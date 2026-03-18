@@ -1,0 +1,274 @@
+{
+  "name": "IPAI Event Router (Integration Bus)",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "seconds",
+              "secondsInterval": 30
+            }
+          ]
+        }
+      },
+      "id": "schedule",
+      "name": "Schedule (Every 30s)",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.1,
+      "position": [250, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.SUPABASE_URL }}/rest/v1/rpc/claim_outbox",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "supabaseApi",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "p_limit",
+              "value": "25"
+            },
+            {
+              "name": "p_worker",
+              "value": "n8n-event-router"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "claim_jobs",
+      "name": "Claim Outbox Jobs",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [450, 300]
+    },
+    {
+      "parameters": {
+        "rules": {
+          "rules": [
+            {
+              "conditions": {
+                "string": [
+                  {
+                    "value1": "={{ $json.event_type }}",
+                    "operation": "startsWith",
+                    "value2": "expense."
+                  }
+                ]
+              },
+              "renameOutput": true,
+              "outputKey": "expense"
+            },
+            {
+              "conditions": {
+                "string": [
+                  {
+                    "value1": "={{ $json.event_type }}",
+                    "operation": "startsWith",
+                    "value2": "asset."
+                  }
+                ]
+              },
+              "renameOutput": true,
+              "outputKey": "asset"
+            },
+            {
+              "conditions": {
+                "string": [
+                  {
+                    "value1": "={{ $json.event_type }}",
+                    "operation": "startsWith",
+                    "value2": "finance_task."
+                  }
+                ]
+              },
+              "renameOutput": true,
+              "outputKey": "finance_task"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "switch_event_type",
+      "name": "Route by Event Type",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3,
+      "position": [650, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.SUPABASE_URL }}/rest/v1/rpc/ack_outbox",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "supabaseApi",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "p_id",
+              "value": "={{ $json.id }}"
+            }
+          ]
+        }
+      },
+      "id": "ack_job",
+      "name": "Ack Job",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1250, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.SUPABASE_URL }}/rest/v1/rpc/fail_outbox",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "supabaseApi",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "p_id",
+              "value": "={{ $json.id }}"
+            },
+            {
+              "name": "p_error",
+              "value": "={{ $json.error || 'Unknown error' }}"
+            }
+          ]
+        }
+      },
+      "id": "fail_job",
+      "name": "Fail Job",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1250, 500]
+    },
+    {
+      "parameters": {
+        "url": "={{ $env.N8N_WEBHOOK_BASE_URL }}/webhook/expense-handler",
+        "options": {}
+      },
+      "id": "expense_handler",
+      "name": "Call Expense Handler",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [900, 200]
+    },
+    {
+      "parameters": {
+        "url": "={{ $env.N8N_WEBHOOK_BASE_URL }}/webhook/asset-handler",
+        "options": {}
+      },
+      "id": "asset_handler",
+      "name": "Call Asset Handler",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [900, 300]
+    },
+    {
+      "parameters": {
+        "url": "={{ $env.N8N_WEBHOOK_BASE_URL }}/webhook/finance-handler",
+        "options": {}
+      },
+      "id": "finance_handler",
+      "name": "Call Finance Handler",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [900, 400]
+    }
+  ],
+  "connections": {
+    "Schedule (Every 30s)": {
+      "main": [
+        [
+          {
+            "node": "Claim Outbox Jobs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Claim Outbox Jobs": {
+      "main": [
+        [
+          {
+            "node": "Route by Event Type",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Route by Event Type": {
+      "main": [
+        [
+          {
+            "node": "Call Expense Handler",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Call Asset Handler",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Call Finance Handler",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Call Expense Handler": {
+      "main": [
+        [
+          {
+            "node": "Ack Job",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Call Asset Handler": {
+      "main": [
+        [
+          {
+            "node": "Ack Job",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Call Finance Handler": {
+      "main": [
+        [
+          {
+            "node": "Ack Job",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 1,
+  "updatedAt": "2026-01-22T00:00:00.000Z",
+  "versionId": "1"
+}

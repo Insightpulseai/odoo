@@ -1,0 +1,3 @@
+ERROR:  relation "ir_module_module" does not exist
+LINE 1: SELECT name, state, latest_version FROM ir_module_module WHE...
+                                                ^

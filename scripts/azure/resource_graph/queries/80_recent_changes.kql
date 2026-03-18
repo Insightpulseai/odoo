@@ -1,0 +1,10 @@
+resourcechanges
+| extend changeTime = todatetime(properties.changeAttributes.timestamp)
+| where changeTime > ago(14d)
+| project
+    targetResourceId = tostring(properties.targetResourceId),
+    changeType = tostring(properties.changeType),
+    changeTime,
+    changedBy = tostring(properties.changeAttributes.changedBy),
+    operation = tostring(properties.changeAttributes.operation)
+| order by changeTime desc

@@ -1,0 +1,10 @@
+capability_id,tier,target_product,target_flow,sap_reference,odoo_core,oca_modules,ipai_modules,manual_score
+crm.pipeline.board,p0,Salesforce Sales Cloud,Pipeline board + quick actions,Lead-to-Cash discipline,crm|sale,crm*,ipai_crm_pipeline,10
+itsm.incident.queue,p0,ServiceNow ITSM,Incident queue + SLA,Service ops discipline,helpdesk,,ipai_itsm_incident,0
+workos.pages.db,p1,Notion,Pages + database views,SOP governance (reference),knowledge,,ipai_workos_pages,0
+assets.checkout.reserve,p1,Cheqroom,Reserve + checkout + custody,EAM/PM discipline,maintenance|stock,,ipai_assets_checkout,0
+ppm.portfolio.lite,p1,Clarity PPM,Portfolio-lite + capacity-lite,SAP PS/PPM discipline,project|hr_timesheet,,ipai_ppm_portfolio,0
+expense.submit.approve,p1,SAP Concur,Expense submission + approval,T&E discipline,hr_expense,,ipai_expense_workflow,0
+crm.forecasting,p2,Salesforce Sales Cloud,Revenue forecasting,Lead-to-Cash discipline,crm|sale,,ipai_crm_forecast,0
+itsm.change.management,p2,ServiceNow ITSM,Change request workflow,Service ops discipline,helpdesk,,ipai_itsm_change,0
+expense.policy.enforce,p2,SAP Concur,Policy enforcement,T&E discipline,hr_expense,,ipai_expense_policy,0

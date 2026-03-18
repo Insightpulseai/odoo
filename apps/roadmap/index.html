@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>InsightPulseAI — Product Roadmap</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#fafbfc;--surface:#fff;--border:#e5e7eb;--border-light:#f0f1f3;
+  --text:#111827;--text-secondary:#6b7280;--text-tertiary:#9ca3af;
+  --accent:#4f46e5;--accent-light:#eef2ff;--accent-dark:#3730a3;
+  --success:#059669;--success-bg:#ecfdf5;
+  --warning:#d97706;--warning-bg:#fffbeb;
+  --danger:#dc2626;--danger-bg:#fef2f2;
+  --info:#0284c7;--info-bg:#f0f9ff;
+  --purple:#7c3aed;--purple-bg:#f5f3ff;
+  --sidebar-w:220px;--header-h:56px;
+  --radius:8px;--radius-lg:12px;
+  --shadow-sm:0 1px 2px rgba(0,0,0,.05);
+  --shadow:0 1px 3px rgba(0,0,0,.08),0 1px 2px rgba(0,0,0,.04);
+  --shadow-lg:0 4px 12px rgba(0,0,0,.1);
+  --font:-apple-system,BlinkMacSystemFont,'Inter','Segoe UI',Roboto,sans-serif;
+  --mono:'SF Mono','Fira Code','Cascadia Code',monospace;
+}
+body{font-family:var(--font);background:var(--bg);color:var(--text);font-size:13px;line-height:1.5;overflow:hidden;height:100vh}
+button{font-family:inherit;cursor:pointer;border:none;background:none;font-size:inherit}
+input,select{font-family:inherit;font-size:inherit}
+
+/* Layout */
+.app{display:flex;height:100vh}
+.sidebar{width:var(--sidebar-w);background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0;overflow-y:auto}
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden}
+.header{height:var(--header-h);background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 24px;gap:12px;flex-shrink:0}
+.content{flex:1;overflow:auto;padding:24px}
+
+/* Sidebar */
+.sidebar-brand{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px}
+.sidebar-brand .logo{width:28px;height:28px;background:var(--accent);border-radius:6px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:14px}
+.sidebar-brand .name{font-weight:600;font-size:14px;color:var(--text)}
+.sidebar-brand .tag{font-size:10px;color:var(--text-tertiary);display:block;margin-top:-2px}
+.sidebar-nav{padding:8px}
+.nav-section{padding:12px 12px 4px;font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--text-tertiary)}
+.nav-item{display:flex;align-items:center;gap:8px;padding:7px 12px;border-radius:6px;color:var(--text-secondary);font-size:13px;font-weight:500;transition:all .15s}
+.nav-item:hover{background:var(--bg);color:var(--text)}
+.nav-item.active{background:var(--accent-light);color:var(--accent)}
+.nav-item svg{width:16px;height:16px;flex-shrink:0}
+.nav-item .badge{margin-left:auto;background:var(--accent);color:#fff;font-size:10px;font-weight:600;padding:1px 6px;border-radius:10px}
+
+/* Legend */
+.sidebar-legend{margin-top:auto;padding:16px 20px;border-top:1px solid var(--border)}
+.legend-title{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--text-tertiary);margin-bottom:8px}
+.legend-item{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--text-secondary);padding:2px 0}
+.legend-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+
+/* Header */
+.header-title{font-weight:600;font-size:15px;margin-right:auto}
+.header-search{display:flex;align-items:center;gap:6px;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:5px 10px;width:220px}
+.header-search input{border:none;background:none;outline:none;width:100%;font-size:12px;color:var(--text)}
+.header-search svg{width:14px;height:14px;color:var(--text-tertiary);flex-shrink:0}
+.view-toggle{display:flex;border:1px solid var(--border);border-radius:6px;overflow:hidden}
+.view-btn{padding:5px 12px;font-size:12px;font-weight:500;color:var(--text-secondary);background:var(--surface);border-right:1px solid var(--border);transition:all .15s}
+.view-btn:last-child{border-right:none}
+.view-btn.active{background:var(--accent);color:#fff}
+.view-btn:hover:not(.active){background:var(--bg)}
+
+/* Filters bar */
+.filters{display:flex;align-items:center;gap:8px;padding:0 24px 0;flex-shrink:0;height:44px;border-bottom:1px solid var(--border-light);background:var(--surface)}
+.filter-select{padding:4px 8px;border:1px solid var(--border);border-radius:6px;background:var(--surface);color:var(--text-secondary);font-size:12px;outline:none;cursor:pointer}
+.filter-select:focus{border-color:var(--accent)}
+.filter-label{font-size:11px;color:var(--text-tertiary);font-weight:500}
+
+/* KPI Strip */
+.kpi-strip{display:flex;gap:16px;margin-bottom:20px}
+.kpi-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:16px 20px;flex:1;min-width:0}
+.kpi-value{font-size:28px;font-weight:700;line-height:1.1}
+.kpi-label{font-size:11px;color:var(--text-secondary);margin-top:2px;font-weight:500}
+.kpi-change{font-size:11px;margin-top:4px;font-weight:600}
+.kpi-change.up{color:var(--success)}
+.kpi-change.down{color:var(--danger)}
+
+/* Timeline header */
+.timeline-header{display:flex;border-bottom:2px solid var(--border);margin-bottom:0;position:sticky;top:0;z-index:10;background:var(--bg)}
+.timeline-label-col{width:200px;flex-shrink:0;padding:10px 16px;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:var(--text-tertiary)}
+.timeline-quarters{display:flex;flex:1}
+.timeline-quarter{flex:1;padding:10px 12px;font-size:12px;font-weight:600;color:var(--text-secondary);text-align:center;border-left:1px solid var(--border-light);position:relative}
+.timeline-quarter.current{color:var(--accent);background:var(--accent-light)}
+.timeline-quarter .sub{font-size:10px;font-weight:400;color:var(--text-tertiary);display:block}
+
+/* Roadmap rows */
+.roadmap-row{display:flex;border-bottom:1px solid var(--border-light);min-height:90px}
+.roadmap-row:hover{background:rgba(79,70,229,.015)}
+.row-label{width:200px;flex-shrink:0;padding:12px 16px;border-right:1px solid var(--border-light);display:flex;flex-direction:column;justify-content:center}
+.row-label .plane-name{font-weight:600;font-size:13px;color:var(--text)}
+.row-label .plane-count{font-size:11px;color:var(--text-tertiary)}
+.row-label .plane-dot{width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:6px}
+.row-quarters{display:flex;flex:1;position:relative}
+.row-quarter{flex:1;padding:8px 6px;border-left:1px solid var(--border-light);display:flex;flex-direction:column;gap:4px}
+.row-quarter.current{background:rgba(79,70,229,.02)}
+
+/* Initiative cards */
+.init-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:8px 10px;cursor:pointer;transition:all .15s;position:relative}
+.init-card:hover{box-shadow:var(--shadow);border-color:#d1d5db;transform:translateY(-1px)}
+.init-card .card-title{font-size:11.5px;font-weight:600;line-height:1.3;margin-bottom:4px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.init-card .card-meta{display:flex;align-items:center;gap:4px;flex-wrap:wrap}
+.init-card .status-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+.init-card .card-tag{font-size:9.5px;padding:1px 5px;border-radius:4px;font-weight:500}
+.init-card .card-owner{font-size:9.5px;color:var(--text-tertiary);margin-left:auto;font-weight:500}
+.init-card.span-2{position:absolute;width:calc(200% - 12px);z-index:2}
+.init-card.span-3{position:absolute;width:calc(300% - 12px);z-index:2}
+
+/* Status colors */
+.status-idea{background:#f3f4f6;color:#6b7280}.status-idea .status-dot{background:#9ca3af}
+.status-planned{background:var(--info-bg);color:var(--info)}.status-planned .status-dot{background:var(--info)}
+.status-progress{background:var(--accent-light);color:var(--accent)}.status-progress .status-dot{background:var(--accent)}
+.status-risk{background:var(--warning-bg);color:var(--warning)}.status-risk .status-dot{background:var(--warning)}
+.status-blocked{background:var(--danger-bg);color:var(--danger)}.status-blocked .status-dot{background:var(--danger)}
+.status-complete{background:var(--success-bg);color:var(--success)}.status-complete .status-dot{background:var(--success)}
+
+/* Priority */
+.priority-critical{border-left:3px solid var(--danger)}
+.priority-high{border-left:3px solid var(--warning)}
+.priority-medium{border-left:3px solid var(--info)}
+.priority-low{border-left:3px solid var(--text-tertiary)}
+
+/* Detail panel */
+.detail-overlay{position:fixed;inset:0;background:rgba(0,0,0,.3);z-index:100;opacity:0;pointer-events:none;transition:opacity .2s}
+.detail-overlay.open{opacity:1;pointer-events:auto}
+.detail-panel{position:fixed;top:0;right:0;bottom:0;width:480px;background:var(--surface);box-shadow:-4px 0 24px rgba(0,0,0,.12);z-index:101;transform:translateX(100%);transition:transform .25s ease;overflow-y:auto}
+.detail-panel.open{transform:translateX(0)}
+.detail-header{padding:20px 24px;border-bottom:1px solid var(--border);display:flex;align-items:flex-start;gap:12px}
+.detail-close{width:32px;height:32px;display:flex;align-items:center;justify-content:center;border-radius:6px;color:var(--text-secondary);flex-shrink:0}
+.detail-close:hover{background:var(--bg)}
+.detail-title{font-size:18px;font-weight:700;line-height:1.3;flex:1}
+.detail-body{padding:24px}
+.detail-section{margin-bottom:20px}
+.detail-section-title{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--text-tertiary);margin-bottom:8px}
+.detail-desc{font-size:13px;color:var(--text-secondary);line-height:1.6}
+.detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.detail-field{background:var(--bg);border-radius:var(--radius);padding:10px 12px}
+.detail-field-label{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:var(--text-tertiary);margin-bottom:2px}
+.detail-field-value{font-size:13px;font-weight:600;color:var(--text)}
+.detail-deps{display:flex;flex-wrap:wrap;gap:6px}
+.dep-tag{font-size:11px;padding:3px 8px;border-radius:6px;background:var(--bg);border:1px solid var(--border);color:var(--text-secondary);font-weight:500}
+.detail-kpi{background:var(--accent-light);border-radius:var(--radius);padding:12px 16px}
+.detail-kpi .kpi-metric{font-size:15px;font-weight:700;color:var(--accent)}
+.detail-kpi .kpi-target{font-size:12px;color:var(--text-secondary);margin-top:2px}
+.detail-milestone{display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid var(--border-light)}
+.detail-milestone:last-child{border-bottom:none}
+.milestone-dot{width:8px;height:8px;border-radius:50%;background:var(--accent);flex-shrink:0}
+.milestone-text{font-size:12px;color:var(--text-secondary)}
+.milestone-date{font-size:11px;color:var(--text-tertiary);margin-left:auto;font-weight:500}
+
+/* Portfolio view */
+.portfolio-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:16px}
+.portfolio-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:20px;cursor:pointer;transition:all .15s}
+.portfolio-card:hover{box-shadow:var(--shadow-lg);transform:translateY(-2px)}
+.portfolio-card .pf-title{font-size:15px;font-weight:700;margin-bottom:4px}
+.portfolio-card .pf-desc{font-size:12px;color:var(--text-secondary);line-height:1.5;margin-bottom:12px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.portfolio-card .pf-meta{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.portfolio-card .pf-bar{height:4px;background:var(--bg);border-radius:2px;overflow:hidden}
+.portfolio-card .pf-bar-fill{height:100%;border-radius:2px;transition:width .3s}
+.portfolio-card .pf-footer{display:flex;justify-content:space-between;align-items:center;margin-top:8px;font-size:11px;color:var(--text-tertiary)}
+
+/* Dependency view */
+.dep-view{padding:20px}
+.dep-matrix{display:grid;gap:8px}
+.dep-row{display:flex;align-items:center;gap:8px;padding:8px 12px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius)}
+.dep-from{width:200px;font-weight:600;font-size:12px;flex-shrink:0}
+.dep-arrow{color:var(--text-tertiary);font-size:16px}
+.dep-to{font-size:12px;color:var(--text-secondary)}
+.dep-type{font-size:10px;padding:2px 6px;border-radius:4px;background:var(--warning-bg);color:var(--warning);font-weight:600;margin-left:auto}
+
+/* Animations */
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.animate-in{animation:fadeIn .3s ease both}
+
+/* Scrollbar */
+::-webkit-scrollbar{width:6px;height:6px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:#d1d5db;border-radius:3px}
+::-webkit-scrollbar-thumb:hover{background:#9ca3af}
+</style>
+</head>
+<body>
+<div class="app" id="app">
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <div class="logo">IP</div>
+      <div><span class="name">InsightPulseAI</span><span class="tag">Product Roadmap</span></div>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="nav-section">Views</div>
+      <button class="nav-item active" data-view="timeline" onclick="switchView('timeline')">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="3" width="14" height="10" rx="1.5"/><line x1="1" y1="6" x2="15" y2="6"/><line x1="5.5" y1="3" x2="5.5" y2="13"/></svg>
+        Timeline<span class="badge" id="totalBadge">14</span>
+      </button>
+      <button class="nav-item" data-view="portfolio" onclick="switchView('portfolio')">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="1" width="6" height="6" rx="1"/><rect x="9" y="1" width="6" height="6" rx="1"/><rect x="1" y="9" width="6" height="6" rx="1"/><rect x="9" y="9" width="6" height="6" rx="1"/></svg>
+        Portfolio
+      </button>
+      <button class="nav-item" data-view="dependencies" onclick="switchView('dependencies')">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="4" cy="4" r="2"/><circle cx="12" cy="12" r="2"/><line x1="5.5" y1="5.5" x2="10.5" y2="10.5"/></svg>
+        Dependencies
+      </button>
+      <button class="nav-item" data-view="kpi" onclick="switchView('kpi')">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="1,12 5,6 9,9 15,2"/><line x1="1" y1="14" x2="15" y2="14"/></svg>
+        KPI / OKR
+      </button>
+      <div class="nav-section">CAF Stages</div>
+      <button class="nav-item" onclick="filterByCAF('all')">All Stages</button>
+      <button class="nav-item" onclick="filterByCAF('Strategy')">Strategy</button>
+      <button class="nav-item" onclick="filterByCAF('Plan')">Plan</button>
+      <button class="nav-item" onclick="filterByCAF('Ready')">Ready</button>
+      <button class="nav-item" onclick="filterByCAF('Migrate')">Migrate</button>
+      <button class="nav-item" onclick="filterByCAF('Modernize')">Modernize</button>
+      <button class="nav-item" onclick="filterByCAF('Cloud-native')">Cloud-native</button>
+      <button class="nav-item" onclick="filterByCAF('Govern')">Govern</button>
+      <button class="nav-item" onclick="filterByCAF('Secure')">Secure</button>
+      <button class="nav-item" onclick="filterByCAF('Manage')">Manage</button>
+    </nav>
+    <div class="sidebar-legend">
+      <div class="legend-title">Status Legend</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#9ca3af"></div>Idea</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--info)"></div>Planned</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--accent)"></div>In Progress</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--warning)"></div>At Risk</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--danger)"></div>Blocked</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--success)"></div>Complete</div>
+    </div>
+  </aside>
+
+  <div class="main">
+    <!-- Header -->
+    <header class="header">
+      <div class="header-title" id="viewTitle">Roadmap Timeline</div>
+      <div class="header-search">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="6.5" cy="6.5" r="4.5"/><line x1="10" y1="10" x2="14" y2="14"/></svg>
+        <input type="text" placeholder="Search initiatives..." id="searchInput" oninput="applyFilters()">
+      </div>
+      <div class="view-toggle">
+        <button class="view-btn active" id="qtrToggle" onclick="setTimeScale('quarterly')">Quarterly</button>
+        <button class="view-btn" id="yrToggle" onclick="setTimeScale('yearly')">Yearly</button>
+      </div>
+    </header>
+
+    <!-- Filters -->
+    <div class="filters">
+      <span class="filter-label">Filters:</span>
+      <select class="filter-select" id="filterPlane" onchange="applyFilters()">
+        <option value="all">All Planes</option>
+        <option value="Platform / Infra">Platform / Infra</option>
+        <option value="Data Intelligence">Data Intelligence</option>
+        <option value="Agent Platform">Agent Platform</option>
+        <option value="Odoo Copilot / ERP">Odoo Copilot / ERP</option>
+        <option value="Web / Workspace">Web / Workspace</option>
+        <option value="Automations / Integration">Automations / Integration</option>
+      </select>
+      <select class="filter-select" id="filterStatus" onchange="applyFilters()">
+        <option value="all">All Statuses</option>
+        <option value="Idea">Idea</option>
+        <option value="Planned">Planned</option>
+        <option value="In Progress">In Progress</option>
+        <option value="At Risk">At Risk</option>
+        <option value="Blocked">Blocked</option>
+        <option value="Complete">Complete</option>
+      </select>
+      <select class="filter-select" id="filterPriority" onchange="applyFilters()">
+        <option value="all">All Priorities</option>
+        <option value="Critical">Critical</option>
+        <option value="High">High</option>
+        <option value="Medium">Medium</option>
+        <option value="Low">Low</option>
+      </select>
+      <select class="filter-select" id="filterOwner" onchange="applyFilters()">
+        <option value="all">All Owners</option>
+        <option value="chief-architect">chief-architect</option>
+        <option value="azure-platform">azure-platform</option>
+        <option value="data-intelligence">data-intelligence</option>
+        <option value="foundry-agent">foundry-agent</option>
+        <option value="odoo-runtime">odoo-runtime</option>
+        <option value="release-ops">release-ops</option>
+      </select>
+    </div>
+
+    <!-- Content -->
+    <div class="content" id="contentArea"></div>
+  </div>
+</div>
+
+<!-- Detail Panel -->
+<div class="detail-overlay" id="detailOverlay" onclick="closeDetail()"></div>
+<div class="detail-panel" id="detailPanel">
+  <div class="detail-header">
+    <div class="detail-title" id="detailTitle"></div>
+    <button class="detail-close" onclick="closeDetail()">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="3" x2="13" y2="13"/><line x1="13" y1="3" x2="3" y2="13"/></svg>
+    </button>
+  </div>
+  <div class="detail-body" id="detailBody"></div>
+</div>
+
+<script>
+// Data
+const QUARTERS = ['Q1 2026','Q2 2026','Q3 2026','Q4 2026','Q1 2027','Q2 2027'];
+const QUARTER_SUBS = ['Jan-Mar','Apr-Jun','Jul-Sep','Oct-Dec','Jan-Mar','Apr-Jun'];
+const CURRENT_Q = 0;
+
+const PLANES = [
+  {id:'platform',name:'Platform / Infra',color:'#6366f1'},
+  {id:'data',name:'Data Intelligence',color:'#0891b2'},
+  {id:'agent',name:'Agent Platform',color:'#7c3aed'},
+  {id:'odoo',name:'Odoo Copilot / ERP',color:'#059669'},
+  {id:'web',name:'Web / Workspace',color:'#d97706'},
+  {id:'auto',name:'Automations / Integration',color:'#dc2626'}
+];
+
+const INITIATIVES = [
+  {id:1,title:'Customer & Identity Intelligence Fabric',desc:'Unified customer identity resolution across all touchpoints — CDP, identity graph, consent management, and audience segmentation built on Unity Catalog.',plane:'Data Intelligence',status:'In Progress',priority:'Critical',owner:'data-intelligence',quarter:0,span:3,caf:'Ready',deps:['Azure Landing Zones','Unity Catalog'],kpi:'Customer match rate > 85%',kpiTarget:'Identity resolution latency < 200ms P99',milestones:[{text:'Schema design complete',date:'Q1 2026'},{text:'Bronze/Silver pipeline live',date:'Q2 2026'},{text:'Gold product published',date:'Q3 2026'}],risks:['PII governance complexity','Cross-source matching accuracy']},
+  {id:2,title:'Campaign Planning, Measurement & Optimization Cloud',desc:'End-to-end campaign lifecycle: plan, execute, measure, and optimize across channels with MMM, MTA, and incrementality testing.',plane:'Data Intelligence',status:'Planned',priority:'High',owner:'data-intelligence',quarter:1,span:3,caf:'Plan',deps:['Customer Intelligence Fabric','Attribution Models'],kpi:'Campaign ROI visibility > 90% of spend',kpiTarget:'Measurement latency < 24h',milestones:[{text:'Requirements finalized',date:'Q2 2026'},{text:'MMM model validated',date:'Q3 2026'},{text:'Self-serve analytics live',date:'Q4 2026'}],risks:['Attribution model accuracy','Multi-touch data gaps']},
+  {id:3,title:'Brand, Cultural & Creative Intelligence Hub',desc:'AI-powered brand monitoring, cultural trend detection, creative performance scoring, and competitive intelligence dashboard.',plane:'Data Intelligence',status:'Idea',priority:'Medium',owner:'data-intelligence',quarter:3,span:2,caf:'Strategy',deps:['NLP Pipeline','Vision AI','Agent Context Products'],kpi:'Brand sentiment accuracy > 80%',kpiTarget:'Trend detection lead time 48h',milestones:[{text:'Data source inventory',date:'Q4 2026'},{text:'Prototype dashboard',date:'Q1 2027'}],risks:['Unstructured data volume','Cultural context nuance']},
+  {id:4,title:'Retail Media & Commerce Intelligence',desc:'Retail media network analytics, commerce attribution, shelf analytics, and shopper journey intelligence for FMCG/retail clients.',plane:'Data Intelligence',status:'Idea',priority:'Medium',owner:'data-intelligence',quarter:3,span:3,caf:'Strategy',deps:['Customer Intelligence Fabric','Campaign Cloud'],kpi:'Retail media ROAS attribution coverage > 70%',kpiTarget:'Shopper journey mapping for top 5 retailers',milestones:[{text:'Retail partner data agreements',date:'Q4 2026'},{text:'First attribution model',date:'Q1 2027'},{text:'Production dashboard',date:'Q2 2027'}],risks:['Retailer data access','Walled garden limitations']},
+  {id:5,title:'Audience, Ad Revenue & Content Supply Chain Intelligence',desc:'Audience analytics, ad revenue forecasting, content performance optimization, and supply chain intelligence for media/entertainment.',plane:'Data Intelligence',status:'Planned',priority:'High',owner:'data-intelligence',quarter:2,span:2,caf:'Plan',deps:['Customer Intelligence Fabric','EventHub Pipeline'],kpi:'Content ROI prediction accuracy > 75%',kpiTarget:'Ad revenue forecast within 5% variance',milestones:[{text:'Event pipeline connected',date:'Q3 2026'},{text:'Forecasting model v1',date:'Q4 2026'}],risks:['Content taxonomy standardization','Real-time volume']},
+  {id:6,title:'Financial Risk, Revenue Assurance & FinOps Intelligence',desc:'Financial risk scoring, revenue leakage detection, Azure cost optimization, and compliance monitoring across the platform.',plane:'Data Intelligence',status:'Planned',priority:'High',owner:'data-intelligence',quarter:1,span:2,caf:'Plan',deps:['Odoo Financial Data','Azure Cost APIs','BIR Compliance'],kpi:'Revenue leakage detection < 0.5% of total',kpiTarget:'Cloud cost anomaly detection within 4h',milestones:[{text:'Odoo finance data extract',date:'Q2 2026'},{text:'FinOps dashboard live',date:'Q3 2026'}],risks:['Odoo data model complexity','Multi-currency handling']},
+  {id:7,title:'Agent Context Products',desc:'Governed, agent-consumable data products in Unity Catalog — customer context, campaign context, financial context, risk signals for Foundry agents.',plane:'Agent Platform',status:'In Progress',priority:'Critical',owner:'foundry-agent',quarter:0,span:2,caf:'Ready',deps:['Customer Intelligence Fabric','Unity Catalog','Foundry SDK'],kpi:'Agent grounding accuracy > 90%',kpiTarget:'Context retrieval latency < 500ms',milestones:[{text:'Schema + catalog published',date:'Q1 2026'},{text:'First 3 context products live',date:'Q2 2026'}],risks:['Data freshness vs accuracy tradeoff','Schema evolution']},
+  {id:8,title:'Databricks Decision Apps',desc:'Interactive Databricks Apps for self-serve analytics — campaign dashboards, customer segmentation explorer, financial health monitors, and executive KPI views.',plane:'Data Intelligence',status:'Idea',priority:'Medium',owner:'data-intelligence',quarter:4,span:2,caf:'Cloud-native',deps:['Gold Data Products','Semantic Layer'],kpi:'Self-serve adoption > 60% of analysts',kpiTarget:'Dashboard load time < 3s',milestones:[{text:'App framework selected',date:'Q1 2027'},{text:'First 2 apps deployed',date:'Q2 2027'}],risks:['User adoption','Performance at scale']},
+  {id:9,title:'Creative Evidence Assistant',desc:'Foundry-hosted agent that analyzes creative assets, scores performance potential, suggests optimizations, and generates evidence-backed creative briefs.',plane:'Agent Platform',status:'Planned',priority:'Medium',owner:'foundry-agent',quarter:2,span:2,caf:'Modernize',deps:['Brand Intelligence Hub','Vision AI','Agent Context Products'],kpi:'Creative score correlation with performance > 0.7',kpiTarget:'Brief generation time < 30s',milestones:[{text:'Tool definitions finalized',date:'Q3 2026'},{text:'Hosted agent published',date:'Q4 2026'}],risks:['Creative subjectivity','Multi-modal model costs']},
+  {id:10,title:'Marketing Strategist Agent',desc:'Multi-agent workflow that synthesizes market data, audience insights, competitive signals, and budget constraints into actionable marketing strategies.',plane:'Agent Platform',status:'Planned',priority:'High',owner:'foundry-agent',quarter:2,span:2,caf:'Modernize',deps:['Campaign Cloud','Customer Fabric','Agent Context Products'],kpi:'Strategy recommendation acceptance > 65%',kpiTarget:'Strategy generation < 5min',milestones:[{text:'Workflow design complete',date:'Q3 2026'},{text:'Beta with 3 accounts',date:'Q4 2026'}],risks:['Multi-agent coordination complexity','Hallucination risk']},
+  {id:11,title:'Campaign Analyst Agent',desc:'Foundry agent that monitors live campaigns, detects anomalies, explains performance changes, and recommends real-time optimizations.',plane:'Agent Platform',status:'Idea',priority:'Medium',owner:'foundry-agent',quarter:3,span:2,caf:'Cloud-native',deps:['Campaign Cloud','Real-time Events','Agent Context Products'],kpi:'Anomaly detection precision > 85%',kpiTarget:'Alert-to-recommendation < 15min',milestones:[{text:'Real-time pipeline connected',date:'Q4 2026'},{text:'Agent published',date:'Q1 2027'}],risks:['False positive rate','Real-time data latency']},
+  {id:12,title:'Odoo Revenue & Campaign Copilot',desc:'In-ERP copilot that helps sales/account teams with revenue forecasting, campaign-linked invoicing, partner performance insights, and BIR-compliant reporting.',plane:'Odoo Copilot / ERP',status:'In Progress',priority:'Critical',owner:'odoo-runtime',quarter:0,span:2,caf:'Migrate',deps:['Odoo on Azure','Agent Context Products','BIR Compliance'],kpi:'Copilot adoption > 70% of active users',kpiTarget:'Revenue forecast accuracy within 10%',milestones:[{text:'Core module installed',date:'Q1 2026'},{text:'Foundry integration live',date:'Q2 2026'}],risks:['Odoo 19 migration stability','User trust in AI recommendations']},
+  {id:13,title:'Marketing Workspace OS',desc:'Unified web workspace for campaign planning, brief management, asset library, approval workflows, and team collaboration — powered by Foundry agents.',plane:'Web / Workspace',status:'Idea',priority:'Low',owner:'chief-architect',quarter:4,span:2,caf:'Cloud-native',deps:['Campaign Cloud','Creative Assistant','Design System'],kpi:'Team velocity improvement > 30%',kpiTarget:'Brief-to-launch cycle < 5 days',milestones:[{text:'UX research complete',date:'Q1 2027'},{text:'MVP launch',date:'Q2 2027'}],risks:['Scope creep','Competing with existing tools']},
+  {id:14,title:'Governance, Security & FinOps Control Layer',desc:'Cross-platform governance: Azure Policy, RBAC, cost alerts, compliance evidence, audit trails, and security baseline enforcement across all planes.',plane:'Platform / Infra',status:'In Progress',priority:'Critical',owner:'azure-platform',quarter:0,span:4,caf:'Govern',deps:['Azure Landing Zones','Key Vault','Entra ID'],kpi:'Policy compliance > 95%',kpiTarget:'Security incident response < 1h',milestones:[{text:'Landing zone baseline',date:'Q1 2026'},{text:'Policy gates enforced',date:'Q2 2026'},{text:'Full observability',date:'Q3 2026'},{text:'Audit evidence automated',date:'Q4 2026'}],risks:['Policy-as-code maturity','Cross-team adoption']}
+];
+
+let currentView = 'timeline';
+let currentCAF = 'all';
+let filteredData = [...INITIATIVES];
+
+function getStatusClass(s){
+  const m={'Idea':'idea','Planned':'planned','In Progress':'progress','At Risk':'risk','Blocked':'blocked','Complete':'complete'};
+  return 'status-'+(m[s]||'idea');
+}
+function getPriorityClass(p){
+  return 'priority-'+p.toLowerCase();
+}
+function getPlaneColor(name){
+  const p=PLANES.find(x=>x.name===name);
+  return p?p.color:'#6b7280';
+}
+
+function applyFilters(){
+  const plane=document.getElementById('filterPlane').value;
+  const status=document.getElementById('filterStatus').value;
+  const priority=document.getElementById('filterPriority').value;
+  const owner=document.getElementById('filterOwner').value;
+  const search=document.getElementById('searchInput').value.toLowerCase();
+
+  filteredData=INITIATIVES.filter(i=>{
+    if(plane!=='all'&&i.plane!==plane)return false;
+    if(status!=='all'&&i.status!==status)return false;
+    if(priority!=='all'&&i.priority!==priority)return false;
+    if(owner!=='all'&&i.owner!==owner)return false;
+    if(currentCAF!=='all'&&i.caf!==currentCAF)return false;
+    if(search&&!i.title.toLowerCase().includes(search)&&!i.desc.toLowerCase().includes(search))return false;
+    return true;
+  });
+  document.getElementById('totalBadge').textContent=filteredData.length;
+  renderView();
+}
+
+function filterByCAF(caf){
+  currentCAF=caf;
+  document.querySelectorAll('.nav-item').forEach(n=>{
+    if(n.textContent.trim()===caf||n.textContent.trim()==='All Stages'&&caf==='all')n.classList.add('active');
+    else if(!n.dataset.view)n.classList.remove('active');
+  });
+  applyFilters();
+}
+
+function switchView(view){
+  currentView=view;
+  document.querySelectorAll('[data-view]').forEach(n=>{
+    n.classList.toggle('active',n.dataset.view===view);
+  });
+  const titles={'timeline':'Roadmap Timeline','portfolio':'Portfolio Summary','dependencies':'Dependency Map','kpi':'KPI / OKR Alignment'};
+  document.getElementById('viewTitle').textContent=titles[view]||'Roadmap';
+  renderView();
+}
+
+function setTimeScale(scale){
+  document.getElementById('qtrToggle').classList.toggle('active',scale==='quarterly');
+  document.getElementById('yrToggle').classList.toggle('active',scale==='yearly');
+  renderView();
+}
+
+function renderView(){
+  const area=document.getElementById('contentArea');
+  switch(currentView){
+    case'timeline':area.innerHTML=renderTimeline();break;
+    case'portfolio':area.innerHTML=renderPortfolio();break;
+    case'dependencies':area.innerHTML=renderDependencies();break;
+    case'kpi':area.innerHTML=renderKPI();break;
+  }
+}
+
+function renderKPIStrip(){
+  const total=filteredData.length;
+  const onTrack=filteredData.filter(i=>['In Progress','Planned','Complete'].includes(i.status)).length;
+  const atRisk=filteredData.filter(i=>i.status==='At Risk'||i.status==='Blocked').length;
+  const complete=filteredData.filter(i=>i.status==='Complete').length;
+  const upcoming=filteredData.filter(i=>i.quarter<=1).length;
+  return `<div class="kpi-strip">
+    <div class="kpi-card"><div class="kpi-value">${total}</div><div class="kpi-label">Total Initiatives</div></div>
+    <div class="kpi-card"><div class="kpi-value" style="color:var(--success)">${onTrack}</div><div class="kpi-label">On Track</div></div>
+    <div class="kpi-card"><div class="kpi-value" style="color:var(--warning)">${atRisk}</div><div class="kpi-label">At Risk / Blocked</div></div>
+    <div class="kpi-card"><div class="kpi-value" style="color:var(--accent)">${complete}</div><div class="kpi-label">Completed</div></div>
+    <div class="kpi-card"><div class="kpi-value">${upcoming}</div><div class="kpi-label">This / Next Quarter</div></div>
+  </div>`;
+}
+
+function renderTimeline(){
+  let html=renderKPIStrip();
+  html+=`<div class="timeline-header">
+    <div class="timeline-label-col">Product Plane</div>
+    <div class="timeline-quarters">${QUARTERS.map((q,i)=>`<div class="timeline-quarter${i===CURRENT_Q?' current':''}">${q}<span class="sub">${QUARTER_SUBS[i]}</span></div>`).join('')}</div>
+  </div>`;
+
+  PLANES.forEach(plane=>{
+    const items=filteredData.filter(i=>i.plane===plane.name);
+    html+=`<div class="roadmap-row">
+      <div class="row-label"><div><span class="plane-dot" style="background:${plane.color}"></span><span class="plane-name">${plane.name}</span></div><span class="plane-count">${items.length} initiative${items.length!==1?'s':''}</span></div>
+      <div class="row-quarters">${QUARTERS.map((q,qi)=>{
+        const qItems=items.filter(i=>i.quarter===qi);
+        return `<div class="row-quarter${qi===CURRENT_Q?' current':''}">${qItems.map(i=>renderInitCard(i)).join('')}</div>`;
+      }).join('')}</div>
+    </div>`;
+  });
+  return html;
+}
+
+function renderInitCard(item){
+  return `<div class="init-card ${getPriorityClass(item.priority)} animate-in" onclick="openDetail(${item.id})">
+    <div class="card-title">${item.title}</div>
+    <div class="card-meta">
+      <span class="status-dot" style="background:${getStatusDotColor(item.status)}"></span>
+      <span class="card-tag ${getStatusClass(item.status)}">${item.status}</span>
+      <span class="card-owner">${item.owner}</span>
+    </div>
+  </div>`;
+}
+
+function getStatusDotColor(s){
+  const m={'Idea':'#9ca3af','Planned':'#0284c7','In Progress':'#4f46e5','At Risk':'#d97706','Blocked':'#dc2626','Complete':'#059669'};
+  return m[s]||'#9ca3af';
+}
+
+function renderPortfolio(){
+  let html=renderKPIStrip();
+  html+='<div class="portfolio-grid">';
+  filteredData.forEach(item=>{
+    const progress=item.status==='Complete'?100:item.status==='In Progress'?45:item.status==='Planned'?15:item.status==='At Risk'?60:5;
+    const barColor=item.status==='Complete'?'var(--success)':item.status==='At Risk'?'var(--warning)':item.status==='In Progress'?'var(--accent)':'var(--info)';
+    html+=`<div class="portfolio-card animate-in" onclick="openDetail(${item.id})">
+      <div class="pf-title">${item.title}</div>
+      <div class="pf-desc">${item.desc}</div>
+      <div class="pf-meta">
+        <span class="card-tag ${getStatusClass(item.status)}">${item.status}</span>
+        <span class="card-tag" style="background:var(--bg);color:var(--text-secondary)">${item.priority}</span>
+        <span class="card-tag" style="background:var(--bg);color:var(--text-secondary)">${item.caf}</span>
+      </div>
+      <div class="pf-bar"><div class="pf-bar-fill" style="width:${progress}%;background:${barColor}"></div></div>
+      <div class="pf-footer"><span>${item.owner}</span><span>${QUARTERS[item.quarter]} — ${QUARTERS[Math.min(item.quarter+item.span-1,5)]}</span></div>
+    </div>`;
+  });
+  html+='</div>';
+  return html;
+}
+
+function renderDependencies(){
+  let html=renderKPIStrip();
+  html+='<div class="dep-view"><div class="dep-matrix">';
+  filteredData.forEach(item=>{
+    if(item.deps&&item.deps.length){
+      item.deps.forEach(dep=>{
+        html+=`<div class="dep-row animate-in" onclick="openDetail(${item.id})">
+          <div class="dep-from" style="color:${getPlaneColor(item.plane)}">${item.title}</div>
+          <span class="dep-arrow">&larr;</span>
+          <div class="dep-to">${dep}</div>
+          <span class="dep-type">depends on</span>
+        </div>`;
+      });
+    }
+  });
+  html+='</div></div>';
+  return html;
+}
+
+function renderKPI(){
+  let html=renderKPIStrip();
+  html+='<div class="portfolio-grid">';
+  filteredData.forEach(item=>{
+    html+=`<div class="portfolio-card animate-in" onclick="openDetail(${item.id})">
+      <div class="pf-title" style="font-size:13px">${item.title}</div>
+      <div class="detail-kpi" style="margin:12px 0">
+        <div class="kpi-metric">${item.kpi}</div>
+        <div class="kpi-target">${item.kpiTarget}</div>
+      </div>
+      <div class="pf-meta">
+        <span class="card-tag ${getStatusClass(item.status)}">${item.status}</span>
+        <span class="card-tag" style="background:var(--bg);color:var(--text-secondary)">${item.caf}</span>
+      </div>
+      <div class="pf-footer"><span>${item.owner}</span><span>${QUARTERS[item.quarter]}</span></div>
+    </div>`;
+  });
+  html+='</div>';
+  return html;
+}
+
+function openDetail(id){
+  const item=INITIATIVES.find(i=>i.id===id);
+  if(!item)return;
+  document.getElementById('detailTitle').textContent=item.title;
+  let html=`
+    <div class="detail-section">
+      <div class="detail-section-title">Description</div>
+      <div class="detail-desc">${item.desc}</div>
+    </div>
+    <div class="detail-section">
+      <div class="detail-grid">
+        <div class="detail-field"><div class="detail-field-label">Status</div><div class="detail-field-value"><span class="card-tag ${getStatusClass(item.status)}">${item.status}</span></div></div>
+        <div class="detail-field"><div class="detail-field-label">Priority</div><div class="detail-field-value">${item.priority}</div></div>
+        <div class="detail-field"><div class="detail-field-label">Owner</div><div class="detail-field-value" style="font-family:var(--mono);font-size:12px">${item.owner}</div></div>
+        <div class="detail-field"><div class="detail-field-label">CAF Stage</div><div class="detail-field-value">${item.caf}</div></div>
+        <div class="detail-field"><div class="detail-field-label">Product Plane</div><div class="detail-field-value">${item.plane}</div></div>
+        <div class="detail-field"><div class="detail-field-label">Timeline</div><div class="detail-field-value">${QUARTERS[item.quarter]} — ${QUARTERS[Math.min(item.quarter+item.span-1,5)]}</div></div>
+      </div>
+    </div>
+    <div class="detail-section">
+      <div class="detail-section-title">KPI / Business Outcome</div>
+      <div class="detail-kpi">
+        <div class="kpi-metric">${item.kpi}</div>
+        <div class="kpi-target">${item.kpiTarget}</div>
+      </div>
+    </div>
+    <div class="detail-section">
+      <div class="detail-section-title">Dependencies</div>
+      <div class="detail-deps">${item.deps.map(d=>`<span class="dep-tag">${d}</span>`).join('')}</div>
+    </div>
+    <div class="detail-section">
+      <div class="detail-section-title">Milestones</div>
+      ${item.milestones.map(m=>`<div class="detail-milestone"><div class="milestone-dot"></div><div class="milestone-text">${m.text}</div><div class="milestone-date">${m.date}</div></div>`).join('')}
+    </div>
+    <div class="detail-section">
+      <div class="detail-section-title">Risks</div>
+      <div class="detail-deps">${item.risks.map(r=>`<span class="dep-tag" style="border-color:var(--warning);color:var(--warning)">${r}</span>`).join('')}</div>
+    </div>`;
+  document.getElementById('detailBody').innerHTML=html;
+  document.getElementById('detailOverlay').classList.add('open');
+  document.getElementById('detailPanel').classList.add('open');
+}
+
+function closeDetail(){
+  document.getElementById('detailOverlay').classList.remove('open');
+  document.getElementById('detailPanel').classList.remove('open');
+}
+
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeDetail()});
+
+// Init
+renderView();
+</script>
+</body>
+</html>

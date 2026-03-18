@@ -1,0 +1,104 @@
+# Task Stages (Kanban Columns)
+# Model: project.task.type
+# Import order: 6 (before tasks)
+
+stages:
+  # ============================================================
+  # STANDARD KANBAN STAGES
+  # These are global stages (shared across projects)
+  # ============================================================
+
+  - id: ipai_stage_backlog
+    name: Backlog
+    sequence: 5
+    fold: true  # Collapsed by default
+    description: "Tasks not yet scheduled"
+
+  - id: ipai_stage_todo
+    name: To Do
+    sequence: 10
+    fold: false
+    description: "Ready to start"
+
+  - id: ipai_stage_in_progress
+    name: In Progress
+    sequence: 20
+    fold: false
+    description: "Currently being worked on"
+
+  - id: ipai_stage_review
+    name: Review
+    sequence: 30
+    fold: false
+    description: "Pending internal or client review"
+
+  - id: ipai_stage_testing
+    name: Testing
+    sequence: 35
+    fold: false
+    description: "In QA/testing"
+
+  - id: ipai_stage_done
+    name: Done
+    sequence: 40
+    fold: true
+    description: "Completed tasks"
+
+  - id: ipai_stage_cancelled
+    name: Cancelled
+    sequence: 50
+    fold: true
+    description: "Cancelled or not required"
+
+# Project-specific stage assignments
+# Use this if you want different stages per project
+project_stages:
+  # Project Alpha uses standard stages
+  ipai_proj_alpha:
+    - ipai_stage_backlog
+    - ipai_stage_todo
+    - ipai_stage_in_progress
+    - ipai_stage_review
+    - ipai_stage_done
+
+  # Project Beta uses dev-focused stages
+  ipai_proj_beta:
+    - ipai_stage_backlog
+    - ipai_stage_todo
+    - ipai_stage_in_progress
+    - ipai_stage_testing
+    - ipai_stage_done
+
+# Odoo import field mapping
+odoo_import:
+  model: project.task.type
+  fields:
+    - name: id
+      column: External ID
+      required: true
+
+    - name: name
+      column: Name
+      required: true
+
+    - name: sequence
+      column: Sequence
+      type: integer
+
+    - name: fold
+      column: Folded
+      type: boolean
+      notes: "True = collapsed in kanban view"
+
+    - name: description
+      column: Description
+
+    - name: project_ids
+      column: Projects
+      type: many2many
+      relation: project.project
+      notes: "Leave empty for global stages"
+
+# Note: In Odoo 18, project.task.type can be global or project-specific
+# Global stages: Don't set project_ids
+# Project-specific: Set project_ids/id to link to specific projects

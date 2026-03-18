@@ -1,0 +1,47 @@
+version: 1
+type: ops_skill
+family: azure_sample_azd
+skill:
+  name: azd-environment-bootstrap
+  status: draft
+  owner: azure-bootstrap-engineer
+  purpose: >
+    Initialize azd environment with correct subscription, region, resource group
+    targeting, and CI/CD integration. Handles azd init, azd env new, environment
+    variables, azure.yaml configuration, and pipeline scaffolding.
+
+  triggers:
+    - new project initialized from azd template
+    - new environment needed (dev, staging, prod)
+    - CI/CD pipeline setup for azd-managed project
+    - environment variable configuration change
+
+  inputs:
+    - azd template (selected via azd-template-selection)
+    - target subscription ID
+    - target region (e.g., southeastasia, eastus)
+    - resource group naming convention (rg-ipai-{env})
+    - environment name (dev, staging, prod)
+    - CI/CD target (GitHub Actions, Azure Pipelines, both)
+
+  steps:
+    - run azd init from selected template (or azd init for existing project)
+    - configure azure.yaml with service definitions and resource mappings
+    - run azd env new {env-name} for each target environment
+    - set environment variables via azd env set
+    - configure subscription and region targeting
+    - run azd pipeline config for CI/CD integration
+    - verify environment configuration with azd env get-values
+
+  outputs:
+    - initialized project with azure.yaml
+    - configured environment(s) with variables
+    - CI/CD pipeline configuration (workflow files)
+    - environment verification output
+
+  guardrails:
+    - subscription and region must match platform conventions
+    - resource group names must follow rg-ipai-{env} pattern
+    - environment variables must not contain secret values in plaintext
+    - CI/CD pipelines must use federated credentials, not stored secrets
+    - azure.yaml must declare all services and their hosting targets

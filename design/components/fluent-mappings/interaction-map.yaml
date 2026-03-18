@@ -1,0 +1,66 @@
+# =============================================================================
+# Interaction State Contract
+# =============================================================================
+# Governs required interaction states for all product surfaces.
+# Every actionable control must implement these states using governed tokens.
+#
+# Reference: design/validation/parity-rules.yaml
+# Upstream: Fluent 2 interaction patterns
+# =============================================================================
+
+version: 1
+
+interaction_contract:
+
+  focus:
+    required: true
+    keyboard_visible: true
+    notes: "Focus ring must be visible for keyboard navigation. Use focus-visible, not focus."
+
+  hover:
+    required_for_pointer_surfaces: true
+    notes: "All pointer-interactive elements must have a hover state."
+
+  active:
+    required_for_actionable_controls: true
+    notes: "Buttons, links, and interactive controls must have a pressed/active state."
+
+  disabled:
+    must_reduce_affordance_without_hiding_label: true
+    notes: "Disabled controls reduce visual weight but remain readable. Never display:none."
+
+  loading:
+    must_preserve_layout: true
+    notes: "Loading state must not cause layout shift. Use skeleton or spinner in place."
+
+  error:
+    must_have_color_and_text_signal: true
+    notes: "Error state uses color AND text. Never color-only (accessibility)."
+
+  selected:
+    must_have_distinct_visual_from_hover: true
+    notes: "Selected state must be visually distinct from hover."
+
+  reduced_motion:
+    required: true
+    notes: "All motion must respect prefers-reduced-motion. Provide static fallback."
+
+# ---------------------------------------------------------------------------
+# Accessibility invariants
+# ---------------------------------------------------------------------------
+accessibility:
+  color_contrast:
+    minimum_ratio_normal_text: 4.5
+    minimum_ratio_large_text: 3.0
+    minimum_ratio_non_text: 3.0
+    standard: "WCAG 2.2 AA"
+
+  keyboard:
+    all_interactive_elements_reachable: true
+    tab_order_matches_visual_order: true
+    escape_closes_overlays: true
+
+  screen_reader:
+    all_controls_have_accessible_name: true
+    dynamic_content_uses_live_regions: true
+    decorative_images_have_empty_alt: true

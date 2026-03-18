@@ -1,0 +1,53 @@
+# PPM (Project Portfolio Management) parity modules
+# Covers: project management, timesheets, budgets, timeline/Gantt, forecasting
+# Source: EE Planning + EE Gantt + EE Budget + EE Timesheet Grid
+
+# OCA: Project & Timeline
+project_task_default_stage
+project_task_stage_mgmt
+project_task_stage_state
+project_timeline
+project_task_pull_request
+
+# OCA: Timesheet
+hr_timesheet_task_stage
+hr_timesheet_time_control
+
+# OCA: Budget / MIS Builder
+mis_builder
+mis_builder_budget
+
+# OCA: Reporting
+report_xlsx
+report_xlsx_helper
+account_financial_report
+kpi_dashboard
+bi_sql_editor
+
+# OCA: Queue (background jobs for reports/sync)
+queue_job
+queue_job_cron
+
+# OCA: Foundation (common deps)
+date_range
+base_view_inheritance_extension
+
+# OCA: Web UX
+web_responsive
+web_dialog_size
+
+# IPAI: Finance PPM
+ipai_finance_ppm
+ipai_finance_ppm_golive
+ipai_finance_ppm_umbrella
+ipai_finance_closing
+ipai_finance_close_seed
+ipai_month_end
+ipai_month_end_closing
+ipai_tbwa_finance
+
+# IPAI: Platform
+ipai_platform_workflow
+ipai_platform_approvals
+ipai_platform_audit
+ipai_enterprise_bridge

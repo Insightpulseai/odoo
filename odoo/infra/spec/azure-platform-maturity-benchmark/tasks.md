@@ -6,7 +6,7 @@
 
 ## Phase 1: Scoring Framework
 
-- [ ] Define weighted scoring rubric in `ssot/azure/platform_maturity_benchmark.yaml`
+- [ ] Define weighted scoring rubric in `infra/ssot/azure/platform_maturity_benchmark.yaml`
 - [ ] Implement `scripts/infra/azure_maturity_score.py` scoring engine
   - [ ] Parse rubric YAML and evidence YAML
   - [ ] Compute per-criterion, per-domain, and aggregate scores
@@ -68,5 +68,5 @@
 
 - [ ] Implement `scripts/infra/azure_maturity_report.py` markdown generator
 - [ ] Generate domain gap report with remediation priorities
-- [ ] Add historical score append to `ssot/azure/maturity_history.json`
+- [ ] Add historical score append to `infra/ssot/azure/maturity_history.json`
 - [ ] Verify end-to-end: evidence → score → gate → report

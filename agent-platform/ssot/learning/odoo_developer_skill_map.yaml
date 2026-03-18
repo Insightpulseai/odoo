@@ -1,0 +1,77 @@
+version: 1
+source: odoo_19_developer_howtos
+status: active
+type: benchmark_curriculum
+family: odoo_developer_implementation
+updated_at: "2026-03-17"
+
+skills:
+  - id: odoo-module-scaffolding
+    lane: backend_foundation
+    role: create_new_module_structure
+    build_order: 1
+    skill_dir: agents/skills/odoo-module-scaffolding/
+    knowledge_ref: agents/knowledge/benchmarks/odoo-developer-howtos.md
+
+  - id: odoo-orm-model-extension
+    lane: backend_customization
+    role: extend_models_fields_and_business_logic
+    build_order: 2
+    skill_dir: agents/skills/odoo-orm-model-extension/
+    knowledge_ref: agents/knowledge/benchmarks/odoo-developer-howtos.md
+
+  - id: odoo-view-customization
+    lane: ui_customization
+    role: extend_views_actions_and_menus
+    build_order: 3
+    skill_dir: agents/skills/odoo-view-customization/
+    knowledge_ref: agents/knowledge/benchmarks/odoo-developer-howtos.md
+
+  - id: odoo-security-acl-rules
+    lane: security
+    role: define_groups_acls_and_record_rules
+    build_order: 4
+    skill_dir: agents/skills/odoo-security-acl-rules/
+    knowledge_ref: agents/knowledge/benchmarks/odoo-developer-howtos.md
+
+  - id: odoo-test-authoring
+    lane: quality
+    role: write_module_tests_and_regression_checks
+    build_order: 5
+    skill_dir: agents/skills/odoo-test-authoring/
+    knowledge_ref: agents/knowledge/benchmarks/odoo-developer-howtos.md
+
+  - id: odoo-upgrade-safe-extension
+    lane: maintainability
+    role: keep_changes_inheritance_based_and_upgrade_safe
+    build_order: 6
+    skill_dir: agents/skills/odoo-upgrade-safe-extension/
+    knowledge_ref: agents/knowledge/benchmarks/odoo-developer-howtos.md
+
+  - id: odoo-report-customization
+    lane: reporting
+    role: customize_reports_and_print_surfaces
+    build_order: 7
+    skill_dir: agents/skills/odoo-report-customization/
+    knowledge_ref: agents/knowledge/benchmarks/odoo-developer-howtos.md
+
+  - id: odoo-webclient-owl-extension
+    lane: frontend
+    role: extend_webclient_and_owl_surfaces
+    build_order: 8
+    skill_dir: agents/skills/odoo-webclient-owl-extension/
+    knowledge_ref: agents/knowledge/benchmarks/odoo-developer-howtos.md
+
+  - id: odoo-qweb-website-customization
+    lane: website
+    role: customize_qweb_theme_and_website_surfaces
+    build_order: 9
+    skill_dir: agents/skills/odoo-qweb-website-customization/
+    knowledge_ref: agents/knowledge/benchmarks/odoo-developer-howtos.md
+
+  - id: odoo-data-migration-script
+    lane: data
+    role: move_seed_transform_or_backfill_data
+    build_order: 10
+    skill_dir: agents/skills/odoo-data-migration-script/
+    knowledge_ref: agents/knowledge/benchmarks/odoo-developer-howtos.md

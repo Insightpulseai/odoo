@@ -1,0 +1,82 @@
+// Composer Component Styles
+
+.ipai-composer {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ipai-space-2);
+  padding: var(--ipai-space-3);
+  background: var(--ipai-surface);
+  border: 1px solid var(--ipai-outline);
+  border-radius: var(--ipai-radius-xl);
+  transition: border-color var(--ipai-duration-fast) var(--ipai-ease-out),
+              box-shadow var(--ipai-duration-fast) var(--ipai-ease-out);
+
+  &--focused {
+    border-color: var(--ipai-primary);
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+  }
+
+  &--loading {
+    opacity: 0.7;
+    pointer-events: none;
+  }
+}
+
+.ipai-composer-input {
+  border: none;
+  background: transparent;
+  resize: none;
+  min-height: 24px;
+  max-height: 200px;
+  padding: var(--ipai-space-1);
+  font-family: var(--ipai-font-sans);
+  font-size: var(--ipai-text-base);
+  line-height: var(--ipai-leading-relaxed);
+  color: var(--ipai-on-surface);
+  overflow-y: auto;
+
+  &::placeholder {
+    color: var(--ipai-on-surface-muted);
+  }
+
+  &:focus {
+    outline: none;
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+  }
+
+  // Scrollbar
+  &::-webkit-scrollbar {
+    width: 4px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: var(--ipai-outline);
+    border-radius: var(--ipai-radius-full);
+  }
+}
+
+.ipai-composer-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--ipai-space-2);
+}
+
+.ipai-composer-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--ipai-space-1);
+}
+
+.ipai-composer-submit {
+  display: flex;
+  align-items: center;
+  gap: var(--ipai-space-3);
+}

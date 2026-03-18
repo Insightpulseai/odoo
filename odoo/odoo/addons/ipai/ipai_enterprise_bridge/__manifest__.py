@@ -3,7 +3,7 @@
 {
     "name": "IPAI Enterprise Bridge",
     "summary": "Minimal stubs and redirections for EE model references (does not reimplement EE features)",
-    "version": "19.0.1.0.0",
+    "version": "19.0.1.1.0",
     "category": "Technical",
     "author": "InsightPulseAI",
     "website": "https://github.com/jgtolentino/odoo",
@@ -18,6 +18,7 @@
         "hr_expense",
         "maintenance",
         "project",
+        "purchase",
     ],
     "external_dependencies": {
         "python": [
@@ -35,9 +36,11 @@
         "data/oauth_providers.xml",
         "data/enterprise_bridge_data.xml",
         "views/res_config_settings_views.xml",
+        "views/foundry_provider_config_views.xml",
+        "views/doc_digitization_config_views.xml",
+        "views/ipai_policy_views.xml",
         "views/iot_device_views.xml",
         "views/ipai_close_views.xml",
-        "views/ipai_policy_views.xml",
         "views/product_views.xml",
         "views/enterprise_bridge_views.xml",
     ],

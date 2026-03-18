@@ -1,0 +1,441 @@
+# CI/CD Policy Matrix — Machine-Readable SSOT Companion
+# Schema version: 1
+# Human-readable source: docs/architecture/CI_CD_POLICY_MATRIX.md
+# Repo: Insightpulseai/odoo
+#
+# Consumers: CI workflow path-scoping logic, agent policy checks,
+#             gate enforcement scripts (scripts/policy/*)
+#
+# Update flow:
+#   1. Edit docs/architecture/CI_CD_POLICY_MATRIX.md (policy owner)
+#   2. Update this file to match (data mirror)
+#   3. Commit both together
+
+version: 1
+
+# ──────────────────────────────────────────────
+# Repo identity
+# ──────────────────────────────────────────────
+repo_classification:
+  type: odoo_monorepo_oca_style
+  primary_runtime_boundary: addons/
+  embedded_control_plane: supabase/
+  policy_sources:
+    - ssot/
+    - spec/
+    - docs/architecture/
+  odoo_first: true  # Never treat as Supabase-first
+
+# ──────────────────────────────────────────────
+# Gate level definitions
+# ──────────────────────────────────────────────
+gate_levels:
+  P0:
+    name: merge-blocking
+    description: Must pass before merge on any protected branch
+  P1:
+    name: deploy-blocking
+    description: Required before staging or production deploy
+  P2:
+    name: advisory
+    description: Non-blocking warning; produces evidence/artifacts
+  P3:
+    name: scheduled-audit
+    description: Periodic drift and compliance checks
+
+# ──────────────────────────────────────────────
+# Trigger modes
+# ──────────────────────────────────────────────
+triggers:
+  - pull_request       # path-scoped
+  - push_to_main
+  - manual_dispatch
+  - scheduled          # cron
+
+# ──────────────────────────────────────────────
+# Path-scoping rules (required — docs-only PRs
+# must never trigger full Odoo runtime matrix)
+# ──────────────────────────────────────────────
+path_scoping_rules:
+  - pattern: "addons/**"
+    activates: [odoo_runtime]
+  - pattern: "supabase/**"
+    activates: [supabase_control_plane]
+  - pattern: ".github/**"
+    activates: [governance]
+  - pattern: "scripts/**"
+    activates: [governance]
+  - pattern: "ssot/**"
+    activates: [governance]
+  - pattern: "docs/**"
+    activates: [docs_agent_governance]
+  - pattern: "spec/**"
+    activates: [docs_agent_governance]
+  - pattern: "agents/**"
+    activates: [docs_agent_governance]
+  - pattern: "skills/**"
+    activates: [docs_agent_governance]
+
+# ──────────────────────────────────────────────
+# Subtrees
+# ──────────────────────────────────────────────
+subtrees:
+
+  # A. Odoo Runtime (primary)
+  odoo_runtime:
+    label: "A. addons/ — Odoo Runtime"
+    priority: highest
+    identity_impact: true
+    conventions:
+      - oca_style_for: addons/oca/
+      - thin_bridge_only_for: addons/ipai/   # not an EE parity replacement layer
+    checks:
+      - id: odoo_manifest_sanity
+        level: P0
+        blocking_scope: merge
+        description: "__manifest__.py presence, format, version, deps"
+        path_patterns: ["addons/**/__manifest__.py"]
+      - id: odoo_python_lint
+        level: P0
+        blocking_scope: merge
+        description: "Python lint/static checks scoped to changed modules"
+        path_patterns: ["addons/**/*.py"]
+      - id: odoo_xml_parse
+        level: P0
+        blocking_scope: merge
+        description: "XML parse validation and view inheritance sanity"
+        path_patterns: ["addons/**/*.xml"]
+      - id: odoo_transaction_safety
+        level: P0
+        blocking_scope: merge
+        description: "Forbidden cr.commit()/cr.rollback() except allowlisted cases"
+        path_patterns: ["addons/**/*.py"]
+      - id: odoo_exception_hygiene
+        level: P0
+        blocking_scope: merge
+        description: "Broad exception catches flagged/blocked per policy"
+        path_patterns: ["addons/**/*.py"]
+      - id: odoo_install_upgrade_smoke
+        level: P0
+        blocking_scope: merge
+        description: "Install/upgrade smoke for changed modules (-i/-u path)"
+        path_patterns: ["addons/**"]
+      - id: odoo_targeted_tests
+        level: P0
+        blocking_scope: merge
+        description: "Python tests for changed modules"
+        path_patterns: ["addons/**/*.py"]
+      - id: odoo_js_owl_tests
+        level: P0
+        blocking_scope: merge
+        description: "JS/Owl tests when web assets in changed modules are touched"
+        path_patterns: ["addons/**/static/**"]
+        conditional: true  # only when web assets changed
+      - id: odoo_expanded_upgrade_matrix
+        level: P1
+        blocking_scope: deploy
+        description: "Expanded install/upgrade for touched modules + dependencies"
+        path_patterns: ["addons/**"]
+      - id: odoo_navigation_smoke
+        level: P1
+        blocking_scope: deploy
+        description: "Critical navigation smoke (core apps + touched modules)"
+        path_patterns: ["addons/**"]
+      - id: odoo_asset_integrity
+        level: P1
+        blocking_scope: deploy
+        description: "Asset integrity for web-affecting changes"
+        path_patterns: ["addons/**/static/**"]
+        conditional: true
+      - id: odoo_boot_traceback_sanity
+        level: P1
+        blocking_scope: deploy
+        description: "Log/traceback sanity on boot and module upgrade"
+        path_patterns: ["addons/**"]
+      - id: odoo_perf_regression
+        level: P2
+        blocking_scope: advisory
+        description: "Performance regression sampling (query count / timing)"
+      - id: odoo_coverage_trends
+        level: P2
+        blocking_scope: advisory
+        description: "Coverage trends reporting"
+      - id: odoo_deprecated_api_scan
+        level: P3
+        blocking_scope: scheduled
+        description: "Deprecated API usage scan (warn-first)"
+    evidence_outputs:
+      - install_upgrade_logs
+      - test_reports_junit_xml
+      - failed_xpath_template_diagnostics
+      - traceback_excerpts_with_module_attribution
+
+  # B. Supabase control-plane (secondary)
+  supabase_control_plane:
+    label: "B. supabase/ — Embedded Control Plane"
+    priority: high
+    identity_impact: false  # secondary; does not define repo primary runtime
+    conventions:
+      - supabase_native_layout: true
+    checks:
+      - id: supabase_migration_syntax
+        level: P0
+        blocking_scope: merge
+        description: "SQL migration syntax/validation checks"
+        path_patterns: ["supabase/migrations/**/*.sql"]
+      - id: supabase_migration_ordering
+        level: P0
+        blocking_scope: merge
+        description: "Migration ordering / timestamp naming sanity"
+        path_patterns: ["supabase/migrations/**"]
+      - id: supabase_function_lint_build_test
+        level: P0
+        blocking_scope: merge
+        description: "Edge Function lint/build/test (changed functions only)"
+        path_patterns: ["supabase/functions/**"]
+      - id: supabase_scheduler_binding
+        level: P0
+        blocking_scope: merge
+        description: "No comment-only scheduled state for declared scheduled functions"
+        path_patterns: ["supabase/functions/**", "supabase/config.toml"]
+      - id: supabase_config_schema
+        level: P0
+        blocking_scope: merge
+        description: "Config schema / environment contract validation"
+        path_patterns: ["supabase/config.toml"]
+      - id: supabase_migration_dry_run
+        level: P1
+        blocking_scope: deploy
+        description: "Migration dry-run / apply verification in test environment"
+        path_patterns: ["supabase/migrations/**"]
+      - id: supabase_function_deploy_integrity
+        level: P1
+        blocking_scope: deploy
+        description: "Edge Function deploy package integrity"
+        path_patterns: ["supabase/functions/**"]
+      - id: supabase_scheduler_drift
+        level: P1
+        blocking_scope: deploy
+        description: "Scheduler registration drift check against SSOT"
+        path_patterns: ["supabase/**"]
+      - id: supabase_function_perf
+        level: P2
+        blocking_scope: advisory
+        description: "Function cold-start / perf snapshots"
+      - id: supabase_orphaned_functions
+        level: P3
+        blocking_scope: scheduled
+        description: "Orphaned function detection"
+      - id: supabase_cron_drift
+        level: P3
+        blocking_scope: scheduled
+        description: "Cron drift audits"
+    evidence_outputs:
+      - migration_validation_logs
+      - function_build_artifacts
+      - scheduler_binding_report
+      - drift_report_expected_vs_actual
+
+  # C. Governance layer
+  governance:
+    label: "C. .github/, scripts/, ssot/ — Governance & Enforcement"
+    priority: high
+    identity_impact: true  # enables trust in all other gates
+    checks:
+      - id: workflow_yaml_lint
+        level: P0
+        blocking_scope: merge
+        description: "Workflow YAML syntax/lint"
+        path_patterns: [".github/workflows/**/*.yml"]
+      - id: script_static_checks
+        level: P0
+        blocking_scope: merge
+        description: "Script syntax/static checks (Python/Bash)"
+        path_patterns: ["scripts/**/*.py", "scripts/**/*.sh"]
+      - id: policy_script_tests
+        level: P0
+        blocking_scope: merge
+        description: "Policy script unit/smoke tests"
+        path_patterns: ["scripts/policy/**"]
+      - id: ssot_schema_validation
+        level: P0
+        blocking_scope: merge
+        description: "SSOT schema/shape validation (YAML/JSON contracts)"
+        path_patterns: ["ssot/**/*.yaml", "ssot/**/*.json"]
+      - id: ssot_cross_file_consistency
+        level: P0
+        blocking_scope: merge
+        description: "Cross-file consistency (parity/allowlist/policy references)"
+        path_patterns: ["ssot/**"]
+        conditional: true  # only if cross-file checks implemented
+      - id: protected_branch_workflow_integrity
+        level: P1
+        blocking_scope: deploy
+        description: "Protected-branch workflow integrity checks"
+        path_patterns: [".github/workflows/**"]
+      - id: required_checks_presence
+        level: P1
+        blocking_scope: deploy
+        description: "Required-checks presence (no accidental gate removal)"
+        path_patterns: [".github/**"]
+      - id: stale_workflow_detection
+        level: P3
+        blocking_scope: scheduled
+        description: "Stale workflow detection"
+      - id: dead_script_detection
+        level: P3
+        blocking_scope: scheduled
+        description: "Dead script detection"
+      - id: ssot_drift_reporting
+        level: P3
+        blocking_scope: scheduled
+        description: "SSOT drift reporting"
+    evidence_outputs:
+      - policy_validation_report
+      - workflow_lint_output
+      - ssot_schema_validation_results
+
+  # D. Documentation, Spec Kit, Agent Governance
+  docs_agent_governance:
+    label: "D. docs/, spec/, agents/, skills/ — Documentation & Agent Governance"
+    priority: medium  # conditional — escalates only when spec/agent files are required
+    identity_impact: false
+    checks:
+      - id: markdown_lint
+        level: P0
+        blocking_scope: merge
+        description: "Markdown syntax/lint"
+        path_patterns: ["docs/**/*.md", "spec/**/*.md"]
+        conditional: true  # if enabled
+      - id: docs_link_checks
+        level: P0
+        blocking_scope: merge
+        description: "Internal docs link checks"
+        path_patterns: ["docs/**/*.md"]
+      - id: speckit_completeness
+        level: P0
+        blocking_scope: merge
+        description: "Spec Kit completeness (constitution, prd, plan, tasks) for spec-governed changes"
+        path_patterns: ["spec/**"]
+        conditional: true  # only for spec-governed changes
+      - id: agent_schema_validation
+        level: P0
+        blocking_scope: merge
+        description: "Agent schema/structure validation when agents/** or skills/** changes"
+        path_patterns: ["agents/**", "skills/**"]
+        conditional: true  # only when agent files changed
+      - id: trilateral_docs_sync
+        level: P0
+        blocking_scope: merge
+        description: "CLAUDE.md / AGENTS.md / GEMINI.md sync check"
+        path_patterns: ["CLAUDE.md", "AGENTS.md", "GEMINI.md"]
+        conditional: true  # if trilateral sync enforced
+      - id: docs_freshness
+        level: P3
+        blocking_scope: scheduled
+        description: "Docs freshness checks"
+      - id: missing_evidence_references
+        level: P3
+        blocking_scope: scheduled
+        description: "Missing evidence references in runbooks"
+      - id: agent_prompt_drift
+        level: P3
+        blocking_scope: scheduled
+        description: "Agent prompt drift checks"
+    evidence_outputs:
+      - docs_lint_link_reports
+      - spec_completeness_report
+      - agent_registry_validation_report
+
+# ──────────────────────────────────────────────
+# Cross-cutting policies
+# ──────────────────────────────────────────────
+cross_cutting_policies:
+
+  odoo_first_gating_priority:
+    description: >
+      When multiple subtrees are changed in a PR, addons/ gates are
+      evaluated as primary runtime risk. supabase/ gates run for
+      control-plane changes. Governance/docs checks are path-scoped
+      and do not escalate runtime jobs unless directly required.
+    order:
+      1: odoo_runtime
+      2: supabase_control_plane
+      3: governance
+      4: docs_agent_governance
+
+  path_scoped_execution:
+    required: true
+    rules:
+      - docs_only_prs_must_not_trigger_odoo_install_upgrade: true
+      - policy_only_prs_must_not_trigger_runtime_deploy: true
+
+  agent_generated_change_safeguards:
+    required_artifacts:
+      - scoped_diff_summary
+      - evidence_artifacts_from_executed_checks
+      - explicit_list_of_skipped_checks
+      - failure_reason_and_rollback_note_if_partial
+
+  temporary_policy_relaxation:
+    required_fields:
+      - owner
+      - reason
+      - expiry_date
+      - compensating_control
+      - followup_task_reference
+
+# ──────────────────────────────────────────────
+# Phased rollout
+# ──────────────────────────────────────────────
+phase_rollout:
+  phase_1:
+    label: "Immediate / Highest ROI"
+    checks:
+      - odoo_manifest_sanity
+      - odoo_xml_parse
+      - odoo_transaction_safety
+      - odoo_exception_hygiene
+      - odoo_install_upgrade_smoke
+      - supabase_migration_syntax
+      - supabase_function_lint_build_test
+      - workflow_yaml_lint
+      - script_static_checks
+      - policy_script_tests
+      - speckit_completeness
+      - agent_schema_validation
+  phase_2:
+    label: "Navigation + drift checks"
+    checks:
+      - odoo_js_owl_tests
+      - supabase_scheduler_drift
+      - odoo_navigation_smoke
+      - trilateral_docs_sync
+  phase_3:
+    label: "Performance + audit dashboards"
+    checks:
+      - odoo_perf_regression
+      - odoo_deprecated_api_scan
+      - supabase_cron_drift
+      - supabase_orphaned_functions
+      - docs_freshness
+      - agent_prompt_drift
+
+# ──────────────────────────────────────────────
+# Ownership model (agent/persona-aligned)
+# ──────────────────────────────────────────────
+ownership:
+  - owner: odoo.backend.engineer
+    scope: [odoo_python_lint, odoo_transaction_safety, odoo_exception_hygiene, odoo_targeted_tests]
+  - owner: odoo.frontend.engineer
+    scope: [odoo_js_owl_tests, odoo_asset_integrity]
+  - owner: odoo.xml.views.specialist
+    scope: [odoo_xml_parse]
+  - owner: odoo.test.engineer
+    scope: [odoo_targeted_tests, odoo_expanded_upgrade_matrix]
+  - owner: odoo.release.manager
+    scope: [odoo_navigation_smoke, odoo_boot_traceback_sanity, odoo_install_upgrade_smoke]
+  - owner: odooops.cicd.guard
+    scope: [workflow_yaml_lint, required_checks_presence, protected_branch_workflow_integrity]
+  - owner: supabase.controlplane.guard
+    scope: [supabase_migration_syntax, supabase_function_lint_build_test, supabase_scheduler_binding]

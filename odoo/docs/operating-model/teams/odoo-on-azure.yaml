@@ -1,0 +1,77 @@
+team_id: odoo-on-azure
+mode: solo-founder
+human_owner: jake
+final_approver: jake
+
+agents:
+  - id: chief-architect
+    persona: personas/chief_architect.md
+    skills:
+      - skills/platform/enterprise-benchmark-doctrine/SKILL.md
+      - skills/platform/offering-artifact-model/SKILL.md
+    tools:
+      - git
+      - gh
+      - repo_search
+
+  - id: azure-platform
+    persona: personas/azure_platform.md
+    skills:
+      - skills/platform/azure-landing-zones/SKILL.md
+      - skills/platform/azure-rbac-and-managed-identity/SKILL.md
+      - skills/platform/azure-container-apps-runtime/SKILL.md
+      - skills/platform/azure-front-door-and-dns/SKILL.md
+    tools:
+      - az
+      - bicep
+      - terraform
+      - gh
+
+  - id: odoo-runtime
+    persona: personas/odoo_runtime.md
+    skills:
+      - skills/odoo/odoo-runtime-baseline/SKILL.md
+      - skills/odoo/odoo-addon-boundaries/SKILL.md
+      - skills/odoo/odoo-aca-deployment/SKILL.md
+      - skills/odoo/odoo-cutover-and-rollback/SKILL.md
+    tools:
+      - git
+      - docker
+      - psql
+      - gh
+
+  - id: foundry-agent
+    persona: personas/foundry_agent.md
+    skills:
+      - skills/platform/foundry-project-bootstrap/SKILL.md
+      - skills/platform/foundry-hosted-agents/SKILL.md
+      - skills/platform/foundry-tool-manifests/SKILL.md
+      - skills/platform/foundry-evals-and-tracing/SKILL.md
+    tools:
+      - az
+      - git
+      - gh
+
+  - id: data-intelligence
+    persona: personas/data_intelligence.md
+    skills:
+      - skills/platform/databricks-workspace-baseline/SKILL.md
+      - skills/platform/lakeflow-bundles/SKILL.md
+      - skills/platform/unity-catalog-governance/SKILL.md
+      - skills/platform/agent-context-data-products/SKILL.md
+    tools:
+      - databricks
+      - sql
+      - git
+      - gh
+
+  - id: release-ops
+    persona: personas/release_ops.md
+    skills:
+      - skills/platform/github-actions-reusable-workflows/SKILL.md
+      - skills/platform/evidence-pack-generation/SKILL.md
+    tools:
+      - gh
+      - git
+      - ci
+      - logs

@@ -1,0 +1,101 @@
+# Odoo Module Audit Skill
+# Audits Odoo module against OCA standards and best practices
+
+name: odoo_module_audit
+version: 1.0.0
+key: odoo.module.audit
+description: |
+  Audit Odoo module against OCA standards.
+  Checks manifest, dependencies, Python style, and security.
+
+intents:
+  - audit this module
+  - check OCA compliance
+  - validate module structure
+  - lint the module
+  - check module quality
+
+guardrails:
+  - Do not modify source files
+  - Report findings only
+  - Do not execute module code
+
+tools:
+  - key: lint.python
+    name: Python Linter
+    target_model: ipai.lint.runner
+    target_method: run_python_lint
+    description: Run flake8/black checks on Python files
+
+  - key: lint.manifest
+    name: Manifest Checker
+    target_model: ipai.lint.runner
+    target_method: check_manifest
+    description: Validate __manifest__.py structure and fields
+
+  - key: lint.deps
+    name: Dependency Checker
+    target_model: ipai.lint.runner
+    target_method: check_dependencies
+    description: Check module dependencies are valid
+
+  - key: lint.security
+    name: Security Checker
+    target_model: ipai.lint.runner
+    target_method: check_security
+    description: Check for security issues (access rules, SQL injection)
+
+workflow:
+  - lint.python
+  - lint.manifest
+  - lint.deps
+  - lint.security
+
+input_schema:
+  type: object
+  properties:
+    module_path:
+      type: string
+      description: Path to the module to audit
+    strict:
+      type: boolean
+      default: false
+      description: Enable strict mode (fail on warnings)
+
+output_schema:
+  type: object
+  properties:
+    passed:
+      type: boolean
+    errors:
+      type: array
+      items:
+        type: object
+        properties:
+          tool: { type: string }
+          level: { type: string }
+          message: { type: string }
+          file: { type: string }
+          line: { type: integer }
+    summary:
+      type: string
+
+agentInstructions: |
+  When the user asks to audit an Odoo module:
+
+  1. **Validate Input**:
+     - Ensure module_path points to a valid Odoo module (has __manifest__.py)
+     - Default to current directory if not specified
+
+  2. **Run Audit**:
+     - Execute the workflow tools in order
+     - Collect all findings from each tool
+
+  3. **Report Results**:
+     - Summarize pass/fail status
+     - List errors grouped by severity
+     - Provide actionable recommendations
+
+  4. **Output**:
+     - Return structured output with passed, errors, and summary
+     - If strict mode, fail on any warning

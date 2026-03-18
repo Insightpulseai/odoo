@@ -384,13 +384,13 @@ The five capability modes consolidate into three logical agents + one determinis
 - Router is deterministic code, not LLM inference
 
 **SSOT matrices:**
-- Agent capabilities: `ssot/agents/agent_capability_matrix.yaml`
-- Ingress paths: `ssot/platform/agent_ingress_matrix.yaml`
+- Agent capabilities: `infra/ssot/agents/agent_capability_matrix.yaml`
+- Ingress paths: `infra/ssot/platform/agent_ingress_matrix.yaml`
 - Spec kit: `spec/odoo-copilot-agent-framework/`
 
 ---
 
 *SSOT: `ssot/governance/ai-consolidation-foundry.yaml`*
-*Agent policy: `ssot/agents/prod_policy.yaml`*
+*Agent policy: `infra/ssot/agents/prod_policy.yaml`*
 *Target state: `docs/architecture/COPILOT_TARGET_STATE.md`*
 *Last updated: 2026-03-15*

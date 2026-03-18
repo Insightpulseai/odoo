@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mxfile host="app.diagrams.net" modified="2026-02-22T00:00:00.000Z" agent="Claude" version="21.0.0">
+  <diagram name="Odoo Deployment Sequence" id="deploy-seq">
+    <mxGraphModel dx="1400" dy="900" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1400" pageHeight="900" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <!-- Lifelines -->
+        <mxCell id="dev" value="Developer" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;collapsible=0;recursiveResize=0;outlineConnect=0;" vertex="1" parent="1">
+          <mxGeometry x="100" y="80" width="100" height="700" as="geometry" />
+        </mxCell>
+        <mxCell id="repo" value="GitHub Repo" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;collapsible=0;recursiveResize=0;outlineConnect=0;" vertex="1" parent="1">
+          <mxGeometry x="300" y="80" width="100" height="700" as="geometry" />
+        </mxCell>
+        <mxCell id="ci" value="CI Gates / Actions" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;collapsible=0;recursiveResize=0;outlineConnect=0;" vertex="1" parent="1">
+          <mxGeometry x="500" y="80" width="120" height="700" as="geometry" />
+        </mxCell>
+        <mxCell id="do" value="DO Droplet" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;collapsible=0;recursiveResize=0;outlineConnect=0;" vertex="1" parent="1">
+          <mxGeometry x="700" y="80" width="100" height="700" as="geometry" />
+        </mxCell>
+        <mxCell id="supabase" value="Supabase" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;collapsible=0;recursiveResize=0;outlineConnect=0;" vertex="1" parent="1">
+          <mxGeometry x="900" y="80" width="100" height="700" as="geometry" />
+        </mxCell>
+
+        <!-- Messages -->
+        <mxCell id="msg1" value="git push" style="html=1;verticalAlign=bottom;endArrow=block;rounded=0;" edge="1" parent="1" source="dev" target="repo">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="150" y="160" as="sourcePoint" />
+            <mxPoint x="350" y="160" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="msg2" value="trigger CI" style="html=1;verticalAlign=bottom;endArrow=block;rounded=0;" edge="1" parent="1" source="repo" target="ci">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="350" y="190" as="sourcePoint" />
+            <mxPoint x="550" y="190" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="msg3" value="validate Allowlist &amp; Risk" style="html=1;verticalAlign=bottom;endArrow=block;rounded=0;fontStyle=1;" edge="1" parent="1" source="ci" target="ci">
+          <mxGeometry width="80" relative="1" as="geometry">
+            <mxPoint x="560" y="220" as="sourcePoint" />
+            <mxPoint x="560" y="250" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="590" y="220" />
+              <mxPoint x="590" y="250" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="msg4" value="build Docker &amp; push" style="html=1;verticalAlign=bottom;endArrow=block;rounded=0;" edge="1" parent="1" source="ci" target="do">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="560" y="290" as="sourcePoint" />
+            <mxPoint x="750" y="290" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="msg5" value="docker pull &amp; restart" style="html=1;verticalAlign=bottom;endArrow=block;rounded=0;" edge="1" parent="1" source="do" target="do">
+          <mxGeometry width="80" relative="1" as="geometry">
+            <mxPoint x="750" y="330" as="sourcePoint" />
+            <mxPoint x="750" y="360" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="780" y="330" />
+              <mxPoint x="780" y="360" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="msg6" value="refresh routes" style="html=1;verticalAlign=bottom;endArrow=block;rounded=0;" edge="1" parent="1" source="do" target="supabase">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="750" y="400" as="sourcePoint" />
+            <mxPoint x="950" y="400" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+
+        <!-- Activation Boxes (Optional but good for clarity) -->
+        <mxCell id="act-repo" value="" style="html=1;points=[];perimeter=orthogonalPerimeter;" vertex="1" parent="repo">
+          <mxGeometry x="45" y="80" width="10" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="act-ci" value="" style="html=1;points=[];perimeter=orthogonalPerimeter;" vertex="1" parent="ci">
+          <mxGeometry x="55" y="110" width="10" height="150" as="geometry" />
+        </mxCell>
+        <mxCell id="act-do" value="" style="html=1;points=[];perimeter=orthogonalPerimeter;" vertex="1" parent="do">
+          <mxGeometry x="45" y="210" width="10" height="120" as="geometry" />
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

@@ -1,0 +1,83 @@
+# =============================================================================
+# Delta Table Contract: bronze.raw_pages
+# =============================================================================
+# Raw crawled pages before any normalization.
+# Stores HTML/PDF content or references to object storage.
+# =============================================================================
+
+table: bronze.raw_pages
+format: delta
+location: s3://lakehouse/bronze/raw_pages/
+
+partition_by:
+  - source
+  - crawled_date
+
+primary_key:
+  - tenant_id
+  - canonical_url
+  - content_hash
+
+columns:
+  tenant_id:
+    type: uuid
+    nullable: false
+    description: Tenant isolation key
+
+  source:
+    type: varchar
+    nullable: false
+    description: Source system (sap_help, odoo_docs, oca_github, etc.)
+
+  canonical_url:
+    type: varchar
+    nullable: false
+    description: Normalized URL without query params or fragments
+
+  resolved_url:
+    type: varchar
+    nullable: true
+    description: Final URL after redirects
+
+  http_status:
+    type: integer
+    nullable: true
+    description: HTTP response status code
+
+  content_hash:
+    type: varchar
+    nullable: false
+    description: SHA-256 of raw content for deduplication
+
+  content_type:
+    type: varchar
+    nullable: true
+    description: MIME type (text/html, application/pdf, etc.)
+
+  raw_object_path:
+    type: varchar
+    nullable: true
+    description: S3 path if storing large blobs separately
+
+  raw_text:
+    type: varchar
+    nullable: true
+    description: Extracted text for small payloads (<100KB)
+
+  headers:
+    type: varchar
+    nullable: true
+    description: JSON-encoded HTTP response headers
+
+  crawled_at:
+    type: timestamp
+    nullable: false
+    description: Crawl timestamp (UTC)
+
+  crawled_date:
+    type: date
+    nullable: false
+    description: Partition date derived from crawled_at
+
+merge_key: content_hash
+retention_days: 90

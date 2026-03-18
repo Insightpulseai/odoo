@@ -1,0 +1,43 @@
+version: 1
+name: fine-tuning-recipe-design
+description: "Design fine-tuning recipes for domain adaptation, instruction tuning, and supervised downstream tasks"
+type: benchmark_skill
+skill_classification: encoded_preference
+owner_persona: training-architect
+source_family: hf_smol_training_playbook
+status: active
+
+triggers:
+  - "fine-tune a model"
+  - "domain adaptation"
+  - "instruction tuning"
+  - "task-specific training"
+
+inputs:
+  - base_model: "Pretrained model to fine-tune"
+  - task: "Target task or domain"
+  - dataset: "Fine-tuning dataset (from model-data-curation)"
+  - compute_budget: "Available resources"
+
+steps:
+  - id: assess_approach
+    action: "Full fine-tuning vs parameter-efficient (LoRA, QLoRA)"
+  - id: configure_training
+    action: "Set training arguments: lower lr than pretraining, fewer epochs"
+  - id: set_evaluation
+    action: "Define task-specific evaluation metrics"
+  - id: design_schedule
+    action: "Epochs, early stopping, best model selection"
+
+outputs:
+  - recipe: "Fine-tuning configuration"
+  - approach: "Full vs PEFT method"
+  - eval_metrics: "Task-specific evaluation criteria"
+
+guardrails:
+  - "Fine-tuning requires much less compute/data than pretraining"
+  - "Learning rate should be lower than pretraining (1e-5 to 5e-5 typical)"
+  - "Watch for catastrophic forgetting — eval on general benchmarks too"
+  - "PEFT methods (LoRA) preferred when compute is limited"
+
+benchmark_source: "https://huggingface.co/docs/transformers/training"

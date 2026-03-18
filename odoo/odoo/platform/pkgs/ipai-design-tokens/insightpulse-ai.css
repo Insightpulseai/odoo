@@ -1,0 +1,419 @@
+/**
+ * InsightPulse AI Design System - Fluent 2-aligned Custom Web Theme
+ *
+ * This CSS file provides the complete InsightPulse AI design system
+ * for use in any web application (vanilla HTML, WordPress, static sites, etc.)
+ *
+ * Usage:
+ * <link rel="stylesheet" href="insightpulse-ai.css">
+ */
+
+/* ============================================================================
+   CSS Custom Properties (Design Tokens)
+   ============================================================================ */
+
+:root {
+  /* Primary Brand Colors */
+  --ipai-primary-50: #e6f2ff;
+  --ipai-primary-100: #b3d9ff;
+  --ipai-primary-200: #80bfff;
+  --ipai-primary-300: #4da6ff;
+  --ipai-primary-400: #1a8cff;
+  --ipai-primary-500: #0073e6;  /* Primary brand color */
+  --ipai-primary-600: #005bb3;
+  --ipai-primary-700: #004380;
+  --ipai-primary-800: #002b4d;
+  --ipai-primary-900: #00131a;
+
+  /* Neutral Grays */
+  --ipai-neutral-0: #ffffff;
+  --ipai-neutral-10: #fafafa;
+  --ipai-neutral-20: #f5f5f5;
+  --ipai-neutral-30: #e0e0e0;
+  --ipai-neutral-40: #d6d6d6;
+  --ipai-neutral-50: #c2c2c2;
+  --ipai-neutral-60: #a0a0a0;
+  --ipai-neutral-70: #7a7a7a;
+  --ipai-neutral-80: #5c5c5c;
+  --ipai-neutral-90: #3d3d3d;
+  --ipai-neutral-100: #1a1a1a;
+
+  /* Semantic Colors */
+  --ipai-success: #107c10;
+  --ipai-warning: #faa500;
+  --ipai-error: #d13438;
+  --ipai-info: #0078d4;
+  --ipai-ai-accent: #7c3aed;  /* Purple for AI features */
+
+  /* Typography */
+  --ipai-font-family-base: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --ipai-font-family-mono: "Cascadia Code", "Fira Code", Consolas, "Courier New", monospace;
+
+  --ipai-font-size-100: 10px;
+  --ipai-font-size-200: 12px;
+  --ipai-font-size-300: 14px;
+  --ipai-font-size-400: 16px;
+  --ipai-font-size-500: 20px;
+  --ipai-font-size-600: 24px;
+  --ipai-font-size-700: 28px;
+  --ipai-font-size-800: 32px;
+  --ipai-font-size-900: 40px;
+
+  --ipai-font-weight-regular: 400;
+  --ipai-font-weight-medium: 500;
+  --ipai-font-weight-semibold: 600;
+  --ipai-font-weight-bold: 700;
+
+  --ipai-line-height-100: 14px;
+  --ipai-line-height-200: 16px;
+  --ipai-line-height-300: 20px;
+  --ipai-line-height-400: 22px;
+  --ipai-line-height-500: 28px;
+  --ipai-line-height-600: 32px;
+  --ipai-line-height-700: 36px;
+  --ipai-line-height-800: 40px;
+  --ipai-line-height-900: 52px;
+
+  /* Spacing (4px base) */
+  --ipai-spacing-xxs: 4px;
+  --ipai-spacing-xs: 8px;
+  --ipai-spacing-s: 12px;
+  --ipai-spacing-m: 16px;
+  --ipai-spacing-l: 20px;
+  --ipai-spacing-xl: 24px;
+  --ipai-spacing-xxl: 32px;
+  --ipai-spacing-xxxl: 40px;
+
+  /* Border Radius */
+  --ipai-radius-none: 0;
+  --ipai-radius-small: 2px;
+  --ipai-radius-medium: 4px;
+  --ipai-radius-large: 8px;
+  --ipai-radius-circular: 9999px;
+
+  /* Elevation (Shadows) */
+  --ipai-shadow-2: 0 0 2px rgba(0,0,0,0.12), 0 2px 4px rgba(0,0,0,0.14);
+  --ipai-shadow-4: 0 0 2px rgba(0,0,0,0.12), 0 4px 8px rgba(0,0,0,0.14);
+  --ipai-shadow-8: 0 0 2px rgba(0,0,0,0.12), 0 8px 16px rgba(0,0,0,0.14);
+  --ipai-shadow-16: 0 0 2px rgba(0,0,0,0.12), 0 16px 32px rgba(0,0,0,0.14);
+
+  /* Motion/Duration */
+  --ipai-duration-faster: 50ms;
+  --ipai-duration-fast: 100ms;
+  --ipai-duration-normal: 200ms;
+  --ipai-duration-slow: 300ms;
+  --ipai-duration-slower: 400ms;
+}
+
+/* ============================================================================
+   Base Styles
+   ============================================================================ */
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: var(--ipai-font-family-base);
+  font-size: var(--ipai-font-size-400);
+  line-height: var(--ipai-line-height-400);
+  color: var(--ipai-neutral-100);
+  background-color: var(--ipai-neutral-10);
+  margin: 0;
+  padding: 0;
+}
+
+/* ============================================================================
+   Typography Utility Classes
+   ============================================================================ */
+
+.ipai-text-100 { font-size: var(--ipai-font-size-100); line-height: var(--ipai-line-height-100); }
+.ipai-text-200 { font-size: var(--ipai-font-size-200); line-height: var(--ipai-line-height-200); }
+.ipai-text-300 { font-size: var(--ipai-font-size-300); line-height: var(--ipai-line-height-300); }
+.ipai-text-400 { font-size: var(--ipai-font-size-400); line-height: var(--ipai-line-height-400); }
+.ipai-text-500 { font-size: var(--ipai-font-size-500); line-height: var(--ipai-line-height-500); }
+.ipai-text-600 { font-size: var(--ipai-font-size-600); line-height: var(--ipai-line-height-600); }
+.ipai-text-700 { font-size: var(--ipai-font-size-700); line-height: var(--ipai-line-height-700); }
+.ipai-text-800 { font-size: var(--ipai-font-size-800); line-height: var(--ipai-line-height-800); }
+.ipai-text-900 { font-size: var(--ipai-font-size-900); line-height: var(--ipai-line-height-900); }
+
+.ipai-font-regular { font-weight: var(--ipai-font-weight-regular); }
+.ipai-font-medium { font-weight: var(--ipai-font-weight-medium); }
+.ipai-font-semibold { font-weight: var(--ipai-font-weight-semibold); }
+.ipai-font-bold { font-weight: var(--ipai-font-weight-bold); }
+
+/* ============================================================================
+   Button Components
+   ============================================================================ */
+
+.ipai-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--ipai-spacing-s) var(--ipai-spacing-m);
+  font-family: var(--ipai-font-family-base);
+  font-size: var(--ipai-font-size-300);
+  font-weight: var(--ipai-font-weight-semibold);
+  border-radius: var(--ipai-radius-medium);
+  border: none;
+  cursor: pointer;
+  transition: all var(--ipai-duration-normal) ease;
+}
+
+.ipai-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--ipai-shadow-4);
+}
+
+.ipai-btn:active {
+  transform: translateY(0);
+}
+
+.ipai-btn-primary {
+  background-color: var(--ipai-primary-500);
+  color: var(--ipai-neutral-0);
+}
+
+.ipai-btn-primary:hover {
+  background-color: var(--ipai-primary-600);
+}
+
+.ipai-btn-secondary {
+  background-color: var(--ipai-neutral-0);
+  color: var(--ipai-primary-500);
+  border: 1px solid var(--ipai-primary-500);
+}
+
+.ipai-btn-secondary:hover {
+  background-color: var(--ipai-primary-50);
+}
+
+.ipai-btn-ai {
+  background-color: var(--ipai-ai-accent);
+  color: var(--ipai-neutral-0);
+}
+
+.ipai-btn-ai:hover {
+  background-color: #6d28d9;
+}
+
+/* ============================================================================
+   Card Components
+   ============================================================================ */
+
+.ipai-card {
+  background-color: var(--ipai-neutral-0);
+  border-radius: var(--ipai-radius-large);
+  padding: var(--ipai-spacing-xl);
+  box-shadow: var(--ipai-shadow-4);
+}
+
+.ipai-card-header {
+  font-size: var(--ipai-font-size-600);
+  font-weight: var(--ipai-font-weight-semibold);
+  margin-bottom: var(--ipai-spacing-m);
+  color: var(--ipai-neutral-100);
+}
+
+.ipai-card-content {
+  color: var(--ipai-neutral-90);
+  line-height: var(--ipai-line-height-400);
+}
+
+/* ============================================================================
+   Input Components
+   ============================================================================ */
+
+.ipai-input {
+  width: 100%;
+  padding: var(--ipai-spacing-s);
+  font-family: var(--ipai-font-family-base);
+  font-size: var(--ipai-font-size-300);
+  border: 1px solid var(--ipai-neutral-40);
+  border-radius: var(--ipai-radius-medium);
+  transition: border-color var(--ipai-duration-normal) ease;
+}
+
+.ipai-input:focus {
+  outline: none;
+  border-color: var(--ipai-primary-500);
+  box-shadow: 0 0 0 2px var(--ipai-primary-100);
+}
+
+.ipai-input::placeholder {
+  color: var(--ipai-neutral-60);
+}
+
+/* ============================================================================
+   Badge Components
+   ============================================================================ */
+
+.ipai-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: var(--ipai-spacing-xxs) var(--ipai-spacing-s);
+  font-size: var(--ipai-font-size-200);
+  font-weight: var(--ipai-font-weight-semibold);
+  border-radius: var(--ipai-radius-circular);
+}
+
+.ipai-badge-success {
+  background-color: #dff6dd;
+  color: var(--ipai-success);
+}
+
+.ipai-badge-warning {
+  background-color: #fff4ce;
+  color: #8a5c00;
+}
+
+.ipai-badge-error {
+  background-color: #fde7e9;
+  color: var(--ipai-error);
+}
+
+.ipai-badge-info {
+  background-color: #cfe4fa;
+  color: var(--ipai-info);
+}
+
+.ipai-badge-ai {
+  background-color: #ede9fe;
+  color: var(--ipai-ai-accent);
+}
+
+/* ============================================================================
+   AI Chat Widget Styles
+   ============================================================================ */
+
+.ipai-chat-widget {
+  position: fixed;
+  bottom: var(--ipai-spacing-l);
+  right: var(--ipai-spacing-l);
+  z-index: 1000;
+}
+
+.ipai-chat-fab {
+  width: 56px;
+  height: 56px;
+  border-radius: var(--ipai-radius-circular);
+  background-color: var(--ipai-primary-500);
+  color: var(--ipai-neutral-0);
+  border: none;
+  cursor: pointer;
+  box-shadow: var(--ipai-shadow-8);
+  font-size: var(--ipai-font-size-600);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform var(--ipai-duration-normal) ease;
+}
+
+.ipai-chat-fab:hover {
+  transform: scale(1.1);
+}
+
+.ipai-chat-panel {
+  position: absolute;
+  bottom: 72px;
+  right: 0;
+  width: 400px;
+  height: 600px;
+  background-color: var(--ipai-neutral-0);
+  border-radius: var(--ipai-radius-large);
+  box-shadow: var(--ipai-shadow-16);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.ipai-chat-header {
+  padding: var(--ipai-spacing-m);
+  background-color: var(--ipai-primary-500);
+  color: var(--ipai-neutral-0);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.ipai-chat-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: var(--ipai-radius-circular);
+  background-color: var(--ipai-ai-accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--ipai-font-size-500);
+}
+
+.ipai-chat-messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--ipai-spacing-m);
+  display: flex;
+  flex-direction: column;
+  gap: var(--ipai-spacing-m);
+}
+
+.ipai-chat-message {
+  max-width: 75%;
+  padding: var(--ipai-spacing-s);
+  border-radius: var(--ipai-radius-medium);
+}
+
+.ipai-chat-message-user {
+  align-self: flex-end;
+  background-color: var(--ipai-primary-500);
+  color: var(--ipai-neutral-0);
+}
+
+.ipai-chat-message-assistant {
+  align-self: flex-start;
+  background-color: var(--ipai-neutral-20);
+  color: var(--ipai-neutral-100);
+}
+
+.ipai-chat-input-container {
+  padding: var(--ipai-spacing-m);
+  border-top: 1px solid var(--ipai-neutral-30);
+  display: flex;
+  gap: var(--ipai-spacing-s);
+}
+
+/* ============================================================================
+   Utility Classes
+   ============================================================================ */
+
+.ipai-shadow-2 { box-shadow: var(--ipai-shadow-2); }
+.ipai-shadow-4 { box-shadow: var(--ipai-shadow-4); }
+.ipai-shadow-8 { box-shadow: var(--ipai-shadow-8); }
+.ipai-shadow-16 { box-shadow: var(--ipai-shadow-16); }
+
+.ipai-bg-primary { background-color: var(--ipai-primary-500); }
+.ipai-bg-neutral { background-color: var(--ipai-neutral-0); }
+.ipai-bg-ai { background-color: var(--ipai-ai-accent); }
+
+.ipai-text-primary { color: var(--ipai-primary-500); }
+.ipai-text-neutral { color: var(--ipai-neutral-100); }
+.ipai-text-ai { color: var(--ipai-ai-accent); }
+
+.ipai-p-xxs { padding: var(--ipai-spacing-xxs); }
+.ipai-p-xs { padding: var(--ipai-spacing-xs); }
+.ipai-p-s { padding: var(--ipai-spacing-s); }
+.ipai-p-m { padding: var(--ipai-spacing-m); }
+.ipai-p-l { padding: var(--ipai-spacing-l); }
+.ipai-p-xl { padding: var(--ipai-spacing-xl); }
+
+.ipai-m-xxs { margin: var(--ipai-spacing-xxs); }
+.ipai-m-xs { margin: var(--ipai-spacing-xs); }
+.ipai-m-s { margin: var(--ipai-spacing-s); }
+.ipai-m-m { margin: var(--ipai-spacing-m); }
+.ipai-m-l { margin: var(--ipai-spacing-l); }
+.ipai-m-xl { margin: var(--ipai-spacing-xl); }
+
+.ipai-rounded-none { border-radius: var(--ipai-radius-none); }
+.ipai-rounded-small { border-radius: var(--ipai-radius-small); }
+.ipai-rounded-medium { border-radius: var(--ipai-radius-medium); }
+.ipai-rounded-large { border-radius: var(--ipai-radius-large); }
+.ipai-rounded-circular { border-radius: var(--ipai-radius-circular); }

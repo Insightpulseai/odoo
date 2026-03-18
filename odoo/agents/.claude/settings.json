@@ -1,0 +1,22 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(grep -r installable /Users/tbwa/Documents/GitHub/Insightpulseai/odoo/addons/ipai/ipai_ai*/__manifest__.py)",
+      "WebFetch(domain:www.supabase-cms.com)",
+      "Read(//dev/**)",
+      "Read(//Users/tbwa/Documents/GitHub/Insightpulseai/odoo git add addons/ipai/ipai_odoo_copilot/security/ir.model.access.csv addons/ipai/ipai_hr_expense_liquidation/**)",
+      "Bash(gh run:*)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" https://n8n.insightpulseai.com/)",
+      "Bash(dig n8n.insightpulseai.com CNAME +short)",
+      "Bash(find /Users/tbwa/Documents/GitHub/Insightpulseai/ -maxdepth 4 -name *.tf -path *cloudflare*)",
+      "Bash(find /Users/tbwa/Documents/GitHub/Insightpulseai/ -maxdepth 4 -name subdomain-registry*)"
+    ],
+    "additionalDirectories": [
+      "/Users/tbwa/Documents/GitHub/Insightpulseai/odoo/addons/ipai/ipai_odoo_copilot/static/src/js",
+      "/Users/tbwa/Documents/GitHub/Insightpulseai/odoo/addons/ipai/ipai_odoo_copilot/static/src/xml",
+      "/Users/tbwa/Documents/GitHub/Insightpulseai/odoo/addons/ipai/ipai_odoo_copilot/static/src/scss",
+      "/Users/tbwa/Documents/GitHub/Insightpulseai/odoo/addons/ipai/ipai_odoo_copilot",
+      "/Users/tbwa/Documents/GitHub/Insightpulseai/odoo/addons/ipai/ipai_hr_expense_liquidation"
+    ]
+  }
+}

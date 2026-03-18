@@ -1,0 +1,60 @@
+version: 1
+type: review_skill
+family: odoo_coding_guidelines
+skill:
+  name: odoo-extendability-check
+  status: draft
+  owner: agents
+  purpose: >
+    Verify code follows the "think extendable" principle — small methods, no
+    hardcoded blocking logic, proper _inherit usage, configurable parameters,
+    and proper hook points for submodule override.
+
+  triggers:
+    - new module code (models, wizards, controllers)
+    - inherited model changes
+    - business logic review
+    - implementation skill output review
+
+  inputs:
+    - Python source files under review
+    - module manifest and dependency list
+    - diff or full source of changed files
+
+  steps:
+    - check method size (flag methods over 30 lines)
+    - check for hardcoded values that should be configurable
+    - verify _inherit used instead of copy/replacement
+    - check for proper hook points (allow submodule override via small overridable methods)
+    - verify fields use proper delegation patterns (_inherits, related, delegate)
+    - check that business logic is not embedded in CRUD methods
+    - verify action methods call business methods (separation of concerns)
+
+  outputs:
+    - extendability_report
+    - violation_list (with file, line, severity, rule)
+    - refactoring_suggestions
+    - risk_assessment
+
+  guardrails:
+    - prefer inherited extension over core patching
+    - methods should remain small and single-responsibility
+    - do not hardcode logic that blocks extension by submodules
+    - do not call cr.commit() unless explicitly justified and documented
+    - catch only specific exceptions
+    - follow Odoo file, XML, and import conventions
+
+  evidence:
+    required: true
+    format: "docs/evidence/{stamp}/odoo-review/extendability-check/"
+
+  evals:
+    dimensions: [accuracy, completeness, safety, policy_adherence, evidence_quality]
+    thresholds:
+      accuracy: 0.95
+      safety: 0.99
+
+cross_references:
+  - agents/knowledge/benchmarks/odoo-coding-guidelines.md
+  - agents/knowledge/benchmarks/odoo-developer-howtos.md
+  - ~/.claude/rules/odoo19-coding.md

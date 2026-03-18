@@ -1,0 +1,53 @@
+:root {
+  /* Core Banking Palette - IPAI Design System */
+  /* Generated from tokens/source/tokens.json */
+  --ipai-color-bg: #E7EDF5;
+  --ipai-color-surface: #FFFFFF;
+  --ipai-color-canvas: #F5F8FA;
+  --ipai-color-text-primary: #0B1F33;
+  --ipai-color-text-secondary: #4A5F7A;
+  --ipai-color-text-tertiary: #7A8FA5;
+  --ipai-color-text-onAccent: #FFFFFF;
+  --ipai-color-primary: #0F2A44;
+  --ipai-color-primaryDeep: #0A1E33;
+  --ipai-color-primaryHover: #1A3A5A;
+  --ipai-color-accent-green: #7BC043;
+  --ipai-color-accent-greenHover: #6AA638;
+  --ipai-color-accent-teal: #64B9CA;
+  --ipai-color-accent-tealHover: #52A7B8;
+  --ipai-color-accent-amber: #F6C445;
+  --ipai-color-accent-amberHover: #E5B334;
+  --ipai-color-semantic-success: #7BC043;
+  --ipai-color-semantic-warning: #F6C445;
+  --ipai-color-semantic-error: #E74C3C;
+  --ipai-color-semantic-info: #64B9CA;
+  --ipai-color-border: #D1DCE5;
+  --ipai-color-borderLight: #E7EDF5;
+  --ipai-color-borderDark: #B8C7D6;
+  --ipai-color-overlay: rgba(11, 31, 51, 0.6);
+  --ipai-spacing-gap: 16px;
+  --ipai-spacing-gapSm: 12px;
+  --ipai-spacing-gapLg: 24px;
+  --ipai-radius-default: 8px;
+  --ipai-radius-sm: 4px;
+  --ipai-radius-lg: 12px;
+  --ipai-radius-full: 9999px;
+  --ipai-shadow-default: 0 4px 12px rgba(11, 31, 51, 0.08);
+  --ipai-shadow-soft: 0 2px 8px rgba(11, 31, 51, 0.06);
+  --ipai-shadow-lg: 0 8px 24px rgba(11, 31, 51, 0.12);
+  --ipai-shadow-inner: inset 0 2px 4px rgba(11, 31, 51, 0.06);
+  --ipai-typography-fontFamily-base: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --ipai-typography-fontFamily-mono: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, 'Courier New', monospace;
+}
+
+/* Dark theme support */
+@media (prefers-color-scheme: dark) {
+  :root {
+    /* Override specific tokens for dark mode */
+    --ipai-color-bg: #0B1F33;
+    --ipai-color-surface: #0F2A44;
+    --ipai-color-text-primary: #FFFFFF;
+    --ipai-color-text-secondary: #B8C7D6;
+    --ipai-color-border: #1A3A5A;
+  }
+}

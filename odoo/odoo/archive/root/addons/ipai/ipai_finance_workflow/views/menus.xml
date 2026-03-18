@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Finance Workflow Root Menu -->
+    <menuitem id="menu_finance_workflow_root"
+              name="Finance Workflow"
+              web_icon="ipai_finance_workflow,static/description/icon.png"
+              sequence="45"/>
+
+    <!-- Finance Projects Submenu -->
+    <menuitem id="menu_finance_projects"
+              name="Projects"
+              parent="menu_finance_workflow_root"
+              sequence="10"/>
+
+    <!-- Month-End Close Project Action -->
+    <record id="action_project_month_end" model="ir.actions.act_window">
+        <field name="name">Month-End Close</field>
+        <field name="res_model">project.task</field>
+        <field name="view_mode">list,form,calendar,pivot,graph</field>
+        <field name="domain">[('project_id', '=', %(project_month_end_close)d)]</field>
+        <field name="context">{
+            'default_project_id': %(project_month_end_close)d,
+            'default_finance_workflow_type': 'month_end'
+        }</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create your first month-end close task
+            </p>
+            <p>
+                Track monthly closing activities through the Prep → Review → Approve → Execute lifecycle.
+            </p>
+        </field>
+    </record>
+
+    <menuitem id="menu_project_month_end"
+              name="Month-End Close"
+              parent="menu_finance_projects"
+              action="action_project_month_end"
+              sequence="10"/>
+
+    <!-- BIR Returns Project Action -->
+    <record id="action_project_bir" model="ir.actions.act_window">
+        <field name="name">BIR Returns</field>
+        <field name="res_model">project.task</field>
+        <field name="view_mode">list,form,calendar,pivot,graph</field>
+        <field name="domain">[('project_id', '=', %(project_bir_returns)d)]</field>
+        <field name="context">{
+            'default_project_id': %(project_bir_returns)d,
+            'default_finance_workflow_type': 'bir'
+        }</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create your first BIR return task
+            </p>
+            <p>
+                Track BIR filing deadlines through the Prep → Review → Approve → File/Pay lifecycle.
+            </p>
+        </field>
+    </record>
+
+    <menuitem id="menu_project_bir"
+              name="BIR Returns"
+              parent="menu_finance_projects"
+              action="action_project_bir"
+              sequence="20"/>
+
+    <!-- Configuration Submenu -->
+    <menuitem id="menu_finance_config"
+              name="Configuration"
+              parent="menu_finance_workflow_root"
+              groups="ipai_finance_workflow.group_finance_manager"
+              sequence="90"/>
+
+    <menuitem id="menu_finance_roles"
+              name="Finance Roles"
+              parent="menu_finance_config"
+              action="action_finance_roles"
+              sequence="10"/>
+
+    <!-- Finance Team Action -->
+    <record id="action_finance_team" model="ir.actions.act_window">
+        <field name="name">Finance Team</field>
+        <field name="res_model">res.users</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('finance_code', '!=', False)]</field>
+        <field name="context">{'search_default_group_by_finance_role': 1}</field>
+    </record>
+
+    <menuitem id="menu_finance_team"
+              name="Finance Team"
+              parent="menu_finance_config"
+              action="action_finance_team"
+              sequence="20"/>
+</odoo>

@@ -1,0 +1,205 @@
+# =============================================================================
+# Azure DevOps SSOT — InsightPulse AI
+# =============================================================================
+# Canonical definition for the Azure DevOps organization.
+# Source of truth for: projects, pipelines, pools, service connections,
+# variable groups, environments, and naming alignment.
+#
+# Organization: https://dev.azure.com/insightpulseai
+# Tenant: ceoinsightpulseai.onmicrosoft.com (402de71a-87ec-4302-a609-fb76098d1da7)
+# Last verified: 2026-03-17
+# =============================================================================
+
+organization: https://dev.azure.com/insightpulseai
+tenant_id: 402de71a-87ec-4302-a609-fb76098d1da7
+tenant_domain: ceoinsightpulseai.onmicrosoft.com
+
+# ---------------------------------------------------------------------------
+# Projects
+# ---------------------------------------------------------------------------
+projects:
+  active:
+    - name: ipai-platform
+      id: b4267980-f678-4fcb-b8b4-3d81d9153445
+      description: "InsightPulse AI Platform — Odoo CE 19 + Azure infra"
+      process_template: Basic
+      source_control: Git
+      default_team: ipai-platform Team
+      last_updated: "2026-03-10"
+
+  deprecated:
+    - name: lakehouse
+      id: 2e588936-6048-4763-96ab-a9a23bd89127
+      status: empty_candidate_for_rename_or_removal
+      intended_replacement: data-intelligence
+      reason: >
+        Empty project (no repos, no pipelines). Name does not align with
+        canonical repo topology where the data/analytics repo is 'data-intelligence'.
+      action_required: rename to 'data-intelligence' if it will be used, otherwise delete
+
+# ---------------------------------------------------------------------------
+# Pipelines
+# ---------------------------------------------------------------------------
+pipelines:
+  azure-infra-deploy:
+    id: 1
+    project: ipai-platform
+    yaml_file: azure-pipelines.yml
+    source_repo: Insightpulseai/odoo
+    source_type: GitHub
+    default_branch: main
+    target_pool: hosted  # Policy: use hosted by default
+    pool_override_reason: null
+    stages:
+      - Validate (Bicep lint + what-if)
+      - DeployDev (rg-ipai-dev, main only)
+      - DeployProd (rg-ipai-shared-prod, main only, manual approval)
+      - ValidateCutover (Front Door cutover validation)
+
+  ci-validation:
+    id: 2
+    project: ipai-platform
+    yaml_file: azure-pipelines-ci.yml
+    source_repo: Insightpulseai/odoo
+    source_type: GitHub
+    default_branch: main
+    target_pool: hosted
+    pool_override_reason: null
+    stages:
+      - RepoSanity (boundary + structure checks)
+      - PythonLint (flake8, black, isort, py_compile, secrets scan)
+      - SSOTValidation (YAML syntax, AI manifests, integrations)
+      - ConfigValidation (devcontainer drift, workflow YAML)
+      - Summary (gate)
+
+# ---------------------------------------------------------------------------
+# Agent Pools
+# ---------------------------------------------------------------------------
+agent_pools:
+  hosted:
+    name: Azure Pipelines
+    id: 9
+    type: hosted
+    status: active
+    policy: default pool for all pipelines
+
+  self_hosted:
+    name: ipai-build-pool
+    id: 10
+    type: self-hosted
+    status: offline  # as of 2026-03-17
+    agents:
+      - name: "ipai-build-pool 1"
+        id: 9
+        version: "4.269.0"
+        status: offline
+    policy: >
+      Optional. Use only when a pipeline has a documented requirement for
+      private-network access or specialized runtime. Must not be the sole
+      execution path for any required pipeline.
+
+# ---------------------------------------------------------------------------
+# Service Connections
+# ---------------------------------------------------------------------------
+service_connections:
+  - name: azure-ipai
+    type: azurerm
+    id: c982daf0-3c95-4ade-9bd6-0b9b09eda751
+    ready: true
+    purpose: Azure Resource Manager — deploy Bicep, manage resources
+
+  - name: github-insightpulseai
+    type: github
+    id: 64d24956-15d3-4751-bbfd-bab33e0905aa
+    ready: true
+    purpose: GitHub source integration — checkout repos for pipelines
+
+# ---------------------------------------------------------------------------
+# Variable Groups
+# ---------------------------------------------------------------------------
+variable_groups:
+  - name: azure-ipai-config
+    id: 1
+    scope: ipai-platform
+    variables:
+      AZURE_LOCATION: southeastasia
+      AZURE_RESOURCE_GROUP_DEV: rg-ipai-dev
+      # RECONCILED: pipeline YAML updated from rg-ipai-production to
+      # rg-ipai-shared-prod (the RG that actually exists). Variable group
+      # in Azure DevOps UI still needs manual update to match.
+      AZURE_RESOURCE_GROUP_PROD: rg-ipai-shared-prod  # TODO: update in AzDO UI
+      BICEP_TEMPLATE_PATH: infra/azure/main.bicep
+      BICEP_VERSION: latest
+      FD_PARAMS_PATH: infra/azure/parameters/front-door-prod.parameters.json
+      ODOO_PARAMS_PATH: infra/azure/parameters/odoo-runtime-prod.parameters.json
+
+# ---------------------------------------------------------------------------
+# Environments (target state)
+# ---------------------------------------------------------------------------
+environments:
+  target:
+    - name: dev
+      resource_group: rg-ipai-dev
+      approvals: none
+      purpose: Development and validation deployments
+
+    - name: prod
+      resource_group: rg-ipai-shared-prod
+      approvals: manual_for_destructive_or_topology_changes
+      purpose: Production deployments
+
+  current_state: >
+    No environments are materialized in Azure DevOps as of 2026-03-17.
+    Pipeline stages use direct job pools instead of deployment jobs with
+    environment references.
+
+# ---------------------------------------------------------------------------
+# Naming Alignment
+# ---------------------------------------------------------------------------
+# Maps Azure DevOps / legacy names to canonical repo topology names.
+# See: docs/architecture/TARGET_ORG_PLATFORM_STRUCTURE.md
+naming_alignment:
+  azure_devops_to_canonical:
+    lakehouse: data-intelligence
+    ops-platform: platform
+    design-system: design
+
+  resource_group_reconciliation:
+    # Live Azure RGs (verified 2026-03-17):
+    #   rg-ipai-dev, rg-ipai-shared-dev, rg-ipai-ai-dev,
+    #   rg-ipai-agents-dev, rg-ipai-data-dev, rg-ipai-devops,
+    #   rg-ipai-shared-staging, rg-ipai-shared-prod
+    #
+    # rg-ipai-production does NOT exist (verified 2026-03-17).
+    # Pipeline YAML has been patched to use rg-ipai-shared-prod.
+    # AzDO variable group still needs manual update.
+    pipeline_var_prod_before: rg-ipai-production  # was wrong
+    pipeline_var_prod_after: rg-ipai-shared-prod  # corrected in YAML
+    actual_prod_rg: rg-ipai-shared-prod           # exists in Azure
+    action: >
+      Update variable group 'azure-ipai-config' AZURE_RESOURCE_GROUP_PROD
+      from 'rg-ipai-production' to 'rg-ipai-shared-prod' in Azure DevOps UI.
+
+# ---------------------------------------------------------------------------
+# Policy
+# ---------------------------------------------------------------------------
+policy:
+  project_model: >
+    ipai-platform is the sole active Azure DevOps project.
+    Empty or stale projects must be renamed to match canonical repo
+    topology or removed.
+
+  pipeline_execution: >
+    Hosted agents (Azure Pipelines pool) are the default for all
+    CI and infrastructure pipelines. Self-hosted pools are optional
+    and must not be the only execution path for required pipelines.
+
+  environment_gates: >
+    Azure DevOps environments must exist for dev and prod.
+    Approvals/checks are reserved for destructive, RBAC, or
+    topology-sensitive changes only.
+
+  source_control: >
+    GitHub is the source control truth. Azure DevOps is the
+    delivery/portfolio control plane. Pipelines pull from GitHub
+    via the github-insightpulseai service connection.

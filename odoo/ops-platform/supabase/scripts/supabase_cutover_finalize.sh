@@ -18,7 +18,7 @@ KV_NAME="${KV_NAME:-kv-ipai-dev}"
 EVIDENCE_DIR="${EVIDENCE_DIR:-docs/evidence/$(date +%Y%m%d-%H%M)/supabase-migration}"
 REPO_ROOT="${REPO_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || echo .)}"
 SCRIPTS_DIR="${REPO_ROOT}/ops-platform/supabase/scripts"
-SSOT_FILE="${REPO_ROOT}/ssot/azure/supabase.yaml"
+SSOT_FILE="${REPO_ROOT}/infra/ssot/azure/supabase.yaml"
 CLOUD_PROJECT_REF="spdtwktxdalcfigzeqrz"
 CLOUD_API_URL="https://${CLOUD_PROJECT_REF}.supabase.co"
 DRY_RUN=false
@@ -48,7 +48,7 @@ Prerequisites:
 Actions:
   1. Runs cutover verification (must pass)
   2. Sets cloud project to read-only (revokes write grants)
-  3. Updates SSOT file: ssot/azure/supabase.yaml
+  3. Updates SSOT file: infra/ssot/azure/supabase.yaml
   4. Creates git commit with evidence
   5. Outputs final evidence pack
   6. Logs 30-day decommission reminder
@@ -266,7 +266,7 @@ chore(deploy): finalize supabase cloud-to-self-hosted cutover
 
 - Cloud project spdtwktxdalcfigzeqrz set to read-only
 - All consumers rewired to self-hosted instance
-- SSOT updated: ssot/azure/supabase.yaml
+- SSOT updated: infra/ssot/azure/supabase.yaml
 - Evidence pack generated with verification results
 - 30-day decommission window starts now
 COMMITEOF

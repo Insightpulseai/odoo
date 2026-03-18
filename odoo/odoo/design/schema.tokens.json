@@ -1,0 +1,98 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "ComponentTokens",
+  "description": "Fluent UI v9-style design tokens per component, extracted from screenshots",
+  "type": "object",
+  "required": ["screen", "components", "globals"],
+  "properties": {
+    "screen": {
+      "type": "string",
+      "description": "Screen identifier matching wireframe spec"
+    },
+    "version": {
+      "type": "string",
+      "description": "Token version for tracking changes"
+    },
+    "globals": {
+      "type": "object",
+      "description": "Global tokens shared across all components",
+      "properties": {
+        "font.family.base": { "type": "string" },
+        "font.family.mono": { "type": "string" },
+        "font.family.numeric": { "type": "string" },
+        "font.size.100": { "type": ["number", "string"] },
+        "font.size.200": { "type": ["number", "string"] },
+        "font.size.300": { "type": ["number", "string"] },
+        "font.size.400": { "type": ["number", "string"] },
+        "font.size.500": { "type": ["number", "string"] },
+        "font.weight.regular": { "type": "number" },
+        "font.weight.medium": { "type": "number" },
+        "font.weight.semibold": { "type": "number" },
+        "font.weight.bold": { "type": "number" },
+        "radius.none": { "type": "number" },
+        "radius.sm": { "type": "number" },
+        "radius.md": { "type": "number" },
+        "radius.lg": { "type": "number" },
+        "radius.xl": { "type": "number" },
+        "radius.circular": { "type": ["number", "string"] },
+        "stroke.width.1": { "type": "number" },
+        "stroke.width.2": { "type": "number" },
+        "elevation.1": { "type": "string" },
+        "elevation.2": { "type": "string" },
+        "elevation.3": { "type": "string" },
+        "spacing.xxs": { "type": "number" },
+        "spacing.xs": { "type": "number" },
+        "spacing.s": { "type": "number" },
+        "spacing.m": { "type": "number" },
+        "spacing.l": { "type": "number" },
+        "spacing.xl": { "type": "number" },
+        "spacing.xxl": { "type": "number" },
+        "color.bg.canvas": { "type": "string" },
+        "color.bg.subtle": { "type": "string" },
+        "color.bg.sidebar": { "type": "string" },
+        "color.bg.header": { "type": "string" },
+        "color.fg.default": { "type": "string" },
+        "color.fg.muted": { "type": "string" },
+        "color.fg.onDark": { "type": "string" },
+        "color.border.default": { "type": "string" },
+        "color.brand.primary": { "type": "string" },
+        "color.brand.primaryHover": { "type": "string" },
+        "color.status.success": { "type": "string" },
+        "color.status.warning": { "type": "string" },
+        "color.status.danger": { "type": "string" },
+        "color.status.info": { "type": "string" }
+      },
+      "additionalProperties": true
+    },
+    "components": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "properties": {
+          "tokens": {
+            "type": "object",
+            "description": "Default state tokens"
+          },
+          "states": {
+            "type": "object",
+            "description": "State-specific token overrides",
+            "properties": {
+              "hover": { "type": "object" },
+              "focus": { "type": "object" },
+              "active": { "type": "object" },
+              "disabled": { "type": "object" },
+              "selected": { "type": "object" },
+              "error": { "type": "object" }
+            },
+            "additionalProperties": true
+          },
+          "variants": {
+            "type": "object",
+            "description": "Size/appearance variants",
+            "additionalProperties": { "type": "object" }
+          }
+        }
+      }
+    }
+  }
+}

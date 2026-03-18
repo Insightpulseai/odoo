@@ -1,0 +1,26 @@
+# Git State Snapshot
+# Generated: 2025-12-25T16:56:39Z
+# Host: odoo-erp-prod
+# Repo: /opt/odoo-ce
+
+SHA: f748a4d7305f8269a8092f49c204978413501a25
+Branch: main
+Short SHA: f748a4d
+
+# Remote
+origin	https://github.com/jgtolentino/odoo-ce.git (fetch)
+origin	https://github.com/jgtolentino/odoo-ce.git (push)
+
+# Status (dirty check)
+ M docs/repo/GIT_STATE.prod.txt
+?? oca_addons/
+
+# Last 5 commits
+f748a4d docs: auto-update SITEMAP.md and TREE.md [skip ci]
+a4af31a docs(workos): add production deployment artifacts
+3879362 docs(workos): add production deployment report
+7421960 docs: auto-update SITEMAP.md and TREE.md [skip ci]
+dd3fc65 fix(workos): migrate tree views to list views for Odoo 18 compatibility
+
+# Tags
+

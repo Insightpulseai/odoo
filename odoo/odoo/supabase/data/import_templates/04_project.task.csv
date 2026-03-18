@@ -1,0 +1,12 @@
+id,name,active,sequence,project_id/id,stage_id/id,user_ids/id,partner_id/id,parent_id/id,milestone_id/id,priority,kanban_state,date_deadline,date_assign,planned_hours,description,tag_ids/id
+ipai_project.task_jan_prep,January Close - Prep,true,10,ipai_project.project_q1_close,ipai_project.stage_backlog,,,,,1,normal,2026-01-25,,8,"Prepare January closing entries",
+ipai_project.task_jan_review,January Close - Review,true,20,ipai_project.project_q1_close,ipai_project.stage_backlog,,,,,1,normal,2026-01-28,,4,"Review January closing entries",
+ipai_project.task_jan_approve,January Close - Approve,true,30,ipai_project.project_q1_close,ipai_project.stage_backlog,,,,ipai_project.ms_jan_close,1,normal,2026-01-31,,2,"Final approval for January close",
+ipai_project.task_feb_prep,February Close - Prep,true,40,ipai_project.project_q1_close,ipai_project.stage_backlog,,,,,1,normal,2026-02-23,,8,"Prepare February closing entries",
+ipai_project.task_feb_review,February Close - Review,true,50,ipai_project.project_q1_close,ipai_project.stage_backlog,,,,,1,normal,2026-02-26,,4,"Review February closing entries",
+ipai_project.task_feb_approve,February Close - Approve,true,60,ipai_project.project_q1_close,ipai_project.stage_backlog,,,,ipai_project.ms_feb_close,1,normal,2026-02-28,,2,"Final approval for February close",
+ipai_project.task_bir_1601c_prep,BIR 1601-C - Prep,true,10,ipai_project.project_bir_compliance,ipai_project.stage_backlog,,,,,1,normal,2026-01-10,,4,"Prepare 1601-C withholding tax return",
+ipai_project.task_bir_1601c_file,BIR 1601-C - File,true,20,ipai_project.project_bir_compliance,ipai_project.stage_backlog,,,,ipai_project.ms_q1_bir_1601c,1,normal,2026-01-15,,2,"File 1601-C with BIR",
+ipai_project.task_bir_2550m_prep,BIR 2550M - Prep,true,30,ipai_project.project_bir_compliance,ipai_project.stage_backlog,,,,,1,normal,2026-01-18,,4,"Prepare 2550M VAT return",
+ipai_project.task_bir_2550m_file,BIR 2550M - File,true,40,ipai_project.project_bir_compliance,ipai_project.stage_backlog,,,,ipai_project.ms_q1_bir_2550m,1,normal,2026-01-20,,2,"File 2550M with BIR",
+ipai_project.task_weekly_status,Weekly Status Update,true,100,ipai_project.project_q1_close,ipai_project.stage_backlog,,,,,0,normal,2026-01-10,,1,"Recurring weekly status meeting",

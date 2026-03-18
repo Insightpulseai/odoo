@@ -1,0 +1,50 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "diagramflow"
+version = "0.1.0"
+description = "Convert Mermaid diagrams to BPMN XML and draw.io format"
+readme = "README.md"
+license = {text = "LGPL-3.0"}
+requires-python = ">=3.10"
+authors = [
+    {name = "IPAI", email = "ipai@example.com"}
+]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: GNU Lesser General Public License v3 (LGPLv3)",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+]
+dependencies = [
+    "pyyaml>=6.0",
+    "lxml>=4.9",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0",
+    "black>=23.0",
+    "isort>=5.0",
+]
+
+[project.scripts]
+diagramflow = "diagramflow.cli:main"
+mermaid2bpmn = "diagramflow.cli:mermaid_to_bpmn"
+mermaid2drawio = "diagramflow.cli:mermaid_to_drawio"
+
+[tool.setuptools.packages.find]
+where = ["."]
+
+[tool.black]
+line-length = 100
+target-version = ["py310"]
+
+[tool.isort]
+profile = "black"
+line_length = 100

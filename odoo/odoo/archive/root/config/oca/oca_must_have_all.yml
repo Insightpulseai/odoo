@@ -1,0 +1,17 @@
+# OCA Must-Have ALL (Odoo 19) - Combined Bundle
+# Includes: Base + Accounting + Sales + Purchases
+# This is the canonical install bundle for full OCA baseline.
+
+meta:
+  odoo_version: "19.0"
+  purpose: "OCA Must-Have: Base + Accounting + Sales + Purchases"
+
+includes:
+  - oca_must_have_base.yml
+  - oca_must_have_accounting.yml
+  - oca_must_have_sales.yml
+  - oca_must_have_purchase.yml
+
+policy:
+  require_all_modules_installed: true
+  fail_if_module_not_found: true

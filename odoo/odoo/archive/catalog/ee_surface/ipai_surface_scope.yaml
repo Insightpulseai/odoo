@@ -1,0 +1,65 @@
+version: 1
+principle: >
+  EE parity is tracked as USER-OUTCOME SURFACES, not Enterprise module presence.
+  Assume an OCA or external-service equivalent exists for every EE module; track only
+  surfaces that require glue, external services, UX, or governance to match.
+
+# Surfaces we explicitly care about (initial seed)
+# - implementation.status: planned|in_progress|done
+# - implementation.coverage: native_oca|external_service|custom_ipai|hybrid
+# - evidence: links to docs/evidence paths or scripts/tests
+surfaces:
+  - id: ee-productivity-ai-agents
+    label: "AI Agents (configured instructions, topics, controlled sources)"
+    priority: P0
+    implementation:
+      status: in_progress
+      coverage: hybrid
+      approach:
+        - "OCA/Odoo CE side: provide an agent UI entrypoint + configuration model"
+        - "External: IPAI AI Gateway (Supabase Edge Function) for inference + policy"
+        - "Governance: restrict sources + auditable retrieval"
+    evidence:
+      - "docs/evidence/20260210-1200/auth-system/VERIFICATION.md"
+      - "scripts/health/check_all.sh"
+
+  - id: ee-finance-expense-ocr
+    label: "Expense/Vendor Bill OCR (digitization pipeline)"
+    priority: P0
+    implementation:
+      status: planned
+      coverage: external_service
+      approach:
+        - "Supabase Storage + OCR function + Odoo attachment ingestion"
+        - "Queue + retry + audit trail"
+    evidence: []
+
+  - id: ee-productivity-spreadsheet
+    label: "Spreadsheet (collaborative sheet surface)"
+    priority: P1
+    implementation:
+      status: planned
+      coverage: external_service
+      approach:
+        - "Replace with Supabase + sheet UI (or OnlyOffice/Collabora) embedded"
+    evidence: []
+
+  - id: ee-productivity-sign
+    label: "eSignature surface"
+    priority: P1
+    implementation:
+      status: planned
+      coverage: external_service
+      approach:
+        - "Replace with external e-sign provider or open-source signing stack"
+    evidence: []
+
+  - id: ee-security-sso-saml
+    label: "SSO (SAML) surface"
+    priority: P2
+    implementation:
+      status: planned
+      coverage: external_service
+      approach:
+        - "Supabase SSO (SAML) / external IdP; Odoo trusts JWT"
+    evidence: []

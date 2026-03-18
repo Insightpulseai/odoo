@@ -1,0 +1,278 @@
+// =============================================================================
+// IPAI Website Coming Soon — Token-Driven Styles
+// =============================================================================
+// References IPAI Design System SSOT tokens (--ipai-color-*, --ipai-radius-*,
+// --ipai-shadow-*, --ipai-font-*). Fallback values ensure standalone operation
+// even if ipai_design_system module is not installed.
+//
+// Scope: all page styles are namespaced under .ipai-cs-* to avoid conflicts.
+// Header/footer hiding uses :has() scoped to .ipai-cs-wrap (no global change).
+// =============================================================================
+
+// ---------------------------------------------------------------------------
+// Token aliases with SSOT fallbacks
+// ---------------------------------------------------------------------------
+:root {
+  // Background (dark landing)
+  --ipai-cs-bg: var(--ipai-color-neutral-background-inverted, #0B1220);
+  --ipai-cs-surface: rgba(255, 255, 255, 0.06);
+  --ipai-cs-border: var(--ipai-color-neutral-stroke1, rgba(255, 255, 255, 0.10));
+
+  // Text
+  --ipai-cs-text: var(--ipai-color-neutral-foreground-inverted, rgba(255, 255, 255, 0.92));
+  --ipai-cs-muted: rgba(255, 255, 255, 0.65);
+
+  // Pulser green (Copilot green from SSOT)
+  --ipai-cs-pulse: var(--ipai-color-copilot-green, #32CD32);
+
+  // Brand accent
+  --ipai-cs-accent: var(--ipai-color-accent-primary, #F6C000);
+
+  // CTA gradient (Copilot signature: purple → cyan → green)
+  --ipai-cs-gradient: var(
+    --ipai-color-copilot-gradient,
+    linear-gradient(135deg, #7B68EE 0%, #00CED1 50%, #32CD32 100%)
+  );
+
+  // Shape
+  --ipai-cs-radius: var(--ipai-radius-xlarge, 12px);
+  --ipai-cs-radius-pill: var(--ipai-radius-circular, 9999px);
+  --ipai-cs-shadow: var(--ipai-shadow-28, 0px 14px 28px rgba(0, 0, 0, 0.14));
+
+  // Typography
+  --ipai-cs-font: var(
+    --ipai-font-family-base,
+    'Segoe UI Variable', 'Segoe UI', system-ui, -apple-system, sans-serif
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Hide website header + footer only when Coming Soon page is active.
+// Uses :has() to scope — no global template modification needed.
+// ---------------------------------------------------------------------------
+#wrapwrap:has(.ipai-cs-wrap) {
+  > header,
+  > footer {
+    display: none !important;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Page root
+// ---------------------------------------------------------------------------
+.ipai-cs-wrap {
+  background: transparent !important;
+}
+
+.ipai-cs-root {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 28px 18px;
+  font-family: var(--ipai-cs-font);
+  color: var(--ipai-cs-text);
+  background:
+    radial-gradient(900px 380px at 10% 10%, rgba(50, 205, 50, 0.10), transparent 55%),
+    radial-gradient(900px 380px at 90% 12%, rgba(123, 104, 238, 0.08), transparent 55%),
+    linear-gradient(180deg, var(--ipai-cs-bg) 0%, #0F1A2E 100%);
+}
+
+// ---------------------------------------------------------------------------
+// Card
+// ---------------------------------------------------------------------------
+.ipai-cs-container {
+  width: min(860px, 100%);
+}
+
+.ipai-cs-card {
+  background: var(--ipai-cs-surface);
+  border: 1px solid var(--ipai-cs-border);
+  border-radius: var(--ipai-cs-radius);
+  padding: 22px;
+  box-shadow: var(--ipai-cs-shadow);
+  backdrop-filter: blur(10px);
+}
+
+// ---------------------------------------------------------------------------
+// Header
+// ---------------------------------------------------------------------------
+.ipai-cs-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  margin-bottom: 14px;
+}
+
+.ipai-cs-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 800;
+  font-size: 18px;
+  letter-spacing: -0.02em;
+}
+
+// ---------------------------------------------------------------------------
+// Pulser pulsating dot (CSS-only, no JS)
+// ---------------------------------------------------------------------------
+.ipai-cs-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: var(--ipai-cs-radius-pill);
+  background: var(--ipai-cs-pulse);
+  box-shadow: 0 0 0 0 rgba(50, 205, 50, 0.55);
+  animation: ipai-pulser-ring 1.6s ease-in-out infinite;
+  flex-shrink: 0;
+}
+
+@keyframes ipai-pulser-ring {
+  0% {
+    box-shadow: 0 0 0 0 rgba(50, 205, 50, 0.55);
+    transform: scale(1);
+  }
+  70% {
+    box-shadow: 0 0 0 14px rgba(50, 205, 50, 0);
+    transform: scale(1.02);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(50, 205, 50, 0);
+    transform: scale(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ipai-cs-dot {
+    animation: none;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Kicker label
+// ---------------------------------------------------------------------------
+.ipai-cs-kicker {
+  color: var(--ipai-cs-muted);
+  font-weight: 700;
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+// ---------------------------------------------------------------------------
+// Typography
+// ---------------------------------------------------------------------------
+.ipai-cs-heading {
+  margin: 10px 0;
+  font-size: clamp(28px, 4.2vw, 44px);
+  line-height: 1.05;
+  letter-spacing: -0.035em;
+  font-weight: 700;
+  color: var(--ipai-cs-text);
+}
+
+.ipai-cs-description {
+  color: var(--ipai-cs-muted);
+  font-size: 15px;
+  line-height: 1.55;
+  max-width: 62ch;
+}
+
+// ---------------------------------------------------------------------------
+// Capability pills
+// ---------------------------------------------------------------------------
+.ipai-cs-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 18px;
+}
+
+.ipai-cs-pill {
+  border: 1px solid var(--ipai-cs-border);
+  background: rgba(255, 255, 255, 0.04);
+  padding: 10px 12px;
+  border-radius: var(--ipai-cs-radius-pill);
+  font-size: 12px;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.82);
+}
+
+// ---------------------------------------------------------------------------
+// CTA buttons
+// ---------------------------------------------------------------------------
+.ipai-cs-cta {
+  margin-top: 18px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+}
+
+.ipai-cs-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 44px;
+  padding: 0 20px;
+  border-radius: var(--ipai-cs-radius-pill);
+  font-weight: 800;
+  font-size: 14px;
+  text-decoration: none;
+  cursor: pointer;
+  transition: opacity 0.2s;
+
+  &:hover {
+    opacity: 0.88;
+    text-decoration: none;
+  }
+}
+
+.ipai-cs-btn-primary {
+  background: var(--ipai-cs-gradient);
+  color: #fff;
+  border: none;
+}
+
+.ipai-cs-btn-ghost {
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--ipai-cs-text);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+}
+
+// ---------------------------------------------------------------------------
+// Footer
+// ---------------------------------------------------------------------------
+.ipai-cs-footer {
+  margin-top: 14px;
+  color: var(--ipai-cs-muted);
+  font-size: 12px;
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+// ---------------------------------------------------------------------------
+// Mobile
+// ---------------------------------------------------------------------------
+@media (max-width: 480px) {
+  .ipai-cs-root {
+    padding: 16px 12px;
+  }
+
+  .ipai-cs-card {
+    padding: 16px;
+  }
+
+  .ipai-cs-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .ipai-cs-footer {
+    flex-direction: column;
+    gap: 4px;
+  }
+}

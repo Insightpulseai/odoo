@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ── ir.actions.client — renders the OWL OKRDashboard component ── -->
+    <record id="action_finance_ppm_okr_dashboard" model="ir.actions.client">
+        <field name="name">OKR Dashboard</field>
+        <field name="tag">finance_ppm.okr_dashboard</field>
+        <field name="target">current</field>
+    </record>
+
+    <!-- ── Menu items ────────────────────────────────────────────────── -->
+    <!-- Top-level Finance PPM section under the Project app -->
+    <menuitem
+        id="menu_finance_ppm_root"
+        name="Finance PPM"
+        parent="project.menu_main_pm"
+        sequence="90"
+    />
+
+    <menuitem
+        id="menu_finance_ppm_okr_dashboard"
+        name="OKR Dashboard"
+        parent="menu_finance_ppm_root"
+        action="action_finance_ppm_okr_dashboard"
+        sequence="10"
+    />
+
+</odoo>

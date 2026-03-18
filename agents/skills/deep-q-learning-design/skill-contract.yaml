@@ -1,0 +1,75 @@
+id: deep-q-learning-design
+version: 1
+status: active
+classification: capability_uplift
+owner: policy-optimization-engineer
+benchmark_source: "HF Deep RL Course — Deep Q-Learning with Atari"
+implementation_source: "SB3, CleanRL docs"
+
+purpose: >
+  Design DQN agents that use neural networks to approximate Q-functions
+  for environments with large or continuous observation spaces.
+
+inputs:
+  - name: environment
+    type: string
+    required: true
+    description: "Gymnasium environment ID"
+  - name: observation_type
+    type: enum
+    values: [vector, image]
+    required: true
+    description: "Type of observation space"
+  - name: action_space_size
+    type: integer
+    required: true
+    description: "Number of discrete actions"
+
+outputs:
+  - name: model
+    type: neural_network
+    description: "Trained Q-network"
+  - name: hyperparameters
+    type: dict
+    description: "Network architecture, replay buffer size, target update frequency"
+  - name: training_curve
+    type: list
+    description: "Episode returns over training"
+
+constraints:
+  - "Action space must be discrete"
+  - "Experience replay buffer must be used"
+  - "Target network must be used for stability"
+  - "Gradient clipping recommended for stability"
+
+variants:
+  - name: vanilla_dqn
+    description: "Standard DQN with replay and target network"
+  - name: double_dqn
+    description: "Use online network to select action, target network to evaluate"
+  - name: dueling_dqn
+    description: "Separate value and advantage streams"
+
+hyperparameters:
+  learning_rate:
+    default: 0.0001
+    range: [0.00001, 0.001]
+  buffer_size:
+    default: 100000
+    range: [10000, 1000000]
+  batch_size:
+    default: 32
+    range: [16, 256]
+  target_update_interval:
+    default: 1000
+    range: [100, 10000]
+  gamma:
+    default: 0.99
+  epsilon_start:
+    default: 1.0
+  epsilon_end:
+    default: 0.05
+  epsilon_decay_steps:
+    default: 100000
+  total_timesteps:
+    default: 1000000

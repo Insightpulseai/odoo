@@ -1,0 +1,81 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "WireframeSpec",
+  "description": "Layout specification extracted from screenshots for component-based reconstruction",
+  "type": "object",
+  "required": ["screen", "viewport", "nodes"],
+  "properties": {
+    "screen": {
+      "type": "string",
+      "description": "Unique identifier for this screen/view"
+    },
+    "source": {
+      "type": "string",
+      "description": "Source screenshot filename or URL"
+    },
+    "viewport": {
+      "type": "object",
+      "required": ["width", "height"],
+      "properties": {
+        "width": { "type": "number" },
+        "height": { "type": "number" },
+        "density": { "type": "number", "default": 1 }
+      }
+    },
+    "nodes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "type", "frame"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique node ID (dot-notation for hierarchy)"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "AppShell", "Header", "Sidebar", "NavList", "NavItem",
+              "Toolbar", "Content", "Card", "Table", "Kanban", "KanbanColumn",
+              "Chart", "EmptyState", "Button", "Text", "Input", "Select",
+              "Tag", "Badge", "Avatar", "Modal", "Dialog", "Drawer",
+              "Tabs", "TabList", "TabPanel", "List", "ListItem",
+              "Grid", "GridItem", "Calendar", "Timeline", "Tree",
+              "Breadcrumb", "Pagination", "Menu", "MenuItem", "Tooltip",
+              "Progress", "Spinner", "Skeleton", "Divider", "Spacer",
+              "Icon", "Image", "Link", "Checkbox", "Radio", "Switch",
+              "Copilot", "CopilotChat", "CopilotChip", "CopilotAction"
+            ]
+          },
+          "frame": {
+            "type": "object",
+            "required": ["x", "y", "w", "h"],
+            "properties": {
+              "x": { "type": "number" },
+              "y": { "type": "number" },
+              "w": { "type": "number" },
+              "h": { "type": "number" }
+            }
+          },
+          "props": {
+            "type": "object",
+            "description": "Component-specific properties"
+          },
+          "children": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "IDs of child nodes"
+          },
+          "bindings": {
+            "type": "object",
+            "description": "Data bindings for dynamic content",
+            "properties": {
+              "data": { "type": "string" },
+              "events": { "type": "object" }
+            }
+          }
+        }
+      }
+    }
+  }
+}

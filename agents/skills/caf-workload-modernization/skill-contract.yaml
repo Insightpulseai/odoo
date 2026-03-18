@@ -1,0 +1,74 @@
+version: 1
+type: benchmark_skill
+classification: capability_uplift
+family: microsoft-caf
+skill:
+  name: caf-workload-modernization
+  id: caf-workload-modernization
+  version: "0.1.0"
+  status: draft
+  owner_persona: cloud-migration-engineer
+  source_family: microsoft-caf
+  benchmark_source: "Microsoft Cloud Adoption Framework"
+  purpose: >
+    Modernize existing workloads to improve business outcomes using CAF
+    Modernize phase methodology. Covers application and database modernization
+    patterns, containerization assessment, PaaS migration, and performance optimization.
+
+  triggers:
+    - workload running on IaaS identified for PaaS modernization
+    - performance or scalability issues on existing workload
+    - database modernization opportunity identified
+    - containerization assessment requested
+    - cost optimization through managed services
+
+  inputs:
+    - current workload architecture and technology stack
+    - performance baselines and bottleneck analysis
+    - modernization objectives (cost, performance, scalability, maintainability)
+    - target Azure PaaS services under consideration
+    - application dependencies and integration points
+
+  steps:
+    - assess current workload architecture and identify modernization opportunities
+    - evaluate modernization patterns (refactor, rearchitect, rebuild)
+    - assess containerization readiness (if applicable)
+    - evaluate database modernization options (managed PG, Cosmos DB, etc.)
+    - design target architecture with PaaS services
+    - plan incremental modernization path (strangler fig, parallel run)
+    - estimate cost impact of modernization
+    - define performance benchmarks for before/after comparison
+    - execute modernization in stages
+    - validate modernized workload against performance and functional baselines
+
+  outputs:
+    - modernization_assessment
+    - target_architecture
+    - modernization_plan
+    - cost_impact_analysis
+    - performance_comparison
+    - evidence
+
+  guardrails:
+    - "CAF is a benchmark reference, not a runtime dependency"
+    - "Canonical stack remains Odoo CE + Azure Container Apps"
+    - "A benchmark becomes integration only with explicit contract in docs/contracts/"
+    - "Modernization must be incremental — no big-bang rewrites"
+    - "Performance baselines must be captured before and after modernization"
+
+  evidence:
+    required: true
+    format: "docs/evidence/{stamp}/caf/modernization/"
+
+  evals:
+    dimensions: [accuracy, completeness, cost_awareness, performance_improvement, evidence_quality]
+    thresholds:
+      accuracy: 0.90
+      cost_awareness: 0.90
+
+cross_references:
+  - agents/knowledge/benchmarks/microsoft-cloud-adoption-framework.md
+  - agents/personas/cloud-migration-engineer.md
+  - agents/skills/caf-workload-migration/
+  - agents/skills/caf-cloud-native-design/
+  - agent-platform/ssot/learning/microsoft_caf_skill_map.yaml

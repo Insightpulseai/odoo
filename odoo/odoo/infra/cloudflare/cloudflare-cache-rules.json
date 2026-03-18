@@ -1,0 +1,32 @@
+{
+  "_comment": "Cloudflare Page Rules / Cache Rules for InsightPulse AI Odoo Stack. Apply via Cloudflare dashboard or API. Zone: insightpulseai.com",
+  "cache_rules": [
+    {
+      "name": "Cache Odoo Static Assets",
+      "description": "Cache JS, CSS, images, fonts served by Odoo /web/static/ and /web/image/",
+      "expression": "(http.host eq \"erp.insightpulseai.com\" and (starts_with(http.request.uri.path, \"/web/static/\") or starts_with(http.request.uri.path, \"/web/image/\") or http.request.uri.path.extension in {\"js\" \"css\" \"png\" \"jpg\" \"jpeg\" \"gif\" \"svg\" \"ico\" \"woff\" \"woff2\" \"ttf\" \"eot\"}))",
+      "action": "set_cache_settings",
+      "action_parameters": {
+        "cache": true,
+        "edge_ttl": { "mode": "override_origin", "default": 86400 },
+        "browser_ttl": { "mode": "override_origin", "default": 3600 }
+      }
+    },
+    {
+      "name": "Bypass Cache for Odoo Dynamic Routes",
+      "description": "Never cache login, session, RPC, longpolling, admin routes",
+      "expression": "(http.host eq \"erp.insightpulseai.com\" and (starts_with(http.request.uri.path, \"/web/login\") or starts_with(http.request.uri.path, \"/web/session\") or starts_with(http.request.uri.path, \"/web/webclient\") or starts_with(http.request.uri.path, \"/web/action\") or starts_with(http.request.uri.path, \"/web/dataset\") or starts_with(http.request.uri.path, \"/longpolling/\") or starts_with(http.request.uri.path, \"/xmlrpc/\") or starts_with(http.request.uri.path, \"/jsonrpc\") or starts_with(http.request.uri.path, \"/web/content/\")))",
+      "action": "set_cache_settings",
+      "action_parameters": {
+        "cache": false
+      }
+    }
+  ],
+  "security_headers": {
+    "_comment": "Recommended Cloudflare Transform Rules for security headers",
+    "X-Content-Type-Options": "nosniff",
+    "X-Frame-Options": "SAMEORIGIN",
+    "Referrer-Policy": "strict-origin-when-cross-origin",
+    "Permissions-Policy": "camera=(), microphone=(), geolocation=()"
+  }
+}

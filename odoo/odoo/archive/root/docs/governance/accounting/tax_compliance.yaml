@@ -1,0 +1,91 @@
+version: "1.0"
+domain: "accounting"
+track: "tax_compliance"
+levels:
+  L1: "Preparer (data gathering + drafts)"
+  L2: "Reviewer (accuracy + completeness)"
+  L3: "Tax lead (risk + planning + defense)"
+competencies:
+  - code: TAX-01
+    name: "Tax data readiness (source-of-truth integrity)"
+    why_it_matters: "Clean source data reduces filing risk and rework."
+    behaviors:
+      L1: ["Collects invoices/receipts; validates required fields."]
+      L2: ["Implements data QA checks; resolves exceptions with stakeholders."]
+      L3:
+        [
+          "Defines data standards; automates readiness checks and evidence retention.",
+        ]
+    evidence:
+      - "Tax data completeness report"
+      - "Exception log + resolutions"
+      - "Evidence retention policy"
+    tool_enablers:
+      - "Invoice/bill data capture"
+      - "Document attachments / audit trail (if enabled)"
+
+  - code: TAX-02
+    name: "Indirect tax (VAT/GST/Sales tax) preparation"
+    why_it_matters: "Indirect tax is high-frequency and high-penalty if wrong/late."
+    behaviors:
+      L1: ["Prepares draft returns from system reports; flags anomalies."]
+      L2: ["Reviews return logic; verifies rates, exemptions, and mappings."]
+      L3: ["Owns filing calendar, risk controls, and dispute handling."]
+    evidence:
+      - "Return workpapers"
+      - "Rate/mapping configuration notes"
+      - "Variance analysis vs prior periods"
+    tool_enablers:
+      - "Tax reports/returns features"
+
+  - code: TAX-03
+    name: "Withholding tax & remittances"
+    why_it_matters: "Withholding errors create vendor/client disputes and audit exposure."
+    behaviors:
+      L1: ["Applies correct withholding on payments under supervision."]
+      L2: ["Reviews withholding computations; ensures proper documentation."]
+      L3:
+        [
+          "Designs withholding governance (approvals, exceptions, periodic audits).",
+        ]
+    evidence:
+      - "Withholding schedules"
+      - "Remittance proofs"
+      - "Exception approvals"
+    tool_enablers:
+      - "Payment processing workflows"
+      - "Withholding tax configuration"
+
+  - code: TAX-04
+    name: "Statutory reporting & audit defense pack"
+    why_it_matters: "Faster audits and fewer penalties via clear traceability."
+    behaviors:
+      L1: ["Builds evidence pack (invoices, JEs, schedules)."]
+      L2: ["Prepares audit-ready tie-outs and narratives."]
+      L3:
+        ["Leads audit responses; manages risk registers and remediation plans."]
+    evidence:
+      - "Audit defense pack index"
+      - "Tie-outs (tax ↔ GL ↔ subledger)"
+      - "Risk register + remediation status"
+    tool_enablers:
+      - "Document management system"
+      - "Reporting and analytics"
+
+  - code: TAX-05
+    name: "Client advisory: compliance + planning"
+    why_it_matters: "Moves the firm upmarket (strategy > compliance-only)."
+    behaviors:
+      L1: ["Explains filing status and basic variances."]
+      L2: ["Recommends process fixes to prevent recurring issues."]
+      L3:
+        [
+          "Leads planning and scenario work; quantifies savings and risk tradeoffs.",
+        ]
+    evidence:
+      - "Client memo"
+      - "Scenario models"
+      - "Decision log"
+    tool_enablers:
+      - "Reporting and dashboards"
+      - "Scenario modeling tools"

@@ -1,0 +1,20 @@
+On branch claude/figma-dev-mode-access-TTldM
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git restore <file>..." to discard changes in working directory)
+	modified:   .env.example
+	modified:   CLAUDE.md
+
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+	docs/evidence/20260124-2104/
+	figma.config.json
+	scripts/figma/figma_export_variables.sh
+	scripts/figma/verify_dev_mode_access.sh
+
+no changes added to commit (use "git add" and/or "git commit -a")
+* claude/figma-dev-mode-access-TTldM
+  claude/push-production-validation-ivVR2
+3926091 docs: auto-update SITEMAP.md and TREE.md [skip ci]
+0ccffa6 fix(docs): clarify forbidden path references to fix CI path hallucina… (#275)
+9d3f7cb docs: auto-update SITEMAP.md and TREE.md [skip ci]

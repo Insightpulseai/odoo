@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2026 InsightPulse AI
+     License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl). -->
+<odoo>
+    <!-- Extend Project Task Form with Copilot Smart Button -->
+    <record id="view_project_task_form_copilot" model="ir.ui.view">
+        <field name="name">project.task.form.copilot</field>
+        <field name="model">project.task</field>
+        <field name="inherit_id" ref="project.view_task_form2"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div[@name='button_box']" position="inside">
+                <button name="action_open_copilot" type="object"
+                    class="oe_stat_button" icon="fa-robot">
+                    <div class="o_stat_info">
+                        <span class="o_stat_text">Ask Copilot</span>
+                    </div>
+                </button>
+                <button name="action_view_copilot_sessions" type="object"
+                    class="oe_stat_button" icon="fa-comments"
+                    invisible="copilot_session_count == 0">
+                    <field name="copilot_session_count" widget="statinfo"
+                        string="Sessions"/>
+                </button>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Optional: Extend Project Task Kanban with Copilot indicator -->
+    <record id="view_project_task_kanban_copilot" model="ir.ui.view">
+        <field name="name">project.task.kanban.copilot</field>
+        <field name="model">project.task</field>
+        <field name="inherit_id" ref="project.view_task_kanban"/>
+        <field name="priority">100</field>
+        <field name="arch" type="xml">
+            <!-- Add copilot session count field to kanban -->
+            <xpath expr="//kanban" position="inside">
+                <field name="copilot_session_count"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>

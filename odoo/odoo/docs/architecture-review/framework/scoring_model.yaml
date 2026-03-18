@@ -1,0 +1,211 @@
+# Architecture Review Scoring Model v1.0
+# Defines domains, weights, maturity levels, and blockers
+
+version: "1.0"
+updated: "2026-01-24"
+
+# Maturity levels (0-4 scale)
+maturity_levels:
+  0:
+    name: Initial
+    description: Ad-hoc, undocumented, reactive
+    color: "#D1242F"
+  1:
+    name: Developing
+    description: Some practices defined, inconsistent
+    color: "#FB8C00"
+  2:
+    name: Defined
+    description: Documented processes, variable execution
+    color: "#FDD835"
+  3:
+    name: Managed
+    description: Consistent execution, measured outcomes
+    color: "#7CB342"
+  4:
+    name: Optimizing
+    description: Continuous improvement, automated controls
+    color: "#2DA44E"
+
+# Scoring scale for individual questions
+question_scale:
+  0: Not implemented
+  1: Partially implemented
+  2: Implemented with gaps
+  3: Fully implemented
+  4: Exceeds requirements
+
+# Domain definitions with weights
+domains:
+  tenancy_isolation:
+    id: A
+    name: Tenancy & Isolation
+    weight: 0.15
+    description: Multi-tenant boundaries, per-tenant data isolation, RLS patterns
+    key_risks:
+      - Cross-tenant data leakage
+      - Shared resource contention
+      - Tenant context loss in automation
+
+  identity_authz:
+    id: B
+    name: Identity & AuthZ
+    weight: 0.12
+    description: SSO/OIDC, RBAC, service principals, token management
+    key_risks:
+      - Privilege escalation
+      - Stale access grants
+      - Token replay attacks
+
+  data_architecture:
+    id: C
+    name: Data Architecture
+    weight: 0.12
+    description: Postgres-first patterns, CDC/events, retention, lakehouse
+    key_risks:
+      - Data loss
+      - Schema drift
+      - Unbounded retention costs
+
+  app_architecture:
+    id: D
+    name: App Architecture
+    weight: 0.10
+    description: Next.js/Edge modularity, Odoo modules, API boundaries
+    key_risks:
+      - Tight coupling
+      - Version incompatibility
+      - Inconsistent error handling
+
+  integration_automation:
+    id: E
+    name: Integration & Automation
+    weight: 0.10
+    description: n8n workflows, queues, retries, idempotency, MCP safety
+    key_risks:
+      - Duplicate execution
+      - Orphaned jobs
+      - Agent tool misuse
+
+  reliability_dr:
+    id: F
+    name: Reliability & DR
+    weight: 0.10
+    description: RPO/RTO targets, backups, restore drills, multi-region
+    key_risks:
+      - Unmet recovery objectives
+      - Untested restore procedures
+      - Single point of failure
+
+  observability_audit:
+    id: G
+    name: Observability & Audit
+    weight: 0.08
+    description: Logs, metrics, traces, audit trails, anomaly detection
+    key_risks:
+      - Blind spots in production
+      - Missing audit evidence
+      - Alert fatigue
+
+  security_engineering:
+    id: H
+    name: Security Engineering
+    weight: 0.08
+    description: Secrets management, supply chain, dependency scanning
+    key_risks:
+      - Secret exposure
+      - Vulnerable dependencies
+      - Runtime exploitation
+
+  performance_capacity:
+    id: I
+    name: Performance & Capacity
+    weight: 0.05
+    description: Load profiles, caching, query plans, backpressure
+    key_risks:
+      - Cascading failures
+      - Resource exhaustion
+      - Poor user experience
+
+  cost_finops:
+    id: J
+    name: Cost & FinOps
+    weight: 0.05
+    description: Unit economics, cost allocation, budgets, guardrails
+    key_risks:
+      - Runaway costs
+      - Unattributed spend
+      - Missed optimization
+
+  compliance_governance:
+    id: K
+    name: Compliance & Governance
+    weight: 0.03
+    description: PII handling, retention policies, access reviews
+    key_risks:
+      - Regulatory violation
+      - Data subject rights failures
+      - Audit failures
+
+  sdlc_change_control:
+    id: L
+    name: SDLC & Change Control
+    weight: 0.02
+    description: CI gates, deterministic builds, rollback, migrations
+    key_risks:
+      - Broken production
+      - Irreversible changes
+      - Configuration drift
+
+# Blockers - these fail the review regardless of score
+blockers:
+  - id: BLOCK-001
+    name: Secrets in VCS
+    description: Secrets, keys, or credentials committed to version control
+    evidence: git log search for patterns, secret scanning results
+    remediation: Rotate immediately, enable secret scanning
+
+  - id: BLOCK-002
+    name: No RLS on tenant tables
+    description: Multi-tenant tables without Row Level Security
+    evidence: Supabase RLS policy audit
+    remediation: Enable RLS, add tenant_id policies
+
+  - id: BLOCK-003
+    name: Stale backup verification
+    description: No backup restore test in 90+ days
+    evidence: Restore drill documentation with timestamps
+    remediation: Schedule and execute restore drill
+
+  - id: BLOCK-004
+    name: Unaudited production access
+    description: Production data access without audit logging
+    evidence: Audit log configuration, sample queries
+    remediation: Enable audit logging on all production access
+
+  - id: BLOCK-005
+    name: Unprotected main branch
+    description: No CI gates or branch protection on main
+    evidence: GitHub branch protection settings
+    remediation: Enable required checks and reviews
+
+  - id: BLOCK-006
+    name: No rollback mechanism
+    description: Deployments without tested rollback procedure
+    evidence: Rollback runbook, execution history
+    remediation: Document and test rollback for each deploy target
+
+# Thresholds for review outcome
+thresholds:
+  pass:
+    min_overall_score: 2.5
+    min_domain_scores: 2.0
+    max_blockers: 0
+  conditional_pass:
+    min_overall_score: 2.0
+    min_domain_scores: 1.5
+    max_blockers: 0
+    requires_remediation_plan: true
+  fail:
+    any_blocker: true
+    overall_score_below: 2.0

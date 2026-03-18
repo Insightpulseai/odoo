@@ -1,0 +1,70 @@
+version: 1
+type: implementation_skill
+family: odoo_developer_implementation
+skill:
+  name: odoo-qweb-website-customization
+  status: active
+  owner: agents
+  build_order: 9
+  lane: website
+  purpose: >
+    Customize QWeb themes, website building blocks (snippets), and frontend
+    surfaces in Odoo CE 19. Uses inherited templates and snippet registration
+    to extend the website editor without modifying core templates.
+
+  triggers:
+    - website theme customization needed
+    - new website building block (snippet) required
+    - existing website page needs layout changes
+    - portal page customization needed
+
+  inputs:
+    - target_template (XML ID of template to extend, or null for new snippet)
+    - customization_type (theme, snippet, page, portal)
+    - content_description
+    - styling_requirements (optional)
+
+  steps:
+    - identify target QWeb template or snippet by XML ID
+    - create inherited template for modifications
+    - for new snippets, create snippet template and register in snippet panel
+    - add snippet options (if configurable) via options template
+    - create SCSS with o_<module>_ class prefix for styling
+    - register templates and assets in __manifest__.py
+    - for portal pages, extend portal controller if needed
+    - test in website editor on disposable DB
+    - verify snippet drag-and-drop works (if applicable)
+
+  outputs:
+    - template_file_path
+    - snippet_registration (if applicable)
+    - scss_file_path (if applicable)
+    - website_editor_test_result
+    - evidence
+
+  guardrails:
+    - never directly modify core website templates
+    - follow Odoo website snippet conventions for building blocks
+    - use inherited templates with xpath for page modifications
+    - CSS class prefix: o_<module>_ (e.g. o_ipai_website_banner)
+    - SCSS variables: $o-* prefix
+    - snippets must be draggable and configurable in website editor
+    - portal pages must respect access control (no unauthorized data exposure)
+    - prefer inherited extension over core patching
+    - do not call cr.commit() unless explicitly justified
+
+  evidence:
+    required: true
+    format: "docs/evidence/{stamp}/odoo-dev/odoo-qweb-website-customization/"
+
+  evals:
+    dimensions: [accuracy, completeness, safety, policy_adherence, evidence_quality]
+    thresholds:
+      accuracy: 0.95
+      safety: 0.99
+      policy_adherence: 0.95
+
+cross_references:
+  - agents/knowledge/benchmarks/odoo-developer-howtos.md
+  - agents/knowledge/benchmarks/odoo-coding-guidelines.md
+  - .claude/rules/odoo19-coding.md

@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- IDP Record Rules for multi-company/multi-tenant isolation -->
+
+    <!-- IDP Document: Company isolation -->
+    <record id="idp_document_rule_company" model="ir.rule">
+        <field name="name">IDP Document: company isolation</field>
+        <field name="model_id" ref="model_idp_document"/>
+        <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+        <field name="groups" eval="[(4, ref('base.group_user'))]"/>
+    </record>
+
+    <!-- IDP Document OCR: Inherits document company rule -->
+    <record id="idp_document_ocr_rule_company" model="ir.rule">
+        <field name="name">IDP Document OCR: company isolation</field>
+        <field name="model_id" ref="model_idp_document_ocr"/>
+        <field name="domain_force">[('document_id.company_id', 'in', company_ids)]</field>
+        <field name="groups" eval="[(4, ref('base.group_user'))]"/>
+    </record>
+
+    <!-- IDP Extraction: Inherits document company rule -->
+    <record id="idp_extraction_rule_company" model="ir.rule">
+        <field name="name">IDP Extraction: company isolation</field>
+        <field name="model_id" ref="model_idp_extraction"/>
+        <field name="domain_force">[('document_id.company_id', 'in', company_ids)]</field>
+        <field name="groups" eval="[(4, ref('base.group_user'))]"/>
+    </record>
+
+    <!-- IDP Review: Inherits document company rule -->
+    <record id="idp_review_rule_company" model="ir.rule">
+        <field name="name">IDP Review: company isolation</field>
+        <field name="model_id" ref="model_idp_review"/>
+        <field name="domain_force">[('document_id.company_id', 'in', company_ids)]</field>
+        <field name="groups" eval="[(4, ref('base.group_user'))]"/>
+    </record>
+
+    <!-- IDP Review: Reviewers only see pending reviews -->
+    <record id="idp_review_rule_reviewer_pending" model="ir.rule">
+        <field name="name">IDP Review: reviewers see pending only</field>
+        <field name="model_id" ref="model_idp_review"/>
+        <field name="domain_force">[('status', 'in', ['pending', 'in_progress'])]</field>
+        <field name="groups" eval="[(4, ref('ipai_idp.group_idp_reviewer'))]"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="True"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+
+    <!-- IDP Model Version: Global (all companies) - read by all, write by admin -->
+    <record id="idp_model_version_rule_global" model="ir.rule">
+        <field name="name">IDP Model Version: global read</field>
+        <field name="model_id" ref="model_idp_model_version"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('base.group_user'))]"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="False"/>
+        <field name="perm_create" eval="False"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+
+    <!-- IDP Validation Rule: Global (all companies) - read by all, write by admin -->
+    <record id="idp_validation_rule_rule_global" model="ir.rule">
+        <field name="name">IDP Validation Rule: global read</field>
+        <field name="model_id" ref="model_idp_validation_rule"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('base.group_user'))]"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="False"/>
+        <field name="perm_create" eval="False"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+
+</odoo>

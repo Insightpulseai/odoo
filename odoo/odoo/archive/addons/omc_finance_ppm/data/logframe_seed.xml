@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <data noupdate="1">
+
+    <!-- =========================================================
+         LOGICAL FRAMEWORK MATRIX SEED DATA
+         Based on Goal → Outcome → IM1 (Month-End) / IM2 (Tax Filing)
+         ========================================================= -->
+
+    <!-- GOAL LEVEL -->
+    <record id="logframe_goal" model="omc.logframe">
+      <field name="x_name">100% compliant and timely month-end closing and tax filing</field>
+      <field name="x_level">goal</field>
+      <field name="x_indicator">% of processes submitted on time</field>
+      <field name="x_target">100%</field>
+      <field name="x_verification">BIR confirmation receipts, General Ledger logs, Trial Balance reports</field>
+      <field name="x_assumptions">Stable staffing, system availability, clear deadlines</field>
+      <field name="x_project_id" ref="project_finance_ppm_2025_2026"/>
+      <field name="x_sequence">10</field>
+    </record>
+
+    <!-- OUTCOME LEVEL -->
+    <record id="logframe_outcome" model="omc.logframe">
+      <field name="x_name">Streamlined coordination between Finance, Payroll, Tax, and Treasury teams</field>
+      <field name="x_level">outcome</field>
+      <field name="x_indicator"># of handoff delays, # of rework cycles</field>
+      <field name="x_target">Zero handoff delays, max 1 rework cycle per month</field>
+      <field name="x_verification">Task completion logs, email timestamps, version control history</field>
+      <field name="x_assumptions">Clear roles and responsibilities, adequate training</field>
+      <field name="x_project_id" ref="project_finance_ppm_2025_2026"/>
+      <field name="x_sequence">20</field>
+    </record>
+
+    <!-- IMMEDIATE OBJECTIVE 1: MONTH-END CLOSING -->
+    <record id="logframe_im1" model="omc.logframe">
+      <field name="x_name">IM1: Timely Month-End Closing (Ledgers, Accruals, WIP)</field>
+      <field name="x_level">im1</field>
+      <field name="x_indicator">Days to close books after month-end</field>
+      <field name="x_target">5 business days</field>
+      <field name="x_verification">Trial Balance sign-off date, Management reporting pack date</field>
+      <field name="x_assumptions">Complete source data, no major reconciliation issues</field>
+      <field name="x_project_id" ref="project_finance_ppm_2025_2026"/>
+      <field name="x_sequence">30</field>
+    </record>
+
+    <!-- Link IM1 to November 2025 Closing Tasks -->
+    <function model="omc.logframe" name="write">
+      <value eval="[ref('logframe_im1')]"/>
+      <value eval="{'x_task_ids': [(4, ref('task_nov25_gl_recon')), (4, ref('task_nov25_accruals')), (4, ref('task_nov25_wip_revrec')), (4, ref('task_nov25_tb_signoff')), (4, ref('task_nov25_mis_reporting'))]}"/>
+    </function>
+
+    <!-- Link IM1 to December 2025 Year-End Closing Tasks -->
+    <function model="omc.logframe" name="write">
+      <value eval="[ref('logframe_im1')]"/>
+      <value eval="{'x_task_ids': [(4, ref('task_dec25_preclose_recon')), (4, ref('task_dec25_accruals_cutoff')), (4, ref('task_dec25_year_end_adj')), (4, ref('task_dec25_audit_pack'))]}"/>
+    </function>
+
+    <!-- IMMEDIATE OBJECTIVE 2: TAX FILING COMPLIANCE -->
+    <record id="logframe_im2" model="omc.logframe">
+      <field name="x_name">IM2: Tax Filing Compliance (WHT, VAT, Income Tax)</field>
+      <field name="x_level">im2</field>
+      <field name="x_indicator">% of BIR filings submitted on/before deadline</field>
+      <field name="x_target">100%</field>
+      <field name="x_verification">BIR confirmation receipts (1601-C, 0619-E, 2550M, 1702-RT)</field>
+      <field name="x_assumptions">Accurate withholding data, timely payroll close, no system outages</field>
+      <field name="x_project_id" ref="project_finance_ppm_2025_2026"/>
+      <field name="x_sequence">40</field>
+    </record>
+
+    <!-- Link IM2 to Tax Compliance Tasks -->
+    <function model="omc.logframe" name="write">
+      <value eval="[ref('logframe_im2')]"/>
+      <value eval="{'x_task_ids': [(4, ref('task_tax_nov25_payroll_withholding')), (4, ref('task_tax_nov25_vat_2550m')), (4, ref('task_tax_dec25_payroll_withholding')), (4, ref('task_tax_dec25_vat_2550m'))]}"/>
+    </function>
+
+    <!-- OUTPUT 1: RECONCILIATIONS -->
+    <record id="logframe_output_recon" model="omc.logframe">
+      <field name="x_name">Output: Bank & GL reconciliations completed</field>
+      <field name="x_level">output</field>
+      <field name="x_indicator"># of reconciling items, variance %</field>
+      <field name="x_target">Zero unreconciled items > 30 days, variance < 1%</field>
+      <field name="x_verification">Bank reconciliation report, GL reconciliation worksheet</field>
+      <field name="x_assumptions">Complete bank statements, accurate GL postings</field>
+      <field name="x_project_id" ref="project_finance_ppm_2025_2026"/>
+      <field name="x_sequence">50</field>
+    </record>
+
+    <!-- OUTPUT 2: JOURNAL ENTRIES -->
+    <record id="logframe_output_jes" model="omc.logframe">
+      <field name="x_name">Output: Accruals &amp; adjusting journal entries posted</field>
+      <field name="x_level">output</field>
+      <field name="x_indicator"># of JEs, total value, review cycle time</field>
+      <field name="x_target">All JEs reviewed within 24 hours</field>
+      <field name="x_verification">JE approval logs, GL detail report</field>
+      <field name="x_assumptions">Clear accrual policies, timely data from operations</field>
+      <field name="x_project_id" ref="project_finance_ppm_2025_2026"/>
+      <field name="x_sequence">60</field>
+    </record>
+
+    <!-- OUTPUT 3: BIR FORMS -->
+    <record id="logframe_output_bir" model="omc.logframe">
+      <field name="x_name">Output: BIR forms generated and filed</field>
+      <field name="x_level">output</field>
+      <field name="x_indicator"># of BIR forms filed, filing date vs deadline</field>
+      <field name="x_target">100% on or before deadline</field>
+      <field name="x_verification">BIR confirmation receipts, eFPS filing logs</field>
+      <field name="x_assumptions">Accurate withholding computation, system availability</field>
+      <field name="x_project_id" ref="project_finance_ppm_2025_2026"/>
+      <field name="x_sequence">70</field>
+    </record>
+
+    <!-- ACTIVITY 1: BANK RECONCILIATION -->
+    <record id="logframe_activity_bank_recon" model="omc.logframe">
+      <field name="x_name">Activity: Daily bank reconciliation</field>
+      <field name="x_level">activity</field>
+      <field name="x_indicator">Frequency of reconciliation, # of unreconciled items</field>
+      <field name="x_target">Daily reconciliation, zero items >7 days old</field>
+      <field name="x_verification">Bank reconciliation report, task completion log</field>
+      <field name="x_assumptions">Daily bank statements available</field>
+      <field name="x_project_id" ref="project_finance_ppm_2025_2026"/>
+      <field name="x_sequence">80</field>
+    </record>
+
+    <!-- ACTIVITY 2: GL RECONCILIATION -->
+    <record id="logframe_activity_gl_recon" model="omc.logframe">
+      <field name="x_name">Activity: GL sub-ledger reconciliation</field>
+      <field name="x_level">activity</field>
+      <field name="x_indicator">Variance between GL and sub-ledgers</field>
+      <field name="x_target">< 1% variance</field>
+      <field name="x_verification">GL reconciliation worksheet, variance analysis report</field>
+      <field name="x_assumptions">Sub-ledgers updated daily</field>
+      <field name="x_project_id" ref="project_finance_ppm_2025_2026"/>
+      <field name="x_sequence">90</field>
+    </record>
+
+    <!-- ACTIVITY 3: WHT COMPUTATION -->
+    <record id="logframe_activity_wht" model="omc.logframe">
+      <field name="x_name">Activity: Withholding tax computation</field>
+      <field name="x_level">activity</field>
+      <field name="x_indicator">Accuracy of WHT computation, timely submission</field>
+      <field name="x_target">100% accuracy, submitted 2 days before deadline</field>
+      <field name="x_verification">WHT computation worksheet, 1601-C filing logs</field>
+      <field name="x_assumptions">Complete payroll data, accurate tax codes</field>
+      <field name="x_project_id" ref="project_finance_ppm_2025_2026"/>
+      <field name="x_sequence">100</field>
+    </record>
+
+    <!-- ACTIVITY 4: VAT COMPUTATION -->
+    <record id="logframe_activity_vat" model="omc.logframe">
+      <field name="x_name">Activity: VAT computation and reconciliation</field>
+      <field name="x_level">activity</field>
+      <field name="x_indicator">Accuracy of VAT computation, variance with GL</field>
+      <field name="x_target">100% accuracy, < 0.5% variance</field>
+      <field name="x_verification">VAT computation worksheet, 2550M filing logs, GL VAT account</field>
+      <field name="x_assumptions">Complete sales and purchase invoices, proper tax coding</field>
+      <field name="x_project_id" ref="project_finance_ppm_2025_2026"/>
+      <field name="x_sequence">110</field>
+    </record>
+
+  </data>
+</odoo>

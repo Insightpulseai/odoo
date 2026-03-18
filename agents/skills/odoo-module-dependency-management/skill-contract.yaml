@@ -1,0 +1,69 @@
+version: 1
+type: delivery_skill
+family: odoo_sh_delivery
+skill:
+  name: odoo-module-dependency-management
+  status: draft
+  owner: odoo-developer
+  purpose: >
+    Validate and manage Odoo module dependency graphs — ipai_* custom modules,
+    OCA community modules, and upstream Odoo CE addons. Ensure dependency
+    integrity, update discipline, and manifest compliance.
+
+  triggers:
+    - new module added to addons manifest
+    - module dependency change in __manifest__.py
+    - OCA submodule update
+    - module installation or upgrade failure
+    - dependency audit request
+
+  inputs:
+    - module name and __manifest__.py contents
+    - addons manifest (config/addons.manifest.yaml)
+    - OCA submodule state (.gitmodules)
+    - installed module list from target database
+    - module graph from Odoo registry
+
+  steps:
+    - parse __manifest__.py for depends list
+    - resolve full transitive dependency chain
+    - verify all dependencies are available in addons path
+    - check for circular dependencies
+    - validate OCA module compatibility with Odoo 19
+    - verify no Enterprise module dependencies
+    - check addons manifest alignment with installed modules
+    - produce dependency graph report with compliance status
+
+  outputs:
+    - dependency_graph
+    - compliance_status
+    - missing_dependencies
+    - circular_dependency_check
+    - enterprise_violation_check
+    - findings
+    - evidence
+
+  guardrails:
+    - never introduce Enterprise module dependencies
+    - never modify OCA module source — use ipai_* override
+    - never skip dependency resolution before module install
+    - never add modules outside canonical paths (addons/ipai/, addons/oca/)
+    - config -> OCA -> delta (ipai_*) philosophy always applies
+    - bind to local addons paths and GitHub, not Odoo.sh app store
+
+  evidence:
+    required: true
+    format: "docs/evidence/{stamp}/odoo-delivery/odoo-module-dependency-management/"
+
+  evals:
+    dimensions: [accuracy, completeness, safety, policy_adherence, evidence_quality]
+    thresholds:
+      accuracy: 0.95
+      safety: 0.99
+      policy_adherence: 0.95
+
+cross_references:
+  - agents/knowledge/benchmarks/odoo-sh-persona-model.md
+  - agents/personas/odoo-developer.md
+  - .claude/rules/oca-governance.md
+  - config/addons.manifest.yaml

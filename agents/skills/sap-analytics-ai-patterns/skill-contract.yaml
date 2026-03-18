@@ -1,0 +1,58 @@
+version: 1
+name: sap-analytics-ai-patterns
+status: draft
+owner: agents
+type: benchmark_skill
+
+purpose: >
+  Extract analytics, AI, and Copilot benchmark patterns from SAP unified
+  analytics and AI platform guidance for translation to the actual
+  Databricks + Foundry + Odoo stack.
+
+triggers:
+  - analytics architecture design
+  - AI/Copilot integration planning
+  - data platform pattern selection
+  - user asks about SAP analytics patterns
+
+inputs:
+  - current analytics architecture
+  - data platform topology
+  - AI/agent runtime configuration
+  - reporting requirements
+
+dependencies:
+  - agents/knowledge/benchmarks/sap-on-microsoft-cloud-learning-path.md
+  - docs/architecture/reference-benchmarks.md
+
+steps:
+  - identify analytics/AI concern (reporting, embedding, copilot, data integration)
+  - extract benchmark pattern from Microsoft guidance
+  - translate to actual stack (Databricks, Foundry, Superset, Odoo)
+  - produce recommendation with platform mapping
+  - flag patterns that require SAP data sources vs generic Azure data
+
+outputs:
+  - benchmark_extracted
+  - relevance_to_current_platform
+  - recommended_translation
+  - risks
+  - out_of_scope
+  - evidence
+
+guardrails:
+  - do not require SAP data sources unless SAP is present
+  - translate Power Platform patterns to actual tooling (Databricks Apps, Superset)
+  - Copilot Studio patterns map to Foundry agent workflows
+  - do not prescribe SAP Analytics Cloud
+
+evidence:
+  - cited Microsoft Learn analytics/AI module
+  - translated platform recommendation
+  - identified non-goals
+
+evals:
+  - analytics pattern correctly extracted
+  - AI/Copilot patterns map to Foundry
+  - no SAP Analytics Cloud dependency introduced
+  - data platform translation uses actual stack

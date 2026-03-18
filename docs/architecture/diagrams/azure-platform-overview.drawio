@@ -1,0 +1,283 @@
+<mxfile host="app.diagrams.net" modified="2026-03-17T00:00:00.000Z" agent="InsightPulseAI" version="24.0" type="device">
+  <diagram id="azure-platform-overview" name="InsightPulseAI Azure Platform — Overview">
+    <mxGraphModel dx="1800" dy="1200" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1920" pageHeight="1280" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <!-- ═══════════════════════════════════════════════════════ -->
+        <!-- TITLE -->
+        <!-- ═══════════════════════════════════════════════════════ -->
+        <mxCell id="title" value="&lt;b&gt;InsightPulseAI Azure Platform — Overview&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:11px&quot;&gt;Six-plane architecture · Truth-plane legend · Canonical implementation targets&lt;/font&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;fontSize=16;fontColor=#1B1B1B;" vertex="1" parent="1">
+          <mxGeometry x="460" y="20" width="600" height="50" as="geometry" />
+        </mxCell>
+
+        <!-- ═══════════════════════════════════════════════════════ -->
+        <!-- PLANE 1: GOVERNANCE / CONTROL -->
+        <!-- ═══════════════════════════════════════════════════════ -->
+        <mxCell id="plane1" value="&lt;b&gt;1 · Governance / Control Plane&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E8F0FE;strokeColor=#4285F4;dashed=1;dashPattern=5 5;verticalAlign=top;align=left;spacingLeft=10;spacingTop=5;fontSize=13;fontColor=#1A73E8;" vertex="1" parent="1">
+          <mxGeometry x="40" y="90" width="1440" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="azure_boards" value="Azure Boards&lt;br&gt;&lt;font style=&quot;font-size:10px&quot;&gt;planned truth&lt;/font&gt;" style="shape=mxgraph.azure.boards;whiteSpace=wrap;html=1;fillColor=#0078D4;fontColor=#FFFFFF;strokeColor=none;fontSize=11;verticalAlign=bottom;imageWidth=36;imageHeight=36;" vertex="1" parent="1">
+          <mxGeometry x="80" y="130" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="github" value="GitHub&lt;br&gt;&lt;font style=&quot;font-size:10px&quot;&gt;code truth&lt;/font&gt;" style="shape=mxgraph.signs.tech.computer_2;whiteSpace=wrap;html=1;fillColor=#24292F;fontColor=#FFFFFF;strokeColor=none;fontSize=11;verticalAlign=bottom;imageWidth=36;imageHeight=36;" vertex="1" parent="1">
+          <mxGeometry x="240" y="130" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="azure_pipelines" value="Azure Pipelines&lt;br&gt;&lt;font style=&quot;font-size:10px&quot;&gt;release truth&lt;/font&gt;" style="shape=mxgraph.azure.azure_pipelines;whiteSpace=wrap;html=1;fillColor=#0078D4;fontColor=#FFFFFF;strokeColor=none;fontSize=11;verticalAlign=bottom;imageWidth=36;imageHeight=36;" vertex="1" parent="1">
+          <mxGeometry x="400" y="130" width="130" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="azure_resource_graph" value="Resource Graph&lt;br&gt;&lt;font style=&quot;font-size:10px&quot;&gt;live inventory truth&lt;/font&gt;" style="shape=mxgraph.azure.azure_resource_graph;whiteSpace=wrap;html=1;fillColor=#0078D4;fontColor=#FFFFFF;strokeColor=none;fontSize=11;verticalAlign=bottom;imageWidth=36;imageHeight=36;" vertex="1" parent="1">
+          <mxGeometry x="570" y="130" width="140" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="repo_ssot" value="Repo SSOT&lt;br&gt;&lt;font style=&quot;font-size:10px&quot;&gt;intended-state truth&lt;/font&gt;" style="shape=mxgraph.azure.azure_repos;whiteSpace=wrap;html=1;fillColor=#0078D4;fontColor=#FFFFFF;strokeColor=none;fontSize=11;verticalAlign=bottom;imageWidth=36;imageHeight=36;" vertex="1" parent="1">
+          <mxGeometry x="750" y="130" width="130" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="runtime_evidence" value="Runtime Evidence&lt;br&gt;&lt;font style=&quot;font-size:10px&quot;&gt;audit trail&lt;/font&gt;" style="shape=mxgraph.azure.log_analytics_workspaces;whiteSpace=wrap;html=1;fillColor=#0078D4;fontColor=#FFFFFF;strokeColor=none;fontSize=11;verticalAlign=bottom;imageWidth=36;imageHeight=36;" vertex="1" parent="1">
+          <mxGeometry x="920" y="130" width="130" height="60" as="geometry" />
+        </mxCell>
+
+        <!-- ═══════════════════════════════════════════════════════ -->
+        <!-- PLANE 2: IDENTITY / NETWORK / SECURITY -->
+        <!-- ═══════════════════════════════════════════════════════ -->
+        <mxCell id="plane2" value="&lt;b&gt;2 · Identity / Network / Security Plane&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF3E0;strokeColor=#E65100;dashed=1;dashPattern=5 5;verticalAlign=top;align=left;spacingLeft=10;spacingTop=5;fontSize=13;fontColor=#E65100;" vertex="1" parent="1">
+          <mxGeometry x="40" y="230" width="1440" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="cloudflare_dns" value="Cloudflare DNS&lt;br&gt;&lt;font style=&quot;font-size:10px&quot;&gt;authoritative DNS&lt;/font&gt;" style="shape=mxgraph.azure.dns_zones;whiteSpace=wrap;html=1;fillColor=#F48120;fontColor=#FFFFFF;strokeColor=none;fontSize=11;verticalAlign=bottom;imageWidth=36;imageHeight=36;" vertex="1" parent="1">
+          <mxGeometry x="80" y="270" width="130" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="azure_front_door" value="Azure Front Door&lt;br&gt;&lt;font style=&quot;font-size:10px&quot;&gt;WAF · TLS · routing&lt;/font&gt;" style="shape=mxgraph.azure.front_doors;whiteSpace=wrap;html=1;fillColor=#0078D4;fontColor=#FFFFFF;strokeColor=none;fontSize=11;verticalAlign=bottom;imageWidth=36;imageHeight=36;" vertex="1" parent="1">
+          <mxGeometry x="250" y="270" width="140" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="entra_id" value="Microsoft Entra ID&lt;br&gt;&lt;font style=&quot;font-size:10px&quot;&gt;target IdP&lt;/font&gt;" style="shape=mxgraph.azure.active_directory;whiteSpace=wrap;html=1;fillColor=#0078D4;fontColor=#FFFFFF;strokeColor=none;fontSize=11;verticalAlign=bottom;imageWidth=36;imageHeight=36;" vertex="1" parent="1">
+          <mxGeometry x="430" y="270" width="130" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="key_vault" value="Key Vault&lt;br&gt;&lt;font style=&quot;font-size:10px&quot;&gt;kv-ipai-dev&lt;/font&gt;" style="shape=mxgraph.azure.key_vaults;whiteSpace=wrap;html=1;fillColor=#0078D4;fontColor=#FFFFFF;strokeColor=none;fontSize=11;verticalAlign=bottom;imageWidth=36;imageHeight=36;" vertex="1" parent="1">
+          <mxGeometry x="600" y="270" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="managed_identity" value="Managed Identities&lt;br&gt;&lt;font style=&quot;font-size:10px&quot;&gt;workload identity&lt;/font&gt;" style="shape=mxgraph.azure.managed_identities;whiteSpace=wrap;html=1;fillColor=#0078D4;fontColor=#FFFFFF;strokeColor=none;fontSize=11;verticalAlign=bottom;imageWidth=36;imageHeight=36;" vertex="1" parent="1">
+          <mxGeometry x="760" y="270" width="140" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="private_networking" value="Private Networking&lt;br&gt;&lt;font style=&quot;font-size:10px&quot;&gt;VNet · NSG&lt;/font&gt;" style="shape=mxgraph.azure.virtual_networks;whiteSpace=wrap;html=1;fillColor=#0078D4;fontColor=#FFFFFF;strokeColor=none;fontSize=11;verticalAlign=bottom;imageWidth=36;imageHeight=36;" vertex="1" parent="1">
+          <mxGeometry x="940" y="270" width="130" height="60" as="geometry" />
+        </mxCell>
+
+        <!-- ═══════════════════════════════════════════════════════ -->
+        <!-- PLANE 3: BUSINESS SYSTEMS -->
+        <!-- ═══════════════════════════════════════════════════════ -->
+        <mxCell id="plane3" value="&lt;b&gt;3 · Business Systems Plane&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E8F5E9;strokeColor=#2E7D32;dashed=1;dashPattern=5 5;verticalAlign=top;align=left;spacingLeft=10;spacingTop=5;fontSize=13;fontColor=#2E7D32;" vertex="1" parent="1">
+          <mxGeometry x="40" y="370" width="1440" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="odoo_aca" value="Odoo CE 19&lt;br&gt;&lt;font style=&quot;font-size:10px&quot;&gt;ACA: web · worker · cron&lt;/font&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px&quot;&gt;transactional truth&lt;/font&gt;" style="shape=mxgraph.azure.container_apps;whiteSpace=wrap;html=1;fillColor=#2E7D32;fontColor=#FFFFFF;strokeColor=none;fontSize=11;verticalAlign=bottom;imageWidth=40;imageHeight=40;" vertex="1" parent="1">
+          <mxGeometry x="80" y="410" width="160" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="postgresql" value="Azure PostgreSQL&lt;br&gt;&lt;font style=&quot;font-size:10px&quot;&gt;Flexible Server&lt;/font&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px&quot;&gt;ipai-odoo-dev-pg&lt;/font&gt;" style="shape=mxgraph.azure.database_for_postgresql_servers;whiteSpace=wrap;html=1;fillColor=#2E7D32;fontColor=#FFFFFF;strokeColor=none;fontSize=11;verticalAlign=bottom;imageWidth=40;imageHeight=40;" vertex="1" parent="1">
+          <mxGeometry x="290" y="410" width="160" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="n8n_aca" value="n8n&lt;br&gt;&lt;font style=&quot;font-size:10px&quot;&gt;ACA: automation&lt;/font&gt;" style="shape=mxgraph.azure.container_apps;whiteSpace=wrap;html=1;fillColor=#558B2F;fontColor=#FFFFFF;strokeColor=none;fontSize=11;verticalAlign=bottom;imageWidth=36;imageHeight=36;" vertex="1" parent="1">
+          <mxGeometry x="500" y="410" width="130" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="plane_aca" value="Plane&lt;br&gt;&lt;font style=&quot;font-size:10px&quot;&gt;ACA: project mgmt&lt;/font&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px&quot;&gt;command surface only&lt;/font&gt;" style="shape=mxgraph.azure.container_apps;whiteSpace=wrap;html=1;fillColor=#558B2F;fontColor=#FFFFFF;strokeColor=none;fontSize=11;verticalAlign=bottom;imageWidth=36;imageHeight=36;" vertex="1" parent="1">
+          <mxGeometry x="670" y="410" width="150" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="superset_aca" value="Superset&lt;br&gt;&lt;font style=&quot;font-size:10px&quot;&gt;ACA: BI dashboards&lt;/font&gt;" style="shape=mxgraph.azure.container_apps;whiteSpace=wrap;html=1;fillColor=#558B2F;fontColor=#FFFFFF;strokeColor=none;fontSize=11;verticalAlign=bottom;imageWidth=36;imageHeight=36;" vertex="1" parent="1">
+          <mxGeometry x="860" y="410" width="130" height="80" as="geometry" />
+        </mxCell>
+
+        <!-- ═══════════════════════════════════════════════════════ -->
+        <!-- PLANE 4: DATA INTELLIGENCE -->
+        <!-- ═══════════════════════════════════════════════════════ -->
+        <mxCell id="plane4" value="&lt;b&gt;4 · Data Intelligence Plane&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F3E5F5;strokeColor=#7B1FA2;dashed=1;dashPattern=5 5;verticalAlign=top;align=left;spacingLeft=10;spacingTop=5;fontSize=13;fontColor=#7B1FA2;" vertex="1" parent="1">
+          <mxGeometry x="40" y="530" width="1440" height="130" as="geometry" />
+        </mxCell>
+        <mxCell id="databricks" value="Databricks&lt;br&gt;&lt;font style=&quot;font-size:10px&quot;&gt;dbw-ipai-dev&lt;/font&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px&quot;&gt;analytical truth&lt;/font&gt;" style="shape=mxgraph.azure.azure_databricks;whiteSpace=wrap;html=1;fillColor=#7B1FA2;fontColor=#FFFFFF;strokeColor=none;fontSize=11;verticalAlign=bottom;imageWidth=40;imageHeight=40;" vertex="1" parent="1">
+          <mxGeometry x="80" y="570" width="150" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="adls_delta" value="ADLS / Delta Lake&lt;br&gt;&lt;font style=&quot;font-size:10px&quot;&gt;medallion architecture&lt;/font&gt;" style="shape=mxgraph.azure.data_lake_storage;whiteSpace=wrap;html=1;fillColor=#7B1FA2;fontColor=#FFFFFF;strokeColor=none;fontSize=11;verticalAlign=bottom;imageWidth=40;imageHeight=40;" vertex="1" parent="1">
+          <mxGeometry x="270" y="570" width="160" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="unity_catalog" value="Unity Catalog&lt;br&gt;&lt;font style=&quot;font-size:10px&quot;&gt;governed data access&lt;/font&gt;" style="shape=mxgraph.azure.purview_accounts;whiteSpace=wrap;html=1;fillColor=#7B1FA2;fontColor=#FFFFFF;strokeColor=none;fontSize=11;verticalAlign=bottom;imageWidth=36;imageHeight=36;" vertex="1" parent="1">
+          <mxGeometry x="470" y="570" width="140" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="fabric_bi" value="Microsoft Fabric&lt;br&gt;&lt;font style=&quot;font-size:10px&quot;&gt;BI · mirroring&lt;/font&gt;" style="shape=mxgraph.azure.power_bi;whiteSpace=wrap;html=1;fillColor=#7B1FA2;fontColor=#FFFFFF;strokeColor=none;fontSize=11;verticalAlign=bottom;imageWidth=36;imageHeight=36;" vertex="1" parent="1">
+          <mxGeometry x="650" y="570" width="140" height="70" as="geometry" />
+        </mxCell>
+
+        <!-- ═══════════════════════════════════════════════════════ -->
+        <!-- PLANE 5: AGENT / AI RUNTIME -->
+        <!-- ═══════════════════════════════════════════════════════ -->
+        <mxCell id="plane5" value="&lt;b&gt;5 · Agent / AI Runtime Plane&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF8E1;strokeColor=#F57F17;dashed=1;dashPattern=5 5;verticalAlign=top;align=left;spacingLeft=10;spacingTop=5;fontSize=13;fontColor=#F57F17;" vertex="1" parent="1">
+          <mxGeometry x="40" y="680" width="1440" height="130" as="geometry" />
+        </mxCell>
+        <mxCell id="foundry" value="Microsoft Foundry&lt;br&gt;&lt;font style=&quot;font-size:10px&quot;&gt;agent runtime/eval truth&lt;/font&gt;" style="shape=mxgraph.azure.ai_studio;whiteSpace=wrap;html=1;fillColor=#F57F17;fontColor=#FFFFFF;strokeColor=none;fontSize=11;verticalAlign=bottom;imageWidth=40;imageHeight=40;" vertex="1" parent="1">
+          <mxGeometry x="80" y="720" width="160" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="doc_intelligence" value="Document Intelligence&lt;br&gt;&lt;font style=&quot;font-size:10px&quot;&gt;docai-ipai-dev&lt;/font&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px&quot;&gt;extraction truth&lt;/font&gt;" style="shape=mxgraph.azure.form_recognizers;whiteSpace=wrap;html=1;fillColor=#F57F17;fontColor=#FFFFFF;strokeColor=none;fontSize=11;verticalAlign=bottom;imageWidth=36;imageHeight=36;" vertex="1" parent="1">
+          <mxGeometry x="280" y="720" width="160" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="logic_apps" value="Logic Apps&lt;br&gt;&lt;font style=&quot;font-size:10px&quot;&gt;orchestration&lt;/font&gt;" style="shape=mxgraph.azure.logic_apps;whiteSpace=wrap;html=1;fillColor=#F57F17;fontColor=#FFFFFF;strokeColor=none;fontSize=11;verticalAlign=bottom;imageWidth=36;imageHeight=36;" vertex="1" parent="1">
+          <mxGeometry x="480" y="720" width="130" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="functions" value="Azure Functions&lt;br&gt;&lt;font style=&quot;font-size:10px&quot;&gt;serverless compute&lt;/font&gt;" style="shape=mxgraph.azure.function_apps;whiteSpace=wrap;html=1;fillColor=#F57F17;fontColor=#FFFFFF;strokeColor=none;fontSize=11;verticalAlign=bottom;imageWidth=36;imageHeight=36;" vertex="1" parent="1">
+          <mxGeometry x="650" y="720" width="140" height="70" as="geometry" />
+        </mxCell>
+
+        <!-- ═══════════════════════════════════════════════════════ -->
+        <!-- PLANE 6: EXPERIENCE / DOMAIN APPLICATIONS -->
+        <!-- ═══════════════════════════════════════════════════════ -->
+        <mxCell id="plane6" value="&lt;b&gt;6 · Experience / Domain Application Plane&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E0F7FA;strokeColor=#00838F;dashed=1;dashPattern=5 5;verticalAlign=top;align=left;spacingLeft=10;spacingTop=5;fontSize=13;fontColor=#00838F;" vertex="1" parent="1">
+          <mxGeometry x="40" y="830" width="1440" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="odoo_ui" value="Odoo UI&lt;br&gt;&lt;font style=&quot;font-size:10px&quot;&gt;ERP · website · portal&lt;/font&gt;" style="shape=mxgraph.azure.app_services;whiteSpace=wrap;html=1;fillColor=#00838F;fontColor=#FFFFFF;strokeColor=none;fontSize=11;verticalAlign=bottom;imageWidth=36;imageHeight=36;" vertex="1" parent="1">
+          <mxGeometry x="80" y="870" width="140" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="domain_workbenches" value="Domain Workbenches&lt;br&gt;&lt;font style=&quot;font-size:10px&quot;&gt;ops-console · analyst apps&lt;/font&gt;" style="shape=mxgraph.azure.app_services;whiteSpace=wrap;html=1;fillColor=#00838F;fontColor=#FFFFFF;strokeColor=none;fontSize=11;verticalAlign=bottom;imageWidth=36;imageHeight=36;" vertex="1" parent="1">
+          <mxGeometry x="260" y="870" width="170" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="apis" value="APIs&lt;br&gt;&lt;font style=&quot;font-size:10px&quot;&gt;FastAPI · Odoo JSON-RPC&lt;/font&gt;" style="shape=mxgraph.azure.api_management_services;whiteSpace=wrap;html=1;fillColor=#00838F;fontColor=#FFFFFF;strokeColor=none;fontSize=11;verticalAlign=bottom;imageWidth=36;imageHeight=36;" vertex="1" parent="1">
+          <mxGeometry x="470" y="870" width="140" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="web_apps" value="web/ apps&lt;br&gt;&lt;font style=&quot;font-size:10px&quot;&gt;Next.js · browser copilot&lt;/font&gt;" style="shape=mxgraph.azure.static_apps;whiteSpace=wrap;html=1;fillColor=#00838F;fontColor=#FFFFFF;strokeColor=none;fontSize=11;verticalAlign=bottom;imageWidth=36;imageHeight=36;" vertex="1" parent="1">
+          <mxGeometry x="650" y="870" width="150" height="60" as="geometry" />
+        </mxCell>
+
+        <!-- ═══════════════════════════════════════════════════════ -->
+        <!-- CONNECTIONS (key data flows) -->
+        <!-- ═══════════════════════════════════════════════════════ -->
+        <!-- DNS → Front Door -->
+        <mxCell id="edge_dns_afd" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#666666;strokeWidth=2;" edge="1" source="cloudflare_dns" target="azure_front_door" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <!-- Front Door → Odoo -->
+        <mxCell id="edge_afd_odoo" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#2E7D32;strokeWidth=2;" edge="1" source="azure_front_door" target="odoo_aca" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <!-- Odoo → PostgreSQL -->
+        <mxCell id="edge_odoo_pg" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#2E7D32;strokeWidth=2;" edge="1" source="odoo_aca" target="postgresql" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <!-- PostgreSQL → Databricks (JDBC extract) -->
+        <mxCell id="edge_pg_dbx" value="JDBC extract" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#7B1FA2;strokeWidth=2;dashed=1;fontSize=10;fontColor=#7B1FA2;" edge="1" source="postgresql" target="databricks" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <!-- PostgreSQL → Fabric (mirroring) -->
+        <mxCell id="edge_pg_fabric" value="Fabric mirroring" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#7B1FA2;strokeWidth=2;dashed=1;fontSize=10;fontColor=#7B1FA2;" edge="1" source="postgresql" target="fabric_bi" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <!-- Databricks → ADLS -->
+        <mxCell id="edge_dbx_adls" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#7B1FA2;strokeWidth=2;" edge="1" source="databricks" target="adls_delta" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <!-- ADLS → Unity Catalog -->
+        <mxCell id="edge_adls_uc" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#7B1FA2;strokeWidth=2;" edge="1" source="adls_delta" target="unity_catalog" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <!-- Foundry → Odoo (agent tool calls) -->
+        <mxCell id="edge_foundry_odoo" value="agent tools" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#F57F17;strokeWidth=2;dashed=1;fontSize=10;fontColor=#F57F17;" edge="1" source="foundry" target="odoo_aca" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <!-- Key Vault → Odoo (secrets) -->
+        <mxCell id="edge_kv_odoo" value="secrets" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#E65100;strokeWidth=1;dashed=1;fontSize=10;fontColor=#E65100;" edge="1" source="key_vault" target="odoo_aca" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <!-- Managed Identity → Key Vault -->
+        <mxCell id="edge_mi_kv" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#E65100;strokeWidth=1;" edge="1" source="managed_identity" target="key_vault" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <!-- Front Door → n8n -->
+        <mxCell id="edge_afd_n8n" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#558B2F;strokeWidth=1;dashed=1;" edge="1" source="azure_front_door" target="n8n_aca" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <!-- Front Door → Plane -->
+        <mxCell id="edge_afd_plane" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#558B2F;strokeWidth=1;dashed=1;" edge="1" source="azure_front_door" target="plane_aca" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <!-- Front Door → Superset -->
+        <mxCell id="edge_afd_superset" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#558B2F;strokeWidth=1;dashed=1;" edge="1" source="azure_front_door" target="superset_aca" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- ═══════════════════════════════════════════════════════ -->
+        <!-- TRUTH-PLANE LEGEND -->
+        <!-- ═══════════════════════════════════════════════════════ -->
+        <!-- Block A: Truth Authorities (6 canonical) -->
+        <mxCell id="legend_box" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FAFAFA;strokeColor=#BDBDBD;verticalAlign=top;align=left;spacingLeft=10;spacingTop=5;" vertex="1" parent="1">
+          <mxGeometry x="1520" y="90" width="360" height="250" as="geometry" />
+        </mxCell>
+        <mxCell id="legend_title" value="&lt;b&gt;Truth Authorities (6)&lt;/b&gt;" style="text;html=1;align=left;verticalAlign=top;whiteSpace=wrap;fontSize=13;fontColor=#1B1B1B;" vertex="1" parent="1">
+          <mxGeometry x="1540" y="100" width="300" height="25" as="geometry" />
+        </mxCell>
+        <mxCell id="legend_1" value="Azure Boards = planned truth" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;fontSize=11;fontColor=#444444;" vertex="1" parent="1">
+          <mxGeometry x="1540" y="130" width="320" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="legend_2" value="GitHub = code truth" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;fontSize=11;fontColor=#444444;" vertex="1" parent="1">
+          <mxGeometry x="1540" y="155" width="320" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="legend_3" value="Azure Pipelines = release truth" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;fontSize=11;fontColor=#444444;" vertex="1" parent="1">
+          <mxGeometry x="1540" y="180" width="320" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="legend_4" value="Azure Resource Graph = live inventory truth" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;fontSize=11;fontColor=#444444;" vertex="1" parent="1">
+          <mxGeometry x="1540" y="205" width="320" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="legend_5" value="Microsoft Foundry = agent/runtime/eval truth" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;fontSize=11;fontColor=#444444;" vertex="1" parent="1">
+          <mxGeometry x="1540" y="230" width="320" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="legend_6" value="Repo SSOT = intended-state truth" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;fontSize=11;fontColor=#444444;" vertex="1" parent="1">
+          <mxGeometry x="1540" y="255" width="320" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="legend_sep1" value="" style="line;strokeColor=#BDBDBD;" vertex="1" parent="1">
+          <mxGeometry x="1540" y="280" width="320" height="10" as="geometry" />
+        </mxCell>
+        <mxCell id="legend_note1" value="&lt;font style=&quot;font-size:10px&quot;&gt;Benchmark vendors (SAP, Concur, AvaTax, etc.)&lt;br&gt;are reference-only — not shown in this diagram.&lt;/font&gt;" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;fontSize=10;fontColor=#999999;" vertex="1" parent="1">
+          <mxGeometry x="1540" y="295" width="320" height="40" as="geometry" />
+        </mxCell>
+
+        <!-- Block B: Domain Systems / Evidence Artifacts -->
+        <mxCell id="evidence_box" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FAFAFA;strokeColor=#BDBDBD;verticalAlign=top;align=left;spacingLeft=10;spacingTop=5;" vertex="1" parent="1">
+          <mxGeometry x="1520" y="360" width="360" height="200" as="geometry" />
+        </mxCell>
+        <mxCell id="evidence_title" value="&lt;b&gt;Domain Systems / Evidence&lt;/b&gt;" style="text;html=1;align=left;verticalAlign=top;whiteSpace=wrap;fontSize=13;fontColor=#1B1B1B;" vertex="1" parent="1">
+          <mxGeometry x="1540" y="370" width="300" height="25" as="geometry" />
+        </mxCell>
+        <mxCell id="evidence_1" value="Odoo = transactional system of record" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;fontSize=11;fontColor=#666666;" vertex="1" parent="1">
+          <mxGeometry x="1540" y="400" width="320" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="evidence_2" value="Databricks + Fabric = analytical system of record" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;fontSize=11;fontColor=#666666;" vertex="1" parent="1">
+          <mxGeometry x="1540" y="425" width="320" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="evidence_3" value="Document Intelligence = extraction pipeline" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;fontSize=11;fontColor=#666666;" vertex="1" parent="1">
+          <mxGeometry x="1540" y="450" width="320" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="evidence_4" value="Runtime Evidence = audit trail" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;fontSize=11;fontColor=#666666;" vertex="1" parent="1">
+          <mxGeometry x="1540" y="475" width="320" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="evidence_5" value="Architecture diagrams = generated artifacts" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;fontSize=11;fontColor=#666666;" vertex="1" parent="1">
+          <mxGeometry x="1540" y="500" width="320" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="evidence_6" value="Validation outputs = CI evidence" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;fontSize=11;fontColor=#666666;" vertex="1" parent="1">
+          <mxGeometry x="1540" y="525" width="320" height="20" as="geometry" />
+        </mxCell>
+
+        <!-- ═══════════════════════════════════════════════════════ -->
+        <!-- EDGE LEGEND -->
+        <!-- ═══════════════════════════════════════════════════════ -->
+        <mxCell id="edge_legend_box" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FAFAFA;strokeColor=#BDBDBD;" vertex="1" parent="1">
+          <mxGeometry x="1520" y="580" width="360" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="edge_legend_title" value="&lt;b&gt;Edge Legend&lt;/b&gt;" style="text;html=1;align=left;verticalAlign=top;whiteSpace=wrap;fontSize=13;fontColor=#1B1B1B;" vertex="1" parent="1">
+          <mxGeometry x="1540" y="590" width="200" height="25" as="geometry" />
+        </mxCell>
+        <mxCell id="edge_legend_solid" value="── solid = active data path" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;fontSize=11;fontColor=#444444;" vertex="1" parent="1">
+          <mxGeometry x="1540" y="620" width="320" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="edge_legend_dashed" value="- - dashed = routed / periodic / target" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;fontSize=11;fontColor=#444444;" vertex="1" parent="1">
+          <mxGeometry x="1540" y="645" width="320" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="edge_legend_color" value="color = plane ownership of the flow" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;fontSize=11;fontColor=#444444;" vertex="1" parent="1">
+          <mxGeometry x="1540" y="670" width="320" height="20" as="geometry" />
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

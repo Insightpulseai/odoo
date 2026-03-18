@@ -1,0 +1,232 @@
+# Unified API Gateway — Machine-Readable SSOT
+# Consumed by: CI validators, architecture docs, DNS generators
+# Human-readable companion: docs/architecture/UNIFIED_API_GATEWAY_TARGET_STATE.md
+version: 1
+last_updated: "2026-03-13"
+
+gateway:
+  canonical_hostname: api.insightpulseai.com
+  version_prefix: /api/v1
+  ingress_owner: azure_front_door
+  gateway_product: azure_apim
+  gateway_tier: consumption
+  auth_mode: oauth2_jwt_apikey
+  tls: front_door_managed
+  waf: enabled
+
+route_groups:
+  - id: erp
+    prefix: /api/v1/erp
+    backing_system: odoo
+    authority_type: system_of_record
+    owner: odoo
+    internal_origin: ipai-odoo-dev-web.thankfulbush-191bdcb0.southeastasia.azurecontainerapps.io
+    allowed_methods: [GET, POST, PUT, PATCH, DELETE]
+    auth_required: true
+    audit_required: true
+    rate_limit_tier: standard
+    status: planned
+    examples:
+      - /api/v1/erp/invoices
+      - /api/v1/erp/projects
+      - /api/v1/erp/tasks
+      - /api/v1/erp/approvals
+
+  - id: control
+    prefix: /api/v1/control
+    backing_system: supabase
+    authority_type: single_source_of_truth
+    owner: supabase
+    internal_origin: spdtwktxdalcfigzeqrz.supabase.co
+    allowed_methods: [GET, POST, PATCH]
+    auth_required: true
+    audit_required: true
+    rate_limit_tier: standard
+    status: planned
+    examples:
+      - /api/v1/control/config
+      - /api/v1/control/agent-registry
+      - /api/v1/control/sync-state
+
+  - id: agents
+    prefix: /api/v1/agents
+    backing_system: foundry
+    authority_type: runtime
+    owner: foundry
+    internal_origin: TBD  # Foundry Agent Service endpoint
+    allowed_methods: [GET, POST]
+    auth_required: true
+    audit_required: true
+    rate_limit_tier: elevated
+    status: planned
+    examples:
+      - /api/v1/agents/conversations
+      - /api/v1/agents/sessions
+      - /api/v1/agents/evaluations
+
+  - id: docs
+    prefix: /api/v1/docs
+    backing_system: plane
+    authority_type: read_replica
+    owner: plane
+    internal_origin: ipai-plane-dev.thankfulbush-191bdcb0.southeastasia.azurecontainerapps.io
+    allowed_methods: [GET]
+    auth_required: true
+    audit_required: false
+    rate_limit_tier: relaxed
+    status: planned
+    examples:
+      - /api/v1/docs/specs
+      - /api/v1/docs/runbooks
+
+  - id: integrations
+    prefix: /api/v1/integrations
+    backing_system: n8n
+    authority_type: orchestration_only
+    owner: n8n
+    internal_origin: n8n.insightpulseai.com
+    allowed_methods: [POST]
+    auth_required: true
+    audit_required: true
+    rate_limit_tier: strict
+    status: planned
+    examples:
+      - /api/v1/integrations/webhooks
+      - /api/v1/integrations/sync
+      - /api/v1/integrations/callbacks
+
+systems:
+  odoo:
+    role: system_of_record
+    domains: [erp]
+    hostname: erp.insightpulseai.com
+    ui_surface: true
+    api_via_gateway: true
+
+  supabase:
+    role: single_source_of_truth
+    domains: [control]
+    project_ref: spdtwktxdalcfigzeqrz
+    ui_surface: false
+    api_via_gateway: true
+
+  foundry:
+    role: agent_runtime
+    domains: [agents]
+    hostname: TBD
+    ui_surface: false
+    api_via_gateway: true
+
+  plane:
+    role: docs_work_management
+    domains: [docs]
+    hostname: plane.insightpulseai.com
+    ui_surface: true
+    api_via_gateway: true
+
+  n8n:
+    role: orchestration
+    domains: [integrations]
+    hostname: n8n.insightpulseai.com
+    ui_surface: true
+    api_via_gateway: true
+
+authority_matrix:
+  - domain: erp
+    authoritative_system: odoo
+    writable_via_gateway: true
+    read_only_via_gateway: false
+    forbidden_operations: [supabase_writes, foundry_writes, direct_db_access]
+    notes: All ERP business state changes must go through Odoo
+
+  - domain: control
+    authoritative_system: supabase
+    writable_via_gateway: true
+    read_only_via_gateway: false
+    forbidden_operations: [odoo_writes, direct_db_access]
+    notes: Control-plane metadata and app config
+
+  - domain: agents
+    authoritative_system: foundry
+    writable_via_gateway: true
+    read_only_via_gateway: false
+    forbidden_operations: [direct_db_writes, odoo_writes]
+    notes: Agent runtime conversations and tool orchestration
+
+  - domain: docs
+    authoritative_system: plane
+    writable_via_gateway: false
+    read_only_via_gateway: true
+    forbidden_operations: [gateway_writes]
+    notes: Read-only summaries and metadata
+
+  - domain: integrations
+    authoritative_system: n8n
+    writable_via_gateway: false
+    read_only_via_gateway: false
+    forbidden_operations: [business_state_writes, direct_data_mutations]
+    notes: Trigger/orchestration only, not source of truth
+
+migration_phases:
+  - id: 1
+    title: Inventory existing routes and hostnames
+    status: not_started
+    dependencies: []
+
+  - id: 2
+    title: Classify ownership and authority
+    status: not_started
+    dependencies: [1]
+
+  - id: 3
+    title: Define gateway route map
+    status: not_started
+    dependencies: [2]
+
+  - id: 4
+    title: Introduce unified DNS/ingress
+    status: not_started
+    dependencies: [3]
+
+  - id: 5
+    title: Move approved consumers to unified API
+    status: not_started
+    dependencies: [4]
+
+  - id: 6
+    title: Deprecate direct public service access
+    status: not_started
+    dependencies: [5]
+
+  - id: 7
+    title: Enforce policy and observability
+    status: not_started
+    dependencies: [6]
+
+  - id: 8
+    title: Document and operationalize
+    status: not_started
+    dependencies: [7]
+
+dns:
+  add:
+    - hostname: api
+      type: CNAME
+      target: azure_front_door
+      purpose: Canonical API entrypoint
+
+  keep_as_ui:
+    - erp.insightpulseai.com
+    - auth.insightpulseai.com
+    - plane.insightpulseai.com
+    - superset.insightpulseai.com
+    - ocr.insightpulseai.com
+
+  evaluate:
+    - hostname: mcp.insightpulseai.com
+      question: Separate MCP protocol or subpath of unified API?
+    - hostname: crm.insightpulseai.com
+      question: Redundant with erp — deprecate?
+
+  deprecate_for_api:
+    - direct service origins for programmatic access

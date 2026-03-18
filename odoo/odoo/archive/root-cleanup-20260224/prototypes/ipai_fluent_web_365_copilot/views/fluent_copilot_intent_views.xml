@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2026 InsightPulse AI
+     License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl). -->
+<odoo>
+    <!-- Intent List View -->
+    <record id="view_copilot_intent_list" model="ir.ui.view">
+        <field name="name">fluent.copilot.intent.list</field>
+        <field name="model">fluent.copilot.intent</field>
+        <field name="arch" type="xml">
+            <list editable="bottom">
+                <field name="sequence" widget="handle"/>
+                <field name="icon"/>
+                <field name="name"/>
+                <field name="code"/>
+                <field name="category"/>
+                <field name="example_utterance"/>
+                <field name="active"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Intent Form View -->
+    <record id="view_copilot_intent_form" model="ir.ui.view">
+        <field name="name">fluent.copilot.intent.form</field>
+        <field name="model">fluent.copilot.intent</field>
+        <field name="arch" type="xml">
+            <form string="Copilot Intent">
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="toggle_active" type="object"
+                            class="oe_stat_button" icon="fa-archive">
+                            <field name="active" widget="boolean_button"
+                                options='{"terminology": "archive"}'/>
+                        </button>
+                    </div>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1>
+                            <field name="name" placeholder="e.g., Summarize Record"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="code"/>
+                            <field name="category"/>
+                            <field name="icon"/>
+                            <field name="sequence"/>
+                        </group>
+                        <group>
+                            <field name="example_utterance"
+                                placeholder="e.g., What is this invoice about?"/>
+                            <field name="applicable_models"
+                                placeholder="e.g., account.move,project.task"/>
+                        </group>
+                    </group>
+                    <group>
+                        <field name="description" placeholder="Detailed description..."/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Intent Action -->
+    <record id="action_copilot_intent" model="ir.actions.act_window">
+        <field name="name">Copilot Intents</field>
+        <field name="res_model">fluent.copilot.intent</field>
+        <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Define Copilot Intents
+            </p>
+            <p>
+                Intents are predefined actions the Copilot can recognize and execute,
+                such as "Summarize", "Explain", "Show KPIs", etc.
+            </p>
+        </field>
+    </record>
+</odoo>

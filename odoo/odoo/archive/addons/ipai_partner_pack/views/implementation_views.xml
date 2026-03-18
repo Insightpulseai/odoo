@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Implementation Template Tree View -->
+    <record id="view_implementation_template_tree" model="ir.ui.view">
+        <field name="name">ipai.implementation.template.tree</field>
+        <field name="model">ipai.implementation.template</field>
+        <field name="arch" type="xml">
+            <list string="Implementation Templates">
+                <field name="sequence" widget="handle"/>
+                <field name="code"/>
+                <field name="name"/>
+                <field name="total_phases"/>
+                <field name="total_deliverables"/>
+                <field name="estimated_duration"/>
+                <field name="active" optional="hide"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Implementation Template Form View -->
+    <record id="view_implementation_template_form" model="ir.ui.view">
+        <field name="name">ipai.implementation.template.form</field>
+        <field name="model">ipai.implementation.template</field>
+        <field name="arch" type="xml">
+            <form string="Implementation Template">
+                <sheet>
+                    <widget name="web_ribbon" title="Archived" bg_color="text-bg-danger" invisible="active"/>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1><field name="name" placeholder="Template Name..."/></h1>
+                    </div>
+                    <group>
+                        <group string="Configuration">
+                            <field name="code"/>
+                            <field name="sequence"/>
+                            <field name="active" invisible="1"/>
+                        </group>
+                        <group string="Statistics">
+                            <field name="total_phases"/>
+                            <field name="total_deliverables"/>
+                            <field name="estimated_duration"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Phases" name="phases">
+                            <field name="phase_ids">
+                                <list editable="bottom">
+                                    <field name="sequence" widget="handle"/>
+                                    <field name="name"/>
+                                    <field name="milestone_type" widget="badge"/>
+                                    <field name="duration_days"/>
+                                    <field name="gate_criteria"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Deliverables" name="deliverables">
+                            <field name="deliverable_ids">
+                                <list editable="bottom">
+                                    <field name="sequence" widget="handle"/>
+                                    <field name="name"/>
+                                    <field name="phase_id"/>
+                                    <field name="deliverable_type" widget="badge"/>
+                                    <field name="owner_role"/>
+                                    <field name="is_mandatory"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Description" name="description">
+                            <field name="description"/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- Implementation Template Action -->
+    <record id="action_implementation_template" model="ir.actions.act_window">
+        <field name="name">Implementation Templates</field>
+        <field name="res_model">ipai.implementation.template</field>
+        <field name="view_mode">list,form</field>
+        <field name="context">{'search_default_filter_active': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create your first implementation template
+            </p>
+            <p>
+                Implementation templates define standard project phases,
+                milestones, and deliverables for repeatable implementations.
+            </p>
+        </field>
+    </record>
+
+    <!-- Risk Register Tree View -->
+    <record id="view_risk_register_item_tree" model="ir.ui.view">
+        <field name="name">ipai.risk.register.item.tree</field>
+        <field name="model">ipai.risk.register.item</field>
+        <field name="arch" type="xml">
+            <list string="Risk Register" decoration-danger="priority >= 16" decoration-warning="priority >= 9 and priority &lt; 16" decoration-info="priority &lt; 9">
+                <field name="name"/>
+                <field name="project_id"/>
+                <field name="risk_category" widget="badge"/>
+                <field name="probability"/>
+                <field name="impact"/>
+                <field name="priority" string="Score"/>
+                <field name="state" widget="badge" decoration-info="state == 'identified'" decoration-warning="state in ('analyzing', 'mitigating')" decoration-success="state in ('monitoring', 'closed')"/>
+                <field name="owner_id" widget="many2one_avatar_user"/>
+                <field name="review_date"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Risk Register Form View -->
+    <record id="view_risk_register_item_form" model="ir.ui.view">
+        <field name="name">ipai.risk.register.item.form</field>
+        <field name="model">ipai.risk.register.item</field>
+        <field name="arch" type="xml">
+            <form string="Risk Register Item">
+                <header>
+                    <button name="action_analyze" string="Analyze" type="object" invisible="state != 'identified'"/>
+                    <button name="action_mitigate" string="Mitigate" type="object" invisible="state != 'analyzing'"/>
+                    <button name="action_monitor" string="Monitor" type="object" invisible="state != 'mitigating'"/>
+                    <button name="action_close" string="Close" type="object" invisible="state not in ('monitoring', 'mitigating')"/>
+                    <field name="state" widget="statusbar" statusbar_visible="identified,analyzing,mitigating,monitoring,closed"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1><field name="name" placeholder="Risk Title..."/></h1>
+                    </div>
+                    <group>
+                        <group string="Context">
+                            <field name="project_id"/>
+                            <field name="sale_order_id"/>
+                            <field name="risk_category"/>
+                        </group>
+                        <group string="Assessment">
+                            <field name="probability"/>
+                            <field name="impact"/>
+                            <field name="priority" string="Risk Score"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group string="Ownership">
+                            <field name="owner_id"/>
+                            <field name="identified_date"/>
+                            <field name="review_date"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Description" name="description">
+                            <field name="description" placeholder="Describe the risk in detail..."/>
+                        </page>
+                        <page string="Mitigation Plan" name="mitigation">
+                            <field name="mitigation_plan" placeholder="Actions to reduce probability or impact..."/>
+                        </page>
+                        <page string="Contingency Plan" name="contingency">
+                            <field name="contingency_plan" placeholder="Actions if the risk materializes..."/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- Risk Register Search View -->
+    <record id="view_risk_register_item_search" model="ir.ui.view">
+        <field name="name">ipai.risk.register.item.search</field>
+        <field name="model">ipai.risk.register.item</field>
+        <field name="arch" type="xml">
+            <search string="Search Risks">
+                <field name="name"/>
+                <field name="project_id"/>
+                <field name="owner_id"/>
+                <separator/>
+                <filter string="High Risk (16+)" name="filter_high" domain="[('priority', '>=', 16)]"/>
+                <filter string="Medium Risk (9-15)" name="filter_medium" domain="[('priority', '>=', 9), ('priority', '&lt;', 16)]"/>
+                <filter string="Low Risk (&lt;9)" name="filter_low" domain="[('priority', '&lt;', 9)]"/>
+                <separator/>
+                <filter string="Open" name="filter_open" domain="[('state', '!=', 'closed')]"/>
+                <filter string="Closed" name="filter_closed" domain="[('state', '=', 'closed')]"/>
+                <separator/>
+                <filter string="My Risks" name="filter_mine" domain="[('owner_id', '=', uid)]"/>
+                <group expand="0" string="Group By">
+                    <filter string="Project" name="group_project" context="{'group_by': 'project_id'}"/>
+                    <filter string="Category" name="group_category" context="{'group_by': 'risk_category'}"/>
+                    <filter string="State" name="group_state" context="{'group_by': 'state'}"/>
+                    <filter string="Owner" name="group_owner" context="{'group_by': 'owner_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Risk Register Action -->
+    <record id="action_risk_register_item" model="ir.actions.act_window">
+        <field name="name">Risk Register</field>
+        <field name="res_model">ipai.risk.register.item</field>
+        <field name="view_mode">list,form</field>
+        <field name="context">{'search_default_filter_open': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Log a new risk
+            </p>
+            <p>
+                Track implementation risks with probability, impact assessment,
+                and mitigation plans.
+            </p>
+        </field>
+    </record>
+</odoo>

@@ -1,0 +1,68 @@
+version: 1
+type: framework_skill
+family: agent_sdk_stack
+skill:
+  name: copilot-sdk-dev-assistant
+  status: draft
+  owner: agents
+  purpose: >
+    Embed GitHub Copilot CLI engine in developer tools and workflows —
+    coding assistance, file-edit planning, repo-aware context. This is a
+    developer productivity tool (technical preview), not an enterprise
+    agent runtime.
+
+  triggers:
+    - developer tool integration requiring coding assistance
+    - coding assistant setup for a team or project
+    - BYOK provider configuration (OpenAI, Azure AI Foundry, Anthropic)
+    - quality evaluation of Copilot SDK code generation
+
+  inputs:
+    - Copilot subscription status (active subscription vs BYOK)
+    - BYOK provider selection and API key reference (if applicable)
+    - target language and framework
+    - JSON-RPC interface configuration
+    - repository context and conventions
+    - quality evaluation criteria
+
+  steps:
+    - verify Copilot subscription or BYOK setup (fail fast if neither)
+    - configure SDK client for target language (Python, TypeScript, Go, .NET)
+    - set up JSON-RPC communication channel
+    - configure BYOK provider if not using Copilot subscription
+    - integrate with target developer tool or workflow
+    - test code generation quality against evaluation criteria
+    - document auth constraints (BYOK lacks Entra/managed identity)
+    - produce integration report with quality assessment
+
+  outputs:
+    - sdk_integration_config
+    - byok_provider_setup
+    - json_rpc_config
+    - integration_test_results
+    - quality_assessment
+    - auth_constraint_documentation
+    - evidence
+
+  guardrails:
+    - do NOT treat as enterprise agent runtime — technical preview only
+    - BYOK lacks Entra ID and managed identity support — document this constraint explicitly
+    - require quality evaluation before any production use
+    - never use for non-developer-facing agent surfaces
+    - never hardcode BYOK API keys — use env vars or secret store
+    - never conflate with Microsoft Agent Framework — different purpose entirely
+
+  evidence:
+    required: true
+    format: "docs/evidence/{stamp}/copilot-sdk/integration/"
+
+  evals:
+    dimensions: [accuracy, completeness, safety, policy_adherence, evidence_quality]
+    thresholds:
+      accuracy: 0.90
+      safety: 0.99
+
+cross_references:
+  - agents/personas/developer-copilot.md
+  - agents/knowledge/benchmarks/github-copilot-sdk.md
+  - agent-platform/ssot/learning/agent_sdk_stack_map.yaml

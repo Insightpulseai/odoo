@@ -1,0 +1,94 @@
+// Systray Item Styles
+
+.ipai-systray-item {
+  position: relative;
+
+  &--disabled {
+    opacity: 0.5;
+    pointer-events: none;
+  }
+}
+
+.ipai-systray-btn {
+  display: flex;
+  align-items: center;
+  gap: var(--ipai-space-2);
+  padding: var(--ipai-space-1-5) var(--ipai-space-3);
+  background: transparent;
+  border: none;
+  border-radius: var(--ipai-radius-lg);
+  color: var(--ipai-on-surface-variant);
+  cursor: pointer;
+  transition:
+    background var(--ipai-duration-fast) var(--ipai-ease-out),
+    color var(--ipai-duration-fast) var(--ipai-ease-out);
+
+  &:hover {
+    background: var(--ipai-surface-container);
+    color: var(--ipai-on-surface);
+  }
+
+  &--active {
+    background: var(--ipai-primary-container);
+    color: var(--ipai-primary);
+
+    &:hover {
+      background: var(--ipai-primary-container);
+    }
+  }
+}
+
+.ipai-systray-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+
+  svg {
+    width: 100%;
+    height: 100%;
+  }
+}
+
+.ipai-systray-label {
+  font-size: var(--ipai-text-sm);
+  font-weight: var(--ipai-font-medium);
+}
+
+// Pulse indicator
+.ipai-systray-pulse {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 8px;
+  height: 8px;
+  background: var(--ipai-primary);
+  border-radius: var(--ipai-radius-full);
+  animation: ipai-pulse 2s infinite;
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset: -2px;
+    background: var(--ipai-primary);
+    border-radius: var(--ipai-radius-full);
+    opacity: 0.5;
+    animation: ipai-pulse-ring 2s infinite;
+  }
+}
+
+@keyframes ipai-pulse-ring {
+  0% {
+    transform: scale(1);
+    opacity: 0.5;
+  }
+  50% {
+    transform: scale(1.5);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 0;
+  }
+}

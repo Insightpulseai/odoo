@@ -1,0 +1,172 @@
+version: "1.0"
+description: "GitHub Well-Architected Framework Assessment Model for OCA-style Monorepos"
+
+pillars:
+  productivity:
+    name: "Productivity"
+    weight: 0.25
+    description: "accelerate developer velocity through automation and determinism"
+    domains:
+      automation_coverage:
+        checks:
+          - id: generator_scripts_exist
+            description: "SSOT generators must exist for critical configs (addons, DNS)"
+            critical: true
+            maturity_criteria:
+              0: "No generator scripts found"
+              2: "Critical generators (gen_addons_path, gen_dns) exist"
+              4: "Generators optimized, cached, and fully documented"
+          - id: makefile_automation
+            description: "Common operations must have Makefile targets"
+            critical: false
+            maturity_criteria:
+              0: "No Makefile or very basic"
+              2: "Standard targets (install, test, deploy) exist"
+              4: "Full lifecycle coverage in Makefile"
+      ci_efficiency:
+        checks:
+          - id: ci_workflow_coverage
+            description: "Quality gates for drift, spec-kit, and generators"
+            critical: false
+            maturity_criteria:
+              0: "Basic or no CI"
+              2: "Gates for critical paths exist"
+              4: "Comprehensive coverage with < 5min feedback"
+          - id: generator_output_deterministic
+            description: "Generators must produce identical output on re-run"
+            critical: true
+            maturity_criteria:
+              0: "Generators produce variable output"
+              4: "Generators are fully deterministic"
+
+  collaboration:
+    name: "Collaboration"
+    weight: 0.20
+    description: "foster team alignment and knowledge sharing"
+    domains:
+      documentation:
+        checks:
+          - id: readme_current
+            description: "README.md must be updated within last 30 days"
+            critical: false
+            maturity_criteria:
+              0: "Stale or missing README"
+              4: "Active, current README"
+          - id: claude_md_current
+            description: "CLAUDE.md must reflect current architecture"
+            critical: false
+            maturity_criteria:
+              0: "Missing CLAUDE.md"
+              4: "CLAUDE.md present"
+      community_health:
+        checks:
+          - id: pr_template_exists
+            description: "PR template must exist with checklist"
+            critical: false
+            maturity_criteria:
+              0: "No PR template"
+              4: "PR template with checklist"
+          - id: codeowners_exists
+            description: "CODEOWNERS must cover critical paths"
+            critical: false
+            maturity_criteria:
+              0: "No CODEOWNERS"
+              4: "Comprehensive CODEOWNERS"
+
+  security:
+    name: "Application Security"
+    weight: 0.25
+    description: "secure code, dependencies, and infrastructure"
+    domains:
+      secrets_management:
+        checks:
+          - id: github_secrets_scanning_enabled
+            description: "GitHub secrets scanning must be enabled"
+            critical: true
+            maturity_criteria:
+              0: "Disabled"
+              4: "Enabled"
+      code_security:
+        checks:
+          - id: branch_protection_enabled
+            description: "Main branch protection must be enabled"
+            critical: true
+            maturity_criteria:
+              0: "Disabled"
+              4: "Enabled with linear history and rules"
+          - id: dependabot_enabled
+            description: "Dependabot alerts must be enabled"
+            critical: false
+            maturity_criteria:
+              0: "Disabled"
+              4: "Enabled"
+      data_security:
+        checks:
+          - id: supabase_rls_enabled
+            description: "RLS policies must exist for Supabase tables"
+            critical: false
+            maturity_criteria:
+              0: "No RLS policies check"
+              4: "RLS enforced"
+
+  governance:
+    name: "Governance"
+    weight: 0.15
+    description: "ensure compliance and manage technical debt"
+    domains:
+      compliance:
+        checks:
+          - id: drift_gates_exist
+            description: "CI gates must prevent manual changes to generated files"
+            critical: false
+            maturity_criteria:
+              0: "No drift detection"
+              4: "Automated drift gates"
+      spec_management:
+        checks:
+          - id: spec_bundles_exist
+            description: "Spec bundles must exist for significant features"
+            critical: false
+            maturity_criteria:
+              0: "No spec bundles"
+              4: "Spec bundles present"
+          - id: spec_bundle_quality
+            description: "Spec bundles must be complete (constitution + PRD + plan)"
+            critical: false
+            maturity_criteria:
+              0: "Incomplete bundles"
+              4: "Complete bundles"
+
+  architecture:
+    name: "Architecture"
+    weight: 0.15
+    description: "maintain ssot patterns and layer separation"
+    domains:
+      ssot_patterns:
+        checks:
+          - id: ssot_generators_exist
+            description: "Generator scripts must exist for critical configs"
+            critical: true
+            maturity_criteria:
+              0: "No SSOT generators"
+              4: "Generators for all configs"
+          - id: dependency_pinning
+            description: "Lock files must be committed"
+            critical: false
+            maturity_criteria:
+              0: "No lock files"
+              4: "Lock files present"
+      modularity:
+        checks:
+          - id: layer_separation
+            description: "Clear separation of concern (Odoo/Supabase/Infra)"
+            critical: false
+            maturity_criteria:
+              0: "Mixed concerns"
+              4: "Clean separation"
+          - id: no_hardcoded_configs
+            description: "No hardcoded IPs, URLs, or configs"
+            critical: false
+            maturity_criteria:
+              0: "Hardcoded values detected"
+              4: "Config via env/files"

@@ -1,0 +1,141 @@
+schema_version: "1.0"
+updated_at: "2026-03-15"
+
+n8n_target:
+  url: https://n8n-azure.insightpulseai.com
+  api_base: /api/v1
+  port: 5678
+
+import_policy:
+  default_state: disabled  # All imported disabled; enable per-wave
+  url_rewrite:
+    old: https://spdtwktxdalcfigzeqrz.supabase.co
+    new: https://supabase.insightpulseai.com
+  credential_rewrite:
+    strategy: manual  # Credentials must be re-created on target n8n
+
+enablement_waves:
+  - wave: 1
+    name: "Health & Control"
+    description: "Health checks, monitoring, heartbeat workflows"
+    enable_after: "All Phase 5 consumer smoke tests pass"
+    workflows:
+      # Health checks
+      - automations/n8n/workflows/01-health-check.json
+      - automations/n8n/workflows/control-plane/health-check-scheduler.json
+      # Control plane backup
+      - automations/n8n/workflows/control-plane/backup-scheduler.json
+      # MCP connection test
+      - automations/n8n/workflows/claude-ai-mcp/test/00_mcp_connection_test.json
+
+  - wave: 2
+    name: "Read-Only Integrations"
+    description: "Workflows that only read from Supabase (dashboards, reports, exports, queries)"
+    enable_after: "Wave 1 healthy for 24h"
+    workflows:
+      # MCP read-only workflows
+      - automations/n8n/workflows/claude-ai-mcp/read-only/01_mcp_odoo_query.json
+      - automations/n8n/workflows/claude-ai-mcp/read-only/02_mcp_supabase_ops.json
+      - automations/n8n/workflows/claude-ai-mcp/read-only/03_mcp_finance_summary.json
+      - automations/n8n/workflows/claude-ai-mcp/read-only/04_mcp_infra_health.json
+      - automations/n8n/workflows/claude-ai-mcp/read-only/05_mcp_workflow_monitor.json
+      - automations/n8n/workflows/claude-ai-mcp/read-only/06_mcp_sync_trigger.json
+      # Reporting / cache refresh
+      - automations/n8n/workflows/superset-cache-refresh.json
+      # Odoo reverse mapper (read-only query)
+      - automations/n8n/workflows/odoo_reverse_mapper.json
+      # PPM reconciliation (read + compare)
+      - automations/n8n/workflows/ppm-clarity-reconciliation.json
+
+  - wave: 3
+    name: "GitHub & Slack Events"
+    description: "Webhook receivers for GitHub events and Slack commands"
+    enable_after: "Wave 2 healthy for 24h"
+    workflows:
+      # GitHub event handlers
+      - automations/n8n/workflows/github-events-handler.json
+      - automations/n8n/workflows/github-router.json
+      - automations/n8n/workflows/05-github-oauth-callback.json
+      - automations/n8n/workflows/02-git-operations-hub.json
+      - automations/n8n/workflows/git_operations_hub.json
+      # Slack / ChatOps
+      - automations/n8n/workflows/ppm-clarity-slack-commands.json
+      - automations/n8n/workflows/chatops-hotfix.json
+      - automations/n8n/workflows/channel-action-workflow.json
+      # Deployment notifications
+      - automations/n8n/workflows/deployment-notify.json
+      # AI agent router (webhook-triggered)
+      - automations/n8n/workflows/ai-agent-router.json
+      # Integration event router
+      - automations/n8n/workflows/integration/event-router.json
+      - automations/n8n/workflows/integration/workspace-events-handler.json
+
+  - wave: 4
+    name: "Write-Path & Deployment"
+    description: "Workflows that write to Supabase, trigger deployments, or mutate state"
+    enable_after: "Wave 3 healthy for 48h"
+    workflows:
+      # MCP write-path workflows
+      - automations/n8n/workflows/claude-ai-mcp/write-path/07_mcp_workflow_manager.json
+      - automations/n8n/workflows/claude-ai-mcp/write-path/08_mcp_github_ops.json
+      - automations/n8n/workflows/claude-ai-mcp/write-path/09_mcp_artifact_deployer.json
+      # Deployment triggers
+      - automations/n8n/workflows/github-deploy-trigger.json
+      - automations/n8n/workflows/control-plane/deploy-trigger.json
+      # Finance write-path (journal posting, closing)
+      - automations/n8n/workflows/n8n_ai_journal_posting.json
+      - automations/n8n/workflows/finance_closing_automation.json
+      - automations/n8n/workflows/03-finance-close-orchestrator.json
+      - automations/n8n/workflows/n8n_finance_ppm_workflow_odoo19.json
+      # Expense capture (writes to Odoo)
+      - automations/n8n/workflows/expense_receipt_capture.json
+      - automations/n8n/workflows/invoice_ocr_to_odoo.json
+      - automations/n8n/workflows/integration/expense-handler.json
+      - automations/n8n/workflows/integration/finance-handler.json
+      # BIR compliance (writes)
+      - automations/n8n/workflows/04-bir-compliance.json
+      - automations/n8n/workflows/n8n_bir_efiling_automation.json
+      - automations/n8n/workflows/n8n_bir_form_generation.json
+      - automations/n8n/workflows/bir-rag-pipeline.json
+      # PPM sync (bidirectional writes)
+      - automations/n8n/workflows/plane-odoo-github-sync.json
+      - automations/n8n/workflows/ppm-clarity-odoo-to-plane.json
+      - automations/n8n/workflows/ppm-clarity-plane-to-odoo.json
+      # Billing / subscription
+      - automations/n8n/workflows/billing-subscription-created.json
+      # Integration write-path
+      - automations/n8n/workflows/integration/asset-handler.json
+      - automations/n8n/workflows/integration/github-artifacts-mirror.json
+      # Telegram OCR
+      - automations/n8n/workflows/claude-ai-mcp/11_telegram_ocr_gemini_complete.json
+      # Tenant provisioning
+      - automations/n8n/n8n_tenant_provisioning.json
+      # Vercel drain handler (transitional -- Vercel is deprecated)
+      - automations/n8n/workflows/vercel-drain-handler.json
+      # Architecture review
+      - automations/n8n/workflows/wa-architecture-review.json
+      # Teams bot adapter (transitional)
+      - automations/n8n/workflows/teams-bot-adapter.json
+
+  - wave: 5
+    name: "Cron & Batch"
+    description: "Scheduled batch jobs and recurring workflows"
+    enable_after: "Wave 4 healthy for 48h"
+    workflows:
+      # BIR deadline cron jobs
+      - automations/n8n/workflows/bir_deadline_reminder.json
+      - automations/n8n/bir_deadline_reminder_workflow.json
+      - automations/n8n/bir_overdue_nudge_workflow.json
+      # Monthly close automation (scheduled)
+      - automations/n8n/workflows/ppm_monthly_close_automation.json
+
+# Workflows in secondary locations -- duplicates or legacy copies, do NOT import
+excluded:
+  - path: odoo/automations/n8n/workflows/
+    reason: "Duplicate of automations/n8n/workflows/ (nested odoo/ directory)"
+  - path: automations/workflows/n8n/
+    reason: "Legacy workflow location; canonical files are in automations/n8n/workflows/"
+  - path: infra/n8n/workflows/platform/
+    reason: "Platform-specific reference tool, not a standard n8n workflow"
+  - path: web/platform-kit/infra/n8n/
+    reason: "Platform kit reference, not a deployable workflow"

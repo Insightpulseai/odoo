@@ -1,0 +1,422 @@
+openapi: 3.0.3
+info:
+  title: Lakehouse Executor Contract
+  description: |
+    Standard API contract for lakehouse executors (Spark, Trino, dbt, Python, notebooks).
+    Control Room submits runs; executors claim, execute, and report back.
+  version: 1.0.0
+  contact:
+    name: Data Platform Team
+  license:
+    name: Apache 2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0
+
+servers:
+  - url: https://executor.example.com
+    description: Production executor gateway
+  - url: http://localhost:8080
+    description: Local development
+
+tags:
+  - name: health
+    description: Health check endpoints
+  - name: runs
+    description: Run lifecycle management
+  - name: events
+    description: Event streaming
+
+paths:
+  /v1/health:
+    get:
+      tags: [health]
+      summary: Health check
+      operationId: getHealth
+      responses:
+        "200":
+          description: Executor is healthy
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HealthResponse"
+        "503":
+          description: Executor is unhealthy
+
+  /v1/runs:
+    post:
+      tags: [runs]
+      summary: Submit a run
+      operationId: submitRun
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RunSubmit"
+      responses:
+        "202":
+          description: Run accepted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RunAccepted"
+        "400":
+          description: Invalid run specification
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "429":
+          description: Rate limited or caps exceeded
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /v1/runs/{run_id}:
+    get:
+      tags: [runs]
+      summary: Get run status
+      operationId: getRunStatus
+      parameters:
+        - $ref: "#/components/parameters/RunId"
+      responses:
+        "200":
+          description: Run status
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RunStatus"
+        "404":
+          description: Run not found
+
+  /v1/runs/{run_id}/cancel:
+    post:
+      tags: [runs]
+      summary: Cancel a run
+      operationId: cancelRun
+      parameters:
+        - $ref: "#/components/parameters/RunId"
+      responses:
+        "202":
+          description: Cancel requested
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RunAccepted"
+        "404":
+          description: Run not found
+        "409":
+          description: Run already completed or canceled
+
+  /v1/runs/{run_id}/events:
+    get:
+      tags: [events]
+      summary: Stream run events (SSE)
+      operationId: streamRunEvents
+      parameters:
+        - $ref: "#/components/parameters/RunId"
+        - name: since
+          in: query
+          description: Return events after this timestamp
+          schema:
+            type: string
+            format: date-time
+      responses:
+        "200":
+          description: Event stream (text/event-stream)
+          content:
+            text/event-stream:
+              schema:
+                type: string
+        "404":
+          description: Run not found
+
+  /v1/runs/{run_id}/artifacts:
+    get:
+      tags: [runs]
+      summary: List run artifacts
+      operationId: listRunArtifacts
+      parameters:
+        - $ref: "#/components/parameters/RunId"
+        - name: kind
+          in: query
+          description: Filter by artifact kind
+          schema:
+            type: string
+            enum: [log, dataset, report, manifest, checkpoint]
+      responses:
+        "200":
+          description: Artifact list
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ArtifactList"
+        "404":
+          description: Run not found
+
+  /v1/executors:
+    get:
+      tags: [health]
+      summary: List registered executors
+      operationId: listExecutors
+      responses:
+        "200":
+          description: Executor list
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ExecutorList"
+
+  /v1/executors/{executor_id}/heartbeat:
+    post:
+      tags: [health]
+      summary: Executor heartbeat
+      operationId: executorHeartbeat
+      parameters:
+        - name: executor_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/HeartbeatPayload"
+      responses:
+        "200":
+          description: Heartbeat acknowledged
+        "404":
+          description: Executor not found
+
+components:
+  parameters:
+    RunId:
+      name: run_id
+      in: path
+      required: true
+      description: Unique run identifier
+      schema:
+        type: string
+        format: uuid
+
+  schemas:
+    HealthResponse:
+      type: object
+      required: [status, version]
+      properties:
+        status:
+          type: string
+          enum: [healthy, degraded, unhealthy]
+        version:
+          type: string
+        capabilities:
+          type: array
+          items:
+            type: string
+            enum: [sql, spark, dbt, python, notebook, pipeline]
+        uptime_seconds:
+          type: integer
+
+    RunSubmit:
+      type: object
+      required: [run_id, job_type, payload, artifact_base_uri]
+      properties:
+        run_id:
+          type: string
+          format: uuid
+          description: Client-generated unique run ID
+        job_type:
+          type: string
+          enum: [sql, spark, dbt, python, notebook, pipeline]
+          description: Type of job to execute
+        payload:
+          type: object
+          additionalProperties: true
+          description: Job-specific configuration
+        artifact_base_uri:
+          type: string
+          description: "Base URI for artifacts (s3://bucket/path or https://blob...)"
+        env:
+          type: object
+          additionalProperties:
+            type: string
+          description: Environment variables to pass to executor
+        secrets_ref:
+          type: string
+          description: Reference to secret bundle name; executor resolves at runtime
+        priority:
+          type: integer
+          default: 100
+          description: Lower values = higher priority
+        timeout_seconds:
+          type: integer
+          default: 3600
+          description: Maximum run duration
+        idempotency_key:
+          type: string
+          description: Optional key for idempotent submissions
+        tags:
+          type: object
+          additionalProperties:
+            type: string
+          description: Arbitrary tags for filtering/routing
+
+    RunAccepted:
+      type: object
+      required: [run_id, executor_run_id, status]
+      properties:
+        run_id:
+          type: string
+          format: uuid
+        executor_run_id:
+          type: string
+          description: Executor's internal run identifier
+        status:
+          type: string
+          enum: [queued, claimed]
+
+    RunStatus:
+      type: object
+      required: [run_id, status]
+      properties:
+        run_id:
+          type: string
+          format: uuid
+        executor_run_id:
+          type: string
+        status:
+          type: string
+          enum: [queued, claimed, running, succeeded, failed, canceled]
+        phase:
+          type: string
+          enum: [prepare, resolve, execute, validate, publish, finalize]
+          description: Current execution phase
+        progress_pct:
+          type: integer
+          minimum: 0
+          maximum: 100
+        started_at:
+          type: string
+          format: date-time
+        finished_at:
+          type: string
+          format: date-time
+        duration_seconds:
+          type: integer
+        error_message:
+          type: string
+        error_code:
+          type: string
+        retry_count:
+          type: integer
+
+    RunEvent:
+      type: object
+      required: [id, ts, level, message]
+      properties:
+        id:
+          type: integer
+        ts:
+          type: string
+          format: date-time
+        level:
+          type: string
+          enum: [debug, info, warn, error]
+        phase:
+          type: string
+          enum: [prepare, resolve, execute, validate, publish, finalize]
+        message:
+          type: string
+        data:
+          type: object
+          additionalProperties: true
+
+    Artifact:
+      type: object
+      required: [id, kind, uri]
+      properties:
+        id:
+          type: integer
+        kind:
+          type: string
+          enum: [log, dataset, report, manifest, checkpoint]
+        uri:
+          type: string
+          description: Full URI to artifact
+        sha256:
+          type: string
+          description: SHA-256 checksum
+        size_bytes:
+          type: integer
+        meta:
+          type: object
+          additionalProperties: true
+
+    ArtifactList:
+      type: object
+      required: [artifacts]
+      properties:
+        artifacts:
+          type: array
+          items:
+            $ref: "#/components/schemas/Artifact"
+        total_count:
+          type: integer
+
+    Executor:
+      type: object
+      required: [id, name, capabilities, is_active]
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        capabilities:
+          type: array
+          items:
+            type: string
+            enum: [sql, spark, dbt, python, notebook, pipeline]
+        is_active:
+          type: boolean
+        last_seen_at:
+          type: string
+          format: date-time
+        current_runs:
+          type: integer
+        max_concurrent_runs:
+          type: integer
+
+    ExecutorList:
+      type: object
+      required: [executors]
+      properties:
+        executors:
+          type: array
+          items:
+            $ref: "#/components/schemas/Executor"
+
+    HeartbeatPayload:
+      type: object
+      properties:
+        current_runs:
+          type: integer
+        available_capacity:
+          type: integer
+        metrics:
+          type: object
+          additionalProperties: true
+
+    Error:
+      type: object
+      required: [code, message]
+      properties:
+        code:
+          type: string
+        message:
+          type: string
+        details:
+          type: object
+          additionalProperties: true

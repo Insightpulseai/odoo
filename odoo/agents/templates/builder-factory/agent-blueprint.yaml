@@ -1,0 +1,24 @@
+schema: ipai.blueprint.agent.v1
+id: ""
+name: ""
+purpose: ""
+persona_ref: ""           # agents/personas/<name>.md
+skills: []                # list of SKILL.md paths
+tools: []                 # list of tool bindings
+knowledge_refs: []        # agents/knowledge/**
+eval_hooks:
+  pre_publish: []         # eval scenarios to pass before publishing
+  post_deploy: []         # eval scenarios to run after deployment
+inputs:
+  - name: ""
+    type: ""
+    required: true
+outputs:
+  - name: ""
+    type: ""
+dependencies: []          # other agents this depends on
+promotion_criteria:
+  - "All pre_publish evals pass"
+  - "No critical risk findings"
+  - "Security-judge review complete"
+  - "Documentation exists"

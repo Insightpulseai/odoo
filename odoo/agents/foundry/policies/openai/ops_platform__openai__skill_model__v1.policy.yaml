@@ -1,0 +1,81 @@
+version: 1
+namespace: ipai.ops_platform.openai.skill_model.v1
+artifact_type: policy
+repo_key: ops_platform
+domain: openai
+subject: skill_model
+
+# ============================================================================
+# OPENAI ACADEMY SKILL MODEL
+# ============================================================================
+# Skills = reusable process, tool, and convention patterns.
+# The factory emits a skill pack as Layer 2 output.
+# Source: OpenAI Academy Skills concept
+# Examples: design-doc-to-plan, jira-sprint-planner-from-notes,
+#           pr-description-and-changelog-style
+# ============================================================================
+
+skill_types:
+  - process_skill      # Multi-step workflow (e.g., design-doc-to-plan)
+  - tool_skill         # Tool-specific capability (e.g., Odoo XML-RPC patterns)
+  - convention_skill   # Standards/style enforcement (e.g., PR description format)
+  - role_pack          # Persona + skills bundle (e.g., finance analyst pack)
+
+skill_schema:
+  required_fields:
+    - skill_id
+    - skill_type
+    - title
+    - description
+    - inputs
+    - outputs
+    - dependencies
+    - version
+
+  optional_fields:
+    - examples
+    - eval_criteria
+    - upstream_source
+    - tool_bindings
+
+rules:
+  every_factory_output_must_include_skill_pack: true
+  skills_must_be_reusable_across_projects: true
+  skills_must_declare_dependencies: true
+  skills_must_have_eval_criteria_for_production: true
+  convention_skills_must_reference_ssot_policy: true
+
+factory_output_layer_2:
+  name: reusable_operating_intelligence
+  inspired_by: openai_academy_skills
+  produces:
+    - process_skills
+    - tool_skills
+    - convention_skills
+    - role_packs
+
+engineering_skill_examples:
+  - id: design_doc_to_plan
+    type: process_skill
+    description: "Convert design document to implementation plan with task decomposition"
+    ipai_equivalent: "/speckit.plan"
+
+  - id: jira_sprint_planner_from_notes
+    type: process_skill
+    description: "Generate sprint backlog from meeting notes or spec tasks"
+    ipai_equivalent: "/speckit.tasks"
+
+  - id: pr_description_and_changelog
+    type: convention_skill
+    description: "Generate PR description and changelog from commit diff"
+    ipai_equivalent: "/git-workflow:create-pr"
+
+  - id: runbook_from_evidence
+    type: process_skill
+    description: "Draft operational runbook from deployment evidence"
+    ipai_equivalent: "agents/runbooks/ generation"
+
+  - id: debug_and_optimize
+    type: tool_skill
+    description: "Systematic debugging and performance optimization workflow"
+    ipai_equivalent: "/troubleshoot"

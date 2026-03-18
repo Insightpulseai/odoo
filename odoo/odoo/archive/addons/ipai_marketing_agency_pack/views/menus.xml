@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Root Menu -->
+    <menuitem id="menu_marketing_agency_root"
+              name="Marketing Agency"
+              sequence="55"/>
+
+    <!-- Client Brands Submenu -->
+    <menuitem id="menu_client_brands"
+              name="Client Brands"
+              parent="menu_marketing_agency_root"
+              action="action_client_brand"
+              sequence="10"/>
+
+    <!-- Campaigns Submenu -->
+    <menuitem id="menu_campaigns"
+              name="Campaigns"
+              parent="menu_marketing_agency_root"
+              action="action_campaign"
+              sequence="20"/>
+
+    <!-- Creative Production Menu -->
+    <menuitem id="menu_creative_production"
+              name="Creative Production"
+              parent="menu_marketing_agency_root"
+              sequence="30"/>
+
+    <menuitem id="menu_creative_briefs"
+              name="Creative Briefs"
+              parent="menu_creative_production"
+              action="action_creative_brief"
+              sequence="10"/>
+
+    <menuitem id="menu_assets"
+              name="Assets"
+              parent="menu_creative_production"
+              action="action_asset"
+              sequence="20"/>
+
+    <!-- Media & Content Menu -->
+    <menuitem id="menu_media_content"
+              name="Media &amp; Content"
+              parent="menu_marketing_agency_root"
+              sequence="40"/>
+
+    <menuitem id="menu_content_calendar"
+              name="Content Calendar"
+              parent="menu_media_content"
+              action="action_content_calendar_item"
+              sequence="10"/>
+
+    <menuitem id="menu_performance"
+              name="Performance Metrics"
+              parent="menu_media_content"
+              action="action_performance_snapshot"
+              sequence="20"/>
+</odoo>

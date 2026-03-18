@@ -1,0 +1,23 @@
+# Environment files (local development only)
+.env
+.env.local
+.env.development
+.env.test
+.env.production
+.env.staging
+
+# Keep templates (committed to git)
+!.env.example
+!.env.template
+!.env.sample
+
+# Secret files
+secrets/
+*.key
+*.pem
+*.p12
+*.pfx
+
+# Vault files
+vault/
+.vault/

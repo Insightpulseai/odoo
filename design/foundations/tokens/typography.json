@@ -1,0 +1,26 @@
+{
+  "category": "typography",
+  "description": "Typography tokens. Fluent 2 type ramp aligned.",
+  "tokens": {
+    "type.family.base": "Segoe UI, -apple-system, BlinkMacSystemFont, sans-serif",
+    "type.family.monospace": "Cascadia Code, Consolas, monospace",
+    "type.size.100": "10px",
+    "type.size.200": "12px",
+    "type.size.300": "14px",
+    "type.size.400": "16px",
+    "type.size.500": "20px",
+    "type.size.600": "24px",
+    "type.size.700": "28px",
+    "type.size.800": "32px",
+    "type.size.900": "40px",
+    "type.weight.regular": 400,
+    "type.weight.semibold": 600,
+    "type.weight.bold": 700,
+    "type.line-height.100": "14px",
+    "type.line-height.200": "16px",
+    "type.line-height.300": "20px",
+    "type.line-height.400": "22px",
+    "type.line-height.500": "28px",
+    "type.line-height.600": "32px"
+  }
+}

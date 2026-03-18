@@ -8,8 +8,6 @@
             <field name="code">model.cron_dispatch_queued()</field>
             <field name="interval_number">2</field>
             <field name="interval_type">minutes</field>
-            <field name="numbercall">-1</field>
-            <field name="doall">False</field>
             <field name="active">True</field>
         </record>
     </data>

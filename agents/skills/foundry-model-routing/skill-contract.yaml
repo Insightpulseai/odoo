@@ -1,0 +1,61 @@
+version: 1
+type: foundry_skill
+family: foundry_model_tool_runtime
+skill:
+  name: foundry-model-routing
+  status: draft
+  owner: agents
+  purpose: >
+    Decide whether to pin one model or use model router for quality/cost/latency
+    optimization. Model router is a conditional optimization surface, not a
+    default-on feature.
+
+  triggers:
+    - multi-model evaluation for a workload
+    - cost optimization initiative
+    - latency optimization initiative
+    - quality trade-off analysis
+
+  inputs:
+    - workload variability profile (uniform vs mixed request types)
+    - cost budget and constraints
+    - latency SLA
+    - quality requirements per request type
+    - current model assignment
+
+  steps:
+    - assess workload variability (uniform requests vs mixed complexity)
+    - evaluate router benefits vs pinned model for this workload
+    - model expected cost/latency trade-offs with and without router
+    - recommend pinned or routed configuration with rationale
+    - define fallback strategy (what happens if router is unavailable)
+    - document trade-off notes and expected behavior
+
+  outputs:
+    - routing_recommendation
+    - trade_off_notes
+    - fallback_strategy
+    - expected_cost_impact
+    - expected_latency_impact
+
+  guardrails:
+    - router is a conditional optimization surface, not default everywhere
+    - require workload variability evidence before recommending router
+    - document latency implications of routing overhead
+    - pinned model is the default — router requires justification
+    - never recommend router without fallback strategy
+
+  evidence:
+    required: true
+    format: "docs/evidence/{stamp}/foundry/model-routing/"
+
+  evals:
+    dimensions: [accuracy, completeness, safety, policy_adherence, evidence_quality]
+    thresholds:
+      accuracy: 0.95
+      safety: 0.99
+
+cross_references:
+  - agents/knowledge/benchmarks/microsoft-foundry-models-and-tools.md
+  - agents/personas/foundry-model-governor.md
+  - agents/skills/foundry-model-selection/skill-contract.yaml

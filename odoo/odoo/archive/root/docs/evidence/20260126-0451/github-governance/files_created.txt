@@ -1,0 +1,11 @@
+Files Created:
+- .github/workflows/github-governance.yml
+- ops/github/custom-properties/schema.json
+- ops/github/rulesets/org-repo-ruleset.json
+- ops/github/teams/teams.json
+- scripts/github/apply_all_governance.sh
+- scripts/github/apply_custom_properties.sh
+- scripts/github/apply_org_ruleset.sh
+- scripts/github/apply_teams.sh
+- scripts/github/pull_enterprise_audit.sh
+- scripts/github/validate_governance.sh

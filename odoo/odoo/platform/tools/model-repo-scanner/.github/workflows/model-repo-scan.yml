@@ -1,0 +1,94 @@
+name: Model Repo Scanner
+
+on:
+  workflow_dispatch:
+    inputs:
+      organization:
+        description: 'GitHub organization to scan'
+        required: true
+        default: 'jgtolentino'
+      verbose:
+        description: 'Verbose output'
+        type: boolean
+        default: false
+
+  schedule:
+    # Run weekly on Sundays at 00:00 UTC
+    - cron: '0 0 * * 0'
+
+permissions:
+  contents: read
+  pull-requests: read
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y jq ripgrep
+
+      - name: Setup gh CLI
+        run: |
+          gh auth status || echo "Using GITHUB_TOKEN"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Run scanner
+        id: scan
+        run: |
+          cd tools/model-repo-scanner
+          chmod +x scripts/*.sh
+
+          VERBOSE_FLAG=""
+          if [[ "${{ inputs.verbose }}" == "true" ]]; then
+            VERBOSE_FLAG="-v"
+          fi
+
+          ./scripts/find_model_repo.sh \
+            -o "${{ inputs.organization || 'jgtolentino' }}" \
+            $VERBOSE_FLAG
+
+          # Output summary
+          echo "## Model Repo Scanner Results" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Top 5 Repositories" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          jq -r 'sort_by(-.total_score) | .[0:5] | .[] | "- **\(.repo)**: \(.total_score)/100"' artifacts/model-repo-scores.json >> $GITHUB_STEP_SUMMARY
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build ZIP package
+        run: |
+          cd tools/model-repo-scanner
+          zip -r model-repo-scanner.zip \
+            scripts/ \
+            config/ \
+            artifacts/ \
+            .github/workflows/model-repo-scan.yml \
+            README.md \
+            -x "*.cache/*" \
+            -x ".git/*"
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: model-repo-scanner
+          path: |
+            tools/model-repo-scanner/model-repo-scanner.zip
+            tools/model-repo-scanner/artifacts/model-repo-scores.json
+            tools/model-repo-scanner/artifacts/model-repo-report.md
+          retention-days: 30
+
+      - name: Upload scores JSON
+        uses: actions/upload-artifact@v4
+        with:
+          name: model-repo-scores
+          path: tools/model-repo-scanner/artifacts/model-repo-scores.json
+          retention-days: 90

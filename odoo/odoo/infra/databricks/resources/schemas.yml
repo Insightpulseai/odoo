@@ -1,0 +1,42 @@
+# Schema and Table Definitions
+
+resources:
+  schemas:
+    bronze:
+      name: bronze
+      catalog_name: ${var.catalog}
+      comment: "Raw data layer - stores unmodified source data"
+
+    silver:
+      name: silver
+      catalog_name: ${var.catalog}
+      comment: "Cleaned and normalized data layer"
+
+    gold:
+      name: gold
+      catalog_name: ${var.catalog}
+      comment: "Business-ready data marts and aggregations"
+
+# Note: Tables are created dynamically by notebooks
+# This file documents the expected schema
+
+# Bronze Tables:
+# - bronze.notion_raw_pages: Raw Notion page payloads
+# - bronze.azure_rg_raw: Raw Azure Resource Graph results
+# - bronze.sync_watermarks: Sync tracking
+
+# Silver Tables:
+# - silver.notion_programs: Normalized programs
+# - silver.notion_projects: Normalized projects
+# - silver.notion_budget_lines: Normalized budget lines
+# - silver.notion_risks: Normalized risks
+# - silver.azure_advisor_recommendations: Normalized advisor recs
+
+# Gold Tables:
+# - gold.ppm_budget_vs_actual: Budget vs actual by period
+# - gold.ppm_forecast: Run-rate forecast
+# - gold.ppm_risk_summary: Risk rollups
+# - gold.ppm_projects: Enriched projects table
+# - gold.azure_advisor_summary: Advisor summary
+# - gold.control_room_status: Pipeline health metrics
+# - gold.dq_issues: Data quality issues

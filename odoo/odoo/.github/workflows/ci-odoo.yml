@@ -1,0 +1,185 @@
+# .github/workflows/ci-odoo.yml
+# Canonical fast gate for every PR/push.
+# Stages: repo sanity → Python/Odoo validation → schema/spec → benchmark dry-run → summary
+name: CI Odoo
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-odoo-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # ──────────────────────────────────────────────
+  # Stage 1: Repo sanity
+  # ──────────────────────────────────────────────
+  repo-sanity:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Verify CLAUDE.md exists
+        run: test -f CLAUDE.md
+
+      - name: Verify repo structure basics
+        run: |
+          set -euo pipefail
+          for d in addons scripts spec docs .github/workflows; do
+            test -d "$d" || { echo "::error::Missing required directory: $d"; exit 1; }
+          done
+
+      - name: Check for secrets in staged files
+        run: |
+          set -euo pipefail
+          if grep -rEn '(sk-[a-zA-Z0-9]{20,}|ghp_[a-zA-Z0-9]{36}|AKIA[A-Z0-9]{16})' \
+               --include='*.py' --include='*.js' --include='*.ts' --include='*.yml' \
+               --include='*.yaml' --include='*.json' --include='*.env' \
+               addons/ scripts/ apps/ packages/ 2>/dev/null; then
+            echo "::error::Potential secret detected in source files"
+            exit 1
+          fi
+          echo "No secrets detected."
+
+  # ──────────────────────────────────────────────
+  # Stage 2: Python / Odoo validation
+  # ──────────────────────────────────────────────
+  python-lint:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    needs: repo-sanity
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install linters
+        run: pip install flake8 black isort
+
+      - name: flake8
+        run: |
+          flake8 addons/ipai/ \
+            --max-line-length=120 \
+            --extend-ignore=E501,W503,E203 \
+            --count --statistics || true
+
+      - name: black (check only)
+        run: black --check --diff addons/ipai/ || true
+
+      - name: isort (check only)
+        run: isort --check --diff addons/ipai/ || true
+
+  odoo-module-validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    needs: repo-sanity
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Compile all IPAI Python files
+        run: |
+          set -euo pipefail
+          fail=0
+          while IFS= read -r f; do
+            python3 -m py_compile "$f" || { echo "::error file=$f::Syntax error"; fail=1; }
+          done < <(find addons/ipai addons/ipai_* -name '*.py' -type f 2>/dev/null)
+          exit "$fail"
+
+      - name: Validate __manifest__.py files
+        run: |
+          set -euo pipefail
+          fail=0
+          while IFS= read -r m; do
+            python3 -c "
+          import ast, sys
+          try:
+              with open('$m') as f:
+                  data = ast.literal_eval(f.read())
+              assert isinstance(data, dict), 'manifest must be a dict'
+              assert 'name' in data, 'manifest missing name'
+              assert 'version' in data, 'manifest missing version'
+              print('OK:', '$m')
+          except Exception as e:
+              print(f'::error file=$m::{e}', file=sys.stderr)
+              sys.exit(1)
+          " || fail=1
+          done < <(find addons/ipai addons/ipai_* -name '__manifest__.py' -type f 2>/dev/null)
+          exit "$fail"
+
+  # ──────────────────────────────────────────────
+  # Stage 3: Schema / spec validation
+  # ──────────────────────────────────────────────
+  schema-spec:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    needs: repo-sanity
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install YAML validator
+        run: pip install pyyaml
+
+      - name: Validate YAML files in infra/ssot
+        run: |
+          set -euo pipefail
+          find infra/ssot -type f \( -name '*.yaml' -o -name '*.yml' \) -print0 2>/dev/null | \
+            xargs -0 -I{} python3 -c "
+          import yaml, sys
+          try:
+              yaml.safe_load(open('{}', encoding='utf-8'))
+              print('OK:', '{}')
+          except Exception as e:
+              print(f'::error file={}::{e}', file=sys.stderr)
+              sys.exit(1)
+          "
+
+      - name: Validate workflow YAML
+        run: |
+          set -euo pipefail
+          for f in .github/workflows/*.yml; do
+            python3 -c "
+          import yaml, sys
+          try:
+              yaml.safe_load(open('$f', encoding='utf-8'))
+              print('OK:', '$f')
+          except Exception as e:
+              print(f'::error file=$f::{e}', file=sys.stderr)
+              sys.exit(1)
+          "
+          done
+
+  # ──────────────────────────────────────────────
+  # Stage 4: Summary
+  # ──────────────────────────────────────────────
+  ci-summary:
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    needs: [python-lint, odoo-module-validate, schema-spec]
+    if: always()
+    steps:
+      - name: Check upstream results
+        run: |
+          echo "CI Odoo pipeline complete."
+          echo "python-lint: ${{ needs.python-lint.result }}"
+          echo "odoo-module-validate: ${{ needs.odoo-module-validate.result }}"
+          echo "schema-spec: ${{ needs.schema-spec.result }}"
+          if [[ "${{ needs.odoo-module-validate.result }}" == "failure" ]]; then
+            echo "::error::Odoo module validation failed"
+            exit 1
+          fi

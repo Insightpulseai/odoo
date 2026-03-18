@@ -1,0 +1,285 @@
+{
+  "name": "Expense Approval Routing",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "expense-submitted",
+        "options": {}
+      },
+      "id": "webhook-submit",
+      "name": "Expense Submitted",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [250, 300]
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "={{ $env.ODOO_URL }}/api/v1/expenses/{{ $json.expense_id }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBasicAuth"
+      },
+      "id": "get-expense",
+      "name": "Get Expense Details",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [450, 300],
+      "credentials": {
+        "httpBasicAuth": {
+          "id": "odoo-api-auth"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "number": [
+            {
+              "value1": "={{ $json.amount }}",
+              "operation": "smaller",
+              "value2": 100
+            }
+          ]
+        }
+      },
+      "id": "check-auto-approve",
+      "name": "Amount < $100?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [650, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.ODOO_URL }}/api/v1/expenses/{{ $json.expense_id }}/approve",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBasicAuth",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "auto_approved",
+              "value": true
+            },
+            {
+              "name": "notes",
+              "value": "Auto-approved: Amount under threshold"
+            }
+          ]
+        }
+      },
+      "id": "auto-approve",
+      "name": "Auto-Approve",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [850, 200],
+      "credentials": {
+        "httpBasicAuth": {
+          "id": "odoo-api-auth"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "number": [
+            {
+              "value1": "={{ $json.amount }}",
+              "operation": "smallerEqual",
+              "value2": 500
+            }
+          ]
+        }
+      },
+      "id": "check-manager",
+      "name": "Amount <= $500?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [850, 400]
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "={{ $env.ODOO_URL }}/api/v1/employees/{{ $json.employee_id }}/manager",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBasicAuth"
+      },
+      "id": "get-manager",
+      "name": "Get Manager",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [1050, 300],
+      "credentials": {
+        "httpBasicAuth": {
+          "id": "odoo-api-auth"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "={{ $env.ODOO_URL }}/api/v1/employees/{{ $json.employee_id }}/director",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBasicAuth"
+      },
+      "id": "get-director",
+      "name": "Get Director",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [1050, 500],
+      "credentials": {
+        "httpBasicAuth": {
+          "id": "odoo-api-auth"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.MATTERMOST_WEBHOOK }}",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "channel",
+              "value": "expense-approvals"
+            },
+            {
+              "name": "username",
+              "value": "Expense Bot"
+            },
+            {
+              "name": "icon_emoji",
+              "value": ":money_with_wings:"
+            },
+            {
+              "name": "text",
+              "value": "**New Expense Awaiting Approval**\n\n:bust_in_silhouette: **From:** {{ $node['Get Expense Details'].json.employee_name }}\n:moneybag: **Amount:** ${{ $node['Get Expense Details'].json.amount }}\n:page_facing_up: **Description:** {{ $node['Get Expense Details'].json.name }}\n:calendar: **Date:** {{ $node['Get Expense Details'].json.date }}\n\n@{{ $json.manager_username }} - Please review and approve/reject in Odoo."
+            }
+          ]
+        }
+      },
+      "id": "notify-mattermost",
+      "name": "Notify Manager (Mattermost)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [1250, 300]
+    },
+    {
+      "parameters": {
+        "fromEmail": "expenses@company.com",
+        "toEmail": "={{ $json.manager_email }}",
+        "subject": "Expense Approval Required: ${{ $node['Get Expense Details'].json.amount }} from {{ $node['Get Expense Details'].json.employee_name }}",
+        "text": "A new expense requires your approval.\n\nFrom: {{ $node['Get Expense Details'].json.employee_name }}\nAmount: ${{ $node['Get Expense Details'].json.amount }}\nDescription: {{ $node['Get Expense Details'].json.name }}\nDate: {{ $node['Get Expense Details'].json.date }}\n\nPlease log into Odoo to approve or reject this expense."
+      },
+      "id": "notify-email",
+      "name": "Notify Manager (Email)",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2,
+      "position": [1450, 300],
+      "credentials": {
+        "smtp": {
+          "id": "smtp-credentials"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Expense Submitted": {
+      "main": [
+        [
+          {
+            "node": "Get Expense Details",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Expense Details": {
+      "main": [
+        [
+          {
+            "node": "Amount < $100?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Amount < $100?": {
+      "main": [
+        [
+          {
+            "node": "Auto-Approve",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Amount <= $500?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Amount <= $500?": {
+      "main": [
+        [
+          {
+            "node": "Get Manager",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Get Director",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Manager": {
+      "main": [
+        [
+          {
+            "node": "Notify Manager (Mattermost)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Director": {
+      "main": [
+        [
+          {
+            "node": "Notify Manager (Mattermost)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Notify Manager (Mattermost)": {
+      "main": [
+        [
+          {
+            "node": "Notify Manager (Email)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "saveDataErrorExecution": "all",
+    "saveDataSuccessExecution": "all"
+  }
+}

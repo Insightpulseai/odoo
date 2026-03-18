@@ -1,7 +1,7 @@
 # EE Parity Matrix — Odoo CE 19
 
 > **Generated**: 2026-02-24
-> **Source**: `ssot/parity_targets.yaml`
+> **Source**: `odoo/ssot/parity_targets.yaml`
 > **Validator**: `scripts/parity/augment_parity_fields.py`
 
 ## Coverage Summary

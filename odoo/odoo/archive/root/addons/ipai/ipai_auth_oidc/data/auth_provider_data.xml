@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <!--
+            Default OAuth Provider Templates for IPAI Stack.
+
+            These records create OAuth provider entries that can be activated
+            by setting the appropriate environment variables:
+              - OIDC_CLIENT_ID
+              - OIDC_CLIENT_SECRET
+              - OIDC_AUTH_ENDPOINT
+              - OIDC_TOKEN_ENDPOINT
+              - OIDC_USERINFO_ENDPOINT
+
+            For Keycloak (self-hosted):
+              OIDC_AUTH_ENDPOINT=https://auth.insightpulseai.com/realms/ipai/protocol/openid-connect/auth
+              OIDC_TOKEN_ENDPOINT=https://auth.insightpulseai.com/realms/ipai/protocol/openid-connect/token
+              OIDC_USERINFO_ENDPOINT=https://auth.insightpulseai.com/realms/ipai/protocol/openid-connect/userinfo
+
+            For Google:
+              OIDC_AUTH_ENDPOINT=https://accounts.google.com/o/oauth2/v2/auth
+              OIDC_TOKEN_ENDPOINT=https://oauth2.googleapis.com/token
+              OIDC_USERINFO_ENDPOINT=https://openidconnect.googleapis.com/v1/userinfo
+        -->
+
+        <!-- Keycloak OIDC Provider (primary — self-hosted SSO) -->
+        <record id="auth_provider_keycloak" model="auth.oauth.provider">
+            <field name="name">InsightPulse AI SSO (Keycloak)</field>
+            <field name="enabled" eval="False"/>
+            <field name="client_id">ipai-odoo</field>
+            <field name="auth_endpoint">https://auth.insightpulseai.com/realms/ipai/protocol/openid-connect/auth</field>
+            <field name="validation_endpoint">https://auth.insightpulseai.com/realms/ipai/protocol/openid-connect/userinfo</field>
+            <field name="scope">openid email profile</field>
+            <field name="css_class">fa fa-fw fa-lock</field>
+            <field name="body">Sign in with InsightPulse AI</field>
+            <field name="sequence">10</field>
+        </record>
+
+        <!-- Google OIDC Provider (fallback) -->
+        <record id="auth_provider_google_oidc" model="auth.oauth.provider">
+            <field name="name">Google (OIDC)</field>
+            <field name="enabled" eval="False"/>
+            <field name="client_id">PLACEHOLDER_SET_VIA_ENV</field>
+            <field name="auth_endpoint">https://accounts.google.com/o/oauth2/v2/auth</field>
+            <field name="validation_endpoint">https://openidconnect.googleapis.com/v1/userinfo</field>
+            <field name="scope">openid email profile</field>
+            <field name="css_class">fa fa-fw fa-google</field>
+            <field name="body">Sign in with Google</field>
+            <field name="sequence">20</field>
+        </record>
+
+    </data>
+</odoo>

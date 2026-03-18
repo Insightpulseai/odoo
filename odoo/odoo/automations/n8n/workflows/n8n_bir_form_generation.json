@@ -1,0 +1,169 @@
+{
+  "name": "Finance PPM - BIR Form Generation (Odoo 19 PH)",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 23 * * 0"
+            }
+          ]
+        }
+      },
+      "id": "schedule-trigger",
+      "name": "Weekly Schedule (Monday 7AM PHT)",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [220, 300],
+      "notes": "Runs weekly on Monday 7AM PHT (23:00 UTC Sunday) to pre-generate upcoming BIR forms"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "bir-form-generate",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "webhook-trigger",
+      "name": "Webhook (Manual/API)",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [220, 500],
+      "notes": "POST /webhook/bir-form-generate with body: {form_type, period, employee_code}"
+    },
+    {
+      "parameters": {
+        "url": "={{$env.N8N_ODOO_URL}}/xmlrpc/2/common",
+        "method": "POST",
+        "sendBody": true,
+        "contentType": "raw",
+        "rawContentType": "application/xml",
+        "body": "<?xml version=\"1.0\"?>\n<methodCall>\n  <methodName>authenticate</methodName>\n  <params>\n    <param><value><string>={{$env.N8N_ODOO_DB}}</string></value></param>\n    <param><value><string>={{$env.N8N_ODOO_USER}}</string></value></param>\n    <param><value><string>={{$env.N8N_ODOO_PASSWORD}}</string></value></param>\n    <param><value><struct/></value></param>\n  </params>\n</methodCall>"
+      },
+      "id": "odoo-auth",
+      "name": "Authenticate",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [480, 400]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Determine which BIR forms need generation based on upcoming deadlines\n// Uses the Finance PPM BIR Tax Filing project deadlines\n\nconst now = new Date();\nconst pht = new Date(now.getTime() + 8 * 60 * 60 * 1000);\nconst today = pht.toISOString().split('T')[0];\n\n// Look ahead window: forms due in the next 14 days\nconst lookAhead = new Date(pht.getTime() + 14 * 86400000);\nconst lookAheadStr = lookAhead.toISOString().split('T')[0];\n\n// BIR form types and their Odoo 19 PH localization mappings\nconst BIR_FORMS = {\n  '1601-C': {\n    model: 'bir.withholding.return',\n    odoo19_report: 'l10n_ph.action_report_bir_1601c',\n    description: 'Monthly Withholding Tax on Compensation',\n    dat_export: true,\n    efps_form_code: '1601C'\n  },\n  '0619-E': {\n    model: 'bir.withholding.return',\n    odoo19_report: 'l10n_ph.action_report_bir_0619e',\n    description: 'Monthly Expanded Withholding Tax',\n    dat_export: true,\n    efps_form_code: '0619E'\n  },\n  '2550M': {\n    model: 'bir.vat.return',\n    odoo19_report: 'l10n_ph.action_report_bir_2550m',\n    description: 'Monthly VAT Declaration',\n    dat_export: true,\n    efps_form_code: '2550M'\n  },\n  '2550Q': {\n    model: 'bir.vat.return',\n    odoo19_report: 'l10n_ph.action_report_bir_2550q',\n    description: 'Quarterly VAT Return',\n    dat_export: true,\n    slsp_export: true,\n    efps_form_code: '2550Q'\n  },\n  '1601-EQ': {\n    model: 'bir.withholding.return',\n    odoo19_report: 'l10n_ph.action_report_bir_1601eq',\n    description: 'Quarterly Expanded Withholding Tax',\n    dat_export: true,\n    qap_export: true,\n    efps_form_code: '1601EQ'\n  },\n  '1702Q': {\n    model: 'bir.tax_return',\n    odoo19_report: 'l10n_ph.action_report_bir_1702q',\n    description: 'Quarterly Income Tax Return',\n    dat_export: false,\n    efps_form_code: '1702Q'\n  },\n  '1702-RT': {\n    model: 'bir.tax_return',\n    odoo19_report: 'l10n_ph.action_report_bir_1702rt',\n    description: 'Annual Income Tax Return',\n    dat_export: false,\n    efps_form_code: '1702RT'\n  },\n  '1604-CF': {\n    model: 'bir.alphalist',\n    odoo19_report: 'l10n_ph.action_report_bir_1604cf',\n    description: 'Annual Info Return - Compensation',\n    dat_export: true,\n    alphalist_export: true,\n    efps_form_code: '1604CF'\n  },\n  '1604-E': {\n    model: 'bir.alphalist',\n    odoo19_report: 'l10n_ph.action_report_bir_1604e',\n    description: 'Annual Info Return - Expanded',\n    dat_export: true,\n    sawt_export: true,\n    efps_form_code: '1604E'\n  }\n};\n\n// Override from webhook if manual trigger\nconst webhookData = $node['Webhook (Manual/API)']?.json || {};\nconst filterFormType = webhookData.form_type || null;\nconst filterPeriod = webhookData.period || null;\n\nreturn [{\n  json: {\n    today: today,\n    look_ahead: lookAheadStr,\n    bir_forms: BIR_FORMS,\n    filter_form_type: filterFormType,\n    filter_period: filterPeriod,\n    timestamp: now.toISOString()\n  }\n}];"
+      },
+      "id": "compute-form-schedule",
+      "name": "Compute Form Schedule",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [700, 400]
+    },
+    {
+      "parameters": {
+        "url": "={{$env.N8N_ODOO_URL}}/xmlrpc/2/object",
+        "method": "POST",
+        "sendBody": true,
+        "contentType": "raw",
+        "rawContentType": "application/xml",
+        "body": "<?xml version=\"1.0\"?>\n<methodCall>\n  <methodName>execute_kw</methodName>\n  <params>\n    <param><value><string>={{$env.N8N_ODOO_DB}}</string></value></param>\n    <param><value><int>={{$node['Authenticate'].json.params.param.value.int}}</int></value></param>\n    <param><value><string>={{$env.N8N_ODOO_PASSWORD}}</string></value></param>\n    <param><value><string>project.task</string></value></param>\n    <param><value><string>search_read</string></value></param>\n    <param><value><array>\n      <data>\n        <value><array><data>\n          <value><array><data>\n            <value><string>project_id.name</string></value>\n            <value><string>=</string></value>\n            <value><string>Finance PPM - BIR Tax Filing</string></value>\n          </data></value></array>\n          <value><array><data>\n            <value><string>date_deadline</string></value>\n            <value><string>&gt;=</string></value>\n            <value><string>={{$json.today}}</string></value>\n          </data></value></array>\n          <value><array><data>\n            <value><string>date_deadline</string></value>\n            <value><string>&lt;=</string></value>\n            <value><string>={{$json.look_ahead}}</string></value>\n          </data></value></array>\n          <value><array><data>\n            <value><string>stage_id.name</string></value>\n            <value><string>not in</string></value>\n            <value><array><data>\n              <value><string>Done</string></value>\n              <value><string>Cancelled</string></value>\n            </data></array></value>\n          </data></value></array>\n        </data></value></array>\n      </data>\n    </value></array></param>\n    <param><value><struct>\n      <member><name>fields</name><value><array><data>\n        <value><string>name</string></value>\n        <value><string>date_deadline</string></value>\n        <value><string>user_ids</string></value>\n        <value><string>stage_id</string></value>\n        <value><string>description</string></value>\n      </data></array></value></member>\n      <member><name>limit</name><value><int>50</int></value></member>\n      <member><name>order</name><value><string>date_deadline asc</string></value></member>\n    </struct></value></param>\n  </params>\n</methodCall>"
+      },
+      "id": "fetch-upcoming-bir",
+      "name": "Fetch Upcoming BIR Tasks",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [920, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Process upcoming BIR tasks and generate form data\n// Leverages Odoo 19 PH localization (l10n_ph) for:\n//   - 2550Q revamped computation\n//   - SLSP .dat export (Sales List of Sales Purchases)\n//   - QAP .dat export (Quarterly Alphalist of Payees)\n//   - SAWT .dat export (Summary Alphalist of Withholding Taxes)\n//   - Disbursement voucher integration\n\nconst schedule = $node['Compute Form Schedule'].json;\nconst tasksData = $node['Fetch Upcoming BIR Tasks'].json;\n\nfunction parseTasks(data) {\n  if (!data || !data.params) return [];\n  const param = data.params.param;\n  if (!param || !param.value || !param.value.array) return [];\n  const items = param.value.array.data.value;\n  if (!Array.isArray(items)) return items ? [items] : [];\n  return items.map(item => {\n    const members = item.struct.member;\n    const task = {};\n    members.forEach(m => {\n      task[m.name] = m.value.string || m.value.int || '';\n    });\n    return task;\n  });\n}\n\nconst tasks = parseTasks(tasksData);\nconst formJobs = [];\n\nfor (const task of tasks) {\n  const name = task.name || '';\n  \n  // Extract form type from task name (e.g., '1601-C (Withholding Tax) - January 2026')\n  let formType = null;\n  const formMatch = name.match(/^([\\w-]+)\\s*\\(/);\n  if (formMatch) formType = formMatch[1];\n  \n  if (!formType || !schedule.bir_forms[formType]) continue;\n  \n  // Apply filters if manual trigger\n  if (schedule.filter_form_type && formType !== schedule.filter_form_type) continue;\n  \n  const formConfig = schedule.bir_forms[formType];\n  \n  // Extract period from task name\n  const periodMatch = name.match(/- (.+)$/);\n  const period = periodMatch ? periodMatch[1].trim() : 'Unknown';\n  \n  formJobs.push({\n    task_id: task.id,\n    task_name: name,\n    form_type: formType,\n    form_config: formConfig,\n    period: period,\n    deadline: task.date_deadline,\n    stage: task.stage_id,\n    // Odoo 19 PH localization features\n    dat_export_enabled: formConfig.dat_export || false,\n    slsp_export: formConfig.slsp_export || false,\n    qap_export: formConfig.qap_export || false,\n    sawt_export: formConfig.sawt_export || false,\n    alphalist_export: formConfig.alphalist_export || false,\n    efps_form_code: formConfig.efps_form_code\n  });\n}\n\nreturn [{\n  json: {\n    form_jobs: formJobs,\n    job_count: formJobs.length,\n    timestamp: schedule.timestamp\n  }\n}];"
+      },
+      "id": "process-form-jobs",
+      "name": "Process Form Generation Jobs",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1150, 400]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Generate BIR form data using Odoo 19 PH localization\n// This node calls the ipai_bir_tax_compliance model to:\n//   1. Compute tax amounts from Odoo accounting data\n//   2. Generate eBIRForms-compatible JSON\n//   3. Export .dat files (SLSP, QAP, SAWT) where applicable\n//   4. Prepare eFPS submission package\n\nconst jobs = $json.form_jobs;\nconst results = [];\n\nfor (const job of jobs) {\n  const result = {\n    task_id: job.task_id,\n    form_type: job.form_type,\n    period: job.period,\n    deadline: job.deadline,\n    efps_form_code: job.efps_form_code,\n    status: 'pending_generation',\n    // Odoo 19 PH export capabilities\n    exports: []\n  };\n\n  // Mark which exports to generate\n  if (job.dat_export_enabled) {\n    result.exports.push({\n      type: 'dat',\n      description: `${job.form_type} .dat file for eBIRForms import`\n    });\n  }\n  if (job.slsp_export) {\n    result.exports.push({\n      type: 'slsp_dat',\n      description: 'SLSP - Sales List of Sales/Purchases .dat'\n    });\n  }\n  if (job.qap_export) {\n    result.exports.push({\n      type: 'qap_dat', \n      description: 'QAP - Quarterly Alphalist of Payees .dat'\n    });\n  }\n  if (job.sawt_export) {\n    result.exports.push({\n      type: 'sawt_dat',\n      description: 'SAWT - Summary Alphalist of Withholding Taxes .dat'\n    });\n  }\n  if (job.alphalist_export) {\n    result.exports.push({\n      type: 'alphalist_dat',\n      description: 'Alphalist .dat file for annual submission'\n    });\n  }\n\n  results.push(result);\n}\n\n// Summary for Slack notification\nconst formTypes = [...new Set(results.map(r => r.form_type))];\nconst totalExports = results.reduce((sum, r) => sum + r.exports.length, 0);\n\nreturn [{\n  json: {\n    results: results,\n    summary: {\n      forms_to_generate: results.length,\n      form_types: formTypes,\n      total_exports: totalExports,\n      period_range: results.length > 0 \n        ? `${results[0].deadline} to ${results[results.length-1].deadline}`\n        : 'none'\n    }\n  }\n}];"
+      },
+      "id": "generate-forms",
+      "name": "Generate BIR Forms (Odoo 19 PH)",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1400, 400],
+      "notes": "Leverages Odoo 19 PH localization: 2550Q revamp, SLSP/QAP/SAWT .dat export"
+    },
+    {
+      "parameters": {
+        "url": "https://slack.com/api/chat.postMessage",
+        "method": "POST",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "channel",
+              "value": "={{$env.N8N_SLACK_CHANNEL_ID}}"
+            },
+            {
+              "name": "text",
+              "value": "=BIR Form Generation: {{$json.summary.forms_to_generate}} forms queued ({{$json.summary.form_types.join(', ')}}) | {{$json.summary.total_exports}} export files | Deadlines: {{$json.summary.period_range}}"
+            },
+            {
+              "name": "blocks",
+              "value": "=[{\"type\":\"header\",\"text\":{\"type\":\"plain_text\",\"text\":\"BIR Form Generation Report\"}},{\"type\":\"section\",\"text\":{\"type\":\"mrkdwn\",\"text\":\":page_facing_up: *{{$json.summary.forms_to_generate}} BIR forms* queued for generation\\n:file_folder: *{{$json.summary.total_exports}} export files* (DAT/SLSP/QAP/SAWT)\\n:calendar: Deadline range: {{$json.summary.period_range}}\\n:clipboard: Form types: {{$json.summary.form_types.join(', ')}}\\n\\n_Odoo 19 PH Localization: 2550Q revamp + SLSP/QAP/SAWT .dat export_\"}},{\"type\":\"context\",\"elements\":[{\"type\":\"mrkdwn\",\"text\":\"_Auto-generated by Finance PPM BIR Form Generation workflow_\"}]}]"
+            }
+          ]
+        }
+      },
+      "id": "slack-notification",
+      "name": "Slack: Form Generation Report",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1650, 400]
+    }
+  ],
+  "connections": {
+    "Weekly Schedule (Monday 7AM PHT)": {
+      "main": [[{ "node": "Authenticate", "type": "main", "index": 0 }]]
+    },
+    "Webhook (Manual/API)": {
+      "main": [[{ "node": "Authenticate", "type": "main", "index": 0 }]]
+    },
+    "Authenticate": {
+      "main": [[{ "node": "Compute Form Schedule", "type": "main", "index": 0 }]]
+    },
+    "Compute Form Schedule": {
+      "main": [[{ "node": "Fetch Upcoming BIR Tasks", "type": "main", "index": 0 }]]
+    },
+    "Fetch Upcoming BIR Tasks": {
+      "main": [[{ "node": "Process Form Generation Jobs", "type": "main", "index": 0 }]]
+    },
+    "Process Form Generation Jobs": {
+      "main": [[{ "node": "Generate BIR Forms (Odoo 19 PH)", "type": "main", "index": 0 }]]
+    },
+    "Generate BIR Forms (Odoo 19 PH)": {
+      "main": [[{ "node": "Slack: Form Generation Report", "type": "main", "index": 0 }]]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "saveManualExecutions": true,
+    "callerPolicy": "workflowsFromSameOwner",
+    "timezone": "Asia/Manila"
+  },
+  "staticData": null,
+  "tags": [
+    { "name": "finance" },
+    { "name": "bir" },
+    { "name": "odoo19" },
+    { "name": "form-generation" },
+    { "name": "ph-localization" }
+  ],
+  "meta": {
+    "templateCredsSetupCompleted": false,
+    "instanceId": "finance-ppm-bir-forms"
+  }
+}

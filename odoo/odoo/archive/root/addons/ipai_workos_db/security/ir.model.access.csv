@@ -1,0 +1,7 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_ipai_workos_database_user,access_ipai_workos_database_user,model_ipai_workos_database,base.group_user,1,1,1,0
+access_ipai_workos_database_manager,access_ipai_workos_database_manager,model_ipai_workos_database,base.group_system,1,1,1,1
+access_ipai_workos_property_user,access_ipai_workos_property_user,model_ipai_workos_property,base.group_user,1,1,1,1
+access_ipai_workos_property_manager,access_ipai_workos_property_manager,model_ipai_workos_property,base.group_system,1,1,1,1
+access_ipai_workos_row_user,access_ipai_workos_row_user,model_ipai_workos_row,base.group_user,1,1,1,1
+access_ipai_workos_row_manager,access_ipai_workos_row_manager,model_ipai_workos_row,base.group_system,1,1,1,1

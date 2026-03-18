@@ -1,0 +1,4 @@
+--- a/_work/OCA-ai/ai_oca_bridge_chatter/static/description/Chat.json
++++ b/automations/n8n/workflows/Chat.json
+@@ Move stray workflow to canonical location @@
+# git mv '_work/OCA-ai/ai_oca_bridge_chatter/static/description/Chat.json' 'automations/n8n/workflows/Chat.json'

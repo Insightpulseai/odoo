@@ -1,0 +1,6 @@
+id,name,project_id/id,deadline,milestone_type,gate_status,approval_required,approver_id/id,baseline_deadline
+ipai_project.ms_jan_close,January Close Complete,ipai_project.project_q1_close,2026-01-31,phase_gate,not_started,true,,2026-01-31
+ipai_project.ms_feb_close,February Close Complete,ipai_project.project_q1_close,2026-02-28,phase_gate,not_started,true,,2026-02-28
+ipai_project.ms_mar_close,March Close Complete,ipai_project.project_q1_close,2026-03-31,phase_gate,not_started,true,,2026-03-31
+ipai_project.ms_q1_bir_1601c,Q1 BIR 1601-C Filed,ipai_project.project_bir_compliance,2026-01-15,deliverable,not_started,false,,2026-01-15
+ipai_project.ms_q1_bir_2550m,Q1 BIR 2550M Filed,ipai_project.project_bir_compliance,2026-01-20,deliverable,not_started,false,,2026-01-20

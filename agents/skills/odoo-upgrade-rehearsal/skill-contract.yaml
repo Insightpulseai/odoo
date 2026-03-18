@@ -1,0 +1,58 @@
+version: 1
+type: governance_skill
+family: oca_community_governance
+skill:
+  name: odoo-upgrade-rehearsal
+  status: draft
+  owner: odoo-tester
+  purpose: >
+    Execute and validate upgrade rehearsal on disposable database — test
+    migration scripts, verify data integrity, capture evidence.
+
+  triggers:
+    - upgrade planning approved
+    - migration scripts ready
+    - pre-production rehearsal
+
+  inputs:
+    - source database snapshot (disposable copy)
+    - target Odoo version
+    - OpenUpgrade migration scripts
+    - custom ipai_* migration scripts
+
+  steps:
+    - create disposable DB copy from source
+    - run OpenUpgrade migration against disposable DB
+    - verify module install status post-migration
+    - check data integrity (record counts, key fields)
+    - run automated tests post-migration
+    - classify failures per testing policy
+    - capture evidence logs
+
+  outputs:
+    - rehearsal_report
+    - pass_fail_per_module
+    - data_integrity_results
+    - failure_classification
+    - evidence_logs
+
+  guardrails:
+    - never rehearse on production DB
+    - always use disposable copy
+    - classify every failure per testing policy
+    - save raw output to evidence directory
+
+  evidence:
+    required: true
+    format: "docs/evidence/{stamp}/oca-governance/odoo-upgrade-rehearsal/"
+
+  evals:
+    dimensions: [accuracy, completeness, safety, policy_adherence, evidence_quality]
+    thresholds:
+      accuracy: 0.95
+      safety: 0.99
+
+cross_references:
+  - agents/knowledge/benchmarks/oca-community-governance.md
+  - agents/skills/odoo-openupgrade-assessment/skill-contract.yaml
+  - agent-platform/ssot/learning/oca_skill_persona_map.yaml

@@ -1,0 +1,22 @@
+# Checklist — caf-landing-zone-design
+
+- [ ] Current management group and subscription topology assessed
+- [ ] Management group hierarchy designed (or justified why flat structure is appropriate)
+- [ ] Subscription topology defined (platform vs application subscriptions)
+- [ ] Resource group naming convention validated (`rg-ipai-{purpose}-{env}`)
+- [ ] Identity baseline established (Entra ID tenant, RBAC roles)
+- [ ] Conditional Access policies defined
+- [ ] Privileged Identity Management (PIM) considered for admin roles
+- [ ] Network topology designed (hub-spoke or VWAN)
+- [ ] Address space planned with no overlapping ranges
+- [ ] DNS resolution strategy documented
+- [ ] Private Link / service endpoints configured for PaaS services
+- [ ] NSG rules defined for network segmentation
+- [ ] Platform automation approach selected (Bicep modules, Azure Verified Modules)
+- [ ] Deployment pipeline defined (GitHub Actions or Azure Pipelines)
+- [ ] Centralized logging workspace configured (Log Analytics)
+- [ ] Azure Monitor and Application Insights enabled
+- [ ] Microsoft Defender for Cloud enabled
+- [ ] Tagging policy defined and enforced
+- [ ] CAF landing zone review checklist completed
+- [ ] Evidence captured in `docs/evidence/{stamp}/caf/landing-zone/`

@@ -1,0 +1,5 @@
+External ID (optional),Stage Name* (project.task.type/name),Sequence (number),Folded in Kanban (Y/N) (fold),Applies to Projects (comma-separated project names) (project_ids/name)
+stage_preparation,Preparation,1,N,Example Project
+stage_review,Review,2,N,Example Project
+stage_approval,Approval,3,N,Example Project
+stage_done,Done,4,Y,Example Project

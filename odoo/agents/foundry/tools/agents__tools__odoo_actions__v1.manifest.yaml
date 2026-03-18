@@ -1,0 +1,71 @@
+# agents__tools__odoo_actions__v1.manifest.yaml
+apiVersion: ipai.tool/v1
+kind: ToolManifest
+metadata:
+  name: odoo-actions
+  version: "1.0.0"
+  description: "Approved Odoo RPC actions for agent use"
+  owner: platform-team
+  last_updated: "2026-03-16"
+
+spec:
+  provider: odoo_rpc
+  transport: json-rpc
+  endpoint_template: "${ODOO_URL}/jsonrpc"
+  authentication:
+    method: api_key
+    key_vault: kv-ipai-dev
+    secret_name: odoo-agent-api-key
+
+  actions:
+    odoo_search_partner:
+      odoo_model: res.partner
+      odoo_method: search_read
+      fields: [id, name, vat, email, phone, country_id, property_account_payable_id]
+      domain_template: "[('name', 'ilike', '{query}')]"
+      max_limit: 50
+      side_effects: none
+
+    odoo_get_journal_entries:
+      odoo_model: account.move
+      odoo_method: search_read
+      fields: [id, name, date, journal_id, partner_id, amount_total, state, move_type, line_ids]
+      domain_template: "[('date', '>=', '{date_from}'), ('date', '<=', '{date_to}')]"
+      max_limit: 200
+      side_effects: none
+
+    odoo_create_vendor_bill:
+      odoo_model: account.move
+      odoo_method: create
+      required_fields: [partner_id, invoice_line_ids]
+      defaults:
+        move_type: in_invoice
+        state: draft
+      side_effects: ["Creates account.move record in draft"]
+      constraints:
+        - "Always creates in draft state — never auto-posts"
+        - "Requires valid partner_id"
+
+    odoo_create_expense:
+      odoo_model: hr.expense
+      odoo_method: create
+      required_fields: [employee_id, product_id, total_amount]
+      side_effects: ["Creates hr.expense in draft"]
+      constraints:
+        - "Employee must exist and be active"
+        - "Product must be an expense product"
+
+    odoo_update_move_state:
+      odoo_model: account.move
+      allowed_actions: [action_post, button_draft, button_cancel]
+      side_effects: ["Changes account.move workflow state"]
+      constraints:
+        - "Must follow Odoo state machine: draft → posted, posted → cancel"
+        - "Requires human confirmation before execution"
+        - "Never skip intermediate states"
+
+  global_constraints:
+    - "All actions must go through Odoo ORM — no direct SQL"
+    - "Respect Odoo ACL and record rules"
+    - "Log all mutations to OpenTelemetry"
+    - "Never delete records — use archive (active=False) instead"

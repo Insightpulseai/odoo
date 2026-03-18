@@ -1,0 +1,38 @@
+name,finance_code,finance_category,finance_deadline_type,reviewer_id/login,approver_id/login,prep_duration,review_duration,approval_duration,project_id/name,is_finance_ppm
+"Record accruals for Consultancy Fees and various routine General Expense Accruals. Estimated expense for which a vendor invoice has not yet been received.",RIM,Accruals & Expenses,monthly,ckveracruz@tbwaphilippines.com,ckveracruz@tbwaphilippines.com,1.0,0.5,0.5,Month-end closing,TRUE
+"Review and reconcile all accrued expenses to ensure accuracy and completeness.",BOM,Accruals & Expenses,monthly,rmeran@tbwaphilippines.com,ckveracruz@tbwaphilippines.com,1.0,0.5,0.5,Month-end closing,TRUE
+"Process payroll for the current month including salaries, benefits, and deductions.",JPAL,Payroll & Personnel,monthly,bmanalo@tbwaphilippines.com,rmeran@tbwaphilippines.com,1.0,0.5,0.5,Month-end closing,TRUE
+"Calculate and record payroll-related provisions and accruals.",LAS,Payroll & Personnel,monthly,rmeran@tbwaphilippines.com,ckveracruz@tbwaphilippines.com,1.0,0.5,0.5,Month-end closing,TRUE
+"Reconcile employee advances and loan accounts.",RMQB,Payroll & Personnel,monthly,bmanalo@tbwaphilippines.com,rmeran@tbwaphilippines.com,1.0,0.5,0.5,Month-end closing,TRUE
+"Record government-mandated benefits (SSS, PhilHealth, Pag-IBIG) contributions.",JMSM,Payroll & Personnel,monthly,bmanalo@tbwaphilippines.com,rmeran@tbwaphilippines.com,1.0,0.5,0.5,Month-end closing,TRUE
+"Compute and record withholding tax provisions for the month.",JAP,Tax & Provisions,monthly,rmeran@tbwaphilippines.com,ckveracruz@tbwaphilippines.com,1.0,0.5,0.5,Month-end closing,TRUE
+"Calculate and record VAT output and input tax for the month.",JPAL,Tax & Provisions,monthly,rmeran@tbwaphilippines.com,ckveracruz@tbwaphilippines.com,1.0,0.5,0.5,Month-end closing,TRUE
+"Prepare tax reconciliation schedules and supporting documentation.",JLI,Tax & Provisions,monthly,bmanalo@tbwaphilippines.com,rmeran@tbwaphilippines.com,1.0,0.5,0.5,Month-end closing,TRUE
+"Record percentage tax provisions for applicable transactions.",JRMO,Tax & Provisions,monthly,rmeran@tbwaphilippines.com,ckveracruz@tbwaphilippines.com,1.0,0.5,0.5,Month-end closing,TRUE
+"Reconcile all bank accounts including petty cash and main operating accounts.",CSD,Bank Reconciliation,monthly,bmanalo@tbwaphilippines.com,rmeran@tbwaphilippines.com,1.0,0.5,0.5,Month-end closing,TRUE
+"Investigate and resolve outstanding reconciling items from previous months.",RIM,Bank Reconciliation,monthly,ckveracruz@tbwaphilippines.com,ckveracruz@tbwaphilippines.com,1.0,0.5,0.5,Month-end closing,TRUE
+"Prepare bank reconciliation statements with supporting documentation.",BOM,Bank Reconciliation,monthly,rmeran@tbwaphilippines.com,ckveracruz@tbwaphilippines.com,1.0,0.5,0.5,Month-end closing,TRUE
+"Reconcile all accounts receivable subsidiary ledgers to general ledger.",LAS,AR/AP Reconciliation,monthly,bmanalo@tbwaphilippines.com,rmeran@tbwaphilippines.com,1.0,0.5,0.5,Month-end closing,TRUE
+"Reconcile all accounts payable subsidiary ledgers to general ledger.",RMQB,AR/AP Reconciliation,monthly,bmanalo@tbwaphilippines.com,rmeran@tbwaphilippines.com,1.0,0.5,0.5,Month-end closing,TRUE
+"Age analysis of receivables and provision for doubtful accounts.",JMSM,AR/AP Reconciliation,monthly,rmeran@tbwaphilippines.com,ckveracruz@tbwaphilippines.com,1.0,0.5,0.5,Month-end closing,TRUE
+"Age analysis of payables and accrual verification.",JAP,AR/AP Reconciliation,monthly,rmeran@tbwaphilippines.com,ckveracruz@tbwaphilippines.com,1.0,0.5,0.5,Month-end closing,TRUE
+"Process depreciation for all fixed assets for the month.",JPAL,Fixed Assets & Depreciation,monthly,bmanalo@tbwaphilippines.com,rmeran@tbwaphilippines.com,1.0,0.5,0.5,Month-end closing,TRUE
+"Update fixed asset register for new acquisitions and disposals.",JLI,Fixed Assets & Depreciation,monthly,bmanalo@tbwaphilippines.com,rmeran@tbwaphilippines.com,1.0,0.5,0.5,Month-end closing,TRUE
+"Reconcile fixed asset accounts to general ledger.",JRMO,Fixed Assets & Depreciation,monthly,rmeran@tbwaphilippines.com,ckveracruz@tbwaphilippines.com,1.0,0.5,0.5,Month-end closing,TRUE
+"Prepare month-end adjusting journal entries for all accounts.",CSD,Journal Entries & Adjustments,monthly,bmanalo@tbwaphilippines.com,rmeran@tbwaphilippines.com,1.0,0.5,0.5,Month-end closing,TRUE
+"Record prepayment amortizations and deferrals.",RIM,Journal Entries & Adjustments,monthly,ckveracruz@tbwaphilippines.com,ckveracruz@tbwaphilippines.com,1.0,0.5,0.5,Month-end closing,TRUE
+"Process foreign exchange revaluation for foreign currency accounts.",BOM,Journal Entries & Adjustments,monthly,rmeran@tbwaphilippines.com,ckveracruz@tbwaphilippines.com,1.0,0.5,0.5,Month-end closing,TRUE
+"Record intercompany transactions and eliminations.",LAS,Journal Entries & Adjustments,monthly,rmeran@tbwaphilippines.com,ckveracruz@tbwaphilippines.com,1.0,0.5,0.5,Month-end closing,TRUE
+"Prepare preliminary trial balance before final adjustments.",RMQB,Financial Reporting,monthly,bmanalo@tbwaphilippines.com,rmeran@tbwaphilippines.com,1.0,0.5,0.5,Month-end closing,TRUE
+"Generate final trial balance after all adjustments.",JMSM,Financial Reporting,monthly,rmeran@tbwaphilippines.com,ckveracruz@tbwaphilippines.com,1.0,0.5,0.5,Month-end closing,TRUE
+"Prepare monthly financial statements (Balance Sheet, Income Statement, Cash Flow).",JAP,Financial Reporting,monthly,rmeran@tbwaphilippines.com,ckveracruz@tbwaphilippines.com,1.0,0.5,0.5,Month-end closing,TRUE
+"Prepare variance analysis reports comparing actual vs budget.",JPAL,Financial Reporting,monthly,rmeran@tbwaphilippines.com,ckveracruz@tbwaphilippines.com,1.0,0.5,0.5,Month-end closing,TRUE
+"Compile management reports and KPI dashboards.",JLI,Financial Reporting,monthly,rmeran@tbwaphilippines.com,ckveracruz@tbwaphilippines.com,1.0,0.5,0.5,Month-end closing,TRUE
+"Reconcile all balance sheet accounts to supporting schedules.",JRMO,GL Reconciliation,monthly,bmanalo@tbwaphilippines.com,rmeran@tbwaphilippines.com,1.0,0.5,0.5,Month-end closing,TRUE
+"Verify all revenue accounts and match to supporting documents.",CSD,GL Reconciliation,monthly,bmanalo@tbwaphilippines.com,rmeran@tbwaphilippines.com,1.0,0.5,0.5,Month-end closing,TRUE
+"Verify all expense accounts and match to supporting documents.",RIM,GL Reconciliation,monthly,ckveracruz@tbwaphilippines.com,ckveracruz@tbwaphilippines.com,1.0,0.5,0.5,Month-end closing,TRUE
+"Review and close all subledgers to general ledger.",BOM,GL Reconciliation,monthly,rmeran@tbwaphilippines.com,ckveracruz@tbwaphilippines.com,1.0,0.5,0.5,Month-end closing,TRUE
+"Archive all month-end documentation and supporting files.",LAS,Month-end Close Process,monthly,bmanalo@tbwaphilippines.com,rmeran@tbwaphilippines.com,1.0,0.5,0.5,Month-end closing,TRUE
+"Update month-end closing checklist and sign-off.",RMQB,Month-end Close Process,monthly,rmeran@tbwaphilippines.com,ckveracruz@tbwaphilippines.com,1.0,0.5,0.5,Month-end closing,TRUE
+"Perform final review of all accounts and financial statements.",JMSM,Month-end Close Process,monthly,rmeran@tbwaphilippines.com,ckveracruz@tbwaphilippines.com,1.0,0.5,0.5,Month-end closing,TRUE
+"Close accounting period in system and lock transactions.",JAP,Month-end Close Process,monthly,ckveracruz@tbwaphilippines.com,ckveracruz@tbwaphilippines.com,1.0,0.5,0.5,Month-end closing,TRUE

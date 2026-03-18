@@ -12,7 +12,7 @@ This repository currently functions as an Odoo-led platform monorepo containing:
 - shared infra artifacts (`infra/`)
 - platform app artifacts (`platform/`)
 - web/public app artifacts (`web/`)
-- Supabase/control-plane artifacts (`supabase/`)
+- Supabase/platform artifacts (`supabase/`)
 - agent/runbook assets (`agents/`)
 - automation assets (`automations/`)
 - design assets (`design/`)
@@ -37,13 +37,14 @@ The desired end state is:
 | Target repo | Owns |
 |---|---|
 | `odoo` | ERP runtime, addons, Odoo config, ERP deployment contracts, ERP SSOT |
-| `platform` | OdooOps console, platform admin/control-plane apps, Supabase artifacts |
+| `platform` | OdooOps console, platform admin apps, Supabase artifacts |
 | `infra` | Shared infrastructure, cloud/network/edge, IaC |
 | `web` | Public website, apex surfaces |
 | `agents` | Shared agent/skill/runbook assets |
 | `automations` | Shared workflow assets |
-| `design-system` | Shared design assets/tokens |
-| `lakehouse` | Databricks and analytics platform |
+| `design` | Shared design assets/tokens |
+| `data-intelligence` | Databricks and analytics platform |
+| `docs` | Cross-platform documentation |
 
 ## What stays in `odoo` after decomposition
 
@@ -75,9 +76,9 @@ The desired end state is:
 |---|---|---|---|
 | Local | `odoo_dev` | `config/dev/odoo.conf` | Docker Compose (`colima-odoo`) |
 | Staging | `odoo_staging` | `config/staging/odoo.conf` | Azure Container Apps |
-| Production | `odoo_prod` | `config/prod/odoo.conf` | Azure Container Apps |
+| Production | `odoo` | `config/prod/odoo.conf` | Azure Container Apps |
 
-Historical references such as `odoo_core`, `odoo_stage`, `odoo_db`, or bare `odoo` as the canonical production database are non-canonical and should be treated as legacy references only.
+Historical references such as `odoo_core`, `odoo_stage`, `odoo_db`, or `odoo_prod` are non-canonical and should be treated as legacy references only. The canonical production database name is `odoo`.
 
 ## Edge model (normalized)
 

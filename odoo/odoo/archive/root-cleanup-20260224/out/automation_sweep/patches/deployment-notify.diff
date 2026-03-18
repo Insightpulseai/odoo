@@ -1,0 +1,4 @@
+--- a/n8n/workflows/deployment-notify.json
++++ b/automations/n8n/workflows/deployment-notify.json
+@@ Move stray workflow to canonical location @@
+# git mv 'n8n/workflows/deployment-notify.json' 'automations/n8n/workflows/deployment-notify.json'

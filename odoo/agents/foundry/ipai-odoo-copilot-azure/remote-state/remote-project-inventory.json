@@ -1,0 +1,100 @@
+{
+  "snapshot_date": "2026-03-15T00:00:00+08:00",
+  "project": {
+    "name": "data-intel-ph",
+    "resource_name": "data-intel-ph-resource",
+    "resource_group": "rg-data-intel-ph",
+    "location": "eastus2",
+    "kind": "AIServices",
+    "sku": "S0",
+    "endpoint": "https://data-intel-ph-resource.services.ai.azure.com",
+    "cognitive_endpoint": "https://data-intel-ph-resource.cognitiveservices.azure.com/",
+    "custom_subdomain": "data-intel-ph-resource",
+    "provisioning_state": "Succeeded",
+    "date_created": "2026-03-03T00:48:29.608Z",
+    "public_network_access": "Enabled",
+    "network_acls": {
+      "default_action": "Allow",
+      "ip_rules": [],
+      "vnet_rules": []
+    }
+  },
+  "models": {
+    "total_available": 270,
+    "agent_model": "gpt-4.1",
+    "notable_models": ["gpt-4.1", "gpt-5", "gpt-5.1", "gpt-5.2-chat", "gpt-5.3-chat", "claude-opus-4-6", "claude-sonnet-4-6", "DeepSeek-V3.2", "o4-mini"]
+  },
+  "deployments": {
+    "status": "No explicit deployments endpoint (serverless model access)",
+    "note": "Models accessed via serverless API, not dedicated deployments"
+  },
+  "agents": {
+    "count": 1,
+    "list": [
+      {
+        "id": "asst_45er4aG28tFTABadwxEhODIf",
+        "name": "ipai-odoo-copilot-azure",
+        "description": "InsightPulseAI Odoo Copilot - Public Advisory Mode for landing page",
+        "model": "gpt-4.1",
+        "tools": [],
+        "tool_resources": {},
+        "metadata": {},
+        "temperature": 1.0,
+        "top_p": 1.0,
+        "response_format": "auto",
+        "created_at": 1773429148
+      }
+    ]
+  },
+  "ai_search": {
+    "connection_name": "srchipaidev8tlstu",
+    "endpoint": "https://srch-ipai-dev.search.windows.net/",
+    "api_key_vaulted": "ipai-odoo-dev-kv/srch-ipai-dev-api-key",
+    "indexes": 0,
+    "documents": 0,
+    "indexers": 0,
+    "data_sources": 0,
+    "status": "EMPTY — search service exists but no indexes or documents",
+    "quota_indexes": 15,
+    "note": "Search service is reachable and authenticated but has zero content. No RAG/retrieval is currently active."
+  },
+  "content_safety": {
+    "available": true,
+    "categories": ["Hate", "Sexual", "Violence", "SelfHarm"],
+    "test_result": "All severity 0 for benign input",
+    "blocklists": []
+  },
+  "evaluations": {
+    "status": "BLOCKED — Foundry project API requires https://ai.azure.com audience token; current az CLI cannot obtain this token for the project API surface",
+    "count": 0,
+    "note": "Foundry portal showed 0 evaluations in prior screenshot review"
+  },
+  "ai_gateway": {
+    "configured": false,
+    "status": "Not configured — all gateway properties are null"
+  },
+  "tracing_monitoring": {
+    "app_insights": "Not configured via API inspection",
+    "diagnostic_settings": "Not verified"
+  },
+  "identity": {
+    "role_assignments": [
+      {"principal_id": "19a9ad6a-4b53-4529-afd2-6320e855ba9a", "role": "Cognitive Services User", "type": "ServicePrincipal"},
+      {"principal_id": "04a534a0-696f-482f-910e-ebabab413138", "role": "Cognitive Services User", "type": "ServicePrincipal"},
+      {"principal_id": "unknown", "role": "Cognitive Services User", "type": "ServicePrincipal"}
+    ],
+    "service_principals": [
+      {"name": "sp-ipai-azdevops", "app_id": "ae2df138-de9a-4a4a-a02b-b8fd8a8925e6", "type": "Application"}
+    ],
+    "app_registrations_for_project": "None matching 'data-intel-ph' filter"
+  },
+  "threads": {
+    "has_activity": true,
+    "has_more": true,
+    "recent_5_newest_created_at": 1773503482
+  },
+  "publish_state": {
+    "app_sharing": "Not inspectable via API",
+    "note": "Foundry project sharing/publish state requires portal or project API access"
+  }
+}

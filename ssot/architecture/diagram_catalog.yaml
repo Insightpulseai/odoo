@@ -1,0 +1,51 @@
+version: 1
+status: active
+id: diagram_catalog
+
+diagrams:
+  - id: azure-platform-overview
+    title: InsightPulseAI Azure Platform Overview
+    source: docs/architecture/diagrams/azure-platform-overview.drawio
+    render: docs/architecture/diagrams/azure-platform-overview.png
+    level: overview
+    authority:
+      intended_state: repo_ssot
+      release_truth: azure_pipelines
+      live_inventory_truth: azure_resource_graph
+    planes:
+      - governance_control
+      - identity_network_security
+      - business_systems
+      - data_intelligence
+      - agent_ai_runtime
+      - experience_domain_apps
+    includes:
+      - azure_front_door
+      - cloudflare_dns
+      - entra_id
+      - key_vault
+      - managed_identities
+      - aca_odoo
+      - aca_n8n
+      - aca_plane
+      - aca_superset
+      - postgresql_flexible_server
+      - databricks
+      - adls_delta
+      - unity_catalog
+      - foundry
+      - document_intelligence
+      - logic_apps
+      - functions
+      - fabric_bi
+    excludes_benchmark:
+      - sap_on_azure
+      - concur
+      - avatax
+      - smartly_io
+      - quilt_ai
+      - lions
+      - dataintelligence_ro
+      - fal_ai
+      - odoo_sh
+    status: canonical

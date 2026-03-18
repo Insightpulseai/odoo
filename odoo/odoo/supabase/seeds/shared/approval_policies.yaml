@@ -1,0 +1,212 @@
+# Shared Approval Policies
+# Workflow rules for task and document approval
+
+approval_policies:
+  # Standard Task Approval
+  - id: policy_standard_task
+    code: STANDARD_TASK
+    name: Standard Task Approval
+    description: Two-level approval for standard tasks
+    applies_to: [finance.task]
+    conditions:
+      task_type: [month_end, compliance]
+      category: ["*"]
+    workflow:
+      steps:
+        - step: 1
+          name: Preparation
+          role: RIM
+          action: complete
+          next_step: 2
+        - step: 2
+          name: Review
+          role: BOM
+          action: approve
+          next_step: 3
+          can_reject: true
+        - step: 3
+          name: Done
+          role: system
+          action: close
+    sla:
+      prep_to_review: 24  # hours
+      review_to_approve: 24  # hours
+
+  # BIR Filing Approval
+  - id: policy_bir_filing
+    code: BIR_FILING
+    name: BIR Filing Approval
+    description: Three-level approval for BIR tax filings
+    applies_to: [finance.task, bir.return]
+    conditions:
+      task_type: [bir_filing]
+    workflow:
+      steps:
+        - step: 1
+          name: Preparation
+          role: RIM
+          action: prepare
+          next_step: 2
+          requires:
+            - computation_complete
+            - attachments_uploaded
+        - step: 2
+          name: Review
+          role: BOM
+          action: review
+          next_step: 3
+          can_reject: true
+          requires:
+            - all_checks_passed
+        - step: 3
+          name: Approval
+          role: FD
+          action: approve
+          next_step: 4
+          can_reject: true
+        - step: 4
+          name: Filed
+          role: system
+          action: mark_filed
+          requires:
+            - reference_number_entered
+    sla:
+      prep_to_review: 48
+      review_to_approve: 24
+      approve_to_file: 24
+
+  # Period Close Approval
+  - id: policy_period_close
+    code: PERIOD_CLOSE
+    name: Period Close Approval
+    description: Executive approval for period closing
+    applies_to: [closing.period]
+    conditions:
+      action: close
+    workflow:
+      steps:
+        - step: 1
+          name: Pre-Close Check
+          role: BOM
+          action: run_checks
+          next_step: 2
+          requires:
+            - all_tasks_done
+            - all_compliance_passed
+        - step: 2
+          name: Final Review
+          role: CKVC
+          action: review
+          next_step: 3
+          can_reject: true
+        - step: 3
+          name: Sign-off
+          role: FD
+          action: approve
+          next_step: 4
+        - step: 4
+          name: Closed
+          role: system
+          action: lock_period
+    sla:
+      check_to_review: 24
+      review_to_signoff: 48
+
+  # High Value Transaction Approval
+  - id: policy_high_value
+    code: HIGH_VALUE
+    name: High Value Transaction Approval
+    description: Additional approval for high-value items
+    applies_to: [account.move]
+    conditions:
+      amount_total: ">500000"
+    workflow:
+      steps:
+        - step: 1
+          name: Preparation
+          role: RIM
+          action: prepare
+          next_step: 2
+        - step: 2
+          name: Manager Review
+          role: BOM
+          action: review
+          next_step: 3
+          can_reject: true
+        - step: 3
+          name: Controller Review
+          role: CKVC
+          action: review
+          next_step: 4
+          can_reject: true
+        - step: 4
+          name: Executive Approval
+          role: FD
+          action: approve
+          next_step: 5
+          can_reject: true
+        - step: 5
+          name: Approved
+          role: system
+          action: post
+
+# Rejection handling
+rejection_rules:
+  - policy_id: "*"
+    on_reject:
+      action: return_to_preparer
+      reset_step: 1
+      notify: [preparer, original_reviewer]
+      require_comment: true
+      max_rejections: 3
+
+  - policy_id: PERIOD_CLOSE
+    on_reject:
+      action: return_to_prior_step
+      reset_step: null  # Return to previous step only
+      notify: [BOM, CKVC]
+      require_comment: true
+      max_rejections: 2
+
+# Delegation rules
+delegation_rules:
+  - role: BOM
+    can_delegate_to: [CKVC]
+    max_duration_days: 14
+    requires_approval: false
+
+  - role: FD
+    can_delegate_to: [CKVC]
+    max_duration_days: 30
+    requires_approval: true
+
+  - role: CKVC
+    can_delegate_to: [BOM]
+    max_duration_days: 7
+    requires_approval: false
+
+# Auto-approval rules
+auto_approval_rules:
+  - condition: task.is_recurring and task.prev_approved and task.amount_variance < 0.05
+    action: auto_approve_after_review
+    notify: [approver]
+    log_reason: "Auto-approved: recurring task within 5% variance"
+
+  - condition: task.category == 'DEPRECIATION' and task.system_generated
+    action: auto_approve_after_review
+    notify: [approver]
+    log_reason: "Auto-approved: system-generated depreciation"
+
+# Approval matrix by amount
+approval_matrix:
+  - min_amount: 0
+    max_amount: 50000
+    approvers: [BOM]
+
+  - min_amount: 50001
+    max_amount: 500000
+    approvers: [BOM, CKVC]
+
+  - min_amount: 500001
+    max_amount: null
+    approvers: [BOM, CKVC, FD]

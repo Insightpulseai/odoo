@@ -1,0 +1,79 @@
+[
+    {
+        "Id": "sha256:cbafce4c9a475e748d6033227380d8dbb8452876ec3eb4aa32db65fff6349d9d",
+        "RepoTags": [
+            "odoo:18.0"
+        ],
+        "RepoDigests": [
+            "odoo@sha256:1ba7ab9783cd2b08a875077dc3c744b0dcbe7eb0f78ac354a1c7a658f5455749"
+        ],
+        "Parent": "",
+        "Comment": "buildkit.dockerfile.v0",
+        "Created": "2025-12-24T05:15:00.663683761Z",
+        "DockerVersion": "",
+        "Author": "Odoo S.A. <info@odoo.com>",
+        "Config": {
+            "User": "odoo",
+            "ExposedPorts": {
+                "8069/tcp": {},
+                "8071/tcp": {},
+                "8072/tcp": {}
+            },
+            "Env": [
+                "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+                "LANG=en_US.UTF-8",
+                "ODOO_VERSION=18.0",
+                "ODOO_RC=/etc/odoo/odoo.conf"
+            ],
+            "Entrypoint": [
+                "/entrypoint.sh"
+            ],
+            "Cmd": [
+                "odoo"
+            ],
+            "Volumes": {
+                "/mnt/extra-addons": {},
+                "/var/lib/odoo": {}
+            },
+            "Labels": {
+                "org.opencontainers.image.ref.name": "ubuntu",
+                "org.opencontainers.image.version": "24.04"
+            },
+            "Shell": [
+                "/bin/bash",
+                "-xo",
+                "pipefail",
+                "-c"
+            ]
+        },
+        "Architecture": "amd64",
+        "Os": "linux",
+        "Size": 2037280859,
+        "GraphDriver": {
+            "Data": {
+                "LowerDir": "/var/lib/docker/overlay2/bfbbb2edda090c019e579214c772b986e9fefb0040c206890640f7a34c0fc72e/diff:/var/lib/docker/overlay2/5cbbc3e03e95465a6f3ab47b6ebf542bce233558a85ff927a69b02e070607a03/diff:/var/lib/docker/overlay2/34275c0609bf2665b8bbe40f53af63997cb2637d4ccd8a613cda425807a57cbb/diff:/var/lib/docker/overlay2/b725e0829ce5afc7c4fca06468d6aaa719c7762c06845e46d919bab5b6c79f9a/diff:/var/lib/docker/overlay2/e880a5988d630bc15ae2a2aac7676851dbe8d7955548b89d634cc76791236aa0/diff:/var/lib/docker/overlay2/0e556a05fcf8fb8f5d046d3ecf04d4a38c6544c4898a9858c5fc5c1501be61d6/diff:/var/lib/docker/overlay2/a6d2a1363aea394d75675063e2c078994c4b5db9a66fd1bec8e43d302391364a/diff:/var/lib/docker/overlay2/50cbe76a2329e4411c3487f25a15bc158d296958035628a6e84c1a3b96397c48/diff",
+                "MergedDir": "/var/lib/docker/overlay2/5174446c26f776dd5a2b3d53850181b59abc54ca98c15da07dcb6593b64031cd/merged",
+                "UpperDir": "/var/lib/docker/overlay2/5174446c26f776dd5a2b3d53850181b59abc54ca98c15da07dcb6593b64031cd/diff",
+                "WorkDir": "/var/lib/docker/overlay2/5174446c26f776dd5a2b3d53850181b59abc54ca98c15da07dcb6593b64031cd/work"
+            },
+            "Name": "overlay2"
+        },
+        "RootFS": {
+            "Type": "layers",
+            "Layers": [
+                "sha256:e8bce0aabd687e9ee90e0bada33884f40b277196f72aac9934357472863a80ae",
+                "sha256:38ae801de4b04fd893a538ebd812a898e0d215e1a6e0f0d16d5f09c0a556f7c2",
+                "sha256:e93b4ac814089449c91b365d31b7bb44a8ba200cb47b5f7a8272b7619f840c22",
+                "sha256:826ae754b129b2d879f63206abbaa7362494b0172c71458921c062d049a46ef1",
+                "sha256:4ac5c451af0991864dcf8dc34893c2c21f3426a3bb27a4f46da0cdad5b3da00e",
+                "sha256:a35e1604fdacad85859737d2b43bf5af9c3777b58a23d0bc2a6403fd6e123aed",
+                "sha256:004925e3d12ac49f9a9b9c7a0e8b2238d6cf59c429da7e224f8a97c59c6d4273",
+                "sha256:2f7f1d746142e1e9ea8244629750a110f91249dd47bc44872d6c4bd7f854ad97",
+                "sha256:0215f878662b7418b797af17c9958b427bb8e3b4ff49c2a822a21e9b6de3a98d"
+            ]
+        },
+        "Metadata": {
+            "LastTagTime": "0001-01-01T00:00:00Z"
+        }
+    }
+]

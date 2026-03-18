@@ -1,0 +1,64 @@
+id: tenant-identity-isolation
+name: Tenant Identity Isolation
+version: 0.1.0
+type: benchmark_skill
+classification: capability_uplift
+family: azure-saas-mt
+persona: saas-platform-architect
+updated_at: "2026-03-17"
+
+purpose: >
+  Design tenant identity boundaries using Entra ID, including per-tenant
+  app registrations, token claims for tenant context, RBAC per tenant,
+  and cross-tenant access prevention.
+
+triggers:
+  - "Designing multi-tenant authentication"
+  - "Tenant users can see other tenants' data"
+  - "Need to add tenant context to JWT tokens"
+  - "Cross-tenant access audit findings"
+
+inputs:
+  - identity_provider: "Entra ID, Entra External ID (B2C successor), or hybrid"
+  - tenant_model: "Single-tenant app reg, multi-tenant app reg, or per-tenant app reg"
+  - token_claims_needed: "Custom claims for tenant context (tenant_id, roles, tier)"
+  - rbac_requirements: "Per-tenant role definitions and assignments"
+
+steps:
+  - "Select app registration model based on tenant isolation requirements"
+  - "Design custom token claims to embed tenant context"
+  - "Define per-tenant RBAC roles and permission boundaries"
+  - "Implement cross-tenant access prevention at token validation layer"
+  - "Configure managed identities for service-to-service within tenant boundary"
+  - "Establish token validation middleware enforcing tenant scope"
+
+outputs:
+  - app_registration_design: "App registration topology and configuration"
+  - token_claims_schema: "Custom claims structure with tenant context"
+  - rbac_model: "Per-tenant roles, permissions, and assignment strategy"
+  - validation_middleware: "Token validation rules enforcing tenant boundary"
+  - managed_identity_map: "Service-to-service identity assignments per tenant"
+
+guardrails:
+  - "Token must always contain tenant_id claim — reject tokens without it"
+  - "No API endpoint may serve data without validating tenant_id from token"
+  - "Cross-tenant access must be impossible via token manipulation"
+  - "Service-to-service calls must use managed identities, not shared secrets"
+
+evidence:
+  - "Token without tenant_id rejected at middleware layer"
+  - "User in tenant A cannot access tenant B resources via API"
+  - "Managed identity scoped to correct tenant resources only"
+
+dependencies:
+  - saas-resource-organization
+
+evals:
+  - scenario: "Token with tampered tenant_id"
+    pass: "Request rejected, security event logged"
+  - scenario: "User authenticates and accesses only their tenant"
+    pass: "All API responses scoped to authenticated tenant"
+  - scenario: "Service-to-service call across tenant boundary"
+    pass: "Call rejected — managed identity not authorized"
+
+benchmark_source: "Azure Entra ID Multitenancy Patterns"

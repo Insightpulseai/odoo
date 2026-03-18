@@ -1,0 +1,583 @@
+/**
+ * IPAI Copilot UI Theme
+ * Microsoft 365 Copilot-inspired Fluent UI tokens and layouts
+ */
+
+/* ============================================
+   Fluent 2 Design Tokens as CSS Variables
+   ============================================ */
+
+:root {
+    /* Background colors */
+    --ipai-bg-page: #f5f5f7;
+    --ipai-bg-shell: #ffffff;
+    --ipai-bg-card: #ffffff;
+    --ipai-bg-sidebar: #fafafa;
+    --ipai-bg-input: #f9fafb;
+    --ipai-bg-hover: #f3f4f6;
+    --ipai-bg-active: #eff6ff;
+
+    /* Border colors */
+    --ipai-border-soft: #e5e7eb;
+    --ipai-border-card: #e1e4ea;
+    --ipai-border-input: #d1d5db;
+    --ipai-border-focus: #6366f1;
+
+    /* Border radii */
+    --ipai-radius-sm: 8px;
+    --ipai-radius-md: 12px;
+    --ipai-radius-lg: 18px;
+    --ipai-radius-xl: 24px;
+    --ipai-radius-full: 9999px;
+
+    /* Shadows */
+    --ipai-shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    --ipai-shadow-card: 0 4px 16px rgba(0, 0, 0, 0.08);
+    --ipai-shadow-elevated: 0 10px 30px rgba(0, 0, 0, 0.12);
+    --ipai-shadow-focus: 0 0 0 3px rgba(99, 102, 241, 0.2);
+
+    /* Accent colors (Indigo-based like Copilot) */
+    --ipai-color-accent: #4f46e5;
+    --ipai-color-accent-hover: #4338ca;
+    --ipai-color-accent-soft: #eef2ff;
+    --ipai-color-accent-muted: #c7d2fe;
+
+    /* Text colors */
+    --ipai-text-primary: #111827;
+    --ipai-text-secondary: #374151;
+    --ipai-text-muted: #6b7280;
+    --ipai-text-placeholder: #9ca3af;
+    --ipai-text-inverse: #ffffff;
+
+    /* Status colors */
+    --ipai-color-success: #10b981;
+    --ipai-color-warning: #f59e0b;
+    --ipai-color-error: #ef4444;
+    --ipai-color-info: #3b82f6;
+
+    /* Spacing */
+    --ipai-space-xs: 4px;
+    --ipai-space-sm: 8px;
+    --ipai-space-md: 16px;
+    --ipai-space-lg: 24px;
+    --ipai-space-xl: 32px;
+    --ipai-space-2xl: 48px;
+
+    /* Typography */
+    --ipai-font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    --ipai-font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+
+    /* Font sizes */
+    --ipai-text-xs: 0.75rem;
+    --ipai-text-sm: 0.875rem;
+    --ipai-text-base: 1rem;
+    --ipai-text-lg: 1.125rem;
+    --ipai-text-xl: 1.25rem;
+    --ipai-text-2xl: 1.5rem;
+    --ipai-text-3xl: 1.875rem;
+    --ipai-text-4xl: 2.25rem;
+
+    /* Transitions */
+    --ipai-transition-fast: 150ms ease;
+    --ipai-transition-normal: 200ms ease;
+    --ipai-transition-slow: 300ms ease;
+}
+
+/* ============================================
+   Copilot Shell Layout
+   ============================================ */
+
+.ipaiCopilotPage {
+    display: flex;
+    height: 100vh;
+    width: 100%;
+    background: var(--ipai-bg-page);
+    font-family: var(--ipai-font-sans);
+    color: var(--ipai-text-primary);
+    overflow: hidden;
+}
+
+/* ============================================
+   Sidebar Navigation
+   ============================================ */
+
+.ipaiCopilotSidebar {
+    width: 260px;
+    min-width: 260px;
+    padding: var(--ipai-space-md) var(--ipai-space-sm);
+    border-right: 1px solid var(--ipai-border-soft);
+    background: var(--ipai-bg-shell);
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+}
+
+.ipaiSidebarHeader {
+    padding: var(--ipai-space-sm) var(--ipai-space-md);
+    margin-bottom: var(--ipai-space-md);
+}
+
+.ipaiSidebarLogo {
+    display: flex;
+    align-items: center;
+    gap: var(--ipai-space-sm);
+    font-size: var(--ipai-text-lg);
+    font-weight: 600;
+    color: var(--ipai-text-primary);
+}
+
+.ipaiSidebarLogoIcon {
+    width: 32px;
+    height: 32px;
+    background: linear-gradient(135deg, var(--ipai-color-accent), #8b5cf6);
+    border-radius: var(--ipai-radius-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: var(--ipai-text-sm);
+}
+
+.ipaiSidebarNav {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: var(--ipai-space-xs);
+}
+
+.ipaiSidebarNavItem {
+    display: flex;
+    align-items: center;
+    gap: var(--ipai-space-sm);
+    padding: var(--ipai-space-sm) var(--ipai-space-md);
+    border-radius: var(--ipai-radius-md);
+    color: var(--ipai-text-secondary);
+    cursor: pointer;
+    transition: all var(--ipai-transition-fast);
+    font-size: var(--ipai-text-sm);
+    font-weight: 500;
+}
+
+.ipaiSidebarNavItem:hover {
+    background: var(--ipai-bg-hover);
+    color: var(--ipai-text-primary);
+}
+
+.ipaiSidebarNavItem.active {
+    background: var(--ipai-bg-active);
+    color: var(--ipai-color-accent);
+}
+
+.ipaiSidebarNavIcon {
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: var(--ipai-text-base);
+}
+
+.ipaiSidebarSection {
+    margin-top: var(--ipai-space-lg);
+}
+
+.ipaiSidebarSectionTitle {
+    font-size: var(--ipai-text-xs);
+    font-weight: 600;
+    color: var(--ipai-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: var(--ipai-space-sm) var(--ipai-space-md);
+}
+
+.ipaiConversationList {
+    display: flex;
+    flex-direction: column;
+    gap: var(--ipai-space-xs);
+}
+
+.ipaiConversationItem {
+    display: flex;
+    align-items: center;
+    padding: var(--ipai-space-sm) var(--ipai-space-md);
+    border-radius: var(--ipai-radius-md);
+    color: var(--ipai-text-secondary);
+    font-size: var(--ipai-text-sm);
+    cursor: pointer;
+    transition: all var(--ipai-transition-fast);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.ipaiConversationItem:hover {
+    background: var(--ipai-bg-hover);
+    color: var(--ipai-text-primary);
+}
+
+/* ============================================
+   Main Content Area
+   ============================================ */
+
+.ipaiCopilotMain {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: var(--ipai-space-xl) var(--ipai-space-2xl);
+    gap: var(--ipai-space-lg);
+    overflow-y: auto;
+    max-width: 900px;
+    margin: 0 auto;
+    width: 100%;
+}
+
+.ipaiCopilotWelcome {
+    text-align: center;
+    padding: var(--ipai-space-xl) 0;
+}
+
+.ipaiCopilotTitle {
+    font-size: var(--ipai-text-3xl);
+    font-weight: 600;
+    color: var(--ipai-text-primary);
+    margin-bottom: var(--ipai-space-sm);
+}
+
+.ipaiCopilotSubtitle {
+    font-size: var(--ipai-text-base);
+    color: var(--ipai-text-muted);
+}
+
+/* ============================================
+   Prompt Shell (Chat Input Area)
+   ============================================ */
+
+.ipaiPromptShell {
+    background: var(--ipai-bg-shell);
+    border-radius: var(--ipai-radius-xl);
+    box-shadow: var(--ipai-shadow-elevated);
+    padding: var(--ipai-space-lg);
+    border: 1px solid var(--ipai-border-card);
+}
+
+.ipaiPromptPlaceholder {
+    font-size: var(--ipai-text-base);
+    color: var(--ipai-text-muted);
+    margin-bottom: var(--ipai-space-md);
+    line-height: 1.6;
+}
+
+.ipaiPromptInputWrapper {
+    display: flex;
+    align-items: flex-end;
+    gap: var(--ipai-space-sm);
+    background: var(--ipai-bg-input);
+    border-radius: var(--ipai-radius-lg);
+    padding: var(--ipai-space-sm);
+    border: 1px solid var(--ipai-border-input);
+    transition: all var(--ipai-transition-fast);
+}
+
+.ipaiPromptInputWrapper:focus-within {
+    border-color: var(--ipai-border-focus);
+    box-shadow: var(--ipai-shadow-focus);
+}
+
+.ipaiPromptInput {
+    flex: 1;
+    border: none;
+    background: transparent;
+    padding: var(--ipai-space-sm) var(--ipai-space-md);
+    font-size: var(--ipai-text-base);
+    color: var(--ipai-text-primary);
+    resize: none;
+    min-height: 24px;
+    max-height: 200px;
+    outline: none;
+    font-family: var(--ipai-font-sans);
+}
+
+.ipaiPromptInput::placeholder {
+    color: var(--ipai-text-placeholder);
+}
+
+.ipaiPromptActions {
+    display: flex;
+    align-items: center;
+    gap: var(--ipai-space-xs);
+    padding-right: var(--ipai-space-xs);
+}
+
+.ipaiPromptBtn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: var(--ipai-radius-md);
+    border: none;
+    background: transparent;
+    color: var(--ipai-text-muted);
+    cursor: pointer;
+    transition: all var(--ipai-transition-fast);
+}
+
+.ipaiPromptBtn:hover {
+    background: var(--ipai-bg-hover);
+    color: var(--ipai-text-primary);
+}
+
+.ipaiPromptBtnPrimary {
+    background: var(--ipai-color-accent);
+    color: var(--ipai-text-inverse);
+}
+
+.ipaiPromptBtnPrimary:hover {
+    background: var(--ipai-color-accent-hover);
+    color: var(--ipai-text-inverse);
+}
+
+.ipaiPromptBtnPrimary:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* ============================================
+   Tool Cards Grid
+   ============================================ */
+
+.ipaiToolsSection {
+    margin-top: var(--ipai-space-md);
+}
+
+.ipaiToolsSectionTitle {
+    font-size: var(--ipai-text-base);
+    font-weight: 600;
+    color: var(--ipai-text-primary);
+    margin-bottom: var(--ipai-space-md);
+}
+
+.ipaiToolCardGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: var(--ipai-space-md);
+}
+
+.ipaiToolCard {
+    background: var(--ipai-bg-card);
+    border-radius: var(--ipai-radius-lg);
+    box-shadow: var(--ipai-shadow-card);
+    padding: var(--ipai-space-md) var(--ipai-space-lg);
+    border: 1px solid var(--ipai-border-card);
+    cursor: pointer;
+    transition: all var(--ipai-transition-normal);
+}
+
+.ipaiToolCard:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--ipai-shadow-elevated);
+    border-color: var(--ipai-color-accent-muted);
+}
+
+.ipaiToolCardHeader {
+    display: flex;
+    align-items: center;
+    gap: var(--ipai-space-sm);
+    margin-bottom: var(--ipai-space-sm);
+}
+
+.ipaiToolCardIcon {
+    width: 40px;
+    height: 40px;
+    border-radius: var(--ipai-radius-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: var(--ipai-text-lg);
+    color: var(--ipai-text-inverse);
+}
+
+.ipaiToolCardIcon.analyze {
+    background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+}
+
+.ipaiToolCardIcon.create {
+    background: linear-gradient(135deg, #8b5cf6, #6d28d9);
+}
+
+.ipaiToolCardIcon.search {
+    background: linear-gradient(135deg, #10b981, #047857);
+}
+
+.ipaiToolCardIcon.assistant {
+    background: linear-gradient(135deg, #f59e0b, #d97706);
+}
+
+.ipaiToolCardTitle {
+    font-size: var(--ipai-text-sm);
+    font-weight: 600;
+    color: var(--ipai-text-primary);
+}
+
+.ipaiToolCardDescription {
+    font-size: var(--ipai-text-sm);
+    color: var(--ipai-text-muted);
+    line-height: 1.5;
+}
+
+/* ============================================
+   Quick Actions / Suggestions
+   ============================================ */
+
+.ipaiQuickActions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--ipai-space-sm);
+    margin-top: var(--ipai-space-md);
+}
+
+.ipaiQuickActionBtn {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--ipai-space-xs);
+    padding: var(--ipai-space-sm) var(--ipai-space-md);
+    background: var(--ipai-bg-shell);
+    border: 1px solid var(--ipai-border-soft);
+    border-radius: var(--ipai-radius-full);
+    font-size: var(--ipai-text-sm);
+    color: var(--ipai-text-secondary);
+    cursor: pointer;
+    transition: all var(--ipai-transition-fast);
+}
+
+.ipaiQuickActionBtn:hover {
+    background: var(--ipai-bg-active);
+    border-color: var(--ipai-color-accent-muted);
+    color: var(--ipai-color-accent);
+}
+
+/* ============================================
+   Chat Messages
+   ============================================ */
+
+.ipaiChatMessages {
+    display: flex;
+    flex-direction: column;
+    gap: var(--ipai-space-md);
+    padding: var(--ipai-space-md) 0;
+}
+
+.ipaiChatMessage {
+    display: flex;
+    gap: var(--ipai-space-md);
+    max-width: 100%;
+}
+
+.ipaiChatMessage.user {
+    justify-content: flex-end;
+}
+
+.ipaiChatMessageAvatar {
+    width: 32px;
+    height: 32px;
+    border-radius: var(--ipai-radius-full);
+    background: var(--ipai-color-accent-soft);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: var(--ipai-text-sm);
+    color: var(--ipai-color-accent);
+    flex-shrink: 0;
+}
+
+.ipaiChatMessage.user .ipaiChatMessageAvatar {
+    background: var(--ipai-color-accent);
+    color: var(--ipai-text-inverse);
+}
+
+.ipaiChatMessageContent {
+    max-width: 80%;
+    padding: var(--ipai-space-md);
+    border-radius: var(--ipai-radius-lg);
+    background: var(--ipai-bg-shell);
+    border: 1px solid var(--ipai-border-card);
+    font-size: var(--ipai-text-sm);
+    line-height: 1.6;
+}
+
+.ipaiChatMessage.user .ipaiChatMessageContent {
+    background: var(--ipai-color-accent);
+    color: var(--ipai-text-inverse);
+    border-color: transparent;
+}
+
+/* ============================================
+   Loading State
+   ============================================ */
+
+.ipaiLoadingDots {
+    display: flex;
+    gap: 4px;
+    align-items: center;
+}
+
+.ipaiLoadingDot {
+    width: 8px;
+    height: 8px;
+    border-radius: var(--ipai-radius-full);
+    background: var(--ipai-color-accent);
+    animation: ipaiPulse 1.4s infinite ease-in-out both;
+}
+
+.ipaiLoadingDot:nth-child(1) { animation-delay: -0.32s; }
+.ipaiLoadingDot:nth-child(2) { animation-delay: -0.16s; }
+.ipaiLoadingDot:nth-child(3) { animation-delay: 0; }
+
+@keyframes ipaiPulse {
+    0%, 80%, 100% {
+        transform: scale(0.6);
+        opacity: 0.5;
+    }
+    40% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+/* ============================================
+   Responsive Adjustments
+   ============================================ */
+
+@media (max-width: 768px) {
+    .ipaiCopilotSidebar {
+        display: none;
+    }
+
+    .ipaiCopilotMain {
+        padding: var(--ipai-space-md);
+    }
+
+    .ipaiToolCardGrid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* ============================================
+   Override Odoo defaults within Copilot shell
+   ============================================ */
+
+.ipaiCopilotPage {
+    /* Reset any conflicting Odoo styles */
+    & * {
+        box-sizing: border-box;
+    }
+
+    & a {
+        text-decoration: none;
+        color: inherit;
+    }
+
+    & button {
+        font-family: var(--ipai-font-sans);
+    }
+}

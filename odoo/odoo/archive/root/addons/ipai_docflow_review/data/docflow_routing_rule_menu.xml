@@ -1,0 +1,13 @@
+<odoo>
+  <!-- Under your existing DocFlow root -->
+  <menuitem id="menu_docflow_config_root"
+            name="Configuration"
+            parent="menu_docflow_root"
+            sequence="90"/>
+
+  <menuitem id="menu_docflow_routing_rules"
+            name="Routing Rules"
+            parent="menu_docflow_config_root"
+            action="action_docflow_routing_rule"
+            sequence="10"/>
+</odoo>

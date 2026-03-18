@@ -1,0 +1,167 @@
+{
+  "version": 1,
+  "source": {
+    "name": "Odoo Editions Comparison",
+    "url": "https://www.odoo.com/page/editions"
+  },
+  "taxonomy": ["ce_core", "oca_module", "bridge_connector", "defer"],
+  "ppm_rule": "PPM targets must use ce_core or oca_module only. No custom EE-parity modules for PPM.",
+  "targets": [
+    {
+      "category": "Services",
+      "feature": "PPM (Projects/Portfolio/Programs) — Policy",
+      "edition_ref": "PPM-related features are treated as CE core + OCA only (no custom parity modules).",
+      "target_parity": "ce_core",
+      "candidate": {
+        "oca_modules": ["(to-fill) OCA 19.0 project/portfolio extensions as needed"],
+        "bridge": "",
+        "connector": ""
+      },
+      "notes": "Hard rule: PPM scope is Odoo 19 CE + OCA only. Gaps are handled via process/automation, not custom EE-parity modules.",
+      "risk": "low"
+    },
+    {
+      "category": "Services",
+      "feature": "Project task dependencies",
+      "edition_ref": "Project — Task dependencies",
+      "target_parity": "oca_module",
+      "candidate": {
+        "oca_modules": ["(to-fill) project task dependency module (OCA project)"],
+        "bridge": "",
+        "connector": ""
+      },
+      "notes": "PPM rule: OCA module only; no custom parity module. Validate on 19.0 before finalising.",
+      "risk": "medium"
+    },
+    {
+      "category": "Services",
+      "feature": "Timesheet Grid view, timer, reminders, timesheet validation",
+      "edition_ref": "Timesheet — Grid view, timer, reminders, timesheet validation",
+      "target_parity": "oca_module",
+      "candidate": {
+        "oca_modules": ["(to-fill) OCA timesheet UX/validation modules"],
+        "bridge": "",
+        "connector": ""
+      },
+      "notes": "Start with the minimal compliance workflow first (validation), then UX enhancements. PPM rule applies.",
+      "risk": "medium"
+    },
+    {
+      "category": "Finance",
+      "feature": "Vendor Bill OCR",
+      "edition_ref": "Accounting — Comprehensive Accounting includes Vendor Bill OCR",
+      "target_parity": "bridge_connector",
+      "candidate": {
+        "oca_modules": [],
+        "bridge": "ipai_docflow_review + PaddleOCR pipeline (external bridge)",
+        "connector": "ipai_* thin connector (if required)"
+      },
+      "notes": "EE gap addressed via external OCR bridge; keep secrets server-side; evidence artifacts required.",
+      "risk": "high"
+    },
+    {
+      "category": "Finance",
+      "feature": "Expense Digitalization (OCR)",
+      "edition_ref": "Expenses — Expense Digitalization (OCR)",
+      "target_parity": "bridge_connector",
+      "candidate": {
+        "oca_modules": [],
+        "bridge": "ipai_docflow_review + OCR ingestion",
+        "connector": "ipai_* thin connector (if required)"
+      },
+      "notes": "Same OCR bridge approach; ensure RLS/audit trail for extracted fields.",
+      "risk": "high"
+    },
+    {
+      "category": "Finance",
+      "feature": "Documents",
+      "edition_ref": "Finance — Documents",
+      "target_parity": "bridge_connector",
+      "candidate": {
+        "oca_modules": [],
+        "bridge": "Supabase Storage + metadata + access control",
+        "connector": "ipai_* connector for document links"
+      },
+      "notes": "Treat as platform service; avoid building an EE-style DMS module; keep storage + metadata outside Odoo where possible.",
+      "risk": "medium"
+    },
+    {
+      "category": "Finance",
+      "feature": "Spreadsheet (BI)",
+      "edition_ref": "Documents — Spreadsheet",
+      "target_parity": "defer",
+      "candidate": {
+        "oca_modules": [],
+        "bridge": "Superset + exports (bridge)",
+        "connector": "none"
+      },
+      "notes": "Do not replicate Odoo Spreadsheet; use Superset/exports; revisit if user demand requires in-Odoo spreadsheet UX.",
+      "risk": "medium"
+    },
+    {
+      "category": "Finance",
+      "feature": "Sign",
+      "edition_ref": "Finance — Sign",
+      "target_parity": "bridge_connector",
+      "candidate": {
+        "oca_modules": [],
+        "bridge": "external e-sign service (bridge)",
+        "connector": "ipai_sign (bridge connector)"
+      },
+      "notes": "EE gap handled as external service; ensure audit evidence stored in ops.*",
+      "risk": "medium"
+    },
+    {
+      "category": "Supply Chain",
+      "feature": "Inventory Barcode",
+      "edition_ref": "Inventory — Barcode",
+      "target_parity": "ce_core",
+      "candidate": {
+        "oca_modules": [],
+        "bridge": "",
+        "connector": ""
+      },
+      "notes": "Validate CE capability in Odoo 19 CE build before finalising. Editions page lists Barcode under Inventory.",
+      "risk": "low"
+    },
+    {
+      "category": "Supply Chain",
+      "feature": "Manufacturing Shopfloor / Control Panel / Scheduling",
+      "edition_ref": "Manufacturing (MRP) — Shopfloor, Control Panel, Scheduling",
+      "target_parity": "oca_module",
+      "candidate": {
+        "oca_modules": ["(to-fill) OCA MRP-related scheduling/shopfloor alternatives"],
+        "bridge": "",
+        "connector": ""
+      },
+      "notes": "Prefer OCA replacements; if not available in 19.0, treat as bridge (separate service) rather than custom parity module.",
+      "risk": "high"
+    },
+    {
+      "category": "Productivity",
+      "feature": "Approvals",
+      "edition_ref": "Productivity — Approvals",
+      "target_parity": "bridge_connector",
+      "candidate": {
+        "oca_modules": [],
+        "bridge": "n8n approvals + Slack notifications (SSOT in Supabase ops.*)",
+        "connector": "optional ipai_* connector"
+      },
+      "notes": "Editions page lists Approvals; chosen strategy is automation-first approvals (not an in-Odoo parity module).",
+      "risk": "medium"
+    },
+    {
+      "category": "Customization",
+      "feature": "Studio",
+      "edition_ref": "Customization — Studio",
+      "target_parity": "defer",
+      "candidate": {
+        "oca_modules": [],
+        "bridge": "",
+        "connector": ""
+      },
+      "notes": "Do not attempt Studio parity as an Odoo addon; handle config + UI needs through code/CI and thin theming modules.",
+      "risk": "high"
+    }
+  ]
+}

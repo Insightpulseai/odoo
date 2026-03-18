@@ -1,0 +1,249 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Content Calendar Item Tree View -->
+    <record id="view_content_calendar_item_tree" model="ir.ui.view">
+        <field name="name">ipai.content.calendar.item.tree</field>
+        <field name="model">ipai.content.calendar.item</field>
+        <field name="arch" type="xml">
+            <list string="Content Calendar" decoration-muted="state == 'cancelled'" decoration-success="state == 'published'">
+                <field name="scheduled_datetime"/>
+                <field name="name"/>
+                <field name="campaign_id"/>
+                <field name="brand_id"/>
+                <field name="channel" widget="badge"/>
+                <field name="post_type"/>
+                <field name="state" widget="badge" decoration-info="state == 'draft'" decoration-warning="state == 'scheduled'" decoration-success="state == 'published'" decoration-danger="state == 'cancelled'"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Content Calendar Item Form View -->
+    <record id="view_content_calendar_item_form" model="ir.ui.view">
+        <field name="name">ipai.content.calendar.item.form</field>
+        <field name="model">ipai.content.calendar.item</field>
+        <field name="arch" type="xml">
+            <form string="Content Calendar Item">
+                <header>
+                    <button name="action_schedule" string="Schedule" type="object" class="oe_highlight" invisible="state != 'draft'"/>
+                    <button name="action_publish" string="Mark Published" type="object" class="oe_highlight" invisible="state != 'scheduled'"/>
+                    <button name="action_cancel" string="Cancel" type="object" invisible="state in ('published', 'cancelled')"/>
+                    <button name="action_reset_draft" string="Reset to Draft" type="object" invisible="state == 'draft'"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,scheduled,published"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1><field name="name" placeholder="Post Title..."/></h1>
+                    </div>
+                    <group>
+                        <group string="Campaign">
+                            <field name="campaign_id"/>
+                            <field name="brand_id"/>
+                            <field name="asset_id" domain="[('campaign_id', '=', campaign_id)]"/>
+                        </group>
+                        <group string="Channel &amp; Type">
+                            <field name="channel"/>
+                            <field name="post_type"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group string="Schedule">
+                            <field name="scheduled_datetime"/>
+                            <field name="published_datetime" invisible="state != 'published'"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Post Content" name="content">
+                            <group>
+                                <field name="copy" placeholder="Post copy/caption..."/>
+                            </group>
+                            <group>
+                                <field name="hashtags" placeholder="#hashtag1 #hashtag2"/>
+                                <field name="link_url" widget="url"/>
+                            </group>
+                        </page>
+                        <page string="Notes" name="notes">
+                            <field name="notes"/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- Content Calendar Calendar View -->
+    <record id="view_content_calendar_item_calendar" model="ir.ui.view">
+        <field name="name">ipai.content.calendar.item.calendar</field>
+        <field name="model">ipai.content.calendar.item</field>
+        <field name="arch" type="xml">
+            <calendar string="Content Calendar" date_start="start" color="channel" mode="month" quick_create="0">
+                <field name="name"/>
+                <field name="channel"/>
+                <field name="brand_id"/>
+                <field name="state"/>
+            </calendar>
+        </field>
+    </record>
+
+    <!-- Content Calendar Search View -->
+    <record id="view_content_calendar_item_search" model="ir.ui.view">
+        <field name="name">ipai.content.calendar.item.search</field>
+        <field name="model">ipai.content.calendar.item</field>
+        <field name="arch" type="xml">
+            <search string="Search Content Calendar">
+                <field name="name"/>
+                <field name="campaign_id"/>
+                <field name="brand_id"/>
+                <separator/>
+                <filter string="Scheduled" name="filter_scheduled" domain="[('state', '=', 'scheduled')]"/>
+                <filter string="Published" name="filter_published" domain="[('state', '=', 'published')]"/>
+                <separator/>
+                <filter string="Facebook" name="filter_facebook" domain="[('channel', '=', 'facebook')]"/>
+                <filter string="Instagram" name="filter_instagram" domain="[('channel', '=', 'instagram')]"/>
+                <filter string="LinkedIn" name="filter_linkedin" domain="[('channel', '=', 'linkedin')]"/>
+                <group expand="0" string="Group By">
+                    <filter string="Campaign" name="group_campaign" context="{'group_by': 'campaign_id'}"/>
+                    <filter string="Brand" name="group_brand" context="{'group_by': 'brand_id'}"/>
+                    <filter string="Channel" name="group_channel" context="{'group_by': 'channel'}"/>
+                    <filter string="State" name="group_state" context="{'group_by': 'state'}"/>
+                    <filter string="Scheduled Date" name="group_date" context="{'group_by': 'scheduled_datetime:day'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Content Calendar Action -->
+    <record id="action_content_calendar_item" model="ir.actions.act_window">
+        <field name="name">Content Calendar</field>
+        <field name="res_model">ipai.content.calendar.item</field>
+        <field name="view_mode">calendar,list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Schedule your first content post
+            </p>
+            <p>
+                Plan and schedule content across channels with the content calendar.
+            </p>
+        </field>
+    </record>
+
+    <!-- Performance Snapshot Tree View -->
+    <record id="view_performance_snapshot_tree" model="ir.ui.view">
+        <field name="name">ipai.performance.snapshot.tree</field>
+        <field name="model">ipai.performance.snapshot</field>
+        <field name="arch" type="xml">
+            <list string="Performance Snapshots">
+                <field name="date"/>
+                <field name="campaign_id"/>
+                <field name="brand_id"/>
+                <field name="channel" widget="badge"/>
+                <field name="reach"/>
+                <field name="impressions"/>
+                <field name="clicks"/>
+                <field name="ctr" widget="percentage"/>
+                <field name="spend" widget="monetary"/>
+                <field name="cpc" widget="monetary"/>
+                <field name="leads"/>
+                <field name="conversions"/>
+                <field name="currency_id" column_invisible="True"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Performance Snapshot Form View -->
+    <record id="view_performance_snapshot_form" model="ir.ui.view">
+        <field name="name">ipai.performance.snapshot.form</field>
+        <field name="model">ipai.performance.snapshot</field>
+        <field name="arch" type="xml">
+            <form string="Performance Snapshot">
+                <sheet>
+                    <group>
+                        <group string="Campaign">
+                            <field name="campaign_id"/>
+                            <field name="brand_id"/>
+                            <field name="date"/>
+                            <field name="channel"/>
+                        </group>
+                        <group string="Currency">
+                            <field name="currency_id"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Core Metrics" name="metrics">
+                            <group>
+                                <group string="Reach &amp; Engagement">
+                                    <field name="reach"/>
+                                    <field name="impressions"/>
+                                    <field name="engagement"/>
+                                    <field name="engagement_rate" widget="percentage"/>
+                                </group>
+                                <group string="Clicks &amp; CTR">
+                                    <field name="clicks"/>
+                                    <field name="ctr" widget="percentage"/>
+                                </group>
+                            </group>
+                            <group>
+                                <group string="Conversions">
+                                    <field name="leads"/>
+                                    <field name="conversions"/>
+                                </group>
+                                <group string="Costs">
+                                    <field name="spend"/>
+                                    <field name="cpc"/>
+                                    <field name="cpm"/>
+                                    <field name="cpl"/>
+                                </group>
+                            </group>
+                        </page>
+                        <page string="Additional Metrics" name="additional">
+                            <field name="metrics_json" widget="ace" options="{'mode': 'json'}"/>
+                        </page>
+                        <page string="Notes" name="notes">
+                            <field name="notes"/>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Performance Snapshot Search View -->
+    <record id="view_performance_snapshot_search" model="ir.ui.view">
+        <field name="name">ipai.performance.snapshot.search</field>
+        <field name="model">ipai.performance.snapshot</field>
+        <field name="arch" type="xml">
+            <search string="Search Performance">
+                <field name="campaign_id"/>
+                <field name="brand_id"/>
+                <separator/>
+                <filter string="All Channels" name="filter_all" domain="[('channel', '=', 'all')]"/>
+                <filter string="Facebook" name="filter_facebook" domain="[('channel', '=', 'facebook')]"/>
+                <filter string="Instagram" name="filter_instagram" domain="[('channel', '=', 'instagram')]"/>
+                <filter string="Google" name="filter_google" domain="[('channel', '=', 'google')]"/>
+                <group expand="0" string="Group By">
+                    <filter string="Campaign" name="group_campaign" context="{'group_by': 'campaign_id'}"/>
+                    <filter string="Brand" name="group_brand" context="{'group_by': 'brand_id'}"/>
+                    <filter string="Channel" name="group_channel" context="{'group_by': 'channel'}"/>
+                    <filter string="Date" name="group_date" context="{'group_by': 'date:month'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Performance Snapshot Action -->
+    <record id="action_performance_snapshot" model="ir.actions.act_window">
+        <field name="name">Performance Metrics</field>
+        <field name="res_model">ipai.performance.snapshot</field>
+        <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Add your first performance snapshot
+            </p>
+            <p>
+                Track campaign performance metrics like reach, impressions,
+                clicks, and conversions over time.
+            </p>
+        </field>
+    </record>
+</odoo>

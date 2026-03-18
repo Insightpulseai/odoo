@@ -1,0 +1,225 @@
+{
+  "name": "Control Plane: Backup Scheduler",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 3 * * *"
+            }
+          ]
+        }
+      },
+      "id": "schedule",
+      "name": "Daily at 3 AM",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.1,
+      "position": [250, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Generate backup job metadata\nconst timestamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, 19);\nconst correlationId = `backup-${timestamp}`;\n\nreturn {\n  correlation_id: correlationId,\n  timestamp: timestamp,\n  targets: ['odoo_core', 'odoo_marketing', 'odoo_accounting'],\n  bucket: process.env.DO_SPACES_BUCKET || 'odoo-backups',\n  retention_days: 30\n};"
+      },
+      "id": "prepare_backup",
+      "name": "Prepare Backup",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [450, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.SUPABASE_URL }}/rest/v1/rpc/enqueue_job",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "supabaseApi",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Prefer",
+              "value": "return=representation"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"p_source\": \"scheduler\",\n  \"p_job_type\": \"backup.started\",\n  \"p_payload\": {\n    \"timestamp\": \"{{ $json.timestamp }}\",\n    \"targets\": {{ JSON.stringify($json.targets) }},\n    \"bucket\": \"{{ $json.bucket }}\"\n  },\n  \"p_context\": { \"correlation_id\": \"{{ $json.correlation_id }}\" },\n  \"p_priority\": 7\n}",
+        "options": {}
+      },
+      "id": "record_start",
+      "name": "Record Backup Start",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [650, 300]
+    },
+    {
+      "parameters": {
+        "command": "=cd /opt/odoo-oca && ./scripts/backup-do-spaces.sh {{ $('Prepare Backup').item.json.bucket }} 2>&1",
+        "timeout": 600
+      },
+      "id": "run_backup",
+      "name": "Execute Backup Script",
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [850, 300],
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "number": [
+            {
+              "value1": "={{ $json.exitCode }}",
+              "operation": "equal",
+              "value2": 0
+            }
+          ]
+        }
+      },
+      "id": "check_success",
+      "name": "Backup Succeeded?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [1050, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.SUPABASE_URL }}/rest/v1/rpc/complete_job",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "supabaseApi",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"p_job_id\": \"{{ $('Record Backup Start').item.json }}\",\n  \"p_result\": {\n    \"stdout\": \"{{ $('Execute Backup Script').item.json.stdout.slice(0, 1000) }}\",\n    \"backup_path\": \"s3://{{ $('Prepare Backup').item.json.bucket }}/odoo-backups/{{ $('Prepare Backup').item.json.timestamp }}/\",\n    \"completed_at\": \"{{ new Date().toISOString() }}\"\n  }\n}",
+        "options": {}
+      },
+      "id": "mark_complete",
+      "name": "Mark Backup Complete",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1250, 200]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.SUPABASE_URL }}/rest/v1/rpc/fail_job",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "supabaseApi",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"p_job_id\": \"{{ $('Record Backup Start').item.json }}\",\n  \"p_error\": {\n    \"message\": \"Backup script failed\",\n    \"exit_code\": {{ $('Execute Backup Script').item.json.exitCode }},\n    \"stderr\": \"{{ $('Execute Backup Script').item.json.stderr?.slice(0, 500) || '' }}\"\n  }\n}",
+        "options": {}
+      },
+      "id": "mark_failed",
+      "name": "Mark Backup Failed",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1250, 400]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.SUPABASE_URL }}/rest/v1/rpc/enqueue_job",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "supabaseApi",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"p_source\": \"backup\",\n  \"p_job_type\": \"alert.backup_failed\",\n  \"p_payload\": {\n    \"correlation_id\": \"{{ $('Prepare Backup').item.json.correlation_id }}\",\n    \"error\": \"{{ $('Execute Backup Script').item.json.stderr?.slice(0, 200) || 'Unknown error' }}\"\n  },\n  \"p_priority\": 10\n}",
+        "options": {}
+      },
+      "id": "create_alert",
+      "name": "Create Backup Alert",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1450, 400]
+    }
+  ],
+  "connections": {
+    "Daily at 3 AM": {
+      "main": [
+        [
+          {
+            "node": "Prepare Backup",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare Backup": {
+      "main": [
+        [
+          {
+            "node": "Record Backup Start",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Record Backup Start": {
+      "main": [
+        [
+          {
+            "node": "Execute Backup Script",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute Backup Script": {
+      "main": [
+        [
+          {
+            "node": "Backup Succeeded?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Backup Succeeded?": {
+      "main": [
+        [
+          {
+            "node": "Mark Backup Complete",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Mark Backup Failed",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mark Backup Failed": {
+      "main": [
+        [
+          {
+            "node": "Create Backup Alert",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1",
+    "saveManualExecutions": true,
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "staticData": null,
+  "tags": ["control-plane", "backup", "scheduler"],
+  "triggerCount": 1,
+  "updatedAt": "2026-01-24T00:00:00.000Z",
+  "versionId": "1"
+}

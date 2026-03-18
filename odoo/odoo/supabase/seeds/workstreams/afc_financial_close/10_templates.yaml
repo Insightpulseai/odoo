@@ -1,0 +1,35 @@
+# AFC Closing Templates
+# SAP AFC-compatible template definitions
+
+templates:
+  - id: tmpl_month_end
+    workstream_id: afc
+    code: AFC_MONTH_END
+    name: Monthly Financial Close
+    period_type: MONTHLY
+    version: "1.0"
+    is_active: true
+    description: Standard month-end closing activities
+    sap_reference: SAP_AFC_TEMPLATE_MONTHLY
+
+  - id: tmpl_quarter_end
+    workstream_id: afc
+    code: AFC_QUARTER_END
+    name: Quarterly Financial Close
+    period_type: QUARTERLY
+    version: "1.0"
+    is_active: true
+    description: Quarter-end closing with additional regulatory reporting
+    sap_reference: SAP_AFC_TEMPLATE_QUARTERLY
+    includes_tasks_from: [AFC_MONTH_END]  # Inherits monthly tasks
+
+  - id: tmpl_year_end
+    workstream_id: afc
+    code: AFC_YEAR_END
+    name: Annual Financial Close
+    period_type: ANNUAL
+    version: "1.0"
+    is_active: true
+    description: Year-end closing with audit preparation
+    sap_reference: SAP_AFC_TEMPLATE_ANNUAL
+    includes_tasks_from: [AFC_QUARTER_END]  # Inherits quarterly tasks

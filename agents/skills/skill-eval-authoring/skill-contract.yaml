@@ -1,0 +1,47 @@
+version: 1
+name: skill-eval-authoring
+description: "Design and write evaluation suites for agent skills with test prompts, success criteria, and grading methods"
+type: benchmark_skill
+skill_classification: encoded_preference
+owner_persona: skill-eval-judge
+source_family: anthropic_skill_authoring
+status: active
+
+triggers:
+  - "write evals for skill"
+  - "skill needs evaluation"
+  - "eval design"
+  - "quality gate for skill"
+
+inputs:
+  - skill_name: "Skill to evaluate"
+  - skill_type: "capability_uplift or encoded_preference"
+  - skill_contract: "Skill contract YAML"
+  - success_criteria: "What good output looks like"
+
+steps:
+  - id: choose_eval_type
+    action: "Select single-turn, multi-turn, or agent eval based on skill complexity"
+  - id: choose_grader
+    action: "Select code-based, model-based, or human grading"
+  - id: write_test_cases
+    action: "Create test prompts with expected outputs and grading criteria"
+  - id: write_negative_cases
+    action: "Create cases where skill should NOT produce output"
+  - id: define_pass_criteria
+    action: "Set pass@k or pass^k thresholds"
+  - id: define_lifecycle
+    action: "Plan capability → regression graduation"
+
+outputs:
+  - eval_suite: "Test cases with prompts, expected outputs, grading"
+  - pass_criteria: "Threshold definition"
+  - grading_method: "Code-based, model-based, or human"
+
+guardrails:
+  - "Grade outputs, not paths — don't penalize creative valid solutions"
+  - "Implement partial credit for multi-component tasks"
+  - "Must include both positive and negative test cases"
+  - "Validate LLM graders through human calibration"
+
+benchmark_source: "https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents"

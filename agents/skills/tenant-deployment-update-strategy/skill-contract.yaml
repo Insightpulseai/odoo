@@ -1,0 +1,31 @@
+id: tenant-deployment-update-strategy
+version: 1
+status: active
+classification: encoded_preference
+persona: tenant-lifecycle-operator
+updated_at: "2026-03-17"
+
+purpose: >
+  Design tenant-aware deployment and update rollout strategies for
+  multi-tenant SaaS platforms.
+
+inputs:
+  - tenancy_model: "Shared, dedicated, or hybrid"
+  - deployment_infrastructure: "Container Apps, AKS, App Service"
+  - update_frequency: "Release cadence and maintenance windows"
+  - rollback_requirements: "Maximum rollback time and data compatibility"
+
+outputs:
+  - deployment_strategy: "Ring, canary, or blue-green with tenant grouping"
+  - rollout_plan: "Stage-by-stage rollout with gates and health checks"
+  - rollback_procedure: "Per-tenant and platform-wide rollback steps"
+  - versioning_strategy: "API versioning and backward compatibility rules"
+  - communication_plan: "Tenant notification for planned and emergency updates"
+
+guardrails:
+  - "Enterprise tenants must not be in the first deployment ring"
+  - "Every ring must have health check gates before promotion"
+  - "Rollback must be possible within 15 minutes"
+  - "Database migrations must be backward compatible"
+
+benchmark_source: "Azure Multitenancy Checklist - Operational Excellence"

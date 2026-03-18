@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- ============================================ -->
+    <!-- Approval Matrix Rules -->
+    <!-- ============================================ -->
+
+    <!-- Rule 1: Small Amount (≤ ₱5,000) - Manager Only -->
+    <record id="approval_rule_small" model="tbwa.approval.matrix">
+        <field name="name">Small Amount (≤ ₱5,000)</field>
+        <field name="sequence">10</field>
+        <field name="amount_min">0.01</field>
+        <field name="amount_max">5000.00</field>
+        <field name="approver_level_1">manager</field>
+        <field name="approver_level_2">none</field>
+        <field name="sla_hours">24</field>
+        <field name="active">True</field>
+    </record>
+
+    <!-- Rule 2: Medium Amount (₱5,001 - ₱25,000) - Manager → Finance Head -->
+    <record id="approval_rule_medium" model="tbwa.approval.matrix">
+        <field name="name">Medium Amount (₱5,001 - ₱25,000)</field>
+        <field name="sequence">20</field>
+        <field name="amount_min">5000.01</field>
+        <field name="amount_max">25000.00</field>
+        <field name="approver_level_1">manager</field>
+        <field name="approver_level_2">finance_head</field>
+        <field name="sla_hours">48</field>
+        <field name="active">True</field>
+    </record>
+
+    <!-- Rule 3: Large Amount (₱25,001 - ₱100,000) - Manager → CFO -->
+    <record id="approval_rule_large" model="tbwa.approval.matrix">
+        <field name="name">Large Amount (₱25,001 - ₱100,000)</field>
+        <field name="sequence">30</field>
+        <field name="amount_min">25000.01</field>
+        <field name="amount_max">100000.00</field>
+        <field name="approver_level_1">manager</field>
+        <field name="approver_level_2">cfo</field>
+        <field name="sla_hours">72</field>
+        <field name="active">True</field>
+    </record>
+
+    <!-- Rule 4: Very Large Amount (> ₱100,000) - Manager → CFO (Extended SLA) -->
+    <record id="approval_rule_very_large" model="tbwa.approval.matrix">
+        <field name="name">Very Large Amount (> ₱100,000)</field>
+        <field name="sequence">40</field>
+        <field name="amount_min">100000.01</field>
+        <field name="amount_max">9999999999.99</field>
+        <field name="approver_level_1">manager</field>
+        <field name="approver_level_2">cfo</field>
+        <field name="sla_hours">120</field>
+        <field name="active">True</field>
+    </record>
+
+    <!-- Rule 5: Travel Expense (Special Rule) - Travel Tag, Manager Only if ≤ ₱10,000 -->
+    <record id="approval_rule_travel_small" model="tbwa.approval.matrix">
+        <field name="name">Travel Expense (≤ ₱10,000)</field>
+        <field name="sequence">15</field>
+        <field name="amount_min">0.01</field>
+        <field name="amount_max">10000.00</field>
+        <field name="tag_category">travel</field>
+        <field name="approver_level_1">manager</field>
+        <field name="approver_level_2">none</field>
+        <field name="sla_hours">24</field>
+        <field name="active">True</field>
+    </record>
+
+    <!-- Rule 6: Travel Expense (Special Rule) - Travel Tag, Manager → Finance if > ₱10,000 -->
+    <record id="approval_rule_travel_large" model="tbwa.approval.matrix">
+        <field name="name">Travel Expense (> ₱10,000)</field>
+        <field name="sequence">25</field>
+        <field name="amount_min">10000.01</field>
+        <field name="amount_max">9999999999.99</field>
+        <field name="tag_category">travel</field>
+        <field name="approver_level_1">manager</field>
+        <field name="approver_level_2">finance_head</field>
+        <field name="sla_hours">48</field>
+        <field name="active">True</field>
+    </record>
+
+    <!-- Rule 7: Professional Fees (Special Rule) - Always requires Finance approval -->
+    <record id="approval_rule_professional" model="tbwa.approval.matrix">
+        <field name="name">Professional Fees (All Amounts)</field>
+        <field name="sequence">35</field>
+        <field name="amount_min">0.01</field>
+        <field name="amount_max">9999999999.99</field>
+        <field name="tag_category">professional</field>
+        <field name="approver_level_1">manager</field>
+        <field name="approver_level_2">finance_head</field>
+        <field name="sla_hours">48</field>
+        <field name="active">True</field>
+    </record>
+
+    <!-- Rule 8: Rent Expense (Special Rule) - Always requires CFO approval -->
+    <record id="approval_rule_rent" model="tbwa.approval.matrix">
+        <field name="name">Rent Expense (All Amounts)</field>
+        <field name="sequence">45</field>
+        <field name="amount_min">0.01</field>
+        <field name="amount_max">9999999999.99</field>
+        <field name="tag_category">rent</field>
+        <field name="approver_level_1">manager</field>
+        <field name="approver_level_2">cfo</field>
+        <field name="sla_hours">72</field>
+        <field name="active">True</field>
+    </record>
+
+    <!-- ============================================ -->
+    <!-- SLA Escalation Rules -->
+    <!-- ============================================ -->
+    <!-- Note: SLA monitoring is handled by cron job -->
+    <!-- tbwa_spectra_integration.cron_monitor_approval_sla -->
+    <!-- Runs every hour to check for pending approvals exceeding SLA -->
+
+</odoo>

@@ -1,0 +1,124 @@
+version: 1
+namespace: ipai.ops_platform.ado.operating_model.v1
+artifact_type: policy
+repo_key: ops_platform
+domain: ado
+subject: operating_model
+
+# ============================================================================
+# AZURE DEVOPS OPERATING MODEL
+# ============================================================================
+# Azure DevOps = delivery governance and release-control plane
+# GitHub = canonical source control
+# ADO MCP = agent interaction layer
+# ============================================================================
+
+decision:
+  github_is_primary_source_control: true
+  azure_devops_is_primary_work_and_release_plane: true
+  azure_repos_is_not_primary_scm: true
+
+ado_services:
+  boards:
+    enabled: true
+    role: portfolio_and_delivery_tracking
+    owns:
+      - portfolio
+      - program
+      - product
+      - epic
+      - feature
+      - story
+      - defect
+      - release_milestone
+      - change_approval
+
+  pipelines:
+    enabled: true
+    role: release_orchestration_and_promotion
+    use_for:
+      - environment_promotion_gates
+      - multi_repo_orchestration
+      - deployment_pipelines_azure_native
+      - test_report_aggregation
+      - release_stage_control
+
+  test_plans:
+    enabled: true
+    role: manual_uat_and_exploratory_testing
+    use_for:
+      - manual_test_plans
+      - uat_signoff
+      - exploratory_testing
+      - regulated_feature_signoff
+
+  artifacts:
+    enabled: conditional
+    role: internal_package_distribution
+    use_for:
+      - internal_package_feeds
+      - signed_package_promotion
+    note: "Enable only when package feeds are needed beyond GitHub Packages"
+
+  repos:
+    enabled: false
+    note: "GitHub remains canonical SCM. Do not introduce Azure Repos as second primary code host."
+
+# ============================================================================
+# GITHUB STAYS PRIMARY FOR
+# ============================================================================
+
+github_owns:
+  - repository
+  - branch
+  - pull_request
+  - commit
+  - workflow
+  - code_artifact
+  - code_review
+  - branch_protection
+
+# ============================================================================
+# OPS-PLATFORM OWNS
+# ============================================================================
+
+ops_platform_owns:
+  - offer_registry
+  - packaging_channel
+  - publish_state
+  - evidence_bundle
+  - environment_registry
+
+# ============================================================================
+# INTEGRATION RULES
+# ============================================================================
+
+integration_rules:
+  all_release_work_must_link_to_github_artifacts: true
+  all_prod_promotions_require_release_record: true
+  all_uat_signoff_requires_test_plan_or_equivalent: true
+  agent_automation_must_use_azure_devops_mcp_or_api_contract: true
+  duplicate_repo_creation_in_ado_forbidden_by_default: true
+
+# ============================================================================
+# GITHUB ↔ ADO BINDING
+# ============================================================================
+
+github_binding:
+  github_remains_code_system_of_record: true
+  ado_work_items_must_reference_github_repo: true
+  ado_release_records_must_reference_github_pr_or_tag: true
+  pipeline_may_consume_github_repos: true
+
+# ============================================================================
+# PRICING NOTE
+# ============================================================================
+
+pricing:
+  first_5_basic_users: free
+  additional_basic_users: "$6/user/month"
+  free_microsoft_hosted_parallel_job: 1
+  free_microsoft_hosted_minutes: 1800
+  free_self_hosted_parallel_job: 1
+  self_hosted_minutes: unlimited
+  test_plans: separate_higher_cost_tier

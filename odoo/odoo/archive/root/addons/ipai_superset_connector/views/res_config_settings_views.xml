@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Settings View Extension -->
+    
+    <record id="res_config_settings_view_form" model="ir.ui.view">
+        <field name="name">res.config.settings.view.form.inherit.superset</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="base.res_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//form" position="inside">
+                <app data-string="Superset" string="Superset" name="ipai_superset_connector" groups="ipai_superset_connector.group_superset_admin">
+                    <block title="Connection Settings">
+                        <setting string="Default Connection" help="Default Superset connection for new datasets">
+                            <field name="superset_connection_id"/>
+                        </setting>
+                    </block>
+                    <block title="Sync Settings">
+                        <setting string="Auto-Sync" help="Automatically sync datasets to Superset">
+                            <field name="superset_auto_sync"/>
+                            <div class="content-group" invisible="not superset_auto_sync">
+                                <div class="row mt16">
+                                    <label for="superset_sync_interval" class="col-lg-3 o_light_label"/>
+                                    <field name="superset_sync_interval"/>
+                                </div>
+                            </div>
+                        </setting>
+                    </block>
+                    <block title="Security">
+                        <setting string="Row-Level Security" help="Filter data by company for multi-tenant access">
+                            <field name="superset_enable_rls"/>
+                        </setting>
+                    </block>
+                    <block title="Analytics Views">
+                        <setting string="Pre-built Views" help="Create optimized SQL views for common analytics">
+                            <field name="superset_create_analytics_views"/>
+                            <button name="action_create_all_analytics_views" type="object"
+                                    string="Create All Analytics Views" class="btn-secondary mt8"/>
+                        </setting>
+                    </block>
+                </app>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

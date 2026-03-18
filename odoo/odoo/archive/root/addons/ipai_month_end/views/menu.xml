@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Root Menu -->
+    <menuitem id="menu_month_end_root"
+              name="Month-End Closing"
+              web_icon="ipai_month_end,static/description/icon.png"
+              sequence="25"/>
+
+    <!-- Closings Menu -->
+    <menuitem id="menu_closings"
+              name="Closings"
+              parent="menu_month_end_root"
+              action="action_month_end_closing"
+              sequence="10"/>
+
+    <!-- Tasks Menu -->
+    <menuitem id="menu_tasks"
+              name="Tasks"
+              parent="menu_month_end_root"
+              action="action_month_end_task"
+              sequence="20"/>
+
+    <!-- Configuration Menu -->
+    <menuitem id="menu_config"
+              name="Configuration"
+              parent="menu_month_end_root"
+              sequence="100"/>
+
+    <menuitem id="menu_task_templates"
+              name="Task Templates"
+              parent="menu_config"
+              action="action_task_template"
+              sequence="10"/>
+
+    <menuitem id="menu_holidays"
+              name="Philippine Holidays"
+              parent="menu_config"
+              action="action_ph_holiday"
+              sequence="20"/>
+</odoo>

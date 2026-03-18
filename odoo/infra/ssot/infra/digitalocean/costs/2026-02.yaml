@@ -1,0 +1,21 @@
+# DigitalOcean cost snapshot — February 2026
+# Source: DO billing dashboard reviewed 2026-03-01
+# Context: Post-consolidation baseline — Vercel + droplets canonical
+
+month: "2026-02"
+total_usd: 111.07
+
+analysis:
+  trend: "Reduction of $42.45 from Jan 2026 ($89.41 reduction from Dec 2025 peak)"
+  status: "Consolidated to droplets + managed Postgres. App Platform = 0, Registry = 0."
+  remaining_cost_drivers:
+    - "odoo-production droplet (~$48/mo — 4 vCPU / 8 GB SGP1)"
+    - "ocr-service-droplet (~$24/mo — 2 vCPU / 4 GB SGP1)"
+    - "managed Postgres cluster (~$30/mo)"
+    - "snapshots + volume (within retention policy target)"
+  target_monthly: "<$120 sustained (allows for one additional droplet if needed)"
+  next_actions:
+    - "Enforce snapshot retention (policy.yaml: 2 weekly + 2 monthly)"
+    - "Review unattached volumes"
+    - "Monitor OCR droplet disk alerts (see monitoring.yaml)"
+    - "Evaluate right-sizing after 4 weeks of metrics collection"

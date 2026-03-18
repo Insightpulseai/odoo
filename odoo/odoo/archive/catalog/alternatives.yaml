@@ -1,0 +1,238 @@
+version: "0.1.0"
+baseline:
+  odoo_ce_major: 18
+  oca_series: "18.0"
+
+items:
+  - id: documents-dms
+    ee_feature: "Documents (DMS, document workspace, versioning)"
+    category: "Documents"
+    replacements:
+      ce: []
+      oca:
+        - "OCA/document-management:dms"
+        - "OCA/document-management:dms_field"
+      ipai: []
+    install_order:
+      - "OCA/document-management:dms"
+      - "OCA/document-management:dms_field"
+    constraints:
+      - "Module maturity varies by Odoo version; validate on your baseline."
+    verification:
+      commands:
+        - "odoo-bin -d <DB> -i dms,dms_field --stop-after-init"
+      expected_signals:
+        - "Odoo exits 0"
+        - "Modules installed (check ir_module_module state=installed)"
+    rollback:
+      commands:
+        - "odoo-bin -d <DB> -u base --stop-after-init"
+    links:
+      oca:
+        - "https://github.com/OCA/document-management"
+      notes: "Primary replacement for EE Documents module"
+    maturity: "beta"
+    risk: "med"
+
+  - id: helpdesk
+    ee_feature: "Helpdesk (ticketing, SLA, teams)"
+    category: "Support"
+    replacements:
+      ce: []
+      oca:
+        - "OCA/helpdesk:helpdesk_mgmt"
+        - "OCA/helpdesk:helpdesk_mgmt_sla"
+      ipai: []
+    install_order:
+      - "OCA/helpdesk:helpdesk_mgmt"
+      - "OCA/helpdesk:helpdesk_mgmt_sla"
+    constraints: []
+    verification:
+      commands:
+        - "odoo-bin -d <DB> -i helpdesk_mgmt,helpdesk_mgmt_sla --stop-after-init"
+      expected_signals:
+        - "Odoo exits 0"
+    rollback:
+      commands:
+        - "odoo-bin -d <DB> -u base --stop-after-init"
+    links:
+      oca:
+        - "https://github.com/OCA/helpdesk"
+    maturity: "beta"
+    risk: "med"
+
+  - id: field-service
+    ee_feature: "Field Service (task scheduling, route planning, mobile)"
+    category: "Field Service"
+    replacements:
+      ce: []
+      oca:
+        - "OCA/field-service:fieldservice"
+        - "OCA/field-service:fieldservice_account"
+        - "OCA/field-service:fieldservice_sale"
+      ipai: []
+    install_order:
+      - "OCA/field-service:fieldservice"
+      - "OCA/field-service:fieldservice_account"
+      - "OCA/field-service:fieldservice_sale"
+    constraints:
+      - "Mobile app requires additional PWA setup or third-party mobile client"
+    verification:
+      commands:
+        - "odoo-bin -d <DB> -i fieldservice,fieldservice_account,fieldservice_sale --stop-after-init"
+      expected_signals:
+        - "Odoo exits 0"
+        - "Field Service menu visible"
+    rollback:
+      commands:
+        - "odoo-bin -d <DB> -u base --stop-after-init"
+    links:
+      oca:
+        - "https://github.com/OCA/field-service"
+    maturity: "stable"
+    risk: "low"
+
+  - id: sign-digital-signature
+    ee_feature: "Sign (digital document signing, audit trail)"
+    category: "Documents"
+    replacements:
+      ce: []
+      oca:
+        - "OCA/edi:edi_webservice"
+      ipai:
+        - "ipai_sign_basic (planned)"
+    install_order:
+      - "ipai_sign_basic"
+    constraints:
+      - "Full parity requires external signing service integration (DocuSign, HelloSign API)"
+      - "ipai_sign_basic provides basic internal signing workflow only"
+    verification:
+      commands:
+        - "odoo-bin -d <DB> -i ipai_sign_basic --stop-after-init"
+      expected_signals:
+        - "Odoo exits 0"
+        - "Sign menu accessible"
+    rollback:
+      commands:
+        - "odoo-bin -d <DB> -u base --stop-after-init"
+    links:
+      notes: "OCA coverage limited; custom ipai module bridges gap"
+    maturity: "alpha"
+    risk: "high"
+
+  - id: studio-customization
+    ee_feature: "Studio (no-code app builder, custom fields, views)"
+    category: "Customization"
+    replacements:
+      ce:
+        - "base_technical_features"
+      oca:
+        - "OCA/server-ux:base_technical_features"
+      ipai:
+        - "ipai_dev_studio_base"
+    install_order:
+      - "OCA/server-ux:base_technical_features"
+      - "ipai_dev_studio_base"
+    constraints:
+      - "No true no-code parity; provides developer-friendly technical menus"
+      - "Custom fields require XML/Python for full flexibility"
+    verification:
+      commands:
+        - "odoo-bin -d <DB> -i base_technical_features,ipai_dev_studio_base --stop-after-init"
+      expected_signals:
+        - "Odoo exits 0"
+        - "Technical Features menu accessible"
+    rollback:
+      commands:
+        - "odoo-bin -d <DB> -u base --stop-after-init"
+    links:
+      oca:
+        - "https://github.com/OCA/server-ux"
+    maturity: "stable"
+    risk: "low"
+
+  - id: social-marketing
+    ee_feature: "Social Marketing (social media scheduling, analytics)"
+    category: "Marketing"
+    replacements:
+      ce: []
+      oca:
+        - "OCA/social:mail_tracking"
+      ipai: []
+    install_order:
+      - "OCA/social:mail_tracking"
+    constraints:
+      - "Social platform posting requires n8n workflows or external integrations"
+      - "No direct equivalent to EE Social Marketing scheduler"
+    verification:
+      commands:
+        - "odoo-bin -d <DB> -i mail_tracking --stop-after-init"
+      expected_signals:
+        - "Odoo exits 0"
+    rollback:
+      commands:
+        - "odoo-bin -d <DB> -u base --stop-after-init"
+    links:
+      oca:
+        - "https://github.com/OCA/social"
+      notes: "Supplement with n8n + social APIs for scheduling"
+    maturity: "beta"
+    risk: "med"
+
+  - id: approval-workflows
+    ee_feature: "Approvals (multi-level approval workflows)"
+    category: "Workflow"
+    replacements:
+      ce: []
+      oca:
+        - "OCA/multi-company:base_tier_validation"
+        - "OCA/multi-company:base_tier_validation_formula"
+      ipai:
+        - "ipai_approvals"
+    install_order:
+      - "OCA/multi-company:base_tier_validation"
+      - "OCA/multi-company:base_tier_validation_formula"
+      - "ipai_approvals"
+    constraints: []
+    verification:
+      commands:
+        - "odoo-bin -d <DB> -i base_tier_validation,base_tier_validation_formula,ipai_approvals --stop-after-init"
+      expected_signals:
+        - "Odoo exits 0"
+        - "Tier Validation config accessible"
+    rollback:
+      commands:
+        - "odoo-bin -d <DB> -u base --stop-after-init"
+    links:
+      oca:
+        - "https://github.com/OCA/multi-company"
+    maturity: "stable"
+    risk: "low"
+
+  - id: quality-management
+    ee_feature: "Quality (quality checks, control points, alerts)"
+    category: "Manufacturing"
+    replacements:
+      ce: []
+      oca:
+        - "OCA/manufacture:quality_control"
+        - "OCA/manufacture:quality_control_stock"
+      ipai: []
+    install_order:
+      - "OCA/manufacture:quality_control"
+      - "OCA/manufacture:quality_control_stock"
+    constraints: []
+    verification:
+      commands:
+        - "odoo-bin -d <DB> -i quality_control,quality_control_stock --stop-after-init"
+      expected_signals:
+        - "Odoo exits 0"
+        - "Quality Control menu visible"
+    rollback:
+      commands:
+        - "odoo-bin -d <DB> -u base --stop-after-init"
+    links:
+      oca:
+        - "https://github.com/OCA/manufacture"
+    maturity: "beta"
+    risk: "med"

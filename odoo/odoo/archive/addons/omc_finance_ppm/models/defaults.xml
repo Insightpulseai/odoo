@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="default_todo_not_done" model="ir.default">
+        <field name="field_id" ref="field_todo_is_done" />
+        <field name="json_value">false</field>
+    </record>
+</odoo>

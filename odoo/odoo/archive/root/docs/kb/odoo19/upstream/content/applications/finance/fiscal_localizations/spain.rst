@@ -1,0 +1,303 @@
+=====
+Spain
+=====
+
+Configuration
+=============
+
+Install the 🇪🇸 **Spanish** :doc:`fiscal localization package <../fiscal_localizations>` to get all
+the default accounting features of the Spanish localization.
+
+Three **Spanish** localizations exist, each with its own pre-configured **PGCE** charts of accounts:
+
+- Spain - SMEs (2008);
+- Spain - Complete (2008);
+- Spain - Non-profit entities (2008).
+
+To select the one to use, go to :menuselection:`Accounting --> Configuration --> Settings` and
+select a package in the :guilabel:`Fiscal Localization` section.
+
+.. warning::
+   You can only change the accounting package as long as you have not created any accounting entry.
+
+.. seealso::
+   - :doc:`Documentation on e-invoicing’s legality and compliance in Spain
+     <../accounting/customer_invoices/electronic_invoicing/spain>`
+   - :doc:`Documentation on e-invoicing’s legality and compliance in the Basque Country
+     <../accounting/customer_invoices/electronic_invoicing/basque_country>`
+
+Chart of accounts
+=================
+
+You can reach the **Chart of Accounts** by going to :menuselection:`Accounting --> Configuration -->
+Accounting: Chart of Accounts`.
+
+.. tip::
+    When you create a new Odoo Online database, **Spain - SMEs (2008)** is installed by default.
+
+Taxes
+=====
+
+Default Spain-specific taxes are created automatically when the
+:guilabel:`Spanish - Accounting (PGCE 2008) (l10n_es)` module is installed, and tax reports are
+available when installing the module :guilabel:`Spain - Accounting (PGCE 2008) (l10n_es_reports)`.
+Each tax impacts the Spain-specific **tax reports (Modelo)**, available by going to
+:menuselection:`Accounting --> Reporting --> Statements Reports: Tax Report`.
+
+Reports
+=======
+
+Here is the list of Spanish-specific statement reports available:
+
+- Balance Sheet;
+- Profit & Loss;
+- EC Sales List;
+- Tax Report (Modelo 111);
+- Tax Report (Modelo 115);
+- Tax Report (Modelo 130);
+- Tax Report (Modelo 303);
+- Tax Report (Modelo 347);
+- Tax Report (Modelo 349);
+- Tax Report (Modelo 390).
+
+You can access Spain-specific tax reports by clicking on the **book** icon when on a report and
+selecting its Spain-specific version: :guilabel:`(ES)`.
+
+.. image:: spain/modelo-reports.png
+   :alt: Spain-specific tax reports.
+
+Modelo 130
+----------
+
+Change the percentage
+~~~~~~~~~~~~~~~~~~~~~
+
+If you wish to change the percentage computation of the box :guilabel:`[04]` under the :guilabel:`I`
+section and/or of the box :guilabel:`[09]` under the :guilabel:`II` section:
+
+#. Activate the :ref:`developer mode <developer-mode>`, go to :menuselection:`Accounting -->
+   Reporting --> Tax Report`, and select the report :guilabel:`Tax report (Modelo 130)`.
+#. Click the :icon:`fa-cogs` (:guilabel:`cogs`) icon to the right of :guilabel:`Report: Tax Report
+   (Mod 130) (ES)`.
+#. Click the box you wish to change, and in the pop-up window, click on the :guilabel:`percentage`
+   line. In the new pop-up window, change the value in the :guilabel:`Formula` field to the
+   percentage you wish to apply.
+   Repeat this action if you wish to modify the other box as well.
+
+Report agriculture activity
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+If you wish to have any amount input in the :guilabel:`II` section (from boxes :guilabel:`[08]` to
+:guilabel:`[11]`), you must change the **industry** of the corresponding contact to
+:guilabel:`Agriculture`:
+
+#. Go to the contact form (:menuselection:`Accounting --> Customers --> Customers`
+   or :menuselection:`Accounting --> Vendors --> Vendors`, for example), and select a contact.
+#. In the :guilabel:`Sales & Purchase` tab, set the :guilabel:`Industry` field to
+   :guilabel:`Agriculture`.
+
+Repeat this operation for all contacts related to the **agriculture** industry.
+
+
+.. _localizations/spain/veri-factu:
+
+Veri*Factu
+==========
+
+.. note::
+   Producers of Veri*Factu billing systems must self-certify their compliance with the regulations.
+   :download:`Download Odoo's "declaración responsable"<spain/declaracion_responsable.pdf>`
+
+**Veri*Factu** is an e-Invoicing system used by the Spanish Tax Agency. It is mandatory for most
+taxpayers in Spain, except for those who use the SII system or are under a regional tax regime
+(i.e., TicketBai).
+
+Odoo allows :ref:`invoices <localizations/spain/veri-factu-invoices>` and Point of Sale :ref:`orders
+<localizations/spain/veri-factu-orders>` to be automatically sent to the tax authorities.
+
+.. _localizations/spain/veri-factu-configuration:
+
+Configuration
+-------------
+
+To enable **Veri\*Factu**, follow these steps:
+
+#. Open the Settings app to make sure your company's :guilabel:`Country` and :guilabel:`Tax ID` are
+   correctly set in the :ref:`Companies <general/companies/company>` section.
+#. :ref:`Install <general/install>` the :guilabel:`Spain - Veri*Factu (l10n_es_edi_verifactu)`
+   module.
+#. Go to :menuselection:`Accounting --> Configuration --> Settings`, scroll to the
+   :guilabel:`Veri\*Factu` section, check the :guilabel:`Enable Veri*Factu` option, and click
+   :icon:`oi-arrow-right` :guilabel:`Manage certificates` to add a certificate.
+#. In the :guilabel:`Certificates for Veri\*Factu` list view, click :guilabel:`New`.
+#. Click :guilabel:`Upload your file`, then select a certificate file and enter the
+   :guilabel:`Password` needed to open the certificate (if there is one).
+
+.. note::
+   - At least one certificate has to be uploaded.
+   - By default Veri*Factu is in testing mode. The data is sent to test servers
+     and is not considered official. When official data can be sent to the production servers, go to
+     the :guilabel:`Veri\*Factu` section in the :guilabel:`Settings` and disable :guilabel:`Test
+     Environment`.
+
+.. _localizations/spain/veri-factu-invoices:
+
+Invoices
+--------
+
+Once an :doc:`invoice <../../finance/accounting/customer_invoices>` is confirmed, it can be
+:ref:`sent <accounting/invoice/sending>`. In the :guilabel:`Send` window, the Veri*Factu option is
+available if Veri*Factu has been enabled.
+
+Click :guilabel:`Send` to generate a JSON file containing the invoice details. This file is stored
+as a Veri*Factu document. In the :guilabel:`Veri*Factu` tab, all corresponding documents are
+listed by their creation date and current status.
+
+.. tip::
+   To download a JSON file, click on its document in the :guilabel:`Veri*Factu` tab. Then, in
+   the :guilabel:`Open: Veri*Factu Documents` window, click the link in the :guilabel:`JSON` field.
+
+.. note::
+   - The document should be sent to the :abbr:`AEAT (Agencia Estatal de Administración Tributaria)`
+     immediately. However, it may be delayed due to mandatory waiting periods between submissions
+     required by the :abbr:`AEAT (Agencia Estatal de Administración Tributaria)`. In such cases,
+     the document is automatically sent the next time a scheduled action runs.
+   - A Veri\*Factu **QR code** appears on the invoice PDF. Scan this code to verify that the invoice
+     has been received and recognized by the :abbr:`AEAT (Agencia Estatal de Administración
+     Tributaria)`.
+
+.. _localizations/spain/veri-factu-orders:
+
+Point of sale orders
+--------------------
+
+Once an order has been :ref:`paid <pos/use/sell>`, a JSON file containing the order details is
+generated. This file is stored as a Veri*Factu document.
+
+Go to :menuselection:`Point of Sale --> Orders --> Orders`. In the :guilabel:`Orders` list view,
+select the relevant order. In the :guilabel:`Veri*Factu` tab, all the corresponding documents are
+listed by their creation date and current status.
+
+.. tip::
+   To download a JSON file, click on its document in the :guilabel:`Veri*Factu` tab. Then, in
+   the :guilabel:`Open: Veri*Factu Documents` window, click the link in the :guilabel:`JSON` field.
+
+.. note::
+   - The document should be sent to the :abbr:`AEAT (Agencia Estatal de Administración Tributaria)`
+     immediately. However, it may be delayed due to mandatory waiting periods between submissions
+     required by the :abbr:`AEAT (Agencia Estatal de Administración Tributaria)`. In such cases,
+     the document is automatically sent the next time a scheduled action runs.
+
+If an invoice is generated for an order during the payment process, the Veri*Factu document is
+:ref:`created and sent for the invoice <localizations/spain/veri-factu-invoices>` instead.
+
+.. note::
+   A Veri\*Factu **QR code** appears on the order receipt, even if an invoice is created for the
+   order. Scan this code to verify that the invoice has been received and recognized by the
+   :abbr:`AEAT (Agencia Estatal de Administración Tributaria)`
+
+TicketBAI
+=========
+
+`Ticket BAI <https://www.gipuzkoa.eus/es/web/ogasuna/ticketbai>`_ or **TBAI** is an e-Invoicing
+system used by the Basque government and its three provincial councils (Álava, Biscay, and
+Gipuzkoa).
+
+Odoo supports the **TicketBAI (TBAI)** electronic invoicing format for all three regions of the
+**Basque Country**. To enable **TicketBAI**, set your company's :guilabel:`Country` and
+:guilabel:`Tax ID` under :menuselection:`Settings --> General Settings` in the :guilabel:`Companies`
+section.
+
+Then, :ref:`install <general/install>` the module :guilabel:`Spain -TicketBAI (l10n_es_edi_TBAI)`,
+go to :menuselection:`Accounting --> Configuration --> Settings`, and select a **region** in the
+:guilabel:`Spain Localization` section's :guilabel:`Tax Agency for TBAI` field.
+
+Once a region is selected, click :guilabel:`Manage certificates (SII/TicketBAI)`, then click
+:guilabel:`New`, upload the certificate, and enter the password provided by the tax agency.
+
+.. warning::
+   If you are testing certificates, enable :guilabel:`Test Mode` in the
+   :guilabel:`Spain Localization` section, which can be found under :guilabel:`Accounting` in
+   the **Settings** app.
+
+Use case
+--------
+
+Once an invoice has been :doc:`created <../../finance/accounting/customer_invoices>` and confirmed,
+a TicketBAI **banner** appears at the top.
+
+.. image:: spain/ticketbai-invoice.png
+   :alt: TicketBAI banner at the top of the invoice once sent.
+
+Odoo sends invoices through TicketBAI automatically every **24 hours**. However, you can click
+:guilabel:`Process now` to send the invoice immediately.
+
+When the invoice is **sent**, the status of the field :guilabel:`Electronic Invoice` changes to
+:guilabel:`Sent`, and the XML file can be found in the **chatter**. Under the
+:guilabel:`EDI Documents` tab, you can see the traceability of other generated documents related to
+the invoice (e.g., if the invoice should also be sent through the **SII**, it will appear here).
+
+.. note::
+   The TBAI **QR code** is displayed on the invoice PDF.
+
+   .. image:: spain/qr-code.png
+      :alt: QR code of the TicketBAI on the invoice.
+
+FACe
+====
+
+`FACe <https://face.gob.es/en>`_ is the e-Invoicing platform used by the public administrations in
+Spain to send electronic invoices.
+
+Before configuring the :abbr:`FACe (General Entrance for Electronic Invoices)` system,
+:ref:`install <general/install>` the :guilabel:`Spain - Facturae EDI (l10n_es_edi_facturae)` module
+and other **Facturae EDI**-related modules.
+
+To configure FACe, follow these steps:
+
+#. Go to :menuselection:`Accounting --> Configuration --> Certificates`.
+#. Click :guilabel:`New` to create a new certificate.
+#. Complete the fields, including uploading the file of the :guilabel:`Certificate` provided by the
+   tax agency and the provided :guilabel:`Certificate Password`.
+
+.. note::
+   If using the Invoicing app instead of Accounting, go to :menuselection:`Invoicing -->
+   Configuration --> Certificates`.
+
+Use case
+--------
+
+Once you have :doc:`created <../../finance/accounting/customer_invoices>` an invoice and confirmed
+it, click :guilabel:`Send & Print`. Make sure :guilabel:`Generate Facturae edi file` is enabled, and
+click :guilabel:`Send & Print` again. Once the invoice is sent, the generated XML file is available
+in the **chatter**.
+
+.. warning::
+   The file is **NOT** automatically sent. You have to send it yourself manually.
+
+.. tip::
+   You can send **FACe** XML files in batch through `the governmental portal <https://www.facturae.gob.es/formato/Paginas/descarga-aplicacion-escritorio.aspx>`_.
+
+Administrative centers
+----------------------
+
+In order for **FACe** to work with **administrative centers**, the invoice *must* include specific
+data about the centers.
+
+To add **administrative centers**, create a new **contact** to add to the **partner** company.
+Select :guilabel:`FACe Center` as the **type**, assign one or more **role(s)** to that contact, and
+:guilabel:`Save`. The **three** roles usually required are:
+
+- Órgano gestor: :guilabel:`Receptor` (Receiver);
+- Unidad tramitadora: :guilabel:`Pagador` (Payer);
+- Oficina contable: :guilabel:`Fiscal` (Fiscal).
+
+.. image:: spain/administrative-center.png
+   :alt: Administrative center contact form for public entities.
+
+.. tip::
+   - If administrative centers need different :guilabel:`Codes` per role, you *must* create
+     different centers for each role.
+   - When an electronic invoice is created using a partner with **administrative centers**, *all*
+     administrative centers are included in the invoice.
+   - You can add one contact with multiple roles or multiple contacts with a different role each.

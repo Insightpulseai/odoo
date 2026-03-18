@@ -1,0 +1,429 @@
+// ============================================================================
+// IPAI Platform Theme - Surfaces
+// Material 3 containment + Fluent depth patterns
+// ============================================================================
+
+@import 'tokens';
+
+// ==========================================================================
+// BASE SURFACE CLASSES
+// ==========================================================================
+
+.ipai-surface {
+  background: var(--ipai-surface);
+  color: var(--ipai-on-surface);
+}
+
+.ipai-surface-dim {
+  background: var(--ipai-surface-dim);
+  color: var(--ipai-on-surface);
+}
+
+.ipai-surface-bright {
+  background: var(--ipai-surface-bright);
+  color: var(--ipai-on-surface);
+}
+
+.ipai-surface-container {
+  background: var(--ipai-surface-container);
+  color: var(--ipai-on-surface);
+}
+
+.ipai-surface-container-low {
+  background: var(--ipai-surface-container-low);
+  color: var(--ipai-on-surface);
+}
+
+.ipai-surface-container-high {
+  background: var(--ipai-surface-container-high);
+  color: var(--ipai-on-surface);
+}
+
+// ==========================================================================
+// CARD SURFACES
+// ==========================================================================
+
+.ipai-card {
+  background: var(--ipai-surface);
+  border: 1px solid var(--ipai-outline-variant);
+  border-radius: var(--ipai-radius-lg);
+  box-shadow: var(--ipai-shadow-xs);
+  transition: box-shadow var(--ipai-duration-normal) var(--ipai-ease-out),
+              border-color var(--ipai-duration-normal) var(--ipai-ease-out);
+
+  &:hover {
+    box-shadow: var(--ipai-shadow-sm);
+  }
+}
+
+.ipai-card-elevated {
+  background: var(--ipai-surface);
+  border: none;
+  border-radius: var(--ipai-radius-lg);
+  box-shadow: var(--ipai-shadow-md);
+  transition: box-shadow var(--ipai-duration-normal) var(--ipai-ease-out),
+              transform var(--ipai-duration-normal) var(--ipai-ease-out);
+
+  &:hover {
+    box-shadow: var(--ipai-shadow-lg);
+  }
+}
+
+.ipai-card-filled {
+  background: var(--ipai-surface-container);
+  border: none;
+  border-radius: var(--ipai-radius-lg);
+
+  &.ipai-card-filled--primary {
+    background: var(--ipai-primary-container);
+    color: var(--ipai-on-primary-container);
+  }
+
+  &.ipai-card-filled--success {
+    background: var(--ipai-tertiary-container);
+    color: var(--ipai-on-tertiary-container);
+  }
+
+  &.ipai-card-filled--warning {
+    background: var(--ipai-warning-container);
+    color: var(--ipai-on-warning-container);
+  }
+
+  &.ipai-card-filled--error {
+    background: var(--ipai-error-container);
+    color: var(--ipai-on-error-container);
+  }
+}
+
+// ==========================================================================
+// COPILOT PANEL SURFACE
+// ==========================================================================
+
+.ipai-panel {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: var(--ipai-background);
+  border-left: 1px solid var(--ipai-outline-variant);
+
+  &--floating {
+    position: fixed;
+    top: var(--ipai-space-4);
+    right: var(--ipai-space-4);
+    bottom: var(--ipai-space-4);
+    width: var(--ipai-panel-width);
+    max-width: calc(100vw - var(--ipai-space-8));
+    border: 1px solid var(--ipai-outline-variant);
+    border-radius: var(--ipai-radius-xl);
+    box-shadow: var(--ipai-shadow-2xl);
+    z-index: var(--ipai-z-copilot);
+    overflow: hidden;
+  }
+}
+
+.ipai-panel-header {
+  display: flex;
+  align-items: center;
+  gap: var(--ipai-space-3);
+  padding: var(--ipai-space-3) var(--ipai-space-4);
+  background: var(--ipai-surface);
+  border-bottom: 1px solid var(--ipai-outline-variant);
+  min-height: var(--ipai-header-height);
+}
+
+.ipai-panel-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--ipai-space-4);
+
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: var(--ipai-outline);
+    border-radius: var(--ipai-radius-full);
+    border: 2px solid var(--ipai-background);
+
+    &:hover {
+      background: var(--ipai-on-surface-muted);
+    }
+  }
+}
+
+.ipai-panel-footer {
+  padding: var(--ipai-space-3) var(--ipai-space-4);
+  background: var(--ipai-surface);
+  border-top: 1px solid var(--ipai-outline-variant);
+}
+
+// ==========================================================================
+// MESSAGE BUBBLES
+// ==========================================================================
+
+.ipai-message {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ipai-space-2);
+  padding: var(--ipai-message-padding);
+  border-radius: var(--ipai-radius-lg);
+
+  &--assistant {
+    background: var(--ipai-assistant-bg);
+    border: 1px solid var(--ipai-assistant-border);
+    color: var(--ipai-assistant-text);
+    margin-right: var(--ipai-space-8);
+    border-bottom-left-radius: var(--ipai-radius-sm);
+  }
+
+  &--user {
+    background: var(--ipai-user-bg);
+    border: 1px solid var(--ipai-user-border);
+    color: var(--ipai-user-text);
+    margin-left: var(--ipai-space-8);
+    border-bottom-right-radius: var(--ipai-radius-sm);
+  }
+
+  &--system {
+    background: var(--ipai-system-bg);
+    border: 1px solid var(--ipai-system-border);
+    color: var(--ipai-system-text);
+    margin: 0 var(--ipai-space-4);
+    text-align: center;
+    font-size: var(--ipai-text-sm);
+  }
+
+  &--loading {
+    .ipai-message-content {
+      display: flex;
+      align-items: center;
+      gap: var(--ipai-space-2);
+    }
+  }
+}
+
+.ipai-message-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--ipai-space-2);
+}
+
+.ipai-message-sender {
+  font-size: var(--ipai-text-sm);
+  font-weight: var(--ipai-font-semibold);
+}
+
+// ==========================================================================
+// MODAL / DIALOG SURFACES
+// ==========================================================================
+
+.ipai-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+  z-index: var(--ipai-z-modal-backdrop);
+  animation: ipai-fade-in var(--ipai-duration-normal) var(--ipai-ease-out);
+}
+
+.ipai-modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 90%;
+  max-width: 500px;
+  max-height: 90vh;
+  background: var(--ipai-surface);
+  border-radius: var(--ipai-radius-xl);
+  box-shadow: var(--ipai-shadow-2xl);
+  z-index: var(--ipai-z-modal);
+  overflow: hidden;
+  animation: ipai-scale-in var(--ipai-duration-normal) var(--ipai-ease-spring);
+}
+
+.ipai-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--ipai-space-4) var(--ipai-space-5);
+  border-bottom: 1px solid var(--ipai-outline-variant);
+}
+
+.ipai-modal-body {
+  padding: var(--ipai-space-5);
+  overflow-y: auto;
+  max-height: calc(90vh - 140px);
+}
+
+.ipai-modal-footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--ipai-space-3);
+  padding: var(--ipai-space-4) var(--ipai-space-5);
+  border-top: 1px solid var(--ipai-outline-variant);
+}
+
+// ==========================================================================
+// POPOVER SURFACE
+// ==========================================================================
+
+.ipai-popover {
+  background: var(--ipai-surface);
+  border: 1px solid var(--ipai-outline-variant);
+  border-radius: var(--ipai-radius-lg);
+  box-shadow: var(--ipai-shadow-lg);
+  z-index: var(--ipai-z-popover);
+  animation: ipai-scale-in var(--ipai-duration-fast) var(--ipai-ease-out);
+}
+
+// ==========================================================================
+// TOOLTIP SURFACE
+// ==========================================================================
+
+.ipai-tooltip {
+  padding: var(--ipai-space-1-5) var(--ipai-space-3);
+  background: var(--ipai-on-surface);
+  color: var(--ipai-surface);
+  font-size: var(--ipai-text-xs);
+  border-radius: var(--ipai-radius-md);
+  box-shadow: var(--ipai-shadow-md);
+  z-index: var(--ipai-z-tooltip);
+  animation: ipai-fade-in var(--ipai-duration-fast) var(--ipai-ease-out);
+  max-width: 250px;
+  text-align: center;
+}
+
+// ==========================================================================
+// DIVIDERS
+// ==========================================================================
+
+.ipai-divider {
+  height: 1px;
+  background: var(--ipai-outline-variant);
+  border: none;
+  margin: var(--ipai-space-4) 0;
+
+  &--subtle {
+    background: var(--ipai-surface-container);
+  }
+
+  &--vertical {
+    width: 1px;
+    height: auto;
+    margin: 0 var(--ipai-space-4);
+  }
+}
+
+// ==========================================================================
+// SKELETON LOADERS
+// ==========================================================================
+
+.ipai-skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--ipai-surface-container) 25%,
+    var(--ipai-surface-container-high) 50%,
+    var(--ipai-surface-container) 75%
+  );
+  background-size: 200% 100%;
+  animation: ipai-shimmer 1.5s infinite;
+  border-radius: var(--ipai-radius-md);
+}
+
+.ipai-skeleton-text {
+  height: 1em;
+  margin: var(--ipai-space-1) 0;
+
+  &:first-child {
+    width: 100%;
+  }
+
+  &:nth-child(2) {
+    width: 85%;
+  }
+
+  &:nth-child(3) {
+    width: 70%;
+  }
+}
+
+.ipai-skeleton-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--ipai-radius-full);
+}
+
+.ipai-skeleton-button {
+  width: 80px;
+  height: 32px;
+}
+
+// ==========================================================================
+// DIFF PREVIEW SURFACE
+// ==========================================================================
+
+.ipai-diff {
+  font-family: var(--ipai-font-mono);
+  font-size: var(--ipai-text-sm);
+  border-radius: var(--ipai-radius-lg);
+  overflow: hidden;
+  border: 1px solid var(--ipai-outline-variant);
+}
+
+.ipai-diff-header {
+  display: flex;
+  align-items: center;
+  gap: var(--ipai-space-2);
+  padding: var(--ipai-space-2) var(--ipai-space-3);
+  background: var(--ipai-surface-container);
+  border-bottom: 1px solid var(--ipai-outline-variant);
+  font-family: var(--ipai-font-sans);
+  font-size: var(--ipai-text-xs);
+  font-weight: var(--ipai-font-medium);
+}
+
+.ipai-diff-content {
+  padding: var(--ipai-space-3);
+  background: var(--ipai-surface);
+  overflow-x: auto;
+}
+
+.ipai-diff-line {
+  display: flex;
+  padding: var(--ipai-space-0-5) var(--ipai-space-2);
+
+  &--add {
+    background: var(--ipai-diff-add-bg);
+    color: var(--ipai-diff-add-text);
+  }
+
+  &--remove {
+    background: var(--ipai-diff-remove-bg);
+    color: var(--ipai-diff-remove-text);
+  }
+
+  &--change {
+    background: var(--ipai-diff-change-bg);
+    color: var(--ipai-diff-change-text);
+  }
+}
+
+.ipai-diff-line-number {
+  width: 40px;
+  text-align: right;
+  padding-right: var(--ipai-space-2);
+  color: var(--ipai-on-surface-muted);
+  user-select: none;
+}
+
+.ipai-diff-line-content {
+  flex: 1;
+  white-space: pre;
+}

@@ -1,0 +1,11 @@
+id,name,parent_id/id
+__import__.dms_cat_financial,Financial Documents,
+__import__.dms_cat_hr,HR Documents,
+__import__.dms_cat_legal,Legal Documents,
+__import__.dms_cat_operational,Operational,
+__import__.dms_cat_invoices,Invoices,__import__.dms_cat_financial
+__import__.dms_cat_statements,Statements,__import__.dms_cat_financial
+__import__.dms_cat_tax,Tax Documents,__import__.dms_cat_financial
+__import__.dms_cat_employee,Employee Records,__import__.dms_cat_hr
+__import__.dms_cat_contracts,Contracts,__import__.dms_cat_legal
+__import__.dms_cat_agreements,Agreements,__import__.dms_cat_legal

@@ -1,0 +1,213 @@
+# =============================================================================
+# MAIL-STACK.YAML - Complete Email Stack Definition (SSOT)
+# =============================================================================
+# This single file fully defines Zoho + Mailgun + DNS + SMTP configuration.
+# All other email-related files are derived from or consistent with this.
+# =============================================================================
+
+version: "1.0"
+last_updated: "2026-02-01"
+canonical_domain: insightpulseai.com
+
+# =============================================================================
+# DNS AUTHORITY
+# =============================================================================
+dns:
+  provider: wix
+  nameservers:
+    - ns6.wixdns.net
+    - ns7.wixdns.net
+  management_url: https://manage.wix.com
+  apply_method: manual  # manual | terraform | api
+
+# =============================================================================
+# INBOUND EMAIL (Zoho)
+# =============================================================================
+inbound:
+  provider: zoho
+  domain: insightpulseai.com
+  admin_url: https://mailadmin.zoho.com
+
+  dns_records:
+    mx:
+      - host: "@"
+        value: mx.zoho.com
+        priority: 10
+      - host: "@"
+        value: mx2.zoho.com
+        priority: 20
+      - host: "@"
+        value: mx3.zoho.com
+        priority: 50
+
+    spf:
+      host: "@"
+      value: "v=spf1 include:zohomail.com include:mailgun.org ~all"
+
+    dmarc:
+      host: "_dmarc"
+      value: "v=DMARC1; p=quarantine; rua=mailto:dmarc@insightpulseai.com"
+
+  mailboxes:
+    - business@insightpulseai.com
+    - support@insightpulseai.com
+    - info@insightpulseai.com
+
+# =============================================================================
+# OUTBOUND EMAIL (Mailgun)
+# =============================================================================
+outbound:
+  provider: mailgun
+  domain: mg.insightpulseai.com
+  region: us
+  api_base: https://api.mailgun.net
+  dashboard_url: https://app.mailgun.com
+
+  # Secrets (references only - values in secret store)
+  secrets:
+    api_key: MAILGUN_API_KEY
+    webhook_signing_key: MAILGUN_WEBHOOK_SIGNING_KEY
+
+  # SMTP Configuration
+  smtp:
+    server: smtp.mailgun.org
+    port: 587
+    encryption: starttls
+    alternative_ports:
+      ssl: 465
+
+  # SMTP Users
+  users:
+    no_reply:
+      login: no-reply@mg.insightpulseai.com
+      password_ref: MAILGUN_SMTP_PASSWORD
+      purpose: System notifications, invoices, automated emails
+      from_name: InsightPulse AI
+      from_email: no-reply@insightpulseai.com
+
+    support:
+      login: support@mg.insightpulseai.com
+      password_ref: MAILGUN_SMTP_PASSWORD_SUPPORT
+      purpose: Helpdesk, customer support, ticket responses
+      from_name: InsightPulse AI Support
+      from_email: support@insightpulseai.com
+
+  # DNS Records (from Mailgun API)
+  dns_records:
+    spf:
+      host: mg
+      type: TXT
+      value: "v=spf1 include:mailgun.org ~all"
+
+    dkim:
+      host: mx._domainkey.mg
+      type: TXT
+      value: "k=rsa; p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQC59AXS0WKSDfH3HaKlpa1a3dusQWC7PECyywHd2mntae8jiwJ9++tHgu+YFNRVwXTmCFfUIsUdQpmxhYyVsYVLis/xagryklQ/wU3SF0E3Qso796fV9x1ShYb/W9rqpiW8jVD78LSppRquyYwTNLuP2+5hWFLxxVqPJYWZBHE2CQIDAQAB"
+
+    mx:
+      - host: mg
+        type: MX
+        value: mxa.mailgun.org
+        priority: 10
+      - host: mg
+        type: MX
+        value: mxb.mailgun.org
+        priority: 10
+
+    tracking:
+      host: email.mg
+      type: CNAME
+      value: mailgun.org
+
+  # Feature Flags
+  tracking:
+    open_tracking: true
+    click_tracking: true
+    unsubscribe_tracking: false
+
+  # Webhooks (optional)
+  webhooks:
+    enabled: false
+    base_url: https://erp.insightpulseai.com/mailgun/webhook
+    events:
+      - delivered
+      - opened
+      - clicked
+      - permanent_fail
+      - complained
+
+# =============================================================================
+# ODOO INTEGRATION
+# =============================================================================
+odoo:
+  version: "19.0"
+  base_url: https://erp.insightpulseai.com
+
+  outgoing_mail_server:
+    name: Mailgun - insightpulseai.com
+    smtp_host: smtp.mailgun.org
+    smtp_port: 587
+    smtp_encryption: starttls
+    smtp_user: no-reply@mg.insightpulseai.com
+    smtp_pass_ref: MAILGUN_SMTP_PASSWORD
+    from_filter: insightpulseai.com
+    sequence: 1
+    active: true
+
+  system_parameters:
+    mail.catchall.domain: insightpulseai.com
+    mail.catchall.alias: catchall
+    mail.default.from: notifications
+    mail.bounce.alias: bounce
+    web.base.url: https://erp.insightpulseai.com
+
+# =============================================================================
+# DEPRECATED DOMAINS (DO NOT USE)
+# =============================================================================
+deprecated:
+  - domain: insightpulseai.net
+    reason: Consolidating to .com
+    action: Remove all references
+
+  - domain: mg.insightpulseai.net
+    reason: Migrated to mg.insightpulseai.com
+    action: Delete from Mailgun after verification
+
+# =============================================================================
+# VERIFICATION
+# =============================================================================
+verification:
+  commands:
+    dns_check: |
+      dig MX insightpulseai.com +short
+      dig TXT mg.insightpulseai.com +short
+      dig TXT mx._domainkey.mg.insightpulseai.com +short
+
+    mailgun_status: |
+      ./scripts/mailgun/mailgun-domain-setup.sh status
+
+    test_email: |
+      ./scripts/mailgun/mailgun-domain-setup.sh test your-email@example.com
+
+  expected_state:
+    mailgun_domain: active
+    dns_spf: valid
+    dns_dkim: valid
+    dns_mx: valid
+    smtp_connection: reachable
+
+# =============================================================================
+# CHECKLIST
+# =============================================================================
+checklist:
+  completed:
+    - Mailgun domain created (mg.insightpulseai.com)
+    - SMTP credentials created (no-reply, support)
+    - Repository configs updated
+    - SSOT files created
+
+  pending:
+    - DNS records added in Wix
+    - Mailgun domain verified
+    - Test email sent successfully
+    - Odoo mail server configured

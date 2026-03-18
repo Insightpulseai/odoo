@@ -1,0 +1,81 @@
+# Unity Catalog Permissions Configuration
+# Defines grants for catalogs, schemas, and tables
+
+resources:
+  grants:
+    # Catalog-level grants
+    catalog_grants:
+      catalog: "${var.catalog}"
+      grants:
+        - principal: "data-engineers"
+          privileges:
+            - USE_CATALOG
+            - USE_SCHEMA
+            - CREATE_SCHEMA
+            - CREATE_TABLE
+            - CREATE_FUNCTION
+            - SELECT
+            - MODIFY
+
+        - principal: "data-analysts"
+          privileges:
+            - USE_CATALOG
+            - USE_SCHEMA
+            - SELECT
+
+        - principal: "platform-admins"
+          privileges:
+            - ALL_PRIVILEGES
+
+        - principal: "notion-ppm-service-principal"
+          privileges:
+            - ALL_PRIVILEGES
+
+    # Schema-level grants (bronze)
+    bronze_grants:
+      schema: "${var.catalog}.bronze"
+      grants:
+        - principal: "data-engineers"
+          privileges:
+            - USE_SCHEMA
+            - CREATE_TABLE
+            - SELECT
+            - MODIFY
+
+        - principal: "data-analysts"
+          privileges:
+            - USE_SCHEMA
+            - SELECT
+
+    # Schema-level grants (silver)
+    silver_grants:
+      schema: "${var.catalog}.silver"
+      grants:
+        - principal: "data-engineers"
+          privileges:
+            - USE_SCHEMA
+            - CREATE_TABLE
+            - SELECT
+            - MODIFY
+
+        - principal: "data-analysts"
+          privileges:
+            - USE_SCHEMA
+            - SELECT
+
+    # Schema-level grants (gold)
+    gold_grants:
+      schema: "${var.catalog}.gold"
+      grants:
+        - principal: "data-engineers"
+          privileges:
+            - USE_SCHEMA
+            - CREATE_TABLE
+            - SELECT
+            - MODIFY
+
+        - principal: "data-analysts"
+          privileges:
+            - USE_SCHEMA
+            - SELECT
+            - CREATE_VIEW

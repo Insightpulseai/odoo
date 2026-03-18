@@ -1,0 +1,58 @@
+name: pnpm lockfile integrity
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  lockfile-check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Enable Corepack
+        run: corepack enable
+
+      - name: Use pnpm version from package.json#packageManager
+        shell: bash
+        run: |
+          set -euo pipefail
+          PM="$(node -p "require('./package.json').packageManager || ''")"
+          if [[ -z "$PM" ]]; then
+            echo "package.json#packageManager is missing (expected e.g. 'pnpm@9.15.4')." >&2
+            exit 1
+          fi
+          if [[ "$PM" != pnpm@* ]]; then
+            echo "package.json#packageManager must be pnpm@<version>, got: $PM" >&2
+            exit 1
+          fi
+          VER="${PM#pnpm@}"
+          echo "Using pnpm@$VER"
+          corepack prepare "pnpm@$VER" --activate
+          pnpm --version
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "pnpm"
+
+      - name: Install with frozen lockfile (must not modify lockfile)
+        run: pnpm install --frozen-lockfile
+
+      - name: Ensure lockfile unchanged
+        shell: bash
+        run: |
+          set -euo pipefail
+          if ! git diff --exit-code -- pnpm-lock.yaml; then
+            echo "::error::pnpm-lock.yaml changed during CI. Regenerate locally and commit it."
+            git --no-pager diff -- pnpm-lock.yaml | head -100
+            exit 1
+          fi
+          echo "Lockfile is in sync with package.json"

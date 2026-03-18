@@ -1,0 +1,5449 @@
+erDiagram
+  a1_check {
+    boolean active
+    varchar check_type
+    int close_gate_template_id
+    varchar code
+    int company_id
+    datetime create_date
+    int create_uid
+    varchar description
+    text fail_action
+    int id
+    varchar name
+    text pass_criteria
+    int sequence
+    varchar severity
+    datetime write_date
+    int write_uid
+  }
+  a1_check_result {
+    int check_id
+    datetime create_date
+    int create_uid
+    varchar evidence
+    int executed_by
+    datetime executed_date
+    int id
+    varchar result
+    text result_notes
+    int task_id
+    datetime write_date
+    int write_uid
+  }
+  a1_check_result_attachment_ids_rel {
+    int a1_check_result_id
+    int ir_attachment_id
+  }
+  a1_export_run {
+    int company_id
+    datetime create_date
+    int create_uid
+    int created_count
+    int error_count
+    int id
+    text log
+    varchar run_type
+    varchar seed_hash
+    text seed_json
+    varchar status
+    int unchanged_count
+    int updated_count
+    varchar webhook_url
+    datetime write_date
+    int write_uid
+  }
+  a1_role {
+    boolean active
+    varchar code
+    int company_id
+    datetime create_date
+    int create_uid
+    int default_user_id
+    text description
+    int fallback_user_id
+    int id
+    varchar name
+    int sequence
+    datetime write_date
+    int write_uid
+  }
+  a1_role_group_ids_rel {
+    int a1_role_id
+    int res_groups_id
+  }
+  a1_task {
+    date approval_deadline
+    int approval_done_by
+    datetime approval_done_date
+    int approver_id
+    varchar approver_role
+    float checklist_progress
+    int close_task_id
+    int company_id
+    datetime create_date
+    int create_uid
+    varchar external_key
+    int id
+    varchar name
+    varchar notes
+    int owner_id
+    varchar owner_role
+    date prep_deadline
+    int prep_done_by
+    datetime prep_done_date
+    date review_deadline
+    int review_done_by
+    datetime review_done_date
+    int reviewer_id
+    varchar reviewer_role
+    int sequence
+    varchar state
+    int tasklist_id
+    int template_id
+    int workstream_id
+    datetime write_date
+    int write_uid
+  }
+  a1_task_checklist {
+    varchar code
+    datetime create_date
+    int create_uid
+    int done_by
+    datetime done_date
+    int id
+    boolean is_done
+    boolean is_required
+    varchar item_type
+    varchar name
+    int sequence
+    int task_id
+    int template_item_id
+    int value_attachment_id
+    text value_text
+    datetime write_date
+    int write_uid
+  }
+  a1_tasklist {
+    int close_cycle_id
+    int company_id
+    datetime create_date
+    int create_uid
+    int id
+    varchar name
+    varchar notes
+    date period_end
+    varchar period_label
+    date period_start
+    float progress
+    varchar state
+    int task_count
+    int task_done_count
+    varchar webhook_url
+    datetime write_date
+    int write_uid
+  }
+  a1_template {
+    boolean active
+    float approval_days
+    varchar approver_role
+    int close_template_id
+    varchar code
+    int company_id
+    datetime create_date
+    int create_uid
+    varchar description
+    int id
+    varchar name
+    varchar owner_role
+    varchar phase_code
+    float prep_days
+    float review_days
+    varchar reviewer_role
+    int sequence
+    float total_days
+    int workstream_id
+    datetime write_date
+    int write_uid
+  }
+  a1_template_check_rel {
+    int check_id
+    int template_id
+  }
+  a1_template_checklist {
+    varchar code
+    datetime create_date
+    int create_uid
+    int id
+    text instructions
+    boolean is_required
+    varchar item_type
+    varchar name
+    int sequence
+    int template_id
+    datetime write_date
+    int write_uid
+  }
+  a1_template_step {
+    varchar assignee_role
+    varchar code
+    datetime create_date
+    int create_uid
+    int deadline_offset_days
+    float effort_days
+    int id
+    varchar name
+    int sequence
+    int template_id
+    datetime write_date
+    int write_uid
+  }
+  a1_workstream {
+    boolean active
+    int close_category_id
+    varchar code
+    int company_id
+    datetime create_date
+    int create_uid
+    varchar description
+    int id
+    varchar name
+    int owner_role_id
+    int owner_user_id
+    varchar phase_code
+    int sequence
+    int template_count
+    datetime write_date
+    int write_uid
+  }
+  account_account {
+    boolean centralized
+    datetime create_date
+    int create_uid
+    boolean hide_in_cash_flow
+    int id
+    datetime write_date
+    int write_uid
+  }
+  account_account_reconcile_data {
+    datetime create_date
+    int create_uid
+    varchar data
+    int id
+    int reconcile_id
+    int user_id
+    datetime write_date
+    int write_uid
+  }
+  account_age_report_configuration {
+    int company_id
+    datetime create_date
+    int create_uid
+    int id
+    varchar name
+    datetime write_date
+    int write_uid
+  }
+  account_age_report_configuration_line {
+    int account_age_report_config_id
+    datetime create_date
+    int create_uid
+    int id
+    int inferior_limit
+    varchar name
+    datetime write_date
+    int write_uid
+  }
+  account_analytic_account {
+    int id
+  }
+  account_analytic_line {
+    int ancestor_task_id
+    datetime create_date
+    int create_uid
+    datetime date_time
+    datetime date_time_end
+    int id
+    varchar show_time_control
+    int stock_move_id
+    int stock_task_id
+    datetime write_date
+    int write_uid
+  }
+  account_bank_statement {
+    datetime create_date
+    int create_uid
+    int id
+    datetime write_date
+    int write_uid
+  }
+  account_bank_statement_line {
+    int aggregate_id
+    varchar aggregate_name
+    varchar analytic_distribution
+    int analytic_precision
+    boolean can_reconcile
+    datetime create_date
+    int create_uid
+    int id
+    decimal manual_amount
+    decimal manual_amount_in_currency
+    boolean manual_exchange_counterpart
+    boolean manual_in_currency
+    varchar manual_kind
+    varchar manual_move_type
+    varchar manual_name
+    decimal manual_original_amount
+    decimal previous_manual_amount_in_currency
+    varchar reconcile_aggregate
+    varchar reconcile_data
+    varchar reconcile_data_info
+    varchar reconcile_mode
+    datetime write_date
+    int write_uid
+  }
+  account_bank_statement_line_manual_analytic_tag_ids_rel {
+    int account_bank_statement_line_id
+    int id_id
+  }
+  account_group {
+    varchar complete_code
+    varchar complete_name
+    datetime create_date
+    int create_uid
+    int id
+    int level
+    datetime write_date
+    int write_uid
+  }
+  account_journal {
+    boolean autovalidate_completed_move
+    int commission_account_id
+    int commission_analytic_account_id
+    int company_currency_id
+    boolean create_counterpart
+    datetime create_date
+    int create_uid
+    int id
+    varchar import_type
+    datetime last_import_date
+    boolean launch_import_completion
+    int partner_id
+    int receivable_account_id
+    varchar reconcile_aggregate
+    varchar reconcile_mode
+    boolean split_counterpart
+    boolean used_for_completion
+    boolean used_for_import
+    datetime write_date
+    int write_uid
+  }
+  account_journal_rule_ids_rel {
+    int account_journal_id
+    int id_id
+  }
+  account_move {
+    date bir_2307_date
+    boolean bir_2307_generated
+    text completion_logs
+    datetime create_date
+    int create_uid
+    decimal ewt_amount
+    varchar financial_type
+    int id
+    int import_partner_id
+    varchar transaction_id
+    boolean used_for_completion
+    datetime write_date
+    int write_uid
+  }
+  account_move_completion_rule {
+    datetime create_date
+    int create_uid
+    varchar function_to_call
+    int id
+    varchar name
+    int sequence
+    datetime write_date
+    int write_uid
+  }
+  account_move_completion_rule_journal_ids_rel {
+    int account_move_completion_rule_id
+    int id_id
+  }
+  account_move_line {
+    boolean already_completed
+    datetime create_date
+    int create_uid
+    int id
+    datetime write_date
+    int write_uid
+  }
+  account_move_line_analytic_account_ids_rel {
+    int account_analytic_account_id
+    int account_move_line_id
+  }
+  account_reconcile_model {
+    datetime create_date
+    int create_uid
+    int id
+    boolean unique_matching
+    datetime write_date
+    int write_uid
+  }
+  account_reconcile_model_line {
+    datetime create_date
+    int create_uid
+    int id
+    datetime write_date
+    int write_uid
+  }
+  account_reconcile_model_line_analytic_tag_ids_rel {
+    int account_reconcile_model_line_id
+    int id_id
+  }
+  account_tax {
+    float balance
+    float balance_refund
+    float balance_regular
+    float base_balance
+    float base_balance_refund
+    float base_balance_regular
+    datetime create_date
+    int create_uid
+    boolean has_moves
+    int id
+    datetime write_date
+    int write_uid
+  }
+  activity_statement_wizard {
+    datetime create_date
+    int create_uid
+    date date_start
+    int id
+    datetime write_date
+    int write_uid
+  }
+  advisor_category {
+    boolean active
+    varchar code
+    int color
+    datetime create_date
+    int create_uid
+    text description
+    int high_count
+    varchar icon
+    int id
+    int latest_score
+    varchar name
+    int open_count
+    int recommendation_count
+    int sequence
+    datetime write_date
+    int write_uid
+  }
+  advisor_playbook {
+    boolean active
+    varchar automation_kind
+    text automation_params
+    varchar automation_ref
+    varchar code
+    datetime create_date
+    int create_uid
+    text description
+    int id
+    varchar name
+    int recommendation_count
+    text steps_md
+    datetime write_date
+    int write_uid
+  }
+  advisor_playbook_category_ids_rel {
+    int advisor_category_id
+    int advisor_playbook_id
+  }
+  advisor_recommendation {
+    varchar category_code
+    int category_id
+    float confidence
+    datetime create_date
+    int create_uid
+    int currency_id
+    date date_due
+    date date_resolved
+    text description
+    decimal estimated_savings
+    text evidence
+    varchar external_link
+    int id
+    int impact_score
+    varchar name
+    int owner_id
+    int playbook_id
+    text remediation_steps
+    varchar resource_ref
+    varchar resource_type
+    varchar severity
+    int severity_order
+    date snooze_until
+    varchar source
+    varchar status
+    datetime write_date
+    int write_uid
+  }
+  advisor_recommendation_tag_ids_rel {
+    int advisor_recommendation_id
+    int advisor_tag_id
+  }
+  advisor_score {
+    datetime as_of
+    varchar category_code
+    int category_id
+    datetime create_date
+    int create_uid
+    int critical_count
+    int high_count
+    int id
+    text inputs_json
+    int open_count
+    int resolved_count
+    int score
+    datetime write_date
+    int write_uid
+  }
+  advisor_tag {
+    int color
+    datetime create_date
+    int create_uid
+    int id
+    varchar name
+    datetime write_date
+    int write_uid
+  }
+  aged_partner_balance_report_wizard {
+    int account_code_from
+    int account_code_to
+    int age_partner_config_id
+    datetime create_date
+    int create_uid
+    date date_at
+    date date_from
+    int id
+    boolean payable_accounts_only
+    boolean receivable_accounts_only
+    boolean show_move_line_details
+    varchar target_move
+    datetime write_date
+    int write_uid
+  }
+  aged_partner_balance_report_wizard_account_ids_rel {
+    int aged_partner_balance_report_wizard_id
+    int id_id
+  }
+  aged_partner_balance_report_wizard_partner_ids_rel {
+    int aged_partner_balance_report_wizard_id
+    int id_id
+  }
+  attachment_queue {
+    int attachment_id
+    datetime create_date
+    int create_uid
+    datetime date_done
+    varchar failure_emails
+    varchar file_type
+    int fs_storage_id
+    int id
+    varchar method_type
+    varchar state
+    text state_message
+    int task_id
+    datetime write_date
+    int write_uid
+  }
+  attachment_queue_reschedule {
+    datetime create_date
+    int create_uid
+    int id
+    datetime write_date
+    int write_uid
+  }
+  attachment_queue_reschedule_attachment_ids_rel {
+    int attachment_queue_reschedule_id
+    int id_id
+  }
+  attachment_synchronize_task {
+    boolean active
+    varchar after_import
+    boolean avoid_duplicated_files
+    int backend_id
+    int count_attachment_done
+    int count_attachment_failed
+    int count_attachment_pending
+    datetime create_date
+    int create_uid
+    varchar failure_emails
+    varchar file_type
+    varchar filepath
+    int id
+    varchar method_type
+    varchar move_path
+    varchar name
+    varchar new_name
+    varchar pattern
+    datetime write_date
+    int write_uid
+  }
+  auditlog_autovacuum {
+    datetime create_date
+    int create_uid
+    int id
+    datetime write_date
+    int write_uid
+  }
+  auditlog_http_request {
+    datetime create_date
+    int create_uid
+    varchar display_name
+    int http_session_id
+    int id
+    varchar name
+    varchar root_url
+    varchar user_context
+    int user_id
+    datetime write_date
+    int write_uid
+  }
+  auditlog_http_session {
+    datetime create_date
+    int create_uid
+    varchar display_name
+    int id
+    varchar name
+    int user_id
+    datetime write_date
+    int write_uid
+  }
+  auditlog_log {
+    datetime create_date
+    int create_uid
+    int http_request_id
+    int http_session_id
+    int id
+    varchar log_type
+    varchar method
+    int model_id
+    varchar model_model
+    varchar model_name
+    varchar name
+    int res_id
+    varchar res_ids
+    int user_id
+    datetime write_date
+    int write_uid
+  }
+  auditlog_log_line {
+    datetime create_date
+    int create_uid
+    varchar field_description
+    int field_id
+    varchar field_name
+    int id
+    int log_id
+    text new_value
+    text new_value_text
+    text old_value
+    text old_value_text
+    datetime write_date
+    int write_uid
+  }
+  auditlog_rule {
+    int action_id
+    boolean capture_record
+    datetime create_date
+    int create_uid
+    int id
+    boolean log_create
+    boolean log_export_data
+    boolean log_read
+    varchar log_type
+    boolean log_unlink
+    boolean log_write
+    int model_id
+    varchar model_model
+    varchar model_name
+    varchar name
+    varchar state
+    datetime write_date
+    int write_uid
+  }
+  auditlog_rule_fields_to_exclude_ids_rel {
+    int auditlog_rule_id
+    int ir_model_fields_id
+  }
+  auditlog_rule_users_to_exclude_ids_rel {
+    int auditlog_rule_id
+    int res_users_id
+  }
+  audittail_rules_users {
+    int rule_id
+    int user_id
+  }
+  base_automation {
+    int id
+  }
+  base_exception_test_purchase {
+    boolean active
+    float amount_total
+    datetime create_date
+    int create_uid
+    int id
+    varchar name
+    int partner_id
+    varchar state
+    int user_id
+    datetime write_date
+    int write_uid
+  }
+  base_exception_test_purchase_line {
+    float amount
+    datetime create_date
+    int create_uid
+    int id
+    int lead_id
+    varchar name
+    float qty
+    datetime write_date
+    int write_uid
+  }
+  base_sequence_tester {
+    datetime create_date
+    int create_uid
+    int id
+    varchar name
+    varchar test_type
+    datetime write_date
+    int write_uid
+  }
+  bir_alphalist {
+    int company_id
+    datetime create_date
+    int create_uid
+    int currency_id
+    int fiscal_year
+    varchar form_type
+    int id
+    varchar name
+    varchar state
+    decimal total_gross
+    decimal total_wht
+    datetime write_date
+    int write_uid
+  }
+  bir_alphalist_line {
+    int alphalist_id
+    datetime create_date
+    int create_uid
+    int currency_id
+    decimal gross_income
+    int id
+    varchar income_type
+    int partner_id
+    varchar tin
+    decimal wht_amount
+    datetime write_date
+    int write_uid
+  }
+  bir_filing_deadline {
+    int company_id
+    datetime create_date
+    int create_uid
+    date deadline_date
+    varchar form_type
+    int id
+    varchar name
+    int period_month
+    int period_year
+    date reminder_date
+    int return_id
+    varchar state
+    datetime write_date
+    int write_uid
+  }
+  bir_return {
+    varchar bir_reference
+    int company_id
+    datetime create_date
+    int create_uid
+    int currency_id
+    decimal exempt_sales
+    int filed_by
+    datetime filed_date
+    varchar form_type
+    int id
+    decimal input_vat
+    decimal interest
+    varchar name
+    text notes
+    decimal output_vat
+    date payment_date
+    varchar payment_reference
+    decimal penalty
+    date period_end
+    date period_start
+    varchar state
+    int task_id
+    decimal tax_base
+    decimal tax_credits
+    decimal tax_due
+    decimal tax_payable
+    decimal total_due
+    decimal total_payments
+    decimal total_wht
+    decimal vatable_sales
+    datetime write_date
+    int write_uid
+    decimal zero_rated_sales
+  }
+  bir_return_line {
+    decimal amount
+    datetime create_date
+    int create_uid
+    int currency_id
+    varchar description
+    int id
+    int move_id
+    int partner_id
+    int return_id
+    int sequence
+    decimal tax_amount
+    varchar tin
+    datetime write_date
+    int write_uid
+  }
+  bir_tax_return {
+    varchar bir_reference
+    int company_id
+    datetime create_date
+    int create_uid
+    int currency_id
+    int days_until_due
+    date due_date
+    int filed_by
+    datetime filed_date
+    varchar form_type
+    varchar frequency
+    int id
+    decimal interest
+    boolean is_overdue
+    varchar name
+    text notes
+    date payment_date
+    varchar payment_reference
+    decimal penalty
+    date period_end
+    date period_start
+    varchar state
+    decimal tax_base
+    varchar tax_category
+    decimal tax_credits
+    decimal tax_due
+    decimal tax_payable
+    decimal total_amount_due
+    datetime write_date
+    int write_uid
+  }
+  bir_tax_return_line {
+    datetime create_date
+    int create_uid
+    int currency_id
+    varchar description
+    int id
+    int move_id
+    int partner_id
+    int return_id
+    int sequence
+    decimal tax_amount
+    decimal tax_base
+    float tax_rate
+    varchar tin
+    datetime write_date
+    int write_uid
+  }
+  bir_vat_line {
+    decimal amount_untaxed
+    datetime create_date
+    int create_uid
+    int currency_id
+    int id
+    date invoice_date
+    int invoice_id
+    varchar line_type
+    int partner_id
+    int return_id
+    varchar tin
+    decimal vat_amount
+    varchar vat_category
+    datetime write_date
+    int write_uid
+  }
+  bir_vat_return {
+    datetime create_date
+    int create_uid
+    decimal excess_input_vat
+    decimal excess_input_vat_previous
+    decimal exempt_sales
+    int id
+    decimal importations
+    decimal net_vat_payable
+    decimal output_vat
+    decimal purchase_of_services
+    decimal total_input_vat
+    decimal total_sales
+    decimal vatable_purchases
+    decimal vatable_sales
+    datetime write_date
+    int write_uid
+    decimal zero_rated_sales
+  }
+  bir_withholding_line {
+    datetime create_date
+    int create_uid
+    int currency_id
+    decimal gross_income
+    int id
+    varchar income_type
+    int move_id
+    int partner_id
+    int payslip_id
+    int return_id
+    varchar tin
+    decimal wht_amount
+    float wht_rate
+    datetime write_date
+    int write_uid
+  }
+  bir_withholding_return {
+    decimal compensation_tax_withheld
+    datetime create_date
+    int create_uid
+    int employee_count
+    decimal expanded_wht_amount
+    decimal final_wht_amount
+    int id
+    decimal taxable_compensation
+    decimal total_compensation
+    decimal total_payments
+    varchar withholding_type
+    datetime write_date
+    int write_uid
+  }
+  cleanup_create_indexes_line {
+    datetime create_date
+    int create_uid
+    int field_id
+    int id
+    boolean purged
+    int wizard_id
+    datetime write_date
+    int write_uid
+  }
+  cleanup_create_indexes_wizard {
+    datetime create_date
+    int create_uid
+    int id
+    datetime write_date
+    int write_uid
+  }
+  cleanup_purge_line_column {
+    datetime create_date
+    int create_uid
+    int id
+    int model_id
+    int wizard_id
+    datetime write_date
+    int write_uid
+  }
+  cleanup_purge_line_data {
+    datetime create_date
+    int create_uid
+    int data_id
+    int id
+    int wizard_id
+    datetime write_date
+    int write_uid
+  }
+  cleanup_purge_line_field {
+    datetime create_date
+    int create_uid
+    int field_id
+    int id
+    int model_id
+    varchar model_name
+    int wizard_id
+    datetime write_date
+    int write_uid
+  }
+  cleanup_purge_line_menu {
+    datetime create_date
+    int create_uid
+    int id
+    int menu_id
+    int wizard_id
+    datetime write_date
+    int write_uid
+  }
+  cleanup_purge_line_model {
+    datetime create_date
+    int create_uid
+    int id
+    int wizard_id
+    datetime write_date
+    int write_uid
+  }
+  cleanup_purge_line_module {
+    datetime create_date
+    int create_uid
+    int id
+    int wizard_id
+    datetime write_date
+    int write_uid
+  }
+  cleanup_purge_line_table {
+    datetime create_date
+    int create_uid
+    int id
+    varchar table_type
+    int wizard_id
+    datetime write_date
+    int write_uid
+  }
+  cleanup_purge_wizard_column {
+    datetime create_date
+    int create_uid
+    int id
+    datetime write_date
+    int write_uid
+  }
+  cleanup_purge_wizard_data {
+    datetime create_date
+    int create_uid
+    int id
+    datetime write_date
+    int write_uid
+  }
+  cleanup_purge_wizard_field {
+    datetime create_date
+    int create_uid
+    int id
+    datetime write_date
+    int write_uid
+  }
+  cleanup_purge_wizard_menu {
+    datetime create_date
+    int create_uid
+    int id
+    datetime write_date
+    int write_uid
+  }
+  cleanup_purge_wizard_model {
+    datetime create_date
+    int create_uid
+    int id
+    datetime write_date
+    int write_uid
+  }
+  cleanup_purge_wizard_module {
+    datetime create_date
+    int create_uid
+    int id
+    datetime write_date
+    int write_uid
+  }
+  cleanup_purge_wizard_table {
+    datetime create_date
+    int create_uid
+    int id
+    datetime write_date
+    int write_uid
+  }
+  close_approval_gate {
+    float actual_value
+    int approved_by
+    datetime approved_date
+    int approver_id
+    text block_reason
+    int company_id
+    datetime create_date
+    int create_uid
+    int cycle_id
+    varchar gate_type
+    int id
+    varchar name
+    varchar notes
+    int sequence
+    varchar state
+    int template_id
+    float threshold_value
+    datetime write_date
+    int write_uid
+  }
+  close_approval_gate_template {
+    int a1_check_id
+    boolean active
+    varchar code
+    int company_id
+    datetime create_date
+    int create_uid
+    varchar description
+    varchar gate_type
+    int id
+    varchar name
+    text pass_criteria
+    int sequence
+    datetime write_date
+    int write_uid
+  }
+  close_cycle {
+    int a1_tasklist_id
+    int company_id
+    datetime create_date
+    int create_uid
+    int exception_count
+    boolean gates_ready
+    int id
+    varchar name
+    varchar notes
+    int open_exception_count
+    date period_end
+    varchar period_label
+    date period_start
+    float progress
+    varchar state
+    int task_count
+    int task_done_count
+    varchar webhook_url
+    datetime write_date
+    int write_uid
+  }
+  close_exception {
+    int assigned_to
+    int company_id
+    datetime create_date
+    int create_uid
+    int cycle_id
+    varchar description
+    int escalated_to
+    int escalation_count
+    datetime escalation_deadline
+    varchar exception_type
+    int id
+    datetime last_escalated
+    varchar name
+    int reported_by
+    varchar resolution
+    int resolved_by
+    datetime resolved_date
+    varchar severity
+    varchar state
+    int task_id
+    datetime write_date
+    int write_uid
+  }
+  close_task {
+    int a1_task_id
+    date approval_deadline
+    int approval_done_by
+    datetime approval_done_date
+    int approver_id
+    int category_id
+    float checklist_progress
+    int company_id
+    datetime create_date
+    int create_uid
+    int cycle_id
+    varchar external_key
+    boolean has_open_exceptions
+    int id
+    varchar name
+    varchar notes
+    date prep_deadline
+    int prep_done_by
+    datetime prep_done_date
+    int preparer_id
+    date review_deadline
+    int review_done_by
+    datetime review_done_date
+    int reviewer_id
+    int sequence
+    varchar state
+    int template_id
+    datetime write_date
+    int write_uid
+  }
+  close_task_category {
+    int a1_workstream_id
+    boolean active
+    varchar code
+    int color
+    int company_id
+    datetime create_date
+    int create_uid
+    text description
+    int id
+    varchar name
+    int sequence
+    datetime write_date
+    int write_uid
+  }
+  close_task_checklist {
+    varchar code
+    datetime create_date
+    int create_uid
+    int done_by
+    datetime done_date
+    int id
+    text instructions
+    boolean is_done
+    boolean is_required
+    varchar name
+    int sequence
+    int task_id
+    datetime write_date
+    int write_uid
+  }
+  close_task_template {
+    int a1_template_id
+    boolean active
+    float approval_days
+    int approval_offset
+    int approver_id
+    varchar approver_role
+    int category_id
+    varchar code
+    int company_id
+    datetime create_date
+    int create_uid
+    varchar description
+    int id
+    varchar name
+    float prep_days
+    int prep_offset
+    int preparer_id
+    varchar preparer_role
+    float review_days
+    int review_offset
+    int reviewer_id
+    varchar reviewer_role
+    int sequence
+    datetime write_date
+    int write_uid
+  }
+  close_task_template_checklist {
+    varchar code
+    datetime create_date
+    int create_uid
+    int id
+    text instructions
+    boolean is_required
+    varchar name
+    int sequence
+    int template_id
+    datetime write_date
+    int write_uid
+  }
+  closing_period {
+    int bir_tasks
+    int company_id
+    int completed_tasks
+    datetime create_date
+    int create_uid
+    int id
+    date last_workday
+    int month_end_tasks
+    varchar name
+    text notes
+    int overdue_tasks
+    date period_date
+    int period_month
+    int period_year
+    float progress
+    varchar state
+    int total_tasks
+    datetime write_date
+    int write_uid
+  }
+  compliance_check {
+    float actual_value
+    varchar check_type
+    int checked_by
+    datetime checked_date
+    int closing_id
+    datetime create_date
+    int create_uid
+    float expected_value
+    int id
+    varchar name
+    text result_text
+    int sequence
+    varchar status
+    float tolerance
+    float variance
+    datetime write_date
+    int write_uid
+  }
+  credit_statement_import {
+    int commission_account_id
+    datetime create_date
+    int create_uid
+    varchar file_name
+    int id
+    binary input_statement
+    int journal_id
+    int partner_id
+    int receivable_account_id
+    datetime write_date
+    int write_uid
+  }
+  crm_lead {
+    datetime create_date
+    int create_uid
+    int days_in_stage
+    int id
+    datetime last_call_date
+    datetime last_meeting_date
+    datetime stage_entry_date
+    varchar stage_missing_fields
+    boolean stage_rule_validated
+    datetime write_date
+    int write_uid
+  }
+  crm_stage {
+    datetime create_date
+    int create_uid
+    int id
+    text ipai_automation_notes
+    boolean ipai_enforce_rules
+    int ipai_sla_days
+    varchar ipai_stage_color
+    varchar ipai_stage_icon
+    datetime write_date
+    int write_uid
+  }
+  crm_stage_required_fields_rel {
+    int field_id
+    int stage_id
+  }
+  date_range {
+    int id
+  }
+  db_backup {
+    varchar backup_format
+    datetime create_date
+    int create_uid
+    int days_to_keep
+    varchar folder
+    int id
+    varchar method
+    varchar name
+    varchar sftp_host
+    varchar sftp_password
+    int sftp_port
+    varchar sftp_private_key
+    varchar sftp_user
+    datetime write_date
+    int write_uid
+  }
+  detailed_activity_statement_wizard {
+    datetime create_date
+    int create_uid
+    int id
+    boolean show_aging_buckets
+    boolean show_balance
+    datetime write_date
+    int write_uid
+  }
+  discuss_channel {
+    datetime create_date
+    int create_uid
+    int id
+    boolean is_ai_channel
+    datetime write_date
+    int write_uid
+  }
+  exception_rule {
+    boolean active
+    text code
+    datetime create_date
+    int create_uid
+    text description
+    varchar domain
+    varchar exception_type
+    int id
+    boolean is_blocking
+    varchar method
+    varchar model
+    varchar name
+    int sequence
+    datetime write_date
+    int write_uid
+  }
+  exception_rule_confirm_test_purchase {
+    datetime create_date
+    int create_uid
+    int id
+    int related_model_id
+    datetime write_date
+    int write_uid
+  }
+  exception_rule_test_purchase_ids_rel {
+    int base_exception_test_purchase_id
+    int exception_rule_id
+  }
+  export_xlsx_wizard {
+    datetime create_date
+    int create_uid
+    binary data
+    int id
+    varchar name
+    varchar res_ids
+    varchar res_model
+    varchar state
+    int template_id
+    datetime write_date
+    int write_uid
+  }
+  fetchmail_attach_mail_manually {
+    datetime create_date
+    int create_uid
+    int folder_id
+    int id
+    varchar name
+    datetime write_date
+    int write_uid
+  }
+  fetchmail_attach_mail_manually_mail {
+    varchar body
+    datetime create_date
+    int create_uid
+    datetime date
+    varchar email_from
+    int id
+    varchar msgid
+    varchar object_id
+    varchar subject
+    int wizard_id
+    datetime write_date
+    int write_uid
+  }
+  fetchmail_server {
+    int cleanup_days
+    varchar cleanup_folder
+    datetime create_date
+    int create_uid
+    int error_notice_template_id
+    text folders_available
+    boolean folders_only
+    int id
+    int object_id
+    int purge_days
+    varchar server_type
+    datetime write_date
+    int write_uid
+  }
+  fetchmail_server_folder {
+    int action_id
+    boolean active
+    varchar archive_path
+    datetime create_date
+    int create_uid
+    boolean delete_matching
+    varchar domain
+    boolean fetch_unseen_only
+    boolean flag_nonmatching
+    int id
+    varchar mail_field
+    varchar match_algorithm
+    boolean match_first
+    varchar model_field
+    int model_id
+    varchar model_order
+    varchar msg_state
+    varchar path
+    int sequence
+    int server_id
+    varchar state
+    datetime write_date
+    int write_uid
+  }
+  finance_bir_deadline {
+    boolean active
+    datetime create_date
+    int create_uid
+    date deadline_date
+    text description
+    varchar display_name
+    varchar form_type
+    int id
+    varchar name
+    varchar period_covered
+    int responsible_approval_id
+    int responsible_prep_id
+    int responsible_review_id
+    varchar state
+    date target_payment_approval_date
+    date target_prep_date
+    date target_report_approval_date
+    datetime write_date
+    int write_uid
+  }
+  finance_ppm_bir_calendar {
+    datetime create_date
+    int create_uid
+    text description
+    date filing_deadline
+    varchar form_code
+    varchar form_name
+    int id
+    varchar period
+    varchar responsible_role
+    datetime write_date
+    int write_uid
+  }
+  finance_ppm_dashboard {
+    datetime create_date
+    int create_uid
+    int failures_24h
+    int id
+    text last_message
+    datetime last_run_at
+    varchar last_status
+    varchar name
+    datetime next_scheduled_at
+    int sequence
+    varchar status_color
+    int total_runs
+    varchar workflow_code
+    datetime write_date
+    int write_uid
+  }
+  finance_ppm_import_wizard {
+    datetime create_date
+    int create_uid
+    text error_log
+    binary file_data
+    varchar file_name
+    varchar file_type
+    int id
+    text import_summary
+    varchar import_type
+    int records_created
+    int records_failed
+    int records_skipped
+    int records_updated
+    boolean skip_header
+    varchar state
+    boolean update_existing
+    datetime write_date
+    int write_uid
+  }
+  finance_ppm_logframe {
+    varchar code
+    datetime create_date
+    int create_uid
+    text description
+    int id
+    varchar kpi_baseline
+    varchar kpi_measure
+    varchar kpi_target
+    varchar level
+    varchar measurement_frequency
+    varchar name
+    int parent_id
+    varchar parent_path
+    varchar responsible_role
+    datetime write_date
+    int write_uid
+  }
+  finance_ppm_ph_holiday {
+    datetime create_date
+    int create_uid
+    date date
+    text description
+    varchar holiday_type
+    int id
+    boolean is_nationwide
+    varchar name
+    datetime write_date
+    int write_uid
+  }
+  finance_ppm_tdi_audit {
+    datetime create_date
+    int create_uid
+    varchar display_name
+    text error_log
+    varchar file_name
+    boolean has_errors
+    int id
+    datetime import_date
+    text import_summary
+    varchar import_type
+    int records_created
+    int records_failed
+    int records_skipped
+    int records_updated
+    varchar state
+    float success_rate
+    int total_records
+    int user_id
+    datetime write_date
+    int write_uid
+  }
+  finance_task {
+    boolean approve_done
+    int approve_done_by
+    datetime approve_done_date
+    date approve_due_date
+    int approve_user_id
+    varchar bir_form_type
+    varchar bir_reference
+    int bir_return_id
+    int closing_id
+    int company_id
+    datetime create_date
+    int create_uid
+    int days_overdue
+    datetime filed_date
+    date filing_due_date
+    int id
+    boolean is_overdue
+    varchar name
+    text notes
+    varchar phase
+    boolean prep_done
+    int prep_done_by
+    datetime prep_done_date
+    date prep_due_date
+    int prep_user_id
+    boolean review_done
+    int review_done_by
+    datetime review_done_date
+    date review_due_date
+    int review_user_id
+    int sequence
+    varchar state
+    varchar task_type
+    int template_id
+    datetime write_date
+    int write_uid
+  }
+  finance_task_template {
+    boolean active
+    int approve_day_offset
+    int approve_user_id
+    varchar bir_form_type
+    datetime create_date
+    int create_uid
+    varchar description
+    int filing_day_offset
+    varchar frequency
+    int id
+    varchar name
+    varchar oca_module
+    varchar odoo_model
+    varchar phase
+    int prep_day_offset
+    int prep_user_id
+    int review_day_offset
+    int review_user_id
+    int sequence
+    int task_count
+    varchar task_type
+    datetime write_date
+    int write_uid
+  }
+  finance_task_template_dependency_rel {
+    int depends_on_id
+    int task_id
+  }
+  fs_storage {
+    datetime create_date
+    int create_uid
+    int export_task_count
+    int id
+    int import_task_count
+    datetime write_date
+    int write_uid
+  }
+  general_ledger_report_wizard {
+    int account_code_from
+    int account_code_to
+    boolean centralize
+    datetime create_date
+    int create_uid
+    date date_from
+    int date_range_id
+    date date_to
+    varchar domain
+    boolean foreign_currency
+    date fy_start_date
+    varchar grouped_by
+    boolean hide_account_at_0
+    int id
+    boolean only_one_unaffected_earnings_account
+    boolean payable_accounts_only
+    boolean receivable_accounts_only
+    boolean show_cost_center
+    varchar target_move
+    int unaffected_earnings_account
+    datetime write_date
+    int write_uid
+  }
+  general_ledger_report_wizard_account_ids_rel {
+    int general_ledger_report_wizard_id
+    int id_id
+  }
+  general_ledger_report_wizard_account_journal_ids_rel {
+    int general_ledger_report_wizard_id
+    int id_id
+  }
+  general_ledger_report_wizard_cost_center_ids_rel {
+    int general_ledger_report_wizard_id
+    int id_id
+  }
+  general_ledger_report_wizard_partner_ids_rel {
+    int general_ledger_report_wizard_id
+    int id_id
+  }
+  hr_employee {
+    datetime create_date
+    int create_uid
+    int id
+    datetime write_date
+    int write_uid
+    boolean x_master_control_offboarded
+    boolean x_master_control_onboarded
+  }
+  hr_expense {
+    datetime create_date
+    int create_uid
+    int id
+    int project_id
+    boolean requires_project
+    int travel_request_id
+    datetime write_date
+    int write_uid
+    boolean x_master_control_submitted
+  }
+  hr_payslip {
+    int id
+  }
+  hr_timesheet_switch {
+    int analytic_line_id
+    int company_id
+    datetime create_date
+    int create_uid
+    datetime date_time
+    datetime date_time_end
+    int id
+    varchar name
+    int project_id
+    float running_timer_duration
+    int running_timer_id
+    datetime running_timer_start
+    int task_id
+    datetime write_date
+    int write_uid
+  }
+  iap_account {
+    datetime create_date
+    int create_uid
+    int id
+    varchar provider
+    datetime write_date
+    int write_uid
+  }
+  import_xlsx_wizard {
+    datetime create_date
+    int create_uid
+    binary datas
+    varchar filename
+    varchar fname
+    int id
+    binary import_file
+    int res_id
+    varchar res_model
+    varchar state
+    int template_id
+    datetime write_date
+    int write_uid
+  }
+  import_xlsx_wizard_attachment_ids_rel {
+    int import_xlsx_wizard_id
+    int ir_attachment_id
+  }
+  ipai_agent_knowledge_source {
+    int attachment_id
+    text content_text
+    datetime create_date
+    int create_uid
+    int id
+    boolean is_active
+    varchar key
+    varchar kind
+    varchar model_name
+    varchar name
+    varchar tags
+    varchar url
+    datetime write_date
+    int write_uid
+  }
+  ipai_agent_run {
+    datetime completed_at
+    datetime create_date
+    int create_uid
+    float duration_seconds
+    text error_text
+    int id
+    text input_json
+    text input_text
+    varchar name
+    text output_json
+    text output_text
+    int skill_id
+    varchar skill_key
+    datetime started_at
+    varchar state
+    text tool_trace_json
+    int user_id
+    datetime write_date
+    int write_uid
+  }
+  ipai_agent_skill {
+    datetime create_date
+    int create_uid
+    text description
+    text guardrails
+    int id
+    text intents
+    boolean is_active
+    varchar key
+    varchar name
+    int run_count
+    varchar version
+    text workflow_json
+    datetime write_date
+    int write_uid
+  }
+  ipai_agent_tool {
+    datetime create_date
+    int create_uid
+    text description
+    int id
+    text input_schema_json
+    boolean is_active
+    varchar key
+    varchar name
+    text output_schema_json
+    boolean requires_admin
+    varchar target_method
+    varchar target_model
+    datetime write_date
+    int write_uid
+  }
+  ipai_ai_studio_run {
+    datetime create_date
+    int create_uid
+    text generated_files_json
+    int id
+    varchar module_name
+    varchar name
+    text prompt
+    text spec_json
+    varchar state
+    boolean validation_ok
+    text validation_report
+    varchar workspace_path
+    datetime write_date
+    int write_uid
+  }
+  ipai_ask_ai_chatter_request {
+    datetime create_date
+    int create_uid
+    text error
+    int id
+    varchar model
+    text payload_json
+    text question
+    int requested_by
+    int res_id
+    text response
+    text response_json
+    int source_message_id
+    varchar state
+    varchar uuid
+    datetime write_date
+    int write_uid
+  }
+  ipai_ask_ai_service {
+    datetime create_date
+    int create_uid
+    int id
+    datetime write_date
+    int write_uid
+  }
+  ipai_asset {
+    int active_checkout_id
+    varchar barcode
+    int category_id
+    varchar code
+    datetime create_date
+    int create_uid
+    int currency_id
+    decimal current_value
+    int custodian_id
+    text description
+    int id
+    varchar image
+    int location_id
+    varchar name
+    date purchase_date
+    decimal purchase_value
+    varchar state
+    datetime write_date
+    int write_uid
+  }
+  ipai_asset_category {
+    boolean allow_reservations
+    int asset_count
+    varchar code
+    datetime create_date
+    int create_uid
+    text description
+    int id
+    int max_checkout_days
+    varchar name
+    boolean requires_approval
+    int sequence
+    datetime write_date
+    int write_uid
+  }
+  ipai_asset_checkout {
+    datetime actual_return_date
+    datetime approval_date
+    int approved_by
+    int asset_id
+    datetime checkout_date
+    text checkout_notes
+    varchar condition_on_return
+    datetime create_date
+    int create_uid
+    int employee_id
+    date expected_return_date
+    int id
+    varchar name
+    text return_notes
+    varchar state
+    datetime write_date
+    int write_uid
+  }
+  ipai_asset_reservation {
+    int asset_id
+    datetime create_date
+    int create_uid
+    int employee_id
+    date end_date
+    int id
+    varchar name
+    text notes
+    date start_date
+    varchar state
+    datetime write_date
+    int write_uid
+  }
+  ipai_audit_log {
+    varchar action
+    datetime create_date
+    int create_uid
+    varchar display_name
+    varchar field_name
+    int id
+    text new_value
+    text old_value
+    int res_id
+    varchar res_model
+    varchar res_name
+    int user_id
+    datetime write_date
+    int write_uid
+  }
+  ipai_bir_dat_wizard {
+    datetime create_date
+    int create_uid
+    int currency_id
+    date date_end
+    date date_start
+    binary file_data
+    varchar file_name
+    int id
+    int record_count
+    varchar report_type
+    varchar state
+    decimal total_amount
+    decimal total_tax
+    datetime write_date
+    int write_uid
+  }
+  ipai_bir_form_schedule {
+    date approval_date
+    date bir_deadline
+    datetime create_date
+    int create_uid
+    date filing_date
+    varchar form_code
+    int id
+    datetime last_reminder_sent
+    varchar period
+    date prep_date
+    int reminder_count
+    int responsible_approval_id
+    int responsible_prep_id
+    int responsible_review_id
+    date review_date
+    varchar status
+    datetime write_date
+    int write_uid
+  }
+  ipai_bir_process_step {
+    datetime create_date
+    int create_uid
+    text detail
+    int id
+    int person_id
+    varchar role
+    int schedule_id
+    int step_no
+    int target_offset
+    varchar title
+    datetime write_date
+    int write_uid
+  }
+  ipai_bir_schedule_item {
+    boolean active
+    varchar bir_form
+    datetime create_date
+    int create_uid
+    date deadline
+    int id
+    varchar im_xml_id
+    varchar period_covered
+    datetime write_date
+    int write_uid
+  }
+  ipai_bir_schedule_line {
+    varchar approve_by_code
+    date approve_due_date
+    varchar bir_form
+    datetime create_date
+    int create_uid
+    date deadline_date
+    int id
+    varchar notes
+    varchar period_label
+    varchar prep_by_code
+    date prep_due_date
+    varchar review_by_code
+    date review_due_date
+    datetime write_date
+    int write_uid
+  }
+  ipai_bir_schedule_step {
+    varchar activity_type
+    int business_days_before
+    datetime create_date
+    int create_uid
+    int id
+    int item_id
+    boolean on_or_before_deadline
+    varchar role_code
+    int sequence
+    datetime write_date
+    int write_uid
+  }
+  ipai_close_generated_map {
+    datetime create_date
+    int create_uid
+    varchar external_key
+    int generation_run_id
+    int id
+    varchar operation
+    int run_id
+    varchar seed_hash
+    varchar seed_hash_at_generation
+    int task_id
+    int template_id
+    datetime write_date
+    int write_uid
+  }
+  ipai_close_generation_run {
+    datetime create_date
+    int create_uid
+    int created_count
+    varchar cycle_code
+    varchar cycle_key
+    varchar cycle_type
+    boolean dry_run
+    int duration_seconds
+    datetime end_time
+    int error_count
+    int id
+    varchar name
+    int obsolete_marked_count
+    date period_end
+    date period_start
+    int project_id
+    varchar report_json
+    varchar report_status
+    varchar seed_id
+    varchar seed_version
+    datetime start_time
+    varchar status
+    int task_count_created
+    int task_count_obsolete
+    int task_count_skipped
+    int task_count_updated
+    int unchanged_count
+    int unresolved_assignee_count
+    int updated_count
+    int user_id
+    int warning_count
+    datetime write_date
+    int write_uid
+  }
+  ipai_close_generator {
+    datetime create_date
+    int create_uid
+    int id
+    varchar name
+    datetime write_date
+    int write_uid
+  }
+  ipai_close_task_step {
+    datetime create_date
+    int create_uid
+    varchar default_employee_code
+    int id
+    int sequence
+    varchar step_code
+    varchar step_name
+    int template_id
+    int user_id
+    datetime write_date
+    int write_uid
+    varchar x_legacy_template_code
+  }
+  ipai_close_task_template {
+    varchar category_code
+    varchar category_name
+    int category_seq
+    datetime create_date
+    int create_uid
+    boolean critical_path
+    varchar cycle_code
+    int duration_days
+    varchar employee_code
+    int id
+    boolean is_active
+    int offset_from_period_end
+    varchar phase_code
+    varchar phase_name
+    int phase_seq
+    varchar phase_type
+    varchar recurrence_rule
+    varchar responsible_role
+    varchar seed_hash
+    varchar step_code
+    int step_seq
+    text task_description
+    varchar task_name_template
+    varchar template_code
+    int template_seq
+    varchar template_version
+    varchar wbs_code_template
+    varchar workstream_code
+    varchar workstream_name
+    int workstream_seq
+    datetime write_date
+    int write_uid
+    boolean x_legacy_migration
+  }
+  ipai_convert_phases_wizard {
+    datetime create_date
+    int create_uid
+    int id
+    varchar im1_keywords
+    varchar im1_name
+    varchar im2_keywords
+    varchar im2_name
+    boolean move_tasks_by_keyword
+    int parent_project_id
+    datetime write_date
+    int write_uid
+  }
+  ipai_directory_person {
+    boolean active
+    varchar code
+    datetime create_date
+    int create_uid
+    varchar email
+    int id
+    varchar name
+    varchar role
+    datetime write_date
+    int write_uid
+  }
+  ipai_equipment_asset {
+    int booking_count
+    int category_id
+    int company_id
+    varchar condition
+    datetime create_date
+    int create_uid
+    int id
+    varchar image_1920
+    int incident_count
+    int location_id
+    varchar name
+    int product_id
+    varchar serial_number
+    varchar status
+    datetime write_date
+    int write_uid
+  }
+  ipai_equipment_booking {
+    int asset_id
+    int borrower_id
+    datetime create_date
+    int create_uid
+    datetime end_datetime
+    int id
+    boolean is_overdue
+    varchar name
+    int project_id
+    datetime start_datetime
+    varchar state
+    datetime write_date
+    int write_uid
+  }
+  ipai_equipment_incident {
+    int asset_id
+    int booking_id
+    datetime create_date
+    int create_uid
+    text description
+    int id
+    varchar name
+    int reported_by
+    varchar severity
+    varchar status
+    datetime write_date
+    int write_uid
+  }
+  ipai_finance_bir_schedule {
+    date approval_deadline
+    int approval_task_id
+    int approver_id
+    float completion_pct
+    datetime create_date
+    int create_uid
+    date filing_deadline
+    int id
+    int logframe_id
+    varchar name
+    varchar period_covered
+    date prep_deadline
+    int prep_task_id
+    date review_deadline
+    int review_task_id
+    int reviewer_id
+    varchar status
+    int supervisor_id
+    datetime write_date
+    int write_uid
+  }
+  ipai_finance_close_generate_wizard {
+    int calendar_id
+    datetime create_date
+    int create_uid
+    int id
+    int month
+    datetime write_date
+    int write_uid
+    int year
+  }
+  ipai_finance_directory {
+    boolean active
+    varchar code
+    datetime create_date
+    int create_uid
+    varchar email
+    int id
+    varchar name
+    int user_id
+    datetime write_date
+    int write_uid
+  }
+  ipai_finance_logframe {
+    text assumptions
+    varchar code
+    datetime create_date
+    int create_uid
+    int id
+    text indicators
+    varchar level
+    text means_of_verification
+    varchar name
+    int sequence
+    int task_count
+    datetime write_date
+    int write_uid
+  }
+  ipai_finance_person {
+    varchar code
+    datetime create_date
+    int create_uid
+    varchar email
+    int id
+    varchar name
+    varchar role
+    int user_id
+    datetime write_date
+    int write_uid
+  }
+  ipai_finance_ppm_golive_checklist {
+    int completed_items
+    float completion_pct
+    datetime create_date
+    int create_uid
+    int created_by
+    int director_id
+    text director_notes
+    datetime director_review_date
+    datetime director_signoff_date
+    int id
+    varchar name
+    int senior_supervisor_id
+    text senior_supervisor_notes
+    datetime senior_supervisor_review_date
+    varchar state
+    int supervisor_id
+    text supervisor_notes
+    datetime supervisor_review_date
+    int total_items
+    varchar version
+    datetime write_date
+    int write_uid
+  }
+  ipai_finance_ppm_golive_checklist_section_ids_rel {
+    int ipai_finance_ppm_golive_checklist_id
+    int ipai_finance_ppm_golive_section_id
+  }
+  ipai_finance_ppm_golive_item {
+    int checked_by
+    datetime checked_date
+    datetime create_date
+    int create_uid
+    text description
+    varchar evidence_url
+    int id
+    boolean is_checked
+    boolean is_critical
+    varchar name
+    text notes
+    int section_id
+    int sequence
+    datetime write_date
+    int write_uid
+  }
+  ipai_finance_ppm_golive_section {
+    int completed_items
+    float completion_pct
+    datetime create_date
+    int create_uid
+    text description
+    int id
+    varchar name
+    varchar section_type
+    int sequence
+    int total_items
+    datetime write_date
+    int write_uid
+  }
+  ipai_finance_seed_service {
+    datetime create_date
+    int create_uid
+    int id
+    datetime write_date
+    int write_uid
+  }
+  ipai_finance_seed_wizard {
+    datetime create_date
+    int create_uid
+    int id
+    boolean strict
+    datetime write_date
+    int write_uid
+  }
+  ipai_finance_task_template {
+    boolean active
+    varchar anchor
+    float approval_duration
+    varchar approve_by_code
+    int approved_by_id
+    int bir_form_id
+    varchar category
+    datetime create_date
+    int create_uid
+    int day_of_month
+    int default_duration_days
+    text description
+    int employee_code_id
+    int id
+    varchar name
+    int offset_days
+    varchar prep_by_code
+    float prep_duration
+    varchar review_by_code
+    float review_duration
+    int reviewed_by_id
+    int sequence
+    varchar task_category
+    varchar trigger_type
+    datetime write_date
+    int write_uid
+  }
+  ipai_generate_bir_tasks_wizard {
+    datetime create_date
+    int create_uid
+    date date_from
+    date date_to
+    boolean dry_run
+    int id
+    int program_project_id
+    datetime write_date
+    int write_uid
+  }
+  ipai_generate_im_projects_wizard {
+    boolean create_bir_tasks
+    boolean create_children
+    datetime create_date
+    boolean create_month_end_tasks
+    int create_uid
+    int id
+    int project_id
+    datetime write_date
+    int write_uid
+  }
+  ipai_generate_month_end_wizard {
+    date anchor_date
+    datetime create_date
+    int create_uid
+    boolean dry_run
+    int id
+    int program_project_id
+    datetime write_date
+    int write_uid
+  }
+  ipai_grid_column {
+    varchar alignment
+    varchar cell_css_class
+    boolean clickable
+    varchar column_type
+    datetime create_date
+    int create_uid
+    varchar css_class
+    varchar currency_field
+    varchar date_format
+    int decimal_places
+    varchar display_name
+    boolean editable
+    varchar field_name
+    varchar field_type
+    boolean filterable
+    varchar format_string
+    int grid_view_id
+    varchar header_css_class
+    int id
+    boolean is_action_column
+    boolean is_avatar_column
+    boolean is_primary
+    boolean is_selection_column
+    varchar label
+    int max_width
+    int min_width
+    boolean resizable
+    boolean searchable
+    int sequence
+    boolean sortable
+    boolean visible
+    text widget_options
+    int width
+    datetime write_date
+    int write_uid
+  }
+  ipai_grid_filter {
+    boolean active
+    varchar color
+    int condition_count
+    datetime create_date
+    int create_uid
+    varchar domain
+    text filter_json
+    int grid_view_id
+    varchar icon
+    int id
+    boolean is_default
+    boolean is_global
+    varchar name
+    int sequence
+    int user_id
+    datetime write_date
+    int write_uid
+  }
+  ipai_grid_filter_condition {
+    datetime create_date
+    int create_uid
+    varchar field_label
+    varchar field_name
+    varchar field_type
+    int filter_id
+    int id
+    varchar operator
+    boolean value_boolean
+    varchar value_char
+    date value_date
+    datetime value_datetime
+    float value_float
+    int value_integer
+    int value_many2one
+    varchar value_selection
+    datetime write_date
+    int write_uid
+  }
+  ipai_grid_view {
+    boolean active
+    int active_filter_id
+    int column_count
+    text config_json
+    datetime create_date
+    int create_uid
+    boolean enable_column_reorder
+    boolean enable_column_resize
+    boolean enable_export
+    boolean enable_quick_search
+    boolean enable_row_selection
+    int id
+    int model_id
+    varchar model_name
+    varchar name
+    int page_size
+    varchar page_size_options
+    int sequence
+    boolean show_checkboxes
+    boolean show_row_numbers
+    text sort_json
+    varchar view_type
+    datetime write_date
+    int write_uid
+  }
+  ipai_grid_view_visible_columns_rel {
+    int column_id
+    int grid_view_id
+  }
+  ipai_month_end_closing {
+    int company_id
+    int completed_tasks
+    datetime create_date
+    int create_uid
+    int id
+    date last_workday
+    varchar name
+    int overdue_tasks
+    date period_date
+    float progress
+    varchar state
+    int total_tasks
+    datetime write_date
+    int write_uid
+  }
+  ipai_month_end_task {
+    boolean approve_done
+    int approve_done_by
+    datetime approve_done_date
+    date approve_due_date
+    int approve_user_id
+    int closing_id
+    datetime create_date
+    int create_uid
+    int days_overdue
+    int id
+    boolean is_overdue
+    varchar name
+    varchar notes
+    varchar phase
+    boolean prep_done
+    int prep_done_by
+    datetime prep_done_date
+    date prep_due_date
+    int prep_user_id
+    boolean review_done
+    int review_done_by
+    datetime review_done_date
+    date review_due_date
+    int review_user_id
+    int sequence
+    varchar state
+    int template_id
+    datetime write_date
+    int write_uid
+  }
+  ipai_month_end_task_template {
+    boolean active
+    int approve_day_offset
+    int approve_user_id
+    datetime create_date
+    int create_uid
+    varchar description
+    int id
+    varchar name
+    varchar oca_module
+    varchar odoo_model
+    varchar phase
+    int prep_day_offset
+    int prep_user_id
+    int review_day_offset
+    int review_user_id
+    int sequence
+    int task_count
+    datetime write_date
+    int write_uid
+  }
+  ipai_month_end_template {
+    boolean active
+    varchar category
+    datetime create_date
+    int create_uid
+    varchar default_im_xml_id
+    int id
+    varchar task_base_name
+    datetime write_date
+    int write_uid
+  }
+  ipai_month_end_template_step {
+    varchar activity_type
+    int business_days_before
+    datetime create_date
+    int create_uid
+    int id
+    int offset_days
+    varchar role_code
+    int sequence
+    int template_id
+    datetime write_date
+    int write_uid
+  }
+  ipai_ocr_job {
+    int attachment_id
+    varchar attachment_mimetype
+    varchar attachment_name
+    datetime completed_at
+    float confidence_score
+    datetime create_date
+    int create_uid
+    float duration_seconds
+    text error_message
+    int id
+    varchar name
+    int output_attachment_id
+    int provider_id
+    int res_id
+    varchar res_model
+    text result_json
+    text result_text
+    int retry_count
+    datetime started_at
+    varchar state
+    datetime write_date
+    int write_uid
+  }
+  ipai_ocr_provider {
+    boolean active
+    varchar auth_param_key
+    varchar auth_type
+    varchar base_url
+    datetime create_date
+    int create_uid
+    int id
+    int job_count
+    int max_retries
+    varchar name
+    text notes
+    varchar provider_type
+    int sequence
+    varchar supported_formats
+    int timeout
+    datetime write_date
+    int write_uid
+  }
+  ipai_permission {
+    boolean active
+    datetime create_date
+    int create_uid
+    int group_id
+    int id
+    varchar name
+    varchar permission_level
+    varchar role
+    varchar scope_ref
+    varchar scope_type
+    int user_id
+    datetime write_date
+    int write_uid
+  }
+  ipai_ph_holiday {
+    datetime create_date
+    int create_uid
+    date date
+    varchar holiday_type
+    int id
+    varchar name
+    datetime write_date
+    int write_uid
+    int year
+  }
+  ipai_share_token {
+    boolean active
+    datetime create_date
+    int create_uid
+    int created_by
+    datetime expires_at
+    int id
+    boolean is_public
+    varchar name
+    varchar permission_level
+    varchar scope_ref
+    varchar scope_type
+    datetime write_date
+    int write_uid
+  }
+  ipai_skill_knowledge_rel {
+    int knowledge_id
+    int skill_id
+  }
+  ipai_skill_tool_rel {
+    int skill_id
+    int tool_id
+  }
+  ipai_sms_message {
+    text body
+    float cost
+    datetime create_date
+    int create_uid
+    datetime delivered_at
+    varchar error_code
+    text error_message
+    varchar external_id
+    varchar from_number
+    int id
+    varchar name
+    int partner_id
+    int provider_id
+    text raw_response
+    int res_id
+    varchar res_model
+    int retry_count
+    int segments
+    datetime sent_at
+    varchar state
+    varchar to_number
+    datetime write_date
+    int write_uid
+  }
+  ipai_sms_provider {
+    varchar account_sid
+    boolean active
+    varchar auth_param_key
+    varchar base_url
+    datetime create_date
+    int create_uid
+    int id
+    int max_retries
+    int message_count
+    varchar name
+    text notes
+    varchar provider_type
+    varchar sender_id
+    int sequence
+    int timeout
+    boolean webhook_enabled
+    datetime write_date
+    int write_uid
+  }
+  ipai_studio_ai_history {
+    text analysis
+    int automation_id
+    text command
+    varchar command_type
+    float confidence
+    datetime create_date
+    int create_uid
+    text feedback_comment
+    varchar feedback_score
+    int field_id
+    int id
+    int model_id
+    varchar model_name
+    varchar result
+    text result_message
+    int user_id
+    datetime write_date
+    int write_uid
+  }
+  ipai_studio_ai_wizard {
+    text analysis_json
+    text command
+    varchar command_type
+    float confidence
+    int context_model_id
+    datetime create_date
+    int create_uid
+    int created_field_id
+    varchar field_label
+    varchar field_name
+    boolean field_required
+    varchar field_type
+    int history_id
+    int id
+    boolean is_ready
+    varchar message
+    int relation_model_id
+    varchar result_message
+    text selection_options
+    varchar state
+    int target_model_id
+    datetime write_date
+    int write_uid
+  }
+  ipai_task_template_dependency_rel {
+    int depends_on_id
+    int task_id
+  }
+  ipai_travel_request {
+    int company_id
+    datetime create_date
+    int create_uid
+    int currency_id
+    varchar destination
+    int employee_id
+    date end_date
+    decimal estimated_budget
+    int id
+    varchar name
+    int project_id
+    text purpose
+    date start_date
+    varchar state
+    datetime write_date
+    int write_uid
+  }
+  ipai_workos_block {
+    int attachment_id
+    varchar block_type
+    varchar callout_color
+    varchar callout_icon
+    varchar content_html
+    text content_json
+    text content_text
+    datetime create_date
+    int create_uid
+    int id
+    boolean is_checked
+    boolean is_collapsed
+    varchar name
+    int page_id
+    int parent_block_id
+    int sequence
+    datetime write_date
+    int write_uid
+  }
+  ipai_workos_canvas {
+    boolean active
+    datetime create_date
+    int create_uid
+    int id
+    varchar name
+    text nodes_json
+    int page_id
+    text viewport_json
+    datetime write_date
+    int write_uid
+  }
+  ipai_workos_comment {
+    int anchor_block_id
+    int author_id
+    varchar content
+    text content_text
+    datetime create_date
+    int create_uid
+    int id
+    boolean is_resolved
+    int parent_id
+    int reply_count
+    datetime resolved_at
+    int resolved_by
+    int target_id
+    varchar target_model
+    varchar target_name
+    datetime write_date
+    int write_uid
+  }
+  ipai_workos_database {
+    boolean active
+    datetime create_date
+    int create_uid
+    text description
+    varchar icon
+    int id
+    varchar name
+    int page_id
+    int row_count
+    int space_id
+    datetime write_date
+    int write_uid
+  }
+  ipai_workos_page {
+    boolean active
+    int child_count
+    text content_preview
+    binary cover_image
+    datetime create_date
+    int create_uid
+    varchar icon
+    int id
+    boolean is_archived
+    int last_edited_by
+    varchar name
+    int parent_id
+    varchar parent_path
+    int sequence
+    int space_id
+    int template_id
+    int workspace_id
+    datetime write_date
+    int write_uid
+  }
+  ipai_workos_property {
+    datetime create_date
+    int create_uid
+    int database_id
+    int id
+    boolean is_title
+    boolean is_visible
+    varchar name
+    text options_json
+    varchar property_type
+    int related_database_id
+    int sequence
+    int width
+    datetime write_date
+    int write_uid
+  }
+  ipai_workos_row {
+    boolean active
+    datetime create_date
+    int create_uid
+    int database_id
+    int id
+    varchar name
+    int sequence
+    text values_json
+    datetime write_date
+    int write_uid
+  }
+  ipai_workos_search {
+    text block_results
+    datetime create_date
+    int create_uid
+    text database_results
+    int id
+    text page_results
+    varchar query
+    varchar scope
+    int scope_id
+    datetime write_date
+    int write_uid
+  }
+  ipai_workos_search_history {
+    datetime create_date
+    int create_uid
+    int id
+    varchar query
+    int result_count
+    int user_id
+    datetime write_date
+    int write_uid
+  }
+  ipai_workos_space {
+    boolean active
+    int color
+    datetime create_date
+    int create_uid
+    text description
+    varchar icon
+    int id
+    varchar name
+    int page_count
+    int sequence
+    varchar visibility
+    int workspace_id
+    datetime write_date
+    int write_uid
+  }
+  ipai_workos_template {
+    text blocks_json
+    varchar category
+    datetime create_date
+    int create_uid
+    text description
+    varchar icon
+    int id
+    boolean is_published
+    boolean is_system
+    varchar name
+    text properties_json
+    int sequence
+    text views_json
+    datetime write_date
+    int write_uid
+  }
+  ipai_workos_template_tag {
+    int color
+    datetime create_date
+    int create_uid
+    int id
+    varchar name
+    datetime write_date
+    int write_uid
+  }
+  ipai_workos_template_tag_ids_rel {
+    int ipai_workos_template_id
+    int ipai_workos_template_tag_id
+  }
+  ipai_workos_view {
+    text config_json
+    datetime create_date
+    int create_uid
+    int database_id
+    int date_property_id
+    text filter_json
+    int group_by_property_id
+    int id
+    boolean is_default
+    boolean is_shared
+    varchar name
+    int sequence
+    text sort_json
+    int user_id
+    varchar view_type
+    datetime write_date
+    int write_uid
+  }
+  ipai_workos_view_visible_property_ids_rel {
+    int ipai_workos_property_id
+    int ipai_workos_view_id
+  }
+  ipai_workos_workspace {
+    boolean active
+    int color
+    datetime create_date
+    int create_uid
+    text description
+    varchar icon
+    int id
+    varchar name
+    int owner_id
+    int space_count
+    datetime write_date
+    int write_uid
+  }
+  ipai_workspace {
+    int account_manager_id
+    boolean active
+    varchar brand_name
+    varchar campaign_type
+    varchar channel_mix
+    int client_id
+    varchar closing_stage
+    varchar code
+    int color
+    int company_id
+    datetime create_date
+    int create_uid
+    datetime date_end
+    datetime date_start
+    int engagement_count
+    varchar entity_code
+    varchar fiscal_period
+    int id
+    varchar industry
+    int invoice_count
+    boolean is_critical
+    varchar name
+    int parent_id
+    float planned_hours
+    float progress
+    int project_count
+    float remaining_hours
+    int sequence
+    varchar stage
+    varchar workspace_type
+    datetime write_date
+    int write_uid
+  }
+  ipai_workspace_link {
+    datetime create_date
+    int create_uid
+    varchar display_name
+    int id
+    varchar link_type
+    int res_id
+    varchar res_model
+    int workspace_id
+    datetime write_date
+    int write_uid
+  }
+  ir_actions {
+    datetime create_date
+    int create_uid
+    int id
+    varchar type
+    datetime write_date
+    int write_uid
+  }
+  ir_actions_act_window {
+    int id
+  }
+  ir_actions_act_window_view {
+    datetime create_date
+    int create_uid
+    int id
+    varchar view_mode
+    datetime write_date
+    int write_uid
+  }
+  ir_actions_actions {
+    datetime create_date
+    int create_uid
+    int id
+    boolean is_temporary
+    datetime write_date
+    int write_uid
+  }
+  ir_actions_report {
+    datetime create_date
+    int create_uid
+    int id
+    varchar report_type
+    datetime write_date
+    int write_uid
+  }
+  ir_attachment {
+    datetime create_date
+    int create_uid
+    int id
+    datetime write_date
+    int write_uid
+  }
+  ir_config_parameter {
+    datetime create_date
+    int create_uid
+    int id
+    datetime write_date
+    int write_uid
+  }
+  ir_cron {
+    datetime create_date
+    int create_uid
+    int email_template_id
+    int id
+    datetime write_date
+    int write_uid
+  }
+  ir_cron_mutually_exclusive_cron_ids_rel {
+    int id_id
+    int ir_cron_id
+  }
+  ir_exports {
+    datetime create_date
+    int create_uid
+    int global_resolver_id
+    int id
+    boolean language_agnostic
+    datetime write_date
+    int write_uid
+  }
+  ir_exports_line {
+    boolean active
+    datetime create_date
+    int create_uid
+    int id
+    varchar instance_method_name
+    int lang_id
+    int resolver_id
+    varchar target
+    datetime write_date
+    int write_uid
+  }
+  ir_exports_resolver {
+    datetime create_date
+    int create_uid
+    int id
+    varchar name
+    text python_code
+    varchar type
+    datetime write_date
+    int write_uid
+  }
+  ir_filters {
+    datetime create_date
+    int create_uid
+    int id
+    datetime write_date
+    int write_uid
+  }
+  ir_model {
+    boolean active_custom_tracking
+    boolean add_open_tab_field
+    boolean add_smart_search
+    boolean automatic_custom_tracking
+    varchar automatic_custom_tracking_domain
+    datetime create_date
+    int create_uid
+    boolean force_noupdate
+    int id
+    varchar name_search_domain
+    boolean restrict_update
+    text rpc_config_edit
+    varchar smart_search_warning
+    int tracked_field_count
+    boolean use_smart_name_search
+    datetime write_date
+    int write_uid
+  }
+  ir_model_access {
+    datetime create_date
+    int create_uid
+    int id
+    datetime write_date
+    int write_uid
+  }
+  ir_model_data {
+    datetime create_date
+    int create_uid
+    int id
+    datetime write_date
+    int write_uid
+  }
+  ir_model_fields {
+    boolean can_have_options
+    int comodel_id
+    datetime create_date
+    int create_uid
+    boolean custom_tracking
+    int id
+    boolean native_tracking
+    boolean trackable
+    varchar tracking_domain
+    datetime write_date
+    int write_uid
+  }
+  ir_model_index_size {
+    datetime create_date
+    int create_uid
+    int id
+    int ir_model_size_id
+    varchar name
+    int size
+    datetime write_date
+    int write_uid
+  }
+  ir_model_name_search_ids_rel {
+    int ir_model_fields_id
+    int ir_model_id
+  }
+  ir_model_relation_size {
+    datetime create_date
+    int create_uid
+    int id
+    int ir_model_size_id
+    varchar name
+    int size
+    datetime write_date
+    int write_uid
+  }
+  ir_model_res_groups_update_allowed_rel {
+    int ir_model_id
+    int res_groups_id
+  }
+  ir_model_size {
+    int attachment_size
+    datetime create_date
+    int create_uid
+    int id
+    int indexes_size
+    date measurement_date
+    varchar model
+    varchar model_name
+    int relations_size
+    int table_size
+    int total_database_size
+    int total_model_size
+    int total_table_size
+    int tuples
+    datetime write_date
+    int write_uid
+  }
+  ir_module_author {
+    datetime create_date
+    int create_uid
+    int id
+    int installed_module_qty
+    varchar name
+    datetime write_date
+    int write_uid
+  }
+  ir_module_author_installed_module_ids_rel {
+    int id_id
+    int ir_module_author_id
+  }
+  ir_module_module {
+    datetime create_date
+    int create_uid
+    int css_code_qty
+    int id
+    boolean is_oca_module
+    boolean is_odoo_module
+    int js_code_qty
+    int module_type_id
+    int python_code_qty
+    int scss_code_qty
+    datetime write_date
+    int write_uid
+    int xml_code_qty
+  }
+  ir_module_module_author_ids_rel {
+    int id_id
+    int ir_module_module_id
+  }
+  ir_module_type {
+    datetime create_date
+    int create_uid
+    int id
+    int installed_module_qty
+    varchar name
+    int sequence
+    datetime write_date
+    int write_uid
+  }
+  ir_module_type_rule {
+    datetime create_date
+    int create_uid
+    int id
+    varchar module_domain
+    int module_type_id
+    int sequence
+    datetime write_date
+    int write_uid
+  }
+  ir_sequence {
+    datetime create_date
+    int create_uid
+    int id
+    datetime write_date
+    int write_uid
+  }
+  ir_sequence_option {
+    int company_id
+    datetime create_date
+    int create_uid
+    int id
+    varchar model
+    varchar name
+    boolean use_sequence_option
+    datetime write_date
+    int write_uid
+  }
+  ir_sequence_option_line {
+    int base_id
+    int company_id
+    datetime create_date
+    int create_uid
+    varchar filter_domain
+    int id
+    varchar implementation
+    varchar model
+    varchar name
+    varchar prefix
+    int sequence_id
+    varchar suffix
+    boolean use_sequence_option
+    datetime write_date
+    int write_uid
+  }
+  ir_ui_menu {
+    int id
+  }
+  ir_ui_view {
+    datetime create_date
+    int create_uid
+    int id
+    varchar type
+    datetime write_date
+    int write_uid
+  }
+  journal_ledger_report_wizard {
+    datetime create_date
+    int create_uid
+    date date_from
+    int date_range_id
+    date date_to
+    boolean foreign_currency
+    varchar group_option
+    int id
+    varchar move_target
+    varchar sort_option
+    boolean with_account_name
+    boolean with_auto_sequence
+    datetime write_date
+    int write_uid
+  }
+  journal_ledger_report_wizard_journal_ids_rel {
+    int id_id
+    int journal_ledger_report_wizard_id
+  }
+  m2x_create_edit_option {
+    int comodel_id
+    varchar comodel_name
+    datetime create_date
+    int create_uid
+    int field_id
+    varchar field_name
+    int id
+    int model_id
+    varchar model_name
+    varchar name
+    varchar option_create
+    varchar option_create_edit
+    datetime write_date
+    int write_uid
+  }
+  mail_message {
+    datetime create_date
+    int create_uid
+    int id
+    datetime write_date
+    int write_uid
+  }
+  mail_message_subtype {
+    int id
+  }
+  mail_template {
+    int id
+  }
+  mail_tracking_value {
+    datetime create_date
+    int create_uid
+    int id
+    datetime write_date
+    int write_uid
+  }
+  mis_cash_flow_forecast_line {
+    int account_id
+    float balance
+    int company_id
+    datetime create_date
+    int create_uid
+    date date
+    int id
+    varchar name
+    int partner_id
+    datetime write_date
+    int write_uid
+  }
+  mis_report_instance {
+    boolean allow_horizontal
+    datetime create_date
+    int create_uid
+    boolean horizontal
+    int id
+    datetime write_date
+    int write_uid
+  }
+  mis_report_kpi {
+    datetime create_date
+    int create_uid
+    int id
+    boolean split_after
+    datetime write_date
+    int write_uid
+  }
+  open_items_report_wizard {
+    int account_code_from
+    int account_code_to
+    datetime create_date
+    int create_uid
+    date date_at
+    date date_from
+    boolean foreign_currency
+    varchar grouped_by
+    boolean hide_account_at_0
+    int id
+    boolean payable_accounts_only
+    boolean receivable_accounts_only
+    boolean show_partner_details
+    varchar target_move
+    datetime write_date
+    int write_uid
+  }
+  open_items_report_wizard_account_ids_rel {
+    int id_id
+    int open_items_report_wizard_id
+  }
+  open_items_report_wizard_partner_ids_rel {
+    int id_id
+    int open_items_report_wizard_id
+  }
+  outstanding_statement_wizard {
+    datetime create_date
+    int create_uid
+    int id
+    datetime write_date
+    int write_uid
+  }
+  ph_holiday {
+    int company_id
+    datetime create_date
+    int create_uid
+    date date
+    varchar holiday_type
+    int id
+    varchar name
+    datetime write_date
+    int write_uid
+    int year
+  }
+  ppm_close_task {
+    varchar agency_code
+    varchar approval_completed_by
+    date approval_completed_date
+    float approval_days
+    date approval_due
+    varchar approver_code
+    text completion_notes
+    datetime create_date
+    int create_uid
+    text detailed_task
+    int id
+    int monthly_close_id
+    varchar name
+    text notes
+    varchar owner_code
+    varchar prep_completed_by
+    date prep_completed_date
+    float prep_days
+    date prep_start
+    varchar review_completed_by
+    date review_completed_date
+    float review_days
+    date review_due
+    varchar reviewer_code
+    int sequence
+    varchar state
+    int template_id
+    float total_days
+    datetime write_date
+    int write_uid
+  }
+  ppm_close_template {
+    boolean active
+    varchar agency_code
+    float approval_days
+    varchar approver_code
+    datetime create_date
+    int create_uid
+    text detailed_task
+    int id
+    varchar name
+    text notes
+    varchar owner_code
+    float prep_days
+    float review_days
+    varchar reviewer_code
+    int sequence
+    varchar task_category
+    float total_days
+    datetime write_date
+    int write_uid
+  }
+  ppm_kpi_snapshot {
+    datetime as_of
+    datetime create_date
+    int create_uid
+    int id
+    varchar kpi_category
+    varchar kpi_key
+    varchar kpi_label
+    varchar name
+    int portfolio_id
+    int program_id
+    int project_id
+    varchar scope
+    varchar source
+    varchar source_ref
+    varchar status
+    float target_value
+    float threshold_green
+    float threshold_yellow
+    varchar unit
+    float value
+    varchar value_text
+    datetime write_date
+    int write_uid
+  }
+  ppm_monthly_close {
+    date approval_due_date
+    date close_month
+    datetime create_date
+    int create_uid
+    boolean created_by_cron
+    int id
+    date month_end_date
+    varchar name
+    text notes
+    date prep_start_date
+    float progress_percentage
+    date review_due_date
+    varchar state
+    int task_completed
+    int task_count
+    datetime write_date
+    int write_uid
+  }
+  ppm_portfolio {
+    boolean active
+    float budget_variance_pct
+    varchar code
+    datetime create_date
+    int create_uid
+    int currency_id
+    date date_end
+    date date_start
+    varchar description
+    int health_score
+    varchar health_status
+    int id
+    varchar name
+    text objective
+    int owner_id
+    int program_count
+    int sequence
+    int sponsor_id
+    decimal total_actual
+    decimal total_budget
+    datetime write_date
+    int write_uid
+  }
+  ppm_program {
+    boolean active
+    decimal actual_cost
+    decimal budget
+    varchar code
+    datetime create_date
+    int create_uid
+    int currency_id
+    date date_end
+    date date_start
+    varchar description
+    text health_notes
+    int health_score
+    varchar health_status
+    int id
+    varchar name
+    text objectives
+    int open_high_risks
+    int portfolio_id
+    int program_manager_id
+    int project_count
+    int risk_count
+    int sequence
+    int sponsor_id
+    datetime write_date
+    int write_uid
+  }
+  ppm_program_project_rel {
+    int program_id
+    int project_id
+  }
+  ppm_resource_allocation {
+    float allocation_pct
+    datetime create_date
+    int create_uid
+    date date_end
+    date date_start
+    int employee_id
+    int id
+    boolean is_overloaded
+    varchar name
+    text notes
+    float planned_hours
+    int program_id
+    int project_id
+    varchar role
+    varchar status
+    int task_id
+    float total_allocation
+    int user_id
+    datetime write_date
+    int write_uid
+  }
+  ppm_risk {
+    int assigned_to_id
+    varchar category
+    varchar code
+    text contingency_plan
+    datetime create_date
+    int create_uid
+    int currency_id
+    date date_closed
+    date date_identified
+    date date_target
+    text description
+    int id
+    varchar impact
+    text mitigation_plan
+    varchar mitigation_strategy
+    varchar name
+    int owner_id
+    int portfolio_id
+    decimal potential_cost
+    varchar probability
+    int program_id
+    int project_id
+    int risk_score
+    varchar scope
+    varchar severity
+    varchar status
+    datetime write_date
+    int write_uid
+  }
+  product_category {
+    int id
+  }
+  product_product {
+    datetime create_date
+    int create_uid
+    int id
+    datetime write_date
+    int write_uid
+  }
+  product_set_line {
+    datetime create_date
+    int create_uid
+    int id
+    datetime write_date
+    int write_uid
+  }
+  product_template {
+    datetime create_date
+    int create_uid
+    int id
+    boolean recurring_task
+    varchar service_tracking
+    varchar task_force_month
+    varchar task_force_month_quarter
+    varchar task_force_month_semester
+    int task_repeat_interval
+    int task_repeat_number
+    varchar task_repeat_type
+    varchar task_repeat_unit
+    date task_repeat_until
+    varchar task_start_date_method
+    datetime write_date
+    int write_uid
+  }
+  project_assignment {
+    boolean active
+    int company_id
+    datetime create_date
+    int create_uid
+    int id
+    varchar name
+    int project_id
+    int role_id
+    int user_id
+    datetime write_date
+    int write_uid
+  }
+  project_category {
+    int id
+  }
+  project_milestone {
+    int alert_days_before
+    date approval_date
+    boolean approval_required
+    int approver_id
+    date baseline_deadline
+    int completed_task_count
+    text completion_criteria
+    datetime create_date
+    int create_uid
+    int dedication
+    text deliverables
+    int execution
+    varchar gate_status
+    int id
+    date last_alert_sent
+    varchar milestone_type
+    varchar risk_level
+    text risk_notes
+    int task_count
+    int variance_days
+    datetime write_date
+    int write_uid
+  }
+  project_pr_required {
+    int project_id
+    int state_id
+  }
+  project_project {
+    date actual_finish
+    date actual_start
+    date baseline_finish
+    date baseline_start
+    int child_ids_count
+    varchar clarity_id
+    datetime create_date
+    int create_uid
+    int critical_milestone_count
+    int department_id
+    varchar health_status
+    int id
+    varchar im_code
+    boolean inherit_assignments
+    boolean ipai_finance_enabled
+    varchar ipai_im_code
+    boolean ipai_is_im_project
+    int ipai_root_project_id
+    boolean is_program
+    boolean is_template
+    varchar key
+    boolean limit_role_to_assignments
+    int location_dest_id
+    int location_id
+    int milestone_count
+    varchar name
+    float overall_progress
+    varchar overall_status
+    int parent_id
+    varchar parent_path
+    int phase_count
+    int picking_type_id
+    int portfolio_id
+    varchar program_code
+    varchar program_type
+    int purchase_count
+    int purchase_invoice_count
+    float purchase_invoice_line_total
+    int purchase_line_total
+    varchar sequence_code
+    datetime stage_last_update_date
+    date stock_analytic_date
+    int task_key_sequence_id
+    int type_id
+    int variance_finish
+    int variance_start
+    datetime write_date
+    int write_uid
+    varchar x_cycle_code
+  }
+  project_project_group_ids_rel {
+    int project_project_id
+    int res_groups_id
+  }
+  project_project_hr_category_ids_rel {
+    int id_id
+    int project_project_id
+  }
+  project_project_tag_ids_rel {
+    int id_id
+    int project_project_id
+  }
+  project_project_type_ids_rel {
+    int id_id
+    int project_project_id
+  }
+  project_role {
+    boolean active
+    int company_id
+    varchar complete_name
+    datetime create_date
+    int create_uid
+    varchar description
+    int id
+    varchar name
+    int parent_id
+    varchar parent_path
+    datetime write_date
+    int write_uid
+  }
+  project_stakeholder {
+    datetime create_date
+    int create_uid
+    int id
+    text note
+    int partner_id
+    int project_id
+    int role_id
+    datetime write_date
+    int write_uid
+  }
+  project_stakeholder_role {
+    datetime create_date
+    int create_uid
+    int id
+    varchar name
+    datetime write_date
+    int write_uid
+  }
+  project_tags {
+    int company_id
+    datetime create_date
+    int create_uid
+    int id
+    int parent_id
+    varchar parent_path
+    datetime write_date
+    int write_uid
+  }
+  project_tags_allowed_project_ids_rel {
+    int id_id
+    int project_tags_id
+  }
+  project_task {
+    varchar activity_type
+    float actual_cost
+    float actual_hours
+    boolean allow_moves_action_assign
+    boolean allow_moves_action_confirm
+    int ancestor_id
+    float approval_duration
+    int approver_id
+    boolean auto_sync
+    date bir_approval_due_date
+    date bir_deadline
+    varchar bir_form
+    date bir_payment_due_date
+    varchar bir_period_label
+    date bir_prep_due_date
+    boolean bir_related
+    int bir_schedule_id
+    int child_task_count
+    date closing_due_date
+    varchar cluster
+    varchar code
+    float cost_variance
+    datetime create_date
+    int create_uid
+    boolean critical_path
+    binary domain_hr_category_ids
+    binary domain_user_ids
+    boolean done_stock_moves
+    float earned_value
+    varchar erp_ref
+    int fd_id
+    varchar finance_category
+    varchar finance_code
+    varchar finance_deadline_type
+    int finance_logframe_id
+    int finance_person_id
+    int finance_supervisor_id
+    int free_float
+    int gate_approver_id
+    varchar gate_decision
+    int gate_milestone_id
+    int group_id
+    boolean has_gate
+    int id
+    varchar ipai_compliance_step
+    int ipai_days_to_deadline
+    int ipai_deadline_offset_workdays
+    varchar ipai_owner_code
+    varchar ipai_owner_role
+    varchar ipai_status_bucket
+    varchar ipai_task_category
+    int ipai_template_id
+    boolean is_finance_ppm
+    boolean is_phase
+    varchar key
+    int lag_days
+    int lead_days
+    int location_dest_id
+    int location_id
+    int milestone_count
+    varchar notes
+    varchar owner_code
+    varchar period_covered
+    date phase_baseline_finish
+    date phase_baseline_start
+    float phase_progress
+    varchar phase_status
+    varchar phase_type
+    int phase_variance_days
+    int picking_type_id
+    datetime planned_date_end
+    datetime planned_date_start
+    float planned_hours
+    float planned_value
+    varchar portal_url
+    boolean portal_url_visible
+    varchar pr_uri
+    float prep_duration
+    varchar priority
+    int project_department_id
+    varchar relative_due
+    float remaining_hours
+    float resource_allocation
+    float review_duration
+    int reviewer_id
+    varchar role_code
+    float schedule_variance
+    int scrap_count
+    int sfm_id
+    int stage_id
+    int stock_analytic_account_id
+    date stock_analytic_date
+    varchar stock_analytic_distribution
+    boolean stock_moves_is_locked
+    varchar stock_state
+    date target_date
+    int total_float
+    int type_id
+    boolean unreserve_visible
+    varchar url
+    boolean use_stock_moves
+    int version_id
+    varchar wbs_code
+    datetime write_date
+    int write_uid
+    varchar x_cycle_key
+    varchar x_external_key
+    boolean x_obsolete
+    varchar x_seed_hash
+    varchar x_step_code
+    varchar x_task_template_code
+  }
+  project_task_checklist_item {
+    float actual_hours
+    int assigned_user_id
+    text blocker_description
+    date completed_date
+    datetime create_date
+    int create_uid
+    date due_date
+    float estimated_hours
+    int id
+    text notes
+    varchar priority
+    varchar status
+    datetime write_date
+    int write_uid
+  }
+  project_task_description_template {
+    boolean active
+    int company_id
+    datetime create_date
+    int create_uid
+    varchar description
+    int id
+    varchar name
+    datetime write_date
+    int write_uid
+  }
+  project_task_employee_ids_rel {
+    int id_id
+    int project_task_id
+  }
+  project_task_hr_category_ids_rel {
+    int id_id
+    int project_task_id
+  }
+  project_task_merge {
+    datetime create_date
+    boolean create_new_task
+    int create_uid
+    int dst_project_id
+    int dst_task_id
+    varchar dst_task_name
+    int id
+    datetime write_date
+    int write_uid
+  }
+  project_task_merge_task_ids_rel {
+    int project_task_id
+    int project_task_merge_id
+  }
+  project_task_merge_user_ids_rel {
+    int project_task_merge_id
+    int res_users_id
+  }
+  project_task_pr_required_states_rel {
+    int id_id
+    int project_task_id
+  }
+  project_task_stock_product_set_wizard {
+    datetime create_date
+    int create_uid
+    int id
+    int task_id
+    datetime write_date
+    int write_uid
+  }
+  project_task_tag_ids_rel {
+    int id_id
+    int project_task_id
+  }
+  project_task_type {
+    boolean case_default
+    datetime create_date
+    int create_uid
+    boolean done_stock_moves
+    int id
+    varchar task_state
+    boolean use_stock_moves
+    datetime write_date
+    int write_uid
+  }
+  project_task_user_ids_rel {
+    int id_id
+    int project_task_id
+  }
+  project_type {
+    varchar code
+    varchar complete_name
+    datetime create_date
+    int create_uid
+    text description
+    int id
+    varchar name
+    int parent_id
+    boolean project_ok
+    boolean task_ok
+    datetime write_date
+    int write_uid
+  }
+  project_version {
+    datetime create_date
+    int create_uid
+    int id
+    varchar name
+    int project_id
+    datetime write_date
+    int write_uid
+  }
+  purchase_order {
+    datetime create_date
+    int create_uid
+    int id
+    datetime write_date
+    int write_uid
+    boolean x_master_control_submitted
+  }
+  quick_start_screen {
+    datetime create_date
+    int create_uid
+    int id
+    varchar name
+    datetime write_date
+    int write_uid
+  }
+  quick_start_screen_action {
+    varchar action_ref_id
+    boolean active
+    int color
+    varchar context
+    datetime create_date
+    int create_uid
+    varchar description
+    varchar domain
+    varchar icon_name
+    int id
+    varchar image
+    varchar name
+    int sequence
+    datetime write_date
+    int write_uid
+  }
+  quick_start_screen_action_ids_rel {
+    int id_id
+    int quick_start_screen_id
+  }
+  report_project_task_user {
+    int ancestor_id
+    datetime create_date
+    int create_uid
+    int id
+    datetime planned_date_end
+    datetime planned_date_start
+    datetime write_date
+    int write_uid
+  }
+  report_xlsx_wizard {
+    datetime create_date
+    int create_uid
+    varchar domain
+    int id
+    varchar res_model
+    datetime write_date
+    int write_uid
+  }
+  res_company {
+    boolean account_auto_reconcile_queue
+    varchar color_button_bg
+    varchar color_button_bg_hover
+    varchar color_button_text
+    varchar color_link_text
+    varchar color_link_text_hover
+    varchar color_navbar_bg
+    varchar color_navbar_bg_hover
+    varchar color_navbar_text
+    varchar color_submenu_text
+    varchar company_colors
+    datetime create_date
+    int create_uid
+    binary favicon
+    int id
+    boolean project_inherit_assignments
+    boolean project_limit_role_to_assignments
+    varchar reconcile_aggregate
+    varchar scss_modif_timestamp
+    int user_tech_id
+    datetime write_date
+    int write_uid
+  }
+  res_config_settings {
+    boolean account_auto_reconcile_queue
+    int age_partner_config_id
+    datetime create_date
+    int create_uid
+    boolean database_size_purge
+    int database_size_retention_daily
+    int database_size_retention_monthly
+    varchar default_aging_type
+    boolean default_filter_negative_balances
+    boolean default_filter_partners_non_due
+    boolean default_show_aging_buckets
+    varchar excluded_models_from_readonly
+    boolean group_activity_statement
+    boolean group_outstanding_statement
+    int id
+    varchar ipai_copilot_api_key
+    varchar ipai_copilot_api_url
+    boolean ipai_enable_finance_project_analytics
+    varchar project_display_name_pattern
+    boolean project_inherit_assignments
+    boolean project_limit_role_to_assignments
+    varchar pwa_background_color
+    binary pwa_icon
+    varchar pwa_short_name
+    varchar pwa_theme_color
+    varchar reconcile_aggregate
+    int session_auto_close_timeout
+    boolean superset_auto_sync
+    int superset_connection_id
+    boolean superset_create_analytics_views
+    boolean superset_enable_rls
+    varchar superset_sync_interval
+    datetime write_date
+    int write_uid
+  }
+  res_currency {
+    int id
+  }
+  res_groups {
+    int id
+  }
+  res_partner {
+    varchar bank_statement_label
+    boolean bir_registered
+    date bir_registration_date
+    datetime create_date
+    int create_uid
+    int id
+    float srm_overall_score
+    int srm_supplier_id
+    varchar srm_tier
+    varchar tax_type
+    varchar tin
+    varchar tin_branch_code
+    datetime write_date
+    int write_uid
+  }
+  res_remote {
+    datetime create_date
+    int create_uid
+    int id
+    boolean in_network
+    varchar ip
+    varchar name
+    datetime write_date
+    int write_uid
+  }
+  res_users {
+    varchar apps_menu_search_type
+    varchar apps_menu_theme
+    varchar chatter_position
+    datetime create_date
+    int create_uid
+    int id
+    boolean is_readonly_user
+    boolean is_redirect_home
+    varchar notify_danger_channel_name
+    varchar notify_default_channel_name
+    varchar notify_info_channel_name
+    varchar notify_success_channel_name
+    varchar notify_warning_channel_name
+    int quick_start_screen_id
+    datetime write_date
+    int write_uid
+    varchar x_employee_code
+  }
+  res_users_hr_category_ids_rel {
+    int id_id
+    int res_users_id
+  }
+  resource_calendar {
+    int id
+  }
+  sale_order {
+    datetime create_date
+    int create_uid
+    boolean has_project_service_tracking_lines
+    int id
+    varchar transaction_id
+    datetime write_date
+    int write_uid
+  }
+  sale_order_line {
+    datetime create_date
+    int create_uid
+    int id
+    boolean is_project_service_tracking_line
+    datetime write_date
+    int write_uid
+  }
+  srm_kpi_category {
+    boolean active
+    varchar code
+    varchar compute_source
+    datetime create_date
+    int create_uid
+    text description
+    varchar eval_method
+    int id
+    varchar name
+    int sequence
+    float weight
+    datetime write_date
+    int write_uid
+  }
+  srm_qualification {
+    datetime approval_date
+    int approver_id
+    boolean checklist_complete
+    date completion_date
+    datetime create_date
+    int create_uid
+    date expiry_date
+    int id
+    varchar name
+    text notes
+    varchar qualification_type
+    text rejection_reason
+    int reviewer_id
+    text risk_notes
+    float risk_score
+    date start_date
+    varchar state
+    int supplier_id
+    date target_completion
+    datetime write_date
+    int write_uid
+  }
+  srm_qualification_checklist {
+    int completed_by
+    date completed_date
+    datetime create_date
+    int create_uid
+    text description
+    int id
+    boolean is_complete
+    boolean is_required
+    varchar name
+    text notes
+    int qualification_id
+    int sequence
+    datetime write_date
+    int write_uid
+  }
+  srm_qualification_document_ids_rel {
+    int ir_attachment_id
+    int srm_qualification_id
+  }
+  srm_scorecard {
+    text action_items
+    date as_of
+    text comments
+    datetime create_date
+    int create_uid
+    int evaluator_id
+    varchar grade
+    int id
+    varchar name
+    float overall_score
+    varchar period
+    varchar state
+    int supplier_id
+    datetime write_date
+    int write_uid
+  }
+  srm_scorecard_line {
+    datetime create_date
+    int create_uid
+    text evidence
+    int id
+    int kpi_category_id
+    text notes
+    float score
+    int scorecard_id
+    int sequence
+    float weight
+    float weighted_score
+    datetime write_date
+    int write_uid
+  }
+  srm_supplier {
+    varchar code
+    boolean compliance_docs_complete
+    datetime create_date
+    int create_uid
+    int currency_id
+    int id
+    boolean is_qualified
+    date last_audit_date
+    int latest_scorecard_id
+    varchar name
+    date next_audit_date
+    int open_po_count
+    float overall_score
+    int partner_id
+    int primary_contact_id
+    date qualification_expiry
+    varchar risk_level
+    text risk_notes
+    int sales_contact_id
+    varchar state
+    varchar tier
+    int total_po_count
+    datetime write_date
+    int write_uid
+    decimal ytd_spend
+  }
+  srm_supplier_category_ids_rel {
+    int product_category_id
+    int srm_supplier_id
+  }
+  stock_location {
+    int id
+  }
+  stock_move {
+    datetime create_date
+    int create_uid
+    int id
+    int raw_material_task_id
+    boolean show_cancel_button_in_task
+    int task_id
+    datetime write_date
+    int write_uid
+  }
+  stock_move_line {
+    datetime create_date
+    int create_uid
+    int id
+    int task_id
+    datetime write_date
+    int write_uid
+  }
+  stock_scrap {
+    datetime create_date
+    int create_uid
+    int id
+    int task_id
+    datetime write_date
+    int write_uid
+  }
+  superset_analytics_view {
+    boolean active
+    varchar category
+    datetime create_date
+    int create_uid
+    text description
+    int id
+    boolean is_created
+    datetime last_refresh
+    varchar name
+    varchar required_modules
+    int sequence
+    text sql_definition
+    varchar technical_name
+    datetime write_date
+    int write_uid
+  }
+  superset_bulk_dataset_wizard {
+    int connection_id
+    boolean create_analytics_views
+    datetime create_date
+    int create_uid
+    int id
+    varchar preset
+    datetime write_date
+    int write_uid
+  }
+  superset_connection {
+    varchar access_token
+    boolean active
+    varchar api_key
+    varchar auth_method
+    varchar base_url
+    datetime create_date
+    int create_uid
+    varchar csrf_token
+    int dataset_count
+    int db_connection_id
+    varchar db_connection_name
+    int id
+    text last_error
+    datetime last_sync
+    varchar name
+    varchar password
+    varchar pg_database
+    varchar pg_host
+    varchar pg_password
+    int pg_port
+    varchar pg_schema
+    varchar pg_username
+    varchar refresh_token
+    varchar state
+    datetime token_expiry
+    boolean use_ssl
+    varchar username
+    datetime write_date
+    int write_uid
+  }
+  superset_dataset {
+    boolean active
+    varchar category
+    int column_count
+    int connection_id
+    datetime create_date
+    int create_uid
+    text custom_sql
+    text description
+    boolean enable_rls
+    int id
+    boolean include_all_fields
+    datetime last_sync
+    int model_id
+    varchar model_name
+    varchar name
+    varchar rls_filter_column
+    int sequence
+    varchar source_type
+    int superset_dataset_id
+    text sync_error
+    varchar sync_status
+    varchar technical_name
+    boolean view_created
+    varchar view_name
+    text view_sql
+    datetime write_date
+    int write_uid
+  }
+  superset_dataset_column {
+    varchar aggregation
+    varchar column_type
+    datetime create_date
+    int create_uid
+    varchar data_type
+    int dataset_id
+    text description
+    boolean filterable
+    varchar format_string
+    boolean groupable
+    int id
+    varchar label
+    varchar name
+    int sequence
+    datetime write_date
+    int write_uid
+  }
+  superset_dataset_field_ids_rel {
+    int ir_model_fields_id
+    int superset_dataset_id
+  }
+  superset_dataset_wizard {
+    varchar category
+    int connection_id
+    datetime create_date
+    int create_uid
+    boolean create_view
+    boolean enable_rls
+    int id
+    boolean include_all_fields
+    int model_id
+    varchar name
+    boolean sync_to_superset
+    varchar technical_name
+    datetime write_date
+    int write_uid
+  }
+  superset_dataset_wizard_field_ids_rel {
+    int ir_model_fields_id
+    int superset_dataset_wizard_id
+  }
+  test_partner_time_window {
+    datetime create_date
+    int create_uid
+    int id
+    int partner_id
+    datetime write_date
+    int write_uid
+  }
+  test_time_window_model {
+    datetime create_date
+    int create_uid
+    int id
+    int partner_id
+    datetime write_date
+    int write_uid
+  }
+  time_weekday {
+    datetime create_date
+    int create_uid
+    int id
+    varchar name
+    datetime write_date
+    int write_uid
+  }
+  timesheets_analysis_report {
+    int ancestor_task_id
+    datetime create_date
+    int create_uid
+    int id
+    datetime write_date
+    int write_uid
+  }
+  trgm_index {
+    datetime create_date
+    int create_uid
+    int field_id
+    int id
+    varchar index_name
+    varchar index_type
+    datetime write_date
+    int write_uid
+  }
+  trial_balance_report_wizard {
+    int account_code_from
+    int account_code_to
+    datetime create_date
+    int create_uid
+    date date_from
+    int date_range_id
+    date date_to
+    boolean foreign_currency
+    date fy_start_date
+    varchar grouped_by
+    boolean hide_account_at_0
+    boolean hide_parent_hierarchy_level
+    int id
+    boolean limit_hierarchy_level
+    boolean only_one_unaffected_earnings_account
+    boolean payable_accounts_only
+    boolean receivable_accounts_only
+    boolean show_hierarchy
+    int show_hierarchy_level
+    boolean show_partner_details
+    varchar target_move
+    int unaffected_earnings_account
+    datetime write_date
+    int write_uid
+  }
+  trial_balance_report_wizard_account_ids_rel {
+    int id_id
+    int trial_balance_report_wizard_id
+  }
+  trial_balance_report_wizard_journal_ids_rel {
+    int id_id
+    int trial_balance_report_wizard_id
+  }
+  trial_balance_report_wizard_partner_ids_rel {
+    int id_id
+    int trial_balance_report_wizard_id
+  }
+  upgrade_analysis {
+    datetime analysis_date
+    int config_id
+    datetime create_date
+    int create_uid
+    int id
+    text log
+    varchar state
+    varchar upgrade_path
+    datetime write_date
+    boolean write_files
+    int write_uid
+  }
+  upgrade_attribute {
+    datetime create_date
+    int create_uid
+    int id
+    varchar name
+    int record_id
+    varchar value
+    datetime write_date
+    int write_uid
+  }
+  upgrade_comparison_config {
+    int analysis_qty
+    datetime create_date
+    int create_uid
+    varchar database
+    int id
+    varchar name
+    varchar password
+    int port
+    varchar server
+    varchar username
+    varchar version
+    datetime write_date
+    int write_uid
+  }
+  upgrade_generate_record_wizard {
+    datetime create_date
+    int create_uid
+    int id
+    varchar state
+    datetime write_date
+    int write_uid
+  }
+  upgrade_install_wizard {
+    datetime create_date
+    int create_uid
+    int id
+    int module_qty
+    varchar state
+    datetime write_date
+    int write_uid
+  }
+  upgrade_install_wizard_module_ids_rel {
+    int id_id
+    int upgrade_install_wizard_id
+  }
+  upgrade_record {
+    datetime create_date
+    int create_uid
+    varchar definition
+    varchar domain
+    varchar field
+    int id
+    varchar mode
+    varchar model
+    varchar model_original_module
+    varchar model_type
+    varchar module
+    varchar name
+    boolean noupdate
+    varchar prefix
+    varchar suffix
+    varchar type
+    datetime write_date
+    int write_uid
+  }
+  vacuum_rule {
+    boolean active
+    int company_id
+    datetime create_date
+    int create_uid
+    text description
+    boolean empty_model
+    boolean empty_subtype
+    varchar filename_pattern
+    int id
+    varchar inheriting_model
+    varchar message_type
+    varchar model
+    text model_filter_domain
+    int model_id
+    varchar name
+    int retention_time
+    varchar ttype
+    datetime write_date
+    int write_uid
+  }
+  vacuum_rule_message_subtype_ids_rel {
+    int mail_message_subtype_id
+    int vacuum_rule_id
+  }
+  vacuum_rule_model_ids_rel {
+    int ir_model_id
+    int vacuum_rule_id
+  }
+  vat_report_wizard {
+    varchar based_on
+    datetime create_date
+    int create_uid
+    date date_from
+    int date_range_id
+    date date_to
+    int id
+    varchar target_move
+    boolean tax_detail
+    datetime write_date
+    int write_uid
+  }
+  web_editor_class {
+    boolean active
+    varchar class_name
+    datetime create_date
+    int create_uid
+    int id
+    varchar name
+    int sequence
+    datetime write_date
+    int write_uid
+  }
+  web_form_banner_rule {
+    boolean active
+    datetime create_date
+    int create_uid
+    int id
+    text message
+    boolean message_is_html
+    text message_value_code
+    int model_id
+    varchar model_name
+    varchar name
+    varchar position
+    int sequence
+    varchar severity
+    varchar target_xpath
+    datetime write_date
+    int write_uid
+  }
+  web_form_banner_rule_trigger_field_rel {
+    int ir_model_fields_id
+    int web_form_banner_rule_id
+  }
+  web_form_banner_rule_view_ids_rel {
+    int ir_ui_view_id
+    int web_form_banner_rule_id
+  }
+  wizard_open_tax_balances {
+    datetime create_date
+    int create_uid
+    int date_range_id
+    date from_date
+    int id
+    varchar target_move
+    date to_date
+    datetime write_date
+    int write_uid
+  }
+  wizard_open_tax_balances_company_ids_rel {
+    int id_id
+    int wizard_open_tax_balances_id
+  }
+  workos_comment_mention_rel {
+    int comment_id
+    int user_id
+  }
+  workspace_member_rel {
+    int user_id
+    int workspace_id
+  }
+  xlsx_template {
+    datetime create_date
+    int create_uid
+    varchar csv_delimiter
+    varchar csv_extension
+    boolean csv_quote
+    binary datas
+    varchar description
+    int export_action_id
+    varchar fname
+    varchar gname
+    int id
+    int import_action_id
+    text input_instruction
+    text instruction
+    varchar name
+    varchar post_import_hook
+    int redirect_action
+    int report_action_id
+    int report_menu_id
+    varchar res_model
+    varchar result_field
+    int result_model_id
+    boolean show_instruction
+    boolean to_csv
+    boolean use_report_wizard
+    datetime write_date
+    int write_uid
+  }
+  xlsx_template_export {
+    datetime create_date
+    int create_uid
+    varchar excel_cell
+    varchar field_cond
+    varchar field_name
+    int id
+    boolean is_cont
+    boolean is_extend
+    boolean is_sum
+    varchar row_field
+    varchar section_type
+    int sequence
+    varchar sheet
+    varchar style
+    varchar style_cond
+    int template_id
+    datetime write_date
+    int write_uid
+  }
+  xlsx_template_import {
+    datetime create_date
+    int create_uid
+    varchar excel_cell
+    varchar field_cond
+    varchar field_name
+    int id
+    boolean no_delete
+    varchar row_field
+    varchar section_type
+    int sequence
+    varchar sheet
+    int template_id
+    datetime write_date
+    int write_uid
+  }
+  a1_check ||--o{ close_approval_gate_template : "close_gate_template_id"
+  a1_check ||--o{ res_company : "company_id"
+  a1_check_result ||--o{ a1_check : "check_id"
+  a1_check_result ||--o{ res_users : "executed_by"
+  a1_check_result ||--o{ a1_task : "task_id"
+  a1_check_result_attachment_ids_rel ||--o{ a1_check_result : "a1_check_result_id"
+  a1_check_result_attachment_ids_rel ||--o{ ir_attachment : "ir_attachment_id"
+  a1_export_run ||--o{ res_company : "company_id"
+  a1_role ||--o{ res_company : "company_id"
+  a1_role ||--o{ res_users : "default_user_id"
+  a1_role ||--o{ res_users : "fallback_user_id"
+  a1_role_group_ids_rel ||--o{ a1_role : "a1_role_id"
+  a1_role_group_ids_rel ||--o{ res_groups : "res_groups_id"
+  a1_task ||--o{ res_users : "approval_done_by"
+  a1_task ||--o{ res_users : "approver_id"
+  a1_task ||--o{ close_task : "close_task_id"
+  a1_task ||--o{ res_company : "company_id"
+  a1_task ||--o{ res_users : "owner_id"
+  a1_task ||--o{ res_users : "prep_done_by"
+  a1_task ||--o{ res_users : "review_done_by"
+  a1_task ||--o{ res_users : "reviewer_id"
+  a1_task ||--o{ a1_tasklist : "tasklist_id"
+  a1_task ||--o{ a1_template : "template_id"
+  a1_task ||--o{ a1_workstream : "workstream_id"
+  a1_task_checklist ||--o{ res_users : "done_by"
+  a1_task_checklist ||--o{ a1_task : "task_id"
+  a1_task_checklist ||--o{ a1_template_checklist : "template_item_id"
+  a1_task_checklist ||--o{ ir_attachment : "value_attachment_id"
+  a1_tasklist ||--o{ close_cycle : "close_cycle_id"
+  a1_tasklist ||--o{ res_company : "company_id"
+  a1_template ||--o{ close_task_template : "close_template_id"
+  a1_template ||--o{ res_company : "company_id"
+  a1_template ||--o{ a1_workstream : "workstream_id"
+  a1_template_check_rel ||--o{ a1_check : "check_id"
+  a1_template_check_rel ||--o{ a1_template : "template_id"
+  a1_template_checklist ||--o{ a1_template : "template_id"
+  a1_template_step ||--o{ a1_template : "template_id"
+  a1_workstream ||--o{ close_task_category : "close_category_id"
+  a1_workstream ||--o{ res_company : "company_id"
+  a1_workstream ||--o{ a1_role : "owner_role_id"
+  a1_workstream ||--o{ res_users : "owner_user_id"
+  account_account_reconcile_data ||--o{ res_users : "user_id"
+  account_age_report_configuration ||--o{ res_company : "company_id"
+  account_age_report_configuration_line ||--o{ account_age_report_configuration : "account_age_report_config_id"
+  account_bank_statement_line_manual_analytic_tag_ids_rel ||--o{ account_bank_statement_line : "account_bank_statement_line_id"
+  account_journal_rule_ids_rel ||--o{ account_journal : "account_journal_id"
+  account_move ||--o{ res_partner : "import_partner_id"
+  account_move_completion_rule_journal_ids_rel ||--o{ account_move_completion_rule : "account_move_completion_rule_id"
+  account_move_line_analytic_account_ids_rel ||--o{ account_analytic_account : "account_analytic_account_id"
+  account_move_line_analytic_account_ids_rel ||--o{ account_move_line : "account_move_line_id"
+  account_reconcile_model_line_analytic_tag_ids_rel ||--o{ account_reconcile_model_line : "account_reconcile_model_line_id"
+  advisor_playbook_category_ids_rel ||--o{ advisor_category : "advisor_category_id"
+  advisor_playbook_category_ids_rel ||--o{ advisor_playbook : "advisor_playbook_id"
+  advisor_recommendation ||--o{ advisor_category : "category_id"
+  advisor_recommendation ||--o{ res_currency : "currency_id"
+  advisor_recommendation ||--o{ res_users : "owner_id"
+  advisor_recommendation ||--o{ advisor_playbook : "playbook_id"
+  advisor_recommendation_tag_ids_rel ||--o{ advisor_recommendation : "advisor_recommendation_id"
+  advisor_recommendation_tag_ids_rel ||--o{ advisor_tag : "advisor_tag_id"
+  advisor_score ||--o{ advisor_category : "category_id"
+  aged_partner_balance_report_wizard ||--o{ account_age_report_configuration : "age_partner_config_id"
+  aged_partner_balance_report_wizard_account_ids_rel ||--o{ aged_partner_balance_report_wizard : "aged_partner_balance_report_wizard_id"
+  aged_partner_balance_report_wizard_partner_ids_rel ||--o{ aged_partner_balance_report_wizard : "aged_partner_balance_report_wizard_id"
+  attachment_queue ||--o{ ir_attachment : "attachment_id"
+  attachment_queue ||--o{ fs_storage : "fs_storage_id"
+  attachment_queue ||--o{ attachment_synchronize_task : "task_id"
+  attachment_queue_reschedule_attachment_ids_rel ||--o{ attachment_queue_reschedule : "attachment_queue_reschedule_id"
+  attachment_synchronize_task ||--o{ fs_storage : "backend_id"
+  auditlog_http_request ||--o{ auditlog_http_session : "http_session_id"
+  auditlog_http_request ||--o{ res_users : "user_id"
+  auditlog_http_session ||--o{ res_users : "user_id"
+  auditlog_log ||--o{ auditlog_http_request : "http_request_id"
+  auditlog_log ||--o{ auditlog_http_session : "http_session_id"
+  auditlog_log ||--o{ ir_model : "model_id"
+  auditlog_log ||--o{ res_users : "user_id"
+  auditlog_log_line ||--o{ ir_model_fields : "field_id"
+  auditlog_log_line ||--o{ auditlog_log : "log_id"
+  auditlog_rule ||--o{ ir_actions_act_window : "action_id"
+  auditlog_rule ||--o{ ir_model : "model_id"
+  auditlog_rule_fields_to_exclude_ids_rel ||--o{ auditlog_rule : "auditlog_rule_id"
+  auditlog_rule_fields_to_exclude_ids_rel ||--o{ ir_model_fields : "ir_model_fields_id"
+  auditlog_rule_users_to_exclude_ids_rel ||--o{ auditlog_rule : "auditlog_rule_id"
+  auditlog_rule_users_to_exclude_ids_rel ||--o{ res_users : "res_users_id"
+  audittail_rules_users ||--o{ res_users : "rule_id"
+  audittail_rules_users ||--o{ auditlog_rule : "user_id"
+  base_exception_test_purchase ||--o{ res_partner : "partner_id"
+  base_exception_test_purchase ||--o{ res_users : "user_id"
+  base_exception_test_purchase_line ||--o{ base_exception_test_purchase : "lead_id"
+  bir_alphalist ||--o{ res_company : "company_id"
+  bir_alphalist ||--o{ res_currency : "currency_id"
+  bir_alphalist_line ||--o{ bir_alphalist : "alphalist_id"
+  bir_alphalist_line ||--o{ res_currency : "currency_id"
+  bir_alphalist_line ||--o{ res_partner : "partner_id"
+  bir_filing_deadline ||--o{ res_company : "company_id"
+  bir_filing_deadline ||--o{ bir_tax_return : "return_id"
+  bir_return ||--o{ res_company : "company_id"
+  bir_return ||--o{ res_currency : "currency_id"
+  bir_return ||--o{ res_users : "filed_by"
+  bir_return ||--o{ finance_task : "task_id"
+  bir_return_line ||--o{ account_move : "move_id"
+  bir_return_line ||--o{ res_partner : "partner_id"
+  bir_return_line ||--o{ bir_return : "return_id"
+  bir_tax_return ||--o{ res_company : "company_id"
+  bir_tax_return ||--o{ res_currency : "currency_id"
+  bir_tax_return ||--o{ res_users : "filed_by"
+  bir_tax_return_line ||--o{ res_currency : "currency_id"
+  bir_tax_return_line ||--o{ account_move : "move_id"
+  bir_tax_return_line ||--o{ res_partner : "partner_id"
+  bir_tax_return_line ||--o{ bir_tax_return : "return_id"
+  bir_vat_line ||--o{ res_currency : "currency_id"
+  bir_vat_line ||--o{ account_move : "invoice_id"
+  bir_vat_line ||--o{ res_partner : "partner_id"
+  bir_vat_line ||--o{ bir_vat_return : "return_id"
+  bir_withholding_line ||--o{ res_currency : "currency_id"
+  bir_withholding_line ||--o{ account_move : "move_id"
+  bir_withholding_line ||--o{ res_partner : "partner_id"
+  bir_withholding_line ||--o{ hr_payslip : "payslip_id"
+  bir_withholding_line ||--o{ bir_withholding_return : "return_id"
+  cleanup_create_indexes_line ||--o{ ir_model_fields : "field_id"
+  cleanup_create_indexes_line ||--o{ cleanup_create_indexes_wizard : "wizard_id"
+  cleanup_purge_line_column ||--o{ ir_model : "model_id"
+  cleanup_purge_line_column ||--o{ cleanup_purge_wizard_column : "wizard_id"
+  cleanup_purge_line_data ||--o{ ir_model_data : "data_id"
+  cleanup_purge_line_data ||--o{ cleanup_purge_wizard_data : "wizard_id"
+  cleanup_purge_line_field ||--o{ cleanup_purge_wizard_field : "wizard_id"
+  cleanup_purge_line_menu ||--o{ ir_ui_menu : "menu_id"
+  cleanup_purge_line_menu ||--o{ cleanup_purge_wizard_menu : "wizard_id"
+  cleanup_purge_line_model ||--o{ cleanup_purge_wizard_model : "wizard_id"
+  cleanup_purge_line_module ||--o{ cleanup_purge_wizard_module : "wizard_id"
+  cleanup_purge_line_table ||--o{ cleanup_purge_wizard_table : "wizard_id"
+  close_approval_gate ||--o{ res_users : "approved_by"
+  close_approval_gate ||--o{ res_users : "approver_id"
+  close_approval_gate ||--o{ res_company : "company_id"
+  close_approval_gate ||--o{ close_cycle : "cycle_id"
+  close_approval_gate ||--o{ close_approval_gate_template : "template_id"
+  close_approval_gate_template ||--o{ a1_check : "a1_check_id"
+  close_approval_gate_template ||--o{ res_company : "company_id"
+  close_cycle ||--o{ a1_tasklist : "a1_tasklist_id"
+  close_cycle ||--o{ res_company : "company_id"
+  close_exception ||--o{ res_users : "assigned_to"
+  close_exception ||--o{ res_company : "company_id"
+  close_exception ||--o{ close_cycle : "cycle_id"
+  close_exception ||--o{ res_users : "escalated_to"
+  close_exception ||--o{ res_users : "reported_by"
+  close_exception ||--o{ res_users : "resolved_by"
+  close_exception ||--o{ close_task : "task_id"
+  close_task ||--o{ a1_task : "a1_task_id"
+  close_task ||--o{ res_users : "approval_done_by"
+  close_task ||--o{ res_users : "approver_id"
+  close_task ||--o{ close_task_category : "category_id"
+  close_task ||--o{ res_company : "company_id"
+  close_task ||--o{ close_cycle : "cycle_id"
+  close_task ||--o{ res_users : "prep_done_by"
+  close_task ||--o{ res_users : "preparer_id"
+  close_task ||--o{ res_users : "review_done_by"
+  close_task ||--o{ res_users : "reviewer_id"
+  close_task ||--o{ close_task_template : "template_id"
+  close_task_category ||--o{ a1_workstream : "a1_workstream_id"
+  close_task_category ||--o{ res_company : "company_id"
+  close_task_checklist ||--o{ res_users : "done_by"
+  close_task_checklist ||--o{ close_task : "task_id"
+  close_task_template ||--o{ a1_template : "a1_template_id"
+  close_task_template ||--o{ res_users : "approver_id"
+  close_task_template ||--o{ close_task_category : "category_id"
+  close_task_template ||--o{ res_company : "company_id"
+  close_task_template ||--o{ res_users : "preparer_id"
+  close_task_template ||--o{ res_users : "reviewer_id"
+  close_task_template_checklist ||--o{ close_task_template : "template_id"
+  closing_period ||--o{ res_company : "company_id"
+  compliance_check ||--o{ res_users : "checked_by"
+  compliance_check ||--o{ closing_period : "closing_id"
+  crm_stage_required_fields_rel ||--o{ ir_model_fields : "field_id"
+  crm_stage_required_fields_rel ||--o{ crm_stage : "stage_id"
+  exception_rule_confirm_test_purchase ||--o{ base_exception_test_purchase : "related_model_id"
+  exception_rule_test_purchase_ids_rel ||--o{ base_exception_test_purchase : "base_exception_test_purchase_id"
+  exception_rule_test_purchase_ids_rel ||--o{ exception_rule : "exception_rule_id"
+  export_xlsx_wizard ||--o{ xlsx_template : "template_id"
+  fetchmail_attach_mail_manually_mail ||--o{ fetchmail_attach_mail_manually : "wizard_id"
+  fetchmail_server ||--o{ mail_template : "error_notice_template_id"
+  fetchmail_server_folder ||--o{ fetchmail_server : "server_id"
+  finance_bir_deadline ||--o{ ipai_finance_person : "responsible_approval_id"
+  finance_bir_deadline ||--o{ ipai_finance_person : "responsible_prep_id"
+  finance_bir_deadline ||--o{ ipai_finance_person : "responsible_review_id"
+  finance_ppm_logframe ||--o{ finance_ppm_logframe : "parent_id"
+  finance_ppm_tdi_audit ||--o{ res_users : "user_id"
+  finance_task ||--o{ res_users : "approve_done_by"
+  finance_task ||--o{ res_users : "approve_user_id"
+  finance_task ||--o{ bir_return : "bir_return_id"
+  finance_task ||--o{ closing_period : "closing_id"
+  finance_task ||--o{ res_users : "prep_done_by"
+  finance_task ||--o{ res_users : "prep_user_id"
+  finance_task ||--o{ res_users : "review_done_by"
+  finance_task ||--o{ res_users : "review_user_id"
+  finance_task ||--o{ finance_task_template : "template_id"
+  finance_task_template ||--o{ res_users : "approve_user_id"
+  finance_task_template ||--o{ res_users : "prep_user_id"
+  finance_task_template ||--o{ res_users : "review_user_id"
+  finance_task_template_dependency_rel ||--o{ finance_task_template : "depends_on_id"
+  finance_task_template_dependency_rel ||--o{ finance_task_template : "task_id"
+  general_ledger_report_wizard_account_ids_rel ||--o{ general_ledger_report_wizard : "general_ledger_report_wizard_id"
+  general_ledger_report_wizard_account_journal_ids_rel ||--o{ general_ledger_report_wizard : "general_ledger_report_wizard_id"
+  general_ledger_report_wizard_cost_center_ids_rel ||--o{ general_ledger_report_wizard : "general_ledger_report_wizard_id"
+  general_ledger_report_wizard_partner_ids_rel ||--o{ general_ledger_report_wizard : "general_ledger_report_wizard_id"
+  hr_expense ||--o{ project_project : "project_id"
+  hr_expense ||--o{ ipai_travel_request : "travel_request_id"
+  import_xlsx_wizard ||--o{ xlsx_template : "template_id"
+  import_xlsx_wizard_attachment_ids_rel ||--o{ import_xlsx_wizard : "import_xlsx_wizard_id"
+  import_xlsx_wizard_attachment_ids_rel ||--o{ ir_attachment : "ir_attachment_id"
+  ipai_agent_knowledge_source ||--o{ ir_attachment : "attachment_id"
+  ipai_agent_run ||--o{ ipai_agent_skill : "skill_id"
+  ipai_agent_run ||--o{ res_users : "user_id"
+  ipai_ask_ai_chatter_request ||--o{ res_users : "requested_by"
+  ipai_ask_ai_chatter_request ||--o{ mail_message : "source_message_id"
+  ipai_asset ||--o{ ipai_asset_checkout : "active_checkout_id"
+  ipai_asset ||--o{ ipai_asset_category : "category_id"
+  ipai_asset ||--o{ res_currency : "currency_id"
+  ipai_asset ||--o{ hr_employee : "custodian_id"
+  ipai_asset ||--o{ stock_location : "location_id"
+  ipai_asset_checkout ||--o{ res_users : "approved_by"
+  ipai_asset_checkout ||--o{ ipai_asset : "asset_id"
+  ipai_asset_checkout ||--o{ hr_employee : "employee_id"
+  ipai_asset_reservation ||--o{ ipai_asset : "asset_id"
+  ipai_asset_reservation ||--o{ hr_employee : "employee_id"
+  ipai_audit_log ||--o{ res_users : "user_id"
+  ipai_bir_dat_wizard ||--o{ res_currency : "currency_id"
+  ipai_bir_form_schedule ||--o{ ipai_finance_person : "responsible_approval_id"
+  ipai_bir_form_schedule ||--o{ ipai_finance_person : "responsible_prep_id"
+  ipai_bir_form_schedule ||--o{ ipai_finance_person : "responsible_review_id"
+  ipai_bir_process_step ||--o{ ipai_finance_person : "person_id"
+  ipai_bir_process_step ||--o{ ipai_bir_form_schedule : "schedule_id"
+  ipai_bir_schedule_step ||--o{ ipai_bir_schedule_item : "item_id"
+  ipai_close_generated_map ||--o{ ipai_close_generation_run : "generation_run_id"
+  ipai_close_generated_map ||--o{ ipai_close_generation_run : "run_id"
+  ipai_close_generated_map ||--o{ project_task : "task_id"
+  ipai_close_generated_map ||--o{ ipai_close_task_template : "template_id"
+  ipai_close_generation_run ||--o{ project_project : "project_id"
+  ipai_close_generation_run ||--o{ res_users : "user_id"
+  ipai_close_task_step ||--o{ ipai_close_task_template : "template_id"
+  ipai_close_task_step ||--o{ res_users : "user_id"
+  ipai_convert_phases_wizard ||--o{ project_project : "parent_project_id"
+  ipai_equipment_asset ||--o{ product_category : "category_id"
+  ipai_equipment_asset ||--o{ res_company : "company_id"
+  ipai_equipment_asset ||--o{ stock_location : "location_id"
+  ipai_equipment_asset ||--o{ product_product : "product_id"
+  ipai_equipment_booking ||--o{ ipai_equipment_asset : "asset_id"
+  ipai_equipment_booking ||--o{ res_users : "borrower_id"
+  ipai_equipment_booking ||--o{ project_project : "project_id"
+  ipai_equipment_incident ||--o{ ipai_equipment_asset : "asset_id"
+  ipai_equipment_incident ||--o{ ipai_equipment_booking : "booking_id"
+  ipai_equipment_incident ||--o{ res_users : "reported_by"
+  ipai_finance_bir_schedule ||--o{ project_task : "approval_task_id"
+  ipai_finance_bir_schedule ||--o{ res_users : "approver_id"
+  ipai_finance_bir_schedule ||--o{ ipai_finance_logframe : "logframe_id"
+  ipai_finance_bir_schedule ||--o{ project_task : "prep_task_id"
+  ipai_finance_bir_schedule ||--o{ project_task : "review_task_id"
+  ipai_finance_bir_schedule ||--o{ res_users : "reviewer_id"
+  ipai_finance_bir_schedule ||--o{ res_users : "supervisor_id"
+  ipai_finance_close_generate_wizard ||--o{ resource_calendar : "calendar_id"
+  ipai_finance_directory ||--o{ res_users : "user_id"
+  ipai_finance_person ||--o{ res_users : "user_id"
+  ipai_finance_ppm_golive_checklist ||--o{ res_users : "created_by"
+  ipai_finance_ppm_golive_checklist ||--o{ res_users : "director_id"
+  ipai_finance_ppm_golive_checklist ||--o{ res_users : "senior_supervisor_id"
+  ipai_finance_ppm_golive_checklist ||--o{ res_users : "supervisor_id"
+  ipai_finance_ppm_golive_checklist_section_ids_rel ||--o{ ipai_finance_ppm_golive_checklist : "ipai_finance_ppm_golive_checklist_id"
+  ipai_finance_ppm_golive_checklist_section_ids_rel ||--o{ ipai_finance_ppm_golive_section : "ipai_finance_ppm_golive_section_id"
+  ipai_finance_ppm_golive_item ||--o{ res_users : "checked_by"
+  ipai_finance_ppm_golive_item ||--o{ ipai_finance_ppm_golive_section : "section_id"
+  ipai_finance_task_template ||--o{ ipai_finance_person : "approved_by_id"
+  ipai_finance_task_template ||--o{ finance_bir_deadline : "bir_form_id"
+  ipai_finance_task_template ||--o{ ipai_finance_person : "employee_code_id"
+  ipai_finance_task_template ||--o{ ipai_finance_person : "reviewed_by_id"
+  ipai_generate_bir_tasks_wizard ||--o{ project_project : "program_project_id"
+  ipai_generate_im_projects_wizard ||--o{ project_project : "project_id"
+  ipai_generate_month_end_wizard ||--o{ project_project : "program_project_id"
+  ipai_grid_column ||--o{ ipai_grid_view : "grid_view_id"
+  ipai_grid_filter ||--o{ ipai_grid_view : "grid_view_id"
+  ipai_grid_filter ||--o{ res_users : "user_id"
+  ipai_grid_filter_condition ||--o{ ipai_grid_filter : "filter_id"
+  ipai_grid_view ||--o{ ipai_grid_filter : "active_filter_id"
+  ipai_grid_view ||--o{ ir_model : "model_id"
+  ipai_grid_view_visible_columns_rel ||--o{ ipai_grid_column : "column_id"
+  ipai_grid_view_visible_columns_rel ||--o{ ipai_grid_view : "grid_view_id"
+  ipai_month_end_closing ||--o{ res_company : "company_id"
+  ipai_month_end_task ||--o{ res_users : "approve_done_by"
+  ipai_month_end_task ||--o{ res_users : "approve_user_id"
+  ipai_month_end_task ||--o{ ipai_month_end_closing : "closing_id"
+  ipai_month_end_task ||--o{ res_users : "prep_done_by"
+  ipai_month_end_task ||--o{ res_users : "prep_user_id"
+  ipai_month_end_task ||--o{ res_users : "review_done_by"
+  ipai_month_end_task ||--o{ res_users : "review_user_id"
+  ipai_month_end_task ||--o{ ipai_month_end_task_template : "template_id"
+  ipai_month_end_task_template ||--o{ res_users : "approve_user_id"
+  ipai_month_end_task_template ||--o{ res_users : "prep_user_id"
+  ipai_month_end_task_template ||--o{ res_users : "review_user_id"
+  ipai_month_end_template_step ||--o{ ipai_month_end_template : "template_id"
+  ipai_ocr_job ||--o{ ir_attachment : "attachment_id"
+  ipai_ocr_job ||--o{ ir_attachment : "output_attachment_id"
+  ipai_ocr_job ||--o{ ipai_ocr_provider : "provider_id"
+  ipai_permission ||--o{ res_groups : "group_id"
+  ipai_permission ||--o{ res_users : "user_id"
+  ipai_share_token ||--o{ res_users : "created_by"
+  ipai_skill_knowledge_rel ||--o{ ipai_agent_knowledge_source : "knowledge_id"
+  ipai_skill_knowledge_rel ||--o{ ipai_agent_skill : "skill_id"
+  ipai_skill_tool_rel ||--o{ ipai_agent_skill : "skill_id"
+  ipai_skill_tool_rel ||--o{ ipai_agent_tool : "tool_id"
+  ipai_sms_message ||--o{ res_partner : "partner_id"
+  ipai_sms_message ||--o{ ipai_sms_provider : "provider_id"
+  ipai_studio_ai_history ||--o{ base_automation : "automation_id"
+  ipai_studio_ai_history ||--o{ ir_model_fields : "field_id"
+  ipai_studio_ai_history ||--o{ ir_model : "model_id"
+  ipai_studio_ai_history ||--o{ res_users : "user_id"
+  ipai_studio_ai_wizard ||--o{ ir_model : "context_model_id"
+  ipai_studio_ai_wizard ||--o{ ir_model_fields : "created_field_id"
+  ipai_studio_ai_wizard ||--o{ ipai_studio_ai_history : "history_id"
+  ipai_studio_ai_wizard ||--o{ ir_model : "relation_model_id"
+  ipai_studio_ai_wizard ||--o{ ir_model : "target_model_id"
+  ipai_task_template_dependency_rel ||--o{ ipai_month_end_task_template : "depends_on_id"
+  ipai_task_template_dependency_rel ||--o{ ipai_month_end_task_template : "task_id"
+  ipai_travel_request ||--o{ res_company : "company_id"
+  ipai_travel_request ||--o{ res_currency : "currency_id"
+  ipai_travel_request ||--o{ hr_employee : "employee_id"
+  ipai_travel_request ||--o{ project_project : "project_id"
+  ipai_workos_block ||--o{ ir_attachment : "attachment_id"
+  ipai_workos_block ||--o{ ipai_workos_page : "page_id"
+  ipai_workos_block ||--o{ ipai_workos_block : "parent_block_id"
+  ipai_workos_canvas ||--o{ ipai_workos_page : "page_id"
+  ipai_workos_comment ||--o{ res_users : "author_id"
+  ipai_workos_comment ||--o{ ipai_workos_comment : "parent_id"
+  ipai_workos_comment ||--o{ res_users : "resolved_by"
+  ipai_workos_database ||--o{ ipai_workos_page : "page_id"
+  ipai_workos_database ||--o{ ipai_workos_space : "space_id"
+  ipai_workos_page ||--o{ res_users : "last_edited_by"
+  ipai_workos_page ||--o{ ipai_workos_page : "parent_id"
+  ipai_workos_page ||--o{ ipai_workos_space : "space_id"
+  ipai_workos_page ||--o{ ipai_workos_template : "template_id"
+  ipai_workos_page ||--o{ ipai_workos_workspace : "workspace_id"
+  ipai_workos_property ||--o{ ipai_workos_database : "database_id"
+  ipai_workos_property ||--o{ ipai_workos_database : "related_database_id"
+  ipai_workos_row ||--o{ ipai_workos_database : "database_id"
+  ipai_workos_search_history ||--o{ res_users : "user_id"
+  ipai_workos_space ||--o{ ipai_workos_workspace : "workspace_id"
+  ipai_workos_template_tag_ids_rel ||--o{ ipai_workos_template : "ipai_workos_template_id"
+  ipai_workos_template_tag_ids_rel ||--o{ ipai_workos_template_tag : "ipai_workos_template_tag_id"
+  ipai_workos_view ||--o{ ipai_workos_database : "database_id"
+  ipai_workos_view ||--o{ ipai_workos_property : "date_property_id"
+  ipai_workos_view ||--o{ ipai_workos_property : "group_by_property_id"
+  ipai_workos_view ||--o{ res_users : "user_id"
+  ipai_workos_view_visible_property_ids_rel ||--o{ ipai_workos_property : "ipai_workos_property_id"
+  ipai_workos_view_visible_property_ids_rel ||--o{ ipai_workos_view : "ipai_workos_view_id"
+  ipai_workos_workspace ||--o{ res_users : "owner_id"
+  ipai_workspace ||--o{ res_users : "account_manager_id"
+  ipai_workspace ||--o{ res_partner : "client_id"
+  ipai_workspace ||--o{ res_company : "company_id"
+  ipai_workspace ||--o{ ipai_workspace : "parent_id"
+  ipai_workspace_link ||--o{ ipai_workspace : "workspace_id"
+  ir_cron_mutually_exclusive_cron_ids_rel ||--o{ ir_cron : "ir_cron_id"
+  ir_model_fields ||--o{ ir_model : "comodel_id"
+  ir_model_name_search_ids_rel ||--o{ ir_model_fields : "ir_model_fields_id"
+  ir_model_name_search_ids_rel ||--o{ ir_model : "ir_model_id"
+  ir_model_res_groups_update_allowed_rel ||--o{ ir_model : "ir_model_id"
+  ir_model_res_groups_update_allowed_rel ||--o{ res_groups : "res_groups_id"
+  ir_module_author_installed_module_ids_rel ||--o{ ir_module_author : "ir_module_author_id"
+  ir_module_module_author_ids_rel ||--o{ ir_module_module : "ir_module_module_id"
+  journal_ledger_report_wizard_journal_ids_rel ||--o{ journal_ledger_report_wizard : "journal_ledger_report_wizard_id"
+  m2x_create_edit_option ||--o{ ir_model : "comodel_id"
+  m2x_create_edit_option ||--o{ ir_model_fields : "field_id"
+  m2x_create_edit_option ||--o{ ir_model : "model_id"
+  mis_cash_flow_forecast_line ||--o{ res_company : "company_id"
+  open_items_report_wizard_account_ids_rel ||--o{ open_items_report_wizard : "open_items_report_wizard_id"
+  open_items_report_wizard_partner_ids_rel ||--o{ open_items_report_wizard : "open_items_report_wizard_id"
+  ph_holiday ||--o{ res_company : "company_id"
+  ppm_close_task ||--o{ ppm_monthly_close : "monthly_close_id"
+  ppm_close_task ||--o{ ppm_close_template : "template_id"
+  ppm_kpi_snapshot ||--o{ ppm_portfolio : "portfolio_id"
+  ppm_kpi_snapshot ||--o{ ppm_program : "program_id"
+  ppm_kpi_snapshot ||--o{ project_project : "project_id"
+  ppm_portfolio ||--o{ res_currency : "currency_id"
+  ppm_portfolio ||--o{ res_users : "owner_id"
+  ppm_portfolio ||--o{ res_users : "sponsor_id"
+  ppm_program ||--o{ res_currency : "currency_id"
+  ppm_program ||--o{ ppm_portfolio : "portfolio_id"
+  ppm_program ||--o{ res_users : "program_manager_id"
+  ppm_program ||--o{ res_users : "sponsor_id"
+  ppm_program_project_rel ||--o{ ppm_program : "program_id"
+  ppm_program_project_rel ||--o{ ppm_program : "program_id"
+  ppm_program_project_rel ||--o{ project_project : "project_id"
+  ppm_program_project_rel ||--o{ project_project : "project_id"
+  ppm_resource_allocation ||--o{ hr_employee : "employee_id"
+  ppm_resource_allocation ||--o{ ppm_program : "program_id"
+  ppm_resource_allocation ||--o{ project_project : "project_id"
+  ppm_resource_allocation ||--o{ project_task : "task_id"
+  ppm_risk ||--o{ res_users : "assigned_to_id"
+  ppm_risk ||--o{ res_currency : "currency_id"
+  ppm_risk ||--o{ res_users : "owner_id"
+  ppm_risk ||--o{ ppm_portfolio : "portfolio_id"
+  ppm_risk ||--o{ ppm_program : "program_id"
+  ppm_risk ||--o{ project_project : "project_id"
+  project_milestone ||--o{ res_users : "approver_id"
+  project_pr_required ||--o{ project_project : "project_id"
+  project_pr_required ||--o{ project_task_type : "state_id"
+  project_project ||--o{ project_project : "ipai_root_project_id"
+  project_project ||--o{ project_category : "portfolio_id"
+  project_project_group_ids_rel ||--o{ project_project : "project_project_id"
+  project_project_group_ids_rel ||--o{ res_groups : "res_groups_id"
+  project_project_hr_category_ids_rel ||--o{ project_project : "project_project_id"
+  project_project_tag_ids_rel ||--o{ project_project : "project_project_id"
+  project_project_type_ids_rel ||--o{ project_project : "project_project_id"
+  project_stakeholder ||--o{ res_partner : "partner_id"
+  project_stakeholder ||--o{ project_project : "project_id"
+  project_stakeholder ||--o{ project_stakeholder_role : "role_id"
+  project_tags_allowed_project_ids_rel ||--o{ project_tags : "project_tags_id"
+  project_task ||--o{ res_users : "approver_id"
+  project_task ||--o{ ipai_finance_bir_schedule : "bir_schedule_id"
+  project_task ||--o{ res_users : "fd_id"
+  project_task ||--o{ ipai_finance_logframe : "finance_logframe_id"
+  project_task ||--o{ ipai_finance_person : "finance_person_id"
+  project_task ||--o{ res_users : "finance_supervisor_id"
+  project_task ||--o{ res_users : "gate_approver_id"
+  project_task ||--o{ project_milestone : "gate_milestone_id"
+  project_task ||--o{ ipai_finance_task_template : "ipai_template_id"
+  project_task ||--o{ res_users : "reviewer_id"
+  project_task ||--o{ res_users : "sfm_id"
+  project_task_checklist_item ||--o{ res_users : "assigned_user_id"
+  project_task_description_template ||--o{ res_company : "company_id"
+  project_task_employee_ids_rel ||--o{ project_task : "project_task_id"
+  project_task_hr_category_ids_rel ||--o{ project_task : "project_task_id"
+  project_task_merge ||--o{ project_project : "dst_project_id"
+  project_task_merge ||--o{ project_task : "dst_task_id"
+  project_task_merge_task_ids_rel ||--o{ project_task : "project_task_id"
+  project_task_merge_task_ids_rel ||--o{ project_task_merge : "project_task_merge_id"
+  project_task_merge_user_ids_rel ||--o{ project_task_merge : "project_task_merge_id"
+  project_task_merge_user_ids_rel ||--o{ res_users : "res_users_id"
+  project_task_pr_required_states_rel ||--o{ project_task : "project_task_id"
+  project_task_tag_ids_rel ||--o{ project_task : "project_task_id"
+  project_task_user_ids_rel ||--o{ project_task : "project_task_id"
+  quick_start_screen_action_ids_rel ||--o{ quick_start_screen : "quick_start_screen_id"
+  res_config_settings ||--o{ account_age_report_configuration : "age_partner_config_id"
+  res_config_settings ||--o{ superset_connection : "superset_connection_id"
+  res_partner ||--o{ srm_supplier : "srm_supplier_id"
+  res_users_hr_category_ids_rel ||--o{ res_users : "res_users_id"
+  srm_qualification ||--o{ res_users : "approver_id"
+  srm_qualification ||--o{ res_users : "reviewer_id"
+  srm_qualification ||--o{ srm_supplier : "supplier_id"
+  srm_qualification_checklist ||--o{ res_users : "completed_by"
+  srm_qualification_checklist ||--o{ srm_qualification : "qualification_id"
+  srm_qualification_document_ids_rel ||--o{ ir_attachment : "ir_attachment_id"
+  srm_qualification_document_ids_rel ||--o{ srm_qualification : "srm_qualification_id"
+  srm_scorecard ||--o{ res_users : "evaluator_id"
+  srm_scorecard ||--o{ srm_supplier : "supplier_id"
+  srm_scorecard_line ||--o{ srm_kpi_category : "kpi_category_id"
+  srm_scorecard_line ||--o{ srm_scorecard : "scorecard_id"
+  srm_supplier ||--o{ res_currency : "currency_id"
+  srm_supplier ||--o{ srm_scorecard : "latest_scorecard_id"
+  srm_supplier ||--o{ res_partner : "partner_id"
+  srm_supplier ||--o{ res_partner : "primary_contact_id"
+  srm_supplier ||--o{ res_partner : "sales_contact_id"
+  srm_supplier_category_ids_rel ||--o{ product_category : "product_category_id"
+  srm_supplier_category_ids_rel ||--o{ srm_supplier : "srm_supplier_id"
+  superset_bulk_dataset_wizard ||--o{ superset_connection : "connection_id"
+  superset_dataset ||--o{ superset_connection : "connection_id"
+  superset_dataset ||--o{ ir_model : "model_id"
+  superset_dataset_column ||--o{ superset_dataset : "dataset_id"
+  superset_dataset_field_ids_rel ||--o{ ir_model_fields : "ir_model_fields_id"
+  superset_dataset_field_ids_rel ||--o{ superset_dataset : "superset_dataset_id"
+  superset_dataset_wizard ||--o{ superset_connection : "connection_id"
+  superset_dataset_wizard ||--o{ ir_model : "model_id"
+  superset_dataset_wizard_field_ids_rel ||--o{ ir_model_fields : "ir_model_fields_id"
+  superset_dataset_wizard_field_ids_rel ||--o{ superset_dataset_wizard : "superset_dataset_wizard_id"
+  test_partner_time_window ||--o{ res_partner : "partner_id"
+  test_time_window_model ||--o{ res_partner : "partner_id"
+  trial_balance_report_wizard_account_ids_rel ||--o{ trial_balance_report_wizard : "trial_balance_report_wizard_id"
+  trial_balance_report_wizard_journal_ids_rel ||--o{ trial_balance_report_wizard : "trial_balance_report_wizard_id"
+  trial_balance_report_wizard_partner_ids_rel ||--o{ trial_balance_report_wizard : "trial_balance_report_wizard_id"
+  upgrade_install_wizard_module_ids_rel ||--o{ upgrade_install_wizard : "upgrade_install_wizard_id"
+  vacuum_rule ||--o{ res_company : "company_id"
+  vacuum_rule ||--o{ ir_model : "model_id"
+  vacuum_rule_message_subtype_ids_rel ||--o{ mail_message_subtype : "mail_message_subtype_id"
+  vacuum_rule_message_subtype_ids_rel ||--o{ vacuum_rule : "vacuum_rule_id"
+  vacuum_rule_model_ids_rel ||--o{ ir_model : "ir_model_id"
+  vacuum_rule_model_ids_rel ||--o{ vacuum_rule : "vacuum_rule_id"
+  web_form_banner_rule ||--o{ ir_model : "model_id"
+  web_form_banner_rule_trigger_field_rel ||--o{ ir_model_fields : "ir_model_fields_id"
+  web_form_banner_rule_trigger_field_rel ||--o{ web_form_banner_rule : "web_form_banner_rule_id"
+  web_form_banner_rule_view_ids_rel ||--o{ ir_ui_view : "ir_ui_view_id"
+  web_form_banner_rule_view_ids_rel ||--o{ web_form_banner_rule : "web_form_banner_rule_id"
+  wizard_open_tax_balances ||--o{ date_range : "date_range_id"
+  wizard_open_tax_balances_company_ids_rel ||--o{ wizard_open_tax_balances : "wizard_open_tax_balances_id"
+  workos_comment_mention_rel ||--o{ ipai_workos_comment : "comment_id"
+  workos_comment_mention_rel ||--o{ res_users : "user_id"
+  workspace_member_rel ||--o{ res_users : "user_id"
+  workspace_member_rel ||--o{ ipai_workos_workspace : "workspace_id"

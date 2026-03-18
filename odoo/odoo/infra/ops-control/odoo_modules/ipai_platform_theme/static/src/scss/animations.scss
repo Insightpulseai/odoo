@@ -1,0 +1,358 @@
+// ============================================================================
+// IPAI Platform Theme - Animations
+// Material 3 Expressive motion patterns
+// ============================================================================
+
+@import 'tokens';
+
+// ==========================================================================
+// KEYFRAMES
+// ==========================================================================
+
+// Fade in
+@keyframes ipai-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+// Fade out
+@keyframes ipai-fade-out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+// Scale in (for modals, popovers)
+@keyframes ipai-scale-in {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+// Slide in from right (for panel)
+@keyframes ipai-slide-in-right {
+  from {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+// Slide out to right
+@keyframes ipai-slide-out-right {
+  from {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+}
+
+// Slide in from bottom (for messages)
+@keyframes ipai-slide-in-bottom {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// Slide up (for toasts)
+@keyframes ipai-slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// Bounce (for typing indicator)
+@keyframes ipai-bounce {
+  0%, 80%, 100% {
+    transform: scale(0.6);
+    opacity: 0.4;
+  }
+  40% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+// Spin
+@keyframes ipai-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+// Pulse
+@keyframes ipai-pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+// Shimmer (for skeleton loaders)
+@keyframes ipai-shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+// Progress indeterminate
+@keyframes ipai-progress-indeterminate {
+  0% {
+    transform: translateX(-100%);
+  }
+  50% {
+    transform: translateX(200%);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
+}
+
+// Shake (for errors)
+@keyframes ipai-shake {
+  0%, 100% {
+    transform: translateX(0);
+  }
+  10%, 30%, 50%, 70%, 90% {
+    transform: translateX(-4px);
+  }
+  20%, 40%, 60%, 80% {
+    transform: translateX(4px);
+  }
+}
+
+// Pop (for success)
+@keyframes ipai-pop {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+// Stream in (for AI text)
+@keyframes ipai-stream-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+// ==========================================================================
+// ANIMATION UTILITY CLASSES
+// ==========================================================================
+
+// Fade animations
+.ipai-animate-fade-in {
+  animation: ipai-fade-in var(--ipai-duration-normal) var(--ipai-ease-out) forwards;
+}
+
+.ipai-animate-fade-out {
+  animation: ipai-fade-out var(--ipai-duration-normal) var(--ipai-ease-out) forwards;
+}
+
+// Slide animations
+.ipai-animate-slide-in-right {
+  animation: ipai-slide-in-right var(--ipai-duration-slow) var(--ipai-ease-out) forwards;
+}
+
+.ipai-animate-slide-out-right {
+  animation: ipai-slide-out-right var(--ipai-duration-slow) var(--ipai-ease-out) forwards;
+}
+
+.ipai-animate-slide-in-bottom {
+  animation: ipai-slide-in-bottom var(--ipai-duration-normal) var(--ipai-ease-out) forwards;
+}
+
+.ipai-animate-slide-up {
+  animation: ipai-slide-up var(--ipai-duration-normal) var(--ipai-ease-spring) forwards;
+}
+
+// Scale animations
+.ipai-animate-scale-in {
+  animation: ipai-scale-in var(--ipai-duration-normal) var(--ipai-ease-spring) forwards;
+}
+
+// Feedback animations
+.ipai-animate-shake {
+  animation: ipai-shake var(--ipai-duration-slow) var(--ipai-ease-out);
+}
+
+.ipai-animate-pop {
+  animation: ipai-pop var(--ipai-duration-normal) var(--ipai-ease-spring);
+}
+
+.ipai-animate-pulse {
+  animation: ipai-pulse 2s var(--ipai-ease-in-out) infinite;
+}
+
+// Loading animations
+.ipai-animate-spin {
+  animation: ipai-spin 1s linear infinite;
+}
+
+// ==========================================================================
+// TRANSITION UTILITIES
+// ==========================================================================
+
+.ipai-transition-none {
+  transition: none;
+}
+
+.ipai-transition-all {
+  transition: all var(--ipai-duration-normal) var(--ipai-ease-out);
+}
+
+.ipai-transition-colors {
+  transition:
+    color var(--ipai-duration-fast) var(--ipai-ease-out),
+    background-color var(--ipai-duration-fast) var(--ipai-ease-out),
+    border-color var(--ipai-duration-fast) var(--ipai-ease-out);
+}
+
+.ipai-transition-opacity {
+  transition: opacity var(--ipai-duration-normal) var(--ipai-ease-out);
+}
+
+.ipai-transition-transform {
+  transition: transform var(--ipai-duration-normal) var(--ipai-ease-out);
+}
+
+.ipai-transition-shadow {
+  transition: box-shadow var(--ipai-duration-normal) var(--ipai-ease-out);
+}
+
+// ==========================================================================
+// MESSAGE ANIMATIONS (Copilot-specific)
+// ==========================================================================
+
+.ipai-message-enter {
+  animation: ipai-slide-in-bottom var(--ipai-duration-normal) var(--ipai-ease-out);
+}
+
+.ipai-message-stream {
+  .ipai-message-content > * {
+    animation: ipai-stream-in var(--ipai-duration-fast) var(--ipai-ease-out);
+  }
+}
+
+// Staggered message list
+.ipai-messages-stagger {
+  .ipai-message {
+    opacity: 0;
+    animation: ipai-slide-in-bottom var(--ipai-duration-normal) var(--ipai-ease-out) forwards;
+
+    @for $i from 1 through 10 {
+      &:nth-child(#{$i}) {
+        animation-delay: #{$i * 50}ms;
+      }
+    }
+  }
+}
+
+// ==========================================================================
+// PANEL ANIMATIONS
+// ==========================================================================
+
+.ipai-panel-enter {
+  animation: ipai-slide-in-right var(--ipai-duration-slow) var(--ipai-ease-out);
+}
+
+.ipai-panel-exit {
+  animation: ipai-slide-out-right var(--ipai-duration-slow) var(--ipai-ease-out);
+}
+
+// ==========================================================================
+// HOVER STATES WITH MOTION
+// ==========================================================================
+
+.ipai-hover-lift {
+  transition:
+    transform var(--ipai-duration-fast) var(--ipai-ease-out),
+    box-shadow var(--ipai-duration-fast) var(--ipai-ease-out);
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--ipai-shadow-md);
+  }
+}
+
+.ipai-hover-glow {
+  transition: box-shadow var(--ipai-duration-fast) var(--ipai-ease-out);
+
+  &:hover {
+    box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.15);
+  }
+}
+
+.ipai-hover-scale {
+  transition: transform var(--ipai-duration-fast) var(--ipai-ease-out);
+
+  &:hover {
+    transform: scale(1.02);
+  }
+
+  &:active {
+    transform: scale(0.98);
+  }
+}
+
+// ==========================================================================
+// REDUCED MOTION
+// ==========================================================================
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  .ipai-animate-spin {
+    animation: none;
+  }
+}

@@ -1,0 +1,31 @@
+id: saas-governance-devops-incident-design
+version: 1
+status: active
+classification: encoded_preference
+persona: saas-platform-architect
+updated_at: "2026-03-17"
+
+purpose: >
+  Design governance policies, tenant-aware CI/CD pipelines, and incident
+  management with tenant context for multi-tenant SaaS platforms.
+
+inputs:
+  - compliance_requirements: "Industry regulations, data residency, audit needs"
+  - deployment_model: "Shared deployment, per-tenant deployment, ring-based"
+  - incident_severity_levels: "Severity classification and SLA per tier"
+  - audit_retention: "Log retention period and access requirements"
+
+outputs:
+  - governance_policies: "Azure Policy definitions and assignments"
+  - deployment_pipeline: "CI/CD pipeline with tenant-aware rollout stages"
+  - incident_management: "Incident classification, escalation, and communication"
+  - audit_logging: "Tenant-dimensioned audit log design"
+  - change_management: "Process for multi-tenant update approval and rollout"
+
+guardrails:
+  - "Every deployment must be tenant-aware (know which tenants are affected)"
+  - "Incident reports must include tenant blast radius"
+  - "Audit logs must include tenant-id dimension"
+  - "Governance policies must be enforceable via automation"
+
+benchmark_source: "Azure SaaS Well-Architected - Governance, DevOps, Incident Management"

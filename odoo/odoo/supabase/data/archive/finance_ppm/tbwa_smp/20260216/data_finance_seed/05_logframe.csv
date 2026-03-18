@@ -1,0 +1,16 @@
+# Logframe — Finance PPM (TBWA\SMP Philippines)
+# ================================================
+# Logical Framework Matrix mapping Goal → Outcome → Objectives → Outputs → Activities
+# to Odoo 19 CE project structure (2 projects, 89 tasks)
+#
+# Reference: SAP Financial Close Cockpit parity
+# Standard: Philippine BIR compliance + PFRS/PAS
+
+level,code,objective,indicators,means_of_verification,assumptions,odoo_project,kpi_query
+Goal,—,"Ensure 100% compliant and timely month-end closing and tax filing for TBWA SMP Finance.","% of reports and tax filings submitted on time","Approved BIR receipts, audit reports","Finance systems remain stable",Both,v_logframe_goal_kpi
+Outcome,—,"Streamlined coordination between Finance, Payroll, Tax, and Treasury teams.","Average delay < 1 day per process","Task tracker, Notion logs","All teams follow deadlines",Both,v_logframe_outcome_kpi
+IM1,Month-End Closing,"Accurate and timely closing of books and reconciliations, including journal entries, accruals, WIP, and TB sign-off.","% of TB reconciled; # of closing adjustments","Reconciliation sheets, GL logs","Data complete and reviewed",Finance PPM - Month-End Close,v_logframe_im1_kpi
+IM2,Tax Filing Compliance,"Complete, on-time tax filing for payroll, VAT, and withholding taxes.","% of filings submitted before BIR deadlines","BIR confirmation receipts","Government portals operational",Finance PPM - BIR Tax Filing,v_logframe_im2_kpi
+Outputs,—,"1. Journal entries and accruals finalized  2. All BIR forms filed  3. Reports reviewed and approved","# of completed tasks per calendar","Monthly compliance sheet","Timely reviews and approvals",Both,v_logframe_outputs_kpi
+Activities (IM1),—,"Reconcile ledgers / Post accruals / Prepare WIP and TB / Finalize balances / Approve entries","Daily completion %","Month-close calendar","No data loss",Finance PPM - Month-End Close,v_logframe_im1_activities
+Activities (IM2),—,"Compute VAT / Prepare 1601C, 0619E / Route for approvals / File returns / Upload proofs","Filing rate vs deadline","Tax filing tracker","Portals accessible",Finance PPM - BIR Tax Filing,v_logframe_im2_activities

@@ -109,7 +109,7 @@ agentInstructions: |
   1. **Environment Setup**:
      - Use canonical setup from odoo19/ directory
      - Configure docker-compose with health checks
-     - Set db_name per environment (odoo_dev / odoo_staging / odoo_prod)
+     - Set db_name per environment (odoo_dev / odoo_staging / odoo)
      - Disable database selector (list_db = False)
 
   2. **Module Installation**:

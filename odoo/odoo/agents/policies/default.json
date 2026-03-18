@@ -1,0 +1,53 @@
+{
+  "policy_id": "default",
+  "version": "1.0",
+  "description": "Default agent policy. Conservative guardrails for production agents.",
+
+  "routing": {
+    "max_iterations": 10,
+    "timeout_seconds": 300,
+    "escalation_on_failure": true,
+    "escalation_target": "human"
+  },
+
+  "guardrails": {
+    "no_secrets_in_output": true,
+    "no_destructive_git": true,
+    "no_force_push": true,
+    "no_docker_in_web": true,
+    "no_sudo": true,
+    "no_enterprise_modules": true,
+    "require_ci_for_deploy": true
+  },
+
+  "rate_limits": {
+    "max_api_calls_per_minute": 60,
+    "max_memory_writes_per_session": 100,
+    "max_file_edits_per_session": 50
+  },
+
+  "permissions": {
+    "can_read_repo": true,
+    "can_write_repo": true,
+    "can_create_pr": true,
+    "can_merge_pr": false,
+    "can_deploy": false,
+    "can_access_secrets": false,
+    "can_modify_ci": true,
+    "can_modify_infra": false
+  },
+
+  "memory": {
+    "persist_session": true,
+    "persist_facts": true,
+    "ttl_episodes_days": 30,
+    "ttl_cache_hours": 24
+  },
+
+  "safety": {
+    "require_verification_before_commit": true,
+    "require_tests_before_merge": true,
+    "block_on_policy_violation": true,
+    "log_all_actions": true
+  }
+}

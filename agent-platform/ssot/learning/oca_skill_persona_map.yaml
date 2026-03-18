@@ -1,0 +1,65 @@
+version: 1
+source: oca_repos_and_resources
+status: active
+type: benchmark_taxonomy
+family: oca_community_governance
+updated_at: "2026-03-17"
+
+description: >
+  OCA repos and resources as benchmark layer for upgrade, branch-series
+  governance, maintainer quality, and community-core discipline.
+
+benchmarks:
+  - id: openupgrade
+    role: upgrade_path_benchmark
+  - id: ocb
+    role: community_backport_benchmark
+  - id: maintainer_tools
+    role: maintainer_conventions_benchmark
+  - id: oca_github_bot
+    role: repo_automation_benchmark
+  - id: repo_maintainer_conf
+    role: series_branch_standardization_benchmark
+  - id: oca_docs
+    role: community_documentation_benchmark
+
+skills:
+  - id: odoo-openupgrade-assessment
+    benchmark: openupgrade
+    owner_persona: odoo-developer
+    build_order: 1
+
+  - id: odoo-upgrade-rehearsal
+    benchmark: openupgrade
+    owner_persona: odoo-tester
+    build_order: 2
+
+  - id: odoo-core-backport-assessment
+    benchmark: ocb
+    owner_persona: odoo-developer
+    build_order: 3
+
+  - id: odoo-repo-maintenance
+    benchmark: maintainer_tools
+    owner_persona: odoo-release-manager
+    build_order: 4
+
+  - id: odoo-branch-series-governance
+    benchmark: repo_maintainer_conf
+    owner_persona: odoo-release-manager
+    build_order: 5
+
+  - id: odoo-maintainer-quality-gate
+    benchmark: maintainer_tools
+    owner_persona: odoo-delivery-judge
+    build_order: 6
+
+  - id: odoo-bot-automation-patterns
+    benchmark: oca_github_bot
+    owner_persona: odoo-release-manager
+    build_order: 7
+
+cross_references:
+  - agents/knowledge/benchmarks/oca-community-governance.md
+  - agents/knowledge/benchmarks/odoo-sh-persona-model.md
+  - agent-platform/ssot/learning/odoo_sh_skill_persona_map.yaml

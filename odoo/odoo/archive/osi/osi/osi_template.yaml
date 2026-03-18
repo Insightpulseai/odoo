@@ -1,0 +1,259 @@
+# =============================================================================
+# Open Semantics Interface (OSI) Template
+# =============================================================================
+# This YAML template defines a semantic model for the Scout gold_sales_by_day view
+# Use this as a reference for creating your own semantic models
+# =============================================================================
+
+version: "1.0"
+
+model:
+  name: sales
+  label: "Sales Analytics"
+  description: "Daily sales aggregates with store, product, and customer dimensions"
+  source:
+    type: view
+    ref: scout_gold.sales_by_day
+  primary_key: [date, store_id, product_id]
+  time_dimension: date
+  default_time_grain: day
+
+dimensions:
+  # Time dimensions
+  - name: date
+    label: "Date"
+    description: "Transaction date"
+    expr: "date"
+    type: date
+    is_time_dimension: true
+    time_grain: day
+    tags: [time, primary]
+
+  - name: week
+    label: "Week"
+    description: "ISO week of year"
+    expr: "date_trunc('week', date)"
+    type: date
+    is_time_dimension: true
+    time_grain: week
+
+  - name: month
+    label: "Month"
+    description: "Calendar month"
+    expr: "date_trunc('month', date)"
+    type: date
+    is_time_dimension: true
+    time_grain: month
+
+  - name: quarter
+    label: "Quarter"
+    description: "Fiscal quarter"
+    expr: "date_trunc('quarter', date)"
+    type: date
+    is_time_dimension: true
+    time_grain: quarter
+
+  - name: year
+    label: "Year"
+    description: "Calendar year"
+    expr: "date_trunc('year', date)"
+    type: date
+    is_time_dimension: true
+    time_grain: year
+
+  # Store dimensions
+  - name: store_id
+    label: "Store ID"
+    description: "Unique store identifier"
+    expr: "store_id"
+    type: string
+    tags: [store, id]
+
+  - name: store_name
+    label: "Store Name"
+    description: "Store display name"
+    expr: "store_name"
+    type: string
+    tags: [store]
+
+  - name: region
+    label: "Region"
+    description: "Geographic region"
+    expr: "region"
+    type: string
+    tags: [store, geo]
+    hierarchy_level: 1
+
+  - name: city
+    label: "City"
+    description: "City location"
+    expr: "city"
+    type: string
+    tags: [store, geo]
+    hierarchy_level: 2
+
+  # Product dimensions
+  - name: product_id
+    label: "Product ID"
+    description: "Unique product identifier"
+    expr: "product_id"
+    type: string
+    tags: [product, id]
+
+  - name: product_name
+    label: "Product Name"
+    description: "Product display name"
+    expr: "product_name"
+    type: string
+    tags: [product]
+
+  - name: category
+    label: "Category"
+    description: "Product category"
+    expr: "category"
+    type: string
+    tags: [product]
+    hierarchy_level: 1
+
+  - name: subcategory
+    label: "Subcategory"
+    description: "Product subcategory"
+    expr: "subcategory"
+    type: string
+    tags: [product]
+    hierarchy_level: 2
+
+  - name: brand
+    label: "Brand"
+    description: "Product brand"
+    expr: "brand"
+    type: string
+    tags: [product]
+
+  # Customer dimensions
+  - name: customer_segment
+    label: "Customer Segment"
+    description: "Customer segmentation tier"
+    expr: "customer_segment"
+    type: string
+    tags: [customer]
+
+metrics:
+  # Revenue metrics
+  - name: total_revenue
+    label: "Total Revenue"
+    description: "Sum of all sales revenue"
+    type: simple
+    aggregation: sum
+    expr: "revenue"
+    format: "$#,##0.00"
+    unit: "USD"
+    tags: [revenue, primary]
+
+  - name: avg_revenue
+    label: "Average Revenue"
+    description: "Average revenue per transaction"
+    type: simple
+    aggregation: avg
+    expr: "revenue"
+    format: "$#,##0.00"
+    unit: "USD"
+    tags: [revenue]
+
+  # Volume metrics
+  - name: total_quantity
+    label: "Total Quantity"
+    description: "Sum of items sold"
+    type: simple
+    aggregation: sum
+    expr: "quantity"
+    format: "#,##0"
+    unit: "items"
+    tags: [volume]
+
+  - name: transaction_count
+    label: "Transaction Count"
+    description: "Number of transactions"
+    type: simple
+    aggregation: count
+    expr: "transaction_id"
+    format: "#,##0"
+    tags: [volume]
+
+  - name: unique_customers
+    label: "Unique Customers"
+    description: "Distinct customer count"
+    type: simple
+    aggregation: count_distinct
+    expr: "customer_id"
+    format: "#,##0"
+    tags: [customer]
+
+  # Profitability metrics
+  - name: total_cost
+    label: "Total Cost"
+    description: "Sum of cost of goods sold"
+    type: simple
+    aggregation: sum
+    expr: "cost"
+    format: "$#,##0.00"
+    unit: "USD"
+    tags: [cost]
+
+  - name: gross_margin
+    label: "Gross Margin"
+    description: "Revenue minus cost"
+    type: derived
+    depends_on: [total_revenue, total_cost]
+    formula: "total_revenue - total_cost"
+    format: "$#,##0.00"
+    unit: "USD"
+    tags: [margin, derived]
+
+  - name: margin_pct
+    label: "Margin %"
+    description: "Gross margin as percentage of revenue"
+    type: ratio
+    depends_on: [gross_margin, total_revenue]
+    formula: "CASE WHEN total_revenue > 0 THEN gross_margin / total_revenue * 100 ELSE 0 END"
+    format: "0.0%"
+    unit: "%"
+    tags: [margin, derived]
+
+  # Average metrics
+  - name: avg_basket_size
+    label: "Avg Basket Size"
+    description: "Average revenue per transaction"
+    type: ratio
+    depends_on: [total_revenue, transaction_count]
+    formula: "CASE WHEN transaction_count > 0 THEN total_revenue / transaction_count ELSE 0 END"
+    format: "$#,##0.00"
+    unit: "USD"
+    tags: [basket]
+
+  - name: avg_items_per_basket
+    label: "Avg Items/Basket"
+    description: "Average items per transaction"
+    type: ratio
+    depends_on: [total_quantity, transaction_count]
+    formula: "CASE WHEN transaction_count > 0 THEN total_quantity / transaction_count ELSE 0 END"
+    format: "0.0"
+    unit: "items"
+    tags: [basket]
+
+relationships:
+  - name: to_stores
+    description: "Join to stores dimension table"
+    to_model: stores_dim
+    join_type: left
+    on: "sales.store_id = stores_dim.store_id"
+    from_cardinality: many
+    to_cardinality: one
+
+  - name: to_products
+    description: "Join to products dimension table"
+    to_model: products_dim
+    join_type: left
+    on: "sales.product_id = products_dim.product_id"
+    from_cardinality: many
+    to_cardinality: one

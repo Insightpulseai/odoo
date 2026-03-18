@@ -1,0 +1,57 @@
+version: 1
+name: sap-rise-workflow-optimization
+status: draft
+owner: agents
+type: benchmark_skill
+
+purpose: >
+  Extract workflow, collaboration, and process optimization patterns from
+  RISE with SAP guidance for translation to the actual Odoo + Slack +
+  Foundry + n8n automation model.
+
+triggers:
+  - workflow optimization for ERP processes
+  - collaboration pattern design (Teams/Slack integration)
+  - Copilot/assistant integration into business processes
+  - user asks about RISE workflow patterns
+
+inputs:
+  - current workflow architecture
+  - collaboration tools in use
+  - automation topology (n8n, Foundry)
+  - process improvement targets
+
+dependencies:
+  - agents/knowledge/benchmarks/sap-on-microsoft-cloud-learning-path.md
+
+steps:
+  - identify workflow concern (approval, collaboration, automation, copilot)
+  - extract RISE pattern from Microsoft guidance
+  - translate to actual stack (Odoo workflows, Slack, n8n, Foundry agents)
+  - produce recommendation with tool mapping
+  - flag patterns requiring SAP workflow vs generic patterns
+
+outputs:
+  - benchmark_extracted
+  - relevance_to_current_platform
+  - recommended_translation
+  - risks
+  - out_of_scope
+  - evidence
+
+guardrails:
+  - do not require SAP workflow engine
+  - translate Teams patterns to Slack where applicable
+  - Copilot patterns map to Foundry agent workflows
+  - n8n is the automation engine, not SAP Build Process Automation
+
+evidence:
+  - cited Microsoft Learn RISE module
+  - translated workflow recommendation
+  - identified non-goals
+
+evals:
+  - workflow pattern correctly extracted
+  - collaboration patterns map to actual tools
+  - no SAP workflow engine required
+  - automation maps to n8n + Foundry

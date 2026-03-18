@@ -1,0 +1,67 @@
+version: 1
+type: delivery_skill
+family: odoo_sh_delivery
+skill:
+  name: odoo-monitoring-posture
+  status: draft
+  owner: odoo-platform-admin
+  purpose: >
+    Validate monitoring and observability posture for the Odoo CE 19
+    platform on Azure. Ensure Azure Monitor, Application Insights,
+    health probes, and alerting are configured and active.
+
+  triggers:
+    - pre-deployment monitoring readiness check
+    - periodic monitoring posture audit
+    - incident response requiring monitoring verification
+    - new Container App provisioned
+
+  inputs:
+    - Container App names and resource group
+    - Azure Monitor workspace configuration
+    - Application Insights connection string reference
+    - health probe endpoint configuration
+    - alert rule inventory
+
+  steps:
+    - verify Azure Monitor workspace is configured and collecting data
+    - confirm Application Insights is connected to Container Apps
+    - check health probe endpoints are configured and returning 200
+    - validate alert rules exist for critical metrics (error rate, latency, availability)
+    - verify alert notification channels (email, Slack webhook)
+    - check log retention meets policy requirements
+    - confirm dashboard exists for key KPIs
+    - produce monitoring posture report
+
+  outputs:
+    - monitoring_status
+    - health_probe_status
+    - alert_rules
+    - notification_channels
+    - kpi_dashboard
+    - findings
+    - blockers
+    - evidence
+
+  guardrails:
+    - never disable monitoring or alerting
+    - never reduce log retention below policy minimum
+    - never expose Application Insights connection strings in output
+    - read-only monitoring queries — never modify alert rules without explicit request
+    - bind to Azure Monitor and Application Insights, not Odoo.sh monitoring
+
+  evidence:
+    required: true
+    format: "docs/evidence/{stamp}/odoo-delivery/odoo-monitoring-posture/"
+
+  evals:
+    dimensions: [accuracy, completeness, safety, policy_adherence, evidence_quality]
+    thresholds:
+      accuracy: 0.95
+      safety: 0.99
+      policy_adherence: 0.95
+
+cross_references:
+  - agents/knowledge/benchmarks/odoo-sh-persona-model.md
+  - agents/personas/odoo-platform-admin.md
+  - .claude/rules/infrastructure.md

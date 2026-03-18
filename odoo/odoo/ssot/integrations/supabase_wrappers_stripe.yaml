@@ -1,0 +1,129 @@
+# schema: ssot.integrations.v1
+# Supabase Wrappers (Stripe FDW) integration register.
+# Declares components, SSOT boundary rules, and risk flags for
+# the Supabase Wrappers extension exposing Stripe API as SQL foreign tables.
+#
+# Integration model: Postgres FDW (Foreign Data Wrapper).
+#   - Wrappers is a Postgres extension (based on pgrx) — installed in the Supabase project
+#   - Stripe API is exposed as SQL tables: stripe.customers, stripe.subscriptions, etc.
+#   - Credentials stored in Supabase Vault (never in pg_foreign_server catalog as plaintext)
+#   - Requires extensions: wrappers + pg_net
+#   - Schema grants are explicit — not granted to public role
+#
+# Boundary doctrine: docs/architecture/SOW_BOUNDARY.md
+# Supabase "Works With" partner: https://supabase.com/partners/integrations/stripe
+# Wrappers docs: https://supabase.com/docs/guides/database/extensions/wrappers/stripe
+
+version: "1.0.0"
+schema: ssot.integrations.v1
+name: supabase_wrappers_stripe
+display_name: "Supabase Wrappers — Stripe FDW"
+status: planned              # planned | porting | active | deprecated
+last_reviewed: "2026-03-01"
+
+provider:
+  platform: supabase
+  runtime: postgres_fdw       # Postgres Foreign Data Wrapper via Wrappers extension
+  framework: wrappers
+  template: "supabase-wrappers-stripe"
+
+components:
+  wrappers_extension:
+    description: >
+      Supabase Wrappers Postgres extension (pgrx-based). Must be enabled
+      before creating any FDW server. Also requires pg_net for HTTP transport.
+    install_migration: |
+      CREATE EXTENSION IF NOT EXISTS wrappers;
+      CREATE EXTENSION IF NOT EXISTS pg_net;
+    notes: >
+      Enable via Supabase Dashboard → Database → Extensions → wrappers
+      OR via migration. Migration is the SSOT path (never dashboard-only).
+
+  stripe_fdw_server:
+    description: >
+      Postgres FOREIGN SERVER referencing Stripe API via Wrappers.
+      Credentials are bound via Vault — never stored as plaintext options.
+    install_migration: |
+      CREATE SERVER stripe_server
+        FOREIGN DATA WRAPPER stripe_wrapper
+        OPTIONS (
+          api_key_id '<vault-secret-uuid>'  -- UUID of Vault secret, not the raw key
+        );
+    notes: >
+      api_key_id must be the UUID of the Supabase Vault secret containing the
+      Stripe secret key. Obtain via: SELECT id FROM vault.secrets WHERE name = 'stripe_secret_key';
+
+  stripe_schema_views:
+    description: >
+      Foreign tables mapped to Stripe API resources in the stripe.* schema.
+      Schema is created explicitly — not granted to public role.
+    example_tables:
+      - stripe.customers
+      - stripe.subscriptions
+      - stripe.invoices
+      - stripe.charges
+    install_migration: |
+      CREATE SCHEMA IF NOT EXISTS stripe;
+      CREATE FOREIGN TABLE stripe.customers (
+        id TEXT,
+        email TEXT,
+        name TEXT,
+        metadata JSONB,
+        created TIMESTAMP
+      )
+      SERVER stripe_server
+      OPTIONS (object 'customers');
+    notes: >
+      Foreign tables are read-only by default. Schema grants are explicit:
+      GRANT USAGE ON SCHEMA stripe TO service_role;
+      GRANT SELECT ON ALL FOREIGN TABLES IN SCHEMA stripe TO service_role;
+      Never GRANT to anon or authenticated roles directly.
+
+  vault_credential_binding:
+    description: >
+      Supabase Vault secret binding for Stripe API credentials.
+      The FDW server references the secret by UUID (api_key_id), never by raw value.
+    vault_secret_name: stripe_secret_key    # see ssot/secrets/registry.yaml
+    notes: >
+      Create vault secret via Supabase CLI or Edge Function with service role.
+      Never create via SQL plaintext: DO NOT use OPTIONS (api_key '<raw-key>').
+      Reference: ssot/secrets/registry.yaml → stripe_secret_key
+
+ssot_boundary_rules:
+  - "stripe.* schema is read-only by default — no DML (INSERT/UPDATE/DELETE) against FDW foreign tables"
+  - "Only service_role and explicitly granted DB roles may query stripe.* tables — never anon or authenticated directly"
+  - "Vault secret MUST be referenced via api_key_id (UUID) in CREATE SERVER OPTIONS — never the raw key value"
+  - "Extensions (wrappers, pg_net) MUST be enabled via migration, not dashboard-only"
+  - "Schema grants MUST be explicit — never GRANT to public"
+  - "All FDW setup (CREATE EXTENSION, CREATE SERVER, CREATE FOREIGN TABLE) requires a committed migration"
+
+required_secrets:
+  - stripe_secret_key          # see ssot/secrets/registry.yaml → vault_secret_name: stripe_secret_key
+
+allowed_egress:
+  - "api.stripe.com"           # Stripe REST API (FDW HTTP calls via pg_net)
+  - "stripe.com"
+
+risk_flags:
+  - id: vault_bypass
+    severity: high
+    description: >
+      If the Stripe secret key is placed directly in pg_foreign_server OPTIONS
+      as a plaintext value (api_key '<sk_live_...>'), it is stored unencrypted
+      in the pg_foreign_server system catalog and visible to superusers and
+      anyone with access to information_schema.
+    mitigation: >
+      Always use api_key_id (Vault UUID) in CREATE SERVER OPTIONS.
+      CI lint: scan migrations for OPTIONS patterns matching (api_key '...' without 'id').
+      Reject any migration containing a Stripe key value (sk_test_|sk_live_) literal.
+
+  - id: overly_permissive_grants
+    severity: medium
+    description: >
+      Granting SELECT on stripe.* to the authenticated or anon role would expose
+      all Stripe customer and payment data to any authenticated or anonymous user
+      who can reach the Supabase REST API.
+    mitigation: >
+      Grants must target only service_role or a dedicated application role.
+      Review migration diffs for GRANT ... TO authenticated or GRANT ... TO anon.
+      CI lint: block migrations containing (GRANT.*stripe.*TO (anon|authenticated)).
