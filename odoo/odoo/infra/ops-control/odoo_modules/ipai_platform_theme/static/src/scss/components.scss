@@ -1,0 +1,635 @@
+// ============================================================================
+// IPAI Platform Theme - Components
+// Material 3 + Fluent component patterns
+// ============================================================================
+
+@import 'tokens';
+
+// ==========================================================================
+// BUTTONS
+// ==========================================================================
+
+.ipai-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--ipai-space-2);
+  padding: var(--ipai-space-2) var(--ipai-space-4);
+  font-family: var(--ipai-font-sans);
+  font-size: var(--ipai-text-sm);
+  font-weight: var(--ipai-font-medium);
+  line-height: var(--ipai-leading-none);
+  border-radius: var(--ipai-radius-md);
+  border: none;
+  cursor: pointer;
+  transition:
+    background var(--ipai-duration-fast) var(--ipai-ease-out),
+    box-shadow var(--ipai-duration-fast) var(--ipai-ease-out),
+    transform var(--ipai-duration-fast) var(--ipai-ease-out);
+
+  &:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 var(--ipai-ring-offset) var(--ipai-surface),
+                0 0 0 calc(var(--ipai-ring-offset) + var(--ipai-ring-width)) var(--ipai-ring-color);
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+
+  &:active:not(:disabled) {
+    transform: scale(0.98);
+  }
+}
+
+// Filled button (primary action)
+.ipai-btn--filled {
+  background: var(--ipai-primary);
+  color: var(--ipai-on-primary);
+
+  &:hover:not(:disabled) {
+    background: var(--ipai-primary-dark);
+  }
+}
+
+// Tonal button (secondary action)
+.ipai-btn--tonal {
+  background: var(--ipai-primary-container);
+  color: var(--ipai-on-primary-container);
+
+  &:hover:not(:disabled) {
+    background: var(--ipai-primary-container);
+    filter: brightness(0.95);
+  }
+}
+
+// Outlined button
+.ipai-btn--outlined {
+  background: transparent;
+  color: var(--ipai-primary);
+  border: 1px solid var(--ipai-outline);
+
+  &:hover:not(:disabled) {
+    background: var(--ipai-surface-container-low);
+    border-color: var(--ipai-primary);
+  }
+}
+
+// Text button
+.ipai-btn--text {
+  background: transparent;
+  color: var(--ipai-primary);
+  padding: var(--ipai-space-2);
+
+  &:hover:not(:disabled) {
+    background: var(--ipai-surface-container);
+  }
+}
+
+// Icon button
+.ipai-btn--icon {
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border-radius: var(--ipai-radius-full);
+  background: transparent;
+  color: var(--ipai-on-surface-variant);
+
+  &:hover:not(:disabled) {
+    background: var(--ipai-surface-container);
+    color: var(--ipai-on-surface);
+  }
+}
+
+// Size variants
+.ipai-btn--sm {
+  padding: var(--ipai-space-1-5) var(--ipai-space-3);
+  font-size: var(--ipai-text-xs);
+}
+
+.ipai-btn--lg {
+  padding: var(--ipai-space-3) var(--ipai-space-6);
+  font-size: var(--ipai-text-base);
+}
+
+// Color variants
+.ipai-btn--success {
+  &.ipai-btn--filled {
+    background: var(--ipai-tertiary);
+    &:hover:not(:disabled) { background: var(--ipai-tertiary-dark); }
+  }
+  &.ipai-btn--tonal {
+    background: var(--ipai-tertiary-container);
+    color: var(--ipai-on-tertiary-container);
+  }
+  &.ipai-btn--outlined, &.ipai-btn--text {
+    color: var(--ipai-tertiary);
+  }
+}
+
+.ipai-btn--danger {
+  &.ipai-btn--filled {
+    background: var(--ipai-error);
+    &:hover:not(:disabled) { background: var(--ipai-error-dark); }
+  }
+  &.ipai-btn--tonal {
+    background: var(--ipai-error-container);
+    color: var(--ipai-on-error-container);
+  }
+  &.ipai-btn--outlined, &.ipai-btn--text {
+    color: var(--ipai-error);
+  }
+}
+
+// ==========================================================================
+// CHIPS / TAGS
+// ==========================================================================
+
+.ipai-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ipai-space-1-5);
+  padding: var(--ipai-space-1) var(--ipai-space-3);
+  font-size: var(--ipai-text-xs);
+  font-weight: var(--ipai-font-medium);
+  border-radius: var(--ipai-radius-full);
+  background: var(--ipai-chip-default-bg);
+  color: var(--ipai-chip-default-text);
+  border: none;
+  cursor: default;
+  transition:
+    background var(--ipai-duration-fast) var(--ipai-ease-out),
+    transform var(--ipai-duration-fast) var(--ipai-ease-out);
+
+  &--clickable {
+    cursor: pointer;
+
+    &:hover {
+      filter: brightness(0.95);
+    }
+
+    &:active {
+      transform: scale(0.97);
+    }
+  }
+
+  &--primary {
+    background: var(--ipai-chip-primary-bg);
+    color: var(--ipai-chip-primary-text);
+  }
+
+  &--success {
+    background: var(--ipai-chip-success-bg);
+    color: var(--ipai-chip-success-text);
+  }
+
+  &--warning {
+    background: var(--ipai-chip-warning-bg);
+    color: var(--ipai-chip-warning-text);
+  }
+
+  &--danger {
+    background: var(--ipai-chip-danger-bg);
+    color: var(--ipai-chip-danger-text);
+  }
+}
+
+// Action chip (for copilot actions)
+.ipai-action-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ipai-space-2);
+  padding: var(--ipai-space-2) var(--ipai-space-3);
+  font-size: var(--ipai-text-sm);
+  font-weight: var(--ipai-font-medium);
+  border-radius: var(--ipai-radius-lg);
+  background: var(--ipai-surface);
+  color: var(--ipai-on-surface);
+  border: 1px solid var(--ipai-outline);
+  cursor: pointer;
+  transition:
+    background var(--ipai-duration-fast) var(--ipai-ease-out),
+    border-color var(--ipai-duration-fast) var(--ipai-ease-out),
+    box-shadow var(--ipai-duration-fast) var(--ipai-ease-out);
+
+  &:hover {
+    background: var(--ipai-surface-container-low);
+    border-color: var(--ipai-primary);
+  }
+
+  &:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 var(--ipai-ring-offset) var(--ipai-surface),
+                0 0 0 calc(var(--ipai-ring-offset) + var(--ipai-ring-width)) var(--ipai-ring-color);
+  }
+
+  .ipai-action-chip-icon {
+    width: 16px;
+    height: 16px;
+    color: var(--ipai-primary);
+  }
+}
+
+// ==========================================================================
+// FORM INPUTS
+// ==========================================================================
+
+.ipai-input {
+  display: block;
+  width: 100%;
+  padding: var(--ipai-space-2-5) var(--ipai-space-3);
+  font-family: var(--ipai-font-sans);
+  font-size: var(--ipai-text-base);
+  line-height: var(--ipai-leading-normal);
+  color: var(--ipai-on-surface);
+  background: var(--ipai-surface);
+  border: 1px solid var(--ipai-outline);
+  border-radius: var(--ipai-radius-md);
+  transition:
+    border-color var(--ipai-duration-fast) var(--ipai-ease-out),
+    box-shadow var(--ipai-duration-fast) var(--ipai-ease-out);
+
+  &::placeholder {
+    color: var(--ipai-on-surface-muted);
+  }
+
+  &:hover:not(:disabled):not(:focus) {
+    border-color: var(--ipai-on-surface-muted);
+  }
+
+  &:focus {
+    outline: none;
+    border-color: var(--ipai-primary);
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+  }
+
+  &:disabled {
+    background: var(--ipai-surface-container);
+    color: var(--ipai-on-surface-disabled);
+    cursor: not-allowed;
+  }
+
+  &--error {
+    border-color: var(--ipai-error);
+
+    &:focus {
+      box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.15);
+    }
+  }
+}
+
+// Textarea
+.ipai-textarea {
+  @extend .ipai-input;
+  min-height: 80px;
+  resize: vertical;
+}
+
+// Composer (chat input)
+.ipai-composer {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ipai-space-2);
+  padding: var(--ipai-space-3);
+  background: var(--ipai-surface);
+  border: 1px solid var(--ipai-outline);
+  border-radius: var(--ipai-radius-xl);
+  transition: border-color var(--ipai-duration-fast) var(--ipai-ease-out);
+
+  &:focus-within {
+    border-color: var(--ipai-primary);
+  }
+}
+
+.ipai-composer-input {
+  border: none;
+  background: transparent;
+  resize: none;
+  min-height: var(--ipai-composer-min-height);
+  max-height: var(--ipai-composer-max-height);
+  padding: var(--ipai-space-1);
+  font-family: var(--ipai-font-sans);
+  font-size: var(--ipai-text-base);
+  line-height: var(--ipai-leading-relaxed);
+  color: var(--ipai-on-surface);
+
+  &::placeholder {
+    color: var(--ipai-on-surface-muted);
+  }
+
+  &:focus {
+    outline: none;
+  }
+}
+
+.ipai-composer-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--ipai-space-2);
+}
+
+.ipai-composer-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--ipai-space-1);
+}
+
+// ==========================================================================
+// CITATION LINK
+// ==========================================================================
+
+.ipai-citation {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ipai-space-1);
+  padding: var(--ipai-space-0-5) var(--ipai-space-2);
+  font-size: var(--ipai-text-xs);
+  font-weight: var(--ipai-font-medium);
+  color: var(--ipai-citation-text);
+  background: var(--ipai-citation-bg);
+  border-radius: var(--ipai-radius-sm);
+  text-decoration: none;
+  transition: background var(--ipai-duration-fast) var(--ipai-ease-out);
+
+  &:hover {
+    background: var(--ipai-citation-hover-bg);
+    text-decoration: none;
+  }
+
+  .ipai-citation-icon {
+    width: 12px;
+    height: 12px;
+  }
+}
+
+.ipai-citations-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--ipai-space-2);
+  margin-top: var(--ipai-space-3);
+  padding-top: var(--ipai-space-3);
+  border-top: 1px solid var(--ipai-outline-variant);
+}
+
+// ==========================================================================
+// LOADING INDICATORS
+// ==========================================================================
+
+.ipai-spinner {
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--ipai-surface-container-high);
+  border-top-color: var(--ipai-primary);
+  border-radius: var(--ipai-radius-full);
+  animation: ipai-spin 0.8s linear infinite;
+
+  &--sm {
+    width: 14px;
+    height: 14px;
+  }
+
+  &--lg {
+    width: 28px;
+    height: 28px;
+    border-width: 3px;
+  }
+}
+
+// Typing indicator (dots)
+.ipai-typing {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ipai-space-1);
+}
+
+.ipai-typing-dot {
+  width: 6px;
+  height: 6px;
+  background: var(--ipai-on-surface-muted);
+  border-radius: var(--ipai-radius-full);
+  animation: ipai-bounce 1.4s infinite ease-in-out both;
+
+  &:nth-child(1) { animation-delay: -0.32s; }
+  &:nth-child(2) { animation-delay: -0.16s; }
+  &:nth-child(3) { animation-delay: 0s; }
+}
+
+// ==========================================================================
+// AVATAR
+// ==========================================================================
+
+.ipai-avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: var(--ipai-radius-full);
+  background: var(--ipai-primary-container);
+  color: var(--ipai-on-primary-container);
+  font-size: var(--ipai-text-sm);
+  font-weight: var(--ipai-font-semibold);
+  overflow: hidden;
+
+  &--sm {
+    width: 24px;
+    height: 24px;
+    font-size: var(--ipai-text-xs);
+  }
+
+  &--lg {
+    width: 40px;
+    height: 40px;
+    font-size: var(--ipai-text-base);
+  }
+
+  &--xl {
+    width: 56px;
+    height: 56px;
+    font-size: var(--ipai-text-xl);
+  }
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+}
+
+.ipai-avatar-ai {
+  background: linear-gradient(135deg, var(--ipai-primary-light), var(--ipai-primary));
+  color: var(--ipai-on-primary);
+}
+
+// ==========================================================================
+// TOGGLE / SWITCH
+// ==========================================================================
+
+.ipai-toggle {
+  position: relative;
+  width: 44px;
+  height: 24px;
+  background: var(--ipai-surface-container-high);
+  border-radius: var(--ipai-radius-full);
+  cursor: pointer;
+  transition: background var(--ipai-duration-fast) var(--ipai-ease-out);
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 20px;
+    height: 20px;
+    background: var(--ipai-surface);
+    border-radius: var(--ipai-radius-full);
+    box-shadow: var(--ipai-shadow-sm);
+    transition: transform var(--ipai-duration-fast) var(--ipai-ease-out);
+  }
+
+  &.ipai-toggle--active {
+    background: var(--ipai-primary);
+
+    &::before {
+      transform: translateX(20px);
+    }
+  }
+}
+
+// ==========================================================================
+// TABS
+// ==========================================================================
+
+.ipai-tabs {
+  display: flex;
+  gap: var(--ipai-space-1);
+  padding: var(--ipai-space-1);
+  background: var(--ipai-surface-container);
+  border-radius: var(--ipai-radius-lg);
+}
+
+.ipai-tab {
+  flex: 1;
+  padding: var(--ipai-space-2) var(--ipai-space-3);
+  font-size: var(--ipai-text-sm);
+  font-weight: var(--ipai-font-medium);
+  color: var(--ipai-on-surface-variant);
+  background: transparent;
+  border: none;
+  border-radius: var(--ipai-radius-md);
+  cursor: pointer;
+  transition:
+    background var(--ipai-duration-fast) var(--ipai-ease-out),
+    color var(--ipai-duration-fast) var(--ipai-ease-out);
+
+  &:hover:not(.ipai-tab--active) {
+    color: var(--ipai-on-surface);
+  }
+
+  &--active {
+    background: var(--ipai-surface);
+    color: var(--ipai-on-surface);
+    box-shadow: var(--ipai-shadow-xs);
+  }
+}
+
+// ==========================================================================
+// BADGE
+// ==========================================================================
+
+.ipai-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 var(--ipai-space-1-5);
+  font-size: var(--ipai-text-xs);
+  font-weight: var(--ipai-font-semibold);
+  color: var(--ipai-on-primary);
+  background: var(--ipai-primary);
+  border-radius: var(--ipai-radius-full);
+
+  &--dot {
+    min-width: 8px;
+    width: 8px;
+    height: 8px;
+    padding: 0;
+  }
+
+  &--success {
+    background: var(--ipai-tertiary);
+  }
+
+  &--warning {
+    background: var(--ipai-warning);
+  }
+
+  &--danger {
+    background: var(--ipai-error);
+  }
+}
+
+// ==========================================================================
+// PROGRESS
+// ==========================================================================
+
+.ipai-progress {
+  height: 4px;
+  background: var(--ipai-surface-container-high);
+  border-radius: var(--ipai-radius-full);
+  overflow: hidden;
+}
+
+.ipai-progress-bar {
+  height: 100%;
+  background: var(--ipai-primary);
+  border-radius: var(--ipai-radius-full);
+  transition: width var(--ipai-duration-normal) var(--ipai-ease-out);
+
+  &--indeterminate {
+    width: 30%;
+    animation: ipai-progress-indeterminate 1.5s ease-in-out infinite;
+  }
+}
+
+// ==========================================================================
+// BREADCRUMB (for panel header)
+// ==========================================================================
+
+.ipai-breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: var(--ipai-space-1);
+  font-size: var(--ipai-text-sm);
+  color: var(--ipai-on-surface-variant);
+}
+
+.ipai-breadcrumb-item {
+  display: flex;
+  align-items: center;
+  gap: var(--ipai-space-1);
+
+  &:not(:last-child)::after {
+    content: '/';
+    color: var(--ipai-on-surface-muted);
+    margin-left: var(--ipai-space-1);
+  }
+}
+
+.ipai-breadcrumb-link {
+  color: var(--ipai-on-surface-variant);
+  text-decoration: none;
+
+  &:hover {
+    color: var(--ipai-primary);
+  }
+}
+
+.ipai-breadcrumb-current {
+  color: var(--ipai-on-surface);
+  font-weight: var(--ipai-font-medium);
+}

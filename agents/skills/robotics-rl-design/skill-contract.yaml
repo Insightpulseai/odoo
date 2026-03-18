@@ -1,0 +1,66 @@
+id: robotics-rl-design
+version: 1
+status: active
+classification: capability_uplift
+owner: simulation-environment-designer
+benchmark_source: "HF Deep RL Course — Actor-Critic with Robotics"
+implementation_source: "SB3, PyBullet, MuJoCo docs"
+
+purpose: >
+  Design RL systems for robotics and simulation environments, covering
+  continuous control, reward engineering, sim-to-real considerations,
+  and safety constraints.
+
+inputs:
+  - name: task_description
+    type: text
+    required: true
+    description: "Robotic task to solve"
+  - name: simulator
+    type: enum
+    values: [mujoco, pybullet, isaac_gym, custom]
+    required: true
+  - name: sim_to_real
+    type: boolean
+    required: false
+    description: "Whether real-world transfer is planned"
+
+outputs:
+  - name: environment_spec
+    type: dict
+    description: "Full environment specification"
+  - name: reward_function
+    type: text
+    description: "Reward function definition with justification"
+  - name: safety_constraints
+    type: list
+    description: "Physical and behavioral constraints"
+
+constraints:
+  - "Actions must respect physical joint limits"
+  - "Reward function must not incentivize unsafe behavior"
+  - "Sim-to-real transfer requires domain randomization plan"
+  - "Control frequency must match physical system capabilities"
+
+environment_params:
+  control_frequency:
+    description: "Hz of action application"
+    typical_range: [20, 500]
+  action_space:
+    type: continuous
+    description: "Joint torques, velocities, or positions"
+  observation_space:
+    components:
+      - "Joint angles and velocities"
+      - "End-effector position/orientation"
+      - "Contact/force sensors"
+      - "Goal specification"
+  reward_components:
+    - name: task_reward
+      description: "Progress toward task goal"
+    - name: control_cost
+      description: "Penalize large actions (energy efficiency)"
+    - name: alive_bonus
+      description: "Reward for not falling/crashing"
+    - name: safety_penalty
+      description: "Penalize constraint violations"

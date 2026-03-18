@@ -348,6 +348,61 @@ subtrees:
       - agent_registry_validation_report
 
 # ──────────────────────────────────────────────
+# Testing policy — test level gate mapping
+# ──────────────────────────────────────────────
+# Ref: https://learn.microsoft.com/en-us/devops/develop/shift-left-make-testing-fast-reliable
+# Human-readable companion: docs/architecture/quality_engineering_model.md § 0
+#
+# L0 = unit (in-memory, no deps)
+# L1 = unit (minimal deps — config, fixtures)
+# L2 = functional (bounded — real DB, stubs)
+# L3 = functional (deployed service env)
+# L4 = production-integrated (restricted)
+
+testing_policy:
+
+  pre_commit:
+    description: "Developer local — before push"
+    required: [L0, L1]
+    optional: [L2]
+    enforcement: developer_discipline
+
+  pull_request:
+    description: "GitHub Actions CI — PR status check"
+    required: [L0, L1, selected_L2]
+    optional: []
+    enforcement: required_status_check
+    maps_to_gates: [P0]
+
+  pre_merge_main:
+    description: "Final CI gate before merge to main"
+    required: [L0, L1, required_L2]
+    optional: [selected_L3]
+    enforcement: required_status_check
+    maps_to_gates: [P0]
+
+  pre_production:
+    description: "Azure Pipelines CD — before staging/prod deploy"
+    required: [required_L3]
+    optional: [controlled_L4]
+    enforcement: environment_approval_gate
+    maps_to_gates: [P1]
+
+  post_deploy:
+    description: "After production deploy — synthetic + health"
+    required: [controlled_L4]
+    optional: []
+    enforcement: monitoring_alert
+    maps_to_gates: [P1, P2]
+
+  flakiness_policy:
+    quarantine_allowed: true
+    quarantine_tracking: azure_boards_issue
+    triage_sla: "1 sprint from detection"
+    target: "zero quarantined tests"
+    ui_tests_default: discouraged
+
+# ──────────────────────────────────────────────
 # Cross-cutting policies
 # ──────────────────────────────────────────────
 cross_cutting_policies:

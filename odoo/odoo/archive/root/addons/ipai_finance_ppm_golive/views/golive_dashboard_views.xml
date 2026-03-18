@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Dashboard Kanban View -->
+    <record id="view_golive_dashboard_kanban" model="ir.ui.view">
+        <field name="name">ipai.finance.ppm.golive.dashboard.kanban</field>
+        <field name="model">ipai.finance.ppm.golive.checklist</field>
+        <field name="arch" type="xml">
+            <kanban class="o_kanban_dashboard">
+                <field name="name"/>
+                <field name="state"/>
+                <field name="completion_pct"/>
+                <field name="completed_items"/>
+                <field name="total_items"/>
+                <field name="director_signoff_date"/>
+                <templates>
+                    <t t-name="kanban-box">
+                        <div class="oe_kanban_global_click">
+                            <div class="o_kanban_card_header">
+                                <div class="o_kanban_card_header_title">
+                                    <div class="o_primary"><field name="name"/></div>
+                                    <div class="o_secondary">
+                                        <t t-if="record.state.raw_value == 'approved'">
+                                            <span class="badge badge-success">✅ APPROVED</span>
+                                        </t>
+                                        <t t-elif="record.state.raw_value == 'rejected'">
+                                            <span class="badge badge-danger">❌ REJECTED</span>
+                                        </t>
+                                        <t t-elif="record.state.raw_value == 'director_review'">
+                                            <span class="badge badge-warning">Director Review</span>
+                                        </t>
+                                        <t t-elif="record.state.raw_value == 'senior_supervisor_review'">
+                                            <span class="badge badge-info">Senior Supervisor Review</span>
+                                        </t>
+                                        <t t-elif="record.state.raw_value == 'supervisor_review'">
+                                            <span class="badge badge-info">Supervisor Review</span>
+                                        </t>
+                                        <t t-else="">
+                                            <span class="badge badge-secondary">Draft</span>
+                                        </t>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="container o_kanban_card_content">
+                                <div class="row">
+                                    <div class="col-12">
+                                        <progressbar t-att-value="record.completion_pct.value" t-att-title="record.completion_pct.value + '%'"/>
+                                        <div class="text-muted">
+                                            <t t-esc="record.completed_items.value"/> / <t t-esc="record.total_items.value"/> items completed
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row mt-2">
+                                    <div class="col-12">
+                                        <t t-if="record.director_signoff_date.raw_value">
+                                            <div class="text-success">
+                                                <strong>Director Sign-Off:</strong> <t t-esc="record.director_signoff_date.value"/>
+                                            </div>
+                                        </t>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- Dashboard Action -->
+    <record id="action_golive_dashboard" model="ir.actions.act_window">
+        <field name="name">Go-Live Dashboard</field>
+        <field name="res_model">ipai.finance.ppm.golive.checklist</field>
+        <field name="view_mode">kanban,tree,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No go-live checklists yet
+            </p>
+            <p>
+                Create your first Finance PPM Go-Live Checklist to track production readiness.
+            </p>
+        </field>
+    </record>
+</odoo>

@@ -1,0 +1,31 @@
+# Nightly Schedule Configuration
+# Defines schedules used across jobs
+
+# Note: Schedules are defined inline within job resources.
+# This file documents the standard schedules used.
+
+# Standard Schedules:
+#
+# Real-time (15 min):
+#   quartz_cron_expression: "0 */15 * * * ?"
+#   Used for: Notion sync, Control Room refresh
+#
+# Hourly:
+#   quartz_cron_expression: "0 0 * * * ?"
+#   Used for: Silver transformations, DQ checks
+#
+# Hourly+30:
+#   quartz_cron_expression: "0 30 * * * ?"
+#   Used for: Gold marts (after silver completes)
+#
+# Every 6 hours:
+#   quartz_cron_expression: "0 0 */6 * * ?"
+#   Used for: Azure Resource Graph ingest
+#
+# Nightly (2 AM UTC):
+#   quartz_cron_expression: "0 0 2 * * ?"
+#   Used for: Full refreshes, maintenance tasks
+#
+# Weekly (Sunday 3 AM UTC):
+#   quartz_cron_expression: "0 0 3 ? * SUN"
+#   Used for: Delta OPTIMIZE, VACUUM

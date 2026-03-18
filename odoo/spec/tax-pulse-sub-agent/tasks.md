@@ -28,7 +28,7 @@
 - [ ] **3.4** Update `action_file()` to require `state == 'approved'`
 - [ ] **3.5** Update statusbar and button visibility for approved stage
 - [ ] **3.6** Create `copilot_tools_bir.xml` with 8 BIR tool definitions
-- [ ] **3.7** Create `ssot/agents/tax_pulse_tool_contracts.yaml`
+- [ ] **3.7** Create `infra/ssot/agents/tax_pulse_tool_contracts.yaml`
 - [ ] **3.8** Wire `compute_bir_vat_return` → `action_compute()` on `bir.vat.return`
 - [ ] **3.9** Wire `compute_bir_withholding_return` → `action_compute()` on `bir.withholding.return`
 - [ ] **3.10** Wire `validate_bir_return` → `action_validate()` on `bir.tax.return`
@@ -94,7 +94,7 @@
 - [ ] **3A.7** Test: bridge returns correct data, APIM auth enforced
 
 ### Wave 3B: Compliance Check Registry
-- [x] **3B.1** Create `ssot/tax/compliance_check_catalog.yaml` with 12 checks (CI-001 to CI-012)
+- [x] **3B.1** Create `infra/ssot/tax/compliance_check_catalog.yaml` with 12 checks (CI-001 to CI-012)
 - [ ] **3B.2** Implement check execution method on `tax.compliance.period`
 - [ ] **3B.3** Wire each check to its `query_source` Odoo model
 - [ ] **3B.4** Persist findings as `tax.compliance.finding` records
@@ -129,7 +129,7 @@
 - [ ] **P.4** Validate grounding: agent cites AI Search sources, not embedded knowledge
 
 ### Existing Module Mapping
-- [x] **M.1** Update `ssot/agents/tax_pulse_tool_contracts.yaml` with agent metadata and module mapping
+- [x] **M.1** Update `infra/ssot/agents/tax_pulse_tool_contracts.yaml` with agent metadata and module mapping
 - [ ] **M.2** Verify `ipai_bir_tax_compliance` owns compliance checks and findings
 - [ ] **M.3** Verify `ipai_bir_notifications` owns deadline alerts and proactive notifications
 - [ ] **M.4** Verify `ipai_finance_ppm` owns close orchestration tasks

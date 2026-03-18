@@ -82,17 +82,50 @@
       "Bash(docker --context colima-odoo exec odoo-devcontainer-devcontainer-1 ls /workspaces/odoo/addons/ipai/ipai_odoo_copilot/__manifest__.py)",
       "Bash(docker --context colima-odoo exec odoo-devcontainer-devcontainer-1 /opt/odoo/odoo-bin -d odoo_dev -u ipai_odoo_copilot --stop-after-init --no-http --db_host=db --db_user=odoo --db_password=odoo --addons-path=/opt/odoo/addons,/workspaces/odoo/addons/ipai)",
       "Bash(docker --context colima-odoo exec odoo-devcontainer-devcontainer-1 pip install azure-identity azure-search-documents)",
+      "Bash(docker --context colima-odoo exec odoo-devcontainer-db-1 psql -U odoo -d odoo_dev -t -c \":*)",
+      "Bash(docker --context colima-odoo exec odoo-devcontainer-devcontainer-1 /opt/odoo/odoo-bin -d odoo_dev --db_host=db --db_user=odoo --db_password=odoo --addons-path=/opt/odoo/addons,/workspaces/odoo/addons/ipai -i ipai_theme_copilot --stop-after-init --no-http)",
+      "Bash(docker --context colima-odoo exec odoo-devcontainer-devcontainer-1 /opt/odoo/odoo-bin -d odoo_dev --db_host=db --db_user=odoo --db_password=odoo --addons-path=/opt/odoo/addons,/workspaces/odoo/addons/ipai -i ipai_hr_expense_liquidation --stop-after-init --no-http)",
+      "Bash(docker --context colima-odoo exec odoo-devcontainer-devcontainer-1 /opt/odoo/odoo-bin -d odoo_dev --db_host=db --db_user=odoo --db_password=odoo --addons-path=/opt/odoo/addons,/workspaces/odoo/addons/ipai -i ipai_agent --stop-after-init --no-http)",
+      "Bash(docker --context colima-odoo exec odoo-devcontainer-devcontainer-1 /opt/odoo/odoo-bin -d odoo_dev --db_host=db --db_user=odoo --db_password=odoo --addons-path=/opt/odoo/addons,/workspaces/odoo/addons/ipai --log-handler odoo.tools.convert:DEBUG -i ipai_hr_expense_liquidation --stop-after-init --no-http)",
+      "Bash(docker --context colima-odoo exec odoo-devcontainer-db-1 psql -U odoo -d odoo_dev -t -c \"SELECT login FROM res_users WHERE active = true ORDER BY id LIMIT 5;\")",
+      "Bash(docker --context colima-odoo kill odoo-local)",
+      "Bash(docker --context colima-odoo run -d --rm --name odoo-local --network odoo-devcontainer_devnet -p 8069:8069 -v odoo-local-data:/var/lib/odoo odoo-devcontainer-devcontainer:latest /opt/odoo/odoo-bin --database=odoo_dev --db_host=db --db_user=odoo --db_password=odoo --http-port=8069 --addons-path=/opt/odoo/addons,/workspaces/odoo/addons/ipai --data-dir=/var/lib/odoo --limit-time-real=600)",
+      "Bash(docker --context colima-odoo ps --format '{{.Names}} {{.Status}}')",
       "Bash(find /Users/tbwa/Documents/GitHub/Insightpulseai/odoo -maxdepth 3 -name Dockerfile* -type f)",
       "mcp__microsoft-learn__microsoft_docs_search",
       "Bash(az *)",
       "Bash(az resource:*)",
-      "Bash(az boards:*)",
-      "Bash(grep -E \"\\(^/[^/]+/[^/]+/package.json$\\)\")",
-      "Bash(find /Users/tbwa/Documents/GitHub/Insightpulseai/odoo/web/apps -maxdepth 1 -name mcp-jobs -type d -exec ls -la {}/src)",
-      "Bash(2)"
+      "Bash(az boards:*)"
     ],
     "deny": [
       "Bash(docker context use *)"
+    ],
+    "additionalDirectories": [
+      "/Users/tbwa/Documents/GitHub/Insightpulseai/ssot/odoo"
+    ]
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 .claude/hooks/pretool_policy.py"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 .claude/hooks/posttool_evidence.py"
+          }
+        ]
+      }
     ]
   },
   "agentCommands": {

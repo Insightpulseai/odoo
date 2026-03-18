@@ -1,0 +1,80 @@
+# =============================================================================
+# Delta Table Contract: gold.embeddings
+# =============================================================================
+# Vector embeddings for semantic search.
+# Supports multiple embedding models per chunk.
+# =============================================================================
+
+table: gold.embeddings
+format: delta
+location: s3://lakehouse/gold/embeddings/
+
+partition_by:
+  - model
+  - embed_date
+
+primary_key:
+  - tenant_id
+  - embedding_id
+
+columns:
+  tenant_id:
+    type: uuid
+    nullable: false
+    description: Tenant isolation key
+
+  embedding_id:
+    type: uuid
+    nullable: false
+    description: Unique embedding ID (hash of chunk_id + model)
+
+  chunk_id:
+    type: uuid
+    nullable: false
+    description: Reference to gold.chunks
+
+  model:
+    type: varchar
+    nullable: false
+    description: Embedding model name (text-embedding-3-large, bge-large, etc.)
+
+  model_version:
+    type: varchar
+    nullable: true
+    description: Model version or checkpoint
+
+  dims:
+    type: integer
+    nullable: false
+    description: Vector dimensions
+
+  v:
+    type: array_double
+    nullable: false
+    description: Embedding vector (Trino array(double))
+
+  norm:
+    type: double
+    nullable: true
+    description: L2 norm of vector (for cosine similarity optimization)
+
+  created_at:
+    type: timestamp
+    nullable: false
+    description: Embedding creation timestamp (UTC)
+
+  embed_date:
+    type: date
+    nullable: false
+    description: Partition date
+
+merge_key: embedding_id
+retention_days: 365
+
+# Model registry reference
+mlflow:
+  experiment: embeddings
+  track_metrics:
+    - latency_ms
+    - batch_size
+    - tokens_per_sec

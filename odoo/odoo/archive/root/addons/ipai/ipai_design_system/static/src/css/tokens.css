@@ -1,0 +1,241 @@
+/**
+ * IPAI Design System - Design Tokens
+ * Based on Microsoft Fluent UI React v9 + Copilot patterns
+ *
+ * Token Naming Convention:
+ * --ipai-{category}-{property}-{variant}
+ *
+ * Categories: color, spacing, radius, shadow, font, duration, curve
+ */
+
+:root {
+  /* ============================================
+   * BRAND COLORS
+   * Teams purple as primary brand color
+   * ============================================ */
+  --ipai-color-brand-primary: #6264A7;
+  --ipai-color-brand-primary-hover: #5558A3;
+  --ipai-color-brand-primary-pressed: #4A4D9E;
+  --ipai-color-brand-on-primary: #FFFFFF;
+  --ipai-color-brand-background1: #F0E6FF;
+  --ipai-color-brand-background2: #F8F8FE;
+  --ipai-color-brand-foreground1: #6264A7;
+  --ipai-color-brand-foreground2: #5558A3;
+
+  /* Accent (gold/yellow for highlights) */
+  --ipai-color-accent-primary: #F6C000;
+  --ipai-color-accent-background1: #FFF8E1;
+  --ipai-color-accent-foreground1: #835C00;
+
+  /* ============================================
+   * NEUTRAL COLORS
+   * Grayscale for backgrounds, text, borders
+   * ============================================ */
+  --ipai-color-neutral-background1: #FFFFFF;
+  --ipai-color-neutral-background2: #FAFAFA;
+  --ipai-color-neutral-background3: #F5F5F5;
+  --ipai-color-neutral-background4: #EBEBEB;
+  --ipai-color-neutral-background5: #E0E0E0;
+  --ipai-color-neutral-background-inverted: #292929;
+
+  --ipai-color-neutral-foreground1: #242424;
+  --ipai-color-neutral-foreground2: #424242;
+  --ipai-color-neutral-foreground3: #616161;
+  --ipai-color-neutral-foreground4: #707070;
+  --ipai-color-neutral-foreground-disabled: #BDBDBD;
+  --ipai-color-neutral-foreground-inverted: #FFFFFF;
+
+  --ipai-color-neutral-stroke1: #D1D1D1;
+  --ipai-color-neutral-stroke2: #E0E0E0;
+  --ipai-color-neutral-stroke3: #EBEBEB;
+  --ipai-color-neutral-stroke-accessible: #616161;
+
+  /* ============================================
+   * STATUS COLORS
+   * Success, warning, danger, info states
+   * ============================================ */
+  /* Success (green) */
+  --ipai-color-status-success-background1: #DFF6DD;
+  --ipai-color-status-success-background2: #C8F0C4;
+  --ipai-color-status-success-foreground1: #0E700E;
+  --ipai-color-status-success-foreground2: #107C10;
+  --ipai-color-status-success-border1: #9FE09B;
+
+  /* Warning (yellow/amber) */
+  --ipai-color-status-warning-background1: #FFF4CE;
+  --ipai-color-status-warning-background2: #FFEB99;
+  --ipai-color-status-warning-foreground1: #835C00;
+  --ipai-color-status-warning-foreground2: #6D4C00;
+  --ipai-color-status-warning-border1: #FFD966;
+
+  /* Danger (red) */
+  --ipai-color-status-danger-background1: #FDE7E9;
+  --ipai-color-status-danger-background2: #FDCFD3;
+  --ipai-color-status-danger-foreground1: #A80000;
+  --ipai-color-status-danger-foreground2: #C50F1F;
+  --ipai-color-status-danger-border1: #F5A3A9;
+
+  /* Info (blue) */
+  --ipai-color-status-info-background1: #E6F2FF;
+  --ipai-color-status-info-background2: #CCE4FF;
+  --ipai-color-status-info-foreground1: #0078D4;
+  --ipai-color-status-info-foreground2: #005A9E;
+  --ipai-color-status-info-border1: #99CAFF;
+
+  /* ============================================
+   * COPILOT COLORS
+   * Signature gradient: purple → cyan → green
+   * ============================================ */
+  --ipai-color-copilot-purple: #7B68EE;
+  --ipai-color-copilot-cyan: #00CED1;
+  --ipai-color-copilot-green: #32CD32;
+  --ipai-color-copilot-gradient: linear-gradient(135deg, #7B68EE 0%, #00CED1 50%, #32CD32 100%);
+  --ipai-color-copilot-gradient-text: linear-gradient(90deg, #7B68EE, #00CED1, #32CD32);
+  --ipai-color-copilot-gradient-subtle: linear-gradient(135deg, #F0E6FF 0%, #E6F0FF 50%, #E6FFF0 100%);
+  --ipai-color-copilot-background: linear-gradient(180deg, #FAFBFF 0%, #F5F7FF 100%);
+  --ipai-color-copilot-border: #E8ECFF;
+
+  /* ============================================
+   * SHADOWS
+   * Elevation levels for depth
+   * ============================================ */
+  --ipai-shadow-2: 0px 1px 2px rgba(0, 0, 0, 0.14), 0px 0px 2px rgba(0, 0, 0, 0.12);
+  --ipai-shadow-4: 0px 2px 4px rgba(0, 0, 0, 0.14), 0px 0px 2px rgba(0, 0, 0, 0.12);
+  --ipai-shadow-8: 0px 4px 8px rgba(0, 0, 0, 0.14), 0px 0px 2px rgba(0, 0, 0, 0.12);
+  --ipai-shadow-16: 0px 8px 16px rgba(0, 0, 0, 0.14), 0px 0px 2px rgba(0, 0, 0, 0.12);
+  --ipai-shadow-28: 0px 14px 28px rgba(0, 0, 0, 0.14), 0px 0px 2px rgba(0, 0, 0, 0.12);
+  --ipai-shadow-64: 0px 32px 64px rgba(0, 0, 0, 0.14), 0px 0px 2px rgba(0, 0, 0, 0.12);
+
+  /* Brand shadow (purple tint) */
+  --ipai-shadow-brand-4: 0px 2px 4px rgba(98, 100, 167, 0.24);
+  --ipai-shadow-brand-8: 0px 4px 8px rgba(98, 100, 167, 0.24);
+
+  /* ============================================
+   * BORDER RADIUS
+   * Rounded corners
+   * ============================================ */
+  --ipai-radius-none: 0px;
+  --ipai-radius-small: 2px;
+  --ipai-radius-medium: 4px;
+  --ipai-radius-large: 8px;
+  --ipai-radius-xlarge: 12px;
+  --ipai-radius-circular: 9999px;
+
+  /* ============================================
+   * SPACING
+   * Consistent spacing scale
+   * ============================================ */
+  --ipai-spacing-none: 0px;
+  --ipai-spacing-xxs: 2px;
+  --ipai-spacing-xs: 4px;
+  --ipai-spacing-s: 8px;
+  --ipai-spacing-m: 12px;
+  --ipai-spacing-l: 16px;
+  --ipai-spacing-xl: 20px;
+  --ipai-spacing-xxl: 24px;
+  --ipai-spacing-xxxl: 32px;
+
+  /* ============================================
+   * TYPOGRAPHY
+   * Font families and sizes
+   * ============================================ */
+  --ipai-font-family-base: 'Segoe UI Variable', 'Segoe UI', system-ui, -apple-system, sans-serif;
+  --ipai-font-family-monospace: 'Cascadia Code', 'Fira Code', Consolas, monospace;
+  --ipai-font-family-numeric: Bahnschrift, 'Segoe UI Variable', sans-serif;
+
+  /* Font sizes */
+  --ipai-font-size-100: 10px;
+  --ipai-font-size-200: 12px;
+  --ipai-font-size-300: 14px;
+  --ipai-font-size-400: 16px;
+  --ipai-font-size-500: 20px;
+  --ipai-font-size-600: 24px;
+  --ipai-font-size-700: 28px;
+  --ipai-font-size-800: 32px;
+  --ipai-font-size-900: 40px;
+  --ipai-font-size-1000: 48px;
+
+  /* Font weights */
+  --ipai-font-weight-regular: 400;
+  --ipai-font-weight-medium: 500;
+  --ipai-font-weight-semibold: 600;
+  --ipai-font-weight-bold: 700;
+
+  /* Line heights */
+  --ipai-line-height-100: 14px;
+  --ipai-line-height-200: 16px;
+  --ipai-line-height-300: 20px;
+  --ipai-line-height-400: 22px;
+  --ipai-line-height-500: 28px;
+  --ipai-line-height-600: 32px;
+  --ipai-line-height-700: 36px;
+  --ipai-line-height-800: 40px;
+  --ipai-line-height-900: 52px;
+  --ipai-line-height-1000: 64px;
+
+  /* ============================================
+   * ANIMATION
+   * Duration and easing curves
+   * ============================================ */
+  --ipai-duration-ultra-fast: 50ms;
+  --ipai-duration-faster: 100ms;
+  --ipai-duration-fast: 150ms;
+  --ipai-duration-normal: 200ms;
+  --ipai-duration-slow: 300ms;
+  --ipai-duration-slower: 400ms;
+  --ipai-duration-ultra-slow: 500ms;
+
+  /* Easing curves */
+  --ipai-curve-accelerate-max: cubic-bezier(0.9, 0.1, 1, 0.2);
+  --ipai-curve-accelerate-mid: cubic-bezier(0.7, 0, 1, 0.5);
+  --ipai-curve-accelerate-min: cubic-bezier(0.8, 0, 1, 1);
+  --ipai-curve-decelerate-max: cubic-bezier(0.1, 0.9, 0.2, 1);
+  --ipai-curve-decelerate-mid: cubic-bezier(0, 0.7, 0.5, 1);
+  --ipai-curve-decelerate-min: cubic-bezier(0, 0.8, 1, 1);
+  --ipai-curve-easy-ease: cubic-bezier(0.33, 0, 0.67, 1);
+  --ipai-curve-easy-ease-max: cubic-bezier(0.8, 0, 0.2, 1);
+  --ipai-curve-linear: cubic-bezier(0, 0, 1, 1);
+
+  /* ============================================
+   * Z-INDEX SCALE
+   * Layering for overlays, modals, etc.
+   * ============================================ */
+  --ipai-z-index-background: -1;
+  --ipai-z-index-content: 0;
+  --ipai-z-index-sticky: 100;
+  --ipai-z-index-fixed: 200;
+  --ipai-z-index-overlay-backdrop: 300;
+  --ipai-z-index-overlay-content: 400;
+  --ipai-z-index-modal-backdrop: 500;
+  --ipai-z-index-modal-content: 600;
+  --ipai-z-index-popover: 700;
+  --ipai-z-index-tooltip: 800;
+  --ipai-z-index-notification: 900;
+}
+
+/* ============================================
+ * DARK THEME (optional)
+ * ============================================ */
+@media (prefers-color-scheme: dark) {
+  :root.ipai-theme-auto {
+    --ipai-color-neutral-background1: #1F1F1F;
+    --ipai-color-neutral-background2: #2D2D2D;
+    --ipai-color-neutral-background3: #3D3D3D;
+    --ipai-color-neutral-foreground1: #FFFFFF;
+    --ipai-color-neutral-foreground2: #D6D6D6;
+    --ipai-color-neutral-foreground3: #ADADAD;
+    --ipai-color-neutral-stroke1: #5C5C5C;
+    --ipai-color-neutral-stroke2: #4D4D4D;
+  }
+}
+
+.ipai-theme-dark {
+  --ipai-color-neutral-background1: #1F1F1F;
+  --ipai-color-neutral-background2: #2D2D2D;
+  --ipai-color-neutral-background3: #3D3D3D;
+  --ipai-color-neutral-foreground1: #FFFFFF;
+  --ipai-color-neutral-foreground2: #D6D6D6;
+  --ipai-color-neutral-foreground3: #ADADAD;
+  --ipai-color-neutral-stroke1: #5C5C5C;
+  --ipai-color-neutral-stroke2: #4D4D4D;
+}

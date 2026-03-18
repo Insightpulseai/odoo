@@ -1,0 +1,4 @@
+--- a/_work/OCA-ai/ai_oca_bridge_document_page/static/description/RagCapabilitiesWithOdooKnowledge.json
++++ b/automations/n8n/workflows/RagCapabilitiesWithOdooKnowledge.json
+@@ Move stray workflow to canonical location @@
+# git mv '_work/OCA-ai/ai_oca_bridge_document_page/static/description/RagCapabilitiesWithOdooKnowledge.json' 'automations/n8n/workflows/RagCapabilitiesWithOdooKnowledge.json'

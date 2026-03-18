@@ -1,0 +1,79 @@
+version: 1
+type: benchmark_skill
+classification: encoded_preference
+family: microsoft-caf
+skill:
+  name: caf-security-baseline
+  id: caf-security-baseline
+  version: "0.1.0"
+  status: draft
+  owner_persona: cloud-security-architect
+  source_family: microsoft-caf
+  benchmark_source: "Microsoft Cloud Adoption Framework"
+  purpose: >
+    Secure Azure environment following CAF Secure phase methodology. Covers
+    zero trust architecture, Microsoft Defender for Cloud, identity perimeter
+    with Entra ID, network segmentation, data protection, threat detection,
+    and security operations baselines.
+
+  triggers:
+    - security baseline establishment for new environment
+    - security posture assessment or compliance audit
+    - new service deployment requiring security review
+    - identity perimeter change (Keycloak to Entra migration)
+    - security incident or vulnerability discovered
+
+  inputs:
+    - current security posture (Defender for Cloud secure score)
+    - identity configuration (Entra ID, Keycloak, RBAC)
+    - network topology and segmentation
+    - data classification and encryption status
+    - compliance requirements
+
+  steps:
+    - assess current security posture using Defender for Cloud secure score
+    - evaluate zero trust implementation across identity, devices, network, data
+    - audit identity perimeter (Entra ID, Conditional Access, MFA, PIM)
+    - review network segmentation (NSGs, Private Link, service endpoints)
+    - assess data protection (encryption at rest, in transit, key management)
+    - evaluate threat detection (Defender plans, Sentinel integration)
+    - review security operations procedures (incident response, escalation)
+    - identify security gaps with severity classification
+    - define security improvement roadmap
+    - produce security posture report with evidence
+
+  outputs:
+    - security_posture_assessment
+    - zero_trust_maturity
+    - identity_audit_results
+    - network_segmentation_review
+    - data_protection_status
+    - threat_detection_coverage
+    - security_roadmap
+    - evidence
+
+  guardrails:
+    - "CAF is a benchmark reference, not a runtime dependency"
+    - "Canonical stack remains Odoo CE + Azure Container Apps"
+    - "A benchmark becomes integration only with explicit contract in docs/contracts/"
+    - "Security designs must account for Keycloak-to-Entra transition state"
+    - "Never propose controls requiring Enterprise SKU without documenting cost impact"
+    - "Secrets must align with Azure Key Vault conventions"
+
+  evidence:
+    required: true
+    format: "docs/evidence/{stamp}/caf/security/"
+
+  evals:
+    dimensions: [accuracy, completeness, zero_trust_coverage, threat_detection, evidence_quality]
+    thresholds:
+      accuracy: 0.95
+      zero_trust_coverage: 0.90
+
+cross_references:
+  - agents/knowledge/benchmarks/microsoft-cloud-adoption-framework.md
+  - agents/personas/cloud-security-architect.md
+  - agents/skills/azure-resiliency-ops/
+  - agents/skills/caf-governance-baseline/
+  - .claude/rules/security-baseline.md
+  - agent-platform/ssot/learning/microsoft_caf_skill_map.yaml

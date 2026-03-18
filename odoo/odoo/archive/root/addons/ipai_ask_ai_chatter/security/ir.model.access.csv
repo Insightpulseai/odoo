@@ -1,0 +1,2 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_ipai_ask_ai_chatter_request_user,ipai.ask_ai_chatter.request user,model_ipai_ask_ai_chatter_request,base.group_user,1,0,1,0

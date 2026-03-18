@@ -1,0 +1,76 @@
+version: 1
+source: odoo_sh_role_model
+status: active
+type: benchmark_taxonomy
+description: >
+  Maps Odoo.sh delivery roles to InsightPulse AI agent personas and their
+  owned skill families. Odoo.sh is the persona benchmark; Azure Container Apps
+  + Azure Front Door + Azure managed PostgreSQL is the implementation plane.
+
+personas:
+  - name: odoo-developer
+    benchmark_role: Developers
+    benchmark_source: Odoo.sh features — Developers
+    implementation_plane: GitHub + Azure Container Apps + Azure Log Analytics
+    persona_file: agents/personas/odoo-developer.md
+    owns:
+      - odoo-github-flow
+      - odoo-log-triage
+      - odoo-shell-debug
+      - odoo-module-dependency-management
+      - odoo-ci-validation
+
+  - name: odoo-tester
+    benchmark_role: Testers
+    benchmark_source: Odoo.sh features — Testers
+    implementation_plane: Azure managed PG + ACA staging revisions + GitHub Actions
+    persona_file: agents/personas/odoo-tester.md
+    owns:
+      - odoo-automated-test-readiness
+      - odoo-staging-validation
+      - odoo-branch-test-tracking
+      - odoo-manual-test-orchestration
+      - odoo-community-module-test-fit
+
+  - name: odoo-release-manager
+    benchmark_role: Project Managers
+    benchmark_source: Odoo.sh features — Project Managers
+    implementation_plane: GitHub PR flow + ACA revision promotion + ACR
+    persona_file: agents/personas/odoo-release-manager.md
+    owns:
+      - odoo-dev-to-staging-promotion
+      - odoo-staging-to-production-promotion
+      - odoo-build-sharing
+      - odoo-release-readiness
+
+  - name: odoo-platform-admin
+    benchmark_role: System Administrators
+    benchmark_source: Odoo.sh features — System Administrators
+    implementation_plane: Azure Monitor + Azure PG + Cloudflare + Azure Front Door
+    persona_file: agents/personas/odoo-platform-admin.md
+    owns:
+      - odoo-ha-posture
+      - odoo-backup-recovery
+      - odoo-mail-runtime
+      - odoo-performance-posture
+      - odoo-monitoring-posture
+      - odoo-dns-runtime
+      - odoo-security-posture
+
+meta_personas:
+  - name: odoo-delivery-judge
+    role: readiness_and_safety_gate
+    description: >
+      Validates release readiness by cross-checking evidence from all four
+      delivery personas. No direct Odoo.sh equivalent — governance construct
+      that ensures collective release readiness.
+    persona_file: agents/personas/odoo-delivery-judge.md
+    validates:
+      - odoo-developer
+      - odoo-tester
+      - odoo-release-manager
+      - odoo-platform-admin
+
+cross_references:
+  - agents/knowledge/benchmarks/odoo-sh-persona-model.md
+  - docs/architecture/reference-benchmarks.md

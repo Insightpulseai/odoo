@@ -1,0 +1,67 @@
+id: saas-observability-design
+name: SaaS Observability Design
+version: 0.1.0
+type: benchmark_skill
+classification: capability_uplift
+family: azure-saas-mt
+persona: saas-platform-architect
+updated_at: "2026-03-17"
+
+purpose: >
+  Design multi-tenant observability with tenant context, covering per-tenant
+  metrics, log partitioning, distributed tracing with tenant ID, SLA
+  dashboards, and anomaly detection.
+
+triggers:
+  - "No per-tenant visibility into platform health"
+  - "Cannot attribute performance issues to specific tenants"
+  - "SLA reporting requires tenant-level metrics"
+  - "Noisy neighbor detection requires tenant-tagged telemetry"
+
+inputs:
+  - telemetry_sources: "Application logs, metrics, traces, infrastructure metrics"
+  - tenant_context_method: "How tenant ID is propagated (HTTP header, token claim, context)"
+  - retention_requirements: "Log and metric retention periods"
+  - sla_definitions: "Per-tier SLA targets (availability, latency, throughput)"
+  - alerting_requirements: "Who gets alerted for which conditions"
+
+steps:
+  - "Design tenant context propagation through all telemetry"
+  - "Configure per-tenant metrics collection and aggregation"
+  - "Implement log partitioning with tenant ID enrichment"
+  - "Design distributed tracing with tenant correlation"
+  - "Build SLA compliance dashboards per tenant and tier"
+  - "Configure anomaly detection for tenant-level deviations"
+
+outputs:
+  - telemetry_architecture: "End-to-end observability pipeline with tenant context"
+  - metrics_design: "Per-tenant metrics, dimensions, and aggregation rules"
+  - log_partitioning: "Log Analytics workspace strategy and tenant filtering"
+  - tracing_design: "Distributed tracing with tenant correlation ID"
+  - sla_dashboards: "Dashboard definitions for per-tenant SLA tracking"
+  - alerting_rules: "Alert definitions with tenant-aware thresholds"
+
+guardrails:
+  - "Every log entry and metric must include tenant_id dimension"
+  - "Tenant A must not be able to see tenant B's telemetry"
+  - "SLA measurement must be automated, not manually calculated"
+  - "Alert fatigue must be managed — aggregate before alerting"
+
+evidence:
+  - "Per-tenant latency dashboard shows correct data per tenant"
+  - "Log query filtered by tenant_id returns only that tenant's logs"
+  - "SLA report generated automatically for billing period"
+
+dependencies:
+  - saas-resource-organization
+  - tenant-identity-isolation
+
+evals:
+  - scenario: "Query logs for specific tenant"
+    pass: "Only that tenant's log entries returned"
+  - scenario: "Tenant SLA breach"
+    pass: "Alert fires within 5 minutes, dashboard shows breach"
+  - scenario: "Cross-tenant telemetry isolation"
+    pass: "Tenant admin portal shows only their own metrics"
+
+benchmark_source: "Azure Monitor, Application Insights, Log Analytics Workspaces"

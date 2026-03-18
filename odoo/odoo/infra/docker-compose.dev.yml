@@ -1,0 +1,157 @@
+# =============================================================================
+# IPAI Dev Workspace — SSOT Delegator
+# =============================================================================
+# Delegates to canonical docker-compose.yml for core services (db, redis, odoo).
+# Adds only additional dev tools: Superset, n8n, MCP Gateway.
+#
+# Usage:
+#   docker compose -f docker-compose.yml -f docker-compose.dev.yml up -d
+#   docker compose -f docker-compose.yml -f docker-compose.dev.yml logs -f
+#
+# Endpoints:
+#   - Odoo:     http://localhost:8069      (from SSOT)
+#   - Superset: http://localhost:8088      (admin/admin)
+#   - n8n:      http://localhost:5679      (admin/admin — host port remapped from 5678 for debugpy)
+#   - MCP:      http://localhost:3333      (placeholder)
+# =============================================================================
+
+include:
+  - path: docker-compose.yml
+
+name: ipai_dev
+
+services:
+  # ===========================================
+  # SUPERSET (BI & Analytics)
+  # ===========================================
+  superset:
+    image: apache/superset:latest
+    container_name: ipai-superset-dev
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    environment:
+      SUPERSET_ENV: development
+      SUPERSET_CONFIG_PATH: /app/pythonpath/superset_config.py
+      SUPERSET_SECRET_KEY: dev-secret-key-change-in-prod
+      SQLALCHEMY_DATABASE_URI: postgresql+psycopg2://odoo:odoo@db:5432/odoo_dev
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+    ports:
+      - "8088:8088"
+    volumes:
+      - ./dev/superset/superset_config.py:/app/pythonpath/superset_config.py:ro
+      - superset_home:/app/superset_home
+    command: >
+      /bin/bash -lc "
+      superset db upgrade &&
+      superset fab create-admin --username admin --firstname Admin --lastname User --email admin@example.com --password admin || true &&
+      superset init &&
+      superset run -p 8088 -h 0.0.0.0 --with-threads --reload --debugger
+      "
+    healthcheck:
+      test: ["CMD", "curl", "-sf", "http://localhost:8088/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 120s
+    restart: unless-stopped
+
+  # ===========================================
+  # N8N (Workflow Automation)
+  # ===========================================
+  n8n:
+    image: n8nio/n8n:latest
+    container_name: ipai-n8n-dev
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      - N8N_HOST=localhost
+      - N8N_PORT=5678
+      - N8N_PROTOCOL=http
+      - NODE_ENV=development
+      # Host port remapped to 5679 so that 5678 is available for debugpy.
+      # n8n still listens internally on :5678 — only the host mapping changes.
+      - WEBHOOK_URL=http://localhost:5679/
+      - GENERIC_TIMEZONE=Asia/Manila
+      # Database
+      - DB_TYPE=postgresdb
+      - DB_POSTGRESDB_HOST=db
+      - DB_POSTGRESDB_PORT=5432
+      - DB_POSTGRESDB_DATABASE=odoo_dev
+      - DB_POSTGRESDB_USER=odoo
+      - DB_POSTGRESDB_PASSWORD=odoo
+      - DB_POSTGRESDB_SCHEMA=n8n
+      # Security
+      - N8N_BASIC_AUTH_ACTIVE=true
+      - N8N_BASIC_AUTH_USER=admin
+      - N8N_BASIC_AUTH_PASSWORD=admin
+    ports:
+      # host:5678 is RESERVED for Odoo debugpy (scripts/odoo_debugpy_entrypoint.py).
+      # n8n uses host:5679 → container:5678 to avoid the collision.
+      # Do NOT change back to 5678:5678 here.
+      - "5679:5678"
+    volumes:
+      - n8n_data:/home/node/.n8n
+      - ./n8n:/home/node/workflows:ro
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:5678/healthz || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+    restart: unless-stopped
+
+  # ===========================================
+  # MCP GATEWAY (Model Context Protocol)
+  # ===========================================
+  mcp_gateway:
+    image: node:20-alpine
+    container_name: ipai-mcp-dev
+    working_dir: /app
+    volumes:
+      - ./mcp:/app:ro
+      - mcp_modules:/app/node_modules
+    environment:
+      - NODE_ENV=development
+      - MCP_PORT=3333
+      - ODOO_URL=http://odoo:8069
+      - SUPERSET_URL=http://superset:8088
+      - N8N_URL=http://n8n:5678
+      - POSTGRES_URL=postgresql://odoo:odoo@db:5432/odoo_dev
+    ports:
+      - "3333:3333"
+    command: >
+      sh -c "
+      echo 'MCP Gateway placeholder - replace with actual server' &&
+      node -e \"
+        const http = require('http');
+        const server = http.createServer((req, res) => {
+          res.writeHead(200, {'Content-Type': 'application/json'});
+          res.end(JSON.stringify({
+            status: 'ok',
+            service: 'MCP Gateway',
+            endpoints: {
+              odoo: process.env.ODOO_URL,
+              superset: process.env.SUPERSET_URL,
+              n8n: process.env.N8N_URL
+            }
+          }));
+        });
+        server.listen(3333, '0.0.0.0', () => console.log('MCP Gateway listening on :3333'));
+      \"
+      "
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:3333/ || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    restart: unless-stopped
+
+volumes:
+  superset_home:
+  n8n_data:
+  mcp_modules:

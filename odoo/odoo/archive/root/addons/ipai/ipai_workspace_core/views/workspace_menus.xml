@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ============================================================ -->
+    <!-- Workspace Copilot menus (under existing Workspaces root)      -->
+    <!-- ============================================================ -->
+
+    <menuitem
+        id="menu_workspace_copilot"
+        name="Copilot"
+        parent="menu_ipai_workspace_root"
+        sequence="40"/>
+
+    <menuitem
+        id="menu_workspace_copilot_pages"
+        name="Pages"
+        parent="menu_workspace_copilot"
+        action="action_workspace_page"
+        sequence="10"/>
+
+    <menuitem
+        id="menu_workspace_copilot_saved_queries"
+        name="Saved Queries"
+        parent="menu_workspace_copilot"
+        action="action_workspace_saved_query"
+        sequence="20"/>
+
+    <menuitem
+        id="menu_workspace_copilot_evidence"
+        name="Evidence Packs"
+        parent="menu_workspace_copilot"
+        action="action_workspace_evidence_pack"
+        sequence="30"/>
+
+</odoo>

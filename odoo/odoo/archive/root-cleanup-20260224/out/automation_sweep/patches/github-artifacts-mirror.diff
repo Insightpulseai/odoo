@@ -1,0 +1,4 @@
+--- a/n8n/workflows/integration/github-artifacts-mirror.json
++++ b/automations/n8n/workflows/github-artifacts-mirror.json
+@@ Move stray workflow to canonical location @@
+# git mv 'n8n/workflows/integration/github-artifacts-mirror.json' 'automations/n8n/workflows/github-artifacts-mirror.json'

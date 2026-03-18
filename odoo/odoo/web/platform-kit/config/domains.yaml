@@ -1,0 +1,78 @@
+# =============================================================================
+# DOMAINS.YAML - Single Source of Truth for Domain Policy
+# =============================================================================
+# This file defines ALL domain-related policies for InsightPulse AI.
+# UI panels (Squarespace, Mailgun, etc.) are VIEWS, not sources of truth.
+# =============================================================================
+
+version: "1.0"
+last_updated: "2026-02-01"
+
+# -----------------------------------------------------------------------------
+# Canonical Domain Policy
+# -----------------------------------------------------------------------------
+canonical:
+  root_domain: insightpulseai.com
+  deprecated_domains:
+    - insightpulseai.net  # DO NOT USE - migrating away
+
+# -----------------------------------------------------------------------------
+# DNS Authority
+# -----------------------------------------------------------------------------
+dns:
+  provider: wix
+  nameservers:
+    - ns6.wixdns.net
+    - ns7.wixdns.net
+  management_url: https://manage.wix.com
+  note: "Squarespace is NOT the DNS authority - using Wix DNS"
+
+# -----------------------------------------------------------------------------
+# Domain Purposes
+# -----------------------------------------------------------------------------
+domains:
+  insightpulseai.com:
+    purpose: primary
+    usage:
+      - corporate_identity
+      - receiving_email
+      - web_presence
+    email_provider: zoho
+    mx_records:
+      - host: "@"
+        value: mx.zoho.com
+        priority: 10
+      - host: "@"
+        value: mx2.zoho.com
+        priority: 20
+      - host: "@"
+        value: mx3.zoho.com
+        priority: 50
+
+  mg.insightpulseai.com:
+    purpose: transactional_email
+    usage:
+      - smtp_outbound
+      - odoo_notifications
+      - system_emails
+    email_provider: mailgun
+    region: us
+    state: unverified  # Update after DNS verification
+
+  # Deprecated - DO NOT USE
+  mg.insightpulseai.net:
+    purpose: deprecated
+    status: to_be_removed
+    migration_target: mg.insightpulseai.com
+
+# -----------------------------------------------------------------------------
+# Validation Rules
+# -----------------------------------------------------------------------------
+validation:
+  # All outbound email MUST use .com domain
+  outbound_domain_regex: "^.*@(mg\\.)?insightpulseai\\.com$"
+
+  # Reject any .net usage
+  blocked_patterns:
+    - "insightpulseai.net"
+    - "mg.insightpulseai.net"

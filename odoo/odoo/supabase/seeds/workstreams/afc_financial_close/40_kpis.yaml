@@ -1,0 +1,105 @@
+# AFC Key Performance Indicators
+# Monitoring metrics for financial close
+
+kpis:
+  - id: kpi_afc_completion_rate
+    workstream_id: afc
+    code: AFC_COMPLETION_RATE
+    name: Task Completion Rate
+    description: Percentage of tasks completed on or before due date
+    formula: (completed_on_time / total_tasks) * 100
+    target: 95
+    unit: "%"
+    frequency: per_period
+    alert_threshold: 90
+
+  - id: kpi_afc_overdue_count
+    workstream_id: afc
+    code: AFC_OVERDUE_COUNT
+    name: Overdue Tasks
+    description: Number of tasks past due date
+    formula: count(tasks where status != 'done' and due_date < today)
+    target: 0
+    unit: "tasks"
+    frequency: daily
+    alert_threshold: 3
+
+  - id: kpi_afc_cycle_time
+    workstream_id: afc
+    code: AFC_CYCLE_TIME
+    name: Close Cycle Time
+    description: Working days from period end to final sign-off
+    formula: workdays_between(period_end, signoff_date)
+    target: 5
+    unit: "days"
+    frequency: per_period
+    alert_threshold: 7
+
+  - id: kpi_afc_first_pass_rate
+    workstream_id: afc
+    code: AFC_FIRST_PASS
+    name: First Pass Approval Rate
+    description: Percentage of tasks approved without rejection
+    formula: (approved_first_time / total_approved) * 100
+    target: 90
+    unit: "%"
+    frequency: per_period
+    alert_threshold: 80
+
+  - id: kpi_afc_evidence_complete
+    workstream_id: afc
+    code: AFC_EVIDENCE_COMPLETE
+    name: Evidence Completeness
+    description: Percentage of required evidence attached
+    formula: (evidence_attached / evidence_required) * 100
+    target: 100
+    unit: "%"
+    frequency: per_period
+    alert_threshold: 95
+
+  - id: kpi_afc_phase_completion
+    workstream_id: afc
+    code: AFC_PHASE_COMPLETION
+    name: Phase Completion by Day
+    description: Track phase completion against schedule
+    formula: phase_status_by_schedule
+    target: on_track
+    unit: "status"
+    frequency: daily
+    alert_threshold: at_risk
+
+  - id: kpi_afc_rework_rate
+    workstream_id: afc
+    code: AFC_REWORK_RATE
+    name: Rework Rate
+    description: Percentage of tasks requiring re-preparation
+    formula: (rejected_tasks / total_tasks) * 100
+    target: 5
+    unit: "%"
+    frequency: per_period
+    alert_threshold: 10
+
+  - id: kpi_afc_audit_findings
+    workstream_id: afc
+    code: AFC_AUDIT_FINDINGS
+    name: Audit Findings
+    description: Number of audit findings per close cycle
+    formula: count(audit_findings where period = current_period)
+    target: 0
+    unit: "findings"
+    frequency: per_period
+    alert_threshold: 1
+
+# KPI dashboard groupings
+dashboards:
+  - id: dash_afc_executive
+    name: Executive Dashboard
+    kpis: [kpi_afc_completion_rate, kpi_afc_cycle_time, kpi_afc_audit_findings]
+
+  - id: dash_afc_operations
+    name: Operations Dashboard
+    kpis: [kpi_afc_overdue_count, kpi_afc_first_pass_rate, kpi_afc_rework_rate]
+
+  - id: dash_afc_compliance
+    name: Compliance Dashboard
+    kpis: [kpi_afc_evidence_complete, kpi_afc_phase_completion]

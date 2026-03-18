@@ -1,0 +1,36 @@
+workstream:
+  id: str(required=True)
+  code: str(required=True)
+  name: str(required=True)
+  description: str(required=False)
+  sap_anchor: str(required=False)
+  odoo_anchor: str(required=False)
+  version: str(required=True)
+  domains: list(include('domain'), required=False)
+  worklist_types: list(include('worklist_type'), required=False)
+  frequencies: list(include('frequency'), required=False)
+  raci_roles: list(include('raci_role'), required=False)
+
+---
+domain:
+  code: str(required=True)
+  name: str(required=True)
+  description: str(required=False)
+
+---
+worklist_type:
+  code: str(required=True)
+  name: str(required=True)
+  description: str(required=False)
+
+---
+frequency:
+  code: str(required=True)
+  name: str(required=True)
+  deadline_rule: str(required=False)
+
+---
+raci_role:
+  code: str(required=True)
+  name: str(required=True)
+  description: str(required=False)

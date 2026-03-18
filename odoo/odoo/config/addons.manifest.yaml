@@ -89,6 +89,7 @@ oca_repositories:
       - base_tier_validation_formula
       - base_tier_validation_forward
       - date_range
+      - date_range_account
       - base_substate
 
   - repo: server-backend
@@ -197,6 +198,14 @@ oca_repositories:
     tier: 3
     purpose: Period/fiscal year closing automation
 
+  - repo: account-analytic
+    url: https://github.com/OCA/account-analytic.git
+    ref: "19.0"
+    tier: 3
+    purpose: Analytic accounting extensions
+    must_have:
+      - account_analytic_required
+
   - repo: account-financial-tools
     url: https://github.com/OCA/account-financial-tools.git
     ref: "19.0"
@@ -210,6 +219,7 @@ oca_repositories:
       - account_tax_balance
       - account_journal_lock_date
       - account_move_line_tax_editable
+      - account_chart_update
       - account_usability
       - currency_rate_update
 
@@ -329,12 +339,17 @@ oca_repositories:
       - sale_order_line_price_history
       - sale_order_line_input
       - sale_commercial_partner
+      - portal_sale_order_search
+      - sale_order_line_delivery_state
+      - sale_order_line_menu
 
   - repo: sale-reporting
     url: https://github.com/OCA/sale-reporting.git
     ref: "19.0"
     tier: 5
     purpose: Sales report extensions
+    must_have:
+      - sale_report_salesperson_from_partner
 
   - repo: purchase-workflow
     url: https://github.com/OCA/purchase-workflow.git
@@ -534,6 +549,8 @@ profiles:
       - mis_builder_budget           # server: mis-builder
       - partner_statement            # server: account-financial-reporting (if available)
       - currency_rate_update         # server: account-financial-tools
+      - account_analytic_required    # server: account-analytic
+      - account_chart_update         # server: account-financial-tools
       - account_journal_lock_date    # server: account-financial-tools
       - account_lock_date_update     # server: account-financial-tools
 
@@ -549,7 +566,11 @@ profiles:
       - sale_fixed_discount          # server: sale-workflow
       - sale_order_line_price_history  # server: sale-workflow
       - sale_order_line_input        # server: sale-workflow
+      - sale_order_line_delivery_state  # server: sale-workflow
+      - sale_order_line_menu         # server: sale-workflow
       - sale_order_archive           # server: sale-workflow
+      - portal_sale_order_search     # server: sale-workflow
+      - sale_report_salesperson_from_partner  # server: sale-reporting
 
   baseline_purchase_controls:
     provenance: curated_ipai

@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_ph_holiday_tree" model="ir.ui.view">
+        <field name="name">ph.holiday.tree</field>
+        <field name="model">ph.holiday</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="date"/>
+                <field name="name"/>
+                <field name="holiday_type" widget="badge"/>
+                <field name="year"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_ph_holiday_form" model="ir.ui.view">
+        <field name="name">ph.holiday.form</field>
+        <field name="model">ph.holiday</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="date"/>
+                        </group>
+                        <group>
+                            <field name="holiday_type"/>
+                            <field name="year"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_ph_holiday_calendar" model="ir.ui.view">
+        <field name="name">ph.holiday.calendar</field>
+        <field name="model">ph.holiday</field>
+        <field name="arch" type="xml">
+            <calendar date_start="date" color="holiday_type" mode="year">
+                <field name="name"/>
+            </calendar>
+        </field>
+    </record>
+
+    <record id="action_ph_holiday" model="ir.actions.act_window">
+        <field name="name">Philippine Holidays</field>
+        <field name="res_model">ph.holiday</field>
+        <field name="view_mode">calendar,list,form</field>
+    </record>
+</odoo>

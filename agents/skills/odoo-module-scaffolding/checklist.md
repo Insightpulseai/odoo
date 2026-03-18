@@ -1,0 +1,21 @@
+# Checklist — odoo-module-scaffolding
+
+- [ ] Module name matches `ipai_<domain>_<feature>` pattern
+- [ ] Directory created under `addons/ipai/`
+- [ ] `__manifest__.py` has version `19.0.x.y.z`
+- [ ] `__manifest__.py` has license `LGPL-3`
+- [ ] `__manifest__.py` has no Enterprise or IAP dependencies
+- [ ] `__manifest__.py` data order: security groups, ACLs, data, views
+- [ ] `__manifest__.py` passes `python3 -m py_compile`
+- [ ] `__init__.py` imports models package
+- [ ] `models/__init__.py` imports model files
+- [ ] Model class follows Odoo 19 attribute order (private attrs, defaults, fields, constraints, computes, CRUD, actions, business)
+- [ ] `security/ir.model.access.csv` has header row with all columns
+- [ ] ACL rows have all 4 CRUD columns (perm_read, perm_write, perm_create, perm_unlink)
+- [ ] ACL ID pattern: `access_<model>_<group>`
+- [ ] `views/` directory contains stub XML with correct XML ID conventions
+- [ ] `tests/__init__.py` exists
+- [ ] `tests/test_<module>.py` stub exists
+- [ ] README.rst or README.md exists with module purpose
+- [ ] No files created outside `addons/ipai/` directory
+- [ ] Evidence captured in `docs/evidence/{stamp}/odoo-dev/odoo-module-scaffolding/`

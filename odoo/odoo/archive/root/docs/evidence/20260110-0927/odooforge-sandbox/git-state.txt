@@ -1,0 +1,23 @@
+Commit: 46cebab6e9ba8755c70ceff931a3582e5a1441b6
+Author: Claude <noreply@anthropic.com>
+Date: Sat Jan 10 09:27:05 2026 +0000
+Subject: feat(sandbox): add OdooForge Sandbox containerized development environment
+ odooforge-sandbox/.gitignore             |  30 ++
+ odooforge-sandbox/Dockerfile.kit         |  38 +++
+ odooforge-sandbox/README.md              | 118 +++++++
+ odooforge-sandbox/addons/.gitkeep        |   1 +
+ odooforge-sandbox/config/odoo.conf       |  18 +
+ odooforge-sandbox/docker-compose.yml     |  74 ++++
+ odooforge-sandbox/install-sandbox.sh     | 178 ++++++++++
+ odooforge-sandbox/kit-cli/__init__.py    |   1 +
+ odooforge-sandbox/kit-cli/kit.py         | 557 +++++++++++++++++++++++++++++++
+ odooforge-sandbox/reports/.gitkeep       |   1 +
+ odooforge-sandbox/specs/.gitkeep         |   1 +
+ odooforge-sandbox/templates/.gitkeep     |   1 +
+ odooforge-sandbox/tests/UAT_TEST_PLAN.md | 177 ++++++++++
+ odooforge-sandbox/tests/__init__.py      |   1 +
+ odooforge-sandbox/tests/run-uat.sh       |  95 ++++++
+ odooforge-sandbox/tests/test_uat.py      | 469 ++++++++++++++++++++++++++
+ 16 files changed, 1760 insertions(+)
+
+Branch: claude/odooforge-sandbox-setup-EtB6m

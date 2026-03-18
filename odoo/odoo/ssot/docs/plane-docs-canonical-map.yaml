@@ -1,0 +1,367 @@
+# Plane Docs Canonical Ownership Map
+# SSOT for documentation surface ownership across Repo and Plane Wiki
+#
+# Spec bundle: spec/plane-unified-docs/
+# Human-readable map: docs/migration/PLANE_DOCS_CONSOLIDATION_MAP.md
+# Constitution: spec/plane-unified-docs/constitution.md
+#
+# Status: active
+# Created: 2026-03-13
+# Owner: Platform Architecture
+
+schema_version: "1.0"
+last_updated: "2026-03-13"
+
+# -------------------------------------------------------------------
+# Documentation domains and their canonical surface assignments
+# -------------------------------------------------------------------
+
+domains:
+
+  # -----------------------------------------------------------------
+  # 1. Architecture
+  # -----------------------------------------------------------------
+  - domain: architecture
+    canonical_surface: both_linked
+    repo_path: docs/architecture/
+    plane_location: "Wiki > Architecture"
+    owner: platform-architect
+    status: planned
+    migration_action: migrate
+    duplicate_sources:
+      - docs/ai/ARCHITECTURE.md
+      - docs/architecture/INSIGHTPULSEAI_TECHNICAL_ARCHITECTURE.md
+      - docs/architecture/IPAI_TARGET_ARCHITECTURE.md
+    notes: >
+      Machine-readable artifacts (schema.dbml, INDEX.json, PLACEMENT_AUDIT.yaml,
+      runtime_identifiers.json) stay in repo. Human-readable overviews, ADRs,
+      and strategy docs migrate to Plane Wiki. Duplicates between docs/ai/ and
+      docs/architecture/ are merged into single Plane pages.
+
+  # -----------------------------------------------------------------
+  # 2. Product Specs (PRDs)
+  # -----------------------------------------------------------------
+  - domain: product-specs
+    canonical_surface: both_linked
+    repo_path: spec/*/prd.md
+    plane_location: "Wiki > Product"
+    owner: product-owner
+    status: planned
+    migration_action: link
+    duplicate_sources:
+      - docs/product/
+    notes: >
+      Full PRDs remain in repo spec bundles (CI-enforced structure).
+      Plane Wiki gets a summary page per PRD with link to canonical
+      repo path. Spec bundle constitutions always stay in repo.
+      Active spec bundles: azure-target-state, enterprise-target-state,
+      lakehouse, odoo-copilot, odoo-erp-saas, platform-auth,
+      plane-unified-docs, sap-joule-concur-odoo-azure, and others.
+
+  # -----------------------------------------------------------------
+  # 3. Delivery Plans
+  # -----------------------------------------------------------------
+  - domain: delivery-plans
+    canonical_surface: both_linked
+    repo_path: spec/*/plan.md
+    plane_location: "Wiki > Delivery"
+    owner: delivery-lead
+    status: planned
+    migration_action: link
+    duplicate_sources: []
+    notes: >
+      Implementation plans stay in repo spec bundles. Plane Wiki
+      gets a summary page with timeline and links. Plane execution
+      (L3 work items and cycles) tracks active delivery.
+
+  # -----------------------------------------------------------------
+  # 4. Runbooks
+  # -----------------------------------------------------------------
+  - domain: runbooks
+    canonical_surface: plane_wiki
+    repo_path: docs/architecture/GOLDEN_PATH.md
+    plane_location: "Wiki > Runbooks"
+    owner: ops-lead
+    status: planned
+    migration_action: migrate
+    duplicate_sources:
+      - docs/deployment/
+      - docs/architecture/DEPLOY_TARGET_MATRIX.md
+      - docs/troubleshooting/
+    notes: >
+      All operational runbooks (deployment, backup, restore, monthly close,
+      certificate renewal, troubleshooting) migrate to Plane Wiki.
+      Repo files replaced with redirect stubs. GOLDEN_PATH.md becomes
+      the developer onboarding runbook.
+
+  # -----------------------------------------------------------------
+  # 5. Integrations
+  # -----------------------------------------------------------------
+  - domain: integrations
+    canonical_surface: both_linked
+    repo_path: ssot/integrations/
+    plane_location: "Wiki > Integrations"
+    owner: integration-owner
+    status: planned
+    migration_action: link
+    duplicate_sources:
+      - docs/architecture/INTEGRATIONS_SURFACE.md
+      - docs/architecture/N8N_AUTOMATION_CONTRACT.md
+      - docs/architecture/SLACK_AGENT_CONTRACT.md
+      - docs/architecture/PLANE_APP_CONNECTOR.md
+      - docs/architecture/PLANE_MARKETPLACE_INTEGRATIONS.md
+      - docs/integrations/
+    notes: >
+      SSOT YAML configs stay in repo (ssot/integrations/*.yaml).
+      Human-readable integration specs and contracts migrate to
+      Plane Wiki. Plane GitHub sync, Slack integration, and MCP
+      server configs stay in repo as machine-readable SSOT.
+
+  # -----------------------------------------------------------------
+  # 6. Data Platform
+  # -----------------------------------------------------------------
+  - domain: data-platform
+    canonical_surface: both_linked
+    repo_path: docs/architecture/DATABRICKS_ARCHITECTURE.md
+    plane_location: "Wiki > Data Platform"
+    owner: data-lead
+    status: planned
+    migration_action: migrate
+    duplicate_sources:
+      - docs/architecture/SUPERSET.md
+      - docs/architecture/SUPERSET_ERD_INTEGRATION.md
+      - docs/analytics/
+    notes: >
+      Data platform architecture, Superset docs, Databricks docs,
+      and medallion architecture docs migrate to Plane Wiki.
+      DBML schemas, SQL migrations, and ETL configs stay in repo.
+      Superset dashboard configs stay in infra/superset/.
+
+  # -----------------------------------------------------------------
+  # 7. ERP / Odoo
+  # -----------------------------------------------------------------
+  - domain: erp-odoo
+    canonical_surface: both_linked
+    repo_path: addons/ipai/
+    plane_location: "Wiki > ERP / Odoo"
+    owner: odoo-lead
+    status: planned
+    migration_action: link
+    duplicate_sources:
+      - docs/architecture/ODOO_EDITIONS_SSOT.md
+      - docs/architecture/EE_PARITY_MATRIX.md
+      - docs/architecture/EE_PARITY_POLICY.md
+      - docs/ai/EE_PARITY.md
+      - docs/architecture/MODULE_DECISION_RUBRIC.md
+      - docs/odoo/
+      - docs/oca/
+    notes: >
+      Module source code, __manifest__.py, OCA configs, and CLAUDE.md
+      always stay in repo. Human-readable strategy docs (editions policy,
+      EE parity matrix, module decision rubric) migrate to Plane Wiki.
+      EE parity duplicates across docs/architecture/ and docs/ai/ are
+      merged into one canonical Plane page. OCA workflow docs stay in
+      repo (code-adjacent).
+
+  # -----------------------------------------------------------------
+  # 8. Platform / Azure
+  # -----------------------------------------------------------------
+  - domain: platform-azure
+    canonical_surface: both_linked
+    repo_path: infra/
+    plane_location: "Wiki > Platform / Azure"
+    owner: infrastructure-lead
+    status: planned
+    migration_action: link
+    duplicate_sources:
+      - docs/architecture/ODOO_ACA_RUNTIME.md
+      - docs/architecture/FRONT_DOOR_MIGRATION.md
+      - docs/architecture/CANONICAL_RUNTIME_IMAGE.md
+      - docs/infra/
+    notes: >
+      IaC configs (Terraform, DNS YAML, compose files) stay in repo.
+      Human-readable Azure architecture docs, service matrix overviews,
+      and cost optimization guides migrate to Plane Wiki.
+      Service matrix SSOT stays in ssot/azure/service-matrix.yaml.
+
+  # -----------------------------------------------------------------
+  # 9. AI / Agents
+  # -----------------------------------------------------------------
+  - domain: ai-agents
+    canonical_surface: both_linked
+    repo_path: .claude/
+    plane_location: "Wiki > AI / Agents"
+    owner: ai-lead
+    status: planned
+    migration_action: link
+    duplicate_sources:
+      - docs/architecture/AGENT_RUNTIMES.md
+      - docs/architecture/AI_PROVIDER_BRIDGE.md
+      - docs/architecture/ASK_AI_CONTRACT.md
+      - docs/architecture/IPAI_AI_PLATFORM_ARCH.md
+      - docs/agents/
+    notes: >
+      Agent configs (.claude/, CLAUDE.md, MCP configs) always stay in
+      repo. Human-readable AI strategy docs, agent runtime overviews,
+      and platform architecture migrate to Plane Wiki. AI module
+      deprecation manifests stay in repo (CI-enforced).
+
+  # -----------------------------------------------------------------
+  # 10. Finance / Compliance
+  # -----------------------------------------------------------------
+  - domain: finance-compliance
+    canonical_surface: plane_wiki
+    repo_path: addons/ipai/ipai_bir_tax_compliance/
+    plane_location: "Wiki > Finance / Compliance"
+    owner: compliance-lead
+    status: planned
+    migration_action: migrate
+    duplicate_sources:
+      - docs/ai/BIR_COMPLIANCE.md
+      - docs/architecture/AUTOMATION_AUDIT_TRAIL.md
+    notes: >
+      BIR compliance docs, tax tables, monthly close process docs,
+      and audit trail docs migrate to Plane Wiki. Module source code
+      and tax computation logic stay in repo. TRAIN law tax tables
+      in CLAUDE.md stay (code-adjacent reference for agents).
+
+  # -----------------------------------------------------------------
+  # 11. Governance
+  # -----------------------------------------------------------------
+  - domain: governance
+    canonical_surface: both_linked
+    repo_path: docs/governance/
+    plane_location: "Wiki > Governance"
+    owner: governance-lead
+    status: planned
+    migration_action: migrate
+    duplicate_sources:
+      - docs/architecture/GOVERNANCE_BRANCH_PROTECTION.md
+      - docs/architecture/GOVERNANCE_HARDENING_2026-03-05.md
+      - ssot/governance/
+    notes: >
+      Human-readable governance docs (review cadence, escalation paths,
+      branch protection policies) migrate to Plane Wiki. Machine-readable
+      governance configs in ssot/governance/ stay in repo.
+      CI-enforced contracts (MONOREPO_CONTRACT.md, SOW_BOUNDARY.md)
+      stay in repo.
+
+  # -----------------------------------------------------------------
+  # 12. Templates
+  # -----------------------------------------------------------------
+  - domain: templates
+    canonical_surface: plane_wiki
+    repo_path: null
+    plane_location: "Wiki > Templates"
+    owner: governance-lead
+    status: planned
+    migration_action: migrate
+    duplicate_sources: []
+    notes: >
+      Page templates (ADR, PRD, Runbook, Incident Postmortem, Release
+      Checklist, Onboarding Guide, Integration Spec) are created natively
+      in Plane. No repo equivalent. Template definitions documented in
+      docs/architecture/PLANE_UNIFIED_DOCS_TARGET_STATE.md for reference.
+
+  # -----------------------------------------------------------------
+  # 13. Release Logs
+  # -----------------------------------------------------------------
+  - domain: release-logs
+    canonical_surface: both_linked
+    repo_path: docs/releases/
+    plane_location: "Wiki > Releases"
+    owner: release-manager
+    status: planned
+    migration_action: link
+    duplicate_sources: []
+    notes: >
+      Machine-readable release data (WHAT_SHIPPED.json, GO_LIVE_MANIFEST.md)
+      stays in repo. Human-readable release notes and retrospectives
+      migrate to Plane Wiki. Each release gets a Plane page using the
+      Release Checklist template.
+
+  # -----------------------------------------------------------------
+  # 14. Operations
+  # -----------------------------------------------------------------
+  - domain: operations
+    canonical_surface: plane_wiki
+    repo_path: docs/operations/
+    plane_location: "Wiki > Operations"
+    owner: ops-lead
+    status: planned
+    migration_action: migrate
+    duplicate_sources:
+      - docs/troubleshooting/
+    notes: >
+      Incident postmortems, health check procedures, monitoring thresholds,
+      and on-call rotation docs migrate to Plane Wiki. CI health check
+      scripts stay in repo. Evidence bundles (docs/evidence/) stay in
+      repo (CI-generated).
+
+  # -----------------------------------------------------------------
+  # 15. Onboarding
+  # -----------------------------------------------------------------
+  - domain: onboarding
+    canonical_surface: plane_wiki
+    repo_path: docs/guides/
+    plane_location: "Wiki > Onboarding"
+    owner: team-lead
+    status: planned
+    migration_action: migrate
+    duplicate_sources:
+      - docs/architecture/ECOSYSTEM_GUIDE.md
+    notes: >
+      New developer setup, ecosystem guide, agent onboarding, and
+      platform services map migrate to Plane Wiki. Code-adjacent
+      setup docs (README files in module directories) stay in repo.
+
+# -------------------------------------------------------------------
+# Summary statistics
+# -------------------------------------------------------------------
+summary:
+  total_domains: 15
+  canonical_plane_wiki: 4
+  canonical_repo: 0
+  canonical_both_linked: 11
+  status_planned: 15
+  status_active: 0
+  status_migrated: 0
+  status_archived: 0
+
+# -------------------------------------------------------------------
+# Consolidation rules (machine-readable reference)
+# -------------------------------------------------------------------
+rules:
+  stays_in_repo:
+    - "Machine-readable SSOT (YAML, JSON, DBML, SQL)"
+    - "CI/CD workflow definitions (.github/workflows/)"
+    - "Code-adjacent docs (CLAUDE.md, module READMEs, inline docs)"
+    - "CI-enforced contracts and schemas"
+    - "Evidence bundles (docs/evidence/, CI-generated)"
+    - "Docker/IaC configs (docker/, deploy/, infra/)"
+    - "Lock files (oca.lock.json, pnpm-lock.yaml)"
+    - "Spec bundle constitutions (spec/*/constitution.md)"
+    - "Agent configs (.claude/)"
+
+  migrates_to_plane_wiki:
+    - "Architecture overviews and strategy docs"
+    - "PRD summaries (full PRD stays in repo, summary in wiki)"
+    - "Delivery plans and roadmaps"
+    - "Runbooks and operational procedures"
+    - "Integration specs (human-readable portions)"
+    - "Decision records (ADRs)"
+    - "Onboarding guides"
+    - "Governance and process docs"
+    - "Release notes (human-readable)"
+
+  archives_then_deletes:
+    - "Duplicate content (same doc in multiple locations)"
+    - "Stale content referencing deprecated systems"
+    - "Draft documents with no review in 180+ days"
+    - "Legacy migration artifacts from completed migrations"
+
+  never_in_plane:
+    - "Secrets, API keys, credentials"
+    - "Raw CI logs or build artifacts"
+    - "Git history or diff output"
+    - "Machine-readable configs that CI parses"

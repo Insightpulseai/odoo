@@ -1,0 +1,40 @@
+version: 1
+source: microsoft_foundry_documentation
+status: active
+type: foundry_taxonomy
+family: foundry_model_tool_runtime
+updated_at: "2026-03-17"
+
+description: >
+  Three Foundry control planes mapped to bounded personas and skills.
+  Model governance, tool governance, and runtime promotion as separate surfaces.
+
+planes:
+  - id: model_selection
+    personas:
+      - foundry-model-governor
+    skills:
+      - foundry-model-selection
+      - foundry-model-routing
+      - foundry-model-benchmark-judge
+
+  - id: tool_catalog
+    personas:
+      - foundry-tool-governor
+    skills:
+      - foundry-tool-catalog-curation
+      - foundry-mcp-auth-design
+      - foundry-remote-mcp-registration
+
+  - id: runtime_promotion
+    personas:
+      - foundry-runtime-builder
+      - foundry-eval-judge
+    skills:
+      - foundry-agent-runtime-promotion
+
+cross_references:
+  - agents/knowledge/benchmarks/microsoft-foundry-models-and-tools.md
+  - docs/contracts/foundry-vscode-auth-contract.md
+  - ssot/agents/mcp-baseline.yaml
+  - ssot/runtime/live-builder-surfaces.yaml

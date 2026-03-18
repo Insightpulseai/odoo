@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+    <!--
+    BIR Filing Deadlines Reference
+
+    Monthly Forms (due 20th of following month):
+    - 2550M (VAT)
+    - 1601-C (Compensation WHT)
+    - 1601-E (Expanded WHT)
+    - 1601-F (Final WHT)
+    - 2551M (Percentage Tax)
+    - 1600 (VAT/Percentage Withheld)
+
+    Quarterly Forms (due 25th of month following quarter):
+    - 2550Q (Quarterly VAT)
+    - 1701Q (Quarterly Income Tax - Self-employed)
+    - 2551Q (Quarterly Percentage Tax)
+
+    Annual Forms (due April 15):
+    - 1604-CF (Alphalist - Compensation)
+    - 1604-E (Alphalist - Expanded WHT)
+    - 1700 (Annual ITR - Compensation only)
+    - 1701 (Annual ITR - Self-employed)
+    - 1702-RT/MX/EX (Corporate Annual ITR)
+
+    Per Transaction:
+    - 1706 (Capital Gains - Real Property): 30 days from sale
+    - 1707 (Capital Gains - Shares): 30 days from sale
+    - 2000 (DST): Per document execution
+    - 0605 (Payment Form): Per payment
+    -->
+</odoo>

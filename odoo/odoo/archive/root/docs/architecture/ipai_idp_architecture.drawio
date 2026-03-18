@@ -1,0 +1,257 @@
+<mxfile host="app.diagrams.net" modified="2024-12-06T00:00:00.000Z" agent="Claude" version="21.0.0">
+  <diagram name="IPAI IDP Architecture" id="ipai-idp-arch">
+    <mxGraphModel dx="1422" dy="794" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <!-- Title -->
+        <mxCell id="title" value="IPAI IDP - Intelligent Document Processing Architecture" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=18;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="280" y="20" width="600" height="30" as="geometry" />
+        </mxCell>
+
+        <!-- Document Sources Container -->
+        <mxCell id="sources-container" value="Document Sources" style="swimlane;horizontal=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;rounded=1;fontSize=12;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="40" y="70" width="160" height="300" as="geometry" />
+        </mxCell>
+
+        <mxCell id="src-upload" value="Manual Upload" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="sources-container">
+          <mxGeometry x="30" y="30" width="100" height="40" as="geometry" />
+        </mxCell>
+
+        <mxCell id="src-email" value="Email Inbox" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="sources-container">
+          <mxGeometry x="30" y="80" width="100" height="40" as="geometry" />
+        </mxCell>
+
+        <mxCell id="src-api" value="REST API" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="sources-container">
+          <mxGeometry x="30" y="130" width="100" height="40" as="geometry" />
+        </mxCell>
+
+        <mxCell id="src-mobile" value="Mobile App" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="sources-container">
+          <mxGeometry x="30" y="180" width="100" height="40" as="geometry" />
+        </mxCell>
+
+        <mxCell id="src-drive" value="Cloud Drive" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="sources-container">
+          <mxGeometry x="30" y="230" width="100" height="40" as="geometry" />
+        </mxCell>
+
+        <!-- IDP Pipeline Container -->
+        <mxCell id="pipeline-container" value="IDP Processing Pipeline" style="swimlane;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;rounded=1;fontSize=12;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="230" y="70" width="540" height="180" as="geometry" />
+        </mxCell>
+
+        <mxCell id="step-queued" value="Queued" style="ellipse;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontColor=#333333;" vertex="1" parent="pipeline-container">
+          <mxGeometry x="20" y="40" width="60" height="40" as="geometry" />
+        </mxCell>
+
+        <mxCell id="step-ocr" value="OCR&#xa;Processing" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="pipeline-container">
+          <mxGeometry x="100" y="35" width="70" height="50" as="geometry" />
+        </mxCell>
+
+        <mxCell id="step-classify" value="Document&#xa;Classification" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="pipeline-container">
+          <mxGeometry x="190" y="35" width="70" height="50" as="geometry" />
+        </mxCell>
+
+        <mxCell id="step-extract" value="LLM&#xa;Extraction" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" vertex="1" parent="pipeline-container">
+          <mxGeometry x="280" y="35" width="70" height="50" as="geometry" />
+        </mxCell>
+
+        <mxCell id="step-validate" value="Validation&#xa;Rules" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="pipeline-container">
+          <mxGeometry x="370" y="35" width="70" height="50" as="geometry" />
+        </mxCell>
+
+        <mxCell id="step-decision" value="?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="pipeline-container">
+          <mxGeometry x="460" y="35" width="50" height="50" as="geometry" />
+        </mxCell>
+
+        <!-- Pipeline arrows -->
+        <mxCell id="arrow1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="pipeline-container" source="step-queued" target="step-ocr">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="arrow2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="pipeline-container" source="step-ocr" target="step-classify">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="arrow3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="pipeline-container" source="step-classify" target="step-extract">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="arrow4" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="pipeline-container" source="step-extract" target="step-validate">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="arrow5" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="pipeline-container" source="step-validate" target="step-decision">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Outcome boxes -->
+        <mxCell id="outcome-approved" value="Auto-Approved&#xa;(conf ≥ 90%)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="pipeline-container">
+          <mxGeometry x="440" y="110" width="80" height="50" as="geometry" />
+        </mxCell>
+
+        <mxCell id="outcome-review" value="Review&#xa;Needed" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="pipeline-container">
+          <mxGeometry x="340" y="110" width="80" height="50" as="geometry" />
+        </mxCell>
+
+        <!-- Decision arrows -->
+        <mxCell id="arrow-approved" value="pass" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontStyle=2;fontSize=10;" edge="1" parent="pipeline-container" source="step-decision" target="outcome-approved">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="arrow-review" value="fail/low" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontStyle=2;fontSize=10;" edge="1" parent="pipeline-container" source="step-decision" target="outcome-review">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Services Container -->
+        <mxCell id="services-container" value="Odoo Services Layer" style="swimlane;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;rounded=1;fontSize=12;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="230" y="270" width="540" height="100" as="geometry" />
+        </mxCell>
+
+        <mxCell id="svc-ocr" value="idp.service.ocr" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=10;" vertex="1" parent="services-container">
+          <mxGeometry x="20" y="35" width="90" height="45" as="geometry" />
+        </mxCell>
+
+        <mxCell id="svc-extractor" value="idp.service.extractor" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=10;" vertex="1" parent="services-container">
+          <mxGeometry x="125" y="35" width="90" height="45" as="geometry" />
+        </mxCell>
+
+        <mxCell id="svc-validator" value="idp.service.validator" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=10;" vertex="1" parent="services-container">
+          <mxGeometry x="230" y="35" width="90" height="45" as="geometry" />
+        </mxCell>
+
+        <mxCell id="svc-parser" value="idp.service.parser" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=10;" vertex="1" parent="services-container">
+          <mxGeometry x="335" y="35" width="90" height="45" as="geometry" />
+        </mxCell>
+
+        <mxCell id="svc-health" value="idp.service.health" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;" vertex="1" parent="services-container">
+          <mxGeometry x="440" y="35" width="90" height="45" as="geometry" />
+        </mxCell>
+
+        <!-- Data Models Container -->
+        <mxCell id="models-container" value="Odoo Data Models" style="swimlane;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;rounded=1;fontSize=12;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="230" y="390" width="540" height="100" as="geometry" />
+        </mxCell>
+
+        <mxCell id="model-doc" value="idp.document" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=10;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=10;" vertex="1" parent="models-container">
+          <mxGeometry x="30" y="30" width="80" height="55" as="geometry" />
+        </mxCell>
+
+        <mxCell id="model-ocr" value="idp.document.ocr" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=10;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=10;" vertex="1" parent="models-container">
+          <mxGeometry x="130" y="30" width="80" height="55" as="geometry" />
+        </mxCell>
+
+        <mxCell id="model-extraction" value="idp.extraction" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=10;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=10;" vertex="1" parent="models-container">
+          <mxGeometry x="230" y="30" width="80" height="55" as="geometry" />
+        </mxCell>
+
+        <mxCell id="model-review" value="idp.review" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=10;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=10;" vertex="1" parent="models-container">
+          <mxGeometry x="330" y="30" width="80" height="55" as="geometry" />
+        </mxCell>
+
+        <mxCell id="model-version" value="idp.model.version" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=10;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;" vertex="1" parent="models-container">
+          <mxGeometry x="430" y="30" width="80" height="55" as="geometry" />
+        </mxCell>
+
+        <!-- External APIs Container -->
+        <mxCell id="external-container" value="External Services" style="swimlane;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;rounded=1;fontSize=12;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="800" y="70" width="160" height="200" as="geometry" />
+        </mxCell>
+
+        <mxCell id="ext-ocr-api" value="OCR API&#xa;(InsightPulse/&#xa;Google/Azure)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=10;" vertex="1" parent="external-container">
+          <mxGeometry x="20" y="35" width="120" height="50" as="geometry" />
+        </mxCell>
+
+        <mxCell id="ext-llm-api" value="LLM API&#xa;(Claude/OpenAI)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=10;" vertex="1" parent="external-container">
+          <mxGeometry x="20" y="100" width="120" height="50" as="geometry" />
+        </mxCell>
+
+        <!-- Health Endpoints Container -->
+        <mxCell id="health-container" value="Health Endpoints" style="swimlane;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;rounded=1;fontSize=12;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="800" y="290" width="160" height="130" as="geometry" />
+        </mxCell>
+
+        <mxCell id="ep-livez" value="/ipai/idp/livez" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;" vertex="1" parent="health-container">
+          <mxGeometry x="20" y="30" width="120" height="25" as="geometry" />
+        </mxCell>
+
+        <mxCell id="ep-readyz" value="/ipai/idp/readyz" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=10;" vertex="1" parent="health-container">
+          <mxGeometry x="20" y="60" width="120" height="25" as="geometry" />
+        </mxCell>
+
+        <mxCell id="ep-healthz" value="/ipai/idp/healthz" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=10;" vertex="1" parent="health-container">
+          <mxGeometry x="20" y="90" width="120" height="25" as="geometry" />
+        </mxCell>
+
+        <!-- Security Groups Container -->
+        <mxCell id="security-container" value="Security Groups" style="swimlane;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;rounded=1;fontSize=12;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="800" y="440" width="160" height="130" as="geometry" />
+        </mxCell>
+
+        <mxCell id="grp-user" value="IDP User (read)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=9;" vertex="1" parent="security-container">
+          <mxGeometry x="10" y="25" width="140" height="20" as="geometry" />
+        </mxCell>
+
+        <mxCell id="grp-reviewer" value="IDP Reviewer (+ review)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=9;" vertex="1" parent="security-container">
+          <mxGeometry x="10" y="50" width="140" height="20" as="geometry" />
+        </mxCell>
+
+        <mxCell id="grp-manager" value="IDP Manager (+ CRUD)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=9;" vertex="1" parent="security-container">
+          <mxGeometry x="10" y="75" width="140" height="20" as="geometry" />
+        </mxCell>
+
+        <mxCell id="grp-admin" value="IDP Admin (+ config)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=9;" vertex="1" parent="security-container">
+          <mxGeometry x="10" y="100" width="140" height="20" as="geometry" />
+        </mxCell>
+
+        <!-- Output Container -->
+        <mxCell id="output-container" value="Output / Export" style="swimlane;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;rounded=1;fontSize=12;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="40" y="390" width="160" height="100" as="geometry" />
+        </mxCell>
+
+        <mxCell id="out-invoice" value="account.move&#xa;(Vendor Bills)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;" vertex="1" parent="output-container">
+          <mxGeometry x="20" y="30" width="120" height="50" as="geometry" />
+        </mxCell>
+
+        <!-- Connecting arrows between containers -->
+        <mxCell id="src-to-pipeline" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#6c8ebf;" edge="1" parent="1" source="sources-container" target="pipeline-container">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="pipeline-to-external" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#b85450;dashed=1;" edge="1" parent="1" source="pipeline-container" target="external-container">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="services-to-health" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=1;strokeColor=#82b366;dashed=1;" edge="1" parent="1" source="svc-health" target="health-container">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="output-arrow" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#82b366;" edge="1" parent="1" source="models-container" target="output-container">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Legend -->
+        <mxCell id="legend-title" value="Legend" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=11;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="40" y="510" width="60" height="20" as="geometry" />
+        </mxCell>
+
+        <mxCell id="legend-ocr" value="OCR" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=9;" vertex="1" parent="1">
+          <mxGeometry x="40" y="535" width="50" height="20" as="geometry" />
+        </mxCell>
+
+        <mxCell id="legend-llm" value="LLM" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=9;" vertex="1" parent="1">
+          <mxGeometry x="100" y="535" width="50" height="20" as="geometry" />
+        </mxCell>
+
+        <mxCell id="legend-validation" value="Validation" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=9;" vertex="1" parent="1">
+          <mxGeometry x="160" y="535" width="60" height="20" as="geometry" />
+        </mxCell>
+
+        <mxCell id="legend-data" value="Data Store" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=5;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=9;" vertex="1" parent="1">
+          <mxGeometry x="230" y="530" width="60" height="30" as="geometry" />
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

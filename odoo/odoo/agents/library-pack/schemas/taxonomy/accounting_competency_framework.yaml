@@ -1,0 +1,65 @@
+version: 1
+framework:
+  name: accounting_competency_framework
+  tracks:
+    - id: financial_close
+      competencies:
+        - id: close_planning
+          name: Close planning & calendar
+          skills:
+            ["close calendar design", "cutoff rules", "task dependency mapping"]
+        - id: reconciliations
+          name: Reconciliations
+          skills:
+            ["bank rec", "AR/AP rec", "intercompany rec", "variance analysis"]
+        - id: journals
+          name: Journals & adjustments
+          skills: ["accruals", "deferrals", "reclasses", "FX remeasurement"]
+        - id: controls
+          name: Controls & approvals
+          skills:
+            [
+              "segregation of duties",
+              "evidence retention",
+              "audit trail review",
+            ]
+
+    - id: tax_compliance
+      competencies:
+        - id: vat
+          name: VAT compliance
+          skills:
+            [
+              "vat mapping",
+              "output/input reconciliation",
+              "return preparation",
+              "payment tracking",
+            ]
+        - id: withholding
+          name: Withholding compliance
+          skills:
+            [
+              "rate application",
+              "certificate tracking",
+              "return preparation",
+              "vendor reconciliation",
+            ]
+        - id: statutory_reporting
+          name: Statutory reporting
+          skills:
+            [
+              "schedule preparation",
+              "supporting docs",
+              "filing packaging",
+              "deadline monitoring",
+            ]
+
+  mapping_hints:
+    odoo_modules:
+      ["account", "purchase", "hr_expense", "project", "documents (if used)"]
+    automation:
+      [
+        "scheduled checks (bounded runtime)",
+        "evidence bundle generation",
+        "policy rules as YAML",
+      ]

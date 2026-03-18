@@ -1,0 +1,82 @@
+{
+  "name": "@ipai/design-tokens",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Design tokens for IPAI applications: Fluent 2, Material 3 Expressive, Tableau (Odoo, Superset, Next.js, Vite)",
+  "files": [
+    "dist/",
+    "src/",
+    "tokens.css",
+    "tokens.scss",
+    "tableau.css",
+    "tailwind.preset.js",
+    "tailwind-material3.preset.js",
+    "tailwind-tableau.preset.js",
+    "material3-expressive.css"
+  ],
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    },
+    "./fluent.css": "./dist/fluent.css",
+    "./tokens.json": "./dist/tokens.json",
+    "./tailwind-preset": "./dist/tailwind-preset.cjs",
+    "./tokens.css": "./tokens.css",
+    "./tokens.scss": "./tokens.scss",
+    "./tableau.css": "./tableau.css",
+    "./tailwind.preset": "./tailwind.preset.js",
+    "./tailwind-material3.preset": "./tailwind-material3.preset.js",
+    "./tailwind-tableau.preset": "./tailwind-tableau.preset.js",
+    "./material3-expressive.css": "./material3-expressive.css",
+    "./material3Theme": {
+      "import": "./src/material3Theme.ts",
+      "types": "./src/material3Theme.ts"
+    },
+    "./react/Material3Components": {
+      "import": "./src/react/Material3Components.tsx",
+      "types": "./src/react/Material3Components.tsx"
+    },
+    "./odooTokens": {
+      "import": "./src/odooTokens.ts",
+      "types": "./src/odooTokens.ts"
+    },
+    "./tableauTokens": {
+      "import": "./src/tableauTokens.ts",
+      "types": "./src/tableauTokens.ts"
+    },
+    "./tableauTokens.json": "./src/tableauTokens.json",
+    "./react/AIChatWidget": {
+      "import": "./src/react/AIChatWidget.tsx",
+      "types": "./src/react/AIChatWidget.tsx"
+    },
+    "./insightpulse-ai.css": "./insightpulse-ai.css",
+    "./ipai-brand/tokens.json": "./tokens.json",
+    "./ipai-brand/css": "./export/css-vars.css",
+    "./ipai-brand": {
+      "import": "./src/ipai-brand.ts",
+      "types": "./src/ipai-brand.ts"
+    }
+  },
+  "scripts": {
+    "dev": "vite",
+    "preview": "vite preview",
+    "build": "tsx src/build.ts",
+    "build:watch": "tsx watch src/build.ts",
+    "sync:odoo": "cp dist/fluent.css ../../addons/ipai/ipai_theme_fluent2/static/src/css/fluent2.css && echo '✓ Synced to ipai_theme_fluent2'"
+  },
+  "dependencies": {
+    "@fluentui/tokens": "^1.0.0-alpha.17"
+  },
+  "devDependencies": {
+    "@types/react": "^18.3.3",
+    "@types/react-dom": "^18.3.0",
+    "@vitejs/plugin-react": "^4.3.1",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "tsx": "^4.7.0",
+    "typescript": "^5.6.3",
+    "vite": "^5.4.0"
+  }
+}

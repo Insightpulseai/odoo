@@ -1,0 +1,185 @@
+version: 1
+id: microsoft_caf_skill_map
+status: active
+source_family:
+  - microsoft-caf
+type: benchmark_curriculum
+updated_at: "2026-03-17"
+
+description: >
+  Maps Microsoft Cloud Adoption Framework (CAF) 9 lifecycle phases to bounded
+  personas, skills, and knowledge bases. CAF is a benchmark for cloud adoption
+  discipline and Azure landing zone architecture. It informs architecture quality
+  but does NOT replace the canonical stack (Odoo CE + Azure Container Apps).
+
+personas:
+  - id: cloud-strategy-advisor
+    file: agents/personas/cloud-strategy-advisor.md
+    owns:
+      - caf-strategy-definition
+      - caf-adoption-planning
+    responsibility: "Strategy and Plan phases — business justification, adoption outcomes, skills readiness"
+
+  - id: landing-zone-architect
+    file: agents/personas/landing-zone-architect.md
+    owns:
+      - caf-landing-zone-design
+    responsibility: "Ready phase — Azure landing zone design, subscription topology, platform automation"
+
+  - id: cloud-migration-engineer
+    file: agents/personas/cloud-migration-engineer.md
+    owns:
+      - caf-workload-migration
+      - caf-workload-modernization
+    responsibility: "Migrate and Modernize phases — workload assessment, migration waves, modernization patterns"
+
+  - id: cloud-native-architect
+    file: agents/personas/cloud-native-architect.md
+    owns:
+      - caf-cloud-native-design
+    responsibility: "Cloud-native phase — greenfield design, containers, serverless, microservices"
+
+  - id: cloud-governance-operator
+    file: agents/personas/cloud-governance-operator.md
+    owns:
+      - caf-governance-baseline
+      - caf-operations-management
+    responsibility: "Govern and Manage phases — policy enforcement, cost management, operational baselines"
+
+  - id: cloud-security-architect
+    file: agents/personas/cloud-security-architect.md
+    owns:
+      - caf-security-baseline
+    responsibility: "Secure phase — zero trust, identity perimeter, threat protection, security baselines"
+
+knowledge_bases:
+  - id: microsoft-cloud-adoption-framework
+    file: agents/knowledge/benchmarks/microsoft-cloud-adoption-framework.md
+    covers:
+      - "CAF 9 lifecycle phases"
+      - "5 Rs rationalization"
+      - "Governance maturity model"
+      - "Operations maturity model"
+      - "InsightPulseAI platform mapping"
+
+skills:
+  # Strategy phase
+  - id: caf-strategy-definition
+    file: agents/skills/caf-strategy-definition/
+    persona: cloud-strategy-advisor
+    classification: capability_uplift
+    caf_phase: strategy
+    purpose: "Define cloud adoption strategy with business justification and outcomes"
+
+  # Plan phase
+  - id: caf-adoption-planning
+    file: agents/skills/caf-adoption-planning/
+    persona: cloud-strategy-advisor
+    classification: capability_uplift
+    caf_phase: plan
+    purpose: "Create cloud adoption plan with timeline, skills readiness, organizational alignment"
+
+  # Ready phase
+  - id: caf-landing-zone-design
+    file: agents/skills/caf-landing-zone-design/
+    persona: landing-zone-architect
+    classification: encoded_preference
+    caf_phase: ready
+    purpose: "Design Azure landing zone following CAF enterprise-scale architecture"
+
+  # Migrate phase
+  - id: caf-workload-migration
+    file: agents/skills/caf-workload-migration/
+    persona: cloud-migration-engineer
+    classification: capability_uplift
+    caf_phase: migrate
+    purpose: "Assess and execute workload migration using CAF methodology"
+
+  # Modernize phase
+  - id: caf-workload-modernization
+    file: agents/skills/caf-workload-modernization/
+    persona: cloud-migration-engineer
+    classification: capability_uplift
+    caf_phase: modernize
+    purpose: "Modernize existing workloads to improve business outcomes"
+
+  # Cloud-native phase
+  - id: caf-cloud-native-design
+    file: agents/skills/caf-cloud-native-design/
+    persona: cloud-native-architect
+    classification: capability_uplift
+    caf_phase: cloud-native
+    purpose: "Design new cloud-native workloads and features"
+
+  # Govern phase
+  - id: caf-governance-baseline
+    file: agents/skills/caf-governance-baseline/
+    persona: cloud-governance-operator
+    classification: encoded_preference
+    caf_phase: govern
+    purpose: "Establish and enforce cloud governance baselines"
+
+  # Secure phase
+  - id: caf-security-baseline
+    file: agents/skills/caf-security-baseline/
+    persona: cloud-security-architect
+    classification: encoded_preference
+    caf_phase: secure
+    purpose: "Secure Azure environment following CAF security methodology"
+
+  # Manage phase
+  - id: caf-operations-management
+    file: agents/skills/caf-operations-management/
+    persona: cloud-governance-operator
+    classification: encoded_preference
+    caf_phase: manage
+    purpose: "Manage cloud operations with proper baselines and processes"
+
+build_order:
+  - phase: 1
+    skills: [caf-strategy-definition]
+    reason: "Strategy defines business justification and adoption motivations first"
+
+  - phase: 2
+    skills: [caf-adoption-planning]
+    reason: "Plan translates strategy into actionable backlog with timeline"
+
+  - phase: 3
+    skills: [caf-landing-zone-design]
+    reason: "Landing zone must be ready before workloads can migrate or be built"
+
+  - phase: 4
+    skills: [caf-workload-migration, caf-workload-modernization, caf-cloud-native-design]
+    reason: "Migrate, Modernize, and Cloud-native can run in parallel once landing zone is ready"
+
+  - phase: 5
+    skills: [caf-governance-baseline, caf-security-baseline, caf-operations-management]
+    reason: "Govern, Secure, and Manage are cross-cutting — apply throughout but formalize after workloads land"
+
+guardrails:
+  - "CAF is a benchmark reference, not a runtime dependency"
+  - "Canonical stack remains Odoo CE + Azure Container Apps"
+  - "A benchmark becomes integration only with explicit contract in docs/contracts/"
+  - "Strategy outputs inform architecture but do not override existing platform commitments"
+  - "Landing zone designs must align with existing rg-ipai-* resource group conventions"
+  - "Governance policies must not block production without migration path"
+  - "Security designs must account for Keycloak-to-Entra transition state"
+  - "Operations baselines must be achievable by solo developer"
+  - "ACA is the default compute — AKS requires explicit justification"
+
+cross_references:
+  - id: azure_saas_multitenancy_skill_map
+    file: agent-platform/ssot/learning/azure_saas_multitenancy_skill_map.yaml
+    relationship: "Complementary — SaaS multitenancy builds on CAF landing zone foundation"
+
+  - id: foundry_model_tool_runtime_map
+    file: agent-platform/ssot/learning/foundry_model_tool_runtime_map.yaml
+    relationship: "Complementary — Foundry agent runtime operates within CAF-governed Azure environment"
+
+  - id: azure_copilot_agent_skill_map
+    file: agent-platform/ssot/learning/azure_copilot_agent_skill_map.yaml
+    relationship: "Complementary — Azure ops skills implement CAF operational baselines"
+
+  - id: databricks_production_ready_skill_map
+    file: agent-platform/ssot/learning/databricks_production_ready_skill_map.yaml
+    relationship: "Complementary — Databricks workloads follow CAF cloud-native and governance patterns"

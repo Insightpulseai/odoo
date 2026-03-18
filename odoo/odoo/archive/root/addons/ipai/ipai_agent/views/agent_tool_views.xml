@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <record id="view_ipai_agent_tool_tree" model="ir.ui.view">
+        <field name="name">ipai.agent.tool.tree</field>
+        <field name="model">ipai.agent.tool</field>
+        <field name="arch" type="xml">
+            <list string="Agent Tools">
+                <field name="name"/>
+                <field name="technical_name"/>
+                <field name="auth_mode"/>
+                <field name="active" optional="show"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_ipai_agent_tool_form" model="ir.ui.view">
+        <field name="name">ipai.agent.tool.form</field>
+        <field name="model">ipai.agent.tool</field>
+        <field name="arch" type="xml">
+            <form string="Agent Tool">
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="name"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="technical_name"/>
+                            <field name="active" widget="boolean_toggle"/>
+                            <field name="auth_mode"/>
+                        </group>
+                        <group string="ir.config_parameter Keys">
+                            <field name="endpoint_param"/>
+                            <field name="secret_param"/>
+                        </group>
+                    </group>
+                    <group string="Access Control">
+                        <field name="allowed_group_ids" widget="many2many_tags"/>
+                    </group>
+                    <field name="description" placeholder="Describe what this tool does…"/>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_ipai_agent_tool" model="ir.actions.act_window">
+        <field name="name">Tools</field>
+        <field name="res_model">ipai.agent.tool</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+</odoo>
