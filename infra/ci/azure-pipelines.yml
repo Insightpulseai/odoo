@@ -210,7 +210,7 @@ stages:
         steps:
           - checkout: self
 
-          - template: pipelines/templates/deploy-bicep.yml
+          - template: ../pipelines/templates/deploy-bicep.yml
             parameters:
               serviceConnection: $(serviceConnection)
               resourceGroup: $(devResourceGroup)
@@ -247,7 +247,7 @@ stages:
         steps:
           - checkout: self
 
-          - template: pipelines/templates/deploy-bicep.yml
+          - template: ../pipelines/templates/deploy-bicep.yml
             parameters:
               serviceConnection: $(serviceConnection)
               resourceGroup: $(prodResourceGroup)
