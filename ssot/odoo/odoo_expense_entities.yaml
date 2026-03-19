@@ -1,0 +1,106 @@
+version: 1
+namespace: odoo.expenses
+source:
+  kind: user_docs_contract
+  docs:
+    - odoo_19_finance_expenses
+description: >
+  Canonical business-entity contract for Odoo 19 expense workflows. This is a
+  business/schema contract for integrations, analytics, copilots, and approval
+  orchestration. It is not a claim of exact ORM/database parity.
+
+enums:
+  expense_status:
+    values: [draft, submitted, approved, posted, reimbursed, refused, cancelled]
+  paid_by:
+    values: [employee, company]
+  reimbursement_method:
+    values: [direct, payslip, vendor_bill, other]
+
+entities:
+  expense_category:
+    label: Expense Category
+    description: Policy/config object for expense entry behavior and accounting treatment.
+    primary_key: id
+    fields:
+      - {name: id, type: string, required: true}
+      - {name: name, type: string, required: true}
+      - {name: account_id, type: string, required: false}
+      - {name: company_id, type: string, required: true}
+      - {name: unit_of_measure, type: string, required: false}
+      - {name: requires_receipt, type: boolean, required: false, default: false}
+      - {name: is_reinvoiceable, type: boolean, required: false, default: false}
+      - {name: is_active, type: boolean, required: true, default: true}
+
+  expense:
+    label: Expense
+    description: Individual employee or company-paid expense line.
+    primary_key: id
+    fields:
+      - {name: id, type: string, required: true}
+      - {name: category_id, type: string, required: true}
+      - {name: employee_id, type: string, required: true}
+      - {name: company_id, type: string, required: true}
+      - {name: paid_by, type: enum, enum_ref: paid_by, required: true}
+      - {name: expense_date, type: date, required: true}
+      - {name: account_id, type: string, required: false}
+      - {name: currency_id, type: string, required: true}
+      - {name: total, type: number, required: true}
+      - {name: quantity, type: number, required: false}
+      - {name: unit_price, type: number, required: false}
+      - {name: included_taxes_amount, type: number, required: false}
+      - {name: analytic_account_id, type: string, required: false}
+      - {name: tax_ids, type: "array[string]", required: false}
+      - {name: receipt_attachment_id, type: string, required: false}
+      - {name: report_id, type: string, required: false}
+      - {name: status, type: enum, enum_ref: expense_status, required: true}
+      - {name: notes, type: string, required: false}
+
+  expense_report:
+    label: Expense Report
+    description: Grouped expense submission for approval, posting, and reimbursement.
+    primary_key: id
+    fields:
+      - {name: id, type: string, required: true}
+      - {name: summary, type: string, required: true}
+      - {name: employee_id, type: string, required: true}
+      - {name: company_id, type: string, required: true}
+      - {name: paid_by, type: enum, enum_ref: paid_by, required: true}
+      - {name: expense_line_ids, type: "array[string]", required: true}
+      - {name: total_amount, type: number, required: true}
+      - {name: currency_id, type: string, required: true}
+      - {name: state, type: enum, enum_ref: expense_status, required: true}
+      - {name: submitted_at, type: datetime, required: false}
+      - {name: approved_at, type: datetime, required: false}
+      - {name: posted_at, type: datetime, required: false}
+      - {name: reimbursed_at, type: datetime, required: false}
+
+  expense_reimbursement:
+    label: Expense Reimbursement
+    description: Settlement record for reimbursement of a posted expense report.
+    primary_key: id
+    fields:
+      - {name: id, type: string, required: true}
+      - {name: expense_report_id, type: string, required: true}
+      - {name: employee_id, type: string, required: true}
+      - {name: reimbursement_method, type: enum, enum_ref: reimbursement_method, required: true}
+      - {name: amount, type: number, required: true}
+      - {name: currency_id, type: string, required: true}
+      - {name: payment_date, type: date, required: false}
+      - {name: journal_id, type: string, required: false}
+      - {name: payment_id, type: string, required: false}
+      - {name: state, type: enum, enum_ref: expense_status, required: true}
+
+relationships:
+  - from: expense_category
+    to: expense
+    type: one_to_many
+    via: category_id
+  - from: expense_report
+    to: expense
+    type: one_to_many
+    via: report_id
+  - from: expense_report
+    to: expense_reimbursement
+    type: one_to_many
+    via: expense_report_id

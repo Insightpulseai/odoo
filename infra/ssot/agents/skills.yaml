@@ -19,12 +19,12 @@
 #   allowed_tools - list of tool IDs from ssot/tools/registry.yaml; ["__none__"] = no tools
 #   security      - security controls block (see ssot/agents/interface_schema.yaml)
 #
-# Last updated: 2026-03-02
+# Last updated: 2026-03-15
 # Spec:         spec/deerflow-patterns-adoption/
 
 meta:
   schema_version: "1.1"
-  updated_at: "2026-03-02"
+  updated_at: "2026-03-15"
   spec: "spec/deerflow-patterns-adoption/"
 
 skills:
@@ -51,6 +51,81 @@ skills:
       - slack_post_approval_request
       - repo_read_file
       - repo_write_file
+    security:
+      path_traversal_guard: true
+      symlink_guard: true
+      metadata_escaping: true
+      max_skill_body_bytes: 5000
+
+  - id: document-intelligence-analyze
+    name: "Document Intelligence Analyze"
+    description: >
+      Extracts structured data from documents (PDFs, images, scans) using
+      Azure Document Intelligence prebuilt and custom models. Supports invoices,
+      receipts, tax forms, ID documents, contracts, and batch processing.
+    executor: do_runner
+    max_duration_s: 600
+    tags: [azure, document-intelligence, pdf, ocr, invoices, receipts, tax-forms, extraction]
+    state_machine: [PLAN, PATCH, VERIFY]
+    owner: platform-team
+    status: experimental
+    allowed_tools:
+      - ops_start_run
+      - ops_log_event
+      - ops_complete_run
+      - ops_fail_run
+      - ops_add_artifact
+      - repo_read_file
+      - repo_write_file
+    security:
+      path_traversal_guard: true
+      symlink_guard: true
+      metadata_escaping: true
+      max_skill_body_bytes: 5000
+
+  - id: document-intelligence-train
+    name: "Document Intelligence Train"
+    description: >
+      Trains custom Azure Document Intelligence models (template or neural)
+      from labeled training data. Manages model lifecycle including build,
+      evaluate, compose, and version management.
+    executor: do_runner
+    max_duration_s: 1800
+    tags: [azure, document-intelligence, custom-model, training, neural]
+    state_machine: [PLAN, PATCH, VERIFY, MONITOR]
+    owner: platform-team
+    status: experimental
+    allowed_tools:
+      - ops_start_run
+      - ops_log_event
+      - ops_complete_run
+      - ops_fail_run
+      - ops_add_artifact
+      - repo_read_file
+    security:
+      path_traversal_guard: true
+      symlink_guard: true
+      metadata_escaping: true
+      max_skill_body_bytes: 5000
+
+  - id: document-intelligence-classify
+    name: "Document Intelligence Classify"
+    description: >
+      Classifies incoming documents by type (invoice, receipt, contract, tax form)
+      using Azure Document Intelligence classification models. Routes documents
+      to the appropriate extraction pipeline.
+    executor: do_runner
+    max_duration_s: 300
+    tags: [azure, document-intelligence, classification, routing, triage]
+    state_machine: [PLAN, VERIFY]
+    owner: platform-team
+    status: experimental
+    allowed_tools:
+      - ops_start_run
+      - ops_log_event
+      - ops_complete_run
+      - ops_fail_run
+      - repo_read_file
     security:
       path_traversal_guard: true
       symlink_guard: true

@@ -1,0 +1,195 @@
+version: 1
+namespace: azure.document_intelligence
+source:
+  kind: vendor_docs_contract
+  docs:
+    - azure_document_intelligence_v4_0
+    - azure_form_recognizer_migration
+description: >
+  Canonical entity contract for Azure Document Intelligence (formerly Form
+  Recognizer) prebuilt model outputs. Defines the business-schema for extracted
+  document fields used by copilots, expense automation, invoice processing,
+  and compliance workflows. Not a claim of exact API response parity.
+
+enums:
+  analysis_status:
+    values: [not_started, running, succeeded, failed]
+  model_type:
+    values: [prebuilt, custom_template, custom_neural, composed, classification]
+  document_type:
+    values: [invoice, receipt, id_document, tax_w2, tax_1040, tax_1098, tax_1099, bank_statement, check, pay_stub, credit_card, contract, health_insurance_card, marriage_certificate, layout, read, general_document]
+  confidence_level:
+    values: [high, medium, low]
+  content_format:
+    values: [json, markdown, pdf]
+
+entities:
+  analysis_result:
+    label: Analysis Result
+    description: Top-level result from a Document Intelligence analyze operation.
+    primary_key: operation_id
+    fields:
+      - {name: operation_id, type: string, required: true}
+      - {name: model_id, type: string, required: true}
+      - {name: status, type: enum, enum_ref: analysis_status, required: true}
+      - {name: created_at, type: datetime, required: true}
+      - {name: completed_at, type: datetime, required: false}
+      - {name: api_version, type: string, required: true}
+      - {name: content_format, type: enum, enum_ref: content_format, required: false}
+      - {name: page_count, type: integer, required: false}
+      - {name: document_count, type: integer, required: false}
+
+  extracted_document:
+    label: Extracted Document
+    description: A single document extracted from the analysis (one PDF may yield multiple documents).
+    primary_key: id
+    fields:
+      - {name: id, type: string, required: true}
+      - {name: operation_id, type: string, required: true}
+      - {name: doc_type, type: enum, enum_ref: document_type, required: true}
+      - {name: confidence, type: number, required: true}
+      - {name: page_range_start, type: integer, required: false}
+      - {name: page_range_end, type: integer, required: false}
+
+  extracted_field:
+    label: Extracted Field
+    description: A key-value field extracted from a document.
+    primary_key: id
+    fields:
+      - {name: id, type: string, required: true}
+      - {name: document_id, type: string, required: true}
+      - {name: field_name, type: string, required: true}
+      - {name: field_type, type: string, required: true}
+      - {name: value_string, type: string, required: false}
+      - {name: value_number, type: number, required: false}
+      - {name: value_date, type: date, required: false}
+      - {name: value_currency_code, type: string, required: false}
+      - {name: value_currency_amount, type: number, required: false}
+      - {name: confidence, type: number, required: true}
+      - {name: content, type: string, required: false}
+      - {name: bounding_region_page, type: integer, required: false}
+
+  extracted_table:
+    label: Extracted Table
+    description: A table structure extracted from a document page.
+    primary_key: id
+    fields:
+      - {name: id, type: string, required: true}
+      - {name: operation_id, type: string, required: true}
+      - {name: page_number, type: integer, required: true}
+      - {name: row_count, type: integer, required: true}
+      - {name: column_count, type: integer, required: true}
+      - {name: caption, type: string, required: false}
+
+  table_cell:
+    label: Table Cell
+    description: A single cell within an extracted table.
+    primary_key: id
+    fields:
+      - {name: id, type: string, required: true}
+      - {name: table_id, type: string, required: true}
+      - {name: row_index, type: integer, required: true}
+      - {name: column_index, type: integer, required: true}
+      - {name: content, type: string, required: true}
+      - {name: kind, type: string, required: false}
+      - {name: row_span, type: integer, required: false, default: 1}
+      - {name: column_span, type: integer, required: false, default: 1}
+
+  invoice_extract:
+    label: Invoice Extract
+    description: Structured fields from prebuilt-invoice model.
+    primary_key: document_id
+    fields:
+      - {name: document_id, type: string, required: true}
+      - {name: vendor_name, type: string, required: false}
+      - {name: vendor_address, type: string, required: false}
+      - {name: vendor_tax_id, type: string, required: false}
+      - {name: customer_name, type: string, required: false}
+      - {name: customer_address, type: string, required: false}
+      - {name: invoice_id, type: string, required: false}
+      - {name: invoice_date, type: date, required: false}
+      - {name: due_date, type: date, required: false}
+      - {name: purchase_order, type: string, required: false}
+      - {name: subtotal, type: number, required: false}
+      - {name: total_tax, type: number, required: false}
+      - {name: invoice_total, type: number, required: false}
+      - {name: amount_due, type: number, required: false}
+      - {name: currency_code, type: string, required: false}
+      - {name: payment_term, type: string, required: false}
+      - {name: remittance_address, type: string, required: false}
+
+  receipt_extract:
+    label: Receipt Extract
+    description: Structured fields from prebuilt-receipt model.
+    primary_key: document_id
+    fields:
+      - {name: document_id, type: string, required: true}
+      - {name: merchant_name, type: string, required: false}
+      - {name: merchant_address, type: string, required: false}
+      - {name: merchant_phone, type: string, required: false}
+      - {name: transaction_date, type: date, required: false}
+      - {name: transaction_time, type: string, required: false}
+      - {name: subtotal, type: number, required: false}
+      - {name: total_tax, type: number, required: false}
+      - {name: tip, type: number, required: false}
+      - {name: total, type: number, required: false}
+      - {name: currency_code, type: string, required: false}
+
+  expense_receipt_mapping:
+    label: Expense Receipt Mapping
+    description: Maps receipt extraction fields to Odoo expense entity fields for automated expense creation.
+    primary_key: id
+    fields:
+      - {name: id, type: string, required: true}
+      - {name: receipt_document_id, type: string, required: true}
+      - {name: odoo_expense_id, type: string, required: false}
+      - {name: category_id, type: string, required: false}
+      - {name: mapped_total, type: number, required: true}
+      - {name: mapped_date, type: date, required: true}
+      - {name: mapped_vendor, type: string, required: false}
+      - {name: confidence_level, type: enum, enum_ref: confidence_level, required: true}
+      - {name: requires_review, type: boolean, required: true, default: true}
+
+  custom_model:
+    label: Custom Model
+    description: A trained custom model for domain-specific document extraction.
+    primary_key: model_id
+    fields:
+      - {name: model_id, type: string, required: true}
+      - {name: model_type, type: enum, enum_ref: model_type, required: true}
+      - {name: description, type: string, required: false}
+      - {name: created_at, type: datetime, required: true}
+      - {name: api_version, type: string, required: true}
+      - {name: doc_types, type: "array[string]", required: false}
+      - {name: training_dataset_path, type: string, required: false}
+      - {name: accuracy_score, type: number, required: false}
+
+relationships:
+  - from: analysis_result
+    to: extracted_document
+    type: one_to_many
+    via: operation_id
+  - from: extracted_document
+    to: extracted_field
+    type: one_to_many
+    via: document_id
+  - from: analysis_result
+    to: extracted_table
+    type: one_to_many
+    via: operation_id
+  - from: extracted_table
+    to: table_cell
+    type: one_to_many
+    via: table_id
+  - from: extracted_document
+    to: invoice_extract
+    type: one_to_one
+    via: document_id
+  - from: extracted_document
+    to: receipt_extract
+    type: one_to_one
+    via: document_id
+  - from: receipt_extract
+    to: expense_receipt_mapping
+    type: one_to_one
+    via: receipt_document_id
