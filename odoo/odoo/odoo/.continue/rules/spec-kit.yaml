@@ -1,0 +1,191 @@
+# Spec Kit Enforcement Rules for Continue+
+# These rules ensure all feature work has proper spec bundles
+
+name: spec-kit-enforcement
+description: Enforce spec bundle presence and quality for all feature work
+version: 1.0.0
+
+rules:
+  # ============================================================================
+  # SPEC BUNDLE STRUCTURE
+  # ============================================================================
+
+  - id: spec-bundle-required
+    description: Feature work must have a spec bundle
+    severity: error
+    trigger: on_plan
+    check: |
+      For any feature work, verify spec/<slug>/ exists with:
+      - constitution.md (invariant rules)
+      - prd.md (product requirements)
+      - plan.md (implementation plan)
+      - tasks.md (checklist)
+    message: |
+      Feature work requires a complete spec bundle at spec/<slug>/.
+      Create the bundle before starting implementation:
+      ```
+      mkdir -p spec/<feature-slug>
+      touch spec/<feature-slug>/{constitution,prd,plan,tasks}.md
+      ```
+
+  - id: no-placeholder-text
+    description: Spec files must not contain placeholder text
+    severity: warning
+    patterns:
+      - "TODO"
+      - "TBD"
+      - "PLACEHOLDER"
+      - "LOREM"
+      - "FILL.?ME.?IN"
+      - "\\[INSERT\\]"
+      - "XXX"
+    paths:
+      - "spec/**/*.md"
+    message: |
+      Spec files must not contain placeholder text.
+      Replace all TODO/TBD/PLACEHOLDER markers with actual content.
+
+  - id: minimum-content
+    description: Spec files must have substantive content
+    severity: warning
+    check: |
+      Each spec file must have at least:
+      - 10 non-empty, non-heading lines
+      - Required sections per file type
+    paths:
+      - "spec/**/*.md"
+    message: |
+      Spec files must have substantive content (≥10 lines).
+      Add real requirements, plans, and tasks.
+
+  # ============================================================================
+  # CONSTITUTION REQUIREMENTS
+  # ============================================================================
+
+  - id: constitution-non-negotiables
+    description: Constitution must define non-negotiable rules
+    severity: error
+    paths:
+      - "spec/**/constitution.md"
+    requirePatterns:
+      - "Non-Negotiable"
+      - "MUST"
+      - "invariant"
+    message: |
+      constitution.md must include a "Non-Negotiables" section
+      with clear MUST/MUST NOT rules.
+
+  # ============================================================================
+  # PRD REQUIREMENTS
+  # ============================================================================
+
+  - id: prd-goals-defined
+    description: PRD must define clear goals
+    severity: warning
+    paths:
+      - "spec/**/prd.md"
+    requirePatterns:
+      - "Goal"
+      - "Requirement"
+      - "User Stor"
+    message: |
+      prd.md should include Goals, Requirements, or User Stories.
+
+  # ============================================================================
+  # PLAN REQUIREMENTS
+  # ============================================================================
+
+  - id: plan-files-to-change
+    description: Plan must list files to change
+    severity: error
+    paths:
+      - "spec/**/plan.md"
+    requirePatterns:
+      - "Files"
+      - "\\.py"
+      - "\\.ts"
+      - "\\.md"
+    message: |
+      plan.md must explicitly list files that will be changed.
+      Include: ## Files to Change with paths.
+
+  - id: plan-verification-commands
+    description: Plan must include verification commands
+    severity: warning
+    paths:
+      - "spec/**/plan.md"
+    requirePatterns:
+      - "Verif"
+      - "pytest"
+      - "npm test"
+      - "make"
+    message: |
+      plan.md should include verification commands to validate changes.
+
+  # ============================================================================
+  # TASKS REQUIREMENTS
+  # ============================================================================
+
+  - id: tasks-checkboxes
+    description: Tasks must use checkbox format
+    severity: error
+    paths:
+      - "spec/**/tasks.md"
+    requirePatterns:
+      - "- \\["
+    message: |
+      tasks.md must use checkbox format:
+      - [ ] Task description
+      - [x] Completed task
+
+  # ============================================================================
+  # PR TRACEABILITY
+  # ============================================================================
+
+  - id: pr-spec-reference
+    description: PRs must reference spec bundle
+    severity: warning
+    trigger: on_ship
+    check: |
+      PR description must include:
+      - Spec Reference: spec/<slug>/
+      - Tasks checklist from tasks.md
+    message: |
+      Include spec reference in PR description:
+      ```
+      ## Spec Reference
+      `spec/<feature-slug>/`
+      ```
+
+  # ============================================================================
+  # WORKFLOW CONSTRAINTS
+  # ============================================================================
+
+  - id: plan-before-implement
+    description: Must have plan before implementation
+    severity: error
+    trigger: on_implement
+    check: |
+      Verify spec/<slug>/plan.md exists and is non-empty
+      before allowing implementation to proceed.
+    message: |
+      Run /plan first to create the implementation plan.
+      Implementation requires an approved plan.
+
+  - id: verify-before-ship
+    description: Must verify before shipping
+    severity: error
+    trigger: on_ship
+    check: |
+      Verify that /verify has been run and passed
+      before allowing /ship to proceed.
+    message: |
+      Run /verify first to ensure all checks pass.
+      Cannot ship with failing verification.
+
+# Excluded paths (don't apply these rules here)
+excludePaths:
+  - "**/node_modules/**"
+  - "**/.git/**"
+  - "**/dist/**"
+  - "**/build/**"

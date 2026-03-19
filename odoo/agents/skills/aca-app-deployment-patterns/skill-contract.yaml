@@ -1,0 +1,52 @@
+version: 1
+type: ops_skill
+family: azure_sample_azd
+skill:
+  name: aca-app-deployment-patterns
+  status: draft
+  owner: app-hosting-engineer
+  purpose: >
+    Deploy apps to Azure Container Apps using azd patterns. Covers ACA
+    environment setup, container registry integration, scaling rules,
+    ingress configuration, health probes, and azd templates for ACA.
+    Directly relevant to canonical Odoo-on-ACA stack.
+
+  triggers:
+    - new containerized application deployment to ACA
+    - ACA environment configuration change
+    - scaling rule update
+    - ingress or health probe configuration
+    - container registry integration setup
+
+  inputs:
+    - application name and container image
+    - ACA environment (cae-ipai-{env})
+    - resource group (rg-ipai-{env})
+    - scaling requirements (min/max replicas, scaling rules)
+    - ingress requirements (external/internal, target port, CORS)
+    - health probe configuration (path, interval, threshold)
+
+  steps:
+    - verify ACA environment exists and is healthy
+    - configure container registry pull via managed identity
+    - define scaling rules (HTTP, CPU, memory, custom)
+    - configure ingress (external/internal, TLS, CORS)
+    - set up health probes (liveness, readiness, startup)
+    - deploy via azd or az containerapp create/update
+    - verify deployment health and accessibility
+    - configure Front Door origin if external-facing
+
+  outputs:
+    - deployed Container App with correct configuration
+    - scaling rules verified
+    - ingress accessible and TLS configured
+    - health probes passing
+    - Front Door routing confirmed (if applicable)
+
+  guardrails:
+    - ACA is canonical compute — never propose AKS without justification
+    - managed identity for ACR pull, Key Vault, downstream services
+    - health probes must be configured before enabling traffic
+    - minimum replicas >= 1 for production workloads
+    - ingress TLS is mandatory for external-facing services
+    - scaling rules must account for cold start latency

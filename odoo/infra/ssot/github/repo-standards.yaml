@@ -41,7 +41,7 @@ repo_standards:
       module_naming: "ipai_<domain>_<feature>"
 
     web-app:
-      description: "Frontend/fullstack web application (Next.js, Vercel)"
+      description: "Frontend/fullstack web application (Next.js, Azure Container Apps)"
       extra_required_files:
         - .github/workflows/ci.yml
       quality_gates:
@@ -57,7 +57,7 @@ repo_standards:
         - "Data contracts defined (contracts/)"
 
     supabase-platform:
-      description: "Supabase control-plane with migrations and Edge Functions"
+      description: "Supabase platform with migrations and Edge Functions"
       extra_required_files:
         - .github/workflows/ci.yml
       quality_gates:
@@ -69,9 +69,9 @@ repo_standards:
       extra_required_files:
         - .github/workflows/ci.yml
       quality_gates:
-        - "Infra provider dirs present (infra/digitalocean/, infra/cloudflare/)"
+        - "Infra provider dirs present (infra/azure/, infra/cloudflare/)"
 
-    design-system:
+    design:
       description: "Shared design tokens, components, and brand assets"
       extra_required_files:
         - .github/workflows/ci.yml

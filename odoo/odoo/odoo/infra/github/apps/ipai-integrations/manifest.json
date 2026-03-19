@@ -1,0 +1,35 @@
+{
+  "_comment": "GitHub App Manifest for ipai-integrations. SSOT: ssot/integrations/github_apps.yaml",
+  "_doc": "One-time creation: scripts/github/create-app-from-manifest.sh ipai-integrations",
+
+  "name": "ipai-integrations",
+  "description": "InsightPulse AI — GitHub integration hub. Routes PR/issue/push events to Supabase (ops ledger, n8n automation, Plane project management).",
+  "url": "https://insightpulseai.com",
+
+  "hook_attributes": {
+    "url": "https://spdtwktxdalcfigzeqrz.supabase.co/functions/v1/ops-github-webhook-ingest",
+    "active": true
+  },
+
+  "redirect_url": "https://ops.insightpulseai.com/oauth/github-app/installed",
+  "callback_urls": [
+    "https://ops.insightpulseai.com/oauth/github-app/installed"
+  ],
+
+  "setup_url": null,
+  "setup_on_update": false,
+  "public": false,
+
+  "default_permissions": {
+    "metadata": "read",
+    "pull_requests": "read",
+    "issues": "read"
+  },
+
+  "default_events": [
+    "pull_request",
+    "issues",
+    "issue_comment",
+    "push"
+  ]
+}

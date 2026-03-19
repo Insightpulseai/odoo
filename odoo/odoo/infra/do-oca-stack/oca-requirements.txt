@@ -1,0 +1,36 @@
+# OCA Pinned Requirements for Odoo 18.0
+# Format: repo_name git_url commit_sha
+# Generated: 2026-01-24
+# Update with: make lock
+#
+# IMPORTANT: These SHAs must be from the 18.0 branch of each OCA repo.
+# Verify compatibility before updating.
+
+# Core Infrastructure
+server-tools    https://github.com/OCA/server-tools.git         18.0
+web             https://github.com/OCA/web.git                  18.0
+queue           https://github.com/OCA/queue.git                18.0
+reporting-engine https://github.com/OCA/reporting-engine.git    18.0
+
+# Accounting (optional - uncomment if needed)
+# account-financial-tools   https://github.com/OCA/account-financial-tools.git   18.0
+# account-invoicing         https://github.com/OCA/account-invoicing.git         18.0
+# account-financial-reporting https://github.com/OCA/account-financial-reporting.git 18.0
+
+# CRM / Sales (optional)
+# crm                       https://github.com/OCA/crm.git                       18.0
+# sale-workflow             https://github.com/OCA/sale-workflow.git             18.0
+
+# Stock / Warehouse (optional)
+# stock-logistics-warehouse https://github.com/OCA/stock-logistics-warehouse.git 18.0
+# stock-logistics-workflow  https://github.com/OCA/stock-logistics-workflow.git  18.0
+
+# HR (optional)
+# hr                        https://github.com/OCA/hr.git                        18.0
+
+# Project (optional)
+# project                   https://github.com/OCA/project.git                   18.0
+
+# Social / Connectors (optional)
+# social                    https://github.com/OCA/social.git                    18.0
+# connector                 https://github.com/OCA/connector.git                 18.0

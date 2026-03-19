@@ -1,0 +1,135 @@
+<odoo>
+  <record id="view_docflow_document_tree" model="ir.ui.view">
+    <field name="name">docflow.document.tree</field>
+    <field name="model">docflow.document</field>
+    <field name="arch" type="xml">
+      <list>
+        <field name="create_date"/>
+        <field name="state" widget="badge" decoration-info="state == 'new'" decoration-success="state == 'approved'" decoration-warning="state == 'needs_review'"/>
+        <field name="doc_type"/>
+        <field name="vendor_or_merchant"/>
+        <field name="doc_date"/>
+        <field name="amount_total"/>
+        <field name="currency_id"/>
+        <field name="confidence"/>
+        <field name="res_model"/>
+        <field name="res_id"/>
+      </list>
+    </field>
+  </record>
+
+  <record id="view_docflow_document_form" model="ir.ui.view">
+    <field name="name">docflow.document.form</field>
+    <field name="model">docflow.document</field>
+    <field name="arch" type="xml">
+      <form string="DocFlow Document">
+        <header>
+          <button name="action_approve_create_draft" type="object" string="Approve &amp; Create Draft" class="btn-primary"
+                  invisible="state in ('rejected','draft_created','failed')"/>
+          <button name="action_mark_needs_review" type="object" string="Needs Review"/>
+          <button name="action_compute_vendor_and_dupes" type="object" string="Check Vendor + Duplicates" class="btn-secondary"/>
+          <button name="action_reject" type="object" string="Reject" class="btn-secondary"/>
+          <field name="state" widget="statusbar" statusbar_visible="new,extracted,needs_review,approved,draft_created,rejected,failed"/>
+        </header>
+
+        <sheet>
+          <group>
+            <group>
+              <field name="document_id" readonly="1"/>
+              <field name="source"/>
+              <field name="doc_type"/>
+              <field name="confidence"/>
+              <field name="res_ref" readonly="1"/>
+            </group>
+            <group>
+              <field name="attachment_id" widget="many2one_binary"/>
+            </group>
+          </group>
+
+          <group string="Signals" invisible="doc_type == 'unknown'">
+            <field name="vendor_match_partner_id" invisible="doc_type != 'invoice'"/>
+            <field name="vendor_match_method" invisible="doc_type != 'invoice'"/>
+            <field name="vendor_match_score" invisible="doc_type != 'invoice'"/>
+            <field name="dupe_risk"/>
+          </group>
+
+          <notebook>
+            <page string="Review Fields">
+              <group invisible="doc_type != 'invoice'">
+                <group>
+                  <field name="vendor_name"/>
+                  <field name="invoice_number"/>
+                  <field name="invoice_date"/>
+                  <field name="currency_id"/>
+                </group>
+                <group>
+                  <field name="subtotal"/>
+                  <field name="vat"/>
+                  <field name="total"/>
+                </group>
+                <group>
+                  <field name="line_ids">
+                    <list editable="bottom">
+                      <field name="sequence"/>
+                      <field name="description"/>
+                      <field name="quantity"/>
+                      <field name="unit_price"/>
+                      <field name="line_total" readonly="1"/>
+                    </list>
+                  </field>
+                </group>
+              </group>
+
+              <group invisible="doc_type != 'expense'">
+                <group>
+                  <field name="expense_description"/>
+                  <field name="expense_date"/>
+                  <field name="expense_amount"/>
+                  <field name="currency_id"/>
+                  <field name="merchant"/>
+                </group>
+              </group>
+
+              <footer>
+                <button name="action_sync_structured_to_json" type="object" string="Sync Structured &amp;rarr; JSON" class="btn-secondary"/>
+              </footer>
+            </page>
+
+            <page string="Duplicates">
+              <field name="dupe_hits_json" widget="text" readonly="1"/>
+            </page>
+
+            <page string="Diff">
+              <field name="last_diff_text" widget="text" readonly="1"/>
+            </page>
+
+            <page string="Raw JSON (Advanced)">
+              <field name="llm_extraction_json" widget="text"/>
+            </page>
+
+            <page string="Classification">
+              <field name="llm_classification_json" widget="text"/>
+            </page>
+            <page string="OCR Text">
+              <field name="ocr_text" widget="text"/>
+            </page>
+            <page string="Validation">
+              <field name="validation_json" widget="text"/>
+              <field name="confidence_breakdown_json" widget="text"/>
+            </page>
+          </notebook>
+        </sheet>
+      </form>
+    </field>
+  </record>
+
+  <record id="action_docflow_document" model="ir.actions.act_window">
+    <field name="name">DocFlow Review</field>
+    <field name="res_model">docflow.document</field>
+    <field name="view_mode">list,form</field>
+    <field name="domain">[]</field>
+  </record>
+
+  <menuitem id="menu_docflow_root" name="DocFlow" sequence="10"/>
+  <menuitem id="menu_docflow_review" name="Manual Review" parent="menu_docflow_root" action="action_docflow_document" sequence="10"/>
+</odoo>

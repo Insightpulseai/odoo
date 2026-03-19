@@ -1,0 +1,352 @@
+# STC Compliance Checks
+# SAP Tax Compliance Business Content checks
+
+compliance_checks:
+  # ============================================================
+  # VAT Compliance Checks
+  # ============================================================
+
+  - id: chk_vat_id_validation
+    worklist_type: S4_VAT
+    code: STC_VAT_001
+    name: Validate VAT ID Format
+    description: Check that all VAT IDs follow the correct format (TIN)
+    category: DATA_QUALITY
+    severity: HIGH
+    auto_run: true
+    sap_reference: SAP_STC_CHK_VAT_ID
+    rule:
+      type: regex_match
+      field: partner.vat
+      pattern: "^\\d{3}-\\d{3}-\\d{3}-\\d{3}$"
+      message: "Invalid TIN format. Expected: XXX-XXX-XXX-XXX"
+
+  - id: chk_postings_without_tax
+    worklist_type: S4_VAT
+    code: STC_VAT_002
+    name: Postings Without Tax Codes
+    description: Identify journal entries missing tax codes where expected
+    category: COMPLETENESS
+    severity: HIGH
+    auto_run: true
+    sap_reference: SAP_STC_CHK_NO_TAX
+    rule:
+      type: missing_field
+      model: account.move.line
+      field: tax_ids
+      filter: "account_id.account_type in ['income', 'expense']"
+      message: "Journal entry line missing tax code"
+
+  - id: chk_high_vat_sales
+    worklist_type: S4_VAT
+    code: STC_VAT_003
+    name: High Sales Invoice VAT Amounts
+    description: Flag sales invoices with VAT above threshold
+    category: THRESHOLD
+    severity: MEDIUM
+    auto_run: true
+    sap_reference: SAP_STC_CHK_HIGH_VAT_SALES
+    rule:
+      type: threshold
+      model: account.move
+      field: amount_tax
+      threshold: 100000
+      operator: ">"
+      filter: "move_type == 'out_invoice'"
+      message: "High VAT amount on sales invoice"
+
+  - id: chk_high_vat_purchase
+    worklist_type: S4_VAT
+    code: STC_VAT_004
+    name: High Purchase Invoice VAT Amounts
+    description: Flag purchase invoices with VAT above threshold
+    category: THRESHOLD
+    severity: MEDIUM
+    auto_run: true
+    sap_reference: SAP_STC_CHK_HIGH_VAT_PURCHASE
+    rule:
+      type: threshold
+      model: account.move
+      field: amount_tax
+      threshold: 100000
+      operator: ">"
+      filter: "move_type == 'in_invoice'"
+      message: "High VAT amount on purchase invoice"
+
+  - id: chk_vat_mismatch
+    worklist_type: S4_VAT
+    code: STC_VAT_005
+    name: VAT Amount Mismatch
+    description: Check if VAT amount matches expected rate
+    category: ACCURACY
+    severity: HIGH
+    auto_run: true
+    sap_reference: SAP_STC_CHK_VAT_MISMATCH
+    rule:
+      type: calculation_check
+      model: account.move
+      formula: "abs(amount_tax - (amount_untaxed * 0.12)) > 1"
+      message: "VAT amount does not match 12% of taxable base"
+
+  - id: chk_zero_rated_without_docs
+    worklist_type: S4_VAT
+    code: STC_VAT_006
+    name: Zero-Rated Without Documentation
+    description: Zero-rated transactions without supporting documents
+    category: DOCUMENTATION
+    severity: HIGH
+    auto_run: false
+    sap_reference: SAP_STC_CHK_ZERO_RATED
+    rule:
+      type: missing_attachment
+      model: account.move
+      filter: "tax_ids.amount == 0 and move_type in ['out_invoice', 'in_invoice']"
+      message: "Zero-rated transaction requires supporting documentation"
+
+  # ============================================================
+  # Vendor Master Compliance Checks
+  # ============================================================
+
+  - id: chk_vendor_without_tin
+    worklist_type: S4_VND
+    code: STC_VND_001
+    name: Vendors Without TIN
+    description: Vendors missing Tax Identification Number
+    category: DATA_QUALITY
+    severity: CRITICAL
+    auto_run: true
+    sap_reference: SAP_STC_CHK_VND_NO_TIN
+    rule:
+      type: missing_field
+      model: res.partner
+      field: vat
+      filter: "supplier_rank > 0"
+      message: "Vendor missing TIN"
+
+  - id: chk_vendor_tin_format
+    worklist_type: S4_VND
+    code: STC_VND_002
+    name: Invalid Vendor TIN Format
+    description: Vendor TIN does not match required format
+    category: DATA_QUALITY
+    severity: HIGH
+    auto_run: true
+    sap_reference: SAP_STC_CHK_VND_TIN_FMT
+    rule:
+      type: regex_match
+      model: res.partner
+      field: vat
+      pattern: "^\\d{3}-\\d{3}-\\d{3}-\\d{3}$"
+      filter: "supplier_rank > 0 and vat != False"
+      message: "Invalid TIN format for vendor"
+
+  - id: chk_vendor_address_incomplete
+    worklist_type: S4_VND
+    code: STC_VND_003
+    name: Incomplete Vendor Address
+    description: Vendor address missing required fields for BIR
+    category: DATA_QUALITY
+    severity: MEDIUM
+    auto_run: true
+    sap_reference: SAP_STC_CHK_VND_ADDR
+    rule:
+      type: missing_any_field
+      model: res.partner
+      fields: [street, city, zip]
+      filter: "supplier_rank > 0"
+      message: "Vendor address incomplete"
+
+  - id: chk_vendor_bank_missing
+    worklist_type: S4_VND
+    code: STC_VND_004
+    name: Vendor Missing Bank Details
+    description: Vendor without bank account for payment
+    category: DATA_QUALITY
+    severity: LOW
+    auto_run: false
+    sap_reference: SAP_STC_CHK_VND_BANK
+    rule:
+      type: empty_relation
+      model: res.partner
+      field: bank_ids
+      filter: "supplier_rank > 0"
+      message: "Vendor missing bank account details"
+
+  # ============================================================
+  # Invoice Compliance Checks
+  # ============================================================
+
+  - id: chk_invoice_without_tin
+    worklist_type: S4_INV
+    code: STC_INV_001
+    name: Invoice Without Partner TIN
+    description: Invoice to partner without TIN
+    category: DATA_QUALITY
+    severity: HIGH
+    auto_run: true
+    sap_reference: SAP_STC_CHK_INV_NO_TIN
+    rule:
+      type: related_field_missing
+      model: account.move
+      field: partner_id.vat
+      filter: "move_type in ['out_invoice', 'in_invoice']"
+      message: "Invoice partner missing TIN"
+
+  - id: chk_invoice_amount_threshold
+    worklist_type: S4_INV
+    code: STC_INV_002
+    name: Invoice Amount Threshold
+    description: Invoice exceeds reporting threshold
+    category: THRESHOLD
+    severity: MEDIUM
+    auto_run: true
+    sap_reference: SAP_STC_CHK_INV_THRESHOLD
+    rule:
+      type: threshold
+      model: account.move
+      field: amount_total
+      threshold: 500000
+      operator: ">"
+      message: "Invoice exceeds PHP 500,000 threshold"
+
+  - id: chk_invoice_date_mismatch
+    worklist_type: S4_INV
+    code: STC_INV_003
+    name: Invoice Date Mismatch
+    description: Invoice date outside expected period
+    category: TIMING
+    severity: MEDIUM
+    auto_run: true
+    sap_reference: SAP_STC_CHK_INV_DATE
+    rule:
+      type: date_range
+      model: account.move
+      field: invoice_date
+      range_field: date
+      tolerance_days: 30
+      message: "Invoice date significantly different from posting date"
+
+  - id: chk_duplicate_invoice
+    worklist_type: S4_INV
+    code: STC_INV_004
+    name: Potential Duplicate Invoice
+    description: Possible duplicate invoice from same vendor
+    category: DATA_QUALITY
+    severity: HIGH
+    auto_run: true
+    sap_reference: SAP_STC_CHK_INV_DUPE
+    rule:
+      type: duplicate_check
+      model: account.move
+      fields: [partner_id, amount_total, ref]
+      time_window_days: 30
+      message: "Potential duplicate invoice detected"
+
+  # ============================================================
+  # Withholding Tax Checks
+  # ============================================================
+
+  - id: chk_wht_rate_mismatch
+    worklist_type: S4_WHT
+    code: STC_WHT_001
+    name: WHT Rate Mismatch
+    description: Withholding tax rate does not match ATC
+    category: ACCURACY
+    severity: HIGH
+    auto_run: true
+    sap_reference: SAP_STC_CHK_WHT_RATE
+    rule:
+      type: lookup_mismatch
+      model: account.move.line
+      field: tax_ids.amount
+      lookup_table: bir_atc_rates
+      message: "WHT rate does not match ATC specification"
+
+  - id: chk_wht_missing_atc
+    worklist_type: S4_WHT
+    code: STC_WHT_002
+    name: Missing ATC Code
+    description: WHT transaction without ATC classification
+    category: DATA_QUALITY
+    severity: CRITICAL
+    auto_run: true
+    sap_reference: SAP_STC_CHK_WHT_ATC
+    rule:
+      type: missing_field
+      model: account.move.line
+      field: atc_code
+      filter: "tax_ids.is_withholding == True"
+      message: "WHT transaction missing ATC code"
+
+  - id: chk_wht_threshold_exceeded
+    worklist_type: S4_WHT
+    code: STC_WHT_003
+    name: WHT Threshold Exceeded
+    description: Transaction exceeds WHT threshold but no WHT applied
+    category: COMPLETENESS
+    severity: HIGH
+    auto_run: true
+    sap_reference: SAP_STC_CHK_WHT_THRESHOLD
+    rule:
+      type: threshold_missing_tax
+      model: account.move
+      field: amount_total
+      threshold: 10000
+      expected_tax_type: withholding
+      message: "Transaction exceeds WHT threshold without withholding"
+
+  - id: chk_wht_cert_not_issued
+    worklist_type: S4_WHT
+    code: STC_WHT_004
+    name: WHT Certificate Not Issued
+    description: Withholding applied but certificate not generated
+    category: DOCUMENTATION
+    severity: MEDIUM
+    auto_run: false
+    sap_reference: SAP_STC_CHK_WHT_CERT
+    rule:
+      type: missing_document
+      model: account.move
+      filter: "has_withholding == True"
+      document_type: wht_certificate
+      message: "WHT certificate not issued for transaction"
+
+# Check categories
+categories:
+  - code: DATA_QUALITY
+    name: Data Quality
+    description: Master data completeness and accuracy
+  - code: COMPLETENESS
+    name: Completeness
+    description: Required data present
+  - code: ACCURACY
+    name: Accuracy
+    description: Calculations and rates correct
+  - code: THRESHOLD
+    name: Threshold
+    description: Amount-based triggers
+  - code: TIMING
+    name: Timing
+    description: Date-related checks
+  - code: DOCUMENTATION
+    name: Documentation
+    description: Required attachments
+
+# Severity levels
+severities:
+  CRITICAL:
+    color: "#B71C1C"
+    auto_block: true
+    sla_hours: 4
+  HIGH:
+    color: "#F44336"
+    auto_block: false
+    sla_hours: 24
+  MEDIUM:
+    color: "#FF9800"
+    auto_block: false
+    sla_hours: 48
+  LOW:
+    color: "#4CAF50"
+    auto_block: false
+    sla_hours: 72

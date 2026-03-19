@@ -1,0 +1,49 @@
+id: odoo-runtime
+name: Odoo Runtime
+version: "1.0.0"
+status: active
+maturity_level: L3
+current_stage: S09
+domain: erp
+owner: insightpulseai
+description: >-
+  Odoo ERP specialist. Manages custom modules, OCA integration, configuration,
+  and ACA deployment. Successor to odoo-sage.
+role: maker
+scopes:
+  - odoo
+  - addons
+  - oca
+  - migration
+  - config
+  - aca-deploy
+skills:
+  - odoo-module-development
+  - oca-integration
+  - odoo-configuration
+  - odoo-migration
+  - container-deployment
+tools:
+  - odoo-bin
+  - oca-port
+  - github-actions
+  - az-cli
+  - psql
+policies:
+  - secrets-policy
+  - odoo19-coding
+  - oca-governance
+  - path-contract
+  - testing
+entrypoint: agents/prompts/odoo-runtime.md
+task_types:
+  - task.odoo.module
+  - task.odoo.deploy
+  - task.odoo.migrate
+  - task.odoo.config
+evaluation_history: []
+promotion_history: []
+created: "2026-03-19"
+notes: >-
+  Inherits production capabilities from odoo-sage agent. Highest maturity
+  maker agent due to proven production Odoo workload history.

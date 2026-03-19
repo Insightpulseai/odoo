@@ -1,0 +1,10 @@
+schema: ssot.plane.taxonomy.cycles.v1
+version: 1
+updated: "2026-03-06"
+
+naming_pattern: '^[0-9]{4}-[0-9]{2} Month End$'
+cycles:
+  - 2026-03 Month End
+  - 2026-04 Month End
+  - 2026-05 Month End
+  - 2026-06 Month End

@@ -1,0 +1,183 @@
+# =============================================================================
+# Source Manifest: OCA (Odoo Community Association) Repositories
+# =============================================================================
+# GitHub repositories from the Odoo Community Association.
+# Crawls READMEs, documentation, and module manifests.
+# =============================================================================
+
+source: oca_repos
+display_name: "OCA Community Modules"
+version: "18.0"
+priority: 2
+
+# Domain allowlist
+domains:
+  - github.com
+  - raw.githubusercontent.com
+
+# GitHub API configuration
+github:
+  org: "OCA"
+  api_base: "https://api.github.com"
+  # Only repos with 18.0 branch
+  branch_filter: "18.0"
+  # Repos to include (if empty, include all with matching branch)
+  include_repos: []
+  # Repos to exclude
+  exclude_repos:
+    - ".github"
+    - "maintainer-tools"
+    - "maintainer-quality-tools"
+    - "pylint-odoo"
+    - "oca-custom"
+
+# Key OCA repositories by functional area
+roots:
+  # Financial
+  - space: oca/account-financial
+    repo: "account-financial-reporting"
+    description: "Financial Reporting Modules"
+
+  - space: oca/account-payment
+    repo: "account-payment"
+    description: "Payment Management"
+
+  - space: oca/bank-statement
+    repo: "bank-statement-import"
+    description: "Bank Statement Import"
+
+  # HR
+  - space: oca/hr
+    repo: "hr"
+    description: "Human Resources Modules"
+
+  - space: oca/hr-expense
+    repo: "hr-expense"
+    description: "Expense Management"
+
+  - space: oca/hr-attendance
+    repo: "hr-attendance"
+    description: "Attendance Tracking"
+
+  # Sales & CRM
+  - space: oca/sale-workflow
+    repo: "sale-workflow"
+    description: "Sales Workflow Extensions"
+
+  - space: oca/crm
+    repo: "crm"
+    description: "CRM Enhancements"
+
+  # Inventory & Manufacturing
+  - space: oca/stock-logistics
+    repo: "stock-logistics-workflow"
+    description: "Stock Logistics Workflow"
+
+  - space: oca/manufacture
+    repo: "manufacture"
+    description: "Manufacturing Modules"
+
+  # Purchase
+  - space: oca/purchase-workflow
+    repo: "purchase-workflow"
+    description: "Purchase Workflow"
+
+  # Website & eCommerce
+  - space: oca/website
+    repo: "website"
+    description: "Website Modules"
+
+  - space: oca/e-commerce
+    repo: "e-commerce"
+    description: "eCommerce Extensions"
+
+  # Connectors & Integrations
+  - space: oca/connector
+    repo: "connector"
+    description: "Integration Framework"
+
+  - space: oca/edi
+    repo: "edi"
+    description: "Electronic Data Interchange"
+
+  # Server & Technical
+  - space: oca/server-tools
+    repo: "server-tools"
+    description: "Server Utilities"
+
+  - space: oca/server-ux
+    repo: "server-ux"
+    description: "UX Improvements"
+
+  - space: oca/reporting-engine
+    repo: "reporting-engine"
+    description: "Reporting Framework"
+
+  # Localization
+  - space: oca/l10n-philippines
+    repo: "l10n-philippines"
+    description: "Philippine Localization"
+
+# Files to extract from each repo
+file_patterns:
+  # Documentation
+  - pattern: "README.md"
+    type: "readme"
+    depth: 0  # Only root
+  - pattern: "README.rst"
+    type: "readme"
+    depth: 0
+  - pattern: "**/README.md"
+    type: "module_readme"
+    depth: 2  # Module level
+  - pattern: "**/README.rst"
+    type: "module_readme"
+    depth: 2
+  # Module manifests
+  - pattern: "**/__manifest__.py"
+    type: "manifest"
+    depth: 2
+  # Static description pages
+  - pattern: "**/static/description/index.html"
+    type: "description"
+    depth: 3
+
+# Content transformation
+extraction:
+  # Convert RST to Markdown
+  rst_to_md: true
+  # Extract manifest metadata
+  parse_manifests: true
+  # Include module dependencies in metadata
+  extract_dependencies: true
+
+# Exclude patterns
+exclude:
+  - "*/test*/"
+  - "*/tests/"
+  - "*/__pycache__/"
+  - "*.pyc"
+  - "*.po"
+  - "*.pot"
+  - "setup/"
+  - ".github/"
+
+# Pipeline configuration
+pipeline:
+  chunk_strategy: "paragraph"  # Better for technical docs
+  chunk_size_tokens: 384
+  chunk_overlap_tokens: 48
+  embedding_model: "text-embedding-3-small"
+  embedding_dims: 1536
+  # Include module name in chunk metadata
+  enrich_with_module_context: true
+
+# Refresh schedule
+schedule:
+  cron: "0 4 * * 0"  # Weekly on Sunday at 4 AM
+  full_recrawl_days: 14  # Full recrawl every 2 weeks
+
+# Rate limiting for GitHub API
+rate_limit:
+  requests_per_hour: 5000  # With auth
+  unauthenticated: 60

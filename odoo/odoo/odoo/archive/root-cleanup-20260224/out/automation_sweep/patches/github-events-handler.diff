@@ -1,0 +1,4 @@
+--- a/n8n/workflows/github-events-handler.json
++++ b/automations/n8n/workflows/github-events-handler.json
+@@ Move stray workflow to canonical location @@
+# git mv 'n8n/workflows/github-events-handler.json' 'automations/n8n/workflows/github-events-handler.json'

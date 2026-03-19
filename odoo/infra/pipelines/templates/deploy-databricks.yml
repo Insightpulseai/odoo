@@ -1,0 +1,97 @@
+# =============================================================================
+# pipelines/templates/deploy-databricks.yml
+# =============================================================================
+# Reusable step template: Databricks Asset Bundle validate + deploy.
+#
+# Usage:
+#   - template: pipelines/templates/deploy-databricks.yml@templates
+#     parameters:
+#       serviceConnection: sc-azure-dev-lakehouse
+#       target: dev
+#
+# Design decisions:
+#   - Uses Databricks CLI v2 (databricks bundle) for DAB deployments.
+#   - Validate-only mode controlled by validateOnly parameter.
+#   - Service connection provides Azure auth for Databricks workspace.
+# =============================================================================
+
+parameters:
+  - name: serviceConnection
+    type: string
+
+  - name: workspaceName
+    type: string
+    default: dbw-ipai-dev
+
+  - name: bundlePath
+    type: string
+    default: '.'
+
+  - name: target
+    type: string
+    default: dev
+    values:
+      - dev
+      - staging
+      - prod
+
+  - name: validateOnly
+    type: boolean
+    default: false
+
+steps:
+  # ---------------------------------------------------------------------------
+  # Install Databricks CLI
+  # ---------------------------------------------------------------------------
+  - script: |
+      set -euo pipefail
+      echo "Installing Databricks CLI..."
+      curl -fsSL https://raw.githubusercontent.com/databricks/setup-cli/main/install.sh | sh
+      databricks --version
+    displayName: Install Databricks CLI
+
+  # ---------------------------------------------------------------------------
+  # Bundle validate (always runs)
+  # ---------------------------------------------------------------------------
+  - task: AzureCLI@2
+    displayName: Databricks bundle validate (${{ parameters.target }})
+    inputs:
+      azureSubscription: ${{ parameters.serviceConnection }}
+      scriptType: bash
+      scriptLocation: inlineScript
+      inlineScript: |
+        set -euo pipefail
+        cd "${{ parameters.bundlePath }}"
+
+        echo "Validating Databricks bundle (target: ${{ parameters.target }})..."
+        databricks bundle validate --target ${{ parameters.target }}
+        echo "Validation: PASS"
+
+  # ---------------------------------------------------------------------------
+  # Bundle deploy (skipped in validate-only mode)
+  # ---------------------------------------------------------------------------
+  - ${{ if eq(parameters.validateOnly, false) }}:
+    - task: AzureCLI@2
+      displayName: Databricks bundle deploy (${{ parameters.target }})
+      inputs:
+        azureSubscription: ${{ parameters.serviceConnection }}
+        scriptType: bash
+        scriptLocation: inlineScript
+        inlineScript: |
+          set -euo pipefail
+          cd "${{ parameters.bundlePath }}"
+
+          EVIDENCE_DIR="/tmp/databricks-deploy-${{ parameters.target }}"
+          mkdir -p "${EVIDENCE_DIR}"
+
+          echo "Deploying Databricks bundle (target: ${{ parameters.target }})..."
+          databricks bundle deploy \
+            --target ${{ parameters.target }} \
+            2>&1 | tee "${EVIDENCE_DIR}/deploy.log"
+
+          echo "Deploy complete."
+
+    - publish: /tmp/databricks-deploy-${{ parameters.target }}
+      artifact: databricks-deploy-${{ parameters.target }}
+      displayName: Publish Databricks deploy evidence
+      condition: always()

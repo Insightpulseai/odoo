@@ -1,0 +1,41 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* IPAI Design Tokens */
+:root {
+  --ipai-bg: #0B1220;
+  --ipai-surface: #111827;
+  --ipai-surface-2: #0F172A;
+  --ipai-border: rgba(255, 255, 255, 0.10);
+  --ipai-border-strong: rgba(255, 255, 255, 0.16);
+  --ipai-text: rgba(255, 255, 255, 0.92);
+  --ipai-text-muted: rgba(255, 255, 255, 0.65);
+  --ipai-text-faint: rgba(255, 255, 255, 0.45);
+  --ipai-primary: #FBBF24;
+  --ipai-primary-2: #F59E0B;
+  --ipai-radius: 12px;
+  --ipai-radius-sm: 10px;
+  --ipai-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+  --ipai-shadow-soft: 0 6px 18px rgba(0, 0, 0, 0.22);
+}
+
+:root.ipai-theme-light {
+  --ipai-bg: #F6F7FB;
+  --ipai-surface: #FFFFFF;
+  --ipai-surface-2: #F1F5F9;
+  --ipai-border: rgba(15, 23, 42, 0.10);
+  --ipai-border-strong: rgba(15, 23, 42, 0.14);
+  --ipai-text: rgba(15, 23, 42, 0.92);
+  --ipai-text-muted: rgba(15, 23, 42, 0.62);
+  --ipai-text-faint: rgba(15, 23, 42, 0.42);
+  --ipai-shadow: 0 10px 24px rgba(15, 23, 42, 0.10);
+  --ipai-shadow-soft: 0 8px 18px rgba(15, 23, 42, 0.08);
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  background: transparent;
+}

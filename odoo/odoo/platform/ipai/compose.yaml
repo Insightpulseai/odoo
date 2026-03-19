@@ -2,14 +2,14 @@
 # ipai-platform Docker Compose — SSOT Delegator
 # =============================================================================
 # Delegates to canonical ../docker-compose.yml for core services (db, redis, odoo).
-# Adds only platform-specific services: optional local Supabase.
-# TLS termination and routing handled by Azure Front Door.
+# Adds only platform-specific services: Nginx reverse proxy, optional Supabase.
 #
 # Usage:
-#   docker compose up -d                     # Core stack (from SSOT)
+#   docker compose up -d                     # Core stack (from SSOT) + Nginx
 #   docker compose --profile supabase up -d  # With local Supabase
 #
 # Endpoints:
+#   - Nginx:    http://localhost:80        (reverse proxy)
 #   - Odoo:     http://localhost:8069      (from SSOT)
 #   - Supabase: http://localhost:3000      (optional, PostgREST)
 # =============================================================================
@@ -20,6 +20,22 @@ include:
 name: ipai_platform
 
 services:
+  # ---------------------------------------------------------------------------
+  # Nginx Reverse Proxy
+  # ---------------------------------------------------------------------------
+  nginx:
+    image: nginx:1.25-alpine
+    container_name: ipai-nginx
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/conf.d:/etc/nginx/conf.d:ro
+    depends_on:
+      odoo:
+        condition: service_healthy
+    restart: unless-stopped
+
   # ---------------------------------------------------------------------------
   # Supabase Local Stack (Optional Profile)
   # ---------------------------------------------------------------------------

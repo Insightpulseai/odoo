@@ -14,6 +14,10 @@
 #   ssot/governance/platform-strategy-2026.yaml (VMOKRAPI strategy)
 #   infra/ssot/roadmap/product_roadmap.yaml (quarterly roadmap)
 #
+# NOTE: Strategic KPIs in platform-strategy-2026.yaml use SKPI-* namespace
+# to avoid collision with operational KPIs (kpi_001..kpi_017) in
+# platform/data/contracts/control_room_kpis.yaml.
+#
 # Status values: active | partial | planned | blocked | deprecated | n/a
 # Priority: P0 (production blocker) | P1 (operational maturity) | P2 (enhancement) | P3 (future)
 #
@@ -21,7 +25,7 @@
 # =============================================================================
 
 schema_version: "1.0"
-last_updated: "2026-03-15"
+last_updated: "2026-03-18"
 
 # =============================================================================
 # A. ERP — Odoo Enterprise Parity (CE + OCA + ipai_*)
@@ -640,6 +644,85 @@ integrations:
     priority: P0
 
 # =============================================================================
+# J. Identity & SSO (aligned to OBJ-001)
+# =============================================================================
+identity_sso:
+  target: "Entra ID as canonical identity plane, MFA enforced, no GA day-to-day"
+  current: "Bootstrap complete — domain verified, emergency accounts, MFA assigned"
+  strategy_ref: OBJ-001
+  okr_ref: OKR-001
+
+  capabilities:
+    - id: domain_verification
+      description: "Primary business domain verified in M365"
+      status: active
+      priority: P0
+
+    - id: emergency_access
+      description: "2 emergency access accounts with Global Admin"
+      status: active
+      priority: P0
+
+    - id: mfa_baseline
+      description: "MFA enforced for all admin accounts"
+      status: partial
+      priority: P0
+      gap: "Security Defaults temporarily disabled for bootstrap"
+
+    - id: named_accounts
+      description: "All platform admins on named accounts, no shared credentials"
+      status: active
+      priority: P0
+
+    - id: entra_sso_odoo
+      description: "Entra ID SSO for Odoo via OIDC"
+      status: partial
+      priority: P0
+      gap: "App registration created, M365 Business Premium needed for Conditional Access P1"
+
+# =============================================================================
+# K. DevOps Maturity (aligned to OBJ-002)
+# =============================================================================
+devops_maturity:
+  target: "Azure DevOps as canonical delivery control plane"
+  current: "Project created, CI/CD pipeline active, Boards populated"
+  strategy_ref: OBJ-002
+  okr_ref: OKR-002
+
+  capabilities:
+    - id: ado_project
+      description: "Azure DevOps project operationalized with environments"
+      status: active
+      priority: P0
+
+    - id: yaml_pipelines
+      description: "All deployments via YAML pipelines in repo"
+      status: active
+      priority: P0
+
+    - id: wif_service_connections
+      description: "Workload Identity Federation service connections"
+      status: active
+      priority: P0
+
+    - id: agent_pools
+      description: "Self-hosted agent pools operational"
+      status: active
+      priority: P1
+
+    - id: boards_hierarchy
+      description: "Azure Boards with Epic→Issue hierarchy, GitHub AB# linking"
+      status: partial
+      priority: P1
+      gap: "Epics created but Issues not parented, AB# linking not active in commits"
+
+    - id: environment_gates
+      description: "Manual approval gates for staging and prod"
+      status: partial
+      priority: P0
+      gap: "Environments defined but gates not tested end-to-end"
+
+# =============================================================================
 # SCORING SUMMARY
 # =============================================================================
 scoring:
@@ -698,9 +781,21 @@ scoring:
       p0_gaps: 0
       status: "All core integrations active"
 
+    - domain: Identity & SSO
+      target_pct: 100
+      current_pct: 70
+      p0_gaps: 1
+      status: "Bootstrap complete, Conditional Access P1 blocked on M365 Business Premium"
+
+    - domain: DevOps Maturity
+      target_pct: 100
+      current_pct: 65
+      p0_gaps: 1
+      status: "Project + pipeline active, Boards hierarchy not wired, gates untested"
+
   overall:
-    weighted_score: 51
-    p0_gap_count: 13
+    weighted_score: 53
+    p0_gap_count: 15
     critical_path: "OCA hydration → EE parity → platform ops proof"
 
 # =============================================================================

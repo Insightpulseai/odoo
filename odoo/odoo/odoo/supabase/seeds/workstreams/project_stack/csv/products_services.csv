@@ -1,0 +1,6 @@
+External ID,Name,Internal Reference,Product Type,Sales Price,Cost,Unit of Measure,Invoicing Policy,Track Service,Active,Can be Sold,Sales Description
+ipai_prod_consulting,Consulting Hours,SVC-CONSULT,service,2500.0,0.0,Hour,delivery,timesheet,TRUE,TRUE,Professional consulting services billed hourly
+ipai_prod_development,Development Hours,SVC-DEV,service,2000.0,0.0,Hour,delivery,timesheet,TRUE,TRUE,Software development services billed hourly
+ipai_prod_design,Design Hours,SVC-DESIGN,service,1800.0,0.0,Hour,delivery,timesheet,TRUE,TRUE,Creative design services billed hourly
+ipai_prod_pm,Project Management,SVC-PM,service,2200.0,0.0,Hour,delivery,timesheet,TRUE,TRUE,Project management services billed hourly
+ipai_prod_milestone_delivery,Milestone Delivery,SVC-MILESTONE,service,50000.0,0.0,Unit,order,manual,TRUE,TRUE,Fixed-fee milestone delivery

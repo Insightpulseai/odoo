@@ -1,0 +1,27 @@
+# OCA Must-Have Purchase (Odoo 19) - SSOT manifest
+# NOTE: module names are commonly used OCA technical names.
+# CI will validate module availability for 19.0.
+
+meta:
+  odoo_version: "19.0"
+  purpose: "OCA Must-Have Purchase modules for every Odoo instance"
+  install_order:
+    - "purchase-workflow"
+
+repositories:
+  # TODO: pin to exact git SHAs in oca.lock.json
+  - name: "OCA/purchase-workflow"
+    branch: "19.0"
+
+modules:
+  # --- purchase-workflow (purchase order workflows) ---
+  - purchase_order_type
+  - purchase_order_line_sequence
+  - purchase_exception
+  - purchase_order_approved
+  - purchase_tier_validation
+
+policy:
+  require_all_modules_installed: true
+  fail_if_missing_repo: true
+  fail_if_module_not_found: true

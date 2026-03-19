@@ -1,0 +1,75 @@
+# Agent Factory — Boards Mapping SSOT
+# Maps spec/agent-factory/tasks.md to Azure Boards decomposition.
+
+id: agent_factory_boards_mapping
+version: 1.0.0
+source: spec/agent-factory/tasks.md
+task_id_pattern: "AF-\\d+"
+
+epics:
+  - id: EPIC-AF-01
+    title: Agent Factory Foundations
+    description: Types, schemas, repo structure, base packages
+    phases: [phase_0]
+    task_range: AF-001 to AF-008
+
+  - id: EPIC-AF-02
+    title: Task Bus
+    description: Typed envelope, router, state machine, event log
+    phases: [phase_1]
+    task_range: AF-010 to AF-019
+
+  - id: EPIC-AF-03
+    title: Registry and Passports
+    description: Agent CRUD, passport schema, migration of existing agents
+    phases: [phase_2]
+    task_range: AF-020 to AF-029
+
+  - id: EPIC-AF-04
+    title: Assembly Line and Stage Gates
+    description: 16-stage config, gate engine, criteria evaluator
+    phases: [phase_3]
+    task_range: AF-030 to AF-045
+
+  - id: EPIC-AF-05
+    title: Evaluations and Judge Agents
+    description: Eval specs, rubrics, judge contracts, eval runner
+    phases: [phase_4]
+    task_range: AF-050 to AF-060
+
+  - id: EPIC-AF-06
+    title: Promotion and Release Controls
+    description: Promotion records, release lanes, maturity calculator
+    phases: [phase_5]
+    task_range: AF-070 to AF-078
+
+  - id: EPIC-AF-07
+    title: Runtime Observability
+    description: Metrics, alerts, dashboards, SLA tracking
+    phases: [phase_6]
+    task_range: AF-080 to AF-088
+
+  - id: EPIC-AF-08
+    title: Portfolio Governance and Retirement
+    description: Portfolio KPIs, debt tracker, retirement workflows
+    phases: [phase_7, phase_8]
+    task_range: AF-090 to AF-106
+
+stage_to_issue_ownership:
+  S01-S02: platform-team
+  S03-S07: maker-agent-owner
+  S08-S09: platform-team
+  S10-S13: runtime-ops
+  S14-S16: platform-team
+
+work_item_defaults:
+  type: Task
+  area_path: InsightPulseAI/Agent-Platform
+  iteration_path: current
+  parent_rule: phase_to_epic
+
+notes:
+  - Task IDs (AF-NNN) are stable identifiers from spec/agent-factory/tasks.md
+  - Epics group by delivery phase, not by stage
+  - Do not create duplicate work items — derive from tasks.md
+  - Update this file if tasks.md phases are renumbered

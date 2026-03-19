@@ -78,8 +78,8 @@
 **Files changed**:
 - `addons/ipai/ipai_odoo_copilot/data/pack_bir_compliance.xml` — BIR tool definitions per agent
 - `addons/ipai/ipai_ai_copilot/data/copilot_tools_bir.xml` — 8 BIR copilot tools
-- `ssot/agents/tax_pulse_tool_contracts.yaml` — typed tool contracts (COMPLETE)
-- `ssot/agents/agent_capability_matrix.yaml` — BIR pack registered (COMPLETE)
+- `infra/ssot/agents/tax_pulse_tool_contracts.yaml` — typed tool contracts (COMPLETE)
+- `infra/ssot/agents/agent_capability_matrix.yaml` — BIR pack registered (COMPLETE)
 - `eval/datasets/bir_*.yaml` — evaluation datasets (COMPLETE)
 - `eval/training/bir_sft_*.jsonl` — SFT training assets (COMPLETE)
 
@@ -199,8 +199,8 @@ The following artifacts were created as part of the AFC parity merge and are ref
 | `agents/contracts/ui/confirm_action_card.json` | Adaptive Card JSON for write confirmation | Actions agent, Tax Pulse, all write operations |
 | `agents/contracts/ui/adaptive_cards_index.yaml` | Index of all Adaptive Cards across surfaces | Teams integration, Odoo widget, agent responses |
 | `agents/contracts/openapi/ipai_odoo_bridge.openapi.yaml` | Narrow OpenAPI spec for agent-to-Odoo bridge | All agents via APIM, Tax Pulse tools |
-| `ssot/tax/compliance_check_catalog.yaml` | Machine-readable compliance check registry (12 checks) | Tax Pulse agent, `ipai_bir_tax_compliance` |
-| `ssot/agents/tax_pulse_tool_contracts.yaml` | Tool contracts + agent metadata (updated) | Tax Pulse capability pack, bridge API |
+| `infra/ssot/tax/compliance_check_catalog.yaml` | Machine-readable compliance check registry (12 checks) | Tax Pulse agent, `ipai_bir_tax_compliance` |
+| `infra/ssot/agents/tax_pulse_tool_contracts.yaml` | Tool contracts + agent metadata (updated) | Tax Pulse capability pack, bridge API |
 
 ### Capability Class Integration
 

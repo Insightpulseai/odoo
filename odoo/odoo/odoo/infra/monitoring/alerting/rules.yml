@@ -1,0 +1,72 @@
+# Prometheus Alerting Rules — InsightPulse AI Stack
+groups:
+  - name: odoo_alerts
+    rules:
+      - alert: OdooDown
+        expr: up{job="odoo"} == 0
+        for: 2m
+        labels:
+          severity: critical
+          workspace: insightpulseai-prod
+        annotations:
+          summary: "Odoo CE is down"
+          description: "Odoo health endpoint has been unreachable for 2+ minutes."
+
+      - alert: PostgreSQLDown
+        expr: up{job="postgresql"} == 0
+        for: 1m
+        labels:
+          severity: critical
+          workspace: insightpulseai-prod
+        annotations:
+          summary: "PostgreSQL exporter is down"
+          description: "PostgreSQL metrics exporter unreachable for 1+ minute."
+
+  - name: host_alerts
+    rules:
+      - alert: HighCPU
+        expr: 100 - (avg(rate(node_cpu_seconds_total{mode="idle"}[5m])) * 100) > 90
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Host CPU usage above 90%"
+          description: "CPU usage has been above 90% for 5+ minutes. Current: {{ $value }}%"
+
+      - alert: HighMemory
+        expr: (1 - node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes) * 100 > 90
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Host memory usage above 90%"
+          description: "Memory usage has been above 90% for 5+ minutes. Current: {{ $value }}%"
+
+      - alert: DiskSpaceCritical
+        expr: (1 - node_filesystem_avail_bytes{mountpoint="/"} / node_filesystem_size_bytes{mountpoint="/"}) * 100 > 85
+        for: 10m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Root filesystem above 85% full"
+          description: "Disk usage on / has been above 85% for 10+ minutes. Current: {{ $value }}%"
+
+  - name: postgres_alerts
+    rules:
+      - alert: PostgreSQLHighConnections
+        expr: pg_stat_activity_count > 80
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "PostgreSQL connections above 80"
+          description: "Active + idle connections: {{ $value }}. Max is typically 100."
+
+      - alert: PostgreSQLSlowQueries
+        expr: rate(pg_stat_activity_count{state="active"}[5m]) > 20
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High rate of active PostgreSQL queries"
+          description: "Active query count rate: {{ $value }}"

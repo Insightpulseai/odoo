@@ -1,0 +1,176 @@
+# schema: ssot.infra.digitalocean.monitoring.v1
+# DigitalOcean monitoring posture — alert thresholds per droplet class.
+#
+# do-agent is the collection mechanism (open-source; free opt-in with DO Monitoring).
+# Alert policies are configured in the DO control panel or via the DO API.
+#
+# Reference:
+#   DO Monitoring overview: https://docs.digitalocean.com/products/monitoring/
+#   Alert policy management: https://docs.digitalocean.com/products/monitoring/details/features/
+#   do-agent requirement: must be installed on each droplet for metrics/alerting to work.
+#
+# Automation: doctl + PyDo (official Python SDK) for programmatic management.
+# See: ssot/infra/digitalocean/automation.yaml (if created)
+#
+# Active alerts as of 2026-03-01:
+#   ocr-service-droplet: disk >80% (1h), memory >85% (5m), CPU >85% (5m), load >200 (5m)
+#   — disk pressure is the most critical; see remediation notes below.
+
+version: "1.0.0"
+schema: ssot.infra.digitalocean.monitoring.v1
+last_reviewed: "2026-03-01"
+
+monitoring_standard:
+  agent: do-agent
+  all_always_on_droplets: true
+  preferred_interfaces:
+    - doctl
+    - pydo                        # official Python SDK (OpenAPIv3-based)
+
+notification_channels:
+  slack:
+    notes: "Configure via DO console: Monitoring → Notification Policies → Add Slack webhook"
+  email:
+    notes: "Default; configure in DO account settings"
+
+# ── Per-Droplet Alert Thresholds ──────────────────────────────────────────────
+
+alert_policies:
+
+  # OCR service droplet — resource-intensive; model loading + image processing
+  ocr_service_droplet:
+    droplet_name: "ocr-service-droplet"
+    sizing_note: "2–4 vCPU / 4–8 GB recommended for OCR workloads"
+
+    disk_utilization:
+      warn:
+        threshold_pct: 75
+        duration_min: 60
+        action: "Investigate: log rotation, /tmp cleanup, docker overlay2 pruning"
+      crit:
+        threshold_pct: 90
+        duration_min: 30
+        action: "Immediate: prune docker images + logs; escalate if >90%"
+    disk_remediation:
+      - "Run: docker system prune -f --volumes (non-production containers only)"
+      - "Clear /tmp OCR input/output files (enforce TTL cleanup cron)"
+      - "Rotate nginx + application logs (logrotate must be configured)"
+      - "Move model cache to a dedicated Volume if >10 GB"
+      - "Long-term: archive old logs to DO Spaces"
+
+    memory_utilization:
+      warn:
+        threshold_pct: 80
+        duration_min: 10
+        action: "Check OCR worker concurrency; consider capping concurrent workers"
+      crit:
+        threshold_pct: 90
+        duration_min: 10
+        action: "Restart OCR workers if OOM-prone; add 1 GB swap if absent"
+    memory_remediation:
+      - "Cap OCR worker concurrency (queue depth is fine; concurrency is the RAM driver)"
+      - "Add swap (2 GB minimum) to absorb burst spikes"
+      - "Separate ingest from compute: don't process OCR in the HTTP request path"
+      - "If sustained: resize droplet (RAM > CPU for Python + caching workloads)"
+
+    cpu_utilization:
+      warn:
+        threshold_pct: 80
+        duration_min: 10
+        action: "Review concurrent OCR job count; queue is fine, concurrency is the risk"
+      crit:
+        threshold_pct: 90
+        duration_min: 10
+        action: "Throttle incoming OCR requests; scale up if justified by metrics"
+
+    load_average_1m:
+      warn:
+        threshold_per_vcpu: 1.0   # load > 1x vCPU count for 10 min
+        duration_min: 10
+        action: "Review worker pool sizing"
+      crit:
+        threshold_per_vcpu: 1.5   # load > 1.5x vCPU count
+        duration_min: 10
+        action: "Immediate: identify stuck workers or runaway processes"
+
+    outbound_bandwidth:
+      alert_if_below_mbps: 1.0   # Droplet may be down
+      duration_min: 5
+      action: "Check: docker ps, nginx status, droplet console"
+
+  # Odoo ERP production droplet — higher baseline; more workers + cron
+  odoo_erp_prod:
+    droplet_name: "odoo-production"
+    sizing_note: "4 vCPU / 8 GB recommended for production Odoo with workers + cron"
+
+    disk_utilization:
+      warn:
+        threshold_pct: 75
+        duration_min: 60
+        action: "Check: /opt/odoo/filestore, /var/log, docker overlay2"
+      crit:
+        threshold_pct: 90
+        duration_min: 30
+        action: "Immediate: move filestore to Volume if not already; prune logs"
+
+    memory_utilization:
+      warn:
+        threshold_pct: 80
+        duration_min: 10
+        action: "Check Odoo worker count (workers setting in odoo.conf)"
+      crit:
+        threshold_pct: 90
+        duration_min: 10
+        action: "Restart excess workers; consider reducing worker count or resizing"
+
+    cpu_utilization:
+      warn:
+        threshold_pct: 80
+        duration_min: 10
+        action: "Check for heavy cron jobs or report generation"
+      crit:
+        threshold_pct: 90
+        duration_min: 10
+        action: "Identify offending process (top); consider splitting report jobs"
+
+    load_average_1m:
+      warn:
+        threshold_per_vcpu: 1.0
+        duration_min: 10
+      crit:
+        threshold_per_vcpu: 2.0   # Odoo with 4 vCPU; alert at load > 8
+        duration_min: 10
+
+# ── Key Metrics to Prove "Optimum" Sizing ────────────────────────────────────
+
+sizing_decision_metrics:
+  description: >
+    Monitor these 6 metrics for 1–4 weeks before making resize decisions.
+    "Optimum" = consistently within warn thresholds without crit alerts.
+  metrics:
+    - droplet_cpu_pct
+    - droplet_memory_pct_plus_swap
+    - disk_io_wait_pct
+    - nginx_request_rate_and_p95_latency
+    - odoo_worker_saturation
+    - postgres_slow_query_count_and_active_connections
+  downsize_trigger: "All metrics consistently below 25% CPU and 50% RAM at peak"
+  upgrade_trigger:
+    cpu: "Pegged during peak hours → 8 vCPU / 16 GB"
+    ram: "Memory pressure / swapping → 16 GB first (RAM > CPU for Python)"
+    reports: "Heavy report generation / large attachment processing → more CPU"
+
+# ── Marketplace Add-Ons (optional) ───────────────────────────────────────────
+
+marketplace_addons:
+  simple_observability:
+    status: optional
+    rationale: >
+      Adds unified metrics + logs + cron tracking beyond DO native monitoring.
+      Adopt if: log correlation across services is needed for OCR/n8n debugging.
+      Avoid if: DO Monitoring + log rotation on-box is sufficient.
+  logs_telemetry:
+    status: not_adopted
+    rationale: >
+      Full-featured log ingestion; justified only if DO native + Supabase Edge logs
+      are insufficient for cross-service correlation.

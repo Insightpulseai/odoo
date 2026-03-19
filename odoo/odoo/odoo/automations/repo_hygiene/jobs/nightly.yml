@@ -1,0 +1,159 @@
+# =============================================================================
+# Repo Hygiene Job: nightly
+# SSOT for nightly repository health checks
+# File: automations/repo_hygiene/jobs/nightly.yml
+#
+# Schedule: 01:10 Asia/Manila daily (= 17:10 UTC = cron '10 17 * * *')
+# Executor: Supabase Edge Function repo-hygiene-runner
+# Queue:    ops.repo_hygiene_runs (Supabase)
+# =============================================================================
+
+job:
+  name: nightly
+  display_name: Nightly Repo Hygiene
+  schedule: "10 17 * * *"       # UTC — 01:10 Asia/Manila
+  timezone_note: "01:10 Asia/Manila (UTC+08:00)"
+  pg_cron_job_name: ops_repo_hygiene_nightly
+  edge_function: repo-hygiene-runner
+  action: run_nightly
+  timeout_ms: 25000             # < Edge Function wall-clock limit
+  enabled: true
+
+# =============================================================================
+# Priority 0 — Fail-fast invariants (block merge if any fail)
+# =============================================================================
+checks_p0:
+  - id: p0_root_allowlist
+    name: Root path allowlist
+    description: Only approved top-level directories/files exist at repo root
+    allowlist:
+      dirs:
+        - .claude
+        - .devcontainer
+        - .github
+        - .specify
+        - addons
+        - agents
+        - apps
+        - automations
+        - docs
+        - infra
+        - packages
+        - sandbox
+        - scripts
+        - spec
+        - supabase
+        - web
+        - workflows
+      files:
+        - .gitignore
+        - .gitmodules
+        - .pre-commit-config.yaml
+        - AGENTS.md
+        - CLAUDE.md
+        - GEMINI.md
+        - LICENSE
+        - Makefile
+        - README.md
+        - package.json
+        - pnpm-workspace.yaml
+        - pyproject.toml
+        - turbo.json
+    severity: critical
+    fail_fast: true
+
+  - id: p0_secret_scan
+    name: Literal secret pattern scan
+    description: No raw secrets committed anywhere in the diff
+    patterns:
+      - "sk-[a-zA-Z0-9]{20,}"          # OpenAI / Anthropic API keys
+      - "eyJ[A-Za-z0-9_-]{10,}"        # Base64 JWT-shaped values (rough heuristic)
+      - "AAAA[A-Za-z0-9]{20,}"         # SSH private key prefix
+      - "-----BEGIN (RSA|EC|DSA|OPENSSH) PRIVATE KEY-----"
+    exclude_paths:
+      - "*.md"                          # Docs may contain example patterns
+      - "supabase/migrations/*.sql"     # Vault secret names (not values) allowed
+    severity: critical
+    fail_fast: true
+
+  - id: p0_structure_invariants
+    name: Repo structure invariants
+    description: Critical structural rules that must always hold
+    rules:
+      - "addons/ipai/ dirs must match ipai_* naming"
+      - "supabase/functions/ dirs must not contain hardcoded URLs"
+      - "infra/dns/subdomain-registry.yaml must be the only DNS SSOT"
+    severity: critical
+    fail_fast: true
+
+# =============================================================================
+# Priority 1 — Drift detection (report; may block on threshold)
+# =============================================================================
+checks_p1:
+  - id: p1_stale_branches
+    name: Stale branch detection
+    description: Branches with last commit > 30 days, no open PR
+    threshold_days: 30
+    severity: warning
+    report: true
+
+  - id: p1_evidence_retention
+    name: Evidence bundle retention
+    description: Evidence bundles older than 90 days flagged for archival
+    canonical_path: "web/docs/evidence/"
+    retention_days: 90
+    severity: info
+    report: true
+
+  - id: p1_oca_submodule_pins
+    name: OCA submodule pin audit
+    description: Submodule SHAs pinned to known-good commits (not floating HEAD)
+    paths:
+      - "addons/OCA/**"
+    severity: warning
+    report: true
+
+  - id: p1_generated_file_drift
+    name: Generated file drift
+    description: Files marked DO_NOT_EDIT match their generator output
+    generators:
+      - source: "docs/agent_instructions/SSOT.md"
+        targets: ["CLAUDE.md", "AGENTS.md", "GEMINI.md"]
+        runner: "scripts/agents/sync_agent_instructions.py --dry-run"
+      - source: "infra/dns/subdomain-registry.yaml"
+        targets:
+          - "infra/cloudflare/envs/prod/subdomains.auto.tfvars"
+          - "docs/architecture/runtime_identifiers.json"
+          - "infra/dns/dns-validation-spec.json"
+        runner: "scripts/generate-dns-artifacts.sh --dry-run"
+    severity: warning
+    report: true
+
+# =============================================================================
+# Priority 2 — Governance (org-level YAML linting)
+# =============================================================================
+checks_p2:
+  - id: p2_workflow_yaml_lint
+    name: GitHub Actions workflow YAML lint
+    description: All .github/workflows/*.yml files are valid YAML
+    path: ".github/workflows/"
+    severity: info
+    report: true
+
+  - id: p2_contract_index_sync
+    name: Platform contracts index sync
+    description: Every contract file in docs/contracts/ has an entry in PLATFORM_CONTRACTS_INDEX.md
+    contracts_dir: "docs/contracts/"
+    index_file: "docs/contracts/PLATFORM_CONTRACTS_INDEX.md"
+    severity: warning
+    report: true
+
+# =============================================================================
+# Output
+# =============================================================================
+output:
+  table: ops.repo_hygiene_runs
+  findings_table: ops.repo_hygiene_findings
+  artifacts_table: ops.repo_hygiene_artifacts
+  audit_actor: repo-hygiene-runner
+  notify_on_p0_failure: true       # TODO: wire to Slack webhook when available

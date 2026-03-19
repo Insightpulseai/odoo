@@ -1,0 +1,50 @@
+mode: staging
+
+debug:
+  xml_reload: false
+  python_reload: false
+  qweb_debug: false
+  werkzeug_debug: false
+
+database:
+  allowed_names:
+    - odoo_staging
+  dbfilter: "^odoo_staging$"
+  data_source: sanitized_prod_snapshot
+  refresh_cadence: weekly
+
+runtime:
+  workers: 2
+  max_cron_threads: 1
+  proxy_mode: true
+  base_url: https://erp-staging.insightpulseai.com
+
+mail:
+  provider: mailhog
+  host: mailhog
+  port: 1025
+  catch_all: true
+  external_delivery: false
+
+cron:
+  mode: gated
+  default_active: false
+  whitelist:
+    - mail.mail_send
+    - base.ir_cron_scheduler
+
+integrations:
+  payment_providers: test_mode
+  sms_gateway: disabled
+  external_apis: sandbox_only
+
+safety:
+  pii_masking: true
+  live_webhooks: disabled
+  production_api_keys: never
+
+addons:
+  paths:
+    - /usr/lib/python3/dist-packages/odoo/addons
+    - /opt/odoo/addons/oca
+    - /opt/odoo/addons/ipai

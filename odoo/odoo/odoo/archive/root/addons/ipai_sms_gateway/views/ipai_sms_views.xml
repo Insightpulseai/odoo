@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- SMS Provider Views -->
+    <record id="view_ipai_sms_provider_tree" model="ir.ui.view">
+        <field name="name">ipai.sms.provider.tree</field>
+        <field name="model">ipai.sms.provider</field>
+        <field name="arch" type="xml">
+            <list string="SMS Providers">
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="provider_type"/>
+                <field name="sender_id"/>
+                <field name="active"/>
+                <field name="message_count"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_ipai_sms_provider_form" model="ir.ui.view">
+        <field name="name">ipai.sms.provider.form</field>
+        <field name="model">ipai.sms.provider</field>
+        <field name="arch" type="xml">
+            <form string="SMS Provider">
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="test_connection" type="object"
+                                class="oe_stat_button" icon="fa-plug">
+                            <span>Test Connection</span>
+                        </button>
+                    </div>
+                    <widget name="web_ribbon" title="Archived" bg_color="text-bg-danger"
+                            invisible="active"/>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="provider_type"/>
+                            <field name="active"/>
+                            <field name="sequence"/>
+                        </group>
+                        <group>
+                            <field name="sender_id"/>
+                            <field name="timeout"/>
+                            <field name="max_retries"/>
+                        </group>
+                    </group>
+                    <group string="API Configuration">
+                        <group>
+                            <field name="base_url"
+                                   placeholder="https://api.example.com"/>
+                            <field name="account_sid"
+                                   placeholder="Account SID or API User"/>
+                        </group>
+                        <group>
+                            <field name="auth_param_key"
+                                   placeholder="ipai.sms.provider_token"/>
+                            <field name="webhook_enabled"/>
+                        </group>
+                    </group>
+                    <group string="Notes">
+                        <field name="notes" nolabel="1"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_ipai_sms_provider" model="ir.actions.act_window">
+        <field name="name">SMS Providers</field>
+        <field name="res_model">ipai.sms.provider</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <!-- SMS Message Views -->
+    <record id="view_ipai_sms_message_tree" model="ir.ui.view">
+        <field name="name">ipai.sms.message.tree</field>
+        <field name="model">ipai.sms.message</field>
+        <field name="arch" type="xml">
+            <list string="SMS Messages" decoration-danger="state == 'failed'"
+                  decoration-success="state == 'delivered'"
+                  decoration-info="state == 'sent'"
+                  decoration-warning="state == 'sending'">
+                <field name="name"/>
+                <field name="to_number"/>
+                <field name="body" widget="char" class="text-truncate" style="max-width: 200px;"/>
+                <field name="provider_id"/>
+                <field name="state" widget="badge"
+                       decoration-danger="state == 'failed'"
+                       decoration-success="state == 'delivered'"
+                       decoration-info="state == 'sent'"
+                       decoration-warning="state == 'sending'"/>
+                <field name="sent_at"/>
+                <field name="segments"/>
+                <field name="cost" widget="monetary"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_ipai_sms_message_form" model="ir.ui.view">
+        <field name="name">ipai.sms.message.form</field>
+        <field name="model">ipai.sms.message</field>
+        <field name="arch" type="xml">
+            <form string="SMS Message">
+                <header>
+                    <button name="action_queue" type="object" string="Queue"
+                            class="btn-secondary" invisible="state != 'draft'"/>
+                    <button name="action_send" type="object" string="Send Now"
+                            class="btn-primary" invisible="state not in ('draft', 'queued', 'failed')"/>
+                    <button name="action_reset" type="object" string="Reset"
+                            invisible="state != 'failed'"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="draft,queued,sending,sent,delivered"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="name"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="to_number"/>
+                            <field name="from_number"/>
+                            <field name="provider_id"/>
+                        </group>
+                        <group>
+                            <field name="partner_id"/>
+                            <field name="segments"/>
+                            <field name="cost" widget="monetary"/>
+                        </group>
+                    </group>
+                    <group>
+                        <field name="body"/>
+                    </group>
+                    <group string="Tracking" invisible="state == 'draft'">
+                        <group>
+                            <field name="external_id"/>
+                            <field name="sent_at"/>
+                            <field name="delivered_at"/>
+                        </group>
+                        <group>
+                            <field name="retry_count"/>
+                            <field name="res_model"/>
+                            <field name="res_id"/>
+                        </group>
+                    </group>
+                    <group string="Error" invisible="state != 'failed'">
+                        <group>
+                            <field name="error_code"/>
+                        </group>
+                        <group>
+                            <field name="error_message"/>
+                        </group>
+                    </group>
+                    <notebook invisible="not raw_response">
+                        <page string="Raw Response">
+                            <field name="raw_response" nolabel="1"/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_ipai_sms_message_search" model="ir.ui.view">
+        <field name="name">ipai.sms.message.search</field>
+        <field name="model">ipai.sms.message</field>
+        <field name="arch" type="xml">
+            <search string="SMS Messages">
+                <field name="name"/>
+                <field name="to_number"/>
+                <field name="body"/>
+                <field name="provider_id"/>
+                <filter name="filter_queued" string="Queued"
+                        domain="[('state', '=', 'queued')]"/>
+                <filter name="filter_sent" string="Sent"
+                        domain="[('state', '=', 'sent')]"/>
+                <filter name="filter_delivered" string="Delivered"
+                        domain="[('state', '=', 'delivered')]"/>
+                <filter name="filter_failed" string="Failed"
+                        domain="[('state', '=', 'failed')]"/>
+                <separator/>
+                <group expand="0" string="Group By">
+                    <filter name="groupby_state" string="Status"
+                            context="{'group_by': 'state'}"/>
+                    <filter name="groupby_provider" string="Provider"
+                            context="{'group_by': 'provider_id'}"/>
+                    <filter name="groupby_partner" string="Partner"
+                            context="{'group_by': 'partner_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_ipai_sms_message" model="ir.actions.act_window">
+        <field name="name">SMS Messages</field>
+        <field name="res_model">ipai.sms.message</field>
+        <field name="view_mode">list,form</field>
+        <field name="context">{'search_default_filter_queued': 1}</field>
+    </record>
+
+    <!-- Menu Items -->
+    <menuitem id="menu_ipai_sms_root" name="SMS Gateway"
+              parent="base.menu_custom"
+              sequence="51"/>
+
+    <menuitem id="menu_ipai_sms_messages" name="Messages"
+              parent="menu_ipai_sms_root"
+              action="action_ipai_sms_message"
+              sequence="10"/>
+
+    <menuitem id="menu_ipai_sms_providers" name="Providers"
+              parent="menu_ipai_sms_root"
+              action="action_ipai_sms_provider"
+              sequence="20"/>
+</odoo>

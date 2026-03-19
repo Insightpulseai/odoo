@@ -1,0 +1,42 @@
+version: 1
+name: parallel-workflow-design
+description: "Design parallel fan-out/fan-in workflows with independent subtasks and defined aggregation"
+type: benchmark_skill
+skill_classification: encoded_preference
+owner_persona: workflow-architect
+source_family: anthropic_agent_patterns
+status: active
+
+triggers:
+  - "parallel workflow needed"
+  - "fan-out fan-in design"
+  - "independent subtasks"
+  - "concurrent execution"
+
+inputs:
+  - subtasks: "List of independent work items"
+  - aggregation_strategy: "How to combine results"
+  - failure_tolerance: "What if some subtasks fail?"
+
+steps:
+  - id: verify_independence
+    action: "Confirm subtasks are truly independent — no hidden dependencies"
+  - id: define_subtask_contracts
+    action: "Specify input/output contract for each parallel branch"
+  - id: design_aggregation
+    action: "Define aggregation strategy BEFORE implementation"
+  - id: define_failure_handling
+    action: "What happens when k of n subtasks fail?"
+
+outputs:
+  - subtask_contracts: "Per-branch input/output specs"
+  - aggregation_strategy: "How results combine"
+  - failure_policy: "Partial success handling"
+  - concurrency_limit: "Max parallel branches"
+
+guardrails:
+  - "Aggregation strategy must be defined before implementation"
+  - "Verify subtask independence — hidden dependencies cause silent failures"
+  - "Define partial failure policy (fail-fast vs. best-effort)"
+
+benchmark_source: "https://www.anthropic.com/engineering/building-effective-agents"

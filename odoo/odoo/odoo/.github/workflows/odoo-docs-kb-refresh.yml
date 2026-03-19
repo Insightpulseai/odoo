@@ -1,0 +1,179 @@
+name: Odoo Docs KB Refresh
+
+on:
+  schedule:
+    - cron: "0 6 * * 1"  # Weekly Monday 06:00 UTC
+  workflow_dispatch:
+    inputs:
+      full_reindex:
+        description: "Force full re-index (ignore last commit)"
+        type: boolean
+        default: false
+
+env:
+  CLONE_DIR: /tmp/odoo-documentation-19
+  PYTHON_VERSION: "3.12"
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: pip
+
+      - name: Install dependencies
+        run: |
+          pip install pyyaml openai azure-search-documents azure-core
+
+      - name: Clone/pull Odoo 19 docs
+        run: |
+          python -c "
+          import sys
+          sys.path.insert(0, '.')
+          from packages.odoo_docs_kb.loader import OdooDocsLoader
+          loader = OdooDocsLoader(
+              source_config_path='agents/knowledge/odoo19_docs/source.yaml',
+              clone_dir='${{ env.CLONE_DIR }}',
+          )
+          commit = loader.clone_or_pull()
+          print(f'HEAD commit: {commit}')
+          with open('${{ runner.temp }}/head_commit.txt', 'w') as f:
+              f.write(commit)
+          "
+
+      - name: Load and chunk docs
+        run: |
+          python -c "
+          import json, sys
+          sys.path.insert(0, '.')
+          from packages.odoo_docs_kb.loader import OdooDocsLoader
+          from packages.odoo_docs_kb.chunker import RSTHeadingChunker
+
+          loader = OdooDocsLoader(
+              source_config_path='agents/knowledge/odoo19_docs/source.yaml',
+              clone_dir='${{ env.CLONE_DIR }}',
+          )
+          chunker = RSTHeadingChunker(
+              config_path='agents/knowledge/odoo19_docs/chunking.yaml',
+          )
+
+          full_reindex = '${{ inputs.full_reindex }}' == 'true'
+
+          if full_reindex:
+              docs = loader.load_all()
+              print(f'Full load: {len(docs)} files')
+          else:
+              from packages.odoo_docs_kb.index import AzureSearchIndexer
+              indexer = AzureSearchIndexer(
+                  config_path='agents/knowledge/odoo19_docs/indexing.yaml',
+              )
+              manifest = indexer.load_manifest()
+              last_commit = manifest.get('last_indexed_commit')
+              if last_commit:
+                  docs, deleted = loader.load_changed(last_commit)
+                  print(f'Incremental: {len(docs)} changed, {len(deleted)} deleted')
+              else:
+                  docs = loader.load_all()
+                  print(f'First run (full): {len(docs)} files')
+
+          all_chunks = []
+          for doc in docs:
+              chunks = chunker.chunk(doc.path, doc.content, doc.metadata)
+              all_chunks.extend(chunks)
+
+          print(f'Total chunks: {len(all_chunks)}')
+
+          # Save chunks for next step
+          chunk_data = [
+              {
+                  'chunk_id': c.chunk_id,
+                  'content': c.content,
+                  'path': c.path,
+                  'heading_chain': c.heading_chain,
+                  'ordinal': c.ordinal,
+                  'content_hash': c.content_hash,
+                  'metadata': c.metadata,
+              }
+              for c in all_chunks
+          ]
+          with open('${{ runner.temp }}/chunks.json', 'w') as f:
+              json.dump(chunk_data, f)
+          "
+
+      - name: Embed and index
+        env:
+          AZURE_OPENAI_API_KEY: ${{ secrets.AZURE_OPENAI_API_KEY }}
+          AZURE_OPENAI_ENDPOINT: ${{ secrets.AZURE_OPENAI_ENDPOINT }}
+          AZURE_OPENAI_API_VERSION: "2024-06-01"
+          AZURE_SEARCH_ENDPOINT: ${{ secrets.AZURE_SEARCH_ENDPOINT }}
+          AZURE_SEARCH_API_KEY: ${{ secrets.AZURE_SEARCH_API_KEY }}
+        run: |
+          python -c "
+          import json, sys
+          sys.path.insert(0, '.')
+          from packages.odoo_docs_kb.chunker import Chunk
+          from packages.odoo_docs_kb.embed import AzureEmbedder
+          from packages.odoo_docs_kb.index import AzureSearchIndexer
+
+          with open('${{ runner.temp }}/chunks.json') as f:
+              chunk_data = json.load(f)
+
+          chunks = [
+              Chunk(
+                  chunk_id=c['chunk_id'],
+                  content=c['content'],
+                  path=c['path'],
+                  heading_chain=c['heading_chain'],
+                  ordinal=c['ordinal'],
+                  content_hash=c['content_hash'],
+                  metadata=c['metadata'],
+              )
+              for c in chunk_data
+          ]
+
+          if not chunks:
+              print('No chunks to index — repo unchanged')
+              sys.exit(0)
+
+          # Embed
+          embedder = AzureEmbedder(batch_size=100)
+          texts = [c.content for c in chunks]
+          ids = [c.chunk_id for c in chunks]
+          embeddings = embedder.embed_texts(texts, ids)
+
+          # Index
+          indexer = AzureSearchIndexer(
+              config_path='agents/knowledge/odoo19_docs/indexing.yaml',
+          )
+          indexer.ensure_index()
+
+          with open('${{ runner.temp }}/head_commit.txt') as f:
+              commit = f.read().strip()
+
+          upserted = indexer.upsert_chunks(chunks, embeddings, commit)
+          print(f'Upserted {upserted} documents')
+
+          # Save manifest
+          file_hashes = {c.path: c.content_hash for c in chunks}
+          indexer.save_manifest(commit, file_hashes)
+
+          print(f'Index stats: {indexer.get_index_stats()}')
+          "
+
+      - name: Commit manifest
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          if git diff --quiet agents/knowledge/odoo19_docs/.index_manifest.json 2>/dev/null; then
+            echo "No manifest changes"
+          else
+            git add agents/knowledge/odoo19_docs/.index_manifest.json
+            git commit -m "chore(kb): update odoo19-docs index manifest"
+            git push
+          fi

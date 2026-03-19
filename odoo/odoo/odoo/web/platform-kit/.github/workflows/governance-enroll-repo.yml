@@ -1,0 +1,263 @@
+# =============================================================================
+# governance-enroll-repo.yml - Fast Repo Enrollment
+# =============================================================================
+# Enrolls a single repository into the governance framework immediately.
+# Called via workflow_dispatch when a new repo is created or needs enrollment.
+#
+# TRIGGERS:
+#   - Manual dispatch with repo_full_name input
+#   - Webhook-triggered via dispatch-enroll-repo.sh
+#
+# PREREQUISITES:
+#   - GITHUB_APP_ID secret set in organization
+#   - GITHUB_APP_PRIVATE_KEY_B64 secret set in organization
+#   - SUPABASE_URL secret set in organization
+#   - SUPABASE_SERVICE_ROLE_KEY secret set in organization
+# =============================================================================
+
+name: Enroll Repository in Governance
+
+on:
+  workflow_dispatch:
+    inputs:
+      repo_full_name:
+        description: 'Repository full name (e.g., Insightpulseai-net/odoo-ce)'
+        required: true
+        type: string
+      apply_governance:
+        description: 'Apply governance policies to the repo'
+        required: false
+        default: 'true'
+        type: boolean
+      sync_inventory:
+        description: 'Sync GitHub inventory to Supabase'
+        required: false
+        default: 'true'
+        type: boolean
+
+permissions:
+  contents: read
+
+env:
+  GITHUB_ORG: Insightpulseai-net
+
+jobs:
+  enroll:
+    name: Enroll Repository
+    runs-on: ubuntu-latest
+
+    steps:
+      # -----------------------------------------------------------------------
+      # Checkout
+      # -----------------------------------------------------------------------
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # -----------------------------------------------------------------------
+      # Setup Node.js (for inventory sync script)
+      # -----------------------------------------------------------------------
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      # -----------------------------------------------------------------------
+      # Install Dependencies
+      # -----------------------------------------------------------------------
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y jq
+
+      # -----------------------------------------------------------------------
+      # Mint GitHub App Token
+      # -----------------------------------------------------------------------
+      - name: Mint GitHub App Token
+        id: token
+        env:
+          GITHUB_APP_ID: ${{ secrets.GH_APP_ID }}
+          GITHUB_APP_PRIVATE_KEY_B64: ${{ secrets.GH_APP_PRIVATE_KEY_B64 }}
+        run: |
+          chmod +x ./scripts/github/mint-ghapp-token.sh
+          TOKEN=$(./scripts/github/mint-ghapp-token.sh)
+          echo "::add-mask::${TOKEN}"
+          echo "token=${TOKEN}" >> $GITHUB_OUTPUT
+          echo "✅ GitHub App token minted successfully"
+
+      # -----------------------------------------------------------------------
+      # Validate Repository Exists
+      # -----------------------------------------------------------------------
+      - name: Validate repository exists
+        id: validate
+        env:
+          GITHUB_TOKEN: ${{ steps.token.outputs.token }}
+          REPO_FULL_NAME: ${{ inputs.repo_full_name }}
+        run: |
+          echo "Validating repository: ${REPO_FULL_NAME}"
+
+          REPO_DATA=$(curl -sS -H "Authorization: Bearer ${GITHUB_TOKEN}" \
+            -H "Accept: application/vnd.github+json" \
+            "https://api.github.com/repos/${REPO_FULL_NAME}")
+
+          if echo "${REPO_DATA}" | jq -e '.message == "Not Found"' > /dev/null 2>&1; then
+            echo "❌ Repository not found: ${REPO_FULL_NAME}"
+            exit 1
+          fi
+
+          REPO_NAME=$(echo "${REPO_DATA}" | jq -r '.name')
+          REPO_VISIBILITY=$(echo "${REPO_DATA}" | jq -r '.visibility')
+          DEFAULT_BRANCH=$(echo "${REPO_DATA}" | jq -r '.default_branch')
+
+          echo "repo_name=${REPO_NAME}" >> $GITHUB_OUTPUT
+          echo "visibility=${REPO_VISIBILITY}" >> $GITHUB_OUTPUT
+          echo "default_branch=${DEFAULT_BRANCH}" >> $GITHUB_OUTPUT
+
+          echo "✅ Repository validated: ${REPO_NAME} (${REPO_VISIBILITY}, branch: ${DEFAULT_BRANCH})"
+
+      # -----------------------------------------------------------------------
+      # Apply Governance Policy
+      # -----------------------------------------------------------------------
+      - name: Apply governance policy
+        if: ${{ inputs.apply_governance == 'true' }}
+        id: apply
+        env:
+          GITHUB_TOKEN: ${{ steps.token.outputs.token }}
+          REPO_FULL_NAME: ${{ inputs.repo_full_name }}
+          DEFAULT_BRANCH: ${{ steps.validate.outputs.default_branch }}
+        run: |
+          echo "Applying governance policy to: ${REPO_FULL_NAME}"
+
+          # Read governance config
+          if [ -f "config/github/pulser-hub-app.yaml" ]; then
+            echo "Found governance config"
+          fi
+
+          # Apply branch protection to default branch
+          echo "Setting branch protection for ${DEFAULT_BRANCH}..."
+
+          PROTECTION_PAYLOAD=$(cat <<EOF
+          {
+            "required_status_checks": {
+              "strict": true,
+              "contexts": []
+            },
+            "enforce_admins": false,
+            "required_pull_request_reviews": {
+              "dismiss_stale_reviews": true,
+              "require_code_owner_reviews": false,
+              "required_approving_review_count": 1
+            },
+            "restrictions": null,
+            "required_linear_history": false,
+            "allow_force_pushes": false,
+            "allow_deletions": false,
+            "block_creations": false,
+            "required_conversation_resolution": true
+          }
+          EOF
+          )
+
+          RESPONSE=$(curl -sS -X PUT \
+            -H "Authorization: Bearer ${GITHUB_TOKEN}" \
+            -H "Accept: application/vnd.github+json" \
+            -H "Content-Type: application/json" \
+            "https://api.github.com/repos/${REPO_FULL_NAME}/branches/${DEFAULT_BRANCH}/protection" \
+            -d "${PROTECTION_PAYLOAD}")
+
+          if echo "${RESPONSE}" | jq -e '.message' > /dev/null 2>&1; then
+            ERROR_MSG=$(echo "${RESPONSE}" | jq -r '.message')
+            echo "⚠️ Branch protection: ${ERROR_MSG}"
+            echo "protection_applied=false" >> $GITHUB_OUTPUT
+          else
+            echo "✅ Branch protection applied to ${DEFAULT_BRANCH}"
+            echo "protection_applied=true" >> $GITHUB_OUTPUT
+          fi
+
+          # Enable vulnerability alerts
+          echo "Enabling vulnerability alerts..."
+          curl -sS -X PUT \
+            -H "Authorization: Bearer ${GITHUB_TOKEN}" \
+            -H "Accept: application/vnd.github+json" \
+            "https://api.github.com/repos/${REPO_FULL_NAME}/vulnerability-alerts" || true
+
+          # Enable automated security fixes
+          echo "Enabling automated security fixes..."
+          curl -sS -X PUT \
+            -H "Authorization: Bearer ${GITHUB_TOKEN}" \
+            -H "Accept: application/vnd.github+json" \
+            "https://api.github.com/repos/${REPO_FULL_NAME}/automated-security-fixes" || true
+
+          echo "✅ Governance policy applied"
+
+      # -----------------------------------------------------------------------
+      # Sync GitHub Inventory to Supabase
+      # -----------------------------------------------------------------------
+      - name: Sync inventory to Supabase
+        if: ${{ inputs.sync_inventory == 'true' }}
+        env:
+          GITHUB_TOKEN: ${{ steps.token.outputs.token }}
+          GITHUB_ORG: ${{ env.GITHUB_ORG }}
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: |
+          echo "Syncing GitHub inventory to Supabase..."
+
+          if [[ -z "${SUPABASE_URL:-}" || -z "${SUPABASE_SERVICE_ROLE_KEY:-}" ]]; then
+            echo "⚠️ Supabase not configured, skipping inventory sync"
+            exit 0
+          fi
+
+          node scripts/github/sync-github-inventory.mjs
+
+          echo "✅ Inventory sync completed"
+
+      # -----------------------------------------------------------------------
+      # Log Enrollment to Supabase
+      # -----------------------------------------------------------------------
+      - name: Log enrollment to Supabase
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          REPO_FULL_NAME: ${{ inputs.repo_full_name }}
+          PROTECTION_APPLIED: ${{ steps.apply.outputs.protection_applied || 'skipped' }}
+        run: |
+          if [[ -z "${SUPABASE_URL:-}" || -z "${SUPABASE_SERVICE_ROLE_KEY:-}" ]]; then
+            echo "⚠️ Supabase not configured, skipping audit log"
+            exit 0
+          fi
+
+          curl -sS -X POST "${SUPABASE_URL}/rest/v1/rpc/ops.start_run" \
+            -H "Authorization: Bearer ${SUPABASE_SERVICE_ROLE_KEY}" \
+            -H "apikey: ${SUPABASE_SERVICE_ROLE_KEY}" \
+            -H "Content-Type: application/json" \
+            -H "Prefer: return=representation" \
+            -d "{
+              \"p_run_type\": \"repo_enroll\",
+              \"p_actor\": \"${GITHUB_ACTOR}\",
+              \"p_ref\": \"${GITHUB_SHA}\",
+              \"p_target_scope\": \"repo\",
+              \"p_target_id\": \"${REPO_FULL_NAME}\",
+              \"p_workflow_run_id\": ${GITHUB_RUN_ID},
+              \"p_metadata\": {
+                \"protection_applied\": \"${PROTECTION_APPLIED}\",
+                \"triggered_by\": \"workflow_dispatch\"
+              }
+            }" || echo "⚠️ Failed to log to Supabase (non-fatal)"
+
+      # -----------------------------------------------------------------------
+      # Summary
+      # -----------------------------------------------------------------------
+      - name: Print summary
+        run: |
+          echo ""
+          echo "========================================"
+          echo "ENROLLMENT SUMMARY"
+          echo "========================================"
+          echo "Repository: ${{ inputs.repo_full_name }}"
+          echo "Visibility: ${{ steps.validate.outputs.visibility }}"
+          echo "Default Branch: ${{ steps.validate.outputs.default_branch }}"
+          echo "Governance Applied: ${{ inputs.apply_governance }}"
+          echo "Protection Applied: ${{ steps.apply.outputs.protection_applied || 'skipped' }}"
+          echo "Inventory Synced: ${{ inputs.sync_inventory }}"
+          echo "========================================"
+          echo "✅ Repository enrollment complete"

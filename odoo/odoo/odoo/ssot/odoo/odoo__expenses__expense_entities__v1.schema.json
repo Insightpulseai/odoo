@@ -1,0 +1,164 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://insightpulseai.com/schemas/odoo-expense-entities/v1",
+  "title": "Odoo Expense Entity Contract",
+  "description": "JSON Schema for Odoo CE 19.0 expense entity definitions covering hr.expense, hr.expense.sheet, and hr.employee.",
+  "type": "object",
+  "required": ["name", "version", "generated", "odoo_version", "modules", "entities"],
+  "properties": {
+    "name": {
+      "type": "string",
+      "const": "odoo-expense-entities"
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+\\.\\d+\\.\\d+$"
+    },
+    "generated": {
+      "type": "string",
+      "format": "date"
+    },
+    "odoo_version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+$"
+    },
+    "modules": {
+      "type": "array",
+      "items": { "type": "string" },
+      "minItems": 1
+    },
+    "entities": {
+      "type": "array",
+      "items": { "$ref": "#/definitions/entity" },
+      "minItems": 1
+    }
+  },
+  "definitions": {
+    "entity": {
+      "type": "object",
+      "required": ["model", "description", "key_fields"],
+      "properties": {
+        "model": {
+          "type": "string",
+          "description": "Odoo model technical name (e.g. hr.expense)."
+        },
+        "description": {
+          "type": "string"
+        },
+        "key_fields": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/field" },
+          "minItems": 1
+        },
+        "state_machine": {
+          "$ref": "#/definitions/state_machine"
+        },
+        "key_methods": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/method" }
+        },
+        "common_filters": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/filter" }
+        },
+        "access_groups": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/access_group" }
+        }
+      },
+      "additionalProperties": false
+    },
+    "field": {
+      "type": "object",
+      "required": ["name", "type"],
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Field technical name."
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "Char", "Text", "Html", "Integer", "Float", "Monetary",
+            "Boolean", "Date", "Datetime", "Binary", "Selection",
+            "Many2one", "One2many", "Many2many", "Json", "Reference"
+          ]
+        },
+        "relation": {
+          "type": "string",
+          "description": "Related model for relational fields."
+        },
+        "required": {
+          "type": "boolean"
+        },
+        "description": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "state_machine": {
+      "type": "object",
+      "required": ["initial", "transitions"],
+      "properties": {
+        "initial": {
+          "type": "string",
+          "description": "Initial state value."
+        },
+        "transitions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["from", "to", "method"],
+            "properties": {
+              "from": { "type": "string" },
+              "to": { "type": "string" },
+              "method": { "type": "string" },
+              "description": { "type": "string" }
+            },
+            "additionalProperties": false
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "method": {
+      "type": "object",
+      "required": ["name", "description"],
+      "properties": {
+        "name": { "type": "string" },
+        "description": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+    "filter": {
+      "type": "object",
+      "required": ["name", "domain"],
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Filter name."
+        },
+        "domain": {
+          "type": "string",
+          "description": "Odoo domain expression as string."
+        }
+      },
+      "additionalProperties": false
+    },
+    "access_group": {
+      "type": "object",
+      "required": ["group", "description"],
+      "properties": {
+        "group": {
+          "type": "string",
+          "description": "XML ID of the access group."
+        },
+        "description": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

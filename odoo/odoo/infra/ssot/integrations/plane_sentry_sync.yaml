@@ -1,0 +1,121 @@
+# schema: ssot.integrations.v1
+# Sentry → Plane issues — auto-creates Plane work items from Sentry errors.
+# Closes the Operate → Plan loop (error observability → tracked work).
+#
+# Sentry fingerprint is the idempotency key; one Plane issue per unique error.
+# Edge function: supabase/functions/sentry-plane-sync/
+# Parent registry: ssot/integrations/plane.yaml
+# Contract doc:   docs/architecture/PLANE_MARKETPLACE_INTEGRATIONS.md §Sentry
+
+version: "1.0.0"
+schema: ssot.integrations.v1
+name: plane_sentry_sync
+display_name: "Sentry → Plane Issues"
+status: planned
+last_reviewed: "2026-03-01"
+
+provider:
+  platform: plane
+  category: integration
+  direction: inbound_only
+
+components:
+  webhook_handler:
+    description: >
+      Supabase Edge Function receiving Sentry alert webhooks. Validates the
+      Sentry signing secret, deduplicates on fingerprint, then creates/updates
+      Plane issues via Plane API.
+    path: "supabase/functions/sentry-plane-sync/"
+    triggers:
+      - sentry_event_alert      # new error matching an alert rule
+      - sentry_issue_created    # new issue group created
+      - sentry_issue_resolved   # issue resolved in Sentry
+
+  dedup_table:
+    description: "Maps Sentry fingerprint → Plane issue ID to prevent duplicates"
+    table: work_plane.sentry_issues
+    schema:
+      sentry_project_slug: text
+      sentry_fingerprint: text   # primary dedup key (composite PK with project)
+      sentry_issue_id: text
+      plane_issue_id: uuid
+      plane_project_id: uuid
+      first_seen: timestamptz
+      last_seen: timestamptz
+      occurrence_count: integer
+      status: text               # open | resolved | ignored
+
+  ops_audit:
+    description: "ops.runs row per webhook batch; ops.run_events per Sentry event"
+    idempotency_key_format: "sentry_plane_sync:{sentry_project_slug}:{sentry_fingerprint}"
+
+sync_directions:
+  - id: sentry_error_to_plane_issue
+    direction: inbound
+    trigger: "Sentry alert webhook (new error or occurrence spike)"
+    action: "Create Plane issue if fingerprint not yet mapped; update occurrence count"
+    status: planned
+    issue_format:
+      title: "[Sentry] {error_type}: {error_message} ({environment})"
+      description: >
+        Auto-generated from Sentry alert.
+        - Sentry issue: {sentry_issue_url}
+        - Project: {sentry_project_slug}
+        - Environment: {environment}
+        - First seen: {first_seen}
+        - Occurrence count: {count}
+      labels: [bug, sentry, auto-created]
+      priority: "derived from Sentry level: fatal→urgent, error→high, warning→medium"
+
+  - id: sentry_resolve_to_plane_close
+    direction: inbound
+    trigger: "Sentry issue resolved webhook"
+    action: "Update Plane issue state to Done (if not already closed)"
+    status: planned
+
+  - id: plane_to_sentry
+    direction: outbound
+    status: out_of_scope
+    notes: "Plane does not write back to Sentry. Sentry is the SoR for error state."
+
+required_secrets:
+  - plane_api_key
+  - plane_workspace_id
+  - sentry_webhook_secret    # SENTRY_WEBHOOK_SECRET (new entry in secrets registry)
+
+sentry_project_mapping:
+  description: >
+    Maps Sentry project slug → Plane project ID. Lives in SSOT, not in Edge Function.
+  file: "ssot/mappings/plane_sentry.yaml"  # to be created when activating
+
+boundary_rules:
+  - rule: "Sentry fingerprint + project is the idempotency key"
+    rationale: "Each unique Sentry error produces exactly one Plane issue, regardless of alert frequency"
+
+  - rule: "Sentry webhook secret MUST be validated before processing"
+    rationale: "Prevents spoofed Sentry events from creating Plane issues"
+
+  - rule: "Sentry is SoR for error state; Plane issue is a mirror/tracker only"
+    rationale: "Plane close does not resolve in Sentry; Sentry resolve updates Plane"
+
+  - rule: "Plane issue creation MUST include sentry_issue_url in description"
+    rationale: "Traceable link from Plane issue back to Sentry for investigation"
+
+  - rule: "Sync worker MUST emit ops.run_events per event processed"
+    rationale: "Advisor 'Sentry error → Plane issue' check reads ops.run_events"
+
+risk_flags:
+  - flag: "High-frequency errors create Plane issue update storms"
+    severity: medium
+    mitigation: >
+      After initial issue creation, recurring occurrences only update
+      last_seen + occurrence_count in work_plane.sentry_issues.
+      No additional Plane API calls for known fingerprints.
+      Rate limit: max 10 Plane API calls per Sentry webhook delivery.
+
+  - flag: "Sentry project not in mapping creates unrouted events"
+    severity: low
+    mitigation: >
+      Events from unmapped Sentry projects are logged in ops.run_events
+      with status = 'skipped_no_mapping'. Advisor surfaces unmapped projects
+      in the SoW posture scan.

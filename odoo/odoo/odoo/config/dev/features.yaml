@@ -1,0 +1,29 @@
+mode: dev
+
+debug:
+  xml_reload: true
+  python_reload: true
+  qweb_debug: true
+  werkzeug_debug: true
+
+database:
+  allowed_names:
+    - odoo_dev
+    - odoo_dev_demo
+  dbfilter: "^odoo(_dev|_dev_demo)?$"
+
+runtime:
+  workers: 0
+  max_cron_threads: 1
+  proxy_mode: false
+
+mail:
+  provider: mailpit
+  host: mailpit
+  port: 1025
+
+addons:
+  paths:
+    - /mnt/oca
+    - /mnt/extra-addons/ipai
+    - /mnt/extra-addons/local

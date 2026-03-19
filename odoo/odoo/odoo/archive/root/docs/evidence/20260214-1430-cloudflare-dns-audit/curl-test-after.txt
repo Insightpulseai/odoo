@@ -1,0 +1,32 @@
+=== Superset HTTP Headers (After Proxy Enablement) ===
+Date: 2026-02-14 11:26:42 UTC
+
+curl -sI https://superset.insightpulseai.com/health
+
+HTTP/2 200 
+date: Sat, 14 Feb 2026 11:26:42 GMT
+content-type: text/html; charset=utf-8
+server: cloudflare
+nel: {"report_to":"cf-nel","success_fraction":0.0,"max_age":604800}
+permissions-policy: browsing-topics=()
+x-frame-options: SAMEORIGIN
+x-content-type-options: nosniff
+content-security-policy: frame-ancestors https://erp.insightpulseai.net https://scout-mvp.vercel.app http://localhost:8069 http://localhost:3000
+strict-transport-security: max-age=31556926; includeSubDomains
+strict-transport-security: max-age=31536000; includeSubDomains
+referrer-policy: strict-origin-when-cross-origin
+vary: Accept-Encoding
+vary: Origin
+access-control-allow-origin: http://localhost:3000
+access-control-expose-headers: *
+access-control-allow-credentials: true
+cf-cache-status: DYNAMIC
+report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=BXcH03KMYp80dBHHzh0k6LJSwHZAPj31Idisa46Ph0i%2BEUnikoKG8cNTOKMN8rE7QykWhcA6QouPMGHZgWE6V52kaiyin2ve7XoB79%2BqjjJnqbWayxWL1SurYA%3D%3D"}]}
+cf-ray: 9cdc364e3a7a7ac6-SIN
+alt-svc: h3=":443"; ma=86400
+
+
+Status: ✅ PROXIED
+- cf-ray header present
+- server: cloudflare
+- Cloudflare WAF and DDoS protection active

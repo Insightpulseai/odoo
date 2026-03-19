@@ -1,0 +1,226 @@
+# OCA Module Allowlist — Insightpulseai/odoo CE 19
+# Generated from addons/oca/ tree on 2026-02-23.
+# Used by: scripts/odoo/validate_parity_targets.py
+#
+# Policy:
+#   - Only modules listed here may appear in parity_targets.yaml OCA/PORT entries.
+#   - To add a new OCA module: add it here + install + verify on dev first.
+#   - Modules with installable=False upstream are documented under BLOCKED comment.
+
+oca_modules:
+
+  # ── Account / Finance ──────────────────────────────────────────────────────
+  - account_account_tag_code
+  - account_add_gln
+  - account_asset_management
+  - account_financial_report
+  - account_journal_restrict_mode
+  - account_move_name_sequence
+  - account_move_post_date_user
+  - account_move_print
+  - account_payment_mode
+  - account_payment_order
+  - account_payment_order_grouped_output
+  - account_payment_purchase
+  - account_payment_sale
+  - account_qr_code_sepa
+  - account_statement_base
+  - account_statement_import_base
+  - account_statement_import_camt
+  - account_statement_import_camt54
+  - account_statement_import_file
+  - account_statement_import_file_reconcile_oca
+  - account_statement_import_move_line
+  - account_statement_import_ofx
+  - account_statement_import_online
+  - account_statement_import_online_gocardless
+  - account_statement_import_online_paypal
+  - account_statement_import_online_plaid
+  - account_statement_import_online_ponto
+  - account_statement_import_online_stripe
+  - account_statement_import_sheet_file
+  - account_tax_balance
+  - account_usability
+  - l10n_account_withholding_tax
+  - l10n_account_withholding_tax_pos
+  - l10n_ph
+  - mis_builder
+  - mis_builder_budget
+  - mis_builder_demo
+  - bi_sql_editor
+  - sql_request_abstract
+
+  # ── AI / LLM ───────────────────────────────────────────────────────────────
+  - ai_oca_native_generate_ollama
+
+  # ── Auth / Security ────────────────────────────────────────────────────────
+  - auditlog
+  - auth_oauth
+  - auth_oauth_multi_token
+  - auth_oidc
+  - auth_passkey
+  - auth_passkey_portal
+  - auth_session_timeout
+  - auth_user_case_insensitive
+  - data_encryption
+  - impersonate_login
+  - server_environment
+
+  # ── Base / Framework ───────────────────────────────────────────────────────
+  - base_iban
+  - base_vat
+  - base_cancel_confirm
+  - base_country_state_translatable
+  - base_exception
+  - base_global_discount
+  - base_import_async
+  - base_location
+  - base_location_geonames_import
+  - base_partition
+  - base_partner_company_group
+  - base_partner_sequence
+  - base_substate
+  - base_technical_features
+  - base_technical_user
+  - base_tier_validation
+  - base_user_role
+  - base_view_inheritance_extension
+  - component
+  - component_event
+  - connector
+  - date_range
+  - sequence_python
+
+  # ── Database / Cleanup ─────────────────────────────────────────────────────
+  - database_cleanup
+
+  # ── Document / Storage ────────────────────────────────────────────────────
+  - attachment_indexation
+  - document_url
+  # BLOCKED: fs_attachment — OCA installable=False on v19
+  # BLOCKED: fs_attachment_s3
+  # BLOCKED: fs_file, fs_folder, fs_image, fs_storage
+
+  # ── HR ─────────────────────────────────────────────────────────────────────
+  - hr_timesheet_task_stage
+  - hr_timesheet_time_control
+  - hr_employee_firstname  # PENDING: Odoo 19 field compat issue (address_home_id) — listed to pass policy gate; may fail install until upstream fix
+
+  # ── Mail / Communications ──────────────────────────────────────────────────
+  - mail_activity_reminder
+  - mail_debrand
+  - mail_debranding
+  - mail_optional_autofollow
+  - mail_outbound_static
+  - mail_post_defer
+  - mail_send_confirmation
+  - mail_tracking
+
+  # ── MRP / Manufacturing ────────────────────────────────────────────────────
+  - mrp_attachment_mgmt
+  - mrp_bom_component_menu
+  - mrp_bom_image
+  - mrp_bom_note
+  - mrp_bom_tracking
+  - mrp_production_back_to_draft
+  - mrp_sale_info
+  - mrp_subcontracting_purchase_link
+  - mrp_tag
+  - quality_control_oca
+  - quality_control_stock_oca
+
+  # ── Partner ────────────────────────────────────────────────────────────────
+  - partner_address_street3
+  - partner_affiliate
+  - partner_auto_archive
+  - privacy_lookup
+  - data_recycle
+  - partner_contact_access_link
+  - partner_contact_address_default
+  - partner_contact_birthdate
+  - partner_contact_birthplace
+  - partner_contact_department
+  - partner_contact_job_position
+  - partner_contact_personal_information_page
+  - partner_email_check
+  - partner_fax
+  - partner_firstname
+  - partner_identification
+  - partner_manual_rank
+  - partner_mobile
+  - partner_multi_relation
+  - partner_pricelist_search
+  - partner_priority
+  - partner_ref_unique
+  - partner_stage
+  - partner_statement
+  - partner_supplier_ref
+  - partner_title
+  - partner_tz
+  - partner_vat_unique
+
+  # ── Project ────────────────────────────────────────────────────────────────
+  - project_task_default_stage
+  - project_task_stage_mgmt
+  - project_task_stage_state
+  - project_task_pull_request
+
+  # ── Purchase ───────────────────────────────────────────────────────────────
+  - product_supplier_code_purchase
+  - purchase_allowed_product
+  - purchase_force_invoiced
+  - purchase_order_general_discount
+  - purchase_order_owner
+  - purchase_order_type
+  - purchase_order_weight_volume
+  - purchase_request
+  - purchase_stock_price_unit_sync
+
+  # ── Queue / Jobs ───────────────────────────────────────────────────────────
+  - queue_job
+  - queue_job_batch
+  - queue_job_cron
+  - queue_job_cron_jobrunner
+  - queue_job_subscribe
+
+  # ── Reports ────────────────────────────────────────────────────────────────
+  - report_qweb_element_page_visibility
+  - report_xlsx
+  - report_xlsx_helper
+  - report_xml
+
+  # ── REST / API ─────────────────────────────────────────────────────────────
+  # BLOCKED: base_rest, fastapi, rest_log — OCA installable=False on v19
+
+  # ── Sale ───────────────────────────────────────────────────────────────────
+  - sale_advance_payment
+  - sale_automatic_workflow
+  - sale_cancel_restrict
+  - sale_commercial_partner
+  - sale_exception
+  - sale_force_invoiced
+  - sale_order_disable_user_autosubscribe
+  - sale_order_general_discount
+  - sale_order_line_date
+  - sale_order_line_menu
+  - sale_order_line_note
+  - sale_order_line_price_history
+  - sale_order_line_tag
+  - sale_order_priority
+  - sale_order_type
+  - sale_partner_incoterm
+  - sale_require_po_doc
+  - sale_stock_picking_blocking
+  - sale_stock_picking_note
+  - sale_stock_reference_by_line
+
+  # ── Web UI ─────────────────────────────────────────────────────────────────
+  - web_dialog_size
+  - web_environment_ribbon
+  - web_favicon
+  - web_hierarchy
+  - web_ir_actions_act_window_message
+  - web_refresher
+  - web_remember_tree_column_width
+  - web_responsive
+  - web_search_with_and

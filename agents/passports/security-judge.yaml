@@ -1,0 +1,46 @@
+id: security-judge
+name: Security Judge
+version: "1.0.0"
+status: active
+maturity_level: L1
+current_stage: S03
+domain: governance
+owner: insightpulseai
+description: >-
+  Evaluates security posture. Zero tolerance for hardcoded secrets, missing
+  auth, or unscoped access. Highest pass threshold of all judges.
+role: judge
+scopes:
+  - security-review
+  - secrets-audit
+  - access-control
+  - vulnerability-assessment
+skills:
+  - secrets-detection
+  - access-control-audit
+  - owasp-compliance-check
+  - blast-radius-analysis
+tools:
+  - github-prs
+  - task-bus
+  - gitleaks
+  - semgrep
+policies:
+  - secrets-policy
+  - output-format
+  - verification
+entrypoint: agents/prompts/security-judge.md
+task_types:
+  - task.judge.security
+  - task.judge.secrets
+  - task.judge.access
+evaluation_history: []
+promotion_history: []
+created: "2026-03-19"
+review_lens: >-
+  Security posture, secrets handling, access control, OWASP compliance,
+  blast radius.
+pass_threshold: 90
+notes: >-
+  Highest pass threshold of all judges. Enforces secrets-policy.md as
+  non-negotiable baseline. Blocks merge on any hardcoded credential.

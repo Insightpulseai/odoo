@@ -1,0 +1,43 @@
+{
+  "changes": {
+    "commits": [],
+    "prs": []
+  },
+  "generated_at": "2026-01-09T22:55:11.114916+00:00",
+  "production": {
+    "artifacts": [],
+    "compare": {
+      "base": "32ce14e",
+      "commits": 2,
+      "evidence": "DEPLOYMENT_PROOFS/api_compare.json",
+      "files": 6,
+      "head": "32ce14e",
+      "html_url": "https://github.com/jgtolentino/odoo-ce/compare/prod-20260109-2229...prod-20260109-2248"
+    },
+    "head_sha": "main",
+    "previous_release_tag": "prod-20260109-2229",
+    "release": {
+      "evidence": "DEPLOYMENT_PROOFS/api_release_latest.json",
+      "html_url": "https://github.com/jgtolentino/odoo-ce/releases/tag/prod-20260109-2248",
+      "name": "prod-20260109-2248",
+      "published_at": "2026-01-09T22:48:19Z",
+      "tag": "prod-20260109-2248",
+      "target_commitish": "main"
+    },
+    "workflow_run": {
+      "conclusion": "success",
+      "created_at": "2026-01-09T22:46:49Z",
+      "evidence": "DEPLOYMENT_PROOFS/api_workflow_run_20867798233.json",
+      "html_url": "https://github.com/jgtolentino/odoo-ce/actions/runs/20867798233",
+      "id": 20867798233,
+      "name": "Deploy to Production",
+      "status": "completed",
+      "updated_at": "2026-01-09T22:48:21Z"
+    }
+  },
+  "repo": "jgtolentino/odoo-ce",
+  "unverified": [
+    "workflow_run: Matched by time proximity (90s diff)",
+    "graphql: API returned 403"
+  ]
+}

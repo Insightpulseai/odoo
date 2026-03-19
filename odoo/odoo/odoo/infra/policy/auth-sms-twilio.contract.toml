@@ -1,0 +1,41 @@
+# infra/policy/auth-sms-twilio.contract.toml
+# SSOT policy: Twilio SMS auth stanza must be present in supabase/config.toml
+# This file documents the required config stanza and its env var contract.
+# Last updated: 2026-02-22
+
+[contract]
+id = "C-TWILIO-01"
+name = "Supabase Auth SMS Twilio Stanza"
+owner = "DevOps"
+status = "pending-credentials"  # Change to "active" after Messaging Service SID set
+
+[required_config_toml_stanza]
+# supabase/config.toml must contain exactly this section.
+# Values must be env var refs — never literal secrets.
+section = "auth.sms.twilio"
+enabled = true
+account_sid_ref = "env(TWILIO_ACCOUNT_SID)"
+auth_token_ref = "env(TWILIO_AUTH_TOKEN)"
+message_service_sid_ref = "env(TWILIO_MESSAGE_SERVICE_SID)"
+
+[required_vault_secrets]
+# All three must be present in Supabase Vault before this contract becomes "active".
+TWILIO_ACCOUNT_SID = "AC_REDACTED_TO_UNBLOCK_PUSH"  # account SID only — not secret
+TWILIO_AUTH_TOKEN = "ROTATED_REQUIRED"                       # must be rotated (was exposed)
+TWILIO_MESSAGE_SERVICE_SID = "PENDING"                       # create in Twilio Console first
+
+[protection]
+# This stanza must not be removed by linters or automated tooling.
+# If config.toml is regenerated, preserve [auth.sms.twilio] manually.
+linter_preserve = true
+removal_requires = "explicit PR with C-TWILIO-01 deprecation notice"
+
+[evidence_required]
+vault_secrets_set = false
+config_toml_stanza_committed = false
+test_otp_received = false
+auth_token_rotated = false
+
+[blocking_items]
+auth_token_rotation = "TWILIO_AUTH_TOKEN exposed in plaintext 2026-02-22 — rotate immediately"
+messaging_service_sid = "Must create Twilio Messaging Service and add +15703545535 to sender pool"

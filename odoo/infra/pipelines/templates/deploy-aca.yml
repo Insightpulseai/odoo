@@ -1,0 +1,201 @@
+# =============================================================================
+# pipelines/templates/deploy-aca.yml
+# =============================================================================
+# Reusable step template: Azure Container Apps revision deployment.
+#
+# Usage:
+#   - template: pipelines/templates/deploy-aca.yml@templates
+#     parameters:
+#       serviceConnection: sc-azure-dev-platform
+#       containerAppName: ipai-odoo-dev-web
+#       imageName: ipai-odoo-web
+#       imageTag: $(Build.SourceVersion)
+#
+# Design decisions:
+#   - Uses `az containerapp update` (not create) — the Container App must
+#     already exist. Infrastructure provisioning is handled by deploy-bicep.yml.
+#   - Polls for revision Running state with timeout (max 5 min).
+#   - Health check hits the app's health endpoint after revision is active.
+#   - Deployment evidence published as artifact.
+# =============================================================================
+
+parameters:
+  - name: serviceConnection
+    type: string
+
+  - name: containerAppName
+    type: string
+
+  - name: imageName
+    type: string
+
+  - name: imageTag
+    type: string
+
+  - name: acrName
+    type: string
+    default: cripaidev
+
+  - name: resourceGroup
+    type: string
+    default: rg-ipai-dev
+
+  - name: environmentLabel
+    type: string
+    default: dev
+
+  - name: healthPath
+    type: string
+    default: /web/health
+
+  - name: healthTimeoutSeconds
+    type: number
+    default: 300
+
+steps:
+  # ---------------------------------------------------------------------------
+  # Deploy new revision
+  # ---------------------------------------------------------------------------
+  - task: AzureCLI@2
+    displayName: Deploy ACA revision (${{ parameters.containerAppName }})
+    inputs:
+      azureSubscription: ${{ parameters.serviceConnection }}
+      scriptType: bash
+      scriptLocation: inlineScript
+      inlineScript: |
+        set -euo pipefail
+
+        ACR="${{ parameters.acrName }}.azurecr.io"
+        IMAGE="${ACR}/${{ parameters.imageName }}:${{ parameters.imageTag }}"
+        APP="${{ parameters.containerAppName }}"
+        RG="${{ parameters.resourceGroup }}"
+
+        echo "======================================================================"
+        echo " ACA Deployment"
+        echo "   Container App : ${APP}"
+        echo "   Resource Group: ${RG}"
+        echo "   Image         : ${IMAGE}"
+        echo "   Environment   : ${{ parameters.environmentLabel }}"
+        echo "======================================================================"
+
+        # Update the container app with the new image
+        az containerapp update \
+          --name "${APP}" \
+          --resource-group "${RG}" \
+          --image "${IMAGE}" \
+          --output table
+
+        echo "Revision update submitted."
+    name: DeployRevision
+
+  # ---------------------------------------------------------------------------
+  # Wait for revision to reach Running state
+  # ---------------------------------------------------------------------------
+  - task: AzureCLI@2
+    displayName: Wait for revision — Running (${{ parameters.environmentLabel }})
+    inputs:
+      azureSubscription: ${{ parameters.serviceConnection }}
+      scriptType: bash
+      scriptLocation: inlineScript
+      inlineScript: |
+        set -euo pipefail
+
+        APP="${{ parameters.containerAppName }}"
+        RG="${{ parameters.resourceGroup }}"
+        TIMEOUT=${{ parameters.healthTimeoutSeconds }}
+        INTERVAL=10
+        ELAPSED=0
+
+        echo "Waiting for latest revision to reach Running state (timeout: ${TIMEOUT}s)..."
+
+        while [[ ${ELAPSED} -lt ${TIMEOUT} ]]; do
+          STATE=$(az containerapp revision list \
+            --name "${APP}" \
+            --resource-group "${RG}" \
+            --query "[0].properties.runningState" \
+            --output tsv 2>/dev/null || echo "Unknown")
+
+          echo "  [${ELAPSED}s] Revision state: ${STATE}"
+
+          if [[ "${STATE}" == "Running" ]]; then
+            echo "Revision is Running."
+            exit 0
+          fi
+
+          if [[ "${STATE}" == "Failed" || "${STATE}" == "Degraded" ]]; then
+            echo "ERROR: Revision entered ${STATE} state." >&2
+            az containerapp revision list \
+              --name "${APP}" \
+              --resource-group "${RG}" \
+              --query "[0]" \
+              --output json
+            exit 1
+          fi
+
+          sleep ${INTERVAL}
+          ELAPSED=$((ELAPSED + INTERVAL))
+        done
+
+        echo "ERROR: Timeout (${TIMEOUT}s) waiting for Running state." >&2
+        exit 1
+
+  # ---------------------------------------------------------------------------
+  # Health check
+  # ---------------------------------------------------------------------------
+  - task: AzureCLI@2
+    displayName: Health check (${{ parameters.environmentLabel }})
+    inputs:
+      azureSubscription: ${{ parameters.serviceConnection }}
+      scriptType: bash
+      scriptLocation: inlineScript
+      inlineScript: |
+        set -euo pipefail
+
+        APP="${{ parameters.containerAppName }}"
+        RG="${{ parameters.resourceGroup }}"
+        EVIDENCE_DIR="/tmp/deploy-evidence-${{ parameters.environmentLabel }}"
+        mkdir -p "${EVIDENCE_DIR}"
+
+        # Get the FQDN
+        FQDN=$(az containerapp show \
+          --name "${APP}" \
+          --resource-group "${RG}" \
+          --query "properties.configuration.ingress.fqdn" \
+          --output tsv)
+
+        HEALTH_URL="https://${FQDN}${{ parameters.healthPath }}"
+        echo "Health check: ${HEALTH_URL}"
+
+        HTTP_CODE=$(curl -s -o /dev/null -w '%{http_code}' --max-time 30 "${HEALTH_URL}" || echo "000")
+        echo "HTTP status: ${HTTP_CODE}"
+
+        # Capture evidence
+        cat > "${EVIDENCE_DIR}/deploy-evidence.json" <<EOJSON
+        {
+          "containerApp": "${APP}",
+          "resourceGroup": "${RG}",
+          "image": "${{ parameters.acrName }}.azurecr.io/${{ parameters.imageName }}:${{ parameters.imageTag }}",
+          "fqdn": "${FQDN}",
+          "healthUrl": "${HEALTH_URL}",
+          "httpStatus": ${HTTP_CODE},
+          "environment": "${{ parameters.environmentLabel }}",
+          "buildId": "$(Build.BuildId)",
+          "commit": "$(Build.SourceVersion)",
+          "timestamp": "$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+        }
+        EOJSON
+
+        cat "${EVIDENCE_DIR}/deploy-evidence.json"
+
+        if [[ "${HTTP_CODE}" -lt 200 || "${HTTP_CODE}" -ge 400 ]]; then
+          echo "WARN: Health check returned ${HTTP_CODE}. Review deployment." >&2
+          # Non-blocking — some apps may not have /web/health yet
+        fi
+
+  # ---------------------------------------------------------------------------
+  # Publish deployment evidence
+  # ---------------------------------------------------------------------------
+  - publish: /tmp/deploy-evidence-${{ parameters.environmentLabel }}
+    artifact: deploy-evidence-${{ parameters.environmentLabel }}
+    displayName: Publish deployment evidence (${{ parameters.environmentLabel }})
+    condition: always()

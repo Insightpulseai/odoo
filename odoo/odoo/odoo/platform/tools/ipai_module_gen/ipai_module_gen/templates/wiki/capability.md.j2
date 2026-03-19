@@ -1,0 +1,76 @@
+# {{ cap.title | default(cap.sap_id) }}
+
+> **SAP ID**: {{ cap.sap_id }}
+> **Slug**: {{ cap.slug }}
+{% if cap.sap_doc %}> **Reference**: [SAP Documentation]({{ cap.sap_doc }}){% endif %}
+
+## Overview
+
+{{ cap.title | default(cap.sap_id) }} provides [describe functionality] for the IPAI platform.
+
+{% if cap.odoo %}
+## Odoo Module
+
+**Module**: `{{ cap.odoo.module | default('TBD') }}`
+**Layer**: {{ cap.odoo.layer | default('ipai') }}
+
+### Models
+
+{% for model in cap.odoo.models | default([]) %}
+- `{{ model.name }}` - {{ model.description | default('') }}
+{% endfor %}
+
+### Dependencies
+
+{% for dep in cap.odoo.depends | default(['base']) %}
+- `{{ dep }}`
+{% endfor %}
+{% endif %}
+
+## Features
+
+- [Feature 1]
+- [Feature 2]
+- [Feature 3]
+
+## Configuration
+
+1. Install the module
+2. Configure settings
+3. Set up security groups
+
+## Usage
+
+### Getting Started
+
+1. Navigate to the menu
+2. Create a new record
+3. Follow the workflow
+
+### Tips
+
+- [Tip 1]
+- [Tip 2]
+
+## Technical Details
+
+See the [spec bundle](../spec/{{ cap.slug }}/) for:
+- [Constitution](../spec/{{ cap.slug }}/constitution.md) - Non-negotiable rules
+- [PRD](../spec/{{ cap.slug }}/prd.md) - Product requirements
+- [Plan](../spec/{{ cap.slug }}/plan.md) - Implementation plan
+- [Tasks](../spec/{{ cap.slug }}/tasks.md) - Task checklist
+
+## Related Capabilities
+
+- [List related capabilities]
+
+## FAQ
+
+**Q: [Common question]?**
+A: [Answer]
+
+## Changelog
+
+| Version | Changes |
+|---------|---------|
+| 1.0.0 | Initial release |

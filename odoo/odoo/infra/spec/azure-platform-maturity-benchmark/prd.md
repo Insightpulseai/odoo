@@ -100,7 +100,7 @@ cutover_ready = aggregate_score ≥ 85 AND min(domain_scores) ≥ 60
 
 | Artifact | Format | Path |
 |----------|--------|------|
-| Benchmark scorecard | YAML | `ssot/azure/platform_maturity_benchmark.yaml` |
+| Benchmark scorecard | YAML | `infra/ssot/azure/platform_maturity_benchmark.yaml` |
 | Evidence pack | Markdown + JSON | `docs/evidence/<timestamp>/azure-maturity/` |
 | Domain gap report | Markdown | `docs/evidence/<timestamp>/azure-maturity/gap_report.md` |
 | CI gate result | JSON | CI artifact output |

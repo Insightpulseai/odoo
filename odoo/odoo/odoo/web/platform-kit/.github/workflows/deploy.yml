@@ -1,0 +1,197 @@
+name: deploy
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: "Target environment"
+        required: true
+        default: "staging"
+        type: choice
+        options:
+          - staging
+          - production
+      image_tag:
+        description: "Image tag to deploy (default: latest)"
+        required: false
+        default: "latest"
+        type: string
+  workflow_run:
+    workflows: ["docker-publish"]
+    types: [completed]
+    branches: [main]
+
+concurrency:
+  group: deploy-${{ github.event.inputs.environment || 'production' }}
+  cancel-in-progress: false
+
+jobs:
+  deploy_staging:
+    if: |
+      (github.event_name == 'workflow_dispatch' && github.event.inputs.environment == 'staging') ||
+      (github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success')
+    runs-on: ubuntu-latest
+    environment: staging
+    timeout-minutes: 20
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Setup SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.DEPLOY_SSH_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -H "${{ secrets.DEPLOY_SSH_HOST }}" >> ~/.ssh/known_hosts 2>/dev/null || true
+
+      - name: Determine image tag
+        id: tag
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "tag=${{ github.event.inputs.image_tag }}" >> $GITHUB_OUTPUT
+          else
+            echo "tag=sha-${GITHUB_SHA::7}" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Deploy via docker compose
+        env:
+          HOST: ${{ secrets.DEPLOY_SSH_HOST }}
+          USER: ${{ secrets.DEPLOY_SSH_USER }}
+          COMPOSE_PATH: ${{ secrets.DEPLOY_COMPOSE_PATH }}
+          IMAGE_TAG: ${{ steps.tag.outputs.tag }}
+          REGISTRY: ghcr.io/${{ github.repository }}
+        run: |
+          if [ -z "$HOST" ] || [ -z "$USER" ]; then
+            echo "::warning::Deploy secrets not configured, skipping deployment"
+            exit 0
+          fi
+
+          ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no "$USER@$HOST" bash -lc "
+            set -euo pipefail
+
+            # Navigate to compose directory
+            COMPOSE_DIR=\"\${COMPOSE_PATH:-/opt/app}\"
+            cd \"\$COMPOSE_DIR\" 2>/dev/null || cd ~
+
+            # Login to GHCR (if credentials available)
+            if [ -n \"\${GHCR_TOKEN:-}\" ]; then
+              echo \"\$GHCR_TOKEN\" | docker login ghcr.io -u \"\${GHCR_USER:-${{ github.actor }}}\" --password-stdin
+            fi
+
+            # Pull latest images
+            docker compose pull 2>/dev/null || echo 'No compose file or pull failed'
+
+            # Restart services
+            docker compose up -d --remove-orphans 2>/dev/null || echo 'No compose file'
+
+            # Show status
+            docker ps --format 'table {{.Names}}\t{{.Status}}\t{{.Ports}}' | head -20
+          "
+
+      - name: Health check
+        if: ${{ secrets.DEPLOY_HEALTH_URL != '' }}
+        run: |
+          echo "Waiting for service to be ready..."
+          sleep 10
+
+          for i in 1 2 3 4 5; do
+            if curl -sf "${{ secrets.DEPLOY_HEALTH_URL }}" -o /dev/null; then
+              echo "Health check passed"
+              exit 0
+            fi
+            echo "Attempt $i failed, retrying in 5s..."
+            sleep 5
+          done
+
+          echo "::error::Health check failed after 5 attempts"
+          exit 1
+
+  deploy_production:
+    if: github.event_name == 'workflow_dispatch' && github.event.inputs.environment == 'production'
+    needs: []
+    runs-on: ubuntu-latest
+    environment: production
+    timeout-minutes: 20
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Setup SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.DEPLOY_SSH_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -H "${{ secrets.DEPLOY_SSH_HOST }}" >> ~/.ssh/known_hosts 2>/dev/null || true
+
+      - name: Backup before deploy
+        env:
+          HOST: ${{ secrets.DEPLOY_SSH_HOST }}
+          USER: ${{ secrets.DEPLOY_SSH_USER }}
+        run: |
+          if [ -z "$HOST" ] || [ -z "$USER" ]; then
+            echo "::warning::Deploy secrets not configured"
+            exit 0
+          fi
+
+          ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no "$USER@$HOST" bash -lc "
+            # Create backup timestamp
+            BACKUP_TS=\$(date +%Y%m%d_%H%M%S)
+            echo \"Creating pre-deploy backup: \$BACKUP_TS\"
+
+            # Backup database if pg_dump available and DB configured
+            if command -v pg_dump &>/dev/null && [ -n \"\${DATABASE_URL:-}\" ]; then
+              pg_dump \"\$DATABASE_URL\" -Fc > \"/tmp/backup_\${BACKUP_TS}.dump\" 2>/dev/null || echo 'DB backup skipped'
+            fi
+
+            echo 'Pre-deploy backup complete (or skipped if not configured)'
+          "
+
+      - name: Deploy via docker compose
+        env:
+          HOST: ${{ secrets.DEPLOY_SSH_HOST }}
+          USER: ${{ secrets.DEPLOY_SSH_USER }}
+          COMPOSE_PATH: ${{ secrets.DEPLOY_COMPOSE_PATH }}
+          IMAGE_TAG: ${{ github.event.inputs.image_tag }}
+          REGISTRY: ghcr.io/${{ github.repository }}
+        run: |
+          if [ -z "$HOST" ] || [ -z "$USER" ]; then
+            echo "::warning::Deploy secrets not configured, skipping deployment"
+            exit 0
+          fi
+
+          ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no "$USER@$HOST" bash -lc "
+            set -euo pipefail
+
+            COMPOSE_DIR=\"\${COMPOSE_PATH:-/opt/app}\"
+            cd \"\$COMPOSE_DIR\" 2>/dev/null || cd ~
+
+            # Pull and restart
+            docker compose pull 2>/dev/null || echo 'No compose file or pull failed'
+            docker compose up -d --remove-orphans 2>/dev/null || echo 'No compose file'
+
+            docker ps --format 'table {{.Names}}\t{{.Status}}\t{{.Ports}}' | head -20
+          "
+
+      - name: Health check
+        if: ${{ secrets.DEPLOY_HEALTH_URL != '' }}
+        run: |
+          echo "Waiting for service to be ready..."
+          sleep 15
+
+          for i in 1 2 3 4 5 6; do
+            if curl -sf "${{ secrets.DEPLOY_HEALTH_URL }}" -o /dev/null; then
+              echo "Health check passed"
+              exit 0
+            fi
+            echo "Attempt $i failed, retrying in 10s..."
+            sleep 10
+          done
+
+          echo "::error::Health check failed after 6 attempts"
+          exit 1
+
+      - name: Notify on failure
+        if: failure()
+        run: |
+          echo "::error::Production deployment failed. Check logs and consider rollback."
+          echo "Rollback command: docker compose up -d --no-deps <service> with previous image tag"

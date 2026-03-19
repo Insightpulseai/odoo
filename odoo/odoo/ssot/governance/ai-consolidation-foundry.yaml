@@ -75,8 +75,8 @@ doctrine: >
 # Target State (3 agents + 1 workflow)
 # ---------------------------------------------------------------------------
 # Canonical doc: docs/architecture/COPILOT_TARGET_STATE.md
-# SSOT matrices: ssot/agents/agent_capability_matrix.yaml
-#                ssot/platform/agent_ingress_matrix.yaml
+# SSOT matrices: infra/ssot/agents/agent_capability_matrix.yaml
+#                infra/ssot/platform/agent_ingress_matrix.yaml
 # Spec kit:      spec/odoo-copilot-agent-framework/
 target_state:
   components:

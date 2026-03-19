@@ -1,0 +1,267 @@
+# Shared Notification Profiles
+# Email and in-app notification configurations
+
+notification_profiles:
+  # Task Assignment Notifications
+  - id: notify_task_assigned
+    code: TASK_ASSIGNED
+    name: Task Assignment Notification
+    trigger: task.assigned
+    channels: [email, in_app]
+    recipients:
+      - role: assignee
+    template:
+      subject: "[{workstream}] Task Assigned: {task_name}"
+      body: |
+        You have been assigned a new task:
+
+        Task: {task_name}
+        Due Date: {due_date}
+        Period: {period_name}
+
+        Please complete this task before the due date.
+
+        View Task: {task_url}
+
+  # Task Due Reminders
+  - id: notify_task_due_soon
+    code: TASK_DUE_SOON
+    name: Task Due Soon Reminder
+    trigger: task.due_date - 1 day
+    channels: [email, in_app]
+    recipients:
+      - role: assignee
+      - role: reviewer
+    template:
+      subject: "[REMINDER] Task Due Tomorrow: {task_name}"
+      body: |
+        Reminder: The following task is due tomorrow:
+
+        Task: {task_name}
+        Due Date: {due_date}
+        Status: {task_status}
+
+        Please ensure completion before the deadline.
+
+  # Overdue Notifications
+  - id: notify_task_overdue
+    code: TASK_OVERDUE
+    name: Task Overdue Notification
+    trigger: task.due_date + 1 day
+    channels: [email, in_app]
+    recipients:
+      - role: assignee
+      - role: reviewer
+      - role: approver
+    template:
+      subject: "[OVERDUE] Task Past Due: {task_name}"
+      body: |
+        ATTENTION: The following task is past due:
+
+        Task: {task_name}
+        Due Date: {due_date}
+        Days Overdue: {days_overdue}
+
+        Immediate action required.
+
+  # Escalation Notifications
+  - id: notify_escalation_level1
+    code: ESCALATION_L1
+    name: Level 1 Escalation
+    trigger: task.overdue + 2 days
+    channels: [email]
+    recipients:
+      - role: BOM
+    template:
+      subject: "[ESCALATION] Task Overdue 2+ Days: {task_name}"
+      body: |
+        ESCALATION NOTICE
+
+        Task: {task_name}
+        Assignee: {assignee_name}
+        Days Overdue: {days_overdue}
+
+        Please follow up with the assignee.
+
+  - id: notify_escalation_level2
+    code: ESCALATION_L2
+    name: Level 2 Escalation
+    trigger: task.overdue + 3 days
+    channels: [email]
+    recipients:
+      - role: BOM
+      - role: CKVC
+    template:
+      subject: "[URGENT ESCALATION] Task Overdue 3+ Days: {task_name}"
+      body: |
+        URGENT ESCALATION
+
+        Task: {task_name}
+        Assignee: {assignee_name}
+        Manager: {manager_name}
+        Days Overdue: {days_overdue}
+
+        This task is critically overdue. Executive attention required.
+
+  # Review Notifications
+  - id: notify_ready_for_review
+    code: READY_FOR_REVIEW
+    name: Ready for Review Notification
+    trigger: task.status = 'review'
+    channels: [email, in_app]
+    recipients:
+      - role: reviewer
+    template:
+      subject: "[REVIEW] Task Ready for Review: {task_name}"
+      body: |
+        A task is ready for your review:
+
+        Task: {task_name}
+        Prepared by: {preparer_name}
+        Prep Date: {prep_done_date}
+
+        Please review and approve/reject.
+
+  # Approval Notifications
+  - id: notify_approved
+    code: TASK_APPROVED
+    name: Task Approved Notification
+    trigger: task.status = 'done'
+    channels: [in_app]
+    recipients:
+      - role: preparer
+      - role: reviewer
+    template:
+      subject: "[APPROVED] Task Completed: {task_name}"
+      body: |
+        Good news! Your task has been approved:
+
+        Task: {task_name}
+        Approved by: {approver_name}
+        Approval Date: {approve_date}
+
+  - id: notify_rejected
+    code: TASK_REJECTED
+    name: Task Rejected Notification
+    trigger: task.rejected
+    channels: [email, in_app]
+    recipients:
+      - role: preparer
+    template:
+      subject: "[ACTION REQUIRED] Task Rejected: {task_name}"
+      body: |
+        Your task requires revision:
+
+        Task: {task_name}
+        Rejected by: {reviewer_name}
+        Reason: {rejection_reason}
+
+        Please address the issues and resubmit.
+
+  # Period Notifications
+  - id: notify_period_opened
+    code: PERIOD_OPENED
+    name: Period Opened Notification
+    trigger: period.status = 'open'
+    channels: [email]
+    recipients:
+      - role: RIM
+      - role: BOM
+    template:
+      subject: "[NEW PERIOD] {period_name} Now Open"
+      body: |
+        A new closing period has been opened:
+
+        Period: {period_name}
+        Close Deadline: {close_deadline}
+        Tasks Generated: {task_count}
+
+        Please begin working on your assigned tasks.
+
+  - id: notify_period_closed
+    code: PERIOD_CLOSED
+    name: Period Closed Notification
+    trigger: period.status = 'closed'
+    channels: [email]
+    recipients:
+      - role: all_finance
+    template:
+      subject: "[CLOSED] {period_name} Successfully Closed"
+      body: |
+        The following period has been closed:
+
+        Period: {period_name}
+        Closed by: {closed_by}
+        Close Date: {close_date}
+
+        All tasks completed. Period is now locked.
+
+  # Compliance Notifications
+  - id: notify_compliance_exception
+    code: COMPLIANCE_EXCEPTION
+    name: Compliance Exception Notification
+    trigger: compliance_check.status = 'failed'
+    channels: [email, in_app]
+    recipients:
+      - role: BOM
+      - role: CKVC
+    template:
+      subject: "[COMPLIANCE] Exception Found: {check_name}"
+      body: |
+        A compliance check has found exceptions:
+
+        Check: {check_name}
+        Severity: {severity}
+        Exception Count: {exception_count}
+
+        Please review and address these issues.
+
+  # BIR Filing Notifications
+  - id: notify_bir_deadline
+    code: BIR_DEADLINE
+    name: BIR Filing Deadline Reminder
+    trigger: bir_return.deadline - 3 days
+    channels: [email]
+    recipients:
+      - role: RIM
+      - role: BOM
+    template:
+      subject: "[BIR] Filing Deadline in 3 Days: {form_code}"
+      body: |
+        REMINDER: BIR filing deadline approaching
+
+        Form: {form_code} - {form_name}
+        Deadline: {deadline_date}
+        Status: {filing_status}
+
+        Ensure all preparation is complete.
+
+# Notification channels
+channels:
+  email:
+    provider: odoo_mail
+    fallback: null
+  in_app:
+    provider: odoo_discuss
+    fallback: email
+  sms:
+    provider: null  # Not configured
+    fallback: email
+
+# Digest settings
+digests:
+  daily_summary:
+    schedule: "08:00 PHT"
+    recipients: [RIM, BOM]
+    content:
+      - pending_tasks
+      - overdue_tasks
+      - upcoming_deadlines
+
+  weekly_summary:
+    schedule: "Monday 08:00 PHT"
+    recipients: [CKVC, FD]
+    content:
+      - period_status
+      - kpi_summary
+      - exception_summary

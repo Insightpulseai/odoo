@@ -1,0 +1,5 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_ask_ai_conversation_user,ask.ai.conversation.user,model_ask_ai_conversation,base.group_user,1,1,1,0
+access_ask_ai_message_user,ask.ai.message.user,model_ask_ai_message,base.group_user,1,1,1,0
+access_ask_ai_conversation_admin,ask.ai.conversation.admin,model_ask_ai_conversation,base.group_system,1,1,1,1
+access_ask_ai_message_admin,ask.ai.message.admin,model_ask_ai_message,base.group_system,1,1,1,1

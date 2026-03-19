@@ -1,0 +1,68 @@
+version: 1
+type: framework_skill
+family: agent_sdk_stack
+skill:
+  name: m365-agents-channel-delivery
+  status: draft
+  owner: agents
+  purpose: >
+    Package and deploy agents to M365 Copilot, Teams, and web channels
+    using the Microsoft 365 Agents SDK. This is the channel delivery layer,
+    distinct from core orchestration, developer assistance, and external
+    integration.
+
+  triggers:
+    - new channel deployment for an existing agent
+    - Teams integration for agent surface
+    - M365 Copilot extension development
+    - web widget setup for agent embedding
+    - channel auth configuration change
+
+  inputs:
+    - target channel (Teams, M365 Copilot, web, custom app)
+    - activity handler requirements
+    - state storage backend preference
+    - auth context (Entra app registration, scopes)
+    - Azure AI Foundry backend agent configuration
+    - app manifest and packaging requirements
+
+  steps:
+    - identify target channel and its specific requirements
+    - configure activity handlers (message, event, invoke patterns)
+    - set up state storage (conversation, user, turn — with durable backend for production)
+    - configure auth context (Entra token validation, SSO, identity propagation)
+    - connect to Azure AI Foundry backend for agent functionality
+    - package for target channel (Teams app package, Copilot declaration, web embed)
+    - test in target channel environment
+    - produce deployment evidence
+
+  outputs:
+    - channel_configuration
+    - deployment_manifest
+    - auth_setup
+    - state_storage_config
+    - integration_test_results
+    - evidence
+
+  guardrails:
+    - do not implement core agent logic in channel layer — channel delivers, orchestration reasons
+    - require Azure AI Foundry backend for agent functionality
+    - test in target channel before production — channel behavior differs across surfaces
+    - never hardcode auth tokens or client secrets
+    - never assume channel parity — each channel has different capabilities
+    - never use in-memory state storage for production
+
+  evidence:
+    required: true
+    format: "docs/evidence/{stamp}/m365-channel/deployment/"
+
+  evals:
+    dimensions: [accuracy, completeness, safety, policy_adherence, evidence_quality]
+    thresholds:
+      accuracy: 0.95
+      safety: 0.99
+
+cross_references:
+  - agents/personas/m365-channel-agent.md
+  - agents/knowledge/benchmarks/microsoft-365-agents-sdk.md
+  - agent-platform/ssot/learning/agent_sdk_stack_map.yaml

@@ -1,0 +1,47 @@
+version: 1
+name: model-data-curation
+description: "Select, filter, and validate training data for corpus quality, task fit, and proper splits"
+type: benchmark_skill
+skill_classification: encoded_preference
+owner_persona: dataset-curator
+source_family: hf_smol_training_playbook
+status: active
+
+triggers:
+  - "training data preparation"
+  - "corpus selection"
+  - "dataset filtering"
+  - "data quality for training"
+
+inputs:
+  - task_description: "What the model will be trained to do"
+  - candidate_sources: "Available data sources"
+  - quality_requirements: "Minimum quality thresholds"
+  - size_budget: "Target dataset size"
+
+steps:
+  - id: define_requirements
+    action: "Specify task/domain fit criteria"
+  - id: source_selection
+    action: "Identify and evaluate candidate data sources"
+  - id: filtering
+    action: "Apply quality filters: dedup, language detection, toxicity, format"
+  - id: domain_fit
+    action: "Verify data matches target task/domain"
+  - id: split_design
+    action: "Design train/validation/test splits with stratification"
+  - id: quality_report
+    action: "Generate data quality report with statistics"
+
+outputs:
+  - curated_dataset: "Filtered, split, validated dataset"
+  - quality_report: "Statistics, filter rates, domain coverage"
+  - data_card: "Dataset documentation"
+
+guardrails:
+  - "Quality over quantity — small clean dataset > large noisy dataset"
+  - "Deduplication is mandatory"
+  - "Validation set must be held out strictly"
+  - "Data provenance and licensing must be documented"
+
+benchmark_source: "https://huggingface.co/HuggingFaceTB"

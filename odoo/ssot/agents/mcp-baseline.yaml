@@ -1,0 +1,114 @@
+# =============================================================================
+# MCP Baseline — Canonical Control Surface Requirements
+# =============================================================================
+# Defines which MCP servers are required, optional, conditional, or forbidden
+# as primary control-plane surfaces for the InsightPulseAI platform.
+#
+# Reference: docs/contracts/foundry-vscode-auth-contract.md
+# =============================================================================
+
+version: 1
+schema: mcp-baseline
+updated_at: "2026-03-17"
+
+# ---------------------------------------------------------------------------
+# Required: must be available in every builder/agent workspace
+# ---------------------------------------------------------------------------
+required:
+  azure_mcp_server:
+    package: "@anthropics/azure-mcp"
+    purpose: "Azure resource management, Container Apps, Key Vault, Front Door ops"
+    auth: "Entra app registration (interactive) or service principal (automated)"
+    surfaces:
+      - VS Code
+      - Claude Code
+      - CI pipelines (via service principal)
+
+  azure_devops_mcp:
+    package: "azure-devops-mcp"
+    purpose: "Boards work items, pipeline triggers, release gates, PR linking"
+    auth: "Entra app registration or PAT (emergency fallback only)"
+    surfaces:
+      - VS Code
+      - Claude Code
+
+  azure_ai_foundry_mcp:
+    package: "azure-ai-foundry-mcp"
+    purpose: "Agent workflow execution, model deployment, eval runs, project management"
+    auth: "Entra app registration, project-scoped token"
+    surfaces:
+      - VS Code
+      - Claude Code
+      - Foundry web (implicit via portal)
+
+  playwright_mcp:
+    package: "@anthropic/playwright-mcp-server"
+    purpose: "Browser automation, E2E testing, UI validation, screenshot evidence"
+    auth: "None (local browser)"
+    surfaces:
+      - Claude Code
+      - CI pipelines
+
+# ---------------------------------------------------------------------------
+# Optional: available when needed, not mandatory in every workspace
+# ---------------------------------------------------------------------------
+optional:
+  markitdown_mcp:
+    purpose: "Document conversion (PDF/DOCX/PPTX → Markdown)"
+    when: "Document processing, OCR pipeline prep, spec extraction"
+
+  github_mcp:
+    package: "@modelcontextprotocol/server-github"
+    purpose: "GitHub repo/PR/issue operations when not using gh CLI directly"
+    when: "Agent workflows that need structured GitHub API access"
+
+  supabase_mcp:
+    package: "@supabase/mcp-server"
+    purpose: "Supabase schema, SQL, Edge Functions management"
+    when: "Supabase integration work (not primary control plane)"
+
+# ---------------------------------------------------------------------------
+# Conditional: required only for specific workloads
+# ---------------------------------------------------------------------------
+conditional:
+  databricks_mcp:
+    purpose: "Lakehouse operations, notebook execution, job management"
+    condition: "Active Databricks/analytics workload"
+    auth: "Databricks PAT or Azure service principal"
+
+  enterprise_mcp:
+    purpose: "Enterprise integration surfaces (SAP, Dynamics, etc.)"
+    condition: "Active enterprise integration contract exists in docs/contracts/"
+    note: "Must have explicit contract before activation — benchmarks do not qualify"
+
+# ---------------------------------------------------------------------------
+# Forbidden as primary control plane
+# ---------------------------------------------------------------------------
+forbidden_as_primary_control_plane:
+  - description: "Generic chat-only adapters (Slack/Discord bots as control surface)"
+    reason: "Chat is notification/triage surface, not authoritative control plane"
+  - description: "Unregistered vendor MCPs without explicit contract"
+    reason: "Control surfaces must be documented in this baseline before activation"
+  - description: "Stripe MCP or payment MCPs"
+    reason: "Not part of current platform scope — remove from workspace if present"
+  - description: "Personal productivity MCPs (Notion, calendar, etc.)"
+    reason: "Not part of platform control plane — use separately if desired"
+
+# ---------------------------------------------------------------------------
+# Canonical interpretation
+# ---------------------------------------------------------------------------
+canonical_surface_model:
+  foundry_web: "Primary live agent-builder UI (browser)"
+  vscode: "Repo + local runtime + extension surface"
+  azure_devops_mcp: "Boards/builds/releases/work-item automation"
+  azure_mcp_server: "Azure resource/runtime ops"
+  foundry_mcp: "Agent workflow/model/eval automation"
+
+# ---------------------------------------------------------------------------
+# Enforcement
+# ---------------------------------------------------------------------------
+enforcement:
+  workspace_init_check: true
+  warn_on_unlisted_mcp: true
+  block_on_forbidden_mcp: false
+  validator: "scripts/ci/validate_mcp_baseline.py"

@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- List View -->
+    <record id="view_bir_alert_list" model="ir.ui.view">
+        <field name="name">bir.alert.list</field>
+        <field name="model">bir.alert</field>
+        <field name="arch" type="xml">
+            <list string="BIR Alerts" default_order="create_date desc">
+                <field name="sent_date"/>
+                <field name="alert_type"/>
+                <field name="filing_deadline_id"/>
+                <field name="recipient_email"/>
+                <field name="subject"/>
+                <field name="status"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Form View -->
+    <record id="view_bir_alert_form" model="ir.ui.view">
+        <field name="name">bir.alert.form</field>
+        <field name="model">bir.alert</field>
+        <field name="arch" type="xml">
+            <form string="BIR Alert">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="filing_deadline_id"/>
+                            <field name="alert_type"/>
+                            <field name="recipient_email"/>
+                            <field name="sent_date"/>
+                            <field name="status"/>
+                        </group>
+                        <group>
+                            <field name="subject"/>
+                        </group>
+                    </group>
+                    <group>
+                        <field name="body_text" nolabel="1" widget="text"/>
+                    </group>
+                    <group string="Error Details" invisible="status != 'failed'">
+                        <field name="error_message" nolabel="1"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Search View -->
+    <record id="view_bir_alert_search" model="ir.ui.view">
+        <field name="name">bir.alert.search</field>
+        <field name="model">bir.alert</field>
+        <field name="arch" type="xml">
+            <search string="BIR Alerts">
+                <field name="filing_deadline_id"/>
+                <field name="recipient_email"/>
+                <field name="subject"/>
+                <filter string="Daily Digest" name="digest" domain="[('alert_type', '=', 'digest')]"/>
+                <filter string="Urgent" name="urgent" domain="[('alert_type', '=', 'urgent')]"/>
+                <filter string="Sent" name="sent" domain="[('status', '=', 'sent')]"/>
+                <filter string="Failed" name="failed" domain="[('status', '=', 'failed')]"/>
+                <separator/>
+                <filter string="Last 7 Days" name="last_7_days"
+                    domain="[('sent_date', '&gt;=', (context_today() - datetime.timedelta(days=7)).strftime('%Y-%m-%d'))]"/>
+                <filter string="Last 30 Days" name="last_30_days"
+                    domain="[('sent_date', '&gt;=', (context_today() - datetime.timedelta(days=30)).strftime('%Y-%m-%d'))]"/>
+                <group expand="0" string="Group By">
+                    <filter string="Alert Type" name="group_alert_type" context="{'group_by': 'alert_type'}"/>
+                    <filter string="Status" name="group_status" context="{'group_by': 'status'}"/>
+                    <filter string="Recipient" name="group_recipient" context="{'group_by': 'recipient_email'}"/>
+                    <filter string="Sent Date" name="group_sent_date" context="{'group_by': 'sent_date:day'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Action -->
+    <record id="action_bir_alert" model="ir.actions.act_window">
+        <field name="name">BIR Alert History</field>
+        <field name="res_model">bir.alert</field>
+        <field name="view_mode">list,form</field>
+        <field name="context">{'search_default_last_30_days': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No BIR alerts sent yet
+            </p>
+            <p>
+                BIR alerts are sent automatically:
+                <ul>
+                    <li>Daily digest at 08:00 PH time</li>
+                    <li>Urgent alerts for deadlines &lt;24h (checked every 4 hours)</li>
+                </ul>
+                Configure recipients in Settings → Technical → Parameters → System Parameters:
+                <ul>
+                    <li>ipai_bir_notifications.digest_recipients</li>
+                    <li>ipai_bir_notifications.urgent_recipients</li>
+                </ul>
+            </p>
+        </field>
+    </record>
+</odoo>

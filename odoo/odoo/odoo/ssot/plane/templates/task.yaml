@@ -1,0 +1,38 @@
+schema: ssot.plane.template.v1
+type: task
+updated: "2026-03-16"
+
+template:
+  name: Task Template
+  description_structure: |
+    ## Change Summary
+    What specific change is being made?
+
+    ## Repo / Path
+    Which repo and file paths are affected?
+
+    ## Validation Required
+    What checks confirm this task is complete?
+
+    ## Done Condition
+    Single sentence: what must be true for this to be Done?
+
+  required_fields:
+    - title
+    - description
+    - assignee
+    - state
+
+  label_convention:
+    - "Module/<module>"
+
+  module_assignment_rule: >
+    Inherit module from parent Story.
+
+  cycle_assignment_rule: >
+    Inherit cycle from parent Story.
+
+  done_rule: >
+    Done condition met.
+    Validation checks passing.
+    Committed to repo.

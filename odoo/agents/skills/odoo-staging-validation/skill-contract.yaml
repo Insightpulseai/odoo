@@ -1,0 +1,67 @@
+version: 1
+type: delivery_skill
+family: odoo_sh_delivery
+skill:
+  name: odoo-staging-validation
+  status: draft
+  owner: odoo-tester
+  purpose: >
+    Validate staging environment readiness by running automated tests with
+    production-like data, capturing test evidence, and classifying results
+    per the testing policy.
+
+  triggers:
+    - branch promoted to staging environment
+    - staging deployment completed
+    - pre-production validation request
+    - module upgrade applied to staging
+
+  inputs:
+    - staging Container App revision
+    - staging database state (odoo_staging on Azure managed PG)
+    - modules under test
+    - test scope (unit, integration, or full regression)
+    - previous test evidence for comparison
+
+  steps:
+    - verify staging Container App is running current revision
+    - confirm staging database is available and has production-like data
+    - run automated tests with --test-enable on disposable test_<module> databases
+    - capture test output with pass/fail counts and tracebacks
+    - classify all failures per testing policy (passes_locally, init_only, env_issue, migration_gap, real_defect)
+    - compare results with previous test run for regression detection
+    - produce staging validation report with evidence
+
+  outputs:
+    - staging_status
+    - test_results
+    - failure_classification
+    - regression_analysis
+    - findings
+    - blockers
+    - evidence
+
+  guardrails:
+    - never use production database (odoo) for testing
+    - never claim tests pass without evidence log with path citation
+    - never skip failure classification — every failure must be categorized
+    - never silently skip test failures
+    - never claim repo-wide readiness from a subset of tested modules
+    - bind to Azure managed PG and ACA staging revisions, not Odoo.sh staging
+
+  evidence:
+    required: true
+    format: "docs/evidence/{stamp}/odoo-delivery/odoo-staging-validation/"
+
+  evals:
+    dimensions: [accuracy, completeness, safety, policy_adherence, evidence_quality]
+    thresholds:
+      accuracy: 0.95
+      safety: 0.99
+      policy_adherence: 0.95
+
+cross_references:
+  - agents/knowledge/benchmarks/odoo-sh-persona-model.md
+  - agents/personas/odoo-tester.md
+  - .claude/rules/testing.md
+  - .claude/rules/infrastructure.md

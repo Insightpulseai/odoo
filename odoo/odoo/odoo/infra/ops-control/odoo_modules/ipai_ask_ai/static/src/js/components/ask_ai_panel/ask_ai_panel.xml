@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <t t-name="ipai_ask_ai.AskAIPanel">
+        <div class="ipai-panel ipai-animate-slide-in-right">
+            <!-- Header -->
+            <div class="ipai-panel-header">
+                <div class="ipai-panel-header-left">
+                    <div class="ipai-avatar ipai-avatar-ai ipai-avatar--sm">
+                        <i class="fa fa-robot"/>
+                    </div>
+                    <span class="ipai-heading-6">AI Copilot</span>
+                </div>
+
+                <!-- Context breadcrumb -->
+                <div class="ipai-breadcrumb" t-if="hasContext">
+                    <span class="ipai-breadcrumb-item">
+                        <span class="ipai-breadcrumb-current" t-esc="contextInfo.model"/>
+                    </span>
+                    <span class="ipai-breadcrumb-item" t-if="contextInfo.display_name">
+                        <span class="ipai-breadcrumb-current ipai-truncate" style="max-width: 120px;"
+                              t-esc="contextInfo.display_name"/>
+                    </span>
+                </div>
+
+                <div class="ipai-panel-header-right">
+                    <!-- Mode selector -->
+                    <div class="ipai-mode-selector">
+                        <button class="ipai-btn ipai-btn--text ipai-btn--sm"
+                                t-on-click="toggleModeSelector">
+                            <i t-attf-class="fa {{ getModeIcon(currentMode) }}"/>
+                            <span t-esc="getModeLabel(currentMode)"/>
+                            <i class="fa fa-chevron-down" style="font-size: 10px;"/>
+                        </button>
+
+                        <div class="ipai-mode-dropdown ipai-popover"
+                             t-if="state.showModeSelector">
+                            <button class="ipai-mode-option"
+                                    t-att-class="{ 'active': currentMode === 'ask' }"
+                                    t-on-click="() => this.setMode('ask')">
+                                <i class="fa fa-question-circle"/>
+                                <div class="ipai-mode-option-content">
+                                    <span class="ipai-mode-option-label">Ask</span>
+                                    <span class="ipai-mode-option-desc">Questions &amp; explanations</span>
+                                </div>
+                            </button>
+                            <button class="ipai-mode-option"
+                                    t-att-class="{ 'active': currentMode === 'do' }"
+                                    t-on-click="() => this.setMode('do')">
+                                <i class="fa fa-play-circle"/>
+                                <div class="ipai-mode-option-content">
+                                    <span class="ipai-mode-option-label">Do</span>
+                                    <span class="ipai-mode-option-desc">Execute actions</span>
+                                </div>
+                            </button>
+                            <button class="ipai-mode-option"
+                                    t-att-class="{ 'active': currentMode === 'explain' }"
+                                    t-on-click="() => this.setMode('explain')">
+                                <i class="fa fa-info-circle"/>
+                                <div class="ipai-mode-option-content">
+                                    <span class="ipai-mode-option-label">Explain</span>
+                                    <span class="ipai-mode-option-desc">Detailed analysis</span>
+                                </div>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- New conversation -->
+                    <button class="ipai-btn ipai-btn--icon"
+                            title="New conversation"
+                            t-on-click="newConversation">
+                        <i class="fa fa-plus"/>
+                    </button>
+
+                    <!-- Close button -->
+                    <button class="ipai-btn ipai-btn--icon"
+                            title="Close (Esc)"
+                            t-on-click="close">
+                        <i class="fa fa-times"/>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Message list -->
+            <div class="ipai-panel-body" t-ref="messageList">
+                <!-- Empty state -->
+                <div class="ipai-empty-state" t-if="!messages.length">
+                    <div class="ipai-empty-state-icon">
+                        <i class="fa fa-comments-o"/>
+                    </div>
+                    <h4 class="ipai-heading-5">How can I help?</h4>
+                    <p class="ipai-body-sm ipai-text-muted">
+                        Ask questions about your data, request explanations, or let me help you perform actions.
+                    </p>
+
+                    <!-- Quick actions -->
+                    <div class="ipai-quick-actions">
+                        <button class="ipai-action-chip"
+                                t-on-click="() => this.onSendMessage('Summarize this record')">
+                            <i class="fa fa-file-text-o ipai-action-chip-icon"/>
+                            Summarize this record
+                        </button>
+                        <button class="ipai-action-chip"
+                                t-on-click="() => this.onSendMessage('What actions can I take here?')">
+                            <i class="fa fa-bolt ipai-action-chip-icon"/>
+                            What can I do here?
+                        </button>
+                        <button class="ipai-action-chip"
+                                t-on-click="() => this.onSendMessage('Show me related records')">
+                            <i class="fa fa-link ipai-action-chip-icon"/>
+                            Show related records
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Messages -->
+                <div class="ipai-messages" t-if="messages.length">
+                    <t t-foreach="messages" t-as="message" t-key="message.id">
+                        <Message
+                            message="message"
+                            onExecuteAction="(actionIndex) => this.onExecuteAction(message.id, actionIndex)"
+                        />
+                    </t>
+                </div>
+            </div>
+
+            <!-- Composer -->
+            <div class="ipai-panel-footer">
+                <Composer
+                    onSend.bind="onSendMessage"
+                    isLoading="isLoading"
+                    placeholder="Ask anything about your data..."
+                />
+            </div>
+        </div>
+    </t>
+
+</templates>

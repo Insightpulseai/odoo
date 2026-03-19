@@ -1,0 +1,166 @@
+# Fluent UI Designer Agent — Machine-Readable SSOT
+# Generated: 2026-03-19
+
+identity:
+  name: fluent-designer-agent
+  type: frontend-app
+  domain: frontend
+  description: Fluent UI React v9 designer agent for generating, critiquing, refining, and handing off Microsoft-native UI compositions
+  status: spec-complete
+  owner: "@Insightpulseai-net/frontend"
+
+technology:
+  framework: Next.js 14+ (App Router)
+  ui_library: Fluent UI React v9
+  styling: Griffel
+  language: TypeScript
+  runtime_note: Fluent provider and Fluent-heavy surfaces require 'use client' boundary under App Router
+  build: next build
+
+packages:
+  - id: fluent-designer-contract
+    path: web/packages/fluent-designer-contract/
+    purpose: Typed contracts and schema validation
+    status: planned
+
+  - id: fluent-designer-prompts
+    path: web/packages/fluent-designer-prompts/
+    purpose: Prompt templates and brief parsing
+    status: planned
+
+  - id: fluent-designer-theme
+    path: web/packages/fluent-designer-theme/
+    purpose: Fluent token extensions and brand overrides
+    status: planned
+
+app:
+  path: web/apps/fluent-designer-agent/
+  status: planned
+  features:
+    - id: designer-workspace
+      path: src/features/designer-agent/
+      description: Workspace layout, mode orchestration
+      status: planned
+
+    - id: design-rules-engine
+      path: src/features/design-system/
+      description: Lightweight Fluent alignment validation
+      status: planned
+
+    - id: prompt-parsing
+      path: src/features/prompting/
+      description: Natural language to DesignBrief conversion
+      status: planned
+
+    - id: mock-adapter
+      path: src/services/
+      description: Deterministic fixtures for 5 starter use cases
+      status: planned
+
+modes:
+  - generate
+  - critique
+  - refine
+  - handoff
+
+contracts:
+  - DesignIntent
+  - DesignBrief
+  - ScreenProposal
+  - SectionProposal
+  - ComponentRecommendation
+  - DesignCritique
+  - CritiqueViolation
+  - HandoffArtifact
+  - DesignerAgentResponse
+  - DesignerAgentError
+  - DesignerAgentService
+  - ComponentTree
+  - RefineConstraints
+  - ServiceHealth
+
+starter_use_cases:
+  - id: campaign-dashboard
+    description: Microsoft-style analytics dashboard for campaign performance
+    priority: P0
+
+  - id: enterprise-settings
+    description: Enterprise settings page for admin configuration
+    priority: P0
+
+  - id: copilot-side-panel
+    description: Copilot side-panel for contextual assistance
+    priority: P0
+
+  - id: admin-list-detail
+    description: Data-heavy admin list/detail workspace
+    priority: P1
+
+  - id: hero-landing
+    description: Hero/landing section for Microsoft-adjacent product
+    priority: P1
+
+design_rules:
+  - layout_hierarchy
+  - whitespace_density
+  - component_appropriateness
+  - heading_action_consistency
+  - accessibility_basics
+  - token_usage_sanity
+  - platform_native_tone
+
+dependencies:
+  required:
+    - "@fluentui/react-components"
+    - react
+    - react-dom
+    - typescript
+  optional:
+    - existing repo state management
+    - existing repo test framework
+    - existing repo linting config
+
+integration:
+  backend_adapter: DesignerAgentService interface
+  mock_adapter: MockDesignerAgentService (v1)
+  foundry_adapter: FoundryDesignerAgentService (later)
+  foundry_sdk: azure-ai-projects 2.x (later, not in v1)
+
+spec_bundle:
+  prd: spec/fluent-designer-agent/prd.md
+  plan: spec/fluent-designer-agent/plan.md
+  tasks: spec/fluent-designer-agent/tasks.md
+  architecture: docs/architecture/frontend/fluent-designer-agent.md
+
+milestones:
+  - id: A
+    name: Contracts and skeleton
+    scope: Typed contracts + app shell + Fluent theme
+    status: planned
+
+  - id: B
+    name: Generate mode
+    scope: Prompt → brief → proposal with mock adapter
+    status: planned
+
+  - id: C
+    name: Critique and Handoff
+    scope: Critique mode + handoff generation + rules engine
+    status: planned
+
+  - id: D
+    name: Full workspace
+    scope: All 4 modes + 5 use cases + tests green
+    status: planned
+
+source_of_truth_contract_package: web/packages/fluent-designer-contract
+mock_adapter: true
+backend_required_for_mvp: false
+
+exclusions_v1:
+  - live backend agent runtime
+  - image/screenshot generation
+  - drag-and-drop visual builder
+  - direct Foundry SDK import in frontend
+  - custom styling outside Griffel/Fluent tokens
+  - multi-user collaboration

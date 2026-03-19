@@ -1,0 +1,4 @@
+--- a/notion-n8n-monthly-close/workflows/odoo/W501_EQ_BOOKING_SYNC.json
++++ b/automations/n8n/workflows/W501_EQ_BOOKING_SYNC.json
+@@ Move stray workflow to canonical location @@
+# git mv 'notion-n8n-monthly-close/workflows/odoo/W501_EQ_BOOKING_SYNC.json' 'automations/n8n/workflows/W501_EQ_BOOKING_SYNC.json'

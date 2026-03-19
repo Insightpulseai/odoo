@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2026 InsightPulseAI -->
+<!-- License LGPL-3.0 or later (http://www.gnu.org/licenses/lgpl). -->
+<odoo>
+    <!-- Form view for the wizard -->
+    <record id="view_ipai_zoho_fetch_wizard_form" model="ir.ui.view">
+        <field name="name">ipai.zoho.fetch.wizard.form</field>
+        <field name="model">ipai.zoho.fetch.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Fetch Zoho Mail">
+                <group>
+                    <field name="server_id"/>
+                    <field name="date_from"/>
+                </group>
+                <footer>
+                    <button name="action_fetch_now"
+                            string="Fetch Now"
+                            type="object"
+                            class="btn-primary"/>
+                    <button string="Cancel"
+                            class="btn-secondary"
+                            special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <!-- Action to open the wizard -->
+    <record id="action_ipai_zoho_fetch_wizard" model="ir.actions.act_window">
+        <field name="name">Fetch Zoho Mail</field>
+        <field name="res_model">ipai.zoho.fetch.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+</odoo>

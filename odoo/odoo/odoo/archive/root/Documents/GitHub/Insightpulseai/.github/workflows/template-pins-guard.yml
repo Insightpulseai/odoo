@@ -1,0 +1,11 @@
+name: Template Pins Guard
+on: [push, pull_request]
+
+jobs:
+  guard:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify vendored templates are pinned
+        run: |
+          ./scripts/ci_guard_template_pins.sh templates/vendor

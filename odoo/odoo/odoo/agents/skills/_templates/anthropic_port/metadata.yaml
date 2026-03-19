@@ -1,0 +1,14 @@
+id: example-skill-id
+source:
+  upstream: anthropics/skills
+  upstream_path: skills/<name>/SKILL.md
+  ported_date: "YYYY-MM-DD"
+taxonomy:
+  kind: tool-only  # tool-only | connector | bridge
+io:
+  inputs_schema: inputs.schema.json
+  outputs_schema: outputs.schema.json
+governance:
+  deterministic: true
+  secrets_in_repo: false
+  reviewed_by: null

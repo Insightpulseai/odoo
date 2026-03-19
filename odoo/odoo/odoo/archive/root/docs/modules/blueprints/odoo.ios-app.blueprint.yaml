@@ -1,0 +1,89 @@
+id: odoo.ios-app
+title: Odoo iOS App Store Client (SwiftUI skeleton + Fastlane CI)
+category: ops-console
+sources:
+  - type: doc
+    url: https://developer.apple.com/documentation/swiftui
+    catalog_id: apple-swiftui-docs
+target:
+  app_dir: apps/odoo-mobile-ios
+  spec_dir: spec/odoo-mobile
+  fastlane_dir: fastlane
+variables:
+  - name: MATCH_GIT_URL
+    required: true
+    description: Private git repo URL for Fastlane match code signing certificates.
+  - name: MATCH_PASSWORD
+    required: true
+    description: Encryption password for Fastlane match certificate repo.
+  - name: APP_STORE_CONNECT_API_KEY_ID
+    required: true
+    description: App Store Connect API Key ID for CI automation.
+  - name: APP_STORE_CONNECT_API_KEY_ISSUER_ID
+    required: true
+    description: Issuer ID for the App Store Connect API key.
+  - name: APP_STORE_CONNECT_API_KEY_CONTENT
+    required: true
+    description: Base64-encoded .p8 key file content for CI (set as GitHub secret).
+  - name: APPLE_ID
+    required: true
+    description: Apple ID email used for Fastlane match authentication.
+  - name: APP_IDENTIFIER
+    required: false
+    description: Bundle ID (default com.insightpulseai.odoo-mobile).
+automation:
+  steps:
+    - name: create_swift_skeleton
+      description: Create SwiftUI app skeleton in apps/odoo-mobile-ios/
+      instruction: |
+        Create Package.swift (swift-tools-version 5.9, iOS 17+, no external deps).
+        Create Sources/App/OdooMobileApp.swift — @main App + ContentView + AuthState.
+        Create all 5 feature stubs: SSOAuthSession, TokenStore, BiometricGate,
+        DocumentScanView, OfflineQueue, PushRegistration, DeepLinkRouter.
+        Create Shared/OdooClient.swift, Shared/NetworkMonitor.swift.
+        Create README.md with setup and architecture docs.
+    - name: create_fastlane
+      description: Create Fastlane configuration (Fastfile, Appfile, Matchfile, .env.example)
+      instruction: |
+        Create fastlane/Fastfile with lanes: test, build_testflight, release_appstore.
+        Create fastlane/Appfile reading app_identifier and apple_id from ENV.
+        Create fastlane/Matchfile using git storage_mode and appstore type.
+        Create fastlane/.env.example documenting all required secrets.
+    - name: create_ci_workflow
+      description: Create .github/workflows/ios-appstore.yml
+      instruction: |
+        Create path-filtered workflow for apps/odoo-mobile-ios/** and fastlane/**.
+        Test job: run fastlane ios test on macos-14 with Xcode 15.2.
+        Build job: run fastlane ios build_testflight on push to main (after test).
+        Upload test results and IPA as artifacts.
+    - name: create_spec_bundle
+      description: Create spec/odoo-mobile/ spec bundle
+      instruction: |
+        Create constitution.md (iOS 17+, SwiftUI, no private APIs, Keychain, OIDC).
+        Create prd.md (5 native capabilities, target users, release criteria).
+        Create plan.md (5 phases from skeleton to App Store submission).
+        Create tasks.md (phase 0 tasks checked, phases 1-5 pending).
+    - name: catalog_item_link
+      description: Add item to docs/catalog/mobile.catalog.json and blueprint
+      instruction: |
+        Create docs/catalog/mobile.catalog.json with odoo-mobile-ios item.
+        Ensure blueprint_id: odoo.ios-app is set in the catalog item.
+verification:
+  required_checks:
+    - catalog-gate
+    - blueprint-gate
+  preview:
+    expectations:
+      - package-swift-exists
+      - fastfile-exists
+      - ci-workflow-exists
+      - spec-bundle-exists
+rollback:
+  strategy: revert_pr
+notes:
+  minor_customization:
+    - Set OdooBaseURL and OdooOIDCClientID in Info.plist after creating Xcode project.
+    - Run fastlane match init once to create the certificate repo.
+    - Set all GitHub Actions secrets before first CI run.
+    - Update bundle ID if using a different Apple Developer team.
+    - Phase 0 is skeleton only — implement TODO stubs in phases 1-5.

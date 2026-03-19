@@ -13,7 +13,7 @@
 # =============================================================================
 
 schema_version: "1.0"
-last_updated: "2026-03-17"
+last_updated: "2026-03-18"
 validator: scripts/ci/validate_planning_index.py
 ci_gate: .github/workflows/planning-index-ssot-check.yml
 
@@ -85,18 +85,18 @@ layers:
 
   - id: product_roadmap
     name: "Product Roadmap"
-    canonical_file: ssot/roadmap/product_roadmap.yaml
+    canonical_file: infra/ssot/roadmap/product_roadmap.yaml
     owner: product-lead
     cadence: monthly
-    status: not_on_branch  # exists on refactor branch (e3c2013d6f), not yet on main
+    status: on_main
     join_keys:
-      - field: initiatives[].okr_ref
-        joins_to: operational_okrs.canonical_okrs[].id
-      - field: initiatives[].objective_ref
-        joins_to: strategy.objectives[].id
+      - field: quarters[].epics[].id
+        joins_to: azure_boards.epics (via title convention)
+      - field: quarters[].epics[].ssot_ref
+        joins_to: spec bundles or ssot files
     note: >
-      This file exists on the refactor branch but has not been merged to main.
-      Cross-references to this layer are deferred until the file lands on main.
+      Product roadmap with quarterly milestones and epic definitions.
+      Epic ID format: E-<DOMAIN>-<SEQ>.
 
   - id: capability_targets
     name: "Parity & Capability Targets"
@@ -214,5 +214,82 @@ related_artifacts:
 
   - file: odoo/docs/architecture/GOALS_SYSTEM_OF_RECORD_DECISION.md
     purpose: "ADR-GSR-001: Goals System of Record — YAML now, AzDo later"
+    layer: governance
+    status: on_main
+
+  - file: ssot/governance/platform-constitution.yaml
+    purpose: "Platform-level non-negotiable rules and amendment process"
+    layer: governance
+    status: on_main
+
+  - file: ssot/governance/operating-model.yaml
+    purpose: "AzDo + GitHub tool authority boundaries and sync contracts"
+    layer: governance
+    status: on_main
+
+  - file: ssot/governance/project-charter.yaml
+    purpose: "Formal project charter — scope, stakeholders, constraints, success criteria"
+    layer: governance
+    status: on_main
+
+  - file: ssot/governance/azdo-execution-hierarchy.yaml
+    purpose: "Azure Boards seed data: Epic (objective) → Issue (workstream) → Task hierarchy"
+    layer: operational_okrs
+    status: on_main
+
+  # --- Operating model docs (cross-linked, not canonical layers) ---
+
+  - file: docs/architecture/devsecops_operating_model.md
+    purpose: "DevSecOps control planes: shift-left security, secure build/release, identity"
+    layer: governance
+    status: on_main
+
+  - file: docs/architecture/reliability_operating_model.md
+    purpose: "SRE model: SLI/SLO, incident response, backup/DR, zero-downtime, deployment windows"
+    layer: governance
+    status: on_main
+
+  - file: docs/architecture/quality_engineering_model.md
+    purpose: "Delivery quality gates: DoD, PR gates, release readiness, rollback criteria"
+    layer: governance
+    status: on_main
+
+  - file: docs/architecture/identity_and_secrets.md
+    purpose: "Identity/RBAC/secrets: Entra ID posture, Key Vault, secret rotation, RBAC rules"
+    layer: governance
+    status: on_main
+
+  - file: docs/architecture/runtime_security.md
+    purpose: "Container security posture: registry controls, Defender, Azure Policy, alerting"
+    layer: governance
+    status: on_main
+
+  - file: docs/architecture/release_management_model.md
+    purpose: "Safe deployment doctrine: progressive exposure, rings, bake time, hotfix routing"
+    layer: governance
+    status: on_main
+
+  - file: docs/architecture/platform_delivery_contract.md
+    purpose: "Delivery contract: tooling consistency, automation rules, service isolation"
+    layer: governance
+    status: on_main
+
+  - file: docs/architecture/AZURE_DEVOPS_OPERATING_MODEL.md
+    purpose: "AzDo inner/outer loop contract, local-to-remote drift prevention, pipeline strategy"
+    layer: governance
+    status: on_main
+
+  - file: infra/ssot/ci_cd_policy_matrix.yaml
+    purpose: "CI/CD gate levels (P0-P3), trigger modes, path scoping rules"
+    layer: governance
+    status: on_main
+
+  - file: infra/ssot/github/org-policy.yaml
+    purpose: "GitHub org security posture: 2FA, repo creation, forking, third-party access"
+    layer: governance
+    status: on_main
+
+  - file: docs/contracts/PLATFORM_CONTRACTS_INDEX.md
+    purpose: "Master index of 30+ cross-boundary platform contracts with validators"
     layer: governance
     status: on_main

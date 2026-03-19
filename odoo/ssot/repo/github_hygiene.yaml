@@ -1,0 +1,26 @@
+version: 1
+updated_at: "2026-03-18"
+
+canonical_ci_system: azure_devops
+github_actions_role: none
+
+github_actions_status:
+  state: decommissioned
+  effective_date: "2026-03-18"
+  active_workflow_directory_present: false
+  workflows_removed: 20
+  rationale: unresolved_billing_and_operational_reliability
+
+policy:
+  github_actions_must_not_be_used: true
+  new_workflow_yaml_requires_explicit_reversal_decision: true
+
+github_role:
+  source_control: true
+  pull_request_authority: true
+  ci_cd: false
+  deployment: false
+  automation: false
+
+decommission_record: docs/architecture/GITHUB_ACTIONS_DECOMMISSION_2026-03-18.md
+decision_log: docs/architecture/GITHUB_CLEANUP_DECISION_LOG_2026-03-18.md

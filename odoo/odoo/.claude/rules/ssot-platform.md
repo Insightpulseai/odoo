@@ -137,7 +137,7 @@ Azure Container Apps (`ca-ipai-dev`) is the canonical deployment surface.
 - Do not create workflows that depend on Vercel deployment status events
 - Do not treat Vercel preview deployments as CI gates
 - Any remaining Vercel integrations, preview checks, or deployment references are transitional residue and should be removed
-- SSOT integration files (`ssot/integrations/vercel_*.yaml`) are marked `deprecated`
+- SSOT integration files (`infra/ssot/integrations/vercel_*.yaml`) are marked `deprecated`
 
 ---
 

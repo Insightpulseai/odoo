@@ -1,0 +1,101 @@
+# ssot/agents/interface_schema.yaml
+# Defines the required schema for entries in ssot/agents/skills.yaml.
+#
+# CI validator: scripts/ci/validate_skills_registry.py
+# Contract:     docs/contracts/C-AGENT-WORKFLOWS-01.md
+# Tool registry: ssot/tools/registry.yaml
+#
+# This file is the authoritative definition of what fields every skill entry
+# MUST and MAY contain, what values are valid, and what security defaults apply.
+#
+# Last updated: 2026-03-02
+
+meta:
+  schema_version: "1.0"
+  updated_at: "2026-03-02"
+  contract: "docs/contracts/C-AGENT-WORKFLOWS-01.md"
+
+# ── Required fields (every skill entry must have all of these) ────────────────
+required_fields:
+  - id             # kebab-case unique identifier; FK in ops.runs.skill_id
+  - name           # human-readable display name
+  - description    # what the skill does (1-2 sentences)
+  - executor       # execution surface (see valid_executors)
+  - max_duration_s # hard timeout; Edge Function returns 504 on breach
+  - tags           # free-form list for filtering/discovery
+  - state_machine  # ordered list of phases (subset of valid_phases)
+  - owner          # team or person responsible
+  - status         # lifecycle status (see valid_statuses)
+  - allowed_tools  # list of tool IDs from ssot/tools/registry.yaml
+  - security       # security controls block (see security_defaults)
+
+# ── Optional fields ──────────────────────────────────────────────────────────
+optional_fields:
+  - spec           # relative path to spec bundle, e.g. spec/deerflow-patterns-adoption/
+  - notes          # freeform notes for maintainers
+
+# ── Valid executor surfaces ───────────────────────────────────────────────────
+valid_executors:
+  - vercel_sandbox   # Vercel serverless sandbox (short-lived, cold start <300ms)
+  - do_runner        # DigitalOcean App Platform runner (long-running, stateful)
+  - supabase_edge_fn # Supabase Edge Function (Deno, <500ms, no FS write)
+
+# ── Valid workflow phases ─────────────────────────────────────────────────────
+valid_phases:
+  - PLAN    # read inputs, create ops.run, determine action plan
+  - PATCH   # apply code/config changes to working tree
+  - VERIFY  # run CI checks or dry-run validation
+  - PR      # open pull request (never push to main)
+  - MONITOR # post-deploy observability check (optional, may extend state machines)
+
+# ── Phase ordering constraint ────────────────────────────────────────────────
+# state_machine must be a strictly-ordered subsequence of:
+#   PLAN → PATCH → VERIFY → PR → MONITOR
+# Re-entering a phase is not allowed within a single run.
+phase_order_canonical: [PLAN, PATCH, VERIFY, PR, MONITOR]
+
+# ── Valid skill lifecycle statuses ───────────────────────────────────────────
+valid_statuses:
+  - active        # used in production; CI gate enforces it
+  - experimental  # under development; CI gate is advisory only
+  - deprecated    # no new runs; kept for audit trail FK integrity
+
+# ── Security block — required sub-fields and defaults ────────────────────────
+# Every skill must have a `security:` block. Missing fields are set to their
+# default values by the executor runtime. CI validator enforces presence.
+security_defaults:
+  path_traversal_guard: true
+  # Blocks any file path containing ".." or absolute paths not under allowed prefixes.
+  # Enforced at the repo_read_file / repo_write_file tool layer.
+
+  symlink_guard: true
+  # Resolves symlinks and re-validates the resolved path against allowed prefixes.
+  # Prevents symlink traversal attacks in repo_write_file.
+
+  metadata_escaping: true
+  # Ensures ops.run_events data jsonb values are escaped before storage.
+  # Prevents JSON injection into the audit trail.
+
+  max_skill_body_bytes: 5000
+  # Hard limit on the byte size of any single file write via repo_write_file.
+  # Skills requiring larger writes must split into multiple phases or PRs.
+
+# ── Tool reference rules ─────────────────────────────────────────────────────
+tool_reference_rules:
+  - Every entry in allowed_tools must match an id in ssot/tools/registry.yaml.
+  - A skill may only use tools where its id appears in the tool's allowed_in_skills
+    list, OR where allowed_in_skills is ["*"].
+  - The special value "__none__" is permitted for read-only diagnostic skills
+    that call no external tools.
+
+# ── Citation label rule ────────────────────────────────────────────────────────
+# Docs in docs/contracts/ and spec/ must not use shorthand citation labels
+# (e.g. [C1], [C2], [Ref-3]) without a full URL or repo-relative path.
+# CI validator checks for the pattern /\[C\d+\]/ in all .md files under
+# docs/contracts/ and fails if a match is found without an adjacent URL.
+citation_label_rule:
+  banned_pattern: "\\[C\\d+\\]"
+  allowed_form: "full URL or repo-relative path in the same sentence"
+  scope:
+    - "docs/contracts/**/*.md"
+    - "spec/**/*.md"

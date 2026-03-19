@@ -64,14 +64,14 @@ This file tracks top-level directories currently present in `Insightpulseai/odoo
 - ops
 - fastlane
 
-### MOVE → `ops-platform`
+### MOVE → `platform`
 - supabase
 - platform
 - ipai-platform
 - packages
 - schemas
 
-### MOVE → `lakehouse`
+### MOVE → `data-intelligence`
 - src/lakehouse
 - dbt
 - datasets

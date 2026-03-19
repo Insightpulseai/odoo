@@ -1,0 +1,67 @@
+id: saas-networking-design
+name: SaaS Networking Design
+version: 0.1.0
+type: benchmark_skill
+classification: capability_uplift
+family: azure-saas-mt
+persona: saas-platform-architect
+updated_at: "2026-03-17"
+
+purpose: >
+  Design multi-tenant networking with isolation, covering VNET per stamp,
+  private endpoints, Front Door routing per tenant, DNS per tenant, and
+  network policy enforcement.
+
+triggers:
+  - "Designing network architecture for multi-tenant SaaS"
+  - "Network isolation audit findings"
+  - "Per-tenant custom domain requirements"
+  - "Private connectivity requirements from enterprise tenants"
+
+inputs:
+  - stamp_topology: "Number and location of deployment stamps"
+  - tenant_dns_model: "Shared subdomain, per-tenant subdomain, or custom domain"
+  - private_connectivity: "Whether enterprise tenants need Private Link or VPN"
+  - waf_requirements: "WAF policy requirements per tenant or globally"
+  - network_compliance: "Network segmentation and logging requirements"
+
+steps:
+  - "Design VNET topology per stamp with subnet segmentation"
+  - "Configure private endpoints for PaaS services (PostgreSQL, Storage, Redis)"
+  - "Design Front Door routing with per-tenant backend assignment"
+  - "Implement DNS strategy for tenant-specific endpoints"
+  - "Define network security groups and network policies"
+  - "Configure WAF rules for multi-tenant traffic"
+
+outputs:
+  - vnet_topology: "VNET design per stamp with subnet layout"
+  - private_endpoint_map: "Private endpoints for all PaaS services"
+  - front_door_config: "Routing rules, backend pools, and custom domains"
+  - dns_design: "DNS zones, records, and automation for tenant domains"
+  - nsg_policies: "Network security group rules per subnet"
+  - waf_policy: "WAF rules for multi-tenant traffic protection"
+
+guardrails:
+  - "No PaaS service exposed on public internet without Front Door or Private Link"
+  - "Cross-stamp network traffic must traverse Front Door, not direct VNET peering"
+  - "NSG rules must deny all by default, allow only required traffic"
+  - "DNS changes must follow the YAML-first workflow (see ssot-platform rules)"
+
+evidence:
+  - "Port scan confirms no direct PaaS exposure"
+  - "Cross-tenant traffic isolation verified via network flow logs"
+  - "Custom domain TLS provisioned and working"
+
+dependencies:
+  - saas-resource-organization
+  - saas-deployment-stamp-design
+
+evals:
+  - scenario: "Direct access to PostgreSQL bypassing Front Door"
+    pass: "Connection refused — private endpoint only"
+  - scenario: "Tenant custom domain with TLS"
+    pass: "HTTPS working, certificate auto-renewed"
+  - scenario: "Cross-stamp network isolation"
+    pass: "No direct network path between stamps"
+
+benchmark_source: "Azure Front Door Multitenancy, Private Link"

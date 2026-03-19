@@ -1,0 +1,27 @@
+{
+  "name": "chatgpt-ipai-ai-studio",
+  "version": "1.0.0",
+  "description": "ChatGPT App for IPAI AI Studio - Odoo customization via natural language",
+  "type": "module",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node --watch src/server.js"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.25.1",
+    "zod": "^3.25.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "author": "InsightPulse AI",
+  "license": "MIT",
+  "keywords": [
+    "chatgpt",
+    "mcp",
+    "odoo",
+    "ai-studio",
+    "ipai"
+  ]
+}

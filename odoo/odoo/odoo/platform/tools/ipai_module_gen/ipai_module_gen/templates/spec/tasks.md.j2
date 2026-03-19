@@ -1,0 +1,76 @@
+# Tasks — {{ cap.title }}
+
+> **SAP ID**: {{ cap.sap_id }}
+> **Slug**: {{ cap.slug }}
+
+## Backlog (ordered)
+
+### 1) Foundation
+
+- [ ] Create spec bundle (constitution, prd, plan, tasks)
+{% if odoo.module %}
+- [ ] Create module scaffold `{{ odoo.module }}`
+- [ ] Define __manifest__.py with dependencies
+{% endif %}
+
+### 2) Data Model
+
+{% for model in odoo.models | default([]) %}
+- [ ] Create model `{{ model.name }}`
+{% endfor %}
+- [ ] Add field definitions
+- [ ] Set up _sql_constraints
+
+### 3) Security
+
+- [ ] Create security groups (User, Manager)
+- [ ] Define record rules (company isolation)
+- [ ] Create ir.model.access.csv
+
+### 4) Views
+
+{% for view in odoo.views | default([]) %}
+- [ ] Create {{ view.type }} view for {{ view.model }}
+{% endfor %}
+- [ ] Create search view with filters
+- [ ] Create action windows
+{% for menu in odoo.menus | default([]) %}
+- [ ] Create menu: {{ menu.name }}
+{% endfor %}
+
+### 5) Business Logic
+
+- [ ] Implement state transitions
+- [ ] Add validation methods
+- [ ] Create computed fields
+- [ ] Set up mail.thread integration
+
+### 6) Integration
+
+- [ ] Connect to related modules
+- [ ] Add scheduled actions if needed
+- [ ] Configure mail templates
+
+### 7) Testing
+
+- [ ] Unit tests for models
+- [ ] Security rule tests
+- [ ] Integration tests
+
+### 8) Documentation
+
+- [ ] Module README
+- [ ] User guide
+- [ ] Technical documentation
+
+### 9) Demo Data
+
+- [ ] Create demo records
+- [ ] Add sample configurations
+
+### 10) Review
+
+- [ ] Code review
+- [ ] Security review
+- [ ] Performance review
+- [ ] CI pipeline pass

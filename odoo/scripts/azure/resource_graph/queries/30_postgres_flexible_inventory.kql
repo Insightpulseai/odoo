@@ -1,0 +1,12 @@
+Resources
+| where type =~ 'microsoft.dbforpostgresql/flexibleservers'
+| project
+    id,
+    name,
+    type,
+    location,
+    resourceGroup,
+    subscriptionId,
+    sku = tostring(sku.name),
+    tags
+| order by name asc

@@ -1,0 +1,45 @@
+id: foundry-agent
+name: Foundry Agent
+version: "1.0.0"
+status: active
+maturity_level: L1
+current_stage: S05
+domain: agent-platform
+owner: insightpulseai
+description: >-
+  Azure AI Foundry specialist. Manages hosted agent lifecycle, tool registration,
+  MCP/A2A transport, and evaluation runs.
+role: maker
+scopes:
+  - foundry
+  - hosted-agents
+  - tools
+  - mcp
+  - a2a
+  - evals
+skills:
+  - foundry-agent-deployment
+  - tool-registration
+  - mcp-transport-config
+  - evaluation-orchestration
+tools:
+  - az-cli
+  - foundry-sdk
+  - mcp-cli
+  - github-actions
+policies:
+  - secrets-policy
+  - verification
+  - output-format
+entrypoint: agents/prompts/foundry-agent.md
+task_types:
+  - task.foundry.deploy-agent
+  - task.foundry.configure
+  - task.foundry.evaluate
+  - task.mcp.register
+evaluation_history: []
+promotion_history: []
+created: "2026-03-19"
+notes: >-
+  Foundry designer adapter exists but agent runtime not yet provisioned.
+  Auth and Search SDK integration done; AIProjectClient adoption pending.

@@ -1,0 +1,144 @@
+# =============================================================================
+# Data-Intelligence Migration Inventory — SSOT
+# =============================================================================
+# File-level move list for the data-intelligence repo split.
+# Each entry classifies a source surface and defines its migration target.
+# =============================================================================
+
+id: data_intelligence_migration_inventory
+version: 1.0.0
+created: "2026-03-19"
+status: planned
+
+# -----------------------------------------------------------------------------
+# Migration Entries
+# -----------------------------------------------------------------------------
+inventory:
+  # --- Active Surfaces (MOVE) ---
+
+  - source: infra/databricks/notebooks/
+    classification: move
+    target: data-intelligence/databricks/notebooks/
+    rationale: Active delivery notebooks (bronze ingest, silver transform, gold analytics, agent EDA)
+
+  - source: infra/databricks/resources/
+    classification: move
+    target: data-intelligence/databricks/bundles/resources/
+    rationale: Job definitions, cluster configs, pipeline specs, schedules, UC grants
+
+  - source: infra/databricks/sql/
+    classification: move
+    target: data-intelligence/databricks/sql/
+    rationale: Medallion SQL definitions (schemas, bronze, silver, gold, grants)
+
+  - source: infra/databricks/src/
+    classification: move
+    target: data-intelligence/databricks/src/
+    rationale: Python workbench package (connectors, DLT, config, bronze ingest)
+
+  - source: infra/databricks/scripts/
+    classification: move
+    target: data-intelligence/scripts/
+    rationale: fmt, lint, smoke, test scripts for Databricks workloads
+
+  - source: infra/databricks/pyproject.toml
+    classification: move
+    target: data-intelligence/pyproject.toml
+    rationale: Python project config for databricks workbench
+
+  - source: infra/databricks/agent_systems/
+    classification: move
+    target: data-intelligence/databricks/agent_systems/
+    rationale: Feedback intel agent, eval jobs, classifiers
+
+  - source: odoo/infra/databricks/sql/bronze.sql
+    classification: move
+    target: data-intelligence/databricks/sql/bronze_odoo.sql
+    rationale: Odoo-sourced bronze extraction SQL
+
+  - source: odoo/infra/databricks/sql/silver.sql
+    classification: move
+    target: data-intelligence/databricks/sql/silver_odoo.sql
+    rationale: Silver transforms for Odoo-sourced data
+
+  - source: odoo/infra/databricks/sql/gold.sql
+    classification: move
+    target: data-intelligence/databricks/sql/gold_odoo.sql
+    rationale: Gold analytical views from Odoo data
+
+  - source: odoo/infra/databricks/sql/schemas.sql
+    classification: move
+    target: data-intelligence/databricks/sql/schemas_odoo.sql
+    rationale: Schema definitions for Odoo medallion layers
+
+  - source: odoo/infra/databricks/sql/grants.sql
+    classification: move
+    target: data-intelligence/databricks/sql/grants_odoo.sql
+    rationale: UC grants for Odoo-sourced catalog objects
+
+  - source: odoo/infra/databricks/sql/bronze_marketing.sql
+    classification: move
+    target: data-intelligence/databricks/sql/bronze_marketing.sql
+    rationale: Marketing bronze extraction SQL
+
+  - source: odoo/infra/databricks/sql/silver_marketing.sql
+    classification: move
+    target: data-intelligence/databricks/sql/silver_marketing.sql
+    rationale: Marketing silver transforms
+
+  - source: odoo/infra/databricks/sql/gold_marketing.sql
+    classification: move
+    target: data-intelligence/databricks/sql/gold_marketing.sql
+    rationale: Marketing gold analytics
+
+  - source: odoo/infra/databricks/sql/platinum_marketing.sql
+    classification: move
+    target: data-intelligence/databricks/sql/platinum_marketing.sql
+    rationale: Marketing platinum layer (embeddings/ML)
+
+  - source: odoo/infra/databricks/sql/multi_tenant_setup.sql
+    classification: move
+    target: data-intelligence/databricks/sql/multi_tenant_setup.sql
+    rationale: Multi-tenant catalog setup
+
+  - source: odoo/infra/databricks/dlt/marketing_pipeline.sql
+    classification: move
+    target: data-intelligence/databricks/pipelines/marketing_pipeline.sql
+    rationale: DLT marketing pipeline definition
+
+  - source: lakehouse/contracts/bi/tableau.yaml
+    classification: move
+    target: data-intelligence/lakehouse/contracts/bi/tableau.yaml
+    rationale: BI contract stub — canonical home is the analytical plane
+
+  # --- Legacy Surfaces (REVIEW) ---
+
+  - source: archive/work/databricks/notebooks/
+    classification: review
+    target: null
+    rationale: Older notebooks — review for salvageable logic before discarding
+
+  - source: archive/work/databricks/apps/
+    classification: review
+    target: null
+    rationale: Legacy Databricks apps (dq-monitor, anomaly-triage, rag-search) — evaluate for reactivation
+
+  - source: archive/work/databricks/sql/
+    classification: review
+    target: null
+    rationale: SQL queries and dashboards — check for overlap with active surfaces
+
+  - source: archive/work/databricks/.databricks/
+    classification: archive
+    target: null
+    rationale: DAB state files, terraform state — do not migrate, not canonical
+
+  - source: archive/work/databricks/databricks.yml
+    classification: review
+    target: null
+    rationale: Legacy DAB config — compare against current infra/databricks/ config
+
+  - source: archive/work/databricks/agents/
+    classification: review
+    target: null
+    rationale: Legacy copilot YAML — check if superseded by agents/foundry/

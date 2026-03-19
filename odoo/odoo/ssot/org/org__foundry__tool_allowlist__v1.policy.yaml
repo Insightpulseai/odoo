@@ -1,0 +1,50 @@
+# org__foundry__tool_allowlist__v1.policy.yaml
+apiVersion: ipai.policy/v1
+kind: ToolAllowlist
+metadata:
+  name: foundry-tool-allowlist
+  version: "1.0.0"
+  owner: platform-team
+  last_updated: "2026-03-16"
+
+spec:
+  categories:
+    document_processing:
+      - tool: document_intelligence
+        provider: azure
+        modes: [read, layout, prebuilt]
+        allowed_document_classes: [vendor_bill, receipt, contract, bank_statement, tax_document, policy_document]
+      - tool: azure_search
+        provider: azure
+        use_for: [knowledge_retrieval, document_search]
+
+    odoo_actions:
+      - tool: odoo_create_vendor_bill
+        provider: odoo_rpc
+        requires: [finance_approval_workflow]
+      - tool: odoo_create_expense
+        provider: odoo_rpc
+        requires: [expense_workflow]
+      - tool: odoo_search_partner
+        provider: odoo_rpc
+      - tool: odoo_get_journal_entries
+        provider: odoo_rpc
+        requires: [finance_read_access]
+      - tool: odoo_update_move_state
+        provider: odoo_rpc
+        requires: [finance_approval_workflow]
+        note: "Never bypass Odoo workflow state machine"
+
+    notifications:
+      - tool: slack_send_message
+        provider: slack_api
+        channels: [finance-alerts, ops-alerts]
+      - tool: email_send
+        provider: zoho_smtp
+        note: "Route through Odoo ir.mail_server"
+
+  global_rules:
+    - "Tools must have typed input/output schemas"
+    - "No tool may bypass Odoo workflow state transitions"
+    - "All tool calls must emit OpenTelemetry spans"
+    - "Secrets resolved from Azure Key Vault at runtime, never hardcoded"

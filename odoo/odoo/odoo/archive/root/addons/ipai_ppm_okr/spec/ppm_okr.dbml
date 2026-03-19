@@ -1,0 +1,550 @@
+/////////////////////////////////////////////////////////////
+// IPAI PPM + OKR (CE-only) — DBML ERD
+// Scope: Project + Task + Milestones + Dependencies + Recurrence
+//        + Portfolio/Program governance + Budget/Resource + OKR
+//
+// Notes:
+// - Base Odoo tables (res_users, res_partner, mail_*, hr_*, account_*) are stubbed.
+// - Where Odoo already has a table, we extend via *_meta tables to avoid collisions.
+/////////////////////////////////////////////////////////////
+
+// ---------- Stubs (core Odoo) ----------
+Table res_users {
+  id bigint [pk]
+  partner_id bigint
+}
+
+Table res_partner {
+  id bigint [pk]
+  name varchar
+}
+
+Table res_company {
+  id bigint [pk]
+  name varchar
+}
+
+Table account_analytic_account {
+  id bigint [pk]
+  name varchar
+  company_id bigint
+}
+
+Table mail_activity {
+  id bigint [pk]
+  res_model varchar
+  res_id bigint
+  activity_type_id bigint
+  user_id bigint
+  date_deadline date
+}
+
+// ---------- Project (CE core) ----------
+Table project_project {
+  id bigint [pk]
+  active boolean
+  name varchar [not null]
+  company_id bigint [not null]
+  partner_id bigint
+  user_id bigint // project manager
+  analytic_account_id bigint
+  date_start date
+  date_end date
+
+  // Feature flags (match what you're toggling in UI)
+  allow_timesheets boolean
+  allow_billable boolean
+  allow_task_dependencies boolean
+  allow_milestones boolean
+  allow_recurring_tasks boolean
+
+  privacy_visibility varchar // 'employees'|'portal'|'followers' etc
+  color int
+  sequence int
+
+  create_uid bigint
+  create_date timestamp
+  write_uid bigint
+  write_date timestamp
+}
+
+Table project_task_stage {
+  id bigint [pk]
+  name varchar [not null]
+  sequence int
+  fold boolean
+  is_closed boolean
+}
+
+Table project_task {
+  id bigint [pk]
+  active boolean
+  project_id bigint [not null]
+  parent_id bigint // subtask parent
+  name varchar [not null]
+  description text
+
+  stage_id bigint
+  priority varchar  // '0'|'1'|'2'|'3'
+  kanban_state varchar // 'normal'|'done'|'blocked'
+
+  user_id bigint      // main assignee
+  partner_id bigint   // customer/contact
+  company_id bigint
+
+  date_deadline date
+  planned_date_begin timestamp
+  planned_date_end timestamp
+
+  planned_hours numeric
+  remaining_hours numeric
+  progress numeric // 0..100
+
+  milestone_id bigint
+  recurrence_id bigint
+
+  create_uid bigint
+  create_date timestamp
+  write_uid bigint
+  write_date timestamp
+}
+
+Table project_milestone {
+  id bigint [pk]
+  project_id bigint [not null]
+  name varchar [not null]
+  deadline_date date
+  reached_date date
+  state varchar // 'todo'|'reached'|'cancelled'
+  sequence int
+
+  create_uid bigint
+  create_date timestamp
+  write_uid bigint
+  write_date timestamp
+}
+
+Table project_task_dependency {
+  id bigint [pk]
+  task_id bigint [not null]
+  depends_on_id bigint [not null]
+  dependency_type varchar // 'FS'|'SS'|'FF'|'SF' (optional)
+  lag_minutes int
+
+  create_uid bigint
+  create_date timestamp
+}
+
+Table project_task_recurrence {
+  id bigint [pk]
+  name varchar
+  rrule varchar // iCal RRULE text (portable)
+  dtstart timestamp
+  until timestamp
+  count int
+  timezone varchar
+  next_run_at timestamp
+  active boolean
+
+  create_uid bigint
+  create_date timestamp
+  write_uid bigint
+  write_date timestamp
+}
+
+// ---------- PPM Governance (Portfolio/Program) ----------
+Table ppm_portfolio {
+  id bigint [pk]
+  company_id bigint [not null]
+  name varchar [not null]
+  code varchar [unique]
+  owner_user_id bigint [not null]
+  description text
+
+  start_date date
+  end_date date
+
+  stage varchar // 'idea'|'approved'|'active'|'on_hold'|'closed'
+  rag_status varchar // 'green'|'amber'|'red'
+
+  strategic_theme varchar
+  target_value_statement text
+
+  create_uid bigint
+  create_date timestamp
+  write_uid bigint
+  write_date timestamp
+}
+
+Table ppm_program {
+  id bigint [pk]
+  portfolio_id bigint [not null]
+  name varchar [not null]
+  code varchar
+  owner_user_id bigint [not null]
+  description text
+
+  start_date date
+  end_date date
+  stage varchar
+  rag_status varchar
+
+  create_uid bigint
+  create_date timestamp
+  write_uid bigint
+  write_date timestamp
+}
+
+// "Meta" extension (do not replace project_project table)
+Table ppm_project_meta {
+  project_id bigint [pk] // 1:1 with project_project
+  portfolio_id bigint
+  program_id bigint
+
+  business_case text
+  expected_benefits text
+
+  priority_rank int
+  strategic_score numeric
+  risk_score numeric
+
+  capex_budget numeric
+  opex_budget numeric
+  currency varchar // ISO code if you don't want a currency FK here
+
+  governance_owner_user_id bigint
+  steering_group_notes text
+
+  create_uid bigint
+  create_date timestamp
+  write_uid bigint
+  write_date timestamp
+}
+
+Table ppm_workstream {
+  id bigint [pk]
+  project_id bigint [not null]
+  name varchar [not null]
+  lead_user_id bigint
+  sequence int
+  start_date date
+  end_date date
+
+  create_uid bigint
+  create_date timestamp
+  write_uid bigint
+  write_date timestamp
+}
+
+Table ppm_epic {
+  id bigint [pk]
+  project_id bigint [not null]
+  workstream_id bigint
+  name varchar [not null]
+  description text
+  stage varchar // 'todo'|'doing'|'done'
+  start_date date
+  end_date date
+  story_points numeric
+
+  create_uid bigint
+  create_date timestamp
+  write_uid bigint
+  write_date timestamp
+}
+
+// ---------- Risk / Issue / Change ----------
+Table ppm_risk {
+  id bigint [pk]
+  project_id bigint [not null]
+  task_id bigint
+  title varchar [not null]
+  description text
+
+  probability int // 1..5
+  impact int      // 1..5
+  score int       // computed or stored
+  mitigation_plan text
+
+  owner_user_id bigint
+  due_date date
+  status varchar // 'open'|'mitigating'|'closed'
+
+  create_uid bigint
+  create_date timestamp
+  write_uid bigint
+  write_date timestamp
+}
+
+Table ppm_issue {
+  id bigint [pk]
+  project_id bigint [not null]
+  task_id bigint
+  title varchar [not null]
+  description text
+
+  severity varchar // 'low'|'med'|'high'|'critical'
+  owner_user_id bigint
+  due_date date
+  status varchar // 'open'|'in_progress'|'resolved'|'closed'
+
+  create_uid bigint
+  create_date timestamp
+  write_uid bigint
+  write_date timestamp
+}
+
+Table ppm_change_request {
+  id bigint [pk]
+  project_id bigint [not null]
+  title varchar [not null]
+  description text
+
+  requested_by_user_id bigint
+  requested_at timestamp
+
+  impact_scope text
+  impact_cost numeric
+  impact_schedule_days int
+  decision varchar // 'pending'|'approved'|'rejected'
+  decided_by_user_id bigint
+  decided_at timestamp
+
+  create_uid bigint
+  create_date timestamp
+  write_uid bigint
+  write_date timestamp
+}
+
+// ---------- Budgeting (portable, CE-only) ----------
+Table ppm_budget {
+  id bigint [pk]
+  company_id bigint [not null]
+  portfolio_id bigint
+  program_id bigint
+  project_id bigint
+  fiscal_year int [not null]
+
+  approved_amount numeric
+  forecast_amount numeric
+  actual_amount numeric
+
+  create_uid bigint
+  create_date timestamp
+  write_uid bigint
+  write_date timestamp
+}
+
+Table ppm_budget_line {
+  id bigint [pk]
+  budget_id bigint [not null]
+  category varchar // 'labor'|'software'|'vendor'|'travel'|'other'
+  description text
+  amount numeric [not null]
+  analytic_account_id bigint
+
+  create_uid bigint
+  create_date timestamp
+}
+
+// ---------- Resource Allocation ----------
+Table ppm_resource_role {
+  id bigint [pk]
+  name varchar [not null] // 'PM'|'Dev'|'QA'|'Designer' etc
+  sequence int
+}
+
+Table ppm_resource_allocation {
+  id bigint [pk]
+  project_id bigint [not null]
+  task_id bigint
+  user_id bigint [not null]
+  role_id bigint
+
+  date_from date [not null]
+  date_to date [not null]
+  allocation_percent numeric [not null] // 0..100
+
+  cost_rate numeric
+  bill_rate numeric
+
+  create_uid bigint
+  create_date timestamp
+  write_uid bigint
+  write_date timestamp
+}
+
+// ---------- OKR ----------
+Table okr_cycle {
+  id bigint [pk]
+  company_id bigint [not null]
+  name varchar [not null]
+  start_date date [not null]
+  end_date date [not null]
+  state varchar // 'draft'|'active'|'closed'
+
+  create_uid bigint
+  create_date timestamp
+  write_uid bigint
+  write_date timestamp
+}
+
+Table okr_objective {
+  id bigint [pk]
+  cycle_id bigint [not null]
+  parent_objective_id bigint
+  owner_user_id bigint [not null]
+
+  // optional scoping
+  portfolio_id bigint
+  program_id bigint
+  project_id bigint
+
+  title varchar [not null]
+  description text
+  weight numeric // portfolio-level weighting
+
+  status varchar // 'on_track'|'at_risk'|'off_track'
+  confidence int // 1..5
+
+  create_uid bigint
+  create_date timestamp
+  write_uid bigint
+  write_date timestamp
+}
+
+Table okr_key_result {
+  id bigint [pk]
+  objective_id bigint [not null]
+  owner_user_id bigint
+
+  title varchar [not null]
+  metric_type varchar // 'number'|'percent'|'currency'|'boolean'
+  unit varchar        // '%','PHP','count', etc
+
+  baseline_value numeric
+  target_value numeric [not null]
+  current_value numeric
+  scoring_method varchar // 'linear'|'threshold' etc
+  weight numeric
+
+  due_date date
+  last_checkin_at timestamp
+
+  status varchar // 'on_track'|'at_risk'|'off_track'
+  confidence int // 1..5
+
+  create_uid bigint
+  create_date timestamp
+  write_uid bigint
+  write_date timestamp
+}
+
+Table okr_checkin {
+  id bigint [pk]
+  key_result_id bigint [not null]
+  checkin_at timestamp [not null]
+  value numeric
+  confidence int
+  comment text
+  user_id bigint [not null]
+
+  create_uid bigint
+  create_date timestamp
+}
+
+Table okr_initiative {
+  id bigint [pk]
+  // initiative can attach to objective or key result
+  objective_id bigint
+  key_result_id bigint
+
+  // and can be executed via project/task
+  project_id bigint
+  task_id bigint
+
+  owner_user_id bigint
+  name varchar [not null]
+  description text
+  status varchar // 'todo'|'doing'|'done'|'blocked'
+  start_date date
+  end_date date
+
+  create_uid bigint
+  create_date timestamp
+  write_uid bigint
+  write_date timestamp
+}
+
+// ---------- Relationships ----------
+Ref: project_project.company_id > res_company.id
+Ref: project_project.partner_id > res_partner.id
+Ref: project_project.user_id > res_users.id
+Ref: project_project.analytic_account_id > account_analytic_account.id
+
+Ref: project_task.project_id > project_project.id
+Ref: project_task.parent_id > project_task.id
+Ref: project_task.stage_id > project_task_stage.id
+Ref: project_task.user_id > res_users.id
+Ref: project_task.partner_id > res_partner.id
+Ref: project_task.company_id > res_company.id
+Ref: project_task.milestone_id > project_milestone.id
+Ref: project_task.recurrence_id > project_task_recurrence.id
+
+Ref: project_milestone.project_id > project_project.id
+
+Ref: project_task_dependency.task_id > project_task.id
+Ref: project_task_dependency.depends_on_id > project_task.id
+
+Ref: ppm_program.portfolio_id > ppm_portfolio.id
+Ref: ppm_project_meta.project_id > project_project.id
+Ref: ppm_project_meta.portfolio_id > ppm_portfolio.id
+Ref: ppm_project_meta.program_id > ppm_program.id
+
+Ref: ppm_workstream.project_id > project_project.id
+Ref: ppm_epic.project_id > project_project.id
+Ref: ppm_epic.workstream_id > ppm_workstream.id
+
+Ref: ppm_risk.project_id > project_project.id
+Ref: ppm_risk.task_id > project_task.id
+Ref: ppm_risk.owner_user_id > res_users.id
+
+Ref: ppm_issue.project_id > project_project.id
+Ref: ppm_issue.task_id > project_task.id
+Ref: ppm_issue.owner_user_id > res_users.id
+
+Ref: ppm_change_request.project_id > project_project.id
+Ref: ppm_change_request.requested_by_user_id > res_users.id
+Ref: ppm_change_request.decided_by_user_id > res_users.id
+
+Ref: ppm_budget.company_id > res_company.id
+Ref: ppm_budget.portfolio_id > ppm_portfolio.id
+Ref: ppm_budget.program_id > ppm_program.id
+Ref: ppm_budget.project_id > project_project.id
+Ref: ppm_budget_line.budget_id > ppm_budget.id
+Ref: ppm_budget_line.analytic_account_id > account_analytic_account.id
+
+Ref: ppm_resource_allocation.project_id > project_project.id
+Ref: ppm_resource_allocation.task_id > project_task.id
+Ref: ppm_resource_allocation.user_id > res_users.id
+Ref: ppm_resource_allocation.role_id > ppm_resource_role.id
+
+Ref: okr_cycle.company_id > res_company.id
+Ref: okr_objective.cycle_id > okr_cycle.id
+Ref: okr_objective.parent_objective_id > okr_objective.id
+Ref: okr_objective.owner_user_id > res_users.id
+Ref: okr_objective.portfolio_id > ppm_portfolio.id
+Ref: okr_objective.program_id > ppm_program.id
+Ref: okr_objective.project_id > project_project.id
+
+Ref: okr_key_result.objective_id > okr_objective.id
+Ref: okr_key_result.owner_user_id > res_users.id
+
+Ref: okr_checkin.key_result_id > okr_key_result.id
+Ref: okr_checkin.user_id > res_users.id
+
+Ref: okr_initiative.objective_id > okr_objective.id
+Ref: okr_initiative.key_result_id > okr_key_result.id
+Ref: okr_initiative.project_id > project_project.id
+Ref: okr_initiative.task_id > project_task.id
+Ref: okr_initiative.owner_user_id > res_users.id

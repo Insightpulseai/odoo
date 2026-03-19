@@ -1,0 +1,269 @@
+# =============================================================================
+# Workload Identities — InsightPulse AI
+# =============================================================================
+#
+# Managed identities, service principals, and their access grants.
+# All Azure service-to-service authentication uses managed identity (MI) or
+# workload identity federation (WIF). No long-lived secrets.
+#
+# Human-readable narrative: docs/security/ACCESS_MODEL.md § 8
+# Last updated: 2026-03-18
+# =============================================================================
+
+schema_version: "1.0"
+last_updated: "2026-03-18"
+
+# -----------------------------------------------------------------------------
+# Managed Identities
+# -----------------------------------------------------------------------------
+
+managed_identities:
+
+  - name: id-ipai-agents-dev
+    type: user_assigned
+    resource_group: rg-ipai-shared-dev
+    entra_group: sg-ipai-workload-agents
+    description: >
+      Identity for AI agent workloads running in Container Apps.
+      Agents use this to access Key Vault, Azure OpenAI, ADLS gold layer,
+      and APIM for Odoo tool calls.
+    assigned_to:
+      - resource: cae-ipai-dev
+        type: container_apps_environment
+        note: Agent Container Apps in this environment
+    accesses:
+      - resource: kv-ipai-dev
+        role: Key Vault Secrets User
+        purpose: Read API keys, connection strings for agent operations
+      - resource: stipaidevlake
+        role: Storage Blob Data Reader
+        purpose: Read gold-layer context products for agent grounding
+      - resource: oai-ipai-dev
+        role: Cognitive Services OpenAI User
+        purpose: LLM inference calls (GPT-4o, embeddings)
+      - resource: docai-ipai-dev
+        role: Cognitive Services User
+        purpose: Document Intelligence OCR pipeline
+      - resource: srch-ipai-dev
+        role: Search Index Data Reader
+        purpose: Semantic search queries
+      - resource: apim-ipai-dev  # planned
+        role: API Consumer
+        purpose: Governed Odoo API calls
+    prohibited:
+      - resource: kv-ipai-dev
+        role: Key Vault Administrator
+        reason: Agents read secrets, never manage them
+      - resource: ipai-odoo-dev-pg
+        role: any_direct_access
+        reason: No direct database access — use APIM-governed API only
+
+  - name: id-ipai-aca-dev
+    type: user_assigned
+    resource_group: rg-ipai-agents-dev
+    entra_group: sg-ipai-workload-aca
+    description: >
+      Identity for Odoo and platform Container Apps (web, cron, worker).
+      Accesses Key Vault for runtime secrets and ACR for image pull.
+    assigned_to:
+      - resource: ipai-odoo-dev-web
+        type: container_app
+      - resource: ipai-odoo-dev-cron
+        type: container_app
+      - resource: ipai-odoo-dev-worker
+        type: container_app
+      - resource: ipai-plane-dev
+        type: container_app
+      - resource: ipai-shelf-dev
+        type: container_app
+      - resource: ipai-crm-dev
+        type: container_app
+    accesses:
+      - resource: kv-ipai-dev
+        role: Key Vault Secrets User
+        purpose: Read platform secrets (Slack webhook, Supabase keys)
+      - resource: ipai-odoo-dev-kv
+        role: Key Vault Secrets User
+        purpose: Read Odoo-specific secrets (SMTP, DB password, API tokens)
+      - resource: cripaidev
+        role: AcrPull
+        purpose: Pull container images for deployment
+    prohibited:
+      - resource: kv-ipai-dev
+        role: Key Vault Administrator
+        reason: Container Apps read secrets, never manage them
+      - resource: stipaidevlake
+        role: any
+        reason: Odoo Container Apps do not access ADLS directly
+
+  - name: id-ipai-databricks-dev
+    type: user_assigned
+    resource_group: rg-ipai-ai-dev
+    entra_group: sg-ipai-workload-databricks
+    description: >
+      Identity for Databricks workspace operations.
+      Accesses ADLS for medallion lake read/write and Key Vault for secrets.
+    assigned_to:
+      - resource: dbw-ipai-dev
+        type: databricks_workspace
+    accesses:
+      - resource: stipaidevlake
+        role: Storage Blob Data Contributor
+        purpose: Read/write bronze, silver, gold ADLS layers
+      - resource: kv-ipai-dev
+        role: Key Vault Secrets User
+        purpose: Read connection strings, API keys for ETL pipelines
+    prohibited:
+      - resource: ipai-odoo-dev-pg
+        role: any_direct_access
+        reason: >
+          Databricks must never write to Odoo PostgreSQL.
+          ETL extracts via API to ADLS bronze. No direct DB access.
+      - resource: kv-ipai-dev
+        role: Key Vault Administrator
+        reason: Databricks reads secrets, never manages them
+
+  - name: dbmanagedidentity
+    type: user_assigned
+    resource_group: rg-dbw-managed-ipai-dev
+    entra_group: sg-ipai-workload-databricks
+    description: >
+      Databricks-managed identity for Unity Catalog access connector.
+      Used by Unity Catalog to access ADLS storage on behalf of the workspace.
+    assigned_to:
+      - resource: unity-catalog-access-connector
+        type: databricks_access_connector
+    accesses:
+      - resource: stipaidevlake
+        role: Storage Blob Data Contributor
+        purpose: Unity Catalog external location access to ADLS
+
+# -----------------------------------------------------------------------------
+# Service Principals (App Registrations)
+# -----------------------------------------------------------------------------
+
+service_principals:
+
+  - name: "InsightPulse AI - Odoo ERP"
+    app_id: 3605a67d-7135-44a0-8640-03a9b4225923
+    type: app_registration
+    description: >
+      Entra app registration for Odoo OIDC federation.
+      Issues tokens with app role claims for Odoo authorization.
+    auth_method:
+      current: client_secret  # RISK — rotate regularly
+      target: certificate_or_wif
+      migration_priority: medium
+    app_roles_count: 15
+    app_roles_manifest: infra/entra/app-roles-manifest.json
+    consumers:
+      - system: odoo_ce_19
+        module: ipai_auth_oidc
+        protocol: oidc
+        grant_type: authorization_code
+        redirect_uri: "https://erp.insightpulseai.com/auth_oidc/signin"
+      - system: copilot_surfaces
+        protocol: on_behalf_of
+        grant_type: obo_flow
+    prohibited:
+      - action: broad_graph_api_access
+        reason: App should only issue tokens, not read directory
+
+  - name: sc-azure-dev-platform
+    type: service_principal
+    description: >
+      Azure DevOps service connection for platform pipeline deployments.
+      Workload Identity Federation — no client secret.
+    auth_method:
+      current: workload_identity_federation
+      notes: No secret rotation needed
+    entra_group: sg-ipai-workload-cicd
+    scope:
+      - rg-ipai-dev
+      - rg-ipai-shared-dev
+    azure_rbac_role: Contributor
+    devops_project: ipai-platform
+    protected_resource: true
+    approval_required: true
+    approvers:
+      - sg-ipai-platform-owners
+
+  - name: sc-azure-dev-lakehouse
+    type: service_principal
+    description: >
+      Azure DevOps service connection for lakehouse pipeline deployments.
+      Workload Identity Federation — no client secret.
+    auth_method:
+      current: workload_identity_federation
+      notes: No secret rotation needed
+    entra_group: sg-ipai-workload-cicd
+    scope:
+      - rg-ipai-ai-dev
+      - rg-ipai-data-dev
+    azure_rbac_role: Contributor
+    devops_project: lakehouse
+    protected_resource: true
+    approval_required: true
+    approvers:
+      - sg-ipai-platform-owners
+
+# -----------------------------------------------------------------------------
+# Identity Flow Summary
+# -----------------------------------------------------------------------------
+
+identity_flows:
+  human_to_app:
+    - flow: Human -> Entra OIDC -> Odoo CE 19
+      module: ipai_auth_oidc
+      claims: [sub, email, roles, groups]
+    - flow: Human -> Entra SSO -> Databricks
+      method: workspace_login
+    - flow: Human -> Entra SSO -> Azure DevOps
+      method: org_login
+    - flow: Human -> Entra SSO -> Azure Portal
+      method: subscription_access
+
+  workload_to_service:
+    - flow: id-ipai-aca-dev -> MI token -> Key Vault
+      purpose: secret_read
+    - flow: id-ipai-aca-dev -> MI token -> ACR
+      purpose: image_pull
+    - flow: id-ipai-agents-dev -> MI token -> Key Vault
+      purpose: secret_read
+    - flow: id-ipai-agents-dev -> MI token -> Azure OpenAI
+      purpose: inference
+    - flow: id-ipai-agents-dev -> MI token -> ADLS gold
+      purpose: data_read
+    - flow: id-ipai-agents-dev -> MI token -> APIM
+      purpose: governed_api_invoke
+    - flow: id-ipai-databricks-dev -> MI token -> ADLS
+      purpose: medallion_read_write
+    - flow: id-ipai-databricks-dev -> MI token -> Key Vault
+      purpose: secret_read
+    - flow: dbmanagedidentity -> MI token -> ADLS
+      purpose: unity_catalog_external_location
+
+  cicd_to_azure:
+    - flow: sc-azure-dev-platform -> WIF token -> Azure RM
+      purpose: container_app_deployment
+    - flow: sc-azure-dev-lakehouse -> WIF token -> Azure RM
+      purpose: databricks_pipeline_deployment
+
+# -----------------------------------------------------------------------------
+# Secret Rotation Schedule
+# -----------------------------------------------------------------------------
+
+secret_rotation:
+  - principal: "InsightPulse AI - Odoo ERP"
+    secret_type: client_secret
+    current_rotation: manual
+    target_rotation: eliminate  # migrate to cert/WIF
+    max_age_days: 90
+
+  - principal: all_managed_identities
+    secret_type: none
+    notes: MI tokens are issued by Azure fabric — no secret to rotate
+
+  - principal: all_wif_connections
+    secret_type: none
+    notes: WIF uses OIDC federation — no secret to rotate

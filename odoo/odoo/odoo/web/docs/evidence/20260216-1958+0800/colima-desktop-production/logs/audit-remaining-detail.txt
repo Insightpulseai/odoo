@@ -1,0 +1,100 @@
+{
+  "actions": [
+    {
+      "action": "update",
+      "resolves": [
+        {
+          "id": 1112134,
+          "path": "web__chatgpt_ipai_ai_studio>@modelcontextprotocol/sdk>@hono/node-server>hono",
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        },
+        {
+          "id": 1112135,
+          "path": "web__chatgpt_ipai_ai_studio>@modelcontextprotocol/sdk>@hono/node-server>hono",
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        },
+        {
+          "id": 1112644,
+          "path": "web__chatgpt_ipai_ai_studio>@modelcontextprotocol/sdk>@hono/node-server>hono",
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        },
+        {
+          "id": 1112677,
+          "path": "web__chatgpt_ipai_ai_studio>@modelcontextprotocol/sdk>@hono/node-server>hono",
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        },
+        {
+          "id": 1112678,
+          "path": "web__chatgpt_ipai_ai_studio>@modelcontextprotocol/sdk>@hono/node-server>hono",
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        },
+        {
+          "id": 1112911,
+          "path": "web__chatgpt_ipai_ai_studio>@modelcontextprotocol/sdk>@hono/node-server>hono",
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        }
+      ],
+      "module": "@hono/node-server",
+      "target": "1.19.9",
+      "depth": 3
+    },
+    {
+      "action": "update",
+      "resolves": [
+        {
+          "id": 1112453,
+          "path": "web__ipai-control-center-docs>nextra>@theguild/remark-mermaid>mermaid>lodash-es",
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        }
+      ],
+      "module": "lodash-es",
+      "target": "4.17.23",
+      "depth": 5
+    },
+    {
+      "action": "update",
+      "resolves": [
+        {
+          "id": 1112455,
+          "path": "templates__saas-landing>recharts>lodash",
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        }
+      ],
+      "module": "lodash",
+      "target": "4.17.23",
+      "depth": 3
+    },
+    {
+      "action": "update",
+      "resolves": [
+        {
+          "id": 1113161,
+          "path": ".>googleapis>googleapis-common>qs",
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        }
+      ],
+      "module": "qs",
+      "target": "6.15.0",
+      "depth": 4
+    },
+    {
+      "action": "review",
+      "module": "ip",

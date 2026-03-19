@@ -1,0 +1,11 @@
+<odoo>
+    <record id="milestone_scope_signed_off" model="project.milestone">
+        <field name="name">Scope Signed Off</field>
+        <field name="project_id" ref="ipai_project_seed.project_client_onboarding"/>
+    </record>
+
+    <record id="milestone_go_live" model="project.milestone">
+        <field name="name">Go Live</field>
+        <field name="project_id" ref="ipai_project_seed.project_client_onboarding"/>
+    </record>
+</odoo>

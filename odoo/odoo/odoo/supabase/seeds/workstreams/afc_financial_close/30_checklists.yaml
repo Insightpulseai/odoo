@@ -1,0 +1,182 @@
+# AFC Checklist Items
+# Evidence requirements per task
+
+checklists:
+  # Phase I - Payroll
+  - id: chk_001_payroll_summary
+    task_id: afc_task_001
+    label: Payroll Summary Report
+    required: true
+    evidence_type: DOCUMENT
+
+  - id: chk_001_payroll_journal
+    task_id: afc_task_001
+    label: Payroll Journal Entry Posted
+    required: true
+    evidence_type: JOURNAL_ENTRY
+
+  - id: chk_001_final_pay
+    task_id: afc_task_001
+    label: Final Pay Computation (if any)
+    required: false
+    evidence_type: DOCUMENT
+
+  # Phase I - Tax Provision
+  - id: chk_002_tax_computation
+    task_id: afc_task_002
+    label: Tax Provision Computation Worksheet
+    required: true
+    evidence_type: SPREADSHEET
+
+  - id: chk_002_ppb_schedule
+    task_id: afc_task_002
+    label: PPB Provision Schedule
+    required: true
+    evidence_type: SPREADSHEET
+
+  # Phase I - VAT Report
+  - id: chk_003_vat_summary
+    task_id: afc_task_003
+    label: Monthly VAT Summary Report
+    required: true
+    evidence_type: DOCUMENT
+
+  - id: chk_003_output_vat
+    task_id: afc_task_003
+    label: Output VAT Schedule
+    required: true
+    evidence_type: SPREADSHEET
+
+  - id: chk_003_input_vat
+    task_id: afc_task_003
+    label: Input VAT Schedule
+    required: true
+    evidence_type: SPREADSHEET
+
+  # Phase I - Input VAT
+  - id: chk_004_cumulative_vat
+    task_id: afc_task_004
+    label: Cumulative VAT Summary
+    required: true
+    evidence_type: SPREADSHEET
+
+  # Phase I - CA Liquidations
+  - id: chk_005_ca_project_list
+    task_id: afc_task_005
+    label: Project CA Liquidation List
+    required: true
+    evidence_type: DOCUMENT
+
+  - id: chk_006_ca_employee_list
+    task_id: afc_task_006
+    label: Employee CA Liquidation List
+    required: false
+    evidence_type: DOCUMENT
+
+  # Phase II - Accruals
+  - id: chk_007_consultancy_schedule
+    task_id: afc_task_007
+    label: Consultancy Fee Schedule
+    required: true
+    evidence_type: SPREADSHEET
+
+  - id: chk_008_royalty_computation
+    task_id: afc_task_008
+    label: Management/Royalty Fee Computation
+    required: true
+    evidence_type: SPREADSHEET
+
+  - id: chk_009_revenue_schedule
+    task_id: afc_task_009
+    label: Revenue Recognition Schedule
+    required: true
+    evidence_type: SPREADSHEET
+
+  # Phase II - Depreciation
+  - id: chk_015_depreciation_schedule
+    task_id: afc_task_015
+    label: Fixed Asset Depreciation Schedule
+    required: true
+    evidence_type: SPREADSHEET
+
+  - id: chk_015_asset_register
+    task_id: afc_task_015
+    label: Updated Asset Register
+    required: true
+    evidence_type: DOCUMENT
+
+  # Phase II - FX
+  - id: chk_021_fx_rates
+    task_id: afc_task_021
+    label: Month-End FX Rates (BSP)
+    required: true
+    evidence_type: DOCUMENT
+
+  - id: chk_021_fx_revaluation
+    task_id: afc_task_021
+    label: FX Revaluation Worksheet
+    required: true
+    evidence_type: SPREADSHEET
+
+  # Phase III - WIP
+  - id: chk_024_wip_schedule
+    task_id: afc_task_024
+    label: WIP Schedule per Job#
+    required: true
+    evidence_type: SPREADSHEET
+
+  # Phase IV - Reports
+  - id: chk_027_flash_report
+    task_id: afc_task_027
+    label: Flash Report
+    required: true
+    evidence_type: DOCUMENT
+
+  - id: chk_028_ar_aging
+    task_id: afc_task_028
+    label: AR Aging Report
+    required: true
+    evidence_type: DOCUMENT
+
+  - id: chk_029_ap_aging
+    task_id: afc_task_029
+    label: AP Aging Report
+    required: true
+    evidence_type: DOCUMENT
+
+  - id: chk_030_bank_recon
+    task_id: afc_task_030
+    label: Bank Reconciliation Statement
+    required: true
+    evidence_type: DOCUMENT
+
+  # Phase IV - Close
+  - id: chk_032_trial_balance
+    task_id: afc_task_032
+    label: Trial Balance Report
+    required: true
+    evidence_type: DOCUMENT
+
+  - id: chk_033_signoff_form
+    task_id: afc_task_033
+    label: Signed Close-Off Form
+    required: true
+    evidence_type: APPROVAL
+
+# Evidence types
+evidence_types:
+  - code: DOCUMENT
+    name: Document/PDF
+    extensions: [pdf, docx, doc]
+  - code: SPREADSHEET
+    name: Spreadsheet
+    extensions: [xlsx, xls, csv]
+  - code: JOURNAL_ENTRY
+    name: Journal Entry Reference
+    extensions: []
+  - code: APPROVAL
+    name: Approval/Signature
+    extensions: [pdf, png, jpg]
+  - code: SCREENSHOT
+    name: System Screenshot
+    extensions: [png, jpg]

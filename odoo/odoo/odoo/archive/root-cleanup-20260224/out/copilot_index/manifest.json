@@ -1,0 +1,42 @@
+{
+  "documents": [
+    {
+      "chunks": [
+        {
+          "content_hash": "848343cf4f269bc36e58edb8d0f4a2f3c67657015bc1a9a656124654228c689a",
+          "index": 0,
+          "preview": "# Agent Audit Rules  ## Hard Gates for Production ..."
+        },
+        {
+          "content_hash": "f9708f08c8591bb0775cecd67076db184197b59835f10f2b3c22b53658eaa843",
+          "index": 1,
+          "preview": "nce**    - Do not claim a URL is live, healthy, or..."
+        },
+        {
+          "content_hash": "c841c18840234bf60890ff369bc4ea732cca693ef577016f20340c1c4bc967bc",
+          "index": 2,
+          "preview": "specific file/code references - \"No issues found\" ..."
+        }
+      ],
+      "chunks_count": 3,
+      "content_hash": "4586016545788e7532a01471f38a4179e67652e2e25729bf8f58ab6ccd0aca96",
+      "source": "kb/audit/AGENT_AUDIT_RULES.md",
+      "title": "Agent Audit Rules"
+    },
+    {
+      "chunks": [
+        {
+          "content_hash": "5533eadc651290043ba193f379a300acc978907839dffc3d2b99c49c146abac3",
+          "index": 0,
+          "preview": "# Month-End Close SOP  ## Overview This document o..."
+        }
+      ],
+      "chunks_count": 1,
+      "content_hash": "5533eadc651290043ba193f379a300acc978907839dffc3d2b99c49c146abac3",
+      "source": "kb/finance_close/sop.md",
+      "title": "Month-End Close SOP"
+    }
+  ],
+  "generated_at_utc": "deterministic-timestamp-ignored-for-diff",
+  "version": "1.0"
+}

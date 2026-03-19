@@ -1,0 +1,54 @@
+version: 1
+status: active
+id: target_system_context
+
+shared_platform:
+  identity:
+    - entra_id
+    - managed_identities
+  security:
+    - key_vault
+    - azure_policy
+    - waf
+  networking:
+    - vnet_private_networking
+    - azure_front_door
+    - cloudflare_dns
+  governance:
+    - azure_boards
+    - github
+    - azure_pipelines
+    - azure_resource_graph
+    - repo_ssot
+
+workloads:
+  business_core:
+    - odoo
+    - azure_postgresql_flexible_server
+
+  data_core:
+    - adls
+    - delta_lake
+    - databricks
+    - unity_catalog
+    - fabric
+    - optional_adf
+
+  agent_core:
+    - foundry_projects
+    - foundry_agent_service
+    - mcp_tools
+    - model_catalog_router
+    - eval_tracing
+
+  document_core:
+    - azure_document_intelligence
+    - logic_apps
+    - azure_functions
+
+experience_surfaces:
+  - odoo_ui
+  - marketing_retail_media_workbench
+  - entertainment_creator_workbench
+  - financial_services_compliance_workbench
+  - data_engineering_agent_factory_workbench

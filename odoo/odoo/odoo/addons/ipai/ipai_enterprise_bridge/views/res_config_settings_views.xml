@@ -6,25 +6,10 @@
         <field name="inherit_id" ref="base_setup.res_config_settings_view_form"/>
         <field name="arch" type="xml">
             <xpath expr="//app[@name='general_settings']" position="inside">
+
+                <!-- ===== OAuth ===== -->
                 <block title="IPAI Enterprise Bridge" name="ipai_bridge_settings">
-                    <setting string="Email Provider" help="Configure email delivery without IAP">
-                        <field name="ipai_mail_provider"/>
-                        <div class="content-group" invisible="ipai_mail_provider != 'mailgun'">
-                            <div class="row mt16">
-                                <label for="ipai_mailgun_domain" class="col-lg-3"/>
-                                <field name="ipai_mailgun_domain"/>
-                            </div>
-                            <div class="row">
-                                <label for="ipai_mailgun_api_key" class="col-lg-3"/>
-                                <field name="ipai_mailgun_api_key" password="True"/>
-                            </div>
-                        </div>
-                        <div class="row mt16">
-                            <label for="ipai_mail_catchall_domain" class="col-lg-3"/>
-                            <field name="ipai_mail_catchall_domain" placeholder="mail.example.com"/>
-                        </div>
-                    </setting>
-                    <setting string="OAuth Providers" help="Enable social login without Enterprise">
+                    <setting string="OAuth Providers" help="Enable social login">
                         <div class="content-group">
                             <div class="row">
                                 <field name="ipai_oauth_google_enabled"/>
@@ -36,20 +21,63 @@
                             </div>
                         </div>
                     </setting>
-                    <setting string="IoT Bridge" help="Control IoT devices without IoT Box subscription">
-                        <field name="ipai_iot_enabled"/>
-                        <div class="content-group" invisible="not ipai_iot_enabled">
+                </block>
+
+                <!-- ===== AI / Integrations ===== -->
+                <block title="AI / Integrations" name="ipai_ai_integrations_settings">
+                    <setting string="Microsoft Foundry"
+                             help="Connect to Azure AI Foundry for agents and AI inference">
+                        <field name="ipai_foundry_enabled"/>
+                        <div class="content-group" invisible="not ipai_foundry_enabled">
                             <div class="row mt16">
-                                <label for="ipai_iot_mqtt_broker" class="col-lg-3"/>
-                                <field name="ipai_iot_mqtt_broker"/>
+                                <label for="ipai_foundry_endpoint" class="col-lg-3"/>
+                                <field name="ipai_foundry_endpoint"
+                                       placeholder="https://ai.azure.com"/>
                             </div>
                             <div class="row">
-                                <label for="ipai_iot_mqtt_port" class="col-lg-3"/>
-                                <field name="ipai_iot_mqtt_port"/>
+                                <label for="ipai_foundry_project_name" class="col-lg-3"/>
+                                <field name="ipai_foundry_project_name"/>
+                            </div>
+                            <div class="row">
+                                <label for="ipai_foundry_model_deployment" class="col-lg-3"/>
+                                <field name="ipai_foundry_model_deployment"/>
+                            </div>
+                            <div class="row">
+                                <label for="ipai_foundry_auth_mode" class="col-lg-3"/>
+                                <field name="ipai_foundry_auth_mode"/>
+                            </div>
+                            <div class="row">
+                                <label for="ipai_foundry_api_version" class="col-lg-3"/>
+                                <field name="ipai_foundry_api_version"/>
+                            </div>
+                            <div class="row">
+                                <label for="ipai_foundry_auth_audience" class="col-lg-3"/>
+                                <field name="ipai_foundry_auth_audience"/>
+                            </div>
+                        </div>
+                    </setting>
+
+                    <setting string="Document Intelligence / OCR"
+                             help="Extract data from invoices and receipts using Azure AI">
+                        <field name="ipai_doc_ai_enabled"/>
+                        <div class="content-group" invisible="not ipai_doc_ai_enabled">
+                            <div class="row mt16">
+                                <label for="ipai_doc_ai_provider" class="col-lg-3"/>
+                                <field name="ipai_doc_ai_provider"/>
+                            </div>
+                            <div class="row">
+                                <label for="ipai_doc_ai_endpoint" class="col-lg-3"/>
+                                <field name="ipai_doc_ai_endpoint"
+                                       placeholder="https://docai-ipai-dev.cognitiveservices.azure.com"/>
+                            </div>
+                            <div class="row">
+                                <label for="ipai_doc_ai_model" class="col-lg-3"/>
+                                <field name="ipai_doc_ai_model"/>
                             </div>
                         </div>
                     </setting>
                 </block>
+
             </xpath>
         </field>
     </record>

@@ -1,0 +1,54 @@
+name: org-docs-kb
+description: Organization-wide internal documentation knowledge base
+
+sources:
+  - name: repo-docs
+    type: repo-crawl
+    include_patterns:
+      - "docs/**/*.md"
+      - "spec/**/*.md"
+      - "CLAUDE.md"
+      - "*/CLAUDE.md"
+      - "odoo19/*.md"
+      - "docs/ai/*.md"
+      - "docs/contracts/*.md"
+      - "docs/architecture/*.md"
+      - "docs/runtime/*.md"
+      - "docs/platform/*.md"
+    exclude_patterns:
+      - "docs/evidence/**"
+      - "node_modules/**"
+      - ".git/**"
+      - "**/vendor/**"
+    priority: P1
+
+  - name: spec-bundles
+    type: spec-bundle
+    root: spec/
+    priority: P1
+
+ingestion:
+  chunker: markdown-heading-aware
+  chunk_size_target: 1500
+  chunk_overlap: 200
+  min_chunk_tokens: 50
+  id_template: "{source}:{path}:{heading_chain}:{ordinal}:{content_hash_8}"
+
+indexing:
+  index_name: org-docs
+  search_service: from-env  # AZURE_SEARCH_ENDPOINT
+  embedding_deployment: from-env  # AZURE_OPENAI_EMBEDDING_DEPLOYMENT
+  embedding_endpoint: from-env  # AZURE_OPENAI_ENDPOINT
+  dimensions: 1536
+  semantic_config: default
+
+refresh:
+  schedule: weekly
+  mode: incremental
+  workflow: org-docs-refresh.yml
+
+metadata:
+  repo: Insightpulseai/odoo
+  product: ipai
+  source_type: internal-docs
+  lang: en

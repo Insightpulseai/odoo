@@ -1,0 +1,346 @@
+# =============================================================================
+# Entra Group Definitions — InsightPulse AI
+# =============================================================================
+#
+# Canonical Entra ID security group definitions, membership, and metadata.
+#
+# Naming convention:
+#   sg-ipai-{scope}-{role}     — standard security groups
+#   rl-ipai-{scope}-{role}     — role-assignable groups (for PIM)
+#
+# Human-readable narrative: docs/security/ACCESS_MODEL.md § 5
+# Last updated: 2026-03-18
+# =============================================================================
+
+schema_version: "1.0"
+last_updated: "2026-03-18"
+
+groups:
+
+  # ---------------------------------------------------------------------------
+  # Administrative Groups
+  # ---------------------------------------------------------------------------
+
+  - name: sg-ipai-platform-owners
+    display_name: "IPAI Platform Owners"
+    description: "Platform owner role — full admin across all planes and environments"
+    type: security
+    role_assignable: true
+    mail_enabled: false
+    membership_type: assigned
+    members:
+      - upn: admin@insightpulseai.com
+        type: member
+      - upn: ceo@insightpulseai.com
+        type: guest
+    azure_rbac_assignments:
+      - scope: subscription
+        role: Contributor
+      - scope: subscription
+        role: User Access Administrator
+    app_role_assignments:
+      - app: "InsightPulse AI - Odoo ERP"
+        role: ops.admin
+    notes: "Day-to-day operations. NOT Global Admin for daily use."
+
+  - name: sg-ipai-emergency-admins
+    display_name: "IPAI Emergency Admins"
+    description: "Break-glass accounts — Global Admin for recovery only"
+    type: security
+    role_assignable: true
+    mail_enabled: false
+    membership_type: assigned
+    members:
+      - upn: admin@insightpulseai.com
+        type: member
+      - upn: emergency-admin@insightpulseai.com
+        type: member
+    entra_directory_roles:
+      - Global Administrator
+    azure_rbac_assignments:
+      - scope: subscription
+        role: Owner
+    monitoring:
+      - sign_in_alerts: true
+        alert_channel: slack_security_alerts
+        alert_method: azure_monitor_action_group
+    notes: "Never use for daily operations. Sign-in triggers immediate alert."
+
+  # ---------------------------------------------------------------------------
+  # Team Role Groups
+  # ---------------------------------------------------------------------------
+
+  - name: sg-ipai-developers
+    display_name: "IPAI Developers"
+    description: "Engineers — dev full access, staging deploy, prod pipeline only"
+    type: security
+    role_assignable: false
+    mail_enabled: false
+    membership_type: assigned
+    members: []  # future team members
+    azure_rbac_assignments:
+      - scope: rg-ipai-dev
+        role: Contributor
+      - scope: rg-ipai-shared-dev
+        role: Reader
+    notes: "Empty group — ready for first team hire."
+
+  - name: sg-ipai-data-engineers
+    display_name: "IPAI Data Engineers"
+    description: "Databricks + ADLS operators — lakehouse pipeline builders"
+    type: security
+    role_assignable: false
+    mail_enabled: false
+    membership_type: assigned
+    members: []  # future
+    azure_rbac_assignments:
+      - scope: rg-ipai-ai-dev
+        role: Contributor
+      - scope: rg-ipai-data-dev
+        role: Reader
+
+  - name: sg-ipai-finance-operators
+    display_name: "IPAI Finance Operators"
+    description: "Odoo finance close + BIR compliance users"
+    type: security
+    role_assignable: false
+    mail_enabled: false
+    membership_type: assigned
+    members: []  # future
+    app_role_assignments:
+      - app: "InsightPulse AI - Odoo ERP"
+        role: finance.close.operator
+      - app: "InsightPulse AI - Odoo ERP"
+        role: finance.viewer
+
+  - name: sg-ipai-analysts
+    display_name: "IPAI Analysts"
+    description: "Read-only BI consumers — dashboards and reports"
+    type: security
+    role_assignable: false
+    mail_enabled: false
+    membership_type: assigned
+    members: []  # future
+    app_role_assignments:
+      - app: "InsightPulse AI - Odoo ERP"
+        role: analytics.viewer
+      - app: "InsightPulse AI - Odoo ERP"
+        role: copilot.advisory
+
+  # ---------------------------------------------------------------------------
+  # Vertical Groups
+  # ---------------------------------------------------------------------------
+
+  - name: sg-ipai-vertical-marketing
+    display_name: "IPAI Vertical — Marketing"
+    description: "Marketing vertical access — campaigns, brand, playbooks"
+    type: security
+    role_assignable: false
+    mail_enabled: false
+    membership_type: assigned
+    members: []  # future
+    app_role_assignments:
+      - app: "InsightPulse AI - Odoo ERP"
+        role: marketing.manager
+      - app: "InsightPulse AI - Odoo ERP"
+        role: marketing.viewer
+      - app: "InsightPulse AI - Odoo ERP"
+        role: analytics.viewer
+      - app: "InsightPulse AI - Odoo ERP"
+        role: copilot.advisory
+    vertical_isolation:
+      odoo_company: "InsightPulse AI - Marketing"
+      unity_catalog_schemas:
+        - "gold.marketing_*"
+      apim_subscription: sub-ipai-marketing
+
+  - name: sg-ipai-vertical-retail-media
+    display_name: "IPAI Vertical — Retail Media"
+    description: "Retail media vertical access — POS, inventory, media workflows"
+    type: security
+    role_assignable: false
+    mail_enabled: false
+    membership_type: assigned
+    members: []  # future
+    app_role_assignments:
+      - app: "InsightPulse AI - Odoo ERP"
+        role: retail.operator
+      - app: "InsightPulse AI - Odoo ERP"
+        role: media.ops
+      - app: "InsightPulse AI - Odoo ERP"
+        role: product.operator
+      - app: "InsightPulse AI - Odoo ERP"
+        role: analytics.viewer
+      - app: "InsightPulse AI - Odoo ERP"
+        role: copilot.advisory
+    vertical_isolation:
+      odoo_company: "InsightPulse AI - Retail Media"
+      unity_catalog_schemas:
+        - "gold.retail_*"
+      apim_subscription: sub-ipai-retail-media
+
+  - name: sg-ipai-vertical-entertainment
+    display_name: "IPAI Vertical — Entertainment"
+    description: "Entertainment vertical access — media ops, content, marketing"
+    type: security
+    role_assignable: false
+    mail_enabled: false
+    membership_type: assigned
+    members: []  # future
+    app_role_assignments:
+      - app: "InsightPulse AI - Odoo ERP"
+        role: media.ops
+      - app: "InsightPulse AI - Odoo ERP"
+        role: marketing.manager
+      - app: "InsightPulse AI - Odoo ERP"
+        role: analytics.viewer
+      - app: "InsightPulse AI - Odoo ERP"
+        role: copilot.advisory
+    vertical_isolation:
+      odoo_company: "InsightPulse AI - Entertainment"
+      unity_catalog_schemas:
+        - "gold.entertainment_*"
+      apim_subscription: sub-ipai-entertainment
+
+  - name: sg-ipai-vertical-finserv
+    display_name: "IPAI Vertical — Financial Services"
+    description: "Financial services vertical access — finance close, compliance, BIR"
+    type: security
+    role_assignable: false
+    mail_enabled: false
+    membership_type: assigned
+    members: []  # future
+    app_role_assignments:
+      - app: "InsightPulse AI - Odoo ERP"
+        role: finance.close.operator
+      - app: "InsightPulse AI - Odoo ERP"
+        role: finance.close.approver
+      - app: "InsightPulse AI - Odoo ERP"
+        role: finance.viewer
+      - app: "InsightPulse AI - Odoo ERP"
+        role: analytics.viewer
+      - app: "InsightPulse AI - Odoo ERP"
+        role: copilot.advisory
+    vertical_isolation:
+      odoo_company: "InsightPulse AI - Financial Services"
+      unity_catalog_schemas:
+        - "gold.finserv_*"
+      apim_subscription: sub-ipai-finserv
+
+  # ---------------------------------------------------------------------------
+  # Workload Identity Groups
+  # ---------------------------------------------------------------------------
+
+  - name: sg-ipai-workload-agents
+    display_name: "IPAI Workload — Agent Identities"
+    description: "Managed identities for AI agent workloads"
+    type: security
+    role_assignable: false
+    mail_enabled: false
+    membership_type: assigned
+    members:
+      - object: id-ipai-agents-dev
+        type: managed_identity
+    azure_rbac_assignments:
+      - scope: kv-ipai-dev
+        role: Key Vault Secrets User
+      - scope: stipaidevlake
+        role: Storage Blob Data Reader
+      - scope: oai-ipai-dev
+        role: Cognitive Services OpenAI User
+
+  - name: sg-ipai-workload-aca
+    display_name: "IPAI Workload — Container Apps"
+    description: "Managed identities for Odoo and platform Container Apps"
+    type: security
+    role_assignable: false
+    mail_enabled: false
+    membership_type: assigned
+    members:
+      - object: id-ipai-aca-dev
+        type: managed_identity
+    azure_rbac_assignments:
+      - scope: kv-ipai-dev
+        role: Key Vault Secrets User
+      - scope: ipai-odoo-dev-kv
+        role: Key Vault Secrets User
+      - scope: cripaidev
+        role: AcrPull
+
+  - name: sg-ipai-workload-databricks
+    display_name: "IPAI Workload — Databricks Identities"
+    description: "Managed identities for Databricks workspace and Unity Catalog"
+    type: security
+    role_assignable: false
+    mail_enabled: false
+    membership_type: assigned
+    members:
+      - object: id-ipai-databricks-dev
+        type: managed_identity
+      - object: dbmanagedidentity
+        type: managed_identity
+    azure_rbac_assignments:
+      - scope: stipaidevlake
+        role: Storage Blob Data Contributor
+      - scope: kv-ipai-dev
+        role: Key Vault Secrets User
+
+  - name: sg-ipai-workload-cicd
+    display_name: "IPAI Workload — CI/CD Pipelines"
+    description: "Service principals for Azure DevOps and GitHub Actions pipelines"
+    type: security
+    role_assignable: false
+    mail_enabled: false
+    membership_type: assigned
+    members:
+      - object: sc-azure-dev-platform
+        type: service_principal
+      - object: sc-azure-dev-lakehouse
+        type: service_principal
+    azure_rbac_assignments:
+      - scope: subscription
+        role: Reader
+      - scope: cripaidev
+        role: AcrPush
+
+  # ---------------------------------------------------------------------------
+  # App Role Groups (for Entra app role assignment)
+  # ---------------------------------------------------------------------------
+
+  - name: sg-ipai-app-copilot-advisory
+    display_name: "IPAI App Role — Copilot Advisory"
+    description: "Users with copilot.advisory app role — read-only copilot access"
+    type: security
+    role_assignable: false
+    mail_enabled: false
+    membership_type: assigned
+    members: []  # dynamically populated via app role assignment
+    app_role_assignments:
+      - app: "InsightPulse AI - Odoo ERP"
+        role: copilot.advisory
+
+  - name: sg-ipai-app-copilot-action
+    display_name: "IPAI App Role — Copilot Action"
+    description: "Users with copilot.action app role — action-capable copilot access"
+    type: security
+    role_assignable: false
+    mail_enabled: false
+    membership_type: assigned
+    members: []  # dynamically populated via app role assignment
+    app_role_assignments:
+      - app: "InsightPulse AI - Odoo ERP"
+        role: copilot.action
+
+  - name: sg-ipai-app-ops-admin
+    display_name: "IPAI App Role — Operations Admin"
+    description: "Users with ops.admin app role — platform operations"
+    type: security
+    role_assignable: false
+    mail_enabled: false
+    membership_type: assigned
+    members: []  # populated via nested group: sg-ipai-platform-owners
+    nested_groups:
+      - sg-ipai-platform-owners
+    app_role_assignments:
+      - app: "InsightPulse AI - Odoo ERP"
+        role: ops.admin

@@ -1,0 +1,31 @@
+id: tenant-context-mapping
+version: 1
+status: active
+classification: encoded_preference
+persona: multitenancy-architect
+updated_at: "2026-03-17"
+
+purpose: >
+  Design tenant context propagation from request ingress through all
+  middleware, services, and data access layers.
+
+inputs:
+  - ingress_model: "Subdomain, header, token claim, URL path"
+  - service_topology: "Monolith, microservices, or hybrid"
+  - async_patterns: "Message queues, event bus, cron jobs"
+  - observability_stack: "Logging, tracing, metrics tools"
+
+outputs:
+  - mapping_strategy: "How requests are mapped to tenants"
+  - propagation_design: "How tenant context flows through the stack"
+  - async_context: "How background jobs and messages carry tenant context"
+  - observability_design: "How tenant-id appears in logs, traces, and metrics"
+  - validation_rules: "How tenant context is validated at each boundary"
+
+guardrails:
+  - "Every request must resolve to exactly one tenant"
+  - "Tenant context must not be lost in async/background processing"
+  - "Tenant-id must appear in all logs, traces, and metrics"
+  - "Tenant resolution failure must reject the request, not default"
+
+benchmark_source: "Azure Multitenancy Checklist - Security Pillar"

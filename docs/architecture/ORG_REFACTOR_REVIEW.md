@@ -386,7 +386,7 @@ The organization should adopt a **bounded multi-repo** model: each repo owns a c
 odoo (ERP) -------> infra (IaC) <------- web (UI)
    |                    |                    |
    |                    v                    |
-   |              data-intelligence (data)           |
+   |          data-intelligence (data)        |
    |                    |                    |
    v                    v                    v
 agents (AI) <---- automations (jobs) ----> design (tokens)

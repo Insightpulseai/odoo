@@ -1,0 +1,106 @@
+# Project Stack Seed Workstream
+# Provides complete seed data for Project + Tasks + Timesheets + Analytics
+# Compatible with CE + OCA modules defined in CE_OCA_PROJECT_STACK.md
+
+workstream:
+  id: project_stack
+  name: Project Stack Bootstrap
+  version: "1.0.0"
+  odoo_version: "18.0"
+  description: |
+    Complete seed data for Odoo Project module stack including:
+    - Customers/Stakeholders (res.partner)
+    - Analytic Accounts (account.analytic.account)
+    - Service Products (product.product)
+    - Projects (project.project)
+    - Task Tags (project.tags)
+    - Task Stages (project.task.type)
+    - Tasks with dependencies (project.task)
+    - Timesheets (account.analytic.line)
+
+# Import order (MUST follow this sequence)
+import_order:
+  - file: 10_partners.yaml
+    model: res.partner
+    priority: 1
+    description: Customers and stakeholders
+
+  - file: 20_analytic_accounts.yaml
+    model: account.analytic.account
+    priority: 2
+    description: Analytic accounts for project costing
+
+  - file: 30_products.yaml
+    model: product.product
+    priority: 3
+    description: Service products for time billing
+
+  - file: 40_projects.yaml
+    model: project.project
+    priority: 4
+    description: Projects
+
+  - file: 50_tags.yaml
+    model: project.tags
+    priority: 5
+    description: Task tags
+
+  - file: 60_stages.yaml
+    model: project.task.type
+    priority: 6
+    description: Task stages (kanban columns)
+
+  - file: 70_tasks.yaml
+    model: project.task
+    priority: 7
+    description: Tasks with hierarchy and dependencies
+
+  - file: 80_timesheets.yaml
+    model: account.analytic.line
+    priority: 8
+    description: Timesheet entries
+
+# Required modules (CE + OCA)
+required_modules:
+  ce_core:
+    - project
+    - mail
+    - portal
+    - hr_timesheet
+    - sale_timesheet
+    - account
+    - sale_management
+
+  oca_optional:
+    - project_task_dependency  # For task dependencies
+    - project_wbs              # For WBS structure
+    - hr_timesheet_sheet       # For timesheet approval
+
+# Data cleanup (for re-import)
+cleanup_order:
+  - account.analytic.line
+  - project.task
+  - project.task.type
+  - project.tags
+  - project.project
+  - product.product
+  - account.analytic.account
+  # Note: Don't delete res.partner (may have other references)
+
+# Verification queries
+verification:
+  - name: partners_created
+    query: "SELECT COUNT(*) FROM res_partner WHERE ref LIKE 'ipai_partner_%'"
+    expected_min: 2
+
+  - name: projects_created
+    query: "SELECT COUNT(*) FROM project_project WHERE name LIKE '%Alpha%' OR name LIKE '%Beta%'"
+    expected_min: 2
+
+  - name: tasks_created
+    query: "SELECT COUNT(*) FROM project_task"
+    expected_min: 8
+
+  - name: timesheets_created
+    query: "SELECT COUNT(*) FROM account_analytic_line WHERE project_id IS NOT NULL"
+    expected_min: 4

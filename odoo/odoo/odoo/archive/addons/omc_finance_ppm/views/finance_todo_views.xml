@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_finance_todo_list" model="ir.ui.view">
+        <field name="name">finance.todo.list</field>
+        <field name="model">finance.todo</field>
+        <field name="arch" type="xml">
+            <list editable="bottom">
+                <field name="is_done"/>
+                <field name="name"/>
+                <field name="assignee_id" widget="many2one_avatar_user"/>
+            </list>
+        </field>
+    </record>
+</odoo>

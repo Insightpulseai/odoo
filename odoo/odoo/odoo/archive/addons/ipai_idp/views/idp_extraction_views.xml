@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- IDP Extraction List View -->
+    <record id="view_idp_extraction_list" model="ir.ui.view">
+        <field name="name">idp.extraction.list</field>
+        <field name="model">idp.extraction</field>
+        <field name="arch" type="xml">
+            <list string="Extractions" decoration-success="validation_status == 'pass'" decoration-warning="validation_status == 'warning'" decoration-danger="validation_status == 'fail'">
+                <field name="document_id"/>
+                <field name="doc_type"/>
+                <field name="vendor_name"/>
+                <field name="invoice_number"/>
+                <field name="total_amount"/>
+                <field name="currency"/>
+                <field name="confidence" widget="progressbar"/>
+                <field name="validation_status" widget="badge"/>
+                <field name="model_version_id"/>
+                <field name="create_date"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- IDP Extraction Form View -->
+    <record id="view_idp_extraction_form" model="ir.ui.view">
+        <field name="name">idp.extraction.form</field>
+        <field name="model">idp.extraction</field>
+        <field name="arch" type="xml">
+            <form string="Extraction">
+                <header>
+                    <button name="action_validate" type="object" string="Validate" class="btn-primary"/>
+                    <field name="validation_status" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group string="Document Info">
+                            <field name="document_id"/>
+                            <field name="doc_type"/>
+                            <field name="model_version_id"/>
+                            <field name="ocr_id"/>
+                        </group>
+                        <group string="Extracted Summary">
+                            <field name="vendor_name"/>
+                            <field name="invoice_number"/>
+                            <field name="invoice_date"/>
+                            <field name="total_amount"/>
+                            <field name="currency"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group string="Quality Metrics">
+                            <field name="confidence" widget="progressbar"/>
+                            <field name="processing_time_ms"/>
+                            <field name="llm_model"/>
+                            <field name="token_count"/>
+                        </group>
+                        <group string="Validation">
+                            <field name="validation_status"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Extracted Data" name="data">
+                            <field name="extracted_json" widget="ace" options="{'mode': 'json'}"/>
+                        </page>
+                        <page string="Field Confidences" name="confidences">
+                            <field name="field_confidences" widget="ace" options="{'mode': 'json'}"/>
+                        </page>
+                        <page string="Validation Errors" name="errors">
+                            <field name="validation_errors" widget="ace" options="{'mode': 'json'}"/>
+                        </page>
+                        <page string="Raw LLM Response" name="raw">
+                            <field name="raw_llm_response"/>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- IDP Extraction Search View -->
+    <record id="view_idp_extraction_search" model="ir.ui.view">
+        <field name="name">idp.extraction.search</field>
+        <field name="model">idp.extraction</field>
+        <field name="arch" type="xml">
+            <search string="Search Extractions">
+                <field name="vendor_name"/>
+                <field name="invoice_number"/>
+                <field name="document_id"/>
+                <filter string="Passed" name="filter_pass" domain="[('validation_status', '=', 'pass')]"/>
+                <filter string="Failed" name="filter_fail" domain="[('validation_status', '=', 'fail')]"/>
+                <filter string="High Confidence" name="filter_high_conf" domain="[('confidence', '>=', 0.9)]"/>
+                <filter string="Low Confidence" name="filter_low_conf" domain="[('confidence', '&lt;', 0.9)]"/>
+                <group expand="0" string="Group By">
+                    <filter string="Document Type" name="group_doc_type" context="{'group_by': 'doc_type'}"/>
+                    <filter string="Validation Status" name="group_validation" context="{'group_by': 'validation_status'}"/>
+                    <filter string="Model Version" name="group_version" context="{'group_by': 'model_version_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- IDP Extraction Action -->
+    <record id="action_idp_extraction" model="ir.actions.act_window">
+        <field name="name">Extractions</field>
+        <field name="res_model">idp.extraction</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_idp_extraction_search"/>
+    </record>
+</odoo>

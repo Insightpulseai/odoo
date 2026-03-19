@@ -1,0 +1,304 @@
+# STC Philippine Localization Overlay
+# PH-specific customizations on top of SAP canonical checks
+
+localization:
+  country: PH
+  name: Philippines
+  tax_authority: BIR (Bureau of Internal Revenue)
+  tin_format: XXX-XXX-XXX-XXX
+  vat_rate: 0.12
+
+# ============================================================
+# BIR Form Definitions
+# ============================================================
+
+bir_forms:
+  # Monthly Forms
+  - code: "2550M"
+    name: Monthly VAT Declaration
+    frequency: MONTHLY
+    deadline_rule:
+      type: day_of_next_month
+      day: 20
+    prep_offset: -5
+    review_offset: -3
+    approve_offset: -1
+    attachments:
+      - Summary List of Sales
+      - Summary List of Purchases
+      - VAT Relief Schedule (if applicable)
+    penalties:
+      late_surcharge: 0.25
+      interest_per_month: 0.02
+      compromise: 1000
+
+  - code: "1601C"
+    name: Monthly Compensation Withholding Tax
+    frequency: MONTHLY
+    deadline_rule:
+      type: day_of_next_month
+      day: 10
+    prep_offset: -5
+    review_offset: -3
+    approve_offset: -1
+    attachments:
+      - Alphalist of Payees (MAP)
+    penalties:
+      late_surcharge: 0.25
+      interest_per_month: 0.02
+
+  - code: "1601E"
+    name: Monthly Expanded Withholding Tax
+    frequency: MONTHLY
+    deadline_rule:
+      type: day_of_next_month
+      day: 10
+    prep_offset: -5
+    review_offset: -3
+    approve_offset: -1
+    attachments:
+      - Alphalist of Payees (MAP)
+    penalties:
+      late_surcharge: 0.25
+      interest_per_month: 0.02
+
+  - code: "2551M"
+    name: Monthly Percentage Tax
+    frequency: MONTHLY
+    deadline_rule:
+      type: day_of_next_month
+      day: 20
+    prep_offset: -5
+    review_offset: -3
+    approve_offset: -1
+
+  # Quarterly Forms
+  - code: "2550Q"
+    name: Quarterly VAT Return
+    frequency: QUARTERLY
+    deadline_rule:
+      type: day_after_quarter_end
+      day: 25
+    prep_offset: -7
+    review_offset: -4
+    approve_offset: -1
+    attachments:
+      - Quarterly Summary List of Sales
+      - Quarterly Summary List of Purchases
+      - Supporting Schedules
+
+  - code: "1702Q"
+    name: Quarterly Income Tax Return
+    frequency: QUARTERLY
+    deadline_rule:
+      type: day_after_quarter_end
+      day: 60
+    prep_offset: -10
+    review_offset: -5
+    approve_offset: -2
+
+  # Annual Forms
+  - code: "1604CF"
+    name: Annual Information Return (Compensation)
+    frequency: ANNUAL
+    deadline_rule:
+      type: fixed_date
+      month: 1
+      day: 31
+    prep_offset: -10
+    review_offset: -5
+    approve_offset: -2
+    attachments:
+      - Alphalist of Employees (DAT file)
+      - Summary Report
+
+  - code: "1604E"
+    name: Annual Information Return (Expanded)
+    frequency: ANNUAL
+    deadline_rule:
+      type: fixed_date
+      month: 3
+      day: 1
+    prep_offset: -15
+    review_offset: -7
+    approve_offset: -3
+    attachments:
+      - Alphalist of Payees (DAT file)
+      - Summary Report
+
+  - code: "1702"
+    name: Annual Income Tax Return (Corporation)
+    frequency: ANNUAL
+    deadline_rule:
+      type: day_after_year_end
+      day: 105  # April 15
+    prep_offset: -15
+    review_offset: -7
+    approve_offset: -3
+    attachments:
+      - Audited Financial Statements
+      - Income Tax Computation
+      - Reconciliation Schedules
+
+  - code: "1707"
+    name: Annual CGT Return
+    frequency: ANNUAL
+    deadline_rule:
+      type: within_days
+      days: 30
+      trigger: transaction_date
+
+# ============================================================
+# ATC (Alphanumeric Tax Codes) Reference
+# ============================================================
+
+atc_codes:
+  # Compensation
+  - code: "WC010"
+    description: Compensation - Regular
+    rate: varies
+    category: compensation
+
+  - code: "WC011"
+    description: Compensation - Minimum Wage
+    rate: 0
+    category: compensation
+
+  # Expanded Withholding
+  - code: "WI010"
+    description: Professional Fees - Individual
+    rate: 0.10
+    category: expanded
+
+  - code: "WI020"
+    description: Professional Fees - Corporation
+    rate: 0.15
+    category: expanded
+
+  - code: "WI100"
+    description: Rentals - Real Property
+    rate: 0.05
+    category: expanded
+
+  - code: "WI130"
+    description: Rentals - Movable Property
+    rate: 0.05
+    category: expanded
+
+  - code: "WI157"
+    description: Commissions - Agents/Brokers
+    rate: 0.10
+    category: expanded
+
+  - code: "WI159"
+    description: Subcontractor Services
+    rate: 0.02
+    category: expanded
+
+  - code: "WI160"
+    description: Services - Prime Contractors
+    rate: 0.02
+    category: expanded
+
+  - code: "WI640"
+    description: Purchases - Goods
+    rate: 0.01
+    category: expanded
+
+  - code: "WI641"
+    description: Purchases - Services
+    rate: 0.02
+    category: expanded
+
+  # VAT
+  - code: "VI010"
+    description: VAT - Regular Sale
+    rate: 0.12
+    category: vat
+
+  - code: "VI020"
+    description: VAT - Zero-Rated Export
+    rate: 0
+    category: vat
+
+  - code: "VI030"
+    description: VAT - Exempt
+    rate: 0
+    category: vat
+
+# ============================================================
+# Check Overlays (PH-specific adjustments)
+# ============================================================
+
+check_overlays:
+  - check_code: STC_VAT_001
+    applies_to: chk_vat_id_validation
+    patch_type: rule_update
+    patch:
+      pattern: "^\\d{3}-\\d{3}-\\d{3}-\\d{3}$"
+      message: "Invalid TIN format. BIR requires: XXX-XXX-XXX-XXX"
+
+  - check_code: STC_VAT_003
+    applies_to: chk_high_vat_sales
+    patch_type: threshold_update
+    patch:
+      threshold: 100000
+      note: "PHP 100,000 threshold for VAT invoice monitoring"
+
+  - check_code: STC_INV_002
+    applies_to: chk_invoice_amount_threshold
+    patch_type: threshold_update
+    patch:
+      threshold: 500000
+      note: "PHP 500,000 threshold for large invoice reporting"
+
+  - check_code: STC_WHT_003
+    applies_to: chk_wht_threshold_exceeded
+    patch_type: threshold_update
+    patch:
+      threshold: 10000
+      note: "PHP 10,000 threshold for expanded WHT on purchases"
+
+# ============================================================
+# Evidence Requirements (PH-specific)
+# ============================================================
+
+evidence_requirements:
+  - bir_form: "2550M"
+    required:
+      - name: Summary List of Sales (SLS)
+        format: xlsx
+        bir_attachment_code: SLS
+      - name: Summary List of Purchases (SLP)
+        format: xlsx
+        bir_attachment_code: SLP
+    optional:
+      - name: VAT Relief Schedule
+        format: xlsx
+
+  - bir_form: "1604CF"
+    required:
+      - name: Alphalist of Employees
+        format: dat
+        bir_attachment_code: ALPHA_COMP
+      - name: BIR Form 2316 for each employee
+        format: pdf
+
+  - bir_form: "1604E"
+    required:
+      - name: Alphalist of Payees
+        format: dat
+        bir_attachment_code: ALPHA_EXP
+
+# ============================================================
+# Holiday Adjustments
+# ============================================================
+
+holiday_rules:
+  - rule: deadline_falls_on_holiday
+    action: extend_to_next_workday
+    note: "If deadline falls on PH holiday, extend to next business day"
+
+  - rule: deadline_falls_on_weekend
+    action: extend_to_next_workday
+    note: "If deadline falls on weekend, extend to next Monday"

@@ -1,0 +1,14 @@
+# Grafana Dashboard Provider
+apiVersion: 1
+
+providers:
+  - name: default
+    orgId: 1
+    folder: IPAI
+    type: file
+    disableDeletion: false
+    updateIntervalSeconds: 60
+    allowUiUpdates: true
+    options:
+      path: /var/lib/grafana/dashboards
+      foldersFromFilesStructure: false

@@ -10,13 +10,14 @@ This document defines the authoritative taxonomy and operational boundaries for 
 |------------|---------------|------------|
 | `.github` | Org governance, issue forms, reusable workflows, policies | PRIVATE |
 | `odoo` | ERP System of Record (Odoo 19 CE + OCA + IPAI bridge) | PUBLIC |
-| `ops-platform` | SSOT / Secrets / Control-Plane (Vault, Edge Functions) | PRIVATE |
-| `lakehouse` | Intelligence / Analytics pipelines (Databricks, Medallion) | PRIVATE |
+| `platform` | SSOT / Secrets / Platform (Vault, Edge Functions) | PRIVATE |
+| `data-intelligence` | Intelligence / Analytics pipelines (Databricks, Medallion) | PRIVATE |
 | `infra` | Infrastructure and Edge (IaC, Azure, DO, Cloudflare) | PRIVATE |
 | `web` | Product surfaces, landing pages, and documentation sites | PRIVATE |
-| `design-system` | Visual language, design tokens, and shared UI assets | INTERNAL |
+| `design` | Visual language, design tokens, and shared UI assets | INTERNAL |
 | `agents` | Agent runtime metadata, skills, and orchestration | PUBLIC |
 | `automations` | Workflow automation, scheduled jobs, and runbooks | PRIVATE |
+| `docs` | Organization-wide documentation and knowledge base | PRIVATE |
 | `templates` | Bootstrap-only scaffolds, starter templates | PRIVATE |
 
 ### Archive / Merge Candidates
@@ -24,10 +25,10 @@ This document defines the authoritative taxonomy and operational boundaries for 
 | Repository | Action | Target Anchor |
 |------------|--------|---------------|
 | `template-factory` | ARCHIVE | N/A |
-| `plugin-marketplace` | MERGE & ARCHIVE | `ops-platform` / `agents` |
+| `plugin-marketplace` | MERGE & ARCHIVE | `platform` / `agents` |
 | `plugin-agents` | MERGE & ARCHIVE | `agents` |
 | `dev-environment` | ARCHIVE | `.github` / `templates` |
-| `ops-console` | MERGE & ARCHIVE | `web` / `ops-platform` |
+| `ops-console` | MERGE & ARCHIVE | `web` / `platform` |
 | `app-crm` | MERGE & ARCHIVE | `web` / `odoo` |
 | `learn` | ARCHIVE | N/A |
 | `fluent-owl` | ARCHIVE | N/A |
@@ -43,10 +44,10 @@ This document defines the authoritative taxonomy and operational boundaries for 
 |-----------|---------|
 | `Admins` | Organization level access control |
 | `odoo-core` | ERP development and maintenance |
-| `platform-core` | SSOT and control-plane management |
+| `platform-core` | SSOT and platform management |
 | `infra-devops` | IaC and pipeline automation |
-| `data-ai` | Lakehouse and AI agents |
-| `design-system` | Visual language and UI components |
+| `data-ai` | Data intelligence and AI agents |
+| `design` | Visual language and UI components |
 | `automation-ops` | n8n and workflow stability |
 
 ## 3. Canonical Project Model
@@ -60,13 +61,14 @@ This document defines the authoritative taxonomy and operational boundaries for 
 ## 4. Responsibility Boundaries
 
 - **odoo**: ERP SOR only.
-- **ops-platform**: SSOT / secrets / control-plane.
-- **lakehouse**: intelligence / analytics pipelines.
+- **platform**: SSOT / secrets / platform.
+- **data-intelligence**: intelligence / analytics pipelines.
 - **infra**: infrastructure and edge.
 - **web**: product and docs surfaces.
 - **agents**: agent runtime metadata / skills / orchestration.
 - **automations**: workflow automation, schedulers, runbooks.
-- **design-system**: visual language and shared UI assets.
+- **docs**: organization-wide documentation and knowledge base.
+- **design**: visual language and shared UI assets.
 - **templates**: bootstrap-only, not runtime code.
 
 ## 5. Governance Rules

@@ -1,0 +1,13 @@
+Resources
+| where type =~ 'microsoft.cdn/profiles'
+   or type =~ 'microsoft.cdn/profiles/afdendpoints'
+| project
+    id,
+    name,
+    type,
+    location,
+    resourceGroup,
+    subscriptionId,
+    sku = tostring(sku.name),
+    tags
+| order by name asc

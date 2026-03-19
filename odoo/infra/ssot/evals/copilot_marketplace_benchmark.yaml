@@ -1,0 +1,385 @@
+---
+# Copilot Marketplace Benchmark — Four-Reference Model
+# Core precursor primary: SAP Joule (ERP copilot shell)
+# Core precursor secondary: Notion 3.0 (agentic workspace shell)
+# Specialist tax: AvaTax (tax/compliance)
+# Operational: SAP on Azure (workload operating model)
+# Governed by: ssot/evals/agent_benchmark_doctrine.yaml
+
+version: 5
+name: copilot_marketplace_benchmark
+status: active
+updated_at: "2026-03-18"
+doctrine_ref: ssot/evals/agent_benchmark_doctrine.yaml
+
+# =====================================================================
+# TWO-SURFACE BENCHMARK MODEL
+# =====================================================================
+
+benchmark_surfaces:
+
+  # ----- Surface 1: Core Copilot Precursor -----
+  core_precursor:
+    benchmark_targets:
+      primary:
+        name: "SAP Joule"
+        source: "marketplace_listing_user_provided"
+        benchmark_purpose: erp_business_copilot_shell
+        capability_types:
+          - transactional
+          - navigational
+          - informational
+        platform_fit:
+          - microsoft_365_copilot
+          - teams
+        grounding_modes:
+          - help_portal_docs
+          - uploaded_documents
+
+      secondary:
+        name: "Notion 3.0"
+        source: "https://www.notion.com/blog/introducing-notion-3-0"
+        benchmark_purpose: agentic_workspace_shell
+        capability_types:
+          - multi_step_work
+          - document_database_creation
+          - cross_tool_search
+          - personalization_memory
+          - custom_agent_model
+        notable_claims:
+          - "up to 20 minutes of autonomous work"
+          - "hundreds of pages at once"
+          - "instruction/memory page for personalization"
+          - "custom agents on schedules/triggers"
+          - "database row permissions for enterprise"
+
+    candidate:
+      name: "Odoo Copilot Precursor"
+      ssot_ref: "ssot/agents/odoo_copilot_precursor.yaml"
+      scope:
+        - transactional_assistance
+        - navigational_assistance
+        - informational_assistance
+        - safe_tool_orchestration
+        - document_grounding
+        - role_aware_assistance
+        - multi_step_work_product_generation
+        - memory_personalization
+        - cross_tool_knowledge_search
+        - specialist_agent_handoff
+
+    verdict_rule:
+      surpass_requires:
+        - higher_weighted_score_on_core_tasks
+        - no_critical_safety_failures
+        - equal_or_better_groundedness
+        - equal_or_better_navigation_and_task_completion
+
+  # ----- Surface 2: TaxPulse Specialist vs AvaTax -----
+  specialist_tax:
+    benchmark_target:
+      name: "AvaTax: Agentic Tax and Compliance"
+      source: "marketplace_listing_user_provided"
+      claimed_capabilities:
+        - tax_calculation
+        - jurisdiction_resolution
+        - sales_use_vat_gst_support
+        - product_specific_tax_rules
+        - accounts_payable_use_tax_control
+        - real_time_processing
+        - batch_processing
+        - enterprise_scale
+        - compliance_auditability
+      benchmark_purpose: specialist_tax_compliance
+
+    candidate:
+      name: "TaxPulse Specialist"
+      depends_on: "Odoo Copilot Precursor"
+      ssot_ref: "spec/tax-pulse-sub-agent/prd.md"
+      scope:
+        - philippine_tax_and_compliance
+        - ap_workflows
+        - vendor_bill_review
+        - tax_mapping
+        - audit_support
+
+    verdict_rule:
+      surpass_requires:
+        - higher_weighted_score_on_tax_compliance_tasks
+        - no_critical_compliance_failures
+        - equal_or_better_accuracy_on_priority_tax_tasks
+        - equal_or_better_audit_explainability
+        - latency_within_workload_threshold
+
+    # Scope boundaries for specialist benchmark
+    fair_benchmark_dimensions:
+      - tax_determination_accuracy
+      - exception_detection
+      - ap_compliance_workflow_fit
+      - explainability_and_audit_support
+      - latency_for_bounded_tasks
+      - batch_review_quality
+
+    unfair_benchmark_dimensions:
+      - global_190_country_coverage_parity
+      - rooftop_level_geolocation_parity
+      - regulator_grade_tax_content_database_parity
+      - raw_api_scale_throughput_parity
+      - government_licensing_sst_certification_parity
+    unfair_benchmark_note: >-
+      These are platform/content-business advantages, not realistic
+      first-pass product-comparison lanes for the TaxPulse specialist.
+
+  # ----- Surface 3: Operational Benchmark — SAP on Azure -----
+  operational:
+    benchmark_target:
+      name: "SAP on Azure / SAP on Microsoft Cloud"
+      sources:
+        - "https://learn.microsoft.com/en-us/azure/sap/"
+        - "https://learn.microsoft.com/en-us/azure/sap/sap-on-azure-overview"
+      benchmark_purpose: workload_operating_model
+      capability_types:
+        - workload_control_plane
+        - security_and_governance
+        - backup_and_dr
+        - analytics_attachment
+        - devops_and_iac
+
+    candidate:
+      name: "Odoo on Azure Operating Model"
+      scope:
+        - odoo_runtime_inventory
+        - environment_stamp_awareness
+        - health_and_drift_monitoring
+        - backup_restore_evidence
+        - deployment_evidence
+        - key_vault_secret_model
+        - defender_security_posture
+        - azure_policy_guardrails
+        - azure_devops_pipelines
+        - bicep_iac_provisioning
+        - governed_analytics_plane
+        - foundry_ai_extension_plane
+
+    reference_architecture:
+      sap_equivalents:
+        azure_center_for_sap: "Odoo workload control surface (ops-console)"
+        azure_monitor_for_sap: "Application Insights + Log Analytics"
+        key_vault: "ipai-odoo-dev-kv (already wired)"
+        azure_backup: "PostgreSQL PITR + Azure Files snapshots"
+        azure_site_recovery: "not yet implemented"
+        azure_devops: "Azure DevOps Boards + Pipelines (active)"
+        synapse_fabric: "Databricks + Power BI (planned)"
+
+    verdict_rule:
+      maturity_requires:
+        - workload_control_plane_exists
+        - key_vault_backed_secrets_only
+        - backup_restore_tested
+        - iac_driven_provisioning
+        - pipeline_driven_deployments
+        - monitoring_and_alerting_active
+
+# =====================================================================
+# SPECIALIST TAX DIMENSIONS (AvaTax benchmark surface)
+# =====================================================================
+
+dimensions:
+  - id: tax_accuracy
+    weight: 0.30
+    description: >-
+      Accuracy of tax determination, code mapping, exception detection,
+      and recalculation consistency for Philippine tax workflows.
+    success_metrics:
+      - tax_determination_accuracy
+      - tax_code_mapping_accuracy
+      - exception_detection_accuracy
+      - recalculation_consistency
+
+  - id: compliance_control
+    weight: 0.20
+    description: >-
+      Ability to detect undercharge/overcharge, enforce policy thresholds,
+      and correctly gate approval workflows.
+    success_metrics:
+      - undercharge_detection
+      - overcharge_detection
+      - policy_threshold_enforcement
+      - approval_gate_correctness
+
+  - id: jurisdiction_and_rule_fit
+    weight: 0.15
+    description: >-
+      Correctness of jurisdiction selection, product-specific rule
+      application, and entity/address context handling for Philippine
+      BIR tax types (VAT, EWT, FWT, DST).
+    success_metrics:
+      - jurisdiction_selection_correctness
+      - product_rule_application
+      - cross_border_rule_handling
+      - address_or_entity_context_handling
+
+  - id: workflow_fit
+    weight: 0.15
+    description: >-
+      Integration quality with Odoo AP workflows, vendor bill review,
+      accountant/controller usability, and corrective action generation.
+    success_metrics:
+      - odoo_ap_fit
+      - vendor_bill_review_fit
+      - accountant_controller_usability
+      - corrective_action_quality
+
+  - id: auditability_and_explainability
+    weight: 0.10
+    description: >-
+      Quality of explanations, traceability of decisions, evidence
+      completeness, and reviewer confidence in copilot outputs.
+    success_metrics:
+      - explanation_quality
+      - traceability
+      - evidence_completeness
+      - reviewer_confidence
+
+  - id: latency_and_scale
+    weight: 0.10
+    description: >-
+      Response time for real-time and batch tax operations within
+      bounded workload scenarios.
+    success_metrics:
+      - p50_latency_ms
+      - p95_latency_ms
+      - batch_completion_rate
+      - response_stability
+
+task_sets:
+  tax_accuracy:
+    - id: tax_001
+      prompt: >-
+        Review this vendor bill and determine whether input VAT,
+        withholding, or use tax treatment is required.
+    - id: tax_002
+      prompt: >-
+        Classify this expense line set and propose the correct tax
+        mapping for posting.
+    - id: tax_003
+      prompt: >-
+        Detect whether this supplier invoice appears undercharged or
+        overcharged for tax based on configured policy thresholds.
+
+  compliance_control:
+    - id: comp_001
+      prompt: >-
+        Flag AP invoices that violate configured tax tolerance
+        thresholds and route them for review.
+    - id: comp_002
+      prompt: >-
+        Explain why this transaction should be blocked, approved, or
+        escalated from a compliance perspective.
+    - id: comp_003
+      prompt: >-
+        Generate an audit note showing the inputs, rule applied, and
+        recommended next action.
+
+  workflow_fit:
+    - id: wf_001
+      prompt: >-
+        Assist an AP reviewer in correcting tax treatment on a draft
+        vendor bill in Odoo.
+    - id: wf_002
+      prompt: >-
+        Propose follow-up actions for month-end tax review across
+        open AP items.
+    - id: wf_003
+      prompt: >-
+        Summarize tax exceptions requiring controller review today.
+
+evaluation:
+  judges:
+    deterministic_checks:
+      required: true
+      description: >-
+        Automated validation of tax outcomes: correct rates applied,
+        correct classification, no unauthorized mutations, threshold
+        compliance, referential integrity.
+      checks:
+        - tax_rates_correct
+        - classification_matches_expected
+        - no_unauthorized_writes
+        - threshold_compliance
+        - referential_integrity
+        - idempotency
+
+    llm_judge_grounded:
+      required: true
+      description: >-
+        Model-based evaluation of groundedness, clarity, and
+        usefulness. Judge model must differ from candidate model.
+      model: different_from_candidate
+      evaluates:
+        - groundedness
+        - clarity
+        - usefulness
+        - completeness
+        - conciseness
+      scoring: likert_1_to_5
+
+    human_tax_reviewer:
+      required: true
+      description: >-
+        Philippine finance/tax expert reviews outputs for BIR
+        compliance, accounting correctness, and ERP practicality.
+      reviewer_profile: philippine_tax_and_finance_expert
+      minimum_sample_rate: 0.20
+      evaluates:
+        - bir_compliance
+        - accounting_correctness
+        - tax_treatment_accuracy
+        - trustworthiness
+        - edge_case_handling
+
+  protocol:
+    blind: true
+    randomized_order: true
+    repeated_runs: 5
+    same_task_set_for_all_candidates: true
+    note: "Benchmark on business-task outcomes, not vendor-native product breadth."
+
+scoring:
+  weighted_score_formula: "sum(dimension_score * weight)"
+  pass_thresholds:
+    minimum_weighted_score_to_claim_surpass: 0.82
+    minimum_tax_accuracy: 0.90
+    maximum_critical_compliance_failures: 0
+    minimum_auditability_score: 0.90
+
+  reporting:
+    required_metrics:
+      - pass_at_1
+      - pass_at_n
+      - variance
+      - critical_failure_count
+      - mean_score
+      - worst_run_score
+      - per_dimension_scores
+      - per_task_scores
+
+  claim_discipline:
+    safe_claims:
+      - "better fit for our target Odoo tax/compliance workflows"
+      - "outperforms the AvaTax benchmark surface on approved internal tasks"
+    unsafe_claims:
+      - "better than AvaTax overall"
+      - "global tax engine replacement"
+      - "equivalent tax content coverage"
+      - "same compliance footprint"
+
+evidence:
+  path_template: "docs/evals/evidence/{YYYYMMDD-HHMM}/copilot_marketplace/"
+  required_artifacts:
+    - prompts.jsonl
+    - outputs/
+    - judge_scores.json
+    - benchmark_summary.md
+    - failure_log.md
+    - audit_examples/

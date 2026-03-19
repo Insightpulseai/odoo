@@ -95,5 +95,5 @@ git push
 | File | Purpose |
 |------|---------|
 | `infra/dns/subdomain-registry.yaml` | Subdomain SSOT |
-| `ssot/azure/service-matrix.yaml` | Service-to-container mapping |
-| `ssot/azure/resources.yaml` | Azure resource inventory |
+| `infra/ssot/azure/service-matrix.yaml` | Service-to-container mapping |
+| `infra/ssot/azure/resources.yaml` | Azure resource inventory |

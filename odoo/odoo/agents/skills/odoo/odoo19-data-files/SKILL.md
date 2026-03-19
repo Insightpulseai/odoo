@@ -908,7 +908,6 @@ the manifest:
     <field name="model_id" ref="model_my_model"/>
     <field name="interval_number">1</field>
     <field name="interval_type">days</field>
-    <field name="numbercall">-1</field>
     <field name="code">model._cron_cleanup()</field>
 </record>
 ```

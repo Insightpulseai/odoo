@@ -1,0 +1,632 @@
+# Agents Repo Inventory (Machine-Readable SSOT)
+# Generated: 2026-03-18
+# Scope: /agents directory only
+
+inventory:
+
+  # ── PRECURSOR / CORE COPILOT ──────────────────────────────────────
+
+  - id: copilot-metadata
+    title: Odoo Copilot Agent Metadata
+    path: foundry/ipai-odoo-copilot-azure/metadata.yaml
+    asset_type: manifest
+    category: precursor
+    status: active
+    relevance_to_precursor: high
+    relevance_to_taxpulse: medium
+    foundry_related: true
+    benchmark_related: false
+    recommended_action: reuse
+    notes: Agent identity, model (gpt-4.1), consumption channels, write_policy
+
+  - id: copilot-system-prompt
+    title: Copilot System Prompt v2.0.0
+    path: foundry/ipai-odoo-copilot-azure/system-prompt.md
+    asset_type: prompt
+    category: precursor
+    status: active
+    relevance_to_precursor: high
+    relevance_to_taxpulse: medium
+    foundry_related: true
+    benchmark_related: false
+    recommended_action: reuse
+    notes: Advisory-only instructions, scope enforcement, context-awareness, safety rules
+
+  - id: copilot-runtime-contract
+    title: Runtime Contract C-30
+    path: foundry/ipai-odoo-copilot-azure/runtime-contract.md
+    asset_type: contract
+    category: precursor
+    status: active
+    relevance_to_precursor: high
+    relevance_to_taxpulse: medium
+    foundry_related: true
+    benchmark_related: false
+    recommended_action: reuse
+    notes: Foundry project facts, publish lifecycle, auth chain, safety posture, SLA, telemetry
+
+  - id: copilot-context-envelope
+    title: Context Envelope Contract
+    path: foundry/ipai-odoo-copilot-azure/context-envelope-contract.md
+    asset_type: contract
+    category: precursor
+    status: active
+    relevance_to_precursor: high
+    relevance_to_taxpulse: high
+    foundry_related: true
+    benchmark_related: false
+    recommended_action: reuse
+    notes: Server-side RBAC injection, user identity, app_roles, retrieval_scope, permitted_tools
+
+  - id: copilot-retrieval-grounding
+    title: Retrieval Grounding Contract
+    path: foundry/ipai-odoo-copilot-azure/retrieval-grounding-contract.md
+    asset_type: contract
+    category: precursor
+    status: partial
+    relevance_to_precursor: high
+    relevance_to_taxpulse: high
+    foundry_related: true
+    benchmark_related: false
+    recommended_action: extend
+    notes: Azure AI Search integration spec. Blocked on index provisioning + KB ingestion.
+
+  - id: copilot-tool-definitions
+    title: Stage 1 Read-Only Tool Definitions
+    path: foundry/ipai-odoo-copilot-azure/tool-definitions.json
+    asset_type: schema
+    category: precursor
+    status: active
+    relevance_to_precursor: high
+    relevance_to_taxpulse: medium
+    foundry_related: true
+    benchmark_related: false
+    recommended_action: reuse
+    notes: "8 tools: read_record, search_records, search_docs, get_report, read_finance_close, view_campaign_perf, view_dashboard, search_strategy_docs"
+
+  - id: copilot-guardrails
+    title: Copilot Guardrails
+    path: foundry/ipai-odoo-copilot-azure/guardrails.md
+    asset_type: policy
+    category: precursor
+    status: active
+    relevance_to_precursor: high
+    relevance_to_taxpulse: medium
+    foundry_related: true
+    benchmark_related: false
+    recommended_action: reuse
+    notes: Safety constraints (what agent can/cannot do)
+
+  - id: copilot-manifest
+    title: Copilot Foundry Agent Manifest
+    path: foundry/agents/agents__runtime__odoo_copilot__v1.manifest.yaml
+    asset_type: manifest
+    category: precursor
+    status: active
+    relevance_to_precursor: high
+    relevance_to_taxpulse: medium
+    foundry_related: true
+    benchmark_related: true
+    recommended_action: reuse
+    notes: Primary user-facing Odoo CE 19 assistant. Benchmarked against Notion 3.0.
+
+  # ── TAXPULSE / FINANCE / BIR ──────────────────────────────────────
+
+  - id: finance-assistant-manifest
+    title: Finance Assistant Agent Manifest
+    path: foundry/agents/agents__runtime__odoo_finance_assistant__v1.manifest.yaml
+    asset_type: manifest
+    category: taxpulse
+    status: partial
+    relevance_to_precursor: medium
+    relevance_to_taxpulse: high
+    foundry_related: true
+    benchmark_related: false
+    recommended_action: extend
+    notes: Draft. Vendor search, journal entries, document intelligence, BIR compliance.
+
+  - id: close-assistant-manifest
+    title: Finance Close Assistant Agent Manifest
+    path: foundry/agents/agents__runtime__odoo_close_assistant__v1.manifest.yaml
+    asset_type: manifest
+    category: taxpulse
+    status: partial
+    relevance_to_precursor: medium
+    relevance_to_taxpulse: high
+    foundry_related: true
+    benchmark_related: false
+    recommended_action: extend
+    notes: Draft. Multi-step close workflow with approval and reconciliation.
+
+  - id: bir-filing-calendar
+    title: BIR Filing Calendar
+    path: knowledge-base/bir-compliance/bir-filing-calendar.md
+    asset_type: knowledge
+    category: taxpulse
+    status: active
+    relevance_to_precursor: low
+    relevance_to_taxpulse: high
+    foundry_related: false
+    benchmark_related: false
+    recommended_action: reuse
+    notes: Monthly/quarterly/annual BIR deadlines (1601-C, 2550M, 2307, Alphalist, RELIEF)
+
+  - id: bir-forms-reference
+    title: BIR Forms Reference
+    path: knowledge-base/bir-compliance/bir-forms-reference.md
+    asset_type: knowledge
+    category: taxpulse
+    status: active
+    relevance_to_precursor: low
+    relevance_to_taxpulse: high
+    foundry_related: false
+    benchmark_related: false
+    recommended_action: reuse
+    notes: BIR form catalog with field-by-field guides
+
+  - id: vat-compliance-guide
+    title: VAT Compliance Guide
+    path: knowledge-base/bir-compliance/vat-compliance-guide.md
+    asset_type: knowledge
+    category: taxpulse
+    status: active
+    relevance_to_precursor: low
+    relevance_to_taxpulse: high
+    foundry_related: false
+    benchmark_related: false
+    recommended_action: reuse
+    notes: VAT returns, input tax credit, exempt transactions, withholding on purchases
+
+  - id: withholding-tax-guide
+    title: Withholding Tax Guide
+    path: knowledge-base/bir-compliance/withholding-tax-guide.md
+    asset_type: knowledge
+    category: taxpulse
+    status: active
+    relevance_to_precursor: low
+    relevance_to_taxpulse: high
+    foundry_related: false
+    benchmark_related: false
+    recommended_action: reuse
+    notes: Withholding tax obligations (compensation, interest, dividends, benefits)
+
+  - id: ph-tax-taxonomy
+    title: Philippines Tax Taxonomy
+    path: library-pack/schemas/taxonomy/philippines_tax.yaml
+    asset_type: schema
+    category: taxpulse
+    status: active
+    relevance_to_precursor: low
+    relevance_to_taxpulse: high
+    foundry_related: false
+    benchmark_related: false
+    recommended_action: reuse
+    notes: PH-specific tax categories, BIR form codes, withholding tax rates, VAT treatment
+
+  - id: finance-close-specialist-prompt
+    title: Finance Close Specialist Prompt
+    path: library-pack/prompts/agents/finance_close_specialist.md
+    asset_type: prompt
+    category: taxpulse
+    status: active
+    relevance_to_precursor: medium
+    relevance_to_taxpulse: high
+    foundry_related: false
+    benchmark_related: false
+    recommended_action: extend
+    notes: Router target for month-end close, BIR, VAT, withholding. Not yet a Foundry agent.
+
+  - id: ph-close-tax-pack-prompt
+    title: PH Close Tax Pack Prompt
+    path: library/prompts/finance/ph-close-tax-pack.md
+    asset_type: prompt
+    category: taxpulse
+    status: active
+    relevance_to_precursor: low
+    relevance_to_taxpulse: high
+    foundry_related: false
+    benchmark_related: false
+    recommended_action: reuse
+    notes: Coding agent prompt for PH month-end close + tax compliance pack
+
+  - id: finance-tool-allowlist
+    title: Finance Tool Allowlist Policy
+    path: foundry/policies/agents__policy__finance_tool_allowlist__v1.policy.yaml
+    asset_type: policy
+    category: taxpulse
+    status: active
+    relevance_to_precursor: medium
+    relevance_to_taxpulse: high
+    foundry_related: true
+    benchmark_related: false
+    recommended_action: reuse
+    notes: Read tools auto-approved, write tools require confirmation
+
+  # ── TOOL REGISTRY / ROUTING ───────────────────────────────────────
+
+  - id: agent-registry
+    title: Agent Registry (SSOT)
+    path: registry/agents.yaml
+    asset_type: registry
+    category: routing
+    status: active
+    relevance_to_precursor: high
+    relevance_to_taxpulse: medium
+    foundry_related: false
+    benchmark_related: false
+    recommended_action: reuse
+    notes: Canonical agent definitions (odoo-sage, devops-prime, data-forge, ui-craft, supabase-ssot, automation-specialist)
+
+  - id: agent-router
+    title: Agent Router (Keyword Routing)
+    path: library-pack/router/agent_router.yaml
+    asset_type: config
+    category: routing
+    status: active
+    relevance_to_precursor: high
+    relevance_to_taxpulse: high
+    foundry_related: false
+    benchmark_related: false
+    recommended_action: reuse
+    notes: "Keyword→agent mapping (tax/bir/vat → finance_close_specialist)"
+
+  - id: routing-policy
+    title: Subagent Routing Policy
+    path: coordinator/policies/routing_policy.md
+    asset_type: policy
+    category: routing
+    status: active
+    relevance_to_precursor: medium
+    relevance_to_taxpulse: low
+    foundry_related: false
+    benchmark_related: false
+    recommended_action: reuse
+    notes: git-expert, devops-expert, repo-expert routing rules
+
+  - id: mcp-coordinator-routing
+    title: MCP Coordinator Routing Logic
+    path: mcp/coordinator/app/routing.py
+    asset_type: code
+    category: routing
+    status: partial
+    relevance_to_precursor: high
+    relevance_to_taxpulse: medium
+    foundry_related: false
+    benchmark_related: false
+    recommended_action: extend
+    notes: A2A context propagation, finance→prod routing. Needs wiring to live endpoints.
+
+  - id: doc-intelligence-tool
+    title: Document Intelligence Tool Manifest
+    path: foundry/tools/agents__tools__document_intelligence__v1.manifest.yaml
+    asset_type: manifest
+    category: routing
+    status: active
+    relevance_to_precursor: medium
+    relevance_to_taxpulse: high
+    foundry_related: true
+    benchmark_related: false
+    recommended_action: reuse
+    notes: "Azure Document Intelligence (docai-ipai-dev). Models: invoice, receipt, layout, read."
+
+  - id: odoo-actions-tool
+    title: Odoo Actions Tool Manifest
+    path: foundry/tools/agents__tools__odoo_actions__v1.manifest.yaml
+    asset_type: manifest
+    category: routing
+    status: active
+    relevance_to_precursor: high
+    relevance_to_taxpulse: high
+    foundry_related: true
+    benchmark_related: false
+    recommended_action: reuse
+    notes: "Odoo JSON-RPC actions. Read: search_partner, get_journal_entries. Write: create_vendor_bill, create_expense, update_move_state."
+
+  - id: tool-allowlist-policy
+    title: Tool Allowlist Policy
+    path: foundry/policies/agents__policy__tool_allowlist__v1.policy.yaml
+    asset_type: policy
+    category: routing
+    status: active
+    relevance_to_precursor: high
+    relevance_to_taxpulse: high
+    foundry_related: true
+    benchmark_related: false
+    recommended_action: reuse
+    notes: Tool trust levels, auth modes, approval requirements
+
+  - id: odoo-mcp-config
+    title: Odoo MCP Configuration
+    path: mcp/odoo-mcp/config.yaml
+    asset_type: config
+    category: routing
+    status: active
+    relevance_to_precursor: high
+    relevance_to_taxpulse: medium
+    foundry_related: false
+    benchmark_related: false
+    recommended_action: reuse
+    notes: Connection, permissions, allowed models (18 core models)
+
+  # ── FOUNDRY GOVERNANCE ────────────────────────────────────────────
+
+  - id: foundry-naming-convention
+    title: Artifact Naming Convention
+    path: foundry/policies/org__foundry__artifact_naming_convention__v1.policy.yaml
+    asset_type: policy
+    category: foundry
+    status: active
+    relevance_to_precursor: medium
+    relevance_to_taxpulse: low
+    foundry_related: true
+    benchmark_related: false
+    recommended_action: reuse
+    notes: domain__service__subject__version naming pattern
+
+  - id: foundry-model-selection
+    title: Model Selection Policy
+    path: foundry/policies/org__foundry__model_selection_policy__v1.policy.yaml
+    asset_type: policy
+    category: foundry
+    status: active
+    relevance_to_precursor: high
+    relevance_to_taxpulse: low
+    foundry_related: true
+    benchmark_related: false
+    recommended_action: reuse
+    notes: GA vs Preview model selection criteria
+
+  - id: foundry-runtime-strategy
+    title: Runtime Strategy Policy
+    path: foundry/policies/org__foundry__runtime_strategy__v1.policy.yaml
+    asset_type: policy
+    category: foundry
+    status: active
+    relevance_to_precursor: high
+    relevance_to_taxpulse: low
+    foundry_related: true
+    benchmark_related: false
+    recommended_action: reuse
+    notes: "Stage 1 Prototype → Stage 2 Preview → Stage 3 GA promotion gates"
+
+  - id: foundry-publish-rules
+    title: Agent Publish Rules
+    path: foundry/policies/agents__policy__agent_publish_rules__v1.policy.yaml
+    asset_type: policy
+    category: foundry
+    status: active
+    relevance_to_precursor: high
+    relevance_to_taxpulse: medium
+    foundry_related: true
+    benchmark_related: true
+    recommended_action: reuse
+    notes: Promotion gates and approval workflows
+
+  - id: foundry-model-routing
+    title: Model Routing Policy
+    path: foundry/policies/agents__policy__model_routing__v1.policy.yaml
+    asset_type: policy
+    category: foundry
+    status: active
+    relevance_to_precursor: high
+    relevance_to_taxpulse: low
+    foundry_related: true
+    benchmark_related: false
+    recommended_action: reuse
+    notes: gpt-4.1 default, fallback routing
+
+  - id: agentic-sdlc-constitution
+    title: Agentic SDLC Constitution
+    path: foundry/agentic-sdlc-constitution.md
+    asset_type: policy
+    category: foundry
+    status: active
+    relevance_to_precursor: high
+    relevance_to_taxpulse: medium
+    foundry_related: true
+    benchmark_related: false
+    recommended_action: reuse
+    notes: Data authority, tech stack constraints, agent behavior rules, cross-repo responsibility
+
+  - id: factory-schemas
+    title: Factory Schemas (Skill Pack, Project, Release Ladder)
+    path: foundry/factory/
+    asset_type: schema
+    category: foundry
+    status: active
+    relevance_to_precursor: medium
+    relevance_to_taxpulse: low
+    foundry_related: true
+    benchmark_related: false
+    recommended_action: reuse
+    notes: Validation schemas for skill packs, projects, release stages
+
+  # ── BENCHMARK / EVAL ──────────────────────────────────────────────
+
+  - id: eval-rubric
+    title: Copilot Evaluation Rubric
+    path: evals/odoo-copilot/rubric.md
+    asset_type: rubric
+    category: benchmark
+    status: active
+    relevance_to_precursor: high
+    relevance_to_taxpulse: medium
+    foundry_related: false
+    benchmark_related: true
+    recommended_action: reuse
+    notes: "Categories: Quality (relevance, task_adherence), Safety (hallucination, PII, policy), Grounding, Runtime, Actions"
+
+  - id: eval-thresholds
+    title: Release Gate Thresholds
+    path: evals/odoo-copilot/thresholds.yaml
+    asset_type: config
+    category: benchmark
+    status: active
+    relevance_to_precursor: high
+    relevance_to_taxpulse: medium
+    foundry_related: false
+    benchmark_related: true
+    recommended_action: reuse
+    notes: "Zero-tolerance: no PII leakage, no RBAC bypass, no critical policy violations"
+
+  - id: eval-dataset
+    title: Eval Dataset v2 (150 cases)
+    path: evals/odoo-copilot/datasets/eval-dataset-v2.json
+    asset_type: dataset
+    category: benchmark
+    status: active
+    relevance_to_precursor: high
+    relevance_to_taxpulse: medium
+    foundry_related: false
+    benchmark_related: true
+    recommended_action: reuse
+    notes: "150 cases: quality 40, safety 35, product 45, rbac 20, context 10"
+
+  - id: eval-results
+    title: Eval Results (ADVISORY_RELEASE_READY)
+    path: evals/odoo-copilot/results/eval-20260315-full-final.json
+    asset_type: evidence
+    category: benchmark
+    status: active
+    relevance_to_precursor: high
+    relevance_to_taxpulse: low
+    foundry_related: false
+    benchmark_related: true
+    recommended_action: reuse
+    notes: 30/30 pass, 100% pass rate. Archived reference.
+
+  - id: judge-foundry-eval
+    title: Foundry Eval Judge Persona
+    path: personas/foundry-eval-judge.md
+    asset_type: persona
+    category: benchmark
+    status: active
+    relevance_to_precursor: high
+    relevance_to_taxpulse: medium
+    foundry_related: true
+    benchmark_related: true
+    recommended_action: reuse
+    notes: Cross-plane validation (model, tool, runtime governance)
+
+  - id: judge-skill-eval
+    title: Skill Eval Judge Persona
+    path: personas/skill-eval-judge.md
+    asset_type: persona
+    category: benchmark
+    status: active
+    relevance_to_precursor: medium
+    relevance_to_taxpulse: low
+    foundry_related: false
+    benchmark_related: true
+    recommended_action: reuse
+    notes: Skill maturity assessment
+
+  - id: judge-odoo-delivery
+    title: Odoo Delivery Judge Persona
+    path: personas/odoo-delivery-judge.md
+    asset_type: persona
+    category: benchmark
+    status: active
+    relevance_to_precursor: medium
+    relevance_to_taxpulse: medium
+    foundry_related: false
+    benchmark_related: true
+    recommended_action: reuse
+    notes: Odoo module delivery readiness (code quality, tests, docs)
+
+  - id: benchmark-bir-eservices
+    title: BIR e-Services Benchmark
+    path: knowledge/benchmarks/bir-eservices-ebirforms.md
+    asset_type: knowledge
+    category: benchmark
+    status: active
+    relevance_to_precursor: low
+    relevance_to_taxpulse: high
+    foundry_related: false
+    benchmark_related: true
+    recommended_action: reuse
+    notes: Tax compliance baseline reference
+
+  # ── MEMORY / PERSONALIZATION ──────────────────────────────────────
+
+  - id: memory-mcp-server
+    title: Memory MCP Server
+    path: mcp/servers/memory-mcp-server/
+    asset_type: code
+    category: memory
+    status: partial
+    relevance_to_precursor: high
+    relevance_to_taxpulse: low
+    foundry_related: false
+    benchmark_related: false
+    recommended_action: extend
+    notes: Scaffolded TypeScript server. Session/conversation memory persistence not implemented.
+
+  - id: audit-trail-model
+    title: Audit Trail Model Spec
+    path: foundry/ipai-odoo-copilot-azure/runtime-contract.md
+    asset_type: spec
+    category: memory
+    status: partial
+    relevance_to_precursor: high
+    relevance_to_taxpulse: medium
+    foundry_related: true
+    benchmark_related: false
+    recommended_action: extend
+    notes: "ipai.copilot.audit model referenced in contract. Spec only — Odoo model not yet built."
+
+  # ── DEPRECATED ────────────────────────────────────────────────────
+
+  - id: digitalocean-mcp-server
+    title: DigitalOcean MCP Server
+    path: mcp/servers/digitalocean-mcp-server/
+    asset_type: code
+    category: deprecated
+    status: stale
+    relevance_to_precursor: low
+    relevance_to_taxpulse: low
+    foundry_related: false
+    benchmark_related: false
+    recommended_action: archive
+    notes: DigitalOcean deprecated per CLAUDE.md (2026-03-15)
+
+  - id: vercel-mcp-server
+    title: Vercel MCP Server
+    path: mcp/servers/vercel-mcp-server/
+    asset_type: code
+    category: deprecated
+    status: stale
+    relevance_to_precursor: low
+    relevance_to_taxpulse: low
+    foundry_related: false
+    benchmark_related: false
+    recommended_action: archive
+    notes: Vercel deprecated per CLAUDE.md (2026-03-11)
+
+  # ── CAPABILITY INVENTORY ──────────────────────────────────────────
+
+  - id: capability-inventory
+    title: Agent Capability Inventory
+    path: AGENT_CAPABILITY_INVENTORY.yaml
+    asset_type: registry
+    category: routing
+    status: active
+    relevance_to_precursor: medium
+    relevance_to_taxpulse: low
+    foundry_related: false
+    benchmark_related: false
+    recommended_action: reuse
+    notes: "142 capabilities: 14 production, 23 staging, 71 development"
+
+  - id: doc-review-agent-manifest
+    title: Document Review Agent Manifest
+    path: foundry/agents/agents__runtime__odoo_doc_review_agent__v1.manifest.yaml
+    asset_type: manifest
+    category: taxpulse
+    status: partial
+    relevance_to_precursor: medium
+    relevance_to_taxpulse: high
+    foundry_related: true
+    benchmark_related: false
+    recommended_action: extend
+    notes: Draft. Document review specialist (invoice, receipt, layout, read prebuilt models).

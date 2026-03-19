@@ -1,0 +1,241 @@
+# schema: ssot.integrations.v1
+# ---------------------------------------------------------------------------
+# Integration: github_features
+# Name:        GitHub Platform Features Posture
+# Vendor:      github
+# Category:    platform_posture
+# Version:     1.0.0
+# Reviewed:    2026-03-01
+#
+# Purpose:
+#   SSOT registry of GitHub platform features that the Insightpulseai
+#   organization uses or should adopt. Covers: code security signals
+#   (Dependabot, CodeQL, secret scanning, push protection), repository
+#   rulesets, CODEOWNERS, GitHub Actions permissions, required reviews,
+#   and deployment environments.
+#
+#   This SSOT feeds the Ops Advisor "GitHub Features" scan
+#   (github_features pillar checks). Scan adapters read this file to
+#   know which features are expected active per scope.
+#
+# Advisor rulepacks that reference this file:
+#   ssot/advisor/rulepacks/github_governance.yaml
+#
+# Workbooks produced by this SSOT:
+#   ssot/advisor/workbooks/github_rulesets_baseline.yaml
+#   ssot/advisor/workbooks/github_security_baseline.yaml
+#
+# Scan adapter:
+#   type:  github_rest_api
+#   auth:  GITHUB_TOKEN (org-level read permissions)
+#   planned_route: apps/ops-console/app/api/advisor/scans/github/route.ts
+#   planned_pr:    separate PR (TypeScript implementation)
+#
+# Boundary doctrine: docs/architecture/SSOT_BOUNDARIES.md
+# Architecture doc:  docs/architecture/GITHUB_FEATURES_ADVISOR.md (planned)
+# ---------------------------------------------------------------------------
+
+version: "1.0.0"
+schema: ssot.integrations.v1
+id: github_features
+name: "GitHub Platform Features Posture"
+vendor: github
+category: platform_posture
+status: active
+last_reviewed: "2026-03-01"
+
+provider:
+  platform: github
+  org: Insightpulseai
+  primary_repo: "Insightpulseai/odoo"
+  api_base: "https://api.github.com"
+  auth_env_var: GITHUB_TOKEN
+
+description: >
+  SSOT registry of GitHub platform features that the Insightpulseai
+  organization uses or should adopt. Covers: code security signals
+  (Dependabot, CodeQL, secret scanning, push protection), repository
+  rulesets, CODEOWNERS, GitHub Actions permissions, required reviews,
+  and deployment environments.
+
+  This SSOT feeds the Ops Advisor "GitHub Features" scan
+  (github_features pillar checks). Scan adapters read this file to
+  know which features are expected active.
+
+features:
+
+  security_signals:
+
+    - id: dependabot_alerts
+      name: "Dependabot vulnerability alerts"
+      url: "https://docs.github.com/code-security/dependabot/dependabot-alerts/about-dependabot-alerts"
+      expected_state: enabled
+      scope: organization
+      advisor_rule: github_security_dependabot
+      check_api: "GET /orgs/{org}/repos → repos[].security_and_analysis.dependabot_alerts.status"
+      evidence_fields:
+        - repo
+        - dependabot_alerts_enabled
+
+    - id: dependabot_security_updates
+      name: "Dependabot security updates (auto PRs)"
+      url: "https://docs.github.com/code-security/dependabot/dependabot-security-updates"
+      expected_state: enabled
+      scope: organization
+      advisor_rule: github_security_dependabot
+      check_api: "GET /repos/{owner}/{repo}/automated-security-fixes"
+      evidence_fields:
+        - repo
+        - automated_security_fixes_enabled
+
+    - id: secret_scanning
+      name: "GitHub secret scanning"
+      url: "https://docs.github.com/code-security/secret-scanning/about-secret-scanning"
+      expected_state: enabled
+      scope: organization
+      advisor_rule: github_security_secret_scanning
+      check_api: "GET /repos/{owner}/{repo}/security-and-analysis"
+      evidence_fields:
+        - repo
+        - secret_scanning_enabled
+
+    - id: push_protection
+      name: "Push protection (block secrets at push time)"
+      url: "https://docs.github.com/code-security/secret-scanning/protecting-pushes-with-secret-scanning"
+      expected_state: enabled
+      scope: organization
+      advisor_rule: github_security_push_protection
+      check_api: "GET /repos/{owner}/{repo}/security-and-analysis"
+      evidence_fields:
+        - repo
+        - push_protection_enabled
+
+    - id: code_scanning_codeql
+      name: "CodeQL code scanning"
+      url: "https://docs.github.com/code-security/code-scanning/automatically-scanning-your-code-for-vulnerabilities-and-errors"
+      expected_state: enabled
+      scope: default_branch
+      advisor_rule: github_security_codeql
+      check_api: "GET /repos/{owner}/{repo}/code-scanning/alerts"
+      # CodeQL is verified via presence of .github/workflows/codeql.yml
+      workflow_file: ".github/workflows/codeql.yml"
+      evidence_fields:
+        - repo
+        - codeql_workflow_present
+        - last_analysis_date
+
+  governance_signals:
+
+    - id: org_rulesets
+      name: "Organization-level rulesets"
+      url: "https://docs.github.com/repositories/configuring-branches-and-merges-in-your-repository/managing-rulesets"
+      expected_state: active
+      min_rulesets: 1
+      scope: organization
+      advisor_rule: github_rulesets_default_branch
+      check_api: "GET /orgs/{org}/rulesets"
+      evidence_fields:
+        - rulesets_count
+        - active_rulesets
+
+    - id: codeowners
+      name: "CODEOWNERS file in default repos"
+      url: "https://docs.github.com/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners"
+      expected_state: present
+      scope: critical_repos
+      critical_repos:
+        - "Insightpulseai/odoo"
+      required_paths_covered:
+        - "ssot/"
+        - "supabase/migrations/"
+        - ".github/workflows/"
+        - "infra/"
+      advisor_rule: github_rulesets_codeowners
+      check_api: "GET /repos/{owner}/{repo}/contents/CODEOWNERS"
+      evidence_fields:
+        - codeowners_exists
+        - covered_paths
+        - missing_paths
+
+    - id: required_reviews
+      name: "Required PR reviews (min 1 approval)"
+      expected_state: enabled
+      scope: default_branch
+      min_approvals: 1
+      advisor_rule: github_rulesets_required_reviews
+      check_api: "GET /orgs/{org}/rulesets → rulesets[].rules[type=pull_request]"
+      evidence_fields:
+        - repo
+        - min_approvals_required
+        - dismiss_stale_reviews
+
+    - id: stale_review_dismissal
+      name: "Dismiss stale PR reviews on new commits"
+      expected_state: enabled
+      scope: default_branch
+      advisor_rule: github_rulesets_required_reviews
+      check_api: "GET /orgs/{org}/rulesets → rulesets[].rules[type=pull_request].parameters.dismiss_stale_reviews_on_push"
+      evidence_fields:
+        - repo
+        - dismiss_stale_reviews_on_push
+
+  ci_signals:
+
+    - id: required_status_checks
+      name: "Required status checks before merge"
+      expected_state: enabled
+      min_checks: 1
+      scope: production_repos
+      production_repo_detection: "presence of .github/workflows/*deploy*.yml OR vercel.json"
+      advisor_rule: github_rulesets_required_status
+      check_api: "GET /repos/{owner}/{repo}/branches/{branch}/protection → required_status_checks"
+      evidence_fields:
+        - repo
+        - has_deploy_workflow
+        - status_checks_required
+        - required_check_names
+
+    - id: actions_permissions
+      name: "Actions allowed only from org or verified creators"
+      url: "https://docs.github.com/organizations/managing-organization-settings/disabling-or-limiting-github-actions-for-your-organization"
+      expected_state: restricted
+      allowed_actions_policy: "selected"   # GitHub: local_only | all | selected
+      scope: organization
+      advisor_rule: github_rulesets_actions_permissions
+      check_api: "GET /orgs/{org}/actions/permissions"
+      evidence_fields:
+        - enabled_repositories
+        - allowed_actions
+        - github_owned_allowed
+        - verified_allowed
+
+  deployment_signals:
+
+    - id: deployment_environments
+      name: "GitHub Environments with protection rules"
+      url: "https://docs.github.com/actions/deployment/targeting-different-environments/using-environments-for-deployment"
+      expected_state: configured
+      scope: production_repos
+      required_environments:
+        - name: production
+          repos: ["Insightpulseai/odoo"]
+          protection_required: true
+        - name: supabase-prod
+          repos: ["Insightpulseai/odoo"]
+          protection_required: true
+      advisor_rule: github_rulesets_deployment_envs
+      check_api: "GET /repos/{owner}/{repo}/environments"
+      evidence_fields:
+        - repo
+        - environments_configured
+        - environments_with_protection
+
+scan_adapter:
+  type: github_rest_api
+  auth: GITHUB_TOKEN
+  auth_scope: "org-level read (repo, security_events, administration)"
+  scan_doc: "docs/architecture/GITHUB_FEATURES_ADVISOR.md"
+  planned_route: "apps/ops-console/app/api/advisor/scans/github/route.ts"
+  planned_pr: "separate PR (TypeScript implementation)"
+  # Scan results are written to ops.platform_events (append-only)
+  # via the standard advisor scan pipeline in the Ops Console API

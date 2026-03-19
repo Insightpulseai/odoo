@@ -1,0 +1,631 @@
+{
+  "version": "1.6",
+  "updated": "2026-03-15",
+  "description": "Machine-readable skill index. Agents query this first, then lazy-load full skill MD. Sync to ops.skills in Supabase for control plane discovery.",
+  "skills": [
+    {
+      "id": "agentic-sdlc-msft-pattern",
+      "name": "Agentic SDLC — Microsoft Pattern",
+      "domain": "sdlc",
+      "path": "skills/sdlc/agentic-sdlc-msft-pattern/SKILL.md",
+      "tags": ["sdlc", "spec-kit", "coding-agent", "sre", "ci-cd", "multi-agent"],
+      "source_url": "https://techcommunity.microsoft.com/blog/appsonazureblog/an-ai-led-sdlc-building-an-end-to-end-agentic-software-development-lifecycle-wit/4491896",
+      "applies_to": ["agents", ".github", "infra", "automations"],
+      "last_validated": "2026-03-15"
+    },
+    {
+      "id": "spec-driven-development",
+      "name": "Spec-Driven Development",
+      "domain": "sdlc",
+      "path": "skills/sdlc/spec-driven-development/SKILL.md",
+      "tags": ["spec-kit", "requirements", "constitution", "task-decomposition"],
+      "applies_to": ["agents", "odoo"],
+      "last_validated": "2026-03-15"
+    },
+    {
+      "id": "sre-feedback-loop",
+      "name": "SRE Feedback Loop",
+      "domain": "sdlc",
+      "path": "skills/sdlc/sre-feedback-loop/SKILL.md",
+      "tags": ["sre", "observability", "incident-response", "sub-agents", "day-2-ops"],
+      "applies_to": ["agents", "automations", "infra"],
+      "last_validated": "2026-03-15"
+    },
+    {
+      "id": "azure-well-architected",
+      "name": "Azure Well-Architected",
+      "domain": "infrastructure",
+      "path": "skills/azure-well-architected/SKILL.md",
+      "tags": ["azure", "well-architected", "cost", "security", "reliability"],
+      "applies_to": ["infra"],
+      "last_validated": "2026-03-15"
+    },
+    {
+      "id": "deploy-odoo-modules-git",
+      "name": "Deploy Odoo Modules via Git",
+      "domain": "odoo_ce",
+      "path": "skills/deploy-odoo-modules-git/SKILL.md",
+      "tags": ["odoo", "deploy", "git", "modules"],
+      "applies_to": ["odoo"],
+      "last_validated": "2026-03-15"
+    },
+    {
+      "id": "oca-development-standards",
+      "name": "OCA Development Standards",
+      "domain": "odoo_ce",
+      "path": "skills/oca-development-standards/SKILL.md",
+      "tags": ["oca", "standards", "coding", "odoo"],
+      "applies_to": ["odoo", "agents"],
+      "last_validated": "2026-03-15"
+    },
+    {
+      "id": "odoo-ci-optimization",
+      "name": "Odoo CI Optimization",
+      "domain": "odoo_ce",
+      "path": "skills/odoo-ci-optimization/SKILL.md",
+      "tags": ["ci", "optimization", "odoo", "testing"],
+      "applies_to": ["odoo", ".github"],
+      "last_validated": "2026-03-15"
+    },
+    {
+      "id": "expense-processing",
+      "name": "Expense Processing",
+      "domain": "finance_ops",
+      "path": "skills/expense-processing/SKILL.md",
+      "tags": ["expense", "finance", "ocr", "odoo"],
+      "applies_to": ["odoo"],
+      "last_validated": "2026-03-15"
+    },
+    {
+      "id": "finance-month-end",
+      "name": "Finance Month-End Close",
+      "domain": "finance_ops",
+      "path": "skills/finance-month-end/SKILL.md",
+      "tags": ["finance", "closing", "month-end", "reconciliation"],
+      "applies_to": ["odoo", "automations"],
+      "last_validated": "2026-03-15"
+    },
+    {
+      "id": "bir-tax-filing",
+      "name": "BIR Tax Filing",
+      "domain": "finance_ops",
+      "path": "skills/bir-tax-filing/SKILL.md",
+      "tags": ["bir", "tax", "philippines", "compliance"],
+      "applies_to": ["odoo"],
+      "last_validated": "2026-03-15"
+    },
+    {
+      "id": "backup-odoo-environment",
+      "name": "Backup Odoo Environment",
+      "domain": "deployment",
+      "path": "skills/backup-odoo-environment/SKILL.md",
+      "tags": ["backup", "odoo", "disaster-recovery"],
+      "applies_to": ["infra", "odoo"],
+      "last_validated": "2026-03-15"
+    },
+    {
+      "id": "restore-odoo-environment",
+      "name": "Restore Odoo Environment",
+      "domain": "deployment",
+      "path": "skills/restore-odoo-environment/SKILL.md",
+      "tags": ["restore", "odoo", "disaster-recovery"],
+      "applies_to": ["infra", "odoo"],
+      "last_validated": "2026-03-15"
+    },
+    {
+      "id": "promote-staging-to-prod",
+      "name": "Promote Staging to Production",
+      "domain": "deployment",
+      "path": "skills/promote-staging-to-prod/SKILL.md",
+      "tags": ["deploy", "staging", "production", "promotion"],
+      "applies_to": ["infra", "odoo"],
+      "last_validated": "2026-03-15"
+    },
+    {
+      "id": "deep-research",
+      "name": "Deep Research",
+      "domain": "orchestration",
+      "path": "skills/deep-research/SKILL.md",
+      "tags": ["research", "analysis", "knowledge"],
+      "applies_to": ["agents"],
+      "last_validated": "2026-03-15"
+    },
+    {
+      "id": "github-well-architected",
+      "name": "GitHub Well-Architected",
+      "domain": "orchestration",
+      "path": "skills/github-well-architected/SKILL.md",
+      "tags": ["github", "best-practices", "repo-management"],
+      "applies_to": [".github", "agents"],
+      "last_validated": "2026-03-15"
+    },
+    {
+      "id": "landing-ai-ade",
+      "name": "LandingAI Agentic Document Extraction (ADE)",
+      "domain": "inference",
+      "path": "skills/inference/landing-ai-ade/SKILL.md",
+      "tags": ["ocr", "document-extraction", "agentic", "invoice", "receipt", "schema-extraction", "mcp"],
+      "source_url": "https://github.com/landing-ai/ade-python",
+      "applies_to": ["agents", "odoo", "automations"],
+      "secrets_required": ["VISION_AGENT_API_KEY"],
+      "last_validated": "2026-03-15"
+    },
+    {
+      "id": "fal-ai-platform",
+      "name": "fal.ai — Generative Media Inference",
+      "domain": "inference",
+      "path": "skills/inference/fal-ai-platform/SKILL.md",
+      "tags": ["inference", "gpu", "generative-media", "fal", "streaming"],
+      "source_url": "https://fal.ai/docs",
+      "applies_to": ["agents", "ops-platform", "lakehouse"],
+      "secrets_required": ["FAL_KEY"],
+      "last_validated": "2026-03-15"
+    },
+    {
+      "id": "azure-pipelines",
+      "name": "Azure Pipelines — CI/CD Reference",
+      "domain": "ci_cd",
+      "path": "skills/ci-cd/azure-pipelines/SKILL.md",
+      "tags": ["ci-cd", "azure-devops", "pipelines", "deterministic"],
+      "source_url": "https://learn.microsoft.com/en-us/azure/devops/pipelines/",
+      "applies_to": [".github", "infra", "automations"],
+      "last_validated": "2026-03-15"
+    },
+    {
+      "id": "databricks-platform",
+      "name": "Databricks Data Intelligence Platform",
+      "domain": "lakehouse",
+      "path": "skills/platform/databricks-platform/SKILL.md",
+      "tags": ["databricks", "lakehouse", "unity-catalog", "medallion", "federation"],
+      "source_url": "https://www.databricks.com/product",
+      "applies_to": ["lakehouse", "agents", "ops-platform"],
+      "last_validated": "2026-03-15"
+    },
+    {
+      "id": "databricks-apps-lakebase",
+      "name": "Databricks Apps + Lakebase — Full-Stack AI Applications",
+      "domain": "lakehouse",
+      "path": "skills/platform/databricks-apps-lakebase/SKILL.md",
+      "tags": ["databricks-apps", "lakebase", "neon", "postgres", "synced-tables", "reverse-etl", "dabs", "ai-agents", "conversational-memory"],
+      "source_url": "https://www.databricks.com/resources/ebook/hands-on-guide-apps-databricks",
+      "applies_to": ["lakehouse", "agents", "web"],
+      "last_validated": "2026-03-15"
+    },
+    {
+      "id": "databricks-sql-warehousing",
+      "name": "Databricks SQL & Data Warehousing",
+      "domain": "lakehouse",
+      "path": "skills/platform/databricks-sql-warehousing/SKILL.md",
+      "tags": ["databricks", "sql", "warehousing", "dashboards", "metrics", "alerts", "delta-lake"],
+      "source_url": "https://learn.microsoft.com/en-us/azure/databricks/sql/",
+      "applies_to": ["lakehouse", "agents"],
+      "last_validated": "2026-03-15"
+    },
+    {
+      "id": "databricks-lakeflow",
+      "name": "Databricks Lakeflow — Data Engineering",
+      "domain": "lakehouse",
+      "path": "skills/platform/databricks-lakeflow/SKILL.md",
+      "tags": ["databricks", "lakeflow", "dlt", "sdp", "streaming", "etl", "connect", "jobs", "spark"],
+      "source_url": "https://learn.microsoft.com/en-us/azure/databricks/data-engineering/",
+      "applies_to": ["lakehouse", "automations"],
+      "last_validated": "2026-03-15"
+    },
+    {
+      "id": "databricks-data-engineering",
+      "name": "Databricks Data Engineering",
+      "domain": "lakehouse",
+      "path": "skills/platform/databricks-data-engineering/SKILL.md",
+      "tags": ["dlt", "medallion", "lakeflow", "federation", "streaming"],
+      "source_url": "https://www.databricks.com/product/data-engineering",
+      "applies_to": ["lakehouse", "automations"],
+      "last_validated": "2026-03-15"
+    },
+    {
+      "id": "databricks-cli-bundles",
+      "name": "Databricks CLI & Asset Bundles",
+      "domain": "lakehouse",
+      "path": "skills/platform/databricks-cli-bundles/SKILL.md",
+      "tags": ["databricks", "cli", "dab", "bundle", "deploy", "cicd", "azure"],
+      "source_url": "https://docs.databricks.com/aws/en/dev-tools/cli/tutorial",
+      "applies_to": ["lakehouse", "automations", "ops-platform"],
+      "last_validated": "2026-03-16"
+    },
+    {
+      "id": "enterprise-benchmark-doctrine",
+      "name": "Enterprise Benchmark Doctrine",
+      "domain": "ops-platform",
+      "path": "skills/platform/enterprise-benchmark-doctrine/SKILL.md",
+      "tags": ["benchmark", "well-architected", "agent-framework", "sdlc", "data-products", "ontology", "governance", "delta-sharing"],
+      "source_urls": [
+        "https://techcommunity.microsoft.com/blog/appsonazureblog/an-ai-led-sdlc-building-an-end-to-end-agentic-software-development-lifecycle-wit/4491896",
+        "https://learn.microsoft.com/en-us/azure/well-architected/service-guides/azure-databricks",
+        "https://github.com/microsoft/agent-framework",
+        "https://github.com/microsoft/agents",
+        "https://docs.databricks.com/aws/en/delta-sharing/sap-bdc/",
+        "https://www.palantir.com/docs/foundry/api/v2/general/overview/introduction/"
+      ],
+      "applies_to": ["agents", "lakehouse", "ops-platform", "automations"],
+      "last_validated": "2026-03-16"
+    },
+    {
+      "id": "bir-eservices",
+      "name": "BIR eServices — Philippine Tax Electronic Systems",
+      "domain": "finance_ops",
+      "path": "skills/odoo/bir-eservices/SKILL.md",
+      "tags": ["bir", "eservices", "efps", "ebirforms", "ereg", "philippines", "tax-filing"],
+      "source_url": "https://www.bir.gov.ph/eServices",
+      "applies_to": ["odoo", "agents", "automations"],
+      "last_validated": "2026-03-15"
+    },
+    {
+      "id": "taxpulse-ph-pack",
+      "name": "TaxPulse-PH-Pack — Philippine BIR Tax Compliance",
+      "domain": "finance_ops",
+      "path": "skills/odoo/taxpulse-ph-pack/SKILL.md",
+      "tags": ["bir", "tax", "philippines", "compliance", "withholding", "vat", "income-tax", "supabase", "ai-review"],
+      "source_url": "https://github.com/jgtolentino/TaxPulse-PH-Pack",
+      "applies_to": ["odoo", "agents", "ops-platform"],
+      "last_validated": "2026-03-15"
+    },
+    {
+      "id": "sap-concur-parity",
+      "name": "SAP Concur Parity — Odoo CE Replacement Map",
+      "domain": "finance_ops",
+      "path": "skills/industries/sap-concur-parity/SKILL.md",
+      "tags": ["concur", "expense", "travel", "invoice", "parity", "replacement", "ee-surpass"],
+      "source_url": "https://www.concur.com/products/travel-expense",
+      "applies_to": ["odoo", "agents", "automations"],
+      "last_validated": "2026-03-15"
+    },
+    {
+      "id": "databricks-financial-services",
+      "name": "Databricks — Financial Services",
+      "domain": "finance_ops",
+      "path": "skills/industries/financial-services/SKILL.md",
+      "tags": ["finance", "bir", "compliance", "reporting", "medallion"],
+      "source_url": "https://www.databricks.com/solutions/industries/financial-services",
+      "applies_to": ["lakehouse", "agents"],
+      "last_validated": "2026-03-15"
+    },
+    {
+      "id": "databricks-marketing-retail-media",
+      "name": "Databricks — Marketing, Retail, Media",
+      "domain": "lakehouse",
+      "path": "skills/industries/marketing-retail-media/SKILL.md",
+      "tags": ["marketing", "retail", "cdp", "audience", "project-scout"],
+      "source_url": "https://www.databricks.com/solutions/industries",
+      "applies_to": ["lakehouse", "agents"],
+      "last_validated": "2026-03-15"
+    },
+    {
+      "id": "azure-marketplace-productization",
+      "name": "Azure Marketplace Offer Productization",
+      "domain": "gtm",
+      "path": "skills/gtm/azure-marketplace-productization/SKILL.md",
+      "tags": ["marketplace", "saas", "macc", "co-sell", "pricing", "metering", "private-offers"],
+      "source_url": "https://learn.microsoft.com/partner-center/marketplace-offers",
+      "applies_to": ["web", "ops-platform", "infra", ".github"],
+      "last_validated": "2026-03-15"
+    },
+    {
+      "id": "odoo-services-ee-parity",
+      "name": "Odoo 19 Services — EE Parity",
+      "domain": "odoo_ce",
+      "path": "skills/odoo-services-ee-parity/SKILL.md",
+      "tags": ["odoo", "ee-parity", "helpdesk", "planning", "timesheets", "field-service", "project"],
+      "source_url": "https://www.odoo.com/documentation/19.0/applications/services.html",
+      "applies_to": ["odoo", "lakehouse", "agents"],
+      "last_validated": "2026-03-15"
+    },
+    {
+      "id": "azure-foundry",
+      "name": "Microsoft Foundry (Azure AI Foundry)",
+      "domain": "platform",
+      "path": "skills/platform/azure-foundry/SKILL.md",
+      "tags": ["foundry", "azure", "agents", "mcp", "a2a", "tool-catalog", "workflows", "responses-api"],
+      "source_url": "https://learn.microsoft.com/en-us/azure/foundry/what-is-foundry",
+      "applies_to": ["agents", "infra", "automations"],
+      "last_validated": "2026-03-15"
+    },
+    {
+      "id": "databricks-tableau-connect",
+      "name": "Databricks + Tableau BI Connection",
+      "domain": "lakehouse",
+      "path": "skills/platform/databricks-tableau-connect/SKILL.md",
+      "tags": ["tableau", "databricks", "bi", "partner-connect", "unity-catalog", "odbc"],
+      "source_url": "https://learn.microsoft.com/en-us/azure/databricks/partners/bi/tableau",
+      "applies_to": ["lakehouse", "agents"],
+      "last_validated": "2026-03-15"
+    },
+    {
+      "id": "agent-orchestration-taskbus",
+      "name": "Agent-to-Agent Orchestration & Task Bus",
+      "domain": "orchestration",
+      "path": "skills/agent-orchestration-taskbus/SKILL.md",
+      "tags": ["orchestration", "taskbus", "mcp-jobs", "a2a", "pulser", "realtime", "multi-agent"],
+      "applies_to": ["agents", "automations", "odoo", "web"],
+      "last_validated": "2026-03-15"
+    },
+    {
+      "id": "azure-foundry-agent-service",
+      "name": "Azure Foundry Agent Service",
+      "domain": "azure_foundry",
+      "path": "skills/azure-foundry/agent-service/SKILL.md",
+      "tags": ["azure", "foundry", "agent-service", "managed-platform", "multi-agent"],
+      "source_url": "https://learn.microsoft.com/en-us/azure/foundry/agents/overview",
+      "applies_to": ["agents", "infra", "foundry"],
+      "last_validated": "2026-03-15"
+    },
+    {
+      "id": "azure-foundry-tool-catalog",
+      "name": "Azure Foundry Tool Catalog",
+      "domain": "azure_foundry",
+      "path": "skills/azure-foundry/tool-catalog/SKILL.md",
+      "tags": ["tools", "mcp", "openapi", "function-calling", "code-interpreter", "web-search"],
+      "source_url": "https://learn.microsoft.com/en-us/azure/foundry/agents/concepts/tool-catalog",
+      "applies_to": ["agents", "foundry"],
+      "last_validated": "2026-03-15"
+    },
+    {
+      "id": "azure-foundry-agent-evaluators",
+      "name": "Azure Foundry Agent Evaluators",
+      "domain": "azure_foundry",
+      "path": "skills/azure-foundry/agent-evaluators/SKILL.md",
+      "tags": ["evaluation", "quality", "safety", "task-adherence", "tool-accuracy"],
+      "source_url": "https://learn.microsoft.com/en-us/azure/foundry/concepts/evaluation-evaluators/agent-evaluators",
+      "applies_to": ["agents", "evals"],
+      "last_validated": "2026-03-15"
+    },
+    {
+      "id": "azure-foundry-observability",
+      "name": "Azure Foundry Agent Observability",
+      "domain": "azure_foundry",
+      "path": "skills/azure-foundry/observability/SKILL.md",
+      "tags": ["tracing", "opentelemetry", "application-insights", "observability", "spans"],
+      "source_url": "https://learn.microsoft.com/en-us/azure/foundry/observability/concepts/trace-agent-concept",
+      "applies_to": ["agents", "infra"],
+      "last_validated": "2026-03-15"
+    },
+    {
+      "id": "azure-foundry-agent-identity",
+      "name": "Azure Foundry Agent Identity",
+      "domain": "azure_foundry",
+      "path": "skills/azure-foundry/agent-identity/SKILL.md",
+      "tags": ["identity", "entra", "rbac", "authentication", "managed-identity"],
+      "source_url": "https://learn.microsoft.com/en-us/azure/foundry/agents/concepts/agent-identity",
+      "applies_to": ["agents", "infra"],
+      "last_validated": "2026-03-15"
+    },
+    {
+      "id": "azure-foundry-iq",
+      "name": "Foundry IQ — Knowledge Grounding",
+      "domain": "azure_foundry",
+      "path": "skills/azure-foundry/foundry-iq/SKILL.md",
+      "tags": ["knowledge", "rag", "grounding", "search", "permissions", "agentic-retrieval"],
+      "source_url": "https://learn.microsoft.com/en-us/azure/foundry/agents/concepts/what-is-foundry-iq",
+      "applies_to": ["agents", "foundry"],
+      "last_validated": "2026-03-15"
+    },
+    {
+      "id": "azure-foundry-models",
+      "name": "Azure Foundry Models",
+      "domain": "azure_foundry",
+      "path": "skills/azure-foundry/foundry-models/SKILL.md",
+      "tags": ["models", "llm", "claude", "gpt", "llama", "phi", "mistral"],
+      "source_url": "https://learn.microsoft.com/en-us/azure/foundry/foundry-models/concepts/models-from-partners",
+      "applies_to": ["agents", "foundry"],
+      "last_validated": "2026-03-15"
+    },
+    {
+      "id": "azure-foundry-control-plane",
+      "name": "Azure Foundry Control Plane",
+      "domain": "azure_foundry",
+      "path": "skills/azure-foundry/control-plane/SKILL.md",
+      "tags": ["fleet-management", "governance", "compliance", "monitoring", "cost"],
+      "source_url": "https://learn.microsoft.com/en-us/azure/foundry/control-plane/overview",
+      "applies_to": ["agents", "infra"],
+      "last_validated": "2026-03-15"
+    },
+    {
+      "id": "azure-foundry-hosted-agents",
+      "name": "Azure Foundry Hosted Agents",
+      "domain": "azure_foundry",
+      "path": "skills/azure-foundry/hosted-agents/SKILL.md",
+      "tags": ["hosted-agents", "containers", "deployment", "scaling", "frameworks"],
+      "source_url": "https://learn.microsoft.com/en-us/azure/foundry/agents/concepts/hosted-agents",
+      "applies_to": ["agents", "infra", "foundry"],
+      "last_validated": "2026-03-15"
+    },
+    {
+      "id": "azure-foundry-workflow-agents",
+      "name": "Azure Foundry Workflow Agents",
+      "domain": "azure_foundry",
+      "path": "skills/azure-foundry/workflow-agents/SKILL.md",
+      "tags": ["workflows", "orchestration", "multi-agent", "visual-builder", "power-fx"],
+      "source_url": "https://learn.microsoft.com/en-us/azure/foundry/agents/concepts/workflow",
+      "applies_to": ["agents", "automations"],
+      "last_validated": "2026-03-15"
+    },
+    {
+      "id": "azure-foundry-sdk-quickstart",
+      "name": "Azure Foundry SDK Quickstart",
+      "domain": "azure_foundry",
+      "path": "skills/azure-foundry/sdk-quickstart/SKILL.md",
+      "tags": ["sdk", "python", "cli", "quickstart", "project-setup", "agent-creation"],
+      "source_url": "https://learn.microsoft.com/en-us/azure/foundry/quickstarts/get-started-code",
+      "applies_to": ["agents", "foundry", "infra"],
+      "last_validated": "2026-03-15"
+    },
+    {
+      "id": "azure-foundry-cloud-evaluation",
+      "name": "Azure Foundry Cloud Evaluation",
+      "domain": "azure_foundry",
+      "path": "skills/azure-foundry/cloud-evaluation/SKILL.md",
+      "tags": ["evaluation", "cloud-eval", "ci-cd", "automated-testing"],
+      "source_url": "https://learn.microsoft.com/en-us/azure/foundry/how-to/develop/cloud-evaluation",
+      "applies_to": ["agents", "evals"],
+      "last_validated": "2026-03-15"
+    },
+    {
+      "id": "azure-foundry-enterprise-agent-tutorial",
+      "name": "Enterprise Agent Pattern (SharePoint + MCP)",
+      "domain": "azure_foundry",
+      "path": "skills/azure-foundry/enterprise-agent-tutorial/SKILL.md",
+      "tags": ["enterprise", "sharepoint", "mcp", "knowledge-grounding", "tutorial"],
+      "source_url": "https://learn.microsoft.com/en-us/azure/foundry/tutorials/idea-to-prototype",
+      "applies_to": ["agents", "foundry"],
+      "last_validated": "2026-03-15"
+    },
+    {
+      "id": "azure-ai-app-templates",
+      "name": "Azure AI App Templates",
+      "domain": "azure_foundry",
+      "path": "skills/azure-foundry/ai-app-templates/SKILL.md",
+      "tags": ["templates", "rag", "chat", "multi-agent", "aca", "azd", "reference-architecture"],
+      "source_url": "https://learn.microsoft.com/en-us/azure/developer/ai/intelligent-app-templates",
+      "applies_to": ["agents", "infra", "web"],
+      "last_validated": "2026-03-15"
+    },
+    {
+      "id": "vscode-devcontainers",
+      "name": "VS Code Dev Containers",
+      "domain": "devops",
+      "path": "skills/devops/vscode-devcontainers/SKILL.md",
+      "tags": ["devcontainer", "docker", "vscode", "docker-compose", "development-environment"],
+      "source_url": "https://code.visualstudio.com/docs/devcontainers/create-dev-container",
+      "applies_to": ["odoo", "infra", "agents"],
+      "last_validated": "2026-03-15"
+    },
+    {
+      "id": "github-integrations",
+      "name": "GitHub Integrations — Apps, Actions, Webhooks",
+      "domain": "integration",
+      "path": "skills/integration/github-integrations/SKILL.md",
+      "tags": ["github", "github-apps", "actions", "webhooks", "oauth", "integrations"],
+      "source_url": "https://docs.github.com/en/integrations/concepts/about-building-integrations",
+      "applies_to": [".github", "agents", "automations"],
+      "last_validated": "2026-03-15"
+    },
+    {
+      "id": "n8n-odoo-supabase-etl",
+      "name": "Self-Hosted n8n → Supabase ETL → Iceberg → Odoo",
+      "domain": "integration",
+      "path": "skills/integration/n8n-odoo-supabase-etl/SKILL.md",
+      "tags": ["n8n", "odoo", "supabase", "etl", "iceberg", "parquet", "medallion", "adls", "reverse-etl"],
+      "source_url": "https://n8n.io/integrations/odoo/",
+      "applies_to": ["automations", "odoo", "lakehouse", "ops-platform"],
+      "last_validated": "2026-03-15"
+    },
+    {
+      "id": "azure-document-intelligence",
+      "name": "Azure Document Intelligence",
+      "domain": "azure_foundry",
+      "path": "skills/azure-foundry/document-intelligence/SKILL.md",
+      "tags": ["ocr", "document-intelligence", "invoice", "receipt", "layout", "containers"],
+      "source_url": "https://learn.microsoft.com/en-us/azure/ai-services/document-intelligence/?view=doc-intel-4.0.0",
+      "applies_to": ["agents", "infra", "odoo"],
+      "last_validated": "2026-03-15"
+    }
+  ],
+  "workflows": [
+    {
+      "id": "coding-agent-from-issue",
+      "name": "Coding Agent from Issue",
+      "domain": "sdlc",
+      "path": "workflows/coding-agent-from-issue.yaml",
+      "tags": ["coding-agent", "github-issue", "auto-pr"],
+      "applies_to": ["agents", "odoo", ".github"],
+      "last_validated": "2026-03-15"
+    },
+    {
+      "id": "sre-to-issue-to-agent",
+      "name": "SRE Feedback Loop",
+      "domain": "sdlc",
+      "path": "workflows/sre-to-issue-to-agent.yaml",
+      "tags": ["sre", "incident", "auto-fix", "closed-loop"],
+      "applies_to": ["agents", "automations", "infra"],
+      "last_validated": "2026-03-15"
+    },
+    {
+      "id": "deploy",
+      "name": "Deploy Workflow",
+      "domain": "deployment",
+      "path": "workflows/deploy.md",
+      "tags": ["deploy", "odoo"],
+      "applies_to": ["odoo", "infra"],
+      "last_validated": "2026-03-15"
+    },
+    {
+      "id": "scaffold",
+      "name": "Scaffold Workflow",
+      "domain": "odoo_ce",
+      "path": "workflows/scaffold.md",
+      "tags": ["scaffold", "module", "odoo"],
+      "applies_to": ["odoo"],
+      "last_validated": "2026-03-15"
+    },
+    {
+      "id": "test",
+      "name": "Test Workflow",
+      "domain": "odoo_ce",
+      "path": "workflows/test.md",
+      "tags": ["test", "odoo", "ci"],
+      "applies_to": ["odoo"],
+      "last_validated": "2026-03-15"
+    }
+  ],
+  "knowledge": [
+    {
+      "id": "agentic-sdlc-msft-reference",
+      "name": "Agentic SDLC — Microsoft Reference Architecture",
+      "domain": "sdlc",
+      "path": "knowledge-base/sdlc/agentic-sdlc-msft-reference.md",
+      "tags": ["sdlc", "microsoft", "agent-framework", "reference-architecture"],
+      "source_url": "https://techcommunity.microsoft.com/blog/appsonazureblog/an-ai-led-sdlc-building-an-end-to-end-agentic-software-development-lifecycle-wit/4491896",
+      "last_validated": "2026-03-15"
+    },
+    {
+      "id": "anthropic-engineering-practices",
+      "name": "Anthropic Engineering Practices",
+      "domain": "orchestration",
+      "path": "knowledge/anthropic_engineering_practices.md",
+      "tags": ["anthropic", "engineering", "best-practices"],
+      "last_validated": "2026-03-15"
+    },
+    {
+      "id": "odoo-19-functional-architecture",
+      "name": "Odoo 19 Functional Architecture",
+      "domain": "odoo_ce",
+      "path": "knowledge/odoo_19_functional_architecture.md",
+      "tags": ["odoo", "architecture", "functional"],
+      "last_validated": "2026-03-15"
+    },
+    {
+      "id": "state-of-ai-agents-2026-databricks",
+      "name": "State of AI Agents 2026 — Databricks Report",
+      "domain": "sdlc",
+      "path": "knowledge-base/industry-reports/state-of-ai-agents-2026-databricks.md",
+      "tags": ["industry-report", "agents", "multi-agent", "governance", "evaluations", "lakebase", "multi-model"],
+      "last_validated": "2026-03-15"
+    },
+    {
+      "id": "agent-framework-msft-reference",
+      "name": "Microsoft Agent Framework — Reference Architecture",
+      "domain": "sdlc",
+      "path": "knowledge-base/sdlc/agent-framework-msft-reference.md",
+      "tags": ["microsoft", "agent-framework", "multi-agent", "orchestration"],
+      "source_url": "https://github.com/microsoft/agent-framework",
+      "last_validated": "2026-03-15"
+    }
+  ],
+  "constitutions": [
+    {
+      "id": "agentic-sdlc-constitution",
+      "name": "Agentic SDLC Constitution",
+      "path": "foundry/agentic-sdlc-constitution.md",
+      "tags": ["constitution", "governance", "sdlc", "ssot-sor"],
+      "last_validated": "2026-03-15"
+    }
+  ]
+}

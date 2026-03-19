@@ -1,0 +1,57 @@
+version: 1
+type: governance_skill
+family: oca_community_governance
+skill:
+  name: odoo-maintainer-quality-gate
+  status: draft
+  owner: odoo-delivery-judge
+  purpose: >
+    Judge skill — validate OCA module adoption against maintainer quality
+    standards before inclusion in install baseline.
+
+  triggers:
+    - OCA module adoption proposal
+    - addons manifest update
+    - quality gate review
+
+  inputs:
+    - module name and OCA repository
+    - target branch (e.g. 19.0)
+    - addons.manifest.yaml entry
+
+  steps:
+    - check 19.0 branch exists and CI green
+    - verify development_status >= Stable
+    - test install in disposable DB
+    - check no conflicts with ipai_* modules
+    - verify no EE dependencies
+    - check in addons.manifest.yaml with repo/tier/provenance
+    - check coverage and review history
+
+  outputs:
+    - adoption_verdict
+    - quality_score
+    - gap_list
+    - required_actions
+
+  guardrails:
+    - Stable minimum for production
+    - Mature for critical path modules
+    - never adopt without test install
+    - never adopt modules with EE dependencies
+
+  evidence:
+    required: true
+    format: "docs/evidence/{stamp}/oca-governance/odoo-maintainer-quality-gate/"
+
+  evals:
+    dimensions: [accuracy, completeness, safety, policy_adherence, evidence_quality]
+    thresholds:
+      accuracy: 0.98
+      safety: 0.99
+      policy_adherence: 0.99
+
+cross_references:
+  - agents/knowledge/benchmarks/oca-community-governance.md
+  - agent-platform/ssot/learning/oca_skill_persona_map.yaml
+  - config/addons.manifest.yaml

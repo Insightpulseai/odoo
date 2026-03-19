@@ -1,0 +1,290 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2026 InsightPulse AI
+     License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl). -->
+<odoo>
+    <data noupdate="1">
+        <!-- ============ Default Intents ============ -->
+        <record id="intent_summarize" model="fluent.copilot.intent">
+            <field name="name">Summarize</field>
+            <field name="code">summarize</field>
+            <field name="description">Generate a concise summary of the current record, highlighting key information and status.</field>
+            <field name="example_utterance">Summarize this record for me</field>
+            <field name="icon">fa-compress</field>
+            <field name="category">general</field>
+            <field name="sequence">1</field>
+        </record>
+
+        <record id="intent_explain" model="fluent.copilot.intent">
+            <field name="name">Explain</field>
+            <field name="code">explain</field>
+            <field name="description">Provide a detailed explanation of why the record is in its current state, including relevant history.</field>
+            <field name="example_utterance">Why is this invoice overdue?</field>
+            <field name="icon">fa-info-circle</field>
+            <field name="category">general</field>
+            <field name="sequence">2</field>
+        </record>
+
+        <record id="intent_show_kpis" model="fluent.copilot.intent">
+            <field name="name">Show KPIs</field>
+            <field name="code">show_kpis</field>
+            <field name="description">Display key performance indicators and metrics related to the current context.</field>
+            <field name="example_utterance">Show me the KPIs for this project</field>
+            <field name="icon">fa-chart-bar</field>
+            <field name="category">general</field>
+            <field name="sequence">3</field>
+        </record>
+
+        <record id="intent_navigate" model="fluent.copilot.intent">
+            <field name="name">Navigate To</field>
+            <field name="code">navigate</field>
+            <field name="description">Provide navigation hints to related records, reports, or dashboards.</field>
+            <field name="example_utterance">Where can I see the aging report?</field>
+            <field name="icon">fa-compass</field>
+            <field name="category">navigation</field>
+            <field name="sequence">4</field>
+        </record>
+
+        <record id="intent_suggest_action" model="fluent.copilot.intent">
+            <field name="name">Suggest Next Action</field>
+            <field name="code">suggest_action</field>
+            <field name="description">Recommend the most appropriate next action based on the record's current state.</field>
+            <field name="example_utterance">What should I do next with this task?</field>
+            <field name="icon">fa-lightbulb-o</field>
+            <field name="category">general</field>
+            <field name="sequence">5</field>
+        </record>
+
+        <record id="intent_find_risks" model="fluent.copilot.intent">
+            <field name="name">Find Risks</field>
+            <field name="code">find_risks</field>
+            <field name="description">Identify potential risks or issues that may require attention.</field>
+            <field name="example_utterance">Are there any risks I should know about?</field>
+            <field name="icon">fa-exclamation-triangle</field>
+            <field name="category">project</field>
+            <field name="sequence">6</field>
+            <field name="applicable_models">project.project,project.task</field>
+        </record>
+
+        <record id="intent_analyze_budget" model="fluent.copilot.intent">
+            <field name="name">Analyze Budget</field>
+            <field name="code">analyze_budget</field>
+            <field name="description">Provide budget analysis including variances, burn rate, and forecasts.</field>
+            <field name="example_utterance">How is the budget looking?</field>
+            <field name="icon">fa-money</field>
+            <field name="category">finance</field>
+            <field name="sequence">7</field>
+            <field name="applicable_models">project.project,account.move</field>
+        </record>
+
+        <!-- ============ Demo Session: Project Task ============ -->
+        <record id="demo_session_project" model="fluent.copilot.session">
+            <field name="name">Copilot Demo: Project Task Analysis</field>
+            <field name="user_id" ref="base.user_admin"/>
+            <field name="context_model">project.task</field>
+            <field name="status">active</field>
+            <field name="mock_ai_provider">mock</field>
+            <field name="mock_tokens_used">847</field>
+        </record>
+
+        <!-- Demo Messages: Project -->
+        <record id="demo_msg_project_1" model="fluent.copilot.message">
+            <field name="session_id" ref="demo_session_project"/>
+            <field name="role">system</field>
+            <field name="message_type">suggestion</field>
+            <field name="body">**Welcome to Copilot!**
+
+I'm here to help you with your project tasks. You can ask me to:
+- Summarize this task
+- Show progress metrics
+- Identify risks or blockers
+- Suggest next actions
+
+*Type your question below to get started.*</field>
+        </record>
+
+        <record id="demo_msg_project_2" model="fluent.copilot.message">
+            <field name="session_id" ref="demo_session_project"/>
+            <field name="role">user</field>
+            <field name="message_type">question</field>
+            <field name="body">Can you summarize the status of this task and tell me if there are any risks?</field>
+        </record>
+
+        <record id="demo_msg_project_3" model="fluent.copilot.message">
+            <field name="session_id" ref="demo_session_project"/>
+            <field name="role">assistant</field>
+            <field name="message_type">explanation</field>
+            <field name="mock_confidence">0.94</field>
+            <field name="mock_latency_ms">523</field>
+            <field name="mock_tokens">187</field>
+            <field name="body">**Task Summary**
+
+This task is currently **In Progress** with the following key details:
+
+| Attribute | Value |
+|-----------|-------|
+| Progress | 65% complete |
+| Deadline | In 5 days |
+| Assignee | John Smith |
+| Priority | High |
+
+**Identified Risks:**
+
+1. **Timeline Risk (Medium)** - Current velocity suggests the task may take 2 days longer than planned. Consider:
+   - Reducing scope of deliverables
+   - Adding additional resources
+
+2. **Dependency Risk (Low)** - Waiting on design approval from Marketing team. Follow up recommended.
+
+**Recommended Actions:**
+- Schedule a quick sync with the Marketing team
+- Update the timeline estimate if needed
+
+*This is a mock analysis for prototype demonstration.*</field>
+        </record>
+
+        <record id="demo_msg_project_4" model="fluent.copilot.message">
+            <field name="session_id" ref="demo_session_project"/>
+            <field name="role">user</field>
+            <field name="message_type">question</field>
+            <field name="body">Show me the KPIs for this project</field>
+        </record>
+
+        <record id="demo_msg_project_5" model="fluent.copilot.message">
+            <field name="session_id" ref="demo_session_project"/>
+            <field name="role">assistant</field>
+            <field name="message_type">kpi_summary</field>
+            <field name="mock_confidence">0.96</field>
+            <field name="mock_latency_ms">412</field>
+            <field name="mock_tokens">156</field>
+            <field name="body">**Project KPIs Dashboard**
+
+| Metric | Current | Target | Status |
+|--------|---------|--------|--------|
+| Task Completion | 12/18 (67%) | 100% | On Track |
+| Budget Utilization | $45,000 / $60,000 | 75% | Under Budget |
+| On-Time Delivery | 85% | 90% | At Risk |
+| Team Velocity | 42 pts/sprint | 40 pts | Exceeding |
+| Open Blockers | 2 | 0 | Needs Attention |
+
+**Trends (Last 4 Weeks):**
+- Velocity: +8% improvement
+- Budget burn rate: Stable at $11,250/week
+- Defect rate: Decreasing (-15%)
+
+**Recommendations:**
+- Address the 2 open blockers to improve on-time delivery
+- Current pace suggests project will complete 3 days ahead of final deadline
+
+*This is a mock KPI summary for prototype demonstration.*</field>
+        </record>
+
+        <!-- ============ Demo Session: Finance ============ -->
+        <record id="demo_session_finance" model="fluent.copilot.session">
+            <field name="name">Copilot Demo: Invoice Analysis</field>
+            <field name="user_id" ref="base.user_admin"/>
+            <field name="status">active</field>
+            <field name="mock_ai_provider">mock</field>
+            <field name="mock_tokens_used">634</field>
+        </record>
+
+        <record id="demo_msg_finance_1" model="fluent.copilot.message">
+            <field name="session_id" ref="demo_session_finance"/>
+            <field name="role">system</field>
+            <field name="message_type">suggestion</field>
+            <field name="body">**Welcome to Copilot - Finance Mode**
+
+I can help you with financial records and analysis. Try asking:
+- Why is this invoice overdue?
+- Explain this payment status
+- Show customer payment history
+- Navigate to aging reports
+
+*Type your question to begin.*</field>
+        </record>
+
+        <record id="demo_msg_finance_2" model="fluent.copilot.message">
+            <field name="session_id" ref="demo_session_finance"/>
+            <field name="role">user</field>
+            <field name="message_type">question</field>
+            <field name="body">Why is this invoice overdue and what should I do about it?</field>
+        </record>
+
+        <record id="demo_msg_finance_3" model="fluent.copilot.message">
+            <field name="session_id" ref="demo_session_finance"/>
+            <field name="role">assistant</field>
+            <field name="message_type">explanation</field>
+            <field name="mock_confidence">0.91</field>
+            <field name="mock_latency_ms">487</field>
+            <field name="mock_tokens">203</field>
+            <field name="body">**Invoice Analysis**
+
+This invoice (INV/2026/0042) is **14 days overdue**. Here's what I found:
+
+**Invoice Details:**
+| Field | Value |
+|-------|-------|
+| Customer | Acme Corp |
+| Amount | $12,500.00 |
+| Due Date | January 7, 2026 |
+| Payment Terms | Net 30 |
+
+**Why It's Overdue:**
+
+1. **No payment received** - Bank reconciliation shows no matching deposits
+2. **Customer pattern** - Acme Corp has paid late on 3 of last 5 invoices (avg. 12 days late)
+3. **No dispute filed** - Customer hasn't raised any objections
+
+**Communication History:**
+- Jan 10: Automated reminder sent (no response)
+- No manual follow-up recorded
+
+**Recommended Actions:**
+
+1. **Immediate:** Send a personal follow-up email to accounts@acmecorp.com
+2. **This Week:** Schedule a phone call if no response by Jan 23
+3. **Consider:** Reviewing credit terms for this customer
+
+*Click "Navigate to Customer" to view full payment history.*
+
+*This is a mock analysis for prototype demonstration.*</field>
+        </record>
+
+        <record id="demo_msg_finance_4" model="fluent.copilot.message">
+            <field name="session_id" ref="demo_session_finance"/>
+            <field name="role">user</field>
+            <field name="message_type">question</field>
+            <field name="body">Where can I see the aging report?</field>
+        </record>
+
+        <record id="demo_msg_finance_5" model="fluent.copilot.message">
+            <field name="session_id" ref="demo_session_finance"/>
+            <field name="role">assistant</field>
+            <field name="message_type">navigation_hint</field>
+            <field name="mock_confidence">0.98</field>
+            <field name="mock_latency_ms">234</field>
+            <field name="mock_tokens">88</field>
+            <field name="body">**Navigation: Aging Reports**
+
+You can access aging reports in several ways:
+
+**Quick Path:**
+1. Go to **Accounting** → **Reporting** → **Partner Reports**
+2. Select **Aged Receivable** or **Aged Payable**
+
+**Alternative Access:**
+- From any customer form: Click **Action** → **Aged Partner Balance**
+- Keyboard shortcut: Press `Alt + Q` and search "aging"
+
+**Available Reports:**
+| Report | Description |
+|--------|-------------|
+| Aged Receivable | Customer balances by aging bucket |
+| Aged Payable | Vendor balances by aging bucket |
+| Aged Partner Balance | Combined view by partner |
+
+**Tip:** You can filter the aging report by date range, partner, or account to focus on specific receivables.
+
+*This is a mock navigation hint for prototype demonstration.*</field>
+        </record>
+    </data>
+</odoo>

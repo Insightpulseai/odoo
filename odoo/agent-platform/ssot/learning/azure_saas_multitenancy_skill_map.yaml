@@ -1,0 +1,195 @@
+version: 1
+id: azure_saas_multitenancy_skill_map
+status: active
+source_family:
+  - azure_saas_well_architected
+  - azure_multitenancy_checklist
+type: benchmark_curriculum
+updated_at: "2026-03-17"
+
+description: >
+  Maps Azure SaaS Well-Architected and multitenancy checklist to bounded
+  personas, skills, and knowledge bases. Uses the SaaS docs for platform
+  doctrine and the multitenancy checklist for tenant/isolation/operations
+  benchmarks.
+
+personas:
+  - id: saas-platform-architect
+    file: agents/personas/saas-platform-architect.md
+    owns:
+      - saas-resource-organization
+      - saas-identity-access-design
+      - saas-billing-cost-management
+      - saas-governance-devops-incident-design
+    responsibility: "Top-level SaaS architecture lanes"
+
+  - id: multitenancy-architect
+    file: agents/personas/multitenancy-architect.md
+    owns:
+      - tenancy-model-selection
+      - tenant-isolation-design
+      - tenant-context-mapping
+      - noisy-neighbor-mitigation
+    responsibility: "Tenant-specific design decisions"
+
+  - id: tenant-lifecycle-operator
+    file: agents/personas/tenant-lifecycle-operator.md
+    owns:
+      - tenant-lifecycle-automation
+      - tenant-deployment-update-strategy
+      - tenant-health-alerting
+    responsibility: "Tenant provisioning, updates, monitoring"
+
+  - id: billing-metering-architect
+    file: agents/personas/billing-metering-architect.md
+    owns:
+      - per-tenant-metering-design
+    responsibility: "Pricing, consumption measurement, cost correlation"
+
+  - id: tenant-isolation-judge
+    file: agents/personas/tenant-isolation-judge.md
+    owns:
+      - multitenant-compliance-dns-safety
+    responsibility: "Isolation verification, compliance, DNS safety"
+
+  - id: saas-operations-judge
+    file: agents/personas/saas-operations-judge.md
+    owns:
+      - multitenancy-readiness-judge
+      - multitenant-performance-scaling
+    responsibility: "Operational readiness, SLO/SLA, scale/chaos testing"
+
+knowledge_bases:
+  - id: azure-saas-well-architected
+    file: agents/knowledge/benchmarks/azure-saas-well-architected.md
+    covers: ["SaaS design methodology", "Technical and operational design areas"]
+
+  - id: azure-multitenancy-checklist
+    file: agents/knowledge/benchmarks/azure-multitenancy-checklist.md
+    covers: ["Business considerations", "Five WAF pillars for multitenancy", "Global guardrails"]
+
+skills:
+  # SaaS platform architect
+  - id: saas-resource-organization
+    file: agents/skills/saas-resource-organization/
+    persona: saas-platform-architect
+    classification: encoded_preference
+    purpose: "Design subscription, RG, naming, tagging for multi-tenant"
+
+  - id: saas-identity-access-design
+    file: agents/skills/saas-identity-access-design/
+    persona: saas-platform-architect
+    classification: encoded_preference
+    purpose: "Design tenant/user identity, authorization, zero trust"
+
+  - id: saas-billing-cost-management
+    file: agents/skills/saas-billing-cost-management/
+    persona: saas-platform-architect
+    classification: encoded_preference
+    purpose: "Design billing, cost management, and pricing models"
+
+  - id: saas-governance-devops-incident-design
+    file: agents/skills/saas-governance-devops-incident-design/
+    persona: saas-platform-architect
+    classification: encoded_preference
+    purpose: "Design governance, DevOps practices, incident management"
+
+  # Multitenancy architect
+  - id: tenancy-model-selection
+    file: agents/skills/tenancy-model-selection/
+    persona: multitenancy-architect
+    classification: encoded_preference
+    purpose: "Select shared vs dedicated vs hybrid tenancy model"
+
+  - id: tenant-isolation-design
+    file: agents/skills/tenant-isolation-design/
+    persona: multitenancy-architect
+    classification: encoded_preference
+    purpose: "Design tenant isolation boundaries and enforcement"
+
+  - id: tenant-context-mapping
+    file: agents/skills/tenant-context-mapping/
+    persona: multitenancy-architect
+    classification: encoded_preference
+    purpose: "Design tenant context propagation through the stack"
+
+  - id: noisy-neighbor-mitigation
+    file: agents/skills/noisy-neighbor-mitigation/
+    persona: multitenancy-architect
+    classification: capability_uplift
+    purpose: "Mitigate noisy neighbor effects across tenants"
+
+  # Tenant lifecycle operator
+  - id: tenant-lifecycle-automation
+    file: agents/skills/tenant-lifecycle-automation/
+    persona: tenant-lifecycle-operator
+    classification: encoded_preference
+    purpose: "Automate tenant onboarding, provisioning, offboarding"
+
+  - id: tenant-deployment-update-strategy
+    file: agents/skills/tenant-deployment-update-strategy/
+    persona: tenant-lifecycle-operator
+    classification: encoded_preference
+    purpose: "Design tenant-aware deployment and update rollout"
+
+  - id: tenant-health-alerting
+    file: agents/skills/tenant-health-alerting/
+    persona: tenant-lifecycle-operator
+    classification: encoded_preference
+    purpose: "Design per-tenant monitoring, metrics, and alerting"
+
+  # Billing/metering architect
+  - id: per-tenant-metering-design
+    file: agents/skills/per-tenant-metering-design/
+    persona: billing-metering-architect
+    classification: encoded_preference
+    purpose: "Design per-tenant consumption measurement and cost attribution"
+
+  # Tenant isolation judge
+  - id: multitenant-compliance-dns-safety
+    file: agents/skills/multitenant-compliance-dns-safety/
+    persona: tenant-isolation-judge
+    classification: encoded_preference
+    purpose: "Verify compliance requirements and DNS safety per tenant"
+
+  # SaaS operations judge
+  - id: multitenancy-readiness-judge
+    file: agents/skills/multitenancy-readiness-judge/
+    persona: saas-operations-judge
+    classification: encoded_preference
+    purpose: "Judge whether SaaS platform is operationally ready for multi-tenant"
+
+  - id: multitenant-performance-scaling
+    file: agents/skills/multitenant-performance-scaling/
+    persona: saas-operations-judge
+    classification: capability_uplift
+    purpose: "Design and validate multi-tenant performance and scaling"
+
+guardrails:
+  - "Tenants are not the same thing as users"
+  - "Tenant context must be explicit in authorization"
+  - "Tenant isolation must be designed and continuously tested"
+  - "Per-tenant consumption must be measurable"
+  - "Tenant lifecycle must be automated"
+  - "Control plane and data plane must be distinguished"
+  - "Noisy-neighbor risk must be actively mitigated"
+
+build_order:
+  - phase: 1
+    skills: [tenancy-model-selection, saas-resource-organization]
+    reason: "Foundation: tenancy model and resource org come first"
+  - phase: 2
+    skills: [saas-identity-access-design, tenant-isolation-design, tenant-context-mapping]
+    reason: "Identity and isolation depend on tenancy model"
+  - phase: 3
+    skills: [saas-billing-cost-management, per-tenant-metering-design, noisy-neighbor-mitigation]
+    reason: "Billing, metering, and noisy-neighbor depend on isolation"
+  - phase: 4
+    skills: [tenant-lifecycle-automation, tenant-deployment-update-strategy, tenant-health-alerting]
+    reason: "Operations depend on architecture"
+  - phase: 5
+    skills: [saas-governance-devops-incident-design, multitenant-compliance-dns-safety]
+    reason: "Governance and compliance cross-cut all lanes"
+  - phase: 6
+    skills: [multitenant-performance-scaling, multitenancy-readiness-judge]
+    reason: "Performance and readiness are final gates"

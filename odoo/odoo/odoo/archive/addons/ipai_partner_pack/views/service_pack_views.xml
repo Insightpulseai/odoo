@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Service Pack Tree View -->
+    <record id="view_service_pack_tree" model="ir.ui.view">
+        <field name="name">ipai.service.pack.tree</field>
+        <field name="model">ipai.service.pack</field>
+        <field name="arch" type="xml">
+            <list string="Service Packs">
+                <field name="sequence" widget="handle"/>
+                <field name="code"/>
+                <field name="name"/>
+                <field name="tier" widget="badge" decoration-info="tier == 'starter'" decoration-success="tier == 'professional'" decoration-warning="tier == 'enterprise'" decoration-danger="tier == 'custom'"/>
+                <field name="default_hours"/>
+                <field name="total_lines"/>
+                <field name="active" optional="hide"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Service Pack Form View -->
+    <record id="view_service_pack_form" model="ir.ui.view">
+        <field name="name">ipai.service.pack.form</field>
+        <field name="model">ipai.service.pack</field>
+        <field name="arch" type="xml">
+            <form string="Service Pack">
+                <sheet>
+                    <widget name="web_ribbon" title="Archived" bg_color="text-bg-danger" invisible="active"/>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1><field name="name" placeholder="Pack Name..."/></h1>
+                    </div>
+                    <group>
+                        <group string="Configuration">
+                            <field name="code"/>
+                            <field name="tier"/>
+                            <field name="sequence"/>
+                            <field name="active" invisible="1"/>
+                        </group>
+                        <group string="Estimates">
+                            <field name="default_hours"/>
+                            <field name="ratio_impl_to_pm"/>
+                            <field name="default_team_template_id"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Pack Lines" name="lines">
+                            <field name="line_ids">
+                                <list editable="bottom">
+                                    <field name="sequence" widget="handle"/>
+                                    <field name="product_id"/>
+                                    <field name="name"/>
+                                    <field name="qty"/>
+                                    <field name="uom_id"/>
+                                    <field name="is_optional"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Description" name="description">
+                            <field name="description"/>
+                        </page>
+                        <page string="Technical" name="technical">
+                            <group>
+                                <field name="included_deliverables" widget="ace" options="{'mode': 'json'}"/>
+                            </group>
+                        </page>
+                        <page string="Notes" name="notes">
+                            <field name="notes"/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- Service Pack Search View -->
+    <record id="view_service_pack_search" model="ir.ui.view">
+        <field name="name">ipai.service.pack.search</field>
+        <field name="model">ipai.service.pack</field>
+        <field name="arch" type="xml">
+            <search string="Search Service Packs">
+                <field name="name"/>
+                <field name="code"/>
+                <separator/>
+                <filter string="Starter" name="filter_starter" domain="[('tier', '=', 'starter')]"/>
+                <filter string="Professional" name="filter_professional" domain="[('tier', '=', 'professional')]"/>
+                <filter string="Enterprise" name="filter_enterprise" domain="[('tier', '=', 'enterprise')]"/>
+                <filter string="Custom" name="filter_custom" domain="[('tier', '=', 'custom')]"/>
+                <separator/>
+                <filter string="Active" name="filter_active" domain="[('active', '=', True)]"/>
+                <filter string="Archived" name="filter_archived" domain="[('active', '=', False)]"/>
+                <group expand="0" string="Group By">
+                    <filter string="Tier" name="group_tier" context="{'group_by': 'tier'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Service Pack Action -->
+    <record id="action_service_pack" model="ir.actions.act_window">
+        <field name="name">Service Packs</field>
+        <field name="res_model">ipai.service.pack</field>
+        <field name="view_mode">list,form</field>
+        <field name="context">{'search_default_filter_active': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create your first service pack
+            </p>
+            <p>
+                Service packs define standard implementation offerings with
+                predefined scope, hours, and deliverables.
+            </p>
+        </field>
+    </record>
+</odoo>

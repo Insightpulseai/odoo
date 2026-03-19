@@ -1,0 +1,122 @@
+# =============================================================================
+# Org Topology — SSOT
+# =============================================================================
+# Canonical 12-repo / 8-plane organization topology.
+# All docs, configs, and CI should reference these repo names and planes.
+# =============================================================================
+
+id: org_topology
+version: 1.1.0
+updated: "2026-03-19"
+status: target_state
+
+# -----------------------------------------------------------------------------
+# Repos
+# -----------------------------------------------------------------------------
+repos:
+  - id: .github
+    plane: governance
+    purpose: Org-wide workflows, templates, rulesets
+    status: active
+
+  - id: odoo
+    plane: transactional
+    purpose: ERP/runtime (Odoo CE + OCA + ipai bridges)
+    status: active
+
+  - id: platform
+    plane: control
+    purpose: Ops platform, Supabase backend, service catalog
+    status: active
+
+  - id: data-intelligence
+    plane: intelligence
+    purpose: Databricks, governed data products, semantic/BI
+    status: split_required
+    current_surface: embedded_in_monorepo
+    transition_paths:
+      - infra/databricks/
+      - odoo/infra/databricks/sql/
+      - lakehouse/contracts/
+    split_plan: docs/architecture/data-intelligence/repo-split-plan.md
+
+  - id: agent-platform
+    plane: agent
+    purpose: Foundry runtime, tools, workflows, evals
+    status: active
+
+  - id: web
+    plane: experience
+    purpose: Websites, portals, browser extensions, UIs
+    status: planned
+
+  - id: infra
+    plane: substrate
+    purpose: Azure/Cloudflare IaC, landing zones, identity
+    status: active
+
+  - id: automations
+    plane: automation
+    purpose: n8n, schedulers, jobs, workflow contracts
+    status: active
+
+  - id: agents
+    plane: doctrine
+    purpose: Personas, skills, judges, knowledge, evals
+    status: active
+
+  - id: design
+    plane: visual
+    purpose: Tokens, Figma exports, brand assets
+    status: planned
+
+  - id: docs
+    plane: documentation
+    purpose: Cross-repo architecture, strategy, evidence
+    status: active
+
+  - id: templates
+    plane: bootstrap
+    purpose: Starter kits, repo templates
+    status: planned
+
+# -----------------------------------------------------------------------------
+# Planes
+# -----------------------------------------------------------------------------
+planes:
+  - id: governance
+    description: Org-wide policies, workflows, rulesets
+  - id: transactional
+    description: ERP runtime, business process execution
+  - id: control
+    description: Platform services, service catalog, ops
+  - id: intelligence
+    description: Data engineering, analytics, governed data products
+  - id: agent
+    description: Agent runtime, tools, evaluation, orchestration
+  - id: experience
+    description: User-facing apps, portals, extensions
+  - id: substrate
+    description: Cloud infrastructure, identity, networking
+  - id: automation
+    description: Workflow engines, schedulers, event-driven jobs
+  - id: doctrine
+    description: Agent definitions, skills, knowledge, evaluations
+  - id: visual
+    description: Design tokens, brand assets, component libraries
+  - id: documentation
+    description: Architecture docs, strategy, evidence packs
+  - id: bootstrap
+    description: Starter kits, repo templates, scaffolds
+
+# -----------------------------------------------------------------------------
+# Naming Corrections
+# -----------------------------------------------------------------------------
+naming_corrections:
+  - wrong: control-plane
+    correct: platform
+    note: concept alias, not repo name
+
+  - wrong: design-system
+    correct: design
+    note: internal folder name, not repo name

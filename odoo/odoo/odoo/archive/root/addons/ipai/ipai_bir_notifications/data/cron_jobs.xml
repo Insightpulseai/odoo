@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Daily Digest: 08:00 PH Time (00:00 UTC) -->
+    <record id="ir_cron_bir_daily_digest" model="ir.cron">
+        <field name="name">BIR: Send Daily Digest (08:00 PH)</field>
+        <field name="model_id" ref="model_bir_alert"/>
+        <field name="state">code</field>
+        <field name="code">model.send_daily_digest()</field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">days</field>
+        <field name="numbercall">-1</field>
+        <field name="doall" eval="False"/>
+        <field name="active" eval="True"/>
+        <!-- 08:00 Manila = 00:00 UTC -->
+        <field name="nextcall" eval="(DateTime.now() + timedelta(days=1)).replace(hour=0, minute=0, second=0)"/>
+    </record>
+
+    <!-- Urgent Check: Every 4 hours -->
+    <record id="ir_cron_bir_urgent_check" model="ir.cron">
+        <field name="name">BIR: Check Urgent Deadlines (Every 4h)</field>
+        <field name="model_id" ref="model_bir_alert"/>
+        <field name="state">code</field>
+        <field name="code">model.check_urgent_deadlines()</field>
+        <field name="interval_number">4</field>
+        <field name="interval_type">hours</field>
+        <field name="numbercall">-1</field>
+        <field name="doall" eval="False"/>
+        <field name="active" eval="True"/>
+    </record>
+</odoo>

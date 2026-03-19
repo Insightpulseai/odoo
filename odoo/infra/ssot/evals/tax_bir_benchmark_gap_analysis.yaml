@@ -1,0 +1,327 @@
+---
+# Tax/BIR Benchmark Gap Analysis — Machine-Readable SSOT
+# Inventory: ssot/evals/tax_bir_benchmark_test_inventory.yaml
+# Consolidation report: docs/architecture/TAX_BIR_BENCHMARK_TEST_CONSOLIDATION.md
+# Migration plan: docs/architecture/TAX_BIR_BENCHMARK_MIGRATION_PLAN.md
+
+version: 1
+name: tax_bir_benchmark_gap_analysis
+status: active
+scan_date: "2026-03-18"
+total_gaps: 13
+
+gaps:
+
+  - id: GAP-ATC-001
+    title: "ATC code namespace divergence between Odoo and Supabase"
+    severity: critical
+    category: data_integrity
+    description: >-
+      Odoo tax module uses W-series withholding codes (e.g. W010, W020)
+      while Supabase/state artifacts use WI/WC-series codes (e.g. WI010, WC010).
+      This prevents safe deterministic withholding classification and blocks
+      trustworthy tax-agent recommendations.
+    impact:
+      - incorrect withholding classification
+      - broken cross-system rule matching
+      - unsafe agent tax recommendations
+      - benchmark invalidation for withholding-related tasks
+    required_before:
+      - agent tax benchmark execution
+      - production tax recommendation workflows
+      - TaxPulse specialist-agent rollout
+    recommended_action: >-
+      Define canonical ATC namespace. Publish explicit crosswalk mapping
+      in ssot/domain/atc_code_mapping.yaml. Update Odoo and platform
+      validation tests. Reject unmapped codes in agent/runtime paths.
+    migration_phase: "1A"
+    effort_estimate: "3-5 days"
+    blocks:
+      - GAP-001
+      - GAP-002
+      - GAP-009
+
+  - id: GAP-001
+    title: "No canonical tax/compliance task suite with gold outputs"
+    severity: critical
+    category: test_coverage
+    description: >-
+      There is no single task suite of 25-40 tax/compliance tasks with
+      deterministic gold outputs (expected correct answers). The existing
+      spec bundles define tasks conceptually but do not provide machine-
+      verifiable expected results. The BIR test fixtures (EWT, VAT CSVs)
+      cover module-level computation but not agent-level task completion.
+    affected_assets:
+      - EVAL-014  # spec/odoo-copilot-benchmark/
+      - EVAL-015  # spec/tax-pulse-sub-agent/
+      - EVAL-011  # ewt_expected_withholding.csv
+      - EVAL-012  # vat_basic_expected_lines.csv
+    recommended_action: >-
+      Create ssot/evals/tasks/tax_compliance_tasks.jsonl with 25-40 tasks.
+      Each task: prompt, context, expected_output, scoring_rubric, difficulty.
+      Derive initial tasks from spec/odoo-copilot-benchmark/tasks.md and
+      extend with BIR-specific scenarios (1601-C, 2550M/Q, 1702-RT).
+    migration_phase: 3
+    effort_estimate: "2-3 days"
+    blocks:
+      - GAP-002
+      - GAP-004
+      - GAP-009
+
+  - id: GAP-002
+    title: "No custom Foundry evaluators for tax accuracy"
+    severity: critical
+    category: evaluator
+    description: >-
+      Azure AI Foundry supports custom evaluators but none have been
+      built for tax-specific dimensions: tax determination accuracy,
+      BIR compliance correctness, withholding rate validation, or
+      jurisdiction resolution accuracy. The doctrine (EVAL-002) requires
+      deterministic + model-based + human judges, but only the doctrine
+      exists -- no implementations.
+    affected_assets:
+      - EVAL-001  # copilot_marketplace_benchmark.yaml
+      - EVAL-002  # agent_benchmark_doctrine.yaml
+    recommended_action: >-
+      Build 3 custom Foundry evaluators:
+      1. tax_accuracy_evaluator -- deterministic comparison of computed
+         tax amounts against gold outputs (tolerance: 0.01 PHP).
+      2. bir_compliance_evaluator -- validates BIR form field mapping,
+         ATC code assignment, and filing period correctness.
+      3. withholding_evaluator -- validates EWT/FWT rate selection
+         against BIR Revenue Regulations.
+      Deploy to Azure AI Foundry evaluation registry.
+    migration_phase: 3
+    effort_estimate: "3-5 days"
+    blocks:
+      - GAP-006
+
+  - id: GAP-003
+    title: "No human review rubric template for Philippine tax expert"
+    severity: high
+    category: governance
+    description: >-
+      The doctrine requires human expert judges for deployment-gating
+      benchmarks. No rubric template exists for a Philippine tax expert
+      to score agent outputs. Scoring dimensions (accuracy, completeness,
+      regulatory citation, risk identification) are undefined.
+    affected_assets:
+      - EVAL-002  # agent_benchmark_doctrine.yaml
+      - EVAL-003  # agent_benchmark_doctrine.md
+    recommended_action: >-
+      Create ssot/evals/rubrics/tax_expert_review_rubric.yaml with:
+      - 5-point scale per dimension (accuracy, completeness, citation,
+        risk_identification, form_correctness)
+      - Inter-rater reliability instructions
+      - Sample scored outputs for calibration
+      - Minimum 2 reviewers per task for deployment-gating runs
+    migration_phase: 3
+    effort_estimate: "1-2 days"
+    blocks: []
+
+  - id: GAP-004
+    title: "No repeated-run harness for consistency measurement"
+    severity: high
+    category: infrastructure
+    description: >-
+      The doctrine warns about agent non-determinism (WebArena 14.41%
+      success rate). No harness exists to run each task 5+ times and
+      measure consistency (pass@k, variance, failure mode distribution).
+      A single run cannot distinguish systematic from stochastic failures.
+    affected_assets:
+      - EVAL-002  # agent_benchmark_doctrine.yaml
+      - EVAL-005  # evaluator.py (if it exists)
+      - EVAL-006  # run_benchmark.py (if it exists)
+    recommended_action: >-
+      Build scripts/benchmark/repeated_run_harness.py that:
+      - Runs each task N times (default N=5)
+      - Records per-run outputs and scores
+      - Computes pass@1, pass@3, pass@5, variance, and mode of failure
+      - Outputs a consistency report alongside the main benchmark report
+    migration_phase: 4
+    effort_estimate: "1-2 days"
+    blocks: []
+
+  - id: GAP-005
+    title: "No production trace replay tests"
+    severity: medium
+    category: test_coverage
+    description: >-
+      No mechanism to capture production agent traces (tool calls,
+      LLM responses, user inputs) and replay them as regression tests.
+      The doctrine requires production telemetry as part of evaluation
+      but no replay infrastructure exists.
+    affected_assets:
+      - EVAL-002  # agent_benchmark_doctrine.yaml
+    recommended_action: >-
+      Design a trace capture format (JSONL with timestamp, tool_call,
+      llm_response, user_input fields). Build a replay harness that
+      feeds captured inputs and compares outputs against recorded
+      expected results. Start with manual trace capture from staging.
+    migration_phase: 5
+    effort_estimate: "3-5 days"
+    blocks: []
+
+  - id: GAP-006
+    title: "No CI benchmark gate that blocks deploys on eval regression"
+    severity: critical
+    category: ci_cd
+    description: >-
+      No CI workflow gates deployments on benchmark results. The reported
+      .github/workflows/odoo-copilot-eval.yml was not found on disk.
+      Even if it exists, there is no evidence it blocks merges or deploys
+      when benchmark scores regress below thresholds.
+    affected_assets:
+      - EVAL-017  # odoo-copilot-eval.yml (missing)
+      - EVAL-001  # copilot_marketplace_benchmark.yaml
+    recommended_action: >-
+      Create .github/workflows/benchmark-gate.yml that:
+      1. Runs on PR to main (for tax-related paths)
+      2. Executes the benchmark task suite
+      3. Compares scores against baseline thresholds from
+         ssot/evals/benchmark_baselines.yaml
+      4. Fails the PR check if any hard-gate dimension regresses
+      5. Posts a score summary comment on the PR
+    migration_phase: 4
+    effort_estimate: "2-3 days"
+    blocks: []
+
+  - id: GAP-007
+    title: "No red-team/adversarial test coverage for tax compliance agent"
+    severity: medium
+    category: security
+    description: >-
+      No adversarial test cases exist to probe the tax compliance agent
+      for failure modes: prompt injection to bypass tax rules, hallucinated
+      ATC codes, incorrect jurisdiction selection under ambiguity,
+      confidently wrong withholding rates, or unauthorized tax adjustments.
+    affected_assets:
+      - EVAL-002  # agent_benchmark_doctrine.yaml (safety_overrides principle)
+    recommended_action: >-
+      Create ssot/evals/tasks/tax_adversarial_tasks.jsonl with 10-15
+      adversarial scenarios. Categories: prompt injection, hallucination
+      probing, ambiguity exploitation, authorization bypass, edge-case
+      tax scenarios (zero-rated, exempt, mixed transactions).
+    migration_phase: 5
+    effort_estimate: "2-3 days"
+    blocks: []
+
+  - id: GAP-008
+    title: "No benchmark evidence-pack contract"
+    severity: high
+    category: governance
+    description: >-
+      No standard format for benchmark evidence packs. The agent output
+      contract requires evidence in docs/evidence/ but does not specify
+      the structure for benchmark runs. Need a contract for: prompts.jsonl,
+      outputs/, judge_scores.json, summary.json, metadata.json.
+    affected_assets:
+      - EVAL-002  # agent_benchmark_doctrine.yaml
+    recommended_action: >-
+      Define the evidence-pack contract in
+      docs/contracts/BENCHMARK_EVIDENCE_CONTRACT.md with:
+      - Required files: prompts.jsonl, outputs/{task_id}.json,
+        judge_scores.json, summary.json, metadata.json
+      - Schema for each file
+      - Retention policy (keep last 10 runs, archive older)
+      - CI validator that checks pack completeness
+    migration_phase: 4
+    effort_estimate: "1 day"
+    blocks: []
+
+  - id: GAP-009
+    title: "No deterministic evaluator for BIR form correctness"
+    severity: critical
+    category: evaluator
+    description: >-
+      No evaluator validates that agent-generated BIR forms (1601-C,
+      2550M/Q, 1702-RT) have correct field mappings, computed totals,
+      ATC code assignments, and filing period metadata. The existing
+      Odoo tests (EVAL-008/009/010) validate computation logic but
+      not the form-level output structure.
+    affected_assets:
+      - EVAL-008  # test_bir_ewt_compute.py
+      - EVAL-009  # test_bir_vat_compute.py
+      - EVAL-010  # test_rules_engine.py
+    recommended_action: >-
+      Build scripts/benchmark/evaluators/bir_form_evaluator.py that:
+      - Takes agent output (JSON or XML) for a BIR form
+      - Validates against BIR form schema (field names, types, ranges)
+      - Checks computed totals against line items
+      - Verifies ATC codes against the BIR ATC code master list
+      - Returns pass/fail with field-level error details
+    migration_phase: 3
+    effort_estimate: "2-3 days"
+    blocks: []
+
+  - id: GAP-010
+    title: "No integration test connecting Odoo tax module to agent eval"
+    severity: high
+    category: integration
+    description: >-
+      The Odoo tax tests (EVAL-008/009/010) and the benchmark framework
+      (EVAL-001/002) are disconnected. No test verifies that the agent
+      correctly invokes the Odoo tax module and that module-level results
+      propagate correctly through the agent's output. The two layers
+      are tested in isolation.
+    affected_assets:
+      - EVAL-008  # test_bir_ewt_compute.py
+      - EVAL-009  # test_bir_vat_compute.py
+      - EVAL-001  # copilot_marketplace_benchmark.yaml
+    recommended_action: >-
+      Create an integration test suite that:
+      1. Sets up a test Odoo instance with ipai_bir_tax_compliance
+      2. Runs agent tasks that require tax computation
+      3. Verifies agent output matches Odoo module output
+      4. Reports both agent-level and module-level scores
+    migration_phase: 4
+    effort_estimate: "3-5 days"
+    blocks: []
+
+  - id: GAP-011
+    title: "No demo/fixture data for agent-level tax review simulation"
+    severity: medium
+    category: test_coverage
+    description: >-
+      The BIR test fixtures (EVAL-011/012/013) are CSV files for module
+      unit tests. No demo data exists for agent-level simulation: sample
+      vendor bills, purchase orders with tax implications, multi-line
+      invoices with mixed VAT/EWT, or cross-border transactions.
+    affected_assets:
+      - EVAL-011  # ewt_expected_withholding.csv
+      - EVAL-012  # vat_basic_expected_lines.csv
+      - EVAL-013  # vat_basic_transactions.csv
+    recommended_action: >-
+      Create addons/ipai/ipai_bir_tax_compliance/tests/fixtures/agent_demo/
+      with realistic business documents: vendor_bills.json, purchase_orders.json,
+      mixed_invoices.json, cross_border_transactions.json. Each document
+      should have an expected agent analysis attached.
+    migration_phase: 3
+    effort_estimate: "2-3 days"
+    blocks:
+      - GAP-001
+
+  - id: GAP-012
+    title: "No continuous evaluation setup for production TaxPulse agent"
+    severity: medium
+    category: operations
+    description: >-
+      No scheduled or continuous evaluation runs against the production
+      TaxPulse agent. The doctrine requires production telemetry as part
+      of evaluation, but no monitoring, alerting, or dashboard exists
+      for benchmark score trends over time.
+    affected_assets:
+      - EVAL-002  # agent_benchmark_doctrine.yaml
+      - EVAL-015  # spec/tax-pulse-sub-agent/
+    recommended_action: >-
+      Set up a weekly cron job (GitHub Actions scheduled workflow) that:
+      1. Runs the tax benchmark suite against staging
+      2. Stores results in docs/evidence/benchmark-runs/
+      3. Compares against baseline and previous run
+      4. Posts regression alerts to Slack #ops channel
+      5. Updates a benchmark trend dashboard (Superset or simple HTML)
+    migration_phase: 5
+    effort_estimate: "2-3 days"
+    blocks:
+      - GAP-001
+      - GAP-006

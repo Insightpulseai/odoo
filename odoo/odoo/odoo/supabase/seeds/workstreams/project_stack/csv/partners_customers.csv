@@ -1,0 +1,6 @@
+External ID,Name,Company Type,Is a Company,Parent Company,Email,Phone,Street,City,Zip,Country,Is a Customer,Is a Vendor,Internal Reference,Job Position,Notes
+ipai_partner_acme,ACME Foods Inc,company,TRUE,,ops@acme.com,+63 2 8123 4567,"Unit 1501, RCBC Plaza",Makati City,1200,Philippines,1,0,ipai_partner_acme,,Demo customer for Project Alpha
+ipai_partner_tbwa,TBWA SMP,company,TRUE,,business@insightpulseai.com,+63 2 8000 0000,"Level 10, Uptown Tower",Taguig City,1630,Philippines,1,0,ipai_partner_tbwa,,TBWA internal projects
+ipai_partner_globex,Globex Corporation,company,TRUE,,procurement@globex.com,+63 2 8555 1234,Ayala Avenue cor. Paseo de Roxas,Makati City,1226,Philippines,1,0,ipai_partner_globex,,Demo customer for Project Beta
+ipai_contact_acme_pm,Maria Santos,person,FALSE,ipai_partner_acme,maria.santos@acme.com,+63 917 123 4567,,,,,0,0,ipai_contact_acme_pm,Project Manager,ACME project stakeholder - portal access candidate
+ipai_contact_globex_cfo,Juan Dela Cruz,person,FALSE,ipai_partner_globex,juan.delacruz@globex.com,+63 918 987 6543,,,,,0,0,ipai_contact_globex_cfo,CFO,Globex executive sponsor - portal access candidate

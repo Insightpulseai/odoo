@@ -1,0 +1,267 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Creative Brief Tree View -->
+    <record id="view_creative_brief_tree" model="ir.ui.view">
+        <field name="name">ipai.creative.brief.tree</field>
+        <field name="model">ipai.creative.brief</field>
+        <field name="arch" type="xml">
+            <list string="Creative Briefs" decoration-muted="state == 'rejected'">
+                <field name="name"/>
+                <field name="campaign_id"/>
+                <field name="brand_id"/>
+                <field name="deadline"/>
+                <field name="asset_count"/>
+                <field name="state" widget="badge" decoration-info="state == 'draft'" decoration-warning="state in ('review', 'revision')" decoration-success="state == 'approved'" decoration-danger="state == 'rejected'"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Creative Brief Form View -->
+    <record id="view_creative_brief_form" model="ir.ui.view">
+        <field name="name">ipai.creative.brief.form</field>
+        <field name="model">ipai.creative.brief</field>
+        <field name="arch" type="xml">
+            <form string="Creative Brief">
+                <header>
+                    <button name="action_submit_review" string="Submit for Review" type="object" class="oe_highlight" invisible="state != 'draft'"/>
+                    <button name="action_approve" string="Approve" type="object" class="oe_highlight" invisible="state != 'review'"/>
+                    <button name="action_request_revision" string="Request Revision" type="object" invisible="state != 'review'"/>
+                    <button name="action_reject" string="Reject" type="object" invisible="state != 'review'"/>
+                    <button name="action_reset_draft" string="Reset to Draft" type="object" invisible="state in ('draft', 'approved')"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,review,approved"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1><field name="name" placeholder="Brief Title..."/></h1>
+                    </div>
+                    <group>
+                        <group string="Campaign">
+                            <field name="campaign_id"/>
+                            <field name="brand_id"/>
+                            <field name="deadline"/>
+                        </group>
+                        <group string="Statistics">
+                            <field name="asset_count"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Brief Content" name="content">
+                            <group>
+                                <group string="Target">
+                                    <field name="audience" placeholder="Who is this creative targeting?"/>
+                                </group>
+                                <group string="Message">
+                                    <field name="single_minded_proposition" placeholder="The one key takeaway..."/>
+                                    <field name="tone"/>
+                                    <field name="call_to_action"/>
+                                </group>
+                            </group>
+                            <separator string="Key Messages"/>
+                            <field name="key_messages"/>
+                        </page>
+                        <page string="Requirements" name="requirements">
+                            <group>
+                                <field name="mandatories" widget="ace" options="{'mode': 'json'}"/>
+                            </group>
+                            <group>
+                                <field name="channels" widget="ace" options="{'mode': 'json'}"/>
+                            </group>
+                        </page>
+                        <page string="Deliverables" name="deliverables">
+                            <field name="deliverables_description"/>
+                        </page>
+                        <page string="Assets" name="assets">
+                            <field name="asset_ids">
+                                <list>
+                                    <field name="name"/>
+                                    <field name="asset_type" widget="badge"/>
+                                    <field name="version"/>
+                                    <field name="state" widget="badge"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- Creative Brief Action -->
+    <record id="action_creative_brief" model="ir.actions.act_window">
+        <field name="name">Creative Briefs</field>
+        <field name="res_model">ipai.creative.brief</field>
+        <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create your first creative brief
+            </p>
+            <p>
+                Creative briefs define the direction and requirements
+                for campaign assets and deliverables.
+            </p>
+        </field>
+    </record>
+
+    <!-- Asset Tree View -->
+    <record id="view_asset_tree" model="ir.ui.view">
+        <field name="name">ipai.asset.tree</field>
+        <field name="model">ipai.asset</field>
+        <field name="arch" type="xml">
+            <list string="Assets" decoration-muted="state == 'rejected'">
+                <field name="code"/>
+                <field name="name"/>
+                <field name="brand_id"/>
+                <field name="campaign_id"/>
+                <field name="asset_type" widget="badge"/>
+                <field name="version"/>
+                <field name="format"/>
+                <field name="state" widget="badge" decoration-info="state == 'draft'" decoration-warning="state in ('internal_review', 'client_review', 'revision')" decoration-success="state in ('approved', 'published')" decoration-danger="state == 'rejected'"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Asset Form View -->
+    <record id="view_asset_form" model="ir.ui.view">
+        <field name="name">ipai.asset.form</field>
+        <field name="model">ipai.asset</field>
+        <field name="arch" type="xml">
+            <form string="Asset">
+                <header>
+                    <button name="action_submit_internal" string="Submit Internal Review" type="object" class="oe_highlight" invisible="state != 'draft'"/>
+                    <button name="action_submit_client" string="Submit to Client" type="object" class="oe_highlight" invisible="state != 'internal_review'"/>
+                    <button name="action_approve" string="Approve" type="object" class="oe_highlight" invisible="state != 'client_review'"/>
+                    <button name="action_request_revision" string="Request Revision" type="object" invisible="state not in ('internal_review', 'client_review')"/>
+                    <button name="action_reject" string="Reject" type="object" invisible="state not in ('internal_review', 'client_review')"/>
+                    <button name="action_publish" string="Publish" type="object" class="oe_highlight" invisible="state != 'approved'"/>
+                    <button name="action_reset_draft" string="Reset to Draft" type="object" invisible="state in ('draft', 'published')"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,internal_review,client_review,approved,published"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1><field name="name" placeholder="Asset Name..."/></h1>
+                    </div>
+                    <group>
+                        <group string="Classification">
+                            <field name="code"/>
+                            <field name="brand_id"/>
+                            <field name="campaign_id"/>
+                            <field name="brief_id"/>
+                        </group>
+                        <group string="Type &amp; Version">
+                            <field name="asset_type"/>
+                            <field name="version"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group string="File">
+                            <field name="file" filename="file_name"/>
+                            <field name="file_name" invisible="1"/>
+                            <field name="file_url" widget="url"/>
+                        </group>
+                        <group string="Specifications">
+                            <field name="format"/>
+                            <field name="file_type"/>
+                            <field name="duration" invisible="asset_type not in ('video', 'audio', 'animation')"/>
+                            <field name="file_size"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Description" name="description">
+                            <field name="description"/>
+                        </page>
+                        <page string="Internal Notes" name="notes">
+                            <field name="notes"/>
+                        </page>
+                        <page string="Approval History" name="approvals">
+                            <field name="approval_cycle_ids">
+                                <list editable="bottom">
+                                    <field name="stage"/>
+                                    <field name="approver_id"/>
+                                    <field name="due_date"/>
+                                    <field name="decision" widget="badge"/>
+                                    <field name="decision_date"/>
+                                    <field name="comments"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- Asset Kanban View -->
+    <record id="view_asset_kanban" model="ir.ui.view">
+        <field name="name">ipai.asset.kanban</field>
+        <field name="model">ipai.asset</field>
+        <field name="arch" type="xml">
+            <kanban default_group_by="state" class="o_kanban_small_column">
+                <field name="name"/>
+                <field name="brand_id"/>
+                <field name="asset_type"/>
+                <field name="state"/>
+                <field name="version"/>
+                <templates>
+                    <t t-name="card">
+                        <div class="oe_kanban_content">
+                            <strong><field name="name"/></strong>
+                            <div class="text-muted"><field name="brand_id"/></div>
+                            <div class="mt-2">
+                                <span class="badge bg-secondary"><field name="asset_type"/></span>
+                                <span class="badge bg-info">v<field name="version"/></span>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- Asset Search View -->
+    <record id="view_asset_search" model="ir.ui.view">
+        <field name="name">ipai.asset.search</field>
+        <field name="model">ipai.asset</field>
+        <field name="arch" type="xml">
+            <search string="Search Assets">
+                <field name="name"/>
+                <field name="code"/>
+                <field name="brand_id"/>
+                <field name="campaign_id"/>
+                <separator/>
+                <filter string="Video" name="filter_video" domain="[('asset_type', '=', 'video')]"/>
+                <filter string="Image" name="filter_image" domain="[('asset_type', '=', 'image')]"/>
+                <filter string="Copy" name="filter_copy" domain="[('asset_type', '=', 'copy')]"/>
+                <separator/>
+                <filter string="In Review" name="filter_review" domain="[('state', 'in', ('internal_review', 'client_review'))]"/>
+                <filter string="Approved" name="filter_approved" domain="[('state', '=', 'approved')]"/>
+                <filter string="Published" name="filter_published" domain="[('state', '=', 'published')]"/>
+                <group expand="0" string="Group By">
+                    <filter string="Brand" name="group_brand" context="{'group_by': 'brand_id'}"/>
+                    <filter string="Campaign" name="group_campaign" context="{'group_by': 'campaign_id'}"/>
+                    <filter string="Type" name="group_type" context="{'group_by': 'asset_type'}"/>
+                    <filter string="State" name="group_state" context="{'group_by': 'state'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Asset Action -->
+    <record id="action_asset" model="ir.actions.act_window">
+        <field name="name">Assets</field>
+        <field name="res_model">ipai.asset</field>
+        <field name="view_mode">kanban,list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create your first asset
+            </p>
+            <p>
+                Assets are creative deliverables like images, videos,
+                and copy that go through approval workflows.
+            </p>
+        </field>
+    </record>
+</odoo>

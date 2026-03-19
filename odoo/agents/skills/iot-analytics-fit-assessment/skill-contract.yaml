@@ -1,0 +1,69 @@
+version: 1
+name: iot-analytics-fit-assessment
+status: draft
+owner: agents
+type: judge
+family: databricks-architecture
+classification: encoded_preference
+
+purpose: >
+  Assess whether streaming telemetry or IoT analytics is actually in scope for a
+  given workload. Returns IN_SCOPE, OUT_OF_SCOPE, or CONDITIONAL. Prevents accidental
+  expansion into IoT architecture when not needed.
+
+source: "IoT analytics with Azure Data Explorer and Azure IoT Hub" (Microsoft Learn architecture card)
+
+triggers:
+  - workload mentions streaming, telemetry, sensors, or IoT
+  - architecture review includes real-time data ingestion
+  - scope assessment for new data platform initiative
+  - technology selection involving Azure Data Explorer or IoT Hub
+
+inputs:
+  - workload description
+  - data sources (are they actually IoT devices or sensors?)
+  - latency requirements (seconds, minutes, hours, days)
+  - volume characteristics (events/second, data size)
+
+dependencies:
+  - agents/knowledge/benchmarks/azure-databricks-architecture-cards.md
+  - agent-platform/ssot/learning/databricks_architecture_card_map.yaml
+
+steps:
+  - identify whether data sources are genuine IoT/sensor devices or batch/API sources
+  - assess latency requirement (sub-second = streaming, minutes = micro-batch, hours+ = batch)
+  - evaluate volume (>10K events/sec sustained = streaming territory)
+  - check for device management needs (provisioning, twin state, firmware)
+  - determine if Azure Data Explorer or IoT Hub capabilities are genuinely needed
+  - classify as IN_SCOPE, OUT_OF_SCOPE, or CONDITIONAL
+  - if OUT_OF_SCOPE, recommend appropriate alternative (batch pipeline, API polling, change data capture)
+
+outputs:
+  - scope_verdict: IN_SCOPE | OUT_OF_SCOPE | CONDITIONAL
+  - justification
+  - alternative_recommendation (if OUT_OF_SCOPE)
+  - evidence
+
+guardrails:
+  - >
+    IoT analytics is an optional adjacent benchmark, not a primary architecture
+    concern. The default verdict is OUT_OF_SCOPE unless the workload genuinely
+    involves device telemetry, sub-second latency requirements, or high-volume
+    streaming ingestion. Do not let "real-time" language alone trigger IoT scope.
+  - default to OUT_OF_SCOPE unless clear IoT signals are present
+  - "real-time dashboards" alone does not mean IoT is needed
+  - "API data refresh every 5 minutes" is micro-batch, not streaming
+  - do not recommend IoT Hub or ADX unless device management or time-series analytics at scale is needed
+
+evidence:
+  format: docs/evidence/{stamp}/databricks/iot-fit-assessment/
+  required:
+    - workload description
+    - scope verdict with justification
+    - alternative recommendation (if OUT_OF_SCOPE)
+
+evals:
+  accuracy: 0.95
+  completeness: 0.90
+  safety: 0.99
+  policy_adherence: 0.99

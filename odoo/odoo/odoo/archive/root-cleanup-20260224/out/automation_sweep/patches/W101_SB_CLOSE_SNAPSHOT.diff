@@ -1,0 +1,4 @@
+--- a/notion-n8n-monthly-close/workflows/supabase/W101_SB_CLOSE_SNAPSHOT.json
++++ b/automations/n8n/workflows/W101_SB_CLOSE_SNAPSHOT.json
+@@ Move stray workflow to canonical location @@
+# git mv 'notion-n8n-monthly-close/workflows/supabase/W101_SB_CLOSE_SNAPSHOT.json' 'automations/n8n/workflows/W101_SB_CLOSE_SNAPSHOT.json'

@@ -1,0 +1,186 @@
+[
+  {
+    "repo_name": ".github",
+    "target_state": "active",
+    "canonical_domain": "governance",
+    "visibility": "private",
+    "merge_target": null,
+    "notes": "Org-wide configuration and reusable workflows"
+  },
+  {
+    "repo_name": "odoo",
+    "target_state": "active",
+    "canonical_domain": "erp",
+    "visibility": "public",
+    "merge_target": null,
+    "notes": "Canonical ERP runtime (CE 19 + OCA + IPAI)"
+  },
+  {
+    "repo_name": "ops-platform",
+    "target_state": "active",
+    "canonical_domain": "control-plane",
+    "visibility": "private",
+    "merge_target": null,
+    "notes": "Supabase SSOT and secrets management"
+  },
+  {
+    "repo_name": "lakehouse",
+    "target_state": "active",
+    "canonical_domain": "data",
+    "visibility": "private",
+    "merge_target": null,
+    "notes": "Databricks lakehouse and analytics pipelines"
+  },
+  {
+    "repo_name": "infra",
+    "target_state": "active",
+    "canonical_domain": "infrastructure",
+    "visibility": "private",
+    "merge_target": null,
+    "notes": "IaC for Azure, DO, and Cloudflare"
+  },
+  {
+    "repo_name": "web",
+    "target_state": "active",
+    "canonical_domain": "product",
+    "visibility": "private",
+    "merge_target": null,
+    "notes": "Web applications and documentation surfaces"
+  },
+  {
+    "repo_name": "design-system",
+    "target_state": "active",
+    "canonical_domain": "shared",
+    "visibility": "internal",
+    "merge_target": null,
+    "notes": "Design tokens and brand assets"
+  },
+  {
+    "repo_name": "agents",
+    "target_state": "active",
+    "canonical_domain": "ai",
+    "visibility": "public",
+    "merge_target": null,
+    "notes": "Agent registry and AI orchestration"
+  },
+  {
+    "repo_name": "automations",
+    "target_state": "active",
+    "canonical_domain": "automation",
+    "visibility": "private",
+    "merge_target": null,
+    "notes": "n8n and scheduled automation workflows"
+  },
+  {
+    "repo_name": "templates",
+    "target_state": "active",
+    "canonical_domain": "shared",
+    "visibility": "private",
+    "merge_target": null,
+    "notes": "Repository scaffolds and starters"
+  },
+  {
+    "repo_name": "template-factory",
+    "target_state": "archive",
+    "canonical_domain": "legacy",
+    "visibility": "private",
+    "merge_target": null,
+    "notes": "Archived as requested"
+  },
+  {
+    "repo_name": "plugin-marketplace",
+    "target_state": "merge",
+    "canonical_domain": "extension",
+    "visibility": "private",
+    "merge_target": "ops-platform",
+    "notes": "Merge useful assets into ops-platform"
+  },
+  {
+    "repo_name": "plugin-agents",
+    "target_state": "merge",
+    "canonical_domain": "ai",
+    "visibility": "private",
+    "merge_target": "agents",
+    "notes": "Merge useful assets into agents"
+  },
+  {
+    "repo_name": "dev-environment",
+    "target_state": "archive",
+    "canonical_domain": "legacy",
+    "visibility": "private",
+    "merge_target": ".github",
+    "notes": "Absorb into .github/templates/docs"
+  },
+  {
+    "repo_name": "ops-console",
+    "target_state": "merge",
+    "canonical_domain": "product",
+    "visibility": "private",
+    "merge_target": "web",
+    "notes": "Merge into web or ops-platform"
+  },
+  {
+    "repo_name": "app-crm",
+    "target_state": "merge",
+    "canonical_domain": "product",
+    "visibility": "internal",
+    "merge_target": "odoo",
+    "notes": "Merge into web or odoo"
+  },
+  {
+    "repo_name": "learn",
+    "target_state": "archive",
+    "canonical_domain": "legacy",
+    "visibility": "private",
+    "merge_target": null,
+    "notes": "Archived as requested"
+  },
+  {
+    "repo_name": "fluent-owl",
+    "target_state": "archive",
+    "canonical_domain": "legacy",
+    "visibility": "internal",
+    "merge_target": null,
+    "notes": "Archived as requested"
+  },
+  {
+    "repo_name": "roadmap",
+    "target_state": "archive",
+    "canonical_domain": "planning",
+    "visibility": "public",
+    "merge_target": null,
+    "notes": "Use GitHub Projects instead"
+  },
+  {
+    "repo_name": "mcp-core",
+    "target_state": "merge",
+    "canonical_domain": "ai",
+    "visibility": "internal",
+    "merge_target": "agents",
+    "notes": "Merge into agents or automations"
+  },
+  {
+    "repo_name": "fin-ops",
+    "target_state": "archive",
+    "canonical_domain": "legacy",
+    "visibility": "internal",
+    "merge_target": "odoo",
+    "notes": "Merge into odoo/docs"
+  },
+  {
+    "repo_name": "app-landing",
+    "target_state": "merge",
+    "canonical_domain": "product",
+    "visibility": "internal",
+    "merge_target": "web",
+    "notes": "Merge into web"
+  },
+  {
+    "repo_name": "demo-repository",
+    "target_state": "delete",
+    "canonical_domain": "legacy",
+    "visibility": "private",
+    "merge_target": null,
+    "notes": "Delete if disposable"
+  }
+]

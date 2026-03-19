@@ -1,0 +1,31 @@
+id: tenant-health-alerting
+version: 1
+status: active
+classification: encoded_preference
+persona: tenant-lifecycle-operator
+updated_at: "2026-03-17"
+
+purpose: >
+  Design per-tenant monitoring, metrics, and alerting for multi-tenant
+  SaaS platforms.
+
+inputs:
+  - observability_stack: "Azure Monitor, Application Insights, Grafana, etc."
+  - slo_definitions: "SLOs per tenant tier"
+  - alert_routing: "Notification channels per tier and severity"
+  - dashboard_requirements: "Platform-wide and per-tenant dashboard needs"
+
+outputs:
+  - metrics_design: "Tenant-dimensioned metric definitions"
+  - slo_tracking: "Per-tenant SLO calculation and burn rate alerting"
+  - alert_rules: "Alert definitions with tenant-aware routing"
+  - dashboard_design: "Platform and per-tenant dashboard layouts"
+  - anomaly_detection: "Per-tenant anomaly detection configuration"
+
+guardrails:
+  - "Every metric must include tenant-id as a dimension"
+  - "SLO burn rate alerts must fire before SLO is breached"
+  - "Alert routing must respect tenant tier (enterprise gets faster response)"
+  - "Dashboards must not expose cross-tenant data"
+
+benchmark_source: "Azure Multitenancy Checklist - Operational Excellence"

@@ -1,0 +1,52 @@
+version: 1
+type: governance_skill
+family: oca_community_governance
+skill:
+  name: odoo-branch-series-governance
+  status: draft
+  owner: odoo-release-manager
+  purpose: >
+    Validate branch and series readiness for new Odoo versions — branch
+    creation, CI tooling updates, migration issue tracking.
+
+  triggers:
+    - new Odoo version release
+    - series migration planning
+    - branch creation
+
+  inputs:
+    - target Odoo version
+    - repo-maintainer-conf branch generation rules
+    - OCA repo list from addons manifest
+
+  steps:
+    - check repo-maintainer-conf for branch generation rules
+    - verify CI tooling supports new series (pre-commit, linting)
+    - check OCB branch exists for target version
+    - verify migration issues created per OCA process
+    - confirm oca-github-bot updated for new series
+
+  outputs:
+    - series_readiness_report
+    - branch_status
+    - ci_tooling_status
+    - migration_issue_inventory
+
+  guardrails:
+    - never create series branch without CI tooling support
+    - follow OCA branch naming conventions
+    - require migration issues before branch work begins
+
+  evidence:
+    required: true
+    format: "docs/evidence/{stamp}/oca-governance/odoo-branch-series-governance/"
+
+  evals:
+    dimensions: [accuracy, completeness, safety, policy_adherence, evidence_quality]
+    thresholds:
+      accuracy: 0.95
+      safety: 0.99
+
+cross_references:
+  - agents/knowledge/benchmarks/oca-community-governance.md
+  - agent-platform/ssot/learning/oca_skill_persona_map.yaml

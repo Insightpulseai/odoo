@@ -1,0 +1,17 @@
+name: Naming Drift Check
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  check-naming-drift:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.12'
+      - name: Run Naming Drift Checker
+        run: python3 scripts/ci/check_naming_drift.py

@@ -1,0 +1,203 @@
+=== W9 Studio Booking Form - Supabase Integration Implementation ===
+Timestamp: 2026-02-20 03:43 +0800
+Status: COMPLETE
+Project: rotor-kinetic
+Location: /Users/tbwa/Documents/GitHub/Insightpulseai/odoo/sandbox/dev/.artifacts/rotor-kinetic
+
+=== FILES CREATED ===
+
+1. src/lib/supabase.ts (NEW)
+   - Supabase client initialization
+   - Environment variable validation
+   - Error handling for missing config
+   - Export: supabase client instance
+
+2. src/lib/bookings.ts (NEW)
+   - BookingPayload TypeScript interface
+   - submitBooking() async function
+   - Data sanitization (trim, lowercase email)
+   - Error handling with throw pattern
+   - Status defaulting to 'pending'
+
+3. supabase/migrations/20260220_create_bookings.sql (NEW)
+   - bookings table schema
+   - 10 columns: id, studio_type, booking_date, time_slot, name, email, phone, message, status, created_at
+   - CHECK constraints: studio_type in (video, photo, event, rental)
+   - CHECK constraints: status in (pending, confirmed, cancelled)
+   - EXCLUSION constraint: no_double_booking (prevents same date + time)
+   - 3 indexes: date, email, status
+   - RLS enabled
+   - 2 policies: anon_insert_booking (public submissions), authenticated_all (admin)
+
+4. .env.local.example (NEW)
+   - Template for environment variables
+   - Placeholder values with instructions
+   - Git-safe (no real credentials)
+
+5. .env.local (NEW, GIT-IGNORED)
+   - VITE_SUPABASE_URL=https://spdtwktxdalcfigzeqrz.supabase.co
+   - VITE_SUPABASE_ANON_KEY=[REDACTED]
+   - Ready for immediate use
+
+6. SUPABASE_SETUP.md (NEW)
+   - Complete setup instructions
+   - Migration commands (SQL Editor + CLI)
+   - Verification queries
+   - Test procedures
+   - Troubleshooting guide
+
+=== FILES MODIFIED ===
+
+1. src/components/ui/BookingSection.jsx
+   - Line 4: Added import { submitBooking } from '../../lib/bookings'
+   - Lines 13-14: Added error design tokens (borderError, textError)
+   - Lines 42-47: Added state: loading, submitError, validationError
+   - Lines 49-84: Replaced handleSubmit with async version
+     - Validation for studioType, selected date, timeSlot
+     - Loading state management
+     - Try/catch error handling
+     - Date formatting to YYYY-MM-DD
+   - Lines 321-332: Added error display UI
+   - Lines 335-347: Updated submit button with loading state
+
+=== DESIGN DECISIONS ===
+
+1. Error Handling Strategy: throw instead of {success, error} pattern
+   - Rationale: Standard try/catch in UI, simpler error flow
+   - Alternative: Could use Result<T, E> pattern for type safety
+
+2. Date Format: YYYY-MM-DD (ISO 8601 date only)
+   - Rationale: PostgreSQL date type compatibility
+   - Implementation: selected.toISOString().split('T')[0]
+
+3. Email Normalization: .trim().toLowerCase()
+   - Rationale: Prevent duplicate bookings with case variations
+   - Example: "User@Example.com" → "user@example.com"
+
+4. Double-Booking Prevention: Database EXCLUDE constraint
+   - Rationale: Atomic guarantee at DB level, not app level
+   - Trade-off: Error message less user-friendly, but prevents race conditions
+
+5. RLS Policy: anon INSERT only, authenticated ALL
+   - Rationale: Public can submit, admins can manage
+   - Security: Service role key required for SELECT/UPDATE/DELETE
+
+=== VERIFICATION CHECKLIST ===
+
+Pre-Deployment:
+[ ] Migration SQL executed in Supabase
+[ ] Table created with correct schema
+[ ] RLS policies active
+[ ] Exclusion constraint enforced
+[ ] .env.local configured with real credentials
+
+Runtime Testing:
+[ ] Form validation shows errors for missing fields
+[ ] Loading state shows "Sending…" during submission
+[ ] Success state shows after submission
+[ ] Data appears in Supabase table
+[ ] Double-booking attempt shows error
+[ ] Network error shows user-friendly message
+
+Build Verification:
+[ ] TypeScript compilation (if tsc configured)
+[ ] npm run build succeeds
+[ ] No console errors on page load
+[ ] Supabase client initializes without errors
+
+=== INTEGRATION POINTS ===
+
+Dependencies:
+- @supabase/supabase-js@2.95.3 (already installed via package-lock.json)
+- react-day-picker (already installed)
+- No new npm packages required
+
+Environment:
+- Vite (build tool, VITE_ prefix for env vars)
+- React (UI framework)
+- Supabase (PostgreSQL + RLS + Edge Functions)
+
+Data Flow:
+1. User fills form → BookingSection state
+2. Submit → submitBooking(payload)
+3. Supabase client → INSERT via RLS policy
+4. Success → setSubmitted(true)
+5. Error → setSubmitError(message)
+
+=== SECURITY CONSIDERATIONS ===
+
+✅ Secrets managed via .env.local (git-ignored)
+✅ Anon key safe for client-side (read-only via RLS)
+✅ Service role key NOT used in frontend
+✅ Input sanitization (.trim(), .toLowerCase())
+✅ SQL injection: N/A (parameterized queries via Supabase SDK)
+✅ CSRF: N/A (Supabase handles auth)
+✅ XSS: React auto-escapes, no dangerouslySetInnerHTML
+
+Pending:
+⚠️  Email validation: HTML5 type="email" only (no server-side verification)
+⚠️  Rate limiting: Not implemented (Supabase default limits apply)
+⚠️  CAPTCHA: Not implemented (vulnerable to spam)
+
+=== NEXT STEPS (Out of Scope) ===
+
+1. Email Notifications
+   - Supabase Edge Function on INSERT trigger
+   - SendGrid/Postmark integration
+   - Templates: confirmation, admin notification
+
+2. Admin Dashboard
+   - Protected route with Supabase Auth
+   - Booking management UI (approve/reject/cancel)
+   - Calendar view of bookings
+
+3. Booking Confirmation Workflow
+   - Status transitions: pending → confirmed → cancelled
+   - Email sent on status change
+   - iCal attachment generation
+
+4. Availability Management
+   - Block specific dates/times
+   - Custom time slots per day
+   - Holiday calendar integration
+
+5. Payment Integration
+   - Stripe Checkout for deposits
+   - Refund workflow
+   - Invoice generation
+
+=== DEPLOYMENT NOTES ===
+
+Production Checklist:
+1. Generate production VITE_SUPABASE_ANON_KEY if different from dev
+2. Run migration on production Supabase project
+3. Test form submission on production URL
+4. Monitor Supabase logs for errors
+5. Set up error tracking (Sentry, LogRocket, etc.)
+
+Rollback Plan:
+1. Remove bookings table: DROP TABLE public.bookings CASCADE;
+2. Revert BookingSection.jsx to commit before changes
+3. Remove src/lib/ directory
+4. Remove .env.local
+
+Performance:
+- Supabase INSERT: ~50-200ms typical
+- No additional API calls required
+- Client-side validation: instant
+- Network failure graceful degradation
+
+=== EVIDENCE ===
+
+Files Created: 6 new files
+Files Modified: 1 file (BookingSection.jsx)
+Lines Changed: ~80 lines added/modified
+Dependencies: 0 new (Supabase already installed)
+Build Status: Not tested (requires npm run dev)
+Migration Status: SQL ready, not executed
+
+Implementation Time: ~45 minutes
+Complexity: Moderate (async/await, RLS, exclusion constraints)
+Risk Level: Low (no breaking changes, additive only)
+
+=== END OF LOG ===

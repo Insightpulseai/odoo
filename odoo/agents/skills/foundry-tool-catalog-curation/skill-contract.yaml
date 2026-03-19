@@ -1,0 +1,64 @@
+version: 1
+type: foundry_skill
+family: foundry_model_tool_runtime
+skill:
+  name: foundry-tool-catalog-curation
+  status: draft
+  owner: agents
+  purpose: >
+    Choose which tools belong in the approved Foundry tool baseline. Classify
+    each tool as approved, conditional, or forbidden based on trust boundary,
+    auth mode, provider trust, and category fit.
+
+  triggers:
+    - new tool proposal for the Foundry baseline
+    - tool catalog review (periodic or ad hoc)
+    - MCP server registration request
+    - quarterly audit of tool catalog
+
+  inputs:
+    - tool name and description
+    - tool type (local MCP, remote MCP, native Foundry)
+    - auth mode (managed identity, Entra, OAuth2, key-based)
+    - provider trust level
+    - category (code execution, data access, external API, etc.)
+    - current mcp-baseline.yaml
+
+  steps:
+    - classify tool type (local MCP, remote MCP, native Foundry)
+    - assess auth mode and verify it meets minimum requirements
+    - check provider trust level
+    - evaluate category fit against approved categories
+    - determine verdict — approved, conditional, or forbidden — with reason
+    - check against ssot/agents/mcp-baseline.yaml for conflicts or duplicates
+    - document classification with full rationale
+
+  outputs:
+    - classification_verdict
+    - auth_mode_requirement
+    - trust_boundary_assessment
+    - catalog_update_recommendation
+    - conflict_or_duplicate_check
+
+  guardrails:
+    - never approve unregistered tools for production
+    - require auth review for all remote MCP tools
+    - distinguish local/remote MCP trust boundaries — they are not equivalent
+    - check against mcp-baseline.yaml before any classification
+    - forbidden tools must have documented rationale
+    - conditional tools must have documented conditions for approval
+
+  evidence:
+    required: true
+    format: "docs/evidence/{stamp}/foundry/tool-catalog/"
+
+  evals:
+    dimensions: [accuracy, completeness, safety, policy_adherence, evidence_quality]
+    thresholds:
+      accuracy: 0.95
+      safety: 0.99
+
+cross_references:
+  - agents/knowledge/benchmarks/microsoft-foundry-models-and-tools.md
+  - agents/personas/foundry-tool-governor.md
+  - ssot/agents/mcp-baseline.yaml

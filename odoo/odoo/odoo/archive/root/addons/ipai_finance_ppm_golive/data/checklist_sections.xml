@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Finance PPM Go-Live Checklist Sections -->
+
+    <record id="section_data_system" model="ipai.finance.ppm.golive.section">
+        <field name="name">Data &amp; System Readiness</field>
+        <field name="section_type">data_system</field>
+        <field name="sequence">10</field>
+        <field name="description">Verify all infrastructure components are healthy and accessible</field>
+    </record>
+
+    <record id="section_module" model="ipai.finance.ppm.golive.section">
+        <field name="name">Finance PPM Module Readiness</field>
+        <field name="section_type">module</field>
+        <field name="sequence">20</field>
+        <field name="description">Ensure all Odoo modules are installed and configured correctly</field>
+    </record>
+
+    <record id="section_afc" model="ipai.finance.ppm.golive.section">
+        <field name="name">AFC (Financial Close) Go-Live Check</field>
+        <field name="section_type">afc</field>
+        <field name="sequence">30</field>
+        <field name="description">Validate month-end closing workflows and automation</field>
+    </record>
+
+    <record id="section_stc" model="ipai.finance.ppm.golive.section">
+        <field name="name">STC (Tax Compliance) Go-Live Check</field>
+        <field name="section_type">stc</field>
+        <field name="sequence">40</field>
+        <field name="description">Verify BIR tax filing automation and compliance</field>
+    </record>
+
+    <record id="section_control_room" model="ipai.finance.ppm.golive.section">
+        <field name="name">Control Room (AI/Automation) Go-Live Check</field>
+        <field name="section_type">control_room</field>
+        <field name="sequence">50</field>
+        <field name="description">Ensure n8n workflows and AI automation are operational</field>
+    </record>
+
+    <record id="section_notion_parity" model="ipai.finance.ppm.golive.section">
+        <field name="name">Notion-AI Parity Check</field>
+        <field name="section_type">notion_parity</field>
+        <field name="sequence">60</field>
+        <field name="description">Validate feature parity with Notion-AI workspace</field>
+    </record>
+
+    <record id="section_audit_compliance" model="ipai.finance.ppm.golive.section">
+        <field name="name">Audit &amp; Compliance Check</field>
+        <field name="section_type">audit_compliance</field>
+        <field name="sequence">70</field>
+        <field name="description">Ensure audit trails and compliance requirements are met</field>
+    </record>
+
+    <record id="section_operational" model="ipai.finance.ppm.golive.section">
+        <field name="name">Operational Check</field>
+        <field name="section_type">operational</field>
+        <field name="sequence">80</field>
+        <field name="description">Verify operational procedures and training are complete</field>
+    </record>
+
+    <record id="section_golive_criteria" model="ipai.finance.ppm.golive.section">
+        <field name="name">Official Go-Live Criteria</field>
+        <field name="section_type">golive_criteria</field>
+        <field name="sequence">90</field>
+        <field name="description">Final validation gates before production authorization</field>
+    </record>
+</odoo>

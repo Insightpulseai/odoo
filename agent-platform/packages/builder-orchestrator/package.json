@@ -1,0 +1,18 @@
+{
+  "name": "@ipai/builder-orchestrator",
+  "version": "0.1.0",
+  "description": "Orchestration engine: loads agent assets, enforces policy, routes to Foundry client",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc --build",
+    "clean": "rm -rf dist",
+    "test": "node --test dist/tests/"
+  },
+  "dependencies": {
+    "@ipai/builder-contract": "0.1.0",
+    "@ipai/builder-foundry-client": "0.1.0"
+  },
+  "files": ["dist"],
+  "license": "LGPL-3.0"
+}

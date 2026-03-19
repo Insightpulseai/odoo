@@ -1,0 +1,320 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="0">
+        <record id="holiday_feast_of_the_immaculate_concep_20251208" model="resource.calendar.leaves">
+            <field name="name">Feast of the Immaculate Conception</field>
+            <field name="date_from">2025-12-08 00:00:00</field>
+            <field name="date_to">2025-12-08 23:59:59</field>
+            <field name="resource_id" eval="False"/>
+            <field name="time_type">leave</field>
+        </record>
+        <record id="holiday_christmas_eve_20251224" model="resource.calendar.leaves">
+            <field name="name">Christmas Eve</field>
+            <field name="date_from">2025-12-24 00:00:00</field>
+            <field name="date_to">2025-12-24 23:59:59</field>
+            <field name="resource_id" eval="False"/>
+            <field name="time_type">leave</field>
+        </record>
+        <record id="holiday_christmas_day_20251225" model="resource.calendar.leaves">
+            <field name="name">Christmas Day</field>
+            <field name="date_from">2025-12-25 00:00:00</field>
+            <field name="date_to">2025-12-25 23:59:59</field>
+            <field name="resource_id" eval="False"/>
+            <field name="time_type">leave</field>
+        </record>
+        <record id="holiday_rizal_day_20251230" model="resource.calendar.leaves">
+            <field name="name">Rizal Day</field>
+            <field name="date_from">2025-12-30 00:00:00</field>
+            <field name="date_to">2025-12-30 23:59:59</field>
+            <field name="resource_id" eval="False"/>
+            <field name="time_type">leave</field>
+        </record>
+        <record id="holiday_last_day_of_the_year_20251231" model="resource.calendar.leaves">
+            <field name="name">Last Day of the Year</field>
+            <field name="date_from">2025-12-31 00:00:00</field>
+            <field name="date_to">2025-12-31 23:59:59</field>
+            <field name="resource_id" eval="False"/>
+            <field name="time_type">leave</field>
+        </record>
+        <record id="holiday_new_year_s_day_20260101" model="resource.calendar.leaves">
+            <field name="name">New Year&apos;s Day</field>
+            <field name="date_from">2026-01-01 00:00:00</field>
+            <field name="date_to">2026-01-01 23:59:59</field>
+            <field name="resource_id" eval="False"/>
+            <field name="time_type">leave</field>
+        </record>
+        <record id="holiday_chinese_new_year_20260217" model="resource.calendar.leaves">
+            <field name="name">Chinese New Year</field>
+            <field name="date_from">2026-02-17 00:00:00</field>
+            <field name="date_to">2026-02-17 23:59:59</field>
+            <field name="resource_id" eval="False"/>
+            <field name="time_type">leave</field>
+        </record>
+        <record id="holiday_eid_l_fitr_end_of_ramadan_20260320" model="resource.calendar.leaves">
+            <field name="name">Eid&apos;l Fitr (End of Ramadan)</field>
+            <field name="date_from">2026-03-20 00:00:00</field>
+            <field name="date_to">2026-03-20 23:59:59</field>
+            <field name="resource_id" eval="False"/>
+            <field name="time_type">leave</field>
+        </record>
+        <record id="holiday_maundy_thursday_20260402" model="resource.calendar.leaves">
+            <field name="name">Maundy Thursday</field>
+            <field name="date_from">2026-04-02 00:00:00</field>
+            <field name="date_to">2026-04-02 23:59:59</field>
+            <field name="resource_id" eval="False"/>
+            <field name="time_type">leave</field>
+        </record>
+        <record id="holiday_good_friday_20260403" model="resource.calendar.leaves">
+            <field name="name">Good Friday</field>
+            <field name="date_from">2026-04-03 00:00:00</field>
+            <field name="date_to">2026-04-03 23:59:59</field>
+            <field name="resource_id" eval="False"/>
+            <field name="time_type">leave</field>
+        </record>
+        <record id="holiday_black_saturday_20260404" model="resource.calendar.leaves">
+            <field name="name">Black Saturday</field>
+            <field name="date_from">2026-04-04 00:00:00</field>
+            <field name="date_to">2026-04-04 23:59:59</field>
+            <field name="resource_id" eval="False"/>
+            <field name="time_type">leave</field>
+        </record>
+        <record id="holiday_araw_ng_kagitingan_20260409" model="resource.calendar.leaves">
+            <field name="name">Araw ng Kagitingan</field>
+            <field name="date_from">2026-04-09 00:00:00</field>
+            <field name="date_to">2026-04-09 23:59:59</field>
+            <field name="resource_id" eval="False"/>
+            <field name="time_type">leave</field>
+        </record>
+        <record id="holiday_labor_day_20260501" model="resource.calendar.leaves">
+            <field name="name">Labor Day</field>
+            <field name="date_from">2026-05-01 00:00:00</field>
+            <field name="date_to">2026-05-01 23:59:59</field>
+            <field name="resource_id" eval="False"/>
+            <field name="time_type">leave</field>
+        </record>
+        <record id="holiday_eid_l_adha_feast_of_sacrifice_20260527" model="resource.calendar.leaves">
+            <field name="name">Eid&apos;l Adha (Feast of Sacrifice)</field>
+            <field name="date_from">2026-05-27 00:00:00</field>
+            <field name="date_to">2026-05-27 23:59:59</field>
+            <field name="resource_id" eval="False"/>
+            <field name="time_type">leave</field>
+        </record>
+        <record id="holiday_independence_day_20260612" model="resource.calendar.leaves">
+            <field name="name">Independence Day</field>
+            <field name="date_from">2026-06-12 00:00:00</field>
+            <field name="date_to">2026-06-12 23:59:59</field>
+            <field name="resource_id" eval="False"/>
+            <field name="time_type">leave</field>
+        </record>
+        <record id="holiday_ninoy_aquino_day_20260821" model="resource.calendar.leaves">
+            <field name="name">Ninoy Aquino Day</field>
+            <field name="date_from">2026-08-21 00:00:00</field>
+            <field name="date_to">2026-08-21 23:59:59</field>
+            <field name="resource_id" eval="False"/>
+            <field name="time_type">leave</field>
+        </record>
+        <record id="holiday_national_heroes_day_20260831" model="resource.calendar.leaves">
+            <field name="name">National Heroes Day</field>
+            <field name="date_from">2026-08-31 00:00:00</field>
+            <field name="date_to">2026-08-31 23:59:59</field>
+            <field name="resource_id" eval="False"/>
+            <field name="time_type">leave</field>
+        </record>
+        <record id="holiday_all_saints_day_20261101" model="resource.calendar.leaves">
+            <field name="name">All Saints&apos; Day</field>
+            <field name="date_from">2026-11-01 00:00:00</field>
+            <field name="date_to">2026-11-01 23:59:59</field>
+            <field name="resource_id" eval="False"/>
+            <field name="time_type">leave</field>
+        </record>
+        <record id="holiday_all_souls_day_20261102" model="resource.calendar.leaves">
+            <field name="name">All Souls&apos; Day</field>
+            <field name="date_from">2026-11-02 00:00:00</field>
+            <field name="date_to">2026-11-02 23:59:59</field>
+            <field name="resource_id" eval="False"/>
+            <field name="time_type">leave</field>
+        </record>
+        <record id="holiday_bonifacio_day_20261130" model="resource.calendar.leaves">
+            <field name="name">Bonifacio Day</field>
+            <field name="date_from">2026-11-30 00:00:00</field>
+            <field name="date_to">2026-11-30 23:59:59</field>
+            <field name="resource_id" eval="False"/>
+            <field name="time_type">leave</field>
+        </record>
+        <record id="holiday_feast_of_the_immaculate_concep_20261208" model="resource.calendar.leaves">
+            <field name="name">Feast of the Immaculate Conception</field>
+            <field name="date_from">2026-12-08 00:00:00</field>
+            <field name="date_to">2026-12-08 23:59:59</field>
+            <field name="resource_id" eval="False"/>
+            <field name="time_type">leave</field>
+        </record>
+        <record id="holiday_christmas_eve_20261224" model="resource.calendar.leaves">
+            <field name="name">Christmas Eve</field>
+            <field name="date_from">2026-12-24 00:00:00</field>
+            <field name="date_to">2026-12-24 23:59:59</field>
+            <field name="resource_id" eval="False"/>
+            <field name="time_type">leave</field>
+        </record>
+        <record id="holiday_christmas_day_20261225" model="resource.calendar.leaves">
+            <field name="name">Christmas Day</field>
+            <field name="date_from">2026-12-25 00:00:00</field>
+            <field name="date_to">2026-12-25 23:59:59</field>
+            <field name="resource_id" eval="False"/>
+            <field name="time_type">leave</field>
+        </record>
+        <record id="holiday_rizal_day_20261230" model="resource.calendar.leaves">
+            <field name="name">Rizal Day</field>
+            <field name="date_from">2026-12-30 00:00:00</field>
+            <field name="date_to">2026-12-30 23:59:59</field>
+            <field name="resource_id" eval="False"/>
+            <field name="time_type">leave</field>
+        </record>
+        <record id="holiday_last_day_of_the_year_20261231" model="resource.calendar.leaves">
+            <field name="name">Last Day of the Year</field>
+            <field name="date_from">2026-12-31 00:00:00</field>
+            <field name="date_to">2026-12-31 23:59:59</field>
+            <field name="resource_id" eval="False"/>
+            <field name="time_type">leave</field>
+        </record>
+        <record id="holiday_new_year_s_day_20270101" model="resource.calendar.leaves">
+            <field name="name">New Year&apos;s Day</field>
+            <field name="date_from">2027-01-01 00:00:00</field>
+            <field name="date_to">2027-01-01 23:59:59</field>
+            <field name="resource_id" eval="False"/>
+            <field name="time_type">leave</field>
+        </record>
+        <record id="holiday_chinese_new_year_20270208" model="resource.calendar.leaves">
+            <field name="name">Chinese New Year</field>
+            <field name="date_from">2027-02-08 00:00:00</field>
+            <field name="date_to">2027-02-08 23:59:59</field>
+            <field name="resource_id" eval="False"/>
+            <field name="time_type">leave</field>
+        </record>
+        <record id="holiday_eid_l_fitr_end_of_ramadan_20270310" model="resource.calendar.leaves">
+            <field name="name">Eid&apos;l Fitr (End of Ramadan)</field>
+            <field name="date_from">2027-03-10 00:00:00</field>
+            <field name="date_to">2027-03-10 23:59:59</field>
+            <field name="resource_id" eval="False"/>
+            <field name="time_type">leave</field>
+        </record>
+        <record id="holiday_maundy_thursday_20270325" model="resource.calendar.leaves">
+            <field name="name">Maundy Thursday</field>
+            <field name="date_from">2027-03-25 00:00:00</field>
+            <field name="date_to">2027-03-25 23:59:59</field>
+            <field name="resource_id" eval="False"/>
+            <field name="time_type">leave</field>
+        </record>
+        <record id="holiday_good_friday_20270326" model="resource.calendar.leaves">
+            <field name="name">Good Friday</field>
+            <field name="date_from">2027-03-26 00:00:00</field>
+            <field name="date_to">2027-03-26 23:59:59</field>
+            <field name="resource_id" eval="False"/>
+            <field name="time_type">leave</field>
+        </record>
+        <record id="holiday_black_saturday_20270327" model="resource.calendar.leaves">
+            <field name="name">Black Saturday</field>
+            <field name="date_from">2027-03-27 00:00:00</field>
+            <field name="date_to">2027-03-27 23:59:59</field>
+            <field name="resource_id" eval="False"/>
+            <field name="time_type">leave</field>
+        </record>
+        <record id="holiday_araw_ng_kagitingan_20270409" model="resource.calendar.leaves">
+            <field name="name">Araw ng Kagitingan</field>
+            <field name="date_from">2027-04-09 00:00:00</field>
+            <field name="date_to">2027-04-09 23:59:59</field>
+            <field name="resource_id" eval="False"/>
+            <field name="time_type">leave</field>
+        </record>
+        <record id="holiday_labor_day_20270501" model="resource.calendar.leaves">
+            <field name="name">Labor Day</field>
+            <field name="date_from">2027-05-01 00:00:00</field>
+            <field name="date_to">2027-05-01 23:59:59</field>
+            <field name="resource_id" eval="False"/>
+            <field name="time_type">leave</field>
+        </record>
+        <record id="holiday_eid_l_adha_feast_of_sacrifice_20270516" model="resource.calendar.leaves">
+            <field name="name">Eid&apos;l Adha (Feast of Sacrifice)</field>
+            <field name="date_from">2027-05-16 00:00:00</field>
+            <field name="date_to">2027-05-16 23:59:59</field>
+            <field name="resource_id" eval="False"/>
+            <field name="time_type">leave</field>
+        </record>
+        <record id="holiday_independence_day_20270612" model="resource.calendar.leaves">
+            <field name="name">Independence Day</field>
+            <field name="date_from">2027-06-12 00:00:00</field>
+            <field name="date_to">2027-06-12 23:59:59</field>
+            <field name="resource_id" eval="False"/>
+            <field name="time_type">leave</field>
+        </record>
+        <record id="holiday_ninoy_aquino_day_20270821" model="resource.calendar.leaves">
+            <field name="name">Ninoy Aquino Day</field>
+            <field name="date_from">2027-08-21 00:00:00</field>
+            <field name="date_to">2027-08-21 23:59:59</field>
+            <field name="resource_id" eval="False"/>
+            <field name="time_type">leave</field>
+        </record>
+        <record id="holiday_national_heroes_day_20270830" model="resource.calendar.leaves">
+            <field name="name">National Heroes Day</field>
+            <field name="date_from">2027-08-30 00:00:00</field>
+            <field name="date_to">2027-08-30 23:59:59</field>
+            <field name="resource_id" eval="False"/>
+            <field name="time_type">leave</field>
+        </record>
+        <record id="holiday_all_saints_day_20271101" model="resource.calendar.leaves">
+            <field name="name">All Saints&apos; Day</field>
+            <field name="date_from">2027-11-01 00:00:00</field>
+            <field name="date_to">2027-11-01 23:59:59</field>
+            <field name="resource_id" eval="False"/>
+            <field name="time_type">leave</field>
+        </record>
+        <record id="holiday_all_souls_day_20271102" model="resource.calendar.leaves">
+            <field name="name">All Souls&apos; Day</field>
+            <field name="date_from">2027-11-02 00:00:00</field>
+            <field name="date_to">2027-11-02 23:59:59</field>
+            <field name="resource_id" eval="False"/>
+            <field name="time_type">leave</field>
+        </record>
+        <record id="holiday_bonifacio_day_20271130" model="resource.calendar.leaves">
+            <field name="name">Bonifacio Day</field>
+            <field name="date_from">2027-11-30 00:00:00</field>
+            <field name="date_to">2027-11-30 23:59:59</field>
+            <field name="resource_id" eval="False"/>
+            <field name="time_type">leave</field>
+        </record>
+        <record id="holiday_feast_of_the_immaculate_concep_20271208" model="resource.calendar.leaves">
+            <field name="name">Feast of the Immaculate Conception</field>
+            <field name="date_from">2027-12-08 00:00:00</field>
+            <field name="date_to">2027-12-08 23:59:59</field>
+            <field name="resource_id" eval="False"/>
+            <field name="time_type">leave</field>
+        </record>
+        <record id="holiday_christmas_eve_20271224" model="resource.calendar.leaves">
+            <field name="name">Christmas Eve</field>
+            <field name="date_from">2027-12-24 00:00:00</field>
+            <field name="date_to">2027-12-24 23:59:59</field>
+            <field name="resource_id" eval="False"/>
+            <field name="time_type">leave</field>
+        </record>
+        <record id="holiday_christmas_day_20271225" model="resource.calendar.leaves">
+            <field name="name">Christmas Day</field>
+            <field name="date_from">2027-12-25 00:00:00</field>
+            <field name="date_to">2027-12-25 23:59:59</field>
+            <field name="resource_id" eval="False"/>
+            <field name="time_type">leave</field>
+        </record>
+        <record id="holiday_rizal_day_20271230" model="resource.calendar.leaves">
+            <field name="name">Rizal Day</field>
+            <field name="date_from">2027-12-30 00:00:00</field>
+            <field name="date_to">2027-12-30 23:59:59</field>
+            <field name="resource_id" eval="False"/>
+            <field name="time_type">leave</field>
+        </record>
+        <record id="holiday_last_day_of_the_year_20271231" model="resource.calendar.leaves">
+            <field name="name">Last Day of the Year</field>
+            <field name="date_from">2027-12-31 00:00:00</field>
+            <field name="date_to">2027-12-31 23:59:59</field>
+            <field name="resource_id" eval="False"/>
+            <field name="time_type">leave</field>
+        </record>
+    </data>
+</odoo>

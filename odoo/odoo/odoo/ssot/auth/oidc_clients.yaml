@@ -1,0 +1,232 @@
+# schema: ssot.auth.oidc_clients.v2
+# Single source of truth for OIDC client registrations.
+#
+# UPDATED 2026-03-12: Primary IdP changed from Supabase Auth to Keycloak.
+# Supabase Auth remains an app-level auth surface for Supabase-native apps.
+# See ssot/auth/azure_app_auth.yaml for the full auth target state contract.
+#
+# This file tracks:
+#   - Identity Provider (IdP) configuration
+#   - Registered OIDC/OAuth2 clients (relying parties)
+#   - Per-environment callback URLs, scopes, and activation status
+#
+# NEVER include client_secret values in this file.
+# Secret references point to Azure Key Vault entries.
+#
+# Related:
+#   - ssot/auth/azure_app_auth.yaml (auth target state contract)
+#   - ssot/auth/github_auth_surface.yaml (GitHub OAuth surface)
+#   - ssot/secrets/registry.yaml (secret name registry)
+#   - addons/ipai/ipai_auth_oidc/ (Odoo OIDC module)
+
+version: "2.0.0"
+schema: ssot.auth.oidc_clients.v2
+last_reviewed: "2026-03-12"
+
+# ---------------------------------------------------------------------------
+# Identity Provider — Primary (Keycloak)
+# ---------------------------------------------------------------------------
+idp:
+  name: "Keycloak"
+  role: "Primary IdP and federation broker"
+  type: oidc
+  self_hosted: true
+  # Keycloak realm URLs are per-environment (see environments section below)
+  supported_scopes:
+    - openid
+    - email
+    - profile
+    - groups  # for group/role claim mapping
+  supported_flows:
+    - authorization_code_pkce
+  banned_flows:
+    - implicit
+    - password
+  notes: >
+    Keycloak is the single SSO authority for all platform apps.
+    Self-hosted, aligned with the rest of the self-hosted stack.
+    Replaces Supabase Auth as primary IdP (changed 2026-03-12).
+
+# ---------------------------------------------------------------------------
+# Identity Provider — App-level (Supabase Auth, downstream)
+# ---------------------------------------------------------------------------
+idp_downstream:
+  name: "Supabase Auth"
+  role: "App-level auth surface (relying party, NOT primary IdP)"
+  type: oidc
+  project_ref: spdtwktxdalcfigzeqrz
+  issuer: "https://spdtwktxdalcfigzeqrz.supabase.co/auth/v1"
+  endpoints:
+    authorization: "https://spdtwktxdalcfigzeqrz.supabase.co/auth/v1/oauth/authorize"
+    token: "https://spdtwktxdalcfigzeqrz.supabase.co/auth/v1/oauth/token"
+    userinfo: "https://spdtwktxdalcfigzeqrz.supabase.co/auth/v1/oauth/userinfo"
+    jwks: "https://spdtwktxdalcfigzeqrz.supabase.co/auth/v1/.well-known/jwks.json"
+    discovery: "https://spdtwktxdalcfigzeqrz.supabase.co/auth/v1/.well-known/openid-configuration"
+  notes: >
+    Used by Supabase-native apps (edge functions, realtime, storage RLS).
+    NOT the enterprise identity provider. Keycloak is upstream.
+
+# ---------------------------------------------------------------------------
+# Keycloak Environments
+# ---------------------------------------------------------------------------
+environments:
+  dev:
+    realm: ipai-dev
+    issuer: "https://auth-dev.insightpulseai.com/realms/ipai-dev"
+    endpoints:
+      authorization: "https://auth-dev.insightpulseai.com/realms/ipai-dev/protocol/openid-connect/auth"
+      token: "https://auth-dev.insightpulseai.com/realms/ipai-dev/protocol/openid-connect/token"
+      userinfo: "https://auth-dev.insightpulseai.com/realms/ipai-dev/protocol/openid-connect/userinfo"
+      jwks: "https://auth-dev.insightpulseai.com/realms/ipai-dev/protocol/openid-connect/certs"
+    status: planned
+
+  staging:
+    realm: ipai-staging
+    issuer: "https://auth-staging.insightpulseai.com/realms/ipai-staging"
+    endpoints:
+      authorization: "https://auth-staging.insightpulseai.com/realms/ipai-staging/protocol/openid-connect/auth"
+      token: "https://auth-staging.insightpulseai.com/realms/ipai-staging/protocol/openid-connect/token"
+      userinfo: "https://auth-staging.insightpulseai.com/realms/ipai-staging/protocol/openid-connect/userinfo"
+      jwks: "https://auth-staging.insightpulseai.com/realms/ipai-staging/protocol/openid-connect/certs"
+    status: planned
+
+  production:
+    realm: ipai-prod
+    issuer: "https://auth.insightpulseai.com/realms/ipai-prod"
+    endpoints:
+      authorization: "https://auth.insightpulseai.com/realms/ipai-prod/protocol/openid-connect/auth"
+      token: "https://auth.insightpulseai.com/realms/ipai-prod/protocol/openid-connect/token"
+      userinfo: "https://auth.insightpulseai.com/realms/ipai-prod/protocol/openid-connect/userinfo"
+      jwks: "https://auth.insightpulseai.com/realms/ipai-prod/protocol/openid-connect/certs"
+    status: planned
+
+# ---------------------------------------------------------------------------
+# Registered OIDC Clients (Relying Parties)
+# ---------------------------------------------------------------------------
+clients:
+
+  - id: odoo
+    name: "Odoo ERP"
+    description: "Primary ERP — SSO via Keycloak OIDC"
+    provider: keycloak
+    grant_type: authorization_code_pkce
+    group_claim_mapping: true
+    local_password: break_glass_only
+    scopes: [openid, email, profile, groups]
+    module: "auth_oauth + ipai_auth_oidc"
+    per_env:
+      dev:
+        base_url: "https://erp-dev.insightpulseai.com"
+        callback_url: "https://erp-dev.insightpulseai.com/auth_oauth/signin"
+        logout_url: "https://erp-dev.insightpulseai.com/web/session/logout"
+      staging:
+        base_url: "https://erp-staging.insightpulseai.com"
+        callback_url: "https://erp-staging.insightpulseai.com/auth_oauth/signin"
+        logout_url: "https://erp-staging.insightpulseai.com/web/session/logout"
+      production:
+        base_url: "https://erp.insightpulseai.com"
+        callback_url: "https://erp.insightpulseai.com/auth_oauth/signin"
+        logout_url: "https://erp.insightpulseai.com/web/session/logout"
+    secret_ref:
+      client_id: keycloak-oidc-client-id-odoo  # Key Vault secret name
+      client_secret: keycloak-oidc-client-secret-odoo
+    status: planned
+    notes: >
+      Uses Odoo's built-in auth_oauth module + ipai_auth_oidc for group mapping.
+      ACA Easy Auth is NOT used as Odoo's session system.
+      Admin path shielded behind internal ingress.
+
+  - id: n8n
+    name: "n8n Automation"
+    description: "Workflow automation — SSO via Keycloak OIDC"
+    provider: keycloak
+    grant_type: authorization_code_pkce
+    local_password: break_glass_only
+    enforced_sso: [owners, admins]
+    scopes: [openid, email, profile]
+    per_env:
+      production:
+        base_url: "https://n8n.insightpulseai.com"
+        callback_url: "https://n8n.insightpulseai.com/rest/oauth2-credential/callback"
+        logout_url: "https://n8n.insightpulseai.com/signout"
+        editor_base_url: "https://n8n.insightpulseai.com"
+    secret_ref:
+      client_id: keycloak-oidc-client-id-n8n
+      client_secret: keycloak-oidc-client-secret-n8n
+    status: planned
+    notes: >
+      N8N_EDITOR_BASE_URL must match public hostname behind Front Door.
+      SSO enforced for owners/admins. Local fallback for break-glass only.
+
+  - id: plane
+    name: "Plane Project Management"
+    description: "Project management — SSO via Keycloak OIDC"
+    provider: keycloak
+    grant_type: authorization_code_pkce
+    scopes: [openid, email, profile]
+    per_env:
+      production:
+        base_url: "https://plane.insightpulseai.com"
+        callback_url: "https://plane.insightpulseai.com/api/oauth/callback"
+        logout_url: "https://plane.insightpulseai.com/sign-out"
+    secret_ref:
+      client_id: keycloak-oidc-client-id-plane
+      client_secret: keycloak-oidc-client-secret-plane
+    status: planned
+    notes: >
+      ACA built-in auth acceptable as additional ingress gate (internal tool).
+
+  - id: shelf
+    name: "Shelf Knowledge Base"
+    description: "Internal knowledge base — SSO via Keycloak OIDC"
+    provider: keycloak
+    grant_type: authorization_code_pkce
+    scopes: [openid, email, profile]
+    per_env:
+      production:
+        base_url: "https://shelf.insightpulseai.com"
+        callback_url: "https://shelf.insightpulseai.com/oauth/callback"
+        logout_url: "https://shelf.insightpulseai.com/logout"
+    secret_ref:
+      client_id: keycloak-oidc-client-id-shelf
+      client_secret: keycloak-oidc-client-secret-shelf
+    status: planned
+    notes: >
+      ACA built-in auth acceptable as additional ingress gate (internal tool).
+
+  - id: superset
+    name: "Apache Superset BI"
+    description: "Business intelligence — SSO via Keycloak OIDC"
+    provider: keycloak
+    grant_type: authorization_code_pkce
+    scopes: [openid, email, profile, groups]
+    group_claim_mapping: true
+    per_env:
+      production:
+        base_url: "https://superset.insightpulseai.com"
+        callback_url: "https://superset.insightpulseai.com/oauth-authorized/keycloak"
+        logout_url: "https://superset.insightpulseai.com/logout"
+    secret_ref:
+      client_id: keycloak-oidc-client-id-superset
+      client_secret: keycloak-oidc-client-secret-superset
+    status: planned
+    notes: >
+      Superset supports Flask-AppBuilder OIDC via AUTH_TYPE = AUTH_OID.
+
+  - id: ops_console
+    name: "Ops Console"
+    description: "Platform operations console — SSO via Keycloak OIDC"
+    provider: keycloak
+    grant_type: authorization_code_pkce
+    scopes: [openid, email, profile]
+    per_env:
+      production:
+        base_url: "https://ops.insightpulseai.com"
+        callback_url: "https://ops.insightpulseai.com/api/auth/callback/keycloak"
+        logout_url: "https://ops.insightpulseai.com/api/auth/signout"
+    secret_ref:
+      client_id: keycloak-oidc-client-id-ops
+      client_secret: keycloak-oidc-client-secret-ops
+    status: planned
+    notes: >
+      ACA built-in auth acceptable as additional ingress gate (admin tool).

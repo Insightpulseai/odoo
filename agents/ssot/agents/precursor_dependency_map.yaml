@@ -1,0 +1,254 @@
+# Precursor Dependency Map
+# Generated: 2026-03-18
+# Purpose: What's needed to build the Odoo Copilot precursor, mapped against existing assets
+
+# ── REUSABLE COMPONENTS (already in agents repo) ────────────────────
+
+reusable:
+
+  - id: system-prompt
+    path: foundry/ipai-odoo-copilot-azure/system-prompt.md
+    description: Advisory-mode system instructions v2.0.0
+    readiness: production
+    integration_effort: none
+
+  - id: context-envelope
+    path: foundry/ipai-odoo-copilot-azure/context-envelope-contract.md
+    description: Server-side RBAC context injection schema
+    readiness: production
+    integration_effort: implement_envelope_builder
+
+  - id: tool-definitions
+    path: foundry/ipai-odoo-copilot-azure/tool-definitions.json
+    description: 8 read-only tools for Stage 1
+    readiness: production
+    integration_effort: wire_to_foundry_sdk
+
+  - id: guardrails
+    path: foundry/ipai-odoo-copilot-azure/guardrails.md
+    description: Safety constraints and behavioral boundaries
+    readiness: production
+    integration_effort: none
+
+  - id: eval-suite
+    path: evals/odoo-copilot/
+    description: 150-case eval with rubric, thresholds, and ADVISORY_RELEASE_READY status
+    readiness: production
+    integration_effort: automate_runner
+
+  - id: agent-manifest
+    path: foundry/agents/agents__runtime__odoo_copilot__v1.manifest.yaml
+    description: Foundry agent definition (model, channels, constraints)
+    readiness: production
+    integration_effort: deploy_to_foundry
+
+  - id: governance-policies
+    path: foundry/policies/
+    description: 24 policies (naming, model selection, routing, allowlists, publish rules)
+    readiness: production
+    integration_effort: none
+
+  - id: bir-knowledge-base
+    path: knowledge-base/bir-compliance/
+    description: 4 BIR compliance docs (filing calendar, forms, VAT, withholding)
+    readiness: production
+    integration_effort: ingest_to_ai_search
+
+  - id: agent-router
+    path: library-pack/router/agent_router.yaml
+    description: Keyword→specialist routing rules
+    readiness: production
+    integration_effort: wire_to_runtime
+
+  - id: judge-personas
+    path: personas/
+    description: 9 judge personas for eval and quality gates
+    readiness: production
+    integration_effort: none
+
+# ── MISSING COMPONENTS (must build) ─────────────────────────────────
+
+missing:
+
+  - id: foundry-project
+    description: Azure AI Foundry project in rg-ipai-ai-dev
+    category: infrastructure
+    priority: P0
+    effort: 2h
+    blocks:
+      - grounding
+      - telemetry
+      - tool-execution
+      - agent-deployment
+    notes: Without this, no Stage 2+ progression possible
+
+  - id: ai-search-index
+    description: Azure AI Search index seeded with KB documents
+    category: infrastructure
+    priority: P0
+    effort: 4h
+    blocks:
+      - grounding
+      - retrieval-eval
+    depends_on:
+      - foundry-project
+    notes: bir-compliance and finance-close-kb docs ready for ingestion
+
+  - id: discuss-bot-module
+    description: ipai_odoo_copilot Odoo module (Discuss bot consumption channel)
+    category: odoo-module
+    priority: P0
+    effort: 8h
+    blocks:
+      - primary-user-channel
+    notes: Module not yet created. Needs mail.channel integration, webhook receiver.
+
+  - id: telemetry-wiring
+    description: App Insights + OTLP exporter for agent observability
+    category: infrastructure
+    priority: P1
+    effort: 6h
+    blocks:
+      - stage-2-promotion
+    depends_on:
+      - foundry-project
+    notes: Event taxonomy defined in runtime contract. Implementation needed.
+
+  - id: audit-trail-model
+    description: ipai.copilot.audit Odoo model
+    category: odoo-module
+    priority: P1
+    effort: 4h
+    blocks:
+      - compliance-logging
+    notes: Schema defined in runtime contract. Model + ACL + views needed.
+
+  - id: memory-implementation
+    description: Agent memory persistence (session, conversation, preferences)
+    category: runtime
+    priority: P1
+    effort: 8h
+    blocks:
+      - cross-session-context
+      - personalization
+    notes: Memory MCP server scaffolded at mcp/servers/memory-mcp-server/
+
+  - id: taxpulse-agent
+    description: Standalone TaxPulse Foundry agent (promoted from finance_close_specialist)
+    category: agent
+    priority: P1
+    effort: 4h
+    blocks:
+      - specialist-handoff
+    depends_on:
+      - foundry-project
+    notes: Prompt exists. Needs manifest, eval dataset, promotion.
+
+  - id: adversarial-eval
+    description: Red team / prompt injection / jailbreak eval suite
+    category: eval
+    priority: P2
+    effort: 8h
+    blocks:
+      - ga-readiness
+    notes: Not yet started. Consider PyRIT integration.
+
+  - id: eval-runner-ci
+    description: Automated eval runner in CI pipeline
+    category: ci
+    priority: P2
+    effort: 6h
+    blocks:
+      - continuous-eval
+    depends_on:
+      - foundry-project
+    notes: Manual eval runs currently. Need GitHub Actions workflow.
+
+  - id: evidence-pack-utility
+    description: Audit evidence bundling and compression
+    category: tooling
+    priority: P2
+    effort: 4h
+    blocks:
+      - compliance-reporting
+    notes: Requested in multiple specs. Not yet built.
+
+# ── BLOCKERS ────────────────────────────────────────────────────────
+
+blockers:
+
+  - id: foundry-project-not-provisioned
+    severity: critical
+    description: Azure AI Foundry project does not exist yet in rg-ipai-ai-dev
+    impact: Blocks Stage 2+ (grounding, tools, telemetry, agent deployment)
+    resolution: Provision project via Azure CLI or portal
+    blocks:
+      - ai-search-index
+      - telemetry-wiring
+      - taxpulse-agent
+      - eval-runner-ci
+
+  - id: entra-not-migrated
+    severity: high
+    description: Identity still on Keycloak, not yet Microsoft Entra ID
+    impact: Context envelope roles may not map to Entra claims
+    resolution: Complete Keycloak→Entra migration gates
+    blocks:
+      - rbac-enforcement-in-production
+
+  - id: discuss-module-missing
+    severity: high
+    description: No Odoo module to receive copilot messages in Discuss
+    impact: Primary user consumption channel unavailable
+    resolution: Build ipai_odoo_copilot module with mail.channel integration
+
+# ── OPTIONAL ENHANCEMENTS (later phases) ───────────────────────────
+
+optional_later:
+
+  - id: write-tools
+    description: Stage 2+ write tools (create_vendor_bill, create_expense, update_move_state)
+    depends_on: [foundry-project, telemetry-wiring, tool-eval]
+    notes: Read-only first. Write tools require full tool eval + approval workflow.
+
+  - id: multi-agent-orchestration
+    description: Runtime orchestration of multiple specialist agents
+    depends_on: [foundry-project, taxpulse-agent, memory-implementation]
+    notes: Agent coordination MCP server scaffolded but protocol not implemented.
+
+  - id: personalization-engine
+    description: User-level preference learning and instruction memory
+    depends_on: [memory-implementation]
+    notes: Company-level and user-level config surfaces.
+
+  - id: eval-corpus-expansion
+    description: Expand eval from 150 to 500+ cases
+    depends_on: [eval-runner-ci]
+    notes: Current 150 cases cover advisory mode. GA requires broader coverage.
+
+# ── BUILD SEQUENCE (recommended) ───────────────────────────────────
+
+build_sequence:
+  phase_1_foundation:
+    - foundry-project
+    - ai-search-index
+    - discuss-bot-module
+    timeline: Unblocks everything downstream
+
+  phase_2_observability:
+    - telemetry-wiring
+    - audit-trail-model
+    - eval-runner-ci
+    timeline: Stage 2 promotion requirements
+
+  phase_3_specialists:
+    - taxpulse-agent
+    - memory-implementation
+    - evidence-pack-utility
+    timeline: Domain specialist packaging
+
+  phase_4_hardening:
+    - adversarial-eval
+    - eval-corpus-expansion
+    - write-tools
+    timeline: GA readiness

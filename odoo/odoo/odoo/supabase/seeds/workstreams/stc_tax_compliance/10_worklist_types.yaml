@@ -1,0 +1,76 @@
+# STC Worklist Types
+# SAP Tax Compliance worklist definitions
+
+worklist_types:
+  - id: wl_s4_vat
+    workstream_id: stc
+    code: S4_VAT
+    name: VAT Compliance Worklist
+    description: Checks related to VAT input, output, and declarations
+    priority: 1
+    sap_reference: SAP_STC_WORKLIST_VAT
+    checks:
+      - chk_vat_id_validation
+      - chk_postings_without_tax
+      - chk_high_vat_sales
+      - chk_high_vat_purchase
+      - chk_vat_mismatch
+      - chk_zero_rated_without_docs
+
+  - id: wl_s4_vnd
+    workstream_id: stc
+    code: S4_VND
+    name: Vendor Master Compliance Worklist
+    description: Checks related to vendor master data quality
+    priority: 2
+    sap_reference: SAP_STC_WORKLIST_VND
+    checks:
+      - chk_vendor_without_tin
+      - chk_vendor_tin_format
+      - chk_vendor_address_incomplete
+      - chk_vendor_bank_missing
+
+  - id: wl_s4_inv
+    workstream_id: stc
+    code: S4_INV
+    name: Invoice Compliance Worklist
+    description: Checks related to invoice data quality
+    priority: 3
+    sap_reference: SAP_STC_WORKLIST_INV
+    checks:
+      - chk_invoice_without_tin
+      - chk_invoice_amount_threshold
+      - chk_invoice_date_mismatch
+      - chk_duplicate_invoice
+
+  - id: wl_s4_wht
+    workstream_id: stc
+    code: S4_WHT
+    name: Withholding Tax Worklist
+    description: Checks related to withholding tax compliance
+    priority: 4
+    sap_reference: SAP_STC_WORKLIST_WHT
+    checks:
+      - chk_wht_rate_mismatch
+      - chk_wht_missing_atc
+      - chk_wht_threshold_exceeded
+      - chk_wht_cert_not_issued
+
+# Worklist priorities
+priorities:
+  1:
+    name: Critical
+    color: "#F44336"
+    sla_hours: 24
+  2:
+    name: High
+    color: "#FF9800"
+    sla_hours: 48
+  3:
+    name: Medium
+    color: "#2196F3"
+    sla_hours: 72
+  4:
+    name: Low
+    color: "#4CAF50"
+    sla_hours: 120

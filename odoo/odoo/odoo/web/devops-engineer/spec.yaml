@@ -1,0 +1,10 @@
+# fin-workspace app spec (normalized)
+name: devops-engineer
+slug: devops-engineer
+do:
+  app_id: 9e89ce8b-e6f8-4403-af8c-8f1ca593639d
+  region: 
+  ingress: 
+owners:
+  - platform: fin-workspace
+env: prod

@@ -53,46 +53,6 @@ Deliver an Azure-native platform that behaves like Odoo.sh for Odoo operations, 
 | Mail catcher | Mailpit container |
 | Custom domains + SSL | Cloudflare DNS → Azure Front Door → ACA |
 
-## Interface Doctrine
-
-1. The platform must evolve interfaces from ad hoc team-specific processes toward consistent standard tooling and then self-service solutions. Standard tooling means consistent interfaces plus documentation/templates and paved roads. Self-service means autonomy with consistent, discoverable user experiences.
-
-2. The first acceptable maturity target is not fully integrated services everywhere. The first acceptable target is broad consistency and reduced support burden through standard tooling and selective self-service.
-
-3. Development-environment setup and application diagnosis are first-class platform interfaces, not side concerns. These are the concrete focal examples for interface maturity.
-
-## Provisioning Doctrine
-
-1. Provisioning must move from manual/coordinated patterns to paved and then automated workflows using IaC templates, formalized processes, structured request paths, and centralized metrics.
-
-2. Core provisioning workflows must be integrated into CI/CD with governance and compliance checks in-line.
-
-3. Authorized users must be able to provision dedicated or shared standardized environments through controlled self-service, not only through ticket escalation.
-
-4. Predictive/adaptive allocation is a future capability, not a prerequisite for the first release.
-
-**Guardrail**: The platform must avoid the coordinated trap where requests are centralized through ticketing/manual approval but still bottleneck on the platform team. That phase is necessary for consistency but slow and overhead-heavy; the goal is to move through it, not stay in it.
-
-## Source Governance Doctrine
-
-1. Normative sources define behavior and doctrine: Odoo.sh docs + Microsoft platform-engineering/devops guidance + Azure Well-Architected Framework.
-
-2. Reference implementations may influence shape and examples but do not override doctrine.
-
-3. Naming-collision repos must not be mistaken for normative sources. In particular, `foundry-rs/*` is unrelated to Microsoft Foundry and must stay out of the Azure/Odoo.sh platform baseline unless an explicit blockchain/EVM workstream is added.
-
-4. The OKR/goal-tracking layer must remain tool-agnostic. Viva Goals was retired December 31, 2025 -- do not name it as a future operating surface.
-
-## AI Platform Extension Doctrine
-
-1. The platform may support AI workload extensions through provider-based integration, MCP surfaces, local development, and production reference architectures derived from Microsoft Foundry examples.
-
-2. Local-first AI development is allowed as an implementation mode because Foundry Local runs models on local hardware without requiring an Azure subscription and exposes an OpenAI-compatible API.
-
-3. Production AI paths must align to hardened reference architecture patterns (network isolation, controlled dependencies, security controls) as shown by Microsoft's Azure AI Foundry baseline.
-
-4. Bootstrap/starter templates accelerate onboarding but must be marked as non-production baselines unless explicitly hardened.
-
 ## Odoo.sh Behaviors Intentionally Changed
 
 | Odoo.sh Behavior | Azure Change | Reason |

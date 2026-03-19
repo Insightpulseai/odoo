@@ -1,0 +1,77 @@
+{
+  "name": "superset_mcp",
+  "version": "1.0.0",
+  "description": "Native Apache Superset MCP tools: list/get dashboards, charts, datasets, generate charts, and execute SQL for the fin-workspace analytics stack.",
+  "mcpServer": "superset-mcp",
+  "tools": [
+    {
+      "name": "list_dashboards",
+      "description": "List all Superset dashboards. Use select_columns to reduce payload.",
+      "parameters": {
+        "select_columns": ["id", "dashboard_title", "published", "changed_on"]
+      }
+    },
+    {
+      "name": "list_charts",
+      "description": "List all Superset charts. Use select_columns for lean responses.",
+      "parameters": {
+        "select_columns": ["id", "slice_name", "viz_type", "datasource_id"]
+      }
+    },
+    {
+      "name": "list_datasets",
+      "description": "List all Superset datasets (tables/views).",
+      "parameters": {
+        "select_columns": ["id", "table_name", "schema", "database_id"]
+      }
+    },
+    {
+      "name": "get_dashboard_info",
+      "description": "Get detailed info about a specific dashboard by ID"
+    },
+    {
+      "name": "get_chart_info",
+      "description": "Get detailed info about a specific chart by ID"
+    },
+    {
+      "name": "get_dataset_info",
+      "description": "Get detailed info about a specific dataset by ID"
+    },
+    {
+      "name": "generate_chart",
+      "description": "Generate a new chart. chart_type is MANDATORY.",
+      "requiredParams": ["chart_type", "datasource_id"]
+    },
+    {
+      "name": "execute_sql",
+      "description": "Execute SQL query against a database. NOT cached - use sparingly."
+    }
+  ],
+  "metadata": {
+    "notes": [
+      "Resource identifiers must be numeric IDs or UUIDs; do not use names or schema.table patterns.",
+      "When calling generate_chart, chart_type is mandatory.",
+      "Use select_columns in list_* tools to reduce payload size and avoid null fields.",
+      "Caching is enabled for list_* and get_*_info tools via FastMCP 2.13.0, but NOT for execute_sql or generate_chart.",
+      "API key authentication required: Authorization: Bearer pst_..."
+    ],
+    "authentication": {
+      "type": "api_key",
+      "header": "Authorization",
+      "prefix": "Bearer",
+      "envVar": "SUPERSET_MCP_API_KEY"
+    },
+    "theming": {
+      "designSystem": "Ant Design v5",
+      "darkModeSupport": true,
+      "tokenOverrides": "echartsOptionsOverrides",
+      "chartSpecificOverrides": "echartsOptionsOverridesByChartType"
+    },
+    "references": [
+      "SIP-155: Agentic Dashboard Summarization",
+      "SIP-157: Agentic Query in Dashboard",
+      "https://superset.apache.org/docs/api"
+    ]
+  },
+  "agentInstructions": "When working with Superset analytics:\n1. Use list_* tools with select_columns for discovery - this keeps responses lean.\n2. Use get_*_info for detailed inspection of specific resources.\n3. Resource IDs must be numeric or UUIDs - never use names.\n4. For generate_chart, always specify chart_type explicitly.\n5. Use execute_sql sparingly as it bypasses MCP caching.\n6. Never expose API keys in logs or messages.\n7. Reference Superset concepts: MCP tools, auth modes, themes, SSO, alerts & reports."
+}

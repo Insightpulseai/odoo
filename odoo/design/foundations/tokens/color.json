@@ -1,0 +1,18 @@
+{
+  "$schema": "../../../design/schema.tokens.json",
+  "category": "color",
+  "description": "Brand and semantic color tokens. Fluent 2 aligned.",
+  "tokens": {
+    "color.brand.primary": "#6264A7",
+    "color.brand.primary.hover": "#4F5291",
+    "color.brand.primary.active": "#3D407B",
+    "color.brand.secondary": "#E0E0E0",
+    "color.neutral.background": "#FFFFFF",
+    "color.neutral.foreground": "#242424",
+    "color.neutral.stroke": "#D1D1D1",
+    "color.status.success": "#107C10",
+    "color.status.warning": "#FFB900",
+    "color.status.error": "#D13438",
+    "color.status.info": "#0078D4"
+  }
+}

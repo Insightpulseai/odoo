@@ -16,17 +16,19 @@
     "notes": "Canonical ERP runtime (CE 19 + OCA + IPAI)"
   },
   {
-    "repo_name": "ops-platform",
+    "repo_name": "platform",
     "target_state": "active",
-    "canonical_domain": "control-plane",
+    "canonical_domain": "platform",
+    "note": "Renamed from ops-platform",
     "visibility": "private",
     "merge_target": null,
     "notes": "Supabase SSOT and secrets management"
   },
   {
-    "repo_name": "lakehouse",
+    "repo_name": "data-intelligence",
     "target_state": "active",
-    "canonical_domain": "data",
+    "canonical_domain": "data-intelligence",
+    "note": "Renamed from lakehouse",
     "visibility": "private",
     "merge_target": null,
     "notes": "Databricks lakehouse and analytics pipelines"
@@ -48,9 +50,10 @@
     "notes": "Web applications and documentation surfaces"
   },
   {
-    "repo_name": "design-system",
+    "repo_name": "design",
     "target_state": "active",
-    "canonical_domain": "shared",
+    "canonical_domain": "design",
+    "note": "Renamed from design-system",
     "visibility": "internal",
     "merge_target": null,
     "notes": "Design tokens and brand assets"
@@ -92,8 +95,8 @@
     "target_state": "merge",
     "canonical_domain": "extension",
     "visibility": "private",
-    "merge_target": "ops-platform",
-    "notes": "Merge useful assets into ops-platform"
+    "merge_target": "platform",
+    "notes": "Merge useful assets into platform"
   },
   {
     "repo_name": "plugin-agents",
@@ -117,7 +120,7 @@
     "canonical_domain": "product",
     "visibility": "private",
     "merge_target": "web",
-    "notes": "Merge into web or ops-platform"
+    "notes": "Merge into web or platform"
   },
   {
     "repo_name": "app-crm",

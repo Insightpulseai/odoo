@@ -1,0 +1,89 @@
+# Getting Started with Odoo
+
+Welcome to the Odoo Getting Started guide. This section will help you install, configure, and start using Odoo.
+
+## Installation
+
+### System Requirements
+
+- **Python**: 3.10 or higher
+- **PostgreSQL**: 14 or higher
+- **Node.js**: 18 or higher (for frontend assets)
+- **RAM**: Minimum 4GB, recommended 8GB+
+- **Disk Space**: Minimum 10GB
+
+### Installation Methods
+
+#### 1. Docker (Recommended for Development)
+
+```bash
+# Pull the official Odoo image
+docker pull odoo:19.0
+
+# Run Odoo with PostgreSQL
+docker run -d -e POSTGRES_USER=odoo -e POSTGRES_PASSWORD=odoo -e POSTGRES_DB=postgres --name db postgres:15
+docker run -p 8069:8069 --name odoo --link db:db -t odoo:19.0
+```
+
+#### 2. From Source
+
+```bash
+# Clone the repository
+git clone https://github.com/odoo/odoo.git --depth 1 --branch 19.0
+cd odoo
+
+# Install Python dependencies
+pip3 install -r requirements.txt
+
+# Start Odoo
+./odoo-bin --addons-path=addons -d odoo_db
+```
+
+#### 3. Using Package Managers
+
+**Debian/Ubuntu:**
+
+```bash
+wget -O - https://nightly.odoo.com/odoo.key | apt-key add -
+echo "deb http://nightly.odoo.com/19.0/nightly/deb/ ./" >> /etc/apt/sources.list.d/odoo.list
+apt-get update && apt-get install odoo
+```
+
+## First Steps
+
+### 1. Access Odoo
+
+After installation, open your browser and navigate to:
+
+```
+http://localhost:8069
+```
+
+### 2. Create Your First Database
+
+1. Enter a master password (keep this secure!)
+2. Choose a database name
+3. Enter your email
+4. Select a language
+5. Choose demo data (recommended for learning)
+6. Click "Create Database"
+
+### 3. Install Your First Module
+
+1. Go to Apps menu
+2. Search for "CRM"
+3. Click "Install"
+4. Wait for installation to complete
+
+## Next Steps
+
+- [Developer Documentation](/developer) - Learn to build custom modules
+- [Administrator Guide](/administrator) - Configure and manage your Odoo instance
+- [User Guides](/user) - Learn how to use specific modules
+
+## IPAI Platform Extensions
+
+If you're using the IPAI Platform Kit, check out:
+
+- [Platform Kit Documentation](/platform-kit) - Supabase integration and Edge Functions
+- [Parity Guide](/parity) - EE → CE/OCA feature mapping

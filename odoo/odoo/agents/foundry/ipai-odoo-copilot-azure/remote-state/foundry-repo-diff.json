@@ -1,0 +1,127 @@
+{
+  "diff_date": "2026-03-15T00:00:00+08:00",
+  "gaps": [
+    {
+      "id": "GAP-01",
+      "category": "system_instructions",
+      "classification": "drift",
+      "severity": "HIGH",
+      "description": "Remote system prompt lacks scope-boundary enforcement, context-awareness, RBAC-awareness, retrieval scope, advisory disclaimers, and permitted_tools contract",
+      "remote_state": "Minimal advisory prompt — 5 sentences, no structured constraints",
+      "repo_expectation": "runtime-contract.md + guardrails.md + CONTEXT_AND_RBAC_MODEL.md define comprehensive behavior contract",
+      "remediation": "Update remote system instructions to match target contract",
+      "automatable": true
+    },
+    {
+      "id": "GAP-02",
+      "category": "retrieval",
+      "classification": "missing_remotely",
+      "severity": "HIGH",
+      "description": "AI Search service exists but has 0 indexes, 0 documents. No RAG/retrieval is active.",
+      "remote_state": "srch-ipai-dev is empty",
+      "repo_expectation": "runtime-contract.md specifies Azure AI Search index 'ipai-knowledge-index' attached for RAG",
+      "remediation": "Create index, populate with knowledge base documents, attach to agent via tool_resources",
+      "automatable": "partially — index creation yes, content population requires source docs"
+    },
+    {
+      "id": "GAP-03",
+      "category": "tools",
+      "classification": "missing_remotely",
+      "severity": "MEDIUM",
+      "description": "Agent has 0 tools wired. Stage 1 read tools not yet connected.",
+      "remote_state": "tools: [], tool_resources: {}",
+      "repo_expectation": "tooling-matrix.yaml defines Stage 1 read tools",
+      "remediation": "Tool wiring is Stage 2 per runtime contract. Document as expected gap for current stage.",
+      "automatable": false,
+      "note": "Not a blocker for Advisory Release — tools are Stage 2"
+    },
+    {
+      "id": "GAP-04",
+      "category": "evaluations",
+      "classification": "missing_remotely",
+      "severity": "CRITICAL",
+      "description": "Zero Foundry-native evaluations. Manual probes exist (4/5 pass) but not sufficient for Advisory Release.",
+      "remote_state": "0 evaluations in Foundry portal, 1 manual probe run",
+      "repo_expectation": "publish-policy.md requires passing evaluation evidence. thresholds.yaml defines pass/fail criteria.",
+      "remediation": "Run comprehensive evaluation suite (150+ cases for Advisory Release)",
+      "automatable": "partially — can run via API but Foundry eval SDK requires project API access (blocked by token audience)"
+    },
+    {
+      "id": "GAP-05",
+      "category": "temperature",
+      "classification": "drift",
+      "severity": "MEDIUM",
+      "description": "Agent temperature is 1.0 (max creativity). Advisory copilot should use lower temperature for factual/grounded responses.",
+      "remote_state": "temperature: 1.0, top_p: 1.0",
+      "repo_expectation": "Not explicitly specified in contract but guardrails.md requires grounded responses",
+      "remediation": "Set temperature to 0.3-0.5 for advisory mode",
+      "automatable": true
+    },
+    {
+      "id": "GAP-06",
+      "category": "content_safety",
+      "classification": "partial",
+      "severity": "LOW",
+      "description": "Azure Content Safety active at service level but no custom blocklists or guardrail rules",
+      "remote_state": "4-category content filter active, 0 custom blocklists",
+      "repo_expectation": "guardrails.md defines 6 guardrails (G-1 through G-6)",
+      "remediation": "Custom guardrails enforced via system prompt + backend, not Foundry-native. Acceptable for Stage 1.",
+      "automatable": false,
+      "note": "System prompt update (GAP-01) addresses this"
+    },
+    {
+      "id": "GAP-07",
+      "category": "identity",
+      "classification": "partial",
+      "severity": "MEDIUM",
+      "description": "3 Cognitive Services User role assignments exist but app roles not registered in Entra",
+      "remote_state": "3 service principals with Cognitive Services User role. No app roles registered.",
+      "repo_expectation": "CONTEXT_AND_RBAC_MODEL.md defines 14 app roles",
+      "remediation": "Phase 2 of RBAC model. Not blocking for Advisory Release.",
+      "automatable": "partially — app role registration via az ad app"
+    },
+    {
+      "id": "GAP-08",
+      "category": "monitoring",
+      "classification": "missing_remotely",
+      "severity": "MEDIUM",
+      "description": "No App Insights or tracing configured",
+      "remote_state": "AI gateway properties all null, no diagnostic settings visible",
+      "repo_expectation": "runtime-contract.md Stage 2 requires App Insights",
+      "remediation": "Stage 2 requirement. Not blocking for Advisory Release.",
+      "automatable": true
+    },
+    {
+      "id": "GAP-09",
+      "category": "network_security",
+      "classification": "acceptable_for_stage",
+      "severity": "LOW",
+      "description": "Public network access enabled, no VNet rules",
+      "remote_state": "publicNetworkAccess: Enabled, defaultAction: Allow",
+      "repo_expectation": "Stage 3 requires private networking",
+      "remediation": "Stage 3 requirement. Acceptable for Stage 1.",
+      "automatable": true
+    },
+    {
+      "id": "GAP-10",
+      "category": "context_envelope",
+      "classification": "missing_remotely",
+      "severity": "HIGH",
+      "description": "No context envelope injection. Agent receives raw user prompt without identity, surface, scope, or mode context.",
+      "remote_state": "Plain text prompt forwarded to agent",
+      "repo_expectation": "CONTEXT_AND_RBAC_MODEL.md defines mandatory server-side context envelope",
+      "remediation": "Implement context envelope in foundry_service.py and server.ts. Phase 1 of RBAC model.",
+      "automatable": true
+    }
+  ],
+  "summary": {
+    "total_gaps": 10,
+    "critical": 1,
+    "high": 3,
+    "medium": 4,
+    "low": 2,
+    "automatable_now": ["GAP-01", "GAP-05"],
+    "partially_automatable": ["GAP-02", "GAP-04", "GAP-07", "GAP-10"],
+    "manual_or_staged": ["GAP-03", "GAP-06", "GAP-08", "GAP-09"]
+  }
+}

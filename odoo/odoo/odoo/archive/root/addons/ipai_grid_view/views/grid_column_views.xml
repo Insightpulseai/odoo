@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <!-- ==========================================
+         GRID COLUMN CONFIGURATION VIEWS
+         ========================================== -->
+
+    <!-- Grid Column: List -->
+    <record id="view_ipai_grid_column_tree" model="ir.ui.view">
+        <field name="name">ipai.grid.column.tree</field>
+        <field name="model">ipai.grid.column</field>
+        <field name="arch" type="xml">
+            <list string="Grid Columns" editable="bottom">
+                <field name="sequence" widget="handle"/>
+                <field name="grid_view_id" invisible="context.get('default_grid_view_id')"/>
+                <field name="field_name"/>
+                <field name="label"/>
+                <field name="field_type"/>
+                <field name="column_type"/>
+                <field name="width"/>
+                <field name="alignment"/>
+                <field name="sortable"/>
+                <field name="filterable"/>
+                <field name="visible"/>
+                <field name="is_primary"/>
+                <field name="is_avatar_column"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Grid Column: Form -->
+    <record id="view_ipai_grid_column_form" model="ir.ui.view">
+        <field name="name">ipai.grid.column.form</field>
+        <field name="model">ipai.grid.column</field>
+        <field name="arch" type="xml">
+            <form string="Grid Column Configuration">
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="display_name"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group string="Field Binding">
+                            <field name="grid_view_id"/>
+                            <field name="field_name"/>
+                            <field name="label"/>
+                            <field name="field_type"/>
+                        </group>
+                        <group string="Column Type">
+                            <field name="column_type"/>
+                            <field name="sequence"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group string="Display Properties">
+                            <field name="visible"/>
+                            <field name="width"/>
+                            <field name="min_width"/>
+                            <field name="max_width"/>
+                            <field name="alignment"/>
+                        </group>
+                        <group string="Formatting">
+                            <field name="format_string" invisible="field_type not in ('float', 'monetary')"/>
+                            <field name="date_format" invisible="field_type not in ('date', 'datetime')"/>
+                            <field name="decimal_places" invisible="field_type not in ('float', 'monetary')"/>
+                            <field name="currency_field" invisible="field_type != 'monetary'"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group string="Interactivity">
+                            <field name="sortable"/>
+                            <field name="filterable"/>
+                            <field name="searchable"/>
+                            <field name="resizable"/>
+                            <field name="editable"/>
+                            <field name="clickable"/>
+                        </group>
+                        <group string="Special Columns">
+                            <field name="is_primary"/>
+                            <field name="is_avatar_column"/>
+                            <field name="is_selection_column"/>
+                            <field name="is_action_column"/>
+                        </group>
+                    </group>
+                    <group string="Styling">
+                        <field name="css_class"/>
+                        <field name="header_css_class"/>
+                        <field name="cell_css_class"/>
+                    </group>
+                    <group string="Widget Options">
+                        <field name="widget_options" widget="ace" options="{'mode': 'json'}"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Grid Column: Search -->
+    <record id="view_ipai_grid_column_search" model="ir.ui.view">
+        <field name="name">ipai.grid.column.search</field>
+        <field name="model">ipai.grid.column</field>
+        <field name="arch" type="xml">
+            <search string="Search Columns">
+                <field name="field_name"/>
+                <field name="label"/>
+                <field name="grid_view_id"/>
+                <filter string="Visible" name="filter_visible" domain="[('visible', '=', True)]"/>
+                <filter string="Sortable" name="filter_sortable" domain="[('sortable', '=', True)]"/>
+                <filter string="Primary" name="filter_primary" domain="[('is_primary', '=', True)]"/>
+                <group expand="0" string="Group By">
+                    <filter string="Grid View" name="groupby_view" context="{'group_by': 'grid_view_id'}"/>
+                    <filter string="Field Type" name="groupby_type" context="{'group_by': 'field_type'}"/>
+                    <filter string="Column Type" name="groupby_coltype" context="{'group_by': 'column_type'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Action: Grid Columns -->
+    <record id="action_ipai_grid_column" model="ir.actions.act_window">
+        <field name="name">Grid Columns</field>
+        <field name="res_model">ipai.grid.column</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_ipai_grid_column_search"/>
+        <field name="context">{'search_default_filter_visible': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Configure grid columns
+            </p>
+            <p>
+                Define which fields are displayed and how they appear in the grid.
+            </p>
+        </field>
+    </record>
+
+    <!-- Menu Item -->
+    <menuitem id="menu_ipai_grid_column"
+              name="Columns"
+              parent="menu_ipai_grid_view_root"
+              action="action_ipai_grid_column"
+              sequence="20"/>
+
+</odoo>

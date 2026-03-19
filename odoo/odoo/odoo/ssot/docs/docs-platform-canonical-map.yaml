@@ -1,0 +1,167 @@
+# Docs Platform Canonical Map
+# Schema: ssot.docs.canonical-map.v1
+# Purpose: Machine-readable authority mapping for all documentation categories
+# Updated: 2026-03-13
+
+version: "1.0"
+schema: ssot.docs.canonical-map.v1
+
+surfaces:
+  repo: "Insightpulseai/odoo (GitHub)"
+  published_docs: "docs.insightpulseai.com (MkDocs on Azure Static Web Apps)"
+  plane: "Plane workspace (plane.insightpulseai.com)"
+
+categories:
+  - id: architecture
+    domain: platform
+    content_type: technical_reference
+    canonical_surface: repo
+    repo_path: docs/architecture/
+    published_path: /architecture/
+    plane_location: null
+    owner: platform_team
+    status: active
+    migration_action: keep
+
+  - id: product_specs
+    domain: product
+    content_type: specification
+    canonical_surface: repo
+    repo_path: spec/
+    published_path: null
+    plane_location: null
+    owner: product_team
+    status: active
+    migration_action: keep
+
+  - id: delivery_plans
+    domain: engineering
+    content_type: plan
+    canonical_surface: repo
+    repo_path: spec/*/plan.md
+    published_path: null
+    plane_location: "project:delivery / module:plans (mirror)"
+    owner: engineering_lead
+    status: active
+    migration_action: keep
+
+  - id: runbooks
+    domain: operations
+    content_type: operational_procedure
+    canonical_surface: plane
+    repo_path: null
+    published_path: /ops/runbooks/ (linked)
+    plane_location: "workspace:ops / module:runbooks"
+    owner: sre_ops
+    status: active
+    migration_action: keep
+
+  - id: integrations
+    domain: platform
+    content_type: contract
+    canonical_surface: repo
+    repo_path: docs/contracts/ + ssot/integrations/
+    published_path: /integrations/
+    plane_location: null
+    owner: platform_team
+    status: active
+    migration_action: keep
+
+  - id: platform_azure
+    domain: infrastructure
+    content_type: deployment_reference
+    canonical_surface: repo
+    repo_path: docs/deployment/ + infra/
+    published_path: /platform/
+    plane_location: null
+    owner: infra_team
+    status: active
+    migration_action: keep
+
+  - id: erp_odoo
+    domain: erp
+    content_type: module_reference
+    canonical_surface: repo
+    repo_path: docs/modules/ + addons/
+    published_path: /erp/
+    plane_location: null
+    owner: erp_team
+    status: active
+    migration_action: keep
+
+  - id: data_platform
+    domain: data
+    content_type: technical_reference
+    canonical_surface: repo
+    repo_path: docs/architecture/ADLS* + ssot/integrations/adls*
+    published_path: /data/
+    plane_location: null
+    owner: data_team
+    status: active
+    migration_action: keep
+
+  - id: ai_agents
+    domain: ai
+    content_type: technical_reference
+    canonical_surface: repo
+    repo_path: docs/ai/ + spec/
+    published_path: /ai/
+    plane_location: null
+    owner: ai_team
+    status: active
+    migration_action: keep
+
+  - id: finance_compliance
+    domain: finance
+    content_type: compliance_reference
+    canonical_surface: repo
+    repo_path: spec/finance-unified/ + docs/modules/
+    published_path: /finance/
+    plane_location: null
+    owner: finance_team
+    status: active
+    migration_action: keep
+
+  - id: governance_policies
+    domain: governance
+    content_type: policy
+    canonical_surface: repo
+    repo_path: docs/contracts/ + docs/governance/
+    published_path: /governance/
+    plane_location: null
+    owner: cto
+    status: active
+    migration_action: keep
+
+  - id: release_changelogs
+    domain: release
+    content_type: changelog
+    canonical_surface: repo
+    repo_path: docs/releases/
+    published_path: /releases/
+    plane_location: null
+    owner: release_manager
+    status: active
+    migration_action: keep
+
+  - id: templates
+    domain: platform
+    content_type: template
+    canonical_surface: repo
+    repo_path: docs/templates/ + spec/**/templates/
+    published_path: null
+    plane_location: null
+    owner: platform_team
+    status: active
+    migration_action: keep
+
+  - id: archive
+    domain: repo_admin
+    content_type: archived
+    canonical_surface: repo
+    repo_path: archive/
+    published_path: null
+    plane_location: null
+    owner: repo_admin
+    status: archive
+    migration_action: archive

@@ -1,0 +1,27 @@
+version: 1
+platforms:
+  - id: azure-devops
+    name: Azure DevOps
+    target: 1.0
+    coverage: 0.90
+    status: green
+  - id: vercel-cicd
+    name: Vercel CI/CD
+    target: 1.0
+    coverage: 0.79
+    status: amber
+  - id: odoo-enterprise
+    name: Odoo Enterprise
+    target: 1.0
+    coverage: 0.65
+    status: amber
+  - id: azure-databricks
+    name: Azure Databricks
+    target: 1.0
+    coverage: 0.55
+    status: amber
+policy:
+  thresholds:
+    green_min: 0.85
+    amber_min: 0.60
+    fail_below: 0.55

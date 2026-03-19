@@ -1,0 +1,72 @@
+# DigitalOcean Gradient ADK — Provider SSOT
+# Optional: deploy agent services as managed endpoints on DO Gradient AI Platform.
+# See: spec/odooops-console/plan.md § "DigitalOcean Gradient ADK"
+
+provider: digitalocean
+capability: gradient_adk
+status: optional
+
+adk:
+  requires_feature_preview: true
+  python_min_version: "3.10"
+  local_port: 8080
+  local_endpoint: /run
+  deploy_host_pattern: "https://agents.do-ai.run"
+  request_schema:
+    method: POST
+    body: '{"prompt": "..."}'
+    content_type: application/json
+
+modules:
+  - id: agents_adk
+    name: Agents / ADK
+    status: optional
+    description: Build, run locally, and deploy agents as hosted services.
+
+  - id: serverless_inference
+    name: Serverless Inference
+    status: optional
+    description: Direct model calls via serverless inference API.
+
+  - id: knowledge_bases
+    name: Knowledge Bases (RAG)
+    status: optional
+    description: Create/manage knowledge bases, attach/detach to agents.
+
+  - id: routing
+    name: Agent Routing
+    status: optional
+    description: Route to multiple agents; route functions within agents.
+
+  - id: guardrails
+    name: Guardrails
+    status: optional
+    description: Input/output validation and safety filters.
+
+  - id: insights_logs
+    name: Insights & Logs
+    status: optional
+    description: Agent execution logs and tracing.
+
+  - id: tracing
+    name: Tracing
+    status: optional
+    description: Distributed tracing for agent execution chains.
+
+  - id: evaluation
+    name: Evaluation
+    status: optional
+    description: Agent evaluation with datasets and metrics.
+
+env:
+  - name: GRADIENT_MODEL_ACCESS_KEY
+    ssot_secret_key: gradient_model_access_key
+    description: Serverless inference model access key.
+
+  - name: DIGITALOCEAN_API_TOKEN
+    ssot_secret_key: digitalocean_api_token_genai
+    description: DO API token with genai CRUD + project read scopes.
+
+reference:
+  docs_root: "https://docs.digitalocean.com/products/gradient-ai-platform/"
+  adk_getting_started: "https://docs.digitalocean.com/products/gradient-ai-platform/getting-started/use-adk/"

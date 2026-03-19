@@ -1,0 +1,302 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://insightpulseai.com/schemas/odoo__odoo__copilot_benchmark__v1.schema.json",
+  "title": "Odoo Copilot Benchmark Registry v1",
+  "description": "Machine-readable benchmark contract for evaluating Odoo Copilot against enterprise AI assistant standards. Note: category weights should sum to 100.",
+  "type": "object",
+  "required": [
+    "version",
+    "namespace",
+    "artifact_type",
+    "repo_key",
+    "domain",
+    "subject",
+    "benchmark_context",
+    "benchmark_anchors",
+    "scoring_scale",
+    "categories",
+    "target_thresholds",
+    "red_flags",
+    "competitive_snapshot",
+    "north_star"
+  ],
+  "properties": {
+    "version": {
+      "type": "integer",
+      "const": 1,
+      "description": "Schema version"
+    },
+    "namespace": {
+      "type": "string",
+      "pattern": "^ipai\\.odoo\\.odoo\\.copilot_benchmark\\.v[0-9]+$",
+      "description": "Dotted namespace identifier"
+    },
+    "artifact_type": {
+      "type": "string",
+      "const": "registry",
+      "description": "Artifact type discriminator"
+    },
+    "repo_key": {
+      "type": "string",
+      "description": "Repository key"
+    },
+    "domain": {
+      "type": "string",
+      "description": "Domain scope"
+    },
+    "subject": {
+      "type": "string",
+      "const": "copilot_benchmark",
+      "description": "Subject identifier"
+    },
+    "benchmark_context": {
+      "type": "object",
+      "required": ["product", "review_date", "version", "scope"],
+      "properties": {
+        "product": {
+          "type": "string"
+        },
+        "review_date": {
+          "type": "string",
+          "format": "date",
+          "description": "ISO 8601 date of benchmark review"
+        },
+        "version": {
+          "type": "string",
+          "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+\\.[0-9]+\\.[0-9]+$",
+          "description": "Odoo module version (e.g. 19.0.2.0.0)"
+        },
+        "scope": {
+          "type": "string",
+          "description": "Comma-separated scope areas covered by this benchmark"
+        }
+      },
+      "additionalProperties": false
+    },
+    "benchmark_anchors": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/benchmark_anchor"
+      },
+      "description": "External products/platforms used as comparison anchors"
+    },
+    "scoring_scale": {
+      "type": "object",
+      "required": ["min", "max", "levels"],
+      "properties": {
+        "min": {
+          "type": "integer",
+          "const": 0
+        },
+        "max": {
+          "type": "integer",
+          "const": 5
+        },
+        "levels": {
+          "type": "array",
+          "minItems": 6,
+          "maxItems": 6,
+          "items": {
+            "$ref": "#/$defs/scoring_level"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "categories": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/category"
+      },
+      "description": "Benchmark evaluation categories. Weights across all categories should sum to 100."
+    },
+    "target_thresholds": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/target_threshold"
+      },
+      "description": "Weighted-average score thresholds mapped to maturity labels"
+    },
+    "red_flags": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string"
+      },
+      "description": "Observable failure modes that should block production deployment"
+    },
+    "competitive_snapshot": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/competitive_entry"
+      },
+      "description": "Per-anchor competitive positioning snapshot"
+    },
+    "north_star": {
+      "type": "string",
+      "description": "Strategic positioning statement for the copilot"
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "benchmark_anchor": {
+      "type": "object",
+      "required": ["key", "label", "role"],
+      "properties": {
+        "key": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9_]*$",
+          "description": "Machine-readable anchor key"
+        },
+        "label": {
+          "type": "string",
+          "description": "Human-readable anchor name"
+        },
+        "role": {
+          "type": "string",
+          "description": "Why this anchor is relevant to the benchmark"
+        }
+      },
+      "additionalProperties": false
+    },
+    "scoring_level": {
+      "type": "object",
+      "required": ["score", "label"],
+      "properties": {
+        "score": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 5
+        },
+        "label": {
+          "type": "string",
+          "enum": [
+            "absent",
+            "concept_only",
+            "partial_fragile",
+            "usable_controlled_production",
+            "strong_competitive",
+            "benchmark_class"
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "category": {
+      "type": "object",
+      "required": ["key", "label", "weight", "question", "five_looks_like", "checks"],
+      "properties": {
+        "key": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9_]*$",
+          "description": "Machine-readable category key"
+        },
+        "label": {
+          "type": "string",
+          "description": "Human-readable category label"
+        },
+        "weight": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100,
+          "description": "Percentage weight for weighted-average scoring. All category weights should sum to 100."
+        },
+        "question": {
+          "type": "string",
+          "description": "Evaluation question this category answers"
+        },
+        "five_looks_like": {
+          "type": "string",
+          "description": "Description of what a score of 5 looks like for this category"
+        },
+        "checks": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string"
+          },
+          "description": "Observable criteria to evaluate this category"
+        }
+      },
+      "additionalProperties": false
+    },
+    "target_threshold": {
+      "type": "object",
+      "required": ["max_score", "label"],
+      "properties": {
+        "max_score": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 5,
+          "description": "Upper bound of the weighted-average score range"
+        },
+        "label": {
+          "type": "string",
+          "enum": [
+            "prototype_only",
+            "narrow_pilot",
+            "acceptable_v1",
+            "strong_competitive",
+            "enterprise_ready"
+          ],
+          "description": "Maturity label for this score range"
+        }
+      },
+      "additionalProperties": false
+    },
+    "competitive_strength_level": {
+      "type": "string",
+      "enum": [
+        "low",
+        "low_medium",
+        "medium",
+        "medium_high",
+        "high",
+        "very_high"
+      ],
+      "description": "Qualitative strength level for competitive comparison"
+    },
+    "competitive_entry": {
+      "type": "object",
+      "required": [
+        "benchmark",
+        "native_erp_actions",
+        "finance_depth",
+        "workplace_integration",
+        "agent_platform",
+        "analytics_depth",
+        "lesson"
+      ],
+      "properties": {
+        "benchmark": {
+          "type": "string",
+          "description": "Key referencing a benchmark_anchor"
+        },
+        "native_erp_actions": {
+          "$ref": "#/$defs/competitive_strength_level"
+        },
+        "finance_depth": {
+          "$ref": "#/$defs/competitive_strength_level"
+        },
+        "workplace_integration": {
+          "$ref": "#/$defs/competitive_strength_level"
+        },
+        "agent_platform": {
+          "$ref": "#/$defs/competitive_strength_level"
+        },
+        "analytics_depth": {
+          "$ref": "#/$defs/competitive_strength_level"
+        },
+        "lesson": {
+          "type": "string",
+          "description": "Key takeaway from this competitive anchor"
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

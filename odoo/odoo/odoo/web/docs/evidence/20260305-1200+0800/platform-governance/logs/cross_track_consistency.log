@@ -1,0 +1,51 @@
+🔍 Cross-Track Consistency Audit
+  Scope: PPM Clarity spec ↔ backend ↔ automation ↔ docs
+
+======================================================================
+✅ CONSISTENT ACROSS ALL TRACKS:
+
+1. Idempotency Key Format:
+   - Format: plane:sync:{workflow_id}:{plane_issue_id}:{odoo_task_id}:{timestamp}
+   - Constitution P5 ✅
+   - test_idempotency.py ✅
+   - All workflows expected to use this format
+
+2. Field Ownership Rules:
+   - Plane-owned: title, description, priority, labels, cycle, state, estimate_point
+   - Odoo-owned: user_ids, timesheet_ids, planned_hours, effective_hours, attachment_ids, message_ids
+   - Constitution P3 ✅
+   - test_conflicts.py ✅
+   - docs/ops/PPM_CLARITY_PLANE_ODOO.md ✅
+
+3. Slack Channels (Core):
+   - #ppm-clarity-logs (success notifications)
+   - #ppm-clarity-alerts (failure notifications)
+   - #ppm-clarity-conflicts (manual review notifications)
+   - Constitution ✅
+   - test_slack_notifier.py ✅
+   - docs/ops ✅
+
+4. Slack Slash Commands:
+   - /ppm-retry <event_id> - Constitution ✅, docs/ops ✅, test ✅
+   - /ppm-status [project_id] - Constitution ✅, docs/ops ✅, test ✅
+
+======================================================================
+⚠️ MINOR INCONSISTENCIES (Non-blocking):
+
+1. Daily Summary Channel:
+   - docs/ops/PPM_CLARITY_PLANE_ODOO.md: Uses #ppm-clarity-daily (4th channel)
+   - test_slack_notifier.py:114: Uses #ppm-clarity-logs (reuses existing)
+   - Impact: Minor - operational docs introduce separate channel, tests consolidate
+   - Recommendation: Clarify in follow-up - separate channel provides better organization
+
+2. Missing Slash Command Test:
+   - docs/ops documents /ppm-resolve <link_id> <resolution>
+   - test_slack_notifier.py has no test for /ppm-resolve
+   - Impact: Minor - docs mention it, but no test coverage yet
+   - Recommendation: Add test in follow-up
+
+======================================================================
+🎯 AUDIT STATUS: PASS WITH MINOR NOTES
+   - Core integration contracts consistent across all artifacts
+   - Minor inconsistencies documented for future cleanup
+   - No blocking issues preventing Phase 8 completion

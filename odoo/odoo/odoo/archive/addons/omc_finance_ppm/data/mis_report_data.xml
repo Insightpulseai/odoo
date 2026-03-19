@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+    <!-- MIS Builder Report Template: Month-End P&L -->
+    <record id="mis_report_month_end_pl" model="mis.report">
+        <field name="name">Month-End P&amp;L (Finance PPM)</field>
+        <field name="description">Monthly Profit &amp; Loss report for Finance PPM Dashboard</field>
+    </record>
+
+    <!-- MIS Report KPI: Revenue -->
+    <record id="mis_kpi_revenue" model="mis.report.kpi">
+        <field name="report_id" ref="mis_report_month_end_pl"/>
+        <field name="sequence">10</field>
+        <field name="name">Revenue</field>
+        <field name="description">Total Revenue (Sales)</field>
+        <field name="expression">balp[][('account_id.code', '=like', '4%')]</field>
+        <field name="type">num</field>
+    </record>
+
+    <!-- MIS Report KPI: Cost of Sales -->
+    <record id="mis_kpi_cost_of_sales" model="mis.report.kpi">
+        <field name="report_id" ref="mis_report_month_end_pl"/>
+        <field name="sequence">20</field>
+        <field name="name">Cost of Sales</field>
+        <field name="description">Direct Costs</field>
+        <field name="expression">balp[][('account_id.code', '=like', '5%')]</field>
+        <field name="type">num</field>
+    </record>
+
+    <!-- MIS Report KPI: Gross Profit -->
+    <record id="mis_kpi_gross_profit" model="mis.report.kpi">
+        <field name="report_id" ref="mis_report_month_end_pl"/>
+        <field name="sequence">30</field>
+        <field name="name">Gross Profit</field>
+        <field name="description">Revenue - Cost of Sales</field>
+        <field name="expression">Revenue - Cost_of_Sales</field>
+        <field name="type">num</field>
+    </record>
+
+    <!-- MIS Report KPI: Operating Expenses -->
+    <record id="mis_kpi_opex" model="mis.report.kpi">
+        <field name="report_id" ref="mis_report_month_end_pl"/>
+        <field name="sequence">40</field>
+        <field name="name">Operating Expenses</field>
+        <field name="description">OPEX (Account 6xxx)</field>
+        <field name="expression">balp[][('account_id.code', '=like', '6%')]</field>
+        <field name="type">num</field>
+    </record>
+
+    <!-- MIS Report KPI: Net Income -->
+    <record id="mis_kpi_net_income" model="mis.report.kpi">
+        <field name="report_id" ref="mis_report_month_end_pl"/>
+        <field name="sequence">50</field>
+        <field name="name">Net Income</field>
+        <field name="description">Gross Profit - OPEX</field>
+        <field name="expression">Gross_Profit - Operating_Expenses</field>
+        <field name="type">num</field>
+    </record>
+
+    <!-- MIS Report Instance: Current Month -->
+    <record id="mis_instance_current_month" model="mis.report.instance">
+        <field name="name">Current Month P&amp;L</field>
+        <field name="report_id" ref="mis_report_month_end_pl"/>
+        <field name="date_range_type_id" ref="date_range.date_range_month"/>
+        <field name="temporary" eval="False"/>
+        <field name="landscape_pdf" eval="True"/>
+    </record>
+</odoo>

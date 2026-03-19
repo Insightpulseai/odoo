@@ -1,0 +1,69 @@
+id: data-intelligence
+name: Data Intelligence
+version: "1.0.0"
+status: active
+maturity_level: L1
+current_stage: S04
+domain: data
+owner: insightpulseai
+description: >-
+  Data engineering and intelligence specialist. Manages Databricks workspace,
+  DLT pipelines, catalog, and data products. Successor to data-forge.
+role: maker
+scopes:
+  - databricks
+  - dlt
+  - medallion
+  - catalog
+  - mlflow
+  - data-products
+skills:
+  - dlt-pipeline-development
+  - medallion-architecture
+  - catalog-management
+  - data-quality-validation
+  - mlflow-tracking
+tools:
+  - databricks-cli
+  - az-cli
+  - psql
+  - github-actions
+policies:
+  - secrets-policy
+  - verification
+  - output-format
+entrypoint: agents/prompts/data-intelligence.md
+task_types:
+  - task.data.pipeline
+  - task.data.catalog
+  - task.data.quality
+  - task.data.product
+evaluation_history: []
+promotion_history: []
+repo_status: split_required
+canonical_repo: data-intelligence
+current_transition_surface:
+  type: embedded_monorepo_surface
+  active_paths:
+    - infra/databricks/
+    - odoo/infra/databricks/sql/
+    - lakehouse/contracts/
+  legacy_review_paths:
+    - archive/work/databricks/
+blocking_gates:
+  - standalone_repo_not_yet_created
+  - active_assets_not_yet_consolidated
+next_transition:
+  - bootstrap_repo
+  - migrate_active_assets
+  - clean_monorepo_ownership
+  - validate_cutover
+split_plan: docs/architecture/data-intelligence/repo-split-plan.md
+split_manifest: ssot/data-intelligence/repo_split_manifest.yaml
+created: "2026-03-19"
+notes: >-
+  Databricks workspace exists and pipelines are scaffolded. Uses JDBC extract
+  from Odoo PostgreSQL, not Supabase ETL (deprecated). No standalone
+  data-intelligence repo yet — assets are embedded in monorepo under
+  infra/databricks/, odoo/infra/databricks/sql/, and lakehouse/contracts/.
+  Repo split is required before L2 promotion.

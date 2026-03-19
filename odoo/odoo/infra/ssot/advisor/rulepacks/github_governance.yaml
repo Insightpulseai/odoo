@@ -1,0 +1,155 @@
+# schema: ssot.advisor.rulepack.v1
+# ---------------------------------------------------------------------------
+# Rulepack: github_governance
+# Name:     Repository governance at scale
+# Source:   GitHub Well-Architected Framework — Governance pillar
+#           https://wellarchitected.github.com/library/governance/
+# Pillar:   ops_excellence
+# Version:  1.0.0
+# Reviewed: 2026-03-01
+#
+# Purpose:
+#   Checks that the Insightpulseai GitHub organization follows the GitHub WAF
+#   Governance pillar recommendations for protecting default branches, requiring
+#   code review, enforcing CODEOWNERS coverage, and enabling secret scanning.
+#
+# Adapter:  github (uses GitHub REST API + GraphQL)
+#
+# CI validator: scripts/ci/validate_advisor_rulepacks.py (planned)
+# ---------------------------------------------------------------------------
+
+id: github_governance
+name: "Repository governance at scale"
+source: github_well_architected
+pillar: ops_excellence
+version: "1.0.0"
+last_reviewed: "2026-03-01"
+
+# Citation base — all rules should cite a specific anchor under this base URL
+citation_base: "https://wellarchitected.github.com/library/governance/"
+
+rules:
+
+  - id: org_rulesets_default_branch
+    title: "Organization-level rulesets protect default branches"
+    severity: high
+    check: >
+      The GitHub organization (Insightpulseai) has at least one active ruleset that
+      applies to all repositories and requires:
+        - Pull request before merging (min 1 approval)
+        - At least one required status check on default branches
+      Check via: GET /orgs/{org}/rulesets
+    citation_url: "https://wellarchitected.github.com/library/governance/"
+    finding_template: >
+      Missing organization-level ruleset: no ruleset protects default branches
+      across all repositories with PR + status check requirements.
+    remediation: >
+      Create an organization ruleset in GitHub Settings → Rules → Rulesets.
+      Target: all repositories, default branch. Require: 1 pull request approval,
+      at least 1 required status check (e.g. ci/lint or ci/typecheck).
+    evidence_fields:
+      - rulesets_count
+      - active_rulesets
+
+  - id: required_status_checks
+    title: "Critical repos require status checks before merge"
+    severity: high
+    check: >
+      Repositories that have production deployments (detected by presence of
+      .github/workflows/*deploy*.yml or vercel.json at root) must have at least
+      one required status check configured in a ruleset or branch protection rule.
+      Check via: GET /repos/{owner}/{repo}/branches/{branch}/protection
+    citation_url: "https://wellarchitected.github.com/library/governance/"
+    finding_template: >
+      No required status checks on {repo}: production-linked repository allows
+      merges to default branch without passing CI checks.
+    remediation: >
+      Add required status checks to the repository ruleset or branch protection
+      rule. Minimum: the CI lint and typecheck jobs must pass before merge.
+    evidence_fields:
+      - repo
+      - has_deploy_workflow
+      - status_checks_required
+
+  - id: codeowners_coverage
+    title: "CODEOWNERS coverage for sensitive paths"
+    severity: medium
+    check: >
+      The primary repository (Insightpulseai/odoo) must have a CODEOWNERS file
+      that covers the following sensitive paths:
+        - ssot/
+        - supabase/migrations/
+        - .github/workflows/
+        - infra/
+      Check via: GET /repos/{owner}/{repo}/contents/CODEOWNERS (and .github/CODEOWNERS)
+    citation_url: "https://wellarchitected.github.com/library/governance/"
+    finding_template: >
+      CODEOWNERS missing or not covering {path}: changes to sensitive paths
+      can merge without a required reviewer.
+    remediation: >
+      Create or update CODEOWNERS at the repo root or .github/CODEOWNERS.
+      Add entries for ssot/, supabase/migrations/, .github/workflows/, and infra/
+      pointing to the appropriate team or individuals.
+    evidence_fields:
+      - codeowners_exists
+      - covered_paths
+      - missing_paths
+
+  - id: secret_scanning_active
+    title: "Secret scanning enabled on all repositories"
+    severity: high
+    check: >
+      GitHub secret scanning must be enabled on all repositories in the
+      Insightpulseai organization. For public repositories, secret scanning is
+      free. For private repositories, it requires GitHub Advanced Security (GHAS)
+      or GitHub Enterprise.
+      Check via: GET /repos/{owner}/{repo}/security-and-analysis
+    citation_url: "https://wellarchitected.github.com/library/governance/"
+    finding_template: >
+      Secret scanning not enabled on {repo}: credentials committed to this
+      repository would not trigger an alert.
+    remediation: >
+      Enable secret scanning in GitHub Settings → Code security → Secret scanning.
+      For private repos without GHAS, consider using trufflesecurity/trufflehog
+      or gitleaks as a pre-commit / CI check (see scripts/ci/secret_scan.sh).
+    evidence_fields:
+      - repo
+      - secret_scanning_enabled
+      - push_protection_enabled
+
+  - id: dependency_alerts_enabled
+    title: "Dependabot alerts enabled on all repositories"
+    severity: medium
+    check: >
+      Dependabot vulnerability alerts must be enabled on all repositories.
+      This is a free feature for all GitHub plans.
+      Check via: GET /repos/{owner}/{repo}/vulnerability-alerts
+    citation_url: "https://wellarchitected.github.com/library/governance/"
+    finding_template: >
+      Dependabot alerts not enabled on {repo}: known vulnerable dependencies
+      will not surface automatically.
+    remediation: >
+      Enable Dependabot alerts in GitHub Settings → Security → Dependabot alerts.
+      This is free for all plan tiers.
+    evidence_fields:
+      - repo
+      - vulnerability_alerts_enabled
+
+  - id: pr_review_dismissal_restriction
+    title: "Stale PR reviews dismissed on new pushes"
+    severity: low
+    check: >
+      Branch protection or rulesets must be configured to dismiss stale pull
+      request approvals when new commits are pushed. This prevents a "approve
+      then amend" attack vector.
+      Check via: ruleset conditions or branch protection required_pull_request_reviews
+    citation_url: "https://wellarchitected.github.com/library/governance/"
+    finding_template: >
+      Stale review dismissal not enforced on {repo}: approved PRs can be amended
+      after approval without re-review.
+    remediation: >
+      In the organization ruleset (or per-repo branch protection), enable
+      "Dismiss stale pull request approvals when new commits are pushed".
+    evidence_fields:
+      - repo
+      - dismiss_stale_reviews

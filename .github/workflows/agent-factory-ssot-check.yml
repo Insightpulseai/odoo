@@ -1,0 +1,36 @@
+name: agent-factory-ssot-check
+
+on:
+  pull_request:
+    paths:
+      - "spec/agent-factory/**"
+      - "docs/architecture/agent-platform/agent-factory.md"
+      - "ssot/agent-platform/**"
+      - "scripts/agent_factory/**"
+      - "tests/agent_factory/**"
+  push:
+    branches: [main]
+    paths:
+      - "spec/agent-factory/**"
+      - "docs/architecture/agent-platform/agent-factory.md"
+      - "ssot/agent-platform/**"
+
+jobs:
+  validate:
+    name: Validate Agent Factory SSOT
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install pyyaml pytest
+
+      - name: Run SSOT validator
+        run: python scripts/agent_factory/validate_agent_factory.py
+
+      - name: Run consistency tests
+        run: pytest tests/agent_factory -q --tb=short

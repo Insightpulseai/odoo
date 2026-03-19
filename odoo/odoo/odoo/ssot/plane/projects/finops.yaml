@@ -1,0 +1,15 @@
+schema: ssot.plane.project.v1
+version: 1
+updated: "2026-03-06"
+
+workspace_slug: fin-ops
+project:
+  key: FINOPS
+  name: Finance PPM — Month-end Close
+  investment_id_prefix: FINOPS-
+  owner: Finance PMO
+  sponsor: Finance Leadership
+  pm: Finance PMO
+  department: Finance
+  cost_center: FIN
+  canonical_template: ssot/plane/templates/finops_month_end.yaml

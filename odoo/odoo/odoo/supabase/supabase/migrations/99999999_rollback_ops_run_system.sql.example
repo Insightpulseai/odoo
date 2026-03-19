@@ -1,0 +1,27 @@
+-- ROLLBACK MIGRATION: ops_run_system
+-- NOTE: This is a stub/example. Forward-only migrations are recommended.
+-- Only use this if you need to completely remove the ops schema.
+--
+-- To apply: rename to 99999999_rollback_ops_run_system.sql and run
+-- WARNING: This will DELETE all audit data in ops schema!
+
+-- Drop all functions first (due to dependencies)
+drop function if exists ops.start_run(text, text, text, text, jsonb);
+drop function if exists ops.log_event(uuid, text, text, jsonb);
+drop function if exists ops.complete_run(uuid, jsonb);
+drop function if exists ops.fail_run(uuid, text, jsonb);
+drop function if exists ops.add_artifact(uuid, text, text, jsonb);
+drop function if exists ops.set_updated_at();
+drop function if exists ops.touch_secret(text, text);
+
+-- Drop schema and all objects
+drop schema if exists ops cascade;
+
+-- Verify cleanup
+do $$
+begin
+  if exists (select 1 from information_schema.schemata where schema_name = 'ops') then
+    raise exception 'ops schema still exists after rollback';
+  end if;
+  raise notice 'ops schema successfully removed';
+end $$;

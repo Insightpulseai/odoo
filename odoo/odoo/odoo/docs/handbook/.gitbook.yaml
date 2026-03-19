@@ -1,0 +1,12 @@
+root: ./
+
+structure:
+  readme: README.md
+  summary: SUMMARY.md
+
+redirects:
+  expenses: finance/expenses/how-to-submit.md
+  month-end: finance/month-end/checklist.md
+  bir: compliance/bir/calendar.md
+  policies: finance/policies/spending.md
+  odoo: systems/odoo-guide.md

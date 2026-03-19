@@ -1,0 +1,150 @@
+# Odoo.sh-Equivalent Platform — Feature Equivalence Mapping
+# SSOT: infra/spec/odoosh-equivalent-platform/
+# Generated: 2026-03-11
+# Schema: v1.0.0
+
+version: "1.0.0"
+
+# Maps each Odoo.sh feature to its self-hosted equivalent
+equivalence_map:
+  production_environment:
+    odoosh_feature: "Production environment"
+    platform_equivalent: "ACA production revision"
+    implementation_stack: "Azure Container Apps"
+    capability_ref: c4_staging_promotion
+    status: planned
+
+  staging_environments:
+    odoosh_feature: "Staging environments"
+    platform_equivalent: "PR-linked ACA revisions"
+    implementation_stack: "GitHub Actions + ACA"
+    capability_ref: c4_staging_promotion
+    status: planned
+
+  development_branches:
+    odoosh_feature: "Development branches"
+    platform_equivalent: "Ephemeral ACA environments"
+    implementation_stack: "GitHub Actions + ACA"
+    capability_ref: c1_git_integration_ci
+    status: planned
+
+  online_editor:
+    odoosh_feature: "Online editor"
+    platform_equivalent: "GitHub Codespaces / Claude Code"
+    implementation_stack: "GitHub / Anthropic"
+    capability_ref: c3_exec_shell
+    status: available
+
+  web_shell:
+    odoosh_feature: "Web shell / SSH"
+    platform_equivalent: "ACA exec + az containerapp exec"
+    implementation_stack: "Azure CLI"
+    capability_ref: c3_exec_shell
+    status: planned
+
+  log_tailing:
+    odoosh_feature: "Log tailing"
+    platform_equivalent: "Azure Monitor + Log Analytics"
+    implementation_stack: "Azure Monitor"
+    capability_ref: c2_logs_runtime_visibility
+    status: planned
+
+  build_history:
+    odoosh_feature: "Build history"
+    platform_equivalent: "GitHub Actions run history"
+    implementation_stack: "GitHub"
+    capability_ref: c1_git_integration_ci
+    status: available
+
+  submodule_management:
+    odoosh_feature: "Submodule management"
+    platform_equivalent: "Git submodules + gitaggregate"
+    implementation_stack: "GitHub"
+    capability_ref: c1_git_integration_ci
+    status: available
+
+  automated_backups:
+    odoosh_feature: "Automated backups"
+    platform_equivalent: "Azure Backup + pg_dump cron"
+    implementation_stack: "Azure + scripts"
+    capability_ref: c6_backups_restore
+    status: planned
+
+  mail_catcher:
+    odoosh_feature: "Mail catcher"
+    platform_equivalent: "Mailpit (dev/staging)"
+    implementation_stack: "Self-hosted container sidecar"
+    capability_ref: c5_mail_catcher
+    status: planned
+
+  module_installation:
+    odoosh_feature: "Module installation"
+    platform_equivalent: "odoo --stop-after-init -i via CI"
+    implementation_stack: "GitHub Actions"
+    capability_ref: c1_git_integration_ci
+    status: available
+
+  database_manager:
+    odoosh_feature: "Database manager"
+    platform_equivalent: "Disabled (single DB per env)"
+    implementation_stack: "By design (list_db = False)"
+    capability_ref: c6_backups_restore
+    status: available
+    note: "Intentionally disabled for security and simplicity"
+
+# Container topology reference (owned by infra/ssot/runtime/)
+container_topology:
+  local_dev:
+    required:
+      - name: insightpulse-devcontainer
+        role: "Main coding container (Python, Node, Odoo tooling, git, linters)"
+      - name: insightpulse-dev-db
+        role: "Local PostgreSQL sidecar"
+    optional:
+      - name: insightpulse-dev-redis
+        role: "Cache (when testing cache-dependent features)"
+      - name: insightpulse-dev-ocr
+        role: "OCR service (when testing document processing)"
+      - name: insightpulse-dev-mailcatcher
+        role: "Mail sink (when testing email flows)"
+      - name: insightpulse-dev-mcp
+        role: "MCP server (when testing MCP integrations)"
+      - name: insightpulse-dev-n8n
+        role: "Automation (when testing workflow triggers)"
+
+  azure_runtime:
+    naming_convention: "ipai-<service>-<env>"
+    environments: [dev, staging, prod]
+    core_odoo:
+      - name: ipai-odoo-web
+        type: app
+        role: "Odoo HTTP/RPC server"
+      - name: ipai-odoo-worker
+        type: app
+        role: "Odoo async worker (longpolling, cron offload)"
+      - name: ipai-odoo-cron
+        type: app
+        role: "Odoo scheduled actions runner"
+      - name: ipai-odoo-init
+        type: job
+        role: "Module install/upgrade (runs on deploy, not persistent)"
+    platform_services:
+      - name: ipai-auth
+        type: app
+        role: "Authentication gateway (Keycloak)"
+      - name: ipai-mcp
+        type: app
+        role: "MCP server coordinator"
+      - name: ipai-n8n
+        type: app
+        role: "Workflow automation"
+      - name: ipai-ocr
+        type: app
+        role: "Document OCR processing"
+      - name: ipai-superset
+        type: app
+        role: "BI dashboards"
+      - name: ipai-plane
+        type: app
+        role: "Project management"
+    total_runtime_units: 10

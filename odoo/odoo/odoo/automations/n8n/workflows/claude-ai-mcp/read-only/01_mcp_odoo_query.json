@@ -1,0 +1,154 @@
+{
+  "name": "MCP Tool: Odoo Query (SOR Read-Only)",
+  "nodes": [
+    {
+      "parameters": {
+        "path": "mcp-insightpulse",
+        "authentication": "bearerAuth",
+        "options": {}
+      },
+      "id": "mcp-trigger-001",
+      "name": "MCP Server Trigger",
+      "type": "n8n-nodes-langchain.mcpTrigger",
+      "typeVersion": 1,
+      "position": [200, 300]
+    },
+    {
+      "parameters": {
+        "name": "odoo_query",
+        "description": "Query Odoo ERP data (System of Record). Read-only. Supports models: account.move (invoices/bills), account.move.line (journal items), res.partner (contacts), account.payment, product.product, sale.order, purchase.order. Returns structured JSON. Use domain filters in Odoo domain syntax e.g. [[\"state\",\"=\",\"posted\"],[\"move_type\",\"=\",\"out_invoice\"]].",
+        "workflowId": "={{ $workflow.id }}",
+        "fields": {
+          "values": [
+            {
+              "name": "model",
+              "description": "Odoo model name. Common: account.move, account.move.line, res.partner, account.payment, product.product, sale.order, purchase.order",
+              "type": "string",
+              "required": true
+            },
+            {
+              "name": "domain",
+              "description": "Odoo domain filter as JSON array. Example: [[\"state\",\"=\",\"posted\"],[\"move_type\",\"=\",\"out_invoice\"]]. Empty array [] returns all records.",
+              "type": "string",
+              "required": false
+            },
+            {
+              "name": "fields",
+              "description": "Comma-separated field names to return. Example: name,partner_id,amount_total,state,date. Leave empty for default fields.",
+              "type": "string",
+              "required": false
+            },
+            {
+              "name": "limit",
+              "description": "Maximum records to return (default 20, max 100)",
+              "type": "number",
+              "required": false
+            },
+            {
+              "name": "order",
+              "description": "Sort order. Example: date desc, name asc",
+              "type": "string",
+              "required": false
+            }
+          ]
+        }
+      },
+      "id": "tool-odoo-query",
+      "name": "Odoo Query Tool",
+      "type": "n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 1.1,
+      "position": [500, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.ODOO_URL }}/jsonrpc",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "none",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"jsonrpc\": \"2.0\",\n  \"method\": \"call\",\n  \"params\": {\n    \"service\": \"object\",\n    \"method\": \"execute_kw\",\n    \"args\": [\n      \"{{ $env.ODOO_DB }}\",\n      {{ $env.ODOO_UID }},\n      \"{{ $env.ODOO_API_KEY }}\",\n      \"{{ $json.model || 'account.move' }}\",\n      \"search_read\",\n      [{{ $json.domain || '[]' }}],\n      {\n        \"fields\": {{ $json.fields ? JSON.stringify($json.fields.split(',').map(f => f.trim())) : '[]' }},\n        \"limit\": {{ $json.limit || 20 }},\n        \"order\": \"{{ $json.order || 'id desc' }}\"\n      }\n    ]\n  },\n  \"id\": {{ Date.now() }}\n}",
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "id": "http-odoo-rpc",
+      "name": "Odoo JSON-RPC",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [700, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Format Odoo response for MCP client\nconst input = $input.first().json;\nconst result = input.result || [];\n\nif (input.error) {\n  return [{\n    json: {\n      status: 'error',\n      message: input.error.data?.message || input.error.message || 'Odoo query failed',\n      hint: 'Check model name and domain syntax. Domain must be valid JSON array.'\n    }\n  }];\n}\n\nconst count = Array.isArray(result) ? result.length : 0;\n\nreturn [{\n  json: {\n    status: 'success',\n    source: 'odoo_sor',\n    model: $('Odoo Query Tool').first().json.model || 'unknown',\n    record_count: count,\n    records: Array.isArray(result) ? result.slice(0, 100) : result,\n    note: count >= 100 ? 'Results truncated at 100. Use more specific domain filters.' : undefined\n  }\n}];"
+      },
+      "id": "code-format",
+      "name": "Format Response",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [900, 300]
+    }
+  ],
+  "connections": {
+    "MCP Server Trigger": {
+      "main": [
+        [
+          {
+            "node": "Odoo Query Tool",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Odoo Query Tool": {
+      "main": [
+        [
+          {
+            "node": "Odoo JSON-RPC",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Odoo JSON-RPC": {
+      "main": [
+        [
+          {
+            "node": "Format Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "saveManualExecutions": true,
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "tags": [
+    {
+      "name": "mcp",
+      "id": "mcp-tag"
+    },
+    {
+      "name": "odoo-sor",
+      "id": "odoo-tag"
+    }
+  ],
+  "meta": {
+    "instanceId": "insightpulseai-n8n"
+  }
+}

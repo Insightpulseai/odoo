@@ -1,0 +1,72 @@
+version: 1
+name: databricks-app-production-readiness
+status: draft
+owner: agents
+type: benchmark_skill
+family: databricks_production_readiness
+
+purpose: >
+  Assess whether a Databricks App meets production-readiness criteria
+  covering serverless hosting, environment/deploy discipline, app packaging,
+  and secure deployment.
+
+triggers:
+  - new Databricks App deployment
+  - app promotion to production
+  - app security or deployment review
+
+inputs:
+  - app bundle configuration
+  - deployment target
+  - authentication config
+  - data access scope
+
+dependencies:
+  - agents/knowledge/benchmarks/databricks-production-ready.md
+  - docs/architecture/enterprise_data_platform.md
+
+steps:
+  - verify app is packaged as a Databricks App bundle (not standalone notebook)
+  - check serverless compute allocation and scaling config
+  - verify environment separation (dev/staging/prod workspaces)
+  - confirm authentication — SSO/OAuth integrated, no hardcoded credentials
+  - check data access scope is minimal (principle of least privilege)
+  - verify deployment path is codified (CI/CD, not manual deploy)
+  - confirm health checks and monitoring exist
+  - check rollback capability (version pinning, previous deployment restore)
+
+outputs:
+  - app_readiness_assessment
+  - security_review
+  - deployment_discipline_score
+  - gap_list
+  - remediation_recommendations
+  - evidence
+
+guardrails:
+  - >
+    Databricks "production ready" is a benchmark for production discipline,
+    not a blanket trust label. A Databricks capability is production-grade
+    in our doctrine only when: release maturity is acceptable (GA or Public
+    Preview with stable interface/SLA/support), deployment path is codified,
+    observability/evaluation exists, rollback/recovery expectations are defined.
+    Beta, Private Preview, and Experimental features must NOT be treated as
+    canonical production baseline.
+  - never approve app without auth review
+  - never treat manual deployment as production-ready
+  - require health check evidence
+  - require least-privilege data access validation
+
+evidence:
+  format: docs/evidence/{stamp}/databricks/app-readiness/
+  required:
+    - app bundle artifact
+    - authentication configuration proof
+    - deployment pipeline proof
+    - health check configuration
+
+evals:
+  accuracy: 0.95
+  completeness: 0.95
+  safety: 0.99
+  policy_adherence: 0.99

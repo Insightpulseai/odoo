@@ -9,7 +9,7 @@ This document is the Odoo-specific implementation policy for the platform.
 
 Higher-order platform architecture, resource ownership, DNS target state, identity model, SSOT/SOR doctrine, CI/CD contract, and hard constraints are defined in:
 
-- `ssot/azure/PLATFORM_TARGET_STATE.md`
+- `infra/ssot/azure/PLATFORM_TARGET_STATE.md`
 
 If any rule in this document conflicts with the platform target-state document, the platform target-state document prevails.
 

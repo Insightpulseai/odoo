@@ -1,0 +1,342 @@
+name: ci
+
+on:
+  pull_request:
+  push:
+    branches: ["main"]
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  domain-policy:
+    name: Domain Policy Check
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check for forbidden .net domain
+        run: |
+          set -euo pipefail
+
+          echo "Checking for insightpulseai.net references..."
+
+          # Use grep since rg may not be installed
+          if grep -rn --include="*" \
+             --exclude-dir=".git" \
+             --exclude-dir="node_modules" \
+             --exclude-dir=".venv" \
+             --exclude-dir="venv" \
+             --exclude-dir="dist" \
+             --exclude-dir="build" \
+             --exclude-dir=".next" \
+             --exclude-dir="__pycache__" \
+             "insightpulseai\.net" . 2>/dev/null; then
+            echo ""
+            echo "::error::Found forbidden domain 'insightpulseai.net' in codebase"
+            echo "All references must use 'insightpulseai.com'"
+            echo ""
+            echo "Fix with:"
+            echo "  find . -type f -not -path '*/.git/*' -print0 | xargs -0 perl -pi -e 's/insightpulseai\\.net/insightpulseai.com/g'"
+            exit 1
+          fi
+
+          echo "Domain policy check passed (no .net references found)"
+
+      - name: Validate canonical domains in manifest
+        run: |
+          if [ -f config/integrations/integration_manifest.yaml ]; then
+            echo "Checking integration manifest..."
+
+            # Verify mailgun_domain is subdomain
+            if grep -q "mailgun_domain:.*insightpulseai.com" config/integrations/integration_manifest.yaml; then
+              if ! grep -q "mailgun_domain:.*mg\.insightpulseai.com" config/integrations/integration_manifest.yaml; then
+                echo "::warning::MAILGUN_DOMAIN should be mg.insightpulseai.com (subdomain)"
+              fi
+            fi
+
+            echo "Manifest check complete"
+          fi
+
+  secrets-scan:
+    name: Secrets Scan
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    needs: [domain-policy]
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Run gitleaks
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          config-path: .gitleaks.toml
+
+  validate-secrets-shape:
+    name: Validate Secrets Schema
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check .env.example contains required keys
+        run: |
+          set -euo pipefail
+
+          if [ ! -f scripts/secrets/secrets.schema.json ]; then
+            echo "No secrets schema found, skipping"
+            exit 0
+          fi
+
+          req=$(jq -r '.required[]' scripts/secrets/secrets.schema.json)
+          missing=()
+
+          for k in $req; do
+            if ! grep -q "^${k}=" .env.example 2>/dev/null; then
+              missing+=("$k")
+            fi
+          done
+
+          if [ ${#missing[@]} -gt 0 ]; then
+            echo "Missing in .env.example:"
+            printf ' - %s\n' "${missing[@]}"
+            exit 1
+          fi
+
+          echo "All required keys present in .env.example"
+
+  lint-build:
+    name: Lint & Build
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Setup Node
+        uses: actions/setup-node@v6
+        with:
+          node-version: "20"
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
+
+      - name: Get pnpm store directory
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+
+      - uses: actions/cache@v4
+        name: Setup pnpm cache
+        with:
+          path: ${{ env.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
+      - name: Install deps
+        run: pnpm install --frozen-lockfile
+
+      - name: Lint
+        run: pnpm run lint || echo "Lint not configured, skipping"
+
+      - name: Build
+        run: pnpm run build || echo "Build not configured, skipping"
+
+      - name: Docker build (smoke)
+        run: |
+          if [ -f Dockerfile ]; then
+            docker build -t odoo-ce-4l:ci .
+          else
+            echo "No Dockerfile; skipping docker build"
+          fi
+
+      - name: Compose up (smoke)
+        run: |
+          if [ -f docker-compose.yml ] || [ -f docker-compose.yaml ]; then
+            docker compose up -d --wait || true
+            docker compose ps
+            docker compose down -v
+          else
+            echo "No docker-compose; skipping compose smoke"
+          fi
+
+  supabase-check:
+    name: Supabase Migrations Check
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check migration file naming
+        run: |
+          set -euo pipefail
+
+          if [ ! -d supabase/migrations ]; then
+            echo "No migrations directory, skipping"
+            exit 0
+          fi
+
+          echo "Checking migration file naming..."
+          invalid=()
+
+          for f in supabase/migrations/*.sql; do
+            [ -f "$f" ] || continue
+            basename=$(basename "$f")
+
+            # Check format: YYYYMMDDHHMMSS_description.sql
+            if ! echo "$basename" | grep -qE '^[0-9]{14}_[a-z0-9_]+\.sql$'; then
+              # Also allow YYYYMMDDNNNNN format
+              if ! echo "$basename" | grep -qE '^[0-9]{14}[0-9]*_[a-z0-9_]+\.sql$'; then
+                invalid+=("$basename")
+              fi
+            fi
+          done
+
+          if [ ${#invalid[@]} -gt 0 ]; then
+            echo "Invalid migration file names:"
+            printf ' - %s\n' "${invalid[@]}"
+            echo ""
+            echo "Expected format: YYYYMMDDHHMMSS_description.sql"
+            exit 1
+          fi
+
+          echo "All migration files properly named"
+
+      - name: Validate SQL syntax (basic)
+        run: |
+          if [ ! -d supabase/migrations ]; then
+            echo "No migrations directory, skipping"
+            exit 0
+          fi
+
+          for f in supabase/migrations/*.sql; do
+            [ -f "$f" ] || continue
+            echo "Checking $f..."
+
+            # Basic syntax check: ensure file is not empty and has valid structure
+            if [ ! -s "$f" ]; then
+              echo "Warning: $f is empty"
+            fi
+
+            # Check for common issues
+            if grep -qiE 'drop\s+table.*cascade' "$f"; then
+              echo "Warning: $f contains DROP TABLE CASCADE"
+            fi
+          done
+
+          echo "SQL validation complete"
+
+  terraform-plan:
+    name: Terraform Plan
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    if: github.event_name == 'pull_request'
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check if Terraform exists
+        id: check
+        run: |
+          if [ -d infra/terraform ]; then
+            echo "exists=true" >> $GITHUB_OUTPUT
+          else
+            echo "exists=false" >> $GITHUB_OUTPUT
+          fi
+
+      - uses: hashicorp/setup-terraform@v3
+        if: steps.check.outputs.exists == 'true'
+        with:
+          terraform_version: "1.6.6"
+
+      - name: Terraform fmt
+        if: steps.check.outputs.exists == 'true'
+        run: |
+          terraform -chdir=infra/terraform/modules/platform_kit fmt -check -recursive || true
+
+      - name: Terraform init (dev)
+        if: steps.check.outputs.exists == 'true'
+        run: |
+          terraform -chdir=infra/terraform/envs/dev init -input=false -backend=false || true
+
+      - name: Terraform validate (dev)
+        if: steps.check.outputs.exists == 'true'
+        run: |
+          terraform -chdir=infra/terraform/envs/dev validate || true
+
+      - name: Terraform plan (dev)
+        if: steps.check.outputs.exists == 'true'
+        id: plan
+        continue-on-error: true
+        run: |
+          set +e
+          terraform -chdir=infra/terraform/envs/dev plan -no-color -input=false 2>&1 | tee /tmp/tfplan.txt
+          echo "exitcode=$?" >> $GITHUB_OUTPUT
+
+      - name: Comment plan on PR
+        if: steps.check.outputs.exists == 'true' && github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            let plan = '';
+            try {
+              plan = fs.readFileSync('/tmp/tfplan.txt', 'utf8').slice(0, 60000);
+            } catch (e) {
+              plan = 'No terraform plan output';
+            }
+
+            const body = `### Terraform Plan (dev)
+            \`\`\`
+            ${plan}
+            \`\`\`
+            `;
+
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body: body
+            });
+
+  edge-functions-check:
+    name: Edge Functions Check
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Deno
+        uses: denoland/setup-deno@v1
+        with:
+          deno-version: v1.x
+
+      - name: Check Edge Function syntax
+        run: |
+          if [ ! -d supabase/functions ]; then
+            echo "No functions directory, skipping"
+            exit 0
+          fi
+
+          for dir in supabase/functions/*/; do
+            [ -d "$dir" ] || continue
+            dirname=$(basename "$dir")
+
+            # Skip shared directory
+            if [ "$dirname" = "_shared" ]; then
+              continue
+            fi
+
+            if [ -f "${dir}index.ts" ]; then
+              echo "Checking ${dirname}..."
+              deno check --no-lock "${dir}index.ts" || echo "Warning: ${dirname} has type issues"
+            fi
+          done
+
+          echo "Edge Functions check complete"

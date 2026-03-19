@@ -1,0 +1,60 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Feature",
+  "description": "Feature registry entry (Supabase-style directory)",
+  "type": "object",
+  "required": ["id", "name", "tags", "summary", "stage"],
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z0-9\\-]+$",
+      "description": "Unique feature identifier (kebab-case)"
+    },
+    "name": {
+      "type": "string",
+      "description": "Human-readable feature name"
+    },
+    "summary": {
+      "type": "string",
+      "description": "Brief description of the feature"
+    },
+    "tags": {
+      "type": "array",
+      "items": { "type": "string" },
+      "minItems": 1,
+      "description": "Searchable/filterable tags"
+    },
+    "stage": {
+      "type": "string",
+      "enum": ["ga", "beta", "alpha", "deprecated"],
+      "description": "Feature maturity stage"
+    },
+    "availability": {
+      "type": "string",
+      "enum": ["all", "pro", "enterprise", "self-hosted"],
+      "default": "all",
+      "description": "Availability tier"
+    },
+    "links": {
+      "type": "object",
+      "properties": {
+        "docs": { "type": "string", "format": "uri" },
+        "runbook": { "type": "string" },
+        "repo": { "type": "string", "format": "uri" },
+        "api": { "type": "string", "format": "uri" }
+      },
+      "additionalProperties": false
+    },
+    "related_assets": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "IDs of related features or integrations"
+    },
+    "ipai_module": {
+      "type": "string",
+      "pattern": "^ipai_[a-z0-9_]+$",
+      "description": "Associated IPAI Odoo module (if any)"
+    }
+  },
+  "additionalProperties": false
+}

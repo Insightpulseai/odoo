@@ -1,0 +1,77 @@
+version: 1
+type: benchmark_skill
+classification: encoded_preference
+family: microsoft-caf
+skill:
+  name: caf-governance-baseline
+  id: caf-governance-baseline
+  version: "0.1.0"
+  status: draft
+  owner_persona: cloud-governance-operator
+  source_family: microsoft-caf
+  benchmark_source: "Microsoft Cloud Adoption Framework"
+  purpose: >
+    Establish and enforce cloud governance baselines using CAF Govern phase
+    methodology. Covers Azure Policy, cost management, resource consistency,
+    security baseline, identity baseline, deployment acceleration, and
+    governance maturity model progression.
+
+  triggers:
+    - governance baseline establishment for new environment
+    - Azure Policy audit or new policy assignment
+    - cost management review or budget alert
+    - resource naming or tagging inconsistency detected
+    - governance maturity assessment requested
+
+  inputs:
+    - current Azure Policy assignments
+    - resource inventory with naming and tagging status
+    - cost management data (budgets, actuals, forecasts)
+    - compliance requirements
+    - governance maturity target level
+
+  steps:
+    - assess current governance maturity level (Initial, Defined, Managed, Optimized)
+    - audit Azure Policy assignments against CAF recommended policies
+    - evaluate resource naming convention compliance
+    - audit resource tagging completeness
+    - review cost management configuration (budgets, alerts, advisor recommendations)
+    - assess identity governance (RBAC assignments, PIM usage)
+    - evaluate deployment acceleration (IaC coverage, deployment gates)
+    - identify governance gaps with prioritized remediation
+    - define governance improvement roadmap
+    - produce governance posture report with evidence
+
+  outputs:
+    - governance_maturity_assessment
+    - policy_audit_results
+    - naming_compliance_report
+    - tagging_audit_results
+    - cost_management_status
+    - governance_roadmap
+    - evidence
+
+  guardrails:
+    - "CAF is a benchmark reference, not a runtime dependency"
+    - "Canonical stack remains Odoo CE + Azure Container Apps"
+    - "A benchmark becomes integration only with explicit contract in docs/contracts/"
+    - "Governance policies must not block existing production workloads without migration path"
+    - "Cost optimization must account for self-hosted philosophy"
+    - "Policy enforcement should be audit-first, then deny"
+
+  evidence:
+    required: true
+    format: "docs/evidence/{stamp}/caf/governance/"
+
+  evals:
+    dimensions: [accuracy, completeness, policy_coverage, cost_awareness, evidence_quality]
+    thresholds:
+      accuracy: 0.95
+      policy_coverage: 0.90
+
+cross_references:
+  - agents/knowledge/benchmarks/microsoft-cloud-adoption-framework.md
+  - agents/personas/cloud-governance-operator.md
+  - agents/skills/azure-optimization-ops/
+  - agents/skills/caf-security-baseline/
+  - agent-platform/ssot/learning/microsoft_caf_skill_map.yaml

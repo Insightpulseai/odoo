@@ -87,6 +87,19 @@ param cpuCron string = '0.5'
 @description('Memory for odoo-cron')
 param memoryCron string = '1Gi'
 
+// --- Persistent storage (Azure Files for /var/lib/odoo) ---
+@description('Enable persistent filestore via Azure Files mount')
+param enablePersistentFilestore bool = false
+
+@description('Azure Files share name for Odoo filestore')
+param azureFilesShareName string = 'odoo-filestore'
+
+@description('Storage account name for Azure Files')
+param storageAccountName string = ''
+
+@description('Key Vault secret name for the Azure Files storage account key')
+param storageKeySecretName string = 'sa-odoo-filestore-key'
+
 @description('Resource tags')
 param tags object = {}
 
@@ -136,6 +149,40 @@ var sharedEnv = concat([
 var revisionSuffixProp = !empty(revisionSuffix) ? { revisionSuffix: revisionSuffix } : {}
 
 // ---------------------------------------------------------------------------
+// Azure Files storage for Odoo filestore (/var/lib/odoo)
+// ---------------------------------------------------------------------------
+// ACA requires the storage to be registered on the managed environment first,
+// then referenced as a volume in each container app template.
+
+resource odooFilestoreStorage 'Microsoft.App/managedEnvironments/storages@2023-05-01' = if (enablePersistentFilestore) {
+  name: 'odoo-filestore'
+  parent: acaEnvironment
+  properties: {
+    azureFile: {
+      accountName: storageAccountName
+      accountKey: keyVault.getSecret(storageKeySecretName)
+      shareName: azureFilesShareName
+      accessMode: 'ReadWrite'
+    }
+  }
+}
+
+var filestoreVolumes = enablePersistentFilestore ? [
+  {
+    name: 'odoo-filestore'
+    storageName: 'odoo-filestore'
+    storageType: 'AzureFile'
+  }
+] : []
+
+var filestoreVolumeMounts = enablePersistentFilestore ? [
+  {
+    volumeName: 'odoo-filestore'
+    mountPath: '/var/lib/odoo'
+  }
+] : []
+
+// ---------------------------------------------------------------------------
 // odoo-web — HTTP service, routable via Front Door
 // ---------------------------------------------------------------------------
 
@@ -180,6 +227,7 @@ resource odooWeb 'Microsoft.App/containerApps@2023-05-01' = {
             memory: memoryWeb
           }
           env: sharedEnv
+          volumeMounts: filestoreVolumeMounts
           probes: [
             {
               type: 'Liveness'
@@ -205,6 +253,7 @@ resource odooWeb 'Microsoft.App/containerApps@2023-05-01' = {
           ]
         }
       ]
+      volumes: filestoreVolumes
       scale: {
         minReplicas: minReplicasWeb
         maxReplicas: maxReplicasWeb
@@ -258,6 +307,7 @@ resource odooWorker 'Microsoft.App/containerApps@2023-05-01' = {
             memory: memoryWorker
           }
           env: sharedEnv
+          volumeMounts: filestoreVolumeMounts
           probes: [
             {
               type: 'Liveness'
@@ -269,6 +319,7 @@ resource odooWorker 'Microsoft.App/containerApps@2023-05-01' = {
           ]
         }
       ]
+      volumes: filestoreVolumes
       scale: {
         minReplicas: minReplicasWorker
         maxReplicas: maxReplicasWorker
@@ -316,6 +367,7 @@ resource odooCron 'Microsoft.App/containerApps@2023-05-01' = {
             memory: memoryCron
           }
           env: sharedEnv
+          volumeMounts: filestoreVolumeMounts
           probes: [
             {
               type: 'Liveness'
@@ -327,6 +379,7 @@ resource odooCron 'Microsoft.App/containerApps@2023-05-01' = {
           ]
         }
       ]
+      volumes: filestoreVolumes
       scale: {
         minReplicas: 1
         maxReplicas: 1 // Cron must be single-replica to avoid duplicate scheduled actions

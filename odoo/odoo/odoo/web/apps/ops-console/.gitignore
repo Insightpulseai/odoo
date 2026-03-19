@@ -1,0 +1,5 @@
+.vercel
+
+# Environment files (secrets)
+.env*
+!.env.example

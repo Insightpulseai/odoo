@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <!-- Default Helpdesk Stages -->
+        <record id="stage_new" model="ipai.helpdesk.stage">
+            <field name="name">New</field>
+            <field name="sequence">1</field>
+            <field name="description">Newly submitted tickets awaiting triage</field>
+        </record>
+
+        <record id="stage_in_progress" model="ipai.helpdesk.stage">
+            <field name="name">In Progress</field>
+            <field name="sequence">10</field>
+            <field name="description">Tickets being actively worked on</field>
+        </record>
+
+        <record id="stage_waiting" model="ipai.helpdesk.stage">
+            <field name="name">Waiting for Customer</field>
+            <field name="sequence">20</field>
+            <field name="description">Tickets pending customer response</field>
+        </record>
+
+        <record id="stage_resolved" model="ipai.helpdesk.stage">
+            <field name="name">Resolved</field>
+            <field name="sequence">90</field>
+            <field name="is_close">True</field>
+            <field name="fold">True</field>
+            <field name="description">Tickets that have been successfully resolved</field>
+        </record>
+
+        <record id="stage_cancelled" model="ipai.helpdesk.stage">
+            <field name="name">Cancelled</field>
+            <field name="sequence">100</field>
+            <field name="is_close">True</field>
+            <field name="fold">True</field>
+            <field name="description">Tickets that were cancelled or duplicates</field>
+        </record>
+
+        <!-- Ticket Sequence -->
+        <record id="seq_helpdesk_ticket" model="ir.sequence">
+            <field name="name">Helpdesk Ticket</field>
+            <field name="code">ipai.helpdesk.ticket</field>
+            <field name="prefix">TKT-</field>
+            <field name="padding">5</field>
+        </record>
+    </data>
+</odoo>

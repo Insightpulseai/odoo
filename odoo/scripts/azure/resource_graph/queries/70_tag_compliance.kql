@@ -1,0 +1,16 @@
+Resources
+| extend hasEnvironment = isnotempty(tags['environment'])
+| extend hasOwner = isnotempty(tags['owner'])
+| extend hasSystem = isnotempty(tags['system'])
+| where hasEnvironment == false or hasOwner == false or hasSystem == false
+| project
+    id,
+    name,
+    type,
+    resourceGroup,
+    subscriptionId,
+    tags,
+    hasEnvironment,
+    hasOwner,
+    hasSystem
+| order by type asc, name asc

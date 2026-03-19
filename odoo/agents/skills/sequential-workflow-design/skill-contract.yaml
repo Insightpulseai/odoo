@@ -1,0 +1,40 @@
+version: 1
+name: sequential-workflow-design
+description: "Design sequential prompt-chaining workflows with fixed ordered steps and inter-step dependencies"
+type: benchmark_skill
+skill_classification: encoded_preference
+owner_persona: workflow-architect
+source_family: anthropic_agent_patterns
+status: active
+
+triggers:
+  - "sequential workflow needed"
+  - "prompt chaining design"
+  - "multi-step pipeline with dependencies"
+
+inputs:
+  - task_description: "End-to-end task to decompose"
+  - dependency_map: "Which steps depend on which outputs"
+  - quality_gates: "Validation criteria between steps"
+
+steps:
+  - id: decompose
+    action: "Break task into minimal sequential steps"
+  - id: define_interfaces
+    action: "Define input/output contract for each step"
+  - id: add_gates
+    action: "Add validation gates between steps to catch errors early"
+  - id: optimize
+    action: "Check if any steps can be merged (fewer steps = less latency)"
+
+outputs:
+  - step_chain: "Ordered list of steps with input/output contracts"
+  - gate_criteria: "Validation rules between steps"
+  - fallback_strategy: "What happens when a gate fails"
+
+guardrails:
+  - "Minimize step count — merge steps unless quality degrades"
+  - "Every step must have a clear output contract"
+  - "Gate failures must have defined fallback behavior"
+
+benchmark_source: "https://www.anthropic.com/engineering/building-effective-agents"

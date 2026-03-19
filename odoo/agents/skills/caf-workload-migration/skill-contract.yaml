@@ -1,0 +1,73 @@
+version: 1
+type: benchmark_skill
+classification: capability_uplift
+family: microsoft-caf
+skill:
+  name: caf-workload-migration
+  id: caf-workload-migration
+  version: "0.1.0"
+  status: draft
+  owner_persona: cloud-migration-engineer
+  source_family: microsoft-caf
+  benchmark_source: "Microsoft Cloud Adoption Framework"
+  purpose: >
+    Assess and execute workload migration using CAF Migrate phase methodology.
+    Covers workload assessment with Azure Migrate, migration wave planning,
+    rehost/replatform patterns, testing, validation, and cutover/rollback planning.
+
+  triggers:
+    - workload identified for migration to Azure
+    - migration wave planning initiated
+    - cutover window scheduled
+    - post-migration validation required
+
+  inputs:
+    - workload inventory with dependencies
+    - source environment details (VMs, databases, networking)
+    - target Azure environment (landing zone, resource groups)
+    - migration timeline and constraints
+    - rollback requirements
+
+  steps:
+    - assess workload readiness using Azure Migrate or equivalent
+    - map workload dependencies (network, data, identity)
+    - select migration pattern (rehost or replatform)
+    - plan migration wave with sequencing and dependencies
+    - prepare target environment (networking, identity, storage)
+    - execute migration (data sync, cutover, DNS switch)
+    - validate migration (functional tests, performance baseline, data integrity)
+    - document rollback procedure and verify rollback capability
+    - decommission source after validation period
+    - produce migration evidence report
+
+  outputs:
+    - workload_assessment
+    - migration_plan
+    - cutover_runbook
+    - rollback_procedure
+    - validation_report
+    - evidence
+
+  guardrails:
+    - "CAF is a benchmark reference, not a runtime dependency"
+    - "Canonical stack remains Odoo CE + Azure Container Apps"
+    - "A benchmark becomes integration only with explicit contract in docs/contracts/"
+    - "Never execute cutover without documented and tested rollback procedure"
+    - "Data integrity validation is mandatory before decommissioning source"
+
+  evidence:
+    required: true
+    format: "docs/evidence/{stamp}/caf/migration/"
+
+  evals:
+    dimensions: [accuracy, completeness, safety, data_integrity, evidence_quality]
+    thresholds:
+      accuracy: 0.95
+      safety: 0.99
+      data_integrity: 0.99
+
+cross_references:
+  - agents/knowledge/benchmarks/microsoft-cloud-adoption-framework.md
+  - agents/personas/cloud-migration-engineer.md
+  - agents/skills/azure-migration-ops/
+  - agent-platform/ssot/learning/microsoft_caf_skill_map.yaml

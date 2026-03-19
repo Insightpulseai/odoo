@@ -1,0 +1,66 @@
+version: 1
+type: delivery_skill
+family: odoo_sh_delivery
+skill:
+  name: odoo-shell-debug
+  status: draft
+  owner: odoo-developer
+  purpose: >
+    Provide runtime debugging capabilities via container shell access on
+    Azure Container Apps. Inspect container state, run Odoo shell commands,
+    and diagnose runtime issues without modifying production data.
+
+  triggers:
+    - runtime issue requiring container inspection
+    - module state verification needed
+    - database connection debugging
+    - ORM query investigation
+
+  inputs:
+    - container app name and revision
+    - resource group
+    - specific module or model to inspect
+    - suspected issue description
+
+  steps:
+    - connect to container via az containerapp exec
+    - verify Odoo process state and configuration
+    - inspect module installation state via Odoo shell
+    - check database connectivity and pool status
+    - run targeted ORM queries for diagnosis
+    - inspect container filesystem (addons path, config, logs)
+    - capture diagnostic evidence
+    - disconnect cleanly
+
+  outputs:
+    - diagnostic_report
+    - container_state
+    - module_state
+    - database_status
+    - findings
+    - evidence
+
+  guardrails:
+    - never modify data in production database via shell
+    - never install or uninstall modules via shell on production
+    - never expose database credentials or secrets in output
+    - read-only inspection unless explicitly authorized for dev/staging
+    - document every shell session with purpose and findings
+    - bind to az containerapp exec, not Odoo.sh web shell
+
+  evidence:
+    required: true
+    format: "docs/evidence/{stamp}/odoo-delivery/odoo-shell-debug/"
+
+  evals:
+    dimensions: [accuracy, completeness, safety, policy_adherence, evidence_quality]
+    thresholds:
+      accuracy: 0.95
+      safety: 0.99
+      policy_adherence: 0.95
+
+cross_references:
+  - agents/knowledge/benchmarks/odoo-sh-persona-model.md
+  - agents/personas/odoo-developer.md
+  - .claude/rules/infrastructure.md
+  - .claude/rules/path-contract.md

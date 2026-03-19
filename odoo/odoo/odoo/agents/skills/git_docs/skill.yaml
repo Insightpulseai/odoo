@@ -1,0 +1,16 @@
+id: git_docs
+name: Official Git Documentation Grounded Skill
+version: 0.1.0
+source_of_truth:
+  - https://git-scm.com/docs
+guardrails:
+  require_citations: true
+  allowed_domains:
+    - git-scm.com
+retrieval:
+  chunk_chars: 1200
+  overlap_chars: 150
+  top_k: 8
+outputs:
+  must_include:
+    - citations

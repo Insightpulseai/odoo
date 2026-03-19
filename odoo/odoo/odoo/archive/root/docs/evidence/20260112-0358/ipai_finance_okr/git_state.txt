@@ -1,0 +1,22 @@
+cb4fb82ae72440e539d4715089f4e64f5102f0e5 feat(ipai_finance_okr): add OKR + PMBOK + WBS governance module
+  claude/ai-design-patterns-XcKud       c91a6f3 docs: auto-update SITEMAP.md and TREE.md [skip ci]
+* claude/finance-governance-model-sTSMj cb4fb82 feat(ipai_finance_okr): add OKR + PMBOK + WBS governance module
+ addons/ipai/ipai_finance_okr/__init__.py           |   2 +
+ addons/ipai/ipai_finance_okr/__manifest__.py       |  28 +++
+ .../ipai_finance_okr/data/okr_objective_seed.xml   | 100 +++++++++
+ addons/ipai/ipai_finance_okr/models/__init__.py    |   9 +
+ .../ipai/ipai_finance_okr/models/okr_key_result.py | 231 ++++++++++++++++++++
+ .../ipai_finance_okr/models/okr_kr_milestone.py    |  92 ++++++++
+ .../models/okr_kr_score_snapshot.py                |  71 +++++++
+ .../ipai_finance_okr/models/okr_kr_task_link.py    | 105 +++++++++
+ .../ipai/ipai_finance_okr/models/okr_objective.py  | 140 ++++++++++++
+ addons/ipai/ipai_finance_okr/models/okr_risk.py    | 173 +++++++++++++++
+ .../ipai_finance_okr/security/ir.model.access.csv  |   7 +
+ .../ipai_finance_okr/static/description/icon.svg   |  17 ++
+ addons/ipai/ipai_finance_okr/views/menus.xml       |  43 ++++
+ .../views/okr_key_result_views.xml                 | 194 +++++++++++++++++
+ .../ipai_finance_okr/views/okr_milestone_views.xml | 119 +++++++++++
+ .../ipai_finance_okr/views/okr_objective_views.xml | 185 ++++++++++++++++
+ .../ipai/ipai_finance_okr/views/okr_risk_views.xml | 197 +++++++++++++++++
+ docs/data-model/IPAI_FINANCE_OKR_SCHEMA.dbml       | 236 +++++++++++++++++++++
+ 18 files changed, 1949 insertions(+)

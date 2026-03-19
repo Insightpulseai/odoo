@@ -1,0 +1,17 @@
+version: 1
+status: active
+updated_at: "2026-03-17"
+
+domain_packs:
+  marketing:
+    benchmarks: [smartly_io, quilt_ai, lions, dataintelligence_ro, fal_ai]
+
+  retail_media:
+    benchmarks: [smartly_io, quilt_ai, dataintelligence_ro, fal_ai]
+
+  entertainment:
+    benchmarks: [smartly_io, quilt_ai, lions, fal_ai]
+
+  financial_services:
+    benchmarks: [quilt_ai, lions]
+    conditional_benchmarks: [smartly_io, dataintelligence_ro, fal_ai]

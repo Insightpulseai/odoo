@@ -1,0 +1,75 @@
+# ===========================================================================
+# SSOT: Desired Odoo Modules
+# Modules listed here will be auto-installed on merge to main
+# ===========================================================================
+#
+# Guidelines:
+# - Keep this list minimal and curated
+# - Include only modules that MUST be installed in production
+# - OCA modules should be pinned via oca.lock.json
+# - IPAI custom modules use ipai_* prefix
+#
+# To add a module:
+# 1. Add the module name to this list
+# 2. Ensure the module is in the addons path
+# 3. Merge to main - CI will auto-install
+#
+# ===========================================================================
+
+modules:
+  # Core IPAI modules
+  - ipai_ops_mirror
+
+  # Theme and UI (uncomment as needed)
+  # - ipai_theme_copilot
+  # - ipai_design_system
+  # - ipai_platform_theme
+
+  # Enterprise bridge (CE equivalents)
+  # - ipai_enterprise_bridge
+
+  # Finance modules (uncomment as needed)
+  # - ipai_finance_workflow
+  # - ipai_finance_ppm_umbrella
+  # - ipai_finance_closing
+  # - ipai_month_end
+
+  # Compliance modules
+  # - ipai_bir_tax_compliance
+
+  # AI modules
+  # - ipai_ask_ai
+  # - ipai_ask_ai_chatter
+
+  # Integration modules
+  # - ipai_superset_connector
+  # - ipai_ocr_gateway
+
+  # Platform modules
+  # - ipai_platform_workflow
+  # - ipai_platform_approvals
+  # - ipai_platform_audit
+  # - ipai_platform_permissions
+
+  # WorkOS modules (Notion-like)
+  # - ipai_workos_core
+  # - ipai_workos_blocks
+  # - ipai_workos_canvas
+  # - ipai_workos_search
+
+# ===========================================================================
+# Environment-specific overrides
+# ===========================================================================
+environments:
+  prod:
+    # Modules only installed in prod
+    modules: []
+
+  stage:
+    # Additional modules for staging
+    modules: []
+
+  dev:
+    # Development-only modules
+    modules:
+      # - ipai_dev_studio_base

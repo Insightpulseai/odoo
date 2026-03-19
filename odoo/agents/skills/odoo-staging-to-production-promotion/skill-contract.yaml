@@ -1,0 +1,74 @@
+version: 1
+type: delivery_skill
+family: odoo_sh_delivery
+skill:
+  name: odoo-staging-to-production-promotion
+  status: draft
+  owner: odoo-release-manager
+  purpose: >
+    Validate and execute staging-to-production deployment. Ensure tester
+    and platform admin evidence is complete, rollback path is tested,
+    and bake-time observation is planned before production cutover.
+
+  triggers:
+    - staging validation complete with no blockers
+    - tester persona sign-off received
+    - platform admin confirms backup and monitoring readiness
+    - scheduled production deployment window
+
+  inputs:
+    - staging branch and revision
+    - tester evidence from odoo-staging-validation skill
+    - platform admin evidence (backup, monitoring, security)
+    - container image tag from staging
+    - rollback plan (previous production revision, backup)
+    - bake-time plan (observation period, success criteria)
+
+  steps:
+    - verify tester evidence exists with no real_defect blockers
+    - verify platform admin confirms backup taken before deployment
+    - verify monitoring and alerting are active
+    - confirm rollback plan documented (previous revision + DB backup)
+    - execute production Container App revision update
+    - verify production health check passes
+    - confirm production database migration completes
+    - begin bake-time observation period
+    - produce production deployment evidence report
+
+  outputs:
+    - deployment_status
+    - tester_verification
+    - platform_admin_verification
+    - production_revision
+    - rollback_plan
+    - bake_time_status
+    - findings
+    - blockers
+    - evidence
+
+  guardrails:
+    - never deploy to production without tester evidence
+    - never deploy without confirmed database backup
+    - never deploy without active monitoring
+    - never classify release as healthy without bake-time evidence
+    - never deploy without documented rollback path
+    - never deploy during active incident without explicit override
+    - bind to ACA revision promotion and Azure managed PG, not Odoo.sh production
+
+  evidence:
+    required: true
+    format: "docs/evidence/{stamp}/odoo-delivery/odoo-staging-to-production-promotion/"
+
+  evals:
+    dimensions: [accuracy, completeness, safety, policy_adherence, evidence_quality]
+    thresholds:
+      accuracy: 0.95
+      safety: 0.99
+      policy_adherence: 0.95
+
+cross_references:
+  - agents/knowledge/benchmarks/odoo-sh-persona-model.md
+  - agents/personas/odoo-release-manager.md
+  - agents/skills/odoo-staging-validation/skill-contract.yaml
+  - agents/skills/odoo-backup-recovery/skill-contract.yaml
+  - agents/skills/odoo-monitoring-posture/skill-contract.yaml

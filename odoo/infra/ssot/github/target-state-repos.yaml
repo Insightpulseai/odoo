@@ -3,20 +3,22 @@ org: Insightpulseai
 
 # Canonical repo classification.
 # Every repo MUST appear here exactly once.
-# Domain values: erp, control-plane, web, data-platform, infrastructure,
-#   design-system, agents, governance, templates
+# Domain values: erp, platform, web, data-intelligence, infrastructure,
+#   design, agents, governance, templates, automation, docs
 
 # Valid domains
 domains:
   - erp
-  - control-plane
+  - platform
   - web
-  - data-platform
+  - data-intelligence
   - infrastructure
-  - design-system
+  - design
   - agents
   - governance
   - templates
+  - automation
+  - docs
 
 canonical_repos:
   # ── Active repos ─────────────────────────────────────
@@ -26,11 +28,12 @@ canonical_repos:
     canonical: true
     description: "Odoo CE 19 monorepo — ERP, modules, CI, specs, scripts"
 
-  - name: ops-platform
-    domain: control-plane
+  - name: platform
+    domain: platform
     status: active
     canonical: true
-    description: "Supabase SSOT + secrets + automations control-plane"
+    description: "Platform admin apps, SSOT, control-plane"
+    note: "Renamed from ops-platform"
 
   - name: web
     domain: web
@@ -38,23 +41,25 @@ canonical_repos:
     canonical: true
     description: "Product web surfaces — ops console, marketing, docs"
 
-  - name: lakehouse
-    domain: data-platform
+  - name: data-intelligence
+    domain: data-intelligence
     status: active
     canonical: true
     description: "Databricks lakehouse — medallion pipelines, Unity Catalog"
+    note: "Renamed from lakehouse"
 
   - name: infra
     domain: infrastructure
     status: active
     canonical: true
-    description: "IaC — Azure, DigitalOcean, Cloudflare, Terraform"
+    description: "IaC — Azure, Cloudflare, Terraform, Bicep"
 
-  - name: design-system
-    domain: design-system
+  - name: design
+    domain: design
     status: active
     canonical: true
     description: "Design tokens, components, icon pipeline, brand assets"
+    note: "Renamed from design-system"
 
   - name: agents
     domain: agents
@@ -73,6 +78,18 @@ canonical_repos:
     status: active
     canonical: true
     description: "Org-wide GitHub config — issue templates, labels, workflows"
+
+  - name: automations
+    domain: automation
+    status: active
+    canonical: true
+    description: "Workflow automation, scheduled jobs, and runbooks"
+
+  - name: docs
+    domain: docs
+    status: active
+    canonical: true
+    description: "Cross-platform documentation and architecture"
 
   - name: learn
     domain: governance
@@ -116,10 +133,10 @@ canonical_repos:
     description: "Finance ops (archived, merged into odoo)"
 
   - name: fluent-owl
-    domain: design-system
+    domain: design
     status: archived
     canonical: false
-    superseded_by: design-system
+    superseded_by: design
     description: "Design experiments (archived)"
 
   - name: mcp-core
@@ -130,7 +147,7 @@ canonical_repos:
     description: "MCP core (archived, merged into agents)"
 
   - name: ops-console
-    domain: control-plane
+    domain: platform
     status: archived
     canonical: false
     superseded_by: web

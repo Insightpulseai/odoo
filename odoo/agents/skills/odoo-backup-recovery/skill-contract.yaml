@@ -1,0 +1,68 @@
+version: 1
+type: delivery_skill
+family: odoo_sh_delivery
+skill:
+  name: odoo-backup-recovery
+  status: draft
+  owner: odoo-platform-admin
+  purpose: >
+    Validate backup posture and recovery capabilities for the Odoo CE 19
+    platform on Azure managed PostgreSQL. Ensure incremental backups,
+    geo-redundancy, and point-in-time restore are configured and tested.
+
+  triggers:
+    - pre-deployment backup verification
+    - periodic backup posture audit
+    - disaster recovery drill
+    - post-incident recovery execution
+
+  inputs:
+    - Azure PostgreSQL Flexible Server name (ipai-odoo-dev-pg)
+    - backup retention policy configuration
+    - geo-redundancy settings
+    - target recovery point (timestamp or backup ID)
+    - database name (odoo, odoo_staging, odoo_dev)
+
+  steps:
+    - verify Azure PG backup is enabled with correct retention period
+    - confirm geo-redundant backup is configured
+    - check latest backup timestamp and verify recency
+    - validate point-in-time restore capability window
+    - test restore to disposable database (if drill)
+    - verify backup encryption at rest
+    - check backup alerting (notify on failure)
+    - produce backup posture report with evidence
+
+  outputs:
+    - backup_status
+    - retention_policy
+    - geo_redundancy
+    - latest_backup_timestamp
+    - restore_capability
+    - findings
+    - blockers
+    - evidence
+
+  guardrails:
+    - never reduce backup retention below policy minimum
+    - never disable geo-redundant backup
+    - never restore to production database without explicit authorization
+    - never expose database credentials in backup verification output
+    - test restores go to disposable databases only
+    - bind to Azure managed PG backup, not Odoo.sh backup
+
+  evidence:
+    required: true
+    format: "docs/evidence/{stamp}/odoo-delivery/odoo-backup-recovery/"
+
+  evals:
+    dimensions: [accuracy, completeness, safety, policy_adherence, evidence_quality]
+    thresholds:
+      accuracy: 0.95
+      safety: 0.99
+      policy_adherence: 0.95
+
+cross_references:
+  - agents/knowledge/benchmarks/odoo-sh-persona-model.md
+  - agents/personas/odoo-platform-admin.md
+  - .claude/rules/infrastructure.md

@@ -1,0 +1,4 @@
+--- a/n8n/workflows/github-router.json
++++ b/automations/n8n/workflows/github-router.json
+@@ Move stray workflow to canonical location @@
+# git mv 'n8n/workflows/github-router.json' 'automations/n8n/workflows/github-router.json'

@@ -1,0 +1,48 @@
+version: 1
+type: ops_skill
+family: azure_sample_azd
+skill:
+  name: entra-auth-app-patterns
+  status: draft
+  owner: entra-auth-integrator
+  purpose: >
+    Implement Microsoft Entra authentication in applications. Covers
+    app registration, token validation, keyless access, managed identity
+    auth, and the OpenAI + Entra pattern (Azure OpenAI + Entra + keyless + ACA + azd).
+
+  triggers:
+    - new application requires authentication
+    - migration from Keycloak to Entra
+    - OpenAI integration needs Entra auth
+    - keyless access pattern implementation
+    - app registration creation or update
+
+  inputs:
+    - application type (web app, API, daemon/service, SPA)
+    - authentication flow (authorization code, client credentials, managed identity)
+    - downstream services requiring token-based access
+    - existing Keycloak configuration (if migrating)
+
+  steps:
+    - determine correct authentication flow for application type
+    - create or update Entra app registration
+    - configure redirect URIs and token settings
+    - implement token validation in application code
+    - configure managed identity for service-to-service auth
+    - test authentication flow end-to-end
+    - document app registration details and permissions
+
+  outputs:
+    - Entra app registration configured
+    - authentication flow implemented in application
+    - token validation working
+    - managed identity bindings verified
+    - documentation of app ID, permissions, and flows
+
+  guardrails:
+    - keyless access (managed identity + Entra) is default
+    - API keys only as fallback with documented justification
+    - certificates or federated credentials preferred over client secrets
+    - Keycloak is transitional — new integrations target Entra directly
+    - never store client secrets in code or tracked config files
+    - token lifetimes follow Microsoft defaults unless justified

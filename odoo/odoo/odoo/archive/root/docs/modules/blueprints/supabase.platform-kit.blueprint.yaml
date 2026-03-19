@@ -1,0 +1,89 @@
+id: supabase.platform-kit
+title: Supabase Platform Kit (Management API live data in /platform)
+category: platform-kit
+
+sources:
+  - type: supabase-platform-kit
+    url: https://supabase.com/blog/supabase-ui-platform-kit
+    catalog_id: supabase-ui-platform-kit
+  - type: supabase-example
+    url: https://github.com/supabase/supabase/tree/master/examples
+    catalog_id: nextjs-with-supabase
+
+target:
+  app_dir: apps/ops-console
+  package_manager: pnpm
+  creates_new_app: false
+
+variables:
+  - name: SUPABASE_MANAGEMENT_API_TOKEN
+    required: true
+    description: Management API token with read access (server-only)
+    example: sbp_xxxxxxx
+  - name: NEXT_PUBLIC_SUPABASE_PROJECT_REF
+    required: true
+    description: Supabase project reference (non-secret)
+    example: spdtwktxdalcfigzeqrz
+
+automation:
+  steps:
+    - name: wire_projects_list
+      description: Connect /platform Projects card to live Management API
+      agent_instruction: |
+        In apps/ops-console/app/platform/page.tsx:
+        - Change the page to a server component (remove 'use client')
+        - Import the Management API client: import { client } from '@/lib/management-api'
+        - Fetch projects: const { data } = await client.GET('/v1/projects')
+        - Replace the scaffold SurfaceCard with a real projects list showing:
+          name, region, status (active/inactive/paused), health badges
+        - Keep the existing card layout; populate with real data or fall back to
+          scaffold if SUPABASE_MANAGEMENT_API_TOKEN is not set
+
+    - name: wire_branches_list
+      description: Connect Branches card to live Management API
+      agent_instruction: |
+        In apps/ops-console/app/platform/page.tsx:
+        - Fetch branches for the project:
+          const { data } = await client.GET('/v1/projects/{ref}/branches', { params: { path: { ref: projectRef } } })
+        - Show branch name, status, git_branch, created_at
+        - Add a "Create DEV branch" action (POST /v1/projects/{ref}/branches) as a
+          server action (no direct client access to SUPABASE_MANAGEMENT_API_TOKEN)
+
+    - name: wire_logs_query
+      description: Connect Logs card to live Management API
+      agent_instruction: |
+        Add a server action in apps/ops-console/app/platform/actions.ts:
+        - queryLogs(projectRef, sql) → POST /v1/projects/{ref}/analytics/endpoints/logs.all
+        - Return the first 50 rows
+        Add a basic log query panel in the Logs card:
+        - Preset SQL queries (last 100 errors, last 100 auth events)
+        - Display results in a simple table
+        - No direct user-provided SQL (XSS risk) — use preset queries only
+
+    - name: wire_security_advisor
+      description: Connect security advisor
+      agent_instruction: |
+        Fetch security advisor findings:
+          const { data } = await client.GET('/v1/projects/{ref}/advisors/security', ...)
+        Display findings grouped by severity (ERROR, WARN, INFO).
+        Add a "Block merge if security advisor returns ERROR" note in the UI.
+
+verification:
+  required_checks:
+    - ops-console-check
+    - golden-path-summary
+  preview:
+    expectations:
+      - platform-page-shows-real-project-data
+      - no-management-token-in-client-bundle
+      - security-advisor-visible
+
+rollback:
+  strategy: revert_pr
+  notes: No schema changes. Revert PR if Management API calls cause issues.
+
+notes:
+  minor_customization:
+    - Add SUPABASE_MANAGEMENT_API_TOKEN to Vercel project env vars (server-only)
+    - Verify the token has read access for /v1/projects and /v1/projects/{ref}/branches
+    - "Test with: curl -H 'Authorization: Bearer $TOKEN' https://api.supabase.com/v1/projects"

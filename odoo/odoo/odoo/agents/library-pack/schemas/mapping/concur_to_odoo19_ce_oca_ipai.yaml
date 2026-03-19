@@ -1,0 +1,60 @@
+version: 1
+mapping:
+  source_product: sap_concur
+  target_stack:
+    odoo: "19-ce"
+    oca: "18.0+ (where compatible)"
+    glue: "minimal ipai_* only when unavoidable"
+
+assumptions:
+  - "Exact OCA module choices depend on your curated OCA set and Odoo 19 compatibility."
+  - "Receipts OCR can be externalized (e.g., PaddleOCR) and pushed into Odoo via API."
+
+capabilities:
+  - id: expense_capture
+    concur: "Mobile receipt capture, expense creation"
+    odoo_ce: ["hr_expense"]
+    oca_candidates: ["hr_expense_* (OCR/helpers if available)"]
+    ipai_glue:
+      - "ipai_docflow_receipts_ingest (external OCR -> attachment -> expense draft)"
+    evidence: ["payment_proof", "approval", "official_return"]
+
+  - id: expense_approval
+    concur: "Policy checks, approvals, routing"
+    odoo_ce: ["hr_expense", "mail", "approval (if installed)"]
+    oca_candidates: ["approval_*", "auditlog (if used)"]
+    ipai_glue:
+      - "ipai_policy_engine (rules as YAML + server actions)"
+    evidence: ["approval"]
+
+  - id: travel_request
+    concur: "Trip request, itinerary, pre-approval"
+    odoo_ce: ["project (for requests)", "calendar", "mail"]
+    oca_candidates: ["travel_* (if available)"]
+    ipai_glue:
+      - "ipai_travel_requests (minimal model OR prefer project templates)"
+    evidence: ["approval"]
+
+  - id: invoice_capture
+    concur: "Invoice upload + matching"
+    odoo_ce: ["account", "purchase"]
+    oca_candidates: ["ocr_* (if exists), partner_autocomplete helpers"]
+    ipai_glue:
+      - "ipai_docflow_invoice_ingest (OCR -> vendor bill draft)"
+    evidence: ["official_return", "workbook_schedule", "approval"]
+
+  - id: month_end_close_pack
+    concur: "Spend reporting supports close"
+    odoo_ce: ["account", "account_reports (if CE)", "mail"]
+    oca_candidates: ["mis_builder", "account_financial_report", "auditlog"]
+    ipai_glue:
+      - "ipai_close_checklists (data templates + evidence bundle generator)"
+    evidence: ["reconciliation", "journal_entry", "approval"]
+
+integration:
+  mobile:
+    flutter_package: "supabase_flutter"
+    purpose: "auth/session + realtime status of submissions"
+    note: "Mobile client can queue receipts to object storage; Odoo ingests via edge/worker."
+  backend:
+    data_exchange: ["JSON over HTTPS", "XML-RPC (Odoo)", "webhooks"]

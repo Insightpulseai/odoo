@@ -133,7 +133,7 @@ docker compose exec odoo odoo -d odoo -u ipai_finance_ppm --stop-after-init
 - Health check endpoints (`/web/health`)
 - Log aggregation patterns (Docker logs, nginx logs)
 - Metrics collection (PostgreSQL stats, Odoo performance)
-- Alert routing (n8n workflows → Mattermost)
+- Alert routing (n8n workflows → Slack)
 
 **Skills**:
 - Configure health check monitoring
@@ -250,7 +250,7 @@ def scrub_sql_dump(input_sql, output_sql):
 **Knowledge Required**:
 - Backup restoration testing patterns
 - Smoke test strategies for restored databases
-- Mattermost webhook integration for alerts
+- Slack webhook integration for alerts
 - Cron scheduling for automated jobs
 
 **Skills**:
@@ -500,28 +500,28 @@ ufw enable
 - n8n workflow JSON structure
 - Webhook triggers
 - HTTP request nodes
-- Mattermost notification nodes
+- Slack notification nodes
 
 **Skills**:
 - Create n8n workflows for automation
 - Configure webhook endpoints
 - Integrate with Odoo XML-RPC
-- Send Mattermost alerts
+- Send Slack alerts
 
 ---
 
-### 5.2. Mattermost ChatOps
+### 5.2. Slack ChatOps
 
 **Knowledge Required**:
-- Mattermost webhook format
+- Slack webhook format
 - Interactive message buttons
 - Slash command integration
 - Bot user configuration
 
 **Skills**:
-- Send alerts to Mattermost channels
+- Send alerts to Slack channels
 - Create approval workflows with buttons
-- Configure Mattermost bot users
+- Configure Slack bot users
 - Integrate with n8n for bidirectional communication
 
 ---

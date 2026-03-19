@@ -1,0 +1,302 @@
+# =============================================================================
+# Separation of Duties Matrix — InsightPulse AI
+# =============================================================================
+#
+# Defines which actions require separation between roles, approval gates,
+# and audit requirements. Accommodates the current one-person operating model
+# while encoding clean boundaries for team scaling.
+#
+# Human-readable narrative: docs/security/ACCESS_MODEL.md § 11
+# Last updated: 2026-03-18
+# =============================================================================
+
+schema_version: "1.0"
+last_updated: "2026-03-18"
+
+# -----------------------------------------------------------------------------
+# Operating Model Context
+# -----------------------------------------------------------------------------
+
+operating_model:
+  current_team_size: 1
+  current_pattern: one_person_with_delegated_agents
+  target_pattern: small_team_with_agent_delegation
+  accommodation: >
+    With one human operator, strict SoD is enforced via pipeline gates,
+    temporal separation, audit logging, and maker/checker agent patterns.
+    When team grows to 2+, human-to-human SoD pairs activate.
+
+# -----------------------------------------------------------------------------
+# SoD Matrix
+# -----------------------------------------------------------------------------
+
+duties:
+
+  # --- Deployment ---
+
+  - id: deploy_to_production
+    action: Deploy application or infrastructure changes to production environment
+    authorized_role: sg-ipai-platform-owners
+    authorized_method: azure_pipelines_environment_gate
+    prohibited_role: individual_developer_unilaterally
+    approval_required: true
+    approval_mechanism: pipeline_environment_manual_approval
+    audit: azure_devops_pipeline_logs
+    one_person_accommodation: >
+      Same person authors and approves, but pipeline gate enforces temporal
+      separation (commit -> CI checks -> manual approval step).
+    team_scaling_rule: >
+      At 2+ humans: code author != deployment approver.
+
+  - id: access_prod_data
+    action: Read production business data (Odoo transactions, financials)
+    authorized_role: sg-ipai-platform-owners  # direct via Databricks SQL gold layer
+    authorized_method: databricks_sql_warehouse_gold_layer
+    prohibited_role: sg-ipai-developers  # no direct prod access
+    approval_required: false
+    constraint: read_only_gold_layer
+    audit: databricks_sql_query_history
+    notes: >
+      Production data accessed only via Databricks gold layer (read-only).
+      No direct PostgreSQL access to ipai-odoo-dev-pg from any human.
+
+  - id: manage_secrets
+    action: Create, update, or delete secrets in Azure Key Vault
+    authorized_role: sg-ipai-platform-owners
+    authorized_method: key_vault_administrator_rbac
+    prohibited_role:
+      - sg-ipai-developers
+      - sg-ipai-workload-agents
+      - sg-ipai-workload-cicd
+    approval_required: false
+    audit: key_vault_diagnostic_logs
+    notes: >
+      Developers and agents can READ secrets (Key Vault Secrets User)
+      but cannot create, update, or delete them.
+
+  - id: change_identity_policy
+    action: Modify Entra ID policies, create/delete groups, assign directory roles
+    authorized_role: sg-ipai-emergency-admins  # Global Admin
+    authorized_method: entra_admin_center
+    prohibited_role: all_non_admin
+    approval_required: true  # target: PIM activation
+    approval_mechanism:
+      current: manual_break_glass_procedure
+      target: pim_jit_activation  # requires Entra P2
+    audit: entra_audit_log
+    one_person_accommodation: >
+      Platform owner uses separate break-glass account for identity changes.
+      Daily operations use scoped admin role.
+    team_scaling_rule: >
+      At 2+ humans: identity admin != daily platform operator.
+
+  - id: modify_boards_truth
+    action: Create, update, or close work items in Azure Boards (planned truth)
+    authorized_role: sg-ipai-platform-owners
+    authorized_method: azure_boards_ui_or_api
+    prohibited_role:
+      - sg-ipai-workload-agents  # agents cannot modify planned truth
+      - sg-ipai-workload-cicd  # pipelines cannot modify planned truth
+    approval_required: false
+    audit: azure_devops_audit_stream
+    notes: >
+      Azure Boards is the planned truth authority. Agents and pipelines
+      may READ work items but must not create or modify them.
+      Work item state transitions are human-driven.
+
+  - id: set_agent_policies
+    action: Configure agent tool permissions, prompt governance, and evaluation criteria
+    authorized_role: sg-ipai-platform-owners
+    authorized_method: foundry_admin_console
+    prohibited_role:
+      - sg-ipai-workload-agents  # agents must not self-modify policies
+    approval_required: false
+    audit: foundry_trace_logs
+    notes: >
+      Agents must not modify their own governance policies.
+      This is enforced by Foundry role assignments (agents get Runtime role, not Admin).
+
+  - id: approve_financial_close
+    action: Approve month-end financial close tasks and journal entries
+    authorized_role: finance.close.approver
+    authorized_method: odoo_approval_workflow
+    prohibited_role: finance.close.operator  # same person cannot operate and approve
+    approval_required: true
+    approval_mechanism: odoo_activity_approval
+    audit: odoo_chatter_audit_trail
+    one_person_accommodation: >
+      In one-person mode, platform owner holds both roles but must use
+      the Odoo approval workflow (not direct state change).
+      Agent acts as maker, human acts as judge.
+    team_scaling_rule: >
+      At 2+ humans: close operator != close approver.
+
+  - id: modify_odoo_permissions
+    action: Change Odoo user group assignments, access rights, and record rules
+    authorized_role: sg-ipai-platform-owners
+    authorized_method: odoo_settings_users
+    prohibited_role:
+      - sg-ipai-finance-operators
+      - sg-ipai-analysts
+    approval_required: false
+    audit: odoo_ir_logging
+
+  - id: push_to_main
+    action: Merge code changes to the main branch
+    authorized_role:
+      - sg-ipai-platform-owners
+      - codeowners  # per CODEOWNERS file
+    authorized_method: github_pr_review
+    prohibited_role: unreviewed_contributor
+    approval_required: true
+    approval_mechanism: github_pr_required_review
+    audit: github_audit_log
+    one_person_accommodation: >
+      Platform owner can self-merge after CI checks pass.
+      Branch protection enforces required status checks.
+    team_scaling_rule: >
+      At 2+ humans: code author != code reviewer for prod deployments.
+
+  - id: create_delete_entra_groups
+    action: Create or delete Entra ID security groups
+    authorized_role: sg-ipai-emergency-admins  # Global Admin
+    authorized_method: entra_admin_center
+    prohibited_role: all_non_admin
+    approval_required: false
+    audit: entra_audit_log
+
+  - id: modify_unity_catalog_grants
+    action: GRANT or REVOKE Unity Catalog privileges on schemas/tables
+    authorized_role: sg-ipai-platform-owners  # Databricks workspace admin
+    authorized_method: databricks_unity_catalog_sql
+    prohibited_role:
+      - sg-ipai-data-engineers  # target: separate catalog admin from data engineer
+    approval_required: false
+    audit: unity_catalog_audit_log
+    one_person_accommodation: >
+      Platform owner acts as both catalog admin and data engineer initially.
+    team_scaling_rule: >
+      At 3+ humans: catalog admin != data engineer.
+
+  - id: modify_apim_policies
+    action: Create or modify APIM policies, rate limits, and API definitions
+    authorized_role: sg-ipai-platform-owners
+    authorized_method: apim_admin_portal
+    prohibited_role:
+      - sg-ipai-workload-agents
+      - sg-ipai-developers  # developers can test, not modify policies
+    approval_required: false
+    audit: apim_diagnostic_logs
+
+  - id: access_break_glass_accounts
+    action: Sign in using emergency admin accounts
+    authorized_role: sg-ipai-emergency-admins
+    authorized_method: direct_sign_in
+    prohibited_role: all_others
+    approval_required: false  # emergency — no approval gate
+    audit:
+      - entra_sign_in_logs
+      - slack_security_alert  # immediate notification
+    post_incident:
+      - rotate_break_glass_passwords
+      - review_audit_logs
+      - file_incident_report
+
+  - id: modify_dns_records
+    action: Create, update, or delete DNS records in Cloudflare
+    authorized_role: sg-ipai-platform-owners
+    authorized_method: yaml_first_workflow  # infra/dns/subdomain-registry.yaml
+    prohibited_role: all_others
+    approval_required: true
+    approval_mechanism: pr_review_on_dns_yaml
+    audit: git_commit_history
+    notes: >
+      DNS changes follow YAML-first workflow. No direct Cloudflare API calls
+      or dashboard changes. CI applies via Terraform on merge to main.
+
+  - id: odoo_database_admin
+    action: Direct PostgreSQL admin operations (backup, restore, schema changes)
+    authorized_role: sg-ipai-platform-owners
+    authorized_method: azure_pg_admin_tools
+    prohibited_role:
+      - sg-ipai-workload-databricks  # HARD RULE: no Databricks -> Odoo PG
+      - sg-ipai-workload-agents  # agents use API, not direct DB
+      - sg-ipai-data-engineers  # data engineers use ADLS, not Odoo PG
+    approval_required: false
+    audit: pg_audit_logs
+
+# -----------------------------------------------------------------------------
+# Prohibited Combinations (Incompatible Roles)
+# -----------------------------------------------------------------------------
+
+incompatible_role_pairs:
+
+  - role_a: finance.close.operator
+    role_b: finance.close.approver
+    scope: same_user_same_close_period
+    enforcement: odoo_approval_workflow
+    exception: one_person_team_with_workflow_gate
+    reason: >
+      Financial close operator and approver must be different people
+      (or the same person must use the workflow gate, not direct state change).
+
+  - role_a: base.group_system  # Odoo Settings
+    role_b: account.group_account_manager  # Odoo Accounting Adviser
+    scope: production_environment
+    enforcement: odoo_record_rules_plus_audit
+    exception: platform_owner_in_bootstrap_phase
+    reason: >
+      System configuration and financial operations should be separated
+      to prevent unauthorized financial modifications.
+
+  - role_a: Global Administrator  # Entra directory role
+    role_b: daily_operations
+    scope: entra_id
+    enforcement: pim_jit_activation  # target state
+    exception: current_state_manual_discipline
+    reason: >
+      Global Admin should not be used for daily operations.
+      Use scoped roles and escalate via PIM only when needed.
+
+  - role_a: sg-ipai-workload-agents
+    role_b: Key Vault Administrator
+    scope: any_key_vault
+    enforcement: azure_rbac_deny
+    exception: none
+    reason: >
+      Agents must never manage secrets. They read secrets only.
+      This is a hard boundary — no exceptions.
+
+# -----------------------------------------------------------------------------
+# Audit Requirements
+# -----------------------------------------------------------------------------
+
+audit_requirements:
+
+  - scope: all_actions
+    requirement: All actions in the SoD matrix must produce audit trail
+    retention: 90_days_minimum
+    storage:
+      - azure_monitor_log_analytics
+      - entra_audit_logs
+      - devops_audit_stream
+      - odoo_ir_logging
+
+  - scope: break_glass_sign_in
+    requirement: Immediate alert on any break-glass account sign-in
+    notification:
+      - channel: slack_security_alerts
+        method: azure_monitor_action_group
+      - channel: email_platform_owner
+        method: azure_monitor_action_group
+    response_sla: 15_minutes
+
+  - scope: key_vault_operations
+    requirement: All Key Vault operations logged and auditable
+    retention: 365_days
+    storage: key_vault_diagnostic_logs
+
+  - scope: production_deployments
+    requirement: Every production deployment has pipeline-generated audit trail
+    retention: 365_days
+    storage: azure_devops_pipeline_logs

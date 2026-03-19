@@ -1,7 +1,7 @@
-// Log Analytics workspace for centralized logging
-// All ACA, Key Vault, Front Door, and PostgreSQL diagnostics flow here
+// Azure Log Analytics Workspace module
+// Central observability sink for all platform resources
 
-@description('Log Analytics workspace name')
+@description('Name of the Log Analytics workspace')
 param workspaceName string
 
 @description('Azure region')
@@ -10,13 +10,16 @@ param location string
 @description('Resource tags')
 param tags object
 
-@description('Data retention in days (30 = free tier)')
-param retentionInDays int = 30
+@description('Retention period in days')
+@minValue(30)
+@maxValue(730)
+param retentionInDays int = 90
 
-@description('Pricing tier for the workspace')
+@description('SKU name')
+@allowed(['PerGB2018', 'Free', 'Standalone'])
 param skuName string = 'PerGB2018'
 
-resource workspace 'Microsoft.OperationalInsights/workspaces@2023-09-01' = {
+resource workspace 'Microsoft.OperationalInsights/workspaces@2022-10-01' = {
   name: workspaceName
   location: location
   tags: tags
@@ -25,6 +28,8 @@ resource workspace 'Microsoft.OperationalInsights/workspaces@2023-09-01' = {
       name: skuName
     }
     retentionInDays: retentionInDays
+    publicNetworkAccessForIngestion: 'Enabled'
+    publicNetworkAccessForQuery: 'Enabled'
   }
 }
 

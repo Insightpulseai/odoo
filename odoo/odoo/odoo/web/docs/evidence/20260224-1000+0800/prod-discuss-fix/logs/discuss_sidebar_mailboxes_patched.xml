@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<templates xml:space="preserve">
+    <t
+        t-name="mail_tracking.DiscussSidebarMailboxes"
+        t-inherit="mail.DiscussSidebarMailboxes"
+        t-inherit-mode="extension"
+    >
+        <xpath expr="//div" position="inside">
+            <Mailbox mailbox="store.failed" />
+        </xpath>
+    </t>
+    <t
+        t-name="mail_tracking.Discuss.mobileTopbar"
+        t-inherit="mail.DiscussContent.mobileTopbar"
+        t-inherit-mode="extension"
+    >
+        <xpath expr="//div" position="inside">
+            <t t-call="mail.MobileMailbox">
+                <t t-set="mailbox" t-value="store.failed" />
+            </t>
+        </xpath>
+    </t>
+</templates>
