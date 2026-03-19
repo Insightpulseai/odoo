@@ -87,6 +87,27 @@
       "Bash(docker context use *)"
     ]
   },
+  "enabledMcpjsonServers": [
+    "github",
+    "azure",
+    "supabase",
+    "figma",
+    "playwright",
+    "microsoft-learn"
+  ],
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": ".claude/hooks/block-dangerous-bash.py"
+          }
+        ]
+      }
+    ]
+  },
   "agentCommands": {
     "plan": ".claude/commands/plan.md",
     "implement": ".claude/commands/implement.md",

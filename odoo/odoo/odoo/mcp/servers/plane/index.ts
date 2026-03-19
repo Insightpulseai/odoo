@@ -27,7 +27,7 @@ import { createHash } from "crypto";
 // Configuration (all from environment — never hardcoded)
 // ---------------------------------------------------------------------------
 
-const PLANE_API_URL = process.env.PLANE_API_URL || "https://plane.insightpulseai.com/api/v1";
+const PLANE_API_URL = process.env.PLANE_API_URL || "https://api.plane.so/api/v1";
 const PLANE_API_KEY = process.env.PLANE_API_KEY;
 const PLANE_WORKSPACE_SLUG = process.env.PLANE_WORKSPACE_SLUG;
 const SUPABASE_URL = process.env.SUPABASE_URL;

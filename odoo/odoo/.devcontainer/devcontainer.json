@@ -20,6 +20,7 @@
   "containerUser": "vscode",
   "remoteUser": "vscode",
   "postCreateCommand": "bash .devcontainer/post-create.sh",
+  "postStartCommand": "bash -lc 'python3 --version && test -d /workspaces/odoo && echo devcontainer-ready'",
   "customizations": {
     "vscode": {
       "extensions": [

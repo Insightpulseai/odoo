@@ -1,0 +1,376 @@
+# foundry_target_capabilities.yaml
+# SSOT: Foundry platform capability maturity assessment
+# Contract: docs/contracts/COPILOT_CAPABILITY_EVAL_CONTRACT.md
+# Source: agents/knowledge/azure_platform/foundry_coverage_matrix.yaml
+# Scored: 2026-03-15 from code + coverage matrix evidence
+#
+# Scale: 0=missing, 1=scaffolded, 2=partial, 3=operational, 4=target
+# release_blocker: true means current < 3 blocks release
+
+domains:
+
+  # ════════════════════════════════════════════
+  # 1. Models (weight: 0.15)
+  # ════════════════════════════════════════════
+  models:
+    weight: 0.15
+    capabilities:
+
+      - id: model_catalog_access
+        name: "Foundry model catalog browsing and selection"
+        target: 4
+        current: 2
+        evidence:
+          - addons/ipai/ipai_enterprise_bridge/models/foundry_provider_config.py  # model_deployment field
+          - agents/knowledge/azure_platform/foundry_coverage_matrix.yaml  # foundry-models bucket: partial
+        criteria:
+          - KB answers model catalog queries accurately
+          - Model deployment guidance covers MaaS vs MaaP
+          - Deployment name configurable in provider config
+        release_blocker: false
+        notes: "Provider config stores deployment name. Coverage matrix shows partial coverage for model catalog."
+
+      - id: model_deployment_config
+        name: "Model deployment configuration"
+        target: 4
+        current: 2
+        evidence:
+          - addons/ipai/ipai_enterprise_bridge/models/foundry_provider_config.py  # endpoint, model_deployment, api_version fields
+          - addons/ipai/ipai_odoo_copilot/models/foundry_service.py  # _get_settings model field
+        criteria:
+          - Deployment name, endpoint, and API version configurable
+          - Multiple deployments supported
+          - Deployment health probed
+        release_blocker: false
+        notes: "Single deployment configurable. No multi-deployment support."
+
+      - id: fine_tuning_guidance
+        name: "Fine-tuning guidance in KB"
+        target: 4
+        current: 1
+        evidence:
+          - agents/knowledge/azure_platform/foundry_coverage_matrix.yaml  # foundry-models bucket includes fine-tuning URLs
+        criteria:
+          - KB covers fine-tuning workflow end-to-end
+          - Acceptance queries for fine-tuning answered correctly
+        release_blocker: false
+        notes: "URLs registered in coverage matrix. No KB content indexed."
+
+  # ════════════════════════════════════════════
+  # 2. Agents (weight: 0.15)
+  # ════════════════════════════════════════════
+  agents:
+    weight: 0.15
+    capabilities:
+
+      - id: agent_resolution
+        name: "Agent name resolution via Foundry API"
+        target: 4
+        current: 2
+        evidence:
+          - addons/ipai/ipai_odoo_copilot/models/foundry_service.py  # lines 228-299, _resolve_agent
+        criteria:
+          - Agent looked up by name from /agents or /openai/assistants endpoint
+          - Agent ID and model returned on match
+          - Not-found produces actionable error with available agent names
+          - Live validated against Foundry project
+        release_blocker: true
+        notes: "Code complete. Not live-validated (check B pending)."
+
+      - id: agent_lifecycle_management
+        name: "Agent lifecycle (create/update/delete)"
+        target: 4
+        current: 0
+        evidence: []
+        criteria:
+          - Agent creation from Odoo config
+          - Agent update (model, instructions, tools) from Odoo
+          - Agent deletion with cleanup
+        release_blocker: false
+        notes: "Read-only resolution only. No create/update/delete. By design for Stage 1."
+
+      - id: multi_agent_orchestration
+        name: "Multi-agent orchestration"
+        target: 4
+        current: 0
+        evidence:
+          - agents/knowledge/azure_platform/foundry_coverage_matrix.yaml  # agent-service bucket: partial, includes multi-agent URL
+        criteria:
+          - Multiple agents coordinated for complex tasks
+          - Handoff protocol between agents
+          - KB covers multi-agent patterns
+        release_blocker: false
+        notes: "Coverage matrix references multi-agent URLs. No implementation."
+
+  # ════════════════════════════════════════════
+  # 3. Tools (weight: 0.15)
+  # ════════════════════════════════════════════
+  tools:
+    weight: 0.15
+    capabilities:
+
+      - id: function_calling
+        name: "Function calling tool integration"
+        target: 4
+        current: 3
+        evidence:
+          - addons/ipai/ipai_odoo_copilot/models/tool_executor.py  # 11 tools in _TOOL_HANDLERS
+          - addons/ipai/ipai_agent/models/agent_tool.py  # tool registry model
+        criteria:
+          - Tools defined with JSON schema for Foundry function calling
+          - Tool results returned to agent for synthesis
+          - Error results distinct from success results
+        release_blocker: true
+        notes: "11 tools dispatched via handler registry. Results structured as success/data/error."
+
+      - id: code_interpreter
+        name: "Foundry code interpreter integration"
+        target: 4
+        current: 0
+        evidence: []
+        criteria:
+          - Code interpreter enabled on agent
+          - File upload/download path
+          - Sandbox execution constraints
+        release_blocker: false
+        notes: "Not implemented. Would be Foundry-side configuration."
+
+      - id: file_search
+        name: "Foundry file search integration"
+        target: 4
+        current: 0
+        evidence: []
+        criteria:
+          - File search tool enabled on agent
+          - Vector store creation and management
+          - File upload path from Odoo
+        release_blocker: false
+        notes: "Not implemented. KB search tools provide similar capability via Azure AI Search."
+
+  # ════════════════════════════════════════════
+  # 4. Guardrails (weight: 0.10)
+  # ════════════════════════════════════════════
+  guardrails:
+    weight: 0.10
+    capabilities:
+
+      - id: content_filtering
+        name: "Foundry content safety filters"
+        target: 4
+        current: 0
+        evidence:
+          - agents/knowledge/azure_platform/foundry_coverage_matrix.yaml  # guardrails-controls bucket: missing
+        criteria:
+          - Content filter policy configured on deployment
+          - Custom blocklists defined
+          - Filter violations logged
+        release_blocker: false
+        notes: "Coverage matrix shows guardrails-controls bucket as missing. No Foundry-side config."
+
+      - id: prompt_shields
+        name: "Prompt shields (jailbreak protection)"
+        target: 4
+        current: 0
+        evidence:
+          - agents/knowledge/azure_platform/foundry_coverage_matrix.yaml  # guardrails-controls bucket: missing
+        criteria:
+          - Prompt shields enabled on deployment
+          - Jailbreak attempts detected and blocked
+          - Shield events logged to audit
+        release_blocker: false
+        notes: "Coverage matrix references prompt shield URLs. No implementation."
+
+      - id: groundedness_detection
+        name: "Groundedness detection for responses"
+        target: 4
+        current: 0
+        evidence:
+          - agents/knowledge/azure_platform/foundry_coverage_matrix.yaml  # guardrails-controls bucket: missing
+        criteria:
+          - Groundedness detection enabled
+          - Ungrounded responses flagged
+          - Grounding score available in response
+        release_blocker: false
+        notes: "Coverage matrix references groundedness detection URLs. No implementation."
+
+  # ════════════════════════════════════════════
+  # 5. Governance (weight: 0.10)
+  # ════════════════════════════════════════════
+  governance:
+    weight: 0.10
+    capabilities:
+
+      - id: rbac_configuration
+        name: "Foundry RBAC and role assignments"
+        target: 4
+        current: 1
+        evidence:
+          - agents/knowledge/azure_platform/foundry_coverage_matrix.yaml  # security-governance bucket: missing
+        criteria:
+          - RBAC roles documented and assigned
+          - Managed identity configured with least-privilege
+          - KB covers RBAC guidance
+        release_blocker: false
+        notes: "Security-governance bucket missing in coverage matrix. DefaultAzureCredential used but RBAC not configured."
+
+      - id: audit_logging_foundry
+        name: "Foundry-side audit logging"
+        target: 4
+        current: 0
+        evidence: []
+        criteria:
+          - Azure Monitor diagnostic logs enabled
+          - API call audit trail available
+          - Log retention configured
+        release_blocker: false
+        notes: "No Azure Monitor integration. Odoo-side audit exists but not Foundry-side."
+
+  # ════════════════════════════════════════════
+  # 6. SDK/API (weight: 0.15)
+  # ════════════════════════════════════════════
+  sdk_api:
+    weight: 0.15
+    capabilities:
+
+      - id: ai_projects_sdk
+        name: "azure-ai-projects SDK adoption"
+        target: 4
+        current: 1
+        evidence:
+          - addons/ipai/ipai_odoo_copilot/models/foundry_service.py  # raw urllib, not AIProjectClient
+        criteria:
+          - AIProjectClient used for agent operations
+          - SDK handles auth, routing, version negotiation
+          - Replaces raw urllib HTTP calls
+        release_blocker: false
+        notes: "Raw urllib still used. SDK migration is the main pending gate."
+
+      - id: azure_search_sdk
+        name: "Azure AI Search SDK adoption"
+        target: 4
+        current: 3
+        evidence:
+          - addons/ipai/ipai_odoo_copilot/models/tool_executor.py  # lines 17-20, SearchClient import
+          - addons/ipai/ipai_odoo_copilot/models/tool_executor.py  # lines 353-376, _get_search_client
+          - packages/odoo-docs-kb/index.py  # SearchClient + SearchIndexClient
+        criteria:
+          - azure.search.documents.SearchClient used for queries
+          - SearchIndexClient used for index management
+          - Semantic search configured
+          - SDK manages auth via AzureKeyCredential
+        release_blocker: false
+        notes: "SearchClient used in tool executor and KB indexer. Functional."
+
+      - id: azure_identity_sdk
+        name: "Azure Identity SDK adoption"
+        target: 4
+        current: 3
+        evidence:
+          - addons/ipai/ipai_odoo_copilot/models/foundry_service.py  # lines 23-28, graceful import
+          - addons/ipai/ipai_odoo_copilot/models/foundry_service.py  # lines 118-125, DefaultAzureCredential usage
+        criteria:
+          - azure.identity.DefaultAzureCredential used for auth
+          - Graceful fallback when SDK not installed
+          - Token refresh handled automatically
+        release_blocker: false
+        notes: "Implemented with graceful import fallback."
+
+  # ════════════════════════════════════════════
+  # 7. Eval and Tracing (weight: 0.10)
+  # ════════════════════════════════════════════
+  eval_tracing:
+    weight: 0.10
+    capabilities:
+
+      - id: retrieval_eval
+        name: "Retrieval quality evaluation"
+        target: 4
+        current: 3
+        evidence:
+          - packages/odoo-docs-kb/eval.py  # RetrievalEvaluator with 10 seeded queries and MRR
+        criteria:
+          - Seeded eval queries with expected path prefixes
+          - MRR and path hit rate computed
+          - Eval runnable after every reindex
+          - Results persisted for trend tracking
+        release_blocker: false
+        notes: "10 eval queries. MRR metric. No trend persistence."
+
+      - id: foundry_tracing
+        name: "Foundry-side tracing (OpenTelemetry / App Insights)"
+        target: 4
+        current: 0
+        evidence:
+          - agents/knowledge/azure_platform/foundry_coverage_matrix.yaml  # observability-evaluation-tracing bucket: missing
+        criteria:
+          - OpenTelemetry traces from Foundry SDK
+          - Application Insights integration
+          - Trace correlation across Odoo -> Foundry
+        release_blocker: false
+        notes: "Coverage matrix shows observability bucket as missing."
+
+      - id: evaluation_metrics
+        name: "Foundry built-in evaluation metrics"
+        target: 4
+        current: 0
+        evidence:
+          - agents/knowledge/azure_platform/foundry_coverage_matrix.yaml  # observability-evaluation-tracing bucket: missing
+        criteria:
+          - Coherence, relevance, groundedness metrics enabled
+          - Evaluation pipeline runs on schedule
+          - Results feed back into model/agent tuning
+        release_blocker: false
+        notes: "Coverage matrix references eval metric URLs. No implementation."
+
+  # ════════════════════════════════════════════
+  # 8. Developer Workflow (weight: 0.10)
+  # ════════════════════════════════════════════
+  developer_workflow:
+    weight: 0.10
+    capabilities:
+
+      - id: local_dev_setup
+        name: "Local development setup for Foundry integration"
+        target: 4
+        current: 2
+        evidence:
+          - addons/ipai/ipai_odoo_copilot/models/foundry_service.py  # API key fallback for local dev
+          - addons/ipai/ipai_odoo_copilot/__manifest__.py  # external_dependencies listed
+        criteria:
+          - Local dev works with API key (no managed identity required)
+          - External dependencies documented in manifest
+          - Dev setup instructions available
+          - Mock/stub mode for offline development
+        release_blocker: false
+        notes: "API key fallback works for local dev. No mock mode for offline development."
+
+      - id: kb_pipeline_automation
+        name: "KB indexing pipeline automation"
+        target: 4
+        current: 2
+        evidence:
+          - packages/odoo-docs-kb/loader.py  # document loader exists
+          - packages/odoo-docs-kb/chunker.py  # chunker exists
+          - packages/odoo-docs-kb/embed.py  # embedder exists
+          - packages/odoo-docs-kb/index.py  # indexer with manifest tracking
+        criteria:
+          - Full pipeline: load -> chunk -> embed -> index
+          - Incremental indexing via manifest
+          - Pipeline runnable from CI
+          - Pipeline runnable locally
+        release_blocker: false
+        notes: "Full pipeline code exists. Manifest-based incremental indexing. No CI integration."
+
+      - id: coverage_matrix_tracking
+        name: "Foundry coverage matrix maintenance"
+        target: 4
+        current: 3
+        evidence:
+          - agents/knowledge/azure_platform/foundry_coverage_matrix.yaml  # 12 buckets, 42 acceptance queries
+        criteria:
+          - All 12 Foundry doc areas tracked
+          - Priority, status, acceptance queries defined per bucket
+          - Monthly review cadence
+          - Summary statistics computed
+        release_blocker: false
+        notes: "12 buckets with P0-P2 priority, status, source URLs, acceptance queries, and summary."

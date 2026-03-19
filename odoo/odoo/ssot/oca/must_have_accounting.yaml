@@ -1,0 +1,18 @@
+schema: ssot.oca.must_have_accounting.v1
+version: "1.0"
+source:
+  name: "OCA Must Have Accounting modules"
+  url: "https://test.odoo-community.org/must-have-oca-accounting-modules"
+modules:
+  - technical_name: account_financial_report
+    repo: account-financial-reporting
+    rationale: "Core financial statements/reporting improvements."
+  - technical_name: partner_statement
+    repo: account-financial-reporting
+    rationale: "Customer/vendor statements (AR/AP) with printable/reporting workflows."
+  - technical_name: account_add_gln
+    repo: (odoo)
+    rationale: "Partner GLN support (often needed for invoicing/EDI partner master data)."
+notes:
+  - "This file is authoritative; docs must reference it and avoid duplicating the list."
+  - "Expand incrementally as OCA Accounting 'Must Have' list is confirmed."
