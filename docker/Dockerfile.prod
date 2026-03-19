@@ -1,0 +1,71 @@
+# syntax=docker/dockerfile:1.7
+# =============================================================================
+# Odoo CE 19 Production Image — Azure Container Apps
+# =============================================================================
+# Pipeline: .azure/pipelines/ci-cd.yml (Build stage)
+# Config:   config/azure/odoo.conf (list_db=False, proxy_mode=True)
+# Target:   ipaiodoodevacr.azurecr.io/ipai-odoo-web
+# =============================================================================
+
+ARG ODOO_BASE_IMAGE=odoo:19.0
+
+FROM ${ODOO_BASE_IMAGE} AS base
+
+USER root
+
+# System deps for OCA modules + IPAI addons
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    git \
+    curl \
+    python3-pip \
+    libxml2-dev \
+    libxslt1-dev \
+    libldap2-dev \
+    libsasl2-dev \
+    libssl-dev \
+    libpq-dev \
+    python3-pandas \
+    python3-xlrd \
+    python3-xlsxwriter \
+    python3-xmlsec \
+    && rm -rf /var/lib/apt/lists/*
+
+# Directory structure
+RUN mkdir -p /opt/odoo/addons/ipai \
+    && mkdir -p /opt/odoo/addons/oca
+
+# Copy IPAI custom addons
+COPY ./addons/ipai /opt/odoo/addons/ipai
+
+# Copy Azure-specific odoo.conf (list_db=False, proxy_mode=True)
+COPY ./config/azure/odoo.conf /etc/odoo/odoo.conf
+
+# Install Python deps from OCA and IPAI modules
+RUN find /opt/odoo/addons -name "requirements.txt" \
+    -exec pip3 install --no-cache-dir --break-system-packages -r {} \; \
+    2>/dev/null || true
+
+# Install requests for streaming copilot proxy
+RUN pip3 install --no-cache-dir --break-system-packages requests || true
+
+# Permissions
+RUN chown -R odoo:odoo /opt/odoo/addons /etc/odoo/odoo.conf
+
+USER odoo
+
+# Config path
+ENV ODOO_RC=/etc/odoo/odoo.conf
+
+# Health check (ACA also probes /web/health externally)
+HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
+    CMD curl -f http://localhost:8069/web/health || exit 1
+
+LABEL org.opencontainers.image.title="IPAI Odoo CE 19 (Production)" \
+      org.opencontainers.image.vendor="InsightPulse AI" \
+      org.opencontainers.image.version="19.0.1.0.0" \
+      com.insightpulseai.odoo.version="19.0" \
+      com.insightpulseai.license="LGPL-3.0"
+
+CMD ["odoo", "-c", "/etc/odoo/odoo.conf"]
+
+EXPOSE 8069 8071 8072

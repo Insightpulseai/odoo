@@ -3,7 +3,7 @@ import logging
 import os
 
 import odoo
-from werkzeug.exceptions import Forbidden
+from werkzeug.exceptions import Forbidden, NotFound
 
 _logger = logging.getLogger(__name__)
 
@@ -13,11 +13,23 @@ ALLOWED_FDID = os.environ.get("AZURE_FRONTDOOR_ID")
 # probes hit these directly without routing through Front Door.
 EXEMPT_PATHS = frozenset({"/web/health", "/"})
 
+# Paths unconditionally blocked — defense-in-depth regardless of FDID.
+# Database manager must never be accessible in production even through Front Door.
+BLOCKED_PATH_PREFIXES = (
+    "/web/database/",
+)
+
 _original_call = odoo.http.Root.__call__
 
 
 def _secure_wsgi_call(self, environ, start_response):
     path = environ.get("PATH_INFO", "")
+
+    # 0. Block database manager unconditionally (defense-in-depth for list_db)
+    if any(path.startswith(p) for p in BLOCKED_PATH_PREFIXES):
+        _logger.warning("Blocked access to restricted path: %s", path)
+        response = NotFound()
+        return response(environ, start_response)
 
     # 1. Bypass for ACA health probes (no FDID header on internal probes)
     if path in EXEMPT_PATHS:
