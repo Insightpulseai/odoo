@@ -1,0 +1,247 @@
+version: 1
+namespace: odoo.copilot.finance_tools
+description: >
+  Canonical finance/expense tool contract for Odoo Copilot. These tools are
+  business-safe surfaces, not direct database access primitives. Intended for
+  approval-aware copilots, agent runtimes, and workflow orchestration.
+
+defaults:
+  approval_mode: policy_driven
+  audit_required: true
+  idempotency_required: true
+
+tool_categories:
+  - read
+  - workflow
+  - recommendation
+  - action
+
+tools:
+  - key: read_invoice
+    category: read
+    label: Read invoice
+    description: Fetch a customer invoice header and key financial state.
+    inputs:
+      - {name: invoice_id, type: string, required: false}
+      - {name: invoice_number, type: string, required: false}
+    outputs:
+      entity: invoice
+      fields:
+        - id
+        - invoice_number
+        - partner_id
+        - invoice_date
+        - due_date
+        - amount_total
+        - residual_amount
+        - state
+        - payment_state
+    access:
+      minimum_scope: finance.read
+      approval_required: false
+
+  - key: list_overdue_invoices
+    category: read
+    label: List overdue invoices
+    description: Return unpaid or partially paid invoices past due date.
+    inputs:
+      - {name: company_id, type: string, required: false}
+      - {name: partner_id, type: string, required: false}
+      - {name: as_of_date, type: date, required: false}
+    outputs:
+      entity: invoice
+      fields:
+        - id
+        - invoice_number
+        - partner_id
+        - due_date
+        - amount_total
+        - residual_amount
+        - payment_state
+    access:
+      minimum_scope: finance.read
+      approval_required: false
+
+  - key: read_vendor_bill
+    category: read
+    label: Read vendor bill
+    description: Fetch a vendor bill and current payable/payment status.
+    inputs:
+      - {name: bill_id, type: string, required: false}
+      - {name: bill_number, type: string, required: false}
+    outputs:
+      entity: vendor_bill
+      fields:
+        - id
+        - bill_number
+        - vendor_id
+        - bill_date
+        - due_date
+        - amount_total
+        - residual_amount
+        - state
+        - payment_state
+    access:
+      minimum_scope: finance.read
+      approval_required: false
+
+  - key: list_unreconciled_bank_transactions
+    category: read
+    label: List unreconciled bank transactions
+    description: Fetch bank/cash lines not yet reconciled.
+    inputs:
+      - {name: journal_id, type: string, required: false}
+      - {name: from_date, type: date, required: false}
+      - {name: to_date, type: date, required: false}
+    outputs:
+      entity: bank_transaction
+      fields:
+        - id
+        - transaction_date
+        - label
+        - partner_id
+        - amount
+        - is_reconciled
+    access:
+      minimum_scope: finance.read
+      approval_required: false
+
+  - key: suggest_reconciliation_matches
+    category: recommendation
+    label: Suggest reconciliation matches
+    description: Suggest likely matches between bank transactions and accounting documents.
+    inputs:
+      - {name: bank_transaction_id, type: string, required: true}
+    outputs:
+      entity: recommendation
+      fields:
+        - candidate_document_id
+        - candidate_document_type
+        - confidence_score
+        - explanation
+    access:
+      minimum_scope: finance.read
+      approval_required: false
+
+  - key: create_expense
+    category: action
+    label: Create expense
+    description: Draft a new expense entry for an employee or company-paid expense.
+    inputs:
+      - {name: category_id, type: string, required: true}
+      - {name: employee_id, type: string, required: true}
+      - {name: paid_by, type: enum, required: true, enum_values: [employee, company]}
+      - {name: expense_date, type: date, required: true}
+      - {name: currency_id, type: string, required: true}
+      - {name: total, type: number, required: true}
+      - {name: quantity, type: number, required: false}
+      - {name: unit_price, type: number, required: false}
+      - {name: included_taxes_amount, type: number, required: false}
+      - {name: analytic_account_id, type: string, required: false}
+      - {name: receipt_attachment_id, type: string, required: false}
+      - {name: notes, type: string, required: false}
+    outputs:
+      entity: expense
+      fields: [id, status, total, employee_id, category_id]
+    access:
+      minimum_scope: expenses.write
+      approval_required: false
+      audit_event: expense_created
+
+  - key: submit_expense_report
+    category: workflow
+    label: Submit expense report
+    description: Create or submit an expense report for approval.
+    inputs:
+      - {name: report_id, type: string, required: false}
+      - {name: summary, type: string, required: false}
+      - {name: employee_id, type: string, required: true}
+      - {name: expense_line_ids, type: "array[string]", required: true}
+    outputs:
+      entity: expense_report
+      fields: [id, summary, state, total_amount, submitted_at]
+    access:
+      minimum_scope: expenses.submit
+      approval_required: false
+      audit_event: expense_report_submitted
+
+  - key: approve_expense_report
+    category: workflow
+    label: Approve expense report
+    description: Approve a submitted expense report.
+    inputs:
+      - {name: report_id, type: string, required: true}
+      - {name: approver_id, type: string, required: true}
+      - {name: approval_note, type: string, required: false}
+    outputs:
+      entity: expense_report
+      fields: [id, state, approved_at]
+    access:
+      minimum_scope: expenses.approve
+      approval_required: true
+      audit_event: expense_report_approved
+
+  - key: post_expense_report
+    category: workflow
+    label: Post expense report
+    description: Post an approved expense report into accounting.
+    inputs:
+      - {name: report_id, type: string, required: true}
+    outputs:
+      entity: expense_report
+      fields: [id, state, posted_at]
+    access:
+      minimum_scope: finance.post
+      approval_required: true
+      audit_event: expense_report_posted
+
+  - key: reimburse_expense_report
+    category: action
+    label: Reimburse expense report
+    description: Reimburse a posted expense report to the employee.
+    inputs:
+      - {name: report_id, type: string, required: true}
+      - {name: reimbursement_method, type: enum, required: true, enum_values: [direct, payslip, vendor_bill, other]}
+      - {name: journal_id, type: string, required: false}
+      - {name: payment_date, type: date, required: false}
+    outputs:
+      entity: expense_reimbursement
+      fields: [id, expense_report_id, amount, state, payment_date]
+    access:
+      minimum_scope: expenses.reimburse
+      approval_required: true
+      audit_event: expense_report_reimbursed
+
+  - key: propose_finance_close_summary
+    category: recommendation
+    label: Propose finance close summary
+    description: Summarize open items, overdue items, unreconciled lines, and expense backlog for period close.
+    inputs:
+      - {name: company_id, type: string, required: true}
+      - {name: period_start, type: date, required: true}
+      - {name: period_end, type: date, required: true}
+    outputs:
+      entity: close_summary
+      fields:
+        - open_customer_invoices
+        - open_vendor_bills
+        - unreconciled_bank_transactions
+        - unposted_expense_reports
+        - reimbursement_backlog
+        - narrative_summary
+    access:
+      minimum_scope: finance.read
+      approval_required: false
+
+guardrails:
+  prohibitions:
+    - no direct destructive posting reversal without explicit policy allowance
+    - no reimbursement approval bypass
+    - no write operation without audit event emission
+    - no cross-company mutation without explicit company scope
+  required_runtime_checks:
+    - acl_check
+    - company_scope_check
+    - state_transition_check
+    - idempotency_key_check
+    - audit_log_write

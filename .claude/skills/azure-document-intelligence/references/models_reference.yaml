@@ -1,0 +1,421 @@
+version: 1
+namespace: azure.document_intelligence.models
+description: >
+  Comprehensive reference for all Azure Document Intelligence prebuilt and custom
+  model capabilities, including supported fields, API parameters, and integration patterns.
+  Source: Azure Document Intelligence v4.0 (2024-11-30 GA) documentation.
+
+api:
+  current_version: "2024-11-30"
+  previous_versions:
+    - "2023-07-31"
+    - "2022-08-31"
+  base_url_pattern: "https://{endpoint}/documentintelligence"
+  analyze_endpoint: "/documentModels/{modelId}:analyze"
+  batch_endpoint: "/documentModels/{modelId}:analyzeBatch"
+  sdk_packages:
+    python: "azure-ai-documentintelligence>=1.0.0"
+    dotnet: "Azure.AI.DocumentIntelligence"
+    java: "azure-ai-documentintelligence"
+    javascript: "@azure-rest/ai-document-intelligence"
+  studio_url: "https://documentintelligence.ai.azure.com/studio"
+
+prebuilt_models:
+  # --- Document Analysis ---
+  read:
+    model_id: prebuilt-read
+    category: document_analysis
+    description: OCR — extract printed and handwritten text, languages, and text lines
+    supported_formats: [pdf, jpeg, png, bmp, tiff, heif, docx, xlsx, pptx, html]
+    max_file_size_mb: 500
+    max_pages: 2000
+    key_outputs: [pages, words, lines, languages, styles]
+    add_on_features: [languages, barcodes]
+
+  layout:
+    model_id: prebuilt-layout
+    category: document_analysis
+    description: Extract text, tables, figures, selection marks, and document structure
+    supported_formats: [pdf, jpeg, png, bmp, tiff, heif, docx, xlsx, pptx, html]
+    max_file_size_mb: 500
+    max_pages: 2000
+    key_outputs: [pages, tables, figures, paragraphs, sections, selection_marks]
+    add_on_features: [formulas, styleFont, barcodes, languages, highResolution]
+    output_formats: [json, markdown, pdf]
+
+  general_document:
+    model_id: prebuilt-document
+    category: document_analysis
+    description: General key-value pair extraction with entity recognition
+    key_outputs: [key_value_pairs, entities, tables, paragraphs]
+
+  # --- Financial ---
+  invoice:
+    model_id: prebuilt-invoice
+    category: financial
+    description: Extract vendor/customer info, line items, totals from invoices
+    key_fields:
+      - VendorName
+      - VendorAddress
+      - VendorTaxId
+      - CustomerName
+      - CustomerAddress
+      - InvoiceId
+      - InvoiceDate
+      - DueDate
+      - PurchaseOrder
+      - SubTotal
+      - TotalTax
+      - InvoiceTotal
+      - AmountDue
+      - PreviousUnpaidBalance
+      - CurrencyCode
+      - PaymentTerm
+      - RemittanceAddress
+      - ServiceAddress
+      - ShippingAddress
+    line_item_fields:
+      - Description
+      - Quantity
+      - Unit
+      - UnitPrice
+      - Amount
+      - Tax
+      - ProductCode
+      - Date
+    locales: [en-US, de-DE, es-ES, fr-FR, it-IT, ja-JP, ko-KR, nl-NL, pt-BR, zh-Hans]
+
+  receipt:
+    model_id: prebuilt-receipt
+    category: financial
+    description: Extract merchant, items, totals, tips from receipts
+    key_fields:
+      - MerchantName
+      - MerchantAddress
+      - MerchantPhoneNumber
+      - TransactionDate
+      - TransactionTime
+      - Subtotal
+      - TotalTax
+      - Tip
+      - Total
+      - CurrencyCode
+    receipt_types: [creditCard, gas, parking, hotel, meal, retailMeal, other]
+
+  bank_statement:
+    model_id: prebuilt-bankStatement
+    category: financial
+    description: Extract account info, transactions, balances from bank statements
+    key_fields:
+      - AccountNumber
+      - BankName
+      - StatementDate
+      - BeginningBalance
+      - EndingBalance
+    transaction_fields:
+      - Date
+      - Description
+      - Amount
+      - Balance
+      - CheckNumber
+
+  check:
+    model_id: prebuilt-check
+    category: financial
+    description: Extract payee, amount, date, routing/account numbers from checks
+    key_fields:
+      - PayerName
+      - PayeeName
+      - Date
+      - Amount
+      - AmountInWords
+      - Memo
+      - RoutingNumber
+      - AccountNumber
+      - CheckNumber
+
+  pay_stub:
+    model_id: prebuilt-payStub
+    category: financial
+    description: Extract employee pay information from pay stubs
+    key_fields:
+      - EmployeeName
+      - EmployeeAddress
+      - EmployerId
+      - PayPeriodStart
+      - PayPeriodEnd
+      - PayDate
+      - GrossPay
+      - NetPay
+    deduction_fields:
+      - FederalTax
+      - StateTax
+      - SocialSecurity
+      - Medicare
+      - Other
+
+  credit_card:
+    model_id: prebuilt-creditCard
+    category: financial
+    description: Extract credit card statement details
+    key_fields:
+      - CardHolderName
+      - AccountNumber
+      - StatementDate
+      - PreviousBalance
+      - PaymentsCredits
+      - NewCharges
+      - StatementBalance
+      - MinimumPayment
+      - DueDate
+
+  # --- Tax Forms ---
+  tax_w2:
+    model_id: prebuilt-tax.us.w2
+    category: tax
+    description: Extract W-2 Wage and Tax Statement fields
+    key_fields:
+      - Employee
+      - Employer
+      - EmployerIdNumber
+      - WagesTipsOtherCompensation
+      - FederalIncomeTaxWithheld
+      - SocialSecurityWages
+      - SocialSecurityTaxWithheld
+      - MedicareWagesAndTips
+      - MedicareTaxWithheld
+      - ControlNumber
+      - TaxYear
+
+  tax_1040:
+    model_id: prebuilt-tax.us.1040
+    category: tax
+    description: Extract Form 1040 individual income tax return fields
+    key_fields:
+      - FilingStatus
+      - FirstName
+      - LastName
+      - SSN
+      - AdjustedGrossIncome
+      - TotalIncome
+      - TotalTax
+      - Refund
+      - AmountOwed
+      - TaxYear
+
+  tax_1098:
+    model_id: prebuilt-tax.us.1098
+    category: tax
+    description: Extract Form 1098 mortgage interest statement fields
+    key_fields:
+      - Lender
+      - Borrower
+      - MortgageInterestReceived
+      - OutstandingMortgagePrincipal
+      - PointsPaid
+      - PropertyTax
+      - TaxYear
+
+  tax_1099:
+    model_id: prebuilt-tax.us.1099
+    category: tax
+    description: Extract 1099 information return variants
+    variants: [1099-NEC, 1099-MISC, 1099-INT, 1099-DIV, 1099-R, 1099-G, 1099-SSA, 1099-K, 1099-COMBO]
+    key_fields:
+      - Payer
+      - Recipient
+      - TaxYear
+    variant_specific_fields:
+      NEC: [NonemployeeCompensation]
+      MISC: [Rents, Royalties, OtherIncome]
+      INT: [InterestIncome]
+      DIV: [OrdinaryDividends, QualifiedDividends]
+
+  # --- Identity ---
+  id_document:
+    model_id: prebuilt-idDocument
+    category: identity
+    description: Extract ID card, passport, driver license fields
+    supported_documents: [passport, driver_license, national_id, residence_permit, us_social_security]
+    key_fields:
+      - FirstName
+      - LastName
+      - DateOfBirth
+      - DocumentNumber
+      - ExpirationDate
+      - DateOfIssue
+      - CountryRegion
+      - Address
+      - Sex
+      - Nationality
+      - MachineReadableZone
+
+  health_insurance_card:
+    model_id: prebuilt-healthInsuranceCard.us
+    category: identity
+    description: Extract US health insurance card fields
+    key_fields:
+      - Insurer
+      - MemberId
+      - MemberName
+      - GroupNumber
+      - PlanName
+      - PlanType
+      - Copays
+      - Dependents
+      - EffectiveDate
+
+  marriage_certificate:
+    model_id: prebuilt-marriageCertificate.us
+    category: identity
+    description: Extract US marriage certificate fields
+    key_fields:
+      - SpouseNames
+      - DateOfMarriage
+      - PlaceOfMarriage
+      - County
+      - State
+      - CertificateNumber
+
+  # --- Legal ---
+  contract:
+    model_id: prebuilt-contract
+    category: legal
+    description: Extract contract and agreement fields
+    key_fields:
+      - Parties
+      - Title
+      - ExecutionDate
+      - EffectiveDate
+      - ExpirationDate
+      - RenewalDate
+      - Jurisdiction
+      - TermsOfUse
+
+custom_models:
+  types:
+    template:
+      description: Fixed-layout form extraction using labeled training data
+      min_training_samples: 5
+      best_for: [government_forms, standardized_applications, structured_forms]
+      build_mode: template
+
+    neural:
+      description: Variable-layout document extraction using deep learning
+      min_training_samples: 5
+      best_for: [invoices_multi_vendor, contracts, letters, mixed_layouts]
+      build_mode: neural
+
+    composed:
+      description: Routes documents to the appropriate sub-model automatically
+      max_component_models: 200
+      best_for: [multi_form_processing, department_routing]
+
+    classification:
+      description: Classifies documents by type before extraction
+      min_samples_per_class: 5
+      max_classes: 500
+      best_for: [mailroom_sorting, document_triage, intake_routing]
+
+  training_workflow:
+    steps:
+      - Upload training data to Azure Blob Storage
+      - Label documents in Document Intelligence Studio
+      - Build model via REST API or SDK
+      - Evaluate model accuracy
+      - Deploy and version model
+
+add_on_capabilities:
+  high_resolution:
+    feature_flag: null
+    description: 300 DPI processing for small text and fine details
+    models: [prebuilt-layout, prebuilt-invoice, prebuilt-receipt]
+
+  formulas:
+    feature_flag: "formulas"
+    description: Extract mathematical formulas as LaTeX
+    models: [prebuilt-layout, prebuilt-read]
+
+  style_font:
+    feature_flag: "styleFont"
+    description: Extract font name, size, weight, style, color, background color
+    models: [prebuilt-layout]
+
+  barcodes:
+    feature_flag: "barcodes"
+    description: Extract 1D and 2D barcodes (QR, Code128, EAN, UPC, DataMatrix, PDF417)
+    models: [prebuilt-layout, prebuilt-read]
+
+  languages:
+    feature_flag: "languages"
+    description: Detect language per text span
+    models: [prebuilt-layout, prebuilt-read]
+
+  query_fields:
+    feature_flag: "queryFields"
+    description: LLM-powered extraction of user-specified field names
+    models: [prebuilt-layout, prebuilt-document]
+    note: Specify field names in queryFields parameter; uses GPT model internally
+
+  searchable_pdf:
+    output_format: pdf
+    description: Generate searchable PDF with embedded OCR text layer
+    models: [prebuilt-read]
+
+  markdown_output:
+    output_format: markdown
+    description: Structure-preserving markdown output with headers, lists, and tables
+    models: [prebuilt-layout]
+
+container_deployment:
+  description: Run Document Intelligence models in Docker containers for disconnected/on-premise scenarios
+  available_containers:
+    - {model: read, image: "mcr.microsoft.com/azure-cognitive-services/form-recognizer/read"}
+    - {model: layout, image: "mcr.microsoft.com/azure-cognitive-services/form-recognizer/layout"}
+    - {model: invoice, image: "mcr.microsoft.com/azure-cognitive-services/form-recognizer/invoice"}
+    - {model: receipt, image: "mcr.microsoft.com/azure-cognitive-services/form-recognizer/receipt"}
+    - {model: id_document, image: "mcr.microsoft.com/azure-cognitive-services/form-recognizer/id-document"}
+    - {model: custom_template, image: "mcr.microsoft.com/azure-cognitive-services/form-recognizer/custom-template"}
+  requirements:
+    min_cpu: 8
+    min_memory_gb: 8
+    eula_required: true
+    billing_endpoint_required: true
+  note: Containers still require periodic connectivity to Azure for billing validation
+
+pricing:
+  free_tier:
+    pages_per_month: 500
+    custom_training: 1 model
+    add_ons: not_available
+  standard_tier:
+    read_per_page: 0.001
+    prebuilt_per_page: 0.01
+    custom_neural_per_page: 0.05
+    custom_template_per_page: 0.015
+    add_on_per_feature_per_page: 0.005
+    batch_discount: "volume pricing available"
+
+security:
+  authentication:
+    - key_credential
+    - azure_ad_token
+    - managed_identity
+  encryption:
+    in_transit: TLS_1_2
+    at_rest: AES_256
+    customer_managed_keys: supported
+  network:
+    private_endpoints: supported
+    vnet_integration: supported
+    ip_firewall: supported
+  compliance:
+    - SOC_2
+    - ISO_27001
+    - HIPAA_BAA
+    - FedRAMP_High
+    - PCI_DSS
+  data_handling:
+    retention: deleted_after_processing
+    cross_region: no_transfer
+    gdpr: compliant
