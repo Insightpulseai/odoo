@@ -1,0 +1,526 @@
+# foundry_eval_queries.yaml
+# Structured evaluation query set for Foundry KB coverage validation.
+# Each query tests whether the KB can retrieve and answer questions
+# from a specific documentation bucket.
+# Last updated: 2026-03-15
+
+meta:
+  title: "Microsoft Foundry KB Evaluation Queries"
+  description: >
+    Seeded eval queries for validating KB retrieval accuracy across
+    all 12 Foundry documentation buckets. Minimum 3 queries per bucket.
+  total_queries: 42
+  pass_threshold: 0.80  # 80% of queries must return correct answers
+
+queries:
+
+  # ──────────────────────────────────────────────
+  # 1. Get Started (4 queries)
+  # ──────────────────────────────────────────────
+  - id: gs-001
+    query: "What is Azure AI Foundry and how does it differ from Azure OpenAI Service?"
+    expected_source_bucket: get-started
+    expected_answer_keywords:
+      - foundry
+      - unified platform
+      - model catalog
+      - hub
+      - project
+    difficulty: easy
+
+  - id: gs-002
+    query: "Walk me through creating my first project in the Foundry portal."
+    expected_source_bucket: get-started
+    expected_answer_keywords:
+      - create project
+      - hub
+      - resource group
+      - subscription
+      - portal
+    difficulty: easy
+
+  - id: gs-003
+    query: "What is the relationship between a Foundry hub and a Foundry project?"
+    expected_source_bucket: get-started
+    expected_answer_keywords:
+      - hub
+      - project
+      - shared resources
+      - connections
+      - isolation
+    difficulty: medium
+
+  - id: gs-004
+    query: "How do I test a model in the Foundry playground before writing code?"
+    expected_source_bucket: get-started
+    expected_answer_keywords:
+      - playground
+      - chat
+      - completions
+      - system message
+      - parameters
+    difficulty: easy
+
+  # ──────────────────────────────────────────────
+  # 2. Agent Service (4 queries)
+  # ──────────────────────────────────────────────
+  - id: as-001
+    query: "How do I create a basic agent using Azure AI Agent Service?"
+    expected_source_bucket: agent-service
+    expected_answer_keywords:
+      - agent
+      - create
+      - instructions
+      - model
+      - thread
+    difficulty: easy
+
+  - id: as-002
+    query: "What built-in tools can I attach to a Foundry agent?"
+    expected_source_bucket: agent-service
+    expected_answer_keywords:
+      - code interpreter
+      - file search
+      - function calling
+      - tools
+      - bing grounding
+    difficulty: medium
+
+  - id: as-003
+    query: "How does multi-agent orchestration work in Azure AI Agent Service?"
+    expected_source_bucket: agent-service
+    expected_answer_keywords:
+      - multi-agent
+      - orchestration
+      - handoff
+      - routing
+      - conversation
+    difficulty: hard
+
+  - id: as-004
+    query: "What is the architecture of the Azure AI Agent Service runtime?"
+    expected_source_bucket: agent-service
+    expected_answer_keywords:
+      - architecture
+      - threads
+      - runs
+      - messages
+      - assistants API
+    difficulty: hard
+
+  # ──────────────────────────────────────────────
+  # 3. Foundry Models (4 queries)
+  # ──────────────────────────────────────────────
+  - id: fm-001
+    query: "What models are available in the Foundry model catalog?"
+    expected_source_bucket: foundry-models
+    expected_answer_keywords:
+      - model catalog
+      - OpenAI
+      - Meta
+      - Mistral
+      - Microsoft
+      - open source
+    difficulty: easy
+
+  - id: fm-002
+    query: "What is the difference between Models as a Service and Models as a Platform?"
+    expected_source_bucket: foundry-models
+    expected_answer_keywords:
+      - MaaS
+      - MaaP
+      - serverless
+      - managed compute
+      - pay-per-token
+    difficulty: medium
+
+  - id: fm-003
+    query: "How do I fine-tune a GPT model in Azure AI Foundry?"
+    expected_source_bucket: foundry-models
+    expected_answer_keywords:
+      - fine-tune
+      - training data
+      - JSONL
+      - hyperparameters
+      - deploy
+    difficulty: medium
+
+  - id: fm-004
+    query: "How do I use model benchmarks to compare performance across models?"
+    expected_source_bucket: foundry-models
+    expected_answer_keywords:
+      - benchmark
+      - compare
+      - accuracy
+      - latency
+      - quality metrics
+    difficulty: medium
+
+  # ──────────────────────────────────────────────
+  # 4. Manage Agents, Models & Tools (3 queries)
+  # ──────────────────────────────────────────────
+  - id: mm-001
+    query: "How do I add a connection to Azure Blob Storage in Foundry?"
+    expected_source_bucket: manage-agents-models-tools
+    expected_answer_keywords:
+      - connection
+      - blob storage
+      - add connection
+      - authentication
+      - managed identity
+    difficulty: medium
+
+  - id: mm-002
+    query: "How do I check and request quota increases for model deployments?"
+    expected_source_bucket: manage-agents-models-tools
+    expected_answer_keywords:
+      - quota
+      - tokens per minute
+      - request increase
+      - deployment
+      - limits
+    difficulty: medium
+
+  - id: mm-003
+    query: "How do I scale or delete an existing model deployment?"
+    expected_source_bucket: manage-agents-models-tools
+    expected_answer_keywords:
+      - manage deployment
+      - scale
+      - delete
+      - update
+      - capacity
+    difficulty: easy
+
+  # ──────────────────────────────────────────────
+  # 5. Guardrails & Controls (4 queries)
+  # ──────────────────────────────────────────────
+  - id: gc-001
+    query: "How do I configure content safety filters for a Foundry deployment?"
+    expected_source_bucket: guardrails-controls
+    expected_answer_keywords:
+      - content filter
+      - severity
+      - hate
+      - violence
+      - sexual
+      - self-harm
+    difficulty: easy
+
+  - id: gc-002
+    query: "What is prompt shields and how does it protect against prompt injection?"
+    expected_source_bucket: guardrails-controls
+    expected_answer_keywords:
+      - prompt shields
+      - jailbreak
+      - injection
+      - detection
+      - indirect attacks
+    difficulty: medium
+
+  - id: gc-003
+    query: "How do I enable groundedness detection to reduce hallucinations?"
+    expected_source_bucket: guardrails-controls
+    expected_answer_keywords:
+      - groundedness
+      - hallucination
+      - detection
+      - grounding
+      - source documents
+    difficulty: medium
+
+  - id: gc-004
+    query: "How do I create a custom blocklist for content filtering?"
+    expected_source_bucket: guardrails-controls
+    expected_answer_keywords:
+      - blocklist
+      - custom
+      - terms
+      - regex
+      - content filter
+    difficulty: hard
+
+  # ──────────────────────────────────────────────
+  # 6. Responsible AI (3 queries)
+  # ──────────────────────────────────────────────
+  - id: ra-001
+    query: "What responsible AI principles does Azure AI Foundry enforce?"
+    expected_source_bucket: responsible-ai
+    expected_answer_keywords:
+      - responsible AI
+      - fairness
+      - transparency
+      - accountability
+      - safety
+    difficulty: easy
+
+  - id: ra-002
+    query: "Where do I find transparency notes for models deployed via Foundry?"
+    expected_source_bucket: responsible-ai
+    expected_answer_keywords:
+      - transparency note
+      - limitations
+      - intended uses
+      - documentation
+    difficulty: medium
+
+  - id: ra-003
+    query: "How do I evaluate a model for bias or fairness issues in Foundry?"
+    expected_source_bucket: responsible-ai
+    expected_answer_keywords:
+      - fairness
+      - bias
+      - evaluate
+      - metrics
+      - demographic
+    difficulty: hard
+
+  # ──────────────────────────────────────────────
+  # 7. API & SDK (4 queries)
+  # ──────────────────────────────────────────────
+  - id: sdk-001
+    query: "How do I call the Azure AI Inference API for chat completions?"
+    expected_source_bucket: api-sdk
+    expected_answer_keywords:
+      - chat completions
+      - inference
+      - REST
+      - endpoint
+      - messages
+    difficulty: easy
+
+  - id: sdk-002
+    query: "What Python SDK packages do I need to work with Azure AI Foundry?"
+    expected_source_bucket: api-sdk
+    expected_answer_keywords:
+      - azure-ai-inference
+      - azure-ai-projects
+      - pip install
+      - SDK
+      - Python
+    difficulty: easy
+
+  - id: sdk-003
+    query: "How do I authenticate to Foundry using managed identity vs API key?"
+    expected_source_bucket: api-sdk
+    expected_answer_keywords:
+      - managed identity
+      - API key
+      - DefaultAzureCredential
+      - authentication
+      - token
+    difficulty: medium
+
+  - id: sdk-004
+    query: "How do I stream chat completion responses using the Foundry SDK?"
+    expected_source_bucket: api-sdk
+    expected_answer_keywords:
+      - stream
+      - chat completions
+      - async
+      - iterator
+      - chunks
+    difficulty: hard
+
+  # ──────────────────────────────────────────────
+  # 8. Observability, Evaluation & Tracing (4 queries)
+  # ──────────────────────────────────────────────
+  - id: oe-001
+    query: "How do I evaluate a generative AI application using Foundry's built-in evaluators?"
+    expected_source_bucket: observability-evaluation-tracing
+    expected_answer_keywords:
+      - evaluate
+      - evaluator
+      - coherence
+      - relevance
+      - groundedness
+    difficulty: medium
+
+  - id: oe-002
+    query: "What built-in evaluation metrics does Foundry provide?"
+    expected_source_bucket: observability-evaluation-tracing
+    expected_answer_keywords:
+      - coherence
+      - fluency
+      - relevance
+      - groundedness
+      - similarity
+    difficulty: easy
+
+  - id: oe-003
+    query: "How do I enable distributed tracing for my Foundry application?"
+    expected_source_bucket: observability-evaluation-tracing
+    expected_answer_keywords:
+      - tracing
+      - OpenTelemetry
+      - Application Insights
+      - spans
+      - trace-local-sdk
+    difficulty: hard
+
+  - id: oe-004
+    query: "How do I monitor token usage and latency of deployed models?"
+    expected_source_bucket: observability-evaluation-tracing
+    expected_answer_keywords:
+      - monitor
+      - token usage
+      - latency
+      - metrics
+      - Azure Monitor
+    difficulty: medium
+
+  # ──────────────────────────────────────────────
+  # 9. Developer Experience (3 queries)
+  # ──────────────────────────────────────────────
+  - id: dx-001
+    query: "How do I connect VS Code to Azure AI Foundry for local development?"
+    expected_source_bucket: developer-experience
+    expected_answer_keywords:
+      - VS Code
+      - extension
+      - connect
+      - local
+      - development
+    difficulty: easy
+
+  - id: dx-002
+    query: "What is prompt flow and how do I build a flow in Foundry?"
+    expected_source_bucket: developer-experience
+    expected_answer_keywords:
+      - prompt flow
+      - DAG
+      - nodes
+      - flow
+      - LLM tool
+    difficulty: medium
+
+  - id: dx-003
+    query: "How do I scaffold a new AI project using Foundry templates?"
+    expected_source_bucket: developer-experience
+    expected_answer_keywords:
+      - template
+      - azd
+      - scaffold
+      - starter
+      - ai-template
+    difficulty: medium
+
+  # ──────────────────────────────────────────────
+  # 10. Setup & Configure (3 queries)
+  # ──────────────────────────────────────────────
+  - id: sc-001
+    query: "How do I create an Azure AI Foundry hub with private endpoint networking?"
+    expected_source_bucket: setup-configure
+    expected_answer_keywords:
+      - hub
+      - private endpoint
+      - virtual network
+      - networking
+      - create
+    difficulty: hard
+
+  - id: sc-002
+    query: "How do I configure a managed virtual network for my Foundry workspace?"
+    expected_source_bucket: setup-configure
+    expected_answer_keywords:
+      - managed network
+      - outbound rules
+      - workspace
+      - isolation
+      - FQDN
+    difficulty: hard
+
+  - id: sc-003
+    query: "How do I create and manage compute instances in Foundry?"
+    expected_source_bucket: setup-configure
+    expected_answer_keywords:
+      - compute
+      - instance
+      - create
+      - VM size
+      - idle shutdown
+    difficulty: medium
+
+  # ──────────────────────────────────────────────
+  # 11. Security & Governance (4 queries)
+  # ──────────────────────────────────────────────
+  - id: sg-001
+    query: "What RBAC roles exist for Azure AI Foundry and what permissions do they grant?"
+    expected_source_bucket: security-governance
+    expected_answer_keywords:
+      - RBAC
+      - roles
+      - Azure AI Developer
+      - Azure AI Inference Deployment Operator
+      - permissions
+    difficulty: medium
+
+  - id: sg-002
+    query: "How do I configure managed identity for Foundry to access other Azure resources?"
+    expected_source_bucket: security-governance
+    expected_answer_keywords:
+      - managed identity
+      - system-assigned
+      - user-assigned
+      - role assignment
+      - access
+    difficulty: medium
+
+  - id: sg-003
+    query: "How does Azure AI Foundry handle encryption of data at rest?"
+    expected_source_bucket: security-governance
+    expected_answer_keywords:
+      - encryption
+      - customer-managed keys
+      - CMK
+      - Key Vault
+      - at rest
+    difficulty: hard
+
+  - id: sg-004
+    query: "How do I audit access and changes to Foundry projects and resources?"
+    expected_source_bucket: security-governance
+    expected_answer_keywords:
+      - audit
+      - activity log
+      - diagnostic settings
+      - Azure Monitor
+      - access log
+    difficulty: hard
+
+  # ──────────────────────────────────────────────
+  # 12. Operate & Support (3 queries)
+  # ──────────────────────────────────────────────
+  - id: os-001
+    query: "What are the service limits and quotas for Azure AI Foundry?"
+    expected_source_bucket: operate-support
+    expected_answer_keywords:
+      - limits
+      - quotas
+      - tokens per minute
+      - requests per minute
+      - max deployments
+    difficulty: easy
+
+  - id: os-002
+    query: "Which Azure regions support AI Foundry and what models are available per region?"
+    expected_source_bucket: operate-support
+    expected_answer_keywords:
+      - region
+      - availability
+      - East US
+      - West Europe
+      - model availability
+    difficulty: medium
+
+  - id: os-003
+    query: "How do I troubleshoot a model deployment that returns 429 rate limit errors?"
+    expected_source_bucket: operate-support
+    expected_answer_keywords:
+      - troubleshoot
+      - 429
+      - rate limit
+      - throttling
+      - retry
+      - quota
+    difficulty: hard

@@ -1,0 +1,150 @@
+# Citation Contract for Grounded Answers
+# Schema: ssot.docs.citation.v1
+# Version: 1.0
+# Updated: 2026-03-15
+# Referenced by: docs/contracts/ORG_DOC_PLATFORM_CONTRACT.md
+
+version: "1.0"
+schema: ssot.docs.citation.v1
+
+# ============================================================================
+# CITATION SCHEMA
+# ============================================================================
+# Every search result or RAG answer must include citations to source chunks.
+
+citation:
+  chunk_id:
+    type: string
+    required: true
+    description: Deterministic chunk identifier (from metadata_schema.yaml)
+
+  doc_id:
+    type: string
+    required: true
+    description: Parent document identifier
+
+  title:
+    type: string
+    required: true
+    description: Document title
+
+  path:
+    type: string
+    required: true
+    description: File path (repo-relative) or URL
+
+  heading_chain:
+    type: string
+    required: false
+    description: Breadcrumb heading path within the document
+
+  content_excerpt:
+    type: string
+    max_length: 200
+    required: true
+    description: >
+      Verbatim excerpt from the chunk content. Maximum 200 characters.
+      Must be a direct substring of the original chunk, not a summary.
+
+  score:
+    type: float
+    min: 0.0
+    max: 1.0
+    required: true
+    description: >
+      Relevance score from the search backend.
+      Normalized to 0-1 range regardless of scoring method.
+
+  source:
+    type: string
+    enum: [repo, web, external]
+    required: true
+    description: Source type of the cited document
+
+# ============================================================================
+# GROUNDED ANSWER SCHEMA
+# ============================================================================
+# The complete response envelope for a documentation query.
+
+grounded_answer:
+  answer:
+    type: string
+    required: true
+    description: >
+      The generated answer text. Must be grounded in the cited chunks.
+      Claims not supported by citations must be qualified with uncertainty.
+
+  citations:
+    type: list
+    item_type: citation
+    min_items: 1
+    required: true
+    description: >
+      List of citations supporting the answer.
+      At least 1 citation required. Ordered by relevance score descending.
+
+  confidence_band:
+    type: string
+    enum: [high, medium, low, none]
+    required: true
+    description: >
+      Confidence level of the answer based on citation quality.
+      high = top citation score >= 0.85 and answer fully supported.
+      medium = top citation score >= 0.7 and answer mostly supported.
+      low = top citation score >= 0.5 and answer partially supported.
+      none = no relevant citations found or answer is speculative.
+
+  ambiguity_flag:
+    type: boolean
+    required: true
+    description: >
+      True if multiple citations provide conflicting information.
+      When true, ambiguity_reason must explain the conflict.
+
+  ambiguity_reason:
+    type: string
+    required: conditional
+    condition: required if ambiguity_flag is true
+    description: >
+      Explanation of the ambiguity or conflict between sources.
+      Must reference the specific conflicting citations by chunk_id.
+
+# ============================================================================
+# CONFIDENCE BAND RULES
+# ============================================================================
+
+confidence_rules:
+  high:
+    min_top_score: 0.85
+    min_citations: 1
+    answer_coverage: fully_supported
+    description: "All claims in answer are directly supported by cited chunks"
+
+  medium:
+    min_top_score: 0.70
+    min_citations: 1
+    answer_coverage: mostly_supported
+    description: "Most claims supported; minor inferences acceptable"
+
+  low:
+    min_top_score: 0.50
+    min_citations: 1
+    answer_coverage: partially_supported
+    description: "Some claims supported; significant inference required"
+
+  none:
+    min_top_score: 0.0
+    min_citations: 0
+    answer_coverage: unsupported
+    description: "No relevant citations found; answer is speculative or from training data only"
+
+# ============================================================================
+# CITATION DISPLAY FORMAT
+# ============================================================================
+
+display:
+  inline_format: "[{ordinal}]"
+  footer_format: "[{ordinal}] {title} -- {path} (score: {score:.2f})"
+  max_citations_displayed: 5
+  show_excerpts: true
+  excerpt_max_length: 150

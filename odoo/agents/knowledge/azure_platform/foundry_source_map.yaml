@@ -1,0 +1,253 @@
+# foundry_source_map.yaml
+# Maps each Foundry coverage bucket to concrete doc URLs and crawl rules.
+# Used by the KB ingestion pipeline to fetch and index MS Learn content.
+# Last updated: 2026-03-15
+
+meta:
+  title: "Microsoft Foundry Source Map"
+  description: >
+    Crawl configuration for each Foundry documentation bucket.
+    Feeds into the KB chunking and indexing pipeline.
+  canonical_base: "https://learn.microsoft.com/en-us/azure/ai-foundry/"
+  default_content_selector: "main article"
+  default_crawl_depth: 2
+
+sources:
+
+  # ──────────────────────────────────────────────
+  # 1. Get Started
+  # ──────────────────────────────────────────────
+  - bucket: get-started
+    base_urls:
+      - https://learn.microsoft.com/en-us/azure/ai-foundry/what-is-azure-ai-foundry
+      - https://learn.microsoft.com/en-us/azure/ai-foundry/quickstarts/get-started-playground
+      - https://learn.microsoft.com/en-us/azure/ai-foundry/quickstarts/get-started-code
+      - https://learn.microsoft.com/en-us/azure/ai-foundry/how-to/create-projects
+      - https://learn.microsoft.com/en-us/azure/ai-foundry/how-to/create-hub-project
+    crawl_depth: 1
+    content_selector: "main article"
+    include_patterns:
+      - "/azure/ai-foundry/what-is-*"
+      - "/azure/ai-foundry/quickstarts/*"
+      - "/azure/ai-foundry/how-to/create-projects*"
+      - "/azure/ai-foundry/how-to/create-hub*"
+    exclude_patterns:
+      - "/azure/ai-foundry/reference/*"
+      - "/azure/ai-foundry/resources/*"
+      - "*/changelog*"
+
+  # ──────────────────────────────────────────────
+  # 2. Agent Service
+  # ──────────────────────────────────────────────
+  - bucket: agent-service
+    base_urls:
+      - https://learn.microsoft.com/en-us/azure/ai-foundry/agents/overview
+      - https://learn.microsoft.com/en-us/azure/ai-foundry/agents/quickstart
+      - https://learn.microsoft.com/en-us/azure/ai-foundry/agents/how-to/create-agent
+      - https://learn.microsoft.com/en-us/azure/ai-foundry/agents/how-to/tools
+      - https://learn.microsoft.com/en-us/azure/ai-foundry/agents/how-to/multi-agent
+      - https://learn.microsoft.com/en-us/azure/ai-foundry/agents/concepts/agents-architecture
+    crawl_depth: 2
+    content_selector: "main article"
+    include_patterns:
+      - "/azure/ai-foundry/agents/*"
+    exclude_patterns:
+      - "/azure/ai-foundry/agents/resources/*"
+      - "*/changelog*"
+
+  # ──────────────────────────────────────────────
+  # 3. Foundry Models
+  # ──────────────────────────────────────────────
+  - bucket: foundry-models
+    base_urls:
+      - https://learn.microsoft.com/en-us/azure/ai-foundry/how-to/model-catalog-overview
+      - https://learn.microsoft.com/en-us/azure/ai-foundry/how-to/deploy-models-openai
+      - https://learn.microsoft.com/en-us/azure/ai-foundry/how-to/deploy-models-serverless
+      - https://learn.microsoft.com/en-us/azure/ai-foundry/how-to/fine-tune-models
+      - https://learn.microsoft.com/en-us/azure/ai-foundry/how-to/model-benchmarks
+      - https://learn.microsoft.com/en-us/azure/ai-foundry/concepts/deployments-overview
+    crawl_depth: 2
+    content_selector: "main article"
+    include_patterns:
+      - "/azure/ai-foundry/how-to/model-catalog*"
+      - "/azure/ai-foundry/how-to/deploy-models*"
+      - "/azure/ai-foundry/how-to/fine-tune*"
+      - "/azure/ai-foundry/how-to/model-benchmark*"
+      - "/azure/ai-foundry/concepts/deployments*"
+    exclude_patterns:
+      - "/azure/ai-foundry/how-to/deploy-models-*-availability*"
+      - "*/changelog*"
+
+  # ──────────────────────────────────────────────
+  # 4. Manage Agents, Models & Tools
+  # ──────────────────────────────────────────────
+  - bucket: manage-agents-models-tools
+    base_urls:
+      - https://learn.microsoft.com/en-us/azure/ai-foundry/how-to/connections-add
+      - https://learn.microsoft.com/en-us/azure/ai-foundry/how-to/quota
+      - https://learn.microsoft.com/en-us/azure/ai-foundry/how-to/manage-deployments
+      - https://learn.microsoft.com/en-us/azure/ai-foundry/how-to/create-manage-compute
+    crawl_depth: 1
+    content_selector: "main article"
+    include_patterns:
+      - "/azure/ai-foundry/how-to/connections*"
+      - "/azure/ai-foundry/how-to/quota*"
+      - "/azure/ai-foundry/how-to/manage-deploy*"
+      - "/azure/ai-foundry/how-to/create-manage-compute*"
+    exclude_patterns:
+      - "*/changelog*"
+
+  # ──────────────────────────────────────────────
+  # 5. Guardrails & Controls
+  # ──────────────────────────────────────────────
+  - bucket: guardrails-controls
+    base_urls:
+      - https://learn.microsoft.com/en-us/azure/ai-foundry/concepts/content-filtering
+      - https://learn.microsoft.com/en-us/azure/ai-foundry/how-to/configure-content-filters
+      - https://learn.microsoft.com/en-us/azure/ai-foundry/concepts/prompt-shields
+      - https://learn.microsoft.com/en-us/azure/ai-foundry/how-to/groundedness-detection
+      - https://learn.microsoft.com/en-us/azure/ai-foundry/how-to/blocklists
+    crawl_depth: 1
+    content_selector: "main article"
+    include_patterns:
+      - "/azure/ai-foundry/concepts/content-filter*"
+      - "/azure/ai-foundry/how-to/configure-content*"
+      - "/azure/ai-foundry/concepts/prompt-shield*"
+      - "/azure/ai-foundry/how-to/groundedness*"
+      - "/azure/ai-foundry/how-to/blocklist*"
+    exclude_patterns:
+      - "*/changelog*"
+
+  # ──────────────────────────────────────────────
+  # 6. Responsible AI
+  # ──────────────────────────────────────────────
+  - bucket: responsible-ai
+    base_urls:
+      - https://learn.microsoft.com/en-us/azure/ai-foundry/concepts/responsible-ai
+      - https://learn.microsoft.com/en-us/azure/ai-foundry/concepts/transparency-notes
+      - https://learn.microsoft.com/en-us/azure/ai-foundry/how-to/evaluate-fairness
+    crawl_depth: 1
+    content_selector: "main article"
+    include_patterns:
+      - "/azure/ai-foundry/concepts/responsible*"
+      - "/azure/ai-foundry/concepts/transparency*"
+      - "/azure/ai-foundry/how-to/evaluate-fairness*"
+    exclude_patterns:
+      - "*/changelog*"
+
+  # ──────────────────────────────────────────────
+  # 7. API & SDK
+  # ──────────────────────────────────────────────
+  - bucket: api-sdk
+    base_urls:
+      - https://learn.microsoft.com/en-us/azure/ai-foundry/reference/reference-model-inference-api
+      - https://learn.microsoft.com/en-us/azure/ai-foundry/how-to/develop/sdk-overview
+      - https://learn.microsoft.com/en-us/azure/ai-foundry/how-to/develop/create-hub-project-sdk
+      - https://learn.microsoft.com/en-us/azure/ai-foundry/how-to/develop/connections-environment-variables
+      - https://learn.microsoft.com/en-us/azure/ai-foundry/reference/reference-model-inference-chat-completions
+    crawl_depth: 2
+    content_selector: "main article"
+    include_patterns:
+      - "/azure/ai-foundry/reference/reference-model-inference*"
+      - "/azure/ai-foundry/how-to/develop/*"
+    exclude_patterns:
+      - "/azure/ai-foundry/reference/region*"
+      - "/azure/ai-foundry/reference/limits*"
+      - "*/changelog*"
+
+  # ──────────────────────────────────────────────
+  # 8. Observability, Evaluation & Tracing
+  # ──────────────────────────────────────────────
+  - bucket: observability-evaluation-tracing
+    base_urls:
+      - https://learn.microsoft.com/en-us/azure/ai-foundry/how-to/evaluate-generative-ai-app
+      - https://learn.microsoft.com/en-us/azure/ai-foundry/how-to/evaluate-sdk
+      - https://learn.microsoft.com/en-us/azure/ai-foundry/concepts/evaluation-metrics-built-in
+      - https://learn.microsoft.com/en-us/azure/ai-foundry/how-to/develop/trace-local-sdk
+      - https://learn.microsoft.com/en-us/azure/ai-foundry/how-to/monitor-deployments
+    crawl_depth: 2
+    content_selector: "main article"
+    include_patterns:
+      - "/azure/ai-foundry/how-to/evaluate*"
+      - "/azure/ai-foundry/concepts/evaluation*"
+      - "/azure/ai-foundry/how-to/develop/trace*"
+      - "/azure/ai-foundry/how-to/monitor*"
+    exclude_patterns:
+      - "*/changelog*"
+
+  # ──────────────────────────────────────────────
+  # 9. Developer Experience
+  # ──────────────────────────────────────────────
+  - bucket: developer-experience
+    base_urls:
+      - https://learn.microsoft.com/en-us/azure/ai-foundry/how-to/develop/vs-code
+      - https://learn.microsoft.com/en-us/azure/ai-foundry/how-to/prompt-flow
+      - https://learn.microsoft.com/en-us/azure/ai-foundry/how-to/develop/ai-template-get-started
+      - https://learn.microsoft.com/en-us/azure/ai-foundry/quickstarts/get-started-code
+    crawl_depth: 1
+    content_selector: "main article"
+    include_patterns:
+      - "/azure/ai-foundry/how-to/develop/vs-code*"
+      - "/azure/ai-foundry/how-to/prompt-flow*"
+      - "/azure/ai-foundry/how-to/develop/ai-template*"
+    exclude_patterns:
+      - "*/changelog*"
+
+  # ──────────────────────────────────────────────
+  # 10. Setup & Configure
+  # ──────────────────────────────────────────────
+  - bucket: setup-configure
+    base_urls:
+      - https://learn.microsoft.com/en-us/azure/ai-foundry/how-to/create-hub-project
+      - https://learn.microsoft.com/en-us/azure/ai-foundry/how-to/configure-private-link
+      - https://learn.microsoft.com/en-us/azure/ai-foundry/how-to/create-manage-compute
+      - https://learn.microsoft.com/en-us/azure/ai-foundry/how-to/configure-managed-network
+    crawl_depth: 1
+    content_selector: "main article"
+    include_patterns:
+      - "/azure/ai-foundry/how-to/create-hub*"
+      - "/azure/ai-foundry/how-to/configure-private*"
+      - "/azure/ai-foundry/how-to/configure-managed*"
+      - "/azure/ai-foundry/how-to/create-manage-compute*"
+    exclude_patterns:
+      - "*/changelog*"
+
+  # ──────────────────────────────────────────────
+  # 11. Security & Governance
+  # ──────────────────────────────────────────────
+  - bucket: security-governance
+    base_urls:
+      - https://learn.microsoft.com/en-us/azure/ai-foundry/concepts/rbac-ai-foundry
+      - https://learn.microsoft.com/en-us/azure/ai-foundry/how-to/role-based-access-control
+      - https://learn.microsoft.com/en-us/azure/ai-foundry/concepts/encryption-keys-portal
+      - https://learn.microsoft.com/en-us/azure/ai-foundry/how-to/configure-managed-identity
+      - https://learn.microsoft.com/en-us/azure/ai-foundry/concepts/vulnerability-management
+    crawl_depth: 1
+    content_selector: "main article"
+    include_patterns:
+      - "/azure/ai-foundry/concepts/rbac*"
+      - "/azure/ai-foundry/how-to/role-based*"
+      - "/azure/ai-foundry/concepts/encryption*"
+      - "/azure/ai-foundry/how-to/configure-managed-identity*"
+      - "/azure/ai-foundry/concepts/vulnerability*"
+    exclude_patterns:
+      - "*/changelog*"
+
+  # ──────────────────────────────────────────────
+  # 12. Operate & Support
+  # ──────────────────────────────────────────────
+  - bucket: operate-support
+    base_urls:
+      - https://learn.microsoft.com/en-us/azure/ai-foundry/how-to/troubleshoot
+      - https://learn.microsoft.com/en-us/azure/ai-foundry/reference/region-support
+      - https://learn.microsoft.com/en-us/azure/ai-foundry/reference/limits-quotas
+      - https://learn.microsoft.com/en-us/azure/ai-foundry/reference/known-issues
+    crawl_depth: 1
+    content_selector: "main article"
+    include_patterns:
+      - "/azure/ai-foundry/how-to/troubleshoot*"
+      - "/azure/ai-foundry/reference/region*"
+      - "/azure/ai-foundry/reference/limits*"
+      - "/azure/ai-foundry/reference/known*"
+    exclude_patterns:
+      - "*/changelog*"

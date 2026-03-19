@@ -86,30 +86,39 @@
       "Bash(docker --context colima-odoo exec odoo-devcontainer-devcontainer-1 /opt/odoo/odoo-bin -d odoo_dev --db_host=db --db_user=odoo --db_password=odoo --addons-path=/opt/odoo/addons,/workspaces/odoo/addons/ipai -i ipai_theme_copilot --stop-after-init --no-http)",
       "Bash(docker --context colima-odoo exec odoo-devcontainer-devcontainer-1 /opt/odoo/odoo-bin -d odoo_dev --db_host=db --db_user=odoo --db_password=odoo --addons-path=/opt/odoo/addons,/workspaces/odoo/addons/ipai -i ipai_hr_expense_liquidation --stop-after-init --no-http)",
       "Bash(docker --context colima-odoo exec odoo-devcontainer-devcontainer-1 /opt/odoo/odoo-bin -d odoo_dev --db_host=db --db_user=odoo --db_password=odoo --addons-path=/opt/odoo/addons,/workspaces/odoo/addons/ipai -i ipai_agent --stop-after-init --no-http)",
-      "Bash(cd /Users/tbwa/Documents/GitHub/Insightpulseai/odoo __NEW_LINE_3f9d30c43486d08c__ for mod in ipai_helpdesk ipai_theme_copilot ipai_hr_expense_liquidation ipai_agent)",
-      "Bash(do echo:*)",
       "Bash(docker --context colima-odoo exec odoo-devcontainer-devcontainer-1 /opt/odoo/odoo-bin -d odoo_dev --db_host=db --db_user=odoo --db_password=odoo --addons-path=/opt/odoo/addons,/workspaces/odoo/addons/ipai --log-handler odoo.tools.convert:DEBUG -i ipai_hr_expense_liquidation --stop-after-init --no-http)",
-      "Bash(for mod:*)",
-      "Read(//Users/tbwa/Documents/GitHub/Insightpulseai/odoo/**)",
       "Bash(docker --context colima-odoo exec odoo-devcontainer-db-1 psql -U odoo -d odoo_dev -t -c \"SELECT login FROM res_users WHERE active = true ORDER BY id LIMIT 5;\")",
       "Bash(docker --context colima-odoo kill odoo-local)",
-      "Bash(__NEW_LINE_3370f35447bffb9f__ docker:*)",
-      "Bash(__NEW_LINE_3370f35447bffb9f__ sleep:*)",
-      "Bash(__NEW_LINE_07ffca593b0132a2__ docker:*)",
-      "Bash(__NEW_LINE_07ffca593b0132a2__ sleep:*)",
-      "Bash(grep -rn ipai_mail_provider addons/ipai/ --include=*.py --include=*.xml)",
-      "Bash(addons/ipai/ipai_enterprise_bridge/views/res_config_settings_views.xml:*)",
       "Bash(docker --context colima-odoo run -d --rm --name odoo-local --network odoo-devcontainer_devnet -p 8069:8069 -v odoo-local-data:/var/lib/odoo odoo-devcontainer-devcontainer:latest /opt/odoo/odoo-bin --database=odoo_dev --db_host=db --db_user=odoo --db_password=odoo --http-port=8069 --addons-path=/opt/odoo/addons,/workspaces/odoo/addons/ipai --data-dir=/var/lib/odoo --limit-time-real=600)",
-      "Bash(__NEW_LINE_cff7eb8d06f4b317__ sleep:*)",
       "Bash(docker --context colima-odoo ps --format '{{.Names}} {{.Status}}')",
-      "Read(//Users/tbwa/Documents/GitHub/Insightpulseai/=== odoo/**)",
-      "Bash(__NEW_LINE_0dc8b8393939d354__ git:*)"
+      "Bash(find /Users/tbwa/Documents/GitHub/Insightpulseai/odoo -maxdepth 3 -name Dockerfile* -type f)",
+      "mcp__microsoft-learn__microsoft_docs_search",
+      "Bash(az *)",
+      "Bash(az resource:*)",
+      "Bash(az boards:*)",
+      "Read(//Users/tbwa/Documents/GitHub/Insightpulseai/agent-platform/**)",
+      "Bash(export AZURE_DEVOPS_EXT_PAT=\"$AZURE_DEVOPS_EXT_PAT\")",
+      "Bash(chmod +x /Users/tbwa/Documents/GitHub/Insightpulseai/odoo/scripts/odoo/smoke_test.sh)",
+      "Bash(/Users/tbwa/Documents/GitHub/Insightpulseai/odoo/scripts/odoo/smoke_test.sh https://erp.insightpulseai.com)",
+      "Bash(mkdir -p /Users/tbwa/Documents/GitHub/Insightpulseai/odoo/odoo/.claude/hooks)",
+      "Bash(printf '#!/usr/bin/env python3\\\\nimport sys; sys.exit\\(0\\)\\\\n')",
+      "Read(//private/tmp/claude-501/-Users-tbwa-Documents-GitHub/Insightpulseai-odoo/6638cad3-32a7-4755-8c8d-c4953a9073e2/tasks/**)",
+      "Bash(find /Users/tbwa/Documents/GitHub/Insightpulseai/odoo -maxdepth 3 -name Dockerfile -not -path */.devcontainer/* -not -path */agents/* -not -path */archive/*)",
+      "Bash(bash scripts/odoo/smoke_test.sh https://erp.insightpulseai.com)",
+      "Bash(/tmp/asset_summary.sh:*)",
+      "Bash(bash /tmp/asset_summary.sh)",
+      "Read(//Users/tbwa/Documents/GitHub/Insightpulseai/odoo/**)",
+      "Bash(xargs git:*)",
+      "Bash(xargs -I{} git branch -D {})",
+      "Read(//Users/tbwa/Documents/GitHub/Insightpulseai/**)",
+      "Read(//Users/tbwa/Documents/GitHub/Insightpulseai/agent-platform AGENTS_ROOT=/Users/tbwa/Documents/GitHub/Insightpulseai/agents node apps/builder-factory/dist/server.js SERVER_PID=$! sleep 3 echo === Health check === curl -s http:/localhost:8088/health echo  echo === Chat request === curl -s -X POST http:/localhost:8088/ -H Content-Type: application/json -d {\"message\":\"What modules are installed?\",\"mode\":\"PROD-ADVISORY\",\"user\":{\"uid\":1,\"login\":\"admin\"},\"context\":{\"surface\":\"erp\"}} python3 -c import sys,json; d=json.load\\(sys.stdin\\); print\\(f'Status: {\"ok\" if d.get\\(\"content\"\\) else \"fail\"}'\\); print\\(f'Content: {d.get\\(\"content\",\"\"\\)[:100]}...'\\); print\\(f'Latency: {d.get\\(\"latency_ms\"\\)}ms'\\) kill $SERVER_PID 2 /dev/**)"
     ],
     "deny": [
       "Bash(docker context use *)"
     ],
     "additionalDirectories": [
-      "/Users/tbwa/Documents/GitHub/Insightpulseai/ssot/odoo"
+      "/Users/tbwa/Documents/GitHub/Insightpulseai/ssot/odoo",
+      "/tmp"
     ]
   },
   "hooks": {

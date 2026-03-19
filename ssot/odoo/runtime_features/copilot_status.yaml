@@ -1,0 +1,82 @@
+version: 1
+feature: odoo_copilot
+canonical_module: ipai_odoo_copilot
+observed_at: "2026-03-18"
+
+repo_state:
+  legacy_module:
+    name: ipai_ai_copilot
+    status: deprecated
+    installable: false
+  canonical_module:
+    name: ipai_odoo_copilot
+    version: "19.0.2.0.0"
+    status: active
+    installable: true
+    tests_present: true
+
+runtime_state:
+  dev_installed: unknown
+  staging_installed: unknown
+  prod_installed: unknown
+  prod_verified_end_to_end: false
+
+capabilities:
+  implemented:
+    - systray_ui
+    - admin_config
+    - bounded_connection_actions
+    - healthcheck_cron
+    - rag_search
+  missing_for_full_chain:
+    - ipai_foundry_bridge
+    - ipai_document_intelligence_bridge
+    - ipai_ap_expense_capture
+
+foundry_agent:
+  workspace: data-intel-ph
+  agent_name: ipai-odoo-copilot-azure
+  observed_at: "2026-03-18"
+  exists: true
+  preview_configured: true
+  published: unknown
+  saved_revision: v7
+  model: gpt-4.1
+  instructions:
+    present: true
+    label: "IPAI Odoo Copilot — System Instructions v5"
+  tools:
+    - file_search
+    - code_interpreter
+  knowledge_assets:
+    - ipai-odoo-knowledge-base
+
+foundry_sdk_target:
+  required: true
+  package_family: azure_ai_projects_v2
+  python:
+    packages:
+      - "azure-ai-projects>=2.0.0"
+      - azure-identity
+  auth_mode: DefaultAzureCredential
+  endpoint_source: "Foundry project endpoint"
+  current_alignment:
+    verified_against_quickstart: true
+    classic_1x_allowed: false
+
+integration_status:
+  foundry_agent_exists: true
+  odoo_to_foundry_runtime_verified: false
+  prod_end_to_end_verified: false
+
+release_policy:
+  go_live_blocker: false
+  phase: phase_3_deferred
+  allowed_claims:
+    - "Base copilot module exists and is installable"
+    - "Foundry agent resource exists"
+    - "Foundry agent preview configuration exists"
+  disallowed_claims:
+    - "Odoo production is successfully invoking the Foundry agent"
+    - "Foundry publication/live serving is proven"
+    - "Full copilot workflow chain is complete"

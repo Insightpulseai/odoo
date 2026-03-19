@@ -1,0 +1,344 @@
+# foundry_coverage_matrix.yaml
+# SSOT: Microsoft Foundry documentation coverage contract
+# Tracks whether the Azure Platform KB covers the full Foundry doc surface.
+# Source: Azure AI Foundry left-nav taxonomy on MS Learn
+# Last updated: 2026-03-15
+
+meta:
+  title: "Microsoft Foundry Coverage Matrix"
+  description: >
+    Enumerates all 12 Foundry documentation areas and tracks KB coverage status.
+    Each bucket maps to a doc area from the Foundry portal left-nav on MS Learn.
+  base_url: "https://learn.microsoft.com/en-us/azure/ai-foundry/"
+  review_cadence: "monthly"
+  owner: "platform-knowledge"
+
+# Priority definitions:
+#   P0 — Must be covered before KB is production-ready
+#   P1 — Should be covered within one sprint of P0 completion
+#   P2 — Nice to have; cover when bandwidth allows
+
+# Status definitions:
+#   covered       — KB answers 80%+ of acceptance queries correctly
+#   partial       — KB answers some queries but has known gaps
+#   missing       — No KB content exists for this area
+#   not_in_scope  — Intentionally excluded (document reason)
+
+buckets:
+
+  # ──────────────────────────────────────────────
+  # 1. Get Started
+  # ──────────────────────────────────────────────
+  - name: get-started
+    priority: P0
+    status: partial
+    owner: platform-knowledge
+    description: >
+      Foundry portal overview, quickstarts, first project creation,
+      and playground walkthroughs.
+    source_urls:
+      - https://learn.microsoft.com/en-us/azure/ai-foundry/what-is-azure-ai-foundry
+      - https://learn.microsoft.com/en-us/azure/ai-foundry/quickstarts/get-started-playground
+      - https://learn.microsoft.com/en-us/azure/ai-foundry/quickstarts/get-started-code
+      - https://learn.microsoft.com/en-us/azure/ai-foundry/how-to/create-projects
+      - https://learn.microsoft.com/en-us/azure/ai-foundry/how-to/create-hub-project
+    expected_tools:
+      - get_foundry_quickstart_guidance
+      - get_foundry_project_setup
+      - get_foundry_playground_walkthrough
+    acceptance_queries:
+      - "How do I create my first Azure AI Foundry project?"
+      - "What is the difference between a hub and a project in Foundry?"
+      - "How do I use the Foundry playground to test a model?"
+      - "What prerequisites do I need before starting with Azure AI Foundry?"
+
+  # ──────────────────────────────────────────────
+  # 2. Agent Service
+  # ──────────────────────────────────────────────
+  - name: agent-service
+    priority: P0
+    status: partial
+    owner: platform-knowledge
+    description: >
+      Azure AI Agent Service: creating, configuring, and deploying agents
+      with tools, knowledge, and multi-agent orchestration.
+    source_urls:
+      - https://learn.microsoft.com/en-us/azure/ai-foundry/agents/overview
+      - https://learn.microsoft.com/en-us/azure/ai-foundry/agents/quickstart
+      - https://learn.microsoft.com/en-us/azure/ai-foundry/agents/how-to/create-agent
+      - https://learn.microsoft.com/en-us/azure/ai-foundry/agents/how-to/tools
+      - https://learn.microsoft.com/en-us/azure/ai-foundry/agents/how-to/multi-agent
+      - https://learn.microsoft.com/en-us/azure/ai-foundry/agents/concepts/agents-architecture
+    expected_tools:
+      - get_foundry_agent_service_guidance
+      - get_foundry_agent_tools_reference
+      - get_foundry_multi_agent_patterns
+    acceptance_queries:
+      - "How do I create an agent in Azure AI Foundry Agent Service?"
+      - "What tools can I attach to a Foundry agent (code interpreter, file search, functions)?"
+      - "How does multi-agent orchestration work in Foundry?"
+      - "What is the architecture of the Azure AI Agent Service?"
+
+  # ──────────────────────────────────────────────
+  # 3. Foundry Models
+  # ──────────────────────────────────────────────
+  - name: foundry-models
+    priority: P0
+    status: partial
+    owner: platform-knowledge
+    description: >
+      Model catalog, deployment options (MaaS vs MaaP), fine-tuning,
+      model benchmarks, and model lifecycle management.
+    source_urls:
+      - https://learn.microsoft.com/en-us/azure/ai-foundry/how-to/model-catalog-overview
+      - https://learn.microsoft.com/en-us/azure/ai-foundry/how-to/deploy-models-openai
+      - https://learn.microsoft.com/en-us/azure/ai-foundry/how-to/deploy-models-serverless
+      - https://learn.microsoft.com/en-us/azure/ai-foundry/how-to/fine-tune-models
+      - https://learn.microsoft.com/en-us/azure/ai-foundry/how-to/model-benchmarks
+      - https://learn.microsoft.com/en-us/azure/ai-foundry/concepts/deployments-overview
+    expected_tools:
+      - get_foundry_model_catalog_guidance
+      - get_foundry_model_deployment_guidance
+      - get_foundry_fine_tuning_guidance
+    acceptance_queries:
+      - "What models are available in the Azure AI Foundry model catalog?"
+      - "What is the difference between MaaS and MaaP deployment in Foundry?"
+      - "How do I fine-tune a model in Azure AI Foundry?"
+      - "How do I compare model performance using Foundry benchmarks?"
+
+  # ──────────────────────────────────────────────
+  # 4. Manage Agents, Models & Tools
+  # ──────────────────────────────────────────────
+  - name: manage-agents-models-tools
+    priority: P1
+    status: missing
+    owner: platform-knowledge
+    description: >
+      Lifecycle management of deployed agents, model versions, tool
+      registrations, connection management, and resource quotas.
+    source_urls:
+      - https://learn.microsoft.com/en-us/azure/ai-foundry/how-to/connections-add
+      - https://learn.microsoft.com/en-us/azure/ai-foundry/how-to/quota
+      - https://learn.microsoft.com/en-us/azure/ai-foundry/how-to/manage-deployments
+      - https://learn.microsoft.com/en-us/azure/ai-foundry/how-to/create-manage-compute
+    expected_tools:
+      - get_foundry_connection_management
+      - get_foundry_quota_management
+      - get_foundry_deployment_lifecycle
+    acceptance_queries:
+      - "How do I add a connection to an external data source in Foundry?"
+      - "How do I manage deployment quotas and rate limits?"
+      - "How do I update or roll back a model deployment?"
+
+  # ──────────────────────────────────────────────
+  # 5. Guardrails & Controls
+  # ──────────────────────────────────────────────
+  - name: guardrails-controls
+    priority: P0
+    status: missing
+    owner: platform-knowledge
+    description: >
+      Content safety filters, prompt shields, groundedness detection,
+      blocklists, and custom content filtering policies.
+    source_urls:
+      - https://learn.microsoft.com/en-us/azure/ai-foundry/concepts/content-filtering
+      - https://learn.microsoft.com/en-us/azure/ai-foundry/how-to/configure-content-filters
+      - https://learn.microsoft.com/en-us/azure/ai-foundry/concepts/prompt-shields
+      - https://learn.microsoft.com/en-us/azure/ai-foundry/how-to/groundedness-detection
+      - https://learn.microsoft.com/en-us/azure/ai-foundry/how-to/blocklists
+    expected_tools:
+      - get_foundry_content_filter_guidance
+      - get_foundry_prompt_shield_guidance
+      - get_foundry_groundedness_detection
+    acceptance_queries:
+      - "How do I configure content safety filters for a Foundry deployment?"
+      - "What is prompt shields and how does it protect against jailbreaks?"
+      - "How do I set up groundedness detection in Azure AI Foundry?"
+      - "How do I create and apply a custom blocklist?"
+
+  # ──────────────────────────────────────────────
+  # 6. Responsible AI
+  # ──────────────────────────────────────────────
+  - name: responsible-ai
+    priority: P1
+    status: missing
+    owner: platform-knowledge
+    description: >
+      Responsible AI principles in Foundry, transparency notes,
+      fairness evaluations, and compliance documentation.
+    source_urls:
+      - https://learn.microsoft.com/en-us/azure/ai-foundry/concepts/responsible-ai
+      - https://learn.microsoft.com/en-us/azure/ai-foundry/concepts/transparency-notes
+      - https://learn.microsoft.com/en-us/azure/ai-foundry/how-to/evaluate-fairness
+    expected_tools:
+      - get_foundry_responsible_ai_guidance
+      - get_foundry_transparency_notes
+    acceptance_queries:
+      - "What responsible AI practices does Azure AI Foundry enforce?"
+      - "Where can I find transparency notes for Foundry models?"
+      - "How do I evaluate a model for fairness bias in Foundry?"
+
+  # ──────────────────────────────────────────────
+  # 7. API & SDK
+  # ──────────────────────────────────────────────
+  - name: api-sdk
+    priority: P0
+    status: partial
+    owner: platform-knowledge
+    description: >
+      Azure AI Inference SDK, REST API reference, client libraries
+      (Python, JS, C#, Java), and authentication patterns.
+    source_urls:
+      - https://learn.microsoft.com/en-us/azure/ai-foundry/reference/reference-model-inference-api
+      - https://learn.microsoft.com/en-us/azure/ai-foundry/how-to/develop/sdk-overview
+      - https://learn.microsoft.com/en-us/azure/ai-foundry/how-to/develop/create-hub-project-sdk
+      - https://learn.microsoft.com/en-us/azure/ai-foundry/how-to/develop/connections-environment-variables
+      - https://learn.microsoft.com/en-us/azure/ai-foundry/reference/reference-model-inference-chat-completions
+    expected_tools:
+      - get_foundry_sdk_reference
+      - get_foundry_api_reference
+      - get_foundry_auth_patterns
+    acceptance_queries:
+      - "How do I call the Azure AI Inference API for chat completions?"
+      - "What SDKs are available for Azure AI Foundry (Python, JS, C#)?"
+      - "How do I authenticate to Foundry using managed identity vs API key?"
+      - "How do I set up environment variables for Foundry SDK connections?"
+
+  # ──────────────────────────────────────────────
+  # 8. Observability, Evaluation & Tracing
+  # ──────────────────────────────────────────────
+  - name: observability-evaluation-tracing
+    priority: P0
+    status: missing
+    owner: platform-knowledge
+    description: >
+      Evaluation pipelines, built-in and custom metrics, tracing with
+      Application Insights / OpenTelemetry, and production monitoring.
+    source_urls:
+      - https://learn.microsoft.com/en-us/azure/ai-foundry/how-to/evaluate-generative-ai-app
+      - https://learn.microsoft.com/en-us/azure/ai-foundry/how-to/evaluate-sdk
+      - https://learn.microsoft.com/en-us/azure/ai-foundry/concepts/evaluation-metrics-built-in
+      - https://learn.microsoft.com/en-us/azure/ai-foundry/how-to/develop/trace-local-sdk
+      - https://learn.microsoft.com/en-us/azure/ai-foundry/how-to/monitor-deployments
+    expected_tools:
+      - get_foundry_evaluation_guidance
+      - get_foundry_tracing_guidance
+      - get_foundry_monitoring_guidance
+    acceptance_queries:
+      - "How do I evaluate a generative AI app using Foundry's built-in metrics?"
+      - "What evaluation metrics does Foundry provide out of the box (coherence, relevance, groundedness)?"
+      - "How do I enable tracing for my Foundry application with OpenTelemetry?"
+      - "How do I monitor a deployed model's latency and token usage?"
+
+  # ──────────────────────────────────────────────
+  # 9. Developer Experience
+  # ──────────────────────────────────────────────
+  - name: developer-experience
+    priority: P0
+    status: partial
+    owner: platform-knowledge
+    description: >
+      VS Code integration, prompt flow, GitHub integration, CLI tooling,
+      and local development workflows.
+    source_urls:
+      - https://learn.microsoft.com/en-us/azure/ai-foundry/how-to/develop/vs-code
+      - https://learn.microsoft.com/en-us/azure/ai-foundry/how-to/prompt-flow
+      - https://learn.microsoft.com/en-us/azure/ai-foundry/how-to/develop/ai-template-get-started
+      - https://learn.microsoft.com/en-us/azure/ai-foundry/quickstarts/get-started-code
+    expected_tools:
+      - get_foundry_vscode_integration
+      - get_foundry_prompt_flow_guidance
+      - get_foundry_cli_reference
+    acceptance_queries:
+      - "How do I use Azure AI Foundry from VS Code?"
+      - "What is prompt flow and how do I create one in Foundry?"
+      - "How do I scaffold a new Foundry project from a template?"
+
+  # ──────────────────────────────────────────────
+  # 10. Setup & Configure
+  # ──────────────────────────────────────────────
+  - name: setup-configure
+    priority: P1
+    status: missing
+    owner: platform-knowledge
+    description: >
+      Hub/project creation, networking (private endpoints, VNet),
+      compute configuration, and resource provisioning.
+    source_urls:
+      - https://learn.microsoft.com/en-us/azure/ai-foundry/how-to/create-hub-project
+      - https://learn.microsoft.com/en-us/azure/ai-foundry/how-to/configure-private-link
+      - https://learn.microsoft.com/en-us/azure/ai-foundry/how-to/create-manage-compute
+      - https://learn.microsoft.com/en-us/azure/ai-foundry/how-to/configure-managed-network
+    expected_tools:
+      - get_foundry_hub_setup
+      - get_foundry_networking_guidance
+      - get_foundry_compute_config
+    acceptance_queries:
+      - "How do I create an Azure AI Foundry hub with private networking?"
+      - "How do I configure a managed virtual network for Foundry?"
+      - "How do I provision and manage compute instances in Foundry?"
+
+  # ──────────────────────────────────────────────
+  # 11. Security & Governance
+  # ──────────────────────────────────────────────
+  - name: security-governance
+    priority: P0
+    status: missing
+    owner: platform-knowledge
+    description: >
+      RBAC, managed identity, data encryption, audit logging,
+      compliance certifications, and key vault integration.
+    source_urls:
+      - https://learn.microsoft.com/en-us/azure/ai-foundry/concepts/rbac-ai-foundry
+      - https://learn.microsoft.com/en-us/azure/ai-foundry/how-to/role-based-access-control
+      - https://learn.microsoft.com/en-us/azure/ai-foundry/concepts/encryption-keys-portal
+      - https://learn.microsoft.com/en-us/azure/ai-foundry/how-to/configure-managed-identity
+      - https://learn.microsoft.com/en-us/azure/ai-foundry/concepts/vulnerability-management
+    expected_tools:
+      - get_foundry_rbac_guidance
+      - get_foundry_security_guidance
+      - get_foundry_compliance_reference
+    acceptance_queries:
+      - "What RBAC roles are available for Azure AI Foundry and what do they grant?"
+      - "How do I configure managed identity for Foundry resources?"
+      - "How does Azure AI Foundry handle data encryption at rest and in transit?"
+      - "How do I audit who accessed or modified a Foundry project?"
+
+  # ──────────────────────────────────────────────
+  # 12. Operate & Support
+  # ──────────────────────────────────────────────
+  - name: operate-support
+    priority: P1
+    status: missing
+    owner: platform-knowledge
+    description: >
+      Troubleshooting, known issues, service limits, SLA, region
+      availability, and support channels.
+    source_urls:
+      - https://learn.microsoft.com/en-us/azure/ai-foundry/how-to/troubleshoot
+      - https://learn.microsoft.com/en-us/azure/ai-foundry/reference/region-support
+      - https://learn.microsoft.com/en-us/azure/ai-foundry/reference/limits-quotas
+      - https://learn.microsoft.com/en-us/azure/ai-foundry/reference/known-issues
+    expected_tools:
+      - get_foundry_troubleshooting
+      - get_foundry_limits_reference
+      - get_foundry_region_availability
+    acceptance_queries:
+      - "What are the service limits and quotas for Azure AI Foundry?"
+      - "Which Azure regions support AI Foundry?"
+      - "How do I troubleshoot a failed model deployment in Foundry?"
+
+# ──────────────────────────────────────────────
+# Coverage Summary
+# ──────────────────────────────────────────────
+summary:
+  total_buckets: 12
+  covered: 0
+  partial: 5
+  missing: 7
+  not_in_scope: 0
+  p0_ready: false
+  p0_buckets: 8
+  p0_covered: 0
+  p0_partial: 4
+  p0_missing: 4

@@ -1,0 +1,415 @@
+# schema: ssot.advisor.workbook.v1
+# ---------------------------------------------------------------------------
+# Workbook: devops_baseline
+# Name:     Microsoft DevOps Lifecycle Baseline Assessment
+# Pillar:   ops_excellence
+# Source:   ssot/advisor/assessments/microsoft_devops_lifecycle.yaml
+# Version:  1.0.0
+# Reviewed: 2026-03-01
+#
+# Purpose:
+#   Step-by-step operator guide for conducting a full Microsoft DevOps lifecycle
+#   posture assessment across all four phases: Plan, Develop, Deliver, Operate.
+#
+#   Triggered by: periodic ops_excellence review, onboarding a new team member,
+#   or when the advisor finds open findings in microsoft_devops_lifecycle.
+#
+# Prerequisites:
+#   - Access to GitHub org (Insightpulseai) with admin or owner role
+#   - Access to Plane project management (plane.insightpulseai.com)
+#   - Access to Vercel dashboard (vercel.com/insightpulseai)
+#   - Access to DigitalOcean (cloud.digitalocean.com)
+#   - Access to n8n (n8n.insightpulseai.com)
+#   - Supabase project access (spdtwktxdalcfigzeqrz)
+#   - Ops Console access (ops.insightpulseai.com)
+#
+# Steps with evidence_required=true block workbook completion in the Ops Console
+# until the operator captures proof.
+# ---------------------------------------------------------------------------
+
+id: devops_baseline
+name: "Microsoft DevOps Lifecycle Baseline Assessment"
+pillar: ops_excellence
+source: ssot/advisor/assessments/microsoft_devops_lifecycle.yaml
+version: "1.0.0"
+
+# Context displayed in the Ops Console before step 1
+context: >
+  This workbook walks through IPAI's DevOps maturity across the four Microsoft
+  DevOps lifecycle phases: Plan, Develop, Deliver, Operate. Work through each
+  step in order and capture required evidence. At the end, generate a dated
+  scorecard in docs/audits/. This workbook is the execution surface for the
+  microsoft_devops_lifecycle assessment YAML.
+
+steps:
+
+  - step_no: 1
+    text: >
+      Run the microsoft_devops_lifecycle assessment to establish current posture.
+      From the ops-console, trigger a scan against the assessment:
+
+        Assessment ID: microsoft_devops_lifecycle
+        Scope: all phases (Plan, Develop, Deliver, Operate)
+
+      Alternatively, query the ops platform events table to see the most recent
+      scan result:
+
+        SELECT * FROM ops.platform_events
+        WHERE event_type = 'advisor_scan'
+          AND payload->>'assessment_id' = 'microsoft_devops_lifecycle'
+        ORDER BY created_at DESC
+        LIMIT 1;
+
+      Capture the scan_id and the list of open findings as evidence before proceeding.
+    evidence_required: true
+    automation_ref: "apps/ops-console/app/api/runs/[runId]"
+    expected_outcome: >
+      A scan record exists for microsoft_devops_lifecycle dated within the last 24 hours.
+      The output lists which posture checks passed and which have gaps. Use the gap list
+      to prioritize remediation steps in this workbook.
+
+  - step_no: 2
+    text: >
+      Plan phase — verify Plane backlog completeness.
+
+      Log in to Plane (plane.insightpulseai.com) and confirm:
+        1. All active features have a Plane project with epics, stories, and tasks.
+        2. No open tasks exist without a parent story.
+        3. The current quarter has at least one milestone with linked epics.
+
+      Then verify spec bundle coverage. For each feature in Develop phase or later,
+      confirm a spec bundle exists at spec/<feature-slug>/ with both
+      constitution.md and prd.md present:
+
+        ls spec/
+        # For each active feature slug:
+        ls spec/<feature-slug>/constitution.md spec/<feature-slug>/prd.md
+
+      Document any spec bundles that are missing or incomplete.
+    evidence_required: true
+    automation_ref: "scripts/check-spec-kit.sh"
+    expected_outcome: >
+      Every active feature (in Develop phase or later) has a spec bundle with
+      constitution.md and prd.md. Plane has the current quarter's milestone defined
+      with at least one linked epic. Missing spec bundles are listed as gaps for
+      immediate creation via /speckit.specify.
+
+  - step_no: 3
+    text: >
+      Plan phase — verify spec bundles include tasks.md for features in Develop phase.
+
+      For each spec bundle at spec/<feature-slug>/, check whether tasks.md exists
+      and contains actionable engineering tasks. If tasks.md is absent, generate it:
+
+        # Review spec bundle
+        cat spec/<feature-slug>/plan.md
+
+        # Generate tasks breakdown
+        # Use /speckit.tasks in Claude Code to produce spec/<feature-slug>/tasks.md
+
+      Ensure tasks in tasks.md align with Plane task items. If there is a mismatch,
+      update either tasks.md or Plane to reflect the actual work breakdown.
+    evidence_required: false
+    automation_ref: "scripts/check-spec-kit.sh"
+    expected_outcome: >
+      All spec bundles for features in Develop phase or later have a tasks.md with
+      a complete task breakdown. tasks.md items are traceable to Plane task IDs.
+
+  - step_no: 4
+    text: >
+      Develop phase — verify branch protection and required status checks.
+
+      Via GitHub API or gh CLI:
+
+        gh api orgs/Insightpulseai/rulesets --jq '.[].name'
+        # Expect: at least one ruleset targeting all repositories, default branch
+
+        gh api repos/Insightpulseai/odoo/branches/main/protection \
+          --jq '.required_status_checks.contexts'
+        # Expect: ["ci/lint", "ci/typecheck"] or equivalent
+
+      Also verify CODEOWNERS coverage for sensitive paths:
+
+        cat .github/CODEOWNERS 2>/dev/null || cat CODEOWNERS 2>/dev/null
+        # Check that ssot/, supabase/migrations/, .github/workflows/, infra/
+        # all have entries
+
+      Check for .github/copilot-instructions.md:
+
+        ls .github/copilot-instructions.md && echo "PRESENT" || echo "MISSING"
+    evidence_required: true
+    automation_ref: null
+    expected_outcome: >
+      Organization ruleset exists and protects the default branch on all repos
+      with PR + status check requirements. CODEOWNERS covers all four sensitive
+      paths. .github/copilot-instructions.md is present with IPAI-specific guidance.
+      If any of these are missing, create them before proceeding.
+
+  - step_no: 5
+    text: >
+      Develop phase — verify agentic coding runs are tracked in ops.runs.
+
+      Confirm the ops-console /api/runs endpoint is reachable and recent Claude Code
+      sessions produced run records:
+
+        curl -s https://ops.insightpulseai.com/api/runs \
+          -H "Authorization: Bearer $OPS_API_TOKEN" \
+          | jq '.[0:5] | .[] | {id, agent_id, outcome, commit_sha}'
+
+      Cross-reference recent commits on main that were authored by Claude:
+
+        git log main --oneline --author="claude" -10 2>/dev/null || \
+        git log main --oneline --since="7 days ago" -20
+
+      For each agentic commit without a matching ops.runs record, manually create
+      a retrospective record via the ops-console UI or API.
+    evidence_required: false
+    automation_ref: "apps/ops-console/app/api/runs/[runId]"
+    expected_outcome: >
+      The ops-console /api/runs endpoint returns records for recent agentic coding
+      sessions. Agentic commits can be traced to run records. If no run records
+      exist, the ops-console integration needs to be wired into the agent workflow
+      (see apps/ops-console/ implementation).
+
+  - step_no: 6
+    text: >
+      Deliver phase — verify Vercel deployment environments and CI gates.
+
+      For each Vercel project in the Insightpulseai organization:
+        1. Confirm the project is connected to the Insightpulseai/odoo repository
+           (or the correct app subdirectory).
+        2. Confirm auto-deploy is NOT enabled for the production environment
+           without CI check requirements.
+        3. Confirm the production environment requires at least one reviewer
+           approval in GitHub (Settings → Environments → production → Required reviewers).
+
+      Check GitHub environment protection:
+
+        gh api repos/Insightpulseai/odoo/environments --jq \
+          '.environments[] | {name, protection_rules}'
+        # Expect: production environment has at least 1 required reviewer
+
+      If the production environment has no reviewers, add them:
+
+        gh api repos/Insightpulseai/odoo/environments/production \
+          -X PUT --field protection_rules='[{"type":"required_reviewers"}]'
+    evidence_required: true
+    automation_ref: null
+    expected_outcome: >
+      All production Vercel deployments are gated by passing CI checks and require
+      a GitHub environment reviewer approval. No Vercel project is auto-deploying
+      to production on push without human review.
+
+  - step_no: 7
+    text: >
+      Deliver phase — audit GitHub Actions workflow permissions.
+
+      Scan all workflows for missing or overly broad permissions declarations:
+
+        grep -r "permissions:" .github/workflows/ | grep -v "read\|contents: read"
+        # Flag any workflow with write-all or missing permissions
+
+        grep -rL "permissions:" .github/workflows/*.yml .github/workflows/*.yaml \
+          2>/dev/null
+        # List workflows with no permissions declaration
+
+      For each workflow without explicit permissions, add:
+
+        permissions:
+          contents: read
+
+      For workflows requiring write access, ensure the permission is scoped to the
+      minimum required (e.g., contents: write, pull-requests: write — never write-all).
+
+      Verify the organization-level default permission is set to read-only:
+
+        gh api orgs/Insightpulseai \
+          --jq '.default_repository_permission'
+        # Should be "read" or "none"
+    evidence_required: false
+    automation_ref: null
+    expected_outcome: >
+      All GitHub Actions workflows have explicit permissions declarations with
+      minimum required scope. No workflows use permissions: write-all. The
+      organization default permission is set to "read" or "none".
+
+  - step_no: 8
+    text: >
+      Operate phase — verify DigitalOcean monitoring alerts are configured.
+
+      Check the SSOT file for declared alert policies:
+
+        cat ssot/infra/digitalocean/monitoring.yaml
+
+      Cross-reference against the live DO monitoring alerts:
+
+        doctl monitoring alert list --format Name,Type,Compare,Value,Enabled
+
+      Required alerts that must be present and enabled:
+        - CPU utilization >= 80% on odoo-production (178.128.112.214)
+        - Disk utilization >= 75% on odoo-production
+        - Memory utilization >= 85% on odoo-production
+        - Outbound bandwidth spike on odoo-production
+
+      If any alerts are missing, create them:
+
+        doctl monitoring alert create \
+          --type "v1/insights/droplet/cpu" \
+          --compare "GreaterThan" --value 80 --window "5m" \
+          --entities "droplet:<droplet_id>" \
+          --description "CPU utilization >= 80% on odoo-production" \
+          --emails "ops@insightpulseai.com"
+
+      After creating any missing alerts, update ssot/infra/digitalocean/monitoring.yaml
+      to reflect the live configuration and commit the change.
+    evidence_required: true
+    automation_ref: null
+    expected_outcome: >
+      All four required monitoring alert policies (CPU, disk, memory, bandwidth) are
+      enabled on the odoo-production droplet. The ssot/infra/digitalocean/monitoring.yaml
+      file matches the live configuration. Alerts route to a monitored notification
+      endpoint (email or Slack webhook).
+
+  - step_no: 9
+    text: >
+      Operate phase — verify n8n workflows are checked into the repo.
+
+      List workflows in the n8n UI (requires n8n API access):
+
+        curl -s https://n8n.insightpulseai.com/api/v1/workflows \
+          -H "X-N8N-API-KEY: $N8N_API_KEY" \
+          | jq '.[].name'
+
+      Compare against committed workflow JSON files:
+
+        ls automations/n8n/workflows/*.json 2>/dev/null | wc -l
+
+      For any workflow in n8n that has no corresponding JSON in the repo, export it:
+
+        curl -s https://n8n.insightpulseai.com/api/v1/workflows/<id> \
+          -H "X-N8N-API-KEY: $N8N_API_KEY" \
+          > automations/n8n/workflows/<slug>.json
+
+      Verify each exported JSON uses credential references ({{ $credentials.* }})
+      and not literal values. Commit all exported workflow files.
+
+      Also verify the SSOT platform rule (Rule 6): no literal passwords or API keys
+      appear in any workflow JSON.
+    evidence_required: false
+    automation_ref: "automations/n8n/workflows/"
+    expected_outcome: >
+      All production n8n workflows have a corresponding JSON file in
+      automations/n8n/workflows/ committed to the repo. No JSON file contains
+      literal credential values. The repo becomes the SSOT for n8n workflow state.
+
+  - step_no: 10
+    text: >
+      Operate phase — verify Supabase schema changes flow via migrations only.
+
+      Compare the live Supabase schema against the migration history:
+
+        # View migration history
+        ls supabase/migrations/*.sql | sort
+
+        # Check for schema drift (requires supabase CLI)
+        supabase db diff --schema public --schema ops
+
+      If `supabase db diff` reports schema objects that do not appear in any
+      migration file, those changes were made via the dashboard or direct SQL.
+      For each drifted object:
+        1. Create a new migration file that captures the change:
+             supabase migration new <descriptive_name>
+        2. Populate the migration SQL with the actual DDL for the drifted object.
+        3. Commit the migration file.
+
+      Enforce going forward: no ad-hoc SQL in production (SSOT platform rule 4:
+      schema changes via migrations only, ops.* tables are append-only).
+    evidence_required: false
+    automation_ref: null
+    expected_outcome: >
+      supabase db diff reports zero schema drift between the live database and
+      the migration history. All schema objects in the public and ops schemas are
+      traceable to a migration file in supabase/migrations/. No dashboard-only
+      schema changes are present.
+
+  - step_no: 11
+    text: >
+      Operate phase — verify Ops Advisor finding resolution rate.
+
+      Query the ops platform events or advisor findings table for the 30-day
+      resolution rate:
+
+        SELECT
+          COUNT(*) FILTER (WHERE status = 'resolved') AS resolved,
+          COUNT(*) AS total,
+          ROUND(
+            COUNT(*) FILTER (WHERE status = 'resolved')::numeric / COUNT(*) * 100, 1
+          ) AS resolution_rate_pct
+        FROM ops.advisor_findings
+        WHERE created_at >= NOW() - INTERVAL '30 days';
+
+      Also count open high-severity findings:
+
+        SELECT COUNT(*) FROM ops.advisor_findings
+        WHERE status = 'open' AND severity = 'high';
+
+      Target: resolution_rate_pct >= 80 AND open high-severity findings < 3.
+
+      If the resolution rate is below 80%:
+        - Triage all open findings by severity.
+        - Assign owners to each high-severity finding.
+        - Set a remediation deadline (use the finding's advisor workbook as the
+          remediation guide).
+    evidence_required: true
+    automation_ref: "apps/ops-console/app/api/runs/[runId]"
+    expected_outcome: >
+      The 30-day finding resolution rate is >= 80%. Open high-severity findings
+      are fewer than 3. If below target, a remediation backlog is created in Plane
+      with high-severity findings as tasks under an "Ops Advisor Remediation" epic.
+
+  - step_no: 12
+    text: >
+      Scorecard — document findings in docs/audits/devops_lifecycle_<YYYYMMDD>.md.
+
+      Create the audit document:
+
+        mkdir -p docs/audits
+        DATE=$(date +%Y%m%d)
+        AUDIT_FILE="docs/audits/devops_lifecycle_${DATE}.md"
+
+      The audit document must include:
+        - Date and assessor name
+        - Summary table: phase, checks run, checks passed, checks failed
+        - Per-phase findings with severity, gap description, and remediation status
+        - Resolution rate from step 11
+        - Priority remediation items (top 3 open high-severity gaps)
+        - Next review date (recommend 90 days)
+
+      Commit the audit file:
+
+        git add docs/audits/devops_lifecycle_${DATE}.md
+        git commit -m "docs(audit): devops lifecycle assessment ${DATE}"
+
+      Link the audit file from the Ops Console finding record for this workbook run.
+    evidence_required: true
+    automation_ref: null
+    expected_outcome: >
+      docs/audits/devops_lifecycle_<YYYYMMDD>.md is committed to the repository.
+      The audit document contains a complete scorecard across all four phases
+      with evidence references from the earlier steps. The file is linked from
+      the Ops Console workbook run record.
+
+# Completion criteria:
+# Workbook is complete when:
+#   - Step 1 evidence captured (assessment scan with open findings list)
+#   - Step 2 evidence captured (Plane backlog + spec bundle coverage check)
+#   - Step 4 evidence captured (branch protection + CODEOWNERS + copilot instructions)
+#   - Step 6 evidence captured (Vercel environment protection rules)
+#   - Step 8 evidence captured (DO monitoring alerts present and enabled)
+#   - Step 11 evidence captured (resolution rate >= 80%)
+#   - Step 12 evidence captured (audit document committed)
+completion_check:
+  rerun_assessment: microsoft_devops_lifecycle
+  target_posture: >
+    All posture checks across Plan, Develop, Deliver, and Operate phases pass
+    with no high-severity gaps remaining open.

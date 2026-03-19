@@ -1,0 +1,123 @@
+# schema: ssot.docs.catalog.v1
+# ---
+# SSOT: Odoo documentation catalog for Insightpulseai/odoo
+# Docs index: docs/dev/odoo/DOCS_INDEX.md
+# Parity map: docs/dev/odoo/PARITY_MAP_ODOOSH.md
+# Last updated: 2026-03-02
+
+id: odoo_docs_catalog
+name: "Odoo 19.0 documentation catalog — Insightpulseai/odoo"
+category: documentation
+reviewed: "2026-03-02"
+version: "1.0.0"
+
+version_target: "19.0"
+hosting_mode: on_prem_digitalocean
+odoo_edition: CE  # Community Edition only — no Enterprise modules
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Critical topics (operational + development)
+# ─────────────────────────────────────────────────────────────────────────────
+critical_topics:
+  - mail           # outgoing/inbound mail, aliases, DNS records
+  - addons_path    # module discovery, submodule detection, OCA mounts
+  - dbfilter       # single-database mode (list_db=False, dbfilter)
+  - proxy_mode     # nginx reverse proxy requirement
+  - backups        # pg_dump rotation, filestore, neutralization
+  - upgrades       # major version upgrade scripts, openupgradelib
+  - external_api   # XML-RPC deprecation → JSON-2 migration
+  - workers        # worker count tuning per environment
+  - testing        # --test-tags, TransactionCase, HttpCase
+  - security       # ir.model.access.csv, ir.rule, groups
+
+# ─────────────────────────────────────────────────────────────────────────────
+# URLs by topic
+# ─────────────────────────────────────────────────────────────────────────────
+urls_by_topic:
+  install:
+    - https://www.odoo.com/documentation/19.0/administration/on_premise/source.html
+    - https://www.odoo.com/documentation/19.0/administration/on_premise/deploy.html
+    - https://www.odoo.com/documentation/19.0/administration/on_premise/update.html
+    - https://www.odoo.com/documentation/19.0/administration/on_premise/packages.html
+    - https://www.odoo.com/documentation/19.0/developer/reference/cli.html
+
+  hosting:
+    - https://www.odoo.com/documentation/19.0/administration/on_premise/deploy.html  # nginx + SSL section
+    - https://www.odoo.com/documentation/19.0/administration/on_premise/packages.html
+
+  db_mgmt:
+    - https://www.odoo.com/documentation/19.0/administration/neutralized_database.html
+    - https://www.odoo.com/documentation/19.0/administration/upgrade.html
+    - https://www.odoo.com/documentation/19.0/developer/howtos/upgrade_custom_db.html
+    - https://www.odoo.com/documentation/19.0/developer/reference/upgrades/upgrade_scripts.html
+    - https://www.odoo.com/documentation/19.0/developer/reference/upgrades/upgrade_utils.html
+
+  mail:
+    - https://www.odoo.com/documentation/19.0/applications/general/email_communication/email_servers_outbound.html
+    - https://www.odoo.com/documentation/19.0/applications/general/email_communication/email_servers_inbound.html
+    - https://www.odoo.com/documentation/19.0/administration/on_premise/email_gateway.html
+    - https://www.odoo.com/documentation/19.0/applications/general/email_communication/email_domain.html
+    - https://www.odoo.com/documentation/19.0/developer/reference/backend/mixins.html
+
+  external_api:
+    - https://www.odoo.com/documentation/19.0/developer/reference/external_rpc_api.html  # DEPRECATED → remove before Odoo 20
+    - https://www.odoo.com/documentation/19.0/developer/reference/external_api.html  # JSON-2 — use this
+
+  developer:
+    - https://www.odoo.com/documentation/19.0/developer/reference/backend/module.html
+    - https://www.odoo.com/documentation/19.0/developer/reference/backend/orm.html
+    - https://www.odoo.com/documentation/19.0/developer/reference/backend/security.html
+    - https://www.odoo.com/documentation/19.0/developer/reference/backend/data.html
+    - https://www.odoo.com/documentation/19.0/developer/reference/backend/actions.html
+    - https://www.odoo.com/documentation/19.0/developer/reference/user_interface/view_records.html
+    - https://www.odoo.com/documentation/19.0/developer/reference/backend/testing.html
+    - https://www.odoo.com/documentation/19.0/contributing/development/coding_guidelines.html
+    - https://www.odoo.com/documentation/19.0/developer/tutorials/importable_modules.html
+
+  scaffold:
+    - https://www.odoo.com/documentation/19.0/developer/reference/cli.html  # scaffold subcommand
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Odoo.sh parity references (EE/SaaS only — informational, not requirements)
+# ─────────────────────────────────────────────────────────────────────────────
+parity_refs:
+  odoosh:
+    - https://www.odoo.com/documentation/19.0/administration/odoo_sh/getting_started/branches.html
+    - https://www.odoo.com/documentation/19.0/administration/odoo_sh/advanced/submodules.html
+    - https://www.odoo.com/documentation/19.0/administration/odoo_sh/advanced/containers.html
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Deprecation watchlist
+# ─────────────────────────────────────────────────────────────────────────────
+deprecations:
+  - api: XML-RPC (/xmlrpc/2/common, /xmlrpc/2/object)
+    status: deprecated_in_19
+    removal: odoo_20
+    migration: JSON-2 API with Authorization Bearer header
+    audit_paths:
+      - automations/n8n/workflows/*.json
+      - scripts/odoo_api_client.py
+      - supabase/functions/
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Key odoo.conf parameters (canonical names)
+# ─────────────────────────────────────────────────────────────────────────────
+odoo_conf_params:
+  production:
+    - workers               # number of HTTP worker processes (≥2, ≤2×CPU)
+    - max_cron_threads      # cron worker count (1 recommended)
+    - proxy_mode            # True when behind nginx
+    - list_db               # False in production
+    - dbfilter              # regex to restrict visible DBs
+    - limit_memory_hard     # process kill threshold (bytes)
+    - limit_memory_soft     # GC trigger threshold (bytes)
+    - limit_time_cpu        # CPU time limit per request (seconds)
+    - limit_time_real       # wall-clock time limit per request (seconds)
+    - gevent_port           # websocket/longpolling port (default 8072)
+  mail:
+    - smtp_server           # ir.mail_server field
+    - smtp_port             # ir.mail_server field
+    - smtp_user             # ir.mail_server field
+    - smtp_password         # ir.mail_server field (secret — store in Vault)
+    - email_from            # default From address
+    - catchall_domain       # mail.catchall.domain system parameter

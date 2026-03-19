@@ -1,0 +1,114 @@
+# ssot/qa/autonoma_slack.yaml
+# SSOT for Autonoma ↔ Slack notification routing.
+# Autonoma is the E2E test orchestration platform (docs.autonoma.app).
+# This SSOT is the authoritative config for how test results route to Slack channels.
+#
+# Spec: docs/runbooks/AUTONOMA_SLACK.md
+# Secrets: ssot/secrets/registry.yaml §autonoma_oauth_client_id, autonoma_oauth_client_secret
+# Last updated: 2026-03-02
+
+schema: ssot.qa.autonoma.v1
+
+application:
+  name: ops-console
+  autonoma_project: insightpulseai/ops-console   # Autonoma project slug
+  description: >
+    E2E and smoke tests for the ops-console Next.js app.
+    Notifications route to Slack via the Autonoma OAuth 2.0 Slack bot.
+
+# ── Slack workspace ──────────────────────────────────────────────────────────
+slack:
+  workspace: insightpulseai
+  # channel IDs should be updated once the Autonoma Slack App is installed.
+  # Until then, use channel names as identifiers.
+  channels:
+    ops_alerts:
+      name: "#ops-alerts"
+      id: null        # UPDATE after Slack App install
+      purpose: "Production failures and critical E2E regressions"
+    dev_ci:
+      name: "#dev-ci"
+      id: null        # UPDATE after Slack App install
+      purpose: "Preview branch failures and CI noise"
+    qa:
+      name: "#qa"
+      id: null        # UPDATE after Slack App install
+      purpose: "Scheduled daily test run summaries"
+
+# ── Routing rules ────────────────────────────────────────────────────────────
+routing:
+  - name: prod-failures
+    description: "Production E2E failures"
+    filter:
+      environment: production
+      status: [failed]
+      priority: [high, critical]
+    channel: ops_alerts
+    notification_format: detailed   # includes affected components, execution time, link
+
+  - name: preview-failures
+    description: "Preview branch failures"
+    filter:
+      environment: preview
+      status: [failed]
+    channel: dev_ci
+    notification_format: compact    # pass/fail + link only
+
+  - name: daily-scheduled
+    description: "Daily scheduled run summaries (all statuses)"
+    filter:
+      trigger_type: scheduled
+      schedule: daily
+    channel: qa
+    notification_format: summary    # aggregate pass/fail count + link to report
+
+  - name: prod-pass
+    description: "Production passes (confirm stability, low noise)"
+    filter:
+      environment: production
+      status: [passed]
+    channel: ops_alerts
+    notification_format: minimal    # single-line: "✅ E2E passed — <commit sha>"
+    enabled: false                  # enable after first successful production run
+
+# ── Filters ──────────────────────────────────────────────────────────────────
+global_filters:
+  # Only notify for these test types
+  test_types: [e2e, smoke]
+  # Suppress transient noise: same test must fail N consecutive runs before alerting
+  consecutive_failures_before_alert: 1   # set to 2 to reduce flake noise
+
+# ── Security model ───────────────────────────────────────────────────────────
+security:
+  auth_method: oauth2
+  oauth_scopes:
+    - chat:write
+    - channels:read
+    - incoming-webhook
+  encryption: in_transit_and_at_rest
+  audit_logs: autonoma_managed   # Autonoma maintains OAuth audit logs
+  secret_refs:
+    client_id: autonoma_oauth_client_id   # ssot/secrets/registry.yaml key
+    client_secret: autonoma_oauth_client_secret
+
+# ── Quick actions (in Slack) ─────────────────────────────────────────────────
+quick_actions:
+  # Autonoma Slack bot supports these inline actions on failure messages
+  - acknowledge     # marks failure as acknowledged
+  - assign          # assigns to a team member
+  - dismiss         # dismisses one-off flakes (not counted toward streak)
+  # Commands available in any channel where bot is present:
+  commands:
+    - /autonoma status        # current run status
+    - /autonoma run <suite>   # trigger a run from Slack
+
+# ── Convergence integration (optional) ──────────────────────────────────────
+# When enabled, ops-convergence-scan emits a finding if the latest Vercel production
+# deployment has no associated Autonoma E2E result within the staleness window.
+convergence:
+  enabled: false   # enable once Autonoma → ops.convergence_findings wiring is implemented
+  finding_kind: e2e_missing
+  target: "autonoma:ops-console:production"
+  staleness_window_minutes: 60
+  severity: medium
+  runbook: docs/runbooks/AUTONOMA_SLACK.md

@@ -70,5 +70,6 @@
     "https://json.schemastore.org/github-action.json": ".github/action.yml"
   },
   "python.languageServer": "None",
-  "git.ignoreLimitWarning": true
+  "git.ignoreLimitWarning": true,
+  "vscode-pull-requests-azure-devops.collection": "https://dev.azure.com/insightpulseai"
 }

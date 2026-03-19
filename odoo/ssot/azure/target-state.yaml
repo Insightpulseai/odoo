@@ -1,0 +1,134 @@
+version: "2.0"
+last_updated: "2026-03-13"
+governance: "spec/azure-target-state/constitution.md"
+
+# -- Runtime plane policy --
+# Azure-native is the only approved runtime plane.
+# External SaaS exceptions: Tableau Cloud (analytics presentation only).
+# Email exception: Zoho/Mailgun (messaging infrastructure, not app runtime).
+# Temporary transition exception: Vercel only if explicitly time-bounded.
+# DigitalOcean: decommissioned 2026-03-11. Never reintroduce.
+
+platforms:
+  github:
+    role: primary
+    capabilities:
+      source_control: { status: active, service: "GitHub Repos" }
+      ci_cd: { status: active, service: "GitHub Actions" }
+      code_review: { status: active, service: "GitHub PRs" }
+      issue_tracking: { status: active, service: "GitHub Issues + Plane" }
+      documentation: { status: active, service: "In-repo spec kits" }
+      releases: { status: active, service: "GitHub Releases" }
+      packages: { status: active, service: "npm (pnpm workspaces)" }
+      security: { status: active, service: "Dependabot + CodeQL" }
+
+  azure_devops:
+    role: bounded
+    constraint: "Boards-only program overlay"
+    capabilities:
+      boards: { status: optional, service: "Azure Boards" }
+      executive_reporting: { status: optional, service: "Azure Dashboards" }
+    prohibited:
+      - repos
+      - pipelines
+      - artifacts
+      - test_plans
+      - wiki
+
+  azure_cloud:
+    role: primary_runtime
+    constraint: "All first-party runtimes on Azure. No other cloud compute."
+    capabilities:
+      container_apps: { status: active, service: "Azure Container Apps" }
+      front_door: { status: active, service: "Azure Front Door Standard/Premium" }
+      key_vault: { status: active, service: "Azure Key Vault" }
+      postgresql: { status: active, service: "Azure PG Flexible Server" }
+      container_registry: { status: active, service: "Azure Container Registry" }
+      foundry_agents: { status: active, service: "Microsoft Foundry Agents Service" }
+      openai: { status: active, service: "Azure OpenAI" }
+      databricks: { status: active, service: "Azure Databricks" }
+      monitor: { status: active, service: "Azure Monitor / App Insights" }
+      dev_center:
+        status: phase-2
+        service: "Azure Dev Center"
+        prerequisite: "Front Door cutover complete (Wave 1+)"
+
+  external_saas:
+    tableau_cloud:
+      role: analytics_presentation
+      constraint: "Presentation/consumption surface only. Never SSOT or SOR."
+      site: "insightpulseai on 10ax.online.tableau.com"
+      primary_connector: "Azure Databricks"
+      secondary_connectors: ["Azure SQL", "Azure Synapse"]
+      conditional_connectors: ["ADLS Gen2"]
+      auth: "Azure AD OAuth (Entra ID)"
+      contract: "lakehouse/contracts/bi/tableau.yaml"
+
+  email:
+    role: messaging_infrastructure
+    constraint: "DNS-only. Not app runtime. Not routed through Front Door."
+    providers:
+      zoho: { status: active, scope: "Human/business mailboxes on root domain" }
+      mailgun: { status: active, scope: "Transactional mail via mg.insightpulseai.com" }
+
+  deprecated:
+    digitalocean:
+      role: decommissioned
+      decommissioned_date: "2026-03-11"
+      note: "Droplet deleted, snapshot complete. Never reintroduce."
+    vercel:
+      role: deprecated
+      note: "No new deployments. Transitional residue only."
+
+dns:
+  authority: Cloudflare
+  mail_policy: DNS-only
+  app_edge: Azure Front Door Standard/Premium
+  apex_note: "Cloudflare CNAME flattening for @. Monitor AFD certificate revalidation."
+
+  public_hostnames_via_frontdoor:
+    - "@"
+    - www
+    - erp
+    - auth
+    - crm
+    - mcp
+    - n8n
+    - ocr
+    - plane
+    - shelf
+    - superset
+    - ops
+
+  mail_records_dns_only:
+    - MX
+    - SPF
+    - DKIM
+    - DMARC
+    - mail
+    - email.mg
+
+identity:
+  workforce: Entra ID
+  tableau_auth: "Azure AD OAuth (connector credentials)"
+  secrets: "Azure Key Vault + Supabase Vault"
+
+repo_ownership:
+  infra: "dns, edge, frontdoor, iac, cloud topology"
+  lakehouse: "databricks, bi-serving, tableau contracts, medallion"
+  odoo: "erp runtime only"
+  ops-platform: "ssot, control-plane, secrets, supabase"
+  agents: "agent registry, skills, orchestration"
+
+migration_direction: "azure_devops -> github (repos, pipelines, wiki)"
+conflict_resolution: "github_authoritative"
+sync_direction: "github -> azure_devops (one-way, never reverse)"
+
+cross_references:
+  platform_target_state: "ssot/azure/PLATFORM_TARGET_STATE.md"
+  constitution: "spec/azure-target-state/constitution.md"
+  service_matrix: "ssot/azure/service-matrix.yaml"
+  dns_plan: "ssot/azure/dns-migration-plan.yaml"
+  resources_inventory: "artifacts/azure/resources.inventory.json"
+  foundry_targets: "artifacts/azure/foundry.targets.json"
+  tableau_contract: "lakehouse/contracts/bi/tableau.yaml"

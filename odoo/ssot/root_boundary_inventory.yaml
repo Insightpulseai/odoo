@@ -1,0 +1,881 @@
+# Root Boundary Inventory — SSOT
+# Classifies every top-level entry in the repo root.
+#
+# Statuses:
+#   aligned           — canonical, belongs here per CLAUDE.md / PLATFORM_REPO_TREE
+#   duplicate         — content duplicates another canonical path
+#   misplaced         — README-only stub or wrong location
+#   candidate_archive — transient / scratch / should not be at root
+#   tooling           — IDE / build / agent tooling (dot-prefixed, expected)
+#   unknown           — no clear owner or purpose; needs triage
+
+version: 1
+generated: "2026-02-24"
+
+canonical_top_level:
+  - .github
+  - .claude
+  - .agent
+  - .devcontainer
+  - .vscode
+  - addons
+  - agents
+  - skills
+  - config
+  - docker
+  - runtime
+  - scripts
+  - supabase
+  - infra
+  - apps
+  - packages
+  - docs
+  - spec
+  - ssot
+  - tests
+  - templates
+  - archive
+  - automations
+  - web
+  - odoo19
+  - vendor
+  - third_party
+  - data
+
+inventory:
+  # ── Canonical directories ────────────────────────────────────────────
+  - path: .github
+    status: aligned
+    notes: "CI/CD workflows, issue templates, policies"
+    owner: devops
+
+  - path: .claude
+    status: aligned
+    notes: "Claude Code agent config, settings, rules"
+    owner: null
+
+  - path: .agent
+    status: aligned
+    notes: "Agent rules, configs, coordinator, subagents"
+    owner: null
+
+  - path: .devcontainer
+    status: aligned
+    notes: "DevContainer config for codespaces / local dev"
+    owner: devops
+
+  - path: .vscode
+    status: aligned
+    notes: "VS Code workspace settings"
+    owner: null
+
+  - path: addons
+    status: aligned
+    notes: "Odoo addons: addons/odoo, addons/oca, addons/ipai"
+    owner: backend
+
+  - path: agents
+    status: aligned
+    notes: "Agent personas, MCP servers, skills"
+    owner: null
+
+  - path: skills
+    status: aligned
+    notes: "Agent skill definitions (subagent prompts)"
+    owner: null
+
+  - path: config
+    status: aligned
+    notes: "Odoo + platform configuration files"
+    owner: backend
+
+  - path: docker
+    status: aligned
+    notes: "Docker images, compose fragments, build contexts"
+    owner: devops
+
+  - path: runtime
+    status: aligned
+    notes: "Runtime scripts, patches for production"
+    owner: devops
+
+  - path: scripts
+    status: aligned
+    notes: "550+ automation scripts across 43 categories"
+    owner: devops
+
+  - path: supabase
+    status: aligned
+    notes: "Supabase functions, migrations, config"
+    owner: backend
+
+  - path: infra
+    status: aligned
+    notes: "Infrastructure: DNS, Cloudflare, DO, monitoring, n8n"
+    owner: devops
+
+  - path: apps
+    status: aligned
+    notes: "Frontend applications (ops-console, mobile, etc)"
+    owner: frontend
+
+  - path: packages
+    status: aligned
+    notes: "Shared npm/pnpm packages (8 packages)"
+    owner: null
+
+  - path: docs
+    status: aligned
+    notes: "Documentation: ai/, architecture/, ops/, contracts/"
+    owner: scribe
+
+  - path: spec
+    status: aligned
+    notes: "Spec kit bundles (62+ specs, spec-kit format)"
+    owner: architect
+
+  - path: ssot
+    status: aligned
+    notes: "SSOT policies, boundary maps, CI/CD policy matrix"
+    owner: architect
+
+  - path: tests
+    status: aligned
+    notes: "Test suites (smoke tests, __init__.py)"
+    owner: qa
+
+  - path: templates
+    status: aligned
+    notes: "Module templates, Odoo CMS templates, SaaS landing"
+    owner: null
+
+  - path: archive
+    status: aligned
+    notes: "Archived content: deprecated addons, env-backups, root cleanup"
+    owner: null
+
+  - path: automations
+    status: aligned
+    notes: "n8n workflows, repo_hygiene scripts"
+    owner: devops
+
+  - path: web
+    status: aligned
+    notes: "Web apps: ai-control-plane, apps, bi-architect, platform-kit, docs/evidence"
+    owner: frontend
+
+  - path: odoo19
+    status: aligned
+    notes: "Odoo 19 runtime: config, backups, scripts, docs"
+    owner: backend
+
+  - path: vendor
+    status: aligned
+    notes: "Vendored OCA modules, oca-sync, oca.lock"
+    owner: backend
+
+  - path: third_party
+    status: aligned
+    notes: "Third-party: anthropic_skills, OCA modules"
+    owner: null
+
+  - path: data
+    status: aligned
+    notes: "Import templates, finance seed, filestore, BIR data"
+    owner: backend
+
+  # ── Misplaced (README-only stubs) ───────────────────────────────────
+  - path: mcp
+    status: misplaced
+    notes: "Only contains README.md. agents/mcp/ is the canonical MCP location."
+    owner: null
+
+  - path: n8n
+    status: misplaced
+    notes: "Only contains README.md. infra/n8n/ is the canonical n8n location."
+    owner: null
+
+  - path: vercel
+    status: misplaced
+    notes: "Only contains README.md. vercel.json at root + web/ apps cover Vercel."
+    owner: null
+
+  # ── Duplicates ──────────────────────────────────────────────────────
+  - path: specs
+    status: duplicate
+    notes: "Loose PRD markdown files (not spec-kit format). Duplicates spec/."
+    owner: null
+
+  - path: catalogs
+    status: duplicate
+    notes: "Contains locales/ + sap_concur catalog. Duplicates catalog/."
+    owner: null
+
+  - path: catalog
+    status: aligned
+    notes: "Canonical catalog: parity plans, equivalence matrices, alternatives"
+    owner: architect
+
+  # ── Candidate archive (transient / scratch / dev artifacts) ─────────
+  - path: scratch
+    status: candidate_archive
+    notes: "Transient scratch: odoo.pid, out/, spec-migration-plan.csv"
+    owner: null
+
+  - path: out
+    status: candidate_archive
+    notes: "Build/sweep output: automation_sweep, concur_demo, copilot_index (20 items)"
+    owner: null
+
+  - path: sandbox
+    status: candidate_archive
+    notes: "Dev sandbox: dev/, workbench/. CLAUDE.md says never canonical evidence."
+    owner: null
+
+  - path: odoo_local
+    status: candidate_archive
+    notes: "Local Odoo seed data + integration map. Should be in data/ or docs/."
+    owner: null
+
+  - path: secrets
+    status: candidate_archive
+    notes: "Contains odoo_pg_pass. Already in .gitignore. Security risk if committed."
+    owner: security
+
+  # ── Unknown / needs triage ──────────────────────────────────────────
+  - path: api
+    status: unknown
+    notes: "Single file: oca-docs-brain-openapi.yaml. Could live in docs/ or spec/."
+    owner: null
+
+  - path: architecture-review
+    status: unknown
+    notes: "Review baseline, framework, templates. Could merge into docs/architecture/."
+    owner: architect
+
+  - path: audit
+    status: unknown
+    notes: "snapshot.json + snapshot.txt. Could merge into reports/ or docs/."
+    owner: qa
+
+  - path: baselines
+    status: unknown
+    notes: "Quality baseline from 2025. Could merge into reports/ or docs/."
+    owner: qa
+
+  - path: bin
+    status: unknown
+    notes: "9 CLI scripts. Could merge into scripts/bin/ or scripts/cli/."
+    owner: devops
+
+  - path: calendar
+    status: unknown
+    notes: "Finance closing calendar CSV + ICS. Could live in data/ or docs/ops/."
+    owner: null
+
+  - path: ccpm
+    status: unknown
+    notes: "Critical Chain Project Management sub-project with .github, bin, scripts, spec."
+    owner: null
+
+  - path: ci
+    status: unknown
+    notes: "odoo_core_addons_allowlist.txt + README. Could merge into .github/ or scripts/ci/."
+    owner: devops
+
+  - path: claudedocs
+    status: unknown
+    notes: "Claude-generated analysis reports (6 files). Rule: claudedocs/ is correct per RULES.md."
+    owner: null
+
+  - path: clients
+    status: unknown
+    notes: "flutter_receipt_ocr. Could live in apps/ or services/."
+    owner: frontend
+
+  - path: contains-studio-agents
+    status: unknown
+    notes: "Agent personas by department (design, engineering, marketing, product). May overlap agents/."
+    owner: null
+
+  - path: contracts
+    status: unknown
+    notes: "delta/ + lakehouse-executor.openapi.yaml. May overlap docs/contracts/."
+    owner: null
+
+  - path: db
+    status: unknown
+    notes: "Database audit, import-templates, init, migrations (12 items). Overlaps data/ and supabase/migrations/."
+    owner: backend
+
+  - path: dbt
+    status: unknown
+    notes: "dbt project config. Could live in infra/ or data/."
+    owner: null
+
+  - path: deploy
+    status: unknown
+    notes: "docflow deployment. Could live in infra/deploy/."
+    owner: devops
+
+  - path: design
+    status: unknown
+    notes: "Components, figma, inputs, tokens (9 items). May overlap design-tokens/ and packages/design-tokens/."
+    owner: frontend
+
+  - path: design-tokens
+    status: unknown
+    notes: "Figma export artifacts. May overlap design/ and packages/design-tokens/."
+    owner: frontend
+
+  - path: dev
+    status: unknown
+    notes: "Dev compose overlays: odoo-addons, postgres-init, superset. Could live in docker/ or infra/."
+    owner: devops
+
+  - path: docflow-agentic-finance
+    status: unknown
+    notes: "Agentic finance sub-project (agents, data, scripts, spec). Could be a spec/ bundle or apps/ entry."
+    owner: null
+
+  - path: engines
+    status: unknown
+    notes: "Engine templates: doc-ocr, retail-intel, te-cheq. Could live in services/ or apps/."
+    owner: null
+
+  - path: figma
+    status: unknown
+    notes: "Figma config + make-dev yaml. Overlaps design/ and design-tokens/."
+    owner: frontend
+
+  - path: frontend-fluent
+    status: unknown
+    notes: "Single .env.example file. Likely a dead prototype."
+    owner: null
+
+  - path: handbook
+    status: unknown
+    notes: "Compliance + finance handbook (gitbook). Could merge into docs/."
+    owner: scribe
+
+  - path: harness
+    status: unknown
+    notes: "Test harness runners. Could merge into tests/."
+    owner: qa
+
+  - path: integrations
+    status: unknown
+    notes: "Single apps.yml. Could merge into docs/ops/ or config/."
+    owner: null
+
+  - path: inventory
+    status: unknown
+    notes: "Symlinked latest → runs/. Could merge into reports/."
+    owner: null
+
+  - path: ipai-platform
+    status: unknown
+    notes: "Platform config: nginx, odoo, scripts, .env.example. May overlap infra/ or docker/."
+    owner: devops
+
+  - path: kb
+    status: unknown
+    notes: "Knowledge base: audit, design_system, finance_close, parity. Could merge into docs/."
+    owner: null
+
+  - path: mattermost
+    status: candidate_archive
+    notes: "Deprecated per CLAUDE.md (replaced by Slack 2026-01-28). Contains runbooks + webhook-templates."
+    owner: null
+
+  - path: memory
+    status: unknown
+    notes: "Agent memory packs + policy. Could merge into agents/ or .claude/."
+    owner: null
+
+  - path: notion-n8n-monthly-close
+    status: unknown
+    notes: "Notion+n8n monthly close sub-project. Could be in services/ or automations/."
+    owner: null
+
+  - path: ocr-adapter
+    status: unknown
+    notes: "OCR adapter service (scripts, test_receipts, deployment docs). Could be in services/ or apps/."
+    owner: backend
+
+  - path: ocr_service
+    status: unknown
+    notes: "Minimal OCR service (server.py + pid file). Could merge into services/ocr/."
+    owner: backend
+
+  - path: odoo
+    status: unknown
+    notes: "Contains compose/ + ssot/ + seed data. Not the main Odoo runtime (that is odoo19/)."
+    owner: backend
+
+  - path: odoo-schema-mirror
+    status: unknown
+    notes: "Schema export/DBML generation tools. Could live in tools/ or db/."
+    owner: backend
+
+  - path: ops
+    status: unknown
+    notes: "Operations: alerting, backlog, backup, compose (14 items). May overlap infra/ and docs/ops/."
+    owner: devops
+
+  - path: osi
+    status: unknown
+    notes: "OSI templates (JSON + YAML). Could live in templates/ or config/."
+    owner: null
+
+  - path: parity
+    status: unknown
+    notes: "EE parity matrix. Overlaps catalog/ and docs/."
+    owner: null
+
+  - path: patches
+    status: unknown
+    notes: "Single diff file. Could merge into runtime/patches/."
+    owner: null
+
+  - path: pkgs
+    status: unknown
+    notes: "13 packages. Duplicates packages/ naming convention."
+    owner: null
+
+  - path: platform
+    status: unknown
+    notes: "Advisor, bridges, db, vercel-integrations. May overlap infra/ or web/."
+    owner: null
+
+  - path: platform-kit
+    status: unknown
+    notes: "CLI, docs, reports. May overlap web/platform-kit/."
+    owner: null
+
+  - path: prototypes
+    status: candidate_archive
+    notes: "Prototype Odoo themes/chat (3 items + README). Experimental, not production."
+    owner: null
+
+  - path: registry
+    status: unknown
+    notes: "Feature + integration registries. Could merge into catalog/ or config/."
+    owner: null
+
+  - path: releasekit
+    status: unknown
+    notes: "Fastlane, scripts, store assets. Could merge into apps/ or infra/."
+    owner: devops
+
+  - path: reports
+    status: unknown
+    notes: "Parity reports, repo_hygiene, structure diffs. Could merge into docs/ or out/."
+    owner: null
+
+  - path: research
+    status: unknown
+    notes: "Single dist/ directory. Could merge into docs/research/."
+    owner: null
+
+  - path: schemas
+    status: unknown
+    notes: "JSON schemas for features, gates, parity. Could merge into spec/ or config/."
+    owner: null
+
+  - path: security
+    status: unknown
+    notes: "Caddyfile + threat model doc. Could merge into infra/ or docs/."
+    owner: security
+
+  - path: seed_export
+    status: unknown
+    notes: "CSV exports (projects, stages, tags, tasks). Could merge into data/."
+    owner: null
+
+  - path: seeds
+    status: unknown
+    notes: "Schema, scripts, shared, workstreams. Overlaps data/ and db/."
+    owner: null
+
+  - path: services
+    status: unknown
+    notes: "notion-sync, ocr, pm_api. Could merge into apps/ or be canonical services dir."
+    owner: backend
+
+  - path: skillpack
+    status: unknown
+    notes: "Single manifest.json. Could merge into agents/ or skills/."
+    owner: null
+
+  - path: src
+    status: unknown
+    notes: "Lakehouse Python package + egg-info. Could live in packages/ or services/."
+    owner: null
+
+  - path: stack
+    status: unknown
+    notes: "Single odoo19_stack.yaml. Could merge into infra/ or config/."
+    owner: null
+
+  - path: tasks
+    status: unknown
+    notes: "infra/ subdirectory only. Could merge into docs/ops/ or spec/."
+    owner: null
+
+  - path: tools
+    status: unknown
+    notes: "25 tool directories: agent-router, audit, catalog, etc. Overlaps scripts/."
+    owner: null
+
+  - path: workflows
+    status: unknown
+    notes: "Finance PPM, n8n, odoo workflows (11 items). Overlaps automations/."
+    owner: null
+
+  - path: agent-library
+    status: unknown
+    notes: "13 agent library entries. Overlaps agents/."
+    owner: null
+
+  - path: agent-library-pack
+    status: unknown
+    notes: "Prompts, router, schemas, scripts. Overlaps agents/."
+    owner: null
+
+  # ── Tooling (dot-prefixed, expected) ────────────────────────────────
+  - path: .ai
+    status: tooling
+    notes: "bugbot-rules.yml. AI linting config."
+    owner: null
+
+  - path: .cache
+    status: tooling
+    notes: "SuperClaude indexes: rg_catalog.txt, ctags. Auto-generated."
+    owner: null
+
+  - path: .continue
+    status: tooling
+    notes: "Continue.dev IDE config: prompts, rules, config.json."
+    owner: null
+
+  - path: .gemini
+    status: tooling
+    notes: "Gemini agent tmp directory."
+    owner: null
+
+  - path: .insightpulse
+    status: tooling
+    notes: "Repo root allowlist, sync config."
+    owner: null
+
+  - path: .lib
+    status: tooling
+    notes: "Benchmark databases (bench.db, bench_full.db 186MB). Candidate for .gitignore."
+    owner: null
+
+  - path: .pnpm-store
+    status: tooling
+    notes: "pnpm package store. Should be in .gitignore."
+    owner: null
+
+  - path: .pytest_cache
+    status: tooling
+    notes: "pytest cache. Has own .gitignore."
+    owner: null
+
+  - path: .refactor
+    status: tooling
+    notes: "Refactoring config YAML."
+    owner: null
+
+  - path: .specify
+    status: tooling
+    notes: "Spec-kit memory, scripts, templates."
+    owner: null
+
+  - path: .supabase
+    status: tooling
+    notes: "Supabase local config."
+    owner: null
+
+  - path: .venv
+    status: tooling
+    notes: "Python virtual environment. Should be in .gitignore."
+    owner: null
+
+  - path: .worktrees
+    status: tooling
+    notes: "Git worktrees for parallel development."
+    owner: null
+
+  - path: .gitignore
+    status: aligned
+    notes: "Git ignore rules."
+    owner: null
+
+  - path: .pre-commit-config.yaml
+    status: aligned
+    notes: "Pre-commit hook configuration."
+    owner: devops
+
+  - path: .agentignore
+    status: tooling
+    notes: "Agent ignore rules."
+    owner: null
+
+  - path: .cursorignore
+    status: tooling
+    notes: "Cursor IDE ignore rules."
+    owner: null
+
+  - path: .flake8
+    status: tooling
+    notes: "Flake8 Python linting config."
+    owner: null
+
+  - path: .markdownlint-cli2.jsonc
+    status: tooling
+    notes: "Markdown linting config."
+    owner: null
+
+  - path: .mypy-baseline.txt
+    status: tooling
+    notes: "mypy type checking baseline."
+    owner: null
+
+  - path: .oca_install_state.json
+    status: tooling
+    notes: "OCA module install state tracking."
+    owner: null
+
+  - path: .python-version
+    status: tooling
+    notes: "Python version pin (pyenv)."
+    owner: null
+
+  - path: .yamllint.yml
+    status: tooling
+    notes: "YAML linting config."
+    owner: null
+
+  # ── Root config files (aligned) ─────────────────────────────────────
+  - path: CLAUDE.md
+    status: aligned
+    notes: "Agent SSOT pointer + operating contract."
+    owner: null
+
+  - path: AGENTS.md
+    status: aligned
+    notes: "Generated agent instructions (from SSOT.md sync)."
+    owner: null
+
+  - path: GEMINI.md
+    status: aligned
+    notes: "Generated Gemini agent instructions."
+    owner: null
+
+  - path: README.md
+    status: aligned
+    notes: "Repo README."
+    owner: null
+
+  - path: CHANGELOG.md
+    status: aligned
+    notes: "Change log."
+    owner: null
+
+  - path: CONTRIBUTING.md
+    status: aligned
+    notes: "Contribution guidelines."
+    owner: null
+
+  - path: SECURITY.md
+    status: aligned
+    notes: "Security policy."
+    owner: security
+
+  - path: Makefile
+    status: aligned
+    notes: "Build/dev make targets."
+    owner: null
+
+  - path: package.json
+    status: aligned
+    notes: "Root pnpm workspace package.json."
+    owner: null
+
+  - path: pnpm-workspace.yaml
+    status: aligned
+    notes: "pnpm workspace config."
+    owner: null
+
+  - path: pnpm-lock.yaml
+    status: aligned
+    notes: "pnpm lockfile."
+    owner: null
+
+  - path: turbo.json
+    status: aligned
+    notes: "Turborepo config."
+    owner: null
+
+  - path: vercel.json
+    status: aligned
+    notes: "Vercel deployment config (root-level)."
+    owner: devops
+
+  - path: pyproject.toml
+    status: aligned
+    notes: "Python project config (black, isort, mypy)."
+    owner: null
+
+  - path: odoo-bin
+    status: aligned
+    notes: "Odoo CLI entry point."
+    owner: backend
+
+  - path: odoo.code-workspace
+    status: aligned
+    notes: "VS Code multi-root workspace."
+    owner: null
+
+  - path: oca-aggregate.yml
+    status: aligned
+    notes: "OCA gitaggregate config."
+    owner: backend
+
+  - path: oca.lock.json
+    status: aligned
+    notes: "OCA module lock file."
+    owner: backend
+
+  - path: mkdocs.yml
+    status: aligned
+    notes: "MkDocs documentation site config."
+    owner: scribe
+
+  - path: llms.txt
+    status: aligned
+    notes: "LLM context file (compact)."
+    owner: null
+
+  - path: llms-full.txt
+    status: aligned
+    notes: "LLM context file (full)."
+    owner: null
+
+  - path: addons.manifest.json
+    status: aligned
+    notes: "Addons manifest for CI/install validation."
+    owner: backend
+
+  - path: automations-inventory.json
+    status: aligned
+    notes: "n8n automation inventory (generated)."
+    owner: devops
+
+  - path: automations-inventory.md
+    status: aligned
+    notes: "n8n automation inventory (readable)."
+    owner: devops
+
+  - path: generate_automations_inventory.py
+    status: unknown
+    notes: "Root-level script. Should live in scripts/automations/."
+    owner: null
+
+  - path: requirements.txt
+    status: aligned
+    notes: "Python dependencies."
+    owner: null
+
+  - path: requirements-constraints.txt
+    status: aligned
+    notes: "Python dependency constraints."
+    owner: null
+
+  - path: requirements-dev.txt
+    status: aligned
+    notes: "Python dev dependencies."
+    owner: null
+
+  - path: requirements-docs.txt
+    status: aligned
+    notes: "Python docs dependencies."
+    owner: null
+
+  - path: requirements-oca.txt
+    status: aligned
+    notes: "OCA-specific Python dependencies."
+    owner: null
+
+  # ── Docker root files (high-risk, CI-referenced) ────────────────────
+  - path: Dockerfile
+    status: duplicate
+    notes: "Root Dockerfile (Odoo 18 CE header). docker/Dockerfile.ce19 exists. CI refs to both."
+    owner: devops
+
+  - path: docker-compose.yml
+    status: aligned
+    notes: "Canonical SSOT compose. Referenced by 6+ CI workflows. Must stay at root."
+    owner: devops
+
+  - path: docker-compose.dev.yml
+    status: aligned
+    notes: "Dev overlay compose. Referenced by compose-ssot-gate.yml CI. Must stay at root."
+    owner: devops
+
+  # ── Env files (expected at root, .gitignore'd) ──────────────────────
+  - path: .env
+    status: aligned
+    notes: "Local env vars. In .gitignore."
+    owner: null
+
+  - path: .env.dev
+    status: aligned
+    notes: "Dev env vars. In .gitignore."
+    owner: null
+
+  - path: .env.example
+    status: aligned
+    notes: "Example env template. Committed."
+    owner: null
+
+  - path: .env.figma
+    status: aligned
+    notes: "Figma env vars. In .gitignore."
+    owner: null
+
+  - path: .env.figma.example
+    status: aligned
+    notes: "Figma env example. Committed."
+    owner: null
+
+  - path: .env.platform.local
+    status: aligned
+    notes: "Platform local env. In .gitignore."
+    owner: null
+
+  - path: .env.prod
+    status: aligned
+    notes: "Prod env vars. In .gitignore."
+    owner: null
+
+  - path: .env.smtp.example
+    status: aligned
+    notes: "SMTP env example. Committed."
+    owner: null
+
+  - path: .env.stage
+    status: aligned
+    notes: "Staging env vars. In .gitignore."
+    owner: null
+
+# Summary:
+#   aligned:           ~48 dirs + ~35 files = ~83
+#   misplaced:         3  (mcp, n8n, vercel)
+#   duplicate:         3  (specs, catalogs, Dockerfile)
+#   candidate_archive: 6  (scratch, out, sandbox, odoo_local, secrets, mattermost, prototypes)
+#   tooling:           ~20 (dot-prefixed dirs + config files)
+#   unknown:           ~45 (dirs needing triage in future phases)

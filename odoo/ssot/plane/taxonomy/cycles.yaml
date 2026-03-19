@@ -1,0 +1,24 @@
+schema: ssot.plane.taxonomy.cycles.v2
+version: 2
+updated: "2026-03-16"
+
+# Finance cycles (retained for finops project)
+finance_cycles:
+  naming_pattern: '^[0-9]{4}-[0-9]{2} Month End$'
+  cycles:
+    - 2026-03 Month End
+    - 2026-04 Month End
+    - 2026-05 Month End
+    - 2026-06 Month End
+
+# Platform delivery waves (for platform project)
+# Each maps to an Azure Boards Iteration equivalent.
+platform_cycles:
+  naming_pattern: '^(Cleanup|Plan to Ready|Ready to Migrate|Migration Wave|Client Packaging)'
+  cycles:
+    - Cleanup
+    - Plan to Ready
+    - Ready to Migrate
+    - Migration Wave 1
+    - Migration Wave 2
+    - Client Packaging

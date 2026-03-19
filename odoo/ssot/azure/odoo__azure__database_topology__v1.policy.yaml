@@ -1,0 +1,60 @@
+version: 1
+namespace: ipai.odoo.azure.database_topology.v1
+artifact_type: policy
+repo_key: odoo
+domain: azure
+subject: database_topology
+
+rules:
+  odoo_and_supabase_must_not_share_postgres_server: true
+  postgres_server_boundary_is_environment_boundary: true
+  production_databases_must_not_reside_on_dev_servers: true
+  public_access_disabled_for_prod_when_private_endpoint_ready: true
+  long_term_backup_required_for_prod: true
+  ha_required_for_prod: true
+  tls_enforced_all_environments: true
+  app_login_must_not_be_superuser: true
+
+databases:
+  canonical:
+    prod: odoo
+    staging: odoo_staging
+    dev: odoo_dev
+  forbidden:
+    - odoo_prod
+
+target_topology:
+  odoo:
+    dev:
+      server: ipai-odoo-dev-pg
+      database: odoo_dev
+    staging:
+      server: ipai-odoo-staging-pg
+      database: odoo_staging
+    prod:
+      server: ipai-odoo-prod-pg
+      database: odoo
+  supabase:
+    dev:
+      server: pg-ipai-dev
+      database: supabase
+    staging:
+      server: ipai-supabase-staging-pg
+      database: supabase
+    prod:
+      server: ipai-supabase-prod-pg
+      database: supabase
+
+current_state:
+  ipai-odoo-dev-pg:
+    databases_present:
+      - postgres
+      - odoo
+      - odoo_dev
+      - odoo_staging
+      - odoo_prod
+    violations:
+      - "odoo_prod on dev server"
+      - "odoo (prod) on dev server"
+      - "odoo_staging on dev server"
+    target: "retain only odoo_dev"

@@ -17,7 +17,7 @@
 7. **Cross-domain changes need a contract doc.** DNS + email changes → `docs/contracts/DNS_EMAIL_CONTRACT.md`. New cross-domain contracts → register in `docs/contracts/PLATFORM_CONTRACTS_INDEX.md`.
 8. **Domain deprecations are permanent.** `insightpulseai.net` → `insightpulseai.com`. Mattermost → Slack. Never reintroduce deprecated items.
 9. **Odoo is relying party, Supabase is IdP.** Never store primary passwords in Odoo for users with a Supabase counterpart.
-10. **No console-only infrastructure changes.** DigitalOcean, Cloudflare, Vercel — all changes must have a corresponding repo commit (IaC or YAML).
+10. **No console-only infrastructure changes.** Azure, Cloudflare — all changes must have a corresponding repo commit (IaC or YAML).
 
 ---
 
@@ -175,6 +175,6 @@ When working on `addons/oca/` submodules:
 | An n8n workflow        | n8n (`automations/n8n/`) | `automations/n8n/workflows/<name>.json` |
 | A Vercel route         | **DEPRECATED**           | Vercel is no longer active — use Azure Container Apps |
 | A design token         | Figma → tokens           | Run `scripts/design/export_tokens.sh`   |
-| DO droplet stack       | DO infra                 | `deploy/odoo-prod.compose.yml`          |
+| Azure Container Apps   | Azure infra              | `infra/azure/`                          |
 | A CI workflow          | GitHub                   | `.github/workflows/<name>.yml`          |
 | An Odoo module         | Odoo addons              | `addons/ipai/ipai_<domain>_<feature>/`  |

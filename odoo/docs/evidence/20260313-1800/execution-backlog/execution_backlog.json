@@ -1,0 +1,67 @@
+{
+  "generated": "2026-03-13T18:00:00+08:00",
+  "repo": "Insightpulseai/odoo",
+  "branch": "chore/mcp-normalize-tier1",
+  "summary": {
+    "total_tasks": 87,
+    "blocked": 14,
+    "ready": 31,
+    "stale": 19,
+    "obsolete": 12,
+    "critical_path_items": 4,
+    "spec_bundles": 8,
+    "open_issues": 1,
+    "open_prs": 3,
+    "orphan_branches": 4,
+    "code_todos": 42,
+    "deprecated_workflow_refs": 7,
+    "pending_contracts": 7,
+    "ci_status": "BILLING_LOCKED"
+  },
+  "tasks": [
+    {"id": "CI-001", "title": "Resolve GitHub Actions billing lock", "source": "ci-sweep", "repo": "Insightpulseai/odoo", "owner": null, "status": "BLOCKED", "priority": "P0", "dependencies": [], "blockers": ["GitHub billing"], "last_signal": "2026-03-13", "next_action": "Resolve billing with GitHub"},
+    {"id": "PR-576", "title": "chore(mcp): migrate shared MCP config to root .mcp.json", "source": "github-pr", "repo": "Insightpulseai/odoo", "owner": "jgtolentino", "status": "READY", "priority": "P0", "dependencies": [], "blockers": ["CI-001"], "last_signal": "2026-03-13", "next_action": "Merge after CI unblocked"},
+    {"id": "PR-575", "title": "chore(ssot): lock Azure-native target state + Tableau connector", "source": "github-pr", "repo": "Insightpulseai/odoo", "owner": "jgtolentino", "status": "READY", "priority": "P0", "dependencies": [], "blockers": ["CI-001"], "last_signal": "2026-03-13", "next_action": "Merge after CI unblocked"},
+    {"id": "PR-573", "title": "feat(platform): CI normalization, Azure migration, platform SSOT", "source": "github-pr", "repo": "Insightpulseai/odoo", "owner": "jgtolentino", "status": "CONFLICTING", "priority": "P1", "dependencies": [], "blockers": ["CI-001", "merge-conflicts"], "last_signal": "2026-03-13", "next_action": "Resolve conflicts, rebase on main"},
+    {"id": "GH-567", "title": "Azure DevOps Pipeline: Authorize Managed DevOps Pool", "source": "github-issue", "repo": "Insightpulseai/odoo", "owner": null, "status": "OPEN", "priority": "P1", "dependencies": [], "blockers": [], "last_signal": "2026-03-11", "next_action": "Assign owner, authorize pool"},
+    {"id": "CI-002", "title": "Remove DigitalOcean refs from 3 workflow files", "source": "ci-sweep", "repo": "Insightpulseai/odoo", "owner": null, "status": "READY", "priority": "P1", "dependencies": [], "blockers": [], "last_signal": "2026-03-13", "next_action": "Edit infra-cloudflare-dns.yml, docker-build-n8n.yml, docker-build-odoo.yml"},
+    {"id": "CI-003", "title": "Remove Vercel refs from 3 workflow files", "source": "ci-sweep", "repo": "Insightpulseai/odoo", "owner": null, "status": "READY", "priority": "P1", "dependencies": [], "blockers": [], "last_signal": "2026-03-13", "next_action": "Edit ssot-snapshot.yml, secrets-audit.yml, ssot-validate.yml"},
+    {"id": "CI-004", "title": "Clean up 4 orphan branches", "source": "github", "repo": "Insightpulseai/odoo", "owner": null, "status": "READY", "priority": "P2", "dependencies": [], "blockers": [], "last_signal": "2026-03-13", "next_action": "Delete chore/billing-smoke, claude/developer-ux-*, claude/setup-odoo-*, docs/readme-*"},
+    {"id": "SPEC-01", "title": "odoo-copilot: Batch 1 phases (B1.1-B1.4)", "source": "spec/odoo-copilot/tasks.md", "repo": "Insightpulseai/odoo", "owner": null, "status": "IN_PROGRESS", "priority": "P1", "dependencies": ["devcontainer"], "blockers": [], "last_signal": "2026-03-11", "next_action": "Execute B1.1 install verification"},
+    {"id": "SPEC-07", "title": "lakehouse: Restore 4 contract YAML files", "source": "spec/lakehouse/tasks.md", "repo": "Insightpulseai/odoo", "owner": null, "status": "READY", "priority": "P1", "dependencies": [], "blockers": [], "last_signal": null, "next_action": "Restore to contracts/delta/"},
+    {"id": "SPEC-10", "title": "platform-auth: Phase 2 — Enable SSO across apps", "source": "spec/platform-auth/tasks.md", "repo": "Insightpulseai/odoo", "owner": null, "status": "BLOCKED", "priority": "P1", "dependencies": ["Keycloak", "Azure ACA"], "blockers": ["Keycloak deployment"], "last_signal": null, "next_action": "Enable ipai_auth_oidc in prod"},
+    {"id": "SPEC-12", "title": "odoo-app-agent-skills: Final commit/push", "source": "spec/odoo-app-agent-skills/tasks.md", "repo": "Insightpulseai/odoo", "owner": null, "status": "READY", "priority": "P1", "dependencies": [], "blockers": [], "last_signal": null, "next_action": "git add && git commit && git push"},
+    {"id": "TODO-01", "title": "Implement AI endpoint HTTP call", "source": "code-todo", "repo": "Insightpulseai/odoo", "owner": null, "status": "READY", "priority": "P1", "dependencies": [], "blockers": [], "last_signal": null, "next_action": "Wire to Azure OpenAI in ipai_enterprise_bridge/models/ipai_job.py:104"},
+    {"id": "GOV-001", "title": "Archive VERCEL_PRODUCTION_CHECKLIST_SSOT.md", "source": "docs-sweep", "repo": "Insightpulseai/odoo", "owner": null, "status": "READY", "priority": "P2", "dependencies": [], "blockers": [], "last_signal": null, "next_action": "Move to docs/archive/"},
+    {"id": "GOV-002", "title": "Archive docs/guides/runbooks/digitalocean.md", "source": "docs-sweep", "repo": "Insightpulseai/odoo", "owner": null, "status": "READY", "priority": "P2", "dependencies": [], "blockers": [], "last_signal": null, "next_action": "Archive (infra deleted)"},
+    {"id": "GOV-003", "title": "Archive docs/guides/runbooks/vercel.md", "source": "docs-sweep", "repo": "Insightpulseai/odoo", "owner": null, "status": "READY", "priority": "P2", "dependencies": [], "blockers": [], "last_signal": null, "next_action": "Archive"},
+    {"id": "C-03", "title": "JWT Trust Contract — create doc + CI validator", "source": "contracts-index", "repo": "Insightpulseai/odoo", "owner": null, "status": "PENDING", "priority": "P2", "dependencies": [], "blockers": [], "last_signal": null, "next_action": "Create docs/contracts/JWT_TRUST_CONTRACT.md"},
+    {"id": "C-04", "title": "Task Queue Contract — create doc + CI validator", "source": "contracts-index", "repo": "Insightpulseai/odoo", "owner": null, "status": "PENDING", "priority": "P2", "dependencies": [], "blockers": [], "last_signal": null, "next_action": "Create doc"},
+    {"id": "C-05", "title": "Design Tokens Contract — create doc + CI validator", "source": "contracts-index", "repo": "Insightpulseai/odoo", "owner": null, "status": "PENDING", "priority": "P3", "dependencies": [], "blockers": [], "last_signal": null, "next_action": "Create doc"},
+    {"id": "C-06", "title": "Vercel Environment Variables — mark deprecated", "source": "contracts-index", "repo": "Insightpulseai/odoo", "owner": null, "status": "OBSOLETE", "priority": "P2", "dependencies": [], "blockers": [], "last_signal": null, "next_action": "Mark deprecated in index"},
+    {"id": "C-08", "title": "Platform Audit Events — create doc + CI validator", "source": "contracts-index", "repo": "Insightpulseai/odoo", "owner": null, "status": "PENDING", "priority": "P2", "dependencies": [], "blockers": [], "last_signal": null, "next_action": "Create doc"},
+    {"id": "C-09", "title": "GitHub Actions Secrets — create doc + CI validator", "source": "contracts-index", "repo": "Insightpulseai/odoo", "owner": null, "status": "PENDING", "priority": "P2", "dependencies": [], "blockers": [], "last_signal": null, "next_action": "Create doc"}
+  ],
+  "duplicates": [
+    {"merged_id": "CI-002", "sources": ["infra-cloudflare-dns.yml", "docker-build-n8n.yml", "docker-build-odoo.yml"], "reason": "Same DO cleanup across 3 files"},
+    {"merged_id": "CI-003", "sources": ["ssot-snapshot.yml", "secrets-audit.yml", "ssot-validate.yml"], "reason": "Same Vercel cleanup across 3 files"}
+  ],
+  "conflicts": [
+    {"id": "C-06", "sources": ["contracts-index (PENDING)", "infrastructure-rules (Vercel deprecated)"], "resolution": "Mark OBSOLETE"},
+    {"id": "C-18", "sources": ["contracts-index (ACTIVE)", "infrastructure (DO deleted 2026-03-11)"], "resolution": "Mark DEPRECATED"}
+  ],
+  "stale": [
+    {"id": "digitalocean-runbook", "path": "docs/guides/runbooks/digitalocean.md", "reason": "Infrastructure deleted 2026-03-11", "action": "archive"},
+    {"id": "vercel-checklist", "path": "docs/operations/VERCEL_PRODUCTION_CHECKLIST_SSOT.md", "reason": "Platform deprecated", "action": "archive"},
+    {"id": "vercel-runbook", "path": "docs/guides/runbooks/vercel.md", "reason": "Platform deprecated", "action": "archive"},
+    {"id": "go-live-template-do-vercel", "path": "docs/releases/GO_LIVE_CHECKLIST_TEMPLATE.md", "reason": "References deleted DO + Vercel infra", "action": "rewrite"},
+    {"id": "scaffold-modules-13", "paths": ["ipai_ai_automations", "ipai_ai_fields", "ipai_ai_livechat", "ipai_documents_ai", "ipai_equity", "ipai_esg_social", "ipai_esg", "ipai_finance_tax_return", "ipai_helpdesk_refund", "ipai_planning_attendance", "ipai_project_templates", "ipai_sign", "ipai_whatsapp_connector"], "reason": "Empty models with TODO stubs only", "action": "keep-deprioritize"},
+    {"id": "copilot-phase4-teams", "path": "spec/odoo-copilot/tasks.md", "reason": "No Teams deployment planned", "action": "defer"}
+  ],
+  "execution_order": {
+    "now": ["CI-001", "PR-576", "PR-575", "PR-573", "SPEC-12", "SPEC-07", "GOV-001", "GOV-002", "GOV-003"],
+    "next": ["CI-002", "CI-003", "CI-004", "GH-567", "SPEC-01", "SPEC-10", "TODO-01", "C-06"],
+    "later": ["C-03", "C-04", "C-05", "C-08", "C-09", "SPEC-02", "SPEC-03", "SPEC-04", "SPEC-06", "SPEC-13", "SPEC-14", "TD-01", "CI-T02", "CI-T03"],
+    "close": ["C-06", "C-18", "digitalocean-runbook", "vercel-checklist", "vercel-runbook", "copilot-phase4-teams"]
+  }
+}

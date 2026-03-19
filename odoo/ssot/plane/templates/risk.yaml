@@ -1,0 +1,42 @@
+schema: ssot.plane.template.v1
+type: risk
+updated: "2026-03-16"
+
+template:
+  name: Risk Template
+  description_structure: |
+    ## Risk Statement
+    If <condition>, then <consequence>.
+
+    ## Impact
+    What is the blast radius? (scope, cost, timeline)
+
+    ## Likelihood
+    High / Medium / Low — with rationale.
+
+    ## Mitigation
+    What actions reduce likelihood or impact?
+
+    ## Trigger
+    What observable event means this risk has materialized?
+
+  required_fields:
+    - title
+    - description
+    - priority
+    - assignee (risk owner)
+
+  label_convention:
+    - "Type/Risk"
+    - "Module/<module>"
+    - "Priority/<impact-level>"
+
+  module_assignment_rule: >
+    Assign to the module most affected by the risk.
+
+  cycle_assignment_rule: >
+    Assign to the cycle where the risk window is highest.
+
+  done_rule: >
+    Risk is mitigated (likelihood reduced to acceptable level),
+    accepted (documented decision), or expired (window passed).

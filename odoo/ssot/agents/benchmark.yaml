@@ -1,0 +1,88 @@
+# ssot/agents/benchmark.yaml
+# Benchmark scoring weights and tier thresholds for IPAI agent runs.
+#
+# Used by:
+#   .github/workflows/benchmark-runner.yml
+#   ops.agent_benchmark_results (stores computed scores)
+#
+# Tier definitions:
+#   A  — exemplary; auto-approve for promotion
+#   B  — acceptable; passes CI gate
+#   C  — marginal; requires human review before promotion
+#   F  — failing; blocks promotion
+#
+# Last updated: 2026-03-02
+# Spec:         spec/deerflow-patterns-adoption/
+
+meta:
+  schema_version: "1.0"
+  updated_at: "2026-03-02"
+
+tiers:
+  A:
+    min_score: 90
+    label: "Exemplary"
+    auto_promote: true
+  B:
+    min_score: 75
+    label: "Acceptable"
+    auto_promote: true
+  C:
+    min_score: 50
+    label: "Marginal"
+    auto_promote: false
+  F:
+    min_score: 0
+    label: "Failing"
+    auto_promote: false
+
+# Minimum tier required for a skill to be considered production-ready
+production_min_tier: B
+# Minimum number of benchmark runs before promotion is allowed
+min_benchmark_runs: 3
+
+metrics:
+  - id: evidence_compliance
+    weight: 0.30
+    description: >
+      Fraction of run_events that include non-empty `detail` JSONB
+      (evidence of work done). Measured as: events_with_detail / total_events.
+    scoring:
+      perfect: 1.0    # all events have evidence
+      good: 0.8       # ≥80% have evidence
+      marginal: 0.5   # ≥50% have evidence
+      failing: 0.0    # <50%
+
+  - id: diff_minimality
+    weight: 0.25
+    description: >
+      Inverse of diff size relative to task scope.
+      Score = max(0, 1 - (changed_lines / 200)).
+      A 200-line diff scores 0; a 10-line diff scores 0.95.
+    scoring:
+      unit: changed_lines
+      formula: "max(0, 1 - changed_lines / 200)"
+
+  - id: ci_pass_rate
+    weight: 0.30
+    description: >
+      Fraction of CI check suites that passed on the first attempt
+      (no re-runs required). Measured at VERIFY state exit.
+    scoring:
+      perfect: 1.0    # CI green on first run
+      good: 0.75      # CI green after 1 re-run
+      marginal: 0.5   # CI green after 2 re-runs
+      failing: 0.0    # CI still failing after 3 re-runs
+
+  - id: time_to_green_s
+    weight: 0.15
+    description: >
+      Wall-clock seconds from run creation to VERIFY-success.
+      Scored inversely against the skill's max_duration_s.
+      Score = max(0, 1 - actual_s / max_duration_s).
+    scoring:
+      unit: seconds
+      formula: "max(0, 1 - time_to_green_s / skill.max_duration_s)"
+
+# composite_score = sum(metric.weight * metric.score for metric in metrics)
+# tier = first tier where composite_score >= tier.min_score / 100

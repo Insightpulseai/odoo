@@ -34,7 +34,7 @@ GRANT MODIFY ON SCHEMA ${catalog}.gold TO `data-engineers`;
 GRANT ALL PRIVILEGES ON CATALOG ${catalog} TO `platform-admins`;
 
 -- Service principal for automated jobs
-GRANT USAGE ON CATALOG ${catalog} TO `notion-ppm-service-principal`;
-GRANT ALL PRIVILEGES ON SCHEMA ${catalog}.bronze TO `notion-ppm-service-principal`;
-GRANT ALL PRIVILEGES ON SCHEMA ${catalog}.silver TO `notion-ppm-service-principal`;
-GRANT ALL PRIVILEGES ON SCHEMA ${catalog}.gold TO `notion-ppm-service-principal`;
+GRANT USAGE ON CATALOG ${catalog} TO `finance-ppm-service-principal`;
+GRANT ALL PRIVILEGES ON SCHEMA ${catalog}.bronze TO `finance-ppm-service-principal`;
+GRANT ALL PRIVILEGES ON SCHEMA ${catalog}.silver TO `finance-ppm-service-principal`;
+GRANT ALL PRIVILEGES ON SCHEMA ${catalog}.gold TO `finance-ppm-service-principal`;
