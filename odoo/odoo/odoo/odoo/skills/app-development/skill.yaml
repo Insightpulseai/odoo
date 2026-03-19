@@ -1,0 +1,96 @@
+# App Development Skill (General)
+# Cross-platform application development orchestration
+
+name: app_development
+version: 1.0.0
+key: app.development
+description: |
+  Orchestrate full application development lifecycle: requirements,
+  architecture, development, testing, deployment, and handoff.
+  Routes to specialized skills based on app type.
+
+intents:
+  - develop app
+  - app development
+  - build application
+  - create software
+  - software development
+
+guardrails:
+  - Route to specialized skill based on app type
+  - All apps must have tests before deployment
+  - Follow monorepo conventions for Node.js apps
+  - Follow IPAI conventions for Odoo modules
+  - Security review required before production
+
+tools:
+  - key: dev.classify
+    name: Classify Project
+    target_model: ipai.dev.runner
+    target_method: classify_project
+    description: Determine app type and route to appropriate skill
+
+  - key: dev.spec
+    name: Create Specification
+    target_model: ipai.dev.runner
+    target_method: create_spec
+    description: Generate spec bundle (constitution, prd, plan, tasks)
+
+  - key: dev.execute
+    name: Execute Development
+    target_model: ipai.dev.runner
+    target_method: execute_development
+    description: Run development workflow based on classification
+
+  - key: dev.review
+    name: Code Review
+    target_model: ipai.dev.runner
+    target_method: run_review
+    description: Automated code review for quality and security
+
+  - key: dev.deliver
+    name: Deliver
+    target_model: ipai.dev.runner
+    target_method: deliver
+    description: Package, deploy, and generate handoff documentation
+
+workflow:
+  - dev.classify
+  - dev.spec
+  - dev.execute
+  - dev.review
+  - dev.deliver
+
+input_schema:
+  type: object
+  required:
+    - project_name
+  properties:
+    project_name: { type: string }
+    description: { type: string }
+    app_type:
+      type: string
+      enum: [odoo_module, web_app, mobile_app, api, integration, automation]
+
+output_schema:
+  type: object
+  properties:
+    classification: { type: string }
+    spec_path: { type: string }
+    deliverables: { type: array, items: { type: string } }
+    deployment_status: { type: string }
+
+agentInstructions: |
+  When managing app development:
+
+  1. **Classify**: Determine project type and route to:
+     - Odoo module → odoo.customization skill
+     - Web app → web.development skill
+     - Mobile app → app.mobile.design skill
+     - API → web.backend skill
+     - Integration → odoo.implementation skill
+
+  2. **Spec**: Create spec bundle under spec/<project-slug>/
+  3. **Execute**: Delegate to specialized skill
+  4. **Review**: Run linters, security checks, test coverage
+  5. **Deliver**: Deploy + evidence pack + handoff docs

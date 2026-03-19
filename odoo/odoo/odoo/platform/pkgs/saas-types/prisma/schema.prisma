@@ -1,0 +1,410 @@
+// =============================================================================
+// Multi-Tenant Provider Prisma Schema
+// =============================================================================
+// Ideal multi-tenant model where:
+// - Tenant = organization using the platform
+// - Provider = organization offering services/agents to other tenants
+// - Same org can be BOTH tenant and provider
+//
+// Generated: 2026-01-12
+// =============================================================================
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../node_modules/.prisma/client"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+  schemas  = ["saas", "logs", "projects"]
+}
+
+// =============================================================================
+// ENUMS
+// =============================================================================
+
+enum AccountRoleType {
+  TENANT   // Organization consuming services
+  PROVIDER // Organization offering services
+  INTERNAL // Platform internal organization
+
+  @@schema("saas")
+}
+
+enum SubscriptionStatus {
+  DRAFT     // Subscription created but not active
+  ACTIVE    // Subscription is active and billable
+  SUSPENDED // Temporarily suspended
+  CANCELLED // Permanently cancelled
+
+  @@schema("saas")
+}
+
+enum EnvironmentType {
+  DEV     // Development environment
+  STAGING // Staging/QA environment
+  PROD    // Production environment
+
+  @@schema("saas")
+}
+
+enum AccountLinkType {
+  PROVIDER_OF // from_account is provider for to_account
+  RESELLER_OF // from_account resells to_account
+  PARTNER_OF  // Symmetric partner relationship
+
+  @@schema("saas")
+}
+
+// =============================================================================
+// CORE ENTITIES: ACCOUNTS & USERS
+// =============================================================================
+
+/// Accounts represent organizations. Can be tenant, provider, or both.
+/// Maps to Odoo res.company/res.partner.
+model Account {
+  id           String    @id @default(uuid()) @db.Uuid
+  slug         String    @unique
+  name         String
+  legalName    String?   @map("legal_name")
+  country      String?
+  timezone     String?
+  isActive     Boolean   @default(true) @map("is_active")
+
+  // Multi-tenancy hints
+  defaultLocale String?  @map("default_locale")
+  billingEmail  String?  @map("billing_email")
+
+  // Odoo mapping
+  odooCompanyId Int?     @map("odoo_company_id")
+  odooPartnerId Int?     @map("odoo_partner_id")
+
+  createdAt    DateTime  @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt    DateTime  @updatedAt @map("updated_at") @db.Timestamptz
+  deletedAt    DateTime? @map("deleted_at") @db.Timestamptz
+
+  // Relations
+  roles                  AccountRole[]
+  users                  User[]
+  providedServices       Service[]       @relation("ProviderServices")
+  tenantSubscriptions    Subscription[]  @relation("TenantSubscriptions")
+  providerSubscriptions  Subscription[]  @relation("ProviderSubscriptions")
+  environments           Environment[]
+  fromLinks              AccountLink[]   @relation("FromAccount")
+  toLinks                AccountLink[]   @relation("ToAccount")
+  usageRecords           UsageRecord[]
+  auditLogs              AccountAudit[]
+  projects               Project[]
+
+  @@map("accounts")
+  @@schema("saas")
+}
+
+/// Accounts can have multiple roles (TENANT + PROVIDER simultaneously).
+model AccountRole {
+  id         String          @id @default(uuid()) @db.Uuid
+  accountId  String          @map("account_id") @db.Uuid
+  role       AccountRoleType
+  isPrimary  Boolean         @default(false) @map("is_primary")
+  grantedAt  DateTime        @default(now()) @map("granted_at") @db.Timestamptz
+  grantedBy  String?         @map("granted_by") @db.Uuid
+
+  // Relations
+  account    Account         @relation(fields: [accountId], references: [id], onDelete: Cascade)
+
+  @@unique([accountId, role], name: "uq_account_role")
+  @@map("account_roles")
+  @@schema("saas")
+}
+
+/// Users belong to one primary account. Maps to Odoo res.users and Supabase auth.users.
+model User {
+  id          String    @id @default(uuid()) @db.Uuid
+  accountId   String    @map("account_id") @db.Uuid
+  email       String    @unique
+  fullName    String?   @map("full_name")
+  isAdmin     Boolean   @default(false) @map("is_admin")
+  isActive    Boolean   @default(true) @map("is_active")
+
+  // External IDs for SSO/sync
+  authUserId  String?   @map("auth_user_id") @db.Uuid
+  odooUserId  Int?      @map("odoo_user_id")
+  keycloakId  String?   @map("keycloak_id") @db.Uuid
+
+  createdAt   DateTime  @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt   DateTime  @updatedAt @map("updated_at") @db.Timestamptz
+  deletedAt   DateTime? @map("deleted_at") @db.Timestamptz
+
+  // Relations
+  account     Account   @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  auditLogs   AccountAudit[]
+  projects    Project[]
+
+  @@map("users")
+  @@schema("saas")
+}
+
+// =============================================================================
+// PROVIDER SIDE: SERVICES & PLANS
+// =============================================================================
+
+/// Services offered by providers. E.g., Scout Dashboard, Ask Copilot.
+model Service {
+  id                      String           @id @default(uuid()) @db.Uuid
+  providerAccountId       String           @map("provider_account_id") @db.Uuid
+  key                     String           @unique
+  name                    String
+  description             String?
+
+  // Visibility
+  isPublic                Boolean          @default(false) @map("is_public")
+  isEnabled               Boolean          @default(true) @map("is_enabled")
+
+  // Classification
+  category                String?
+  defaultEnvironmentType  EnvironmentType? @map("default_environment_type")
+
+  // Technical hints
+  mcpServerName           String?          @map("mcp_server_name")
+  n8nWorkflowId           String?          @map("n8n_workflow_id")
+
+  createdAt               DateTime         @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt               DateTime         @updatedAt @map("updated_at") @db.Timestamptz
+  deletedAt               DateTime?        @map("deleted_at") @db.Timestamptz
+
+  // Relations
+  providerAccount         Account          @relation("ProviderServices", fields: [providerAccountId], references: [id])
+  plans                   ServicePlan[]
+  subscriptions           Subscription[]
+  usageRecords            UsageRecord[]
+
+  @@map("services")
+  @@schema("saas")
+}
+
+/// Pricing plans for services. Multiple tiers per service.
+model ServicePlan {
+  id                 String    @id @default(uuid()) @db.Uuid
+  serviceId          String    @map("service_id") @db.Uuid
+  key                String
+  name               String
+  description        String?
+
+  // Pricing
+  monthlyPriceCents  Int?      @map("monthly_price_cents")
+  annualPriceCents   Int?      @map("annual_price_cents")
+  currency           String?   @default("USD")
+
+  // Limits
+  maxSeats           Int?      @map("max_seats")
+  maxRequestsMonth   Int?      @map("max_requests_month")
+  featureFlags       Json      @default("{}") @map("feature_flags")
+
+  isActive           Boolean   @default(true) @map("is_active")
+  createdAt          DateTime  @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt          DateTime  @updatedAt @map("updated_at") @db.Timestamptz
+
+  // Relations
+  service            Service   @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+  subscriptions      Subscription[]
+
+  @@unique([serviceId, key], name: "uq_service_plan_key")
+  @@map("service_plans")
+  @@schema("saas")
+}
+
+// =============================================================================
+// TENANT SIDE: SUBSCRIPTIONS & RELATIONSHIPS
+// =============================================================================
+
+/// Links tenants to provider services. The core billing relationship.
+model Subscription {
+  id                  String             @id @default(uuid()) @db.Uuid
+  tenantAccountId     String             @map("tenant_account_id") @db.Uuid
+  providerAccountId   String             @map("provider_account_id") @db.Uuid
+  serviceId           String             @map("service_id") @db.Uuid
+  servicePlanId       String?            @map("service_plan_id") @db.Uuid
+
+  status              SubscriptionStatus @default(DRAFT)
+
+  // Lifecycle
+  startedAt           DateTime?          @map("started_at") @db.Timestamptz
+  endedAt             DateTime?          @map("ended_at") @db.Timestamptz
+  trialEndsAt         DateTime?          @map("trial_ends_at") @db.Timestamptz
+  nextBillingAt       DateTime?          @map("next_billing_at") @db.Timestamptz
+
+  // Billing reference
+  externalRef         String?            @map("external_ref")
+  billingMetadata     Json               @default("{}") @map("billing_metadata")
+
+  createdAt           DateTime           @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt           DateTime           @updatedAt @map("updated_at") @db.Timestamptz
+  cancelledAt         DateTime?          @map("cancelled_at") @db.Timestamptz
+
+  // Relations
+  tenantAccount       Account            @relation("TenantSubscriptions", fields: [tenantAccountId], references: [id])
+  providerAccount     Account            @relation("ProviderSubscriptions", fields: [providerAccountId], references: [id])
+  service             Service            @relation(fields: [serviceId], references: [id])
+  servicePlan         ServicePlan?       @relation(fields: [servicePlanId], references: [id])
+  usageRecords        UsageRecord[]
+
+  @@map("subscriptions")
+  @@schema("saas")
+}
+
+/// Explicit relationships between accounts.
+model AccountLink {
+  id              String          @id @default(uuid()) @db.Uuid
+  fromAccountId   String          @map("from_account_id") @db.Uuid
+  toAccountId     String          @map("to_account_id") @db.Uuid
+  linkType        AccountLinkType @map("link_type")
+
+  metadata        Json            @default("{}") @db.JsonB
+  isActive        Boolean         @default(true) @map("is_active")
+
+  createdAt       DateTime        @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt       DateTime        @updatedAt @map("updated_at") @db.Timestamptz
+
+  // Relations
+  fromAccount     Account         @relation("FromAccount", fields: [fromAccountId], references: [id])
+  toAccount       Account         @relation("ToAccount", fields: [toAccountId], references: [id])
+
+  @@unique([fromAccountId, toAccountId, linkType], name: "uq_account_link")
+  @@map("account_links")
+  @@schema("saas")
+}
+
+// =============================================================================
+// ENVIRONMENTS: INFRASTRUCTURE BINDINGS
+// =============================================================================
+
+/// Maps accounts to infrastructure. Each account can have dev/staging/prod.
+model Environment {
+  id                    String          @id @default(uuid()) @db.Uuid
+  accountId             String          @map("account_id") @db.Uuid
+  envType               EnvironmentType @map("env_type")
+
+  // Supabase binding
+  supabaseProjectRef    String?         @map("supabase_project_ref")
+  supabaseServiceRole   String?         @map("supabase_service_role")
+
+  // Vercel binding
+  vercelProjectId       String?         @map("vercel_project_id")
+  vercelTeamId          String?         @map("vercel_team_id")
+
+  // DigitalOcean binding
+  digitaloceanAppId     String?         @map("digitalocean_app_id")
+  digitaloceanCluster   String?         @map("digitalocean_cluster")
+
+  // Odoo binding
+  odooDbName            String?         @map("odoo_db_name")
+  odooBaseUrl           String?         @map("odoo_base_url")
+
+  // Superset binding
+  supersetDatabaseKey   String?         @map("superset_database_key")
+  supersetDashboardIds  String[]        @map("superset_dashboard_ids")
+
+  isActive              Boolean         @default(true) @map("is_active")
+  createdAt             DateTime        @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt             DateTime        @updatedAt @map("updated_at") @db.Timestamptz
+
+  // Relations
+  account               Account         @relation(fields: [accountId], references: [id], onDelete: Cascade)
+
+  @@unique([accountId, envType], name: "uq_account_env")
+  @@map("environments")
+  @@schema("saas")
+}
+
+// =============================================================================
+// USAGE TRACKING
+// =============================================================================
+
+/// Tracks service usage for billing and limit enforcement.
+model UsageRecord {
+  id               String    @id @default(uuid()) @db.Uuid
+  subscriptionId   String    @map("subscription_id") @db.Uuid
+  tenantAccountId  String    @map("tenant_account_id") @db.Uuid
+  serviceId        String    @map("service_id") @db.Uuid
+
+  periodStart      DateTime  @map("period_start") @db.Date
+  periodEnd        DateTime  @map("period_end") @db.Date
+
+  // Metrics
+  requestCount     Int       @default(0) @map("request_count")
+  tokenCount       Int       @default(0) @map("token_count")
+  storageBytes     BigInt    @default(0) @map("storage_bytes")
+  computeSeconds   Int       @default(0) @map("compute_seconds")
+
+  // Status
+  isBilled         Boolean   @default(false) @map("is_billed")
+  billedAt         DateTime? @map("billed_at") @db.Timestamptz
+
+  createdAt        DateTime  @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt        DateTime  @updatedAt @map("updated_at") @db.Timestamptz
+
+  // Relations
+  subscription     Subscription @relation(fields: [subscriptionId], references: [id])
+  tenantAccount    Account      @relation(fields: [tenantAccountId], references: [id])
+  service          Service      @relation(fields: [serviceId], references: [id])
+
+  @@unique([subscriptionId, periodStart], name: "uq_usage_period")
+  @@map("usage_records")
+  @@schema("saas")
+}
+
+// =============================================================================
+// AUDIT LOG
+// =============================================================================
+
+/// Audit trail for all account-related changes.
+model AccountAudit {
+  id            String    @id @default(uuid()) @db.Uuid
+  accountId     String    @map("account_id") @db.Uuid
+  actorUserId   String?   @map("actor_user_id") @db.Uuid
+  action        String
+  entityType    String    @map("entity_type")
+  entityId      String    @map("entity_id") @db.Uuid
+  changes       Json?     @db.JsonB
+  ipAddress     String?   @map("ip_address") @db.Inet
+  userAgent     String?   @map("user_agent")
+  createdAt     DateTime  @default(now()) @map("created_at") @db.Timestamptz
+
+  // Relations
+  account       Account   @relation(fields: [accountId], references: [id])
+  actorUser     User?     @relation(fields: [actorUserId], references: [id])
+
+  @@map("account_audit")
+  @@schema("logs")
+}
+
+// =============================================================================
+// EXAMPLE DOMAIN TABLE
+// =============================================================================
+
+/// Example domain table showing row-based multi-tenancy pattern.
+model Project {
+  id               String    @id @default(uuid()) @db.Uuid
+  tenantAccountId  String    @map("tenant_account_id") @db.Uuid
+  name             String
+  key              String
+  status           String    @default("active")
+
+  createdByUserId  String    @map("created_by_user_id") @db.Uuid
+
+  // Odoo mapping
+  odooProjectId    Int?      @map("odoo_project_id")
+
+  createdAt        DateTime  @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt        DateTime  @updatedAt @map("updated_at") @db.Timestamptz
+  deletedAt        DateTime? @map("deleted_at") @db.Timestamptz
+
+  // Relations
+  tenantAccount    Account   @relation(fields: [tenantAccountId], references: [id])
+  createdBy        User      @relation(fields: [createdByUserId], references: [id])
+
+  @@unique([tenantAccountId, key], name: "uq_project_key")
+  @@map("projects")
+  @@schema("projects")
+}

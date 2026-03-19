@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+
+    <record id="param_gateway_url" model="ir.config_parameter">
+        <field name="key">ipai.copilot.gateway_url</field>
+        <field name="value">http://localhost:8088</field>
+    </record>
+
+    <record id="param_enabled" model="ir.config_parameter">
+        <field name="key">ipai.copilot.enabled</field>
+        <field name="value">True</field>
+    </record>
+
+    <record id="param_mode" model="ir.config_parameter">
+        <field name="key">ipai.copilot.mode</field>
+        <field name="value">PROD-ADVISORY</field>
+    </record>
+
+</odoo>

@@ -1,0 +1,49 @@
+{
+  email business@insightpulseai.com
+  # debug
+}
+
+# --- Odoo ---
+{$ERP_DOMAIN} {
+  encode gzip
+  header {
+    -Server
+  }
+  reverse_proxy odoo:8069 {
+    header_up X-Forwarded-Proto {scheme}
+    header_up X-Forwarded-Host {host}
+    header_up X-Forwarded-For {remote_host}
+  }
+}
+
+# --- n8n ---
+{$N8N_DOMAIN} {
+  encode gzip
+  header {
+    -Server
+  }
+  reverse_proxy n8n:5678
+}
+
+# --- Superset ---
+{$SUPERSET_DOMAIN} {
+  encode gzip
+  header {
+    -Server
+  }
+  reverse_proxy superset:8088
+}
+
+# --- OCR API ---
+{$OCR_DOMAIN} {
+  encode gzip
+  header {
+    -Server
+  }
+  reverse_proxy ocr:8000
+}
+
+# --- MCP (placeholder) ---
+# {$MCP_DOMAIN} {
+#   reverse_proxy mcp:3000
+# }

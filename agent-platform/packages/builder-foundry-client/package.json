@@ -1,0 +1,17 @@
+{
+  "name": "@ipai/builder-foundry-client",
+  "version": "0.1.0",
+  "description": "Foundry client abstraction: mock, Azure AI Foundry, and future adapters",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc --build",
+    "clean": "rm -rf dist",
+    "test": "node --test dist/tests/"
+  },
+  "dependencies": {
+    "@ipai/builder-contract": "0.1.0"
+  },
+  "files": ["dist"],
+  "license": "LGPL-3.0"
+}

@@ -1,0 +1,61 @@
+version: 1
+type: foundry_skill
+family: foundry_model_tool_runtime
+skill:
+  name: foundry-remote-mcp-registration
+  status: draft
+  owner: agents
+  purpose: >
+    Standardize how new enterprise tools become Foundry MCP tools. Covers
+    hosting patterns (Azure Functions, ACA, external), auth configuration,
+    API Center registration, and connectivity validation.
+
+  triggers:
+    - new tool integration requiring MCP registration
+    - remote MCP server setup
+    - enterprise tool onboarding to Foundry
+
+  inputs:
+    - tool description and capabilities
+    - hosting pattern preference (Azure Functions, ACA, external)
+    - auth requirements (from foundry-mcp-auth-design)
+    - API Center registration requirements
+    - connectivity requirements (network, firewall, DNS)
+
+  steps:
+    - determine hosting pattern (Azure Functions vs ACA vs external)
+    - configure auth using managed identity + RBAC where possible
+    - register tool in API Center or tool catalog
+    - validate connectivity (network path, DNS resolution, health endpoint)
+    - document registration with hosting, auth, and connectivity evidence
+    - update ssot/agents/mcp-baseline.yaml with new entry
+
+  outputs:
+    - registration_checklist
+    - hosting_configuration
+    - auth_setup
+    - connectivity_validation_evidence
+    - baseline_update
+
+  guardrails:
+    - require auth configuration before registration
+    - prefer Azure Functions for new internal tools
+    - require ACA + managed identity for Azure MCP Server pattern
+    - document trust boundary for every registered tool
+    - never register without connectivity validation
+
+  evidence:
+    required: true
+    format: "docs/evidence/{stamp}/foundry/mcp-registration/"
+
+  evals:
+    dimensions: [accuracy, completeness, safety, policy_adherence, evidence_quality]
+    thresholds:
+      accuracy: 0.95
+      safety: 0.99
+
+cross_references:
+  - agents/knowledge/benchmarks/microsoft-foundry-models-and-tools.md
+  - agents/personas/foundry-tool-governor.md
+  - agents/skills/foundry-mcp-auth-design/skill-contract.yaml
+  - ssot/agents/mcp-baseline.yaml

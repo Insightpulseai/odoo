@@ -1,0 +1,28 @@
+# Development environment configuration
+
+environment: dev
+catalog: dev_ppm
+
+schemas:
+  bronze: bronze
+  silver: silver
+  gold: gold
+
+# Notion databases to sync
+notion:
+  databases:
+    programs: "NOTION_PROGRAMS_DB_ID"
+    projects: "NOTION_PROJECTS_DB_ID"
+    budget_lines: "NOTION_BUDGET_LINES_DB_ID"
+    risks: "NOTION_RISKS_DB_ID"
+
+# Alerting (disabled in dev)
+alerting:
+  enabled: false
+  webhook_url: ""
+
+# Data quality thresholds
+quality:
+  null_threshold_pct: 5.0
+  unique_threshold_pct: 0.0
+  referential_threshold_pct: 1.0

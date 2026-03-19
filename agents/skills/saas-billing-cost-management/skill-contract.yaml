@@ -1,0 +1,31 @@
+id: saas-billing-cost-management
+version: 1
+status: active
+classification: encoded_preference
+persona: saas-platform-architect
+updated_at: "2026-03-17"
+
+purpose: >
+  Design billing models, cost management strategies, and pricing tiers
+  for multi-tenant SaaS platforms on Azure.
+
+inputs:
+  - pricing_model: "Per-seat, per-usage, tiered, or hybrid"
+  - tier_definitions: "Feature sets per tier (free, standard, enterprise)"
+  - cost_attribution_needs: "Granularity of per-tenant cost tracking"
+  - billing_frequency: "Monthly, annual, usage-based"
+
+outputs:
+  - pricing_model_design: "Pricing structure with tiers and feature gates"
+  - cost_management_setup: "Azure Cost Management configuration"
+  - budget_alerts: "Per-tenant and platform-wide budget alert rules"
+  - billing_pipeline: "Metering to invoice pipeline design"
+  - antipattern_review: "Known billing antipatterns to avoid"
+
+guardrails:
+  - "Pricing model must be defined before infrastructure design"
+  - "Cost attribution must be possible per tenant"
+  - "Budget alerts must exist for both platform and per-tenant"
+  - "Billing pipeline must be auditable"
+
+benchmark_source: "Azure SaaS Well-Architected - Billing and Cost Management"

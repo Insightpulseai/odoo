@@ -1,0 +1,223 @@
+{
+  "name": "Finance PPM - Recurrent Alerts (Odoo 19)",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 1,9 * * *"
+            }
+          ]
+        }
+      },
+      "id": "schedule-trigger",
+      "name": "Schedule (9AM & 5PM PHT)",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [220, 300],
+      "notes": "Runs at 01:00 UTC (9AM PHT) and 09:00 UTC (5PM PHT) daily"
+    },
+    {
+      "parameters": {},
+      "id": "manual-trigger",
+      "name": "Manual Trigger",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [220, 500]
+    },
+    {
+      "parameters": {
+        "url": "={{$env.N8N_ODOO_URL}}/xmlrpc/2/common",
+        "method": "POST",
+        "sendBody": true,
+        "contentType": "raw",
+        "rawContentType": "application/xml",
+        "body": "<?xml version=\"1.0\"?>\n<methodCall>\n  <methodName>authenticate</methodName>\n  <params>\n    <param><value><string>={{$env.N8N_ODOO_DB}}</string></value></param>\n    <param><value><string>={{$env.N8N_ODOO_USER}}</string></value></param>\n    <param><value><string>={{$env.N8N_ODOO_PASSWORD}}</string></value></param>\n    <param><value><struct/></value></param>\n  </params>\n</methodCall>"
+      },
+      "id": "odoo-auth",
+      "name": "Authenticate",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [480, 400]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Compute date boundaries for alert classification\nconst now = new Date();\n// PHT is UTC+8\nconst pht = new Date(now.getTime() + 8 * 60 * 60 * 1000);\nconst phtHour = pht.getUTCHours();\n\nconst today = now.toISOString().split('T')[0];\nconst tomorrow = new Date(now.getTime() + 86400000).toISOString().split('T')[0];\n\nreturn [{\n  json: {\n    today: today,\n    tomorrow: tomorrow,\n    pht_hour: phtHour,\n    is_morning: phtHour < 12,\n    alert_label: phtHour < 12 ? '9:00 AM PHT' : '5:00 PM PHT',\n    timestamp: now.toISOString()\n  }\n}];"
+      },
+      "id": "compute-dates",
+      "name": "Compute Dates",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [700, 400]
+    },
+    {
+      "parameters": {
+        "url": "={{$env.N8N_ODOO_URL}}/xmlrpc/2/object",
+        "method": "POST",
+        "sendBody": true,
+        "contentType": "raw",
+        "rawContentType": "application/xml",
+        "body": "<?xml version=\"1.0\"?>\n<methodCall>\n  <methodName>execute_kw</methodName>\n  <params>\n    <param><value><string>={{$env.N8N_ODOO_DB}}</string></value></param>\n    <param><value><int>={{$node['Authenticate'].json.params.param.value.int}}</int></value></param>\n    <param><value><string>={{$env.N8N_ODOO_PASSWORD}}</string></value></param>\n    <param><value><string>project.task</string></value></param>\n    <param><value><string>search_read</string></value></param>\n    <param><value><array>\n      <data>\n        <value><array><data>\n          <value><array><data>\n            <value><string>date_deadline</string></value>\n            <value><string>=</string></value>\n            <value><string>={{$json.today}}</string></value>\n          </data></value></array>\n          <value><array><data>\n            <value><string>stage_id.name</string></value>\n            <value><string>not in</string></value>\n            <value><array><data>\n              <value><string>Done</string></value>\n              <value><string>Cancelled</string></value>\n            </data></array></value>\n          </data></value></array>\n          <value><array><data>\n            <value><string>project_id.name</string></value>\n            <value><string>like</string></value>\n            <value><string>Finance PPM</string></value>\n          </data></value></array>\n        </data></value></array>\n      </data>\n    </value></array></param>\n    <param><value><struct>\n      <member><name>fields</name><value><array><data>\n        <value><string>name</string></value>\n        <value><string>date_deadline</string></value>\n        <value><string>user_ids</string></value>\n        <value><string>stage_id</string></value>\n        <value><string>project_id</string></value>\n        <value><string>description</string></value>\n      </data></array></value></member>\n      <member><name>limit</name><value><int>200</int></value></member>\n    </struct></value></param>\n  </params>\n</methodCall>"
+      },
+      "id": "fetch-due-today",
+      "name": "Fetch Due Today",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [920, 250]
+    },
+    {
+      "parameters": {
+        "url": "={{$env.N8N_ODOO_URL}}/xmlrpc/2/object",
+        "method": "POST",
+        "sendBody": true,
+        "contentType": "raw",
+        "rawContentType": "application/xml",
+        "body": "<?xml version=\"1.0\"?>\n<methodCall>\n  <methodName>execute_kw</methodName>\n  <params>\n    <param><value><string>={{$env.N8N_ODOO_DB}}</string></value></param>\n    <param><value><int>={{$node['Authenticate'].json.params.param.value.int}}</int></value></param>\n    <param><value><string>={{$env.N8N_ODOO_PASSWORD}}</string></value></param>\n    <param><value><string>project.task</string></value></param>\n    <param><value><string>search_read</string></value></param>\n    <param><value><array>\n      <data>\n        <value><array><data>\n          <value><array><data>\n            <value><string>date_deadline</string></value>\n            <value><string>&lt;</string></value>\n            <value><string>={{$json.today}}</string></value>\n          </data></value></array>\n          <value><array><data>\n            <value><string>stage_id.name</string></value>\n            <value><string>not in</string></value>\n            <value><array><data>\n              <value><string>Done</string></value>\n              <value><string>Cancelled</string></value>\n            </data></array></value>\n          </data></value></array>\n          <value><array><data>\n            <value><string>project_id.name</string></value>\n            <value><string>like</string></value>\n            <value><string>Finance PPM</string></value>\n          </data></value></array>\n        </data></value></array>\n      </data>\n    </value></array></param>\n    <param><value><struct>\n      <member><name>fields</name><value><array><data>\n        <value><string>name</string></value>\n        <value><string>date_deadline</string></value>\n        <value><string>user_ids</string></value>\n        <value><string>stage_id</string></value>\n        <value><string>project_id</string></value>\n        <value><string>description</string></value>\n      </data></array></value></member>\n      <member><name>limit</name><value><int>200</int></value></member>\n    </struct></value></param>\n  </params>\n</methodCall>"
+      },
+      "id": "fetch-overdue",
+      "name": "Fetch Overdue",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [920, 450]
+    },
+    {
+      "parameters": {
+        "url": "={{$env.N8N_ODOO_URL}}/xmlrpc/2/object",
+        "method": "POST",
+        "sendBody": true,
+        "contentType": "raw",
+        "rawContentType": "application/xml",
+        "body": "<?xml version=\"1.0\"?>\n<methodCall>\n  <methodName>execute_kw</methodName>\n  <params>\n    <param><value><string>={{$env.N8N_ODOO_DB}}</string></value></param>\n    <param><value><int>={{$node['Authenticate'].json.params.param.value.int}}</int></value></param>\n    <param><value><string>={{$env.N8N_ODOO_PASSWORD}}</string></value></param>\n    <param><value><string>project.task</string></value></param>\n    <param><value><string>search_read</string></value></param>\n    <param><value><array>\n      <data>\n        <value><array><data>\n          <value><string>|</string></value>\n          <value><array><data>\n            <value><string>stage_id.name</string></value>\n            <value><string>=</string></value>\n            <value><string>Under Review</string></value>\n          </data></value></array>\n          <value><array><data>\n            <value><string>stage_id.name</string></value>\n            <value><string>=</string></value>\n            <value><string>Pending Approval</string></value>\n          </data></value></array>\n          <value><array><data>\n            <value><string>project_id.name</string></value>\n            <value><string>like</string></value>\n            <value><string>Finance PPM</string></value>\n          </data></value></array>\n        </data></value></array>\n      </data>\n    </value></array></param>\n    <param><value><struct>\n      <member><name>fields</name><value><array><data>\n        <value><string>name</string></value>\n        <value><string>date_deadline</string></value>\n        <value><string>user_ids</string></value>\n        <value><string>stage_id</string></value>\n        <value><string>project_id</string></value>\n        <value><string>description</string></value>\n      </data></array></value></member>\n      <member><name>limit</name><value><int>200</int></value></member>\n    </struct></value></param>\n  </params>\n</methodCall>"
+      },
+      "id": "fetch-handover",
+      "name": "Fetch Handover (Review/Approval)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [920, 650]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Build Slack alert message with 3 categories:\n// 1. Due Today (alert assignee at 9AM & 5PM)\n// 2. Overdue (daily escalation until done)\n// 3. Handover (reviewer/approver notification)\n\nconst dates = $node['Compute Dates'].json;\nconst dueToday = $node['Fetch Due Today'].json;\nconst overdue = $node['Fetch Overdue'].json;\nconst handover = $node['Fetch Handover (Review/Approval)'].json;\n\n// Parse XML-RPC results (tasks come as arrays)\nfunction parseTasks(data) {\n  if (!data || !data.params) return [];\n  const param = data.params.param;\n  if (!param || !param.value || !param.value.array) return [];\n  const items = param.value.array.data.value;\n  if (!Array.isArray(items)) return items ? [items] : [];\n  return items.map(item => {\n    const members = item.struct.member;\n    const task = {};\n    members.forEach(m => {\n      task[m.name] = m.value.string || m.value.int || m.value.boolean || '';\n    });\n    return task;\n  });\n}\n\nconst dueTasks = parseTasks(dueToday);\nconst overdueTasks = parseTasks(overdue);\nconst handoverTasks = parseTasks(handover);\n\nlet blocks = [];\n\n// Header\nblocks.push({\n  type: 'header',\n  text: { type: 'plain_text', text: `Finance PPM Alert (${dates.alert_label})` }\n});\n\nblocks.push({\n  type: 'context',\n  elements: [{ type: 'mrkdwn', text: `*Date:* ${dates.today} | *Schedule:* 9AM & 5PM PHT` }]\n});\n\nblocks.push({ type: 'divider' });\n\n// Section 1: DUE TODAY (alert at both 9AM and 5PM)\nif (dueTasks.length > 0) {\n  blocks.push({\n    type: 'section',\n    text: {\n      type: 'mrkdwn',\n      text: `:alarm_clock: *${dueTasks.length} Tasks Due Today*\\n` +\n        dueTasks.slice(0, 15).map(t =>\n          `• *${t.name || 'Unknown'}* — deadline: ${t.date_deadline || 'N/A'}`\n        ).join('\\n')\n    }\n  });\n  blocks.push({ type: 'divider' });\n}\n\n// Section 2: OVERDUE (daily escalation)\nif (overdueTasks.length > 0) {\n  blocks.push({\n    type: 'section',\n    text: {\n      type: 'mrkdwn',\n      text: `:rotating_light: *${overdueTasks.length} Overdue Tasks (Daily Escalation)*\\n` +\n        overdueTasks.slice(0, 15).map(t =>\n          `• *${t.name || 'Unknown'}* — was due: ${t.date_deadline || 'N/A'}`\n        ).join('\\n')\n    }\n  });\n  blocks.push({ type: 'divider' });\n}\n\n// Section 3: HANDOVER (tasks awaiting review/approval)\nif (handoverTasks.length > 0) {\n  blocks.push({\n    type: 'section',\n    text: {\n      type: 'mrkdwn',\n      text: `:arrows_counterclockwise: *${handoverTasks.length} Tasks Awaiting Handover*\\n` +\n        handoverTasks.slice(0, 15).map(t => {\n          const stage = t.stage_id || 'Unknown Stage';\n          return `• *${t.name || 'Unknown'}* — stage: ${stage}`;\n        }).join('\\n')\n    }\n  });\n  blocks.push({ type: 'divider' });\n}\n\n// All clear\nif (dueTasks.length === 0 && overdueTasks.length === 0 && handoverTasks.length === 0) {\n  blocks.push({\n    type: 'section',\n    text: { type: 'mrkdwn', text: ':white_check_mark: No due, overdue, or handover tasks right now.' }\n  });\n}\n\n// Footer\nblocks.push({\n  type: 'context',\n  elements: [{\n    type: 'mrkdwn',\n    text: `_Alert policy: 2x on due date (9AM & 5PM) • Daily after due date until done • Handover on stage change_`\n  }]\n});\n\nconst hasAlerts = dueTasks.length > 0 || overdueTasks.length > 0 || handoverTasks.length > 0;\n\nreturn [{\n  json: {\n    blocks: JSON.stringify(blocks),\n    text: `Finance PPM: ${dueTasks.length} due today, ${overdueTasks.length} overdue, ${handoverTasks.length} handover`,\n    has_alerts: hasAlerts,\n    due_count: dueTasks.length,\n    overdue_count: overdueTasks.length,\n    handover_count: handoverTasks.length\n  }\n}];"
+      },
+      "id": "build-message",
+      "name": "Build Alert Message",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1200, 450]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "boolean": [
+            {
+              "value1": "={{$json.has_alerts}}",
+              "value2": true
+            }
+          ]
+        }
+      },
+      "id": "has-alerts",
+      "name": "Has Alerts?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [1420, 450]
+    },
+    {
+      "parameters": {
+        "url": "https://slack.com/api/chat.postMessage",
+        "method": "POST",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "channel",
+              "value": "={{$env.N8N_SLACK_CHANNEL_ID}}"
+            },
+            {
+              "name": "blocks",
+              "value": "={{$json.blocks}}"
+            },
+            {
+              "name": "text",
+              "value": "={{$json.text}}"
+            }
+          ]
+        }
+      },
+      "id": "slack-channel",
+      "name": "Slack Channel Alert",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1640, 350],
+      "notes": "Posts to #finance-ppm channel"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Build individual DM alerts for assignees\n// Maps task assignees to their Slack user IDs (configured in env)\nconst SLACK_USER_MAP = {\n  // Map Odoo user emails to Slack member IDs\n  // Configure via N8N_SLACK_USER_MAP env var as JSON\n  // e.g. {\"beng.manalo@omc.com\": \"U12345\", ...}\n};\n\ntry {\n  const mapStr = $env.N8N_SLACK_USER_MAP || '{}';\n  Object.assign(SLACK_USER_MAP, JSON.parse(mapStr));\n} catch(e) {}\n\nconst alerts = [];\nconst input = $json;\n\n// For each alert type, generate individual DM\nif (input.due_count > 0 || input.overdue_count > 0) {\n  alerts.push({\n    json: {\n      message: `Reminder: ${input.due_count} task(s) due today, ${input.overdue_count} overdue. Check Odoo: ${$env.N8N_ODOO_URL}/odoo/project`,\n      slack_user_map: SLACK_USER_MAP\n    }\n  });\n}\n\nreturn alerts.length > 0 ? alerts : [{ json: { skip: true } }];"
+      },
+      "id": "dm-alerts",
+      "name": "Prepare DM Alerts",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1640, 550],
+      "notes": "Optional: individual DM alerts to assignees (requires SLACK_USER_MAP)"
+    }
+  ],
+  "connections": {
+    "Schedule (9AM & 5PM PHT)": {
+      "main": [[{ "node": "Authenticate", "type": "main", "index": 0 }]]
+    },
+    "Manual Trigger": {
+      "main": [[{ "node": "Authenticate", "type": "main", "index": 0 }]]
+    },
+    "Authenticate": {
+      "main": [[{ "node": "Compute Dates", "type": "main", "index": 0 }]]
+    },
+    "Compute Dates": {
+      "main": [[
+        { "node": "Fetch Due Today", "type": "main", "index": 0 },
+        { "node": "Fetch Overdue", "type": "main", "index": 0 },
+        { "node": "Fetch Handover (Review/Approval)", "type": "main", "index": 0 }
+      ]]
+    },
+    "Fetch Due Today": {
+      "main": [[{ "node": "Build Alert Message", "type": "main", "index": 0 }]]
+    },
+    "Fetch Overdue": {
+      "main": [[{ "node": "Build Alert Message", "type": "main", "index": 0 }]]
+    },
+    "Fetch Handover (Review/Approval)": {
+      "main": [[{ "node": "Build Alert Message", "type": "main", "index": 0 }]]
+    },
+    "Build Alert Message": {
+      "main": [[{ "node": "Has Alerts?", "type": "main", "index": 0 }]]
+    },
+    "Has Alerts?": {
+      "main": [
+        [{ "node": "Slack Channel Alert", "type": "main", "index": 0 }],
+        [{ "node": "Prepare DM Alerts", "type": "main", "index": 0 }]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "saveManualExecutions": true,
+    "callerPolicy": "workflowsFromSameOwner",
+    "timezone": "Asia/Manila"
+  },
+  "staticData": null,
+  "tags": [
+    { "name": "finance" },
+    { "name": "ppm" },
+    { "name": "odoo19" },
+    { "name": "alerts" }
+  ],
+  "meta": {
+    "templateCredsSetupCompleted": false,
+    "instanceId": "finance-ppm-odoo19"
+  }
+}

@@ -1,0 +1,149 @@
+# schema: ssot.integrations.v1
+# Figma platform integration register.
+# Declares components, SSOT boundary rules, and risk flags for the
+# Figma REST API + Webhooks V2 + Variables sync + MCP server integration.
+#
+# Integration model: Figma is a READ surface (Source of Record for design assets).
+#   - Design assets / tokens / components → sync → repo (canonical SoT after sync)
+#   - Webhooks V2 are API-managed only (no UI) — aligns with SSOT-native doctrine
+#   - Variables sync is bidirectional: CI pushes from repo to Figma; Figma events trigger pull
+#   - MCP server exposes Figma context to Claude Code agents
+#   - Agents must log execution to ops.run_events
+#
+# Boundary doctrine: docs/architecture/FIGMA_INTEGRATION_SURFACE.md
+# Contract doc:      docs/architecture/FIGMA_INTEGRATION_SURFACE.md
+#
+# References:
+#   figma/code-connect               — Dev Mode real code snippets wiring
+#   figma/variables-github-action-example — bidirectional Variables ↔ tokens via GitHub Actions
+#   figma/mcp-server-guide           — Figma MCP server usage guide (rate limits, setup)
+#   figma/figma-gemini-cli-extension — MCP client config pattern reference
+
+version: "1.0.0"
+schema: ssot.integrations.v1
+name: figma
+display_name: "Figma Design Platform"
+status: planned              # planned | porting | active | deprecated
+last_reviewed: "2026-03-01"
+
+provider:
+  platform: figma
+  api_base: "https://api.figma.com/v1"
+  webhook_api: "https://api.figma.com/v2/webhooks"
+  mcp_server: "https://mcp.figma.com/mcp"
+  auth_methods:
+    - oauth2              # preferred for multi-user / user-scoped access
+    - personal_access_token   # for internal automation (CI, MCP, agent tooling)
+
+components:
+  rest_api_client:
+    description: >
+      Figma REST API client for reading files, components, variables, and design tokens.
+      OAuth 2.0 is preferred for user-scoped access; PAT for internal automation (CI, agents).
+    path: "supabase/functions/figma-api/"
+    auth: oauth2_or_pat
+    scopes:
+      - "file_read"                  # read specific files (narrower than files:read)
+      - "file_variables:read"        # read variables and variable collections
+      - "file_variables:write"       # push variable updates (CI sync only)
+    scope_policy: >
+      Use granular scopes. Avoid files:read (overly permissive — reads ALL files in org).
+      Prefer file_read scoped to specific file IDs.
+
+  webhook_ingest:
+    description: >
+      Figma Webhooks V2 ingest endpoint. Webhooks are created, modified, and deleted
+      exclusively via the Figma API (POST/PATCH/DELETE to api.figma.com/v2/webhooks).
+      No UI configuration — aligns with SSOT-native / no-UI doctrine.
+    path: "supabase/functions/figma-webhook/"
+    webhook_events:
+      - FILE_UPDATE          # design file saved
+      - FILE_VERSION_UPDATE  # explicit version created
+      - LIBRARY_PUBLISH      # component library published (triggers token sync)
+      - FILE_COMMENT         # comment activity (optional, for notification workflows)
+    secret_verification: required  # HMAC-SHA256 via x-figma-signature header
+    idempotency: >
+      Webhook payloads include event_id. Use as ops.runs.idempotency_key prefix:
+        "figma:webhook:{event_type}:{event_id}"
+
+  variables_sync:
+    description: >
+      Bidirectional Variables ↔ Design Tokens sync via GitHub Actions CI.
+      Repo is the canonical source: CI pushes from packages/design-tokens/tokens.json to Figma.
+      Figma LIBRARY_PUBLISH webhooks trigger a reverse pull into the repo for audit.
+    path: "packages/design-tokens/"
+    ci_workflow: ".github/workflows/figma-variables-sync.yml"
+    direction: "repo_canonical"    # repo SoT; Figma is consumer after CI push
+    reference: "figma/variables-github-action-example"
+    generated_artifact: "packages/design-tokens/tokens.json"
+    regenerate_command: "scripts/design/export_tokens.sh"
+
+  mcp_server_bridge:
+    description: >
+      Figma MCP server exposing Figma context (files, components, variables) to Claude Code agents.
+      Config lives in agents/mcp/figma.json. Auth via FIGMA_PERSONAL_ACCESS_TOKEN from Vault.
+    mcp_url: "https://mcp.figma.com/mcp"
+    config_path: "agents/mcp/figma.json"
+    rate_limits: "per figma/mcp-server-guide — be conservative; no batch polling"
+    logging: "All agent tool calls must emit to ops.run_events"
+
+  code_connect:
+    description: >
+      Figma Code Connect wires Figma component definitions to real repo code in packages/ui.
+      Enables Dev Mode to show actual component code rather than generated stubs.
+    path: "packages/ui/"
+    reference: "figma/code-connect"
+    publish_command: "pnpm figma connect publish"
+    ci_workflow: ".github/workflows/figma-code-connect-publish.yml"
+
+ssot_boundary_rules:
+  - "Figma is the Source of Record for design assets; repo is canonical SoT for tokens AFTER sync"
+  - "Webhooks MUST be created via Figma API (never via Figma UI) — SSOT-native compliance"
+  - "OAuth 2.0 tokens stored in Supabase Vault; PAT tokens stored in Supabase Vault + os_keychain"
+  - "Variables sync is bidirectional but repo is canonical: CI pushes to Figma; Figma events trigger repo pull for audit only"
+  - "Figma agents MUST log every tool call execution to ops.run_events"
+  - "MCP agent MUST NOT write to Figma files directly — read-only in agent context"
+  - "Webhook secret (figma_webhook_secret) MUST be verified on every ingest; reject without valid signature"
+  - "Scope creep guard: file_read replaces files:read; re-audit scopes quarterly"
+
+required_secrets:
+  - figma_oauth_client_id          # OAuth2 app client ID (see ssot/secrets/registry.yaml)
+  - figma_oauth_client_secret      # OAuth2 app client secret
+  - figma_personal_access_token    # PAT for CI, MCP, agent tooling
+  - figma_webhook_secret           # Webhook signature verification secret
+
+allowed_egress:
+  - api.figma.com                  # Figma REST API + Webhooks V2
+  - mcp.figma.com                  # Figma MCP server
+  - www.figma.com                  # (read-only OAuth redirect)
+
+risk_flags:
+  - id: oauth_scope_creep
+    severity: medium
+    description: >
+      Using files:read grants read access to ALL files in the organization.
+      Accidental over-scoping exposes confidential design assets.
+    mitigation: >
+      Use file_read scoped to specific file IDs.
+      Re-audit OAuth app scopes quarterly via Figma App settings.
+      CI lint step should reject OAuth config with files:read scope.
+
+  - id: webhook_secret_absent
+    severity: medium
+    description: >
+      Figma webhook payloads without signature verification allow spoofed events
+      that could trigger unauthorized variable syncs or run_events.
+    mitigation: >
+      figma_webhook_secret MUST be set before webhook endpoint is registered.
+      supabase/functions/figma-webhook/ rejects any request without valid
+      x-figma-signature (HMAC-SHA256). Gate on Vault secret presence at cold-start.
+
+  - id: pat_token_proliferation
+    severity: low
+    description: >
+      Personal Access Tokens have no expiry by default and are scoped to the user,
+      not the application. Rotation gaps increase blast radius on exposure.
+    mitigation: >
+      Prefer OAuth for user-scoped access. PAT is internal tooling only (CI, MCP).
+      Store in Supabase Vault only. Rotate on team member offboarding.
+      Track in ssot/secrets/registry.yaml#figma_personal_access_token.

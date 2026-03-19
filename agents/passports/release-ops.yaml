@@ -1,0 +1,46 @@
+id: release-ops
+name: Release Ops
+version: "1.0.0"
+status: active
+maturity_level: L2
+current_stage: S07
+domain: devops
+owner: insightpulseai
+description: >-
+  Release operations specialist. Manages CI/CD pipelines, PR quality gates,
+  deployment automation, and evidence packs. Successor to devops-prime.
+role: maker
+scopes:
+  - ci
+  - cd
+  - pr-checks
+  - deploy-gates
+  - evidence-packs
+  - github-actions
+skills:
+  - ci-pipeline-management
+  - deployment-automation
+  - pr-quality-gating
+  - evidence-collection
+  - rollback-execution
+tools:
+  - github-actions
+  - gh-cli
+  - az-cli
+  - docker
+policies:
+  - secrets-policy
+  - verification
+  - output-format
+entrypoint: agents/prompts/release-ops.md
+task_types:
+  - task.release.build
+  - task.release.deploy
+  - task.release.gate
+  - task.release.rollback
+evaluation_history: []
+promotion_history: []
+created: "2026-03-19"
+notes: >-
+  CI/CD pipelines are production-grade. GitHub-hosted runners only;
+  self-hosted runners are deprecated.

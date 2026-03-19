@@ -1,0 +1,117 @@
+# =============================================================================
+# Public Endpoints — InsightPulse AI
+# =============================================================================
+#
+# Canonical hostname-to-target mapping for the insightpulseai.com domain.
+# Authoritative DNS: Cloudflare. Canonical edge: Azure Front Door.
+#
+# Status values:
+#   canonical          — on Azure Front Door, production intent
+#   transitional       — planned migration to AFD, not yet complete
+#   transitional_direct — direct IP, pending AFD migration
+#   legacy_external    — external provider, not canonical, pending removal
+#
+# Last updated: 2026-03-18
+# =============================================================================
+
+version: 1
+
+domain: insightpulseai.com
+authoritative_dns: cloudflare
+canonical_edge: azure_front_door
+front_door_endpoint: ipai-fd-dev-ep-fnh4e8d6gtdhc8ax.z03.azurefd.net
+
+hostnames:
+
+  # -- Canonical (on Azure Front Door) --
+
+  apex:
+    target: ipai-fd-dev-ep-fnh4e8d6gtdhc8ax.z03.azurefd.net
+    status: canonical
+
+  www:
+    target: ipai-fd-dev-ep-fnh4e8d6gtdhc8ax.z03.azurefd.net
+    status: canonical
+
+  erp:
+    target: ipai-fd-dev-ep-fnh4e8d6gtdhc8ax.z03.azurefd.net
+    status: canonical
+    origin: ipai-odoo-dev-web
+
+  auth:
+    target: ipai-fd-dev-ep-fnh4e8d6gtdhc8ax.z03.azurefd.net
+    status: canonical
+    origin: ipai-auth-dev
+
+  crm:
+    target: ipai-fd-dev-ep-fnh4e8d6gtdhc8ax.z03.azurefd.net
+    status: canonical
+    origin: ipai-crm-dev
+
+  mcp:
+    target: ipai-fd-dev-ep-fnh4e8d6gtdhc8ax.z03.azurefd.net
+    status: canonical
+    origin: ipai-mcp-dev
+
+  n8n:
+    target: ipai-fd-dev-ep-fnh4e8d6gtdhc8ax.z03.azurefd.net
+    status: canonical
+
+  ocr:
+    target: ipai-fd-dev-ep-fnh4e8d6gtdhc8ax.z03.azurefd.net
+    status: canonical
+    origin: ipai-ocr-dev
+
+  plane:
+    target: ipai-fd-dev-ep-fnh4e8d6gtdhc8ax.z03.azurefd.net
+    status: canonical
+    origin: ipai-plane-dev
+
+  shelf:
+    target: ipai-fd-dev-ep-fnh4e8d6gtdhc8ax.z03.azurefd.net
+    status: canonical
+    origin: ipai-shelf-dev
+
+  superset:
+    target: ipai-fd-dev-ep-fnh4e8d6gtdhc8ax.z03.azurefd.net
+    status: canonical
+    origin: ipai-superset-dev
+
+  # -- Transitional --
+
+  erp-azure:
+    target: ipai-fd-dev-ep-fnh4e8d6gtdhc8ax.z03.azurefd.net
+    status: transitional
+    notes: duplicate of erp, pending removal
+
+  # -- Transitional Direct (direct IP, not on AFD) --
+
+  supabase:
+    target: 4.193.100.31
+    status: transitional_direct
+    notes: self-hosted Supabase VM, pending AFD or private endpoint migration
+
+  n8n-azure:
+    target: 4.193.100.31
+    status: transitional_direct
+    notes: direct IP, pending AFD migration
+
+  # -- Legacy External (not on Azure) --
+
+  ops:
+    target: cname.vercel-dns.com
+    status: legacy_external
+    notes: Vercel deployment, pending migration to Azure Container Apps
+
+  agent:
+    target: wr2azp5dsl6mu6xvxtpglk5v.agents.do-ai.run
+    status: legacy_external
+    notes: DigitalOcean agent runtime, pending migration to Azure
+
+# -- Rules --
+
+rules:
+  - All new hostnames must target Azure Front Door
+  - Any hostname not on AFD must be explicitly classified
+  - No silent Vercel / DigitalOcean / direct-IP drift
+  - Changes to this file require corresponding Cloudflare DNS update

@@ -1,0 +1,30 @@
+# Staging Environment Identifiers (non-secret only)
+# Secrets live in platform-native stores, never in this file.
+# See docs/architecture/SECRETS_POLICY.md
+
+environment: staging
+
+supabase:
+  project_ref: __SET_ME__  # staging Supabase project ref
+  url: __SET_ME__          # https://<ref>.supabase.co
+
+vercel:
+  project: __SET_ME__      # Vercel project name for staging
+  env: preview             # Vercel environment mapping
+
+odoo:
+  db_name: odoo_staging
+  base_url: staging.erp.insightpulseai.com
+  addons_tag: __SET_ME__   # git tag or commit SHA
+
+superset:
+  url: __SET_ME__          # staging Superset URL
+  primary_db: odoo_staging
+
+slack:
+  channel: "#staging-alerts"
+
+domains:
+  erp: staging.erp.insightpulseai.com
+  ops: staging.ops.insightpulseai.com
+  bi: staging.bi.insightpulseai.com

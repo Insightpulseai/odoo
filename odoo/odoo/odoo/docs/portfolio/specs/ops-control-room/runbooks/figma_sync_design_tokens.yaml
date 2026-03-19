@@ -1,0 +1,314 @@
+---
+# Figma Design Token Sync Runbook
+# Ensures git synchronization before syncing design tokens to Figma
+
+id: figma_sync_design_tokens
+name: Sync Design Tokens to Figma
+version: 1.0.0
+kind: deployment
+description: |
+  Comprehensive design token synchronization workflow that:
+  1. Validates git repository state
+  2. Pulls latest changes from remote
+  3. Syncs normalized design tokens to Figma
+  4. Posts summary notification
+
+  Enforces git pre-flight checks as a hard gate to prevent token desync.
+
+environment: prod
+lane: Auto
+
+metadata:
+  owner: InsightPulse AI
+  maintainer: Jake Tolentino (@jgtolentino)
+  created: 2026-01-20
+  last_updated: 2026-01-20
+  tags:
+    - figma
+    - design-system
+    - deployment
+    - git-operations
+
+prerequisites:
+  - description: design-system-cli repository cloned locally
+    validation: test -d /Users/tbwa/Documents/GitHub/design-system-cli
+
+  - description: Figma access token available (for push mode)
+    validation: test -n "$FIGMA_ACCESS_TOKEN" || true
+    required: false
+
+  - description: Normalized design tokens file exists
+    validation: test -f ./tokens/normalized-tokens.json
+
+inputs:
+  - name: mode
+    type: enum
+    required: true
+    values: [plugin, push]
+    default: plugin
+    description: Figma sync mode (plugin generation or API push)
+
+  - name: tokens_file
+    type: string
+    required: true
+    default: ./tokens/normalized-tokens.json
+    description: Path to normalized design tokens JSON
+
+  - name: output_dir
+    type: string
+    required: false
+    default: ./figma-plugin
+    description: Output directory for Figma plugin files (plugin mode)
+
+  - name: figma_file_id
+    type: string
+    required: false
+    description: Figma file ID (push mode only)
+
+  - name: require_clean_git
+    type: boolean
+    required: false
+    default: false
+    description: Fail if git working directory has uncommitted changes
+
+steps:
+  - id: git_preflight
+    name: Git Pre-Flight Checks
+    agent: figma_bridge
+    skill: git_preflight
+    description: |
+      Validate git repository state and sync with remote before proceeding.
+      This is a hard gate - if git checks fail, the entire runbook aborts.
+
+    inputs:
+      cwd: /Users/tbwa/Documents/GitHub/design-system-cli
+      checkStatus: true
+      pull: true
+      requireClean: ${require_clean_git}
+
+    on_failure:
+      action: abort
+      reason: |
+        Git pre-flight failed. Possible causes:
+        - Git conflicts from pull
+        - Uncommitted changes with requireClean=true
+        - Unable to reach remote repository
+
+        Resolution:
+        1. Navigate to design-system-cli repository
+        2. Resolve any merge conflicts: git status
+        3. Commit or stash uncommitted changes if required
+        4. Retry the runbook
+
+    telemetry:
+      capture: all
+      events:
+        - git_preflight.start
+        - git_preflight.status
+        - git_preflight.conflict
+        - git_preflight.complete
+
+    success_criteria:
+      - condition: result.proceed === true
+        description: Git checks passed successfully
+
+    estimated_duration: 5-15 seconds
+
+  - id: sync_tokens
+    name: Sync Design Tokens
+    agent: figma_bridge
+    skill: figma_sync_tokens
+    depends_on: [git_preflight]
+    description: |
+      Generate Figma plugin files or push tokens directly to Figma API.
+      Only executes if git pre-flight checks passed.
+
+    inputs:
+      mode: ${mode}
+      input: ${tokens_file}
+      out: ${output_dir}
+      fileId: ${figma_file_id}
+      token: ${FIGMA_ACCESS_TOKEN}
+
+    on_failure:
+      action: abort
+      reason: |
+        Design token sync failed. Check:
+        - Token file format is valid JSON
+        - Figma API credentials are correct (push mode)
+        - Output directory is writable (plugin mode)
+
+    telemetry:
+      capture: all
+      events:
+        - figma_sync.start
+        - figma_sync.plugin_generated
+        - figma_sync.api_push_complete
+        - figma_sync.error
+
+    success_criteria:
+      - condition: result.success === true
+        description: Tokens synced successfully
+
+    estimated_duration: 10-30 seconds
+
+  - id: post_summary
+    name: Post Summary Notification
+    agent: ops_planner
+    skill: notify_run_summary
+    depends_on: [sync_tokens]
+    description: |
+      Send summary notification to configured channels (Slack, Mattermost, etc.)
+      with runbook execution results.
+
+    inputs:
+      runbook_id: figma_sync_design_tokens
+      include_telemetry: true
+
+    on_failure:
+      action: warn
+      reason: Summary notification failed but sync completed successfully
+
+    estimated_duration: 2-5 seconds
+
+execution_policy:
+  retry:
+    enabled: true
+    max_attempts: 2
+    backoff: exponential
+    steps: [git_preflight]  # Only retry git operations
+
+  timeout:
+    total: 5m
+    per_step:
+      git_preflight: 30s
+      sync_tokens: 2m
+      post_summary: 30s
+
+  concurrency:
+    allow_parallel: false
+    reason: Git operations must be sequential
+
+rollback:
+  enabled: false
+  reason: |
+    Figma plugin generation is idempotent - regenerating creates identical files.
+    API push mode updates Figma styles in-place (no database state to rollback).
+
+telemetry:
+  run_events_table: job_runs
+  step_events_table: job_events
+  metrics_table: telemetry_events
+
+  capture_policy:
+    inputs: true
+    outputs: true
+    errors: true
+    duration: true
+    git_status: true
+
+notifications:
+  on_success:
+    - channel: slack
+      webhook: ${SLACK_WEBHOOK_URL}
+      template: |
+        ✅ Design tokens synced to Figma
+        Mode: ${mode}
+        Tokens: ${tokens_file}
+        Duration: ${duration_ms}ms
+
+  on_failure:
+    - channel: slack
+      webhook: ${SLACK_WEBHOOK_URL}
+      template: |
+        ❌ Figma sync failed
+        Step: ${failed_step}
+        Reason: ${failure_reason}
+
+  on_git_conflict:
+    - channel: slack
+      webhook: ${SLACK_WEBHOOK_URL}
+      template: |
+        ⚠️ Git pre-flight failed - conflicts detected
+        Branch: ${git_branch}
+        Conflicts: ${conflict_files}
+        Action: Manual resolution required
+
+usage_examples:
+  - name: Plugin mode (default)
+    command: |
+      curl -X POST https://buildopscontrolroom.vercel.app/api/runs \
+        -H "Content-Type: application/json" \
+        -d '{
+          "template_id": "figma_sync_design_tokens",
+          "environment": "prod",
+          "lane": "Auto",
+          "inputs": {
+            "mode": "plugin",
+            "tokens_file": "./tokens/normalized-tokens.json",
+            "output_dir": "./figma-plugin"
+          }
+        }'
+
+  - name: API push mode
+    command: |
+      curl -X POST https://buildopscontrolroom.vercel.app/api/runs \
+        -H "Content-Type: application/json" \
+        -d '{
+          "template_id": "figma_sync_design_tokens",
+          "environment": "prod",
+          "inputs": {
+            "mode": "push",
+            "tokens_file": "./tokens/normalized-tokens.json",
+            "figma_file_id": "abc123def456",
+            "FIGMA_ACCESS_TOKEN": "figd_xxx"
+          }
+        }'
+
+  - name: Strict git validation
+    command: |
+      curl -X POST https://buildopscontrolroom.vercel.app/api/runs \
+        -H "Content-Type: application/json" \
+        -d '{
+          "template_id": "figma_sync_design_tokens",
+          "inputs": {
+            "mode": "plugin",
+            "tokens_file": "./tokens/normalized-tokens.json",
+            "require_clean_git": true
+          }
+        }'
+
+verification:
+  - step: git_preflight
+    checks:
+      - git status shows clean or acceptable state
+      - git pull completed without conflicts
+      - telemetry events captured in mcp-jobs
+
+  - step: sync_tokens
+    checks:
+      - plugin files generated (plugin mode) or API push succeeded
+      - output matches expected structure
+      - no errors in telemetry
+
+  - step: post_summary
+    checks:
+      - notification delivered
+      - summary contains accurate run metadata
+
+notes:
+  - |
+    Git pre-flight is a HARD GATE. If it fails, the entire runbook aborts.
+    This is intentional - we never want to sync tokens from a desynchronized repository.
+
+  - |
+    For long-running branches or heavy rebases, use require_clean_git: true
+    for especially sensitive flows (e.g., "Push new production theme tokens").
+
+  - |
+    When you introduce more bridges (Odoo theme sync, Superset dashboards),
+    reuse the git_preflight skill rather than cloning the logic.
+
+  - |
+    Consider adding metrics on git pre-flight failures (count, per repo)
+    so the telemetry_analyst sub-agent can surface "flaky repos" or chronic conflict areas.

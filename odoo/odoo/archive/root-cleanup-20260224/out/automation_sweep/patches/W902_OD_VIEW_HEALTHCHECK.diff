@@ -1,0 +1,4 @@
+--- a/notion-n8n-monthly-close/workflows/odoo/W902_OD_VIEW_HEALTHCHECK.json
++++ b/automations/n8n/workflows/W902_OD_VIEW_HEALTHCHECK.json
+@@ Move stray workflow to canonical location @@
+# git mv 'notion-n8n-monthly-close/workflows/odoo/W902_OD_VIEW_HEALTHCHECK.json' 'automations/n8n/workflows/W902_OD_VIEW_HEALTHCHECK.json'

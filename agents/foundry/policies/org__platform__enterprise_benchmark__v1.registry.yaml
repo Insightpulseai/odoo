@@ -1,0 +1,92 @@
+version: 1
+namespace: ipai.org.platform.enterprise_benchmark.v1
+artifact_type: registry
+repo_key: org
+domain: platform
+subject: enterprise_benchmark
+last_reviewed_utc: "2026-03-16T00:00:00Z"
+
+benchmark_id: azure-enterprise-tenant-identity-benchmark
+
+dimensions:
+  - id: tenant_definition
+    description: "Application tenant is explicitly defined and not conflated with users, workspaces, environments, or Entra tenants."
+    required: true
+    scoring: { 0: "no canonical tenant definition", 1: "partial definition in prose only", 2: "canonical definition enforced in docs and naming rules" }
+
+  - id: entra_tenant_distinction
+    description: "App tenant and Microsoft Entra tenant are explicitly distinct in code, docs, and schemas."
+    required: true
+    scoring: { 0: "mixed terminology", 1: "terminology documented but not enforced", 2: "distinct field names and review gates enforced" }
+
+  - id: tenant_resolution
+    description: "Every request path has a deterministic tenant resolution method."
+    required: true
+    scoring: { 0: "implicit or ad hoc", 1: "implemented for some paths", 2: "defined for all inbound paths" }
+
+  - id: tenant_isolation_model
+    description: "Shared-vs-isolated component model is documented and tested."
+    required: true
+    scoring: { 0: "undefined", 1: "documented", 2: "documented and validated" }
+
+  - id: request_to_tenant_mapping
+    description: "User requests are mapped to tenants without ambiguity."
+    required: true
+    scoring: { 0: "undefined", 1: "exists in app logic only", 2: "exists in app logic and architecture docs" }
+
+  - id: noisy_neighbor_controls
+    description: "Shared infrastructure includes explicit noisy-neighbor protections."
+    required: true
+    scoring: { 0: "no mitigations", 1: "mitigations planned", 2: "mitigations implemented and monitored" }
+
+  - id: per_tenant_metering
+    description: "Tenant consumption can be measured and correlated to cost."
+    required: true
+    scoring: { 0: "no metering", 1: "partial metering", 2: "metering and cost correlation implemented" }
+
+  - id: tenant_lifecycle_automation
+    description: "Onboarding, provisioning, configuration, and offboarding are automated."
+    required: true
+    scoring: { 0: "manual lifecycle", 1: "partially automated", 2: "end-to-end automated" }
+
+  - id: control_plane_data_plane_separation
+    description: "Control-plane and data-plane responsibilities are documented and separated."
+    required: true
+    scoring: { 0: "no separation", 1: "conceptual only", 2: "clear architectural and operational separation" }
+
+  - id: entra_auth_standard
+    description: "Microsoft Entra is the authoritative identity plane for human auth and workload identity."
+    required: true
+    scoring: { 0: "identity fragmented", 1: "Entra used partially", 2: "Entra is canonical and documented" }
+
+  - id: managed_identity_coverage
+    description: "Azure workloads use managed identity where feasible."
+    required: true
+    scoring: { 0: "secrets-only auth", 1: "mixed secrets and MI", 2: "MI default with exceptions documented" }
+
+  - id: conditional_access_coverage
+    description: "Human access paths are protected by Conditional Access where applicable."
+    required: true
+    scoring: { 0: "no policy coverage", 1: "partial", 2: "documented and enforced" }
+
+  - id: domain_dns_hardening
+    description: "Domain ownership, subdomain routing, and takeover prevention are documented and monitored."
+    required: true
+    scoring: { 0: "unmanaged DNS risk", 1: "DNS documented only", 2: "DNS documented, validated, and monitored" }
+
+  - id: connection_contracts
+    description: "Every integration has a declared contract with auth, probe, observability, and owner."
+    required: true
+    scoring: { 0: "no contracts", 1: "some connections contracted", 2: "all connections contracted and probed" }
+
+compliance:
+  pass_threshold: 22
+  max_score: 28
+  hard_fail_dimensions:
+    - tenant_definition
+    - entra_tenant_distinction
+    - tenant_resolution
+    - tenant_isolation_model
+    - request_to_tenant_mapping
+    - entra_auth_standard
+    - connection_contracts

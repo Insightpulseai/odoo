@@ -1,0 +1,85 @@
+{
+  "name": "PPM Clarity: Slack Slash Commands",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "ppm-clarity/slack-command",
+        "responseMode": "lastNode",
+        "options": {}
+      },
+      "name": "Slash Command Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [250, 300]
+    },
+    {
+      "parameters": {
+        "functionCode": "// Parse Slack slash command payload\nconst body = $input.first().json;\nconst text = (body.text || '').trim();\nconst parts = text.split(/\\s+/);\nconst subcommand = parts[0] || '';\n\n// Route: /ppm-retry <event-id>\n// Route: /ppm-resolve [plane|odoo|manual] <link-id>\n// Route: /ppm-status\n\nreturn [{\n  json: {\n    subcommand: subcommand,\n    args: parts.slice(1),\n    user_id: body.user_id,\n    channel_id: body.channel_id,\n    response_url: body.response_url,\n    raw_text: text\n  }\n}];"
+      },
+      "name": "Parse Command",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [450, 300]
+    },
+    {
+      "parameters": {
+        "rules": {
+          "rules": [
+            { "outputKey": "retry", "value": "retry" },
+            { "outputKey": "resolve", "value": "resolve" },
+            { "outputKey": "status", "value": "status" }
+          ]
+        },
+        "fallbackOutput": "none",
+        "value": "={{ $json.subcommand }}"
+      },
+      "name": "Route Command",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 2,
+      "position": [650, 300]
+    },
+    {
+      "parameters": {
+        "functionCode": "// /ppm-retry <event-id>\nconst eventId = $json.args[0];\nif (!eventId) {\n  return [{ json: { response_type: 'ephemeral', text: 'Usage: /ppm-retry <event-id>' } }];\n}\n\n// TODO: Look up event, re-execute sync\nreturn [{ json: {\n  response_type: 'in_channel',\n  text: `:arrows_counterclockwise: Retrying sync for event \\`${eventId}\\`...`\n} }];"
+      },
+      "name": "Handle Retry",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [900, 150]
+    },
+    {
+      "parameters": {
+        "functionCode": "// /ppm-resolve [plane|odoo|manual] <link-id>\nconst strategy = $json.args[0];\nconst linkId = $json.args[1];\n\nif (!strategy || !linkId || !['plane', 'odoo', 'manual'].includes(strategy)) {\n  return [{ json: { response_type: 'ephemeral', text: 'Usage: /ppm-resolve [plane|odoo|manual] <link-id>' } }];\n}\n\n// TODO: Apply resolution strategy\nreturn [{ json: {\n  response_type: 'in_channel',\n  text: `:white_check_mark: Conflict \\`${linkId}\\` resolved using **${strategy}** strategy.`\n} }];"
+      },
+      "name": "Handle Resolve",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [900, 300]
+    },
+    {
+      "parameters": {
+        "functionCode": "// /ppm-status — show sync health dashboard\n// TODO: Query Supabase for live stats\nreturn [{ json: {\n  response_type: 'ephemeral',\n  text: ':bar_chart: *PPM Clarity Status*\\n- Active links: _querying..._\\n- Sync state: :white_check_mark: Healthy\\n- Last reconciliation: 2 AM today\\n- Conflicts pending: 0'\n} }];"
+      },
+      "name": "Handle Status",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [900, 450]
+    }
+  ],
+  "connections": {
+    "Slash Command Webhook": { "main": [[{ "node": "Parse Command", "type": "main", "index": 0 }]] },
+    "Parse Command": { "main": [[{ "node": "Route Command", "type": "main", "index": 0 }]] },
+    "Route Command": {
+      "main": [
+        [{ "node": "Handle Retry", "type": "main", "index": 0 }],
+        [{ "node": "Handle Resolve", "type": "main", "index": 0 }],
+        [{ "node": "Handle Status", "type": "main", "index": 0 }]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "tags": ["ppm-clarity", "slack", "commands"]
+}

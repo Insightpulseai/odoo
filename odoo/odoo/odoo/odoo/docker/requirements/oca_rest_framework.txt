@@ -1,0 +1,6 @@
+# OCA REST framework dependencies
+# Required by: base_rest, base_rest_pydantic (OCA/rest-framework)
+pydantic>=2.0,<3.0
+apispec>=6.0
+cerberus
+marshmallow

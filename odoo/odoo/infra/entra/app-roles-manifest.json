@@ -1,0 +1,126 @@
+{
+  "$schema": "https://raw.githubusercontent.com/Azure/azure-resource-manager-schemas/main/schemas/2019-01-01/Microsoft.Authorization.json",
+  "_comment": "Azure AD App Registration — App Roles for InsightPulseAI. UUIDs are deterministic (UUID v5, namespace=DNS:insightpulseai.com, name=role_value).",
+  "appRoles": [
+    {
+      "id": "5b454fe7-e2ae-5e14-9fa9-1c0b40209ef4",
+      "allowedMemberTypes": ["User", "Application"],
+      "displayName": "Product Viewer",
+      "description": "View product information and access public advisory content",
+      "isEnabled": true,
+      "value": "product.viewer"
+    },
+    {
+      "id": "6d0cf29e-22a0-5644-ab52-398caf78a1c6",
+      "allowedMemberTypes": ["User", "Application"],
+      "displayName": "Product Operator",
+      "description": "Manage product configuration and product-related operations",
+      "isEnabled": true,
+      "value": "product.operator"
+    },
+    {
+      "id": "898f968e-2eb4-595d-a1e1-49b88a619799",
+      "allowedMemberTypes": ["User", "Application"],
+      "displayName": "Finance Close Operator",
+      "description": "Execute financial closing tasks including journal entries and reconciliation",
+      "isEnabled": true,
+      "value": "finance.close.operator"
+    },
+    {
+      "id": "b49e77f2-c926-5cf1-b0d0-4cf289bdfcdd",
+      "allowedMemberTypes": ["User", "Application"],
+      "displayName": "Finance Close Approver",
+      "description": "Approve financial closing tasks, access approval workflows and audit evidence",
+      "isEnabled": true,
+      "value": "finance.close.approver"
+    },
+    {
+      "id": "05f874a6-dc99-5438-8810-35680de2f17b",
+      "allowedMemberTypes": ["User", "Application"],
+      "displayName": "Finance Viewer",
+      "description": "Read-only access to financial data, reports, and dashboards",
+      "isEnabled": true,
+      "value": "finance.viewer"
+    },
+    {
+      "id": "48eea2d4-ba35-5c4d-8e76-5b4fa4953f89",
+      "allowedMemberTypes": ["User", "Application"],
+      "displayName": "Marketing Manager",
+      "description": "Full marketing operations including campaign management, brand standards, and playbook access",
+      "isEnabled": true,
+      "value": "marketing.manager"
+    },
+    {
+      "id": "37aaf0ac-5cb2-53d8-ad96-167f3a36e7bb",
+      "allowedMemberTypes": ["User", "Application"],
+      "displayName": "Marketing Viewer",
+      "description": "View campaign performance and marketing reports",
+      "isEnabled": true,
+      "value": "marketing.viewer"
+    },
+    {
+      "id": "719b8620-5d07-539f-8c19-0f9bde045865",
+      "allowedMemberTypes": ["User", "Application"],
+      "displayName": "Media Operations",
+      "description": "Media operations including content management and media workflow execution",
+      "isEnabled": true,
+      "value": "media.ops"
+    },
+    {
+      "id": "9787f974-d77b-5aea-9e92-cd20523d2f5a",
+      "allowedMemberTypes": ["User", "Application"],
+      "displayName": "Retail Operator",
+      "description": "Retail operations including POS management, inventory, and retail workflows",
+      "isEnabled": true,
+      "value": "retail.operator"
+    },
+    {
+      "id": "c4026d80-ad89-5084-8fcf-3474da837523",
+      "allowedMemberTypes": ["User", "Application"],
+      "displayName": "Analytics Viewer",
+      "description": "View dashboards, reports, and analytics outputs",
+      "isEnabled": true,
+      "value": "analytics.viewer"
+    },
+    {
+      "id": "e9a00301-a71c-5ee8-b6c1-0831b476a843",
+      "allowedMemberTypes": ["User", "Application"],
+      "displayName": "Analytics Admin",
+      "description": "Configure analytics pipelines, dashboards, and data sources",
+      "isEnabled": true,
+      "value": "analytics.admin"
+    },
+    {
+      "id": "86e8bfed-6188-598d-ad63-b8770e473ea9",
+      "allowedMemberTypes": ["User", "Application"],
+      "displayName": "Copilot Advisory",
+      "description": "Advisory-only copilot access — read and search permitted, no transactional actions",
+      "isEnabled": true,
+      "value": "copilot.advisory"
+    },
+    {
+      "id": "1f5e9e3d-50da-50d9-8b09-842a5b36d790",
+      "allowedMemberTypes": ["User", "Application"],
+      "displayName": "Copilot Action",
+      "description": "Action-capable copilot access — may execute transactional operations with confirmation",
+      "isEnabled": true,
+      "value": "copilot.action"
+    },
+    {
+      "id": "034c5b37-c6e7-5c0f-a90d-0a0a114b1ade",
+      "allowedMemberTypes": ["User", "Application"],
+      "displayName": "Operations Admin",
+      "description": "Platform operations administration including infrastructure, deployments, and runbooks",
+      "isEnabled": true,
+      "value": "ops.admin"
+    },
+    {
+      "id": "da3b0aa5-42ff-573c-b8d0-efe2e2598b23",
+      "allowedMemberTypes": ["User", "Application"],
+      "displayName": "Operations Viewer",
+      "description": "View operational status, health checks, and monitoring dashboards",
+      "isEnabled": true,
+      "value": "ops.viewer"
+    }
+  ]
+}

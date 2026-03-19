@@ -1,0 +1,4 @@
+--- a/web/platform-kit/infra/n8n/plane-odoo-sync.workflow.json
++++ b/automations/n8n/workflows/plane-odoo-sync.workflow.json
+@@ Move stray workflow to canonical location @@
+# git mv 'web/platform-kit/infra/n8n/plane-odoo-sync.workflow.json' 'automations/n8n/workflows/plane-odoo-sync.workflow.json'

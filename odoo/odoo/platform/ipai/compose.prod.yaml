@@ -1,0 +1,115 @@
+# =============================================================================
+# Production Docker Compose Overlay for ipai-platform
+# =============================================================================
+# Usage: docker compose -f compose.yaml -f compose.prod.yaml up -d
+#
+# This overlay adds:
+# - TLS termination via Nginx
+# - Resource limits and healthchecks
+# - PostgreSQL tuning for production
+# - Log volume management
+# =============================================================================
+
+services:
+  nginx:
+    ports:
+      - "443:443"
+    volumes:
+      - ./nginx/certs:/etc/nginx/certs:ro
+      - ./nginx/conf.d/sites/odoo-prod.conf:/etc/nginx/conf.d/sites/odoo.conf:ro
+      - nginx_logs:/var/log/nginx:rw
+    environment:
+      - NGINX_ENVSUBST_OUTPUT_DIR=/etc/nginx
+    healthcheck:
+      test: ["CMD", "curl", "-fs", "http://localhost/nginx-health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+
+  odoo:
+    deploy:
+      resources:
+        limits:
+          cpus: '4'
+          memory: 8G
+        reservations:
+          cpus: '2'
+          memory: 4G
+    volumes:
+      - ./odoo/odoo.conf:/etc/odoo/odoo.conf:ro
+      - odoo_logs:/var/log/odoo:rw
+    environment:
+      - ODOO_RC=/etc/odoo/odoo.conf
+    healthcheck:
+      test: ["CMD", "curl", "-fs", "http://localhost:8069/web/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100m"
+        max-file: "5"
+
+  odoo_db:
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+          memory: 4G
+        reservations:
+          cpus: '1'
+          memory: 2G
+    command: >
+      postgres
+      -c shared_buffers=1GB
+      -c effective_cache_size=3GB
+      -c maintenance_work_mem=256MB
+      -c checkpoint_completion_target=0.9
+      -c wal_buffers=64MB
+      -c default_statistics_target=100
+      -c random_page_cost=1.1
+      -c effective_io_concurrency=200
+      -c work_mem=16MB
+      -c min_wal_size=1GB
+      -c max_wal_size=4GB
+      -c max_worker_processes=4
+      -c max_parallel_workers_per_gather=2
+      -c max_parallel_workers=4
+      -c log_statement=none
+      -c log_min_duration_statement=1000
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U odoo -d odoo"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "50m"
+        max-file: "3"
+
+  redis:
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+    command: redis-server --appendonly yes --maxmemory 256mb --maxmemory-policy allkeys-lru
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "20m"
+        max-file: "2"
+
+volumes:
+  nginx_logs:
+  odoo_logs:

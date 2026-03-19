@@ -1,0 +1,410 @@
+// =============================================================================
+// Portal UI Overrides (/my, /shop, etc.)
+// =============================================================================
+// Styles the Odoo portal/website interface to match ChatGPT App SDK design.
+// Uses CSS custom properties from tokens.scss for consistency with backend.
+// =============================================================================
+
+// ---------------------------------------------------------------------------
+// Global Portal Styling
+// ---------------------------------------------------------------------------
+body {
+  font-family: var(--ipai-font-sans);
+  color: var(--ipai-fg);
+  background: var(--ipai-bg);
+  line-height: var(--ipai-line-height);
+}
+
+// ---------------------------------------------------------------------------
+// Portal Wrapper
+// ---------------------------------------------------------------------------
+.o_portal_wrap {
+  background: var(--ipai-bg-subtle);
+  min-height: 100vh;
+
+  // Portal sidebar
+  .o_portal_my_home {
+    .o_portal_doc_spinner {
+      background: var(--ipai-bg);
+    }
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Portal Navigation
+// ---------------------------------------------------------------------------
+.o_portal_navbar {
+  background: var(--ipai-bg);
+  border-bottom: 1px solid var(--ipai-border);
+
+  .navbar-brand {
+    font-weight: var(--ipai-font-weight-semibold);
+    color: var(--ipai-fg);
+  }
+
+  .nav-link {
+    color: var(--ipai-fg-muted);
+    transition: color var(--ipai-transition);
+
+    &:hover {
+      color: var(--ipai-fg);
+    }
+
+    &.active {
+      color: var(--ipai-fg);
+      font-weight: var(--ipai-font-weight-medium);
+    }
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Portal Cards
+// ---------------------------------------------------------------------------
+.card,
+.o_portal_wrap .card,
+.o_portal_docs .card {
+  background: var(--ipai-card-bg);
+  border: 1px solid var(--ipai-border);
+  border-radius: var(--ipai-radius);
+  box-shadow: var(--ipai-shadow-xs);
+  transition: box-shadow var(--ipai-transition);
+
+  &:hover {
+    box-shadow: var(--ipai-shadow-sm);
+  }
+
+  .card-header {
+    background: var(--ipai-bg-subtle);
+    border-bottom: 1px solid var(--ipai-border);
+    font-weight: var(--ipai-font-weight-semibold);
+  }
+
+  .card-body {
+    color: var(--ipai-fg);
+  }
+
+  .card-footer {
+    background: var(--ipai-bg-subtle);
+    border-top: 1px solid var(--ipai-border);
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Portal Tables
+// ---------------------------------------------------------------------------
+.o_portal_wrap table,
+.table {
+  border-radius: var(--ipai-radius);
+  overflow: hidden;
+
+  thead {
+    background: var(--ipai-bg-subtle);
+
+    th {
+      color: var(--ipai-fg-muted);
+      font-weight: var(--ipai-font-weight-semibold);
+      border-bottom: 1px solid var(--ipai-border);
+    }
+  }
+
+  tbody {
+    tr {
+      transition: background-color var(--ipai-transition);
+
+      &:hover {
+        background: var(--ipai-bg-hover);
+      }
+
+      td {
+        border-bottom: 1px solid var(--ipai-border-muted);
+        color: var(--ipai-fg);
+      }
+    }
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Buttons (Portal)
+// ---------------------------------------------------------------------------
+.btn {
+  border-radius: var(--ipai-radius-sm);
+  font-weight: var(--ipai-font-weight-medium);
+  transition: all var(--ipai-transition);
+
+  &:focus-visible {
+    box-shadow: var(--ipai-focus-ring);
+  }
+}
+
+.btn-primary {
+  background: var(--ipai-primary);
+  border-color: var(--ipai-primary);
+  color: var(--ipai-primary-fg);
+
+  &:hover {
+    background: var(--ipai-primary-hover);
+    border-color: var(--ipai-primary-hover);
+  }
+
+  &:active,
+  &.active {
+    background: var(--ipai-primary-active);
+    border-color: var(--ipai-primary-active);
+  }
+}
+
+.btn-secondary {
+  background: var(--ipai-secondary);
+  border-color: var(--ipai-secondary);
+  color: var(--ipai-secondary-fg);
+
+  &:hover {
+    background: var(--ipai-secondary-hover);
+    border-color: var(--ipai-secondary-hover);
+  }
+}
+
+.btn-outline-primary {
+  color: var(--ipai-primary);
+  border-color: var(--ipai-primary);
+
+  &:hover {
+    background: var(--ipai-primary);
+    color: var(--ipai-primary-fg);
+  }
+}
+
+.btn-outline-secondary {
+  color: var(--ipai-secondary);
+  border-color: var(--ipai-border-strong);
+
+  &:hover {
+    background: var(--ipai-bg-hover);
+    color: var(--ipai-fg);
+    border-color: var(--ipai-border-strong);
+  }
+}
+
+.btn-link {
+  color: var(--ipai-accent);
+
+  &:hover {
+    color: var(--ipai-accent-hover);
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Form Controls (Portal)
+// ---------------------------------------------------------------------------
+.form-control,
+.form-select,
+input.form-control,
+textarea.form-control,
+select.form-select {
+  border-radius: var(--ipai-radius-sm);
+  border: 1px solid var(--ipai-input-border);
+  background: var(--ipai-input-bg);
+  color: var(--ipai-fg);
+  transition: border-color var(--ipai-transition), box-shadow var(--ipai-transition);
+
+  &:hover {
+    border-color: var(--ipai-input-border-hover);
+  }
+
+  &:focus {
+    border-color: var(--ipai-input-border-focus);
+    box-shadow: var(--ipai-focus-ring);
+    outline: none;
+  }
+
+  &::placeholder {
+    color: var(--ipai-input-placeholder);
+  }
+
+  &:disabled {
+    background: var(--ipai-input-bg-disabled);
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Portal Breadcrumbs
+// ---------------------------------------------------------------------------
+.o_portal_wrap .breadcrumb {
+  background: transparent;
+  padding: 0;
+
+  .breadcrumb-item {
+    color: var(--ipai-fg-muted);
+
+    a {
+      color: var(--ipai-fg-muted);
+      text-decoration: none;
+
+      &:hover {
+        color: var(--ipai-fg);
+        text-decoration: underline;
+      }
+    }
+
+    &.active {
+      color: var(--ipai-fg);
+      font-weight: var(--ipai-font-weight-medium);
+    }
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Portal Sidebar
+// ---------------------------------------------------------------------------
+.o_portal_my_home .o_portal_side_nav {
+  background: var(--ipai-card-bg);
+  border-radius: var(--ipai-radius);
+  border: 1px solid var(--ipai-border);
+  box-shadow: var(--ipai-shadow-xs);
+
+  .nav-link {
+    color: var(--ipai-fg-muted);
+    border-radius: var(--ipai-radius-sm);
+    margin: 2px 4px;
+    transition: all var(--ipai-transition);
+
+    &:hover {
+      background: var(--ipai-bg-hover);
+      color: var(--ipai-fg);
+    }
+
+    &.active {
+      background: var(--ipai-primary);
+      color: var(--ipai-primary-fg);
+    }
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Alerts (Portal)
+// ---------------------------------------------------------------------------
+.alert {
+  border-radius: var(--ipai-radius);
+  border: none;
+}
+
+.alert-success {
+  background: var(--ipai-success-bg);
+  color: var(--ipai-success);
+}
+
+.alert-warning {
+  background: var(--ipai-warning-bg);
+  color: var(--ipai-warning);
+}
+
+.alert-danger {
+  background: var(--ipai-danger-bg);
+  color: var(--ipai-danger);
+}
+
+.alert-info {
+  background: var(--ipai-info-bg);
+  color: var(--ipai-info);
+}
+
+// ---------------------------------------------------------------------------
+// Badges (Portal)
+// ---------------------------------------------------------------------------
+.badge {
+  border-radius: 6px;
+  font-weight: var(--ipai-font-weight-medium);
+}
+
+// ---------------------------------------------------------------------------
+// Dropdowns (Portal)
+// ---------------------------------------------------------------------------
+.dropdown-menu {
+  border-radius: var(--ipai-radius);
+  border: 1px solid var(--ipai-border);
+  box-shadow: var(--ipai-shadow-lg);
+  background: var(--ipai-card-bg);
+
+  .dropdown-item {
+    border-radius: calc(var(--ipai-radius-sm) - 4px);
+    margin: 2px 4px;
+    width: calc(100% - 8px);
+    transition: background-color var(--ipai-transition);
+
+    &:hover {
+      background: var(--ipai-bg-hover);
+    }
+
+    &.active,
+    &:active {
+      background: var(--ipai-primary);
+      color: var(--ipai-primary-fg);
+    }
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Modals (Portal)
+// ---------------------------------------------------------------------------
+.modal-content {
+  border-radius: var(--ipai-radius);
+  border: 1px solid var(--ipai-border);
+  box-shadow: var(--ipai-shadow-lg);
+  background: var(--ipai-card-bg);
+
+  .modal-header {
+    border-bottom: 1px solid var(--ipai-border);
+  }
+
+  .modal-footer {
+    border-top: 1px solid var(--ipai-border);
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Pagination (Portal)
+// ---------------------------------------------------------------------------
+.pagination {
+  .page-item {
+    .page-link {
+      border-radius: var(--ipai-radius-sm);
+      border: 1px solid var(--ipai-border);
+      color: var(--ipai-fg-muted);
+      margin: 0 2px;
+      transition: all var(--ipai-transition);
+
+      &:hover {
+        background: var(--ipai-bg-hover);
+        color: var(--ipai-fg);
+      }
+    }
+
+    &.active .page-link {
+      background: var(--ipai-primary);
+      border-color: var(--ipai-primary);
+      color: var(--ipai-primary-fg);
+    }
+
+    &.disabled .page-link {
+      background: var(--ipai-input-bg-disabled);
+      color: var(--ipai-fg-subtle);
+    }
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Footer
+// ---------------------------------------------------------------------------
+footer {
+  background: var(--ipai-bg);
+  border-top: 1px solid var(--ipai-border);
+  color: var(--ipai-fg-muted);
+
+  a {
+    color: var(--ipai-fg-muted);
+
+    &:hover {
+      color: var(--ipai-fg);
+    }
+  }
+}

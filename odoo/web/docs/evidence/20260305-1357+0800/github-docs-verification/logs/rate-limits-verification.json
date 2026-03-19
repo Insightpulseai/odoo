@@ -1,0 +1,30 @@
+{
+  "source": "https://docs.github.com/en/rest/using-the-rest-api/rate-limits-for-the-rest-api",
+  "verified_at": "2026-03-05T13:57:00+08:00",
+  "verification_type": "rate_limits",
+  "findings": {
+    "unauthenticated": {
+      "claimed": "60 requests/hour",
+      "official": "60 requests per hour",
+      "status": "CORRECT"
+    },
+    "authenticated_pat_oauth": {
+      "claimed": "5,000 requests/hour",
+      "official": "5,000 requests per hour",
+      "status": "CORRECT"
+    },
+    "github_app_installation": {
+      "claimed": "5,000 requests/hour per installation",
+      "official": "minimum rate limit of 5,000 requests per hour",
+      "status": "CORRECT"
+    },
+    "enterprise_cloud": {
+      "claimed": "Rate limits may be higher (contact GitHub)",
+      "official": "15,000 requests per hour for GitHub Apps and OAuth apps in EC organizations",
+      "status": "CONSERVATIVE_BUT_CORRECT",
+      "note": "Document uses conservative language to avoid overpromising"
+    }
+  },
+  "verdict": "ACCURATE",
+  "recommendation": "Consider adding explicit Enterprise Cloud numbers (15,000/hour) for completeness"
+}

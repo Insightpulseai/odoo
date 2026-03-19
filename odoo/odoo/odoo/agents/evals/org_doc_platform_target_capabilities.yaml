@@ -1,0 +1,503 @@
+# org_doc_platform_target_capabilities.yaml
+# SSOT: Org-wide documentation platform capability maturity assessment
+# Contract: docs/contracts/ORG_DOC_PLATFORM_EVAL_CONTRACT.md
+# Scored: 2026-03-15 from code evidence in this repo
+#
+# Scale: 0=missing, 1=scaffolded, 2=partial, 3=operational, 4=target
+# release_blocker: true means current < 3 blocks release
+
+domains:
+
+  # ════════════════════════════════════════════
+  # 1. Source Coverage (weight: 0.15)
+  # ════════════════════════════════════════════
+  source_coverage:
+    weight: 0.15
+    capabilities:
+
+      - id: repo_docs_discovery
+        name: "Repository docs discovery and loading"
+        target: 4
+        current: 2
+        evidence:
+          - "apps/org-docs-kb/ directory structure being created"
+          - "RepoDocsLoader pattern exists in odoo-docs-kb, not yet adapted for org-docs"
+        criteria:
+          - Loader discovers markdown/rst/yaml files in docs/ tree
+          - Recursive traversal with configurable exclusion patterns
+          - Metadata extraction (title, path, git timestamp)
+          - Incremental mode (only changed files since last run)
+        release_blocker: false
+        notes: "Loader pattern exists but org-docs-specific instance not yet running."
+
+      - id: spec_bundle_discovery
+        name: "Spec bundle discovery and indexing"
+        target: 4
+        current: 2
+        evidence:
+          - "spec/ directory contains 76 spec bundles"
+          - "SpecBundleLoader pattern being adapted"
+        criteria:
+          - Loader discovers spec bundles in spec/ tree
+          - Indexes constitution.md, prd.md, plan.md, tasks.md per bundle
+          - Extracts spec metadata (slug, status, owner)
+          - Handles nested spec structures
+        release_blocker: false
+        notes: "Spec bundles exist and are well-structured. Loader not yet connected."
+
+      - id: external_docs_ingestion
+        name: "External documentation ingestion"
+        target: 4
+        current: 1
+        evidence:
+          - "web_loader pattern exists in knowledge base apps"
+        criteria:
+          - Can ingest docs from external URLs (Azure docs, OCA wiki)
+          - Source contract (source.yaml) required per external source
+          - Rate limiting and caching for external fetches
+          - Content extraction handles HTML, PDF, markdown
+        release_blocker: false
+        notes: "Web loader exists elsewhere. Not connected to org-docs index."
+
+      - id: source_inventory
+        name: "Source inventory tracking"
+        target: 4
+        current: 2
+        evidence:
+          - "source_inventory.yaml being created this session"
+        criteria:
+          - All doc sources listed with owner, format, refresh cadence
+          - Classification (engineering, architecture, runbook, policy, spec)
+          - Sensitivity level per source
+          - Last-indexed timestamp tracked
+        release_blocker: false
+        notes: "Inventory file being created. Not yet used by loaders."
+
+  # ════════════════════════════════════════════
+  # 2. Freshness and Lifecycle (weight: 0.10)
+  # ════════════════════════════════════════════
+  freshness_lifecycle:
+    weight: 0.10
+    capabilities:
+
+      - id: git_based_incremental
+        name: "Git-based incremental refresh"
+        target: 4
+        current: 2
+        evidence:
+          - "Pattern exists in odoo-docs-kb loader (git log --since)"
+          - "Not yet implemented for org-docs platform"
+        criteria:
+          - Loader uses git log to detect changed files since last run
+          - Only re-embeds and re-indexes changed documents
+          - Tracks last-run timestamp in state file
+          - Full rebuild available as fallback
+        release_blocker: false
+        notes: "Pattern proven in odoo-docs-kb. Needs adaptation for org-docs."
+
+      - id: stale_doc_detection
+        name: "Stale document detection"
+        target: 4
+        current: 1
+        evidence:
+          - "freshness field defined in search schema"
+          - "No automation flags stale docs"
+        criteria:
+          - Docs not modified in 90 days flagged as stale
+          - Stale flag stored in search index metadata
+          - Stale docs deprioritized in search results
+          - Owner notified when doc becomes stale
+        release_blocker: false
+        notes: "Schema supports freshness. No detection automation exists."
+
+      - id: refresh_automation
+        name: "Automated refresh workflow"
+        target: 4
+        current: 2
+        evidence:
+          - "org-docs-refresh.yml workflow being created"
+        criteria:
+          - Weekly scheduled refresh (Monday 07:00 UTC)
+          - Manual trigger available via workflow_dispatch
+          - Refresh logs stored as workflow artifacts
+          - Failure alerts via Slack webhook
+        release_blocker: false
+        notes: "Workflow being created. Not yet tested."
+
+  # ════════════════════════════════════════════
+  # 3. Retrieval Quality (weight: 0.20)
+  # ════════════════════════════════════════════
+  retrieval_quality:
+    weight: 0.20
+    capabilities:
+
+      - id: semantic_search
+        name: "Semantic search over org docs"
+        target: 4
+        current: 2
+        evidence:
+          - "Azure AI Search configured for the platform"
+          - "org-docs index not yet populated with documents"
+        criteria:
+          - Embedding model produces vectors for all indexed docs
+          - Cosine similarity search returns top-k results
+          - Results include score, snippet, metadata
+          - Latency <500ms for 95th percentile queries
+        release_blocker: true
+        notes: "Search infra configured. Index empty. Cannot validate retrieval quality."
+
+      - id: filtered_search
+        name: "Filtered search by doc type and source"
+        target: 4
+        current: 2
+        evidence:
+          - "doc_type and source filters defined in search service"
+          - "Not tested with real data"
+        criteria:
+          - Filter by doc_type (engineering, architecture, runbook, policy, spec)
+          - Filter by source (repo path, external URL)
+          - Combined filters work correctly
+          - Empty result set handled gracefully
+        release_blocker: false
+        notes: "Filter logic in code. Not validated with populated index."
+
+      - id: eval_queries
+        name: "Eval query suite for retrieval testing"
+        target: 4
+        current: 1
+        evidence:
+          - "Eval framework exists for copilot"
+          - "Org-docs eval queries being seeded this session"
+        criteria:
+          - At least 3 queries per doc type (15+ total)
+          - Expected results documented per query
+          - Automated scoring (precision, recall, MRR)
+          - Results tracked over time
+        release_blocker: false
+        notes: "Eval queries being created. Scoring automation not yet built."
+
+  # ════════════════════════════════════════════
+  # 4. Grounding/Citation Quality (weight: 0.15)
+  # ════════════════════════════════════════════
+  grounding_citation:
+    weight: 0.15
+    capabilities:
+
+      - id: citation_schema
+        name: "Citation schema and enforcement"
+        target: 4
+        current: 2
+        evidence:
+          - "Citation fields defined in search response schema"
+          - "Enforcement not tested with real queries"
+        criteria:
+          - Every search result includes source path and line range
+          - Citations verifiable against source document
+          - Missing citation raises warning in logs
+          - Citation accuracy measurable via eval suite
+        release_blocker: true
+        notes: "Schema defined. Enforcement depends on populated index."
+
+      - id: confidence_bands
+        name: "Confidence band classification"
+        target: 4
+        current: 2
+        evidence:
+          - "Confidence band logic in search service"
+          - "Thresholds not calibrated against real data"
+        criteria:
+          - High confidence (>0.85 cosine), medium (0.70-0.85), low (<0.70)
+          - Band displayed with each result
+          - Low-confidence results carry warning
+          - Thresholds calibrated from eval query results
+        release_blocker: false
+        notes: "Logic exists. Thresholds need calibration with real data."
+
+      - id: ambiguity_detection
+        name: "Ambiguity and conflict detection"
+        target: 4
+        current: 1
+        evidence:
+          - "Ambiguity flag defined in response schema"
+          - "Detection logic not implemented"
+        criteria:
+          - Detects when multiple sources give conflicting answers
+          - Flags ambiguous results to user
+          - Suggests authoritative source when conflict detected
+          - Ambiguity rate tracked as quality metric
+        release_blocker: false
+        notes: "Flag defined. No detection logic exists."
+
+  # ════════════════════════════════════════════
+  # 5. Access Control Readiness (weight: 0.05)
+  # ════════════════════════════════════════════
+  access_control:
+    weight: 0.05
+    capabilities:
+
+      - id: sensitivity_classification
+        name: "Document sensitivity classification"
+        target: 4
+        current: 1
+        evidence:
+          - "Sensitivity field in index schema (public, internal, confidential)"
+          - "Not enforced at search time"
+        criteria:
+          - Every indexed doc has sensitivity level
+          - Classification rules documented per source type
+          - Secrets-containing docs auto-classified as confidential
+          - Classification auditable
+        release_blocker: false
+        notes: "Schema field exists. No classification automation."
+
+      - id: role_based_filtering
+        name: "Role-based search filtering"
+        target: 4
+        current: 0
+        evidence: []
+        criteria:
+          - Search accepts caller role/identity
+          - Confidential docs filtered for non-admin callers
+          - Filter applied at search layer (not post-filter)
+          - Audit log for sensitive doc access
+        release_blocker: false
+        notes: "Not implemented. Low priority for internal-only platform."
+
+  # ════════════════════════════════════════════
+  # 6. Search UX Quality (weight: 0.10)
+  # ════════════════════════════════════════════
+  search_ux:
+    weight: 0.10
+    capabilities:
+
+      - id: doc_type_filtering
+        name: "Doc type filtering in search endpoint"
+        target: 4
+        current: 2
+        evidence:
+          - "Search endpoint accepts doc_type parameter"
+          - "Not tested with populated index"
+        criteria:
+          - Filter by engineering, architecture, runbook, policy, spec
+          - Multiple type selection supported
+          - Result count per type available
+          - UI-friendly response format
+        release_blocker: false
+        notes: "Endpoint exists. Needs real data to validate."
+
+      - id: source_browsing
+        name: "Source browsing endpoint"
+        target: 4
+        current: 1
+        evidence:
+          - "Endpoint planned in service design"
+        criteria:
+          - List all indexed sources with doc counts
+          - Browse docs within a source
+          - Source health (last indexed, doc count, stale count)
+          - Paginated response
+        release_blocker: false
+        notes: "Planned but not implemented."
+
+      - id: freshness_reporting
+        name: "Freshness reporting endpoint"
+        target: 4
+        current: 1
+        evidence:
+          - "Endpoint planned in service design"
+        criteria:
+          - Report stale docs by source
+          - Report freshness distribution
+          - Alert threshold for stale doc percentage
+          - Machine-readable output (JSON)
+        release_blocker: false
+        notes: "Planned but not implemented."
+
+  # ════════════════════════════════════════════
+  # 7. Deployment Repeatability (weight: 0.10)
+  # ════════════════════════════════════════════
+  deployment:
+    weight: 0.10
+    capabilities:
+
+      - id: container_image
+        name: "Container image build"
+        target: 4
+        current: 2
+        evidence:
+          - "Dockerfile being created for apps/org-docs-kb/"
+        criteria:
+          - Dockerfile builds successfully
+          - Image size < 500MB
+          - Non-root user
+          - Health check in Dockerfile
+        release_blocker: true
+        notes: "Dockerfile being created. Not yet built or tested."
+
+      - id: publish_pipeline
+        name: "ACR publish pipeline"
+        target: 4
+        current: 2
+        evidence:
+          - "publish-agent-services.yml matrix being extended"
+        criteria:
+          - CI builds and pushes image to ACR on main merge
+          - Image tagged with git SHA and latest
+          - Build cache for faster iterations
+          - Vulnerability scan on push
+        release_blocker: false
+        notes: "Pipeline entry being added. Not yet tested."
+
+      - id: health_check
+        name: "Health check endpoint"
+        target: 4
+        current: 2
+        evidence:
+          - "GET /health endpoint in service code"
+        criteria:
+          - Returns 200 with JSON body
+          - Includes version, uptime, index status
+          - Checks Azure AI Search connectivity
+          - Response time <100ms
+        release_blocker: true
+        notes: "Endpoint exists in code. Not tested in container."
+
+      - id: rollback_path
+        name: "Rollback mechanism"
+        target: 4
+        current: 1
+        evidence:
+          - "No explicit rollback mechanism defined"
+        criteria:
+          - Previous image tag always available in ACR
+          - ACA revision rollback documented
+          - Rollback takes <5 minutes
+          - Rollback tested in staging
+        release_blocker: false
+        notes: "ACR retains previous images. No documented rollback procedure."
+
+  # ════════════════════════════════════════════
+  # 8. Observability and Operations (weight: 0.10)
+  # ════════════════════════════════════════════
+  observability:
+    weight: 0.10
+    capabilities:
+
+      - id: health_endpoint
+        name: "Health endpoint for monitoring"
+        target: 4
+        current: 2
+        evidence:
+          - "GET /health in service code"
+        criteria:
+          - Returns structured JSON with component status
+          - Monitored by Azure Front Door or external prober
+          - Alerts on consecutive failures
+          - Includes dependency health (search service, embedding model)
+        release_blocker: true
+        notes: "Endpoint exists. Not monitored externally."
+
+      - id: request_logging
+        name: "Structured request logging"
+        target: 4
+        current: 1
+        evidence:
+          - "Basic Python logging in service"
+        criteria:
+          - JSON structured logs
+          - Request ID correlation
+          - Query text and result count logged
+          - Log level configurable via env var
+        release_blocker: false
+        notes: "Basic logging only. Not structured."
+
+      - id: metrics
+        name: "Application metrics"
+        target: 4
+        current: 0
+        evidence: []
+        criteria:
+          - Request count, latency, error rate
+          - Index size, document count, stale count
+          - Embedding latency, search latency
+          - Prometheus-compatible or Azure Monitor
+        release_blocker: false
+        notes: "Not implemented."
+
+      - id: tracing
+        name: "Distributed tracing"
+        target: 4
+        current: 0
+        evidence: []
+        criteria:
+          - OpenTelemetry instrumentation
+          - Trace spans for embed, search, response
+          - Trace ID in response headers
+          - Azure Monitor or Jaeger backend
+        release_blocker: false
+        notes: "Not implemented."
+
+  # ════════════════════════════════════════════
+  # 9. Governance and Ownership (weight: 0.05)
+  # ════════════════════════════════════════════
+  governance:
+    weight: 0.05
+    capabilities:
+
+      - id: operating_model
+        name: "Operating model documentation"
+        target: 4
+        current: 2
+        evidence:
+          - "docs/platform/ORG_DOC_OPERATING_MODEL.md being created"
+        criteria:
+          - Refresh cadence documented
+          - Eval cadence documented
+          - Ownership model defined
+          - Escalation path for quality issues
+        release_blocker: true
+        notes: "Being created this session."
+
+      - id: admission_policy
+        name: "New source admission policy"
+        target: 4
+        current: 2
+        evidence:
+          - "docs/platform/ORG_DOC_ADMISSION_POLICY.md being created"
+        criteria:
+          - Rules for adding new doc sources documented
+          - Owner requirement enforced
+          - Format requirements specified
+          - Generated/derived doc exclusion rule
+        release_blocker: false
+        notes: "Being created this session."
+
+      - id: doc_ownership
+        name: "Document ownership tracking"
+        target: 4
+        current: 1
+        evidence:
+          - "Owner field in index schema"
+          - "Not populated or enforced"
+        criteria:
+          - Every indexed doc has an owner
+          - Owner notified on staleness
+          - Ownership transfer process documented
+          - Orphaned docs flagged
+        release_blocker: false
+        notes: "Schema field exists. No enforcement."
+
+      - id: deprecation_policy
+        name: "Document deprecation policy"
+        target: 4
+        current: 1
+        evidence:
+          - "Freshness markers in schema"
+          - "No deprecation automation"
+        criteria:
+          - Deprecated docs marked in source_inventory.yaml
+          - Deprecated docs excluded from next index rebuild
+          - Deprecation reason recorded
+          - Grace period before removal (30 days)
+        release_blocker: false
+        notes: "Freshness exists. No deprecation workflow."

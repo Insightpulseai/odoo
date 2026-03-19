@@ -1,0 +1,46 @@
+version: 1
+name: pretraining-recipe-design
+description: "Design pretraining or continued pretraining recipes with architecture, training arguments, and checkpoint strategy"
+type: benchmark_skill
+skill_classification: encoded_preference
+owner_persona: training-architect
+source_family: hf_smol_training_playbook
+status: active
+
+triggers:
+  - "pretrain a model"
+  - "continue pretraining"
+  - "training from scratch"
+  - "pretraining recipe"
+
+inputs:
+  - objective: "What the model should learn"
+  - data_scale: "Available training data size"
+  - compute_budget: "Available GPU hours"
+  - base_model: "Starting model (if continued pretraining)"
+
+steps:
+  - id: classify_task
+    action: "Determine: full pretraining vs continued pretraining"
+  - id: select_architecture
+    action: "Choose model architecture and size"
+  - id: design_training_args
+    action: "Set learning rate, batch size, warmup, scheduler, max steps"
+  - id: checkpoint_strategy
+    action: "Define checkpoint frequency, evaluation cadence, early stopping"
+  - id: loss_tracking
+    action: "Define loss monitoring, divergence detection, logging"
+
+outputs:
+  - recipe: "Complete training configuration"
+  - training_args: "TrainingArguments specification"
+  - checkpoint_plan: "When to save, evaluate, and stop"
+  - monitoring_plan: "What to track during training"
+
+guardrails:
+  - "Full pretraining requires significantly more data and compute than continued pretraining"
+  - "Learning rate warmup is mandatory"
+  - "Checkpoint frequency must balance storage cost with recovery granularity"
+  - "Loss divergence detection must be configured"
+
+benchmark_source: "https://huggingface.co/docs/transformers/trainer"

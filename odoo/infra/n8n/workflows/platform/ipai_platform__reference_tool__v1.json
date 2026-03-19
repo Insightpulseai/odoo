@@ -1,0 +1,121 @@
+{
+  "name": "ipai_platform__reference_tool__v1",
+  "nodes": [
+    {
+      "parameters": {
+        "path": "v1/reference-tool",
+        "options": {}
+      },
+      "id": "trigger_webhook",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [250, 300],
+      "webhookId": "ipai-platform-ref-tool-v1"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{$env.SUPABASE_URL}}/rest/v1/runs",
+        "authentication": "headerAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [{ "name": "Prefer", "value": "return=representation" }]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            { "name": "kind", "value": "test" },
+            { "name": "status", "value": "running" },
+            {
+              "name": "metadata",
+              "value": "={{ JSON.stringify({ trigger: 'webhook', client: 'n8n', inputs: $json.body }) }}"
+            }
+          ]
+        }
+      },
+      "id": "log_start",
+      "name": "Log Start (Supabase)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [500, 300],
+      "credentials": { "headerAuth": { "id": "supabase_key" } }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{$env.SUPABASE_URL}}/rest/v1/run_events",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "run_id",
+              "value": "={{$node[\"Log Start (Supabase)\"].json.id}}"
+            },
+            { "name": "level", "value": "info" },
+            {
+              "name": "message",
+              "value": "Workflow logic executed successfully."
+            }
+          ]
+        }
+      },
+      "id": "log_event",
+      "name": "Log Event",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [750, 200]
+    },
+    {
+      "parameters": {
+        "method": "PATCH",
+        "url": "={{$env.SUPABASE_URL}}/rest/v1/runs?id=eq.{{$node[\"Log Start (Supabase)\"].json.id}}",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            { "name": "status", "value": "success" },
+            { "name": "finished_at", "value": "={{$now}}" }
+          ]
+        }
+      },
+      "id": "log_finish",
+      "name": "Log Success",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [1000, 200]
+    },
+    {
+      "parameters": {
+        "method": "PATCH",
+        "url": "={{$env.SUPABASE_URL}}/rest/v1/runs?id=eq.{{$node[\"Log Start (Supabase)\"].json.id}}",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            { "name": "status", "value": "failed" },
+            { "name": "finished_at", "value": "={{$now}}" },
+            { "name": "error_message", "value": "={{$json.message}}" }
+          ]
+        }
+      },
+      "id": "log_error",
+      "name": "Log Failure",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [1000, 400]
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [[{ "node": "Log Start (Supabase)", "type": "main", "index": 0 }]]
+    },
+    "Log Start (Supabase)": {
+      "main": [[{ "node": "Log Event", "type": "main", "index": 0 }]]
+    },
+    "Log Event": {
+      "main": [[{ "node": "Log Success", "type": "main", "index": 0 }]]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

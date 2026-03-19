@@ -1,0 +1,21 @@
+{
+  "id": "supabase",
+  "name": "Supabase",
+  "summary": "PostgreSQL database, Auth, Storage, Realtime, and Edge Functions. External integrations layer for the IPAI stack.",
+  "category": "database",
+  "type": "connectable",
+  "capabilities": ["database", "auth", "storage", "realtime", "edge-functions", "pgvector", "pg-cron"],
+  "install": {
+    "provisioner": "scripts/provisioners/install_supabase.sh",
+    "scopes": ["database", "storage", "auth"],
+    "env_vars": ["SUPABASE_URL", "SUPABASE_SERVICE_ROLE_KEY", "SUPABASE_ANON_KEY"],
+    "auto_configure": false
+  },
+  "links": {
+    "docs": "https://supabase.com/docs",
+    "vendor": "https://supabase.com",
+    "api": "https://supabase.com/docs/reference/api"
+  },
+  "mcp_server": "@supabase/mcp-server",
+  "status": "active"
+}

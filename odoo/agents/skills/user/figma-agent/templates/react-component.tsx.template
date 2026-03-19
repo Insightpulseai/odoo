@@ -1,0 +1,74 @@
+// Generated from Figma frame: "{{FIGMA_FRAME_NAME}}"
+// Figma URL: {{FIGMA_URL}}
+// Generated: {{TIMESTAMP}}
+
+import { cn } from '@/lib/utils';
+{{#if HAS_VARIANTS}}
+import { cva, type VariantProps } from 'class-variance-authority';
+{{/if}}
+
+{{#if HAS_VARIANTS}}
+const {{COMPONENT_NAME_LOWER}} = cva(
+  // Base styles
+  [
+    {{#each BASE_CLASSES}}
+    "{{this}}",
+    {{/each}}
+  ],
+  {
+    variants: {
+      {{#each VARIANTS}}
+      {{this.name}}: {
+        {{#each this.options}}
+        {{this.key}}: "{{this.classes}}",
+        {{/each}}
+      },
+      {{/each}}
+    },
+    defaultVariants: {
+      {{#each DEFAULT_VARIANTS}}
+      {{this.name}}: "{{this.value}}",
+      {{/each}}
+    }
+  }
+);
+
+{{/if}}
+interface {{COMPONENT_NAME}}Props {{#if HAS_VARIANTS}}extends VariantProps<typeof {{COMPONENT_NAME_LOWER}}> {{/if}}{
+  {{#each PROPS}}
+  {{this.name}}{{#unless this.required}}?{{/unless}}: {{this.type}};
+  {{/each}}
+  className?: string;
+}
+
+export function {{COMPONENT_NAME}}({
+  {{#each PROPS}}
+  {{this.name}},
+  {{/each}}
+  {{#if HAS_VARIANTS}}
+  {{#each VARIANTS}}
+  {{this.name}},
+  {{/each}}
+  {{/if}}
+  className,
+}: {{COMPONENT_NAME}}Props) {
+  return (
+    <{{ROOT_ELEMENT}}
+      className={cn(
+        {{#if HAS_VARIANTS}}
+        {{COMPONENT_NAME_LOWER}}({ {{#each VARIANTS}}{{this.name}}, {{/each}} }),
+        {{else}}
+        {{#each BASE_CLASSES}}
+        "{{this}}",
+        {{/each}}
+        {{/if}}
+        className
+      )}
+      {{#each ARIA_ATTRIBUTES}}
+      {{this.name}}={{this.value}}
+      {{/each}}
+    >
+      {{CHILDREN_TEMPLATE}}
+    </{{ROOT_ELEMENT}}>
+  );
+}

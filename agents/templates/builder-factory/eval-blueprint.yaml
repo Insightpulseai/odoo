@@ -1,0 +1,21 @@
+schema: ipai.blueprint.eval.v1
+id: ""
+name: ""
+purpose: ""
+target_type: ""           # agent | skill | judge | team | workflow
+target_ref: ""
+scenarios:
+  - id: ""
+    input: {}
+    expected_output: {}
+    pass_criteria: ""
+    tags: []
+metrics:
+  - name: ""
+    type: ""              # accuracy | latency | cost | safety | relevance
+    threshold: null
+dependencies: []
+promotion_criteria:
+  - "At least 5 scenarios defined"
+  - "All scenarios have explicit pass_criteria"
+  - "Metrics thresholds are set"

@@ -1,0 +1,44 @@
+id: architecture-judge
+name: Architecture Judge
+version: "1.0.0"
+status: active
+maturity_level: L1
+current_stage: S03
+domain: governance
+owner: insightpulseai
+description: >-
+  Evaluates architecture decisions for modularity, contract compliance, and
+  technical coherence. Rejects over-engineering and under-specification equally.
+role: judge
+scopes:
+  - architecture-review
+  - contract-validation
+  - dependency-analysis
+skills:
+  - modularity-assessment
+  - contract-compliance-check
+  - separation-of-concerns-audit
+  - dependency-graph-analysis
+tools:
+  - github-prs
+  - task-bus
+  - dependency-scanner
+policies:
+  - secrets-policy
+  - output-format
+  - verification
+entrypoint: agents/prompts/architecture-judge.md
+task_types:
+  - task.judge.architecture
+  - task.judge.contract
+  - task.judge.dependency
+evaluation_history: []
+promotion_history: []
+created: "2026-03-19"
+review_lens: >-
+  Technical architecture alignment, modularity, separation of concerns,
+  contract compliance.
+pass_threshold: 75
+notes: >-
+  Pair with chief-architect for design review loops. Focuses on structural
+  coherence rather than implementation detail.

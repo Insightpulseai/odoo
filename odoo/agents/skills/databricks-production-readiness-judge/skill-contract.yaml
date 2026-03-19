@@ -1,0 +1,74 @@
+version: 1
+name: databricks-production-readiness-judge
+status: draft
+owner: agents
+type: benchmark_skill
+family: databricks_production_readiness
+
+purpose: >
+  Meta-skill that classifies whether a Databricks surface is actually
+  production-grade based on release maturity, deployment evidence,
+  observability, and rollback capability. Decides: is it GA-grade,
+  preview-grade, or not acceptable?
+
+triggers:
+  - any production-readiness skill output requires final judgment
+  - new Databricks feature adoption proposal
+  - quarterly maturity review
+
+inputs:
+  - skill assessment outputs from lane-specific skills (pipeline/app/agent/model)
+  - Databricks release notes
+  - feature maturity classification
+
+dependencies:
+  - agents/skills/databricks-pipeline-production-readiness/
+  - agents/skills/databricks-app-production-readiness/
+  - agents/skills/databricks-agent-production-readiness/
+  - agents/skills/databricks-model-serving-production-readiness/
+  - agents/knowledge/benchmarks/databricks-production-ready.md
+  - docs/architecture/enterprise_data_platform.md
+
+steps:
+  - classify the Databricks feature's release maturity (GA / Public Preview / Beta / Private Preview / Experimental)
+  - check if deployment path is codified (IaC, CI/CD, bundle)
+  - verify observability/evaluation evidence exists
+  - confirm rollback/recovery expectations are defined
+  - cross-check against lane-specific skill output (pipeline/app/agent/model)
+  - determine production-grade classification — production-ready, preview-acceptable, not-production-grade
+  - generate recommendation — adopt, adopt-with-conditions, defer, reject
+
+outputs:
+  - maturity_classification
+  - production_grade_determination
+  - adoption_recommendation
+  - conditions (if adopt-with-conditions)
+  - evidence_summary
+  - risk_assessment
+
+guardrails:
+  - >
+    Databricks "production ready" is a benchmark for production discipline,
+    not a blanket trust label. A Databricks capability is production-grade
+    in our doctrine only when: release maturity is acceptable (GA or Public
+    Preview with stable interface/SLA/support), deployment path is codified,
+    observability/evaluation exists, rollback/recovery expectations are defined.
+    Beta, Private Preview, and Experimental features must NOT be treated as
+    canonical production baseline.
+  - never classify Beta/Private Preview/Experimental as production-ready
+  - require evidence from at least one lane-specific skill
+  - flag features with no observability as not-production-grade
+  - always produce explicit recommendation with rationale
+
+evidence:
+  format: docs/evidence/{stamp}/databricks/readiness-judgment/
+  required:
+    - maturity classification source
+    - lane-specific skill assessment(s)
+    - adoption recommendation rationale
+
+evals:
+  accuracy: 0.98
+  completeness: 0.95
+  safety: 0.99
+  policy_adherence: 0.99

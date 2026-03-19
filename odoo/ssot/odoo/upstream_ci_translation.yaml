@@ -1,0 +1,338 @@
+schema_version: "1.0"
+target_state: upstream_ci_translation
+description: >
+  Maps upstream Odoo CI/workflow intent to Azure DevOps pipeline responsibilities.
+  GitHub Actions must NOT be reintroduced — this is a translation map only.
+updated_at: "2026-03-18"
+
+authority:
+  ci_cd: azure_devops
+  source_control: github
+  github_actions: decommissioned
+
+# Verified 2026-03-18: upstream GitHub Actions presence
+upstream_github_actions_audit:
+  odoo/odoo: none  # uses runbot, not GHA
+  odoo/docker: none
+  odoo/upgrade-util: none  # uses pre-commit hooks (ruff, typos, check-xml/yaml)
+  odoo/documentation: none
+  odoo/runbot: none
+  odoo/tutorials: none
+  odoo/owl: deploy.yml  # Node.js CI — npm test + lint + format-check + build
+  odoo/OdooLocust: none
+  odoo/design-themes: none
+  summary: >
+    Only odoo/owl has a GitHub Actions workflow. All other repos use runbot
+    or pre-commit hooks. This confirms that copying GHA from upstream is
+    not applicable — upstream barely uses GHA themselves.
+
+# =============================================================================
+# Upstream workflow intent → Azure DevOps pipeline mapping
+# =============================================================================
+translations:
+
+  # ---------------------------------------------------------------------------
+  # Static validation
+  # ---------------------------------------------------------------------------
+  - id: lint-python
+    upstream_intent: Python linting (flake8, pylint-odoo, isort, black)
+    source_repos:
+      - odoo/odoo
+      - OCA/maintainer-quality-tools
+    workflow_category: static_validation
+    why_it_matters: >
+      Catches syntax errors, style violations, and OCA-specific anti-patterns
+      before tests run.
+    azdo_pipeline: ci-validation
+    azdo_stage: Lint
+    azdo_job_type: standard
+    priority: must_have
+    notes: >
+      Use pylint-odoo plugin for Odoo-specific checks.
+      OCA maintainer-quality-tools defines the canonical ruleset.
+
+  - id: lint-javascript
+    upstream_intent: JavaScript/OWL linting (eslint)
+    source_repos:
+      - odoo/odoo
+      - odoo/owl
+    workflow_category: static_validation
+    why_it_matters: >
+      Frontend code quality for OWL components and web assets.
+    azdo_pipeline: ci-validation
+    azdo_stage: Lint
+    azdo_job_type: standard
+    priority: should_have
+    notes: OWL-specific eslint config from odoo/owl repo.
+
+  - id: manifest-validation
+    upstream_intent: Module manifest validation (__manifest__.py structure, deps, version)
+    source_repos:
+      - OCA/maintainer-quality-tools
+    workflow_category: static_validation
+    why_it_matters: >
+      Malformed manifests cause silent install failures.
+    azdo_pipeline: ci-validation
+    azdo_stage: Lint
+    azdo_job_type: standard
+    priority: must_have
+
+  - id: yaml-template-validation
+    upstream_intent: YAML/template syntax validation
+    source_repos: []
+    workflow_category: static_validation
+    why_it_matters: >
+      Catches pipeline YAML errors before they reach AzDO.
+    azdo_pipeline: ci-validation
+    azdo_stage: ConfigValidation
+    azdo_job_type: standard
+    priority: must_have
+
+  # ---------------------------------------------------------------------------
+  # Packaging validation
+  # ---------------------------------------------------------------------------
+  - id: dockerfile-build
+    upstream_intent: Docker image build validation
+    source_repos:
+      - odoo/docker
+    workflow_category: packaging_validation
+    why_it_matters: >
+      Validates that the Odoo runtime image builds successfully with all
+      dependencies and addons.
+    azdo_pipeline: ci-validation
+    azdo_stage: Build
+    azdo_job_type: standard
+    priority: must_have
+    notes: >
+      Reference odoo/docker for base image patterns.
+      Our Dockerfile at odoo/Dockerfile is the canonical build source.
+
+  - id: requirements-check
+    upstream_intent: Python dependency resolution validation
+    source_repos:
+      - odoo/odoo
+    workflow_category: packaging_validation
+    why_it_matters: >
+      Catches dependency conflicts before image build.
+    azdo_pipeline: ci-validation
+    azdo_stage: Build
+    azdo_job_type: standard
+    priority: should_have
+
+  # ---------------------------------------------------------------------------
+  # Installation validation
+  # ---------------------------------------------------------------------------
+  - id: module-install-test
+    upstream_intent: Module installation smoke test (--init with --stop-after-init)
+    source_repos:
+      - odoo/odoo
+      - OCA/maintainer-quality-tools
+    workflow_category: installation_validation
+    why_it_matters: >
+      Validates that modules install cleanly without errors.
+      Catches missing dependencies, broken XML, and init failures.
+    azdo_pipeline: ci-validation
+    azdo_stage: Test
+    azdo_job_type: standard
+    priority: must_have
+    notes: >
+      Use disposable test DB (test_<module>).
+      Run with --test-enable for modules that have tests.
+
+  - id: module-upgrade-test
+    upstream_intent: Module upgrade validation (--update with existing DB)
+    source_repos:
+      - odoo/odoo
+      - odoo/upgrade-util
+    workflow_category: upgrade_validation
+    why_it_matters: >
+      Validates that module upgrades don't break existing data.
+    azdo_pipeline: ci-validation
+    azdo_stage: Test
+    azdo_job_type: standard
+    priority: should_have
+    notes: Requires a seeded test DB with prior version data.
+
+  # ---------------------------------------------------------------------------
+  # Unit/integration testing
+  # ---------------------------------------------------------------------------
+  - id: python-unit-tests
+    upstream_intent: Python unit tests (TransactionCase, SavepointCase)
+    source_repos:
+      - odoo/odoo
+    workflow_category: test_matrix
+    why_it_matters: >
+      Core business logic validation.
+    azdo_pipeline: ci-validation
+    azdo_stage: Test
+    azdo_job_type: standard
+    priority: must_have
+
+  - id: js-unit-tests
+    upstream_intent: JavaScript/OWL unit tests (QUnit)
+    source_repos:
+      - odoo/odoo
+      - odoo/owl
+    workflow_category: test_matrix
+    why_it_matters: >
+      Frontend component validation.
+    azdo_pipeline: ci-validation
+    azdo_stage: Test
+    azdo_job_type: standard
+    priority: should_have
+
+  - id: http-case-tests
+    upstream_intent: HTTP integration tests (HttpCase with browser)
+    source_repos:
+      - odoo/odoo
+    workflow_category: test_matrix
+    why_it_matters: >
+      End-to-end validation of web controllers and views.
+    azdo_pipeline: ci-validation
+    azdo_stage: Test
+    azdo_job_type: standard
+    priority: nice_to_have
+    notes: Requires headless browser in CI agent.
+
+  # ---------------------------------------------------------------------------
+  # Security
+  # ---------------------------------------------------------------------------
+  - id: security-scanning
+    upstream_intent: Static security analysis (CodeQL, Semgrep, Trivy)
+    source_repos: []
+    workflow_category: security_policy
+    why_it_matters: >
+      OWASP top 10, dependency vulnerabilities, secret detection.
+    azdo_pipeline: ci-validation
+    azdo_stage: Security
+    azdo_job_type: standard
+    priority: must_have
+    notes: >
+      Previously in GitHub CodeQL workflow.
+      Translate to AzDO security scanning stage or GHAS direct integration.
+
+  # ---------------------------------------------------------------------------
+  # Documentation validation
+  # ---------------------------------------------------------------------------
+  - id: docs-build
+    upstream_intent: Documentation build validation (Sphinx/RST)
+    source_repos:
+      - odoo/documentation
+    workflow_category: docs_validation
+    why_it_matters: >
+      Validates that documentation compiles without errors.
+    azdo_pipeline: ci-validation
+    azdo_stage: Lint
+    azdo_job_type: standard
+    priority: nice_to_have
+    notes: >
+      We use Markdown, not Sphinx. Translate to markdown lint/link check.
+
+  - id: ssot-validation
+    upstream_intent: SSOT file consistency validation
+    source_repos: []
+    workflow_category: docs_validation
+    why_it_matters: >
+      Ensures SSOT YAML files are valid, consistent, and not contradictory.
+    azdo_pipeline: ci-validation
+    azdo_stage: SSOTValidation
+    azdo_job_type: standard
+    priority: must_have
+    notes: Previously in GitHub Actions SSOT check workflows.
+
+  # ---------------------------------------------------------------------------
+  # Performance / load testing
+  # ---------------------------------------------------------------------------
+  - id: load-testing
+    upstream_intent: Locust-based load testing against Odoo
+    source_repos:
+      - odoo/OdooLocust
+    workflow_category: performance_or_load
+    why_it_matters: >
+      Performance regression detection before production releases.
+    azdo_pipeline: quality-governance
+    azdo_stage: LoadTest
+    azdo_job_type: scheduled
+    priority: should_have
+    notes: >
+      Not PR-gated. Run on schedule or before protected promotions.
+      Reference OdooLocust for task patterns.
+
+  - id: benchmark-eval
+    upstream_intent: AI/agent benchmark and evaluation runs
+    source_repos: []
+    workflow_category: performance_or_load
+    why_it_matters: >
+      Quality gates for AI copilot and tax/compliance agent releases.
+    azdo_pipeline: quality-governance
+    azdo_stage: BenchmarkEval
+    azdo_job_type: scheduled
+    priority: must_have
+    notes: Foundry evals, deterministic evaluators, evidence packs.
+
+  # ---------------------------------------------------------------------------
+  # Release support
+  # ---------------------------------------------------------------------------
+  - id: image-publish
+    upstream_intent: Container image build and publish to registry
+    source_repos:
+      - odoo/docker
+    workflow_category: release_support
+    why_it_matters: >
+      Produces deployable Odoo runtime artifacts.
+    azdo_pipeline: runtime-delivery
+    azdo_stage: Build
+    azdo_job_type: deployment
+    priority: must_have
+
+  - id: migration-execution
+    upstream_intent: Database migration execution during upgrades
+    source_repos:
+      - odoo/upgrade-util
+    workflow_category: release_support
+    why_it_matters: >
+      Runs pre/post-migrate scripts as part of runtime delivery.
+    azdo_pipeline: runtime-delivery
+    azdo_stage: Migrate
+    azdo_job_type: deployment
+    priority: must_have
+
+  - id: runtime-smoke
+    upstream_intent: Post-deploy smoke validation (health endpoint, login, basic operations)
+    source_repos: []
+    workflow_category: release_support
+    why_it_matters: >
+      Validates that the deployed runtime is functional.
+    azdo_pipeline: runtime-delivery
+    azdo_stage: Smoke
+    azdo_job_type: deployment
+    priority: must_have
+
+  # ---------------------------------------------------------------------------
+  # Explicitly ignored
+  # ---------------------------------------------------------------------------
+  - id: runbot-ci
+    upstream_intent: Runbot CI orchestration
+    source_repos:
+      - odoo/runbot
+    workflow_category: ignore_for_now
+    why_it_matters: null
+    azdo_pipeline: null
+    azdo_stage: null
+    azdo_job_type: null
+    priority: not_applicable
+    notes: >
+      Runbot is Odoo's custom CI system. We use Azure DevOps.
+      Extract test topology concepts only — do not adopt runbot itself.
+
+  - id: odoo-sh-deploy
+    upstream_intent: Odoo.sh deployment orchestration
+    source_repos:
+      - odoo/odoosh
+    workflow_category: ignore_for_now
+    why_it_matters: null
+    azdo_pipeline: null
+    azdo_stage: null
+    azdo_job_type: null
+    priority: not_applicable
+    notes: We deploy to Azure Container Apps, not Odoo.sh.

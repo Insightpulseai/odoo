@@ -1,0 +1,13 @@
+{
+  "id": "rag-pipeline",
+  "name": "RAG Pipeline",
+  "summary": "Deterministic Retrieval-Augmented Generation: fixed chunking, stable hashes, reproducible retrieval with pgvector.",
+  "tags": ["ai", "rag", "embeddings", "vector", "search"],
+  "stage": "beta",
+  "availability": "all",
+  "links": {
+    "docs": "https://supabase.com/docs/guides/ai"
+  },
+  "related_assets": ["ai-agent-builder", "mcp-server", "knowledge-base"],
+  "ipai_module": "ipai_ai_rag"
+}

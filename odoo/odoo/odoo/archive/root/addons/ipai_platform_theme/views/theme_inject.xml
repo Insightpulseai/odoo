@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Inject theme class on body based on company setting -->
+    <template id="ipai_theme_body_class" inherit_id="web.layout" name="IPAI Theme Body Class">
+        <xpath expr="//body" position="attributes">
+            <attribute name="t-attf-class" separator=" " add="ipai-theme-#{request.env.company.ipai_theme_variant or 'tbwa'}"/>
+        </xpath>
+    </template>
+
+</odoo>

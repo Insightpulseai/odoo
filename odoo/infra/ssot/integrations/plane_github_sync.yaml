@@ -1,0 +1,96 @@
+# schema: ssot.integrations.v1
+# GitHub ↔ Plane sync — closes the Plan → Develop loop.
+# PR merges / GitHub issues → update Plane issue state.
+# Plane issue created → optionally creates GitHub issue.
+#
+# Mapping config: ssot/mappings/plane_github.yaml
+# Edge function:  supabase/functions/plane-github-sync/
+# Parent registry: ssot/integrations/plane.yaml
+# Contract doc:   docs/architecture/PLANE_MARKETPLACE_INTEGRATIONS.md §GitHub
+
+version: "1.0.0"
+schema: ssot.integrations.v1
+name: plane_github_sync
+display_name: "GitHub ↔ Plane Sync"
+status: planned
+last_reviewed: "2026-03-01"
+
+provider:
+  platform: plane
+  category: integration
+  direction: bidirectional_with_primary_inbound
+
+components:
+  sync_worker:
+    description: "Supabase Edge Function consuming GitHub webhooks and Plane API"
+    path: "supabase/functions/plane-github-sync/"
+    triggers:
+      - github_webhook_pull_request   # PR opened, merged, closed
+      - github_webhook_issues         # issue opened, closed, labeled
+      - github_webhook_push           # commit pushed to default branch
+
+  mapping_config:
+    description: "Declarative repo → Plane project mapping. Never hardcoded in function."
+    path: "ssot/mappings/plane_github.yaml"
+    schema:
+      repo_full_name: string        # "Insightpulseai/odoo"
+      plane_project_id: uuid
+      label_to_state_map: object    # GitHub label → Plane state name
+      pr_merge_state: string        # Plane state to set on PR merge (default: "Done")
+
+  ops_audit:
+    description: "ops.runs row per sync batch; ops.run_events per repo processed"
+    idempotency_key_format: "plane_github_sync:{github_delivery_id}"
+
+sync_directions:
+  - id: github_to_plane
+    direction: inbound
+    trigger: "GitHub webhook (PR merged / issue closed)"
+    action: "Update Plane issue state via Plane API"
+    status: planned
+    notes: >
+      On PR merge: find linked Plane issue (from PR description #PLANE-{id} or
+      branch name pattern plane/{issue_id}), set state to pr_merge_state.
+      On GitHub issue close: set linked Plane issue to Done.
+
+  - id: plane_to_github
+    direction: outbound
+    trigger: "Plane webhook (issue created with github_sync tag)"
+    action: "Create GitHub issue in mapped repo"
+    status: disabled_by_default
+    notes: >
+      Disabled until mirror schema is stable. Requires explicit policy gate:
+      ssot/mappings/plane_github.yaml writeback_enabled: true per repo mapping.
+
+required_secrets:
+  - plane_api_key
+  - plane_workspace_id
+  - github_token          # Fine-grained PAT: repo:read, issues:write
+  # github_webhook_secret is validated at the GitHub App level
+
+boundary_rules:
+  - rule: "Mapping config MUST live in ssot/mappings/plane_github.yaml"
+    rationale: "No ad-hoc project mapping in Edge Function code"
+
+  - rule: "Sync worker MUST emit ops.runs + ops.run_events per batch"
+    rationale: "Advisor GitHub sync coverage check requires audit trail"
+
+  - rule: "Plane → GitHub writeback requires writeback_enabled: true in mapping"
+    rationale: "Prevents unintended GitHub issue creation from Plane activity"
+
+  - rule: "GitHub delivery ID is the idempotency key"
+    rationale: "GitHub retries identical deliveries with same X-GitHub-Delivery header"
+
+risk_flags:
+  - flag: "Unlinked PRs produce no Plane state update"
+    severity: low
+    mitigation: >
+      PR description or branch name must follow pattern plane/{issue_id} or
+      include #PLANE-{sequence_id}. Teams should document this in CONTRIBUTING.md.
+
+  - flag: "Rate limit on Plane API during bulk GitHub activity"
+    severity: low
+    mitigation: >
+      Sync worker batches Plane API calls; uses exponential backoff on 429.
+      GitHub webhook delivery queue absorbs burst; individual events processed
+      sequentially with 100ms minimum spacing.

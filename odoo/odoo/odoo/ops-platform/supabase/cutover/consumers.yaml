@@ -1,0 +1,224 @@
+version: "1.0"
+schema: supabase.cutover.consumers.v1
+updated_at: "2026-03-14"
+
+cloud_project:
+  id: spdtwktxdalcfigzeqrz
+  url: https://spdtwktxdalcfigzeqrz.supabase.co
+
+self_hosted:
+  url: https://supabase.insightpulseai.com
+  vm_host: 4.193.100.31
+  vm_user: azureuser
+  docker_compose_dir: /opt/supabase-deploy/
+
+# Consumer rewire order follows dependency topology.
+# Priority 1 = first to rewire (no external deps).
+# Priority 10 = last (all platform services must be healthy before touching CI).
+consumers:
+  # ── Priority 1: Self-referencing (Edge Functions call Supabase itself) ─────
+  - name: edge-functions
+    type: self_referencing
+    description: "Deno Edge Functions — read SUPABASE_URL via Deno.env.get()"
+    env_vars:
+      - SUPABASE_URL
+      - SUPABASE_ANON_KEY
+      - SUPABASE_SERVICE_ROLE_KEY
+    update_method: env_file
+    update_target: /opt/supabase-deploy/.env
+    # Changes take effect on next supabase functions serve / container restart
+    restart_required: true
+    smoke_test: "curl -sf https://supabase.insightpulseai.com/functions/v1/ops-health"
+    smoke_test_expected_status: 200
+    priority: 1
+
+  # ── Priority 2: n8n — co-deployed on same VM ─────────────────────────────
+  - name: n8n
+    type: co_deployed
+    description: "n8n workflow automation — shares .env with Supabase compose stack"
+    port: 5678
+    public_url: https://n8n-azure.insightpulseai.com
+    env_vars:
+      - SUPABASE_URL
+      - SUPABASE_SERVICE_ROLE_KEY
+      - SUPABASE_ANON_KEY
+    update_method: env_file
+    update_target: /opt/supabase-deploy/.env
+    restart_required: true
+    smoke_test: "curl -sf https://n8n-azure.insightpulseai.com/healthz"
+    smoke_test_expected_status: 200
+    priority: 2
+
+  # ── Priority 3–6: Azure Container Apps ───────────────────────────────────
+  - name: ipai-odoo-dev-web
+    type: container_app
+    description: "Odoo CE 19 ERP — Supabase used for task bus and AI integrations"
+    resource_group: rg-ipai-dev
+    public_url: https://erp.insightpulseai.com
+    env_vars:
+      - SUPABASE_URL
+      - SUPABASE_ANON_KEY
+      - SUPABASE_SERVICE_ROLE_KEY
+    update_method: az_containerapp
+    # az containerapp update --name ipai-odoo-dev-web --resource-group rg-ipai-dev
+    #   --set-env-vars SUPABASE_URL=secretref:supabase-url ...
+    secret_source: kv-ipai-dev
+    kv_secret_names:
+      - supabase-url
+      - supabase-anon-key
+      - supabase-service-role-key
+    smoke_test: "curl -sf https://erp.insightpulseai.com/web/health"
+    smoke_test_expected_status: 200
+    priority: 3
+
+  - name: ipai-odoo-worker
+    type: container_app
+    description: "Odoo queue worker — same Supabase dependency as web"
+    resource_group: rg-ipai-dev
+    env_vars:
+      - SUPABASE_URL
+      - SUPABASE_SERVICE_ROLE_KEY
+    update_method: az_containerapp
+    secret_source: kv-ipai-dev
+    kv_secret_names:
+      - supabase-url
+      - supabase-service-role-key
+    smoke_test: null  # No public health endpoint; rely on Odoo web smoke test
+    priority: 3
+
+  - name: ipai-odoo-cron
+    type: container_app
+    description: "Odoo cron container — same Supabase dependency as web"
+    resource_group: rg-ipai-dev
+    env_vars:
+      - SUPABASE_URL
+      - SUPABASE_SERVICE_ROLE_KEY
+    update_method: az_containerapp
+    secret_source: kv-ipai-dev
+    kv_secret_names:
+      - supabase-url
+      - supabase-service-role-key
+    smoke_test: null
+    priority: 3
+
+  - name: ipai-mcp-dev
+    type: container_app
+    description: "MCP coordination server — routes agent tool calls through Supabase"
+    resource_group: rg-ipai-dev
+    public_url: https://mcp.insightpulseai.com
+    env_vars:
+      - SUPABASE_URL
+      - SUPABASE_ANON_KEY
+      - SUPABASE_SERVICE_ROLE_KEY
+    update_method: az_containerapp
+    secret_source: kv-ipai-dev
+    kv_secret_names:
+      - supabase-url
+      - supabase-anon-key
+      - supabase-service-role-key
+    smoke_test: "curl -sf https://mcp.insightpulseai.com/health"
+    smoke_test_expected_status: 200
+    priority: 4
+
+  - name: ipai-website-dev
+    type: container_app
+    description: "Public-facing website — reads from Supabase for CMS content"
+    resource_group: rg-ipai-dev
+    public_url: https://insightpulseai.com
+    env_vars:
+      - SUPABASE_URL
+      - SUPABASE_ANON_KEY
+    update_method: az_containerapp
+    secret_source: kv-ipai-dev
+    kv_secret_names:
+      - supabase-url
+      - supabase-anon-key
+    smoke_test: "curl -sf https://insightpulseai.com/"
+    smoke_test_expected_status: 200
+    priority: 5
+
+  - name: ipai-crm-dev
+    type: container_app
+    description: "CRM web app — reads Supabase for leads and pipeline data"
+    resource_group: rg-ipai-dev
+    public_url: https://crm.insightpulseai.com
+    env_vars:
+      - SUPABASE_URL
+      - SUPABASE_ANON_KEY
+    update_method: az_containerapp
+    secret_source: kv-ipai-dev
+    kv_secret_names:
+      - supabase-url
+      - supabase-anon-key
+    smoke_test: "curl -sf https://crm.insightpulseai.com/"
+    smoke_test_expected_status: 200
+    priority: 5
+
+  # ── Priority 6: ops-console ───────────────────────────────────────────────
+  - name: ops-console
+    type: container_app
+    description: "Ops console app — reads Supabase for infrastructure health data"
+    resource_group: rg-ipai-dev
+    public_url: https://ops.insightpulseai.com
+    env_vars:
+      - SUPABASE_URL
+      - SUPABASE_SERVICE_ROLE_KEY
+      - SUPABASE_ANON_KEY
+    update_method: az_containerapp
+    secret_source: kv-ipai-dev
+    kv_secret_names:
+      - supabase-url
+      - supabase-service-role-key
+      - supabase-anon-key
+    smoke_test: "curl -sf https://ops.insightpulseai.com/"
+    smoke_test_expected_status: 200
+    priority: 6
+
+  # ── Priority 7: Slack agent app ──────────────────────────────────────────
+  - name: slack-agent-app
+    type: container_app
+    description: "Slack bot / agent — queries Supabase for context and memory"
+    resource_group: rg-ipai-dev
+    env_vars:
+      - SUPABASE_URL
+      - SUPABASE_SERVICE_ROLE_KEY
+    update_method: az_containerapp
+    secret_source: kv-ipai-dev
+    kv_secret_names:
+      - supabase-url
+      - supabase-service-role-key
+    smoke_test: null  # Slack connectivity verified via /health slash command post-cutover
+    priority: 7
+
+  # ── Priority 10: GitHub Actions (last — CI must not break earlier steps) ──
+  - name: github-actions
+    type: github_secrets
+    description: "CI/CD pipelines — use SUPABASE_URL etc. for migration and deploy jobs"
+    repo: Insightpulseai/odoo
+    secret_names:
+      - SUPABASE_URL
+      - SUPABASE_ANON_KEY
+      - SUPABASE_SERVICE_ROLE_KEY
+    update_method: gh_secret
+    # gh secret set SUPABASE_URL --repo Insightpulseai/odoo --body "$NEW_URL"
+    smoke_test: "gh workflow run health-check.yml --repo Insightpulseai/odoo"
+    priority: 10
+
+# ── Rewire execution order summary ─────────────────────────────────────────
+# 1  → edge-functions (env_file, VM restart)
+# 2  → n8n (env_file, VM restart)
+# 3  → ipai-odoo-dev-web, ipai-odoo-worker, ipai-odoo-cron (az containerapp)
+# 4  → ipai-mcp-dev (az containerapp)
+# 5  → ipai-website-dev, ipai-crm-dev (az containerapp)
+# 6  → ops-console (az containerapp)
+# 7  → slack-agent-app (az containerapp)
+# 10 → github-actions (gh secret)
+
+# ── Rollback procedure ──────────────────────────────────────────────────────
+# Each consumer supports rollback by re-running rewire with SUPABASE_URL
+# pointing back to https://spdtwktxdalcfigzeqrz.supabase.co.
+# The supabase_consumer_rewire.py script accepts --rollback flag to execute this.
+rollback:
+  cloud_url: https://spdtwktxdalcfigzeqrz.supabase.co
+  script: ops-platform/supabase/scripts/supabase_consumer_rewire.py
+  flag: "--rollback"

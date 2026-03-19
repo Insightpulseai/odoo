@@ -1,0 +1,50 @@
+# schema: ssot.m365.agent.capabilities.v1
+agent_id: insightpulseai_ops_advisor
+reviewed: "2026-03-01"
+
+# Capabilities surfaced to M365 Copilot for routing decisions
+capabilities:
+  - id: advisor_findings_query
+    display_name: "Operational advisor findings"
+    description: >
+      Access current Ops Advisor findings across security, cost, reliability,
+      ops excellence, and performance pillars. Includes open findings, severity
+      levels, and recommended remediations.
+    sample_prompts:
+      - "What are the open security findings in the IPAI advisor?"
+      - "Show me high severity advisor findings"
+      - "What's the current reliability posture?"
+    data_freshness: real_time   # fetched live via broker
+    auth_required: m365_user_identity
+
+  - id: agent_run_audit
+    display_name: "AI agent run history"
+    description: >
+      Access the audit trail of agentic coding runs (AI agents that made code
+      changes, opened PRs, or triggered scans). Includes outcome, PR links,
+      and evidence status.
+    sample_prompts:
+      - "What did the AI agent do today?"
+      - "Show me recent agent coding runs"
+      - "Which agentic PRs are still open?"
+    data_freshness: real_time
+    auth_required: m365_user_identity
+
+  - id: advisor_scan_trigger
+    display_name: "Trigger advisor scan"
+    description: >
+      Initiate a full Ops Advisor scan. Returns a job reference for tracking.
+      Scan results appear in the advisor findings capability after completion.
+    sample_prompts:
+      - "Run an advisor scan"
+      - "Refresh the ops advisor findings"
+    requires_confirmation: true
+    auth_required: m365_user_identity
+
+connector:
+  type: federated  # preferred over Graph sync (no data egress to Microsoft)
+  protocol: mcp_over_https
+  endpoint: "{{SUPABASE_URL}}/functions/v1/m365-copilot-broker"
+  auth_method: jwt  # Supabase anon key + user identity claim
+
+data_residency: sg1   # DigitalOcean Singapore (matches production droplet region)

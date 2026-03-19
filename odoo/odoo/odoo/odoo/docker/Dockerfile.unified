@@ -1,0 +1,203 @@
+# syntax=docker/dockerfile:1.7
+# =============================================================================
+# IPAI Odoo Runtime — Canonical Production Image
+# =============================================================================
+# Replaces: root Dockerfile (Odoo 18), docker/odoo/Dockerfile (thin wrapper)
+# Contract: Odoo 19 CE + OCA (flattened) + IPAI custom modules
+# Manifest: config/addons.manifest.yaml (curated repo + module list)
+# Validator: scripts/odoo/validate_addons_manifest.py
+#
+# Addon path order (SSOT invariant):
+#   /usr/lib/python3/dist-packages/odoo/addons  (Odoo CE core)
+#   /opt/odoo/addons/oca                         (OCA flattened)
+#   /opt/odoo/addons/ipai                        (IPAI custom)
+#
+# Build profiles:
+#   standard — CE + OCA essentials (production default)
+#   parity   — Full enterprise-parity OCA modules
+#
+# Build:
+#   docker build -f docker/Dockerfile.unified -t ipai-odoo-runtime:19.0 .
+#   docker build -f docker/Dockerfile.unified --build-arg PROFILE=parity -t ipai-odoo-runtime:19.0-parity .
+#
+# =============================================================================
+
+ARG ODOO_BASE=odoo:19
+FROM ${ODOO_BASE}
+
+ARG PROFILE=standard
+ARG BUILD_DATE
+ARG GIT_SHA
+
+USER root
+
+# =============================================================================
+# System Dependencies
+# =============================================================================
+# Note: libpq-dev omitted — base odoo:19 image ships PG 18 client libs
+# which conflict with the Ubuntu repo's PG 16 libpq-dev package.
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
+    curl \
+    git \
+    libxml2-dev \
+    libxslt1-dev \
+    libsasl2-dev \
+    libldap2-dev \
+    libssl-dev \
+    libffi-dev \
+    libjpeg-dev \
+    liblcms2-dev \
+    zlib1g-dev \
+    python3-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+# =============================================================================
+# Directory Structure
+# =============================================================================
+RUN mkdir -p /opt/odoo/addons/oca \
+    && mkdir -p /opt/odoo/addons/ipai
+
+# =============================================================================
+# Python Dependencies — Layered requirements (small, not bloated)
+# =============================================================================
+# requirements-odoo.txt  — Odoo CE core (placeholder; baked into base image)
+# requirements-oca.txt   — extra libs needed by installed OCA modules
+# requirements-ai.txt    — OCA/ai bridge + ipai_ai_* module deps
+COPY requirements-oca.txt requirements-ai.txt /tmp/
+COPY docker/requirements/oca_rest_framework.txt /tmp/oca_rest_framework.txt
+# --ignore-installed needed: base odoo:19 ships debian-managed typing-extensions
+# which has no RECORD file, causing pip uninstall to fail on upgrade.
+RUN pip3 install --no-cache-dir --break-system-packages --ignore-installed \
+    -r /tmp/oca_rest_framework.txt \
+    -r /tmp/requirements-oca.txt \
+    -r /tmp/requirements-ai.txt \
+    && rm /tmp/oca_rest_framework.txt /tmp/requirements-oca.txt /tmp/requirements-ai.txt
+
+# =============================================================================
+# Manifest-Driven Build Gate
+# =============================================================================
+# Validates that the build context only contains OCA repos declared in the
+# curated manifest. Prevents ad-hoc addon directories from entering the image.
+# Contract: docs/contracts/ADDONS_MANIFEST_CONTRACT.md (C-27)
+RUN pip3 install --no-cache-dir --break-system-packages pyyaml 2>/dev/null \
+    || python3 -c "import yaml" 2>/dev/null \
+    || { echo "ERROR: Cannot install PyYAML for manifest validation"; exit 1; }
+COPY config/addons.manifest.yaml /tmp/addons.manifest.yaml
+
+# =============================================================================
+# OCA Modules — Flatten from addons/oca into /opt/odoo/addons/oca
+# =============================================================================
+# Source: addons/oca/ (git-aggregator checkouts, each is an OCA repo)
+# Strategy: Flatten all modules with __manifest__.py into single directory
+# Benefit: Single addon path; collision detection prevents silent overwrites
+# Guard: Only repos listed in addons.manifest.yaml are allowed
+COPY ./addons/oca /tmp/oca-src
+
+RUN set -eux; \
+  # --- Build gate: extract allowed repos from manifest --- \
+  allowed_repos=$(python3 -c "\
+import yaml; \
+m = yaml.safe_load(open('/tmp/addons.manifest.yaml')); \
+print(' '.join(r['repo'] for r in m.get('oca_repositories', [])))"); \
+  # --- Validate: reject undeclared repos --- \
+  for repo in /tmp/oca-src/*; do \
+    [ -d "$repo" ] || continue; \
+    repo_name=$(basename "$repo"); \
+    case " $allowed_repos " in \
+      *" $repo_name "*) ;; \
+      *) echo "ERROR: OCA repo '$repo_name' not declared in addons.manifest.yaml"; exit 1 ;; \
+    esac; \
+  done; \
+  # --- Flatten declared repos --- \
+  module_count=0; \
+  for repo in /tmp/oca-src/*; do \
+    [ -d "$repo" ] || continue; \
+    repo_name=$(basename "$repo"); \
+    for mod in "$repo"/*; do \
+      [ -d "$mod" ] || continue; \
+      [ -f "$mod/__manifest__.py" ] || continue; \
+      mod_name=$(basename "$mod"); \
+      if [ -d "/opt/odoo/addons/oca/$mod_name" ]; then \
+        echo "ERROR: OCA module collision: $mod_name (repo: $repo_name)"; \
+        exit 1; \
+      fi; \
+      cp -a "$mod" "/opt/odoo/addons/oca/$mod_name"; \
+      module_count=$((module_count + 1)); \
+    done; \
+  done; \
+  echo "OCA modules flattened: $module_count"; \
+  rm -rf /tmp/oca-src /tmp/addons.manifest.yaml
+
+# Install OCA module Python dependencies
+RUN find /opt/odoo/addons/oca -name "requirements.txt" \
+    -exec pip3 install --no-cache-dir --break-system-packages -r {} \; 2>/dev/null || true
+
+# =============================================================================
+# IPAI Custom Modules
+# =============================================================================
+COPY ./addons/ipai /opt/odoo/addons/ipai
+
+# Install IPAI module Python dependencies
+RUN find /opt/odoo/addons/ipai -name "requirements.txt" \
+    -exec pip3 install --no-cache-dir --break-system-packages -r {} \; 2>/dev/null || true
+
+# =============================================================================
+# Final Addon Root Verification
+# =============================================================================
+# Ensure only the two declared addon roots exist under /opt/odoo/addons/
+# and no stray directories were introduced during the build.
+RUN set -eux; \
+  for dir in /opt/odoo/addons/*/; do \
+    dirname=$(basename "$dir"); \
+    case "$dirname" in \
+      oca|ipai) ;; \
+      *) echo "ERROR: Undeclared addon root: /opt/odoo/addons/$dirname"; exit 1 ;; \
+    esac; \
+  done; \
+  oca_count=$(find /opt/odoo/addons/oca -maxdepth 1 -mindepth 1 -type d | wc -l); \
+  ipai_count=$(find /opt/odoo/addons/ipai -maxdepth 1 -mindepth 1 -type d | wc -l); \
+  echo "Addon roots verified: oca=$oca_count modules, ipai=$ipai_count modules"
+
+# =============================================================================
+# Configuration — Azure Container App (no hardcoded DB params)
+# DB connection injected via ACA env vars (HOST, PORT, USER, PASSWORD)
+# =============================================================================
+ARG ODOO_CONF=./config/azure/odoo.conf
+COPY ${ODOO_CONF} /etc/odoo/odoo.conf
+
+# =============================================================================
+# Permissions
+# =============================================================================
+RUN chown -R odoo:odoo /opt/odoo/addons /etc/odoo/odoo.conf
+
+USER odoo
+
+# =============================================================================
+# Runtime Environment
+# =============================================================================
+ENV ODOO_RC=/etc/odoo/odoo.conf \
+    IPAI_PROFILE=${PROFILE}
+
+# Addon path: CE core -> OCA (flattened) -> IPAI custom
+ENV ODOO_ADDONS_PATH=/usr/lib/python3/dist-packages/odoo/addons,/opt/odoo/addons/oca,/opt/odoo/addons/ipai
+
+# =============================================================================
+# Health Check
+# =============================================================================
+HEALTHCHECK --interval=30s --timeout=10s --start-period=90s --retries=3 \
+    CMD curl -sf http://localhost:8069/web/health || exit 1
+
+# =============================================================================
+# OCI Labels
+# =============================================================================
+LABEL org.opencontainers.image.source="https://github.com/Insightpulseai/odoo" \
+      org.opencontainers.image.title="IPAI Odoo Runtime (${PROFILE})" \
+      org.opencontainers.image.description="Odoo 19 CE + OCA + InsightPulse AI modules" \
+      org.opencontainers.image.vendor="InsightPulse AI" \
+      org.opencontainers.image.created="${BUILD_DATE}" \
+      org.opencontainers.image.revision="${GIT_SHA}" \
+      com.insightpulseai.odoo.version="19.0" \
+      com.insightpulseai.profile="${PROFILE}"
+
+EXPOSE 8069 8072

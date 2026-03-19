@@ -1,0 +1,10 @@
+<odoo>
+    <record id="seq_docflow_document" model="ir.sequence">
+        <field name="name">DocFlow Document</field>
+        <field name="code">docflow.document</field>
+        <field name="prefix">DF-</field>
+        <field name="padding">5</field>
+        <field name="number_next">1</field>
+        <field name="number_increment">1</field>
+    </record>
+</odoo>

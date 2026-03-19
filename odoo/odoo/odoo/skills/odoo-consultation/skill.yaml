@@ -1,0 +1,148 @@
+# Odoo Consultation Skill
+# Discovery, gap analysis, and strategic advisory for Odoo CE deployments
+
+name: odoo_consultation
+version: 1.0.0
+key: odoo.consultation
+description: |
+  Run Odoo consultation workflows: business discovery, gap analysis,
+  module recommendations, EE parity assessment, and roadmap generation.
+
+intents:
+  - odoo consultation
+  - business analysis for odoo
+  - odoo gap analysis
+  - recommend odoo modules
+  - odoo readiness assessment
+  - evaluate odoo fit
+
+guardrails:
+  - Read-only analysis; do not modify production data
+  - Never recommend Odoo Enterprise modules (CE + OCA + ipai_* only)
+  - Reference spec bundles for all recommendations
+  - Cost estimates must use self-hosted pricing only
+
+tools:
+  - key: consult.discovery
+    name: Business Discovery
+    target_model: ipai.consult.runner
+    target_method: run_discovery
+    description: Gather business requirements and current system landscape
+
+  - key: consult.gap_analysis
+    name: Gap Analysis
+    target_model: ipai.consult.runner
+    target_method: run_gap_analysis
+    description: Compare requirements against Odoo CE + OCA + ipai_* capabilities
+
+  - key: consult.module_recommend
+    name: Module Recommendations
+    target_model: ipai.consult.runner
+    target_method: recommend_modules
+    description: Map requirements to specific Odoo modules (CE, OCA, ipai_*)
+
+  - key: consult.parity_check
+    name: EE Parity Assessment
+    target_model: ipai.consult.runner
+    target_method: check_ee_parity
+    description: Evaluate enterprise parity score for required features
+
+  - key: consult.roadmap
+    name: Roadmap Generation
+    target_model: ipai.consult.runner
+    target_method: generate_roadmap
+    description: Create phased implementation roadmap with milestones
+
+workflow:
+  - consult.discovery
+  - consult.gap_analysis
+  - consult.module_recommend
+  - consult.parity_check
+  - consult.roadmap
+
+input_schema:
+  type: object
+  required:
+    - client_name
+    - industry
+  properties:
+    client_name:
+      type: string
+      description: Client or project name
+    industry:
+      type: string
+      description: Industry vertical (manufacturing, services, retail, etc.)
+    current_systems:
+      type: array
+      items: { type: string }
+      description: Current ERP/software systems in use
+    requirements:
+      type: array
+      items:
+        type: object
+        properties:
+          area: { type: string }
+          description: { type: string }
+          priority: { type: string, enum: [P0, P1, P2, P3] }
+      description: Business requirements by functional area
+    budget_range:
+      type: string
+      description: Budget category (startup, smb, enterprise)
+
+output_schema:
+  type: object
+  properties:
+    discovery_report:
+      type: object
+      description: Business discovery findings
+    gap_matrix:
+      type: array
+      items:
+        type: object
+        properties:
+          requirement: { type: string }
+          coverage: { type: string, enum: [full, partial, gap] }
+          solution: { type: string }
+    recommended_modules:
+      type: array
+      items:
+        type: object
+        properties:
+          module: { type: string }
+          source: { type: string, enum: [ce, oca, ipai] }
+          parity_score: { type: number }
+    roadmap:
+      type: object
+      description: Phased implementation roadmap
+
+agentInstructions: |
+  When running an Odoo consultation:
+
+  1. **Discovery Phase**:
+     - Identify industry, team size, current systems
+     - Map functional areas (accounting, HR, inventory, CRM, etc.)
+     - Document integration requirements
+     - Note compliance requirements (BIR for PH, etc.)
+
+  2. **Gap Analysis**:
+     - For each requirement, check Odoo CE base coverage
+     - Check OCA module availability (oca.lock.json, gitaggregate)
+     - Check ipai_* module coverage (addons/ipai/)
+     - Flag true gaps requiring new development
+
+  3. **Module Mapping** (follow Config → OCA → Delta):
+     - First: Can Odoo CE config handle it?
+     - Second: Is there an OCA module?
+     - Third: Does an ipai_* module exist?
+     - Fourth: Flag as custom development needed
+
+  4. **EE Parity Assessment**:
+     - Reference CLAUDE.md EE Feature Mapping table
+     - Calculate weighted parity score per priority
+     - Identify critical gaps (P0 features without coverage)
+
+  5. **Roadmap Output**:
+     - Phase 1: Core (accounting, contacts, basic workflows)
+     - Phase 2: Operations (HR, inventory, helpdesk)
+     - Phase 3: Intelligence (AI, analytics, automation)
+     - Include self-hosted cost estimates (DigitalOcean)

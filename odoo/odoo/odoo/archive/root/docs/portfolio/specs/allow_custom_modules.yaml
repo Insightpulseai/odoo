@@ -1,0 +1,6 @@
+version: 1
+# Emergency/temporary exceptions. Keep as small and time-boxed as possible.
+# Example:
+# allow:
+#   - ipai_oneoff_migration_tool
+allow: []

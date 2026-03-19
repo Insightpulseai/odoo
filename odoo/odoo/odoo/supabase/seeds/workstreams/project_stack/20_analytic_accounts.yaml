@@ -1,0 +1,81 @@
+# Analytic Accounts
+# Model: account.analytic.account
+# Import order: 2 (after partners, before projects)
+
+analytic_accounts:
+  # ============================================================
+  # PROJECT-LINKED ANALYTIC ACCOUNTS
+  # ============================================================
+
+  - id: ipai_aa_acme_alpha
+    name: ACME - Project Alpha
+    code: ACME-ALPHA
+    partner_id: ipai_partner_acme
+    active: true
+    plan_id: null  # Will use default plan
+    company_id: null  # Will use current company
+
+  - id: ipai_aa_acme_beta
+    name: ACME - Project Beta
+    code: ACME-BETA
+    partner_id: ipai_partner_acme
+    active: true
+
+  - id: ipai_aa_globex_gamma
+    name: Globex - Project Gamma
+    code: GLOBEX-GAMMA
+    partner_id: ipai_partner_globex
+    active: true
+
+  - id: ipai_aa_tbwa_internal
+    name: TBWA - Internal Dev
+    code: TBWA-INT
+    partner_id: ipai_partner_tbwa
+    active: true
+
+  # ============================================================
+  # OVERHEAD / NON-BILLABLE ACCOUNTS
+  # ============================================================
+
+  - id: ipai_aa_overhead_admin
+    name: Overhead - Admin
+    code: OH-ADMIN
+    partner_id: null
+    active: true
+
+  - id: ipai_aa_overhead_training
+    name: Overhead - Training
+    code: OH-TRAIN
+    partner_id: null
+    active: true
+
+# Odoo import field mapping
+odoo_import:
+  model: account.analytic.account
+  fields:
+    - name: id
+      column: External ID
+      required: true
+
+    - name: name
+      column: Name
+      required: true
+
+    - name: code
+      column: Code
+
+    - name: partner_id
+      column: Partner
+      type: many2one
+      relation: res.partner
+
+    - name: active
+      column: Active
+      type: boolean
+      default: true
+
+    - name: plan_id
+      column: Analytic Plan
+      type: many2one
+      relation: account.analytic.plan
+      notes: "Leave blank to use default plan"

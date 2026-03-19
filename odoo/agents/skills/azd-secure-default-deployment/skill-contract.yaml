@@ -1,0 +1,48 @@
+version: 1
+type: ops_skill
+family: azure_sample_azd
+skill:
+  name: azd-secure-default-deployment
+  status: draft
+  owner: app-hosting-engineer
+  purpose: >
+    Deploy applications with secure-by-default posture via azd. Enforces
+    managed identity, VNet integration, private endpoints, and keyless
+    access as deployment defaults. Covers the azd up/deploy/provision workflow.
+
+  triggers:
+    - application ready for first deployment
+    - deployment configuration review
+    - security posture audit of azd-managed deployment
+    - upgrade from insecure to secure-default deployment
+
+  inputs:
+    - initialized azd project (from azd-environment-bootstrap)
+    - target environment (dev, staging, prod)
+    - service list from azure.yaml
+    - security requirements (managed identity, VNet, private endpoints)
+
+  steps:
+    - verify azure.yaml declares managed identity for all services
+    - verify IaC (Bicep/Terraform) includes VNet integration
+    - verify private endpoints for data services (PostgreSQL, Key Vault, ACR)
+    - verify keyless access pattern (no API keys, connection strings in config)
+    - run azd provision to create infrastructure
+    - run azd deploy to deploy application code
+    - verify deployment with health checks
+    - validate security posture post-deployment
+
+  outputs:
+    - provisioned infrastructure with secure defaults
+    - deployed application services
+    - security posture report (managed identity, VNet, private endpoints, keyless)
+    - health check results
+    - deployment URL and access verification
+
+  guardrails:
+    - managed identity is mandatory — no service principal secrets
+    - VNet integration required for production deployments
+    - private endpoints required for data services
+    - keyless access pattern enforced — no connection strings with embedded credentials
+    - health probes must pass before traffic routing
+    - azd up is the preferred single command (provision + deploy)

@@ -1,0 +1,57 @@
+Verification Checklist - Supabase SSOT + Odoo SOR Implementation
+
+✅ Constitution clearly defines SSOT vs SOR and lists what must remain in Odoo
+  - Odoo SOR list includes: accounting truth, ERP operational truth, legal/audit artifacts
+  - Supabase SSOT list includes: ops/control plane, identity/access, integration state, MDM overlays, analytics/AI
+  - Ownership/conflict policy is explicit (Odoo wins for Odoo-owned domains)
+  - Hard "Don'ts" include "no shadow ledger" and "no unauthorized writebacks"
+  - Location: spec/odoo-ee-parity-seed/constitution.md:85-136 (pre-existing, no changes)
+
+✅ PRD includes a Supabase feature mapping table with explicit boundary constraints
+  - Table maps all major Supabase capabilities (Database, RLS+Auth, RPC, Edge Functions, Realtime, Storage, Queues, Cron, Observability, Vectors)
+  - Each row has SSOT usage description and SOR boundary constraint
+  - Acceptance criteria require ownership declaration for new integrations
+  - Location: spec/odoo-ee-parity-seed/spec.md:157-176
+
+✅ Plan mentions CI enforcement hooks
+  - CI check for shadow ledger detection mentioned
+  - Ownership declaration requirement documented
+  - Audit trail requirements for Edge Functions specified
+  - Location: spec/odoo-ee-parity-seed/plan.md:111-114
+
+✅ Pattern docs enforce SSOT/SOR boundary
+  - Each pattern doc has "SSOT/SOR Boundary Notes" section
+  - Pattern docs reference upstream examples via raw URLs
+  - Patterns are extraction-focused, not full app clones
+  - Location: docs/supabase/patterns/*.md (5 files created)
+
+✅ Partner integrations policy is enforceable
+  - Policy states "Supabase primitives first" rule
+  - RLS perimeter requirement is explicit
+  - Audit trail requirements are documented
+  - Secrets handling is specified
+  - Location: spec/odoo-ee-parity-seed/constitution.md:115-127
+
+✅ UI components policy prevents design system duplication
+  - Policy allows UI for SSOT-facing apps only
+  - Policy prohibits shadow-ledger UIs
+  - Policy notes deprecated supabase/ui library
+  - Location: spec/odoo-ee-parity-seed/constitution.md:129-135
+
+✅ No unrelated governance sections were rewritten
+  - Existing ipai_* namespace policy remains intact (lines 67-82)
+  - Existing parity boundary rules remain intact (Article 4: lines 238-327)
+  - Changes are surgical additions, not rewrites
+
+Files Changed Summary:
+  - spec/odoo-ee-parity-seed/constitution.md: ✅ No changes (SSOT/SOR already exists)
+  - spec/odoo-ee-parity-seed/spec.md: ✅ Added Supabase feature mapping (19 lines)
+  - spec/odoo-ee-parity-seed/plan.md: ✅ Added enforcement plan + examples (37 lines)
+  - docs/supabase/patterns/edge-functions-worker.md: ✅ Created (122 lines)
+  - docs/supabase/patterns/edge-functions-ci-deploy.md: ✅ Created (142 lines)
+  - docs/supabase/patterns/webhook-ingest-verify.md: ✅ Created (240 lines)
+  - docs/supabase/patterns/auth-rls-function-access.md: ✅ Created (229 lines)
+  - docs/supabase/patterns/storage-multipart-upload.md: ✅ Created (282 lines)
+
+Total Lines Added: 1,071
+Status: COMPLETE

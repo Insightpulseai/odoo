@@ -1,0 +1,199 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://insightpulseai.com/schemas/agent-skill.v1.json",
+  "title": "Agent Skill Contract",
+  "description": "Schema for agent skill contracts. Each skill defines inputs, outputs, required secrets, policies, and verification checks.",
+  "type": "object",
+  "required": ["id", "version", "description", "inputs", "requires", "outputs", "policies", "verification"],
+  "additionalProperties": false,
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9_]*(\\.[a-z][a-z0-9_]*){1,4}$",
+      "description": "Dot-separated skill identifier (e.g., 'odoo.mail.configure')"
+    },
+    "version": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "Monotonically increasing skill contract version"
+    },
+    "description": {
+      "type": "string",
+      "minLength": 10,
+      "maxLength": 500,
+      "description": "Human-readable description of what this skill does"
+    },
+    "maturity": {
+      "type": "string",
+      "enum": ["L0", "L1", "L2", "L3", "L4"],
+      "default": "L2",
+      "description": "Skill maturity level: L0=prompt-only, L1=contract+examples, L2=tool+verify, L3=prod-policy+drift, L4=self-healing"
+    },
+    "inputs": {
+      "type": "object",
+      "description": "Input parameters for the skill",
+      "minProperties": 1,
+      "additionalProperties": {
+        "$ref": "#/$defs/input_parameter"
+      }
+    },
+    "requires": {
+      "type": "object",
+      "required": ["secrets"],
+      "additionalProperties": false,
+      "properties": {
+        "secrets": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "description": "Secret identifier from ssot/secrets/registry.yaml"
+          },
+          "description": "Secret identifiers required by this skill (names only, never values)"
+        },
+        "ssot_files": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "description": "Repo-relative path to an SSOT file this skill depends on"
+          },
+          "description": "SSOT files this skill reads or validates against"
+        },
+        "tools": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "External tools or CLI commands this skill requires"
+        }
+      }
+    },
+    "outputs": {
+      "type": "object",
+      "required": ["artifacts"],
+      "additionalProperties": false,
+      "properties": {
+        "artifacts": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "description": "Repo-relative path pattern for output artifacts"
+          },
+          "minItems": 1,
+          "description": "Files produced or modified by this skill"
+        },
+        "evidence": {
+          "type": "string",
+          "description": "Evidence directory pattern (e.g., 'web/docs/evidence/<stamp>/<topic>/')"
+        }
+      }
+    },
+    "policies": {
+      "type": "object",
+      "required": ["no_plaintext_secrets"],
+      "additionalProperties": false,
+      "properties": {
+        "no_plaintext_secrets": {
+          "type": "boolean",
+          "const": true,
+          "description": "Must always be true — skills must never contain plaintext secrets"
+        },
+        "must_pass_ci": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "description": "CI script path that must pass after skill execution"
+          },
+          "description": "CI gates that validate this skill's outputs"
+        },
+        "idempotent": {
+          "type": "boolean",
+          "description": "Whether running the skill multiple times produces the same result"
+        },
+        "rollback_supported": {
+          "type": "boolean",
+          "description": "Whether the skill can undo its changes"
+        }
+      }
+    },
+    "verification": {
+      "type": "object",
+      "required": ["checks"],
+      "additionalProperties": false,
+      "properties": {
+        "checks": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/verification_check"
+          },
+          "minItems": 1,
+          "description": "Verification checks to confirm skill succeeded"
+        }
+      }
+    }
+  },
+  "$defs": {
+    "input_parameter": {
+      "type": "object",
+      "required": ["type"],
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": ["string", "integer", "boolean", "array", "object"],
+          "description": "Parameter data type"
+        },
+        "description": {
+          "type": "string",
+          "description": "Human-readable description of the parameter"
+        },
+        "enum": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Allowed values for this parameter"
+        },
+        "default": {
+          "description": "Default value if not provided"
+        },
+        "required": {
+          "type": "boolean",
+          "default": true,
+          "description": "Whether this parameter is required"
+        }
+      }
+    },
+    "verification_check": {
+      "type": "object",
+      "required": ["name", "type"],
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Human-readable check name"
+        },
+        "type": {
+          "type": "string",
+          "enum": ["ci_script", "http_get", "smtp_connect", "odoo_rpc", "file_exists", "yaml_valid", "schema_match"],
+          "description": "Type of verification check"
+        },
+        "target": {
+          "type": "string",
+          "description": "Target for the check (URL, path, endpoint)"
+        },
+        "method": {
+          "type": "string",
+          "description": "Method or script to run for the check"
+        },
+        "expected": {
+          "type": "string",
+          "description": "Expected result (e.g., 'HTTP 200', 'exit 0')"
+        },
+        "notes": {
+          "type": "string",
+          "description": "Additional context about this check"
+        }
+      }
+    }
+  }
+}

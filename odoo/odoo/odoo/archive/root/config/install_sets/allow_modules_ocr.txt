@@ -1,0 +1,21 @@
+# OCR (Document Digitalization) parity modules
+# Covers: invoice/receipt OCR, vendor bill draft creation
+# Source: EE IAP OCR (replaced by external OCR service)
+
+# OCA: Foundation deps
+queue_job
+base_view_inheritance_extension
+
+# OCA: Account statement import (bank statement OCR pipeline)
+account_statement_base
+account_statement_import_base
+account_statement_import_file
+account_statement_import_file_reconcile_oca
+
+# OCA: Reconciliation
+account_reconcile_oca
+
+# IPAI: OCR gateway + expense OCR
+ipai_ocr_gateway
+ipai_expense_ocr
+ipai_enterprise_bridge

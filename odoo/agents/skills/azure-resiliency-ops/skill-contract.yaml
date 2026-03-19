@@ -1,0 +1,69 @@
+version: 1
+type: ops_skill
+family: azure_copilot_ops
+skill:
+  name: azure-resiliency-ops
+  status: draft
+  owner: agents
+  purpose: >
+    Validate HA/DR posture — zone redundancy, backup policies,
+    failover routes, and health probes. Ensures every production
+    service has documented DR evidence.
+
+  triggers:
+    - pre-release audit for production deployment
+    - disaster recovery drill
+    - new production service onboarded
+    - backup policy change in PR
+
+  inputs:
+    - service name and resource type
+    - PostgreSQL Flexible Server configuration
+    - Front Door health probe settings
+    - backup retention policies
+    - failover DNS configuration
+
+  steps:
+    - verify zone redundancy is enabled on PostgreSQL Flexible Server
+    - check Front Door health probe endpoints are configured and responsive
+    - validate backup retention meets policy (minimum 7 days for dev, 30 days for prod)
+    - confirm point-in-time restore (PITR) is enabled for PostgreSQL
+    - verify Container App replicas span availability zones
+    - check failover DNS records exist for critical services
+    - validate Front Door origin failover behavior (priority routing)
+    - confirm disaster recovery runbook exists for the service
+    - verify last successful backup timestamp
+    - produce resiliency posture evidence
+
+  outputs:
+    - validation_result
+    - zone_redundancy_status
+    - backup_compliance
+    - health_probe_status
+    - failover_readiness
+    - findings
+    - blockers
+    - evidence
+
+  guardrails:
+    - never reduce backup retention below current policy minimum
+    - require DR evidence for all production services
+    - flag single-zone deployments as blockers for production
+    - never disable health probes
+    - backup validation requires actual restore test evidence, not just configuration
+
+  evidence:
+    required: true
+    format: "docs/evidence/{stamp}/azure-ops/resiliency/"
+
+  evals:
+    dimensions: [accuracy, completeness, safety, policy_adherence, evidence_quality]
+    thresholds:
+      accuracy: 0.95
+      safety: 0.99
+
+cross_references:
+  - docs/contracts/azure-resource-graph-contract.md
+  - ssot/runtime/resource-graph-query-catalog.yaml
+  - docs/architecture/reference-benchmarks.md
+  - .claude/rules/infrastructure.md

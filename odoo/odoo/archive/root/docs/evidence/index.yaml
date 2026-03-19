@@ -1,0 +1,230 @@
+---
+# Evidence Index
+# Machine-readable cross-reference for all timestamped evidence artifacts
+# Format: EVID-<YYYYMMDD>-<NUMBER>
+
+version: "1.0.0"
+last_updated: "2026-02-12T19:00:00Z"
+total_evidence_records: 5
+
+# ============================================================================
+# Evidence Records (Chronological Order)
+# ============================================================================
+
+evidence_records:
+  - id: EVID-20260128-001
+    timestamp: "2026-01-28T00:00:00Z"
+    type: migration
+    scope: mattermost-to-slack
+    portfolio_initiative: PORT-2026-005
+    process_id: PROC-COMM-001
+    controls: [CTRL-DEPR-001]
+    artifacts:
+      - path: docs/deprecated/mattermost/
+        description: "Mattermost deprecation artifacts"
+    status: complete
+    verified_by: integration_team
+    tags: [communication, migration, deprecation]
+
+  - id: EVID-20260212-001
+    timestamp: "2026-02-12T18:44:00Z"
+    type: migration
+    scope: mailgun-cleanup
+    portfolio_initiative: PORT-2026-004
+    process_id: PROC-EMAIL-001
+    controls: [CTRL-DOC-001]
+    artifacts:
+      - path: docs/evidence/20260212-1844/mailgun-cleanup/
+        files:
+          - verification.md
+          - deprecation-notice.md
+    status: complete
+    verified_by: integration_team
+    tags: [email, migration, cleanup]
+
+  - id: EVID-20260212-002
+    timestamp: "2026-02-12T16:27:00Z"
+    type: infrastructure_snapshot
+    scope: prod-runtime-baseline
+    portfolio_initiative: PORT-2026-001
+    process_id: PROC-DEPLOY-001
+    controls: [CTRL-DEPLOY-001]
+    artifacts:
+      - path: docs/architecture/PROD_RUNTIME_SNAPSHOT.md
+        description: "Production runtime configuration and service registry"
+      - path: docs/architecture/runtime_identifiers.json
+        description: "Machine-readable runtime identifiers"
+    status: complete
+    verified_by: devops_team
+    tags: [infrastructure, baseline, production]
+
+  - id: EVID-20260212-003
+    timestamp: "2026-02-12T18:44:00Z"
+    type: decision
+    scope: email-provider-selection
+    portfolio_initiative: PORT-2026-004
+    process_id: PROC-EMAIL-001
+    controls: [CTRL-DOC-001]
+    artifacts:
+      - path: docs/evidence/decisions/ADR-001-zoho-mail.md
+        description: "Architecture Decision Record: Zoho Mail SMTP adoption"
+    status: complete
+    verified_by: integration_team
+    tags: [decision, email, architecture]
+
+  - id: EVID-20260212-004
+    timestamp: "2026-02-12T19:00:00Z"
+    type: governance_implementation
+    scope: 7-layer-operating-model
+    portfolio_initiative: PORT-2026-008
+    process_id: PROC-GOVERN-001
+    controls: [CTRL-TRACE-001, CTRL-DOC-002]
+    artifacts:
+      - path: docs/TRACEABILITY_INDEX.yaml
+        description: "Cross-layer traceability mapping"
+      - path: docs/strategy/README.md
+        description: "Strategy layer index"
+      - path: docs/portfolio/README.md
+        description: "Portfolio layer index"
+      - path: docs/process/README.md
+        description: "Process layer index"
+      - path: docs/control/README.md
+        description: "Control layer index"
+      - path: docs/evidence/README.md
+        description: "Evidence layer index"
+      - path: docs/integration/README.md
+        description: "Integration layer index"
+    status: in_progress
+    verified_by: compliance_team
+    tags: [governance, operating-model, restructuring]
+
+  - id: EVID-20260212-005
+    timestamp: "2026-02-12T19:00:00Z"
+    type: infrastructure_snapshot
+    scope: docker-baseline
+    portfolio_initiative: PORT-2026-010
+    process_id: PROC-INFRA-001
+    controls: [CTRL-SOP-003]
+    artifacts:
+      - path: docs/integration/docker-infrastructure.md
+        description: "Docker container orchestration documentation"
+      - path: docs/control/policies/SOP-003-docker-container-management.md
+        description: "Docker management standard operating procedure"
+    status: in_progress
+    verified_by: devops_team
+    tags: [docker, infrastructure, containers]
+
+# ============================================================================
+# Evidence Statistics
+# ============================================================================
+
+statistics:
+  by_type:
+    migration: 2
+    infrastructure_snapshot: 2
+    decision: 1
+    governance_implementation: 1
+
+  by_status:
+    complete: 4
+    in_progress: 2
+
+  by_portfolio_initiative:
+    PORT-2026-001: 1  # Odoo.sh-Grade Deployment
+    PORT-2026-004: 2  # Email Infrastructure Modernization
+    PORT-2026-005: 1  # Communication Platform Consolidation
+    PORT-2026-008: 1  # GitHub Organization Restructuring
+    PORT-2026-010: 1  # Docker Infrastructure Formalization
+
+  by_process:
+    PROC-DEPLOY-001: 1   # Deployment automation
+    PROC-EMAIL-001: 2    # Email service management
+    PROC-COMM-001: 1     # Communication platform management
+    PROC-GOVERN-001: 1   # Governance framework
+    PROC-INFRA-001: 1    # Infrastructure management
+
+# ============================================================================
+# Timestamped Evidence Directories
+# ============================================================================
+
+timestamped_evidence:
+  - path: docs/evidence/20260121-0000/
+    description: "Docker image diff analysis"
+    portfolio_initiative: null
+    status: archived
+
+  - path: docs/evidence/20260212-1844/
+    description: "Mailgun cleanup evidence"
+    portfolio_initiative: PORT-2026-004
+    status: complete
+
+  - path: docs/evidence/20260212-1900/
+    description: "Docker infrastructure baseline (planned)"
+    portfolio_initiative: PORT-2026-010
+    status: pending
+
+# ============================================================================
+# Architecture Decision Records
+# ============================================================================
+
+decisions:
+  - id: ADR-001-zoho-mail
+    title: "Adopt Zoho Mail SMTP for Outbound Email"
+    date: "2026-02-12"
+    status: accepted
+    path: docs/evidence/decisions/ADR-001-zoho-mail.md
+    portfolio_initiative: PORT-2026-004
+    evidence_id: EVID-20260212-003
+
+# ============================================================================
+# Search Index
+# ============================================================================
+
+tags:
+  communication: [EVID-20260128-001]
+  migration: [EVID-20260128-001, EVID-20260212-001]
+  deprecation: [EVID-20260128-001]
+  email: [EVID-20260212-001, EVID-20260212-003]
+  cleanup: [EVID-20260212-001]
+  infrastructure: [EVID-20260212-002, EVID-20260212-005]
+  baseline: [EVID-20260212-002]
+  production: [EVID-20260212-002]
+  decision: [EVID-20260212-003]
+  architecture: [EVID-20260212-003]
+  governance: [EVID-20260212-004]
+  operating-model: [EVID-20260212-004]
+  restructuring: [EVID-20260212-004]
+  docker: [EVID-20260212-005]
+  containers: [EVID-20260212-005]
+
+# ============================================================================
+# Metadata
+# ============================================================================
+
+evidence_types:
+  - migration: "Service migration or deprecation artifacts"
+  - infrastructure_snapshot: "Infrastructure configuration baseline"
+  - decision: "Architecture Decision Records (ADRs)"
+  - governance_implementation: "Governance framework changes"
+  - incident: "Incident post-mortems and root cause analysis"
+  - release: "Release evidence and validation artifacts"
+  - approval: "Approval artifacts and sign-offs"
+
+evidence_status:
+  - pending: "Evidence collection planned but not started"
+  - in_progress: "Evidence being collected"
+  - complete: "Evidence collection complete and verified"
+  - archived: "Historical evidence, no longer actively referenced"
+
+immutability_policy:
+  principle: "Write-once-read-many (WORM)"
+  enforcement: "Timestamped directories are immutable after creation"
+  modification: "Never modify existing evidence; create new evidence record instead"
+  retention: "All evidence retained indefinitely for audit trail"
+
+cross_reference_policy:
+  requirement: "All evidence must reference portfolio initiative and process"
+  traceability: "Bidirectional links between evidence and portfolio/process/control"
+  validation: "Evidence index must match TRACEABILITY_INDEX.yaml"
+
+# vim: set ft=yaml:

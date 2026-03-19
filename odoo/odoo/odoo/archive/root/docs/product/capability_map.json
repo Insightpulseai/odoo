@@ -1,0 +1,6500 @@
+{
+  "items": [
+    {
+      "id": "script_HOTFIX_OWLERROR.sh",
+      "name": "HOTFIX_OWLERROR.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/ops/deploy/HOTFIX_OWLERROR.sh"
+    },
+    {
+      "id": "script_PRODUCTION_DEPLOY_WORKOS.sh",
+      "name": "PRODUCTION_DEPLOY_WORKOS.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/ops/deploy/PRODUCTION_DEPLOY_WORKOS.sh"
+    },
+    {
+      "id": "script___init__.py",
+      "name": "__init__.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/infra-discovery/__init__.py"
+    },
+    {
+      "id": "tool___init__.py",
+      "name": "__init__.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "tools/odoo_schema/__init__.py"
+    },
+    {
+      "id": "script__common.sh",
+      "name": "_common.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/odooops/_common.sh"
+    },
+    {
+      "id": "skill_accounting",
+      "name": "accounting",
+      "type": "skill",
+      "location": "repo_only",
+      "path": "skills/odoo19/accounting/SKILL.md"
+    },
+    {
+      "id": "script_activate-n8n-workflows.sh",
+      "name": "activate-n8n-workflows.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/activate-n8n-workflows.sh"
+    },
+    {
+      "id": "skill_activities",
+      "name": "activities",
+      "type": "skill",
+      "location": "repo_only",
+      "path": "skills/odoo19/activities/SKILL.md"
+    },
+    {
+      "id": "script_add_or_update_database.sh",
+      "name": "add_or_update_database.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/superset/add_or_update_database.sh"
+    },
+    {
+      "id": "skill_administration",
+      "name": "administration",
+      "type": "skill",
+      "location": "repo_only",
+      "path": "skills/odoo19/administration/SKILL.md"
+    },
+    {
+      "id": "tool_adopt_model_repo.sh",
+      "name": "adopt_model_repo.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "tools/model-repo-scanner/scripts/adopt_model_repo.sh"
+    },
+    {
+      "id": "script_affected_apps.py",
+      "name": "affected_apps.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/integrations/affected_apps.py"
+    },
+    {
+      "id": "script_aggregate_results.py",
+      "name": "aggregate_results.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/audit/aggregate_results.py"
+    },
+    {
+      "id": "skill_ai",
+      "name": "ai",
+      "type": "skill",
+      "location": "repo_only",
+      "path": "skills/odoo19/ai/SKILL.md"
+    },
+    {
+      "id": "skill_ai-agent-patterns",
+      "name": "ai-agent-patterns",
+      "type": "skill",
+      "location": "repo_only",
+      "path": "docs/archive/agent-skills/ai-agent-patterns/SKILL.md"
+    },
+    {
+      "id": "script_analyze.py",
+      "name": "analyze.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/refactor/analyze.py"
+    },
+    {
+      "id": "skill_antigravity-browser",
+      "name": "antigravity-browser",
+      "type": "skill",
+      "location": "repo_only",
+      "path": "sandbox/dev/.claude/skills/antigravity-browser/SKILL.md"
+    },
+    {
+      "id": "script_apply-email-events-pack.sh",
+      "name": "apply-email-events-pack.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/supabase/apply-email-events-pack.sh"
+    },
+    {
+      "id": "script_apply-supabase-schema.sh",
+      "name": "apply-supabase-schema.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/apply-supabase-schema.sh"
+    },
+    {
+      "id": "script_apply.sh",
+      "name": "apply.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/cf/apply.sh"
+    },
+    {
+      "id": "script_apply_all.sh",
+      "name": "apply_all.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/supabase/apply_all.sh"
+    },
+    {
+      "id": "script_apply_all_governance.sh",
+      "name": "apply_all_governance.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/github/apply_all_governance.sh"
+    },
+    {
+      "id": "script_apply_auth_providers.py",
+      "name": "apply_auth_providers.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/odoo/apply_auth_providers.py"
+    },
+    {
+      "id": "script_apply_blueprint.py",
+      "name": "apply_blueprint.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/catalog/apply_blueprint.py"
+    },
+    {
+      "id": "script_apply_config.sh",
+      "name": "apply_config.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/apply_config.sh"
+    },
+    {
+      "id": "script_apply_custom_properties.sh",
+      "name": "apply_custom_properties.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/github/apply_custom_properties.sh"
+    },
+    {
+      "id": "script_apply_fixes.sh",
+      "name": "apply_fixes.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/refactor/apply_fixes.sh"
+    },
+    {
+      "id": "script_apply_mail_settings.py",
+      "name": "apply_mail_settings.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/odoo/apply_mail_settings.py"
+    },
+    {
+      "id": "script_apply_org_ruleset.sh",
+      "name": "apply_org_ruleset.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/github/apply_org_ruleset.sh"
+    },
+    {
+      "id": "script_apply_settings.py",
+      "name": "apply_settings.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/odoo/apply_settings.py"
+    },
+    {
+      "id": "script_apply_teams.sh",
+      "name": "apply_teams.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/github/apply_teams.sh"
+    },
+    {
+      "id": "script_apply_unaccent_fix.sh",
+      "name": "apply_unaccent_fix.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/db/apply_unaccent_fix.sh"
+    },
+    {
+      "id": "skill_appointments",
+      "name": "appointments",
+      "type": "skill",
+      "location": "repo_only",
+      "path": "skills/odoo19/appointments/SKILL.md"
+    },
+    {
+      "id": "skill_appraisals",
+      "name": "appraisals",
+      "type": "skill",
+      "location": "repo_only",
+      "path": "skills/odoo19/appraisals/SKILL.md"
+    },
+    {
+      "id": "skill_apps_modules",
+      "name": "apps_modules",
+      "type": "skill",
+      "location": "repo_only",
+      "path": "skills/odoo19/apps_modules/SKILL.md"
+    },
+    {
+      "id": "script_assess_opportunities.py",
+      "name": "assess_opportunities.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/audit/assess_opportunities.py"
+    },
+    {
+      "id": "script_assign_module_icons.py",
+      "name": "assign_module_icons.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/assign_module_icons.py"
+    },
+    {
+      "id": "skill_attendances",
+      "name": "attendances",
+      "type": "skill",
+      "location": "repo_only",
+      "path": "skills/odoo19/attendances/SKILL.md"
+    },
+    {
+      "id": "script_audit-secrets.sh",
+      "name": "audit-secrets.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/security/audit-secrets.sh"
+    },
+    {
+      "id": "script_audit_ee_parity.sh",
+      "name": "audit_ee_parity.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/parity/audit_ee_parity.sh"
+    },
+    {
+      "id": "script_audit_email_config.py",
+      "name": "audit_email_config.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/audit_email_config.py"
+    },
+    {
+      "id": "script_audit_installed_modules.py",
+      "name": "audit_installed_modules.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/audit_installed_modules.py"
+    },
+    {
+      "id": "script_audit_ipai_modules.py",
+      "name": "audit_ipai_modules.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/audit_ipai_modules.py"
+    },
+    {
+      "id": "script_audit_oca_modules.py",
+      "name": "audit_oca_modules.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/audit_oca_modules.py"
+    },
+    {
+      "id": "script_audit_tree_tags.sh",
+      "name": "audit_tree_tags.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/ci/audit_tree_tags.sh"
+    },
+    {
+      "id": "script_auto_error_handler.sh",
+      "name": "auto_error_handler.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/auto_error_handler.sh"
+    },
+    {
+      "id": "skill_azure-well-architected",
+      "name": "azure-well-architected",
+      "type": "skill",
+      "location": "repo_only",
+      "path": "agents/skills/azure-well-architected/SKILL.md"
+    },
+    {
+      "id": "script_backlog_scan.py",
+      "name": "backlog_scan.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/backlog_scan.py"
+    },
+    {
+      "id": "script_backup-dns-config.sh",
+      "name": "backup-dns-config.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/dns/backup-dns-config.sh"
+    },
+    {
+      "id": "skill_backup-odoo-environment",
+      "name": "backup-odoo-environment",
+      "type": "skill",
+      "location": "repo_only",
+      "path": "agents/skills/backup-odoo-environment/SKILL.md"
+    },
+    {
+      "id": "script_backup-plane.sh",
+      "name": "backup-plane.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/docker/backup-plane.sh"
+    },
+    {
+      "id": "script_backup_odoo.sh",
+      "name": "backup_odoo.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/backup_odoo.sh"
+    },
+    {
+      "id": "script_backup_test.sh",
+      "name": "backup_test.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/backup/backup_test.sh"
+    },
+    {
+      "id": "script_backup_verify.sh",
+      "name": "backup_verify.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/backup_verify.sh"
+    },
+    {
+      "id": "skill_barcode",
+      "name": "barcode",
+      "type": "skill",
+      "location": "repo_only",
+      "path": "skills/odoo19/barcode/SKILL.md"
+    },
+    {
+      "id": "script_baseline-validation.sh",
+      "name": "baseline-validation.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/baseline-validation.sh"
+    },
+    {
+      "id": "skill_bir-compliance-automation",
+      "name": "bir-compliance-automation",
+      "type": "skill",
+      "location": "repo_only",
+      "path": ".claude/superclaude/skills/finance/bir-compliance-automation/SKILL.md"
+    },
+    {
+      "id": "skill_bir-tax-filing",
+      "name": "bir-tax-filing",
+      "type": "skill",
+      "location": "repo_only",
+      "path": "skills/bir-tax-filing/SKILL.md"
+    },
+    {
+      "id": "skill_blog",
+      "name": "blog",
+      "type": "skill",
+      "location": "repo_only",
+      "path": "skills/odoo19/blog/SKILL.md"
+    },
+    {
+      "id": "script_bootstrap.sh",
+      "name": "bootstrap.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/codespaces/bootstrap.sh"
+    },
+    {
+      "id": "script_bootstrap_apps_from_inventory.sh",
+      "name": "bootstrap_apps_from_inventory.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/bootstrap_apps_from_inventory.sh"
+    },
+    {
+      "id": "script_bootstrap_companies.sh",
+      "name": "bootstrap_companies.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/odoo/bootstrap_companies.sh"
+    },
+    {
+      "id": "script_bootstrap_companies_min.sh",
+      "name": "bootstrap_companies_min.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/odoo/bootstrap_companies_min.sh"
+    },
+    {
+      "id": "script_bootstrap_execution_board.sh",
+      "name": "bootstrap_execution_board.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/bootstrap_execution_board.sh"
+    },
+    {
+      "id": "script_bootstrap_from_tag.sh",
+      "name": "bootstrap_from_tag.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/deploy/bootstrap_from_tag.sh"
+    },
+    {
+      "id": "script_bootstrap_github_issues.sh",
+      "name": "bootstrap_github_issues.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/bootstrap_github_issues.sh"
+    },
+    {
+      "id": "script_bootstrap_ssot_dns_odoo_supabase.sh",
+      "name": "bootstrap_ssot_dns_odoo_supabase.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/bootstrap_ssot_dns_odoo_supabase.sh"
+    },
+    {
+      "id": "script_build_and_push_version.sh",
+      "name": "build_and_push_version.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/build_and_push_version.sh"
+    },
+    {
+      "id": "script_build_blueprints.py",
+      "name": "build_blueprints.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/catalog/build_blueprints.py"
+    },
+    {
+      "id": "script_build_ee_only_matrix.py",
+      "name": "build_ee_only_matrix.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/parity/build_ee_only_matrix.py"
+    },
+    {
+      "id": "script_build_index.py",
+      "name": "build_index.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/catalog/build_index.py"
+    },
+    {
+      "id": "script_build_kb_graph.py",
+      "name": "build_kb_graph.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/build_kb_graph.py"
+    },
+    {
+      "id": "script_build_llms_full.sh",
+      "name": "build_llms_full.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/docs/build_llms_full.sh"
+    },
+    {
+      "id": "script_build_oca_bundle.py",
+      "name": "build_oca_bundle.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/odoo_parity/build_oca_bundle.py"
+    },
+    {
+      "id": "script_build_skills.py",
+      "name": "build_skills.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/skills/build_skills.py"
+    },
+    {
+      "id": "script_build_v0.10.0.sh",
+      "name": "build_v0.10.0.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/build_v0.10.0.sh"
+    },
+    {
+      "id": "script_build_v0.9.1.sh",
+      "name": "build_v0.9.1.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/build_v0.9.1.sh"
+    },
+    {
+      "id": "script_bulk_import_tasks_odoo19.py",
+      "name": "bulk_import_tasks_odoo19.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/bulk_import_tasks_odoo19.py"
+    },
+    {
+      "id": "skill_calendar",
+      "name": "calendar",
+      "type": "skill",
+      "location": "repo_only",
+      "path": "skills/odoo19/calendar/SKILL.md"
+    },
+    {
+      "id": "script_canonical_audit.py",
+      "name": "canonical_audit.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/canonical_audit.py"
+    },
+    {
+      "id": "tool_caps_report.mjs",
+      "name": "caps_report.mjs",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "tools/routing/caps_report.mjs"
+    },
+    {
+      "id": "script_ce_oca_audit.py",
+      "name": "ce_oca_audit.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/ce_oca_audit.py"
+    },
+    {
+      "id": "script_cf_delete_superset_dns.sh",
+      "name": "cf_delete_superset_dns.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/cf_delete_superset_dns.sh"
+    },
+    {
+      "id": "script_cf_upsert_superset_dns.sh",
+      "name": "cf_upsert_superset_dns.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/cf_upsert_superset_dns.sh"
+    },
+    {
+      "id": "script_check-enterprise-modules.sh",
+      "name": "check-enterprise-modules.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/check-enterprise-modules.sh"
+    },
+    {
+      "id": "script_check-generated-tokens.sh",
+      "name": "check-generated-tokens.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/check-generated-tokens.sh"
+    },
+    {
+      "id": "script_check-spec-kit.sh",
+      "name": "check-spec-kit.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/check-spec-kit.sh"
+    },
+    {
+      "id": "script_check-supabase-migrations.sh",
+      "name": "check-supabase-migrations.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/check-supabase-migrations.sh"
+    },
+    {
+      "id": "script_check_addon_allowlist.py",
+      "name": "check_addon_allowlist.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/check_addon_allowlist.py"
+    },
+    {
+      "id": "script_check_addons_path_invariants.sh",
+      "name": "check_addons_path_invariants.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/ci/check_addons_path_invariants.sh"
+    },
+    {
+      "id": "script_check_agent_instruction_drift.py",
+      "name": "check_agent_instruction_drift.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/agents/check_agent_instruction_drift.py"
+    },
+    {
+      "id": "script_check_all.sh",
+      "name": "check_all.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/health/check_all.sh"
+    },
+    {
+      "id": "script_check_custom_modules.py",
+      "name": "check_custom_modules.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/policy/check_custom_modules.py"
+    },
+    {
+      "id": "script_check_digitalocean.py",
+      "name": "check_digitalocean.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/audit/checks/check_digitalocean.py"
+    },
+    {
+      "id": "script_check_dns.sh",
+      "name": "check_dns.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/audit/check_dns.sh"
+    },
+    {
+      "id": "script_check_dns_doh.py",
+      "name": "check_dns_doh.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/audit/check_dns_doh.py"
+    },
+    {
+      "id": "script_check_dns_py.py",
+      "name": "check_dns_py.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/audit/check_dns_py.py"
+    },
+    {
+      "id": "script_check_domain_policy.py",
+      "name": "check_domain_policy.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/audit/checks/check_domain_policy.py"
+    },
+    {
+      "id": "script_check_ee_parity.py",
+      "name": "check_ee_parity.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/odoo_parity/check_ee_parity.py"
+    },
+    {
+      "id": "script_check_github.py",
+      "name": "check_github.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/audit/checks/check_github.py"
+    },
+    {
+      "id": "script_check_github_waf.py",
+      "name": "check_github_waf.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/audit/check_github_waf.py"
+    },
+    {
+      "id": "script_check_go_live_manifest.py",
+      "name": "check_go_live_manifest.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/check_go_live_manifest.py"
+    },
+    {
+      "id": "script_check_infra_waf.py",
+      "name": "check_infra_waf.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/audit/check_infra_waf.py"
+    },
+    {
+      "id": "script_check_install_set_drift.sh",
+      "name": "check_install_set_drift.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/check_install_set_drift.sh"
+    },
+    {
+      "id": "script_check_ipai_foundation.sh",
+      "name": "check_ipai_foundation.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/parity/check_ipai_foundation.sh"
+    },
+    {
+      "id": "script_check_llm_routing.sh",
+      "name": "check_llm_routing.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/ci/check_llm_routing.sh"
+    },
+    {
+      "id": "script_check_mailgun.py",
+      "name": "check_mailgun.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/audit/checks/check_mailgun.py"
+    },
+    {
+      "id": "script_check_mailgun.sh",
+      "name": "check_mailgun.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/audit/check_mailgun.sh"
+    },
+    {
+      "id": "script_check_module_status.sh",
+      "name": "check_module_status.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/check_module_status.sh"
+    },
+    {
+      "id": "script_check_n8n.py",
+      "name": "check_n8n.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/audit/checks/check_n8n.py"
+    },
+    {
+      "id": "script_check_n8n_workflow_secrets.sh",
+      "name": "check_n8n_workflow_secrets.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/ci/check_n8n_workflow_secrets.sh"
+    },
+    {
+      "id": "script_check_no_artifacts_tracked.sh",
+      "name": "check_no_artifacts_tracked.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/ci/check_no_artifacts_tracked.sh"
+    },
+    {
+      "id": "script_check_no_enterprise_code.sh",
+      "name": "check_no_enterprise_code.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/parity/check_no_enterprise_code.sh"
+    },
+    {
+      "id": "script_check_odoo.py",
+      "name": "check_odoo.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/audit/checks/check_odoo.py"
+    },
+    {
+      "id": "script_check_odoo_addons_path.sh",
+      "name": "check_odoo_addons_path.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/ci/check_odoo_addons_path.sh"
+    },
+    {
+      "id": "script_check_odoosh_parity.py",
+      "name": "check_odoosh_parity.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/check_odoosh_parity.py"
+    },
+    {
+      "id": "script_check_parity_boundaries.sh",
+      "name": "check_parity_boundaries.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/ci/check_parity_boundaries.sh"
+    },
+    {
+      "id": "script_check_prd_linkage.sh",
+      "name": "check_prd_linkage.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/ci/check_prd_linkage.sh"
+    },
+    {
+      "id": "script_check_project_tasks.py",
+      "name": "check_project_tasks.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/check_project_tasks.py"
+    },
+    {
+      "id": "script_check_root_allowlist.py",
+      "name": "check_root_allowlist.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/ci/check_root_allowlist.py"
+    },
+    {
+      "id": "script_check_root_moves_backcompat.sh",
+      "name": "check_root_moves_backcompat.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/ci/check_root_moves_backcompat.sh"
+    },
+    {
+      "id": "script_check_secrets.sh",
+      "name": "check_secrets.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/check_secrets.sh"
+    },
+    {
+      "id": "script_check_shadow_ledger.sh",
+      "name": "check_shadow_ledger.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/ci/check_shadow_ledger.sh"
+    },
+    {
+      "id": "script_check_slack.py",
+      "name": "check_slack.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/audit/checks/check_slack.py"
+    },
+    {
+      "id": "script_check_supabase.py",
+      "name": "check_supabase.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/audit/checks/check_supabase.py"
+    },
+    {
+      "id": "script_check_supabase.sh",
+      "name": "check_supabase.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/audit/check_supabase.sh"
+    },
+    {
+      "id": "script_check_supabase_contract.sh",
+      "name": "check_supabase_contract.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/ci/check_supabase_contract.sh"
+    },
+    {
+      "id": "script_check_supabase_preview_config.sh",
+      "name": "check_supabase_preview_config.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/ci/check_supabase_preview_config.sh"
+    },
+    {
+      "id": "script_check_superset.py",
+      "name": "check_superset.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/audit/checks/check_superset.py"
+    },
+    {
+      "id": "script_check_undocumented_specs.py",
+      "name": "check_undocumented_specs.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/check_undocumented_specs.py"
+    },
+    {
+      "id": "script_check_vercel.py",
+      "name": "check_vercel.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/audit/checks/check_vercel.py"
+    },
+    {
+      "id": "script_check_vercel.sh",
+      "name": "check_vercel.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/audit/check_vercel.sh"
+    },
+    {
+      "id": "script_checks.sh",
+      "name": "checks.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/refactor/checks.sh"
+    },
+    {
+      "id": "script_chore_repo.sh",
+      "name": "chore_repo.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/chore_repo.sh"
+    },
+    {
+      "id": "script_ci_local.sh",
+      "name": "ci_local.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/ci_local.sh"
+    },
+    {
+      "id": "script_ci_naming_gate.sh",
+      "name": "ci_naming_gate.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/refactor/ci_naming_gate.sh"
+    },
+    {
+      "id": "script_ci_odoo_changed_modules.py",
+      "name": "ci_odoo_changed_modules.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/ci_odoo_changed_modules.py"
+    },
+    {
+      "id": "script_ci_odoo_gate.py",
+      "name": "ci_odoo_gate.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/ci_odoo_gate.py"
+    },
+    {
+      "id": "script_ci_odoo_resolve_deps.py",
+      "name": "ci_odoo_resolve_deps.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/ci_odoo_resolve_deps.py"
+    },
+    {
+      "id": "script_ci_odoo_resolve_impacted.py",
+      "name": "ci_odoo_resolve_impacted.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/ci_odoo_resolve_impacted.py"
+    },
+    {
+      "id": "script_ci_odoo_run_install_upgrade.sh",
+      "name": "ci_odoo_run_install_upgrade.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/ci_odoo_run_install_upgrade.sh"
+    },
+    {
+      "id": "script_ci_smoke_test.sh",
+      "name": "ci_smoke_test.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/ci_smoke_test.sh"
+    },
+    {
+      "id": "tool_ci_sync_check.sh",
+      "name": "ci_sync_check.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "bin/ci_sync_check.sh"
+    },
+    {
+      "id": "cli_claude",
+      "name": "claude",
+      "type": "cli",
+      "location": "machine_only",
+      "path": "/Users/tbwa/.nvm/versions/node/v22.12.0/bin/claude"
+    },
+    {
+      "id": "skill_claude-ai-n8n-connector",
+      "name": "claude-ai-n8n-connector",
+      "type": "skill",
+      "location": "repo_only",
+      "path": ".claude/superclaude/skills/claude-ai-n8n-connector/SKILL.md"
+    },
+    {
+      "id": "script_clean-branches.sh",
+      "name": "clean-branches.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/clean-branches.sh"
+    },
+    {
+      "id": "script_clean_install_allowlist.sh",
+      "name": "clean_install_allowlist.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/oca/clean_install_allowlist.sh"
+    },
+    {
+      "id": "script_cleanup-branches.sh",
+      "name": "cleanup-branches.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/cleanup-branches.sh"
+    },
+    {
+      "id": "script_cleanup-preview-dns.sh",
+      "name": "cleanup-preview-dns.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/dns/cleanup-preview-dns.sh"
+    },
+    {
+      "id": "script_cleanup_smoke_mail.py",
+      "name": "cleanup_smoke_mail.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/odoo/cleanup_smoke_mail.py"
+    },
+    {
+      "id": "script_clone_missing_oca_repos.sh",
+      "name": "clone_missing_oca_repos.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/clone_missing_oca_repos.sh"
+    },
+    {
+      "id": "script_cloudflare-dns-audit.sh",
+      "name": "cloudflare-dns-audit.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/cloudflare-dns-audit.sh"
+    },
+    {
+      "id": "script_cloudflare-enable-proxy.sh",
+      "name": "cloudflare-enable-proxy.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/cloudflare-enable-proxy.sh"
+    },
+    {
+      "id": "skill_code-review",
+      "name": "code-review",
+      "type": "skill",
+      "location": "repo_only",
+      "path": "docs/archive/agent-skills/code-review/SKILL.md"
+    },
+    {
+      "id": "script_common.sh",
+      "name": "common.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/superset/common.sh"
+    },
+    {
+      "id": "skill_companies",
+      "name": "companies",
+      "type": "skill",
+      "location": "repo_only",
+      "path": "skills/odoo19/companies/SKILL.md"
+    },
+    {
+      "id": "script_company_bootstrap.py",
+      "name": "company_bootstrap.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/odoo/company_bootstrap.py"
+    },
+    {
+      "id": "script_company_bootstrap_min.py",
+      "name": "company_bootstrap_min.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/odoo/company_bootstrap_min.py"
+    },
+    {
+      "id": "script_company_bootstrap_xmlrpc.py",
+      "name": "company_bootstrap_xmlrpc.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/odoo/company_bootstrap_xmlrpc.py"
+    },
+    {
+      "id": "script_compare_audit_baseline.py",
+      "name": "compare_audit_baseline.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/ci/compare_audit_baseline.py"
+    },
+    {
+      "id": "script_compose_ssot_check.sh",
+      "name": "compose_ssot_check.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/ci/compose_ssot_check.sh"
+    },
+    {
+      "id": "script_compose_vars.sh",
+      "name": "compose_vars.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/compose_vars.sh"
+    },
+    {
+      "id": "skill_composition-patterns",
+      "name": "composition-patterns",
+      "type": "skill",
+      "location": "repo_only",
+      "path": "docs/archive/agent-skills/composition-patterns/SKILL.md"
+    },
+    {
+      "id": "script_compute_addons_roots.sh",
+      "name": "compute_addons_roots.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/ci_gate/compute_addons_roots.sh"
+    },
+    {
+      "id": "script_configure-odoo-params.sh",
+      "name": "configure-odoo-params.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/integration/configure-odoo-params.sh"
+    },
+    {
+      "id": "script_configure_auth_email_templates.sh",
+      "name": "configure_auth_email_templates.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/supabase/configure_auth_email_templates.sh"
+    },
+    {
+      "id": "script_configure_auth_smtp_and_urls.sh",
+      "name": "configure_auth_smtp_and_urls.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/supabase/configure_auth_smtp_and_urls.sh"
+    },
+    {
+      "id": "script_configure_base_url.py",
+      "name": "configure_base_url.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/configure_base_url.py"
+    },
+    {
+      "id": "script_configure_gmail_smtp.py",
+      "name": "configure_gmail_smtp.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/configure_gmail_smtp.py"
+    },
+    {
+      "id": "script_configure_gmail_smtp.sh",
+      "name": "configure_gmail_smtp.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/configure_gmail_smtp.sh"
+    },
+    {
+      "id": "script_configure_google_oauth.sh",
+      "name": "configure_google_oauth.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/configure_google_oauth.sh"
+    },
+    {
+      "id": "script_configure_mailgun_smtp.py",
+      "name": "configure_mailgun_smtp.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/configure_mailgun_smtp.py"
+    },
+    {
+      "id": "script_configure_sendgrid_smtp.py",
+      "name": "configure_sendgrid_smtp.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/configure_sendgrid_smtp.py"
+    },
+    {
+      "id": "script_configure_smtp.py",
+      "name": "configure_smtp.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/configure_smtp.py"
+    },
+    {
+      "id": "script_configure_zoho_smtp.py",
+      "name": "configure_zoho_smtp.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/configure_zoho_smtp.py"
+    },
+    {
+      "id": "script_confirm_user.py",
+      "name": "confirm_user.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/auth/confirm_user.py"
+    },
+    {
+      "id": "skill_contacts",
+      "name": "contacts",
+      "type": "skill",
+      "location": "repo_only",
+      "path": "skills/odoo19/contacts/SKILL.md"
+    },
+    {
+      "id": "script_convert_csv_to_xml.py",
+      "name": "convert_csv_to_xml.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/convert_csv_to_xml.py"
+    },
+    {
+      "id": "script_convert_expense_template_to_odoo.py",
+      "name": "convert_expense_template_to_odoo.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/seeds/convert_expense_template_to_odoo.py"
+    },
+    {
+      "id": "script_convert_seed_to_xml.py",
+      "name": "convert_seed_to_xml.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/convert_seed_to_xml.py"
+    },
+    {
+      "id": "tool_copilot_drift_check.sh",
+      "name": "copilot_drift_check.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "bin/copilot_drift_check.sh"
+    },
+    {
+      "id": "script_copilot_ingest.py",
+      "name": "copilot_ingest.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/copilot_ingest.py"
+    },
+    {
+      "id": "script_count_xml_seeds.py",
+      "name": "count_xml_seeds.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/count_xml_seeds.py"
+    },
+    {
+      "id": "script_coverage_audit.py",
+      "name": "coverage_audit.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/lakehouse/coverage_audit.py"
+    },
+    {
+      "id": "script_crawl_site.sh",
+      "name": "crawl_site.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/crawl_site.sh"
+    },
+    {
+      "id": "script_create-module-readme.sh",
+      "name": "create-module-readme.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/create-module-readme.sh"
+    },
+    {
+      "id": "script_create-preview-dns.sh",
+      "name": "create-preview-dns.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/dns/create-preview-dns.sh"
+    },
+    {
+      "id": "script_create-release.sh",
+      "name": "create-release.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/create-release.sh"
+    },
+    {
+      "id": "script_create_backup.sh",
+      "name": "create_backup.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/backup/create_backup.sh"
+    },
+    {
+      "id": "script_create_blocker_issues.sh",
+      "name": "create_blocker_issues.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/parity/create_blocker_issues.sh"
+    },
+    {
+      "id": "script_create_ee_replacement_issues.sh",
+      "name": "create_ee_replacement_issues.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/github/create_ee_replacement_issues.sh"
+    },
+    {
+      "id": "script_create_parity_pr.sh",
+      "name": "create_parity_pr.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/create_parity_pr.sh"
+    },
+    {
+      "id": "script_create_project_alias.py",
+      "name": "create_project_alias.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/odoo-automation/create_project_alias.py"
+    },
+    {
+      "id": "skill_crm",
+      "name": "crm",
+      "type": "skill",
+      "location": "repo_only",
+      "path": "skills/odoo19/crm/SKILL.md"
+    },
+    {
+      "id": "script_curate_surface_catalog.sh",
+      "name": "curate_surface_catalog.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/ee_surface/curate_surface_catalog.sh"
+    },
+    {
+      "id": "skill_dashboards",
+      "name": "dashboards",
+      "type": "skill",
+      "location": "repo_only",
+      "path": "skills/odoo19/dashboards/SKILL.md"
+    },
+    {
+      "id": "skill_data_cleaning",
+      "name": "data_cleaning",
+      "type": "skill",
+      "location": "repo_only",
+      "path": "skills/odoo19/data_cleaning/SKILL.md"
+    },
+    {
+      "id": "script_db-cleanup-legacy.sh",
+      "name": "db-cleanup-legacy.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/db-cleanup-legacy.sh"
+    },
+    {
+      "id": "script_db_naming_gate.py",
+      "name": "db_naming_gate.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/ci/db_naming_gate.py"
+    },
+    {
+      "id": "script_db_verify.sh",
+      "name": "db_verify.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/db_verify.sh"
+    },
+    {
+      "id": "skill_deep-research",
+      "name": "deep-research",
+      "type": "skill",
+      "location": "repo_only",
+      "path": ".agent/skills/deep-research/SKILL.md"
+    },
+    {
+      "id": "script_delete_user_safe.sh",
+      "name": "delete_user_safe.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/delete_user_safe.sh"
+    },
+    {
+      "id": "script_deploy-bir-compliance.sh",
+      "name": "deploy-bir-compliance.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/deploy-bir-compliance.sh"
+    },
+    {
+      "id": "script_deploy-databricks.sh",
+      "name": "deploy-databricks.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/ppm/deploy-databricks.sh"
+    },
+    {
+      "id": "script_deploy-december-2025-bir-tasks.sh",
+      "name": "deploy-december-2025-bir-tasks.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/deploy-december-2025-bir-tasks.sh"
+    },
+    {
+      "id": "script_deploy-ipai-modules.sh",
+      "name": "deploy-ipai-modules.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/ci/deploy-ipai-modules.sh"
+    },
+    {
+      "id": "script_deploy-mailgun-mailgate.sh",
+      "name": "deploy-mailgun-mailgate.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/deploy-mailgun-mailgate.sh"
+    },
+    {
+      "id": "script_deploy-n8n-workflows.sh",
+      "name": "deploy-n8n-workflows.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/deploy-n8n-workflows.sh"
+    },
+    {
+      "id": "skill_deploy-odoo-modules-git",
+      "name": "deploy-odoo-modules-git",
+      "type": "skill",
+      "location": "repo_only",
+      "path": "agents/skills/deploy-odoo-modules-git/SKILL.md"
+    },
+    {
+      "id": "script_deploy-odoo-modules.sh",
+      "name": "deploy-odoo-modules.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/deploy-odoo-modules.sh"
+    },
+    {
+      "id": "script_deploy-otp-auth.sh",
+      "name": "deploy-otp-auth.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/deploy-otp-auth.sh"
+    },
+    {
+      "id": "script_deploy-prod-e2e.sh",
+      "name": "deploy-prod-e2e.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/deploy/deploy-prod-e2e.sh"
+    },
+    {
+      "id": "script_deploy-supabase.sh",
+      "name": "deploy-supabase.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/integration/deploy-supabase.sh"
+    },
+    {
+      "id": "script_deploy-tbwa-theme-tokens.sh",
+      "name": "deploy-tbwa-theme-tokens.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/deploy-tbwa-theme-tokens.sh"
+    },
+    {
+      "id": "script_deploy-to-server.sh",
+      "name": "deploy-to-server.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/deploy-to-server.sh"
+    },
+    {
+      "id": "script_deploy.sh",
+      "name": "deploy.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/deploy/deploy.sh"
+    },
+    {
+      "id": "script_deploy_afc_rag.sh",
+      "name": "deploy_afc_rag.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/deploy_afc_rag.sh"
+    },
+    {
+      "id": "script_deploy_complete_fix.sh",
+      "name": "deploy_complete_fix.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/deploy_complete_fix.sh"
+    },
+    {
+      "id": "script_deploy_custom_image.sh",
+      "name": "deploy_custom_image.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/deploy_custom_image.sh"
+    },
+    {
+      "id": "script_deploy_finance_ppm_odoo19.sh",
+      "name": "deploy_finance_ppm_odoo19.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/deploy_finance_ppm_odoo19.sh"
+    },
+    {
+      "id": "script_deploy_n8n_all.py",
+      "name": "deploy_n8n_all.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/automations/deploy_n8n_all.py"
+    },
+    {
+      "id": "script_deploy_notion_tasks.sh",
+      "name": "deploy_notion_tasks.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/deploy_notion_tasks.sh"
+    },
+    {
+      "id": "script_deploy_odoo_smart.sh",
+      "name": "deploy_odoo_smart.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/deploy_odoo_smart.sh"
+    },
+    {
+      "id": "script_deploy_odoo_upgrade.sh",
+      "name": "deploy_odoo_upgrade.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/deploy_odoo_upgrade.sh"
+    },
+    {
+      "id": "script_deploy_one.py",
+      "name": "deploy_one.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/integrations/deploy_one.py"
+    },
+    {
+      "id": "script_deploy_parity_schema.sh",
+      "name": "deploy_parity_schema.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/deploy_parity_schema.sh"
+    },
+    {
+      "id": "script_deploy_ppm_dashboard.sh",
+      "name": "deploy_ppm_dashboard.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/ops/deploy/deploy_ppm_dashboard.sh"
+    },
+    {
+      "id": "script_deploy_ppm_dashboard_direct.sh",
+      "name": "deploy_ppm_dashboard_direct.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/ops/deploy/deploy_ppm_dashboard_direct.sh"
+    },
+    {
+      "id": "script_deploy_prod.sh",
+      "name": "deploy_prod.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/deploy_prod.sh"
+    },
+    {
+      "id": "script_deploy_production.sh",
+      "name": "deploy_production.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/deploy_production.sh"
+    },
+    {
+      "id": "script_deploy_theme_to_production.sh",
+      "name": "deploy_theme_to_production.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/deploy_theme_to_production.sh"
+    },
+    {
+      "id": "script_deploy_vercel_prod.sh",
+      "name": "deploy_vercel_prod.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/deploy_vercel_prod.sh"
+    },
+    {
+      "id": "script_deploy_with_credentials.sh",
+      "name": "deploy_with_credentials.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/deploy_with_credentials.sh"
+    },
+    {
+      "id": "script_deploy_workos.sh",
+      "name": "deploy_workos.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/prod/deploy_workos.sh"
+    },
+    {
+      "id": "script_deploy_workos_prod.sh",
+      "name": "deploy_workos_prod.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/deploy_workos_prod.sh"
+    },
+    {
+      "id": "script_deployment-checklist.sh",
+      "name": "deployment-checklist.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/deployment-checklist.sh"
+    },
+    {
+      "id": "script_design-sync.sh",
+      "name": "design-sync.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/design-sync.sh"
+    },
+    {
+      "id": "script_devcontainer_ssot_check.sh",
+      "name": "devcontainer_ssot_check.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/ci/devcontainer_ssot_check.sh"
+    },
+    {
+      "id": "script_devcontainer_up.sh",
+      "name": "devcontainer_up.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/devcontainer_up.sh"
+    },
+    {
+      "id": "skill_developer_mode",
+      "name": "developer_mode",
+      "type": "skill",
+      "location": "repo_only",
+      "path": "skills/odoo19/developer_mode/SKILL.md"
+    },
+    {
+      "id": "script_diagnose_502.sh",
+      "name": "diagnose_502.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/deploy/diagnose_502.sh"
+    },
+    {
+      "id": "script_diagnose_prod.sh",
+      "name": "diagnose_prod.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/diagnose_prod.sh"
+    },
+    {
+      "id": "script_diagnose_scss_error.sh",
+      "name": "diagnose_scss_error.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/odoo/diagnose_scss_error.sh"
+    },
+    {
+      "id": "script_diagnose_smtp.sh",
+      "name": "diagnose_smtp.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/diagnose_smtp.sh"
+    },
+    {
+      "id": "script_discover_all.py",
+      "name": "discover_all.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/infra-discovery/discover_all.py"
+    },
+    {
+      "id": "script_discover_digitalocean.py",
+      "name": "discover_digitalocean.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/infra-discovery/discover_digitalocean.py"
+    },
+    {
+      "id": "script_discover_digitalocean_infra.sh",
+      "name": "discover_digitalocean_infra.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/discover_digitalocean_infra.sh"
+    },
+    {
+      "id": "script_discover_docker.py",
+      "name": "discover_docker.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/infra-discovery/discover_docker.py"
+    },
+    {
+      "id": "script_discover_docker_infra.sh",
+      "name": "discover_docker_infra.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/discover_docker_infra.sh"
+    },
+    {
+      "id": "script_discover_github.py",
+      "name": "discover_github.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/infra-discovery/discover_github.py"
+    },
+    {
+      "id": "script_discover_odoo.py",
+      "name": "discover_odoo.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/infra-discovery/discover_odoo.py"
+    },
+    {
+      "id": "script_discover_odoo_infra.py",
+      "name": "discover_odoo_infra.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/discover_odoo_infra.py"
+    },
+    {
+      "id": "script_discover_supabase.py",
+      "name": "discover_supabase.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/infra-discovery/discover_supabase.py"
+    },
+    {
+      "id": "script_discover_supabase_infra.py",
+      "name": "discover_supabase_infra.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/discover_supabase_infra.py"
+    },
+    {
+      "id": "script_discover_supabase_ui_sources.sh",
+      "name": "discover_supabase_ui_sources.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/discover_supabase_ui_sources.sh"
+    },
+    {
+      "id": "script_discover_vercel.py",
+      "name": "discover_vercel.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/infra-discovery/discover_vercel.py"
+    },
+    {
+      "id": "skill_discuss",
+      "name": "discuss",
+      "type": "skill",
+      "location": "repo_only",
+      "path": "skills/odoo19/discuss/SKILL.md"
+    },
+    {
+      "id": "script_distill_packs.sh",
+      "name": "distill_packs.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/memory/distill_packs.sh"
+    },
+    {
+      "id": "script_do-bootstrap-odoo-prod.sh",
+      "name": "do-bootstrap-odoo-prod.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/deploy/do-bootstrap-odoo-prod.sh"
+    },
+    {
+      "id": "cli_docker",
+      "name": "docker",
+      "type": "cli",
+      "location": "machine_only",
+      "path": "/usr/local/bin/docker"
+    },
+    {
+      "id": "script_docker-desktop-audit.sh",
+      "name": "docker-desktop-audit.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/docker-desktop-audit.sh"
+    },
+    {
+      "id": "script_docker-image-diff.sh",
+      "name": "docker-image-diff.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/ci/docker-image-diff.sh"
+    },
+    {
+      "id": "script_docker-staging-audit.sh",
+      "name": "docker-staging-audit.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/docker-staging-audit.sh"
+    },
+    {
+      "id": "script_docs_refresh.sh",
+      "name": "docs_refresh.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/docs_refresh.sh"
+    },
+    {
+      "id": "skill_documents",
+      "name": "documents",
+      "type": "skill",
+      "location": "repo_only",
+      "path": "skills/odoo19/documents/SKILL.md"
+    },
+    {
+      "id": "script_down.sh",
+      "name": "down.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/down.sh"
+    },
+    {
+      "id": "skill_ecommerce",
+      "name": "ecommerce",
+      "type": "skill",
+      "location": "repo_only",
+      "path": "skills/odoo19/ecommerce/SKILL.md"
+    },
+    {
+      "id": "script_ee_oca_parity_proof.py",
+      "name": "ee_oca_parity_proof.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/ee_oca_parity_proof.py"
+    },
+    {
+      "id": "script_ee_replace_request.sh",
+      "name": "ee_replace_request.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/ee_replace_request.sh"
+    },
+    {
+      "id": "skill_elearning",
+      "name": "elearning",
+      "type": "skill",
+      "location": "repo_only",
+      "path": "skills/odoo19/elearning/SKILL.md"
+    },
+    {
+      "id": "skill_email_communication",
+      "name": "email_communication",
+      "type": "skill",
+      "location": "repo_only",
+      "path": "skills/odoo19/email_communication/SKILL.md"
+    },
+    {
+      "id": "skill_email_marketing",
+      "name": "email_marketing",
+      "type": "skill",
+      "location": "repo_only",
+      "path": "skills/odoo19/email_marketing/SKILL.md"
+    },
+    {
+      "id": "skill_employees",
+      "name": "employees",
+      "type": "skill",
+      "location": "repo_only",
+      "path": "skills/odoo19/employees/SKILL.md"
+    },
+    {
+      "id": "tool_enforce_gate.mjs",
+      "name": "enforce_gate.mjs",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "tools/pr-gate/enforce_gate.mjs"
+    },
+    {
+      "id": "script_enhanced_health_check.sh",
+      "name": "enhanced_health_check.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/enhanced_health_check.sh"
+    },
+    {
+      "id": "script_ensure_dir.py",
+      "name": "ensure_dir.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/oca/ensure_dir.py"
+    },
+    {
+      "id": "script_ensure_superset_metadata_db.sh",
+      "name": "ensure_superset_metadata_db.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/superset/ensure_superset_metadata_db.sh"
+    },
+    {
+      "id": "script_env_create.sh",
+      "name": "env_create.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/odooops/env_create.sh"
+    },
+    {
+      "id": "script_env_destroy.sh",
+      "name": "env_destroy.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/odooops/env_destroy.sh"
+    },
+    {
+      "id": "script_env_wait_ready.sh",
+      "name": "env_wait_ready.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/odooops/env_wait_ready.sh"
+    },
+    {
+      "id": "script_erp_config_cli.sh",
+      "name": "erp_config_cli.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/erp_config_cli.sh"
+    },
+    {
+      "id": "skill_esg",
+      "name": "esg",
+      "type": "skill",
+      "location": "repo_only",
+      "path": "skills/odoo19/esg/SKILL.md"
+    },
+    {
+      "id": "script_evaluate_goals.py",
+      "name": "evaluate_goals.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/parity/evaluate_goals.py"
+    },
+    {
+      "id": "skill_events",
+      "name": "events",
+      "type": "skill",
+      "location": "repo_only",
+      "path": "skills/odoo19/events/SKILL.md"
+    },
+    {
+      "id": "script_execute_rationalization.sh",
+      "name": "execute_rationalization.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/execute_rationalization.sh"
+    },
+    {
+      "id": "skill_expense-processing",
+      "name": "expense-processing",
+      "type": "skill",
+      "location": "repo_only",
+      "path": "skills/expense-processing/SKILL.md"
+    },
+    {
+      "id": "script_expense_ocr_ingest.sh",
+      "name": "expense_ocr_ingest.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/expense_ocr_ingest.sh"
+    },
+    {
+      "id": "skill_expenses",
+      "name": "expenses",
+      "type": "skill",
+      "location": "repo_only",
+      "path": "skills/odoo19/expenses/SKILL.md"
+    },
+    {
+      "id": "script_export-dns-to-terraform.sh",
+      "name": "export-dns-to-terraform.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/dns/export-dns-to-terraform.sh"
+    },
+    {
+      "id": "script_export_architecture_diagrams.sh",
+      "name": "export_architecture_diagrams.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/export_architecture_diagrams.sh"
+    },
+    {
+      "id": "tool_export_backlog.mjs",
+      "name": "export_backlog.mjs",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "tools/backlog/export_backlog.mjs"
+    },
+    {
+      "id": "script_export_evidence.sh",
+      "name": "export_evidence.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/deploy/export_evidence.sh"
+    },
+    {
+      "id": "skill_export_import_data",
+      "name": "export_import_data",
+      "type": "skill",
+      "location": "repo_only",
+      "path": "skills/odoo19/export_import_data/SKILL.md"
+    },
+    {
+      "id": "tool_export_schema.py",
+      "name": "export_schema.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "tools/odoo_schema/export_schema.py"
+    },
+    {
+      "id": "script_export_todo_seed.py",
+      "name": "export_todo_seed.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/export_todo_seed.py"
+    },
+    {
+      "id": "script_exposed_schemas.py",
+      "name": "exposed_schemas.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/supabase/exposed_schemas.py"
+    },
+    {
+      "id": "script_extract_openai_academy_prompt_packs.py",
+      "name": "extract_openai_academy_prompt_packs.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/extract_openai_academy_prompt_packs.py"
+    },
+    {
+      "id": "script_extract_remote_data.py",
+      "name": "extract_remote_data.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/extract_remote_data.py"
+    },
+    {
+      "id": "cli_fd",
+      "name": "fd",
+      "type": "cli",
+      "location": "machine_only",
+      "path": "/opt/homebrew/bin/fd"
+    },
+    {
+      "id": "script_fetch_and_pin.sh",
+      "name": "fetch_and_pin.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/oca/fetch_and_pin.sh"
+    },
+    {
+      "id": "script_fetch_external_llms_packs.sh",
+      "name": "fetch_external_llms_packs.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/docs/fetch_external_llms_packs.sh"
+    },
+    {
+      "id": "script_fetch_project_api_keys.sh",
+      "name": "fetch_project_api_keys.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/supabase/fetch_project_api_keys.sh"
+    },
+    {
+      "id": "skill_field_service",
+      "name": "field_service",
+      "type": "skill",
+      "location": "repo_only",
+      "path": "skills/odoo19/field_service/SKILL.md"
+    },
+    {
+      "id": "skill_figma-agent",
+      "name": "figma-agent",
+      "type": "skill",
+      "location": "repo_only",
+      "path": "skills/user/figma-agent/SKILL.md"
+    },
+    {
+      "id": "script_figma_export_variables.sh",
+      "name": "figma_export_variables.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/figma/figma_export_variables.sh"
+    },
+    {
+      "id": "script_figma_featuremap_sync.py",
+      "name": "figma_featuremap_sync.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/figma/figma_featuremap_sync.py"
+    },
+    {
+      "id": "script_final_verification.sh",
+      "name": "final_verification.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/ops/deploy/final_verification.sh"
+    },
+    {
+      "id": "tool_finance-cli.sh",
+      "name": "finance-cli.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "bin/finance-cli.sh"
+    },
+    {
+      "id": "skill_finance-month-end",
+      "name": "finance-month-end",
+      "type": "skill",
+      "location": "repo_only",
+      "path": "skills/finance-month-end/SKILL.md"
+    },
+    {
+      "id": "script_finance_ppm_health_check.sh",
+      "name": "finance_ppm_health_check.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/finance_ppm_health_check.sh"
+    },
+    {
+      "id": "script_finance_ppm_restore_golden.sh",
+      "name": "finance_ppm_restore_golden.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/finance_ppm_restore_golden.sh"
+    },
+    {
+      "id": "script_finance_ppm_seed_audit.py",
+      "name": "finance_ppm_seed_audit.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/finance_ppm_seed_audit.py"
+    },
+    {
+      "id": "tool_find_model_repo.sh",
+      "name": "find_model_repo.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "tools/model-repo-scanner/scripts/find_model_repo.sh"
+    },
+    {
+      "id": "skill_fiscal_localizations",
+      "name": "fiscal_localizations",
+      "type": "skill",
+      "location": "repo_only",
+      "path": "skills/odoo19/fiscal_localizations/SKILL.md"
+    },
+    {
+      "id": "script_fix-finance-ppm-schema.sh",
+      "name": "fix-finance-ppm-schema.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/fix-finance-ppm-schema.sh"
+    },
+    {
+      "id": "script_fix-pay-invoices-online-error.py",
+      "name": "fix-pay-invoices-online-error.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/fix-pay-invoices-online-error.py"
+    },
+    {
+      "id": "script_fix_broken_action.sh",
+      "name": "fix_broken_action.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/odoo/fix_broken_action.sh"
+    },
+    {
+      "id": "script_fix_claude_code_bash_patterns.py",
+      "name": "fix_claude_code_bash_patterns.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/fix_claude_code_bash_patterns.py"
+    },
+    {
+      "id": "script_fix_deps_safe.sh",
+      "name": "fix_deps_safe.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/refactor/fixers/fix_deps_safe.sh"
+    },
+    {
+      "id": "script_fix_oauth_button.sh",
+      "name": "fix_oauth_button.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/fix_oauth_button.sh"
+    },
+    {
+      "id": "script_fix_oauth_button_odoo_core.sh",
+      "name": "fix_oauth_button_odoo_core.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/fix_oauth_button_odoo_core.sh"
+    },
+    {
+      "id": "script_fix_odoo18_views.py",
+      "name": "fix_odoo18_views.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/ipai-view-migration/fix_odoo18_views.py"
+    },
+    {
+      "id": "script_fix_odoo_email_config.sh",
+      "name": "fix_odoo_email_config.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/fixes/fix_odoo_email_config.sh"
+    },
+    {
+      "id": "script_fix_permissions.sh",
+      "name": "fix_permissions.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/fix_permissions.sh"
+    },
+    {
+      "id": "script_fix_pos_enterprise_error.sh",
+      "name": "fix_pos_enterprise_error.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/fix_pos_enterprise_error.sh"
+    },
+    {
+      "id": "skill_fleet",
+      "name": "fleet",
+      "type": "skill",
+      "location": "repo_only",
+      "path": "skills/odoo19/fleet/SKILL.md"
+    },
+    {
+      "id": "script_force_asset_regeneration.sh",
+      "name": "force_asset_regeneration.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/force_asset_regeneration.sh"
+    },
+    {
+      "id": "skill_forum",
+      "name": "forum",
+      "type": "skill",
+      "location": "repo_only",
+      "path": "skills/odoo19/forum/SKILL.md"
+    },
+    {
+      "id": "skill_frontdesk",
+      "name": "frontdesk",
+      "type": "skill",
+      "location": "repo_only",
+      "path": "skills/odoo19/frontdesk/SKILL.md"
+    },
+    {
+      "id": "script_full_backup.sh",
+      "name": "full_backup.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/backup/full_backup.sh"
+    },
+    {
+      "id": "script_full_deploy_sanity.sh",
+      "name": "full_deploy_sanity.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/full_deploy_sanity.sh"
+    },
+    {
+      "id": "script_gate_modules.sh",
+      "name": "gate_modules.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/ci_gate/gate_modules.sh"
+    },
+    {
+      "id": "script_gen-env-local.sh",
+      "name": "gen-env-local.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/secrets/gen-env-local.sh"
+    },
+    {
+      "id": "script_gen_addons_path.py",
+      "name": "gen_addons_path.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/gen_addons_path.py"
+    },
+    {
+      "id": "script_gen_addons_path.sh",
+      "name": "gen_addons_path.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/gen_addons_path.sh"
+    },
+    {
+      "id": "script_gen_install_set.py",
+      "name": "gen_install_set.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/gen_install_set.py"
+    },
+    {
+      "id": "script_gen_odoo_editions_parity_seed.py",
+      "name": "gen_odoo_editions_parity_seed.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/gen_odoo_editions_parity_seed.py"
+    },
+    {
+      "id": "tool_gen_prod_snapshot.sh",
+      "name": "gen_prod_snapshot.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "tools/audit/gen_prod_snapshot.sh"
+    },
+    {
+      "id": "script_gen_repo_tree.sh",
+      "name": "gen_repo_tree.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/gen_repo_tree.sh"
+    },
+    {
+      "id": "tool_gen_repo_tree.sh",
+      "name": "gen_repo_tree.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "tools/audit/gen_repo_tree.sh"
+    },
+    {
+      "id": "script_gen_repo_tree_fallback.sh",
+      "name": "gen_repo_tree_fallback.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/gen_repo_tree_fallback.sh"
+    },
+    {
+      "id": "tool_gen_repo_tree_prod.sh",
+      "name": "gen_repo_tree_prod.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "tools/audit/gen_repo_tree_prod.sh"
+    },
+    {
+      "id": "tool_gen_runtime_sitemap.sh",
+      "name": "gen_runtime_sitemap.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "tools/audit/gen_runtime_sitemap.sh"
+    },
+    {
+      "id": "tool_gen_snapshot_json.sh",
+      "name": "gen_snapshot_json.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "tools/audit/gen_snapshot_json.sh"
+    },
+    {
+      "id": "script_generate-dns-artifacts.sh",
+      "name": "generate-dns-artifacts.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/generate-dns-artifacts.sh"
+    },
+    {
+      "id": "skill_generate-odoo-skill-from-kb",
+      "name": "generate-odoo-skill-from-kb",
+      "type": "skill",
+      "location": "repo_only",
+      "path": "agents/skills/generate-odoo-skill-from-kb/SKILL.md"
+    },
+    {
+      "id": "script_generate_2026_finance_calendar.py",
+      "name": "generate_2026_finance_calendar.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/generate_2026_finance_calendar.py"
+    },
+    {
+      "id": "script_generate_2026_schedule.py",
+      "name": "generate_2026_schedule.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/generate_2026_schedule.py"
+    },
+    {
+      "id": "script_generate_addons_path.py",
+      "name": "generate_addons_path.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/oca/generate_addons_path.py"
+    },
+    {
+      "id": "script_generate_agents_json.py",
+      "name": "generate_agents_json.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/agents/generate_agents_json.py"
+    },
+    {
+      "id": "tool_generate_all.sh",
+      "name": "generate_all.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "tools/graphs/generate_all.sh"
+    },
+    {
+      "id": "script_generate_capability_inventory.py",
+      "name": "generate_capability_inventory.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/generate_capability_inventory.py"
+    },
+    {
+      "id": "script_generate_ee_parity_matrix.py",
+      "name": "generate_ee_parity_matrix.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/parity/generate_ee_parity_matrix.py"
+    },
+    {
+      "id": "script_generate_ee_surface_catalog.py",
+      "name": "generate_ee_surface_catalog.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/ee_surface/generate_ee_surface_catalog.py"
+    },
+    {
+      "id": "script_generate_erd_graphviz.py",
+      "name": "generate_erd_graphviz.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/generate_erd_graphviz.py"
+    },
+    {
+      "id": "script_generate_finance_dashboard.py",
+      "name": "generate_finance_dashboard.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/generate_finance_dashboard.py"
+    },
+    {
+      "id": "script_generate_go_live_checklist.py",
+      "name": "generate_go_live_checklist.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/generate_go_live_checklist.py"
+    },
+    {
+      "id": "script_generate_inventory.sh",
+      "name": "generate_inventory.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/oca/generate_inventory.sh"
+    },
+    {
+      "id": "tool_generate_knowledge_graph.py",
+      "name": "generate_knowledge_graph.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "tools/graphs/generate_knowledge_graph.py"
+    },
+    {
+      "id": "tool_generate_knowledge_graph.sh",
+      "name": "generate_knowledge_graph.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "tools/graphs/generate_knowledge_graph.sh"
+    },
+    {
+      "id": "script_generate_llm_docs.py",
+      "name": "generate_llm_docs.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/generate_llm_docs.py"
+    },
+    {
+      "id": "script_generate_module_docs.py",
+      "name": "generate_module_docs.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/generate_module_docs.py"
+    },
+    {
+      "id": "script_generate_module_health_report.py",
+      "name": "generate_module_health_report.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/generate_module_health_report.py"
+    },
+    {
+      "id": "script_generate_module_signatures.py",
+      "name": "generate_module_signatures.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/generate_module_signatures.py"
+    },
+    {
+      "id": "script_generate_month_end_imports.py",
+      "name": "generate_month_end_imports.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/generate_month_end_imports.py"
+    },
+    {
+      "id": "script_generate_odoo_dbml.py",
+      "name": "generate_odoo_dbml.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/generate_odoo_dbml.py"
+    },
+    {
+      "id": "script_generate_odoo_template.py",
+      "name": "generate_odoo_template.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/generate_odoo_template.py"
+    },
+    {
+      "id": "script_generate_project_stack_csv.py",
+      "name": "generate_project_stack_csv.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/seeds/generate_project_stack_csv.py"
+    },
+    {
+      "id": "script_generate_project_stack_xlsx.py",
+      "name": "generate_project_stack_xlsx.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/seeds/generate_project_stack_xlsx.py"
+    },
+    {
+      "id": "script_generate_release_docs.sh",
+      "name": "generate_release_docs.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/generate_release_docs.sh"
+    },
+    {
+      "id": "script_generate_repo_index.py",
+      "name": "generate_repo_index.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/generate_repo_index.py"
+    },
+    {
+      "id": "script_generate_schema_artifacts.sh",
+      "name": "generate_schema_artifacts.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/generate_schema_artifacts.sh"
+    },
+    {
+      "id": "tool_generate_schema_erd.sh",
+      "name": "generate_schema_erd.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "tools/graphs/generate_schema_erd.sh"
+    },
+    {
+      "id": "script_generate_seed_audit_artifact.py",
+      "name": "generate_seed_audit_artifact.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/generate_seed_audit_artifact.py"
+    },
+    {
+      "id": "script_generate_seed_xml.py",
+      "name": "generate_seed_xml.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/generate_seed_xml.py"
+    },
+    {
+      "id": "script_generate_service_tokens.sh",
+      "name": "generate_service_tokens.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/auth/generate_service_tokens.sh"
+    },
+    {
+      "id": "script_generate_shadow_ddl.py",
+      "name": "generate_shadow_ddl.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/generate_shadow_ddl.py"
+    },
+    {
+      "id": "script_generate_spec_report.py",
+      "name": "generate_spec_report.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/generate_spec_report.py"
+    },
+    {
+      "id": "script_generate_stack_docs.py",
+      "name": "generate_stack_docs.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/docs/generate_stack_docs.py"
+    },
+    {
+      "id": "script_generate_supabase_context_pack.sh",
+      "name": "generate_supabase_context_pack.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/db/generate_supabase_context_pack.sh"
+    },
+    {
+      "id": "cli_gh",
+      "name": "gh",
+      "type": "cli",
+      "location": "machine_only",
+      "path": "/opt/homebrew/bin/gh"
+    },
+    {
+      "id": "script_gh_actions_secrets_apply.sh",
+      "name": "gh_actions_secrets_apply.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/supabase/gh_actions_secrets_apply.sh"
+    },
+    {
+      "id": "cli_git",
+      "name": "git",
+      "type": "cli",
+      "location": "machine_only",
+      "path": "/opt/homebrew/bin/git"
+    },
+    {
+      "id": "script_git_safety_preflight.sh",
+      "name": "git_safety_preflight.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/git_safety_preflight.sh"
+    },
+    {
+      "id": "script_git_state_preflight.sh",
+      "name": "git_state_preflight.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/git_state_preflight.sh"
+    },
+    {
+      "id": "skill_github-well-architected",
+      "name": "github-well-architected",
+      "type": "skill",
+      "location": "repo_only",
+      "path": "agents/skills/github-well-architected/SKILL.md"
+    },
+    {
+      "id": "script_go_live.sh",
+      "name": "go_live.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/go_live.sh"
+    },
+    {
+      "id": "script_go_no_go_check.sh",
+      "name": "go_no_go_check.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/go_no_go_check.sh"
+    },
+    {
+      "id": "script_guardrail_no_bulk_doc_dump.sh",
+      "name": "guardrail_no_bulk_doc_dump.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/ci/guardrail_no_bulk_doc_dump.sh"
+    },
+    {
+      "id": "script_healthcheck.sh",
+      "name": "healthcheck.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/deploy/healthcheck.sh"
+    },
+    {
+      "id": "script_healthcheck_odoo.sh",
+      "name": "healthcheck_odoo.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/healthcheck_odoo.sh"
+    },
+    {
+      "id": "skill_helpdesk",
+      "name": "helpdesk",
+      "type": "skill",
+      "location": "repo_only",
+      "path": "skills/odoo19/helpdesk/SKILL.md"
+    },
+    {
+      "id": "script_hotfix_icon_crash.sh",
+      "name": "hotfix_icon_crash.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/hotfix_icon_crash.sh"
+    },
+    {
+      "id": "script_hotfix_production.sh",
+      "name": "hotfix_production.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/hotfix_production.sh"
+    },
+    {
+      "id": "script_html_catalog.py",
+      "name": "html_catalog.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/html_catalog.py"
+    },
+    {
+      "id": "skill_html_editor",
+      "name": "html_editor",
+      "type": "skill",
+      "location": "repo_only",
+      "path": "skills/odoo19/html_editor/SKILL.md"
+    },
+    {
+      "id": "tool_http_crawler.py",
+      "name": "http_crawler.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "tools/audit/http_crawler.py"
+    },
+    {
+      "id": "script_image-diff-report.sh",
+      "name": "image-diff-report.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/image-diff-report.sh"
+    },
+    {
+      "id": "script_image_audit.sh",
+      "name": "image_audit.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/image_audit.sh"
+    },
+    {
+      "id": "script_import-n8n-workflows.sh",
+      "name": "import-n8n-workflows.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/ci/import-n8n-workflows.sh"
+    },
+    {
+      "id": "script_import_activities.py",
+      "name": "import_activities.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/import/import_activities.py"
+    },
+    {
+      "id": "script_import_assets.sh",
+      "name": "import_assets.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/superset/import_assets.sh"
+    },
+    {
+      "id": "tool_import_bir_schedules.py",
+      "name": "import_bir_schedules.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "bin/import_bir_schedules.py"
+    },
+    {
+      "id": "script_import_finance_data.py",
+      "name": "import_finance_data.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/ops/install/import_finance_data.py"
+    },
+    {
+      "id": "script_import_finance_directory.py",
+      "name": "import_finance_directory.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/ops/install/import_finance_directory.py"
+    },
+    {
+      "id": "script_import_month_end_tasks.py",
+      "name": "import_month_end_tasks.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/import_month_end_tasks.py"
+    },
+    {
+      "id": "script_import_november_wbs.py",
+      "name": "import_november_wbs.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/ops/install/import_november_wbs.py"
+    },
+    {
+      "id": "skill_in_app_purchase",
+      "name": "in_app_purchase",
+      "type": "skill",
+      "location": "repo_only",
+      "path": "skills/odoo19/in_app_purchase/SKILL.md"
+    },
+    {
+      "id": "skill_incident-triage",
+      "name": "incident-triage",
+      "type": "skill",
+      "location": "repo_only",
+      "path": ".agent/antigravity/skills/incident-triage/SKILL.md"
+    },
+    {
+      "id": "script_incident_snapshot.sh",
+      "name": "incident_snapshot.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/incident_snapshot.sh"
+    },
+    {
+      "id": "script_index_anthropic_skills.py",
+      "name": "index_anthropic_skills.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/skills/index_anthropic_skills.py"
+    },
+    {
+      "id": "script_index_odoo_docs.py",
+      "name": "index_odoo_docs.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/kb/index_odoo_docs.py"
+    },
+    {
+      "id": "script_ingest_docs_to_supabase.py",
+      "name": "ingest_docs_to_supabase.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/ingest_docs_to_supabase.py"
+    },
+    {
+      "id": "script_ingest_knowledge_graph.py",
+      "name": "ingest_knowledge_graph.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/ingest_knowledge_graph.py"
+    },
+    {
+      "id": "script_install-ce-apps.sh",
+      "name": "install-ce-apps.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/odoo/install-ce-apps.sh"
+    },
+    {
+      "id": "script_install-cli-tools.sh",
+      "name": "install-cli-tools.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/ops/install-cli-tools.sh"
+    },
+    {
+      "id": "script_install-ee-parity-modules.sh",
+      "name": "install-ee-parity-modules.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/dev/install-ee-parity-modules.sh"
+    },
+    {
+      "id": "script_install-git-hooks.sh",
+      "name": "install-git-hooks.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/install-git-hooks.sh"
+    },
+    {
+      "id": "script_install-notion-stack.sh",
+      "name": "install-notion-stack.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/install-notion-stack.sh"
+    },
+    {
+      "id": "script_install-oca-modules.sh",
+      "name": "install-oca-modules.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/odoo/install-oca-modules.sh"
+    },
+    {
+      "id": "script_install-odoo-18-modules.sh",
+      "name": "install-odoo-18-modules.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/install-odoo-18-modules.sh"
+    },
+    {
+      "id": "script_install_all_ipai_modules.sh",
+      "name": "install_all_ipai_modules.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/install_all_ipai_modules.sh"
+    },
+    {
+      "id": "script_install_baseline.sh",
+      "name": "install_baseline.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/install_baseline.sh"
+    },
+    {
+      "id": "script_install_finance_stack.sh",
+      "name": "install_finance_stack.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/install_finance_stack.sh"
+    },
+    {
+      "id": "script_install_from_allowlist.sh",
+      "name": "install_from_allowlist.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/oca/install_from_allowlist.sh"
+    },
+    {
+      "id": "script_install_from_allowlist_docker.sh",
+      "name": "install_from_allowlist_docker.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/oca/install_from_allowlist_docker.sh"
+    },
+    {
+      "id": "script_install_from_allowlist_docker_v2.sh",
+      "name": "install_from_allowlist_docker_v2.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/oca/install_from_allowlist_docker_v2.sh"
+    },
+    {
+      "id": "script_install_ipai_finance_ppm.sh",
+      "name": "install_ipai_finance_ppm.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/install_ipai_finance_ppm.sh"
+    },
+    {
+      "id": "script_install_module.py",
+      "name": "install_module.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/ops/install/install_module.py"
+    },
+    {
+      "id": "script_install_module_xmlrpc.py",
+      "name": "install_module_xmlrpc.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/install_module_xmlrpc.py"
+    },
+    {
+      "id": "script_install_modules_direct.py",
+      "name": "install_modules_direct.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/oca/install_modules_direct.py"
+    },
+    {
+      "id": "script_install_oauth_module.py",
+      "name": "install_oauth_module.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/install_oauth_module.py"
+    },
+    {
+      "id": "script_install_oca_gantt_bridge.sh",
+      "name": "install_oca_gantt_bridge.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/install_oca_gantt_bridge.sh"
+    },
+    {
+      "id": "script_install_oca_ipai_full.sh",
+      "name": "install_oca_ipai_full.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/ocadev/install_oca_ipai_full.sh"
+    },
+    {
+      "id": "script_install_oca_modules.sh",
+      "name": "install_oca_modules.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/oca/install_oca_modules.sh"
+    },
+    {
+      "id": "script_install_oca_parity.sh",
+      "name": "install_oca_parity.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/install_oca_parity.sh"
+    },
+    {
+      "id": "script_install_oca_project_modules.sh",
+      "name": "install_oca_project_modules.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/install_oca_project_modules.sh"
+    },
+    {
+      "id": "script_install_odoo_18.sh",
+      "name": "install_odoo_18.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/ci/install_odoo_18.sh"
+    },
+    {
+      "id": "script_install_ppm_module.py",
+      "name": "install_ppm_module.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/ops/install/install_ppm_module.py"
+    },
+    {
+      "id": "script_install_ppm_monthly_close.sh",
+      "name": "install_ppm_monthly_close.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/ops/deploy/install_ppm_monthly_close.sh"
+    },
+    {
+      "id": "script_install_stack.sh",
+      "name": "install_stack.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/stack/install_stack.sh"
+    },
+    {
+      "id": "script_install_waves.py",
+      "name": "install_waves.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/oca/install_waves.py"
+    },
+    {
+      "id": "skill_integrations",
+      "name": "integrations",
+      "type": "skill",
+      "location": "repo_only",
+      "path": "skills/odoo19/integrations/SKILL.md"
+    },
+    {
+      "id": "script_introspect_feature_inventory.py",
+      "name": "introspect_feature_inventory.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/ci/introspect_feature_inventory.py"
+    },
+    {
+      "id": "script_introspect_project.py",
+      "name": "introspect_project.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/introspect_project.py"
+    },
+    {
+      "id": "skill_inventory",
+      "name": "inventory",
+      "type": "skill",
+      "location": "repo_only",
+      "path": "skills/odoo19/inventory/SKILL.md"
+    },
+    {
+      "id": "script_inventory_config_keys.sh",
+      "name": "inventory_config_keys.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/inventory_config_keys.sh"
+    },
+    {
+      "id": "script_inventory_repo_surfaces.sh",
+      "name": "inventory_repo_surfaces.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/ci/inventory_repo_surfaces.sh"
+    },
+    {
+      "id": "script_investigate-erp-domain.sh",
+      "name": "investigate-erp-domain.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/investigate-erp-domain.sh"
+    },
+    {
+      "id": "script_invoke_secret_smoke.sh",
+      "name": "invoke_secret_smoke.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/supabase/invoke_secret_smoke.sh"
+    },
+    {
+      "id": "skill_iot",
+      "name": "iot",
+      "type": "skill",
+      "location": "repo_only",
+      "path": "skills/odoo19/iot/SKILL.md"
+    },
+    {
+      "id": "script_ipai_ai_seed.sh",
+      "name": "ipai_ai_seed.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/ipai_ai_seed.sh"
+    },
+    {
+      "id": "script_ipai_full_audit.py",
+      "name": "ipai_full_audit.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/ipai_full_audit.py"
+    },
+    {
+      "id": "script_ipai_install_upgrade_test.sh",
+      "name": "ipai_install_upgrade_test.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/ipai_install_upgrade_test.sh"
+    },
+    {
+      "id": "script_ipai_quality_gate.sh",
+      "name": "ipai_quality_gate.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/ipai_quality_gate.sh"
+    },
+    {
+      "id": "cli_jq",
+      "name": "jq",
+      "type": "cli",
+      "location": "machine_only",
+      "path": "/opt/homebrew/bin/jq"
+    },
+    {
+      "id": "skill_keyboard_shortcuts",
+      "name": "keyboard_shortcuts",
+      "type": "skill",
+      "location": "repo_only",
+      "path": "skills/odoo19/keyboard_shortcuts/SKILL.md"
+    },
+    {
+      "id": "script_keychain-setup.sh",
+      "name": "keychain-setup.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/secrets/keychain-setup.sh"
+    },
+    {
+      "id": "script_lib.py",
+      "name": "lib.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/audit/lib.py"
+    },
+    {
+      "id": "script_lib.sh",
+      "name": "lib.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/refactor/lib.sh"
+    },
+    {
+      "id": "script_lib_benchmark.py",
+      "name": "lib_benchmark.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/lib/lib_benchmark.py"
+    },
+    {
+      "id": "script_lib_db.py",
+      "name": "lib_db.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/lib/lib_db.py"
+    },
+    {
+      "id": "script_lib_init.sh",
+      "name": "lib_init.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/lib/lib_init.sh"
+    },
+    {
+      "id": "script_lib_scan.py",
+      "name": "lib_scan.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/lib/lib_scan.py"
+    },
+    {
+      "id": "script_lint.sh",
+      "name": "lint.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/lint.sh"
+    },
+    {
+      "id": "script_lint_all.sh",
+      "name": "lint_all.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/lint_all.sh"
+    },
+    {
+      "id": "script_lint_odoo_entrypoint.sh",
+      "name": "lint_odoo_entrypoint.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/lint_odoo_entrypoint.sh"
+    },
+    {
+      "id": "script_lint_odoo_xml.py",
+      "name": "lint_odoo_xml.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/ci/lint_odoo_xml.py"
+    },
+    {
+      "id": "script_list-ee-parity-modules.sh",
+      "name": "list-ee-parity-modules.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/dev/list-ee-parity-modules.sh"
+    },
+    {
+      "id": "script_list_installed_modules.sh",
+      "name": "list_installed_modules.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/ocadev/list_installed_modules.sh"
+    },
+    {
+      "id": "skill_livechat",
+      "name": "livechat",
+      "type": "skill",
+      "location": "repo_only",
+      "path": "skills/odoo19/livechat/SKILL.md"
+    },
+    {
+      "id": "script_load_env.sh",
+      "name": "load_env.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/lib/load_env.sh"
+    },
+    {
+      "id": "script_lock_stage.sh",
+      "name": "lock_stage.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/lock_stage.sh"
+    },
+    {
+      "id": "skill_lunch",
+      "name": "lunch",
+      "type": "skill",
+      "location": "repo_only",
+      "path": "skills/odoo19/lunch/SKILL.md"
+    },
+    {
+      "id": "skill_maintenance",
+      "name": "maintenance",
+      "type": "skill",
+      "location": "repo_only",
+      "path": "skills/odoo19/maintenance/SKILL.md"
+    },
+    {
+      "id": "skill_manufacturing",
+      "name": "manufacturing",
+      "type": "skill",
+      "location": "repo_only",
+      "path": "skills/odoo19/manufacturing/SKILL.md"
+    },
+    {
+      "id": "script_map_logframe.py",
+      "name": "map_logframe.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/map_logframe.py"
+    },
+    {
+      "id": "skill_marketing_automation",
+      "name": "marketing_automation",
+      "type": "skill",
+      "location": "repo_only",
+      "path": "skills/odoo19/marketing_automation/SKILL.md"
+    },
+    {
+      "id": "script_migrate-dns-to-do.sh",
+      "name": "migrate-dns-to-do.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/dns/migrate-dns-to-do.sh"
+    },
+    {
+      "id": "script_migrate-net-to-com.sh",
+      "name": "migrate-net-to-com.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/deploy/migrate-net-to-com.sh"
+    },
+    {
+      "id": "script_migrate.sh",
+      "name": "migrate.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/deploy/migrate.sh"
+    },
+    {
+      "id": "script_migrate_submodules_to_aggregate.sh",
+      "name": "migrate_submodules_to_aggregate.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/migrate_submodules_to_aggregate.sh"
+    },
+    {
+      "id": "script_mint_token.py",
+      "name": "mint_token.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/auth/mint_token.py"
+    },
+    {
+      "id": "script_mirror_gold_to_supabase.py",
+      "name": "mirror_gold_to_supabase.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/lakehouse/mirror_gold_to_supabase.py"
+    },
+    {
+      "id": "script_module_audit_agent.py",
+      "name": "module_audit_agent.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/module_audit_agent.py"
+    },
+    {
+      "id": "script_module_drift_gate.sh",
+      "name": "module_drift_gate.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/ci/module_drift_gate.sh"
+    },
+    {
+      "id": "script_module_gate.py",
+      "name": "module_gate.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/ci_gate/module_gate.py"
+    },
+    {
+      "id": "script_n8n-gitops.sh",
+      "name": "n8n-gitops.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/n8n-gitops.sh"
+    },
+    {
+      "id": "script_n8n_opex_cli.sh",
+      "name": "n8n_opex_cli.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/ops/n8n_opex_cli.sh"
+    },
+    {
+      "id": "script_needs_supabase_ci_preview.sh",
+      "name": "needs_supabase_ci_preview.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/ci/needs_supabase_ci_preview.sh"
+    },
+    {
+      "id": "script_new_conversation_entry.sh",
+      "name": "new_conversation_entry.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/new_conversation_entry.sh"
+    },
+    {
+      "id": "script_new_go_live_checklist.sh",
+      "name": "new_go_live_checklist.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/new_go_live_checklist.sh"
+    },
+    {
+      "id": "script_next_parity_violations.sh",
+      "name": "next_parity_violations.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/ci/next_parity_violations.sh"
+    },
+    {
+      "id": "cli_node",
+      "name": "node",
+      "type": "cli",
+      "location": "machine_only",
+      "path": "/Users/tbwa/.nvm/versions/node/v22.12.0/bin/node"
+    },
+    {
+      "id": "script_notify_slack.sh",
+      "name": "notify_slack.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/notify_slack.sh"
+    },
+    {
+      "id": "cli_npm",
+      "name": "npm",
+      "type": "cli",
+      "location": "machine_only",
+      "path": "/Users/tbwa/.nvm/versions/node/v22.12.0/bin/npm"
+    },
+    {
+      "id": "script_oca-bootstrap.sh",
+      "name": "oca-bootstrap.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/oca-bootstrap.sh"
+    },
+    {
+      "id": "skill_oca-development-standards",
+      "name": "oca-development-standards",
+      "type": "skill",
+      "location": "repo_only",
+      "path": ".agent/skills/oca-development-standards/SKILL.md"
+    },
+    {
+      "id": "skill_oca-module-porter",
+      "name": "oca-module-porter",
+      "type": "skill",
+      "location": "repo_only",
+      "path": ".claude/skills/oca-module-porter/SKILL.md"
+    },
+    {
+      "id": "skill_oca-owl-standards",
+      "name": "oca-owl-standards",
+      "type": "skill",
+      "location": "repo_only",
+      "path": ".agent/skills/oca-owl-standards/SKILL.md"
+    },
+    {
+      "id": "script_oca-sync.sh",
+      "name": "oca-sync.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/oca-sync.sh"
+    },
+    {
+      "id": "script_oca-template-bootstrap.sh",
+      "name": "oca-template-bootstrap.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/oca-template-bootstrap.sh"
+    },
+    {
+      "id": "script_oca-update.sh",
+      "name": "oca-update.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/oca-update.sh"
+    },
+    {
+      "id": "script_oca_hydrate.sh",
+      "name": "oca_hydrate.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/oca_hydrate.sh"
+    },
+    {
+      "id": "script_oca_install.sh",
+      "name": "oca_install.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/oca_install.sh"
+    },
+    {
+      "id": "script_oca_must_have_gate.sh",
+      "name": "oca_must_have_gate.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/ci/oca_must_have_gate.sh"
+    },
+    {
+      "id": "script_odoo-18-oca-install.sh",
+      "name": "odoo-18-oca-install.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/odoo-18-oca-install.sh"
+    },
+    {
+      "id": "tool_odoo-check-gate",
+      "name": "odoo-check-gate",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "bin/odoo-check-gate"
+    },
+    {
+      "id": "skill_odoo-ci-optimization",
+      "name": "odoo-ci-optimization",
+      "type": "skill",
+      "location": "repo_only",
+      "path": ".agent/skills/odoo-ci-optimization/SKILL.md"
+    },
+    {
+      "id": "script_odoo-entrypoint-post-fix.sh",
+      "name": "odoo-entrypoint-post-fix.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/tests/odoo-entrypoint-post-fix.sh"
+    },
+    {
+      "id": "script_odoo-entrypoint-pre-fix.sh",
+      "name": "odoo-entrypoint-pre-fix.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/tests/odoo-entrypoint-pre-fix.sh"
+    },
+    {
+      "id": "skill_odoo-fullstack-ai-dev",
+      "name": "odoo-fullstack-ai-dev",
+      "type": "skill",
+      "location": "repo_only",
+      "path": "agents/skills/odoo-fullstack-ai-dev/SKILL.md"
+    },
+    {
+      "id": "skill_odoo-supabase-deployment",
+      "name": "odoo-supabase-deployment",
+      "type": "skill",
+      "location": "repo_only",
+      "path": "spec/odoo-supabase-deployment/AGENT_PROMPT.md"
+    },
+    {
+      "id": "tool_odoo-tests.sh",
+      "name": "odoo-tests.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "bin/odoo-tests.sh"
+    },
+    {
+      "id": "script_odoo.sh",
+      "name": "odoo.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/odoo.sh"
+    },
+    {
+      "id": "skill_odoo19-actions",
+      "name": "odoo19-actions",
+      "type": "skill",
+      "location": "repo_only",
+      "path": "skills/odoo/odoo19-actions/SKILL.md"
+    },
+    {
+      "id": "skill_odoo19-assets",
+      "name": "odoo19-assets",
+      "type": "skill",
+      "location": "repo_only",
+      "path": "skills/odoo/odoo19-assets/SKILL.md"
+    },
+    {
+      "id": "skill_odoo19-cli",
+      "name": "odoo19-cli",
+      "type": "skill",
+      "location": "repo_only",
+      "path": "skills/odoo/odoo19-cli/SKILL.md"
+    },
+    {
+      "id": "skill_odoo19-coding-guidelines",
+      "name": "odoo19-coding-guidelines",
+      "type": "skill",
+      "location": "repo_only",
+      "path": "skills/odoo/odoo19-coding-guidelines/SKILL.md"
+    },
+    {
+      "id": "skill_odoo19-data-files",
+      "name": "odoo19-data-files",
+      "type": "skill",
+      "location": "repo_only",
+      "path": "skills/odoo/odoo19-data-files/SKILL.md"
+    },
+    {
+      "id": "skill_odoo19-external-api",
+      "name": "odoo19-external-api",
+      "type": "skill",
+      "location": "repo_only",
+      "path": "skills/odoo/odoo19-external-api/SKILL.md"
+    },
+    {
+      "id": "skill_odoo19-frontend",
+      "name": "odoo19-frontend",
+      "type": "skill",
+      "location": "repo_only",
+      "path": "skills/odoo/odoo19-frontend/SKILL.md"
+    },
+    {
+      "id": "skill_odoo19-git-guidelines",
+      "name": "odoo19-git-guidelines",
+      "type": "skill",
+      "location": "repo_only",
+      "path": "skills/odoo/odoo19-git-guidelines/SKILL.md"
+    },
+    {
+      "id": "skill_odoo19-http-controllers",
+      "name": "odoo19-http-controllers",
+      "type": "skill",
+      "location": "repo_only",
+      "path": "skills/odoo/odoo19-http-controllers/SKILL.md"
+    },
+    {
+      "id": "skill_odoo19-mixins",
+      "name": "odoo19-mixins",
+      "type": "skill",
+      "location": "repo_only",
+      "path": "skills/odoo/odoo19-mixins/SKILL.md"
+    },
+    {
+      "id": "skill_odoo19-module",
+      "name": "odoo19-module",
+      "type": "skill",
+      "location": "repo_only",
+      "path": "skills/odoo/odoo19-module/SKILL.md"
+    },
+    {
+      "id": "skill_odoo19-orm",
+      "name": "odoo19-orm",
+      "type": "skill",
+      "location": "repo_only",
+      "path": "skills/odoo/odoo19-orm/SKILL.md"
+    },
+    {
+      "id": "skill_odoo19-owl-components",
+      "name": "odoo19-owl-components",
+      "type": "skill",
+      "location": "repo_only",
+      "path": "skills/odoo/odoo19-owl-components/SKILL.md"
+    },
+    {
+      "id": "skill_odoo19-performance",
+      "name": "odoo19-performance",
+      "type": "skill",
+      "location": "repo_only",
+      "path": "skills/odoo/odoo19-performance/SKILL.md"
+    },
+    {
+      "id": "skill_odoo19-qweb",
+      "name": "odoo19-qweb",
+      "type": "skill",
+      "location": "repo_only",
+      "path": "skills/odoo/odoo19-qweb/SKILL.md"
+    },
+    {
+      "id": "skill_odoo19-reports",
+      "name": "odoo19-reports",
+      "type": "skill",
+      "location": "repo_only",
+      "path": "skills/odoo/odoo19-reports/SKILL.md"
+    },
+    {
+      "id": "skill_odoo19-security",
+      "name": "odoo19-security",
+      "type": "skill",
+      "location": "repo_only",
+      "path": "skills/odoo/odoo19-security/SKILL.md"
+    },
+    {
+      "id": "skill_odoo19-testing",
+      "name": "odoo19-testing",
+      "type": "skill",
+      "location": "repo_only",
+      "path": "skills/odoo/odoo19-testing/SKILL.md"
+    },
+    {
+      "id": "skill_odoo19-upgrade",
+      "name": "odoo19-upgrade",
+      "type": "skill",
+      "location": "repo_only",
+      "path": "skills/odoo/odoo19-upgrade/SKILL.md"
+    },
+    {
+      "id": "script_odoo_check_ai_ocr_params.py",
+      "name": "odoo_check_ai_ocr_params.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/odoo_check_ai_ocr_params.py"
+    },
+    {
+      "id": "script_odoo_check_mail.py",
+      "name": "odoo_check_mail.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/odoo_check_mail.py"
+    },
+    {
+      "id": "script_odoo_coming_soon_install.sh",
+      "name": "odoo_coming_soon_install.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/odoo_coming_soon_install.sh"
+    },
+    {
+      "id": "script_odoo_coming_soon_rollback.sh",
+      "name": "odoo_coming_soon_rollback.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/odoo_coming_soon_rollback.sh"
+    },
+    {
+      "id": "script_odoo_coming_soon_verify.sh",
+      "name": "odoo_coming_soon_verify.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/odoo_coming_soon_verify.sh"
+    },
+    {
+      "id": "script_odoo_config_mail_ai_ocr.py",
+      "name": "odoo_config_mail_ai_ocr.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/odoo_config_mail_ai_ocr.py"
+    },
+    {
+      "id": "script_odoo_configure_mail.sh",
+      "name": "odoo_configure_mail.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/odoo_configure_mail.sh"
+    },
+    {
+      "id": "script_odoo_db_schema_diff.sh",
+      "name": "odoo_db_schema_diff.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/odoo_db_schema_diff.sh"
+    },
+    {
+      "id": "script_odoo_ensure_modules_installed.sh",
+      "name": "odoo_ensure_modules_installed.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/odoo_ensure_modules_installed.sh"
+    },
+    {
+      "id": "script_odoo_env_diagnose.sh",
+      "name": "odoo_env_diagnose.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/odoo_env_diagnose.sh"
+    },
+    {
+      "id": "script_odoo_import_project_suite.py",
+      "name": "odoo_import_project_suite.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/odoo_import_project_suite.py"
+    },
+    {
+      "id": "script_odoo_install_from_manifests.sh",
+      "name": "odoo_install_from_manifests.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/odoo_install_from_manifests.sh"
+    },
+    {
+      "id": "script_odoo_install_modules.sh",
+      "name": "odoo_install_modules.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/odoo_install_modules.sh"
+    },
+    {
+      "id": "script_odoo_install_oca_must_have.sh",
+      "name": "odoo_install_oca_must_have.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/odoo_install_oca_must_have.sh"
+    },
+    {
+      "id": "script_odoo_local_9069.sh",
+      "name": "odoo_local_9069.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/health/odoo_local_9069.sh"
+    },
+    {
+      "id": "script_odoo_local_health.sh",
+      "name": "odoo_local_health.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/health/odoo_local_health.sh"
+    },
+    {
+      "id": "script_odoo_modules_preflight.sh",
+      "name": "odoo_modules_preflight.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/odoo_modules_preflight.sh"
+    },
+    {
+      "id": "script_odoo_rationalization.sh",
+      "name": "odoo_rationalization.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/odoo_rationalization.sh"
+    },
+    {
+      "id": "script_odoo_rollback_mail_ai_ocr.py",
+      "name": "odoo_rollback_mail_ai_ocr.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/odoo_rollback_mail_ai_ocr.py"
+    },
+    {
+      "id": "script_odoo_runtime_snapshot.sh",
+      "name": "odoo_runtime_snapshot.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/odoo_runtime_snapshot.sh"
+    },
+    {
+      "id": "script_odoo_seed_post_upgrade.sh",
+      "name": "odoo_seed_post_upgrade.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/odoo_seed_post_upgrade.sh"
+    },
+    {
+      "id": "script_odoo_seed_projects_and_stages.py",
+      "name": "odoo_seed_projects_and_stages.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/odoo_seed_projects_and_stages.py"
+    },
+    {
+      "id": "script_odoo_semantic_lint.py",
+      "name": "odoo_semantic_lint.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/odoo/odoo_semantic_lint.py"
+    },
+    {
+      "id": "script_odoo_smoke_close.sh",
+      "name": "odoo_smoke_close.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/odoo_smoke_close.sh"
+    },
+    {
+      "id": "script_odoo_start_fetchmail.py",
+      "name": "odoo_start_fetchmail.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/odoo_start_fetchmail.py"
+    },
+    {
+      "id": "script_odoo_update_modules.sh",
+      "name": "odoo_update_modules.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/odoo_update_modules.sh"
+    },
+    {
+      "id": "script_odoo_upgrade_modules.sh",
+      "name": "odoo_upgrade_modules.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/odoo_upgrade_modules.sh"
+    },
+    {
+      "id": "script_odoo_verify_from_manifests.py",
+      "name": "odoo_verify_from_manifests.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/odoo_verify_from_manifests.py"
+    },
+    {
+      "id": "script_odoo_verify_modules.py",
+      "name": "odoo_verify_modules.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/odoo_verify_modules.py"
+    },
+    {
+      "id": "script_odoo_verify_oca_must_have.py",
+      "name": "odoo_verify_oca_must_have.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/odoo_verify_oca_must_have.py"
+    },
+    {
+      "id": "skill_odooops-deploy",
+      "name": "odooops-deploy",
+      "type": "skill",
+      "location": "repo_only",
+      "path": "skills/odooops/odooops-deploy/SKILL.md"
+    },
+    {
+      "id": "skill_odooops-test",
+      "name": "odooops-test",
+      "type": "skill",
+      "location": "repo_only",
+      "path": "skills/odooops/odooops-test/SKILL.md"
+    },
+    {
+      "id": "script_package_image_tarball.sh",
+      "name": "package_image_tarball.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/package_image_tarball.sh"
+    },
+    {
+      "id": "tool_parity_audit.py",
+      "name": "parity_audit.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "tools/parity/parity_audit.py"
+    },
+    {
+      "id": "script_parity_check.py",
+      "name": "parity_check.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/parity/parity_check.py"
+    },
+    {
+      "id": "script_parity_seed_sanity_check.py",
+      "name": "parity_seed_sanity_check.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/parity_seed_sanity_check.py"
+    },
+    {
+      "id": "script_parse_manifest.sh",
+      "name": "parse_manifest.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/ocadev/parse_manifest.sh"
+    },
+    {
+      "id": "script_parse_notion_tasks.py",
+      "name": "parse_notion_tasks.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/parse_notion_tasks.py"
+    },
+    {
+      "id": "skill_payment_providers",
+      "name": "payment_providers",
+      "type": "skill",
+      "location": "repo_only",
+      "path": "skills/odoo19/payment_providers/SKILL.md"
+    },
+    {
+      "id": "skill_payroll",
+      "name": "payroll",
+      "type": "skill",
+      "location": "repo_only",
+      "path": "skills/odoo19/payroll/SKILL.md"
+    },
+    {
+      "id": "script_phase1_archive_deprecated.sh",
+      "name": "phase1_archive_deprecated.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/deprecation/phase1_archive_deprecated.sh"
+    },
+    {
+      "id": "script_phase2_consolidate_ai_modules.sh",
+      "name": "phase2_consolidate_ai_modules.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/deprecation/phase2_consolidate_ai_modules.sh"
+    },
+    {
+      "id": "script_phase3_cleanup_theme_architecture.sh",
+      "name": "phase3_cleanup_theme_architecture.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/deprecation/phase3_cleanup_theme_architecture.sh"
+    },
+    {
+      "id": "script_phase4_finance_docs_to_oca.sh",
+      "name": "phase4_finance_docs_to_oca.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/deprecation/phase4_finance_docs_to_oca.sh"
+    },
+    {
+      "id": "script_pin_oca_repos.sh",
+      "name": "pin_oca_repos.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/stack/pin_oca_repos.sh"
+    },
+    {
+      "id": "cli_pip3",
+      "name": "pip3",
+      "type": "cli",
+      "location": "machine_only",
+      "path": "/Users/tbwa/.pyenv/versions/odoo-19-dev/bin/pip3"
+    },
+    {
+      "id": "script_plan.sh",
+      "name": "plan.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/cf/plan.sh"
+    },
+    {
+      "id": "skill_planning",
+      "name": "planning",
+      "type": "skill",
+      "location": "repo_only",
+      "path": "skills/odoo19/planning/SKILL.md"
+    },
+    {
+      "id": "skill_plm",
+      "name": "plm",
+      "type": "skill",
+      "location": "repo_only",
+      "path": "skills/odoo19/plm/SKILL.md"
+    },
+    {
+      "id": "cli_pnpm",
+      "name": "pnpm",
+      "type": "cli",
+      "location": "machine_only",
+      "path": "/Users/tbwa/.nvm/versions/node/v22.12.0/bin/pnpm"
+    },
+    {
+      "id": "skill_point_of_sale",
+      "name": "point_of_sale",
+      "type": "skill",
+      "location": "repo_only",
+      "path": "skills/odoo19/point_of_sale/SKILL.md"
+    },
+    {
+      "id": "script_policy-check.sh",
+      "name": "policy-check.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/policy-check.sh"
+    },
+    {
+      "id": "script_port_addon.sh",
+      "name": "port_addon.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/oca/port_addon.sh"
+    },
+    {
+      "id": "script_port_to_19.sh",
+      "name": "port_to_19.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/oca/port_to_19.sh"
+    },
+    {
+      "id": "tool_postdeploy-finance.sh",
+      "name": "postdeploy-finance.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "bin/postdeploy-finance.sh"
+    },
+    {
+      "id": "script_pre_install_snapshot.sh",
+      "name": "pre_install_snapshot.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/pre_install_snapshot.sh"
+    },
+    {
+      "id": "script_preflight.sh",
+      "name": "preflight.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/ocadev/preflight.sh"
+    },
+    {
+      "id": "script_preflight_check.sh",
+      "name": "preflight_check.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/db/preflight_check.sh"
+    },
+    {
+      "id": "script_prod_access_check.py",
+      "name": "prod_access_check.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/prod_access_check.py"
+    },
+    {
+      "id": "script_prod_backup_dump.sh",
+      "name": "prod_backup_dump.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/prod_backup_dump.sh"
+    },
+    {
+      "id": "script_prod_db_guess.py",
+      "name": "prod_db_guess.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/prod_db_guess.py"
+    },
+    {
+      "id": "skill_project",
+      "name": "project",
+      "type": "skill",
+      "location": "repo_only",
+      "path": "skills/odoo19/project/SKILL.md"
+    },
+    {
+      "id": "skill_promote-staging-to-prod",
+      "name": "promote-staging-to-prod",
+      "type": "skill",
+      "location": "repo_only",
+      "path": "agents/skills/promote-staging-to-prod/SKILL.md"
+    },
+    {
+      "id": "script_promote.sh",
+      "name": "promote.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/promote.sh"
+    },
+    {
+      "id": "script_promote_oauth_users.py",
+      "name": "promote_oauth_users.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/promote_oauth_users.py"
+    },
+    {
+      "id": "script_provision_tenant.sh",
+      "name": "provision_tenant.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/provision_tenant.sh"
+    },
+    {
+      "id": "cli_psql",
+      "name": "psql",
+      "type": "cli",
+      "location": "machine_only",
+      "path": "/opt/homebrew/bin/psql"
+    },
+    {
+      "id": "script_pull_enterprise_audit.sh",
+      "name": "pull_enterprise_audit.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/github/pull_enterprise_audit.sh"
+    },
+    {
+      "id": "skill_purchase",
+      "name": "purchase",
+      "type": "skill",
+      "location": "repo_only",
+      "path": "skills/odoo19/purchase/SKILL.md"
+    },
+    {
+      "id": "script_purge_assets.sh",
+      "name": "purge_assets.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/odoo/purge_assets.sh"
+    },
+    {
+      "id": "cli_python3",
+      "name": "python3",
+      "type": "cli",
+      "location": "machine_only",
+      "path": "/Users/tbwa/.pyenv/versions/odoo-19-dev/bin/python3"
+    },
+    {
+      "id": "skill_quality",
+      "name": "quality",
+      "type": "skill",
+      "location": "repo_only",
+      "path": "skills/odoo19/quality/SKILL.md"
+    },
+    {
+      "id": "script_query_memory.py",
+      "name": "query_memory.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/ops/install/query_memory.py"
+    },
+    {
+      "id": "skill_react-best-practices",
+      "name": "react-best-practices",
+      "type": "skill",
+      "location": "repo_only",
+      "path": "docs/archive/agent-skills/react-best-practices/SKILL.md"
+    },
+    {
+      "id": "script_recreate_odoo_prod.sh",
+      "name": "recreate_odoo_prod.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/recreate_odoo_prod.sh"
+    },
+    {
+      "id": "skill_recruitment",
+      "name": "recruitment",
+      "type": "skill",
+      "location": "repo_only",
+      "path": "skills/odoo19/recruitment/SKILL.md"
+    },
+    {
+      "id": "skill_referrals",
+      "name": "referrals",
+      "type": "skill",
+      "location": "repo_only",
+      "path": "skills/odoo19/referrals/SKILL.md"
+    },
+    {
+      "id": "skill_refresh-odoo19-kb",
+      "name": "refresh-odoo19-kb",
+      "type": "skill",
+      "location": "repo_only",
+      "path": "agents/skills/refresh-odoo19-kb/SKILL.md"
+    },
+    {
+      "id": "script_refresh_docs.py",
+      "name": "refresh_docs.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/docs/refresh_docs.py"
+    },
+    {
+      "id": "script_refresh_odoo19_kb.py",
+      "name": "refresh_odoo19_kb.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/skills/refresh_odoo19_kb.py"
+    },
+    {
+      "id": "script_regen_install_sets.sh",
+      "name": "regen_install_sets.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/regen_install_sets.sh"
+    },
+    {
+      "id": "script_release_gate.sh",
+      "name": "release_gate.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/release_gate.sh"
+    },
+    {
+      "id": "skill_rental",
+      "name": "rental",
+      "type": "skill",
+      "location": "repo_only",
+      "path": "skills/odoo19/rental/SKILL.md"
+    },
+    {
+      "id": "skill_repairs",
+      "name": "repairs",
+      "type": "skill",
+      "location": "repo_only",
+      "path": "skills/odoo19/repairs/SKILL.md"
+    },
+    {
+      "id": "script_replace_seed_from_excel.py",
+      "name": "replace_seed_from_excel.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/replace_seed_from_excel.py"
+    },
+    {
+      "id": "script_repo_health.sh",
+      "name": "repo_health.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/repo_health.sh"
+    },
+    {
+      "id": "script_repo_root.sh",
+      "name": "repo_root.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/lib/repo_root.sh"
+    },
+    {
+      "id": "script_repo_structure_diff.py",
+      "name": "repo_structure_diff.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/repo_structure_diff.py"
+    },
+    {
+      "id": "script_report_ci_telemetry.sh",
+      "name": "report_ci_telemetry.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/report_ci_telemetry.sh"
+    },
+    {
+      "id": "script_report_ee_parity.py",
+      "name": "report_ee_parity.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/report_ee_parity.py"
+    },
+    {
+      "id": "script_report_stale_branches.sh",
+      "name": "report_stale_branches.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/report_stale_branches.sh"
+    },
+    {
+      "id": "skill_reporting",
+      "name": "reporting",
+      "type": "skill",
+      "location": "repo_only",
+      "path": "skills/odoo19/reporting/SKILL.md"
+    },
+    {
+      "id": "tool_require_audit_artifacts.sh",
+      "name": "require_audit_artifacts.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "tools/audit/require_audit_artifacts.sh"
+    },
+    {
+      "id": "script_require_runnable_slice.sh",
+      "name": "require_runnable_slice.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/parity/require_runnable_slice.sh"
+    },
+    {
+      "id": "script_reset_generated_dir.py",
+      "name": "reset_generated_dir.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/oca/reset_generated_dir.py"
+    },
+    {
+      "id": "skill_restore-odoo-environment",
+      "name": "restore-odoo-environment",
+      "type": "skill",
+      "location": "repo_only",
+      "path": "agents/skills/restore-odoo-environment/SKILL.md"
+    },
+    {
+      "id": "script_restore_backup.sh",
+      "name": "restore_backup.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/backup/restore_backup.sh"
+    },
+    {
+      "id": "script_restore_test.sh",
+      "name": "restore_test.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/backup/restore_test.sh"
+    },
+    {
+      "id": "cli_rg",
+      "name": "rg",
+      "type": "cli",
+      "location": "machine_only",
+      "path": "/opt/homebrew/bin/rg"
+    },
+    {
+      "id": "script_rollback.sh",
+      "name": "rollback.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/deploy/rollback.sh"
+    },
+    {
+      "id": "script_rotate_zoho_password.sh",
+      "name": "rotate_zoho_password.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/supabase/rotate_zoho_password.sh"
+    },
+    {
+      "id": "script_run-all-gates.sh",
+      "name": "run-all-gates.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/ci/run-all-gates.sh"
+    },
+    {
+      "id": "script_run-all-sandboxes.sh",
+      "name": "run-all-sandboxes.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/sandbox/run-all-sandboxes.sh"
+    },
+    {
+      "id": "script_run-dq-checks.sh",
+      "name": "run-dq-checks.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/ppm/run-dq-checks.sh"
+    },
+    {
+      "id": "script_run_all.sh",
+      "name": "run_all.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/ci/run_all.sh"
+    },
+    {
+      "id": "tool_run_audit_bundle.sh",
+      "name": "run_audit_bundle.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "tools/audit/run_audit_bundle.sh"
+    },
+    {
+      "id": "script_run_clarity_ppm_reverse.sh",
+      "name": "run_clarity_ppm_reverse.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/run_clarity_ppm_reverse.sh"
+    },
+    {
+      "id": "script_run_close.sh",
+      "name": "run_close.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/month_close/run_close.sh"
+    },
+    {
+      "id": "tool_run_ee_parity.sh",
+      "name": "run_ee_parity.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "tools/parity/run_ee_parity.sh"
+    },
+    {
+      "id": "script_run_import_sequence.sh",
+      "name": "run_import_sequence.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/import/run_import_sequence.sh"
+    },
+    {
+      "id": "script_run_integration_audit.sh",
+      "name": "run_integration_audit.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/audit/run_integration_audit.sh"
+    },
+    {
+      "id": "script_run_naming_refactor.sh",
+      "name": "run_naming_refactor.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/refactor/run_naming_refactor.sh"
+    },
+    {
+      "id": "script_run_odoo_migrations.sh",
+      "name": "run_odoo_migrations.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/run_odoo_migrations.sh"
+    },
+    {
+      "id": "script_run_odoo_shell.sh",
+      "name": "run_odoo_shell.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/run_odoo_shell.sh"
+    },
+    {
+      "id": "script_run_odoo_tests.sh",
+      "name": "run_odoo_tests.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/ci/run_odoo_tests.sh"
+    },
+    {
+      "id": "script_run_parity_gates.sh",
+      "name": "run_parity_gates.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/gates/run_parity_gates.sh"
+    },
+    {
+      "id": "script_run_project_introspection.sh",
+      "name": "run_project_introspection.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/run_project_introspection.sh"
+    },
+    {
+      "id": "script_run_refactor_subagents.sh",
+      "name": "run_refactor_subagents.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/refactor/run_refactor_subagents.sh"
+    },
+    {
+      "id": "script_run_sql_tests.sh",
+      "name": "run_sql_tests.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/db/run_sql_tests.sh"
+    },
+    {
+      "id": "skill_safe-migration",
+      "name": "safe-migration",
+      "type": "skill",
+      "location": "repo_only",
+      "path": ".agent/antigravity/skills/safe-migration/SKILL.md"
+    },
+    {
+      "id": "skill_sales",
+      "name": "sales",
+      "type": "skill",
+      "location": "repo_only",
+      "path": "skills/odoo19/sales/SKILL.md"
+    },
+    {
+      "id": "script_scaffold_ipai_parity.py",
+      "name": "scaffold_ipai_parity.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/scaffold_ipai_parity.py"
+    },
+    {
+      "id": "script_scaffold_ipai_parity.sh",
+      "name": "scaffold_ipai_parity.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/scaffold_ipai_parity.sh"
+    },
+    {
+      "id": "script_scan-forbidden-commands.sh",
+      "name": "scan-forbidden-commands.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/gates/scan-forbidden-commands.sh"
+    },
+    {
+      "id": "script_scan-policy-violations.sh",
+      "name": "scan-policy-violations.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/gates/scan-policy-violations.sh"
+    },
+    {
+      "id": "script_scan_ipai_modules.py",
+      "name": "scan_ipai_modules.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/scan_ipai_modules.py"
+    },
+    {
+      "id": "script_scan_repos.sh",
+      "name": "scan_repos.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/scan_repos.sh"
+    },
+    {
+      "id": "skill_schema-appreciation",
+      "name": "schema-appreciation",
+      "type": "skill",
+      "location": "repo_only",
+      "path": ".agent/skills/schema-appreciation/SKILL.md"
+    },
+    {
+      "id": "script_schema_drift_check.sh",
+      "name": "schema_drift_check.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/ci/schema_drift_check.sh"
+    },
+    {
+      "id": "script_schema_drift_env_check.sh",
+      "name": "schema_drift_env_check.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/schema_drift_env_check.sh"
+    },
+    {
+      "id": "tool_schema_to_drawio.py",
+      "name": "schema_to_drawio.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "tools/odoo_schema/schema_to_drawio.py"
+    },
+    {
+      "id": "tool_schema_to_pydantic.py",
+      "name": "schema_to_pydantic.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "tools/odoo_schema/schema_to_pydantic.py"
+    },
+    {
+      "id": "script_score_repos.py",
+      "name": "score_repos.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/score_repos.py"
+    },
+    {
+      "id": "script_screenshot_production.sh",
+      "name": "screenshot_production.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/screenshot_production.sh"
+    },
+    {
+      "id": "skill_search",
+      "name": "search",
+      "type": "skill",
+      "location": "repo_only",
+      "path": "skills/odoo19/search/SKILL.md"
+    },
+    {
+      "id": "script_secret-scan.sh",
+      "name": "secret-scan.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/secret-scan.sh"
+    },
+    {
+      "id": "script_seed_companies_users.py",
+      "name": "seed_companies_users.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/seed_companies_users.py"
+    },
+    {
+      "id": "script_seed_finance_close_from_xlsx.py",
+      "name": "seed_finance_close_from_xlsx.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/seed_finance_close_from_xlsx.py"
+    },
+    {
+      "id": "script_seed_finance_ppm_stages.py",
+      "name": "seed_finance_ppm_stages.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/seed_finance_ppm_stages.py"
+    },
+    {
+      "id": "script_seed_finance_ppm_stages_odoo19.py",
+      "name": "seed_finance_ppm_stages_odoo19.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/seed_finance_ppm_stages_odoo19.py"
+    },
+    {
+      "id": "script_seed_logframe_milestones_odoo19.py",
+      "name": "seed_logframe_milestones_odoo19.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/seed_logframe_milestones_odoo19.py"
+    },
+    {
+      "id": "script_seed_org_companies_users_integrations.py",
+      "name": "seed_org_companies_users_integrations.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/odoo/seed_org_companies_users_integrations.py"
+    },
+    {
+      "id": "script_seed_projects_from_xlsx.py",
+      "name": "seed_projects_from_xlsx.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/seed_projects_from_xlsx.py"
+    },
+    {
+      "id": "script_send_test_email.sh",
+      "name": "send_test_email.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/mailgun/send_test_email.sh"
+    },
+    {
+      "id": "script_set_edge_secrets.sh",
+      "name": "set_edge_secrets.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/supabase/set_edge_secrets.sh"
+    },
+    {
+      "id": "script_set_status.sh",
+      "name": "set_status.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/status/set_status.sh"
+    },
+    {
+      "id": "script_setup-codespaces-pat.sh",
+      "name": "setup-codespaces-pat.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/setup-codespaces-pat.sh"
+    },
+    {
+      "id": "script_setup-codespaces-secrets.sh",
+      "name": "setup-codespaces-secrets.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/setup-codespaces-secrets.sh"
+    },
+    {
+      "id": "script_setup-control-room.sh",
+      "name": "setup-control-room.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/ppm/setup-control-room.sh"
+    },
+    {
+      "id": "script_setup-do-domain.sh",
+      "name": "setup-do-domain.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/dns/setup-do-domain.sh"
+    },
+    {
+      "id": "script_setup-insightpulseai-domain.sh",
+      "name": "setup-insightpulseai-domain.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/deploy/setup-insightpulseai-domain.sh"
+    },
+    {
+      "id": "script_setup-mailgun-secrets.sh",
+      "name": "setup-mailgun-secrets.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/setup-mailgun-secrets.sh"
+    },
+    {
+      "id": "script_setup-notion-sync.sh",
+      "name": "setup-notion-sync.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/ppm/setup-notion-sync.sh"
+    },
+    {
+      "id": "script_setup_afc_rag.sh",
+      "name": "setup_afc_rag.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/setup_afc_rag.sh"
+    },
+    {
+      "id": "script_setup_config_env.sh",
+      "name": "setup_config_env.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/setup_config_env.sh"
+    },
+    {
+      "id": "script_setup_credentials.sh",
+      "name": "setup_credentials.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/setup_credentials.sh"
+    },
+    {
+      "id": "script_setup_keycloak_db.sh",
+      "name": "setup_keycloak_db.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/setup_keycloak_db.sh"
+    },
+    {
+      "id": "script_setup_odoo_superset.sh",
+      "name": "setup_odoo_superset.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/superset/setup_odoo_superset.sh"
+    },
+    {
+      "id": "script_setup_webhooks.sh",
+      "name": "setup_webhooks.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/mailgun/setup_webhooks.sh"
+    },
+    {
+      "id": "script_ship_v1_1_0.sh",
+      "name": "ship_v1_1_0.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/ops/ship_v1_1_0.sh"
+    },
+    {
+      "id": "skill_sign",
+      "name": "sign",
+      "type": "skill",
+      "location": "repo_only",
+      "path": "skills/odoo19/sign/SKILL.md"
+    },
+    {
+      "id": "script_simple_deploy.sh",
+      "name": "simple_deploy.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/simple_deploy.sh"
+    },
+    {
+      "id": "script_skill_web_session_bridge.sh",
+      "name": "skill_web_session_bridge.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/skill_web_session_bridge.sh"
+    },
+    {
+      "id": "script_smoke.sh",
+      "name": "smoke.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/smoke.sh"
+    },
+    {
+      "id": "script_smoke_github_app.sh",
+      "name": "smoke_github_app.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/smoke_github_app.sh"
+    },
+    {
+      "id": "script_smoke_import_odoo.sh",
+      "name": "smoke_import_odoo.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/ci/smoke_import_odoo.sh"
+    },
+    {
+      "id": "script_smoke_mail.py",
+      "name": "smoke_mail.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/odoo/smoke_mail.py"
+    },
+    {
+      "id": "script_smoke_odoo_container.sh",
+      "name": "smoke_odoo_container.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/ci/smoke_odoo_container.sh"
+    },
+    {
+      "id": "script_smoke_test_odoo.sh",
+      "name": "smoke_test_odoo.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/smoke_test_odoo.sh"
+    },
+    {
+      "id": "script_smoketest.sh",
+      "name": "smoketest.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/smoketest.sh"
+    },
+    {
+      "id": "skill_sms_marketing",
+      "name": "sms_marketing",
+      "type": "skill",
+      "location": "repo_only",
+      "path": "skills/odoo19/sms_marketing/SKILL.md"
+    },
+    {
+      "id": "script_snapshot-baseline.sh",
+      "name": "snapshot-baseline.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/docker/snapshot-baseline.sh"
+    },
+    {
+      "id": "tool_snapshot.sh",
+      "name": "snapshot.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "tools/audit/snapshot.sh"
+    },
+    {
+      "id": "skill_social_marketing",
+      "name": "social_marketing",
+      "type": "skill",
+      "location": "repo_only",
+      "path": "skills/odoo19/social_marketing/SKILL.md"
+    },
+    {
+      "id": "script_spec-kit-enforce.py",
+      "name": "spec-kit-enforce.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/spec-kit-enforce.py"
+    },
+    {
+      "id": "script_spec_validate.sh",
+      "name": "spec_validate.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/spec_validate.sh"
+    },
+    {
+      "id": "script_speckit-scaffold.sh",
+      "name": "speckit-scaffold.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/speckit-scaffold.sh"
+    },
+    {
+      "id": "skill_spreadsheet",
+      "name": "spreadsheet",
+      "type": "skill",
+      "location": "repo_only",
+      "path": "skills/odoo19/spreadsheet/SKILL.md"
+    },
+    {
+      "id": "script_ssh-tunnel-db.sh",
+      "name": "ssh-tunnel-db.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/ssh-tunnel-db.sh"
+    },
+    {
+      "id": "script_stabilize_product_json.py",
+      "name": "stabilize_product_json.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/vscode/stabilize_product_json.py"
+    },
+    {
+      "id": "script_stack_verify.sh",
+      "name": "stack_verify.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/stack_verify.sh"
+    },
+    {
+      "id": "skill_stages",
+      "name": "stages",
+      "type": "skill",
+      "location": "repo_only",
+      "path": "skills/odoo19/stages/SKILL.md"
+    },
+    {
+      "id": "script_staging_down.sh",
+      "name": "staging_down.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/staging_down.sh"
+    },
+    {
+      "id": "script_staging_restore_and_sanitize.sh",
+      "name": "staging_restore_and_sanitize.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/staging_restore_and_sanitize.sh"
+    },
+    {
+      "id": "script_staging_up.sh",
+      "name": "staging_up.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/staging_up.sh"
+    },
+    {
+      "id": "script_start-codespace.sh",
+      "name": "start-codespace.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/sandbox/start-codespace.sh"
+    },
+    {
+      "id": "script_start-do-sandbox.sh",
+      "name": "start-do-sandbox.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/sandbox/start-do-sandbox.sh"
+    },
+    {
+      "id": "script_start-local-sandbox.sh",
+      "name": "start-local-sandbox.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/sandbox/start-local-sandbox.sh"
+    },
+    {
+      "id": "script_start-odoo-tunnel.sh",
+      "name": "start-odoo-tunnel.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/start-odoo-tunnel.sh"
+    },
+    {
+      "id": "script_start.sh",
+      "name": "start.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/codespaces/start.sh"
+    },
+    {
+      "id": "script_start_local_odoo.sh",
+      "name": "start_local_odoo.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/start_local_odoo.sh"
+    },
+    {
+      "id": "script_stop-dev-stacks.sh",
+      "name": "stop-dev-stacks.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/docker/stop-dev-stacks.sh"
+    },
+    {
+      "id": "script_stop.sh",
+      "name": "stop.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/codespaces/stop.sh"
+    },
+    {
+      "id": "script_structured_output.sh",
+      "name": "structured_output.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/claude/structured_output.sh"
+    },
+    {
+      "id": "skill_studio",
+      "name": "studio",
+      "type": "skill",
+      "location": "repo_only",
+      "path": "skills/odoo19/studio/SKILL.md"
+    },
+    {
+      "id": "skill_subscriptions",
+      "name": "subscriptions",
+      "type": "skill",
+      "location": "repo_only",
+      "path": "skills/odoo19/subscriptions/SKILL.md"
+    },
+    {
+      "id": "cli_supabase",
+      "name": "supabase",
+      "type": "cli",
+      "location": "machine_only",
+      "path": "/opt/homebrew/bin/supabase"
+    },
+    {
+      "id": "skill_supabase-schema-catalog",
+      "name": "supabase-schema-catalog",
+      "type": "skill",
+      "location": "repo_only",
+      "path": "skills/user/supabase-schema-catalog/SKILL.md"
+    },
+    {
+      "id": "script_supabase_check.py",
+      "name": "supabase_check.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/supabase_check.py"
+    },
+    {
+      "id": "script_supabase_check_data.py",
+      "name": "supabase_check_data.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/supabase_check_data.py"
+    },
+    {
+      "id": "script_supabase_check_envs.py",
+      "name": "supabase_check_envs.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/supabase_check_envs.py"
+    },
+    {
+      "id": "script_supabase_delete_user.sh",
+      "name": "supabase_delete_user.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/supabase_delete_user.sh"
+    },
+    {
+      "id": "script_supabase_local.sh",
+      "name": "supabase_local.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/supabase_local.sh"
+    },
+    {
+      "id": "script_supabase_migrate.py",
+      "name": "supabase_migrate.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/supabase_migrate.py"
+    },
+    {
+      "id": "script_supabase_preview.sh",
+      "name": "supabase_preview.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/ci/supabase_preview.sh"
+    },
+    {
+      "id": "script_supabase_schema_diff.sh",
+      "name": "supabase_schema_diff.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/supabase_schema_diff.sh"
+    },
+    {
+      "id": "script_supabase_sync_migrate.py",
+      "name": "supabase_sync_migrate.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/supabase_sync_migrate.py"
+    },
+    {
+      "id": "cli_superclaude",
+      "name": "superclaude",
+      "type": "cli",
+      "location": "machine_only",
+      "path": "/Users/tbwa/.local/bin/superclaude"
+    },
+    {
+      "id": "script_superset_db_connect.sh",
+      "name": "superset_db_connect.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/superset_db_connect.sh"
+    },
+    {
+      "id": "script_superset_db_setup.py",
+      "name": "superset_db_setup.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/superset_db_setup.py"
+    },
+    {
+      "id": "skill_surveys",
+      "name": "surveys",
+      "type": "skill",
+      "location": "repo_only",
+      "path": "skills/odoo19/surveys/SKILL.md"
+    },
+    {
+      "id": "script_sweep_repo.py",
+      "name": "sweep_repo.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/automations/sweep_repo.py"
+    },
+    {
+      "id": "script_sync-fluent-tokens.sh",
+      "name": "sync-fluent-tokens.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/sync-fluent-tokens.sh"
+    },
+    {
+      "id": "script_sync-tokens.sh",
+      "name": "sync-tokens.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/sync-tokens.sh"
+    },
+    {
+      "id": "script_sync_agent_instructions.py",
+      "name": "sync_agent_instructions.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/agents/sync_agent_instructions.py"
+    },
+    {
+      "id": "script_sync_agent_memory.py",
+      "name": "sync_agent_memory.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/sync_agent_memory.py"
+    },
+    {
+      "id": "script_sync_all.sh",
+      "name": "sync_all.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/secrets/sync_all.sh"
+    },
+    {
+      "id": "script_sync_anthropic_skills.sh",
+      "name": "sync_anthropic_skills.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/vendor/sync_anthropic_skills.sh"
+    },
+    {
+      "id": "script_sync_current_state.sh",
+      "name": "sync_current_state.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/sync_current_state.sh"
+    },
+    {
+      "id": "script_sync_directional.py",
+      "name": "sync_directional.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/sync_directional.py"
+    },
+    {
+      "id": "script_sync_env.sh",
+      "name": "sync_env.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/secrets/sync_env.sh"
+    },
+    {
+      "id": "script_sync_github_secrets.sh",
+      "name": "sync_github_secrets.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/secrets/sync_github_secrets.sh"
+    },
+    {
+      "id": "script_sync_ipai_sample_metrics_to_supabase.py",
+      "name": "sync_ipai_sample_metrics_to_supabase.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/sync_ipai_sample_metrics_to_supabase.py"
+    },
+    {
+      "id": "script_sync_oca.sh",
+      "name": "sync_oca.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/sync_oca.sh"
+    },
+    {
+      "id": "script_sync_odoo_fluent_design_system.sh",
+      "name": "sync_odoo_fluent_design_system.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/sync/sync_odoo_fluent_design_system.sh"
+    },
+    {
+      "id": "script_sync_odoo_shadow.py",
+      "name": "sync_odoo_shadow.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/sync_odoo_shadow.py"
+    },
+    {
+      "id": "script_sync_readme_current_state.py",
+      "name": "sync_readme_current_state.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/docs/sync_readme_current_state.py"
+    },
+    {
+      "id": "script_sync_supabase_secrets.sh",
+      "name": "sync_supabase_secrets.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/secrets/sync_supabase_secrets.sh"
+    },
+    {
+      "id": "script_tenant_automation.py",
+      "name": "tenant_automation.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/tenant_automation.py"
+    },
+    {
+      "id": "script_test-expense-flow.sh",
+      "name": "test-expense-flow.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/integration/test-expense-flow.sh"
+    },
+    {
+      "id": "script_test-mailgun.py",
+      "name": "test-mailgun.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/test-mailgun.py"
+    },
+    {
+      "id": "script_test-mailgun.sh",
+      "name": "test-mailgun.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/test-mailgun.sh"
+    },
+    {
+      "id": "script_test-webhook.py",
+      "name": "test-webhook.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/integration/test-webhook.py"
+    },
+    {
+      "id": "script_test_afc_rag.py",
+      "name": "test_afc_rag.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/test_afc_rag.py"
+    },
+    {
+      "id": "script_test_auth_bootstrap.sh",
+      "name": "test_auth_bootstrap.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/test_auth_bootstrap.sh"
+    },
+    {
+      "id": "script_test_auth_flows_safe.sh",
+      "name": "test_auth_flows_safe.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/supabase/test_auth_flows_safe.sh"
+    },
+    {
+      "id": "script_test_database_connection.sh",
+      "name": "test_database_connection.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/superset/test_database_connection.sh"
+    },
+    {
+      "id": "script_test_deploy_local.sh",
+      "name": "test_deploy_local.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/test_deploy_local.sh"
+    },
+    {
+      "id": "script_test_e2e.sh",
+      "name": "test_e2e.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/odooops/test_e2e.sh"
+    },
+    {
+      "id": "script_test_ee_parity.py",
+      "name": "test_ee_parity.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/test_ee_parity.py"
+    },
+    {
+      "id": "tool_test_ee_parity.py",
+      "name": "test_ee_parity.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "tools/parity/test_ee_parity.py"
+    },
+    {
+      "id": "script_test_email_flow.sh",
+      "name": "test_email_flow.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/test_email_flow.sh"
+    },
+    {
+      "id": "script_test_email_otp_curl.sh",
+      "name": "test_email_otp_curl.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/supabase/test_email_otp_curl.sh"
+    },
+    {
+      "id": "script_test_finance_ppm_odoo19.sh",
+      "name": "test_finance_ppm_odoo19.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/test_finance_ppm_odoo19.sh"
+    },
+    {
+      "id": "script_test_ipai_install_upgrade.py",
+      "name": "test_ipai_install_upgrade.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/test_ipai_install_upgrade.py"
+    },
+    {
+      "id": "script_test_magic_link.sh",
+      "name": "test_magic_link.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/test_magic_link.sh"
+    },
+    {
+      "id": "script_test_magic_link_curl.sh",
+      "name": "test_magic_link_curl.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/supabase/test_magic_link_curl.sh"
+    },
+    {
+      "id": "script_test_mcp_jobs.sh",
+      "name": "test_mcp_jobs.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/test_mcp_jobs.sh"
+    },
+    {
+      "id": "script_test_ops.sh",
+      "name": "test_ops.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/ops/test_ops.sh"
+    },
+    {
+      "id": "script_test_projects_v2_api.sh",
+      "name": "test_projects_v2_api.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/github/test_projects_v2_api.sh"
+    },
+    {
+      "id": "script_test_secret_smoke.sh",
+      "name": "test_secret_smoke.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/supabase/test_secret_smoke.sh"
+    },
+    {
+      "id": "script_test_smtp.sh",
+      "name": "test_smtp.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/mailgun/test_smtp.sh"
+    },
+    {
+      "id": "script_test_theme_locally.sh",
+      "name": "test_theme_locally.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/test_theme_locally.sh"
+    },
+    {
+      "id": "skill_time_off",
+      "name": "time_off",
+      "type": "skill",
+      "location": "repo_only",
+      "path": "skills/odoo19/time_off/SKILL.md"
+    },
+    {
+      "id": "skill_timesheets",
+      "name": "timesheets",
+      "type": "skill",
+      "location": "repo_only",
+      "path": "skills/odoo19/timesheets/SKILL.md"
+    },
+    {
+      "id": "skill_to_do",
+      "name": "to_do",
+      "type": "skill",
+      "location": "repo_only",
+      "path": "skills/odoo19/to_do/SKILL.md"
+    },
+    {
+      "id": "script_triage.py",
+      "name": "triage.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/refactor/triage.py"
+    },
+    {
+      "id": "script_triage_dependabot_alerts.sh",
+      "name": "triage_dependabot_alerts.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/security/triage_dependabot_alerts.sh"
+    },
+    {
+      "id": "skill_ui-ux-pro-max",
+      "name": "ui-ux-pro-max",
+      "type": "skill",
+      "location": "repo_only",
+      "path": ".claude/skills/ui-ux-pro-max/SKILL.md"
+    },
+    {
+      "id": "script_union_prune_install_sets.py",
+      "name": "union_prune_install_sets.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/union_prune_install_sets.py"
+    },
+    {
+      "id": "script_up.sh",
+      "name": "up.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/up.sh"
+    },
+    {
+      "id": "script_update_diagram_manifest.py",
+      "name": "update_diagram_manifest.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/update_diagram_manifest.py"
+    },
+    {
+      "id": "script_update_finance_ppm.py",
+      "name": "update_finance_ppm.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/ops/install/update_finance_ppm.py"
+    },
+    {
+      "id": "script_update_module.py",
+      "name": "update_module.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/ops/install/update_module.py"
+    },
+    {
+      "id": "script_update_task_phase_tags.sh",
+      "name": "update_task_phase_tags.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/update_task_phase_tags.sh"
+    },
+    {
+      "id": "script_update_tasks_after_import.py",
+      "name": "update_tasks_after_import.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/update_tasks_after_import.py"
+    },
+    {
+      "id": "script_upgrade_theme_module.py",
+      "name": "upgrade_theme_module.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/upgrade_theme_module.py"
+    },
+    {
+      "id": "skill_users",
+      "name": "users",
+      "type": "skill",
+      "location": "repo_only",
+      "path": "skills/odoo19/users/SKILL.md"
+    },
+    {
+      "id": "script_validate-compose-ssot.sh",
+      "name": "validate-compose-ssot.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/validate-compose-ssot.sh"
+    },
+    {
+      "id": "script_validate-continue-config.sh",
+      "name": "validate-continue-config.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/validate-continue-config.sh"
+    },
+    {
+      "id": "skill_validate-odoo-module-against-kb",
+      "name": "validate-odoo-module-against-kb",
+      "type": "skill",
+      "location": "repo_only",
+      "path": "agents/skills/validate-odoo-module-against-kb/SKILL.md"
+    },
+    {
+      "id": "script_validate-spec-kit.sh",
+      "name": "validate-spec-kit.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/validate-spec-kit.sh"
+    },
+    {
+      "id": "script_validate_addons_path.py",
+      "name": "validate_addons_path.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/odoo/validate_addons_path.py"
+    },
+    {
+      "id": "script_validate_agent_registry.py",
+      "name": "validate_agent_registry.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/agentic/validate_agent_registry.py"
+    },
+    {
+      "id": "script_validate_ai_naming.py",
+      "name": "validate_ai_naming.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/validate_ai_naming.py"
+    },
+    {
+      "id": "script_validate_and_render.py",
+      "name": "validate_and_render.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/competency/validate_and_render.py"
+    },
+    {
+      "id": "script_validate_blueprints.py",
+      "name": "validate_blueprints.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/catalog/validate_blueprints.py"
+    },
+    {
+      "id": "script_validate_capabilities.sh",
+      "name": "validate_capabilities.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/validate_capabilities.sh"
+    },
+    {
+      "id": "script_validate_catalogs.py",
+      "name": "validate_catalogs.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/catalog/validate_catalogs.py"
+    },
+    {
+      "id": "script_validate_contract.sh",
+      "name": "validate_contract.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/design/validate_contract.sh"
+    },
+    {
+      "id": "script_validate_contracts.py",
+      "name": "validate_contracts.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/lakehouse/validate_contracts.py"
+    },
+    {
+      "id": "script_validate_ee_iap_independence.sh",
+      "name": "validate_ee_iap_independence.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/validate_ee_iap_independence.sh"
+    },
+    {
+      "id": "script_validate_ee_replacements.py",
+      "name": "validate_ee_replacements.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/validate_ee_replacements.py"
+    },
+    {
+      "id": "script_validate_finance_ppm_data.py",
+      "name": "validate_finance_ppm_data.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/validate_finance_ppm_data.py"
+    },
+    {
+      "id": "script_validate_github_app.sh",
+      "name": "validate_github_app.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/ci/validate_github_app.sh"
+    },
+    {
+      "id": "script_validate_governance.sh",
+      "name": "validate_governance.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/github/validate_governance.sh"
+    },
+    {
+      "id": "script_validate_headers.py",
+      "name": "validate_headers.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/import/validate_headers.py"
+    },
+    {
+      "id": "script_validate_ipai_custom_modules.py",
+      "name": "validate_ipai_custom_modules.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/ci/validate_ipai_custom_modules.py"
+    },
+    {
+      "id": "script_validate_ipai_doc_module_refs.py",
+      "name": "validate_ipai_doc_module_refs.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/validate_ipai_doc_module_refs.py"
+    },
+    {
+      "id": "script_validate_m1.sh",
+      "name": "validate_m1.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/validate_m1.sh"
+    },
+    {
+      "id": "script_validate_manifest.py",
+      "name": "validate_manifest.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/validate_manifest.py"
+    },
+    {
+      "id": "script_validate_manifests.py",
+      "name": "validate_manifests.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/validate_manifests.py"
+    },
+    {
+      "id": "script_validate_memory_contracts.py",
+      "name": "validate_memory_contracts.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/agentic/validate_memory_contracts.py"
+    },
+    {
+      "id": "script_validate_no_deprecated_installed.sh",
+      "name": "validate_no_deprecated_installed.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/validate_no_deprecated_installed.sh"
+    },
+    {
+      "id": "script_validate_oca_aggregate_output.py",
+      "name": "validate_oca_aggregate_output.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/validate_oca_aggregate_output.py"
+    },
+    {
+      "id": "script_validate_oca_layout.py",
+      "name": "validate_oca_layout.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/odoo/validate_oca_layout.py"
+    },
+    {
+      "id": "script_validate_odoo19_spec.sh",
+      "name": "validate_odoo19_spec.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/validate_odoo19_spec.sh"
+    },
+    {
+      "id": "script_validate_parity_map.py",
+      "name": "validate_parity_map.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/policy/validate_parity_map.py"
+    },
+    {
+      "id": "script_validate_parity_matrix.py",
+      "name": "validate_parity_matrix.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/parity/validate_parity_matrix.py"
+    },
+    {
+      "id": "script_validate_parity_matrix.sh",
+      "name": "validate_parity_matrix.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/parity/validate_parity_matrix.sh"
+    },
+    {
+      "id": "script_validate_parity_targets.py",
+      "name": "validate_parity_targets.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/odoo/validate_parity_targets.py"
+    },
+    {
+      "id": "script_validate_product_api_proposals.py",
+      "name": "validate_product_api_proposals.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/vscode/validate_product_api_proposals.py"
+    },
+    {
+      "id": "script_validate_production.sh",
+      "name": "validate_production.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/validate_production.sh"
+    },
+    {
+      "id": "script_validate_registries.py",
+      "name": "validate_registries.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/validate_registries.py"
+    },
+    {
+      "id": "script_validate_registry.py",
+      "name": "validate_registry.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/secrets/validate_registry.py"
+    },
+    {
+      "id": "script_validate_repo_config.sh",
+      "name": "validate_repo_config.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/validate_repo_config.sh"
+    },
+    {
+      "id": "script_validate_repo_contract.sh",
+      "name": "validate_repo_contract.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/validate_repo_contract.sh"
+    },
+    {
+      "id": "script_validate_repo_layout.sh",
+      "name": "validate_repo_layout.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/validate_repo_layout.sh"
+    },
+    {
+      "id": "script_validate_repo_structure.py",
+      "name": "validate_repo_structure.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/validate_repo_structure.py"
+    },
+    {
+      "id": "script_validate_seed_ssot.py",
+      "name": "validate_seed_ssot.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/finance/validate_seed_ssot.py"
+    },
+    {
+      "id": "script_validate_spec_kit.py",
+      "name": "validate_spec_kit.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/validate_spec_kit.py"
+    },
+    {
+      "id": "tool_validate_spec_kit.py",
+      "name": "validate_spec_kit.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "tools/parity/validate_spec_kit.py"
+    },
+    {
+      "id": "script_validate_spec_kit.sh",
+      "name": "validate_spec_kit.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/validate_spec_kit.sh"
+    },
+    {
+      "id": "script_validate_spec_kit_odooops.sh",
+      "name": "validate_spec_kit_odooops.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/validate_spec_kit_odooops.sh"
+    },
+    {
+      "id": "script_validate_ssot_excel.py",
+      "name": "validate_ssot_excel.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/validate_ssot_excel.py"
+    },
+    {
+      "id": "script_validate_team_directory.py",
+      "name": "validate_team_directory.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/finance/validate_team_directory.py"
+    },
+    {
+      "id": "script_vendor_backlog_sync.py",
+      "name": "vendor_backlog_sync.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/integrations/vendor_backlog_sync.py"
+    },
+    {
+      "id": "script_vendor_odoo_docs.py",
+      "name": "vendor_odoo_docs.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/kb/vendor_odoo_docs.py"
+    },
+    {
+      "id": "script_vercel_promote_previous.sh",
+      "name": "vercel_promote_previous.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/vercel_promote_previous.sh"
+    },
+    {
+      "id": "script_verify-addon-permissions.sh",
+      "name": "verify-addon-permissions.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/verify-addon-permissions.sh"
+    },
+    {
+      "id": "script_verify-addons-mounts.sh",
+      "name": "verify-addons-mounts.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/verify-addons-mounts.sh"
+    },
+    {
+      "id": "script_verify-all.sh",
+      "name": "verify-all.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/ppm/verify-all.sh"
+    },
+    {
+      "id": "script_verify-ce-apps.sh",
+      "name": "verify-ce-apps.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/odoo/verify-ce-apps.sh"
+    },
+    {
+      "id": "script_verify-cli-stack.sh",
+      "name": "verify-cli-stack.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/ops/verify-cli-stack.sh"
+    },
+    {
+      "id": "script_verify-codespaces-auth.sh",
+      "name": "verify-codespaces-auth.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/verify-codespaces-auth.sh"
+    },
+    {
+      "id": "script_verify-control-plane.sh",
+      "name": "verify-control-plane.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/verify-control-plane.sh"
+    },
+    {
+      "id": "script_verify-dataverse-console.sh",
+      "name": "verify-dataverse-console.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/verify-dataverse-console.sh"
+    },
+    {
+      "id": "script_verify-delegation-complete.sh",
+      "name": "verify-delegation-complete.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/dns/verify-delegation-complete.sh"
+    },
+    {
+      "id": "script_verify-deployment.sh",
+      "name": "verify-deployment.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/ci/verify-deployment.sh"
+    },
+    {
+      "id": "script_verify-dns-baseline.sh",
+      "name": "verify-dns-baseline.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/verify-dns-baseline.sh"
+    },
+    {
+      "id": "script_verify-dns-enhancements.sh",
+      "name": "verify-dns-enhancements.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/verify-dns-enhancements.sh"
+    },
+    {
+      "id": "script_verify-do-dns.sh",
+      "name": "verify-do-dns.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/dns/verify-do-dns.sh"
+    },
+    {
+      "id": "script_verify-full-parity.sh",
+      "name": "verify-full-parity.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/odoo/verify-full-parity.sh"
+    },
+    {
+      "id": "script_verify-https.sh",
+      "name": "verify-https.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/verify-https.sh"
+    },
+    {
+      "id": "script_verify-oca-modules.sh",
+      "name": "verify-oca-modules.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/odoo/verify-oca-modules.sh"
+    },
+    {
+      "id": "script_verify-odoo-18-oca.sh",
+      "name": "verify-odoo-18-oca.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/verify-odoo-18-oca.sh"
+    },
+    {
+      "id": "script_verify-service-health.sh",
+      "name": "verify-service-health.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/verify-service-health.sh"
+    },
+    {
+      "id": "script_verify-workspace-dns.sh",
+      "name": "verify-workspace-dns.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/verify-workspace-dns.sh"
+    },
+    {
+      "id": "script_verify.sh",
+      "name": "verify.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/verify.sh"
+    },
+    {
+      "id": "tool_verify_alignment.py",
+      "name": "verify_alignment.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "tools/audit/verify_alignment.py"
+    },
+    {
+      "id": "script_verify_all.sh",
+      "name": "verify_all.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/mailgun/verify_all.sh"
+    },
+    {
+      "id": "script_verify_assets.sh",
+      "name": "verify_assets.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/aiux/verify_assets.sh"
+    },
+    {
+      "id": "script_verify_auth.sh",
+      "name": "verify_auth.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/verify_auth.sh"
+    },
+    {
+      "id": "script_verify_auth_config.sh",
+      "name": "verify_auth_config.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/supabase/verify_auth_config.sh"
+    },
+    {
+      "id": "script_verify_auth_setup.sh",
+      "name": "verify_auth_setup.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/verify_auth_setup.sh"
+    },
+    {
+      "id": "script_verify_backup.sh",
+      "name": "verify_backup.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/verify_backup.sh"
+    },
+    {
+      "id": "script_verify_cdn.sh",
+      "name": "verify_cdn.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/verify_cdn.sh"
+    },
+    {
+      "id": "script_verify_close.sh",
+      "name": "verify_close.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/month_close/verify_close.sh"
+    },
+    {
+      "id": "script_verify_cloudflare_dns_drift.py",
+      "name": "verify_cloudflare_dns_drift.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/ci/verify_cloudflare_dns_drift.py"
+    },
+    {
+      "id": "script_verify_deployment.py",
+      "name": "verify_deployment.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/ops/install/verify_deployment.py"
+    },
+    {
+      "id": "script_verify_dev_mode_access.sh",
+      "name": "verify_dev_mode_access.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/figma/verify_dev_mode_access.sh"
+    },
+    {
+      "id": "script_verify_dns.sh",
+      "name": "verify_dns.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/mailgun/verify_dns.sh"
+    },
+    {
+      "id": "script_verify_domain.sh",
+      "name": "verify_domain.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/mailgun/verify_domain.sh"
+    },
+    {
+      "id": "script_verify_email_auth.sh",
+      "name": "verify_email_auth.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/verify_email_auth.sh"
+    },
+    {
+      "id": "tool_verify_expected_paths.sh",
+      "name": "verify_expected_paths.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "tools/audit/verify_expected_paths.sh"
+    },
+    {
+      "id": "script_verify_finance_ppm.py",
+      "name": "verify_finance_ppm.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/ops/install/verify_finance_ppm.py"
+    },
+    {
+      "id": "script_verify_generated_odoo_artifacts.sh",
+      "name": "verify_generated_odoo_artifacts.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/verify_generated_odoo_artifacts.sh"
+    },
+    {
+      "id": "script_verify_import.py",
+      "name": "verify_import.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/import/verify_import.py"
+    },
+    {
+      "id": "script_verify_import.sh",
+      "name": "verify_import.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/import/verify_import.sh"
+    },
+    {
+      "id": "script_verify_install.sh",
+      "name": "verify_install.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/aiux/verify_install.sh"
+    },
+    {
+      "id": "script_verify_ipai_web_mail_compat.py",
+      "name": "verify_ipai_web_mail_compat.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/verify_ipai_web_mail_compat.py"
+    },
+    {
+      "id": "script_verify_kb_index.py",
+      "name": "verify_kb_index.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/kb/verify_kb_index.py"
+    },
+    {
+      "id": "script_verify_local.sh",
+      "name": "verify_local.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/verify_local.sh"
+    },
+    {
+      "id": "script_verify_login_button.sh",
+      "name": "verify_login_button.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/verify_login_button.sh"
+    },
+    {
+      "id": "script_verify_monitoring.sh",
+      "name": "verify_monitoring.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/verify_monitoring.sh"
+    },
+    {
+      "id": "script_verify_oca_ipai_layout.sh",
+      "name": "verify_oca_ipai_layout.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/verify_oca_ipai_layout.sh"
+    },
+    {
+      "id": "script_verify_odoo_docs_pin.py",
+      "name": "verify_odoo_docs_pin.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/kb/verify_odoo_docs_pin.py"
+    },
+    {
+      "id": "script_verify_ops_docs.sh",
+      "name": "verify_ops_docs.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/ci/verify_ops_docs.sh"
+    },
+    {
+      "id": "script_verify_phase3.py",
+      "name": "verify_phase3.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/verify_phase3.py"
+    },
+    {
+      "id": "script_verify_phase5.sh",
+      "name": "verify_phase5.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/verify_phase5.sh"
+    },
+    {
+      "id": "script_verify_ppm_installation.sh",
+      "name": "verify_ppm_installation.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/ops/verify_ppm_installation.sh"
+    },
+    {
+      "id": "script_verify_prod.sh",
+      "name": "verify_prod.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/deploy/verify_prod.sh"
+    },
+    {
+      "id": "script_verify_prod_health.sh",
+      "name": "verify_prod_health.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/aiux/verify_prod_health.sh"
+    },
+    {
+      "id": "script_verify_setup.sh",
+      "name": "verify_setup.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/refactor/verify_setup.sh"
+    },
+    {
+      "id": "script_verify_smtp.py",
+      "name": "verify_smtp.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/verify_smtp.py"
+    },
+    {
+      "id": "script_verify_stack.sh",
+      "name": "verify_stack.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/stack/verify_stack.sh"
+    },
+    {
+      "id": "script_verify_supabase_deploy.sh",
+      "name": "verify_supabase_deploy.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/verify_supabase_deploy.sh"
+    },
+    {
+      "id": "script_verify_supabase_full.sh",
+      "name": "verify_supabase_full.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/verify_supabase_full.sh"
+    },
+    {
+      "id": "script_verify_web_assets.sh",
+      "name": "verify_web_assets.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/verify_web_assets.sh"
+    },
+    {
+      "id": "script_verify_workos.sh",
+      "name": "verify_workos.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/prod/verify_workos.sh"
+    },
+    {
+      "id": "skill_voip",
+      "name": "voip",
+      "type": "skill",
+      "location": "repo_only",
+      "path": "skills/odoo19/voip/SKILL.md"
+    },
+    {
+      "id": "script_wait_for_postgres.sh",
+      "name": "wait_for_postgres.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/ci/wait_for_postgres.sh"
+    },
+    {
+      "id": "skill_web-design-guidelines",
+      "name": "web-design-guidelines",
+      "type": "skill",
+      "location": "repo_only",
+      "path": "docs/archive/agent-skills/web-design-guidelines/SKILL.md"
+    },
+    {
+      "id": "script_web_sandbox_verify.sh",
+      "name": "web_sandbox_verify.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/web_sandbox_verify.sh"
+    },
+    {
+      "id": "script_web_session_init.sh",
+      "name": "web_session_init.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/web_session_init.sh"
+    },
+    {
+      "id": "skill_website",
+      "name": "website",
+      "type": "skill",
+      "location": "repo_only",
+      "path": "skills/odoo19/website/SKILL.md"
+    },
+    {
+      "id": "script_whats_deployed.py",
+      "name": "whats_deployed.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/whats_deployed.py"
+    },
+    {
+      "id": "script_whats_deployed.sh",
+      "name": "whats_deployed.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/whats_deployed.sh"
+    },
+    {
+      "id": "skill_whatsapp",
+      "name": "whatsapp",
+      "type": "skill",
+      "location": "repo_only",
+      "path": "skills/odoo19/whatsapp/SKILL.md"
+    },
+    {
+      "id": "script_wiki_sync.sh",
+      "name": "wiki_sync.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/wiki_sync.sh"
+    },
+    {
+      "id": "script_worktree-setup.sh",
+      "name": "worktree-setup.sh",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/worktree-setup.sh"
+    },
+    {
+      "id": "script_write_phase6_verification_summary.py",
+      "name": "write_phase6_verification_summary.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/write_phase6_verification_summary.py"
+    },
+    {
+      "id": "script_xmlrpc_set_admin_password.py",
+      "name": "xmlrpc_set_admin_password.py",
+      "type": "tool",
+      "location": "repo_only",
+      "path": "scripts/xmlrpc_set_admin_password.py"
+    },
+    {
+      "id": "cli_yarn",
+      "name": "yarn",
+      "type": "cli",
+      "location": "machine_only",
+      "path": "/Users/tbwa/.nvm/versions/node/v22.12.0/bin/yarn"
+    }
+  ]
+}

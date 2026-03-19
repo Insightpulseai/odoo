@@ -1,0 +1,79 @@
+id: ops.advisor-ui
+title: Ops Advisor UI (Azure Advisor-like dashboard)
+category: ops-console
+sources:
+  - type: supabase-platform-kit
+    url: https://supabase.com/docs/guides/platform
+    catalog_id: supabase-platform-kit
+target:
+  app_dir: apps/ops-console/app/advisor
+  platform_dir: platform/advisor
+  migration_dir: supabase/supabase/migrations
+variables:
+  - name: SUPABASE_URL
+    required: true
+    description: Supabase project URL (PostgREST base URL for ops.* schema queries).
+  - name: SUPABASE_SERVICE_ROLE_KEY
+    required: true
+    description: Service role key for server-only advisor API routes and scorer CLI.
+  - name: VERCEL_API_TOKEN
+    required: false
+    description: Vercel API token used by the scorer Vercel source module.
+  - name: DO_ACCESS_TOKEN
+    required: false
+    description: DigitalOcean API token used by the scorer DO source module.
+  - name: SUPABASE_MANAGEMENT_TOKEN
+    required: false
+    description: Supabase Management API token for project health checks.
+automation:
+  steps:
+    - name: apply_migration
+      description: Apply ops schema migration to Supabase
+      instruction: |
+        Apply supabase/supabase/migrations/20260222000000_ops_advisor.sql to create
+        ops.advisor_runs, ops.advisor_findings, and ops.advisor_scores tables
+        with RLS policies that deny anon reads (service role bypasses automatically).
+    - name: create_platform_scorer
+      description: Create platform/advisor/ scorer, ruleset, and source modules
+      instruction: |
+        Create platform/advisor/ruleset.yaml with 15 rules across 5 pillars.
+        Create platform/advisor/scorer.ts — loads ruleset, runs sources, writes to ops.* via REST.
+        Create platform/advisor/sources/{vercel,digitalocean,supabase}.ts for external API checks.
+    - name: create_ui_routes
+      description: Create 4 UI routes in apps/ops-console/app/advisor/
+      instruction: |
+        Create app/advisor/page.tsx — dashboard with RadialBarChart score rings (recharts).
+        Create app/advisor/[pillar]/page.tsx — pillar detail findings list.
+        Create app/advisor/findings/page.tsx — all findings table (@tanstack/react-table).
+        Create app/advisor/workbooks/page.tsx — workbook list scaffold.
+    - name: create_api_routes
+      description: Create 2 API routes (server-only, no supabase-js)
+      instruction: |
+        Create app/api/advisor/runs/route.ts — GET latest runs + scores; POST trigger scan.
+        Create app/api/advisor/findings/route.ts — GET findings with pillar/severity filters.
+        All routes use fetch() with SUPABASE_SERVICE_ROLE_KEY directly against PostgREST REST API.
+    - name: catalog_item_link
+      description: Ensure catalog item exists with blueprint_id=ops.advisor-ui
+      instruction: |
+        Ensure docs/catalog/vercel.examples.catalog.json contains an item with
+        id: ops-advisor-ui, blueprint_id: ops.advisor-ui.
+verification:
+  required_checks:
+    - catalog-gate
+    - blueprint-gate
+    - build-gate
+  preview:
+    expectations:
+      - advisor-page-exists
+      - api-runs-route-exists
+      - api-findings-route-exists
+      - migration-exists
+      - scorer-exists
+rollback:
+  strategy: revert_pr
+notes:
+  minor_customization:
+    - Set SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY in .env.local before local testing.
+    - Set VERCEL_API_TOKEN, DO_ACCESS_TOKEN, SUPABASE_MANAGEMENT_TOKEN for live scoring.
+    - Run scorer manually via tsx platform/advisor/scorer.ts or POST /api/advisor/runs.
+    - Workbooks page is scaffold only — populated by ops.mobile-release-workbook blueprint.

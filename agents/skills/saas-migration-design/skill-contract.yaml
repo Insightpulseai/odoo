@@ -1,0 +1,68 @@
+id: saas-migration-design
+name: SaaS Migration Design
+version: 0.1.0
+type: benchmark_skill
+classification: capability_uplift
+family: azure-saas-mt
+persona: saas-platform-architect
+updated_at: "2026-03-17"
+
+purpose: >
+  Design tenant migration between stamps or tiers with zero downtime,
+  covering data migration verification, DNS cutover, rollback procedures,
+  and migration SLA.
+
+triggers:
+  - "Tenant needs to move to a different stamp (capacity, region, tier)"
+  - "Stamp decommissioning requires tenant evacuation"
+  - "Tenant upgrading from shared to dedicated tier"
+  - "Regional migration for data residency compliance"
+
+inputs:
+  - migration_type: "Intra-stamp (tier change), inter-stamp (same region), cross-region"
+  - downtime_tolerance: "Zero downtime, maintenance window, or degraded mode"
+  - data_volume: "Size of tenant data to migrate"
+  - service_dependencies: "Services that need coordinated cutover"
+  - rollback_requirements: "Maximum rollback time if migration fails"
+
+steps:
+  - "Assess migration scope and classify migration type"
+  - "Design data migration strategy (logical replication, backup/restore, online)"
+  - "Plan service cutover sequence with dependency order"
+  - "Implement DNS cutover or routing change"
+  - "Define data verification procedures post-migration"
+  - "Build rollback procedure with tested restoration"
+
+outputs:
+  - migration_plan: "Step-by-step migration procedure with timing"
+  - data_migration_strategy: "Replication or backup approach with verification"
+  - cutover_procedure: "DNS and routing change sequence"
+  - verification_suite: "Post-migration data integrity checks"
+  - rollback_procedure: "Tested rollback with maximum duration"
+  - communication_plan: "Tenant notification timeline"
+
+guardrails:
+  - "Data integrity must be verified before and after migration"
+  - "Rollback must be possible within the defined time window"
+  - "Tenant must be notified before, during, and after migration"
+  - "Migration must not affect other tenants on source or destination stamp"
+
+evidence:
+  - "Data checksum match between source and destination"
+  - "Zero errors in post-migration verification suite"
+  - "Rollback tested and completes within defined window"
+
+dependencies:
+  - saas-deployment-stamp-design
+  - data-isolation-pattern-design
+  - saas-networking-design
+
+evals:
+  - scenario: "Zero-downtime tenant migration between stamps"
+    pass: "Tenant accessible throughout, data integrity verified"
+  - scenario: "Migration failure and rollback"
+    pass: "Rollback completes within defined window, tenant operational on original stamp"
+  - scenario: "Cross-region migration for data residency"
+    pass: "All data in new region, none in old region, DNS updated"
+
+benchmark_source: "Azure Database Migration Service, Traffic Manager"

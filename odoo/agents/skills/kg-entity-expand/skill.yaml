@@ -1,0 +1,126 @@
+# Knowledge Graph Entity Expand Skill
+# Fetches entity context and relationships from KG
+
+name: kg_entity_expand
+version: 1.0.0
+key: kg.entity.expand
+description: |
+  Expand entity context from Knowledge Graph.
+  Fetches neighbors, relationships, and evidence for a given entity.
+
+intents:
+  - expand entity context
+  - get related entities
+  - show entity relationships
+  - what is related to this
+  - entity neighborhood
+
+guardrails:
+  - Read-only access to KG
+  - Respect tenant isolation
+  - Limit depth to prevent runaway queries
+
+tools:
+  - key: kg.fetch_node
+    name: Fetch Node
+    target_model: ipai.kg.bridge
+    target_method: fetch_node
+    description: Get entity details by kind and key
+
+  - key: kg.expand_neighbors
+    name: Expand Neighbors
+    target_model: ipai.kg.bridge
+    target_method: expand_neighbors
+    description: Get k-hop neighborhood
+
+  - key: kg.fetch_evidence
+    name: Fetch Evidence
+    target_model: ipai.kg.bridge
+    target_method: fetch_evidence
+    description: Get provenance for relationships
+
+  - key: kg.format_context
+    name: Format Context
+    target_model: ipai.kg.bridge
+    target_method: format_context
+    description: Format results for agent consumption
+
+workflow:
+  - kg.fetch_node
+  - kg.expand_neighbors
+  - kg.fetch_evidence
+  - kg.format_context
+
+input_schema:
+  type: object
+  required:
+    - entity_ref
+  properties:
+    entity_ref:
+      type: string
+      description: Entity reference (kind:key format)
+    depth:
+      type: integer
+      default: 2
+      minimum: 1
+      maximum: 5
+      description: Maximum traversal depth
+    predicates:
+      type: array
+      items: { type: string }
+      description: Filter to specific relationship types
+    include_evidence:
+      type: boolean
+      default: true
+      description: Include provenance information
+
+output_schema:
+  type: object
+  properties:
+    entity:
+      type: object
+      properties:
+        node_id: { type: string }
+        kind: { type: string }
+        key: { type: string }
+        label: { type: string }
+        attrs: { type: object }
+    neighbors:
+      type: array
+      items:
+        type: object
+        properties:
+          predicate: { type: string }
+          target: { type: object }
+          depth: { type: integer }
+    evidence:
+      type: array
+      items:
+        type: object
+        properties:
+          edge_id: { type: string }
+          source_type: { type: string }
+          source_ref: { type: string }
+          excerpt: { type: string }
+    formatted_context:
+      type: string
+
+agentInstructions: |
+  When the user asks about entity relationships or context:
+
+  1. **Parse Entity Reference**:
+     - Extract kind and key from entity_ref (e.g., "module:ipai_finance_ppm")
+     - Validate entity exists
+
+  2. **Expand Neighborhood**:
+     - Use specified depth (default 2)
+     - Filter by predicates if provided
+
+  3. **Gather Evidence**:
+     - Fetch provenance for key relationships
+     - Include source references
+
+  4. **Format Output**:
+     - Provide structured entity data
+     - Include human-readable formatted_context
+     - Cite evidence for claims

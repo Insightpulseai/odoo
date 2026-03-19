@@ -1,0 +1,73 @@
+schema: ssot.security.vuln_policy.v1
+version: "1.0"
+
+# Vulnerability thresholds enforced by .github/workflows/security-alerts-snapshot.yml
+# critical / high violations block CI unless covered by a non-expired exception.
+# moderate / low are logged but do not block.
+#
+# SSOT: ssot/security/vuln_policy.yaml (this file)
+# Snapshot: reports/security/github_alerts_snapshot.json
+# Runbook: docs/runbooks/SECURITY_GATES.md
+
+thresholds:
+  # Dependabot (SCA) — GitHub severity scale
+  dependabot:
+    critical: 0
+    high:     0
+    medium:   9999
+    low:      9999
+
+  # Code Scanning (SAST / CodeQL) — GitHub rule severity scale
+  code_scanning:
+    error:    0
+    warning:  9999
+    note:     9999
+
+# ── Current exceptions ──────────────────────────────────────────────────────
+# All exceptions must have:
+#   - A unique id (EX-NNNN)
+#   - expires_on (max 90 days from creation)
+#   - tracking_issue (GitHub Issue or PR number)
+#   - rationale (why it cannot be fixed immediately)
+#
+# Expired exceptions are treated as policy violations at CI evaluation time.
+#
+# Current baseline exception block covers the 224 alerts present on main
+# before this policy was introduced (2026-02-27).
+# Each group must be resolved by its expires_on date or replaced with a
+# more specific exception (narrowed scope, shorter TTL).
+
+exceptions:
+  - id: EX-0001
+    scope: dependabot
+    severity: critical
+    count_at_creation: 4
+    expires_on: "2026-03-31"
+    tracking_issue: "https://github.com/Insightpulseai/odoo/security/dependabot"
+    rationale: >
+      Baseline critical alerts present before SSOT policy introduction (2026-02-27).
+      Must be triaged individually using scripts/security/triage_dependabot_alerts.sh.
+      All 4 must be resolved or individually excepted by expires_on.
+
+  - id: EX-0002
+    scope: dependabot
+    severity: high
+    count_at_creation: 62
+    expires_on: "2026-04-30"
+    tracking_issue: "https://github.com/Insightpulseai/odoo/security/dependabot"
+    rationale: >
+      Baseline high alerts (62) present before SSOT policy introduction.
+      Prioritize: pnpm/npm transitive deps first (use pnpm audit --fix),
+      then Python deps (pip-audit), then GitHub Actions pinning.
+      Progress tracked by snapshot drift in reports/security/.
+
+  - id: EX-0003
+    scope: code_scanning
+    severity: error
+    count_at_creation: 43
+    expires_on: "2026-04-30"
+    tracking_issue: "https://github.com/Insightpulseai/odoo/security/code-scanning"
+    rationale: >
+      Baseline CodeQL error-severity findings (43) present before policy introduction.
+      Triage using gh api code-scanning; dismiss noise with rationale.
+      Non-noise findings require fix PRs before expires_on.

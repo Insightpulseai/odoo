@@ -1,0 +1,13 @@
+{
+  "id": "approvals-workflow",
+  "name": "Approvals Workflow",
+  "summary": "Custom approval workflow engine replacing Odoo EE Approvals module with configurable multi-level approval chains.",
+  "tags": ["workflow", "approvals", "automation", "hr"],
+  "stage": "ga",
+  "availability": "all",
+  "links": {
+    "runbook": "docs/runbooks/approvals.md"
+  },
+  "related_assets": ["enterprise-parity", "expense-automation"],
+  "ipai_module": "ipai_approvals"
+}

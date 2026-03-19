@@ -1,0 +1,23 @@
+# Helpdesk parity modules
+# Covers: ticket management, SLA, rotting tickets, refunds
+# Source: EE Helpdesk
+
+# OCA: Helpdesk (if present in OCA/helpdesk repo)
+# NOTE: OCA helpdesk module names vary by version.
+# Add exact technical names from your OCA branch here.
+
+# OCA: Foundation deps
+queue_job
+date_range
+base_view_inheritance_extension
+
+# OCA: Web UX
+web_responsive
+
+# OCA: Mail / Social
+mail_activity_board
+
+# IPAI: Helpdesk
+ipai_helpdesk
+ipai_helpdesk_refund
+ipai_enterprise_bridge

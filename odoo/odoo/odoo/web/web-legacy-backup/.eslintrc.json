@@ -1,0 +1,20 @@
+{
+  "extends": "next/core-web-vitals",
+  "rules": {
+    "no-restricted-syntax": [
+      "error",
+      {
+        "selector": "Literal[value=/^#[0-9a-fA-F]{3,8}$/]",
+        "message": "Use design tokens instead of hardcoded hex colors. Import from @ipai/design-tokens"
+      }
+    ]
+  },
+  "overrides": [
+    {
+      "files": ["src/components/docs/**/*"],
+      "rules": {
+        "no-restricted-syntax": "off"
+      }
+    }
+  ]
+}

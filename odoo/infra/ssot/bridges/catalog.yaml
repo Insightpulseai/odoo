@@ -1,0 +1,165 @@
+# schema: ssot.bridges.v1
+# IPAI integration bridges that fill Odoo EE feature gaps.
+# Every active bridge must have:
+#   1. An entry here
+#   2. A contract doc at the path specified in contract_doc
+#   3. Secret identifiers in ssot/secrets/registry.yaml
+#
+# status values:
+#   active    — bridge is deployed and in production use
+#   planned   — bridge is planned, not yet deployed
+#   deprecated — bridge was replaced or removed
+
+version: "1.0.0"
+schema: ssot.bridges.v1
+last_reviewed: "2026-02-27"
+
+schema_rules:
+  required_fields:
+    - name
+    - display_name
+    - replaces_ee_feature
+    - status          # active | planned | deprecated
+    - contract_doc    # path to docs/contracts/<NAME>_CONTRACT.md
+    - secrets         # list of secret identifiers (empty list [] is valid)
+  status_values:
+    - active
+    - planned
+    - deprecated
+
+bridges:
+  - name: ipai_zoho_mail_api
+    display_name: "Zoho Mail API Bridge"
+    replaces_ee_feature: "Outbound mail server (EE)"
+    ee_module: mail_enterprise
+    addon_path: addons/ipai/ipai_zoho_mail_api/
+    status: active
+    contract_doc: docs/contracts/MAIL_BRIDGE_CONTRACT.md
+    secrets:
+      - zoho_client_id
+      - zoho_client_secret
+      - zoho_refresh_token
+    notes: "OAuth2 bridge to Zoho Mail SMTP. Handles all outbound email from Odoo CE."
+
+  - name: ipai_ai_tools_bridge
+    display_name: "IPAI AI Provider Bridge (platform contract)"
+    replaces_ee_feature: "Odoo AI features (EE/IAP)"
+    ee_module: enterprise_ai
+    addon_path: platform/ai/providers/gemini.ts
+    status: active
+    contract_doc: docs/contracts/AI_BRIDGE_CONTRACT.md
+    secrets:
+      - gemini_api_key
+    # Platform-level consumers and routing metadata
+    consumers:
+      - odoo          # via ipai_ai_widget addon (ir.config_parameter bridge_url)
+      - ops-console   # via apps/ops-console/app/api/ai/gemini/route.ts
+      - workers       # future automation workers
+    endpoints:
+      - generate      # POST /api/ai/gemini — text generation (active)
+      - chat          # planned
+      - embeddings    # planned
+    fallback: oca_ollama   # ai_oca_native_generate_ollama for offline/local tenants
+    notes: >
+      Primary AI platform contract. Google Gemini 2.0 Flash REST bridge at
+      /api/ai/gemini (Ops Console / Vercel). All Odoo AI calls route through
+      ipai_ai_widget → ir.config_parameter bridge_url → this endpoint.
+      No Odoo IAP dependency. OCA Ollama is opt-in fallback for local tenants.
+
+  - name: ipai_slack_connector
+    display_name: "Slack Connector"
+    replaces_ee_feature: "Discuss / Mattermost integration (EE)"
+    ee_module: mail_enterprise
+    addon_path: addons/ipai/ipai_slack_connector/
+    status: active
+    contract_doc: docs/contracts/SLACK_BRIDGE_CONTRACT.md
+    secrets:
+      - slack_bot_token
+      - slack_signing_secret
+    notes: "Slack replaces Mattermost (deprecated 2026-01-28). All notifications route through Slack."
+
+  - name: ipai_ocr_paddleocr
+    display_name: "PaddleOCR Document Processing Bridge"
+    replaces_ee_feature: "Document AI / OCR (EE)"
+    ee_module: documents_ocr
+    addon_path: addons/ipai/ipai_ai_tools/
+    status: active
+    contract_doc: docs/contracts/OCR_BRIDGE_CONTRACT.md
+    secrets: []
+    notes: "PaddleOCR-VL self-hosted on DO droplet (178.128.112.214). REST API at ocr.insightpulseai.com."
+
+  - name: ipai_ai_widget
+    display_name: "Ask AI Widget (Odoo 19 CE Chatter)"
+    replaces_ee_feature: "Ask AI (EE/BYOM — OpenAI or Gemini key in AI app Settings)"
+    ee_module: enterprise_ai
+    addon_path: addons/ipai/ipai_ai_widget/
+    status: active
+    version: "19.0.1.0.0"
+    contract_doc: docs/contracts/AI_WIDGET_CONTRACT.md
+    secrets:
+      - gemini_api_key
+    notes: >
+      Odoo-side proxy addon (OWL 2 button in chatter + Odoo controller).
+      NOT the platform contract — this is the Odoo UI + controller layer that
+      calls ipai_ai_tools_bridge via ir.config_parameter bridge_url.
+      No Odoo IAP dependency. Provider switching happens at bridge level, not here.
+
+  - name: ipai_ai_copilot
+    display_name: "IPAI AI Copilot (M365/Joule-class)"
+    replaces_ee_feature: "Odoo EE AI Agents + M365 Copilot + SAP Joule"
+    ee_module: enterprise_ai
+    addon_path: addons/ipai/ipai_ai_copilot/
+    status: planned
+    version: "19.0.1.0.0"
+    contract_doc: docs/contracts/AI_COPILOT_CONTRACT.md
+    secrets:
+      - gemini_api_key
+    consumers:
+      - odoo          # via ipai_ai_copilot addon (ir.config_parameter bridge_url)
+    endpoints:
+      - generate      # POST /api/ai/gemini (simple, no tools)
+      - tools         # POST /api/ai/gemini/tools (function calling, new)
+    capabilities:
+      - persistent_sidebar
+      - command_palette
+      - gemini_function_calling
+      - tool_registry
+      - proactive_insights
+      - n8n_automation_bridge
+      - supabase_rag
+    notes: >
+      Full AI copilot for Odoo 19 CE. Surpasses EE AI agents in:
+      multi-provider support, cross-system n8n automation, Supabase-backed RAG,
+      and provider cost routing (Flash/Pro). Gemini function calling enables
+      create/update/search Odoo records from natural language.
+      ir.config_parameter: ipai_ai_copilot.bridge_url = /api/ai/gemini/tools
+
+  - name: ipai_llm_supabase_bridge
+    display_name: "LLM Observability Bridge (Apexive → Supabase)"
+    replaces_ee_feature: "Odoo AI activity logging / audit trail (EE)"
+    ee_module: enterprise_ai
+    addon_path: addons/ipai/ipai_llm_supabase_bridge/
+    status: planned
+    contract_doc: docs/contracts/LLM_SUPABASE_BRIDGE_CONTRACT.md
+    secrets:
+      - llm_bridge_webhook_secret
+      - anthropic_api_key
+    consumers:
+      - odoo          # ipai_llm_supabase_bridge module (event outbox)
+      - supabase      # functions/llm-webhook-ingest (event ingestion)
+    endpoints:
+      - llm-webhook-ingest    # POST Supabase Edge Function — signed webhook delivery
+    activation_criteria:
+      - "Supabase migration applied: ops.runs, ops.run_events, ops.artifacts tables exist and ops.ingest_bridge_event() function is callable (SELECT routine_name FROM information_schema.routines WHERE routine_schema = 'ops')"
+      - "Edge Function deployed + HMAC verified: POST with valid X-Signature-256 header → HTTP 200; POST without header → HTTP 401"
+      - "Odoo module installs cleanly: ipai.bridge.config and ipai.bridge.event models registered, no outbound network calls during install (python odoo-bin --test-enable --test-tags ipai_llm_supabase_bridge -d odoo_dev)"
+      - "E2E event flow proven: tool.call event emitted from Odoo appears in ops.run_events; duplicate call with same idempotency_key produces exactly 1 row (SELECT COUNT(*) FROM ops.run_events WHERE idempotency_key = '<key>') = 1"
+      - "RLS verified: service_role reads all rows; authenticated role can only read rows WHERE created_by = auth.uid() (SELECT COUNT(*) AS own FROM ops.run_events WHERE created_by = auth.uid()) matches expected subset"
+      - "Auth policy: invitations minted by Supabase; Odoo may send branded invite emails; Odoo user/partner provisioned post-accept (identity_sor=supabase per ssot/runtime/prod_settings.yaml)"
+    notes: >
+      Observability bridge connecting Apexive odoo-llm framework to Supabase ops.* schema.
+      Hooks into llm_tool._execute() and llm_thread lifecycle to emit signed webhook events.
+      Provides DLQ + exponential-backoff retry via cron. One-way only: Odoo SOR → Supabase SSOT.
+      Architecture layer: different from ipai_ai_copilot (which routes inference through bridge URL).
+      Apexive framework makes direct provider calls; this module adds observability on top.
+      Spec: spec/ipai-llm-supabase-bridge/

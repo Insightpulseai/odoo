@@ -1,0 +1,27 @@
+{
+  "name": "diagramflow",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Deterministic diagram pipeline: Mermaid → BPMN 2.0 → draw.io with Azure remapping",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "diagram:build": "node dist/cli.js build",
+    "diagram:remap": "node dist/cli.js remap",
+    "diagram:ci": "node dist/cli.js build --check",
+    "test": "node --test dist/**/*.test.js"
+  },
+  "dependencies": {
+    "fast-xml-parser": "^4.5.0",
+    "yaml": "^2.4.5",
+    "yargs": "^17.7.2"
+  },
+  "devDependencies": {
+    "@types/node": "^20.14.10",
+    "@types/yargs": "^17.0.32",
+    "typescript": "^5.5.4"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

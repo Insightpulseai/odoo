@@ -1,0 +1,378 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://insightpulseai.com/schemas/sync/odoo-plane-sync.schema.json",
+  "title": "Odoo ↔ Plane Sync Schema",
+  "description": "Bidirectional sync schemas for Odoo CE (System of Record) and Plane (Execution Engine)",
+
+  "$defs": {
+    "syncDirection": {
+      "type": "string",
+      "enum": ["odoo_to_plane", "plane_to_odoo", "bidirectional"]
+    },
+
+    "syncEvent": {
+      "type": "object",
+      "required": ["event_id", "timestamp", "source", "event_type", "entity_type", "payload"],
+      "properties": {
+        "event_id": {
+          "type": "string",
+          "format": "uuid",
+          "description": "Unique event identifier for idempotency"
+        },
+        "timestamp": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "source": {
+          "type": "string",
+          "enum": ["odoo", "plane", "ci", "webhook"]
+        },
+        "event_type": {
+          "type": "string",
+          "enum": [
+            "create",
+            "update",
+            "delete",
+            "status_change",
+            "assignment_change",
+            "shipped",
+            "deploy_success",
+            "deploy_failed"
+          ]
+        },
+        "entity_type": {
+          "type": "string",
+          "enum": ["project", "milestone", "task", "deployment", "cycle", "issue"]
+        },
+        "entity_id": {
+          "type": "string"
+        },
+        "payload": {
+          "type": "object"
+        },
+        "correlation_id": {
+          "type": "string",
+          "description": "Links related events across systems"
+        }
+      }
+    },
+
+    "entityMapping": {
+      "type": "object",
+      "required": ["odoo_model", "odoo_id", "plane_type", "plane_id"],
+      "properties": {
+        "odoo_model": {
+          "type": "string",
+          "enum": ["project.project", "project.milestone", "project.task"]
+        },
+        "odoo_id": {
+          "type": "integer"
+        },
+        "plane_type": {
+          "type": "string",
+          "enum": ["project", "cycle", "issue"]
+        },
+        "plane_id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "plane_workspace_id": {
+          "type": "string"
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "last_synced_at": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+
+    "odooProject": {
+      "type": "object",
+      "required": ["id", "name"],
+      "properties": {
+        "id": { "type": "integer" },
+        "name": { "type": "string" },
+        "wbs_code": { "type": "string" },
+        "portfolio_id": { "type": "integer" },
+        "planned_date_begin": { "type": "string", "format": "date" },
+        "planned_date_end": { "type": "string", "format": "date" },
+        "user_id": { "type": "integer" },
+        "health": { "type": "string", "enum": ["green", "yellow", "red"] },
+        "plane_project_id": { "type": "string" },
+        "plane_workspace_id": { "type": "string" }
+      }
+    },
+
+    "planeProject": {
+      "type": "object",
+      "required": ["id", "name", "workspace_id"],
+      "properties": {
+        "id": { "type": "string", "format": "uuid" },
+        "name": { "type": "string" },
+        "identifier": { "type": "string" },
+        "workspace_id": { "type": "string" },
+        "description": { "type": "string" },
+        "lead_id": { "type": "string" },
+        "start_date": { "type": "string", "format": "date" },
+        "target_date": { "type": "string", "format": "date" },
+        "odoo_project_id": { "type": "integer" }
+      }
+    },
+
+    "odooMilestone": {
+      "type": "object",
+      "required": ["id", "name", "project_id", "target_date"],
+      "properties": {
+        "id": { "type": "integer" },
+        "name": { "type": "string" },
+        "project_id": { "type": "integer" },
+        "target_date": { "type": "string", "format": "date" },
+        "actual_date": { "type": "string", "format": "date" },
+        "is_shipped": { "type": "boolean" },
+        "shipped_at": { "type": "string", "format": "date-time" },
+        "progress": { "type": "number", "minimum": 0, "maximum": 100 },
+        "plane_cycle_id": { "type": "string" }
+      }
+    },
+
+    "planeCycle": {
+      "type": "object",
+      "required": ["id", "name", "project_id"],
+      "properties": {
+        "id": { "type": "string", "format": "uuid" },
+        "name": { "type": "string" },
+        "project_id": { "type": "string" },
+        "start_date": { "type": "string", "format": "date" },
+        "end_date": { "type": "string", "format": "date" },
+        "is_active": { "type": "boolean" },
+        "odoo_milestone_id": { "type": "integer" }
+      }
+    },
+
+    "odooTask": {
+      "type": "object",
+      "required": ["id", "name", "project_id"],
+      "properties": {
+        "id": { "type": "integer" },
+        "name": { "type": "string" },
+        "wbs_code": { "type": "string" },
+        "project_id": { "type": "integer" },
+        "milestone_id": { "type": "integer" },
+        "parent_id": { "type": "integer" },
+        "user_id": { "type": "integer" },
+        "planned_date_begin": { "type": "string", "format": "date" },
+        "planned_date_end": { "type": "string", "format": "date" },
+        "stage_id": { "type": "integer" },
+        "kanban_state": { "type": "string", "enum": ["normal", "done", "blocked"] },
+        "is_shipped": { "type": "boolean" },
+        "shipped_at": { "type": "string", "format": "date-time" },
+        "is_blocked": { "type": "boolean" },
+        "depend_on_ids": {
+          "type": "array",
+          "items": { "type": "integer" }
+        },
+        "key_result_ids": {
+          "type": "array",
+          "items": { "type": "integer" }
+        },
+        "plane_issue_id": { "type": "string" }
+      }
+    },
+
+    "planeIssue": {
+      "type": "object",
+      "required": ["id", "name", "project_id"],
+      "properties": {
+        "id": { "type": "string", "format": "uuid" },
+        "name": { "type": "string" },
+        "sequence_id": { "type": "integer" },
+        "project_id": { "type": "string" },
+        "cycle_id": { "type": "string" },
+        "parent_id": { "type": "string" },
+        "state_id": { "type": "string" },
+        "state_name": { "type": "string" },
+        "priority": { "type": "string", "enum": ["urgent", "high", "medium", "low", "none"] },
+        "assignee_ids": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "label_ids": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "start_date": { "type": "string", "format": "date" },
+        "target_date": { "type": "string", "format": "date" },
+        "completed_at": { "type": "string", "format": "date-time" },
+        "odoo_task_id": { "type": "integer" },
+        "relation_ids": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "issue_id": { "type": "string" },
+              "relation_type": {
+                "type": "string",
+                "enum": ["blocks", "blocked_by", "relates_to", "duplicate"]
+              }
+            }
+          }
+        }
+      }
+    },
+
+    "deploymentEvent": {
+      "type": "object",
+      "required": ["commit_sha", "environment", "status"],
+      "properties": {
+        "commit_sha": { "type": "string", "pattern": "^[a-f0-9]{7,40}$" },
+        "environment": { "type": "string", "enum": ["preview", "staging", "production"] },
+        "status": { "type": "string", "enum": ["pending", "running", "success", "failed", "cancelled"] },
+        "pipeline_run_id": { "type": "string" },
+        "pipeline_url": { "type": "string", "format": "uri" },
+        "branch": { "type": "string" },
+        "commit_message": { "type": "string" },
+        "deployed_by": { "type": "string" },
+        "deployed_at": { "type": "string", "format": "date-time" },
+        "linked_task_ids": {
+          "type": "array",
+          "items": { "type": "integer" },
+          "description": "Odoo task IDs linked to this deployment"
+        },
+        "linked_issue_ids": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Plane issue IDs linked to this deployment"
+        },
+        "ci_checks": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": { "type": "string" },
+              "status": { "type": "string", "enum": ["success", "failure", "pending"] },
+              "url": { "type": "string", "format": "uri" }
+            }
+          }
+        }
+      }
+    }
+  },
+
+  "type": "object",
+  "properties": {
+    "sync_config": {
+      "type": "object",
+      "required": ["version", "mappings"],
+      "properties": {
+        "version": { "type": "string", "const": "1.0" },
+        "odoo_base_url": { "type": "string", "format": "uri" },
+        "plane_base_url": { "type": "string", "format": "uri" },
+        "plane_workspace_slug": { "type": "string" },
+
+        "mappings": {
+          "type": "object",
+          "properties": {
+            "project_to_project": {
+              "type": "object",
+              "properties": {
+                "direction": { "$ref": "#/$defs/syncDirection" },
+                "odoo_fields": {
+                  "type": "array",
+                  "items": { "type": "string" }
+                },
+                "plane_fields": {
+                  "type": "array",
+                  "items": { "type": "string" }
+                },
+                "field_mapping": {
+                  "type": "object",
+                  "additionalProperties": { "type": "string" }
+                }
+              }
+            },
+            "milestone_to_cycle": {
+              "type": "object",
+              "properties": {
+                "direction": { "$ref": "#/$defs/syncDirection" },
+                "field_mapping": {
+                  "type": "object",
+                  "additionalProperties": { "type": "string" }
+                }
+              }
+            },
+            "task_to_issue": {
+              "type": "object",
+              "properties": {
+                "direction": { "$ref": "#/$defs/syncDirection" },
+                "field_mapping": {
+                  "type": "object",
+                  "additionalProperties": { "type": "string" }
+                },
+                "state_mapping": {
+                  "type": "object",
+                  "description": "Maps Odoo stage_id to Plane state_id",
+                  "additionalProperties": { "type": "string" }
+                }
+              }
+            },
+            "dependency_to_relation": {
+              "type": "object",
+              "properties": {
+                "odoo_field": { "type": "string", "const": "depend_on_ids" },
+                "plane_relation_type": { "type": "string", "const": "blocked_by" }
+              }
+            }
+          }
+        },
+
+        "user_mapping": {
+          "type": "object",
+          "description": "Maps Odoo user IDs to Plane user IDs",
+          "additionalProperties": { "type": "string" }
+        },
+
+        "hooks": {
+          "type": "object",
+          "properties": {
+            "on_task_shipped": {
+              "type": "object",
+              "properties": {
+                "add_plane_label": { "type": "string", "default": "shipped" },
+                "update_plane_state": { "type": "string" },
+                "notify_slack": { "type": "boolean" }
+              }
+            },
+            "on_deployment_success": {
+              "type": "object",
+              "properties": {
+                "auto_ship_tasks": { "type": "boolean", "default": true },
+                "add_plane_label": { "type": "string", "default": "deployed" }
+              }
+            },
+            "on_plane_issue_completed": {
+              "type": "object",
+              "properties": {
+                "trigger_ship_review": { "type": "boolean", "default": true },
+                "update_odoo_stage": { "type": "boolean", "default": true }
+              }
+            }
+          }
+        }
+      }
+    },
+
+    "sync_events": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/syncEvent" }
+    },
+
+    "entity_mappings": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/entityMapping" }
+    }
+  }
+}

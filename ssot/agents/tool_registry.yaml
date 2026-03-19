@@ -1,0 +1,181 @@
+# =============================================================================
+# SSOT: Agent Tool Registry
+# =============================================================================
+# Generated: 2026-03-18
+# Source: docs/security/AGENT_CAPABILITY_AUDIT.md
+# =============================================================================
+
+version: "1.0"
+updated_at: "2026-03-18"
+
+tools:
+  # ---------------------------------------------------------------------------
+  # MCP-hosted tools (configured in .mcp.json)
+  # ---------------------------------------------------------------------------
+  - id: mcp_github_copilot
+    name: "GitHub Copilot MCP"
+    type: mcp_server
+    transport: http
+    url: "https://api.githubcopilot.com/mcp/"
+    ownership: github_owned
+    auth_mode: oauth
+    data_access: read_only
+    lock_in_risk: medium
+    note: "Requires GitHub Copilot subscription"
+
+  - id: mcp_microsoft_learn
+    name: "Microsoft Learn MCP"
+    type: mcp_server
+    transport: http
+    url: "https://learn.microsoft.com/api/mcp"
+    ownership: microsoft_owned
+    auth_mode: none
+    data_access: read_only
+    lock_in_risk: low
+
+  - id: mcp_azure
+    name: "Azure MCP"
+    type: mcp_server
+    transport: stdio
+    command: "npx -y @azure/mcp@latest server start"
+    ownership: microsoft_owned
+    auth_mode: managed_identity
+    data_access: admin_control
+    lock_in_risk: high
+    risk: "Broad resource management scope. No allowlist configured."
+
+  - id: mcp_figma
+    name: "Figma MCP"
+    type: mcp_server
+    transport: http
+    url: "https://figma.com/mcp"
+    ownership: third_party_vendor_owned
+    auth_mode: oauth
+    data_access: read_only
+    lock_in_risk: low
+
+  - id: mcp_supabase
+    name: "Supabase MCP"
+    type: mcp_server
+    transport: stdio
+    command: "npx -y @supabase/mcp-server"
+    ownership: third_party_vendor_owned
+    auth_mode: api_key
+    data_access: full_write
+    lock_in_risk: low
+    risk: "ACCESS_TOKEN grants full write. Should restrict to read-only."
+    env_vars:
+      - SUPABASE_ACCESS_TOKEN
+      - SUPABASE_PROJECT_REF
+
+  - id: mcp_playwright
+    name: "Playwright MCP"
+    type: mcp_server
+    transport: stdio
+    command: "npx -y @playwright/mcp@latest"
+    ownership: third_party_vendor_owned
+    auth_mode: none
+    data_access: no_data
+    lock_in_risk: low
+
+  # ---------------------------------------------------------------------------
+  # n8n MCP bridge tools
+  # ---------------------------------------------------------------------------
+  - id: n8n_list_workflow_tools
+    name: "n8n List Workflow Tools"
+    type: mcp_tool
+    parent: n8n_api_bridge
+    path: agents/mcp/n8n-api-bridge/src/tools/aiTools.ts
+    ownership: insightpulseai_owned
+    auth_mode: api_key
+    data_access: read_only
+    description: "Discover tool-compatible nodes in n8n workflows"
+
+  - id: n8n_execute_workflow_with_context
+    name: "n8n Execute Workflow with Context"
+    type: mcp_tool
+    parent: n8n_api_bridge
+    path: agents/mcp/n8n-api-bridge/src/tools/aiTools.ts
+    ownership: insightpulseai_owned
+    auth_mode: api_key
+    data_access: bounded_write
+    description: "Execute n8n workflow with AI-provided context and parameters"
+
+  - id: n8n_get_tool_definition
+    name: "n8n Get Tool Definition"
+    type: mcp_tool
+    parent: n8n_api_bridge
+    path: agents/mcp/n8n-api-bridge/src/tools/aiTools.ts
+    ownership: insightpulseai_owned
+    auth_mode: api_key
+    data_access: read_only
+    description: "Retrieve detailed schema and parameters for a specific workflow tool"
+
+  # ---------------------------------------------------------------------------
+  # Foundry tools (defined in ssot/ai/tools.yaml, currently all planned)
+  # ---------------------------------------------------------------------------
+  - id: foundry_search_records
+    name: "Search Records (Foundry)"
+    type: foundry_tool
+    status: planned
+    ownership: insightpulseai_owned
+    auth_mode: managed_identity
+    data_access: read_only
+    description: "Search Odoo records by model + domain"
+
+  - id: foundry_read_record
+    name: "Read Record (Foundry)"
+    type: foundry_tool
+    status: planned
+    ownership: insightpulseai_owned
+    auth_mode: managed_identity
+    data_access: read_only
+    description: "Read specific Odoo record by ID"
+
+  - id: foundry_search_knowledge
+    name: "Search Knowledge (Foundry)"
+    type: foundry_tool
+    status: planned
+    ownership: insightpulseai_owned
+    auth_mode: managed_identity
+    data_access: read_only
+    description: "Search Azure AI Search knowledge index"
+
+  - id: foundry_create_draft
+    name: "Create Draft (Foundry)"
+    type: foundry_tool
+    status: planned
+    ownership: insightpulseai_owned
+    auth_mode: managed_identity
+    data_access: bounded_write
+    description: "Create record in draft state only, requires approval"
+
+  # ---------------------------------------------------------------------------
+  # CLI-safe tool wrappers
+  # ---------------------------------------------------------------------------
+  - id: odoo_cli_safe
+    name: "Odoo CLI Safe Wrapper"
+    type: cli_wrapper
+    path: agents/skills/odoo-cli-safe/bin/odoo-safe
+    ownership: insightpulseai_owned
+    auth_mode: local_secret
+    data_access: bounded_write
+    description: "Policy-bounded odoo-bin wrapper. Allowlist in policies/allowed-ops.md."
+
+  - id: github_cli_safe
+    name: "GitHub CLI Safe Wrapper"
+    type: cli_wrapper
+    path: agents/skills/github-cli-safe/bin/gh-safe
+    ownership: insightpulseai_owned
+    auth_mode: local_secret
+    data_access: bounded_write
+    description: "Policy-bounded gh CLI wrapper."
+
+  - id: azure_cli_safe
+    name: "Azure CLI Safe Wrapper"
+    type: cli_wrapper
+    path: agents/skills/azure-cli-safe/bin/az-safe
+    ownership: insightpulseai_owned
+    auth_mode: local_secret
+    data_access: bounded_write
+    description: "Policy-bounded az CLI wrapper. Allowlist in policies/allowed-ops.md."

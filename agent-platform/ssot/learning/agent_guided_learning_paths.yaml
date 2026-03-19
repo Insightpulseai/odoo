@@ -1,0 +1,72 @@
+schema_version: "1.0"
+last_updated: "2026-03-17"
+status: active
+
+surfaces:
+  foundry_vscode_extension:
+    purpose:
+      - open_projects
+      - inspect_resources
+      - deploy_models
+      - generate_sample_code
+      - use_playgrounds
+    production: false
+
+  agent_framework_local:
+    purpose:
+      - local_debug
+      - workflow_iteration
+      - tool_testing
+      - trace_inspection
+    production: false
+
+  foundry_hosted_runtime:
+    purpose:
+      - managed_agent_deploy
+      - production_runtime
+      - scale_agents
+    production: true
+
+lanes:
+  - id: lane_1
+    name: foundations
+    outcomes:
+      - understands_platform_planes
+      - understands_agent_roles
+      - understands_local_vs_hosted_boundary
+
+  - id: lane_2
+    name: foundry_project_fluency
+    outcomes:
+      - can_open_correct_project
+      - can_navigate_resources_and_tools
+      - can_identify_deployed_models
+
+  - id: lane_3
+    name: model_deployment_and_code_generation
+    outcomes:
+      - can_deploy_model
+      - can_generate_sample_code
+      - understands_project_vs_model_endpoint
+
+  - id: lane_4
+    name: local_agent_experimentation
+    outcomes:
+      - can_run_local_agent_workflows
+      - can_debug_failures
+      - can_inspect_traces
+
+  - id: lane_5
+    name: hosted_agent_promotion
+    outcomes:
+      - can_deploy_hosted_agent
+      - can_bind_project_resources
+      - can_validate_remote_behavior
+
+  - id: lane_6
+    name: governance_and_production_readiness
+    outcomes:
+      - can_attach_evidence
+      - can_apply_advisory_operator_boundary
+      - can_pass_review_checks
+      - can_classify_agent_readiness

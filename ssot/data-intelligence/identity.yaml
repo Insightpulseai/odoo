@@ -1,0 +1,27 @@
+# Service principal and identity provisioning for Finance PPM workload
+id: finance_ppm_identity
+version: 1.0.0
+status: planned
+
+service_principals:
+  - id: finance-ppm-service-principal
+    display_name: Finance PPM Service Principal
+    purpose: Run-as identity for Databricks jobs, DLT pipelines, and data access
+    provisioning_status: not_provisioned
+    required_permissions:
+      - databricks_workspace_access
+      - unity_catalog_grants (bronze, silver, gold schemas)
+      - azure_key_vault_reader (kv-ipai-dev)
+    environments:
+      dev:
+        workspace_root: /finance-ppm-dev
+        catalog: dev_ppm
+      staging:
+        workspace_root: /finance-ppm-staging
+        catalog: staging_ppm
+      prod:
+        workspace_root: /finance-ppm-prod
+        catalog: ppm
+    notes: >-
+      Previously named notion-ppm-service-principal. Renamed to reflect
+      the Finance PPM capability domain rather than a specific source system.

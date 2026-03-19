@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<testsuites name="vitest tests" tests="6" failures="0" errors="0" time="0.357">
+    <testsuite name="src/client/ControlPlaneClient.test.ts" timestamp="2026-02-14T23:12:37.322Z" hostname="Jakes-MacBook-Air.local" tests="2" failures="0" errors="0" skipped="0" time="0.001697167">
+        <testcase classname="src/client/ControlPlaneClient.test.ts" name="ControlPlaneClient &gt; creates client with base URL" time="0.000952417">
+        </testcase>
+        <testcase classname="src/client/ControlPlaneClient.test.ts" name="ControlPlaneClient &gt; has required methods" time="0.000334625">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/commands/index.test.ts" timestamp="2026-02-14T23:12:37.324Z" hostname="Jakes-MacBook-Air.local" tests="1" failures="0" errors="0" skipped="0" time="0.018835417">
+        <testcase classname="src/commands/index.test.ts" name="command wiring &gt; loads module without throwing" time="0.018402208">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/commands/operations.test.ts" timestamp="2026-02-14T23:12:37.324Z" hostname="Jakes-MacBook-Air.local" tests="1" failures="0" errors="0" skipped="0" time="0.018092875">
+        <testcase classname="src/commands/operations.test.ts" name="operations commands &gt; loads module without throwing" time="0.017606584">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/providers/ProjectTreeProvider.test.ts" timestamp="2026-02-14T23:12:37.325Z" hostname="Jakes-MacBook-Air.local" tests="2" failures="0" errors="0" skipped="0" time="0.001290083">
+        <testcase classname="src/providers/ProjectTreeProvider.test.ts" name="ProjectTreeProvider &gt; creates provider with client" time="0.000637375">
+        </testcase>
+        <testcase classname="src/providers/ProjectTreeProvider.test.ts" name="ProjectTreeProvider &gt; has required tree provider methods" time="0.000184209">
+        </testcase>
+    </testsuite>
+</testsuites>

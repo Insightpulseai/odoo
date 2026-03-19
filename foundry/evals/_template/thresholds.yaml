@@ -1,0 +1,46 @@
+# =============================================================================
+# Foundry Eval Thresholds — Template
+# =============================================================================
+# Copy to foundry/evals/<slug>/thresholds.yaml for each AI-enabled release.
+# Reference: docs/contracts/eval-gate-contract.md
+# =============================================================================
+
+version: 1
+slug: "<slug>"
+release_unit: "<module-or-surface>"
+ai_enabled: true
+
+blocking_policy:
+  fail_release_if_any_blocking_threshold_fails: true
+
+dimensions:
+  quality:
+    threshold: 0.85
+    blocking: true
+  groundedness:
+    threshold: 0.80
+    blocking: true
+  tool_success_rate:
+    threshold: 0.95
+    blocking: true
+  safety:
+    threshold: 0.98
+    blocking: true
+  latency_p95_ms:
+    threshold: 4000
+    operator: "<="
+    blocking: false
+  fallback_success_rate:
+    threshold: 0.95
+    blocking: true
+
+trace_requirements:
+  required: true
+  publish_trace_link: true
+
+monitoring_requirements:
+  required: true
+  post_release_monitoring_window_hours: 24
+
+claim_policy:
+  marketplace_claims_must_not_exceed_measured_capability: true

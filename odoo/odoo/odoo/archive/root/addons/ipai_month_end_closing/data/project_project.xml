@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="0">
+        <!-- Project: Month-End Close -->
+        <record id="project_month_end_close" model="project.project">
+            <field name="name">Month-End Close</field>
+            <field name="description">GOAL: Accurate and timely month-end close for TBWA Finance
+
+KEY RESULTS:
+- KR1: ≥95% close tasks completed by Day-3
+- KR3: Accrual variance ≤₱50k
+
+PHASES (WORKDAY offsets from period end):
+1. Initial &amp; Compliance (WD-5 to WD-4)
+2. Accruals &amp; Amortization (WD-3 to WD-2)
+3. WIP/Reconciliation (WD-1)
+4. Final Adjustments (WD 0 to WD+3)
+5. Sign-off (WD+4 to WD+6)
+
+TIME ESTIMATES:
+- Preparation: 1 Day (8 hours)
+- Review: 0.5 Day (4 hours)
+- Approval: 0.5 Day (4 hours)
+
+SCORING: 0.0-1.0 monthly; 0.7 = target success
+RISK TRIGGER: Any KR confidence &lt;40% = risk register escalation</field>
+            <field name="privacy_visibility">employees</field>
+            <field name="allow_milestones">True</field>
+            <field name="allow_task_dependencies">True</field>
+            <field name="type_ids" eval="[(6, 0, [
+                ref('stage_backlog'),
+                ref('stage_preparation'),
+                ref('stage_review'),
+                ref('stage_approval'),
+                ref('stage_done'),
+                ref('stage_blocked'),
+            ])]"/>
+        </record>
+
+        <!-- Project: BIR Tax Filing -->
+        <record id="project_bir_tax_filing" model="project.project">
+            <field name="name">BIR Tax Filing</field>
+            <field name="description">GOAL: 100% on-time BIR tax filing compliance
+
+KEY RESULT:
+- KR2: 6/6 statutory filings before BIR deadlines
+
+WORKFLOW (from Tax Filing sheet):
+1. Preparation: -4 WD (Finance Supervisor - BOM)
+2. Report Approval: -2 WD (Senior Finance Manager - RIM)
+3. Payment Approval: -1 WD (Finance Director - CKVC)
+4. Filing &amp; Payment: 0 WD (Finance Supervisor - BOM)
+
+BIR FORMS:
+- Monthly: 1601-C/0619-E, 2550M
+- Quarterly: 1601-EQ, 2550Q, 1702Q
+- Annual: 1702-RT/EX, 1604-CF, 1604-E</field>
+            <field name="privacy_visibility">employees</field>
+            <field name="allow_milestones">True</field>
+            <field name="allow_task_dependencies">True</field>
+            <field name="type_ids" eval="[(6, 0, [
+                ref('stage_backlog'),
+                ref('stage_preparation'),
+                ref('stage_review'),
+                ref('stage_approval'),
+                ref('stage_done'),
+                ref('stage_blocked'),
+            ])]"/>
+        </record>
+    </data>
+</odoo>

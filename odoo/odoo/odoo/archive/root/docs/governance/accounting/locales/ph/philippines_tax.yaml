@@ -1,0 +1,182 @@
+version: "1.0"
+domain: "accounting"
+locale: "PH"
+extends_track: "tax_compliance"
+
+# Overlay strategy:
+# - add_competencies: PH-specific competencies (new codes)
+# - override_competencies: patch existing base competencies (e.g., TAX-02) with PH notes/evidence/tools
+
+add_competencies:
+  - code: PH-TAX-01
+    name: "BIR calendar management (monthly/quarterly/annual)"
+    why_it_matters: "PH filings are deadline-driven; missed deadlines trigger penalties and client escalations."
+    behaviors:
+      L1:
+        [
+          "Maintains a filing calendar; tracks due dates per entity and tax type.",
+        ]
+      L2:
+        [
+          "Owns the calendar; proactively gathers inputs and validates readiness ahead of deadlines.",
+        ]
+      L3:
+        [
+          "Designs calendar governance with SLAs, escalation paths, and coverage plans.",
+        ]
+    evidence:
+      - "BIR filing calendar (per entity) with owners + due dates"
+      - "Readiness checklist per filing cycle"
+      - "Escalation log + resolution notes"
+    tool_enablers:
+      - "Project/Tasks to manage filing workflows"
+      - "Document management for proof-of-filing artifacts"
+
+  - code: PH-TAX-02
+    name: "VAT operations (PH context)"
+    why_it_matters: "VAT compliance depends on clean invoice/bill data and correct tax mapping across transactions."
+    behaviors:
+      L1:
+        [
+          "Prepares draft VAT workpapers from transaction reports; flags anomalies.",
+        ]
+      L2:
+        [
+          "Validates VAT mappings/rates, exemptions, and period cutoffs; reconciles VAT to GL.",
+        ]
+      L3:
+        [
+          "Defines VAT controls and variance thresholds; leads issue remediation and audit responses.",
+        ]
+    evidence:
+      - "VAT reconciliation (tax ↔ GL ↔ subledger)"
+      - "Variance analysis vs prior periods"
+      - "Mapping/rate configuration notes"
+    tool_enablers:
+      - "Tax reports/returns features"
+      - "Invoice/bill validation rules (where available)"
+    notes:
+      - "BIR Form 2550Q: Quarterly VAT Return (due 25th after quarter-end)"
+      - "Standard VAT rate: 12%"
+      - "TaxPulse-PH-Pack: Automated 2550Q generation from account.move"
+
+  - code: PH-TAX-03
+    name: "Withholding tax certificates & schedules (PH context)"
+    why_it_matters: "Withholding compliance requires traceability: certificates, schedules, and consistent mapping to payments."
+    behaviors:
+      L1:
+        [
+          "Tracks withholding on payments; maintains basic schedules and supporting docs.",
+        ]
+      L2:
+        [
+          "Ensures certificate completeness and ties schedules to GL and payment runs.",
+        ]
+      L3:
+        [
+          "Designs withholding governance (approvals, exception handling, periodic internal audits).",
+        ]
+    evidence:
+      - "Withholding schedules tied to payment batches"
+      - "Certificate request/issuance tracker"
+      - "Exception log with approvals"
+    tool_enablers:
+      - "Payment/bank workflows"
+      - "Attachment indexing (evidence packs)"
+    notes:
+      - "BIR Form 1601-C: Monthly Withholding Tax on Compensation (due 10th of following month)"
+      - "TRAIN Law 2026 tax brackets: ₱20,833/month exempt threshold"
+      - "TaxPulse-PH-Pack: Automated 1601-C from hr.payslip"
+
+  - code: PH-TAX-04
+    name: "e-Filing operational discipline (eBIR/eFPS-style workflows)"
+    why_it_matters: "Operational controls reduce filing failure modes: version drift, missing attachments, wrong entity selection."
+    behaviors:
+      L1:
+        [
+          "Follows filing runbook; captures proof-of-filing artifacts per submission.",
+        ]
+      L2:
+        [
+          "Maintains a filing runbook; validates entity, period, and submission outputs.",
+        ]
+      L3:
+        [
+          "Hardens filing controls; automates artifact capture and audit-defense packaging.",
+        ]
+    evidence:
+      - "Runbook + change log"
+      - "Proof-of-filing archive (per entity/period)"
+      - "Submission failure log + remediation notes"
+    tool_enablers:
+      - "Runbooks stored in repo/knowledge base"
+      - "Automated evidence capture (where applicable)"
+    notes:
+      - "eBIRForms: Offline software for non-eFPS filers (latest: v7.9.5)"
+      - "eFPS: Online system for large taxpayers"
+      - "Mandatory electronic filing per RR No. 6-2014"
+
+  - code: PH-TAX-05
+    name: "Regulatory monitoring & change impact assessment"
+    why_it_matters: "PH compliance changes can invalidate mappings/workpapers; you need controlled updates and client comms."
+    behaviors:
+      L1: ["Tracks known changes; updates checklists when instructed."]
+      L2:
+        [
+          "Assesses impact on processes/mappings; proposes updates with evidence.",
+        ]
+      L3:
+        [
+          "Owns change management; trains team; updates controls and client guidance.",
+        ]
+    evidence:
+      - "Change log (what changed, impact, actions, effective date)"
+      - "Updated workpapers/checklists"
+      - "Training notes or internal bulletin"
+    tool_enablers:
+      - "Policy docs + version control"
+      - "Tasking/workflows for rollout"
+    notes:
+      - "Recent changes: EOPT Act (Jan 22, 2024), RR No. 29-2025 de minimis (Jan 6, 2026)"
+      - "Monitor BIR website for Revenue Regulations and Memorandum Circulars"
+
+  - code: PH-TAX-06
+    name: "TRAIN Law & EOPT Act compliance (2026 updates)"
+    why_it_matters: "Tax computation accuracy depends on current rates, brackets, and penalty rules."
+    behaviors:
+      L1:
+        [
+          "Applies current TRAIN Law tax brackets and de minimis limits in computations.",
+        ]
+      L2:
+        [
+          "Validates taxpayer classification (Micro/Small) for EOPT Act reduced penalties.",
+        ]
+      L3:
+        [
+          "Advises clients on tax optimization opportunities from TRAIN/EOPT provisions.",
+        ]
+    evidence:
+      - "Tax computation workpapers with 2026 rates"
+      - "Taxpayer classification documentation (gross income basis)"
+      - "Client advisory memos on tax optimization"
+    tool_enablers:
+      - "Tax bracket engine (TRAIN Law 2026)"
+      - "Penalty calculator (EOPT Act rates for Micro/Small)"
+      - "De minimis benefits tracker (RR No. 29-2025)"
+    notes:
+      - "TRAIN Law: Tax-exempt up to ₱250,000/year (₱20,833/month)"
+      - "EOPT Act: Micro (<₱3M) 10% surcharge, 6% interest; Small (₱3M-₱20M) same"
+      - "De minimis 2026: Rice ₱2,500/mo, Medical ₱2,000/sem, Uniform ₱8,000/yr"
+
+override_competencies:
+  TAX-02:
+    notes:
+      - "PH overlay: treat this as VAT operations readiness + reconciliation discipline, not just report generation."
+      - "Evidence should include tax↔GL tie-outs and proof-of-filing retention."
+  TAX-03:
+    notes:
+      - "PH overlay: emphasize certificate/schedule traceability tied to payment runs and vendor/customer records."
+  TAX-04:
+    notes:
+      - "PH overlay: audit defense should include proof-of-filing archives and structured evidence indexing per filing cycle."

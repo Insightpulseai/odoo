@@ -1,0 +1,222 @@
+# =============================================================================
+# Odoo Module Governed Pipeline — Skeleton
+# =============================================================================
+# Implements the idea-to-release pipeline contract:
+#   docs/architecture/idea-to-release-pipeline.md
+#
+# Stages: Validate → Test → Package → Stage → Eval → Approve → Deploy → Marketplace
+# =============================================================================
+
+name: odoo-module-$(Date:yyyyMMdd)$(Rev:.r)
+
+trigger: none
+pr: none
+
+parameters:
+  - name: slug
+    type: string
+    default: ""
+  - name: workItemId
+    type: string
+    default: ""
+  - name: moduleName
+    type: string
+    default: ""
+  - name: deployTarget
+    type: string
+    default: "azure_runtime"
+    values:
+      - azure_runtime
+      - odoo_sh
+  - name: aiEnabled
+    type: boolean
+    default: false
+  - name: marketplacePublish
+    type: boolean
+    default: false
+
+variables:
+  specRoot: spec/${{ parameters.slug }}
+  evalRoot: foundry/evals/${{ parameters.slug }}
+  marketplaceRoot: marketplace/odoo/${{ parameters.moduleName }}
+
+stages:
+
+  # ---------------------------------------------------------------------------
+  # Stage 1: Validate metadata and contract inputs
+  # ---------------------------------------------------------------------------
+  - stage: Validate_Metadata
+    displayName: Validate metadata and contract inputs
+    jobs:
+      - job: validate
+        pool:
+          vmImage: ubuntu-latest
+        steps:
+          - checkout: self
+          - script: |
+              test -n "${{ parameters.slug }}"
+              test -n "${{ parameters.workItemId }}"
+              test -n "${{ parameters.moduleName }}"
+            displayName: Validate required parameters
+          - script: |
+              test -f "$(specRoot)/constitution.md"
+              test -f "$(specRoot)/prd.md"
+              test -f "$(specRoot)/plan.md"
+              test -f "$(specRoot)/tasks.md"
+            displayName: Validate Spec Kit bundle exists
+          - script: |
+              if [ "${{ parameters.aiEnabled }}" = "true" ]; then
+                test -f "$(evalRoot)/thresholds.yaml"
+              fi
+            displayName: Validate eval gate file when AI-enabled
+
+  # ---------------------------------------------------------------------------
+  # Stage 2: Lint and test
+  # ---------------------------------------------------------------------------
+  - stage: Lint_And_Test
+    displayName: Lint and test
+    dependsOn: Validate_Metadata
+    jobs:
+      - job: test
+        pool:
+          vmImage: ubuntu-latest
+        steps:
+          - checkout: self
+          - script: echo "TODO: Run L0/L1/L2 tests"
+            displayName: Execute shift-left tests
+          - script: echo "TODO: Publish test evidence"
+            displayName: Publish test summary
+
+  # ---------------------------------------------------------------------------
+  # Stage 3: Package module/release artifact
+  # ---------------------------------------------------------------------------
+  - stage: Package
+    displayName: Package module/release artifact
+    dependsOn: Lint_And_Test
+    jobs:
+      - job: package
+        pool:
+          vmImage: ubuntu-latest
+        steps:
+          - checkout: self
+          - script: echo "TODO: Build/package Odoo release artifact"
+            displayName: Package artifact
+          - publish: $(Build.SourcesDirectory)
+            artifact: release-package
+            displayName: Publish release package
+
+  # ---------------------------------------------------------------------------
+  # Stage 4: Deploy to staging
+  # ---------------------------------------------------------------------------
+  - stage: Deploy_Staging
+    displayName: Deploy to staging
+    dependsOn: Package
+    jobs:
+      - deployment: deploy_staging
+        environment: odoo-staging
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - checkout: self
+                - script: |
+                    if [ "${{ parameters.deployTarget }}" = "odoo_sh" ]; then
+                      echo "TODO: Trigger Odoo.sh staging path"
+                    else
+                      echo "TODO: Trigger Azure staging deployment"
+                    fi
+                  displayName: Deploy staging
+                - script: echo "TODO: Run staging smoke checks"
+                  displayName: Staging validation
+
+  # ---------------------------------------------------------------------------
+  # Stage 5: AI evaluation gate (conditional)
+  # ---------------------------------------------------------------------------
+  - stage: Eval_Gate
+    displayName: AI evaluation gate
+    dependsOn: Deploy_Staging
+    condition: and(succeeded(), eq('${{ parameters.aiEnabled }}', 'true'))
+    jobs:
+      - job: eval
+        pool:
+          vmImage: ubuntu-latest
+        steps:
+          - checkout: self
+          - script: echo "TODO: Run Foundry evals using $(evalRoot)/thresholds.yaml"
+            displayName: Run Foundry eval
+          - script: echo "TODO: Publish eval summary and traces"
+            displayName: Publish eval evidence
+
+  # ---------------------------------------------------------------------------
+  # Stage 6: Production approval
+  # ---------------------------------------------------------------------------
+  - stage: Approve_Production
+    displayName: Production approval
+    dependsOn:
+      - Deploy_Staging
+      - Eval_Gate
+    condition: |
+      or(
+        and(succeeded('Deploy_Staging'), eq('${{ parameters.aiEnabled }}', 'false')),
+        and(succeeded('Deploy_Staging'), succeeded('Eval_Gate'), eq('${{ parameters.aiEnabled }}', 'true'))
+      )
+    jobs:
+      - job: approval
+        pool: server
+        steps:
+          - task: ManualValidation@0
+            inputs:
+              instructions: |
+                Confirm:
+                - linked work item: ${{ parameters.workItemId }}
+                - spec slug: ${{ parameters.slug }}
+                - rollback path exists
+                - bake-time policy exists
+                - staging validation passed
+                - eval gate passed if AI-enabled
+              notifyUsers: ""
+            displayName: Manual production approval
+
+  # ---------------------------------------------------------------------------
+  # Stage 7: Deploy to production
+  # ---------------------------------------------------------------------------
+  - stage: Deploy_Production
+    displayName: Deploy to production
+    dependsOn: Approve_Production
+    jobs:
+      - deployment: deploy_prod
+        environment: odoo-production
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - checkout: self
+                - script: |
+                    if [ "${{ parameters.deployTarget }}" = "odoo_sh" ]; then
+                      echo "TODO: Trigger Odoo.sh production promotion"
+                    else
+                      echo "TODO: Trigger Azure production deployment"
+                    fi
+                  displayName: Deploy production
+                - script: echo "TODO: Run production smoke checks"
+                  displayName: Production validation
+                - script: echo "TODO: Publish deployment evidence"
+                  displayName: Publish production evidence
+
+  # ---------------------------------------------------------------------------
+  # Stage 8: Marketplace readiness (conditional)
+  # ---------------------------------------------------------------------------
+  - stage: Marketplace_Readiness
+    displayName: Marketplace readiness
+    dependsOn: Deploy_Production
+    condition: and(succeeded(), eq('${{ parameters.marketplacePublish }}', 'true'))
+    jobs:
+      - job: marketplace
+        pool:
+          vmImage: ubuntu-latest
+        steps:
+          - checkout: self
+          - script: |
+              test -f "$(marketplaceRoot)/manifest-checklist.md"
+              echo "TODO: Validate marketplace package/listing readiness"
+            displayName: Validate marketplace checklist

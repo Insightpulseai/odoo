@@ -1,0 +1,159 @@
+{
+  "name": "Billing - Subscription Created",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "billing-subscription-created",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "webhook-trigger",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1.1,
+      "position": [200, 300],
+      "webhookId": "billing-subscription-created"
+    },
+    {
+      "parameters": {
+        "content": "=## New Subscription\n\n**Customer:** {{ $json.record.customer_id }}\n**Plan:** {{ $json.record.plan_name }}\n**Status:** {{ $json.record.status }}\n**Amount:** {{ $json.record.unit_price_amount / 100 }} {{ $json.record.currency_code }}"
+      },
+      "id": "slack-notification",
+      "name": "Slack Notification",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2,
+      "position": [600, 200],
+      "credentials": {
+        "slackApi": {
+          "id": "slack-credentials",
+          "name": "Slack API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "={{ $env.ODOO_BASE_URL }}/jsonrpc",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "jsonrpc",
+              "value": "2.0"
+            },
+            {
+              "name": "method",
+              "value": "call"
+            },
+            {
+              "name": "id",
+              "value": "={{ Date.now() }}"
+            },
+            {
+              "name": "params",
+              "value": "={{ JSON.stringify({ service: 'object', method: 'execute_kw', args: [$env.ODOO_DB, $env.ODOO_UID, $env.ODOO_PASSWORD, 'project.task', 'create', [{ name: 'Onboard: ' + $json.record.plan_name + ' Customer', project_id: 1, description: 'New subscription created. Customer ID: ' + $json.record.customer_id }]] }) }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "odoo-create-task",
+      "name": "Create Onboarding Task",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [600, 400],
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ success: true, processed: true }) }}"
+      },
+      "id": "respond-webhook",
+      "name": "Respond to Webhook",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [900, 300]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "boolean": [
+            {
+              "value1": "={{ $json.type }}",
+              "value2": "INSERT"
+            }
+          ]
+        }
+      },
+      "id": "filter-inserts",
+      "name": "Filter Inserts",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [400, 300]
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Filter Inserts",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter Inserts": {
+      "main": [
+        [
+          {
+            "node": "Slack Notification",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Create Onboarding Task",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Slack Notification": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Onboarding Task": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "saveDataSuccessExecution": "all",
+    "saveDataErrorExecution": "all"
+  },
+  "tags": [
+    {
+      "name": "billing"
+    },
+    {
+      "name": "automation"
+    }
+  ]
+}

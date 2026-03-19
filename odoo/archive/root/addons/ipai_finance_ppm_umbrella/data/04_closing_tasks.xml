@@ -1,0 +1,330 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<odoo>
+  <data noupdate="1">
+    <!-- 36 Month-End Closing Tasks with RACI Matrix -->
+    <record id="closing_task_001" model="project.task">
+      <field name="name">Process and record Payroll, Final Pay, SL Conversions, and early retirement accrual.</field>
+      <field name="description">Category: Payroll &amp; Personnel
+Employee: RIM</field>
+      <field name="project_id" ref="ipai_finance_ppm.project_month_end_closing"/>
+      <field name="user_ids" eval="[(4, ref('user_rim'))]"/>
+      <field name="finance_logframe_id" ref="logframe_005_out_01"/>
+      <field name="description"/>
+    </record>
+    <record id="closing_task_002" model="project.task">
+      <field name="name">Calculate and record the monthly Tax Provision and PPB Provision (performance bonuses).</field>
+      <field name="description">Category: Tax &amp; Provisions
+Employee: RIM</field>
+      <field name="project_id" ref="ipai_finance_ppm.project_month_end_closing"/>
+      <field name="user_ids" eval="[(4, ref('user_rim'))]"/>
+      <field name="finance_logframe_id" ref="logframe_006_out_02"/>
+      <field name="description"/>
+    </record>
+    <record id="closing_task_003" model="project.task">
+      <field name="name">Record recurring monthly Rental Income/Expense and monthly amortization expense for employee hospitalization plans.</field>
+      <field name="description">Category: Rent &amp; Leases
+Employee: RIM</field>
+      <field name="project_id" ref="ipai_finance_ppm.project_month_end_closing"/>
+      <field name="user_ids" eval="[(4, ref('user_rim'))]"/>
+      <field name="finance_logframe_id" ref="logframe_007_out_03"/>
+      <field name="description"/>
+    </record>
+    <record id="closing_task_004" model="project.task">
+      <field name="name">Record accruals for Consultancy Fees and various routine General Expense Accruals.Estimated expense for which a vendor invoice has not yet been received.</field>
+      <field name="description">Category: Accruals &amp; Expenses
+Employee: RIM</field>
+      <field name="project_id" ref="ipai_finance_ppm.project_month_end_closing"/>
+      <field name="user_ids" eval="[(4, ref('user_rim'))]"/>
+      <field name="finance_logframe_id" ref="logframe_008_out_04"/>
+      <field name="description"/>
+    </record>
+    <record id="closing_task_005" model="project.task">
+      <field name="name">Process and record Payments for various Cash Advances. Recording the funding/issuance of cash to employees for expected business expenditures.</field>
+      <field name="description">Category: General
+Employee: RIM</field>
+      <field name="project_id" ref="ipai_finance_ppm.project_month_end_closing"/>
+      <field name="user_ids" eval="[(4, ref('user_rim'))]"/>
+      <field name="finance_logframe_id" ref="logframe_003_im1"/>
+      <field name="description"/>
+    </record>
+    <record id="closing_task_006" model="project.task">
+      <field name="name">The necessary reversal or adjustment of temporary journal entries created in a previous month. Process reversal entries for the prior month's accruals and reclassifications.</field>
+      <field name="description">Category: Prior Period Review
+Employee: RIM</field>
+      <field name="project_id" ref="ipai_finance_ppm.project_month_end_closing"/>
+      <field name="user_ids" eval="[(4, ref('user_rim'))]"/>
+      <field name="finance_logframe_id" ref="logframe_005_out_01"/>
+      <field name="description"/>
+    </record>
+    <record id="closing_task_007" model="project.task">
+      <field name="name">Allocating prepaid expenses and capital costs over time to reflect true monthly resource consumption. Record monthly Depreciation, Amortization for vehicles/purchases/LOA, and Amortization for all technology licenses and shared service costs.</field>
+      <field name="description">Category: Amortization &amp; Corporate
+Employee: BOM</field>
+      <field name="project_id" ref="ipai_finance_ppm.project_month_end_closing"/>
+      <field name="user_ids" eval="[(4, ref('user_bom'))]"/>
+      <field name="finance_logframe_id" ref="logframe_006_out_02"/>
+      <field name="description"/>
+    </record>
+    <record id="closing_task_008" model="project.task">
+      <field name="name">Accrue monthly expenses for Management and Royalty fees, consulting fees, and funds for Innovations/Initiatives. Brief Detail: Recognizing an expense for internal projects or strategic corporate investments not yet formally invoiced.</field>
+      <field name="description">Category: Corporate Accruals
+Employee: BOM</field>
+      <field name="project_id" ref="ipai_finance_ppm.project_month_end_closing"/>
+      <field name="user_ids" eval="[(4, ref('user_bom'))]"/>
+      <field name="finance_logframe_id" ref="logframe_007_out_03"/>
+      <field name="description"/>
+    </record>
+    <record id="closing_task_009" model="project.task">
+      <field name="name">Monthly tracking and recording of premiums for various corporate insurance policies. Record monthly accrual for various Corporate Insurance types and amortize prepaid Health Insurance.</field>
+      <field name="description">Category: Insurance
+Employee: BOM</field>
+      <field name="project_id" ref="ipai_finance_ppm.project_month_end_closing"/>
+      <field name="user_ids" eval="[(4, ref('user_bom'))]"/>
+      <field name="finance_logframe_id" ref="logframe_008_out_04"/>
+      <field name="description"/>
+    </record>
+    <record id="closing_task_010" model="project.task">
+      <field name="name">Non-operating financial activities including capital structure and compliance. Record monthly bank charges, perform revaluation of foreign currency bank accounts, and record the monthly expense portion of the Omnicom stock option grant.</field>
+      <field name="description">Category: Treasury &amp; Other
+Employee: BOM</field>
+      <field name="project_id" ref="ipai_finance_ppm.project_month_end_closing"/>
+      <field name="user_ids" eval="[(4, ref('user_bom'))]"/>
+      <field name="finance_logframe_id" ref="logframe_005_out_01"/>
+      <field name="description"/>
+    </record>
+    <record id="closing_task_011" model="project.task">
+      <field name="name">Process reversal entries for all prior month Accruals (e.g., trainings, production/retainers).</field>
+      <field name="description">Category: Prior Period Review
+Employee: BOM</field>
+      <field name="project_id" ref="ipai_finance_ppm.project_month_end_closing"/>
+      <field name="user_ids" eval="[(4, ref('user_bom'))]"/>
+      <field name="finance_logframe_id" ref="logframe_005_out_01"/>
+      <field name="description"/>
+    </record>
+    <record id="closing_task_012" model="project.task">
+      <field name="name">Prepare reports for Flash, Wins &amp; Losses and Revenue.</field>
+      <field name="description">Category: Regional Reporting
+Employee: BOM</field>
+      <field name="project_id" ref="ipai_finance_ppm.project_month_end_closing"/>
+      <field name="user_ids" eval="[(4, ref('user_bom'))]"/>
+      <field name="finance_logframe_id" ref="logframe_006_out_02"/>
+      <field name="description"/>
+    </record>
+    <record id="closing_task_013" model="project.task">
+      <field name="name">Recognizing revenue and billable costs based on client contracts and project status. Accrue estimated Production, Retainer Fees, Media Commission, Creative Fees, and OOPC. Recording estimated Out-of-Pocket Costs that will eventually be billed to a client.</field>
+      <field name="description">Category: Client Billings
+Employee: JPAL</field>
+      <field name="project_id" ref="ipai_finance_ppm.project_month_end_closing"/>
+      <field name="user_ids" eval="[(4, ref('user_jpal'))]"/>
+      <field name="finance_logframe_id" ref="logframe_007_out_03"/>
+      <field name="description"/>
+    </record>
+    <record id="closing_task_014" model="project.task">
+      <field name="name">Reconciling and reclassifying costs to ensure they are correctly categorized as billable (WIP) or internal (OOP). Perform month-end Reclassifications of OOP to WIP (moves client-related expenses to an active project account) and necessary Reclass WIP to OOP (moves costs back if non-billable).</field>
+      <field name="description">Category: WIP/OOP Management
+Employee: JPAL</field>
+      <field name="project_id" ref="ipai_finance_ppm.project_month_end_closing"/>
+      <field name="user_ids" eval="[(4, ref('user_jpal'))]"/>
+      <field name="finance_logframe_id" ref="logframe_008_out_04"/>
+      <field name="description"/>
+    </record>
+    <record id="closing_task_015" model="project.task">
+      <field name="name">Allocating prepaid expenses and capital costs over time to reflect true monthly resource consumption. Record monthly Amortization of the Business Permit and Amortization of LOA.</field>
+      <field name="description">Category: Amortization &amp; Corporate
+Employee: JPAL</field>
+      <field name="project_id" ref="ipai_finance_ppm.project_month_end_closing"/>
+      <field name="user_ids" eval="[(4, ref('user_jpal'))]"/>
+      <field name="finance_logframe_id" ref="logframe_006_out_02"/>
+      <field name="description"/>
+    </record>
+    <record id="closing_task_016" model="project.task">
+      <field name="name">Accrue estimated monthly Audit Fees.</field>
+      <field name="description">Category: General
+Employee: JPAL</field>
+      <field name="project_id" ref="ipai_finance_ppm.project_month_end_closing"/>
+      <field name="user_ids" eval="[(4, ref('user_jpal'))]"/>
+      <field name="finance_logframe_id" ref="logframe_003_im1"/>
+      <field name="description"/>
+    </record>
+    <record id="closing_task_017" model="project.task">
+      <field name="name">Record monthly Rental Expense/Income related to intercompany transactions.</field>
+      <field name="description">Category: General
+Employee: JPAL</field>
+      <field name="project_id" ref="ipai_finance_ppm.project_month_end_closing"/>
+      <field name="user_ids" eval="[(4, ref('user_jpal'))]"/>
+      <field name="finance_logframe_id" ref="logframe_003_im1"/>
+      <field name="description"/>
+    </record>
+    <record id="closing_task_018" model="project.task">
+      <field name="name">Perform month-end Revaluation of Intercompany Balances. Adjusting intercompany balances to reflect the correct value at the month-end exchange rate.</field>
+      <field name="description">Category: General
+Employee: JPAL</field>
+      <field name="project_id" ref="ipai_finance_ppm.project_month_end_closing"/>
+      <field name="user_ids" eval="[(4, ref('user_jpal'))]"/>
+      <field name="finance_logframe_id" ref="logframe_003_im1"/>
+      <field name="description"/>
+    </record>
+    <record id="closing_task_019" model="project.task">
+      <field name="name">Prepare reports for Working Captital related to AR</field>
+      <field name="description">Category: AR Aging - WC
+Employee: JPAL</field>
+      <field name="project_id" ref="ipai_finance_ppm.project_month_end_closing"/>
+      <field name="user_ids" eval="[(4, ref('user_jpal'))]"/>
+      <field name="finance_logframe_id" ref="logframe_003_im1"/>
+      <field name="description"/>
+    </record>
+    <record id="closing_task_020" model="project.task">
+      <field name="name">Process and record Cash Advance (CA) Liquidations for specific project-related expenses.</field>
+      <field name="description">Category: CA Liquidations
+Employee: LAS</field>
+      <field name="project_id" ref="ipai_finance_ppm.project_month_end_closing"/>
+      <field name="user_ids" eval="[(4, ref('user_las'))]"/>
+      <field name="finance_logframe_id" ref="logframe_003_im1"/>
+      <field name="description"/>
+    </record>
+    <record id="closing_task_021" model="project.task">
+      <field name="name">Prepare AP Aging report for working captital submission</field>
+      <field name="description">Category: AP Aging - WC
+Employee: LAS</field>
+      <field name="project_id" ref="ipai_finance_ppm.project_month_end_closing"/>
+      <field name="user_ids" eval="[(4, ref('user_las'))]"/>
+      <field name="finance_logframe_id" ref="logframe_003_im1"/>
+      <field name="description"/>
+    </record>
+    <record id="closing_task_022" model="project.task">
+      <field name="name">Prepare HOW's summary report</field>
+      <field name="description">Category: OOP
+Employee: LAS</field>
+      <field name="project_id" ref="ipai_finance_ppm.project_month_end_closing"/>
+      <field name="user_ids" eval="[(4, ref('user_las'))]"/>
+      <field name="finance_logframe_id" ref="logframe_003_im1"/>
+      <field name="description"/>
+    </record>
+    <record id="closing_task_023" model="project.task">
+      <field name="name">Recording transactions for financed assets and long-term commitments. Record monthly interest expense on leased assets and process amortization reclassifications for prepaid corporate fees.</field>
+      <field name="description">Category: Asset &amp; Lease Entries
+Employee: LAS</field>
+      <field name="project_id" ref="ipai_finance_ppm.project_month_end_closing"/>
+      <field name="user_ids" eval="[(4, ref('user_las'))]"/>
+      <field name="finance_logframe_id" ref="logframe_003_im1"/>
+      <field name="description"/>
+    </record>
+    <record id="closing_task_024" model="project.task">
+      <field name="name">Correcting entries across the general ledger (GL). Process required reclassifications between specific GL accounts and between Marketing Expense categories.</field>
+      <field name="description">Category: Reclassifications
+Employee: LAS</field>
+      <field name="project_id" ref="ipai_finance_ppm.project_month_end_closing"/>
+      <field name="user_ids" eval="[(4, ref('user_las'))]"/>
+      <field name="finance_logframe_id" ref="logframe_003_im1"/>
+      <field name="description"/>
+    </record>
+    <record id="closing_task_025" model="project.task">
+      <field name="name">Compile and record monthly Input VAT entries (VAT paid on purchases) and the monthly VAT Report (cumulative summary of VAT activity).</field>
+      <field name="description">Category: VAT &amp; Taxes
+Employee: JLI</field>
+      <field name="project_id" ref="ipai_finance_ppm.project_month_end_closing"/>
+      <field name="user_ids" eval="[(4, ref('user_jli'))]"/>
+      <field name="finance_logframe_id" ref="logframe_003_im1"/>
+      <field name="description"/>
+    </record>
+    <record id="closing_task_026" model="project.task">
+      <field name="name">Recording estimated expenses for recurring monthly costs and recognizing non-fixed asset costs. Accrue recurring Expenses (estimated expense for regularly occurring services).</field>
+      <field name="description">Category: Accruals &amp; Assets
+Employee: JLI</field>
+      <field name="project_id" ref="ipai_finance_ppm.project_month_end_closing"/>
+      <field name="user_ids" eval="[(4, ref('user_jli'))]"/>
+      <field name="finance_logframe_id" ref="logframe_003_im1"/>
+      <field name="description"/>
+    </record>
+    <record id="closing_task_027" model="project.task">
+      <field name="name">Record the monthly recognition/capitalization of Other Computer Related Costs.</field>
+      <field name="description">Category: General
+Employee: JLI</field>
+      <field name="project_id" ref="ipai_finance_ppm.project_month_end_closing"/>
+      <field name="user_ids" eval="[(4, ref('user_jli'))]"/>
+      <field name="finance_logframe_id" ref="logframe_003_im1"/>
+      <field name="description"/>
+    </record>
+    <record id="closing_task_028" model="project.task">
+      <field name="name">Prepare AP Aging report with detailed status per invoice.</field>
+      <field name="description">Category: AP Aging
+Employee: JLI</field>
+      <field name="project_id" ref="ipai_finance_ppm.project_month_end_closing"/>
+      <field name="user_ids" eval="[(4, ref('user_jli'))]"/>
+      <field name="finance_logframe_id" ref="logframe_003_im1"/>
+      <field name="description"/>
+    </record>
+    <record id="closing_task_029" model="project.task">
+      <field name="name">Process and record Cash Advance (CA) Liquidations submitted by employees.</field>
+      <field name="description">Category: CA Liquidations
+Employee: RMQB</field>
+      <field name="project_id" ref="ipai_finance_ppm.project_month_end_closing"/>
+      <field name="user_ids" eval="[(4, ref('user_rmqb'))]"/>
+      <field name="finance_logframe_id" ref="logframe_003_im1"/>
+      <field name="description"/>
+    </record>
+    <record id="closing_task_030" model="project.task">
+      <field name="name">Accrue monthly expense for Employee Cellphone Allowance</field>
+      <field name="description">Category: Accruals &amp; Assets
+Employee: RMQB</field>
+      <field name="project_id" ref="ipai_finance_ppm.project_month_end_closing"/>
+      <field name="user_ids" eval="[(4, ref('user_rmqb'))]"/>
+      <field name="finance_logframe_id" ref="logframe_003_im1"/>
+      <field name="description"/>
+    </record>
+    <record id="closing_task_031" model="project.task">
+      <field name="name">Adjusting a recorded expense from one GL account to another to ensure correct reporting. Process reclassifications to correct expense categories (e.g., General Expense to Wireless and Meals).</field>
+      <field name="description">Category: Expense Reclassification
+Employee: RMQB</field>
+      <field name="project_id" ref="ipai_finance_ppm.project_month_end_closing"/>
+      <field name="user_ids" eval="[(4, ref('user_rmqb'))]"/>
+      <field name="finance_logframe_id" ref="logframe_003_im1"/>
+      <field name="description"/>
+    </record>
+    <record id="closing_task_032" model="project.task">
+      <field name="name">Compile, review, and record the monthly VAT Report (Initial and additional entries).</field>
+      <field name="description">Category: VAT Reporting
+Employee: JAP</field>
+      <field name="project_id" ref="ipai_finance_ppm.project_month_end_closing"/>
+      <field name="user_ids" eval="[(4, ref('user_jap'))]"/>
+      <field name="finance_logframe_id" ref="logframe_003_im1"/>
+      <field name="description"/>
+    </record>
+    <record id="closing_task_033" model="project.task">
+      <field name="name">Adjusting costs or revenues between different internal project codes or job numbers. Process and record Transfers of Job Codes for consultancy fees and corporate projects.</field>
+      <field name="description">Category: Job Transfers
+Employee: JAP</field>
+      <field name="project_id" ref="ipai_finance_ppm.project_month_end_closing"/>
+      <field name="user_ids" eval="[(4, ref('user_jap'))]"/>
+      <field name="finance_logframe_id" ref="logframe_003_im1"/>
+      <field name="description"/>
+    </record>
+    <record id="closing_task_034" model="project.task">
+      <field name="name">Record specific GL reclassifications needed for month-end adjustments</field>
+      <field name="description">Category: General
+Employee: JAP</field>
+      <field name="project_id" ref="ipai_finance_ppm.project_month_end_closing"/>
+      <field name="user_ids" eval="[(4, ref('user_jap'))]"/>
+      <field name="finance_logframe_id" ref="logframe_003_im1"/>
+      <field name="description"/>
+    </record>
+    <record id="closing_task_035" model="project.task">
+      <field name="name">Compile documents for the attachment of the revenue accruals.</field>
+      <field name="description">Category: Accruals
+Employee: JRMO</field>
+      <field name="project_id" ref="ipai_finance_ppm.project_month_end_closing"/>
+      <field name="user_ids" eval="[(4, ref('user_jrmo'))]"/>
+      <field name="finance_logframe_id" ref="logframe_003_im1"/>
+      <field name="description"/>
+    </record>
+    <record id="closing_task_036" model="project.task">
+      <field name="name">Prepare WIP schedule summary per Job#</field>
+      <field name="description">Category: WIP
+Employee: JRMO</field>
+      <field name="project_id" ref="ipai_finance_ppm.project_month_end_closing"/>
+      <field name="user_ids" eval="[(4, ref('user_jrmo'))]"/>
+      <field name="finance_logframe_id" ref="logframe_003_im1"/>
+      <field name="description"/>
+    </record>
+  </data>
+</odoo>

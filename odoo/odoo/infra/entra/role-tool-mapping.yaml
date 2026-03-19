@@ -1,0 +1,232 @@
+# Role-Tool Mapping — InsightPulseAI
+#
+# Runtime lookup table: the backend reads this to compute `permitted_tools`
+# and `retrieval_scope` from the Entra token `roles` claim.
+#
+# The context envelope builder resolves the union of all tools/scopes
+# across the user's assigned roles, then intersects with entity scope.
+#
+# Reference: infra/docs/architecture/CONTEXT_AND_RBAC_MODEL.md
+# Generated UUIDs: infra/entra/app-roles-manifest.json
+
+---
+version: "1.0.0"
+last_updated: "2026-03-15"
+
+# Permitted modes:
+#   PROD-ADVISORY  — read-only, search, advisory responses
+#   PROD-ACTION    — transactional operations with confirmation
+
+role_mappings:
+
+  # --- Product roles ---
+  product.viewer:
+    permitted_tools:
+      - read_record
+      - search_docs
+    retrieval_scope:
+      - general-kb
+      - product-kb
+    permitted_modes:
+      - PROD-ADVISORY
+
+  product.operator:
+    permitted_tools:
+      - read_record
+      - search_docs
+      - create_draft_product
+      - update_product
+    retrieval_scope:
+      - general-kb
+      - product-kb
+    permitted_modes:
+      - PROD-ADVISORY
+      - PROD-ACTION
+
+  # --- Finance roles ---
+  finance.close.operator:
+    permitted_tools:
+      - read_finance_close
+      - create_close_task_draft
+      - read_record
+      - search_docs
+      - create_draft_invoice
+    retrieval_scope:
+      - finance-close-kb
+      - bir-compliance
+    permitted_modes:
+      - PROD-ADVISORY
+      - PROD-ACTION
+
+  finance.close.approver:
+    permitted_tools:
+      - read_finance_close
+      - create_close_task_draft
+      - approve_close_task
+      - read_record
+      - search_docs
+      - create_draft_invoice
+    retrieval_scope:
+      - finance-close-kb
+      - bir-compliance
+      - audit-evidence
+    permitted_modes:
+      - PROD-ADVISORY
+      - PROD-ACTION
+
+  finance.viewer:
+    permitted_tools:
+      - read_finance_close
+      - read_record
+      - search_docs
+    retrieval_scope:
+      - finance-close-kb
+      - bir-compliance
+    permitted_modes:
+      - PROD-ADVISORY
+
+  # --- Marketing roles ---
+  marketing.manager:
+    permitted_tools:
+      - view_campaign_perf
+      - read_record
+      - search_docs
+      - search_strategy_docs
+      - create_draft_campaign
+      - update_campaign
+    retrieval_scope:
+      - marketing-playbooks
+      - general-kb
+    permitted_modes:
+      - PROD-ADVISORY
+      - PROD-ACTION
+
+  marketing.viewer:
+    permitted_tools:
+      - view_campaign_perf
+      - read_record
+      - search_docs
+    retrieval_scope:
+      - marketing-playbooks
+      - general-kb
+    permitted_modes:
+      - PROD-ADVISORY
+
+  # --- Media/Retail roles ---
+  media.ops:
+    permitted_tools:
+      - read_record
+      - search_docs
+      - manage_media_assets
+      - update_media_workflow
+    retrieval_scope:
+      - media-ops-kb
+      - general-kb
+    permitted_modes:
+      - PROD-ADVISORY
+      - PROD-ACTION
+
+  retail.operator:
+    permitted_tools:
+      - read_record
+      - search_docs
+      - create_draft_order
+      - confirm_order
+      - manage_inventory
+    retrieval_scope:
+      - retail-ops-kb
+      - general-kb
+    permitted_modes:
+      - PROD-ADVISORY
+      - PROD-ACTION
+
+  # --- Analytics roles ---
+  analytics.viewer:
+    permitted_tools:
+      - read_record
+      - search_docs
+      - view_dashboard
+    retrieval_scope:
+      - analytics-kb
+      - general-kb
+    permitted_modes:
+      - PROD-ADVISORY
+
+  analytics.admin:
+    permitted_tools:
+      - read_record
+      - search_docs
+      - view_dashboard
+      - configure_dashboard
+      - manage_data_source
+    retrieval_scope:
+      - analytics-kb
+      - general-kb
+    permitted_modes:
+      - PROD-ADVISORY
+      - PROD-ACTION
+
+  # --- Copilot roles ---
+  copilot.advisory:
+    permitted_tools:
+      - read_record
+      - search_docs
+    retrieval_scope:
+      - general-kb
+    permitted_modes:
+      - PROD-ADVISORY
+
+  copilot.action:
+    permitted_tools:
+      - read_record
+      - search_docs
+      - create_draft_invoice
+      - create_draft_order
+      - confirm_order
+      - change_operational_state
+    retrieval_scope:
+      - general-kb
+    permitted_modes:
+      - PROD-ADVISORY
+      - PROD-ACTION
+
+  # --- Operations roles ---
+  ops.admin:
+    permitted_tools:
+      - read_record
+      - search_docs
+      - change_operational_state
+      - manage_deployment
+      - view_infrastructure
+    retrieval_scope:
+      - ops-kb
+      - infrastructure-kb
+      - general-kb
+    permitted_modes:
+      - PROD-ADVISORY
+      - PROD-ACTION
+
+  ops.viewer:
+    permitted_tools:
+      - read_record
+      - search_docs
+      - view_infrastructure
+    retrieval_scope:
+      - ops-kb
+      - infrastructure-kb
+      - general-kb
+    permitted_modes:
+      - PROD-ADVISORY
+
+# ---------------------------------------------------------------------------
+# Resolution rules (implemented by the context envelope builder):
+#
+# 1. permitted_tools = union of tools across all assigned roles
+# 2. retrieval_scope = union of scopes across all assigned roles
+# 3. permitted_modes = union of modes across all assigned roles
+# 4. If no roles assigned: permitted_tools=[], retrieval_scope=[], mode=PROD-ADVISORY
+# 5. Entity scope (company_id, operating_entity_ids) is intersected AFTER
+#    role resolution — a tool may be permitted but scoped to specific entities.
+# 6. copilot.action without a domain-specific action role (e.g., finance.close.operator)
+#    still permits generic actions but NOT domain-specific ones like approve_close_task.
+# ---------------------------------------------------------------------------

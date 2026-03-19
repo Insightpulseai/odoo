@@ -1,0 +1,74 @@
+name: supabase-pr-checks
+
+on:
+  pull_request:
+    paths:
+      - "supabase/**"
+      - ".github/workflows/supabase-*.yml"
+      - "package.json"
+      - "package-lock.json"
+
+jobs:
+  local-stack-smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Setup Node
+        uses: actions/setup-node@v6
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Install deps
+        run: npm ci
+
+      - name: Install Supabase CLI
+        run: npx supabase --version
+
+      - name: Start Supabase local stack
+        run: |
+          npx supabase start
+          npx supabase status
+
+      - name: Basic DB connectivity check
+        run: |
+          npx supabase status -o env > .sb.env
+          cat .sb.env | sed -E 's/(SERVICE_ROLE_KEY|ANON_KEY|JWT_SECRET)=.*/\1=REDACTED/' || true
+          set -a
+          source .sb.env
+          set +a
+          docker ps --format 'table {{.Names}}\t{{.Status}}'
+
+      - name: Validate migrations
+        run: |
+          # Check that migrations can be applied cleanly
+          npx supabase db reset --debug 2>&1 || exit 1
+          echo "Migrations applied successfully"
+
+      - name: Stop local stack
+        if: always()
+        run: npx supabase stop
+
+  edge-functions-typecheck:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Setup Deno
+        uses: denoland/setup-deno@v2
+        with:
+          deno-version: v1.x
+
+      - name: Type check Edge Functions
+        run: |
+          for fn_dir in supabase/functions/*/; do
+            if [ -f "${fn_dir}index.ts" ]; then
+              echo "Checking ${fn_dir}..."
+              deno check --allow-import "${fn_dir}index.ts" || exit 1
+            fi
+          done

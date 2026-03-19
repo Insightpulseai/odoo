@@ -1,0 +1,54 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "environment": {
+      "value": "dev"
+    },
+    "baseName": {
+      "value": "notion-ppm"
+    },
+    "databricksTier": {
+      "value": "standard"
+    },
+    "appServiceSku": {
+      "value": "B1"
+    },
+    "enableFrontDoor": {
+      "value": false
+    },
+    "enableApim": {
+      "value": false
+    },
+    "enableVnet": {
+      "value": true
+    },
+    "enableLogAnalytics": {
+      "value": true
+    },
+    "enableAzureFiles": {
+      "value": true
+    },
+    "enableOdooServices": {
+      "value": true
+    },
+    "odooAcaEnvironmentName": {
+      "value": "ipai-odoo-dev-env"
+    },
+    "odooContainerRegistryServer": {
+      "value": "cripaidev.azurecr.io"
+    },
+    "odooManagedIdentityResourceId": {
+      "value": ""
+    },
+    "odooKeyVaultName": {
+      "value": "ipai-odoo-dev-kv"
+    },
+    "odooPostgresHost": {
+      "value": "ipai-odoo-dev-pg.postgres.database.azure.com"
+    },
+    "odooPostgresDb": {
+      "value": "odoo"
+    }
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "name": "@insightpulse/sync-scripts",
+  "version": "1.0.0",
+  "description": "Bidirectional sync scripts for InsightPulse",
+  "type": "commonjs",
+  "scripts": {
+    "sync:all": "node sync-all.js",
+    "sync:spec-to-prisma": "node spec-to-prisma.js",
+    "sync:schema-to-openapi": "node schema-to-openapi.js",
+    "sync:schema-to-docs": "node schema-to-docs.js",
+    "sync:docs-to-kb": "node docs-to-kb.js",
+    "sync:tree": "node generate-tree.js",
+    "sync:sitemap": "node generate-sitemap.js",
+    "watch": "node watch.js"
+  },
+  "dependencies": {
+    "glob": "^10.3.10",
+    "js-yaml": "^4.1.0",
+    "chokidar": "^3.5.3"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

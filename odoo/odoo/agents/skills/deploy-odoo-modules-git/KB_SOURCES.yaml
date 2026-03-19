@@ -1,0 +1,7 @@
+version: 1
+skill_id: deploy-odoo-modules-git
+kb:
+  - kb_root: docs/kb/odoo19
+    topics:
+      - odoo19.admin.odoo_sh
+    required: true

@@ -1,0 +1,58 @@
+version: 1
+namespace: ipai.ops_platform.foundry.agent_registry.v1
+artifact_type: registry
+repo_key: ops_platform
+domain: foundry
+subject: agent_registry
+
+agents:
+  - agent_key: odoo_finance_assistant
+    name: Odoo Finance Assistant
+    owner_repo: agents
+    runtime: agent_service
+    sdk_mode: foundry_sdk
+    model_alias: chat_default
+    tools:
+      - odoo_actions
+      - sharepoint_grounding
+    knowledge:
+      - finance_policies
+    promotion_state: draft
+    environment_bindings:
+      dev: true
+      staging: false
+      prod: false
+
+  - agent_key: odoo_doc_review_agent
+    name: Odoo Document Review Agent
+    owner_repo: agents
+    runtime: agent_service
+    sdk_mode: foundry_sdk
+    model_alias: chat_default
+    tools:
+      - document_intelligence
+      - odoo_actions
+    knowledge:
+      - finance_policies
+      - operating_sops
+    promotion_state: draft
+    environment_bindings:
+      dev: true
+      staging: false
+      prod: false
+
+  - agent_key: odoo_close_assistant
+    name: Odoo Close Assistant
+    owner_repo: agents
+    runtime: agent_service
+    sdk_mode: foundry_sdk
+    model_alias: reasoning_default
+    tools:
+      - odoo_actions
+    knowledge:
+      - finance_policies
+    promotion_state: draft
+    environment_bindings:
+      dev: true
+      staging: false
+      prod: false

@@ -1,0 +1,15 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_ipai_client_brand_user,ipai.client.brand.user,model_ipai_client_brand,base.group_user,1,0,0,0
+access_ipai_client_brand_manager,ipai.client.brand.manager,model_ipai_client_brand,sales_team.group_sale_manager,1,1,1,1
+access_ipai_campaign_user,ipai.campaign.user,model_ipai_campaign,base.group_user,1,1,1,0
+access_ipai_campaign_manager,ipai.campaign.manager,model_ipai_campaign,sales_team.group_sale_manager,1,1,1,1
+access_ipai_creative_brief_user,ipai.creative.brief.user,model_ipai_creative_brief,base.group_user,1,1,1,0
+access_ipai_creative_brief_manager,ipai.creative.brief.manager,model_ipai_creative_brief,sales_team.group_sale_manager,1,1,1,1
+access_ipai_asset_user,ipai.asset.user,model_ipai_asset,base.group_user,1,1,1,0
+access_ipai_asset_manager,ipai.asset.manager,model_ipai_asset,sales_team.group_sale_manager,1,1,1,1
+access_ipai_approval_cycle_user,ipai.approval.cycle.user,model_ipai_approval_cycle,base.group_user,1,1,1,0
+access_ipai_approval_cycle_manager,ipai.approval.cycle.manager,model_ipai_approval_cycle,sales_team.group_sale_manager,1,1,1,1
+access_ipai_content_calendar_item_user,ipai.content.calendar.item.user,model_ipai_content_calendar_item,base.group_user,1,1,1,0
+access_ipai_content_calendar_item_manager,ipai.content.calendar.item.manager,model_ipai_content_calendar_item,sales_team.group_sale_manager,1,1,1,1
+access_ipai_performance_snapshot_user,ipai.performance.snapshot.user,model_ipai_performance_snapshot,base.group_user,1,1,1,0
+access_ipai_performance_snapshot_manager,ipai.performance.snapshot.manager,model_ipai_performance_snapshot,sales_team.group_sale_manager,1,1,1,1

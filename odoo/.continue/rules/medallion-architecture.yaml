@@ -1,0 +1,257 @@
+# Continue Rules for Medallion Architecture Patterns
+# Enforces bronze/silver/gold data lake conventions
+
+name: medallion-architecture
+description: Rules for maintaining medallion (bronze/silver/gold) architecture patterns
+version: 1.0.0
+
+rules:
+  # ============================================================================
+  # BRONZE LAYER RULES
+  # ============================================================================
+
+  - id: bronze-raw-data
+    description: Bronze layer should store raw, unmodified data
+    paths:
+      - "infra/databricks/notebooks/bronze/**/*.py"
+      - "**/bronze/**/*.py"
+    severity: error
+    patterns:
+      - "\\.withColumn\\("
+      - "\\.select\\("
+      - "CASE\\s+WHEN"
+    excludePatterns:
+      - "_extracted_at"
+      - "_source"
+      - "_raw_json"
+    message: |
+      Bronze layer should contain raw data with minimal transformations.
+      Only add metadata columns (_extracted_at, _source, _raw_json).
+      Move business logic transformations to silver layer.
+
+  - id: bronze-metadata-columns
+    description: Bronze tables must include extraction metadata
+    paths:
+      - "infra/databricks/notebooks/bronze/**/*.py"
+    severity: error
+    patterns:
+      - "\\.write"
+      - "CREATE TABLE"
+    requirePatterns:
+      - "_extracted_at"
+      - "_source"
+    message: |
+      Bronze tables must include metadata columns:
+      - _extracted_at: Timestamp of extraction
+      - _source: Source system identifier
+      - _raw_json: Optional raw JSON for debugging
+
+  - id: bronze-idempotent-writes
+    description: Bronze writes should be idempotent
+    paths:
+      - "infra/databricks/notebooks/bronze/**/*.py"
+    severity: warning
+    patterns:
+      - "\\.write\\.mode"
+    requirePatterns:
+      - "append"
+      - "MERGE"
+    message: |
+      Bronze writes should be idempotent. Use append mode with
+      deduplication logic or MERGE with proper key matching.
+
+  # ============================================================================
+  # SILVER LAYER RULES
+  # ============================================================================
+
+  - id: silver-cleaned-data
+    description: Silver layer should contain cleaned, normalized data
+    paths:
+      - "infra/databricks/notebooks/silver/**/*.py"
+      - "**/silver/**/*.py"
+    severity: info
+    patterns:
+      - "SELECT\\s+\\*"
+      - "\\.select\\(\\\"\\*\\\"\\)"
+    message: |
+      Silver layer should explicitly select and transform columns.
+      Avoid SELECT * - define explicit column lists with proper types.
+
+  - id: silver-typed-columns
+    description: Silver tables should have strongly typed columns
+    paths:
+      - "infra/databricks/notebooks/silver/**/*.py"
+    severity: warning
+    patterns:
+      - "StringType\\(\\)"
+    requirePatterns:
+      - "cast\\("
+      - "IntegerType"
+      - "DoubleType"
+      - "TimestampType"
+    message: |
+      Silver tables should have proper column types.
+      Cast string columns to appropriate types (int, double, timestamp, date).
+
+  - id: silver-null-handling
+    description: Silver layer should handle null values
+    paths:
+      - "infra/databricks/notebooks/silver/**/*.py"
+    severity: warning
+    patterns:
+      - "\\.withColumn\\("
+      - "SELECT"
+    requirePatterns:
+      - "COALESCE"
+      - "IFNULL"
+      - "coalesce"
+      - "fillna"
+      - "na\\.fill"
+    message: |
+      Silver layer should explicitly handle null values.
+      Use COALESCE, IFNULL, or fillna() to provide defaults where appropriate.
+
+  - id: silver-deduplication
+    description: Silver tables should be deduplicated
+    paths:
+      - "infra/databricks/notebooks/silver/**/*.py"
+    severity: warning
+    patterns:
+      - "FROM.*bronze"
+      - "read.*bronze"
+    requirePatterns:
+      - "DISTINCT"
+      - "ROW_NUMBER"
+      - "dropDuplicates"
+      - "distinct\\(\\)"
+    message: |
+      Silver layer should deduplicate records from bronze.
+      Use ROW_NUMBER() with window functions or dropDuplicates().
+
+  # ============================================================================
+  # GOLD LAYER RULES
+  # ============================================================================
+
+  - id: gold-business-logic
+    description: Gold layer contains business-ready aggregations
+    paths:
+      - "infra/databricks/notebooks/gold/**/*.py"
+      - "**/gold/**/*.py"
+    severity: info
+    patterns:
+      - "FROM.*bronze"
+    message: |
+      Gold layer should read from silver, not bronze.
+      Bronze -> Silver -> Gold is the correct flow.
+
+  - id: gold-aggregations
+    description: Gold tables should contain aggregated metrics
+    paths:
+      - "infra/databricks/notebooks/gold/**/*.py"
+    severity: info
+    patterns:
+      - "SELECT"
+      - "read"
+    requirePatterns:
+      - "GROUP BY"
+      - "SUM\\("
+      - "COUNT\\("
+      - "AVG\\("
+      - "groupBy"
+      - "agg\\("
+    message: |
+      Gold layer typically contains aggregated, business-ready metrics.
+      Include appropriate aggregations (SUM, COUNT, AVG) with GROUP BY.
+
+  - id: gold-naming-convention
+    description: Gold tables should use business-friendly names
+    paths:
+      - "infra/databricks/notebooks/gold/**/*.py"
+    severity: info
+    patterns:
+      - "CREATE TABLE"
+      - "\\.write"
+    message: |
+      Gold table names should be business-friendly:
+      - Use domain terminology (budget_summary, project_health)
+      - Avoid technical prefixes (tbl_, stg_, tmp_)
+      - Use snake_case
+
+  # ============================================================================
+  # CROSS-LAYER RULES
+  # ============================================================================
+
+  - id: layer-isolation
+    description: Each layer should only read from the previous layer
+    severity: error
+    paths:
+      - "infra/databricks/notebooks/**/*.py"
+    patterns:
+      - "gold.*FROM.*bronze"
+      - "read.*bronze.*gold"
+    message: |
+      Data should flow through layers: Bronze -> Silver -> Gold
+      Gold should never read directly from bronze.
+
+  - id: schema-documentation
+    description: Table schemas should be documented
+    paths:
+      - "infra/databricks/notebooks/**/*.py"
+    severity: info
+    patterns:
+      - "CREATE TABLE"
+      - "\\.write\\."
+    requirePatterns:
+      - "COMMENT"
+      - "comment="
+      - "# Schema:"
+    message: |
+      Document table schemas with COMMENT clauses or inline comments.
+      Include column descriptions and business context.
+
+  - id: data-quality-checks
+    description: Include data quality assertions
+    paths:
+      - "infra/databricks/notebooks/silver/**/*.py"
+      - "infra/databricks/notebooks/gold/**/*.py"
+    severity: warning
+    patterns:
+      - "\\.write"
+      - "INSERT"
+    requirePatterns:
+      - "assert"
+      - "expect"
+      - "CONSTRAINT"
+      - "CHECK"
+    message: |
+      Include data quality checks before writing to silver/gold.
+      Use assertions, expectations, or CHECK constraints.
+
+# Table naming conventions
+conventions:
+  bronze:
+    prefix: ""
+    suffix: ""
+    pattern: "{source}_{entity}"
+    examples:
+      - "notion_programs"
+      - "notion_projects"
+      - "azure_rg_resources"
+
+  silver:
+    prefix: ""
+    suffix: ""
+    pattern: "{entity}"
+    examples:
+      - "programs"
+      - "projects"
+      - "budget_lines"
+
+  gold:
+    prefix: ""
+    suffix: ""
+    pattern: "{business_domain}_{metric_type}"
+    examples:
+      - "budget_vs_actual"
+      - "project_health"
+      - "risk_summary"

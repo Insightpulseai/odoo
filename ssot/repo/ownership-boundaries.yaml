@@ -1,0 +1,114 @@
+version: 1
+updated: "2026-03-17"
+repo: odoo
+role: erp_runtime_canonical
+
+current_state:
+  contains_cross_domain_artifacts: true
+  note: >
+    Repository currently hosts ERP runtime plus transitional cross-domain
+    artifacts pending decomposition to owning repositories.
+
+target_ownership:
+  addons: odoo
+  config: odoo
+  docker: odoo
+  erp_docs: odoo
+  erp_scripts: odoo
+  erp_ssot: odoo
+  erp_spec: odoo
+  tests: odoo
+  infra: infra
+  platform_apps: platform
+  shared_agents: agents
+  agent_platform: agents
+  automations: automations
+  design_assets: design
+  public_web: web
+  lakehouse: data-intelligence
+  supabase: platform
+  cross_platform_docs: docs
+
+canonical_repos:
+  - name: .github
+    visibility: private
+    purpose: Org governance, reusable workflows, policies
+  - name: odoo
+    visibility: public
+    purpose: ERP runtime (Odoo 19 CE + OCA + IPAI bridge)
+  - name: agents
+    visibility: public
+    purpose: Agent runtime metadata, skills, orchestration
+  - name: platform
+    visibility: private
+    purpose: Platform admin apps, SSOT, control-plane
+  - name: data-intelligence
+    visibility: private
+    purpose: Databricks lakehouse, medallion pipelines, Unity Catalog
+  - name: infra
+    visibility: private
+    purpose: IaC — Azure, Cloudflare, Terraform, Bicep
+  - name: web
+    visibility: private
+    purpose: Product surfaces — ops console, marketing, docs sites
+  - name: automations
+    visibility: private
+    purpose: Workflow automation, scheduled jobs, runbooks
+  - name: design
+    visibility: internal
+    purpose: Design tokens, components, icon pipeline, brand assets
+  - name: docs
+    visibility: public
+    purpose: Cross-platform documentation and architecture
+  - name: templates
+    visibility: private
+    purpose: Bootstrap scaffolds and starter templates
+
+deprecated_runtime_surfaces:
+  - name: vercel
+    deprecated: "2026-03-11"
+    replacement: azure_container_apps
+  - name: digitalocean
+    deprecated: "2026-03-15"
+    replacement: azure_container_apps
+  - name: mailgun
+    deprecated: "2026-03-11"
+    replacement: zoho_smtp
+
+deprecated_labels:
+  - name: control-plane
+    replacement: platform
+  - name: design-system
+    replacement: design
+  - name: lakehouse
+    replacement: data-intelligence
+  - name: ops-platform
+    replacement: platform
+
+auth_model:
+  target_authority: entra_id
+  transitional_runtime: keycloak
+  standalone_auth_workload: false
+  note: >
+    Auth is a capability provided by Entra ID (target) or Keycloak
+    (transitional). It is NOT modeled as a standalone workload.
+
+addon_layers:
+  canonical_extension_layers:
+    - addons/oca
+    - addons/ipai
+    - addons/local
+  vendor_core:
+    note: >
+      Odoo CE core addons are managed via vendor runtime paths
+      (e.g. vendor/odoo/addons/ or /opt/odoo/addons/).
+      They are NOT counted as extension layers.
+
+github_ui_metadata_drift:
+  note: >
+    The following GitHub UI metadata items require separate cleanup
+    via gh CLI or GitHub settings. They cannot be fixed by README edits alone.
+  items:
+    - "Repository website field may still show Vercel URLs"
+    - "Deployment history may still show Vercel deployments"
+    - "Environment settings may reference deprecated DO endpoints"

@@ -1,0 +1,71 @@
+id: actor-critic-design
+version: 1
+status: active
+classification: capability_uplift
+owner: policy-optimization-engineer
+benchmark_source: "HF Deep RL Course — Actor-Critic (A2C)"
+implementation_source: "SB3 docs"
+
+purpose: >
+  Design A2C/A3C actor-critic agents that reduce variance of policy gradient
+  estimates by using a learned value function as a baseline (critic) alongside
+  the policy (actor).
+
+inputs:
+  - name: environment
+    type: string
+    required: true
+    description: "Gymnasium environment ID"
+  - name: action_space_type
+    type: enum
+    values: [discrete, continuous]
+    required: true
+
+outputs:
+  - name: actor_model
+    type: neural_network
+    description: "Trained policy network"
+  - name: critic_model
+    type: neural_network
+    description: "Trained value network"
+  - name: training_curve
+    type: list
+    description: "Episode returns over training"
+
+constraints:
+  - "Critic must estimate V(s), not Q(s,a)"
+  - "Advantage estimation required (not raw returns)"
+  - "Entropy bonus recommended for exploration"
+
+architecture_options:
+  - name: shared_backbone
+    description: "Actor and critic share feature layers, split at output"
+  - name: separate_networks
+    description: "Actor and critic have independent parameters"
+
+hyperparameters:
+  learning_rate:
+    default: 0.0007
+    range: [0.0001, 0.003]
+  gamma:
+    default: 0.99
+  gae_lambda:
+    default: 0.95
+    range: [0.9, 1.0]
+    description: "GAE lambda for advantage estimation"
+  n_steps:
+    default: 5
+    range: [1, 256]
+    description: "Steps before update"
+  entropy_coefficient:
+    default: 0.01
+    range: [0.0, 0.1]
+  value_loss_coefficient:
+    default: 0.5
+  max_grad_norm:
+    default: 0.5
+  n_envs:
+    default: 4
+    description: "Parallel environments for A2C"
+  total_timesteps:
+    default: 500000
