@@ -1,0 +1,7 @@
+id,name,sequence,fold,description,project_ids/id
+ipai_project.stage_backlog,Backlog,10,false,"Tasks not yet started",
+ipai_project.stage_todo,To Do,20,false,"Tasks ready to start",
+ipai_project.stage_in_progress,In Progress,30,false,"Tasks currently being worked on",
+ipai_project.stage_review,Review,40,false,"Tasks pending review",
+ipai_project.stage_done,Done,50,true,"Completed tasks",
+ipai_project.stage_cancelled,Cancelled,60,true,"Cancelled tasks",

@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Server Action: Mark All To-Dos Done -->
+    <record id="action_mark_todos_done" model="ir.actions.server">
+        <field name="name">Complete All To-Dos</field>
+        <field name="model_id" ref="project.model_project_task"/>
+        <field name="binding_model_id" ref="project.model_project_task"/>
+        <field name="binding_view_types">form</field>
+        <field name="state">code</field>
+        <field name="code">
+if record.x_todo_ids:
+    record.x_todo_ids.write({'x_is_done': True})
+        </field>
+    </record>
+
+    <!-- Server Action: OMC Closing Status API -->
+    <record id="action_omc_closing_status_api" model="ir.actions.server">
+        <field name="name">OMC Closing Status API</field>
+        <field name="model_id" ref="project.model_project_task"/>
+        <field name="state">code</field>
+        <field name="code">
+import json
+from odoo.http import request
+
+def get_closing_status():
+    phases = env['project.task'].search([('x_is_phase', '=', True)])
+    result = []
+
+    for phase in phases:
+        todos = phase.x_todo_ids
+        total = len(todos)
+        done = len(todos.filtered(lambda t: t.x_is_done))
+        completion = round((done / total * 100), 2) if total > 0 else 0
+
+        result.append({
+            'phase': phase.name,
+            'total_todos': total,
+            'done_todos': done,
+            'completion_pct': completion,
+            'deadline': phase.date_deadline.isoformat() if phase.date_deadline else None
+        })
+
+    return json.dumps(result, indent=2)
+
+action = {
+    'type': 'ir.actions.act_window',
+    'res_model': 'ir.actions.server',
+    'view_mode': 'form',
+}
+        </field>
+    </record>
+</odoo>

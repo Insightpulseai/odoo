@@ -1,0 +1,81 @@
+# =============================================================================
+# ODOO PATHS-IGNORE TEMPLATE
+# =============================================================================
+# Add this paths-ignore section to your Odoo CI workflows to skip heavy tests
+# when only docs/spec/agent-config files change.
+#
+# Usage:
+#   Copy the `on.pull_request.paths-ignore` section to your workflow file.
+#
+# Files:
+#   .github/workflows/test.yml
+#   .github/workflows/pre-commit.yml
+#   .github/workflows/odoo-*.yml
+# =============================================================================
+
+# Example workflow with paths-ignore
+name: Odoo Tests (with paths-ignore)
+
+on:
+  pull_request:
+    # Skip CI when only these paths change
+    paths-ignore:
+      # Spec bundles (Continue+)
+      - 'spec/**'
+
+      # Agent configuration
+      - '.claude/**'
+      - '.continue/**'
+      - 'CLAUDE.md'
+
+      # Documentation
+      - 'docs/**'
+      - '*.md'
+      - '**/*.md'
+      - '*.rst'
+      - '**/*.rst'
+
+      # CI/Infra (non-Odoo)
+      - '.github/workflows/spec-kit-*.yml'
+      - '.github/workflows/agent-*.yml'
+      - '.github/workflows/docs-*.yml'
+
+      # Scripts (non-test)
+      - 'scripts/**'
+
+      # Deployment configs
+      - 'deploy/**'
+      - 'infra/**'
+      - 'docker-compose*.yml'
+      - 'Dockerfile*'
+
+      # IDE/Editor configs
+      - '.vscode/**'
+      - '.idea/**'
+      - '.editorconfig'
+      - '.gitignore'
+
+  push:
+    branches: [main, master]
+    # Apply same paths-ignore for push events
+    paths-ignore:
+      - 'spec/**'
+      - '.claude/**'
+      - '.continue/**'
+      - 'CLAUDE.md'
+      - 'docs/**'
+      - '*.md'
+
+# Minimal example job
+jobs:
+  test:
+    name: Run Odoo Tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: This job only runs for code changes
+        run: |
+          echo "Running Odoo tests..."
+          echo "This job was NOT skipped, so addons/ or odoo/ files changed"

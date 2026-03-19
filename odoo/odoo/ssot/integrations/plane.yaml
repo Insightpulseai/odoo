@@ -1,0 +1,153 @@
+# schema: ssot.integrations.v1
+# Plane.so SoW registry — core platform + marketplace integrations governed by SSOT.
+# Registers Plane core (issues/cycles/modules/pages) and all marketplace
+# integrations (MCP, GitHub sync, Slack intake, Sentry sync).
+#
+# Integration model: Plane is WORK SYSTEM (SoW), not System of Record (SoR).
+#   - Plane owns issues, cycles, modules, pages
+#   - Internal work_plane.* schema mirrors Plane state via webhook + API sync
+#   - No direct Plane writes without explicit policy gate (writeback_policy)
+#   - All tool calls and syncs emit ops.run_events for audit trail
+#
+# Boundary doctrine: docs/architecture/SSOT_BOUNDARIES.md
+# Contract doc:      docs/architecture/PLANE_MARKETPLACE_INTEGRATIONS.md
+# Webhook + API sync: ssot/integrations/plane_webhooks.yaml
+# MCP server:        ssot/integrations/plane_mcp.yaml
+
+version: "1.0.0"
+schema: ssot.integrations.v1
+name: plane
+display_name: "Plane (SoW Platform + Marketplace)"
+status: planned              # planned | porting | active | deprecated
+last_reviewed: "2026-03-01"
+
+provider:
+  platform: plane
+  category: sow
+  api_base: https://api.plane.so/api/v1/
+  auth_env_var: PLANE_API_KEY
+  description: >
+    Plane.so as Statement of Work surface: issues, cycles, modules, pages.
+    Marketplace integrations are SSOT-governed plugins, not ad-hoc SaaS toggles.
+
+components:
+  core:
+    description: "Plane core entities mirrored into work_plane.* schema via webhook + API sync"
+    entities:
+      - issues
+      - cycles
+      - modules
+      - pages
+    mirror_schema: work_plane.*
+    sync_file: ssot/integrations/plane_webhooks.yaml
+
+  marketplace_integrations:
+    - id: plane_mcp
+      display_name: "Plane MCP (Claude + VS Code)"
+      status: planned
+      surfaces: [mcp_tools]
+      file: ssot/integrations/plane_mcp.yaml
+      priority: tier_0     # unblocks agentic SoW immediately
+
+    - id: plane_github_sync
+      display_name: "GitHub ↔ Plane Sync"
+      status: planned
+      surfaces: [webhooks, polling]
+      file: ssot/integrations/plane_github_sync.yaml
+      priority: tier_1     # closes Plan → Develop loop
+
+    - id: plane_slack_intake
+      display_name: "Slack → Plane Intake"
+      status: planned
+      surfaces: [events, commands]
+      file: ssot/integrations/plane_slack_intake.yaml
+      priority: tier_1     # closes Operate → Plan loop (SoW intake funnel)
+
+    - id: plane_sentry_sync
+      display_name: "Sentry → Plane Issues"
+      status: planned
+      surfaces: [webhooks]
+      file: ssot/integrations/plane_sentry_sync.yaml
+      priority: tier_1     # closes Operate → Plan loop (error → work item)
+
+required_secrets:
+  - plane_api_key          # X-API-Key header (sync workers + MCP server)
+  - plane_workspace_id     # workspace slug used in all API paths
+  - plane_webhook_secret   # shared secret for inbound webhook validation
+
+policy:
+  sor_write: forbidden            # Plane is SoW; never promotes to SoR
+  ssot_write: required            # all integration config lives in ssot/integrations/
+  audit: ops_run_events_required  # every tool call / sync MUST emit ops.run_events
+  idempotency: required           # all ingest paths must carry idempotency_key
+  writeback: disabled_by_default  # no Plane writeback without explicit policy gate
+
+boundary_rules:
+  - rule: "Plane is SoW; SSOT owns canonical work state — no ad-hoc SaaS toggles"
+    rationale: "Prevents UI-only configuration drift; all integration state lives in repo"
+    ci_check: "check_repo_structure.py §plane"
+
+  - rule: "All MCP tool calls to Plane MUST emit ops.run_events rows"
+    rationale: "Audit trail; enables Advisor SoW posture scan"
+
+  - rule: "Marketplace integration config lives in ssot/integrations/ only"
+    rationale: "No integration is considered active without an SSOT file + _index.yaml row"
+
+  - rule: "Plane API key MUST NOT appear in browser-side code or Vercel env"
+    rationale: "Server-only; follows ssot/secrets/registry.yaml prohibited_consumers"
+
+  - rule: "GitHub sync mappings MUST live in ssot/mappings/plane_github.yaml"
+    rationale: "Deterministic config; no ad-hoc project-to-repo mapping in Edge Function code"
+
+  - rule: "Slack intake path MUST be idempotent by {workspace}:{channel}:{thread_ts}"
+    rationale: "Prevents duplicate Plane issues from Slack retry events"
+
+  - rule: "Sentry sync MUST map fingerprint to Plane issue via work_plane.sentry_issues"
+    rationale: "Idempotent fingerprint-based dedup; avoid duplicate issue creation"
+
+advisor_scan:
+  name: "Plane SoW Posture"
+  description: >
+    Advisor scan that answers: are we using Plane properly?
+    Checks for active MCP server, GitHub sync coverage, Slack intake usage,
+    and Sentry issue linkage. Outputs findings grouped by Plan/Develop/Operate.
+  checks:
+    - id: mcp_server_healthy
+      question: "Is the Plane MCP server configured and emitting run_events?"
+      data_source: ops.run_events
+      filter: "tool_source = 'plane_mcp'"
+
+    - id: github_sync_coverage
+      question: "Are mapped GitHub repos producing Plane issue updates?"
+      data_source: ops.runs
+      filter: "integration = 'plane_github_sync'"
+
+    - id: slack_intake_active
+      question: "Are Slack threads being converted to tracked Plane work?"
+      data_source: ops.runs
+      filter: "integration = 'plane_slack_intake'"
+
+    - id: sentry_linkage
+      question: "Are Sentry errors producing Plane issues with ownership?"
+      data_source: work_plane.sentry_issues
+      filter: "plane_issue_id IS NOT NULL"
+
+risk_flags:
+  - flag: "Plane becomes SoR if writeback is enabled without policy review"
+    severity: high
+    mitigation: >
+      writeback requires work_plane.writeback_policy = 'enabled' per workspace.
+      Disabled by default. Requires explicit sign-off before enabling.
+      See: docs/architecture/PLANE_MARKETPLACE_INTEGRATIONS.md §Writeback Policy.
+
+  - flag: "Advisor posture scan gap if ops.run_events not emitted by MCP"
+    severity: medium
+    mitigation: >
+      CI check required: all plane-* Edge Functions and the MCP server
+      must emit ops.run_events. Checked by check_plane_audit_coverage.py.
+
+  - flag: "Slack intake creates duplicate issues without idempotency"
+    severity: medium
+    mitigation: >
+      Idempotency key = {workspace}:{channel}:{thread_ts} UNIQUE constraint
+      in work_plane.slack_intake_events. Duplicate calls silently skip insert.

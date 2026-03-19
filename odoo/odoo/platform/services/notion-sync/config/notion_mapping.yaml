@@ -1,0 +1,182 @@
+# Notion Database Mapping Configuration
+# Maps Notion database properties to Databricks table columns
+
+sync_config:
+  version: "1.0"
+  catalog: "${DATABRICKS_CATALOG}"
+  bronze_schema: bronze
+  silver_schema: silver
+  gold_schema: gold
+
+databases:
+  programs:
+    database_id: "${NOTION_PROGRAMS_DB_ID}"
+    bronze_partition: "programs"
+    silver_table: "silver.notion_programs"
+    description: "Portfolio programs (top-level containers)"
+    columns:
+      - source: "Name"
+        target: "name"
+        type: "title"
+        required: true
+      - source: "Owner"
+        target: "owner"
+        type: "person"
+      - source: "Start Date"
+        target: "start_date"
+        type: "date"
+      - source: "End Date"
+        target: "end_date"
+        type: "date"
+      - source: "Status"
+        target: "status"
+        type: "select"
+        values: ["Active", "On Hold", "Completed", "Cancelled"]
+      - source: "Description"
+        target: "description"
+        type: "rich_text"
+
+  projects:
+    database_id: "${NOTION_PROJECTS_DB_ID}"
+    bronze_partition: "projects"
+    silver_table: "silver.notion_projects"
+    description: "Individual projects with budgets"
+    columns:
+      - source: "Name"
+        target: "name"
+        type: "title"
+        required: true
+      - source: "Program"
+        target: "program_id"
+        type: "relation"
+        relation_table: "programs"
+      - source: "Budget Total"
+        target: "budget_total"
+        type: "number"
+      - source: "Currency"
+        target: "currency"
+        type: "select"
+        default: "USD"
+        values: ["USD", "EUR", "PHP"]
+      - source: "Start Date"
+        target: "start_date"
+        type: "date"
+      - source: "End Date"
+        target: "end_date"
+        type: "date"
+      - source: "Status"
+        target: "status"
+        type: "select"
+        values: ["Planning", "In Progress", "Completed", "On Hold"]
+      - source: "Priority"
+        target: "priority"
+        type: "select"
+        values: ["High", "Medium", "Low"]
+      - source: "Owner"
+        target: "owner"
+        type: "person"
+
+  budget_lines:
+    database_id: "${NOTION_BUDGET_LINES_DB_ID}"
+    bronze_partition: "budget_lines"
+    silver_table: "silver.notion_budget_lines"
+    description: "Individual budget line items"
+    columns:
+      - source: "Project"
+        target: "project_id"
+        type: "relation"
+        relation_table: "projects"
+      - source: "Category"
+        target: "category"
+        type: "select"
+        values: ["CapEx", "OpEx"]
+      - source: "Vendor"
+        target: "vendor"
+        type: "text"
+      - source: "Description"
+        target: "description"
+        type: "rich_text"
+      - source: "Amount"
+        target: "amount"
+        type: "number"
+      - source: "Committed Date"
+        target: "committed_date"
+        type: "date"
+      - source: "Invoice Date"
+        target: "invoice_date"
+        type: "date"
+      - source: "Paid Date"
+        target: "paid_date"
+        type: "date"
+      - source: "Actual Amount"
+        target: "actual_amount"
+        type: "number"
+      - source: "Notes"
+        target: "notes"
+        type: "rich_text"
+
+  risks:
+    database_id: "${NOTION_RISKS_DB_ID}"
+    bronze_partition: "risks"
+    silver_table: "silver.notion_risks"
+    description: "Project risks and mitigations"
+    columns:
+      - source: "Project"
+        target: "project_id"
+        type: "relation"
+        relation_table: "projects"
+      - source: "Title"
+        target: "title"
+        type: "title"
+        required: true
+      - source: "Severity"
+        target: "severity"
+        type: "select"
+        values: ["Critical", "High", "Medium", "Low"]
+      - source: "Probability"
+        target: "probability"
+        type: "select"
+        values: ["High", "Medium", "Low"]
+      - source: "Status"
+        target: "status"
+        type: "select"
+        values: ["Open", "Mitigating", "Closed", "Accepted"]
+      - source: "Mitigation"
+        target: "mitigation"
+        type: "rich_text"
+      - source: "Owner"
+        target: "owner"
+        type: "person"
+
+  actions:
+    database_id: "${NOTION_ACTIONS_DB_ID}"
+    bronze_partition: "actions"
+    silver_table: "silver.notion_actions"
+    description: "Actions generated from DQ issues or Advisor"
+    write_enabled: true  # Allow writing back to Notion
+    columns:
+      - source: "Title"
+        target: "title"
+        type: "title"
+        required: true
+      - source: "Project"
+        target: "project_id"
+        type: "relation"
+        relation_table: "projects"
+      - source: "Assignee"
+        target: "assignee"
+        type: "person"
+      - source: "Due Date"
+        target: "due_date"
+        type: "date"
+      - source: "Status"
+        target: "status"
+        type: "select"
+        values: ["Open", "In Progress", "Done"]
+      - source: "Source"
+        target: "source"
+        type: "select"
+        values: ["Advisor", "DataQuality", "Manual"]
+      - source: "Source Ref"
+        target: "source_ref"
+        type: "url"

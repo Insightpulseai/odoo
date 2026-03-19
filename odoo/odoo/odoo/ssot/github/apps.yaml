@@ -1,0 +1,135 @@
+# ssot/github/apps.yaml
+# Multi-app GitHub App registry for InsightPulse AI.
+# Each entry declares intent — permissions, events, routing, secrets.
+#
+# Principles:
+#   - Two separate apps keeps blast radius tight (n8n creds can't touch Plane and vice versa)
+#   - pulser-hub (platform automation) stays in app-manifest.yaml as the primary identity
+#   - This file covers the two integration-specific apps
+#
+# Status: apps are NOT yet provisioned (status: not_provisioned).
+#         Create via GitHub UI manifest conversion (one-time), then update status here.
+#
+# Companion files:
+#   ssot/github/app-manifest.yaml         — pulser-hub (primary automation identity)
+#   infra/github/apps/ipai-n8n/manifest.json
+#   infra/github/apps/ipai-plane-bridge/manifest.json
+#   ssot/secrets/registry.yaml            — secret identifiers for all apps
+#
+# Last reviewed: 2026-03-02
+
+version: 1
+
+apps:
+
+  # ── 1. ipai-n8n ─────────────────────────────────────────────────────────────
+  # Routes GitHub events into n8n for workflow automation.
+  # Using a dedicated app (not pulser-hub) keeps automation credentials isolated
+  # from the platform identity used for agent PR creation and check-run writes.
+  - id: ipai-n8n
+    kind: github_app
+    status: not_provisioned           # update to active once created + installed
+    owner_org: Insightpulseai
+    repository_selection: selected    # explicit allow-list; no "all repos" exposure
+
+    app_ids:
+      app_id_ref: github_app_id_n8n   # ssot/secrets/registry.yaml
+
+    webhook:
+      url: "https://n8n.insightpulseai.com/webhook/github"
+      secret_ref: github_app_webhook_secret_n8n   # registry.yaml key
+      active: true
+      # The ops-github-webhook-ingest function also listens; it tries GITHUB_APP_WEBHOOK_SECRET_N8N.
+      # On match it stores the event AND forwards to n8n (fire-and-forget).
+
+    permissions:
+      contents: read          # push events + diff access
+      metadata: read          # required by all GitHub Apps
+      pull_requests: read     # PR events (no write needed for observation)
+      issues: read            # issue events
+
+    events:
+      - push
+      - pull_request
+      - issues
+      - issue_comment
+
+    routing:
+      primary: n8n_webhook          # forward directly to n8n.insightpulseai.com/webhook/github
+      secondary: ops_webhook_events # also store in ops.webhook_events for audit
+
+    secrets:
+      - github_app_id_n8n
+      - github_app_private_key_n8n      # for installation tokens if n8n needs API actions
+      - github_app_webhook_secret_n8n
+
+    notes: >
+      n8n workflows consume push/PR/issue events. No write permissions needed on GitHub
+      (n8n triggers automations internally). Installation tokens are optional — only
+      needed if an n8n workflow needs to write back to GitHub via the API.
+
+  # ── 2. ipai-plane-bridge ────────────────────────────────────────────────────
+  # Bridges GitHub events → Plane (project management) via a Supabase Edge Function.
+  # Plane's built-in OAuth integration doesn't support self-hosted GitHub App webhooks
+  # directly; this bridge converts GitHub events → Plane API calls server-side.
+  - id: ipai-plane-bridge
+    kind: github_app
+    status: not_provisioned
+    owner_org: Insightpulseai
+    repository_selection: selected
+
+    app_ids:
+      app_id_ref: github_app_id_plane   # ssot/secrets/registry.yaml
+
+    webhook:
+      url: "https://spdtwktxdalcfigzeqrz.supabase.co/functions/v1/ops-github-webhook-ingest"
+      secret_ref: github_app_webhook_secret_plane
+      active: true
+      # ops-github-webhook-ingest tries GITHUB_APP_WEBHOOK_SECRET_PLANE on match;
+      # stores event AND triggers the plane-github-sync Edge Function.
+
+    permissions:
+      metadata: read          # required
+      pull_requests: read     # PR → Plane issue state sync
+      issues: read            # GitHub issue → Plane cycle/module mapping
+
+    events:
+      - pull_request          # opened, merged, closed → update Plane issue state
+      - issues                # opened, closed → create/update Plane issues
+      - issue_comment         # comment sync (if Plane activity feed is used)
+
+    routing:
+      primary: ops_webhook_events   # store in ops.webhook_events
+      secondary: plane_github_sync  # then invoke plane-github-sync Edge Function
+
+    secrets:
+      - github_app_id_plane
+      - github_app_webhook_secret_plane
+      # No private key needed — this app never mints installation tokens;
+      # it only receives webhooks and calls Plane API with PLANE_API_TOKEN.
+
+    plane_integration:
+      api_secret_ref: plane_api_token    # ssot/secrets/registry.yaml
+      base_url_ref:   plane_base_url     # ssot/secrets/registry.yaml
+      sync_function:  plane-github-sync  # existing supabase/functions/plane-github-sync
+
+    notes: >
+      Plane does not natively accept GitHub App webhooks on self-hosted instances.
+      This bridge: (1) receives the GitHub App webhook at the Supabase ingest function,
+      (2) verifies signature, (3) stores in ops.webhook_events, (4) fans out to
+      plane-github-sync which calls the Plane REST API. The bridge owns the translation
+      layer so neither service is coupled to the other's webhook format.
+
+# ── Creation workflow (one-time per app) ─────────────────────────────────────
+#
+# 1. Run: scripts/github/create-app-from-manifest.sh ipai-n8n
+#    (reads infra/github/apps/ipai-n8n/manifest.json → GitHub manifest conversion API)
+#    Returns: app_id + PEM private key → store in Supabase Vault + GitHub Secrets
+#
+# 2. Update this file: status: active, and add the real app_id value
+# 3. Update ssot/secrets/registry.yaml: status.desired = present (from not_provisioned)
+# 4. Deploy Supabase secrets:
+#    supabase secrets set GITHUB_APP_WEBHOOK_SECRET_N8N=<value>
+#    supabase secrets set GITHUB_APP_ID_N8N=<value>
+#    (etc.)
+# 5. CI drift guard picks up from here — no more manual URL drift

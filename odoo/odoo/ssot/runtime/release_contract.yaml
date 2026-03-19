@@ -1,0 +1,57 @@
+# schema: ssot.runtime.release_contract.v1
+# Contract defining required fields for every production release.
+# Referenced by: scripts/build_release_manifest.py, .github/workflows/cd-production.yml
+
+version: 1
+meta:
+  owner: platform
+  purpose: "Contract defining required fields for every production release"
+  created: "2026-03-03"
+
+required_fields:
+  - field: tag
+    type: string
+    description: "Immutable git tag (prod-YYYYMMDD-HHMM or vYYYY.MM.DD-sha)"
+
+  - field: image_digest
+    type: "sha256:..."
+    description: "Docker image digest from ghcr.io push"
+
+  - field: image_tag
+    type: string
+    description: "Docker image tag used for deployment"
+
+  - field: commit_sha
+    type: string
+    description: "Full 40-char commit SHA"
+
+  - field: addon_set_fingerprint
+    type: "sha256:..."
+    description: "Hash of sorted addon manifest list (addons/ipai + addons/oca)"
+
+  - field: sbom_artifact
+    type: path
+    description: "SPDX or CycloneDX SBOM file"
+
+  - field: gates_passed
+    type: list
+    description: "List of gates passed (G1-G4 per spec/odoo-release-gates-control-plane)"
+
+  - field: deployer
+    type: string
+    description: "GitHub actor who triggered deployment"
+
+  - field: workflow_run_id
+    type: integer
+    description: "GitHub Actions run ID"
+
+  - field: timestamp
+    type: ISO8601
+    description: "UTC timestamp of release creation"
+
+optional_fields:
+  - field: vuln_scan_result
+    description: "Grype vulnerability scan summary (critical/high/medium/low counts)"
+
+  - field: oca_lock_hash
+    description: "Hash of vendor/oca.lock.json"

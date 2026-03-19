@@ -1,0 +1,31 @@
+id: per-tenant-metering-design
+version: 1
+status: active
+classification: encoded_preference
+persona: billing-metering-architect
+updated_at: "2026-03-17"
+
+purpose: >
+  Design per-tenant consumption measurement and cost attribution
+  for multi-tenant SaaS platforms.
+
+inputs:
+  - metering_dimensions: "What to measure (API calls, storage, compute, data)"
+  - pricing_model: "How metered usage maps to billing"
+  - collection_infrastructure: "Event Hub, Service Bus, direct logging"
+  - accuracy_requirements: "Acceptable measurement error margin"
+
+outputs:
+  - metering_points: "Where and what to measure in the stack"
+  - collection_pipeline: "Event flow from metering point to storage"
+  - aggregation_design: "How raw events become billable usage records"
+  - rating_engine: "How usage records are priced per tier"
+  - fraud_detection: "Rules for detecting anomalous usage patterns"
+
+guardrails:
+  - "Metering must capture every billable event"
+  - "Collection pipeline must handle event loss gracefully (at-least-once delivery)"
+  - "Aggregation must be auditable (raw events retained)"
+  - "Rating must match published pricing exactly"
+
+benchmark_source: "Azure Multitenancy Checklist - Cost Optimization"

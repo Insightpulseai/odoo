@@ -1,0 +1,57 @@
+id: policy-gradient-design
+version: 1
+status: active
+classification: capability_uplift
+owner: policy-optimization-engineer
+benchmark_source: "HF Deep RL Course — Policy Gradient (Reinforce)"
+implementation_source: "SB3, CleanRL docs"
+
+purpose: >
+  Design REINFORCE and policy gradient agents that learn policies directly
+  by optimizing expected cumulative reward through gradient ascent on the
+  policy parameters.
+
+inputs:
+  - name: environment
+    type: string
+    required: true
+    description: "Gymnasium environment ID"
+  - name: action_space_type
+    type: enum
+    values: [discrete, continuous]
+    required: true
+    description: "Type of action space"
+
+outputs:
+  - name: model
+    type: neural_network
+    description: "Trained policy network"
+  - name: hyperparameters
+    type: dict
+    description: "Network architecture, learning rate, baseline type"
+  - name: training_curve
+    type: list
+    description: "Episode returns over training"
+
+constraints:
+  - "Requires complete episodes (Monte Carlo)"
+  - "High variance — baseline subtraction strongly recommended"
+  - "Not sample efficient — consider actor-critic for complex problems"
+
+hyperparameters:
+  learning_rate:
+    default: 0.001
+    range: [0.0001, 0.01]
+  gamma:
+    default: 0.99
+    range: [0.9, 0.999]
+  baseline:
+    type: enum
+    values: [none, mean_return, learned_value]
+    default: mean_return
+  n_episodes:
+    default: 5000
+    range: [1000, 100000]
+  entropy_coefficient:
+    default: 0.01
+    description: "Encourages exploration via entropy bonus"

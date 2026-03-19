@@ -1,0 +1,7 @@
+# OCA dependency version pins for deterministic builds
+# Update ONLY after verifying the new version works in dev.
+# Usage: pip install -c requirements-constraints.txt -r requirements-oca.txt
+
+# upgrade_analysis deps
+odoorpc==0.10.1
+openupgradelib==3.12.0

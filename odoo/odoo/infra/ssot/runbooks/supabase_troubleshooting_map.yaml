@@ -1,0 +1,132 @@
+# schema: ssot.runbooks.supabase.v1
+# Machine-readable routing map for Supabase incident triage.
+# Maps regex error signatures → local runbooks → owners → severity defaults.
+# Used by IPAI agent annotations and CI failure routing.
+#
+# severity_default:
+#   SEV1 = service down / data loss risk / blocking multiple users
+#   SEV2 = degraded / single user or feature affected
+#   SEV3 = minor / cosmetic / low urgency
+
+version: "1.0.0"
+canonical_index: "docs/runbooks/supabase/TROUBLESHOOTING_INDEX.md"
+
+entries:
+
+  # ── Auth / JWT ──────────────────────────────────────────────────────────
+  - id: auth_missing_sub
+    signature: "invalid claim.*missing sub|missing.*sub.*claim"
+    category: auth
+    owner: platform-auth
+    severity_default: SEV2
+    runbook: docs/runbooks/supabase/auth_jwt.md
+    supabase_docs: https://supabase.com/docs/guides/troubleshooting
+    escalation: internal
+    fast_check: |
+      SELECT id, created_at, status, error_message
+      FROM auth.audit_log_entries
+      WHERE created_at > now() - interval '1 hour' AND status != 200
+      ORDER BY created_at DESC LIMIT 20;
+
+  - id: auth_invalid_jwt
+    signature: "JWSError.*JWSInvalidSignature|invalid JWT|JWT.*expired"
+    category: auth
+    owner: platform-auth
+    severity_default: SEV2
+    runbook: docs/runbooks/supabase/auth_jwt.md
+    supabase_docs: https://supabase.com/docs/guides/troubleshooting
+    escalation: internal
+
+  - id: auth_rls_403
+    signature: "42501.*permission denied|403.*Forbidden.*new row violates"
+    category: auth
+    owner: platform-db
+    severity_default: SEV2
+    runbook: docs/runbooks/supabase/auth_jwt.md
+    supabase_docs: https://supabase.com/docs/guides/troubleshooting
+    escalation: internal
+
+  # ── Webhooks / pg_net ───────────────────────────────────────────────────
+  - id: pgnet_permission_denied
+    signature: "42501.*permission denied.*http_request_queue|42501.*net\\..*"
+    category: webhooks
+    owner: platform-db
+    severity_default: SEV2
+    runbook: docs/runbooks/supabase/webhooks_pg_net.md
+    supabase_docs: https://supabase.com/docs/guides/troubleshooting/webhook-debugging-guide-M8sk47
+    escalation: internal
+    fast_check: |
+      SELECT count(*) AS queue_depth FROM net.http_request_queue;
+
+  - id: pgnet_worker_down
+    signature: "pg_net.*background worker|http_request_queue.*stuck"
+    category: webhooks
+    owner: platform-db
+    severity_default: SEV2
+    runbook: docs/runbooks/supabase/webhooks_pg_net.md
+    supabase_docs: https://supabase.com/docs/guides/troubleshooting/webhook-debugging-guide-M8sk47
+    escalation: supabase_support
+
+  # ── pg_cron ─────────────────────────────────────────────────────────────
+  - id: pgcron_job_not_running
+    signature: "cron.*job.*not.*run|pg_cron.*failed|cron.job_run_details.*failed"
+    category: cron
+    owner: platform-db
+    severity_default: SEV3
+    runbook: docs/runbooks/supabase/cron_pg_cron.md
+    supabase_docs: https://supabase.com/docs/guides/troubleshooting/pgcron-debugging-guide-n1KTaz
+    escalation: internal
+    fast_check: |
+      SELECT * FROM cron.job_run_details WHERE status = 'failed'
+      AND start_time > now() - interval '24 hours';
+
+  # ── Connection pooling / Supavisor ──────────────────────────────────────
+  - id: pool_too_many_connections
+    signature: "too many connections|remaining connection slots.*reserved|FATAL.*connections"
+    category: pooling
+    owner: platform-db
+    severity_default: SEV1
+    runbook: docs/runbooks/supabase/pooling_supavisor.md
+    supabase_docs: https://supabase.com/docs/guides/troubleshooting/supavisor-faq-YyP5tI
+    escalation: supabase_support|internal
+    fast_check: |
+      SELECT state, count(*) FROM pg_stat_activity
+      WHERE datname = current_database() GROUP BY state;
+
+  - id: pool_connection_refused
+    signature: "connection refused.*5432|connection refused.*6543"
+    category: pooling
+    owner: platform-db
+    severity_default: SEV1
+    runbook: docs/runbooks/supabase/pooling_supavisor.md
+    supabase_docs: https://supabase.com/docs/guides/troubleshooting/supavisor-faq-YyP5tI
+    escalation: supabase_support
+
+  # ── HTTP API / Edge Functions ────────────────────────────────────────────
+  - id: edge_function_timeout
+    signature: "504.*Gateway Timeout|FunctionsHttpError|Edge Function.*non-2xx"
+    category: edge_functions
+    owner: platform-edge
+    severity_default: SEV2
+    runbook: docs/runbooks/supabase/http_api.md
+    supabase_docs: https://supabase.com/docs/guides/troubleshooting/http-api-issues
+    escalation: internal
+
+  - id: rest_api_5xx
+    signature: "500 Internal Server Error.*postgrest|PostgREST.*error"
+    category: http_api
+    owner: platform-db
+    severity_default: SEV2
+    runbook: docs/runbooks/supabase/http_api.md
+    supabase_docs: https://supabase.com/docs/guides/troubleshooting/http-api-issues
+    escalation: internal
+
+  # ── Storage ─────────────────────────────────────────────────────────────
+  - id: storage_unauthorized
+    signature: "storage.*403|StorageError.*unauthorized|Bucket.*not found|object.*access denied"
+    category: storage
+    owner: platform-storage
+    severity_default: SEV2
+    runbook: docs/runbooks/supabase/storage_buckets.md
+    supabase_docs: https://supabase.com/docs/guides/troubleshooting
+    escalation: internal

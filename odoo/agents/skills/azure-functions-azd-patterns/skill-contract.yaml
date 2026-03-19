@@ -1,0 +1,50 @@
+version: 1
+type: ops_skill
+family: azure_sample_azd
+skill:
+  name: azure-functions-azd-patterns
+  status: draft
+  owner: functions-platform-engineer
+  purpose: >
+    Deploy Azure Functions with azd using secure-by-default patterns.
+    Covers Flex Consumption plan, managed identity, VNet integration,
+    and all major trigger types across C#, Python, TypeScript, and Java.
+
+  triggers:
+    - new serverless workload requirement
+    - event-driven processing need (timer, HTTP, Cosmos, Event Grid)
+    - migration from Classic Consumption to Flex Consumption
+    - Functions security posture review
+
+  inputs:
+    - trigger type (HTTP, Timer, Cosmos DB, Event Grid, Service Bus, Storage)
+    - language/runtime (C#, Python, TypeScript, Java)
+    - downstream service dependencies
+    - VNet requirements
+    - scaling requirements
+
+  steps:
+    - select azd template for Functions workload
+    - verify template uses Flex Consumption plan (not Classic)
+    - configure managed identity for downstream service access
+    - configure VNet integration if accessing private resources
+    - define function bindings for trigger type
+    - deploy via azd up
+    - verify function execution and scaling behavior
+    - document cold start characteristics
+
+  outputs:
+    - deployed Function App with secure defaults
+    - Flex Consumption plan configuration
+    - managed identity bindings
+    - VNet integration status
+    - function execution verification
+    - scaling and cold start documentation
+
+  guardrails:
+    - Flex Consumption is default — Classic Consumption only with justification
+    - managed identity mandatory for all downstream service access
+    - VNet integration required when accessing private resources
+    - timer triggers must use validated CRON expressions (UTC)
+    - HTTP triggers must have appropriate auth level
+    - cold start impact must be documented for user-facing functions

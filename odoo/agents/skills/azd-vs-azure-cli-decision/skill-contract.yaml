@@ -1,0 +1,43 @@
+version: 1
+type: judge_skill
+family: azure_sample_azd
+skill:
+  name: azd-vs-azure-cli-decision
+  status: draft
+  owner: azd-deployment-judge
+  purpose: >
+    Judge skill — decide whether a given task requires azd, Azure CLI, or both.
+    Returns a verdict (AZD / AZURE_CLI / BOTH) with reasoning. Enforces correct
+    tool selection and prevents anti-patterns like using Azure CLI for app
+    bootstrap or azd for diagnostics.
+
+  triggers:
+    - any Azure-related task where tool selection is ambiguous
+    - pre-execution review of proposed Azure commands
+    - tool selection dispute between personas
+    - new team member needs guidance on tool boundaries
+
+  inputs:
+    - task description
+    - proposed tool (if any)
+    - task category (bootstrap, deploy, diagnose, maintain, query)
+
+  steps:
+    - classify task into category (bootstrap, provision, deploy, diagnose, maintain, query)
+    - apply decision matrix to determine correct tool
+    - if hybrid scenario, define clear boundaries for each tool
+    - generate verdict with reasoning
+    - flag anti-patterns if proposed tool is wrong
+
+  outputs:
+    - verdict: AZD / AZURE_CLI / BOTH
+    - reasoning: why this tool is correct for this task
+    - boundaries: if BOTH, clear delineation of responsibilities
+    - anti-patterns: flagged if proposed tool was wrong
+
+  guardrails:
+    - this is a judge skill — it does not execute, only decides
+    - azd for developer workflows (bootstrap, provision, deploy, CI/CD)
+    - Azure CLI for operator workflows (inventory, diagnose, maintain, configure)
+    - BOTH only when task genuinely spans both domains
+    - default to azd for app-centric tasks, Azure CLI for resource-centric tasks

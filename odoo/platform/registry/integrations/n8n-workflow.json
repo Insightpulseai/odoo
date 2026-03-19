@@ -1,0 +1,20 @@
+{
+  "id": "n8n-workflow",
+  "name": "n8n Workflow Automation",
+  "summary": "Self-hosted workflow automation. GitHub events handler, scheduled jobs, and Odoo task creation.",
+  "category": "workflow",
+  "type": "native",
+  "capabilities": ["webhooks", "scheduled-jobs", "github-events", "odoo-sync", "slack-notifications"],
+  "install": {
+    "provisioner": "scripts/provisioners/install_n8n.sh",
+    "scopes": [],
+    "env_vars": ["N8N_WEBHOOK_URL", "N8N_API_KEY"],
+    "auto_configure": true
+  },
+  "links": {
+    "docs": "https://docs.n8n.io/",
+    "vendor": "https://n8n.io"
+  },
+  "ipai_module": "ipai_n8n_connector",
+  "status": "active"
+}

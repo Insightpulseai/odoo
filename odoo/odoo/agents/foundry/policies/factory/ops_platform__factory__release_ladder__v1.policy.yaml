@@ -1,0 +1,222 @@
+version: 1
+namespace: ipai.ops_platform.factory.release_ladder.v1
+artifact_type: policy
+repo_key: ops_platform
+domain: factory
+subject: release_ladder
+
+# ============================================================================
+# RELEASE LADDER — Priority order for productized publishing
+# ============================================================================
+
+releases:
+
+  - id: R0
+    title: Foundation — Policy Pack + Registries
+    channel: internal_artifacts
+    status: shipped
+    audience: platform_team_only
+    ships:
+      - policy_pack (21 files)
+      - connection_registry
+      - packaging_channel_matrix
+      - offer_registry
+      - agent_publish_rules
+      - model_alias_rules
+      - enterprise_benchmark
+    success_condition: "All governance files committed, indexed, and reviewable"
+    timeline: month_1
+
+  - id: R1
+    title: Odoo Copilot — Internal Dev Preview
+    channel: internal_one_click
+    status: draft
+    audience: internal_users
+    ships:
+      - odoo_copilot_manifest
+      - read_only_mode_only
+      - foundry_backed_chat
+      - approved_tools_only
+    success_condition: "Internal users can ask finance/Odoo/BIR questions with trace+eval working"
+    do_not_do_yet:
+      - public_packaging
+      - marketplace_listing
+      - write_mode
+    timeline: month_1
+
+  - id: R2
+    title: Finance DocFlow — Alpha
+    channel: internal_one_click
+    status: proposed
+    audience: finance_team
+    ships:
+      - invoice_receipt_document_extraction
+      - document_intelligence_multimodal_pipeline
+      - review_queue
+      - draft_only_posting
+    success_condition: "Extraction works, review flow works, evidence+audit trail exist"
+    do_not_do_yet:
+      - auto_booking
+      - unsupervised_posting
+    timeline: month_2
+
+  - id: R3
+    title: Ops Console — Beta
+    channel: internal_one_click
+    status: proposed
+    audience: platform_team
+    ships:
+      - release_registry_view
+      - offer_registry_view
+      - agent_status_dashboard
+      - evaluation_status
+      - environment_visibility
+      - packaging_channel_status
+    success_condition: "One screen shows what exists, what is deployable, what is blocked"
+    timeline: month_2
+
+  - id: R4
+    title: Azure DevOps Release-Control Integration
+    channel: internal_service
+    status: proposed
+    audience: delivery_team
+    ships:
+      - boards_binding
+      - release_item_linking
+      - test_plans_uat_linkage
+      - promotion_gates
+      - ado_mcp_for_agents
+    success_condition: "Every prod promotion maps to release/work-item/test-evidence chain"
+    timeline: month_3
+
+  - id: R5
+    title: Tableau / BI Connector
+    channel: connector_plugin_extension
+    status: proposed
+    audience: analysts
+    ships:
+      - governed_metric_export
+      - semantic_access_layer
+      - tableau_cloud_consumption_path
+    success_condition: "Tableau is consumption-only surface binding to governed outputs"
+    timeline: month_3
+
+  - id: R6
+    title: First Installable Product Package
+    channel: azure_managed_application
+    status: future
+    audience: internal_it_or_customer
+    candidate: finance_docflow_or_odoo_copilot_bundle
+    ships:
+      - arm_package
+      - ui_definition
+      - managed_app_metadata
+      - internal_service_catalog_listing
+    success_condition: "One-click install works from Azure portal service catalog"
+    prerequisite: "R1-R5 stable"
+    timeline: month_3_plus
+
+  - id: R7
+    title: External Commercial Packaging
+    channel: marketplace
+    status: future
+    audience: external_customers
+    options:
+      - azure_marketplace_managed_application
+      - commercial_saas_offer
+      - m365_copilot_teams_extension
+      - managed_service_offer
+    success_condition: "Revenue-generating listing live on marketplace"
+    prerequisite: "R1-R6 stable + legal/compliance review"
+    timeline: after_r6_stable
+
+# ============================================================================
+# RELEASE LANES
+# ============================================================================
+
+lanes:
+  A:
+    name: Internal Capability Releases
+    cadence: weekly
+    examples:
+      - odoo_copilot_preview
+      - docflow_alpha_improvements
+      - ops_console_screens
+      - connector_prototypes
+
+  B:
+    name: Controlled Promotion Releases
+    cadence: biweekly
+    examples:
+      - dev_to_staging_promotions
+      - gated_write_mode_expansions
+      - uat_approved_feature_packs
+
+  C:
+    name: Productized Packaging Releases
+    cadence: monthly_or_slower
+    examples:
+      - managed_app_package
+      - external_connector_package
+      - commercial_offer_package
+
+# ============================================================================
+# CRON SCHEDULE
+# ============================================================================
+
+cron:
+  daily:
+    - sync_registries
+    - refresh_offer_status
+    - run_smoke_evals_on_internal_agents
+    - check_connector_health
+    - publish_internal_status_snapshot
+
+  nightly:
+    - run_full_eval_packs_on_candidate_agents
+    - refresh_connection_verification
+    - detect_policy_drift
+    - update_release_readiness_score
+
+  weekly:
+    - promote_top_passing_internal_candidates
+    - open_release_notes_draft
+    - refresh_tableau_bi_semantic_export
+    - close_stale_blockers
+
+  biweekly:
+    - staging_release_train
+    - manual_uat_cycle
+    - azure_devops_release_board_update
+    - packaging_readiness_review
+
+  monthly:
+    - productized_package_review
+    - decide_managed_app_saas_connector_marketplace_readiness
+
+# ============================================================================
+# CERTIFICATION → OWNERSHIP LANES
+# ============================================================================
+
+certification_ownership:
+  note: "Certifications are ownership lanes, not prerequisites for starting work"
+
+  infra_network_security:
+    certs: [AZ-305, AZ-104, AZ-700, AZ-500]
+    owns: [infra, networking, security, architecture]
+
+  foundry_agent_ml:
+    certs: [AI-102, AI-300, DP-100, DP-750]
+    owns: [foundry, agent_runtime, evaluation, ml_data_workflows]
+
+  release_automation:
+    certs: [AZ-400, GH-200, GH-300, GH-500]
+    owns: [release_automation, github, policy, code_quality]
+
+  bi_analytics:
+    certs: [PL-300, DP-600, DP-700]
+    owns: [bi, semantic_surfaces, fabric_analytics]
+
+  business_agent_gtm:
+    certs: [AB-100, AB-730, AB-731]
+    owns: [business_agent_packaging, go_to_market]

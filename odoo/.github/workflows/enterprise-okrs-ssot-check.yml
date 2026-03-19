@@ -1,0 +1,39 @@
+# DISABLED: GHA runners non-functional (billing). CI migrating to Azure DevOps Pipelines.
+# To re-enable: remove `if: false` from jobs.
+name: Enterprise OKRs SSOT Check
+
+on:
+  push:
+    paths:
+      - 'ssot/governance/enterprise_okrs*'
+      - 'platform/data/contracts/control_room_kpis.yaml'
+      - 'scripts/ci/validate_enterprise_okrs.py'
+      - '.github/workflows/enterprise-okrs-ssot-check.yml'
+  pull_request:
+    paths:
+      - 'ssot/governance/enterprise_okrs*'
+      - 'platform/data/contracts/control_room_kpis.yaml'
+      - 'scripts/ci/validate_enterprise_okrs.py'
+      - '.github/workflows/enterprise-okrs-ssot-check.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    name: Validate enterprise OKRs SSOT
+    if: false
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: pip install pyyaml jsonschema
+
+      - name: Validate SSOT
+        run: python scripts/ci/validate_enterprise_okrs.py

@@ -1,0 +1,186 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "product_mapping.schema.json",
+  "title": "Product Mapping Schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "version",
+    "source_product",
+    "target_stack",
+    "mapping",
+    "implementation_plan",
+    "gaps",
+    "evidence"
+  ],
+  "properties": {
+    "version": { "type": "string", "minLength": 3 },
+    "source_product": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "vendor", "edition"],
+      "properties": {
+        "name": { "type": "string", "minLength": 2 },
+        "vendor": { "type": "string", "minLength": 2 },
+        "edition": { "type": "string", "minLength": 2 },
+        "url": { "type": "string" }
+      }
+    },
+    "target_stack": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["odoo_version", "odoo_edition", "oca", "ipai_glue"],
+      "properties": {
+        "odoo_version": {
+          "type": "string",
+          "pattern": "^[0-9]{2}\\.[0-9]$|^[0-9]{2}$"
+        },
+        "odoo_edition": { "type": "string", "enum": ["CE"] },
+        "oca": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["version", "repos"],
+          "properties": {
+            "version": { "type": "string", "minLength": 2 },
+            "repos": {
+              "type": "array",
+              "minItems": 1,
+              "items": { "type": "string", "minLength": 3 }
+            }
+          }
+        },
+        "ipai_glue": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["principles", "modules"],
+          "properties": {
+            "principles": {
+              "type": "array",
+              "items": { "type": "string", "minLength": 3 }
+            },
+            "modules": {
+              "type": "array",
+              "items": { "type": "string", "minLength": 3 }
+            }
+          }
+        }
+      }
+    },
+    "mapping": {
+      "type": "array",
+      "minItems": 5,
+      "items": { "$ref": "#/$defs/mapping_row" }
+    },
+    "implementation_plan": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["phases", "order", "verification"],
+      "properties": {
+        "phases": {
+          "type": "array",
+          "minItems": 2,
+          "items": { "$ref": "#/$defs/phase" }
+        },
+        "order": {
+          "type": "array",
+          "minItems": 3,
+          "items": { "type": "string", "minLength": 3 }
+        },
+        "verification": {
+          "type": "array",
+          "minItems": 3,
+          "items": { "type": "string", "minLength": 5 }
+        }
+      }
+    },
+    "gaps": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/gap" }
+    },
+    "evidence": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/evidence_ref" }
+    }
+  },
+  "$defs": {
+    "evidence_ref": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["ref"],
+      "properties": {
+        "ref": { "type": "string", "minLength": 1 },
+        "hint": { "type": "string" },
+        "url": { "type": "string" }
+      }
+    },
+    "mapping_row": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "capability_id",
+        "source_feature",
+        "target",
+        "approach",
+        "coverage"
+      ],
+      "properties": {
+        "capability_id": { "type": "string", "minLength": 4 },
+        "source_feature": { "type": "string", "minLength": 3 },
+        "target": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["odoo_modules", "oca_modules", "ipai_glue"],
+          "properties": {
+            "odoo_modules": { "type": "array", "items": { "type": "string" } },
+            "oca_modules": { "type": "array", "items": { "type": "string" } },
+            "ipai_glue": { "type": "array", "items": { "type": "string" } }
+          }
+        },
+        "approach": {
+          "type": "string",
+          "enum": ["odoo_core", "oca", "minimal_glue", "external_service"]
+        },
+        "coverage": { "type": "number", "minimum": 0, "maximum": 1 },
+        "notes": { "type": "string" },
+        "evidence": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/evidence_ref" }
+        }
+      }
+    },
+    "phase": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "name", "deliverables"],
+      "properties": {
+        "id": { "type": "string", "minLength": 3 },
+        "name": { "type": "string", "minLength": 3 },
+        "deliverables": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "type": "string", "minLength": 3 }
+        },
+        "depends_on": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 3 }
+        }
+      }
+    },
+    "gap": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "description", "severity", "mitigation"],
+      "properties": {
+        "id": { "type": "string", "minLength": 4 },
+        "description": { "type": "string", "minLength": 10 },
+        "severity": { "type": "string", "enum": ["p0", "p1", "p2", "p3"] },
+        "mitigation": { "type": "string", "minLength": 10 },
+        "evidence": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/evidence_ref" }
+        }
+      }
+    }
+  }
+}

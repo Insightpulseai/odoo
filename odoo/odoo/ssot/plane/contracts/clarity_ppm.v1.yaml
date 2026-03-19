@@ -1,0 +1,55 @@
+schema: ssot.plane.clarity_ppm.v1
+version: 1
+updated: "2026-03-06"
+
+contract:
+  name: Clarity PPM Semantic Contract
+  workspace_slug: fin-ops
+  project_ref: ssot/plane/projects/finops.yaml
+  taxonomy_refs:
+    labels: ssot/plane/taxonomy/labels.yaml
+    modules: ssot/plane/taxonomy/modules.yaml
+    states: ssot/plane/taxonomy/states.yaml
+    estimates: ssot/plane/taxonomy/estimates.yaml
+    cycles: ssot/plane/taxonomy/cycles.yaml
+
+investment_model:
+  id_prefix: FINOPS-
+  required_fields:
+    - investment_id
+    - investment_type
+    - sponsor
+    - owner
+    - pm
+    - department
+    - cost_center
+    - planned_start
+    - planned_end
+    - rag_status
+    - budget_capex
+    - budget_opex
+    - forecast_etc
+    - actuals_to_date
+    - benefits_okr
+  investment_types:
+    - Run
+    - Change
+    - Grow
+
+governance:
+  required_label_prefixes:
+    - RAG/
+    - Type/
+    - Role/
+    - CostCenter/
+    - Compliance/
+  module_prefix_pattern: '^0[1-7]-'
+  cycle_naming_pattern: '^[0-9]{4}-[0-9]{2} Month End$'
+  required_states:
+    - Backlog
+    - Approved
+    - In Progress
+    - Blocked
+    - In Review
+    - Done
+    - Cancelled

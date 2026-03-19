@@ -1,0 +1,33 @@
+version: 1
+type: ssot.runtime.vault_provisioning
+# =============================================================================
+# Vault Provisioning State — InsightPulse AI
+# =============================================================================
+# This file tracks which Supabase Vault secrets have been provisioned in prod.
+# It is the SSOT marker consumed by CI activation gates.
+#
+# Rules:
+#   - provisioned: false  → CI gate will block activation if migration block is uncommented
+#   - provisioned: true   → operator has confirmed the secret exists in Supabase Vault
+#   - NEVER store secret values here — reference ssot/secrets/registry.yaml for IDs
+#   - Update provisioned: true only after verifying: SELECT id FROM vault.secrets WHERE name = '<id>'
+#
+# CI consumer: scripts/ci/check_stripe_wrapper_activation.py
+# =============================================================================
+
+vault:
+  stripe_secret_key:
+    # Flip to true ONLY after running:
+    #   select vault.create_secret('sk_live_...', 'stripe_secret_key', 'description');
+    # and verifying:
+    #   select id, name from vault.secrets where name = 'stripe_secret_key';
+    provisioned: false
+    secret_registry_id: stripe_secret_key   # must match ssot/secrets/registry.yaml
+    evidence:
+      - type: runbook
+        path: docs/runbooks/STRIPE_VAULT_PROVISIONING.md
+        required: false   # gate does not require the runbook file to exist
+    notes: >
+      Provision via Supabase SQL editor or supabase CLI.
+      The Vault secret UUID (vault.secrets.id) is required for CREATE SERVER options(api_key_id).
+      Record the UUID in the migration comment before uncommenting the activation block.

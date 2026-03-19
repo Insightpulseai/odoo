@@ -1,0 +1,114 @@
+version: 1
+namespace: ipai.ops_platform.factory.resolution_rules.v1
+artifact_type: policy
+repo_key: ops_platform
+domain: factory
+subject: resolution_rules
+
+# ============================================================================
+# FACTORY RESOLUTION RULES
+# ============================================================================
+# How the factory decides what to build, from what source, in what order.
+# ============================================================================
+
+three_layer_output:
+  layer_1:
+    name: work_container
+    inspired_by: openai_academy_projects
+    output: project_workspace
+    schema_ref: ops_platform__factory__project_schema__v1
+
+  layer_2:
+    name: reusable_operating_intelligence
+    inspired_by: openai_academy_skills
+    output: skill_pack
+    schema_ref: ops_platform__factory__skill_pack_schema__v1
+
+  layer_3:
+    name: deployable_artifact
+    inspired_by: openai_starter_apps_and_foundry_templates
+    output: app_service_agent_with_eval_and_packaging
+    schema_ref: agents__publish__foundry_deployment_profile_schema__v1
+
+resolution_pipeline:
+  stage_1_intake:
+    input: spec_bundle_or_natural_language_intent
+    output: classified_build_plan
+    actions:
+      - parse_intent
+      - classify_artifact_type
+      - identify_target_repo
+      - identify_target_channel
+
+  stage_2_template_resolution:
+    input: classified_build_plan
+    output: upstream_source_selection
+    actions:
+      - check_adoption_matrix
+      - resolve_template_source
+      - determine_extraction_mode
+      - identify_rewrite_requirements
+
+  stage_3_project_creation:
+    input: upstream_source_plus_spec
+    output: project_workspace
+    actions:
+      - create_project_id
+      - attach_context_files
+      - write_instructions
+      - assign_owner_and_collaborators
+
+  stage_4_skill_compilation:
+    input: project_context
+    output: skill_pack
+    actions:
+      - identify_required_skills
+      - resolve_skill_dependencies
+      - compile_skill_pack
+      - validate_skill_contracts
+
+  stage_5_artifact_generation:
+    input: project_plus_skills
+    output: deployable_artifact
+    actions:
+      - generate_code_or_config
+      - apply_ipai_naming_rewrite
+      - attach_model_alias_bindings
+      - attach_tool_bindings
+      - generate_foundry_deployment_profile
+
+  stage_6_eval:
+    input: artifact
+    output: eval_result
+    actions:
+      - generate_eval_dataset_if_missing
+      - run_smoke_eval
+      - run_policy_eval
+      - check_safety_eval
+      - record_eval_evidence
+
+  stage_7_packaging:
+    input: artifact_plus_eval_result
+    output: packaged_offer
+    actions:
+      - resolve_packaging_channel
+      - apply_channel_requirements
+      - generate_packaging_metadata
+      - register_in_offer_catalog
+
+  stage_8_publish:
+    input: packaged_offer
+    output: published_release
+    actions:
+      - check_publish_gates
+      - check_owner_signoff
+      - promote_to_target_environment
+      - update_release_ladder_status
+      - notify_stakeholders
+
+fail_closed_rules:
+  - if_template_resolution_ambiguous_then_fail
+  - if_eval_not_passed_then_block_publish
+  - if_owner_not_declared_then_block_publish
+  - if_packaging_channel_not_resolved_then_block_publish
+  - if_sample_defaults_remain_then_block_publish

@@ -1,0 +1,7 @@
+id,name,model_id/id,log_read,log_create,log_write,log_unlink,state
+__import__.auditlog_rule_partner,Partner Audit,base.model_res_partner,False,True,True,True,subscribed
+__import__.auditlog_rule_user,User Audit,base.model_res_users,False,True,True,True,subscribed
+__import__.auditlog_rule_invoice,Invoice Audit,account.model_account_move,False,True,True,True,subscribed
+__import__.auditlog_rule_payment,Payment Audit,account.model_account_payment,False,True,True,True,subscribed
+__import__.auditlog_rule_sale,Sale Order Audit,sale.model_sale_order,False,True,True,True,subscribed
+__import__.auditlog_rule_purchase,Purchase Order Audit,purchase.model_purchase_order,False,True,True,True,subscribed

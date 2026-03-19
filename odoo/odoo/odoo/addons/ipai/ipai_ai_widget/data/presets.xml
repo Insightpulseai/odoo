@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo noupdate="1">
+    <record id="preset_summarize" model="ipai.ai.preset">
+        <field name="key">summarize</field>
+        <field name="label">Summarize</field>
+        <field name="icon">fa-compress</field>
+        <field name="prompt_template">Summarize the chatter conversation for this {record_model} record. Be concise (3-5 bullet points). Include key decisions, action items, and dates mentioned.
+
+Context:
+{chatter_text}</field>
+        <field name="requires_selection">False</field>
+        <field name="output_mode">preview</field>
+        <field name="sequence">10</field>
+    </record>
+
+    <record id="preset_improve" model="ipai.ai.preset">
+        <field name="key">improve</field>
+        <field name="label">Improve</field>
+        <field name="icon">fa-pencil</field>
+        <field name="prompt_template">Improve the following text. Make it clearer, more professional, and well-structured. Preserve the original intent and key information.
+
+Text to improve:
+{selected_text}</field>
+        <field name="requires_selection">True</field>
+        <field name="output_mode">replace</field>
+        <field name="sequence">20</field>
+    </record>
+
+    <record id="preset_translate" model="ipai.ai.preset">
+        <field name="key">translate</field>
+        <field name="label">Translate</field>
+        <field name="icon">fa-language</field>
+        <field name="prompt_template">Translate the following text to {target_language}. Maintain the professional tone and formatting.
+
+Text to translate:
+{chatter_text}</field>
+        <field name="requires_selection">False</field>
+        <field name="output_mode">preview</field>
+        <field name="sequence">30</field>
+    </record>
+
+    <record id="preset_draft" model="ipai.ai.preset">
+        <field name="key">draft</field>
+        <field name="label">Draft Reply</field>
+        <field name="icon">fa-envelope</field>
+        <field name="prompt_template">Draft a professional reply to the most recent message in this {record_model} conversation thread. Be concise and actionable.
+
+Conversation context:
+{chatter_text}</field>
+        <field name="requires_selection">False</field>
+        <field name="output_mode">insert</field>
+        <field name="sequence">40</field>
+    </record>
+</odoo>

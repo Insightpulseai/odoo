@@ -1,0 +1,31 @@
+id: tenant-lifecycle-automation
+version: 1
+status: active
+classification: encoded_preference
+persona: tenant-lifecycle-operator
+updated_at: "2026-03-17"
+
+purpose: >
+  Automate tenant onboarding, provisioning, configuration, and offboarding
+  for multi-tenant SaaS platforms.
+
+inputs:
+  - tenancy_model: "Shared, dedicated, or hybrid"
+  - tier_definitions: "Resource allocation per tier"
+  - onboarding_requirements: "Signup flow, verification, initial configuration"
+  - data_retention_policy: "Post-offboarding data retention period"
+
+outputs:
+  - provisioning_workflow: "Step-by-step automated provisioning"
+  - onboarding_flow: "Signup to first login automation"
+  - configuration_management: "Per-tenant configuration storage and retrieval"
+  - offboarding_workflow: "Deactivation, data export, resource cleanup"
+  - self_service_design: "Tenant admin self-service capabilities"
+
+guardrails:
+  - "Zero manual steps in tenant provisioning"
+  - "Provisioning must be idempotent (safe to retry)"
+  - "Offboarding must comply with data retention policy"
+  - "Self-service actions must be audited"
+
+benchmark_source: "Azure Multitenancy Checklist - Operational Excellence"

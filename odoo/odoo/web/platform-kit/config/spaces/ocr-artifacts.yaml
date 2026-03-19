@@ -1,0 +1,217 @@
+# =============================================================================
+# OCR-ARTIFACTS.YAML - DigitalOcean Spaces Configuration (SSOT)
+# =============================================================================
+# This file defines the OCR artifacts storage bucket configuration.
+# Moves OCR outputs OFF droplet disk to DO Spaces for cost efficiency.
+# =============================================================================
+
+version: "1.0"
+last_updated: "2026-02-01"
+
+# =============================================================================
+# BUCKET CONFIGURATION
+# =============================================================================
+bucket:
+  name: ipai-ocr-artifacts
+  region: sgp1  # Same region as ocr-service-droplet
+  acl: private  # Private by default, presigned URLs for access
+
+  # Lifecycle rules for automatic cleanup
+  lifecycle:
+    enabled: true
+    rules:
+      # Move processed artifacts to cold storage after 30 days
+      - id: archive-processed
+        prefix: processed/
+        enabled: true
+        transition:
+          days: 30
+          storage_class: GLACIER  # Note: Spaces doesn't have Glacier, use expiration instead
+
+      # Delete temporary files after 7 days
+      - id: cleanup-temp
+        prefix: temp/
+        enabled: true
+        expiration:
+          days: 7
+
+      # Delete raw uploads after 90 days (processed copies kept)
+      - id: cleanup-raw
+        prefix: raw/
+        enabled: true
+        expiration:
+          days: 90
+
+      # Keep gold/verified artifacts indefinitely
+      - id: preserve-gold
+        prefix: gold/
+        enabled: false  # No expiration for gold artifacts
+
+# =============================================================================
+# FOLDER STRUCTURE
+# =============================================================================
+structure:
+  # Raw OCR uploads (receipts, invoices, documents)
+  raw:
+    path: raw/{year}/{month}/{day}/
+    description: Original uploaded files
+    retention_days: 90
+
+  # Processed OCR outputs (JSON, structured data)
+  processed:
+    path: processed/{year}/{month}/{day}/
+    description: OCR extraction results
+    retention_days: 365
+
+  # Temporary processing files
+  temp:
+    path: temp/{job_id}/
+    description: In-flight processing
+    retention_days: 7
+
+  # Gold/verified artifacts (never delete)
+  gold:
+    path: gold/{document_type}/
+    description: Verified, approved documents
+    retention_days: null  # indefinite
+
+  # Logs and metrics
+  logs:
+    path: logs/{year}/{month}/
+    description: OCR processing logs
+    retention_days: 30
+
+# =============================================================================
+# ACCESS CONFIGURATION
+# =============================================================================
+access:
+  # Service account for OCR service
+  ocr_service:
+    permissions:
+      - read
+      - write
+      - delete
+    prefixes:
+      - raw/
+      - processed/
+      - temp/
+      - logs/
+
+  # Read-only for analytics/BI
+  analytics:
+    permissions:
+      - read
+    prefixes:
+      - processed/
+      - gold/
+
+  # Admin full access
+  admin:
+    permissions:
+      - read
+      - write
+      - delete
+      - list
+    prefixes:
+      - "*"
+
+# =============================================================================
+# INTEGRATION
+# =============================================================================
+integration:
+  # OCR Service configuration
+  ocr_service:
+    endpoint: https://${SPACES_REGION}.digitaloceanspaces.com
+    bucket: ipai-ocr-artifacts
+    # Secrets (references only - values in secret store)
+    access_key_ref: SPACES_ACCESS_KEY
+    secret_key_ref: SPACES_SECRET_KEY
+
+  # Sync from droplet (for migration)
+  migration:
+    source: /opt/ocr-artifacts/
+    destination: s3://ipai-ocr-artifacts/raw/
+    command: |
+      # Using s3cmd or aws cli with Spaces endpoint
+      s3cmd sync /opt/ocr-artifacts/ s3://ipai-ocr-artifacts/raw/ \
+        --host=${SPACES_REGION}.digitaloceanspaces.com \
+        --host-bucket="%(bucket)s.${SPACES_REGION}.digitaloceanspaces.com" \
+        --access_key=${SPACES_ACCESS_KEY} \
+        --secret_key=${SPACES_SECRET_KEY}
+
+  # Odoo integration
+  odoo:
+    # Expense attachment storage
+    expense_attachments:
+      bucket: ipai-ocr-artifacts
+      prefix: processed/expenses/
+      presigned_url_expiry: 3600  # 1 hour
+
+    # Invoice storage
+    invoice_documents:
+      bucket: ipai-ocr-artifacts
+      prefix: processed/invoices/
+      presigned_url_expiry: 3600
+
+# =============================================================================
+# COST OPTIMIZATION
+# =============================================================================
+cost:
+  # Spaces pricing (as of 2026)
+  pricing:
+    storage_per_gb: 0.02  # USD/GB/month
+    bandwidth_per_gb: 0.01  # USD/GB outbound
+    free_bandwidth_gb: 1024  # 1TB free outbound
+
+  # Estimated usage
+  estimates:
+    monthly_uploads_gb: 10
+    monthly_storage_gb: 50
+    monthly_bandwidth_gb: 20
+    estimated_cost_usd: 1.00  # $0.02 * 50GB storage
+
+  # Savings vs droplet disk
+  comparison:
+    droplet_disk_cost: 0.10  # USD/GB/month (part of droplet cost)
+    spaces_cost: 0.02  # USD/GB/month
+    savings_percent: 80  # 80% cheaper than droplet disk
+
+# =============================================================================
+# MONITORING
+# =============================================================================
+monitoring:
+  # Alerts
+  alerts:
+    storage_threshold_gb: 100
+    bandwidth_threshold_gb: 500
+
+  # Metrics to track
+  metrics:
+    - total_storage_gb
+    - monthly_bandwidth_gb
+    - object_count
+    - lifecycle_deletions
+
+# =============================================================================
+# VERIFICATION
+# =============================================================================
+verification:
+  commands:
+    # Create bucket
+    create_bucket: |
+      doctl spaces create ipai-ocr-artifacts --region sgp1
+
+    # List bucket contents
+    list_bucket: |
+      s3cmd ls s3://ipai-ocr-artifacts/ \
+        --host=sgp1.digitaloceanspaces.com \
+        --host-bucket="%(bucket)s.sgp1.digitaloceanspaces.com"
+
+    # Check bucket exists
+    check_bucket: |
+      doctl spaces list | grep ipai-ocr-artifacts
+
+  expected_state:
+    bucket_exists: true
+    lifecycle_configured: true
+    cors_disabled: true  # Private bucket

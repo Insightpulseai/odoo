@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- User Groups -->
+    <record id="group_expense_liquidation_user" model="res.groups">
+        <field name="name">Liquidation User</field>
+        <field name="category_id" ref="base.module_category_human_resources"/>
+        <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+        <field name="comment">Can create and submit own expense liquidations</field>
+    </record>
+
+    <record id="group_expense_liquidation_approver" model="res.groups">
+        <field name="name">Liquidation Approver</field>
+        <field name="category_id" ref="base.module_category_human_resources"/>
+        <field name="implied_ids" eval="[(4, ref('group_expense_liquidation_user'))]"/>
+        <field name="comment">Can approve expense liquidations</field>
+    </record>
+
+    <!-- Record Rules -->
+    <record id="expense_liquidation_user_rule" model="ir.rule">
+        <field name="name">Expense Liquidation: User can see own liquidations</field>
+        <field name="model_id" ref="model_hr_expense_liquidation"/>
+        <field name="domain_force">[('employee_id.user_id', '=', user.id)]</field>
+        <field name="groups" eval="[(4, ref('group_expense_liquidation_user'))]"/>
+    </record>
+
+    <record id="expense_liquidation_approver_rule" model="ir.rule">
+        <field name="name">Expense Liquidation: Approver can see all</field>
+        <field name="model_id" ref="model_hr_expense_liquidation"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('group_expense_liquidation_approver'))]"/>
+    </record>
+
+</odoo>

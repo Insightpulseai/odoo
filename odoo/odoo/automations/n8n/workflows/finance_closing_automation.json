@@ -1,0 +1,343 @@
+{
+  "name": "Finance Month-End Closing - Automation",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "1 0 1 * *"
+            }
+          ]
+        }
+      },
+      "id": "reverse_accruals_trigger",
+      "name": "Day 1 00:01 - Reverse Accruals Trigger",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1,
+      "position": [250, 300]
+    },
+    {
+      "parameters": {
+        "url": "http://159.223.75.148:8069/xmlrpc/2/object",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "jsonrpc",
+              "value": "2.0"
+            },
+            {
+              "name": "method",
+              "value": "call"
+            },
+            {
+              "name": "params",
+              "value": {
+                "db": "odoo_core",
+                "uid": 2,
+                "password": "={{ $env.ODOO_ADMIN_PASSWORD }}",
+                "model": "account.move",
+                "method": "search_read",
+                "args": [
+                  [
+                    ["state", "=", "posted"],
+                    ["auto_reverse", "=", true],
+                    ["reversed_entry_id", "=", false]
+                  ],
+                  ["id", "name", "date"]
+                ]
+              }
+            }
+          ]
+        }
+      },
+      "id": "query_accruals",
+      "name": "Query Auto-Reverse Accruals",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [470, 300]
+    },
+    {
+      "parameters": {
+        "url": "={{ $env.MATTERMOST_WEBHOOK_URL }}",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "text",
+              "value": "=✅ **Accrual Reversal Complete**\n\n**Date**: {{ $now.toFormat('yyyy-MM-dd HH:mm') }}\n**Entries Reversed**: {{ $json.result.length }}\n\nAll prior month accrual entries have been automatically reversed."
+            }
+          ]
+        }
+      },
+      "id": "notify_accrual_reversal",
+      "name": "Notify Accrual Reversal",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [690, 300]
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 6 1 * *"
+            }
+          ]
+        }
+      },
+      "id": "fx_rates_trigger",
+      "name": "Day 1 06:00 - FX Rates Trigger",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1,
+      "position": [250, 500]
+    },
+    {
+      "parameters": {
+        "url": "http://159.223.75.148:8069/xmlrpc/2/object",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "jsonrpc",
+              "value": "2.0"
+            },
+            {
+              "name": "method",
+              "value": "call"
+            },
+            {
+              "name": "params",
+              "value": {
+                "db": "odoo_core",
+                "uid": 2,
+                "password": "={{ $env.ODOO_ADMIN_PASSWORD }}",
+                "model": "res.currency",
+                "method": "cron_update_currency_rates",
+                "args": []
+              }
+            }
+          ]
+        }
+      },
+      "id": "update_fx_rates",
+      "name": "Update FX Rates (BSP)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [470, 500]
+    },
+    {
+      "parameters": {
+        "url": "={{ $env.MATTERMOST_WEBHOOK_URL }}",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "text",
+              "value": "=💱 **FX Rates Updated**\n\n**Date**: {{ $now.toFormat('yyyy-MM-dd HH:mm') }}\n**Source**: BSP (Bangko Sentral ng Pilipinas)\n\nCurrency exchange rates have been updated for the new month."
+            }
+          ]
+        }
+      },
+      "id": "notify_fx_update",
+      "name": "Notify FX Update",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [690, 500]
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 9 5 * *"
+            }
+          ]
+        }
+      },
+      "id": "period_lock_trigger",
+      "name": "Day 5 09:00 - Period Lock Reminder",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1,
+      "position": [250, 700]
+    },
+    {
+      "parameters": {
+        "url": "http://159.223.75.148:8069/xmlrpc/2/object",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "jsonrpc",
+              "value": "2.0"
+            },
+            {
+              "name": "method",
+              "value": "call"
+            },
+            {
+              "name": "params",
+              "value": {
+                "db": "odoo_core",
+                "uid": 2,
+                "password": "={{ $env.ODOO_ADMIN_PASSWORD }}",
+                "model": "project.task",
+                "method": "search_read",
+                "args": [
+                  [
+                    ["project_id.name", "ilike", "Month-End Close"],
+                    ["stage_id.name", "!=", "Done"]
+                  ],
+                  ["id", "name", "user_ids", "stage_id"]
+                ]
+              }
+            }
+          ]
+        }
+      },
+      "id": "check_incomplete_tasks",
+      "name": "Check Incomplete Tasks",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [470, 700]
+    },
+    {
+      "parameters": {
+        "url": "={{ $env.MATTERMOST_WEBHOOK_URL }}",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "text",
+              "value": "=⏰ **Period Lock Reminder**\n\n**Date**: {{ $now.toFormat('yyyy-MM-dd HH:mm') }}\n**Incomplete Tasks**: {{ $json.result.length }}\n\n⚠️ Month-end closing should be complete by Day 7. Please review remaining tasks:\n\n{{ $json.result.map(task => `• ${task.name}`).join('\\n') }}\n\ncc: @finance-director"
+            }
+          ]
+        }
+      },
+      "id": "notify_period_lock",
+      "name": "Notify Period Lock Reminder",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [690, 700]
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 8 10 * *"
+            }
+          ]
+        }
+      },
+      "id": "bir_filing_trigger",
+      "name": "Day 10 08:00 - BIR Filing Alerts",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1,
+      "position": [250, 900]
+    },
+    {
+      "parameters": {
+        "url": "http://159.223.75.148:8069/xmlrpc/2/object",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "jsonrpc",
+              "value": "2.0"
+            },
+            {
+              "name": "method",
+              "value": "call"
+            },
+            {
+              "name": "params",
+              "value": {
+                "db": "odoo_core",
+                "uid": 2,
+                "password": "={{ $env.ODOO_ADMIN_PASSWORD }}",
+                "model": "project.task",
+                "method": "search_read",
+                "args": [
+                  [
+                    ["name", "ilike", "BIR"],
+                    ["project_id.name", "ilike", "Month-End Close"],
+                    ["stage_id.name", "!=", "Done"]
+                  ],
+                  ["id", "name", "user_ids"]
+                ]
+              }
+            }
+          ]
+        }
+      },
+      "id": "check_bir_tasks",
+      "name": "Check BIR Filing Tasks",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [470, 900]
+    },
+    {
+      "parameters": {
+        "url": "={{ $env.MATTERMOST_WEBHOOK_URL }}",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "text",
+              "value": "=📋 **BIR Filing Deadline Alerts**\n\n**Date**: {{ $now.toFormat('yyyy-MM-dd HH:mm') }}\n\n⚠️ **REMINDER**: BIR forms must be filed TODAY (Day 10)\n\n**Pending Tasks**:\n{{ $json.result.map(task => `• ${task.name}`).join('\\n') }}\n\n**Deadlines**:\n• 1601-C: Due today (10th)\n• 1601-EQ: Due Day 15 (if quarterly)\n• 2550M/Q: Due Day 20/25\n\ncc: @tax-specialist @finance-director"
+            }
+          ]
+        }
+      },
+      "id": "notify_bir_filing",
+      "name": "Notify BIR Filing Alerts",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [690, 900]
+    }
+  ],
+  "connections": {
+    "Day 1 00:01 - Reverse Accruals Trigger": {
+      "main": [[{"node": "Query Auto-Reverse Accruals", "type": "main", "index": 0}]]
+    },
+    "Query Auto-Reverse Accruals": {
+      "main": [[{"node": "Notify Accrual Reversal", "type": "main", "index": 0}]]
+    },
+    "Day 1 06:00 - FX Rates Trigger": {
+      "main": [[{"node": "Update FX Rates (BSP)", "type": "main", "index": 0}]]
+    },
+    "Update FX Rates (BSP)": {
+      "main": [[{"node": "Notify FX Update", "type": "main", "index": 0}]]
+    },
+    "Day 5 09:00 - Period Lock Reminder": {
+      "main": [[{"node": "Check Incomplete Tasks", "type": "main", "index": 0}]]
+    },
+    "Check Incomplete Tasks": {
+      "main": [[{"node": "Notify Period Lock Reminder", "type": "main", "index": 0}]]
+    },
+    "Day 10 08:00 - BIR Filing Alerts": {
+      "main": [[{"node": "Check BIR Filing Tasks", "type": "main", "index": 0}]]
+    },
+    "Check BIR Filing Tasks": {
+      "main": [[{"node": "Notify BIR Filing Alerts", "type": "main", "index": 0}]]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": [
+    {"id": "finance", "name": "finance"},
+    {"id": "month-end", "name": "month-end"},
+    {"id": "automation", "name": "automation"}
+  ],
+  "triggerCount": 4,
+  "updatedAt": "2025-12-30T00:00:00.000Z",
+  "versionId": "1"
+}

@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "AgentRouterResponse",
+  "type": "object",
+  "required": ["capability", "primary_agent", "support_agents", "relay_prompt"],
+  "properties": {
+    "capability": { "type": "string" },
+    "primary_agent": { "type": "string" },
+    "support_agents": { "type": "array", "items": { "type": "string" } },
+    "prompt_source": { "type": ["string", "null"] },
+    "relay_prompt": { "type": "string" },
+    "diagnostics": {
+      "type": "object",
+      "properties": {
+        "taxonomy_path": { "type": "string" },
+        "matrix_path": { "type": "string" },
+        "prompts_dir": { "type": "string" },
+        "selection_reason": { "type": "string" }
+      },
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": true
+}

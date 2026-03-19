@@ -1,0 +1,6 @@
+Resources
+| where type == "microsoft.app/containerapps"
+| where properties.configuration.ingress.external == true
+| project name, resourceGroup,
+         fqdn=properties.configuration.ingress.fqdn,
+         external=properties.configuration.ingress.external

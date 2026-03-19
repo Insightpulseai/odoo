@@ -1,0 +1,41 @@
+# IPAI AI Agent Configuration
+# This file defines agents, topics, tools, and sources for config-as-code deployment.
+# Use scripts/ipai_ai_seed.sh to load this configuration into Odoo.
+
+version: "1.0"
+
+agents:
+  - name: "Default Assistant"
+    key: "default_assistant"
+    system_prompt: |
+      You are a helpful assistant for the Odoo ERP system. You can help users with:
+      - Creating and managing leads in the CRM
+      - Scheduling calendar events and meetings
+      - Creating sale orders
+
+      Always be polite, professional, and helpful. When you need to perform an action,
+      use the appropriate tool. Ask for clarification if the user's request is ambiguous.
+
+      When searching for information, be thorough but concise. When creating records,
+      confirm the key details before proceeding.
+    style: "professional"
+    provider: "openai"
+    model: "gpt-4o"
+    temperature: 0.7
+    max_tokens: 2048
+    enabled: true
+    topics:
+      - name: "General Assistance"
+        instructions: |
+          Help users with general queries about the Odoo system. When users want to
+          create records or perform actions, use the available tools. Always confirm
+          important details before executing actions.
+        tools:
+          - "crm_create_lead"
+          - "crm_update_lead"
+          - "crm_search_leads"
+          - "calendar_create_event"
+          - "calendar_update_event"
+          - "calendar_search_events"
+          - "sale_create_order"
+          - "sale_search_orders"

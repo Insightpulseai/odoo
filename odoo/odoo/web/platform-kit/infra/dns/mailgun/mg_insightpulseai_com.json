@@ -1,0 +1,57 @@
+{
+  "domain": "mg.insightpulseai.com",
+  "state": "unverified",
+  "region": "us",
+  "created_at": "2026-02-01T13:23:19Z",
+  "dns_provider": "wix",
+  "nameservers": [
+    "ns6.wixdns.net",
+    "ns7.wixdns.net"
+  ],
+  "sending_dns_records": [
+    {
+      "type": "TXT",
+      "host": "mg",
+      "value": "v=spf1 include:mailgun.org ~all",
+      "purpose": "SPF - Authorize Mailgun to send email"
+    },
+    {
+      "type": "TXT",
+      "host": "mx._domainkey.mg",
+      "value": "k=rsa; p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQC59AXS0WKSDfH3HaKlpa1a3dusQWC7PECyywHd2mntae8jiwJ9++tHgu+YFNRVwXTmCFfUIsUdQpmxhYyVsYVLis/xagryklQ/wU3SF0E3Qso796fV9x1ShYb/W9rqpiW8jVD78LSppRquyYwTNLuP2+5hWFLxxVqPJYWZBHE2CQIDAQAB",
+      "purpose": "DKIM - Email signing key"
+    },
+    {
+      "type": "CNAME",
+      "host": "email.mg",
+      "value": "mailgun.org",
+      "purpose": "Tracking - Click/open tracking"
+    }
+  ],
+  "receiving_dns_records": [
+    {
+      "type": "MX",
+      "host": "mg",
+      "value": "mxa.mailgun.org",
+      "priority": 10,
+      "purpose": "Mailgun MX primary"
+    },
+    {
+      "type": "MX",
+      "host": "mg",
+      "value": "mxb.mailgun.org",
+      "priority": 10,
+      "purpose": "Mailgun MX secondary"
+    }
+  ],
+  "smtp_credentials": {
+    "no_reply": {
+      "login": "no-reply@mg.insightpulseai.com",
+      "password_hint": "695ebf38...e02bb39"
+    },
+    "support": {
+      "login": "support@mg.insightpulseai.com",
+      "password_hint": "d9401176...8b091178"
+    }
+  }
+}

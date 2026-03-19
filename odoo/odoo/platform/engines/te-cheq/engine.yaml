@@ -1,0 +1,215 @@
+engine:
+  slug: te-cheq
+  name: TE-Cheq Travel & Expense Engine
+  version: 0.9.0
+  owner_team: finance-ssc
+  status: active
+  domain: finance
+  description: >
+    Handles travel and expense capture, OCR, policy evaluation, approvals,
+    and posting of summarized entries into the TBWA finance ERP / Odoo 18 CE.
+
+  tags:
+    - t&e
+    - ocr
+    - finance
+    - supabase
+
+data:
+  primary_db: supabase
+  schemas:
+    - schema_name: teq
+      role: fact
+    - schema_name: ref
+      role: dimension
+  tables:
+    - name: teq.expense_reports
+      role: fact
+      description: One row per submitted expense report (header-level).
+      primary_key: [id]
+      natural_keys: [tenant_id, employee_id, report_number]
+      partition_by: month
+      retention: null
+    - name: teq.cash_advances
+      role: fact
+      description: Cash advances tied to trips and later reconciled by expenses.
+      primary_key: [id]
+      natural_keys: [tenant_id, employee_id, advance_number]
+      partition_by: month
+      retention: null
+    - name: teq.expense_lines
+      role: fact
+      description: Line-level expenses (per receipt / per cost line).
+      primary_key: [id]
+      natural_keys: [tenant_id, report_id, line_seq]
+      partition_by: month
+      retention: null
+    - name: teq.receipt_documents
+      role: log
+      description: OCR'd receipts + parsed fields + confidence scores.
+      primary_key: [id]
+      natural_keys: [tenant_id, source_hash]
+      partition_by: month
+      retention: 730d
+    - name: ref.expense_policies
+      role: config
+      description: Policy rules (per tenant, per cost center).
+      primary_key: [id]
+      natural_keys: [tenant_id, policy_code]
+      partition_by: null
+      retention: null
+  indexes:
+    - table: teq.expense_reports
+      type: btree
+      columns: [tenant_id, employee_id, status, submitted_at]
+      where: null
+      usage: >
+        Filter dashboards and agent queries by tenant/employee/status/date.
+    - table: teq.expense_lines
+      type: btree
+      columns: [tenant_id, category_code, spend_date]
+      where: null
+      usage: >
+        Category/time breakdowns and anomaly detection.
+    - table: teq.receipt_documents
+      type: gin
+      columns: [raw_text_tsv]
+      where: null
+      usage: >
+        Full-text search over OCR text when receipts need to be re-matched.
+    - table: teq.expense_reports
+      type: bitmap
+      columns: [status]
+      where: null
+      usage: >
+        Fast AND/OR filters across status + policy_flagged for SSC dashboards.
+
+interfaces:
+  api:
+    http:
+      - name: submit-expense-report
+        method: POST
+        path: /api/te-cheq/expense-reports
+        supabase_function: teq_submit_expense_report
+        auth: bearer_jwt
+        rate_limit_rpm: 60
+      - name: upload-receipt
+        method: POST
+        path: /api/te-cheq/receipts
+        supabase_function: teq_upload_receipt
+        auth: bearer_jwt
+        rate_limit_rpm: 120
+      - name: evaluate-report
+        method: POST
+        path: /api/te-cheq/evaluate
+        supabase_function: teq_evaluate_report
+        auth: service_role
+        rate_limit_rpm: 300
+    events:
+      - name: teq.expense_report_submitted
+        direction: out
+        payload_contract: schemas/events/teq.expense_report_submitted.json
+      - name: teq.expense_report_approved
+        direction: out
+        payload_contract: schemas/events/teq.expense_report_approved.json
+      - name: teq.expense_report_policy_violation
+        direction: out
+        payload_contract: schemas/events/teq.expense_report_policy_violation.json
+  mcp_tools:
+    - name: teq_lookup_expenses
+      description: >
+        Allows agents to query expense headers/lines for a given employee,
+        period, or project with policy flags.
+      input_contract: schemas/tools/teq_lookup_expenses.input.json
+      output_contract: schemas/tools/teq_lookup_expenses.output.json
+    - name: teq_run_policy_check
+      description: >
+        Runs policy engine for a given report_id and returns violations.
+      input_contract: schemas/tools/teq_run_policy_check.input.json
+      output_contract: schemas/tools/teq_run_policy_check.output.json
+
+agents:
+  primary_agent:
+    id: te-cheq-coach
+    description: >
+      Finance T&E assistant that helps employees submit compliant expenses,
+      and helps SSC review edge cases.
+    model: claude-3.5-sonnet
+    tools:
+      - teq_lookup_expenses
+      - teq_run_policy_check
+      - supabase-sql
+  supporting_agents:
+    - id: te-cheq-ocr-validator
+      role: ocr_correction
+    - id: te-cheq-policy-curator
+      role: maintain_policies
+
+memory:
+  short_term:
+    description: >
+      Current employee session: last 20 queries, draft report state,
+      last 50 OCR corrections.
+    sources:
+      - session_cache
+      - recent_events
+  long_term:
+    vector:
+      collections:
+        - teq_policy_qa
+        - teq_playbook
+    sql:
+      tables:
+        - teq.expense_reports
+        - teq.expense_lines
+        - teq.receipt_documents
+  stored:
+    logs_table: logs.teq_agent_actions
+    retention: 365d
+
+security:
+  tenants:
+    model: row_level_security
+    tenant_key: tenant_id
+  roles:
+    - name: teq_employee
+      permissions:
+        - read_own_tenant
+        - submit_own_reports
+    - name: teq_approver
+      permissions:
+        - read_own_tenant
+        - approve_reports
+    - name: teq_admin
+      permissions:
+        - read_all
+        - manage_policies
+  rls_policies_doc: docs/rls/te-cheq.md
+
+observability:
+  dashboards:
+    - name: TE-Cheq Engine Health
+      type: superset
+      path: dashboards/te-cheq-health.json
+  logs:
+    sink: supabase
+    table: logs.teq_engine_events
+  alerts:
+    - name: teq-p95-latency-high
+      channel: mattermost
+      rule_ref: alerts/te-cheq-p95-latency.yml
+    - name: teq-policy-violations-spike
+      channel: mattermost
+      rule_ref: alerts/te-cheq-policy-violations.yml
+
+rollout:
+  environments:
+    - name: dev
+      supabase_project: dev-teq
+    - name: prod
+      supabase_project: spdtwktxdalcfigzeqrz
+  feature_flags:
+    - name: teq_enable_handwriting_model
+      service: supabase
+    - name: teq_enable_strict_policy_enforcement
+      service: supabase

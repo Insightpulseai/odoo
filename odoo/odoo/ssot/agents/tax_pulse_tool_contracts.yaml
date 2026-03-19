@@ -1,0 +1,254 @@
+version: "1.0.0"
+pack: bir_compliance
+updated_at: "2026-03-15"
+spec_ref: spec/tax-pulse-sub-agent/prd.md
+
+# Tool contracts define typed inputs, outputs, agent ownership,
+# and approval requirements for each BIR Compliance Pack tool.
+
+tools:
+  - name: bir_compliance_search
+    description: Search BIR compliance knowledge base for regulations, forms, and filing guidance
+    agent: [advisory, ops]
+    approval_required: false
+    input:
+      query:
+        type: string
+        required: true
+        description: Natural language query about BIR compliance
+      form_type:
+        type: string
+        required: false
+        description: Optional BIR form type filter (e.g., "2550M", "1601C")
+    output:
+      answer:
+        type: string
+        description: Grounded explanation with citations
+      citations:
+        type: array
+        items: { type: string }
+        description: Source references for the answer
+    grounding: required
+    safety: content_risk
+
+  - name: check_overdue_filings
+    description: Query overdue BIR filing deadlines
+    agent: [ops]
+    approval_required: false
+    input:
+      form_type:
+        type: string
+        required: false
+      company_id:
+        type: integer
+        required: false
+    output:
+      overdue_count:
+        type: integer
+      filings:
+        type: array
+        items:
+          type: object
+          properties:
+            id: { type: integer }
+            form_type: { type: string }
+            deadline_date: { type: string, format: date }
+            days_overdue: { type: integer }
+            state: { type: string }
+    odoo_model: bir.filing.deadline
+    odoo_domain: "[('state', '=', 'overdue')]"
+
+  - name: compute_bir_vat_return
+    description: Compute VAT return amounts using rules engine and Odoo account.move data
+    agent: [actions]
+    approval_required: true
+    approver_group: group_ipai_bir_approver
+    input:
+      return_id:
+        type: integer
+        required: true
+        description: ID of bir.vat.return record
+    output:
+      output_vat:
+        type: number
+        description: Total output VAT
+      input_vat:
+        type: number
+        description: Total input VAT
+      vat_payable:
+        type: number
+        description: Net VAT payable (output - input)
+      validation_result:
+        type: string
+        enum: [pass, fail]
+      issues:
+        type: array
+        items: { type: string }
+    odoo_model: bir.vat.return
+    odoo_action: action_compute
+    state_transition: "draft → computed"
+
+  - name: compute_bir_withholding_return
+    description: Compute withholding tax return (1601-C, 1601-E, 1601-F)
+    agent: [actions]
+    approval_required: true
+    approver_group: group_ipai_bir_approver
+    input:
+      return_id:
+        type: integer
+        required: true
+        description: ID of bir.withholding.return record
+    output:
+      total_compensation:
+        type: number
+      total_tax_withheld:
+        type: number
+      validation_result:
+        type: string
+        enum: [pass, fail]
+      issues:
+        type: array
+        items: { type: string }
+    odoo_model: bir.withholding.return
+    odoo_action: action_compute
+    state_transition: "draft → computed"
+
+  - name: validate_bir_return
+    description: Validate a BIR tax return for filing readiness
+    agent: [actions]
+    approval_required: true
+    approver_group: group_ipai_bir_approver
+    input:
+      return_id:
+        type: integer
+        required: true
+        description: ID of bir.tax.return record
+    output:
+      valid:
+        type: boolean
+      issues:
+        type: array
+        items: { type: string }
+        description: Validation issues found
+      missing_data:
+        type: array
+        items: { type: string }
+        description: Required data not yet available
+    odoo_model: bir.tax.return
+    odoo_action: action_validate
+    state_transition: "computed → validated"
+
+  - name: generate_alphalist
+    description: Generate BIR alphalist (1604-CF or 1604-E) from withholding returns
+    agent: [actions]
+    approval_required: true
+    approver_group: group_ipai_finance_manager
+    input:
+      period_year:
+        type: integer
+        required: true
+      form_type:
+        type: string
+        required: true
+        enum: ["1604CF", "1604E"]
+    output:
+      alphalist_id:
+        type: integer
+      employee_count:
+        type: integer
+      total_compensation:
+        type: number
+      total_tax_withheld:
+        type: number
+    odoo_model: bir.alphalist
+    odoo_action: action_generate_alphalist
+
+  - name: generate_efps_xml
+    description: Generate eFPS XML file for electronic filing with BIR
+    agent: [actions]
+    approval_required: true
+    approver_group: group_ipai_bir_approver
+    input:
+      return_id:
+        type: integer
+        required: true
+    output:
+      attachment_id:
+        type: integer
+        description: Odoo ir.attachment ID of generated XML
+      xml_valid:
+        type: boolean
+        description: Passes BIR eFPS schema validation
+    odoo_model: bir.tax.return
+    odoo_action: action_export_efps
+    state_requirement: "approved"
+
+  - name: generate_bir_pdf
+    description: Generate PDF of BIR return for manual filing or archive
+    agent: [actions]
+    approval_required: true
+    approver_group: group_ipai_bir_approver
+    input:
+      return_id:
+        type: integer
+        required: true
+    output:
+      attachment_id:
+        type: integer
+        description: Odoo ir.attachment ID of generated PDF
+      page_count:
+        type: integer
+    odoo_model: bir.tax.return
+    odoo_action: action_generate_pdf
+    state_requirement: "approved"
+
+# --- Agent-Level Metadata (AFC Parity Merge) ---
+
+agent: tax-pulse
+runtime: azure-ai-foundry
+capability_class: capability_pack  # Not a standalone runtime stack
+
+# Tax truth is externalized, not embedded in agent prompts
+knowledge_sources:
+  - type: azure_ai_search
+    index: ipai-ph-tax-knowledge
+    content: [odoo_19_docs, bir_forms_catalog, bir_deadlines, internal_sops]
+  - type: file_search
+    content: [bir_revenue_regulations, compliance_procedures]
+  - type: ssot_yaml
+    path: ssot/tax/compliance_check_catalog.yaml
+
+# Tool surface summary (narrow bridge via OpenAPI)
+tool_surface:
+  read:
+    - getComplianceFindings
+    - getComplianceTasks
+    - getCompliancePeriods
+    - getInvoices
+    - getTaxSummary
+    - getWithholdingLines
+    - getReport2550Q
+    - getReportSAWT
+    - getReportSLSP
+    - getReportBIR2307
+  write_phase1:  # Minimal initial write surface
+    - updateComplianceTask  # state, assignee, completion_note
+    - createComplianceFinding
+    - postChatterNote
+  write_deferred:  # Not in Phase 1
+    - uploadAttachment
+    - genericRecordMutation
+    - directFilingFlags
+
+# Module ownership mapping
+module_mapping:
+  compliance_checks: ipai_bir_tax_compliance
+  compliance_notifications: ipai_bir_notifications
+  close_orchestration: ipai_finance_ppm
+  copilot_runtime: ipai_odoo_copilot
+
+# Confirmation requirement
+write_policy: all_writes_require_adaptive_card_confirmation
+confirmation_card: agents/contracts/ui/confirm_action_card.json
+audit_trail: odoo_mail_thread_chatter
+bridge_openapi: agents/contracts/openapi/ipai_odoo_bridge.openapi.yaml

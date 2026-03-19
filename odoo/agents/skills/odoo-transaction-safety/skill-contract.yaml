@@ -1,0 +1,64 @@
+version: 1
+type: review_skill
+family: odoo_coding_guidelines
+skill:
+  name: odoo-transaction-safety
+  status: draft
+  owner: agents
+  purpose: >
+    Verify transaction safety in Odoo code — no unjustified cr.commit(),
+    proper ORM usage, no raw SQL without justification, correct context
+    handling, and documented sudo() usage.
+
+  triggers:
+    - code containing database operations
+    - migration scripts
+    - bulk import or batch processing operations
+    - queue job implementations
+    - any code using cr.execute() or cr.commit()
+
+  inputs:
+    - Python source files under review
+    - diff or full source of changed files
+    - module context (migration, queue job, standard business logic)
+
+  steps:
+    - scan for cr.commit() calls — flag as critical unless justified
+    - scan for raw SQL (cr.execute) — flag for review, require justification
+    - verify ORM methods used correctly (recordset methods over list comprehensions)
+    - check context handling (with_context, not mutation)
+    - verify sudo() usage is documented with justification comment
+    - check for savepoint usage in appropriate contexts
+    - verify no direct cursor manipulation outside migrations
+
+  outputs:
+    - transaction_safety_report
+    - violation_list (with file, line, severity, rule)
+    - remediation_recommendations
+    - risk_assessment
+
+  guardrails:
+    - never approve cr.commit() without explicit, documented justification
+    - flag all raw SQL as requiring review
+    - context mutation is always a violation
+    - sudo() without documentation comment is a violation
+    - prefer inherited extension over core patching
+    - methods should remain small and single-responsibility
+    - do not hardcode logic that blocks extension by submodules
+    - catch only specific exceptions
+    - follow Odoo file, XML, and import conventions
+
+  evidence:
+    required: true
+    format: "docs/evidence/{stamp}/odoo-review/transaction-safety/"
+
+  evals:
+    dimensions: [accuracy, completeness, safety, policy_adherence, evidence_quality]
+    thresholds:
+      accuracy: 0.98
+      safety: 0.99
+
+cross_references:
+  - agents/knowledge/benchmarks/odoo-coding-guidelines.md
+  - agents/knowledge/benchmarks/odoo-developer-howtos.md
+  - ~/.claude/rules/odoo19-coding.md

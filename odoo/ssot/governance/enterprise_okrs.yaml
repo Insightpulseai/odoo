@@ -6,12 +6,15 @@
 # Cross-references operational KPIs in:
 #   platform/data/contracts/control_room_kpis.yaml
 #
-# Spec bundle: spec/enterprise-target-state/
+# See also: platform-strategy-2026.yaml (VMOKRAPI-SPATRES full model)
+# Planning index: planning_system_index.yaml (layer: operational_okrs)
+#
+# Spec bundle: spec/wholesale-saas-erp-azure/
 # CI validator: scripts/ci/validate_enterprise_okrs.py
 # =============================================================================
 
 schema_version: "1.0"
-last_updated: "2026-03-08"
+last_updated: "2026-03-18"
 
 # =============================================================================
 # Strategic Objectives (A-E)

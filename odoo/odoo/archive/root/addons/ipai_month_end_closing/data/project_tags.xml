@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="0">
+        <!-- PMBOK Tags -->
+        <record id="tag_pmbok_scope" model="project.tags">
+            <field name="name">PMBOK:Scope</field>
+            <field name="color">1</field>
+        </record>
+        <record id="tag_pmbok_schedule" model="project.tags">
+            <field name="name">PMBOK:Schedule</field>
+            <field name="color">2</field>
+        </record>
+        <record id="tag_pmbok_cost" model="project.tags">
+            <field name="name">PMBOK:Cost</field>
+            <field name="color">3</field>
+        </record>
+        <record id="tag_pmbok_quality" model="project.tags">
+            <field name="name">PMBOK:Quality</field>
+            <field name="color">4</field>
+        </record>
+        <record id="tag_pmbok_risk" model="project.tags">
+            <field name="name">PMBOK:Risk</field>
+            <field name="color">5</field>
+        </record>
+        <record id="tag_pmbok_communication" model="project.tags">
+            <field name="name">PMBOK:Communication</field>
+            <field name="color">6</field>
+        </record>
+        <record id="tag_pmbok_stakeholder" model="project.tags">
+            <field name="name">PMBOK:Stakeholder</field>
+            <field name="color">7</field>
+        </record>
+
+        <!-- Immediate Objectives -->
+        <record id="tag_im1_closing" model="project.tags">
+            <field name="name">IM1:Month-End Closing</field>
+            <field name="color">8</field>
+        </record>
+        <record id="tag_im2_tax" model="project.tags">
+            <field name="name">IM2:Tax Filing</field>
+            <field name="color">9</field>
+        </record>
+
+        <!-- Phase Tags -->
+        <record id="tag_phase_1" model="project.tags">
+            <field name="name">Phase 1: Initial &amp; Compliance</field>
+            <field name="color">1</field>
+        </record>
+        <record id="tag_phase_2" model="project.tags">
+            <field name="name">Phase 2: Accruals &amp; Amortization</field>
+            <field name="color">2</field>
+        </record>
+        <record id="tag_phase_3" model="project.tags">
+            <field name="name">Phase 3: WIP/Reconciliation</field>
+            <field name="color">3</field>
+        </record>
+        <record id="tag_phase_4" model="project.tags">
+            <field name="name">Phase 4: Final Adjustments</field>
+            <field name="color">4</field>
+        </record>
+        <record id="tag_phase_5" model="project.tags">
+            <field name="name">Phase 5: Sign-off</field>
+            <field name="color">5</field>
+        </record>
+
+        <!-- BIR Form Tags -->
+        <record id="tag_bir_1601c" model="project.tags">
+            <field name="name">1601-C</field>
+            <field name="color">10</field>
+        </record>
+        <record id="tag_bir_0619e" model="project.tags">
+            <field name="name">0619-E</field>
+            <field name="color">10</field>
+        </record>
+        <record id="tag_bir_1601eq" model="project.tags">
+            <field name="name">1601-EQ</field>
+            <field name="color">11</field>
+        </record>
+        <record id="tag_bir_2550m" model="project.tags">
+            <field name="name">2550M</field>
+            <field name="color">11</field>
+        </record>
+        <record id="tag_bir_2550q" model="project.tags">
+            <field name="name">2550Q</field>
+            <field name="color">11</field>
+        </record>
+        <record id="tag_bir_1702q" model="project.tags">
+            <field name="name">1702Q</field>
+            <field name="color">11</field>
+        </record>
+        <record id="tag_bir_1702rt" model="project.tags">
+            <field name="name">1702-RT/EX</field>
+            <field name="color">11</field>
+        </record>
+        <record id="tag_bir_1604cf" model="project.tags">
+            <field name="name">1604-CF</field>
+            <field name="color">11</field>
+        </record>
+        <record id="tag_bir_1604e" model="project.tags">
+            <field name="name">1604-E</field>
+            <field name="color">11</field>
+        </record>
+
+        <!-- Risk Tags -->
+        <record id="tag_risk_high" model="project.tags">
+            <field name="name">Risk:High</field>
+            <field name="color">5</field>
+        </record>
+        <record id="tag_risk_medium" model="project.tags">
+            <field name="name">Risk:Medium</field>
+            <field name="color">2</field>
+        </record>
+        <record id="tag_risk_low" model="project.tags">
+            <field name="name">Risk:Low</field>
+            <field name="color">7</field>
+        </record>
+    </data>
+</odoo>

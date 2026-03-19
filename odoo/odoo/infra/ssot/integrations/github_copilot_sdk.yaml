@@ -1,0 +1,177 @@
+# schema: ssot.integrations.v1
+# GitHub Copilot SDK + Coding Agent integration register.
+# Declares surfaces, agentic loop contract, and governance posture for all
+# GitHub Copilot surfaces used in the IPAI stack.
+#
+# Integration model:
+#   - VS Code inline and Chat surfaces are ACTIVE (user-driven, always-on)
+#   - Copilot CLI is ACTIVE for terminal-based completions and explain/fix
+#   - GitHub Coding Agent is PLANNED (requires Copilot Business/Enterprise license)
+#     The coding agent operates an autonomous agentic loop:
+#       plan → patch → verify → PR (opens a PR on the repo, never pushes to main directly)
+#
+# Repo contract: .github/copilot-instructions.md governs agent behavior in this repo.
+# Contract doc:  docs/architecture/AGENTIC_CODING_CONTRACT.md
+#
+# References:
+#   github/copilot-coding-agent  — Coding agent documentation and setup guide
+#   github/copilot-chat          — VS Code Copilot Chat usage guide
+#   github/copilot-cli           — GitHub Copilot CLI setup
+#   github/well-architected      — Governance and operational excellence pillars
+
+version: "1.0.0"
+schema: ssot.integrations.v1
+id: github_copilot_sdk
+name: "GitHub Copilot SDK + Coding Agent"
+vendor: github
+category: agentic_coding
+status: active        # inline + chat + CLI are active; Coding Agent is planned
+reviewed: "2026-03-01"
+
+description: >
+  GitHub Copilot coding agent (agentic loop: plan → patch → verify → PR).
+  Includes: VS Code Copilot Chat, inline suggestions, Copilot CLI, and the
+  GitHub-hosted coding agent that opens PRs autonomously.
+
+surfaces:
+  - id: vscode_inline
+    name: "VS Code inline suggestions"
+    url: "https://code.visualstudio.com/docs/copilot/overview"
+    auth: github_oauth
+    status: active
+    notes: >
+      Context-aware completions in editor. Reads open files + workspace context.
+      Does not create commits or PRs. No ops.runs logging required for passive use.
+
+  - id: vscode_chat
+    name: "VS Code Copilot Chat"
+    url: "https://code.visualstudio.com/docs/copilot/copilot-chat"
+    auth: github_oauth
+    status: active
+    notes: >
+      Interactive chat panel in VS Code. User-directed; can reference @workspace,
+      @terminal, and file attachments. Does not autonomously commit changes.
+      Agent-directed sessions that result in file edits must be committed manually
+      and reviewed against AGENTIC_CODING_CONTRACT.md rubric.
+
+  - id: copilot_cli
+    name: "GitHub Copilot CLI"
+    url: "https://docs.github.com/copilot/using-github-copilot/using-copilot-in-the-command-line"
+    auth: github_oauth
+    status: active
+    notes: >
+      Terminal integration (gh copilot explain, gh copilot suggest).
+      Explains commands and suggests shell expressions. Does not execute commands
+      autonomously. No ops.runs logging required for passive CLI use.
+
+  - id: coding_agent
+    name: "GitHub Copilot Coding Agent (autonomous)"
+    url: "https://docs.github.com/copilot/using-github-copilot/using-copilot-coding-agent"
+    auth: github_app
+    status: planned
+    notes: >
+      Autonomous agentic loop: receives a task via GitHub issue or Copilot Chat,
+      plans an implementation, patches files in a sandboxed fork, runs CI checks,
+      and opens a PR against the target repository. Never pushes directly to main.
+      Requires Copilot Business or Enterprise license and GitHub App installation.
+      When activated, ALL runs must produce an ops.runs entry (see repo_contract).
+
+repo_contract:
+  instructions_file: ".github/copilot-instructions.md"
+  agent_skills_dir: "agent-skills/"
+  agentic_loop_doc: "docs/architecture/AGENTIC_CODING_CONTRACT.md"
+  rubric_ssot: "ssot/advisor/rubrics/agentic_coding.yaml"
+  notes: >
+    .github/copilot-instructions.md is the canonical behavior file read by the
+    GitHub Coding Agent on every agentic run. It must reference the agentic loop
+    contract and the rubric SSOT. agent-skills/ holds skill definitions consumed
+    by the coding agent (similar in concept to Claude Code skills).
+
+secrets_required:
+  - name: GITHUB_COPILOT_PAT
+    purpose: "Copilot API access (if using REST API directly)"
+    store: github_actions_secrets
+    required: false
+    note: >
+      Not required for IDE-based usage; required for API-based agentic integrations.
+      If using the GitHub Coding Agent via the GitHub App, auth flows through
+      the App installation token, not a personal PAT.
+
+  - name: GITHUB_APP_PRIVATE_KEY
+    purpose: "Coding Agent GitHub App authentication"
+    store: github_actions_secrets
+    required: false
+    note: >
+      Required only when the GitHub Coding Agent GitHub App is installed.
+      Store the PEM key in GitHub Actions Secrets. Never commit to repo.
+
+ssot_boundary_rules:
+  - "The coding agent MUST open a PR for all code changes; direct pushes to main are forbidden"
+  - "Every agentic run (Coding Agent) MUST produce an ops.runs entry before the run begins"
+  - ".github/copilot-instructions.md is the SSOT for agent behavior; edits require CODEOWNERS review"
+  - "agent-skills/ directory is controlled by CODEOWNERS; changes require architect review"
+  - "Copilot CLI and VS Code surfaces are passive-use: no ops.runs logging required"
+  - "PR evidence must follow the output contract in AGENTIC_CODING_CONTRACT.md"
+  - "Coding Agent may not modify ssot/, supabase/migrations/, or .github/workflows/ without explicit human approval in PR review"
+
+risk_flags:
+  - id: autonomous_push_bypass
+    severity: high
+    description: >
+      If branch protection is misconfigured, the Coding Agent could push directly
+      to main/master, bypassing the PR review gate. This would circumvent the
+      mandatory ops.runs audit trail requirement.
+    mitigation: >
+      Enforce organization-level ruleset requiring PR + 1 approval on all default
+      branches (see ssot/advisor/rulepacks/github_governance.yaml #org_rulesets_default_branch).
+      The Coding Agent must use a feature branch and open a PR; direct pushes
+      should trigger CI failure.
+
+  - id: unlogged_agentic_runs
+    severity: high
+    description: >
+      Coding Agent runs that do not produce an ops.runs entry create an audit gap:
+      changes appear in git history but have no correlated run metadata (task_id,
+      triggered_by, evidence_path).
+    mitigation: >
+      Configure the .github/copilot-instructions.md to require ops.runs insertion
+      as the first step of every agentic run. Verify via the agentic_coding rubric
+      dimension audit_trail (ssot/advisor/rubrics/agentic_coding.yaml).
+
+  - id: instructions_drift
+    severity: medium
+    description: >
+      If .github/copilot-instructions.md drifts from AGENTIC_CODING_CONTRACT.md,
+      the agent may operate under outdated behavioral rules, producing PRs that
+      fail the rubric without the operator knowing why.
+    mitigation: >
+      CODEOWNERS entry for .github/copilot-instructions.md pointing to the
+      platform team. CI lint step should check that the file references the
+      contract doc version header. Update instructions whenever contract doc
+      version increments.
+
+  - id: skill_scope_creep
+    severity: low
+    description: >
+      agent-skills/ definitions could be crafted to grant the Coding Agent
+      capabilities beyond the repo_contract scope (e.g., direct database
+      mutation, secret access).
+    mitigation: >
+      CODEOWNERS review required for all agent-skills/ changes. Skills must not
+      reference raw secrets — use Vault or GitHub Secrets references only.
+      Review new skills against the operating contract before merging.
+
+pillar_posture:
+  - pillar: ops_excellence
+    advisor_scan: agentic_coding
+    rulepack: null
+    rubric: "ssot/advisor/rubrics/agentic_coding.yaml"
+    note: >
+      Posture is governed by the agentic coding rubric (5 dimensions, 0-15 score).
+      The github_governance rulepack governs branch protection and PR requirements
+      that underpin the coding agent's safe operation.
+
+allowed_egress:
+  - api.github.com          # GitHub REST API (Copilot completions, App auth)
+  - copilot-proxy.githubusercontent.com  # Copilot inference proxy
+  - github.com              # Web interface, OAuth redirects

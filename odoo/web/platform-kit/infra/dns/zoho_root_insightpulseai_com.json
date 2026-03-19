@@ -1,0 +1,63 @@
+{
+  "domain": "insightpulseai.com",
+  "purpose": "inbound_email",
+  "provider": "zoho",
+  "dns_provider": "wix",
+  "nameservers": [
+    "ns6.wixdns.net",
+    "ns7.wixdns.net"
+  ],
+  "records": {
+    "mx": [
+      {
+        "type": "MX",
+        "host": "@",
+        "value": "mx.zoho.com",
+        "priority": 10,
+        "purpose": "Zoho primary mail server"
+      },
+      {
+        "type": "MX",
+        "host": "@",
+        "value": "mx2.zoho.com",
+        "priority": 20,
+        "purpose": "Zoho secondary mail server"
+      },
+      {
+        "type": "MX",
+        "host": "@",
+        "value": "mx3.zoho.com",
+        "priority": 50,
+        "purpose": "Zoho tertiary mail server"
+      }
+    ],
+    "spf": {
+      "type": "TXT",
+      "host": "@",
+      "value": "v=spf1 include:zohomail.com include:mailgun.org ~all",
+      "purpose": "SPF - Authorize both Zoho and Mailgun to send"
+    },
+    "dmarc": {
+      "type": "TXT",
+      "host": "_dmarc",
+      "value": "v=DMARC1; p=quarantine; rua=mailto:dmarc@insightpulseai.com",
+      "purpose": "DMARC policy for email authentication"
+    },
+    "zoho_verification": {
+      "type": "TXT",
+      "host": "@",
+      "value": "zoho-verification=<VERIFY_WITH_ZOHO>",
+      "purpose": "Zoho domain ownership verification",
+      "note": "Value from Zoho Admin Console"
+    }
+  },
+  "mailboxes": {
+    "note": "Mailbox configuration is managed in Zoho Admin Console",
+    "admin_url": "https://mailadmin.zoho.com",
+    "expected_aliases": [
+      "business@insightpulseai.com",
+      "support@insightpulseai.com",
+      "info@insightpulseai.com"
+    ]
+  }
+}

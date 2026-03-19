@@ -1,0 +1,34 @@
+ M .claude/settings.local.json
+M  .continue/config.json
+ M .devcontainer/devcontainer.json
+M  .vscode/launch.json
+M  .vscode/settings.json
+M  .vscode/tasks.json
+ M README.md
+ M agents/ORCHESTRATOR.md
+ M docs/FEATURE_CHEQROOM_PARITY.md
+ M docs/FEATURE_CONCUR_PARITY.md
+ M docs/FEATURE_WORKSPACE_PARITY.md
+ M docs/SAAS_PARITY_READINESS.md
+ M odoo-bin
+ M scripts/lint_odoo_entrypoint.sh
+?? .github/workflows/lint-config.yml
+?? addons/ipai/ipai_zoho_mail/
+?? addons/ipai_doc_ocr_bridge/
+?? addons/ipai_enterprise_bridge/
+?? coming-soon.html
+?? config/install_sets/ppm_parity_modules.txt
+?? docs/ODOO_EXECUTION.md
+?? docs/evidence/20260209-0048/
+?? docs/evidence/20260209-1820/
+?? infra/deploy/nginx/insightpulseai.com.conf
+?? oca-parity/
+?? ops/compose/
+?? scripts/deploy/migrate-net-to-com.sh
+?? scripts/deploy/setup-insightpulseai-domain.sh
+?? scripts/down.sh
+?? scripts/smoke.sh
+?? scripts/tests/
+?? scripts/up.sh
+?? scripts/validate_repo_config.sh
+?? specs/agent-ready-cms/

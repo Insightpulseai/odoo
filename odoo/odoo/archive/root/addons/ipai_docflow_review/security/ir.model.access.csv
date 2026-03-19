@@ -1,0 +1,4 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_docflow_document_reviewer,docflow.document reviewer,model_docflow_document,ipai_docflow_review.group_docflow_reviewer,1,1,1,0
+access_docflow_document_line_reviewer,docflow.document.line reviewer,model_docflow_document_line,ipai_docflow_review.group_docflow_reviewer,1,1,1,0
+access_docflow_document_snapshot_reviewer,docflow.document.snapshot reviewer,model_docflow_document_snapshot,ipai_docflow_review.group_docflow_reviewer,1,1,1,0

@@ -1,0 +1,25 @@
+schema: ssot.plane.taxonomy.modules.v2
+version: 2
+updated: "2026-03-16"
+
+# Finance PPM modules (retained for finops project)
+finance_modules:
+  - 01-Intake
+  - 02-Approve
+  - 03-Plan
+  - 04-Execute
+  - 05-Close
+  - 06-Month-End Close
+  - 07-Audit & Evidence
+
+# Platform modules (for platform project)
+# Each maps to an Azure Boards Area Path equivalent.
+platform_modules:
+  - Platform Foundation
+  - Odoo Runtime
+  - Agent Platform
+  - Data Intelligence
+  - Web/Admin
+  - Automations
+  - DNS and Edge
+  - TBWA/SMP Packaging

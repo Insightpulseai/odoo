@@ -1,0 +1,28 @@
+capability_id,tier,target_product,target_flow,sap_reference,odoo_core,oca_modules,ipai_modules,manual_score
+workos.workspace.space.tree,p0,Notion,Workspace/space/page tree navigation,Authorization scopes + ownership,base|web,,ipai_workos_core|ipai_platform_permissions,0
+workos.page.create.nest,p0,Notion,Create page + nest under page,Document governance + ownership,base|web|mail,,ipai_workos_core|ipai_platform_audit,0
+workos.page.move.archive,p0,Notion,Move page + archive/restore,Audit/change discipline,base|web|mail,,ipai_workos_core|ipai_platform_audit,0
+workos.blocks.editor.core,p0,Notion,Block editor insert/move/delete (slash menu),N/A (UI primitive),web,,ipai_workos_blocks,0
+workos.blocks.types.basic,p0,Notion,Basic blocks: paragraph/heading/list/todo/toggle/divider/quote/callout,N/A (UI primitive),web,,ipai_workos_blocks,0
+workos.blocks.attachments,p1,Notion,Image/file blocks backed by attachments,Content governance + retention,web|base|mail,,ipai_workos_blocks|ipai_workos_core,0
+workos.db.create.properties,p0,Notion,Create database + typed properties,Master data discipline + field control,base|web,,ipai_workos_db,0
+workos.db.rows.inline_edit,p0,Notion,Rows CRUD + inline cell editing,Controlled data entry + validation,web,,ipai_workos_db|ipai_workos_views,0
+workos.db.property.types,p0,Notion,Property types: text/number/select/multi/date/checkbox/person,Field control + validation,base|web,,ipai_workos_db,0
+workos.db.relations.basic,p1,Notion,Relation property db-to-db,Reference data relations,base,,ipai_workos_db,0
+workos.db.rollups.lite,p2,Notion,Rollups-lite (count/sum),Reporting discipline,base,,ipai_workos_db,0
+workos.views.switcher.saved,p0,Notion,View switcher + saved views (user/shared),Role-based views discipline,web,,ipai_workos_views,0
+workos.views.table,p0,Notion,Table (grid) view,Operational reporting surface,web,,ipai_workos_views,0
+workos.views.kanban,p0,Notion,Kanban view group-by select/status,Operational board surface,web,,ipai_workos_views,0
+workos.views.calendar,p0,Notion,Calendar view on date property,Schedule visibility,web,,ipai_workos_views,0
+workos.filters.sorts.lite,p1,Notion,Filters/sorts lite per view,Controlled query views,web,,ipai_workos_views,0
+workos.templates.page_db,p1,Notion,Page templates + DB templates,Standard templates/SOPs,base|web,,ipai_workos_templates,0
+workos.collab.comments.page,p0,Notion,Comments on page + threads,Collaboration traceability,mail,,ipai_workos_collab,0
+workos.collab.mentions.notify,p0,Notion,@mentions + notifications,Assignment/notification discipline,mail,,ipai_workos_collab,0
+workos.activity.log,p0,Notion,Activity log (create/edit/move/share),Audit/change log discipline,mail,,ipai_platform_audit|ipai_workos_core,0
+workos.permissions.workspace_roles,p0,Notion,Workspace roles admin/member/guest,Authorization objects + roles,base,,ipai_platform_permissions,0
+workos.permissions.page_scopes,p0,Notion,Page/db permissions view/comment/edit/manage,Authorization scopes,base,,ipai_platform_permissions|ipai_workos_core,0
+workos.share.links,p1,Notion,Share link tokens (internal/public),Controlled sharing + audit,base|web,,ipai_platform_permissions|ipai_workos_core,0
+workos.search.global,p0,Notion,Global search pages + db rows,Enterprise search reference,base|web,,ipai_workos_search,0
+workos.search.scoped,p1,Notion,Scoped search (space/db),Enterprise search scoping,base|web,,ipai_workos_search,0
+workos.export.markdown,p2,Notion,Export page/db to markdown,Document portability,base,,ipai_workos_core,0
+workos.import.markdown,p2,Notion,Import markdown to pages/blocks,Document ingestion,base,,ipai_workos_core|ipai_workos_blocks,0

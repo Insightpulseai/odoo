@@ -1,0 +1,19 @@
+commit 65350e41f277387f45d5d82f5a70d37e59dc3c7c
+Author: Jake Tolentino <jgtolentino.rn@gmail.com>
+Date:   Fri Feb 20 04:33:33 2026 +0800
+
+    docs(supabase): clarify SDK vs Platform Kit and canonical host app
+    
+    - Add docs/supabase/SDK_VS_PLATFORM_KIT.md (comprehensive distinction guide)
+    - Clarify: Platform Kit installed via shadcn generator, NOT npm install
+    - Clarify: Platform Kit = control plane (Management API), SDK = data plane (Auth/RLS/DB)
+    - Declare canonical host app: web/ai-control-plane/
+    - Add Platform Kit placement section to plan.md
+    - Security guidance: Management API token server-only, proxy route permissions
+    - Installation checklists for both SDK and Platform Kit
+    
+    Prevents confusion between shadcn Platform Kit install and npm SDK install.
+
+ docs/supabase/SDK_VS_PLATFORM_KIT.md | 210 +++++++++++++++++++++++++++++++++++
+ spec/odoo-ee-parity-seed/plan.md     |  22 ++++
+ 2 files changed, 232 insertions(+)

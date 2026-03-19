@@ -1,0 +1,14 @@
+{
+  "id": "ai-agent-builder",
+  "name": "AI Agent Builder",
+  "summary": "Build custom AI agents with configurable topics, tools, and RAG sources. CE/OCA-compatible replacement for Odoo 19 AI Agents.",
+  "tags": ["ai", "agents", "rag", "automation"],
+  "stage": "beta",
+  "availability": "all",
+  "links": {
+    "docs": "https://www.odoo.com/documentation/19.0/applications/productivity/ai/agents.html",
+    "runbook": "docs/runbooks/ai-agent-builder.md"
+  },
+  "related_assets": ["mcp-server", "rag-pipeline", "tool-registry"],
+  "ipai_module": "ipai_ai_agent_builder"
+}

@@ -1,0 +1,147 @@
+# schema: ssot.devex.tool.v1
+# ---
+# SSOT: VS Code developer tooling preferences for Insightpulseai/odoo contributors
+# Companion to: ssot/devex/vscode_enterprise.yaml (org-level policies)
+# This file: repo-specific contributor tooling conventions
+# Docs index: docs/dev/vscode/INDEX.md
+# Policies: docs/dev/vscode/RECOMMENDED_POLICIES.md
+# Last updated: 2026-03-02
+
+id: vscode_contributor
+name: "VS Code contributor tooling — Insightpulseai/odoo"
+category: developer_tooling
+reviewed: "2026-03-02"
+version: "1.0.0"
+
+meta:
+  schema_version: "1.0"
+  updated_at: "2026-03-02"
+  repo: "Insightpulseai/odoo"
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Docker / Colima context
+# ─────────────────────────────────────────────────────────────────────────────
+docker:
+  context_devcontainer: colima          # always; colima-odoo is Supabase-isolation only
+  context_supabase_isolation: colima-odoo  # process-scoped only, never globally exported
+  doctor_script: scripts/dev/docker_doctor.sh
+  ci_guard: .github/workflows/devcontainer-context-guard.yml
+
+# ─────────────────────────────────────────────────────────────────────────────
+# VS Code CLI
+# ─────────────────────────────────────────────────────────────────────────────
+vscode:
+  cli_required: true
+  cli_command: code                     # override via CODE_CMD env var
+  cli_doctor_script: scripts/dev/vscode_doctor.sh
+  workspace_file: .vscode/ipai_workspace.code-workspace
+  settings_file: .vscode/settings.json  # workspace-scoped, tracked in git
+  required_extensions:
+    - ms-python.python
+    - ms-vscode-remote.remote-containers
+    - github.copilot
+    - github.copilot-chat
+    - ms-azuretools.vscode-docker
+    - GitHub.vscode-pull-request-github  # PR/issue review without leaving VS Code
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Copilot
+# ─────────────────────────────────────────────────────────────────────────────
+copilot:
+  instructions_path: .github/copilot-instructions.md   # auto-loaded by VS Code Copilot
+  agents_dir: .github/agents/
+  prompts_dir: prompts/
+  allowed_modes:
+    ask:
+      description: "Read-only — no side effects, no tool approval needed"
+      prompt_template: prompts/review_only.prompt.md
+    agents:
+      description: "Multi-file changes — write operations require explicit tool approval"
+      prompt_template: prompts/fixbot_end_to_end.prompt.md
+    smart_actions:
+      description: "Drafts only — review before commit; treat as assistive not authoritative"
+      prompt_template: null
+  agent_org_policy_setting: chat.agent.enabled
+  codebase_search_setting: github.copilot.chat.codeSearch.enabled
+
+# ─────────────────────────────────────────────────────────────────────────────
+# MCP servers
+# ─────────────────────────────────────────────────────────────────────────────
+mcp:
+  workspace_config: .vscode/mcp.json   # tracked in git; NO literal secrets
+  add_mcp_cli: "code --add-mcp"        # user-scoped registration (not tracked)
+  secrets_policy: inputs_array_only    # use inputs[] for every credential
+  secrets_registry: ssot/secrets/registry.yaml
+  servers_dir: mcp/servers/
+  server_count: 11
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Terminal
+# ─────────────────────────────────────────────────────────────────────────────
+terminal:
+  shell_integration: true
+  default_profile_linux: zsh
+  env_inheritance: initializeCommand   # env changes go through initializeCommand/postCreateCommand
+  devcontainer_settings_keys:
+    - terminal.integrated.shellIntegration.enabled
+    - terminal.integrated.defaultProfile.linux
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Python / Odoo
+# ─────────────────────────────────────────────────────────────────────────────
+python:
+  interpreter_path: /workspaces/odoo/.venv/bin/python
+  auto_activate_env: true
+  devcontainer_settings_keys:
+    - python.defaultInterpreterPath
+    - python.terminal.activateEnvironment
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Source Control / GitHub auth
+# ─────────────────────────────────────────────────────────────────────────────
+source_control:
+  git_auth_delegate_to_gh_cli: true
+  # VS Code maintains its own GitHub credential session separate from gh CLI.
+  # Setting github.gitAuthentication: false delegates all auth to gh keyring →
+  # one credential source, no stale-token 401s.
+  devcontainer_settings_keys:
+    - github.gitAuthentication    # false = delegate to gh CLI keyring
+    - git.autofetch               # true = live branch status in Dev Container
+  docs_ref: https://code.visualstudio.com/docs/sourcecontrol/overview
+  ci_guard: .github/workflows/claude-settings-auth-guard.yml
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Dev Container
+# ─────────────────────────────────────────────────────────────────────────────
+devcontainer:
+  config: .devcontainer/devcontainer.json
+  compose: .devcontainer/docker-compose.devcontainer.yml
+  workspace_folder: /workspaces/odoo
+  preflight_script: scripts/devcontainer/preflight.sh
+  doctor_script: scripts/devcontainer/doctor.sh
+  initialize_command: bash scripts/devcontainer/preflight.sh
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Source references (VS Code official docs)
+# ─────────────────────────────────────────────────────────────────────────────
+source_docs:
+  - area: Setup
+    url: https://code.visualstudio.com/docs/setup/additional-components
+  - area: Dev Containers
+    url: https://code.visualstudio.com/docs/devcontainers/containers
+  - area: Copilot core concepts
+    url: https://code.visualstudio.com/docs/copilot/core-concepts
+  - area: Copilot tips
+    url: https://code.visualstudio.com/docs/copilot/copilot-tips-and-tricks
+  - area: Smart actions
+    url: https://code.visualstudio.com/docs/copilot/copilot-smart-actions
+  - area: Prompt engineering
+    url: https://code.visualstudio.com/docs/copilot/guides/prompt-engineering-guide
+  - area: Agent tools
+    url: https://code.visualstudio.com/docs/copilot/agents/agent-tools
+  - area: MCP servers
+    url: https://code.visualstudio.com/docs/copilot/customization/mcp-servers
+  - area: Terminal basics
+    url: https://code.visualstudio.com/docs/terminal/basics
+  - area: Python tutorial
+    url: https://code.visualstudio.com/docs/python/python-tutorial

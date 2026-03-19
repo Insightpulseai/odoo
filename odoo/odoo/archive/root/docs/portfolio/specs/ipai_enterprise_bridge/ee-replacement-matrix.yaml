@@ -1,0 +1,149 @@
+version: 1.0
+last_updated: 2026-01-19
+policy: "Strict enforcement of CE -> OCA -> Bridge replacement hierarchy."
+
+areas:
+  - ee_area: "Accounting (Full)"
+    ce_18_coverage:
+      - "Invoicing (account)"
+      - "Payments"
+      - "Basic Reconciliation"
+    oca_18_candidates:
+      - "OCA/account-financial-reporting/account_financial_report"
+      - "OCA/account-financial-tools/account_asset_management"
+      - "OCA/account-invoicing/account_move_template"
+    bridge_required: true
+    bridge_scope: "Minimal glue to expose OCA menus in standard Odoo locations if hidden."
+    forbidden: []
+    notes: "Avoid full bank sync if not supported by OCA providers."
+
+  - ee_area: "Sign"
+    ce_18_coverage: []
+    oca_18_candidates: []
+    bridge_required: true
+    bridge_scope: "Use ipai_sign (if exists) or simple PDF signature widget integration."
+    forbidden: []
+    notes: "Consider external integration (e.g., DocuSign) via n8n if internal replacement is too complex."
+
+  - ee_area: "Studio"
+    ce_18_coverage: []
+    oca_18_candidates:
+      - "OCA/web/web_view_editor (partial)"
+    bridge_required: false
+    bridge_scope: ""
+    forbidden: ["Studio"]
+    notes: "Do not attempt to replicate Studio. Use code-based customization managed by 'Architect' agent."
+
+  - ee_area: "Mobile"
+    ce_18_coverage:
+      - "Responsive Web Client"
+    oca_18_candidates:
+      - "OCA/web/web_responsive"
+      - "OCA/web/web_pwa_oca"
+    bridge_required: false
+    bridge_scope: ""
+    forbidden: ["Native Mobile App"]
+    notes: "PWA is the standard replacement."
+
+  - ee_area: "Documents"
+    ce_18_coverage:
+      - "Attachments (ir.attachment)"
+    oca_18_candidates:
+      - "OCA/dms/dms"
+    bridge_required: true
+    bridge_scope: "Glue OCA DMS to look/feel slightly more like Odoo Documents if needed."
+    forbidden: []
+    notes: "OCA DMS is powerful but UI differs."
+
+  - ee_area: "Field Service"
+    ce_18_coverage:
+      - "Project (generic tasks)"
+    oca_18_candidates:
+      - "OCA/field-service/fieldservice"
+    bridge_required: true
+    bridge_scope: "Map Field Service entities to Project Tasks if unification desired."
+    forbidden: []
+    notes: "OCA Field Service is a mature standalone application."
+
+  - ee_area: "Helpdesk"
+    ce_18_coverage:
+      - "Issues (Project)"
+    oca_18_candidates:
+      - "OCA/helpdesk/helpdesk"
+    bridge_required: true
+    bridge_scope: "Configuration for Helpdesk teams and automated actions."
+    forbidden: []
+    notes: ""
+
+  - ee_area: "Approvals"
+    ce_18_coverage: []
+    oca_18_candidates:
+      - "OCA/server-ux/base_tier_validation"
+    bridge_required: true
+    bridge_scope: "Apply tier validation mixins to key models (PO, SO, Invoice)."
+    forbidden: []
+    notes: "This is the primary dependency blocking bridge install currently."
+
+  - ee_area: "Timesheets"
+    ce_18_coverage:
+      - "Timesheets (hr_timesheet)"
+    oca_18_candidates:
+      - "OCA/timesheet/hr_timesheet_sheet"
+    bridge_required: false
+    bridge_scope: ""
+    forbidden: []
+    notes: "Grid view available in CE?"
+
+  - ee_area: "Planning"
+    ce_18_coverage: []
+    oca_18_candidates: []
+    bridge_required: true
+    bridge_scope: "Simple resource booking on Calendar view."
+    forbidden: []
+    notes: "Complex Gantt requires commercial libs or heavy lifting."
+
+  - ee_area: "Social Marketing"
+    ce_18_coverage: []
+    oca_18_candidates:
+      - "OCA/social/social_media"
+    bridge_required: true
+    bridge_scope: "Integration with n8n for posting."
+    forbidden: []
+    notes: ""
+
+  - ee_area: "Marketing Automation"
+    ce_18_coverage:
+      - "Mass Mailing"
+    oca_18_candidates:
+      - "OCA/marketing-automation/marketing_campaign (deprecated?)"
+    bridge_required: true
+    bridge_scope: "Trigger actions based on mail trackers."
+    forbidden: []
+    notes: "Use n8n for advanced flows."
+
+  - ee_area: "VoIP"
+    ce_18_coverage: []
+    oca_18_candidates:
+      - "OCA/connector-telephony/asterisk_click2dial"
+    bridge_required: false
+    bridge_scope: ""
+    forbidden: []
+    notes: "External Softphone recommended."
+
+  - ee_area: "Knowledge"
+    ce_18_coverage: []
+    oca_18_candidates:
+      - "OCA/knowledge/knowledge"
+    bridge_required: true
+    bridge_scope: "Embed knowledge articles in views."
+    forbidden: []
+    notes: "Not 1:1 with Odoo Knowledge (Notion-like)."
+
+  - ee_area: "Barcode"
+    ce_18_coverage: []
+    oca_18_candidates:
+      - "OCA/stock-logistics-barcode/stock_barcode"
+    bridge_required: false
+    bridge_scope: ""
+    forbidden: []
+    notes: "OCA provides mobile barcode interface."

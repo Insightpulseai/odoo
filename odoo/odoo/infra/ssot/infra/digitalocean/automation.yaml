@@ -1,0 +1,62 @@
+# schema: ssot.infra.digitalocean.automation.v1
+# Preferred automation interfaces for DigitalOcean.
+# Grounding:
+#   doctl: https://docs.digitalocean.com/reference/doctl/
+#   libraries: https://docs.digitalocean.com/reference/libraries/
+#   open source: https://docs.digitalocean.com/reference/opensource/
+
+version: "1.0.0"
+schema: ssot.infra.digitalocean.automation.v1
+last_reviewed: "2026-03-01"
+
+# ── Preferred Automation Interfaces ──────────────────────────────────────────
+
+preferred_interfaces:
+  - id: doctl
+    type: cli
+    language: go
+    description: "Official DigitalOcean CLI — supports most Control Panel functionality."
+    source_docs: "https://docs.digitalocean.com/reference/doctl/"
+    opensource: true
+    github: "github.com/digitalocean/doctl"
+    use_for:
+      - "Deterministic inventory snapshots into ssot/infra/digitalocean/"
+      - "Alert policy management (doctl monitoring alert list/create)"
+      - "Droplet, DB cluster, firewall, volume operations from CI"
+      - "SSOT drift enforcement — no UI dependence"
+      - "Snapshot management (doctl compute snapshot)"
+
+  - id: pydo
+    type: sdk
+    language: python
+    description: "Official Python SDK — generated from DigitalOcean OpenAPIv3 spec."
+    source_docs: "https://docs.digitalocean.com/reference/libraries/"
+    opensource: true
+    use_for:
+      - "SSOT validator scripts (Python-native CI scripts)"
+      - "Ops Advisor DO scan adapter (pull metrics/alerts/inventory)"
+      - "Pulling droplet metrics into ops.advisor_findings"
+
+# ── No-Console Policy ─────────────────────────────────────────────────────────
+
+no_console_policy: |
+  All DigitalOcean changes must have a corresponding repo commit (IaC or YAML).
+  No console-only infrastructure changes. Use doctl or PyDo with SSOT-driven state.
+  Reference rule: ssot-platform.md Rule 10 — "No console-only infrastructure changes."
+
+# ── Key Commands Reference ────────────────────────────────────────────────────
+
+key_commands:
+  inventory_snapshot: "doctl compute droplet list --format ID,Name,Region,Size,Status --no-header"
+  alert_list: "doctl monitoring alert list"
+  alert_create: "doctl monitoring alert create --type droplet_cpu ..."
+  snapshot_list: "doctl compute snapshot list"
+  db_list: "doctl databases list --format ID,Name,Engine,Region,Status"
+  firewall_list: "doctl compute firewall list"
+
+notes: |
+  doctl is listed among DO's open-source projects (github.com/digitalocean/doctl).
+  PyDo is generated from DO OpenAPIv3 spec; always pin to a released version.
+  For monitoring commands: `doctl monitoring` subcommand group handles alert policies.
+  DO Monitoring API (metrics/alerts) is also available for scan adapters:
+    https://docs.digitalocean.com/reference/api/api-ref/#tag/Monitoring

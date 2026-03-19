@@ -1,0 +1,246 @@
+{
+  "schema_version": "1.0",
+  "zone": "insightpulseai.com",
+  "zone_id": "TBD",
+  "last_updated": "2026-02-13",
+  "purpose": "MCP-aware firewall rules for agent ingress protection",
+
+  "rules": [
+    {
+      "id": "mcp-authentication-required",
+      "priority": 1,
+      "action": "block",
+      "description": "Block unauthenticated requests to MCP endpoint",
+      "expression": "(http.host eq \"mcp.insightpulseai.com\") and (not http.request.headers[\"authorization\"][0] contains \"Bearer\")",
+      "enabled": true,
+      "rationale": "MCP agent ingress must require authentication to prevent unauthorized tool execution",
+      "security_impact": "HIGH - Prevents unauthorized MCP tool calls",
+      "false_positive_risk": "LOW - All legitimate MCP clients should provide Bearer token"
+    },
+    {
+      "id": "mcp-rate-limit-per-ip",
+      "priority": 2,
+      "action": "challenge",
+      "description": "Rate limit MCP requests to 100 req/min per IP",
+      "expression": "(http.host eq \"mcp.insightpulseai.com\") and (rate.requests.1m > 100)",
+      "enabled": true,
+      "rationale": "Prevent MCP endpoint abuse and resource exhaustion",
+      "security_impact": "MEDIUM - Mitigates DoS and brute force attempts",
+      "false_positive_risk": "MEDIUM - Legitimate high-volume automation may trigger",
+      "alternative": "Use IP allowlist for known automation sources"
+    },
+    {
+      "id": "mcp-figma-github-allowlist",
+      "priority": 3,
+      "action": "allow",
+      "description": "Allow known Figma and GitHub IP ranges for MCP",
+      "expression": "(http.host eq \"mcp.insightpulseai.com\") and (ip.src in {140.82.112.0/20 143.55.64.0/20 192.30.252.0/22 185.199.108.0/22})",
+      "enabled": false,
+      "rationale": "Whitelist known MCP integration sources (Figma Make, GitHub MCP)",
+      "security_impact": "HIGH - Reduces attack surface to trusted sources",
+      "false_positive_risk": "NONE - Only affects whitelisted IPs",
+      "note": "Enable after confirming Figma and GitHub IP ranges",
+      "ip_ranges": {
+        "github": ["140.82.112.0/20", "143.55.64.0/20", "192.30.252.0/22", "185.199.108.0/22"],
+        "figma": ["TBD - Verify Figma webhook IPs"]
+      }
+    },
+    {
+      "id": "n8n-block-bots",
+      "priority": 4,
+      "action": "managed_challenge",
+      "description": "Block known bots and crawlers from n8n automation interface",
+      "expression": "(http.host eq \"n8n.insightpulseai.com\") and (cf.client.bot)",
+      "enabled": true,
+      "rationale": "n8n workflow UI should not be indexed or crawled",
+      "security_impact": "MEDIUM - Prevents enumeration and information disclosure",
+      "false_positive_risk": "LOW - Bots should not access automation UI"
+    },
+    {
+      "id": "n8n-authentication-required",
+      "priority": 5,
+      "action": "block",
+      "description": "Block access to n8n without authentication headers",
+      "expression": "(http.host eq \"n8n.insightpulseai.com\") and (http.request.uri.path ne \"/healthz\") and (not http.cookie contains \"n8n-auth\")",
+      "enabled": false,
+      "rationale": "Require n8n session cookie for all non-health-check requests",
+      "security_impact": "CRITICAL - Prevents automation takeover",
+      "false_positive_risk": "HIGH - May block legitimate users, test carefully",
+      "note": "Enable after confirming n8n cookie name and session handling"
+    },
+    {
+      "id": "n8n-unknown-asn-challenge",
+      "priority": 6,
+      "action": "challenge",
+      "description": "Challenge requests from unknown ASNs to n8n",
+      "expression": "(http.host eq \"n8n.insightpulseai.com\") and (not ip.geoip.asnum in {7018 15169 8075 16509})",
+      "enabled": false,
+      "rationale": "Challenge traffic from non-whitelisted ASNs (cloud providers, offices)",
+      "security_impact": "MEDIUM - Reduces attack surface from untrusted networks",
+      "false_positive_risk": "HIGH - May affect legitimate remote users",
+      "note": "Add known ASNs: 7018 (AT&T), 15169 (Google), 8075 (Microsoft), 16509 (AWS)",
+      "asn_whitelist": [
+        7018,
+        15169,
+        8075,
+        16509
+      ]
+    },
+    {
+      "id": "superset-geo-restriction",
+      "priority": 7,
+      "action": "block",
+      "description": "Block access to Superset from non-allowed countries",
+      "expression": "(http.host eq \"superset.insightpulseai.com\") and (not ip.geoip.country in {\"US\" \"PH\" \"SG\"})",
+      "enabled": false,
+      "rationale": "Restrict BI analytics access to expected geographies",
+      "security_impact": "MEDIUM - Reduces global attack surface",
+      "false_positive_risk": "HIGH - May block legitimate remote users",
+      "note": "Enable only if geo-restriction aligns with business requirements",
+      "allowed_countries": ["US", "PH", "SG"]
+    },
+    {
+      "id": "superset-sql-injection-patterns",
+      "priority": 8,
+      "action": "block",
+      "description": "Block SQL injection patterns in Superset requests",
+      "expression": "(http.host eq \"superset.insightpulseai.com\") and (http.request.uri.query contains \"' OR 1=1\" or http.request.uri.query contains \"UNION SELECT\" or http.request.uri.query contains \"DROP TABLE\")",
+      "enabled": true,
+      "rationale": "Prevent SQL injection attempts targeting BI database queries",
+      "security_impact": "HIGH - Prevents data exfiltration and database compromise",
+      "false_positive_risk": "LOW - Legitimate queries should not contain these patterns"
+    },
+    {
+      "id": "staging-ip-restriction",
+      "priority": 9,
+      "action": "block",
+      "description": "Block access to staging subdomains from public internet",
+      "expression": "(http.host contains \"stage-\") and (not ip.src in {178.128.112.214/32 YOUR_OFFICE_IP/32})",
+      "enabled": false,
+      "rationale": "Staging environments should only be accessible from known IPs",
+      "security_impact": "HIGH - Prevents staging data exposure",
+      "false_positive_risk": "HIGH - Blocks all public access to staging",
+      "note": "Replace YOUR_OFFICE_IP with actual office/VPN IP range",
+      "allowed_ips": [
+        "178.128.112.214/32",
+        "YOUR_OFFICE_IP/32"
+      ]
+    },
+    {
+      "id": "global-rate-limit-aggressive",
+      "priority": 10,
+      "action": "challenge",
+      "description": "Challenge IPs exceeding 1000 requests per minute globally",
+      "expression": "(rate.requests.1m > 1000)",
+      "enabled": true,
+      "rationale": "Global rate limit to prevent large-scale attacks",
+      "security_impact": "MEDIUM - Mitigates volumetric attacks",
+      "false_positive_risk": "MEDIUM - May affect legitimate high-traffic scenarios"
+    },
+    {
+      "id": "health-check-bypass",
+      "priority": 11,
+      "action": "allow",
+      "description": "Allow health check endpoints without authentication",
+      "expression": "(http.request.uri.path in {\"/healthz\" \"/health\" \"/api/health\"})",
+      "enabled": true,
+      "rationale": "Monitoring systems need unauthenticated health check access",
+      "security_impact": "LOW - Health checks expose minimal information",
+      "false_positive_risk": "NONE - Intentional bypass for monitoring"
+    },
+    {
+      "id": "common-exploit-patterns",
+      "priority": 12,
+      "action": "block",
+      "description": "Block common exploit patterns (path traversal, RCE attempts)",
+      "expression": "(http.request.uri.path contains \"../\" or http.request.uri.path contains \"..\\\\\" or http.request.uri.query contains \"<script\" or http.request.uri.query contains \"${jndi:\")",
+      "enabled": true,
+      "rationale": "Block known exploit patterns (path traversal, XSS, Log4Shell)",
+      "security_impact": "HIGH - Prevents common exploitation techniques",
+      "false_positive_risk": "LOW - Legitimate requests should not contain these patterns"
+    }
+  ],
+
+  "rate_limiting_rules": [
+    {
+      "id": "mcp-per-ip-limit",
+      "description": "MCP endpoint rate limit: 100 req/min per IP",
+      "match": "http.host eq \"mcp.insightpulseai.com\"",
+      "threshold": 100,
+      "period": 60,
+      "action": "challenge",
+      "counting_expression": "ip.src"
+    },
+    {
+      "id": "n8n-per-ip-limit",
+      "description": "n8n endpoint rate limit: 60 req/min per IP",
+      "match": "http.host eq \"n8n.insightpulseai.com\"",
+      "threshold": 60,
+      "period": 60,
+      "action": "block",
+      "counting_expression": "ip.src"
+    },
+    {
+      "id": "superset-per-user-limit",
+      "description": "Superset rate limit: 300 req/5min per authenticated user",
+      "match": "http.host eq \"superset.insightpulseai.com\"",
+      "threshold": 300,
+      "period": 300,
+      "action": "challenge",
+      "counting_expression": "http.cookie[\"session\"]"
+    }
+  ],
+
+  "managed_rulesets": [
+    {
+      "id": "cloudflare-owasp-core",
+      "name": "Cloudflare OWASP Core Ruleset",
+      "enabled": true,
+      "sensitivity": "medium",
+      "description": "OWASP ModSecurity Core Rule Set",
+      "coverage": ["SQL injection", "XSS", "RCE", "LFI/RFI", "Session fixation"]
+    },
+    {
+      "id": "cloudflare-managed-rules",
+      "name": "Cloudflare Managed Ruleset",
+      "enabled": true,
+      "sensitivity": "low",
+      "description": "Cloudflare curated threat intelligence",
+      "coverage": ["Known CVEs", "Bot attacks", "DDoS patterns"]
+    }
+  ],
+
+  "deployment_checklist": [
+    "✅ Update zone_id in this file with actual Cloudflare zone ID",
+    "✅ Review and adjust priority order based on business requirements",
+    "✅ Test each rule in 'log' mode before enabling 'block' action",
+    "✅ Confirm Figma and GitHub IP ranges for MCP allowlist (rule #3)",
+    "✅ Verify n8n cookie name and session handling (rule #5)",
+    "✅ Add office/VPN IP ranges for staging access restriction (rule #9)",
+    "✅ Monitor Cloudflare Analytics for false positives after deployment",
+    "✅ Document rule changes in infra/cloudflare/README.md",
+    "✅ Set up alerting for blocked requests exceeding threshold",
+    "✅ Schedule quarterly rule review and IP range updates"
+  ],
+
+  "terraform_implementation": {
+    "resource_type": "cloudflare_firewall_rule",
+    "example": "See infra/cloudflare/modules/firewall-rules/ for implementation",
+    "validation": "terraform plan && terraform apply",
+    "rollback": "terraform destroy -target=cloudflare_firewall_rule.<rule_id>"
+  },
+
+  "monitoring_queries": {
+    "cloudflare_logs_api": "https://api.cloudflare.com/client/v4/zones/{zone_id}/firewall/events",
+    "blocked_requests_last_hour": "cf.firewall.rule_id in {<rule_ids>} and time > -1h",
+    "false_positives_detection": "cf.firewall.action eq 'block' and cf.threat_score < 10",
+    "top_blocked_ips": "cf.firewall.action eq 'block' | stats count by ip.src | sort -count | head 10"
+  },
+
+  "references": [
+    "https://developers.cloudflare.com/firewall/cf-firewall-rules/",
+    "https://developers.cloudflare.com/firewall/cf-firewall-rules/fields-and-expressions/",
+    "https://developers.cloudflare.com/waf/managed-rules/",
+    "https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/about-githubs-ip-addresses"
+  ]
+}

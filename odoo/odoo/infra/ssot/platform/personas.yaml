@@ -1,0 +1,80 @@
+# Odoo.sh-Equivalent Platform — Persona Definitions
+# SSOT: infra/spec/odoosh-equivalent-platform/
+# Generated: 2026-03-11
+# Schema: v1.0.0
+
+version: "1.0.0"
+
+personas:
+  developer:
+    label: "Developer"
+    primary_concern: "Ship features fast with confidence"
+    governance_scope: "Code, branches, feature envs, logs, shell"
+    environment_access:
+      development: write
+      staging: read
+      production: read
+    key_workflows:
+      - "Create feature environment from branch (< 3 min)"
+      - "View live logs for any running environment"
+      - "Open shell/exec session into running container"
+      - "Review diffs and staged changes before promotion"
+      - "Access spec-aware context for active feature"
+    ux_capabilities:
+      - structural_outline_navigation
+      - breadcrumb_navigation
+      - pinned_working_set
+      - fast_file_action_launcher
+      - multi_cursor_editing
+      - diff_first_workflow
+      - spec_aware_context
+      - runtime_context_panel
+      - live_logs_panel
+      - shell_exec_access
+      - focus_mode
+      - split_layout_presets
+
+  tester:
+    label: "Tester (QA)"
+    primary_concern: "Validate behavior matches spec"
+    governance_scope: "Staging access, test execution, diff review"
+    environment_access:
+      development: read
+      staging: read
+      production: none
+    key_workflows:
+      - "Access staging environment matching a PR"
+      - "Run test suites against staging"
+      - "Compare expected vs actual output (diff stories)"
+      - "Review evidence artifacts from CI runs"
+      - "Validate gate passage before promotion approval"
+
+  project_manager:
+    label: "Project Manager"
+    primary_concern: "Track readiness and release gates"
+    governance_scope: "Dashboards, deployment history, promotion visibility"
+    environment_access:
+      development: none
+      staging: read
+      production: read
+    key_workflows:
+      - "View deployment history and promotion pipeline"
+      - "Check gate status across all environments"
+      - "Review maturity benchmark scores"
+      - "Track feature completion against spec tasks"
+      - "Approve or defer production promotions"
+
+  system_administrator:
+    label: "System Administrator"
+    primary_concern: "Maintain platform health and security"
+    governance_scope: "Full access including secrets, DNS, monitoring, backup/restore"
+    environment_access:
+      development: write
+      staging: write
+      production: write
+    key_workflows:
+      - "Manage DNS records and domain routing"
+      - "Configure monitoring alerts and thresholds"
+      - "Execute backup and restore operations"
+      - "Manage secrets rotation and access policies"
+      - "Review audit logs and security events"

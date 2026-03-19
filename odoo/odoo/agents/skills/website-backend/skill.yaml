@@ -1,0 +1,81 @@
+# Website Backend Solutions Skill
+# Server-side architecture, APIs, and data infrastructure
+
+name: website_backend
+version: 1.0.0
+key: web.backend
+description: |
+  Build backend solutions: REST/GraphQL APIs, authentication,
+  database optimization, caching, and server infrastructure.
+
+intents:
+  - build backend api
+  - backend architecture
+  - database optimization
+  - authentication system
+  - server infrastructure
+
+guardrails:
+  - Input validation on all external boundaries
+  - SQL injection prevention (parameterized queries only)
+  - Rate limiting on public endpoints
+  - Self-hosted infrastructure (DigitalOcean)
+  - Database connections via env vars only
+
+tools:
+  - key: backend.api
+    name: API Design
+    target_model: ipai.backend.runner
+    target_method: design_api
+    description: Design RESTful or GraphQL API with OpenAPI spec
+
+  - key: backend.auth
+    name: Authentication
+    target_model: ipai.backend.runner
+    target_method: setup_auth
+    description: Configure authentication (JWT, OAuth, Keycloak)
+
+  - key: backend.database
+    name: Database Layer
+    target_model: ipai.backend.runner
+    target_method: build_database
+    description: Schema design, migrations, query optimization
+
+  - key: backend.infra
+    name: Infrastructure
+    target_model: ipai.backend.runner
+    target_method: setup_infra
+    description: Docker, nginx, SSL, monitoring
+
+workflow:
+  - backend.api
+  - backend.auth
+  - backend.database
+  - backend.infra
+
+input_schema:
+  type: object
+  required:
+    - project_name
+    - api_style
+  properties:
+    project_name: { type: string }
+    api_style: { type: string, enum: [rest, graphql, grpc, json_rpc] }
+    auth_provider: { type: string, enum: [keycloak, supabase_auth, jwt_custom, oauth] }
+    database: { type: string, enum: [postgresql, supabase] }
+
+output_schema:
+  type: object
+  properties:
+    api_spec: { type: string }
+    endpoints: { type: array, items: { type: string } }
+    schema_files: { type: array, items: { type: string } }
+    infra_config: { type: object }
+
+agentInstructions: |
+  When building backend solutions:
+
+  1. **API**: OpenAPI 3.0 spec, versioned routes, error handling
+  2. **Auth**: Keycloak for SSO, JWT for API auth, RBAC
+  3. **Database**: PostgreSQL 16, migrations, indexes, RLS
+  4. **Infrastructure**: Docker compose, nginx reverse proxy, SSL

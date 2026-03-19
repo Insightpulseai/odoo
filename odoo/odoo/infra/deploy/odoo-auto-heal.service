@@ -1,0 +1,31 @@
+[Unit]
+Description=Odoo Auto-Healing and Health Monitoring Service
+After=network.target
+Wants=network.target
+
+[Service]
+Type=simple
+User=odoo
+Group=odoo
+WorkingDirectory=/Users/tbwa/odoo-ce
+ExecStart=/Users/tbwa/odoo-ce/scripts/enhanced_health_check.sh monitor
+ExecReload=/bin/kill -HUP $MAINPID
+Restart=always
+RestartSec=10
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=odoo-auto-heal
+
+# Security settings
+NoNewPrivileges=yes
+PrivateTmp=yes
+ProtectSystem=strict
+ProtectHome=yes
+ReadWritePaths=/var/log /tmp /var/backups/odoo_auto
+
+# Resource limits
+MemoryLimit=512M
+CPUQuota=50%
+
+[Install]
+WantedBy=multi-user.target

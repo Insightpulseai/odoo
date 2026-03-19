@@ -1,0 +1,282 @@
+# =============================================================================
+# Agent Maturity Model — Single Source of Truth
+# =============================================================================
+# Six-level maturity framework (L0-L5) governing agent promotion from concept
+# through autonomous operation. Each level defines required capabilities,
+# evidence, controls, and blast radius constraints.
+# =============================================================================
+
+id: agent_maturity_model
+name: IPAI Agent Maturity Model
+version: 1.0.0
+status: active
+owner: platform-team
+
+# -----------------------------------------------------------------------------
+# Maturity Levels
+# -----------------------------------------------------------------------------
+
+levels:
+  # ---------------------------------------------------------------------------
+  # L0 — Concept
+  # ---------------------------------------------------------------------------
+  - id: L0
+    name: concept
+    definition: >
+      Agent exists as an idea with documented intent and scope but no executable code.
+    required_capabilities: []
+    required_evidence:
+      - agent_brief_document
+      - stakeholder_sign_off
+      - scope_boundary_definition
+    required_controls:
+      - naming_convention_compliance
+      - no_duplicate_scope_check
+    evaluation_expectations: []
+    observability_expectations: []
+    allowed_blast_radius: none
+    promotion_criteria:
+      - approved_agent_brief
+      - assigned_owner
+      - defined_capability_contract
+    rollback_triggers:
+      - scope_rejected_by_owner
+      - duplicate_agent_detected
+    allowed_stages:
+      - S01
+      - S02
+
+  # ---------------------------------------------------------------------------
+  # L1 — Prototype
+  # ---------------------------------------------------------------------------
+  - id: L1
+    name: prototype
+    definition: >
+      Agent has executable code that demonstrates core capability in a sandboxed environment.
+    required_capabilities:
+      - single_tool_execution
+      - structured_input_parsing
+      - structured_output_generation
+    required_evidence:
+      - passing_unit_tests
+      - sandbox_execution_log
+      - tool_binding_verification
+    required_controls:
+      - sandboxed_execution_only
+      - no_production_data_access
+      - credential_scoping_to_dev
+    evaluation_expectations:
+      - output_format_validation
+      - basic_correctness_check
+    observability_expectations:
+      - structured_logging_enabled
+      - execution_duration_tracked
+    allowed_blast_radius: sandbox_only
+    promotion_criteria:
+      - all_unit_tests_passing
+      - tool_bindings_verified
+      - output_schema_validated
+      - code_review_approved
+    rollback_triggers:
+      - unit_test_regression
+      - tool_binding_failure
+      - security_finding_critical
+    allowed_stages:
+      - S03
+      - S04
+      - S05
+
+  # ---------------------------------------------------------------------------
+  # L2 — Integrated
+  # ---------------------------------------------------------------------------
+  - id: L2
+    name: integrated
+    definition: >
+      Agent interacts with external services and other agents in a staging environment with real schemas but synthetic data.
+    required_capabilities:
+      - multi_tool_orchestration
+      - error_handling_and_retry
+      - context_window_management
+      - inter_agent_communication
+    required_evidence:
+      - integration_test_results
+      - staging_deployment_log
+      - error_recovery_demonstration
+      - latency_baseline_measurement
+    required_controls:
+      - staging_environment_isolation
+      - synthetic_data_only
+      - rate_limiting_enforced
+      - audit_logging_active
+    evaluation_expectations:
+      - judge_agent_scoring_above_threshold
+      - error_rate_below_5_percent
+      - latency_p95_within_budget
+    observability_expectations:
+      - distributed_tracing_enabled
+      - error_rate_dashboard
+      - latency_percentile_tracking
+      - token_usage_metering
+    allowed_blast_radius: staging_environment
+    promotion_criteria:
+      - integration_tests_passing
+      - judge_score_ge_70
+      - error_rate_lt_5_percent
+      - p95_latency_lt_10s
+      - security_review_passed
+    rollback_triggers:
+      - integration_test_failure
+      - judge_score_below_60
+      - error_rate_above_10_percent
+      - security_vulnerability_detected
+    allowed_stages:
+      - S06
+      - S07
+
+  # ---------------------------------------------------------------------------
+  # L3 — Supervised Production
+  # ---------------------------------------------------------------------------
+  - id: L3
+    name: supervised_production
+    definition: >
+      Agent operates in production with human-in-the-loop approval for consequential actions.
+    required_capabilities:
+      - graceful_degradation
+      - human_escalation_workflow
+      - cost_awareness
+      - output_confidence_scoring
+    required_evidence:
+      - canary_deployment_metrics
+      - human_approval_workflow_verification
+      - cost_projection_under_load
+      - rollback_procedure_tested
+    required_controls:
+      - human_approval_for_writes
+      - cost_ceiling_enforced
+      - circuit_breaker_configured
+      - rollback_procedure_documented
+      - pii_handling_validated
+    evaluation_expectations:
+      - judge_score_ge_80
+      - user_satisfaction_tracked
+      - false_positive_rate_tracked
+      - cost_per_task_within_budget
+    observability_expectations:
+      - real_time_alerting
+      - cost_tracking_per_invocation
+      - human_override_rate_tracking
+      - drift_detection_enabled
+    allowed_blast_radius: limited_production_with_human_gate
+    promotion_criteria:
+      - canary_success_rate_ge_95
+      - human_override_rate_lt_15_percent
+      - cost_per_task_within_budget
+      - no_critical_incidents_in_7_days
+      - judge_score_ge_80
+    rollback_triggers:
+      - human_override_rate_above_25_percent
+      - cost_ceiling_breached
+      - critical_incident_detected
+      - judge_score_below_70
+    allowed_stages:
+      - S08
+      - S09
+
+  # ---------------------------------------------------------------------------
+  # L4 — Autonomous Production
+  # ---------------------------------------------------------------------------
+  - id: L4
+    name: autonomous_production
+    definition: >
+      Agent operates in production without human approval for routine actions, with monitoring and automatic rollback.
+    required_capabilities:
+      - autonomous_decision_making
+      - self_monitoring
+      - adaptive_retry_strategies
+      - multi_agent_coordination
+      - output_self_evaluation
+    required_evidence:
+      - 30_day_supervised_production_log
+      - autonomous_decision_audit
+      - load_test_results
+      - disaster_recovery_drill
+    required_controls:
+      - automated_rollback_on_anomaly
+      - cost_hard_ceiling
+      - blast_radius_containment
+      - weekly_audit_review
+      - model_version_pinning
+    evaluation_expectations:
+      - judge_score_ge_90
+      - autonomous_accuracy_ge_95_percent
+      - cost_efficiency_improving_or_stable
+      - zero_critical_incidents_in_30_days
+    observability_expectations:
+      - anomaly_detection_active
+      - predictive_cost_forecasting
+      - agent_behavior_drift_monitoring
+      - cross_agent_dependency_tracking
+    allowed_blast_radius: full_production_with_automatic_containment
+    promotion_criteria:
+      - 30_days_at_L3_without_critical_incident
+      - autonomous_accuracy_ge_95_percent
+      - cost_trend_stable_or_declining
+      - disaster_recovery_drill_passed
+      - judge_score_ge_90
+    rollback_triggers:
+      - anomaly_detection_alert
+      - cost_hard_ceiling_breached
+      - accuracy_below_90_percent
+      - cross_agent_cascade_failure
+    allowed_stages:
+      - S10
+      - S11
+      - S12
+
+  # ---------------------------------------------------------------------------
+  # L5 — Optimizing
+  # ---------------------------------------------------------------------------
+  - id: L5
+    name: optimizing
+    definition: >
+      Agent self-tunes prompts, parameters, and resource allocation based on continuous feedback and evaluation.
+    required_capabilities:
+      - prompt_self_optimization
+      - resource_auto_scaling
+      - feedback_loop_integration
+      - cross_agent_load_balancing
+      - capability_self_assessment
+    required_evidence:
+      - optimization_improvement_log
+      - self_tuning_safety_bounds_verification
+      - 90_day_production_stability_log
+      - optimization_rollback_demonstration
+    required_controls:
+      - optimization_bounds_enforced
+      - optimization_audit_trail
+      - human_review_of_optimization_decisions_weekly
+      - no_self_modification_of_safety_controls
+      - prompt_version_history_preserved
+    evaluation_expectations:
+      - continuous_judge_scoring
+      - optimization_delta_positive
+      - no_quality_regression_from_optimization
+      - cost_efficiency_measurably_improved
+    observability_expectations:
+      - optimization_decision_logging
+      - before_after_comparison_dashboards
+      - safety_bound_proximity_alerting
+      - prompt_version_lineage_tracking
+    allowed_blast_radius: full_production_with_self_healing
+    promotion_criteria:
+      - 90_days_at_L4_without_critical_incident
+      - demonstrated_measurable_optimization
+      - optimization_safety_bounds_tested
+      - human_review_cadence_established
+    rollback_triggers:
+      - optimization_causes_quality_regression
+      - safety_bound_breach
+      - cost_increase_from_optimization
+      - human_review_flags_concern
+    allowed_stages:
+      - S13

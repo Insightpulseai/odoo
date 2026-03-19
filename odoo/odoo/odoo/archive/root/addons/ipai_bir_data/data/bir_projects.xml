@@ -1,0 +1,35 @@
+<odoo noupdate="0">
+
+  <!-- BIR Tax Filing Project -->
+  <record id="project_bir_tax_filing" model="project.project">
+    <field name="name">BIR Tax Filing</field>
+    <field name="active">1</field>
+  </record>
+
+  <!-- Attach stages to the project -->
+  <record id="stage_preparation_bir" model="project.task.type">
+    <field name="name">Preparation</field>
+    <field name="sequence">10</field>
+    <field name="project_ids" eval="[(4, ref('ipai_bir_data.project_bir_tax_filing'))]"/>
+  </record>
+
+  <record id="stage_review_bir" model="project.task.type">
+    <field name="name">Review</field>
+    <field name="sequence">20</field>
+    <field name="project_ids" eval="[(4, ref('ipai_bir_data.project_bir_tax_filing'))]"/>
+  </record>
+
+  <record id="stage_submission_bir" model="project.task.type">
+    <field name="name">Submission</field>
+    <field name="sequence">30</field>
+    <field name="project_ids" eval="[(4, ref('ipai_bir_data.project_bir_tax_filing'))]"/>
+  </record>
+
+  <record id="stage_done_bir" model="project.task.type">
+    <field name="name">Done</field>
+    <field name="sequence">99</field>
+    <field name="fold">1</field>
+    <field name="project_ids" eval="[(4, ref('ipai_bir_data.project_bir_tax_filing'))]"/>
+  </record>
+
+</odoo>

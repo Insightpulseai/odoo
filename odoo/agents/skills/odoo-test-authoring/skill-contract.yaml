@@ -1,0 +1,72 @@
+version: 1
+type: implementation_skill
+family: odoo_developer_implementation
+skill:
+  name: odoo-test-authoring
+  status: active
+  owner: agents
+  build_order: 5
+  lane: quality
+  purpose: >
+    Write Python tests for Odoo module functionality, regression checks,
+    and integration tests. Uses TransactionCase, HttpCase, and tagged
+    decorators. Tests run on disposable databases with strict failure
+    classification.
+
+  triggers:
+    - new module created without tests
+    - new business logic requires regression coverage
+    - bug fix needs a regression test
+    - PR modifies models or business logic
+
+  inputs:
+    - module_name
+    - test_scenarios (list of behaviors to verify)
+    - test_type (unit, integration, or http)
+
+  steps:
+    - create tests/__init__.py importing test modules
+    - create tests/test_<module>.py with appropriate base class
+    - use TransactionCase for ORM/business logic tests
+    - use HttpCase for controller/web tests
+    - use @tagged decorator for test categorization
+    - create test data in setUp or setUpClass (never use prod/dev DB data)
+    - write assertion methods for each scenario
+    - use disposable test_<module> database name
+    - run tests with --test-enable --stop-after-init
+    - classify results per testing policy (passes locally/init only/env issue/migration gap/real defect)
+    - save evidence to docs/evidence/{stamp}/odoo-dev/odoo-test-authoring/
+
+  outputs:
+    - test_file_paths
+    - test_count
+    - pass_fail_results
+    - failure_classifications
+    - evidence
+
+  guardrails:
+    - never use odoo (prod), odoo_dev, or odoo_staging databases for tests
+    - always use disposable test_<module> database
+    - always classify every test failure (never report raw pass/fail without context)
+    - never claim "all tests pass" without citing evidence log
+    - do not silently skip failures — report every error with source module
+    - prefer inherited extension over core patching
+    - do not call cr.commit() unless explicitly justified
+    - tests must clean up after themselves (TransactionCase auto-rolls back)
+
+  evidence:
+    required: true
+    format: "docs/evidence/{stamp}/odoo-dev/odoo-test-authoring/"
+
+  evals:
+    dimensions: [accuracy, completeness, safety, policy_adherence, evidence_quality]
+    thresholds:
+      accuracy: 0.95
+      safety: 0.99
+      policy_adherence: 0.95
+
+cross_references:
+  - agents/knowledge/benchmarks/odoo-developer-howtos.md
+  - agents/knowledge/benchmarks/odoo-coding-guidelines.md
+  - .claude/rules/testing.md
+  - .claude/rules/odoo19-coding.md

@@ -1,0 +1,8 @@
+External ID,Name,Sequence,Folded,Description
+ipai_stage_backlog,Backlog,5,TRUE,Tasks not yet scheduled
+ipai_stage_todo,To Do,10,FALSE,Ready to start
+ipai_stage_in_progress,In Progress,20,FALSE,Currently being worked on
+ipai_stage_review,Review,30,FALSE,Pending internal or client review
+ipai_stage_testing,Testing,35,FALSE,In QA/testing
+ipai_stage_done,Done,40,TRUE,Completed tasks
+ipai_stage_cancelled,Cancelled,50,TRUE,Cancelled or not required

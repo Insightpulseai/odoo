@@ -1,0 +1,56 @@
+# ============================================================
+# OFFER REGISTRY
+# ============================================================
+# Tracks all publishable offers, their packaging channel,
+# and publish readiness state.
+# Last updated: 2026-03-15
+# ============================================================
+
+schema_version: "1.0"
+registry_id: offer-registry
+
+offers:
+
+  - id: odoo-copilot-preview
+    name: "Odoo Copilot Internal Preview"
+    source_agent: odoo-copilot
+    channel: internal_one_click
+    status: not_ready
+    target_release: R1
+    publish_gate:
+      eval_pass: false
+      policy_compliant: false
+      security_reviewed: false
+    last_updated: "2026-03-15"
+
+  - id: finance-docflow-alpha
+    name: "Finance DocFlow Alpha"
+    source_agent: finance-docflow
+    channel: internal_one_click
+    status: not_ready
+    target_release: R2
+    publish_gate:
+      eval_pass: false
+      policy_compliant: false
+      security_reviewed: false
+    last_updated: "2026-03-15"
+
+  - id: ops-console-beta
+    name: "Ops Console Beta"
+    source_agent: null
+    channel: internal_one_click
+    status: not_ready
+    target_release: R3
+    publish_gate:
+      eval_pass: false
+      policy_compliant: false
+      security_reviewed: false
+    last_updated: "2026-03-15"
+
+# ----------------------------------------------------------
+# Publish readiness rules
+# ----------------------------------------------------------
+publish_rules:
+  - "All publish_gate fields must be true before status can move to ready"
+  - "Channel must match allowed_channels for the current release lane"
+  - "At least one ownership lane signoff required per certification-ownership.yaml"

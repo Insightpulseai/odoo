@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Odoo Copilot Use Cases</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #F5F1E8;
+            padding: 60px 40px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header {
+            margin-bottom: 48px;
+        }
+
+        h1 {
+            font-family: Georgia, 'Times New Roman', serif;
+            font-size: 48px;
+            font-weight: 400;
+            color: #1A1A1A;
+            margin-bottom: 16px;
+        }
+
+        .subtitle {
+            font-size: 18px;
+            color: #666;
+            max-width: 700px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+            gap: 28px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 28px rgba(0,0,0,0.12);
+        }
+
+        .card-image {
+            width: 100%;
+            height: 280px;
+            background: #F8F9FA;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 30px;
+        }
+
+        .card-image svg {
+            width: 100%;
+            height: 100%;
+            max-width: 350px;
+        }
+
+        .card-content {
+            padding: 28px;
+        }
+
+        .card-title {
+            font-family: Georgia, 'Times New Roman', serif;
+            font-size: 26px;
+            font-weight: 400;
+            color: #1A1A1A;
+            line-height: 1.3;
+            margin-bottom: 14px;
+        }
+
+        .card-description {
+            font-size: 15px;
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 24px;
+        }
+
+        .card-tags {
+            display: flex;
+            gap: 14px;
+            padding-top: 20px;
+            border-top: 1px solid #F0F0F0;
+        }
+
+        .tag {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            font-size: 13px;
+            color: #555;
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Odoo Copilot Use Cases</h1>
+            <p class="subtitle">Browse practical examples across sales, finance, operations, and everyday ERP tasks—whether you're working solo or with a team.</p>
+        </div>
+
+        <div class="grid">
+
+            <!-- Card 1: CRM Pipeline -->
+            <div class="card">
+                <div class="card-image">
+                    <svg viewBox="0 0 400 300" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <defs>
+                            <linearGradient id="purple-grad-1" x1="0" y1="0" x2="1" y2="1">
+                                <stop offset="0%" stop-color="#875A7B"/>
+                                <stop offset="100%" stop-color="#7C4C6F"/>
+                            </linearGradient>
+                            <linearGradient id="green-grad-1" x1="0" y1="0" x2="0" y2="1">
+                                <stop offset="0%" stop-color="#4CAF50"/>
+                                <stop offset="100%" stop-color="#388E3C"/>
+                            </linearGradient>
+                        </defs>
+                        <path d="M50 50 L350 50 L300 150 L100 150 Z" fill="url(#purple-grad-1)" opacity="0.2"/>
+                        <path d="M100 150 L300 150 L250 250 L150 250 Z" fill="url(#purple-grad-1)" opacity="0.4"/>
+                        <circle cx="200" cy="70" r="8" fill="#875A7B"/>
+                        <circle cx="180" cy="100" r="8" fill="#875A7B"/>
+                        <circle cx="220" cy="100" r="8" fill="#875A7B"/>
+                        <circle cx="200" cy="130" r="8" fill="#875A7B"/>
+                        <path d="M60 180 L120 140 L180 160 L240 100 L300 120"
+                              stroke="url(#green-grad-1)" stroke-width="4"
+                              stroke-linecap="round" fill="none"/>
+                        <rect x="280" y="200" width="80" height="60" rx="8" fill="white" stroke="#875A7B" stroke-width="2"/>
+                        <line x1="290" y1="215" x2="350" y2="215" stroke="#875A7B" stroke-width="2"/>
+                        <line x1="290" y1="230" x2="340" y2="230" stroke="#ccc" stroke-width="2"/>
+                        <line x1="290" y1="245" x2="330" y2="245" stroke="#ccc" stroke-width="2"/>
+                        <circle cx="320" cy="50" r="20" fill="#FF5722" opacity="0.2"/>
+                        <text x="320" y="58" text-anchor="middle" font-size="24" fill="#FF5722">⚠</text>
+                    </svg>
+                </div>
+                <div class="card-content">
+                    <h2 class="card-title">Surface at-risk deals from your pipeline</h2>
+                    <p class="card-description">Ask "Which opportunities over $50K haven't been touched in 2 weeks?" Get a prioritized list with full context and suggested next actions to keep your pipeline healthy.</p>
+                    <div class="card-tags">
+                        <div class="tag">
+                            <span>🤖 Odoo Copilot</span>
+                        </div>
+                        <div class="tag">
+                            <span>📊 Sales</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 2: Invoice Processing -->
+            <div class="card">
+                <div class="card-image">
+                    <svg viewBox="0 0 400 300" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <defs>
+                            <linearGradient id="purple-grad-2" x1="0" y1="0" x2="1" y2="1">
+                                <stop offset="0%" stop-color="#875A7B"/>
+                                <stop offset="100%" stop-color="#7C4C6F"/>
+                            </linearGradient>
+                            <marker id="arrowgreen" markerWidth="10" markerHeight="10"
+                                    refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+                                <path d="M0,0 L0,6 L9,3 z" fill="#4CAF50"/>
+                            </marker>
+                        </defs>
+                        <rect x="80" y="80" width="120" height="160" rx="8" fill="white" stroke="#875A7B" stroke-width="3"/>
+                        <rect x="90" y="70" width="120" height="160" rx="8" fill="white" stroke="#875A7B" stroke-width="3"/>
+                        <rect x="100" y="60" width="120" height="160" rx="8" fill="url(#purple-grad-2)"/>
+                        <line x1="120" y1="90" x2="200" y2="90" stroke="white" stroke-width="3" opacity="0.8"/>
+                        <line x1="120" y1="110" x2="190" y2="110" stroke="white" stroke-width="3" opacity="0.8"/>
+                        <line x1="120" y1="130" x2="195" y2="130" stroke="white" stroke-width="3" opacity="0.8"/>
+                        <circle cx="160" cy="170" r="25" fill="white" opacity="0.9"/>
+                        <text x="160" y="185" text-anchor="middle" font-size="36" font-weight="bold" fill="#875A7B">$</text>
+                        <path d="M240 130 L280 130" stroke="#4CAF50" stroke-width="4"
+                              stroke-linecap="round" marker-end="url(#arrowgreen)"/>
+                        <circle cx="320" cy="130" r="30" fill="#4CAF50" opacity="0.2"/>
+                        <path d="M305 130 L315 140 L335 115" stroke="#4CAF50"
+                              stroke-width="5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                    </svg>
+                </div>
+                <div class="card-content">
+                    <h2 class="card-title">Prep scattered invoices for month-end close</h2>
+                    <p class="card-description">Upload a folder of vendor bills—PDFs, photos, email attachments. The copilot reads each one, creates draft bills in Odoo, matches to POs when possible, and routes for approval.</p>
+                    <div class="card-tags">
+                        <div class="tag">
+                            <span>🤖 Odoo Copilot</span>
+                        </div>
+                        <div class="tag">
+                            <span>💼 Accounting</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 3: Manufacturing Costs -->
+            <div class="card">
+                <div class="card-image">
+                    <svg viewBox="0 0 400 300" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <rect x="50" y="120" width="100" height="120" fill="#875A7B" opacity="0.3"/>
+                        <rect x="70" y="100" width="60" height="20" fill="#875A7B"/>
+                        <rect x="85" y="80" width="30" height="20" fill="#875A7B"/>
+                        <ellipse cx="95" cy="75" rx="5" ry="8" fill="#ccc" opacity="0.5">
+                            <animate attributeName="ry" values="8;12;8" dur="2s" repeatCount="indefinite"/>
+                        </ellipse>
+                        <ellipse cx="105" cy="70" rx="5" ry="10" fill="#ccc" opacity="0.4">
+                            <animate attributeName="ry" values="10;14;10" dur="2.5s" repeatCount="indefinite"/>
+                        </ellipse>
+                        <rect x="180" y="180" width="40" height="60" rx="4" fill="#FF5722" opacity="0.7"/>
+                        <text x="200" y="255" text-anchor="middle" font-size="12" fill="#666">Now</text>
+                        <rect x="230" y="150" width="40" height="90" rx="4" fill="#FFC107" opacity="0.7"/>
+                        <text x="250" y="255" text-anchor="middle" font-size="12" fill="#666">+15%</text>
+                        <rect x="280" y="195" width="40" height="45" rx="4" fill="#4CAF50" opacity="0.7"/>
+                        <text x="300" y="255" text-anchor="middle" font-size="12" fill="#666">-8%</text>
+                        <defs>
+                            <marker id="arrowpurple" markerWidth="10" markerHeight="10"
+                                    refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+                                <path d="M0,0 L0,6 L9,3 z" fill="#875A7B"/>
+                            </marker>
+                        </defs>
+                        <path d="M220 200 L270 170" stroke="#875A7B" stroke-width="3"
+                              stroke-dasharray="5,5" marker-end="url(#arrowpurple)"/>
+                        <path d="M180 50 L220 60 L260 40 L300 70 L340 45"
+                              stroke="#875A7B" stroke-width="3" stroke-linecap="round" fill="none"/>
+                    </svg>
+                </div>
+                <div class="card-content">
+                    <h2 class="card-title">Stress-test production costs across scenarios</h2>
+                    <p class="card-description">Ask "What if steel prices increase 15% and labor costs drop 8%?" The copilot recalculates your BOMs, shows the new cost per unit, and highlights which products become unprofitable.</p>
+                    <div class="card-tags">
+                        <div class="tag">
+                            <span>🤖 Odoo Copilot</span>
+                        </div>
+                        <div class="tag">
+                            <span>🏭 Manufacturing</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 4: Project Tasks -->
+            <div class="card">
+                <div class="card-image">
+                    <svg viewBox="0 0 400 300" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <rect x="30" y="50" width="100" height="200" rx="8" fill="#F5F5F5" stroke="#875A7B" stroke-width="2"/>
+                        <rect x="150" y="50" width="100" height="200" rx="8" fill="#F5F5F5" stroke="#875A7B" stroke-width="2"/>
+                        <rect x="270" y="50" width="100" height="200" rx="8" fill="#F5F5F5" stroke="#875A7B" stroke-width="2"/>
+                        <text x="80" y="35" text-anchor="middle" font-size="14" font-weight="bold" fill="#666">TODO</text>
+                        <text x="200" y="35" text-anchor="middle" font-size="14" font-weight="bold" fill="#666">DOING</text>
+                        <text x="320" y="35" text-anchor="middle" font-size="14" font-weight="bold" fill="#666">DONE</text>
+                        <rect x="40" y="70" width="80" height="40" rx="4" fill="white" stroke="#875A7B" stroke-width="2"/>
+                        <rect x="40" y="120" width="80" height="40" rx="4" fill="white" stroke="#875A7B" stroke-width="2"/>
+                        <rect x="40" y="170" width="80" height="40" rx="4" fill="white" stroke="#875A7B" stroke-width="2"/>
+                        <rect x="160" y="90" width="80" height="40" rx="4" fill="#FFF3E0" stroke="#FF9800" stroke-width="2"/>
+                        <rect x="160" y="150" width="80" height="40" rx="4" fill="#FFF3E0" stroke="#FF9800" stroke-width="2"/>
+                        <rect x="280" y="110" width="80" height="40" rx="4" fill="#E8F5E9" stroke="#4CAF50" stroke-width="2"/>
+                        <path d="M285 125 L295 135 L310 115" stroke="#4CAF50"
+                              stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                    </svg>
+                </div>
+                <div class="card-content">
+                    <h2 class="card-title">Organize tasks from scattered meeting notes</h2>
+                    <p class="card-description">Feed the copilot your project standup notes from Slack, Google Docs, and email. It creates tasks in Odoo, assigns owners based on discussion context, and sets realistic due dates.</p>
+                    <div class="card-tags">
+                        <div class="tag">
+                            <span>🤖 Odoo Copilot</span>
+                        </div>
+                        <div class="tag">
+                            <span>📋 Projects</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 5: Sales Quote -->
+            <div class="card">
+                <div class="card-image">
+                    <svg viewBox="0 0 400 300" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <defs>
+                            <linearGradient id="purple-grad-5" x1="0" y1="0" x2="1" y2="1">
+                                <stop offset="0%" stop-color="#875A7B"/>
+                                <stop offset="100%" stop-color="#7C4C6F"/>
+                            </linearGradient>
+                        </defs>
+                        <rect x="100" y="50" width="200" height="200" rx="8" fill="white" stroke="#875A7B" stroke-width="3"/>
+                        <rect x="100" y="50" width="200" height="40" rx="8" fill="url(#purple-grad-5)"/>
+                        <text x="200" y="77" text-anchor="middle" font-size="16" font-weight="bold" fill="white">QUOTATION</text>
+                        <line x1="120" y1="110" x2="280" y2="110" stroke="#ccc" stroke-width="2"/>
+                        <line x1="120" y1="130" x2="250" y2="130" stroke="#ccc" stroke-width="2"/>
+                        <line x1="120" y1="150" x2="260" y2="150" stroke="#ccc" stroke-width="2"/>
+                        <rect x="120" y="170" width="160" height="60" rx="4" fill="#F5F5F5" stroke="#875A7B" stroke-width="2"/>
+                        <line x1="120" y1="195" x2="280" y2="195" stroke="#875A7B" stroke-width="2"/>
+                        <text x="140" y="230" font-size="14" font-weight="bold" fill="#875A7B">TOTAL:</text>
+                        <text x="260" y="230" text-anchor="end" font-size="18" font-weight="bold" fill="#4CAF50">$4,475</text>
+                        <g transform="translate(30, 150)">
+                            <circle cx="30" cy="0" r="25" fill="#875A7B" opacity="0.2"/>
+                            <path d="M20 -5 L20 5 M25 -8 L25 8 M30 -12 L30 12 M35 -8 L35 8 M40 -5 L40 5"
+                                  stroke="#875A7B" stroke-width="2" stroke-linecap="round"/>
+                        </g>
+                    </svg>
+                </div>
+                <div class="card-content">
+                    <h2 class="card-title">Generate quotes while on customer calls</h2>
+                    <p class="card-description">Your team speaks naturally: "Create quote for Acme Corp, 50 units Product X at enterprise pricing." The copilot creates the quotation, applies the right price list and payment terms, and emails it instantly.</p>
+                    <div class="card-tags">
+                        <div class="tag">
+                            <span>🤖 Odoo Copilot</span>
+                        </div>
+                        <div class="tag">
+                            <span>💼 Sales</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 6: Financial Reconciliation -->
+            <div class="card">
+                <div class="card-image">
+                    <svg viewBox="0 0 400 300" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <rect x="50" y="50" width="300" height="200" rx="8" fill="white" stroke="#875A7B" stroke-width="3"/>
+                        <rect x="50" y="50" width="300" height="30" rx="8" fill="#F1F3F4"/>
+                        <line x1="50" y1="80" x2="350" y2="80" stroke="#875A7B" stroke-width="2"/>
+                        <line x1="150" y1="50" x2="150" y2="250" stroke="#E0E0E0" stroke-width="1"/>
+                        <line x1="250" y1="50" x2="250" y2="250" stroke="#E0E0E0" stroke-width="1"/>
+                        <line x1="50" y1="110" x2="350" y2="110" stroke="#E0E0E0" stroke-width="1"/>
+                        <line x1="50" y1="140" x2="350" y2="140" stroke="#E0E0E0" stroke-width="1"/>
+                        <line x1="50" y1="170" x2="350" y2="170" stroke="#E0E0E0" stroke-width="1"/>
+                        <line x1="50" y1="200" x2="350" y2="200" stroke="#E0E0E0" stroke-width="1"/>
+                        <rect x="250" y="110" width="100" height="30" fill="#FFF3E0"/>
+                        <text x="300" y="130" text-anchor="middle" font-size="14" font-weight="bold" fill="#F57C00">+$550</text>
+                        <rect x="250" y="170" width="100" height="30" fill="#FFF3E0"/>
+                        <text x="300" y="190" text-anchor="middle" font-size="14" font-weight="bold" fill="#F57C00">+$350</text>
+                        <circle cx="330" cy="230" r="20" stroke="#875A7B" stroke-width="3" fill="none"/>
+                        <line x1="345" y1="245" x2="365" y2="265" stroke="#875A7B" stroke-width="3" stroke-linecap="round"/>
+                        <text x="330" y="238" text-anchor="middle" font-size="16" fill="#875A7B">$</text>
+                    </svg>
+                </div>
+                <div class="card-content">
+                    <h2 class="card-title">Reconcile invoices and catch overcharges</h2>
+                    <p class="card-description">Hand the copilot your vendor invoices and purchase orders. It matches line items across sources, flags discrepancies over your threshold, and creates variance reports—highlighting overcharges.</p>
+                    <div class="card-tags">
+                        <div class="tag">
+                            <span>🤖 Odoo Copilot</span>
+                        </div>
+                        <div class="tag">
+                            <span>💰 Finance</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</body>
+</html>

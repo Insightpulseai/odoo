@@ -1,0 +1,74 @@
+# infra/policy/repo-root-allowlist.contract.yaml
+# SSOT: Allowed top-level directories/files in the repo root.
+# Enforced by: .github/workflows/root-allowlist-guard.yml (Contract 6)
+# Last updated: 2026-02-22
+
+contract:
+  id: "C-06"
+  name: "Repo Root Allowlist"
+  reference: "docs/contracts/PLATFORM_CONTRACTS_INDEX.md §Contract 6"
+  ci_gate: ".github/workflows/root-allowlist-guard.yml"
+
+# Permitted top-level directories
+allowed_directories:
+  - .claude/
+  - .devcontainer/
+  - .github/
+  - .husky/
+  - .pnpm-store/            # local pnpm store (gitignored)
+  - .specify/
+  - .worktrees/             # git worktrees (gitignored)
+  - addons/
+  - agents/
+  - apps/
+  - automations/
+  - config/
+  - deploy/
+  - design/
+  - docs/
+  - docker/
+  - infra/
+  - odoo19/
+  - packages/
+  - platform/
+  - reports/
+  - sandbox/
+  - scripts/
+  - spec/
+  - supabase/
+  - tests/
+  - web/
+  - workers/
+
+# Permitted top-level files
+allowed_files:
+  - .commitlintrc.json
+  - .editorconfig
+  - .env.example
+  - .eslintrc.json
+  - .gitignore
+  - .gitmodules
+  - .npmrc
+  - .pre-commit-config.yaml
+  - .prettierignore
+  - .prettierrc
+  - .python-version
+  - AGENTS.md
+  - CLAUDE.md
+  - GEMINI.md
+  - LICENSE
+  - Makefile
+  - README.md
+  - odoo.conf
+  - package.json
+  - pnpm-lock.yaml
+  - pnpm-workspace.yaml
+  - pyproject.toml
+  - requirements.txt
+  - turbo.json
+
+# Rule: Any PR adding a new root-level directory or file not in the above lists
+# must update this file AND pass the root-allowlist-guard CI gate.
+enforcement:
+  block_unlisted: true
+  exception_process: "Update this file in same PR + CODEOWNERS approval"

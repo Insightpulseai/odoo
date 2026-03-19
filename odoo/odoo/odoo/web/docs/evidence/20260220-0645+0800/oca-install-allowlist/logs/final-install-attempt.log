@@ -1,0 +1,50 @@
+[0;32mFound 70 modules in 10 packs[0m
+
+[0;34mConnecting to Odoo...[0m
+[0;32m✓ Connected as user ID: 2[0m
+
+[0;34mChecking modules...[0m
+[0;32m✓ Already installed: 30[0m
+[1;33m○ To install: 0[0m
+[0;31m✗ Not found: 32[0m
+  - component
+  - component_event
+  - connector
+  - extendable_fastapi
+  - fastapi_auth_api_key
+  - fastapi_auth_jwt
+  - server_environment
+  - server_environment_data_encryption
+  - account_move_tier_validation
+  - account_reconcile_oca
+  ... and 22 more
+[1;33m⚠ Uninstallable: 8[0m
+  - base_rest
+  - base_rest_auth_api_key
+  - base_rest_pydantic
+  - extendable
+  - fastapi
+  - pydantic
+  - mis_builder
+  - mis_builder_budget
+
+[0;32m✓ Pack 'foundation': All 20 modules installed[0m
+[0;32m✓ Pack 'web_ux': All 7 modules installed[0m
+[0;32m✓ Pack 'accounting_core': All 8 modules installed[0m
+[0;32m✓ Pack 'accounting_reconcile': All 2 modules installed[0m
+[0;32m✓ Pack 'accounting_statements': All 7 modules installed[0m
+[0;32m✓ Pack 'purchase_workflow': All 7 modules installed[0m
+[0;32m✓ Pack 'hr_modules': All 3 modules installed[0m
+[0;32m✓ Pack 'project_timesheet': All 4 modules installed[0m
+[0;32m✓ Pack 'crm_extensions': All 6 modules installed[0m
+[0;32m✓ Pack 'reporting': All 6 modules installed[0m
+[0;34m═════════════════════════════════════════════════════════$[0m
+  Already installed: 30
+  Newly installed:   0
+  Not found:         32
+  Uninstallable:     8
+  Failed:            0
+  Total:             70
+[0;34m═════════════════════════════════════════════════════════$[0m
+
+[1;33m⚠ Completed with 32 missing modules[0m

@@ -1,0 +1,182 @@
+{
+  "name": "Expense OCR Pipeline",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "expense-receipt",
+        "options": {}
+      },
+      "id": "webhook-trigger",
+      "name": "Receive Receipt",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [250, 300]
+    },
+    {
+      "parameters": {
+        "operation": "upload",
+        "bucketName": "={{ $env.AWS_S3_BUCKET }}",
+        "fileName": "receipts/{{ $now.format('YYYYMMDD') }}/{{ $json.expense_id }}.{{ $json.file_extension }}",
+        "binaryPropertyName": "data"
+      },
+      "id": "s3-upload",
+      "name": "Upload to S3",
+      "type": "n8n-nodes-base.awsS3",
+      "typeVersion": 1,
+      "position": [450, 300],
+      "credentials": {
+        "aws": {
+          "id": "aws-credentials"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "analyzeExpense",
+        "s3Object": "={{ $node['Upload to S3'].json.key }}"
+      },
+      "id": "textract-analyze",
+      "name": "Analyze Receipt",
+      "type": "n8n-nodes-base.awsTextract",
+      "typeVersion": 1,
+      "position": [650, 300],
+      "credentials": {
+        "aws": {
+          "id": "aws-credentials"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Extract expense data from Textract response\nconst response = $input.first().json;\nconst expenseDocuments = response.ExpenseDocuments || [];\n\nlet extractedData = {\n  vendor: null,\n  total: null,\n  date: null,\n  category: null,\n  items: []\n};\n\nfor (const doc of expenseDocuments) {\n  const summaryFields = doc.SummaryFields || [];\n  \n  for (const field of summaryFields) {\n    const fieldType = field.Type?.Text;\n    const value = field.ValueDetection?.Text;\n    \n    switch (fieldType) {\n      case 'VENDOR_NAME':\n        extractedData.vendor = value;\n        break;\n      case 'TOTAL':\n        extractedData.total = parseFloat(value?.replace(/[^0-9.]/g, ''));\n        break;\n      case 'INVOICE_RECEIPT_DATE':\n        extractedData.date = value;\n        break;\n    }\n  }\n  \n  // Get line items\n  const lineItems = doc.LineItemGroups?.[0]?.LineItems || [];\n  extractedData.items = lineItems.map(item => {\n    const itemFields = item.LineItemExpenseFields || [];\n    return itemFields.reduce((acc, f) => {\n      acc[f.Type?.Text] = f.ValueDetection?.Text;\n      return acc;\n    }, {});\n  });\n}\n\n// Detect category from vendor name\nconst vendorLower = (extractedData.vendor || '').toLowerCase();\nif (vendorLower.includes('uber') || vendorLower.includes('lyft') || vendorLower.includes('taxi')) {\n  extractedData.category = 'Travel - Ground Transport';\n} else if (vendorLower.includes('hotel') || vendorLower.includes('marriott') || vendorLower.includes('hilton')) {\n  extractedData.category = 'Travel - Lodging';\n} else if (vendorLower.includes('airline') || vendorLower.includes('delta') || vendorLower.includes('united')) {\n  extractedData.category = 'Travel - Airfare';\n} else if (vendorLower.includes('restaurant') || vendorLower.includes('cafe') || vendorLower.includes('food')) {\n  extractedData.category = 'Meals - Team';\n} else {\n  extractedData.category = 'Other';\n}\n\nreturn { json: { ...extractedData, expense_id: $node['Receive Receipt'].json.expense_id } };"
+      },
+      "id": "parse-textract",
+      "name": "Parse OCR Results",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [850, 300]
+    },
+    {
+      "parameters": {
+        "method": "PUT",
+        "url": "={{ $env.ODOO_URL }}/api/v1/expenses/{{ $json.expense_id }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBasicAuth",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "amount",
+              "value": "={{ $json.total }}"
+            },
+            {
+              "name": "date",
+              "value": "={{ $json.date }}"
+            },
+            {
+              "name": "name",
+              "value": "={{ $json.vendor }}"
+            },
+            {
+              "name": "product_id",
+              "value": "={{ $json.category }}"
+            },
+            {
+              "name": "ocr_processed",
+              "value": true
+            }
+          ]
+        }
+      },
+      "id": "update-odoo",
+      "name": "Update Expense in Odoo",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [1050, 300],
+      "credentials": {
+        "httpBasicAuth": {
+          "id": "odoo-api-auth"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "delete",
+        "bucketName": "={{ $env.AWS_S3_BUCKET }}",
+        "fileKey": "={{ $node['Upload to S3'].json.key }}"
+      },
+      "id": "s3-cleanup",
+      "name": "Delete Temp File",
+      "type": "n8n-nodes-base.awsS3",
+      "typeVersion": 1,
+      "position": [1250, 300],
+      "credentials": {
+        "aws": {
+          "id": "aws-credentials"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Receive Receipt": {
+      "main": [
+        [
+          {
+            "node": "Upload to S3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upload to S3": {
+      "main": [
+        [
+          {
+            "node": "Analyze Receipt",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Analyze Receipt": {
+      "main": [
+        [
+          {
+            "node": "Parse OCR Results",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse OCR Results": {
+      "main": [
+        [
+          {
+            "node": "Update Expense in Odoo",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Expense in Odoo": {
+      "main": [
+        [
+          {
+            "node": "Delete Temp File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "saveDataErrorExecution": "all",
+    "saveDataSuccessExecution": "none"
+  }
+}

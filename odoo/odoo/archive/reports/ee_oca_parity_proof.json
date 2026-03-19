@@ -1,0 +1,4227 @@
+{
+  "generated_at": "2026-02-17T18:31:46Z",
+  "upstream_references": {
+    "odoo_release_notes": {
+      "url": "https://www.odoo.com/odoo-19-release-notes",
+      "version": "19",
+      "observed_release_month": "September 2025",
+      "usage": "Version-specific behavioral expectations; detect UX/engine changes (not new modules)"
+    },
+    "odoo_editions_compare": {
+      "url": "https://www.odoo.com/page/editions",
+      "usage": "Classify capabilities as Module vs Non-module (Platform/IAP/Service)"
+    }
+  },
+  "summary": {
+    "total_ee_modules": 151,
+    "total_in_scope": 150,
+    "total_not_applicable": 1,
+    "total_covered": 150,
+    "coverage_pct": 100.0,
+    "strategy_breakdown": {
+      "oca_only": 106,
+      "oca_plus_ipai": 12,
+      "external_service": 25,
+      "ce_native": 6,
+      "ipai_custom": 8,
+      "not_needed": 1
+    },
+    "tier_counts": {
+      "T0": 0,
+      "T1": 150,
+      "T2": 0,
+      "T3": 0,
+      "T4": 0,
+      "N/A": 1
+    },
+    "domain_counts": {
+      "accounting": 19,
+      "appointment": 7,
+      "approvals": 3,
+      "barcode": 7,
+      "data": 2,
+      "documents": 16,
+      "field_service": 4,
+      "helpdesk": 10,
+      "hr": 13,
+      "iot": 1,
+      "knowledge": 1,
+      "manufacturing": 10,
+      "marketing": 11,
+      "planning": 3,
+      "project": 7,
+      "sales": 6,
+      "shipping": 9,
+      "spreadsheet": 2,
+      "studio": 2,
+      "timesheet": 2,
+      "voip": 2,
+      "web": 7,
+      "whatsapp": 7
+    },
+    "oca_repos_referenced": [
+      "OCA/account-budgeting",
+      "OCA/account-consolidation",
+      "OCA/account-financial-reporting",
+      "OCA/account-financial-tools",
+      "OCA/account-reconcile",
+      "OCA/automation",
+      "OCA/bank-payment",
+      "OCA/bank-statement-import",
+      "OCA/calendar",
+      "OCA/commission",
+      "OCA/connector-ecommerce",
+      "OCA/connector-telephony",
+      "OCA/contract",
+      "OCA/credit-control",
+      "OCA/crm",
+      "OCA/delivery-carrier",
+      "OCA/dms",
+      "OCA/field-service",
+      "OCA/fleet",
+      "OCA/geospatial",
+      "OCA/helpdesk",
+      "OCA/hr",
+      "OCA/hr-attendance",
+      "OCA/hr-holidays",
+      "OCA/intrastat-extrastat",
+      "OCA/iot",
+      "OCA/knowledge",
+      "OCA/manufacture",
+      "OCA/mis-builder",
+      "OCA/payroll",
+      "OCA/project",
+      "OCA/repair",
+      "OCA/reporting-engine",
+      "OCA/server-tools",
+      "OCA/shift-planning",
+      "OCA/sign",
+      "OCA/social",
+      "OCA/spreadsheet",
+      "OCA/stock-logistics-barcode",
+      "OCA/stock-logistics-reporting",
+      "OCA/stock-logistics-workflow",
+      "OCA/tier-validation",
+      "OCA/timesheet",
+      "OCA/vertical-rental",
+      "OCA/web"
+    ],
+    "oca_repos_verified": 152,
+    "oca_repos_missing": 0,
+    "oca_repo_stats": {
+      "total_unique_referenced": 45,
+      "addons_repos": 45,
+      "infra_repos": 0,
+      "addons_repo_names": [
+        "account-budgeting",
+        "account-consolidation",
+        "account-financial-reporting",
+        "account-financial-tools",
+        "account-reconcile",
+        "automation",
+        "bank-payment",
+        "bank-statement-import",
+        "calendar",
+        "commission",
+        "connector-ecommerce",
+        "connector-telephony",
+        "contract",
+        "credit-control",
+        "crm",
+        "delivery-carrier",
+        "dms",
+        "field-service",
+        "fleet",
+        "geospatial",
+        "helpdesk",
+        "hr",
+        "hr-attendance",
+        "hr-holidays",
+        "intrastat-extrastat",
+        "iot",
+        "knowledge",
+        "manufacture",
+        "mis-builder",
+        "payroll",
+        "project",
+        "repair",
+        "reporting-engine",
+        "server-tools",
+        "shift-planning",
+        "sign",
+        "social",
+        "spreadsheet",
+        "stock-logistics-barcode",
+        "stock-logistics-reporting",
+        "stock-logistics-workflow",
+        "tier-validation",
+        "timesheet",
+        "vertical-rental",
+        "web"
+      ],
+      "infra_repo_names": []
+    },
+    "tier_invariant": {
+      "total": 151,
+      "in_scope": 150,
+      "not_applicable": 1,
+      "check": "PASS"
+    }
+  },
+  "warnings": [],
+  "modules": [
+    {
+      "ee_module": "account_accountant",
+      "domain": "accounting",
+      "description": "Full Accounting (Invoicing, Reconciliation, Reports)",
+      "strategy": "oca",
+      "tier": "T1",
+      "oca_repos": [
+        {
+          "ref": "OCA/account-financial-tools",
+          "exists": true,
+          "url": "https://github.com/OCA/account-financial-tools"
+        },
+        {
+          "ref": "OCA/account-financial-reporting",
+          "exists": true,
+          "url": "https://github.com/OCA/account-financial-reporting"
+        },
+        {
+          "ref": "OCA/account-reconcile",
+          "exists": true,
+          "url": "https://github.com/OCA/account-reconcile"
+        }
+      ],
+      "oca_modules": [
+        "account_financial_report",
+        "account_reconcile_oca",
+        "mis_builder",
+        "account_move_line_tax_editable",
+        "account_journal_lock_date"
+      ],
+      "ipai_modules": [],
+      "external_service": null,
+      "notes": "CE invoicing + OCA reporting + OCA reconciliation covers full accounting",
+      "covered": true,
+      "evidence": {
+        "t1_mapped": true,
+        "t2_installable": null,
+        "t3_functional": null,
+        "t4_verified": null
+      }
+    },
+    {
+      "ee_module": "account_asset",
+      "domain": "accounting",
+      "description": "Asset Management & Depreciation",
+      "strategy": "oca",
+      "tier": "T1",
+      "oca_repos": [
+        {
+          "ref": "OCA/account-financial-tools",
+          "exists": true,
+          "url": "https://github.com/OCA/account-financial-tools"
+        }
+      ],
+      "oca_modules": [
+        "account_asset_management"
+      ],
+      "ipai_modules": [],
+      "external_service": null,
+      "notes": "OCA account_asset_management: full asset lifecycle, depreciation boards, disposal",
+      "covered": true,
+      "evidence": {
+        "t1_mapped": true,
+        "t2_installable": null,
+        "t3_functional": null,
+        "t4_verified": null
+      }
+    },
+    {
+      "ee_module": "account_avatax",
+      "domain": "accounting",
+      "description": "Avalara AvaTax Tax Calculation",
+      "strategy": "external",
+      "tier": "T1",
+      "oca_repos": [],
+      "oca_modules": [],
+      "ipai_modules": [],
+      "external_service": "Avalara AvaTax API (direct)",
+      "notes": "Direct Avalara API integration; no Odoo IAP middleman needed",
+      "covered": true,
+      "evidence": {
+        "t1_mapped": true,
+        "t2_installable": null,
+        "t3_functional": null,
+        "t4_verified": null
+      }
+    },
+    {
+      "ee_module": "account_bank_statement_import_camt",
+      "domain": "accounting",
+      "description": "Bank Statement Import (CAMT format)",
+      "strategy": "oca",
+      "tier": "T1",
+      "oca_repos": [
+        {
+          "ref": "OCA/bank-statement-import",
+          "exists": true,
+          "url": "https://github.com/OCA/bank-statement-import"
+        }
+      ],
+      "oca_modules": [
+        "account_statement_import_camt"
+      ],
+      "ipai_modules": [],
+      "external_service": null,
+      "notes": "Direct OCA equivalent",
+      "covered": true,
+      "evidence": {
+        "t1_mapped": true,
+        "t2_installable": null,
+        "t3_functional": null,
+        "t4_verified": null
+      }
+    },
+    {
+      "ee_module": "account_bank_statement_import_csv",
+      "domain": "accounting",
+      "description": "Bank Statement Import (CSV format)",
+      "strategy": "oca",
+      "tier": "T1",
+      "oca_repos": [
+        {
+          "ref": "OCA/bank-statement-import",
+          "exists": true,
+          "url": "https://github.com/OCA/bank-statement-import"
+        }
+      ],
+      "oca_modules": [
+        "account_statement_import_csv"
+      ],
+      "ipai_modules": [],
+      "external_service": null,
+      "notes": "Direct OCA equivalent",
+      "covered": true,
+      "evidence": {
+        "t1_mapped": true,
+        "t2_installable": null,
+        "t3_functional": null,
+        "t4_verified": null
+      }
+    },
+    {
+      "ee_module": "account_bank_statement_import_ofx",
+      "domain": "accounting",
+      "description": "Bank Statement Import (OFX format)",
+      "strategy": "oca",
+      "tier": "T1",
+      "oca_repos": [
+        {
+          "ref": "OCA/bank-statement-import",
+          "exists": true,
+          "url": "https://github.com/OCA/bank-statement-import"
+        }
+      ],
+      "oca_modules": [
+        "account_statement_import_ofx"
+      ],
+      "ipai_modules": [],
+      "external_service": null,
+      "notes": "Direct OCA equivalent",
+      "covered": true,
+      "evidence": {
+        "t1_mapped": true,
+        "t2_installable": null,
+        "t3_functional": null,
+        "t4_verified": null
+      }
+    },
+    {
+      "ee_module": "account_bank_statement_import_qif",
+      "domain": "accounting",
+      "description": "Bank Statement Import (QIF format)",
+      "strategy": "oca",
+      "tier": "T1",
+      "oca_repos": [
+        {
+          "ref": "OCA/bank-statement-import",
+          "exists": true,
+          "url": "https://github.com/OCA/bank-statement-import"
+        }
+      ],
+      "oca_modules": [
+        "account_statement_import_qif"
+      ],
+      "ipai_modules": [],
+      "external_service": null,
+      "notes": "OCA provides QIF import capability",
+      "covered": true,
+      "evidence": {
+        "t1_mapped": true,
+        "t2_installable": null,
+        "t3_functional": null,
+        "t4_verified": null
+      }
+    },
+    {
+      "ee_module": "account_batch_payment",
+      "domain": "accounting",
+      "description": "Batch Payments",
+      "strategy": "oca",
+      "tier": "T1",
+      "oca_repos": [
+        {
+          "ref": "OCA/bank-payment",
+          "exists": true,
+          "url": "https://github.com/OCA/bank-payment"
+        }
+      ],
+      "oca_modules": [
+        "account_payment_order",
+        "account_banking_pain_base"
+      ],
+      "ipai_modules": [],
+      "external_service": null,
+      "notes": "OCA bank-payment provides SEPA/PAIN payment orders with batch processing",
+      "covered": true,
+      "evidence": {
+        "t1_mapped": true,
+        "t2_installable": null,
+        "t3_functional": null,
+        "t4_verified": null
+      }
+    },
+    {
+      "ee_module": "account_budget",
+      "domain": "accounting",
+      "description": "Budgetary Management",
+      "strategy": "oca",
+      "tier": "T1",
+      "oca_repos": [
+        {
+          "ref": "OCA/mis-builder",
+          "exists": true,
+          "url": "https://github.com/OCA/mis-builder"
+        },
+        {
+          "ref": "OCA/account-budgeting",
+          "exists": true,
+          "url": "https://github.com/OCA/account-budgeting"
+        }
+      ],
+      "oca_modules": [
+        "mis_builder",
+        "mis_builder_budget"
+      ],
+      "ipai_modules": [],
+      "external_service": null,
+      "notes": "MIS Builder provides flexible budgeting with variance analysis, exceeds EE capabilities",
+      "covered": true,
+      "evidence": {
+        "t1_mapped": true,
+        "t2_installable": null,
+        "t3_functional": null,
+        "t4_verified": null
+      }
+    },
+    {
+      "ee_module": "account_consolidation",
+      "domain": "accounting",
+      "description": "Multi-Company Accounting Consolidation",
+      "strategy": "oca",
+      "tier": "T1",
+      "oca_repos": [
+        {
+          "ref": "OCA/account-consolidation",
+          "exists": true,
+          "url": "https://github.com/OCA/account-consolidation"
+        }
+      ],
+      "oca_modules": [
+        "account_consolidation"
+      ],
+      "ipai_modules": [],
+      "external_service": null,
+      "notes": "OCA consolidation module for multi-company financials",
+      "covered": true,
+      "evidence": {
+        "t1_mapped": true,
+        "t2_installable": null,
+        "t3_functional": null,
+        "t4_verified": null
+      }
+    },
+    {
+      "ee_module": "account_disallowed_expenses",
+      "domain": "accounting",
+      "description": "Disallowed Expenses Tracking",
+      "strategy": "oca",
+      "tier": "T1",
+      "oca_repos": [
+        {
+          "ref": "OCA/account-financial-tools",
+          "exists": true,
+          "url": "https://github.com/OCA/account-financial-tools"
+        }
+      ],
+      "oca_modules": [
+        "account_move_line_tax_editable"
+      ],
+      "ipai_modules": [],
+      "external_service": null,
+      "notes": "Tax-editable move lines + analytic filtering achieves expense disallowance tracking",
+      "covered": true,
+      "evidence": {
+        "t1_mapped": true,
+        "t2_installable": null,
+        "t3_functional": null,
+        "t4_verified": null
+      }
+    },
+    {
+      "ee_module": "account_followup",
+      "domain": "accounting",
+      "description": "Payment Follow-up Management",
+      "strategy": "oca",
+      "tier": "T1",
+      "oca_repos": [
+        {
+          "ref": "OCA/credit-control",
+          "exists": true,
+          "url": "https://github.com/OCA/credit-control"
+        }
+      ],
+      "oca_modules": [
+        "account_credit_control"
+      ],
+      "ipai_modules": [],
+      "external_service": null,
+      "notes": "OCA credit-control provides automated dunning and payment follow-up workflows",
+      "covered": true,
+      "evidence": {
+        "t1_mapped": true,
+        "t2_installable": null,
+        "t3_functional": null,
+        "t4_verified": null
+      }
+    },
+    {
+      "ee_module": "account_intrastat",
+      "domain": "accounting",
+      "description": "Intrastat Reporting (EU Trade)",
+      "strategy": "oca",
+      "tier": "T1",
+      "oca_repos": [
+        {
+          "ref": "OCA/intrastat-extrastat",
+          "exists": true,
+          "url": "https://github.com/OCA/intrastat-extrastat"
+        }
+      ],
+      "oca_modules": [
+        "intrastat_product",
+        "intrastat_base"
+      ],
+      "ipai_modules": [],
+      "external_service": null,
+      "notes": "OCA intrastat modules cover EU trade statistical reporting",
+      "covered": true,
+      "evidence": {
+        "t1_mapped": true,
+        "t2_installable": null,
+        "t3_functional": null,
+        "t4_verified": null
+      }
+    },
+    {
+      "ee_module": "account_invoice_extract",
+      "domain": "accounting",
+      "description": "Invoice OCR / Digitization (IAP)",
+      "strategy": "external",
+      "tier": "T1",
+      "oca_repos": [],
+      "oca_modules": [],
+      "ipai_modules": [
+        "ipai_doc_ocr_bridge",
+        "ipai_ocr_gateway"
+      ],
+      "external_service": "PaddleOCR / Google Vision / AWS Textract",
+      "notes": "External OCR service replaces Odoo IAP digitization; ipai_doc_ocr_bridge integrates",
+      "covered": true,
+      "evidence": {
+        "t1_mapped": true,
+        "t2_installable": null,
+        "t3_functional": null,
+        "t4_verified": null
+      }
+    },
+    {
+      "ee_module": "account_online_synchronization",
+      "domain": "accounting",
+      "description": "Online Bank Synchronization (Plaid/Yodlee IAP)",
+      "strategy": "oca",
+      "tier": "T1",
+      "oca_repos": [
+        {
+          "ref": "OCA/bank-statement-import",
+          "exists": true,
+          "url": "https://github.com/OCA/bank-statement-import"
+        }
+      ],
+      "oca_modules": [
+        "account_statement_import_ofx",
+        "account_statement_import_camt",
+        "account_statement_import_csv"
+      ],
+      "ipai_modules": [],
+      "external_service": null,
+      "notes": "OCA bank statement import (OFX, CAMT, CSV) replaces online sync with file-based import",
+      "covered": true,
+      "evidence": {
+        "t1_mapped": true,
+        "t2_installable": null,
+        "t3_functional": null,
+        "t4_verified": null
+      }
+    },
+    {
+      "ee_module": "account_reports",
+      "domain": "accounting",
+      "description": "Accounting Reports (P&L, Balance Sheet, Tax, etc.)",
+      "strategy": "oca",
+      "tier": "T1",
+      "oca_repos": [
+        {
+          "ref": "OCA/account-financial-reporting",
+          "exists": true,
+          "url": "https://github.com/OCA/account-financial-reporting"
+        },
+        {
+          "ref": "OCA/mis-builder",
+          "exists": true,
+          "url": "https://github.com/OCA/mis-builder"
+        }
+      ],
+      "oca_modules": [
+        "account_financial_report",
+        "mis_builder",
+        "mis_builder_contrib"
+      ],
+      "ipai_modules": [],
+      "external_service": null,
+      "notes": "OCA financial reports + MIS Builder provide P&L, balance sheet, general ledger, journal, tax reports",
+      "covered": true,
+      "evidence": {
+        "t1_mapped": true,
+        "t2_installable": null,
+        "t3_functional": null,
+        "t4_verified": null
+      }
+    },
+    {
+      "ee_module": "account_sepa_direct_debit",
+      "domain": "accounting",
+      "description": "SEPA Direct Debit",
+      "strategy": "oca",
+      "tier": "T1",
+      "oca_repos": [
+        {
+          "ref": "OCA/bank-payment",
+          "exists": true,
+          "url": "https://github.com/OCA/bank-payment"
+        }
+      ],
+      "oca_modules": [
+        "account_banking_sepa_direct_debit"
+      ],
+      "ipai_modules": [],
+      "external_service": null,
+      "notes": "OCA SEPA DD implementation (PAIN.008)",
+      "covered": true,
+      "evidence": {
+        "t1_mapped": true,
+        "t2_installable": null,
+        "t3_functional": null,
+        "t4_verified": null
+      }
+    },
+    {
+      "ee_module": "account_taxcloud",
+      "domain": "accounting",
+      "description": "TaxCloud Tax Automation",
+      "strategy": "external",
+      "tier": "T1",
+      "oca_repos": [],
+      "oca_modules": [],
+      "ipai_modules": [],
+      "external_service": "TaxCloud API (direct)",
+      "notes": "Direct TaxCloud API integration",
+      "covered": true,
+      "evidence": {
+        "t1_mapped": true,
+        "t2_installable": null,
+        "t3_functional": null,
+        "t4_verified": null
+      }
+    },
+    {
+      "ee_module": "appointment",
+      "domain": "appointment",
+      "description": "Online Appointment Scheduling",
+      "strategy": "oca",
+      "tier": "T1",
+      "oca_repos": [
+        {
+          "ref": "OCA/calendar",
+          "exists": true,
+          "url": "https://github.com/OCA/calendar"
+        }
+      ],
+      "oca_modules": [
+        "calendar_slot"
+      ],
+      "ipai_modules": [],
+      "external_service": null,
+      "notes": "OCA calendar extensions + CE website calendar provide online booking",
+      "covered": true,
+      "evidence": {
+        "t1_mapped": true,
+        "t2_installable": null,
+        "t3_functional": null,
+        "t4_verified": null
+      }
+    },
+    {
+      "ee_module": "appointment_account_payment",
+      "domain": "appointment",
+      "description": "Appointment - Payment Bridge",
+      "strategy": "ce",
+      "tier": "T1",
+      "oca_repos": [],
+      "oca_modules": [],
+      "ipai_modules": [],
+      "external_service": null,
+      "notes": "CE payment module handles appointment payment collection",
+      "covered": true,
+      "evidence": {
+        "t1_mapped": true,
+        "t2_installable": null,
+        "t3_functional": null,
+        "t4_verified": null
+      }
+    },
+    {
+      "ee_module": "appointment_crm",
+      "domain": "appointment",
+      "description": "Appointment - CRM Bridge",
+      "strategy": "oca",
+      "tier": "T1",
+      "oca_repos": [
+        {
+          "ref": "OCA/calendar",
+          "exists": true,
+          "url": "https://github.com/OCA/calendar"
+        },
+        {
+          "ref": "OCA/crm",
+          "exists": true,
+          "url": "https://github.com/OCA/crm"
+        }
+      ],
+      "oca_modules": [
+        "calendar_slot"
+      ],
+      "ipai_modules": [],
+      "external_service": null,
+      "notes": "Calendar-to-opportunity linking",
+      "covered": true,
+      "evidence": {
+        "t1_mapped": true,
+        "t2_installable": null,
+        "t3_functional": null,
+        "t4_verified": null
+      }
+    },
+    {
+      "ee_module": "appointment_google_calendar",
+      "domain": "appointment",
+      "description": "Appointment - Google Calendar Bridge",
+      "strategy": "ce",
+      "tier": "T1",
+      "oca_repos": [],
+      "oca_modules": [],
+      "ipai_modules": [],
+      "external_service": null,
+      "notes": "CE google_calendar module provides Google Calendar sync natively",
+      "covered": true,
+      "evidence": {
+        "t1_mapped": true,
+        "t2_installable": null,
+        "t3_functional": null,
+        "t4_verified": null
+      }
+    },
+    {
+      "ee_module": "appointment_hr",
+      "domain": "appointment",
+      "description": "Appointment - HR Bridge",
+      "strategy": "oca",
+      "tier": "T1",
+      "oca_repos": [
+        {
+          "ref": "OCA/calendar",
+          "exists": true,
+          "url": "https://github.com/OCA/calendar"
+        }
+      ],
+      "oca_modules": [
+        "calendar_slot"
+      ],
+      "ipai_modules": [],
+      "external_service": null,
+      "notes": "Employee availability for appointments",
+      "covered": true,
+      "evidence": {
+        "t1_mapped": true,
+        "t2_installable": null,
+        "t3_functional": null,
+        "t4_verified": null
+      }
+    },
+    {
+      "ee_module": "appointment_hr_recruitment",
+      "domain": "appointment",
+      "description": "Appointment - Recruitment Bridge",
+      "strategy": "oca",
+      "tier": "T1",
+      "oca_repos": [
+        {
+          "ref": "OCA/calendar",
+          "exists": true,
+          "url": "https://github.com/OCA/calendar"
+        }
+      ],
+      "oca_modules": [
+        "calendar_slot"
+      ],
+      "ipai_modules": [],
+      "external_service": null,
+      "notes": "Interview scheduling via calendar",
+      "covered": true,
+      "evidence": {
+        "t1_mapped": true,
+        "t2_installable": null,
+        "t3_functional": null,
+        "t4_verified": null
+      }
+    },
+    {
+      "ee_module": "appointment_sale",
+      "domain": "appointment",
+      "description": "Appointment - Sales Bridge",
+      "strategy": "oca",
+      "tier": "T1",
+      "oca_repos": [
+        {
+          "ref": "OCA/calendar",
+          "exists": true,
+          "url": "https://github.com/OCA/calendar"
+        }
+      ],
+      "oca_modules": [
+        "calendar_slot"
+      ],
+      "ipai_modules": [],
+      "external_service": null,
+      "notes": "Calendar-to-sale linking",
+      "covered": true,
+      "evidence": {
+        "t1_mapped": true,
+        "t2_installable": null,
+        "t3_functional": null,
+        "t4_verified": null
+      }
+    },
+    {
+      "ee_module": "approvals",
+      "domain": "approvals",
+      "description": "Approval Workflows",
+      "strategy": "oca",
+      "tier": "T1",
+      "oca_repos": [
+        {
+          "ref": "OCA/tier-validation",
+          "exists": true,
+          "url": "https://github.com/OCA/tier-validation"
+        }
+      ],
+      "oca_modules": [
+        "base_tier_validation",
+        "base_tier_validation_formula"
+      ],
+      "ipai_modules": [],
+      "external_service": null,
+      "notes": "OCA tier-validation: multi-level approval workflows on any model, more flexible than EE approvals",
+      "covered": true,
+      "evidence": {
+        "t1_mapped": true,
+        "t2_installable": null,
+        "t3_functional": null,
+        "t4_verified": null
+      }
+    },
+    {
+      "ee_module": "approvals_purchase",
+      "domain": "approvals",
+      "description": "Approvals - Purchase Bridge",
+      "strategy": "oca",
+      "tier": "T1",
+      "oca_repos": [
+        {
+          "ref": "OCA/tier-validation",
+          "exists": true,
+          "url": "https://github.com/OCA/tier-validation"
+        }
+      ],
+      "oca_modules": [
+        "base_tier_validation",
+        "purchase_tier_validation"
+      ],
+      "ipai_modules": [],
+      "external_service": null,
+      "notes": "Purchase order approval tiers",
+      "covered": true,
+      "evidence": {
+        "t1_mapped": true,
+        "t2_installable": null,
+        "t3_functional": null,
+        "t4_verified": null
+      }
+    },
+    {
+      "ee_module": "approvals_sale",
+      "domain": "approvals",
+      "description": "Approvals - Sales Bridge",
+      "strategy": "oca",
+      "tier": "T1",
+      "oca_repos": [
+        {
+          "ref": "OCA/tier-validation",
+          "exists": true,
+          "url": "https://github.com/OCA/tier-validation"
+        }
+      ],
+      "oca_modules": [
+        "base_tier_validation"
+      ],
+      "ipai_modules": [],
+      "external_service": null,
+      "notes": "Sale order approval tiers",
+      "covered": true,
+      "evidence": {
+        "t1_mapped": true,
+        "t2_installable": null,
+        "t3_functional": null,
+        "t4_verified": null
+      }
+    },
+    {
+      "ee_module": "crm_enterprise",
+      "domain": "project",
+      "description": "CRM Enterprise Views (Forecast, Cohort)",
+      "strategy": "oca+external",
+      "tier": "T1",
+      "oca_repos": [
+        {
+          "ref": "OCA/crm",
+          "exists": true,
+          "url": "https://github.com/OCA/crm"
+        }
+      ],
+      "oca_modules": [],
+      "ipai_modules": [],
+      "external_service": "Apache Superset",
+      "notes": "CRM forecasting and cohort analysis via Superset BI dashboards",
+      "covered": true,
+      "evidence": {
+        "t1_mapped": true,
+        "t2_installable": null,
+        "t3_functional": null,
+        "t4_verified": null
+      }
+    },
+    {
+      "ee_module": "data_cleaning",
+      "domain": "data",
+      "description": "Data Cleaning / Deduplication",
+      "strategy": "oca",
+      "tier": "T1",
+      "oca_repos": [
+        {
+          "ref": "OCA/server-tools",
+          "exists": true,
+          "url": "https://github.com/OCA/server-tools"
+        }
+      ],
+      "oca_modules": [
+        "base_partner_merge"
+      ],
+      "ipai_modules": [],
+      "external_service": null,
+      "notes": "OCA partner merge + CE base.partner.merge covers data deduplication",
+      "covered": true,
+      "evidence": {
+        "t1_mapped": true,
+        "t2_installable": null,
+        "t3_functional": null,
+        "t4_verified": null
+      }
+    },
+    {
+      "ee_module": "data_merge",
+      "domain": "data",
+      "description": "Data Merge",
+      "strategy": "oca",
+      "tier": "T1",
+      "oca_repos": [
+        {
+          "ref": "OCA/server-tools",
+          "exists": true,
+          "url": "https://github.com/OCA/server-tools"
+        }
+      ],
+      "oca_modules": [
+        "base_partner_merge"
+      ],
+      "ipai_modules": [],
+      "external_service": null,
+      "notes": "OCA partner merge utilities",
+      "covered": true,
+      "evidence": {
+        "t1_mapped": true,
+        "t2_installable": null,
+        "t3_functional": null,
+        "t4_verified": null
+      }
+    },
+    {
+      "ee_module": "delivery_bpost",
+      "domain": "shipping",
+      "description": "bpost Shipping Connector",
+      "strategy": "oca",
+      "tier": "T1",
+      "oca_repos": [
+        {
+          "ref": "OCA/delivery-carrier",
+          "exists": true,
+          "url": "https://github.com/OCA/delivery-carrier"
+        }
+      ],
+      "oca_modules": [
+        "delivery_carrier_label_postlogistics"
+      ],
+      "ipai_modules": [],
+      "external_service": null,
+      "notes": "OCA delivery-carrier provides carrier-agnostic framework + specific connectors",
+      "covered": true,
+      "evidence": {
+        "t1_mapped": true,
+        "t2_installable": null,
+        "t3_functional": null,
+        "t4_verified": null
+      }
+    },
+    {
+      "ee_module": "delivery_dhl",
+      "domain": "shipping",
+      "description": "DHL Express Shipping",
+      "strategy": "oca",
+      "tier": "T1",
+      "oca_repos": [
+        {
+          "ref": "OCA/delivery-carrier",
+          "exists": true,
+          "url": "https://github.com/OCA/delivery-carrier"
+        }
+      ],
+      "oca_modules": [
+        "delivery_carrier_label_dhl"
+      ],
+      "ipai_modules": [],
+      "external_service": null,
+      "notes": "OCA DHL connector",
+      "covered": true,
+      "evidence": {
+        "t1_mapped": true,
+        "t2_installable": null,
+        "t3_functional": null,
+        "t4_verified": null
+      }
+    },
+    {
+      "ee_module": "delivery_easypost",
+      "domain": "shipping",
+      "description": "EasyPost Shipping",
+      "strategy": "external",
+      "tier": "T1",
+      "oca_repos": [
+        {
+          "ref": "OCA/delivery-carrier",
+          "exists": true,
+          "url": "https://github.com/OCA/delivery-carrier"
+        }
+      ],
+      "oca_modules": [],
+      "ipai_modules": [],
+      "external_service": "EasyPost API (direct)",
+      "notes": "Direct EasyPost API integration; OCA delivery framework supports custom carriers",
+      "covered": true,
+      "evidence": {
+        "t1_mapped": true,
+        "t2_installable": null,
+        "t3_functional": null,
+        "t4_verified": null
+      }
+    },
+    {
+      "ee_module": "delivery_fedex",
+      "domain": "shipping",
+      "description": "FedEx Shipping",
+      "strategy": "oca",
+      "tier": "T1",
+      "oca_repos": [
+        {
+          "ref": "OCA/delivery-carrier",
+          "exists": true,
+          "url": "https://github.com/OCA/delivery-carrier"
+        }
+      ],
+      "oca_modules": [
+        "delivery_carrier_label_fedex"
+      ],
+      "ipai_modules": [],
+      "external_service": null,
+      "notes": "OCA FedEx connector",
+      "covered": true,
+      "evidence": {
+        "t1_mapped": true,
+        "t2_installable": null,
+        "t3_functional": null,
+        "t4_verified": null
+      }
+    },
+    {
+      "ee_module": "delivery_sendcloud",
+      "domain": "shipping",
+      "description": "Sendcloud Shipping",
+      "strategy": "external",
+      "tier": "T1",
+      "oca_repos": [
+        {
+          "ref": "OCA/delivery-carrier",
+          "exists": true,
+          "url": "https://github.com/OCA/delivery-carrier"
+        }
+      ],
+      "oca_modules": [],
+      "ipai_modules": [],
+      "external_service": "Sendcloud API (direct)",
+      "notes": "Direct Sendcloud API; OCA delivery framework supports custom carriers",
+      "covered": true,
+      "evidence": {
+        "t1_mapped": true,
+        "t2_installable": null,
+        "t3_functional": null,
+        "t4_verified": null
+      }
+    },
+    {
+      "ee_module": "delivery_shiprocket",
+      "domain": "shipping",
+      "description": "Shiprocket Shipping",
+      "strategy": "external",
+      "tier": "T1",
+      "oca_repos": [
+        {
+          "ref": "OCA/delivery-carrier",
+          "exists": true,
+          "url": "https://github.com/OCA/delivery-carrier"
+        }
+      ],
+      "oca_modules": [],
+      "ipai_modules": [],
+      "external_service": "Shiprocket API (direct)",
+      "notes": "Direct Shiprocket API integration",
+      "covered": true,
+      "evidence": {
+        "t1_mapped": true,
+        "t2_installable": null,
+        "t3_functional": null,
+        "t4_verified": null
+      }
+    },
+    {
+      "ee_module": "delivery_starshipit",
+      "domain": "shipping",
+      "description": "Starshipit Shipping",
+      "strategy": "external",
+      "tier": "T1",
+      "oca_repos": [
+        {
+          "ref": "OCA/delivery-carrier",
+          "exists": true,
+          "url": "https://github.com/OCA/delivery-carrier"
+        }
+      ],
+      "oca_modules": [],
+      "ipai_modules": [],
+      "external_service": "Starshipit API (direct)",
+      "notes": "Direct Starshipit API integration",
+      "covered": true,
+      "evidence": {
+        "t1_mapped": true,
+        "t2_installable": null,
+        "t3_functional": null,
+        "t4_verified": null
+      }
+    },
+    {
+      "ee_module": "delivery_ups",
+      "domain": "shipping",
+      "description": "UPS Shipping",
+      "strategy": "oca",
+      "tier": "T1",
+      "oca_repos": [
+        {
+          "ref": "OCA/delivery-carrier",
+          "exists": true,
+          "url": "https://github.com/OCA/delivery-carrier"
+        }
+      ],
+      "oca_modules": [
+        "delivery_carrier_label_ups"
+      ],
+      "ipai_modules": [],
+      "external_service": null,
+      "notes": "OCA UPS connector",
+      "covered": true,
+      "evidence": {
+        "t1_mapped": true,
+        "t2_installable": null,
+        "t3_functional": null,
+        "t4_verified": null
+      }
+    },
+    {
+      "ee_module": "delivery_usps",
+      "domain": "shipping",
+      "description": "USPS Shipping",
+      "strategy": "oca",
+      "tier": "T1",
+      "oca_repos": [
+        {
+          "ref": "OCA/delivery-carrier",
+          "exists": true,
+          "url": "https://github.com/OCA/delivery-carrier"
+        }
+      ],
+      "oca_modules": [
+        "base_delivery_carrier_label"
+      ],
+      "ipai_modules": [],
+      "external_service": null,
+      "notes": "OCA delivery-carrier framework + base label module; USPS via direct API or stamps.com",
+      "covered": true,
+      "evidence": {
+        "t1_mapped": true,
+        "t2_installable": null,
+        "t3_functional": null,
+        "t4_verified": null
+      }
+    },
+    {
+      "ee_module": "documents",
+      "domain": "documents",
+      "description": "Document Management System",
+      "strategy": "oca",
+      "tier": "T1",
+      "oca_repos": [
+        {
+          "ref": "OCA/dms",
+          "exists": true,
+          "url": "https://github.com/OCA/dms"
+        }
+      ],
+      "oca_modules": [
+        "dms",
+        "dms_field"
+      ],
+      "ipai_modules": [],
+      "external_service": null,
+      "notes": "OCA DMS provides workspaces, tags, access control, versioning",
+      "covered": true,
+      "evidence": {
+        "t1_mapped": true,
+        "t2_installable": null,
+        "t3_functional": null,
+        "t4_verified": null
+      }
+    },
+    {
+      "ee_module": "documents_account",
+      "domain": "documents",
+      "description": "Documents - Accounting Bridge",
+      "strategy": "oca",
+      "tier": "T1",
+      "oca_repos": [
+        {
+          "ref": "OCA/dms",
+          "exists": true,
+          "url": "https://github.com/OCA/dms"
+        }
+      ],
+      "oca_modules": [
+        "dms"
+      ],
+      "ipai_modules": [],
+      "external_service": null,
+      "notes": "OCA DMS + Odoo attachment system covers document-accounting linking",
+      "covered": true,
+      "evidence": {
+        "t1_mapped": true,
+        "t2_installable": null,
+        "t3_functional": null,
+        "t4_verified": null
+      }
+    },
+    {
+      "ee_module": "documents_fleet",
+      "domain": "documents",
+      "description": "Documents - Fleet Bridge",
+      "strategy": "oca",
+      "tier": "T1",
+      "oca_repos": [
+        {
+          "ref": "OCA/dms",
+          "exists": true,
+          "url": "https://github.com/OCA/dms"
+        }
+      ],
+      "oca_modules": [
+        "dms"
+      ],
+      "ipai_modules": [],
+      "external_service": null,
+      "notes": "Generic DMS handles fleet documents via tags",
+      "covered": true,
+      "evidence": {
+        "t1_mapped": true,
+        "t2_installable": null,
+        "t3_functional": null,
+        "t4_verified": null
+      }
+    },
+    {
+      "ee_module": "documents_hr",
+      "domain": "documents",
+      "description": "Documents - HR Bridge",
+      "strategy": "oca",
+      "tier": "T1",
+      "oca_repos": [
+        {
+          "ref": "OCA/dms",
+          "exists": true,
+          "url": "https://github.com/OCA/dms"
+        }
+      ],
+      "oca_modules": [
+        "dms"
+      ],
+      "ipai_modules": [],
+      "external_service": null,
+      "notes": "OCA DMS tags/workspaces handle HR document categorization",
+      "covered": true,
+      "evidence": {
+        "t1_mapped": true,
+        "t2_installable": null,
+        "t3_functional": null,
+        "t4_verified": null
+      }
+    },
+    {
+      "ee_module": "documents_hr_contract",
+      "domain": "documents",
+      "description": "Documents - HR Contract Bridge",
+      "strategy": "oca",
+      "tier": "T1",
+      "oca_repos": [
+        {
+          "ref": "OCA/dms",
+          "exists": true,
+          "url": "https://github.com/OCA/dms"
+        }
+      ],
+      "oca_modules": [
+        "dms"
+      ],
+      "ipai_modules": [],
+      "external_service": null,
+      "notes": "Contract documents managed via DMS workspaces",
+      "covered": true,
+      "evidence": {
+        "t1_mapped": true,
+        "t2_installable": null,
+        "t3_functional": null,
+        "t4_verified": null
+      }
+    },
+    {
+      "ee_module": "documents_hr_expense",
+      "domain": "documents",
+      "description": "Documents - Expense Bridge",
+      "strategy": "oca",
+      "tier": "T1",
+      "oca_repos": [
+        {
+          "ref": "OCA/dms",
+          "exists": true,
+          "url": "https://github.com/OCA/dms"
+        }
+      ],
+      "oca_modules": [
+        "dms"
+      ],
+      "ipai_modules": [],
+      "external_service": null,
+      "notes": "Expense receipts via DMS",
+      "covered": true,
+      "evidence": {
+        "t1_mapped": true,
+        "t2_installable": null,
+        "t3_functional": null,
+        "t4_verified": null
+      }
+    },
+    {
+      "ee_module": "documents_hr_holidays",
+      "domain": "documents",
+      "description": "Documents - Time Off Bridge",
+      "strategy": "oca",
+      "tier": "T1",
+      "oca_repos": [
+        {
+          "ref": "OCA/dms",
+          "exists": true,
+          "url": "https://github.com/OCA/dms"
+        }
+      ],
+      "oca_modules": [
+        "dms"
+      ],
+      "ipai_modules": [],
+      "external_service": null,
+      "notes": "Leave documents via DMS",
+      "covered": true,
+      "evidence": {
+        "t1_mapped": true,
+        "t2_installable": null,
+        "t3_functional": null,
+        "t4_verified": null
+      }
+    },
+    {
+      "ee_module": "documents_hr_payroll",
+      "domain": "documents",
+      "description": "Documents - Payroll Bridge",
+      "strategy": "oca",
+      "tier": "T1",
+      "oca_repos": [
+        {
+          "ref": "OCA/dms",
+          "exists": true,
+          "url": "https://github.com/OCA/dms"
+        },
+        {
+          "ref": "OCA/payroll",
+          "exists": true,
+          "url": "https://github.com/OCA/payroll"
+        }
+      ],
+      "oca_modules": [
+        "dms"
+      ],
+      "ipai_modules": [],
+      "external_service": null,
+      "notes": "Payslip PDFs stored in DMS",
+      "covered": true,
+      "evidence": {
+        "t1_mapped": true,
+        "t2_installable": null,
+        "t3_functional": null,
+        "t4_verified": null
+      }
+    },
+    {
+      "ee_module": "documents_hr_recruitment",
+      "domain": "documents",
+      "description": "Documents - Recruitment Bridge",
+      "strategy": "oca",
+      "tier": "T1",
+      "oca_repos": [
+        {
+          "ref": "OCA/dms",
+          "exists": true,
+          "url": "https://github.com/OCA/dms"
+        }
+      ],
+      "oca_modules": [
+        "dms"
+      ],
+      "ipai_modules": [],
+      "external_service": null,
+      "notes": "Applicant documents via DMS",
+      "covered": true,
+      "evidence": {
+        "t1_mapped": true,
+        "t2_installable": null,
+        "t3_functional": null,
+        "t4_verified": null
+      }
+    },
+    {
+      "ee_module": "documents_l10n_be_hr_payroll",
+      "domain": "documents",
+      "description": "Documents - Belgian Payroll Bridge",
+      "strategy": "oca",
+      "tier": "T1",
+      "oca_repos": [
+        {
+          "ref": "OCA/dms",
+          "exists": true,
+          "url": "https://github.com/OCA/dms"
+        }
+      ],
+      "oca_modules": [
+        "dms"
+      ],
+      "ipai_modules": [],
+      "external_service": null,
+      "notes": "Country-specific payroll docs via generic DMS",
+      "covered": true,
+      "evidence": {
+        "t1_mapped": true,
+        "t2_installable": null,
+        "t3_functional": null,
+        "t4_verified": null
+      }
+    },
+    {
+      "ee_module": "documents_product",
+      "domain": "documents",
+      "description": "Documents - Product Bridge",
+      "strategy": "oca",
+      "tier": "T1",
+      "oca_repos": [
+        {
+          "ref": "OCA/dms",
+          "exists": true,
+          "url": "https://github.com/OCA/dms"
+        }
+      ],
+      "oca_modules": [
+        "dms"
+      ],
+      "ipai_modules": [],
+      "external_service": null,
+      "notes": "Product datasheets via DMS",
+      "covered": true,
+      "evidence": {
+        "t1_mapped": true,
+        "t2_installable": null,
+        "t3_functional": null,
+        "t4_verified": null
+      }
+    },
+    {
+      "ee_module": "documents_project",
+      "domain": "documents",
+      "description": "Documents - Project Bridge",
+      "strategy": "oca",
+      "tier": "T1",
+      "oca_repos": [
+        {
+          "ref": "OCA/dms",
+          "exists": true,
+          "url": "https://github.com/OCA/dms"
+        }
+      ],
+      "oca_modules": [
+        "dms"
+      ],
+      "ipai_modules": [],
+      "external_service": null,
+      "notes": "OCA DMS workspaces per project",
+      "covered": true,
+      "evidence": {
+        "t1_mapped": true,
+        "t2_installable": null,
+        "t3_functional": null,
+        "t4_verified": null
+      }
+    },
+    {
+      "ee_module": "documents_sign",
+      "domain": "documents",
+      "description": "Documents - Sign Bridge",
+      "strategy": "oca",
+      "tier": "T1",
+      "oca_repos": [
+        {
+          "ref": "OCA/dms",
+          "exists": true,
+          "url": "https://github.com/OCA/dms"
+        },
+        {
+          "ref": "OCA/sign",
+          "exists": true,
+          "url": "https://github.com/OCA/sign"
+        }
+      ],
+      "oca_modules": [
+        "dms"
+      ],
+      "ipai_modules": [],
+      "external_service": null,
+      "notes": "Signed documents stored in DMS",
+      "covered": true,
+      "evidence": {
+        "t1_mapped": true,
+        "t2_installable": null,
+        "t3_functional": null,
+        "t4_verified": null
+      }
+    },
+    {
+      "ee_module": "documents_spreadsheet",
+      "domain": "documents",
+      "description": "Documents - Spreadsheet",
+      "strategy": "oca",
+      "tier": "T1",
+      "oca_repos": [
+        {
+          "ref": "OCA/dms",
+          "exists": true,
+          "url": "https://github.com/OCA/dms"
+        },
+        {
+          "ref": "OCA/spreadsheet",
+          "exists": true,
+          "url": "https://github.com/OCA/spreadsheet"
+        }
+      ],
+      "oca_modules": [
+        "dms"
+      ],
+      "ipai_modules": [],
+      "external_service": null,
+      "notes": "OCA DMS + CE spreadsheet covers document-spreadsheet integration",
+      "covered": true,
+      "evidence": {
+        "t1_mapped": true,
+        "t2_installable": null,
+        "t3_functional": null,
+        "t4_verified": null
+      }
+    },
+    {
+      "ee_module": "fleet_enterprise",
+      "domain": "project",
+      "description": "Fleet Enterprise Views",
+      "strategy": "oca",
+      "tier": "T1",
+      "oca_repos": [
+        {
+          "ref": "OCA/fleet",
+          "exists": true,
+          "url": "https://github.com/OCA/fleet"
+        }
+      ],
+      "oca_modules": [
+        "fleet_vehicle_log_fuel"
+      ],
+      "ipai_modules": [],
+      "external_service": null,
+      "notes": "OCA fleet modules extend CE fleet with fuel logs, additional views",
+      "covered": true,
+      "evidence": {
+        "t1_mapped": true,
+        "t2_installable": null,
+        "t3_functional": null,
+        "t4_verified": null
+      }
+    },
+    {
+      "ee_module": "helpdesk",
+      "domain": "helpdesk",
+      "description": "Helpdesk / Ticketing System",
+      "strategy": "oca",
+      "tier": "T1",
+      "oca_repos": [
+        {
+          "ref": "OCA/helpdesk",
+          "exists": true,
+          "url": "https://github.com/OCA/helpdesk"
+        }
+      ],
+      "oca_modules": [
+        "helpdesk_mgmt",
+        "helpdesk_mgmt_project",
+        "helpdesk_mgmt_timesheet"
+      ],
+      "ipai_modules": [],
+      "external_service": null,
+      "notes": "OCA helpdesk_mgmt: full ticket management, SLA, project integration, timesheet",
+      "covered": true,
+      "evidence": {
+        "t1_mapped": true,
+        "t2_installable": null,
+        "t3_functional": null,
+        "t4_verified": null
+      }
+    },
+    {
+      "ee_module": "helpdesk_account",
+      "domain": "helpdesk",
+      "description": "Helpdesk - Accounting Bridge",
+      "strategy": "oca",
+      "tier": "T1",
+      "oca_repos": [
+        {
+          "ref": "OCA/helpdesk",
+          "exists": true,
+          "url": "https://github.com/OCA/helpdesk"
+        }
+      ],
+      "oca_modules": [
+        "helpdesk_mgmt"
+      ],
+      "ipai_modules": [],
+      "external_service": null,
+      "notes": "OCA helpdesk + CE accounting integration",
+      "covered": true,
+      "evidence": {
+        "t1_mapped": true,
+        "t2_installable": null,
+        "t3_functional": null,
+        "t4_verified": null
+      }
+    },
+    {
+      "ee_module": "helpdesk_fsm",
+      "domain": "helpdesk",
+      "description": "Helpdesk - Field Service Bridge",
+      "strategy": "oca",
+      "tier": "T1",
+      "oca_repos": [
+        {
+          "ref": "OCA/helpdesk",
+          "exists": true,
+          "url": "https://github.com/OCA/helpdesk"
+        },
+        {
+          "ref": "OCA/field-service",
+          "exists": true,
+          "url": "https://github.com/OCA/field-service"
+        }
+      ],
+      "oca_modules": [
+        "helpdesk_mgmt",
+        "fieldservice"
+      ],
+      "ipai_modules": [],
+      "external_service": null,
+      "notes": "OCA helpdesk + OCA field-service integration",
+      "covered": true,
+      "evidence": {
+        "t1_mapped": true,
+        "t2_installable": null,
+        "t3_functional": null,
+        "t4_verified": null
+      }
+    },
+    {
+      "ee_module": "helpdesk_repair",
+      "domain": "helpdesk",
+      "description": "Helpdesk - Repair Bridge",
+      "strategy": "oca",
+      "tier": "T1",
+      "oca_repos": [
+        {
+          "ref": "OCA/helpdesk",
+          "exists": true,
+          "url": "https://github.com/OCA/helpdesk"
+        },
+        {
+          "ref": "OCA/repair",
+          "exists": true,
+          "url": "https://github.com/OCA/repair"
+        }
+      ],
+      "oca_modules": [
+        "helpdesk_mgmt"
+      ],
+      "ipai_modules": [],
+      "external_service": null,
+      "notes": "Ticket-to-repair order flow via OCA helpdesk",
+      "covered": true,
+      "evidence": {
+        "t1_mapped": true,
+        "t2_installable": null,
+        "t3_functional": null,
+        "t4_verified": null
+      }
+    },
+    {
+      "ee_module": "helpdesk_sale",
+      "domain": "helpdesk",
+      "description": "Helpdesk - Sales Bridge",
+      "strategy": "oca",
+      "tier": "T1",
+      "oca_repos": [
+        {
+          "ref": "OCA/helpdesk",
+          "exists": true,
+          "url": "https://github.com/OCA/helpdesk"
+        }
+      ],
+      "oca_modules": [
+        "helpdesk_mgmt"
+      ],
+      "ipai_modules": [],
+      "external_service": null,
+      "notes": "Ticket-to-sale linking via OCA helpdesk",
+      "covered": true,
+      "evidence": {
+        "t1_mapped": true,
+        "t2_installable": null,
+        "t3_functional": null,
+        "t4_verified": null
+      }
+    },
+    {
+      "ee_module": "helpdesk_sale_loyalty",
+      "domain": "helpdesk",
+      "description": "Helpdesk - Sales Loyalty Bridge",
+      "strategy": "oca+ipai",
+      "tier": "T1",
+      "oca_repos": [
+        {
+          "ref": "OCA/helpdesk",
+          "exists": true,
+          "url": "https://github.com/OCA/helpdesk"
+        }
+      ],
+      "oca_modules": [
+        "helpdesk_mgmt"
+      ],
+      "ipai_modules": [
+        "ipai_helpdesk_refund"
+      ],
+      "external_service": null,
+      "notes": "Gift card refunds via thin ipai bridge",
+      "covered": true,
+      "evidence": {
+        "t1_mapped": true,
+        "t2_installable": null,
+        "t3_functional": null,
+        "t4_verified": null
+      }
+    },
+    {
+      "ee_module": "helpdesk_sale_timesheet",
+      "domain": "helpdesk",
+      "description": "Helpdesk - Sale Timesheet Bridge",
+      "strategy": "oca",
+      "tier": "T1",
+      "oca_repos": [
+        {
+          "ref": "OCA/helpdesk",
+          "exists": true,
+          "url": "https://github.com/OCA/helpdesk"
+        }
+      ],
+      "oca_modules": [
+        "helpdesk_mgmt_timesheet"
+      ],
+      "ipai_modules": [],
+      "external_service": null,
+      "notes": "Billable timesheet from helpdesk tickets",
+      "covered": true,
+      "evidence": {
+        "t1_mapped": true,
+        "t2_installable": null,
+        "t3_functional": null,
+        "t4_verified": null
+      }
+    },
+    {
+      "ee_module": "helpdesk_stock",
+      "domain": "helpdesk",
+      "description": "Helpdesk - Stock Bridge",
+      "strategy": "oca",
+      "tier": "T1",
+      "oca_repos": [
+        {
+          "ref": "OCA/helpdesk",
+          "exists": true,
+          "url": "https://github.com/OCA/helpdesk"
+        }
+      ],
+      "oca_modules": [
+        "helpdesk_mgmt"
+      ],
+      "ipai_modules": [],
+      "external_service": null,
+      "notes": "Return/repair flows via helpdesk integration",
+      "covered": true,
+      "evidence": {
+        "t1_mapped": true,
+        "t2_installable": null,
+        "t3_functional": null,
+        "t4_verified": null
+      }
+    },
+    {
+      "ee_module": "helpdesk_stock_account",
+      "domain": "helpdesk",
+      "description": "Helpdesk - Stock Accounting Bridge",
+      "strategy": "oca",
+      "tier": "T1",
+      "oca_repos": [
+        {
+          "ref": "OCA/helpdesk",
+          "exists": true,
+          "url": "https://github.com/OCA/helpdesk"
+        }
+      ],
+      "oca_modules": [
+        "helpdesk_mgmt"
+      ],
+      "ipai_modules": [],
+      "external_service": null,
+      "notes": "Stock valuation in helpdesk context",
+      "covered": true,
+      "evidence": {
+        "t1_mapped": true,
+        "t2_installable": null,
+        "t3_functional": null,
+        "t4_verified": null
+      }
+    },
+    {
+      "ee_module": "helpdesk_timesheet",
+      "domain": "helpdesk",
+      "description": "Helpdesk - Timesheet Bridge",
+      "strategy": "oca",
+      "tier": "T1",
+      "oca_repos": [
+        {
+          "ref": "OCA/helpdesk",
+          "exists": true,
+          "url": "https://github.com/OCA/helpdesk"
+        }
+      ],
+      "oca_modules": [
+        "helpdesk_mgmt_timesheet"
+      ],
+      "ipai_modules": [],
+      "external_service": null,
+      "notes": "Direct OCA equivalent for timesheet tracking on tickets",
+      "covered": true,
+      "evidence": {
+        "t1_mapped": true,
+        "t2_installable": null,
+        "t3_functional": null,
+        "t4_verified": null
+      }
+    },
+    {
+      "ee_module": "hr_appraisal",
+      "domain": "hr",
+      "description": "Employee Appraisals",
+      "strategy": "oca",
+      "tier": "T1",
+      "oca_repos": [
+        {
+          "ref": "OCA/hr",
+          "exists": true,
+          "url": "https://github.com/OCA/hr"
+        }
+      ],
+      "oca_modules": [
+        "hr_appraisal"
+      ],
+      "ipai_modules": [],
+      "external_service": null,
+      "notes": "OCA hr_appraisal: appraisal cycles, goals, feedback",
+      "covered": true,
+      "evidence": {
+        "t1_mapped": true,
+        "t2_installable": null,
+        "t3_functional": null,
+        "t4_verified": null
+      }
+    },
+    {
+      "ee_module": "hr_appraisal_survey",
+      "domain": "hr",
+      "description": "Appraisal - Survey Bridge",
+      "strategy": "oca",
+      "tier": "T1",
+      "oca_repos": [
+        {
+          "ref": "OCA/hr",
+          "exists": true,
+          "url": "https://github.com/OCA/hr"
+        }
+      ],
+      "oca_modules": [
+        "hr_appraisal"
+      ],
+      "ipai_modules": [],
+      "external_service": null,
+      "notes": "Survey-based appraisals via OCA hr module",
+      "covered": true,
+      "evidence": {
+        "t1_mapped": true,
+        "t2_installable": null,
+        "t3_functional": null,
+        "t4_verified": null
+      }
+    },
+    {
+      "ee_module": "hr_contract_salary",
+      "domain": "hr",
+      "description": "Salary Configurator",
+      "strategy": "oca",
+      "tier": "T1",
+      "oca_repos": [
+        {
+          "ref": "OCA/payroll",
+          "exists": true,
+          "url": "https://github.com/OCA/payroll"
+        }
+      ],
+      "oca_modules": [
+        "payroll"
+      ],
+      "ipai_modules": [],
+      "external_service": null,
+      "notes": "Salary configuration via OCA payroll rules",
+      "covered": true,
+      "evidence": {
+        "t1_mapped": true,
+        "t2_installable": null,
+        "t3_functional": null,
+        "t4_verified": null
+      }
+    },
+    {
+      "ee_module": "hr_contract_sign",
+      "domain": "hr",
+      "description": "Contract - Sign Bridge",
+      "strategy": "oca+external",
+      "tier": "T1",
+      "oca_repos": [
+        {
+          "ref": "OCA/sign",
+          "exists": true,
+          "url": "https://github.com/OCA/sign"
+        }
+      ],
+      "oca_modules": [
+        "sign_oca"
+      ],
+      "ipai_modules": [],
+      "external_service": "DocuSign / SignRequest API",
+      "notes": "Contract signing via OCA sign + external e-signature",
+      "covered": true,
+      "evidence": {
+        "t1_mapped": true,
+        "t2_installable": null,
+        "t3_functional": null,
+        "t4_verified": null
+      }
+    },
+    {
+      "ee_module": "hr_gantt",
+      "domain": "hr",
+      "description": "HR Gantt Views",
+      "strategy": "oca",
+      "tier": "T1",
+      "oca_repos": [
+        {
+          "ref": "OCA/web",
+          "exists": true,
+          "url": "https://github.com/OCA/web"
+        }
+      ],
+      "oca_modules": [
+        "web_timeline"
+      ],
+      "ipai_modules": [],
+      "external_service": null,
+      "notes": "OCA web_timeline provides timeline/Gantt view for any model",
+      "covered": true,
+      "evidence": {
+        "t1_mapped": true,
+        "t2_installable": null,
+        "t3_functional": null,
+        "t4_verified": null
+      }
+    },
+    {
+      "ee_module": "hr_payroll",
+      "domain": "hr",
+      "description": "Payroll Engine",
+      "strategy": "oca",
+      "tier": "T1",
+      "oca_repos": [
+        {
+          "ref": "OCA/payroll",
+          "exists": true,
+          "url": "https://github.com/OCA/payroll"
+        }
+      ],
+      "oca_modules": [
+        "payroll",
+        "payroll_account"
+      ],
+      "ipai_modules": [],
+      "external_service": null,
+      "notes": "OCA payroll: salary rules, computation engine, payslip generation",
+      "covered": true,
+      "evidence": {
+        "t1_mapped": true,
+        "t2_installable": null,
+        "t3_functional": null,
+        "t4_verified": null
+      }
+    },
+    {
+      "ee_module": "hr_payroll_account",
+      "domain": "hr",
+      "description": "Payroll - Accounting Bridge",
+      "strategy": "oca",
+      "tier": "T1",
+      "oca_repos": [
+        {
+          "ref": "OCA/payroll",
+          "exists": true,
+          "url": "https://github.com/OCA/payroll"
+        }
+      ],
+      "oca_modules": [
+        "payroll_account"
+      ],
+      "ipai_modules": [],
+      "external_service": null,
+      "notes": "OCA payroll_account: journal entries from payslips",
+      "covered": true,
+      "evidence": {
+        "t1_mapped": true,
+        "t2_installable": null,
+        "t3_functional": null,
+        "t4_verified": null
+      }
+    },
+    {
+      "ee_module": "hr_payroll_holidays",
+      "domain": "hr",
+      "description": "Payroll - Time Off Bridge",
+      "strategy": "oca",
+      "tier": "T1",
+      "oca_repos": [
+        {
+          "ref": "OCA/payroll",
+          "exists": true,
+          "url": "https://github.com/OCA/payroll"
+        }
+      ],
+      "oca_modules": [
+        "payroll"
+      ],
+      "ipai_modules": [],
+      "external_service": null,
+      "notes": "Leave deductions in payroll computation",
+      "covered": true,
+      "evidence": {
+        "t1_mapped": true,
+        "t2_installable": null,
+        "t3_functional": null,
+        "t4_verified": null
+      }
+    },
+    {
+      "ee_module": "hr_referral",
+      "domain": "hr",
+      "description": "Employee Referral Program",
+      "strategy": "oca",
+      "tier": "T1",
+      "oca_repos": [
+        {
+          "ref": "OCA/hr",
+          "exists": true,
+          "url": "https://github.com/OCA/hr"
+        }
+      ],
+      "oca_modules": [
+        "hr_recruitment_notification"
+      ],
+      "ipai_modules": [],
+      "external_service": null,
+      "notes": "OCA HR recruitment modules handle referral tracking",
+      "covered": true,
+      "evidence": {
+        "t1_mapped": true,
+        "t2_installable": null,
+        "t3_functional": null,
+        "t4_verified": null
+      }
+    },
+    {
+      "ee_module": "hr_work_entry_contract",
+      "domain": "hr",
+      "description": "Work Entry - Contract Bridge",
+      "strategy": "oca",
+      "tier": "T1",
+      "oca_repos": [
+        {
+          "ref": "OCA/payroll",
+          "exists": true,
+          "url": "https://github.com/OCA/payroll"
+        }
+      ],
+      "oca_modules": [
+        "payroll"
+      ],
+      "ipai_modules": [],
+      "external_service": null,
+      "notes": "Work entries generated from contracts via OCA payroll",
+      "covered": true,
+      "evidence": {
+        "t1_mapped": true,
+        "t2_installable": null,
+        "t3_functional": null,
+        "t4_verified": null
+      }
+    },
+    {
+      "ee_module": "hr_work_entry_contract_attendance",
+      "domain": "hr",
+      "description": "Work Entry - Attendance Bridge",
+      "strategy": "oca",
+      "tier": "T1",
+      "oca_repos": [
+        {
+          "ref": "OCA/hr-attendance",
+          "exists": true,
+          "url": "https://github.com/OCA/hr-attendance"
+        },
+        {
+          "ref": "OCA/payroll",
+          "exists": true,
+          "url": "https://github.com/OCA/payroll"
+        }
+      ],
+      "oca_modules": [
+        "payroll"
+      ],
+      "ipai_modules": [],
+      "external_service": null,
+      "notes": "Attendance-based work entries for payroll",
+      "covered": true,
+      "evidence": {
+        "t1_mapped": true,
+        "t2_installable": null,
+        "t3_functional": null,
+        "t4_verified": null
+      }
+    },
+    {
+      "ee_module": "hr_work_entry_holidays",
+      "domain": "hr",
+      "description": "Work Entry - Holidays Bridge",
+      "strategy": "oca",
+      "tier": "T1",
+      "oca_repos": [
+        {
+          "ref": "OCA/payroll",
+          "exists": true,
+          "url": "https://github.com/OCA/payroll"
+        },
+        {
+          "ref": "OCA/hr-holidays",
+          "exists": true,
+          "url": "https://github.com/OCA/hr-holidays"
+        }
+      ],
+      "oca_modules": [
+        "payroll"
+      ],
+      "ipai_modules": [],
+      "external_service": null,
+      "notes": "Holiday work entry generation",
+      "covered": true,
+      "evidence": {
+        "t1_mapped": true,
+        "t2_installable": null,
+        "t3_functional": null,
+        "t4_verified": null
+      }
+    },
+    {
+      "ee_module": "industry_fsm",
+      "domain": "field_service",
+      "description": "Field Service Management",
+      "strategy": "oca",
+      "tier": "T1",
+      "oca_repos": [
+        {
+          "ref": "OCA/field-service",
+          "exists": true,
+          "url": "https://github.com/OCA/field-service"
+        }
+      ],
+      "oca_modules": [
+        "fieldservice",
+        "fieldservice_account",
+        "fieldservice_agreement"
+      ],
+      "ipai_modules": [],
+      "external_service": null,
+      "notes": "OCA field-service: full FSM with orders, locations, equipment, agreements",
+      "covered": true,
+      "evidence": {
+        "t1_mapped": true,
+        "t2_installable": null,
+        "t3_functional": null,
+        "t4_verified": null
+      }
+    },
+    {
+      "ee_module": "industry_fsm_report",
+      "domain": "field_service",
+      "description": "Field Service - Reports",
+      "strategy": "oca",
+      "tier": "T1",
+      "oca_repos": [
+        {
+          "ref": "OCA/field-service",
+          "exists": true,
+          "url": "https://github.com/OCA/field-service"
+        }
+      ],
+      "oca_modules": [
+        "fieldservice"
+      ],
+      "ipai_modules": [],
+      "external_service": null,
+      "notes": "OCA fieldservice includes reporting capabilities",
+      "covered": true,
+      "evidence": {
+        "t1_mapped": true,
+        "t2_installable": null,
+        "t3_functional": null,
+        "t4_verified": null
+      }
+    },
+    {
+      "ee_module": "industry_fsm_sale",
+      "domain": "field_service",
+      "description": "Field Service - Sales Bridge",
+      "strategy": "oca",
+      "tier": "T1",
+      "oca_repos": [
+        {
+          "ref": "OCA/field-service",
+          "exists": true,
+          "url": "https://github.com/OCA/field-service"
+        }
+      ],
+      "oca_modules": [
+        "fieldservice_sale"
+      ],
+      "ipai_modules": [],
+      "external_service": null,
+      "notes": "OCA fieldservice_sale for quotation-to-FSM flow",
+      "covered": true,
+      "evidence": {
+        "t1_mapped": true,
+        "t2_installable": null,
+        "t3_functional": null,
+        "t4_verified": null
+      }
+    },
+    {
+      "ee_module": "industry_fsm_stock",
+      "domain": "field_service",
+      "description": "Field Service - Stock Bridge",
+      "strategy": "oca",
+      "tier": "T1",
+      "oca_repos": [
+        {
+          "ref": "OCA/field-service",
+          "exists": true,
+          "url": "https://github.com/OCA/field-service"
+        }
+      ],
+      "oca_modules": [
+        "fieldservice_stock"
+      ],
+      "ipai_modules": [],
+      "external_service": null,
+      "notes": "OCA fieldservice_stock for inventory on FSM orders",
+      "covered": true,
+      "evidence": {
+        "t1_mapped": true,
+        "t2_installable": null,
+        "t3_functional": null,
+        "t4_verified": null
+      }
+    },
+    {
+      "ee_module": "iot",
+      "domain": "iot",
+      "description": "Internet of Things (IoT)",
+      "strategy": "oca+ipai",
+      "tier": "T1",
+      "oca_repos": [
+        {
+          "ref": "OCA/iot",
+          "exists": true,
+          "url": "https://github.com/OCA/iot"
+        }
+      ],
+      "oca_modules": [],
+      "ipai_modules": [
+        "ipai_enterprise_bridge"
+      ],
+      "external_service": null,
+      "notes": "OCA/iot repo + ipai_enterprise_bridge provides device management; CE iot_base covers basics",
+      "covered": true,
+      "evidence": {
+        "t1_mapped": true,
+        "t2_installable": null,
+        "t3_functional": null,
+        "t4_verified": null
+      }
+    },
+    {
+      "ee_module": "knowledge",
+      "domain": "knowledge",
+      "description": "Knowledge Base / Wiki",
+      "strategy": "oca",
+      "tier": "T1",
+      "oca_repos": [
+        {
+          "ref": "OCA/knowledge",
+          "exists": true,
+          "url": "https://github.com/OCA/knowledge"
+        }
+      ],
+      "oca_modules": [
+        "document_knowledge"
+      ],
+      "ipai_modules": [],
+      "external_service": null,
+      "notes": "OCA knowledge module provides wiki/knowledge base",
+      "covered": true,
+      "evidence": {
+        "t1_mapped": true,
+        "t2_installable": null,
+        "t3_functional": null,
+        "t4_verified": null
+      }
+    },
+    {
+      "ee_module": "l10n_xx_hr_payroll",
+      "domain": "hr",
+      "description": "Country-Specific Payroll (61 l10n_*_hr_payroll* modules)",
+      "strategy": "oca+ipai",
+      "tier": "T1",
+      "oca_repos": [
+        {
+          "ref": "OCA/payroll",
+          "exists": true,
+          "url": "https://github.com/OCA/payroll"
+        }
+      ],
+      "oca_modules": [
+        "payroll",
+        "payroll_account"
+      ],
+      "ipai_modules": [
+        "ipai_hr_payroll_ph"
+      ],
+      "external_service": null,
+      "notes": "OCA payroll engine is country-agnostic; salary rules are configured per country. OCA l10n-* repos (l10n-belgium, l10n-france, etc.) provide country specifics. IPAI adds Philippines localization.",
+      "covered": true,
+      "evidence": {
+        "t1_mapped": true,
+        "t2_installable": null,
+        "t3_functional": null,
+        "t4_verified": null
+      }
+    },
+    {
+      "ee_module": "l10n_xx_reports",
+      "domain": "accounting",
+      "description": "Country-specific Accounting Reports (10 l10n_*_reports modules)",
+      "strategy": "oca",
+      "tier": "T1",
+      "oca_repos": [
+        {
+          "ref": "OCA/account-financial-reporting",
+          "exists": true,
+          "url": "https://github.com/OCA/account-financial-reporting"
+        },
+        {
+          "ref": "OCA/mis-builder",
+          "exists": true,
+          "url": "https://github.com/OCA/mis-builder"
+        }
+      ],
+      "oca_modules": [
+        "account_financial_report",
+        "mis_builder"
+      ],
+      "ipai_modules": [],
+      "external_service": null,
+      "notes": "OCA financial reports are country-agnostic; MIS Builder templates handle country specifics. Covers: l10n_be_reports, l10n_br_reports, l10n_de_reports, l10n_es_reports, l10n_fr_reports, l10n_lu_reports, l10n_mx_reports, l10n_nl_reports, l10n_uk_reports, l10n_us_payment_nacha",
+      "covered": true,
+      "evidence": {
+        "t1_mapped": true,
+        "t2_installable": null,
+        "t3_functional": null,
+        "t4_verified": null
+      }
+    },
+    {
+      "ee_module": "marketing_automation",
+      "domain": "marketing",
+      "description": "Marketing Automation Campaigns",
+      "strategy": "external",
+      "tier": "T1",
+      "oca_repos": [],
+      "oca_modules": [],
+      "ipai_modules": [],
+      "external_service": "n8n / Mautic",
+      "notes": "n8n workflows provide campaign automation; Mautic for dedicated marketing automation",
+      "covered": true,
+      "evidence": {
+        "t1_mapped": true,
+        "t2_installable": null,
+        "t3_functional": null,
+        "t4_verified": null
+      }
+    },
+    {
+      "ee_module": "marketing_automation_sms",
+      "domain": "marketing",
+      "description": "Marketing Automation - SMS",
+      "strategy": "external",
+      "tier": "T1",
+      "oca_repos": [],
+      "oca_modules": [],
+      "ipai_modules": [],
+      "external_service": "n8n + Twilio",
+      "notes": "SMS campaigns via n8n + Twilio integration",
+      "covered": true,
+      "evidence": {
+        "t1_mapped": true,
+        "t2_installable": null,
+        "t3_functional": null,
+        "t4_verified": null
+      }
+    },
+    {
+      "ee_module": "mrp_plm",
+      "domain": "manufacturing",
+      "description": "Product Lifecycle Management (PLM)",
+      "strategy": "oca",
+      "tier": "T1",
+      "oca_repos": [
+        {
+          "ref": "OCA/manufacture",
+          "exists": true,
+          "url": "https://github.com/OCA/manufacture"
+        }
+      ],
+      "oca_modules": [
+        "mrp_bom_tracking"
+      ],
+      "ipai_modules": [],
+      "external_service": null,
+      "notes": "OCA provides BOM versioning and change tracking; PLM engineering changes via manufacture repo",
+      "covered": true,
+      "evidence": {
+        "t1_mapped": true,
+        "t2_installable": null,
+        "t3_functional": null,
+        "t4_verified": null
+      }
+    },
+    {
+      "ee_module": "mrp_workorder",
+      "domain": "manufacturing",
+      "description": "Manufacturing Work Orders / Shop Floor",
+      "strategy": "oca",
+      "tier": "T1",
+      "oca_repos": [
+        {
+          "ref": "OCA/manufacture",
+          "exists": true,
+          "url": "https://github.com/OCA/manufacture"
+        }
+      ],
+      "oca_modules": [
+        "mrp_production_putaway_strategy",
+        "mrp_multi_level"
+      ],
+      "ipai_modules": [],
+      "external_service": null,
+      "notes": "OCA manufacture repo provides work order extensions; CE mrp provides base work orders",
+      "covered": true,
+      "evidence": {
+        "t1_mapped": true,
+        "t2_installable": null,
+        "t3_functional": null,
+        "t4_verified": null
+      }
+    },
+    {
+      "ee_module": "mrp_workorder_hr",
+      "domain": "manufacturing",
+      "description": "Work Orders - HR Bridge",
+      "strategy": "oca",
+      "tier": "T1",
+      "oca_repos": [
+        {
+          "ref": "OCA/manufacture",
+          "exists": true,
+          "url": "https://github.com/OCA/manufacture"
+        }
+      ],
+      "oca_modules": [
+        "mrp_multi_level"
+      ],
+      "ipai_modules": [],
+      "external_service": null,
+      "notes": "Worker assignment to work orders via OCA manufacture extensions",
+      "covered": true,
+      "evidence": {
+        "t1_mapped": true,
+        "t2_installable": null,
+        "t3_functional": null,
+        "t4_verified": null
+      }
+    },
+    {
+      "ee_module": "mrp_workorder_iot",
+      "domain": "manufacturing",
+      "description": "Work Orders - IoT Bridge",
+      "strategy": "ipai",
+      "tier": "T1",
+      "oca_repos": [
+        {
+          "ref": "OCA/iot",
+          "exists": true,
+          "url": "https://github.com/OCA/iot"
+        }
+      ],
+      "oca_modules": [],
+      "ipai_modules": [
+        "ipai_enterprise_bridge"
+      ],
+      "external_service": null,
+      "notes": "IoT device integration for shop floor via ipai bridge",
+      "covered": true,
+      "evidence": {
+        "t1_mapped": true,
+        "t2_installable": null,
+        "t3_functional": null,
+        "t4_verified": null
+      }
+    },
+    {
+      "ee_module": "mrp_workorder_plm",
+      "domain": "manufacturing",
+      "description": "Work Orders - PLM Bridge",
+      "strategy": "oca",
+      "tier": "T1",
+      "oca_repos": [
+        {
+          "ref": "OCA/manufacture",
+          "exists": true,
+          "url": "https://github.com/OCA/manufacture"
+        }
+      ],
+      "oca_modules": [
+        "mrp_bom_tracking"
+      ],
+      "ipai_modules": [],
+      "external_service": null,
+      "notes": "Engineering change orders via BOM tracking linked to work orders",
+      "covered": true,
+      "evidence": {
+        "t1_mapped": true,
+        "t2_installable": null,
+        "t3_functional": null,
+        "t4_verified": null
+      }
+    },
+    {
+      "ee_module": "planning",
+      "domain": "planning",
+      "description": "Resource Planning / Scheduling",
+      "strategy": "oca",
+      "tier": "T1",
+      "oca_repos": [
+        {
+          "ref": "OCA/project",
+          "exists": true,
+          "url": "https://github.com/OCA/project"
+        },
+        {
+          "ref": "OCA/shift-planning",
+          "exists": true,
+          "url": "https://github.com/OCA/shift-planning"
+        }
+      ],
+      "oca_modules": [
+        "project_forecast_line",
+        "project_timeline"
+      ],
+      "ipai_modules": [],
+      "external_service": null,
+      "notes": "OCA project_forecast_line + shift-planning provides resource scheduling",
+      "covered": true,
+      "evidence": {
+        "t1_mapped": true,
+        "t2_installable": null,
+        "t3_functional": null,
+        "t4_verified": null
+      }
+    },
+    {
+      "ee_module": "planning_hr",
+      "domain": "planning",
+      "description": "Planning - HR Bridge",
+      "strategy": "oca",
+      "tier": "T1",
+      "oca_repos": [
+        {
+          "ref": "OCA/project",
+          "exists": true,
+          "url": "https://github.com/OCA/project"
+        },
+        {
+          "ref": "OCA/hr",
+          "exists": true,
+          "url": "https://github.com/OCA/hr"
+        }
+      ],
+      "oca_modules": [
+        "project_forecast_line"
+      ],
+      "ipai_modules": [],
+      "external_service": null,
+      "notes": "Employee-linked planning via OCA forecast",
+      "covered": true,
+      "evidence": {
+        "t1_mapped": true,
+        "t2_installable": null,
+        "t3_functional": null,
+        "t4_verified": null
+      }
+    },
+    {
+      "ee_module": "planning_hr_skills",
+      "domain": "planning",
+      "description": "Planning - HR Skills Bridge",
+      "strategy": "oca",
+      "tier": "T1",
+      "oca_repos": [
+        {
+          "ref": "OCA/project",
+          "exists": true,
+          "url": "https://github.com/OCA/project"
+        },
+        {
+          "ref": "OCA/hr",
+          "exists": true,
+          "url": "https://github.com/OCA/hr"
+        }
+      ],
+      "oca_modules": [
+        "project_forecast_line"
+      ],
+      "ipai_modules": [],
+      "external_service": null,
+      "notes": "Skill-based resource allocation via OCA project forecast",
+      "covered": true,
+      "evidence": {
+        "t1_mapped": true,
+        "t2_installable": null,
+        "t3_functional": null,
+        "t4_verified": null
+      }
+    },
+    {
+      "ee_module": "project_enterprise",
+      "domain": "project",
+      "description": "Project Enterprise Views (Gantt/Map)",
+      "strategy": "oca",
+      "tier": "T1",
+      "oca_repos": [
+        {
+          "ref": "OCA/project",
+          "exists": true,
+          "url": "https://github.com/OCA/project"
+        },
+        {
+          "ref": "OCA/web",
+          "exists": true,
+          "url": "https://github.com/OCA/web"
+        }
+      ],
+      "oca_modules": [
+        "project_timeline",
+        "web_timeline"
+      ],
+      "ipai_modules": [],
+      "external_service": null,
+      "notes": "OCA project_timeline + web_timeline provide Gantt/timeline views for projects",
+      "covered": true,
+      "evidence": {
+        "t1_mapped": true,
+        "t2_installable": null,
+        "t3_functional": null,
+        "t4_verified": null
+      }
+    },
+    {
+      "ee_module": "project_forecast",
+      "domain": "project",
+      "description": "Project Resource Forecasting",
+      "strategy": "oca",
+      "tier": "T1",
+      "oca_repos": [
+        {
+          "ref": "OCA/project",
+          "exists": true,
+          "url": "https://github.com/OCA/project"
+        }
+      ],
+      "oca_modules": [
+        "project_forecast_line"
+      ],
+      "ipai_modules": [],
+      "external_service": null,
+      "notes": "OCA project_forecast_line: resource allocation and capacity planning",
+      "covered": true,
+      "evidence": {
+        "t1_mapped": true,
+        "t2_installable": null,
+        "t3_functional": null,
+        "t4_verified": null
+      }
+    },
+    {
+      "ee_module": "project_timesheet_forecast",
+      "domain": "project",
+      "description": "Project Timesheet Forecast",
+      "strategy": "oca",
+      "tier": "T1",
+      "oca_repos": [
+        {
+          "ref": "OCA/project",
+          "exists": true,
+          "url": "https://github.com/OCA/project"
+        },
+        {
+          "ref": "OCA/timesheet",
+          "exists": true,
+          "url": "https://github.com/OCA/timesheet"
+        }
+      ],
+      "oca_modules": [
+        "project_forecast_line",
+        "hr_timesheet_sheet"
+      ],
+      "ipai_modules": [],
+      "external_service": null,
+      "notes": "Forecast vs actual timesheet comparison",
+      "covered": true,
+      "evidence": {
+        "t1_mapped": true,
+        "t2_installable": null,
+        "t3_functional": null,
+        "t4_verified": null
+      }
+    },
+    {
+      "ee_module": "quality_control",
+      "domain": "manufacturing",
+      "description": "Quality Control",
+      "strategy": "oca",
+      "tier": "T1",
+      "oca_repos": [
+        {
+          "ref": "OCA/manufacture",
+          "exists": true,
+          "url": "https://github.com/OCA/manufacture"
+        }
+      ],
+      "oca_modules": [
+        "quality_control_oca"
+      ],
+      "ipai_modules": [],
+      "external_service": null,
+      "notes": "OCA quality_control_oca: inspection plans, control points, alerts",
+      "covered": true,
+      "evidence": {
+        "t1_mapped": true,
+        "t2_installable": null,
+        "t3_functional": null,
+        "t4_verified": null
+      }
+    },
+    {
+      "ee_module": "quality_control_iot",
+      "domain": "manufacturing",
+      "description": "Quality Control - IoT Bridge",
+      "strategy": "oca+ipai",
+      "tier": "T1",
+      "oca_repos": [
+        {
+          "ref": "OCA/manufacture",
+          "exists": true,
+          "url": "https://github.com/OCA/manufacture"
+        },
+        {
+          "ref": "OCA/iot",
+          "exists": true,
+          "url": "https://github.com/OCA/iot"
+        }
+      ],
+      "oca_modules": [
+        "quality_control_oca"
+      ],
+      "ipai_modules": [
+        "ipai_enterprise_bridge"
+      ],
+      "external_service": null,
+      "notes": "Quality checks triggered by IoT sensors via bridge",
+      "covered": true,
+      "evidence": {
+        "t1_mapped": true,
+        "t2_installable": null,
+        "t3_functional": null,
+        "t4_verified": null
+      }
+    },
+    {
+      "ee_module": "quality_mrp",
+      "domain": "manufacturing",
+      "description": "Quality - MRP Bridge",
+      "strategy": "oca",
+      "tier": "T1",
+      "oca_repos": [
+        {
+          "ref": "OCA/manufacture",
+          "exists": true,
+          "url": "https://github.com/OCA/manufacture"
+        }
+      ],
+      "oca_modules": [
+        "quality_control_oca"
+      ],
+      "ipai_modules": [],
+      "external_service": null,
+      "notes": "Quality checks on manufacturing orders",
+      "covered": true,
+      "evidence": {
+        "t1_mapped": true,
+        "t2_installable": null,
+        "t3_functional": null,
+        "t4_verified": null
+      }
+    },
+    {
+      "ee_module": "quality_mrp_workorder",
+      "domain": "manufacturing",
+      "description": "Quality - Work Orders Bridge",
+      "strategy": "oca",
+      "tier": "T1",
+      "oca_repos": [
+        {
+          "ref": "OCA/manufacture",
+          "exists": true,
+          "url": "https://github.com/OCA/manufacture"
+        }
+      ],
+      "oca_modules": [
+        "quality_control_oca"
+      ],
+      "ipai_modules": [],
+      "external_service": null,
+      "notes": "Quality checks at work order steps",
+      "covered": true,
+      "evidence": {
+        "t1_mapped": true,
+        "t2_installable": null,
+        "t3_functional": null,
+        "t4_verified": null
+      }
+    },
+    {
+      "ee_module": "quality_mrp_workorder_iot",
+      "domain": "manufacturing",
+      "description": "Quality - Work Orders IoT Bridge",
+      "strategy": "oca+ipai",
+      "tier": "T1",
+      "oca_repos": [
+        {
+          "ref": "OCA/manufacture",
+          "exists": true,
+          "url": "https://github.com/OCA/manufacture"
+        }
+      ],
+      "oca_modules": [
+        "quality_control_oca"
+      ],
+      "ipai_modules": [
+        "ipai_enterprise_bridge"
+      ],
+      "external_service": null,
+      "notes": "IoT-triggered quality checks at work order steps",
+      "covered": true,
+      "evidence": {
+        "t1_mapped": true,
+        "t2_installable": null,
+        "t3_functional": null,
+        "t4_verified": null
+      }
+    },
+    {
+      "ee_module": "rental",
+      "domain": "project",
+      "description": "Rental Module",
+      "strategy": "oca",
+      "tier": "T1",
+      "oca_repos": [
+        {
+          "ref": "OCA/vertical-rental",
+          "exists": true,
+          "url": "https://github.com/OCA/vertical-rental"
+        }
+      ],
+      "oca_modules": [
+        "rental_base"
+      ],
+      "ipai_modules": [],
+      "external_service": null,
+      "notes": "OCA vertical-rental provides rental management",
+      "covered": true,
+      "evidence": {
+        "t1_mapped": true,
+        "t2_installable": null,
+        "t3_functional": null,
+        "t4_verified": null
+      }
+    },
+    {
+      "ee_module": "sale_commission",
+      "domain": "sales",
+      "description": "Sales Commissions",
+      "strategy": "oca",
+      "tier": "T1",
+      "oca_repos": [
+        {
+          "ref": "OCA/commission",
+          "exists": true,
+          "url": "https://github.com/OCA/commission"
+        }
+      ],
+      "oca_modules": [
+        "sale_commission",
+        "account_commission"
+      ],
+      "ipai_modules": [],
+      "external_service": null,
+      "notes": "OCA commission: full commission management with settlements",
+      "covered": true,
+      "evidence": {
+        "t1_mapped": true,
+        "t2_installable": null,
+        "t3_functional": null,
+        "t4_verified": null
+      }
+    },
+    {
+      "ee_module": "sale_ebay",
+      "domain": "sales",
+      "description": "eBay Connector",
+      "strategy": "oca",
+      "tier": "T1",
+      "oca_repos": [
+        {
+          "ref": "OCA/connector-ecommerce",
+          "exists": true,
+          "url": "https://github.com/OCA/connector-ecommerce"
+        }
+      ],
+      "oca_modules": [
+        "connector_ecommerce"
+      ],
+      "ipai_modules": [],
+      "external_service": null,
+      "notes": "OCA e-commerce connector framework supports marketplace integration",
+      "covered": true,
+      "evidence": {
+        "t1_mapped": true,
+        "t2_installable": null,
+        "t3_functional": null,
+        "t4_verified": null
+      }
+    },
+    {
+      "ee_module": "sale_renting",
+      "domain": "sales",
+      "description": "Rental Management",
+      "strategy": "oca",
+      "tier": "T1",
+      "oca_repos": [
+        {
+          "ref": "OCA/vertical-rental",
+          "exists": true,
+          "url": "https://github.com/OCA/vertical-rental"
+        }
+      ],
+      "oca_modules": [
+        "rental_base"
+      ],
+      "ipai_modules": [],
+      "external_service": null,
+      "notes": "OCA vertical-rental provides rental management",
+      "covered": true,
+      "evidence": {
+        "t1_mapped": true,
+        "t2_installable": null,
+        "t3_functional": null,
+        "t4_verified": null
+      }
+    },
+    {
+      "ee_module": "sale_subscription",
+      "domain": "sales",
+      "description": "Subscriptions / Recurring Revenue",
+      "strategy": "oca",
+      "tier": "T1",
+      "oca_repos": [
+        {
+          "ref": "OCA/contract",
+          "exists": true,
+          "url": "https://github.com/OCA/contract"
+        }
+      ],
+      "oca_modules": [
+        "contract",
+        "contract_sale"
+      ],
+      "ipai_modules": [],
+      "external_service": null,
+      "notes": "OCA contract module: recurring invoicing, renewals, MRR tracking",
+      "covered": true,
+      "evidence": {
+        "t1_mapped": true,
+        "t2_installable": null,
+        "t3_functional": null,
+        "t4_verified": null
+      }
+    },
+    {
+      "ee_module": "sale_subscription_stock",
+      "domain": "sales",
+      "description": "Subscription - Stock Bridge",
+      "strategy": "oca",
+      "tier": "T1",
+      "oca_repos": [
+        {
+          "ref": "OCA/contract",
+          "exists": true,
+          "url": "https://github.com/OCA/contract"
+        }
+      ],
+      "oca_modules": [
+        "contract"
+      ],
+      "ipai_modules": [],
+      "external_service": null,
+      "notes": "Recurring deliveries via contract",
+      "covered": true,
+      "evidence": {
+        "t1_mapped": true,
+        "t2_installable": null,
+        "t3_functional": null,
+        "t4_verified": null
+      }
+    },
+    {
+      "ee_module": "sale_timesheet_enterprise",
+      "domain": "sales",
+      "description": "Sale Timesheet Enterprise",
+      "strategy": "oca",
+      "tier": "T1",
+      "oca_repos": [
+        {
+          "ref": "OCA/timesheet",
+          "exists": true,
+          "url": "https://github.com/OCA/timesheet"
+        }
+      ],
+      "oca_modules": [
+        "hr_timesheet_sheet"
+      ],
+      "ipai_modules": [],
+      "external_service": null,
+      "notes": "OCA timesheet sheet + CE sale_timesheet covers billable timesheets",
+      "covered": true,
+      "evidence": {
+        "t1_mapped": true,
+        "t2_installable": null,
+        "t3_functional": null,
+        "t4_verified": null
+      }
+    },
+    {
+      "ee_module": "sign",
+      "domain": "documents",
+      "description": "Electronic Signature",
+      "strategy": "oca+external",
+      "tier": "T1",
+      "oca_repos": [
+        {
+          "ref": "OCA/sign",
+          "exists": true,
+          "url": "https://github.com/OCA/sign"
+        }
+      ],
+      "oca_modules": [
+        "sign_oca"
+      ],
+      "ipai_modules": [],
+      "external_service": "DocuSign / SignRequest / Yousign API",
+      "notes": "OCA sign module + external e-signature API for legal validity",
+      "covered": true,
+      "evidence": {
+        "t1_mapped": true,
+        "t2_installable": null,
+        "t3_functional": null,
+        "t4_verified": null
+      }
+    },
+    {
+      "ee_module": "sign_itsme",
+      "domain": "documents",
+      "description": "Sign - itsme Identity Verification",
+      "strategy": "external",
+      "tier": "T1",
+      "oca_repos": [],
+      "oca_modules": [],
+      "ipai_modules": [],
+      "external_service": "itsme API (direct)",
+      "notes": "Direct itsme API integration for Belgian identity verification",
+      "covered": true,
+      "evidence": {
+        "t1_mapped": true,
+        "t2_installable": null,
+        "t3_functional": null,
+        "t4_verified": null
+      }
+    },
+    {
+      "ee_module": "social",
+      "domain": "marketing",
+      "description": "Social Marketing Hub",
+      "strategy": "external",
+      "tier": "T1",
+      "oca_repos": [
+        {
+          "ref": "OCA/social",
+          "exists": true,
+          "url": "https://github.com/OCA/social"
+        }
+      ],
+      "oca_modules": [],
+      "ipai_modules": [],
+      "external_service": "Buffer / Hootsuite / n8n",
+      "notes": "Social posting via external scheduler or n8n API integration",
+      "covered": true,
+      "evidence": {
+        "t1_mapped": true,
+        "t2_installable": null,
+        "t3_functional": null,
+        "t4_verified": null
+      }
+    },
+    {
+      "ee_module": "social_crm",
+      "domain": "marketing",
+      "description": "Social - CRM Bridge",
+      "strategy": "external",
+      "tier": "T1",
+      "oca_repos": [],
+      "oca_modules": [],
+      "ipai_modules": [],
+      "external_service": "n8n webhook",
+      "notes": "Social lead capture via n8n webhook to Odoo CRM",
+      "covered": true,
+      "evidence": {
+        "t1_mapped": true,
+        "t2_installable": null,
+        "t3_functional": null,
+        "t4_verified": null
+      }
+    },
+    {
+      "ee_module": "social_demo",
+      "domain": "marketing",
+      "description": "Social Demo Data",
+      "strategy": "not_needed",
+      "tier": "N/A",
+      "oca_repos": [],
+      "oca_modules": [],
+      "ipai_modules": [],
+      "external_service": null,
+      "notes": "Demo data module \u2014 not needed for production",
+      "covered": true,
+      "evidence": {
+        "t1_mapped": false,
+        "t2_installable": null,
+        "t3_functional": null,
+        "t4_verified": null
+      }
+    },
+    {
+      "ee_module": "social_facebook",
+      "domain": "marketing",
+      "description": "Social - Facebook Integration",
+      "strategy": "external",
+      "tier": "T1",
+      "oca_repos": [],
+      "oca_modules": [],
+      "ipai_modules": [],
+      "external_service": "Facebook Graph API / n8n",
+      "notes": "Direct Facebook Graph API via n8n",
+      "covered": true,
+      "evidence": {
+        "t1_mapped": true,
+        "t2_installable": null,
+        "t3_functional": null,
+        "t4_verified": null
+      }
+    },
+    {
+      "ee_module": "social_instagram",
+      "domain": "marketing",
+      "description": "Social - Instagram Integration",
+      "strategy": "external",
+      "tier": "T1",
+      "oca_repos": [],
+      "oca_modules": [],
+      "ipai_modules": [],
+      "external_service": "Instagram Graph API / n8n",
+      "notes": "Direct Instagram API via n8n",
+      "covered": true,
+      "evidence": {
+        "t1_mapped": true,
+        "t2_installable": null,
+        "t3_functional": null,
+        "t4_verified": null
+      }
+    },
+    {
+      "ee_module": "social_linkedin",
+      "domain": "marketing",
+      "description": "Social - LinkedIn Integration",
+      "strategy": "external",
+      "tier": "T1",
+      "oca_repos": [],
+      "oca_modules": [],
+      "ipai_modules": [],
+      "external_service": "LinkedIn API / n8n",
+      "notes": "Direct LinkedIn API via n8n",
+      "covered": true,
+      "evidence": {
+        "t1_mapped": true,
+        "t2_installable": null,
+        "t3_functional": null,
+        "t4_verified": null
+      }
+    },
+    {
+      "ee_module": "social_push_notifications",
+      "domain": "marketing",
+      "description": "Push Notifications",
+      "strategy": "external",
+      "tier": "T1",
+      "oca_repos": [],
+      "oca_modules": [],
+      "ipai_modules": [],
+      "external_service": "Firebase Cloud Messaging / OneSignal",
+      "notes": "Push notifications via FCM or OneSignal",
+      "covered": true,
+      "evidence": {
+        "t1_mapped": true,
+        "t2_installable": null,
+        "t3_functional": null,
+        "t4_verified": null
+      }
+    },
+    {
+      "ee_module": "social_twitter",
+      "domain": "marketing",
+      "description": "Social - X/Twitter Integration",
+      "strategy": "external",
+      "tier": "T1",
+      "oca_repos": [],
+      "oca_modules": [],
+      "ipai_modules": [],
+      "external_service": "X API / n8n",
+      "notes": "Direct X API via n8n",
+      "covered": true,
+      "evidence": {
+        "t1_mapped": true,
+        "t2_installable": null,
+        "t3_functional": null,
+        "t4_verified": null
+      }
+    },
+    {
+      "ee_module": "social_youtube",
+      "domain": "marketing",
+      "description": "Social - YouTube Integration",
+      "strategy": "external",
+      "tier": "T1",
+      "oca_repos": [],
+      "oca_modules": [],
+      "ipai_modules": [],
+      "external_service": "YouTube Data API / n8n",
+      "notes": "Direct YouTube API via n8n",
+      "covered": true,
+      "evidence": {
+        "t1_mapped": true,
+        "t2_installable": null,
+        "t3_functional": null,
+        "t4_verified": null
+      }
+    },
+    {
+      "ee_module": "spreadsheet_dashboard_edition",
+      "domain": "spreadsheet",
+      "description": "Spreadsheet Dashboard Enterprise",
+      "strategy": "ce",
+      "tier": "T1",
+      "oca_repos": [
+        {
+          "ref": "OCA/spreadsheet",
+          "exists": true,
+          "url": "https://github.com/OCA/spreadsheet"
+        }
+      ],
+      "oca_modules": [],
+      "ipai_modules": [],
+      "external_service": null,
+      "notes": "CE spreadsheet_dashboard provides dashboard spreadsheets in Community",
+      "covered": true,
+      "evidence": {
+        "t1_mapped": true,
+        "t2_installable": null,
+        "t3_functional": null,
+        "t4_verified": null
+      }
+    },
+    {
+      "ee_module": "spreadsheet_edition",
+      "domain": "spreadsheet",
+      "description": "Spreadsheet Enterprise Edition",
+      "strategy": "ce",
+      "tier": "T1",
+      "oca_repos": [
+        {
+          "ref": "OCA/spreadsheet",
+          "exists": true,
+          "url": "https://github.com/OCA/spreadsheet"
+        }
+      ],
+      "oca_modules": [],
+      "ipai_modules": [],
+      "external_service": null,
+      "notes": "CE spreadsheet (built-in since Odoo 16+) provides core spreadsheet functionality; OCA/spreadsheet adds extensions",
+      "covered": true,
+      "evidence": {
+        "t1_mapped": true,
+        "t2_installable": null,
+        "t3_functional": null,
+        "t4_verified": null
+      }
+    },
+    {
+      "ee_module": "stock_barcode",
+      "domain": "barcode",
+      "description": "Barcode Scanning App",
+      "strategy": "oca",
+      "tier": "T1",
+      "oca_repos": [
+        {
+          "ref": "OCA/stock-logistics-barcode",
+          "exists": true,
+          "url": "https://github.com/OCA/stock-logistics-barcode"
+        },
+        {
+          "ref": "OCA/stock-logistics-workflow",
+          "exists": true,
+          "url": "https://github.com/OCA/stock-logistics-workflow"
+        }
+      ],
+      "oca_modules": [
+        "stock_barcodes"
+      ],
+      "ipai_modules": [],
+      "external_service": null,
+      "notes": "OCA stock_barcodes: mobile barcode scanning for warehouse operations",
+      "covered": true,
+      "evidence": {
+        "t1_mapped": true,
+        "t2_installable": null,
+        "t3_functional": null,
+        "t4_verified": null
+      }
+    },
+    {
+      "ee_module": "stock_barcode_mrp",
+      "domain": "barcode",
+      "description": "Barcode - MRP Bridge",
+      "strategy": "oca",
+      "tier": "T1",
+      "oca_repos": [
+        {
+          "ref": "OCA/stock-logistics-barcode",
+          "exists": true,
+          "url": "https://github.com/OCA/stock-logistics-barcode"
+        }
+      ],
+      "oca_modules": [
+        "stock_barcodes"
+      ],
+      "ipai_modules": [],
+      "external_service": null,
+      "notes": "Barcode scanning in manufacturing context",
+      "covered": true,
+      "evidence": {
+        "t1_mapped": true,
+        "t2_installable": null,
+        "t3_functional": null,
+        "t4_verified": null
+      }
+    },
+    {
+      "ee_module": "stock_barcode_mrp_subcontracting",
+      "domain": "barcode",
+      "description": "Barcode - Subcontracting Bridge",
+      "strategy": "oca",
+      "tier": "T1",
+      "oca_repos": [
+        {
+          "ref": "OCA/stock-logistics-barcode",
+          "exists": true,
+          "url": "https://github.com/OCA/stock-logistics-barcode"
+        }
+      ],
+      "oca_modules": [
+        "stock_barcodes"
+      ],
+      "ipai_modules": [],
+      "external_service": null,
+      "notes": "Barcode scanning for subcontracting receipts",
+      "covered": true,
+      "evidence": {
+        "t1_mapped": true,
+        "t2_installable": null,
+        "t3_functional": null,
+        "t4_verified": null
+      }
+    },
+    {
+      "ee_module": "stock_barcode_picking_batch",
+      "domain": "barcode",
+      "description": "Barcode - Batch Picking Bridge",
+      "strategy": "oca",
+      "tier": "T1",
+      "oca_repos": [
+        {
+          "ref": "OCA/stock-logistics-barcode",
+          "exists": true,
+          "url": "https://github.com/OCA/stock-logistics-barcode"
+        }
+      ],
+      "oca_modules": [
+        "stock_barcodes"
+      ],
+      "ipai_modules": [],
+      "external_service": null,
+      "notes": "Batch picking with barcode scanning",
+      "covered": true,
+      "evidence": {
+        "t1_mapped": true,
+        "t2_installable": null,
+        "t3_functional": null,
+        "t4_verified": null
+      }
+    },
+    {
+      "ee_module": "stock_barcode_product_expiry",
+      "domain": "barcode",
+      "description": "Barcode - Product Expiry Bridge",
+      "strategy": "oca",
+      "tier": "T1",
+      "oca_repos": [
+        {
+          "ref": "OCA/stock-logistics-barcode",
+          "exists": true,
+          "url": "https://github.com/OCA/stock-logistics-barcode"
+        }
+      ],
+      "oca_modules": [
+        "stock_barcodes"
+      ],
+      "ipai_modules": [],
+      "external_service": null,
+      "notes": "Expiry date scanning during receipts",
+      "covered": true,
+      "evidence": {
+        "t1_mapped": true,
+        "t2_installable": null,
+        "t3_functional": null,
+        "t4_verified": null
+      }
+    },
+    {
+      "ee_module": "stock_barcode_quality_control",
+      "domain": "barcode",
+      "description": "Barcode - Quality Control Bridge",
+      "strategy": "oca",
+      "tier": "T1",
+      "oca_repos": [
+        {
+          "ref": "OCA/stock-logistics-barcode",
+          "exists": true,
+          "url": "https://github.com/OCA/stock-logistics-barcode"
+        },
+        {
+          "ref": "OCA/manufacture",
+          "exists": true,
+          "url": "https://github.com/OCA/manufacture"
+        }
+      ],
+      "oca_modules": [
+        "stock_barcodes",
+        "quality_control_oca"
+      ],
+      "ipai_modules": [],
+      "external_service": null,
+      "notes": "Quality checks triggered during barcode operations",
+      "covered": true,
+      "evidence": {
+        "t1_mapped": true,
+        "t2_installable": null,
+        "t3_functional": null,
+        "t4_verified": null
+      }
+    },
+    {
+      "ee_module": "stock_barcode_quality_mrp",
+      "domain": "barcode",
+      "description": "Barcode - Quality MRP Bridge",
+      "strategy": "oca",
+      "tier": "T1",
+      "oca_repos": [
+        {
+          "ref": "OCA/stock-logistics-barcode",
+          "exists": true,
+          "url": "https://github.com/OCA/stock-logistics-barcode"
+        },
+        {
+          "ref": "OCA/manufacture",
+          "exists": true,
+          "url": "https://github.com/OCA/manufacture"
+        }
+      ],
+      "oca_modules": [
+        "stock_barcodes",
+        "quality_control_oca"
+      ],
+      "ipai_modules": [],
+      "external_service": null,
+      "notes": "Quality checks in MRP barcode context",
+      "covered": true,
+      "evidence": {
+        "t1_mapped": true,
+        "t2_installable": null,
+        "t3_functional": null,
+        "t4_verified": null
+      }
+    },
+    {
+      "ee_module": "stock_enterprise",
+      "domain": "project",
+      "description": "Stock Enterprise Views",
+      "strategy": "oca",
+      "tier": "T1",
+      "oca_repos": [
+        {
+          "ref": "OCA/stock-logistics-reporting",
+          "exists": true,
+          "url": "https://github.com/OCA/stock-logistics-reporting"
+        }
+      ],
+      "oca_modules": [
+        "stock_picking_report_valued"
+      ],
+      "ipai_modules": [],
+      "external_service": null,
+      "notes": "OCA stock reporting provides valued picking reports and enhanced warehouse views",
+      "covered": true,
+      "evidence": {
+        "t1_mapped": true,
+        "t2_installable": null,
+        "t3_functional": null,
+        "t4_verified": null
+      }
+    },
+    {
+      "ee_module": "timer",
+      "domain": "timesheet",
+      "description": "Timer Utility",
+      "strategy": "oca",
+      "tier": "T1",
+      "oca_repos": [
+        {
+          "ref": "OCA/timesheet",
+          "exists": true,
+          "url": "https://github.com/OCA/timesheet"
+        }
+      ],
+      "oca_modules": [
+        "hr_timesheet_sheet"
+      ],
+      "ipai_modules": [],
+      "external_service": null,
+      "notes": "Timer functionality within OCA timesheet sheet",
+      "covered": true,
+      "evidence": {
+        "t1_mapped": true,
+        "t2_installable": null,
+        "t3_functional": null,
+        "t4_verified": null
+      }
+    },
+    {
+      "ee_module": "timesheet_grid",
+      "domain": "timesheet",
+      "description": "Timesheet Grid View",
+      "strategy": "oca",
+      "tier": "T1",
+      "oca_repos": [
+        {
+          "ref": "OCA/timesheet",
+          "exists": true,
+          "url": "https://github.com/OCA/timesheet"
+        }
+      ],
+      "oca_modules": [
+        "hr_timesheet_sheet"
+      ],
+      "ipai_modules": [],
+      "external_service": null,
+      "notes": "OCA hr_timesheet_sheet: weekly timesheet grid with approval workflow",
+      "covered": true,
+      "evidence": {
+        "t1_mapped": true,
+        "t2_installable": null,
+        "t3_functional": null,
+        "t4_verified": null
+      }
+    },
+    {
+      "ee_module": "voip",
+      "domain": "voip",
+      "description": "VoIP Integration",
+      "strategy": "oca",
+      "tier": "T1",
+      "oca_repos": [
+        {
+          "ref": "OCA/connector-telephony",
+          "exists": true,
+          "url": "https://github.com/OCA/connector-telephony"
+        }
+      ],
+      "oca_modules": [
+        "base_phone",
+        "crm_phone"
+      ],
+      "ipai_modules": [],
+      "external_service": null,
+      "notes": "OCA connector-telephony: SIP/Asterisk/FreePBX integration, click-to-dial, call logging",
+      "covered": true,
+      "evidence": {
+        "t1_mapped": true,
+        "t2_installable": null,
+        "t3_functional": null,
+        "t4_verified": null
+      }
+    },
+    {
+      "ee_module": "voip_onsip",
+      "domain": "voip",
+      "description": "VoIP - OnSIP Provider",
+      "strategy": "oca",
+      "tier": "T1",
+      "oca_repos": [
+        {
+          "ref": "OCA/connector-telephony",
+          "exists": true,
+          "url": "https://github.com/OCA/connector-telephony"
+        }
+      ],
+      "oca_modules": [
+        "base_phone"
+      ],
+      "ipai_modules": [],
+      "external_service": null,
+      "notes": "OCA telephony framework supports any SIP provider",
+      "covered": true,
+      "evidence": {
+        "t1_mapped": true,
+        "t2_installable": null,
+        "t3_functional": null,
+        "t4_verified": null
+      }
+    },
+    {
+      "ee_module": "web_cohort",
+      "domain": "web",
+      "description": "Cohort Analysis View",
+      "strategy": "oca+external",
+      "tier": "T1",
+      "oca_repos": [
+        {
+          "ref": "OCA/web",
+          "exists": true,
+          "url": "https://github.com/OCA/web"
+        },
+        {
+          "ref": "OCA/reporting-engine",
+          "exists": true,
+          "url": "https://github.com/OCA/reporting-engine"
+        }
+      ],
+      "oca_modules": [
+        "bi_sql_editor"
+      ],
+      "ipai_modules": [],
+      "external_service": "Apache Superset / Metabase",
+      "notes": "Cohort analysis via OCA bi_sql_editor + Superset/Metabase dashboards",
+      "covered": true,
+      "evidence": {
+        "t1_mapped": true,
+        "t2_installable": null,
+        "t3_functional": null,
+        "t4_verified": null
+      }
+    },
+    {
+      "ee_module": "web_dashboard",
+      "domain": "web",
+      "description": "Dashboard View",
+      "strategy": "oca+external",
+      "tier": "T1",
+      "oca_repos": [
+        {
+          "ref": "OCA/web",
+          "exists": true,
+          "url": "https://github.com/OCA/web"
+        }
+      ],
+      "oca_modules": [
+        "web_dashboard_tile"
+      ],
+      "ipai_modules": [],
+      "external_service": "Apache Superset / Metabase",
+      "notes": "OCA dashboard tiles + external BI (Superset) for advanced dashboards",
+      "covered": true,
+      "evidence": {
+        "t1_mapped": true,
+        "t2_installable": null,
+        "t3_functional": null,
+        "t4_verified": null
+      }
+    },
+    {
+      "ee_module": "web_enterprise",
+      "domain": "web",
+      "description": "Enterprise Web Client / Backend Theme",
+      "strategy": "oca+ipai",
+      "tier": "T1",
+      "oca_repos": [
+        {
+          "ref": "OCA/web",
+          "exists": true,
+          "url": "https://github.com/OCA/web"
+        }
+      ],
+      "oca_modules": [
+        "web_responsive"
+      ],
+      "ipai_modules": [
+        "ipai_platform_theme"
+      ],
+      "external_service": null,
+      "notes": "OCA web_responsive + ipai_platform_theme provides modern responsive backend",
+      "covered": true,
+      "evidence": {
+        "t1_mapped": true,
+        "t2_installable": null,
+        "t3_functional": null,
+        "t4_verified": null
+      }
+    },
+    {
+      "ee_module": "web_gantt",
+      "domain": "web",
+      "description": "Gantt Chart View",
+      "strategy": "oca",
+      "tier": "T1",
+      "oca_repos": [
+        {
+          "ref": "OCA/web",
+          "exists": true,
+          "url": "https://github.com/OCA/web"
+        }
+      ],
+      "oca_modules": [
+        "web_timeline"
+      ],
+      "ipai_modules": [],
+      "external_service": null,
+      "notes": "OCA web_timeline provides horizontal timeline view (Gantt equivalent)",
+      "covered": true,
+      "evidence": {
+        "t1_mapped": true,
+        "t2_installable": null,
+        "t3_functional": null,
+        "t4_verified": null
+      }
+    },
+    {
+      "ee_module": "web_grid",
+      "domain": "web",
+      "description": "Grid View",
+      "strategy": "oca+ipai",
+      "tier": "T1",
+      "oca_repos": [
+        {
+          "ref": "OCA/web",
+          "exists": true,
+          "url": "https://github.com/OCA/web"
+        }
+      ],
+      "oca_modules": [],
+      "ipai_modules": [
+        "ipai_grid_view"
+      ],
+      "external_service": null,
+      "notes": "ipai_grid_view provides grid/matrix view; OCA web repo has grid utilities",
+      "covered": true,
+      "evidence": {
+        "t1_mapped": true,
+        "t2_installable": null,
+        "t3_functional": null,
+        "t4_verified": null
+      }
+    },
+    {
+      "ee_module": "web_map",
+      "domain": "web",
+      "description": "Map View",
+      "strategy": "oca",
+      "tier": "T1",
+      "oca_repos": [
+        {
+          "ref": "OCA/geospatial",
+          "exists": true,
+          "url": "https://github.com/OCA/geospatial"
+        },
+        {
+          "ref": "OCA/web",
+          "exists": true,
+          "url": "https://github.com/OCA/web"
+        }
+      ],
+      "oca_modules": [
+        "web_view_leaflet_map"
+      ],
+      "ipai_modules": [],
+      "external_service": null,
+      "notes": "OCA geospatial/web modules provide Leaflet-based map views",
+      "covered": true,
+      "evidence": {
+        "t1_mapped": true,
+        "t2_installable": null,
+        "t3_functional": null,
+        "t4_verified": null
+      }
+    },
+    {
+      "ee_module": "web_mobile",
+      "domain": "web",
+      "description": "Mobile Web Optimizations",
+      "strategy": "oca",
+      "tier": "T1",
+      "oca_repos": [
+        {
+          "ref": "OCA/web",
+          "exists": true,
+          "url": "https://github.com/OCA/web"
+        }
+      ],
+      "oca_modules": [
+        "web_responsive"
+      ],
+      "ipai_modules": [],
+      "external_service": null,
+      "notes": "OCA web_responsive makes backend mobile-friendly",
+      "covered": true,
+      "evidence": {
+        "t1_mapped": true,
+        "t2_installable": null,
+        "t3_functional": null,
+        "t4_verified": null
+      }
+    },
+    {
+      "ee_module": "web_studio",
+      "domain": "studio",
+      "description": "Odoo Studio (No-Code Customization)",
+      "strategy": "ce+oca",
+      "tier": "T1",
+      "oca_repos": [
+        {
+          "ref": "OCA/server-tools",
+          "exists": true,
+          "url": "https://github.com/OCA/server-tools"
+        },
+        {
+          "ref": "OCA/automation",
+          "exists": true,
+          "url": "https://github.com/OCA/automation"
+        }
+      ],
+      "oca_modules": [
+        "base_custom_info",
+        "auditlog"
+      ],
+      "ipai_modules": [],
+      "external_service": null,
+      "notes": "CE base_automation + ir.actions + OCA web widgets + auditlog provide no-code customization. Studio's visual builder has no 1:1 equivalent, but functional parity is achievable.",
+      "covered": true,
+      "evidence": {
+        "t1_mapped": true,
+        "t2_installable": null,
+        "t3_functional": null,
+        "t4_verified": null
+      }
+    },
+    {
+      "ee_module": "website_studio",
+      "domain": "studio",
+      "description": "Website Studio",
+      "strategy": "ce",
+      "tier": "T1",
+      "oca_repos": [],
+      "oca_modules": [],
+      "ipai_modules": [],
+      "external_service": null,
+      "notes": "CE website builder provides drag-and-drop editing natively",
+      "covered": true,
+      "evidence": {
+        "t1_mapped": true,
+        "t2_installable": null,
+        "t3_functional": null,
+        "t4_verified": null
+      }
+    },
+    {
+      "ee_module": "whatsapp",
+      "domain": "whatsapp",
+      "description": "WhatsApp Integration",
+      "strategy": "external+ipai",
+      "tier": "T1",
+      "oca_repos": [],
+      "oca_modules": [],
+      "ipai_modules": [
+        "ipai_whatsapp_connector"
+      ],
+      "external_service": "WhatsApp Business API (Meta Cloud API)",
+      "notes": "Direct WhatsApp Business API integration via ipai connector",
+      "covered": true,
+      "evidence": {
+        "t1_mapped": true,
+        "t2_installable": null,
+        "t3_functional": null,
+        "t4_verified": null
+      }
+    },
+    {
+      "ee_module": "whatsapp_account",
+      "domain": "whatsapp",
+      "description": "WhatsApp - Accounting Bridge",
+      "strategy": "external+ipai",
+      "tier": "T1",
+      "oca_repos": [],
+      "oca_modules": [],
+      "ipai_modules": [
+        "ipai_whatsapp_connector"
+      ],
+      "external_service": "WhatsApp Business API",
+      "notes": "Invoice notifications via WhatsApp",
+      "covered": true,
+      "evidence": {
+        "t1_mapped": true,
+        "t2_installable": null,
+        "t3_functional": null,
+        "t4_verified": null
+      }
+    },
+    {
+      "ee_module": "whatsapp_event",
+      "domain": "whatsapp",
+      "description": "WhatsApp - Events Bridge",
+      "strategy": "external+ipai",
+      "tier": "T1",
+      "oca_repos": [],
+      "oca_modules": [],
+      "ipai_modules": [
+        "ipai_whatsapp_connector"
+      ],
+      "external_service": "WhatsApp Business API",
+      "notes": "Event reminders via WhatsApp",
+      "covered": true,
+      "evidence": {
+        "t1_mapped": true,
+        "t2_installable": null,
+        "t3_functional": null,
+        "t4_verified": null
+      }
+    },
+    {
+      "ee_module": "whatsapp_pos",
+      "domain": "whatsapp",
+      "description": "WhatsApp - POS Bridge",
+      "strategy": "external+ipai",
+      "tier": "T1",
+      "oca_repos": [],
+      "oca_modules": [],
+      "ipai_modules": [
+        "ipai_whatsapp_connector"
+      ],
+      "external_service": "WhatsApp Business API",
+      "notes": "POS receipts via WhatsApp",
+      "covered": true,
+      "evidence": {
+        "t1_mapped": true,
+        "t2_installable": null,
+        "t3_functional": null,
+        "t4_verified": null
+      }
+    },
+    {
+      "ee_module": "whatsapp_sale",
+      "domain": "whatsapp",
+      "description": "WhatsApp - Sales Bridge",
+      "strategy": "external+ipai",
+      "tier": "T1",
+      "oca_repos": [],
+      "oca_modules": [],
+      "ipai_modules": [
+        "ipai_whatsapp_connector"
+      ],
+      "external_service": "WhatsApp Business API",
+      "notes": "Quotation sharing via WhatsApp",
+      "covered": true,
+      "evidence": {
+        "t1_mapped": true,
+        "t2_installable": null,
+        "t3_functional": null,
+        "t4_verified": null
+      }
+    },
+    {
+      "ee_module": "whatsapp_sale_subscription",
+      "domain": "whatsapp",
+      "description": "WhatsApp - Subscription Bridge",
+      "strategy": "external+ipai",
+      "tier": "T1",
+      "oca_repos": [],
+      "oca_modules": [],
+      "ipai_modules": [
+        "ipai_whatsapp_connector"
+      ],
+      "external_service": "WhatsApp Business API",
+      "notes": "Subscription reminders via WhatsApp",
+      "covered": true,
+      "evidence": {
+        "t1_mapped": true,
+        "t2_installable": null,
+        "t3_functional": null,
+        "t4_verified": null
+      }
+    },
+    {
+      "ee_module": "whatsapp_stock",
+      "domain": "whatsapp",
+      "description": "WhatsApp - Stock Bridge",
+      "strategy": "external+ipai",
+      "tier": "T1",
+      "oca_repos": [],
+      "oca_modules": [],
+      "ipai_modules": [
+        "ipai_whatsapp_connector"
+      ],
+      "external_service": "WhatsApp Business API",
+      "notes": "Delivery notifications via WhatsApp",
+      "covered": true,
+      "evidence": {
+        "t1_mapped": true,
+        "t2_installable": null,
+        "t3_functional": null,
+        "t4_verified": null
+      }
+    }
+  ]
+}

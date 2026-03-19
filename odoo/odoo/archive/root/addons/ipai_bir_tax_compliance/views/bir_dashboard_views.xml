@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Filing Deadline Calendar View -->
+    <record id="view_bir_filing_deadline_calendar" model="ir.ui.view">
+        <field name="name">bir.filing.deadline.calendar</field>
+        <field name="model">bir.filing.deadline</field>
+        <field name="arch" type="xml">
+            <calendar date_start="deadline_date" color="state" mode="month" quick_create="0">
+                <field name="name"/>
+                <field name="form_type"/>
+                <field name="state"/>
+            </calendar>
+        </field>
+    </record>
+
+    <!-- Filing Deadline Tree View -->
+    <record id="view_bir_filing_deadline_tree" model="ir.ui.view">
+        <field name="name">bir.filing.deadline.tree</field>
+        <field name="model">bir.filing.deadline</field>
+        <field name="arch" type="xml">
+            <list decoration-danger="state == 'overdue'" decoration-warning="state == 'due_soon'" decoration-success="state == 'filed'">
+                <field name="name"/>
+                <field name="form_type"/>
+                <field name="deadline_date"/>
+                <field name="reminder_date"/>
+                <field name="return_id"/>
+                <field name="state" widget="badge"
+                       decoration-info="state == 'upcoming'"
+                       decoration-warning="state == 'due_soon'"
+                       decoration-danger="state == 'overdue'"
+                       decoration-success="state == 'filed'"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Filing Deadline Form View -->
+    <record id="view_bir_filing_deadline_form" model="ir.ui.view">
+        <field name="name">bir.filing.deadline.form</field>
+        <field name="model">bir.filing.deadline</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="form_type"/>
+                            <field name="company_id"/>
+                        </group>
+                        <group>
+                            <field name="period_month"/>
+                            <field name="period_year"/>
+                            <field name="deadline_date"/>
+                            <field name="reminder_date"/>
+                        </group>
+                    </group>
+                    <group>
+                        <field name="return_id"/>
+                        <field name="state"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Search View -->
+    <record id="view_bir_filing_deadline_search" model="ir.ui.view">
+        <field name="name">bir.filing.deadline.search</field>
+        <field name="model">bir.filing.deadline</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="form_type"/>
+                <filter name="upcoming" string="Upcoming" domain="[('state', '=', 'upcoming')]"/>
+                <filter name="due_soon" string="Due Soon" domain="[('state', '=', 'due_soon')]"/>
+                <filter name="overdue" string="Overdue" domain="[('state', '=', 'overdue')]"/>
+                <filter name="not_filed" string="Not Filed" domain="[('state', '!=', 'filed')]"/>
+                <separator/>
+                <filter name="this_month" string="This Month" domain="[('deadline_date', '&gt;=', (context_today()).strftime('%Y-%m-01')), ('deadline_date', '&lt;', (context_today() + relativedelta(months=1)).strftime('%Y-%m-01'))]"/>
+                <group expand="0" string="Group By">
+                    <filter name="group_form" string="Form Type" context="{'group_by': 'form_type'}"/>
+                    <filter name="group_state" string="Status" context="{'group_by': 'state'}"/>
+                    <filter name="group_month" string="Month" context="{'group_by': 'deadline_date:month'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Action -->
+    <record id="action_bir_filing_deadline" model="ir.actions.act_window">
+        <field name="name">Filing Deadlines</field>
+        <field name="res_model">bir.filing.deadline</field>
+        <field name="view_mode">calendar,list,form</field>
+        <field name="context">{'search_default_not_filed': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No filing deadlines
+            </p>
+            <p>
+                Run the "Generate Deadlines" scheduled action to create filing deadlines.
+            </p>
+        </field>
+    </record>
+
+    <!-- Dashboard Action (Kanban-style overview) -->
+    <record id="action_bir_compliance_dashboard" model="ir.actions.act_window">
+        <field name="name">BIR Compliance Dashboard</field>
+        <field name="res_model">bir.filing.deadline</field>
+        <field name="view_mode">calendar,list</field>
+        <field name="context">{'search_default_not_filed': 1}</field>
+    </record>
+</odoo>

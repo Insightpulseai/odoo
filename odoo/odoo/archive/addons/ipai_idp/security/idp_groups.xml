@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- IDP Security Groups -->
+
+    <!-- Category for IDP groups -->
+    <record id="module_category_idp" model="ir.module.category">
+        <field name="name">IDP - Document Processing</field>
+        <field name="description">Intelligent Document Processing module access rights</field>
+        <field name="sequence">50</field>
+    </record>
+
+    <!-- Base User: Can view documents assigned to them -->
+    <record id="group_idp_user" model="res.groups">
+        <field name="name">IDP User</field>
+        <field name="category_id" ref="module_category_idp"/>
+        <field name="comment">Can view IDP documents and their extractions. Cannot modify.</field>
+    </record>
+
+    <!-- Reviewer: Can review and correct extractions -->
+    <record id="group_idp_reviewer" model="res.groups">
+        <field name="name">IDP Reviewer</field>
+        <field name="category_id" ref="module_category_idp"/>
+        <field name="implied_ids" eval="[(4, ref('group_idp_user'))]"/>
+        <field name="comment">Can review pending extractions and submit corrections.</field>
+    </record>
+
+    <!-- Manager: Can approve, reprocess, export -->
+    <record id="group_idp_manager" model="res.groups">
+        <field name="name">IDP Manager</field>
+        <field name="category_id" ref="module_category_idp"/>
+        <field name="implied_ids" eval="[(4, ref('group_idp_reviewer'))]"/>
+        <field name="comment">Can approve documents, trigger reprocessing, and export data.</field>
+    </record>
+
+    <!-- Admin: Full access including model versions and validation rules -->
+    <record id="group_idp_admin" model="res.groups">
+        <field name="name">IDP Administrator</field>
+        <field name="category_id" ref="module_category_idp"/>
+        <field name="implied_ids" eval="[(4, ref('group_idp_manager'))]"/>
+        <field name="users" eval="[(4, ref('base.user_admin'))]"/>
+        <field name="comment">Full access to IDP configuration: model versions, validation rules, settings.</field>
+    </record>
+
+</odoo>

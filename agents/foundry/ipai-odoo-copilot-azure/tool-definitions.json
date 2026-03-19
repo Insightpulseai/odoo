@@ -1,0 +1,224 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "version": "1.0.0",
+  "stage": 1,
+  "description": "Stage 1 read-only tool definitions for IPAI Odoo Copilot Azure Foundry agent. OpenAI function-calling schema format.",
+  "tools": [
+    {
+      "type": "function",
+      "function": {
+        "name": "read_record",
+        "description": "Read field values from a specific Odoo record by model name and record ID. Returns the requested fields for the given record, subject to user ACL and company/entity scope checks.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "model": {
+              "type": "string",
+              "description": "The Odoo model technical name (e.g. 'res.partner', 'sale.order', 'account.move')"
+            },
+            "record_id": {
+              "type": "integer",
+              "description": "The database ID of the record to read"
+            },
+            "fields": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "List of field names to read. If empty, reads all accessible fields."
+            }
+          },
+          "required": ["model", "record_id"]
+        }
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "search_records",
+        "description": "Search Odoo records by domain filter and return matching records with specified fields. Uses Odoo's domain syntax for filtering.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "model": {
+              "type": "string",
+              "description": "The Odoo model technical name (e.g. 'res.partner', 'sale.order')"
+            },
+            "domain": {
+              "type": "array",
+              "description": "Odoo domain filter as a list of tuples, e.g. [['state', '=', 'draft'], ['amount_total', '>', 1000]]",
+              "items": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "A domain filter tuple, e.g. ['state', '=', 'draft']"
+              }
+            },
+            "fields": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "List of field names to return. If empty, returns name and id."
+            },
+            "limit": {
+              "type": "integer",
+              "description": "Maximum number of records to return. Default 20, max 100.",
+              "default": 20
+            }
+          },
+          "required": ["model", "domain"]
+        }
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "search_docs",
+        "description": "Search the knowledge base for articles matching the query. Uses Azure AI Search or Odoo knowledge module depending on configuration.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "query": {
+              "type": "string",
+              "description": "The search query text"
+            },
+            "kb_scope": {
+              "type": "string",
+              "description": "Knowledge base scope to search within (e.g. 'general-kb', 'finance-close-kb', 'bir-compliance', 'marketing-playbooks')",
+              "default": "general-kb"
+            },
+            "limit": {
+              "type": "integer",
+              "description": "Maximum number of results to return. Default 5, max 20.",
+              "default": 5
+            }
+          },
+          "required": ["query"]
+        }
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "get_report",
+        "description": "Generate and return an Odoo report (PDF or data) for the specified records. Returns a summary of the report content.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "report_name": {
+              "type": "string",
+              "description": "The technical name of the report action (e.g. 'account.report_invoice', 'sale.report_saleorder')"
+            },
+            "record_ids": {
+              "type": "array",
+              "items": {
+                "type": "integer"
+              },
+              "description": "List of record IDs to include in the report"
+            }
+          },
+          "required": ["report_name", "record_ids"]
+        }
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "read_finance_close",
+        "description": "Read the status and details of finance closing tasks for a given fiscal year and period. Returns closing task statuses, deadlines, and completion metrics.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "fiscal_year": {
+              "type": "string",
+              "description": "The fiscal year identifier (e.g. '2026', 'FY2026')"
+            },
+            "period": {
+              "type": "string",
+              "description": "The closing period (e.g. '2026-01', '2026-Q1', 'January 2026')"
+            }
+          },
+          "required": ["fiscal_year", "period"]
+        }
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "view_campaign_perf",
+        "description": "View performance metrics for a marketing campaign including impressions, clicks, conversions, spend, and ROI within a date range.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "campaign_id": {
+              "type": "integer",
+              "description": "The database ID of the marketing campaign record"
+            },
+            "date_range": {
+              "type": "object",
+              "properties": {
+                "start": {
+                  "type": "string",
+                  "description": "Start date in ISO 8601 format (YYYY-MM-DD)"
+                },
+                "end": {
+                  "type": "string",
+                  "description": "End date in ISO 8601 format (YYYY-MM-DD)"
+                }
+              },
+              "required": ["start", "end"],
+              "description": "Date range for campaign performance data"
+            }
+          },
+          "required": ["campaign_id", "date_range"]
+        }
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "view_dashboard",
+        "description": "View analytics dashboard data including KPIs, charts, and summary metrics. Returns the dashboard configuration and current data snapshot.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "dashboard_id": {
+              "type": "integer",
+              "description": "The database ID of the analytics dashboard"
+            }
+          },
+          "required": ["dashboard_id"]
+        }
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "search_strategy_docs",
+        "description": "Search strategy and playbook documents in the knowledge base. Scoped to strategy, planning, and operational playbook content.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "query": {
+              "type": "string",
+              "description": "The search query text for strategy documents"
+            },
+            "scope": {
+              "type": "string",
+              "description": "Document scope filter (e.g. 'strategy', 'playbook', 'operational', 'planning')",
+              "default": "strategy"
+            },
+            "limit": {
+              "type": "integer",
+              "description": "Maximum number of results to return. Default 5, max 20.",
+              "default": 5
+            }
+          },
+          "required": ["query"]
+        }
+      }
+    }
+  ]
+}

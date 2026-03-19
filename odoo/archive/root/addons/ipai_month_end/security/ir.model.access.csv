@@ -1,0 +1,9 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_ph_holiday_user,ipai.ph.holiday.user,model_ipai_ph_holiday,account.group_account_user,1,0,0,0
+access_ph_holiday_manager,ipai.ph.holiday.manager,model_ipai_ph_holiday,account.group_account_manager,1,1,1,1
+access_task_template_user,ipai.month.end.task.template.user,model_ipai_month_end_task_template,account.group_account_user,1,0,0,0
+access_task_template_manager,ipai.month.end.task.template.manager,model_ipai_month_end_task_template,account.group_account_manager,1,1,1,1
+access_closing_user,ipai.month.end.closing.user,model_ipai_month_end_closing,account.group_account_user,1,1,1,0
+access_closing_manager,ipai.month.end.closing.manager,model_ipai_month_end_closing,account.group_account_manager,1,1,1,1
+access_task_user,ipai.month.end.task.user,model_ipai_month_end_task,account.group_account_user,1,1,0,0
+access_task_manager,ipai.month.end.task.manager,model_ipai_month_end_task,account.group_account_manager,1,1,1,1

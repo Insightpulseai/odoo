@@ -1,0 +1,31 @@
+
+[OK] All expected skill stubs are present.
+{
+  "coverage": {
+    "odoo19_docs": {
+      "total": 63,
+      "found": 63,
+      "missing": 0,
+      "pct": 100.0
+    },
+    "vercel_agent_skills": {
+      "total": 6,
+      "found": 6,
+      "missing": 0,
+      "pct": 100.0
+    },
+    "supabase_agent_skills": {
+      "total": 1,
+      "found": 1,
+      "missing": 0,
+      "pct": 100.0
+    }
+  },
+  "overall": {
+    "total": 70,
+    "found": 70,
+    "missing": 0,
+    "pct": 100.0
+  },
+  "missing_skills": []
+}

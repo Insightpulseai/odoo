@@ -1,0 +1,71 @@
+version: 1
+type: product_skill
+family: product_portfolio
+status: draft
+owner: agents
+
+skill:
+  name: portfolio-manager
+  purpose: >
+    Own goal hierarchy and capacity allocation — OKRs, Azure Boards work items,
+    milestone tracking, resource allocation. Ensure every work item links to a
+    goal and capacity does not exceed availability.
+
+  triggers:
+    - quarterly planning cycle
+    - goal update or OKR amendment
+    - capacity rebalance needed
+    - milestone review gate
+    - work item triage
+
+  inputs:
+    - planning period
+    - OKR set
+    - work item backlog
+    - team capacity data
+
+  steps:
+    - validate OKR hierarchy (enterprise to platform to team)
+    - check work item linkage to goals
+    - verify capacity against timeline
+    - detect orphan work items (no parent goal)
+    - validate milestone gates (prerequisites met)
+    - produce capacity allocation plan with evidence
+
+  outputs:
+    - validated_goal_hierarchy
+    - capacity_allocation_plan
+    - orphan_work_item_report
+    - milestone_risk_assessment
+    - evidence
+
+  guardrails:
+    - never modify OKRs without stakeholder review
+    - never approve capacity allocation exceeding available bandwidth
+    - flag goals without measurable key results
+    - require quarterly review cadence
+    - never delete orphan work items (flag for triage only)
+    - capacity model must account for maintenance and unplanned work buffer (minimum 20%)
+
+  evidence:
+    required: true
+    format: "docs/evidence/{stamp}/portfolio/{planning-period}/"
+
+  evals:
+    dimensions:
+      - accuracy
+      - completeness
+      - safety
+      - policy_adherence
+      - evidence_quality
+    thresholds:
+      accuracy: 0.90
+      completeness: 0.95
+      safety: 0.99
+      policy_adherence: 0.95
+
+cross_references:
+  - ssot/governance/enterprise_okrs.yaml
+  - ssot/governance/platform-strategy-2026.yaml
+  - docs/contracts/boards-to-spec-contract.md
+  - agents/knowledge/benchmarks/openai-product-use-cases.md

@@ -1,0 +1,175 @@
+name: preview
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, closed]
+    branches: ["main"]
+
+permissions:
+  contents: read
+  pull-requests: write
+
+concurrency:
+  group: preview-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  deploy-preview:
+    name: Deploy Preview
+    if: github.event.action != 'closed'
+    runs-on: ubuntu-latest
+    environment: preview
+    timeout-minutes: 20
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Supabase CLI
+        uses: supabase/setup-cli@v1
+        with:
+          version: latest
+
+      - name: Login to Supabase
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN_PREVIEW }}
+        run: |
+          set -euo pipefail
+          if [ -z "$SUPABASE_ACCESS_TOKEN" ]; then
+            echo "::warning::SUPABASE_ACCESS_TOKEN_PREVIEW not set, skipping preview"
+            exit 0
+          fi
+          supabase login --token "$SUPABASE_ACCESS_TOKEN"
+
+      - name: Link preview project
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN_PREVIEW }}
+          SUPABASE_PROJECT_REF: ${{ secrets.SUPABASE_PROJECT_REF_PREVIEW }}
+        run: |
+          set -euo pipefail
+          if [ -z "$SUPABASE_PROJECT_REF" ]; then
+            echo "::warning::SUPABASE_PROJECT_REF_PREVIEW not set, skipping preview"
+            exit 0
+          fi
+          supabase link --project-ref "$SUPABASE_PROJECT_REF"
+
+      - name: Push migrations (preview)
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN_PREVIEW }}
+        run: |
+          set -euo pipefail
+          supabase db push
+
+      - name: Deploy Edge Functions (preview)
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN_PREVIEW }}
+        run: |
+          set -euo pipefail
+          if [ ! -d supabase/functions ]; then
+            echo "No functions directory, skipping"
+            exit 0
+          fi
+
+          # Deploy each function
+          for dir in supabase/functions/*/; do
+            [ -d "$dir" ] || continue
+            fn=$(basename "$dir")
+
+            # Skip shared directory
+            if [ "$fn" = "_shared" ]; then
+              continue
+            fi
+
+            if [ -f "${dir}index.ts" ]; then
+              echo "Deploying $fn..."
+              supabase functions deploy "$fn" || echo "Warning: Failed to deploy $fn"
+            fi
+          done
+
+      - name: Comment preview endpoints
+        if: success()
+        uses: actions/github-script@v7
+        env:
+          SUPABASE_URL_PREVIEW: ${{ secrets.SUPABASE_URL_PREVIEW }}
+        with:
+          script: |
+            const url = process.env.SUPABASE_URL_PREVIEW;
+            if (!url) {
+              console.log("SUPABASE_URL_PREVIEW not set, skipping comment");
+              return;
+            }
+
+            const pr = context.payload.pull_request.number;
+            const sha = context.payload.pull_request.head.sha.slice(0, 7);
+
+            const body = [
+              "### Preview Environment Deployed",
+              "",
+              "| Resource | URL |",
+              "|----------|-----|",
+              `| Supabase | \`${url}\` |`,
+              `| Health Check | \`${url}/functions/v1/health-check\` |`,
+              `| Ops Executor | \`${url}/functions/v1/ops-executor\` |`,
+              `| Plane Sync | \`${url}/functions/v1/plane-sync\` |`,
+              "",
+              `**Commit:** \`${sha}\``,
+              "",
+              "---",
+              "*Preview uses a shared Supabase project. Migrations are applied on each PR update.*"
+            ].join("\n");
+
+            // Find existing preview comment
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: pr
+            });
+
+            const existingComment = comments.find(c =>
+              c.body.includes("### Preview Environment Deployed")
+            );
+
+            if (existingComment) {
+              // Update existing comment
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: existingComment.id,
+                body
+              });
+            } else {
+              // Create new comment
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: pr,
+                body
+              });
+            }
+
+  teardown-preview:
+    name: Teardown Preview
+    if: github.event.action == 'closed'
+    runs-on: ubuntu-latest
+    environment: preview
+    timeout-minutes: 5
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Comment teardown note
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const pr = context.payload.pull_request.number;
+            const merged = context.payload.pull_request.merged;
+
+            const body = merged
+              ? "### Preview Teardown\nPR merged. Preview environment cleaned up (shared project, no destructive action needed)."
+              : "### Preview Teardown\nPR closed without merge. Preview environment cleaned up.";
+
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: pr,
+              body
+            });

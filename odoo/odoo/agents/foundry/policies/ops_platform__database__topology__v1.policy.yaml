@@ -1,0 +1,101 @@
+version: 1
+namespace: ipai.ops_platform.database.topology.v1
+artifact_type: policy
+repo_key: ops_platform
+domain: database
+subject: topology
+
+rules:
+  odoo_and_supabase_must_not_share_postgres_server: true
+  postgres_server_boundary_is_environment_boundary: true
+  production_databases_must_not_reside_on_dev_servers: true
+  public_access_disabled_for_prod_when_private_endpoint_ready: true
+  long_term_backup_required_for_prod: true
+
+target_topology:
+  odoo:
+    dev:
+      server: ipai-odoo-dev-pg
+      resource_group: rg-ipai-dev
+      databases: [odoo_dev]
+    staging:
+      server: ipai-odoo-staging-pg
+      resource_group: rg-ipai-staging
+      databases: [odoo_staging]
+    prod:
+      server: ipai-odoo-prod-pg
+      resource_group: rg-ipai-prod
+      databases: [odoo]
+
+  supabase:
+    dev:
+      server: ipai-supabase-dev-pg
+      resource_group: rg-ipai-agents-dev
+      databases: [postgres]
+      note: "Currently vm-ipai-supabase-dev (VM). Target: dedicated PG Flexible Server or repurpose pg-ipai-dev."
+    staging:
+      server: ipai-supabase-staging-pg
+      resource_group: rg-ipai-staging
+      databases: [postgres]
+    prod:
+      server: ipai-supabase-prod-pg
+      resource_group: rg-ipai-prod
+      databases: [postgres]
+
+observed_state:
+  ipai-odoo-dev-pg:
+    resource_group: rg-ipai-dev
+    databases_present:
+      - postgres
+      - odoo
+      - odoo_dev
+      - odoo_staging
+      - odoo_prod
+    findings:
+      - id: mixed-env-databases
+        severity: high
+        message: "Dev server hosts prod/staging DBs. Target: one server per environment."
+      - id: forbidden-name-odoo_prod
+        severity: high
+        message: "odoo_prod is forbidden. Production DB name must be 'odoo'."
+      - id: public-access-open
+        severity: high
+        message: "Public access enabled with broad Azure-service firewall bypass. No private endpoint."
+      - id: auth-posture-mixed
+        severity: medium
+        message: "Managed identity enabled but PostgreSQL auth only. Identity contract unclear."
+      - id: retention-short
+        severity: medium
+        message: "7-day retention. No vaulted/LTR backup configured."
+
+  vm-ipai-supabase-dev:
+    resource_group: rg-ipai-agents-dev
+    supporting_resources:
+      - vm-ipai-supabase-dev_OsDisk
+      - vm-ipai-supabase-devNSG
+      - vm-ipai-supabase-devPublicIP
+      - vm-ipai-supabase-devVMNic
+      - vm-ipai-supabase-devVNET
+    findings:
+      - id: service-not-contracted
+        severity: high
+        message: "Supabase runtime exists as VM but lacks declared connection contracts."
+      - id: ownership-boundary-unclear
+        severity: medium
+        message: "Supabase runs under agents RG. Platform/data ownership boundary unclear."
+      - id: observability-not-proven
+        severity: high
+        message: "No proven logging, alerting, backup, or secret-source integration."
+
+security_target:
+  prod:
+    public_access: disabled
+    allow_azure_services_bypass: false
+    private_endpoint: required
+    tls_enforced: true
+    ha_enabled: true
+    backup_retention_days: 35
+    long_term_retention: enabled
+    app_login: non_superuser
+    human_admin_path: separated_from_app_runtime
+    auth_mode: managed_identity_preferred

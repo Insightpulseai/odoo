@@ -28,7 +28,7 @@
 | C-14 | [Supabase ETL](SUPABASE_ETL_CONTRACT.md)               | Supabase Postgres (CDC/WAL)                 | Analytics Buckets (Iceberg) / BigQuery    | ✅ Active  | `pg_stat_replication`                      |
 | C-15 | [Odoo Settings](ODOO_SETTINGS_CONTRACT.md)             | `config/odoo/settings.yaml`                 | Odoo `ir.config_parameter`                | ✅ Active  | `apply_settings.py --verify-only`          |
 | C-16 | Odoo Auth Providers                                    | `config/odoo/auth_providers.yaml`           | Odoo `auth.oauth.provider`                | ✅ Active  | `apply_auth_providers.py --enforce`        |
-| C-17 | [AI Copilot Bridge](AI_COPILOT_CONTRACT.md)            | `platform/ai/providers/gemini_tools.ts`     | `addons/ipai/ipai_ai_copilot/`            | 🔲 Planned | `check_parity_and_bridges_ssot.py`         |
+| C-17 | ~~[AI Copilot Bridge](AI_COPILOT_CONTRACT.md)~~         | `platform/ai/providers/gemini_tools.ts`     | `addons/ipai/ipai_ai_copilot/`            | ❌ Deprecated | Superseded by C-30 |
 | C-18 | [DigitalOcean API](C-DO-01-digitalocean-api.md)        | DigitalOcean v2 REST API                    | `ops.do_*` tables, ops-console UI         | ✅ Active  | `ssot/providers/digitalocean/provider.yaml` |
 | C-19 | [Odoo.sh Parity](C-ODOOS-01-parity.md)                 | ops-console platform                        | All console modules                       | ✅ Active  | `spec/odooops-console/constitution.md`     |
 | C-20 | [Mail Catcher](C-MAIL-01-mail-catcher.md)              | Mailgun relay + `ops.mail_events`           | ops-console Observability                 | 🔲 Planned | CI gate (task 33)                          |
@@ -41,6 +41,13 @@
 | C-27 | [Addons Manifest](ADDONS_MANIFEST_CONTRACT.md)               | `config/addons.manifest.yaml`         | `docker/Dockerfile.unified`, `oca-aggregate.yml`  | ✅ Active | `addons-manifest-guard.yml`                |
 | C-28 | [Auth Architecture](../architecture/AUTH_ARCHITECTURE.md)    | Supabase Auth (IdP)                   | Odoo, web apps, mobile, n8n, MCP, Keycloak        | ✅ Active | `spec/platform-auth/constitution.md`       |
 | C-29 | [Azure Bot Service](AZURE_BOT_SERVICE_CONTRACT.md)           | Azure Bot Service (F0)                | n8n webhook, Supabase identity, Odoo XML-RPC      | ✅ Active | `scripts/azure/deploy-bot-service.sh`      |
+| C-30 | [Copilot Runtime Selection](COPILOT_RUNTIME_CONTRACT.md)     | Azure AI Foundry (`data-intel-ph`)    | `addons/ipai/ipai_odoo_copilot/`                   | ✅ Active | `scripts/ci/validate_ssot_ai.py`           |
+| C-31 | [Boards to Spec](boards-to-spec-contract.md)                 | Azure Boards (Epic/Issue)             | `spec/<slug>/` bundle                               | ✅ Active | Spec Kit validate (`spec_validate.sh`)     |
+| C-32 | [Spec to Pipeline](spec-to-pipeline-contract.md)             | `spec/<slug>/` bundle                 | `.azuredevops/pipelines/odoo-module.yml`             | ✅ Active | Pipeline param validation stage            |
+| C-33 | [Pipeline to Odoo.sh](pipeline-to-odoo-sh-contract.md)       | Azure Pipelines / GitHub Actions      | Azure Container Apps / Odoo.sh                       | ✅ Active | Deploy stage smoke checks                  |
+| C-34 | [Eval Gate](eval-gate-contract.md)                           | `foundry/evals/<slug>/thresholds.yaml`| Production promotion gate                            | ✅ Active | Eval_Gate pipeline stage                   |
+| C-35 | [Foundry/VS Code Auth](foundry-vscode-auth-contract.md)      | Entra ID app registration             | VS Code, Foundry, MCP servers, Azure Pipelines       | ⚠️ Partial | Auth completion checklist                  |
+| C-36 | [Azure Resource Graph](azure-resource-graph-contract.md)     | Azure Resource Graph (KQL)            | SSOT reconciliation, drift detection, governance      | ✅ Active | `scripts/azure/resource_graph/run_query.sh` |
 
 ---
 

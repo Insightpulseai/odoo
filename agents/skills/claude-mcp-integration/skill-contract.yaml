@@ -1,0 +1,48 @@
+version: 1
+name: claude-mcp-integration
+description: "Integrate Claude with external tools via MCP — server registration, tool design, auth, dynamic discovery"
+type: benchmark_skill
+skill_classification: capability_uplift
+owner_persona: claude-runtime-integrator
+source_family: anthropic_skill_authoring
+status: active
+
+triggers:
+  - "MCP integration"
+  - "connect Claude to tools"
+  - "MCP server setup"
+  - "tool registration for Claude"
+
+inputs:
+  - tool_service: "External service to integrate"
+  - operations: "What operations Claude needs"
+  - auth_method: "Available auth methods"
+  - tool_count: "Number of tools being registered"
+
+steps:
+  - id: design_tools
+    action: "Design tool schema with namespace prefixes, clear descriptions, high-signal responses"
+  - id: select_auth
+    action: "Choose auth method: managed identity > OAuth2 > API key"
+  - id: register_server
+    action: "Register MCP server with tool definitions"
+  - id: test_descriptions
+    action: "Test tool descriptions against sample prompts for accuracy"
+  - id: configure_discovery
+    action: "If >10 tools: implement dynamic discovery with defer_loading"
+
+outputs:
+  - mcp_server_config: "Server registration details"
+  - tool_schemas: "Tool definitions with descriptions"
+  - auth_config: "Auth method and configuration"
+  - discovery_config: "Dynamic loading configuration if applicable"
+
+guardrails:
+  - "Tool descriptions are prompt engineering — invest in quality"
+  - "Auth hierarchy: managed identity > OAuth2 > API key"
+  - "Return high-signal data, strip noise (UUIDs, MIME types)"
+  - "Error messages must teach the agent what went wrong"
+  - "Test naming schemes empirically"
+  - "Dynamic discovery if >10 tools (defer_loading)"
+
+benchmark_source: "https://www.anthropic.com/engineering/writing-tools-for-agents"

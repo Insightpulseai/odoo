@@ -1,0 +1,8 @@
+ .github/workflows/canonical-gate.yml               |   3 +
+ config/ci/shadow_ledger_baseline.txt               |  11 ++
+ scripts/ci/check_shadow_ledger.sh                  |  55 +++++++
+ spec/odoo-ee-parity-seed/plan.md                   |   7 +-
+ spec/odoo-ee-parity-seed/prd.md                    | 177 +++++++++++++++++++++
+ spec/odoo-ee-parity-seed/spec.md                   |  21 ---
+ .../supabase-integration/OWNERSHIP_DECLARATION.md  |  29 ++++
+ 7 files changed, 279 insertions(+), 24 deletions(-)

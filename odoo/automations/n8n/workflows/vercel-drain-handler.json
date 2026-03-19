@@ -1,0 +1,235 @@
+{
+  "name": "Vercel Drain Handler",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "vercel-drain",
+        "options": {}
+      },
+      "id": "webhook-vercel",
+      "name": "Webhook: Vercel Drain",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [250, 300]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{ $json.type }}",
+              "operation": "equals",
+              "value2": "log"
+            }
+          ]
+        }
+      },
+      "id": "if-log",
+      "name": "Is Log Event?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [450, 200]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{ $json.type }}",
+              "operation": "equals",
+              "value2": "trace"
+            }
+          ]
+        }
+      },
+      "id": "if-trace",
+      "name": "Is Trace Event?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [450, 400]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{ $json.level }}",
+              "operation": "equals",
+              "value2": "error"
+            }
+          ]
+        }
+      },
+      "id": "if-error",
+      "name": "Is Error?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [650, 100]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.SUPABASE_URL }}/rest/v1/vercel_logs",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "={{ $env.SUPABASE_ANON_KEY }}"
+            },
+            {
+              "name": "Prefer",
+              "value": "return=minimal"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "event_type",
+              "value": "={{ $json.type }}"
+            },
+            {
+              "name": "level",
+              "value": "={{ $json.level }}"
+            },
+            {
+              "name": "message",
+              "value": "={{ $json.message }}"
+            },
+            {
+              "name": "deployment_id",
+              "value": "={{ $json.deploymentId }}"
+            },
+            {
+              "name": "project_id",
+              "value": "={{ $json.projectId }}"
+            },
+            {
+              "name": "timestamp",
+              "value": "={{ $json.timestamp }}"
+            },
+            {
+              "name": "raw_payload",
+              "value": "={{ JSON.stringify($json) }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "supabase-log",
+      "name": "Store in Supabase",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 3,
+      "position": [650, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.ODOO_URL }}/xmlrpc/2/object",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": []
+        },
+        "options": {}
+      },
+      "id": "create-odoo-task",
+      "name": "Create Odoo Task",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 3,
+      "position": [850, 50],
+      "notes": "Create helpdesk ticket from error"
+    },
+    {
+      "parameters": {
+        "channel": "#alerts",
+        "text": "=:warning: *Vercel Error*\n\nProject: {{ $json.projectId }}\nDeployment: {{ $json.deploymentId }}\nMessage: {{ $json.message }}\n\n<{{ $env.VERCEL_DASHBOARD_URL }}/{{ $json.projectId }}|View in Vercel>",
+        "otherOptions": {}
+      },
+      "id": "slack-alert",
+      "name": "Slack Alert",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 1,
+      "position": [850, 150],
+      "notes": "Alert on errors"
+    },
+    {
+      "parameters": {},
+      "id": "noop-end",
+      "name": "No Action",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [850, 400]
+    }
+  ],
+  "connections": {
+    "Webhook: Vercel Drain": {
+      "main": [
+        [
+          {
+            "node": "Is Log Event?",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Is Trace Event?",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Store in Supabase",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Is Log Event?": {
+      "main": [
+        [
+          {
+            "node": "Is Error?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Is Error?": {
+      "main": [
+        [
+          {
+            "node": "Create Odoo Task",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Slack Alert",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "No Action",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "saveManualExecutions": true,
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "staticData": null,
+  "tags": ["vercel", "observability", "alerts"],
+  "triggerCount": 1,
+  "updatedAt": "2026-01-26T00:00:00.000Z",
+  "versionId": "1"
+}

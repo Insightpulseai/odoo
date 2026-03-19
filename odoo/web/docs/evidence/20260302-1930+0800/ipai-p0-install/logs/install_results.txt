@@ -1,0 +1,94 @@
+IPAI P0 Module Installation Results
+====================================
+Date: 2026-03-02T19:30:00+08:00
+Server: odoo-prod @ 178.128.112.214
+Database: odoo_prod (DigitalOcean Managed PostgreSQL)
+Pre-install count: 383 modules
+Post-install count: 388 modules (+5 new)
+
+=== INSTALLED (5 modules) ===
+
+1. ipai_ai_platform
+   Name: IPAI AI Platform
+   Summary: AI Platform HTTP Client for Supabase Edge Functions
+   Category: Technical
+   Depends: [base]
+   Result: OK — installed
+
+2. ipai_expense_ocr
+   Name: Expense OCR (IPAI)
+   Summary: Deterministic OCR ingestion for receipts into hr.expense
+   Category: Human Resources/Expenses
+   Depends: [base, mail, hr_expense]
+   Result: OK — installed
+
+3. ipai_auth_oidc
+   Name: IPAI Auth OIDC + MFA
+   Summary: OpenID Connect SSO + TOTP MFA for InsightPulse AI
+   Category: Authentication
+   Depends: [base, auth_totp]
+   Result: OK — installed
+
+4. ipai_theme_fluent2
+   Name: IPAI Fluent 2 Theme Tokens
+   Summary: InsightPulse AI Multi-Aesthetic Theme System (10 themes)
+   Category: Themes
+   Depends: [web]
+   Result: OK — installed
+
+5. ipai_web_icons_fluent
+   Name: IPAI Web Icons - Fluent
+   Summary: Microsoft Fluent System Icons for Odoo + React UI
+   Category: Themes/Icons
+   Depends: [web]
+   Result: OK — installed
+
+=== FAILED (2 modules) ===
+
+6. ipai_helpdesk
+   Error: ParseError in helpdesk_security.xml:4
+   Cause: References base.module_category_services_helpdesk (EE-only category)
+   Fix: Change category_id ref to a CE-compatible category
+
+7. ipai_finance_close_seed
+   Error: ParseError in 04_projects.xml:9
+   Cause: project.project creation fails (schema mismatch with sale_project override)
+   Fix: Update XML to match Odoo 19 project.project model constraints
+
+=== BLOCKED — Missing dependencies (6 modules) ===
+
+8. ipai_ai_agents_ui — needs ipai_ai_core (NOT ON DISK)
+9. ipai_finance_workflow — needs ipai_workspace_core (NOT ON DISK)
+10. ipai_bir_notifications — needs ipai_bir_tax_compliance (NOT ON DISK)
+11. ipai_hr_payroll_ph — needs ipai_bir_tax_compliance + hr_contract (NOT AVAILABLE)
+12. ipai_enterprise_bridge — needs fetchmail (OBSOLETE in Odoo 19, merged into mail)
+13. ipai_zoho_mail — needs fetchmail (OBSOLETE in Odoo 19, merged into mail)
+
+=== BLOCKED — OCA not ported to 19.0 (9 modules) ===
+
+All 9 P0 OCA modules are NOT present in their respective OCA 19.0 branches:
+- account_reconcile_oca (OCA/account-reconcile)
+- account_asset_management (OCA/account-financial-tools)
+- dms, dms_field (OCA/dms — empty directory)
+- helpdesk_mgmt, helpdesk_mgmt_sla (OCA/helpdesk — not vendored)
+- base_tier_validation, base_tier_validation_formula (OCA/server-ux)
+- project_task_dependency (OCA/project)
+
+=== HEALTH CHECK ===
+curl -s https://erp.insightpulseai.com/web/login → HTTP 200
+Broken modules (to upgrade/to install): NONE
+Total installed IPAI modules: 12
+
+=== ALL INSTALLED IPAI MODULES ===
+ipai_account_settings_compat: installed (pre-existing)
+ipai_ai_copilot: installed (pre-existing)
+ipai_ai_platform: installed (NEW)
+ipai_auth_oidc: installed (NEW)
+ipai_expense_ocr: installed (NEW)
+ipai_finance_ppm: installed (pre-existing)
+ipai_foundation: installed (pre-existing)
+ipai_mail_bridge_zoho: installed (pre-existing)
+ipai_mailgun_smtp: installed (pre-existing, deprecated)
+ipai_theme_fluent2: installed (NEW)
+ipai_web_icons_fluent: installed (NEW)
+ipai_zoho_mail_api: installed (pre-existing)

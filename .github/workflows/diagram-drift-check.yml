@@ -1,0 +1,99 @@
+# DISABLED: GHA runners non-functional (billing). CI migrating to Azure DevOps Pipelines.
+# To re-enable: remove `if: false` from jobs.
+name: Diagram Drift Check
+on:
+  pull_request:
+    paths:
+      - 'docs/architecture/diagrams/**'
+      - 'ssot/architecture/diagram_catalog.yaml'
+
+jobs:
+  check-diagram-drift:
+    if: false
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check .drawio/.png lockstep
+        run: |
+          DIAGRAM_DIR="docs/architecture/diagrams"
+          errors=0
+
+          # Every .drawio must have a .png
+          for drawio in "${DIAGRAM_DIR}"/*.drawio; do
+            [ -f "$drawio" ] || continue
+            png="${drawio%.drawio}.png"
+            if [ ! -f "$png" ]; then
+              echo "ERROR: Missing render for ${drawio} — expected ${png}"
+              errors=$((errors + 1))
+            fi
+          done
+
+          # Every .png must have a .drawio (no orphan renders)
+          for png in "${DIAGRAM_DIR}"/*.png; do
+            [ -f "$png" ] || continue
+            drawio="${png%.png}.drawio"
+            if [ ! -f "$drawio" ]; then
+              echo "ERROR: Orphan render ${png} — no matching ${drawio}"
+              errors=$((errors + 1))
+            fi
+          done
+
+          if [ "$errors" -gt 0 ]; then
+            echo ""
+            echo "FAIL: ${errors} diagram drift error(s)."
+            echo "Run: ./scripts/docs/export_drawio.sh"
+            exit 1
+          fi
+
+          echo "PASS: All diagrams have matching source/render pairs."
+
+      - name: Verify render freshness
+        run: |
+          DIAGRAM_DIR="docs/architecture/diagrams"
+          stale=0
+
+          for drawio in "${DIAGRAM_DIR}"/*.drawio; do
+            [ -f "$drawio" ] || continue
+            png="${drawio%.drawio}.png"
+            [ -f "$png" ] || continue
+
+            # If .drawio is newer than .png in this PR, the render is stale
+            if [ "$drawio" -nt "$png" ]; then
+              echo "STALE: ${png} is older than ${drawio}"
+              echo "  Re-export locally: ./scripts/docs/export_drawio.sh ${drawio}"
+              stale=$((stale + 1))
+            fi
+          done
+
+          if [ "$stale" -gt 0 ]; then
+            echo ""
+            echo "FAIL: ${stale} diagram render(s) are stale."
+            echo "Run ./scripts/docs/export_drawio.sh and commit the updated .png files."
+            exit 1
+          fi
+
+          echo "PASS: All renders are at least as recent as their sources."
+
+      - name: Check diagram catalog references
+        run: |
+          CATALOG="ssot/architecture/diagram_catalog.yaml"
+          if [ ! -f "$CATALOG" ]; then
+            echo "WARN: No diagram catalog found at ${CATALOG}"
+            exit 0
+          fi
+
+          errors=0
+          while IFS= read -r path; do
+            if [ ! -f "$path" ]; then
+              echo "ERROR: Catalog references missing file: ${path}"
+              errors=$((errors + 1))
+            fi
+          done < <(grep -E '^\s+(source|render):' "$CATALOG" | awk '{print $2}')
+
+          if [ "$errors" -gt 0 ]; then
+            echo "FAIL: Catalog references missing files."
+            exit 1
+          fi
+
+          echo "PASS: All catalog references resolve."

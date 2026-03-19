@@ -1,0 +1,130 @@
+version: 1
+repo: odoo
+generated_from: manual_policy
+policy:
+  doctrine:
+    - "Odoo 19 CE is the canonical runtime baseline."
+    - "OCA-first for EE-parity and business capability."
+    - "ipai_* is reserved for integration bridges, approved meta-bundles, and bounded vertical/feature packaging."
+    - "Only canonical packages define the default install surface."
+    - "Optional packages must be explicitly selected by domain need."
+    - "Packages not classified here must not be considered part of the canonical platform surface."
+  install_order:
+    - ipai_enterprise_bridge
+    - ipai_scout_bundle
+    - ipai_ces_bundle
+
+canonical:
+  bridge:
+    - name: ipai_enterprise_bridge
+      role: base_bridge
+      description: >
+        Thin cross-cutting bridge layer for shared config, approvals,
+        AI/infra glue, shared mixins, and security groups.
+      required: true
+      default_install: true
+      allowed_scope:
+        - config
+        - approvals
+        - ai_integration_glue
+        - infra_integration_glue
+        - shared_mixins
+        - security_groups
+      forbidden_scope:
+        - ee_parity_business_logic
+        - standalone_vertical_business_flows
+
+  bundles:
+    - name: ipai_scout_bundle
+      role: vertical_bundle
+      description: >
+        Retail / operations meta-bundle. Depends on approved CE/OCA/business modules
+        for sales, purchase, stock, POS, and accounting flows.
+      required: false
+      default_install: true
+      depends_on:
+        - ipai_enterprise_bridge
+      domain: retail_ops
+
+    - name: ipai_ces_bundle
+      role: vertical_bundle
+      description: >
+        Creative services meta-bundle. Depends on approved CE/OCA/business modules
+        for project, HR, timesheet, mail, and portal flows.
+      required: false
+      default_install: true
+      depends_on:
+        - ipai_enterprise_bridge
+      domain: creative_ops
+
+optional:
+  finance:
+    - name: ipai_finance_ppm
+      role: feature_module
+      domain: finance
+    - name: ipai_finance_month_end
+      role: feature_module
+      domain: finance
+    - name: ipai_bir_compliance
+      role: feature_module
+      domain: finance_compliance
+    - name: ipai_finance_close_seed
+      role: seed_module
+      domain: finance
+
+  expense:
+    - name: ipai_expense
+      role: feature_module
+      domain: expense
+    - name: ipai_expense_ocr
+      role: bridge_feature
+      domain: expense_ocr
+
+  equipment:
+    - name: ipai_equipment
+      role: feature_module
+      domain: equipment_booking
+
+  ai:
+    - name: ipai_ai_core
+      role: bridge_feature
+      domain: ai
+    - name: ipai_ai_agents
+      role: bridge_feature
+      domain: ai_agents
+
+  branding:
+    - name: ipai_ce_cleaner
+      role: branding_module
+      domain: ce_cleanup
+    - name: ipai_ce_branding
+      role: branding_module
+      domain: ce_branding
+
+  integrations:
+    - name: ipai_bir_notifications
+      role: integration_feature
+      domain: notifications
+    - name: ipai_bir_plane_sync
+      role: integration_bridge
+      domain: plane_sync
+
+deprecated:
+  policy:
+    - "Modules not referenced by canonical or optional classifications are candidates for deprecation review."
+    - "Deprecated modules should move to addons/_deprecated/ or be blocked by CI."
+    - "A module may not remain active indefinitely without classification."
+
+unclassified_handling:
+  default_state: review_required
+  ci_policy:
+    fail_on_new_unclassified_ipai_module: false
+    warn_on_unclassified_ipai_module: true
+    future_target: fail
+
+reports:
+  intended_consumers:
+    - README.md
+    - docs/architecture
+    - CI policy checks
+    - install profiles

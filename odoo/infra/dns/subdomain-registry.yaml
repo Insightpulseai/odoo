@@ -13,143 +13,148 @@
 #   - infra/dns/dns-validation-spec.json
 # =============================================================================
 #
-# lifecycle field (schema: ssot.dns.v1)
+# lifecycle field (schema: ssot.dns.v2)
 # ─────────────────────────────────────
-# active  → Terraform provisions/maintains the record.
-#           REQUIRED: provider_claim.status must be "claimed" with claimed_at + claim_ref.
-#           CI gate (check_dns_provider_claims.py) blocks merge if not satisfied.
+# active     → Terraform provisions/maintains the record.
+#              REQUIRED: provider_claim.status must be "claimed" with claimed_at + claim_ref.
+#              CI gate (check_dns_provider_claims.py) blocks merge if not satisfied.
 #
-# planned → Record is defined in SSOT but Terraform SKIPS it.
-#           Safe to commit; no DNS change occurs.
-#           Optional: set expires_at to auto-age stale planned records.
-#           CI gate fails if expires_at is in the past (forces resolution).
+# planned    → Record is defined in SSOT but Terraform SKIPS it.
+#              Safe to commit; no DNS change occurs.
+#              Optional: set expires_at to auto-age stale planned records.
+#              CI gate fails if expires_at is in the past (forces resolution).
+#
+# deprecated → Record was once active but is scheduled for removal.
+#              Terraform may retain it temporarily; no new features should depend on it.
+#              Must have deprecated_date and removal_target fields.
 #
 # provider_claim field (schema: ssot.dns.provider_claim.v1)
 # ──────────────────────────────────────────────────────────
 # Required on ALL subdomains (active and planned alike).
 #
 #   provider:    WHO owns/manages the target endpoint.
-#                Allowed: cloudflare | vercel | digitalocean | other
+#                Allowed: cloudflare | azure | vercel | digitalocean | other
 #
 #   status:      Claim state.
 #                Allowed: unclaimed | claimed
 #
 #   claimed_at:  YYYY-MM-DD — REQUIRED when status=claimed.
-#                Date the provider confirmed domain ownership.
 #
 #   claim_ref:   String — REQUIRED when status=claimed.
-#                Traceability anchor. Examples:
-#                  "ssot:cloudflare"               → A record direct to origin, Cloudflare is the CDN
-#                  "ssot:digitalocean-app-platform" → DO App Platform CNAME
-#                  "vercel:prj_<id>"               → Vercel project ID (from dashboard)
-#                  "ticket:ops-2026-042"            → Internal incident/ops ticket
+#                  "ssot:azure-front-door"         → Azure Front Door CNAME
+#                  "ssot:cloudflare"                → Cloudflare-managed
+#                  "vercel:prj_<id>"                → Vercel project ID
 #
 #   expires_at:  YYYY-MM-DD — OPTIONAL, only meaningful on planned records.
-#                After this date, CI fails until the claim is resolved or the
-#                record is removed from SSOT. Prevents permanent "planned" limbo.
 #
-# Transition path for planned → active (e.g. Vercel custom domains)
-# ──────────────────────────────────────────────────────────────────
-# 1. DNS record committed with lifecycle=planned + provider_claim.status=unclaimed.
-#    ↳ Terraform skips it; gate passes; DNS unchanged.
-# 2. Operator claims the domain in the provider dashboard.
-# 3. Operator commits:
-#    - provider_claim.status:   unclaimed → claimed
-#    - provider_claim.claimed_at: <today>
-#    - provider_claim.claim_ref:  <provider reference ID>
-#    - lifecycle:               planned → active
-# 4. Gate passes → PR merges → Terraform provisions the record.
+# =============================================================================
+# POLICY NOTES (2026-03-12)
+# =============================================================================
+# - DigitalOcean is fully decommissioned. No A records may point to 178.128.112.214.
+# - Vercel is deprecated as a deployment target. Existing Vercel CNAMEs are transitional.
+# - Mailgun (mg.insightpulseai.com) is deprecated for outbound mail. Zoho SMTP is canonical.
+# - Azure Front Door is the canonical public ingress for all platform apps.
+# - Front Door endpoint: ipai-fd-dev-ep-fnh4e8d6gtdhc8ax.z03.azurefd.net
+# - Keycloak auth subdomains (auth, auth-dev, auth-staging) route through Front Door.
+# - Apex (insightpulseai.com) serves the standalone website, NOT a redirect to ERP.
 # =============================================================================
 
-version: "1.0"
+version: "2.0"
+schema: ssot.dns.v2
 domain: insightpulseai.com
-environment: production
-origin_ip: 178.128.112.214
+last_reviewed: "2026-03-17"
+
+# Canonical ingress endpoint — all CNAME records for platform apps resolve here.
+front_door_endpoint: ipai-fd-dev-ep-fnh4e8d6gtdhc8ax.z03.azurefd.net
+
+# DO IP is dead. Retained for deprecation audit trail only.
+deprecated_origins:
+  digitalocean_droplet: 178.128.112.214
+  decommissioned: "2026-03-12"
 
 # =============================================================================
 # Subdomain Definitions
 # =============================================================================
-# Each subdomain entry must specify:
-#   - name: subdomain (e.g., "erp" for erp.insightpulseai.com)
-#   - type: DNS record type (A, CNAME, TXT)
-#   - service: human-readable service identifier
-#   - For A records: origin_port, health_check
-#   - For CNAME records: target (full FQDN)
-# =============================================================================
 
 subdomains:
+
   # ---------------------------------------------------------------------------
-  # Apex Record (root domain)
+  # Apex Record (root domain) — standalone website
   # ---------------------------------------------------------------------------
   - name: "@"
-    type: A
-    service: apex_redirect
-    port: 80
-    health_check: /
-    owner_system: "Apex domain (redirects or serves root)"
+    type: CNAME
+    target: ipai-fd-dev-ep-fnh4e8d6gtdhc8ax.z03.azurefd.net
+    service: website
+    owner_system: "InsightPulse AI website (standalone, NOT erp)"
     cloudflare_proxied: true
     tls_mode: "Full (strict)"
     lifecycle: active
     status: active
-    notes: "Root A record for insightpulseai.com → 178.128.112.214. Present in CF, was not tracked in SSOT."
+    notes: >
+      Apex serves the standalone InsightPulse AI website.
+      erp.insightpulseai.com is the separate ERP runtime host.
+      No apex → ERP redirect. These are independent surfaces.
+      Cloudflare CNAME flattening applies (apex CNAME → A at edge).
     azure_target:
-      front_door_origin_group: redirect
-      container_app: odoo-web
-      cutover_wave: 5
-      action: redirect-to-erp
+      front_door_origin_group: website
+      container_app: website
+      cutover_wave: 1
     provider_claim:
-      provider: cloudflare
+      provider: azure
       status: claimed
-      claimed_at: "2026-02-27"
-      claim_ref: "ssot:cloudflare"
+      claimed_at: "2026-03-12"
+      claim_ref: "ssot:azure-front-door"
 
   # ---------------------------------------------------------------------------
-  # Core Business Systems (A Records → 178.128.112.214)
+  # Core Business Systems — CNAME → Azure Front Door
   # ---------------------------------------------------------------------------
   - name: erp
-    type: A
+    type: CNAME
+    target: ipai-fd-dev-ep-fnh4e8d6gtdhc8ax.z03.azurefd.net
     service: odoo_ce_19
-    port: 8069
     health_check: /web/login
     owner_system: "Odoo CE 19.0"
     cloudflare_proxied: true
     tls_mode: "Full (strict)"
     lifecycle: active
     status: active
+    notes: "Standalone ERP host. Not aliased to apex. Front Door routes to ACA odoo-web."
     azure_target:
       front_door_origin_group: odoo-web
       container_app: odoo-web
       cutover_wave: 1
     provider_claim:
-      provider: cloudflare
+      provider: azure
       status: claimed
-      claimed_at: "2026-02-27"
-      claim_ref: "ssot:cloudflare"
+      claimed_at: "2026-03-12"
+      claim_ref: "ssot:azure-front-door"
 
   - name: n8n
-    type: A
+    type: CNAME
+    target: ipai-fd-dev-ep-fnh4e8d6gtdhc8ax.z03.azurefd.net
     service: n8n_workflow_automation
-    port: 5678
     health_check: /healthz
     owner_system: "n8n automation"
     cloudflare_proxied: true
     tls_mode: "Full (strict)"
     lifecycle: active
     status: active
+    backing_status: not_provisioned
+    notes: "DNS points to Front Door. ACA container ipai-n8n-dev not yet provisioned."
     azure_target:
       front_door_origin_group: n8n
       container_app: n8n
       cutover_wave: 2
     provider_claim:
-      provider: cloudflare
+      provider: azure
       status: claimed
-      claimed_at: "2026-02-27"
-      claim_ref: "ssot:cloudflare"
+      claimed_at: "2026-03-12"
+      claim_ref: "ssot:azure-front-door"
 
   - name: plane
-    type: A
+    type: CNAME
+    target: ipai-fd-dev-ep-fnh4e8d6gtdhc8ax.z03.azurefd.net
     service: plane_project_management
-    port: 3002
     health_check: /
     owner_system: "Plane CE (self-hosted)"
     cloudflare_proxied: true
@@ -161,109 +166,80 @@ subdomains:
       container_app: plane
       cutover_wave: 3
     provider_claim:
-      provider: cloudflare
+      provider: azure
       status: claimed
-      claimed_at: "2026-02-28"
-      claim_ref: "ssot:cloudflare"
+      claimed_at: "2026-03-12"
+      claim_ref: "ssot:azure-front-door"
 
   - name: shelf
-    type: A
+    type: CNAME
+    target: ipai-fd-dev-ep-fnh4e8d6gtdhc8ax.z03.azurefd.net
     service: shelf_asset_management
-    port: 3003
     health_check: /healthcheck
     owner_system: "Shelf.nu (self-hosted, ipai fork)"
     cloudflare_proxied: true
     tls_mode: "Full (strict)"
-    # Fully active: DNS + nginx proxy + container running.
     lifecycle: active
     status: active
-    notes: "Self-hosted Shelf.nu fork. Container shelf-webapp-1 on :3003. Deployed 2026-03-05."
     azure_target:
       front_door_origin_group: shelf
       container_app: shelf
       cutover_wave: 3
     provider_claim:
-      provider: cloudflare
+      provider: azure
       status: claimed
-      claimed_at: "2026-03-05"
-      claim_ref: "ssot:cloudflare"
+      claimed_at: "2026-03-12"
+      claim_ref: "ssot:azure-front-door"
 
   - name: crm
-    type: A
+    type: CNAME
+    target: ipai-fd-dev-ep-fnh4e8d6gtdhc8ax.z03.azurefd.net
     service: atomic_crm
-    port: 3004
     health_check: /
     owner_system: "Atomic CRM (marmelab/atomic-crm, Supabase-backed)"
     cloudflare_proxied: true
     tls_mode: "Full (strict)"
     lifecycle: active
     status: active
-    notes: "Atomic CRM SPA (React/Vite). Container atomic-crm on 127.0.0.1:3004. Supabase backend (spdtwktxdalcfigzeqrz). Deployed 2026-03-05."
     azure_target:
       front_door_origin_group: crm
       container_app: crm
       cutover_wave: 3
     provider_claim:
-      provider: cloudflare
+      provider: azure
       status: claimed
-      claimed_at: "2026-03-05"
-      claim_ref: "ssot:cloudflare"
+      claimed_at: "2026-03-12"
+      claim_ref: "ssot:azure-front-door"
 
   - name: ocr
-    type: A
+    type: CNAME
+    target: ipai-fd-dev-ep-fnh4e8d6gtdhc8ax.z03.azurefd.net
     service: paddleocr_microservice
-    port: 8001
     health_check: /health
     owner_system: "PaddleOCR microservice"
     cloudflare_proxied: true
     tls_mode: "Full (strict)"
     lifecycle: active
     status: active
-    vhost_file: "infra/nginx/ocr.insightpulseai.com.conf"
+    notes: "PaddleOCR needs Front Door origin group. GPU-capable ACA container."
     azure_target:
       front_door_origin_group: ocr
       container_app: ocr
       cutover_wave: 4
     provider_claim:
-      provider: cloudflare
+      provider: azure
       status: claimed
-      claimed_at: "2026-02-27"
-      claim_ref: "ssot:cloudflare"
-
-  - name: auth
-    type: A
-    service: authentication_service
-    port: 8080
-    health_check: /
-    owner_system: "Authentication service (Express)"
-    cloudflare_proxied: true
-    tls_mode: "Full (strict)"
-    # DNS + nginx vhost deployed 2026-03-05. Container auth-prod healthy on :8080.
-    # OIDC discovery (/.well-known/openid-configuration) not yet implemented.
-    # Supabase OIDC IdP integration planned.
-    lifecycle: active
-    status: active
-    backing_status: partial
-    notes: "DNS + nginx live. Express container healthy but no OIDC discovery yet. Supabase Auth IdP integration planned."
-    azure_target:
-      front_door_origin_group: auth
-      container_app: auth
-      cutover_wave: 4
-    provider_claim:
-      provider: cloudflare
-      status: claimed
-      claimed_at: "2026-03-05"
-      claim_ref: "ssot:cloudflare"
+      claimed_at: "2026-03-12"
+      claim_ref: "ssot:azure-front-door"
 
   - name: superset
-    type: A
+    type: CNAME
+    target: ipai-fd-dev-ep-fnh4e8d6gtdhc8ax.z03.azurefd.net
     service: apache_superset_bi
-    port: 8088
     health_check: /health
     owner_system: "Apache Superset BI"
     cloudflare_proxied: true
     tls_mode: "Full (strict)"
-    database: "DO managed PostgreSQL: odoo-db-sgp1/superset"
     lifecycle: active
     status: active
     azure_target:
@@ -271,180 +247,289 @@ subdomains:
       container_app: superset
       cutover_wave: 3
     provider_claim:
-      provider: cloudflare
+      provider: azure
       status: claimed
-      claimed_at: "2026-02-27"
-      claim_ref: "ssot:cloudflare"
+      claimed_at: "2026-03-12"
+      claim_ref: "ssot:azure-front-door"
 
-  # ---------------------------------------------------------------------------
-  # App Platform Services (CNAME Records → DO App Platform)
-  # ---------------------------------------------------------------------------
   - name: mcp
-    type: A
+    type: CNAME
+    target: ipai-fd-dev-ep-fnh4e8d6gtdhc8ax.z03.azurefd.net
     service: mcp_gateway
-    origin_port: 443
     health_check: /healthz
-    owner_system: "MCP Hub Coordinator (port 8766 on droplet)"
+    owner_system: "MCP Hub Coordinator"
     cloudflare_proxied: true
     tls_mode: "Full (strict)"
     lifecycle: active
     status: active
-    note: "MCP service runs on droplet at 127.0.0.1:8766 (confirmed 2026-03-04 via prod nginx -T). Previous CNAME→DO App Platform was stale; CF A record was correct all along."
     azure_target:
       front_door_origin_group: mcp-gateway
       container_app: mcp-gateway
       cutover_wave: 2
     provider_claim:
-      provider: cloudflare
+      provider: azure
       status: claimed
-      claimed_at: "2026-03-04"
-      claim_ref: "ssot:cloudflare"
+      claimed_at: "2026-03-12"
+      claim_ref: "ssot:azure-front-door"
 
-  # DigitalOcean Spaces CDN — dns-only, no proxy
-  # proxied: false is mandatory: Cloudflare proxy conflicts with Spaces CORS
-  # and strips CDN cache-control headers.
-  # lifecycle=planned until bucket 'ipai-assets' is created in DO Spaces (SGP1)
-  # and CDN endpoint is verified. Confirm target in DO console:
-  #   Spaces → ipai-assets → CDN → Endpoint FQDN.
-  - name: cdn
+  - name: ops
     type: CNAME
-    service: do_spaces_cdn
-    target: ipai-assets.sgp1.cdn.digitaloceanspaces.com
-    description: "Static asset CDN via DigitalOcean Spaces (SGP1)"
-    cloudflare_proxied: false
-    lifecycle: planned
-    status: planned
-    backing_status: not_provisioned
-    activation_criteria:
-      - "Create DO Spaces bucket 'ipai-assets' in SGP1 region"
-      - "Enable CDN on the bucket and confirm CDN endpoint FQDN"
-      - "Update target if CDN endpoint differs from ipai-assets.sgp1.cdn.digitaloceanspaces.com"
-      - "Flip lifecycle → active + provider_claim.status → claimed"
-    provider_claim:
-      provider: digitalocean
-      status: unclaimed
-      expires_at: "2026-09-01"
-
-  # ---------------------------------------------------------------------------
-  # Additional Subdomains (for www, api, etc.)
-  # ---------------------------------------------------------------------------
-  - name: www
-    type: A
-    service: website_redirect
-    port: 80
-    health_check: /
-    owner_system: "Redirect to apex"
+    target: ipai-fd-dev-ep-fnh4e8d6gtdhc8ax.z03.azurefd.net
+    service: ops_console
+    health_check: /api/health
+    owner_system: "Ops Console (Next.js on ACA)"
     cloudflare_proxied: true
     tls_mode: "Full (strict)"
     lifecycle: active
     status: active
+    notes: "Repointed from Vercel to Front Door (2026-03-12). Vercel is deprecated."
+    azure_target:
+      front_door_origin_group: ops-console
+      container_app: ops-console
+      cutover_wave: 3
+    provider_claim:
+      provider: azure
+      status: claimed
+      claimed_at: "2026-03-12"
+      claim_ref: "ssot:azure-front-door"
+
+  # ---------------------------------------------------------------------------
+  # Keycloak Auth — CNAME → Azure Front Door (production + per-env)
+  # ---------------------------------------------------------------------------
+  - name: auth
+    type: CNAME
+    target: ipai-fd-dev-ep-fnh4e8d6gtdhc8ax.z03.azurefd.net
+    service: keycloak_sso
+    health_check: /realms/ipai-prod
+    owner_system: "Keycloak (primary IdP, production realm)"
+    cloudflare_proxied: true
+    tls_mode: "Full (strict)"
+    lifecycle: active
+    status: active
+    notes: "Keycloak production realm. OIDC issuer: https://auth.insightpulseai.com/realms/ipai-prod"
+    azure_target:
+      front_door_origin_group: auth
+      container_app: keycloak
+      cutover_wave: 1
+    provider_claim:
+      provider: azure
+      status: claimed
+      claimed_at: "2026-03-12"
+      claim_ref: "ssot:azure-front-door"
+
+  - name: auth-dev
+    type: CNAME
+    target: ipai-fd-dev-ep-fnh4e8d6gtdhc8ax.z03.azurefd.net
+    service: keycloak_sso_dev
+    health_check: /realms/ipai-dev
+    owner_system: "Keycloak (dev realm)"
+    cloudflare_proxied: true
+    tls_mode: "Full (strict)"
+    lifecycle: planned
+    status: planned
+    environment: dev
+    notes: "Keycloak dev realm. OIDC issuer: https://auth-dev.insightpulseai.com/realms/ipai-dev"
+    azure_target:
+      front_door_origin_group: auth
+      container_app: keycloak
+    provider_claim:
+      provider: azure
+      status: unclaimed
+      expires_at: "2026-09-01"
+
+  - name: auth-staging
+    type: CNAME
+    target: ipai-fd-dev-ep-fnh4e8d6gtdhc8ax.z03.azurefd.net
+    service: keycloak_sso_staging
+    health_check: /realms/ipai-staging
+    owner_system: "Keycloak (staging realm)"
+    cloudflare_proxied: true
+    tls_mode: "Full (strict)"
+    lifecycle: planned
+    status: planned
+    environment: staging
+    notes: "Keycloak staging realm. OIDC issuer: https://auth-staging.insightpulseai.com/realms/ipai-staging"
+    azure_target:
+      front_door_origin_group: auth
+      container_app: keycloak
+    provider_claim:
+      provider: azure
+      status: unclaimed
+      expires_at: "2026-09-01"
+
+  # ---------------------------------------------------------------------------
+  # Per-Environment ERP Routes — CNAME → Azure Front Door
+  # ---------------------------------------------------------------------------
+  - name: erp-dev
+    type: CNAME
+    target: ipai-fd-dev-ep-fnh4e8d6gtdhc8ax.z03.azurefd.net
+    service: odoo_ce_19_dev
+    health_check: /web/login
+    owner_system: "Odoo CE 19.0 (dev)"
+    cloudflare_proxied: true
+    tls_mode: "Full (strict)"
+    lifecycle: planned
+    status: planned
+    environment: dev
+    notes: "Odoo dev environment. Callback: https://erp-dev.insightpulseai.com/auth_oauth/signin"
+    azure_target:
+      front_door_origin_group: odoo-web
+      container_app: odoo-web-dev
+    provider_claim:
+      provider: azure
+      status: unclaimed
+      expires_at: "2026-09-01"
+
+  - name: erp-staging
+    type: CNAME
+    target: ipai-fd-dev-ep-fnh4e8d6gtdhc8ax.z03.azurefd.net
+    service: odoo_ce_19_staging
+    health_check: /web/login
+    owner_system: "Odoo CE 19.0 (staging)"
+    cloudflare_proxied: true
+    tls_mode: "Full (strict)"
+    lifecycle: planned
+    status: planned
+    environment: staging
+    notes: "Odoo staging environment. Callback: https://erp-staging.insightpulseai.com/auth_oauth/signin"
+    azure_target:
+      front_door_origin_group: odoo-web
+      container_app: odoo-web-staging
+    provider_claim:
+      provider: azure
+      status: unclaimed
+      expires_at: "2026-09-01"
+
+  # ---------------------------------------------------------------------------
+  # www — redirect to apex
+  # ---------------------------------------------------------------------------
+  - name: www
+    type: CNAME
+    target: ipai-fd-dev-ep-fnh4e8d6gtdhc8ax.z03.azurefd.net
+    service: website_redirect
+    owner_system: "Redirect to apex (insightpulseai.com)"
+    cloudflare_proxied: true
+    tls_mode: "Full (strict)"
+    lifecycle: active
+    status: active
+    notes: "www redirects to apex. Front Door handles 301."
     azure_target:
       front_door_origin_group: redirect
-      container_app: odoo-web
-      cutover_wave: 5
-      action: redirect-to-erp
+      action: redirect-to-apex
+      cutover_wave: 1
     provider_claim:
-      provider: cloudflare
+      provider: azure
       status: claimed
-      claimed_at: "2026-02-27"
-      claim_ref: "ssot:cloudflare"
+      claimed_at: "2026-03-12"
+      claim_ref: "ssot:azure-front-door"
 
+  # ---------------------------------------------------------------------------
+  # Planned Services (no backing yet)
+  # ---------------------------------------------------------------------------
   - name: api
-    type: A
+    type: CNAME
+    target: ipai-fd-dev-ep-fnh4e8d6gtdhc8ax.z03.azurefd.net
     service: api_gateway
-    port: 8000
     health_check: /api/health
     owner_system: "API Gateway"
     cloudflare_proxied: true
     tls_mode: "Full (strict)"
     lifecycle: planned
     status: planned
+    backing_status: not_provisioned
+    azure_target:
+      front_door_origin_group: api
+      container_app: api-gateway
     provider_claim:
-      provider: cloudflare
+      provider: azure
       status: unclaimed
-      expires_at: "2026-06-01"
-
-  # ---------------------------------------------------------------------------
-  # Vercel Deployments (CNAME → cname.vercel-dns.com)
-  # ---------------------------------------------------------------------------
-  - name: ops
-    type: CNAME
-    service: ops_console_vercel
-    target: cname.vercel-dns.com
-    health_check: /api/health
-    owner_system: "OdooOps Console (Next.js on Vercel)"
-    cloudflare_proxied: false   # DNS-only required for Vercel CNAME
-    tls_mode: "Full (strict)"
-    # CNAME created in Cloudflare 2026-03-05. DNS-only (not proxied).
-    lifecycle: active
-    status: active
-    notes: "CNAME created 2026-03-05. Vercel domain verified 2026-03-01."
-    provider_claim:
-      provider: vercel
-      status: claimed
-      claimed_at: "2026-03-01"
-      claim_ref: "vercel:odooops-console"
+      expires_at: "2026-09-01"
 
   - name: console
-    description: "Ops Console — Next.js app on Vercel (Supabase-backed)"
     type: CNAME
-    target: cname.vercel-dns.com
-    proxied: false
+    target: ipai-fd-dev-ep-fnh4e8d6gtdhc8ax.z03.azurefd.net
+    description: "Ops Console — alias (if needed alongside ops subdomain)"
+    cloudflare_proxied: true
     lifecycle: planned
     provider_claim:
-      provider: vercel
+      provider: azure
       status: unclaimed
       expires_at: "2026-06-01"
 
   # ---------------------------------------------------------------------------
-  # DO AI Agent (CNAME → DO AI Agents platform)
+  # Azure VM Direct — temporary exception records (not behind Front Door)
   # ---------------------------------------------------------------------------
-  - name: agent
+  - name: n8n-azure
+    type: A
+    target: "4.193.100.31"
+    service: n8n_workflow_automation
+    owner_system: "n8n on Azure VM (vm-ipai-supabase-dev, shared with Supabase)"
+    cloudflare_proxied: true
+    lifecycle: active
+    status: active
+    notes: >
+      Direct A record to Azure VM running n8n alongside self-hosted Supabase.
+      Temporary exception — target is to move n8n to ACA behind Front Door
+      (see n8n subdomain entry). This record coexists with the Front Door-backed
+      n8n entry as a migration bridge.
+    provider_claim:
+      provider: azure
+      status: claimed
+      claimed_at: "2026-03-17"
+      claim_ref: "ssot:azure-vm"
+
+  - name: erp-azure
     type: CNAME
-    service: do_ai_agent
-    target: wr2azp5dsl6mu6xvxtpglk5v.agents.do-ai.run
-    health_check: /
-    owner_system: "DigitalOcean AI Agent"
-    cloudflare_proxied: false   # DNS-only required for external CNAME
+    target: ipai-fd-dev-ep-fnh4e8d6gtdhc8ax.z03.azurefd.net
+    service: odoo_ce_19
+    owner_system: "Odoo CE 19.0 (Azure-specific alias)"
+    cloudflare_proxied: true
     tls_mode: "Full (strict)"
     lifecycle: active
     status: active
+    notes: >
+      Azure-specific ERP alias pointing to Front Door. Created during
+      DigitalOcean-to-Azure migration so erp.insightpulseai.com could be
+      cutover independently. Both erp and erp-azure resolve to the same
+      Front Door origin group. May be consolidated to erp-only later.
+    azure_target:
+      front_door_origin_group: odoo-web
+      container_app: odoo-web
     provider_claim:
-      provider: digitalocean
+      provider: azure
       status: claimed
-      claimed_at: "2026-03-03"
-      claim_ref: "ssot:digitalocean-ai-agents"
+      claimed_at: "2026-03-17"
+      claim_ref: "ssot:azure-front-door"
 
   # ---------------------------------------------------------------------------
-  # Mail routing (A record, DNS-only, unproxied)
+  # Supabase — self-hosted on Azure VM
   # ---------------------------------------------------------------------------
-  - name: mail
+  - name: supabase
     type: A
-    service: mail_routing
-    port: 25
-    health_check: null
-    owner_system: "Mail routing (MX/SPF helper)"
-    cloudflare_proxied: false   # DNS-only for mail
-    tls_mode: "Off"
+    target: "4.193.100.31"
+    service: supabase_platform
+    owner_system: "Self-hosted Supabase on Azure VM (vm-ipai-supabase-dev, rg-ipai-agents-dev)"
+    cloudflare_proxied: true
     lifecycle: active
     status: active
-    notes: "DNS-only A record for mail routing. Not proxied through Cloudflare."
+    notes: >
+      Self-hosted Supabase instance on Azure VM. Migrated from Supabase-hosted
+      (spdtwktxdalcfigzeqrz.supabase.co) to self-hosted on Azure VM 4.193.100.31.
+      Cloudflare proxied for TLS termination and WAF.
+      This is an intentional exception to the ACA-only model (VM, not container).
     provider_claim:
-      provider: cloudflare
+      provider: azure
       status: claimed
-      claimed_at: "2026-03-03"
-      claim_ref: "ssot:cloudflare"
+      claimed_at: "2026-03-17"
+      claim_ref: "ssot:azure-vm"
 
   # ---------------------------------------------------------------------------
   # Inventory-Only Subdomains (referenced in code/docs, no DNS provisioned)
   # ---------------------------------------------------------------------------
-  # These exist in canonical_urls.yaml as STAGED but had no subdomain-registry
-  # entry. Adding for completeness. Do not activate without DNS + service + spec.
-  # ---------------------------------------------------------------------------
   - name: app
-    type: A
+    type: CNAME
+    target: ipai-fd-dev-ep-fnh4e8d6gtdhc8ax.z03.azurefd.net
     service: web_application
-    port: 3000
     health_check: /
     owner_system: "Web application (Supabase OAuth callback)"
     cloudflare_proxied: true
@@ -454,14 +539,14 @@ subdomains:
     backing_status: not_provisioned
     notes: "Referenced in Supabase OAuth callback (2 code refs). No DNS, no container, no spec."
     provider_claim:
-      provider: cloudflare
+      provider: azure
       status: unclaimed
       expires_at: "2026-09-01"
 
   - name: boards
-    type: A
+    type: CNAME
+    target: ipai-fd-dev-ep-fnh4e8d6gtdhc8ax.z03.azurefd.net
     service: kanban_board
-    port: 3000
     health_check: /
     owner_system: "Focalboard/kanban"
     cloudflare_proxied: true
@@ -471,7 +556,7 @@ subdomains:
     backing_status: not_provisioned
     notes: "Inventory-only. Focalboard/kanban reference in docs; no DNS, no container."
     provider_claim:
-      provider: cloudflare
+      provider: azure
       status: unclaimed
       expires_at: "2026-09-01"
 
@@ -492,26 +577,26 @@ subdomains:
       expires_at: "2026-09-01"
 
   - name: gpu
-    type: A
+    type: CNAME
+    target: ipai-fd-dev-ep-fnh4e8d6gtdhc8ax.z03.azurefd.net
     service: gpu_inference
-    port: 11434
     health_check: /healthz
-    owner_system: "GPU/LLM inference (ollama)"
+    owner_system: "GPU/LLM inference (ollama or Azure GPU ACA)"
     cloudflare_proxied: true
     tls_mode: "Full (strict)"
     lifecycle: planned
     status: planned
     backing_status: not_provisioned
-    notes: "ollama-service runs on droplet but unhealthy. No DNS. Do not route until healthy + spec exists."
+    notes: "No backing service. Do not route until GPU ACA container is provisioned."
     provider_claim:
-      provider: cloudflare
+      provider: azure
       status: unclaimed
       expires_at: "2026-09-01"
 
   - name: mlflow
-    type: A
+    type: CNAME
+    target: ipai-fd-dev-ep-fnh4e8d6gtdhc8ax.z03.azurefd.net
     service: ml_experiment_tracking
-    port: 5000
     health_check: /health
     owner_system: "MLflow experiment tracking"
     cloudflare_proxied: true
@@ -521,21 +606,19 @@ subdomains:
     backing_status: not_provisioned
     notes: "1 config reference. No DNS, no container, no spec bundle."
     provider_claim:
-      provider: cloudflare
+      provider: azure
       status: unclaimed
       expires_at: "2026-09-01"
 
   # ---------------------------------------------------------------------------
-  # Mailgun Sending Domain Records (mg.insightpulseai.com)
+  # Staging Environment — CNAME → Azure Front Door
   # ---------------------------------------------------------------------------
   # Mailgun is ACTIVE for outbound transactional email (no-reply@mg.insightpulseai.com).
   # Zoho Mail handles inbound MX routing. Both coexist:
   #   - Mailgun: transactional/automated email via mg.insightpulseai.com
   #   - Zoho Mail: inbound MX + team mailboxes via insightpulseai.com
   #
-  # Tracking CNAME (email click/open tracking) — DEPRECATED with Mailgun (2026-02-01)
-  # Mailgun outbound mail deprecated in favour of Zoho Mail.
-  # Retain record only until Terraform removes it (see deprecated.mg.records_to_remove).
+  # Tracking CNAME (email click/open tracking) — CONFIRMED VALID 2026-03-02
   - name: email.mg
     type: CNAME
     service: mailgun_tracking
@@ -544,7 +627,7 @@ subdomains:
     cloudflare_proxied: false
     lifecycle: active
     status: active
-    notes: "Confirmed valid 2026-03-02 via Mailgun Management API — valid:valid. Mailgun reinstated 2026-03-07."
+    notes: "Confirmed valid 2026-03-02 via Mailgun Management API — valid:valid. Mailgun sender deprecated again as of 2026-03-11; tracking CNAME retained temporarily for legacy flows."
     provider_claim:
       provider: mailgun
       status: claimed
@@ -557,16 +640,17 @@ subdomains:
   # Both added to Cloudflare records SSOT on 2026-03-09.
 
   # ---------------------------------------------------------------------------
-  # Staging Environment (A Records → 178.128.112.214)
+  # Staging Environment (CNAME → Azure Front Door)
   # ---------------------------------------------------------------------------
   # ALL staging entries are lifecycle=planned because no staging containers exist.
   # DNS records are live in Cloudflare (claimed) but no backing service is running.
   # Do not flip to lifecycle=active until docker-compose staging stack is provisioned.
+  # These replace the old DO-era A records pointing to 178.128.112.214.
   # ---------------------------------------------------------------------------
   - name: stage-erp
-    type: A
+    type: CNAME
+    target: ipai-fd-dev-ep-fnh4e8d6gtdhc8ax.z03.azurefd.net
     service: odoo_ce_19_staging
-    port: 8069
     health_check: /web/login
     owner_system: "Odoo CE 19.0 (staging)"
     cloudflare_proxied: true
@@ -576,19 +660,17 @@ subdomains:
     backing_status: not_provisioned
     environment: staging
     activation_criteria:
-      - "Provision staging Odoo compose stack"
-      - "Add nginx vhost for stage-erp → :8069"
+      - "Provision staging Odoo ACA container"
+      - "Add Front Door origin group for stage-erp"
     provider_claim:
-      provider: cloudflare
-      status: claimed
-      claimed_at: "2026-02-27"
-      claim_ref: "ssot:cloudflare"
+      provider: azure
+      status: unclaimed
       expires_at: "2026-09-01"
 
   - name: stage-api
-    type: A
+    type: CNAME
+    target: ipai-fd-dev-ep-fnh4e8d6gtdhc8ax.z03.azurefd.net
     service: api_gateway_staging
-    port: 8100
     health_check: /api/health
     owner_system: "API Gateway (staging)"
     cloudflare_proxied: true
@@ -597,44 +679,32 @@ subdomains:
     status: planned
     backing_status: not_provisioned
     environment: staging
-    notes: "Port changed from 8000 (conflict: paddleocr-service binds 127.0.0.1:8000 on prod host)"
-    activation_criteria:
-      - "Provision API gateway staging container on port 8100"
-      - "Add nginx vhost for stage-api → :8100"
     provider_claim:
-      provider: cloudflare
-      status: claimed
-      claimed_at: "2026-02-27"
-      claim_ref: "ssot:cloudflare"
+      provider: azure
+      status: unclaimed
       expires_at: "2026-09-01"
 
   - name: stage-auth
-    type: A
-    service: authentication_service_staging
-    port: 8080
-    health_check: /.well-known/openid-configuration
-    owner_system: "Authentication service (staging)"
+    type: CNAME
+    target: ipai-fd-dev-ep-fnh4e8d6gtdhc8ax.z03.azurefd.net
+    service: keycloak_sso_staging
+    health_check: /realms/ipai-staging
+    owner_system: "Keycloak (staging, via stage-auth subdomain)"
     cloudflare_proxied: true
     tls_mode: "Full (strict)"
     lifecycle: planned
     status: planned
     backing_status: not_provisioned
     environment: staging
-    activation_criteria:
-      - "Provision staging auth container"
-      - "Implement OIDC discovery endpoint"
-      - "Add nginx vhost for stage-auth → :8080"
     provider_claim:
-      provider: cloudflare
-      status: claimed
-      claimed_at: "2026-02-27"
-      claim_ref: "ssot:cloudflare"
+      provider: azure
+      status: unclaimed
       expires_at: "2026-09-01"
 
   - name: stage-mcp
-    type: A
+    type: CNAME
+    target: ipai-fd-dev-ep-fnh4e8d6gtdhc8ax.z03.azurefd.net
     service: mcp_gateway_staging
-    port: 8766
     health_check: /healthz
     owner_system: "MCP coordination (staging)"
     cloudflare_proxied: true
@@ -643,20 +713,15 @@ subdomains:
     status: planned
     backing_status: not_provisioned
     environment: staging
-    activation_criteria:
-      - "Provision staging MCP coordinator container on port 8766"
-      - "Add nginx vhost for stage-mcp → :8766"
     provider_claim:
-      provider: cloudflare
-      status: claimed
-      claimed_at: "2026-02-27"
-      claim_ref: "ssot:cloudflare"
+      provider: azure
+      status: unclaimed
       expires_at: "2026-09-01"
 
   - name: stage-n8n
-    type: A
+    type: CNAME
+    target: ipai-fd-dev-ep-fnh4e8d6gtdhc8ax.z03.azurefd.net
     service: n8n_workflow_automation_staging
-    port: 5679
     health_check: /healthz
     owner_system: "n8n automation (staging)"
     cloudflare_proxied: true
@@ -665,21 +730,15 @@ subdomains:
     status: planned
     backing_status: not_provisioned
     environment: staging
-    notes: "Port changed from 5678 (conflict: prod n8n binds 0.0.0.0:5678)"
-    activation_criteria:
-      - "Provision staging n8n container on port 5679"
-      - "Add nginx vhost for stage-n8n → :5679"
     provider_claim:
-      provider: cloudflare
-      status: claimed
-      claimed_at: "2026-02-27"
-      claim_ref: "ssot:cloudflare"
+      provider: azure
+      status: unclaimed
       expires_at: "2026-09-01"
 
   - name: stage-superset
-    type: A
+    type: CNAME
+    target: ipai-fd-dev-ep-fnh4e8d6gtdhc8ax.z03.azurefd.net
     service: apache_superset_bi_staging
-    port: 8089
     health_check: /health
     owner_system: "Apache Superset BI (staging)"
     cloudflare_proxied: true
@@ -688,44 +747,34 @@ subdomains:
     status: planned
     backing_status: not_provisioned
     environment: staging
-    notes: "Port changed from 8088 (conflict: prod Superset binds 127.0.0.1:8088)"
-    activation_criteria:
-      - "Provision staging Superset container on port 8089"
-      - "Add nginx vhost for stage-superset → :8089"
     provider_claim:
-      provider: cloudflare
-      status: claimed
-      claimed_at: "2026-02-27"
-      claim_ref: "ssot:cloudflare"
+      provider: azure
+      status: unclaimed
       expires_at: "2026-09-01"
 
   - name: stage-ocr
-    type: A
+    type: CNAME
+    target: ipai-fd-dev-ep-fnh4e8d6gtdhc8ax.z03.azurefd.net
     service: paddleocr_microservice_staging
-    port: 8002
     health_check: /health
     owner_system: "PaddleOCR microservice (staging)"
-    cloudflare_proxied: false
+    cloudflare_proxied: true
     tls_mode: "Full (strict)"
     lifecycle: planned
     status: planned
     backing_status: not_provisioned
     environment: staging
-    notes: "Port changed from 8080 (conflict: auth-prod binds 0.0.0.0:8080)"
-    activation_criteria:
-      - "Provision staging OCR container on port 8002"
-      - "Add nginx vhost for stage-ocr → :8002"
     provider_claim:
-      provider: cloudflare
-      status: claimed
-      claimed_at: "2026-02-27"
-      claim_ref: "ssot:cloudflare"
+      provider: azure
+      status: unclaimed
       expires_at: "2026-09-01"
 
 # =============================================================================
-# Deprecated Services (Archived for Reference)
+# Deprecated Records (scheduled for removal from Cloudflare)
 # =============================================================================
 deprecated:
+
+  # --- Fully removed (no DNS record exists) ---
   - name: affine
     deprecated_date: "2026-02-09"
     replacement: null
@@ -733,26 +782,85 @@ deprecated:
     dns_removed: true
     container_removed: true
 
-  # Mattermost chat — replaced by Slack (2026-01-28)
   - name: chat
     deprecated_date: "2026-01-28"
     replacement: "Slack"
     reason: "Mattermost deprecated; team communication now uses Slack workspace"
-    lifecycle: active
     dns_removed: true
     container_removed: false
-    notes: >
-      chat.insightpulseai.com A record marked for removal from Cloudflare 2026-03-09.
-      Mattermost deprecated 2026-01-28, replaced by Slack. Docker containers
-      (odoo-mattermost-1, odoo-mattermost-postgres-1) may still exist on droplet — clean up separately.
-    records_to_remove:
-      - type: A
-        name: chat
-        content: "178.128.112.214"
+    notes: "Mattermost Docker containers may still exist. Clean up separately."
 
-  # Mailgun — REINSTATED 2026-03-07 (no longer deprecated)
-  # Mailgun handles transactional/automated email (mg.insightpulseai.com).
-  # Zoho Mail handles inbound MX routing (insightpulseai.com).
-  # Both coexist. E2E verified 2026-02-26:
-  #   no-reply@mg.insightpulseai.com → jgtolentino.rn@gmail.com via smtp.mailgun.org:2525
-  # DNS records (SPF, DKIM, DMARC for mg subdomain) remain active in Cloudflare.
+  # --- DO AI Agent (DO is decommissioned) ---
+  - name: agent
+    deprecated_date: "2026-03-12"
+    replacement: null
+    reason: "DigitalOcean AI Agents platform decommissioned with DO teardown"
+    lifecycle: deprecated
+    removal_target: "2026-04-01"
+    previous_target: wr2azp5dsl6mu6xvxtpglk5v.agents.do-ai.run
+    dns_removed: false
+    notes: "CNAME to DO AI Agents. Remove from Cloudflare after confirming no dependencies."
+
+  # --- Mail routing A record (DO IP is dead) ---
+  - name: mail
+    deprecated_date: "2026-03-12"
+    replacement: "Zoho Mail MX records handle mail routing"
+    reason: "A record pointed to DO droplet 178.128.112.214 which is destroyed"
+    lifecycle: deprecated
+    removal_target: "2026-04-01"
+    dns_removed: false
+    notes: "Mail routing now handled by Zoho MX records on apex. This A record is vestigial."
+
+  # --- Mailgun tracking CNAME (Mailgun deprecated) ---
+  - name: email.mg
+    deprecated_date: "2026-03-12"
+    replacement: "Zoho SMTP for outbound mail"
+    reason: "Mailgun deprecated for outbound mail. Zoho SMTP is canonical path."
+    lifecycle: deprecated
+    removal_target: "2026-04-01"
+    previous_target: mailgun.org
+    dns_removed: false
+    notes: "Mailgun tracking CNAME. Remove after confirming no active Mailgun sending."
+
+  # --- CDN (DO Spaces is dead) ---
+  - name: cdn
+    deprecated_date: "2026-03-12"
+    replacement: "Azure Blob Storage or Front Door caching"
+    reason: "DigitalOcean Spaces decommissioned with DO teardown"
+    lifecycle: deprecated
+    removal_target: "2026-04-01"
+    previous_target: ipai-assets.sgp1.cdn.digitaloceanspaces.com
+    dns_removed: false
+    notes: "DO Spaces CDN. Bucket never created. Safe to remove."
+
+  # --- Vercel ops (repointed to Front Door) ---
+  - name: ops-vercel
+    deprecated_date: "2026-03-12"
+    replacement: "ops.insightpulseai.com via Azure Front Door"
+    reason: "Vercel is deprecated as deployment target. ops now routes through Front Door."
+    lifecycle: deprecated
+    removal_target: "2026-04-01"
+    previous_target: cname.vercel-dns.com
+    previous_claim_ref: "vercel:odooops-console"
+    dns_removed: true
+    notes: "Record replaced in-place (ops subdomain repointed). This entry is for audit trail."
+
+  # --- Mailgun DKIM/SPF records (mg.insightpulseai.com) ---
+  # These are TXT/CNAME records for mg subdomain. Retain until Mailgun account closed.
+  - name: mg-sending-records
+    deprecated_date: "2026-03-12"
+    replacement: "Zoho SMTP"
+    reason: "Mailgun outbound mail deprecated. Zoho SMTP is canonical."
+    lifecycle: deprecated
+    removal_target: "2026-06-01"
+    dns_removed: false
+    notes: >
+      Includes: mx._domainkey.mg CNAME, pic._domainkey.mg CNAME,
+      mg TXT (SPF), mg TXT (DMARC). Retain until Mailgun account is formally closed
+      and no transactional email depends on mg.insightpulseai.com.
+    records_to_remove:
+      - { type: CNAME, name: "mx._domainkey.mg", note: "DKIM primary" }
+      - { type: CNAME, name: "pic._domainkey.mg", note: "DKIM rotation" }
+      - { type: CNAME, name: "email.mg", note: "Tracking" }
+      - { type: TXT, name: "mg", note: "SPF for mg subdomain" }
+      - { type: TXT, name: "_dmarc.mg", note: "DMARC for mg subdomain" }

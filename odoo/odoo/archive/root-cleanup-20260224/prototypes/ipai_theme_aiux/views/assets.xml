@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- AIUX Theme Assets -->
+    <template id="assets_backend_aiux" inherit_id="web.assets_backend" name="AIUX Backend Assets">
+        <xpath expr="." position="inside">
+            <link rel="stylesheet" type="text/scss" href="/ipai_theme_aiux/static/src/scss/aiux_tokens.scss"/>
+        </xpath>
+    </template>
+</odoo>

@@ -1,0 +1,103 @@
+# =============================================================================
+# Azure Copilot Agent Skill Map — Ops Skill Family Mapping
+# =============================================================================
+# Maps Azure Copilot for Azure operational patterns to bounded agent skills
+# for platform validation, diagnostics, and governance.
+#
+# Reference: agents/knowledge/benchmarks/azure-copilot-agents.md
+# =============================================================================
+
+version: 1
+schema: azure-copilot-agent-skill-map
+updated_at: "2026-03-17"
+
+skill_type: ops_skill
+family: azure_copilot_ops
+
+source:
+  id: azure_copilot_ops_patterns
+  source_type: operational_curriculum
+  treatment: "Operational skill families for agent-assisted Azure platform management"
+  references:
+    - "https://learn.microsoft.com/en-us/azure/copilot/"
+    - "https://learn.microsoft.com/en-us/azure/well-architected/"
+    - "https://learn.microsoft.com/en-us/azure/advisor/"
+
+skills:
+  - id: azure-deployment-ops
+    role: deployment_validator
+    purpose: "Validate Azure deployment topology — ACA, Front Door, managed identity, Key Vault"
+    build_priority: 1
+    status: draft
+    dependencies:
+      - ssot/runtime/resource-graph-query-catalog.yaml
+      - docs/contracts/azure-resource-graph-contract.md
+      - .claude/rules/infrastructure.md
+
+  - id: azure-migration-ops
+    role: migration_validator
+    purpose: "Validate platform migration patterns — deprecated-to-active resource transitions"
+    build_priority: 2
+    status: draft
+    dependencies:
+      - docs/architecture/reference-benchmarks.md
+      - .claude/rules/infrastructure.md
+
+  - id: azure-observability-ops
+    role: observability_validator
+    purpose: "Validate monitoring posture — App Insights, Log Analytics, alerts, KQL"
+    build_priority: 3
+    status: draft
+    dependencies:
+      - ssot/runtime/resource-graph-query-catalog.yaml
+      - docs/contracts/azure-resource-graph-contract.md
+
+  - id: azure-optimization-ops
+    role: cost_performance_validator
+    purpose: "Validate cost and performance optimization — SKU, idle resources, scaling"
+    build_priority: 4
+    status: draft
+    dependencies:
+      - ssot/runtime/resource-graph-query-catalog.yaml
+      - docs/contracts/azure-resource-graph-contract.md
+
+  - id: azure-resiliency-ops
+    role: ha_dr_validator
+    purpose: "Validate HA/DR posture — zone redundancy, backups, failover, health probes"
+    build_priority: 5
+    status: draft
+    dependencies:
+      - ssot/runtime/resource-graph-query-catalog.yaml
+      - .claude/rules/infrastructure.md
+
+  - id: azure-troubleshooting-ops
+    role: runtime_diagnostician
+    purpose: "Diagnose runtime issues — container logs, DNS, Key Vault RBAC, TLS, NSG"
+    build_priority: 6
+    status: draft
+    dependencies:
+      - ssot/runtime/resource-graph-query-catalog.yaml
+      - .claude/rules/infrastructure.md
+
+build_order:
+  rationale: "Deploy first, then migrate, observe, optimize, harden, and troubleshoot"
+  sequence:
+    - azure-deployment-ops
+    - azure-migration-ops
+    - azure-observability-ops
+    - azure-optimization-ops
+    - azure-resiliency-ops
+    - azure-troubleshooting-ops
+
+output_shape:
+  required_fields:
+    - validation_result
+    - findings
+    - evidence
+    - recommendations
+    - blockers
+    - policy_adherence
+
+skill_types:
+  ops_skill: "Validates Azure platform state against documented contracts and SSOT"
+  note: "All skills are read-only validators — they never create or modify Azure resources directly"

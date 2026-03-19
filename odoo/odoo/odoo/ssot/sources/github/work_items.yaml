@@ -1,0 +1,28 @@
+# SSOT: GitHub Issues → ops.work_items ingestion source
+# Contract: docs/contracts/C-GH-02-workitems-webhooks.md
+source:
+  kind: github_issues
+  org: insightpulseai
+  repos:
+    - odoo
+  cadence:
+    refresh: "15m"             # fallback poller interval
+  webhooks:
+    enabled: true
+    endpoint: "${PUBLIC_BASE_URL}/api/webhooks/github"
+    signature_header: X-Hub-Signature-256
+    signature_prefix: "sha256="
+    secret_ref: github_webhook_secret
+
+ingest:
+  target_table: ops.work_items
+  upsert_key: [work_item_ref]
+  ref_format: "github:{repo.full_name}#{issue.number}"
+  field_map:
+    work_item_ref: "github:{repository.full_name}#{issue.number}"
+    system: github
+    title: issue.title
+    status: issue.state           # open|closed
+    assignee: issue.assignee.login   # nullable
+    url: issue.html_url
+    updated_at: issue.updated_at

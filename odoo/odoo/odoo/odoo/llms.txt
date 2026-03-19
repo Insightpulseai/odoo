@@ -1,0 +1,227 @@
+# Odoo CE + OCA + IPAI Stack
+
+> Self-hosted Odoo 19.0 Community Edition with OCA modules and custom IPAI addons for enterprise parity.
+
+## Overview
+
+This repository contains a self-hosted Odoo CE 19.0 deployment achieving 80%+ Enterprise Edition feature parity through:
+- Odoo Community Edition (CE) - Base ERP
+- OCA (Odoo Community Association) modules - Community extensions
+- IPAI custom modules - InsightPulse AI proprietary addons
+
+Stack: Odoo CE 19.0 + PostgreSQL 16 + n8n + Slack + Superset (self-hosted on DigitalOcean, Slack is SaaS)
+
+## Documentation
+
+### Odoo 19.0 Official
+
+- [Developer Documentation](https://www.odoo.com/documentation/19.0/developer.html): Complete developer reference
+- [How-to Guides](https://www.odoo.com/documentation/19.0/developer/howtos.html): Practical tutorials
+- [Tutorials](https://www.odoo.com/documentation/19.0/developer/tutorials.html): Learning paths
+- [ORM API Reference](https://www.odoo.com/documentation/19.0/developer/reference/backend/orm.html): Models, fields, methods
+- [Web Framework](https://www.odoo.com/documentation/19.0/developer/reference/frontend.html): JavaScript/OWL components
+- [Coding Guidelines](https://www.odoo.com/documentation/19.0/contributing/development/coding_guidelines.html): Style standards
+
+### OCA (Odoo Community Association)
+
+- [OCA GitHub](https://github.com/OCA): 200+ repositories
+- [OCA Apps](https://odoo-community.org/shop): Module catalog
+- [Must-Have Base Modules](https://odoo-community.org/list-of-must-have-oca-modules): Essential modules
+- [Must-Have Accounting](https://odoo-community.org/list-of-must-have-oca-accounting-modules): Finance modules
+- [Must-Have Sales](https://odoo-community.org/list-of-must-have-sales-modules): Sales modules
+- [Contributing Guide](https://github.com/OCA/odoo-community.org/blob/master/website/Contribution/CONTRIBUTING.rst): OCA standards
+
+## Key Concepts
+
+### Module Structure
+
+```
+module_name/
+├── __init__.py           # Python imports
+├── __manifest__.py       # Module metadata
+├── models/               # Business logic (models.Model)
+├── views/                # UI definitions (XML)
+├── security/             # Access rights (ir.model.access.csv)
+├── data/                 # Default data (XML/CSV)
+├── wizard/               # Transient models
+├── report/               # QWeb reports
+└── static/               # Web assets (JS/CSS/images)
+```
+
+### ORM Basics
+
+```python
+from odoo import api, fields, models
+
+class MyModel(models.Model):
+    _name = 'my.model'
+    _description = 'My Model'
+
+    name = fields.Char(required=True)
+    active = fields.Boolean(default=True)
+    partner_id = fields.Many2one('res.partner')
+    line_ids = fields.One2many('my.model.line', 'parent_id')
+
+    @api.depends('line_ids.amount')
+    def _compute_total(self):
+        for record in self:
+            record.total = sum(record.line_ids.mapped('amount'))
+```
+
+### Odoo 19.0 Breaking Changes
+
+- `read_group()` deprecated → use `_read_group()` or `formatted_read_group()`
+- New `@api.private` decorator for RPC exclusion
+- New `odoo.Domain` API for domain manipulation
+- Cron batch commit notifications
+
+## OCA Repositories
+
+### Server & Admin
+
+- [server-tools](https://github.com/OCA/server-tools): mass_editing, auditlog, base_tier_validation
+- [server-ux](https://github.com/OCA/server-ux): date_range, tier validation extensions
+- [server-auth](https://github.com/OCA/server-auth): Authentication modules
+- [queue](https://github.com/OCA/queue): queue_job async processing
+
+### Accounting
+
+- [account-financial-reporting](https://github.com/OCA/account-financial-reporting): General Ledger, Trial Balance
+- [account-reconcile](https://github.com/OCA/account-reconcile): Bank reconciliation (EE parity)
+- [account-financial-tools](https://github.com/OCA/account-financial-tools): Asset management
+- [bank-statement-import](https://github.com/OCA/bank-statement-import): OFX, CAMT, MT940 import
+
+### Sales & CRM
+
+- [sale-workflow](https://github.com/OCA/sale-workflow): Order types, tier validation
+- [crm](https://github.com/OCA/crm): CRM extensions
+- [partner-contact](https://github.com/OCA/partner-contact): Partner fields
+
+### Web UI
+
+- [web](https://github.com/OCA/web): web_m2x_options, web_responsive, web_export_view
+- [reporting-engine](https://github.com/OCA/reporting-engine): report_xlsx
+
+### AI & Automation
+
+- [ai](https://github.com/OCA/ai): LLM integrations
+- [automation](https://github.com/OCA/automation): Automation tools
+- [connector](https://github.com/OCA/connector): Generic connector framework
+
+## IPAI Custom Modules
+
+### Naming Convention
+
+All custom modules use `ipai_` prefix by domain:
+
+| Domain | Pattern | Examples |
+|--------|---------|----------|
+| AI/Agents | `ipai_ai_*` | ipai_ai_agents, ipai_ai_rag |
+| Finance | `ipai_finance_*` | ipai_finance_ppm, ipai_bir_tax_compliance |
+| Platform | `ipai_platform_*` | ipai_platform_workflow, ipai_platform_approvals |
+| WorkOS | `ipai_workos_*` | ipai_workos_core, ipai_workos_canvas |
+| Theme | `ipai_theme_*` | ipai_theme_tbwa_backend |
+| Connectors | `ipai_*_connector` | ipai_superset_connector |
+
+### Key Modules
+
+- `ipai_enterprise_bridge`: Core EE feature parity
+- `ipai_finance_ppm`: Project portfolio management
+- `ipai_helpdesk`: Helpdesk (replaces EE)
+- `ipai_hr_payroll_ph`: Philippines payroll + BIR compliance
+- `ipai_ai_agents`: AI agent framework
+- `ipai_ui_brand_tokens`: Design system tokens
+
+### Module Locations
+
+```
+addons/
+├── OCA/              # OCA repos (14 repositories)
+├── ipai/             # IPAI modules (40+ nested)
+└── ipai_*/           # IPAI modules (30+ flat)
+```
+
+## Coding Standards
+
+### Python (PEP8 + Odoo)
+
+```python
+# Import order: stdlib → odoo → addons
+import os
+from datetime import datetime
+
+from odoo import api, fields, models
+from odoo.exceptions import UserError
+
+from odoo.addons.base.models import res_partner
+```
+
+### Commit Messages
+
+```
+[TAG] scope: description
+
+Tags: [IMP] [FIX] [REF] [ADD] [REM] [MOV] [REL]
+```
+
+### XML Views
+
+```xml
+<record id="view_model_form" model="ir.ui.view">
+    <field name="name">my.model.form</field>
+    <field name="model">my.model</field>
+    <field name="arch" type="xml">
+        <form>
+            <sheet>
+                <group>
+                    <field name="name"/>
+                    <field name="partner_id"/>
+                </group>
+            </sheet>
+        </form>
+    </field>
+</record>
+```
+
+## Enterprise Parity
+
+CE + OCA + IPAI replaces these EE features:
+
+| EE Feature | Replacement | Parity |
+|------------|-------------|--------|
+| Bank Reconciliation | account_reconcile_oca | 95% |
+| Financial Reports | account_financial_report | 90% |
+| Asset Management | account_asset_management | 90% |
+| Approvals | ipai_platform_approvals + base_tier_validation | 95% |
+| Helpdesk | ipai_helpdesk | 90% |
+| Payroll | ipai_hr_payroll_ph | 100% |
+| Studio | ipai_dev_studio_base | 70% |
+
+## Commands
+
+```bash
+# Start stack
+docker compose up -d
+
+# Module operations
+docker compose exec odoo-core odoo -d odoo_core -u module_name --stop-after-init
+
+# Health check
+curl -s http://localhost:8069/web/health
+
+# Run tests
+./scripts/ci/run_odoo_tests.sh module_name
+```
+
+## Project Files
+
+- [CLAUDE.md](CLAUDE.md): Complete project instructions
+- [docker-compose.yml](docker-compose.yml): Stack configuration
+- [oca.lock.json](oca.lock.json): OCA module versions
+- [docs/evidence/](docs/evidence/): Verification records
+
+## Optional
+
+- [Odoo.sh Features](https://www.odoo.sh/features): Managed hosting reference (we self-host)
+- [OCA Coding Standards](https://odoo-community.org/groups/contributors-15/contributors-27032): IDE setup
+- [apexive/odoo-llm](https://github.com/apexive/odoo-llm): Multi-provider LLM framework

@@ -1,0 +1,57 @@
+# agents__policy__finance_tool_allowlist__v1.policy.yaml
+apiVersion: ipai.policy/v1
+kind: FinanceToolAllowlist
+metadata:
+  name: finance-tool-allowlist
+  version: "1.0.0"
+  description: "Defines which tools finance agents may use and under what constraints"
+  owner: finance-team
+  last_updated: "2026-03-16"
+
+spec:
+  applies_to:
+    agents: [odoo-finance-assistant, odoo-doc-review-agent, odoo-close-assistant]
+
+  read_tools:
+    description: "Tools that only read data — no confirmation required"
+    tools:
+      - odoo_search_partner
+      - odoo_get_journal_entries
+      - document_intelligence_extract
+      - azure_search_query
+
+  write_tools:
+    description: "Tools that create or modify records — may require confirmation"
+    tools:
+      - name: odoo_create_vendor_bill
+        confirmation: auto
+        note: "Auto-approved for bills < PHP 50,000 with confidence > 0.90"
+        auto_approve_conditions:
+          max_amount: 50000
+          min_confidence: 0.90
+          currency: PHP
+      - name: odoo_create_expense
+        confirmation: auto
+        auto_approve_conditions:
+          max_amount: 10000
+          min_confidence: 0.85
+      - name: odoo_update_move_state
+        confirmation: always
+        note: "State changes always require human approval"
+
+  notification_tools:
+    tools:
+      - slack_send_message
+      - email_send
+
+  prohibited:
+    - "Direct SQL access to Odoo database"
+    - "Any tool that deletes Odoo records"
+    - "Any tool that modifies user permissions"
+    - "Any tool that accesses payroll data"
+    - "Any tool that bypasses Odoo workflow state machine"
+
+  audit:
+    log_all_tool_calls: true
+    log_destination: opentelemetry
+    retain_days: 90

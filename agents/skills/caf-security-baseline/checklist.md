@@ -1,0 +1,21 @@
+# Checklist — caf-security-baseline
+
+- [ ] Defender for Cloud secure score retrieved and documented
+- [ ] Defender plans reviewed (which resource types are covered)
+- [ ] Zero trust maturity assessed per pillar (identity, network, data, apps, infra)
+- [ ] Entra ID configuration audited (or Keycloak in transition state)
+- [ ] MFA enforced for all privileged accounts
+- [ ] Conditional Access policies defined and active
+- [ ] PIM enabled for privileged roles (or justified deferral with timeline)
+- [ ] RBAC assignments follow least privilege principle
+- [ ] Network segmentation reviewed (NSGs per subnet/NIC)
+- [ ] Private Link evaluated for PaaS services (PostgreSQL, Key Vault, Storage)
+- [ ] TLS enforcement verified for all public endpoints
+- [ ] Encryption at rest verified for all data stores
+- [ ] Key Vault key rotation policy defined
+- [ ] Container images scanned for vulnerabilities
+- [ ] GHAS (GitHub Advanced Security) enabled: secret scanning, code scanning, dependency review
+- [ ] Incident response procedure documented
+- [ ] Security gaps prioritized by severity (Critical, High, Medium, Low)
+- [ ] Security improvement roadmap created
+- [ ] Evidence captured in `docs/evidence/{stamp}/caf/security/`

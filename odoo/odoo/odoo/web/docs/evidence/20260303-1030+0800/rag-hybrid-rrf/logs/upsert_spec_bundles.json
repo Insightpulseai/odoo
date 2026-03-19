@@ -1,0 +1,38 @@
+{
+  "timestamp": "2026-03-03T02:15:30.199129+00:00",
+  "mode": "upsert",
+  "corpora_processed": 1,
+  "total_files": 204,
+  "total_chunks": 347,
+  "results": [
+    {
+      "corpus_id": "spec_bundles",
+      "files_discovered": 204,
+      "documents": 204,
+      "chunks": 347,
+      "dry_run": false,
+      "doc_upsert": {
+        "status": 201,
+        "count": 204
+      },
+      "chunk_upserts": [
+        {
+          "status": 201,
+          "count": 100
+        },
+        {
+          "status": 201,
+          "count": 100
+        },
+        {
+          "status": 201,
+          "count": 100
+        },
+        {
+          "status": 201,
+          "count": 47
+        }
+      ]
+    }
+  ]
+}

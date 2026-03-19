@@ -1,0 +1,233 @@
+// TBWA Design System Tokens
+// Odoo 18.0 CE Theme
+// Brand: TBWA (Black + Yellow Accent)
+// Premium enterprise aesthetic with strict semantic mapping
+
+// ============================================================================
+// TBWA BRAND COLOR TOKENS
+// ============================================================================
+
+:root {
+  // === Primary Brand Colors ===
+  --tbwa-yellow-500: #FFD800;   // Primary accent (TBWA signature yellow)
+  --tbwa-yellow-400: #FFDD2D;   // Hover/alternate yellow
+  --tbwa-yellow-200: #FEEFB5;   // Soft highlight/background
+  --tbwa-black: #000000;        // True black (brand)
+  --tbwa-ink: #111827;          // Text on light surfaces
+
+  // === Surface Colors ===
+  --tbwa-bg: #F7F9FC;           // Page background (cool white)
+  --tbwa-surface: #FFFFFF;      // Cards and panels
+  --tbwa-surface-warm: #FFF8E3; // Warm panels (insights/recommendations)
+  --tbwa-surface-soft: #F2F2F2; // Subtle backgrounds
+
+  // === Border Colors ===
+  --tbwa-border: #E5E7EB;       // Default borders
+  --tbwa-border-strong: #D1D5DB; // Emphasized borders
+
+  // === Text Colors ===
+  --tbwa-text: #111827;         // Primary text
+  --tbwa-text-muted: #6B7280;   // Secondary text
+  --tbwa-text-inverse: #FFFFFF; // Text on dark backgrounds
+
+  // === Sidebar Colors (Black Theme) ===
+  --tbwa-sidebar-bg: #000000;
+  --tbwa-sidebar-surface: #101010;    // Near-black layer
+  --tbwa-sidebar-text: #FFFFFF;
+  --tbwa-sidebar-muted: #A1A1AA;      // Zinc-ish muted text
+  --tbwa-sidebar-active-bg: #141414;
+  --tbwa-sidebar-active-border: #FFD800; // Yellow active indicator
+
+  // === Semantic Colors ===
+  --tbwa-primary: #FFD800;      // Yellow (primary actions)
+  --tbwa-primary-hover: #FFDD2D;
+  --tbwa-primary-ink: #000000;  // Black text on yellow (high contrast)
+  --tbwa-focus: #FFD800;        // Focus rings
+
+  --tbwa-success: #22C55E;      // Green
+  --tbwa-warning: #FFD800;      // Yellow (dual purpose)
+  --tbwa-danger: #EF4444;       // Red
+
+  // === Odoo-Specific Overrides ===
+  // Map TBWA tokens to Odoo's native CSS variables
+  --o-color-primary: var(--tbwa-yellow-500);
+  --o-color-primary-light: var(--tbwa-yellow-400);
+  --o-color-primary-dark: #E5C200; // Darker yellow
+
+  --o-color-success: var(--tbwa-success);
+  --o-color-warning: var(--tbwa-warning);
+  --o-color-danger: var(--tbwa-danger);
+
+  --o-color-text-primary: var(--tbwa-text);
+  --o-color-text-secondary: var(--tbwa-text-muted);
+  --o-color-text-inverse: var(--tbwa-text-inverse);
+
+  --o-color-bg-primary: var(--tbwa-surface);
+  --o-color-bg-secondary: var(--tbwa-bg);
+  --o-color-bg-dark: var(--tbwa-sidebar-bg);
+
+  --o-color-border: var(--tbwa-border);
+  --o-color-border-dark: var(--tbwa-border-strong);
+
+  // ============================================================================
+  // TYPOGRAPHY TOKENS (TBWA Premium)
+  // ============================================================================
+
+  --tbwa-font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --tbwa-font-mono: 'JetBrains Mono', 'Fira Code', Consolas, monospace;
+
+  // Font Sizes (Odoo-compatible scale)
+  --tbwa-text-xs: 0.75rem;    // 12px
+  --tbwa-text-sm: 0.875rem;   // 14px (Odoo default)
+  --tbwa-text-base: 1rem;     // 16px
+  --tbwa-text-lg: 1.125rem;   // 18px
+  --tbwa-text-xl: 1.25rem;    // 20px
+  --tbwa-text-2xl: 1.5rem;    // 24px
+  --tbwa-text-3xl: 1.875rem;  // 30px
+
+  // Font Weights
+  --tbwa-font-normal: 400;
+  --tbwa-font-medium: 500;
+  --tbwa-font-semibold: 600;
+  --tbwa-font-bold: 700;
+
+  // Line Heights
+  --tbwa-leading-tight: 1.25;
+  --tbwa-leading-base: 1.5;
+  --tbwa-leading-relaxed: 1.75;
+
+  // ============================================================================
+  // SPACING TOKENS (8px Grid System)
+  // ============================================================================
+
+  --tbwa-space-px: 1px;
+  --tbwa-space-0-5: 0.125rem;  // 2px
+  --tbwa-space-1: 0.25rem;     // 4px
+  --tbwa-space-2: 0.5rem;      // 8px
+  --tbwa-space-3: 0.75rem;     // 12px
+  --tbwa-space-4: 1rem;        // 16px
+  --tbwa-space-5: 1.25rem;     // 20px
+  --tbwa-space-6: 1.5rem;      // 24px
+  --tbwa-space-8: 2rem;        // 32px
+  --tbwa-space-10: 2.5rem;     // 40px
+  --tbwa-space-12: 3rem;       // 48px
+
+  // ============================================================================
+  // BORDER TOKENS (Premium Rounded Corners)
+  // ============================================================================
+
+  --tbwa-radius-none: 0;
+  --tbwa-radius-sm: 0.25rem;   // 4px
+  --tbwa-radius-base: 0.5rem;  // 8px
+  --tbwa-radius-md: 0.75rem;   // 12px
+  --tbwa-radius-lg: 1rem;      // 16px (premium cards)
+  --tbwa-radius-xl: 0.875rem;  // 14px (default for components)
+  --tbwa-radius-full: 9999px;
+
+  // Border Width
+  --tbwa-border-thin: 1px;
+  --tbwa-border-base: 2px;
+  --tbwa-border-thick: 4px;
+
+  // ============================================================================
+  // SHADOW TOKENS (Premium Depth System)
+  // ============================================================================
+
+  --tbwa-shadow-1: 0 1px 2px rgba(0, 0, 0, 0.06);
+  --tbwa-shadow-2: 0 8px 24px rgba(0, 0, 0, 0.10);
+  --tbwa-shadow-3: 0 16px 32px rgba(0, 0, 0, 0.12);
+  --tbwa-shadow-focus: 0 0 0 3px rgba(255, 216, 0, 0.20); // Yellow focus ring
+
+  // Odoo Shadow Overrides
+  --o-shadow-sm: var(--tbwa-shadow-1);
+  --o-shadow-md: var(--tbwa-shadow-2);
+  --o-shadow-lg: var(--tbwa-shadow-3);
+
+  // ============================================================================
+  // TRANSITION TOKENS
+  // ============================================================================
+
+  --tbwa-duration-fast: 150ms;
+  --tbwa-duration-base: 200ms;
+  --tbwa-duration-slow: 300ms;
+
+  --tbwa-ease-in: cubic-bezier(0.4, 0, 1, 1);
+  --tbwa-ease-out: cubic-bezier(0, 0, 0.2, 1);
+  --tbwa-ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+
+  // ============================================================================
+  // Z-INDEX TOKENS
+  // ============================================================================
+
+  --tbwa-z-dropdown: 1000;
+  --tbwa-z-sticky: 1100;
+  --tbwa-z-modal: 1200;
+  --tbwa-z-tooltip: 1300;
+  --tbwa-z-toast: 1400;
+
+  // ============================================================================
+  // COMPONENT-SPECIFIC TOKENS (Odoo Overrides)
+  // ============================================================================
+
+  // Buttons (Primary = Yellow fill + Black text)
+  --tbwa-btn-primary-bg: var(--tbwa-primary);
+  --tbwa-btn-primary-text: var(--tbwa-primary-ink);
+  --tbwa-btn-primary-hover: var(--tbwa-primary-hover);
+
+  // Buttons (Secondary = White fill + Yellow border + Black text)
+  --tbwa-btn-secondary-bg: var(--tbwa-surface);
+  --tbwa-btn-secondary-text: var(--tbwa-ink);
+  --tbwa-btn-secondary-border: var(--tbwa-primary);
+  --tbwa-btn-secondary-hover-bg: var(--tbwa-surface-warm);
+
+  --tbwa-btn-padding-y: var(--tbwa-space-2);
+  --tbwa-btn-padding-x: var(--tbwa-space-4);
+  --tbwa-btn-radius: var(--tbwa-radius-xl);
+
+  // Form Fields
+  --tbwa-input-padding-y: var(--tbwa-space-2);
+  --tbwa-input-padding-x: var(--tbwa-space-3);
+  --tbwa-input-radius: var(--tbwa-radius-base);
+  --tbwa-input-border: var(--tbwa-border);
+  --tbwa-input-focus-border: var(--tbwa-primary);
+  --tbwa-input-focus-shadow: var(--tbwa-shadow-focus);
+
+  // Cards
+  --tbwa-card-padding: var(--tbwa-space-4);
+  --tbwa-card-radius: var(--tbwa-radius-xl);
+  --tbwa-card-shadow: var(--tbwa-shadow-1);
+  --tbwa-card-hover-shadow: var(--tbwa-shadow-2);
+
+  // Kanban
+  --tbwa-kanban-card-padding: var(--tbwa-space-3);
+  --tbwa-kanban-card-radius: var(--tbwa-radius-xl);
+  --tbwa-kanban-card-gap: var(--tbwa-space-2);
+  --tbwa-kanban-column-bg: var(--tbwa-surface-soft);
+
+  // Sidebar Navigation
+  --tbwa-nav-item-padding: var(--tbwa-space-3);
+  --tbwa-nav-item-radius: var(--tbwa-radius-base);
+  --tbwa-nav-item-hover: var(--tbwa-sidebar-surface);
+  --tbwa-nav-item-active-bg: var(--tbwa-sidebar-active-bg);
+  --tbwa-nav-item-active-border: var(--tbwa-sidebar-active-border);
+
+  // ============================================================================
+  // CHART COLORS (TBWA-Safe Palette)
+  // ============================================================================
+
+  // Yellow for emphasis (selected series, thresholds, current period)
+  --tbwa-chart-emphasis: var(--tbwa-yellow-500);
+  --tbwa-chart-fill-soft: rgba(255, 216, 0, 0.18);
+
+  // Neutrals for data series (minimal palette)
+  --tbwa-chart-neutral-1: var(--tbwa-ink);
+  --tbwa-chart-neutral-2: var(--tbwa-text-muted);
+  --tbwa-chart-neutral-3: var(--tbwa-border-strong);
+
+  // Categorical palette (only for data visualization, not UI chrome)
+  --tbwa-chart-category-1: #111827; // Black
+  --tbwa-chart-category-2: #6B7280; // Gray
+  --tbwa-chart-category-3: #22C55E; // Green (success)
+  --tbwa-chart-category-4: #EF4444; // Red (danger)
+  --tbwa-chart-category-5: #FFD800; // Yellow (emphasis)
+}

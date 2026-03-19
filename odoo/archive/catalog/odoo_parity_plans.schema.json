@@ -1,0 +1,98 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Odoo EE → CE/OCA Parity Plan Matrix",
+  "type": "object",
+  "required": ["version", "baseline", "plans", "items"],
+  "properties": {
+    "version": { "type": "string" },
+    "baseline": {
+      "type": "object",
+      "required": ["odoo_ce_major", "oca_series"],
+      "properties": {
+        "odoo_ce_major": { "type": "integer", "minimum": 16, "maximum": 21 },
+        "oca_series": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+    "plans": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["id", "name", "description", "capability_groups"],
+        "properties": {
+          "id": { "type": "string", "pattern": "^[a-z0-9-]+$" },
+          "name": { "type": "string" },
+          "description": { "type": "string" },
+          "capability_groups": { "type": "array", "items": { "type": "string" }, "minItems": 1 }
+        },
+        "additionalProperties": false
+      }
+    },
+    "items": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "id", "ee_capability", "category", "capability_group",
+          "plan_tiers", "replacements", "install_order",
+          "verification", "rollback", "maturity", "risk"
+        ],
+        "properties": {
+          "id": { "type": "string", "pattern": "^[a-z0-9-]+$" },
+          "ee_capability": { "type": "string", "minLength": 3 },
+          "category": { "type": "string" },
+          "capability_group": { "type": "string" },
+          "plan_tiers": {
+            "type": "array",
+            "minItems": 1,
+            "items": { "type": "string", "enum": ["free", "standard", "enterprise", "business-critical"] }
+          },
+          "replacements": {
+            "type": "object",
+            "required": ["ce", "oca"],
+            "properties": {
+              "ce": { "type": "array", "items": { "type": "string" } },
+              "oca": { "type": "array", "items": { "type": "string" } },
+              "ipai": { "type": "array", "items": { "type": "string" } }
+            },
+            "additionalProperties": false
+          },
+          "install_order": { "type": "array", "minItems": 1, "items": { "type": "string" } },
+          "constraints": { "type": "array", "items": { "type": "string" } },
+          "verification": {
+            "type": "object",
+            "required": ["commands", "expected_signals"],
+            "properties": {
+              "commands": { "type": "array", "minItems": 1, "items": { "type": "string" } },
+              "expected_signals": { "type": "array", "minItems": 1, "items": { "type": "string" } }
+            },
+            "additionalProperties": false
+          },
+          "rollback": {
+            "type": "object",
+            "required": ["commands"],
+            "properties": {
+              "commands": { "type": "array", "minItems": 1, "items": { "type": "string" } }
+            },
+            "additionalProperties": false
+          },
+          "links": {
+            "type": "object",
+            "properties": {
+              "odoo": { "type": "string" },
+              "oca": { "type": "array", "items": { "type": "string" } },
+              "notes": { "type": "string" }
+            },
+            "additionalProperties": true
+          },
+          "maturity": { "type": "string", "enum": ["alpha", "beta", "stable"] },
+          "risk": { "type": "string", "enum": ["low", "med", "high"] }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

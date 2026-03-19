@@ -1,0 +1,60 @@
+# Diagrams
+
+Architecture and flow diagrams for the IPAI Platform.
+
+## Overview
+
+This page contains visual documentation of the IPAI platform architecture, data flows, and module relationships.
+
+{% if images %}
+## Diagrams
+
+{% for img in images %}
+### {{ img.title }}
+
+![{{ img.title }}]({{ img.url }})
+
+{% endfor %}
+{% else %}
+## No Diagrams Found
+
+Add PNG diagrams to `docs/diagrams/` to have them appear here.
+
+### Adding Diagrams
+
+1. Create Mermaid diagrams in `docs/diagrams/*.mmd`
+2. Export to PNG using the diagramflow tool
+3. Run `ipai-gen` to update this page
+{% endif %}
+
+## Diagram Types
+
+### Architecture Diagrams
+
+- System architecture overview
+- Module dependency graphs
+- Integration points
+
+### Flow Diagrams
+
+- Business process flows
+- Data flow diagrams
+- State machine diagrams
+
+### Entity Relationship Diagrams
+
+- Data model ERDs
+- Module relationship maps
+
+## Tools
+
+- **Mermaid**: Source format for diagrams
+- **diagramflow**: Converts Mermaid to BPMN/draw.io
+- **ipai-gen**: Auto-generates this wiki page
+
+## Contributing
+
+1. Create diagram in Mermaid format
+2. Place in `docs/diagrams/`
+3. Run `ipai-gen` to regenerate wiki
+4. Commit changes

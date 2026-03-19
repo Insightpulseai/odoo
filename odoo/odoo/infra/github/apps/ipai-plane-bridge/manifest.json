@@ -1,0 +1,34 @@
+{
+  "_comment": "GitHub App Manifest for ipai-plane-bridge. SSOT: ssot/github/apps.yaml#ipai-plane-bridge",
+  "_doc": "This app webhooks into the Supabase ingest function which fans out to plane-github-sync.",
+  "_creation_script": "scripts/github/create-app-from-manifest.sh ipai-plane-bridge",
+
+  "name": "ipai-plane-bridge",
+  "description": "InsightPulse AI → Plane bridge. Syncs GitHub PR/issue state to Plane project management via Supabase Edge Functions.",
+  "url": "https://mcp.insightpulseai.com",
+
+  "hook_attributes": {
+    "url": "https://spdtwktxdalcfigzeqrz.supabase.co/functions/v1/ops-github-webhook-ingest",
+    "active": true
+  },
+
+  "redirect_url": null,
+  "callback_urls": [],
+
+  "setup_url": null,
+  "setup_on_update": false,
+
+  "public": false,
+
+  "default_permissions": {
+    "metadata": "read",
+    "pull_requests": "read",
+    "issues": "read"
+  },
+
+  "default_events": [
+    "pull_request",
+    "issues",
+    "issue_comment"
+  ]
+}

@@ -1,0 +1,983 @@
+# =============================================================================
+# Azure Boards Execution Hierarchy — InsightPulse AI
+# =============================================================================
+#
+# Repo-side SSOT for the Azure Boards work item hierarchy.
+# This file seeds Azure Boards when ADR-GSR-001 graduation gates pass.
+#
+# Native hierarchy (Basic process): Epic → Issue → Task
+#   - Epic = strategic objective / thematic grouping
+#   - Issue = scoped requirement or workstream (NOT "Feature" — Basic process
+#     uses "Issue" as the middle tier, equivalent to Feature in Agile/Scrum)
+#   - Task = concrete deliverable unit
+#
+# Planning/coordination layer: Delivery Plans + Area Paths + Iteration Paths
+#                              + Dashboards + Dependency Links
+#
+# Azure Boards is the execution coordination system of record for strategic
+# objectives, scoped workstreams, concrete tasks, team ownership, iteration
+# cadence, area ownership, dependency visibility, Delivery Plans, portfolio
+# rollups, dashboards/reporting, and timeline views. Detailed specs,
+# architecture doctrine, SSOT files, and runtime evidence remain in the repo.
+#
+# Constraint: Boards hold the goal record, execution hierarchy, accountable
+# owner, measurable acceptance, and links. Full PRDs, architecture doctrine,
+# target-state SSOT, and module contracts stay in spec/, docs/architecture/,
+# and ssot/ — never in Boards.
+#
+# Cross-references:
+#   - ssot/governance/platform-strategy-2026.yaml (strategy objectives)
+#   - ssot/governance/enterprise_okrs.yaml (operational OKRs)
+#   - ssot/governance/operating-model.yaml (tool authority)
+#   - ADR-GSR-001 (goals SoR decision)
+#
+# Ref: https://learn.microsoft.com/en-us/azure/devops/boards/backlogs/define-features-epics
+# Ref: https://learn.microsoft.com/en-us/azure/devops/boards/backlogs/backlogs-overview
+# Ref: https://learn.microsoft.com/en-us/azure/devops/boards/plans/?view=azure-devops
+# Ref: https://learn.microsoft.com/en-us/azure/devops/boards/github/features-timeline
+# Ref: https://learn.microsoft.com/en-us/devops/plan/scaling-agile
+# =============================================================================
+
+schema_version: "1.1"
+schema: ssot.governance.azdo-execution-hierarchy.v1
+last_updated: "2026-03-19"
+
+organization: insightpulseai
+project: ipai-platform
+
+# -----------------------------------------------------------------------------
+# Work Item Field Contract
+# -----------------------------------------------------------------------------
+# Every Epic/Issue must have:
+#   title:                Deterministic name ([OBJ-NNN] or [FEAT])
+#   description:          Purpose, Scope, Out of scope, Why this matters
+#   acceptance_criteria:  Measurable completion rules only
+#   links:                Spec bundle, architecture docs, SSOT files, PRs
+#   owner:                Accountable role
+#   target_iteration:     Sprint or quarter
+#   tags:                 From stable tag set
+#
+# Task-level items use: [TASK] design | build | validate | deploy | evidence capture
+
+field_contract:
+  required_on_epic:
+    - title
+    - description
+    - acceptance_criteria
+    - owner
+    - tags
+  required_on_feature:
+    - title
+    - description
+    - acceptance_criteria
+    - links
+    - owner
+    - target_iteration
+    - tags
+  task_pattern:
+    - design
+    - build
+    - validate
+    - deploy
+    - evidence_capture
+
+stable_tags:
+  - objective
+  - platform
+  - odoo
+  - foundry
+  - databricks
+  - security
+  - devex
+
+# -----------------------------------------------------------------------------
+# Planning & Coordination Layer
+# -----------------------------------------------------------------------------
+# The hierarchy (Epic → Issue → Task) is the native work-item tree.
+# The planning layer sits ON TOP of the hierarchy for cross-team
+# coordination, timeline visibility, and reporting.
+# Ref: https://learn.microsoft.com/en-us/azure/devops/boards/plans/
+
+planning_layer:
+
+  area_paths:
+    description: >
+      Area Paths define ownership/lane boundaries. Each Epic maps to a
+      top-level area; Features inherit or narrow to sub-areas.
+    structure:
+      - path: "ipai-platform"
+        description: "Root area — platform-wide items"
+      - path: "ipai-platform\\Infrastructure"
+        epics: [OBJ-001]
+        owner: platform-lead
+      - path: "ipai-platform\\Enterprise-Parity"
+        epics: [OBJ-002]
+        owner: engineering-lead
+      - path: "ipai-platform\\AI-Agents"
+        epics: [OBJ-003]
+        owner: engineering-lead
+      - path: "ipai-platform\\Data-Intelligence"
+        epics: [OBJ-004]
+        owner: engineering-lead
+      - path: "ipai-platform\\Developer-Experience"
+        epics: [OBJ-005]
+        owner: platform-lead
+      - path: "ipai-platform\\Security-Compliance"
+        epics: [OBJ-006]
+        owner: platform-lead
+      - path: "ipai-platform\\Revenue-Portfolio"
+        epics: [OBJ-007]
+        owner: product-lead
+
+  iteration_paths:
+    description: >
+      Iteration Paths define delivery cadence. Sprints are 14-day cycles
+      nested under quarterly milestones for portfolio-level reporting.
+    cadence: 14_days
+    structure:
+      - path: "ipai-platform\\2026-Q2"
+        start: "2026-04-01"
+        end: "2026-06-30"
+        sprints:
+          - name: "Sprint 1"
+            start: "2026-04-01"
+            end: "2026-04-14"
+          - name: "Sprint 2"
+            start: "2026-04-15"
+            end: "2026-04-28"
+          - name: "Sprint 3"
+            start: "2026-04-29"
+            end: "2026-05-12"
+          - name: "Sprint 4"
+            start: "2026-05-13"
+            end: "2026-05-26"
+          - name: "Sprint 5"
+            start: "2026-05-27"
+            end: "2026-06-09"
+          - name: "Sprint 6"
+            start: "2026-06-10"
+            end: "2026-06-23"
+      - path: "ipai-platform\\2026-Q3"
+        start: "2026-07-01"
+        end: "2026-09-30"
+        note: "Sprint dates generated at quarter start"
+
+  delivery_plans:
+    description: >
+      Delivery Plans provide timeline coordination across Issues and
+      iterations. Each plan shows a cross-workstream view of scheduled
+      work, dependencies, and milestones.
+    plans:
+      - name: "Platform Delivery Plan"
+        scope: "All 7 Epics across all area paths"
+        view: "Timeline of Issues by iteration"
+        purpose: "Portfolio-level progress and dependency visibility"
+      - name: "Q2 Sprint Plan"
+        scope: "Current quarter Issues and Tasks"
+        view: "Sprint-by-sprint breakdown"
+        purpose: "Operational sprint planning"
+
+  dependency_links:
+    description: >
+      Dependency links express sequencing and cross-workstream blocking
+      relationships. Used in Delivery Plans for critical-path visibility.
+    rules:
+      - "Use Predecessor/Successor link type for sequencing"
+      - "Use Related link type for cross-reference (non-blocking)"
+      - "Every cross-Epic dependency must have an explicit link"
+      - "Blocked items must have a Blocked By link to the blocking item"
+    known_dependencies:
+      - predecessor: "FEAT-001-01 (Identity baseline)"
+        successor: "FEAT-001-02 (AzDo operationalization)"
+        reason: "AzDo service connections require Entra identity baseline"
+      - predecessor: "FEAT-001-02 (AzDo operationalization)"
+        successor: "FEAT-003-01 (Foundry Agent Service integration)"
+        reason: "Foundry deploy pipeline requires AzDo pipeline infrastructure"
+      - predecessor: "FEAT-004-01 (Databricks workspace activation)"
+        successor: "FEAT-004-02 (Customer 360 intelligence fabric)"
+        reason: "Customer 360 requires active Databricks workspace"
+      - predecessor: "FEAT-002-05 (ipai_document_intelligence_bridge)"
+        successor: "FEAT-002-04 (ipai_ap_expense_capture)"
+        reason: "Expense capture depends on Document Intelligence OCR bridge"
+
+  dashboards:
+    description: >
+      Dashboards provide reporting views for different audiences.
+      Built using Azure Boards dashboard widgets.
+    views:
+      - name: "Leadership Dashboard"
+        audience: "Platform lead, stakeholders"
+        widgets:
+          - "Epic burndown (7 objectives)"
+          - "Issue completion by area path"
+          - "Velocity trend (Issues completed per sprint)"
+          - "Blocked items count"
+      - name: "Program Dashboard"
+        audience: "Engineering lead, product lead"
+        widgets:
+          - "Sprint burndown (current iteration)"
+          - "Issue cycle time"
+          - "Dependency graph"
+          - "Upcoming milestones"
+      - name: "Operational Dashboard"
+        audience: "Engineering lead (day-to-day)"
+        widgets:
+          - "My assigned items"
+          - "Recently completed"
+          - "Items missing acceptance criteria"
+          - "Stale items (no update >14 days)"
+
+# -----------------------------------------------------------------------------
+# Team Topology & Operating Model
+# -----------------------------------------------------------------------------
+# Ref: https://learn.microsoft.com/en-us/devops/plan/scaling-agile
+# Ref: https://learn.microsoft.com/en-us/azure/devops/boards/plans/agile-culture
+
+team_topology:
+  principle: "Scale with teams, not projects"
+  description: >
+    Prefer vertical (value-stream) teams aligned to area paths over
+    horizontal (functional) teams. Each team owns a slice of the product
+    from backlog to production. Teams are the unit of scale — when work
+    exceeds capacity, add a team rather than expanding an existing one.
+
+  team_shape:
+    preferred: vertical-value-stream
+    size: "6-9 people per team (current: 1 — solo operator model)"
+    note: >
+      Current operating model is single-developer. Team topology guidance
+      is documented now so the structure scales correctly when headcount
+      grows. Solo-operator maps to all area paths with platform-lead role.
+
+  management_coordination_lane:
+    description: >
+      A lightweight management/program coordination lane provides portfolio
+      views, cross-team dependency resolution, and stakeholder reporting
+      without owning delivery. In the solo-operator model, this is the
+      same person wearing a different hat during sprint boundaries.
+    responsibilities:
+      - "Portfolio backlog grooming (Epic-level prioritization)"
+      - "Cross-area dependency resolution"
+      - "Stakeholder reporting (Leadership Dashboard)"
+      - "Iteration cadence governance (sprint start/end ceremonies)"
+      - "Risk and blocker escalation"
+
+cadence_and_communications:
+  description: >
+    Shared sprint cadence and communication rituals ensure alignment
+    across area paths without heavyweight process overhead.
+  # Ref: https://learn.microsoft.com/en-us/devops/plan/scaling-agile
+
+  shared_sprint_cadence:
+    length: 14_days
+    alignment: "All area paths share the same sprint boundaries"
+    rationale: >
+      Shared cadence simplifies cross-area dependency management and
+      enables organization-wide sprint reviews. Teams (or the solo
+      operator) plan and demo on the same rhythm.
+
+  ceremonies:
+    - name: "Sprint Planning"
+      frequency: "Every 14 days (sprint start)"
+      purpose: "Select Issues/Tasks for the sprint from the backlog"
+      attendees: "Team members (or solo operator)"
+      duration: "1 hour"
+
+    - name: "Sprint Demo / Showcase"
+      frequency: "Every 14 days (sprint end)"
+      purpose: "Demonstrate completed work, gather feedback"
+      attendees: "Team + stakeholders"
+      duration: "30 minutes"
+      note: "Record evidence in docs/evidence/<stamp>/"
+
+    - name: "Retrospective"
+      frequency: "Every 14 days (sprint end)"
+      purpose: "Process improvement, blocker review"
+      attendees: "Team members"
+      duration: "30 minutes"
+
+    - name: "Coordination Meeting"
+      frequency: "Weekly (mid-sprint)"
+      purpose: "Cross-area risks, dependencies, and blockers"
+      attendees: "Management coordination lane"
+      duration: "15 minutes"
+      note: >
+        In solo-operator model, this is a structured self-review of the
+        dependency graph and blocker list.
+
+cross_team_visibility:
+  description: >
+    Cross-team visibility is achieved through Delivery Plans (portfolio
+    backlogs across area paths), dashboards, and dependency links —
+    not through status meetings or status reports.
+  # Ref: https://learn.microsoft.com/en-us/azure/devops/boards/plans/visibility-across-teams
+
+  mechanisms:
+    - tool: "Delivery Plans"
+      purpose: "Timeline view of Issues across all area paths and iterations"
+      audience: "Management coordination lane, stakeholders"
+
+    - tool: "Portfolio Backlogs"
+      purpose: "Epic-level rollup of Issue completion across teams"
+      audience: "Leadership"
+
+    - tool: "Dashboards"
+      purpose: "Real-time widget-based views (see dashboards section above)"
+      audience: "All roles"
+
+    - tool: "Dependency Links"
+      purpose: "Predecessor/Successor links surface cross-area blockers"
+      audience: "Teams, coordination lane"
+
+quality_risk_contract:
+  description: >
+    Lightweight quality and risk communication contract. Ensures risks
+    and quality issues surface early without bureaucratic overhead.
+
+  risk_communication:
+    - trigger: "Item blocked for >3 days"
+      action: "Escalate to coordination lane (add Blocked By link + comment)"
+    - trigger: "Acceptance criteria unclear or missing"
+      action: "Flag in Operational Dashboard (stale items widget)"
+    - trigger: "Cross-area dependency at risk"
+      action: "Raise in weekly coordination meeting"
+    - trigger: "Sprint goal at risk (>30% incomplete at mid-sprint)"
+      action: "Scope negotiation in coordination meeting"
+
+  quality_gates:
+    - gate: "Issue completion"
+      criteria: "All acceptance criteria met + evidence captured"
+    - gate: "Epic completion"
+      criteria: "All child Issues complete + acceptance criteria met"
+    - gate: "Sprint completion"
+      criteria: "Demo delivered + retrospective held + dashboard updated"
+
+  definition_of_done:
+    - "Acceptance criteria verified with evidence"
+    - "Links to PRs, specs, or evidence docs present"
+    - "No open Blocked By links"
+    - "Dashboard widgets reflect current state"
+
+# -----------------------------------------------------------------------------
+# Execution Hierarchy
+# -----------------------------------------------------------------------------
+
+epics:
+
+  # ===========================================================================
+  # OBJ-001: Platform Infrastructure Maturity
+  # ===========================================================================
+  - id: OBJ-001
+    title: "[OBJ-001] Platform Infrastructure Maturity"
+    type: epic
+    tags: [objective, platform]
+    owner: platform-lead
+    description:
+      purpose: >
+        Establish the foundational infrastructure layer — identity, DevOps
+        pipelines, and observability — so all other objectives build on
+        a stable, governed, observable platform.
+      scope: "Identity baseline, AzDo operationalization, observability stack"
+      out_of_scope: "Application features, data pipelines, AI agents"
+      why: >
+        Without identity, CI/CD, and observability, every other workstream
+        operates on an ungoverned foundation. This is the prerequisite layer.
+    acceptance_criteria:
+      - "Entra ID identity baseline fully green (MFA, named accounts, no day-to-day Global Admin)"
+      - "AzDo pipelines route 100% of Azure deployments with no manual portal steps"
+      - "Application Insights + Log Analytics active for all production workloads"
+    strategy_objectives_ref:
+      - OBJ-001  # Identity baseline
+      - OBJ-002  # Azure DevOps operationalization
+      - OBJ-007  # Observability and security baseline
+    links:
+      - infra/ssot/azure/PLATFORM_TARGET_STATE.md
+      - ssot/governance/azdo-project-repo-alignment.yaml
+
+    features:
+
+      - id: FEAT-001-01
+        title: "[FEAT] Identity baseline"
+        tags: [platform, security]
+        owner: platform-lead
+        description:
+          purpose: "Establish canonical identity posture across M365, Entra ID, and AzDo"
+          scope: "Domain verification, emergency access accounts, MFA, named accounts"
+          out_of_scope: "Per-app SSO cutover (tracked separately per app)"
+        acceptance_criteria:
+          - "Primary business domain verified in Entra ID"
+          - "Emergency access (break-glass) accounts created and tested"
+          - "All platform admins on named accounts with MFA"
+          - "Zero day-to-day Global Admin usage"
+        links:
+          - spec/identity-baseline/
+
+      - id: FEAT-001-02
+        title: "[FEAT] Azure DevOps operationalization"
+        tags: [platform, devex]
+        owner: platform-lead
+        description:
+          purpose: "Make AzDo the real control plane for Azure deployments"
+          scope: "ipai-platform project, environments, agent pools, service connections, YAML pipelines"
+          out_of_scope: "GitHub Actions CI (stays in GitHub)"
+        acceptance_criteria:
+          - "3 environments (dev/staging/prod) active in AzDo"
+          - "Self-hosted agent pool operational"
+          - "3 ARM WIF service connections active"
+          - "First end-to-end deploy via AzDo pipeline with no portal steps"
+        links:
+          - ssot/governance/azdo-project-repo-alignment.yaml
+          - ssot/governance/operating-model.yaml
+
+      - id: FEAT-001-03
+        title: "[FEAT] Observability baseline"
+        tags: [platform, security]
+        owner: platform-lead
+        description:
+          purpose: "Make observability part of the baseline, not an afterthought"
+          scope: "Application Insights, Log Analytics, Azure Monitor alerts, Defender for Cloud"
+          out_of_scope: "Custom dashboards, Superset analytics"
+        acceptance_criteria:
+          - "Application Insights enabled for all ACA workloads"
+          - "Log Analytics workspace active"
+          - "Azure Monitor alerts configured for critical paths"
+          - "Defender for Cloud enabled for active estate"
+          - "Smoke/health checks defined for every production workload"
+          - "Rollout strategy defined (progressive exposure via ACA revision management)"
+          - "Rollback path documented (ACA revision shift)"
+          - "Working-hours deployment and bake-time monitoring evidence captured"
+        links:
+          - infra/ssot/azure/resources.yaml
+          - docs/architecture/release_management_model.md
+
+  # ===========================================================================
+  # OBJ-002: Enterprise Parity Achievement
+  # ===========================================================================
+  - id: OBJ-002
+    title: "[OBJ-002] Enterprise Parity Achievement"
+    type: epic
+    tags: [objective, odoo]
+    owner: engineering-lead
+    description:
+      purpose: >
+        Close the gap between Odoo CE and Enterprise feature sets using
+        CE + OCA + ipai_* modules. Target ≥80% parity.
+      scope: "Odoo runtime, ipai_* modules, OCA adoption, Foundry copilot integration"
+      out_of_scope: "Odoo Enterprise licensing, odoo.com IAP"
+      why: >
+        EE parity is the core value proposition — proving that a governed
+        CE stack can match or exceed Enterprise capabilities at zero license cost.
+    acceptance_criteria:
+      - "EE parity score ≥80% (from current ~35-45%)"
+      - "Odoo CE 19 runtime stable with zero critical bugs"
+      - "ipai_enterprise_bridge module cleaned up or deprecated"
+      - "ipai_odoo_copilot integrated with Foundry agent runtime"
+    strategy_objectives_ref:
+      - OBJ-003  # Foundry production runtime hardening
+      - OBJ-004  # Public advisory assistant exposure
+    links:
+      - odoo/.claude/rules/ee-parity.md
+
+    features:
+
+      - id: FEAT-002-01
+        title: "[FEAT] Odoo CE 19 runtime stabilization"
+        tags: [odoo, platform]
+        owner: engineering-lead
+        acceptance_criteria:
+          - "Zero critical runtime errors in production"
+          - "All 126 installed modules pass health check"
+          - "Container restart count < 1/week"
+          - "Ring/flag exposure path defined for module updates"
+          - "Bake-time requirement documented (24h for cron/worker changes)"
+          - "Hotfix path documented for P1/P2 Odoo runtime failures"
+
+      - id: FEAT-002-02
+        title: "[FEAT] ipai_enterprise_bridge cleanup"
+        tags: [odoo]
+        owner: engineering-lead
+        acceptance_criteria:
+          - "Module either refactored to thin bridge or deprecated"
+          - "No EE-specific imports or references remain"
+          - "PR merged with evidence"
+
+      - id: FEAT-002-03
+        title: "[FEAT] ipai_odoo_copilot + Foundry integration"
+        tags: [odoo, foundry]
+        owner: engineering-lead
+        acceptance_criteria:
+          - "Copilot invokes Foundry agent runtime end-to-end"
+          - "Advisory mode enforced (no write operations via copilot)"
+          - "Application Insights traces visible"
+        links:
+          - spec/odoo-copilot-foundry/
+
+      - id: FEAT-002-04
+        title: "[FEAT] ipai_ap_expense_capture"
+        tags: [odoo]
+        owner: engineering-lead
+        acceptance_criteria:
+          - "AP expense capture workflow functional"
+          - "Document Intelligence bridge operational"
+          - "Test evidence captured"
+
+      - id: FEAT-002-05
+        title: "[FEAT] ipai_document_intelligence_bridge"
+        tags: [odoo, foundry]
+        owner: engineering-lead
+        acceptance_criteria:
+          - "Azure Document Intelligence (docai-ipai-dev) callable from Odoo"
+          - "OCR results mapped to Odoo fields"
+          - "Error handling and retry logic in place"
+
+  # ===========================================================================
+  # OBJ-003: AI Agent Ecosystem
+  # ===========================================================================
+  - id: OBJ-003
+    title: "[OBJ-003] AI Agent Ecosystem"
+    type: epic
+    tags: [objective, foundry]
+    owner: engineering-lead
+    description:
+      purpose: >
+        Build the governed AI agent ecosystem using Azure AI Foundry as the
+        control plane. Agents are factory-produced, policy-governed, and
+        observable.
+      scope: "Foundry integration, builder factory, learning paths, MCP tool layer"
+      out_of_scope: "Consumer-facing chatbots, third-party agent marketplaces"
+      why: >
+        The three-plane architecture (Odoo SoR + Databricks SoI + Foundry
+        agent factory) requires Foundry to be operational and governed.
+    acceptance_criteria:
+      - "Foundry Agent Service integration active and deployed"
+      - "Builder factory workspace operational"
+      - "At least 3 agent guided learning paths documented"
+      - "AzDo MCP tool layer specification complete"
+    strategy_objectives_ref:
+      - OBJ-003  # Foundry production runtime hardening
+    links:
+      - spec/agent-ecosystem/
+
+    features:
+
+      - id: FEAT-003-01
+        title: "[FEAT] Foundry Agent Service integration"
+        tags: [foundry, platform]
+        owner: engineering-lead
+        acceptance_criteria:
+          - "ipai-odoo-copilot-azure agent promoted to governed production runtime"
+          - "Runtime contract documented in repo"
+          - "Dev deploy pipeline active"
+          - "Foundry role assignments validated"
+
+      - id: FEAT-003-02
+        title: "[FEAT] Builder factory workspace"
+        tags: [foundry]
+        owner: engineering-lead
+        acceptance_criteria:
+          - "Factory workspace in ops-platform repo operational"
+          - "Agent creation workflow documented"
+          - "Policy governance applied to all factory-produced agents"
+
+      - id: FEAT-003-03
+        title: "[FEAT] Agent guided learning paths"
+        tags: [foundry, devex]
+        owner: engineering-lead
+        acceptance_criteria:
+          - "At least 3 learning paths documented"
+          - "Each path has runnable examples"
+          - "Paths cover: basic agent, tool-using agent, multi-agent"
+
+      - id: FEAT-003-04
+        title: "[FEAT] Azure DevOps MCP tool layer"
+        tags: [foundry, platform]
+        owner: engineering-lead
+        acceptance_criteria:
+          - "MCP tool specification for AzDo operations complete"
+          - "At least 3 tools implemented (work item CRUD, pipeline trigger, board query)"
+          - "Security boundary enforced (no admin-level operations via MCP)"
+
+  # ===========================================================================
+  # OBJ-004: Data Intelligence Pipeline
+  # ===========================================================================
+  - id: OBJ-004
+    title: "[OBJ-004] Data Intelligence Pipeline"
+    type: epic
+    tags: [objective, databricks]
+    owner: engineering-lead
+    description:
+      purpose: >
+        Activate the Databricks-powered data intelligence pipeline.
+        Separate OLTP from OLAP, build medallion architecture, and
+        deliver governed analytics.
+      scope: "Databricks workspace, Customer 360, campaign measurement, BIR tax engine"
+      out_of_scope: "Transactional Odoo queries, real-time streaming"
+      why: >
+        OLTP/OLAP separation is a prerequisite for scalable analytics.
+        Databricks is the data intelligence backbone per platform doctrine.
+    acceptance_criteria:
+      - "Databricks workspace (dbw-ipai-dev) activated with governed access"
+      - "First CDC pipeline from Odoo PG to bronze layer operational"
+      - "Customer 360 silver model defined"
+      - "BIR tax computation engine testable"
+    strategy_objectives_ref:
+      - OBJ-006  # OLTP/OLAP separation
+    links:
+      - spec/data-intelligence-pipeline/
+
+    features:
+
+      - id: FEAT-004-01
+        title: "[FEAT] Databricks workspace activation"
+        tags: [databricks, platform]
+        owner: engineering-lead
+        acceptance_criteria:
+          - "Workspace accessible with governed RBAC"
+          - "Unity Catalog configured"
+          - "First notebook runs successfully"
+          - "Cost controls (cluster policies) in place"
+
+      - id: FEAT-004-02
+        title: "[FEAT] Customer 360 intelligence fabric"
+        tags: [databricks]
+        owner: engineering-lead
+        acceptance_criteria:
+          - "Source tables inventoried from Odoo PG"
+          - "Bronze landing zone defined"
+          - "Silver Customer 360 model contract documented"
+          - "Gold aggregation layer specified"
+
+      - id: FEAT-004-03
+        title: "[FEAT] Campaign measurement cloud"
+        tags: [databricks]
+        owner: engineering-lead
+        acceptance_criteria:
+          - "Campaign data sources identified"
+          - "Measurement model defined"
+          - "Tableau Cloud publication contract specified"
+
+      - id: FEAT-004-04
+        title: "[FEAT] BIR tax engine"
+        tags: [databricks, odoo, security]
+        owner: engineering-lead
+        acceptance_criteria:
+          - "BIR computation rules implemented (VAT, EWT)"
+          - "Test fixtures produce correct outputs"
+          - "Integration with ipai_bir_tax_compliance module validated"
+        links:
+          - odoo/.claude/rules/bir-compliance.md
+
+  # ===========================================================================
+  # OBJ-005: Developer Experience
+  # ===========================================================================
+  - id: OBJ-005
+    title: "[OBJ-005] Developer Experience"
+    type: epic
+    tags: [objective, devex]
+    owner: platform-lead
+    description:
+      purpose: >
+        Optimize the developer experience so that the single-developer
+        operating model is sustainable and efficient.
+      scope: "Docker runtime, VS Code environment, devcontainer parity"
+      out_of_scope: "Cloud IDE, Codespaces (deferred)"
+      why: >
+        Solo-developer model demands zero-friction local dev. Every minute
+        lost to env setup or Docker drift is capacity lost.
+    acceptance_criteria:
+      - "Docker runtime contract documented and enforced"
+      - "VS Code workspace optimized with correct extensions and settings"
+      - "Devcontainer parity with CI environment verified"
+    strategy_objectives_ref:
+      - OBJ-005  # Self-hosted automation consolidation
+
+    features:
+
+      - id: FEAT-005-01
+        title: "[FEAT] Docker runtime contract"
+        tags: [devex, platform]
+        owner: platform-lead
+        acceptance_criteria:
+          - "docker-compose.yml and devcontainer compose documented"
+          - "Mount paths, service names, and port mappings canonical"
+          - "Preflight script validates runtime before boot"
+          - "Same deployment tooling across dev/staging/prod (platform delivery contract)"
+          - "Deployment automation is the default; manual steps are documented exceptions"
+        links:
+          - odoo/.claude/rules/path-contract.md
+          - docs/architecture/platform_delivery_contract.md
+
+      - id: FEAT-005-02
+        title: "[FEAT] VS Code dev environment optimization"
+        tags: [devex]
+        owner: platform-lead
+        acceptance_criteria:
+          - "extensions.json and settings.json canonical across all repos"
+          - "Python interpreter pinned to pyenv odoo-19-dev"
+          - "Linting and formatting configured (black, isort, flake8)"
+
+      - id: FEAT-005-03
+        title: "[FEAT] Devcontainer parity"
+        tags: [devex, platform]
+        owner: platform-lead
+        acceptance_criteria:
+          - "Devcontainer produces identical Odoo runtime to docker-compose"
+          - "OCA module mount paths match"
+          - "Test DB creation works in devcontainer"
+
+  # ===========================================================================
+  # OBJ-006: Security & Compliance
+  # ===========================================================================
+  - id: OBJ-006
+    title: "[OBJ-006] Security & Compliance"
+    type: epic
+    tags: [objective, security]
+    owner: platform-lead
+    description:
+      purpose: >
+        Harden security posture and ensure regulatory compliance,
+        particularly BIR (Philippine tax) requirements.
+      scope: "BIR compliance automation, Zero Trust, Key Vault boundaries"
+      out_of_scope: "SOC 2 certification, GDPR (not applicable)"
+      why: >
+        BIR compliance is a legal requirement. Zero Trust and Key Vault
+        discipline protect the single-tenant platform from credential leakage.
+    acceptance_criteria:
+      - "BIR tax filing automation tested end-to-end"
+      - "Zero Trust posture documented and enforced"
+      - "All secrets managed via Key Vault with managed identity binding"
+    strategy_objectives_ref:
+      - OBJ-007  # Observability and security baseline
+    links:
+      - odoo/.claude/rules/security-baseline.md
+
+    features:
+
+      - id: FEAT-006-01
+        title: "[FEAT] BIR compliance automation"
+        tags: [security, odoo]
+        owner: engineering-lead
+        acceptance_criteria:
+          - "BIR filing deadlines tracked in ipai_bir_tax_compliance"
+          - "VAT and EWT computation validated against test fixtures"
+          - "Filing notification workflow operational"
+        links:
+          - odoo/.claude/rules/bir-compliance.md
+
+      - id: FEAT-006-02
+        title: "[FEAT] Zero Trust posture"
+        tags: [security, platform]
+        owner: platform-lead
+        acceptance_criteria:
+          - "All service-to-service auth uses managed identity"
+          - "No long-lived secrets in pipeline definitions"
+          - "Defender for Cloud enabled for active estate"
+
+      - id: FEAT-006-03
+        title: "[FEAT] Key Vault secret boundaries"
+        tags: [security, platform]
+        owner: platform-lead
+        acceptance_criteria:
+          - "All runtime secrets in kv-ipai-dev with managed identity binding"
+          - "Zero secrets in git-tracked files"
+          - "Secret rotation documented for Zoho SMTP, PG, and API keys"
+
+  # ===========================================================================
+  # OBJ-007: Revenue-Ready Product Portfolio
+  # ===========================================================================
+  - id: OBJ-007
+    title: "[OBJ-007] Revenue-Ready Product Portfolio"
+    type: epic
+    tags: [objective, platform]
+    owner: product-lead
+    description:
+      purpose: >
+        Package the platform into a revenue-ready product portfolio
+        with clear solution positioning, executive communications,
+        and TBWA/SMP packaging.
+      scope: "Solution portfolio, executive comms, TBWA/SMP packaging"
+      out_of_scope: "Pricing, contracts, legal (separate workstream)"
+      why: >
+        The platform must translate technical capability into business
+        value propositions for stakeholders and potential clients.
+    acceptance_criteria:
+      - "Target solution portfolio documented with clear positioning"
+      - "Executive communication templates ready"
+      - "TBWA/SMP packaging defined"
+
+    features:
+
+      - id: FEAT-007-01
+        title: "[FEAT] Target solution portfolio"
+        tags: [platform]
+        owner: product-lead
+        acceptance_criteria:
+          - "Solution portfolio with 3-5 packaged offerings defined"
+          - "Each offering maps to platform capabilities"
+          - "Competitive positioning documented"
+
+      - id: FEAT-007-02
+        title: "[FEAT] Executive communications"
+        tags: [platform]
+        owner: product-lead
+        acceptance_criteria:
+          - "Executive summary deck template ready"
+          - "Key metrics dashboard available"
+          - "Quarterly business review format defined"
+
+      - id: FEAT-007-03
+        title: "[FEAT] TBWA/SMP packaging"
+        tags: [platform]
+        owner: product-lead
+        acceptance_criteria:
+          - "TBWA/SMP brand alignment documented"
+          - "Service packaging with pricing tiers defined"
+          - "Go-to-market timeline established"
+
+  # ===========================================================================
+  # OBJ-008: Cross-Plane Governed Operating Model
+  # ===========================================================================
+  - id: OBJ-008
+    title: "[OBJ-008] Cross-Plane Governed Operating Model"
+    type: epic
+    tags: [objective, platform, odoo, foundry, databricks]
+    owner: platform-lead
+    description:
+      purpose: >
+        Connect Odoo (SoR), Databricks (SoI), and Copilot (Foundry agent
+        runtime) into one governed operating model with explicit ownership
+        boundaries, integration contracts, and end-to-end observability.
+      scope: "Cross-plane ownership model, integration contracts, observability linkage, ambiguity elimination"
+      out_of_scope: "Individual plane implementation (covered by OBJ-001..007)"
+      why: >
+        Without explicit cross-plane contracts, each plane evolves independently
+        and produces conflicting SoR claims, untraced data flows, and ungoverned
+        action paths. This Epic is the connective tissue.
+    acceptance_criteria:
+      - "Odoo/Databricks/Copilot ownership boundaries fully documented"
+      - "All Copilot-to-Odoo and Databricks-to-Copilot paths represented in spec and SSOT"
+      - "End-to-end observability linkage for 100% of production release paths"
+      - "Zero conflicting SoR/lakehouse/Copilot action authority statements in architecture"
+    strategy_objectives_ref: []  # Spans all strategic objectives
+    smart_target_ref: OBJ-005  # enterprise_okrs.yaml
+    links:
+      - ssot/governance/enterprise_okrs.yaml
+      - docs/architecture/UNIFIED_TARGET_ARCHITECTURE.md
+
+    features:
+
+      - id: FEAT-008-01
+        title: "[FEAT] Cross-plane data ownership model"
+        tags: [platform, odoo, databricks, foundry]
+        owner: platform-lead
+        target_iteration: "Sprint 3"
+        description:
+          purpose: "Define who writes, who reads, who governs for each data domain"
+          scope: "Odoo transactional, Databricks analytical, Copilot advisory — ownership and boundary rules"
+        acceptance_criteria:
+          - "Ownership model documented in architecture doc"
+          - "SSOT YAML file defines plane boundaries"
+          - "No ambiguous dual-write paths remain"
+        due: "2026-04-30"
+
+      - id: FEAT-008-02
+        title: "[FEAT] Bounded integration contracts"
+        tags: [platform, foundry, databricks]
+        owner: platform-lead
+        target_iteration: "Sprint 5"
+        description:
+          purpose: "Codify all approved cross-plane data and action paths"
+          scope: "Copilot→Odoo tool contract, Databricks→Copilot context contract"
+        acceptance_criteria:
+          - "Copilot-to-Odoo bounded tool contract published"
+          - "Databricks-to-Copilot curated context contract published"
+          - "Both contracts registered in PLATFORM_CONTRACTS_INDEX.md"
+        due: "2026-05-30"
+
+      - id: FEAT-008-03
+        title: "[FEAT] End-to-end observability linkage"
+        tags: [platform, security]
+        owner: platform-lead
+        target_iteration: "Sprint 6"
+        description:
+          purpose: "Enable correlation of Odoo events, lakehouse pipelines, and Copilot traces"
+          scope: "Trace correlation, audit linkage, incident routing"
+        acceptance_criteria:
+          - "Odoo events, Databricks pipeline runs, and Copilot traces correlatable"
+          - "Incident routing model documented"
+          - "Evidence captured for at least 1 production release path"
+        due: "2026-06-10"
+
+      - id: FEAT-008-04
+        title: "[FEAT] Architectural ambiguity elimination"
+        tags: [platform]
+        owner: platform-lead
+        target_iteration: "Sprint 4"
+        description:
+          purpose: "Close all known contradictions in SoR, lakehouse write path, and Copilot action authority"
+          scope: "Architecture docs, SSOT files, spec bundles"
+        acceptance_criteria:
+          - "Zero conflicting SoR statements across all architecture docs"
+          - "Zero conflicting write-path claims across all SSOT files"
+          - "Verification evidence captured"
+        due: "2026-05-15"
+
+# -----------------------------------------------------------------------------
+# Mapping: Execution Objectives → Strategy Objectives
+# -----------------------------------------------------------------------------
+# The execution hierarchy groups strategy objectives by theme.
+# This is NOT a 1:1 mapping — it's a many-to-many relationship.
+
+objective_mapping:
+  note: >
+    Execution-level Epics (above) group the 7 SMART strategy objectives
+    from platform-strategy-2026.yaml by delivery theme. The strategy
+    OBJ-001..007 are narrow tactical objectives; the execution Epics
+    are broader workstreams that may span multiple strategy objectives.
+
+  mapping:
+    - epic: OBJ-001  # Platform Infrastructure Maturity
+      strategy_refs: [OBJ-001, OBJ-002, OBJ-007]
+      note: "Identity + AzDo + Observability"
+
+    - epic: OBJ-002  # Enterprise Parity Achievement
+      strategy_refs: [OBJ-003, OBJ-004]
+      note: "Foundry runtime + Public assistant (both need Odoo parity)"
+
+    - epic: OBJ-003  # AI Agent Ecosystem
+      strategy_refs: [OBJ-003]
+      note: "Foundry production runtime hardening"
+
+    - epic: OBJ-004  # Data Intelligence Pipeline
+      strategy_refs: [OBJ-006]
+      note: "OLTP/OLAP separation"
+
+    - epic: OBJ-005  # Developer Experience
+      strategy_refs: [OBJ-005]
+      note: "Self-hosted automation consolidation"
+
+    - epic: OBJ-006  # Security & Compliance
+      strategy_refs: [OBJ-007]
+      note: "Observability and security baseline"
+
+    - epic: OBJ-007  # Revenue-Ready Product Portfolio
+      strategy_refs: []
+      note: "Business layer — no direct strategy objective mapping"
+
+    - epic: OBJ-008  # Cross-Plane Governed Operating Model
+      strategy_refs: []
+      smart_target_ref: OBJ-005
+      note: "Cross-plane connective tissue — spans all strategic objectives"
+
+# -----------------------------------------------------------------------------
+# Summary
+# -----------------------------------------------------------------------------
+summary:
+  epics: 8
+  features: 29
+  task_pattern: "5 per feature (design, build, validate, deploy, evidence capture)"
+  estimated_tasks: 145
+  planning_overlays: "Delivery Plans, Area Paths, Iteration Paths, Dashboards, Dependencies"
+  team_model: "Vertical value-stream teams; scale with teams, not projects"
+  github_linkage: "Branches, PRs, merge commits, builds, state transitions linked to work items"
+  smart_target_sync: "enterprise_okrs.yaml SMART targets (OBJ-001..005) synced 2026-03-19"

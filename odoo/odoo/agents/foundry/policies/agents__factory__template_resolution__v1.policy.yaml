@@ -1,0 +1,127 @@
+version: 1
+namespace: ipai.agents.factory.template_resolution.v1
+artifact_type: policy
+repo_key: agents
+domain: factory
+subject: template_resolution
+
+# ============================================================================
+# TEMPLATE RESOLUTION POLICY
+# ============================================================================
+# Templates = accelerators. Specs + SSOT = truth. Factory = enforcement.
+# Upstream sample code must NEVER ship to prod unchanged.
+# ============================================================================
+
+rules:
+  all_factory_outputs_must_start_from_spec: true
+  upstream_templates_are_accelerators_not_ssot: true
+  foundry_templates_are_bootstrap_only: true
+  azd_templates_are_bootstrap_only: true
+  aks_sample_is_pattern_extract_only: true
+  tutorial_code_must_not_ship_to_prod_unchanged: true
+  generated_artifacts_must_be_renamed_to_ipai_convention: true
+  generated_artifacts_must_receive_eval_pack: true
+  generated_artifacts_must_receive_catalog_registration: true
+
+resolution_order:
+  1: explicit_spec_mapping
+  2: adoption_matrix_lookup
+  3: default_template_family
+  4: fail_closed
+
+required_rewrites:
+  - filenames
+  - namespaces
+  - owner_metadata
+  - model_aliases
+  - tool_bindings
+  - eval_configuration
+  - publish_metadata
+
+forbidden_patterns:
+  - direct_prod_publish_from_upstream_sample
+  - raw_upstream_repo_names_in_runtime_artifacts
+  - keeping_default_sample_branding
+  - skipping_eval_because_template_already_exists
+
+# ============================================================================
+# UPSTREAM SOURCE CLASSES
+# ============================================================================
+
+upstream_sources:
+
+  foundry_solution_templates:
+    provider: microsoft
+    class: bootstrap_accelerator
+    url: https://learn.microsoft.com/en-us/azure/foundry/how-to/develop/ai-template-get-started
+    usage_rule: bootstrap_plus_refactor
+    target_repos: [agents, odoo, lakehouse, automations]
+
+  azd_full_stack_templates:
+    provider: microsoft
+    class: bootstrap_accelerator
+    url: https://learn.microsoft.com/en-us/azure/developer/azure-developer-cli/azd-templates
+    usage_rule: bootstrap_only
+    target_repos: [web, infra]
+
+  aks_platform_engineering_sample:
+    provider: microsoft
+    class: benchmark_pattern
+    url: https://learn.microsoft.com/en-us/samples/azure-samples/aks-platform-engineering/aks-platform-engineering/
+    usage_rule: pattern_extract_only
+    target_repos: [infra]
+
+# ============================================================================
+# ADOPTION MATRIX
+# ============================================================================
+
+adoption_matrix:
+
+  - use_case: foundry_agent_bootstrap
+    preferred_templates:
+      - get_started_with_ai_agents
+      - multi_agent_workflow_automation
+    target_repo: agents
+    publish_surface: foundry_agent_service
+
+  - use_case: document_processing_workbench
+    preferred_templates:
+      - multi_modal_content_processing
+      - generate_documents_from_your_data
+    target_repo: odoo
+    publish_surface: foundry_plus_odoo_adapter
+    notes: "Benchmark against SAP-style outcomes, not SAP integration"
+
+  - use_case: lakehouse_agentic_analytics
+    preferred_templates:
+      - agentic_applications_for_unified_data_foundation
+      - get_started_with_ai_chat
+    target_repo: lakehouse
+    publish_surface: databricks_plus_foundry
+
+  - use_case: internal_operator_console
+    preferred_templates:
+      - react_api_full_stack
+    target_repo: web
+    publish_surface: internal_web_surface
+
+  - use_case: platform_control_plane
+    preferred_templates:
+      - gitops_bridge_pattern
+    target_repo: infra
+    publish_surface: aks_control_plane
+
+  - use_case: release_orchestration
+    preferred_templates:
+      - create_a_multi_agent_release_manager_assistant
+    target_repo: automations
+    publish_surface: internal_release_automation
+
+# ============================================================================
+# SAP BENCHMARK RULE
+# ============================================================================
+
+sap_policy:
+  sap_is_benchmark_only: true
+  sap_is_not_integration_target: true
+  benchmark_framing: "Use SAP on Azure (Concur/Joule) as outcome benchmark to beat with Odoo CE + OCA + IPAI"

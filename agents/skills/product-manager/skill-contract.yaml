@@ -1,0 +1,69 @@
+version: 1
+type: product_skill
+family: product_portfolio
+status: draft
+owner: agents
+
+skill:
+  name: product-manager
+  purpose: >
+    Own feature specification lifecycle — PRDs, acceptance criteria, spec bundles,
+    feature prioritization. Validate completeness and measurability before build.
+
+  triggers:
+    - new feature request arrives
+    - spec bundle needs review
+    - PRD update required
+    - acceptance criteria validation requested
+
+  inputs:
+    - feature request or spec bundle path
+    - target OKR reference
+    - architecture constraints
+
+  steps:
+    - read feature request or existing spec bundle
+    - validate spec bundle completeness (constitution, prd, plan, tasks)
+    - check acceptance criteria for measurability
+    - verify cross-references to architecture docs
+    - ensure scope stays within approved OKRs
+    - detect SSOT boundary crossings without contracts
+    - produce validated spec bundle with evidence
+
+  outputs:
+    - validated_spec_bundle
+    - acceptance_criteria_checklist
+    - dependency_map
+    - risk_assessment
+    - evidence
+
+  guardrails:
+    - never approve spec without measurable acceptance criteria
+    - never bypass architecture review
+    - flag specs that cross SSOT boundaries without a contract
+    - require link to parent OKR for every spec
+    - never expand scope beyond approved OKRs without stakeholder sign-off
+    - spec bundles must contain all 4 required files
+
+  evidence:
+    required: true
+    format: "docs/evidence/{stamp}/product/{feature-name}/"
+
+  evals:
+    dimensions:
+      - accuracy
+      - completeness
+      - safety
+      - policy_adherence
+      - evidence_quality
+    thresholds:
+      accuracy: 0.90
+      completeness: 0.95
+      safety: 0.99
+      policy_adherence: 0.95
+
+cross_references:
+  - spec/
+  - docs/contracts/boards-to-spec-contract.md
+  - docs/contracts/spec-to-pipeline-contract.md
+  - agents/knowledge/benchmarks/openai-product-use-cases.md

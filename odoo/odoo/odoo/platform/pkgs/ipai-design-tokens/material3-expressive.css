@@ -1,0 +1,631 @@
+/* ============================================================================
+ * Material 3 "Expressive" Theme (Gemini-style)
+ * ============================================================================
+ * Production-ready M3 design tokens for IPAI applications.
+ * Mimics the Gemini web interface's visual hierarchy with:
+ * - Tonal surfaces for depth
+ * - Generous rounded corners
+ * - Pastel accent colors
+ * - Seamless light/dark mode switching
+ * - UI state tokens (hover/pressed/focus)
+ * - TBWA accent override support
+ * - Odoo-safe scoping with tw- prefix
+ * ============================================================================ */
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* =========================================================================
+     * Light Mode (Gemini Day)
+     * ========================================================================= */
+
+    /* --- Primary Brand Colors (Deep Blue/Purple) --- */
+    --md-sys-color-primary: 29 78 216;              /* blue-700 approx */
+    --md-sys-color-on-primary: 255 255 255;
+    --md-sys-color-primary-container: 219 234 254;  /* blue-100 */
+    --md-sys-color-on-primary-container: 30 58 138; /* blue-900 */
+
+    /* --- Secondary Colors (Indigo for pastel accents) --- */
+    --md-sys-color-secondary: 99 102 241;           /* indigo-500 */
+    --md-sys-color-on-secondary: 255 255 255;
+    --md-sys-color-secondary-container: 224 231 255; /* indigo-100 */
+    --md-sys-color-on-secondary-container: 49 46 129; /* indigo-900 */
+
+    /* --- Tertiary Colors (Gemini-ish rose) --- */
+    --md-sys-color-tertiary: 217 101 112;           /* Gemini rose */
+    --md-sys-color-on-tertiary: 255 255 255;
+    --md-sys-color-tertiary-container: 255 228 230; /* rose-100 */
+    --md-sys-color-on-tertiary-container: 136 19 55; /* rose-900 */
+
+    /* --- Error Colors --- */
+    --md-sys-color-error: 220 38 38;                /* red-600 */
+    --md-sys-color-on-error: 255 255 255;
+    --md-sys-color-error-container: 254 226 226;    /* red-100 */
+    --md-sys-color-on-error-container: 153 27 27;   /* red-800 */
+
+    /* --- Surface Tones (Core of the "Gemini Look") --- */
+    /* Surface: Background behind everything */
+    --md-sys-color-surface: 255 255 255;
+    --md-sys-color-on-surface: 31 31 31;
+    --md-sys-color-on-surface-variant: 73 80 87;
+
+    /* Surface Container variants for cards, sidebars, elevated elements */
+    --md-sys-color-surface-dim: 250 250 250;
+    --md-sys-color-surface-bright: 255 255 255;
+    --md-sys-color-surface-container-lowest: 255 255 255;
+    --md-sys-color-surface-container-low: 243 244 246;  /* gray-100 */
+    --md-sys-color-surface-container: 237 238 241;      /* The specific Gemini gray */
+    --md-sys-color-surface-container-high: 231 232 236;
+    --md-sys-color-surface-container-highest: 225 226 230;
+
+    /* --- Inverse Colors --- */
+    --md-sys-color-inverse-surface: 31 41 55;       /* gray-800 */
+    --md-sys-color-inverse-on-surface: 243 244 246; /* gray-100 */
+    --md-sys-color-inverse-primary: 147 197 253;    /* blue-300 */
+
+    /* --- Outlines & Dividers --- */
+    --md-sys-color-outline: 116 119 127;
+    --md-sys-color-outline-variant: 196 199 197;
+
+    /* --- Background (deprecated, use surface) --- */
+    --md-sys-color-background: 255 255 255;
+    --md-sys-color-on-background: 31 31 31;
+
+    /* --- Shadow & Scrim --- */
+    --md-sys-color-shadow: 0 0 0;
+    --md-sys-color-scrim: 0 0 0;
+
+    /* --- State Layers --- */
+    --md-sys-state-hover-opacity: 0.08;
+    --md-sys-state-focus-opacity: 0.12;
+    --md-sys-state-pressed-opacity: 0.12;
+    --md-sys-state-dragged-opacity: 0.16;
+
+    /* --- UI State Tokens (production-ready) --- */
+    --ui-hover: 0.06;
+    --ui-pressed: 0.10;
+    --ui-focus: 0.22;
+
+    /* --- Muted/Subtle Text Colors (hierarchy) --- */
+    --ui-color-muted: 82 82 91;     /* zinc-600 */
+    --ui-color-subtle: 113 113 122; /* zinc-500 */
+
+    /* --- Status Colors (UI layer) --- */
+    --ui-color-success: 22 163 74;
+    --ui-color-warning: 245 158 11;
+    --ui-color-danger: 220 38 38;
+    --ui-color-info: 59 130 246;
+
+    /* --- Scrim (modal/backdrop) --- */
+    --ui-color-scrim: 0 0 0;
+
+    /* =========================================================================
+     * Shape System (Border Radii)
+     * ========================================================================= */
+    --md-sys-shape-corner-none: 0px;
+    --md-sys-shape-corner-extra-small: 4px;
+    --md-sys-shape-corner-small: 8px;
+    --md-sys-shape-corner-medium: 12px;
+    --md-sys-shape-corner-large: 16px;
+    --md-sys-shape-corner-extra-large: 24px;   /* Chat bubbles */
+    --md-sys-shape-corner-full: 9999px;        /* Pills, FABs */
+
+    /* Semantic radius aliases */
+    --radius-sm: var(--md-sys-shape-corner-small);
+    --radius-md: var(--md-sys-shape-corner-medium);
+    --radius-lg: var(--md-sys-shape-corner-large);
+    --radius-xl: var(--md-sys-shape-corner-extra-large);
+    --radius-2xl: 32px;
+    --radius-full: var(--md-sys-shape-corner-full);
+
+    /* =========================================================================
+     * Elevation System (Shadows)
+     * ========================================================================= */
+    --md-sys-elevation-0: none;
+    --md-sys-elevation-1: 0 1px 3px 1px rgba(0, 0, 0, 0.15), 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+    --md-sys-elevation-2: 0 2px 6px 2px rgba(0, 0, 0, 0.15), 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+    --md-sys-elevation-3: 0 4px 8px 3px rgba(0, 0, 0, 0.15), 0 1px 3px 0 rgba(0, 0, 0, 0.3);
+    --md-sys-elevation-4: 0 6px 10px 4px rgba(0, 0, 0, 0.15), 0 2px 3px 0 rgba(0, 0, 0, 0.3);
+    --md-sys-elevation-5: 0 8px 12px 6px rgba(0, 0, 0, 0.15), 0 4px 4px 0 rgba(0, 0, 0, 0.3);
+
+    /* Enhanced elevation (production) */
+    --elev-1: 0 1px 2px rgba(0, 0, 0, 0.06), 0 1px 3px rgba(0, 0, 0, 0.08);
+    --elev-2: 0 4px 12px rgba(0, 0, 0, 0.10);
+    --elev-3: 0 12px 28px rgba(0, 0, 0, 0.14);
+
+    /* =========================================================================
+     * Motion System
+     * ========================================================================= */
+    --motion-fast: 140ms;
+    --motion-base: 220ms;
+    --motion-slow: 320ms;
+    --motion-ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+
+    /* =========================================================================
+     * Typography
+     * ========================================================================= */
+    --md-sys-typescale-display-large-size: 57px;
+    --md-sys-typescale-display-medium-size: 45px;
+    --md-sys-typescale-display-small-size: 36px;
+    --md-sys-typescale-headline-large-size: 32px;
+    --md-sys-typescale-headline-medium-size: 28px;
+    --md-sys-typescale-headline-small-size: 24px;
+    --md-sys-typescale-title-large-size: 22px;
+    --md-sys-typescale-title-medium-size: 16px;
+    --md-sys-typescale-title-small-size: 14px;
+    --md-sys-typescale-body-large-size: 16px;
+    --md-sys-typescale-body-medium-size: 14px;
+    --md-sys-typescale-body-small-size: 12px;
+    --md-sys-typescale-label-large-size: 14px;
+    --md-sys-typescale-label-medium-size: 12px;
+    --md-sys-typescale-label-small-size: 11px;
+
+    /* Font families (closest open alternatives to Google Sans) */
+    --md-sys-typescale-font-family-brand: 'Inter', 'Roboto Flex', system-ui, sans-serif;
+    --md-sys-typescale-font-family-plain: 'Inter', 'Roboto Flex', system-ui, sans-serif;
+    --md-sys-typescale-font-family-mono: 'JetBrains Mono', 'Fira Code', Consolas, monospace;
+
+    /* =========================================================================
+     * Semantic Status Colors
+     * ========================================================================= */
+    --md-sys-color-success: 34 197 94;          /* green-500 */
+    --md-sys-color-on-success: 255 255 255;
+    --md-sys-color-success-container: 220 252 231; /* green-100 */
+    --md-sys-color-on-success-container: 22 101 52; /* green-800 */
+
+    --md-sys-color-warning: 245 158 11;         /* amber-500 */
+    --md-sys-color-on-warning: 255 255 255;
+    --md-sys-color-warning-container: 254 243 199; /* amber-100 */
+    --md-sys-color-on-warning-container: 146 64 14; /* amber-800 */
+
+    --md-sys-color-info: 59 130 246;            /* blue-500 */
+    --md-sys-color-on-info: 255 255 255;
+    --md-sys-color-info-container: 219 234 254; /* blue-100 */
+    --md-sys-color-on-info-container: 30 64 175; /* blue-800 */
+
+    /* =========================================================================
+     * Gemini-specific Gradients
+     * ========================================================================= */
+    --md-gemini-gradient: linear-gradient(135deg, #4285f4 0%, #9b72cb 50%, #d96570 100%);
+    --md-gemini-mesh: radial-gradient(at 0% 0%, rgba(66, 133, 244, 0.15) 0px, transparent 50%),
+                      radial-gradient(at 100% 0%, rgba(217, 101, 112, 0.15) 0px, transparent 50%);
+    --md-gemini-glow: radial-gradient(ellipse at center, rgba(147, 197, 253, 0.3) 0%, transparent 70%);
+  }
+
+  /* ===========================================================================
+   * Dark Mode (Gemini Night)
+   * =========================================================================== */
+  .dark,
+  :root.dark,
+  [data-theme="dark"] {
+    /* --- Primary shifts to lighter pastel blue for contrast --- */
+    --md-sys-color-primary: 168 199 250;
+    --md-sys-color-on-primary: 10 48 120;
+    --md-sys-color-primary-container: 40 70 140;
+    --md-sys-color-on-primary-container: 216 226 255;
+
+    /* --- Secondary (Indigo for dark) --- */
+    --md-sys-color-secondary: 165 180 252;          /* indigo-300 */
+    --md-sys-color-on-secondary: 30 41 59;
+    --md-sys-color-secondary-container: 49 46 129;  /* indigo-900 */
+    --md-sys-color-on-secondary-container: 224 231 255;
+
+    /* --- Tertiary (Rose for dark) --- */
+    --md-sys-color-tertiary: 251 113 133;           /* rose-400 */
+    --md-sys-color-on-tertiary: 30 41 59;
+    --md-sys-color-tertiary-container: 136 19 55;   /* rose-900 */
+    --md-sys-color-on-tertiary-container: 255 228 230;
+
+    /* --- Error --- */
+    --md-sys-color-error: 255 180 171;
+    --md-sys-color-on-error: 105 0 5;
+    --md-sys-color-error-container: 147 0 10;
+    --md-sys-color-on-error-container: 255 218 214;
+
+    /* --- Surface Tones (Dark Gunmetal/Blue-Grey) --- */
+    --md-sys-color-surface: 19 19 20;           /* Almost black */
+    --md-sys-color-on-surface: 227 227 227;
+    --md-sys-color-on-surface-variant: 196 199 206;
+
+    /* The specific dark grey/blue tone Gemini uses */
+    --md-sys-color-surface-dim: 19 19 20;
+    --md-sys-color-surface-bright: 57 57 62;
+    --md-sys-color-surface-container-lowest: 14 14 15;
+    --md-sys-color-surface-container-low: 29 29 33;
+    --md-sys-color-surface-container: 33 33 38;
+    --md-sys-color-surface-container-high: 43 43 48;
+    --md-sys-color-surface-container-highest: 54 54 59;
+
+    /* --- Inverse --- */
+    --md-sys-color-inverse-surface: 227 227 227;
+    --md-sys-color-inverse-on-surface: 49 49 51;
+    --md-sys-color-inverse-primary: 29 78 216;
+
+    /* --- Outlines --- */
+    --md-sys-color-outline: 142 145 153;
+    --md-sys-color-outline-variant: 68 71 79;
+
+    /* --- Background --- */
+    --md-sys-color-background: 19 19 20;
+    --md-sys-color-on-background: 227 227 227;
+
+    /* --- Muted/Subtle Text Colors (dark mode) --- */
+    --ui-color-muted: 161 161 170;   /* zinc-400 */
+    --ui-color-subtle: 212 212 216;  /* zinc-300 */
+
+    /* --- Elevation (tinted shadows for dark mode) --- */
+    --md-sys-elevation-1: 0 1px 3px 1px rgba(0, 0, 0, 0.5), 0 1px 2px 0 rgba(0, 0, 0, 0.6);
+    --md-sys-elevation-2: 0 2px 6px 2px rgba(0, 0, 0, 0.5), 0 1px 2px 0 rgba(0, 0, 0, 0.6);
+    --md-sys-elevation-3: 0 4px 8px 3px rgba(0, 0, 0, 0.5), 0 1px 3px 0 rgba(0, 0, 0, 0.6);
+    --md-sys-elevation-4: 0 6px 10px 4px rgba(0, 0, 0, 0.5), 0 2px 3px 0 rgba(0, 0, 0, 0.6);
+    --md-sys-elevation-5: 0 8px 12px 6px rgba(0, 0, 0, 0.5), 0 4px 4px 0 rgba(0, 0, 0, 0.6);
+
+    /* Enhanced elevation (dark mode) */
+    --elev-1: 0 1px 2px rgba(0, 0, 0, 0.40), 0 1px 3px rgba(0, 0, 0, 0.35);
+    --elev-2: 0 6px 16px rgba(0, 0, 0, 0.45);
+    --elev-3: 0 16px 36px rgba(0, 0, 0, 0.55);
+
+    /* --- Status Colors (adjusted for dark mode) --- */
+    --md-sys-color-success: 74 222 128;         /* green-400 */
+    --md-sys-color-on-success: 0 0 0;
+    --md-sys-color-success-container: 22 101 52;
+    --md-sys-color-on-success-container: 187 247 208;
+
+    --md-sys-color-warning: 251 191 36;         /* amber-400 */
+    --md-sys-color-on-warning: 0 0 0;
+    --md-sys-color-warning-container: 146 64 14;
+    --md-sys-color-on-warning-container: 254 243 199;
+
+    --md-sys-color-info: 147 197 253;           /* blue-300 */
+    --md-sys-color-on-info: 0 0 0;
+    --md-sys-color-info-container: 30 64 175;
+    --md-sys-color-on-info-container: 219 234 254;
+
+    /* --- Dark mode gradients --- */
+    --md-gemini-gradient: linear-gradient(135deg, #60a5fa 0%, #a78bfa 50%, #f472b6 100%);
+    --md-gemini-mesh: radial-gradient(at 0% 0%, rgba(96, 165, 250, 0.1) 0px, transparent 50%),
+                      radial-gradient(at 100% 0%, rgba(244, 114, 182, 0.1) 0px, transparent 50%);
+    --md-gemini-glow: radial-gradient(ellipse at center, rgba(147, 197, 253, 0.15) 0%, transparent 70%);
+  }
+
+  /* ===========================================================================
+   * TBWA Accent Override
+   * ===========================================================================
+   * Apply class "tbwa" on a wrapper (or on body) to switch accents to TBWA
+   * black/yellow while keeping the M3 Expressive surface hierarchy intact.
+   * =========================================================================== */
+  .tbwa {
+    --md-sys-color-primary: 0 0 0;              /* black */
+    --md-sys-color-on-primary: 255 255 255;
+    --md-sys-color-primary-container: 255 229 0; /* TBWA yellow */
+    --md-sys-color-on-primary-container: 0 0 0;
+
+    /* Use tertiary as the accent color */
+    --md-sys-color-tertiary: 255 229 0;
+    --md-sys-color-on-tertiary: 0 0 0;
+    --md-sys-color-tertiary-container: 255 243 176;
+    --md-sys-color-on-tertiary-container: 0 0 0;
+  }
+
+  .dark .tbwa,
+  .tbwa.dark {
+    --md-sys-color-primary: 255 255 255;        /* white in dark mode */
+    --md-sys-color-on-primary: 0 0 0;
+    --md-sys-color-primary-container: 255 229 0;
+    --md-sys-color-on-primary-container: 0 0 0;
+
+    --md-sys-color-tertiary: 255 229 0;
+    --md-sys-color-on-tertiary: 0 0 0;
+  }
+}
+
+/* =============================================================================
+ * Base Styles
+ * ============================================================================= */
+@layer base {
+  body {
+    @apply bg-surface text-on-surface antialiased;
+    font-family: var(--md-sys-typescale-font-family-plain);
+  }
+
+  /* Smooth theme transitions */
+  *,
+  *::before,
+  *::after {
+    transition-property: background-color, border-color, color, fill, stroke;
+    transition-duration: 150ms;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  /* Disable transitions on page load */
+  .no-transitions *,
+  .no-transitions *::before,
+  .no-transitions *::after {
+    transition: none !important;
+  }
+}
+
+/* =============================================================================
+ * Component Utilities
+ * ============================================================================= */
+@layer components {
+  /* M3 Filled Button */
+  .md-filled-button {
+    @apply inline-flex items-center justify-center px-6 py-2.5 rounded-full;
+    @apply bg-primary text-on-primary font-medium text-sm;
+    @apply hover:shadow-md active:shadow-sm transition-all;
+    @apply focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/50;
+  }
+
+  /* M3 Outlined Button */
+  .md-outlined-button {
+    @apply inline-flex items-center justify-center px-6 py-2.5 rounded-full;
+    @apply bg-transparent text-primary font-medium text-sm;
+    @apply border border-outline hover:bg-primary/8 active:bg-primary/12;
+    @apply transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/50;
+  }
+
+  /* M3 Text Button */
+  .md-text-button {
+    @apply inline-flex items-center justify-center px-3 py-2 rounded-full;
+    @apply bg-transparent text-primary font-medium text-sm;
+    @apply hover:bg-primary/8 active:bg-primary/12 transition-all;
+    @apply focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/50;
+  }
+
+  /* M3 Tonal Button (Gemini-style) */
+  .md-tonal-button {
+    @apply inline-flex items-center justify-center px-6 py-2.5 rounded-full;
+    @apply bg-secondary-container text-on-secondary-container font-medium text-sm;
+    @apply hover:shadow-sm active:shadow-none transition-all;
+    @apply focus:outline-none focus-visible:ring-2 focus-visible:ring-secondary/50;
+  }
+
+  /* M3 FAB */
+  .md-fab {
+    @apply inline-flex items-center justify-center w-14 h-14 rounded-2xl;
+    @apply bg-primary-container text-on-primary-container;
+    @apply shadow-md hover:shadow-lg active:shadow-md transition-all;
+    @apply focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/50;
+  }
+
+  .md-fab-extended {
+    @apply inline-flex items-center justify-center gap-2 px-4 h-14 rounded-2xl;
+    @apply bg-primary-container text-on-primary-container font-medium;
+    @apply shadow-md hover:shadow-lg active:shadow-md transition-all;
+    @apply focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/50;
+  }
+
+  /* M3 Card */
+  .md-card {
+    @apply rounded-xl bg-surface-container p-4;
+    @apply border border-outline-variant/30;
+  }
+
+  .md-card-elevated {
+    @apply rounded-xl bg-surface-container-low p-4;
+    @apply shadow-md;
+  }
+
+  .md-card-filled {
+    @apply rounded-xl bg-surface-container-highest p-4;
+  }
+
+  /* M3 Input Field (Gemini-style prompt input) */
+  .md-input-field {
+    @apply w-full bg-surface-container-low rounded-3xl p-4;
+    @apply border border-transparent;
+    @apply hover:bg-surface-container transition-colors;
+    @apply focus-within:border-outline-variant focus-within:bg-surface;
+  }
+
+  .md-input-field input,
+  .md-input-field textarea {
+    @apply w-full bg-transparent text-on-surface placeholder-outline;
+    @apply resize-none focus:outline-none;
+  }
+
+  /* M3 Chip */
+  .md-chip {
+    @apply inline-flex items-center gap-2 px-4 py-1.5 rounded-lg;
+    @apply bg-surface-container-high text-on-surface-variant text-sm;
+    @apply border border-outline-variant/50;
+    @apply hover:bg-surface-container-highest transition-colors;
+  }
+
+  .md-chip-selected {
+    @apply bg-secondary-container text-on-secondary-container;
+    @apply border-transparent;
+  }
+
+  /* M3 Navigation Rail Item */
+  .md-nav-rail-item {
+    @apply flex flex-col items-center gap-1 p-3 rounded-2xl;
+    @apply text-on-surface-variant hover:bg-surface-container-high;
+    @apply transition-colors cursor-pointer;
+  }
+
+  .md-nav-rail-item.active {
+    @apply bg-secondary-container text-on-secondary-container;
+  }
+
+  /* M3 List Item */
+  .md-list-item {
+    @apply flex items-center gap-4 px-4 py-3 rounded-lg;
+    @apply hover:bg-surface-container transition-colors cursor-pointer;
+  }
+
+  /* M3 Divider */
+  .md-divider {
+    @apply h-px bg-outline-variant/50;
+  }
+
+  /* M3 Badge */
+  .md-badge {
+    @apply inline-flex items-center justify-center min-w-[20px] h-5 px-1.5;
+    @apply bg-error text-on-error text-xs font-medium rounded-full;
+  }
+
+  /* Gemini-style Bot Response Card */
+  .md-response-card {
+    @apply bg-surface-container rounded-3xl p-6;
+    @apply border border-outline-variant/30;
+  }
+
+  /* Gemini Avatar */
+  .md-gemini-avatar {
+    @apply w-8 h-8 rounded-full flex-shrink-0;
+    background: var(--md-gemini-gradient);
+  }
+
+  /* Gemini Mesh Background */
+  .md-gemini-mesh {
+    background: var(--md-gemini-mesh);
+  }
+
+  /* Gemini Glow Effect */
+  .md-gemini-glow {
+    background: var(--md-gemini-glow);
+  }
+}
+
+/* =============================================================================
+ * Animation Utilities
+ * ============================================================================= */
+@layer utilities {
+  /* State layers */
+  .state-layer-hover {
+    @apply hover:bg-current/[0.08];
+  }
+
+  .state-layer-focus {
+    @apply focus:bg-current/[0.12];
+  }
+
+  .state-layer-pressed {
+    @apply active:bg-current/[0.12];
+  }
+
+  /* Production-ready elevation utilities */
+  .elev-1 { box-shadow: var(--elev-1); }
+  .elev-2 { box-shadow: var(--elev-2); }
+  .elev-3 { box-shadow: var(--elev-3); }
+
+  /* Focus ring utility */
+  .focus-ring {
+    outline: none;
+    box-shadow: 0 0 0 4px rgb(var(--md-sys-color-primary) / var(--ui-focus));
+  }
+
+  /* Production-ready transition utility */
+  .transition-ui {
+    transition: background-color var(--motion-base) var(--motion-ease),
+                border-color var(--motion-base) var(--motion-ease),
+                box-shadow var(--motion-base) var(--motion-ease),
+                transform var(--motion-fast) var(--motion-ease),
+                opacity var(--motion-fast) var(--motion-ease);
+  }
+
+  /* Text hierarchy utilities */
+  .text-muted {
+    color: rgb(var(--ui-color-muted));
+  }
+
+  .text-subtle {
+    color: rgb(var(--ui-color-subtle));
+  }
+
+  /* M3 Motion */
+  .motion-standard {
+    transition-timing-function: cubic-bezier(0.2, 0, 0, 1);
+  }
+
+  .motion-emphasized {
+    transition-timing-function: cubic-bezier(0.2, 0, 0, 1);
+    transition-duration: 500ms;
+  }
+
+  .motion-emphasized-decelerate {
+    transition-timing-function: cubic-bezier(0.05, 0.7, 0.1, 1);
+  }
+
+  .motion-emphasized-accelerate {
+    transition-timing-function: cubic-bezier(0.3, 0, 0.8, 0.15);
+  }
+
+  /* Typing animation for AI responses */
+  @keyframes typing-dots {
+    0%, 20% { opacity: 0.2; }
+    50% { opacity: 1; }
+    80%, 100% { opacity: 0.2; }
+  }
+
+  .animate-typing-dot {
+    animation: typing-dots 1.4s infinite ease-in-out both;
+  }
+
+  .animate-typing-dot-1 { animation-delay: 0s; }
+  .animate-typing-dot-2 { animation-delay: 0.2s; }
+  .animate-typing-dot-3 { animation-delay: 0.4s; }
+
+  /* Shimmer loading effect */
+  @keyframes shimmer {
+    0% { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
+  }
+
+  .animate-shimmer {
+    background: linear-gradient(
+      90deg,
+      rgb(var(--md-sys-color-surface-container)) 0%,
+      rgb(var(--md-sys-color-surface-container-high)) 50%,
+      rgb(var(--md-sys-color-surface-container)) 100%
+    );
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+  }
+
+  /* Pulse ring for status indicators */
+  @keyframes pulse-ring-m3 {
+    0% { transform: scale(0.9); opacity: 0.8; }
+    50% { transform: scale(1); opacity: 0.4; }
+    100% { transform: scale(0.9); opacity: 0.8; }
+  }
+
+  .animate-pulse-ring-m3 {
+    animation: pulse-ring-m3 2s ease-in-out infinite;
+  }
+}
+
+/* =============================================================================
+ * Custom Scrollbar (Gemini-style)
+ * ============================================================================= */
+@layer base {
+  /* Webkit browsers */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: rgb(var(--md-sys-color-outline-variant));
+    border-radius: var(--md-sys-shape-corner-full);
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: rgb(var(--md-sys-color-outline));
+  }
+
+  /* Firefox */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: rgb(var(--md-sys-color-outline-variant)) transparent;
+  }
+}

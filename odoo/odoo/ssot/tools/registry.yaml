@@ -1,0 +1,251 @@
+# ssot/tools/registry.yaml
+# Single source of truth for all tools available to IPAI agent skills.
+#
+# CI validator: scripts/ci/validate_skills_registry.py (--check-tools)
+# Reference:    ssot/agents/interface_schema.yaml (field definitions)
+# Contract:     docs/contracts/C-TOOLS-PERMISSIONS-01.md
+#
+# Field reference:
+#   id                      - unique kebab-case identifier; must match [a-z][a-z0-9_]+
+#   description             - what the tool does (1 sentence)
+#   executor_type           - supabase_rpc | github_api | slack_api | mcp_api | edge_fn | repo_fs
+#   allowed_in_skills       - list of skill ids that may use this tool; ["*"] = all
+#   requires_human_approval - true if a human must confirm before execution
+#   side_effects            - list of observable side effects (audit trail items)
+#   sensitive_paths         - glob patterns this tool can read/write (empty = no FS access)
+#   security_notes          - freeform security guidance for implementors
+#
+# Append-only: do NOT remove entries; set allowed_in_skills: [] to disable.
+# Last updated: 2026-03-02
+
+meta:
+  schema_version: "1.0"
+  updated_at: "2026-03-02"
+  contract: "docs/contracts/C-TOOLS-PERMISSIONS-01.md"
+
+tools:
+
+  # ── Supabase ops.* RPC helpers ────────────────────────────────────────────
+
+  - id: ops_start_run
+    description: >
+      Inserts a row into ops.runs with status=running before any side effect begins.
+      Mandatory first call for every skill execution (evidence-first invariant).
+    executor_type: supabase_rpc
+    allowed_in_skills: ["*"]
+    requires_human_approval: false
+    side_effects:
+      - ops.runs INSERT (run_id, agent_kind, triggered_by, started_at, status=running)
+    sensitive_paths: []
+    security_notes: >
+      Must be called before any write side effect.
+      run_id must be a freshly generated UUID — never reused across runs.
+
+  - id: ops_log_event
+    description: >
+      Appends a structured event row to ops.run_events for the current run.
+      Used for phase transitions, warnings, and debug traces.
+    executor_type: supabase_rpc
+    allowed_in_skills: ["*"]
+    requires_human_approval: false
+    side_effects:
+      - ops.run_events INSERT (run_id FK, level, message, data jsonb)
+    sensitive_paths: []
+    security_notes: >
+      data jsonb must never contain secret values.
+      Use secret names (e.g. "CF_API_TOKEN") not values.
+
+  - id: ops_complete_run
+    description: >
+      Updates ops.runs status to completed and sets last_phase + checkpoint_at.
+    executor_type: supabase_rpc
+    allowed_in_skills: ["*"]
+    requires_human_approval: false
+    side_effects:
+      - ops.runs UPDATE (status=completed, last_phase, checkpoint_at)
+    sensitive_paths: []
+    security_notes: ""
+
+  - id: ops_fail_run
+    description: >
+      Updates ops.runs status to failed with error details.
+    executor_type: supabase_rpc
+    allowed_in_skills: ["*"]
+    requires_human_approval: false
+    side_effects:
+      - ops.runs UPDATE (status=failed, output jsonb with error)
+    sensitive_paths: []
+    security_notes: >
+      output.error must not include stack traces containing secrets or tokens.
+
+  - id: ops_add_artifact
+    description: >
+      Inserts a row into ops.artifacts linking a run to a Storage object.
+    executor_type: supabase_rpc
+    allowed_in_skills: ["*"]
+    requires_human_approval: false
+    side_effects:
+      - ops.artifacts INSERT (run_id FK, storage_path, mime_type, size_bytes)
+    sensitive_paths: []
+    security_notes: >
+      storage_path must be under an ops-scoped bucket prefix; never a public URL.
+
+  - id: ops_write_convergence_finding
+    description: >
+      Inserts a finding row into ops.convergence_findings for the ops-advisor-scan skill.
+    executor_type: supabase_rpc
+    allowed_in_skills: ["ops-advisor-scan"]
+    requires_human_approval: false
+    side_effects:
+      - ops.convergence_findings INSERT (run_id FK, severity, category, path, message)
+    sensitive_paths: []
+    security_notes: ""
+
+  # ── GitHub API ──────────────────────────────────────────────────────────────
+
+  - id: github_read_issue
+    description: >
+      Reads a GitHub issue (title, body, labels, comments) via REST API.
+    executor_type: github_api
+    allowed_in_skills: ["pulser-patch", "fixbot-triage"]
+    requires_human_approval: false
+    side_effects: []
+    sensitive_paths: []
+    security_notes: >
+      Uses GITHUB_TOKEN with read:issues scope only.
+      Never expose token in logs or output fields.
+
+  - id: github_open_pr
+    description: >
+      Opens a pull request on github.com/Insightpulseai/odoo via REST API.
+      Never pushes directly to main.
+    executor_type: github_api
+    allowed_in_skills: ["pulser-patch"]
+    requires_human_approval: false
+    side_effects:
+      - GitHub PR created (branch → main, draft=false, reviewers assigned)
+    sensitive_paths: []
+    security_notes: >
+      PR must target the repo default branch; force-push to main is forbidden.
+      Requires GITHUB_TOKEN with write:pull_requests scope.
+
+  - id: github_read_ci_run
+    description: >
+      Reads a GitHub Actions workflow run (logs, conclusion, annotations) via REST API.
+    executor_type: github_api
+    allowed_in_skills: ["fixbot-triage", "ops-advisor-scan"]
+    requires_human_approval: false
+    side_effects: []
+    sensitive_paths: []
+    security_notes: >
+      Log content may contain ephemeral tokens printed by poorly written workflows.
+      Scrub lines matching secret patterns before storing in ops.run_events.
+
+  # ── MCP / Plane API ────────────────────────────────────────────────────────
+
+  - id: mcp_plane_read_issue
+    description: >
+      Reads a Plane work item (title, description, state, assignees) via MCP API.
+    executor_type: mcp_api
+    allowed_in_skills: ["pulser-patch", "fixbot-triage"]
+    requires_human_approval: false
+    side_effects: []
+    sensitive_paths: []
+    security_notes: >
+      Uses PLANE_API_KEY with project read scope.
+      Issue body may contain user-supplied content — sanitize before template injection.
+
+  - id: mcp_plane_create_issue
+    description: >
+      Creates a new Plane work item for escalation when auto-fix is not possible.
+    executor_type: mcp_api
+    allowed_in_skills: ["fixbot-triage"]
+    requires_human_approval: false
+    side_effects:
+      - Plane issue created (project_id, title, description, priority)
+    sensitive_paths: []
+    security_notes: >
+      Title and description must be sanitized; no raw stack traces in description.
+
+  # ── Slack ──────────────────────────────────────────────────────────────────
+
+  - id: slack_post_ops_alert
+    description: >
+      Posts a formatted alert to the #ops-alerts Slack channel via ops-slack-notify.
+    executor_type: slack_api
+    allowed_in_skills: ["fixbot-triage", "ops-advisor-scan"]
+    requires_human_approval: false
+    side_effects:
+      - Slack message posted (#ops-alerts, actor: ops-slack-notify)
+    sensitive_paths: []
+    security_notes: >
+      Message blocks must not include raw secret values.
+      Rate limit: ≤1 post per run to avoid alert storms.
+
+  - id: slack_post_approval_request
+    description: >
+      Posts an interactive approval block to #ops-approvals for human-gated actions.
+      Blocks on acknowledgement before proceeding.
+    executor_type: slack_api
+    allowed_in_skills: ["pulser-patch"]
+    requires_human_approval: true
+    side_effects:
+      - Slack interactive message posted (#ops-approvals)
+      - Run status blocked until approved/rejected
+    sensitive_paths: []
+    security_notes: >
+      Approval flow must time out after 24h; timed-out run must be marked failed.
+      Do not expose SLACK_BOT_TOKEN in the message payload.
+
+  # ── Supabase Edge Functions ────────────────────────────────────────────────
+
+  - id: edge_fn_convergence_scan
+    description: >
+      Invokes the convergence-scan Supabase Edge Function to evaluate SSOT drift.
+    executor_type: edge_fn
+    allowed_in_skills: ["ops-advisor-scan"]
+    requires_human_approval: false
+    side_effects:
+      - ops.convergence_findings rows written via Edge Function
+      - ops.run_events trace written
+    sensitive_paths: []
+    security_notes: >
+      Invocation must supply a valid service-role JWT.
+      Never pass the service-role key as a query parameter.
+
+  # ── Repository File System ─────────────────────────────────────────────────
+
+  - id: repo_read_file
+    description: >
+      Reads a file from the repo working tree (within allowed audited_write_paths).
+    executor_type: repo_fs
+    allowed_in_skills: ["pulser-patch", "fixbot-triage", "ops-advisor-scan"]
+    requires_human_approval: false
+    side_effects: []
+    sensitive_paths:
+      - "addons/ipai/**"
+      - "apps/**"
+      - "packages/**"
+      - "scripts/**"
+    security_notes: >
+      Must not traverse outside audited_write_paths (see prod_policy.yaml).
+      Path traversal guard must be enabled (security.path_traversal_guard: true).
+
+  - id: repo_write_file
+    description: >
+      Writes or patches a file in the repo working tree.
+      Must be preceded by ops_start_run and followed by github_open_pr.
+    executor_type: repo_fs
+    allowed_in_skills: ["pulser-patch"]
+    requires_human_approval: false
+    side_effects:
+      - File created/modified in working tree (staged for PR branch)
+    sensitive_paths:
+      - "addons/ipai/**"
+      - "apps/**"
+      - "packages/**"
+      - "scripts/**"
+    security_notes: >
+      Forbidden paths from prod_policy.yaml are hard-blocked at the executor level.
+      Symlink guard must be enabled (security.symlink_guard: true).
+      max_skill_body_bytes limit applies to each written file.

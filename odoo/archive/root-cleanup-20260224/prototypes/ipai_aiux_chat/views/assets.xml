@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- AIUX Chat Widget Assets -->
+    <template id="assets_backend_aiux_chat" inherit_id="web.assets_backend" name="AIUX Chat Backend Assets">
+        <xpath expr="." position="inside">
+            <script type="text/javascript" src="/ipai_aiux_chat/static/src/js/aiux_chat_service.js"/>
+        </xpath>
+    </template>
+</odoo>

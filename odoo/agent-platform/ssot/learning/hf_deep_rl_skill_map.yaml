@@ -1,0 +1,155 @@
+version: 1
+id: hf_deep_rl_skill_map
+status: active
+source_family: hf_deep_rl_course
+type: benchmark_curriculum
+updated_at: "2026-03-17"
+
+description: >
+  Maps the Hugging Face Deep RL course to bounded personas, skills, and
+  knowledge bases. This is a BENCHMARK CURRICULUM only. The course is in
+  low-maintenance mode. Implementation pins to current library docs
+  (SB3, CleanRL, Sample Factory), not the course itself.
+
+canonical_fit:
+  hf_deep_rl_course: "benchmark curriculum for RL skill taxonomy"
+  stable_baselines3: "implementation source of truth for standard RL"
+  cleanrl: "implementation source of truth for research RL"
+  sample_factory: "implementation source of truth for multi-agent RL"
+  repo_evals: "promotion gate"
+
+personas:
+  - id: reinforcement-learning-architect
+    file: agents/personas/reinforcement-learning-architect.md
+    owns:
+      - rl-environment-selection
+      - ppo-design
+      - rl-training-benchmarking
+    responsibility: "RL system architecture, algorithm family selection"
+
+  - id: simulation-environment-designer
+    file: agents/personas/simulation-environment-designer.md
+    owns:
+      - robotics-rl-design
+    responsibility: "Environment spec, reward design, observation/action spaces"
+
+  - id: policy-optimization-engineer
+    file: agents/personas/policy-optimization-engineer.md
+    owns:
+      - q-learning-baseline-design
+      - deep-q-learning-design
+      - policy-gradient-design
+      - actor-critic-design
+      - multi-agent-rl-design
+    responsibility: "Algorithm implementation, tuning, convergence monitoring"
+
+  - id: rl-eval-judge
+    file: agents/personas/rl-eval-judge.md
+    owns:
+      - rl-readiness-judge
+    responsibility: "Agent promotion gates, eval completeness, safety constraints"
+
+knowledge_bases:
+  - id: hf-deep-rl-course
+    file: agents/knowledge/benchmarks/hf-deep-rl-course.md
+    covers:
+      - "RL algorithm families"
+      - "Environment design"
+      - "Multi-agent patterns"
+      - "Library ecosystem"
+
+skills:
+  - id: rl-environment-selection
+    file: agents/skills/rl-environment-selection/
+    persona: reinforcement-learning-architect
+    classification: encoded_preference
+    purpose: "Select and configure RL training environments"
+    course_unit: "Intro to Deep RL"
+
+  - id: q-learning-baseline-design
+    file: agents/skills/q-learning-baseline-design/
+    persona: policy-optimization-engineer
+    classification: capability_uplift
+    purpose: "Design tabular Q-learning baselines"
+    course_unit: "Q-Learning"
+
+  - id: deep-q-learning-design
+    file: agents/skills/deep-q-learning-design/
+    persona: policy-optimization-engineer
+    classification: capability_uplift
+    purpose: "Design DQN with experience replay and target networks"
+    course_unit: "Deep Q-Learning with Atari"
+
+  - id: policy-gradient-design
+    file: agents/skills/policy-gradient-design/
+    persona: policy-optimization-engineer
+    classification: capability_uplift
+    purpose: "Design REINFORCE and policy gradient methods"
+    course_unit: "Policy Gradient"
+
+  - id: actor-critic-design
+    file: agents/skills/actor-critic-design/
+    persona: policy-optimization-engineer
+    classification: capability_uplift
+    purpose: "Design A2C/A3C actor-critic methods"
+    course_unit: "Actor Critic with Robotics"
+
+  - id: ppo-design
+    file: agents/skills/ppo-design/
+    persona: reinforcement-learning-architect
+    classification: capability_uplift
+    purpose: "Design PPO training with clipped objectives"
+    course_unit: "PPO"
+
+  - id: robotics-rl-design
+    file: agents/skills/robotics-rl-design/
+    persona: simulation-environment-designer
+    classification: capability_uplift
+    purpose: "Design RL for robotics/simulation environments"
+    course_unit: "Actor Critic with Robotics"
+
+  - id: multi-agent-rl-design
+    file: agents/skills/multi-agent-rl-design/
+    persona: policy-optimization-engineer
+    classification: capability_uplift
+    purpose: "Design multi-agent coordination strategies"
+    course_unit: "Multi-Agents and AI vs AI"
+
+  - id: rl-training-benchmarking
+    file: agents/skills/rl-training-benchmarking/
+    persona: reinforcement-learning-architect
+    classification: encoded_preference
+    purpose: "Benchmark RL training runs and track progress"
+
+  - id: rl-readiness-judge
+    file: agents/skills/rl-readiness-judge/
+    persona: rl-eval-judge
+    classification: encoded_preference
+    purpose: "Judge whether RL agent is ready for promotion"
+
+build_order:
+  - phase: 1
+    skills: [rl-environment-selection]
+    reason: "Environment comes first"
+  - phase: 2
+    skills: [q-learning-baseline-design, policy-gradient-design]
+    reason: "Foundation algorithms"
+  - phase: 3
+    skills: [deep-q-learning-design, actor-critic-design, ppo-design]
+    reason: "Advanced algorithms build on foundations"
+  - phase: 4
+    skills: [robotics-rl-design, multi-agent-rl-design]
+    reason: "Domain-specific applications"
+  - phase: 5
+    skills: [rl-training-benchmarking, rl-readiness-judge]
+    reason: "Eval and promotion gates"
+
+rules:
+  - id: course_is_benchmark_only
+    text: "Deep RL course is benchmark curriculum only, not production-readiness standard"
+  - id: pin_to_library_docs
+    text: "Implementation pins to current SB3/CleanRL/Sample Factory docs, not course"
+  - id: leaderboard_defunct
+    text: "Course leaderboard is non-operational — do not reference as live benchmark"
+  - id: ppo_is_default
+    text: "PPO is the default starting algorithm for most RL problems"

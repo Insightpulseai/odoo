@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <t t-name="ipai_odoo_copilot.SystrayButton">
+        <div class="o_ipai_copilot_systray">
+            <!-- Systray Icon -->
+            <button class="o_ipai_copilot_btn btn border-0 bg-transparent"
+                    t-on-click="togglePanel"
+                    title="IPAI Copilot"
+                    t-att-class="{'o_ipai_copilot_btn_active': state.isOpen}">
+                <svg class="o_ipai_copilot_icon" width="20" height="20" viewBox="0 0 24 24"
+                     fill="none" stroke="currentColor" stroke-width="2"
+                     stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 2a4 4 0 0 1 4 4v1h1a3 3 0 0 1 3 3v6a3 3 0 0 1-3 3H7a3 3 0 0 1-3-3v-6a3 3 0 0 1 3-3h1V6a4 4 0 0 1 4-4z"/>
+                    <circle cx="9" cy="13" r="1.5"/>
+                    <circle cx="15" cy="13" r="1.5"/>
+                    <path d="M9 17h6"/>
+                </svg>
+            </button>
+
+            <!-- Chat Panel (right side drawer) -->
+            <div t-if="state.isOpen"
+                 class="o_ipai_copilot_panel shadow-lg">
+
+                <!-- Header -->
+                <div class="o_ipai_copilot_header d-flex align-items-center justify-content-between px-3 py-2 border-bottom">
+                    <div class="d-flex align-items-center gap-2">
+                        <svg width="16" height="16" viewBox="0 0 24 24"
+                             fill="none" stroke="currentColor" stroke-width="2"
+                             stroke-linecap="round" stroke-linejoin="round"
+                             class="text-primary">
+                            <path d="M12 2a4 4 0 0 1 4 4v1h1a3 3 0 0 1 3 3v6a3 3 0 0 1-3 3H7a3 3 0 0 1-3-3v-6a3 3 0 0 1 3-3h1V6a4 4 0 0 1 4-4z"/>
+                            <circle cx="9" cy="13" r="1.5"/>
+                            <circle cx="15" cy="13" r="1.5"/>
+                        </svg>
+                        <strong>IPAI Copilot</strong>
+                    </div>
+                    <div class="d-flex gap-1">
+                        <button class="btn btn-sm btn-outline-secondary border-0"
+                                t-on-click="clearMessages"
+                                title="New conversation">
+                            <i class="fa fa-plus"/>
+                        </button>
+                        <button class="btn btn-sm btn-outline-secondary border-0"
+                                t-on-click="closePanel"
+                                title="Close">
+                            <i class="fa fa-times"/>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Message List -->
+                <div class="o_ipai_copilot_messages flex-grow-1 overflow-auto px-3 py-2"
+                     t-ref="messageList">
+
+                    <!-- Empty State -->
+                    <div t-if="!state.messages.length"
+                         class="o_ipai_copilot_empty text-center text-muted mt-5">
+                        <svg width="40" height="40" viewBox="0 0 24 24"
+                             fill="none" stroke="currentColor" stroke-width="1.5"
+                             stroke-linecap="round" stroke-linejoin="round"
+                             class="mb-3 d-block mx-auto" style="opacity: 0.4">
+                            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                        </svg>
+                        <p class="mb-1 fw-bold">How can I help?</p>
+                        <p class="small">Ask about your Odoo data, workflows, reports, or configuration.</p>
+                    </div>
+
+                    <!-- Messages -->
+                    <t t-foreach="state.messages" t-as="msg" t-key="msg_index">
+                        <!-- User Message -->
+                        <div t-if="msg.role === 'user'"
+                             class="o_ipai_copilot_message o_ipai_copilot_message_user mb-2 d-flex justify-content-end">
+                            <div class="o_ipai_copilot_bubble_user rounded-3 px-3 py-2 small">
+                                <t t-esc="msg.content"/>
+                            </div>
+                        </div>
+
+                        <!-- Assistant Message -->
+                        <div t-if="msg.role === 'assistant'"
+                             class="o_ipai_copilot_message o_ipai_copilot_message_assistant mb-2">
+                            <div class="o_ipai_copilot_bubble_assistant rounded-3 px-3 py-2 small"
+                                 style="max-width: 90%;">
+                                <div class="o_ipai_copilot_content" t-esc="msg.content"/>
+                                <div t-if="msg.latency_ms"
+                                     class="text-muted mt-1"
+                                     style="font-size: 0.7rem;">
+                                    <t t-esc="msg.latency_ms"/>ms
+                                </div>
+                            </div>
+                            <small class="text-muted ms-1"><t t-esc="msg.timestamp"/></small>
+                        </div>
+
+                        <!-- Error Message -->
+                        <div t-if="msg.role === 'error'"
+                             class="o_ipai_copilot_message o_ipai_copilot_message_error mb-2">
+                            <div class="bg-danger bg-opacity-10 border border-danger rounded-3 px-3 py-2 small">
+                                <i class="fa fa-exclamation-triangle text-danger me-1"/>
+                                <t t-esc="msg.content"/>
+                            </div>
+                        </div>
+                    </t>
+
+                    <!-- Loading Indicator -->
+                    <div t-if="state.isLoading"
+                         class="o_ipai_copilot_message o_ipai_copilot_message_loading mb-2">
+                        <div class="bg-light rounded-3 px-3 py-2 small">
+                            <span class="o_ipai_copilot_typing">
+                                <span class="o_ipai_copilot_dot"/>
+                                <span class="o_ipai_copilot_dot"/>
+                                <span class="o_ipai_copilot_dot"/>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Input Area -->
+                <div class="o_ipai_copilot_input border-top px-3 py-2">
+                    <div class="d-flex gap-2">
+                        <textarea
+                            t-ref="promptInput"
+                            class="form-control form-control-sm"
+                            placeholder="Ask IPAI Copilot..."
+                            rows="1"
+                            t-on-keydown="onKeyDown"
+                            t-att-disabled="state.isLoading"/>
+                        <button class="btn btn-primary btn-sm px-3"
+                                t-on-click="sendMessage"
+                                t-att-disabled="state.isLoading">
+                            <i t-att-class="state.isLoading ? 'fa fa-spinner fa-spin' : 'fa fa-paper-plane'"/>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </t>
+
+</templates>
