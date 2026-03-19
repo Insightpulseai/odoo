@@ -1,129 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <!-- Settings form inheritance -->
-    <record id="res_config_settings_view_form_ipai_copilot"
-            model="ir.ui.view">
-        <field name="name">res.config.settings.view.form.inherit.ipai_copilot</field>
+    <record id="res_config_settings_view_form_ipai_copilot" model="ir.ui.view">
+        <field name="name">res.config.settings.view.form.inherit.ipai.copilot</field>
         <field name="model">res.config.settings</field>
-        <field name="inherit_id" ref="base.res_config_settings_view_form"/>
+        <field name="inherit_id" ref="base_setup.res_config_settings_view_form"/>
         <field name="arch" type="xml">
-            <xpath expr="//form" position="inside">
-                <app data-string="IPAI Copilot"
-                     string="IPAI Copilot"
-                     name="ipai_odoo_copilot">
+            <xpath expr="//app[@name='general_settings']" position="inside">
 
-                    <block title="Azure Foundry Connection">
-                        <setting id="ipai_foundry_enabled_setting"
-                                 string="Enable Foundry Copilot"
-                                 help="Activate the Azure Foundry copilot integration">
-                            <field name="ipai_foundry_enabled"/>
-                        </setting>
-                        <setting id="ipai_foundry_endpoint_setting"
-                                 string="Foundry Portal URL"
-                                 help="Azure AI Foundry portal URL (for Open Portal button)">
-                            <field name="ipai_foundry_endpoint"
-                                   placeholder="https://ai.azure.com"/>
-                        </setting>
-                        <setting id="ipai_foundry_api_endpoint_setting"
-                                 string="API Endpoint"
-                                 help="Azure AI services endpoint for API calls (health probe, agent resolution)">
-                            <field name="ipai_foundry_api_endpoint"
-                                   placeholder="https://data-intel-ph-resource.services.ai.azure.com"/>
-                        </setting>
-                        <setting id="ipai_foundry_project_setting"
-                                 string="Foundry Project"
-                                 help="Azure Foundry project identifier">
-                            <field name="ipai_foundry_project"
-                                   placeholder="data-intel-ph"/>
-                        </setting>
-                        <setting id="ipai_foundry_agent_name_setting"
-                                 string="Agent Name"
-                                 help="Physical agent name in Foundry">
-                            <field name="ipai_foundry_agent_name"
-                                   placeholder="ipai-odoo-copilot-azure"/>
-                        </setting>
-                        <setting id="ipai_foundry_model_setting"
-                                 string="Model Deployment"
-                                 help="Model deployment name in Azure Foundry">
-                            <field name="ipai_foundry_model"
-                                   placeholder="gpt-4.1"/>
-                        </setting>
-                    </block>
-
-                    <block title="Knowledge / Search Grounding">
-                        <setting id="ipai_foundry_search_service_setting"
-                                 string="Search Service"
-                                 help="Azure AI Search service name">
-                            <field name="ipai_foundry_search_service"
-                                   placeholder="srch-ipai-dev"/>
-                        </setting>
-                        <setting id="ipai_foundry_search_connection_setting"
-                                 string="Search Connection"
-                                 help="Azure AI Search connection for knowledge grounding">
-                            <field name="ipai_foundry_search_connection"
-                                   placeholder="ipai-search-connection"/>
-                        </setting>
-                        <setting id="ipai_foundry_search_index_setting"
-                                 string="Search Index"
-                                 help="Azure AI Search index name">
-                            <field name="ipai_foundry_search_index"
-                                   placeholder="ipai-knowledge-index"/>
-                        </setting>
-                    </block>
-
-                    <block title="Safety Posture">
-                        <setting id="ipai_foundry_memory_setting"
-                                 string="Agent Memory"
-                                 help="Allow Foundry agent to retain conversation memory (off by default for privacy)">
-                            <field name="ipai_foundry_memory_enabled"/>
-                        </setting>
-                        <setting id="ipai_foundry_read_only_setting"
-                                 string="Read-Only / Draft-Only Mode"
-                                 help="Agent cannot execute writes; mutations are surfaced as drafts">
-                            <field name="ipai_foundry_read_only_mode"/>
-                        </setting>
-                    </block>
-
-                    <block title="Actions">
-                        <setting string="Agent Operations">
-                            <div class="mt8">
-                                <button name="action_test_foundry_connection"
+                <block title="Odoo Copilot" name="ipai_copilot_settings">
+                    <setting string="Copilot"
+                             help="Enable AI copilot assistant in the systray">
+                        <field name="ipai_copilot_enabled"/>
+                        <div class="content-group" invisible="not ipai_copilot_enabled">
+                            <div class="row mt16">
+                                <label for="ipai_copilot_gateway_url" class="col-lg-3"/>
+                                <field name="ipai_copilot_gateway_url"
+                                       placeholder="http://localhost:8088"/>
+                            </div>
+                            <div class="row">
+                                <label for="ipai_copilot_mode" class="col-lg-3"/>
+                                <field name="ipai_copilot_mode"/>
+                            </div>
+                            <div class="row mt8">
+                                <button name="action_test_copilot_connection"
                                         type="object"
                                         string="Test Connection"
-                                        class="btn-primary me-2"
-                                        icon="fa-plug"/>
-                                <button name="action_ensure_foundry_agent"
-                                        type="object"
-                                        string="Verify Agent"
-                                        class="btn-secondary me-2"
-                                        icon="fa-search"/>
-                                <button name="action_open_foundry_portal"
-                                        type="object"
-                                        string="Open Foundry Portal"
-                                        class="btn-link"
-                                        icon="fa-external-link"/>
+                                        class="btn-secondary"
+                                        icon="fa-plug"
+                                        invisible="not ipai_copilot_gateway_url"/>
                             </div>
-                        </setting>
-                    </block>
+                        </div>
+                    </setting>
+                </block>
 
-                </app>
             </xpath>
         </field>
     </record>
-
-    <!-- Menu action to open settings on the IPAI Copilot tab -->
-    <record id="action_ipai_copilot_settings"
-            model="ir.actions.act_window">
-        <field name="name">IPAI Copilot Settings</field>
-        <field name="res_model">res.config.settings</field>
-        <field name="view_mode">form</field>
-        <field name="target">main</field>
-        <field name="context">{'module': 'ipai_odoo_copilot'}</field>
-    </record>
-
-    <menuitem id="menu_ipai_copilot_settings"
-              name="IPAI Copilot"
-              parent="base.menu_administration"
-              action="action_ipai_copilot_settings"
-              sequence="99"/>
 </odoo>
