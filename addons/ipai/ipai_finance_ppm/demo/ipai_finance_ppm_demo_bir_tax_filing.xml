@@ -1,0 +1,232 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <!-- Phase 1: Preparation -->
+        <record id="bir_phase1" model="project.task">
+            <field name="name">Phase 1 - Preparation</field>
+            <field name="project_id" ref="project_bir_tax_filing"/>
+            <field name="stage_id" ref="stage_preparation"/>
+            <field name="sequence">10</field>
+            <field name="priority">1</field>
+            <field name="description">Gather source data, validate completeness, and prepare working papers.</field>
+        </record>
+
+        <record id="bir_p1_01" model="project.task">
+            <field name="name">B1.01 Extract sales and purchase journals for the period</field>
+            <field name="project_id" ref="project_bir_tax_filing"/>
+            <field name="parent_id" ref="bir_phase1"/>
+            <field name="stage_id" ref="stage_preparation"/>
+            <field name="sequence">1</field>
+        </record>
+        <record id="bir_p1_02" model="project.task">
+            <field name="name">B1.02 Generate Summary List of Sales/Purchases (SLSP/SLTP)</field>
+            <field name="project_id" ref="project_bir_tax_filing"/>
+            <field name="parent_id" ref="bir_phase1"/>
+            <field name="stage_id" ref="stage_preparation"/>
+            <field name="sequence">2</field>
+        </record>
+        <record id="bir_p1_03" model="project.task">
+            <field name="name">B1.03 Validate TIN of all vendors and customers</field>
+            <field name="project_id" ref="project_bir_tax_filing"/>
+            <field name="parent_id" ref="bir_phase1"/>
+            <field name="stage_id" ref="stage_preparation"/>
+            <field name="sequence">3</field>
+        </record>
+        <record id="bir_p1_04" model="project.task">
+            <field name="name">B1.04 Reconcile withholding tax sub-ledger to GL</field>
+            <field name="project_id" ref="project_bir_tax_filing"/>
+            <field name="parent_id" ref="bir_phase1"/>
+            <field name="stage_id" ref="stage_preparation"/>
+            <field name="sequence">4</field>
+        </record>
+        <record id="bir_p1_05" model="project.task">
+            <field name="name">B1.05 Prepare BIR Form 2307 certificates for vendors</field>
+            <field name="project_id" ref="project_bir_tax_filing"/>
+            <field name="parent_id" ref="bir_phase1"/>
+            <field name="stage_id" ref="stage_preparation"/>
+            <field name="sequence">5</field>
+        </record>
+        <record id="bir_p1_06" model="project.task">
+            <field name="name">B1.06 Validate VAT-exempt and zero-rated transactions</field>
+            <field name="project_id" ref="project_bir_tax_filing"/>
+            <field name="parent_id" ref="bir_phase1"/>
+            <field name="stage_id" ref="stage_preparation"/>
+            <field name="sequence">6</field>
+        </record>
+        <record id="bir_p1_07" model="project.task">
+            <field name="name">B1.07 Reconcile official receipts and invoices sequence</field>
+            <field name="project_id" ref="project_bir_tax_filing"/>
+            <field name="parent_id" ref="bir_phase1"/>
+            <field name="stage_id" ref="stage_preparation"/>
+            <field name="sequence">7</field>
+        </record>
+
+        <!-- Phase 2: Computation -->
+        <record id="bir_phase2" model="project.task">
+            <field name="name">Phase 2 - Computation</field>
+            <field name="project_id" ref="project_bir_tax_filing"/>
+            <field name="stage_id" ref="stage_preparation"/>
+            <field name="sequence">20</field>
+            <field name="priority">1</field>
+            <field name="description">Compute tax liabilities and prepare return forms.</field>
+        </record>
+
+        <record id="bir_p2_01" model="project.task">
+            <field name="name">B2.01 Compute monthly VAT payable (output less input)</field>
+            <field name="project_id" ref="project_bir_tax_filing"/>
+            <field name="parent_id" ref="bir_phase2"/>
+            <field name="stage_id" ref="stage_preparation"/>
+            <field name="sequence">1</field>
+        </record>
+        <record id="bir_p2_02" model="project.task">
+            <field name="name">B2.02 Prepare BIR Form 2550M (monthly VAT)</field>
+            <field name="project_id" ref="project_bir_tax_filing"/>
+            <field name="parent_id" ref="bir_phase2"/>
+            <field name="stage_id" ref="stage_preparation"/>
+            <field name="sequence">2</field>
+        </record>
+        <record id="bir_p2_03" model="project.task">
+            <field name="name">B2.03 Compute expanded withholding tax (EWT) liability</field>
+            <field name="project_id" ref="project_bir_tax_filing"/>
+            <field name="parent_id" ref="bir_phase2"/>
+            <field name="stage_id" ref="stage_preparation"/>
+            <field name="sequence">3</field>
+        </record>
+        <record id="bir_p2_04" model="project.task">
+            <field name="name">B2.04 Prepare BIR Form 0619-E (monthly EWT remittance)</field>
+            <field name="project_id" ref="project_bir_tax_filing"/>
+            <field name="parent_id" ref="bir_phase2"/>
+            <field name="stage_id" ref="stage_preparation"/>
+            <field name="sequence">4</field>
+        </record>
+        <record id="bir_p2_05" model="project.task">
+            <field name="name">B2.05 Compute final withholding tax (FWT) on compensation</field>
+            <field name="project_id" ref="project_bir_tax_filing"/>
+            <field name="parent_id" ref="bir_phase2"/>
+            <field name="stage_id" ref="stage_preparation"/>
+            <field name="sequence">5</field>
+        </record>
+        <record id="bir_p2_06" model="project.task">
+            <field name="name">B2.06 Prepare BIR Form 1601-C (monthly compensation tax)</field>
+            <field name="project_id" ref="project_bir_tax_filing"/>
+            <field name="parent_id" ref="bir_phase2"/>
+            <field name="stage_id" ref="stage_preparation"/>
+            <field name="sequence">6</field>
+        </record>
+        <record id="bir_p2_07" model="project.task">
+            <field name="name">B2.07 Compute documentary stamp tax (DST) if applicable</field>
+            <field name="project_id" ref="project_bir_tax_filing"/>
+            <field name="parent_id" ref="bir_phase2"/>
+            <field name="stage_id" ref="stage_preparation"/>
+            <field name="sequence">7</field>
+        </record>
+
+        <!-- Phase 3: Review -->
+        <record id="bir_phase3" model="project.task">
+            <field name="name">Phase 3 - Review</field>
+            <field name="project_id" ref="project_bir_tax_filing"/>
+            <field name="stage_id" ref="stage_review"/>
+            <field name="sequence">30</field>
+            <field name="priority">1</field>
+            <field name="description">SFM review of computations and return forms before filing.</field>
+        </record>
+
+        <record id="bir_p3_01" model="project.task">
+            <field name="name">B3.01 SFM review of VAT return and SLSP</field>
+            <field name="project_id" ref="project_bir_tax_filing"/>
+            <field name="parent_id" ref="bir_phase3"/>
+            <field name="stage_id" ref="stage_review"/>
+            <field name="sequence">1</field>
+        </record>
+        <record id="bir_p3_02" model="project.task">
+            <field name="name">B3.02 SFM review of withholding tax returns and MAP</field>
+            <field name="project_id" ref="project_bir_tax_filing"/>
+            <field name="parent_id" ref="bir_phase3"/>
+            <field name="stage_id" ref="stage_review"/>
+            <field name="sequence">2</field>
+        </record>
+        <record id="bir_p3_03" model="project.task">
+            <field name="name">B3.03 Cross-check tax computations to GL balances</field>
+            <field name="project_id" ref="project_bir_tax_filing"/>
+            <field name="parent_id" ref="bir_phase3"/>
+            <field name="stage_id" ref="stage_review"/>
+            <field name="sequence">3</field>
+        </record>
+        <record id="bir_p3_04" model="project.task">
+            <field name="name">B3.04 Validate eFPS/eBIR filing readiness</field>
+            <field name="project_id" ref="project_bir_tax_filing"/>
+            <field name="parent_id" ref="bir_phase3"/>
+            <field name="stage_id" ref="stage_review"/>
+            <field name="sequence">4</field>
+        </record>
+        <record id="bir_p3_05" model="project.task">
+            <field name="name">B3.05 FD approval of tax filing package</field>
+            <field name="project_id" ref="project_bir_tax_filing"/>
+            <field name="parent_id" ref="bir_phase3"/>
+            <field name="stage_id" ref="stage_review"/>
+            <field name="sequence">5</field>
+        </record>
+
+        <!-- Phase 4: Filing -->
+        <record id="bir_phase4" model="project.task">
+            <field name="name">Phase 4 - Filing</field>
+            <field name="project_id" ref="project_bir_tax_filing"/>
+            <field name="stage_id" ref="stage_approval"/>
+            <field name="sequence">40</field>
+            <field name="priority">1</field>
+            <field name="description">Submit returns via eFPS/eBIR and confirm payment.</field>
+        </record>
+
+        <record id="bir_p4_01" model="project.task">
+            <field name="name">B4.01 File BIR 2550M via eFPS</field>
+            <field name="project_id" ref="project_bir_tax_filing"/>
+            <field name="parent_id" ref="bir_phase4"/>
+            <field name="stage_id" ref="stage_approval"/>
+            <field name="sequence">1</field>
+        </record>
+        <record id="bir_p4_02" model="project.task">
+            <field name="name">B4.02 File BIR 0619-E via eFPS</field>
+            <field name="project_id" ref="project_bir_tax_filing"/>
+            <field name="parent_id" ref="bir_phase4"/>
+            <field name="stage_id" ref="stage_approval"/>
+            <field name="sequence">2</field>
+        </record>
+        <record id="bir_p4_03" model="project.task">
+            <field name="name">B4.03 File BIR 1601-C via eFPS</field>
+            <field name="project_id" ref="project_bir_tax_filing"/>
+            <field name="parent_id" ref="bir_phase4"/>
+            <field name="stage_id" ref="stage_approval"/>
+            <field name="sequence">3</field>
+        </record>
+        <record id="bir_p4_04" model="project.task">
+            <field name="name">B4.04 Process tax payment via authorized agent bank</field>
+            <field name="project_id" ref="project_bir_tax_filing"/>
+            <field name="parent_id" ref="bir_phase4"/>
+            <field name="stage_id" ref="stage_approval"/>
+            <field name="sequence">4</field>
+        </record>
+        <record id="bir_p4_05" model="project.task">
+            <field name="name">B4.05 Archive filing confirmation and payment receipts</field>
+            <field name="project_id" ref="project_bir_tax_filing"/>
+            <field name="parent_id" ref="bir_phase4"/>
+            <field name="stage_id" ref="stage_approval"/>
+            <field name="sequence">5</field>
+        </record>
+        <record id="bir_p4_06" model="project.task">
+            <field name="name">B4.06 Distribute BIR 2307 certificates to vendors</field>
+            <field name="project_id" ref="project_bir_tax_filing"/>
+            <field name="parent_id" ref="bir_phase4"/>
+            <field name="stage_id" ref="stage_approval"/>
+            <field name="sequence">6</field>
+        </record>
+        <record id="bir_p4_07" model="project.task">
+            <field name="name">B4.07 Update tax compliance tracker and close period</field>
+            <field name="project_id" ref="project_bir_tax_filing"/>
+            <field name="parent_id" ref="bir_phase4"/>
+            <field name="stage_id" ref="stage_approval"/>
+            <field name="sequence">7</field>
+        </record>
+
+    </data>
+</odoo>

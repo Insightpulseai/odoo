@@ -1,0 +1,16 @@
+odoo_code,bir_canonical,description,rate,applies_to,category,confidence
+W010,WI010,Professional fees - individuals,0.10,individuals,expanded_withholding,confirmed
+W020,WI020,Professional fees - juridical/corporations,0.10,corporations,expanded_withholding,confirmed
+W030,WI010,Professional fees - medical practitioners,0.10,individuals,expanded_withholding,confirmed
+W040,WI010,Professional fees - lawyers,0.10,individuals,expanded_withholding,confirmed
+W050,WI010,Professional entertainers,0.10,individuals,expanded_withholding,confirmed
+W157,WI640,Income payments to suppliers - goods,0.01,all,expanded_withholding,confirmed
+W158,WI641,Income payments to suppliers - services,0.02,all,expanded_withholding,confirmed
+W161,WI157,Commission agents and brokers,0.10,all,expanded_withholding,confirmed
+W169,WI100,Rent - real property,0.05,all,expanded_withholding,confirmed
+W170,WI130,Rent - personal/movable property,0.05,all,expanded_withholding,confirmed
+F001,WF010,Interest on bank deposits,0.20,all,final_withholding,confirmed
+F002,WF020,Cash dividends,0.10,individuals,final_withholding,confirmed
+F003,WF020,Stock dividends,0.10,individuals,final_withholding,confirmed
+F004,GR010,Royalties,0.20,all,final_withholding,needs_verification
+F005,WF050,Prizes over PHP 10000,0.20,all,final_withholding,needs_verification
