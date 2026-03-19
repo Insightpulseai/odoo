@@ -1,0 +1,133 @@
+# Shared Role Definitions
+# Common across AFC and STC workstreams
+
+roles:
+  # Finance Team Roles
+  - id: role_rim
+    code: RIM
+    name: Revenue & Inventory Management
+    description: Finance staff responsible for daily operations and task preparation
+    department: Finance
+    level: Staff
+    capabilities:
+      - create_journal_entries
+      - prepare_reports
+      - upload_documents
+      - mark_task_done
+    restrictions:
+      - cannot_approve_own_work
+      - cannot_close_period
+
+  - id: role_bom
+    code: BOM
+    name: Business Operations Manager
+    description: Finance manager responsible for accuracy review and initial approval
+    department: Finance
+    level: Manager
+    capabilities:
+      - review_journal_entries
+      - approve_tasks
+      - reject_tasks
+      - run_compliance_checks
+      - generate_reports
+    restrictions:
+      - cannot_close_period
+
+  - id: role_ckvc
+    code: CKVC
+    name: Controller / VP Controller
+    description: Senior finance leadership for complex matters and technical guidance
+    department: Finance
+    level: Director
+    capabilities:
+      - approve_tasks
+      - approve_adjustments
+      - override_warnings
+      - run_compliance_checks
+      - technical_consultation
+    restrictions: []
+
+  - id: role_fd
+    code: FD
+    name: Finance Director
+    description: Executive responsible for final sign-off and period close
+    department: Finance
+    level: Executive
+    capabilities:
+      - approve_tasks
+      - close_period
+      - sign_off_financials
+      - external_communication
+      - system_configuration
+    restrictions: []
+
+  # IT Support Roles
+  - id: role_it
+    code: IT
+    name: IT Support
+    description: Technical support for system issues and access management
+    department: IT
+    level: Staff
+    capabilities:
+      - system_access_management
+      - technical_troubleshooting
+      - report_generation_support
+      - data_export
+    restrictions:
+      - no_financial_approval
+
+  # External Roles
+  - id: role_auditor
+    code: AUDITOR
+    name: External Auditor
+    description: External auditor with read-only access
+    department: External
+    level: External
+    capabilities:
+      - view_reports
+      - view_documents
+      - view_audit_trail
+    restrictions:
+      - read_only
+      - no_modification
+
+# Role hierarchy for escalation
+hierarchy:
+  - level: 1
+    role: RIM
+    reports_to: BOM
+  - level: 2
+    role: BOM
+    reports_to: CKVC
+  - level: 3
+    role: CKVC
+    reports_to: FD
+  - level: 4
+    role: FD
+    reports_to: null
+
+# Default RACI assignments
+default_raci:
+  standard_task:
+    R: RIM
+    A: BOM
+    C: []
+    I: [FD]
+
+  complex_task:
+    R: RIM
+    A: BOM
+    C: [CKVC]
+    I: [FD]
+
+  period_close:
+    R: BOM
+    A: FD
+    C: [CKVC]
+    I: []
+
+  bir_filing:
+    R: RIM
+    A: BOM
+    C: []
+    I: [FD, CKVC]

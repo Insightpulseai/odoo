@@ -1,0 +1,53 @@
+id: vercel.docs-ssot
+title: Vercel Docs SSOT (pinned canonical URLs)
+category: ops-console
+sources:
+  - type: doc
+    url: https://vercel.com/docs
+    catalog_id: vercel-docs-home
+  - type: doc
+    url: https://vercel.com/docs/llms-full.txt
+    catalog_id: vercel-docs-llms
+target:
+  app_dir: docs/ops
+variables:
+  - name: NONE
+    required: false
+    description: No runtime variables required for this doc-only blueprint.
+automation:
+  steps:
+    - name: create_ssot_doc
+      description: Create docs/ops/VERCEL_DOCS_SSOT.md as a tight bookmark file
+      instruction: |
+        Create docs/ops/VERCEL_DOCS_SSOT.md containing canonical Vercel docs URLs:
+        - docs home (https://vercel.com/docs) and llms-full.txt snapshot
+        - deployments/environments, git/vercel-for-github, products/previews
+        - monorepos, monorepos/monorepo-faq, package-managers
+        - deployment-protection, accounts
+        - agent-resources, agent-resources/vercel-mcp, agent-resources/vercel-mcp/tools
+        - ai-gateway
+        No narrative. Short comments only.
+    - name: cross_link_from_existing_runbooks
+      description: Add VERCEL_DOCS_SSOT reference to related runbooks
+      instruction: |
+        In docs/ops/VERCEL_MONOREPO.md and docs/ops/VERCEL_PREVIEWS.md, add a
+        "See also" line at the bottom linking to docs/ops/VERCEL_DOCS_SSOT.md.
+        Keep the addition to a single line in the existing runbooks table or as a note.
+    - name: catalog_item_link
+      description: Ensure catalog item exists with blueprint_id=vercel.docs-ssot
+      instruction: |
+        Ensure docs/catalog/vercel.examples.catalog.json contains an item with
+        id: vercel-docs-ssot, blueprint_id: vercel.docs-ssot, and use_cases: [ops-console].
+verification:
+  required_checks:
+    - catalog-gate
+    - blueprint-gate
+  preview:
+    expectations:
+      - docs-generated-no-drift
+      - vercel-docs-ssot-md-exists
+rollback:
+  strategy: revert_pr
+notes:
+  minor_customization:
+    - None — doc-only blueprint; no tokens or env vars required after merge.

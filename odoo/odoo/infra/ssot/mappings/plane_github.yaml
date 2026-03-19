@@ -1,0 +1,47 @@
+# schema: ssot.mappings.v1
+# GitHub repo → Plane project mapping for the plane-github-sync Edge Function.
+# This file is the SSOT for repo-to-project associations.
+# NEVER hardcode these values in supabase/functions/plane-github-sync/index.ts.
+#
+# Integration context: ssot/integrations/plane_github_sync.yaml
+# Edge function:       supabase/functions/plane-github-sync/
+# Contract doc:        docs/architecture/PLANE_MARKETPLACE_INTEGRATIONS.md §GitHub
+
+version: "1.0.0"
+schema: ssot.mappings.v1
+name: plane_github
+description: "Maps GitHub repositories to Plane projects for bidirectional sync"
+last_updated: "2026-03-01"
+
+# Default sync behavior applied to all mappings unless overridden
+defaults:
+  pr_merge_state: "Done"           # Plane state to set when PR is merged
+  issue_close_state: "Done"        # Plane state to set when GitHub issue is closed
+  writeback_enabled: false         # Plane → GitHub direction; disabled by default
+  label_sync_enabled: true         # Sync GitHub labels to Plane labels
+  branch_pattern: "plane/{issue_id}"  # Branch naming convention to extract issue_id
+  pr_description_pattern: "#PLANE-{sequence_id}"  # PR description link pattern
+
+mappings:
+  - repo_full_name: "Insightpulseai/odoo"
+    plane_project_id: ""           # TODO: fill with Plane project UUID after workspace setup
+    plane_project_slug: "odoo"     # human-readable slug for logging
+    writeback_enabled: false
+    label_to_state_map:
+      "in-progress": "In Progress"
+      "review": "In Review"
+      "blocked": "Blocked"
+      "done": "Done"
+    notes: >
+      Primary monorepo. Maps all PR merges to the Odoo project in Plane.
+      Branch pattern: plane/{issue_id} or feat/PLANE-{seq}-description.
+
+  # Add additional repo → project mappings here as workspaces are configured.
+  # Example:
+  # - repo_full_name: "Insightpulseai/scout-dashboard"
+  #   plane_project_id: ""
+  #   plane_project_slug: "scout"
+  #   writeback_enabled: false
+
+# Sentry project → Plane project mapping lives in ssot/mappings/plane_sentry.yaml
+# Slack channel → Plane project mapping lives in ssot/mappings/plane_slack_channels.yaml

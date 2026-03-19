@@ -1,0 +1,44 @@
+id: chief-architect
+name: Chief Architect
+version: "1.0.0"
+status: active
+maturity_level: L2
+current_stage: S07
+domain: orchestration
+owner: insightpulseai
+description: >-
+  Top-level orchestrator. Makes final technical decisions, routes work to
+  specialists, resolves cross-domain conflicts.
+role: maker
+scopes:
+  - architecture
+  - cross-repo
+  - technical-decisions
+  - orchestration
+  - planning
+skills:
+  - architecture-review
+  - dependency-analysis
+  - task-routing
+  - conflict-resolution
+tools:
+  - github-issues
+  - github-prs
+  - slack-notify
+  - task-bus
+policies:
+  - secrets-policy
+  - output-format
+  - verification
+entrypoint: agents/prompts/chief-architect.md
+task_types:
+  - task.arch.design
+  - task.arch.review
+  - task.arch.decision
+  - task.orchestration.route
+evaluation_history: []
+promotion_history: []
+created: "2026-03-19"
+notes: >-
+  Owns the system-level architecture decision record. All cross-domain
+  conflicts escalate here. Routes specialized work to domain agents.

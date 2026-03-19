@@ -1,0 +1,60 @@
+# =============================================================================
+# pipelines/templates/lint-python.yml
+# =============================================================================
+# Reusable step template: Python lint (black, flake8, isort).
+#
+# Usage:
+#   - template: pipelines/templates/lint-python.yml@templates
+#     parameters:
+#       paths: "addons/ipai/ scripts/"
+# =============================================================================
+
+parameters:
+  - name: pythonVersion
+    type: string
+    default: '3.12'
+
+  - name: paths
+    type: string
+    default: '.'
+
+steps:
+  - task: UsePythonVersion@0
+    displayName: Use Python ${{ parameters.pythonVersion }}
+    inputs:
+      versionSpec: ${{ parameters.pythonVersion }}
+
+  - script: |
+      set -euo pipefail
+      pip install --quiet black flake8 isort
+    displayName: Install lint tools
+
+  - script: |
+      set -euo pipefail
+      echo "Running black --check on: ${{ parameters.paths }}"
+      black --check --diff ${{ parameters.paths }} 2>&1 || {
+        echo "FAIL: black formatting violations found."
+        exit 1
+      }
+      echo "black: PASS"
+    displayName: black --check
+
+  - script: |
+      set -euo pipefail
+      echo "Running isort --check on: ${{ parameters.paths }}"
+      isort --check --diff ${{ parameters.paths }} 2>&1 || {
+        echo "FAIL: isort import ordering violations found."
+        exit 1
+      }
+      echo "isort: PASS"
+    displayName: isort --check
+
+  - script: |
+      set -euo pipefail
+      echo "Running flake8 on: ${{ parameters.paths }}"
+      flake8 --max-line-length=120 --extend-ignore=E203,W503 ${{ parameters.paths }} 2>&1 || {
+        echo "FAIL: flake8 violations found."
+        exit 1
+      }
+      echo "flake8: PASS"
+    displayName: flake8

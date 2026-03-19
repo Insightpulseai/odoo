@@ -1,0 +1,239 @@
+# schema: ssot.platform.surfaces.v1
+# Canonical platform surface map — authoritative roles for every product in the stack.
+# This is the single source of truth for "what runs where and why."
+# Reference: ~/Documents/GitHub/Insightpulseai/odoo/ssot/integrations/_index.yaml for details.
+
+version: "1.0.0"
+schema: ssot.platform.surfaces.v1
+last_reviewed: "2026-03-01"
+
+# ── Core Systems ──────────────────────────────────────────────────────────────
+
+surfaces:
+
+  # ── System of Record ────────────────────────────────────────────────────────
+
+  odoo:
+    role: system_of_record
+    description: >
+      ERP SoR — accounting, inventory, HR, CRM, posted documents.
+      Primary business data owner. Relying party; Supabase Auth is IdP.
+    capabilities:
+      - erp_accounting
+      - inventory
+      - hr
+      - crm
+      - website_cms
+    host: erp.insightpulseai.com
+    stack: "Odoo CE 19.0 + OCA addons + ipai_* bridge modules"
+    database: "Local PostgreSQL 16 on odoo-production droplet (NOT Supabase)"
+    see: null
+    rules:
+      - "Never use Supabase for Odoo's primary DB"
+      - "Supabase Auth is IdP; Odoo is relying party"
+      - "ipai_* modules are thin connectors, not EE parity"
+
+  # ── SSOT / Control Plane ─────────────────────────────────────────────────────
+
+  supabase:
+    role: ssot_control_plane
+    description: >
+      SSOT/control-plane DB — ops.*, work.*, integration registry, run ledger,
+      secrets refs, policies. Owns platform state, NOT business SoR.
+    capabilities:
+      - postgres_16
+      - auth
+      - edge_functions
+      - storage
+      - realtime
+      - pgvector
+    project_ref: spdtwktxdalcfigzeqrz
+    host: spdtwktxdalcfigzeqrz.supabase.co
+    schemas:
+      ops: "runs, run_events, artifacts, schedules, advisor_scans, advisor_findings"
+      work: "pages, blocks, search_index, index_queue, kb_sources, kb_documents"
+    plan_gate: "Baseline sufficient for SSOT engine; Enterprise for compliance/SLAs."
+    see: docs/architecture/DATABASES_AND_ROLES.md
+    notes:
+      - "Platform Kit (supabase.com/ui/docs/platform) pattern for embedded manager in odooops-console."
+      - "Supabase is not the Odoo DB — Odoo uses local Postgres on DO droplet."
+
+  # ── SoW (Work Layer) ─────────────────────────────────────────────────────────
+
+  workspace:
+    role: system_of_work
+    description: >
+      Notion-like SoW layer — pages, blocks, RAG, document search.
+      Runs as apps/workspace deployed on Vercel.
+    app_root: apps/workspace
+    schema: work.*
+    features:
+      - pages_and_blocks
+      - rag_endpoint (workspace-ask-docs)
+      - index_worker (workspace-indexer)
+    hosted_on: vercel
+    see: apps/workspace/
+
+  # ── Web App Hosting ───────────────────────────────────────────────────────────
+
+  vercel:
+    role: hosting
+    description: "Canonical deployment surface for all Next.js/Nitro web apps (apps/*)."
+    deployables:
+      - app: odooops-console
+        root: apps/odooops-console
+        purpose: "Ops console UI — Advisor, embedded manager, policy gates"
+      - app: workspace
+        root: apps/workspace
+        purpose: "SoW UI — Notion-like pages, blocks, RAG"
+      - app: slack-agent
+        root: apps/slack-agent
+        purpose: "Slack Bolt/Nitro agent wired to taskbus"
+    monorepo_contract: ssot/vercel/projects.yaml
+    policy:
+      canonical: true
+      app_platform_disallowed: true   # DO App Platform = 0 as of Feb 2026
+    see: ssot/vercel/projects.yaml
+
+  # ── Compute (Self-Hosted Services) ────────────────────────────────────────────
+
+  digitalocean:
+    role: compute
+    description: "Always-on service runtime for Odoo, OCR, Plane, n8n, Superset."
+    droplets:
+      - name: odoo-production
+        region: sgp1
+        sizing: "4 vCPU / 8 GB RAM"
+        services: [odoo, n8n, nginx]
+        dns:
+          - erp.insightpulseai.com
+          - n8n.insightpulseai.com
+          - auth.insightpulseai.com
+      - name: ocr-service-droplet
+        region: sgp1
+        sizing: "2 vCPU / 4 GB RAM"
+        services: [ocr_paddleocr_vl]
+        dns:
+          - ocr.insightpulseai.com
+        alerts:
+          - "disk >80% (1h) — TRIGGERED"
+          - "memory >85% (5m) — TRIGGERED"
+          - "cpu >85% (5m)"
+          - "load >200 (5m)"
+        see: ssot/infra/digitalocean/monitoring.yaml
+    managed_databases:
+      - name: odoo-db-sgp1
+        engine: postgresql_16
+        region: sgp1
+        cost: "~$30/mo"
+    policy:
+      app_platform: disallowed          # removed Feb 2026
+      container_registry: disallowed    # removed Feb 2026
+      droplet_backups: disallowed       # snapshots-only policy
+    see: ssot/infra/digitalocean/policy.yaml
+
+  # ── Automation & Orchestration ────────────────────────────────────────────────
+
+  taskbus:
+    role: orchestration
+    description: "Idempotent taskbus for run lifecycle — ops.runs is the durable ledger."
+    location: packages/taskbus/
+    see: docs/architecture/TASKBUS_CONTRACT.md
+
+  n8n:
+    role: automation_runner
+    description: "Integration glue — workflow runner (NOT SSOT; JSON files are SSOT)."
+    host: n8n.insightpulseai.com
+    policy: "Workflow JSON in automations/n8n/workflows/ is canonical; UI changes must be exported."
+    see: ssot/integrations/n8n.yaml
+
+  pg_cron:
+    role: scheduler
+    description: "Supabase pg_cron — DB-side cron ticks for queue processing."
+    location: supabase/migrations/
+
+  # ── SCM / CI ─────────────────────────────────────────────────────────────────
+
+  github:
+    role: scm_cicd
+    description: "Source control, CI/CD, issue tracking, org-level rulesets."
+    org: insightpulseai
+    plan: github_enterprise_cloud
+    see: ssot/github/enterprise-cloud.yaml
+
+  # ── DNS / CDN / Edge ──────────────────────────────────────────────────────────
+
+  cloudflare:
+    role: dns_cdn_edge
+    description: "DNS (delegated from Spacesquare), CDN, Cloudflare Workers edge."
+    zone: insightpulseai.com
+    canonical_dns: infra/dns/subdomain-registry.yaml
+    see: ssot/integrations/cloudflare_workers.yaml
+
+  # ── Collaboration ─────────────────────────────────────────────────────────────
+
+  slack:
+    role: collaboration
+    description: "Team collaboration + Slack Agent for taskbus-driven automation."
+    host: insightpulseai.slack.com
+    see: ssot/integrations/slack_agent.yaml
+
+  # ── Work Management ───────────────────────────────────────────────────────────
+
+  plane:
+    role: work_management
+    description: "Plane CE — projects, issues, cycles, modules, pages, automations."
+    host: plane.insightpulseai.com
+    see: ssot/integrations/plane_webhooks.yaml
+
+  # ── Design Platform ───────────────────────────────────────────────────────────
+
+  figma:
+    role: design_platform
+    description: "Design source — tokens, variables, Code Connect, MCP server."
+    see: ssot/integrations/figma.yaml
+
+  # ── AI / Agent Surfaces ───────────────────────────────────────────────────────
+
+  mcp_ecosystem:
+    role: agent_platform
+    description: "Pulser / MCP ecosystem — 66-agent architecture + skills registry."
+    see: ssot/skills/superclaude-manifest.json
+
+  vercel_ai_gateway:
+    role: llm_gateway
+    description: "Unified endpoint for many LLM providers with observability + billing."
+    status: planned
+    see: ssot/integrations/vercel_ai_gateway.yaml  # to be created
+
+  # ── Observability ─────────────────────────────────────────────────────────────
+
+  observability:
+    role: telemetry
+    description: "OpenTelemetry-standard telemetry posture across all surfaces."
+    components:
+      - do_monitoring_plus_do_agent
+      - vercel_observability
+      - supabase_edge_function_logs
+    see: ssot/observability/telemetry.yaml
+
+notes: |
+  Role definitions:
+  - system_of_record:    owns primary business data (Odoo)
+  - ssot_control_plane:  owns platform state and run ledger (Supabase)
+  - system_of_work:      owns work-layer data (workspace/SoW)
+  - hosting:             deploys and serves user-facing apps (Vercel)
+  - compute:             runs always-on backend services (DigitalOcean)
+  - orchestration:       idempotent task execution fabric (taskbus)
+  - automation_runner:   workflow execution (n8n)
+  - scm_cicd:            source control + CI/CD (GitHub)
+  - dns_cdn_edge:        traffic routing + edge (Cloudflare)
+  - collaboration:       team comms + agent surface (Slack)
+  - work_management:     issues/projects (Plane)
+  - design_platform:     design tokens + components (Figma)
+  - agent_platform:      AI agent orchestration (MCP/Pulser)
+  - llm_gateway:         model routing + observability (Vercel AI Gateway)
+  - telemetry:           logs/metrics/traces (OTel standard)
+
+  All new services/platforms MUST be registered here before being referenced
+  in other SSOT files or architecture docs.

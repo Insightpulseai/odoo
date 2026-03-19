@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Tree View -->
+    <record id="view_task_template_tree" model="ir.ui.view">
+        <field name="name">ipai.month.end.task.template.tree</field>
+        <field name="model">ipai.month.end.task.template</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="phase"/>
+                <field name="prep_user_id"/>
+                <field name="review_user_id"/>
+                <field name="approve_user_id"/>
+                <field name="prep_day_offset"/>
+                <field name="active"/>
+                <field name="task_count"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Form View -->
+    <record id="view_task_template_form" model="ir.ui.view">
+        <field name="name">ipai.month.end.task.template.form</field>
+        <field name="model">ipai.month.end.task.template</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="%(action_month_end_task)d" type="action"
+                                class="oe_stat_button" icon="fa-tasks"
+                                context="{'search_default_template_id': active_id}">
+                            <field name="task_count" widget="statinfo" string="Tasks"/>
+                        </button>
+                    </div>
+                    <widget name="web_ribbon" title="Archived" bg_color="text-bg-danger" invisible="active"/>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1>
+                            <field name="name" placeholder="Task Template Name"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group string="Classification">
+                            <field name="phase"/>
+                            <field name="sequence"/>
+                            <field name="active"/>
+                        </group>
+                        <group string="Integration">
+                            <field name="odoo_model"/>
+                            <field name="oca_module"/>
+                        </group>
+                    </group>
+                    <group string="RACI Assignments">
+                        <group>
+                            <field name="prep_user_id"/>
+                            <field name="prep_day_offset"/>
+                        </group>
+                        <group>
+                            <field name="review_user_id"/>
+                            <field name="review_day_offset"/>
+                        </group>
+                        <group>
+                            <field name="approve_user_id"/>
+                            <field name="approve_day_offset"/>
+                        </group>
+                    </group>
+                    <group string="Dependencies">
+                        <field name="depends_on_ids" widget="many2many_tags"/>
+                    </group>
+                    <notebook>
+                        <page string="Description">
+                            <field name="description"/>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Search View -->
+    <record id="view_task_template_search" model="ir.ui.view">
+        <field name="name">ipai.month.end.task.template.search</field>
+        <field name="model">ipai.month.end.task.template</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="prep_user_id"/>
+                <field name="review_user_id"/>
+                <field name="approve_user_id"/>
+                <filter name="active" string="Active" domain="[('active', '=', True)]"/>
+                <filter name="archived" string="Archived" domain="[('active', '=', False)]"/>
+                <separator/>
+                <filter name="phase_1" string="Phase I" domain="[('phase', '=', 'I')]"/>
+                <filter name="phase_2" string="Phase II" domain="[('phase', '=', 'II')]"/>
+                <filter name="phase_3" string="Phase III" domain="[('phase', '=', 'III')]"/>
+                <filter name="phase_4" string="Phase IV" domain="[('phase', '=', 'IV')]"/>
+                <group expand="0" string="Group By">
+                    <filter name="group_phase" string="Phase" context="{'group_by': 'phase'}"/>
+                    <filter name="group_prep" string="Preparer" context="{'group_by': 'prep_user_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Action -->
+    <record id="action_task_template" model="ir.actions.act_window">
+        <field name="name">Task Templates</field>
+        <field name="res_model">ipai.month.end.task.template</field>
+        <field name="view_mode">list,form</field>
+        <field name="context">{'search_default_active': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create Task Templates
+            </p>
+            <p>
+                Templates define recurring month-end tasks with RACI assignments and scheduling offsets.
+            </p>
+        </field>
+    </record>
+</odoo>

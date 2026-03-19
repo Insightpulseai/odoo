@@ -8,25 +8,14 @@
 # Each planning layer has a distinct ownership scope and cadence.
 # Files listed here are the SSOT for their respective layers.
 #
-# CI validator: scripts/ci/validate_planning_index.py (planned)
+# CI validator: scripts/ci/validate_planning_index.py
+# CI gate: .github/workflows/planning-index-ssot-check.yml
 # =============================================================================
 
-schema_version: "1.1"
+schema_version: "1.0"
 last_updated: "2026-03-17"
-
-# -----------------------------------------------------------------------------
-# Canonical Strategy (unified entry point)
-# -----------------------------------------------------------------------------
-canonical_strategy:
-  primary_file: ssot/governance/unified_strategy.yaml
-  supersedes_parallel_reading:
-    - ssot/governance/platform-strategy-2026.yaml
-    - ssot/governance/enterprise_okrs.yaml
-  note: >
-    unified_strategy.yaml consolidates both strategy stacks into one file.
-    platform-strategy-2026.yaml remains the primary time-bound objective source.
-    enterprise_okrs.yaml remains the supporting thematic KPI/OKR layer.
-    Neither is deprecated; both are read by the unified file.
+validator: scripts/ci/validate_planning_index.py
+ci_gate: .github/workflows/planning-index-ssot-check.yml
 
 # -----------------------------------------------------------------------------
 # Planning Layer Model
@@ -77,7 +66,9 @@ layers:
   - id: operational_okrs
     name: "Enterprise OKR Stack"
     canonical_file: ssot/governance/enterprise_okrs.yaml
+    schema: ssot/governance/enterprise_okrs.schema.json
     validator: scripts/ci/validate_enterprise_okrs.py
+    ci_gate: .github/workflows/enterprise-okrs-ssot-check.yml
     owner: engineering-lead
     cadence: quarterly
     join_keys:
@@ -124,7 +115,7 @@ layers:
 
   - id: target_state
     name: "Platform Target State"
-    canonical_file: ssot/azure/PLATFORM_TARGET_STATE.md
+    canonical_file: infra/ssot/azure/PLATFORM_TARGET_STATE.md
     owner: platform-lead
     cadence: quarterly
     status: on_main
@@ -208,7 +199,7 @@ related_artifacts:
     purpose: "Repository-to-Azure resource alignment"
     layer: implementation_specs
 
-  - file: ssot/azure/platform_maturity_benchmark.yaml
+  - file: infra/ssot/azure/platform_maturity_benchmark.yaml
     purpose: "Platform maturity benchmark scores"
     layer: capability_targets
     status: on_main
@@ -220,3 +211,8 @@ related_artifacts:
   - file: platform/data/contracts/control_room_kpis.yaml
     purpose: "Operational KPI definitions (kpi_001..kpi_017)"
     layer: operational_okrs
+
+  - file: odoo/docs/architecture/GOALS_SYSTEM_OF_RECORD_DECISION.md
+    purpose: "ADR-GSR-001: Goals System of Record — YAML now, AzDo later"
+    layer: governance
+    status: on_main

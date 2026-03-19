@@ -300,7 +300,7 @@ def test_canonical_manifest_loads():
 
 
 def test_canonical_allowlist_loads():
-    """Real ssot/oca_installed_allowlist.yaml has >= 100 modules."""
+    """Real odoo/ssot/oca_installed_allowlist.yaml has >= 100 modules."""
     allowlist = load_allowlist()  # uses ALLOWLIST_PATH default
     assert isinstance(allowlist, set)
     assert len(allowlist) >= 100

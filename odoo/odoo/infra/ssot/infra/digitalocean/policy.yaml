@@ -1,0 +1,134 @@
+# schema: ssot.infra.digitalocean.policy.v1
+# DigitalOcean infrastructure policy — desired state and drift prevention.
+#
+# This file is the single source of truth for which DO surfaces are allowed
+# and what retention/lifecycle policies govern them.
+#
+# Context:
+#   Dec 2025: $200.48 (DO Apps $52, Registry $20, Backups $21.60, Snapshots $12.88, Volumes $22, Droplets $72)
+#   Jan 2026: $153.52  (migration in progress)
+#   Feb 2026: $111.07  (consolidated to droplets + managed DB)
+#
+# Canonical topology: Vercel + droplet compose for services; managed Postgres for SoR DB.
+# DO App Platform and Container Registry are no longer part of the canonical stack.
+#
+# Contract doc: docs/architecture/N8N_AUTOMATION_CONTRACT.md (n8n on droplet)
+# Monitoring posture: ssot/infra/digitalocean/monitoring.yaml
+# Cost snapshots:     ssot/infra/digitalocean/costs/
+
+version: "1.0.0"
+schema: ssot.infra.digitalocean.policy.v1
+last_reviewed: "2026-03-01"
+
+# ── Allowed Surfaces ──────────────────────────────────────────────────────────
+
+allowed_surfaces:
+  droplets:
+    allowed: true
+    max_count: 3                  # hard limit; exceptions require explicit entry below
+    required_tags:
+      - "project:ipai"
+      - "owner:<service>"         # e.g., owner:odoo-erp, owner:ocr-service
+    regions_allowed:
+      - sgp1                      # primary region
+    notes: >
+      Canonical deployment surface for Odoo ERP, n8n, Superset, OCR service.
+      All services on droplets must be managed via docker compose (deploy/*.compose.yml).
+      No manual docker run in production.
+
+  managed_databases:
+    allowed: true
+    notes: >
+      Managed Postgres cluster for SoR DB is the preferred database surface.
+      Supabase project (spdtwktxdalcfigzeqrz) covers task bus, SoW tables, Edge Functions.
+      DO managed DB is only for Odoo production if Odoo DB is migrated off-droplet.
+
+  volumes:
+    allowed: true
+    conditions:
+      - must_have_tag: "owner:<service>"
+      - must_be_attached: true   # unattached volumes are waste; clean up
+    use_cases:
+      - "odoo-filestore isolation from OS disk"
+      - "OCR model files if >10 GB"
+    notes: >
+      Volumes allowed only for data that cannot reasonably live in object storage
+      (latency-sensitive or requires POSIX semantics). Review quarterly.
+
+  spaces_object_storage:
+    allowed: true
+    notes: >
+      Use Spaces for large static artifacts, long-term log retention,
+      and backup archive (instead of endless snapshots).
+
+  # Disallowed surfaces (no longer part of canonical stack)
+
+  app_platform:
+    allowed: false
+    exception_process: >
+      To re-enable: create an ADR in docs/architecture/ with justification,
+      update this policy file, and get SSOT review on PR.
+    historical_note: >
+      Removed Feb 2026 in favour of Vercel (Next.js) + droplet compose (services).
+      Was costing $52/mo for 8 apps in Dec 2025 — equivalent to a medium droplet.
+
+  container_registry:
+    allowed: false
+    exception_process: >
+      To re-enable: document which CI job pushes images and why DO Registry
+      is preferred over ghcr.io or dockerhub. Add SSOT entry.
+    historical_note: >
+      Removed Feb 2026. Images are built by Vercel (Next.js) or deploy/*.compose.yml
+      using public upstream images with explicit tags.
+
+# ── Backup and Snapshot Policy ────────────────────────────────────────────────
+
+backups:
+  droplet_backups:
+    allowed: false
+    rationale: >
+      Droplet state should be reproducible from repo + SSOT.
+      Use managed DB backups + PITR for the SoR. Use snapshots at known-good
+      checkpoints, not continuous backups.
+    historical_note: >
+      Droplet backups cost $21.60/mo in Dec 2025 for 2 droplets. Removed Feb 2026.
+
+  snapshots:
+    allowed: true
+    retention:
+      weekly: 2                   # keep last 2 weekly snapshots
+      monthly: 2                  # keep last 2 monthly snapshots
+      forever_tag: "keep_forever" # snapshots tagged keep_forever are exempt from pruning
+    when_to_snapshot:
+      - "Before major Odoo version upgrade"
+      - "Before critical schema migration"
+      - "On-demand before risky infra changes"
+    pruning: >
+      Any snapshot >8 weeks old without the keep_forever tag should be reviewed
+      for deletion. Prune manually or via doctl automation (future: CI job).
+
+# ── Monitoring ────────────────────────────────────────────────────────────────
+
+monitoring:
+  do_agent:
+    required: true
+    all_always_on_droplets: true
+    notes: >
+      do-agent must be installed on every always-on droplet.
+      Verify with: doctl compute droplet list --format Name,Status
+      and check monitoring graphs are populated in DO console.
+
+  alert_policies:
+    see: ssot/infra/digitalocean/monitoring.yaml
+
+# ── Exceptions Registry ───────────────────────────────────────────────────────
+
+exceptions: []
+
+# Add entries here if a normally-disallowed surface must temporarily be used:
+# - surface: app_platform
+#   reason: "OCR service spike traffic handled by App Platform auto-scaling"
+#   approved_by: "jgtolentino"
+#   approved_date: "YYYY-MM-DD"
+#   expiry_date: "YYYY-MM-DD"
+#   review_task: "https://github.com/Insightpulseai/odoo/issues/..."

@@ -1,0 +1,23 @@
+name: ccpm-ci
+on:
+  pull_request:
+    paths:
+      - 'ccpm/**'
+  push:
+    branches: [ main ]
+    paths:
+      - 'ccpm/**'
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ccpm
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: npm ci
+      - run: npm run build
+      - run: node dist/index.js init

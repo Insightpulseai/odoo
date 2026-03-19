@@ -78,7 +78,7 @@ jobs:
           SSH_USER: ${{ secrets.ODOO_PROD_SSH_USER }}
           SSH_KEY: ${{ secrets.ODOO_PROD_SSH_KEY }}
           ODOO_CONTAINER: ${{ secrets.ODOO_CONTAINER || 'odoo-core' }}
-          ODOO_DB: ${{ secrets.ODOO_DB || 'odoo_prod' }}
+          ODOO_DB: ${{ secrets.ODOO_DB || 'odoo' }}
           MODULES: ${{ github.event.inputs.modules || 'all' }}
           SKIP_SEED: ${{ github.event.inputs.skip_seed || 'false' }}
         run: |

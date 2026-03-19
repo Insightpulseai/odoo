@@ -1,0 +1,103 @@
+version: 1
+workspace_target_grouping:
+  top_level_groups:
+    - insightpulseai-shared
+    - insightpulseai-dev
+    - insightpulseai-staging
+    - insightpulseai-prod
+
+  shared:
+    edge:
+      - front-door
+      - waf
+      - dns-integration
+    identity:
+      - entra
+      - managed-identities
+      - workload-identity
+    secrets:
+      - key-vault
+    observability:
+      - log-analytics
+      - application-insights
+      - monitor-alerts
+    network:
+      - vnet
+      - subnets
+      - private-dns
+      - nsg
+
+  dev:
+    services:
+      - odoo-web
+      - odoo-worker
+      - odoo-cron
+      - auth
+      - plane
+      - mcp-coordinator
+      - mcp-plane
+      - ocr
+      - supabase
+      - superset
+      - crm
+      - shelf
+      - website
+      - foundry-runtime
+      - databricks-access
+
+  staging:
+    services:
+      - odoo-web
+      - odoo-worker
+      - odoo-cron
+      - auth
+      - plane
+      - mcp-coordinator
+      - ocr
+      - supabase
+      - superset
+      - foundry-runtime
+      - databricks-access
+
+  prod:
+    services:
+      - odoo-web
+      - odoo-worker
+      - odoo-cron
+      - auth
+      - plane
+      - mcp-coordinator
+      - ocr
+      - supabase
+      - superset
+      - foundry-runtime
+      - databricks-access
+
+naming_rules:
+  environments:
+    allowed:
+      - shared
+      - dev
+      - staging
+      - prod
+  runtime_services:
+    required_role_explicit_names:
+      - odoo-web
+      - odoo-worker
+      - odoo-cron
+    forbidden_ambiguous_names:
+      - odoo
+      - platform
+  lifecycle_labels:
+    allowed:
+      - canonical
+      - transitional
+      - legacy
+      - experimental
+      - retire
+
+view_policy:
+  operator_view_is_environment_first: true
+  architecture_mapping_is_plane_aware: true
+  shared_resources_must_not_mix_with_workload_services: true
+  duplicate_top_level_platform_trees_forbidden: true

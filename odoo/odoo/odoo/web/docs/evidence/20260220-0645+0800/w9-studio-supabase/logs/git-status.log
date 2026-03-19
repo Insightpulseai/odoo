@@ -1,0 +1,19 @@
+?? .cache/
+?? _work/
+?? artifacts/figma/
+?? design-tokens/.figma-last-modified
+?? design-tokens/.figma-version
+?? design-tokens/figma-components.json
+?? design-tokens/figma-file.json
+?? design-tokens/figma-styles.json
+?? design-tokens/figma-variables.json
+?? web/docs/evidence/20260216-1958+0800/colima-desktop-production/logs/
+?? web/docs/evidence/20260220-0343+0800/
+?? web/docs/evidence/20260220-0645+0800/
+Permissions Size User Date Modified Name
+.rw-r--r--@  220 tbwa 20 Feb 04:10  .env.local.example
+.rw-r--r--@ 3.0k tbwa 20 Feb 04:33  supabase/migrations/20260220_create_bookings.sql
+.rw-r--r--@ 1.1k tbwa 20 Feb 04:32  src/lib/bookings.ts
+.rw-r--r--@ 2.4k tbwa 20 Feb 04:28  package.json
+.rw-r--r--@  705 tbwa 20 Feb 04:32  src/lib/supabase.ts
+.rw-r--r--@  10k tbwa 20 Feb 04:34  SUPABASE_INTEGRATION.md

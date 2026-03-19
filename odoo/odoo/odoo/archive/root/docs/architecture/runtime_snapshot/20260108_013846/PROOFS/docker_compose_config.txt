@@ -1,0 +1,106 @@
+time="2026-01-08T01:38:51Z" level=warning msg="The \"POSTGRES_PASSWORD\" variable is not set. Defaulting to a blank string."
+time="2026-01-08T01:38:51Z" level=warning msg="The \"POSTGRES_PASSWORD\" variable is not set. Defaulting to a blank string."
+time="2026-01-08T01:38:51Z" level=warning msg="/root/odoo-ce/docker-compose.prod.yml: the attribute `version` is obsolete, it will be ignored, please remove it to avoid potential confusion"
+name: odoo-ce
+services:
+  db:
+    container_name: ipai-db
+    deploy:
+      resources:
+        limits:
+          cpus: 0.5
+          memory: "1073741824"
+        reservations:
+          cpus: 0.25
+          memory: "268435456"
+    environment:
+      ODOO_ADMIN_PASSWORD: UbQbX75Wi+P3R+bItzO/NapptGbL4n/9MvIDVw71Oww=
+      POSTGRES_DB: odoo
+      POSTGRES_PASSWORD: ""
+      POSTGRES_USER: odoo
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - pg_isready -U odoo
+      timeout: 5s
+      interval: 10s
+      retries: 5
+    image: postgres:16
+    networks:
+      ipai_backend: null
+    restart: unless-stopped
+    volumes:
+      - type: volume
+        source: ipai-db-data
+        target: /var/lib/postgresql/data
+        volume: {}
+  odoo:
+    container_name: ipai-ce
+    depends_on:
+      db:
+        condition: service_healthy
+        required: true
+    deploy:
+      resources:
+        limits:
+          cpus: 1.5
+          memory: "2147483648"
+        reservations:
+          cpus: 0.5
+          memory: "536870912"
+    environment:
+      HOST: db
+      ODOO_ADMIN_PASSWORD: UbQbX75Wi+P3R+bItzO/NapptGbL4n/9MvIDVw71Oww=
+      ODOO_RC: /etc/odoo/odoo.conf
+      PASSWORD: ""
+      POSTGRES_PASSWORD: vO1OtibFbuqHJX6WDt6Bhu5mwc9bDERzvvRZw9y31TM=
+      USER: odoo
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - curl -f http://localhost:8069/web/health || exit 1
+      timeout: 10s
+      interval: 30s
+      retries: 3
+      start_period: 1m0s
+    image: ghcr.io/jgtolentino/odoo-ce:v0.9.0
+    networks:
+      ipai_backend: null
+    ports:
+      - mode: ingress
+        host_ip: 127.0.0.1
+        target: 8069
+        published: "8069"
+        protocol: tcp
+    restart: unless-stopped
+    volumes:
+      - type: bind
+        source: /root/odoo-ce/deploy/odoo.conf
+        target: /etc/odoo/odoo.conf
+        read_only: true
+        bind:
+          create_host_path: true
+      - type: bind
+        source: /root/odoo-ce/addons
+        target: /mnt/extra-addons
+        read_only: true
+        bind:
+          create_host_path: true
+      - type: bind
+        source: /root/odoo-ce/oca
+        target: /mnt/oca-addons
+        read_only: true
+        bind:
+          create_host_path: true
+      - type: volume
+        source: ipai-filestore
+        target: /var/lib/odoo
+        volume: {}
+networks:
+  ipai_backend:
+    name: odoo-ce_ipai_backend
+volumes:
+  ipai-db-data:
+    name: odoo-ce_ipai-db-data
+  ipai-filestore:
+    name: odoo-ce_ipai-filestore

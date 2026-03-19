@@ -1,0 +1,251 @@
+---
+# Expanded Withholding Tax (EWT) Rules for Philippines
+# Pattern: PayrollEngine rules DSL with JSONLogic + ATC code matching
+# Formula: base * rate (rate looked up from ATC table)
+
+rules:
+  # Professional fees - Individuals
+  - code: EWT_PROF_W010
+    name: Professional fees - individuals (ATC W010)
+    description: 10% EWT on professional fees paid to individuals
+    priority: 100
+    tax_type: ewt
+    atc_code: W010
+
+    condition:
+      and:
+        - "==": [{"var": "doc_type"}, "bill"]
+        - "==": [{"var": "atc_code"}, "W010"]
+        - "==": [{"var": "vendor_type"}, "PROFESSIONAL"]
+        - ">": [{"var": "gross_amount"}, 0]
+
+    base_source: gross_amount
+    rate_code: W010
+    rate_value: 0.10
+    formula: "base * rate"
+
+    output_bucket: EWT_PROF_W010
+
+    notes: "10% creditable withholding on professional fees to individuals"
+
+  - code: EWT_PROF_W020
+    name: Professional fees - juridical (ATC W020)
+    description: 10% EWT on professional fees paid to corporations
+    priority: 100
+    tax_type: ewt
+    atc_code: W020
+
+    condition:
+      and:
+        - "==": [{"var": "doc_type"}, "bill"]
+        - "==": [{"var": "atc_code"}, "W020"]
+        - "==": [{"var": "vendor_type"}, "PROFESSIONAL"]
+        - ">": [{"var": "gross_amount"}, 0]
+
+    base_source: gross_amount
+    rate_code: W020
+    rate_value: 0.10
+    formula: "base * rate"
+
+    output_bucket: EWT_PROF_W020
+
+    notes: "10% creditable withholding on professional fees to corporations"
+
+  # Medical practitioners
+  - code: EWT_PROF_W030
+    name: Professional fees - medical practitioners (ATC W030)
+    description: 10% EWT on fees paid to doctors, dentists, etc.
+    priority: 100
+    tax_type: ewt
+    atc_code: W030
+
+    condition:
+      and:
+        - "==": [{"var": "doc_type"}, "bill"]
+        - "==": [{"var": "atc_code"}, "W030"]
+        - "in": [{"var": "vendor_type"}, ["PROFESSIONAL", "MEDICAL"]]
+        - ">": [{"var": "gross_amount"}, 0]
+
+    base_source: gross_amount
+    rate_code: W030
+    rate_value: 0.10
+    formula: "base * rate"
+
+    output_bucket: EWT_PROF_W030
+
+    notes: "10% creditable withholding on medical professional fees"
+
+  # Lawyers
+  - code: EWT_PROF_W040
+    name: Professional fees - lawyers (ATC W040)
+    description: 10% EWT on legal fees
+    priority: 100
+    tax_type: ewt
+    atc_code: W040
+
+    condition:
+      and:
+        - "==": [{"var": "doc_type"}, "bill"]
+        - "==": [{"var": "atc_code"}, "W040"]
+        - "==": [{"var": "vendor_type"}, "PROFESSIONAL"]
+        - ">": [{"var": "gross_amount"}, 0]
+
+    base_source: gross_amount
+    rate_code: W040
+    rate_value: 0.10
+    formula: "base * rate"
+
+    output_bucket: EWT_PROF_W040
+
+    notes: "10% creditable withholding on legal professional fees"
+
+  # Income payments to suppliers - Goods (1%)
+  - code: EWT_SUPPLIER_W157
+    name: Income payments - goods (ATC W157)
+    description: 1% EWT on payments for goods
+    priority: 100
+    tax_type: ewt
+    atc_code: W157
+
+    condition:
+      and:
+        - "==": [{"var": "doc_type"}, "bill"]
+        - "==": [{"var": "atc_code"}, "W157"]
+        - "==": [{"var": "vendor_type"}, "SUPPLIER"]
+        - ">": [{"var": "gross_amount"}, 0]
+
+    base_source: gross_amount
+    rate_code: W157
+    rate_value: 0.01
+    formula: "base * rate"
+
+    output_bucket: EWT_SUPPLIER_W157
+
+    notes: "1% creditable withholding on goods purchases"
+
+  # Income payments to suppliers - Services (2%)
+  - code: EWT_SUPPLIER_W158
+    name: Income payments - services (ATC W158)
+    description: 2% EWT on payments for services
+    priority: 100
+    tax_type: ewt
+    atc_code: W158
+
+    condition:
+      and:
+        - "==": [{"var": "doc_type"}, "bill"]
+        - "==": [{"var": "atc_code"}, "W158"]
+        - "==": [{"var": "vendor_type"}, "SUPPLIER"]
+        - ">": [{"var": "gross_amount"}, 0]
+
+    base_source: gross_amount
+    rate_code: W158
+    rate_value: 0.02
+    formula: "base * rate"
+
+    output_bucket: EWT_SUPPLIER_W158
+
+    notes: "2% creditable withholding on services"
+
+  # Commissions
+  - code: EWT_COMMISSION_W161
+    name: Commissions - agents (ATC W161)
+    description: 10% EWT on commissions paid to agents
+    priority: 100
+    tax_type: ewt
+    atc_code: W161
+
+    condition:
+      and:
+        - "==": [{"var": "doc_type"}, "bill"]
+        - "==": [{"var": "atc_code"}, "W161"]
+        - "in": [{"var": "vendor_type"}, ["AGENT", "INDIVIDUAL"]]
+        - ">": [{"var": "gross_amount"}, 0]
+
+    base_source: gross_amount
+    rate_code: W161
+    rate_value: 0.10
+    formula: "base * rate"
+
+    output_bucket: EWT_COMMISSION_W161
+
+    notes: "10% creditable withholding on commissions"
+
+  # Rent - Real property
+  - code: EWT_RENT_W169
+    name: Rent - real property (ATC W169)
+    description: 5% EWT on rental payments for real property
+    priority: 100
+    tax_type: ewt
+    atc_code: W169
+
+    condition:
+      and:
+        - "==": [{"var": "doc_type"}, "bill"]
+        - "==": [{"var": "atc_code"}, "W169"]
+        - ">": [{"var": "gross_amount"}, 0]
+
+    base_source: gross_amount
+    rate_code: W169
+    rate_value: 0.05
+    formula: "base * rate"
+
+    output_bucket: EWT_RENT_W169
+
+    notes: "5% creditable withholding on real property rent"
+
+  # Rent - Personal property
+  - code: EWT_RENT_W170
+    name: Rent - personal property (ATC W170)
+    description: 5% EWT on rental payments for personal property
+    priority: 100
+    tax_type: ewt
+    atc_code: W170
+
+    condition:
+      and:
+        - "==": [{"var": "doc_type"}, "bill"]
+        - "==": [{"var": "atc_code"}, "W170"]
+        - ">": [{"var": "gross_amount"}, 0]
+
+    base_source: gross_amount
+    rate_code: W170
+    rate_value: 0.05
+    formula: "base * rate"
+
+    output_bucket: EWT_RENT_W170
+
+    notes: "5% creditable withholding on personal property rent"
+
+  # Aggregation rule
+  - code: EWT_TOTAL
+    name: Total EWT withheld
+    description: Sum of all expanded withholding tax amounts
+    priority: 200
+    tax_type: ewt
+
+    condition:
+      always: true
+
+    formula: |
+      SUM(
+        EWT_PROF_W010, EWT_PROF_W020, EWT_PROF_W030, EWT_PROF_W040,
+        EWT_SUPPLIER_W157, EWT_SUPPLIER_W158,
+        EWT_COMMISSION_W161,
+        EWT_RENT_W169, EWT_RENT_W170
+      )
+
+    output_bucket: EWT_TOTAL
+
+    notes: "Total creditable expanded withholding tax"
+
+metadata:
+  version: 1.0.0
+  effective_from: "2025-01-01"
+  legal_basis:
+    - "NIRC Section 57"
+    - "RR 2-98 (Consolidated Withholding Tax Regulations)"
+    - "RMC 25-2011 (Updated ATC Codes)"
+  notes: |
+    EWT rules match transactions to ATC codes and apply creditable withholding rates.
+    These amounts are reported on BIR Form 1601-EQ (Quarterly) or 1601-C (Monthly for compensation).

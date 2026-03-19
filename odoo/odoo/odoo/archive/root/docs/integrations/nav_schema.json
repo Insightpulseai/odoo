@@ -1,0 +1,327 @@
+{
+  "$schema": "./nav_schema.schema.json",
+  "version": "1.0.0",
+  "lastUpdated": "2026-01-24",
+  "globalNav": {
+    "items": [
+      { "id": "start", "title": "Start", "href": "/docs/guides/getting-started" },
+      { "id": "products", "title": "Products", "href": "/docs/guides/database" },
+      { "id": "build", "title": "Build", "href": "/docs/guides/local-development" },
+      { "id": "manage", "title": "Manage", "href": "/docs/guides/platform" },
+      { "id": "reference", "title": "Reference", "href": "/docs/reference" },
+      { "id": "resources", "title": "Resources", "href": "/docs/guides/resources" }
+    ]
+  },
+  "sections": [
+    {
+      "id": "platform",
+      "title": "Platform",
+      "icon": "settings",
+      "basePath": "/docs/guides/platform",
+      "items": [
+        {
+          "title": "Platform Overview",
+          "href": "/docs/guides/platform"
+        },
+        {
+          "title": "Add-ons",
+          "href": "/docs/guides/platform/add-ons",
+          "children": [
+            { "title": "Compute Add-ons", "href": "/docs/guides/platform/add-ons/compute" },
+            { "title": "IPv4 Add-on", "href": "/docs/guides/platform/add-ons/ipv4" },
+            { "title": "PITR Add-on", "href": "/docs/guides/platform/add-ons/pitr" }
+          ]
+        },
+        {
+          "title": "Custom Domains",
+          "href": "/docs/guides/platform/custom-domains"
+        },
+        {
+          "title": "Database Backups",
+          "href": "/docs/guides/platform/backups",
+          "children": [
+            { "title": "Daily Backups", "href": "/docs/guides/platform/backups/daily-backups" },
+            { "title": "Point-in-Time Recovery", "href": "/docs/guides/platform/backups/pitr" },
+            { "title": "Backup Retention", "href": "/docs/guides/platform/backups/retention" }
+          ]
+        },
+        {
+          "title": "Database Size",
+          "href": "/docs/guides/platform/database-size"
+        },
+        {
+          "title": "Log Drains",
+          "href": "/docs/guides/platform/log-drains"
+        },
+        {
+          "title": "Metrics",
+          "href": "/docs/guides/platform/metrics"
+        },
+        {
+          "title": "Multi-factor Authentication",
+          "href": "/docs/guides/platform/mfa"
+        },
+        {
+          "title": "Network Restrictions",
+          "href": "/docs/guides/platform/network-restrictions"
+        },
+        {
+          "title": "Permissions",
+          "href": "/docs/guides/platform/permissions"
+        },
+        {
+          "title": "Read Replicas",
+          "href": "/docs/guides/platform/read-replicas"
+        },
+        {
+          "title": "Shared Responsibility Model",
+          "href": "/docs/guides/platform/shared-responsibility"
+        },
+        {
+          "title": "SSL Certificates",
+          "href": "/docs/guides/platform/ssl-certificates"
+        },
+        {
+          "title": "SSO with SAML 2.0",
+          "href": "/docs/guides/platform/sso",
+          "children": [
+            { "title": "Azure AD", "href": "/docs/guides/platform/sso/azure-ad" },
+            { "title": "Google Workspace", "href": "/docs/guides/platform/sso/google-workspace" },
+            { "title": "Okta", "href": "/docs/guides/platform/sso/okta" }
+          ]
+        },
+        {
+          "title": "Transfer Project",
+          "href": "/docs/guides/platform/transfer-project"
+        }
+      ]
+    },
+    {
+      "id": "integrations",
+      "title": "Integrations",
+      "icon": "plug",
+      "basePath": "/docs/guides/platform/integrations",
+      "items": [
+        {
+          "title": "Integrations Overview",
+          "href": "/docs/guides/platform/integrations"
+        },
+        {
+          "title": "Vercel Marketplace",
+          "href": "/docs/guides/platform/integrations/vercel-marketplace",
+          "children": [
+            { "title": "Vercel + Supabase", "href": "/docs/guides/platform/integrations/vercel" },
+            { "title": "Environment Variables", "href": "/docs/guides/platform/integrations/vercel-env-vars" }
+          ]
+        },
+        {
+          "title": "Auth Providers",
+          "href": "/docs/guides/platform/integrations/auth-providers",
+          "children": [
+            { "title": "Apple", "href": "/docs/guides/auth/social-login/auth-apple" },
+            { "title": "Azure", "href": "/docs/guides/auth/social-login/auth-azure" },
+            { "title": "Discord", "href": "/docs/guides/auth/social-login/auth-discord" },
+            { "title": "Facebook", "href": "/docs/guides/auth/social-login/auth-facebook" },
+            { "title": "GitHub", "href": "/docs/guides/auth/social-login/auth-github" },
+            { "title": "Google", "href": "/docs/guides/auth/social-login/auth-google" },
+            { "title": "Keycloak", "href": "/docs/guides/auth/social-login/auth-keycloak" },
+            { "title": "LinkedIn", "href": "/docs/guides/auth/social-login/auth-linkedin" },
+            { "title": "Notion", "href": "/docs/guides/auth/social-login/auth-notion" },
+            { "title": "Slack", "href": "/docs/guides/auth/social-login/auth-slack" },
+            { "title": "Spotify", "href": "/docs/guides/auth/social-login/auth-spotify" },
+            { "title": "Twitch", "href": "/docs/guides/auth/social-login/auth-twitch" },
+            { "title": "Twitter", "href": "/docs/guides/auth/social-login/auth-twitter" },
+            { "title": "WorkOS", "href": "/docs/guides/auth/social-login/auth-workos" },
+            { "title": "Zoom", "href": "/docs/guides/auth/social-login/auth-zoom" }
+          ]
+        },
+        {
+          "title": "Partner Integrations",
+          "href": "/docs/guides/platform/integrations/partners",
+          "children": [
+            { "title": "Cloudflare Workers", "href": "/docs/guides/platform/integrations/cloudflare-workers" },
+            { "title": "Deno Deploy", "href": "/docs/guides/platform/integrations/deno-deploy" },
+            { "title": "Fly.io", "href": "/docs/guides/platform/integrations/flyio" },
+            { "title": "GitHub Actions", "href": "/docs/guides/platform/integrations/github-actions" },
+            { "title": "Heroku", "href": "/docs/guides/platform/integrations/heroku" },
+            { "title": "Netlify", "href": "/docs/guides/platform/integrations/netlify" },
+            { "title": "Railway", "href": "/docs/guides/platform/integrations/railway" },
+            { "title": "Render", "href": "/docs/guides/platform/integrations/render" }
+          ]
+        },
+        {
+          "title": "ORMs & Libraries",
+          "href": "/docs/guides/platform/integrations/orms",
+          "children": [
+            { "title": "Drizzle", "href": "/docs/guides/database/connecting-to-postgres/drizzle" },
+            { "title": "Prisma", "href": "/docs/guides/database/connecting-to-postgres/prisma" },
+            { "title": "Sequelize", "href": "/docs/guides/database/connecting-to-postgres/sequelize" },
+            { "title": "SQLAlchemy", "href": "/docs/guides/database/connecting-to-postgres/sqlalchemy" },
+            { "title": "TypeORM", "href": "/docs/guides/database/connecting-to-postgres/typeorm" }
+          ]
+        },
+        {
+          "title": "AI & Vectors",
+          "href": "/docs/guides/platform/integrations/ai",
+          "children": [
+            { "title": "LangChain", "href": "/docs/guides/ai/langchain" },
+            { "title": "LlamaIndex", "href": "/docs/guides/ai/llama-index" },
+            { "title": "OpenAI", "href": "/docs/guides/ai/openai" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "billing",
+      "title": "Billing",
+      "icon": "credit-card",
+      "basePath": "/docs/guides/platform/billing",
+      "items": [
+        {
+          "title": "Billing Overview",
+          "href": "/docs/guides/platform/billing"
+        },
+        {
+          "title": "Compute Usage",
+          "href": "/docs/guides/platform/billing/compute"
+        },
+        {
+          "title": "Database Storage",
+          "href": "/docs/guides/platform/billing/storage"
+        },
+        {
+          "title": "Egress & Bandwidth",
+          "href": "/docs/guides/platform/billing/egress"
+        },
+        {
+          "title": "Invoices",
+          "href": "/docs/guides/platform/billing/invoices"
+        },
+        {
+          "title": "Spend Cap",
+          "href": "/docs/guides/platform/billing/spend-cap"
+        },
+        {
+          "title": "Upgrade Plan",
+          "href": "/docs/guides/platform/billing/upgrade"
+        }
+      ]
+    },
+    {
+      "id": "going-to-production",
+      "title": "Going to Production",
+      "icon": "rocket",
+      "basePath": "/docs/guides/platform/going-into-prod",
+      "items": [
+        {
+          "title": "Production Checklist",
+          "href": "/docs/guides/platform/going-into-prod"
+        },
+        {
+          "title": "Performance Tuning",
+          "href": "/docs/guides/platform/performance"
+        },
+        {
+          "title": "Connection Pooling",
+          "href": "/docs/guides/database/connecting-to-postgres/connection-pooling"
+        },
+        {
+          "title": "Load Testing",
+          "href": "/docs/guides/platform/load-testing"
+        },
+        {
+          "title": "Monitoring",
+          "href": "/docs/guides/platform/monitoring"
+        }
+      ]
+    },
+    {
+      "id": "security",
+      "title": "Security",
+      "icon": "shield",
+      "basePath": "/docs/guides/platform/security",
+      "items": [
+        {
+          "title": "Security Overview",
+          "href": "/docs/guides/platform/security"
+        },
+        {
+          "title": "Compliance",
+          "href": "/docs/guides/platform/compliance",
+          "children": [
+            { "title": "HIPAA", "href": "/docs/guides/platform/compliance/hipaa" },
+            { "title": "SOC 2", "href": "/docs/guides/platform/compliance/soc2" }
+          ]
+        },
+        {
+          "title": "Data Encryption",
+          "href": "/docs/guides/platform/security/encryption"
+        },
+        {
+          "title": "Row Level Security",
+          "href": "/docs/guides/database/postgres/row-level-security"
+        },
+        {
+          "title": "Secrets Management",
+          "href": "/docs/guides/platform/security/secrets"
+        }
+      ]
+    },
+    {
+      "id": "troubleshooting",
+      "title": "Troubleshooting",
+      "icon": "help-circle",
+      "basePath": "/docs/guides/platform/troubleshooting",
+      "items": [
+        {
+          "title": "Troubleshooting Overview",
+          "href": "/docs/guides/platform/troubleshooting"
+        },
+        {
+          "title": "Connection Issues",
+          "href": "/docs/guides/platform/troubleshooting/connection-issues"
+        },
+        {
+          "title": "Performance Issues",
+          "href": "/docs/guides/platform/troubleshooting/performance"
+        },
+        {
+          "title": "Auth Issues",
+          "href": "/docs/guides/platform/troubleshooting/auth"
+        },
+        {
+          "title": "Storage Issues",
+          "href": "/docs/guides/platform/troubleshooting/storage"
+        }
+      ]
+    }
+  ],
+  "footer": {
+    "primaryLinks": [
+      {
+        "label": "Need some help?",
+        "description": "Contact our support team",
+        "href": "/support",
+        "icon": "life-buoy"
+      },
+      {
+        "label": "Latest updates",
+        "description": "See what's new in Supabase",
+        "href": "/changelog",
+        "icon": "newspaper"
+      }
+    ],
+    "secondaryLinks": [
+      { "label": "Contributing", "href": "/docs/guides/resources/contributing" },
+      { "label": "Author Styleguide", "href": "/docs/guides/resources/styleguide" },
+      { "label": "Open Source", "href": "https://github.com/supabase/supabase" }
+    ],
+    "socialLinks": [
+      { "platform": "twitter", "href": "https://twitter.com/supabase" },
+      { "platform": "github", "href": "https://github.com/supabase" },
+      { "platform": "discord", "href": "https://discord.supabase.com" },
+      { "platform": "youtube", "href": "https://youtube.com/c/supabase" }
+    ],
+    "copyright": "Supabase Inc"
+  }
+}

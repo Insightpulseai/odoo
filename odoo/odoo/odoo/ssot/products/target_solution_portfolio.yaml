@@ -1,0 +1,221 @@
+# =============================================================================
+# Target Solution Portfolio — InsightPulse AI
+# =============================================================================
+#
+# Canonical target solutions mapped to platform planes and repos.
+# Rule: start with governed domain products, then expose through agents and apps.
+#
+# Human doc: docs/architecture/TARGET_SOLUTION_PORTFOLIO.md (create if needed)
+# Strategy ref: ssot/governance/unified_strategy.yaml
+# Org topology: ssot/repo/org_topology.yaml
+# =============================================================================
+
+schema_version: "1.0"
+last_updated: "2026-03-17"
+status: target
+
+# =============================================================================
+# Databricks-native target solutions (data-intelligence repo)
+# =============================================================================
+databricks_solutions:
+
+  - id: SOL-DI-001
+    name: Customer & Identity Intelligence Fabric
+    repo: data-intelligence
+    path: shared/customer_360
+    inspiration: [Smartly.io, Quilt.AI, Databricks marketing solution]
+    products:
+      - audience profiles
+      - identity resolution
+      - customer 360
+      - segmentation and scoring
+      - retention / churn signals
+      - activation-ready features for agents and apps
+    priority: P0
+
+  - id: SOL-DI-002
+    name: Campaign Planning, Measurement & Optimization Cloud
+    repo: data-intelligence
+    path: domains/marketing
+    inspiration: [Smartly.io, Databricks campaign planning/measurement/optimization]
+    products:
+      - media planning inputs
+      - campaign execution telemetry
+      - attribution / incrementality
+      - media mix modeling (MMM)
+      - budget allocation recommendations
+      - cross-channel performance truth
+    priority: P0
+
+  - id: SOL-DI-003
+    name: Brand, Cultural & Creative Intelligence Hub
+    repo: data-intelligence
+    path: domains/marketing
+    inspiration: [Quilt.AI, LIONS Marketing Assistant, Databricks brand management]
+    products:
+      - brand health products
+      - social / review / support sentiment products
+      - influencer / sponsorship evaluation
+      - share-of-voice and earned-media marts
+      - research-grade evidence datasets
+      - creative performance metadata
+    priority: P1
+
+  - id: SOL-DI-004
+    name: AI Visibility / GEO Intelligence
+    repo: data-intelligence
+    path: shared/ai_bi_semantic
+    inspiration: [dataintelligence.ro GeoMind, Quilt.AI LLM Equity Analytics]
+    products:
+      - LLM mention share tracking
+      - citation share and source authority
+      - topic/cluster coverage analysis
+      - prompt-class coverage
+      - competitor comparison
+      - content optimization recommendations
+    priority: P1
+
+  - id: SOL-DI-005
+    name: Retail Media & Commerce Intelligence
+    repo: data-intelligence
+    path: domains/retail
+    inspiration: [Smartly.io, Databricks retail solution]
+    products:
+      - retail media performance
+      - commerce-linked attribution
+      - promotion and offer optimization
+      - ad revenue products
+      - demand/inventory-aware marketing optimization
+    priority: P2
+
+  - id: SOL-DI-006
+    name: Audience, Ad Revenue & Content Supply Chain Intelligence
+    repo: data-intelligence
+    path: domains/media_entertainment
+    inspiration: [Databricks media/entertainment solution, LIONS-style evidence]
+    products:
+      - audience intelligence
+      - subscriber/viewer churn intelligence
+      - ad yield and monetization products
+      - content performance products
+      - content supply chain optimization
+    priority: P1
+
+  - id: SOL-DI-007
+    name: Financial Risk, Revenue Assurance & FinOps Intelligence
+    repo: data-intelligence
+    path: domains/finance
+    inspiration: [Databricks financial services solution]
+    products:
+      - receivables / payment anomaly models
+      - fraud / abuse detection
+      - compliance and reporting marts
+      - treasury / cash visibility
+      - finance operations automation inputs
+    priority: P1
+
+  - id: SOL-DI-008
+    name: Agent Context Products
+    repo: data-intelligence
+    path: shared/agent_context
+    inspiration: [Databricks AI agents, governed data products]
+    products:
+      - curated agent-grade datasets
+      - retrieval-ready embeddings
+      - domain metadata for agent grounding
+      - evaluation assets
+    priority: P0
+
+# =============================================================================
+# Agent surfaces (agent-platform repo)
+# =============================================================================
+agent_solutions:
+
+  - id: SOL-AP-001
+    name: Creative Evidence Assistant
+    repo: agent-platform
+    path: agents/research
+    inspiration: [LIONS Marketing Assistant, Quilt.AI]
+    consumes: [SOL-DI-003, SOL-DI-008]
+    capabilities:
+      - cited evidence retrieval
+      - case study search
+      - creative pattern matching
+      - effectiveness benchmarks
+      - brief generation inputs
+
+  - id: SOL-AP-002
+    name: Marketing Strategist Agent
+    repo: agent-platform
+    path: agents/strategist
+    consumes: [SOL-DI-001, SOL-DI-002, SOL-DI-003]
+    capabilities:
+      - audience analysis
+      - campaign planning support
+      - competitive positioning
+
+  - id: SOL-AP-003
+    name: Campaign Analyst Agent
+    repo: agent-platform
+    path: agents/analyst
+    consumes: [SOL-DI-002, SOL-DI-005, SOL-DI-006]
+    capabilities:
+      - performance analysis
+      - attribution insights
+      - optimization recommendations
+
+  - id: SOL-AP-004
+    name: Brand & Consumer Insight Agent
+    repo: agent-platform
+    path: agents/insight
+    consumes: [SOL-DI-003, SOL-DI-004]
+    capabilities:
+      - brand health interpretation
+      - cultural signal analysis
+      - AI visibility monitoring
+
+# =============================================================================
+# Operational consumers (odoo repo)
+# =============================================================================
+operational_solutions:
+
+  - id: SOL-OD-001
+    name: Odoo Revenue & Campaign Copilot
+    repo: odoo
+    path: addons/ipai/ipai_odoo_copilot
+    inspiration: [Odoo Copilot, Smartly-style ops linkage]
+    consumes: [SOL-DI-001, SOL-DI-002, SOL-DI-007]
+    capabilities:
+      - campaign spend / ROI explanation
+      - budget pacing alerts
+      - invoice / PO / accrual risk detection
+      - creative-to-revenue linkage
+
+# =============================================================================
+# Workspace consumers (web or platform repo)
+# =============================================================================
+workspace_solutions:
+
+  - id: SOL-WS-001
+    name: Marketing Decision Workspace
+    repo: web
+    path: apps/marketing-workspace
+    inspiration: [Notion 3.0]
+    consumes: [SOL-DI-001, SOL-DI-003, SOL-AP-001, SOL-AP-002]
+    capabilities:
+      - shared decision surface
+      - brief/strategy documents
+      - linked evidence
+      - agent-powered search
+      - task/status management
+
+# =============================================================================
+# Rules
+# =============================================================================
+rules:
+  - "Start with governed domain products, then expose through agents and apps"
+  - "Databricks owns governed intelligence. Agents consume it. Odoo executes on it."
+  - "Do not start with the assistant UI and try to invent intelligence behind it later"
+  - "Agent context products are first-class Databricks products, not afterthoughts"
+  - "Notion 3.0 pattern is workspace orchestration, not Databricks core"
+  - "Odoo Copilot is an operational consumer, not the intelligence source"

@@ -1,0 +1,3 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_ipai_workos_canvas_user,access.ipai.workos.canvas.user,model_ipai_workos_canvas,base.group_user,1,1,1,0
+access_ipai_workos_canvas_manager,access.ipai.workos.canvas.manager,model_ipai_workos_canvas,base.group_system,1,1,1,1

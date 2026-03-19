@@ -1,0 +1,343 @@
+# =============================================================================
+# Azure RBAC Matrix — InsightPulse AI
+# =============================================================================
+#
+# RBAC assignments by scope: subscription, resource group, and resource level.
+# All assignments use Entra security groups (never individual users).
+#
+# Human-readable narrative: docs/security/ACCESS_MODEL.md § 6
+# Last updated: 2026-03-18
+# =============================================================================
+
+schema_version: "1.0"
+last_updated: "2026-03-18"
+
+subscription:
+  id: 536d8cf6-89e1-4815-aef3-d5f2c5f4d070
+  name: "Azure subscription 1"
+  region: southeastasia
+
+# -----------------------------------------------------------------------------
+# Subscription-Level Assignments
+# -----------------------------------------------------------------------------
+
+subscription_assignments:
+
+  - principal: sg-ipai-emergency-admins
+    principal_type: security_group
+    role: Owner
+    justification: >
+      Break-glass recovery. Only used when primary admin is locked out.
+      Sign-in triggers immediate Slack alert.
+
+  - principal: sg-ipai-platform-owners
+    principal_type: security_group
+    role: Contributor
+    justification: >
+      Day-to-day platform operations. Combined with User Access Administrator
+      for RBAC management without Owner-level blast radius.
+
+  - principal: sg-ipai-platform-owners
+    principal_type: security_group
+    role: User Access Administrator
+    justification: >
+      Manage RBAC assignments across resource groups.
+      Required for onboarding new team members and service principals.
+
+  - principal: sg-ipai-workload-cicd
+    principal_type: security_group
+    role: Reader
+    justification: >
+      Pipeline resource discovery. Pipelines need to enumerate resources
+      across RGs for deployment targeting.
+
+# -----------------------------------------------------------------------------
+# Resource Group Assignments
+# -----------------------------------------------------------------------------
+
+resource_group_assignments:
+
+  # --- rg-ipai-dev (Core platform) ---
+
+  - resource_group: rg-ipai-dev
+    assignments:
+      - principal: sg-ipai-platform-owners
+        role: Contributor
+        justification: Odoo, Plane, Shelf, CRM management
+
+      - principal: sg-ipai-developers
+        role: Contributor
+        justification: Dev environment full access for engineering
+
+      - principal: sg-ipai-workload-aca
+        role: Contributor
+        justification: Container Apps self-management (scaling, revision)
+
+      - principal: sg-ipai-workload-cicd
+        role: Contributor
+        justification: Pipeline deployments to Container Apps
+
+  # --- rg-ipai-ai-dev (AI/ML stack) ---
+
+  - resource_group: rg-ipai-ai-dev
+    assignments:
+      - principal: sg-ipai-platform-owners
+        role: Contributor
+        justification: AI/ML resource management
+
+      - principal: sg-ipai-data-engineers
+        role: Contributor
+        justification: Databricks, ADLS, AI services operation
+
+      - principal: sg-ipai-workload-databricks
+        role: Contributor
+        justification: Databricks managed identity ADLS and compute access
+
+      - principal: sg-ipai-workload-cicd
+        role: Contributor
+        justification: Pipeline deployments for lakehouse pipelines
+
+  # --- rg-ipai-agents-dev (Agent runtime) ---
+
+  - resource_group: rg-ipai-agents-dev
+    assignments:
+      - principal: sg-ipai-platform-owners
+        role: Contributor
+        justification: Agent runtime management
+
+      - principal: sg-ipai-workload-agents
+        role: Contributor
+        justification: Agent workload self-management
+
+  # --- rg-ipai-shared-dev (Shared services) ---
+
+  - resource_group: rg-ipai-shared-dev
+    assignments:
+      - principal: sg-ipai-platform-owners
+        role: Contributor
+        justification: Shared services management
+
+      - principal: sg-ipai-developers
+        role: Reader
+        justification: Observability access (App Insights, Log Analytics)
+
+      - principal: sg-ipai-workload-cicd
+        role: Contributor
+        justification: ACR push, secret access for pipelines
+
+  # --- rg-ipai-devops (CI/CD) ---
+
+  - resource_group: rg-ipai-devops
+    assignments:
+      - principal: sg-ipai-platform-owners
+        role: Contributor
+        justification: DevOps pool and Dev Center management
+
+  # --- rg-ipai-data-dev (Platform data) ---
+
+  - resource_group: rg-ipai-data-dev
+    assignments:
+      - principal: sg-ipai-platform-owners
+        role: Contributor
+        justification: Platform database management
+
+      - principal: sg-ipai-data-engineers
+        role: Reader
+        justification: Read access to platform DB configuration (not data)
+
+  # --- rg-dbw-managed-ipai-dev (Databricks managed) ---
+
+  - resource_group: rg-dbw-managed-ipai-dev
+    assignments:
+      - principal: sg-ipai-workload-databricks
+        role: Contributor
+        justification: Databricks managed resource access (Unity Catalog connector, MI)
+
+      - principal: sg-ipai-platform-owners
+        role: Reader
+        justification: Monitoring and audit of managed resources
+
+  # --- rg-data-intel-ph (AI Foundry) ---
+
+  - resource_group: rg-data-intel-ph
+    assignments:
+      - principal: sg-ipai-platform-owners
+        role: Contributor
+        justification: AI Foundry project and model management
+
+      - principal: sg-ipai-data-engineers
+        role: Contributor
+        justification: Model training and evaluation access
+
+# -----------------------------------------------------------------------------
+# Resource-Level Assignments
+# -----------------------------------------------------------------------------
+
+resource_assignments:
+
+  # --- Key Vaults ---
+
+  - resource: kv-ipai-dev
+    resource_type: Microsoft.KeyVault/vaults
+    resource_group: rg-ipai-shared-dev
+    assignments:
+      - principal: sg-ipai-platform-owners
+        role: Key Vault Administrator
+        justification: Full secret management for platform
+
+      - principal: sg-ipai-developers
+        role: Key Vault Secrets User
+        justification: Read secrets for dev environment
+
+      - principal: sg-ipai-workload-aca
+        role: Key Vault Secrets User
+        justification: Runtime secret access for Container Apps
+
+      - principal: sg-ipai-workload-agents
+        role: Key Vault Secrets User
+        justification: Agent secret access (API keys, connection strings)
+
+      - principal: sg-ipai-workload-cicd
+        role: Key Vault Secrets User
+        justification: Pipeline secret access for deployments
+
+  - resource: ipai-odoo-dev-kv
+    resource_type: Microsoft.KeyVault/vaults
+    resource_group: rg-ipai-dev
+    assignments:
+      - principal: sg-ipai-platform-owners
+        role: Key Vault Administrator
+        justification: Odoo-specific secret management
+
+      - principal: sg-ipai-workload-aca
+        role: Key Vault Secrets User
+        justification: Odoo runtime secret access (SMTP, DB, API keys)
+
+  # --- Storage (ADLS Gen2) ---
+
+  - resource: stipaidevlake
+    resource_type: Microsoft.Storage/storageAccounts
+    resource_group: rg-ipai-ai-dev
+    assignments:
+      - principal: sg-ipai-data-engineers
+        role: Storage Blob Data Contributor
+        justification: ADLS read/write for ETL pipeline development
+
+      - principal: sg-ipai-workload-databricks
+        role: Storage Blob Data Contributor
+        justification: Databricks ADLS access for medallion transforms
+
+      - principal: sg-ipai-analysts
+        role: Storage Blob Data Reader
+        justification: Read-only access to gold layer for BI
+
+      - principal: sg-ipai-workload-agents
+        role: Storage Blob Data Reader
+        justification: Agent read access to gold-layer context products
+
+  # --- Container Registries ---
+
+  - resource: cripaidev
+    resource_type: Microsoft.ContainerRegistry/registries
+    resource_group: rg-ipai-shared-dev
+    assignments:
+      - principal: sg-ipai-platform-owners
+        role: AcrPush
+        justification: Manual image push (rare — pipeline preferred)
+
+      - principal: sg-ipai-workload-cicd
+        role: AcrPush
+        justification: Pipeline image build and push
+
+      - principal: sg-ipai-workload-aca
+        role: AcrPull
+        justification: Container image pull for Container Apps
+
+  # --- Observability ---
+
+  - resource: appi-ipai-dev
+    resource_type: Microsoft.Insights/components
+    resource_group: rg-ipai-shared-dev
+    assignments:
+      - principal: sg-ipai-developers
+        role: Monitoring Reader
+        justification: Telemetry viewing for debugging
+
+      - principal: sg-ipai-platform-owners
+        role: Monitoring Contributor
+        justification: Alert rule and dashboard management
+
+  - resource: law-ipai-dev
+    resource_type: Microsoft.OperationalInsights/workspaces
+    resource_group: rg-ipai-shared-dev
+    assignments:
+      - principal: sg-ipai-developers
+        role: Log Analytics Reader
+        justification: Log query access for debugging
+
+      - principal: sg-ipai-platform-owners
+        role: Log Analytics Contributor
+        justification: Workspace and query management
+
+  # --- AI Services ---
+
+  - resource: oai-ipai-dev
+    resource_type: Microsoft.CognitiveServices/accounts
+    resource_group: rg-ipai-ai-dev
+    assignments:
+      - principal: sg-ipai-workload-agents
+        role: Cognitive Services OpenAI User
+        justification: Agent inference calls
+
+      - principal: sg-ipai-data-engineers
+        role: Cognitive Services OpenAI User
+        justification: Embedding generation for lakehouse
+
+      - principal: sg-ipai-platform-owners
+        role: Cognitive Services OpenAI Contributor
+        justification: Model deployment management
+
+  - resource: docai-ipai-dev
+    resource_type: Microsoft.CognitiveServices/accounts
+    resource_group: rg-ipai-ai-dev
+    assignments:
+      - principal: sg-ipai-workload-agents
+        role: Cognitive Services User
+        justification: OCR pipeline execution
+
+  - resource: srch-ipai-dev
+    resource_type: Microsoft.Search/searchServices
+    resource_group: rg-ipai-ai-dev
+    assignments:
+      - principal: sg-ipai-workload-agents
+        role: Search Index Data Reader
+        justification: Agent semantic search queries
+
+      - principal: sg-ipai-data-engineers
+        role: Search Index Data Contributor
+        justification: Index management and population
+
+# -----------------------------------------------------------------------------
+# Prohibited Assignments (Anti-Patterns)
+# -----------------------------------------------------------------------------
+
+prohibited:
+  - principal: sg-ipai-workload-agents
+    role: Key Vault Administrator
+    reason: Agents should read secrets, not manage them
+
+  - principal: sg-ipai-developers
+    role: Owner
+    reason: No developer needs subscription Owner
+
+  - principal: sg-ipai-analysts
+    role: Contributor
+    reason: Analysts are read-only; no write access to any resource
+
+  - principal: sg-ipai-workload-databricks
+    role: Key Vault Administrator
+    reason: Databricks needs secret read, not secret management
+
+  - principal: any_individual_user
+    role: any
+    reason: All RBAC via groups — never assign roles to individual users

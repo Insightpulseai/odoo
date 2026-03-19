@@ -13,19 +13,22 @@ _logger = logging.getLogger(__name__)
 
 PARAM_PREFIX = "ipai_odoo_copilot"
 
+# Azure IMDS endpoint for managed-identity token acquisition.
+# Only reachable from within Azure-hosted compute (ACA, VM, etc.).
+# Resource scope targets Azure AI services (Cognitive Services).
+_IMDS_URL = (
+    "http://169.254.169.254/metadata/identity/oauth2/token"
+    "?api-version=2018-02-01"
+    "&resource=https://cognitiveservices.azure.com/"
+)
+_IMDS_TIMEOUT = 2  # seconds — fast fail when not on Azure
+
 # Probe timeout for Foundry API calls.
 _PROBE_TIMEOUT = 10
 
-# Azure AI Responses API version (Agents v2).
-_AGENTS_API_VERSION = "2025-03-01-preview"
-
-# azure-identity is an external dependency — graceful import
-try:
-    from azure.identity import DefaultAzureCredential
-    _HAS_AZURE_IDENTITY = True
-except ImportError:
-    _HAS_AZURE_IDENTITY = False
-    DefaultAzureCredential = None
+# Azure AI Agent Service API version.
+# This is the stable GA version for the Assistants-compatible API.
+_AGENTS_API_VERSION = "2024-12-01-preview"
 
 
 class FoundryService(models.Model):
@@ -80,83 +83,58 @@ class FoundryService(models.Model):
             "read_only_mode": self._get_param(
                 "foundry_read_only_mode", "True"
             ) == "True",
-            # agent_api_mode: "agents" (Foundry Responses API v2)
-            # or "assistants-compat" (legacy Assistants API path).
-            # Rollback switch while /agents endpoint is validated live.
-            "agent_api_mode": self._get_param(
-                "foundry_agent_api_mode", "agents"
-            ),
         }
 
     # ------------------------------------------------------------------
-    # Auth — uses azure-identity DefaultAzureCredential chain
+    # Auth
     # ------------------------------------------------------------------
 
-    def _get_credential(self):
-        """Get Azure credential using DefaultAzureCredential chain.
+    def _get_auth_mode(self):
+        """Detect available auth mode. Returns (mode, token_or_key).
 
-        Precedence (automatic via azure-identity):
-          1. EnvironmentCredential (AZURE_CLIENT_ID/SECRET/TENANT_ID)
-          2. ManagedIdentityCredential (Azure IMDS — ACA, VM, etc.)
-          3. AzureCliCredential (az login — local dev)
-          4. AzureDeveloperCliCredential (azd auth login)
-
-        Returns (credential_or_None, auth_mode_str).
+        mode is one of: 'managed-identity', 'api-key', 'none'.
+        token_or_key is the bearer value or empty string.
         """
-        # Env-var API key — fast path for dev without azure-identity
+        # 1. Try managed identity (IMDS) — only works on Azure compute
+        token = self._try_managed_identity()
+        if token:
+            return "managed-identity", token
+
+        # 2. Env-var API key fallback
         api_key = os.environ.get("AZURE_FOUNDRY_API_KEY", "")
         if api_key:
-            return None, "api-key"
+            return "api-key", api_key
 
-        if not _HAS_AZURE_IDENTITY:
-            _logger.warning(
-                "azure-identity not installed. Install with: "
-                "pip install azure-identity"
-            )
-            return None, "none"
+        return "none", ""
 
+    def _try_managed_identity(self):
+        """Attempt IMDS token acquisition. Returns token str or empty."""
+        req = urllib.request.Request(
+            _IMDS_URL, headers={"Metadata": "true"}
+        )
         try:
-            cred = DefaultAzureCredential()
-            # Validate credential works by requesting a token
-            token = cred.get_token(
-                "https://cognitiveservices.azure.com/.default"
-            )
-            if token and token.token:
-                return cred, "default-credential"
-        except Exception as e:
-            _logger.info(
-                "DefaultAzureCredential failed: %s (expected in local dev "
-                "without az login)", e
-            )
-
-        return None, "none"
+            with urllib.request.urlopen(req, timeout=_IMDS_TIMEOUT) as resp:
+                data = json.loads(resp.read())
+                return data.get("access_token", "")
+        except Exception:
+            # Not on Azure compute, or IMDS unreachable — expected in dev
+            return ""
 
     def _get_auth_headers(self):
-        """Build auth headers from best available credential.
+        """Build auth headers from best available mode.
 
         Returns (headers_dict, auth_mode_str).
         """
-        cred, mode = self._get_credential()
-
+        mode, secret = self._get_auth_mode()
         if mode == "none":
             _logger.info("Foundry auth: no credentials available")
             return {}, mode
-
+        _logger.info("Foundry auth: using %s", mode)
         if mode == "api-key":
-            api_key = os.environ.get("AZURE_FOUNDRY_API_KEY", "")
-            _logger.info("Foundry auth: using api-key")
-            return {"api-key": api_key}, mode
-
-        # DefaultAzureCredential — acquire bearer token
-        try:
-            token = cred.get_token(
-                "https://cognitiveservices.azure.com/.default"
-            )
-            _logger.info("Foundry auth: using %s", mode)
-            return {"Authorization": "Bearer %s" % token.token}, mode
-        except Exception as e:
-            _logger.warning("Token acquisition failed: %s", e)
-            return {}, "none"
+            # Azure AI services accept api-key via header
+            return {"api-key": secret}, mode
+        # Managed identity uses Bearer token
+        return {"Authorization": f"Bearer {secret}"}, mode
 
     # ------------------------------------------------------------------
     # Network
@@ -226,26 +204,19 @@ class FoundryService(models.Model):
     # ------------------------------------------------------------------
 
     def _resolve_agent(self, api_endpoint, auth_headers, auth_mode,
-                       agent_name, agent_api_mode="agents"):
-        """Attempt to find a named agent via the Foundry Agent API.
+                       agent_name):
+        """Attempt to find a named agent via the Azure AI Agent Service API.
 
-        Supports two endpoint modes (configurable via agent_api_mode setting):
-          - "agents": Foundry Responses API v2 path (GET /agents)
-          - "assistants-compat": Legacy Assistants API path
-            (GET /openai/assistants) — rollback switch for validation
+        Uses GET /openai/assistants?api-version=... to list agents and
+        searches for one matching the configured name.
 
         This is read-only — never creates or modifies agents.
 
         Returns (found: bool, message: str).
         """
-        if agent_api_mode == "assistants-compat":
-            path = "/openai/assistants"
-        else:
-            path = "/agents"
-
         url = (
-            "%s%s?api-version=%s"
-            % (api_endpoint.rstrip("/"), path, _AGENTS_API_VERSION)
+            "%s/openai/assistants?api-version=%s"
+            % (api_endpoint.rstrip("/"), _AGENTS_API_VERSION)
         )
         _logger.info(
             "Foundry agent resolve: GET %s (looking for name=%s)",
@@ -427,7 +398,7 @@ class FoundryService(models.Model):
 
         Performs a read-only lookup via the Agents API:
           1. Runs test_connection() first (config + auth + reachability)
-          2. Lists agents via configured endpoint mode
+          2. Lists agents via GET /openai/assistants
           3. Searches for the configured agent name
           4. Reports found/not-found with details
 
@@ -441,12 +412,10 @@ class FoundryService(models.Model):
         settings = self._get_settings()
         api_endpoint = settings["api_endpoint"].rstrip("/")
         auth_headers, auth_mode = self._get_auth_headers()
-        agent_api_mode = settings.get("agent_api_mode", "agents")
 
-        # Step 2: resolve agent using configured API mode
+        # Step 2: resolve agent
         found, resolve_msg = self._resolve_agent(
-            api_endpoint, auth_headers, auth_mode, settings["agent_name"],
-            agent_api_mode=agent_api_mode,
+            api_endpoint, auth_headers, auth_mode, settings["agent_name"]
         )
 
         if found:

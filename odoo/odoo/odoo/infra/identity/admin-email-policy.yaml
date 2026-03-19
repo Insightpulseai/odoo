@@ -1,0 +1,306 @@
+# Admin Email Policy - Machine-Readable SSOT
+# Version: 1.0.0
+# Last Updated: 2026-02-17
+# Status: CANONICAL
+
+---
+version: "1.0.0"
+policy_name: "InsightPulse AI Admin Email Policy"
+enforcement: "CI + Manual Audit"
+
+# Golden Rule
+golden_rule: >
+  Any account with write access to infrastructure, secrets, DNS, CI,
+  or production databases MUST be owned by devops@insightpulseai.com
+
+# System Owner (The One True Admin)
+system_owner:
+  email: "devops@insightpulseai.com"
+  description: "Primary admin/owner identity for all infrastructure and platforms"
+
+  usage_criteria:
+    - "Owns infrastructure"
+    - "Can delete data"
+    - "Can rotate secrets"
+    - "Can break prod"
+    - "Used by automations or CI/CD"
+
+  platforms:
+    - name: "n8n"
+      admin_email: "devops@insightpulseai.com"
+      roles: ["Global Owner"]
+      capabilities: ["API keys", "workflow management", "user management"]
+
+    - name: "Odoo"
+      admin_email: "devops@insightpulseai.com"
+      roles: ["System Administrator"]
+      capabilities: ["database ops", "module management", "system config"]
+
+    - name: "Supabase"
+      admin_email: "devops@insightpulseai.com"
+      roles: ["Project Owner"]
+      capabilities: ["Vault access", "RLS policies", "Edge Functions"]
+
+    - name: "Vercel"
+      admin_email: "devops@insightpulseai.com"
+      roles: ["Team Owner"]
+      capabilities: ["deployment", "domain management", "env vars"]
+
+    - name: "Cloudflare"
+      admin_email: "devops@insightpulseai.com"
+      roles: ["Zone Administrator"]
+      capabilities: ["DNS", "WAF", "SSL", "Workers"]
+
+    - name: "GitHub Organization"
+      admin_email: "devops@insightpulseai.com"
+      roles: ["Organization Owner"]
+      capabilities: ["repo management", "org settings", "webhooks"]
+
+    - name: "Monitoring (Netdata, Sentry)"
+      admin_email: "devops@insightpulseai.com"
+      roles: ["Admin"]
+      capabilities: ["alerts", "integrations", "project management"]
+
+    - name: "CI/CD (GitHub Actions)"
+      admin_email: "devops@insightpulseai.com"
+      roles: ["Admin"]
+      capabilities: ["workflow management", "secrets", "runners"]
+
+    - name: "MCP Hub"
+      admin_email: "devops@insightpulseai.com"
+      roles: ["ops_admin"]
+      capabilities: ["provider management", "RBAC", "audit access"]
+
+# Other Email Aliases
+email_aliases:
+  - alias: "no-reply@insightpulseai.com"
+    purpose: "System-generated outbound email"
+    usage:
+      - "Password resets"
+      - "Workflow notifications"
+      - "Odoo transactional emails"
+      - "n8n workflow output"
+      - "Supabase Auth emails"
+    restrictions:
+      - "Never login with this"
+      - "Never receive alerts here"
+      - "Never use as admin/owner"
+    monitoring: false
+
+  - alias: "billing@insightpulseai.com"
+    purpose: "Financial systems and invoices"
+    usage:
+      - "Supabase billing"
+      - "Vercel invoices"
+      - "Cloudflare billing"
+      - "SaaS subscriptions"
+    restrictions:
+      - "No admin permissions"
+      - "No infrastructure access"
+    monitoring: true
+    access_level: "read-only"
+
+  - alias: "business@insightpulseai.com"
+    purpose: "External professional communication"
+    usage:
+      - "Vendors"
+      - "Clients"
+      - "Partnerships"
+      - "Legal/contracts"
+    restrictions:
+      - "Never system admin"
+      - "Never infrastructure access"
+    monitoring: true
+    access_level: "none"
+
+  - alias: "support@insightpulseai.com"
+    purpose: "Customer support"
+    usage:
+      - "Helpdesk"
+      - "Ticketing"
+      - "Public contact"
+    restrictions:
+      - "Never infrastructure access"
+      - "Never admin permissions"
+    monitoring: true
+    access_level: "none"
+
+  - alias: "info@insightpulseai.com"
+    purpose: "General inquiries (catch-all)"
+    usage:
+      - "Contact forms"
+      - "Landing pages"
+      - "Website inquiries"
+    restrictions:
+      - "Never infrastructure access"
+    monitoring: true
+    access_level: "none"
+
+  - alias: "team@insightpulseai.com"
+    purpose: "Internal notifications"
+    usage:
+      - "FYI emails"
+      - "Broadcasts"
+      - "Low-risk tooling"
+    restrictions:
+      - "Never infrastructure access"
+    monitoring: true
+    access_level: "none"
+
+  - alias: "ceo@insightpulseai.com"
+    purpose: "Executive authority"
+    usage:
+      - "Legal documents"
+      - "High-level communications"
+      - "Board/investor correspondence"
+    restrictions:
+      - "Do NOT use for ops"
+      - "Do NOT receive alerts"
+      - "Never infrastructure access"
+    monitoring: true
+    access_level: "none"
+
+  - alias: "expenses@insightpulseai.com"
+    purpose: "Expense management"
+    usage:
+      - "Receipts"
+      - "Expense claims"
+      - "Reimbursements"
+      - "OCR/DocFlow ingestion"
+    restrictions:
+      - "Never mix with billing"
+    monitoring: true
+    access_level: "none"
+
+  - alias: "jake.tolentino@insightpulseai.com"
+    purpose: "Named individual accountability"
+    usage:
+      - "Sign-offs"
+      - "Approvals"
+      - "Formal acknowledgements"
+    restrictions:
+      - "Not for system admin (use devops@ instead)"
+    monitoring: true
+    access_level: "human-only"
+
+# Forbidden Aliases for Admin
+forbidden_admin_aliases:
+  - "business@insightpulseai.com"
+  - "info@insightpulseai.com"
+  - "support@insightpulseai.com"
+  - "team@insightpulseai.com"
+  - "ceo@insightpulseai.com"
+  - "no-reply@insightpulseai.com"
+  - "@gmail.com"
+  - "@yahoo.com"
+  - "@outlook.com"
+
+# Migration Targets (Legacy -> Canonical)
+migration_required:
+  - platform: "Supabase"
+    current_owner: "jgtolentino.rn@gmail.com"
+    target_owner: "devops@insightpulseai.com"
+    priority: "high"
+    status: "pending"
+
+  - platform: "Vercel"
+    current_owner: "jake.tolentino@insightpulseai.com"
+    target_owner: "devops@insightpulseai.com"
+    priority: "medium"
+    status: "pending"
+
+  - platform: "GitHub Org"
+    current_owner: "jgtolentino.rn@gmail.com"
+    target_owner: "devops@insightpulseai.com"
+    priority: "high"
+    status: "pending"
+
+  - platform: "Cloudflare"
+    current_owner: "jake.tolentino@insightpulseai.com"
+    target_owner: "devops@insightpulseai.com"
+    priority: "medium"
+    status: "pending"
+
+# Enforcement Rules
+enforcement_rules:
+  - rule_id: "E001"
+    description: "All infrastructure platforms must use devops@ as admin"
+    severity: "critical"
+    enforcement: "CI check + manual audit"
+    violation_action: "Block PR + alert ops team"
+
+  - rule_id: "E002"
+    description: "No personal emails (@gmail, @yahoo) as system owners"
+    severity: "critical"
+    enforcement: "CI check"
+    violation_action: "Block PR"
+
+  - rule_id: "E003"
+    description: "System-generated emails must use no-reply@"
+    severity: "high"
+    enforcement: "Code review + manual audit"
+    violation_action: "PR comment + request changes"
+
+  - rule_id: "E004"
+    description: "Financial platform billing must use billing@"
+    severity: "medium"
+    enforcement: "Manual audit"
+    violation_action: "Update billing contact"
+
+  - rule_id: "E005"
+    description: "Never use no-reply@ as admin/owner"
+    severity: "critical"
+    enforcement: "CI check"
+    violation_action: "Block PR"
+
+# Audit Schedule
+audit:
+  frequency: "monthly"
+  checklist:
+    - "Verify devops@ is primary owner on all platforms"
+    - "Check for unauthorized admin emails"
+    - "Validate no-reply@ usage in system emails"
+    - "Review billing@ on payment platforms"
+    - "Audit GitHub org owners"
+    - "Check Supabase project owners"
+    - "Verify Cloudflare zone admins"
+    - "Review Vercel team owners"
+
+  reporting:
+    format: "YAML report"
+    destination: "docs/audits/email-policy/"
+    notify: "devops@insightpulseai.com"
+
+# Exceptions (Approved Deviations)
+exceptions:
+  - platform: "Legacy Services"
+    reason: "Third-party tool requires personal email for verification"
+    approved_by: "DevOps Team"
+    expiration: "2026-06-30"
+    action_after_expiration: "Migrate or deprecate service"
+    notes: "Add devops@ as secondary admin where possible"
+
+# Related Documents
+related_docs:
+  - path: "docs/EMAIL_ALIAS_GUIDE.md"
+    description: "Human-readable email policy guide"
+
+  - path: "docs/evidence/20260216-1546/n8n-admin-setup/ACCOUNT_CREATION.md"
+    description: "n8n admin setup with devops@"
+
+  - path: ".github/workflows/email-policy-check.yml"
+    description: "CI enforcement workflow"
+
+  - path: "infra/identity/email-migration-checklist.md"
+    description: "Platform migration guide"
+
+# Version History
+version_history:
+  - version: "1.0.0"
+    date: "2026-02-17"
+    changes:
+      - "Initial canonical policy"
+      - "Defined devops@ as system owner"
+      - "Mapped all platforms to devops@"
+      - "Created enforcement rules"
+    author: "DevOps Team"

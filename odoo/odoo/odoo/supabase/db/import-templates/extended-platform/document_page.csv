@@ -1,0 +1,8 @@
+id,name,parent_id/id,type,sequence,active,company_id/id
+__import__.doc_wiki_root,Company Wiki,,category,1,True,base.main_company
+__import__.doc_wiki_policies,Policies & Procedures,__import__.doc_wiki_root,category,10,True,base.main_company
+__import__.doc_wiki_guides,User Guides,__import__.doc_wiki_root,category,20,True,base.main_company
+__import__.doc_wiki_templates,Document Templates,__import__.doc_wiki_root,category,30,True,base.main_company
+__import__.doc_wiki_finance,Finance Department,__import__.doc_wiki_policies,category,10,True,base.main_company
+__import__.doc_wiki_hr,Human Resources,__import__.doc_wiki_policies,category,20,True,base.main_company
+__import__.doc_wiki_it,IT & Systems,__import__.doc_wiki_guides,category,10,True,base.main_company

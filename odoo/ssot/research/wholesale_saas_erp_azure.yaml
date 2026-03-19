@@ -1,0 +1,119 @@
+# =============================================================================
+# Wholesale SaaS ERP on Azure — Binding Decisions (SSOT extract)
+# =============================================================================
+# Source: docs/research/wholesale-saas-erp-azure-architecture-study.md
+# ADR:    docs/architecture/ADR_ERP_PLATFORM_ROLE_SPLIT.md
+# Date:   2026-03-17
+# =============================================================================
+
+architecture:
+  name: three-plane-saas-erp
+  version: "2.0"
+  date_accepted: "2026-03-17"
+
+planes:
+  system_of_record:
+    platform: Odoo CE 19
+    owns:
+      - orders
+      - invoices
+      - inventory_moves
+      - purchasing
+      - accounting_postings
+      - master_data
+      - multi_company
+      - multi_warehouse
+      - multi_currency
+    must_not_own:
+      - analytics_lake
+      - agent_orchestration
+      - agent_governance
+    runtime:
+      python: ">=3.10"  # Odoo 19 requirement; repo standard is 3.11
+      postgresql: ">=13"
+      hosting: Azure Container Apps
+      database: Azure Database for PostgreSQL Flexible Server
+
+  system_of_intelligence:
+    platform: Azure Databricks + Unity Catalog
+    owns:
+      - lakehouse_storage
+      - medallion_layers  # bronze → silver → gold
+      - data_products
+      - governed_context_datasets
+      - cross_domain_analytics
+    must_not_own:
+      - erp_transactions
+      - transactional_core_database
+    governance: Unity Catalog  # permissions, auditing, lineage, quality, discovery
+
+  agent_runtime:
+    platform: Microsoft Foundry Agent Service
+    owns:
+      - agent_hosting
+      - agent_tracing
+      - agent_evaluation
+      - agent_publish_promotion
+      - agent_monitoring
+    must_not_own:
+      - data_engineering  # Databricks
+      - erp_posting       # Odoo
+    lifecycle: create → test → trace → evaluate → publish → monitor
+    agent_boundary_rule: >
+      Agents recommend; Odoo commits. No agent may post to ledger,
+      create orders, or mutate inventory without an Odoo-side guardrail.
+
+tenancy:
+  default_model: database-per-tenant
+  rationale: >
+    Aligns with Odoo's multi-database hosting pattern and hostname-based
+    database routing via dbfilter.
+  tiers:
+    standard:
+      pattern: shared_runtime_db_per_tenant
+      routing: dbfilter by hostname
+      isolation: database boundary
+    enterprise:
+      pattern: deployment_per_tenant_stamp
+      isolation: dedicated Odoo + Postgres
+      trigger: revenue threshold or regulatory requirement
+    growth_model: hybrid  # shared default, stamp on upgrade
+
+integration_spine:
+  api_gateway: Azure API Management  # tool gateway + external API governance
+  messaging: Azure Service Bus       # durable cross-system (queues + topics)
+  eventing: Azure Event Grid         # reactive fan-out
+  agent_sdk: Anthropic Agent SDK + MCP  # tool connectivity standard
+
+devops_coexistence:
+  portfolio: Azure DevOps Boards    # epics, features, stories, audit
+  source_control: GitHub            # monorepo, PRs, code review
+  deployment: Azure Pipelines       # approvals/checks for prod
+  linking: "AB#"                    # Azure Boards ↔ GitHub commit linking
+  runner_policy:
+    default: microsoft-hosted       # reimaged per run
+    self_hosted: only for private-network or specialized deps
+
+roadmap:
+  - phase: P0
+    name: Foundations
+    focus: Landing zone, identity, secrets, observability, devcontainer cockpit
+  - phase: P1
+    name: MVP ERP
+    focus: Odoo 19 DB-per-tenant + dbfilter, customer portal, APIM
+  - phase: P2
+    name: Analytics
+    focus: Databricks lakehouse + Unity Catalog, medallion from Odoo
+  - phase: P3
+    name: Copilots
+    focus: Foundry agents with trace/eval/monitor, Document Intelligence
+  - phase: P4
+    name: Multi-tenant hardening
+    focus: Hybrid tenancy, approval gates, SLOs, stamp factory
+
+avoid_entirely:
+  - Databricks as transactional core
+  - ERP posting via agents without guardrails
+  - Untracked VS Code user-setting dependencies
+  - Agents without trace/eval gates
+  - Supabase as control plane (narrowed to self-hosted VM exception)

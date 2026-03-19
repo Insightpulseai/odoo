@@ -13,15 +13,15 @@
 
 | File | Change |
 |---|---|
-| `ssot/azure/resources.yaml` | Rewritten from ~17 to 57 confirmed resources. Schema v2.0 with `lifecycle`, `owner_domain`, `managed_by` fields. |
-| `ssot/azure/PLATFORM_TARGET_STATE.md` | v1.4.1 → v1.5.0. §2 split into current-state summary (referencing resources.yaml) + target-state aspirational. §10/§13/§14 updated for actual resource names. |
+| `infra/ssot/azure/resources.yaml` | Rewritten from ~17 to 57 confirmed resources. Schema v2.0 with `lifecycle`, `owner_domain`, `managed_by` fields. |
+| `infra/ssot/azure/PLATFORM_TARGET_STATE.md` | v1.4.1 → v1.5.0. §2 split into current-state summary (referencing resources.yaml) + target-state aspirational. §10/§13/§14 updated for actual resource names. |
 
 ### Files Created
 
 | File | Purpose |
 |---|---|
-| `ssot/azure/RESOURCE_RECONCILIATION_REPORT.md` | Full gap analysis: newly discovered resources, aspirational resources, naming mismatches, RG mismatches, managed resources, high-risk ambiguities. |
-| `ssot/azure/exceptions/dual-odoo-deployment.yaml` | Formal exception record for dual Odoo deployments across rg-ipai-agents-dev and rg-ipai-dev. |
+| `infra/ssot/azure/RESOURCE_RECONCILIATION_REPORT.md` | Full gap analysis: newly discovered resources, aspirational resources, naming mismatches, RG mismatches, managed resources, high-risk ambiguities. |
+| `infra/ssot/azure/exceptions/dual-odoo-deployment.yaml` | Formal exception record for dual Odoo deployments across rg-ipai-agents-dev and rg-ipai-dev. |
 | `docs/reports/AZURE_INVENTORY_RECONCILIATION_SUMMARY.md` | This file. |
 
 ---
@@ -53,7 +53,7 @@
 - Two Container Registries: `cripaidev` (shared) and `ipaiodoodevacr` (dedicated)
 - Canonical deployment: UNKNOWN
 - Resolution required before: hostname cutover / topology lock
-- Full details: `ssot/azure/exceptions/dual-odoo-deployment.yaml`
+- Full details: `infra/ssot/azure/exceptions/dual-odoo-deployment.yaml`
 
 ---
 

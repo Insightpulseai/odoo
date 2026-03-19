@@ -27,7 +27,7 @@ resources:
           privileges:
             - ALL_PRIVILEGES
 
-        - principal: "notion-ppm-service-principal"
+        - principal: "finance-ppm-service-principal"
           privileges:
             - ALL_PRIVILEGES
 

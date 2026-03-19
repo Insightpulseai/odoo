@@ -1,0 +1,25 @@
+{
+  "event": "issue.created",
+  "workspace": {
+    "id": "ws_123",
+    "slug": "tbwa"
+  },
+  "project": {
+    "id": "proj_456",
+    "name": "OdooOps Console"
+  },
+  "issue": {
+    "id": "iss_1001",
+    "key": "OPS-1001",
+    "name": "Fix /logs 404 route",
+    "state": {
+      "id": "st_open",
+      "name": "Todo"
+    },
+    "assignees": [
+      { "id": "usr_1", "display_name": "Jake" }
+    ],
+    "url": "https://plane.example.com/tbwa/projects/proj_456/issues/iss_1001",
+    "updated_at": "2026-03-01T09:50:00Z"
+  }
+}

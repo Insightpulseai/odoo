@@ -1,0 +1,99 @@
+# Odoo 19 Documentation RAG — Agent Skill Definition
+
+name: odoo_docs_rag
+description: Retrieval-augmented generation over Odoo 19 official documentation
+version: "1.0"
+
+service:
+  app: apps/odoo-docs-kb
+  entrypoint: service.py
+  runtime: azure-container-apps
+  health_check: /health
+
+tools:
+  - name: search_odoo_docs
+    description: >
+      Search the Odoo 19 documentation knowledge base.
+      Returns ranked chunks with citation metadata.
+    parameters:
+      query:
+        type: string
+        required: true
+        description: Natural language search query
+      version:
+        type: string
+        default: "19.0"
+        description: Odoo version to filter on
+      top_k:
+        type: integer
+        default: 8
+        description: Number of results to return (max 20)
+      path_filter:
+        type: string
+        required: false
+        description: >
+          Filter results to a specific doc path prefix
+          (e.g., "content/applications/accounting")
+    returns:
+      type: array
+      items:
+        chunk_id: string
+        content: string
+        path: string
+        heading_chain: string
+        score: float
+        citation: string
+
+  - name: answer_with_citations
+    description: >
+      Answer a question about Odoo 19 using grounded retrieval.
+      Returns an answer with source citations.
+    parameters:
+      query:
+        type: string
+        required: true
+        description: Question about Odoo 19
+      version:
+        type: string
+        default: "19.0"
+    returns:
+      answer: string
+      citations:
+        type: array
+        items:
+          chunk_id: string
+          path: string
+          heading_chain: string
+          relevance: float
+
+  - name: ground_to_module
+    description: >
+      Narrow retrieval to documentation about a specific Odoo module.
+    parameters:
+      module_name:
+        type: string
+        required: true
+        description: Odoo module technical name (e.g., "account", "sale", "hr")
+      query:
+        type: string
+        required: true
+      top_k:
+        type: integer
+        default: 5
+    returns:
+      type: array
+      items:
+        chunk_id: string
+        content: string
+        path: string
+        heading_chain: string
+        citation: string
+
+knowledge_source: agents/knowledge/odoo19_docs/source.yaml
+chunking_config: agents/knowledge/odoo19_docs/chunking.yaml
+indexing_config: agents/knowledge/odoo19_docs/indexing.yaml
+
+# Phase 2 extension — not yet active
+# phase2_tools:
+#   - name: search_odoo_source
+#     description: Search Odoo 19 source code (docstrings, manifests, model help)

@@ -2,7 +2,7 @@
 
 **Version**: 1.0.0
 **Last Updated**: 2026-03-11
-**SSOT**: `ssot/runtime/container-topology.yaml`
+**SSOT**: `infra/ssot/runtime/container-topology.yaml`
 
 ---
 

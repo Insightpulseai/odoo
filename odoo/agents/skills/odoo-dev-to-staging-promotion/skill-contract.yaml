@@ -1,0 +1,69 @@
+version: 1
+type: delivery_skill
+family: odoo_sh_delivery
+skill:
+  name: odoo-dev-to-staging-promotion
+  status: draft
+  owner: odoo-release-manager
+  purpose: >
+    Validate and execute dev-to-staging branch promotion. Ensure all
+    developer and tester evidence is complete before promoting code
+    to the staging environment on Azure Container Apps.
+
+  triggers:
+    - dev branch ready for staging promotion
+    - all CI checks passing on dev branch
+    - developer sign-off on feature completeness
+    - scheduled promotion window
+
+  inputs:
+    - source branch (dev/feature branch)
+    - target branch (staging)
+    - CI status for source branch
+    - developer evidence from odoo-ci-validation skill
+    - module list being promoted
+    - container image tag from dev build
+
+  steps:
+    - verify all required CI checks pass on source branch
+    - confirm developer evidence exists (CI validation, dependency check)
+    - verify no open blockers from developer persona
+    - create or update staging branch from source
+    - trigger staging Container App revision update
+    - verify staging revision deploys successfully
+    - confirm staging database migration completes
+    - produce promotion evidence report
+
+  outputs:
+    - promotion_status
+    - ci_verification
+    - staging_revision
+    - migration_status
+    - findings
+    - blockers
+    - evidence
+
+  guardrails:
+    - never promote without CI evidence from developer persona
+    - never skip staging — no direct dev-to-production
+    - never promote with open blockers
+    - never force-push to staging branch
+    - document rollback path before promotion
+    - bind to GitHub PR flow and ACA revision management, not Odoo.sh branch model
+
+  evidence:
+    required: true
+    format: "docs/evidence/{stamp}/odoo-delivery/odoo-dev-to-staging-promotion/"
+
+  evals:
+    dimensions: [accuracy, completeness, safety, policy_adherence, evidence_quality]
+    thresholds:
+      accuracy: 0.95
+      safety: 0.99
+      policy_adherence: 0.95
+
+cross_references:
+  - agents/knowledge/benchmarks/odoo-sh-persona-model.md
+  - agents/personas/odoo-release-manager.md
+  - agents/skills/odoo-ci-validation/skill-contract.yaml
+  - .claude/rules/infrastructure.md

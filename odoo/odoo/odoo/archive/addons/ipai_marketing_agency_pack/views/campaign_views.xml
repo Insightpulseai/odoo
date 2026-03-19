@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Campaign Tree View -->
+    <record id="view_campaign_tree" model="ir.ui.view">
+        <field name="name">ipai.campaign.tree</field>
+        <field name="model">ipai.campaign</field>
+        <field name="arch" type="xml">
+            <list string="Campaigns" decoration-muted="state == 'cancelled'" decoration-success="state == 'completed'">
+                <field name="code"/>
+                <field name="name"/>
+                <field name="brand_id"/>
+                <field name="partner_id"/>
+                <field name="objective" widget="badge"/>
+                <field name="start_date"/>
+                <field name="end_date"/>
+                <field name="budget" widget="monetary"/>
+                <field name="spent" widget="monetary"/>
+                <field name="state" widget="badge" decoration-info="state == 'draft'" decoration-warning="state in ('planning', 'briefing')" decoration-primary="state == 'production'" decoration-success="state in ('live', 'completed')" decoration-danger="state == 'cancelled'"/>
+                <field name="currency_id" column_invisible="True"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Campaign Form View -->
+    <record id="view_campaign_form" model="ir.ui.view">
+        <field name="name">ipai.campaign.form</field>
+        <field name="model">ipai.campaign</field>
+        <field name="arch" type="xml">
+            <form string="Campaign">
+                <header>
+                    <button name="action_start_planning" string="Start Planning" type="object" class="oe_highlight" invisible="state != 'draft'"/>
+                    <button name="action_start_briefing" string="Start Briefing" type="object" class="oe_highlight" invisible="state != 'planning'"/>
+                    <button name="action_start_production" string="Start Production" type="object" class="oe_highlight" invisible="state != 'briefing'"/>
+                    <button name="action_go_live" string="Go Live" type="object" class="oe_highlight" invisible="state != 'production'"/>
+                    <button name="action_complete" string="Complete" type="object" invisible="state != 'live'"/>
+                    <button name="action_cancel" string="Cancel" type="object" invisible="state in ('completed', 'cancelled')"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,planning,briefing,production,live,completed"/>
+                </header>
+                <sheet>
+                    <widget name="web_ribbon" title="Archived" bg_color="text-bg-danger" invisible="active"/>
+                    <div class="oe_button_box" name="button_box">
+                        <button class="oe_stat_button" type="object" name="action_view_briefs" icon="fa-file-text-o">
+                            <field name="brief_count" widget="statinfo" string="Briefs"/>
+                        </button>
+                        <button class="oe_stat_button" type="object" name="action_view_assets" icon="fa-image">
+                            <field name="asset_count" widget="statinfo" string="Assets"/>
+                        </button>
+                        <button class="oe_stat_button" type="object" name="action_view_calendar" icon="fa-calendar">
+                            <field name="calendar_count" widget="statinfo" string="Posts"/>
+                        </button>
+                    </div>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1><field name="name" placeholder="Campaign Name..."/></h1>
+                    </div>
+                    <group>
+                        <group string="Campaign Details">
+                            <field name="code"/>
+                            <field name="brand_id"/>
+                            <field name="partner_id"/>
+                            <field name="objective"/>
+                            <field name="project_id"/>
+                            <field name="active" invisible="1"/>
+                        </group>
+                        <group string="Timeline">
+                            <field name="start_date"/>
+                            <field name="end_date"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group string="Budget">
+                            <field name="currency_id" invisible="1"/>
+                            <field name="budget"/>
+                            <field name="spent"/>
+                            <field name="remaining_budget"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Description" name="description">
+                            <field name="description"/>
+                        </page>
+                        <page string="KPI Targets" name="kpis">
+                            <field name="kpi_targets" widget="ace" options="{'mode': 'json'}"/>
+                        </page>
+                        <page string="Performance" name="performance">
+                            <field name="snapshot_ids">
+                                <list editable="bottom">
+                                    <field name="date"/>
+                                    <field name="channel" widget="badge"/>
+                                    <field name="reach"/>
+                                    <field name="impressions"/>
+                                    <field name="clicks"/>
+                                    <field name="engagement"/>
+                                    <field name="ctr"/>
+                                    <field name="spend"/>
+                                    <field name="cpc"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- Campaign Kanban View -->
+    <record id="view_campaign_kanban" model="ir.ui.view">
+        <field name="name">ipai.campaign.kanban</field>
+        <field name="model">ipai.campaign</field>
+        <field name="arch" type="xml">
+            <kanban default_group_by="state" class="o_kanban_small_column">
+                <field name="name"/>
+                <field name="brand_id"/>
+                <field name="objective"/>
+                <field name="state"/>
+                <field name="start_date"/>
+                <field name="end_date"/>
+                <field name="budget"/>
+                <field name="currency_id"/>
+                <progressbar field="state" colors='{"draft": "secondary", "planning": "info", "briefing": "info", "production": "warning", "live": "success", "completed": "success", "cancelled": "danger"}'/>
+                <templates>
+                    <t t-name="card">
+                        <div class="oe_kanban_content">
+                            <strong class="o_kanban_record_title"><field name="name"/></strong>
+                            <div class="text-muted"><field name="brand_id"/></div>
+                            <div class="mt-2">
+                                <span class="badge bg-info"><field name="objective"/></span>
+                            </div>
+                            <div class="mt-2">
+                                <field name="start_date"/> - <field name="end_date"/>
+                            </div>
+                            <div class="mt-2">
+                                <strong>Budget:</strong> <field name="budget" widget="monetary"/>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- Campaign Search View -->
+    <record id="view_campaign_search" model="ir.ui.view">
+        <field name="name">ipai.campaign.search</field>
+        <field name="model">ipai.campaign</field>
+        <field name="arch" type="xml">
+            <search string="Search Campaigns">
+                <field name="name"/>
+                <field name="code"/>
+                <field name="brand_id"/>
+                <field name="partner_id"/>
+                <separator/>
+                <filter string="Active" name="filter_active" domain="[('state', 'not in', ('completed', 'cancelled'))]"/>
+                <filter string="Live" name="filter_live" domain="[('state', '=', 'live')]"/>
+                <filter string="Completed" name="filter_completed" domain="[('state', '=', 'completed')]"/>
+                <separator/>
+                <filter string="Awareness" name="filter_awareness" domain="[('objective', '=', 'awareness')]"/>
+                <filter string="Conversion" name="filter_conversion" domain="[('objective', '=', 'conversion')]"/>
+                <group expand="0" string="Group By">
+                    <filter string="Brand" name="group_brand" context="{'group_by': 'brand_id'}"/>
+                    <filter string="Client" name="group_client" context="{'group_by': 'partner_id'}"/>
+                    <filter string="State" name="group_state" context="{'group_by': 'state'}"/>
+                    <filter string="Objective" name="group_objective" context="{'group_by': 'objective'}"/>
+                    <filter string="Start Date" name="group_start" context="{'group_by': 'start_date:month'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Campaign Action -->
+    <record id="action_campaign" model="ir.actions.act_window">
+        <field name="name">Campaigns</field>
+        <field name="res_model">ipai.campaign</field>
+        <field name="view_mode">kanban,list,form</field>
+        <field name="context">{'search_default_filter_active': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create your first campaign
+            </p>
+            <p>
+                Campaigns organize creative production, content calendars,
+                and performance tracking for marketing initiatives.
+            </p>
+        </field>
+    </record>
+</odoo>

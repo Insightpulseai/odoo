@@ -1,0 +1,4 @@
+--- a/workflows/n8n/expense-ocr-workflow.json
++++ b/automations/n8n/workflows/expense-ocr-workflow.json
+@@ Move stray workflow to canonical location @@
+# git mv 'workflows/n8n/expense-ocr-workflow.json' 'automations/n8n/workflows/expense-ocr-workflow.json'
