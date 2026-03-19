@@ -1,140 +1,78 @@
 # -*- coding: utf-8 -*-
 
 import logging
+import urllib.request
+import urllib.error
 
-from odoo import fields, models
+from odoo import _, fields, models
+from odoo.exceptions import UserError
 
 _logger = logging.getLogger(__name__)
-
-PARAM_PREFIX = "ipai_odoo_copilot"
 
 
 class ResConfigSettings(models.TransientModel):
     _inherit = "res.config.settings"
 
-    # --- Azure Foundry connection ---
-    ipai_foundry_enabled = fields.Boolean(
-        string="Enable Foundry Copilot",
-        config_parameter=f"{PARAM_PREFIX}.foundry_enabled",
-        default=False,
+    # Copilot gateway
+    ipai_copilot_enabled = fields.Boolean(
+        string="Copilot Enabled",
+        config_parameter="ipai.copilot.enabled",
     )
-    ipai_foundry_endpoint = fields.Char(
-        string="Foundry Portal URL",
-        config_parameter=f"{PARAM_PREFIX}.foundry_endpoint",
-        help="Azure AI Foundry portal URL (e.g. https://ai.azure.com)",
+    ipai_copilot_gateway_url = fields.Char(
+        string="Gateway URL",
+        config_parameter="ipai.copilot.gateway_url",
+        help="URL of the agent-platform gateway service.",
     )
-    ipai_foundry_api_endpoint = fields.Char(
-        string="Foundry API Endpoint",
-        config_parameter=f"{PARAM_PREFIX}.foundry_api_endpoint",
-        default="https://data-intel-ph-resource.services.ai.azure.com",
-        help="Azure AI services endpoint for API calls "
-             "(e.g. https://<resource>.services.ai.azure.com)",
-    )
-    ipai_foundry_project = fields.Char(
-        string="Foundry Project",
-        config_parameter=f"{PARAM_PREFIX}.foundry_project",
-        default="data-intel-ph",
-        help="Azure Foundry project name",
-    )
-    ipai_foundry_agent_name = fields.Char(
-        string="Foundry Agent Name",
-        config_parameter=f"{PARAM_PREFIX}.foundry_agent_name",
-        default="ipai-odoo-copilot-azure",
-    )
-    ipai_foundry_model = fields.Char(
-        string="Model Deployment",
-        config_parameter=f"{PARAM_PREFIX}.foundry_model",
-        default="gpt-4.1",
-        help="Model deployment name in Azure Foundry",
+    ipai_copilot_mode = fields.Selection(
+        selection=[
+            ("PROD-ADVISORY", "Advisory (read-only, assisted)"),
+            ("PROD-ASSISTED", "Assisted (read + limited write)"),
+            ("DEV", "Development (all tools)"),
+        ],
+        string="Operating Mode",
+        config_parameter="ipai.copilot.mode",
+        default="PROD-ADVISORY",
     )
 
-    # --- Knowledge / Search ---
-    ipai_foundry_search_connection = fields.Char(
-        string="Search Connection",
-        config_parameter=f"{PARAM_PREFIX}.foundry_search_connection",
-        help="Azure AI Search connection name for knowledge grounding",
-    )
-    ipai_foundry_search_service = fields.Char(
-        string="Search Service",
-        config_parameter=f"{PARAM_PREFIX}.foundry_search_service",
-        default="srch-ipai-dev",
-        help="Azure AI Search service name",
-    )
-    ipai_foundry_search_index = fields.Char(
-        string="Search Index",
-        config_parameter=f"{PARAM_PREFIX}.foundry_search_index",
-        help="Azure AI Search index name",
-    )
-
-    # --- Safety posture ---
-    ipai_foundry_memory_enabled = fields.Boolean(
-        string="Enable Agent Memory",
-        config_parameter=f"{PARAM_PREFIX}.foundry_memory_enabled",
-        default=False,
-        help="Allow Foundry agent to retain conversation memory. "
-             "Off by default for privacy.",
-    )
-    ipai_foundry_read_only_mode = fields.Boolean(
-        string="Read-Only / Draft-Only Mode",
-        config_parameter=f"{PARAM_PREFIX}.foundry_read_only_mode",
-        default=True,
-        help="When enabled, the agent cannot execute write operations. "
-             "All mutations are surfaced as drafts for human approval.",
-    )
-
-    # --- Actions ---
-
-    def action_test_foundry_connection(self):
-        """Validate Foundry connectivity via real health probe."""
-        service = self.env["ipai.foundry.service"]
-        ok, message = service.test_connection()
-        notif_type = "success" if ok else "warning"
-        return {
-            "type": "ir.actions.client",
-            "tag": "display_notification",
-            "params": {
-                "title": "Foundry Connection Test",
-                "message": message,
-                "type": notif_type,
-                "sticky": False,
-            },
-        }
-
-    def action_ensure_foundry_agent(self):
-        """Verify the configured agent exists in Foundry (read-only)."""
-        service = self.env["ipai.foundry.service"]
-        ok, message = service.ensure_agent()
-        notif_type = "success" if ok else "warning"
-        return {
-            "type": "ir.actions.client",
-            "tag": "display_notification",
-            "params": {
-                "title": "Foundry Agent Verification",
-                "message": message,
-                "type": notif_type,
-                "sticky": False,
-            },
-        }
-
-    def action_open_foundry_portal(self):
-        """Open the Foundry portal URL in a new browser tab."""
-        ICP = self.env["ir.config_parameter"].sudo()
-        endpoint = ICP.get_param(
-            f"{PARAM_PREFIX}.foundry_endpoint", ""
+    def action_test_copilot_connection(self):
+        """Test the gateway connection by hitting its health endpoint."""
+        self.ensure_one()
+        gateway_url = (
+            self.env['ir.config_parameter']
+            .sudo()
+            .get_param('ipai.copilot.gateway_url', '')
         )
-        if not endpoint:
+        if not gateway_url:
+            raise UserError(_('Gateway URL is not configured.'))
+
+        health_url = gateway_url.rstrip('/') + '/health'
+        try:
+            req = urllib.request.Request(health_url, method='GET')
+            with urllib.request.urlopen(req, timeout=10) as resp:
+                status = resp.status
+                body = resp.read().decode('utf-8', errors='replace')[:200]
+        except urllib.error.HTTPError as e:
+            raise UserError(
+                _('Gateway returned HTTP %d: %s', e.code, e.reason)
+            )
+        except urllib.error.URLError as e:
+            raise UserError(
+                _('Gateway unreachable at %s — %s', health_url, e.reason)
+            )
+        except Exception as e:
+            raise UserError(_('Connection error: %s', str(e)))
+
+        if status == 200:
             return {
-                "type": "ir.actions.client",
-                "tag": "display_notification",
-                "params": {
-                    "title": "Foundry Portal",
-                    "message": "No Foundry portal URL configured.",
-                    "type": "warning",
-                    "sticky": False,
+                'type': 'ir.actions.client',
+                'tag': 'display_notification',
+                'params': {
+                    'title': _('Connection Successful'),
+                    'message': _('Gateway is reachable at %s', gateway_url),
+                    'type': 'success',
+                    'sticky': False,
                 },
             }
-        return {
-            "type": "ir.actions.act_url",
-            "url": endpoint,
-            "target": "new",
-        }
+        raise UserError(
+            _('Unexpected response: HTTP %d — %s', status, body)
+        )

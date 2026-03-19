@@ -1,3 +1,5 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-access_ipai_foundry_service,ipai.foundry.service,model_ipai_foundry_service,base.group_system,1,1,1,0
-access_ipai_copilot_audit,ipai.copilot.audit,model_ipai_copilot_audit,base.group_system,1,1,1,0
+access_copilot_conversation_user,ipai.copilot.conversation.user,model_ipai_copilot_conversation,group_copilot_user,1,1,1,0
+access_copilot_conversation_admin,ipai.copilot.conversation.admin,model_ipai_copilot_conversation,group_copilot_admin,1,1,1,1
+access_copilot_message_user,ipai.copilot.message.user,model_ipai_copilot_message,group_copilot_user,1,1,1,0
+access_copilot_message_admin,ipai.copilot.message.admin,model_ipai_copilot_message,group_copilot_admin,1,1,1,1

@@ -1,8 +1,9 @@
 /** @odoo-module */
 
-import { Component, useState, useRef, onMounted } from "@odoo/owl";
+import { Component, useState, useRef, onMounted, markup } from "@odoo/owl";
 import { registry } from "@web/core/registry";
 import { useService } from "@web/core/utils/hooks";
+import { renderMarkdown } from "./copilot_markdown";
 
 /**
  * CopilotSystrayButton — systray icon that opens the copilot chat panel.
@@ -159,6 +160,15 @@ export class CopilotSystrayButton extends Component {
             this.state.isLoading = false;
             this._scrollToBottom();
         }
+    }
+
+    /**
+     * Render markdown content as safe HTML for use with t-out.
+     * @param {string} content
+     * @returns {Markup}
+     */
+    renderContent(content) {
+        return markup(renderMarkdown(content || ""));
     }
 
     clearMessages() {

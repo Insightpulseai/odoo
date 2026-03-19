@@ -1,0 +1,61 @@
+# -*- coding: utf-8 -*-
+
+import logging
+
+from odoo import api, fields, models
+
+_logger = logging.getLogger(__name__)
+
+
+class CopilotMessage(models.Model):
+    _name = 'ipai.copilot.message'
+    _description = 'Copilot Message'
+    _order = 'create_date asc, id asc'
+
+    # -------------------------------------------------------------------------
+    # Fields
+    # -------------------------------------------------------------------------
+    conversation_id = fields.Many2one(
+        'ipai.copilot.conversation',
+        string='Conversation',
+        required=True,
+        ondelete='cascade',
+        index=True,
+    )
+    role = fields.Selection(
+        [
+            ('user', 'User'),
+            ('assistant', 'Assistant'),
+            ('system', 'System'),
+            ('tool', 'Tool'),
+        ],
+        required=True,
+        index=True,
+    )
+    content = fields.Text(
+        required=True,
+    )
+    tool_calls = fields.Json(
+        string='Tool Calls',
+        help='Structured tool call data from the agent response',
+    )
+    latency_ms = fields.Integer(
+        string='Latency (ms)',
+        help='Response time from the gateway in milliseconds',
+    )
+    request_id = fields.Char(
+        string='Request ID',
+        help='Correlation ID from the agent-platform gateway',
+        index=True,
+    )
+
+    # -------------------------------------------------------------------------
+    # Constraints
+    # -------------------------------------------------------------------------
+    @api.constrains('content')
+    def _check_content_not_empty(self):
+        for rec in self:
+            if not (rec.content or '').strip():
+                raise models.ValidationError(
+                    'Message content cannot be empty.'
+                )
