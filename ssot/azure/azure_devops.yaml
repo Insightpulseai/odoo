@@ -33,7 +33,8 @@ pipelines:
   path_prefix: .azure/pipelines/
   agent_policy:
     default_pool: ubuntu-latest
-    exception_policy: self_hosted_if_private_reachability_required
+    self_hosted: deprecated  # ipai-build-pool removed from all stages 2026-03-19
+    rationale: AzureCLI@2 + service connection eliminates VNet access requirement
 
 # -----------------------------------------------------------------------------
 # Current state — what is live in AzDO today

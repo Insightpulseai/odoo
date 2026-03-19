@@ -1,0 +1,27 @@
+# ssot/website/theme.yaml
+#
+# Authoritative record of website theme assignments.
+# Apply:  python scripts/odoo/apply_website_theme.py
+# Verify: scripts/odoo/verify_website_theme.sh
+# Docs:   docs/ops/ODOO_WEBSITE_THEME.md
+#
+# Rule: never manually set website.theme_id in the Odoo UI without
+#       updating this file and running apply_website_theme.py.
+#
+schema: ssot.website.theme.v1
+version: "1.0"
+
+targets:
+  - env: prod
+    # Canonical URL for frontend verification
+    base_url: https://erp.insightpulseai.com
+    # website.website record id
+    website_id: 1
+    website_name: "My Website"
+    # ir.module.module.name for the theme
+    theme_module: cts_theme_rozz
+    # Resolved theme_id (ir.module.module id); script resolves by module name
+    # if the DB is ever restored — treat this as a hint, not a hard constraint.
+    theme_id: 1011
+    # Verified: 2026-02-27 — curl confirms rozz nav links + logo present
+    last_verified: "2026-02-27"

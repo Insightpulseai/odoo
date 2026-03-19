@@ -1,0 +1,157 @@
+# ssot/auth/github_auth_surface.yaml
+# Single Source of Truth for GitHub authentication surface.
+#
+# Policy: Zero PATs. All automation uses GITHUB_TOKEN (built-in) or
+# the ipai-integrations GitHub App (installation tokens).
+#
+# Guard workflow:  .github/workflows/github-auth-surface-contract.yml
+# Scanner script:  scripts/check_github_pat_usage.py
+# Secrets SSOT:    ssot/secrets/registry.yaml §github_auth
+# Runbook:         docs/runbooks/GITHUB_APP_PROVISIONING.md
+
+schema: ssot.auth.github_surface.v1
+last_reviewed: "2026-03-03"
+
+# ─── Policy ──────────────────────────────────────────────────────────────────
+policy:
+  name: "Zero-PAT GitHub Auth Surface"
+  description: >
+    Personal Access Tokens (classic and fine-grained) are deprecated for all
+    automated workflows, scripts, Edge Functions, and CI/CD pipelines.
+    The canonical auth methods are the GitHub Actions built-in GITHUB_TOKEN
+    and the ipai-integrations GitHub App installation tokens.
+  enforcement:
+    ci_guard: ".github/workflows/github-auth-surface-contract.yml"
+    scanner: "scripts/check_github_pat_usage.py"
+    existing_guard: ".github/workflows/github-auth-surface-guard.yml"
+  effective_date: "2026-03-03"
+
+# ─── Canonical Auth Methods ──────────────────────────────────────────────────
+canonical_methods:
+  github_actions_token:
+    type: "built-in"
+    description: >
+      Ephemeral token auto-injected by GitHub Actions into every workflow run.
+      Scoped to the current repository. Cannot cross repo boundaries.
+    permissions:
+      contents: write
+      pull-requests: write
+      issues: write
+      packages: write
+      actions: read
+    consumers:
+      - ".github/workflows/**"
+    limitations:
+      - "Cannot trigger workflows in other repositories"
+      - "Cannot access GitHub Projects v2 in organizations (org-level scope)"
+      - "Cannot create repository_dispatch events cross-repo"
+    notes: >
+      Preferred for all in-repo operations. ship-on-deploy.yml, release
+      workflows, and all standard CI/CD use this exclusively.
+
+  github_app_ipai_integrations:
+    type: "github_app"
+    app_name: "ipai-integrations"
+    description: >
+      GitHub App that generates short-lived installation tokens for
+      server-side, cross-org, and Edge Function operations.
+    credentials:
+      app_id:
+        vault_key: "github_app_id"
+        github_secret: "GITHUB_APP_ID"
+      private_key:
+        vault_key: "github_app_private_key"
+        github_secret: "GITHUB_APP_PRIVATE_KEY"
+      client_id:
+        vault_key: "github_app_client_id"
+      client_secret:
+        vault_key: "github_app_client_secret"
+      webhook_secret:
+        vault_key: "github_app_webhook_secret"
+    consumers:
+      - "supabase/functions/github-app-auth/"
+      - "supabase/functions/ops-github-webhook-ingest/"
+      - ".github/workflows/github-apps-ssot-guard.yml"
+    provisioning:
+      script: "scripts/github/create-app-from-manifest.sh ipai-integrations"
+      ssot: "ssot/integrations/github_apps.yaml"
+      runbook: "docs/runbooks/GITHUB_APP_PROVISIONING.md"
+    notes: >
+      Installation tokens are generated on-demand by the github-app-auth
+      Edge Function. They expire after 1 hour. No static token stored.
+
+# ─── Deprecated Auth Methods ─────────────────────────────────────────────────
+deprecated_methods:
+  pat_classic:
+    type: "personal_access_token"
+    variant: "classic"
+    status: "deprecated"
+    description: "Classic PATs with broad org-level scopes. All deleted."
+    deleted_tokens:
+      - name: "admin-pat"
+        expired: "2026-03-16"
+        status: "deleted"
+        reason: "Broad admin scopes, no automation consumer."
+      - name: "PROJECTS_TOKEN"
+        expired: "2026-04-08"
+        status: "deleted"
+        reason: "ship-on-deploy.yml already uses built-in GITHUB_TOKEN."
+
+  pat_fine_grained:
+    type: "personal_access_token"
+    variant: "fine-grained"
+    status: "deprecated"
+    description: "Fine-grained PATs. All deleted except allowlisted exceptions."
+    deleted_tokens:
+      - name: "CR_PAT"
+        expired: "2026-03-19"
+        status: "deleted"
+        reason: "Dead token (401). No automation consumer."
+      - name: "ORG_TOKEN"
+        expired: "2026-04-26"
+        status: "deleted"
+        reason: "Not referenced in any workflow or script."
+
+# ─── Temporary Allowlist ─────────────────────────────────────────────────────
+# Tokens here are approved exceptions pending migration to App or GITHUB_TOKEN.
+# Each entry MUST have an expiry_date and migration_plan.
+allowlist:
+  - secret_name: "GH_PAT_SUPERSET"
+    github_secret_name: "GH_PAT_SUPERSET"
+    type: "fine-grained"
+    status: "allowlisted_temp"
+    expiry_date: "2026-06-30"
+    consumer: ".github/workflows/notify-superset.yml"
+    justification: >
+      Cross-repo repository_dispatch to jgtolentino/superset.
+      Built-in GITHUB_TOKEN cannot cross repository boundaries.
+    required_scopes:
+      - "Contents:read on jgtolentino/superset"
+      - "Actions:write on jgtolentino/superset"
+    migration_plan: >
+      Evaluate GitHub App cross-repo dispatch (ipai-integrations installed
+      on jgtolentino/superset) to eliminate this PAT entirely.
+    review_date: "2026-06-01"
+
+# ─── Scanner Configuration ───────────────────────────────────────────────────
+scanner:
+  scan_paths:
+    - ".github/workflows/**/*.yml"
+    - "scripts/**/*.py"
+    - "scripts/**/*.sh"
+    - "ssot/**/*"
+    - "supabase/functions/**/*"
+  blocked_patterns:
+    # Secret references that signal PAT usage
+    - pattern: 'secrets\.(GH_PAT(?!_SUPERSET)\w*|GITHUB_PAT\w*|ADMIN_PAT\w*|ORG_TOKEN|CR_PAT|PROJECTS_TOKEN)'
+      description: "PAT-backed GitHub Actions secret (not allowlisted)"
+    # Raw Authorization headers with tokens
+    - pattern: 'Authorization.*ghp_'
+      description: "Hardcoded classic PAT in Authorization header"
+    - pattern: 'Authorization.*github_pat_'
+      description: "Hardcoded fine-grained PAT in Authorization header"
+  allowlisted_patterns:
+    - pattern: 'secrets\.GH_PAT_SUPERSET'
+      reason: "Temporary allowlist — cross-repo dispatch"
+      expires: "2026-06-30"
+  report_path: "docs/evidence/auth_surface/{run_id}/pat_usage_report.json"

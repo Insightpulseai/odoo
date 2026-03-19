@@ -1,0 +1,304 @@
+# schema: ssot.advisor.rubric.v1
+# ---------------------------------------------------------------------------
+# Rubric: agentic_coding
+# Name:   Agentic coding maturity rubric
+# Pillar: ops_excellence
+# Version: 1.0.0
+# Reviewed: 2026-03-01
+#
+# Purpose:
+#   Scores the quality and governance compliance of agentic coding runs
+#   executed by any agent runtime in the IPAI stack (Copilot Coding Agent,
+#   Claude Code, Semantic Kernel, AutoGen, or manual runs following the loop).
+#
+#   Five dimensions scored 0–3 each; maximum total score is 15.
+#   Scoring thresholds determine Advisor severity and maturity band.
+#
+# Contract doc: docs/architecture/AGENTIC_CODING_CONTRACT.md
+# SSOT files:   ssot/integrations/github_copilot_sdk.yaml
+#               ssot/integrations/microsoft_agent_framework.yaml
+#
+# CI validator: scripts/ci/validate_advisor_rubrics.py (planned)
+# Ops Console:  apps/ops-console/app/api/runs/[runId]/rubric
+# ---------------------------------------------------------------------------
+
+id: agentic_coding
+name: "Agentic coding maturity rubric"
+version: "1.0.0"
+reviewed: "2026-03-01"
+pillar: ops_excellence
+contract_doc: "docs/architecture/AGENTIC_CODING_CONTRACT.md"
+
+scoring:
+  min: 0
+  max: 15    # 5 dimensions × 3 max
+  maturity_bands:
+    - label: Baseline
+      range: [0, 5]
+      description: "Ad-hoc agentic runs with no audit trail or PR discipline"
+      advisor_severity: high
+      escalation: >
+        Open a Plane issue for loop remediation. Block additional agentic runs
+        until at least one Developing-level run is demonstrated.
+
+    - label: Developing
+      range: [6, 9]
+      description: "Most runs produce PRs but evidence is incomplete"
+      advisor_severity: medium
+      escalation: >
+        Log in Ops Console. No immediate escalation but trend-track weekly.
+        If rolling 7-day average stays in Developing for >2 weeks, escalate
+        to high severity.
+
+    - label: Established
+      range: [10, 12]
+      description: "Consistent loop with ops.runs entries and passing verification"
+      advisor_severity: informational
+      escalation: >
+        Log for trend tracking. No action required.
+
+    - label: Optimized
+      range: [13, 15]
+      description: "Full loop with automated evidence capture and regression prevention"
+      advisor_severity: informational
+      escalation: >
+        Exemplary run. Log for trend tracking. Share as reference example.
+
+# Dimensions: each scored independently
+dimensions:
+
+  - id: planning_quality
+    title: "Planning quality"
+    description: >
+      Measures whether the agentic run began with a structured plan that
+      documented the objective, impacted files, spec references, and risk flags
+      before any file was modified.
+    max_score: 3
+    levels:
+      - score: 0
+        label: "None"
+        criteria: "No plan documented before patch"
+        signals:
+          - "ops.runs.plan_artifact is null"
+          - "First ops.run_events entry is step=patch (plan step skipped)"
+          - "No spec bundle referenced in ops.runs or PR body"
+
+      - score: 1
+        label: "Minimal"
+        criteria: "Impacted files listed but no spec or rationale"
+        signals:
+          - "ops.runs.plan_artifact exists but contains only a file list"
+          - "No spec bundle reference in plan document"
+          - "No risk assessment in plan document"
+
+      - score: 2
+        label: "Adequate"
+        criteria: "Spec or intent documented, impacted files listed, ops.runs entry created"
+        signals:
+          - "ops.runs entry with task_id present and status=running before first patch"
+          - "Plan document contains objective statement and impacted file list"
+          - "Spec bundle reference included OR explicit intent documented"
+
+      - score: 3
+        label: "Full"
+        criteria: "Spec bundle referenced, risk assessment included, ops.runs entry with task_id"
+        signals:
+          - "ops.runs.task_id references a Plane issue or GitHub issue number"
+          - "Plan document contains: objective, impacted files, spec bundle path, risk flags"
+          - "ops.run_events step=plan, outcome=completed recorded"
+          - "Restricted paths flagged explicitly in plan if any are modified"
+
+  - id: patch_minimality
+    title: "Patch minimality"
+    description: >
+      Measures whether the patch is tightly scoped to the task objective,
+      with no unrelated file modifications, dead-code additions, or
+      reformatting of files outside the task scope.
+    max_score: 3
+    levels:
+      - score: 0
+        label: "None"
+        criteria: "No constraint on patch scope; changes unrelated files"
+        signals:
+          - "PR diff includes files not listed in the plan document"
+          - "Changes include cosmetic reformatting of files unrelated to the task"
+          - "New features added that were not in the task objective"
+
+      - score: 1
+        label: "Partial"
+        criteria: "Mostly targeted but includes unrelated changes"
+        signals:
+          - "1–3 files modified that are not in the plan document"
+          - "Minor unrelated reformatting present"
+          - "All core changes are task-related but scope creep is visible"
+
+      - score: 2
+        label: "Good"
+        criteria: "Only required files changed; no dead-code added"
+        signals:
+          - "All modified files match the plan document file list"
+          - "No dead-code, commented-out blocks, or debug artifacts in diff"
+          - "No TODO comments added for core functionality"
+
+      - score: 3
+        label: "Excellent"
+        criteria: "Minimal diff; reviewer can confirm scope in under 5 minutes"
+        signals:
+          - "Diff is minimal: each changed line is directly traceable to the task"
+          - "A reviewer with no prior context can verify scope in under 5 minutes"
+          - "ops.run_events step=patch detail.files_modified matches plan file list"
+
+  - id: test_coverage
+    title: "Test and gate coverage"
+    description: >
+      Measures whether all required CI gates were executed and passed before
+      the PR was created, and whether gate output was captured as evidence.
+    max_score: 3
+    levels:
+      - score: 0
+        label: "None"
+        criteria: "No tests run before PR"
+        signals:
+          - "No evidence log files present in docs/evidence/<stamp>/<task>/logs/"
+          - "PR body has no EVIDENCE section with command/result lines"
+          - "ops.run_events has no step=verify record"
+
+      - score: 1
+        label: "Partial"
+        criteria: "Some CI gates pass but SSOT validators not run"
+        signals:
+          - "lint.log or typecheck.log present but repo_health.log absent"
+          - "spec_validate.log absent when a spec bundle is referenced in the plan"
+          - "ops.run_events step=verify present but with incomplete gate list"
+
+      - score: 2
+        label: "Good"
+        criteria: "All required gates pass (lint, typecheck, repo_health.sh)"
+        signals:
+          - "repo_health.log, lint.log, typecheck.log all present and show exit 0"
+          - "flake8.log present if Python files were modified"
+          - "ops.run_events step=verify, outcome=pass recorded"
+
+      - score: 3
+        label: "Full"
+        criteria: "All gates pass including spec_validate.sh; gate output attached as evidence"
+        signals:
+          - "spec_validate.log present (when spec bundle referenced) and shows exit 0"
+          - "All gate log files present with non-empty content"
+          - "PR EVIDENCE section references each log file path with result line"
+          - "ops.run_events step=verify detail lists each gate name and exit code"
+
+  - id: pr_evidence
+    title: "PR evidence quality"
+    description: >
+      Measures whether the PR body follows the output contract and provides
+      sufficient structured evidence for a reviewer to verify the run without
+      accessing external systems.
+    max_score: 3
+    levels:
+      - score: 0
+        label: "None"
+        criteria: "PR exists but has no structured evidence"
+        signals:
+          - "PR body is blank or contains only a brief description"
+          - "No CONTEXT, CHANGES, EVIDENCE, or DIFF SUMMARY sections"
+          - "No log file references in the PR body"
+
+      - score: 1
+        label: "Minimal"
+        criteria: "PR description mentions what changed but no evidence links"
+        signals:
+          - "PR body describes the change in prose"
+          - "No structured sections (CONTEXT, CHANGES, EVIDENCE, DIFF SUMMARY)"
+          - "No file path references to evidence artifacts"
+
+      - score: 2
+        label: "Good"
+        criteria: "Evidence section present with file paths and pass/fail lines"
+        signals:
+          - "PR body contains an EVIDENCE section"
+          - "Each gate command listed with result: PASS or FAIL"
+          - "At least one evidence log file path referenced"
+          - "CHANGES section lists modified files with one-line intent descriptions"
+
+      - score: 3
+        label: "Excellent"
+        criteria: "Evidence follows output contract (CONTEXT, CHANGES, EVIDENCE, DIFF SUMMARY)"
+        signals:
+          - "PR body contains all four sections: CONTEXT, CHANGES, EVIDENCE, DIFF SUMMARY"
+          - "CONTEXT section has repo, branch, cwd, goal, stamp with timezone"
+          - "EVIDENCE section has command/result/saved_to for each gate"
+          - "DIFF SUMMARY explains why each file changed (not just what changed)"
+          - "`agent-generated` label applied to the PR"
+
+  - id: audit_trail
+    title: "Audit trail (ops.runs)"
+    description: >
+      Measures whether the agentic run is fully traceable via the ops.runs and
+      ops.run_events tables, including task linkage, evidence path, and PR URL.
+    max_score: 3
+    levels:
+      - score: 0
+        label: "None"
+        criteria: "No ops.runs entry"
+        signals:
+          - "No row in ops.runs matching the PR's branch name or task_id"
+          - "PR exists in GitHub with no correlated ops.runs record"
+
+      - score: 1
+        label: "Partial"
+        criteria: "ops.runs entry exists but incomplete (missing outcome or evidence_path)"
+        signals:
+          - "ops.runs row exists but status is still 'running' after PR is opened"
+          - "ops.runs.evidence_path is null"
+          - "ops.runs.pr_url is null"
+          - "ops.run_events has fewer than 2 rows for the run"
+
+      - score: 2
+        label: "Good"
+        criteria: "ops.runs entry with task_id, outcome, and PR link"
+        signals:
+          - "ops.runs.task_id references a valid Plane or GitHub issue"
+          - "ops.runs.status = 'completed'"
+          - "ops.runs.pr_url is populated with the PR URL"
+          - "ops.runs.evidence_path is populated with the evidence directory path"
+
+      - score: 3
+        label: "Excellent"
+        criteria: "ops.runs + ops.run_events for each step; evidence_path populated"
+        signals:
+          - "ops.run_events has one row for each step: plan, patch, verify, pr"
+          - "Each ops.run_events row has a non-empty detail JSON object"
+          - "ops.runs.evidence_path contains all required log files"
+          - "ops.runs.agent_id is a registered value (copilot_coding_agent, claude_code, etc.)"
+
+# Score computation guidance for automated scanners
+scoring_rules:
+  compute_total: "sum of all dimension scores"
+  missing_dimension: "treat as score=0 for that dimension"
+  rounding: "none — scores are integers"
+  tie_breaking: "not applicable — each dimension scored independently"
+
+# Registered agent_id values for ops.runs.agent_id
+registered_agents:
+  - copilot_coding_agent
+  - claude_code
+  - semantic_kernel
+  - autogen
+  - manual
+
+# Blocking thresholds (enforced by CI checks on PR)
+blocking_thresholds:
+  audit_trail_minimum: 1
+  description: >
+    Any run with Dimension 5 (audit_trail) score of 0 produces a failing CI check
+    on the PR. The PR cannot be merged until the ops.runs entry exists and
+    audit_trail score is at least 1.
+
+# Advisory thresholds (escalation without blocking)
+advisory_thresholds:
+  escalation_total: 6
+  regression_rolling_7d_avg: 8
+  description: >
+    Total score below 6 → high-severity Advisor finding requiring acknowledgement.
+    Rolling 7-day average below 8 → platform team notification.

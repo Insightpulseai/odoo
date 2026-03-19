@@ -1,0 +1,125 @@
+name: Publish Agent Services
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "apps/odoo-docs-kb/**"
+      - "apps/org-docs-kb/**"
+      - "packages/odoo-docs-kb/**"
+      - "addons/ipai/ipai_odoo_copilot/**"
+      - "addons/ipai/ipai_agent/**"
+  workflow_dispatch:
+    inputs:
+      service:
+        description: "Service to publish (odoo-docs-kb, all)"
+        type: choice
+        options:
+          - odoo-docs-kb
+          - org-docs-kb
+          - all
+        default: all
+
+env:
+  REGISTRY: ${{ secrets.ACR_LOGIN_SERVER }}  # e.g. cripaidev.azurecr.io
+  RESOURCE_GROUP: rg-ipai-dev
+  CONTAINER_ENV: cae-ipai-dev
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write  # OIDC for Azure login
+
+    strategy:
+      matrix:
+        include:
+          - service: odoo-docs-kb
+            context: .
+            dockerfile: apps/odoo-docs-kb/Dockerfile
+            app_name: ipai-odoo-docs-kb
+          - service: org-docs-kb
+            context: .
+            dockerfile: apps/org-docs-kb/Dockerfile
+            app_name: ipai-org-docs-kb
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check if service should build
+        id: check
+        run: |
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+            if [[ "${{ inputs.service }}" == "all" || "${{ inputs.service }}" == "${{ matrix.service }}" ]]; then
+              echo "should_build=true" >> "$GITHUB_OUTPUT"
+            else
+              echo "should_build=false" >> "$GITHUB_OUTPUT"
+            fi
+          else
+            echo "should_build=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Azure Login (OIDC)
+        if: steps.check.outputs.should_build == 'true'
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: ACR Login
+        if: steps.check.outputs.should_build == 'true'
+        run: az acr login --name ${{ secrets.ACR_NAME }}
+
+      - name: Build and push image
+        if: steps.check.outputs.should_build == 'true'
+        run: |
+          IMAGE="${{ env.REGISTRY }}/${{ matrix.service }}:${{ github.sha }}"
+          IMAGE_LATEST="${{ env.REGISTRY }}/${{ matrix.service }}:latest"
+
+          docker build \
+            -f ${{ matrix.dockerfile }} \
+            -t "$IMAGE" \
+            -t "$IMAGE_LATEST" \
+            ${{ matrix.context }}
+
+          docker push "$IMAGE"
+          docker push "$IMAGE_LATEST"
+
+          echo "IMAGE=$IMAGE" >> "$GITHUB_ENV"
+
+      - name: Deploy to Container Apps
+        if: steps.check.outputs.should_build == 'true'
+        run: |
+          az containerapp update \
+            --name ${{ matrix.app_name }} \
+            --resource-group ${{ env.RESOURCE_GROUP }} \
+            --image "${{ env.IMAGE }}" \
+            --set-env-vars \
+              AZURE_SEARCH_INDEX_NAME=odoo19-docs
+
+      - name: Verify deployment
+        if: steps.check.outputs.should_build == 'true'
+        run: |
+          FQDN=$(az containerapp show \
+            --name ${{ matrix.app_name }} \
+            --resource-group ${{ env.RESOURCE_GROUP }} \
+            --query "properties.configuration.ingress.fqdn" -o tsv)
+
+          echo "Deployed to: https://$FQDN"
+
+          # Wait for container to start
+          sleep 30
+
+          STATUS=$(curl -s -o /dev/null -w "%{http_code}" "https://$FQDN/health" || echo "000")
+          echo "Health check: $STATUS"
+
+          if [[ "$STATUS" != "200" ]]; then
+            echo "Health check failed with status $STATUS"
+            az containerapp logs show \
+              --name ${{ matrix.app_name }} \
+              --resource-group ${{ env.RESOURCE_GROUP }} \
+              --tail 50
+            exit 1
+          fi
