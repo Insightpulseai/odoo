@@ -21,7 +21,8 @@
 #   managed_by     — (optional) service that auto-created this resource
 #   notes          — context
 #
-# Reconciled: 2026-03-11 from Azure CLI export (65 confirmed resources)
+# Reconciled: 2026-03-20 from Azure Resource Graph (83 confirmed resources)
+# Previous reconcile: 2026-03-11 (65 resources). Delta: +18 new resources.
 #
 # ERRATA — Names That Do NOT Exist:
 #   oai-ipai-sea       WRONG — correct name is oai-ipai-dev
@@ -31,12 +32,12 @@
 # The -sea suffix does not exist in the naming convention.
 # =============================================================================
 
-schema_version: "2.0"
-last_updated: "2026-03-11"
+schema_version: "2.1"
+last_updated: "2026-03-20"
 naming_convention: "{type}-ipai-{env}"
 default_region: southeastasia
 default_environment: dev
-total_confirmed: 65
+total_confirmed: 83
 
 # -----------------------------------------------------------------------------
 # Resource Groups (8 confirmed + 2 auto-managed)
@@ -243,17 +244,18 @@ container_apps:
     owner_domain: platform
     notes: Superset surface migrated from DO origin to ACA.
 
-  # --- Deployment A: rg-ipai-agents-dev (earlier, simpler split) ---
-  - name: odoo-web
+  - name: ipai-website-dev
     type: Microsoft.App/containerApps
-    resource_group: rg-ipai-agents-dev
+    resource_group: rg-ipai-dev
     region: southeastasia
     source: confirmed
     lifecycle: active
-    owner_domain: odoo
-    notes: >
-      Earlier Odoo deployment (Deployment A). Simpler split.
-      SEE: exceptions/dual-odoo-deployment.yaml
+    owner_domain: platform
+    notes: Website Container App. Added 2026-03-20 reconcile.
+
+  # --- Deployment A: rg-ipai-agents-dev (decommissioned) ---
+  # odoo-web was previously listed here but is no longer live.
+  # Deployment A is retired. See exceptions/dual-odoo-deployment.yaml.
 
 # --- Container App Jobs ---
 container_app_jobs:
@@ -274,6 +276,15 @@ container_app_jobs:
     lifecycle: active
     owner_domain: odoo
     notes: Odoo module install/upgrade job. Part of Deployment B.
+
+  - name: ipai-branding-install
+    type: Microsoft.App/jobs
+    resource_group: rg-ipai-dev
+    region: southeastasia
+    source: confirmed
+    lifecycle: active
+    owner_domain: odoo
+    notes: Branding install job. Part of Deployment B. Added 2026-03-20 reconcile.
 
   - name: odoo-init
     type: Microsoft.App/jobs
@@ -358,6 +369,15 @@ container_registries:
     notes: >
       Odoo-specific container registry in rg-ipai-dev.
       Name does not follow convention. Part of Deployment B.
+
+  - name: ipaiwebacr
+    type: Microsoft.ContainerRegistry/registries
+    resource_group: rg-ipai-dev
+    region: southeastasia
+    source: confirmed
+    lifecycle: active
+    owner_domain: platform
+    notes: Web-specific container registry. Added 2026-03-20 reconcile.
 
 # -----------------------------------------------------------------------------
 # Database
@@ -505,6 +525,15 @@ front_door:
       Azure Front Door Premium profile. Global CDN + WAF + routing.
       Name deviates from convention (expected: fd-ipai-dev). Accepted per D-002.
 
+  - name: ipai-fd-dev-ep
+    type: Microsoft.Cdn/profiles/afdEndpoints
+    resource_group: rg-ipai-shared-dev
+    region: global
+    source: confirmed
+    lifecycle: active
+    owner_domain: infra
+    notes: Front Door endpoint. Added 2026-03-20 reconcile.
+
   - name: ipaiDevWafPolicy
     type: Microsoft.Network/FrontDoorWebApplicationFirewallPolicies
     resource_group: rg-ipai-shared-dev
@@ -615,6 +644,17 @@ storage:
     notes: >
       ADLS Gen2 storage for Medallion Architecture data lake.
       Name generated as st{ipai}{env}lake (no hyphens — SA naming rules).
+
+  - name: stipaiodoodev
+    type: Microsoft.Storage/storageAccounts
+    resource_group: rg-ipai-dev
+    region: southeastasia
+    source: confirmed
+    lifecycle: active
+    owner_domain: odoo
+    notes: >
+      Odoo filestore/blob storage. Part of Deployment B.
+      Added 2026-03-20 reconcile. Candidate for filestore backing.
 
   - name: dbstoragew6tn3uhg4bluy
     type: Microsoft.Storage/storageAccounts
@@ -822,4 +862,139 @@ devops:
     lifecycle: active
     owner_domain: devops
     notes: Dev Center project under ipai-devcenter.
+
+# -----------------------------------------------------------------------------
+# AI Foundry (new workspace — added 2026-03-20 reconcile)
+# -----------------------------------------------------------------------------
+foundry_new:
+  - name: aifoundry-ipai-dev
+    type: Microsoft.MachineLearningServices/workspaces
+    resource_group: rg-ipai-ai-dev
+    region: eastus2
+    source: confirmed
+    lifecycle: active
+    owner_domain: ai
+    notes: >
+      New AI Foundry workspace (eastus2). Supplements data-intel-ph.
+      Contains proj-ipai-claude for Claude agent development.
+
+  - name: proj-ipai-claude
+    type: Microsoft.MachineLearningServices/workspaces/projects
+    resource_group: rg-ipai-ai-dev
+    region: eastus2
+    source: confirmed
+    lifecycle: active
+    owner_domain: ai
+    notes: Foundry project for Claude agent integration under aifoundry-ipai-dev.
+
+  - name: aifoundrkeyvault67125c7c
+    type: Microsoft.KeyVault/vaults
+    resource_group: rg-ipai-ai-dev
+    region: eastus2
+    source: confirmed
+    lifecycle: managed
+    managed_by: ai-foundry
+    owner_domain: ai
+    notes: Foundry-managed Key Vault (auto-created by aifoundry-ipai-dev).
+
+  - name: aifoundrstorage6ff030454
+    type: Microsoft.Storage/storageAccounts
+    resource_group: rg-ipai-ai-dev
+    region: eastus2
+    source: confirmed
+    lifecycle: managed
+    managed_by: ai-foundry
+    owner_domain: ai
+    notes: Foundry-managed storage (auto-created by aifoundry-ipai-dev).
+
+# -----------------------------------------------------------------------------
+# Managed Identities — Environment Separation (added 2026-03-20 reconcile)
+# -----------------------------------------------------------------------------
+# These identities were provisioned for dev/staging/prod environment separation.
+# Evidence that KR-001.2 (env separation) is partially in progress.
+managed_identities_env:
+  # Dev
+  - name: mi-ipai-odoo-dev
+    type: Microsoft.ManagedIdentity/userAssignedIdentities
+    resource_group: rg-ipai-shared-dev
+    region: southeastasia
+    source: confirmed
+    lifecycle: active
+    owner_domain: odoo
+    notes: Odoo workload managed identity (dev).
+
+  - name: mi-ipai-lakehouse-dev
+    type: Microsoft.ManagedIdentity/userAssignedIdentities
+    resource_group: rg-ipai-shared-dev
+    region: southeastasia
+    source: confirmed
+    lifecycle: active
+    owner_domain: lakehouse
+    notes: Lakehouse workload managed identity (dev).
+
+  - name: mi-ipai-platform-dev
+    type: Microsoft.ManagedIdentity/userAssignedIdentities
+    resource_group: rg-ipai-shared-dev
+    region: southeastasia
+    source: confirmed
+    lifecycle: active
+    owner_domain: platform
+    notes: Platform workload managed identity (dev).
+
+  # Staging
+  - name: mi-ipai-odoo-staging
+    type: Microsoft.ManagedIdentity/userAssignedIdentities
+    resource_group: rg-ipai-shared-staging
+    region: southeastasia
+    source: confirmed
+    lifecycle: active
+    owner_domain: odoo
+    notes: Odoo workload managed identity (staging).
+
+  - name: mi-ipai-lakehouse-staging
+    type: Microsoft.ManagedIdentity/userAssignedIdentities
+    resource_group: rg-ipai-shared-staging
+    region: southeastasia
+    source: confirmed
+    lifecycle: active
+    owner_domain: lakehouse
+    notes: Lakehouse workload managed identity (staging).
+
+  - name: mi-ipai-platform-staging
+    type: Microsoft.ManagedIdentity/userAssignedIdentities
+    resource_group: rg-ipai-shared-staging
+    region: southeastasia
+    source: confirmed
+    lifecycle: active
+    owner_domain: platform
+    notes: Platform workload managed identity (staging).
+
+  # Prod
+  - name: mi-ipai-odoo-prod
+    type: Microsoft.ManagedIdentity/userAssignedIdentities
+    resource_group: rg-ipai-shared-prod
+    region: southeastasia
+    source: confirmed
+    lifecycle: active
+    owner_domain: odoo
+    notes: Odoo workload managed identity (prod).
+
+  - name: mi-ipai-lakehouse-prod
+    type: Microsoft.ManagedIdentity/userAssignedIdentities
+    resource_group: rg-ipai-shared-prod
+    region: southeastasia
+    source: confirmed
+    lifecycle: active
+    owner_domain: lakehouse
+    notes: Lakehouse workload managed identity (prod).
+
+  - name: mi-ipai-platform-prod
+    type: Microsoft.ManagedIdentity/userAssignedIdentities
+    resource_group: rg-ipai-shared-prod
+    region: southeastasia
+    source: confirmed
+    lifecycle: active
+    owner_domain: platform
+    notes: Platform workload managed identity (prod).
+
 # =============================================================================
