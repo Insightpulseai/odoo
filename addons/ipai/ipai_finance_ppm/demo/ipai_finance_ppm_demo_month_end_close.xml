@@ -1,0 +1,610 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <!-- ============================================================ -->
+        <!-- Phase I: Initial & Compliance (D+1) — 15 tasks               -->
+        <!-- ============================================================ -->
+        <record id="mec_phase1" model="project.task">
+            <field name="name">I. Initial &amp; Compliance</field>
+            <field name="project_id" ref="project_month_end_close"/>
+            <field name="stage_id" ref="stage_preparation"/>
+            <field name="sequence">10</field>
+            <field name="priority">1</field>
+            <field name="description">D+1: Pre-close validation, bank reconciliation, and compliance checks.</field>
+        </record>
+
+        <record id="mec_p1_01" model="project.task">
+            <field name="name">P1.01 Validate prior month carry-forward balances</field>
+            <field name="project_id" ref="project_month_end_close"/>
+            <field name="parent_id" ref="mec_phase1"/>
+            <field name="stage_id" ref="stage_preparation"/>
+            <field name="sequence">1</field>
+            <field name="description">Compare opening balances against prior month's closing trial balance. Flag variances > PHP 1,000.</field>
+        </record>
+        <record id="mec_p1_02" model="project.task">
+            <field name="name">P1.02 Confirm bank feeds and statement cutoffs</field>
+            <field name="project_id" ref="project_month_end_close"/>
+            <field name="parent_id" ref="mec_phase1"/>
+            <field name="stage_id" ref="stage_preparation"/>
+            <field name="sequence">2</field>
+            <field name="description">Verify all bank feeds imported through last business day. Confirm cutoff date matches close calendar.</field>
+        </record>
+        <record id="mec_p1_03" model="project.task">
+            <field name="name">P1.03 Reconcile petty cash and revolving funds</field>
+            <field name="project_id" ref="project_month_end_close"/>
+            <field name="parent_id" ref="mec_phase1"/>
+            <field name="stage_id" ref="stage_preparation"/>
+            <field name="sequence">3</field>
+            <field name="description">Count and reconcile petty cash. Match revolving fund disbursements to replenishment entries.</field>
+        </record>
+        <record id="mec_p1_04" model="project.task">
+            <field name="name">P1.04 Review outstanding purchase orders for accrual</field>
+            <field name="project_id" ref="project_month_end_close"/>
+            <field name="parent_id" ref="mec_phase1"/>
+            <field name="stage_id" ref="stage_preparation"/>
+            <field name="sequence">4</field>
+            <field name="description">Identify POs with goods/services received but not yet invoiced. Prepare accrual JEs.</field>
+        </record>
+        <record id="mec_p1_05" model="project.task">
+            <field name="name">P1.05 Verify AR aging and collectibility assessment</field>
+            <field name="project_id" ref="project_month_end_close"/>
+            <field name="parent_id" ref="mec_phase1"/>
+            <field name="stage_id" ref="stage_preparation"/>
+            <field name="sequence">5</field>
+            <field name="description">Run AR aging report. Flag accounts > 90 days for allowance review per PFRS 9.</field>
+        </record>
+        <record id="mec_p1_06" model="project.task">
+            <field name="name">P1.06 Confirm AP sub-ledger to GL reconciliation</field>
+            <field name="project_id" ref="project_month_end_close"/>
+            <field name="parent_id" ref="mec_phase1"/>
+            <field name="stage_id" ref="stage_preparation"/>
+            <field name="sequence">6</field>
+            <field name="description">Reconcile AP sub-ledger total to GL control account. Investigate and clear differences.</field>
+        </record>
+        <record id="mec_p1_07" model="project.task">
+            <field name="name">P1.07 Review employee advances and liquidations</field>
+            <field name="project_id" ref="project_month_end_close"/>
+            <field name="parent_id" ref="mec_phase1"/>
+            <field name="stage_id" ref="stage_preparation"/>
+            <field name="sequence">7</field>
+            <field name="description">Verify all employee advances have corresponding liquidation reports. Flag unliquidated advances > 30 days.</field>
+        </record>
+        <record id="mec_p1_08" model="project.task">
+            <field name="name">P1.08 Validate withholding tax computations (EWT/FWT)</field>
+            <field name="project_id" ref="project_month_end_close"/>
+            <field name="parent_id" ref="mec_phase1"/>
+            <field name="stage_id" ref="stage_preparation"/>
+            <field name="sequence">8</field>
+            <field name="description">Verify expanded and final withholding tax computations match BIR tax rates. Cross-check with vendor master data.</field>
+        </record>
+        <record id="mec_p1_09" model="project.task">
+            <field name="name">P1.09 Confirm VAT input/output reconciliation</field>
+            <field name="project_id" ref="project_month_end_close"/>
+            <field name="parent_id" ref="mec_phase1"/>
+            <field name="stage_id" ref="stage_preparation"/>
+            <field name="sequence">9</field>
+            <field name="description">Reconcile VAT input credits against purchase journal. Match VAT output to sales journal. Prepare VAT payable computation.</field>
+        </record>
+        <record id="mec_p1_10" model="project.task">
+            <field name="name">P1.10 Review fixed asset additions and disposals</field>
+            <field name="project_id" ref="project_month_end_close"/>
+            <field name="parent_id" ref="mec_phase1"/>
+            <field name="stage_id" ref="stage_preparation"/>
+            <field name="sequence">10</field>
+            <field name="description">Confirm all asset additions are capitalized per policy. Verify disposal entries and gain/loss calculations.</field>
+        </record>
+        <record id="mec_p1_11" model="project.task">
+            <field name="name">P1.11 Validate payroll accruals and statutory deductions</field>
+            <field name="project_id" ref="project_month_end_close"/>
+            <field name="parent_id" ref="mec_phase1"/>
+            <field name="stage_id" ref="stage_preparation"/>
+            <field name="sequence">11</field>
+            <field name="description">Verify payroll accrual for partial month. Confirm SSS, PhilHealth, Pag-IBIG, and tax withholding computations.</field>
+        </record>
+        <record id="mec_p1_12" model="project.task">
+            <field name="name">P1.12 Check intercompany transaction matching</field>
+            <field name="project_id" ref="project_month_end_close"/>
+            <field name="parent_id" ref="mec_phase1"/>
+            <field name="stage_id" ref="stage_preparation"/>
+            <field name="sequence">12</field>
+            <field name="description">Run IC matching report. Investigate and resolve unmatched IC entries before close.</field>
+        </record>
+        <record id="mec_p1_13" model="project.task">
+            <field name="name">P1.13 Verify prepaid expense amortization schedules</field>
+            <field name="project_id" ref="project_month_end_close"/>
+            <field name="parent_id" ref="mec_phase1"/>
+            <field name="stage_id" ref="stage_preparation"/>
+            <field name="sequence">13</field>
+            <field name="description">Confirm monthly amortization entries for insurance, rent, and other prepaid items are posted.</field>
+        </record>
+        <record id="mec_p1_14" model="project.task">
+            <field name="name">P1.14 Review foreign currency revaluation rates</field>
+            <field name="project_id" ref="project_month_end_close"/>
+            <field name="parent_id" ref="mec_phase1"/>
+            <field name="stage_id" ref="stage_preparation"/>
+            <field name="sequence">14</field>
+            <field name="description">Update month-end FX rates from BSP. Run unrealized gain/loss revaluation for USD, EUR, JPY exposures.</field>
+        </record>
+        <record id="mec_p1_15" model="project.task">
+            <field name="name">P1.15 Generate pre-close trial balance snapshot</field>
+            <field name="project_id" ref="project_month_end_close"/>
+            <field name="parent_id" ref="mec_phase1"/>
+            <field name="stage_id" ref="stage_preparation"/>
+            <field name="sequence">15</field>
+            <field name="description">Export pre-close trial balance. This is the baseline for Phase II adjustments.</field>
+        </record>
+
+        <!-- ============================================================ -->
+        <!-- Phase II: Accruals & Adjustments (D+2) — 18 tasks             -->
+        <!-- ============================================================ -->
+        <record id="mec_phase2" model="project.task">
+            <field name="name">II. Accruals &amp; Adj.</field>
+            <field name="project_id" ref="project_month_end_close"/>
+            <field name="stage_id" ref="stage_preparation"/>
+            <field name="sequence">20</field>
+            <field name="priority">1</field>
+            <field name="description">D+2: Post accruals, adjustments, and reclassification entries.</field>
+        </record>
+
+        <record id="mec_p2_01" model="project.task">
+            <field name="name">P2.01 Post revenue recognition accruals</field>
+            <field name="project_id" ref="project_month_end_close"/>
+            <field name="parent_id" ref="mec_phase2"/>
+            <field name="stage_id" ref="stage_preparation"/>
+            <field name="sequence">1</field>
+            <field name="description">Recognize unbilled revenue per contract milestones and PFRS 15 criteria.</field>
+        </record>
+        <record id="mec_p2_02" model="project.task">
+            <field name="name">P2.02 Post expense accruals for received goods/services</field>
+            <field name="project_id" ref="project_month_end_close"/>
+            <field name="parent_id" ref="mec_phase2"/>
+            <field name="stage_id" ref="stage_preparation"/>
+            <field name="sequence">2</field>
+            <field name="description">Accrue expenses for goods received/services rendered without vendor invoices.</field>
+        </record>
+        <record id="mec_p2_03" model="project.task">
+            <field name="name">P2.03 Post depreciation and amortization entries</field>
+            <field name="project_id" ref="project_month_end_close"/>
+            <field name="parent_id" ref="mec_phase2"/>
+            <field name="stage_id" ref="stage_preparation"/>
+            <field name="sequence">3</field>
+            <field name="description">Run depreciation computation for all asset classes. Post monthly depreciation JE.</field>
+        </record>
+        <record id="mec_p2_04" model="project.task">
+            <field name="name">P2.04 Post allowance for doubtful accounts adjustment</field>
+            <field name="project_id" ref="project_month_end_close"/>
+            <field name="parent_id" ref="mec_phase2"/>
+            <field name="stage_id" ref="stage_preparation"/>
+            <field name="sequence">4</field>
+            <field name="description">Compute expected credit loss per PFRS 9 simplified approach. Post provision adjustment.</field>
+        </record>
+        <record id="mec_p2_05" model="project.task">
+            <field name="name">P2.05 Post inventory valuation adjustments</field>
+            <field name="project_id" ref="project_month_end_close"/>
+            <field name="parent_id" ref="mec_phase2"/>
+            <field name="stage_id" ref="stage_preparation"/>
+            <field name="sequence">5</field>
+            <field name="description">Adjust inventory to lower of cost or NRV. Post write-down entries for slow-moving items.</field>
+        </record>
+        <record id="mec_p2_06" model="project.task">
+            <field name="name">P2.06 Post lease liability and ROU asset entries (PFRS 16)</field>
+            <field name="project_id" ref="project_month_end_close"/>
+            <field name="parent_id" ref="mec_phase2"/>
+            <field name="stage_id" ref="stage_preparation"/>
+            <field name="sequence">6</field>
+            <field name="description">Post monthly lease amortization, interest expense, and lease liability reduction per PFRS 16.</field>
+        </record>
+        <record id="mec_p2_07" model="project.task">
+            <field name="name">P2.07 Post employee benefit accruals (13th month, leave)</field>
+            <field name="project_id" ref="project_month_end_close"/>
+            <field name="parent_id" ref="mec_phase2"/>
+            <field name="stage_id" ref="stage_preparation"/>
+            <field name="sequence">7</field>
+            <field name="description">Accrue proportionate 13th month pay, SIL conversion, and other employee benefits.</field>
+        </record>
+        <record id="mec_p2_08" model="project.task">
+            <field name="name">P2.08 Post intercompany cost allocations</field>
+            <field name="project_id" ref="project_month_end_close"/>
+            <field name="parent_id" ref="mec_phase2"/>
+            <field name="stage_id" ref="stage_preparation"/>
+            <field name="sequence">8</field>
+            <field name="description">Allocate shared costs (IT, admin, facilities) to business units per approved allocation keys.</field>
+        </record>
+        <record id="mec_p2_09" model="project.task">
+            <field name="name">P2.09 Post deferred revenue release</field>
+            <field name="project_id" ref="project_month_end_close"/>
+            <field name="parent_id" ref="mec_phase2"/>
+            <field name="stage_id" ref="stage_preparation"/>
+            <field name="sequence">9</field>
+            <field name="description">Release deferred revenue per amortization schedule. Match to performance obligations.</field>
+        </record>
+        <record id="mec_p2_10" model="project.task">
+            <field name="name">P2.10 Post FX revaluation gain/loss entries</field>
+            <field name="project_id" ref="project_month_end_close"/>
+            <field name="parent_id" ref="mec_phase2"/>
+            <field name="stage_id" ref="stage_preparation"/>
+            <field name="sequence">10</field>
+            <field name="description">Post unrealized FX gain/loss from revaluation. Verify rates match BSP closing rates.</field>
+        </record>
+        <record id="mec_p2_11" model="project.task">
+            <field name="name">P2.11 Post provision for warranties and returns</field>
+            <field name="project_id" ref="project_month_end_close"/>
+            <field name="parent_id" ref="mec_phase2"/>
+            <field name="stage_id" ref="stage_preparation"/>
+            <field name="sequence">11</field>
+            <field name="description">Estimate warranty/return obligations based on historical rates. Adjust provision balance.</field>
+        </record>
+        <record id="mec_p2_12" model="project.task">
+            <field name="name">P2.12 Post reclassification entries (current/non-current)</field>
+            <field name="project_id" ref="project_month_end_close"/>
+            <field name="parent_id" ref="mec_phase2"/>
+            <field name="stage_id" ref="stage_preparation"/>
+            <field name="sequence">12</field>
+            <field name="description">Reclassify long-term liabilities maturing within 12 months to current. Review loan amortization schedules.</field>
+        </record>
+        <record id="mec_p2_13" model="project.task">
+            <field name="name">P2.13 Post tax provision (current and deferred)</field>
+            <field name="project_id" ref="project_month_end_close"/>
+            <field name="parent_id" ref="mec_phase2"/>
+            <field name="stage_id" ref="stage_preparation"/>
+            <field name="sequence">13</field>
+            <field name="description">Compute current income tax provision per CREATE law rates. Calculate deferred tax assets/liabilities for temporary differences.</field>
+        </record>
+        <record id="mec_p2_14" model="project.task">
+            <field name="name">P2.14 Post management fee and royalty accruals</field>
+            <field name="project_id" ref="project_month_end_close"/>
+            <field name="parent_id" ref="mec_phase2"/>
+            <field name="stage_id" ref="stage_preparation"/>
+            <field name="sequence">14</field>
+            <field name="description">Accrue management fees and royalties per intercompany agreements. Apply correct withholding tax rates.</field>
+        </record>
+        <record id="mec_p2_15" model="project.task">
+            <field name="name">P2.15 Post bonus and incentive accruals</field>
+            <field name="project_id" ref="project_month_end_close"/>
+            <field name="parent_id" ref="mec_phase2"/>
+            <field name="stage_id" ref="stage_preparation"/>
+            <field name="sequence">15</field>
+            <field name="description">Accrue performance bonuses and sales incentives based on approved targets and YTD achievement.</field>
+        </record>
+        <record id="mec_p2_16" model="project.task">
+            <field name="name">P2.16 Post insurance premium amortization</field>
+            <field name="project_id" ref="project_month_end_close"/>
+            <field name="parent_id" ref="mec_phase2"/>
+            <field name="stage_id" ref="stage_preparation"/>
+            <field name="sequence">16</field>
+            <field name="description">Amortize prepaid insurance premiums for the current month across applicable cost centers.</field>
+        </record>
+        <record id="mec_p2_17" model="project.task">
+            <field name="name">P2.17 Reconcile suspense and clearing accounts</field>
+            <field name="project_id" ref="project_month_end_close"/>
+            <field name="parent_id" ref="mec_phase2"/>
+            <field name="stage_id" ref="stage_preparation"/>
+            <field name="sequence">17</field>
+            <field name="description">Clear all suspense account balances. Reclassify to correct expense/asset accounts.</field>
+        </record>
+        <record id="mec_p2_18" model="project.task">
+            <field name="name">P2.18 Generate post-adjustment trial balance</field>
+            <field name="project_id" ref="project_month_end_close"/>
+            <field name="parent_id" ref="mec_phase2"/>
+            <field name="stage_id" ref="stage_preparation"/>
+            <field name="sequence">18</field>
+            <field name="description">Export adjusted trial balance. This is the baseline for Phase III review.</field>
+        </record>
+
+        <!-- ============================================================ -->
+        <!-- Phase III: WIP & IC (D+3) — 18 tasks                         -->
+        <!-- ============================================================ -->
+        <record id="mec_phase3" model="project.task">
+            <field name="name">III. WIP &amp; IC</field>
+            <field name="project_id" ref="project_month_end_close"/>
+            <field name="stage_id" ref="stage_review"/>
+            <field name="sequence">30</field>
+            <field name="priority">1</field>
+            <field name="description">D+3: Work-in-progress review, intercompany elimination, and analytical review.</field>
+        </record>
+
+        <record id="mec_p3_01" model="project.task">
+            <field name="name">P3.01 Review WIP schedule and percentage of completion</field>
+            <field name="project_id" ref="project_month_end_close"/>
+            <field name="parent_id" ref="mec_phase3"/>
+            <field name="stage_id" ref="stage_review"/>
+            <field name="sequence">1</field>
+            <field name="description">Validate WIP balances per project. Confirm percentage of completion inputs with project managers.</field>
+        </record>
+        <record id="mec_p3_02" model="project.task">
+            <field name="name">P3.02 Perform IC elimination entries</field>
+            <field name="project_id" ref="project_month_end_close"/>
+            <field name="parent_id" ref="mec_phase3"/>
+            <field name="stage_id" ref="stage_review"/>
+            <field name="sequence">2</field>
+            <field name="description">Post intercompany elimination entries for consolidated reporting. Zero out IC revenue/expense and receivable/payable.</field>
+        </record>
+        <record id="mec_p3_03" model="project.task">
+            <field name="name">P3.03 Validate IC profit elimination on inventory</field>
+            <field name="project_id" ref="project_month_end_close"/>
+            <field name="parent_id" ref="mec_phase3"/>
+            <field name="stage_id" ref="stage_review"/>
+            <field name="sequence">3</field>
+            <field name="description">Eliminate unrealized profit on intercompany inventory transfers still on hand at month-end.</field>
+        </record>
+        <record id="mec_p3_04" model="project.task">
+            <field name="name">P3.04 Review cost center P&amp;L vs budget variance</field>
+            <field name="project_id" ref="project_month_end_close"/>
+            <field name="parent_id" ref="mec_phase3"/>
+            <field name="stage_id" ref="stage_review"/>
+            <field name="sequence">4</field>
+            <field name="description">Compare actual vs budget by cost center. Prepare variance commentary for items > 10% or PHP 100K.</field>
+        </record>
+        <record id="mec_p3_05" model="project.task">
+            <field name="name">P3.05 Perform analytical review of revenue trends</field>
+            <field name="project_id" ref="project_month_end_close"/>
+            <field name="parent_id" ref="mec_phase3"/>
+            <field name="stage_id" ref="stage_review"/>
+            <field name="sequence">5</field>
+            <field name="description">Compare current month revenue to prior month and prior year. Investigate unusual variances.</field>
+        </record>
+        <record id="mec_p3_06" model="project.task">
+            <field name="name">P3.06 Perform analytical review of expense trends</field>
+            <field name="project_id" ref="project_month_end_close"/>
+            <field name="parent_id" ref="mec_phase3"/>
+            <field name="stage_id" ref="stage_review"/>
+            <field name="sequence">6</field>
+            <field name="description">Review expense trends month-over-month. Flag unusual spikes or missing recurring expenses.</field>
+        </record>
+        <record id="mec_p3_07" model="project.task">
+            <field name="name">P3.07 Validate balance sheet account reconciliations</field>
+            <field name="project_id" ref="project_month_end_close"/>
+            <field name="parent_id" ref="mec_phase3"/>
+            <field name="stage_id" ref="stage_review"/>
+            <field name="sequence">7</field>
+            <field name="description">Review all balance sheet account reconciliations. Ensure supporting schedules are complete and signed.</field>
+        </record>
+        <record id="mec_p3_08" model="project.task">
+            <field name="name">P3.08 Review related party transaction disclosures</field>
+            <field name="project_id" ref="project_month_end_close"/>
+            <field name="parent_id" ref="mec_phase3"/>
+            <field name="stage_id" ref="stage_review"/>
+            <field name="sequence">8</field>
+            <field name="description">Identify and document all related party transactions per PAS 24 requirements.</field>
+        </record>
+        <record id="mec_p3_09" model="project.task">
+            <field name="name">P3.09 Validate segment reporting allocations</field>
+            <field name="project_id" ref="project_month_end_close"/>
+            <field name="parent_id" ref="mec_phase3"/>
+            <field name="stage_id" ref="stage_review"/>
+            <field name="sequence">9</field>
+            <field name="description">Verify segment revenue and cost allocations are consistent with management reporting structure.</field>
+        </record>
+        <record id="mec_p3_10" model="project.task">
+            <field name="name">P3.10 Review contingent liabilities and commitments</field>
+            <field name="project_id" ref="project_month_end_close"/>
+            <field name="parent_id" ref="mec_phase3"/>
+            <field name="stage_id" ref="stage_review"/>
+            <field name="sequence">10</field>
+            <field name="description">Update contingent liability register. Review legal cases and purchase commitments for disclosure.</field>
+        </record>
+        <record id="mec_p3_11" model="project.task">
+            <field name="name">P3.11 Perform cash flow statement reconciliation</field>
+            <field name="project_id" ref="project_month_end_close"/>
+            <field name="parent_id" ref="mec_phase3"/>
+            <field name="stage_id" ref="stage_review"/>
+            <field name="sequence">11</field>
+            <field name="description">Prepare indirect method cash flow statement. Reconcile to actual bank movement for the period.</field>
+        </record>
+        <record id="mec_p3_12" model="project.task">
+            <field name="name">P3.12 Review capitalized development costs</field>
+            <field name="project_id" ref="project_month_end_close"/>
+            <field name="parent_id" ref="mec_phase3"/>
+            <field name="stage_id" ref="stage_review"/>
+            <field name="sequence">12</field>
+            <field name="description">Validate development cost capitalization criteria per PAS 38. Review amortization of intangible assets.</field>
+        </record>
+        <record id="mec_p3_13" model="project.task">
+            <field name="name">P3.13 Validate equity roll-forward</field>
+            <field name="project_id" ref="project_month_end_close"/>
+            <field name="parent_id" ref="mec_phase3"/>
+            <field name="stage_id" ref="stage_review"/>
+            <field name="sequence">13</field>
+            <field name="description">Prepare statement of changes in equity. Verify dividends, OCI movements, and retained earnings continuity.</field>
+        </record>
+        <record id="mec_p3_14" model="project.task">
+            <field name="name">P3.14 Cross-check tax provision to BIR filings</field>
+            <field name="project_id" ref="project_month_end_close"/>
+            <field name="parent_id" ref="mec_phase3"/>
+            <field name="stage_id" ref="stage_review"/>
+            <field name="sequence">14</field>
+            <field name="description">Reconcile book tax provision to BIR quarterly return estimates. Identify permanent and timing differences.</field>
+        </record>
+        <record id="mec_p3_15" model="project.task">
+            <field name="name">P3.15 Review subsequent events through close date</field>
+            <field name="project_id" ref="project_month_end_close"/>
+            <field name="parent_id" ref="mec_phase3"/>
+            <field name="stage_id" ref="stage_review"/>
+            <field name="sequence">15</field>
+            <field name="description">Identify events after reporting period that require adjustment or disclosure per PAS 10.</field>
+        </record>
+        <record id="mec_p3_16" model="project.task">
+            <field name="name">P3.16 Prepare management discussion and analysis draft</field>
+            <field name="project_id" ref="project_month_end_close"/>
+            <field name="parent_id" ref="mec_phase3"/>
+            <field name="stage_id" ref="stage_review"/>
+            <field name="sequence">16</field>
+            <field name="description">Draft MD&amp;A narrative highlighting key financial performance drivers, risks, and outlook.</field>
+        </record>
+        <record id="mec_p3_17" model="project.task">
+            <field name="name">P3.17 Validate KPI dashboard data accuracy</field>
+            <field name="project_id" ref="project_month_end_close"/>
+            <field name="parent_id" ref="mec_phase3"/>
+            <field name="stage_id" ref="stage_review"/>
+            <field name="sequence">17</field>
+            <field name="description">Verify KPI metrics (gross margin, EBITDA, DSO, DPO) match underlying financial data.</field>
+        </record>
+        <record id="mec_p3_18" model="project.task">
+            <field name="name">P3.18 Generate review-ready financial statement pack</field>
+            <field name="project_id" ref="project_month_end_close"/>
+            <field name="parent_id" ref="mec_phase3"/>
+            <field name="stage_id" ref="stage_review"/>
+            <field name="sequence">18</field>
+            <field name="description">Compile complete FS pack (BS, IS, CF, equity, notes) for SFM review. Export from Odoo reports.</field>
+        </record>
+
+        <!-- ============================================================ -->
+        <!-- Phase IV: Final Close (D+4-5) — 18 tasks                     -->
+        <!-- ============================================================ -->
+        <record id="mec_phase4" model="project.task">
+            <field name="name">IV. Final Close</field>
+            <field name="project_id" ref="project_month_end_close"/>
+            <field name="stage_id" ref="stage_approval"/>
+            <field name="sequence">40</field>
+            <field name="priority">1</field>
+            <field name="description">D+4-5: Final approval, period lock, filing, and reporting distribution.</field>
+        </record>
+
+        <record id="mec_p4_01" model="project.task">
+            <field name="name">P4.01 SFM review of financial statement pack</field>
+            <field name="project_id" ref="project_month_end_close"/>
+            <field name="parent_id" ref="mec_phase4"/>
+            <field name="stage_id" ref="stage_approval"/>
+            <field name="sequence">1</field>
+            <field name="description">Senior Finance Manager reviews complete FS pack. Document review comments and required corrections.</field>
+        </record>
+        <record id="mec_p4_02" model="project.task">
+            <field name="name">P4.02 Post SFM-directed adjustments</field>
+            <field name="project_id" ref="project_month_end_close"/>
+            <field name="parent_id" ref="mec_phase4"/>
+            <field name="stage_id" ref="stage_approval"/>
+            <field name="sequence">2</field>
+            <field name="description">Post any correction entries identified during SFM review. Tag as "post-review adjustment."</field>
+        </record>
+        <record id="mec_p4_03" model="project.task">
+            <field name="name">P4.03 FD review and sign-off</field>
+            <field name="project_id" ref="project_month_end_close"/>
+            <field name="parent_id" ref="mec_phase4"/>
+            <field name="stage_id" ref="stage_approval"/>
+            <field name="sequence">3</field>
+            <field name="description">Finance Director reviews and approves final financial statements. Record approval in Odoo chatter.</field>
+        </record>
+        <record id="mec_p4_04" model="project.task">
+            <field name="name">P4.04 Lock accounting period in Odoo</field>
+            <field name="project_id" ref="project_month_end_close"/>
+            <field name="parent_id" ref="mec_phase4"/>
+            <field name="stage_id" ref="stage_approval"/>
+            <field name="sequence">4</field>
+            <field name="description">Set period lock date to prevent further postings. Use Odoo Settings > Accounting > Lock Dates.</field>
+        </record>
+        <record id="mec_p4_05" model="project.task">
+            <field name="name">P4.05 Generate final trial balance (locked)</field>
+            <field name="project_id" ref="project_month_end_close"/>
+            <field name="parent_id" ref="mec_phase4"/>
+            <field name="stage_id" ref="stage_approval"/>
+            <field name="sequence">5</field>
+            <field name="description">Export final locked trial balance. This is the definitive record for the period.</field>
+        </record>
+        <record id="mec_p4_06" model="project.task">
+            <field name="name">P4.06 Prepare board reporting package</field>
+            <field name="project_id" ref="project_month_end_close"/>
+            <field name="parent_id" ref="mec_phase4"/>
+            <field name="stage_id" ref="stage_approval"/>
+            <field name="sequence">6</field>
+            <field name="description">Assemble board-ready financial report with executive summary, FS, variance analysis, and KPIs.</field>
+        </record>
+        <record id="mec_p4_07" model="project.task">
+            <field name="name">P4.07 Distribute management reports to cost center heads</field>
+            <field name="project_id" ref="project_month_end_close"/>
+            <field name="parent_id" ref="mec_phase4"/>
+            <field name="stage_id" ref="stage_approval"/>
+            <field name="sequence">7</field>
+            <field name="description">Send cost center P&amp;L reports to department heads with variance commentary.</field>
+        </record>
+        <record id="mec_p4_08" model="project.task">
+            <field name="name">P4.08 Archive supporting schedules and workpapers</field>
+            <field name="project_id" ref="project_month_end_close"/>
+            <field name="parent_id" ref="mec_phase4"/>
+            <field name="stage_id" ref="stage_approval"/>
+            <field name="sequence">8</field>
+            <field name="description">Upload all reconciliations, supporting schedules, and workpapers to document management system.</field>
+        </record>
+        <record id="mec_p4_09" model="project.task">
+            <field name="name">P4.09 Update rolling forecast with actuals</field>
+            <field name="project_id" ref="project_month_end_close"/>
+            <field name="parent_id" ref="mec_phase4"/>
+            <field name="stage_id" ref="stage_approval"/>
+            <field name="sequence">9</field>
+            <field name="description">Replace forecast with actuals for closed month. Refresh remaining months' projections.</field>
+        </record>
+        <record id="mec_p4_10" model="project.task">
+            <field name="name">P4.10 Prepare consolidation reporting package</field>
+            <field name="project_id" ref="project_month_end_close"/>
+            <field name="parent_id" ref="mec_phase4"/>
+            <field name="stage_id" ref="stage_approval"/>
+            <field name="sequence">10</field>
+            <field name="description">Submit entity-level reporting package to group/parent company per consolidation timetable.</field>
+        </record>
+        <record id="mec_p4_11" model="project.task">
+            <field name="name">P4.11 Reconcile Odoo GL to consolidation tool</field>
+            <field name="project_id" ref="project_month_end_close"/>
+            <field name="parent_id" ref="mec_phase4"/>
+            <field name="stage_id" ref="stage_approval"/>
+            <field name="sequence">11</field>
+            <field name="description">Verify Odoo exported balances match consolidation system. Resolve mapping differences.</field>
+        </record>
+        <record id="mec_p4_12" model="project.task">
+            <field name="name">P4.12 File BIR 2550M (monthly VAT return)</field>
+            <field name="project_id" ref="project_month_end_close"/>
+            <field name="parent_id" ref="mec_phase4"/>
+            <field name="stage_id" ref="stage_approval"/>
+            <field name="sequence">12</field>
+            <field name="description">Prepare and file BIR Form 2550M. Ensure SLSP/SLTP attachments are complete and accurate.</field>
+        </record>
+        <record id="mec_p4_13" model="project.task">
+            <field name="name">P4.13 File BIR 1601-EQ/FQ (withholding tax)</field>
+            <field name="project_id" ref="project_month_end_close"/>
+            <field name="parent_id" ref="mec_phase4"/>
+            <field name="stage_id" ref="stage_approval"/>
+            <field name="sequence">13</field>
+            <field name="description">File quarterly expanded/final withholding tax returns with MAP attachments.</field>
+        </record>
+        <record id="mec_p4_14" model="project.task">
+            <field name="name">P4.14 Post close retrospective and process improvements</field>
+            <field name="project_id" ref="project_month_end_close"/>
+            <field name="parent_id" ref="mec_phase4"/>
+            <field name="stage_id" ref="stage_approval"/>
+            <field name="sequence">14</field>
+            <field name="description">Document lessons learned, bottlenecks, and improvement actions for next close cycle.</field>
+        </record>
+        <record id="mec_p4_15" model="project.task">
+            <field name="name">P4.15 Update close calendar for next period</field>
+            <field name="project_id" ref="project_month_end_close"/>
+            <field name="parent_id" ref="mec_phase4"/>
+            <field name="stage_id" ref="stage_approval"/>
+            <field name="sequence">15</field>
+            <field name="description">Set D+1 through D+5 dates for next month. Adjust for holidays and staffing.</field>
+        </record>
+        <record id="mec_p4_16" model="project.task">
+            <field name="name">P4.16 Confirm statutory filing deadlines met</field>
+            <field name="project_id" ref="project_month_end_close"/>
+            <field name="parent_id" ref="mec_phase4"/>
+            <field name="stage_id" ref="stage_approval"/>
+            <field name="sequence">16</field>
+            <field name="description">Verify all BIR, SEC, and regulatory filing deadlines for the period are met. Log confirmation.</field>
+        </record>
+        <record id="mec_p4_17" model="project.task">
+            <field name="name">P4.17 Submit BIR-ready filing package</field>
+            <field name="project_id" ref="project_month_end_close"/>
+            <field name="parent_id" ref="mec_phase4"/>
+            <field name="stage_id" ref="stage_approval"/>
+            <field name="sequence">17</field>
+            <field name="description">Compile final BIR filing package with all returns, attachments, and payment confirmations.</field>
+        </record>
+        <record id="mec_p4_18" model="project.task">
+            <field name="name">P4.18 Mark period close as complete</field>
+            <field name="project_id" ref="project_month_end_close"/>
+            <field name="parent_id" ref="mec_phase4"/>
+            <field name="stage_id" ref="stage_approval"/>
+            <field name="sequence">18</field>
+            <field name="description">Update PPM dashboard. Notify stakeholders that the month-end close cycle is complete.</field>
+        </record>
+
+    </data>
+</odoo>
