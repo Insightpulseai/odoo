@@ -1,0 +1,59 @@
+{
+  "name": "architecture_diagram_skill",
+  "version": "1.0.0",
+  "description": "Generate cloud architecture diagrams with real Azure/AWS/GCP/K8s/DigitalOcean icons using diagram-ai-generator + draw.io assets. Outputs .drawio files and PNG previews to docs/diagrams/architecture.",
+  "mcpServer": "diagram-ai-generator",
+  "tools": [
+    {
+      "name": "step1_list_providers",
+      "description": "List available diagram providers (azure, aws, gcp, k8s, digitalocean, generic)"
+    },
+    {
+      "name": "step2_get_categories",
+      "description": "Get service categories for a provider (e.g., compute, storage, networking)"
+    },
+    {
+      "name": "step3_get_nodes",
+      "description": "Get available node types/icons for a provider category"
+    },
+    {
+      "name": "create_diagram_from_json",
+      "description": "Create a diagram from JSON spec with components, connections, and clusters"
+    },
+    {
+      "name": "multicloud_helper",
+      "description": "Helper for creating multi-cloud diagrams with mixed providers"
+    }
+  ],
+  "defaultOutputDir": "docs/diagrams/architecture",
+  "manifestPath": "docs/diagrams/architecture/manifest.json",
+  "supportedProviders": [
+    "azure",
+    "aws",
+    "gcp",
+    "kubernetes",
+    "digitalocean",
+    "generic"
+  ],
+  "outputFormats": [
+    "drawio",
+    "png",
+    "svg"
+  ],
+  "metadata": {
+    "drawioIntegration": {
+      "githubMode": true,
+      "urlPattern": "https://app.diagrams.net/?mode=github#H{org}/{repo}/{branch}/{path}"
+    },
+    "iconLibraries": [
+      "https://github.com/jgraph/drawio-libs",
+      "https://www.drawio.com/blog/azure-diagrams"
+    ],
+    "references": [
+      "https://github.com/carlosmgv02/diagram-ai-generator",
+      "https://github.com/jgraph/drawio",
+      "https://medium.com/microsoftazure/draw-io-azure-infrastructure-diagrams-through-code-like-an-artist-0ebda592f791"
+    ]
+  },
+  "agentInstructions": "When the user asks for cloud or Kubernetes architecture diagrams:\n1. Discover provider + services (Azure, DO, K8s, etc.) using step1_list_providers and step2_get_categories.\n2. If topology data exists in infra_snapshots/, parse it to identify components.\n3. Build a JSON spec for create_diagram_from_json with proper provider, components, connections, and clusters.\n4. Save the resulting .drawio and image into docs/diagrams/architecture.\n5. Update the diagrams manifest and surface a link suitable for draw.io (GitHub RAW URL or local path).\n6. Return a summary of the architecture, the diagram path, and a ready-to-use draw.io URL."
+}

@@ -1,0 +1,10 @@
+=== Verification Tests ===
+
+TEST 1: Scan existing workflows (expect pass)
+
+TEST 2: Graceful skip in directory without automations/
+
+TEST 3: Detect hardcoded secret (expect fail)
+
+✅ All verification tests complete
+Evidence saved to: web/docs/evidence/20260220-0930+0800/n8n-secret-hygiene/logs

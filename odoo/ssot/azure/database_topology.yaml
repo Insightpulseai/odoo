@@ -1,0 +1,157 @@
+version: 1
+observed_at: "2026-03-18"
+authority:
+  intended_state_owner: "repo ssot"
+  evidence_owner: "azure portal"
+
+observed_topology:
+  postgres_servers:
+    - name: "ipai-odoo-dev-pg"
+      platform: "azure_database_for_postgresql_flexible_server"
+      resource_group: "rg-ipai-dev"
+      environment: "dev"
+      role: "primary_odoo_dev_database_surface"
+      evidence:
+        - "Azure Portal database view"
+        - "Azure resource export CSV"
+        - "VS Code PostgreSQL extension (live connection)"
+
+    - name: "pg-ipai-dev"
+      platform: "azure_database_for_postgresql_flexible_server"
+      resource_group: "rg-ipai-data-dev"
+      environment: "dev"
+      role: "additional_dev_postgresql_surface"
+      evidence:
+        - "Azure resource export CSV"
+
+operator_access:
+  vscode_postgresql_extension:
+    status: "connected"
+    observed_at: "2026-03-18"
+    server_label: "ipai-odoo-dev-pg.postgres.database.azure.com"
+    capabilities_confirmed:
+      - "database_enumeration"
+      - "role_enumeration"
+      - "authenticated_metadata_access"
+    visible_databases:
+      - "azure_maintenance"
+      - "azure_sys"
+      - "odoo"
+      - "odoo_staging"
+      - "postgres"
+      - "template0"
+      - "template1"
+    visible_roles_sample:
+      - "azure_pg_admin"
+      - "pg_checkpoint"
+      - "pg_database_owner"
+      - "pg_monitor"
+      - "pg_read_all_data"
+      - "pg_read_all_settings"
+      - "pg_read_all_stats"
+      - "pg_write_all_data"
+
+credential_boundary:
+  key_vault:
+    name: "ipai-odoo-dev-kv"
+    secret_names:
+      - "pg-admin-login"
+      - "pg-admin-password"
+      - "pg-server-fqdn"
+      - "pg-database-name"
+    status: "observed_in_operator_workflow"
+
+target_topology:
+  local:
+    server: "local-postgres"
+    databases:
+      - "odoo_dev"
+      - "odoo_dev_demo"
+  azure_dev:
+    canonical_postgres_server: "ipai-odoo-dev-pg"
+    canonical_databases:
+      - "odoo_dev"
+  azure_staging:
+    canonical_postgres_server: "ipai-odoo-staging-pg"
+    canonical_databases:
+      - "odoo_staging"
+  azure_production:
+    canonical_postgres_server: "ipai-odoo-prod-pg"
+    canonical_databases:
+      - "odoo"
+
+drift:
+  - code: "DB-SURFACE-001"
+    severity: "high"
+    summary: "Multiple dev PostgreSQL Flexible Servers exist without documented canonical ownership split"
+    observed:
+      - "ipai-odoo-dev-pg in rg-ipai-dev"
+      - "pg-ipai-dev in rg-ipai-data-dev"
+    target:
+      - "ipai-odoo-dev-pg is canonical for Odoo dev runtime"
+      - "Any non-Odoo PostgreSQL surface must have explicit SSOT ownership and purpose"
+
+  - code: "DB-NAME-001"
+    severity: "medium"
+    summary: "Dev server hosts canonical prod database name"
+    observed: "ipai-odoo-dev-pg -> odoo"
+    target: "ipai-odoo-dev-pg -> odoo_dev"
+
+  - code: "DB-ENV-001"
+    severity: "high"
+    summary: "Staging database is co-located on dev server"
+    observed: "ipai-odoo-dev-pg -> odoo_staging"
+    target: "ipai-odoo-staging-pg -> odoo_staging"
+
+  - code: "DB-NET-001"
+    severity: "high"
+    summary: "Public network access remains enabled"
+    observed: "public_network_access=true"
+    target: "public_network_access=false for production posture"
+
+automation_findings:
+  - code: "DB-AUTO-001"
+    severity: "medium"
+    summary: "Azure CLI SQL execution path exists but was invoked without required admin password"
+    observed: "az postgres flexible-server execute returned missing --admin-password/-p"
+    target: "non-interactive execution path documented and wired"
+
+  - code: "DB-OPS-001"
+    severity: "low"
+    summary: "Local VS Code shell environment resolution is degraded"
+    observed: "VS Code warning: unable to resolve shell environment in a reasonable time"
+    target: "stable shell integration for repeatable local operator workflows"
+
+status:
+  platform_choice: "correct"
+  live_operator_connectivity: "confirmed"
+  secret_boundary: "confirmed"
+  automation_path: "partially_wired"
+  environment_isolation: "incomplete"
+  production_hardening: "not_complete"
+  evidence_class: "dev_database_topology"
+
+incidents:
+  - code: "DB-SECRET-DRIFT-001"
+    date: "2026-03-18"
+    summary: "Odoo runtime used stale plain ACA db-password secret after PostgreSQL password change"
+    impact:
+      - "login route served database-manager-disabled surface instead of real login page"
+      - "asset regeneration/bundling path degraded"
+      - "login button invisible to users"
+    root_cause: "db-password was a plain ACA secret, not a Key Vault reference — went stale after password rotation"
+    remediation:
+      - "updated ACA db-password to current value"
+      - "restarted runtime revision"
+      - "cleared stale /web/assets ir_attachment rows (9 rows, 11 MB)"
+      - "verified regenerated compressed bundles serve HTTP 200"
+    prevention:
+      - "replaced plain ACA secret with Key Vault reference on all 3 Odoo apps (web, worker, cron)"
+      - "granted Key Vault Secrets User role to all 3 app managed identities"
+      - "added daily CI asset health check (scripts/ci/check_prod_assets.sh)"
+      - "added secret-source drift check (scripts/ci/check_secret_drift.sh)"
+
+notes:
+  - "This SSOT entry records observed current state, not final target-state approval."
+  - "Do not rename or move live databases until application config, backups, restore tests, and cutover sequencing are defined."
+  - "Do not collapse or delete either server until workload ownership, database contents, and cutover plan are documented."

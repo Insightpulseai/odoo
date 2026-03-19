@@ -1,0 +1,130 @@
+# schema: ssot.integrations.v1
+# n8n automation runner integration register.
+# Declares components, SSOT boundary rules, and risk flags for the
+# n8n self-hosted automation fabric at automations/n8n/.
+#
+# Integration model: n8n is EXECUTION FABRIC, not SSOT.
+#   - Workflows are event-triggered task executors
+#   - n8n NEVER writes to Odoo (SoR) or work.* (SoW) directly
+#   - All durable state flows through ops.runs + ops.run_events
+#   - Workflow JSON files are the SSOT for automation logic (workflow-as-code)
+#
+# Boundary doctrine: docs/architecture/SSOT_BOUNDARIES.md
+# Contract doc:      docs/architecture/N8N_AUTOMATION_CONTRACT.md
+
+version: "1.0.0"
+schema: ssot.integrations.v1
+name: n8n_automation
+display_name: "n8n Automation Runner"
+status: active              # planned | porting | active | deprecated
+last_reviewed: "2026-03-01"
+
+provider:
+  platform: n8n
+  runtime: self-hosted-docker    # docker compose on odoo-production droplet
+  host: n8n.insightpulseai.com
+  deployment: deploy/odoo-prod.compose.yml
+
+components:
+  workflow_files:
+    description: "Workflow-as-code JSON files in automations/n8n/workflows/. CI validates no secrets and correct credential reference patterns."
+    path: "automations/n8n/workflows/"
+    canonical_workflows:
+      - "01-health-check.json"
+      - "02-git-operations-hub.json"
+      - "03-finance-close-orchestrator.json"
+      - "04-bir-compliance.json"
+      - "05-github-oauth-callback.json"
+    sub_dirs:
+      - "automations/n8n/workflows/control-plane/"
+      - "automations/n8n/workflows/integration/"
+      - "automations/n8n/workflows/claude-ai-mcp/"
+
+  credential_registry:
+    description: "Declarative map of required n8n credential names. Credentials are created in n8n UI; this file is the SSOT for which credentials must exist."
+    path: "automations/n8n/CREDENTIALS.md"
+    key_credentials:
+      - "Odoo API"
+      - "Supabase IPAI"
+      - "GitHub OAuth2"
+      - "Anthropic (Claude)"
+
+  supabase_bridge:
+    description: "n8n HTTP node pattern for writing ops.runs rows via Supabase REST API (auth: service role key via $credentials)"
+    path: "automations/n8n/docs/SUPABASE_BRIDGE_PATTERN.md"
+    table: "ops.runs"
+    idempotency_key_format: "n8n:workflow:{workflow_id}:{execution_id}"
+
+  ops_runs_writer:
+    description: "Required node in any durable-state workflow: Supabase HTTP POST to ops.runs for audit trail"
+    required_for:
+      - "Any workflow that mutates external state (Odoo, GitHub, BIR)"
+      - "Any workflow triggered from Slack (response_url forwarding)"
+    optional_for:
+      - "Health checks and monitoring workflows"
+      - "Read-only reporting workflows"
+
+  nodes_library:
+    description: "Custom n8n nodes and utilities for InsightPulse AI"
+    path: "automations/n8n/nodes/"
+
+  templates:
+    description: "Reusable workflow sub-graph templates"
+    path: "automations/n8n/templates/"
+
+boundary_rules:
+  - rule: "Workflow JSON MUST NOT contain literal secret values"
+    rationale: "Secret scanning; secrets belong in Supabase Vault or n8n credential store"
+    ci_check: "check_n8n_workflows_ssot.py §2"
+
+  - rule: "n8n MUST NOT write directly to Odoo PostgreSQL via the Postgres node"
+    rationale: "SoR write isolation; all Odoo mutations must go through Odoo XML-RPC/JSON-RPC API"
+    ci_check: "check_n8n_workflows_ssot.py §3"
+    allowed: "Odoo HTTP API node using 'Odoo API' credential"
+    prohibited: "Postgres node pointing to Odoo host (178.128.112.214:5432) directly"
+
+  - rule: "n8n MUST NOT write directly to work.* or ops.* Supabase tables via ad-hoc SQL"
+    rationale: "SoW boundary; use the Supabase node (REST API) not raw Postgres node for Supabase"
+    exception: "Supabase Postgres node is permitted for read-only analytics queries on non-ops schemas"
+
+  - rule: "Any workflow mutating external durable state MUST emit an ops.run row"
+    rationale: "Single audit trail, replay capability, dedup via idempotency_key UNIQUE constraint"
+    idempotency_key_format: "n8n:workflow:{workflow_id}:{execution_id}"
+
+  - rule: "Workflow files MUST NOT contain connection strings or IP addresses for production databases"
+    rationale: "Prevents direct DB access; forces API-layer usage"
+
+  - rule: "Credential values MUST use n8n credential references ($credentials.*) or env vars ($env.*)"
+    rationale: "ssot-platform.md Rule 6; n8n rules §6"
+
+risk_flags:
+  - flag: "n8n credential store is not in Supabase Vault"
+    severity: medium
+    mitigation: >
+      n8n credentials are stored in the n8n database (self-hosted).
+      n8n DB is backed up with the odoo-production droplet.
+      Critical credentials are also mirrored to Supabase Vault for
+      use by Edge Functions. CREDENTIALS.md is the declarative index.
+
+  - flag: "Workflow import can bypass CI validation"
+    severity: low
+    mitigation: >
+      n8n UI allows importing workflow JSON directly.
+      Any imported workflow must also be committed to automations/n8n/workflows/
+      via the workflow-as-code pattern before being considered SSOT.
+      CI fails if imported workflow contradicts on-disk JSON.
+
+  - flag: "n8n execution logs may contain PII in BIR workflows"
+    severity: medium
+    mitigation: >
+      n8n execution data is stored in the local database.
+      BIR and finance workflows use the 'Execute Command' node for local files
+      only — no PII in workflow JSON. Execution logs have 30-day retention.
+
+  - flag: "webhook URL enumeration if n8n is publicly accessible"
+    severity: low
+    mitigation: >
+      n8n.insightpulseai.com is behind Cloudflare proxy.
+      All webhook paths use random UUIDs (n8n default).
+      Webhook secret (n8n_webhook_secret) is required for any
+      production webhook node via the Header Auth credential.

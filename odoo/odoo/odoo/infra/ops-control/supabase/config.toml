@@ -1,0 +1,38 @@
+# Supabase Configuration for Ops Control Room
+# This file is used by the Supabase CLI and Figma Make deployment
+
+[api]
+enabled = true
+port = 54321
+schemas = ["public", "graphql_public", "ops"]
+extra_search_path = ["public", "extensions", "ops"]
+max_rows = 1000
+
+[db]
+port = 54322
+shadow_port = 54320
+major_version = 15
+
+[studio]
+enabled = true
+port = 54323
+api_url = "http://127.0.0.1"
+
+[functions]
+verify_jwt = false
+import_map = ""
+
+[auth]
+enabled = true
+site_url = "http://localhost:3000"
+additional_redirect_urls = ["https://localhost:3000"]
+jwt_expiry = 3600
+enable_signup = true
+
+[realtime]
+enabled = true
+ip_version = "ipv4"
+
+# Edge Function configuration
+[[functions.ops-executor]]
+verify_jwt = false

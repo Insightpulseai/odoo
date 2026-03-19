@@ -259,7 +259,7 @@ resource afdOrigins 'Microsoft.Cdn/profiles/originGroups/origins@2023-05-01' = [
       httpsPort: entry.origin.httpsPort
       priority: entry.origin.priority
       weight: entry.origin.weight
-      originHostHeader: entry.origin.hostName
+      originHostHeader: entry.origin.?originHostHeader ?? entry.origin.hostName
       enabledState: 'Enabled'
       enforceCertificateNameCheck: true
     }

@@ -1,0 +1,75 @@
+version: 1
+type: implementation_skill
+family: odoo_developer_implementation
+skill:
+  name: odoo-data-migration-script
+  status: active
+  owner: agents
+  build_order: 10
+  lane: data
+  purpose: >
+    Write data migration scripts for seeding, transforming, backfilling,
+    or migrating data during module upgrades. Handles both pre-migration
+    (schema changes before ORM loads) and post-migration (data transforms
+    after ORM is available) phases.
+
+  triggers:
+    - module version bump requires data transformation
+    - new required field added to existing model
+    - data backfill needed for existing records
+    - schema change requires pre-migration SQL
+    - module renaming or model refactoring
+
+  inputs:
+    - module_name
+    - migration_type (pre or post)
+    - from_version
+    - to_version
+    - changes_description (what schema/data changes are needed)
+
+  steps:
+    - create migrations/ directory in module
+    - create version directory (e.g. migrations/19.0.1.1.0/)
+    - create pre-migrate.py for schema changes that must happen before ORM loads
+    - create post-migrate.py for data transforms after ORM is available
+    - define migrate(cr, version) function as entry point
+    - use cr.execute() for raw SQL in pre-migration (ORM not available)
+    - use env['model'] for ORM operations in post-migration
+    - handle idempotency (IF NOT EXISTS, WHERE NOT EXISTS)
+    - test on disposable DB with existing data
+    - verify forward migration and fresh install both work
+
+  outputs:
+    - migration_script_paths
+    - migration_type (pre/post)
+    - version_numbers
+    - test_results (forward migration + fresh install)
+    - evidence
+
+  guardrails:
+    - never use cr.commit() — framework handles transactions
+    - pre-migration: use raw SQL only (ORM not loaded yet)
+    - post-migration: prefer ORM over raw SQL when possible
+    - migrations must be idempotent (safe to re-run)
+    - always test on disposable DB with existing data
+    - never test migrations on prod/dev/staging databases
+    - migration scripts must handle both upgrade and fresh install paths
+    - version in migration directory must match __manifest__.py version
+    - prefer inherited extension over core patching
+    - do not call cr.commit() unless explicitly justified
+
+  evidence:
+    required: true
+    format: "docs/evidence/{stamp}/odoo-dev/odoo-data-migration-script/"
+
+  evals:
+    dimensions: [accuracy, completeness, safety, policy_adherence, evidence_quality]
+    thresholds:
+      accuracy: 0.95
+      safety: 0.99
+      policy_adherence: 0.95
+
+cross_references:
+  - agents/knowledge/benchmarks/odoo-developer-howtos.md
+  - agents/knowledge/benchmarks/odoo-coding-guidelines.md
+  - .claude/rules/odoo19-coding.md

@@ -1,0 +1,55 @@
+version: 1
+name: sap-benchmark-framing
+status: draft
+owner: agents
+type: benchmark_skill
+
+purpose: >
+  Identify and classify SAP on Azure patterns as benchmarks vs mandatory
+  integrations. Ensure benchmark extraction never introduces forced SAP
+  dependencies into the platform.
+
+triggers:
+  - architecture review references SAP patterns
+  - user asks whether SAP is a dependency or benchmark
+  - new benchmark source needs classification
+
+inputs:
+  - source material (Microsoft Learn module, doc, or reference)
+  - current platform target state
+
+dependencies:
+  - agents/knowledge/benchmarks/sap-on-microsoft-cloud-learning-path.md
+  - docs/architecture/reference-benchmarks.md
+
+steps:
+  - read source material
+  - extract architectural patterns
+  - classify each as benchmark (reference) or integration (dependency)
+  - validate classification against platform constitution
+  - produce framing summary with evidence
+
+outputs:
+  - benchmark_extracted
+  - relevance_to_current_platform
+  - recommended_translation
+  - risks
+  - out_of_scope
+  - evidence
+
+guardrails:
+  - never classify SAP products as mandatory unless explicit contract exists
+  - never recommend SAP procurement
+  - always translate to actual target stack (Odoo on Azure)
+  - cite specific source material
+
+evidence:
+  - cited Microsoft Learn source
+  - classification rationale per pattern
+  - platform translation note
+
+evals:
+  - benchmark correctly identified (not treated as integration)
+  - no forced SAP dependency introduced
+  - translation maps to current platform
+  - guardrails respected

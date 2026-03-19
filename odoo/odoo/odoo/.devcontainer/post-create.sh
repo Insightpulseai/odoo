@@ -29,7 +29,8 @@ echo 'git() { for arg in "$@"; do [[ "$arg" == "--no-verify" || "$arg" == "-n" ]
 # ---------------------------------------------------------------------------
 # Persist shell history across rebuilds
 # ---------------------------------------------------------------------------
-mkdir -p ~/.commandhistory
+sudo mkdir -p ~/.commandhistory
+sudo chown -R vscode:vscode ~/.commandhistory
 touch ~/.commandhistory/.zsh_history
 echo 'export HISTFILE=~/.commandhistory/.zsh_history' >> ~/.zshrc
 echo 'export HISTSIZE=10000' >> ~/.zshrc

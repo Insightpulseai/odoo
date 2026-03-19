@@ -1,0 +1,72 @@
+version: 1
+status: active
+updated_at: "2026-03-17"
+source: agents/knowledge/benchmarks/azure-databricks-architecture-cards.md
+
+description: >
+  Maps Azure Databricks architecture cards to skills, priorities,
+  and cross-references with existing databricks skills.
+
+cards:
+  mlops_orchestration:
+    source_card: "Use Azure Databricks to Orchestrate MLOps"
+    priority: primary
+    skill: agents/skills/databricks-mlops-architecture/
+    classification: capability_uplift
+    family: databricks-architecture
+    influences:
+      - training orchestration
+      - staging/production promotion
+      - batch scoring and serving
+      - model lifecycle handoff
+      - Git integration
+      - Jobs/Workflows patterns
+    cross_references:
+      - agents/skills/databricks-model-serving-production-readiness/
+      - agents/skills/databricks-pipeline-production-readiness/
+      - agent-platform/ssot/learning/databricks_production_ready_skill_map.yaml
+
+  many_models_governance:
+    source_card: "Use the many-models architecture approach"
+    priority: primary
+    skill: agents/skills/many-models-governance/
+    classification: capability_uplift
+    family: databricks-architecture
+    influences:
+      - model-per-domain patterns
+      - model-per-tenant patterns
+      - model inventory and cost control
+      - specialized model routing
+      - retirement criteria
+    cross_references:
+      - agents/skills/databricks-model-serving-production-readiness/
+      - agents/skills/databricks-agent-production-readiness/
+      - agent-platform/ssot/learning/databricks_production_ready_skill_map.yaml
+
+  forecasting_solution:
+    source_card: "Use AI to Forecast Customer Orders"
+    priority: conditional
+    skill: agents/skills/forecasting-solution-design/
+    classification: capability_uplift
+    family: databricks-architecture
+    guardrail: scenario archetype — not control-plane relevant
+    influences:
+      - demand forecasting patterns
+      - time-series feature engineering
+      - analytics-prediction-action loop
+    cross_references:
+      - ssot/capabilities/domain_packs.yaml
+
+  iot_analytics:
+    source_card: "IoT analytics with Azure Data Explorer and Azure IoT Hub"
+    priority: defer
+    skill: agents/skills/iot-analytics-fit-assessment/
+    classification: encoded_preference
+    family: databricks-architecture
+    guardrail: optional adjacent benchmark — not primary
+    type: judge
+    returns: [IN_SCOPE, OUT_OF_SCOPE, CONDITIONAL]
+    influences:
+      - streaming telemetry assessment
+      - scope expansion prevention
+    cross_references: []

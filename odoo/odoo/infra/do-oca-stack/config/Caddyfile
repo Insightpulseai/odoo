@@ -1,0 +1,119 @@
+# Caddyfile for Odoo CE + OCA Stack
+# Auto-TLS via Let's Encrypt (production) or self-signed (localhost)
+
+{
+	# Global options
+	email {$ACME_EMAIL:admin@example.com}
+
+	# Staging mode for testing (uncomment to avoid rate limits)
+	# acme_ca https://acme-staging-v02.api.letsencrypt.org/directory
+}
+
+# Health check endpoint (always available)
+:80 {
+	respond /health 200
+
+	# Redirect all other HTTP to HTTPS
+	redir https://{host}{uri} permanent
+}
+
+# Main site with HTTPS
+{$DOMAIN:localhost} {
+	# Logging
+	log {
+		output file /var/log/caddy/access.log {
+			roll_size 50mb
+			roll_keep 5
+		}
+		format json
+	}
+
+	# Security headers
+	header {
+		# HSTS (enable after confirming TLS works)
+		# Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
+
+		# Prevent clickjacking
+		X-Frame-Options "SAMEORIGIN"
+
+		# XSS protection
+		X-Content-Type-Options "nosniff"
+		X-XSS-Protection "1; mode=block"
+
+		# Referrer policy
+		Referrer-Policy "strict-origin-when-cross-origin"
+
+		# Remove server header
+		-Server
+	}
+
+	# Health check (for load balancer / monitoring)
+	handle /caddy-health {
+		respond "OK" 200
+	}
+
+	# Odoo longpolling (websocket for live chat, notifications)
+	handle /longpolling/* {
+		reverse_proxy {$ODOO_BACKEND:odoo:8069} {
+			transport http {
+				read_timeout 300s
+				write_timeout 300s
+			}
+			header_up X-Forwarded-Proto {scheme}
+			header_up X-Real-IP {remote_host}
+		}
+	}
+
+	# Odoo web client
+	handle /web/* {
+		reverse_proxy {$ODOO_BACKEND:odoo:8069} {
+			header_up X-Forwarded-Proto {scheme}
+			header_up X-Real-IP {remote_host}
+		}
+	}
+
+	# Odoo static assets (aggressive caching)
+	handle /web/static/* {
+		reverse_proxy {$ODOO_BACKEND:odoo:8069} {
+			header_up X-Forwarded-Proto {scheme}
+		}
+		header Cache-Control "public, max-age=31536000, immutable"
+	}
+
+	# Odoo image/attachment proxy
+	handle /web/image/* {
+		reverse_proxy {$ODOO_BACKEND:odoo:8069} {
+			header_up X-Forwarded-Proto {scheme}
+		}
+		header Cache-Control "public, max-age=86400"
+	}
+
+	# API endpoints (XML-RPC, JSON-RPC)
+	handle /xmlrpc/* {
+		reverse_proxy {$ODOO_BACKEND:odoo:8069} {
+			header_up X-Forwarded-Proto {scheme}
+			header_up X-Real-IP {remote_host}
+		}
+	}
+
+	handle /jsonrpc/* {
+		reverse_proxy {$ODOO_BACKEND:odoo:8069} {
+			header_up X-Forwarded-Proto {scheme}
+			header_up X-Real-IP {remote_host}
+		}
+	}
+
+	# Default: proxy everything else to Odoo
+	handle {
+		reverse_proxy {$ODOO_BACKEND:odoo:8069} {
+			header_up X-Forwarded-Proto {scheme}
+			header_up X-Real-IP {remote_host}
+
+			# Timeouts for slow pages (reports, large exports)
+			transport http {
+				read_timeout 180s
+				write_timeout 180s
+			}
+		}
+	}
+}

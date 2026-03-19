@@ -1,0 +1,112 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Finance PPM Seed Data Schema",
+  "description": "Schema for TBWA SMP Month-End Closing & Tax Filing 2025-2026 WBS",
+  "type": "object",
+  "properties": {
+    "project": {
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "example": "project_finance_ppm_2025_2026" },
+        "name": { "type": "string", "example": "TBWA SMP – Month-End Closing & Tax Filing 2025–2026" },
+        "privacy_visibility": { "type": "string", "enum": ["followers", "portal", "employees"] }
+      },
+      "required": ["id", "name"]
+    },
+    "phases": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "pattern": "^task_phase_" },
+          "name": { "type": "string" },
+          "project_id": { "type": "string", "example": "project_finance_ppm_2025_2026" },
+          "date_deadline": { "type": "string", "format": "date" },
+          "sequence": { "type": "integer", "minimum": 1 },
+          "is_phase": { "type": "boolean", "const": true }
+        },
+        "required": ["id", "name", "project_id", "date_deadline", "sequence", "is_phase"]
+      },
+      "minItems": 1
+    },
+    "tasks": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "name": { "type": "string" },
+          "project_id": { "type": "string" },
+          "parent_id": { "type": "string", "description": "Reference to phase task ID" },
+          "date_deadline": { "type": "string", "format": "date" },
+          "sequence": { "type": "integer", "minimum": 1 }
+        },
+        "required": ["id", "name", "project_id", "date_deadline", "sequence"]
+      }
+    }
+  },
+  "required": ["project", "phases", "tasks"],
+
+  "examples": [
+    {
+      "project": {
+        "id": "project_finance_ppm_2025_2026",
+        "name": "TBWA SMP – Month-End Closing & Tax Filing 2025–2026",
+        "privacy_visibility": "followers"
+      },
+      "phases": [
+        {
+          "id": "task_phase_nov_2025_closing",
+          "name": "Phase: November 2025 Closing",
+          "project_id": "project_finance_ppm_2025_2026",
+          "date_deadline": "2025-12-05",
+          "sequence": 10,
+          "is_phase": true
+        }
+      ],
+      "tasks": [
+        {
+          "id": "task_nov25_gl_recon",
+          "name": "Nov 2025 – GL & Sub-ledger Reconciliation",
+          "project_id": "project_finance_ppm_2025_2026",
+          "parent_id": "task_phase_nov_2025_closing",
+          "date_deadline": "2025-11-30",
+          "sequence": 11
+        }
+      ]
+    }
+  ],
+
+  "definitions": {
+    "phase_structure": {
+      "description": "Standard phase hierarchy for month-end closing workflows",
+      "type": "object",
+      "properties": {
+        "phase_name": { "type": "string" },
+        "typical_duration_days": { "type": "integer" },
+        "typical_tasks": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      }
+    }
+  },
+
+  "metadata": {
+    "odoo_version": "18.0",
+    "module": "omc_finance_ppm",
+    "total_phases": 4,
+    "total_tasks": 29,
+    "date_range": {
+      "start": "2025-11-01",
+      "end": "2027-01-15"
+    },
+    "removed_enterprise_fields": [
+      "allow_timesheets",
+      "planned_hours"
+    ],
+    "converted_field_names": {
+      "x_is_phase": "is_phase"
+    }
+  }
+}

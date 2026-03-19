@@ -18,9 +18,6 @@ We need Odoo.sh-like developer and operator ergonomics on Azure, while preservin
 - Reproducing Odoo.sh UI exactly (no drag-and-drop branch management)
 - Recreating shared-hosting internals (worker recycling, platform API)
 - Supporting arbitrary long-lived auxiliary daemons inside the main Odoo web container
-- Requiring integrated-services maturity across every interface in the first release
-- Leaving provisioning at coordinated/ticket-driven maturity for core workflows
-- Naming Viva Goals or any specific retired OKR tool as a future operating surface
 
 ## Functional Requirements
 
@@ -59,45 +56,6 @@ Addon sources must support multi-folder OCA/custom layout and optionally submodu
 
 ### FR-12: Secret management
 Secrets must come from Key Vault-backed variable groups or managed identity-backed runtime resolution. Never hardcoded in YAML or committed to git.
-
-### FR-41: Interface maturity target
-The platform must provide standardized interfaces for development-environment setup and application diagnosis, with self-service introduced first for the highest-frequency workflows.
-
-### FR-42: Discoverability
-Users must be able to identify available capabilities and request what they need through consistent affordances rather than person-to-person tribal knowledge.
-
-### FR-43: Diagnostic affordances
-The platform must provide a standard path for observing deployed resources and diagnostic data; later, observability should be increasingly integrated into normal engineering tools and workflows.
-
-### FR-44: Paved provisioning
-Provisioning must use IaC templates and formalized organization-wide provisioning processes for core platform capabilities.
-
-### FR-45: Automated provisioning workflow
-Core environment/resource provisioning must be automated and integrated into CI/CD with embedded governance and compliance checks.
-
-### FR-46: Controlled self-service creation
-Authorized users must be able to provision standardized, preconfigured dedicated or shared environments independently within platform-defined guardrails.
-
-### FR-47: Allocation visibility
-The platform must expose centralized metrics and dashboards for resource allocation and utilization across services.
-
-### FR-48: Allocation automation roadmap
-The roadmap must include automated scaling based on usage patterns and later predictive allocation, but those are not required for TVP acceptance.
-
-### FR-49: Source classification
-The platform documentation must distinguish normative doctrine from implementation exemplars and explicitly mark unrelated naming-collision repos as out of scope.
-
-### FR-50: MCP/provider pattern
-The platform must support an MCP/provider-style extension model for AI capabilities, informed by Microsoft Foundry examples such as mcp-foundry.
-
-### FR-51: Local AI development option
-The platform may offer a local/offline developer path for AI-assisted workflows using OpenAI-compatible local endpoints, informed by Foundry Local.
-
-### FR-52: Production AI reference path
-Any production-grade AI extension path must align to hardened reference architecture patterns (network isolation, controlled dependencies, security controls) as shown by the Azure AI Foundry baseline reference implementation.
-
-### FR-53: Bootstrap templates are non-production by default
-Starter/bootstrap templates may accelerate onboarding, but they must be marked as non-production baselines unless hardened.
 
 ## Non-Functional Requirements
 

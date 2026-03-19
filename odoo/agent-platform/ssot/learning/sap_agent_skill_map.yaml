@@ -1,0 +1,85 @@
+# =============================================================================
+# SAP Agent Skill Map — Learning Path to Skill Family Mapping
+# =============================================================================
+# Maps Microsoft Learn "Run SAP on the Microsoft Cloud" modules to
+# bounded agent skills for benchmark extraction and translation.
+#
+# Reference: agents/knowledge/benchmarks/sap-on-microsoft-cloud-learning-path.md
+# =============================================================================
+
+version: 1
+schema: sap-agent-skill-map
+updated_at: "2026-03-17"
+
+learning_path:
+  id: run_sap_on_microsoft_cloud
+  source: "https://learn.microsoft.com/en-us/training/paths/run-sap-microsoft-cloud/"
+  source_type: benchmark_curriculum
+  treatment: "Reference curriculum for benchmark extraction, not mandatory implementation"
+
+skills:
+  - id: sap-benchmark-framing
+    source_module: microsoft_and_sap_partnership
+    role: benchmark_interpreter
+    purpose: "Identify benchmark patterns vs mandatory integrations"
+    build_priority: 1
+    status: draft
+
+  - id: sap-btp-azure-integration
+    source_module: introduction_to_sap_on_microsoft_cloud
+    role: integration_pattern_extractor
+    purpose: "Extract identity provider, SSO, and BTP-on-Azure integration patterns"
+    build_priority: 5
+    status: draft
+
+  - id: sap-rise-workflow-optimization
+    source_module: innovate_using_rise_with_sap_on_the_microsoft_cloud
+    role: workflow_pattern_extractor
+    purpose: "Extract workflow, collaboration, and Copilot/Teams process patterns"
+    build_priority: 6
+    status: draft
+
+  - id: sap-analytics-ai-patterns
+    source_module: insights_for_sap_using_unified_analytics_and_ai_platform
+    role: analytics_ai_benchmark
+    purpose: "Extract analytics, AI, and Copilot Studio benchmark patterns"
+    build_priority: 4
+    status: draft
+
+  - id: sap-rise-networking
+    source_module: explore_azure_networking_for_sap_rise
+    role: network_pattern_extractor
+    purpose: "Extract peering, VPN, connectivity, and ingress boundary patterns"
+    build_priority: 3
+    status: draft
+
+  - id: sap-security-operations
+    source_module: secure_sap_on_microsoft_cloud
+    role: security_benchmark
+    purpose: "Extract Entra identity, Security Copilot, Sentinel, and monitoring patterns"
+    build_priority: 2
+    status: draft
+
+build_order:
+  rationale: "Matches current platform needs: doctrine → security → networking → analytics → integration → workflow"
+  sequence:
+    - sap-benchmark-framing
+    - sap-security-operations
+    - sap-rise-networking
+    - sap-analytics-ai-patterns
+    - sap-btp-azure-integration
+    - sap-rise-workflow-optimization
+
+output_shape:
+  required_fields:
+    - benchmark_extracted
+    - relevance_to_current_platform
+    - recommended_translation
+    - risks
+    - out_of_scope
+    - evidence
+
+skill_types:
+  benchmark_skill: "Reads Microsoft/SAP patterns and extracts applicable doctrine"
+  implementation_skill: "Applies extracted patterns to Odoo on Azure / Foundry / actual stack"
+  note: "Keep benchmark and implementation skills separate to prevent vendor lock-in"

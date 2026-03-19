@@ -1,0 +1,12 @@
+ccb6bd2dc753d5e1dce73a67f36a33cf
+// Optional: configure or set up a testing framework before each test.
+// If you delete this file, remove `setupFilesAfterEnv` from `jest.config.js`
+// Used for __tests__/testing-library.js
+// Learn more: https://github.com/testing-library/jest-dom
+"use strict";
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+require("@testing-library/jest-dom");
+
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIi9Vc2Vycy90YndhL0RvY3VtZW50cy9HaXRIdWIvSW5zaWdodHB1bHNlYWkvb2Rvby90ZW1wbGF0ZXMvb2Rvb29wcy1jb25zb2xlL2plc3Quc2V0dXAuanMiXSwic291cmNlc0NvbnRlbnQiOlsiLy8gT3B0aW9uYWw6IGNvbmZpZ3VyZSBvciBzZXQgdXAgYSB0ZXN0aW5nIGZyYW1ld29yayBiZWZvcmUgZWFjaCB0ZXN0LlxuLy8gSWYgeW91IGRlbGV0ZSB0aGlzIGZpbGUsIHJlbW92ZSBgc2V0dXBGaWxlc0FmdGVyRW52YCBmcm9tIGBqZXN0LmNvbmZpZy5qc2BcblxuLy8gVXNlZCBmb3IgX190ZXN0c19fL3Rlc3RpbmctbGlicmFyeS5qc1xuLy8gTGVhcm4gbW9yZTogaHR0cHM6Ly9naXRodWIuY29tL3Rlc3RpbmctbGlicmFyeS9qZXN0LWRvbVxuaW1wb3J0IFwiQHRlc3RpbmctbGlicmFyeS9qZXN0LWRvbVwiO1xuIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiJBQUFBLHNFQUFzRTtBQUN0RSw2RUFBNkU7QUFFN0Usd0NBQXdDO0FBQ3hDLDBEQUEwRDs7Ozs7UUFDbkQifQ==

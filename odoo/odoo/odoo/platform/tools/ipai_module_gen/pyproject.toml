@@ -1,0 +1,18 @@
+[project]
+name = "ipai-module-gen"
+version = "0.1.0"
+description = "Deterministic Odoo module generator from capability map"
+requires-python = ">=3.10"
+dependencies = [
+    "pyyaml>=6.0.1",
+    "jinja2>=3.1.3",
+    "lxml>=5.2.2",
+]
+
+[project.scripts]
+ipai-gen = "ipai_module_gen.generate:main"
+ipai-validate = "ipai_module_gen.validate:main"
+
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"

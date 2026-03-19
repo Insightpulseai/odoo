@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <record id="view_ipai_agent_policy_tree" model="ir.ui.view">
+        <field name="name">ipai.agent.policy.tree</field>
+        <field name="model">ipai.agent.policy</field>
+        <field name="arch" type="xml">
+            <list string="Agent Policies">
+                <field name="name"/>
+                <field name="target_model"/>
+                <field name="company_id" groups="base.group_multi_company"/>
+                <field name="require_approval"/>
+                <field name="max_queue_depth"/>
+                <field name="active" optional="show"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_ipai_agent_policy_form" model="ir.ui.view">
+        <field name="name">ipai.agent.policy.form</field>
+        <field name="model">ipai.agent.policy</field>
+        <field name="arch" type="xml">
+            <form string="Agent Policy">
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="name"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="target_model"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                            <field name="active" widget="boolean_toggle"/>
+                        </group>
+                        <group>
+                            <field name="require_approval"/>
+                            <field name="max_queue_depth"/>
+                        </group>
+                    </group>
+                    <group string="Allowed Tools">
+                        <field name="allowed_tool_ids" widget="many2many_tags" nolabel="1"/>
+                    </group>
+                    <field name="notes" placeholder="Governance notes…"/>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_ipai_agent_policy" model="ir.actions.act_window">
+        <field name="name">Policies</field>
+        <field name="res_model">ipai.agent.policy</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+</odoo>

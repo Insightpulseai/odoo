@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Default configuration parameters -->
+    <record id="config_ask_ai_enabled" model="ir.config_parameter">
+        <field name="key">ask_ai.enabled</field>
+        <field name="value">True</field>
+    </record>
+
+    <record id="config_ask_ai_streaming" model="ir.config_parameter">
+        <field name="key">ask_ai.streaming</field>
+        <field name="value">True</field>
+    </record>
+
+    <record id="config_ask_ai_auto_context" model="ir.config_parameter">
+        <field name="key">ask_ai.auto_context</field>
+        <field name="value">True</field>
+    </record>
+
+    <record id="config_ask_ai_require_confirmation" model="ir.config_parameter">
+        <field name="key">ask_ai.require_confirmation</field>
+        <field name="value">True</field>
+    </record>
+
+    <record id="config_ask_ai_blocked_models" model="ir.config_parameter">
+        <field name="key">ask_ai.blocked_models</field>
+        <field name="value">ir.model,ir.model.fields,ir.rule,ir.config_parameter,res.users,ir.actions.server</field>
+    </record>
+
+    <record id="config_ask_ai_panel_position" model="ir.config_parameter">
+        <field name="key">ask_ai.panel_position</field>
+        <field name="value">right</field>
+    </record>
+
+    <record id="config_ask_ai_hotkey" model="ir.config_parameter">
+        <field name="key">ask_ai.hotkey</field>
+        <field name="value">Ctrl+Shift+A</field>
+    </record>
+
+    <record id="config_ask_ai_model" model="ir.config_parameter">
+        <field name="key">ask_ai.model</field>
+        <field name="value">claude-3-sonnet</field>
+    </record>
+</odoo>

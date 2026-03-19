@@ -1,0 +1,68 @@
+version: 1
+observed_at: "2026-03-18"
+
+observed_runtime:
+  ingress:
+    front_door:
+      name: "ipai-fd-dev"
+      resource_group: "rg-ipai-shared-dev"
+      waf_policy: "ipaiDevWafPolicy"
+
+  observability:
+    application_insights:
+      name: "appi-ipai-dev"
+      resource_group: "rg-ipai-shared-dev"
+    log_analytics:
+      name: "law-ipai-dev"
+      resource_group: "rg-ipai-shared-dev"
+
+  odoo_dev:
+    container_apps_environment:
+      name: "ipai-odoo-dev-env"
+      resource_group: "rg-ipai-dev"
+    apps:
+      - name: "ipai-odoo-dev-web"
+        role: "web"
+      - name: "ipai-odoo-dev-worker"
+        role: "worker"
+      - name: "ipai-odoo-dev-cron"
+        role: "cron"
+    jobs:
+      - name: "ipai-odoo-install"
+        role: "install_or_bootstrap"
+      - name: "ipai-odoo-dev-wave1"
+        role: "deployment_or_migration_wave"
+    secrets:
+      key_vault:
+        name: "ipai-odoo-dev-kv"
+        resource_group: "rg-ipai-dev"
+      database_password:
+        secret_name: "db-password"
+        source_type: "key_vault_reference"
+        key_vault_name: "ipai-odoo-dev-kv"
+        canonical_secret_name: "pg-admin-password"
+        plain_secret_allowed: false
+        identity: "system"
+        applied_to:
+          - "ipai-odoo-dev-web"
+          - "ipai-odoo-dev-worker"
+          - "ipai-odoo-dev-cron"
+        wired_at: "2026-03-18"
+    database:
+      server: "ipai-odoo-dev-pg"
+      resource_group: "rg-ipai-dev"
+
+status:
+  ingress_present: true
+  waf_present: true
+  observability_present: true
+  split_runtime_present: true
+  dedicated_odoo_env_present: true
+  dedicated_odoo_db_present: true
+  production_hardening_proven: false
+
+open_questions:
+  - "Is ipai-fd-dev fully routing erp.insightpulseai.com to the intended Odoo origin path?"
+  - "Is origin access restricted to Front Door only?"
+  - "Is ipai-odoo-dev-pg the only database server used by the Odoo runtime?"
+  - "What is the intended ownership of pg-ipai-dev in rg-ipai-data-dev?"

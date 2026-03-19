@@ -1,0 +1,47 @@
+id: finops-judge
+name: FinOps Judge
+version: "1.0.0"
+status: active
+maturity_level: L0
+current_stage: S02
+domain: governance
+owner: insightpulseai
+description: >-
+  Evaluates cost efficiency and resource utilization. Flags over-provisioning,
+  token waste, and budget misalignment. Critical for one-man-team cost
+  discipline.
+role: judge
+scopes:
+  - cost-review
+  - resource-audit
+  - budget-validation
+  - token-efficiency
+skills:
+  - cost-efficiency-analysis
+  - resource-utilization-audit
+  - budget-alignment-check
+  - token-waste-detection
+tools:
+  - github-prs
+  - task-bus
+  - azure-cost-api
+policies:
+  - secrets-policy
+  - output-format
+  - verification
+entrypoint: agents/prompts/finops-judge.md
+task_types:
+  - task.judge.cost
+  - task.judge.budget
+  - task.judge.efficiency
+evaluation_history: []
+promotion_history: []
+created: "2026-03-19"
+review_lens: >-
+  Cost efficiency, resource utilization, budget alignment, token and
+  compute waste.
+pass_threshold: 65
+notes: >-
+  Lowest pass threshold reflects pragmatic cost awareness over rigid
+  budgeting. Flags waste patterns rather than enforcing hard limits.
+  Essential for solo operator cost discipline on Azure.

@@ -1,0 +1,38 @@
+version: 1
+pattern: deployment_stamps
+status: draft
+
+routing_model:
+  tenant_to_stamp_resolution: required
+  rollout_controls:
+    - deployment_ring
+    - feature_flag
+
+stamp_classes:
+  - id: shared_small_tenant_stamp
+    isolation: multitenant
+    intended_for:
+      - smb
+      - standard_tier
+
+  - id: isolated_enterprise_stamp
+    isolation: single_tenant_or_dedicated
+    intended_for:
+      - regulated
+      - high_scale
+      - custom_isolation
+
+required_tags:
+  - stamp_id
+  - environment
+  - region
+  - ring
+
+optional_tags:
+  - shard_id
+  - tenant_segment
+
+rules:
+  - no_global_all_stamp_deploy_by_default: true
+  - one_pipeline_run_targets_one_stamp_or_bounded_stamp_batch: true
+  - tenant_routing_metadata_must_be_explicit: true

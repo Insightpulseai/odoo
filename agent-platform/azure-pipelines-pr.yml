@@ -1,0 +1,31 @@
+trigger: none
+
+pr:
+  branches:
+    include:
+      - main
+  paths:
+    include:
+      - packages/**
+      - apps/**
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+jobs:
+  - job: Validate
+    displayName: 'PR Validation'
+    steps:
+      - task: NodeTool@0
+        inputs:
+          versionSpec: '20.x'
+        displayName: 'Use Node.js 20.x'
+
+      - script: npm ci
+        displayName: 'Install dependencies'
+
+      - script: npm run build
+        displayName: 'TypeScript build'
+
+      - script: npm run test -w @ipai/builder-factory
+        displayName: 'Run smoke tests'

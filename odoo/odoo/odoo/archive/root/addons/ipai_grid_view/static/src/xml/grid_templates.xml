@@ -1,0 +1,456 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <!-- ==========================================
+         GRID CONTROLLER TEMPLATE
+         Main container with toolbar and content
+         ========================================== -->
+    <t t-name="ipai_grid_view.GridController">
+        <div class="o_grid_view o_view_controller" t-ref="root" tabindex="0">
+            <!-- Toolbar -->
+            <div class="o_grid_toolbar">
+                <!-- Left side: Search and filters -->
+                <div class="o_grid_toolbar_left">
+                    <!-- Search box -->
+                    <div class="o_grid_search">
+                        <span class="o_grid_search_icon">
+                            <i class="fa fa-search"/>
+                        </span>
+                        <input
+                            type="text"
+                            class="o_grid_search_input"
+                            placeholder="Search..."
+                            t-ref="searchInput"
+                            t-on-input="onSearchInput"
+                        />
+                        <button
+                            t-if="state.searchTerm"
+                            class="o_grid_search_clear"
+                            t-on-click="onClearSearch"
+                        >
+                            <i class="fa fa-times"/>
+                        </button>
+                    </div>
+
+                    <!-- Active filters -->
+                    <div class="o_grid_filters" t-if="state.activeFilters.length > 0">
+                        <t t-foreach="state.activeFilters" t-as="filter" t-key="filter_index">
+                            <span class="o_grid_filter_tag">
+                                <span t-esc="filter.name"/>
+                                <button class="o_grid_filter_remove" t-on-click="() => this.onRemoveFilter(filter_index)">
+                                    <i class="fa fa-times"/>
+                                </button>
+                            </span>
+                        </t>
+                        <button class="o_grid_clear_filters" t-on-click="onClearFilters">
+                            Clear all
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Right side: View switcher and actions -->
+                <div class="o_grid_toolbar_right">
+                    <!-- Selection info and bulk actions -->
+                    <div class="o_grid_bulk_actions" t-if="state.selectedCount > 0">
+                        <span class="o_grid_selection_info">
+                            <t t-esc="state.selectedCount"/> selected
+                        </span>
+                        <div class="o_grid_bulk_buttons">
+                            <button class="btn btn-sm btn-outline-secondary" t-on-click="onArchiveSelected">
+                                <i class="fa fa-archive"/> Archive
+                            </button>
+                            <button class="btn btn-sm btn-outline-secondary" t-on-click="onDuplicateSelected">
+                                <i class="fa fa-copy"/> Duplicate
+                            </button>
+                            <button class="btn btn-sm btn-outline-danger" t-on-click="onDeleteSelected">
+                                <i class="fa fa-trash"/> Delete
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- View switcher -->
+                    <div class="o_grid_view_switcher btn-group">
+                        <button
+                            t-attf-class="btn btn-sm #{state.viewMode === 'list' ? 'btn-primary' : 'btn-outline-secondary'}"
+                            t-on-click="onSwitchToList"
+                            title="List View"
+                        >
+                            <i class="fa fa-list"/>
+                        </button>
+                        <button
+                            t-attf-class="btn btn-sm #{state.viewMode === 'kanban' ? 'btn-primary' : 'btn-outline-secondary'}"
+                            t-on-click="onSwitchToKanban"
+                            title="Kanban View"
+                        >
+                            <i class="fa fa-th-large"/>
+                        </button>
+                    </div>
+
+                    <!-- Export button -->
+                    <button class="btn btn-sm btn-outline-secondary" t-on-click="onExport" title="Export">
+                        <i class="fa fa-download"/>
+                    </button>
+
+                    <!-- Create button -->
+                    <button class="btn btn-sm btn-primary o_grid_create_btn" t-on-click="onCreateRecord">
+                        <i class="fa fa-plus"/> New
+                    </button>
+                </div>
+            </div>
+
+            <!-- Content area -->
+            <div class="o_grid_content">
+                <!-- Loading overlay -->
+                <div class="o_grid_loading" t-if="state.loading">
+                    <div class="o_grid_loading_spinner">
+                        <i class="fa fa-spinner fa-spin fa-2x"/>
+                    </div>
+                </div>
+
+                <!-- Error state -->
+                <div class="o_grid_error" t-if="state.error">
+                    <div class="o_grid_error_message">
+                        <i class="fa fa-exclamation-triangle fa-2x"/>
+                        <p t-esc="state.error"/>
+                        <button class="btn btn-primary" t-on-click="reload">Retry</button>
+                    </div>
+                </div>
+
+                <!-- Grid renderer -->
+                <t t-if="!state.loading and !state.error">
+                    <GridRenderer
+                        records="state.records"
+                        columns="state.columns"
+                        total="state.total"
+                        loading="state.loading"
+                        selectedIds="state.selectedIds"
+                        allSelected="state.allSelected"
+                        sortField="state.sortField"
+                        sortOrder="state.sortOrder"
+                        offset="state.offset"
+                        limit="state.limit"
+                        onToggleSelection.bind="onToggleSelection"
+                        onToggleSelectAll.bind="onToggleSelectAll"
+                        onSort.bind="onSort"
+                        onOpenRecord.bind="onOpenRecord"
+                        onNextPage.bind="onNextPage"
+                        onPrevPage.bind="onPrevPage"
+                        formatCellValue.bind="formatCellValue"
+                    />
+                </t>
+            </div>
+        </div>
+    </t>
+
+    <!-- ==========================================
+         GRID BUTTONS TEMPLATE
+         Control panel buttons
+         ========================================== -->
+    <t t-name="ipai_grid_view.GridButtons">
+        <div class="o_grid_buttons">
+            <button class="btn btn-primary o_grid_button_create" t-on-click="onCreateRecord">
+                <i class="fa fa-plus"/> New
+            </button>
+        </div>
+    </t>
+
+    <!-- ==========================================
+         GRID RENDERER TEMPLATE
+         Table structure with headers and rows
+         ========================================== -->
+    <t t-name="ipai_grid_view.GridRenderer">
+        <div class="o_grid_renderer">
+            <!-- Table container with horizontal scroll -->
+            <div class="o_grid_table_container">
+                <table class="o_grid_table" t-ref="table">
+                    <!-- Table Header -->
+                    <thead class="o_grid_thead">
+                        <tr class="o_grid_header_row">
+                            <t t-foreach="visibleColumns" t-as="column" t-key="column.id">
+                                <!-- Selection column -->
+                                <th t-if="column.isSelection"
+                                    class="o_grid_th o_grid_th_checkbox"
+                                    t-att-data-column="column.id"
+                                    t-att-style="getColumnStyle(column)">
+                                    <div class="o_grid_checkbox">
+                                        <input
+                                            type="checkbox"
+                                            t-att-checked="props.allSelected"
+                                            t-on-click="onHeaderCheckboxClick"
+                                        />
+                                    </div>
+                                </th>
+
+                                <!-- Action column -->
+                                <th t-elif="column.isAction"
+                                    class="o_grid_th o_grid_th_action"
+                                    t-att-data-column="column.id"
+                                    t-att-style="getColumnStyle(column)">
+                                    <i class="fa fa-cog"/>
+                                </th>
+
+                                <!-- Regular column -->
+                                <th t-else=""
+                                    t-attf-class="o_grid_th #{getCellAlignment(column)} #{column.sortable ? 'o_grid_th_sortable' : ''}"
+                                    t-att-data-column="column.id"
+                                    t-att-style="getColumnStyle(column)"
+                                    t-on-click="(ev) => this.onColumnHeaderClick(column, ev)">
+                                    <div class="o_grid_th_content">
+                                        <span class="o_grid_th_label" t-esc="column.label"/>
+                                        <span t-if="column.sortable" class="o_grid_th_sort">
+                                            <i t-attf-class="fa #{getSortIcon(column)}"/>
+                                        </span>
+                                    </div>
+                                    <!-- Resize handle -->
+                                    <div t-if="column.resizable !== false"
+                                         class="o_grid_resize_handle"
+                                         t-on-mousedown="(ev) => this.onResizeStart(column, ev)"/>
+                                </th>
+                            </t>
+                        </tr>
+                    </thead>
+
+                    <!-- Table Body -->
+                    <tbody class="o_grid_tbody">
+                        <!-- Empty state -->
+                        <tr t-if="props.records.length === 0" class="o_grid_empty_row">
+                            <td t-att-colspan="visibleColumns.length" class="o_grid_empty_cell">
+                                <div class="o_grid_empty_state">
+                                    <i class="fa fa-inbox fa-3x"/>
+                                    <p t-esc="emptyStateMessage"/>
+                                </div>
+                            </td>
+                        </tr>
+
+                        <!-- Data rows -->
+                        <t t-foreach="props.records" t-as="record" t-key="record.id">
+                            <tr t-attf-class="#{getRowClasses(record, record_index)}"
+                                t-on-click="(ev) => this.onRowClick(record.id, ev)"
+                                t-on-mouseenter="() => this.onRowMouseEnter(record_index)"
+                                t-on-mouseleave="onRowMouseLeave">
+                                <t t-foreach="visibleColumns" t-as="column" t-key="column.id">
+                                    <!-- Selection cell -->
+                                    <td t-if="column.isSelection" class="o_grid_td o_grid_td_checkbox">
+                                        <div class="o_grid_checkbox">
+                                            <input
+                                                type="checkbox"
+                                                t-att-checked="isSelected(record.id)"
+                                                t-on-click="(ev) => this.onCheckboxClick(record.id, ev)"
+                                            />
+                                        </div>
+                                    </td>
+
+                                    <!-- Action cell -->
+                                    <td t-elif="column.isAction" class="o_grid_td o_grid_td_action">
+                                        <div class="o_grid_action_menu" t-on-click="(ev) => this.onActionMenuClick(record, ev)">
+                                            <button class="o_grid_action_trigger">
+                                                <i class="fa fa-ellipsis-v"/>
+                                            </button>
+                                            <div class="o_grid_action_dropdown">
+                                                <a class="o_grid_action_item" t-on-click="(ev) => this.onRowAction(record, 'open', ev)">
+                                                    <i class="fa fa-external-link"/> Open
+                                                </a>
+                                                <a class="o_grid_action_item" t-on-click="(ev) => this.onRowAction(record, 'edit', ev)">
+                                                    <i class="fa fa-edit"/> Edit
+                                                </a>
+                                                <a class="o_grid_action_item" t-on-click="(ev) => this.onRowAction(record, 'duplicate', ev)">
+                                                    <i class="fa fa-copy"/> Duplicate
+                                                </a>
+                                                <hr class="o_grid_action_divider"/>
+                                                <a class="o_grid_action_item text-danger" t-on-click="(ev) => this.onRowAction(record, 'delete', ev)">
+                                                    <i class="fa fa-trash"/> Delete
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </td>
+
+                                    <!-- Regular data cell -->
+                                    <td t-else=""
+                                        t-attf-class="o_grid_td #{getCellAlignment(column)} #{getCellWidgetClass(column)}">
+                                        <!-- Avatar cell -->
+                                        <t t-if="column.isAvatar">
+                                            <div class="o_grid_avatar">
+                                                <img t-att-src="'/web/image?model=' + props.resModel + '&amp;id=' + record.id + '&amp;field=image_128'"
+                                                     class="o_grid_avatar_img"/>
+                                            </div>
+                                        </t>
+
+                                        <!-- Badge cell -->
+                                        <t t-elif="column.columnType === 'badge'">
+                                            <span t-attf-class="badge bg-#{getCellValue(record, column) ? 'success' : 'secondary'}">
+                                                <t t-esc="getCellValue(record, column)"/>
+                                            </span>
+                                        </t>
+
+                                        <!-- Progress cell -->
+                                        <t t-elif="column.columnType === 'progress'">
+                                            <div class="o_grid_progress">
+                                                <div class="o_grid_progress_bar"
+                                                     t-attf-style="width: #{getCellValue(record, column)}%"/>
+                                                <span class="o_grid_progress_label">
+                                                    <t t-esc="getCellValue(record, column)"/>%
+                                                </span>
+                                            </div>
+                                        </t>
+
+                                        <!-- Activity cell -->
+                                        <t t-elif="column.columnType === 'activity'">
+                                            <div class="o_grid_activity">
+                                                <button class="o_grid_activity_btn">
+                                                    <i class="fa fa-clock-o"/>
+                                                </button>
+                                            </div>
+                                        </t>
+
+                                        <!-- Primary/clickable cell -->
+                                        <t t-elif="column.isPrimary">
+                                            <span class="o_grid_cell_primary_link">
+                                                <t t-esc="getCellValue(record, column)"/>
+                                            </span>
+                                        </t>
+
+                                        <!-- Standard cell -->
+                                        <t t-else="">
+                                            <span class="o_grid_cell_value">
+                                                <t t-esc="getCellValue(record, column)"/>
+                                            </span>
+                                        </t>
+                                    </td>
+                                </t>
+                            </tr>
+                        </t>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Pagination -->
+            <div class="o_grid_pagination" t-if="props.total > 0">
+                <div class="o_grid_pagination_info">
+                    Showing <strong t-esc="pagination.start"/> - <strong t-esc="pagination.end"/>
+                    of <strong t-esc="props.total"/> records
+                </div>
+                <div class="o_grid_pagination_controls">
+                    <button
+                        class="btn btn-sm btn-outline-secondary o_grid_pagination_prev"
+                        t-att-disabled="!pagination.hasPrev"
+                        t-on-click="props.onPrevPage">
+                        <i class="fa fa-chevron-left"/>
+                    </button>
+                    <span class="o_grid_pagination_page">
+                        Page <t t-esc="pagination.currentPage"/> of <t t-esc="pagination.totalPages"/>
+                    </span>
+                    <button
+                        class="btn btn-sm btn-outline-secondary o_grid_pagination_next"
+                        t-att-disabled="!pagination.hasNext"
+                        t-on-click="props.onNextPage">
+                        <i class="fa fa-chevron-right"/>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </t>
+
+    <!-- ==========================================
+         GRID CELL TEMPLATE
+         Individual cell rendering for widgets
+         ========================================== -->
+    <t t-name="ipai_grid_view.GridCell">
+        <div class="o_grid_cell_widget">
+            <t t-if="props.column.columnType === 'avatar'">
+                <img t-att-src="avatarUrl" class="o_grid_avatar_img"/>
+            </t>
+            <t t-elif="props.column.columnType === 'badge'">
+                <span t-attf-class="badge bg-#{badgeColor}">
+                    <t t-esc="props.value"/>
+                </span>
+            </t>
+            <t t-elif="props.column.columnType === 'progress'">
+                <div class="progress o_grid_progress">
+                    <div class="progress-bar" t-attf-style="width: #{progressPercent}%"/>
+                </div>
+            </t>
+            <t t-elif="props.column.columnType === 'boolean'">
+                <i t-attf-class="fa #{props.value ? 'fa-check text-success' : 'fa-times text-muted'}"/>
+            </t>
+            <t t-else="">
+                <span t-esc="props.value"/>
+            </t>
+        </div>
+    </t>
+
+    <!-- ==========================================
+         FILTER PANEL TEMPLATE
+         Advanced filter configuration
+         ========================================== -->
+    <t t-name="ipai_grid_view.FilterPanel">
+        <div class="o_grid_filter_panel">
+            <div class="o_grid_filter_header">
+                <span class="o_grid_filter_title">Filters</span>
+                <button class="o_grid_filter_close">
+                    <i class="fa fa-times"/>
+                </button>
+            </div>
+            <div class="o_grid_filter_content">
+                <!-- Filter conditions -->
+                <div class="o_grid_filter_conditions">
+                    <t t-foreach="filters" t-as="filter" t-key="filter_index">
+                        <div class="o_grid_filter_condition">
+                            <select class="o_grid_filter_field">
+                                <t t-foreach="columns" t-as="col" t-key="col.id">
+                                    <option t-att-value="col.field" t-esc="col.label"/>
+                                </t>
+                            </select>
+                            <select class="o_grid_filter_operator">
+                                <option value="=">=</option>
+                                <option value="!=">!=</option>
+                                <option value="ilike">contains</option>
+                                <option value=">">&#62;</option>
+                                <option value="&lt;">&#60;</option>
+                            </select>
+                            <input class="o_grid_filter_value" type="text"/>
+                            <button class="o_grid_filter_remove_condition">
+                                <i class="fa fa-minus-circle"/>
+                            </button>
+                        </div>
+                    </t>
+                </div>
+                <button class="o_grid_filter_add btn btn-link">
+                    <i class="fa fa-plus"/> Add condition
+                </button>
+            </div>
+            <div class="o_grid_filter_footer">
+                <button class="btn btn-secondary o_grid_filter_clear">Clear</button>
+                <button class="btn btn-primary o_grid_filter_apply">Apply</button>
+            </div>
+        </div>
+    </t>
+
+    <!-- ==========================================
+         COLUMN SETTINGS TEMPLATE
+         Column visibility and order configuration
+         ========================================== -->
+    <t t-name="ipai_grid_view.ColumnSettings">
+        <div class="o_grid_column_settings">
+            <div class="o_grid_column_settings_header">
+                <span>Columns</span>
+            </div>
+            <div class="o_grid_column_settings_list">
+                <t t-foreach="columns" t-as="column" t-key="column.id">
+                    <div class="o_grid_column_setting_item">
+                        <span class="o_grid_column_drag_handle">
+                            <i class="fa fa-bars"/>
+                        </span>
+                        <label class="o_grid_column_toggle">
+                            <input type="checkbox" t-att-checked="column.visible"/>
+                            <span t-esc="column.label"/>
+                        </label>
+                    </div>
+                </t>
+            </div>
+            <div class="o_grid_column_settings_footer">
+                <button class="btn btn-link">Reset to default</button>
+            </div>
+        </div>
+    </t>
+
+</templates>

@@ -1,0 +1,50 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "description": "MCP server configuration for Figma agent skill",
+  "mcpServers": {
+    "figma": {
+      "url": "https://mcp.figma.com/mcp",
+      "type": "http",
+      "description": "Official Figma MCP server (cloud-hosted)"
+    },
+    "figma-desktop": {
+      "url": "http://127.0.0.1:3845/mcp",
+      "type": "http",
+      "description": "Figma Desktop MCP server (local)"
+    },
+    "framelink": {
+      "command": "npx",
+      "args": ["-y", "figma-developer-mcp", "--stdio"],
+      "env": {
+        "FIGMA_API_KEY": "${FIGMA_API_KEY}"
+      },
+      "description": "Framelink community MCP server"
+    }
+  },
+  "tools": {
+    "get_design_context": {
+      "description": "Primary extraction of hierarchy, layout, styling",
+      "usage": "First call for any design implementation"
+    },
+    "get_metadata": {
+      "description": "Sparse XML outline for large designs",
+      "usage": "When get_design_context returns truncated/verbose results"
+    },
+    "get_screenshot": {
+      "description": "Visual reference capture",
+      "usage": "Always enable unless token-limited"
+    },
+    "get_code_connect_map": {
+      "description": "Figma-to-codebase component mapping",
+      "usage": "When target codebase has Code Connect configured"
+    },
+    "get_variable_defs": {
+      "description": "Design token extraction",
+      "usage": "For design system integration"
+    },
+    "get_figjam": {
+      "description": "FigJam diagram extraction",
+      "usage": "Architecture/flow documentation only"
+    }
+  }
+}

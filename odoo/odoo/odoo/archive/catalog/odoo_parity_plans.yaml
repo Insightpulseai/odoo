@@ -1,0 +1,213 @@
+version: "0.1.0"
+baseline:
+  odoo_ce_major: 18
+  oca_series: "18.0"
+
+plans:
+  - id: free
+    name: "Free"
+    description: "Core CE + selected OCA for small volumes/teams; essential workflows; minimal governance."
+    capability_groups:
+      - "core-finance"
+      - "core-sales-crm"
+      - "core-project"
+      - "core-reporting"
+
+  - id: standard
+    name: "Standard"
+    description: "Automation-first ops; broader OCA coverage; stable defaults; improved workflows."
+    capability_groups:
+      - "documents-dms"
+      - "helpdesk-support"
+      - "maintenance-field"
+      - "etl-automation"
+      - "core-finance"
+      - "core-reporting"
+
+  - id: enterprise
+    name: "Enterprise"
+    description: "Granular governance, RBAC hardening, auditability, advanced approvals, integration controls."
+    capability_groups:
+      - "governance-access"
+      - "auditability"
+      - "advanced-approvals"
+      - "documents-dms"
+      - "etl-automation"
+
+  - id: business-critical
+    name: "Business Critical"
+    description: "Highest security/compliance posture, strict policies, DR readiness, sensitive-data controls."
+    capability_groups:
+      - "security-hardening"
+      - "compliance-controls"
+      - "dr-readiness"
+      - "governance-access"
+      - "auditability"
+
+items:
+  - id: dms-documents
+    ee_capability: "Documents / DMS workspace, tagging, versioning (EE Documents)"
+    category: "Documents"
+    capability_group: "documents-dms"
+    plan_tiers: ["standard", "enterprise", "business-critical"]
+    replacements:
+      ce: []
+      oca:
+        - "OCA/document-management:dms"
+        - "OCA/document-management:dms_field"
+      ipai: []
+    install_order:
+      - "OCA/document-management:dms"
+      - "OCA/document-management:dms_field"
+    constraints:
+      - "Validate module maturity on target Odoo CE baseline."
+    verification:
+      commands:
+        - "odoo-bin -d <DB> -i dms,dms_field --stop-after-init"
+      expected_signals:
+        - "Process exits 0"
+        - "ir_module_module(dms).state == installed"
+    rollback:
+      commands:
+        - "odoo-bin -d <DB> -u base --stop-after-init"
+    maturity: "beta"
+    risk: "med"
+
+  - id: helpdesk-sla
+    ee_capability: "Helpdesk + SLA policies + teams (EE Helpdesk)"
+    category: "Support"
+    capability_group: "helpdesk-support"
+    plan_tiers: ["standard", "enterprise", "business-critical"]
+    replacements:
+      ce: []
+      oca:
+        - "OCA/helpdesk:helpdesk_mgmt"
+        - "OCA/helpdesk:helpdesk_mgmt_sla"
+      ipai: []
+    install_order:
+      - "OCA/helpdesk:helpdesk_mgmt"
+      - "OCA/helpdesk:helpdesk_mgmt_sla"
+    constraints: []
+    verification:
+      commands:
+        - "odoo-bin -d <DB> -i helpdesk_mgmt,helpdesk_mgmt_sla --stop-after-init"
+      expected_signals:
+        - "Process exits 0"
+    rollback:
+      commands:
+        - "odoo-bin -d <DB> -u base --stop-after-init"
+    maturity: "beta"
+    risk: "med"
+
+  - id: governance-audit-log
+    ee_capability: "Audit logging / immutable event trail (EE-level governance expectation)"
+    category: "Governance"
+    capability_group: "auditability"
+    plan_tiers: ["enterprise", "business-critical"]
+    replacements:
+      ce: []
+      oca: []
+      ipai:
+        - "ipai_audit_log"
+    install_order:
+      - "ipai_audit_log"
+    constraints:
+      - "Prefer DB-level append-only table + limited retention policies."
+    verification:
+      commands:
+        - "odoo-bin -d <DB> -i ipai_audit_log --stop-after-init"
+      expected_signals:
+        - "Audit table exists and receives events on write"
+    rollback:
+      commands:
+        - "odoo-bin -d <DB> -u base --stop-after-init"
+    maturity: "alpha"
+    risk: "med"
+
+  - id: field-service-fsm
+    ee_capability: "Field Service Management (task scheduling, route planning, mobile)"
+    category: "Field Service"
+    capability_group: "maintenance-field"
+    plan_tiers: ["standard", "enterprise", "business-critical"]
+    replacements:
+      ce: []
+      oca:
+        - "OCA/field-service:fieldservice"
+        - "OCA/field-service:fieldservice_account"
+        - "OCA/field-service:fieldservice_sale"
+      ipai: []
+    install_order:
+      - "OCA/field-service:fieldservice"
+      - "OCA/field-service:fieldservice_account"
+      - "OCA/field-service:fieldservice_sale"
+    constraints:
+      - "Mobile app requires additional PWA setup"
+    verification:
+      commands:
+        - "odoo-bin -d <DB> -i fieldservice,fieldservice_account,fieldservice_sale --stop-after-init"
+      expected_signals:
+        - "Process exits 0"
+        - "Field Service menu visible"
+    rollback:
+      commands:
+        - "odoo-bin -d <DB> -u base --stop-after-init"
+    maturity: "stable"
+    risk: "low"
+
+  - id: approval-tiers
+    ee_capability: "Multi-level approval workflows (EE Approvals)"
+    category: "Workflow"
+    capability_group: "advanced-approvals"
+    plan_tiers: ["enterprise", "business-critical"]
+    replacements:
+      ce: []
+      oca:
+        - "OCA/multi-company:base_tier_validation"
+        - "OCA/multi-company:base_tier_validation_formula"
+      ipai:
+        - "ipai_approvals"
+    install_order:
+      - "OCA/multi-company:base_tier_validation"
+      - "OCA/multi-company:base_tier_validation_formula"
+      - "ipai_approvals"
+    constraints: []
+    verification:
+      commands:
+        - "odoo-bin -d <DB> -i base_tier_validation,base_tier_validation_formula,ipai_approvals --stop-after-init"
+      expected_signals:
+        - "Process exits 0"
+        - "Tier Validation config accessible"
+    rollback:
+      commands:
+        - "odoo-bin -d <DB> -u base --stop-after-init"
+    maturity: "stable"
+    risk: "low"
+
+  - id: rbac-access-rules
+    ee_capability: "Granular RBAC and record rules (EE-level governance)"
+    category: "Governance"
+    capability_group: "governance-access"
+    plan_tiers: ["enterprise", "business-critical"]
+    replacements:
+      ce:
+        - "base"
+      oca:
+        - "OCA/server-ux:base_technical_features"
+      ipai:
+        - "ipai_access_manager"
+    install_order:
+      - "OCA/server-ux:base_technical_features"
+      - "ipai_access_manager"
+    constraints:
+      - "Requires careful testing; incorrect rules can lock users out"
+    verification:
+      commands:
+        - "odoo-bin -d <DB> -i base_technical_features,ipai_access_manager --stop-after-init"
+      expected_signals:
+        - "Process exits 0"
+        - "Access Rules menu accessible"
+    rollback:
+      commands:
+        - "odoo-bin -d <DB> -u base --stop-after-init"
+    maturity: "beta"
+    risk: "high"

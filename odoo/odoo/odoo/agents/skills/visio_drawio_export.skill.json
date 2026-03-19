@@ -1,0 +1,68 @@
+{
+  "name": "visio_drawio_export_skill",
+  "version": "1.0.0",
+  "description": "Export Visio diagrams (.vsdx) to DrawIO format with PNG/SVG previews, validation, and visual regression testing. Integrates with Control Room for orchestrated job execution.",
+  "mcpServer": "visio-drawio-exporter",
+  "tools": [
+    {
+      "name": "import_visio",
+      "description": "Import .vsdx or .vsd Visio files and parse structure"
+    },
+    {
+      "name": "parse_visio_shapes",
+      "description": "Extract shapes, connections, and metadata from imported Visio"
+    },
+    {
+      "name": "convert_to_drawio",
+      "description": "Convert parsed Visio to DrawIO XML format"
+    },
+    {
+      "name": "export_drawio",
+      "description": "Save DrawIO XML to file"
+    },
+    {
+      "name": "generate_png_preview",
+      "description": "Generate PNG preview from DrawIO file (headless)"
+    },
+    {
+      "name": "generate_svg_preview",
+      "description": "Generate SVG preview from DrawIO file"
+    },
+    {
+      "name": "validate_drawio",
+      "description": "Validate DrawIO file structure and content"
+    },
+    {
+      "name": "visual_diff",
+      "description": "Compare two images for visual regression"
+    }
+  ],
+  "defaultOutputDir": "docs/diagrams/visio-exports",
+  "manifestPath": "docs/diagrams/visio-exports/manifest.json",
+  "supportedFormats": {
+    "input": ["vsdx", "vsd", "drawio"],
+    "output": ["drawio", "png", "svg"]
+  },
+  "cli": {
+    "entrypoint": "visio-drawio-export",
+    "docker": "visio-drawio-export:ci"
+  },
+  "controlRoomIntegration": {
+    "jobType": "diagram_export",
+    "callbackEndpoint": "/api/v1/webhooks/continue"
+  },
+  "metadata": {
+    "drawioVersion": "24.0.0",
+    "dependencies": [
+      "drawio-desktop (headless mode)",
+      "pixelmatch (visual diff)",
+      "sharp (image processing)"
+    ],
+    "references": [
+      "https://github.com/jgraph/drawio",
+      "https://www.drawio.com/doc/",
+      "https://github.com/nickvdyck/drawio-cli"
+    ]
+  },
+  "agentInstructions": "When the user asks to convert Visio diagrams or export DrawIO:\n\n1. **Import Phase**:\n   - Use import_visio to load the .vsdx file\n   - Use parse_visio_shapes to extract the structure\n\n2. **Conversion Phase**:\n   - Use convert_to_drawio to transform to DrawIO format\n   - Use export_drawio to save the .drawio file\n\n3. **Export Phase**:\n   - Use generate_png_preview for PNG output\n   - Use generate_svg_preview for SVG output\n\n4. **Validation Phase** (optional but recommended):\n   - Use validate_drawio to check the output\n   - Report any errors or warnings\n\n5. **Visual Regression** (for CI/PR checks):\n   - Use visual_diff to compare against baselines\n   - Only fail if diff exceeds threshold (default 0.3%)\n\n6. **Control Room Integration**:\n   - Submit as job_type: diagram_export\n   - Include artifacts in run output\n   - Update lineage with source → output relationships"
+}

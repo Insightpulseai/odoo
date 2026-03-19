@@ -1,0 +1,15 @@
+{
+  "category": "zindex",
+  "description": "Z-index stacking tokens. Prevents ad-hoc z-index wars.",
+  "tokens": {
+    "zindex.base": 0,
+    "zindex.content": 1,
+    "zindex.header": 100,
+    "zindex.sidebar": 200,
+    "zindex.dropdown": 1000,
+    "zindex.overlay": 10000,
+    "zindex.modal": 100000,
+    "zindex.toast": 500000,
+    "zindex.tooltip": 1000000
+  }
+}

@@ -1,0 +1,9 @@
+Checking for agent instruction drift...
+SSOT: docs/agent_instructions/SSOT.md
+
+✓ CLAUDE.md: No drift
+✓ AGENTS.md: No drift
+✓ GEMINI.md: No drift
+
+✅ No drift detected. All mirrors match SSOT.
+[drift-check exit:0]

@@ -1,0 +1,8 @@
+id,name,parent_id/id,capacity
+__import__.channel_root,root,,4
+__import__.channel_high,root.high,__import__.channel_root,2
+__import__.channel_medium,root.medium,__import__.channel_root,2
+__import__.channel_low,root.low,__import__.channel_root,1
+__import__.channel_ai,root.ai,__import__.channel_root,2
+__import__.channel_sync,root.sync,__import__.channel_root,1
+__import__.channel_reports,root.reports,__import__.channel_root,1

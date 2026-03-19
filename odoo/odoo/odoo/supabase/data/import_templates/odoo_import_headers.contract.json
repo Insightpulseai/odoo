@@ -1,0 +1,109 @@
+{
+  "mail.activity": {
+    "file": "07_mail.activity.csv",
+    "headers": [
+      "id",
+      "res_model",
+      "res_external_id",
+      "activity_type_id/id",
+      "summary",
+      "note",
+      "date_deadline",
+      "user_id/id"
+    ]
+  },
+  "project.milestone": {
+    "file": "03_project.milestone.csv",
+    "headers": [
+      "id",
+      "name",
+      "project_id/id",
+      "deadline",
+      "milestone_type",
+      "gate_status",
+      "approval_required",
+      "approver_id/id",
+      "baseline_deadline"
+    ]
+  },
+  "project.project": {
+    "file": "02_project.project.csv",
+    "headers": [
+      "id",
+      "name",
+      "active",
+      "sequence",
+      "partner_id/id",
+      "company_id/id",
+      "user_id/id",
+      "date_start",
+      "date",
+      "privacy_visibility",
+      "analytic_account_id/id",
+      "allow_subtasks",
+      "allow_recurring_tasks",
+      "allow_task_dependencies",
+      "allow_milestones",
+      "allow_timesheets",
+      "clarity_id",
+      "health_status",
+      "baseline_start",
+      "baseline_finish",
+      "is_program",
+      "parent_id/id",
+      "program_type"
+    ]
+  },
+  "project.task": {
+    "file": "04_project.task.csv",
+    "headers": [
+      "id",
+      "name",
+      "active",
+      "sequence",
+      "project_id/id",
+      "stage_id/id",
+      "user_ids/id",
+      "partner_id/id",
+      "parent_id/id",
+      "milestone_id/id",
+      "priority",
+      "kanban_state",
+      "date_deadline",
+      "date_assign",
+      "planned_hours",
+      "description",
+      "tag_ids/id"
+    ]
+  },
+  "project.task.dependencies": {
+    "file": "05_project.task.dependencies.csv",
+    "headers": [
+      "id",
+      "depend_on_ids/id"
+    ]
+  },
+  "project.task.recurrence": {
+    "file": "06_project.task.recurrence.csv",
+    "headers": [
+      "id",
+      "recurring_task",
+      "repeat_interval",
+      "repeat_unit",
+      "repeat_type",
+      "repeat_until_date",
+      "repeat_number"
+    ]
+  },
+  "project.task.type": {
+    "file": "01_project.task.type.csv",
+    "headers": [
+      "id",
+      "name",
+      "sequence",
+      "fold",
+      "description",
+      "project_ids/id"
+    ]
+  }
+}

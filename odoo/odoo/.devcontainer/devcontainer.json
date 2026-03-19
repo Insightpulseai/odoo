@@ -3,9 +3,7 @@
   "dockerComposeFile": "docker-compose.devcontainer.yml",
   "service": "devcontainer",
   "workspaceFolder": "/workspaces/odoo",
-  "shutdownAction": "stopCompose",
-  "overrideCommand": false,
-  "initializeCommand": "bash scripts/devcontainer/preflight.sh",
+  "initializeCommand": "bash -lc 'ctx=$(docker context show 2>/dev/null || true); test \"$ctx\" = \"colima-odoo\" || { echo \"Expected docker context colima-odoo, got: ${ctx:-<none>}\"; exit 1; }'",
   "features": {
     "ghcr.io/anthropics/devcontainer-features/claude-code:1.0": {}
   },
@@ -22,7 +20,6 @@
   "containerUser": "vscode",
   "remoteUser": "vscode",
   "postCreateCommand": "bash .devcontainer/post-create.sh",
-  "postStartCommand": "bash -lc 'python3 --version && test -d /workspaces/odoo && echo devcontainer-ready'",
   "customizations": {
     "vscode": {
       "extensions": [

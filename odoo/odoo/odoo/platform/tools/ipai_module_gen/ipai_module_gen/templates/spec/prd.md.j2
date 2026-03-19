@@ -1,0 +1,112 @@
+# PRD — {{ cap.title }}
+
+> **SAP ID**: {{ cap.sap_id }}
+> **Slug**: {{ cap.slug }}
+{% if cap.sap_doc %}> **Reference**: [SAP Documentation]({{ cap.sap_doc }}){% endif %}
+
+## Overview
+
+{{ cap.title }} provides [describe core functionality] for Odoo CE {{ odoo_series }}.
+
+## Problem Statement
+
+[Describe the problem this capability solves]
+
+## Goals
+
+1. [Primary goal]
+2. [Secondary goal]
+3. [Tertiary goal]
+
+## Non-Goals
+
+- [What this capability explicitly does NOT do]
+
+## User Stories
+
+### As an Odoo User
+
+- I want to [action] so that [benefit]
+
+### As an Administrator
+
+- I want to [action] so that [benefit]
+
+## Functional Requirements
+
+{% if odoo.module %}
+### FR-1: Core Functionality
+
+**Module**: `{{ odoo.module }}`
+
+{% for model in odoo.models | default([]) %}
+#### {{ model.name }}
+
+{{ model.description | default('No description') }}
+
+{% endfor %}
+{% endif %}
+
+### FR-2: User Interface
+
+{% for view in odoo.views | default([]) %}
+- {{ view.model }} {{ view.type }} view
+{% endfor %}
+
+### FR-3: Security
+
+- User role: Read/write own records
+- Manager role: Full access within company
+
+## Technical Requirements
+
+### TR-1: Data Model
+
+```
+{% for model in odoo.models | default([]) %}
+{{ model.name }}
+{% endfor %}
+```
+
+### TR-2: Dependencies
+
+{% for dep in odoo.depends | default(['base']) %}
+- `{{ dep }}`
+{% endfor %}
+
+### TR-3: Integration Points
+
+- [List integration points]
+
+## Success Metrics
+
+| Metric | Target |
+|--------|--------|
+| User adoption | [target] |
+| Task completion time | [target] |
+| Error rate | < 1% |
+
+## Milestones
+
+| Phase | Deliverable | Status |
+|-------|-------------|--------|
+| M1 | Data model + security | Pending |
+| M2 | Core UI | Pending |
+| M3 | Integration | Pending |
+| M4 | Testing + docs | Pending |
+
+## Risks & Mitigations
+
+| Risk | Impact | Mitigation |
+|------|--------|------------|
+| [Risk 1] | [Impact] | [Mitigation] |
+
+## Appendix
+
+### Related SAP Functionality
+
+{% if cap.sap_doc %}
+See [SAP Documentation]({{ cap.sap_doc }}) for reference.
+{% else %}
+[Add SAP documentation links]
+{% endif %}

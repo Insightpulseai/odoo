@@ -1,0 +1,93 @@
+# ===========================================================================
+# Odoo-aware CI Policy (SSOT)
+# Configuration for CI gates that enforce module standards
+# ===========================================================================
+
+# Addon directories to scan for changes
+addons_roots:
+  - addons
+  - addons/ipai
+  - addons/OCA
+  - addons/oca
+
+# Modules exempt from desired_modules.yml requirement
+# Use wildcards for patterns (e.g., test_* matches test_foo, test_bar)
+desired_modules_exempt:
+  - test_*
+  - base_*
+  - l10n_*  # Localization modules often installed separately
+
+# ===========================================================================
+# Check Policies
+# ===========================================================================
+checks:
+  # Require __manifest__.py in changed modules
+  require_manifest: true
+
+  # Require AGPL-3 or LGPL-3 license in manifest
+  require_license_agpl3_or_lgpl3: true
+
+  # Block modules with HTTP controllers (security policy)
+  # Set to true if you want to restrict new controller routes
+  forbid_http_controllers_default: false
+
+  # Require security/ir.model.access.csv if models.py contains Model classes
+  require_security_if_models: true
+
+  # Require tests/ directory if Python files changed
+  # Keep false unless you have a stable Odoo test harness
+  require_tests_if_python_changed: false
+
+  # Require README.rst (OCA-style documentation)
+  require_readme_rst: false
+
+# ===========================================================================
+# Severity Levels
+# ===========================================================================
+severity:
+  # Errors block PR merge
+  error:
+    - missing_manifest
+    - missing_in_desired_modules
+    - forbidden_license
+    - missing_security
+
+  # Warnings are reported but don't block
+  warning:
+    - missing_tests
+    - missing_readme
+    - http_controllers_detected
+
+# ===========================================================================
+# Module Tiers (optional)
+# Define tiers for different validation levels
+# ===========================================================================
+tiers:
+  core:
+    # Core modules require stricter validation
+    patterns:
+      - ipai_ops_*
+      - ipai_finance_*
+      - ipai_platform_*
+    checks:
+      require_tests_if_python_changed: true
+      require_readme_rst: true
+
+  theme:
+    # Theme modules have relaxed requirements
+    patterns:
+      - ipai_theme_*
+      - ipai_web_*
+      - ipai_ui_*
+    checks:
+      require_security_if_models: false
+      require_license_agpl3_or_lgpl3: false
+
+  experimental:
+    # Experimental modules bypass most checks
+    patterns:
+      - ipai_dev_*
+      - ipai_test_*
+    checks:
+      require_manifest: true
+      require_security_if_models: false

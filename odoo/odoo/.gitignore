@@ -205,8 +205,6 @@ docker-compose.*.local.yml
 .cursor/
 # --- python ---
 .venv/
-.ruff_cache/
-.mypy_cache/
 # --- misc ---
 # Incident snapshots (track only templates)
 docs/incidents/*

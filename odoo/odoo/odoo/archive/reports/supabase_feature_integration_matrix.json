@@ -1,0 +1,299 @@
+{
+  "_meta": {
+    "version": "1.0.0",
+    "generated": "2026-02-23T00:00:00Z",
+    "repo": "Insightpulseai/odoo",
+    "description": "Machine-readable Supabase primitive capability map and integration lanes. Integrations section is auto-populated by scripts/audit_supabase_integrations.py."
+  },
+  "primitives": [
+    {
+      "id": "postgres",
+      "name": "PostgreSQL 16",
+      "capability": "Relational + JSON + full-text + vector storage",
+      "current_usage": "ops.*, auth.*, public.kb_* schemas; all migrations in supabase/migrations/",
+      "gate_condition": "Use before adding any persistence integration. Replace only if PostgreSQL cannot model the data."
+    },
+    {
+      "id": "rls",
+      "name": "Row-Level Security (RLS)",
+      "capability": "Fine-grained, declarative row-level authorization",
+      "current_usage": "Enabled on ops tables; kb_nodes policy zones via addon_kind + edit_policy columns",
+      "gate_condition": "Use before adding an auth/middleware integration. Replace only if you need cross-tenant or attribute-based access control that RLS cannot express."
+    },
+    {
+      "id": "edge_functions",
+      "name": "Edge Functions (Deno)",
+      "capability": "Serverless functions; webhook adapters, API shims",
+      "current_usage": "42 Edge Functions deployed: n8n webhook bridge, GitHub event relay, task bus adapter",
+      "gate_condition": "Use before adding a BaaS integration. Replace only if invocation latency or cold-start time is unacceptable."
+    },
+    {
+      "id": "pg_cron",
+      "name": "pg_cron",
+      "capability": "Scheduled SQL jobs (cron syntax) within PostgreSQL",
+      "current_usage": "Maintenance jobs: stale task cleanup, KB freshness checks",
+      "gate_condition": "Use before adding a scheduled-job integration. Replace only if you need distributed scheduling across >1 project or a visual scheduling UI."
+    },
+    {
+      "id": "pgmq",
+      "name": "pgmq (Queues)",
+      "capability": "Durable, at-least-once message queue in PostgreSQL",
+      "current_usage": "Task bus for agent jobs (ops.task_queue), n8n trigger queue",
+      "gate_condition": "Use before adding a message-queue integration. Replace only if you need pub/sub fan-out or message-level TTL < 1 second."
+    },
+    {
+      "id": "realtime",
+      "name": "Realtime (CDC WebSocket)",
+      "capability": "INSERT/UPDATE/DELETE broadcasts over WebSocket",
+      "current_usage": "ops-console live dashboard, ERP event stream",
+      "gate_condition": "Use before adding a streaming integration. Replace only if you need >10 000 concurrent subscribers or sub-10 ms latency SLA."
+    },
+    {
+      "id": "storage",
+      "name": "Storage (S3-compatible)",
+      "capability": "Object storage with RLS policies",
+      "current_usage": "Receipt/invoice blobs for OCR pipeline; evidence log archives",
+      "gate_condition": "Use before adding a CDN/object-storage integration. Replace only if you need multi-region replication or CDN edge caching at scale."
+    },
+    {
+      "id": "pgvector",
+      "name": "pgvector / RAG",
+      "capability": "vector(1536) embeddings + IVFFlat/HNSW indexes",
+      "current_usage": "kb_embeddings table; semantic chunk retrieval for GraphRAG Layer 2",
+      "gate_condition": "Use before adding a vector-database integration. Replace only if you need approximate-nearest-neighbor at >10M vectors or sub-5ms p99 search."
+    }
+  ],
+  "integration_lanes": [
+    {
+      "id": "deployment_hosting",
+      "name": "Deployment / Hosting",
+      "approved": [
+        "vercel"
+      ],
+      "pending": []
+    },
+    {
+      "id": "automation_workflows",
+      "name": "Automation / Workflows",
+      "approved": [
+        "n8n"
+      ],
+      "pending": []
+    },
+    {
+      "id": "auth_providers",
+      "name": "Auth Providers",
+      "approved": [
+        "supabase-auth",
+        "ipai-auth-oidc"
+      ],
+      "pending": []
+    },
+    {
+      "id": "data_ops_sync",
+      "name": "Data Ops / Sync",
+      "approved": [
+        "github-actions"
+      ],
+      "pending": []
+    },
+    {
+      "id": "cms_admin",
+      "name": "CMS / Admin",
+      "approved": [],
+      "pending": []
+    },
+    {
+      "id": "observability",
+      "name": "Observability",
+      "approved": [
+        "digitalocean-monitoring"
+      ],
+      "pending": []
+    },
+    {
+      "id": "templates",
+      "name": "Templates / Accelerators",
+      "approved": [],
+      "pending": []
+    }
+  ],
+  "autodetection": {
+    "source": "repo+machine",
+    "output": "docs/supabase/integrations_detected.json",
+    "note": "Do not add integrations here without evidence; use scripts/audit_supabase_integrations.py.",
+    "last_run": "2026-02-23T09:38:10.083188+00:00"
+  },
+  "integrations": {
+    "deployment_hosting": [
+      {
+        "key": "vercel",
+        "name": "Vercel",
+        "confidence": "high"
+      }
+    ],
+    "automation_workflows": [
+      {
+        "key": "n8n",
+        "name": "n8n",
+        "confidence": "high"
+      }
+    ],
+    "auth_providers": [
+      {
+        "key": "supabase-auth",
+        "name": "Supabase Auth",
+        "confidence": "high"
+      }
+    ],
+    "data_ops_sync": [
+      {
+        "key": "github-actions",
+        "name": "GitHub Actions",
+        "confidence": "high"
+      }
+    ],
+    "cms_admin": [],
+    "observability": [
+      {
+        "key": "digitalocean-monitoring",
+        "name": "DigitalOcean Monitoring",
+        "confidence": "low"
+      }
+    ],
+    "templates": []
+  },
+  "machine_autodetection": {
+    "source": "local-machine-read-only",
+    "last_run": "2026-02-23T09:38:24.896896+00:00",
+    "cli_tools": [
+      {
+        "tool": "docker",
+        "version": "Docker version 29.2.0, build 0b9d198",
+        "path": "/usr/local/bin/docker"
+      },
+      {
+        "tool": "docker-compose",
+        "version": "Docker Compose version v5.0.2",
+        "path": "/usr/local/bin/docker-compose"
+      },
+      {
+        "tool": "gh",
+        "version": "gh version 2.83.2 (2025-12-10)",
+        "path": "/opt/homebrew/bin/gh"
+      },
+      {
+        "tool": "git",
+        "version": "git version 2.51.1",
+        "path": "/opt/homebrew/bin/git"
+      },
+      {
+        "tool": "jq",
+        "version": "jq-1.8.1",
+        "path": "/opt/homebrew/bin/jq"
+      },
+      {
+        "tool": "kubectl",
+        "version": "error: unknown flag: --version",
+        "path": "/opt/homebrew/bin/kubectl"
+      },
+      {
+        "tool": "node",
+        "version": "v22.12.0",
+        "path": "/Users/tbwa/.nvm/versions/node/v22.12.0/bin/node"
+      },
+      {
+        "tool": "npm",
+        "version": "10.9.0",
+        "path": "/Users/tbwa/.nvm/versions/node/v22.12.0/bin/npm"
+      },
+      {
+        "tool": "pnpm",
+        "version": "10.30.1",
+        "path": "/Users/tbwa/.nvm/versions/node/v22.12.0/bin/pnpm"
+      },
+      {
+        "tool": "psql",
+        "version": "psql (PostgreSQL) 15.14 (Homebrew)",
+        "path": "/opt/homebrew/bin/psql"
+      },
+      {
+        "tool": "python",
+        "version": "Python 3.11.13",
+        "path": "/Users/tbwa/.pyenv/versions/odoo-19-dev/bin/python"
+      },
+      {
+        "tool": "python3",
+        "version": "Python 3.11.13",
+        "path": "/Users/tbwa/.pyenv/versions/odoo-19-dev/bin/python3"
+      },
+      {
+        "tool": "rg",
+        "version": "ripgrep 15.0.0",
+        "path": "/opt/homebrew/bin/rg"
+      },
+      {
+        "tool": "supabase",
+        "version": "2.67.1",
+        "path": "/opt/homebrew/bin/supabase"
+      },
+      {
+        "tool": "terraform",
+        "version": "OpenTofu v1.11.5",
+        "path": "/Users/tbwa/bin/terraform"
+      },
+      {
+        "tool": "yarn",
+        "version": "1.22.22",
+        "path": "/Users/tbwa/.nvm/versions/node/v22.12.0/bin/yarn"
+      }
+    ],
+    "mcp_config_paths": [
+      "/Users/tbwa/.claude/mcp-servers.json",
+      "/Users/tbwa/.claude/official-supabase-mcp-config.json",
+      "/Users/tbwa/.claude/plugins/marketplaces/claude-plugins-official/external_plugins/asana/.mcp.json",
+      "/Users/tbwa/.claude/plugins/marketplaces/claude-plugins-official/external_plugins/context7/.mcp.json",
+      "/Users/tbwa/.claude/plugins/marketplaces/claude-plugins-official/external_plugins/firebase/.mcp.json",
+      "/Users/tbwa/.claude/plugins/marketplaces/claude-plugins-official/external_plugins/github/.mcp.json",
+      "/Users/tbwa/.claude/plugins/marketplaces/claude-plugins-official/external_plugins/gitlab/.mcp.json",
+      "/Users/tbwa/.claude/plugins/marketplaces/claude-plugins-official/external_plugins/greptile/.mcp.json",
+      "/Users/tbwa/.claude/plugins/marketplaces/claude-plugins-official/external_plugins/laravel-boost/.mcp.json",
+      "/Users/tbwa/.claude/plugins/marketplaces/claude-plugins-official/external_plugins/linear/.mcp.json",
+      "/Users/tbwa/.claude/plugins/marketplaces/claude-plugins-official/external_plugins/playwright/.mcp.json",
+      "/Users/tbwa/.claude/plugins/marketplaces/claude-plugins-official/external_plugins/serena/.mcp.json",
+      "/Users/tbwa/.claude/plugins/marketplaces/claude-plugins-official/external_plugins/slack/.mcp.json",
+      "/Users/tbwa/.claude/plugins/marketplaces/claude-plugins-official/external_plugins/stripe/.mcp.json",
+      "/Users/tbwa/.claude/plugins/marketplaces/claude-plugins-official/external_plugins/supabase/.mcp.json",
+      "/Users/tbwa/.claude/plugins/marketplaces/claude-plugins-official/plugins/example-plugin/.mcp.json",
+      "/Users/tbwa/Library/Application Support/Claude/Claude Extensions Settings/ant.dir.gh.microsoft.clarity-mcp-server.json",
+      "/Users/tbwa/Library/Application Support/Claude/Claude Extensions Settings/ant.dir.gh.tableau.tableau-mcp.json",
+      "/Users/tbwa/Library/Application Support/Claude/Claude Extensions Settings/ant.dir.gh.wonderwhy-er.desktopcommandermcp.json",
+      "/Users/tbwa/Library/Application Support/Claude/Claude Extensions Settings/postman-mcp-server.json",
+      "/Users/tbwa/Library/Application Support/Claude/local-agent-mode-sessions/e06bff7d-047c-4e9a-818c-a9bf87ed8c66/c8398c3c-ca07-43fb-8d34-421bb7ee395a/cowork_plugins/cache/knowledge-work-plugins/bio-research/1.0.0/.mcp.json",
+      "/Users/tbwa/Library/Application Support/Claude/local-agent-mode-sessions/e06bff7d-047c-4e9a-818c-a9bf87ed8c66/c8398c3c-ca07-43fb-8d34-421bb7ee395a/cowork_plugins/cache/knowledge-work-plugins/cowork-plugin-management/0.2.2/skills/cowork-plugin-customizer/examples/customized-mcp.json",
+      "/Users/tbwa/Library/Application Support/Claude/local-agent-mode-sessions/e06bff7d-047c-4e9a-818c-a9bf87ed8c66/c8398c3c-ca07-43fb-8d34-421bb7ee395a/cowork_plugins/cache/knowledge-work-plugins/data/1.0.0/.mcp.json",
+      "/Users/tbwa/Library/Application Support/Claude/local-agent-mode-sessions/e06bff7d-047c-4e9a-818c-a9bf87ed8c66/c8398c3c-ca07-43fb-8d34-421bb7ee395a/cowork_plugins/cache/knowledge-work-plugins/finance/1.0.0/.mcp.json",
+      "/Users/tbwa/Library/Application Support/Claude/local-agent-mode-sessions/e06bff7d-047c-4e9a-818c-a9bf87ed8c66/c8398c3c-ca07-43fb-8d34-421bb7ee395a/cowork_plugins/cache/knowledge-work-plugins/legal/1.0.0/.mcp.json",
+      "/Users/tbwa/Library/Application Support/Claude/local-agent-mode-sessions/e06bff7d-047c-4e9a-818c-a9bf87ed8c66/c8398c3c-ca07-43fb-8d34-421bb7ee395a/cowork_plugins/cache/knowledge-work-plugins/product-management/1.0.0/.mcp.json",
+      "/Users/tbwa/Library/Application Support/Claude/local-agent-mode-sessions/e06bff7d-047c-4e9a-818c-a9bf87ed8c66/c8398c3c-ca07-43fb-8d34-421bb7ee395a/cowork_plugins/cache/knowledge-work-plugins/productivity/1.0.0/.mcp.json",
+      "/Users/tbwa/Library/Application Support/Claude/local-agent-mode-sessions/e06bff7d-047c-4e9a-818c-a9bf87ed8c66/c8398c3c-ca07-43fb-8d34-421bb7ee395a/cowork_plugins/marketplaces/knowledge-work-plugins/bio-research/.mcp.json",
+      "/Users/tbwa/Library/Application Support/Claude/local-agent-mode-sessions/e06bff7d-047c-4e9a-818c-a9bf87ed8c66/c8398c3c-ca07-43fb-8d34-421bb7ee395a/cowork_plugins/marketplaces/knowledge-work-plugins/cowork-plugin-management/skills/cowork-plugin-customizer/examples/customized-mcp.json",
+      "/Users/tbwa/Library/Application Support/Claude/local-agent-mode-sessions/e06bff7d-047c-4e9a-818c-a9bf87ed8c66/c8398c3c-ca07-43fb-8d34-421bb7ee395a/cowork_plugins/marketplaces/knowledge-work-plugins/customer-support/.mcp.json",
+      "/Users/tbwa/Library/Application Support/Claude/local-agent-mode-sessions/e06bff7d-047c-4e9a-818c-a9bf87ed8c66/c8398c3c-ca07-43fb-8d34-421bb7ee395a/cowork_plugins/marketplaces/knowledge-work-plugins/data/.mcp.json",
+      "/Users/tbwa/Library/Application Support/Claude/local-agent-mode-sessions/e06bff7d-047c-4e9a-818c-a9bf87ed8c66/c8398c3c-ca07-43fb-8d34-421bb7ee395a/cowork_plugins/marketplaces/knowledge-work-plugins/enterprise-search/.mcp.json",
+      "/Users/tbwa/Library/Application Support/Claude/local-agent-mode-sessions/e06bff7d-047c-4e9a-818c-a9bf87ed8c66/c8398c3c-ca07-43fb-8d34-421bb7ee395a/cowork_plugins/marketplaces/knowledge-work-plugins/finance/.mcp.json",
+      "/Users/tbwa/Library/Application Support/Claude/local-agent-mode-sessions/e06bff7d-047c-4e9a-818c-a9bf87ed8c66/c8398c3c-ca07-43fb-8d34-421bb7ee395a/cowork_plugins/marketplaces/knowledge-work-plugins/legal/.mcp.json",
+      "/Users/tbwa/Library/Application Support/Claude/local-agent-mode-sessions/e06bff7d-047c-4e9a-818c-a9bf87ed8c66/c8398c3c-ca07-43fb-8d34-421bb7ee395a/cowork_plugins/marketplaces/knowledge-work-plugins/marketing/.mcp.json",
+      "/Users/tbwa/Library/Application Support/Claude/local-agent-mode-sessions/e06bff7d-047c-4e9a-818c-a9bf87ed8c66/c8398c3c-ca07-43fb-8d34-421bb7ee395a/cowork_plugins/marketplaces/knowledge-work-plugins/product-management/.mcp.json",
+      "/Users/tbwa/Library/Application Support/Claude/local-agent-mode-sessions/e06bff7d-047c-4e9a-818c-a9bf87ed8c66/c8398c3c-ca07-43fb-8d34-421bb7ee395a/cowork_plugins/marketplaces/knowledge-work-plugins/productivity/.mcp.json",
+      "/Users/tbwa/Library/Application Support/Claude/local-agent-mode-sessions/e06bff7d-047c-4e9a-818c-a9bf87ed8c66/c8398c3c-ca07-43fb-8d34-421bb7ee395a/cowork_plugins/marketplaces/knowledge-work-plugins/sales/.mcp.json"
+    ],
+    "docker_service_hints": [
+      "ipai-nginx",
+      "odoo-core",
+      "odoo-db",
+      "odoo-redis"
+    ],
+    "note": "Tool names/versions/paths only — no secrets."
+  }
+}

@@ -1,0 +1,92 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.invalid/schemas/form_evidence_bundle.schema.json",
+  "title": "Form Evidence Bundle",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "bundle_id",
+    "locale",
+    "form_id",
+    "period",
+    "entities",
+    "artifacts",
+    "hashes",
+    "provenance"
+  ],
+  "properties": {
+    "bundle_id": { "type": "string", "minLength": 8 },
+    "locale": { "type": "string", "minLength": 2 },
+    "form_id": { "type": "string", "minLength": 3 },
+    "period": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["start", "end"],
+      "properties": {
+        "start": { "type": "string", "format": "date" },
+        "end": { "type": "string", "format": "date" }
+      }
+    },
+    "entities": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["company_name"],
+      "properties": {
+        "company_name": { "type": "string" },
+        "tin": { "type": ["string", "null"] },
+        "branch_code": { "type": ["string", "null"] }
+      }
+    },
+    "artifacts": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["kind", "path", "content_type", "sha256"],
+        "properties": {
+          "kind": { "type": "string" },
+          "path": { "type": "string" },
+          "content_type": { "type": "string" },
+          "sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+          "notes": { "type": ["string", "null"] }
+        }
+      }
+    },
+    "hashes": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["bundle_sha256"],
+      "properties": {
+        "bundle_sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" }
+      }
+    },
+    "provenance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["generated_at", "generator", "inputs"],
+      "properties": {
+        "generated_at": { "type": "string", "format": "date-time" },
+        "generator": { "type": "string" },
+        "inputs": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "signatures": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["by", "at", "method"],
+            "properties": {
+              "by": { "type": "string" },
+              "at": { "type": "string", "format": "date-time" },
+              "method": { "type": "string" },
+              "value": { "type": ["string", "null"] }
+            }
+          }
+        }
+      }
+    }
+  }
+}

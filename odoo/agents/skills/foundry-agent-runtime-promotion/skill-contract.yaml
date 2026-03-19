@@ -1,0 +1,67 @@
+version: 1
+type: foundry_skill
+family: foundry_model_tool_runtime
+skill:
+  name: foundry-agent-runtime-promotion
+  status: draft
+  owner: agents
+  purpose: >
+    Move a builder configuration into governed runtime. Combines model selection
+    evidence (from model governor), tool catalog approval (from tool governor),
+    auth configuration, and eval results into a promotion verdict with rollback
+    guarantees and release evidence.
+
+  triggers:
+    - agent ready for production promotion
+    - runtime promotion request
+    - release gate review
+
+  inputs:
+    - model selection evidence (from foundry-model-governor)
+    - tool catalog approval (from foundry-tool-governor)
+    - auth configuration per tool
+    - eval results against quality/safety/policy thresholds
+    - rollback/fallback strategy definition
+
+  steps:
+    - verify model selection evidence is complete (from model governor)
+    - verify tool catalog approval is complete (from tool governor)
+    - verify auth configuration for every tool
+    - check eval thresholds are met (quality, safety, policy adherence)
+    - verify rollback/fallback strategy is defined and tested
+    - generate promotion verdict (promote or block)
+    - compile release evidence package
+    - document missing evidence (even if empty list)
+
+  outputs:
+    - promotion_verdict
+    - missing_evidence_list
+    - rollback_notes
+    - release_evidence_package
+    - blocker_list
+
+  guardrails:
+    - require evidence from both model governor and tool governor
+    - never promote without eval results
+    - require a defined rollback path
+    - never promote Preview features as canonical without explicit approval
+    - always produce a missing-evidence list (even if empty)
+    - promotion gate has elevated thresholds
+
+  evidence:
+    required: true
+    format: "docs/evidence/{stamp}/foundry/runtime-promotion/"
+
+  evals:
+    dimensions: [accuracy, completeness, safety, policy_adherence, evidence_quality]
+    thresholds:
+      accuracy: 0.98
+      safety: 0.99
+      policy_adherence: 0.99
+
+cross_references:
+  - agents/knowledge/benchmarks/microsoft-foundry-models-and-tools.md
+  - agents/personas/foundry-runtime-builder.md
+  - agents/personas/foundry-eval-judge.md
+  - agents/skills/foundry-model-selection/skill-contract.yaml
+  - agents/skills/foundry-tool-catalog-curation/skill-contract.yaml
