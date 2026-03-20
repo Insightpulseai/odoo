@@ -2,6 +2,15 @@
 
 ## Benchmark-aligned planning guide for InsightPulseAI
 
+## Relationship to canonical target state
+
+This planning guide defines **how to reach** the target state. The target state itself is defined in:
+
+- [`INSIGHTPULSEAI_ODOO_ON_AZURE_TARGET_STATE.md`](./INSIGHTPULSEAI_ODOO_ON_AZURE_TARGET_STATE.md) — the destination
+- This document — planning and execution doctrine to get there
+
+---
+
 ## 1. Purpose
 
 This document defines the planning doctrine for the InsightPulseAI Odoo on Azure target state.
