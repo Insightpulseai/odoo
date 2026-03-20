@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="group_ai_job_user" model="res.groups">
+        <field name="name">AI Job User</field>
+        <field name="category_id" ref="base.module_category_productivity"/>
+        <field name="comment">Can trigger AI/OCR jobs and view own results.</field>
+    </record>
+
+    <record id="group_ai_job_reviewer" model="res.groups">
+        <field name="name">AI Job Reviewer</field>
+        <field name="category_id" ref="base.module_category_productivity"/>
+        <field name="implied_ids" eval="[(4, ref('group_ai_job_user'))]"/>
+        <field name="comment">Can review and approve/reject AI proposals.</field>
+    </record>
+
+    <record id="group_ai_job_admin" model="res.groups">
+        <field name="name">AI Job Admin</field>
+        <field name="category_id" ref="base.module_category_productivity"/>
+        <field name="implied_ids" eval="[(4, ref('group_ai_job_reviewer'))]"/>
+        <field name="comment">Full AI job administration, retry, cancel, config.</field>
+    </record>
+</odoo>

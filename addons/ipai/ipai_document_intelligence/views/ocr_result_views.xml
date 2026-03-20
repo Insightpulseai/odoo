@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- OCR Result: List View -->
+    <record id="ipai_ocr_result_view_list" model="ir.ui.view">
+        <field name="name">ipai.ocr.result.list</field>
+        <field name="model">ipai.ocr.result</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="correlation_id"/>
+                <field name="attachment_name"/>
+                <field name="extraction_mode"/>
+                <field name="page_count"/>
+                <field name="overall_confidence" widget="progressbar"/>
+                <field name="review_recommendation"
+                       decoration-success="review_recommendation == 'auto_accept'"
+                       decoration-warning="review_recommendation == 'review'"
+                       decoration-danger="review_recommendation == 'reject'"
+                       widget="badge"/>
+                <field name="processed_at"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- OCR Result: Form View -->
+    <record id="ipai_ocr_result_view_form" model="ir.ui.view">
+        <field name="name">ipai.ocr.result.form</field>
+        <field name="model">ipai.ocr.result</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_create_proposal"
+                            string="Create Proposal"
+                            type="object"
+                            class="btn-primary"
+                            groups="ipai_copilot_actions.group_ai_job_reviewer"/>
+                    <field name="review_recommendation" widget="statusbar"
+                           statusbar_visible="auto_accept,review,reject"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group string="Source">
+                            <field name="job_id"/>
+                            <field name="correlation_id"/>
+                            <field name="attachment_id"/>
+                            <field name="attachment_name"/>
+                            <field name="source_model"/>
+                            <field name="source_record_id"/>
+                        </group>
+                        <group string="Extraction">
+                            <field name="extraction_mode"/>
+                            <field name="di_model_id"/>
+                            <field name="di_api_version"/>
+                            <field name="page_count"/>
+                            <field name="overall_confidence" widget="progressbar"/>
+                            <field name="di_operation_id"/>
+                            <field name="processed_at"/>
+                            <field name="processing_time_ms"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Raw Text" name="raw_text">
+                            <field name="raw_text"/>
+                        </page>
+                        <page string="Extracted Fields" name="fields">
+                            <field name="extracted_fields" widget="json"/>
+                            <field name="field_confidences" widget="json"/>
+                        </page>
+                        <page string="Tables" name="tables">
+                            <field name="tables" widget="json"/>
+                        </page>
+                        <page string="Key-Value Pairs" name="kv_pairs">
+                            <field name="key_value_pairs" widget="json"/>
+                        </page>
+                        <page string="Text Blocks" name="text_blocks">
+                            <field name="text_blocks" widget="json"/>
+                        </page>
+                        <page string="Error" name="error"
+                              attrs="{'invisible': [('error_message', '=', False)]}">
+                            <field name="error_message"/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- OCR Result: Search View -->
+    <record id="ipai_ocr_result_view_search" model="ir.ui.view">
+        <field name="name">ipai.ocr.result.search</field>
+        <field name="model">ipai.ocr.result</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="correlation_id"/>
+                <field name="attachment_name"/>
+                <field name="source_model"/>
+                <filter name="filter_auto_accept" string="Auto-Accept"
+                        domain="[('review_recommendation', '=', 'auto_accept')]"/>
+                <filter name="filter_review" string="Needs Review"
+                        domain="[('review_recommendation', '=', 'review')]"/>
+                <filter name="filter_reject" string="Rejected"
+                        domain="[('review_recommendation', '=', 'reject')]"/>
+                <separator/>
+                <filter name="filter_invoice" string="Invoices"
+                        domain="[('extraction_mode', '=', 'prebuilt_invoice')]"/>
+                <filter name="filter_receipt" string="Receipts"
+                        domain="[('extraction_mode', '=', 'prebuilt_receipt')]"/>
+                <group expand="0" string="Group By">
+                    <filter name="groupby_mode" string="Extraction Mode"
+                            context="{'group_by': 'extraction_mode'}"/>
+                    <filter name="groupby_review" string="Review Status"
+                            context="{'group_by': 'review_recommendation'}"/>
+                    <filter name="groupby_date" string="Processed Date"
+                            context="{'group_by': 'processed_at:day'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- OCR Result: Action -->
+    <record id="ipai_ocr_result_action" model="ir.actions.act_window">
+        <field name="name">OCR Results</field>
+        <field name="res_model">ipai.ocr.result</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="ipai_ocr_result_view_search"/>
+        <field name="context">{'search_default_filter_review': 1}</field>
+    </record>
+
+</odoo>

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Root menu under AI/Copilot -->
+    <menuitem id="menu_document_intelligence_root"
+              name="Document Intelligence"
+              parent="ipai_copilot_actions.menu_ai_copilot_root"
+              sequence="30"
+              groups="ipai_copilot_actions.group_ai_job_user"/>
+
+    <menuitem id="menu_ocr_results"
+              name="OCR Results"
+              parent="menu_document_intelligence_root"
+              action="ipai_ocr_result_action"
+              sequence="10"/>
+
+</odoo>

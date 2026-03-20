@@ -1,0 +1,7 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_ai_job_user,ipai.ai.job.user,model_ipai_ai_job,group_ai_job_user,1,0,1,0
+access_ai_job_reviewer,ipai.ai.job.reviewer,model_ipai_ai_job,group_ai_job_reviewer,1,1,1,0
+access_ai_job_admin,ipai.ai.job.admin,model_ipai_ai_job,group_ai_job_admin,1,1,1,1
+access_ai_proposal_user,ipai.ai.proposal.user,model_ipai_ai_proposal,group_ai_job_user,1,0,0,0
+access_ai_proposal_reviewer,ipai.ai.proposal.reviewer,model_ipai_ai_proposal,group_ai_job_reviewer,1,1,0,0
+access_ai_proposal_admin,ipai.ai.proposal.admin,model_ipai_ai_proposal,group_ai_job_admin,1,1,1,1
