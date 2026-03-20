@@ -288,3 +288,29 @@ platform_map:
     ci_cd: GitHub Actions + Azure Pipelines (Azure deployments)
     dns: Cloudflare
     hosting: Azure Container Apps (behind Azure Front Door)
+
+# =============================================================================
+# Deprecated Items
+# =============================================================================
+deprecated_items:
+  - name: supabase_managed_subscription
+    deprecated: "2026-03-20"
+    replacement: self-hosted Supabase on Azure VM (vm-ipai-supabase-dev)
+  - name: vercel
+    deprecated: "2026-03-11"
+    replacement: azure_container_apps
+  - name: digitalocean
+    deprecated: "2026-03-15"
+    replacement: azure_container_apps
+  - name: mailgun
+    deprecated: "2026-03-11"
+    replacement: zoho_smtp
+  - name: ops-platform
+    deprecated: "2026-03-20"
+    replacement: platform
+  - name: design-system
+    deprecated: "2026-03-20"
+    replacement: design
+  - name: lakehouse
+    deprecated: "2026-03-20"
+    replacement: data-intelligence
