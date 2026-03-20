@@ -1,0 +1,12 @@
+Name                HasSecret
+------------------  -----------
+HOST                False
+PORT                False
+USER                False
+PASSWORD            True
+db_name             False
+dbfilter            False
+ODOO_STAGE          False
+ODOO_DATA_DIR       False
+CP2_VERIFY          False
+AZURE_FRONTDOOR_ID  False
