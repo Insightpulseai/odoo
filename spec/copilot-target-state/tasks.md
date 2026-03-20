@@ -1,5 +1,32 @@
 # Copilot Target-State — Tasks
 
+## Confirmed Milestones
+
+| Milestone | Evidence | Date |
+| --- | --- | --- |
+| Foundry agent identities visible in M365 admin center | `data-intel-ph-resource-data-intel-ph-AgentIdentity`, `AgentIdentityBlueprint`, project object | 2026-03-20 |
+| Entra agent governance surface active in tenant | M365 admin → All agents shows Foundry-backed entries | 2026-03-20 |
+| `ipai_odoo_copilot` installed on local `odoo_dev` | `state=installed` verified via psql | 2026-03-20 |
+| Canonical unified baseline frozen | Constitution, PRD, plan, planning guide committed | 2026-03-20 |
+
+## Private Deployment Gap Checklist
+
+From: Foundry project identity visible in M365 admin
+To: Named `InsightPulseAI Odoo Copilot` app visible in M365 admin
+
+- [ ] Publish Foundry agent as stable application endpoint
+- [ ] Choose product name: `InsightPulseAI Odoo Copilot`
+- [ ] Create Microsoft 365 / Teams app package (custom engine agent or SaaS)
+- [ ] Deploy to org catalog / private tenant
+- [ ] Verify app appears as productized entry in M365 admin (not just identity object)
+- [ ] Validate user install flow in Teams
+- [ ] Validate admin enablement / config flow
+- [ ] Wire Odoo tool contract to published agent
+- [ ] Wire OCR / Document Intelligence path
+- [ ] Verify end-to-end: Teams → agent → Odoo → response
+
+---
+
 ## Marketplace-Readiness Gap Matrix
 
 | # | Surface | Gap | Exit Artifact | Owner | Priority |
