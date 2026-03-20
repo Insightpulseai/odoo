@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="ipai_ai_job_view_list" model="ir.ui.view">
+        <field name="name">ipai.ai.job.list</field>
+        <field name="model">ipai.ai.job</field>
+        <field name="arch" type="xml">
+            <list decoration-danger="state == 'failed'"
+                  decoration-warning="state == 'needs_review'"
+                  decoration-success="state == 'done'"
+                  decoration-muted="state == 'cancelled'">
+                <field name="create_date"/>
+                <field name="correlation_id" optional="hide"/>
+                <field name="job_type"/>
+                <field name="source_model"/>
+                <field name="source_record_name"/>
+                <field name="trigger"/>
+                <field name="state" widget="badge"/>
+                <field name="confidence" widget="progressbar" optional="show"/>
+                <field name="user_id" widget="many2one_avatar_user"/>
+                <field name="duration_ms" optional="show"/>
+                <field name="retry_count" optional="hide"/>
+                <field name="proposal_count" optional="show"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="ipai_ai_job_view_form" model="ir.ui.view">
+        <field name="name">ipai.ai.job.form</field>
+        <field name="model">ipai.ai.job</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_start" string="Start" type="object"
+                            invisible="state != 'queued'" class="btn-primary"/>
+                    <button name="action_retry" string="Retry" type="object"
+                            invisible="state != 'failed'" class="btn-warning"/>
+                    <button name="action_cancel" string="Cancel" type="object"
+                            invisible="state not in ('queued', 'failed', 'needs_review')"/>
+                    <button name="action_view_proposals" string="View Proposals" type="object"
+                            invisible="proposal_count == 0" class="btn-info"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="queued,running,done"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group string="Job">
+                            <field name="correlation_id"/>
+                            <field name="job_type"/>
+                            <field name="trigger"/>
+                            <field name="user_id"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                        </group>
+                        <group string="Source">
+                            <field name="source_model"/>
+                            <field name="source_record_id"/>
+                            <field name="source_record_name"/>
+                            <field name="attachment_id"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Execution" name="execution">
+                            <group>
+                                <group string="Service">
+                                    <field name="external_job_id"/>
+                                    <field name="agent_id"/>
+                                    <field name="agent_version"/>
+                                    <field name="model_name"/>
+                                    <field name="model_version"/>
+                                </group>
+                                <group string="Timing">
+                                    <field name="started_at"/>
+                                    <field name="completed_at"/>
+                                    <field name="duration_ms"/>
+                                </group>
+                            </group>
+                        </page>
+                        <page string="Result" name="result">
+                            <group>
+                                <field name="confidence" widget="progressbar"/>
+                                <field name="needs_human_review"/>
+                                <field name="review_reason"/>
+                            </group>
+                            <field name="result_payload" widget="json"/>
+                        </page>
+                        <page string="Error" name="error"
+                              invisible="not error_message">
+                            <group>
+                                <field name="error_class"/>
+                                <field name="error_message"/>
+                            </group>
+                        </page>
+                        <page string="Retry" name="retry">
+                            <group>
+                                <field name="retry_count"/>
+                                <field name="max_retries"/>
+                                <field name="last_retry_at"/>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="ipai_ai_job_view_search" model="ir.ui.view">
+        <field name="name">ipai.ai.job.search</field>
+        <field name="model">ipai.ai.job</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="correlation_id"/>
+                <field name="source_model"/>
+                <field name="source_record_name"/>
+                <field name="user_id"/>
+                <filter name="filter_queued" string="Queued" domain="[('state', '=', 'queued')]"/>
+                <filter name="filter_running" string="Running" domain="[('state', '=', 'running')]"/>
+                <filter name="filter_needs_review" string="Needs Review" domain="[('state', '=', 'needs_review')]"/>
+                <filter name="filter_failed" string="Failed" domain="[('state', '=', 'failed')]"/>
+                <separator/>
+                <filter name="filter_ocr" string="OCR Jobs" domain="[('job_type', 'in', ('ocr_read', 'ocr_extract', 'ocr_classify'))]"/>
+                <filter name="filter_copilot" string="Copilot Jobs" domain="[('job_type', 'in', ('copilot_chat', 'copilot_summary', 'copilot_suggest'))]"/>
+                <filter name="filter_finance" string="Finance Jobs" domain="[('job_type', 'in', ('finance_draft', 'finance_review'))]"/>
+                <group expand="0" string="Group By">
+                    <filter name="group_state" string="State" context="{'group_by': 'state'}"/>
+                    <filter name="group_type" string="Job Type" context="{'group_by': 'job_type'}"/>
+                    <filter name="group_user" string="User" context="{'group_by': 'user_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="ipai_ai_job_action" model="ir.actions.act_window">
+        <field name="name">AI Jobs</field>
+        <field name="res_model">ipai.ai.job</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="ipai_ai_job_view_search"/>
+    </record>
+</odoo>

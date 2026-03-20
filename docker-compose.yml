@@ -1,0 +1,122 @@
+# =============================================================================
+# Docker Compose: Odoo CE 19 — Canonical Local Runtime
+# =============================================================================
+# SSOT for local Odoo dev stack. Launched from repo root.
+#
+# Frozen naming:
+#   Project:    odoo
+#   Services:   odoo, db, redis
+#   Containers: odoo-odoo-1, odoo-db-1, odoo-redis-1
+#   Volumes:    odoo-db-data, odoo-web-data, odoo-redis-data
+#   Network:    odoo-net
+#   Context:    colima-odoo
+#   Database:   odoo_dev
+#
+# Usage:
+#   docker --context colima-odoo compose up -d
+#   docker --context colima-odoo compose logs -f odoo
+#   docker --context colima-odoo compose down
+# =============================================================================
+
+name: odoo
+
+services:
+  # =========================================================================
+  # PostgreSQL 16 — Database Backend
+  # =========================================================================
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: odoo
+      POSTGRES_PASSWORD: odoo
+      POSTGRES_DB: odoo_dev
+      POSTGRES_INITDB_ARGS: "--encoding=UTF8 --locale=C"
+    command:
+      - "postgres"
+      - "-c"
+      - "max_connections=100"
+      - "-c"
+      - "shared_buffers=256MB"
+      - "-c"
+      - "effective_cache_size=1GB"
+      - "-c"
+      - "work_mem=16MB"
+      - "-c"
+      - "maintenance_work_mem=128MB"
+      - "-c"
+      - "random_page_cost=1.1"
+      - "-c"
+      - "log_min_duration_statement=1000"
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    ports:
+      - "5433:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U odoo -d odoo_dev"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+      start_period: 10s
+
+  # =========================================================================
+  # Redis 7 — Session Store / Cache / Bus Backend
+  # =========================================================================
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    command: ["redis-server", "--appendonly", "yes"]
+    volumes:
+      - redis-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  # =========================================================================
+  # Odoo CE 19 — Core ERP
+  # =========================================================================
+  odoo:
+    image: odoo:19.0
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    environment:
+      HOST: db
+      PORT: 5432
+      USER: odoo
+      PASSWORD: odoo
+    volumes:
+      - web-data:/var/lib/odoo
+      - ./addons/ipai:/mnt/extra-addons/ipai:ro
+      - ./addons/oca:/mnt/oca:rw
+      - ./config/dev/odoo.conf:/etc/odoo/odoo.conf:ro
+    ports:
+      - "8069:8069"
+      - "8072:8072"
+    command: >
+      odoo
+      --config=/etc/odoo/odoo.conf
+    healthcheck:
+      test: ["CMD", "curl", "-sf", "http://localhost:8069/web/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 90s
+
+volumes:
+  db-data:
+    name: odoo-db-data
+  redis-data:
+    name: odoo-redis-data
+  web-data:
+    name: odoo-web-data
+
+networks:
+  default:
+    name: odoo-net
+    driver: bridge

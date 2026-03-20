@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <menuitem id="menu_ai_root"
+              name="AI Copilot"
+              web_icon="ipai_copilot_actions,static/description/icon.png"
+              sequence="99"/>
+
+    <menuitem id="menu_ai_jobs"
+              name="AI Jobs"
+              parent="menu_ai_root"
+              action="ipai_ai_job_action"
+              sequence="10"/>
+
+    <menuitem id="menu_ai_proposals"
+              name="AI Proposals"
+              parent="menu_ai_root"
+              action="ipai_ai_proposal_action"
+              sequence="20"/>
+</odoo>

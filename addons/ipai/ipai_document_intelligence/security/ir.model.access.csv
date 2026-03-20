@@ -1,0 +1,4 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_ipai_ocr_result_user,ipai.ocr.result.user,model_ipai_ocr_result,ipai_copilot_actions.group_ai_job_user,1,0,0,0
+access_ipai_ocr_result_reviewer,ipai.ocr.result.reviewer,model_ipai_ocr_result,ipai_copilot_actions.group_ai_job_reviewer,1,1,1,0
+access_ipai_ocr_result_admin,ipai.ocr.result.admin,model_ipai_ocr_result,ipai_copilot_actions.group_ai_job_admin,1,1,1,1

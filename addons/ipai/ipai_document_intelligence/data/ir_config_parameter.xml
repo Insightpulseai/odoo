@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <!-- Document Intelligence API version -->
+        <record id="param_di_api_version" model="ir.config_parameter">
+            <field name="key">ipai.doc_intelligence.api_version</field>
+            <field name="value">2024-11-30</field>
+        </record>
+
+        <!-- Confidence threshold for auto-accept (no human review needed) -->
+        <record id="param_di_auto_accept_threshold" model="ir.config_parameter">
+            <field name="key">ipai.doc_intelligence.auto_accept_threshold</field>
+            <field name="value">0.85</field>
+        </record>
+
+        <!-- Confidence threshold below which results are rejected -->
+        <record id="param_di_reject_threshold" model="ir.config_parameter">
+            <field name="key">ipai.doc_intelligence.reject_threshold</field>
+            <field name="value">0.3</field>
+        </record>
+    </data>
+</odoo>

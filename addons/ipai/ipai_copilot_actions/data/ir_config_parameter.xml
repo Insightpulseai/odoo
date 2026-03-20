@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+    <record id="param_review_threshold" model="ir.config_parameter">
+        <field name="key">ipai.copilot_actions.review_threshold</field>
+        <field name="value">0.7</field>
+    </record>
+
+    <record id="param_max_retries" model="ir.config_parameter">
+        <field name="key">ipai.copilot_actions.max_retries</field>
+        <field name="value">3</field>
+    </record>
+
+    <record id="param_auto_ocr_enabled" model="ir.config_parameter">
+        <field name="key">ipai.copilot_actions.auto_ocr_enabled</field>
+        <field name="value">False</field>
+    </record>
+</odoo>
