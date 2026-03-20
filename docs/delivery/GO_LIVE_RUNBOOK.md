@@ -1,15 +1,29 @@
 # Go-Live Runbook — Odoo on Azure Production
 
-## Gate Sequence
+## Gate Sequence (verified 2026-03-20)
 
-| Gate | Description | Status |
-| --- | --- | --- |
-| CP-1 | MFA readiness for admin identities | Open |
-| CP-2 | Azure Files + ACA mount proof | **Done** |
-| CP-3 | Front Door / WAF validation | Open |
-| CP-6 | Odoo DB tenancy hardening (dbfilter, list_db, admin_passwd) | Open |
-| CP-7 | Full production smoke run | Open |
-| CP-8 | Evidence pack assembly | Open |
+| Gate | Description | Status | Evidence |
+| --- | --- | --- | --- |
+| CP-1 | MFA readiness for admin identities | **Partial** | `admin@` enrolled; `emergency-admin@` pending interactive enrollment |
+| CP-2 | Azure Files + ACA mount proof | **Done** | Previously verified |
+| CP-3 | Front Door / WAF validation | **Partial** | AFD live (`x-azure-ref` confirmed on `erp.insightpulseai.com`); WAF policy needs portal verification (resource not CLI-visible) |
+| CP-6 | Odoo DB tenancy hardening (dbfilter, list_db, admin_passwd) | **Open** | Not yet applied |
+| CP-7 | Full production smoke run | **Open** | Pending CP-6 |
+| CP-8 | Evidence pack assembly | **Open** | Pending CP-7 |
+
+### Identity Baseline (solo-team model)
+
+| Identity | Role | Entra Role | Subscription RBAC | MFA |
+| --- | --- | --- | --- | --- |
+| `admin@insightpulseai.com` | Primary admin | Global Administrator | Contributor | Enrolled |
+| `emergency-admin@insightpulseai.com` | Break-glass | Global Administrator | Contributor | **Pending** |
+| `ceo@insightpulseai.com` (Jake ext) | Operator | Owner (inherited) | Owner | External IdP |
+
+### Remaining CP-1 Actions
+
+- [ ] `emergency-admin@insightpulseai.com` completes MFA at `https://aka.ms/mfasetup`
+- [ ] Enable registration campaign in Entra portal (no exclusions or exclude only emergency-admin)
+- [ ] Move automation to workload identities (mandatory MFA Phase 2)
 
 ## Prerequisites
 
@@ -191,8 +205,11 @@ az network front-door waf-policy update --resource-group "$AFD_RG" --name "$WAF_
 
 Do NOT flip to GO until:
 
-- [ ] CP-1: Admin MFA enrollment confirmed
-- [ ] CP-3: WAF policy + AFD security policy bound and validated
+- [x] CP-1a: `admin@insightpulseai.com` MFA enrolled + Global Admin + Contributor
+- [ ] CP-1b: `emergency-admin@insightpulseai.com` MFA enrolled (interactive)
+- [x] CP-2: Azure Files + ACA mount proof
+- [x] CP-3a: AFD live on `erp.insightpulseai.com` (x-azure-ref confirmed)
+- [ ] CP-3b: WAF policy bound and validated (portal verification needed)
 - [ ] CP-6: dbfilter, list_db=False, strong admin_passwd all active
 - [ ] CP-7: Smoke test passes
 - [ ] CP-8: Evidence pack committed
