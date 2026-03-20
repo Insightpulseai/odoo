@@ -12,18 +12,38 @@
 ## Private Deployment Gap Checklist
 
 From: Foundry project identity visible in M365 admin
-To: Named `InsightPulseAI Odoo Copilot` app visible in M365 admin
+To: Named `InsightPulseAI Odoo Copilot` app privately deployable in tenant
 
-- [ ] Publish Foundry agent as stable application endpoint
-- [ ] Choose product name: `InsightPulseAI Odoo Copilot`
-- [ ] Create Microsoft 365 / Teams app package (custom engine agent or SaaS)
+### Phase A — Make the agent consumable
+
+- [ ] Publish Foundry agent as Agent Application (creates stable endpoint + dedicated identity)
+- [ ] Reassign RBAC/permissions to the published agent identity (permissions do NOT transfer automatically)
+- [ ] Verify stable endpoint with actual invocation (Responses-protocol endpoint)
+
+### Phase B — Make it productized
+
+- [ ] Define product name: `InsightPulseAI Odoo Copilot`
+- [ ] Build M365/Teams package using Agents Toolkit (supports org catalog + Marketplace)
 - [ ] Deploy to org catalog / private tenant
 - [ ] Verify app appears as productized entry in M365 admin (not just identity object)
-- [ ] Validate user install flow in Teams
-- [ ] Validate admin enablement / config flow
-- [ ] Wire Odoo tool contract to published agent
-- [ ] Wire OCR / Document Intelligence path
-- [ ] Verify end-to-end: Teams → agent → Odoo → response
+
+### Phase C — Make it operationally safe
+
+- [ ] Prove Odoo end-to-end: `ipai_odoo_copilot` on `odoo_dev` → ask → agent → response → chatter
+- [ ] Lock bounded tool contract (scoped tools, no unrestricted mutation)
+- [ ] Add eval pack with thresholds and pass/fail evidence
+- [ ] Prepare admin approval/onboarding runbook
+- [ ] Document privacy/boundaries for the agent
+- [ ] Decision: private-only vs future Marketplace track
+
+### Go/No-Go for Private Deployment
+
+Ready when ALL true:
+- [ ] Published Agent Application callable
+- [ ] RBAC reassigned to published identity
+- [ ] Odoo Copilot works e2e on canonical baseline
+- [ ] M365/Teams package installs in private tenant
+- [ ] Admin approval flow documented and tested
 
 ---
 
