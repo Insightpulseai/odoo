@@ -12,7 +12,6 @@
         'mail',
         'base_automation',
         'ipai_odoo_copilot',
-        'ipai_enterprise_bridge',
     ],
     'data': [
         'security/copilot_actions_groups.xml',

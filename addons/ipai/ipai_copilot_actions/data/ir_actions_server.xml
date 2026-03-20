@@ -20,44 +20,4 @@ for attachment in records:
         })
 ]]></field>
     </record>
-
-    <!-- Contextual action: Ask Copilot about vendor bill -->
-    <record id="action_copilot_on_move" model="ir.actions.server">
-        <field name="name">Ask Copilot</field>
-        <field name="model_id" ref="account.model_account_move"/>
-        <field name="binding_model_id" ref="account.model_account_move"/>
-        <field name="binding_type">action</field>
-        <field name="state">code</field>
-        <field name="code"><![CDATA[
-for record in records:
-    action = {
-        'type': 'ir.actions.client',
-        'tag': 'ipai_copilot_open',
-        'params': {
-            'model': 'account.move',
-            'res_id': record.id,
-            'action': 'ask',
-        },
-    }
-]]></field>
-    </record>
-
-    <!-- Contextual action: Draft entry from OCR -->
-    <record id="action_draft_from_ocr" model="ir.actions.server">
-        <field name="name">Draft Entry from OCR</field>
-        <field name="model_id" ref="account.model_account_move"/>
-        <field name="binding_model_id" ref="account.model_account_move"/>
-        <field name="binding_type">action</field>
-        <field name="state">code</field>
-        <field name="code"><![CDATA[
-for record in records:
-    env['ipai.ai.job'].create({
-        'source_model': 'account.move',
-        'source_record_id': record.id,
-        'source_record_name': record.name,
-        'job_type': 'finance_draft',
-        'trigger': 'manual',
-    })
-]]></field>
-    </record>
 </odoo>
