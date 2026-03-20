@@ -152,3 +152,30 @@ local_runtime:
     - odoo_dev
     - odoo_staging
     - odoo
+
+canonical_target_state:
+  architecture_doc: docs/architecture/INSIGHTPULSEAI_ODOO_ON_AZURE_TARGET_STATE.md
+  benchmark_model:
+    informational: true
+    navigational: true
+    transactional: true
+  canonical_runtime_roles:
+    odoo: transactional_system_of_record
+    odoo_copilot: user_facing_erp_copilot
+    foundry_agent_applications: governed_ai_runtime
+    document_intelligence: ocr_and_structured_extraction
+
+resource_group_target:
+  model: "16-RG: 1 shared + 5 per env x 3 envs"
+  shared:
+    - rg-ipai-shared-observability
+  per_environment:
+    edge: "rg-ipai-<env>-edge"
+    odoo_runtime: "rg-ipai-<env>-odoo-runtime"
+    odoo_data: "rg-ipai-<env>-odoo-data"
+    platform: "rg-ipai-<env>-platform"
+    ai: "rg-ipai-<env>-ai"
+  environments:
+    - dev
+    - staging
+    - prod
