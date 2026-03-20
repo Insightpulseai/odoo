@@ -1,0 +1,57 @@
+WARNING: The behavior of this command has been altered by the following extension: containerapp
+{
+  "env": [
+    {
+      "name": "HOST",
+      "value": "ipai-odoo-dev-pg.postgres.database.azure.com"
+    },
+    {
+      "name": "PORT",
+      "value": "5432"
+    },
+    {
+      "name": "USER",
+      "value": "odoo_admin"
+    },
+    {
+      "name": "PASSWORD",
+      "secretRef": "db-password"
+    },
+    {
+      "name": "db_name",
+      "value": "odoo"
+    },
+    {
+      "name": "dbfilter",
+      "value": "^odoo$"
+    },
+    {
+      "name": "ODOO_STAGE",
+      "value": "production"
+    },
+    {
+      "name": "ODOO_DATA_DIR",
+      "value": "/var/lib/odoo"
+    },
+    {
+      "name": "CP2_VERIFY",
+      "value": "1773895696"
+    },
+    {
+      "name": "AZURE_FRONTDOOR_ID",
+      "value": "38c7f9ab-c904-4c47-ad53-4b9fb1abea8e"
+    },
+    {
+      "name": "CP6_VERIFY",
+      "value": "1773981982"
+    }
+  ],
+  "name": "ipai-odoo-dev-web",
+  "secrets": [
+    "odoo-admin-passwd",
+    "azure-doc-intel-key",
+    "db-password",
+    "docintel-endpt",
+    "docintel-key"
+  ]
+}

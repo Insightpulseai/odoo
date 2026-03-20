@@ -1,99 +1,128 @@
 # Copilot Target-State — Plan
 
+## Deployment Ladder
+
+### Phase 1 — Benchmark-ready (now)
+
+Deploy internally as:
+
+- Odoo runtime + Odoo Copilot widget (installed on `odoo_dev`)
+- Foundry published agent
+- Document Intelligence / OCR
+- Private benchmark against SAP Joule
+
+Deliverables:
+
+- [ ] Publish Foundry agent to stable endpoint
+- [ ] Connect `ipai_odoo_copilot` to published agent
+- [ ] Wire OCR / Document Intelligence extraction flow
+- [ ] Benchmark against SAP Joule capability classes
+- [ ] Define metrics: informational accuracy, navigational success, transactional proposal acceptance
+
+### Phase 2 — Private Microsoft 365/Teams distribution
+
+- [ ] Package as Microsoft 365 / Teams app or custom engine agent
+- [ ] Deploy to org catalog / private tenant
+- [ ] Validate auth, install flow, role boundaries, UX
+
+### Phase 3 — Marketplace readiness
+
+- [ ] Finalize privacy / boundaries / eval pack
+- [ ] Finalize commercial offer type (SaaS recommended)
+- [ ] Prepare Partner Center assets
+- [ ] Submit for Marketplace review (expect up to 4 weeks)
+
+---
+
+## SAP Joule Benchmark Scorecard
+
+| Capability | SAP Joule Benchmark | Odoo Copilot Target |
+| --- | --- | --- |
+| Informational | Grounded answers and summaries | OCR/result explanation, policy Q&A, record summaries |
+| Navigational | Find and navigate to apps/processes | Jump to records, menus, review queues, actions |
+| Transactional | Complete tasks conversationally | Create draft bills, activities, review items, proposals |
+| Safety | Output reviewed before use | Approval-gated financial/compliance writes |
+| Packaging | Microsoft 365 / Teams presence | M365/Teams agent or SaaS-integrated listing |
+
+---
+
+## Marketplace Quality Gates
+
+Before submission, all must be true:
+
+- [ ] Purpose statement defined
+- [ ] Boundaries / non-goals documented
+- [ ] Privacy / data handling statement
+- [ ] Response-time and quality targets
+- [ ] Grounded-response metrics
+- [ ] Regression test suite
+- [ ] Human-in-the-loop policy for risky actions
+- [ ] Partner Center submission assets ready
+
+---
+
 ## Current State
 
-- 1 Foundry prompt agent: `ipai-odoo-copilot-azure`
-- BIR module: `draft → computed → validated → filed → confirmed` (missing `approved`)
-- `mail.activity.mixin` inherited (activities work)
-- Copilot: 18 tools, 1 BIR tool (read-only `bir_compliance_search`)
-- Tax Pulse: spec kit complete, rates/rules/engine ported (67 tests), tool contracts defined
-- Agent framework: 3-agent + 1-workflow model specced, capability matrix with BIR pack
-- Odoo Project: available with recurring tasks, dependencies, milestones, roles, activities
-- No PLM-style approval gates yet
-- No company-scoped compliance project templates
+- `ipai_odoo_copilot` installed on `odoo_dev` (local)
+- Foundry agent `ipai-odoo-copilot-azure` exists as seed
+- 3 Odoo modules planned: `ipai_odoo_copilot`, `ipai_document_intelligence_bridge`, `ipai_copilot_actions`
+- 4 Foundry agents planned: Copilot, Document Triage, Finance Review, Compliance/Workflow
+- 4 OCR lanes: Read, Layout, Prebuilt, Custom
 
-## Implementation Waves
+---
+
+## Implementation Sequence (Phase 1 detail)
 
 ### Wave 1 — Lock the assistant surface
 
-**Goal**: Stabilize the front-door agent with knowledge, evals, tracing, and document extraction.
+Goal: Stable front-door agent with knowledge, evals, tracing, and document extraction.
 
-**Deliverables**:
-- Foundry IQ knowledge store: BIR regulations, form guides, TRAIN law references
-- Eval datasets: `bir_advisory.yaml` (50 cases), `bir_ops.yaml` (30), `bir_actions.yaml` (40)
-- Guardrails: no ungrounded tax advice, no unauthorized writes
-- App Insights tracing enabled
-- Document extraction pipeline (Azure Document Intelligence) for invoices/receipts/BIR attachments
+- [ ] Publish `ipai-odoo-copilot-azure` Foundry agent
+- [ ] Attach guardrails and eval datasets
+- [ ] Enable Foundry tracing
+- [ ] Wire Document Intelligence for attachment OCR
+- [ ] Agent reads Odoo context via scoped tools only
 
-**Exit gate**: Advisory answers BIR questions with grounded citations, traces visible.
+### Wave 2 — Build the action layer
 
-### Wave 2 — Build hidden backend roles
+Goal: Odoo actions trigger AI/OCR jobs, results write back as proposals.
 
-**Goal**: Router + Ops + Actions behind the Advisory front door.
+- [ ] Create `ipai_copilot_actions` module with job/audit models
+- [ ] Create `ipai_document_intelligence_bridge` module
+- [ ] Add server actions for OCR on attachment upload
+- [ ] Add automation rules for state-change triggers
+- [ ] Status lifecycle: `queued` → `running` → `done` / `failed` / `needs_review`
 
-**Deliverables**:
-- `copilot_router.py` — deterministic intent classification (channel + model + role + intent)
-- Ops runtime — read-only Odoo queries for filing readiness, overdue detection, blocker diagnosis
-- Actions runtime — approval-gated compute, validate, export via Odoo state machine
-- 8 BIR copilot tools wired to Odoo actions
-- `approved` state added to `bir.tax.return`
-- `group_ipai_bir_approver` security group
+### Wave 3 — Add approval and business model actions
 
-**Exit gate**: Router classifies 95%+ correctly, approval gate blocks all unauthorized writes.
+Goal: Finance review, compliance gates, interactive Copilot on target models.
 
-### Wave 3 — Operationalize Odoo Project
+- [ ] Add finance review actions (bill/receipt proposals)
+- [ ] Add approval gates for high-risk writes
+- [ ] Add interactive Copilot UI actions on priority business models
+- [ ] Add Document Triage and Finance Review agents to Foundry
+- [ ] Wire approval/review UI in Odoo
 
-**Goal**: Company-scoped compliance projects with recurring tasks, dependencies, and milestones.
+### Wave 4 — Benchmark and evaluate
 
-**Deliverables**:
-- `bir.filing.task.template` model — seed templates for all 24 form types
-- Month-end closing workbook normalized into Odoo seed XML
-- Recurring task generation cron (N days before deadline)
-- Task dependency chains: reconcile → compute → validate → approve → export → file → confirm
-- Milestones: books ready, tax computed, validated, approved, filed, paid, closed
-- Project roles: preparer, reviewer, approver, payer, compliance owner
-- Company-scoped project template (multi-company ready)
-- Kanban + calendar views for compliance worklist
+Goal: Complete SAP Joule benchmark, evaluation pack, Marketplace gap analysis.
 
-**Exit gate**: Tasks auto-generate per cadence, dependency chains enforce order, milestones track progress.
+- [ ] Run informational accuracy benchmarks
+- [ ] Run navigational success benchmarks
+- [ ] Run transactional proposal acceptance benchmarks
+- [ ] Complete evaluation pack for all agents
+- [ ] Document Marketplace readiness gaps
 
-### Wave 4 — Add approval semantics
+---
 
-**Goal**: PLM-style approval gates on stage transitions.
+## Repo Ownership for Implementation
 
-**Deliverables**:
-- Approval model extension on `bir.tax.return` (required/optional/comments-only)
-- Stage transition rules:
-  - For review → approved for export (required approval by `group_ipai_bir_approver`)
-  - Approved for export → filed (required approval by `group_ipai_finance_manager`)
-  - Filed/paid → confirmed (required approval by compliance owner)
-- Activity auto-creation for approval requests
-- Blocked state when required approval missing
-- Audit trail on all approvals
-
-**Exit gate**: Required approvals block transitions, audit trail captures all decisions.
-
-### Wave 5 — Bind artifacts and evidence
-
-**Goal**: Every tax task links to its full evidence chain.
-
-**Deliverables**:
-- BIR return ↔ project task linking
-- Export artifacts (eFPS XML, PDF, alphalist) attached to task
-- Proof of filing attachment field
-- Proof of payment attachment field
-- Approver evidence (who approved, when, what comments)
-- Evidence completeness check before period close
-- APIM production ingress wired
-
-**Exit gate**: Full audit chain from task → return → artifact → proof → approval for any filing.
-
-## Risk Mitigation
-
-| Risk | Mitigation |
-|---|---|
-| Odoo Project doesn't have PLM-style approvals natively | Model as `ipai_*` extension using `mail.activity` + required flag + blocked state |
-| Recurring task cadence mismatch with BIR deadlines | Use form-type-specific lead days in task templates |
-| Multi-company project scoping complexity | Use Odoo's native `company_id` field + multi-company rules |
-| Agent Framework SDK pre-release | Phase 2 is last to need it; fallback: sequential Responses API calls |
-| Foundry IQ knowledge lag on new BIR regulations | Manual knowledge update process; flag stale citations |
+| Module/Agent | Owning Repo |
+| --- | --- |
+| `ipai_odoo_copilot` | `odoo` |
+| `ipai_document_intelligence_bridge` | `odoo` |
+| `ipai_copilot_actions` | `odoo` |
+| Foundry agent definitions | `agent-platform` |
+| OCR normalization contracts | `platform` |
+| Key Vault / identity wiring | `infra` |
+| Evaluation datasets | `agent-platform` |

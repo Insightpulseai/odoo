@@ -1,0 +1,68 @@
+WARNING: The behavior of this command has been altered by the following extension: containerapp
+{
+  "env": [
+    {
+      "name": "HOST",
+      "value": "ipai-odoo-dev-pg.postgres.database.azure.com"
+    },
+    {
+      "name": "PORT",
+      "value": "5432"
+    },
+    {
+      "name": "USER",
+      "value": "odoo_admin"
+    },
+    {
+      "name": "PASSWORD",
+      "secretRef": "db-password"
+    },
+    {
+      "name": "AZURE_DOC_INTEL_ENDPOINT",
+      "secretRef": "docintel-endpt"
+    },
+    {
+      "name": "AZURE_DOC_INTEL_KEY",
+      "secretRef": "docintel-key"
+    },
+    {
+      "name": "ODOO_STAGE",
+      "value": "production"
+    },
+    {
+      "name": "ODOO_DATA_DIR",
+      "value": "/var/lib/odoo"
+    },
+    {
+      "name": "db_name",
+      "value": "odoo"
+    },
+    {
+      "name": "dbfilter",
+      "value": "^odoo$"
+    },
+    {
+      "name": "AZURE_FRONTDOOR_ID",
+      "value": "38c7f9ab-c904-4c47-ad53-4b9fb1abea8e"
+    },
+    {
+      "name": "ODOO_DBFILTER",
+      "value": "^odoo$"
+    },
+    {
+      "name": "ODOO_LIST_DB",
+      "value": "False"
+    },
+    {
+      "name": "ODOO_ADMIN_PASSWD",
+      "secretRef": "odoo-admin-passwd"
+    }
+  ],
+  "name": "ipai-odoo-dev-cron",
+  "secrets": [
+    "db-password",
+    "docintel-endpt",
+    "docintel-key",
+    "odoo-admin-passwd"
+  ]
+}

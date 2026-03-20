@@ -1,5 +1,89 @@
 # Copilot Target-State — Tasks
 
+## Confirmed Milestones
+
+| Milestone | Evidence | Date |
+| --- | --- | --- |
+| Foundry agent identities visible in M365 admin center | `data-intel-ph-resource-data-intel-ph-AgentIdentity`, `AgentIdentityBlueprint`, project object | 2026-03-20 |
+| Entra agent governance surface active in tenant | M365 admin → All agents shows Foundry-backed entries | 2026-03-20 |
+| `ipai_odoo_copilot` installed on local `odoo_dev` | `state=installed` verified via psql | 2026-03-20 |
+| Canonical unified baseline frozen | Constitution, PRD, plan, planning guide committed | 2026-03-20 |
+
+## Private Deployment Gap Checklist
+
+From: Foundry project identity visible in M365 admin
+To: Named `InsightPulseAI Odoo Copilot` app privately deployable in tenant
+
+### Phase A — Make the agent consumable
+
+- [ ] Publish Foundry agent as Agent Application (creates stable endpoint + dedicated identity)
+- [ ] Reassign RBAC/permissions to the published agent identity (permissions do NOT transfer automatically)
+- [ ] Verify stable endpoint with actual invocation (Responses-protocol endpoint)
+
+### Phase B — Make it productized
+
+- [ ] Define product name: `InsightPulseAI Odoo Copilot`
+- [ ] Build M365/Teams package using Agents Toolkit (supports org catalog + Marketplace)
+- [ ] Deploy to org catalog / private tenant
+- [ ] Verify app appears as productized entry in M365 admin (not just identity object)
+
+### Phase C — Make it operationally safe
+
+- [ ] Prove Odoo end-to-end: `ipai_odoo_copilot` on `odoo_dev` → ask → agent → response → chatter
+- [ ] Lock bounded tool contract (scoped tools, no unrestricted mutation)
+- [ ] Add eval pack with thresholds and pass/fail evidence
+- [ ] Prepare admin approval/onboarding runbook
+- [ ] Document privacy/boundaries for the agent
+- [ ] Decision: private-only vs future Marketplace track
+
+### Go/No-Go for Private Deployment
+
+Ready when ALL true:
+- [ ] Published Agent Application callable
+- [ ] RBAC reassigned to published identity
+- [ ] Odoo Copilot works e2e on canonical baseline
+- [ ] M365/Teams package installs in private tenant
+- [ ] Admin approval flow documented and tested
+
+---
+
+## Marketplace-Readiness Gap Matrix
+
+| # | Surface | Gap | Exit Artifact | Owner | Priority |
+| --- | --- | --- | --- | --- | --- |
+| 1 | Foundry agent publishing | No published agent endpoint | Published app ID, endpoint, auth, versioning | `agent-platform` | P0 |
+| 2 | Odoo Copilot e2e | No proven user flow | Demo: prompt → agent → response → chatter/audit | `odoo` | P0 |
+| 3 | Capability contract | No user-facing scope/boundaries | Capability spec: informational, navigational, transactional, non-goals | `odoo` | P0 |
+| 4 | Agent tool contract | No concrete registry | Agent manifest, tool contract, supported-intent matrix | `agent-platform` | P0 |
+| 5 | Evaluation pack | No formal eval suite | Evals + thresholds + regression for grounding, safety, yield | `agent-platform` | P0 |
+| 6 | Privacy / data handling | No public package | Privacy doc, retention, data-processing sheet | `platform` | P0 |
+| 7 | M365/Teams packaging | No app manifest | App package, icons, screenshots, install flow | `agent-platform` | P1 |
+| 8 | OCR normalization | No canonical schema | Schema, writeback contract, failure taxonomy | `platform` | P1 |
+| 9 | Tenant admin enablement | No onboarding path | Admin guide, config contract, support flow | `platform` | P1 |
+| 10 | Infra identity proof | No production-grade proof | Key Vault/identity contract, route map, tracing | `infra` | P1 |
+| 11 | SLO baseline | No operational targets | Performance baseline, uptime targets, smoke evidence | `infra` | P1 |
+| 12 | Partner Center offer | No submission assets | Listing copy, categories, support/privacy links | `agent-platform` | P2 |
+| 13 | Certification buffer | No review timeline | Submission plan (expect up to 4 weeks) | `agent-platform` | P2 |
+
+### Phase Readiness
+
+| Phase | Goal | Verdict |
+| --- | --- | --- |
+| Phase 1 | Internal SAP Joule benchmark | Reachable now |
+| Phase 2 | Private M365/Teams deployment | Blocked (items 1, 7, 9) |
+| Phase 3 | Public Marketplace launch | Not ready (items 1-13) |
+
+### Go/No-Go
+
+- [ ] Foundry agent published and versioned
+- [ ] M365/Teams package installs cleanly
+- [ ] Odoo Copilot + OCR end to end on canonical baseline
+- [ ] AI quality pack with explicit thresholds
+- [ ] Privacy/data handling docs public
+- [ ] Partner Center assets complete
+
+---
+
 ## Wave 1: Lock the Assistant Surface
 
 - [ ] **1.1** Create BIR regulation knowledge store in Foundry IQ

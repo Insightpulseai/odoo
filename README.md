@@ -41,6 +41,16 @@ Canonical local runtime:
 
 Any competing name, runtime lane, or ownership surface is considered transitional or deprecated and must not gain new authority.
 
+## Canonical product target
+
+The canonical desired end state is defined in [`docs/architecture/INSIGHTPULSEAI_ODOO_ON_AZURE_TARGET_STATE.md`](./docs/architecture/INSIGHTPULSEAI_ODOO_ON_AZURE_TARGET_STATE.md):
+
+- Odoo 19 as the transactional system of record
+- Odoo Copilot as the user-facing ERP copilot
+- Foundry Agent Applications as the governed AI runtime
+- Document Intelligence as the OCR and structured extraction layer
+- Azure landing zones, Entra, and Azure DevOps/GitHub as the operating backbone
+
 ---
 
 ## Actual Current State
