@@ -1,117 +1,119 @@
 # Copilot Target-State — Constitution
 
-> Non-negotiable rules governing the ipai-odoo-copilot architecture.
-> One visible Foundry assistant, backed by hidden router/ops/actions runtimes,
-> grounded by Foundry IQ, governed by APIM, and executed through Odoo-native
-> Projects/Tasks/Activities/Milestones with PLM-style approval gates.
+> Non-negotiable rules governing the InsightPulseAI Odoo-on-Azure architecture.
+> Entra-governed, CAF-aligned landing-zone workload: Odoo in application landing zones,
+> Foundry and Document Intelligence as bounded AI services, Azure DevOps/GitHub as delivery spine.
 
 ---
 
-## C1: One visible assistant, governed backend
+## C1: Entra is the identity plane
 
-Users interact with **one** Foundry prompt agent (`ipai-odoo-copilot-azure`).
-Backend roles (Ops, Actions, Router) are internal — never exposed as separate user-facing agents.
-This is not a chat-only copilot. It is a **Foundry-hosted assistant on top of an Odoo-native workflow engine**.
+- Humans sign in through **Microsoft Entra ID**
+- Odoo runtime, jobs, and integrations use **managed identity / workload identity**
+- Foundry-hosted agents are **governed agent identities**, not anonymous runtime actors
+- Keycloak is transitional — Entra is the target IdP
 
-## C2: Copilot on top of Odoo workflow primitives, not instead of them
+## C2: Azure Landing Zone is the platform foundation
 
-Odoo owns operational workflow state. Copilot explains, inspects, routes, and triggers approved actions on Odoo records. The copilot never:
-- Replaces the task engine
-- Invents workflow state outside Odoo records
-- Holds the canonical due-date/task ledger in prompts
+- One **platform landing zone** for shared identity, connectivity, management
+- **Application landing zones** per workload: `odoo-dev/staging/prod`, `agent-platform`, `data-intelligence`
+- AI workloads (Foundry, Document Intelligence) deploy **inside normal application landing zones**, not a separate AI zone
+- CAF alignment is the structural authority
 
-## C3: Odoo Project is the human workflow engine
+## C3: Odoo is the transactional system of record
 
-Use Odoo's built-in Project/Services primitives as the canonical work-management layer:
+- Odoo 19 owns accounting, CRM, projects, expenses, approvals, documents, posted business records
+- Odoo exposes **server actions, automation rules, scheduled actions, client actions** as the trigger layer
+- Business state is persisted and approved in Odoo, not in agent memory or external services
+- Copilot explains, inspects, routes, and triggers — it never replaces the workflow engine
 
-| Odoo Primitive | Use in Target State |
-|---|---|
-| **Recurring Tasks** | Monthly/quarterly/annual close and filing tasks |
-| **Task Dependencies** | Reconcile → compute → validate → approve → export → file → confirm |
-| **Milestones** | Books ready, tax computed, validated, approved, filed, paid, closed |
-| **Activities** | Reminders, review requests, follow-ups, exception handling |
-| **Project Stages** | Planned, computed, for review, approved for export, filed, paid, confirmed, blocked |
-| **Project Roles** | Preparer, reviewer, approver, payer, compliance owner |
+## C4: Foundry is the hosted AI runtime
 
-## C4: Three logical roles + one workflow
+- Azure AI Foundry Agent Service hosts bounded agents, not one universal agent
+- Agent set: **Copilot**, **Document Triage**, **Finance Review**, **Compliance/Workflow**
+- Agents use **scoped tools** (`get_record_context`, `submit_ocr_job`, `write_review_result`, `create_activity`, `post_chatter_note`)
+- Agents do NOT receive unrestricted DB or ORM mutation capability
+- Tool invocations are logged with correlation IDs
 
-| Component | Backing System | Primary Mode | Responsibility |
+## C5: Document Intelligence is the extraction layer
+
+- Pattern: **Document Intelligence first, Foundry interpretation second**
+- Do not send raw PDFs/images straight to an LLM for structured business data
+- Four extraction lanes: Read OCR, Layout/table, Prebuilt, Custom (PH/BIR/vendor)
+- Normalized extraction output is what Odoo consumes — not raw OCR text
+
+## C6: Odoo Copilot is the interaction layer, not the agent
+
+- Systray/inline widget in Odoo
+- Client actions for interactive prompts
+- Server actions / automation rules for background workflows
+- Odoo-side job and audit models
+- Bounded service clients for Foundry and Document Intelligence
+- Approval UI for high-risk outputs
+
+## C7: Financial and compliance writes are proposal-first
+
+- AI-generated financial outcomes are **proposals**, not auto-posted transactions
+- Low-confidence results are flagged for manual review
+- No posted journal entry without explicit human approval
+- Approval policy is configurable by group/role
+- Approved/rejected/edited outcomes are logged with full audit trail
+
+## C8: Azure DevOps + GitHub is the delivery spine
+
+- **Azure DevOps Boards** = planning/governance spine
+- **GitHub** = code truth (transitional until intentional Azure Repos cutover)
+- **Azure Pipelines** = release truth
+- **GitHub Actions** = transitional where still needed
+- One Azure DevOps project: `ipai-platform`
+
+## C9: Observability is mandatory
+
+- Correlation IDs propagate across Odoo → Foundry → Document Intelligence
+- Failures classified as auth/network/service/model/data errors
+- Retry policy defined per failure class
+- Foundry tracing + App Insights connected
+- All agent and OCR activity is observable and auditable
+- Silent partial writes are prevented
+
+---
+
+## Ownership Matrix
+
+| Layer | System | Owns | Must NOT Own |
 |---|---|---|---|
-| **Advisory** | Foundry Agent Service | Informational | Explain, summarize, guide, cite, route |
-| **Ops** | Agent Framework + Odoo reads | Navigational/diagnostic | Inspect blockers, find overdue items, diagnose missing data |
-| **Actions** | Agent Framework + approved Odoo actions | Transactional | Compute, validate, export, notify, prepare packages |
-| **Router** | Agent Framework workflow | Deterministic orchestration | Classify, route, pause for approval, resume, hand off |
+| **Identity** | Entra ID / Workload ID / Agent ID | Auth, access, agent governance | Business workflow state |
+| **Platform foundation** | Azure Landing Zone (CAF) | Subscription structure, shared services, policy | Application-specific business logic |
+| **Business core** | Odoo 19 | Transactions, approvals, posted records, trigger surface | LLM orchestration, knowledge retrieval |
+| **AI runtime** | Foundry Agent Service | Agent hosting, tool execution, reasoning | Unrestricted DB writes, canonical business state |
+| **Document processing** | Document Intelligence | OCR, extraction, classification | Business interpretation or approval decisions |
+| **Knowledge** | Foundry tools + AI Search | Grounded retrieval, scoped tool access | Transactional state |
+| **Delivery** | Azure DevOps + GitHub | Planning, code, release, governance | Runtime configuration authority |
+| **Observability** | Monitor + App Insights + Foundry tracing | Traces, logs, evals, alerts | Business logic enforcement |
 
-## C5: Capability packs, not agent sprawl
+---
 
-Domain growth happens through **packs**, not new top-level agents:
+## Repo Ownership
 
-| Capability Pack | Advisory | Ops | Actions | Router |
-|---|---:|---:|---:|---:|
-| Databricks Intelligence | Yes | Yes | Yes | Yes |
-| fal Creative Production | Yes | Yes | Yes | Yes |
-| Marketing Strategy & Insight | Yes | Yes | Light | No |
-| BIR Compliance | Yes | Yes | Yes | Yes |
-| Document Intake & Extraction | Yes | Yes | Yes | Yes |
-
-## C6: APIM is the only production front door
-
-| Ingress | Role | Target |
-|---|---|---|
-| **APIM AI Gateway** | Only production front door | All user/API traffic enters here |
-| **Foundry project / OpenAI-compatible clients** | Internal runtime connectivity | Agent, eval, model, tracing calls |
-| **Direct REST** | Adapters only | n8n, webhooks, lightweight bridges |
-| **Playgrounds** | Non-production only | Prototype, tune, validate |
-
-## C7: PLM-style approval gates
-
-Approval semantics modeled after Odoo 19 PLM:
-
-| Approval Type | Use in Tax Workflow |
+| Repo | Owns |
 |---|---|
-| **Required** | Must approve before export, filing, payment confirmation |
-| **Optional** | Reviewer input helpful but not blocking |
-| **Comments only** | Observer/audit/advisory review |
-
-Required approvals block the protected action until complete.
-
-## C8: Observability is mandatory
-
-Foundry tracing + App Insights connected. Every role traces.
-Safety evaluations include human-in-the-loop review.
-
----
-
-## Ownership Matrix (Authoritative)
-
-| Layer | System of Responsibility | What It Owns | What It Must NOT Own |
-|---|---|---|---|
-| **Front-door assistant** | Microsoft Foundry Agent Service | `ipai-odoo-copilot-azure`, conversation runtime, tool orchestration, safety enforcement | Canonical tax workflow state, approval ledger, task templates |
-| **Grounded knowledge** | Foundry IQ | Permission-aware multi-source KB, retrieval, citations, source ACL-aware grounding | Transactional business state, approvals, return lifecycle |
-| **Extraction / document intelligence** | Foundry Tools | OCR, document extraction, content understanding, classification pipelines | Final compliance decisioning or filing approval |
-| **Deterministic orchestration** | Microsoft Agent Framework | Router workflow, handoffs, retries, checkpointing, backend role execution | User-facing long-lived business workflow state |
-| **Production ingress / governance** | APIM AI Gateway | External ingress, auth, quotas, routing, telemetry | Core business logic |
-| **Business objects / source of truth** | Odoo modules | BIR returns, accounting data, payroll, attachments, filing artifacts, status fields | Generalized retrieval or model orchestration |
-| **Human workflow engine** | Odoo Project / Tasks / Activities / Milestones | Recurring task templates, dependencies, deadlines, milestone tracking, approver work queues | LLM memory, knowledge grounding |
-| **Approvals / gate semantics** | Odoo task/approval extension (PLM-style) | Required/optional/comments-only approvals, blocked transitions, audit trail | Free-form advisory answers |
+| `odoo` | Runtime, addons, action hooks, widget, job/audit models |
+| `agent-platform` | Foundry agents, hosted runtime, tools, evals |
+| `platform` | Normalized AI/OCR contracts, control-plane, admin services |
+| `infra` | Landing zone, Front Door, ACA, PostgreSQL, Key Vault, networking |
+| `data-intelligence` | Lakehouse, BI, training/eval datasets |
+| `agents` | Shared prompts, skills, registries |
+| `automations` | Schedulers, jobs, runbooks |
+| `web` | Public/product web surfaces |
+| `design` | Tokens, components, brand |
+| `docs` | Cross-platform architecture/governance |
+| `templates` | Scaffolds only |
 
 ---
 
-## Foundry Knowledge and Tool Model
+## Canonical Statement
 
-| Foundry Surface | Target Use |
-|---|---|
-| **Foundry IQ** | Shared, permission-aware KB for BIR, Odoo docs, internal finance policies, operating procedures |
-| **File search / Azure AI Search** | Uploaded documents, policy docs, BIR references, source-cited answers |
-| **Foundry Tools** | Document extraction, OCR, content understanding, future MCP/tool integrations |
-
----
-
-## Artifact Binding
-
-Every tax task must link to:
-- BIR return record
-- Export/report/XML/PDF artifact
-- Proof of filing
-- Proof of payment
-- Approver evidence
+> InsightPulseAI Odoo on Azure is an Entra-governed, CAF-aligned landing-zone workload:
+> Odoo in application landing zones, Foundry and Document Intelligence as bounded AI
+> services inside those workloads, scoped tools between Odoo and Foundry, approval gates
+> for high-risk writes, and Azure DevOps/GitHub as the delivery spine.
