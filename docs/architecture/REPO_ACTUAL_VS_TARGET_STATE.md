@@ -4,6 +4,21 @@
 
 Separate the current real repository state from the intended decomposed target state.
 
+## Canonical unified target state
+
+The unified target state is frozen as:
+
+- One Azure DevOps project: `ipai-platform`
+- One repo per ownership boundary (see `ssot/repo/ownership-boundaries.yaml`)
+- `odoo` reduced to ERP runtime authority only
+- `platform`, `design`, and `data-intelligence` are the only canonical names for those domains
+- GitHub remains transitional engineering authority until Azure Repos cutover is intentional and complete
+- Local runtime: `colima-odoo` context, repo-root compose, devcontainer is tooling-only
+
+See [`ssot/repo/tranche_1_move_plan.yaml`](../../ssot/repo/tranche_1_move_plan.yaml) for the extraction roadmap.
+
+---
+
 ## Actual current state
 
 This repository currently functions as an Odoo-led platform monorepo containing:

@@ -112,3 +112,43 @@ github_ui_metadata_drift:
     - "Repository website field may still show Vercel URLs"
     - "Deployment history may still show Vercel deployments"
     - "Environment settings may reference deprecated DO endpoints"
+
+decomposition:
+  tranche_1:
+    status: planned
+    repos:
+      - infra
+      - platform
+      - agents
+      - automations
+      - web
+    source_repo: odoo
+    strategy: copy_then_cutover
+    notes:
+      - "Preserve ERP runtime authority in odoo."
+      - "Do not centralize mixed spec/ssot/tests/scripts; split by owning repo."
+      - "skills/odoo-implementation remains in odoo for tranche 1."
+
+canonical_project:
+  azure_devops_project: ipai-platform
+
+authority_model:
+  azure: cloud_runtime_control_access
+  azure_devops: planning_governance_spine
+  github: current_engineering_truth_transitional
+  repo_ssot: intended_state_truth
+  executable_contracts: iac_migrations_pipelines_tests
+
+naming_normalization:
+  ops-platform: platform
+  design-system: design
+  lakehouse: data-intelligence
+
+local_runtime:
+  docker_context: colima-odoo
+  compose_contract: docker-compose.yml
+  devcontainer_role: tooling_only
+  canonical_databases:
+    - odoo_dev
+    - odoo_staging
+    - odoo

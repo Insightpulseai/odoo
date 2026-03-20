@@ -14,6 +14,35 @@
 
 ---
 
+## Canonical unified baseline
+
+The canonical operating model is:
+
+- **Azure** = cloud/runtime/control access
+- **Azure DevOps** = planning/governance spine (one project: `ipai-platform`)
+- **GitHub** = current engineering truth until deliberate Azure Repos cutover
+- **Repo SSOT files** = intended-state truth
+- **IaC / migrations / pipelines / tests** = executable truth
+
+Canonical naming (retire aliases):
+
+| Canonical | Retire |
+|---|---|
+| `platform` | `ops-platform` |
+| `design` | `design-system` |
+| `data-intelligence` | `lakehouse` |
+
+Canonical local runtime:
+
+- Docker context: `colima-odoo`
+- Runtime source: repo-root `docker-compose.yml`
+- Devcontainer is tooling-only, never runtime authority
+- Databases: `odoo_dev`, `odoo_staging`, `odoo`
+
+Any competing name, runtime lane, or ownership surface is considered transitional or deprecated and must not gain new authority.
+
+---
+
 ## Actual Current State
 
 This repository currently contains:
@@ -238,6 +267,20 @@ Target ownership boundaries (decomposition in progress):
 - Shared agent/skills/orchestration assets: `agents`
 - Shared automation/runbooks: `automations`
 - Shared design tokens/components/assets: `design`
+
+### Tranche 1 decomposition lock
+
+The following top-level domains are under active extraction and must not gain new cross-domain ownership inside this repository except for temporary compatibility shims explicitly tracked for removal:
+
+- `infra/` → target repo `infra`
+- `platform/` + `ops-platform/` + non-ERP `supabase/` → target repo `platform`
+- `agents/` + shared reusable `skills/` → target repo `agents`
+- `automations/` → target repo `automations`
+- `web/` + `web-site/` + published `docs-site/` → target repo `web`
+
+`odoo` remains authoritative only for ERP runtime concerns: addon stacks, config, docker/runtime, ERP-specific scripts/tests/docs/spec/ssot, and runtime contracts.
+
+See [`ssot/repo/tranche_1_move_plan.yaml`](./ssot/repo/tranche_1_move_plan.yaml) for the full move map, cutover gates, and completion criteria.
 
 ---
 
