@@ -1,1 +1,18 @@
-
+Name                  Fqdn
+--------------------  ---------------------------------------------------------------------------------------
+ipai-odoo-dev-web     ipai-odoo-dev-web.thankfulbush-191bdcb0.southeastasia.azurecontainerapps.io
+ipai-odoo-dev-worker
+ipai-odoo-dev-cron
+ipai-crm-dev          ipai-crm-dev.thankfulbush-191bdcb0.southeastasia.azurecontainerapps.io
+ipai-plane-dev        ipai-plane-dev.thankfulbush-191bdcb0.southeastasia.azurecontainerapps.io
+ipai-shelf-dev        ipai-shelf-dev.thankfulbush-191bdcb0.southeastasia.azurecontainerapps.io
+ipai-auth-dev         ipai-auth-dev.thankfulbush-191bdcb0.southeastasia.azurecontainerapps.io
+ipai-mcp-dev          ipai-mcp-dev.thankfulbush-191bdcb0.southeastasia.azurecontainerapps.io
+ipai-ocr-dev          ipai-ocr-dev.thankfulbush-191bdcb0.southeastasia.azurecontainerapps.io
+ipai-superset-dev     ipai-superset-dev.thankfulbush-191bdcb0.southeastasia.azurecontainerapps.io
+ipai-website-dev      ipai-website-dev.thankfulbush-191bdcb0.southeastasia.azurecontainerapps.io
+ipai-copilot-gateway  ipai-copilot-gateway.internal.thankfulbush-191bdcb0.southeastasia.azurecontainerapps.io
+---
+Name              Fqdn                                          State
+----------------  --------------------------------------------  -------
+ipai-odoo-dev-pg  ipai-odoo-dev-pg.postgres.database.azure.com  Ready
