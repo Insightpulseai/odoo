@@ -10,7 +10,6 @@
     'depends': [
         'base',
         'mail',
-        'ipai_enterprise_bridge',
         'ipai_copilot_actions',
     ],
     'external_dependencies': {

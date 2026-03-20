@@ -76,7 +76,7 @@
                             <field name="text_blocks" widget="json"/>
                         </page>
                         <page string="Error" name="error"
-                              attrs="{'invisible': [('error_message', '=', False)]}">
+                              invisible="not error_message">
                             <field name="error_message"/>
                         </page>
                     </notebook>
@@ -106,14 +106,13 @@
                         domain="[('extraction_mode', '=', 'prebuilt_invoice')]"/>
                 <filter name="filter_receipt" string="Receipts"
                         domain="[('extraction_mode', '=', 'prebuilt_receipt')]"/>
-                <group expand="0" string="Group By">
-                    <filter name="groupby_mode" string="Extraction Mode"
-                            context="{'group_by': 'extraction_mode'}"/>
-                    <filter name="groupby_review" string="Review Status"
-                            context="{'group_by': 'review_recommendation'}"/>
-                    <filter name="groupby_date" string="Processed Date"
-                            context="{'group_by': 'processed_at:day'}"/>
-                </group>
+                <separator/>
+                <filter name="groupby_mode" string="Extraction Mode"
+                        context="{'group_by': 'extraction_mode'}"/>
+                <filter name="groupby_review" string="Review Status"
+                        context="{'group_by': 'review_recommendation'}"/>
+                <filter name="groupby_date" string="Processed Date"
+                        context="{'group_by': 'processed_at:day'}"/>
             </search>
         </field>
     </record>

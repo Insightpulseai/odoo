@@ -112,6 +112,7 @@
                 <field name="source_model"/>
                 <field name="source_record_name"/>
                 <field name="user_id"/>
+                <separator/>
                 <filter name="filter_queued" string="Queued" domain="[('state', '=', 'queued')]"/>
                 <filter name="filter_running" string="Running" domain="[('state', '=', 'running')]"/>
                 <filter name="filter_needs_review" string="Needs Review" domain="[('state', '=', 'needs_review')]"/>
@@ -120,11 +121,10 @@
                 <filter name="filter_ocr" string="OCR Jobs" domain="[('job_type', 'in', ('ocr_read', 'ocr_extract', 'ocr_classify'))]"/>
                 <filter name="filter_copilot" string="Copilot Jobs" domain="[('job_type', 'in', ('copilot_chat', 'copilot_summary', 'copilot_suggest'))]"/>
                 <filter name="filter_finance" string="Finance Jobs" domain="[('job_type', 'in', ('finance_draft', 'finance_review'))]"/>
-                <group expand="0" string="Group By">
-                    <filter name="group_state" string="State" context="{'group_by': 'state'}"/>
-                    <filter name="group_type" string="Job Type" context="{'group_by': 'job_type'}"/>
-                    <filter name="group_user" string="User" context="{'group_by': 'user_id'}"/>
-                </group>
+                <separator/>
+                <filter name="group_state" string="State" context="{'group_by': 'state'}"/>
+                <filter name="group_type" string="Job Type" context="{'group_by': 'job_type'}"/>
+                <filter name="group_user" string="User" context="{'group_by': 'user_id'}"/>
             </search>
         </field>
     </record>

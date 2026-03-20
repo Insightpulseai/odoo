@@ -4,7 +4,7 @@
     <!-- Root menu under AI/Copilot -->
     <menuitem id="menu_document_intelligence_root"
               name="Document Intelligence"
-              parent="ipai_copilot_actions.menu_ai_copilot_root"
+              parent="ipai_copilot_actions.menu_ai_root"
               sequence="30"
               groups="ipai_copilot_actions.group_ai_job_user"/>
 
