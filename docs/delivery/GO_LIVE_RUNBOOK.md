@@ -1,15 +1,17 @@
 # Go-Live Runbook — Odoo on Azure Production
 
-## Gate Sequence (verified 2026-03-20)
+## Gate Sequence (verified 2026-03-20 12:57 PH)
 
 | Gate | Description | Status | Evidence |
 | --- | --- | --- | --- |
-| CP-1 | MFA readiness for admin identities | **Partial** | `admin@` enrolled; `emergency-admin@` pending interactive enrollment |
-| CP-2 | Azure Files + ACA mount proof | **Done** | Previously verified |
-| CP-3 | Front Door / WAF validation | **Partial** | AFD live (`x-azure-ref` confirmed on `erp.insightpulseai.com`); WAF policy needs portal verification (resource not CLI-visible) |
-| CP-6 | Odoo DB tenancy hardening (dbfilter, list_db, admin_passwd) | **Open** | Not yet applied |
-| CP-7 | Full production smoke run | **Open** | Pending CP-6 |
-| CP-8 | Evidence pack assembly | **Open** | Pending CP-7 |
+| CP-1a | Admin MFA enrollment | **PASS** | `admin@` enrolled, Global Admin + Contributor |
+| CP-1b | Emergency admin MFA | **PENDING** | `emergency-admin@` needs interactive enrollment at `aka.ms/mfasetup` |
+| CP-2 | Azure Files + ACA mount proof | **PASS** | Previously verified |
+| CP-3a | Front Door live routing | **PASS** | `x-azure-ref` confirmed on `erp.insightpulseai.com` |
+| CP-3b | WAF policy validation | **PENDING** | Resource not CLI-visible; needs portal verification |
+| CP-6 | Odoo DB tenancy hardening | **PARTIAL** | `dbfilter=^odoo$` active; `admin_passwd` in KV; `list_db=False` in config but needs image redeploy |
+| CP-7 | Full production smoke run | **PASS** | 10/10 checks passed |
+| CP-8 | Evidence pack assembly | **PASS** | `docs/delivery/evidence/poc-pack/20260320-1257/` |
 
 ### Identity Baseline (solo-team model)
 
@@ -206,10 +208,12 @@ az network front-door waf-policy update --resource-group "$AFD_RG" --name "$WAF_
 Do NOT flip to GO until:
 
 - [x] CP-1a: `admin@insightpulseai.com` MFA enrolled + Global Admin + Contributor
-- [ ] CP-1b: `emergency-admin@insightpulseai.com` MFA enrolled (interactive)
+- [ ] CP-1b: `emergency-admin@insightpulseai.com` MFA enrolled (interactive at `aka.ms/mfasetup`)
 - [x] CP-2: Azure Files + ACA mount proof
 - [x] CP-3a: AFD live on `erp.insightpulseai.com` (x-azure-ref confirmed)
 - [ ] CP-3b: WAF policy bound and validated (portal verification needed)
-- [ ] CP-6: dbfilter, list_db=False, strong admin_passwd all active
-- [ ] CP-7: Smoke test passes
-- [ ] CP-8: Evidence pack committed
+- [x] CP-6a: `dbfilter=^odoo$` active on running revision
+- [x] CP-6b: `admin_passwd` stored in Key Vault (`ipai-odoo-dev-kv`)
+- [ ] CP-6c: `list_db=False` effective (config correct but needs image redeploy)
+- [x] CP-7: Smoke test 10/10 PASS
+- [x] CP-8: Evidence pack at `docs/delivery/evidence/poc-pack/20260320-1257/`
