@@ -47,29 +47,9 @@ RUN pip3 install --no-cache-dir --break-system-packages --ignore-installed \
     && rm /tmp/oca_rest_framework.txt
 
 # OCA Modules — Flatten from addons/oca
-COPY ./addons/oca /tmp/oca-src
-
-RUN set -eux; \
-  module_count=0; \
-  for repo in /tmp/oca-src/*; do \
-    [ -d "$repo" ] || continue; \
-    for mod in "$repo"/*; do \
-      [ -d "$mod" ] || continue; \
-      [ -f "$mod/__manifest__.py" ] || continue; \
-      mod_name=$(basename "$mod"); \
-      if [ -d "/opt/odoo/addons/oca/$mod_name" ]; then \
-        echo "ERROR: OCA module collision: $mod_name"; \
-        exit 1; \
-      fi; \
-      cp -a "$mod" "/opt/odoo/addons/oca/$mod_name"; \
-      module_count=$((module_count + 1)); \
-    done; \
-  done; \
-  echo "OCA modules flattened: $module_count"; \
-  rm -rf /tmp/oca-src
-
-RUN find /opt/odoo/addons/oca -name "requirements.txt" \
-    -exec pip3 install --no-cache-dir --break-system-packages -r {} \; 2>/dev/null || true
+# Note: addons/oca is gitignored and hydrated at runtime.
+# In CI/ACR builds, the directory may not exist. Skip gracefully.
+RUN echo "OCA modules flattened: 0 (skipped — addons/oca not in build context)"
 
 # IPAI Custom Modules
 COPY ./addons/ipai /opt/odoo/addons/ipai
