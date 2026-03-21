@@ -1,0 +1,86 @@
+# Databricks Asset Bundle: LakeFlow Ingestion
+# Pattern: lakeflow_pipelines_python (from databricks/bundle-examples)
+# Purpose: DLT-based ingestion pipelines for Bronze layer population
+# Spec: spec/databricks-bundles-foundation/
+
+bundle:
+  name: lakeflow-ingestion
+
+variables:
+  catalog:
+    description: Unity Catalog name (resolved per target)
+    default: dev_ppm
+  schema_bronze:
+    description: Bronze schema name
+    default: bronze
+  warehouse_id:
+    description: SQL warehouse ID for queries
+  databricks_host:
+    description: Databricks workspace host URL
+  odoo_jdbc_url:
+    description: JDBC connection URL for Odoo PostgreSQL
+  odoo_jdbc_user:
+    description: JDBC user for Odoo PostgreSQL
+
+workspace:
+  host: ${var.databricks_host}
+
+artifacts:
+  lakeflow_ingestion_wheel:
+    type: whl
+    build: pip wheel --no-deps -w dist .
+    path: .
+
+include:
+  - resources/pipelines/*.yml
+  - resources/jobs/*.yml
+
+# Pipeline resource stubs — replace .gitkeep files with actual definitions in Phase 4
+# resources:
+#   pipelines:
+#     odoo_bronze_ingest:
+#       name: "Odoo Bronze Ingest"
+#       target: ${var.catalog}.${var.schema_bronze}
+#       libraries:
+#         - notebook:
+#             path: ./src/lakeflow_ingestion_etl/notebooks/odoo_extract.py
+#       catalog: ${var.catalog}
+#       configuration:
+#         schema: ${var.schema_bronze}
+#       channel: PREVIEW
+#       photon: true
+#       clusters:
+#         - label: default
+#           autoscale:
+#             min_workers: 1
+#             max_workers: 4
+
+targets:
+  dev:
+    mode: development
+    default: true
+    variables:
+      catalog: dev_ppm
+    workspace:
+      root_path: /Workspace/Users/${workspace.current_user.userName}/lakeflow-ingestion-dev
+
+  staging:
+    mode: development
+    variables:
+      catalog: staging_ppm
+    workspace:
+      root_path: /Workspace/Shared/lakeflow-ingestion-staging
+
+  prod:
+    mode: production
+    variables:
+      catalog: ppm
+    workspace:
+      root_path: /Workspace/Shared/lakeflow-ingestion
+    run_as:
+      service_principal_name: finance-ppm-service-principal
+    permissions:
+      - level: CAN_VIEW
+        group_name: data-engineers
+      - level: CAN_MANAGE
+        group_name: platform-admins
