@@ -236,3 +236,58 @@ Use `databricks/shared/` when:
 - A variable or config is consumed by two or more bundles
 - The shared asset has no independent deployment lifecycle
 - The shared asset does not create coupling between bundles' release schedules
+
+## Microsoft Reference Architecture Alignment
+
+This repository aligns to Microsoft's "Data Intelligence End-to-End with Azure Databricks and Microsoft Fabric" reference architecture.
+
+### Canonical platform split
+
+- **Azure Databricks** is the primary engineering plane for:
+  - streaming and batch ingestion
+  - Delta Live Tables / Lakeflow-style pipelines
+  - Auto Loader ingestion from ADLS Gen2
+  - Lakehouse Federation from relational sources
+  - medallion processing (bronze / silver / gold)
+  - Databricks SQL serving
+  - notebooks, MLflow, Feature Store, Vector Search, Model Serving, Lakehouse Monitoring, and Workflows
+
+- **Microsoft Fabric / Power BI** is the downstream semantic and reporting plane for:
+  - published semantic models
+  - analyst-facing reports and dashboards
+  - Copilot-assisted BI consumption
+
+- **Azure platform services** provide the control envelope:
+  - Entra ID
+  - Key Vault
+  - Azure Monitor
+  - Cost Management
+  - Azure DevOps / GitHub
+  - Defender for Cloud
+
+### Governance model
+
+- Databricks bundle roots define deployable data and AI workloads.
+- Unity Catalog is the governance anchor for governed data products.
+- Purview metadata publishing is a platform integration concern, not a bundle-local ownership concern.
+
+### Dataflow model
+
+The default repository dataflow assumes:
+1. ingestion from Event Hubs, ADLS Gen2, and federated relational sources
+2. transformation through bronze / silver / gold
+3. governed storage in Delta Lake on ADLS Gen2
+4. SQL / AI serving from Databricks
+5. downstream semantic/report consumption through Fabric / Power BI
+
+## IDE Project Selection Rule
+
+When multiple Databricks project roots are detected in the workspace:
+
+- choose `infra/databricks` only for substrate/IaC work
+- choose a specific bundle root for workload delivery work
+- do not use nested duplicate paths such as `odoo/.../odoo/.../infra/databricks`
+
+Nested duplicate detections indicate workspace-root drift or recursive folder inclusion and must not be treated as canonical project roots.
+
+Default selection for general Databricks engineering work: `databricks/bundles/foundation_python`.

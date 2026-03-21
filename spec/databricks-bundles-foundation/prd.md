@@ -102,6 +102,21 @@ Production may only deploy a revision that has already passed development valida
 ### FR-13: Deterministic rollback reference
 The delivery system must persist a last-known-good production release reference for deterministic rollback.
 
+### FR-14: Reference-architecture dataflow alignment
+The baseline bundle model must support a Microsoft-aligned dataflow:
+
+- ingestion from streaming, lake, and federated relational sources
+- bronze / silver / gold transformation
+- governed Delta Lake storage
+- Databricks SQL / AI serving
+- downstream Fabric / Power BI consumption
+
+### FR-15: Governance anchor
+The architecture must treat Unity Catalog as the primary governance anchor for Databricks-managed data products.
+
+### FR-16: Platform integration separation
+Purview publishing, identity, secrets, monitoring, cost controls, and security controls must remain outside Databricks bundle roots.
+
 ## Non-Functional Requirements
 
 ### NFR-1: No Manual Workspace Resources
