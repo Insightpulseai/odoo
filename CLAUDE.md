@@ -62,10 +62,20 @@ See `.claude/rules/security-baseline.md` for full policy (sections 2.1-2.6).
 | `mcp/servers/` | MCP server implementations (plane is the only live one) |
 | `.github/workflows/` | 355 CI/CD pipelines |
 | `docker/`, `deploy/` | Docker configs and deployment |
+| `platform/` | Canonical platform control-plane (replaces `ops-platform`) |
+| `data-intelligence/`| Canonical lakehouse/Databricks code (replaces `lakehouse`) |
+| `agents/` | Canonical agent/skill assets (personas, judges, skills) |
+| `agent-platform/` | Canonical agent runtime/orchestration engine |
+| `infra/` | Shared infrastructure and edge configuration |
+| `design/` | Shared design tokens and assets (replaces `design-system`) |
+| `ssot/` | Intended-state truth for platform and ERP runtime |
 
 ---
 
 ## Cross-Repo Invariants
+
+- **Microsoft 365 Agents SDK** is a channel layer for enterprise delivery (Copilot, Teams, Web). It does NOT replace the canonical `agent-platform` runtime.
+- **Service-to-service auth**: All internal flows must use Managed Identities + Azure Key Vault.
 
 1. **Secrets**: `.env` files only, never hardcode. Azure Key Vault for runtime.
 2. **Database**: Odoo uses PostgreSQL (local or Azure managed), NOT Supabase.
@@ -73,6 +83,15 @@ See `.claude/rules/security-baseline.md` for full policy (sections 2.1-2.6).
 4. **CE Only**: No Enterprise modules, no odoo.com IAP dependencies.
 5. **OCA First**: Prefer OCA modules over custom `ipai_*` when available. Config -> OCA -> Delta.
 6. **Specs Required**: Significant changes must reference a spec bundle.
+9. **Databricks Governance**: Databricks + Unity Catalog is the mandatory governed transformation, engineering, and serving plane.
+10. **MCP First**: MCP is required for all reusable agent tools (Google Cloud contract).
+11. **SaaS Authority**: The **Azure SaaS Workload Documentation** is the canonical design framework for the platform.
+12. **Consumption**: **Power BI** is the primary mandatory business-facing reporting surface.
+13. **Fabric Complement**: Fabric is for mirroring and OneLake integration; it never replaces Databricks engineering.
+14. **Stateless Agents**: Session state must be stored externally (Stateless Application rule).
+15. **Sequential Default**: Use Sequential orchestration for deterministic finance flows; Maker-Checker for gates.
+16. **Release Gate**: All production releases must pass the [Go-Live Checklist](file:///Users/tbwa/Documents/GitHub/Insightpulseai/docs/architecture/GO_LIVE_CHECKLIST.md).
+17. **SAP Adapter Only**: SAP is an integrated external enterprise surface. Use Azure Functions or App Service with SAP Cloud SDK for adapter services. Do not adopt SAP infrastructure hosting templates (NetWeaver, HANA, LaMa, S/4HANA) as canonical platform architecture unless SAP runtime hosting is explicitly in scope.
 
 ---
 
