@@ -42,7 +42,7 @@ RUN mkdir -p /opt/odoo/addons/oca \
 
 # OCA Python Dependencies
 COPY docker/requirements/oca_rest_framework.txt /tmp/oca_rest_framework.txt
-RUN pip3 install --no-cache-dir --break-system-packages \
+RUN pip3 install --no-cache-dir --break-system-packages --ignore-installed \
     -r /tmp/oca_rest_framework.txt \
     && rm /tmp/oca_rest_framework.txt
 
