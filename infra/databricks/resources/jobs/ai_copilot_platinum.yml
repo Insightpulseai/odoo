@@ -1,0 +1,49 @@
+# Platinum AI Copilot Views — Deployment Job
+#
+# Creates/refreshes AI-enabled SQL views in the platinum schema.
+# Power BI connects to these views via SQL Warehouse DirectQuery.
+#
+# Schedule: Daily at 01:00 UTC (after gold marts refresh at 00:30).
+# Compute: Serverless (SQL warehouse handles ai_query execution).
+
+resources:
+  jobs:
+    ai_copilot_platinum:
+      name: "AI Copilot Platinum Views"
+      description: >
+        Deploy platinum-layer AI SQL views that provide Power BI Copilot
+        capabilities via Databricks ai_query() + Azure OpenAI.
+      tags:
+        layer: platinum
+        purpose: ai-copilot
+        team: platform
+
+      schedule:
+        quartz_cron_expression: "0 0 1 * * ?"
+        timezone_id: Asia/Manila
+        pause_status: UNPAUSED
+
+      tasks:
+        - task_key: deploy_ai_views
+          description: "Create/replace platinum AI views and UDFs"
+          notebook_task:
+            notebook_path: ../notebooks/platinum/ai_copilot_views.py
+            source: WORKSPACE
+            base_parameters:
+              bundle.catalog: ${var.catalog}
+              bundle.schema_gold: ${var.schema_gold}
+          environment_key: default
+          timeout_seconds: 600
+          max_retries: 1
+
+      environments:
+        - environment_key: default
+          spec:
+            client: "1"
+
+      email_notifications:
+        on_failure:
+          - devops@insightpulseai.com
+
+      queue:
+        enabled: true
