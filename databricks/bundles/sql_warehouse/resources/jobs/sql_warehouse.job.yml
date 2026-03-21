@@ -1,0 +1,10 @@
+resources:
+  jobs:
+    sql_warehouse_marts:
+      name: "[${bundle.target}] SQL Warehouse Marts"
+      tasks:
+        - task_key: customer_360
+          sql_task:
+            warehouse_id: ${var.warehouse_id}
+            file:
+              path: ../../src/sql/marts/customer_360.sql

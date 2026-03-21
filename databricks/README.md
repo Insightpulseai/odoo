@@ -1,134 +1,53 @@
 # Databricks Bundles
 
 > Canonical location for Databricks Asset Bundle definitions.
-> Replaces the legacy monolithic layout at `infra/databricks/`.
 > Spec: `spec/databricks-bundles-foundation/`
 > Architecture: `docs/architecture/DATABRICKS_BUNDLES_BASELINE.md`
 
----
+## Operating Rule
 
-## Operating Rules
+All Databricks workspace resources must be defined and promoted through bundle-managed source files. Manual workspace-only production resources are prohibited unless explicitly documented as a temporary exception.
 
-1. **Every deployable artifact belongs to a bundle.** No loose notebooks or ad-hoc jobs.
-2. **Deploy via CLI only.** `databricks bundle deploy -t <target>` is the only sanctioned mechanism.
-3. **Unity Catalog governs all data.** `hive_metastore` is banned for new development.
-4. **Secrets never enter YAML.** Use Databricks secret scopes or environment variables.
-5. **One PR per bundle change.** Cross-bundle changes in a single PR are allowed but must validate all affected bundles.
-6. **Tests run in CI.** Python bundles must have pytest coverage; SQL bundles must pass validation.
+## Directory Map
 
----
-
-## Bundle Inventory
-
-| Bundle | Pattern | Purpose | Deploy Targets |
-|--------|---------|---------|----------------|
-| `foundation_python` | `default_python` | Core Python library, medallion transforms, data quality | dev, staging, prod |
-| `lakeflow_ingestion` | `lakeflow_pipelines_python` | LakeFlow/DLT ingestion pipelines (Bronze) | dev, staging, prod |
-| `sql_warehouse` | `default_sql` | SQL transforms, marts (Gold), serving views (Platinum) | dev, staging, prod |
-
-The `patterns/` directory contains reference documentation only and is not deployable.
-
----
-
-## Environment Model
-
-| Target | Catalog | Mode | Identity |
-|--------|---------|------|----------|
-| `dev` | `dev_ppm` | development | Current user |
-| `staging` | `staging_ppm` | development | Current user |
-| `prod` | `ppm` | production | `finance-ppm-service-principal` |
-
----
-
-## Quick Start
-
-```bash
-# Validate a bundle
-cd databricks/bundles/foundation_python
-databricks bundle validate -t dev
-
-# Deploy to dev
-databricks bundle deploy -t dev
-
-# Run tests (Python bundles)
-cd databricks/bundles/foundation_python
-pip install -e ".[dev]"
-pytest
-
-# Deploy to staging (requires workspace access)
-databricks bundle deploy -t staging
-
-# Deploy to prod (requires service principal)
-databricks bundle deploy -t prod
-```
-
----
-
-## Medallion Layer Mapping
-
-```
-Bronze                    Silver                    Gold                    Platinum
-(append-only)            (merge/upsert)           (aggregate)            (serve)
-
-lakeflow_ingestion  -->  foundation_python  -->  foundation_python  -->  sql_warehouse
-  DLT pipelines          Python transforms       Python transforms      SQL views
-  JDBC extractors        Dedup / SCD             KPI rollups           Power BI serving
-```
-
----
-
-## CI/CD
-
-CI runs on every PR touching `databricks/**`:
-- Bundle validation (`databricks bundle validate`)
-- Python tests (`pytest`)
-- Doc/spec alignment check
-
-See `.github/workflows/databricks-bundles-ci.yml`.
-
----
-
-## Migration from Legacy
-
-The legacy layout at `infra/databricks/` is being migrated resource-by-resource to this bundle structure. During migration, both paths may coexist but must never deploy the same resource. See Phase 5 of the spec plan for migration details.
-
----
-
-## Directory Structure
-
-```
+```text
 databricks/
-  README.md                              # This file
+  README.md                 # This file
+  shared/
+    variables.yml           # Common variables consumed by all bundles
+    README.md               # Rules for shared assets
   bundles/
-    foundation_python/
-      databricks.yml                     # Bundle config (dev/staging/prod)
-      pyproject.toml                     # Python packaging
-      src/ipai_data_intelligence/        # Python package
-      tests/                             # pytest suite
-      fixtures/                          # Test data
-      resources/
-        jobs/                            # Job definitions
-        pipelines/                       # DLT pipeline definitions
-
-    lakeflow_ingestion/
-      databricks.yml                     # Bundle config
-      pyproject.toml                     # Python packaging
-      src/lakeflow_ingestion_etl/        # Python package
-      resources/
-        pipelines/                       # DLT pipeline definitions
-        jobs/                            # Job definitions
-
-    sql_warehouse/
-      databricks.yml                     # Bundle config
-      src/sql/
-        schemas/                         # Schema DDL
-        marts/                           # Gold-layer SQL
-        serving/                         # Platinum serving views
-      resources/
-        jobs/                            # SQL task jobs
-        dashboards/                      # Lakeview dashboards
-
-    patterns/
-      README.md                          # Reference patterns
-      KNOWLEDGE_BASE_CROSSWALK.md        # Upstream pattern mapping
+    foundation_python/      # Python-driven engineering workloads
+    lakeflow_ingestion/     # DLT/Lakeflow ingestion pipelines
+    sql_warehouse/          # SQL-first marts and serving
+    patterns/               # Reference docs (not deployable)
 ```
+
+## Bundle Creation Rules
+
+1. Each bundle is a standalone `databricks bundle` target
+2. Each bundle must have `databricks.yml` with `dev`, `staging`, `prod` targets
+3. Each bundle must pass `databricks bundle validate` with no errors
+4. New bundles require justification per the constitution
+
+## Environment Rules
+
+| Target | Catalog | Purpose |
+|--------|---------|---------|
+| `dev` | `ipai_dev` | Development iteration |
+| `staging` | `ipai_staging` | Pre-production validation |
+| `prod` | `ipai` | Production workloads |
+
+## Shared Asset Rules
+
+- `shared/variables.yml` holds common variables (catalog, schemas, workspace host)
+- Bundles consume shared config via `include: [../../shared/*.yml]`
+- Shared directory must not contain deployable resources (jobs, pipelines)
+
+## Do Not
+
+- Create resources directly in the Databricks workspace without bundle source
+- Put Azure infrastructure provisioning in bundles (use `infra/azure/`)
+- Put Fabric/Power BI config in bundles (Fabric is downstream consumption)
+- Deploy shared config as a standalone bundle
+- Add new bundles without updating the spec and architecture docs

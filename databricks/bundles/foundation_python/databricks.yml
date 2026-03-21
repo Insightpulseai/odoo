@@ -1,71 +1,45 @@
 # Databricks Asset Bundle: Foundation Python
-# Pattern: default_python (from databricks/bundle-examples)
-# Purpose: Core Python library, medallion transforms, data quality checks
+# Purpose: Core Python library, medallion transforms, data quality checks, shared jobs
 # Spec: spec/databricks-bundles-foundation/
 
 bundle:
-  name: foundation-python
+  name: foundation_python
+
+include:
+  - ../../shared/*.yml
+  - resources/**/*.yml
+
+sync:
+  paths:
+    - src
+    - tests
 
 variables:
   catalog:
-    description: Unity Catalog name (resolved per target)
-    default: dev_ppm
-  schema_bronze:
-    description: Bronze schema name
-    default: bronze
-  schema_silver:
-    description: Silver schema name
-    default: silver
-  schema_gold:
-    description: Gold schema name
-    default: gold
-  schema_platinum:
-    description: Platinum schema name (serving layer)
-    default: platinum
-  warehouse_id:
-    description: SQL warehouse ID for queries
-  databricks_host:
-    description: Databricks workspace host URL
-
-workspace:
-  host: ${var.databricks_host}
-
-artifacts:
-  ipai_data_intelligence_wheel:
-    type: whl
-    build: pip wheel --no-deps -w dist .
-    path: .
-
-include:
-  - resources/jobs/*.yml
-  - resources/pipelines/*.yml
+    default: ${var.catalog}
+  bronze_schema:
+    default: ${var.bronze_schema}
+  silver_schema:
+    default: ${var.silver_schema}
+  gold_schema:
+    default: ${var.gold_schema}
 
 targets:
   dev:
-    mode: development
     default: true
-    variables:
-      catalog: dev_ppm
     workspace:
-      root_path: /Workspace/Users/${workspace.current_user.userName}/foundation-python-dev
+      host: ${var.workspace_host}
+    variables:
+      catalog: ipai_dev
 
   staging:
-    mode: development
-    variables:
-      catalog: staging_ppm
     workspace:
-      root_path: /Workspace/Shared/foundation-python-staging
+      host: ${var.workspace_host}
+    variables:
+      catalog: ipai_staging
 
   prod:
-    mode: production
-    variables:
-      catalog: ppm
     workspace:
-      root_path: /Workspace/Shared/foundation-python
-    run_as:
-      service_principal_name: finance-ppm-service-principal
-    permissions:
-      - level: CAN_VIEW
-        group_name: data-engineers
-      - level: CAN_MANAGE
-        group_name: platform-admins
+      host: ${var.workspace_host}
+    variables:
+      catalog: ipai

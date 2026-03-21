@@ -1,78 +1,19 @@
 [build-system]
-requires = ["hatchling"]
-build-backend = "hatchling.build"
+requires = ["setuptools>=68.0", "wheel"]
+build-backend = "setuptools.build_meta"
 
 [project]
 name = "ipai-data-intelligence"
 version = "0.1.0"
-description = "Core Python library for Databricks data engineering — medallion transforms, data quality, utilities"
-readme = "../../README.md"
+description = "Core Python library for InsightPulse AI Databricks workloads"
 requires-python = ">=3.10"
-license = {text = "LGPL-3.0"}
-authors = [
-    {name = "InsightPulse AI Platform Team", email = "platform@insightpulseai.com"}
-]
-classifiers = [
-    "Development Status :: 3 - Alpha",
-    "Intended Audience :: Developers",
-    "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.10",
-    "Programming Language :: Python :: 3.11",
-    "Programming Language :: Python :: 3.12",
-]
-
-dependencies = [
-    "pyspark>=3.5.0",
-    "delta-spark>=3.0.0",
-    "databricks-sdk>=0.20.0",
-    "pydantic>=2.0.0",
-    "pyyaml>=6.0",
-]
+dependencies = []
 
 [project.optional-dependencies]
-dev = [
-    "pytest>=7.4.0",
-    "pytest-cov>=4.1.0",
-    "pytest-mock>=3.12.0",
-    "black>=23.11.0",
-    "ruff>=0.1.6",
-    "mypy>=1.7.0",
-]
+dev = ["pytest>=7.0"]
 
-[tool.hatch.build.targets.wheel]
-packages = ["src/ipai_data_intelligence"]
-
-[tool.black]
-line-length = 100
-target-version = ["py310", "py311", "py312"]
-
-[tool.ruff]
-line-length = 100
-target-version = "py310"
-select = [
-    "E",   # pycodestyle errors
-    "W",   # pycodestyle warnings
-    "F",   # pyflakes
-    "I",   # isort
-    "B",   # flake8-bugbear
-    "C4",  # flake8-comprehensions
-    "UP",  # pyupgrade
-]
-ignore = [
-    "E501",  # line too long (handled by black)
-]
-
-[tool.ruff.isort]
-known-first-party = ["ipai_data_intelligence"]
-
-[tool.mypy]
-python_version = "3.10"
-warn_return_any = true
-warn_unused_configs = true
-disallow_untyped_defs = true
-ignore_missing_imports = true
+[tool.setuptools.packages.find]
+where = ["src"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
-python_files = ["test_*.py"]
-addopts = "-v --cov=src/ipai_data_intelligence --cov-report=term-missing"

@@ -1,104 +1,42 @@
 # Databricks Asset Bundle: SQL Warehouse
-# Pattern: default_sql (from databricks/bundle-examples)
-# Purpose: SQL-based transforms, Gold marts, Platinum serving views, dashboards
+# Purpose: SQL-first Gold/Platinum marts, serving views, dashboard-supporting assets
 # Spec: spec/databricks-bundles-foundation/
 
 bundle:
-  name: sql-warehouse
+  name: sql_warehouse
+
+include:
+  - ../../shared/*.yml
+  - resources/**/*.yml
+
+sync:
+  paths:
+    - src
 
 variables:
   catalog:
-    description: Unity Catalog name (resolved per target)
-    default: dev_ppm
-  schema_bronze:
-    description: Bronze schema name
-    default: bronze
-  schema_silver:
-    description: Silver schema name
-    default: silver
-  schema_gold:
-    description: Gold schema name
-    default: gold
-  schema_platinum:
-    description: Platinum schema name (serving layer)
-    default: platinum
+    default: ${var.catalog}
+  gold_schema:
+    default: ${var.gold_schema}
   warehouse_id:
-    description: SQL warehouse ID for queries
-  databricks_host:
-    description: Databricks workspace host URL
-
-workspace:
-  host: ${var.databricks_host}
-
-include:
-  - resources/jobs/*.yml
-  - resources/dashboards/*.yml
-
-# SQL task job stub — replace .gitkeep files with actual definitions in Phase 4
-# resources:
-#   jobs:
-#     daily_mart_refresh:
-#       name: "Daily Mart Refresh"
-#       tasks:
-#         - task_key: create_schemas
-#           sql_task:
-#             warehouse_id: ${var.warehouse_id}
-#             file:
-#               path: ./src/sql/schemas/create_schemas.sql
-#         - task_key: refresh_finance_kpis
-#           depends_on:
-#             - task_key: create_schemas
-#           sql_task:
-#             warehouse_id: ${var.warehouse_id}
-#             file:
-#               path: ./src/sql/marts/finance_kpis.sql
-#         - task_key: refresh_project_status
-#           depends_on:
-#             - task_key: create_schemas
-#           sql_task:
-#             warehouse_id: ${var.warehouse_id}
-#             file:
-#               path: ./src/sql/marts/project_status.sql
-#         - task_key: refresh_serving_views
-#           depends_on:
-#             - task_key: refresh_finance_kpis
-#             - task_key: refresh_project_status
-#           sql_task:
-#             warehouse_id: ${var.warehouse_id}
-#             file:
-#               path: ./src/sql/serving/pbi_finance_summary.sql
-#       schedule:
-#         quartz_cron_expression: "0 0 6 * * ?"
-#         timezone_id: Asia/Manila
+    default: ${var.warehouse_id}
 
 targets:
   dev:
-    mode: development
     default: true
-    variables:
-      catalog: dev_ppm
     workspace:
-      root_path: /Workspace/Users/${workspace.current_user.userName}/sql-warehouse-dev
+      host: ${var.workspace_host}
+    variables:
+      catalog: ipai_dev
 
   staging:
-    mode: development
-    variables:
-      catalog: staging_ppm
     workspace:
-      root_path: /Workspace/Shared/sql-warehouse-staging
+      host: ${var.workspace_host}
+    variables:
+      catalog: ipai_staging
 
   prod:
-    mode: production
-    variables:
-      catalog: ppm
     workspace:
-      root_path: /Workspace/Shared/sql-warehouse
-    run_as:
-      service_principal_name: finance-ppm-service-principal
-    permissions:
-      - level: CAN_VIEW
-        group_name: data-engineers
-      - level: CAN_VIEW
-        group_name: data-analysts
-      - level: CAN_MANAGE
-        group_name: platform-admins
+      host: ${var.workspace_host}
+    variables:
+      catalog: ipai

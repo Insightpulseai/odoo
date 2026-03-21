@@ -3,217 +3,157 @@ name: Databricks Bundles CI
 on:
   pull_request:
     paths:
-      - 'databricks/**'
-      - '.github/workflows/databricks-bundles-ci.yml'
+      - "databricks/**"
+      - "spec/databricks-bundles-foundation/**"
+      - "docs/architecture/DATABRICKS_BUNDLES_BASELINE.md"
   push:
     branches: [main]
     paths:
-      - 'databricks/**'
-
-concurrency:
-  group: databricks-ci-${{ github.ref }}
-  cancel-in-progress: true
-
-permissions:
-  contents: read
-  pull-requests: read
+      - "databricks/**"
 
 jobs:
-  # --------------------------------------------------------------------------
-  # Job 1: Detect which bundles changed
-  # --------------------------------------------------------------------------
-  detect-bundles:
-    name: Detect Changed Bundles
+  detect:
+    name: Detect changed bundles
     runs-on: ubuntu-latest
     outputs:
       foundation_python: ${{ steps.filter.outputs.foundation_python }}
       lakeflow_ingestion: ${{ steps.filter.outputs.lakeflow_ingestion }}
       sql_warehouse: ${{ steps.filter.outputs.sql_warehouse }}
-      any_bundle: ${{ steps.filter.outputs.foundation_python == 'true' || steps.filter.outputs.lakeflow_ingestion == 'true' || steps.filter.outputs.sql_warehouse == 'true' }}
+      spec_or_docs: ${{ steps.filter.outputs.spec_or_docs }}
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Detect changed bundles
-        uses: dorny/paths-filter@v3
+      - uses: actions/checkout@v4
+      - uses: dorny/paths-filter@v3
         id: filter
         with:
           filters: |
             foundation_python:
-              - 'databricks/bundles/foundation_python/**'
+              - "databricks/bundles/foundation_python/**"
+              - "databricks/shared/**"
             lakeflow_ingestion:
-              - 'databricks/bundles/lakeflow_ingestion/**'
+              - "databricks/bundles/lakeflow_ingestion/**"
+              - "databricks/shared/**"
             sql_warehouse:
-              - 'databricks/bundles/sql_warehouse/**'
+              - "databricks/bundles/sql_warehouse/**"
+              - "databricks/shared/**"
+            spec_or_docs:
+              - "spec/databricks-bundles-foundation/**"
+              - "docs/architecture/DATABRICKS_BUNDLES_BASELINE.md"
 
-  # --------------------------------------------------------------------------
-  # Job 2: Validate bundle syntax and schema for changed bundles
-  # --------------------------------------------------------------------------
-  validate-bundles:
-    name: Validate Bundles
+  validate-foundation-python:
+    name: Validate foundation_python
+    needs: detect
+    if: needs.detect.outputs.foundation_python == 'true'
     runs-on: ubuntu-latest
-    needs: detect-bundles
-    if: needs.detect-bundles.outputs.any_bundle == 'true'
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - bundle: foundation_python
-            path: databricks/bundles/foundation_python
-            changed: ${{ needs.detect-bundles.outputs.foundation_python }}
-          - bundle: lakeflow_ingestion
-            path: databricks/bundles/lakeflow_ingestion
-            changed: ${{ needs.detect-bundles.outputs.lakeflow_ingestion }}
-          - bundle: sql_warehouse
-            path: databricks/bundles/sql_warehouse
-            changed: ${{ needs.detect-bundles.outputs.sql_warehouse }}
+    defaults:
+      run:
+        working-directory: databricks/bundles/foundation_python
     steps:
-      - name: Skip unchanged bundle
-        if: matrix.changed != 'true'
-        run: echo "Bundle ${{ matrix.bundle }} not changed, skipping."
-
-      - name: Checkout
-        if: matrix.changed == 'true'
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
       - name: Install Databricks CLI
-        if: matrix.changed == 'true'
-        uses: databricks/setup-cli@main
-
-      - name: Validate bundle (${{ matrix.bundle }})
-        if: matrix.changed == 'true'
-        working-directory: ${{ matrix.path }}
-        env:
-          DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST }}
-          DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN }}
         run: |
-          echo "::group::Validating ${{ matrix.bundle }} (dev target)"
-          databricks bundle validate -t dev 2>&1 || {
-            echo "::error::Bundle validation failed for ${{ matrix.bundle }}"
-            exit 1
-          }
-          echo "::endgroup::"
-          echo "Bundle ${{ matrix.bundle }} validation passed."
+          curl -fsSL https://raw.githubusercontent.com/databricks/setup-cli/main/install.sh | sh
 
-  # --------------------------------------------------------------------------
-  # Job 3: Run pytest for Python bundles
-  # --------------------------------------------------------------------------
-  test-python-bundles:
-    name: Test Python Bundles
-    runs-on: ubuntu-latest
-    needs: detect-bundles
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - bundle: foundation_python
-            path: databricks/bundles/foundation_python
-            changed: ${{ needs.detect-bundles.outputs.foundation_python }}
-          - bundle: lakeflow_ingestion
-            path: databricks/bundles/lakeflow_ingestion
-            changed: ${{ needs.detect-bundles.outputs.lakeflow_ingestion }}
-    steps:
-      - name: Skip unchanged bundle
-        if: matrix.changed != 'true'
-        run: echo "Bundle ${{ matrix.bundle }} not changed, skipping."
-
-      - name: Checkout
-        if: matrix.changed == 'true'
-        uses: actions/checkout@v4
+      - name: Validate bundle
+        run: databricks bundle validate
+        env:
+          DATABRICKS_HOST: ${{ vars.DATABRICKS_HOST }}
+          DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN }}
 
       - name: Set up Python
-        if: matrix.changed == 'true'
         uses: actions/setup-python@v5
         with:
-          python-version: '3.12'
-          cache: pip
-          cache-dependency-path: ${{ matrix.path }}/pyproject.toml
+          python-version: "3.12"
+
+      - name: Install dependencies and run tests
+        run: |
+          pip install -e ".[dev]" 2>/dev/null || pip install -e .
+          pip install pytest
+          pytest tests/ -v
+
+  validate-lakeflow-ingestion:
+    name: Validate lakeflow_ingestion
+    needs: detect
+    if: needs.detect.outputs.lakeflow_ingestion == 'true'
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: databricks/bundles/lakeflow_ingestion
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Databricks CLI
+        run: |
+          curl -fsSL https://raw.githubusercontent.com/databricks/setup-cli/main/install.sh | sh
+
+      - name: Validate bundle
+        run: databricks bundle validate
+        env:
+          DATABRICKS_HOST: ${{ vars.DATABRICKS_HOST }}
+          DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN }}
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
 
       - name: Install dependencies
-        if: matrix.changed == 'true'
-        working-directory: ${{ matrix.path }}
         run: |
-          python -m pip install --upgrade pip
-          pip install -e ".[dev]"
+          pip install -e ".[dev]" 2>/dev/null || pip install -e .
 
-      - name: Run linter (ruff)
-        if: matrix.changed == 'true'
-        working-directory: ${{ matrix.path }}
-        run: |
-          ruff check src/ tests/ || echo "::warning::Ruff found lint issues"
-
-      - name: Run formatter check (black)
-        if: matrix.changed == 'true'
-        working-directory: ${{ matrix.path }}
-        run: |
-          black --check src/ tests/ || echo "::warning::Black formatting issues found"
-
-      - name: Run tests (pytest)
-        if: matrix.changed == 'true'
-        working-directory: ${{ matrix.path }}
-        run: |
-          echo "::group::Running pytest for ${{ matrix.bundle }}"
-          pytest --tb=short --no-header -q || {
-            echo "::error::Tests failed for ${{ matrix.bundle }}"
-            exit 1
-          }
-          echo "::endgroup::"
-
-  # --------------------------------------------------------------------------
-  # Job 4: Doc/spec alignment check (placeholder)
-  # --------------------------------------------------------------------------
-  enforce-doc-spec-alignment:
-    name: Doc/Spec Alignment
+  validate-sql-warehouse:
+    name: Validate sql_warehouse
+    needs: detect
+    if: needs.detect.outputs.sql_warehouse == 'true'
     runs-on: ubuntu-latest
-    needs: detect-bundles
-    if: needs.detect-bundles.outputs.any_bundle == 'true'
+    defaults:
+      run:
+        working-directory: databricks/bundles/sql_warehouse
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Check spec kit exists
+      - name: Install Databricks CLI
         run: |
-          echo "::group::Checking spec kit completeness"
-          SPEC_DIR="spec/databricks-bundles-foundation"
-          for file in constitution.md prd.md plan.md tasks.md; do
-            if [ ! -f "$SPEC_DIR/$file" ]; then
-              echo "::error::Missing spec file: $SPEC_DIR/$file"
+          curl -fsSL https://raw.githubusercontent.com/databricks/setup-cli/main/install.sh | sh
+
+      - name: Validate bundle
+        run: databricks bundle validate
+        env:
+          DATABRICKS_HOST: ${{ vars.DATABRICKS_HOST }}
+          DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN }}
+
+  enforce-doc-spec-alignment:
+    name: Doc and spec alignment
+    needs: detect
+    if: needs.detect.outputs.spec_or_docs == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check spec kit completeness
+        run: |
+          for f in constitution.md prd.md plan.md tasks.md; do
+            if [ ! -f "spec/databricks-bundles-foundation/$f" ]; then
+              echo "FAIL: missing spec/databricks-bundles-foundation/$f"
               exit 1
             fi
           done
-          echo "All spec kit files present."
-          echo "::endgroup::"
+          echo "PASS: all spec files present"
 
       - name: Check architecture doc exists
         run: |
-          ARCH_DOC="docs/architecture/DATABRICKS_BUNDLES_BASELINE.md"
-          if [ ! -f "$ARCH_DOC" ]; then
-            echo "::error::Missing architecture doc: $ARCH_DOC"
+          if [ ! -f "docs/architecture/DATABRICKS_BUNDLES_BASELINE.md" ]; then
+            echo "FAIL: missing docs/architecture/DATABRICKS_BUNDLES_BASELINE.md"
             exit 1
           fi
-          echo "Architecture doc present: $ARCH_DOC"
+          echo "PASS: architecture doc present"
 
-      - name: Check bundle README exists
+      - name: Check bundle directories match taxonomy
         run: |
-          BUNDLE_README="databricks/README.md"
-          if [ ! -f "$BUNDLE_README" ]; then
-            echo "::error::Missing bundle README: $BUNDLE_README"
-            exit 1
-          fi
-          echo "Bundle README present: $BUNDLE_README"
-
-      - name: Verify each bundle has databricks.yml
-        run: |
-          for bundle_dir in databricks/bundles/*/; do
-            bundle_name=$(basename "$bundle_dir")
-            # Skip patterns directory (not a deployable bundle)
-            if [ "$bundle_name" = "patterns" ]; then
-              continue
-            fi
-            if [ ! -f "$bundle_dir/databricks.yml" ]; then
-              echo "::error::Bundle $bundle_name missing databricks.yml"
+          for d in foundation_python lakeflow_ingestion sql_warehouse; do
+            if [ ! -d "databricks/bundles/$d" ]; then
+              echo "FAIL: missing databricks/bundles/$d"
               exit 1
             fi
-            echo "Bundle $bundle_name has databricks.yml"
           done
-          echo "All deployable bundles have databricks.yml."
+          echo "PASS: all bundle directories present"

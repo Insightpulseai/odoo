@@ -1,199 +1,173 @@
 # Databricks Bundles Baseline Architecture
 
-> Architecture decision record for the multi-bundle Databricks Asset Bundle layout.
-> Spec: `spec/databricks-bundles-foundation/`
-> Canonical path: `databricks/bundles/`
+## Purpose
 
----
+This document defines the architecture baseline for Databricks Asset Bundle delivery in the InsightPulse AI platform. It is governed by `spec/databricks-bundles-foundation/constitution.md`.
 
-## 1. Context
+## Architecture Position
 
-InsightPulse AI uses Databricks on Azure (Southeast Asia region) for data engineering, transformation, and serving. The Finance PPM Control Room is the primary workload, consuming data from Odoo PostgreSQL and serving aggregates to Power BI.
+### Role Split
 
-The existing layout (`infra/databricks/`) is a monolithic configuration with a single `databricks.yml`, loose notebooks, and ad-hoc SQL files. This creates deployment coupling, testing gaps, and drift risk.
+| Platform | Role | Owns |
+|----------|------|------|
+| **Databricks** | Data engineering, governed data products | Jobs, pipelines, SQL serving, notebooks, DLT |
+| **Fabric / Power BI** | Downstream semantic and reporting consumption | Semantic models, reports, dashboards, OneLake mirroring |
+| **Azure (infra)** | Substrate provisioning | Networking, storage, Key Vault, Entra, workspace provisioning |
 
----
+### Why This Boundary Exists
 
-## 2. Decision
+1. **Databricks bundles are the deployable contract** for all data engineering workloads. They define what runs in the workspace.
+2. **Fabric/Power BI is consumption-only** from the bundle perspective. Bundles do not deploy to Fabric.
+3. **Azure infra is substrate** — bundles assume the workspace, storage, and identity layer exist. They do not provision them.
 
-Adopt the Databricks Asset Bundle (DAB) pattern with a multi-bundle repository layout. Each bundle is independently deployable, testable, and validatable. The layout follows upstream `databricks/bundle-examples` patterns.
+This separation ensures that:
+- A bundle change cannot accidentally break networking or storage
+- A Fabric change cannot accidentally break a Databricks job
+- Each layer can be versioned, tested, and promoted independently
 
----
+## Canonical Directory Layout
 
-## 3. Bundle Inventory
-
-```
+```text
 databricks/
+  README.md                          # Operating rules, directory map
+  shared/
+    variables.yml                    # Common variables (catalog, schemas, etc.)
+    README.md                        # Rules for shared assets
   bundles/
-    foundation_python/       # Core Python library + medallion transforms
-      databricks.yml         # Bundle definition (default_python pattern)
-      pyproject.toml         # Python packaging
-      src/ipai_data_intelligence/
+    foundation_python/               # Python-driven engineering workloads
+      databricks.yml                 # Bundle definition with env targets
+      pyproject.toml                 # Python package config
+      src/
+        ipai_data_intelligence/
+          __init__.py
+          jobs/
+          transforms/
+          quality/
       tests/
-      fixtures/
       resources/
         jobs/
-        pipelines/
-
-    lakeflow_ingestion/      # LakeFlow/DLT ingestion (Bronze layer)
-      databricks.yml         # Bundle definition (lakeflow_pipelines_python pattern)
+    lakeflow_ingestion/              # DLT/Lakeflow ingestion pipelines
+      databricks.yml
       pyproject.toml
-      src/lakeflow_ingestion_etl/
+      src/
+        lakeflow_ingestion_etl/
       resources/
         pipelines/
         jobs/
-
-    sql_warehouse/           # SQL transforms, marts, serving views
-      databricks.yml         # Bundle definition (default_sql pattern)
-      src/sql/
-        schemas/
-        marts/
-        serving/
+    sql_warehouse/                   # SQL-first marts and serving
+      databricks.yml
+      src/
+        sql/
+          marts/
       resources/
         jobs/
-        dashboards/
-
-    patterns/                # Reference patterns (not deployable)
+    patterns/                        # Reference docs (not deployable)
       README.md
       KNOWLEDGE_BASE_CROSSWALK.md
 ```
 
----
+## Bundle Taxonomy
 
-## 4. Environment Model
+### Lane 1: `foundation_python`
 
-| Target | Catalog | Root Path | Mode | Identity |
-|--------|---------|-----------|------|----------|
-| dev | `dev_ppm` | `/Workspace/Users/${current_user}/` | development | Current user |
-| staging | `staging_ppm` | `/Workspace/Shared/<bundle>-staging` | development | Current user |
-| prod | `ppm` | `/Workspace/Shared/<bundle>` | production | `finance-ppm-service-principal` |
+**Purpose**: Core Python library for medallion transforms, data quality checks, and shared engineering jobs.
 
-All targets share the same Databricks workspace. Isolation is enforced by Unity Catalog (separate catalogs per environment) and workspace root paths.
+**Contains**: Python source (`src/ipai_data_intelligence/`), jobs, tests, wheel build config.
 
----
+**Deploys**: Python wheel + job definitions to Databricks workspace.
 
-## 5. Medallion Architecture Mapping
+### Lane 2: `lakeflow_ingestion`
 
-```
-Bronze (append-only)          Silver (merge/upsert)          Gold (aggregate)          Platinum (serve)
-  ${catalog}.bronze.*    -->    ${catalog}.silver.*    -->    ${catalog}.gold.*    -->    ${catalog}.platinum.*
+**Purpose**: DLT/Lakeflow ingestion pipelines for Bronze layer population.
 
-lakeflow_ingestion           foundation_python              foundation_python          sql_warehouse
-  DLT pipelines              Python transforms              Python transforms          SQL views
-  JDBC extractors            Dedup / SCD                    KPI rollups               Power BI serving
-```
+**Contains**: Pipeline definitions, Python ETL source, job triggers.
 
----
+**Deploys**: DLT pipelines + triggering jobs to Databricks workspace.
 
-## 6. CI/CD Pipeline
+### Lane 3: `sql_warehouse`
 
-```
-PR opened (databricks/**)
-  |
-  v
-detect-bundles (dorny/paths-filter)
-  |
-  +---> foundation_python changed? ---> validate + pytest
-  +---> lakeflow_ingestion changed? ---> validate + pytest
-  +---> sql_warehouse changed? -------> validate
-  |
-  v
-merge to main
-  |
-  v
-deploy-dev (automatic, all changed bundles)
-  |
-  v
-tag / manual trigger
-  |
-  v
-deploy-staging (approval required)
-  |
-  v
-deploy-prod (approval + staging tests pass)
+**Purpose**: SQL-first Gold/Platinum marts, serving views, and dashboard-supporting assets.
+
+**Contains**: SQL files, SQL task job definitions.
+
+**Deploys**: SQL tasks executed via SQL Warehouse to Databricks workspace.
+
+### Lane 4: `patterns` (reference only)
+
+**Purpose**: Documents mapping upstream `databricks/bundle-examples` to the local layout.
+
+**Contains**: Markdown reference files only. Never deployed.
+
+## Shared Folder Rules
+
+The `databricks/shared/` directory holds common configuration consumable by all bundles.
+
+**Allowed**:
+- `variables.yml` — common variable definitions (catalog, schemas, workspace host)
+- Shared Python utility libraries (if needed in the future)
+
+**Disallowed**:
+- Job definitions
+- Pipeline definitions
+- Resource files
+- Anything that would be deployed independently
+
+**Consumption**: Each bundle's `databricks.yml` includes shared files via relative path:
+```yaml
+include:
+  - ../../shared/*.yml
 ```
 
-**CI Workflow**: `.github/workflows/databricks-bundles-ci.yml`
+## Environment Model
 
----
+Every deployable bundle must define three targets:
 
-## 7. Dependency Graph
+| Target | Purpose | Catalog |
+|--------|---------|---------|
+| `dev` | Development iteration | `ipai_dev` |
+| `staging` | Pre-production validation | `ipai_staging` |
+| `prod` | Production workloads | `ipai` |
 
-```
-foundation_python (wheel artifact)
-  ^           ^
-  |           |
-  |           |
-lakeflow_ingestion    sql_warehouse (no Python dependency)
-  (imports wheel)
-```
+Environment-specific values (workspace host, catalog, default cluster config) are parameterized in the bundle's target section and override shared variables.
 
-- `foundation_python` produces a wheel artifact (`ipai_data_intelligence`)
-- `lakeflow_ingestion` can reference the wheel in its cluster libraries
-- `sql_warehouse` has no Python dependencies; it uses SQL tasks only
+## Anti-Drift Rules
 
----
+The following are considered drift and must be prevented or remediated:
 
-## 8. Secret Management
+1. **Workspace-only resources** — Production jobs or pipelines that exist only in the workspace with no bundle source. Prohibited per constitution.
+2. **Manual resource changes** — Bundle resources changed via UI/API without corresponding source updates. Detected by comparing bundle state to workspace state.
+3. **Missing environment targets** — A deployable bundle that lacks any of the three required targets. Caught by CI validation.
+4. **Documentation mismatch** — Architecture docs that contradict the implemented bundle taxonomy. Checked by CI spec alignment step.
 
-| Scope | Environment | Source |
-|-------|-------------|--------|
-| `ipai-dev` | dev | Databricks secret scope, populated from Azure Key Vault |
-| `ipai-staging` | staging | Databricks secret scope, populated from Azure Key Vault |
-| `ipai-prod` | prod | Databricks secret scope, populated from Azure Key Vault |
+## CI Contract
 
-Secrets referenced in notebooks/jobs: `dbutils.secrets.get(scope="ipai-<env>", key="<key>")`
+The CI pipeline (`.github/workflows/databricks-bundles-ci.yml`) enforces:
 
-CI/CD secrets: GitHub Actions secrets, injected as environment variables for `databricks bundle deploy`.
+1. **Changed-bundle detection** — Only validates bundles with changed files.
+2. **Bundle validation** — `databricks bundle validate` must pass for each changed bundle.
+3. **Python tests** — `pytest` runs for bundles with a `tests/` directory.
+4. **Doc/spec alignment** — Checks that required documentation exists and is consistent.
 
----
+## Decision Guide
 
-## 9. Migration from Legacy Layout
+### When to create a new bundle
 
-| Legacy Path | Target Bundle | Status |
-|-------------|---------------|--------|
-| `infra/databricks/notebooks/bronze/` | `lakeflow_ingestion` | Pending |
-| `infra/databricks/notebooks/silver/` | `foundation_python` | Pending |
-| `infra/databricks/notebooks/gold/` | `foundation_python` | Pending |
-| `infra/databricks/sql/` | `sql_warehouse` | Pending |
-| `infra/databricks/dlt/` | `lakeflow_ingestion` | Pending |
-| `infra/databricks/resources/jobs/` | Per-bundle `resources/jobs/` | Pending |
-| `infra/databricks/resources/pipelines/` | Per-bundle `resources/pipelines/` | Pending |
-| `infra/databricks/databricks.yml` | Replaced by per-bundle `databricks.yml` | Pending |
+Create a new sibling bundle when:
+- Ownership changes materially (different team owns it)
+- Release cadence differs materially (daily vs. monthly)
+- Runtime surface differs materially (Python vs. SQL vs. DLT)
+- Blast radius would otherwise become too large
 
----
+### When to add to an existing bundle
 
-## 10. Upstream Pattern Alignment
+Add to an existing bundle when:
+- The new asset shares the same owner, cadence, and runtime surface
+- The new asset is a natural extension of the bundle's capability lane
+- Adding it does not materially increase blast radius
 
-| Our Bundle | Upstream Pattern | Source |
-|-----------|-----------------|--------|
-| `foundation_python` | `default_python` | `databricks/bundle-examples` |
-| `lakeflow_ingestion` | `lakeflow_pipelines_python` | `databricks/bundle-examples` |
-| `sql_warehouse` | `default_sql` | `databricks/bundle-examples` |
+### When to use shared/
 
-Deviations from upstream patterns:
-- Multi-catalog variable substitution (upstream uses single catalog)
-- Service principal `run_as` in prod target (upstream uses current user)
-- Wheel artifact cross-bundle consumption (upstream bundles are standalone)
-
----
-
-## 11. Compute Model
-
-| Bundle | Dev Compute | Staging/Prod Compute |
-|--------|------------|---------------------|
-| `foundation_python` | Shared interactive cluster | Job cluster (auto-terminated) |
-| `lakeflow_ingestion` | DLT pipeline cluster (managed) | DLT pipeline cluster (managed) |
-| `sql_warehouse` | SQL warehouse (serverless) | SQL warehouse (serverless) |
-
----
-
-## 12. Open Questions
-
-1. **Fabric mirroring**: Should Platinum serving views be mirrored to OneLake via Databricks-Fabric connector? (Deferred to Phase 5+)
-2. **Streaming**: Should `lakeflow_ingestion` support streaming ingestion, or batch-only? (Batch-first per constitution)
-3. **Dashboard migration**: Should existing Superset dashboards be recreated as Lakeview dashboards? (No -- Power BI is primary)
-
----
-
-*Last updated: 2026-03-22*
+Use `databricks/shared/` when:
+- A variable or config is consumed by two or more bundles
+- The shared asset has no independent deployment lifecycle
+- The shared asset does not create coupling between bundles' release schedules
