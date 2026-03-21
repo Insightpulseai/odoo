@@ -69,12 +69,44 @@ This repository **does not own**:
 
 > **Doctrine**: Microsoft 365 Copilot, Copilot Studio, and Copilot Agents are governed enterprise delivery surfaces for finance use cases; `agent-platform` remains the canonical runtime/orchestration layer behind them.
 
-### 4. SAP Integration
+### 4. Build / Buy / Wrap Doctrine
+
+The platform follows a tiered decision rule for finance agent implementation:
+
+- **Build as Core IP**: Use when Odoo is the action authority, finance policy is non-generic, and the workflow is reusable product IP (e.g., Expense Liquidation, Tax/BIR Compliance).
+- **Buy + Wrap**: Use when the base capability is mature (e.g., OCR, RAG) but requires a governed shell, Odoo adapters, and platform telemetry (e.g., Finance Q&A, AP Invoice Intake).
+- **Buy as-is**: Use only for pure commodity productivity surfaces (e.g., email drafts, generic summaries).
+
+### 5. Deployment Posture (Foundry)
+
+- **Microsoft Foundry**: Shared production runtime for multi-user, governed finance agents.
+- **Foundry Local**: Restricted to local dev, private model testing, and low-latency on-device inference experiments. Not an approved production surface for shared workloads.
+
+### 6. SAP Integration
 
 - SAP is an **integrated external enterprise surface**, not a hosted runtime.
 - Approved adapter patterns: **Azure Functions** or **App Service** with **SAP Cloud SDK** (OData/RFC).
 - SAP infrastructure hosting templates (NetWeaver, HANA, LaMa, S/4HANA) are **non-canonical** unless SAP workload hosting is explicitly approved.
 - SAP adapters are owned by `agent-platform` (function-style edge) or `automations` (workflow glue).
+
+### 7. Databricks Agent Framework Lane
+
+Agents fundamentally centered on lakehouse retrieval, vector search, or evaluation-heavy data intelligence follow the Databricks-native agent pattern:
+
+- **Protocol**: Mandatory adherence to **MLflow `ResponsesAgent`** for tracing, evaluation, and AI Playground compatibility.
+- **Hosting**: Served via **Databricks Apps** (async FastAPI + AgentServer).
+- **Auth**: OAuth-based app or user authorization; **PATs are prohibited** for Databricks Apps.
+- **Streaming**: Must follow the OpenAI-style delta event contract for streaming outputs.
+
+> **Synthesis**: Use **Databricks** for data-intelligence/RAG agents; use **Foundry + Document Intelligence** for enterprise operational finance-agent plane (OCR-heavy); use **Odoo** for transactional authority.
+
+### 8. Document Intelligence & OCR Strategy
+
+The platform distinguishes between prebuilt model consumption and custom model development:
+
+- **Microsoft Foundry**: Primary surface for consuming newest prebuilt models (Invoice, Receipt, Bank Statement).
+- **Document Intelligence Studio**: Mandatory surface for labeling, training, and validating **custom neural/template models** and **custom classification**.
+- **Foundry Local**: Restricted to local prototyping, offline dev, and private workstation testing. Strictly prohibited for multi-user or high-throughput production workloads.
 
 ## Platform Invariants
 

@@ -48,6 +48,19 @@
 - [ ] Define escalation/logging/reporting contract for finance agents
 - [ ] Implement M365 Agents SDK adapter logic
 
+### Phase 4.1 — Wave 1 Finance Agents
+- **Finance Q&A Agent**
+    - [ ] Define knowledge retrieval pipeline (Odoo KB + Docs)
+    - [ ] Implement confidence-based escalation logic to human finance team
+    - [ ] Wire Supabase telemetry for query/feedback loop
+- **Expense Liquidation Agent**
+    - [ ] Define receipt OCR + Odoo `hr.expense` matching logic
+    - [ ] Implement policy audit rules (Merchant, Date, Amount, Tax)
+    - [ ] Define "proposed settlement" artifact for human approval
+- **Finance Policy Agent**
+    - [ ] Define "authoritative source" grounding contract
+    - [ ] Implement query routing (Internal SOP vs External Regulation)
+
 ### Phase 4.5 — SAP Adapter
 - [ ] Define SAP OData adapter contract (read/write business objects)
 - [ ] Implement SAP Cloud SDK Azure Functions quickstart adapter

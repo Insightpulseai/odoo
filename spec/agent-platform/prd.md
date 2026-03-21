@@ -111,6 +111,34 @@ No workflow may depend on hidden prompt-only orchestration logic for critical ex
 - **Copilot Studio** (Custom agent builder/extensibility)
 - **Enterprise Channels**: Teams, Outlook, Excel, Word, PowerPoint agent-enabled workflows.
 
+## Finance Agent Portfolio Matrix
+
+| Agent / Capability | Outcome | SoR | Decision | Why | Priority |
+|--------------------|---------|-----|----------|-----|----------|
+| **Finance Q&A** | Deflect queries | Odoo+KB | **Buy + Wrap** | Interaction is commodity; policy/routing is not | **P1** |
+| **Expense Liquidation** | Receipt matching | **Odoo** | **Build Core IP**| Tightly coupled to PH finance controls | **P1** |
+| **Policy Guidance** | Interpret SOPs | KB/Docs | **Buy + Wrap** | Retrieval is commodity; escalation/sign-off is not| **P1** |
+| **BS Reconciliation** | Faster close | Odoo/ERP| **Buy+Wrap+Own**| Logic/correction tokens are proprietary | **P2** |
+| **AP OCR Intake** | Capture docs | Odoo AP | **Buy + Wrap** | Extraction is commodity; posting controls are not | **P2** |
+| **Tax/BIR Compliance**| Filing prep | Odoo Tax| **Build Core IP**| Jurisdiction-specific differentiator | **P1/P2**|
+
+## Implementation Roadmap (Waves)
+
+### Wave 1 — Foundation & High Reuse
+1. **Finance Q&A Agent** (Deflect process/status queries)
+2. **Expense Liquidation Agent** (Audit receipts against policy)
+3. **Finance Policy Agent** (Grounding in SOPs/Checklists)
+
+### Wave 2 — Control Automation
+4. **Balance Sheet Reconciliation** (Variance detection/correction)
+5. **AP Invoice / OCR Intake** (Validation and routing)
+6. **Collections Coordination** (DSO reduction/follow-up)
+
+### Wave 3 — Strategic Intelligence
+7. **Tax / BIR Compliance** (Jurisdiction-specific filing prep)
+8. **Close Orchestrator** (Checklist & dependency management)
+9. **Executive Finance Insight** (Variance commentary & readout prep)
+
 ## Reference Implementations (Canonical Patterns)
 
 1.  **Finance Q&A Agent**:
