@@ -1,164 +1,94 @@
-# Plan: Databricks Bundles Foundation
+# Plan — Databricks Bundles Foundation
 
-> Implementation plan with 5 phases for establishing the multi-bundle Databricks layout.
-> Governed by: `spec/databricks-bundles-foundation/constitution.md`
-> Requirements: `spec/databricks-bundles-foundation/prd.md`
+## Summary
 
----
+This plan delivers the multi-bundle Databricks Asset Bundle layout defined in the PRD and governed by the constitution. It produces three baseline bundles, a shared configuration layer, CI validation, and architecture documentation.
 
-## Phase 1: Scaffold and Validate (Week 1)
+## Architecture Decision
 
-**Objective**: Create the bundle directory structure, write `databricks.yml` for each bundle, and confirm all three bundles pass `databricks bundle validate`.
+**Decision**: Adopt a multi-bundle layout under `databricks/bundles/` with one bundle per capability lane.
 
-### Deliverables
+### Why this architecture
 
-1. `databricks/bundles/foundation_python/databricks.yml` with dev/staging/prod targets
-2. `databricks/bundles/foundation_python/pyproject.toml` with hatchling build system
-3. `databricks/bundles/foundation_python/src/ipai_data_intelligence/__init__.py` with version marker
-4. `databricks/bundles/lakeflow_ingestion/databricks.yml` with DLT pipeline resources
-5. `databricks/bundles/lakeflow_ingestion/pyproject.toml` with DLT dependencies
-6. `databricks/bundles/lakeflow_ingestion/src/lakeflow_ingestion_etl/__init__.py`
-7. `databricks/bundles/sql_warehouse/databricks.yml` with SQL task resources
-8. `databricks/bundles/sql_warehouse/src/sql/` directory structure (schemas, marts, serving)
-9. `databricks/README.md` with operating rules
-10. `docs/architecture/DATABRICKS_BUNDLES_BASELINE.md` with architecture decisions
+1. **Blast radius isolation** — A bad deploy in `sql_warehouse` cannot break `foundation_python` jobs.
+2. **Independent release cadence** — Ingestion pipelines can ship daily while SQL marts ship weekly.
+3. **Ownership boundaries** — Each bundle can have a clear owner without cross-lane coupling.
+4. **Databricks CLI alignment** — Each bundle is a standalone `databricks bundle` target, matching the CLI's design model.
+5. **Shared config without shared deployables** — Common variables are included but never deployed as a standalone unit.
 
-### Validation Gate
+### Boundaries
 
-```bash
-cd databricks/bundles/foundation_python && databricks bundle validate -t dev
-cd databricks/bundles/lakeflow_ingestion && databricks bundle validate -t dev
-cd databricks/bundles/sql_warehouse && databricks bundle validate -t dev
-```
+| Concern | Owner | Location |
+|---------|-------|----------|
+| Azure networking, storage, Key Vault | Platform / Infra | `infra/azure/` |
+| Databricks workspace provisioning | Platform / Infra | `infra/azure/` or Terraform |
+| Fabric workspace provisioning | Platform / Infra | `infra/azure/` or Terraform |
+| Data engineering jobs, pipelines | Data Engineering | `databricks/bundles/` |
+| SQL marts, serving views | Data/Analytics | `databricks/bundles/sql_warehouse/` |
+| Power BI semantic models | BI team | Power BI service (not in this repo) |
+| Bundle CI/CD | Platform / DevOps | `.github/workflows/` |
 
-All three must exit 0.
+## Delivery Phases
 
----
+### Phase 1: Governance (spec + architecture)
+- Write constitution, PRD, plan, tasks
+- Write `docs/architecture/DATABRICKS_BUNDLES_BASELINE.md`
+- Establish the directory contract
 
-## Phase 2: CI Pipeline (Week 1-2)
+### Phase 2: Scaffolding
+- Create `databricks/` root with `README.md`
+- Create `databricks/shared/variables.yml` and `shared/README.md`
+- Create `databricks/bundles/patterns/` with reference docs
+- Create empty bundle directories for all three lanes
 
-**Objective**: Add GitHub Actions CI that detects changed bundles and runs validation + tests.
+### Phase 3: Foundation Python bundle
+- Create `databricks/bundles/foundation_python/databricks.yml` with env targets
+- Create `pyproject.toml` with setuptools build
+- Create `src/ipai_data_intelligence/` package with jobs, transforms, quality subpackages
+- Create smoke job resource in `resources/jobs/`
+- Create smoke job Python source
+- Create `tests/test_smoke.py`
 
-### Deliverables
+### Phase 4: Lakeflow Ingestion bundle
+- Create `databricks/bundles/lakeflow_ingestion/databricks.yml` with env targets
+- Create `pyproject.toml`
+- Create `src/lakeflow_ingestion_etl/` package with pipeline placeholder
+- Create pipeline resource in `resources/pipelines/`
+- Create job resource in `resources/jobs/`
 
-1. `.github/workflows/databricks-bundles-ci.yml` with:
-   - Path-scoped trigger on `databricks/**`
-   - Bundle change detection (dorny/paths-filter)
-   - `databricks bundle validate` for changed bundles
-   - `pytest` for Python bundles
-   - Doc/spec alignment check (placeholder)
-2. Databricks CLI installation step (official `databricks/setup-cli` action)
-3. Python environment setup with bundle-specific `pyproject.toml`
+### Phase 5: SQL Warehouse bundle
+- Create `databricks/bundles/sql_warehouse/databricks.yml` with env targets
+- Create `src/sql/marts/customer_360.sql` example view
+- Create job resource in `resources/jobs/`
 
-### Validation Gate
+## Implementation Notes
 
-- CI workflow passes on a PR that touches `databricks/bundles/foundation_python/`
-- CI workflow skips bundles not touched by the PR
+### Shared variables consumption
+Each bundle's `databricks.yml` uses `include` to pull in `../../shared/variables.yml`. Variables are then referenced in targets and resource definitions.
 
----
+### CI workflow design
+The CI workflow uses `dorny/paths-filter` to detect which bundles changed, then runs validation and tests only for affected bundles. This keeps CI fast and focused.
 
-## Phase 3: Foundation Python Package (Week 2-3)
+### Databricks CLI pinning
+The CI workflow installs a specific version of the Databricks CLI to avoid drift. The version should be updated periodically but never auto-updated.
 
-**Objective**: Implement the core `ipai_data_intelligence` Python package with medallion transform utilities and data quality checks.
+### Python package structure
+`foundation_python` and `lakeflow_ingestion` use `pyproject.toml` with setuptools. This allows local development, testing, and Databricks wheel deployment.
 
-### Deliverables
-
-1. `src/ipai_data_intelligence/transforms/` - Base classes for Bronze/Silver/Gold transforms
-2. `src/ipai_data_intelligence/quality/` - Data quality check framework (null checks, schema validation, freshness)
-3. `src/ipai_data_intelligence/utils/` - Shared utilities (catalog helpers, config loaders, logging)
-4. `tests/test_transforms.py` - Unit tests for transform base classes
-5. `tests/test_quality.py` - Unit tests for quality checks
-6. `fixtures/` - Sample DataFrames for testing
-7. `resources/jobs/daily_medallion_refresh.yml` - Job definition for daily pipeline run
-8. Wheel artifact configuration in `databricks.yml`
-
-### Validation Gate
-
-```bash
-cd databricks/bundles/foundation_python
-pip install -e ".[dev]"
-pytest --cov=src/ipai_data_intelligence --cov-report=term-missing
-# Coverage >= 60%
-```
-
----
-
-## Phase 4: Ingestion and SQL Bundles (Week 3-4)
-
-**Objective**: Implement LakeFlow ingestion pipelines and SQL warehouse marts.
-
-### Deliverables (lakeflow_ingestion)
-
-1. `src/lakeflow_ingestion_etl/extractors/` - JDBC extractor for Odoo PostgreSQL
-2. `src/lakeflow_ingestion_etl/loaders/` - Bronze table writers with append semantics
-3. `src/lakeflow_ingestion_etl/schema_registry/` - Schema evolution tracking
-4. `resources/pipelines/odoo_bronze_ingest.yml` - DLT pipeline for Odoo extraction
-5. `resources/jobs/daily_bronze_ingest.yml` - Scheduled job wrapping the DLT pipeline
-
-### Deliverables (sql_warehouse)
-
-1. `src/sql/schemas/create_schemas.sql` - DDL for bronze/silver/gold/platinum schemas
-2. `src/sql/marts/finance_kpis.sql` - Gold-layer finance KPI aggregations
-3. `src/sql/marts/project_status.sql` - Gold-layer project status rollups
-4. `src/sql/serving/pbi_finance_summary.sql` - Platinum serving view for Power BI
-5. `resources/jobs/daily_mart_refresh.yml` - SQL task job for mart refresh
-6. `resources/dashboards/` - Lakeview dashboard definitions (if applicable)
-
-### Validation Gate
-
-```bash
-databricks bundle validate -t dev  # Both bundles
-pytest  # lakeflow_ingestion tests
-```
-
----
-
-## Phase 5: Migration and Deprecation (Week 4-5)
-
-**Objective**: Migrate remaining resources from `infra/databricks/` to the bundle layout and mark the legacy path as deprecated.
-
-### Deliverables
-
-1. Resource-by-resource migration inventory (spreadsheet or YAML)
-2. Each migrated resource validated in dev target before legacy removal
-3. `infra/databricks/DEPRECATED.md` with pointer to `databricks/bundles/`
-4. CI guard preventing new files in `infra/databricks/` (optional workflow)
-5. Updated `CLAUDE.md` and SSOT docs reflecting canonical path change
-6. Architecture doc updated with migration evidence
-
-### Validation Gate
-
-- All resources in `databricks/bundles/` deploy successfully to dev
-- No orphaned resources in workspace (compare `databricks bundle validate` output vs workspace list)
-- `infra/databricks/` contains only `DEPRECATED.md` and historical files
-
----
-
-## Risk Register
+## Risks and Mitigations
 
 | Risk | Likelihood | Impact | Mitigation |
 |------|-----------|--------|------------|
-| Legacy notebooks have undocumented dependencies | High | Medium | Inventory all imports before migration |
-| DLT pipeline schema changes break downstream | Medium | High | Schema evolution tracking in lakeflow_ingestion |
-| CI runners lack Databricks CLI | Low | High | Use official `databricks/setup-cli` action |
-| Service principal permissions insufficient | Medium | Medium | Pre-validate with `databricks bundle validate -t prod` |
-| Bundle examples upstream change schema | Low | Low | Pin CLI version, document deviations |
+| Teams create resources outside bundles | Medium | High | Anti-drift CI, workspace audit script |
+| Shared variables grow unbounded | Low | Medium | Constitution limits shared scope |
+| CLI version breaks validation | Low | Medium | Pin version, test upgrades in dev first |
+| Bundle count grows without governance | Medium | Medium | Constitution requires justification for new bundles |
 
----
+## Definition of Done
 
-## Timeline Summary
-
-| Phase | Duration | Dependency | Output |
-|-------|----------|------------|--------|
-| 1 - Scaffold | 1 week | None | Bundle directories, YAML, architecture doc |
-| 2 - CI Pipeline | 1 week | Phase 1 | GitHub Actions workflow |
-| 3 - Foundation Python | 1-2 weeks | Phase 2 | Python package, tests, wheel |
-| 4 - Ingestion + SQL | 1-2 weeks | Phase 3 | DLT pipelines, SQL marts |
-| 5 - Migration | 1 week | Phase 4 | Legacy deprecated, bundles canonical |
-
-Total estimated: 5-7 weeks (overlapping phases possible after Phase 2).
-
----
-
-*Spec bundle: `spec/databricks-bundles-foundation/`*
-*Last updated: 2026-03-22*
+- [ ] All three bundles validate with `databricks bundle validate`
+- [ ] CI workflow detects changed bundles and runs validation
+- [ ] Smoke test passes in `foundation_python`
+- [ ] Architecture doc matches implemented layout
+- [ ] Spec kit (constitution, PRD, plan, tasks) is complete
+- [ ] No manual workspace resources exist without documented exceptions

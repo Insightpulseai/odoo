@@ -1,0 +1,16 @@
+resources:
+  jobs:
+    foundation_python_smoke:
+      name: "[${bundle.target}] Foundation Python Smoke"
+      tasks:
+        - task_key: smoke
+          python_wheel_task:
+            package_name: ipai_data_intelligence
+            entry_point: ipai_data_intelligence.jobs.smoke:main
+          new_cluster:
+            spark_version: ${var.default_spark_version}
+            node_type_id: ${var.default_node_type_id}
+            num_workers: 0
+            spark_conf:
+              spark.databricks.cluster.profile: singleNode
+              spark.master: "local[*]"

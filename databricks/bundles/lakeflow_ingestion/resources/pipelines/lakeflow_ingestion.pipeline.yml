@@ -1,0 +1,12 @@
+resources:
+  pipelines:
+    lakeflow_ingestion:
+      name: "[${bundle.target}] Lakeflow Ingestion"
+      target: ${var.bronze_schema}
+      catalog: ${var.catalog}
+      libraries:
+        - notebook:
+            path: ../../src/lakeflow_ingestion_etl/pipeline.py
+      configuration:
+        bundle_target: ${bundle.target}
+      continuous: false

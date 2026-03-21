@@ -1,0 +1,36 @@
+# Shared variables consumed by all Databricks bundles.
+# Each bundle includes this file via: include: [../../shared/*.yml]
+# Do not put job or pipeline definitions here.
+
+variables:
+  workspace_host:
+    description: Databricks workspace URL
+    default: ""
+
+  catalog:
+    description: Unity Catalog name
+    default: "ipai_dev"
+
+  bronze_schema:
+    description: Bronze layer schema name
+    default: "bronze"
+
+  silver_schema:
+    description: Silver layer schema name
+    default: "silver"
+
+  gold_schema:
+    description: Gold layer schema name
+    default: "gold"
+
+  warehouse_id:
+    description: SQL Warehouse ID for SQL tasks
+    default: ""
+
+  default_node_type_id:
+    description: Default compute node type
+    default: "Standard_DS3_v2"
+
+  default_spark_version:
+    description: Default Databricks Runtime version
+    default: "15.4.x-scala2.12"

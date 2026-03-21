@@ -1,0 +1,9 @@
+resources:
+  jobs:
+    lakeflow_ingestion_trigger:
+      name: "[${bundle.target}] Lakeflow Ingestion Trigger"
+      tasks:
+        - task_key: run_pipeline
+          pipeline_task:
+            pipeline_id: ${resources.pipelines.lakeflow_ingestion.id}
+            full_refresh: false
