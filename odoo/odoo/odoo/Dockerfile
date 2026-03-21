@@ -24,7 +24,6 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
     curl \
     git \
-    libpq-dev \
     libxml2-dev \
     libxslt1-dev \
     libsasl2-dev \
