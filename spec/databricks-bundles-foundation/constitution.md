@@ -120,6 +120,25 @@ The repository uses Odoo.sh as the benchmark for promotion semantics:
 ### 12. Last-known-good production rule
 Production deployments must preserve a machine-readable last-known-good release reference so the previous successful revision can be restored deterministically if a production deploy fails validation.
 
+### 13. Microsoft reference architecture alignment
+The repository aligns to the Microsoft reference architecture in which:
+
+- Databricks is the primary data and AI engineering plane
+- Unity Catalog is the governance anchor for governed data products
+- Fabric / Power BI is the downstream semantic and reporting plane
+- Azure platform services provide identity, secrets, observability, cost, CI/CD, and security controls
+
+### 14. Platform integrations stay outside bundle ownership
+The following concerns must not be treated as bundle-local ownership:
+
+- Purview metadata publishing
+- Entra ID
+- Key Vault
+- Azure Monitor
+- Cost Management
+- Defender for Cloud
+- workspace/network provisioning
+
 ## Required Directory Contract
 
 ```text

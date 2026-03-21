@@ -91,6 +91,14 @@ When Azure DevOps is the governing delivery surface:
 - avoid encoding environment authority directly into bundle taxonomy
 - preserve Git as the reviewable source of truth for bundle config, code, and tests
 
+### Microsoft reference architecture interpretation
+This plan follows Microsoft's published end-to-end pattern:
+
+- `lakeflow_ingestion` maps to Event Hubs / Auto Loader / federated ingestion and bronze entry
+- `foundation_python` maps to reusable engineering, transformation, quality, orchestration, and AI-adjacent code
+- `sql_warehouse` maps to gold-serving SQL surfaces that feed downstream semantic/report consumption
+- Fabric / Power BI remains downstream and is not deployed through Databricks bundle roots
+
 ## Risks and Mitigations
 
 | Risk | Likelihood | Impact | Mitigation |
