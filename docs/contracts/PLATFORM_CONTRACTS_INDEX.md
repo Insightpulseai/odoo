@@ -48,6 +48,7 @@
 | C-34 | [Eval Gate](eval-gate-contract.md)                           | `foundry/evals/<slug>/thresholds.yaml`| Production promotion gate                            | ✅ Active | Eval_Gate pipeline stage                   |
 | C-35 | [Foundry/VS Code Auth](foundry-vscode-auth-contract.md)      | Entra ID app registration             | VS Code, Foundry, MCP servers, Azure Pipelines       | ⚠️ Partial | Auth completion checklist                  |
 | C-36 | [Azure Resource Graph](azure-resource-graph-contract.md)     | Azure Resource Graph (KQL)            | SSOT reconciliation, drift detection, governance      | ✅ Active | `scripts/azure/resource_graph/run_query.sh` |
+| C-37 | [Power BI Copilot Capability](POWERBI_COPILOT_CAPABILITY_CONTRACT.md) | Databricks AI SQL (platinum layer) | Power BI DirectQuery, `ask_copilot()` UDF | ✅ Active | `databricks bundle run ai_copilot_platinum` |
 
 ---
 

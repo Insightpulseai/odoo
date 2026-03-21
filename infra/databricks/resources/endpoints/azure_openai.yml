@@ -1,0 +1,37 @@
+# External Model Serving Endpoint — Azure OpenAI (oai-ipai-dev)
+#
+# Routes ai_query() calls to Azure OpenAI GPT-4o deployment.
+# Used by platinum-layer AI SQL views for Power BI Copilot alternative.
+#
+# Auth: Databricks workspace identity → Azure OpenAI via API key
+# stored in Databricks secret scope `ipai-ai`.
+#
+# Prerequisites:
+#   1. Azure OpenAI resource `oai-ipai-dev` in rg-ipai-ai-dev (eastus)
+#   2. GPT-4o deployment named `gpt-4o` on that resource
+#   3. Secret scope `ipai-ai` with key `azure-openai-key`
+#
+# Create secret scope + key:
+#   databricks secrets create-scope ipai-ai
+#   databricks secrets put-secret ipai-ai azure-openai-key
+
+resources:
+  model_serving_endpoints:
+    ipai_azure_openai:
+      name: ipai-azure-openai
+      config:
+        served_entities:
+          - name: gpt-4o
+            external_model:
+              name: gpt-4o
+              provider: openai
+              task: llm/v1/chat
+              openai_config:
+                openai_api_type: azure
+                openai_api_base: https://oai-ipai-dev.openai.azure.com/
+                openai_deployment_name: gpt-4o
+                openai_api_version: "2024-08-01-preview"
+                openai_api_key: "{{secrets/ipai-ai/azure-openai-key}}"
+      tags:
+        team: platform
+        purpose: ai-sql-copilot
