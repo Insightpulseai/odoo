@@ -2,6 +2,11 @@
 ops/secrets/age-key.txt
 ops/secrets/*.key
 
+# Runtime schema artifacts (generated, large)
+docs/data-model/runtime/odoo_schema.json
+docs/data-model/runtime/manifest.json
+docs/data-model/runtime/drift_report.json
+
 # Sandbox (local dev scratch — never canonical; see CLAUDE.md)
 sandbox/
 

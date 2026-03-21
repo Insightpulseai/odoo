@@ -40,8 +40,8 @@ Six of ten active repos have NO CLAUDE.md. Five have NO .github/ directory. Six 
 
 Three repos are governance-free zones:
 
-- **platform**: Contains SSOT files and Supabase config but has zero documentation, zero CI, zero agent guidance. It is a repo that exists but communicates nothing about why.
-- **data-intelligence**: Contains Databricks DLT contracts but has no README, no docs, no CI. The decision to use Databricks JDBC extract over Supabase ETL is documented only in the user's Claude memory, not in the repo itself.
+- **ops-platform**: Contains SSOT files and Supabase config but has zero documentation, zero CI, zero agent guidance. It is a repo that exists but communicates nothing about why.
+- **lakehouse**: Contains Databricks DLT contracts but has no README, no docs, no CI. The decision to use Databricks JDBC extract over Supabase ETL is documented only in the user's Claude memory, not in the repo itself.
 - **automations**: Contains 339KB of inventory JSON but no README, no docs, no CI. The n8n workflows and repo hygiene scripts are discoverable only by accident.
 
 ### What Is Structurally Wrong
@@ -55,7 +55,7 @@ The `odoo` repo is a monorepo that pretends to be decomposed. It contains:
 - 355 workflows (many are not Odoo-specific)
 - 1000+ scripts (many are platform-level, not Odoo-level)
 
-Meanwhile, `infra` and `platform` exist as separate repos but are incomplete mirrors of what already lives in `odoo/infra/` and `odoo/apps/`. This creates three anti-patterns:
+Meanwhile, `infra` and `ops-platform` exist as separate repos but are incomplete mirrors of what already lives in `odoo/infra/` and `odoo/apps/`. This creates three anti-patterns:
 
 1. **Dual-source-of-truth**: Infrastructure definitions exist in both `odoo/infra/` and `infra/`. Which is canonical?
 2. **Boundary violation**: `odoo` contains apps (ops-console) that have nothing to do with Odoo ERP.
@@ -82,7 +82,7 @@ Meanwhile, `infra` and `platform` exist as separate repos but are incomplete mir
 | Infra duplication | Agents may modify the wrong infra definition |
 | No spec bundle standard outside `odoo` | Agents cannot plan work in satellite repos |
 | No deterministic render points | Agents cannot verify their own output |
-| Naming inconsistency | `platform` vs `odoo/apps/ops-console` -- which is the ops surface? |
+| Naming inconsistency | `ops-platform` vs `odoo/apps/ops-console` -- which is the ops surface? |
 
 ### What Blocks Documentation-Platform Rigor
 
@@ -109,15 +109,15 @@ The organization has outgrown its monorepo-plus-satellites structure. The `odoo`
 | # | Repo | Current Role | Boundary Correct? | Main Problems | Docs Rigor | Azure DevOps Alignment | Coding-Agent Issues | Decision | Priority |
 |---|------|-------------|-------------------|---------------|------------|----------------------|-------------------|----------|----------|
 | 1 | **odoo** | ERP + platform monorepo | NO -- contains infra/, apps/, specs for non-Odoo concerns | Boundary violation: apps/ and infra/ do not belong. 355 workflows includes non-Odoo CI. 1000+ scripts are partially platform-level. | Has docs/ but no build pipeline. Evidence dir is good. 23 architecture docs with no ADR numbering. | Has CI but no standardized gates. No environment promotion docs. No artifact naming. | CLAUDE.md is strong. But agents get confused by scope -- is this an Odoo repo or a platform repo? | SPLIT: Extract infra/, apps/, platform scripts. Odoo repo becomes pure ERP. | P0 |
-| 2 | **platform** | SSOT + Supabase config | NO -- too thin to justify existence as separate repo | Zero governance. No README. No CI. No docs. Contains `ssot/` but unclear if this or `odoo/infra/ssot/` is canonical. | None | None | No CLAUDE.md. Agent lands here and has zero context. | MERGE into consolidated platform repo OR fully populate with governance. | P1 |
-| 3 | **data-intelligence** | Databricks contracts | YES -- clear domain boundary | No README. No CI. No docs. Contracts exist but are not validated. Decision history (JDBC over Supabase ETL) is not recorded here. | None | None | No CLAUDE.md. No ADRs explaining Databricks choices. | KEEP but add full governance stack. | P1 |
+| 2 | **ops-platform** | SSOT + Supabase config | NO -- too thin to justify existence as separate repo | Zero governance. No README. No CI. No docs. Contains `ssot/` but unclear if this or `odoo/infra/ssot/` is canonical. | None | None | No CLAUDE.md. Agent lands here and has zero context. | MERGE into consolidated platform repo OR fully populate with governance. | P1 |
+| 3 | **lakehouse** | Databricks contracts | YES -- clear domain boundary | No README. No CI. No docs. Contracts exist but are not validated. Decision history (JDBC over Supabase ETL) is not recorded here. | None | None | No CLAUDE.md. No ADRs explaining Databricks choices. | KEEP but add full governance stack. | P1 |
 | 4 | **agents** | AI agent definitions | YES -- clear domain boundary | Well-structured internally (capabilities/, knowledge/, skills/, etc.) but no CI, no CLAUDE.md, no docs/, no spec/. README exists but is the only governance artifact. | README only | None | No CLAUDE.md. Agents working on agent definitions have no meta-guidance. Ironic. | KEEP and add governance. High priority -- this repo defines agent behavior. | P0 |
 | 5 | **infra** | Azure IaC | PARTIALLY -- overlaps with odoo/infra/ | Dual-source-of-truth problem. Has docs/ and spec/ but no CLAUDE.md, no .github/, no README. Which infra/ is canonical? | Has docs/ and spec/ -- better than most satellites. | Has terraform/bicep but no pipeline definitions. No environment promotion. | No CLAUDE.md. Agent cannot determine if this or odoo/infra/ is the source of truth. | KEEP as canonical infra repo. Remove odoo/infra/ and symlink or reference. | P0 |
 | 6 | **web** | Vercel-era web apps | PARTIALLY -- README states Vercel is deprecated | 19 apps in apps/ -- unclear which are active post-Vercel deprecation. Contains ai-control-plane/, billing-site/, control-plane/, copilot/ -- some may be dead. | Has docs/ and spec/. README acknowledges deprecation. | No .github/. No CI. Dead apps mixed with live apps. | No CLAUDE.md. Agent cannot determine which apps are live. | AUDIT: Identify live apps, archive dead ones. Add CLAUDE.md. | P2 |
 | 7 | **automations** | n8n + scripts | YES -- clear domain boundary | No README. No CI. No docs. 339KB inventory JSON is data, not documentation. | None | None | No CLAUDE.md. Agent cannot determine what automations are active. | KEEP and add governance. Wire inventory.json to validation. | P2 |
 | 8 | **.github** | Org governance | YES -- this is the right place for org-level config | Has CODEOWNERS, templates, dependabot. But no CLAUDE.md, no README. copilot-instructions.md exists but is minimal. No reusable workflows despite 355 workflows in odoo. | Policies exist but are not linked to enforcement. | Has CI templates but they are not consumed by other repos. | No CLAUDE.md. Org-level agent guidance is missing. copilot-instructions.md is tool-gated, not comprehensive. | EXPAND: Add CLAUDE.md, README, reusable workflows, org governance docs. | P0 |
 | 9 | **templates** | Bootstrap scaffolds | YES -- appropriate scope | Minimal exploration. Unknown if templates match current repo contract. | Unknown | Unknown | Unknown if templates produce repos that meet governance standards. | AUDIT and update to match repo contract defined in this review. | P3 |
-| 10 | **design** | UI primitives | YES -- appropriate scope | Minimal content. Legacy location was design/. May not reflect current design token needs (Azure resource primitives, status indicators, etc.). | Unknown | Unknown | Unknown | AUDIT and expand with primitives defined in Section 9. | P3 |
+| 10 | **design-system** | UI primitives | YES -- appropriate scope | Minimal content. Legacy location was design/. May not reflect current design token needs (Azure resource primitives, status indicators, etc.). | Unknown | Unknown | Unknown | AUDIT and expand with primitives defined in Section 9. | P3 |
 
 ### Archived Repos
 
@@ -158,13 +158,13 @@ The organization has outgrown its monorepo-plus-satellites structure. The `odoo`
 
 **Anti-Patterns Present**:
 1. **God Repo**: One repo owns everything. This makes it impossible to give a team ownership of a specific domain without granting them access to all domains.
-2. **Phantom Decomposition**: The existence of `infra`, `platform`, and `web` as separate repos implies decomposition happened, but `odoo` was never cleaned up. The satellite repos are partial copies, not authoritative sources.
+2. **Phantom Decomposition**: The existence of `infra`, `ops-platform`, and `web` as separate repos implies decomposition happened, but `odoo` was never cleaned up. The satellite repos are partial copies, not authoritative sources.
 3. **Context Overload**: CLAUDE.md is 1500+ lines. It covers Odoo, BIR compliance, Vercel integration, MCP jobs, Supabase, n8n, GitHub Projects, Figma, design tokens, and more. An agent reading this CLAUDE.md gets context about 15 different systems when it may only need to modify one Odoo module.
 4. **Workflow Explosion**: 355 workflows is not a sign of mature CI -- it is a sign that workflows are not composed from reusable pieces. Many of these are variations of the same pattern (lint, test, deploy) for different targets.
 
 **Structural Debt Cost**: Every agent session in `odoo` loads CLAUDE.md that is 4x longer than it needs to be. Every PR touches a repo with 355 workflows, causing CI to take longer than necessary. Every infrastructure change could be applied to either `odoo/infra/` or `infra/`, with no mechanism to detect which is canonical.
 
-#### Repo 2: `platform` -- The Ghost Repo
+#### Repo 2: `ops-platform` -- The Ghost Repo
 
 **Current State**: This repo exists but barely. It contains:
 - `ssot/` -- SSOT files (service matrix, resources)
@@ -177,13 +177,13 @@ That is the complete inventory. No README, no CLAUDE.md, no CI, no docs, no spec
 
 **Why It Must Not Continue**: A repo with no governance artifacts is a repo that cannot be safely operated on by any agent or developer. Its contents are small enough to merge into `infra` (where SSOT files naturally belong) without any loss of structure.
 
-**One Exception**: If the org decides that SSOT files should live separately from IaC (a defensible position), then `platform` should be renamed to `ssot` and given full governance. But the current state -- a governance-free dump with 3 directories -- is not that.
+**One Exception**: If the org decides that SSOT files should live separately from IaC (a defensible position), then `ops-platform` should be renamed to `ssot` and given full governance. But the current state -- a governance-free dump with 3 directories -- is not that.
 
-#### Repo 3: `data-intelligence` -- The Undocumented Decision
+#### Repo 3: `lakehouse` -- The Undocumented Decision
 
 **Current State**: Contains Databricks DLT contracts in `contracts/` directory. That is all.
 
-**The Hidden Story**: The decision to use Databricks JDBC extract instead of Supabase ETL is recorded in the user's Claude memory (`project_supabase_etl_deprecated.md` and `project_data-intelligence_architecture.md`) but NOT in this repo. This means:
+**The Hidden Story**: The decision to use Databricks JDBC extract instead of Supabase ETL is recorded in the user's Claude memory (`project_supabase_etl_deprecated.md` and `project_lakehouse_architecture.md`) but NOT in this repo. This means:
 - A new developer landing in this repo has no idea why Databricks was chosen
 - An agent operating here cannot explain the medallion architecture decisions
 - The JDBC-over-Supabase-ETL decision has no ADR, no rationale, no trade-off analysis in the repo that implements it
@@ -236,7 +236,7 @@ It also has a README. But no CLAUDE.md, no .github/, no docs/, no spec/.
 - `deploy/` -- Deployment scripts
 - `entra/` -- Microsoft Entra ID configuration (for Keycloak-to-Entra migration)
 - `identity/` -- Identity management
-- `data-intelligence/` -- Lakehouse infrastructure (overlaps with `data-intelligence` repo)
+- `lakehouse/` -- Lakehouse infrastructure (overlaps with `lakehouse` repo)
 - `observability/` -- Monitoring and alerting config
 - `platform-kit/` -- Platform tooling
 
@@ -316,7 +316,7 @@ Currently, it has the skeleton but not the substance. The `copilot-instructions.
 
 **The Unknown Risk**: If templates produce repos that do not match the standard contract (no CLAUDE.md, no CODEOWNERS, wrong docs structure), then every new repo starts with governance debt. Templates must be updated to produce repos that match the contract defined in Section 5, and this must be validated in CI.
 
-#### Repo 10: `design` -- The Empty Promise
+#### Repo 10: `design-system` -- The Empty Promise
 
 **Current State**: Minimal content. Legacy location was `design/`.
 
@@ -327,11 +327,11 @@ Currently, it has the skeleton but not the substance. The `copilot-instructions.
 - Typography and spacing tokens
 - Published as npm packages consumed by `web`
 
-**Current Gap**: The ops-console (currently in `odoo/apps/`, target in `web/apps/`) needs design primitives to render Azure resources, deployment status, and operational data. Without a populated `design`, every web component invents its own colors, icons, and status indicators.
+**Current Gap**: The ops-console (currently in `odoo/apps/`, target in `web/apps/`) needs design primitives to render Azure resources, deployment status, and operational data. Without a populated `design-system`, every web component invents its own colors, icons, and status indicators.
 
 ### Summary of Governance Gaps
 
-| Artifact | odoo | platform | data-intelligence | agents | infra | web | automations | .github | templates | design |
+| Artifact | odoo | ops-platform | lakehouse | agents | infra | web | automations | .github | templates | design-system |
 |----------|------|-------------|-----------|--------|-------|-----|------------|---------|-----------|--------------|
 | CLAUDE.md | YES | NO | NO | NO | NO | NO | NO | NO | NO | NO |
 | README | YES | NO | NO | YES | NO | YES | NO | NO | ? | ? |
@@ -355,20 +355,20 @@ The organization should adopt a **bounded multi-repo** model: each repo owns a c
 | # | Repo | Owns | Must Never Own | Notes |
 |---|------|------|---------------|-------|
 | 1 | **odoo** | Odoo CE 19 ERP: addons/ipai/, addons/oca/, vendor/odoo/, Odoo-specific config, Odoo-specific CI, Odoo-specific docs | Infrastructure IaC, standalone apps (ops-console), platform-level scripts, non-Odoo specs | Extract apps/, infra/, platform scripts. This becomes a pure ERP repo. |
-| 2 | **infra** | ALL infrastructure-as-code: Azure (bicep/terraform), Cloudflare DNS, Databricks workspace config, deployment scripts, environment definitions, SSOT files | Application code, business logic, Odoo modules | Absorb odoo/infra/. Absorb platform/ssot/. Becomes the canonical IaC repo. |
+| 2 | **infra** | ALL infrastructure-as-code: Azure (bicep/terraform), Cloudflare DNS, Databricks workspace config, deployment scripts, environment definitions, SSOT files | Application code, business logic, Odoo modules | Absorb odoo/infra/. Absorb ops-platform/ssot/. Becomes the canonical IaC repo. |
 | 3 | **agents** | AI agent definitions: capabilities, knowledge bases, skills, MCP tool definitions, personas, policies, procedures, prompts, evals, foundry config | Infrastructure, deployment, application runtime code | Add governance stack. This is the agent brain -- it must have CLAUDE.md. |
 | 4 | **web** | Web applications: ops-console (from odoo/apps/), active web UIs, design tokens consumed by web | Odoo modules, infrastructure, agent definitions | Absorb ops-console from odoo/apps/. Audit and archive dead Vercel-era apps. |
-| 5 | **data-intelligence** | Data engineering: Databricks DLT contracts, medallion layer definitions, data quality rules, ETL pipeline definitions | Application code, infrastructure provisioning (that goes in infra/) | Add governance stack. ADRs for JDBC-over-Supabase-ETL decision. |
+| 5 | **lakehouse** | Data engineering: Databricks DLT contracts, medallion layer definitions, data quality rules, ETL pipeline definitions | Application code, infrastructure provisioning (that goes in infra/) | Add governance stack. ADRs for JDBC-over-Supabase-ETL decision. |
 | 6 | **automations** | n8n workflows, scheduled jobs, repo hygiene scripts, Notion integrations, automation inventory | Infrastructure provisioning, application code, Odoo modules | Add governance stack. Wire inventory to CI validation. |
 | 7 | **.github** | Org governance: reusable workflows, PR templates, issue templates, CODEOWNERS, dependabot, org-level CLAUDE.md, copilot-instructions.md, shared CI actions, repo contract definitions | Application code, infrastructure, business logic | Expand with reusable workflows extracted from odoo's 355 workflows. Add org CLAUDE.md. |
 | 8 | **templates** | Repo scaffolds: cookiecutter/template repos that produce repos matching the standard contract | Application code, infrastructure | Update templates to produce repos that match Section 5 contract. |
-| 9 | **design** | Design tokens, component primitives, icon sets, color palettes, typography, status indicators | Application runtime code, infrastructure | Expand with primitives defined in Section 9. Publish as npm package. |
+| 9 | **design-system** | Design tokens, component primitives, icon sets, color palettes, typography, status indicators | Application runtime code, infrastructure | Expand with primitives defined in Section 9. Publish as npm package. |
 
 ### Repos to Eliminate
 
 | Repo | Action | Rationale |
 |------|--------|-----------|
-| **platform** | MERGE `ssot/` into `infra/ssot/`, `supabase/` config into `infra/supabase/`. Delete repo. | Too thin to justify existence. SSOT belongs with infrastructure. |
+| **ops-platform** | MERGE `ssot/` into `infra/ssot/`, `supabase/` config into `infra/supabase/`. Delete repo. | Too thin to justify existence. SSOT belongs with infrastructure. |
 | **template-factory** (archived) | Salvage into `templates`, delete | Redundant with `templates` |
 | **plugin-marketplace** (archived) | Delete | Abandoned concept |
 | **plugin-agents** (archived) | Salvage agent patterns into `agents`, delete | Redundant with `agents` |
@@ -386,17 +386,17 @@ The organization should adopt a **bounded multi-repo** model: each repo owns a c
 odoo (ERP) -------> infra (IaC) <------- web (UI)
    |                    |                    |
    |                    v                    |
-   |              data-intelligence (data)           |
+   |              lakehouse (data)           |
    |                    |                    |
    v                    v                    v
-agents (AI) <---- automations (jobs) ----> design (tokens)
+agents (AI) <---- automations (jobs) ----> design-system (tokens)
 ```
 
 Key constraints:
 - `odoo` depends on `infra` for deployment, never the reverse
-- `web` depends on `infra` for deployment and `design` for tokens
+- `web` depends on `infra` for deployment and `design-system` for tokens
 - `agents` is consumed by `odoo` (via MCP tools) and `automations` (via n8n)
-- `data-intelligence` consumes data from `odoo` (via JDBC) and `infra` (for workspace config)
+- `lakehouse` consumes data from `odoo` (via JDBC) and `infra` (for workspace config)
 - `automations` orchestrates across repos but owns no application logic
 - `.github` is the governance root -- all repos consume its workflows and contracts
 
@@ -590,7 +590,7 @@ spec/
     architecture.md
     test-plan.md
     acceptance-criteria.md
-  SPEC-002-data-intelligence-medallion/
+  SPEC-002-lakehouse-medallion/
     ...
 ```
 
@@ -605,9 +605,9 @@ The 76 spec bundles in `odoo/spec/` should be audited: Odoo-specific specs stay,
 | Infrastructure, deployment, environments | `infra` | Platform team |
 | Agent capabilities, MCP tools, prompts | `agents` | AI team |
 | Web apps, UI components | `web` | Frontend team |
-| Data pipelines, DLT, medallion | `data-intelligence` | Data team |
+| Data pipelines, DLT, medallion | `lakehouse` | Data team |
 | n8n workflows, automation inventory | `automations` | Platform team |
-| Design tokens, component library | `design` | Design team |
+| Design tokens, component library | `design-system` | Design team |
 
 #### 4.10 Lint/Validation/Publishing Model
 
@@ -670,13 +670,13 @@ Every repo in the org falls into one of these classes:
 | Class | Definition | Examples |
 |-------|-----------|----------|
 | **Product/Runtime** | Deploys a running service | `odoo`, `web` |
-| **Control Plane** | Manages deployment/operations of other services | `platform` (to be merged) |
+| **Control Plane** | Manages deployment/operations of other services | `ops-platform` (to be merged) |
 | **Infrastructure** | Provisions and configures cloud resources | `infra` |
 | **Agent/AI** | Defines agent behavior, knowledge, capabilities | `agents` |
-| **Data** | Defines data pipelines, schemas, quality rules | `data-intelligence` |
+| **Data** | Defines data pipelines, schemas, quality rules | `lakehouse` |
 | **Automation** | Contains workflow definitions and job scripts | `automations` |
 | **Template** | Scaffolds new repos or modules | `templates` |
-| **Design System** | UI tokens, components, patterns | `design` |
+| **Design System** | UI tokens, components, patterns | `design-system` |
 | **Governance** | Org-level policies, workflows, templates | `.github` |
 
 ### 5.2 Universal Contract (ALL Repos)
@@ -790,7 +790,7 @@ Mandatory CI checks:
 - Prompt lint (no secrets, no PII)
 - Eval regression (if evals/ exists)
 
-#### Data Repos (`data-intelligence`)
+#### Data Repos (`lakehouse`)
 
 ```
 repo-root/
@@ -858,7 +858,7 @@ Mandatory CI checks:
 - Template renders without errors
 - Rendered output passes universal contract check
 
-#### Design System Repos (`design`)
+#### Design System Repos (`design-system`)
 
 ```
 repo-root/
@@ -1100,7 +1100,7 @@ Rules:
 | ACA revision | `<app>--<git-sha-short>` | `ipai-odoo-dev-web--a1b2c3d` |
 | Terraform state | `<env>-<component>.tfstate` | `dev-aca.tfstate` |
 | GitHub release | `v<odoo-version>.<major>.<minor>.<patch>` | `v19.0.1.2.0` |
-| Spec bundle | `SPEC-NNN-<kebab-case-title>` | `SPEC-042-data-intelligence-medallion` |
+| Spec bundle | `SPEC-NNN-<kebab-case-title>` | `SPEC-042-lakehouse-medallion` |
 | ADR | `NNNN-<kebab-case-title>.md` | `0003-keycloak-transitional-to-entra.md` |
 | Evidence pack | `YYYY-MM-DD/<scope>/` | `2026-03-16/deploy/` |
 
@@ -1341,7 +1341,7 @@ Coding agents (Claude, Copilot, Cursor, Windsurf) are only as reliable as the co
 - Infra definitions exist in two places -- agents may apply IaC to the wrong source
 - Spec bundles are only in `odoo` -- agents cannot plan work in satellite repos
 - Evidence directories are only in `odoo` -- agents cannot verify work elsewhere
-- Naming is inconsistent -- `platform` vs `odoo/apps/ops-console` confuses agents
+- Naming is inconsistent -- `ops-platform` vs `odoo/apps/ops-console` confuses agents
 
 ### 7.2 Repo-Local CLAUDE.md Requirements
 
@@ -1428,7 +1428,7 @@ Agents need to verify their work. Every repo must define "render points" -- dete
 | `web` | Build | `npm run build` | Exit code 0 |
 | `web` | Test | `npm test` | Exit code 0 |
 | `agents` | Schema validate | `ajv validate -s schema.json -d *.yaml` | Exit code 0 |
-| `data-intelligence` | Contract validate | `python validate_contracts.py` | Exit code 0 |
+| `lakehouse` | Contract validate | `python validate_contracts.py` | Exit code 0 |
 | `automations` | Inventory check | `python validate_inventory.py` | Exit code 0 |
 
 ### 7.6 Validation Gates
@@ -1465,7 +1465,7 @@ The `odoo` repo already has this pattern. It must be extended to all repos.
 
 | Current Name | Problem | Target Name | Action |
 |-------------|---------|-------------|--------|
-| `platform` | Too vague, overlaps with `odoo/apps/ops-console` | Merge into `infra` | Merge SSOT, delete repo |
+| `ops-platform` | Too vague, overlaps with `odoo/apps/ops-console` | Merge into `infra` | Merge SSOT, delete repo |
 | `odoo/apps/ops-console` | Does not belong in Odoo repo | `web/apps/ops-console` | Move |
 | `odoo/apps/mcp-jobs` | Does not belong in Odoo repo | `automations/mcp-jobs` or `agents/mcp-jobs` | Move |
 | `odoo/infra/` | Duplicates `infra` repo | Remove from `odoo` | Move canonical to `infra`, remove from `odoo` |
@@ -1484,9 +1484,9 @@ The `.github` repo must maintain a `REPO_MAP.md` that agents can read to determi
 | Infrastructure | infra | Azure IaC, DNS, SSOT, deployment | Application code |
 | AI Agents | agents | Agent definitions, MCP tools, evals | Infrastructure, deployment |
 | Web Apps | web | Frontend applications, ops-console | Odoo modules, infra |
-| Data | data-intelligence | DLT pipelines, data contracts | Application code |
+| Data | lakehouse | DLT pipelines, data contracts | Application code |
 | Automation | automations | n8n workflows, scheduled jobs | Infrastructure provisioning |
-| Design | design | Tokens, components | Application logic |
+| Design | design-system | Tokens, components | Application logic |
 | Governance | .github | Org policies, reusable workflows | Application code |
 | Scaffolding | templates | Repo templates | Runtime code |
 ```
@@ -1571,7 +1571,7 @@ The Azure DevOps docs repo represents enterprise-grade documentation practices:
 These must happen before any other docs work:
 
 1. **Add CLAUDE.md to all 9 repos that lack it** -- this is the highest-impact single change for agent reliability
-2. **Add README.md to all repos that lack it** -- `platform`, `data-intelligence`, `automations`, `infra`, `.github`
+2. **Add README.md to all repos that lack it** -- `ops-platform`, `lakehouse`, `automations`, `infra`, `.github`
 3. **Create `.github/workflows/reusable-docs.yml`** -- the reusable docs validation workflow
 4. **Add `.markdownlint.json`** to the `.github` repo (permissive config, copied to all repos)
 5. **Number the existing 23 architecture docs** in `odoo/docs/architecture/` as ADRs or move to `target-state/`
@@ -1587,8 +1587,8 @@ Some documentation topics span multiple repos. These cross-cutting concerns are 
 | Identity/auth flow | `infra` (identity/) | `odoo` (Keycloak config), `web` (auth UI) | Scattered, no unified doc | HIGH -- Keycloak-to-Entra migration needs clear cross-repo view |
 | MCP tool catalog | `agents` (mcp/) | `odoo` (mcp/servers/), `automations` (n8n MCP) | `odoo` CLAUDE.md lists MCP servers, `agents` has definitions | MEDIUM -- agents may not find all MCP tools |
 | DNS/domain mapping | `infra` (dns/) | `.github` (copilot-instructions), `odoo` (mail config) | `infra/dns/subdomain-registry.yaml` is good, but cross-refs are weak | LOW -- SSOT exists in infra |
-| Data flow (Odoo to data-intelligence) | `data-intelligence` | `odoo` (source data), `infra` (JDBC config) | Not documented anywhere | HIGH -- critical data pipeline has no docs |
-| Design tokens to web components | `design` | `web` (consumers) | Neither repo has substantive content | MEDIUM -- blocked until primitives exist |
+| Data flow (Odoo to lakehouse) | `lakehouse` | `odoo` (source data), `infra` (JDBC config) | Not documented anywhere | HIGH -- critical data pipeline has no docs |
+| Design tokens to web components | `design-system` | `web` (consumers) | Neither repo has substantive content | MEDIUM -- blocked until primitives exist |
 | Automation dependencies | `automations` | `odoo` (n8n-to-Odoo workflows), `agents` (MCP jobs) | Inventory exists in `automations` but dependencies not mapped | MEDIUM |
 | Secrets catalog | `infra` (Key Vault) | All repos (consumers) | Key Vault names documented in `infra`, but no cross-repo secret dependency map | HIGH -- changing a secret name breaks unknown consumers |
 
@@ -1604,7 +1604,7 @@ Some documentation topics span multiple repos. These cross-cutting concerns are 
 | **Duplicate documentation** | `odoo` CLAUDE.md + `.claude/rules/` | Odoo coding conventions exist in both CLAUDE.md and `.claude/rules/odoo19-coding.md` | CLAUDE.md should reference rules files, not duplicate them |
 | **Stale deprecation notices** | `odoo` CLAUDE.md references DigitalOcean, Vercel, Mailgun | These are deprecated per `~/.claude/rules/infrastructure.md` but CLAUDE.md still contains detailed DigitalOcean/Vercel integration docs | Remove deprecated integration docs from CLAUDE.md |
 | **Orphaned specs** | `odoo/spec/` (76 bundles) | No status tracking. No way to know which specs are implemented, which are abandoned, which are in progress | Add status field to spec bundles, validate in CI |
-| **Missing decision history** | `data-intelligence`, `agents`, `automations` | Key decisions (Databricks over X, n8n over Y, agent architecture choices) exist only in memory, not in repos | Write ADRs retroactively |
+| **Missing decision history** | `lakehouse`, `agents`, `automations` | Key decisions (Databricks over X, n8n over Y, agent architecture choices) exist only in memory, not in repos | Write ADRs retroactively |
 | **Generated content without generation script** | `odoo/docs/data-model/` | DBML, ERD, ORM maps exist but regeneration script may be broken or outdated | Validate generators in CI |
 | **Unlinked cross-references** | Throughout | Docs reference other files with relative paths that may be broken after moves | CI link validation |
 
@@ -1630,11 +1630,11 @@ Using a 5-level maturity model:
 | `web` | L1 | Has README (acknowledges deprecation), docs/, spec/. But no CLAUDE.md, no CI. |
 | `agents` | L1 | Has README only. No CLAUDE.md, no docs/, no spec/. |
 | `.github` | L1 (partial) | Has policies, templates. No README, no CLAUDE.md. |
-| `data-intelligence` | L0 | No README, no CLAUDE.md, no docs/. |
+| `lakehouse` | L0 | No README, no CLAUDE.md, no docs/. |
 | `automations` | L0 | No README, no CLAUDE.md, no docs/. Has inventory data but no documentation. |
-| `platform` | L0 | Nothing. |
+| `ops-platform` | L0 | Nothing. |
 | `templates` | Unknown | Not explored in depth. |
-| `design` | Unknown | Not explored in depth. |
+| `design-system` | Unknown | Not explored in depth. |
 
 **Target**: All repos at L3 within Phase 4 (Week 8). `odoo` and `infra` at L4 within Phase 5 (Week 10).
 
@@ -1643,7 +1643,7 @@ Using a 5-level maturity model:
 | # | Gap | Repo | Impact if Not Closed | Effort | Priority |
 |---|-----|------|---------------------|--------|----------|
 | 1 | No CLAUDE.md in 9 repos | All except `odoo` | Agents cannot operate safely in any satellite repo | 2 hours each | P0 |
-| 2 | No ADR for Databricks/JDBC decision | `data-intelligence` | Decision history lost, cannot be questioned or revisited | 2 hours | P0 |
+| 2 | No ADR for Databricks/JDBC decision | `lakehouse` | Decision history lost, cannot be questioned or revisited | 2 hours | P0 |
 | 3 | No ADR for Azure-over-DigitalOcean | `infra` | Major infra decision undocumented | 2 hours | P0 |
 | 4 | No ADR for Keycloak-transitional-to-Entra | `infra` | Identity migration has no written plan in repo | 2 hours | P0 |
 | 5 | No runbook for Odoo deployment | `odoo` | Production deployment is tribal knowledge | 4 hours | P0 |
@@ -1806,21 +1806,21 @@ Each primitive maps to a real entity class and defines how that entity is render
 
 | # | Primitive | Purpose | Backed By | Key States | Required Metadata | Form Factor | Repo Owner | Type |
 |---|----------|---------|-----------|------------|-------------------|-------------|------------|------|
-| 1 | `EnvironmentBadge` | Identify which environment a resource belongs to | Environment entity | dev, staging, prod | name, color, isProduction | Badge/pill | design | Presentational |
-| 2 | `ResourceIdentifier` | Display resource name with type icon | Any Azure resource | N/A | name, type, resourceGroup, region | Inline text with icon | design | Presentational |
-| 3 | `StatusIndicator` | Show health/operational status | Health check result | healthy, degraded, unhealthy, unknown, maintenance | status, lastChecked, message | Dot + label | design | Presentational |
-| 4 | `TimestampDisplay` | Show relative and absolute times | Any timestamped event | N/A | timestamp, format (relative/absolute/both) | Text | design | Presentational |
-| 5 | `OwnerBadge` | Show team/person ownership | CODEOWNERS | N/A | owner, type (team/person), avatarUrl | Avatar + name | design | Presentational |
+| 1 | `EnvironmentBadge` | Identify which environment a resource belongs to | Environment entity | dev, staging, prod | name, color, isProduction | Badge/pill | design-system | Presentational |
+| 2 | `ResourceIdentifier` | Display resource name with type icon | Any Azure resource | N/A | name, type, resourceGroup, region | Inline text with icon | design-system | Presentational |
+| 3 | `StatusIndicator` | Show health/operational status | Health check result | healthy, degraded, unhealthy, unknown, maintenance | status, lastChecked, message | Dot + label | design-system | Presentational |
+| 4 | `TimestampDisplay` | Show relative and absolute times | Any timestamped event | N/A | timestamp, format (relative/absolute/both) | Text | design-system | Presentational |
+| 5 | `OwnerBadge` | Show team/person ownership | CODEOWNERS | N/A | owner, type (team/person), avatarUrl | Avatar + name | design-system | Presentational |
 
 #### B2. Status/State Primitives
 
 | # | Primitive | Purpose | Backed By | Key States | Required Metadata | Form Factor | Repo Owner | Type |
 |---|----------|---------|-----------|------------|-------------------|-------------|------------|------|
-| 6 | `DeploymentStatus` | Show deployment pipeline state | GitHub Actions run / ACA revision | queued, in_progress, succeeded, failed, cancelled, rolling_back | runId, commitSha, environment, startedAt, completedAt | Status row | design | Domain |
+| 6 | `DeploymentStatus` | Show deployment pipeline state | GitHub Actions run / ACA revision | queued, in_progress, succeeded, failed, cancelled, rolling_back | runId, commitSha, environment, startedAt, completedAt | Status row | design-system | Domain |
 | 7 | `HealthCard` | Composite health view for a service | ACA app + health endpoint | healthy, degraded, unhealthy, unknown | serviceName, endpoint, lastCheck, responseTime, uptime | Card | web | Composite |
 | 8 | `PromotionIndicator` | Show environment promotion state | Deployment pipeline | ready_to_promote, promoting, promoted, blocked | sourceEnv, targetEnv, commitSha, approvals | Button + status | web | Domain |
 | 9 | `DriftIndicator` | Show config drift between environments | IaC state comparison | in_sync, drifted, unknown | resource, expectedState, actualState, lastChecked | Warning badge | web | Domain |
-| 10 | `ComplianceStatus` | Show compliance posture | Policy check results | compliant, non_compliant, not_evaluated, exempt | policy, resource, lastEvaluated, evidence | Badge with tooltip | design | Domain |
+| 10 | `ComplianceStatus` | Show compliance posture | Policy check results | compliant, non_compliant, not_evaluated, exempt | policy, resource, lastEvaluated, evidence | Badge with tooltip | design-system | Domain |
 
 #### B3. Resource Primitives
 
@@ -1864,9 +1864,9 @@ Each primitive maps to a real entity class and defines how that entity is render
 | 31 | `IncidentCard` | Display an active incident | Incident management (Plane/GitHub Issues) | investigating, identified, monitoring, resolved | incidentId, title, severity, affectedServices, startedAt, resolvedAt | Card | web | Domain |
 | 32 | `AlertRow` | Display an alert rule or fired alert | Azure Monitor / custom | active, firing, acknowledged, resolved, silenced | alertName, severity, resource, lastFired, acknowledgedBy | Table row | web | Domain |
 | 33 | `LogViewer` | Display structured logs | ACA logs / Azure Monitor | N/A | source, timeRange, level, query | Panel | web | Composite |
-| 34 | `MetricSparkline` | Display a metric trend | Azure Monitor metrics | N/A | metricName, resource, timeRange, values | Inline sparkline chart | design | Presentational |
+| 34 | `MetricSparkline` | Display a metric trend | Azure Monitor metrics | N/A | metricName, resource, timeRange, values | Inline sparkline chart | design-system | Presentational |
 | 35 | `BackupStatusRow` | Display backup status for a database | Azure PostgreSQL backups | available, in_progress, failed, not_configured | databaseName, lastBackup, retentionDays, size | Table row | web | Domain |
-| 36 | `UptimeBar` | Display uptime percentage over time | Health check history | N/A | serviceName, timeRange, uptimePercent, incidents | Horizontal bar | design | Presentational |
+| 36 | `UptimeBar` | Display uptime percentage over time | Health check history | N/A | serviceName, timeRange, uptimePercent, incidents | Horizontal bar | design-system | Presentational |
 
 #### B7. Documentation/Spec/Evidence Primitives
 
@@ -2062,13 +2062,13 @@ AutomationInventoryRow
 
 | Primitive Location | What Lives There | Published As |
 |-------------------|-----------------|-------------|
-| `design/tokens/` | CSS custom properties, JSON token definitions | npm `@ipai/design-tokens` |
-| `design/components/foundation/` | EnvironmentBadge, ResourceIdentifier, StatusIndicator, TimestampDisplay, OwnerBadge, MetricSparkline, UptimeBar | npm `@ipai/design-primitives` |
+| `design-system/tokens/` | CSS custom properties, JSON token definitions | npm `@ipai/design-tokens` |
+| `design-system/components/foundation/` | EnvironmentBadge, ResourceIdentifier, StatusIndicator, TimestampDisplay, OwnerBadge, MetricSparkline, UptimeBar | npm `@ipai/design-primitives` |
 | `web/packages/ops-primitives/` | All Domain and Composite primitives (resource cards, deployment status, governance cards, etc.) | Internal package consumed by ops-console |
-| `platform` (merged into `infra`) | N/A -- primitives do not live in infra | N/A |
+| `ops-platform` (merged into `infra`) | N/A -- primitives do not live in infra | N/A |
 
 The split is intentional:
-- **Foundation primitives** (presentational, no domain knowledge) belong in `design`
+- **Foundation primitives** (presentational, no domain knowledge) belong in `design-system`
 - **Domain/composite primitives** (understand IPAI resources, states, workflows) belong in `web`
 - Infrastructure repos never own UI primitives
 
@@ -2139,14 +2139,14 @@ These 15 primitives enable a functional ops-console that can:
 **Repos Affected**: All 9 repos lacking CLAUDE.md, all 5 repos lacking README.md
 
 **Changes**:
-1. Add CLAUDE.md to: `platform`, `data-intelligence`, `agents`, `infra`, `web`, `automations`, `.github`, `templates`, `design`
-2. Add README.md to: `platform`, `data-intelligence`, `automations`, `infra`, `.github`
+1. Add CLAUDE.md to: `ops-platform`, `lakehouse`, `agents`, `infra`, `web`, `automations`, `.github`, `templates`, `design-system`
+2. Add README.md to: `ops-platform`, `lakehouse`, `automations`, `infra`, `.github`
 3. Add `.github/CODEOWNERS` to repos lacking it
 4. Add foundational ADR (`0001-why-this-repo-exists.md`) to repos with docs/
 5. Create `.markdownlint.json` (permissive config) in `.github`, copy to all repos
 
 **Risks**:
-- CLAUDE.md for repos about to be merged (platform) may be wasted effort. Mitigation: write minimal CLAUDE.md for repos marked for merge -- they still need agent guidance until merged.
+- CLAUDE.md for repos about to be merged (ops-platform) may be wasted effort. Mitigation: write minimal CLAUDE.md for repos marked for merge -- they still need agent guidance until merged.
 
 **Verification**:
 - Every repo has CLAUDE.md (check with script)
@@ -2162,28 +2162,28 @@ These 15 primitives enable a functional ops-console that can:
 
 **Objective**: Resolve the dual-source-of-truth problems and boundary violations.
 
-**Repos Affected**: `odoo`, `infra`, `platform`, `web`, `automations`
+**Repos Affected**: `odoo`, `infra`, `ops-platform`, `web`, `automations`
 
 **Changes**:
 1. **Move `odoo/infra/` to `infra/`**: The `infra` repo becomes the canonical IaC location. `odoo/infra/` is removed. If `odoo` needs infra references, it uses cross-repo links or SSOT files.
 2. **Move `odoo/apps/ops-console` to `web/apps/ops-console`**: Ops-console is a web application, not an Odoo module.
 3. **Move `odoo/apps/mcp-jobs` to `automations/mcp-jobs`**: MCP jobs are automations, not Odoo modules.
-4. **Merge `platform/ssot/` into `infra/ssot/`**: SSOT files belong with infrastructure.
-5. **Merge `platform/supabase/` into `infra/supabase/`**: Supabase config is infrastructure.
-6. **Archive `platform`**: After merge, repo becomes empty. Archive it.
+4. **Merge `ops-platform/ssot/` into `infra/ssot/`**: SSOT files belong with infrastructure.
+5. **Merge `ops-platform/supabase/` into `infra/supabase/`**: Supabase config is infrastructure.
+6. **Archive `ops-platform`**: After merge, repo becomes empty. Archive it.
 7. **Audit remaining `odoo/apps/`**: Determine if other apps (7 remaining) belong in `odoo` or should move.
 8. **Audit `odoo` workflows**: Identify non-Odoo workflows for extraction in Phase 3.
 
 **Risks**:
 - Moving `odoo/infra/` breaks any CI that references it. Mitigation: Update all workflow paths before moving.
 - Moving apps breaks import paths. Mitigation: Update package.json / imports.
-- `platform` merge breaks any references to it. Mitigation: Update REPO_MAP.md and all cross-repo links.
+- `ops-platform` merge breaks any references to it. Mitigation: Update REPO_MAP.md and all cross-repo links.
 
 **Verification**:
 - `odoo` repo contains ONLY: `addons/`, `vendor/`, `config/`, `scripts/` (Odoo-specific), `docs/` (Odoo-specific), `spec/` (Odoo-specific)
-- `infra` repo contains ALL IaC including what was in `odoo/infra/` and `platform/ssot/`
+- `infra` repo contains ALL IaC including what was in `odoo/infra/` and `ops-platform/ssot/`
 - `web` repo contains `ops-console`
-- `platform` is archived
+- `ops-platform` is archived
 - All CI pipelines pass after moves
 
 **Evidence**: `docs/evidence/2026-03-XX/phase-2/`
@@ -2321,11 +2321,11 @@ These 15 primitives enable a functional ops-console that can:
 
 **Objective**: Implement the first 15 design primitives per Section 9F.
 
-**Repos Affected**: `design`, `web`
+**Repos Affected**: `design-system`, `web`
 
 **Changes**:
-1. **Create design token file** in `design/tokens/` with all tokens from Section 9D
-2. **Implement 5 foundation primitives** in `design/components/foundation/`:
+1. **Create design token file** in `design-system/tokens/` with all tokens from Section 9D
+2. **Implement 5 foundation primitives** in `design-system/components/foundation/`:
    - EnvironmentBadge, StatusIndicator, ResourceIdentifier, TimestampDisplay, OwnerBadge
 3. **Implement 10 domain/composite primitives** in `web/packages/ops-primitives/`:
    - ContainerAppCard, HealthCard, DeploymentStatus, DatabaseCard, PipelineRunRow, RevisionCard, DNSRecordRow, FrontDoorRouteRow, DeploymentTimeline, RollbackButton
@@ -2446,9 +2446,9 @@ The largest risk in Phase 2 is moving files between repos. This checklist specif
 | `spec/` (non-Odoo) | Move to respective repos |
 | `.github/workflows/` (non-Odoo) | Extract to `.github` as reusable, keep Odoo-specific in `odoo` |
 
-**From `platform` to `infra`**:
+**From `ops-platform` to `infra`**:
 
-| Source (platform) | Destination (infra) | Reason |
+| Source (ops-platform) | Destination (infra) | Reason |
 |----------------------|-------------------|--------|
 | `ssot/` | `infra/ssot/` (merge) | SSOT belongs with infrastructure |
 | `supabase/` | `infra/supabase/` (merge) | Supabase config is infrastructure |
@@ -2530,13 +2530,13 @@ Phases 4 and 5 can run in parallel with Phase 3. Phase 6 can run in parallel wit
 |---|------|--------|--------|----------|------|-----------|-------|
 | 1 | `.github` | Add CLAUDE.md, README.md, REPO_MAP.md, reusable workflows | Org governance root has no agent guidance, no reusable infrastructure | P0 | Low | None | Platform team |
 | 2 | `agents` | Add CLAUDE.md, CODEOWNERS, .github/ with CI | Agent definitions repo has no agent guidance -- the irony must end | P0 | Low | None | AI team |
-| 3 | `infra` | Add CLAUDE.md, README.md; absorb odoo/infra/ and platform/ssot/ | Must become sole IaC source of truth | P0 | Medium | Phase 1 complete | Platform team |
+| 3 | `infra` | Add CLAUDE.md, README.md; absorb odoo/infra/ and ops-platform/ssot/ | Must become sole IaC source of truth | P0 | Medium | Phase 1 complete | Platform team |
 | 4 | `odoo` | Remove infra/, apps/ops-console, apps/mcp-jobs; reduce workflows from 355 | Boundary violation: monorepo pretending to be decomposed | P0 | High | infra ready to absorb | ERP team |
-| 5 | `platform` | Merge ssot/ and supabase/ into infra; archive repo | Too thin, governance-free, causes confusion | P1 | Low | infra ready | Platform team |
-| 6 | `data-intelligence` | Add CLAUDE.md, README.md, docs/architecture/adr/ with JDBC-over-ETL ADR | Governance-free data repo with undocumented decisions | P1 | Low | None | Data team |
+| 5 | `ops-platform` | Merge ssot/ and supabase/ into infra; archive repo | Too thin, governance-free, causes confusion | P1 | Low | infra ready | Platform team |
+| 6 | `lakehouse` | Add CLAUDE.md, README.md, docs/architecture/adr/ with JDBC-over-ETL ADR | Governance-free data repo with undocumented decisions | P1 | Low | None | Data team |
 | 7 | `web` | Add CLAUDE.md; absorb ops-console from odoo; audit and archive dead Vercel apps | Mixed live and dead apps, no agent guidance | P1 | Medium | odoo extraction | Frontend team |
 | 8 | `automations` | Add CLAUDE.md, README.md; restructure inventory.json | Governance-free automation repo | P2 | Low | None | Platform team |
-| 9 | `design` | Audit current state; expand with tokens and foundation primitives | Needed for ops-console primitives | P2 | Low | Primitive design complete | Design team |
+| 9 | `design-system` | Audit current state; expand with tokens and foundation primitives | Needed for ops-console primitives | P2 | Low | Primitive design complete | Design team |
 | 10 | `templates` | Audit templates; update to produce contract-compliant repos | Templates may produce non-compliant repos | P3 | Low | Contract defined | Platform team |
 | 11 | `template-factory` (archived) | Salvage templates if any; delete | Redundant with `templates` | P3 | None | None | Platform team |
 | 12 | `plugin-marketplace` (archived) | Delete | Abandoned concept, no salvageable content | P3 | None | None | Platform team |
@@ -2558,9 +2558,9 @@ The smallest set of changes that produce the highest value without destabilizing
 | 2 | Write CLAUDE.md for `agents` repo | `agents` | 2 hours | HIGH -- agent defs repo needs agent guidance | None |
 | 3 | Write CLAUDE.md for `infra` repo | `infra` | 2 hours | HIGH -- IaC repo needs agent guidance | None |
 | 4 | Write CLAUDE.md for `web` repo | `web` | 2 hours | MEDIUM -- web apps need agent guidance | None |
-| 5 | Write CLAUDE.md for `data-intelligence` repo | `data-intelligence` | 1 hour | MEDIUM -- data repo needs agent guidance | None |
+| 5 | Write CLAUDE.md for `lakehouse` repo | `lakehouse` | 1 hour | MEDIUM -- data repo needs agent guidance | None |
 | 6 | Write CLAUDE.md for `automations` repo | `automations` | 1 hour | MEDIUM -- automation repo needs agent guidance | None |
-| 7 | Write README.md for repos lacking it | `platform`, `data-intelligence`, `automations`, `infra`, `.github` | 3 hours | MEDIUM -- basic discoverability | None |
+| 7 | Write README.md for repos lacking it | `ops-platform`, `lakehouse`, `automations`, `infra`, `.github` | 3 hours | MEDIUM -- basic discoverability | None |
 | 8 | Create REPO_MAP.md in `.github` | `.github` | 1 hour | HIGH -- cross-repo navigation for agents | None |
 | 9 | Create `.markdownlint.json` (permissive) | `.github` | 30 min | MEDIUM -- docs quality baseline | None |
 | 10 | Number top 5 architecture docs as ADRs | `odoo` | 2 hours | MEDIUM -- decision traceability | None |
@@ -2606,13 +2606,13 @@ odoo              Odoo CE 19 ERP ONLY: addons/ipai/, addons/oca/, vendor/odoo/, 
 infra             ALL IaC: Azure, Cloudflare, Databricks, SSOT, deployment, environments
 agents            AI agent definitions: capabilities, knowledge, skills, MCP, personas, evals
 web               Web applications: ops-console, active web UIs, ops-primitives package
-data-intelligence  Data engineering: DLT contracts, medallion layers, data quality
-automations        Workflow automation: n8n, scheduled jobs, automation inventory
-design             Design tokens, foundation primitives, icon library
-templates          Repo scaffolds matching standard contract
+lakehouse         Data engineering: DLT contracts, medallion layers, data quality
+automations       Workflow automation: n8n, scheduled jobs, automation inventory
+design-system     Design tokens, foundation primitives, icon library
+templates         Repo scaffolds matching standard contract
 ```
 
-**Eliminated**: `platform` (merged into `infra`), 5 archived repos (salvaged and deleted).
+**Eliminated**: `ops-platform` (merged into `infra`), 5 archived repos (salvaged and deleted).
 
 ### Docs Platform Model
 
@@ -2651,7 +2651,7 @@ templates          Repo scaffolds matching standard contract
 
 ### Design Primitive Model
 
-- Foundation primitives (5) in `design` -- presentational, no domain knowledge
+- Foundation primitives (5) in `design-system` -- presentational, no domain knowledge
 - Domain/composite primitives (35) in `web/packages/ops-primitives/` -- understand IPAI resources
 - Design tokens published as `@ipai/design-tokens` npm package
 - First 15 primitives rolled out in Phase 7, prioritized by ops-console needs
@@ -2666,7 +2666,7 @@ templates          Repo scaffolds matching standard contract
 | plugin-agents | Salvage > delete | Phase 6 |
 | learn | Delete | Phase 6 |
 | mcp-core | Salvage > delete | Phase 6 |
-| platform (active) | Merge into infra > archive | Phase 2 |
+| ops-platform (active) | Merge into infra > archive | Phase 2 |
 
 ### Success Criteria for Completion
 
@@ -2857,10 +2857,10 @@ This repo does NOT own: application code, Odoo modules, business logic, web UI c
 | Container Registry | cripaidev, ipaiodoodevacr, ipaiwebacr |
 ```
 
-### A.4 CLAUDE.md for `data-intelligence` (Data Engineering)
+### A.4 CLAUDE.md for `lakehouse` (Data Engineering)
 
 ```markdown
-# CLAUDE.md -- data-intelligence (Data Engineering)
+# CLAUDE.md -- lakehouse (Data Engineering)
 
 ## Scope
 This repo owns data engineering artifacts: Databricks DLT pipeline contracts,
@@ -2954,7 +2954,7 @@ This repo does NOT own: infrastructure provisioning, Odoo modules, application c
 
 ## Scope
 This repo owns non-Odoo web applications: ops-console, active web UIs, and the
-ops-primitives package that consumes design tokens.
+ops-primitives package that consumes design-system tokens.
 
 This repo does NOT own: Odoo modules, infrastructure provisioning, agent definitions.
 
@@ -2983,7 +2983,7 @@ This repo does NOT own: Odoo modules, infrastructure provisioning, agent definit
 
 ## Dependencies
 - Consumed by: End users (via Front Door)
-- Depends on: infra (deployment), design (tokens), agents (API for agent features)
+- Depends on: infra (deployment), design-system (tokens), agents (API for agent features)
 
 ## App Inventory
 [Must be populated during Phase 2 audit]
@@ -3059,7 +3059,7 @@ Do NOT delete ipai-auth-dev until all gates pass.
 - Negative: Risk of drift between Keycloak and Entra configurations
 ```
 
-### ADR-0003 (data-intelligence): Databricks JDBC Extract over Supabase ETL
+### ADR-0003 (lakehouse): Databricks JDBC Extract over Supabase ETL
 
 ```markdown
 # ADR-0003: Databricks JDBC Extract over Supabase ETL
@@ -3069,7 +3069,7 @@ Do NOT delete ipai-auth-dev until all gates pass.
 **Deciders**: Data team
 
 ## Context
-The data-intelligence needs to extract data from Odoo's PostgreSQL database into the
+The lakehouse needs to extract data from Odoo's PostgreSQL database into the
 medallion architecture (Bronze > Silver > Gold > Platinum). Two approaches were
 evaluated:
 1. Supabase ETL (webhook-based replication)
@@ -3131,7 +3131,7 @@ For ongoing measurement of org health, use this rubric quarterly:
 | # | Risk | Probability | Impact | Mitigation | Owner |
 |---|------|------------|--------|-----------|-------|
 | R1 | Moving odoo/infra/ breaks CI pipelines | High | High | Update all workflow paths before move. Test in branch first. Keep symlinks temporarily. | Platform team |
-| R2 | platform merge loses SSOT data | Low | High | Verify all SSOT files exist in infra before deleting platform | Platform team |
+| R2 | ops-platform merge loses SSOT data | Low | High | Verify all SSOT files exist in infra before deleting ops-platform | Platform team |
 | R3 | Workflow extraction from odoo creates gaps | Medium | Medium | Keep original workflows alongside reusable versions during transition | Platform team |
 | R4 | CLAUDE.md authoring takes longer than estimated | Medium | Low | Start with minimal CLAUDE.md (scope + rules + validation), expand later | All teams |
 | R5 | Design primitive API shapes do not match Azure Resource Manager | Medium | Medium | Derive TypeScript types from ARM API response schemas | Frontend team |

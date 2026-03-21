@@ -1,8 +1,8 @@
 # Databricks Asset Bundle Configuration
-# For Finance PPM Control Room
+# For Notion x Finance PPM Control Room
 
 bundle:
-  name: finance-ppm
+  name: notion-finance-ppm
 
 variables:
   catalog:
@@ -48,7 +48,7 @@ targets:
     variables:
       catalog: dev_ppm
     workspace:
-      root_path: /Workspace/Users/${workspace.current_user.userName}/finance-ppm-dev
+      root_path: /Workspace/Users/${workspace.current_user.userName}/notion-finance-ppm-dev
     resources:
       jobs:
         notion_sync_bronze:
@@ -69,16 +69,16 @@ targets:
     variables:
       catalog: staging_ppm
     workspace:
-      root_path: /Workspace/Shared/finance-ppm-staging
+      root_path: /Workspace/Shared/notion-finance-ppm-staging
 
   prod:
     mode: production
     variables:
       catalog: ppm
     workspace:
-      root_path: /Workspace/Shared/finance-ppm
+      root_path: /Workspace/Shared/notion-finance-ppm
     run_as:
-      service_principal_name: finance-ppm-service-principal
+      service_principal_name: notion-ppm-service-principal
     permissions:
       - level: CAN_VIEW
         group_name: data-engineers

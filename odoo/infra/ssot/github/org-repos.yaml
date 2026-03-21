@@ -10,8 +10,8 @@ org:
   governance_version: "1.0.0"
 
 layers:
-  - id: platform
-    name: "Platform"
+  - id: control-plane
+    name: "Control Plane"
     purpose: "Org-wide governance, IaC, CI/CD, secrets, automations"
   - id: core-runtime
     name: "Core Runtime"
@@ -27,9 +27,9 @@ layers:
     purpose: "Repos that are no longer maintained"
 
 repos:
-  # --- Platform ---
+  # --- Control Plane ---
   - name: ".github"
-    layer: platform
+    layer: control-plane
     type: github-meta
     visibility: private
     lifecycle: active
@@ -44,13 +44,12 @@ repos:
       - .github/workflows/
       - .github/ISSUE_TEMPLATE/
 
-  - name: platform
-    layer: platform
+  - name: ops-platform
+    layer: control-plane
     type: supabase-platform
     visibility: private
     lifecycle: active
-    description: "Platform admin apps, SSOT, control-plane"
-    note: "Renamed from ops-platform"
+    description: "Supabase SSOT + secrets + automations control-plane"
     default_branch: main
     required_files:
       - README.md
@@ -68,11 +67,11 @@ repos:
       - spec/
 
   - name: infra
-    layer: platform
+    layer: control-plane
     type: iac
     visibility: private
     lifecycle: active
-    description: "IaC: Azure, Cloudflare, Terraform, Bicep"
+    description: "IaC: DigitalOcean, Cloudflare, Terraform"
     default_branch: main
     required_files:
       - README.md
@@ -81,7 +80,7 @@ repos:
       - .github/CODEOWNERS
       - .github/workflows/ci.yml
     directory_layout:
-      - infra/azure/
+      - infra/digitalocean/
       - infra/cloudflare/
       - scripts/
       - docs/
@@ -132,13 +131,12 @@ repos:
       - config/
       - scripts/
 
-  - name: data-intelligence
+  - name: lakehouse
     layer: core-runtime
     type: lakehouse
     visibility: private
     lifecycle: active
     description: "Medallion data pipelines, Unity Catalog, data governance"
-    note: "Renamed from lakehouse"
     default_branch: main
     required_files:
       - README.md
@@ -157,13 +155,12 @@ repos:
       - ssot/
 
   # --- Shared Systems ---
-  - name: design
+  - name: design-system
     layer: shared-library
-    type: design
+    type: design-system
     visibility: internal
     lifecycle: active
     description: "Design tokens, components, icon pipeline, brand assets"
-    note: "Renamed from design-system"
     default_branch: main
     required_files:
       - README.md
@@ -227,7 +224,7 @@ archived:
   - name: plugin-marketplace
     archived_date: "2026-03-07"
     reason: "Scaffold-only (feature branch, 2-4KB)"
-    superseded_by: platform
+    superseded_by: ops-platform
   - name: plugin-agents
     archived_date: "2026-03-07"
     reason: "Scaffold-only (feature branch, 2-4KB)"
@@ -251,7 +248,7 @@ archived:
   - name: fluent-owl
     archived_date: "pre-existing"
     reason: "Archived prior to restructuring"
-    superseded_by: design
+    superseded_by: design-system
   - name: roadmap
     archived_date: "2026-03-07"
     reason: "1 commit, use GitHub Projects instead"
@@ -263,7 +260,7 @@ archived:
   - name: fin-ops
     archived_date: "2026-03-07"
     reason: "Empty repo (no default branch)"
-    superseded_by: platform
+    superseded_by: ops-platform
   - name: app-landing
     archived_date: "2026-03-07"
     reason: "Empty repo (no default branch)"

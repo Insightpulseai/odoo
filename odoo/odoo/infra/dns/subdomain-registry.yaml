@@ -457,25 +457,40 @@ subdomains:
       expires_at: "2026-06-01"
 
   # ---------------------------------------------------------------------------
-  # Supabase — review-required
+  # Supabase — routed through Azure Front Door
   # ---------------------------------------------------------------------------
   - name: supabase
     type: CNAME
-    target: spdtwktxdalcfigzeqrz.supabase.co
-    service: supabase_platform
-    owner_system: "Supabase project spdtwktxdalcfigzeqrz"
+    target: ipai-fd-dev-ep-fnh4e8d6gtdhc8ax.z03.azurefd.net
+    service: supabase_self_hosted
+    owner_system: "Azure Front Door → vm-ipai-supabase-dev (4.193.100.31)"
     cloudflare_proxied: false
     lifecycle: active
-    status: review-required
+    status: active
     notes: >
-      Supabase custom domain. Review whether this should remain a direct CNAME
-      to Supabase or route through Front Door. Supabase Auth is now downstream
-      of Keycloak (app-level only). DNS record may need adjustment.
+      Self-hosted Supabase on Azure VM. Routed through Front Door for WAF,
+      managed TLS, and unified edge. Origin: Kong API gateway on HTTP port 80.
+      Front Door terminates TLS (managed certificate, Approved 2026-03-21).
+      Kong TLS exception: Kong serves HTTP only — origin cert check disabled,
+      forwarding protocol HttpOnly. This is accepted architecture because
+      Front Door → VM traffic traverses Azure backbone (not public internet)
+      and the VM NSG restricts inbound to AzureFrontDoor.Backend service tag.
+      Validation token: _dg7xhq77bf9kng2zhr6mjp555l6vdqj (expires 2026-03-27).
     provider_claim:
-      provider: other
+      provider: azure
       status: claimed
-      claimed_at: "2026-03-12"
-      claim_ref: "ssot:supabase"
+      claimed_at: "2026-03-21"
+      claim_ref: "ssot:front-door:supabase-api"
+    front_door:
+      origin_group: supabase-api
+      origin_name: supabase-vm-origin
+      route: supabase-default
+      custom_domain: supabase-insightpulseai-com
+    dns_validation:
+      record_name: _dnsauth.supabase
+      record_type: TXT
+      record_value: _dg7xhq77bf9kng2zhr6mjp555l6vdqj
+      expires: "2026-03-27"
 
   # ---------------------------------------------------------------------------
   # Inventory-Only Subdomains (referenced in code/docs, no DNS provisioned)

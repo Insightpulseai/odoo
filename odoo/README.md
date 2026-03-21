@@ -21,7 +21,7 @@ This repository currently contains:
 - Odoo CE/OCA/IPAI runtime artifacts
 - ERP deployment/config/runtime contracts
 - shared infra and deployment assets
-- Supabase/platform artifacts
+- Supabase/control-plane artifacts
 - agent/runbook/registry assets
 - automation assets
 - platform app artifacts
@@ -50,14 +50,12 @@ If it extends **Odoo business logic** or replaces EE features → it must be CE 
 The intended end state is:
 
 - `odoo` repo owns ERP runtime, addons, Odoo config, ERP deployment contracts, ERP SSOT
-- `platform` repo owns OdooOps console and platform admin apps
+- `platform` repo owns OdooOps console and platform admin/control-plane apps
 - `infra` repo owns cloud/network/edge/IaC
 - `web` repo owns apex/public marketing surfaces
 - `agents` repo owns shared agent/skill/runbook assets
 - `automations` repo owns shared workflow assets
-- `design` repo owns shared design assets/tokens
-- `data-intelligence` repo owns Databricks/lakehouse analytics
-- `docs` repo owns cross-platform documentation
+- `design-system` repo owns shared design assets/tokens
 
 Until decomposition is completed, this repository remains the authoritative source of truth for the ERP runtime layer.
 
@@ -128,8 +126,8 @@ These are hosted in this repo temporarily. They may move to owning repos during 
 | MCP      | https://mcp.insightpulseai.com      | Azure Front Door | MCP coordination |
 | Superset | https://superset.insightpulseai.com | Azure Front Door | BI dashboards |
 | OCR      | https://ocr.insightpulseai.com      | Azure Front Door | Document processing |
-| Auth     | https://auth.insightpulseai.com     | Azure Front Door | Keycloak (transitional); target: Entra ID |
-| Ops      | https://ops.insightpulseai.com      | Azure Front Door | Operations console |
+| Auth     | https://auth.insightpulseai.com     | Azure Front Door | Authentication |
+| Ops      | https://ops.insightpulseai.com      | Azure Front Door (target) | Currently Vercel — to be repointed |
 | Plane    | https://plane.insightpulseai.com    | Azure Front Door | Project management |
 | Shelf    | https://shelf.insightpulseai.com    | Azure Front Door | Asset management |
 | CRM      | https://crm.insightpulseai.com      | Azure Front Door | CRM |
@@ -160,13 +158,14 @@ These are hosted in this repo temporarily. They may move to owning repos during 
 ### Rules
 
 - Do not assume that every listed hostname is owned by the Odoo runtime layer. Only ERP-specific runtime surfaces are canonical to this repository.
-- **Do not hardcode URLs** — use `infra/dns/subdomain-registry.yaml` as SSOT
+- **Do not hardcode URLs** outside `CANONICAL_URLS.md`
 - `.net` domains are deprecated — `.com` only
 - Any new subdomain **must be added to SSOT first**
 
 See also:
-- `infra/dns/subdomain-registry.yaml` — authoritative DNS SSOT
+- [`docs/architecture/CANONICAL_URLS.md`](docs/architecture/CANONICAL_URLS.md) — authoritative URL reference
 - `reports/url_inventory.json` — machine-readable inventory
+- `docs/architecture/INTEGRATIONS_SURFACE.md`
 
 ---
 
@@ -231,20 +230,21 @@ This repository is the canonical source of truth for the Odoo ERP runtime layer.
 Target ownership boundaries (decomposition in progress):
 
 - ERP runtime, Odoo config, addon stacks, ERP deployment contracts: `odoo`
-- Platform SSOT and admin apps: `platform`
-- Databricks/lakehouse analytics and intelligence: `data-intelligence`
+- Supabase control plane and platform SSOT: `ops-platform` or `platform`
+- Databricks/lakehouse analytics and intelligence: `lakehouse`
 - Shared infrastructure and edge: `infra`
 - Shared web surfaces and docs sites outside ERP: `web`
 - Shared agent/skills/orchestration assets: `agents`
 - Shared automation/runbooks: `automations`
-- Shared design tokens/components/assets: `design`
+- Shared design tokens/components/assets: `design-system`
 
 ---
 
 ## Repo Map
 
+**Full governance contract:** [`docs/architecture/MONOREPO_CONTRACT.md`](./docs/architecture/MONOREPO_CONTRACT.md)
+**Addons boundary rules:** [`docs/architecture/ADDONS_STRUCTURE_BOUNDARY.md`](./docs/architecture/ADDONS_STRUCTURE_BOUNDARY.md)
 **Actual vs target state:** [`docs/architecture/REPO_ACTUAL_VS_TARGET_STATE.md`](./docs/architecture/REPO_ACTUAL_VS_TARGET_STATE.md)
-**Ownership boundaries:** [`ssot/repo/ownership-boundaries.yaml`](./ssot/repo/ownership-boundaries.yaml)
 
 ### Top-level directories: actual vs target ownership
 
@@ -262,9 +262,9 @@ Target ownership boundaries (decomposition in progress):
 | `web/` | Present here temporarily | `web` |
 | `agents/` | Present here temporarily | `agents` |
 | `automations/` | Present here temporarily | `automations` |
-| `design/` | Present here temporarily | `design` |
-| `supabase/` | Present here temporarily | `platform` |
-| `lakehouse/` | Present here temporarily | `data-intelligence` |
+| `design/` | Present here temporarily | `design-system` |
+| `supabase/` | Present here temporarily | `platform` or control-plane repo |
+| `lakehouse/` | Present here temporarily | `lakehouse` |
 | `odoo/` | Runtime-specific sub-tree present | should be rationalized; avoid duplicated root/runtime ambiguity |
 
 ### OCA Addons (Hydrated)
@@ -278,15 +278,12 @@ See: [`docs/architecture/OCA_HYDRATION.md`](docs/architecture/OCA_HYDRATION.md)
 
 ### Canonical `addons_path` (all environments)
 
-All environments must load addon stacks in this priority order:
+All environments must load the three addon stacks in this priority order:
 
-1. Odoo CE core (vendor-managed runtime path or `vendor/odoo/addons/`)
+1. `addons/odoo` — CE core
 2. `addons/oca` — OCA EE-parity modules
 3. `addons/ipai` — Integration bridges only
-4. `addons/local` — Minimal local overrides (only where truly needed)
 
-> Odoo core/vendor code exists under vendor-managed runtime paths.
-> The canonical **extension/governance layers** are `addons/oca`, `addons/ipai`, `addons/local`.
 > Any new EE-parity functionality must land in **OCA** (preferred) or CE.
 > `addons/ipai/*` is reserved for connectors to external bridges
 > (OCR, IoT daemons, payment terminals, queues, email gateways, etc.).
@@ -367,9 +364,9 @@ docker compose exec -T odoo odoo -d odoo_dev -i ipai_ces_bundle --stop-after-ini
 
 ```
 addons/
+  odoo/          # CE core addons (vendor mirror, read-only)
   oca/           # OCA addons (vendored via gitaggregate, see oca-aggregate.yml)
   ipai/          # Integration-bridge connectors only (thin adapters)
-  local/         # Minimal local overrides (only where truly needed)
 config/
   dev/           # Dev environment Odoo conf
   staging/       # Staging environment Odoo conf
@@ -482,6 +479,8 @@ Production runtime targets Azure Container Apps behind Azure Front Door.
 - **Database:** `odoo`
 - **Edge:** Azure Front Door
 
+> Legacy DigitalOcean droplet deployment scripts (`deploy_m1.sh`) are transitional and will be removed as Azure migration completes.
+
 ---
 
 ## Quick Start (Local Dev)
@@ -489,6 +488,7 @@ Production runtime targets Azure Container Apps behind Azure Front Door.
 ```bash
 git clone https://github.com/Insightpulseai/odoo.git
 cd odoo
+cd deploy
 docker compose up -d
 docker compose logs -f odoo
 ```
@@ -606,14 +606,31 @@ Odoo 19 CE → Zoho Mail SMTP (smtp.zoho.com:587, STARTTLS) → Email delivery
 - **Configuration**: System parameters + cron jobs
 **Settings-as-Code Deployment:**
 
-SMTP credentials are managed via Azure Key Vault (`kv-ipai-dev`). Runtime binding uses managed identity to inject `ZOHO_SMTP_USER` / `ZOHO_SMTP_PASSWORD` as environment variables. See `config/odoo/mail_settings.yaml` for the canonical mail transport contract.
-
 ```bash
-# Apply settings to database (Azure runtime)
+# 1. Create secrets file on production
+ssh root@178.128.112.214
+sudo mkdir -p /opt/odoo/secrets
+sudo bash -c 'cat > /opt/odoo/secrets/zoho-mail.env <<EOF
+ZOHO_SMTP_SERVER=smtp.zoho.com
+ZOHO_SMTP_PORT=587
+ZOHO_SMTP_USER=${SMTP_USER}
+ZOHO_SMTP_APP_PASSWORD=__REPLACE_WITH_APP_PASSWORD__
+ZOHO_SMTP_FROM=${SMTP_FROM}
+EOF'
+sudo chmod 600 /opt/odoo/secrets/zoho-mail.env
+
+# 2. Apply settings to database
+set -a; source /opt/odoo/secrets/zoho-mail.env; set +a
+export ODOO_DB=odoo
+export PGHOST="odoo-db-sgp1-do-user-27714628-0.g.db.ondigitalocean.com"
+export PGPORT="25060"
+export PGUSER="doadmin"
+export PGPASSWORD="__REPLACE__"
+cd /opt/odoo
 python3 scripts/odoo/apply_settings_as_code.py
 
-# Verify
-docker compose exec -T db psql -U odoo -d odoo -c "
+# 3. Verify deployment
+psql "host=$PGHOST port=$PGPORT user=$PGUSER dbname=$ODOO_DB sslmode=require" -c "
 SELECT id, name, smtp_host, smtp_user, smtp_port
 FROM ir_mail_server
 WHERE name='Zoho Mail SMTP (insightpulseai.com)';"
@@ -633,7 +650,7 @@ Odoo BIR Module ↔ Supabase Edge Function (plane-sync/) ↔ Plane API
 ```
 
 **Production Status**: ✅ DEPLOYED (Backend: 2026-01-30, BIR Sync: 2026-02-12)
-- **API**: https://plane.insightpulseai.com (Azure Front Door)
+- **API**: http://178.128.112.214:8002
 - **Database**: PostgreSQL 15.7-alpine (88 migrations)
 - **Workers**: Background + scheduled tasks running
 - **BIR Integration**: Bidirectional sync for OKR tracking (`ipai_bir_plane_sync` module)

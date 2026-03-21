@@ -21,7 +21,7 @@ metadata:
   template: insightpulseai/odoo@latest
   owner: platform-engineering
   purpose: azd service-to-resource mapping for InsightPulseAI Azure workloads
-  status: bootstrap-partial
+  status: bootstrap-complete
   prerequisite_phase: 0
   ssot_spec: spec/azure-target-state/plan.md
   notes: >
@@ -101,6 +101,131 @@ services:
       notes: >
         Self-hosted Supabase stack on Azure VM. 12 services via Docker Compose.
         Secrets in Azure Key Vault kv-ipai-dev. Deploy via infra/azure/supabase/deploy.sh.
+
+  # ── Odoo Worker (Container App, no ingress) ──────────────────────────
+  odoo-worker:
+    project: .
+    language: python
+    host: containerapp
+    docker:
+      path: ./docker/Dockerfile
+      context: .
+    metadata:
+      phase: 1
+      ingress: false
+      depends_on:
+        - rg-ipai-dev
+        - cae-ipai-dev
+        - cripaidev
+
+  # ── Odoo Cron (Container App, no ingress) ────────────────────────────
+  odoo-cron:
+    project: .
+    language: python
+    host: containerapp
+    docker:
+      path: ./docker/Dockerfile
+      context: .
+    metadata:
+      phase: 1
+      ingress: false
+      depends_on:
+        - rg-ipai-dev
+        - cae-ipai-dev
+        - cripaidev
+
+  # ── Auth / Keycloak (Container App) ──────────────────────────────────
+  auth:
+    project: ./infra/azure/auth
+    language: java
+    host: containerapp
+    config:
+      port: 8080
+    metadata:
+      phase: 1
+      notes: Keycloak (transitional → Entra ID)
+      depends_on:
+        - rg-ipai-dev
+        - cae-ipai-dev
+
+  # ── OCR Service (Container App) ──────────────────────────────────────
+  ocr:
+    project: ./infra/azure/ocr
+    language: python
+    host: containerapp
+    config:
+      port: 8000
+    metadata:
+      phase: 2
+      depends_on:
+        - rg-ipai-dev
+        - cae-ipai-dev
+
+  # ── Superset BI (Container App) ──────────────────────────────────────
+  superset:
+    project: ./infra/azure/superset
+    language: python
+    host: containerapp
+    config:
+      port: 8088
+    metadata:
+      phase: 2
+      depends_on:
+        - rg-ipai-dev
+        - cae-ipai-dev
+        - pg-ipai-dev
+
+  # ── Plane Project Management (Container App) ─────────────────────────
+  plane:
+    project: ./infra/azure/plane
+    language: python
+    host: containerapp
+    config:
+      port: 3000
+    metadata:
+      phase: 2
+      depends_on:
+        - rg-ipai-dev
+        - cae-ipai-dev
+
+  # ── CRM Service (Container App) ──────────────────────────────────────
+  crm:
+    project: ./infra/azure/crm
+    language: python
+    host: containerapp
+    config:
+      port: 8000
+    metadata:
+      phase: 2
+      depends_on:
+        - rg-ipai-dev
+        - cae-ipai-dev
+
+  # ── Shelf Service (Container App) ────────────────────────────────────
+  shelf:
+    project: ./infra/azure/shelf
+    language: python
+    host: containerapp
+    config:
+      port: 8000
+    metadata:
+      phase: 2
+      depends_on:
+        - rg-ipai-dev
+        - cae-ipai-dev
+
+  # ── Website (Container App) ──────────────────────────────────────────
+  website:
+    project: ./infra/azure/website
+    language: ts
+    host: containerapp
+    config:
+      port: 3000
+    metadata:
+      phase: 2
+      depends_on:
+        - rg-ipai-dev
+        - cae-ipai-dev
 
 # ── Infrastructure ─────────────────────────────────────────────────────────
 infra:

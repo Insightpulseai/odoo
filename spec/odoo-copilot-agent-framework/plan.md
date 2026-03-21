@@ -222,6 +222,23 @@ User request → Router → Actions agent → ConfirmActionCard → User confirm
 
 The `ConfirmActionCard` is mandatory for all write operations regardless of surface (Teams, Odoo Widget, or programmatic API with human-in-the-loop).
 
+## Phase A4 — Skill Framework
+
+- define canonical skill manifest schema
+- define context-pack schema
+- define output contract schema
+- define router selection rules
+- define policy wrapper for permission/config/approval checks
+- define audit and observability contract for all skills
+
+## Phase B9 — Skill Builder Kits
+
+- create starter templates for informational skills
+- create starter templates for artifact-generation skills
+- create starter templates for record-producing skills
+- create starter templates for governed execution skills
+- create a conformance checklist so new skills cannot bypass the framework
+
 ## n8n orchestration boundary
 
 n8n is the asynchronous connector and automation layer, not the primary assistant runtime and not the source of tax/compliance truth.

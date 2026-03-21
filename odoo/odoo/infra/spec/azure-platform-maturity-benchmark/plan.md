@@ -14,7 +14,7 @@
 
 **Deliverables**:
 1. `scripts/infra/azure_maturity_score.py` — Scoring engine that reads evidence YAML and computes weighted scores
-2. `infra/ssot/azure/platform_maturity_benchmark.yaml` — Machine-readable rubric with domain/criterion definitions
+2. `ssot/azure/platform_maturity_benchmark.yaml` — Machine-readable rubric with domain/criterion definitions
 3. `scripts/infra/collect_azure_evidence.sh` — Shell wrapper that runs `az` CLI probes and writes evidence YAML
 
 **Technical Approach**:
@@ -63,7 +63,7 @@
 **Deliverables**:
 1. `scripts/infra/azure_maturity_report.py` — Generates markdown report from scored evidence
 2. Gap report highlighting domains below target with remediation priorities
-3. Historical score tracking (append to `infra/ssot/azure/maturity_history.json`)
+3. Historical score tracking (append to `ssot/azure/maturity_history.json`)
 
 ---
 

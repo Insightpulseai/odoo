@@ -33,7 +33,7 @@
 - `addons/ipai/ipai_ai_copilot/data/copilot_tools_bir.xml` — 8 BIR tool definitions
 - `addons/ipai/ipai_bir_tax_compliance/models/bir_tax_return.py` — add `approved` state + `action_approve()`
 - `addons/ipai/ipai_bir_tax_compliance/security/` — add `group_ipai_bir_approver`
-- `infra/ssot/agents/tax_pulse_tool_contracts.yaml` — typed tool contracts
+- `ssot/agents/tax_pulse_tool_contracts.yaml` — typed tool contracts
 
 **Verification**:
 - `compute_bir_vat_return` tool triggers `action_compute()` and returns amounts
@@ -173,7 +173,7 @@ The following phases extend the original 7-wave plan with AFC parity requirement
 **Goal**: Agent runs compliance checks from the check catalog against live Odoo data.
 
 **Files**:
-- `infra/ssot/tax/compliance_check_catalog.yaml` — check registry (COMPLETE)
+- `ssot/tax/compliance_check_catalog.yaml` — check registry (COMPLETE)
 - Bridge endpoint for check execution
 - Odoo method on `tax.compliance.period` to run checks
 

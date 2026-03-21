@@ -91,89 +91,8 @@ const copilotService = {
             currentConversationId = id;
         }
 
-        /**
-         * Send a message with streaming response via SSE.
-         *
-         * @param {string} message - The user's message text
-         * @param {Object} [context={}] - Optional context
-         * @param {Function} onChunk - Called with (fullText) on each chunk
-         * @returns {Promise<Object>} Final result with conversation_id, content, latency_ms
-         */
-        async function sendMessageStreaming(message, context = {}, onChunk = () => {}) {
-            const csrfToken = odoo.csrf_token || document.cookie
-                .split("; ")
-                .find((c) => c.startsWith("csrf_token="))
-                ?.split("=")[1] || "";
-
-            const body = JSON.stringify({
-                message,
-                conversation_id: currentConversationId,
-                context_model: context.context_model || "",
-                context_res_id: context.context_res_id || 0,
-                surface: context.surface || "erp",
-                csrf_token: csrfToken,
-            });
-
-            const response = await fetch("/ipai/copilot/stream", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body,
-            });
-
-            if (!response.ok) {
-                throw new Error(`Stream request failed: ${response.status}`);
-            }
-
-            const reader = response.body.getReader();
-            const decoder = new TextDecoder();
-            let fullContent = "";
-            let result = {};
-            let buffer = "";
-
-            while (true) {
-                const { done, value } = await reader.read();
-                if (done) break;
-
-                buffer += decoder.decode(value, { stream: true });
-                const lines = buffer.split("\n");
-                // Keep the last incomplete line in the buffer
-                buffer = lines.pop() || "";
-
-                for (const line of lines) {
-                    if (!line.startsWith("data: ")) continue;
-                    try {
-                        const data = JSON.parse(line.slice(6));
-                        if (data.type === "start" && data.conversation_id) {
-                            currentConversationId = data.conversation_id;
-                        } else if (data.type === "chunk") {
-                            fullContent = data.full_content || fullContent + (data.content || "");
-                            onChunk(fullContent);
-                        } else if (data.type === "done") {
-                            result = {
-                                conversation_id: data.conversation_id || currentConversationId,
-                                content: fullContent,
-                                latency_ms: data.latency_ms || 0,
-                                role: "assistant",
-                            };
-                        } else if (data.type === "error") {
-                            throw new Error(data.message || "Stream error");
-                        }
-                    } catch (e) {
-                        if (e.message && !e.message.startsWith("Unexpected")) {
-                            throw e;
-                        }
-                    }
-                }
-            }
-
-            return result;
-        }
-
         return {
             sendMessage,
-            sendMessageStreaming,
             createConversation,
             listConversations,
             resetConversation,

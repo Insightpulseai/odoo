@@ -109,9 +109,7 @@ var services = [
     minReplicas: 1
     maxReplicas: 3
     command: []
-    extraEnv: [
-      { name: 'ODOO_RC', value: '/etc/odoo/odoo.conf' }
-    ]
+    extraEnv: []
   }
   {
     name: 'odoo-worker'
@@ -127,9 +125,7 @@ var services = [
       '--no-http'
       '--workers=2'
     ]
-    extraEnv: [
-      { name: 'ODOO_RC', value: '/etc/odoo/odoo.conf' }
-    ]
+    extraEnv: []
   }
   {
     name: 'odoo-cron'
@@ -145,9 +141,7 @@ var services = [
       '--no-http'
       '--max-cron-threads=2'
     ]
-    extraEnv: [
-      { name: 'ODOO_RC', value: '/etc/odoo/odoo.conf' }
-    ]
+    extraEnv: []
   }
   {
     name: 'n8n'
@@ -254,7 +248,7 @@ resource environment 'Microsoft.App/managedEnvironments@2024-03-01' = {
 }
 
 // ---------------------------------------------------------------------------
-// Container Apps — 9 services (loop-based deployment)
+// Container Apps — 9 services
 // ---------------------------------------------------------------------------
 
 resource containerApps 'Microsoft.App/containerApps@2024-03-01' = [

@@ -77,7 +77,7 @@ License: LGPL-3
         # Data
         'data/sequence.xml',
         'data/cron_monitoring.xml',
-        # 'data/copilot_tools.xml',  # Requires ipai.copilot.tool model (ipai_ai_copilot)
+        'data/copilot_tools.xml',
 
         # Views
         'views/expense_liquidation_views.xml',

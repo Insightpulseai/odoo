@@ -1,8 +1,8 @@
 # Entra Identity Baseline for Copilot
 
-> Version: 1.1.0
-> Last updated: 2026-03-14
-> Source: Azure Entra + Foundry portal screenshots (2026-03-14)
+> Version: 2.0.0
+> Last updated: 2026-03-21
+> Source: Azure Entra portal screenshots (2026-03-21)
 > Parent: `agents/foundry/ipai-odoo-copilot-azure/runtime-contract.md` (C-30)
 
 ## Current Tenant State
@@ -10,41 +10,48 @@
 | Property | Value |
 |----------|-------|
 | Tenant name | Default Directory |
-| Primary domain | `ceoinsightpulseai.onmicrosoft.com` |
+| Primary domain | `insightpulseai.com` |
+| Onmicrosoft domain | `ceoinsightpulseai.onmicrosoft.com` |
 | License tier | Microsoft Entra ID Free |
-| Users | 2 |
+| Users | 4 (Emergency Admin, Platform Admin, Jake Tolentino, 1 guest) |
 | Groups | 12 |
-| App registrations | 3 |
+| App registrations | 4 |
 | Devices | 0 |
 | Entra Connect | Not enabled (cloud-only) |
-| Hybrid identity | None |
+| Hybrid identity | None — Cloud Sync not required (no on-prem AD) |
+
+### Authentication Methods (Enabled)
+
+| Method | Status |
+|--------|--------|
+| Microsoft Authenticator | Enabled (all users) |
+| Passkey / FIDO2 | Enabled (all users) |
+| Temporary Access Pass | Enabled (all users) |
+| Software OATH tokens | Enabled (all users) |
+| Email OTP | Enabled (all users) |
+
+### Authentication Methods (Disabled)
+
+SMS, Voice call, Hardware OATH tokens, Certificate-based authentication, QR code — all disabled.
 
 ## Identity Maturity Assessment
 
-**Current level: Startup / Explore** — usable for controlled prototype, not yet hardened for broad production.
+**Current level: Established / Partly Hardened** — strong auth method selection, not yet fully hardened.
 
 | Dimension | State | Risk |
 |-----------|-------|------|
-| MFA enforcement | Not fully enforced (100+ sign-ins lacking MFA in last 7 days) | HIGH |
-| Auth methods policy | Legacy — needs migration to converged policy | MEDIUM |
-| App registrations | 3 exist — viable for service principal model | OK |
+| Auth methods | Strong — Authenticator/passkey/TAP/OATH enabled, SMS/voice disabled | OK |
+| Auth methods policy | Legacy — converged policy migration outstanding | MEDIUM |
+| Break-glass accounts | Emergency Admin exists — need to confirm 2nd account + documentation | MEDIUM |
+| App registrations | 4 exist — viable for service principal model | OK |
 | Conditional Access | Available but not configured | MEDIUM |
 | Audit logging | Basic (Free tier) | LOW for now |
 | Cloud-only posture | Yes (no hybrid) | OK — simplifies auth model |
+| Key Vault integration | Exists but RBAC enforcement not verified | MEDIUM |
 
-## Immediate Gaps
+## Gaps (Remaining)
 
-### GAP-1: MFA Not Enforced (HIGH)
-
-The Entra portal shows MFA enforcement is required but not complete. 100+ sign-ins in the last 7 days lacked MFA.
-
-**Impact on copilot:** Any admin accessing Azure portal, Foundry, or Odoo admin without MFA creates a credential-theft risk that could compromise the copilot's backend.
-
-**Required action:**
-- Enable Security Defaults or create Conditional Access policy requiring MFA for all users
-- Priority: before Stage 2 promotion
-
-### GAP-2: Legacy Authentication Methods Policy (MEDIUM)
+### GAP-1: Converged Authentication Methods Policy (MEDIUM)
 
 The portal warns about migrating from legacy MFA/SSPR policy to the converged Authentication methods policy.
 
@@ -52,6 +59,25 @@ The portal warns about migrating from legacy MFA/SSPR policy to the converged Au
 
 **Required action:**
 - Migrate to converged Authentication methods policy
+- Priority: before Stage 2 promotion
+
+### GAP-2: Break-Glass Account Documentation (MEDIUM)
+
+Microsoft recommends two cloud-only emergency access accounts permanently assigned Global Administrator. One (Emergency Admin) is visible. Second must be confirmed, role-assigned, and documented.
+
+**Required action:**
+- Confirm both accounts exist and are permanently assigned Global Administrator
+- Document both in `access_model.yaml` under `emergency_admin` role
+- Neither account should be used for daily operations
+- Priority: before Stage 2 promotion
+
+### GAP-3: Key Vault RBAC Enforcement (MEDIUM)
+
+Azure Key Vault must use Azure RBAC as the default authorization model. Current authorization model (access policy vs RBAC) not verified.
+
+**Required action:**
+- Verify all vaults use Azure RBAC authorization
+- Migrate any access-policy vaults to RBAC
 - Priority: before Stage 2 promotion
 
 ## Identity Model for Copilot
@@ -114,23 +140,30 @@ These Entra preview features are visible in the tenant and relevant to future st
 
 ## Stage-Gated Identity Requirements
 
-### Stage 1 (Current) — Explore
+### Stage 1 (Current) — Established
 
 - [x] Entra tenant exists and is usable
-- [x] App registrations available for service principal model
+- [x] App registrations available for service principal model (4 registered)
 - [x] Cloud-only posture (no hybrid complexity)
 - [x] Service principal exists (`sp-ipai-azdevops`, Contributor role)
 - [x] Azure AI Search connected to Foundry project (`srch-ipai-dev`)
-- [ ] MFA enforcement — **not yet complete** (acceptable for prototype, must fix before Stage 2)
+- [x] Strong auth methods enabled (Authenticator, passkey, TAP, Software OATH)
+- [x] Weak auth methods disabled (SMS, voice)
+- [x] Emergency Admin account exists
+- [ ] Converged auth methods policy migration — **outstanding**
+- [ ] Second break-glass account confirmed and documented
+- [ ] Key Vault RBAC authorization model verified
 
 ### Stage 2 — Expand
 
-- [ ] MFA enforced for all admin/privileged users
-- [ ] Converged Authentication methods policy active
+- [x] Strong auth methods enforced for all admin/privileged users
+- [ ] Converged Authentication methods policy active (migrated from legacy)
 - [ ] Foundry access via managed identity or `sp-ipai-azdevops` (not API key)
 - [x] Service principal registered for CI/CD pipeline — **`sp-ipai-azdevops` confirmed**
 - [ ] Conditional Access policy for admin operations
 - [ ] Audit logging sufficient for identity troubleshooting
+- [ ] Two break-glass accounts documented and tested
+- [ ] Key Vault RBAC enforced across all vaults
 
 ### Stage 3 — Hardened
 

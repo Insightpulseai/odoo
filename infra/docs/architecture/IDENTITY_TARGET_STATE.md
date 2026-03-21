@@ -1,29 +1,64 @@
 # Identity Target State
 
-> Version: 1.0.0
-> Last updated: 2026-03-14
+> Version: 2.0.0
+> Last updated: 2026-03-21
 > Canonical repo: `infra`
 
 ## Purpose
 
 Define the target identity architecture for InsightPulseAI across all offerings.
 
-## Current State
+## Current State (as of 2026-03-21)
 
 - Entra tenant: `ceoinsightpulseai.onmicrosoft.com` (Free tier)
-- Users: 2
-- App registrations: 3
+- Primary domain: `insightpulseai.com`
+- Users: 4 (Emergency Admin, Platform Admin, Jake Tolentino, 1 guest)
+- Groups: 12
+- App registrations: 4
+- Devices: 0
 - Service principal: `sp-ipai-azdevops` (Contributor)
-- MFA: Not fully enforced
-- Conditional Access: Not configured
+- MFA methods enabled: Authenticator, Passkey/FIDO2, TAP, Software OATH, Email OTP
+- MFA methods disabled: SMS, Voice, Hardware OATH, Certificate-based, QR code
+- Hybrid identity: None (cloud-native)
+- Migration alert: converged Authentication Methods policy migration outstanding
 
 ## Target State
+
+### Control Planes (Non-Optional)
+
+| Plane | Authority | Authorization Model |
+|-------|-----------|-------------------|
+| Identity | Microsoft Entra ID | OIDC/SAML sign-in |
+| Secrets / Keys / Certificates | Azure Key Vault | Azure RBAC |
+| Resource access | Azure RBAC | Least-privilege role assignments |
+
+### Break-Glass Accounts
+
+Two cloud-only emergency access accounts, permanently assigned Global Administrator, not used for daily operations. Both accounts must be documented and tested quarterly.
+
+### Authentication Methods Baseline
+
+| Method | Target Status |
+|--------|-------------|
+| Microsoft Authenticator | **Required** |
+| Passkey / FIDO2 | **Required** |
+| Temporary Access Pass | **Required** |
+| Software OATH tokens | **Required** |
+| Email OTP | Allowed (if justified) |
+| SMS | **Disabled** (weak channel) |
+| Voice call | **Disabled** (weak channel) |
+
+Legacy MFA/SSPR policy remnants must be fully migrated to the converged Authentication Methods model.
+
+### Hybrid Identity
+
+Cloud Sync is **conditional** — only required when an on-prem AD forest exists. Current posture is cloud-native. Do not model Cloud Sync as required baseline.
 
 ### Human Identity
 
 | Role | Identity Provider | MFA | Conditional Access |
 |------|------------------|-----|-------------------|
-| Platform admin | Entra ID | Required | Admin policy |
+| Platform admin | Entra ID | Required (Authenticator/passkey) | Admin policy |
 | Odoo admin | Entra ID + Odoo session | Required | Admin policy |
 | Odoo user | Odoo local auth | Optional | N/A |
 | Docs visitor | Anonymous | N/A | N/A |

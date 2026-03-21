@@ -6,12 +6,12 @@
 # Updated: 2026-03-07
 # =============================================================================
 
-schema_version: "1.1"
-last_updated: "2026-03-17"
+schema_version: "1.0"
+last_updated: "2026-03-07"
 org: Insightpulseai
 
 # =============================================================================
-# Active Repos (12)
+# Active Repos (9)
 # =============================================================================
 active_repos:
 
@@ -57,10 +57,9 @@ active_repos:
       - Tool schemas
       - Evaluation framework
 
-  - name: platform
+  - name: ops-platform
     visibility: private
-    purpose: Platform admin apps, SSOT, control-plane
-    note: Renamed from ops-platform
+    purpose: Supabase SSOT, secrets, automations control-plane
     scaffolding:
       - CLAUDE.md
       - .vscode/settings.json
@@ -71,10 +70,9 @@ active_repos:
       - Database migrations
       - Supabase configuration
 
-  - name: data-intelligence
+  - name: lakehouse
     visibility: private
     purpose: Databricks lakehouse — medallion pipelines, Unity Catalog, data governance
-    note: Renamed from lakehouse
     scaffolding:
       - CLAUDE.md
       - README.md
@@ -102,33 +100,15 @@ active_repos:
       - .vscode/extensions.json
       - docs/engineering/AI_EDITOR_POLICY.md
 
-  - name: automations
-    visibility: private
-    purpose: Workflow automation, scheduled jobs, and runbooks
-    scaffolding:
-      - CLAUDE.md
-      - README.md
-      - .vscode/settings.json
-      - .vscode/extensions.json
-      - docs/engineering/AI_EDITOR_POLICY.md
-
-  - name: design
+  - name: design-system
     visibility: internal
     purpose: Design tokens, components, icon pipeline, brand assets
-    note: Renamed from design-system
     scaffolding:
       - CLAUDE.md
       - README.md
       - .vscode/settings.json
       - .vscode/extensions.json
       - docs/engineering/AI_EDITOR_POLICY.md
-
-  - name: docs
-    visibility: public
-    purpose: Cross-platform documentation and architecture
-    scaffolding:
-      - CLAUDE.md
-      - README.md
 
   - name: templates
     visibility: private
@@ -141,42 +121,73 @@ active_repos:
       - docs/engineering/AI_EDITOR_POLICY.md
 
 # =============================================================================
-# Archived Repos (5 visible on GitHub as of 2026-03-17)
+# Archived Repos (13)
 # =============================================================================
-# Note: 8 previously archived repos (dev-environment, ops-console, app-crm,
-# app-landing, fin-ops, roadmap, demo-repository, fluent-owl) have been
-# deleted from the org and are no longer visible.
 archived_repos:
 
   - name: mcp-core
-    visibility: internal
     archived_date: "2026-03-07"
     reason: Content migrated to agents/mcp/
 
   - name: learn
-    visibility: private
     archived_date: "2026-03-07"
-    reason: Migrate content to odoo/data-intelligence later
+    reason: Migrate content to odoo/lakehouse later
     future_migration:
       - target: odoo
         content: Odoo addons
-      - target: data-intelligence
+      - target: lakehouse
         content: Lakehouse notebooks/pipelines
 
+  - name: dev-environment
+    archived_date: "2026-03-07"
+    reason: Migrate content to web/design-system/infra later
+    future_migration:
+      - target: web
+        content: React workspace explorer
+      - target: design-system
+        content: Figma docs
+      - target: infra
+        content: Azure docs
+
   - name: template-factory
-    visibility: private
+    archived_date: "2026-03-07"
+    reason: Empty repo (no default branch)
+
+  - name: ops-console
+    archived_date: "2026-03-07"
+    reason: Empty repo (no default branch)
+
+  - name: app-crm
+    archived_date: "2026-03-07"
+    reason: Empty repo (no default branch)
+
+  - name: app-landing
+    archived_date: "2026-03-07"
+    reason: Empty repo (no default branch)
+
+  - name: fin-ops
     archived_date: "2026-03-07"
     reason: Empty repo (no default branch)
 
   - name: plugin-marketplace
-    visibility: private
     archived_date: "2026-03-07"
     reason: Scaffold-only (feature branch, 2-4KB)
 
   - name: plugin-agents
-    visibility: private
     archived_date: "2026-03-07"
     reason: Scaffold-only (feature branch, 2-4KB)
+
+  - name: roadmap
+    archived_date: "2026-03-07"
+    reason: 1 commit, use GitHub Projects instead
+
+  - name: demo-repository
+    archived_date: pre-existing
+    reason: Demo/test repo
+
+  - name: fluent-owl
+    archived_date: pre-existing
+    reason: Archived prior to restructuring
 
 # =============================================================================
 # Org-Wide Standards
@@ -218,15 +229,15 @@ org_layers:
 
   - layer: 1_control_plane
     description: "Governance, CI/CD, org-wide workflows, infrastructure"
-    repos: [.github, platform, infra]
+    repos: [.github, ops-platform, infra]
 
   - layer: 2_core_runtime
     description: "ERP, product surfaces, data/analytics"
-    repos: [odoo, web, data-intelligence]
+    repos: [odoo, web, lakehouse]
 
   - layer: 3_shared_systems
-    description: "Design tokens, templates, agent framework, automation, docs"
-    repos: [design, templates, agents, automations, docs]
+    description: "Design tokens, templates, agent framework"
+    repos: [design-system, templates, agents]
 
   - layer: 4_planning_governance
     description: "Planning tools, ADRs, contracts, environment policies"
@@ -277,40 +288,13 @@ platform_map:
 
   runtime:
     erp: Odoo CE 19 (system of record)
-    platform: Supabase (Edge Functions, Vault) + Azure services
+    control_plane: Supabase (auth, Edge Functions, Vault)
     intelligence: Databricks (lakehouse, Apps)
     agents: Azure Foundry (copilots, tool orchestration)
-    infrastructure: Azure (Container Apps, Front Door, managed PG)
-    identity: Entra ID (target) / Keycloak (transitional)
+    infrastructure: Azure + DigitalOcean
 
   engineering:
     source: GitHub (repos, CI/CD, packages)
-    ci_cd: GitHub Actions + Azure Pipelines (Azure deployments)
+    ci_cd: GitHub Actions
     dns: Cloudflare
-    hosting: Azure Container Apps (behind Azure Front Door)
-
-# =============================================================================
-# Deprecated Items
-# =============================================================================
-deprecated_items:
-  - name: supabase_managed_subscription
-    deprecated: "2026-03-20"
-    replacement: self-hosted Supabase on Azure VM (vm-ipai-supabase-dev)
-  - name: vercel
-    deprecated: "2026-03-11"
-    replacement: azure_container_apps
-  - name: digitalocean
-    deprecated: "2026-03-15"
-    replacement: azure_container_apps
-  - name: mailgun
-    deprecated: "2026-03-11"
-    replacement: zoho_smtp
-  - name: ops-platform
-    deprecated: "2026-03-20"
-    replacement: platform
-  - name: design-system
-    deprecated: "2026-03-20"
-    replacement: design
-  - name: lakehouse
-    deprecated: "2026-03-20"
-    replacement: data-intelligence
+    hosting_web: Vercel

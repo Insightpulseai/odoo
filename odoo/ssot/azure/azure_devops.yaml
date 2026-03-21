@@ -2,123 +2,44 @@ schema_version: "1.0"
 target_state: azure_devops_config
 description: Canonical SSOT for Azure DevOps Project, Boards, and Pipeline environments.
 
-execution_authority:
-  source_control: github
-  ci_cd: azure_devops
-  github_actions: decommissioned  # effective 2026-03-18
-
 project:
-  name: ipai-platform
-  id: b4267980-f678-4fcb-b8b4-3d81d9153445
+  name: InsightPulseAI
   visibility: private
   source_control: github
   repositories:
     - Insightpulseai/odoo
 
 boards:
-  template: basic  # verified via API 2026-03-18 (work item types: Epic, Issue, Task)
+  template: agile
   hierarchy:
     - epic
-    - issue
+    - feature
+    - user_story
     - task
   integrations:
     - github_app: true
       linking_syntax: "AB#{id}"
 
-# =============================================================================
-# Pipeline configuration
-# =============================================================================
 pipelines:
   strategy: yaml_in_repo
   path_prefix: .azure/pipelines/
-  agent_policy:
-    default_pool: ubuntu-latest
-    self_hosted: deprecated  # ipai-build-pool removed from all stages 2026-03-19
-    rationale: AzureCLI@2 + service connection eliminates VNet access requirement
+  agent_pools:
+    default: ubuntu-latest
+    fallback: self-hosted-if-vnet-required
 
-# -----------------------------------------------------------------------------
-# Current state — what is live in AzDO today
-# -----------------------------------------------------------------------------
-current_topology:
-  pipelines:
-    - name: ci-validation
-      status: active
-      note: "PR/push validation — fast-fail incident under investigation (issue #615)"
-    - name: azure-infra-deploy
-      status: active
-      note: "Infra deployment — last run Mar 11 (manual), separate concern"
-
-  environments:
-    - name: insightpulseai-dev
-      trigger: automatic
-      branches:
-        - main
-    - name: insightpulseai-staging
-      trigger: manual_approval
-      approvers:
-        - platform_owner
-    - name: insightpulseai-prod
-      trigger: manual_approval
-      approvers:
-        - platform_owner
-
-# -----------------------------------------------------------------------------
-# Target state — what the platform should converge to
-# -----------------------------------------------------------------------------
-target_topology:
-  pipelines:
-    - ci-validation
-    - platform-shared-delivery
-    - stamp-delivery
-    - runtime-delivery
-    - quality-governance
-  reference: docs/architecture/AZDO_TARGET_PIPELINE_ARCHITECTURE.md
-
-  environment_classes:
-    - shared-dev
-    - shared-staging
-    - shared-prod
-    - stamp-dev
-    - stamp-staging
-    - stamp-prod
-
-  deployment_policy:
-    use_deployment_jobs: true
-
-  multitenancy_model:
-    architecture_style: shared_control_plane_with_selective_data_plane_isolation
-    deployment_pattern: deployment_stamps
-    rollout_patterns:
-      - deployment_rings
-      - feature_flags
-
-  stamp_policy:
-    deploy_unit: stamp
-    required_metadata:
-      - stamp_id
-      - environment
-      - region
-      - ring
-    optional_metadata:
-      - tenant_segment
-      - shard_id
-    reference: ssot/azure/stamp_topology.yaml
-
-  secrets_policy:
-    default_model: key_vault_backed
-    isolation_modes:
-      - shared
-      - per_stamp
-      - per_tenant_when_required
-
-upstream_reference_authority:
-  odoo_reference_map: ssot/odoo/upstream_reference_map.yaml
-  odoo_ci_translation: ssot/odoo/upstream_ci_translation.yaml
-  github_actions_adoption: false
-  rationale: >
-    Official Odoo upstream barely uses GitHub Actions for core runtime/release
-    discipline, so our Azure DevOps-only CI/CD baseline is both operationally
-    intentional and upstream-aligned.
+environments:
+  - name: insightpulseai-dev
+    trigger: automatic
+    branches:
+      - main
+  - name: insightpulseai-staging
+    trigger: manual_approval
+    approvers:
+      - platform_owner
+  - name: insightpulseai-prod
+    trigger: manual_approval
+    approvers:
+      - platform_owner
 
 service_connections:
   azure_rm:

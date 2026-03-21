@@ -75,15 +75,63 @@
 - [ ] Promotion evidence pack (automated capture)
 - [ ] Browser-based log viewer (Superset or Azure Workbooks)
 
+## Phase 0G -- Reference Source Curation
+
+- [ ] Classify normative vs exemplar sources in platform docs
+- [ ] Mark foundry-rs/* as excluded from core platform baseline
+- [ ] Add Microsoft Foundry exemplar inventory to docs
+- [ ] Add baseline/starter hardening note for AI bootstrap templates
+- [ ] Remove Viva Goals references from any forward-looking tool examples
+
+## Phase 1G -- Interface Standardization
+
+- [ ] Document the standard interface for development-environment setup
+- [ ] Document the standard interface for application diagnosis
+- [ ] Identify remaining custom/team-local request paths
+- [ ] Select the first workflows to move from standard tooling to self-service
+
+## Phase 1H -- Paved Provisioning
+
+- [ ] Define canonical IaC templates for core environment/resource types
+- [ ] Define structured request workflows and approval rules
+- [ ] Define centralized allocation and utilization dashboards
+- [ ] Eliminate manual one-off provisioning for core workflows
+
+## Phase 1I -- AI Extension Patterns
+
+- [ ] Evaluate mcp-foundry for provider/orchestrator fit
+- [ ] Evaluate foundry-agent-webapp for auth/webapp integration patterns
+- [ ] Evaluate Foundry Local for local-dev/offline agent workflows
+- [ ] Evaluate Azure AI Foundry baseline for production guardrails
+
+## Phase 2F -- Automated Self-Service
+
+- [ ] Automate core provisioning through CI/CD-integrated workflows
+- [ ] Expose controlled self-service for authorized users
+- [ ] Define dedicated-vs-shared environment creation rules
+- [ ] Embed governance/compliance checks in provisioning workflows
+
+## Phase 3A -- Integrated Experience
+
+- [ ] Identify where platform capabilities should surface directly in CLI/IDE/current engineering flows
+- [ ] Define minimum diagnostic affordances available on demand from the platform
+- [ ] Prioritize integrated-services improvements only after the standard/self-service paths show adoption
+
 ## Progress Summary
 
 | Phase | Status | Completion |
 |-------|--------|-----------|
 | Phase 0: Spec | **Complete** | 100% |
+| Phase 0G: Source curation | **Not started** | 0% |
 | Phase 1: CI/CD | **Mostly done** | 75% |
+| Phase 1G: Interface standardization | **Not started** | 0% |
+| Phase 1H: Paved provisioning | **Not started** | 0% |
+| Phase 1I: AI extension patterns | **Not started** | 0% |
 | Phase 2: Runtime | **Mostly done** | 70% |
+| Phase 2F: Automated self-service | **Not started** | 0% |
 | Phase 3: Data | **Mostly done** | 70% |
+| Phase 3A: Integrated experience | **Not started** | 0% |
 | Phase 4: Non-prod safety | **Mostly done** | 85% |
 | Phase 5: Promotion/rollback | **Started** | 30% |
 | Phase 6: Observability | **Started** | 20% |
-| **Overall** | **In progress** | **65%** |
+| **Overall** | **In progress** | **55%** |

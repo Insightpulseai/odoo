@@ -27,10 +27,24 @@ services:
   - id: svc_003
     name: "Supabase"
     category: database
-    hosting: supabase_cloud
+    hosting: azure_vm
+    vm_name: vm-ipai-supabase-dev
+    resource_group: rg-ipai-agents-dev
+    edge: azure_front_door
+    endpoint: "supabase.insightpulseai.com"
+    origin_ip: "4.193.100.31"
+    origin_port: 80
+    origin_protocol: http
     project_ref: "spdtwktxdalcfigzeqrz"
     status: active
     promotion_state: live
+    tls_model: "Front Door managed certificate (TLS termination at edge)"
+    nsg_restriction: "AzureFrontDoor.Backend service tag only"
+    note: >
+      Self-hosted Supabase on Azure VM. Kong API gateway serves HTTP only.
+      Front Door terminates TLS. Origin cert check disabled, forwarding HttpOnly.
+      Accepted exception — Azure backbone transit, NSG locked to AFD.
+      Cutover completed 2026-03-21.
 
   - id: svc_004
     name: "Auth Gateway"

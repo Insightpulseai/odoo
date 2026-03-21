@@ -1,8 +1,7 @@
 """Write data to Databricks Delta tables."""
 
 import json
-import re
-from datetime import datetime, timezone
+from datetime import datetime
 from typing import Any
 
 import structlog
@@ -28,40 +27,6 @@ class DatabricksWriter:
         self.catalog = config.catalog
         self.logger = logger.bind(service="databricks-writer")
 
-    @staticmethod
-    def _validate_identifier(name: str) -> str:
-        """Validate a SQL identifier (catalog, schema, table name) against an allowlist pattern.
-
-        Prevents SQL injection via malicious identifier names.
-        Only allows alphanumeric characters and underscores, starting with a letter or underscore.
-
-        Raises:
-            ValueError: If the identifier contains disallowed characters.
-        """
-        if not re.match(r"^[a-zA-Z_][a-zA-Z0-9_]*$", name):
-            raise ValueError(
-                f"Invalid SQL identifier: {name!r}. "
-                "Only letters, digits, and underscores are allowed, "
-                "and it must start with a letter or underscore."
-            )
-        return name
-
-    @staticmethod
-    def _sanitize_sql_value(value: str, max_length: int = 1_000_000) -> str:
-        """Sanitize a string value for safe interpolation into SQL literals.
-
-        Rejects null bytes, escapes single quotes, and enforces a maximum length
-        to prevent resource-exhaustion attacks.
-
-        Raises:
-            ValueError: If the value contains null bytes.
-        """
-        if "\x00" in value:
-            raise ValueError("SQL value must not contain null bytes")
-        value = value[:max_length]
-        value = value.replace("'", "''")
-        return value
-
     def execute_sql(self, sql: str) -> dict[str, Any]:
         """Execute a SQL statement and wait for completion."""
         self.logger.debug("Executing SQL", sql=sql[:200])
@@ -85,10 +50,8 @@ class DatabricksWriter:
 
     def ensure_bronze_table(self) -> None:
         """Create bronze table if it doesn't exist."""
-        catalog = self._validate_identifier(self.config.catalog)
-        schema = self._validate_identifier(self.config.schema_bronze)
         sql = f"""
-        CREATE TABLE IF NOT EXISTS {catalog}.{schema}.notion_raw_pages (
+        CREATE TABLE IF NOT EXISTS {self.config.catalog}.{self.config.schema_bronze}.notion_raw_pages (
             page_id STRING,
             database_id STRING,
             database_name STRING,
@@ -105,12 +68,8 @@ class DatabricksWriter:
 
     def ensure_watermark_table(self, table_name: str) -> None:
         """Create watermark table if it doesn't exist."""
-        catalog = self._validate_identifier(self.config.catalog)
-        # table_name may be "schema.table" — validate each part
-        for part in table_name.split("."):
-            self._validate_identifier(part)
         sql = f"""
-        CREATE TABLE IF NOT EXISTS {catalog}.{table_name} (
+        CREATE TABLE IF NOT EXISTS {self.config.catalog}.{table_name} (
             database_id STRING,
             database_name STRING,
             last_synced_at TIMESTAMP,
@@ -124,14 +83,10 @@ class DatabricksWriter:
 
     def get_watermark(self, database_id: str, table_name: str) -> SyncWatermark | None:
         """Get the last sync watermark for a database."""
-        catalog = self._validate_identifier(self.config.catalog)
-        for part in table_name.split("."):
-            self._validate_identifier(part)
-        safe_database_id = self._sanitize_sql_value(database_id)
         sql = f"""
         SELECT database_id, database_name, last_synced_at, last_edited_time, record_count
-        FROM {catalog}.{table_name}
-        WHERE database_id = '{safe_database_id}'
+        FROM {self.config.catalog}.{table_name}
+        WHERE database_id = '{database_id}'
         ORDER BY last_synced_at DESC
         LIMIT 1
         """
@@ -167,27 +122,18 @@ class DatabricksWriter:
         table_name: str,
     ) -> None:
         """Update the sync watermark for a database."""
-        catalog = self._validate_identifier(self.config.catalog)
-        for part in table_name.split("."):
-            self._validate_identifier(part)
-        safe_database_id = self._sanitize_sql_value(database_id)
-        safe_database_name = self._sanitize_sql_value(database_name)
-
-        now = datetime.now(timezone.utc).isoformat()
+        now = datetime.utcnow().isoformat()
         last_edited = last_edited_time.isoformat()
 
-        # record_count is typed as int; enforce to prevent injection via crafted input
-        safe_record_count = int(record_count)
-
         sql = f"""
-        MERGE INTO {catalog}.{table_name} AS target
+        MERGE INTO {self.config.catalog}.{table_name} AS target
         USING (
             SELECT
-                '{safe_database_id}' AS database_id,
-                '{safe_database_name}' AS database_name,
+                '{database_id}' AS database_id,
+                '{database_name}' AS database_name,
                 TIMESTAMP('{now}') AS last_synced_at,
                 TIMESTAMP('{last_edited}') AS last_edited_time,
-                {safe_record_count} AS record_count
+                {record_count} AS record_count
         ) AS source
         ON target.database_id = source.database_id
         WHEN MATCHED THEN UPDATE SET
@@ -210,27 +156,21 @@ class DatabricksWriter:
         if not records:
             return 0
 
-        catalog = self._validate_identifier(self.config.catalog)
-        schema = self._validate_identifier(self.config.schema_bronze)
-
         # Build VALUES clause
         values_parts = []
         for r in records:
-            page_id = self._sanitize_sql_value(r.page_id)
-            database_id = self._sanitize_sql_value(r.database_id)
-            database_name = self._sanitize_sql_value(r.database_name)
-            payload_escaped = self._sanitize_sql_value(r.payload)
-            is_archived = "true" if r.is_archived else "false"
+            # Escape single quotes in payload
+            payload_escaped = r.payload.replace("'", "''")
             values_parts.append(
-                f"('{page_id}', '{database_id}', '{database_name}', "
+                f"('{r.page_id}', '{r.database_id}', '{r.database_name}', "
                 f"'{payload_escaped}', TIMESTAMP('{r.last_edited_time.isoformat()}'), "
-                f"TIMESTAMP('{r.synced_at.isoformat()}'), {is_archived})"
+                f"TIMESTAMP('{r.synced_at.isoformat()}'), {str(r.is_archived).lower()})"
             )
 
         values_sql = ",\n".join(values_parts)
 
         sql = f"""
-        MERGE INTO {catalog}.{schema}.notion_raw_pages AS target
+        MERGE INTO {self.config.catalog}.{self.config.schema_bronze}.notion_raw_pages AS target
         USING (
             SELECT * FROM (
                 VALUES {values_sql}
@@ -263,19 +203,8 @@ class DatabricksWriter:
         if not records:
             return 0
 
-        catalog = self._validate_identifier(self.config.catalog)
-        # table_name may be "schema.table" — validate each part
-        for part in table_name.split("."):
-            self._validate_identifier(part)
-
-        # Get column names from first record — validate as identifiers
+        # Get column names from first record
         columns = list(records[0].keys())
-        for col in columns:
-            self._validate_identifier(col)
-
-        # Validate key_columns as identifiers
-        for col in key_columns:
-            self._validate_identifier(col)
 
         # Build VALUES clause
         values_parts = []
@@ -292,7 +221,8 @@ class DatabricksWriter:
                 elif isinstance(val, datetime):
                     row_values.append(f"TIMESTAMP('{val.isoformat()}')")
                 else:
-                    val_escaped = self._sanitize_sql_value(str(val))
+                    # Escape single quotes
+                    val_escaped = str(val).replace("'", "''")
                     row_values.append(f"'{val_escaped}'")
             values_parts.append(f"({', '.join(row_values)})")
 
@@ -308,7 +238,7 @@ class DatabricksWriter:
         update_cols = [c for c in columns if c not in key_columns]
         update_sql = ", ".join(f"{col} = source.{col}" for col in update_cols)
 
-        full_table = f"{catalog}.{table_name}"
+        full_table = f"{self.config.catalog}.{table_name}"
 
         sql = f"""
         MERGE INTO {full_table} AS target

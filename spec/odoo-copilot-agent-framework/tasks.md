@@ -109,6 +109,26 @@
 - [x] **G.14** Align ingress paths from 3 to 5 in PRD (add project client + playgrounds)
 - [x] **G.15** Add ingress ownership by component table to PRD
 
+## Epic 2.5 — Skill Framework & Builder Kit
+
+- [ ] **SK.1** Define skill manifest schema (YAML, covers identity + contract + policy + runtime + UX)
+- [ ] **SK.2** Define context-pack schema (JSON, covers model/record/view/role/period/attachments/integrations)
+- [ ] **SK.3** Define typed output schema (JSON, covers answer/finding/task/draft/artifact/preview/execution/handoff/blocked)
+- [ ] **SK.4** Build router-to-skill selection contract (deterministic rules + skill_id resolution)
+- [ ] **SK.5** Build skill conformance validator (CI gate: every registered skill passes schema validation)
+- [ ] **SK.6** Build starter templates for informational skills (e.g. `finance_qa`)
+- [ ] **SK.7** Build starter templates for sandbox-generative skills (e.g. `artifact_workspace`)
+- [ ] **SK.8** Build starter templates for record-producing skills (e.g. `document_intake`)
+- [ ] **SK.9** Build starter templates for governed execution skills (e.g. `payment_ops`)
+- [ ] **SK.10** Add per-skill permission/configuration checks to policy wrapper
+- [ ] **SK.11** Add per-skill progress, preview, and blocked-state UX hooks
+- [ ] **SK.12** Add per-skill audit logging contract (App Insights: skill_id, inputs, outputs, decisions, latency)
+- [ ] **SK.13** Register starter skills in registry: `finance_qa`, `artifact_workspace`, `document_intake`, `payment_ops`
+- [ ] **SK.14** Wire `databricks_handoff` skill for cross-platform analytics handoff
+- [ ] **SK.15** Wire `export_ops` skill for report/export generation
+- [ ] **SK.16** Wire `reconciliation` skill for record-producing close workflows
+- [ ] **SK.17** Implement canonical repo shape under `addons/ipai/ipai_odoo_copilot/skills/`
+
 ## Cross-Cutting
 
 - [ ] **X.1** Ensure all agent invocations produce App Insights telemetry (user, mode, tools, tokens, latency, safety)

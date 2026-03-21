@@ -25,7 +25,7 @@ resources:
             node_type_id: "Standard_DS3_v2"
             num_workers: 1
             spark_env_vars:
-              NOTION_TOKEN: "{{secrets/finance-ppm/notion_token}}"
+              NOTION_TOKEN: "{{secrets/notion-ppm/notion_token}}"
               DATABRICKS_CATALOG: "${var.catalog}"
           timeout_seconds: 1800
           max_retries: 2
@@ -58,10 +58,10 @@ resources:
             node_type_id: "Standard_DS3_v2"
             num_workers: 1
             spark_env_vars:
-              AZURE_SUBSCRIPTION_ID: "{{secrets/finance-ppm/azure_subscription_id}}"
-              AZURE_CLIENT_ID: "{{secrets/finance-ppm/azure_client_id}}"
-              AZURE_CLIENT_SECRET: "{{secrets/finance-ppm/azure_client_secret}}"
-              AZURE_TENANT_ID: "{{secrets/finance-ppm/azure_tenant_id}}"
+              AZURE_SUBSCRIPTION_ID: "{{secrets/notion-ppm/azure_subscription_id}}"
+              AZURE_CLIENT_ID: "{{secrets/notion-ppm/azure_client_id}}"
+              AZURE_CLIENT_SECRET: "{{secrets/notion-ppm/azure_client_secret}}"
+              AZURE_TENANT_ID: "{{secrets/notion-ppm/azure_tenant_id}}"
               DATABRICKS_CATALOG: "${var.catalog}"
           timeout_seconds: 1800
           max_retries: 2

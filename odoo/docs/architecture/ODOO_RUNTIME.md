@@ -58,7 +58,7 @@ The config file is therefore part of the runtime identity.
 | ----------- | ------------------------------------------------------ | -------------- | -------------------- |
 | local dev   | `config/dev/odoo.conf`                                 | `odoo_dev`     | local Docker runtime |
 | staging     | `config/stage/odoo.conf` or `config/staging/odoo.conf` | `odoo_staging` | staging ACA app      |
-| prod        | `config/prod/odoo.conf`                                | `odoo`         | prod ACA app         |
+| prod        | `config/prod/odoo.conf`                                | `odoo_prod`    | prod ACA app         |
 
 ### Canonical database naming
 
@@ -66,9 +66,9 @@ The only canonical Odoo database names are:
 
 * `odoo_dev`
 * `odoo_staging`
-* `odoo` (production)
+* `odoo_prod`
 
-Any historical references such as `odoo_core`, `odoo_prod`, or `odoo_stage` are non-canonical and must not be used for active runtime configuration.
+Any historical references such as `odoo_core`, bare `odoo`, or `odoo_stage` are non-canonical and must not be used for active runtime configuration.
 
 ---
 
@@ -100,7 +100,7 @@ Production runtime means:
 
 * Odoo runs in the production Azure Container App
 * the process uses `config/prod/odoo.conf`
-* the runtime connects to `odoo`
+* the runtime connects to `odoo_prod`
 * the runtime uses the production image/addon set
 * secrets come from Azure environment injection / Key Vault-backed configuration
 
@@ -124,7 +124,7 @@ The database the runtime is pointed at:
 
 * `odoo_dev`
 * `odoo_staging`
-* `odoo` (production)
+* `odoo_prod`
 
 ### 4. Code identity
 
@@ -178,7 +178,7 @@ The repository treats runtime as environment-specific and deterministic.
 
 1. Local dev runtime must connect only to `odoo_dev`.
 2. Staging runtime must connect only to `odoo_staging`.
-3. Production runtime must connect only to `odoo`.
+3. Production runtime must connect only to `odoo_prod`.
 4. Runtime config must match the actual deployment mount paths and network context.
 5. Secrets must be injected securely and must not be hardcoded into repo-managed config.
 6. Addon paths are part of runtime identity and must be treated as deployment-critical.

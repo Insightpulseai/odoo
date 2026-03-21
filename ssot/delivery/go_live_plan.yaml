@@ -9,7 +9,7 @@
 # =============================================================================
 
 version: 2
-last_updated: "2026-03-20"
+last_updated: "2026-03-19"
 target: first_live_poc_with_evidence_pack
 caf_current_stage: ready
 caf_target_stage: adopt
@@ -357,14 +357,10 @@ board_updates:
       evidence: "ci-cd.yml references pools and connections — 2026-03-15"
 
   move_to_doing:
+    - item: TASK-003
+      status: "MFA on admin@; emergency-admin@ pending enrollment"
     - item: TASK-006
       status: "Resources exist but not fully wired"
-
-  move_to_done_session_2:
-    - item: TASK-003
-      evidence: "Security Defaults enabled, MFA enrolled for 3/4 admins — 2026-03-20"
-    - item: CP-2
-      evidence: "Azure Files mounted to all 3 ACA apps, persistence verified — 2026-03-20"
 
   move_to_blocked:
     - item: ISSUE-007
@@ -422,33 +418,23 @@ targets:
     title: "Complete identity readiness for go-live"
     critical_path: CP-1
     due: "2026-03-22"
-    status: done
-    completed: "2026-03-20"
+    status: blocked
     owner: platform_operator
     acceptance:
       - "MFA evidence for required admin accounts"
       - "Security defaults blocker removed"
       - "Evidence linked from go-live plan"
-    evidence:
-      - "Security Defaults enabled via Graph PowerShell — 2026-03-20"
-      - "3/4 admins MFA-enrolled (Authenticator); emergency-admin enrolls at next sign-in"
-      - "docs/delivery/evidence/poc-pack/cp1-identity-mfa-assessment.md"
 
   - id: TGT-002
     title: "Enable persistent storage for ACA-hosted Odoo"
     critical_path: CP-2
     due: "2026-03-24"
-    status: done
-    completed: "2026-03-20"
+    status: partial
     owner: infrastructure_owner
     acceptance:
       - "Azure Files mount wired into ACA"
       - "Restart persistence test passes"
       - "Mount evidence linked"
-    evidence:
-      - "Azure Files share odoo-filestore on stipaiodoodev — mounted to all 3 ACA apps"
-      - "Persistence verified: marker file survived restart and new revision deploy"
-      - "docs/delivery/evidence/poc-pack/cp2-aca-persistent-storage.md"
 
   - id: TGT-003
     title: "Validate Azure pipeline deploy path"

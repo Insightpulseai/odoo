@@ -75,7 +75,7 @@ Most repos besides `odoo` and `agents` are scaffolds. Actual content has not yet
 | Repo | Content State | Content Currently In |
 |------|--------------|---------------------|
 | `ops-platform` | Scaffold (`supabase/config.toml` + `CLAUDE.md`) | `odoo/supabase/` |
-| `lakehouse` | Scaffold (`CLAUDE.md` only) | `odoo/ssot/databricks/`, `odoo/work/databricks/`, `odoo/infra/databricks/` |
+| `lakehouse` | Scaffold (`CLAUDE.md` only) | `ssot/databricks/`, `odoo/work/databricks/`, `odoo/infra/databricks/` |
 | `infra` | Scaffold (`CLAUDE.md` only) | `odoo/infra/azure/`, `odoo/infra/cloudflare/`, `odoo/infra/dns/` |
 | `web` | Scaffold (`CLAUDE.md` only) | `odoo/web/`, `odoo/apps/ops-console/`, `odoo/platform/` |
 | `design-system` | Scaffold (`CLAUDE.md` only) | `odoo/packages/design-tokens/`, `odoo/figma/` |

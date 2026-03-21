@@ -18,7 +18,7 @@ const guides: Array<{
     icon: Wrench,
     alternatives: [
       "n8n — Zapier / Make alternative (self-hosted automation)",
-      "Superset — Tableau / Looker alternative (BI + dashboards)",
+      "Power BI — Business Intelligence and reporting hub",
       "Odoo CE + OCA — Salesforce / NetSuite alternative (ERP)",
       "Zoho Mail — Mailgun/SendGrid alternative (transactional mail)",
     ],

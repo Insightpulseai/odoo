@@ -48,11 +48,7 @@
               "type": "array",
               "description": "Odoo domain filter as a list of tuples, e.g. [['state', '=', 'draft'], ['amount_total', '>', 1000]]",
               "items": {
-                "type": "array",
-                "items": {
-                  "type": "string"
-                },
-                "description": "A domain filter tuple, e.g. ['state', '=', 'draft']"
+                "type": "array"
               }
             },
             "fields": {

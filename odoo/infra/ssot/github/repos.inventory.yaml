@@ -20,11 +20,10 @@ repos:
   default_branch: main
   workflows: 23
   updated_at: '2026-03-07T16:45:54Z'
-- name: design
+- name: design-system
   visibility: internal
   status: active
-  domain: design
-  note: "Renamed from design-system"
+  domain: design-system
   canonical: true
   source_of_truth: true
   default_branch: main
@@ -39,11 +38,10 @@ repos:
   default_branch: main
   workflows: 2
   updated_at: '2026-03-07T16:46:16Z'
-- name: data-intelligence
+- name: lakehouse
   visibility: private
   status: active
-  domain: data-intelligence
-  note: "Renamed from lakehouse"
+  domain: data-platform
   canonical: true
   source_of_truth: true
   default_branch: main
@@ -58,11 +56,10 @@ repos:
   default_branch: main
   workflows: 0
   updated_at: '2026-03-08T08:17:38Z'
-- name: platform
+- name: ops-platform
   visibility: private
   status: active
-  domain: platform
-  note: "Renamed from ops-platform"
+  domain: control-plane
   canonical: true
   source_of_truth: true
   default_branch: main
@@ -134,7 +131,7 @@ repos:
 - name: fluent-owl
   visibility: internal
   status: archived
-  domain: design
+  domain: design-system
   canonical: false
   source_of_truth: false
   default_branch: main
@@ -161,7 +158,7 @@ repos:
 - name: ops-console
   visibility: private
   status: archived
-  domain: platform
+  domain: control-plane
   canonical: false
   source_of_truth: false
   default_branch: main

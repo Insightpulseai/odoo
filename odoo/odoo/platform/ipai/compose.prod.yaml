@@ -4,29 +4,13 @@
 # Usage: docker compose -f compose.yaml -f compose.prod.yaml up -d
 #
 # This overlay adds:
-# - TLS termination via Nginx
 # - Resource limits and healthchecks
 # - PostgreSQL tuning for production
 # - Log volume management
+# TLS termination handled by Azure Front Door.
 # =============================================================================
 
 services:
-  nginx:
-    ports:
-      - "443:443"
-    volumes:
-      - ./nginx/certs:/etc/nginx/certs:ro
-      - ./nginx/conf.d/sites/odoo-prod.conf:/etc/nginx/conf.d/sites/odoo.conf:ro
-      - nginx_logs:/var/log/nginx:rw
-    environment:
-      - NGINX_ENVSUBST_OUTPUT_DIR=/etc/nginx
-    healthcheck:
-      test: ["CMD", "curl", "-fs", "http://localhost/nginx-health"]
-      interval: 30s
-      timeout: 5s
-      retries: 3
-      start_period: 10s
-
   odoo:
     deploy:
       resources:
@@ -111,5 +95,4 @@ services:
         max-file: "2"
 
 volumes:
-  nginx_logs:
   odoo_logs:

@@ -54,7 +54,7 @@ repos:
     canonical_packages:
       - ghcr.io/insightpulseai/odoo
 
-  - name: platform
+  - name: ops-platform
     tier: 1
     category: primitive
     system_of_record: supabase

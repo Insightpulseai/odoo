@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="copilot_audit_view_list" model="ir.ui.view">
+        <field name="name">ipai.copilot.audit.list</field>
+        <field name="model">ipai.copilot.audit</field>
+        <field name="arch" type="xml">
+            <list string="Copilot Audit Log" create="false" edit="false" delete="false">
+                <field name="create_date" string="Date"/>
+                <field name="user_id"/>
+                <field name="prompt"/>
+                <field name="environment_mode"/>
+                <field name="source"/>
+                <field name="blocked" widget="boolean"/>
+                <field name="reason"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="copilot_audit_view_form" model="ir.ui.view">
+        <field name="name">ipai.copilot.audit.form</field>
+        <field name="model">ipai.copilot.audit</field>
+        <field name="arch" type="xml">
+            <form string="Copilot Audit Entry" create="false" edit="false" delete="false">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="create_date" string="Date"/>
+                            <field name="user_id"/>
+                            <field name="source"/>
+                        </group>
+                        <group>
+                            <field name="environment_mode"/>
+                            <field name="blocked"/>
+                            <field name="reason"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Prompt">
+                            <field name="prompt" nolabel="1"/>
+                        </page>
+                        <page string="Response">
+                            <field name="response_excerpt" nolabel="1"/>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="copilot_audit_action" model="ir.actions.act_window">
+        <field name="name">Copilot Audit Log</field>
+        <field name="res_model">ipai.copilot.audit</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <menuitem id="menu_ipai_copilot_root"
+              name="IPAI Copilot"
+              parent="base.menu_administration"
+              sequence="98"/>
+
+    <menuitem id="menu_copilot_audit"
+              name="Audit Log"
+              parent="menu_ipai_copilot_root"
+              action="copilot_audit_action"
+              sequence="10"/>
+</odoo>

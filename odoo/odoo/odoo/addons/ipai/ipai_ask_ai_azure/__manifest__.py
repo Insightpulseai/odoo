@@ -20,9 +20,7 @@
             "ipai_ask_ai_azure/static/src/js/ask_ai_systray.js",
         ],
     },
-    "installable": False,
+    "installable": True,
     "auto_install": False,
     "application": False,
-    # DEPRECATED: Replaced by Foundry ask mode via ipai_odoo_copilot (2026-03-15)
-    # See: ssot/governance/ai-consolidation-foundry.yaml
 }

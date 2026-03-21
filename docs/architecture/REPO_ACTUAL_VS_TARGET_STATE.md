@@ -1,23 +1,43 @@
 # Repo Actual vs Target State
 
-## Purpose
-
-Separate the current real repository state from the intended decomposed target state.
-
 ## Canonical unified target state
 
-The unified target state is frozen as:
+> Frozen 2026-03-20. Authority: `ssot/repo/ownership-boundaries.yaml`
 
-- One Azure DevOps project: `ipai-platform`
-- One repo per ownership boundary (see `ssot/repo/ownership-boundaries.yaml`)
+The unified target state is:
+
+- **One Azure DevOps project**: `ipai-platform`
+- **One repo per ownership boundary**: odoo, infra, platform, agents, automations, web, design, data-intelligence, agent-platform, docs, templates
 - `odoo` reduced to ERP runtime authority only
 - `platform`, `design`, and `data-intelligence` are the only canonical names for those domains
 - GitHub remains transitional engineering authority until Azure Repos cutover is intentional and complete
-- Local runtime: `colima-odoo` context, repo-root compose, devcontainer is tooling-only
 
-See [`ssot/repo/tranche_1_move_plan.yaml`](../../ssot/repo/tranche_1_move_plan.yaml) for the extraction roadmap.
+### Naming normalization (frozen)
 
----
+| Deprecated name | Canonical name |
+|----------------|---------------|
+| `ops-platform` | `platform` |
+| `design-system` | `design` |
+| `lakehouse` | `data-intelligence` |
+
+### Local runtime doctrine (frozen)
+
+| Surface | Canonical value |
+|---------|----------------|
+| Docker context | `colima-odoo` |
+| Compose source | repo-root `docker-compose.yml` |
+| Project name | `odoo` |
+| Services | `odoo`, `db`, `redis` |
+| Containers | `odoo-odoo-1`, `odoo-db-1`, `odoo-redis-1` |
+| Volumes | `odoo-db-data`, `odoo-web-data`, `odoo-redis-data` |
+| Network | `odoo-net` |
+| Databases | `odoo_dev`, `odoo_staging`, `odoo` |
+
+Any competing name, runtime lane, or ownership surface is transitional or deprecated and must not gain new authority.
+
+## Purpose
+
+Separate the current real repository state from the intended decomposed target state.
 
 ## Actual current state
 

@@ -16,11 +16,11 @@ This is Microsoft's own canonical guidance on how Foundry and Databricks complem
 
 | Concern | Owner | Our repo |
 |---|---|---|
-| Data ingestion, processing, governance, traditional ML | **Databricks** | `data-intelligence` (Finance PPM) |
+| Data ingestion, processing, governance, traditional ML | **Databricks** | `data-intelligence` |
 | Generative AI apps, agents, prompt engineering, RAG | **Foundry** | `agent-platform` |
 | Foundation model access, benchmarking, model catalog | **Foundry** | `agent-platform` |
-| Large-scale data warehousing, lakehouse, Unity Catalog | **Databricks** | `data-intelligence` (Finance PPM) |
-| Feature engineering, ETL, BI | **Databricks** | `data-intelligence` (Finance PPM) |
+| Large-scale data warehousing, lakehouse, Unity Catalog | **Databricks** | `data-intelligence` |
+| Feature engineering, ETL, BI | **Databricks** | `data-intelligence` |
 | Multi-agent orchestration, conversational AI | **Foundry** | `agent-platform` |
 
 ## The integration pattern

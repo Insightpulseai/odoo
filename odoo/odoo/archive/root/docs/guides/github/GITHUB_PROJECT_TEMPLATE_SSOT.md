@@ -4,9 +4,9 @@
 
 This repository manages GitHub Projects v2 as code:
 
-- Template specs: `odoo/ssot/github/projects/templates/*.project.yaml`
-- Template schema: `odoo/ssot/github/projects/templates/schema.project-template.v1.json`
-- Projection metadata: `odoo/ssot/github/projects/*.yaml`
+- Template specs: `ssot/github/projects/templates/*.project.yaml`
+- Template schema: `ssot/github/projects/templates/schema.project-template.v1.json`
+- Projection metadata: `ssot/github/projects/*.yaml`
 - Validator: `odoo/scripts/github/validate_project_template_ssot.py`
 - Sync tool: `odoo/scripts/github/sync_project_template.py`
 
@@ -22,8 +22,8 @@ Workflows:
 
 ## Add a new template
 
-1. Create a new `*.project.yaml` under `odoo/ssot/github/projects/templates/`.
-2. Create or update its projection file under `odoo/ssot/github/projects/`.
+1. Create a new `*.project.yaml` under `ssot/github/projects/templates/`.
+2. Create or update its projection file under `ssot/github/projects/`.
 3. Run local validation.
 4. Run local dry-run sync.
 
@@ -31,13 +31,13 @@ Workflows:
 
 ```bash
 python odoo/scripts/github/validate_project_template_ssot.py \
-  --spec "odoo/ssot/github/projects/templates/*.project.yaml" \
-  --schema "odoo/ssot/github/projects/templates/schema.project-template.v1.json" \
+  --spec "ssot/github/projects/templates/*.project.yaml" \
+  --schema "ssot/github/projects/templates/schema.project-template.v1.json" \
   --json-output "odoo/artifacts/github/projects/validation_report.json"
 
 python odoo/scripts/github/sync_project_template.py \
   --dry-run \
-  --spec odoo/ssot/github/projects/templates/finops_month_end.project.yaml \
+  --spec ssot/github/projects/templates/finops_month_end.project.yaml \
   --output odoo/artifacts/github/projects/drift_report.json
 ```
 

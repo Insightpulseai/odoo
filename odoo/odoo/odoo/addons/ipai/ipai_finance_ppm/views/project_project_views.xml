@@ -1,25 +1,2 @@
 <odoo>
-    <record id="view_project_project_form_ipai_ppm" model="ir.ui.view">
-        <field name="name">project.project.form.ipai.ppm</field>
-        <field name="model">project.project</field>
-        <field name="inherit_id" ref="project.edit_project"/>
-        <field name="arch" type="xml">
-            <xpath expr="//page[@name='settings']" position="after">
-                <page string="PPM Budget" name="ipai_ppm_budget">
-                    <group>
-                        <group>
-                            <field name="ipai_ppm_budget_amount"/>
-                            <field name="ipai_ppm_budget_currency_id" groups="base.group_multi_currency"/>
-                            <field name="ipai_ppm_cost_center"/>
-                        </group>
-                        <group>
-                            <field name="ipai_ppm_import_batch_id" readonly="1"/>
-                            <field name="ipai_ppm_imported_at" readonly="1"/>
-                            <field name="ipai_ppm_import_source" readonly="1"/>
-                        </group>
-                    </group>
-                </page>
-            </xpath>
-        </field>
-    </record>
 </odoo>

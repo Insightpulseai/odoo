@@ -71,7 +71,7 @@ Reverse ETL writes data from the analytical layer back into operational systems.
 - Writing to `account.move` (posted entries) from any external system
 - Updating Odoo `res.partner` contact data from analytics
 - Overwriting Supabase `ops.platform_events` rows
-- Any flow without an entry in `infra/ssot/azure/service-matrix.yaml`
+- Any flow without an entry in `ssot/azure/service-matrix.yaml`
 
 ## SAP integration flows
 

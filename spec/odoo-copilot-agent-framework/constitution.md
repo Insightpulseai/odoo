@@ -29,3 +29,47 @@
 13. **"Light" pack attachment means prompt context only.** When a pack attaches as "light" to an agent, it provides prompt segments and contextual knowledge but no dedicated tools or write capabilities. The agent can reference the pack's domain knowledge without executing pack-specific actions.
 
 14. **Router implementation is Python.** The router is implemented as `copilot_router.py` inside `addons/ipai/ipai_odoo_copilot/models/`. It is deterministic Python code, not an Agent Framework graph or YAML workflow. Router groundedness evaluation does not apply (no LLM inference).
+
+## Skill Construction Standard
+
+Every Odoo Copilot skill must be implemented as a governed unit, not an informal prompt.
+
+### Required components per skill
+Each skill must define:
+1. **Skill identity**
+   - stable `skill_id`
+   - display name
+   - domain/category
+   - owner/maintainer
+
+2. **Contract**
+   - required inputs
+   - optional inputs
+   - output types
+   - artifact types
+   - writeback targets
+   - failure modes
+
+3. **Policy**
+   - allowed execution modes
+   - permission requirements
+   - configuration prerequisites
+   - human-approval requirements
+   - audit/logging requirements
+
+4. **Runtime**
+   - context-pack requirements
+   - routing hints
+   - tools/adapters used
+   - timeout/retry behavior
+   - fallback behavior
+
+5. **UX**
+   - user-visible label
+   - preview behavior
+   - progress states
+   - approval prompts
+   - blocked-state messaging
+
+### Hard rule
+No capability may be exposed in Odoo Copilot unless it resolves to a concrete skill contract and runtime path.

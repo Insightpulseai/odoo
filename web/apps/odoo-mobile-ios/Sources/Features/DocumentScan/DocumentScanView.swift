@@ -6,7 +6,18 @@ struct DocumentScanView: View {
     @State private var showScanner = false
     @State private var isUploading = false
     @State private var lastResult: String?
+    @State private var uploadError: String?
     @Environment(\.dismiss) private var dismiss
+
+    let client: OdooClient
+    var resModel: String = "ir.attachment"
+    var resId: Int = 0
+
+    init(client: OdooClient = OdooClient(), resModel: String = "ir.attachment", resId: Int = 0) {
+        self.client = client
+        self.resModel = resModel
+        self.resId = resId
+    }
 
     var body: some View {
         NavigationStack {
@@ -19,6 +30,9 @@ struct DocumentScanView: View {
                     .foregroundColor(.secondary)
                 if let result = lastResult {
                     Text(result).font(.caption).foregroundColor(.green)
+                }
+                if let error = uploadError {
+                    Text(error).font(.caption).foregroundColor(.red)
                 }
                 Button(isUploading ? "Uploading…" : "Scan Document") { showScanner = true }
                     .buttonStyle(.borderedProminent)
@@ -33,8 +47,30 @@ struct DocumentScanView: View {
 
     private func upload(images: [UIImage]) async {
         isUploading = true
+        uploadError = nil
         defer { isUploading = false }
-        lastResult = "Uploaded \(images.count) page(s) — TODO: wire to OdooClient"
+
+        var uploadedCount = 0
+        for (index, image) in images.enumerated() {
+            guard let jpegData = image.jpegData(compressionQuality: 0.85) else { continue }
+            let name = "scan_\(Int(Date().timeIntervalSince1970))_p\(index + 1).jpg"
+            do {
+                _ = try await client.uploadDocument(
+                    name: name,
+                    data: jpegData,
+                    mimeType: "image/jpeg",
+                    resModel: resModel,
+                    resId: resId
+                )
+                uploadedCount += 1
+            } catch {
+                uploadError = "Failed on page \(index + 1): \(error.localizedDescription)"
+                break
+            }
+        }
+        if uploadedCount > 0 {
+            lastResult = "Uploaded \(uploadedCount)/\(images.count) page(s)"
+        }
     }
 }
 

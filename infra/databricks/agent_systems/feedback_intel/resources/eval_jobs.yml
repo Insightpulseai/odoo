@@ -1,5 +1,5 @@
 # Agent Evaluation Jobs
-# Automated evaluation of agent performance
+# Compute: Serverless (no VM SKU dependency)
 
 resources:
   jobs:
@@ -20,10 +20,7 @@ resources:
             source: WORKSPACE
             base_parameters:
               eval_dataset: "${var.catalog}.gold.agent_eval_dataset"
-          new_cluster:
-            spark_version: "14.3.x-scala2.12"
-            node_type_id: "Standard_DS3_v2"
-            num_workers: 1
+          environment_key: default
           timeout_seconds: 3600
 
         - task_key: publish_metrics
@@ -33,11 +30,13 @@ resources:
           notebook_task:
             notebook_path: ../src/evaluators/publish_metrics.py
             source: WORKSPACE
-          new_cluster:
-            spark_version: "14.3.x-scala2.12"
-            node_type_id: "Standard_DS3_v2"
-            num_workers: 1
+          environment_key: default
           timeout_seconds: 600
+
+      environments:
+        - environment_key: default
+          spec:
+            client: "1"
 
       # Run weekly
       schedule:

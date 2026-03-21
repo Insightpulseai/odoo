@@ -10,9 +10,6 @@ from . import ipai_policy
 from . import product_template
 from . import purchase_order
 from . import res_config_settings
-from . import settings_actions
-from . import foundry_provider_config
-from . import doc_digitization_config
 from . import enterprise_bridge
 from . import hr_expense_integration
 from . import maintenance_equipment_integration

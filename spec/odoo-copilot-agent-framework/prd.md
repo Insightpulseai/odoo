@@ -274,3 +274,177 @@ Agent-to-Odoo communication uses a narrow OpenAPI bridge, NOT direct JSON-RPC:
 - Gateway: Azure APIM (`apim-ipai-dev.azure-api.net/odoo`)
 - Auth: `X-IPAI-Key` header (API key via Azure Key Vault)
 - Backend: Azure Function or FastAPI, translates to Odoo JSON-RPC internally
+
+---
+
+## How Skills Are Built
+
+Odoo Copilot skills are built from five layers.
+
+### 1. Skill manifest
+Defines:
+- skill id
+- purpose
+- required inputs
+- output types
+- execution modes
+- permissions
+- prerequisites
+
+### 2. Context pack
+Supplies:
+- active Odoo model/record/view
+- user role and company/entity
+- relevant dates/periods
+- attached files/artifacts
+- related scenario/run/finding context
+- configured integrations and destinations
+
+### 3. Runtime adapter chain
+A skill may call one or more of:
+- Odoo ORM/API adapters
+- attachment/file analysis
+- artifact workspace
+- reporting/export adapters
+- payment adapters
+- Databricks handoff
+- external research/search adapters where permitted
+
+### 4. Output contract
+A skill must return one or more of:
+- answer
+- finding
+- remediation task
+- draft object
+- artifact
+- preview
+- execution request
+- handoff destination
+- blocked-state explanation
+
+### 5. Governance wrapper
+Every skill must be wrapped by:
+- execution-mode control
+- permission checks
+- configuration checks
+- audit logging
+- preview/review rules
+- writeback/payment guardrails
+
+## Canonical Skill Lifecycle
+
+1. User invokes Copilot
+2. Router selects candidate skill(s)
+3. Skill validates prerequisites and permissions
+4. Skill assembles required context pack
+5. Skill runs adapters/tools
+6. Skill returns typed output(s)
+7. Copilot renders preview / asks for approval / executes allowed action
+8. Copilot logs run, outputs, decisions, and resulting state
+
+## Skill Types
+
+### A. Informational skills
+Return:
+- answers
+- explanations
+- summaries
+- recommendations
+
+Examples:
+- `finance_qa`
+- `policy_guard`
+- `finance_audit_translation`
+
+### B. Sandbox-generative skills
+Return:
+- artifacts
+- workbooks
+- reports
+- templates
+- evidence packs
+
+Examples:
+- `artifact_workspace`
+- `report_builder`
+- `bir_template_builder`
+- `attachment_packager`
+
+### C. Record-producing skills
+Return:
+- draft Odoo objects
+- findings
+- remediation tasks
+- scenario runs
+
+Examples:
+- `document_intake`
+- `reconciliation`
+- `close_orchestrator`
+
+### D. Governed execution skills
+Return:
+- execution requests
+- payment proposals
+- attach/export/writeback actions
+- Databricks handoff
+
+Examples:
+- `payment_ops`
+- `export_ops`
+- `databricks_handoff`
+
+## Canonical Skill Manifest Example
+
+```yaml
+skill_id: payment_ops
+display_name: Payment Operations
+category: finance_execution
+description: Prepare and govern payment proposals and execution requests.
+inputs:
+  required:
+    - company_id
+    - selected_record_ids
+  optional:
+    - payment_date
+    - payment_journal_id
+    - attached_files
+outputs:
+  - payment_proposal
+  - blocker_report
+  - execution_request
+execution_modes:
+  - prepare_only
+  - ask_before_acting
+permissions:
+  any_of:
+    - copilot_finance_operator
+    - copilot_close_approver
+prerequisites:
+  - payment_configuration_present
+  - payable_records_selected
+human_approval_required:
+  - execution_request
+preview_required: true
+writeback_targets:
+  - account.payment.register
+  - payment_batch
+handoff_targets:
+  - databricks_dashboard/payment-ops
+```
+
+## Skill Design Checklist
+
+A skill is not ready unless all are true:
+
+- It has a stable `skill_id`
+- It declares required inputs
+- It declares typed outputs
+- It declares allowed execution modes
+- It declares permission prerequisites
+- It declares config prerequisites
+- It declares whether preview is required
+- It declares whether approval is required
+- It logs runs and outcomes
+- It has blocked-state behavior
+- It does not rely on narrative-only responses for operational workflows

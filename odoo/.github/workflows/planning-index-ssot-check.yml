@@ -1,5 +1,3 @@
-# DISABLED: GHA runners non-functional (billing). CI migrating to Azure DevOps Pipelines.
-# To re-enable: remove `if: false` from jobs.
 name: Planning Index SSOT Check
 
 on:
@@ -25,7 +23,6 @@ permissions:
 jobs:
   validate-index:
     name: Validate planning system index
-    if: false
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -42,7 +39,6 @@ jobs:
 
   validate-crosslayer:
     name: Validate cross-layer consistency
-    if: false
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4

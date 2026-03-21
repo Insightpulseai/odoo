@@ -1,7 +1,8 @@
 // InsightPulse AI — Azure Infrastructure
 // Main deployment template
 //
-// Modules: Key Vault, Storage, Databricks, App Service, Front Door, APIM, Odoo ACA
+// Modules: Key Vault, Storage, Databricks, App Service, Front Door, APIM, Odoo ACA,
+//          Log Analytics, Application Insights
 
 targetScope = 'resourceGroup'
 
@@ -97,23 +98,13 @@ param odooCpuCron string = '0.5'
 @description('Memory for odoo-cron')
 param odooMemoryCron string = '1Gi'
 
-@description('Enable VNet deployment')
-param enableVnet bool = false
-
-@description('VNet address prefix')
-param vnetAddressPrefix string = '10.0.0.0/16'
-
-@description('Enable Log Analytics deployment')
-param enableLogAnalytics bool = false
+@description('Enable Log Analytics workspace')
+param enableLogAnalytics bool = true
 
 @description('Log Analytics retention in days')
-param logAnalyticsRetentionDays int = 90
-
-@description('Enable Azure Files for Odoo filestore')
-param enableAzureFiles bool = false
-
-@description('Azure Files share quota in GB')
-param azureFilesQuotaGb int = 50
+@minValue(30)
+@maxValue(730)
+param logAnalyticsRetentionDays int = 30
 
 // Variables
 var resourcePrefix = '${baseName}-${environment}'
@@ -121,39 +112,6 @@ var tags = {
   Environment: environment
   Project: 'InsightPulse AI'
   ManagedBy: 'Bicep'
-}
-
-// Virtual Network
-module vnet 'modules/vnet.bicep' = if (enableVnet) {
-  name: 'vnetDeployment'
-  params: {
-    vnetName: '${resourcePrefix}-vnet'
-    location: location
-    addressPrefix: vnetAddressPrefix
-    tags: tags
-  }
-}
-
-// Log Analytics Workspace
-module logAnalytics 'modules/log-analytics.bicep' = if (enableLogAnalytics) {
-  name: 'logAnalyticsDeployment'
-  params: {
-    workspaceName: '${resourcePrefix}-law'
-    location: location
-    retentionInDays: logAnalyticsRetentionDays
-    tags: tags
-  }
-}
-
-// Azure Files for Odoo filestore
-module azureFiles 'modules/azure-files.bicep' = if (enableAzureFiles) {
-  name: 'azureFilesDeployment'
-  params: {
-    storageAccountName: replace('${resourcePrefix}files', '-', '')
-    location: location
-    shareQuotaGb: azureFilesQuotaGb
-    tags: tags
-  }
 }
 
 // Key Vault for secrets
@@ -227,6 +185,28 @@ module apim 'modules/apim.bicep' = if (enableApim) {
   }
 }
 
+// Log Analytics Workspace (central observability)
+module logAnalytics 'modules/log-analytics.bicep' = if (enableLogAnalytics) {
+  name: 'logAnalyticsDeployment'
+  params: {
+    workspaceName: '${resourcePrefix}-law'
+    location: location
+    retentionInDays: logAnalyticsRetentionDays
+    tags: tags
+  }
+}
+
+// Application Insights (APM telemetry)
+module appInsights 'modules/app-insights.bicep' = if (enableLogAnalytics) {
+  name: 'appInsightsDeployment'
+  params: {
+    appInsightsName: '${resourcePrefix}-ai'
+    location: location
+    workspaceId: logAnalytics.outputs.workspaceId
+    tags: tags
+  }
+}
+
 // Odoo ACA Runtime (web + worker + cron)
 module odooServices 'modules/aca-odoo-services.bicep' = if (enableOdooServices) {
   name: 'odooServicesDeployment'
@@ -266,6 +246,7 @@ output odooWebFqdn string = enableOdooServices ? odooServices.outputs.odooWebFqd
 output odooWebName string = enableOdooServices ? odooServices.outputs.odooWebName : 'not-deployed'
 output odooWorkerName string = enableOdooServices ? odooServices.outputs.odooWorkerName : 'not-deployed'
 output odooCronName string = enableOdooServices ? odooServices.outputs.odooCronName : 'not-deployed'
-output vnetName string = enableVnet ? vnet.outputs.vnetName : 'not-deployed'
 output logAnalyticsWorkspaceId string = enableLogAnalytics ? logAnalytics.outputs.workspaceId : 'not-deployed'
-output azureFilesAccountName string = enableAzureFiles ? azureFiles.outputs.storageAccountName : 'not-deployed'
+output logAnalyticsCustomerId string = enableLogAnalytics ? logAnalytics.outputs.customerId : 'not-deployed'
+output appInsightsConnectionString string = enableLogAnalytics ? appInsights.outputs.connectionString : 'not-deployed'
+output appInsightsInstrumentationKey string = enableLogAnalytics ? appInsights.outputs.instrumentationKey : 'not-deployed'
