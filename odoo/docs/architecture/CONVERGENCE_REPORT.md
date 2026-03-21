@@ -11,11 +11,11 @@ All active repositories now match the canonical descriptions and role boundaries
 |------------|--------|------------|---------------------|
 | `.github` | ACTIVE | PRIVATE | Yes |
 | `odoo` | ACTIVE | PUBLIC | Yes |
-| `platform` | ACTIVE | PRIVATE | Yes |
-| `data-intelligence` | ACTIVE | PRIVATE | Yes |
+| `ops-platform` | ACTIVE | PRIVATE | Yes |
+| `lakehouse` | ACTIVE | PRIVATE | Yes |
 | `infra` | ACTIVE | PRIVATE | Yes |
 | `web` | ACTIVE | PRIVATE | Yes |
-| `design` | ACTIVE | INTERNAL | Yes |
+| `design-system` | ACTIVE | INTERNAL | Yes |
 | `agents` | ACTIVE | PUBLIC | Yes |
 | `automations` | ACTIVE | PRIVATE | Yes |
 | `templates` | ACTIVE | PRIVATE | Yes |
@@ -26,10 +26,10 @@ Archived repositories are frozen and de-emphasized. Descriptions were not update
 | Repository | Status | Target Anchor |
 |------------|--------|---------------|
 | `template-factory` | ARCHIVED | `templates` |
-| `plugin-marketplace`| ARCHIVED | `platform` / `agents` |
+| `plugin-marketplace`| ARCHIVED | `ops-platform` / `agents` |
 | `plugin-agents` | ARCHIVED | `agents` |
 | `dev-environment` | ARCHIVED | `.github` / `templates` |
-| `ops-console` | ARCHIVED | `web` / `platform` |
+| `ops-console` | ARCHIVED | `web` / `ops-platform` |
 | `app-crm` | ARCHIVED | `web` / `odoo` |
 | `learn` | ARCHIVED | N/A |
 | `fluent-owl` | ARCHIVED | N/A |
@@ -46,7 +46,7 @@ The current team structure matches the canonical 5-layer model exactly:
 - `platform-core`
 - `infra-devops`
 - `data-ai`
-- `design`
+- `design-system`
 - `automation-ops`
 
 ## 3. Project Model

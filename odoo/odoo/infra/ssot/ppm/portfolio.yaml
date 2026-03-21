@@ -42,7 +42,7 @@ initiatives:
   - id: INIT-004
     name: "DNS & Mail SSOT Convergence"
     owner: tbwa
-    status: active
+    status: completed
     spec_slug: null
     github_label: dns
     start_date: "2026-02-01"
@@ -56,3 +56,83 @@ initiatives:
     github_label: ios
     start_date: "2026-02-15"
     target_date: "2026-04-30"
+
+  - id: INIT-006
+    name: "Agent Factory V2 — Foundry + MCP Governance"
+    owner: tbwa
+    status: active
+    spec_slug: null
+    github_label: agent-factory
+    start_date: "2026-03-01"
+    target_date: "2026-06-30"
+    epics: ["E-AGT-01"]
+
+  - id: INIT-007
+    name: "Azure Self-Host Migration (DO → Azure ACA)"
+    owner: tbwa
+    status: active
+    spec_slug: azure-selfhost-migration
+    github_label: azure-migration
+    start_date: "2026-03-10"
+    target_date: "2026-04-15"
+    epics: ["E-FND-01"]
+
+  - id: INIT-008
+    name: "Data Intelligence Repo Migration"
+    owner: tbwa
+    status: active
+    spec_slug: data-intelligence
+    github_label: data-intelligence
+    start_date: "2026-03-15"
+    target_date: "2026-04-30"
+    epics: ["E-DI-01"]
+
+  - id: INIT-009
+    name: "BIR Tax Compliance — PH Regulatory"
+    owner: tbwa
+    status: active
+    spec_slug: bir-tax-compliance
+    github_label: bir
+    start_date: "2026-01-15"
+    target_date: "2026-06-30"
+    epics: ["E-FND-02"]
+
+  - id: INIT-010
+    name: "Odoo Copilot on Azure (Foundry + Entra)"
+    owner: tbwa
+    status: active
+    spec_slug: ipai-odoo-copilot-azure
+    github_label: copilot
+    start_date: "2026-03-01"
+    target_date: "2026-09-30"
+    epics: ["E-COP-01", "E-KAPA-01"]
+
+  - id: INIT-011
+    name: "Bank Reconciliation Agent"
+    owner: tbwa
+    status: active
+    spec_slug: null
+    github_label: bank-recon
+    start_date: "2026-03-10"
+    target_date: "2026-05-31"
+    epics: ["E-FND-02"]
+
+  - id: INIT-012
+    name: "AP Invoice Agent"
+    owner: tbwa
+    status: active
+    spec_slug: null
+    github_label: ap-invoice
+    start_date: "2026-03-10"
+    target_date: "2026-05-31"
+    epics: ["E-FND-02"]
+
+  - id: INIT-013
+    name: "Entra ID Migration (Keycloak → Entra)"
+    owner: tbwa
+    status: active
+    spec_slug: null
+    github_label: entra
+    start_date: "2026-03-17"
+    target_date: "2026-06-30"
+    epics: ["E-FND-01"]

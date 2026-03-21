@@ -67,10 +67,11 @@
                 <field name="device_type"/>
                 <filter name="online" string="Online" domain="[('status', '=', 'online')]"/>
                 <filter name="offline" string="Offline" domain="[('status', '=', 'offline')]"/>
-                <separator/>
-                <filter name="group_type" string="Device Type" context="{'group_by': 'device_type'}"/>
-                <filter name="group_status" string="Status" context="{'group_by': 'status'}"/>
-                <filter name="group_company" string="Company" context="{'group_by': 'company_id'}"/>
+                <group expand="0" string="Group By">
+                    <filter name="group_type" string="Device Type" context="{'group_by': 'device_type'}"/>
+                    <filter name="group_status" string="Status" context="{'group_by': 'status'}"/>
+                    <filter name="group_company" string="Company" context="{'group_by': 'company_id'}"/>
+                </group>
             </search>
         </field>
     </record>

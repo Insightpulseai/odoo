@@ -68,7 +68,7 @@
 |**Orchestration**         |n8n                         |Target: Container App (`cae-ipai-dev` or `ipai-odoo-dev-env`)                         |Workflow automation, connector glue, retry logic                              |
 |**AI Services**           |Azure Cognitive             |`oai-ipai-dev` (OpenAI), `vision-ipai-dev`, `lang-ipai-dev`, `docai-ipai-dev`         |GPT-4, OCR, NLP, Document Intelligence                                        |
 |**Search**                |Azure AI Search             |`srch-ipai-dev` (`rg-ipai-ai-dev`)                                                    |Semantic search over Delta Lake + Supabase                                    |
-|**AI Foundry**            |Microsoft Foundry           |`data-intel-ph-resource` (`rg-data-intel-ph`, East US 2)                              |Agent runtime, tracing, evaluations, monitoring                               |
+|**AI Foundry**            |Azure AI Foundry            |`data-intel-ph-resource` (`rg-data-intel-ph`, East US 2)                              |AI evaluation, fine-tuning, experiment workspace                              |
 |**Public Edge**           |Azure Front Door            |Not yet provisioned — P1                                                               |TLS termination, WAF, hostname routing                                        |
 |**DNS**                   |Cloudflare                  |`insightpulseai.com` (authoritative)                                                  |All DNS; mail DNS-only; app records proxy during transition                   |
 |**Identity**              |Microsoft Entra ID          |`id-ipai-agents-dev`, `id-ipai-aca-dev`, `id-ipai-databricks-dev`, `dbmanagedidentity`|Workforce SSO + service Managed Identities                                    |
@@ -77,46 +77,6 @@
 |**CI/CD**                 |Azure DevOps                |`insightpulseai` org + `ipai-build-pool` (Managed DevOps Pool)                        |Pipeline execution for all services                                           |
 
 **Hard boundary:** Databricks, n8n, and Azure Front Door never become SSOT or SOR. They read from Odoo/Supabase and publish only *derived artifacts* back to Supabase `ai.*`.
-
------
-
-## 1b. Canonical Operating Model — Six-Plane Architecture
-
-The platform follows a **six-plane Azure-first architecture**. The three systems below form the operational core:
-
-- **Odoo CE 19** = transactional system of record (Business Systems plane)
-- **Azure Databricks + ADLS/Delta + Unity Catalog** = governed data intelligence core (Data Intelligence plane, canonical — not optional)
-- **Microsoft Foundry** = agent factory and hosted runtime (Agent / AI Runtime plane)
-
-| # | Plane | Scope | Key Systems |
-|---|-------|-------|-------------|
-| 1 | Governance / Control | Planning, code, release, policy | Azure Boards, GitHub, Azure Pipelines, Azure Policy |
-| 2 | Identity / Network / Security | Auth, edge, secrets, API governance | Entra ID, Front Door, Key Vault, APIM |
-| 3 | Business Systems | Transactional ERP, automation | Odoo CE 19, n8n |
-| 4 | Data Intelligence | Lakehouse, ML, BI serving | Databricks, ADLS Gen2, Unity Catalog |
-| 5 | Agent / AI Runtime | Agent factory, tracing, evals | Microsoft Foundry, Azure OpenAI, Document Intelligence |
-| 6 | Experience / Domain Apps | User-facing surfaces | Ops Console, BI surfaces, Copilot UIs, Slack |
-
-**APIM boundary:** Azure API Management is the governed ingress/egress and policy boundary. It is **not** the system of record and **not** the agent runtime.
-
-**Module policy:** CE + OCA is the primary EE parity vehicle. `ipai_*` modules are thin bridge/meta/integration glue only — not a general business capability lane.
-
-> Machine-readable SSOT: `ssot/architecture/platform-boundaries.yaml`
-
-## 1c. Truth-Authority Model
-
-Plane membership is architectural placement. Truth authority is a **separate** operational model.
-
-| Authority | System | Description |
-|-----------|--------|-------------|
-| Planned truth | Azure Boards | Work items, sprints, epics, capacity planning |
-| Code truth | GitHub | Source code, PRs, branch policies, CODEOWNERS |
-| Release truth | Azure Pipelines | Build/release gates, environment promotions |
-| Live inventory truth | Azure Resource Graph | Actual Azure resource state, drift detection |
-| Agent/runtime truth | Microsoft Foundry | Agent deployments, model versions, trace logs, eval results |
-| Intended-state truth | Repo SSOT (`ssot/`) | Machine-readable YAML driving IaC, CI gates, and config |
-
-No plane table may substitute for this truth-authority model.
 
 -----
 
@@ -212,7 +172,7 @@ No plane table may substitute for this truth-authority model.
 
 ```
 Cloudflare DNS
-├── Legacy origin: 178.128.112.214 (DigitalOcean — DEPRECATED 2026-03-15)
+├── Legacy origin: 178.128.112.214 (DigitalOcean — all remaining apps)
 └── Azure origin:  4.193.100.31   (Azure VM — supabase, n8n-azure)
 ```
 
@@ -228,20 +188,19 @@ Cloudflare DNS (authoritative, DNS-only for mail)
 
 |Hostname                          |Current               |Action                           |Target Origin                |Priority|
 |----------------------------------|----------------------|---------------------------------|-----------------------------|--------|
-|`erp`                             |`178.128.112.214` DO  |DEPRECATED (2026-03-15)          |AFD → `ipai-odoo-dev-web`    |P1      |
-|`mcp`                             |`178.128.112.214` DO  |DEPRECATED (2026-03-15)          |AFD → MCP Container App      |P1      |
-|`auth`                            |`178.128.112.214` DO  |DEPRECATED (2026-03-15)          |AFD → Entra ID gateway       |P1      |
-|`n8n`                             |`178.128.112.214` DO  |DEPRECATED (2026-03-15)          |AFD → n8n Container App      |P1      |
+|`erp`                             |`178.128.112.214` DO  |**Migrate**                      |AFD → `ipai-odoo-dev-web`    |P1      |
+|`mcp`                             |`178.128.112.214` DO  |**Migrate**                      |AFD → MCP Container App      |P1      |
+|`auth`                            |`178.128.112.214` DO  |**Migrate**                      |AFD → Entra ID gateway       |P1      |
+|`n8n`                             |`178.128.112.214` DO  |**Migrate + retire DO**          |AFD → n8n Container App      |P1      |
 |`supabase`                        |`4.193.100.31` Azure  |**Wire to AFD**                  |AFD → `vm-ipai-supabase-dev` |P2      |
 |`n8n-azure`                       |`4.193.100.31` Azure  |**Rename to `n8n`** post-migration|Merge with n8n above         |P2      |
-|`plane`                           |`178.128.112.214` DO  |DEPRECATED (2026-03-15)          |AFD → `ipai-plane-dev`       |P2      |
-|`crm`                             |`178.128.112.214` DO  |DEPRECATED (2026-03-15)          |AFD → `ipai-crm-dev`         |P2      |
-|`ocr`                             |`178.128.112.214` DO  |DEPRECATED (2026-03-15)          |AFD → `docai-ipai-dev`       |P2      |
-|`www` / `@`                       |`178.128.112.214` DO  |DEPRECATED (2026-03-15)          |AFD → landing page           |P2      |
-|`shelf`                           |`178.128.112.214` DO  |Retire — deprecated 2026-03-11   |AFD → `ipai-shelf-dev`       |P3      |
-|`superset`                        |`178.128.112.214` DO  |DEPRECATED (2026-03-15)          |Databricks Dashboards + Genie|P3      |
-|`mail`, MX, SPF, DKIM, DMARC     |Zoho SMTP              |**Keep DNS-only — never touch**  |No change                    |—       |
-|`mg` (`mg.insightpulseai.com`)    |Mailgun                |Deprecated — Zoho SMTP canonical |No change (remove when safe) |—       |
+|`plane`                           |`178.128.112.214` DO  |**Migrate**                      |AFD → `ipai-plane-dev`       |P2      |
+|`crm`                             |`178.128.112.214` DO  |**Migrate**                      |AFD → `ipai-crm-dev`         |P2      |
+|`ocr`                             |`178.128.112.214` DO  |**Migrate**                      |AFD → `docai-ipai-dev`       |P2      |
+|`www` / `@`                       |`178.128.112.214` DO  |**Migrate**                      |AFD → landing page           |P2      |
+|`shelf`                           |`178.128.112.214` DO  |**Keep Vercel**                  |`shelfnu-two.vercel.app`     |P3      |
+|`superset`                        |`178.128.112.214` DO  |**Evaluate retire**              |Databricks Dashboards + Genie|P3      |
+|`mail`, `mg`, MX, SPF, DKIM, DMARC|Zoho/Mailgun          |**Keep DNS-only — never touch**  |No change                    |—       |
 
 -----
 
@@ -380,7 +339,7 @@ Finance Copilot · BIR Compliance · MCP Agents · Ops Console
 
 **Source control:** GitHub — `InsightPulseAI/odoo`, `InsightPulseAI/databricks-pipelines`
 **Runner:** Azure DevOps (`insightpulseai` org) via `ipai-build-pool` Managed DevOps Pool
-**Targets:** `ipai-odoo-dev-env` (Container Apps), `dbw-ipai-dev` (Databricks). Vercel is deprecated (2026-03-11) — not an active deployment surface.
+**Targets:** `ipai-odoo-dev-env` (Container Apps), `dbw-ipai-dev` (Databricks), Vercel (Shelf/BuildOps)
 
 ```
 PR → Lint (sqlfluff · ruff · markdownlint · odoo-xml-lint [<tree> banned]) →

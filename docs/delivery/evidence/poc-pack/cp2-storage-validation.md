@@ -1,33 +1,27 @@
-# CP-2: ACA Persistent Storage Validation Evidence
+# CP-2 Storage Validation — Azure Files + ACA Mounts
 
-## Date: 2026-03-19
-## Target: ipai-odoo-dev-web (rg-ipai-dev)
+**Date**: 2026-03-20
+**Method**: Azure CLI (az containerapp show, az storage share list)
 
-## Volume Mount Status
+## Storage Account
+- Name: stipaiodoodev
+- Kind: StorageV2
+- SKU: Standard_LRS
+- Location: southeastasia
+- State: Succeeded
 
-**Status: NOT CONFIGURED**
+## Azure Files Share
+- Share name: odoo-filestore
+- ACA env storage name: odoofilestore
+- Access mode: ReadWrite
 
-- `properties.template.volumes`: null (no volumes defined)
-- `properties.template.containers[0].volumeMounts`: null (no mounts)
-- No storage accounts found in `rg-ipai-dev`
+## ACA Volume Mounts
 
-## What this means
+| App | Volume | Mount Path | Type |
+|-----|--------|------------|------|
+| ipai-odoo-dev-web | odoo-filestore | /var/lib/odoo | AzureFile |
+| ipai-odoo-dev-worker | odoo-filestore | /var/lib/odoo | AzureFile |
+| ipai-odoo-dev-cron | odoo-filestore | /var/lib/odoo | AzureFile |
 
-The Odoo filestore (`/var/lib/odoo`) is currently using ephemeral container storage. Uploads, attachments, and generated reports will be lost on container restart/redeploy.
-
-## Required fix
-
-1. Create Azure Files share (or use existing Azure Files in another RG)
-2. Add volume to ACA environment
-3. Mount at `/var/lib/odoo` on all 3 Odoo containers (web, worker, cron)
-4. Verify persistence across restart
-
-## Bicep reference
-
-`infra/azure/modules/azure-files.bicep` exists in the repo but has not been applied to the ACA configuration.
-
-## Assessment
-
-**Status: BLOCKED**
-
-This is a go-live blocker. Filestore persistence must be proven before production use.
+## Verdict
+- CP-2: **DONE** — All 3 ACA apps share persistent Azure Files storage

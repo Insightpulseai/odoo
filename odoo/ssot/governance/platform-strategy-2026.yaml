@@ -15,8 +15,8 @@
 # =============================================================================
 
 schema_version: "1.0"
-last_updated: "2026-03-18"
-revision: "2.1 — Task status sync + KPI namespace fix (KPI-* → SKPI-*)"
+last_updated: "2026-03-14"
+revision: "2.0 — Revised target state with 7 SMART objectives"
 
 strategy:
   id: ipai-platform-2026
@@ -371,91 +371,91 @@ okrs:
 # KPIs
 # =============================================================================
 kpis:
-  - id: SKPI-001
+  - id: KPI-001
     name: Repo ownership codification coverage
     description: Percentage of active repos with codified boundaries
     formula: coded_repos / active_repos * 100
     target: 100
     unit: percent
 
-  - id: SKPI-002
+  - id: KPI-002
     name: Governance CI enforcement
     description: Whether governance CI checks run on all relevant PRs
     formula: ci_check_enabled
     target: true
     unit: boolean
 
-  - id: SKPI-003
+  - id: KPI-003
     name: Azure resource ownership mapping coverage
     description: Percentage of core Azure resources mapped to an owning repo/domain
     formula: mapped_resources / core_resources * 100
     target: 100
     unit: percent
 
-  - id: SKPI-004
+  - id: KPI-004
     name: Foundry agent repo mirror existence
     description: Whether the active agent has repo-backed manifest and prompt
     formula: repo_backed_agent_exists
     target: true
     unit: boolean
 
-  - id: SKPI-005
+  - id: KPI-005
     name: Evaluation artifact coverage
     description: Count of required evaluation categories scaffolded
     formula: count(eval_categories_present)
     target: 3
     unit: count
 
-  - id: SKPI-006
+  - id: KPI-006
     name: Odoo bridge Foundry alignment
     description: Whether Odoo bridge config validates correct Foundry endpoint taxonomy
     formula: bridge_alignment_pass
     target: true
     unit: boolean
 
-  - id: SKPI-007
+  - id: KPI-007
     name: Foundry mirror completeness
     description: Percentage of observed portal assets mirrored into inventory
     formula: mirrored_foundry_assets / observed_foundry_assets * 100
     target: 100
     unit: percent
 
-  - id: SKPI-008
+  - id: KPI-008
     name: Curated AI data contract count
     description: Count of approved Databricks AI-facing data contracts
     formula: count(curated_ai_contracts)
     target: 5
     unit: count
 
-  - id: SKPI-009
+  - id: KPI-009
     name: Boundary-protection rule presence
     description: Whether validators explicitly block prompt-agent ownership in lakehouse
     formula: boundary_rule_exists
     target: true
     unit: boolean
 
-  - id: SKPI-010
+  - id: KPI-010
     name: Foundry-Databricks doctrine documentation coverage
     description: Whether the separation-of-concerns doctrine is documented and linked
     formula: doctrine_docs_present
     target: true
     unit: boolean
 
-  - id: SKPI-011
+  - id: KPI-011
     name: Evidence mapping coverage
     description: Percentage of key results with at least one evidence mapping
     formula: key_results_with_evidence / total_key_results * 100
     target: 100
     unit: percent
 
-  - id: SKPI-012
+  - id: KPI-012
     name: Validation coverage for governance-critical workflows
     description: Percentage of governance-critical workflows with CI or runtime validation
     formula: validated_workflows / governance_critical_workflows * 100
     target: 100
     unit: percent
 
-  - id: SKPI-013
+  - id: KPI-013
     name: Machine-generated reporting readiness
     description: Whether status reporting can be derived from SSOT plus evidence
     formula: reporting_pipeline_ready
@@ -604,9 +604,7 @@ tasks:
     name: Verify primary business domain in Microsoft 365
     owner: identity-platform
     due: 2026-04-07
-    status: done
-    completed: 2026-03-18
-    evidence: "insightpulseai.com verified and set as default domain in M365"
+    status: not_started
     priority: critical
 
   - id: TASK-002
@@ -614,9 +612,7 @@ tasks:
     name: Create 2 emergency access accounts and assign least-privilege roles
     owner: identity-platform
     due: 2026-04-10
-    status: done
-    completed: 2026-03-18
-    evidence: "admin@ and emergency-admin@ accounts created with Global Admin + MFA"
+    status: not_started
     priority: critical
 
   - id: TASK-003
@@ -624,8 +620,7 @@ tasks:
     name: Enable MFA baseline and eliminate day-to-day Global Admin usage
     owner: identity-platform
     due: 2026-04-14
-    status: in_progress
-    evidence: "MFA assigned to both admins. Security Defaults temporarily disabled for bootstrap — re-enable after enrollment."
+    status: not_started
     priority: critical
 
   - id: TASK-004
@@ -633,9 +628,7 @@ tasks:
     name: Operationalize ipai-platform project with dev/staging/prod environments
     owner: devops-platform
     due: 2026-04-14
-    status: done
-    completed: 2026-03-10
-    evidence: "ADO project ipai-platform created (id: b4267980), environments defined in azure_devops.yaml"
+    status: not_started
     priority: critical
 
   - id: TASK-005
@@ -643,9 +636,7 @@ tasks:
     name: Create 3 self-hosted agent pools and 3 WIF service connections
     owner: devops-platform
     due: 2026-04-21
-    status: done
-    completed: 2026-03-15
-    evidence: "ci-cd.yml references ipai-build-pool and sc-azure-dev-platform WIF connection"
+    status: not_started
     priority: high
 
   - id: TASK-006
@@ -703,8 +694,7 @@ tasks:
     name: Inventory all active n8n workflows and cron/webhook jobs
     owner: automations-platform
     due: 2026-06-02
-    status: in_progress
-    evidence: "Automation sweep shipped (commit f4f31af31): 14 canonical, 42 stray, 190 stale-ref files inventoried"
+    status: not_started
     priority: high
 
   - id: TASK-013

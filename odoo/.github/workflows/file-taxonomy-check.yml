@@ -1,5 +1,3 @@
-# DISABLED: GHA runners non-functional (billing). CI migrating to Azure DevOps Pipelines.
-# To re-enable: remove `if: false` from jobs.
 name: File Taxonomy Check
 
 on:
@@ -8,7 +6,6 @@ on:
 
 jobs:
   check-taxonomy:
-    if: false
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4

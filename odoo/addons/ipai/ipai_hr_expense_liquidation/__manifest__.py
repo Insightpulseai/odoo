@@ -88,7 +88,7 @@ License: LGPL-3
         'report/expense_liquidation_report.xml',
     ],
     'demo': [],
-    'installable': False,  # Skeleton — no data/views/security files yet
+    'installable': True,
     'application': False,
     'auto_install': False,
 }

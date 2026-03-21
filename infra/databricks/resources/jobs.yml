@@ -1,4 +1,5 @@
 # Databricks Jobs Configuration
+# Compute: Serverless (no VM SKU dependency — avoids Southeast Asia stockouts)
 
 resources:
   jobs:
@@ -20,15 +21,14 @@ resources:
           notebook_task:
             notebook_path: ../notebooks/bronze/ingest_notion.py
             source: WORKSPACE
-          new_cluster:
-            spark_version: "14.3.x-scala2.12"
-            node_type_id: "Standard_DS3_v2"
-            num_workers: 1
-            spark_env_vars:
-              NOTION_TOKEN: "{{secrets/finance-ppm/notion_token}}"
-              DATABRICKS_CATALOG: "${var.catalog}"
+          environment_key: default
           timeout_seconds: 1800
           max_retries: 2
+
+      environments:
+        - environment_key: default
+          spec:
+            client: "1"
 
       schedule:
         quartz_cron_expression: "0 */15 * * * ?"
@@ -53,18 +53,14 @@ resources:
           notebook_task:
             notebook_path: ../notebooks/bronze/ingest_azure_rg.py
             source: WORKSPACE
-          new_cluster:
-            spark_version: "14.3.x-scala2.12"
-            node_type_id: "Standard_DS3_v2"
-            num_workers: 1
-            spark_env_vars:
-              AZURE_SUBSCRIPTION_ID: "{{secrets/finance-ppm/azure_subscription_id}}"
-              AZURE_CLIENT_ID: "{{secrets/finance-ppm/azure_client_id}}"
-              AZURE_CLIENT_SECRET: "{{secrets/finance-ppm/azure_client_secret}}"
-              AZURE_TENANT_ID: "{{secrets/finance-ppm/azure_tenant_id}}"
-              DATABRICKS_CATALOG: "${var.catalog}"
+          environment_key: default
           timeout_seconds: 1800
           max_retries: 2
+
+      environments:
+        - environment_key: default
+          spec:
+            client: "1"
 
       schedule:
         quartz_cron_expression: "0 0 */6 * * ?"
@@ -91,10 +87,7 @@ resources:
             base_parameters:
               table_name: programs
             source: WORKSPACE
-          new_cluster:
-            spark_version: "14.3.x-scala2.12"
-            node_type_id: "Standard_DS3_v2"
-            num_workers: 1
+          environment_key: default
           timeout_seconds: 900
 
         - task_key: transform_projects
@@ -106,10 +99,7 @@ resources:
             source: WORKSPACE
           depends_on:
             - task_key: transform_programs
-          new_cluster:
-            spark_version: "14.3.x-scala2.12"
-            node_type_id: "Standard_DS3_v2"
-            num_workers: 1
+          environment_key: default
           timeout_seconds: 900
 
         - task_key: transform_budget_lines
@@ -121,10 +111,7 @@ resources:
             source: WORKSPACE
           depends_on:
             - task_key: transform_projects
-          new_cluster:
-            spark_version: "14.3.x-scala2.12"
-            node_type_id: "Standard_DS3_v2"
-            num_workers: 1
+          environment_key: default
           timeout_seconds: 900
 
         - task_key: transform_risks
@@ -136,11 +123,13 @@ resources:
             source: WORKSPACE
           depends_on:
             - task_key: transform_projects
-          new_cluster:
-            spark_version: "14.3.x-scala2.12"
-            node_type_id: "Standard_DS3_v2"
-            num_workers: 1
+          environment_key: default
           timeout_seconds: 900
+
+      environments:
+        - environment_key: default
+          spec:
+            client: "1"
 
       schedule:
         quartz_cron_expression: "0 0 * * * ?"
@@ -165,10 +154,7 @@ resources:
           notebook_task:
             notebook_path: ../notebooks/gold/budget_vs_actual.py
             source: WORKSPACE
-          new_cluster:
-            spark_version: "14.3.x-scala2.12"
-            node_type_id: "Standard_DS3_v2"
-            num_workers: 2
+          environment_key: default
           timeout_seconds: 1800
 
         - task_key: forecast
@@ -178,10 +164,7 @@ resources:
             source: WORKSPACE
           depends_on:
             - task_key: budget_vs_actual
-          new_cluster:
-            spark_version: "14.3.x-scala2.12"
-            node_type_id: "Standard_DS3_v2"
-            num_workers: 2
+          environment_key: default
           timeout_seconds: 1800
 
         - task_key: risk_summary
@@ -189,10 +172,7 @@ resources:
           notebook_task:
             notebook_path: ../notebooks/gold/risk_summary.py
             source: WORKSPACE
-          new_cluster:
-            spark_version: "14.3.x-scala2.12"
-            node_type_id: "Standard_DS3_v2"
-            num_workers: 1
+          environment_key: default
           timeout_seconds: 900
 
         - task_key: projects_summary
@@ -203,11 +183,13 @@ resources:
           depends_on:
             - task_key: budget_vs_actual
             - task_key: risk_summary
-          new_cluster:
-            spark_version: "14.3.x-scala2.12"
-            node_type_id: "Standard_DS3_v2"
-            num_workers: 1
+          environment_key: default
           timeout_seconds: 900
+
+      environments:
+        - environment_key: default
+          spec:
+            client: "1"
 
       schedule:
         quartz_cron_expression: "0 30 * * * ?"
@@ -232,11 +214,13 @@ resources:
           notebook_task:
             notebook_path: ../notebooks/gold/dq_checks.py
             source: WORKSPACE
-          new_cluster:
-            spark_version: "14.3.x-scala2.12"
-            node_type_id: "Standard_DS3_v2"
-            num_workers: 1
+          environment_key: default
           timeout_seconds: 1800
+
+      environments:
+        - environment_key: default
+          spec:
+            client: "1"
 
       schedule:
         quartz_cron_expression: "0 0 * * * ?"
@@ -257,11 +241,13 @@ resources:
           notebook_task:
             notebook_path: ../notebooks/gold/control_room_status.py
             source: WORKSPACE
-          new_cluster:
-            spark_version: "14.3.x-scala2.12"
-            node_type_id: "Standard_DS3_v2"
-            num_workers: 1
+          environment_key: default
           timeout_seconds: 600
+
+      environments:
+        - environment_key: default
+          spec:
+            client: "1"
 
       schedule:
         quartz_cron_expression: "0 */15 * * * ?"

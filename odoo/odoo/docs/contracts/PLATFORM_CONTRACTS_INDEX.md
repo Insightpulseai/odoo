@@ -42,6 +42,8 @@
 | C-28 | [Auth Architecture](../architecture/AUTH_ARCHITECTURE.md)    | Supabase Auth (IdP)                   | Odoo, web apps, mobile, n8n, MCP, Keycloak        | ✅ Active | `spec/platform-auth/constitution.md`       |
 | C-29 | [Azure Bot Service](AZURE_BOT_SERVICE_CONTRACT.md)           | Azure Bot Service (F0)                | n8n webhook, Supabase identity, Odoo XML-RPC      | ✅ Active | `scripts/azure/deploy-bot-service.sh`      |
 | C-30 | [Copilot Runtime Selection](COPILOT_RUNTIME_CONTRACT.md)     | Azure AI Foundry (`data-intel-ph`)    | `addons/ipai/ipai_odoo_copilot/`                   | ✅ Active | `scripts/ci/validate_ssot_ai.py`           |
+| C-31 | [Copilot Capability Eval](COPILOT_CAPABILITY_EVAL_CONTRACT.md) | `agents/evals/`                    | Copilot RAG service, benchmark pipeline             | ✅ Active | `spec/odoo-copilot-benchmark/`             |
+| C-32 | [Org Doc Platform](ORG_DOC_PLATFORM_CONTRACT.md)             | `ssot/docs/`, `packages/odoo-docs-kb/` | All doc search consumers, RAG services          | ✅ Active | `ssot/docs/doc_platform_architecture.yaml` |
 
 ---
 

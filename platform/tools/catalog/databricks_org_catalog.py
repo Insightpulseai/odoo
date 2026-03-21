@@ -31,8 +31,6 @@ GITHUB_API = "https://api.github.com"
 DEFAULT_ORG = "databricks"
 REQUEST_TIMEOUT = 60
 RATE_LIMIT_DELAY = 0.2  # seconds between requests
-MAX_RETRIES = 3
-BACKOFF_BASE = 1  # seconds; exponential: 1s, 2s, 4s
 
 
 def get_headers() -> dict:
@@ -48,47 +46,7 @@ def get_headers() -> dict:
 
 
 def gh_get(url: str, params: Optional[dict] = None) -> requests.Response:
-    """Make authenticated GET request to GitHub API with retry/backoff for transient errors."""
-    last_exc: Optional[Exception] = None
-    for attempt in range(MAX_RETRIES):
-        try:
-            response = requests.get(
-                url,
-                headers=get_headers(),
-                params=params,
-                timeout=REQUEST_TIMEOUT,
-            )
-            # Retry on 5xx and 429 (rate limit handled separately in iter_repos for 403)
-            if response.status_code == 429 or response.status_code >= 500:
-                wait = BACKOFF_BASE * (2 ** attempt)
-                print(
-                    f"HTTP {response.status_code} on {url}, retry {attempt + 1}/{MAX_RETRIES} in {wait}s...",
-                    file=sys.stderr,
-                )
-                time.sleep(wait)
-                continue
-            response.raise_for_status()
-            return response
-        except requests.exceptions.ConnectionError as e:
-            last_exc = e
-            wait = BACKOFF_BASE * (2 ** attempt)
-            print(
-                f"Connection error on {url}, retry {attempt + 1}/{MAX_RETRIES} in {wait}s...",
-                file=sys.stderr,
-            )
-            time.sleep(wait)
-        except requests.exceptions.Timeout as e:
-            last_exc = e
-            wait = BACKOFF_BASE * (2 ** attempt)
-            print(
-                f"Timeout on {url}, retry {attempt + 1}/{MAX_RETRIES} in {wait}s...",
-                file=sys.stderr,
-            )
-            time.sleep(wait)
-    # Exhausted retries — make one final attempt and let it raise
-    if last_exc is not None:
-        raise last_exc
-    # Final attempt for status-code retries (5xx/429)
+    """Make authenticated GET request to GitHub API."""
     response = requests.get(
         url,
         headers=get_headers(),
@@ -127,36 +85,17 @@ def iter_repos(org: str) -> Generator[dict, None, None]:
 
 
 def get_readme(owner: str, repo: str) -> Optional[str]:
-    """Fetch README content for a repository with retry/backoff."""
+    """Fetch README content for a repository."""
     url = f"{GITHUB_API}/repos/{owner}/{repo}/readme"
     headers = {**get_headers(), "Accept": "application/vnd.github.raw"}
-    for attempt in range(MAX_RETRIES):
-        try:
-            response = requests.get(url, headers=headers, timeout=REQUEST_TIMEOUT)
-            if response.status_code == 404:
-                return None
-            if response.status_code == 429 or response.status_code >= 500:
-                wait = BACKOFF_BASE * (2 ** attempt)
-                print(
-                    f"HTTP {response.status_code} fetching README for {owner}/{repo}, "
-                    f"retry {attempt + 1}/{MAX_RETRIES} in {wait}s...",
-                    file=sys.stderr,
-                )
-                time.sleep(wait)
-                continue
-            response.raise_for_status()
-            return response.text
-        except (requests.exceptions.ConnectionError, requests.exceptions.Timeout):
-            wait = BACKOFF_BASE * (2 ** attempt)
-            print(
-                f"Transient error fetching README for {owner}/{repo}, "
-                f"retry {attempt + 1}/{MAX_RETRIES} in {wait}s...",
-                file=sys.stderr,
-            )
-            time.sleep(wait)
-        except requests.exceptions.RequestException:
+    try:
+        response = requests.get(url, headers=headers, timeout=REQUEST_TIMEOUT)
+        if response.status_code == 404:
             return None
-    return None
+        response.raise_for_status()
+        return response.text
+    except requests.exceptions.RequestException:
+        return None
 
 
 def get_docs_tree(owner: str, repo: str, default_branch: str) -> list[dict]:

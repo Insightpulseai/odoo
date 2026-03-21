@@ -80,72 +80,8 @@
 }
 
 .o_ipai_copilot_content {
+    white-space: pre-wrap;
     word-break: break-word;
-    line-height: 1.5;
-}
-
-/* Markdown: headings */
-.o_ipai_copilot_h1 { font-size: 1.1rem; font-weight: 700; margin: 8px 0 4px; }
-.o_ipai_copilot_h2 { font-size: 1rem; font-weight: 700; margin: 6px 0 3px; }
-.o_ipai_copilot_h3 { font-size: 0.95rem; font-weight: 600; margin: 4px 0 2px; }
-.o_ipai_copilot_h4 { font-size: 0.9rem; font-weight: 600; margin: 4px 0 2px; }
-
-/* Markdown: paragraphs */
-.o_ipai_copilot_paragraph {
-    margin-bottom: 4px;
-}
-
-/* Markdown: list items */
-.o_ipai_copilot_list_item {
-    padding-left: 8px;
-    margin-bottom: 2px;
-}
-
-/* Markdown: inline code */
-.o_ipai_copilot_code_inline {
-    background: rgba(0, 0, 0, 0.06);
-    padding: 1px 5px;
-    border-radius: 3px;
-    font-family: 'SFMono-Regular', 'Consolas', 'Liberation Mono', 'Menlo', monospace;
-    font-size: 0.85em;
-}
-
-/* Markdown: code blocks */
-.o_ipai_copilot_code_block {
-    background: #1e1e1e;
-    color: #d4d4d4;
-    padding: 10px 12px;
-    border-radius: 6px;
-    margin: 6px 0;
-    overflow-x: auto;
-    font-size: 0.8rem;
-    line-height: 1.4;
-}
-
-.o_ipai_copilot_code_block code {
-    background: transparent;
-    padding: 0;
-    color: inherit;
-    font-family: 'SFMono-Regular', 'Consolas', 'Liberation Mono', 'Menlo', monospace;
-}
-
-/* Markdown: links */
-.o_ipai_copilot_content a {
-    color: #0d6efd;
-    text-decoration: underline;
-}
-
-.o_ipai_copilot_content a:hover {
-    color: #0a58ca;
-}
-
-/* Markdown: bold/italic */
-.o_ipai_copilot_content strong {
-    font-weight: 600;
-}
-
-.o_ipai_copilot_content em {
-    font-style: italic;
 }
 
 /* Input area */

@@ -1,122 +1,168 @@
 # =============================================================================
-# Org Topology — SSOT
+# Org/Platform Topology — InsightPulse AI
 # =============================================================================
-# Canonical 12-repo / 8-plane organization topology.
-# All docs, configs, and CI should reference these repo names and planes.
+#
+# Machine-readable canonical topology for the GitHub org.
+# Human doc: docs/architecture/TARGET_ORG_PLATFORM_STRUCTURE.md
+# Memory: org_repo_target_state.md
 # =============================================================================
 
-id: org_topology
-version: 1.1.0
-updated: "2026-03-19"
-status: target_state
+schema_version: "1.1"
+last_updated: "2026-03-17"
+status: target
+canonical_doc: docs/architecture/TARGET_ORG_PLATFORM_STRUCTURE.md
 
-# -----------------------------------------------------------------------------
-# Repos
-# -----------------------------------------------------------------------------
+organization: InsightPulseAI
+
 repos:
-  - id: .github
+  - name: .github
     plane: governance
-    purpose: Org-wide workflows, templates, rulesets
-    status: active
+    role: Org-wide governance, reusable workflows, templates, rulesets
+    contains: [workflows, actions, issue_templates, codeowners, dependabot]
+    must_not_contain: [product_code]
 
-  - id: odoo
+  - name: odoo
     plane: transactional
-    purpose: ERP/runtime (Odoo CE + OCA + ipai bridges)
-    status: active
+    role: ERP/runtime monorepo (Odoo CE + OCA + IPAI bridges)
+    contains: [addons, config, docker, runtime, scripts, docs, spec, ssot, tests, apps, packages]
+    must_not_contain: [databricks_pipelines, generic_control_plane_code, agent_runtime]
+    internal_structure:
+      addons_oca: primary extension layer (OCA-first)
+      addons_ipai: thin bridge/meta modules only
+      addons_local: minimal local-only when unavoidable
 
-  - id: platform
+  - name: platform
     plane: control
-    purpose: Ops platform, Supabase backend, service catalog
-    status: active
+    role: Control plane / ops platform / shared backend / Supabase-first services
+    aliases: [ops-platform, control-plane]
+    contains: [apps, supabase, contracts, ssot, docs, spec, scripts, tests, packages]
+    must_not_contain: [odoo_modules, databricks_products]
+    note: "Replaces ops-platform. Owns service catalog, orchestration metadata, ops console backend."
 
-  - id: data-intelligence
+  - name: data-intelligence
     plane: intelligence
-    purpose: Databricks, governed data products, semantic/BI
-    status: split_required
-    current_surface: embedded_in_monorepo
-    transition_paths:
-      - infra/databricks/
-      - odoo/infra/databricks/sql/
-      - lakehouse/contracts/
-    split_plan: docs/architecture/data-intelligence/repo-split-plan.md
+    role: Databricks lakehouse, governed data products, semantic/BI plane
+    aliases: [lakehouse]
+    contains: [bundles, domains, products, pipelines, sql, notebooks, apps, contracts, governance, docs, ssot, spec, tests, scripts, packages]
+    must_not_contain: [erp_transactions, control_plane_services]
+    products_structure:
+      - bronze
+      - silver
+      - gold
+      - semantic
+      - ai_bi
 
-  - id: agent-platform
+  - name: agent-platform
     plane: agent
-    purpose: Foundry runtime, tools, workflows, evals
-    status: active
+    role: Foundry agents, hosted agents, tools, workflows, evals
+    runtime: Microsoft Foundry Agent Service
+    sdks: [python, dotnet]
+    contains: [sdk, agents, workflows, tools, contracts, evals, devui, mcp, plugins, docs, ssot, spec, tests, scripts]
+    must_not_contain: [erp_sor, governed_olap_products]
 
-  - id: web
+  - name: web
     plane: experience
-    purpose: Websites, portals, browser extensions, UIs
-    status: planned
+    role: Websites, browser extension surfaces, portals, product UIs
+    contains: [apps, packages, design-system, docs, ssot, spec, tests, scripts]
+    must_not_contain: [infra, odoo_modules, data_pipelines]
+    browser_copilot_placement:
+      - web/apps/browser-copilot-extension
+      - web/apps/native-screen-bridge
+      - web/packages/browser-agent-contract
 
-  - id: infra
+  - name: infra
     plane: substrate
-    purpose: Azure/Cloudflare IaC, landing zones, identity
-    status: active
+    role: Azure/Cloudflare/IaC, landing zones, identity, network, observability
+    contains: [landing-zones, environments, identities, networking, security, observability, shared-services, modules, policies, docs, ssot, spec, scripts]
+    must_not_contain: [app_business_logic]
 
-  - id: automations
+  - name: automations
     plane: automation
-    purpose: n8n, schedulers, jobs, workflow contracts
-    status: active
+    role: n8n, schedulers, jobs, automation contracts
+    contains: [n8n, schedules, jobs, runbooks, contracts, docs, ssot, spec, tests, scripts]
+    must_not_contain: [erp_core, lakehouse_products]
 
-  - id: agents
-    plane: doctrine
-    purpose: Personas, skills, judges, knowledge, evals
-    status: active
+  - name: agents
+    plane: execution_doctrine
+    role: Personas, skills, judges, benchmark knowledge, evals
+    contains: [personas, skills, knowledge, judges, teams, evals, mcp, plugins, docs, spec]
+    must_not_contain: [runtime_application_logic]
+    note: "Doctrine and knowledge only. Runtime lives in agent-platform."
 
-  - id: design
+  - name: design
     plane: visual
-    purpose: Tokens, Figma exports, brand assets
-    status: planned
+    role: Tokens, components, Figma exports, brand assets
+    aliases: [design-system]
+    contains: [tokens, figma, exports, brand, icons, docs, spec]
 
-  - id: docs
+  - name: docs
     plane: documentation
-    purpose: Cross-repo architecture, strategy, evidence
-    status: active
+    role: Cross-repo architecture, strategy, governance, evidence
+    contains: [architecture, strategy, operating-model, governance, evidence, roadmaps, standards]
+    note: "Human-readable cross-repo docs. Machine SSOT lives in each repo's ssot/."
 
-  - id: templates
+  - name: templates
     plane: bootstrap
-    purpose: Starter kits, repo templates
-    status: planned
+    role: Starter kits, repo templates, bootstrap blueprints
+    contains: [repo, spec-kit, workflows, docs, ssot, starter-apps]
 
-# -----------------------------------------------------------------------------
-# Planes
-# -----------------------------------------------------------------------------
-planes:
-  - id: governance
-    description: Org-wide policies, workflows, rulesets
-  - id: transactional
-    description: ERP runtime, business process execution
-  - id: control
-    description: Platform services, service catalog, ops
-  - id: intelligence
-    description: Data engineering, analytics, governed data products
-  - id: agent
-    description: Agent runtime, tools, evaluation, orchestration
-  - id: experience
-    description: User-facing apps, portals, extensions
-  - id: substrate
-    description: Cloud infrastructure, identity, networking
-  - id: automation
-    description: Workflow engines, schedulers, event-driven jobs
-  - id: doctrine
-    description: Agent definitions, skills, knowledge, evaluations
-  - id: visual
-    description: Design tokens, brand assets, component libraries
-  - id: documentation
-    description: Architecture docs, strategy, evidence packs
-  - id: bootstrap
-    description: Starter kits, repo templates, scaffolds
+renames:
+  - from: lakehouse
+    to: data-intelligence
+    status: target
+    reason: Scope covers Databricks + governed data products + semantic/AI BI, not just lakehouse
 
-# -----------------------------------------------------------------------------
-# Naming Corrections
-# -----------------------------------------------------------------------------
+  - from: ops-platform
+    to: platform
+    status: target
+    reason: Expanded to full control plane, not just ops console
+
+  - from: design-system
+    to: design
+    status: target
+    reason: Shorter name; design-system is internal folder within design/ or web/packages/
+
+per_repo_scaffold:
+  required:
+    - CLAUDE.md                     # repo root, not .claude/CLAUDE.md
+    - .claude/rules/
+    - .github/workflows/
+    - .mcp.json
+    - spec/
+    - docs/
+    - ssot/
+    - tests/
+    - scripts/
+  optional:
+    - .devcontainer/
+    - .vscode/
+    - .editorconfig
+    - apps/
+    - packages/
+    - infra/
+
+naming_conventions:
+  org_repos: kebab-case
+  repo_apps: kebab-case
+  shared_packages: "kebab-case, scoped if published (@ipai/)"
+  odoo_modules: "snake_case with ipai_ prefix"
+  azure_resources: "kebab-case with ipai- prefix"
+  azure_rgs: "rg-ipai-{env}"
+  specs: kebab-case slug
+  workflows: kebab-case.yml
+  claude_rules: kebab-case.md
+
 naming_corrections:
-  - wrong: control-plane
-    correct: platform
-    note: concept alias, not repo name
+  - incorrect: control-plane
+    canonical: platform
+    reason: "control-plane is a concept, not the repo name"
+  - incorrect: design-system (as repo)
+    canonical: design
+    reason: "design-system is an internal folder, not a top-level repo"
 
-  - wrong: design-system
-    correct: design
-    note: internal folder name, not repo name
+pillar_mapping:
+  system_of_record: odoo
+  agent_intelligence: agent-platform
+  data_intelligence: data-intelligence
+  platform_foundation: infra
+  orchestration: platform

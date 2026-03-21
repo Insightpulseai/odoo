@@ -18,7 +18,6 @@
           "origins": [
             {
               "hostName": "odoo-web.internal.insightpulseai.com",
-              "originHostHeader": "erp.insightpulseai.com",
               "httpPort": 80,
               "httpsPort": 443,
               "priority": 1,
@@ -154,7 +153,6 @@
           "origins": [
             {
               "hostName": "odoo-web.internal.insightpulseai.com",
-              "originHostHeader": "erp.insightpulseai.com",
               "httpPort": 80,
               "httpsPort": 443,
               "priority": 1,

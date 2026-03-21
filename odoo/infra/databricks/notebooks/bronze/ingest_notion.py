@@ -20,10 +20,10 @@ CATALOG = os.environ.get("DATABRICKS_CATALOG", "ppm")
 SCHEMA = "bronze"
 
 # Database IDs from secrets
-PROGRAMS_DB_ID = dbutils.secrets.get("finance-ppm", "programs_db_id")
-PROJECTS_DB_ID = dbutils.secrets.get("finance-ppm", "projects_db_id")
-BUDGET_LINES_DB_ID = dbutils.secrets.get("finance-ppm", "budget_lines_db_id")
-RISKS_DB_ID = dbutils.secrets.get("finance-ppm", "risks_db_id")
+PROGRAMS_DB_ID = dbutils.secrets.get("notion-ppm", "programs_db_id")
+PROJECTS_DB_ID = dbutils.secrets.get("notion-ppm", "projects_db_id")
+BUDGET_LINES_DB_ID = dbutils.secrets.get("notion-ppm", "budget_lines_db_id")
+RISKS_DB_ID = dbutils.secrets.get("notion-ppm", "risks_db_id")
 
 # COMMAND ----------
 

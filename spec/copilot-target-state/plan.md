@@ -115,6 +115,115 @@ Goal: Complete SAP Joule benchmark, evaluation pack, Marketplace gap analysis.
 
 ---
 
+---
+
+## Phase A3 — Administrative Plane Foundations
+- implement system landscape registry
+- implement bootstrap readiness checks
+- implement close/control role model and authorization groups
+- implement adapter/connection registry
+
+## Phase B3 — Sandboxed Workspace Foundation
+- implement workspace session model
+- implement scoped context-pack loading
+- implement direct artifact generation pipeline
+- implement artifact preview, export, attach, and publish flows
+- implement governed request-writeback flow for state-changing outputs
+
+## Phase B4 — Skill Registry Hardening
+- formalize the Odoo Copilot skill registry
+- map current UI capability copy to real skills
+- validate configuration/permission prerequisites per skill
+- expose enabled/disabled status by environment and role
+- prevent unsupported capability claims in runtime responses
+
+## Phase B5 — Execution Mode Control
+- implement execution mode model and policy matrix
+- classify skills/actions into low-risk vs high-risk
+- implement ask-before-acting as the default production mode
+- implement scoped guarded autonomy for approved low-risk actions
+- implement risk banners, confirmation prompts, and blocked-action explanations
+
+## Phase B3.1 — Artifact Preview & Review
+- implement inline preview renderer by artifact class
+- implement tabular and structured preview modes
+- implement compare/diff view for regenerated and prior-version outputs
+- implement warning/confidence overlays
+- implement preview-driven approval, regenerate, discard, export, attach, and writeback actions
+
+## Phase B6 — Attachment Intake & Analysis
+- implement attachment upload/session handling in the copilot UI
+- implement file classification and routing
+- implement spreadsheet/document/image/PDF analysis flows
+- implement attachment-to-evidence and attachment-to-record review flows
+- implement low-confidence / unsupported-file fallback states
+
+## Phase B7 — Prompt-Pack Skill Pack Enablement
+- register product and finance skill packs in the skill registry
+- map academy-style use cases to concrete internal skills
+- connect skill packs to sandboxed artifact generation and preview
+- add seeded demo prompts and expected outputs
+- enforce citations/source handling for research-oriented skills
+
+## Phase C3 — Operational Reliability
+- implement connector health monitoring
+- implement sync/job status tracking
+- implement degraded-mode behavior and alerts
+- implement business-log visibility and retry workflows
+
+## Phase C4 — Payment Orchestration
+- detect configured payment rails/journals/providers
+- implement payment readiness checks
+- implement payment proposal and batch generation
+- implement explicit confirmation step before execution
+- implement payment evidence and post-execution logging
+
+## Phase C5 — Databricks Handoff
+- define destination registry for Databricks apps, dashboards, Genie spaces, notebooks, and folders
+- define Odoo-context-to-Databricks mapping rules
+- implement Open in Databricks action and optional Copilot toggle
+- implement governed context-pack handoff
+- implement return-link / back-to-Odoo behavior
+
+## Phase D3 — Lifecycle Governance
+- implement archive/restore workflows
+- implement auditor export flows
+- implement retention/anonymization/purge controls
+- implement offboarding checklist and guarded destructive actions
+
+---
+
+## Runtime Rules
+
+- artifact generation occurs in a sandboxed workspace, not directly against live production state
+- workspace artifacts must have lifecycle states: draft, review-ready, approved-export, approved-writeback
+- writeback/import/publish actions require explicit confirmation and audit logging
+- every executable skill must declare its allowed execution modes
+- production default is Ask Before Acting
+- guarded autonomy must be scoped by role, environment, and action classification
+- high-risk actions always require explicit human confirmation regardless of mode
+- bootstrap readiness must be validated before production scenario execution
+- admin-plane actions must be role-gated and audit-logged
+- connector and degraded-mode state must be observable independently from scenario state
+- archive/purge/offboarding actions require explicit governed workflows
+- payment actions must validate underlying configuration before any execution path is offered
+- payment execution requires explicit user confirmation and role validation
+- payment proposals and executions must be audit-logged as first-class artifacts
+- uploaded files are first-class workflow inputs
+- all uploaded-file analysis occurs in the sandboxed workspace
+- file-derived outputs may become findings, artifacts, drafts, or writeback proposals
+- no file-derived state change may bypass explicit approval where required
+- generated artifacts must enter preview state before downstream approval actions
+- preview must expose artifact status, source context, and warning/confidence metadata
+- regulated or finance-critical outputs require preview before export/publish/writeback
+- research-oriented product/finance skills must surface sources when external/public facts are used
+- strategy/content skills may generate artifacts in the sandbox but must not imply operational execution without the appropriate downstream skill and guardrails
+- Databricks launches must resolve through a destination registry, not hard-coded scattered links
+- handoff must preserve least-privilege context
+- if no destination mapping exists, Odoo Copilot must say so explicitly rather than sending the user to a generic dead-end
+
+---
+
 ## Repo Ownership for Implementation
 
 | Module/Agent | Owning Repo |

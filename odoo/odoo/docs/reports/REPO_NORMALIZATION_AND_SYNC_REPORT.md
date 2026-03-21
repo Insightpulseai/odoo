@@ -16,7 +16,7 @@ This report documents the end-to-end normalization, benchmarking finalization, a
 | `ssot/repo/top_level_ownership.yaml` | Machine-readable root filesystem allowlist |
 | `docs/architecture/REPO_DECOMPOSITION_LEDGER.md` | Transition ledger for non-ERP residue |
 | `docs/architecture/GITHUB_ORG_TOPOLOGY.md` | Authoritative GitHub organization model |
-| `infra/ssot/github/org-topology.json` | Machine-readable org topology manifest |
+| `ssot/github/org-topology.json` | Machine-readable org topology manifest |
 | `.github/workflows/repo-boundary-check.yml` | CI gate for repository sprawl |
 | `odoo/scripts/ci/check_repo_boundary.py` | Boundary validation logic |
 

@@ -6,12 +6,20 @@
         <field name="sequence">200</field>
     </record>
 
+    <!-- All internal users get copilot access by default -->
     <record id="group_copilot_user" model="res.groups">
         <field name="name">Copilot User</field>
+        <field name="category_id" ref="module_category_ipai_copilot"/>
+        <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+        <field name="comment">Access to use the copilot chat interface. Implied by Internal User.</field>
     </record>
 
+    <!-- Admin group for copilot configuration -->
     <record id="group_copilot_admin" model="res.groups">
         <field name="name">Copilot Administrator</field>
+        <field name="category_id" ref="module_category_ipai_copilot"/>
+        <field name="implied_ids" eval="[(4, ref('base.group_system'))]"/>
+        <field name="comment">Full administration of copilot settings, conversations, and gateway config.</field>
     </record>
 
 </odoo>

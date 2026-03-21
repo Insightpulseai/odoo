@@ -76,12 +76,12 @@
                             </div>
                         </div>
 
-                        <!-- Assistant Message (markdown rendered) -->
+                        <!-- Assistant Message -->
                         <div t-if="msg.role === 'assistant'"
                              class="o_ipai_copilot_message o_ipai_copilot_message_assistant mb-2">
                             <div class="o_ipai_copilot_bubble_assistant rounded-3 px-3 py-2 small"
                                  style="max-width: 90%;">
-                                <div class="o_ipai_copilot_content" t-out="renderContent(msg.content)"/>
+                                <div class="o_ipai_copilot_content" t-esc="msg.content"/>
                                 <div t-if="msg.latency_ms"
                                      class="text-muted mt-1"
                                      style="font-size: 0.7rem;">

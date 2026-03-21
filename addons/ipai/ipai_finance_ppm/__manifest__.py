@@ -19,6 +19,7 @@
         "views/ppm_import_wizard_views.xml",
         "views/okr_dashboard_action.xml",
         "data/ir_cron_ppm_sync.xml",
+        "data/ir_config_parameter_powerbi.xml",
     ],
     "assets": {
         "web.assets_backend": [

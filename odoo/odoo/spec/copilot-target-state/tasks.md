@@ -76,7 +76,7 @@
 - [x] **X.1** Create `spec/copilot-target-state/` spec kit
 - [x] **X.2** Create `spec/tax-pulse-sub-agent/` spec kit
 - [x] **X.3** Port TaxPulse rates, rules engine, test fixtures (67 tests)
-- [x] **X.4** Create `infra/ssot/agents/tax_pulse_tool_contracts.yaml`
+- [x] **X.4** Create `ssot/agents/tax_pulse_tool_contracts.yaml`
 - [x] **X.5** Register BIR pack in `agent_capability_matrix.yaml`
 - [x] **X.6** Create eval datasets (advisory, ops, actions)
 - [x] **X.7** Create SFT training assets (catalog, train, valid)

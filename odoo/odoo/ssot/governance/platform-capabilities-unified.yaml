@@ -7,12 +7,12 @@
 # BIR compliance, infrastructure readiness, creative/genAI, and roadmap.
 #
 # Cross-references:
-#   infra/ssot/parity/ee_to_oca_matrix.yaml (EE parity details)
+#   ssot/parity/ee_to_oca_matrix.yaml (EE parity details)
 #   ssot/governance/azure-odoosh-equivalent.yaml (Odoo.sh parity)
 #   ssot/governance/ai-consolidation-foundry.yaml (AI consolidation)
 #   ssot/governance/enterprise_okrs.yaml (OKR/KPI alignment)
 #   ssot/governance/platform-strategy-2026.yaml (VMOKRAPI strategy)
-#   infra/ssot/roadmap/product_roadmap.yaml (quarterly roadmap)
+#   ssot/roadmap/product_roadmap.yaml (quarterly roadmap)
 #
 # Status values: active | partial | planned | blocked | deprecated | n/a
 # Priority: P0 (production blocker) | P1 (operational maturity) | P2 (enhancement) | P3 (future)
@@ -29,7 +29,7 @@ last_updated: "2026-03-15"
 erp_parity:
   target: ">=80% weighted parity"
   current: "35-45% (audited 2026-03-08)"
-  ssot_ref: infra/ssot/parity/ee_to_oca_proof_matrix.yaml
+  ssot_ref: ssot/parity/ee_to_oca_proof_matrix.yaml
 
   accounting:
     - id: bank_reconciliation
@@ -504,7 +504,7 @@ bir_compliance:
 # =============================================================================
 infrastructure:
   target: "Azure-native, IaC-governed, cost-minimized"
-  ssot_ref: infra/ssot/azure/service-matrix.yaml
+  ssot_ref: ssot/azure/service-matrix.yaml
 
   compute:
     - id: container_apps
@@ -708,11 +708,11 @@ scoring:
 # =============================================================================
 cross_references:
   previous_documents_consolidated:
-    - path: infra/ssot/parity/ee_to_oca_matrix.yaml
+    - path: ssot/parity/ee_to_oca_matrix.yaml
       role: "EE parity detail (still authoritative for per-feature routing)"
-    - path: infra/ssot/parity/ee_to_oca_proof_matrix.yaml
+    - path: ssot/parity/ee_to_oca_proof_matrix.yaml
       role: "EE parity evidence links"
-    - path: infra/ssot/parity/ee_to_oca_execution_map.yaml
+    - path: ssot/parity/ee_to_oca_execution_map.yaml
       role: "EE parity execution milestones"
     - path: ssot/governance/azure-odoosh-equivalent.yaml
       role: "Odoo.sh parity detail"
@@ -724,9 +724,9 @@ cross_references:
       role: "OKR/KPI definitions"
     - path: ssot/governance/platform-strategy-2026.yaml
       role: "Full VMOKRAPI strategy"
-    - path: infra/ssot/roadmap/product_roadmap.yaml
+    - path: ssot/roadmap/product_roadmap.yaml
       role: "Quarterly epic roadmap"
-    - path: infra/ssot/platform/capability_matrix.yaml
+    - path: ssot/platform/capability_matrix.yaml
       role: "Developer UX capability details"
     - path: docs/architecture/EE_PARITY_MATRIX.md
       role: "Human-readable EE parity matrix"

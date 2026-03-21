@@ -13,7 +13,3 @@ access_ipai_job_user,ipai.job.user,model_ipai_job,group_ipai_bridge_user,1,0,0,0
 access_ipai_job_manager,ipai.job.manager,model_ipai_job,group_ipai_bridge_manager,1,1,1,1
 access_enterprise_bridge_config_user,ipai.enterprise.bridge.config.user,model_ipai_enterprise_bridge_config,group_ipai_bridge_user,1,0,0,0
 access_enterprise_bridge_config_admin,ipai.enterprise.bridge.config.admin,model_ipai_enterprise_bridge_config,group_ipai_bridge_manager,1,1,1,1
-access_foundry_provider_config_user,ipai.foundry.provider.config.user,model_ipai_foundry_provider_config,base.group_user,1,0,0,0
-access_foundry_provider_config_admin,ipai.foundry.provider.config.admin,model_ipai_foundry_provider_config,base.group_system,1,1,1,1
-access_doc_digitization_config_user,ipai.doc.digitization.config.user,model_ipai_doc_digitization_config,base.group_user,1,0,0,0
-access_doc_digitization_config_admin,ipai.doc.digitization.config.admin,model_ipai_doc_digitization_config,base.group_system,1,1,1,1

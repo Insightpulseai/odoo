@@ -37,9 +37,7 @@ Key features:
     "external_dependencies": {
         "python": ["requests"],
     },
-    "installable": False,
+    "installable": True,
     "auto_install": False,
     "application": False,
-    # DEPRECATED: Foundry is the single LLM gateway (2026-03-15)
-    # See: ssot/governance/ai-consolidation-foundry.yaml
 }

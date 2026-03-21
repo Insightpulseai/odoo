@@ -451,7 +451,10 @@ network:
     source: confirmed
     lifecycle: active
     owner_domain: platform
-    notes: NSG for Supabase VM.
+    notes: >
+      NSG for Supabase VM. Rule AllowHTTP-HTTPS (priority 1100)
+      source restricted to AzureFrontDoor.Backend service tag.
+      No direct public ingress. Updated 2026-03-21.
 
   - name: vm-ipai-supabase-devPublicIP
     type: Microsoft.Network/publicIPAddresses

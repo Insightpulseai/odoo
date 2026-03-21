@@ -8,6 +8,13 @@
         <field name="target">current</field>
     </record>
 
+    <!-- ── Power BI embed URL (set to activate Power BI mode) ────── -->
+    <!-- When set, the OWL component renders the Power BI embed iframe
+         instead of the legacy ECharts dashboard.
+         Value: full Power BI embed URL from Publish to Web or Embed in portal.
+         Example: https://app.powerbi.com/view?r=<token>
+    -->
+
     <!-- ── Menu items ────────────────────────────────────────────────── -->
     <!-- Top-level Finance PPM section under the Project app -->
     <menuitem

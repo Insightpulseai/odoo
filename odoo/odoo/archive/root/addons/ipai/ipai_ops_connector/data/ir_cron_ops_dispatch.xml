@@ -6,6 +6,7 @@
     <field name="code">env['ipai.ops.run'].search([('status','=','queued')], limit=25).action_dispatch()</field>
     <field name="interval_number">1</field>
     <field name="interval_type">minutes</field>
+    <field name="numbercall">-1</field>
     <field name="active">True</field>
   </record>
 </odoo>

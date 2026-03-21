@@ -38,9 +38,9 @@
 # Ref: https://learn.microsoft.com/en-us/devops/plan/scaling-agile
 # =============================================================================
 
-schema_version: "1.1"
+schema_version: "1.0"
 schema: ssot.governance.azdo-execution-hierarchy.v1
-last_updated: "2026-03-19"
+last_updated: "2026-03-17"
 
 organization: insightpulseai
 project: ipai-platform
@@ -834,94 +834,6 @@ epics:
           - "Service packaging with pricing tiers defined"
           - "Go-to-market timeline established"
 
-  # ===========================================================================
-  # OBJ-008: Cross-Plane Governed Operating Model
-  # ===========================================================================
-  - id: OBJ-008
-    title: "[OBJ-008] Cross-Plane Governed Operating Model"
-    type: epic
-    tags: [objective, platform, odoo, foundry, databricks]
-    owner: platform-lead
-    description:
-      purpose: >
-        Connect Odoo (SoR), Databricks (SoI), and Copilot (Foundry agent
-        runtime) into one governed operating model with explicit ownership
-        boundaries, integration contracts, and end-to-end observability.
-      scope: "Cross-plane ownership model, integration contracts, observability linkage, ambiguity elimination"
-      out_of_scope: "Individual plane implementation (covered by OBJ-001..007)"
-      why: >
-        Without explicit cross-plane contracts, each plane evolves independently
-        and produces conflicting SoR claims, untraced data flows, and ungoverned
-        action paths. This Epic is the connective tissue.
-    acceptance_criteria:
-      - "Odoo/Databricks/Copilot ownership boundaries fully documented"
-      - "All Copilot-to-Odoo and Databricks-to-Copilot paths represented in spec and SSOT"
-      - "End-to-end observability linkage for 100% of production release paths"
-      - "Zero conflicting SoR/lakehouse/Copilot action authority statements in architecture"
-    strategy_objectives_ref: []  # Spans all strategic objectives
-    smart_target_ref: OBJ-005  # enterprise_okrs.yaml
-    links:
-      - ssot/governance/enterprise_okrs.yaml
-      - docs/architecture/UNIFIED_TARGET_ARCHITECTURE.md
-
-    features:
-
-      - id: FEAT-008-01
-        title: "[FEAT] Cross-plane data ownership model"
-        tags: [platform, odoo, databricks, foundry]
-        owner: platform-lead
-        target_iteration: "Sprint 3"
-        description:
-          purpose: "Define who writes, who reads, who governs for each data domain"
-          scope: "Odoo transactional, Databricks analytical, Copilot advisory — ownership and boundary rules"
-        acceptance_criteria:
-          - "Ownership model documented in architecture doc"
-          - "SSOT YAML file defines plane boundaries"
-          - "No ambiguous dual-write paths remain"
-        due: "2026-04-30"
-
-      - id: FEAT-008-02
-        title: "[FEAT] Bounded integration contracts"
-        tags: [platform, foundry, databricks]
-        owner: platform-lead
-        target_iteration: "Sprint 5"
-        description:
-          purpose: "Codify all approved cross-plane data and action paths"
-          scope: "Copilot→Odoo tool contract, Databricks→Copilot context contract"
-        acceptance_criteria:
-          - "Copilot-to-Odoo bounded tool contract published"
-          - "Databricks-to-Copilot curated context contract published"
-          - "Both contracts registered in PLATFORM_CONTRACTS_INDEX.md"
-        due: "2026-05-30"
-
-      - id: FEAT-008-03
-        title: "[FEAT] End-to-end observability linkage"
-        tags: [platform, security]
-        owner: platform-lead
-        target_iteration: "Sprint 6"
-        description:
-          purpose: "Enable correlation of Odoo events, lakehouse pipelines, and Copilot traces"
-          scope: "Trace correlation, audit linkage, incident routing"
-        acceptance_criteria:
-          - "Odoo events, Databricks pipeline runs, and Copilot traces correlatable"
-          - "Incident routing model documented"
-          - "Evidence captured for at least 1 production release path"
-        due: "2026-06-10"
-
-      - id: FEAT-008-04
-        title: "[FEAT] Architectural ambiguity elimination"
-        tags: [platform]
-        owner: platform-lead
-        target_iteration: "Sprint 4"
-        description:
-          purpose: "Close all known contradictions in SoR, lakehouse write path, and Copilot action authority"
-          scope: "Architecture docs, SSOT files, spec bundles"
-        acceptance_criteria:
-          - "Zero conflicting SoR statements across all architecture docs"
-          - "Zero conflicting write-path claims across all SSOT files"
-          - "Verification evidence captured"
-        due: "2026-05-15"
-
 # -----------------------------------------------------------------------------
 # Mapping: Execution Objectives → Strategy Objectives
 # -----------------------------------------------------------------------------
@@ -964,20 +876,14 @@ objective_mapping:
       strategy_refs: []
       note: "Business layer — no direct strategy objective mapping"
 
-    - epic: OBJ-008  # Cross-Plane Governed Operating Model
-      strategy_refs: []
-      smart_target_ref: OBJ-005
-      note: "Cross-plane connective tissue — spans all strategic objectives"
-
 # -----------------------------------------------------------------------------
 # Summary
 # -----------------------------------------------------------------------------
 summary:
-  epics: 8
-  features: 29
+  epics: 7
+  features: 25
   task_pattern: "5 per feature (design, build, validate, deploy, evidence capture)"
-  estimated_tasks: 145
+  estimated_tasks: 125
   planning_overlays: "Delivery Plans, Area Paths, Iteration Paths, Dashboards, Dependencies"
   team_model: "Vertical value-stream teams; scale with teams, not projects"
   github_linkage: "Branches, PRs, merge commits, builds, state transitions linked to work items"
-  smart_target_sync: "enterprise_okrs.yaml SMART targets (OBJ-001..005) synced 2026-03-19"

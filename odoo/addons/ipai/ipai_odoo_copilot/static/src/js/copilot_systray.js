@@ -1,4 +1,4 @@
-/** @odoo-module */
+/** @odoo-module **/
 
 import { Component, useState, useRef, onMounted } from "@odoo/owl";
 import { registry } from "@web/core/registry";
@@ -6,9 +6,7 @@ import { useService } from "@web/core/utils/hooks";
 
 /**
  * CopilotSystrayButton — systray icon that opens the copilot chat panel.
- *
- * Uses the copilot service for gateway communication and conversation state.
- * Renders a slide-out panel on the right side with message history.
+ * Self-contained in ipai_odoo_copilot. No dependency on deprecated modules.
  */
 export class CopilotSystrayButton extends Component {
     static template = "ipai_odoo_copilot.SystrayButton";
@@ -19,23 +17,34 @@ export class CopilotSystrayButton extends Component {
             messages: [],
             isLoading: false,
             error: null,
+            isDisabled: false,
         });
         this.inputRef = useRef("promptInput");
         this.messagesRef = useRef("messageList");
-        this.copilot = useService("copilot");
+        this.rpc = useService("rpc");
         this.action = useService("action");
+
+        // Check if copilot is enabled
+        onMounted(async () => {
+            try {
+                const result = await this.rpc("/web/dataset/call_kw", {
+                    model: "ir.config_parameter",
+                    method: "get_param",
+                    args: ["ipai.copilot.foundry_enabled", "False"],
+                    kwargs: {},
+                });
+                this.state.isDisabled = result !== "True";
+            } catch {
+                this.state.isDisabled = true;
+            }
+        });
     }
 
     togglePanel() {
         this.state.isOpen = !this.state.isOpen;
         this.state.error = null;
-        if (this.state.isOpen) {
-            setTimeout(() => {
-                const el = this.inputRef.el;
-                if (el) {
-                    el.focus();
-                }
-            }, 150);
+        if (this.state.isOpen && this.inputRef.el) {
+            setTimeout(() => this.inputRef.el?.focus(), 100);
         }
     }
 
@@ -44,20 +53,22 @@ export class CopilotSystrayButton extends Component {
     }
 
     /**
-     * Capture current page context (model, record ID) from the action service.
+     * Get current page context (model, record ID, action) when available.
      */
     _getPageContext() {
         const context = {};
         try {
             const controller = this.action.currentController;
-            if (controller && controller.action) {
-                const act = controller.action;
-                context.context_model = act.res_model || "";
-                context.context_res_id = act.res_id || 0;
-                context.surface = "erp";
+            if (controller) {
+                const action = controller.action;
+                if (action) {
+                    context.record_model = action.res_model || null;
+                    context.record_id = action.res_id || null;
+                    context.surface = "erp";
+                }
             }
         } catch {
-            // Context capture is best-effort — do not break on failure
+            // Context capture is best-effort
         }
         return context;
     }
@@ -71,15 +82,13 @@ export class CopilotSystrayButton extends Component {
 
     async sendMessage() {
         const input = this.inputRef.el;
-        const text = (input && input.value || "").trim();
-        if (!text || this.state.isLoading) {
-            return;
-        }
+        const prompt = input?.value?.trim();
+        if (!prompt || this.state.isLoading) return;
 
-        // Show user message immediately
+        // Add user message
         this.state.messages.push({
             role: "user",
-            content: text,
+            content: prompt,
             timestamp: new Date().toLocaleTimeString(),
         });
         input.value = "";
@@ -89,26 +98,30 @@ export class CopilotSystrayButton extends Component {
 
         try {
             const context = this._getPageContext();
-            const result = await this.copilot.sendMessage(text, context);
+            const result = await this.rpc("/ipai/copilot/chat", {
+                prompt,
+                record_model: context.record_model,
+                record_id: context.record_id,
+                surface: context.surface || "erp",
+            });
 
-            if (result.error) {
-                this.state.error = result.message || "Unknown error";
+            if (result.blocked) {
                 this.state.messages.push({
-                    role: "error",
-                    content: result.message || "An error occurred.",
+                    role: "assistant",
+                    content: result.reason || "Response was blocked by safety filters.",
+                    blocked: true,
                     timestamp: new Date().toLocaleTimeString(),
                 });
             } else {
                 this.state.messages.push({
                     role: "assistant",
                     content: result.content || "No response received.",
-                    latency_ms: result.latency_ms || 0,
+                    citations: result.citations || [],
                     timestamp: new Date().toLocaleTimeString(),
                 });
             }
         } catch (err) {
-            const msg = err.message
-                || "Failed to reach copilot gateway. Check connection settings.";
+            const msg = err.message || "Failed to reach copilot. Check Settings → IPAI Copilot.";
             this.state.error = msg;
             this.state.messages.push({
                 role: "error",
@@ -124,20 +137,17 @@ export class CopilotSystrayButton extends Component {
     clearMessages() {
         this.state.messages = [];
         this.state.error = null;
-        this.copilot.resetConversation();
     }
 
     _scrollToBottom() {
         setTimeout(() => {
             const el = this.messagesRef.el;
-            if (el) {
-                el.scrollTop = el.scrollHeight;
-            }
+            if (el) el.scrollTop = el.scrollHeight;
         }, 50);
     }
 }
 
-// Register in systray — sequence 1 puts it on the right side
+// Register in systray (rightmost position)
 registry.category("systray").add("ipai_odoo_copilot.SystrayButton", {
     Component: CopilotSystrayButton,
     isDisplayed: () => true,

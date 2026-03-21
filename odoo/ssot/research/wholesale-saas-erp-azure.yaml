@@ -1,56 +1,37 @@
-# =============================================================================
-# Wholesale SaaS ERP on Azure — Research / Adopted Target
-# =============================================================================
-#
-# Origin: deep-research synthesis for Azure-native wholesale ERP platform.
-# Status: adopted — normalized to six-plane Azure-first architecture.
-#
-# Canonical SSOT: ssot/architecture/platform-boundaries.yaml
-# Long-form rationale: docs/architecture/WHOLESALE_SAAS_ERP_ON_AZURE.md
-#
-# Last updated: 2026-03-18
-# =============================================================================
-
 target_architecture:
   name: wholesale-saas-erp-azure
   status: adopted
-  version: "2.0"
-  architecture_model: six_plane_azure_first
-
+  version: "1.0"
+  
   control_plane:
     identity: azure_entra_id
     planning: azure_devops_boards
     ci_cd: azure_devops_pipelines
-    source_control: github
+    source_control: azure_devops_repos
     governance: azure_policy
 
   system_of_record:
-    platform: odoo_ce_19
+    platform: odoo
     compute: azure_container_apps
     database: azure_postgresql_flexible
-    isolation: database_per_tenant
+    isolation: shared_db_separate_schema
     workloads:
       - sales_order_management
       - inventory_fulfillment
       - procurement
-      - accounting
-      - bir_tax_compliance
 
   system_of_intelligence:
     platform: azure_databricks
     architecture: medallion_lakehouse
     governance: unity_catalog
     storage: adls_gen2
-    canonical: true  # not optional
     workloads:
       - financial_consolidation
       - sales_forecasting
       - operational_bi
-      - ml_feature_serving
 
   system_of_agency:
     platform: microsoft_foundry
-    role: agent_runtime_tracing_evals_monitoring
     models:
       - anthropic_claude
       - azure_openai
@@ -59,38 +40,8 @@ target_architecture:
       - copilot_chat
       - autonomous_vendor_billing
       - exception_handling
-      - document_ocr_extraction
 
   integration:
     api_gateway: azure_api_management
     event_bus: azure_service_bus
     edge: azure_front_door
-    api_gateway_role:
-      - governed_ingress_egress_boundary
-      - not_system_of_record
-      - not_agent_runtime
-
-  # ---------------------------------------------------------------------------
-  # Truth Authorities (separate from plane membership)
-  # ---------------------------------------------------------------------------
-
-  truth_authorities:
-    planned: azure_boards
-    code: github
-    release: azure_pipelines
-    live_inventory: azure_resource_graph
-    agent_runtime: microsoft_foundry
-    intended_state: repo_ssot
-
-  # ---------------------------------------------------------------------------
-  # Tenancy Doctrine
-  # ---------------------------------------------------------------------------
-
-  tenancy:
-    default:
-      app_model: shared_runtime_farm
-      data_model: database_per_tenant
-    premium:
-      app_model: deployment_stamp_per_tenant
-      data_model: dedicated_database
-    migration_requirement: automated_shared_to_stamp_promotion

@@ -12,12 +12,12 @@
         'security/copilot_groups.xml',
         'security/ir.model.access.csv',
         'data/ir_config_parameter.xml',
+        'data/copilot_partner_data.xml',
         'views/copilot_assets.xml',
-        'views/res_config_settings_views.xml',
+        'views/copilot_audit_views.xml',
     ],
     'assets': {
         'web.assets_backend': [
-            'ipai_odoo_copilot/static/src/js/copilot_markdown.js',
             'ipai_odoo_copilot/static/src/js/copilot_service.js',
             'ipai_odoo_copilot/static/src/js/copilot_systray.js',
             'ipai_odoo_copilot/static/src/xml/copilot_systray.xml',

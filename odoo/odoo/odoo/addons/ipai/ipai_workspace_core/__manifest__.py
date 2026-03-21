@@ -13,7 +13,7 @@
         "base",
         "mail",
         "ipai_foundation",
-        "ipai_odoo_copilot",  # Foundry gateway (replaces ipai_ai_copilot)
+        "ipai_ai_copilot",
     ],
     "data": [
         "security/security.xml",

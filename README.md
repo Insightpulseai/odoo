@@ -53,53 +53,23 @@ The canonical desired end state is defined in [`docs/architecture/INSIGHTPULSEAI
 
 ---
 
-## Actual Current State
+## Canonical Required End State (Hard Rules)
 
-This repository currently contains:
+The platform architecture is built on five mandatory execution lanes and a formal SaaS operating model:
 
-- Odoo CE/OCA/IPAI runtime artifacts
-- ERP deployment/config/runtime contracts
-- shared infra and deployment assets
-- Supabase/platform artifacts
-- agent/runbook/registry assets
-- automation assets
-- platform app artifacts
-- web/public surface artifacts
-- design assets
+1.  **Azure SaaS Workload Documentation**: The **canonical top-level design framework** for the platform. All design areas (IAM, Networking, Data, DevOps, etc.) must map to this authority.
+2.  **Odoo Integration Lane (n8n)**: n8n is the **required** integration and workflow orchestration layer. Not for CDC.
+3.  **Odoo Analytics Lane (Fabric Mirroring)**: Fabric mirroring is the **required** native landing path for Azure PostgreSQL/Odoo analytics.
+4.  **Databricks Lane (Unity Catalog)**: Databricks + Unity Catalog is the **required** mandatory data-engineering and governed lakehouse plane.
+5.  **Power BI Lane**: Power BI is the **required** primary business-consumption surface, connected live to Unity Catalog.
+6.  **Supabase Lane (supabase/etl)**: Self-hosted `supabase/etl` is the **required** CDC path for Supabase data.
 
-This means the repository is **currently broader than a pure ERP runtime repo**.
-
-> **This is intentionally NOT structured like upstream `odoo/odoo`.**
-> Upstream places CE addons directly under `/addons/`. We separate three addon stacks
-> to enforce OCA-first parity, restrict `ipai_*` to integration bridges, and maintain
-> deterministic deploy + CI governance. See [REPO_LAYOUT.md](docs/architecture/REPO_LAYOUT.md).
-
-### What counts as an "integration bridge"?
-
-If it talks to something **outside Odoo** (daemon, cloud API, hardware, queue) → it is a bridge (`addons/ipai/`).
-If it extends **Odoo business logic** or replaces EE features → it must be CE or OCA (`addons/oca/`).
-
-**Production URL:** https://erp.insightpulseai.com
-**Documentation:** https://insightpulseai.github.io/odoo/
+> [!IMPORTANT]
+> **Databricks is the engineering authority.** Fabric is a complementary mirroring and semantic-consumption layer. The `data-intelligence` directory is the single code authority for all Databricks and lakehouse artifacts.
+>
+> Refer to the [Go-Live Checklist](file:///Users/tbwa/Documents/GitHub/Insightpulseai/docs/architecture/GO_LIVE_CHECKLIST.md) for mandatory release gates.
 
 ---
-
-## Target State
-
-The intended end state is:
-
-- `odoo` repo owns ERP runtime, addons, Odoo config, ERP deployment contracts, ERP SSOT
-- `platform` repo owns OdooOps console and platform admin apps
-- `infra` repo owns cloud/network/edge/IaC
-- `web` repo owns apex/public marketing surfaces
-- `agents` repo owns shared agent/skill/runbook assets
-- `automations` repo owns shared workflow assets
-- `design` repo owns shared design assets/tokens
-- `data-intelligence` repo owns Databricks/lakehouse analytics
-- `docs` repo owns cross-platform documentation
-
-Until decomposition is completed, this repository remains the authoritative source of truth for the ERP runtime layer.
-
 ---
 
 ## Canonical runtime contract
@@ -275,22 +245,10 @@ Target ownership boundaries (decomposition in progress):
 - Shared infrastructure and edge: `infra`
 - Shared web surfaces and docs sites outside ERP: `web`
 - Shared agent/skills/orchestration assets: `agents`
+- Shared agent runtime/orchestration engine: `agent-platform`
 - Shared automation/runbooks: `automations`
 - Shared design tokens/components/assets: `design`
-
-### Tranche 1 decomposition lock
-
-The following top-level domains are under active extraction and must not gain new cross-domain ownership inside this repository except for temporary compatibility shims explicitly tracked for removal:
-
-- `infra/` → target repo `infra`
-- `platform/` + `ops-platform/` + non-ERP `supabase/` → target repo `platform`
-- `agents/` + shared reusable `skills/` → target repo `agents`
-- `automations/` → target repo `automations`
-- `web/` + `web-site/` + published `docs-site/` → target repo `web`
-
-`odoo` remains authoritative only for ERP runtime concerns: addon stacks, config, docker/runtime, ERP-specific scripts/tests/docs/spec/ssot, and runtime contracts.
-
-See [`ssot/repo/tranche_1_move_plan.yaml`](./ssot/repo/tranche_1_move_plan.yaml) for the full move map, cutover gates, and completion criteria.
+- **M365 Copilot Channel Layer**: Microsoft 365 Agents SDK (delivery only)
 
 ---
 
@@ -313,12 +271,14 @@ See [`ssot/repo/tranche_1_move_plan.yaml`](./ssot/repo/tranche_1_move_plan.yaml)
 | `infra/` | Present here temporarily | `infra` |
 | `platform/` | Present here temporarily | `platform` |
 | `web/` | Present here temporarily | `web` |
-| `agents/` | Present here temporarily | `agents` |
+| `agents/` | Primary home for agent personas/skills | `agents` |
+| `agent-platform/` | Primary home for agent runtime/orchestration | `agent-platform` |
 | `automations/` | Present here temporarily | `automations` |
 | `design/` | Present here temporarily | `design` |
-| `supabase/` | Present here temporarily | `platform` |
-| `lakehouse/` | Present here temporarily | `data-intelligence` |
-| `odoo/` | Runtime-specific sub-tree present | should be rationalized; avoid duplicated root/runtime ambiguity |
+| `data-intelligence/` | Primary lakehouse code authority | `data-intelligence` |
+| `ops-platform/` | Retired legacy platform surface | `platform` |
+| `lakehouse/` | Retired legacy lakehouse surface | `data-intelligence` |
+| `odoo/` | Runtime-specific sub-tree | `odoo` |
 
 ### OCA Addons (Hydrated)
 

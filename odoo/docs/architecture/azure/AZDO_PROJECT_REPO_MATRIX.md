@@ -12,7 +12,7 @@
 | Property | Value |
 |----------|-------|
 | Organization | `insightpulseai` |
-| Active projects | 2 (`ipai-platform`, `data-intelligence`) |
+| Active projects | 2 (`ipai-platform`, `lakehouse`) |
 | Role | Selective execution surface (pipelines, boards, artifacts) |
 | Primary source control | GitHub (`Insightpulseai` org) |
 | Primary CI/CD | GitHub Actions |
@@ -32,7 +32,7 @@ GitHub remains the canonical location for source hosting, pull request review, a
 |-------------|------------------------|-------------------|
 | `odoo` | Linked | Container image build, ACA deployment |
 | `infra` | Linked | Terraform plan/apply, infrastructure provisioning |
-| `platform` | Linked | Ops console deployment, health checks |
+| `ops-platform` | Linked | Ops console deployment, health checks |
 | `agents` | Linked | Agent runtime deployment, model gateway routing |
 | `.github` | Linked | Org-level workflow templates (consumed by GH Actions) |
 | `automations` | Linked | n8n workflow deployment, automation orchestration |
@@ -41,17 +41,15 @@ GitHub remains the canonical location for source hosting, pull request review, a
 **Service connection**: `sc-azure-dev-platform` (ARM, workload identity federation)
 **Variable groups**: Key Vault-backed (`kv-ipai-dev`)
 
-### data-intelligence
+### lakehouse
 
-**Purpose**: Databricks analytics, medallion data pipelines, data intelligence.
+**Purpose**: Databricks analytics, medallion data pipelines, lakehouse architecture.
 
 | GitHub Repo | Azure DevOps Visibility | Pipeline Use Cases |
 |-------------|------------------------|-------------------|
-| `data-intelligence` | Linked | Databricks job deployment, notebook sync, Unity Catalog provisioning |
+| `lakehouse` | Linked | Databricks job deployment, notebook sync, Unity Catalog provisioning |
 
 **Service connection**: `sc-azure-dev-lakehouse` (ARM, workload identity federation)
-
-> **Note**: The AzDO project name and service connection name may still reference `lakehouse` until renamed in Azure DevOps. The GitHub repo canonical name is `data-intelligence`.
 **Databricks workspace**: `dbw-ipai-dev`
 
 ---
@@ -62,7 +60,7 @@ GitHub remains the canonical location for source hosting, pull request review, a
 |-----------|---------------|------|-------------|
 | `ipai-build-pool` | `rg-ipai-devops` | Self-hosted | Shared across both projects |
 
-Both `ipai-platform` and `data-intelligence` share the single `ipai-build-pool`. A dedicated pool per project is not warranted at current scale. If pipeline concurrency becomes a bottleneck, split into `ipai-build-pool-platform` and `ipai-build-pool-data-intelligence`.
+Both `ipai-platform` and `lakehouse` share the single `ipai-build-pool`. A dedicated pool per project is not warranted at current scale. If pipeline concurrency becomes a bottleneck, split into `ipai-build-pool-platform` and `ipai-build-pool-lakehouse`.
 
 **Dev Center**: `ipai-devcenter` (in `rg-ipai-devops`) provides dev box and environment definitions. Not currently used for pipeline agents.
 
@@ -73,7 +71,7 @@ Both `ipai-platform` and `data-intelligence` share the single `ipai-build-pool`.
 | Connection Name | Project | Type | Auth Mechanism | Target |
 |-----------------|---------|------|---------------|--------|
 | `sc-azure-dev-platform` | ipai-platform | ARM | Workload identity federation | Platform Azure resources |
-| `sc-azure-dev-lakehouse` | data-intelligence | ARM | Workload identity federation | Data intelligence Azure resources + Databricks |
+| `sc-azure-dev-lakehouse` | lakehouse | ARM | Workload identity federation | Lakehouse Azure resources + Databricks |
 
 **Rules**:
 - All ARM service connections use workload identity federation (no long-lived client secrets).
@@ -90,7 +88,7 @@ Secrets are managed exclusively through Key Vault-backed variable groups.
 | Variable Group | Key Vault | Project | Scope |
 |---------------|-----------|---------|-------|
 | `vg-ipai-platform-secrets` | `kv-ipai-dev` | ipai-platform | Platform service credentials |
-| `vg-ipai-lakehouse-secrets` | `kv-ipai-dev` | data-intelligence | Databricks tokens, storage keys |
+| `vg-ipai-lakehouse-secrets` | `kv-ipai-dev` | lakehouse | Databricks tokens, storage keys |
 
 **Rules**:
 - No long-lived service principal secrets stored in Azure DevOps variable groups directly.

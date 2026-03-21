@@ -48,7 +48,7 @@
 ## Phase 4B: BIR Compliance Pack (Tax Pulse)
 
 - [x] **4B.1** Create `spec/tax-pulse-sub-agent/` spec kit bundle (constitution, prd, plan, tasks)
-- [x] **4B.2** Create `infra/ssot/agents/tax_pulse_tool_contracts.yaml` — 8 typed tool contracts
+- [x] **4B.2** Create `ssot/agents/tax_pulse_tool_contracts.yaml` — 8 typed tool contracts
 - [x] **4B.3** Register BIR Compliance Pack in `agent_capability_matrix.yaml` (all 4 agents)
 - [x] **4B.4** Create `eval/datasets/bir_advisory.yaml` — 50 informational eval cases
 - [x] **4B.5** Create `eval/datasets/bir_ops.yaml` — 30 navigational eval cases
@@ -85,8 +85,8 @@
 - [x] **M.5** Add Foundry vs Agent Framework split section
 - [x] **M.6** Add evaluation model section (system + process + safety layers)
 - [x] **M.7** Add safety-evaluation caveat section
-- [x] **M.8** Create `infra/ssot/platform/agent_ingress_matrix.yaml`
-- [x] **M.9** Create `infra/ssot/agents/agent_capability_matrix.yaml` (v1.1.0 — aligned)
+- [x] **M.8** Create `ssot/platform/agent_ingress_matrix.yaml`
+- [x] **M.9** Create `ssot/agents/agent_capability_matrix.yaml` (v1.1.0 — aligned)
 - [ ] **M.10** Create eval dataset manifests for advisory / ops / actions / router
 - [ ] **M.11** Wire App Insights + Foundry tracing correlation IDs
 - [x] **M.12** Add APIM AI gateway as required production ingress (not stretch)

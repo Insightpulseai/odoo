@@ -32,9 +32,7 @@
         "security/ir.model.access.csv",
         "data/config_parameters.xml",
     ],
-    "installable": False,
+    "installable": True,
     "application": False,
     "auto_install": False,
-    # DEPRECATED: Replaced by Foundry API via ipai_odoo_copilot (2026-03-15)
-    # See: ssot/governance/ai-consolidation-foundry.yaml
 }

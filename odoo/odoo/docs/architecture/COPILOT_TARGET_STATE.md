@@ -4,8 +4,8 @@
 > Foundry = control plane. Agent Framework = execution plane.
 > APIM = production ingress. Capability packs, not vendor agents.
 >
-> SSOT: `infra/ssot/agents/agent_capability_matrix.yaml`
-> SSOT: `infra/ssot/platform/agent_ingress_matrix.yaml`
+> SSOT: `ssot/agents/agent_capability_matrix.yaml`
+> SSOT: `ssot/platform/agent_ingress_matrix.yaml`
 > Spec: `spec/odoo-copilot-agent-framework/`
 
 ---
@@ -252,7 +252,7 @@ latency, safety flags, correlation ID.
 
 ---
 
-*SSOT: `infra/ssot/agents/agent_capability_matrix.yaml`, `infra/ssot/platform/agent_ingress_matrix.yaml`*
+*SSOT: `ssot/agents/agent_capability_matrix.yaml`, `ssot/platform/agent_ingress_matrix.yaml`*
 *Spec: `spec/odoo-copilot-agent-framework/{constitution,prd,plan,tasks}.md`*
 *Parent: `ssot/governance/ai-consolidation-foundry.yaml`*
 *Last updated: 2026-03-15*

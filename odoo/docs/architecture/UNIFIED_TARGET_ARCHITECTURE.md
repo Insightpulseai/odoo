@@ -3,16 +3,7 @@
 > Consolidated view of all system domains, data flows, integration surfaces,
 > and the target end state for the InsightPulse AI platform.
 >
-> **Architecture model:** Six-plane Azure-first. Within this model, Odoo CE 19
-> serves as the transactional system of record, Azure Databricks + ADLS/Delta +
-> Unity Catalog serves as the governed data intelligence core, and Microsoft
-> Foundry serves as the agent factory and hosted agent runtime plane.
->
 > Cross-references:
-> - `docs/architecture/PLATFORM_TARGET_STATE.md` (canonical target doctrine)
-> - `docs/architecture/WHOLESALE_SAAS_ERP_ON_AZURE.md` (long-form rationale)
-> - `ssot/architecture/platform-boundaries.yaml` (machine-readable boundaries)
-> - `ssot/architecture/data-flows.yaml` (machine-readable data flows)
 > - `docs/architecture/SSOT_BOUNDARIES.md` (domain ownership)
 > - `docs/architecture/IPAI_TARGET_ARCHITECTURE.md` (module consolidation)
 > - `docs/contracts/DATA_AUTHORITY_CONTRACT.md` (data authority)

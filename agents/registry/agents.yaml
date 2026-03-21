@@ -5,169 +5,69 @@
 # agents.json is GENERATED from this file — do not edit agents.json by hand.
 # Generator: scripts/agents/generate_agents_json.py
 #
-# Every agent must define: id, name, domain, role, maturity_level, current_stage.
-# Passports (full detail) live in agents/passports/<id>.yaml
+# Every agent must define: id, name, domain, owners, scopes.
+# Optional: entrypoint, skills, policies_ref, memory_contract.
 # =============================================================================
 
-version: 2
-updated: "2026-03-19"
-
-# =============================================================================
-# MAKER AGENTS (builders)
-# =============================================================================
-makers:
-  - id: chief-architect
-    name: Chief Architect
-    domain: orchestration
-    role: maker
-    maturity_level: L2
-    current_stage: S07
-    passport: agents/passports/chief-architect.yaml
-
-  - id: azure-platform
-    name: Azure Platform
-    domain: infrastructure
-    role: maker
-    maturity_level: L1
-    current_stage: S05
-    passport: agents/passports/azure-platform.yaml
-
-  - id: odoo-runtime
-    name: Odoo Runtime
-    domain: erp
-    role: maker
-    maturity_level: L3
-    current_stage: S09
-    passport: agents/passports/odoo-runtime.yaml
-
-  - id: foundry-agent
-    name: Foundry Agent
-    domain: agent-platform
-    role: maker
-    maturity_level: L1
-    current_stage: S05
-    passport: agents/passports/foundry-agent.yaml
-
-  - id: data-intelligence
-    name: Data Intelligence
-    domain: data
-    role: maker
-    maturity_level: L1
-    current_stage: S04
-    passport: agents/passports/data-intelligence.yaml
-
-  - id: release-ops
-    name: Release Ops
-    domain: devops
-    role: maker
-    maturity_level: L2
-    current_stage: S07
-    passport: agents/passports/release-ops.yaml
-
-# =============================================================================
-# JUDGE AGENTS (reviewers)
-# =============================================================================
-judges:
-  - id: architecture-judge
-    name: Architecture Judge
-    domain: governance
-    role: judge
-    maturity_level: L1
-    current_stage: S03
-    pass_threshold: 75
-    passport: agents/passports/architecture-judge.yaml
-
-  - id: security-judge
-    name: Security Judge
-    domain: governance
-    role: judge
-    maturity_level: L1
-    current_stage: S03
-    pass_threshold: 90
-    passport: agents/passports/security-judge.yaml
-
-  - id: governance-judge
-    name: Governance Judge
-    domain: governance
-    role: judge
-    maturity_level: L0
-    current_stage: S02
-    pass_threshold: 70
-    passport: agents/passports/governance-judge.yaml
-
-  - id: finops-judge
-    name: FinOps Judge
-    domain: governance
-    role: judge
-    maturity_level: L0
-    current_stage: S02
-    pass_threshold: 65
-    passport: agents/passports/finops-judge.yaml
-
-  - id: customer-value-judge
-    name: Customer Value Judge
-    domain: governance
-    role: judge
-    maturity_level: L0
-    current_stage: S01
-    pass_threshold: 60
-    passport: agents/passports/customer-value-judge.yaml
-
-  - id: platform-fit-judge
-    name: Platform Fit Judge
-    domain: governance
-    role: judge
-    maturity_level: L0
-    current_stage: S01
-    pass_threshold: 70
-    passport: agents/passports/platform-fit-judge.yaml
-
-# =============================================================================
-# LEGACY AGENTS (predecessors — retained for lineage)
-# =============================================================================
-legacy:
+version: 1
+agents:
   - id: odoo-sage
     name: ODOO-SAGE
     domain: erp
-    role: maker
-    status: superseded
-    successor: odoo-runtime
+    owners: ["@Insightpulseai-net/odooforge"]
+    scopes:
+      - odoo
+      - oca
+      - addons
+      - migration
     entrypoint: "agents/skills/oca-development-standards/SKILL.md"
-
   - id: devops-prime
     name: DEVOPS-PRIME
     domain: devops
-    role: maker
-    status: superseded
-    successor: release-ops
+    owners: ["@Insightpulseai-net/devops"]
+    scopes:
+      - ci
+      - cd
+      - infra
+      - security
+      - drift
     entrypoint: "agents/skills/odoo-ci-optimization/SKILL.md"
-
   - id: data-forge
     name: DATA-FORGE
     domain: data
-    role: maker
-    status: superseded
-    successor: data-intelligence
-
+    owners: ["@Insightpulseai-net/data"]
+    scopes:
+      - etl
+      - lakehouse
+      - medallion
+      - mlflow
   - id: ui-craft
     name: UI-CRAFT
     domain: frontend
-    role: maker
-    status: retained
-    notes: "Fluent UI Designer Agent handles design; UI-CRAFT handles OWL/Odoo frontend"
+    owners: ["@Insightpulseai-net/frontend"]
+    scopes:
+      - react
+      - tailwind
+      - design-tokens
     entrypoint: "agents/skills/oca-owl-standards/SKILL.md"
-
   - id: supabase-ssot
     name: SUPABASE-SSOT
     domain: platform
-    role: maker
-    status: retained
-    notes: "Retained — no direct successor, handles Supabase-specific ops"
-
+    owners: ["@Insightpulseai-net/platform"]
+    scopes:
+      - migrations
+      - rls
+      - edge-functions
+      - ssot
   - id: automation-specialist
     name: AUTOMATION-SPECIALIST
     domain: platform
-    role: maker
-    status: retained
-    notes: "Retained — n8n workflow builder, no direct successor"
+    owners: ["@Insightpulseai-net/platform"]
+    scopes:
+      - n8n
+      - automation
+      - odoo
+      - supabase
     entrypoint: "agents/personas/automation_specialist.md"
+    skills:
+      - "skills/n8n_workflow_builder.md"

@@ -7,12 +7,14 @@ class IpaiCloseChecklist(models.Model):
 
     _name = "ipai.close.checklist"
     _description = "Month-End Close Checklist"
-    _order = "period_name desc, sequence"
+    _order = "period_id desc, sequence"
 
     name = fields.Char(string="Checklist Name", required=True)
-    period_name = fields.Char(
+    period_id = fields.Many2one(
+        "date.range",
         string="Period",
-        help="The accounting period this checklist belongs to (e.g. 2026-03).",
+        domain="[('type_id.name', '=', 'Fiscal Month')]",
+        help="The accounting period this checklist belongs to",
     )
     company_id = fields.Many2one(
         "res.company",

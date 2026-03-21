@@ -155,6 +155,112 @@ Ready when ALL true:
 - [ ] **5.8** End-to-end test: task → return → artifact → proof → approval chain
 - [ ] **5.9** Configure APIM routes for BIR-specific endpoints
 
+## Epic 1.2 — Bootstrap & Landscape
+- [ ] define system landscape object model
+- [ ] define entity/calendar/jurisdiction registration
+- [ ] define scenario enablement workflow
+- [ ] add readiness/preflight checks
+
+## Epic 1.3 — Security & Access
+- [ ] define close/control role families
+- [ ] build role assignment flows
+- [ ] add authorization-group model
+- [ ] enforce permission boundaries across define/run/review/approve/archive actions
+
+## Epic 1.4 — Connectivity Registry
+- [ ] define connection/adaptor registry
+- [ ] define sync/job status model
+- [ ] define adapter contracts (read/write/auth/evidence/failure semantics)
+- [ ] expose connected-system health to operators
+
+## Epic 1.5 — Monitoring & Reliability
+- [ ] build run monitor
+- [ ] build connector-health and sync-failure views
+- [ ] build degraded-mode state handling
+- [ ] add retry/escalation logging
+
+## Epic 1.6 — Lifecycle & Retention
+- [ ] build archive/restore flows
+- [ ] build auditor export center
+- [ ] define retention/anonymization/purge workflows
+- [ ] build offboarding checklist with guarded destructive controls
+
+## Epic 1.7 — Payment Operations
+- [ ] detect and model payment configuration readiness
+- [ ] build payment proposal object model
+- [ ] build payment blocker/reason model
+- [ ] add confirmation UX for payment execution
+- [ ] enforce role/approval checks before release
+- [ ] log payment evidence, remittance artifacts, and execution results
+
+## Epic 1.8 — Sandboxed Artifact Workspace
+- [ ] define workspace session object model
+- [ ] define scoped context-pack ingestion
+- [ ] define artifact object model and lifecycle states
+- [ ] build artifact shelf and preview/compare surfaces
+- [ ] support direct generation of XLSX, CSV, PDF, DOCX, PPTX, JSON, XML, and evidence bundles
+- [ ] support attach-to-record and export flows
+- [ ] support request-writeback workflow with approval gate
+- [ ] audit-log workspace actions, generated files, and publish/writeback decisions
+
+## Epic 1.8.1 — Artifact Preview & Review
+- [ ] define artifact preview object/state model
+- [ ] build inline preview renderer by file type/class
+- [ ] build tabular preview for spreadsheet and schedule outputs
+- [ ] build structured preview for JSON/XML/extracted fields
+- [ ] build compare/diff view for versioned artifacts
+- [ ] surface warnings, confidence flags, and unresolved fields
+- [ ] support approve/export/attach/regenerate/discard/writeback actions from preview
+- [ ] audit-log preview opens, decisions, and version-specific approvals
+
+## Epic 1.9 — Skill Registry & Capability Truth
+- [ ] define canonical skill registry model
+- [ ] map UI capability statements to concrete skills
+- [ ] add prerequisite/configuration checks per skill
+- [ ] add role-based availability checks
+- [ ] add runtime guard so unavailable skills are described as unavailable/configurable instead of falsely available
+- [ ] add audit/logging contract per skill
+
+## Epic 2.0 — Execution Mode & Autonomy Control
+- [ ] define execution mode object model
+- [ ] define per-skill allowed-mode policy
+- [ ] define low-risk vs high-risk action taxonomy
+- [ ] build mode selector and risk banner UX
+- [ ] build confirmation-gating for high-risk actions
+- [ ] build audit logs for autonomous vs confirmed actions
+- [ ] add environment-level policy to disable guarded autonomy where required
+
+## Epic 2.2 — Product & Finance Skill Packs
+- [ ] register product skill-pack identifiers and contracts
+- [ ] register finance skill-pack identifiers and contracts
+- [ ] wire research/content/forecast/reporting skills to artifact workspace and preview
+- [ ] add source/citation behavior for external-research outputs
+- [ ] seed representative demo prompts and expected outputs
+- [ ] validate that skill availability is role/configuration-aware
+
+## Epic 2.4 — Databricks Handoff & Launch Registry
+- [ ] define Databricks destination registry model
+- [ ] define Odoo context-pack schema for launches
+- [ ] build Open in Databricks button/smart action
+- [ ] build optional Copilot Databricks mode toggle
+- [ ] map portfolio/program/project contexts to relevant Databricks dashboards/apps
+- [ ] map close/compliance contexts to relevant Databricks destinations
+- [ ] add launch audit logging and fallback handling for unmapped destinations
+- [ ] add return-link/back-to-Odoo behavior
+
+## Epic 2.1 — Attachment Intake & File Analysis
+- [ ] define attachment session and file metadata model
+- [ ] support multi-file upload in copilot conversations
+- [ ] classify file type and route to the correct analysis skill
+- [ ] support PDF/image OCR and structured extraction
+- [ ] support spreadsheet/document parsing and comparison
+- [ ] support file-to-finding, file-to-artifact, and file-to-draft workflows
+- [ ] support attach-to-record / promote-to-evidence-pack flows
+- [ ] add unsupported/low-confidence/error states with explicit user feedback
+- [ ] audit-log uploads, analysis steps, generated outputs, and approval/writeback decisions
+
+---
+
 ## Completed (Cross-cutting)
 
 - [x] **X.1** Create `spec/copilot-target-state/` spec kit

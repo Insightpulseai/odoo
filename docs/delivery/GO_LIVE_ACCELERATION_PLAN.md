@@ -1,6 +1,6 @@
 # Go-Live Acceleration Plan
 
-> **Version:** 1.2.0 | **Date:** 2026-03-20 | **Owner:** Jake Tolentino
+> **Version:** 1.1.0 | **Date:** 2026-03-19 | **Owner:** Jake Tolentino
 > **CAF Stage:** Ready (45-55%), entering Adopt
 > **Target:** First live POC demonstration with evidence pack
 > **SSOT:** `ssot/delivery/go_live_plan.yaml`
@@ -12,8 +12,8 @@
 The InsightPulse AI platform has completed Strategy and Plan phases. The Odoo runtime is active on Azure Container Apps with PostgreSQL, native Entra admins exist, and the six-plane architecture is codified. However, several critical blockers prevent a safe go-live:
 
 1. **Azure Front Door not deployed** -- all traffic hits ACA directly, no WAF, no edge TLS termination
-2. ~~**Azure Files not mounted**~~ -- **RESOLVED 2026-03-20**: Azure Files share `odoo-filestore` mounted to all 3 ACA apps; persistence verified across restart and redeploy
-3. ~~**Security Defaults disabled**~~ -- **RESOLVED 2026-03-20**: Security Defaults enabled via Graph PowerShell; 3/4 admins MFA-enrolled
+2. **Azure Files not mounted** -- Odoo filestore is ephemeral (data loss on container restart)
+3. **Security Defaults disabled** -- MFA not enforced platform-wide
 4. **Odoo cron broken** -- `analytic_account_id` field drift causes server action failure
 5. **No pipeline has run** -- ci-cd.yml is authored but unexecuted
 6. **No database-per-tenant validation** -- tenancy model is untested
@@ -419,17 +419,11 @@ Only move items where evidence exists. Do not speculate.
 | TASK-005 (agent pools + WIF) | ci-cd.yml references pools and connections -- confirmed 2026-03-15 |
 | Phase 0 tasks.md items marked [x] | Devcontainers, architecture YAML, Bicep modules, parameters -- all committed |
 
-### Move to Done (session 2026-03-20)
-
-| Board Item | Evidence |
-|------------|----------|
-| TASK-003 (MFA baseline) | Security Defaults enabled, 3/4 admins MFA-enrolled — 2026-03-20 |
-| CP-2 (Azure Files + ACA mount) | Azure Files mounted to all 3 ACA apps, persistence verified — 2026-03-20 |
-
 ### Move to Doing (work actively in progress)
 
 | Board Item | Status |
 |------------|--------|
+| TASK-003 (MFA baseline) | MFA on admin@; emergency-admin@ pending enrollment |
 | TASK-006 (App Insights + Log Analytics) | Resources exist but not fully wired |
 
 ### Move to Blocked
@@ -538,25 +532,23 @@ Eight targets that map 1:1 to the critical path, with no overlapping work items.
 
 - **Critical Path:** CP-1
 - **Due:** 2026-03-22
-- **Status:** DONE (completed 2026-03-20)
+- **Status:** BLOCKED
 - **Owner:** platform_operator
 - **Acceptance:**
-  - [x] MFA evidence for required admin accounts
-  - [x] Security defaults blocker removed
-  - [x] Evidence linked from go-live plan
-- **Evidence:** [cp1-identity-mfa-assessment.md](evidence/poc-pack/cp1-identity-mfa-assessment.md)
+  - [ ] MFA evidence for required admin accounts
+  - [ ] Security defaults blocker removed
+  - [ ] Evidence linked from go-live plan
 
 ### TGT-002: Enable persistent storage for ACA-hosted Odoo
 
 - **Critical Path:** CP-2
 - **Due:** 2026-03-24
-- **Status:** DONE (completed 2026-03-20)
+- **Status:** PARTIAL
 - **Owner:** infrastructure_owner
 - **Acceptance:**
-  - [x] Azure Files mount wired into ACA
-  - [x] Restart persistence test passes
-  - [x] Mount evidence linked
-- **Evidence:** [cp2-aca-persistent-storage.md](evidence/poc-pack/cp2-aca-persistent-storage.md)
+  - [ ] Azure Files mount wired into ACA
+  - [ ] Restart persistence test passes
+  - [ ] Mount evidence linked
 
 ### TGT-003: Validate Azure pipeline deploy path
 

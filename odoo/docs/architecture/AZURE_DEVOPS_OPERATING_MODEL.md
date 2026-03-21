@@ -28,11 +28,11 @@ This document establishes a **deterministic engineering cockpit** where local VS
 - **`Makefile`**: Universal execution wrapper bridging local terminal and Azure Pipelines.
 
 ## 4. Azure DevOps Setup Specification
-- **Project**: `ipai-platform` (Visibility: Private, ID: `b4267980-f678-4fcb-b8b4-3d81d9153445`)
+- **Project**: `InsightPulseAI` (Visibility: Private)
 - **Boards Structure**: Agile template (Epic -> Feature -> User Story -> Task).
 - **GitHub Integration**: Azure Boards GitHub app installed to automatically link `AB#123` mentions in commits/PRs to work items.
-- **Pipelines Strategy**: Single multi-stage YAML pipeline (`.azure/pipelines/ci-cd.yml`) stored in the GitHub repo. Stages: Lint → Build → Infra_Dev → Deploy_Dev → Deploy_Staging. Uses `ipai-build-pool` (self-hosted) with `ubuntu-latest` fallback.
-- **Environments**: Registered in ADO as `insightpulseai-dev`, `insightpulseai-staging`, and `insightpulseai-prod`.
+- **Pipelines Strategy**: YAML-based pipelines stored in the GitHub repo under `.azure/pipelines/`. Default to Microsoft-hosted `ubuntu-latest` agent pools to reduce maintenance overhead.
+- **Environments**: Registered in ADO as `insightpulseai-dev`, `insightpulseai-staging`, and `insightpulseai-prod`. 
 - **Service Connections**: Workload Identity Federation (OIDC) between Azure DevOps and Azure Resource Manager to eliminate long-lived secrets.
 
 ## 5. VS Code / DevContainer Local Setup Specification
@@ -54,40 +54,18 @@ This document establishes a **deterministic engineering cockpit** where local VS
 2. **`.vscode/tasks.json`**: Add deterministic execution commands.
 3. **`.vscode/launch.json`**: Add Odoo Python debugging.
 4. **`Makefile`**: Universal bridge for `lint`, `test`, `plan`, `apply`.
-5. **`.azure/pipelines/ci-cd.yml`**: Unified multi-stage CI/CD pipeline (Lint → Build → Infra → Deploy_Dev → Deploy_Staging). Replaces the previously planned separate `pr-validation.yml` and `cd-deployment.yml`.
+5. **`.azure/pipelines/pr-validation.yml`**: CI pipeline triggered by GitHub PRs.
+6. **`.azure/pipelines/cd-deployment.yml`**: Multi-stage CD pipeline triggered by `main` merges.
 
 ## 8. Validation Checklist
 - [ ] DevContainers build and launch correctly in VS Code.
 - [ ] VS Code `tasks.json` can execute `make lint` without errors.
 - [ ] Azure Boards can successfully link to a GitHub PR via the `AB#<id>` syntax.
-- [ ] Opening a GitHub PR or merging to `main` triggers the ADO `ci-cd.yml` pipeline.
+- [ ] Opening a GitHub PR triggers the ADO `pr-validation.yml` pipeline.
 - [ ] The ADO pipeline successfully executes the exact same `make lint` target used locally.
-- [ ] The `ci-cd.yml` pipeline successfully pauses at the `staging` environment approval gate.
+- [ ] Merging to `main` triggers `cd-deployment.yml` and successfully pauses at the `staging` environment approval gate.
 
-## 9. Azure Pipelines Role
-
-> **Ref**: [Azure Pipelines](https://azure.microsoft.com/en-us/products/devops/pipelines/)
-
-Azure Pipelines is the governed CI/CD and release-execution plane. It owns build,
-test, packaging, deployment stages, approvals, and deployment evidence.
-
-| Capability | Detail |
-|-----------|--------|
-| Cross-platform agents | Linux, macOS, Windows (Microsoft-hosted or self-hosted) |
-| Container-native jobs | Build and test inside container images for environment consistency |
-| Stages, gates, approvals | Multi-stage YAML with environment approval gates per promotion |
-| Deployment targets | Azure (ACA, Functions, Databricks) and non-Azure targets |
-| GitHub integration | PR checks/statuses reported back to GitHub; AB# traceability |
-| Parallel execution | Parallel jobs and test splitting for faster feedback |
-
-**Authority boundaries remain unchanged**:
-
-- GitHub = source control and PR truth
-- Azure Boards = planning and execution coordination
-- Azure Pipelines = CI/CD and release execution
-- Repo docs/SSOT = architecture, governance, contracts, runtime truth
-
-## 10. Risks and Assumptions
+## 9. Risks and Assumptions
 - **Assumption**: Microsoft-hosted Ubuntu agents in Azure DevOps have sufficient CPU/RAM to compile Odoo dependencies.
 - **Risk**: GitHub and Azure DevOps synchronization limits. If the Azure Boards app loses connection, traceability breaks.
 - **Risk**: Environment variables mismatch. Secrets management must strictly rely on Azure Key Vault rather than `.env` files for remote execution.

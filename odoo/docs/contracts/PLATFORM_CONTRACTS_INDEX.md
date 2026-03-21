@@ -42,12 +42,6 @@
 | C-28 | [Auth Architecture](../architecture/AUTH_ARCHITECTURE.md)    | Supabase Auth (IdP)                   | Odoo, web apps, mobile, n8n, MCP, Keycloak        | ✅ Active | `spec/platform-auth/constitution.md`       |
 | C-29 | [Azure Bot Service](AZURE_BOT_SERVICE_CONTRACT.md)           | Azure Bot Service (F0)                | n8n webhook, Supabase identity, Odoo XML-RPC      | ✅ Active | `scripts/azure/deploy-bot-service.sh`      |
 | C-30 | [Copilot Runtime Selection](COPILOT_RUNTIME_CONTRACT.md)     | Azure AI Foundry (`data-intel-ph`)    | `addons/ipai/ipai_odoo_copilot/`                   | ✅ Active | `scripts/ci/validate_ssot_ai.py`           |
-| C-31 | [Boards to Spec](boards-to-spec-contract.md)                 | Azure Boards (Epic/Issue)             | `spec/<slug>/` bundle                               | ✅ Active | Spec Kit validate (`spec_validate.sh`)     |
-| C-32 | [Spec to Pipeline](spec-to-pipeline-contract.md)             | `spec/<slug>/` bundle                 | `.azuredevops/pipelines/odoo-module.yml`             | ✅ Active | Pipeline param validation stage            |
-| C-33 | [Pipeline to Odoo.sh](pipeline-to-odoo-sh-contract.md)       | Azure Pipelines / GitHub Actions      | Azure Container Apps / Odoo.sh                       | ✅ Active | Deploy stage smoke checks                  |
-| C-34 | [Eval Gate](eval-gate-contract.md)                           | `foundry/evals/<slug>/thresholds.yaml`| Production promotion gate                            | ✅ Active | Eval_Gate pipeline stage                   |
-| C-35 | [Foundry/VS Code Auth](foundry-vscode-auth-contract.md)      | Entra ID app registration             | VS Code, Foundry, MCP servers, Azure Pipelines       | ⚠️ Partial | Auth completion checklist                  |
-| C-36 | [Azure Resource Graph](azure-resource-graph-contract.md)     | Azure Resource Graph (KQL)            | SSOT reconciliation, drift detection, governance      | ✅ Active | `scripts/azure/resource_graph/run_query.sh` |
 
 ---
 

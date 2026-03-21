@@ -35,6 +35,39 @@ quarters:
         ssot_ref: "ssot/parity/ee_to_oca_proof_matrix.yaml"
         status: active
 
+  - id: "2026-Q2"
+    name: "Foundation & Launch Gates (continued)"
+    epics:
+      - id: E-PRED-01
+        title: "AI ERP Predictive Intelligence"
+        description: "NLQ, multi-provider routing, cash flow/inventory/lead/payment/churn prediction, closed-loop learning"
+        ssot_ref: "ssot/ai/copilot_parity_priorities.yaml"
+        status: planned
+
+      - id: E-MKT-DATA-01
+        title: "Marketing Data Foundation"
+        description: "Identity resolution, consent preferences, canonical event schema tracking"
+        ssot_ref: null
+        status: planned
+
+      - id: E-MKT-SEG-01
+        title: "Segmentation + Experimentation"
+        description: "Segment engine (RFM/cohorts), A/B testing harness, automated reporting"
+        ssot_ref: null
+        status: planned
+
+      - id: E-MKT-NBA-01
+        title: "Next Best Action + Decisioning"
+        description: "NBA rules, audience fatigue guardrails, frequency caps"
+        ssot_ref: null
+        status: planned
+
+      - id: E-WKS-01
+        title: "Workspace Embed + SLA Ops"
+        description: "Embed live ERP views in workspace pages, Canvas-in-a-Box SLAs, incident playbooks"
+        ssot_ref: null
+        status: planned
+
   - id: "2026-Q3"
     name: "Knowledge + Agent Layer"
     epics:

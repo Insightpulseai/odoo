@@ -176,15 +176,15 @@ The post-create script creates three databases:
 | Database | Purpose | Created By |
 |----------|---------|------------|
 | `odoo_dev` | Default development database | post-create.sh |
-| `odoo_staging` | Staging/testing database | post-create.sh |
-| `odoo` | Production-like testing | post-create.sh |
+| `odoo_stage` | Staging/testing database | post-create.sh |
+| `odoo_prod` | Production-like testing | post-create.sh |
 
 ### Switch Database
 
 **Method 1: Environment Variable**
 ```bash
 # Edit .devcontainer/devcontainer.env
-ODOO_DB=odoo_staging
+ODOO_DB=odoo_stage
 
 # Rebuild container
 # Command Palette: "Dev Containers: Rebuild Container"
@@ -192,13 +192,13 @@ ODOO_DB=odoo_staging
 
 **Method 2: Command Line**
 ```bash
-docker compose exec odoo odoo -d odoo_staging -u all
+docker compose exec odoo odoo -d odoo_stage -u all
 ```
 
 **Method 3: Direct Connection**
 ```bash
 # Connect to specific database
-psql -U odoo -d odoo_staging
+psql -U odoo -d odoo_stage
 
 # List all databases
 psql -U odoo -l
@@ -578,8 +578,8 @@ Debug Odoo directly from VS Code:
 ### Database Hygiene
 
 - **Use odoo_dev** for regular development
-- **Use odoo_staging** for testing migrations/updates
-- **Use odoo** for production-like validation
+- **Use odoo_stage** for testing migrations/updates
+- **Use odoo_prod** for production-like validation
 - **Backup before risky operations**: `pg_dump` to file
 - **Reset when needed**: Drop and recreate database
 
