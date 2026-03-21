@@ -1,0 +1,189 @@
+# rg-normalization-matrix.yaml — Resource Group Normalization Plan (Dev Tier)
+#
+# Maps current Azure resources to their target 5+1 RG model.
+# SSOT: docs/architecture/INSIGHTPULSEAI_ODOO_ON_AZURE_TARGET_STATE.md
+#
+# Generated: 2026-03-21
+# Status: Phase 0 (preparation)
+
+target_model:
+  description: "5 lifecycle-aligned RGs + 1 shared observability RG"
+  target_rgs:
+    - name: rg-ipai-shared-observability
+      purpose: Log Analytics, App Insights, Monitor action groups
+      phase: 1
+    - name: rg-ipai-dev-edge
+      purpose: Front Door, WAF policy, custom domains
+      phase: deferred  # Cosmetic rename — accept rg-ipai-shared-dev as de facto edge RG
+    - name: rg-ipai-dev-odoo-runtime
+      purpose: ACA environment, web/worker/cron apps, runtime identities
+      phase: 3
+      status: active  # Already created during initial migration
+    - name: rg-ipai-dev-odoo-data
+      purpose: PostgreSQL, storage (filestore), Azure Files
+      phase: 2
+    - name: rg-ipai-dev-platform
+      purpose: Key Vault, ACR, auth, MCP, OCR, Superset, Plane, Shelf, CRM, website
+      phase: 2
+    - name: rg-ipai-dev-ai
+      purpose: OpenAI, DocAI, Vision, Language, Search, Foundry, Databricks
+      phase: 1
+      note: Accept existing rg-ipai-ai-dev name (Databricks/Foundry can't move)
+
+resource_moves:
+  # Phase 1: Observability + AI (zero downtime)
+  phase_1:
+    - resource: law-ipai-dev
+      type: Microsoft.OperationalInsights/workspaces
+      from: rg-ipai-dev
+      to: rg-ipai-shared-observability
+      moveable: true
+    - resource: appi-ipai-dev
+      type: Microsoft.Insights/components
+      from: rg-ipai-dev
+      to: rg-ipai-shared-observability
+      moveable: true
+      depends_on: law-ipai-dev
+    - resource: smartdetection-action-group
+      type: Microsoft.Insights/actionGroups
+      from: rg-ipai-dev
+      to: rg-ipai-shared-observability
+      moveable: true
+    - resource: oai-ipai-dev
+      type: Microsoft.CognitiveServices/accounts (OpenAI)
+      from: rg-ipai-ai-dev
+      to: rg-ipai-dev-ai
+      moveable: true
+      note: Keep in rg-ipai-ai-dev if not renaming
+    - resource: docai-ipai-dev
+      type: Microsoft.CognitiveServices/accounts (DocIntelligence)
+      from: rg-ipai-ai-dev
+      to: rg-ipai-dev-ai
+      moveable: true
+    - resource: vision-ipai-dev
+      type: Microsoft.CognitiveServices/accounts (ComputerVision)
+      from: rg-ipai-ai-dev
+      to: rg-ipai-dev-ai
+      moveable: true
+    - resource: lang-ipai-dev
+      type: Microsoft.CognitiveServices/accounts (Language)
+      from: rg-ipai-ai-dev
+      to: rg-ipai-dev-ai
+      moveable: true
+    - resource: srch-ipai-dev
+      type: Microsoft.CognitiveServices/accounts (Search)
+      from: rg-ipai-ai-dev
+      to: rg-ipai-dev-ai
+      moveable: true
+
+  # Phase 2: Data + Identity + Registry (zero downtime)
+  phase_2:
+    - resource: ipai-odoo-dev-pg
+      type: Microsoft.DBforPostgreSQL/flexibleServers
+      from: rg-ipai-dev
+      to: rg-ipai-dev-odoo-data
+      moveable: true
+      constraint: PG must be Running during move
+    - resource: stipaiodoodev
+      type: Microsoft.Storage/storageAccounts
+      from: rg-ipai-dev
+      to: rg-ipai-dev-odoo-data
+      moveable: true
+    - resource: kv-ipai-dev
+      type: Microsoft.KeyVault/vaults
+      from: rg-ipai-dev
+      to: rg-ipai-dev-platform
+      moveable: true
+    - resource: ipai-odoo-dev-kv
+      type: Microsoft.KeyVault/vaults
+      from: rg-ipai-dev
+      to: rg-ipai-dev-platform
+      moveable: true
+    - resource: cripaidev
+      type: Microsoft.ContainerRegistry/registries
+      from: rg-ipai-dev
+      to: rg-ipai-dev-platform
+      moveable: true
+    - resource: ipaiodoodevacr
+      type: Microsoft.ContainerRegistry/registries
+      from: rg-ipai-dev
+      to: rg-ipai-dev-platform
+      moveable: true
+    - resource: ipaiwebacr
+      type: Microsoft.ContainerRegistry/registries
+      from: rg-ipai-dev
+      to: rg-ipai-dev-platform
+      moveable: true
+      note: Consolidation candidate — review usage before move
+    - resource: mi-ipai-odoo-dev
+      type: Microsoft.ManagedIdentity/userAssignedIdentities
+      from: rg-ipai-dev
+      to: rg-ipai-dev-odoo-runtime
+      moveable: true
+      post_move: Re-grant RBAC at new scope
+
+  # Phase 3: Odoo Runtime (MAINTENANCE WINDOW — 15 min)
+  phase_3:
+    note: "Container Apps + ACA Environment CANNOT be moved — must be recreated"
+    apps_to_recreate:
+      - ipai-odoo-dev-web
+      - ipai-odoo-dev-worker
+      - ipai-odoo-dev-cron
+      - ipai-auth-dev
+      - ipai-mcp-dev
+      - ipai-ocr-dev
+      - ipai-superset-dev
+      - ipai-plane-dev
+      - ipai-crm-dev
+      - ipai-shelf-dev
+      - ipai-website-dev
+      - ipai-copilot-gateway
+    target_rg: rg-ipai-dev-odoo-runtime
+    target_env: ipai-odoo-dev-env
+    domain: salmontree-b7d27e19.southeastasia.azurecontainerapps.io
+    status: completed  # Done during initial migration 2026-03-20
+
+  # Phase 4: Retire legacy (destructive, after stabilization hold)
+  phase_4:
+    stabilization_hold_until: "2026-03-23"
+    resources_to_delete:
+      - resource: debug-odoo-ep
+        rg: rg-ipai-agents-dev
+        status: deleted  # 2026-03-20
+      - resource: odoo-init
+        rg: rg-ipai-agents-dev
+        status: deleted  # 2026-03-20
+      - resource: cae-ipai-dev
+        rg: rg-ipai-agents-dev
+        status: deleted  # 2026-03-20
+    rgs_to_delete_post_hold:
+      - rg-ipai-dev  # After all resources moved/deleted
+      - rg-ipai-data-dev  # After pg-ipai-dev assessed
+
+cannot_move:
+  - type: Microsoft.App/containerApps
+    reason: Must recreate in target RG
+  - type: Microsoft.App/managedEnvironments
+    reason: Must recreate in target RG
+  - type: Microsoft.App/jobs
+    reason: Must recreate in target RG
+  - type: Microsoft.Cdn/profiles (Front Door)
+    reason: Must recreate — deferred for dev, apply to staging/prod greenfield
+  - type: Microsoft.Databricks/workspaces
+    reason: Cannot move — keep in existing RG
+  - type: Microsoft.MachineLearningServices/workspaces (AI Foundry)
+    reason: Cannot move — keep in existing RG
+
+pragmatic_decisions:
+  - id: skip-fd-recreation
+    decision: "Skip Front Door recreation for dev"
+    reason: "Custom domain cutover is high-risk for cosmetic naming benefit"
+    action: "Accept rg-ipai-shared-dev as de facto edge RG"
+  - id: accept-ai-rg-name
+    decision: "Accept rg-ipai-ai-dev as is"
+    reason: "Databricks, Foundry, and managed resources can't move"
+    action: "Move only Cognitive Services in; update SSOT to accept existing name"
+  - id: single-aca-env
+    decision: "Single ACA environment for all apps"
+    reason: "Two environments double cost"
+    action: "Use one ACA env in rg-ipai-dev-odoo-runtime for both Odoo and platform apps"
