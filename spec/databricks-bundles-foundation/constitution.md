@@ -102,6 +102,24 @@ The following are considered drift:
 - environment targets missing from a deployable bundle
 - documentation that contradicts the implemented bundle taxonomy
 
+### 10. CI executor is pluggable; contract is not
+The execution surface for CI/CD may be GitHub Actions or Azure Pipelines.
+Changing the executor must not change:
+- bundle taxonomy
+- environment target model
+- anti-drift rules
+- Databricks/Fabric boundary
+
+### 11. Odoo.sh-style promotion semantics
+The repository uses Odoo.sh as the benchmark for promotion semantics:
+
+- Development = isolated validation lane
+- Staging = refreshed production-like verification lane with side effects neutralized
+- Production = gated promotion lane that advances only from a validated revision
+
+### 12. Last-known-good production rule
+Production deployments must preserve a machine-readable last-known-good release reference so the previous successful revision can be restored deterministically if a production deploy fails validation.
+
 ## Required Directory Contract
 
 ```text

@@ -75,6 +75,22 @@ The CI workflow installs a specific version of the Databricks CLI to avoid drift
 ### Python package structure
 `foundation_python` and `lakeflow_ingestion` use `pyproject.toml` with setuptools. This allows local development, testing, and Databricks wheel deployment.
 
+### Odoo.sh benchmark implementation note
+Model the release flow after Odoo.sh:
+- dev validates fast and frequently
+- staging is rebuilt/revalidated from fresh production-like state
+- prod is promoted only from a staging-proven revision
+
+Azure DevOps environments provide the deployment target and approval history.
+Databricks bundles provide the deployable revision contract.
+
+### Azure DevOps integration note
+When Azure DevOps is the governing delivery surface:
+- use Azure Pipelines for changed-bundle validation and gated promotion
+- keep environment-specific wiring in service connections and variable groups
+- avoid encoding environment authority directly into bundle taxonomy
+- preserve Git as the reviewable source of truth for bundle config, code, and tests
+
 ## Risks and Mitigations
 
 | Risk | Likelihood | Impact | Mitigation |

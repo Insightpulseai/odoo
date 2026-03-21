@@ -1,0 +1,177 @@
+trigger:
+  branches:
+    include:
+      - main
+  paths:
+    include:
+      - databricks/*
+      - docs/architecture/DATABRICKS_BUNDLES_BASELINE.md
+      - spec/databricks-bundles-foundation/*
+
+pr:
+  branches:
+    include:
+      - main
+  paths:
+    include:
+      - databricks/*
+      - docs/architecture/DATABRICKS_BUNDLES_BASELINE.md
+      - spec/databricks-bundles-foundation/*
+
+pool:
+  vmImage: ubuntu-latest
+
+variables:
+  PYTHON_VERSION: '3.11'
+
+stages:
+  - stage: detect
+    displayName: Detect changed bundle roots
+    jobs:
+      - job: detect_changes
+        displayName: Detect changed paths
+        steps:
+          - checkout: self
+            fetchDepth: 0
+
+          - bash: |
+              set -euo pipefail
+
+              if [ "$(Build.Reason)" = "PullRequest" ]; then
+                BASE_REF="origin/$(System.PullRequest.TargetBranch | sed 's#refs/heads/##')"
+                git fetch origin "$(System.PullRequest.TargetBranch)"
+                DIFF_FILES="$(git diff --name-only "$BASE_REF"...HEAD)"
+              else
+                if git rev-parse HEAD~1 >/dev/null 2>&1; then
+                  DIFF_FILES="$(git diff --name-only HEAD~1 HEAD)"
+                else
+                  DIFF_FILES="$(git ls-files)"
+                fi
+              fi
+
+              echo "Changed files:"
+              echo "$DIFF_FILES"
+
+              foundation=false
+              lakeflow=false
+              sql=false
+              docs_or_spec=false
+
+              if echo "$DIFF_FILES" | grep -E '^(databricks/bundles/foundation_python/|databricks/shared/)' >/dev/null; then
+                foundation=true
+              fi
+
+              if echo "$DIFF_FILES" | grep -E '^(databricks/bundles/lakeflow_ingestion/|databricks/shared/)' >/dev/null; then
+                lakeflow=true
+              fi
+
+              if echo "$DIFF_FILES" | grep -E '^(databricks/bundles/sql_warehouse/|databricks/shared/)' >/dev/null; then
+                sql=true
+              fi
+
+              if echo "$DIFF_FILES" | grep -E '^(docs/architecture/DATABRICKS_BUNDLES_BASELINE.md|spec/databricks-bundles-foundation/)' >/dev/null; then
+                docs_or_spec=true
+              fi
+
+              echo "##vso[task.setvariable variable=foundation_python;isOutput=true]$foundation"
+              echo "##vso[task.setvariable variable=lakeflow_ingestion;isOutput=true]$lakeflow"
+              echo "##vso[task.setvariable variable=sql_warehouse;isOutput=true]$sql"
+              echo "##vso[task.setvariable variable=docs_or_spec;isOutput=true]$docs_or_spec"
+            name: setvars
+            displayName: Compute changed roots
+
+  - stage: validate
+    displayName: Validate changed bundles
+    dependsOn: detect
+    jobs:
+      - job: foundation_python
+        displayName: Validate foundation_python
+        condition: eq(stageDependencies.detect.detect_changes.outputs['setvars.foundation_python'], 'true')
+        steps:
+          - checkout: self
+          - task: UsePythonVersion@0
+            inputs:
+              versionSpec: '$(PYTHON_VERSION)'
+
+          - bash: |
+              set -euo pipefail
+              curl -fsSL https://raw.githubusercontent.com/databricks/setup-cli/main/install.sh | sh
+              databricks version
+            displayName: Install Databricks CLI
+
+          - bash: |
+              set -euo pipefail
+              cd databricks/bundles/foundation_python
+              databricks bundle validate
+            displayName: Validate bundle
+
+          - bash: |
+              set -euo pipefail
+              python -m pip install --upgrade pip
+              pip install -e databricks/bundles/foundation_python pytest
+              pytest -q databricks/bundles/foundation_python/tests
+            displayName: Run tests
+
+      - job: lakeflow_ingestion
+        displayName: Validate lakeflow_ingestion
+        condition: eq(stageDependencies.detect.detect_changes.outputs['setvars.lakeflow_ingestion'], 'true')
+        steps:
+          - checkout: self
+          - task: UsePythonVersion@0
+            inputs:
+              versionSpec: '$(PYTHON_VERSION)'
+
+          - bash: |
+              set -euo pipefail
+              curl -fsSL https://raw.githubusercontent.com/databricks/setup-cli/main/install.sh | sh
+              databricks version
+            displayName: Install Databricks CLI
+
+          - bash: |
+              set -euo pipefail
+              cd databricks/bundles/lakeflow_ingestion
+              databricks bundle validate
+            displayName: Validate bundle
+
+      - job: sql_warehouse
+        displayName: Validate sql_warehouse
+        condition: eq(stageDependencies.detect.detect_changes.outputs['setvars.sql_warehouse'], 'true')
+        steps:
+          - checkout: self
+
+          - bash: |
+              set -euo pipefail
+              curl -fsSL https://raw.githubusercontent.com/databricks/setup-cli/main/install.sh | sh
+              databricks version
+            displayName: Install Databricks CLI
+
+          - bash: |
+              set -euo pipefail
+              cd databricks/bundles/sql_warehouse
+              databricks bundle validate
+            displayName: Validate bundle
+
+  - stage: contract
+    displayName: Enforce architecture/spec alignment
+    dependsOn: detect
+    jobs:
+      - job: enforce_alignment
+        displayName: Check docs/spec contract
+        steps:
+          - checkout: self
+
+          - bash: |
+              set -euo pipefail
+
+              FOUNDATION='$(stageDependencies.detect.detect_changes.outputs['"'"'setvars.foundation_python'"'"'])'
+              LAKEFLOW='$(stageDependencies.detect.detect_changes.outputs['"'"'setvars.lakeflow_ingestion'"'"'])'
+              SQL='$(stageDependencies.detect.detect_changes.outputs['"'"'setvars.sql_warehouse'"'"'])'
+              DOCS='$(stageDependencies.detect.detect_changes.outputs['"'"'setvars.docs_or_spec'"'"'])'
+
+              if [ "$FOUNDATION" = "true" ] || [ "$LAKEFLOW" = "true" ] || [ "$SQL" = "true" ]; then
+                if [ "$DOCS" != "true" ]; then
+                  echo "Bundle contract changed without architecture/spec update."
+                  exit 1
+                fi
+              fi
+            displayName: Fail on undocumented bundle contract change
