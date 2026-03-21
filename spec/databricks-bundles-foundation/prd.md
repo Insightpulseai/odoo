@@ -86,6 +86,22 @@ A GitHub Actions workflow must:
 ### FR-9: Patterns Directory
 A `databricks/bundles/patterns/` directory must contain reference documentation (not deployable assets) mapping upstream Databricks bundle-examples to the local layout.
 
+### FR-10: Dual CI surface support
+The repository must support Databricks bundle validation from either:
+- GitHub Actions
+- Azure Pipelines
+
+The chosen CI executor may change by environment or governance model, but the Databricks bundle contract must remain identical.
+
+### FR-11: Odoo.sh benchmark staging behavior
+The staging environment must validate against sanitized production-like data and must neutralize or redirect external side effects.
+
+### FR-12: Promotion-only production
+Production may only deploy a revision that has already passed development validation and staging verification.
+
+### FR-13: Deterministic rollback reference
+The delivery system must persist a last-known-good production release reference for deterministic rollback.
+
 ## Non-Functional Requirements
 
 ### NFR-1: No Manual Workspace Resources

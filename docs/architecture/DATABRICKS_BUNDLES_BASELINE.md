@@ -148,6 +148,71 @@ The CI pipeline (`.github/workflows/databricks-bundles-ci.yml`) enforces:
 3. **Python tests** — `pytest` runs for bundles with a `tests/` directory.
 4. **Doc/spec alignment** — Checks that required documentation exists and is consistent.
 
+## Odoo.sh Benchmark Model
+
+> **Benchmark:** "Odoo.sh-style promotion semantics on Azure DevOps for Databricks bundles: dev validates fast, staging replays against fresh sanitized production-like state, prod promotes only validated revisions, and rollback restores the last known good release."
+
+This repository adopts **Odoo.sh-style stage semantics** as the benchmark for Databricks delivery:
+
+- **Development**
+  - branch/PR-oriented validation
+  - isolated target
+  - non-production data
+  - fast feedback: bundle validation, unit tests, smoke tests
+
+- **Staging**
+  - production-like validation target
+  - refreshed from sanitized production-like data
+  - side effects neutralized or redirected to test integrations
+  - used for final pre-production verification
+
+- **Production**
+  - promotion only from a previously validated revision
+  - environment-gated deployment
+  - rollback to the last known good deployed revision if production validation fails
+
+## Side-effect Neutralization Rule
+
+Staging must not perform irreversible or external-production side effects.
+Examples:
+- no live outbound notifications
+- no live payment or billing side effects
+- no live external mutations unless explicitly test-scoped
+
+## Promotion Rule
+
+A revision must pass:
+1. dev validation
+2. staging deployment + integration checks
+3. production approval/check gates
+
+before it becomes the active production revision.
+
+## Rollback Rule
+
+Production rollback must restore the last known good deployed bundle revision/manifest.
+Do not rely on ad hoc manual reconstruction.
+
+### Supported execution surfaces
+
+The repository supports both:
+- GitHub Actions
+- Azure Pipelines
+
+Selection rule:
+- Use GitHub Actions when the repository is operating in GitHub-native delivery mode.
+- Use Azure Pipelines when release governance, service connections, variable groups, approvals, or enterprise Azure DevOps controls are the governing surface.
+
+This mirrors Microsoft's Azure DevOps setup pattern for enterprise automation, where project assets, service connections, pipelines, permissions, and variable groups are part of the delivery contract.
+
+### Azure DevOps-specific rule
+
+If Azure Pipelines is enabled for bundle validation/deployment:
+- service connections must be environment-scoped
+- variable groups must hold non-secret environment configuration references
+- secrets must remain in the canonical secret backend and be injected at runtime
+- bundle validation must still remain path-scoped by changed bundle root
+
 ## Decision Guide
 
 ### When to create a new bundle

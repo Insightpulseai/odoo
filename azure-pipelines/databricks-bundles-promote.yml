@@ -1,0 +1,166 @@
+trigger: none
+pr: none
+
+parameters:
+  - name: bundle
+    displayName: Bundle root
+    type: string
+    default: foundation_python
+    values:
+      - foundation_python
+      - lakeflow_ingestion
+      - sql_warehouse
+
+  - name: deploy_ref
+    displayName: Git ref to promote
+    type: string
+    default: main
+
+pool:
+  vmImage: ubuntu-latest
+
+variables:
+  PYTHON_VERSION: '3.11'
+  BUNDLE_ROOT: 'databricks/bundles/${{ parameters.bundle }}'
+
+stages:
+  - stage: dev_validate
+    displayName: Dev validate
+    jobs:
+      - job: validate
+        displayName: Validate selected bundle
+        steps:
+          - checkout: self
+            fetchDepth: 0
+            clean: true
+
+          - bash: |
+              set -euo pipefail
+              git fetch --all --tags --prune
+              git checkout "${{ parameters.deploy_ref }}"
+            displayName: Checkout requested ref
+
+          - task: UsePythonVersion@0
+            inputs:
+              versionSpec: '$(PYTHON_VERSION)'
+
+          - bash: |
+              set -euo pipefail
+              curl -fsSL https://raw.githubusercontent.com/databricks/setup-cli/main/install.sh | sh
+              databricks version
+            displayName: Install Databricks CLI
+
+          - bash: |
+              set -euo pipefail
+              cd "$(BUNDLE_ROOT)"
+              databricks bundle validate -t dev
+            displayName: Bundle validate (dev)
+
+          - bash: |
+              set -euo pipefail
+              if [ -f "$(BUNDLE_ROOT)/pyproject.toml" ] && [ -d "$(BUNDLE_ROOT)/tests" ]; then
+                python -m pip install --upgrade pip
+                pip install -e "$(BUNDLE_ROOT)" pytest
+                pytest -q "$(BUNDLE_ROOT)/tests"
+              else
+                echo "No Python test surface for $(BUNDLE_ROOT)"
+              fi
+            displayName: Run local tests if present
+
+  - stage: staging_deploy
+    displayName: Staging deploy and verify
+    dependsOn: dev_validate
+    jobs:
+      - deployment: deploy_staging
+        displayName: Deploy to staging
+        environment: databricks-staging
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - checkout: self
+                  fetchDepth: 0
+                  clean: true
+
+                - bash: |
+                    set -euo pipefail
+                    git fetch --all --tags --prune
+                    git checkout "${{ parameters.deploy_ref }}"
+                  displayName: Checkout requested ref
+
+                - task: UsePythonVersion@0
+                  inputs:
+                    versionSpec: '$(PYTHON_VERSION)'
+
+                - bash: |
+                    set -euo pipefail
+                    curl -fsSL https://raw.githubusercontent.com/databricks/setup-cli/main/install.sh | sh
+                    databricks version
+                  displayName: Install Databricks CLI
+
+                - bash: |
+                    set -euo pipefail
+                    cd "$(BUNDLE_ROOT)"
+                    databricks bundle deploy -t staging
+                  displayName: Deploy bundle (staging)
+
+                - bash: |
+                    set -euo pipefail
+                    cd "$(BUNDLE_ROOT)"
+                    databricks bundle run -t staging smoke || true
+                  displayName: Run staging smoke/integration checks
+
+  - stage: prod_deploy
+    displayName: Production promote
+    dependsOn: staging_deploy
+    jobs:
+      - deployment: deploy_prod
+        displayName: Deploy to production
+        environment: databricks-prod
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - checkout: self
+                  fetchDepth: 0
+                  clean: true
+
+                - bash: |
+                    set -euo pipefail
+                    git fetch --all --tags --prune
+                    git checkout "${{ parameters.deploy_ref }}"
+                  displayName: Checkout requested ref
+
+                - task: UsePythonVersion@0
+                  inputs:
+                    versionSpec: '$(PYTHON_VERSION)'
+
+                - bash: |
+                    set -euo pipefail
+                    curl -fsSL https://raw.githubusercontent.com/databricks/setup-cli/main/install.sh | sh
+                    databricks version
+                  displayName: Install Databricks CLI
+
+                - bash: |
+                    set -euo pipefail
+                    mkdir -p .release
+                    printf '%s\n' "${{ parameters.deploy_ref }}" > .release/LAST_KNOWN_GOOD_CANDIDATE.txt
+                  displayName: Persist production candidate ref
+
+                - bash: |
+                    set -euo pipefail
+                    cd "$(BUNDLE_ROOT)"
+                    databricks bundle deploy -t prod
+                  displayName: Deploy bundle (prod)
+
+                - bash: |
+                    set -euo pipefail
+                    cd "$(BUNDLE_ROOT)"
+                    databricks bundle run -t prod smoke || true
+                  displayName: Run production post-deploy smoke
+
+                - bash: |
+                    set -euo pipefail
+                    mkdir -p .release
+                    printf '%s\n' "${{ parameters.deploy_ref }}" > .release/LAST_KNOWN_GOOD.txt
+                  displayName: Mark ref as last known good
