@@ -1,0 +1,188 @@
+# =============================================================================
+# GitHub + Entra Target State Configuration — SSOT
+# =============================================================================
+#
+# Defines the minimal enterprise control model for:
+#   - GitHub Enterprise/Org access and security
+#   - Entra ID identity authority
+#   - GitHub Packages publishing strategy
+#   - External collaboration model
+#
+# Last updated: 2026-03-22
+# =============================================================================
+
+schema_version: "1.0"
+last_updated: "2026-03-22"
+owner: "platform-architecture"
+status: "approved"
+
+canonical_statement: >
+  GitHub = engineering and operational workflow surface.
+  Entra = canonical identity authority.
+  SAML + secure 2FA = enterprise access baseline.
+  GitHub Packages = selective SDK/contract publishing only.
+  External Identities = optional B2B collaboration layer.
+
+# ---------------------------------------------------------------------------
+# GitHub Enterprise — Auth & Security
+# ---------------------------------------------------------------------------
+github_enterprise:
+  require_2fa:
+    target: true
+    when: enable_now
+    why: Enterprise baseline — all members must use 2FA
+
+  secure_2fa_methods_only:
+    target: true
+    when: enable_now
+    why: Disallow SMS-based 2FA — require TOTP, WebAuthn, or passkeys
+
+  require_saml_sso:
+    target: true
+    when: enable_now
+    why: Entra is the canonical IdP — enforce SAML for all org access
+    provider: entra_id
+    notes: Configure after Entra SAML app registration
+
+  ip_allow_list:
+    target: false
+    when: defer
+    why: >
+      Causes friction before stable egress model for CI runners,
+      GitHub Apps, developer environments, and office IPs.
+    enable_condition: >
+      Enable only after documenting: office/static IPs, CI runner IPs,
+      GitHub App IPs, developer environment egress
+
+# ---------------------------------------------------------------------------
+# GitHub Org — Planning & Projects
+# ---------------------------------------------------------------------------
+github_org:
+  projects_enabled:
+    target: true
+    when: enable_now
+
+  member_project_visibility_changes:
+    target: false
+    when: enable_now
+    why: Prevent members from changing project visibility without admin approval
+
+  project_boards:
+    - name: PROJECT TEMPLATE
+      type: template
+      status: keep
+    - name: Execution Board
+      type: execution
+      status: keep
+    - name: Roadmap
+      type: roadmap
+      status: keep
+
+  issue_types:
+    core:
+      - Feature
+      - Bug
+      - Task
+    optional:
+      - Incident
+      - Spike
+    do_not_add:
+      - Initiative  # use Azure Boards for portfolio-level planning
+      - Epic        # use Azure Boards for epic-level planning
+    notes: >
+      Keep lean. Do not recreate Azure Boards hierarchy inside GitHub.
+      GitHub is the engineering surface; Azure DevOps is the governance spine.
+
+# ---------------------------------------------------------------------------
+# GitHub Packages — Publishing Strategy
+# ---------------------------------------------------------------------------
+github_packages:
+  strategy: selective
+  when: enable_now
+
+  target_package_lanes:
+    - repo: platform
+      type: sdk_contracts
+      status: target
+    - repo: agents
+      type: sdk_contracts
+      status: target
+    - repo: web
+      type: shared_client_types
+      status: target
+    - repo: data-intelligence
+      type: shared_contract
+      status: optional
+
+  current_packages:
+    - name: ipai-superset
+      status: existing
+      notes: Review if still needed
+
+  do_not_use_for:
+    - runtime app artifacts
+    - one-off internal modules
+    - repo-local code that is not reused
+    - commercial offers or plugin marketplace
+
+# ---------------------------------------------------------------------------
+# Entra ID — Identity & Licensing
+# ---------------------------------------------------------------------------
+entra_id:
+  license_target:
+    minimum: P1
+    preferred: P2
+    why_p2: >
+      Identity governance, access reviews, privileged workflows,
+      higher-assurance enterprise controls match the platform ambition.
+
+  external_identities:
+    target: true
+    when: enable_if_needed
+    why: B2B collaborators, customer/partner guest access
+    use_cases:
+      - managed client workspace access
+      - partner collaboration
+      - external consultant access
+
+  cross_tenant_sync:
+    target: false
+    when: defer
+    why: Only needed if synchronizing across separate Entra tenants
+    enable_condition: Multi-tenant deployment with shared identity needs
+
+  entra_connect:
+    target: false
+    when: defer
+    why: Only needed for on-prem AD / hybrid identity sync
+    enable_condition: On-premises Active Directory exists
+
+  backup_recovery_preview:
+    target: false
+    when: ignore
+    why: Preview feature, not in current license, not a planning blocker
+
+# ---------------------------------------------------------------------------
+# Summary Matrix
+# ---------------------------------------------------------------------------
+summary:
+  enable_now:
+    - "GitHub: Require 2FA"
+    - "GitHub: Secure 2FA methods only"
+    - "GitHub: Require SAML SSO via Entra"
+    - "GitHub: Projects enabled"
+    - "GitHub: Block member project visibility changes"
+    - "GitHub: Issue types — Feature, Bug, Task"
+    - "GitHub: Packages — selective SDK/contract publishing"
+    - "Entra: P1 minimum (P2 preferred)"
+
+  defer:
+    - "GitHub: IP allow list"
+    - "Entra: Cross-tenant sync"
+    - "Entra: Entra Connect"
+    - "GitHub: Broad package publishing"
+
+  ignore:
+    - "Entra: Backup/recovery preview"
+    - "GitHub: Recreating Azure Boards hierarchy in issue types"
+    - "GitHub: Plugin/offer commercialization via Packages"
