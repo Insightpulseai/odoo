@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Tree View -->
+    <record id="l10n_ph_bir_period_view_list" model="ir.ui.view">
+        <field name="name">l10n.ph.bir.period.list</field>
+        <field name="model">l10n.ph.bir.period</field>
+        <field name="arch" type="xml">
+            <list decoration-danger="is_overdue" decoration-success="status == 'paid'"
+                  decoration-info="status == 'filed'" decoration-warning="status == 'prepared'">
+                <field name="period_label"/>
+                <field name="form_code"/>
+                <field name="branch_id"/>
+                <field name="period_start"/>
+                <field name="period_end"/>
+                <field name="due_date"/>
+                <field name="status" widget="badge"
+                       decoration-danger="status == 'overdue'"
+                       decoration-success="status == 'paid'"
+                       decoration-info="status == 'filed'"
+                       decoration-warning="status == 'prepared'"/>
+                <field name="is_overdue" column_invisible="1"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Form View -->
+    <record id="l10n_ph_bir_period_view_form" model="ir.ui.view">
+        <field name="name">l10n.ph.bir.period.form</field>
+        <field name="model">l10n.ph.bir.period</field>
+        <field name="arch" type="xml">
+            <form string="BIR Filing Period">
+                <header>
+                    <button name="action_mark_prepared" type="object"
+                            string="Prepare" class="oe_highlight"
+                            invisible="status != 'open'"
+                            groups="ipai_bir_compliance.group_bir_compliance_manager"/>
+                    <button name="action_mark_filed" type="object"
+                            string="Mark Filed" class="oe_highlight"
+                            invisible="status not in ('open', 'prepared', 'overdue')"
+                            groups="ipai_bir_compliance.group_bir_compliance_manager"/>
+                    <button name="action_mark_paid" type="object"
+                            string="Mark Paid" class="oe_highlight"
+                            invisible="status != 'filed'"
+                            groups="ipai_bir_compliance.group_bir_compliance_manager"/>
+                    <button name="action_create_calendar_event" type="object"
+                            string="Create Calendar Event"
+                            invisible="calendar_event_id"
+                            groups="ipai_bir_compliance.group_bir_compliance_manager"/>
+                    <field name="status" widget="statusbar"
+                           statusbar_visible="open,prepared,filed,paid"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="period_label"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="obligation_id"/>
+                            <field name="form_code"/>
+                            <field name="branch_id"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                        </group>
+                        <group>
+                            <field name="period_start"/>
+                            <field name="period_end"/>
+                            <field name="due_date"/>
+                            <field name="is_overdue"/>
+                            <field name="calendar_event_id"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Filings">
+                            <field name="filing_ids">
+                                <list editable="bottom">
+                                    <field name="filing_reference"/>
+                                    <field name="filing_datetime"/>
+                                    <field name="amount_due"/>
+                                    <field name="amount_paid"/>
+                                    <field name="status" widget="badge"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Notes">
+                            <field name="notes"/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- Calendar View -->
+    <record id="l10n_ph_bir_period_view_calendar" model="ir.ui.view">
+        <field name="name">l10n.ph.bir.period.calendar</field>
+        <field name="model">l10n.ph.bir.period</field>
+        <field name="arch" type="xml">
+            <calendar string="BIR Filing Calendar" date_start="due_date"
+                      color="status" mode="month" quick_create="0">
+                <field name="period_label"/>
+                <field name="form_code"/>
+                <field name="branch_id"/>
+                <field name="status"/>
+                <field name="due_date"/>
+            </calendar>
+        </field>
+    </record>
+
+    <!-- Search View -->
+    <record id="l10n_ph_bir_period_view_search" model="ir.ui.view">
+        <field name="name">l10n.ph.bir.period.search</field>
+        <field name="model">l10n.ph.bir.period</field>
+        <field name="arch" type="xml">
+            <search string="Filing Periods">
+                <field name="period_label"/>
+                <field name="form_code"/>
+                <field name="branch_id"/>
+                <filter string="Open" name="open" domain="[('status', '=', 'open')]"/>
+                <filter string="Prepared" name="prepared" domain="[('status', '=', 'prepared')]"/>
+                <filter string="Overdue" name="overdue" domain="[('status', '=', 'overdue')]"/>
+                <filter string="Filed" name="filed" domain="[('status', '=', 'filed')]"/>
+                <filter string="Paid" name="paid" domain="[('status', '=', 'paid')]"/>
+                <separator/>
+                <filter string="Due This Month" name="due_this_month"
+                        domain="[('due_date', '&gt;=', (context_today()).strftime('%Y-%m-01')),
+                                 ('due_date', '&lt;', ((context_today() + relativedelta(months=1)).strftime('%Y-%m-01')))]"/>
+                <group expand="0" string="Group By">
+                    <filter string="Status" name="group_status" context="{'group_by': 'status'}"/>
+                    <filter string="Form" name="group_form" context="{'group_by': 'form_code'}"/>
+                    <filter string="Branch" name="group_branch" context="{'group_by': 'branch_id'}"/>
+                    <filter string="Due Date" name="group_due" context="{'group_by': 'due_date:month'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Action: Filing Calendar (default calendar view) -->
+    <record id="l10n_ph_bir_period_action_calendar" model="ir.actions.act_window">
+        <field name="name">Filing Calendar</field>
+        <field name="res_model">l10n.ph.bir.period</field>
+        <field name="view_mode">calendar,list,form</field>
+    </record>
+
+    <!-- Action: All Periods (default list view) -->
+    <record id="l10n_ph_bir_period_action" model="ir.actions.act_window">
+        <field name="name">Filing Periods</field>
+        <field name="res_model">l10n.ph.bir.period</field>
+        <field name="view_mode">list,form,calendar</field>
+    </record>
+
+</odoo>
