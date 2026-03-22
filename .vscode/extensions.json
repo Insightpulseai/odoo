@@ -4,6 +4,9 @@
     "github.copilot-chat",
     "github.vscode-pull-request-github",
     "ms-azuretools.vscode-docker",
+    "ms-azuretools.vscode-azureresourcegroups",
+    "ms-azuretools.azure-dev",
+    "ms-vscode.azure-account",
     "ms-python.python",
     "ms-python.vscode-pylance",
     "charliermarsh.ruff",
@@ -11,7 +14,10 @@
     "esbenp.prettier-vscode",
     "dbaeumer.vscode-eslint",
     "editorconfig.editorconfig",
-    "mhutchie.git-graph",
-    "odoo.odoo-language-server"
-  ]
+    "hashicorp.terraform",
+    "databricks.databricks",
+    "odoo.odoo-language-server",
+    "mhutchie.git-graph"
+  ],
+  "unwantedRecommendations": []
 }
