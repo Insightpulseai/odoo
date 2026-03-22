@@ -1,19 +1,26 @@
 # Diva Goals -- Platform SSOT Entry
-# AI-native goals and execution control plane for the agentic DevOps SDLC.
+# AI-native strategy, capability, and execution control plane.
 
 slug: diva-goals
 product_name: Diva Goals
 positioning: >
-  AI-native goals and execution control plane for the agentic DevOps SDLC.
-  Orchestration and review layer over Azure Boards, GitHub, CI/CD, eval gates,
-  and runtime observability. Not a replacement for any source system.
+  AI-native strategy, capability, and execution control plane for the agentic
+  DevOps SDLC. Orchestration, review, and readiness layer over Azure Boards,
+  GitHub, CI/CD, eval gates, runtime observability, L&D systems, and agent
+  registries. Not a replacement for any source system.
 
 status: spec-complete
-version: "1.0"
+version: "2.0"
 last_updated: "2026-03-23"
 
 spec_bundle: spec/diva-goals/
 architecture_doc: docs/architecture/DIVA_GOALS_TARGET_STATE.md
+
+product_axes:
+  - business_execution
+  - human_capability
+  - agent_capability
+  - organizational_readiness
 
 authority_model:
   goals_portfolio:
@@ -34,6 +41,12 @@ authority_model:
   runtime_observability:
     source_of_truth: app-insights-databricks-powerbi
     diva_goals_role: read-evidence
+  people_capability:
+    source_of_truth: hr-ld-systems
+    diva_goals_role: read-evidence-for-capability
+  agent_capability:
+    source_of_truth: agent-registries-evals-skill-packs
+    diva_goals_role: read-evidence-for-readiness
   orchestration_review:
     source_of_truth: diva-goals
     diva_goals_role: write-own
@@ -42,8 +55,8 @@ principles:
   - id: P1
     name: graph-not-list
     description: >
-      Goals, KRs, initiatives, specs, work items, agent runs, and evidence
-      form a directed acyclic graph, not a flat list.
+      Goals, KRs, initiatives, specs, work items, agent runs, capabilities,
+      and evidence form a directed acyclic graph, not a flat list.
   - id: P2
     name: derived-status-default
     description: >
@@ -75,6 +88,21 @@ principles:
       Source systems are authoritative for their domain. Diva Goals is
       authoritative for orchestration and review. Humans are authoritative
       for approval.
+  - id: P8
+    name: capability-is-load-bearing
+    description: >
+      Capability requirements on strategic priorities are constraints that
+      affect readiness status and surface as blockers when unmet.
+  - id: P9
+    name: humans-and-agents-are-capability-actors
+    description: >
+      Both people and agents are capability-bearing actors with roles,
+      skills, development paths, and readiness states.
+  - id: P10
+    name: learning-tied-to-outcomes
+    description: >
+      Learning plans and skill-pack development exist to close capability
+      gaps that block strategic outcomes. Unlinked learning is waste.
 
 core_graph:
   entities:
@@ -94,6 +122,42 @@ core_graph:
     agent_run -> pull_request -> pipeline_run -> eval_gate -> release ->
     runtime_metric
 
+human_capability_entities:
+  - role_family
+  - capability
+  - proficiency_level
+  - capability_requirement
+  - learning_path
+  - capability_assessment
+
+agent_capability_entities:
+  - agent_role
+  - skill_pack
+  - agent_eval_record
+  - agent_participation
+  - approval_record
+  - autonomy_change
+
+review_cadences:
+  - type: execution
+    cadence: weekly
+    focus: initiative-progress-blocked-items-agent-pending
+  - type: portfolio
+    cadence: monthly
+    focus: goal-kr-progress-strategic-alignment
+  - type: capability_readiness
+    cadence: quarterly
+    focus: human-capability-gaps-learning-effectiveness
+  - type: agent_readiness
+    cadence: quarterly
+    focus: agent-eval-scores-autonomy-tier-skill-pack-coverage
+  - type: learning_effectiveness
+    cadence: quarterly
+    focus: ld-program-outcomes-gap-closure-rate
+  - type: exception
+    cadence: on-demand
+    focus: drift-eval-failure-stale-evidence-escalation
+
 policy_flags:
   no_manual_only_status: true
   no_status_without_evidence: true
@@ -102,6 +166,46 @@ policy_flags:
   humans_approve_agents_propose: true
   stale_evidence_auto_flag: true
   override_requires_justification: true
+
+policy_extensions:
+  readiness_override_requires_audit: true
+  agent_autonomy_upgrade_requires_eval: true
+  capability_gap_blockers_must_surface: true
+
+agent_stack:
+  orchestration_sdk: microsoft-agent-framework
+  managed_runtime: azure-ai-foundry-agent-service
+  deployment_mode: foundry-hosted
+  knowledge_runtime: foundry-iq-mcp-knowledge-base-retrieve
+  skills:
+    - strategy-review
+    - capability-review
+    - boards-spec-github-traceability
+    - policy-check
+  observability: foundry-tracing-plus-azure-monitor
+  evaluation:
+    evaluators:
+      - task_completion
+      - task_adherence
+      - intent_resolution
+      - tool_call_accuracy
+      - groundedness
+    pipeline: foundry-eval-pipeline
+    gate: block-deploy-on-eval-fail
+
+workflow_topology:
+  - id: goal-status-synthesis
+    trigger: source-system-event
+    flow: event -> evidence-collector -> graph-update -> derived-status -> drift-check -> notification
+  - id: review-pack-generation
+    trigger: scheduled-or-on-demand
+    flow: review-synthesis-agent -> aggregate -> summarize -> draft-inputs -> store
+  - id: capability-readiness-review
+    trigger: quarterly-or-on-demand
+    flow: capability-aggregation -> gap-scoring -> readiness-assessment -> learning-effectiveness -> draft-pack
+  - id: drift-orphan-detection
+    trigger: continuous-plus-daily-scan
+    flow: graph-scan -> status-vs-evidence -> orphan-check -> staleness-check -> flag-generation
 
 delivery_phases:
   - phase: 1
@@ -124,6 +228,14 @@ delivery_phases:
     name: governance-automation
     weeks: "13-16"
     status: planned
+  - phase: 6
+    name: capability-model
+    weeks: "17-20"
+    status: planned
+  - phase: 7
+    name: agent-development-governance
+    weeks: "21-24"
+    status: planned
 
 tech_stack:
   persistence: databricks-unity-catalog
@@ -131,6 +243,12 @@ tech_stack:
   batch: databricks-jobs
   read_surface: power-bi
   review_ui: azure-container-apps
+  agent_orchestration: microsoft-agent-framework-sdk
+  agent_runtime: azure-ai-foundry-agent-service
+  agent_knowledge: foundry-iq-azure-ai-search-mcp
+  agent_skills: agent-skills-packages
+  agent_evaluation: foundry-evaluators
+  agent_observability: foundry-tracing-azure-monitor
   secrets: azure-key-vault
   identity: microsoft-entra-id
   ci_cd: azure-devops-pipelines

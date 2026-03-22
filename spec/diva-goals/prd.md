@@ -1,6 +1,6 @@
 # Diva Goals -- Product Requirements Document
 
-> AI-native goals, execution, and review system for the agentic DevOps SDLC.
+> AI-native strategy, capability, and execution control plane.
 
 ---
 
@@ -10,8 +10,8 @@
 |-------|-------|
 | **Product Name** | Diva Goals |
 | **Slug** | `diva-goals` |
-| **One-liner** | AI-native goals, execution, and review system for the agentic DevOps SDLC |
-| **Category** | Strategy-to-execution control plane |
+| **One-liner** | AI-native strategy, capability, and execution control plane |
+| **Category** | Strategy-to-execution-to-readiness control plane |
 | **Owner** | InsightPulse AI Platform Team |
 | **Constitution** | `spec/diva-goals/constitution.md` |
 
@@ -36,8 +36,10 @@ This model breaks in an **AI-first, agent-augmented organization** because:
 5. **Runtime evidence** (metrics, health checks, observability) should close the loop on whether a goal was actually achieved -- but traditional tools stop at "task marked complete."
 6. **Agent runs** are first-class delivery events (a Claude Code session, a Foundry agent invocation, a CI pipeline) -- but traditional tools have no entity for them.
 7. **Confidence scoring** for agent outputs requires a different status model than binary pass/fail -- but traditional tools offer only checkbox completion.
+8. **Capability gaps** -- both human skills and agent tools/knowledge -- block strategic outcomes. Traditional tools treat L&D as a separate silo and have no concept of agent skill development.
+9. **Agent workforce governance** -- autonomy tiers, eval-gated promotion, degradation rules -- has no home in traditional tools.
 
-Diva Goals exists to solve this. It is the **control plane** that sits above Azure Boards, GitHub, CI/CD, eval frameworks, and runtime observability to provide a unified strategy-to-execution-to-evidence view that is native to the agentic SDLC.
+Diva Goals exists to solve this. It is the **control plane** that sits above Azure Boards, GitHub, CI/CD, eval frameworks, runtime observability, L&D systems, and agent registries to provide a unified strategy-to-execution-to-capability-to-evidence view that is native to the agentic SDLC.
 
 ---
 
@@ -57,7 +59,7 @@ Eliminate self-reported status. Every status transition must be backed by eviden
 
 ### G4: AI-Native Review Engine
 
-Provide structured review ceremonies (execution review, portfolio review, exception review) that surface evidence, flag drift, detect orphans, and recommend actions -- with agent assistance.
+Provide structured review ceremonies (execution review, portfolio review, capability review, agent readiness review, exception review) that surface evidence, flag drift, detect orphans, and recommend actions -- with agent assistance.
 
 ### G5: Human-in-the-Loop Governance
 
@@ -66,6 +68,14 @@ Ensure humans retain approval authority over all material status transitions whi
 ### G6: Zero Duplication
 
 Never duplicate data that belongs to a source system. Reference, index, derive -- but never copy-and-own.
+
+### G7: Capability Intelligence
+
+Surface human and agent capability gaps as strategic blockers. Connect learning plans and skill-pack development to operating outcomes. Make readiness visible.
+
+### G8: Agent Development Intelligence
+
+Govern agent lifecycle (registration, evaluation, promotion, degradation) with the same structural rigor as human workforce development.
 
 ---
 
@@ -79,6 +89,9 @@ Never duplicate data that belongs to a source system. Reference, index, derive -
 | **Engineering Lead** | Owns initiatives and delivery | Track spec completion, review agent output, approve PRs |
 | **Finance/Ops Lead** | Owns operational KRs (close cycle, compliance) | Monitor operational metrics, review compliance evidence |
 | **Individual Contributor** | Executes work items, reviews agent proposals | Complete tasks, review agent PRs, provide context |
+| **Strategic VP HR/People** | Owns organizational capability strategy | Define capability requirements per strategic priority, review readiness |
+| **L&D Lead** | Owns learning effectiveness and program design | Design learning paths, measure learning-to-outcome linkage, close capability gaps |
+| **OD Lead** | Owns organizational design and role architecture | Define role families, proficiency ladders, org capability maturity |
 
 ### Agent Users
 
@@ -87,6 +100,7 @@ Never duplicate data that belongs to a source system. Reference, index, derive -
 | **Maker Agent** | Produces code, specs, configs (Claude Code, Foundry, Copilot) | Execute spec tasks, create PRs, produce artifacts |
 | **Judge Agent** | Evaluates output quality (eval framework, benchmark runners) | Score agent output, gate releases, flag regressions |
 | **Ops Agent** | Monitors runtime, reports metrics (observability agents) | Report runtime evidence, flag health issues, update KR metrics |
+| **Review Synthesis Agent** | Prepares review packs, summarizes evidence | Pre-populate review inputs, flag anomalies, draft summaries |
 
 ---
 
@@ -112,13 +126,25 @@ Never duplicate data that belongs to a source system. Reference, index, derive -
 
 > Which agent outputs are pending evaluation? What are the eval criteria for each? What thresholds must be met for the release gate to pass? If an output fails, what feedback should I provide to the maker agent?
 
+### J6: VP HR/People -- "Show me capability readiness by strategic priority"
+
+> For each strategic objective, I need to see: what human capabilities are required, what is our current proficiency, where are the gaps, and are our learning interventions closing those gaps. Same for agent capabilities: what skills/tools are needed, what is the eval state, where are we under-invested.
+
+### J7: L&D Lead -- "Show me learning effectiveness"
+
+> For each learning intervention, I need to see: which capability gap it targets, which strategic priority it serves, what the completion and assessment data says, and whether the operating outcome improved. Learning without outcome linkage is waste.
+
+### J8: OD Lead -- "Show me organizational capability maturity"
+
+> Across all role families and agent roles, I need a heat map of capability coverage vs. requirement. Where are we strong, where are we fragile, and what is the trajectory.
+
 ---
 
 ## Product Principles
 
 ### P1: Graph, Not List
 
-Goals, KRs, initiatives, specs, work items, agent runs, and evidence form a **directed acyclic graph**, not a flat list. The graph is the product.
+Goals, KRs, initiatives, specs, work items, agent runs, capabilities, and evidence form a **directed acyclic graph**, not a flat list. The graph is the product.
 
 ### P2: Derived Status is Default
 
@@ -126,7 +152,7 @@ Status is computed from source system evidence by default. Manual status is an o
 
 ### P3: Evidence is Addressable
 
-Every piece of evidence (a PR, a pipeline run, an eval score, a runtime metric) has a stable URI and can be referenced from any entity in the graph.
+Every piece of evidence (a PR, a pipeline run, an eval score, a runtime metric, an assessment result) has a stable URI and can be referenced from any entity in the graph.
 
 ### P4: Agents are Participants, Not Tools
 
@@ -144,132 +170,97 @@ Review ceremonies have defined inputs (evidence, drift flags, orphan reports), d
 
 The system respects a layered authority model: source systems are authoritative for their domain, Diva Goals is authoritative for orchestration and review, humans are authoritative for approval.
 
----
+### P8: Capability Is Load-Bearing
 
-## Solution Architecture (5 Layers)
-
-### Layer 1: Strategic Model
-
-The top of the graph. Objectives, Key Results, and Initiatives as defined in Azure Boards (Epics, Features, User Stories) but enriched with:
-
-- KR measurement definitions (metric source, target, threshold)
-- Initiative-to-spec linkage
-- Portfolio groupings and priority signals
-
-### Layer 2: Execution Graph
-
-The middle of the graph. Maps the agentic SDLC chain:
-
-```
-Spec Bundle -> Work Items -> Agent Runs -> PRs -> Pipelines -> Eval Gates -> Releases
-```
-
-Each entity is a node with:
-- Source system reference (Azure Boards ID, GitHub PR URL, pipeline run ID)
-- Status (derived from source system)
-- Evidence links (URIs to artifacts, logs, scores)
-- Participant links (which agent or human produced/reviewed this)
-
-### Layer 3: Evidence Engine
-
-The connective tissue. Responsible for:
-
-- Ingesting evidence from source systems (Azure Boards API, GitHub API, Azure DevOps API, Application Insights, Databricks)
-- Computing derived status from evidence
-- Detecting staleness (evidence older than freshness policy)
-- Detecting drift (status inconsistent with evidence)
-- Detecting orphans (goals without execution, execution without goals)
-
-### Layer 4: Review Engine
-
-The human-facing decision layer. Provides:
-
-- **Execution Review**: Weekly. Surfaces initiative progress, blocked items, agent output pending review, drift flags.
-- **Portfolio Review**: Monthly. Surfaces goal/KR progress, coverage gaps, resource allocation, strategic alignment.
-- **Exception Review**: On-demand. Triggered by drift detection, eval gate failure, stale evidence, or manual escalation.
-
-Each review produces structured output: decisions made, action items created, approvals granted, exceptions documented.
-
-### Layer 5: Agent Layer
-
-The agent-facing interface. Provides:
-
-- **Task Queue**: Prioritized list of spec tasks available for agent pickup, with context and acceptance criteria.
-- **Submission Endpoint**: Where agents submit completed work for review and eval.
-- **Confidence Model**: Agents declare confidence in their output; low-confidence items are routed for human review.
-- **Audit Trail**: Every agent action is logged with identity, action, evidence, and outcome.
+Capability requirements on strategic priorities are not decorative metadata. They are constraints that affect readiness status and surface in review ceremonies as blockers when unmet.
 
 ---
 
-## Functional Requirements
+## Functional Areas
 
-### FR1: Agentic SDLC Entity Model
+### FA1: Strategy Model
 
-The system must model the complete agentic SDLC chain as first-class entities:
+Objectives, Key Results, Initiatives -- imported from Azure Boards, enriched with measurement definitions, initiative-to-spec linkage, portfolio groupings, and capability requirements.
 
-| Entity | Source System | Diva Goals Role |
-|--------|--------------|-----------------|
-| Objective | Azure Boards (Epic) | Read, align, review |
-| Key Result | Azure Boards (Feature) | Read, measure, derive status |
-| Initiative | Azure Boards (User Story) | Read, trace to specs |
-| Spec Bundle | Spec Kit (`spec/`) | Read, validate completeness |
-| Work Item | Azure Boards (Task) | Read, trace to agent runs/PRs |
-| Agent Run | CI/CD logs, Foundry logs | Read, evidence for delivery |
-| Pull Request | GitHub | Read, evidence for code delivery |
-| Pipeline Run | Azure DevOps, GitHub Actions | Read, evidence for build/test |
-| Eval Gate | Eval framework | Read, gate release decisions |
-| Release | GitHub Release, ACA deployment | Read, evidence for deployment |
-| Runtime Metric | App Insights, Databricks, Power BI | Read, evidence for KR outcomes |
+### FA2: Execution Graph
 
-### FR2: Agent Participation Model
+The agentic SDLC chain: Spec -> Work Items -> Agent Runs -> PRs -> Pipelines -> Eval Gates -> Releases. Each entity traced to source systems with derived status.
 
-The system must model agent participation with:
+### FA3: Capability Intelligence
 
-- **Agent Identity**: Name, type (maker/judge/ops), capability declaration
-- **Agent Runs**: Timestamped records of agent invocations with input context, output artifacts, confidence score
-- **Maker Role**: Agent produces artifacts (code, specs, configs) linked to work items
-- **Judge Role**: Agent evaluates artifacts against criteria, produces scores, gates releases
-- **Confidence Scoring**: Agents declare confidence (0.0-1.0) in their output; thresholds determine routing (auto-approve, human-review, reject)
-- **Approval Workflow**: Human approval required for agent outputs above work-item level
+Role families, proficiency ladders, capability gap scoring, strategic-priority-to-capability mapping. For humans: skill taxonomies, assessment evidence, learning-path linkage. For agents: tool catalogs, knowledge-base coverage, eval scores.
 
-### FR3: Evidence-Backed Status Transitions
+### FA4: Agent Development Intelligence
 
-Every status transition must:
+Agent role catalog, skill-pack metadata, eval/readiness tiers, autonomy levels (supervised, semi-autonomous, autonomous), promotion and degradation rules, maker/judge separation enforcement.
 
-1. Reference the source system event that triggered it (PR merged, pipeline passed, eval score above threshold)
-2. Include a timestamp and evidence URI
-3. Be auditable (who/what changed the status, when, based on what evidence)
-4. Support override with mandatory justification
+### FA5: Human + Agent Operating Model
 
-### FR4: Drift and Orphan Detection
+The unified flow: Goal -> Capability Requirement -> Learning Path (human) or Skill-Pack Plan (agent) -> Work -> Evidence -> Outcome. This is the capability-axis twin of the execution graph.
 
-The system must continuously detect:
+### FA6: L&D/OD Workflows
 
-- **Drift**: Status inconsistent with evidence (e.g., initiative marked "complete" but linked spec has failing eval gates)
-- **Orphans**: Goals without downstream execution, execution without upstream goals
-- **Staleness**: Evidence older than its freshness policy
+Strategic capability planning (what do we need?), learning effectiveness measurement (are interventions working?), capability debt tracking (where are we falling behind?), readiness review preparation.
 
-Detections surface as flags in the review engine, not silent background states.
+### FA7: Agent Workforce Governance
 
-### FR5: Review Engine
+Role catalog (what agents exist, what can they do), maker/judge separation (no agent both produces and evaluates its own output), degradation rules (agent downgraded on eval failure), autonomy tier management.
 
-The system must provide structured review ceremonies:
+### FA8: Review Engine
 
-- **Execution Review** (weekly): Initiative progress, blocked items, agent output pending review, drift flags, action items from last review
-- **Portfolio Review** (monthly): Goal/KR progress, coverage gaps, strategic alignment, resource allocation, exception log
-- **Exception Review** (on-demand): Triggered by drift, eval failure, stale evidence, or escalation
+Execution review (weekly), portfolio review (monthly), capability/readiness review (quarterly), agent readiness review (quarterly), exception review (on-demand). Each review has defined inputs, outputs, and decision tracking.
 
-Each review produces: decisions, action items, approvals, exceptions -- all persisted and traceable.
+### FA9: Evidence Engine
 
-### FR6: DevOps Evidence Drill-Through
+Ingest evidence from all source systems. Compute derived status. Detect staleness, drift, and orphans. Surface coverage gaps.
 
-From any goal or KR, a user must be able to drill through the full evidence chain:
+### FA10: Agent Runtime Model
 
-```
-Goal -> KR -> Initiative -> Spec -> Work Items -> Agent Runs -> PRs -> Pipelines -> Eval Scores -> Releases -> Runtime Metrics
-```
+- **Orchestration**: Microsoft Agent Framework SDK for multi-agent workflow graphs
+- **Managed Runtime**: Azure AI Foundry Agent Service for hosted agent execution
+- **Knowledge**: Foundry IQ via MCP (`knowledge_base_retrieve`) for domain knowledge access
+- **Evaluation**: Foundry evaluators -- `task_completion`, `task_adherence`, `intent_resolution`, `tool_call_accuracy`
+- **Observability**: Traceable telemetry in Foundry tracing + Azure Monitor
 
-Each level shows: entity identity, source system link, current status, evidence summary, participants.
+---
+
+## Success Metrics
+
+### Execution Metrics
+
+| Metric | Target | Measurement |
+|--------|--------|-------------|
+| Goal-to-execution traceability | 100% of active goals have downstream execution links | Graph coverage query |
+| Evidence-backed status | >= 90% of status transitions backed by source system evidence | Audit log analysis |
+| Drift detection latency | < 1 hour from source system event to drift flag | Event processing lag |
+| Orphan detection coverage | 100% of entities checked weekly | Review engine output |
+| Review ceremony completion | 100% of scheduled reviews produce structured output | Review log |
+| Agent participation visibility | 100% of agent runs linked to work items and specs | Graph coverage query |
+| Stale evidence flagging | 100% of evidence past freshness policy flagged within 1h | Evidence engine metrics |
+
+### Human Capability Metrics
+
+| Metric | Target | Measurement |
+|--------|--------|-------------|
+| Time-to-readiness | Median time from capability gap identification to certified readiness | Learning record timestamps |
+| Capability coverage by priority | >= 80% of strategic priorities have assessed capability coverage | Gap analysis query |
+| Learning-to-outcome linkage | >= 70% of learning interventions linked to operating outcomes | Evidence chain query |
+
+### Agent Capability Metrics
+
+| Metric | Target | Measurement |
+|--------|--------|-------------|
+| Eval pass rate (by agent role) | >= 85% first-attempt pass on target eval suite | Foundry eval pipeline |
+| Hallucination rate | < 5% across all agent roles | Foundry groundedness evaluator |
+| Skill-pack coverage | >= 90% of agent roles have registered skill packs with eval baselines | Agent registry query |
+
+### Organizational Metrics
+
+| Metric | Target | Measurement |
+|--------|--------|-------------|
+| Capability gap risk score | Declining trend, quarter-over-quarter | Gap scoring model |
+| Readiness by initiative | >= 75% of active initiatives have full capability coverage | Readiness query |
+| Agent autonomy distribution | Increasing proportion of agents at semi-autonomous or autonomous tiers | Registry query |
 
 ---
 
@@ -282,20 +273,9 @@ Diva Goals is explicitly **not**:
 - **A replacement for observability tools**: Application Insights, Databricks, and Power BI remain the source of truth for runtime metrics and health. Diva Goals reads metrics as evidence, it does not collect telemetry.
 - **A general-purpose project management tool**: Diva Goals does not manage sprints, kanban boards, or task assignment. It manages the strategy-to-execution-to-evidence graph.
 - **A standalone product**: Diva Goals is a control plane that requires Azure Boards, GitHub, CI/CD, and observability as foundational systems. It has no value without them.
-
----
-
-## Success Metrics
-
-| Metric | Target | Measurement |
-|--------|--------|-------------|
-| Goal-to-execution traceability | 100% of active goals have downstream execution links | Graph coverage query |
-| Evidence-backed status | >= 90% of status transitions backed by source system evidence | Audit log analysis |
-| Drift detection latency | < 1 hour from source system event to drift flag | Event processing lag |
-| Orphan detection coverage | 100% of entities checked weekly | Review engine output |
-| Review ceremony completion | 100% of scheduled reviews produce structured output | Review log |
-| Agent participation visibility | 100% of agent runs linked to work items and specs | Graph coverage query |
-| Stale evidence flagging | 100% of evidence past freshness policy flagged within 1h | Evidence engine metrics |
+- **An LMS (Learning Management System)**: Diva Goals does not host courses, manage enrollment, or deliver content. It reads learning evidence from L&D systems and links it to capability requirements.
+- **An HRIS**: Diva Goals does not manage employee records, compensation, or benefits. It reads role and proficiency data as inputs to the capability model.
+- **A chatbot directory**: Diva Goals does not provide a catalog for end-user-facing chatbots. It governs agent capability and readiness for the agentic SDLC, not consumer-facing conversational AI.
 
 ---
 
@@ -338,6 +318,20 @@ Diva Goals is explicitly **not**:
 - Agent-assisted review preparation (pre-populate evidence, flag anomalies)
 - Integration with Azure DevOps Boards backlog prioritization
 
+### Phase 6: Capability Model (Weeks 17-20)
+
+- Human capability taxonomy and role families
+- Proficiency ladders and gap scoring
+- Strategic-priority-to-capability mapping
+- Learning-path model and evidence linkage
+
+### Phase 7: Agent Development Governance (Weeks 21-24)
+
+- Agent role catalog and skill-pack metadata
+- Eval-based readiness tiers and autonomy management
+- Degradation rules and supervision model
+- Capability and agent readiness review ceremonies
+
 ---
 
 ## Risks
@@ -349,6 +343,8 @@ Diva Goals is explicitly **not**:
 | Agent confidence calibration | High | Medium | Start conservative (low threshold = human review), tune over time |
 | Scope creep into project management | High | High | Constitution non-goals, regular scope reviews |
 | Adoption resistance (manual status habit) | Medium | Medium | Default to derived status, make override friction visible |
+| Capability model over-engineering | Medium | Medium | Start with role families and gap scores; defer proficiency ladders until Phase 6 |
+| Agent governance overhead | Medium | Low | Automate eval pipelines; manual review only for autonomy promotions |
 
 ---
 
@@ -359,9 +355,11 @@ Diva Goals is explicitly **not**:
 3. **UI surface**: Should the primary UI be Power BI dashboards, a custom web app, or both? Current lean: Power BI for read-only views, custom app for review ceremonies.
 4. **Agent task assignment**: Should Diva Goals actively assign tasks to agents, or should agents pull from a queue? Current lean: pull model with priority signals.
 5. **Multi-org**: Is Diva Goals single-tenant (InsightPulse AI only) or designed for multi-tenant from the start? Current lean: single-tenant first, multi-tenant later.
+6. **Capability taxonomy source**: Should the role-family and proficiency-ladder taxonomy be maintained in Diva Goals YAML or imported from an external HR system? Current lean: YAML-first, import later.
+7. **Agent eval frequency**: How often should agents be re-evaluated for autonomy tier maintenance? Current lean: on every production deployment, with quarterly full-suite re-eval.
 
 ---
 
 *Product: Diva Goals*
-*Version: 1.0*
+*Version: 2.0*
 *Last updated: 2026-03-23*
