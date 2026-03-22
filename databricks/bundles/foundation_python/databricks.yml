@@ -27,19 +27,22 @@ variables:
 targets:
   dev:
     default: true
+    mode: development
     workspace:
-      host: ${var.workspace_host}
+      host: https://adb-7405610347978231.11.azuredatabricks.net
     variables:
-      catalog: ipai_dev
+      catalog: dev_ppm
 
   staging:
+    mode: production
     workspace:
-      host: ${var.workspace_host}
+      host: https://adb-7405610347978231.11.azuredatabricks.net
     variables:
-      catalog: ipai_staging
+      catalog: staging_ppm
 
   prod:
+    mode: production
     workspace:
-      host: ${var.workspace_host}
+      host: https://adb-7405610347978231.11.azuredatabricks.net
     variables:
-      catalog: ipai
+      catalog: ppm
