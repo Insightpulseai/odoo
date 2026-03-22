@@ -1,0 +1,91 @@
+# =============================================================================
+# Databricks Auth Target State — SSOT
+# =============================================================================
+#
+# Defines the canonical authentication model for Databricks access
+# across local dev, CI/CD, and unattended workloads.
+#
+# Last updated: 2026-03-22
+# =============================================================================
+
+schema_version: "1.0"
+last_updated: "2026-03-22"
+owner: "platform-architecture"
+status: "approved"
+
+target_statement: >
+  Azure CLI auth for human local development.
+  AzureCLI@2 + service connection for Azure DevOps pipelines.
+  Databricks OAuth M2M for Databricks-only unattended workloads.
+  Federation/OIDC over long-lived secrets wherever possible.
+  No hybrid identity dependency unless on-prem AD is actually in scope.
+
+auth_targets:
+  - surface: local_dev
+    method: azure_cli
+    identity: user_interactive
+    target: enable_now
+    why: >
+      Clean for developers who already need Azure access.
+      User sign-in for interactive local work.
+    notes: >
+      Use Entra service principal only for scripted local
+      automation or headless tooling.
+
+  - surface: azure_devops_pipelines
+    method: azure_cli_v2_task
+    identity: entra_service_principal
+    target: enable_now
+    why: >
+      Matches Azure-first governance spine. Databricks explicitly
+      documents AzureCLI@2 as the supported pattern for CLI/bundle
+      commands with DATABRICKS_HOST set.
+    config:
+      task: AzureCLI@2
+      auth: azure_service_connection
+      env_var: DATABRICKS_HOST
+    reference: >
+      https://learn.microsoft.com/en-us/azure/databricks/dev-tools/auth/auth-with-azure-devops
+
+  - surface: github_actions
+    method: workload_identity_federation
+    identity: oidc
+    target: defer
+    why: Avoids long-lived client secrets in GitHub
+    notes: >
+      Enable when GitHub Actions is used for Databricks work.
+      Currently Azure DevOps is the primary CI/CD surface.
+
+  - surface: databricks_native_automation
+    method: databricks_oauth_m2m
+    identity: databricks_service_principal
+    target: enable_now
+    why: >
+      Databricks' preferred unattended auth for Databricks-only
+      access. Short-lived OAuth tokens, no long-lived secrets.
+    reference: >
+      https://learn.microsoft.com/en-us/azure/databricks/dev-tools/auth/oauth-m2m
+
+  - surface: cross_service_bots
+    method: azure_cli
+    identity: entra_service_principal
+    target: enable_now
+    why: >
+      Use when authenticating to Databricks AND other Azure
+      resources simultaneously.
+
+do_not_target:
+  - pattern: manual_pat_based_auth
+    why: Not strategic — use OAuth or Azure CLI instead
+
+  - pattern: long_lived_entra_client_secrets
+    why: Prefer federation/OIDC; rotate if secrets are required
+
+  - pattern: entra_connect_hybrid_sync
+    why: Cloud-native target — no on-prem AD to integrate
+
+  - pattern: cross_tenant_sync
+    why: Single-tenant Entra — not needed unless multi-tenant
+
+  - pattern: secret_based_auth_everywhere
+    why: Federation and managed identity are preferred
