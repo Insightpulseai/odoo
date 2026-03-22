@@ -521,3 +521,30 @@ Calendar/mail/chat → Odoo integrations → Databricks rollups → Foundry copi
 
 **Project / PPM / Close**:
 Tasks/milestones → Odoo project → Databricks portfolio analytics → Foundry PPM copilot
+
+### Entra ↔ Odoo ↔ Foundry Identity Model
+
+| Layer | Service | Role |
+|-------|---------|------|
+| **Identity/SSO** | Entra | OAuth sign-in for Odoo, Foundry, Databricks. Conditional access + MFA. |
+| **Operational UI** | Odoo | Business workflows. Users authenticate via Entra OAuth. |
+| **Copilot runtime** | Foundry | Agent orchestration, tools, tracing, evals, model access. |
+| **Analytics context** | Databricks | Governed data for copilot grounding. |
+| **Promotion** | Azure DevOps | Deployment of bridge module + agent config. |
+
+**What Entra does**: SSO, user/group RBAC, access policy, shared identity boundary.
+
+**What Entra does NOT do**: Copilot behavior, prompts, tools, orchestration, evals, model runtime.
+
+**Copilot architecture**:
+
+```text
+User → Entra SSO → Odoo login
+User → Odoo systray copilot → ipai_odoo_copilot module
+ipai_odoo_copilot → Foundry Agent Service (user context + business context)
+Foundry → Foundry IQ KB (Databricks gold marts, org docs)
+Foundry → tool dispatch (Odoo read_record, search_records, ask_copilot)
+Foundry → response → Odoo systray
+```
+
+**Key rule**: Entra authenticates; Foundry orchestrates; Odoo integrates.
