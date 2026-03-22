@@ -1,0 +1,48 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ReviewSnapshot",
+  "description": "Frozen review-pack snapshot for executive review",
+  "type": "object",
+  "required": ["snapshot_id", "review_type", "period", "created_at", "created_by", "status", "goals"],
+  "properties": {
+    "snapshot_id": { "type": "string", "format": "uuid" },
+    "review_type": { "type": "string", "enum": ["executive", "portfolio", "capability", "agent_readiness", "org_health"] },
+    "period": { "type": "string", "description": "ISO period e.g. 2026-Q1" },
+    "created_at": { "type": "string", "format": "date-time" },
+    "created_by": { "type": "string" },
+    "approved_by": { "type": ["string", "null"] },
+    "approved_at": { "type": ["string", "null"], "format": "date-time" },
+    "status": { "type": "string", "enum": ["draft", "pending_approval", "approved", "published", "archived"] },
+    "goals": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["goal_id", "title", "progress", "confidence", "status_color"],
+        "properties": {
+          "goal_id": { "type": "string" },
+          "title": { "type": "string" },
+          "progress": { "type": "number", "minimum": 0, "maximum": 100 },
+          "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+          "status_color": { "type": "string", "enum": ["green", "amber", "red", "grey"] },
+          "narrative": { "type": "string" },
+          "evidence_refs": { "type": "array", "items": { "$ref": "#/$defs/evidence_ref" } },
+          "blockers": { "type": "array", "items": { "type": "string" } }
+        }
+      }
+    },
+    "summary_narrative": { "type": "string" },
+    "exceptions": { "type": "array", "items": { "type": "string" } }
+  },
+  "$defs": {
+    "evidence_ref": {
+      "type": "object",
+      "required": ["source", "ref_id", "timestamp"],
+      "properties": {
+        "source": { "type": "string" },
+        "ref_id": { "type": "string" },
+        "timestamp": { "type": "string", "format": "date-time" },
+        "url": { "type": "string", "format": "uri" }
+      }
+    }
+  }
+}

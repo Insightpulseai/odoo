@@ -1,0 +1,36 @@
+name: Diva Goals Spec Check
+on:
+  push:
+    paths:
+      - 'spec/diva-goals/**'
+  pull_request:
+    paths:
+      - 'spec/diva-goals/**'
+
+jobs:
+  check-spec-files:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Verify spec files exist and are non-empty
+        run: |
+          REQUIRED_FILES=(
+            "spec/diva-goals/constitution.md"
+            "spec/diva-goals/prd.md"
+            "spec/diva-goals/plan.md"
+            "spec/diva-goals/tasks.md"
+          )
+          EXIT_CODE=0
+          for f in "${REQUIRED_FILES[@]}"; do
+            if [ ! -f "$f" ]; then
+              echo "FAIL: Missing required spec file: $f"
+              EXIT_CODE=1
+            elif [ ! -s "$f" ]; then
+              echo "FAIL: Spec file is empty: $f"
+              EXIT_CODE=1
+            else
+              echo "PASS: $f ($(wc -l < "$f") lines)"
+            fi
+          done
+          exit $EXIT_CODE

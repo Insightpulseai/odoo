@@ -1,0 +1,42 @@
+name: Diva Goals Workflows Check
+on:
+  push:
+    paths:
+      - 'agents/workflows/**'
+  pull_request:
+    paths:
+      - 'agents/workflows/**'
+
+jobs:
+  validate-workflows:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install PyYAML
+        run: pip install pyyaml
+
+      - name: Validate workflow YAML files have required keys
+        run: |
+          EXIT_CODE=0
+          REQUIRED_KEYS="id name version domain steps"
+          for f in $(find agents/workflows -name '*.yaml' -o -name '*.yml' 2>/dev/null); do
+            echo "Checking $f ..."
+            python3 -c "
+          import yaml, sys
+          with open('$f') as fh:
+              data = yaml.safe_load(fh)
+          if not isinstance(data, dict):
+              print('  FAIL: not a YAML mapping')
+              sys.exit(1)
+          missing = [k for k in '$REQUIRED_KEYS'.split() if k not in data]
+          if missing:
+              print(f'  FAIL: missing keys: {missing}')
+              sys.exit(1)
+          print('  PASS: all required keys present')
+          " || EXIT_CODE=1
+          done
+          if ! find agents/workflows -name '*.yaml' -o -name '*.yml' 2>/dev/null | grep -q .; then
+            echo "WARN: No workflow YAML files found under agents/workflows/"
+          fi
+          exit $EXIT_CODE

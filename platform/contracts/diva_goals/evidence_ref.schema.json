@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "EvidenceRef",
+  "description": "Reference to an evidence artifact from a source system",
+  "type": "object",
+  "required": ["source", "source_type", "ref_id", "timestamp"],
+  "properties": {
+    "source": { "type": "string", "description": "Source system identifier" },
+    "source_type": { "type": "string", "enum": ["azure_boards", "github_pr", "github_commit", "pipeline_run", "eval_result", "deployment", "runtime_metric", "odoo_record", "databricks_mart", "hr_learning", "agent_eval", "manual"] },
+    "ref_id": { "type": "string" },
+    "ref_url": { "type": "string", "format": "uri" },
+    "timestamp": { "type": "string", "format": "date-time" },
+    "freshness_hours": { "type": "number" },
+    "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+    "derivation_method": { "type": "string" },
+    "summary": { "type": "string" }
+  }
+}
