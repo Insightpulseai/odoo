@@ -5,3 +5,4 @@ from . import copilot_conversation
 from . import copilot_message
 from . import telemetry
 from . import tool_executor
+from . import ipai_copilot_action_queue
