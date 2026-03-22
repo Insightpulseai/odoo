@@ -7,7 +7,43 @@
 
 ## One-Line Target
 
-The target is no longer "prepare for Databricks"; it is "standardize the live `dbw-ipai-dev` workspace as the governed dev baseline, with repo-defined bundles and Azure DevOps promotion controlling what persists."
+GitHub is the code and PR authority; Azure Boards and Azure Pipelines provide work-item and deployment traceability around it; Databricks `dbw-ipai-dev` is the standardized live dev analytics runtime; Entra and service connections are the auth boundary.
+
+---
+
+## 0. Code Authority Model
+
+GitHub is the canonical code host. Azure DevOps is the governance spine around it, not a replacement.
+
+| Surface | Authority | Notes |
+|---------|-----------|-------|
+| **GitHub** | Repos, branches, pull requests | Source of truth for code |
+| **Azure Boards** | Work items, epics, sprint governance | Connected via Azure Boards app for GitHub |
+| **Azure Pipelines** | CI/CD, build/deploy traceability | Triggered by GitHub events |
+| **Azure Test Plans** | Manual UAT, requirement traceability | Bounded acceptance surface |
+| **Azure Repos** | Not used | Optional; not the target primary code host |
+
+### Traceability Chain
+
+Every meaningful change must link through this chain:
+
+```text
+Azure Boards work item → GitHub branch → GitHub PR (AB#<id>) → Azure Pipelines build → deployment stage
+```
+
+- PRs link to Azure Boards work items via `AB#<id>` in the PR title or description
+- Azure Pipelines writes `Integrated in build` and `Integrated in release` links back to work items
+- Branch policies should check for linked work items where justified
+- The Azure Boards app for GitHub is the supported integration path (not ad hoc PAT-based personal auth)
+
+### GitHub-to-Boards Integration
+
+Install and configure the **Azure Boards app for GitHub** on the `Insightpulseai` org:
+
+- Connects GitHub repos to Azure Boards projects
+- Enables `AB#` work-item linking from commits and PRs
+- Supports `fix/fixes/fixed AB#<id>` to transition work items on merge
+- Provides PR insights on work items and build traceability for YAML pipelines
 
 ---
 
@@ -177,7 +213,53 @@ Because the dev workspace already contains jobs, dashboards, workspace assets, a
 
 VS Code is the operator surface, not the deployment authority.
 
-## 8. What to Avoid
+## 8. Azure Test Plans Target State
+
+### Role
+
+Azure Test Plans is a bounded acceptance-testing and requirement-traceability surface.
+
+### Use it for
+
+- Manual UAT and business validation
+- Requirement-linked acceptance tests (requirement-based suites only)
+- Release signoff evidence
+- Cross-functional validation tied to backlog items
+
+### Do not use it for
+
+- Primary automated test authoring
+- Replacing repo-native test frameworks (Playwright, pytest, Odoo `--test-enable`)
+- Replacing CI test execution in Azure Pipelines
+
+### Suite policy
+
+Prefer requirement-based test suites when end-to-end traceability is required.
+Use static or query-based suites only when traceability to backlog items is not the primary need.
+
+### Access policy
+
+| Access level | Role |
+|-------------|------|
+| Basic + Test Plans | Plan/suite/test-case authors and test managers |
+| Basic | Execution and reporting users |
+| Stakeholder | Feedback-only users (browser extension, no portal) |
+
+### Runner policy
+
+Prefer the web-based test runner for manual testing.
+Do not build new dependencies on the retiring Windows Test Runner client.
+
+### Priority acceptance packs
+
+- Finance PPM dashboard acceptance
+- Budget vs actual validation
+- Odoo finance/expense acceptance
+- Key cross-repo release signoff
+
+See `docs/governance/TEST_STRATEGY_TARGET_STATE.md` for the full test strategy separating repo automation, Databricks validation, and Azure Test Plans UAT.
+
+## 9. What to Avoid
 
 - Azure DevOps extension sprawl
 - PAT-centric automation
@@ -192,6 +274,10 @@ VS Code is the operator surface, not the deployment authority.
 
 | Surface | Target |
 |---------|--------|
+| GitHub | Code and PR authority |
+| Azure Boards | Work-item and initiative governance |
+| Azure Repos | Not used (GitHub is primary) |
+| Traceability | Work item → PR → build → deploy (mandatory) |
 | Entra | Identity authority |
 | Azure DevOps | Governance + promotion spine |
 | Azure DevOps PATs | Heavily restricted (30-day max, no full-scope) |
@@ -208,6 +294,7 @@ VS Code is the operator surface, not the deployment authority.
 | VS Code enterprise controls | Managed profile + extension policy |
 | Containers | Runtime/operator surface |
 | Testing | Standard test/eval surface |
+| Azure Test Plans | Bounded UAT + requirement traceability only |
 | MCP | Small allowlist only |
 
 ## Highest-Priority Deltas
