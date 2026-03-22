@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ApprovalEvent",
+  "description": "Human approval/rejection event for Diva Goals status changes",
+  "type": "object",
+  "required": ["event_id", "event_type", "target_type", "target_id", "actor", "timestamp", "decision"],
+  "properties": {
+    "event_id": { "type": "string", "format": "uuid" },
+    "event_type": { "type": "string", "enum": ["status_approval", "readiness_override", "autonomy_change", "review_publish", "policy_exception"] },
+    "target_type": { "type": "string", "enum": ["goal", "initiative", "review_snapshot", "agent_tier", "capability_assessment"] },
+    "target_id": { "type": "string" },
+    "actor": { "type": "string" },
+    "timestamp": { "type": "string", "format": "date-time" },
+    "decision": { "type": "string", "enum": ["approved", "rejected", "deferred"] },
+    "reason": { "type": "string" },
+    "prior_state": { "type": "object" },
+    "new_state": { "type": "object" }
+  }
+}

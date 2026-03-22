@@ -1,0 +1,18 @@
+name: kb_people_capability
+description: Role families, proficiency levels, learning paths, and certification tracking
+domain: people
+sources:
+  - type: ssot_yaml
+    path: ssot/governance/cloud_people_readiness.yaml
+  - type: ssot_yaml
+    path: ssot/governance/cloud_operating_model.yaml
+  - type: odoo
+    model: hr.employee.skill
+    domain: "[('skill_type_id.name', 'in', ['Cloud', 'AI', 'Data', 'Finance'])]"
+  - type: manual
+    path: docs/operating-model/CAF_PREPARE_PEOPLE_COMPLETE.md
+index_name: diva_people_capability
+refresh_schedule: "0 6 * * 1"  # Weekly Monday 06:00 UTC
+access_policy:
+  read: [diva_orchestrator, diva_judge, hr_reviewer]
+  write: [diva_collector]
