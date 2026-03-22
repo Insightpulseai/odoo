@@ -1,0 +1,170 @@
+# =============================================================================
+# Azure Services Matrix — Target State (SSOT)
+# =============================================================================
+#
+# Canonical framing:
+#   Databricks  = governed data backbone
+#   AI Foundry  = primary gen-AI / agent plane
+#   Fabric / Power BI = downstream semantic and reporting plane
+#   Azure platform = control envelope
+#
+# Tier 1: canonical (must have)
+# Tier 2: bounded / conditional (add only with justification)
+# Tier 3: not core (out of scope)
+#
+# Last updated: 2026-03-22
+# =============================================================================
+
+schema_version: "1.0"
+last_updated: "2026-03-22"
+
+canonical_framing: >
+  Databricks is the governed data intelligence backbone;
+  AI Foundry is the agent and generative AI application plane;
+  Fabric / Power BI is the downstream semantic and reporting plane;
+  Purview is the governance overlay;
+  Azure + Entra + GitHub + Azure DevOps form the control and engineering envelope.
+
+services:
+  # =========================================================================
+  # Tier 1 — Canonical
+  # =========================================================================
+
+  - name: AI Foundry
+    tier: 1
+    role: Primary agent + gen-AI application plane
+    current_status: in_use
+    target_status: keep_and_expand
+    owner: ai
+    notes: >
+      Agent runtime, model deployments, orchestration, tracing, evals.
+      Complements Databricks (data) with Foundry (gen-AI apps).
+
+  - name: Azure
+    tier: 1
+    role: Core landing zone / infra / identity / networking / runtime
+    current_status: in_use
+    target_status: keep
+    owner: infra
+
+  - name: Azure DevOps
+    tier: 1
+    role: Governance spine — pipelines, environments, approvals, Boards
+    current_status: in_use
+    target_status: keep
+    owner: devops
+
+  - name: Databricks
+    tier: 1
+    role: Governed data intelligence backbone
+    current_status: in_use
+    target_status: keep_and_expand
+    owner: lakehouse
+    notes: >
+      Ingest, process, serve, governed data products.
+      Bundle-based CI/CD. Unity Catalog governance anchor.
+
+  - name: Entra ID
+    tier: 1
+    role: Canonical identity, RBAC, service principals, workload identities
+    current_status: in_use
+    target_status: keep
+    owner: infra
+
+  - name: Fabric / Power BI
+    tier: 1
+    role: Downstream semantic and reporting plane
+    current_status: target_consumption
+    target_status: keep_downstream_only
+    owner: platform
+    notes: >
+      Published semantic models, analyst reports, Copilot BI.
+      NOT a Databricks bundle deployment target.
+
+  - name: GitHub
+    tier: 1
+    role: Repo / PR / engineering truth
+    current_status: in_use
+    target_status: keep
+    owner: devops
+
+  - name: Purview
+    tier: 1
+    role: Enterprise metadata, lineage, governance overlay
+    current_status: target
+    target_status: keep_and_add
+    owner: infra
+    notes: >
+      Unified governance across Databricks + Foundry + Fabric.
+      Platform integration concern, not bundle-local.
+
+  - name: Visual Studio Code
+    tier: 1
+    role: Primary local/dev IDE surface
+    current_status: in_use
+    target_status: keep
+    owner: devops
+
+  # =========================================================================
+  # Tier 2 — Bounded / Conditional
+  # =========================================================================
+
+  - name: Microsoft 365 Admin
+    tier: 2
+    role: Bounded tenant admin for Copilot/agent governance
+    current_status: not_active
+    target_status: keep_bounded
+    owner: platform
+    notes: >
+      Copilot licensing, agent publish/reject workflows,
+      Copilot Control System. Not core runtime.
+
+  - name: Copilot Studio
+    tier: 2
+    role: Low-code M365-facing business copilots
+    current_status: not_active
+    target_status: optional
+    owner: platform
+    notes: >
+      Use only for Teams/M365 distribution. Foundry is primary agent factory.
+
+  - name: Power Automate
+    tier: 2
+    role: Business workflow automation adjunct
+    current_status: not_active
+    target_status: optional
+    owner: platform
+    notes: >
+      Only where it beats Databricks Jobs / Foundry / existing automation.
+
+  - name: Power Platform
+    tier: 2
+    role: Low-code business app extension layer
+    current_status: not_active
+    target_status: optional_bounded
+    owner: platform
+
+  - name: Defender
+    tier: 2
+    role: Security posture / DevSecOps / workload protection
+    current_status: target
+    target_status: keep_as_control
+    owner: infra
+
+  # =========================================================================
+  # Tier 3 — Not Core
+  # =========================================================================
+
+  - name: Data Explorer
+    tier: 3
+    role: KQL-native telemetry / time-series (not in current target)
+    current_status: not_active
+    target_status: out_of_scope
+    owner: none
+
+  - name: Intune
+    tier: 3
+    role: Device management only
+    current_status: not_active
+    target_status: out_of_scope
+    owner: none

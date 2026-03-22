@@ -1,0 +1,246 @@
+# =============================================================================
+# Azure Resource Consolidation Plan — SSOT
+# =============================================================================
+#
+# Maps every Azure resource to the target architecture box and a
+# keep/delete/review/consolidate decision.
+#
+# Target boxes:
+#   1  = Source / Ingest
+#   3  = Storage
+#   4/7 = Foundry / gen-AI / agent plane
+#   6  = BI / reporting
+#   9  = Databricks core / governance
+#   11 = Platform / network / runtime / DevOps
+#
+# Last updated: 2026-03-22
+# =============================================================================
+
+schema_version: "1.0"
+last_updated: "2026-03-22"
+
+# ---------------------------------------------------------------------------
+# DELETE NOW — safe strays
+# ---------------------------------------------------------------------------
+delete_now:
+  - resource: pg-ipai-dev
+    rg: rg-ipai-data-dev
+    type: PostgreSQL Flexible Server
+    target_box: 1
+    justification: >
+      Stray generic PG server. pg-ipai-odoo is the canonical Odoo source
+      feeding Databricks. No active app binding found.
+    precondition: Confirm no app references this host
+
+  - resource: id-ipai-aca-dev
+    rg: rg-ipai-agents-dev
+    type: Managed Identity
+    target_box: 11
+    justification: >
+      Leftover from old ACA lane (rg-ipai-dev, now deleted).
+      New ACA apps use system-assigned identities.
+    precondition: Confirm no ACA app references this identity
+
+# ---------------------------------------------------------------------------
+# DELETE AFTER MIGRATION — Foundry duplication
+# ---------------------------------------------------------------------------
+delete_after_migration:
+  - resource: aifoundry-ipai-dev
+    rg: rg-ipai-ai-dev
+    type: AI Foundry Hub
+    target_box: 4/7
+    justification: >
+      Duplicate Foundry estate. data-intel-ph-resource in rg-data-intel-ph
+      is the canonical Foundry hub.
+    precondition: Confirm all agents/models migrated to rg-data-intel-ph
+
+  - resource: proj-ipai-claude
+    rg: rg-ipai-ai-dev
+    type: Foundry Project
+    target_box: 4/7
+    justification: Child of duplicate aifoundry-ipai-dev
+    precondition: Delete with parent hub
+
+  - resource: aifoundrkeyvault67125c7c
+    rg: rg-ipai-ai-dev
+    type: Key Vault (Foundry-managed)
+    target_box: 4/7
+    justification: Auto-created by duplicate Foundry hub
+    precondition: Delete with parent hub
+
+  - resource: aifoundrstorage6ff030454
+    rg: rg-ipai-ai-dev
+    type: Storage Account (Foundry-managed)
+    target_box: 4/7
+    justification: Auto-created by duplicate Foundry hub
+    precondition: Delete with parent hub
+
+# ---------------------------------------------------------------------------
+# CONSOLIDATE — registries, vaults, storage, connectors, PG
+# ---------------------------------------------------------------------------
+consolidate:
+  acr_sprawl:
+    keep: acripaiodoo
+    review:
+      - cripaidev
+      - ipaiodoodevacr
+      - ipaiwebacr
+    target: 1-2 registries max
+    precondition: Check image-pull references in all ACA apps
+    notes: >
+      ipaiodoodevacr DNS is reserved (old RG deleted but name held).
+      acripaiodoo is the new canonical registry.
+
+  keyvault_duplication:
+    keep: kv-ipai-dev
+    review:
+      - ipai-odoo-dev-kv
+    target: Keep only if workload-specific secret isolation is needed
+    precondition: Audit secret references in ACA env vars
+
+  postgres_duplication:
+    keep: pg-ipai-odoo
+    review:
+      - ipai-odoo-dev-pg
+    target: Single canonical Odoo PG
+    precondition: >
+      Confirm which PG the ACA Odoo apps actually connect to.
+      The Databricks JDBC extract references ipai-odoo-pg secrets.
+    notes: >
+      If ipai-odoo-dev-pg is the live binding, keep it and delete pg-ipai-odoo.
+      If pg-ipai-odoo is canonical, delete ipai-odoo-dev-pg.
+
+  databricks_connector:
+    keep: unity-catalog-access-connector
+    review:
+      - ac-dbw-ipai-dev
+    target: Single access connector for Unity Catalog
+    precondition: Confirm ac-dbw-ipai-dev has no active role assignments
+
+  storage_sprawl:
+    keep: stipaidevlake
+    review:
+      - stipaidev
+      - stipaiodoodev
+    target: stipaidevlake for lakehouse, one for Odoo filestore
+    precondition: Check container/blob references
+
+# ---------------------------------------------------------------------------
+# KEEP — canonical target-state resources
+# ---------------------------------------------------------------------------
+keep:
+  databricks_backbone:
+    - dbw-ipai-dev
+    - unity-catalog-access-connector
+    - dbstoragew6tn3uhg4bluy
+    - dbmanagedidentity
+    - stipaidevlake
+    - vnet-ipai-databricks
+    - nsg-dbw-ipai-dev
+    - id-ipai-databricks-dev
+
+  foundry_agent_plane:
+    - data-intel-ph-resource
+    - data-intel-ph  # project
+    - oai-ipai-dev
+    - srch-ipai-dev
+    - docai-ipai-dev
+    - lang-ipai-dev
+
+  odoo_runtime:
+    - ipai-odoo-dev-web
+    - ipai-odoo-dev-worker
+    - ipai-odoo-dev-cron
+    - ipai-odoo-dev-env
+    - ipai-auth-dev
+    - ipai-copilot-gateway
+    - ipai-crm-dev
+    - ipai-mcp-dev
+    - ipai-ocr-dev
+    - ipai-plane-dev
+    - ipai-shelf-dev
+    - ipai-website-dev
+    - acripaiodoo
+
+  edge_and_observability:
+    - ipai-fd-dev
+    - ipaiDevWafPolicy
+    - appi-ipai-dev
+    - law-ipai-dev
+    - managed-appi-ipai-dev-ws
+    - NetworkWatcher_southeastasia
+
+  identity_and_secrets:
+    - kv-ipai-dev
+    - kv-ipai-staging
+    - kv-ipai-prod
+    - mi-ipai-odoo-dev
+    - mi-ipai-odoo-staging
+    - mi-ipai-odoo-prod
+    - mi-ipai-lakehouse-dev
+    - mi-ipai-lakehouse-staging
+    - mi-ipai-lakehouse-prod
+    - mi-ipai-platform-dev
+    - mi-ipai-platform-staging
+    - mi-ipai-platform-prod
+    - id-ipai-agents-dev
+
+  devops:
+    - insightpulseai  # Azure DevOps org
+    - ipai-build-pool
+    - ipai-devcenter
+    - ipai-devcenter-project
+
+  legacy_exception:
+    - vm-ipai-supabase-dev
+    - vm-ipai-supabase-dev_OsDisk_1_98d0c58f5b254ea4a7c90d20ffede7e2
+    - vm-ipai-supabase-devNSG
+    - vm-ipai-supabase-devPublicIP
+    - vm-ipai-supabase-devVMNic
+    - vm-ipai-supabase-devVNET
+
+  review_optional:
+    - ipai-superset-dev  # Keep if supplemental BI, drop if Power BI fully replaces
+    - vision-ipai-dev    # Keep if Computer Vision is used, else drop
+    - ipai-devcenter     # Review if Dev Center is actively used
+    - ipai-devcenter-project
+
+# ---------------------------------------------------------------------------
+# Execution Order
+# ---------------------------------------------------------------------------
+execution_order:
+  - step: 1
+    action: Confirm live bindings
+    targets:
+      - ipai-odoo-dev-pg
+      - ac-dbw-ipai-dev
+      - aifoundry-ipai-dev
+      - proj-ipai-claude
+      - id-ipai-aca-dev
+
+  - step: 2
+    action: Delete safe strays
+    targets:
+      - pg-ipai-dev
+      - id-ipai-aca-dev
+
+  - step: 3
+    action: Collapse to one canonical Foundry estate
+    targets:
+      - aifoundry-ipai-dev
+      - proj-ipai-claude
+      - aifoundrkeyvault67125c7c
+      - aifoundrstorage6ff030454
+
+  - step: 4
+    action: Collapse to one Databricks access connector
+    targets:
+      - ac-dbw-ipai-dev
+
+  - step: 5
+    action: Collapse registries and Key Vaults
+    targets:
+      - cripaidev
+      - ipaiodoodevacr
+      - ipaiwebacr
+      - ipai-odoo-dev-kv
