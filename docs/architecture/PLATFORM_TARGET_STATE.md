@@ -14,6 +14,7 @@
 |1.2.0    |2026-03-11    |Full 55-resource Azure inventory from CSV integrated                                                                                                  |
 |1.3.0    |2026-03-11    |Odoo version corrected to 19 CE; `<tree>` removal enforced in CI                                                                                      |
 |**1.4.0**|**2026-03-11**|**Full synthesis: all sources merged, SSOT/SOR doctrine, Databricks capabilities, DNS map, auth model, Odoo 19 CE conventions, resource cleanup plan**|
+|**1.5.0**|**2026-03-22**|**Canonical service-plane split: Odoo=operations, Foundry=agents, DocIntel=extraction, Databricks=analytics, Odoo.sh=benchmark only**|
 
 -----
 
@@ -481,3 +482,42 @@ Notify (Slack)
 - [ ] Odoo 19 CE `<tree>` XML linter running as required PR gate
 - [ ] ACR consolidation: `ipaiodoodevacr` images migrated to `cripaidev`
 - [ ] Azure DevOps pipeline gates: dbt test pass required before Delta production deploy
+
+---
+
+## Canonical Service-Plane Split (v1.5.0)
+
+> Odoo is the operational SoR, Odoo.sh is the delivery benchmark, Foundry is the primary AI/agent plane, Document Intelligence is the OCR/extraction bridge, Databricks is the governed analytics backbone, and Azure DevOps governs promotion across all of it.
+
+| Plane | Service | Role |
+|-------|---------|------|
+| Operations | Odoo 19 CE + OCA | Transactional SoR, business app surface |
+| Delivery benchmark | Odoo.sh semantics | Git/branch/build/settings promotion model (not runtime) |
+| Runtime | Azure Container Apps | Default containerized service hosting |
+| Analytics | Azure Databricks | Governed medallion transforms, SQL serving, dashboards |
+| AI / Agents | Microsoft Foundry | Primary agent runtime, copilots, evals, tracing |
+| Document bridge | Azure AI Document Intelligence | OCR, extraction, classification |
+| Governance | Azure DevOps | CI/CD, Boards, approvals, promotion spine |
+| Identity | Microsoft Entra | Canonical identity authority |
+| Code | GitHub | Repo, branch, PR truth |
+| BI | Fabric / Power BI | Downstream semantic and reporting consumption |
+| Governance overlay | Microsoft Purview | Metadata, lineage, compliance |
+
+### Boundary Rules
+
+- **Odoo** owns operational workflows. Not AI orchestration.
+- **Foundry** owns agents and copilots. Not transactional data.
+- **Databricks** owns analytics and governed data. Not document ingestion.
+- **Document Intelligence** owns OCR/extraction. Not standalone UI.
+- **Odoo.sh** is benchmark only. Not the runtime target.
+
+### Target Workflows
+
+**Finance / Expenses / Receipts**:
+Document → Document Intelligence → Odoo Accounting/Expenses → Databricks analytics → Foundry copilot
+
+**Communication / CRM**:
+Calendar/mail/chat → Odoo integrations → Databricks rollups → Foundry copilots
+
+**Project / PPM / Close**:
+Tasks/milestones → Odoo project → Databricks portfolio analytics → Foundry PPM copilot
