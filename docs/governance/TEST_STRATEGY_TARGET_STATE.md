@@ -161,6 +161,10 @@ Requirement-based suites are the **only** type that support end-to-end requireme
 | Odoo finance/expense acceptance | Odoo finance epic | Per release |
 | Cross-repo release signoff | Release milestone | Per release |
 | Odoo critical business workflows | Operations epic | Per release |
+| Vendor bill extraction accuracy | Document Intelligence epic | Per model update |
+| Expense receipt classification | Document Intelligence epic | Per model update |
+| Odoo posting/reimbursement from extraction | Finance + Doc Intel epic | Per release |
+| Copilot acceptance over governed outputs | Foundry agent epic | Per release |
 
 ---
 
@@ -433,6 +437,20 @@ A feature is test-complete when:
 - [ ] Azure Test Plans UAT executed and passed (if release-gated feature)
 - [ ] Test results linked to backlog items in Azure DevOps Boards
 - [ ] No test duplication across lanes
+
+---
+
+## Document and Finance Acceptance Packs
+
+Use requirement-based UAT packs only for:
+
+- vendor bill ingestion / extraction accuracy
+- expense receipt extraction/classification
+- Odoo posting/reimbursement acceptance
+- balance sheet reconciliation assistance accuracy
+- collections coordination assistance accuracy
+- budget/variance analysis assistance accuracy
+- dashboard and copilot acceptance over resulting governed outputs
 
 ---
 
