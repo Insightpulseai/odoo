@@ -1,13 +1,13 @@
 # Developer Tooling Target State
 
-> **Status**: Approved
-> **Date**: 2026-03-22
+> **Status**: Live baseline
+> **Date**: 2026-03-22 (updated from approved → live baseline)
 
 ---
 
 ## One-Line Target
 
-Entra-backed Azure DevOps org, PAT-hardened, AzureCLI@2/service-connection Databricks auth, repo-root VS Code workflow, curated extension/MCP allowlist, Databricks bundles fixed to real target hosts, and Azure DevOps Boards/Pipelines as the governance and promotion spine.
+The target is no longer "prepare for Databricks"; it is "standardize the live `dbw-ipai-dev` workspace as the governed dev baseline, with repo-defined bundles and Azure DevOps promotion controlling what persists."
 
 ---
 
@@ -34,7 +34,25 @@ Entra-backed Azure DevOps org, PAT-hardened, AzureCLI@2/service-connection Datab
 | Marketplace extensions | Minimal | Do not add without architecture justification |
 | Project structure | Single `ipai-platform` project | Keep lean |
 
-## 3. Databricks Auth and Workspace
+## 3. Databricks Auth and Live Dev Baseline
+
+**Databricks CLI + Azure DevOps service connection + live dev workspace baseline**
+
+### Canonical Dev Workspace
+
+| Property | Value |
+|----------|-------|
+| Workspace name | `dbw-ipai-dev` |
+| Workspace host | `https://adb-7405610347978231.11.azuredatabricks.net` |
+| Pricing tier | Premium (+ RBAC) |
+| No Public IP | Yes |
+| Primary dev catalog | `dbw_ipai_dev` |
+| Federated source catalog | `odoo_erp` (Lakehouse Federation → Odoo PG) |
+| Domain analytics catalog | `dev_ppm` |
+| Dev SQL warehouse | `ipai-sql-warehouse-dev` (serverless) |
+| Genie | Enabled, zero spaces (intentional) |
+
+### Auth Model
 
 | Surface | Method | Config |
 |---------|--------|--------|
@@ -43,25 +61,55 @@ Entra-backed Azure DevOps org, PAT-hardened, AzureCLI@2/service-connection Datab
 | Unattended bots | Databricks OAuth M2M | Service principal |
 | GitHub Actions | OIDC / workload identity federation | Deferred |
 
-### Fix Now — Databricks Extension State
+### Bundle Defaults
 
-Current (broken):
-```
-Target: prod
-Mode: Development
-Host: https://${var.workspace_host}/
-```
+Local bundle target must be `dev` with real workspace host. `prod` is reserved for gated promotion only.
 
-Target (correct):
-```
-Target: dev
-Mode: development
-Host: https://adb-7405610347978231.11.azuredatabricks.net
+```text
+local bundle target = dev
+mode = development
+workspace_host = https://adb-7405610347978231.11.azuredatabricks.net
 ```
 
-### Bundle Host Resolution
+Every `databricks.yml` target must resolve to a real workspace URL, not an unresolved variable.
 
-Every `databricks.yml` target must resolve to a real workspace URL, not an unresolved variable. Use `.databrickscfg` profiles or environment variables to inject the host per target.
+### Unity Catalog as Namespace Boundary
+
+| Catalog | Role | Governance |
+|---------|------|------------|
+| `dbw_ipai_dev` | Platform/dev lakehouse | Primary dev workspace catalog |
+| `odoo_erp` | Federated source-facing | Read-only via Lakehouse Federation |
+| `dev_ppm` | Domain-oriented analytics | Finance/PPM analytical domain |
+| `system` | Databricks internal | Do not modify |
+
+Avoid ad hoc catalog sprawl. New catalogs require architecture justification.
+
+### Serverless SQL Warehouse
+
+`ipai-sql-warehouse-dev` is the canonical dev SQL-serving baseline for:
+- Gold mart validation
+- Dashboard queries
+- Budget vs actual / finance PPM analytics
+- Future Genie spaces
+
+### Genie Policy
+
+Genie is enabled but must remain empty until:
+- Gold marts are stable and promoted
+- Semantic naming is cleaned up
+- Dashboard and warehouse contracts are stable
+
+Create **one curated finance/PPM Genie space** as the first space, not a broad default.
+
+## 3a. Live Workspace Discipline
+
+Because the dev workspace already contains jobs, dashboards, workspace assets, a serverless SQL warehouse, and multiple catalogs:
+
+- Persistent jobs must be repo-defined (bundle YAML) and promotion-controlled (Azure DevOps)
+- Persistent dashboards must map to governed warehouse/catalog outputs
+- Ad hoc UI-created assets should be minimized and either codified or cleaned up
+- The Databricks UI is an operator/inspection surface, not the source of truth for promoted assets
+- Azure DevOps = promotion and governance spine; repo bundles/SQL/code = source of truth
 
 ## 4. VS Code Standard
 
@@ -145,14 +193,27 @@ VS Code is the operator surface, not the deployment authority.
 | Surface | Target |
 |---------|--------|
 | Entra | Identity authority |
-| Azure DevOps | Governance spine |
-| Azure DevOps PATs | Heavily restricted |
+| Azure DevOps | Governance + promotion spine |
+| Azure DevOps PATs | Heavily restricted (30-day max, no full-scope) |
 | Azure DevOps auth | Service connection first |
-| Databricks local auth | CLI login |
-| Databricks CI auth | AzureCLI@2 |
+| Databricks workspace | `dbw-ipai-dev` (live, Premium, RBAC) |
+| Databricks local auth | CLI login against real workspace host |
+| Databricks CI auth | AzureCLI@2 + service connection |
+| Databricks catalogs | `dbw_ipai_dev` + `odoo_erp` (federated) + `dev_ppm` |
+| Databricks SQL warehouse | `ipai-sql-warehouse-dev` (serverless) |
+| Databricks Genie | Enabled, zero spaces until curated |
+| Databricks UI | Operator/inspection surface, not source of truth |
 | VS Code | Primary IDE |
 | VS Code workspace model | Repo-root canonical |
 | VS Code enterprise controls | Managed profile + extension policy |
 | Containers | Runtime/operator surface |
 | Testing | Standard test/eval surface |
 | MCP | Small allowlist only |
+
+## Highest-Priority Deltas
+
+1. Bind local bundle default to `dev` + real workspace host — **done** (all 3 bundles)
+2. Treat `dbw_ipai_dev` + `odoo_erp` as canonical current catalog model
+3. Use `ipai-sql-warehouse-dev` as standard dev serving surface
+4. Keep Genie empty until one curated finance/PPM space is ready
+5. Prevent Databricks UI drift by making repo + Azure DevOps the authority
