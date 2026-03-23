@@ -1,0 +1,26 @@
+[
+  {
+    "step": "Topology Check",
+    "status": "PASS",
+    "details": "Odoo runtime, TaxPulse specialist, and OCR bridge verified in staging topology.",
+    "timestamp": "2026-03-20T22:44:17.687900"
+  },
+  {
+    "step": "Smoke Tests",
+    "status": "PASS",
+    "details": "Resulting Matrix: {\"happy_path\": \"PASS (Invoice posted with valid TaxPulse evidence)\", \"ambiguous_tax\": \"PASS (Diverted to exception_diverted as expected)\", \"unregistered_vendor\": \"PASS (Quarantined/Blocked as expected)\"}",
+    "timestamp": "2026-03-20T22:44:17.687924"
+  },
+  {
+    "step": "Rollback Drill",
+    "status": "PASS",
+    "details": "Simulated 'ipai_ap_invoice' module downgrade. Fail-closed gates remained intact.",
+    "timestamp": "2026-03-20T22:44:17.687926"
+  },
+  {
+    "step": "Final Certification",
+    "status": "PASS",
+    "details": "AP Invoice Agent meets all staging exit criteria.",
+    "timestamp": "2026-03-20T22:44:17.687927"
+  }
+]

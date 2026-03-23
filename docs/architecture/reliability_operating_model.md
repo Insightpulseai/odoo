@@ -196,6 +196,67 @@ All reliability events produce evidence:
 
 ---
 
+## 9. SaaS / Multi-Tenant Incident Model
+
+This section extends the incident response framework for SaaS-specific concerns.
+It is the **declared incident management authority** for Azure SaaS Workload compliance.
+
+### Tenant-Impact Classification
+
+| Impact Scope | Definition | Escalation |
+|-------------|-----------|------------|
+| Platform-wide | All tenants affected (infra failure, shared-service outage) | P1 — immediate |
+| Multi-tenant | 2+ tenants affected, others unaffected | P2 — high |
+| Single-tenant | One tenant affected, others unaffected | P2/P3 — based on business impact |
+| Tenant-data | Data integrity or isolation breach (any scope) | P1 — immediate + security response |
+
+### Detection Sources
+
+| Source | Mechanism | Covers |
+|--------|-----------|--------|
+| Azure Monitor | Metric alerts, log alerts, availability tests | Infrastructure, ACA health |
+| Application Insights | Request failures, dependency failures, exceptions | Application-level errors |
+| Azure Front Door | WAF alerts, origin health probes | Edge/ingress failures |
+| Defender for Cloud | Security alerts, compliance drift | Security posture |
+| Synthetic monitoring | Scheduled health probes | End-to-end availability |
+| Tenant report | Support channel (Slack, email) | User-observed issues |
+
+### SaaS Incident Response RACI
+
+| Role | Triage | Comms | Mitigation | Rollback | Evidence | PIR |
+|------|--------|-------|------------|----------|----------|-----|
+| Platform lead | **R/A** | **R** | **R/A** | **A** | **R** | **R/A** |
+| Engineering lead | C | I | **R** | **R** | **R** | C |
+| Tenant contact | I | I | — | — | — | I |
+
+### Rollback / Mitigation Authority
+
+- **Container rollback**: Platform lead can shift ACA traffic to previous revision without approval
+- **Database rollback**: Requires explicit authorization (PITR restore is destructive to newer data)
+- **Feature flag disable**: Platform lead can disable tenant-facing features immediately
+- **DNS failover**: Platform lead can redirect via Front Door routing rules
+
+### Post-Incident Review (PIR)
+
+Every P1/P2 incident requires a PIR within 3 business days:
+
+1. Timeline reconstruction (detection → mitigation → resolution)
+2. Tenant-impact assessment (which tenants, what data, what duration)
+3. Root cause analysis (5-whys or equivalent)
+4. Preventive actions (tracked as Azure Boards work items)
+5. Evidence committed to `docs/evidence/<stamp>/incidents/`
+6. SLO error budget impact calculated and recorded
+
+### Relationship to Azure Monitor / Evidence
+
+- All alerts feed into Slack channels (`#alerts-critical`, `#alerts`)
+- Azure Monitor action groups trigger automated acknowledgment
+- Log Analytics workspace retains 90 days of diagnostic logs
+- PIR evidence cross-references Application Insights transaction IDs
+- Runtime evidence docs (`docs/evidence/`) are the permanent record
+
+---
+
 ## Cross-References
 
 - [release_management_model.md](release_management_model.md) — progressive exposure, bake time, hotfix routing
@@ -208,4 +269,8 @@ All reliability events produce evidence:
 
 ---
 
-*Last updated: 2026-03-17*
+- [saas_billing_metering.md](saas_billing_metering.md) — per-tenant billing/metering design authority
+
+---
+
+*Last updated: 2026-03-21*

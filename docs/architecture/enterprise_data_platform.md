@@ -29,7 +29,7 @@ Odoo (System of Record)         Supabase (Control Plane)
 
             ↓ Serve                              ↓ Reverse ETL (bounded)
 
-  Databricks SQL    Tableau Cloud    Superset     Odoo (enrichment fields)
+  Databricks SQL    Power BI    Odoo (enrichment fields)
   (ad-hoc queries)  (exec dashboards) (ops metrics) (draft docs, forecasts)
 ```
 
@@ -69,10 +69,10 @@ Reverse ETL is bounded, typed, and contract-governed.
 
 | Data Product | Consumers | Refresh |
 |-------------|-----------|---------|
-| Customer 360 | Tableau Cloud, Superset | Daily |
-| Revenue Dashboard | Tableau Cloud | Daily |
+| Customer 360 | Power BI | Daily |
+| Revenue Dashboard | Power BI | Daily |
 | BIR Tax Summary | `ipai_bir_tax_compliance` (reverse ETL) | Monthly |
-| Campaign Performance | Tableau Cloud | Weekly |
+| Campaign Performance | Power BI | Weekly |
 | Platform Health | Superset | Hourly |
 
 **Format**: Delta Lake tables exposed via Databricks SQL endpoints
@@ -223,8 +223,8 @@ R = Responsible, A = Accountable, C = Consulted, I = Informed
 |---------|-------------|-------------|-----------|
 | Platform lead | Databricks workspace + Azure portal | Admin | Self-serve |
 | Engineering lead | Databricks workspace + notebooks | Contributor | Guided |
-| Data analyst | Databricks SQL + Tableau Cloud | Reader + SQL | Training path (see learning model) |
-| Business user | Tableau Cloud dashboards | Viewer | Dashboard walkthrough |
+| Data analyst | Databricks SQL + Power BI | Reader + SQL | Training path (see learning model) |
+| Business user | Power BI dashboards | Viewer | Dashboard walkthrough |
 
 ---
 
@@ -254,7 +254,7 @@ Foundry (agents), Azure Boards (execution coordination).
 **Integration with medallion architecture**:
 - Bronze: ad platform data (Meta, Google Ads, etc.) via n8n or connector
 - Silver: conformed marketing fact tables (impressions, clicks, conversions, spend)
-- Gold: attribution models, CLV scores, MMM outputs → Tableau Cloud / Superset
+- Gold: attribution models, CLV scores, MMM outputs → Power BI
 
 See [marketing_analytics_reference_model.md](marketing_analytics_reference_model.md) for
 detailed accelerator evaluation and adoption criteria.

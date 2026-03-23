@@ -183,6 +183,29 @@ The repository treats runtime as environment-specific and deterministic.
 5. Secrets must be injected securely and must not be hardcoded into repo-managed config.
 6. Addon paths are part of runtime identity and must be treated as deployment-critical.
 7. Reverse-proxy / hostname behavior is part of runtime correctness, not an external afterthought.
+8. Azure Blob Storage is the canonical external store for Odoo chatter/email attachments only.
+9. Generated Odoo documents (e.g., Sales Orders) and Documents/Sign files remain on the Odoo-side storage plane.
+
+---
+
+## External Attachment Storage (Selective Offload)
+
+The platform supports offloading large binary attachments to Azure Blob Storage to keep the Odoo database and local filestore performant. This is a **selective integration**, not a full storage replacement.
+
+### Coverage Scope
+
+| Category | Storage Location | Notes |
+|----------|------------------|-------|
+| **Chatter Attachments** | Azure Blob Storage | PNG, PDF, DOCX uploaded via chatter |
+| **Email Attachments** | Azure Blob Storage | Files sent/received via Odoo Mail |
+| **Generated Docs** | Odoo Server / DB | Sales Orders, Invoices, reports produced by Odoo |
+| **Documents / Sign** | Odoo Server / DB | Managed files within the Documents or Sign apps |
+
+### Operational Stance
+
+- **Optimization only**: Treating Azure Blob as a storage optimization, not an analytics lane or control-plane registry.
+- **Identity**: Uses Entra ID App Registration + Key Vault governed secret (not managed identity native).
+- **Network**: CORS must be scoped to known Odoo origins; wildcard `*` is forbidden in production.
 
 ---
 

@@ -1,0 +1,86 @@
+# Organization Target State — 2026
+
+> Revised 11-repo target state for InsightPulse AI platform.
+> Aligns with Diva Goals product family and existing platform architecture.
+
+---
+
+## Target Repository Topology
+
+| # | Repo | Purpose | Primary Language | Plane |
+|---|------|---------|-----------------|-------|
+| 1 | `odoo` | Odoo CE 19 + OCA + IPAI modules (operational SoR) | Python | Operational |
+| 2 | `platform` | Control plane, platform services, API gateway | Python / TypeScript | Platform |
+| 3 | `agents` | Agent personas, skills, workflows, KB assets, eval suites | YAML / Markdown | Agent |
+| 4 | `web` | Web frontend, mobile apps, Fluent 2 design implementation | TypeScript / React | Presentation |
+| 5 | `data-intelligence` | Databricks lakehouse, DLT pipelines, Unity Catalog | Python / SQL | Analytics |
+| 6 | `infra` | Terraform IaC, Azure ARM/Bicep, DNS, networking | HCL / YAML | Infrastructure |
+| 7 | `docs` | Platform documentation, architecture decisions, runbooks | Markdown | Documentation |
+| 8 | `design` | Design tokens, Fluent 2 theme, component specs | JSON / SCSS | Design |
+| 9 | `automations` | n8n workflows, scheduled jobs, event-driven automations | JSON / TypeScript | Automation |
+| 10 | `templates` | azd templates, module scaffolds, project starters | Mixed | Tooling |
+| 11 | `.github` | Org-level GitHub config, shared workflows, issue templates | YAML | Governance |
+
+## Current State vs. Target
+
+Currently everything lives in the `odoo` monorepo. The target state extracts concerns into focused repositories while maintaining the monorepo as the operational core.
+
+### Migration Priority
+
+| Priority | Repo | Rationale |
+|----------|------|-----------|
+| P0 | `agents` | Diva Goals Phase 1 creates 30+ agent assets; clean separation enables independent agent lifecycle |
+| P1 | `data-intelligence` | Databricks workspace has distinct CI/CD; separation reduces monorepo build times |
+| P1 | `infra` | IaC changes have different review cadence; separation improves blast radius control |
+| P2 | `web` | Frontend has distinct build toolchain; separation enables frontend-specific CI |
+| P2 | `design` | Design tokens feed multiple repos; shared repo enables consistent theming |
+| P3 | `platform` | Control plane extraction depends on API gateway stabilization |
+| P3 | `docs` | Documentation consolidation depends on platform stabilization |
+| P4 | `automations` | n8n workflow extraction is low-risk but low-priority |
+| P4 | `templates` | Template extraction depends on azd stabilization |
+
+### What Stays in `odoo`
+
+- `addons/ipai/` — All IPAI Odoo modules (including Diva Goals modules in Phase 2)
+- `addons/oca/` — OCA community modules
+- `vendor/odoo/` — Upstream Odoo CE 19
+- `config/` — Odoo configuration
+- `scripts/odoo/` — Odoo-specific scripts
+- `odoo19/` — Canonical Odoo setup
+
+## Strategic Direction
+
+### 2026 Q1-Q2: Consolidation
+- Stabilize Diva Goals spec (Phase 1 — current)
+- Complete agent asset creation in monorepo
+- Begin Databricks workspace extraction planning
+
+### 2026 Q3: First Extractions
+- Extract `agents` repo (agent personas, skills, workflows, KB)
+- Extract `data-intelligence` repo (Databricks assets)
+- Extract `infra` repo (Terraform, DNS, networking)
+
+### 2026 Q4: Platform Maturity
+- Extract `web` and `design` repos
+- Extract `platform` repo (control plane)
+- Stabilize cross-repo CI/CD with Azure DevOps
+
+## Cross-Repo Contracts
+
+When repos are separated, cross-repo dependencies are managed via:
+- **Package references**: npm/pip packages published from source repos
+- **Git submodules**: For assets that must be co-located (e.g., Odoo addons)
+- **API contracts**: OpenAPI specs for service-to-service communication
+- **Shared workflows**: `.github` org-level workflows for consistent CI
+- **Design tokens**: Published from `design` repo, consumed by `web` and `odoo`
+
+## Alignment with Diva Goals
+
+Diva Goals assets will initially live in the `odoo` monorepo (Phase 1-2), then migrate:
+- `spec/diva-goals/` → stays in `odoo` (spec bundles are repo-local)
+- `ssot/agents/diva_*.yaml` → migrates to `agents` repo
+- `agents/personas/diva-copilot-*.md` → migrates to `agents` repo
+- `agents/skills/*.skill.json` → migrates to `agents` repo
+- `agents/workflows/*.yaml` → migrates to `agents` repo
+- `agents/knowledge/diva-*.yaml` → migrates to `agents` repo
+- `addons/ipai/ipai_diva_*` → stays in `odoo` (Odoo modules are repo-local)

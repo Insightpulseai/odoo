@@ -13,6 +13,46 @@ This architecture uses six planes:
 5. Agent / AI runtime plane
 6. Experience / domain application plane
 
+## Architecture Authority Hierarchy
+
+Design decisions must map to these frameworks in priority order:
+
+1. **Azure SaaS Workload Documentation** — canonical SaaS target-state operating model. Covers: resource organization, identity and access management, compute, networking, data, billing/cost management, governance, DevOps practices, incident management. Use the SaaS assessment tool as the architecture readiness gate. Ref: https://learn.microsoft.com/en-us/azure/architecture/guide/saas/plan-journey-saas
+2. **Cloud Adoption Framework (CAF)** — platform foundation, landing zone design, governance baseline. Ref: https://learn.microsoft.com/en-us/azure/cloud-adoption-framework/
+3. **Repo SSOT + Spec Kit bundles** — implementation authority (this repo's `ssot/`, `spec/`, `infra/ssot/`)
+4. **Runtime evidence docs** — live truth (`docs/evidence/`, Azure Resource Graph, CI artifacts)
+
+The SaaS Workload Documentation supersedes generic CAF guidance for SaaS-specific design areas. CAF remains authoritative for landing zone foundations and migration/governance strategy.
+
+## SaaS Workload Design Area Mapping
+
+| SaaS Design Area | Platform Surface | Key Artifacts |
+|------------------|-----------------|---------------|
+| Resource organization | 5+1 RG model, `rg-ipai-dev-*` | `infra/ssot/azure/resources.yaml` |
+| Identity and access management | Entra ID (target), Keycloak (transitional), managed identities | `infra/ssot/security/access_model.yaml` |
+| Compute | Azure Container Apps, Databricks | `infra/ssot/azure/service-matrix.yaml` |
+| Networking | Azure Front Door, Cloudflare DNS, VNet integration | `infra/dns/subdomain-registry.yaml` |
+| Data | Azure PG, Databricks + Unity Catalog, Fabric Mirroring | `data-intelligence/CLAUDE.md` |
+| Billing and cost management | Per-tenant metering (planned) | `ssot/governance/platform-strategy-2026.yaml` |
+| Governance | Azure Boards, GitHub, SSOT, Azure Policy | `ssot/governance/platform-constitution.yaml` |
+| DevOps practices | Azure Pipelines + GitHub Actions, CI gates, evidence packs | `.github/workflows/`, `ssot/governance/operating-model.yaml` |
+| Incident management | Azure Monitor, Log Analytics, runbooks | `docs/runbooks/` |
+
+## SaaS Readiness Gate
+
+Platform go-live **cannot be declared SaaS-ready** until the Azure SaaS assessment is run against the platform and the results are recorded in evidence.
+
+| Field | Value |
+|-------|-------|
+| `assessment_status` | `not_run` |
+| `last_run_at` | — |
+| `owner` | platform-lead |
+| `blocking_gaps` | per-tenant metering design pending; formal SaaS incident playbook pending |
+
+Ref: [SaaS Assessment Tool](https://learn.microsoft.com/en-us/assessments/strategic/saas-702)
+
+---
+
 ## Core architecture statement
 
 The platform is an Azure landing-zone SaaS architecture where:
@@ -199,6 +239,7 @@ See `docs/architecture/diagram-conventions.md`.
 
 ## Verification sources
 
+- [Azure SaaS Workload Documentation](https://learn.microsoft.com/en-us/azure/architecture/guide/saas/plan-journey-saas) — **primary SaaS design authority**
 - [Azure Landing Zones](https://learn.microsoft.com/en-us/azure/architecture/landing-zones/landing-zone-deploy)
 - [Baseline Foundry Chat Architecture](https://learn.microsoft.com/en-us/azure/architecture/ai-ml/architecture/baseline-microsoft-foundry-chat)
 - [Modern Analytics with Databricks](https://learn.microsoft.com/en-us/azure/architecture/solution-ideas/articles/azure-databricks-modern-analytics-architecture)

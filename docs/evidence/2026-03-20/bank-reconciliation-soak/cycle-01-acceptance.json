@@ -1,0 +1,15 @@
+{
+  "cycle_id": "SOAK-C1-20260320",
+  "batch_scope": "3 lines",
+  "posted_count": 2,
+  "ambiguous_count": 0,
+  "unmatched_count": 0,
+  "duplicate_block_count": 1,
+  "illegal_post_count": 0,
+  "evidence_complete": true,
+  "operator_review_completed": true,
+  "anomalies": [],
+  "residual_risks": [
+    "real-world statement-format variance still being observed"
+  ]
+}

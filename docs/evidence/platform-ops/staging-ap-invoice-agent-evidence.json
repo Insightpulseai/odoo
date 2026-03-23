@@ -1,0 +1,41 @@
+{
+  "request_id": "REQ-7721",
+  "timestamp": "2026-03-21T00:35:49.601601",
+  "environment": "staging-authority-01",
+  "validator_result": "PASS",
+  "ops": [
+    {
+      "op": "Snapshot Prod DB",
+      "status": "OK"
+    },
+    {
+      "op": "Apply Sanitization",
+      "status": "OK",
+      "rules": [
+        {
+          "target": "res.partner.email",
+          "action": "mask",
+          "pattern": "*@ipai.staging"
+        },
+        {
+          "target": "res.partner.vat",
+          "action": "anonymize"
+        },
+        {
+          "target": "ir.mail_server",
+          "action": "disable_all"
+        }
+      ]
+    },
+    {
+      "op": "Apply Topology Gate",
+      "status": "OK",
+      "detail": "ACA Staging instance validated."
+    },
+    {
+      "op": "Run V2 Release Validator",
+      "status": "OK",
+      "depth": "L5"
+    }
+  ]
+}

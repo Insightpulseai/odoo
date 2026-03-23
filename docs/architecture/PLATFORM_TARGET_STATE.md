@@ -63,9 +63,9 @@
 
 |Layer                     |System                      |Azure Resource                                                                        |Role                                                                          |
 |--------------------------|----------------------------|--------------------------------------------------------------------------------------|------------------------------------------------------------------------------|
-|**System of Record (SOR)**|**Odoo 19 CE**              |`ipai-odoo-dev-web/cron/worker` (Container Apps, `rg-ipai-dev`)                       |ERP transactions, ledger, invoices, tax filings, stock                        |
+|**System of Record (SOR)**|**Odoo 19 CE**              |`ipai-odoo-dev-web/cron/worker` (Container Apps, `rg-ipai-dev`)                       |ERP transactions, ledger, invoices, tax filings, stock; selective attachment offload to Azure Blob|
 |**System of Truth (SSOT)**|Supabase                    |`vm-ipai-supabase-dev` + `pg-ipai-dev` (PG Flex, `rg-ipai-data-dev`)                  |Control plane, identity, orchestration state, governance, analytics-ready data|
-|**Intelligence Layer**    |Azure Databricks            |`dbw-ipai-dev` (`rg-ipai-ai-dev`)                                                     |ML, feature store, serving endpoints, Gold KPIs                               |
+|**Intelligence Layer**    |Azure Databricks            |`dbw-ipai-dev` (`rg-ipai-ai-dev`)                                                     |ML, feature store, serving endpoints, Gold KPIs; Databricks Apps for data agents      |
 |**Orchestration**         |n8n                         |Target: Container App (`cae-ipai-dev` or `ipai-odoo-dev-env`)                         |Workflow automation, connector glue, retry logic                              |
 |**AI Services**           |Azure Cognitive             |`oai-ipai-dev` (OpenAI), `vision-ipai-dev`, `lang-ipai-dev`, `docai-ipai-dev`         |GPT-4, OCR, NLP, Document Intelligence                                        |
 |**Search**                |Azure AI Search             |`srch-ipai-dev` (`rg-ipai-ai-dev`)                                                    |Semantic search over Delta Lake + Supabase                                    |
@@ -81,13 +81,19 @@
 
 -----
 
-## 1b. Canonical Operating Model — Six-Plane Architecture
+## 1b. Canonical Operating Model — Azure SaaS Workload Framework
 
-The platform follows a **six-plane Azure-first architecture**. The three systems below form the operational core:
+The platform follows the **Azure SaaS Workload Documentation** design framework, organized into 9 core design areas:
 
-- **Odoo CE 19** = transactional system of record (Business Systems plane)
-- **Azure Databricks + ADLS/Delta + Unity Catalog** = governed data intelligence core (Data Intelligence plane, canonical — not optional)
-- **Microsoft Foundry** = agent factory and hosted runtime (Agent / AI Runtime plane)
+1.  **Resource Organization**: Unified naming and environment-first control (Shared, Dev, Staging, Prod).
+2.  **Identity & Access (IAM)**: Entra ID + Managed Identities + Key Vault (No human prod access).
+3.  **Compute**: Azure Container Apps (Odoo, n8n, MCP) + Virtual Machines (Supabase).
+4.  **Networking**: Azure Front Door (Edge) + VNet integration + Private Link.
+5.  **Data**: Odoo (Azure PG) → Fabric Mirroring → Databricks (Medallion) → Power BI (Consumption).
+6.  **Billing & Cost**: Azure Cost Management + Databricks Serverless usage tracking.
+7.  **Governance**: Unity Catalog (Data/AI) + Azure Policy + Repo SSOT.
+8.  **DevOps**: Azure DevOps + GitHub + Infrastructure-as-Code (IaC).
+9.  **Incident Management**: Azure Monitor + App Insights + Evidence Packs.
 
 | # | Plane | Scope | Key Systems |
 |---|-------|-------|-------------|
@@ -95,8 +101,8 @@ The platform follows a **six-plane Azure-first architecture**. The three systems
 | 2 | Identity / Network / Security | Auth, edge, secrets, API governance | Entra ID, Front Door, Key Vault, APIM |
 | 3 | Business Systems | Transactional ERP, automation | Odoo CE 19, n8n |
 | 4 | Data Intelligence | Lakehouse, ML, BI serving | Databricks, ADLS Gen2, Unity Catalog |
-| 5 | Agent / AI Runtime | Agent factory, tracing, evals | Microsoft Foundry, Azure OpenAI, Document Intelligence |
-| 6 | Experience / Domain Apps | User-facing surfaces | Ops Console, BI surfaces, Copilot UIs, Slack |
+| 5 | Agent / AI Runtime | Agent factory, tracing, evals | Microsoft Foundry, Azure OpenAI, Document Intelligence (Foundry for prebuilt; Studio for custom) |
+| 6 | Experience / Domain Apps | User-facing surfaces | Ops Console, Power BI, Copilot UIs, M365 Copilot, Slack |
 
 **APIM boundary:** Azure API Management is the governed ingress/egress and policy boundary. It is **not** the system of record and **not** the agent runtime.
 
@@ -178,6 +184,7 @@ No plane table may substitute for this truth-authority model.
 |`docai-ipai-dev`        |Document Intelligence|SEA      |Invoice/receipt OCR — BIR compliance        |
 |`srch-ipai-dev`         |AI Search            |SEA      |Semantic search across Delta + Supabase     |
 |`stipaidevlake`         |Storage (ADLS Gen2)  |SEA      |Databricks Delta Lake — Bronze/Silver/Gold  |
+|`db-app-ipai-analyst`   |Databricks App       |SEA      |Governed analyst agent (ResponsesAgent)     |
 |`data-intel-ph-resource`|AI Foundry + Project |East US 2|Model evaluation, fine-tuning workspace     |
 
 ### Security & Identity
@@ -428,8 +435,11 @@ Notify (Slack)
 - Supabase RLS on every exposed table/view; JWT must carry `org_id`, `company_id`, `role`
 - No human prod access via local accounts — Entra ID + Managed Identities only
 - Odoo 19 CE: `<list>` only — `<tree>` is a runtime error; `view_mode="list,form"` only
+- Odoo Azure Blob offload: Wildcard CORS (`*`) forbidden; scope to known Odoo origins only
+- Odoo Azure Blob integration covers chatter/email attachments only; generated documents (SO/Invoice) remain on local storage
 - Production Databricks workloads via Jobs/DLT only — no interactive cluster SQL in prod
 - `debug-odoo-ep` must not persist in production state
+- **Foundry Local**: Prohibited for production; must use Microsoft Foundry for governed multi-user workloads.
 
 -----
 
@@ -475,6 +485,7 @@ Notify (Slack)
 - [ ] `ops.sync_checkpoints` tracking Odoo to Bronze pipeline cursors
 - [ ] `ops.run_events` receiving Databricks job events
 - [ ] JWT claims (`org_id`, `company_id`, `role`) present on all auth tokens
+- [ ] M365 Copilot readiness assessment complete (Phase 4 gate)
 
 ### CI/CD
 

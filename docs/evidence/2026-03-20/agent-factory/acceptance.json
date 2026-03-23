@@ -1,0 +1,11 @@
+{
+  "phase": "release-gates-hardening",
+  "status": "ready_for_release",
+  "gates_validated": true,
+  "rollup_valid": true,
+  "drift_policy_active": true,
+  "remaining_risks": [
+    "manual bypass of GitHub Actions by branch admins remains a policy risk",
+    "untracked infra-as-code scripts (e.g. bash sidecars) may violate contracts"
+  ]
+}

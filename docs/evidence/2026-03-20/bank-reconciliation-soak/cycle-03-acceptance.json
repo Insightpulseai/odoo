@@ -1,0 +1,17 @@
+{
+  "cycle_id": "PROD-C03-REAL",
+  "batch_scope": "2 real lines",
+  "posted_count": 1,
+  "ambiguous_count": 1,
+  "unmatched_count": 0,
+  "duplicate_block_count": 0,
+  "illegal_post_count": 0,
+  "evidence_complete": true,
+  "operator_review_completed": true,
+  "anomalies": [
+    "Ambiguity correctly handled"
+  ],
+  "residual_risks": [
+    "In progress"
+  ]
+}

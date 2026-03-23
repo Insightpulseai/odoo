@@ -85,6 +85,9 @@ Rollback mechanism: ACA revision management (traffic shift to previous healthy r
 - WAF policy active on Front Door
 - ACA workloads are not directly internet-accessible (Front Door → ACA ingress only)
 - Service-to-service communication within the ACA environment uses internal DNS
+- **Odoo Azure Blob Storage**:
+    - Roles: Prefer custom role or `Storage Blob Data Reader/Writer` over broad `Contributor`.
+    - CORS: Scoped to `erp.insightpulseai.com` and dev/staging origins; wildcard `*` is prohibited.
 
 ---
 
