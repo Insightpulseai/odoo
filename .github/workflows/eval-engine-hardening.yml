@@ -1,0 +1,11 @@
+name: Eval Engine Hardening Gates
+on: [push]
+jobs:
+  validate-evals:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - run: npm install -g ajv-cli
+      - run: ajv validate -s ssot/agents/eval_score_contract.schema.json
+      - run: grep "confidence_min" ssot/agents/eval_engine.yaml
+      - run: grep "eval_fail_ambiguity_total" ssot/agents/eval_metrics_contract.yaml
