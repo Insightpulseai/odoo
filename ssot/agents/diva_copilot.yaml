@@ -163,7 +163,6 @@ tool_profiles:
     enabled_tools:
       - foundry_mcp_server_preview
       - github
-      - vercel
       - azure_devops_mcp_server_preview
       - azure_managed_grafana
     action_mode: fail_closed
@@ -179,7 +178,6 @@ tool_profiles:
   ops_release_assistant:
     enabled_tools:
       - github
-      - vercel
       - azure_devops_mcp_server_preview
       - azure_mcp_server
       - azure_managed_grafana

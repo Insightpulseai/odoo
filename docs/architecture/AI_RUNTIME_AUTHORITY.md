@@ -143,7 +143,7 @@ Four tool profiles, each with explicit enabled tools, auth mode, and action poli
 
 ### `odoo_copilot_internal_beta`
 
-- **Enabled tools:** Foundry MCP Server (preview), GitHub, Vercel, Azure DevOps MCP Server (preview), Azure Managed Grafana
+- **Enabled tools:** Foundry MCP Server (preview), GitHub, Azure DevOps MCP Server (preview), Azure Managed Grafana
 - **Action mode:** Fail-closed
 - **Tenant scope:** Trusted internal
 - **Auth:** OAuth for human-scoped tools, managed identity for Azure-native
@@ -157,7 +157,7 @@ Four tool profiles, each with explicit enabled tools, auth mode, and action poli
 
 ### `ops_release_assistant`
 
-- **Enabled tools:** GitHub, Vercel, Azure DevOps MCP Server (preview), Azure MCP Server, Azure Managed Grafana, Foundry MCP Server (preview)
+- **Enabled tools:** GitHub, Azure DevOps MCP Server (preview), Azure MCP Server, Azure Managed Grafana, Foundry MCP Server (preview)
 - **Action mode:** Controlled
 - **Tenant scope:** Ops internal
 - **Auth:** OAuth for dev tools, managed identity for Azure-native

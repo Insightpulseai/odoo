@@ -130,14 +130,35 @@ The runtime plane provides infrastructure. The surfaces provide distinct user ex
 
 ---
 
+## 6. Domain Intelligence Shells
+
+Each domain vertical composes from the same three planes:
+
+| Domain | Diva (Intelligence) | Odoo (Execution) | Studio (Creative) |
+|--------|-------------------|-------------------|-------------------|
+| Marketing | Customer 360, campaign intelligence | CRM, campaigns, partners | Campaign creative, social content |
+| Media | Audience analytics, content intelligence | Scheduling, rights, revenue | Content production, platform export |
+| Retail | Inventory analytics, demand forecasting | POs, inventory, sales | Product visuals, catalog |
+| Financial Ops | Risk/compliance/efficiency analytics | Journals, invoices, tax, close | Financial reports (rare) |
+
+See `docs/architecture/DOMAIN_INTELLIGENCE_SHELLS.md` for the full doctrine.
+
+---
+
 ## SSOT References
 
 - Machine-readable: `ssot/agents/assistant_surfaces.yaml`
 - Odoo Copilot: `ssot/agents/diva_copilot.yaml` (odoo mode)
 - Diva Copilot: `ssot/agents/diva_copilot.yaml` (all modes)
+- Tenancy model: `ssot/architecture/tenancy_model.yaml`
+- A2A interop: `docs/architecture/A2A_INTEROP.md`
+- AgentOps doctrine: `docs/architecture/AGENTOPS_DOCTRINE.md`
+- Retrieval policy: `docs/architecture/RETRIEVAL_AND_MEMORY_POLICY.md`
+- Go-live matrix: `docs/architecture/GO_LIVE_MATRIX.md`
+- Domain shells: `docs/architecture/DOMAIN_INTELLIGENCE_SHELLS.md`
 - Marketing Assistant: `docs/architecture/MARKETING_ASSISTANT_DOCTRINE.md`
 - Runtime authority: `docs/architecture/AI_RUNTIME_AUTHORITY.md`
 
 ---
 
-*Last updated: 2026-03-23*
+*Last updated: 2026-03-24*

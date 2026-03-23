@@ -1,134 +1,103 @@
-# Product Requirements Document: W9 Studio / Studio Copilot
+# W9 Studio Copilot -- PRD
 
-## Product Definition
-
-W9 Studio is a creative finishing and media operations product. Studio Copilot is the AI assistant embedded within W9 Studio.
-
-The product center of gravity is **turning raw or AI-generated assets into finished, publish-ready content**. The bottleneck is post-production; W9's value is the last-mile finishing layer.
-
-## Surface Classification
-
-Studio Copilot is one of five canonical assistant surfaces. See `docs/architecture/ASSISTANT_SURFACES.md`.
-
-- **Role:** Creative finishing / mediaops assistant
-- **Scope:** Authenticated, workflow-driven
-- **Product name:** W9 Studio (Studio Copilot is the assistant inside it)
-- **Not:** A generic social-media chatbot, not an ERP copilot, not a "generate a pretty image" tool
-
-## Goal
-
-Create a workflow-driven creative assistant that:
-
-- Guides users through the six-stage finishing pipeline
-- Applies brand presets and platform-specific export profiles
-- Brokers across generation providers based on task type
-- Supports same-day-publish workflows
-- Provides analytics and next-brief feedback
-
-## Non-Goals
-
-- Replacing professional creative tools (Premiere, After Effects, Figma)
-- Building a standalone social media management SaaS
-- Generic image generation without finishing/brand context
-- Merging into Diva Copilot or Odoo Copilot UX
-- Autonomous publishing without human confirmation
-
-## Workflow Backbone
-
-### Stage 1: Capture / Ingest
-
-- Accept brief, footage, AI-generated assets
-- Parse brief for brand, audience, platform targets
-- Validate asset formats and quality
-
-### Stage 2: AI Polish
-
-- Enhancement, cleanup, upscaling
-- Style transfer and adaptation
-- Copy generation and refinement
-
-### Stage 3: Brand Presets
-
-- Apply brand guidelines (colors, typography, logo placement)
-- Enforce brand consistency across assets
-- Template-driven layouts
-
-### Stage 4: Platform Exports
-
-- Platform-specific format packaging (Instagram, TikTok, LinkedIn, YouTube, etc.)
-- Aspect ratio, duration, and format compliance
-- Metadata and caption generation
-
-### Stage 5: Scheduling / Publish Handoff
-
-- Schedule across platforms
-- Approval gate before publish
-- Handoff to platform APIs or manual publish queue
-
-### Stage 6: Analytics + Next Steps
-
-- Post-publish performance tracking
-- Content performance insights
-- Next-brief recommendations based on what worked
-
-## Generation Policy
-
-| Task Type | Provider | Notes |
-|-----------|----------|-------|
-| Stills (fast) | Gemini direct | Quick edits, iterations |
-| Stills (premium) | Imagen | High-quality generation |
-| Mixed media / video / audio | fal | Video, audio, multimodal |
-| Multimodal review / eval / extraction | OpenAI | Quality assessment, content review |
-
-Provider selection is task-driven, not user-selected. The copilot picks the right provider based on the job.
-
-## Personas
-
-### Creative Lead
-
-Needs fast turnaround from brief to published content with brand consistency.
-
-### Content Producer
-
-Needs multi-platform export, scheduling, and performance feedback.
-
-### Brand Manager
-
-Needs brand preset enforcement, approval gates, and consistency auditing.
-
-## Execution Architecture
-
-### Control Flow
-
-1. Intake brief in Studio surface
-2. Create job manifest
-3. Trigger n8n workflow
-4. n8n submits to fal queue endpoint (header auth + JSON payload)
-5. fal returns generated assets
-6. Studio QA/eval runs (OpenAI multimodal)
-7. Export package created (platform-specific)
-8. Publish/schedule handoff
-9. Analytics written back to governed data plane (Databricks Bronze/Silver/Gold)
-
-### n8n → fal Integration
-
-- Use queue URL from fal model's API tab
-- Header auth: `Authorization: Key YOUR_FAL_KEY`
-- JSON body from model payload documentation
-- Poll for completion or webhook callback
-
-### Open-Source Layer
-
-The reusable infrastructure under this workflow is published as `ugc-mediaops-kit`. See `spec/ugc-mediaops-kit/prd.md`.
-
-## SSOT References
-
-- Surface taxonomy: `docs/architecture/ASSISTANT_SURFACES.md`
-- Machine-readable: `ssot/agents/assistant_surfaces.yaml`
-- Creative provider policy: `docs/architecture/CREATIVE_PROVIDER_POLICY.md`
-- Provider SSOT: `ssot/creative/provider_policy.yaml`
-- OSS layer: `spec/ugc-mediaops-kit/`
+> Product requirements for the Studio Copilot assistant surface.
 
 ---
 
-*Last updated: 2026-03-23*
+## Product Summary
+
+W9 Studio is a creative finishing platform. Studio Copilot is its embedded AI assistant that orchestrates the generation-to-publish pipeline using provider-brokered models.
+
+**Target user:** Creative operators, brand managers, marketing teams.
+**Value proposition:** Reduce time from brief to published content by orchestrating AI generation, brand compliance, and platform export in one workspace.
+
+---
+
+## Functional Requirements
+
+### FR-1: Provider-Brokered Generation
+
+- Support multiple generation providers via adapter interface
+- Default routing: Gemini (fast stills), Imagen (premium stills), fal (mixed media), OpenAI (understanding/eval)
+- Provider selection based on task type, quality tier, and modality
+- Fallback chain when primary provider is unavailable
+
+### FR-2: Brand Preset Management
+
+- Create, store, and apply brand presets (colors, fonts, templates, tone)
+- Presets are workspace-scoped (`workspace_id`)
+- Apply presets to generation prompts and post-processing
+- Version presets with change history
+
+### FR-3: Creative Pipeline Orchestration
+
+- Ingest assets from upload, brief, or AI generation
+- Apply AI polish (enhancement, style transfer, brand alignment)
+- Generate platform-specific exports (dimensions, format, metadata)
+- Queue for review/approval before publish
+
+### FR-4: Platform Export
+
+- Export to standard social/web formats (1080x1080, 1920x1080, 9:16, etc.)
+- Include platform-specific metadata (alt text, captions, hashtags)
+- Batch export for multi-platform campaigns
+- Export manifest with audit trail
+
+### FR-5: Publish Handoff
+
+- Integration with scheduling tools (n8n workflows)
+- Approval gate before publish (human confirmation required)
+- Calendar view of scheduled content
+- Post-publish performance signal ingestion (analytics loop)
+
+### FR-6: Workspace Isolation
+
+- All assets, presets, and history scoped to `workspace_id`
+- `workspace_id` validated against `customer_tenant_id`
+- No cross-workspace data leakage
+- Workspace-level RBAC (owner, editor, viewer)
+
+---
+
+## Non-Functional Requirements
+
+### NFR-1: Latency
+
+- Generation request acknowledgment: < 2s
+- Fast still generation (Gemini): < 10s
+- Premium still generation (Imagen): < 30s
+- Video generation (fal): async with webhook, < 5min
+
+### NFR-2: Observability
+
+- All generation calls logged with provider, model, latency, cost estimate
+- Audit trail for brand preset changes
+- Publish event logging with approval chain
+
+### NFR-3: Security
+
+- No tenant data in public surfaces
+- Provider API keys managed via Azure Key Vault
+- Generation outputs stored in workspace-scoped storage
+
+---
+
+## Out of Scope (v1)
+
+- Direct Odoo record access (use A2A handoff to Odoo Copilot)
+- Analytics dashboards (use Genie)
+- Auto-publish without human confirmation
+- Custom model fine-tuning
+- Video editing beyond generation + trim
+
+---
+
+## Dependencies
+
+- Creative provider policy: `docs/architecture/CREATIVE_PROVIDER_POLICY.md`
+- Tenancy model: `docs/architecture/TENANCY_MODEL.md`
+- fal model shortlist: `ssot/creative/provider_policy.yaml#fal_v01_model_shortlist`
+
+---
+
+*Last updated: 2026-03-24*

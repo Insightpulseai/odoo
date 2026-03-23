@@ -1,0 +1,87 @@
+# SSOT: Tenancy Model
+# Cross-referenced by: docs/architecture/TENANCY_MODEL.md
+# Updated: 2026-03-24
+
+version: "1.0.0"
+
+tenant_identifiers:
+  customer_tenant_id:
+    scope: business_tenant
+    description: Maps to a customer org / Odoo company
+    example: cust_abc123
+    note: Primary business boundary. Never conflate with entra_tenant_id.
+
+  entra_tenant_id:
+    scope: identity_plane
+    description: Microsoft Entra directory identifier
+    example: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+    note: Identity only. Not a business tenant key.
+
+  workspace_id:
+    scope: creative_workspace
+    description: Studio / creative workspace boundary
+    example: ws_studio_001
+
+  environment_id:
+    scope: deployment_environment
+    description: dev / staging / prod
+    allowed_values:
+      - dev
+      - staging
+      - prod
+
+  instance_id:
+    scope: runtime_instance
+    description: Service instance within an environment
+    example: ipai-odoo-dev-web
+
+isolation_planes:
+  public:
+    tenant_awareness: none
+    surfaces:
+      - marketing_landing
+      - public_docs
+      - public_assistant_advisory
+    rule: No tenant data. No customer_tenant_id in request context.
+
+  multitenant_control_plane:
+    tenant_awareness: logical
+    surfaces:
+      - diva_copilot_orchestration
+      - platform_metadata
+      - governance_observability
+    rule: All queries include customer_tenant_id. Cross-tenant leakage is P0.
+
+  tenant_isolated_execution:
+    tenant_awareness: isolated
+    surfaces:
+      - odoo_erp_runtime
+      - odoo_copilot
+      - document_intelligence
+      - genie_analytics
+    rule: Company-scoped. No cross-company data in single response.
+
+  tenant_isolated_creative:
+    tenant_awareness: isolated
+    surfaces:
+      - w9_studio
+      - studio_copilot
+    rule: Workspace-scoped. Brand presets and assets do not leak.
+
+cross_plane_rules:
+  - from: public
+    to: control_plane
+    requirement: authentication
+  - from: control_plane
+    to: execution_plane
+    requirement: customer_tenant_id_propagated
+  - from: execution_plane
+    to: creative_workspace
+    requirement: workspace_id_validated_against_customer_tenant_id
+
+current_state:
+  public: implemented
+  multitenant_control_plane: partial
+  tenant_isolated_execution: single_company_only
+  tenant_isolated_creative: not_implemented
+  note: Multi-customer tenancy is future. Current runtime is single-company.

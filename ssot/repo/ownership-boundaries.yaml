@@ -188,6 +188,32 @@ local_runtime:
     - odoo_staging
     - odoo
 
+canonical_ssot_files:
+  - ssot/agents/assistant_surfaces.yaml
+  - ssot/architecture/tenancy_model.yaml
+  - ssot/governance/agentops_policy.yaml
+  - ssot/governance/copilot_release_stages.yaml
+  - ssot/creative/provider_policy.yaml
+  - ssot/repo/ownership-boundaries.yaml
+  - ssot/agents/diva_copilot.yaml
+  - ssot/agents/diva_copilot_family.yaml
+  - ssot/agents/diva_goals.yaml
+  - ssot/identity/entra_target_state.yaml
+  - ssot/delivery/go_live_plan.yaml
+
+canonical_architecture_docs:
+  - docs/architecture/ASSISTANT_SURFACES.md
+  - docs/architecture/TENANCY_MODEL.md
+  - docs/architecture/A2A_INTEROP.md
+  - docs/architecture/AGENTOPS_DOCTRINE.md
+  - docs/architecture/AI_RUNTIME_AUTHORITY.md
+  - docs/architecture/CREATIVE_PROVIDER_POLICY.md
+  - docs/architecture/RETRIEVAL_AND_MEMORY_POLICY.md
+  - docs/architecture/GO_LIVE_MATRIX.md
+  - docs/architecture/GO_LIVE_CHECKLIST.md
+  - docs/architecture/DOMAIN_INTELLIGENCE_SHELLS.md
+  - docs/architecture/REPO_BOUNDARIES.md
+
 canonical_target_state:
   architecture_doc: docs/architecture/INSIGHTPULSEAI_ODOO_ON_AZURE_TARGET_STATE.md
   benchmark_model:
