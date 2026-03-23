@@ -1,0 +1,19 @@
+version: 1
+release_gates:
+  spec_bundle_required: true
+  ssot_validation_required: true
+  evidence_pack_required: true
+  tests_required: true
+  deployment_contract_required: true
+  fail_closed: true
+
+promotion:
+  prod_requires_acceptance_status:
+    - accepted
+    - ready_for_release
+  prod_requires_runtime_status:
+    - conditional-approved
+    - approved
+  block_on_missing_evidence: true
+  block_on_schema_drift: true
+  block_on_topology_mismatch: true

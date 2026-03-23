@@ -1,0 +1,210 @@
+# ============================================================
+# CRON SCHEDULE — Automated Release Operations
+# ============================================================
+# Defines all recurring jobs for release governance,
+# agent health, and promotion workflows.
+# Last updated: 2026-03-15
+# ============================================================
+
+schema_version: "1.0"
+schedule_id: insightpulseai-cron-schedule
+
+# ----------------------------------------------------------
+# Daily jobs (every day, business hours)
+# ----------------------------------------------------------
+daily:
+  - id: sync-registries
+    name: "Sync release & offer registries"
+    cron: "0 7 * * 1-5"
+    description: "Pull latest registry state from all sources"
+    owner: platform_team
+    targets:
+      - release-registry
+      - offer-registry
+      - agent-registry
+
+  - id: refresh-offer-status
+    name: "Refresh offer status"
+    cron: "15 7 * * 1-5"
+    description: "Update publish/block/draft state for all offers"
+    owner: platform_team
+    targets:
+      - offer-registry
+
+  - id: smoke-evals
+    name: "Run smoke evals on internal agents"
+    cron: "0 8 * * 1-5"
+    description: "Lightweight eval pass on all deployed agents"
+    owner: ai_team
+    targets:
+      - odoo-copilot
+      - finance-docflow
+    alert_on_failure: true
+
+  - id: connector-health
+    name: "Check connector health"
+    cron: "30 8 * * 1-5"
+    description: "Verify all active connections are responsive"
+    owner: platform_team
+    targets:
+      - connection-registry
+
+  - id: status-snapshot
+    name: "Publish internal status snapshot"
+    cron: "0 9 * * 1-5"
+    description: "Generate and push daily ops status to internal dashboard"
+    owner: platform_team
+    outputs:
+      - ops-console-dashboard
+
+# ----------------------------------------------------------
+# Nightly jobs (off-hours, deeper analysis)
+# ----------------------------------------------------------
+nightly:
+  - id: full-eval-pack
+    name: "Run full eval packs on candidate agents"
+    cron: "0 1 * * 1-5"
+    description: "Complete evaluation suite on agents pending promotion"
+    owner: ai_team
+    timeout_minutes: 120
+    targets:
+      - all_candidate_agents
+    alert_on_failure: true
+
+  - id: connection-verification
+    name: "Refresh connection verification"
+    cron: "30 1 * * 1-5"
+    description: "Deep connectivity and auth check on all registered connections"
+    owner: platform_team
+    targets:
+      - connection-registry
+
+  - id: policy-drift-detection
+    name: "Detect policy drift"
+    cron: "0 2 * * 1-5"
+    description: "Compare deployed agent configs against policy pack"
+    owner: platform_team
+    targets:
+      - policy-pack
+      - agent-registry
+    alert_on_failure: true
+
+  - id: release-readiness-score
+    name: "Update release readiness score"
+    cron: "30 2 * * 1-5"
+    description: "Compute readiness score for each release milestone"
+    owner: platform_team
+    outputs:
+      - release-registry
+      - ops-console-dashboard
+
+# ----------------------------------------------------------
+# Weekly jobs (Monday unless noted)
+# ----------------------------------------------------------
+weekly:
+  - id: promote-candidates
+    name: "Promote top passing internal candidates"
+    cron: "0 10 * * 1"
+    description: "Move agents that passed nightly evals to next promotion stage"
+    owner: ai_team
+    requires_approval: true
+
+  - id: release-notes-draft
+    name: "Open release notes draft"
+    cron: "0 11 * * 1"
+    description: "Auto-generate draft release notes from merged changes"
+    owner: platform_team
+    outputs:
+      - release-notes-draft
+
+  - id: bi-semantic-refresh
+    name: "Refresh Power BI / BI semantic export state"
+    cron: "0 12 * * 1"
+    description: "Update governed metric exports for BI consumption"
+    owner: data_team
+    targets:
+      - semantic-access-layer
+      - tableau-connector
+
+  - id: close-stale-blockers
+    name: "Close stale blockers"
+    cron: "0 14 * * 5"
+    description: "Friday — auto-flag or close release blockers older than 14 days"
+    owner: platform_team
+    targets:
+      - release-registry
+
+# ----------------------------------------------------------
+# Biweekly jobs (every other Monday)
+# ----------------------------------------------------------
+biweekly:
+  - id: staging-release-train
+    name: "Staging release train"
+    cron: "0 10 * * 1"
+    frequency_note: "Runs on odd-numbered weeks only"
+    description: "Promote passing candidates from dev to staging"
+    owner: platform_team
+    requires_approval: true
+    gates:
+      - all_nightly_evals_pass
+      - no_critical_blockers
+      - policy_compliance_check
+
+  - id: uat-cycle
+    name: "Manual / UAT cycle"
+    cron: "0 14 * * 1"
+    frequency_note: "Runs on odd-numbered weeks only"
+    description: "Trigger UAT test plan execution for staging candidates"
+    owner: qa_team
+    targets:
+      - azure-test-plans
+
+  - id: ado-board-update
+    name: "Azure DevOps release board update"
+    cron: "0 9 * * 1"
+    frequency_note: "Runs on odd-numbered weeks only"
+    description: "Sync release items, work items, and test evidence to ADO boards"
+    owner: platform_team
+    targets:
+      - ado-boards
+
+  - id: packaging-readiness-review
+    name: "Packaging readiness review"
+    cron: "0 15 * * 5"
+    frequency_note: "Runs on odd-numbered weeks only"
+    description: "Review which assets are ready for next packaging tier"
+    owner: platform_team
+    requires_approval: true
+
+# ----------------------------------------------------------
+# Monthly jobs (first Monday of month)
+# ----------------------------------------------------------
+monthly:
+  - id: productized-package-review
+    name: "Productized package review"
+    cron: "0 10 1-7 * 1"
+    description: "Review one candidate for productized packaging upgrade"
+    owner: platform_team
+    requires_approval: true
+    decisions:
+      - managed_app_ready
+      - saas_ready
+      - connector_ready
+      - marketplace_ready
+      - not_ready
+
+  - id: release-retrospective
+    name: "Release retrospective"
+    cron: "0 14 1-7 * 1"
+    description: "Review release velocity, blockers, and process improvements"
+    owner: platform_team
+
+# ----------------------------------------------------------
+# Alert channels
+# ----------------------------------------------------------
+alerting:
+  default_channel: ops-platform-alerts
+  escalation_channel: platform-team-urgent
+  notification_targets:
+    - ops-console-dashboard
+    - email-platform-team

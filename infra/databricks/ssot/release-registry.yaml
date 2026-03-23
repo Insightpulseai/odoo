@@ -1,0 +1,230 @@
+# ============================================================
+# RELEASE REGISTRY — Priority Release Ladder
+# ============================================================
+# Source of truth for all release milestones, packaging,
+# and promotion gates.
+# Last updated: 2026-03-15
+# ============================================================
+
+schema_version: "1.0"
+registry_id: insightpulseai-release-registry
+
+# ----------------------------------------------------------
+# Release ladder
+# ----------------------------------------------------------
+releases:
+
+  - id: R0
+    name: "Foundation — Governance & Policy Pack"
+    priority: 0
+    type: foundation
+    target_month: 1
+    status: not_started
+    publish_channel: internal_repo_artifacts
+    audience: platform_team
+    artifacts:
+      - policy-pack
+      - connection-registry
+      - packaging-channel-matrix
+      - offer-registry
+      - agent-publish-rules
+      - model-aliasing-rules
+    success_criteria:
+      - "All governance YAMLs committed and reviewed"
+      - "Policy pack enforced in CI"
+      - "Connection registry populated with active connections"
+    blockers: []
+    notes: "Not a product release. Mandatory foundation before any capability ships."
+
+  - id: R1
+    name: "Odoo Copilot — Internal Dev Preview"
+    priority: 1
+    type: capability
+    target_month: 1
+    status: not_started
+    publish_channel: internal_one_click
+    audience: internal_users
+    artifacts:
+      - odoo-copilot-manifest
+      - foundry-chat-backend
+      - approved-tool-allowlist
+      - trace-eval-pipeline
+    constraints:
+      - "Read-only mode only"
+      - "No external marketplace packaging"
+      - "No write mode by default"
+    success_criteria:
+      - "Internal users can ask finance / Odoo / compliance questions"
+      - "Trace + eval + owner metadata all work"
+      - "No write-mode actions enabled"
+    depends_on: [R0]
+
+  - id: R2
+    name: "Finance DocFlow — Alpha"
+    priority: 2
+    type: capability
+    target_month: 2
+    status: not_started
+    publish_channel: internal_one_click
+    audience: internal_users
+    artifacts:
+      - invoice-receipt-extraction-flow
+      - document-intelligence-pipeline
+      - review-queue-ui
+      - draft-posting-module
+    constraints:
+      - "Draft-only posting, no auto-posting"
+      - "No unsafe auto-booking"
+    success_criteria:
+      - "Extraction works on standard invoice formats"
+      - "Review flow works end-to-end"
+      - "Evidence and audit trail exist"
+    depends_on: [R0]
+
+  - id: R3
+    name: "Ops Console — Beta"
+    priority: 3
+    type: platform
+    target_month: 2
+    status: not_started
+    publish_channel: internal_one_click
+    audience: platform_team
+    artifacts:
+      - release-registry-ui
+      - offer-registry-ui
+      - agent-status-dashboard
+      - evaluation-status-dashboard
+      - environment-visibility
+      - packaging-channel-status
+    success_criteria:
+      - "Single internal screen shows what exists, what is deployable, what is blocked"
+    depends_on: [R0]
+
+  - id: R4
+    name: "Azure DevOps Release-Control Integration"
+    priority: 4
+    type: platform
+    target_month: 3
+    status: not_started
+    publish_channel: internal_service
+    audience: platform_team
+    artifacts:
+      - ado-boards-binding
+      - release-item-linking
+      - test-plans-uat-linkage
+      - promotion-gates
+      - ado-mcp-integration
+    success_criteria:
+      - "Every production promotion maps to release/work-item/test-evidence chain"
+    depends_on: [R3]
+
+  - id: R5
+    name: "Power BI / BI Connector Surface"
+    priority: 5
+    type: connector
+    target_month: 3
+    status: not_started
+    publish_channel: connector_plugin_extension
+    audience: internal_analysts
+    artifacts:
+      - governed-metric-export
+      - semantic-access-layer
+      - tableau-cloud-connector
+    constraints:
+      - "Consumption surface only"
+      - "Connector binds to governed outputs, not raw internals"
+    success_criteria:
+      - "Power BI consumes stable data products"
+      - "No direct source-of-truth confusion"
+    depends_on: [R2, R3]
+
+  - id: R6
+    name: "First Installable Product Package"
+    priority: 6
+    type: product
+    target_month: 4
+    status: not_started
+    publish_channel: azure_managed_application
+    audience: internal_service_catalog
+    candidates:
+      - finance-docflow
+      - odoo-copilot-bundle
+    constraints:
+      - "Internal service catalog first"
+      - "ARM-based package structure required"
+      - "Portal UI definition required"
+    success_criteria:
+      - "One-click install from internal catalog works"
+      - "Internal usage metrics are positive"
+    depends_on: [R1, R2, R4]
+
+  - id: R7
+    name: "External Commercial Packaging"
+    priority: 7
+    type: product
+    target_month: 5_plus
+    status: blocked
+    publish_channel: azure_marketplace
+    audience: external_customers
+    options:
+      - azure_marketplace_managed_app
+      - hosted_saas
+      - m365_copilot_teams_extension
+      - managed_service_offer
+    constraints:
+      - "Only after R0–R6 are stable"
+      - "Monetization starts here, not learning"
+    success_criteria:
+      - "Stable internal usage proven"
+      - "Packaging exercise, not capability discovery"
+    depends_on: [R6]
+    notes: "Do NOT prioritize external marketplace publishing yet."
+
+# ----------------------------------------------------------
+# Packaging channels (reference)
+# ----------------------------------------------------------
+packaging_channels:
+  - id: internal_one_click
+    name: "Internal One-Click Deploy"
+    description: "Deploy internally via single action"
+    maturity_required: alpha
+
+  - id: internal_service
+    name: "Internal Service Capability"
+    description: "Platform service, not user-facing product"
+    maturity_required: beta
+
+  - id: connector_plugin_extension
+    name: "Connector / Plugin / Extension"
+    description: "Consumable integration surface"
+    maturity_required: beta
+
+  - id: azure_managed_application
+    name: "Azure Managed Application"
+    description: "ARM-packaged installable product"
+    maturity_required: stable
+
+  - id: azure_marketplace
+    name: "Azure Marketplace"
+    description: "External commercial listing"
+    maturity_required: ga
+
+  - id: hosted_saas
+    name: "Hosted SaaS"
+    description: "Fully hosted service offer"
+    maturity_required: ga
+
+  - id: internal_repo_artifacts
+    name: "Internal Repo Artifacts"
+    description: "Governance docs, policies, YAMLs"
+    maturity_required: draft
+
+# ----------------------------------------------------------
+# Maturity levels
+# ----------------------------------------------------------
+maturity_levels:
+  - draft
+  - alpha
+  - beta
+  - stable
+  - ga

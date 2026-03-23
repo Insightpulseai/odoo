@@ -1,0 +1,221 @@
+agent_id: diva-copilot
+name: Diva Copilot Shell
+version: 0.2.0-beta
+stage: internal_beta
+status: stage-2-complete
+created_at: "2026-03-23"
+spec_bundle: spec/diva-goals/
+extends: ssot/agents/odoo_copilot_precursor.yaml
+
+# Release gate metadata — DO NOT overstate maturity
+release:
+  release_stage: internal_beta
+  capability_mode: advisory_read_only
+  write_tools_enabled: false
+  grounding_mode: partial
+  tenant_safety: single_company_only
+  publishable: true
+  ga_ready: false
+  allowed_users: internal_trusted_only
+  unsupported_claims:
+    - production_write_capable
+    - multi_tenant_safe
+    - public_rollout
+    - enterprise_ga
+  stage_2_completed: "2026-03-23"
+  runtime_contract:
+    inference_model: gpt-4.1
+    inference_deployment: gpt-4.1
+    embedding_model: text-embedding-ada-002
+    embedding_dimensions: 1536
+    openai_resource: oai-ipai-dev
+    openai_region: eastus
+    search_service: srch-ipai-dev
+    search_region: southeastasia
+    foundry_hub: aifoundry-ipai-dev
+    foundry_project: proj-ipai-claude
+    foundry_region: eastus2
+    copilot_gateway: ipai-copilot-gateway
+    frozen_at: "2026-03-23"
+  stage_3_completed:
+    - model_contract_resolved
+    - odoo_docs_kb_indexed
+    - rbac_assigned
+    - foundry_connections_live
+    - foundry_endpoint_live
+    - gateway_wired
+    - retrieval_smoke_test_pass
+  stage_3_remaining:
+    - teams_app_package_missing
+    - eval_pack_not_created
+    - privacy_documentation_missing
+    - partner_center_assets_missing
+    - slo_baseline_missing
+    - full_docs_corpus_expansion
+
+purpose: >
+  Thin copilot shell that provides conversation management, mode switching,
+  context assembly, and skill/KB routing for the Diva Goals product family.
+  Not a monolithic agent — composed from persona, skills, and KB segments.
+
+persona_ref: agents/personas/diva-copilot-system.md
+policy_ref: agents/personas/diva-copilot-policy.md
+
+modes:
+  - id: strategy
+    name: Diva Strategy Copilot
+    persona_overlay: OKR, goal management, portfolio strategy, executive summaries
+    skills:
+      - strategy_review
+      - portfolio_alignment
+      - evidence_traceability
+    kb_segments:
+      - kb_strategy
+      - kb_execution
+      - kb_governance
+
+  - id: odoo
+    name: Diva Odoo Copilot
+    persona_overlay: >
+      ERP-context copilot with 3-lane retrieval: Odoo runtime context,
+      curated Odoo docs KB, bounded web search fallback with citations.
+      Never claims inability to search if retrieval tools are available.
+    skills:
+      - odoo_docs_retrieval
+    kb_segments:
+      - kb_odoo_docs
+      - kb_odoo_tax_runtime
+
+  - id: tax_guru
+    name: Tax Guru
+    persona_overlay: Philippine tax specialist wrapping TaxPulse
+    persona_ref: agents/personas/diva-copilot-tax-guru.md
+    skills:
+      - tax_advisory_diva
+      - bir_workflow_diva
+      - tax_evidence_collection
+    kb_segments:
+      - kb_tax_policy_ph
+      - kb_odoo_tax_runtime
+      - kb_tax_evidence
+
+  - id: capability
+    name: Capability
+    persona_overlay: People and agent capability advisor
+    skills:
+      - capability_gap_analysis
+      - learning_path_designer
+      - agent_readiness
+    kb_segments:
+      - kb_people_capability
+      - kb_agent_capability
+
+  - id: governance
+    name: Governance
+    persona_overlay: Policy and compliance advisor
+    skills:
+      - drift_orphan_detection
+      - policy_sufficiency_judge
+    kb_segments:
+      - kb_governance
+
+skill_pack:
+  - ref: agents/skills/strategy_review.skill.json
+  - ref: agents/skills/review_pack_writer.skill.json
+  - ref: agents/skills/evidence_traceability.skill.json
+  - ref: agents/skills/portfolio_alignment.skill.json
+  - ref: agents/skills/capability_gap_analysis.skill.json
+  - ref: agents/skills/learning_path_designer.skill.json
+  - ref: agents/skills/agent_readiness.skill.json
+  - ref: agents/skills/drift_orphan_detection.skill.json
+  - ref: agents/skills/policy_sufficiency_judge.skill.json
+  - ref: agents/skills/tax_advisory_diva.skill.json
+  - ref: agents/skills/bir_workflow_diva.skill.json
+  - ref: agents/skills/tax_evidence_collection.skill.json
+  - ref: agents/skills/odoo_docs_retrieval.skill.json
+
+kb_segments:
+  - id: kb_strategy
+    ref: agents/knowledge/diva-copilot-sources.yaml#kb_strategy
+  - id: kb_execution
+    ref: agents/knowledge/diva-copilot-sources.yaml#kb_execution
+  - id: kb_people_capability
+    ref: agents/knowledge/diva-copilot-sources.yaml#kb_people_capability
+  - id: kb_agent_capability
+    ref: agents/knowledge/diva-copilot-sources.yaml#kb_agent_capability
+  - id: kb_governance
+    ref: agents/knowledge/diva-copilot-sources.yaml#kb_governance
+  - id: kb_tax_policy_ph
+    ref: agents/knowledge/diva-copilot-sources.yaml#kb_tax_policy_ph
+  - id: kb_odoo_tax_runtime
+    ref: agents/knowledge/diva-copilot-sources.yaml#kb_odoo_tax_runtime
+  - id: kb_tax_evidence
+    ref: agents/knowledge/diva-copilot-sources.yaml#kb_tax_evidence
+  - id: kb_odoo_docs
+    ref: agents/knowledge/kb_odoo_docs.yaml
+
+tool_profiles:
+  landing_public_assistant:
+    enabled_tools: []
+    action_mode: none
+    tenant_scope: none
+  odoo_copilot_internal_beta:
+    enabled_tools:
+      - foundry_mcp_server_preview
+      - github
+      - vercel
+      - azure_devops_mcp_server_preview
+      - azure_managed_grafana
+    action_mode: fail_closed
+    tenant_scope: trusted_internal
+  data_intelligence_assistant:
+    enabled_tools:
+      - azure_databricks_genie
+      - azure_database_for_postgresql
+      - supabase
+      - azure_managed_grafana
+    action_mode: read_only
+    tenant_scope: governed_data
+  ops_release_assistant:
+    enabled_tools:
+      - github
+      - vercel
+      - azure_devops_mcp_server_preview
+      - azure_mcp_server
+      - azure_managed_grafana
+      - foundry_mcp_server_preview
+    action_mode: controlled
+    tenant_scope: ops_internal
+
+model_policy:
+  landing_public_assistant:
+    primary_model: gpt-5-mini
+    escalation_model: gpt-5.4
+    rationale: high-throughput public advisory surface
+  odoo_copilot_internal_beta:
+    primary_model: gpt-5.2
+    escalation_model: gpt-5.4
+    rationale: best product-quality / latency / cost balance
+  coding_release_assistant:
+    primary_model: gpt-5.4
+    secondary_model: gpt-5.2-codex
+    rationale: top coding quality plus strong reasoning fallback
+  data_intelligence_assistant:
+    primary_model: gpt-5.2
+    batch_model: gpt-5-mini
+    rationale: governed Q&A plus cheap triage
+  judges_and_evals:
+    primary_model: gpt-5.4
+    benchmark_model: gpt-5-pro
+    rationale: evaluation-first, not inline traffic
+  note: >
+    gpt-4.1 is the currently deployed model. GPT-5 tier models are the target
+    state and will be adopted as deployments become available on the Foundry runtime.
+
+policy:
+  default_tool_mode: allowlisted
+  write_actions_allowed: false
+  fail_closed_on_missing_context: true
+  fail_closed_on_missing_kb_segment: true
+  grounding_required: true
+  confidence_threshold_for_auto_approve: 0.85

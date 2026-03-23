@@ -1,0 +1,348 @@
+# Copilot / Agents Build Plan — Repo-by-Repo
+# Version: 1.0.0
+# Created: 2026-03-23
+# Authority: ssot/agents/copilot_agents_target_state.yaml
+#
+# This plan sequences the work needed to reach the copilot/agents
+# target state. Phases are ordered by dependency, not priority.
+# Each task has a repo concern, artifact path, and done criteria.
+
+---
+
+# ============================================================
+# Phase 1: SSOT Alignment (immediate — no runtime deps)
+# ============================================================
+# Fix the delta between existing SSOT files and the target state.
+
+phase_1:
+  name: SSOT Alignment
+  prereqs: none
+  duration_estimate: 1 session
+
+  tasks:
+    - id: P1-01
+      action: Update diva_copilot_family.yaml — drop Executive as visible copilot
+      repo: ssot/agents/
+      file: ssot/agents/diva_copilot_family.yaml
+      done: 5 members (strategy, odoo, tax_guru, capability, governance)
+
+    - id: P1-02
+      action: Update diva_copilot.yaml — remove executive mode, align 5 modes
+      repo: ssot/agents/
+      file: ssot/agents/diva_copilot.yaml
+      done: 5 modes matching visible copilot IDs
+
+    - id: P1-03
+      action: Update diva_goals.yaml — replace knowledge_curator with taxpulse, add optional tax_policy_judge
+      repo: ssot/agents/
+      file: ssot/agents/diva_goals.yaml
+      done: 10 agents with taxpulse; optional_agents section with tax_policy_judge
+
+    - id: P1-04
+      action: Update spec/diva-goals/constitution.md D4 — replace knowledge_curator with taxpulse
+      repo: spec/
+      file: spec/diva-goals/constitution.md
+      done: D4 table shows taxpulse, D6 shows 5 modes
+
+    - id: P1-05
+      action: Verify cross-references — all refs from target_state.yaml resolve
+      repo: ssot/agents/
+      done: No dangling refs in copilot_agents_target_state.yaml
+
+# ============================================================
+# Phase 2: Agent Skill & Persona Artifacts (no runtime deps)
+# ============================================================
+# Create the missing skill.json and persona files for taxpulse
+# and tax_policy_judge.
+
+phase_2:
+  name: Agent Skill & Persona Artifacts
+  prereqs: [P1-03]
+
+  tasks:
+    - id: P2-01
+      action: Create taxpulse persona
+      repo: agents/
+      file: agents/personas/taxpulse.md
+      done: Persona file with role, boundary, tools, KB segment refs
+
+    - id: P2-02
+      action: Create taxpulse skill definition
+      repo: agents/
+      file: agents/skills/taxpulse.skill.json
+      done: Skill JSON with inputs, outputs, tool allowlist
+
+    - id: P2-03
+      action: Create tax_policy_judge persona (optional agent)
+      repo: agents/
+      file: agents/personas/tax-policy-judge.md
+      done: Persona file with judge boundary, pass/fail output spec
+
+    - id: P2-04
+      action: Create tax_policy_judge skill definition
+      repo: agents/
+      file: agents/skills/tax_policy_judge.skill.json
+      done: Skill JSON with inputs, outputs, tool allowlist
+
+    - id: P2-05
+      action: Verify all 12 skill refs in diva_copilot.yaml resolve to real files
+      repo: agents/
+      done: Every ref in skill_pack resolves to a valid .skill.json
+
+# ============================================================
+# Phase 3: Knowledge Base Provisioning
+# ============================================================
+# Create the 8 KB segment source definitions and wire them
+# to Azure AI Search index definitions.
+
+phase_3:
+  name: Knowledge Base Provisioning
+  prereqs: [P1-01]
+
+  tasks:
+    - id: P3-01
+      action: Populate agents/knowledge/diva-copilot-sources.yaml with 8 KB segment definitions
+      repo: agents/
+      file: agents/knowledge/diva-copilot-sources.yaml
+      done: 8 segments with source_type, index_name, refresh_strategy, access_policy
+
+    - id: P3-02
+      action: Create Azure AI Search index definitions for each KB segment
+      repo: infra/
+      file: infra/azure/ai-search/kb-indexes/
+      done: 8 index definition files (JSON/YAML)
+
+    - id: P3-03
+      action: Create KB ingestion pipeline configs (source → chunking → indexing)
+      repo: data-intelligence/
+      file: data-intelligence/pipelines/kb/
+      done: Pipeline definitions for each KB with source, chunk strategy, refresh cron
+
+    - id: P3-04
+      action: Wire MCP knowledge_base_retrieve tool to Foundry agent config
+      repo: agents/
+      file: agents/foundry/ipai-odoo-copilot-azure/tool-definitions.json
+      done: knowledge_base_retrieve tool registered with segment routing
+
+# ============================================================
+# Phase 4: Workflow Definitions (Agent Framework)
+# ============================================================
+# Define the 5 canonical workflows as Agent Framework artifacts.
+
+phase_4:
+  name: Workflow Definitions
+  prereqs: [P2-01, P2-02]
+
+  tasks:
+    - id: P4-01
+      action: Create goal_status_synthesis workflow definition
+      repo: agents/
+      file: agents/workflows/goal-status-synthesis.yaml
+      done: Workflow with steps, agent assignments, input/output contracts
+
+    - id: P4-02
+      action: Create review_pack_generation workflow definition
+      repo: agents/
+      file: agents/workflows/review-pack-generation.yaml
+      done: Workflow with maker-checker gate at judged→approved transition
+
+    - id: P4-03
+      action: Create capability_readiness_review workflow definition
+      repo: agents/
+      file: agents/workflows/capability-readiness-review.yaml
+      done: Workflow with readiness_judge fail-closed gate
+
+    - id: P4-04
+      action: Create learning_plan_recommendation workflow definition
+      repo: agents/
+      file: agents/workflows/learning-plan-recommendation.yaml
+      done: Workflow triggered by gap_detected event
+
+    - id: P4-05
+      action: Create odoo_tax_assist workflow definition
+      repo: agents/
+      file: agents/workflows/odoo-tax-assist.yaml
+      done: Workflow with taxpulse worker and policy_judge/tax_policy_judge gate
+
+# ============================================================
+# Phase 5: Odoo Bridge Updates
+# ============================================================
+# Update the Odoo copilot module to support the 5-copilot model
+# and taxpulse routing.
+
+phase_5:
+  name: Odoo Bridge Updates
+  prereqs: [P1-01, P2-01]
+
+  tasks:
+    - id: P5-01
+      action: Update diva_bridge.py — add taxpulse routing, remove knowledge_curator refs
+      repo: addons/ipai/
+      file: addons/ipai/ipai_odoo_copilot/services/diva_bridge.py
+      done: Bridge routes to taxpulse for tax domain; no knowledge_curator calls
+
+    - id: P5-02
+      action: Update copilot_gateway.py — align mode list to 5 visible copilots
+      repo: addons/ipai/
+      file: addons/ipai/ipai_odoo_copilot/controllers/copilot_gateway.py
+      done: Gateway validates against 5 mode IDs (not 6)
+
+    - id: P5-03
+      action: Add copilot mode tests for 5-copilot model
+      repo: addons/ipai/
+      file: addons/ipai/ipai_odoo_copilot/tests/
+      done: Test coverage for mode routing to all 5 copilots
+
+# ============================================================
+# Phase 6: Web UI — Diva Goals App Shell
+# ============================================================
+# Build out the Fluent 2 React app beyond scaffold.
+
+phase_6:
+  name: Web UI — Diva Goals App Shell
+  prereqs: [P1-01]
+
+  tasks:
+    - id: P6-01
+      action: Implement GoalListPage with Fluent 2 DataGrid
+      repo: web/
+      file: web/apps/diva-goals/src/pages/GoalListPage.tsx
+      done: Renders goal list from API, filterable, Fluent 2 styled
+
+    - id: P6-02
+      action: Implement CopilotPanel with 5-copilot mode switcher
+      repo: web/
+      file: web/apps/diva-goals/src/patterns/CopilotPanel.tsx
+      done: Mode selector renders 5 copilot names, routes messages to correct mode
+
+    - id: P6-03
+      action: Implement EvidencePanel for KB-grounded citations
+      repo: web/
+      file: web/apps/diva-goals/src/patterns/EvidencePanel.tsx
+      done: Displays citations with source KB segment, confidence score
+
+    - id: P6-04
+      action: Implement ApprovalDrawer for proposal state machine
+      repo: web/
+      file: web/apps/diva-goals/src/patterns/ApprovalDrawer.tsx
+      done: Renders proposal state, allows human gate actions (approve/reject/escalate)
+
+# ============================================================
+# Phase 7: Microsoft Runtime Provisioning
+# ============================================================
+# Provision Azure resources. Depends on Phase 3 (KB definitions)
+# and Phase 4 (workflow definitions).
+
+phase_7:
+  name: Microsoft Runtime Provisioning
+  prereqs: [P3-01, P4-01]
+
+  tasks:
+    - id: P7-01
+      action: Provision Foundry resource + project
+      repo: infra/
+      file: infra/azure/foundry/
+      done: Foundry resource exists, project created, agents deployable
+
+    - id: P7-02
+      action: Provision Azure AI Search service + 8 KB indexes
+      repo: infra/
+      file: infra/azure/ai-search/
+      done: Search service provisioned, 8 indexes created, MCP endpoint configured
+
+    - id: P7-03
+      action: Provision 3 managed identities (web, jobs, agent-data)
+      repo: infra/
+      file: infra/azure/identity/
+      done: 3 MIs created, RBAC assignments for Key Vault + Foundry + Search
+
+    - id: P7-04
+      action: Deploy Foundry Agent Service with initial agent registrations
+      repo: infra/
+      file: infra/azure/foundry/
+      done: Agent Service boundary active, at least diva_orchestrator registered
+
+    - id: P7-05
+      action: Wire managed identities to existing Container Apps
+      repo: infra/
+      file: infra/azure/aca/
+      done: ipai-odoo-dev-web, worker, cron use MI instead of embedded secrets
+
+# ============================================================
+# Phase 8: Data Intelligence — Evidence Pipeline
+# ============================================================
+# Complete the lakehouse evidence pipeline for Diva Goals.
+
+phase_8:
+  name: Data Intelligence — Evidence Pipeline
+  prereqs: [P1-03]
+
+  tasks:
+    - id: P8-01
+      action: Add taxpulse evidence source to silver pipeline
+      repo: data-intelligence/
+      file: data-intelligence/lakehouse/silver/diva_evidence_normalized.py
+      done: TaxPulse computation results joined into evidence normalization
+
+    - id: P8-02
+      action: Add blocker aggregation to gold mart
+      repo: data-intelligence/
+      file: data-intelligence/lakehouse/gold/diva_review_mart.py
+      done: Blocker type, count, and resolution status in gold output
+
+    - id: P8-03
+      action: Create KB freshness monitoring pipeline
+      repo: data-intelligence/
+      file: data-intelligence/pipelines/kb/freshness_monitor.py
+      done: Pipeline tracks last-refresh per KB segment, alerts on staleness
+
+# ============================================================
+# Phase 9: Eval & Governance
+# ============================================================
+# Evaluation framework for agent quality gates.
+
+phase_9:
+  name: Eval & Governance
+  prereqs: [P4-01, P7-04]
+
+  tasks:
+    - id: P9-01
+      action: Create eval suite for each backend agent (10 agents × test scenarios)
+      repo: foundry/
+      file: foundry/evals/diva-goals/
+      done: Eval thresholds for each agent with pass/fail criteria
+
+    - id: P9-02
+      action: Create integration test for proposal state machine end-to-end
+      repo: tests/
+      file: tests/copilot/test_proposal_state_machine.py
+      done: Test walks draft→published happy path and blocked paths
+
+    - id: P9-03
+      action: Create maker-checker gate test (policy_judge cannot approve its own eval)
+      repo: tests/
+      file: tests/copilot/test_maker_checker_split.py
+      done: Test verifies no agent both creates and approves in any workflow
+
+
+# ============================================================
+# Build Order Summary
+# ============================================================
+
+build_order:
+  immediate:
+    - phase_1  # SSOT alignment (no deps)
+  next:
+    - phase_2  # Skills & personas
+    - phase_3  # KB provisioning (parallel with P2)
+  then:
+    - phase_4  # Workflow definitions
+    - phase_5  # Odoo bridge updates (parallel with P4)
+    - phase_6  # Web UI (parallel with P4/P5)
+  runtime:
+    - phase_7  # Azure provisioning
+  polish:
+    - phase_8  # Evidence pipeline
+    - phase_9  # Eval & governance
+
+total_tasks: 35

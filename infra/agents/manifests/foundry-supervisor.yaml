@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: foundry-supervisor
+  labels:
+    service_name: foundry_supervisor
+    runtime_profile: single_writer_supervisor
+    environment: prod
+    promotion_policy: strict
+spec:
+  replicas: 1
+  template:
+    spec:
+      containers:
+      - name: supervisor
+        image: insightpulse/foundry-supervisor:latest
+        resources:
+          requests:
+            cpu: "500m"
+            memory: "512Mi"
+          limits:
+            cpu: "1000m"
+            memory: "1Gi"
+        livenessProbe:
+          httpGet:
+            path: /healthz
+            port: 8080
+          timeoutSeconds: 5
+          failureThreshold: 3
+        readinessProbe:
+          httpGet:
+            path: /readyz
+            port: 8080
+          timeoutSeconds: 5
+          failureThreshold: 3
+        envFrom:
+        - secretRef:
+            name: supervisor-secrets
+        volumeMounts:
+        - name: supervisor-storage
+          mountPath: /data
+      volumes:
+      - name: supervisor-storage
+        persistentVolumeClaim:
+          claimName: shared-persistent-storage-claim

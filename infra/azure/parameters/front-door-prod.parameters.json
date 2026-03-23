@@ -180,8 +180,7 @@
         { "hostName": "auth.insightpulseai.com", "certificateType": "ManagedCertificate" },
         { "hostName": "insightpulseai.com", "certificateType": "ManagedCertificate" },
         { "hostName": "www.insightpulseai.com", "certificateType": "ManagedCertificate" },
-        { "hostName": "erp-azure.insightpulseai.com", "certificateType": "ManagedCertificate" },
-        { "hostName": "n8n-azure.insightpulseai.com", "certificateType": "ManagedCertificate" }
+        { "hostName": "erp-azure.insightpulseai.com", "certificateType": "ManagedCertificate" }
       ]
     },
     "routes": {
@@ -235,7 +234,7 @@
         },
         {
           "name": "n8n-default",
-          "customDomains": ["n8n.insightpulseai.com", "n8n-azure.insightpulseai.com"],
+          "customDomains": ["n8n.insightpulseai.com"],
           "originGroupName": "n8n",
           "patternsToMatch": ["/*"],
           "cacheEnabled": false,

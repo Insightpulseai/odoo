@@ -44,7 +44,7 @@
 | Action | Host | Condition |
 |--------|------|-----------|
 | DELETE | `erp-azure` | After `erp` validated on prod |
-| DELETE | `n8n-azure` | After `n8n` validated on prod |
+| DELETE | `n8n-azure` | Retired — canonical subdomain is now `n8n` |
 | DELETE | `agent` | After confirming no active dependency |
 | DELETE | `mail` | After confirming Zoho handles all inbound |
 

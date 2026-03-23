@@ -8,14 +8,6 @@ schemas:
   silver: silver
   gold: gold
 
-# Notion databases to sync
-notion:
-  databases:
-    programs: "NOTION_PROGRAMS_DB_ID"
-    projects: "NOTION_PROJECTS_DB_ID"
-    budget_lines: "NOTION_BUDGET_LINES_DB_ID"
-    risks: "NOTION_RISKS_DB_ID"
-
 # Alerting (enabled in prod)
 alerting:
   enabled: true

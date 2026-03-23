@@ -1,0 +1,93 @@
+# ============================================================
+# RELEASE LANES — Cadence & Promotion Model
+# ============================================================
+# Three lanes only. Separates internal iteration from
+# controlled promotion from productized packaging.
+# Last updated: 2026-03-15
+# ============================================================
+
+schema_version: "1.0"
+
+lanes:
+
+  - id: lane_a
+    name: "Internal Capability Releases"
+    cadence: weekly
+    description: >
+      Fast iteration on internal capabilities. No external
+      visibility. Safe to break and fix quickly.
+    examples:
+      - "Odoo Copilot preview improvements"
+      - "DocFlow alpha iteration"
+      - "Ops Console new screens"
+      - "Connector prototypes"
+    allowed_channels:
+      - internal_one_click
+      - internal_repo_artifacts
+    gates:
+      - smoke_evals_pass
+      - no_policy_violations
+    approval_required: false
+
+  - id: lane_b
+    name: "Controlled Promotion Releases"
+    cadence: biweekly
+    description: >
+      Gated promotions from dev to staging. Requires eval
+      pass and UAT signoff. No external publishing.
+    examples:
+      - "Dev → staging promotions"
+      - "Gated write-mode expansions"
+      - "UAT-approved feature packs"
+    allowed_channels:
+      - internal_one_click
+      - internal_service
+    gates:
+      - full_eval_pack_pass
+      - uat_signoff
+      - policy_compliance
+      - no_critical_blockers
+    approval_required: true
+
+  - id: lane_c
+    name: "Productized Packaging Releases"
+    cadence: monthly_or_slower
+    description: >
+      Formal packaging for managed apps, connectors, SaaS,
+      or marketplace. Requires stable internal usage first.
+    examples:
+      - "Managed app package"
+      - "External connector package"
+      - "Commercial offer package"
+    allowed_channels:
+      - azure_managed_application
+      - connector_plugin_extension
+      - hosted_saas
+      - azure_marketplace
+    gates:
+      - stable_internal_usage_30d
+      - full_eval_pack_pass
+      - uat_signoff
+      - security_review
+      - packaging_review
+      - arm_template_valid
+    approval_required: true
+
+# ----------------------------------------------------------
+# Promotion rules
+# ----------------------------------------------------------
+promotion_rules:
+  - from: lane_a
+    to: lane_b
+    requires:
+      - "7+ days in lane_a without regression"
+      - "Smoke evals green for 5 consecutive days"
+      - "No open P0/P1 issues"
+
+  - from: lane_b
+    to: lane_c
+    requires:
+      - "14+ days in lane_b without regression"
+      - "UAT signoff complete"
+      - "Security review passed"
+      - "Packaging readiness review approved"
