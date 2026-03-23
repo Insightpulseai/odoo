@@ -5,9 +5,9 @@
 - [x] Done
 
 ## Workstream 4: Mirror Cleanup (lowest risk)
-- [ ] Diff-verify ops-platform/supabase/ copies are identical
-- [ ] Grep for references to ops-platform/supabase/ paths
-- [ ] Delete ops-platform/supabase/seeds/ and seed/ mirrors
+- [ ] Diff-verify platform/supabase/ copies are identical
+- [ ] Grep for references to platform/supabase/ paths
+- [ ] Delete platform/supabase/seeds/ and seed/ mirrors
 - [ ] Diff-verify nested odoo/ copies are stale
 - [ ] Grep for references to odoo/ nested paths
 - [ ] Delete nested odoo/ stale seed copies

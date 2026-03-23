@@ -1,0 +1,13 @@
+{
+  "record_type": "promotion",
+  "record_version": "1.0.0",
+  "agent_id": "odoo-sage",
+  "from_stage": "S03",
+  "to_stage": "S04",
+  "gate_version": "v1",
+  "decision": "pass",
+  "evidence_refs": ["unit_tests_exist", "eval_passing"],
+  "issued_at": "2026-03-20T19:08:00Z",
+  "issued_by": "foundry-supervisor",
+  "transition_key": "odoo-sage:S03:S04:v1"
+}

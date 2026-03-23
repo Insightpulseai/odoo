@@ -1,0 +1,140 @@
+version: 2
+namespace: lakehouse.benchmark.odoo_copilot
+last_reviewed: "2026-03-15"
+description: >
+  Odoo Copilot Benchmark Scorecard V2 — lakehouse-side reference.
+  Canonical source: odoo repo ssot/odoo/odoo_copilot_benchmark_v2.yaml.
+  This copy provides the benchmark contract for analytics, dashboards,
+  and lakehouse-side evaluation pipelines.
+
+benchmark_anchors:
+  - key: odoo_ai
+    label: Odoo AI / Odoo AI Agents
+    role: Native Odoo embedding, grounded knowledge, in-product actionability
+  - key: sap_joule
+    label: SAP Joule
+    role: Enterprise assistant UX, informational/navigational/transactional support
+  - key: sap_afc
+    label: SAP Advanced Financial Closing
+    role: Close orchestration, task planning, dependency handling, status monitoring
+  - key: microsoft_foundry
+    label: Microsoft Foundry
+    role: >
+      Agent platform maturity — hosted orchestration, control plane, evaluation,
+      tracing, monitoring, knowledge connection, SDK-first operationalization.
+      Surfaces: Foundry Models, Foundry Agent Service, Foundry Control Plane,
+      Foundry IQ, Foundry Tools, Azure Machine Learning.
+  - key: microsoft_copilot_finance
+    label: Microsoft Copilot for Finance / agent platform
+    role: Finance-assistant UX, business-data-connected agents, role-based workflow support
+  - key: databricks_fsi
+    label: Databricks Financial Services
+    role: Analytics/intelligence ceiling for fraud, risk, treasury, compliance
+
+microsoft_foundry_benchmark_dimensions:
+  description: >
+    Microsoft Foundry is the bar for agent-platform maturity, not for ERP-native
+    workflow depth. Foundry defines the bar for hosted agents, control-plane
+    governance, evaluations, monitoring, knowledge connection, and SDK-first
+    operationalization of enterprise AI apps and agents.
+  dimensions:
+    - key: agent_hosting
+      label: Agent hosting and orchestration
+      foundry_surface: Foundry Agent Service
+      odoo_copilot_questions:
+        - Can agents be hosted as durable business workers?
+        - Can they orchestrate multi-step ERP tasks?
+        - Can they persist state safely across sessions/jobs?
+    - key: control_plane
+      label: Control plane and observability
+      foundry_surface: Foundry Control Plane
+      odoo_copilot_questions:
+        - Prompt/result tracing
+        - Action auditability
+        - Evaluation harnesses
+        - Workflow quality metrics
+        - Runtime monitoring
+        - Safety/governance controls
+    - key: knowledge_integration
+      label: Knowledge integration
+      foundry_surface: Foundry IQ
+      odoo_copilot_questions:
+        - Can it connect structured ERP data and document knowledge cleanly?
+        - Can it maintain grounded retrieval without brittle custom glue?
+        - Can different agents share or isolate knowledge safely?
+    - key: sdk_developer_surface
+      label: SDK-first developer surface
+      foundry_surface: Foundry SDKs (Python, C#, JavaScript, Java)
+      odoo_copilot_questions:
+        - Is the copilot platform code-first and automatable?
+        - Can agents/tools be defined deterministically?
+        - Can environments be reproduced in CI/CD?
+        - Can evaluation and deployment be scripted end-to-end?
+    - key: platform_hardening
+      label: Enterprise platform hardening
+      foundry_surface: Foundry private endpoints, migration guidance
+      odoo_copilot_questions:
+        - Tenant/network isolation
+        - Production-safe secret handling
+        - Lifecycle/migration posture
+        - Compatibility discipline as platform primitives evolve
+      notes: >
+        Microsoft documents migration from the classic portal plus a shift
+        toward the Responses API before an August 2026 Assistants API sunset.
+
+categories:
+  - { key: odoo_native_actions, label: Odoo-native actions, weight: 18 }
+  - { key: knowledge_grounding, label: Knowledge grounding / RAG, weight: 14 }
+  - { key: finance_workflow_depth, label: Finance workflow depth, weight: 18 }
+  - { key: agent_configurability, label: Agent configurability, weight: 10 }
+  - { key: multi_step_orchestration, label: Multi-step orchestration, weight: 8 }
+  - { key: embedded_ux_quality, label: Embedded UX quality, weight: 8 }
+  - { key: governance_safety_auditability, label: Governance / safety / auditability, weight: 9 }
+  - { key: agent_platform_control_plane, label: Agent platform / control plane maturity, weight: 10, benchmark_target: Microsoft Foundry }
+  - { key: analytics_recommendations, label: Analytics / recommendations, weight: 5 }
+
+competitive_snapshot:
+  - benchmark: Odoo AI / Agents
+    main_role: Native ERP copilot
+    lesson: Must feel natively actionable inside Odoo
+  - benchmark: SAP Joule
+    main_role: Enterprise assistant UX
+    lesson: Must support informational + navigational + transactional assistance cleanly
+  - benchmark: SAP Advanced Financial Closing
+    main_role: Finance close depth
+    lesson: Must improve close-task orchestration maturity
+  - benchmark: Microsoft Foundry
+    main_role: Agent platform / control plane
+    lesson: Must be governable, observable, evaluable, and KB-connected — not just chat-enabled
+  - benchmark: Microsoft Copilot for Finance / agent platform
+    main_role: Finance assistant UX + role workflows
+    lesson: Must support finance-role-specific assistance, not generic chat
+  - benchmark: Databricks Financial Services
+    main_role: Intelligence layer
+    lesson: Should integrate to deeper analytics rather than pretend to replace them early
+
+practical_target:
+  beat: Odoo native AI on Odoo-specific workflow integration
+  approach:
+    - SAP on finance-process depth
+    - Microsoft 365 Copilot on assistant UX
+    - Microsoft Foundry on agent platform maturity
+  integrate_not_replace: Databricks for deeper intelligence
+
+azure_target_state:
+  self_hosted:
+    - { component: Odoo CE 19, hosting: Azure VM / AKS, role: Operational system of record }
+    - { component: n8n, hosting: Azure VM / AKS, role: Automation/orchestration layer }
+    - { component: Supabase, hosting: Azure VM / AKS, role: Control plane / APIs / auth / storage / realtime }
+  managed:
+    - { component: Azure Databricks, hosting: Azure PaaS, role: Governed analytics / lakehouse / intelligence }
+    - { component: ADLS Gen2, hosting: Azure PaaS, role: Storage backbone }
+  integration_rules:
+    - ERP workflow automation -> n8n
+    - Operational app backend / auth / realtime / thin control plane -> Supabase
+    - Analytical replication / warehouse / lakehouse / ML / finance intelligence -> Databricks
+    - Strict open table interoperability -> Iceberg (only where cross-engine sharing needed)
+  caveats:
+    - "Supabase ETL: platform is self-hostable, but Supabase ETL feature is Private Alpha with self-hosted availability marked N/A"
+    - "supabase/etl open-source Rust framework can be self-operated as custom CDC service"
+    - "n8n Odoo node supports create/update/delete/get via API key or password auth — use for workflow automation, not high-volume warehouse ingestion"

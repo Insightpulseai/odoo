@@ -1,0 +1,19 @@
+{
+  "name": "policy_sufficiency_judge",
+  "version": "1.0.0",
+  "description": "Evaluate whether governance policies are sufficient to cover the current goal landscape. Identifies policy gaps, overlaps, and conflicts.",
+  "intent": "Judge policy sufficiency for the current operational scope",
+  "inputs": [
+    {"name": "scope", "type": "string", "description": "company | department", "required": true},
+    {"name": "scope_id", "type": "integer", "description": "Odoo record ID for scope entity", "required": true},
+    {"name": "policy_ids", "type": "array", "description": "Specific policy IDs to evaluate", "required": false}
+  ],
+  "outputs": [
+    {"name": "sufficiency_verdict", "type": "string", "description": "sufficient | insufficient | needs_review"},
+    {"name": "gaps", "type": "array", "description": "Goal areas without governing policy"},
+    {"name": "overlaps", "type": "array", "description": "Areas with conflicting policies"},
+    {"name": "coverage_score", "type": "float", "description": "Policy coverage percentage (0.0-1.0)"}
+  ],
+  "kb_segments": ["kb_governance"],
+  "agentInstructions": "Read all active policies and map them against the current goal landscape. Identify areas without policy coverage, areas with overlapping/conflicting policies. Produce verdict with evidence."
+}

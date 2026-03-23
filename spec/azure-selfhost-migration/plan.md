@@ -39,7 +39,7 @@ Completed via `scripts/migration/export_supabase_inventory.py` (`supabase_cloud_
 
 **Scripts**:
 - `scripts/migration/export_supabase_inventory.py` (inventory)
-- `ops-platform/supabase/scripts/supabase_schema_export.sh` (schema diff)
+- `platform/supabase/scripts/supabase_schema_export.sh` (schema diff)
 
 **Gate**: `SCHEMA_PARITY: PASS` -- 0 missing tables, 0 missing columns, 0 missing extensions
 
@@ -153,8 +153,8 @@ Split into 4 parallel lanes:
 
 **Scripts**:
 - `scripts/migration/validate_cutover.py`
-- `ops-platform/supabase/scripts/supabase_consumer_rewire.py`
-- `ops-platform/supabase/scripts/supabase_cutover_verify.sh`
+- `platform/supabase/scripts/supabase_consumer_rewire.py`
+- `platform/supabase/scripts/supabase_cutover_verify.sh`
 
 **Gate**: `CUTOVER_VERIFY: PASS` + 7-day soak with zero incidents
 

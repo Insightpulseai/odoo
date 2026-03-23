@@ -1,5 +1,0 @@
-Resources
-| where type == "microsoft.containerregistry/registries"
-| project name, resourceGroup, location,
-         sku=sku.name,
-         adminEnabled=properties.adminUserEnabled

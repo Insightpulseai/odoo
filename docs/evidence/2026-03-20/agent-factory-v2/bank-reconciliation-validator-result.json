@@ -1,0 +1,16 @@
+{
+  "component": "bank-reconciliation-agent",
+  "policy_version": "v2",
+  "validator_status": "pass",
+  "promotion_target": "L5",
+  "criteria": {
+    "red_team_certified": true,
+    "real_soak_cycles_minimum_met": true,
+    "fail_closed_verified": true,
+    "evidence_complete": true
+  },
+  "remaining_risks": [
+    "policy enforcement is only as strong as evidence freshness and validator coverage"
+  ],
+  "timestamp": "2026-03-20T22:58:00Z"
+}

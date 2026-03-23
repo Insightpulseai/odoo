@@ -1,0 +1,498 @@
+# Copilot / Agents Target State — Machine-Readable SSOT
+# Version: 1.0.0
+# Created: 2026-03-23
+# Authority: This file defines the complete target end state for the
+#   Diva Goals app, Diva Copilot family, backend agent layer, and
+#   Microsoft runtime provisioning. All build plans and provisioning
+#   scripts reference this file as the single source of truth.
+#
+# Related files:
+#   - ssot/agents/diva_copilot.yaml (shell config)
+#   - ssot/agents/diva_copilot_family.yaml (mode taxonomy)
+#   - ssot/agents/diva_goals.yaml (agent catalog + workflows)
+#   - spec/diva-goals/constitution.md (D1-D10 rules)
+#   - spec/ipai-odoo-copilot-azure/constitution.md (C1-C9 rules)
+
+---
+
+# ============================================================
+# 1. Product Shape
+# ============================================================
+
+product:
+  app:
+    id: diva-goals
+    name: Diva Goals
+    modules:
+      - id: goals
+        name: Goals
+        purpose: Strategic and operational goal definition, cascading, tracking
+        prerequisite: true  # All other modules require this
+      - id: execution_graph
+        name: Execution Graph
+        purpose: Goal-to-task decomposition, dependency mapping, progress aggregation
+      - id: people_capability
+        name: People Capability
+        purpose: Skills inventory, gap analysis, learning plans for humans
+      - id: agent_capability
+        name: Agent Capability
+        purpose: Agent skills inventory, readiness assessment, promotion gates
+      - id: reviews
+        name: Reviews
+        purpose: Periodic review packs, evidence-backed performance synthesis, approvals
+      - id: governance
+        name: Governance
+        purpose: Policy enforcement, drift detection, orphan detection, compliance gates
+    ux_framework: fluent-2
+    accessibility: wcag-2.2-aa
+
+  copilot_family:
+    id: diva-copilot
+    name: Diva Copilot
+    architecture: thin-shell  # Not monolithic; persona + skills + KB composition
+    shell_ref: ssot/agents/diva_copilot.yaml
+
+    # 5 visible copilots — user-facing brands
+    visible_copilots:
+      - id: strategy
+        name: Diva Strategy Copilot
+        audience: Leadership, strategy owners, OKR practitioners
+        skills:
+          - strategy_review
+          - portfolio_alignment
+          - evidence_traceability
+        kb_segments:
+          - kb_strategy
+          - kb_execution
+          - kb_governance
+
+      - id: odoo
+        name: Diva Odoo Copilot
+        audience: ERP operators, finance team, back-office
+        skills: inherited_from_odoo_copilot
+        kb_segments: inherited_from_odoo_copilot
+
+      - id: tax_guru
+        name: Diva Tax Guru
+        audience: Tax compliance, BIR filing, finance leads
+        skills:
+          - tax_advisory_diva
+          - bir_workflow_diva
+          - tax_evidence_collection
+        kb_segments:
+          - kb_tax_policy_ph
+          - kb_odoo_tax_runtime
+          - kb_tax_evidence
+        sub_agent_ref: taxpulse
+
+      - id: capability
+        name: Diva Capability Copilot
+        audience: HR leads, team leads, agent operators
+        skills:
+          - capability_gap_analysis
+          - learning_path_designer
+          - agent_readiness
+        kb_segments:
+          - kb_people_capability
+          - kb_agent_capability
+
+      - id: governance
+        name: Diva Governance Copilot
+        audience: Compliance officers, governance reviewers
+        skills:
+          - drift_orphan_detection
+          - policy_sufficiency_judge
+        kb_segments:
+          - kb_governance
+
+  # Backend agent layer — not end-user brands
+  backend_agents:
+    catalog_size: 10  # 11 with optional tax_policy_judge
+    catalog_ref: ssot/agents/diva_goals.yaml
+
+    agents:
+      - id: diva_orchestrator
+        role: Workflow coordination and step sequencing
+        type: orchestrator
+        boundary: Never generates content directly; delegates to specialist agents
+        tools_allowed: [workflow_invoke, step_sequence, context_assemble]
+        tools_forbidden: [content_generation, direct_odoo_write]
+
+      - id: evidence_harvester
+        role: Evidence collection from Odoo, Databricks, external sources
+        type: maker
+        boundary: Read-only; never synthesizes or interprets evidence
+        tools_allowed: [odoo_read, databricks_query, kb_search, attachment_read]
+        tools_forbidden: [odoo_write, content_synthesis]
+
+      - id: status_synthesizer
+        role: Goal status narrative generation from collected evidence
+        type: maker
+        boundary: Every claim must have a citation; never invents data
+        tools_allowed: [evidence_summarize, citation_attach, narrative_generate]
+        tools_forbidden: [data_invention, uncited_assertion]
+
+      - id: review_pack_writer
+        role: Review document assembly from synthesized evidence
+        type: maker
+        boundary: Cannot approve its own output; assembles only
+        tools_allowed: [template_render, evidence_attach, section_compose]
+        tools_forbidden: [self_approve, evidence_modify]
+
+      - id: capability_mapper
+        role: Skills-to-roles mapping and gap identification
+        type: maker
+        boundary: Identifies gaps; does not assign learning plans or modify roles
+        tools_allowed: [skills_inventory, gap_compute, competency_lookup]
+        tools_forbidden: [learning_plan_assign, role_modify]
+
+      - id: drift_detector
+        role: Goal drift and orphan task identification
+        type: maker
+        boundary: Detection only; does not remediate or modify goals
+        tools_allowed: [goal_scan, staleness_check, orphan_detect]
+        tools_forbidden: [goal_modify, task_close]
+
+      - id: policy_judge
+        role: Proposal evaluation against governance policies
+        type: judge
+        boundary: Binary pass/fail with reasoning; never suggests remediation
+        tools_allowed: [policy_lookup, rule_evaluate, compliance_check]
+        tools_forbidden: [remediation_suggest, policy_modify]
+
+      - id: readiness_judge
+        role: Agent or team readiness assessment for promotion
+        type: judge
+        boundary: Fail-closed on missing evidence; never promotes directly
+        tools_allowed: [eval_metrics_read, criteria_check, threshold_evaluate]
+        tools_forbidden: [promotion_execute, criteria_modify]
+
+      - id: approval_coordinator
+        role: Approval routing, sign-off tracking, gate enforcement
+        type: coordinator
+        boundary: No authority to auto-approve; routes to designated approvers
+        tools_allowed: [approval_route, signoff_track, gate_enforce]
+        tools_forbidden: [auto_approve, gate_bypass]
+
+      - id: taxpulse
+        role: Tax computation worker, BIR filing preparation, evidence collection
+        type: maker
+        boundary: Computes and prepares; never files or posts without approval
+        tools_allowed: [tax_compute, bir_form_render, evidence_collect, odoo_tax_read]
+        tools_forbidden: [tax_file_submit, journal_post, auto_approve]
+
+    optional_agents:
+      - id: tax_policy_judge
+        role: Tax policy compliance evaluation (maker/judge split for tax)
+        type: judge
+        boundary: Binary pass/fail on tax compliance; never remediates
+        tools_allowed: [tax_policy_lookup, bir_rule_evaluate, compliance_check]
+        tools_forbidden: [tax_compute, remediation_suggest]
+        recommendation: Recommended for proper maker/judge split in tax domain
+
+
+# ============================================================
+# 2. Microsoft Runtime Target
+# ============================================================
+
+microsoft_runtime:
+  foundry:
+    resource:
+      count: 1
+      purpose: Central agent runtime/governance hub
+      success_criteria: Foundry is the single pane for agent lifecycle
+
+    project:
+      count: 1
+      purpose: One project contains all Diva copilot/agent assets
+      success_criteria: All agents, tools, and evals live under one project
+
+    agent_service:
+      count: 1
+      purpose: Agents run under one managed service boundary
+      success_criteria: All backend agents execute within Foundry Agent Service
+      preview_caveat: >
+        Hosted agents are in preview. Private networking for network-isolated
+        Foundry resources is not supported during preview. Keep custom app/API
+        glue in controlled runtime plane until GA.
+
+  agent_framework:
+    workflow_count: 5
+    workflows:
+      - id: goal_status_synthesis
+        domain: goals
+        trigger: scheduled_or_on_demand
+        agents_involved: [diva_orchestrator, evidence_harvester, status_synthesizer, policy_judge]
+        output: Evidence-backed goal status narrative with citations
+
+      - id: review_pack_generation
+        domain: reviews
+        trigger: stage_transition
+        agents_involved: [diva_orchestrator, evidence_harvester, status_synthesizer, review_pack_writer, policy_judge, approval_coordinator]
+        output: Review document with evidence attachments and approval routing
+
+      - id: capability_readiness_review
+        domain: capability
+        trigger: scheduled_or_promotion_request
+        agents_involved: [diva_orchestrator, capability_mapper, readiness_judge]
+        output: Readiness assessment with gap analysis and promotion recommendation
+
+      - id: learning_plan_recommendation
+        domain: capability
+        trigger: gap_detected
+        agents_involved: [diva_orchestrator, capability_mapper]
+        output: Suggested learning paths mapped to identified skill gaps
+
+      - id: odoo_tax_assist
+        domain: tax
+        trigger: copilot_invocation
+        agents_involved: [diva_orchestrator, taxpulse, policy_judge]
+        optional_agents: [tax_policy_judge]
+        output: Tax computation, BIR form preparation, filing evidence
+
+  search:
+    service:
+      count: 1
+      name: Azure AI Search
+      purpose: KB-backed retrieval for all grounded agents
+      success_criteria: Search-backed KB retrieval works through MCP
+      integration: knowledge_base_retrieve (MCP tool)
+
+    knowledge_bases:
+      count: 8
+      segments:
+        - id: kb_strategy
+          domain: Strategic planning frameworks, OKR methodology
+          consumers: [strategy, governance]
+
+        - id: kb_execution
+          domain: Execution tracking patterns, progress aggregation rules
+          consumers: [strategy]
+
+        - id: kb_people_capability
+          domain: Skills taxonomies, competency frameworks, learning design
+          consumers: [capability]
+
+        - id: kb_agent_capability
+          domain: Agent skill inventories, readiness criteria, promotion gates
+          consumers: [capability]
+
+        - id: kb_governance
+          domain: Policy templates, compliance rules, drift thresholds
+          consumers: [strategy, governance]
+
+        - id: kb_tax_policy_ph
+          domain: BIR regulations, TRAIN law, Philippine tax policy
+          consumers: [tax_guru]
+
+        - id: kb_odoo_tax_runtime
+          domain: Odoo tax module configuration, filing workflows
+          consumers: [tax_guru, odoo]
+
+        - id: kb_tax_evidence
+          domain: Tax computation evidence, filing artifacts, audit trails
+          consumers: [tax_guru]
+
+  identity:
+    entra_tenant_count: 1
+    verified_root_domain_count: 1
+    entra_domain_services: 0  # Not needed for Foundry/Agent Framework
+    extra_entra_subdomains: 0  # Not needed for agents/copilots
+
+    managed_identities:
+      count: 3  # Minimum
+      identities:
+        - id: mi-web-runtime
+          purpose: Odoo web, copilot gateway, user-facing services
+          scope: Container Apps (web tier)
+
+        - id: mi-jobs-automation
+          purpose: Odoo workers, cron, n8n, background processing
+          scope: Container Apps (worker tier)
+
+        - id: mi-agent-data
+          purpose: Foundry agents, Databricks, AI Search, Key Vault access
+          scope: Agent runtime + data plane
+
+
+# ============================================================
+# 3. Repo Mapping
+# ============================================================
+
+repo_mapping:
+  - concern: Visible copilots, skills, judges, workflows
+    path: agents/
+    key_files:
+      - agents/personas/diva-copilot-*.md
+      - agents/skills/*.skill.json
+      - agents/knowledge/diva-copilot-sources.yaml
+      - agents/foundry/ipai-odoo-copilot-azure/
+
+  - concern: Control-plane state, approvals, contracts
+    path: platform/
+    key_files: []
+
+  - concern: App shell, copilot panels, Fluent 2 UI
+    path: web/
+    key_files:
+      - web/apps/diva-goals/
+
+  - concern: Odoo adapter, action queue, diva bridge
+    path: odoo/  # Also addons/ipai/
+    key_files:
+      - addons/ipai/ipai_odoo_copilot/
+      - addons/ipai/ipai_copilot_actions/
+
+  - concern: Evidence and review marts
+    path: data-intelligence/
+    key_files:
+      - data-intelligence/contracts/diva_goals_evidence.yaml
+      - data-intelligence/lakehouse/silver/diva_evidence_normalized.py
+      - data-intelligence/lakehouse/gold/diva_review_mart.py
+
+  - concern: Architecture, runbooks
+    path: docs/
+    key_files: []
+
+  - concern: Runtime substrate
+    path: infra/
+    key_files: []
+
+
+# ============================================================
+# 4. Success Criteria
+# ============================================================
+
+success_criteria:
+  copilot_family:
+    - Every visible copilot has a clear, named audience
+    - Every visible copilot routes to a bounded set of skills/workflows
+    - No "one giant Diva assistant" anti-pattern emerges
+    - Thin-shell architecture maintained (no domain logic in shell)
+
+  agent_layer:
+    - Maker and judge roles are separate (no agent both creates and approves)
+    - No executive-visible status publishes without judge + approval path
+    - Workflows are explicit Agent Framework definitions, not hidden in prompts
+    - All agents have declared tool allowlists and boundaries
+
+  knowledge:
+    - Agents answer from KB-grounded evidence (no free-form advice)
+    - Weak evidence routes to judge/human review
+    - Tax retrieval is isolated from general strategy retrieval
+    - knowledge_base_retrieve via MCP is the only retrieval interface
+
+  runtime:
+    - Foundry project hosts the agent estate cleanly
+    - Search-backed KB retrieval works through MCP
+    - Managed identities replace embedded secrets for all Azure workloads
+    - No Entra Domain Services provisioned
+
+  odoo_integration:
+    - Odoo Copilot remains a context adapter (not a data store)
+    - Tax Guru is user-facing; TaxPulse is the worker
+    - No direct posting/file submission bypasses approval coordinator
+    - Proposal state machine (D3) enforced for all agent-generated output
+
+
+# ============================================================
+# 5. Counts Summary
+# ============================================================
+
+counts:
+  user_facing:
+    app_products: 1        # Diva Goals
+    copilot_families: 1    # Diva Copilot
+    visible_copilots: 5    # Strategy, Odoo, Tax Guru, Capability, Governance
+
+  agent_layer:
+    backend_agents: 10     # 11 with optional tax_policy_judge
+    workflows: 5
+    kb_segments: 8
+
+  microsoft_runtime:
+    foundry_resources: 1
+    foundry_projects: 1
+    foundry_agent_services: 1
+    azure_ai_search_services: 1
+    managed_identities: 3  # Minimum
+
+  not_provisioned:
+    entra_domain_services: 0
+    extra_entra_subdomains: 0
+
+  scaling_notes:
+    - Additional Foundry projects only if environments or products split
+    - Additional Search services only if governance/performance requires isolation
+    - Additional copilots only when a real user audience appears
+
+
+# ============================================================
+# 6. Governance References
+# ============================================================
+
+governance:
+  constitutions:
+    - ref: spec/ipai-odoo-copilot-azure/constitution.md
+      rules: C1-C9
+      scope: Odoo Copilot core
+    - ref: spec/diva-goals/constitution.md
+      rules: D1-D10
+      scope: Diva Goals product family
+    - ref: spec/tax-pulse-sub-agent/constitution.md
+      rules: C1-C8
+      scope: TaxPulse sub-agent
+
+  proposal_state_machine:
+    states:
+      - draft
+      - evidence_collected
+      - synthesized
+      - judged
+      - needs_human_review
+      - approved
+      - published
+      - blocked_insufficient_evidence
+      - blocked_policy_violation
+      - blocked_confidence_low
+    confidence_threshold: 0.85
+    human_gate_on_publish: true
+
+  orchestration_default: sequential
+  gate_pattern: maker-checker
+  fan_out_permitted: evidence_collection_only
+
+
+# ============================================================
+# 7. Delta from Current State
+# ============================================================
+
+delta_from_current:
+  copilot_family:
+    change: Reduce from 6 modes to 5 visible copilots
+    detail: >
+      Executive mode dropped as a separate visible copilot.
+      Executive-level summaries are a feature of Strategy Copilot,
+      not a separate brand. diva_copilot_family.yaml needs update.
+
+  backend_agents:
+    change: Replace knowledge_curator with taxpulse; add optional tax_policy_judge
+    detail: >
+      knowledge_curator (KB maintenance) is an operational concern, not a
+      Diva Goals workflow agent. taxpulse (tax computation worker) is the
+      correct 10th agent for the product family. tax_policy_judge is the
+      recommended 11th for maker/judge split in tax domain.
+      diva_goals.yaml needs update.
+
+  microsoft_runtime:
+    change: Formalize Foundry + Agent Framework + AI Search provisioning
+    detail: >
+      No new Azure services beyond what's already in the architecture.
+      This formalizes the provisioning targets and success criteria.
+
+  near_term_caveat:
+    change: Acknowledge hosted agents preview limitation
+    detail: >
+      Hosted agents in Foundry Agent Service are preview. Private networking
+      not supported during preview. Keep custom glue in controlled plane
+      until GA. Do not over-assume mature hosted-agent networking.

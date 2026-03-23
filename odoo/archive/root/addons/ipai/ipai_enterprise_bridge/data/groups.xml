@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<odoo>
-    <!-- Category for IPAI Bridge -->
-    <record id="module_category_ipai_bridge" model="ir.module.category">
-        <field name="name">IPAI Bridge</field>
-        <field name="description">Enterprise Bridge for CE+OCA parity</field>
-        <field name="sequence">100</field>
-    </record>
-</odoo>

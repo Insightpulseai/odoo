@@ -1,0 +1,14 @@
+schema: ipai.governance.promotion.v2
+agent_id: bank-reconciliation-agent
+target_level: L5
+gates:
+  freshness_days: 30
+  spec_kit:
+    present: true
+  red_team:
+    status: PASSED
+  soak_window:
+    cycles_completed: 5
+    stability_score: 1.0
+  fail_closed_verification:
+    verified: true

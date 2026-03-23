@@ -96,14 +96,14 @@ After cleanup, exactly **one** `ir.mail_server` record should have `sequence=1`:
 
 ## Workstream 4: Exact-Copy Mirror Cleanup
 
-### ops-platform/supabase/ mirrors
+### platform/supabase/ mirrors
 
 | File to Delete | Original |
 |----------------|----------|
-| `ops-platform/supabase/seeds/001_hr_seed.sql` | `supabase/seeds/001_hr_seed.sql` |
-| `ops-platform/supabase/seeds/002_finance_seed.sql` | `supabase/seeds/002_finance_seed.sql` |
-| `ops-platform/supabase/seeds/003_odoo_dict_seed.sql` | `supabase/seeds/003_odoo_dict_seed.sql` |
-| `ops-platform/supabase/seed/` (all subdirs) | `supabase/seed/` |
+| `platform/supabase/seeds/001_hr_seed.sql` | `supabase/seeds/001_hr_seed.sql` |
+| `platform/supabase/seeds/002_finance_seed.sql` | `supabase/seeds/002_finance_seed.sql` |
+| `platform/supabase/seeds/003_odoo_dict_seed.sql` | `supabase/seeds/003_odoo_dict_seed.sql` |
+| `platform/supabase/seed/` (all subdirs) | `supabase/seed/` |
 
 ### Nested odoo/ stale copies
 
@@ -118,7 +118,7 @@ After cleanup, exactly **one** `ir.mail_server` record should have `sequence=1`:
 
 Before deleting:
 1. `diff` each pair to confirm they are truly identical (or the copy is staler)
-2. `grep -r "ops-platform/supabase/seeds"` to find any references
+2. `grep -r "platform/supabase/seeds"` to find any references
 3. `grep -r "odoo/addons/ipai"` to find any references
 4. Check CI workflows for paths referencing these copies
 

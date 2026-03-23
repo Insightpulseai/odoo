@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <record id="endpoint_ebirforms" model="l10n.ph.bir.service.endpoint">
+            <field name="code">EBIRFORMS</field>
+            <field name="name">eBIRForms</field>
+            <field name="service_type">filing</field>
+            <field name="official_url">https://www.bir.gov.ph/ebirforms</field>
+            <field name="supports_filing" eval="True"/>
+            <field name="supports_payment" eval="False"/>
+            <field name="supports_reference" eval="True"/>
+            <field name="current_version">v7.9.5</field>
+            <field name="notes">Offline electronic forms package. Version updated via RMC.</field>
+        </record>
+        <record id="endpoint_efps" model="l10n.ph.bir.service.endpoint">
+            <field name="code">EFPS</field>
+            <field name="name">Electronic Filing and Payment System</field>
+            <field name="service_type">filing</field>
+            <field name="official_url">https://efps.bir.gov.ph</field>
+            <field name="supports_filing" eval="True"/>
+            <field name="supports_payment" eval="True"/>
+            <field name="supports_reference" eval="False"/>
+        </record>
+        <record id="endpoint_epay" model="l10n.ph.bir.service.endpoint">
+            <field name="code">EPAY</field>
+            <field name="name">ePay</field>
+            <field name="service_type">payment</field>
+            <field name="official_url">https://www.bir.gov.ph/index.php/tax-information/e-pay.html</field>
+            <field name="supports_filing" eval="False"/>
+            <field name="supports_payment" eval="True"/>
+            <field name="supports_reference" eval="False"/>
+        </record>
+        <record id="endpoint_eservices" model="l10n.ph.bir.service.endpoint">
+            <field name="code">ESERVICES</field>
+            <field name="name">eServices</field>
+            <field name="service_type">registration</field>
+            <field name="official_url">https://www.bir.gov.ph/eServices</field>
+            <field name="supports_filing" eval="False"/>
+            <field name="supports_payment" eval="False"/>
+            <field name="supports_reference" eval="True"/>
+        </record>
+        <record id="endpoint_revenue_issuances" model="l10n.ph.bir.service.endpoint">
+            <field name="code">REVENUE_ISSUANCES</field>
+            <field name="name">Revenue Issuances</field>
+            <field name="service_type">reference</field>
+            <field name="official_url">https://www.bir.gov.ph/revenue-issuances</field>
+            <field name="supports_filing" eval="False"/>
+            <field name="supports_payment" eval="False"/>
+            <field name="supports_reference" eval="True"/>
+        </record>
+        <record id="endpoint_tax_info" model="l10n.ph.bir.service.endpoint">
+            <field name="code">TAX_INFO</field>
+            <field name="name">Tax Information</field>
+            <field name="service_type">reference</field>
+            <field name="official_url">https://www.bir.gov.ph/tax-information</field>
+            <field name="supports_filing" eval="False"/>
+            <field name="supports_payment" eval="False"/>
+            <field name="supports_reference" eval="True"/>
+        </record>
+        <record id="endpoint_interactive_calendar" model="l10n.ph.bir.service.endpoint">
+            <field name="code">INTERACTIVE_TAX_CALENDAR</field>
+            <field name="name">BIR Interactive Tax Calendar</field>
+            <field name="service_type">reference</field>
+            <field name="official_url">https://www.bir.gov.ph/tax-calendar</field>
+            <field name="supports_filing" eval="False"/>
+            <field name="supports_payment" eval="False"/>
+            <field name="supports_reference" eval="True"/>
+            <field name="notes">Per RMC No. 110-2025, the Interactive Tax Calendar is the official digital deadline surface. Printed calendar discontinued.</field>
+        </record>
+    </data>
+</odoo>

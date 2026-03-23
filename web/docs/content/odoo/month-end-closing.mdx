@@ -1,0 +1,94 @@
+---
+title: Month-End Closing
+description: Structured close checklist, lock date policy, and Copilot-assisted exception surfacing for finance teams.
+---
+
+# Month-End Closing
+
+Month-end closing is a structured workflow in Odoo on Cloud that ensures all financial transactions are recorded, reconciled, and locked before producing financial statements. Copilot assists by surfacing exceptions, tracking close task completion, and flagging blocking items.
+
+## Close Checklist
+
+### Week 1: Pre-Close (Day 1-5 after month end)
+
+| # | Task | Owner | Odoo Surface |
+|---|------|-------|-------------|
+| 1 | Cut off AP — ensure all vendor invoices received | AP Lead | `account.move` (vendor bills) |
+| 2 | Cut off AR — confirm all customer invoices issued | AR Lead | `account.move` (customer invoices) |
+| 3 | Review unposted journal entries | Controller | `account.move` (draft entries) |
+| 4 | Reconcile bank statements | Treasury | `account.bank.statement` |
+| 5 | Reconcile intercompany balances | Controller | Analytic accounts |
+| 6 | Review aged receivables | AR Lead | `account.aged.receivable` report |
+| 7 | Review aged payables | AP Lead | `account.aged.payable` report |
+
+### Week 2: Close (Day 6-10)
+
+| # | Task | Owner | Odoo Surface |
+|---|------|-------|-------------|
+| 8 | Post depreciation entries | Fixed Assets | `account.asset` |
+| 9 | Post prepaid expense amortization | Controller | `account.spread` (OCA) |
+| 10 | Accrue unbilled revenue | Revenue Accountant | Manual journal entry |
+| 11 | Accrue unpaid expenses | AP Lead | Manual journal entry |
+| 12 | FX revaluation | Treasury | Currency rate update |
+| 13 | Post payroll journal entries | HR/Payroll | Integration journal |
+| 14 | Review trial balance | Controller | `account.trial.balance` |
+| 15 | Lock prior period | CFO | `account.lock.date` |
+
+### Week 2: Reporting (Day 8-12)
+
+| # | Task | Owner | Odoo Surface |
+|---|------|-------|-------------|
+| 16 | Generate P&L | Controller | MIS Builder / Financial Reports |
+| 17 | Generate Balance Sheet | Controller | MIS Builder / Financial Reports |
+| 18 | Generate Cash Flow Statement | Treasury | MIS Builder |
+| 19 | Variance analysis (actual vs. budget) | FP&A | `account.move.budget` (OCA) |
+| 20 | Management reporting package | CFO | Superset dashboards |
+
+## Copilot Assistance
+
+Copilot helps during month-end by:
+
+- **Exception surfacing**: "3 vendor bills from last month are still in draft status"
+- **Checklist tracking**: "12 of 20 close tasks completed. Blocking: bank reconciliation pending for BDO account"
+- **Variance alerts**: "OPEX is 15% over budget in Marketing cost center — driven by contractor spend"
+- **Status summary**: "Close is 60% complete. Estimated completion: Thursday based on current pace"
+
+## Lock Date Policy
+
+| Lock Type | Who Can Set | Effect |
+|-----------|-------------|--------|
+| **Tax Lock Date** | Adviser+ | Prevents changes to tax-affecting entries before this date |
+| **Hard Lock Date** | CFO only | Prevents ALL changes before this date |
+| **Soft Lock Date** | Controller | Warning only, does not block |
+
+## OCA Modules Used
+
+| Module | Purpose |
+|--------|---------|
+| `account_lock_date_update` | Per-user lock date management |
+| `account_financial_report` | Trial balance, P&L, BS reports |
+| `mis_builder` | Customizable management reports |
+| `account_move_budget` | Budget vs. actual comparison |
+| `account_spread_cost_revenue` | Prepaid/accrual amortization |
+| `account_reconcile_oca` | Bank and GL reconciliation |
+| `account_asset_management` | Fixed asset depreciation |
+
+## Key Metrics
+
+| Metric | Target |
+|--------|--------|
+| **Days to Close** | ≤ 10 business days |
+| **Unreconciled Items** | 0 at close |
+| **Unposted Entries** | 0 at lock date |
+| **Budget Variance** | Explained if > 5% |
+
+## FAQ
+
+**Q: Can Copilot auto-post journal entries?**
+A: No. Copilot is advisory-only in Release 1. It surfaces what needs attention — you decide and act.
+
+**Q: How do multi-company closes work?**
+A: Each company closes independently with its own lock dates. Intercompany reconciliation happens before individual company locks.
+
+**Q: What happens if I forget to lock the period?**
+A: Copilot will alert: "Prior period is still unlocked. 2 entries were posted to last month after the close date." The controller can then review and lock.

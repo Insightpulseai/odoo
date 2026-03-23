@@ -1,0 +1,3 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_ipai_reconciliation_agent,ipai.reconciliation.agent,model_ipai_reconciliation_agent,base.group_user,1,1,1,1
+access_bank_statement_line_extended,account.bank.statement.line,account.model_account_bank_statement_line,base.group_user,1,1,1,1

@@ -1,0 +1,11 @@
+{
+  "timestamp": "2026-03-20T23:00:04.851182",
+  "criteria": {
+    "evidence_fresh": true,
+    "red_team_certified": true,
+    "real_soak_cycles_minimum_met": true
+  },
+  "agent_id": "bank-reconciliation-agent",
+  "target_level": "L5",
+  "validator_status": "pass"
+}

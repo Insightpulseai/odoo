@@ -1,0 +1,133 @@
+# Diva Copilot — KB Segment Registry
+# Defines 8 knowledge base segments for grounding Diva Copilot responses.
+# Referenced by: ssot/agents/diva_copilot.yaml
+# Parent index: agents/knowledge/KNOWLEDGE_BASE_INDEX.yaml
+
+version: 1.0.0
+created: 2026-03-23
+domain: diva_goals
+
+segments:
+  - id: kb_strategy
+    name: Strategic Planning Knowledge
+    domain: strategy
+    description: OKR frameworks, strategic planning methodology, goal cascade patterns
+    sources:
+      - type: documentation
+        path: docs/architecture/DIVA_GOALS_TARGET_STATE.md
+      - type: framework
+        description: OKR methodology and best practices
+      - type: templates
+        description: Strategic goal templates and examples
+    update_frequency: quarterly
+    grounding_required: true
+    index_target: azure_ai_search
+
+  - id: kb_execution
+    name: Execution Tracking Knowledge
+    domain: execution
+    description: Progress aggregation rules, execution tracking patterns, blocker management
+    sources:
+      - type: documentation
+        path: docs/architecture/DIVA_GOALS_TARGET_STATE.md
+      - type: patterns
+        description: Bottom-up progress aggregation algorithms
+      - type: rules
+        description: Staleness thresholds and blocker escalation rules
+    update_frequency: monthly
+    grounding_required: true
+    index_target: azure_ai_search
+
+  - id: kb_people_capability
+    name: People Capability Knowledge
+    domain: people_capability
+    description: Skills taxonomies, competency frameworks, learning design patterns
+    sources:
+      - type: frameworks
+        description: Competency models and proficiency level definitions
+      - type: catalogs
+        description: Learning resource catalogs and providers
+      - type: patterns
+        description: Gap analysis methodology and scoring
+    update_frequency: quarterly
+    grounding_required: true
+    index_target: azure_ai_search
+
+  - id: kb_agent_capability
+    name: Agent Capability Knowledge
+    domain: agent_capability
+    description: Agent skill inventories, readiness criteria, promotion gate definitions
+    sources:
+      - type: ssot
+        path: ssot/agents/
+        description: Agent SSOT definitions and capability inventories
+      - type: evals
+        description: Agent evaluation results and benchmark scores
+      - type: criteria
+        description: Promotion criteria per environment (dev/staging/prod)
+    update_frequency: per_eval_cycle
+    grounding_required: true
+    index_target: azure_ai_search
+
+  - id: kb_governance
+    name: Governance Policy Knowledge
+    domain: governance
+    description: Policy templates, compliance rules, drift thresholds, orphan detection rules
+    sources:
+      - type: policies
+        description: Governance policy template library
+      - type: rules
+        description: Drift detection thresholds and orphan detection rules
+      - type: compliance
+        description: Compliance gate definitions and enforcement rules
+    update_frequency: on_policy_change
+    grounding_required: true
+    index_target: azure_ai_search
+
+  - id: kb_tax_policy_ph
+    name: Philippine Tax Policy Knowledge
+    domain: tax
+    description: BIR regulations, TRAIN law provisions, Revenue Memorandum Circulars
+    sources:
+      - type: regulations
+        description: BIR Revenue Regulations and Revenue Memorandum Circulars
+      - type: rates
+        path: addons/ipai/ipai_tax_pulse/data/rates/
+        description: TRAIN law brackets, EWT/FWT ATC codes
+      - type: rules
+        path: addons/ipai/ipai_tax_pulse/data/rules/
+        description: JSONLogic computation rules
+    update_frequency: on_regulation_change
+    grounding_required: true
+    index_target: azure_ai_search
+
+  - id: kb_odoo_tax_runtime
+    name: Odoo Tax Runtime Knowledge
+    domain: tax
+    description: Odoo tax module configuration, filing workflows, form templates
+    sources:
+      - type: module_docs
+        path: addons/ipai/ipai_tax_pulse/
+        description: TaxPulse module documentation and configuration
+      - type: workflows
+        description: BIR filing workflow definitions and stage sequences
+      - type: configuration
+        description: Tax computation engine configuration
+    update_frequency: on_config_change
+    grounding_required: true
+    index_target: azure_ai_search
+
+  - id: kb_tax_evidence
+    name: Tax Evidence Knowledge
+    domain: tax
+    description: Tax computation audit trails, filing artifacts, evidence pack templates
+    sources:
+      - type: audit_trails
+        description: Computation logs and decision records
+      - type: artifacts
+        description: Filed BIR forms, eFPS submissions, payment confirmations
+      - type: templates
+        description: Evidence pack structure for tax audits
+    update_frequency: per_filing_period
+    grounding_required: true
+    index_target: azure_ai_search

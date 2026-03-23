@@ -1,0 +1,179 @@
+# SSOT: Creative Provider Policy
+# Generation vs understanding split is mandatory.
+# Cross-referenced by: docs/architecture/CREATIVE_PROVIDER_POLICY.md
+# Updated: 2026-03-23
+
+version: "1.0.0"
+
+canonical_rule: >
+  Use OpenAI to understand, evaluate, extract, route, and assist.
+  Use Gemini / Imagen / fal to generate by modality and quality tier.
+
+creative_surfaces:
+  landing_creative_studio:
+    primary_provider: gemini_direct
+    primary_models:
+      default: gemini-2.5-flash-image
+      premium: gemini-3-pro-image-preview
+    secondary_provider: imagen
+    use_cases:
+      - concepting
+      - conversational_image_editing
+      - ad_mockups
+      - social_visuals
+      - fast_variants
+    fal_enabled: false
+    fal_enable_condition:
+      - video_generation
+      - audio_generation
+      - multimodal_public_studio
+
+  agency_workspace:
+    architecture: provider_broker
+    image_default:
+      provider: gemini_direct
+      models:
+        - gemini-2.5-flash-image
+        - gemini-3-pro-image-preview
+    image_quality_lane:
+      provider: imagen
+      models:
+        - imagen-4.0-generate-001
+        - imagen-4.0-ultra-generate-001
+        - imagen-4.0-fast-generate-001
+    media_lane:
+      provider: fal
+      capabilities:
+        - image_generation
+        - image_editing
+        - video_generation
+        - speech
+        - music
+        - sound_effects
+    default_policy:
+      stills_editing: gemini_direct
+      premium_brand_assets: imagen
+      ugc_video_audio: fal
+
+  batch_asset_generation:
+    image_fast_lane:
+      provider: gemini_direct
+      model: gemini-2.5-flash-image
+    image_quality_lane:
+      provider: imagen
+      model_family: imagen-4
+    mixed_media_lane:
+      provider: fal
+      mode: async_queue_webhook
+
+openai_multimodal_role:
+  doctrine: >
+    Use OpenAI to understand, evaluate, extract, route, and assist.
+    Use Gemini / Imagen / fal to generate by modality and quality tier.
+  primary_jobs:
+    - multimodal_understanding
+    - vision_and_document_understanding
+    - ocr_alternative_extraction
+    - pdf_parsing_for_rag
+    - image_evaluation
+    - creative_quality_review
+    - multimodal_rag
+    - speech_and_transcript_processing
+    - asset_captioning_and_tagging
+    - multimodal_assistant_orchestration
+  non_primary_jobs:
+    - default_still_image_generation
+    - premium_brand_still_generation
+    - mixed_media_generation
+    - ugc_video_generation
+    - audio_music_sfx_generation
+
+surface_policy:
+  landing_creative_studio:
+    openai_role:
+      enabled: true
+      jobs:
+        - multimodal_qa
+        - captioning
+        - tagging
+        - public_assistant_understanding
+      default_generation_provider: gemini_direct
+      premium_still_provider: imagen
+      mixed_media_provider: fal
+
+  agency_workspace:
+    openai_role:
+      enabled: true
+      jobs:
+        - judge_eval
+        - multimodal_understanding
+        - asset_review
+        - routing
+        - summarization
+      generation_policy:
+        stills_editing: gemini_direct
+        premium_brand_assets: imagen
+        ugc_video_audio: fal
+
+  document_intelligence:
+    openai_role:
+      enabled: true
+      preferred_jobs:
+        - vision_and_document_understanding
+        - ocr_alternative_extraction
+        - pdf_parsing_for_rag
+        - extraction_validation
+
+  batch_asset_generation:
+    openai_role:
+      enabled: true
+      jobs:
+        - asset_quality_review
+        - output_scoring
+        - post_generation_classification
+      generation_policy:
+        fast_image_batches: gemini_direct
+        premium_still_batches: imagen
+        mixed_media_batches: fal
+
+fal_v01_model_shortlist:
+  images:
+    - id: nano-banana-2
+      role: default_fast_generation
+    - id: nano-banana-pro
+      role: premium_generation
+    - id: flux-pro/kontext
+      role: reference_edit_transform
+    - id: gpt-image-1.5
+      role: high_fidelity_fallback
+  video:
+    - id: kling-video/v3/pro/image-to-video
+      role: default_premium_ugc_video
+    - id: kling-o3-image-to-video-pro
+      role: start_end_frame_transition
+    - id: veo-3.1
+      role: google_premium_video
+    - id: ltx-2.3/image-to-video/fast
+      role: fast_batch_video
+    - id: ltx-2.3/extend-video
+      role: video_extension
+  utilities:
+    - id: pixelcut/background-removal
+      role: background_removal
+    - id: seedvr/upscale/image
+      role: upscaling
+    - id: omnilottie/image-to-lottie
+      role: motion_graphics_export
+    - id: vecglypher/image-to-svg
+      role: vector_logo_glyph
+
+fal_production_policy:
+  default_mode: hosted_queue_endpoint
+  custom_deploy_when:
+    - custom_app_logic_needed
+    - stable_endpoint_id_required
+    - region_env_control_needed
+    - private_auth_wrapper
+  default_auth: private
+  rollout_strategy: rolling
+  n8n_integration: header_auth_json_payload

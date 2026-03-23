@@ -1,83 +1,51 @@
 # -*- coding: utf-8 -*-
 """
 IPAI Finance PPM — OKR Dashboard controller
-Serves the static HTML dashboard + a JSON data endpoint so the
-ECharts visualisations are populated with live Odoo data.
+Serves a JSON data endpoint so the OWL dashboard component
+is populated with live Odoo data.
 """
-import os
 from odoo import http
-from odoo.http import request, Response
+from odoo.http import request
 
 
 class FinancePPMDashboard(http.Controller):
 
-    # ── HTML shell ──────────────────────────────────────────────────────
-    @http.route(
-        "/finance-ppm/okr-dashboard",
-        auth="user",
-        type="http",
-        methods=["GET"],
-    )
-    def okr_dashboard(self):
-        """Serve the standalone OKR dashboard HTML page directly from the
-        static file so we avoid QWeb overhead for this self-contained doc."""
-        html_path = os.path.join(
-            os.path.dirname(__file__),
-            "../static/src/html/okr_dashboard.html",
-        )
-        with open(html_path, "r", encoding="utf-8") as f:
-            html_content = f.read()
-        return Response(html_content, content_type="text/html; charset=utf-8")
-
-    # ── Live data JSON ───────────────────────────────────────────────────
     @http.route(
         "/finance-ppm/okr-dashboard/data",
         auth="user",
-        type="jsonrpc",
+        type="json",
         methods=["POST"],
     )
     def okr_dashboard_data(self):
         """
-        Returns live task counts by stage for the Finance PPM projects.
+        Returns live task counts by stage for Finance PPM projects.
         Response shape:
           {
-            team: [{code, name, role, tasks_total, tasks_done, pct}],
+            team: [{name, tasks_total, tasks_done, pct}],
             stages: {<stage_name>: <count>},
-            totals: {total, done, in_progress, todo},
+            totals: {total, done, pct},
           }
         """
         env = request.env
 
-        # Locate the two canonical Finance PPM projects (name-match, CE-safe)
+        # Finance PPM projects identified by cost center field presence
         projects = env["project.project"].search([
-            ("name", "in", [
-                "Finance PPM - Month-End Close",
-                "Finance PPM - BIR Tax Filing",
-            ])
+            ("ipai_ppm_cost_center", "!=", False),
         ])
         project_ids = projects.ids
 
         if not project_ids:
             return {"error": "Finance PPM projects not found"}
 
-        # ── Per-user task counts ─────────────────────────────────────────
-        # TBWA\SMP Finance team logins (UID 7-16 in prod)
-        finance_logins = [
-            "khalil.veracruz@omc.com",
-            "jp.lorente@omc.com",
-            "rey.meran@omc.com",
-            "beng.manalo@omc.com",
-            "jinky.paladin@omc.com",
-            "amor.lasaga@omc.com",
-            "jasmin.ignacio@omc.com",
-            "sally.brillantes@omc.com",
-            "jhoee.oliva@omc.com",
-            "joana.maravillas@omc.com",
-        ]
-        users = env["res.users"].search([("login", "in", finance_logins)])
+        # Per-user task counts — all users assigned to Finance PPM tasks
+        all_tasks = env["project.task"].search([
+            ("project_id", "in", project_ids),
+            ("user_ids", "!=", False),
+        ])
+        user_ids = all_tasks.mapped("user_ids")
 
         team = []
-        for u in users:
+        for u in user_ids:
             assigned = env["project.task"].search_count([
                 ("project_id", "in", project_ids),
                 ("user_ids", "in", [u.id]),
@@ -90,16 +58,15 @@ class FinancePPMDashboard(http.Controller):
             pct = round(done / assigned * 100, 1) if assigned else 0
             team.append({
                 "id": u.id,
-                "login": u.login,
                 "name": u.name,
                 "tasks_total": assigned,
                 "tasks_done": done,
                 "pct": pct,
             })
 
-        # ── Stage distribution ───────────────────────────────────────────
+        # Stage distribution
         stages = env["project.task.type"].search([
-            ("project_ids", "in", project_ids)
+            ("project_ids", "in", project_ids),
         ])
         stage_counts = {}
         for s in stages:
@@ -109,9 +76,9 @@ class FinancePPMDashboard(http.Controller):
             ])
             stage_counts[s.name] = cnt
 
-        # ── Totals ───────────────────────────────────────────────────────
+        # Totals
         total = env["project.task"].search_count([
-            ("project_id", "in", project_ids)
+            ("project_id", "in", project_ids),
         ])
         done_total = env["project.task"].search_count([
             ("project_id", "in", project_ids),

@@ -37,7 +37,7 @@ consumers:
     type: co_deployed
     description: "n8n workflow automation — shares .env with Supabase compose stack"
     port: 5678
-    public_url: https://n8n-azure.insightpulseai.com
+    public_url: https://n8n.insightpulseai.com
     env_vars:
       - SUPABASE_URL
       - SUPABASE_SERVICE_ROLE_KEY
@@ -45,7 +45,7 @@ consumers:
     update_method: env_file
     update_target: /opt/supabase-deploy/.env
     restart_required: true
-    smoke_test: "curl -sf https://n8n-azure.insightpulseai.com/healthz"
+    smoke_test: "curl -sf https://n8n.insightpulseai.com/healthz"
     smoke_test_expected_status: 200
     priority: 2
 

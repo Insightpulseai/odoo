@@ -1,0 +1,112 @@
+---
+title: BIR Tax Filing (Philippines)
+description: Philippine tax compliance with TaxPulse-PH — VAT, withholding tax, income tax, and documentary stamp tax workflows.
+---
+
+# BIR Tax Filing (Philippines)
+
+InsightPulse AI supports Philippine tax compliance through the TaxPulse-PH sub-agent, which helps finance teams prepare, validate, and file BIR (Bureau of Internal Revenue) tax returns from Odoo on Cloud. It covers VAT, withholding tax, income tax, and documentary stamp tax workflows.
+
+## Supported BIR Forms
+
+### Monthly Filings
+
+| Form | Name | Due Date | Odoo Data Source |
+|------|------|----------|-----------------|
+| **2550M** | Monthly VAT Declaration | 20th of following month | `account.move` (sales/purchase VAT lines) |
+| **1601-C** | Monthly Withholding Tax on Compensation | 10th of following month | Payroll journal entries |
+| **1601-E** | Monthly Expanded Withholding Tax | 10th of following month | `account.move` (EWT lines on vendor bills) |
+| **1601-F** | Monthly Final Withholding Tax | 10th of following month | `account.move` (FWT lines) |
+| **2000** | Documentary Stamp Tax | 5th of following month | Applicable transactions |
+
+### Quarterly Filings
+
+| Form | Name | Due Date | Odoo Data Source |
+|------|------|----------|-----------------|
+| **2550Q** | Quarterly VAT Return | 25th of month after quarter end | Aggregated from 2550M |
+| **1701Q** | Quarterly Income Tax (Individual) | 45 days after quarter end | Income summary |
+| **1702Q** | Quarterly Income Tax (Corporate) | 60 days after quarter end | Income summary |
+| **2307** | Certificate of Creditable Tax Withheld at Source | With quarterly return | EWT summary per vendor |
+| **2316** | Certificate of Compensation Payment/Tax Withheld | Year-end | Payroll summary per employee |
+
+### Annual Filings
+
+| Form | Name | Due Date | Odoo Data Source |
+|------|------|----------|-----------------|
+| **1604-C** | Annual Withholding Tax on Compensation | Jan 31 | Payroll annual summary |
+| **1604-E** | Annual Expanded Withholding Tax | Mar 1 | EWT annual summary |
+| **1702** | Annual Income Tax Return (Corporate) | Apr 15 | Financial statements |
+| **2316** | Annual Employee Tax Certificate | Jan 31 | Per-employee compensation |
+
+## Tax Computation Workflow
+
+### VAT (2550M/2550Q)
+1. **Output VAT**: Sum of VAT on all customer invoices posted in the period
+2. **Input VAT**: Sum of VAT on all vendor bills posted in the period
+3. **VAT Payable** = Output VAT - Input VAT (if positive)
+4. **Excess Input VAT** = carried forward to next period (if negative)
+5. Validate: cross-check with Sales Journal and Purchase Journal totals
+
+### Expanded Withholding Tax (1601-E)
+1. Extract all vendor bills with EWT tax lines
+2. Group by ATC (Alphanumeric Tax Code) — e.g., WE010 (5%), WE050 (2%)
+3. Summarize: tax base + tax withheld per ATC
+4. Generate BIR 2307 certificates per vendor
+5. File 1601-E with eFPS or eBIR
+
+### Compensation Withholding (1601-C)
+1. Extract payroll journal entries for the period
+2. Compute: gross compensation, non-taxable, taxable, tax withheld
+3. Apply BIR tax table (graduated rates)
+4. File 1601-C
+
+## Copilot Assistance
+
+TaxPulse-PH Copilot helps by:
+
+- **Pre-filing validation**: "2550M ready. Output VAT: PHP 245,000. Input VAT: PHP 180,000. Net payable: PHP 65,000. 3 vendor bills missing VAT tax lines — review before filing."
+- **Deadline alerts**: "1601-E due in 3 days. 12 of 15 vendor 2307 certificates generated. Missing: ABC Corp, XYZ Inc, LMN Ltd."
+- **ATC mapping check**: "Vendor bill #2847 uses ATC WE010 (5% professional fees) but vendor is classified as contractor — should this be WE050 (2%)?"
+- **Period comparison**: "VAT payable this month is 40% higher than last month. Main driver: PHP 500K invoice to Client ABC."
+
+## Tax Calendar
+
+| Month | Key Deadlines |
+|-------|--------------|
+| Every month, 10th | 1601-C, 1601-E, 1601-F |
+| Every month, 20th | 2550M |
+| Every month, 5th | DST (2000) |
+| Jan 25 | 2550Q (Q4) |
+| Jan 31 | 1604-C, 2316 |
+| Mar 1 | 1604-E |
+| Apr 15 | 1702 Annual ITR |
+| Apr 25 | 2550Q (Q1) |
+| Jul 25 | 2550Q (Q2) |
+| Oct 25 | 2550Q (Q3) |
+
+## Odoo Configuration
+
+### Tax Codes Setup
+- Output VAT 12%: mapped to BIR account code
+- Input VAT 12%: mapped to BIR account code
+- EWT rates: WE010 (5%), WE020 (10%), WE050 (2%), WI010 (1%)
+- Withholding on compensation: per BIR tax table
+
+### Chart of Accounts
+- Tax payable accounts mapped to BIR form lines
+- Withholding tax accounts per ATC
+- VAT input/output clearing accounts
+
+## FAQ
+
+**Q: Does InsightPulseAI file directly with BIR?**
+A: Not yet. TaxPulse-PH prepares the data, validates it, and generates the filing-ready summary. Actual filing is done through eFPS or eBIR by your tax team. Direct eFPS integration is on the roadmap.
+
+**Q: How are tax credits and excess input VAT handled?**
+A: Excess input VAT is tracked in a carrying account and automatically applied as a credit in the next period's 2550M computation.
+
+**Q: Can it handle multiple branches or RDOs?**
+A: Yes. Multi-company Odoo setup maps each branch to its BIR-registered RDO (Revenue District Office). Each company files independently.
+
+**Q: Is AvaTax used for Philippine taxes?**
+A: No. AvaTax does not cover the Philippine market. TaxPulse-PH is the dedicated Philippine tax engine. AvaTax is benchmarked as a future complement for international tax scenarios.

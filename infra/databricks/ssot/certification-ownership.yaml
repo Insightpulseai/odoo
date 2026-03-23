@@ -1,0 +1,133 @@
+# ============================================================
+# CERTIFICATION OWNERSHIP MAPPING
+# ============================================================
+# Maps Microsoft / GitHub certifications to release ownership
+# lanes. Not prerequisites — ownership and signoff lanes.
+# Last updated: 2026-03-15
+# ============================================================
+
+schema_version: "1.0"
+
+# ----------------------------------------------------------
+# Ownership lanes
+# ----------------------------------------------------------
+ownership_lanes:
+
+  - id: infra_security_architecture
+    name: "Infrastructure, Network, Security & Architecture"
+    certifications:
+      - { id: AZ-305, name: "Azure Solutions Architect Expert" }
+      - { id: AZ-104, name: "Azure Administrator Associate" }
+      - { id: AZ-700, name: "Azure Network Engineer Associate" }
+      - { id: AZ-500, name: "Azure Security Engineer Associate" }
+      - { id: SC-100, name: "Cybersecurity Architect Expert" }
+      - { id: SC-300, name: "Identity and Access Administrator Associate" }
+      - { id: SC-200, name: "Security Operations Analyst Associate" }
+      - { id: SC-401, name: "Information Security Administrator Associate" }
+    owns:
+      - hosting_and_networking
+      - identity_and_access
+      - security_review_signoff
+      - architecture_review
+    signoff_for:
+      - R0   # policy pack, security baseline
+      - R4   # ADO integration (infra plane)
+      - R6   # managed app ARM packaging
+      - R7   # marketplace security review
+
+  - id: ai_foundry_ml
+    name: "AI, Foundry, Agent Runtime & ML/Data"
+    certifications:
+      - { id: AI-102, name: "Azure AI Engineer Associate" }
+      - { id: AI-300, name: "MLOps Engineer Associate (Beta)" }
+      - { id: AI-900, name: "Azure AI Fundamentals" }
+      - { id: DP-100, name: "Azure Data Scientist Associate" }
+      - { id: DP-750, name: "Azure Databricks Data Engineer Associate (Beta)" }
+    owns:
+      - agent_runtime
+      - foundry_configuration
+      - evaluation_pipelines
+      - ml_model_governance
+      - agent_publish_rules
+    signoff_for:
+      - R1   # Odoo Copilot — agent correctness
+      - R2   # Finance DocFlow — extraction pipeline
+      - R5   # BI connector — semantic layer quality
+
+  - id: devops_release_automation
+    name: "DevOps, Release Automation & Code Quality"
+    certifications:
+      - { id: AZ-400, name: "DevOps Engineer Expert" }
+      - { id: GH-200, name: "GitHub Actions" }
+      - { id: GH-300, name: "GitHub Copilot" }
+      - { id: GH-500, name: "GitHub Advanced Security" }
+      - { id: GH-100, name: "GitHub Administration" }
+    owns:
+      - ci_cd_pipelines
+      - release_gates
+      - code_quality_enforcement
+      - github_actions_workflows
+      - promotion_automation
+    signoff_for:
+      - R0   # CI policy enforcement
+      - R4   # ADO release-control integration
+      - R6   # packaging pipeline
+      - R7   # marketplace publish pipeline
+
+  - id: bi_analytics_fabric
+    name: "BI, Analytics & Fabric/Semantic Layer"
+    certifications:
+      - { id: PL-300, name: "Power BI Data Analyst Associate" }
+      - { id: DP-600, name: "Fabric Analytics Engineer Associate" }
+      - { id: DP-700, name: "Fabric Data Engineer Associate" }
+      - { id: DP-800, name: "SQL AI Developer Associate (Beta)" }
+      - { id: DP-300, name: "Azure Database Administrator Associate" }
+      - { id: DP-900, name: "Azure Data Fundamentals" }
+    owns:
+      - bi_semantic_layer
+      - tableau_connector
+      - governed_metric_exports
+      - data_product_definitions
+    signoff_for:
+      - R5   # Power BI / BI connector
+
+  - id: business_agent_packaging
+    name: "Business Agent Packaging & Go-to-Market"
+    certifications:
+      - { id: AB-100, name: "Agentic AI Business Solutions Architect" }
+      - { id: AB-730, name: "AI Business Professional" }
+      - { id: AB-731, name: "AI Transformation Leader" }
+      - { id: AB-900, name: "AI Business Solutions Fundamentals" }
+    owns:
+      - offer_registry
+      - go_to_market_framing
+      - commercial_packaging_decisions
+      - business_value_validation
+    signoff_for:
+      - R6   # first installable product
+      - R7   # external commercial packaging
+
+  - id: dynamics_erp
+    name: "Dynamics 365 / ERP Functional"
+    certifications:
+      - { id: MB-310, name: "Dynamics 365 Finance Functional Consultant" }
+      - { id: MB-330, name: "Dynamics 365 Supply Chain Management" }
+      - { id: MB-800, name: "Dynamics 365 Business Central Functional Consultant" }
+      - { id: MB-820, name: "Dynamics 365 Business Central Developer" }
+      - { id: MB-700, name: "D365 Finance and Operations Apps Solution Architect Expert" }
+    owns:
+      - erp_domain_validation
+      - odoo_to_d365_mapping
+      - finance_workflow_correctness
+    signoff_for:
+      - R1   # Odoo Copilot — domain correctness
+      - R2   # Finance DocFlow — business logic
+
+# ----------------------------------------------------------
+# Rules
+# ----------------------------------------------------------
+rules:
+  - "Certifications are ownership lanes, not prerequisites for starting work"
+  - "Use to decide who signs off, who owns the lane, which releases are credible"
+  - "At least one person from the relevant lane must approve promotion"
+  - "Cross-lane releases require signoff from all involved lanes"

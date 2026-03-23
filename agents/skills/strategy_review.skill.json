@@ -1,0 +1,19 @@
+{
+  "name": "strategy_review",
+  "version": "1.0.0",
+  "description": "Review strategic goals for alignment, progress, and risk. Generates evidence-backed status synthesis for executive and strategy modes.",
+  "intent": "Evaluate strategic goal health and generate status narrative",
+  "inputs": [
+    {"name": "goal_id", "type": "integer", "description": "Odoo goal record ID", "required": true},
+    {"name": "review_depth", "type": "string", "description": "summary | detailed | full", "required": false, "default": "summary"},
+    {"name": "include_sub_goals", "type": "boolean", "description": "Include cascaded sub-goals in review", "required": false, "default": true}
+  ],
+  "outputs": [
+    {"name": "status_narrative", "type": "string", "description": "Evidence-backed goal status narrative"},
+    {"name": "risk_level", "type": "string", "description": "low | medium | high | critical"},
+    {"name": "evidence_citations", "type": "array", "description": "List of evidence sources cited"},
+    {"name": "confidence_score", "type": "float", "description": "Synthesis confidence (0.0-1.0)"}
+  ],
+  "kb_segments": ["kb_strategy", "kb_execution"],
+  "agentInstructions": "When invoked, read the goal record from Odoo, collect evidence from linked tasks and key results, synthesize a status narrative with citations, and assess risk level. Never invent progress data. Confidence below 0.85 triggers human review."
+}

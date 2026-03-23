@@ -1,0 +1,41 @@
+version: 1
+name: task-router
+status: proposed
+
+authority:
+  spec_bundle: spec/task-router-hardening
+  schemas:
+    envelope: ssot/agents/task_envelope.schema.json
+    dead_letter: ssot/agents/dead_letter_record.schema.json
+    metrics: ssot/agents/task_router_metrics_contract.yaml
+
+delivery:
+  semantics: at-least-once
+  duplicate_detection_required: true
+  claim_mode: lease
+  fail_closed_on_malformed_envelope: true
+
+lease:
+  enabled: true
+  duration_seconds: 60
+  reclaim_after_expiry: true
+
+retry:
+  max_attempts: 5
+  strategy: exponential_backoff
+  base_delay_seconds: 5
+  dead_letter_on_exhaustion: true
+
+dedupe:
+  key_format: "<task_id>:<worker_kind>:<attempt_group>"
+  duplicate_policy: suppress_and_record
+
+dead_letter:
+  required: true
+  immutable_records: true
+  schema: ssot/agents/dead_letter_record.schema.json
+
+observability:
+  metrics_path: /metrics
+  health_path: /healthz
+  audit_events_required: true

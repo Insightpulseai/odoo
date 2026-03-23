@@ -1,0 +1,18 @@
+schema: ipai.passport.v1
+id: odoo-sage
+version: 0.1.0
+name: Odoo Sage
+domain: odoo
+stage: S03
+maturity: L1
+contract_ref: agents/contracts/odoo-sage.manifest.yaml
+skills:
+  - odoo-orm
+  - python-ast
+kill_switch:
+  enabled: true
+  active: false
+owners:
+  - engineering@insightpulseai.com
+created_at: '2026-03-20T00:00:00Z'
+updated_at: '2026-03-20T00:00:00Z'

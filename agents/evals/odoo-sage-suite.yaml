@@ -1,0 +1,12 @@
+id: odoo-sage-core-suite
+name: Odoo Sage Core Capabilities
+description: Baseline evaluations for Odoo domain knowledge
+target_agent_id: odoo-sage
+pass_threshold: 0.8
+test_cases:
+  - id: core-orm-model
+    input: "Create an Odoo 17 model for a Library Book with title and author."
+    expected_output: "models.Model.*_name\\s*=\\s*'library.book'"
+  - id: compute-method
+    input: "Write a compute method for total price from qty and unit_price."
+    expected_output: "@api.depends"

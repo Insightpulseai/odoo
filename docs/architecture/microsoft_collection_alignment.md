@@ -114,6 +114,30 @@ assessment evidence, promotion/readiness gates.
 
 ---
 
+## 7. SaaS Workload Documentation (Azure Well-Architected — SaaS Track)
+
+Microsoft expects: SaaS-specific design decisions across nine design areas,
+plus use of the SaaS assessment tool as an architecture readiness gate.
+This is the **primary SaaS design authority** for the platform — supersedes generic CAF
+for SaaS-specific design areas.
+
+Ref: https://learn.microsoft.com/en-us/azure/architecture/guide/saas/plan-journey-saas
+
+| Expected Output | Repo Artifact | Epic | Status |
+|----------------|---------------|------|--------|
+| Resource organization | `infra/ssot/azure/resources.yaml`, `infra/ssot/azure/rg-normalization-matrix.yaml` | OBJ-001 | Complete |
+| Identity and access management | `infra/ssot/security/access_model.yaml`, `infra/ssot/security/entra_groups.yaml` | OBJ-001/FEAT-001-01 | Documented, partial |
+| Compute | `infra/ssot/azure/service-matrix.yaml` | OBJ-001 | Complete |
+| Networking | `infra/dns/subdomain-registry.yaml`, `docs/architecture/target-platform-architecture.md` §Plane 2 | OBJ-001 | Complete |
+| Data | `data-intelligence/CLAUDE.md` (4-lane model), `docs/architecture/enterprise_data_platform.md` | OBJ-004 | Complete |
+| Billing and cost management | `docs/architecture/saas_billing_metering.md`, `ssot/governance/platform-strategy-2026.yaml` | OBJ-001 | **Partial** — design authority documented, implementation deferred |
+| Governance | `ssot/governance/platform-constitution.yaml`, `ssot/governance/operating-model.yaml` | — | Complete |
+| DevOps practices | `ssot/governance/azdo-execution-hierarchy.yaml`, `.github/workflows/` | OBJ-005 | Complete |
+| Incident management | `docs/architecture/reliability_operating_model.md` §9 (SaaS incident model) | OBJ-001/FEAT-001-03 | **Partial** — SaaS/tenant-aware playbook documented, not yet exercised |
+| SaaS assessment (readiness gate) | `docs/architecture/target-platform-architecture.md` §SaaS Readiness Gate | — | **Not run** — gate defined, assessment not yet executed |
+
+---
+
 ## Intentionally Out of Scope
 
 | Microsoft Reference | Why Excluded |
@@ -123,7 +147,6 @@ assessment evidence, promotion/readiness gates.
 | Power Platform / Dataverse | Not in stack. Supabase + n8n cover equivalent automation surface. |
 | Microsoft Fabric (full) | Using Databricks as primary. Fabric referenced only for Tableau connector. |
 | Dynamics 365 Copilot | Using Azure AI Foundry agents, not D365 Copilot. Mapped in AI_CONSOLIDATION_FOUNDRY.md. |
-| Multi-tenant architecture | Single-tenant platform (per project charter constraints). |
 
 ---
 
@@ -135,4 +158,4 @@ Each alignment claim must be backed by one of:
 - An execution Epic/Feature in `azdo-execution-hierarchy.yaml`
 - An explicit "Gap" or "New" marker for artifacts being created
 
-*Last updated: 2026-03-17*
+*Last updated: 2026-03-21*

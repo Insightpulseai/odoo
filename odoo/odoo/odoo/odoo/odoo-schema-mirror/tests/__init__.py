@@ -1,1 +1,0 @@
-# Odoo Schema Mirror Tests

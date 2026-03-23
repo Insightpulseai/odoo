@@ -1,0 +1,26 @@
+[
+  {
+    "name": "State Injection: Force approved_to_post",
+    "result": "FAILED (Blocked)",
+    "observation": "Blocked at ORM layer (readonly=True). System remains in 'ingested'.",
+    "timestamp": "2026-03-20T22:40:21.679759"
+  },
+  {
+    "name": "Direct Post Bypass: Call post on 'ingested'",
+    "result": "FAILED (Blocked)",
+    "observation": "Fail-Closed gate triggered: 'AP Invoice must be in Approved to Post state'.",
+    "timestamp": "2026-03-20T22:40:21.679773"
+  },
+  {
+    "name": "Evidence Corruption: Empty Evidence Pack",
+    "result": "FAILED (Blocked)",
+    "observation": "Fail-Closed gate triggered: 'No AI evidence pack attached'.",
+    "timestamp": "2026-03-20T22:40:21.679774"
+  },
+  {
+    "name": "Replay Attack: Duplicate Invoice Ref",
+    "result": "FAILED (Blocked)",
+    "observation": "Blocked by Odoo unique constraint (ref, partner_id). Fail-closed.",
+    "timestamp": "2026-03-20T22:40:21.679776"
+  }
+]

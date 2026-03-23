@@ -1,0 +1,46 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "ipai.gate-result.v1",
+  "title": "Stage Gate Result",
+  "description": "Machine-verifiable result of an automated stage gate assessment",
+  "type": "object",
+  "properties": {
+    "gate_id": {
+      "type": "string",
+      "description": "Identifier for the specific gate transition (e.g. S04-to-S05)"
+    },
+    "stage_from": {
+      "type": "string",
+      "pattern": "^S(0[1-9]|1[0-6])$"
+    },
+    "stage_to": {
+      "type": "string",
+      "pattern": "^S(0[1-9]|1[0-6])$"
+    },
+    "criteria": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string" },
+          "result": { "type": "string", "enum": ["pass", "fail"] },
+          "evidence_ref": { "type": "string" },
+          "evaluated_at": { "type": "string", "format": "date-time" }
+        },
+        "required": ["name", "result", "evaluated_at"]
+      }
+    },
+    "overall_result": {
+      "type": "string",
+      "enum": ["pass", "fail"],
+      "description": "Binary overall result (fails if any criteria fails)"
+    },
+    "evaluated_by": {
+      "type": "string",
+      "description": "The worker node, action, or user that executed the gate"
+    }
+  },
+  "required": [
+    "gate_id", "stage_from", "stage_to", "criteria", "overall_result", "evaluated_by"
+  ]
+}

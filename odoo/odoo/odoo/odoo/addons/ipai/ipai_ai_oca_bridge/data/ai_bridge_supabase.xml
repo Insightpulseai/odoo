@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<odoo>
-    <data noupdate="1">
-        <record id="bridge_supabase_edge" model="ai.bridge">
-            <field name="name">Supabase Edge (IPAI)</field>
-            <field name="description">Default bridge routing through Supabase Edge Functions via ipai.ai.provider.</field>
-        </record>
-    </data>
-</odoo>

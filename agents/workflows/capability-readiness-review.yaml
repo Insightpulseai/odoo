@@ -1,0 +1,96 @@
+# Workflow: Capability Readiness Review
+# Assesses people or agent readiness for role/environment promotion.
+
+id: capability-readiness-review
+name: Capability Readiness Review
+version: 1.0.0
+domain: capability
+source: Diva Goals Product Family
+created: 2026-03-23
+
+trigger:
+  type: scheduled_or_promotion_request
+  schedule: quarterly
+  filters:
+    entity_type:
+      - person
+      - agent
+      - team
+
+input_schema:
+  required:
+    - entity_type
+    - entity_id
+  properties:
+    entity_type:
+      type: string
+      enum: [person, agent, team]
+    entity_id:
+      type: integer
+      description: Odoo record ID for the entity
+    target_role:
+      type: integer
+      description: Target role ID for gap analysis (optional)
+    target_environment:
+      type: string
+      enum: [staging, production]
+      description: For agent promotion assessments
+
+steps:
+  - id: orchestrate
+    name: Initialize Readiness Review
+    agent: diva_orchestrator
+    action: workflow.initialize
+    inputs:
+      workflow_id: capability-readiness-review
+      entity_type: "{{ input.entity_type }}"
+      entity_id: "{{ input.entity_id }}"
+
+  - id: map_capabilities
+    name: Map Current Capabilities
+    agent: capability_mapper
+    action: capability.map
+    inputs:
+      entity_type: "{{ input.entity_type }}"
+      entity_id: "{{ input.entity_id }}"
+      target_role: "{{ input.target_role }}"
+    outputs:
+      - gap_matrix
+      - critical_gaps
+      - gap_score
+
+  - id: judge_readiness
+    name: Assess Readiness
+    agent: readiness_judge
+    action: readiness.assess
+    inputs:
+      entity_type: "{{ input.entity_type }}"
+      entity_id: "{{ input.entity_id }}"
+      gap_matrix: "{{ steps.map_capabilities.outputs.gap_matrix }}"
+      target_environment: "{{ input.target_environment }}"
+    outputs:
+      - readiness_verdict
+      - blockers
+      - conditions
+
+  - id: route_approval
+    name: Route Readiness Assessment
+    agent: approval_coordinator
+    action: approval.route
+    inputs:
+      proposal_type: readiness_assessment
+      verdict: "{{ steps.judge_readiness.outputs.readiness_verdict }}"
+      blockers: "{{ steps.judge_readiness.outputs.blockers }}"
+    outputs:
+      - approval_status
+
+output_schema:
+  properties:
+    readiness_verdict:
+      type: string
+    gap_matrix:
+      type: object
+    blockers:
+      type: array
+    approval_status:
+      type: string

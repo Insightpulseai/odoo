@@ -3,7 +3,7 @@
 > Consolidated view of all system domains, data flows, integration surfaces,
 > and the target end state for the InsightPulse AI platform.
 >
-> **Architecture model:** Six-plane Azure-first. Within this model, Odoo CE 19
+> **Architecture model:** Azure SaaS Workload Framework (9 design areas). Within this model, Odoo CE 19
 > serves as the transactional system of record, Azure Databricks + ADLS/Delta +
 > Unity Catalog serves as the governed data intelligence core, and Microsoft
 > Foundry serves as the agent factory and hosted agent runtime plane.
@@ -37,13 +37,14 @@
 | Control Plane | Supabase (`spdtwktxdalcfigzeqrz`) |
 | Analytical Lake | Azure Data Lake Storage Gen2 |
 | AI Compute | Azure AI Foundry |
-| BI | Tableau Cloud (consuming ADLS gold) |
+| BI | Power BI (mandatory; live connection to Unity Catalog) |
 | Automation | n8n (self-hosted on Azure) |
 | Identity | Microsoft Entra ID (SSO plane) |
 | Chat | Slack |
 | DNS | Cloudflare (delegated from Spacesquare) |
 | Mail | Zoho SMTP (`smtp.zoho.com:587`) |
 | Secrets | Azure Key Vault (`kv-ipai-dev`) |
+| Productivity Surface | Microsoft 365 Copilot / Copilot Agents |
 
 ---
 
@@ -112,9 +113,9 @@
                     ┌──────────┼──────────┐
                     │          │          │
               ┌─────▼────┐ ┌──▼───────┐ ┌▼──────────────┐
-              │ Tableau   │ │ Azure AI │ │ Reverse ETL   │
-              │ Cloud     │ │ Foundry  │ │ (bounded)     │
-              │ (BI/viz)  │ │ (ML/AI)  │ │               │
+              │ Power BI  │ │ Azure AI │ │ Reverse ETL   │
+              │ (BI/viz)  │ │ Foundry  │ │ (bounded)     │
+              │ (ML/AI)   │ │ (ML/AI)  │ │               │
               └───────────┘ └──────────┘ └───────────────┘
 ```
 
@@ -129,15 +130,18 @@ Every system has exactly one role. No system may claim authority beyond its desi
 | **Odoo CE 19** | System of Record (SoR) | Accounting, invoicing, projects, tasks, BIR filings, employees, vendors, analytic accounts, expense documents | Identity, platform events, vector embeddings |
 | **Supabase** | Single Source of Truth (SSOT) | Platform control plane, app metadata, workflow state, vector embeddings, agent memory, Auth identity, Edge Function state | ERP data, accounting, HR |
 | **ADLS Gen2** | Analytical Lake | Replicated bronze/silver/gold datasets, ML features, BI marts, reverse ETL staging | Nothing operational |
-| **Azure AI Foundry** | Compute Only | Model training, scoring, embedding generation | No data ownership |
+| **Azure AI Foundry** | Compute Only | Model training, scoring, hosting, agent runtime, tracing, evaluations | No data ownership |
+| **Document Intelligence** | Extraction Authority | Specialized OCR, invoice/receipt parsing, document classification | No operational state |
 | **SAP Concur** | SoR (T&E) | Expense reports, travel bookings, invoice captures | ERP posting, tax compliance |
 | **SAP Joule** | Copilot Surface | Conversational interface, Microsoft 365 interop | No data ownership, no direct writes |
-| **Tableau Cloud** | Presentation Only | BI dashboards consuming ADLS gold | No data ownership |
+| **Power BI** | Presentation Only | BI dashboards and reports | No data ownership |
 | **n8n** | Automation | Workflow orchestration, event routing | No data ownership |
 | **Slack** | Communication | ChatOps, notifications, alerts | No data ownership |
 | **Cloudflare** | Edge DNS | DNS resolution, CDN | No data ownership |
 | **Azure Key Vault** | Secrets Store | All credentials, tokens, API keys | No application data |
 | **Microsoft Entra ID** | Identity Plane | SSO federation, SAML/OIDC tokens | No application data |
+| **Databricks Apps** | Data Agent Runtime | RAG, lakehouse retrieval, data-intelligence agents (ResponsesAgent) | Transactional SoR |
+| **M365 Copilot** | Productivity Surface | User-facing assistant, delivery channel | Not a core runtime, no data ownership |
 
 ---
 
@@ -146,10 +150,10 @@ Every system has exactly one role. No system may claim authority beyond its desi
 ### 4.1 ETL Flows (Inbound to ADLS)
 
 ```
-Supabase ──► ADLS Bronze    (incremental batch, daily/hourly)
+Supabase ──► Databricks Bronze    (incremental batch, daily/hourly)
   auth.users, platform_events, ops.task_queue
 
-Odoo ──► ADLS Bronze        (Extract API, daily/weekly)
+Odoo ──► Fabric Mirroring ──► OneLake/Bronze (CDC)
   account.move, project.project, hr.employee, bir.tax.return
 
 SAP Concur ──► Odoo         (API sync, on-submit/daily)
@@ -159,11 +163,11 @@ SAP Concur ──► Odoo         (API sync, on-submit/daily)
 ### 4.2 Transform Flows (ADLS Internal)
 
 ```
-Bronze (raw, append-only, schema-on-read)
-  ↓ dedup, type casting, null handling
-Silver (normalized, typed, deduplicated)
-  ↓ business logic, aggregation, cross-source resolution
-Gold (curated, business-ready)
+Bronze (raw Delta/UniForm, append-only, schema-on-read)
+  ↓ dedup, type casting, null handling (Databricks)
+Silver (normalized, typed, deduplicated Delta)
+  ↓ business logic, aggregation, cross-source resolution (dbt)
+Gold (curated Delta, business-ready)
   ├── finance/       (budget, actuals, variance)
   ├── projects/      (portfolio, resource, timeline)
   ├── compliance/    (BIR filing status, deadlines)
@@ -189,7 +193,8 @@ All reverse ETL is **bounded, typed, and contract-governed**.
 | Expense sync | SAP Concur | Odoo `account.move` (draft) | Azure relay function |
 | Joule read | SAP Joule | Odoo (read-only) | Azure relay function |
 | Joule bounded write | SAP Joule | Odoo `x_forecast_*` | Azure relay + field guard |
-| Entra SSO | Entra ID | SAP Concur + Odoo | SAML/OIDC federation |
+| Entra SSO | Entra ID | SAP Concur + Odoo + M365 Copilot | SAML/OIDC federation |
+| M365 Copilot Channel | M365 Agents SDK | `agent-platform` APIs | Integration surface |
 
 ---
 
@@ -264,7 +269,7 @@ Identity flow:
 | Infrastructure | Azure Monitor | Container Apps, Front Door, ADLS |
 | Application | Odoo logs + n8n execution logs | Container stdout/stderr |
 | Data Pipeline | ADLS `audit/` zone | Run logs, watermarks, lineage, quarantine |
-| BI | Tableau Cloud | ADLS gold layer |
+| BI | Power BI | Databricks SQL / Unity Catalog |
 | Alerting | Slack via n8n | Pipeline failures, anomaly detection |
 | Schema | ADLS `audit/evidence/` | Schema drift detection per flow |
 
@@ -290,7 +295,7 @@ Identity flow:
 
 ### Phase 3 — Reverse ETL + BI
 - [ ] Bounded reverse ETL: scoring writeback, enrichment writeback, read model refresh
-- [ ] Tableau Cloud connected to ADLS gold
+- [ ] Power BI connected to Unity Catalog
 - [ ] Field-level write guards enforced per contract
 - [ ] Idempotency enforcement on all writeback flows
 
@@ -307,6 +312,12 @@ Identity flow:
 - [ ] Scoring writeback to Supabase/Odoo enrichment columns
 - [ ] Supabase pgvector for operational RAG (semantic search, agent memory)
 
+### Phase 6 — M365 Copilot Readiness
+- [ ] Microsoft 365 Copilot readiness assessment complete
+- [ ] M365 Agents SDK established as channel adapter layer
+- [ ] Identity/authz posture for Copilot validated in Entra
+- [ ] Pre-built vs build-your-own agent policy defined
+
 ### Phase 6 — EE Parity
 - [ ] >= 80% weighted EE parity score
 - [ ] All P0 modules live: bank reconciliation, financial reports, payroll, approvals
@@ -322,6 +333,9 @@ Identity flow:
 | ADLS as operational data source | ADLS is analytical only | Read from Odoo/Supabase directly |
 | Generic "sync" between systems | Unbounded, untyped | Use classified reverse ETL types |
 | Direct Joule → Odoo writes | Bypasses mediation + audit | Route through Azure relay function |
+| M365 Copilot as Runtime | Architectural blur | Use `agent-platform` as core runtime |
+| Databricks as Universal Agent Runtime | Scope creep | Reserve for data-intelligence/RAG agents; use Foundry for operational agents |
+| Foundry Local in Production | Reliability risk | Local prototyping/dev only; use Microsoft Foundry for production |
 | Posted accounting entry mutation | Regulatory immutability | Create reversal/correction entries |
 | Secrets in repo | Security | Azure Key Vault + managed identity |
 | Vercel deployments | Deprecated | Azure Container Apps |
@@ -332,16 +346,18 @@ Identity flow:
 
 ---
 
-## 11. Open Decisions
+## 11. Settled Decisions (Mandatory Controls)
 
-| Decision | Options | Recommendation | Status |
-|----------|---------|----------------|--------|
-| Databricks required? | Yes / No | Optional — introduce for ML/complex transforms only | Open |
-| Delta Lake format? | Mandatory / Optional | Optional — Parquet baseline sufficient | Open |
-| Reverse ETL orchestrator | Azure Functions / Data Factory / Databricks | Azure Functions for simplicity | Open |
-| Supabase CDC mechanism | Realtime / Logical replication / Batch | Incremental batch first | Open |
-| Odoo extraction method | Extract API / JSON-2 API / DB replica | Extract API primary | Open |
-| ADLS region | `southeastasia` / other | `southeastasia` (co-locate with ACA) | Open |
+| Decision | Selection | Status |
+|----------|-----------|--------|
+| Databricks required? | Yes — mandatory engineering and governance core | Settled |
+| Unity Catalog required? | Yes — mandatory governance plane | Settled |
+| Delta Lake format? | Mandatory (UniForm on ADLS Gen2) | Settled |
+| Primary BI Surface | Power BI (connected to Unity Catalog) | Settled |
+| SaaS Design Authority | Azure SaaS Workload Documentation | Settled |
+| Fabric Role | Complementary mirroring and semantic integration | Settled |
+| Reverse ETL orchestrator | Azure Functions / Databricks Jobs | Settled |
+| ADLS region | `southeastasia` (co-locate with ACA) | Settled |
 
 ---
 

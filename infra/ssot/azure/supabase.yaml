@@ -36,7 +36,7 @@ network_notes: >
   VM is internal origin. All services bound to 127.0.0.1.
   Kong (8000/8443), n8n (5678), Pooler (5432/6543) — all localhost-only.
   Nginx reverse proxy routes supabase.insightpulseai.com → Kong,
-  n8n-azure.insightpulseai.com → n8n. NSG allows only SSH(22) + HTTP/S(80,443).
+  n8n.insightpulseai.com → n8n. NSG allows only SSH(22) + HTTP/S(80,443).
   TLS via Cloudflare proxy (transition) → Azure Front Door (target).
 
 nsg_rules:
@@ -201,12 +201,12 @@ dns:
       proxied: true
       backend: "nginx → Kong :8000"
       notes: "Supabase API gateway"
-    - subdomain: n8n-azure
+    - subdomain: n8n
       type: A
       target: "4.193.100.31"
       proxied: true
       backend: "nginx → n8n :5678"
-      notes: "n8n workflow automation (Azure)"
+      notes: "n8n workflow automation"
 
 # ---------------------------------------------------------------------------
 # Services (actual deployed — official supabase/docker repo)
@@ -291,7 +291,7 @@ services:
       data_volume: /opt/supabase-deploy/n8n-data
       database: n8n (on supabase-db)
       encryption_key: "Key Vault: n8n-encryption-key (CRITICAL)"
-      webhook_url: "https://n8n-azure.insightpulseai.com"
+      webhook_url: "https://n8n.insightpulseai.com"
 
 # ---------------------------------------------------------------------------
 # Cost Estimate (monthly, southeastasia)

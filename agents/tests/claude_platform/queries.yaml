@@ -1,0 +1,108 @@
+# Claude Platform KB — Retrieval Smoke Tests
+# Version: 1.0.0
+# Created: 2026-03-23
+# Purpose: Retrieval queries to verify the Claude Platform KB covers
+#   tool-use doctrine, web search, and agent tooling patterns.
+#   Run against the claude-platform-kb Azure AI Search index.
+
+version: 1
+kb_id: claude_platform
+test_type: retrieval_smoke
+
+queries:
+  # --- Tool Taxonomy ---
+  - id: tool-use-client-vs-server
+    query: "What is the difference between Claude client tools and server tools?"
+    expected_facets: [client_tools, server_tools, tool_use]
+    expected_content:
+      - "client tools" or "you implement"
+      - "server tools" or "Anthropic runs"
+    source: https://platform.claude.com/docs/en/agents-and-tools/tool-use/overview
+
+  - id: tool-execution-loop
+    query: "How does the Claude tool execution loop work?"
+    expected_facets: [tool_execution_loop, tool_results]
+    expected_content:
+      - "tool_use" or "tool_result"
+      - "execution loop"
+
+  # --- Strict Tool Use ---
+  - id: strict-tool-use
+    query: "When should strict tool use be enabled for Claude tools?"
+    expected_facets: [strict_tool_use, tool_schemas]
+    expected_content:
+      - "strict" or "strict:true"
+      - "schema-valid" or "guaranteed"
+    source: https://platform.claude.com/docs/en/agents-and-tools/tool-use/overview
+
+  # --- Web Search Parameters ---
+  - id: web-search-parameters
+    query: "What parameters does Claude web search support?"
+    expected_facets: [web_search, max_uses, allowed_domains]
+    expected_content:
+      - "web_search_20250305"
+      - "max_uses"
+      - "allowed_domains" or "blocked_domains"
+    source: https://platform.claude.com/docs/en/agents-and-tools/tool-use/web-search-tool
+
+  - id: web-search-domain-rules
+    query: "How do allowed_domains and blocked_domains work in Claude web search?"
+    expected_facets: [allowed_domains, blocked_domains, web_search]
+    expected_content:
+      - "allowed_domains" and "blocked_domains"
+      - "not both" or "one or the other"
+    source: https://platform.claude.com/docs/en/agents-and-tools/tool-use/web-search-tool
+
+  # --- Citations ---
+  - id: web-search-citations
+    query: "What citation behavior does Claude web search provide?"
+    expected_facets: [citations, web_search]
+    expected_content:
+      - "citations"
+      - "always" or "enabled"
+    source: https://platform.claude.com/docs/en/agents-and-tools/tool-use/web-search-tool
+
+  # --- Pricing ---
+  - id: web-search-pricing
+    query: "How is Claude web search billed?"
+    expected_facets: [web_search_pricing, web_search]
+    expected_content:
+      - "$10" or "10 dollars"
+      - "1,000 searches" or "1000 searches"
+      - "failed searches" and "not billed"
+    source: https://platform.claude.com/docs/en/agents-and-tools/tool-use/web-search-tool
+
+  # --- MCP Conversion ---
+  - id: mcp-tool-conversion
+    query: "How do MCP tools convert to Claude tool definitions?"
+    expected_facets: [mcp_tool_conversion, tool_schemas]
+    expected_content:
+      - "MCP" and "tool"
+      - "convert" or "map"
+    source: https://platform.claude.com/docs/en/agents-and-tools/tool-use/overview
+
+  # --- Pause Turn ---
+  - id: server-tool-pause-turn
+    query: "What is pause_turn behavior for Claude server tools?"
+    expected_facets: [pause_turn, server_tools]
+    expected_content:
+      - "pause_turn"
+      - "server" or "inference"
+    source: https://platform.claude.com/docs/en/agents-and-tools/tool-use/overview
+
+  # --- Agent Design Impact ---
+  - id: web-search-vs-internal-kb
+    query: "Should Claude web search be used instead of internal knowledge bases?"
+    expected_facets: [web_search]
+    expected_answer_direction: >
+      No. Web search is for external freshness and public docs.
+      Internal truth comes from governed KB segments (tax policy,
+      Odoo state, approval decisions). Web search is augmentation,
+      not authority.
+
+pass_criteria:
+  minimum_queries_passing: 8
+  total_queries: 10
+  notes: >
+    A query passes if at least one chunk from the expected source
+    appears in the top-5 retrieval results and matches expected facets.

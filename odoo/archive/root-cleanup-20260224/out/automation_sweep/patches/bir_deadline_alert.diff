@@ -1,4 +1,0 @@
---- a/workflows/finance_ppm/bir_deadline_alert.json
-+++ b/automations/n8n/workflows/bir_deadline_alert.json
-@@ Move stray workflow to canonical location @@
-# git mv 'workflows/finance_ppm/bir_deadline_alert.json' 'automations/n8n/workflows/bir_deadline_alert.json'

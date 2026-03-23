@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <!-- Pasig Head Office -->
+        <record id="branch_pasig_ho" model="operating.branch">
+            <field name="name">Pasig Head Office</field>
+            <field name="code">PASIG-HO</field>
+            <field name="tin">215-308-716</field>
+            <field name="branch_code">00000</field>
+            <field name="rdo_code">044</field>
+            <field name="rdo_name">Revenue District Office No. 044 - Pasig City</field>
+            <field name="registered_address">521 Callista Bldg, Levina Place, Jenny's Ave Ext, Maybunga, Pasig City</field>
+            <field name="trade_name">TBWA\SMP</field>
+            <field name="bir_registered_name">TBWA\SMP (PHILS), INC.</field>
+            <field name="is_head_office" eval="True"/>
+            <field name="vat_registered" eval="True"/>
+        </record>
+
+        <!-- Makati Warehouse 9 -->
+        <record id="branch_makati_w9" model="operating.branch">
+            <field name="name">Makati Warehouse 9</field>
+            <field name="code">MAKATI-W9</field>
+            <field name="tin">215-308-716</field>
+            <field name="branch_code">00001</field>
+            <field name="rdo_code">049</field>
+            <field name="rdo_name">Revenue District Office No. 049 - Makati City South</field>
+            <field name="registered_address">Warehouse 9, La Fuerza Plaza, 2241 Don Chino Roces Ave, Bangkal, Makati City</field>
+            <field name="trade_name">TBWA\SMP</field>
+            <field name="bir_registered_name">TBWA\SMP (PHILS), INC.</field>
+            <field name="is_head_office" eval="False"/>
+            <field name="vat_registered" eval="True"/>
+        </record>
+
+    </data>
+</odoo>

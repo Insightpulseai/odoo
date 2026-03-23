@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: task-router
+  labels:
+    service_name: task_router
+    runtime_profile: task_router
+    environment: prod
+    promotion_policy: strict
+spec:
+  replicas: 2
+  template:
+    spec:
+      containers:
+      - name: router
+        image: insightpulse/task-router:latest
+        resources:
+          requests:
+            cpu: "250m"
+            memory: "256Mi"
+          limits:
+            cpu: "500m"
+            memory: "512Mi"
+        livenessProbe:
+          httpGet:
+            path: /healthz
+            port: 8081
+          timeoutSeconds: 5
+          failureThreshold: 3
+        readinessProbe:
+          httpGet:
+            path: /readyz
+            port: 8081
+          timeoutSeconds: 5
+          failureThreshold: 3
+        envFrom:
+        - secretRef:
+            name: router-secrets
+        volumeMounts:
+        - name: router-storage
+          mountPath: /data
+      volumes:
+      - name: router-storage
+        persistentVolumeClaim:
+          claimName: substrate-declared-storage-claim

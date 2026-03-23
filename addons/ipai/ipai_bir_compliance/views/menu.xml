@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Root menu under Accounting -->
+    <menuitem id="bir_compliance_menu_root"
+              name="BIR Compliance"
+              parent="account.menu_finance"
+              sequence="81"
+              groups="ipai_bir_compliance.group_bir_compliance_user"/>
+
+    <!-- Filing Calendar -->
+    <menuitem id="bir_compliance_menu_calendar"
+              name="Filing Calendar"
+              parent="bir_compliance_menu_root"
+              action="l10n_ph_bir_period_action_calendar"
+              sequence="10"/>
+
+    <!-- Filing Obligations -->
+    <menuitem id="bir_compliance_menu_obligations"
+              name="Filing Obligations"
+              parent="bir_compliance_menu_root"
+              action="l10n_ph_bir_obligation_action"
+              sequence="20"/>
+
+    <!-- Filed Returns -->
+    <menuitem id="bir_compliance_menu_filings"
+              name="Filed Returns"
+              parent="bir_compliance_menu_root"
+              action="l10n_ph_bir_filing_action"
+              sequence="30"/>
+
+    <!-- Configuration -->
+    <menuitem id="bir_compliance_menu_config"
+              name="Configuration"
+              parent="bir_compliance_menu_root"
+              sequence="90"
+              groups="ipai_bir_compliance.group_bir_compliance_manager"/>
+
+    <menuitem id="bir_compliance_menu_forms"
+              name="BIR Forms"
+              parent="bir_compliance_menu_config"
+              action="l10n_ph_bir_form_action"
+              sequence="10"/>
+
+    <menuitem id="bir_compliance_menu_deadline_rules"
+              name="Deadline Rules"
+              parent="bir_compliance_menu_config"
+              action="l10n_ph_bir_deadline_rule_action"
+              sequence="20"/>
+
+    <menuitem id="bir_compliance_menu_service_endpoints"
+              name="Service Endpoints"
+              parent="bir_compliance_menu_config"
+              action="l10n_ph_bir_service_endpoint_action"
+              sequence="30"/>
+
+</odoo>

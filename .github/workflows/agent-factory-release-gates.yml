@@ -1,0 +1,56 @@
+name: Agent Factory Release Gates
+on: 
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  validate-release-eligibility:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Validate Release SSOT and Schema
+        run: |
+          npm install -g ajv-cli
+          ajv validate -s ssot/release/production_eligibility.schema.json -d docs/evidence/2026-03-20/agent-factory/production-eligibility.json
+
+      - name: Verify Subsystem Acceptance Artifacts
+        run: |
+          test -f docs/evidence/2026-03-20/foundry-supervisor/acceptance.json
+          test -f docs/evidence/2026-03-20/task-router/acceptance.json
+          test -f docs/evidence/2026-03-20/eval-engine/acceptance.json
+          test -f docs/evidence/2026-03-20/agent-deployments/acceptance.json
+
+      - name: Verify Topology Compatibility (Supervisor)
+        run: |
+          REPLICAS=$(grep "replicas:" infra/agents/manifests/foundry-supervisor.yaml | awk '{print $2}')
+          if [ "$REPLICAS" -ne 1 ]; then
+            echo "FAIL: Supervisor must have exactly 1 replica for exactly-once guarantees."
+            exit 1
+          fi
+
+      - name: Enforce Terminology Drift Policy
+        run: |
+          if grep -r "absolute exactly-once" .; then
+            echo "FAIL: Prohibited claim 'absolute exactly-once' found in repo."
+            exit 1
+          fi
+          if grep -r "unconditional production-ready" .; then
+            echo "FAIL: Prohibited claim 'unconditional production-ready' found in repo."
+            exit 1
+          fi
+
+      - name: Check Evidence Packs
+        run: |
+          # Ensure every subsystem has a non-empty evidence directory
+          [ "$(ls -A docs/evidence/2026-03-20/foundry-supervisor/)" ]
+          [ "$(ls -A docs/evidence/2026-03-20/task-router/)" ]
+          [ "$(ls -A docs/evidence/2026-03-20/eval-engine/)" ]
+          [ "$(ls -A docs/evidence/2026-03-20/agent-deployments/)" ]
+
+      - name: Verify Release Gate SSOT
+        run: |
+          grep "spec_bundle_required: true" ssot/release/release_gates.yaml
+          grep "fail_closed: true" ssot/release/release_gates.yaml

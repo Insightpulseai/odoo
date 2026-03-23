@@ -1,0 +1,53 @@
+---
+title: Runbooks
+---
+
+# Runbooks
+
+Operational procedures for the InsightPulse AI platform.
+
+## Odoo Operations
+
+### Module Deployment
+```bash
+./scripts/deploy-odoo-modules.sh
+```
+
+### Database Backup
+```bash
+./scripts/odoo/backup_db.sh odoo_dev
+```
+
+### Month-End Close Checklist
+1. Verify all vendor bills posted
+2. Run bank reconciliation
+3. Process payroll journal entries
+4. Review and post accruals
+5. Lock accounting period
+6. Generate trial balance
+7. Run financial reports (P&L, Balance Sheet)
+
+## Azure Operations
+
+### Container App Restart
+```bash
+az containerapp revision restart \
+  --name ipai-odoo-dev-web \
+  --resource-group rg-ipai-dev-odoo-runtime
+```
+
+### Key Vault Secret Rotation
+```bash
+az keyvault secret set \
+  --vault-name kv-ipai-dev \
+  --name <secret-name> \
+  --value <new-value>
+```
+
+## Incident Response
+
+1. Check Azure Front Door health probes
+2. Review Container App logs: `az containerapp logs show`
+3. Check PostgreSQL connectivity
+4. Verify Key Vault access (managed identity)
+5. Escalate via Slack `#ops-alerts`

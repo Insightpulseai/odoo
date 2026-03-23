@@ -1,0 +1,40 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "AP Invoice Evidence Pack",
+  "type": "object",
+  "required": [
+    "invoice_id",
+    "vendor_id",
+    "tax_summary",
+    "po_match_status",
+    "evidence_attachment_ids",
+    "agent_compliance_status"
+  ],
+  "properties": {
+    "invoice_id": { "type": "string" },
+    "vendor_id": { "type": "string" },
+    "tax_summary": {
+      "type": "object",
+      "required": ["vat_verified", "ewt_rate", "ewt_atc"],
+      "properties": {
+        "vat_verified": { "type": "boolean" },
+        "ewt_rate": { "type": "number" },
+        "ewt_atc": { "type": "string" },
+        "tax_specialist_id": { "type": "string" }
+      }
+    },
+    "po_match_status": {
+      "type": "string",
+      "enum": ["full_match", "partial_match", "no_po", "disputed"]
+    },
+    "evidence_attachment_ids": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "agent_compliance_status": {
+      "type": "string",
+      "enum": ["compliant", "exception_diverted"]
+    }
+  },
+  "additionalProperties": false
+}

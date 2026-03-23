@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Form View -->
+    <record id="operating_branch_view_form" model="ir.ui.view">
+        <field name="name">operating.branch.view.form</field>
+        <field name="model">operating.branch</field>
+        <field name="arch" type="xml">
+            <form string="Operating Branch">
+                <header/>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <field name="active" widget="boolean_favorite"
+                               nolabel="1"/>
+                    </div>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1>
+                            <field name="name" placeholder="e.g. Pasig Head Office"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group string="Branch Identification" name="identification">
+                            <field name="code"/>
+                            <field name="tin"/>
+                            <field name="branch_code"/>
+                            <field name="full_tin_branch"/>
+                        </group>
+                        <group string="Registration Details" name="registration">
+                            <field name="trade_name"/>
+                            <field name="bir_registered_name"/>
+                            <field name="line_of_business"/>
+                            <field name="registered_address"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group string="BIR Details" name="bir_details">
+                            <field name="rdo_code"/>
+                            <field name="rdo_name"/>
+                            <field name="is_head_office"/>
+                            <field name="vat_registered"/>
+                            <field name="cor_issue_date"/>
+                            <field name="cor_ocn"/>
+                        </group>
+                        <group string="Capability Flags" name="capability_flags">
+                            <field name="active_for_invoicing"/>
+                            <field name="active_for_expenses"/>
+                            <field name="active_for_withholding"/>
+                            <field name="active_for_vat"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group string="Attachments" name="attachments">
+                            <field name="bir_form_2303_attachment_id"/>
+                            <field name="registration_seal_attachment_id"/>
+                        </group>
+                        <group string="Company" name="company"
+                               groups="base.group_multi_company">
+                            <field name="company_id"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Tree View -->
+    <record id="operating_branch_view_tree" model="ir.ui.view">
+        <field name="name">operating.branch.view.tree</field>
+        <field name="model">operating.branch</field>
+        <field name="arch" type="xml">
+            <list string="Operating Branches">
+                <field name="name"/>
+                <field name="code"/>
+                <field name="full_tin_branch"/>
+                <field name="rdo_code"/>
+                <field name="is_head_office"/>
+                <field name="vat_registered"/>
+                <field name="active" column_invisible="1"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Search View -->
+    <record id="operating_branch_view_search" model="ir.ui.view">
+        <field name="name">operating.branch.view.search</field>
+        <field name="model">operating.branch</field>
+        <field name="arch" type="xml">
+            <search string="Operating Branches">
+                <field name="name"/>
+                <field name="code"/>
+                <field name="tin"/>
+                <field name="full_tin_branch"/>
+                <field name="rdo_code"/>
+                <separator/>
+                <filter name="filter_head_office"
+                        string="Head Office"
+                        domain="[('is_head_office', '=', True)]"/>
+                <filter name="filter_vat_registered"
+                        string="VAT Registered"
+                        domain="[('vat_registered', '=', True)]"/>
+                <filter name="filter_active_invoicing"
+                        string="Active for Invoicing"
+                        domain="[('active_for_invoicing', '=', True)]"/>
+                <filter name="filter_active_expenses"
+                        string="Active for Expenses"
+                        domain="[('active_for_expenses', '=', True)]"/>
+                <separator/>
+                <filter name="filter_inactive"
+                        string="Archived"
+                        domain="[('active', '=', False)]"/>
+                <separator/>
+                <group expand="0" string="Group By">
+                    <filter name="group_company"
+                            string="Company"
+                            context="{'group_by': 'company_id'}"/>
+                    <filter name="group_rdo"
+                            string="RDO"
+                            context="{'group_by': 'rdo_code'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Action -->
+    <record id="action_operating_branch" model="ir.actions.act_window">
+        <field name="name">Operating Branches</field>
+        <field name="res_model">operating.branch</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="operating_branch_view_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create your first operating branch
+            </p>
+            <p>
+                Register BIR branch profiles for same-TIN branch registrations.
+                Each branch tracks its own RDO, COR details, and capability flags.
+            </p>
+        </field>
+    </record>
+
+</odoo>

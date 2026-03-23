@@ -130,7 +130,7 @@ web/apps/fluent-designer-agent/
     components/    — shared UI components
     features/
       designer-agent/  — workspace layout, mode orchestration
-      design-system/   — rules engine, component registry
+      design/   — rules engine, component registry
       prompting/       — brief parsing, prompt management
     services/      — adapter interface, mock adapter
     contracts/     — re-exports from fluent-designer-contract

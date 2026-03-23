@@ -1,0 +1,37 @@
+---
+title: Platform Overview
+---
+
+# Platform Overview
+
+InsightPulse AI is an Azure-native platform built on Odoo CE 19, designed for finance-heavy SMEs in the Philippines. It combines ERP operations, AI-assisted workflows, and governed data analytics.
+
+## Service-Plane Architecture
+
+The platform follows a strict service-plane split:
+
+| Plane | Owner | Purpose |
+|-------|-------|---------|
+| Odoo | Transactional SoR | All CRUD, workflows, approvals, compliance |
+| Foundry | AI/Agent plane | LLM orchestration, agent runtime, MCP tools |
+| Databricks | Analytics plane | Data engineering, ML, governed reporting |
+| Document Intelligence | OCR bridge | Receipt/invoice extraction, BIR form processing |
+| Azure DevOps | Promotion spine | CI/CD, release gates, environment promotion |
+
+## Compute Hosting
+
+| Workload | Target | Exception Path |
+|----------|--------|----------------|
+| Web apps, APIs, agents | Azure Container Apps | — |
+| Legacy monoliths | App Service | Bounded exception only |
+| Heavy orchestration | AKS | Not default — justify first |
+| Data pipelines | Databricks Jobs | — |
+| Edge functions | Supabase Edge Functions | External integrations only |
+
+## Key Principles
+
+1. **CE Only** — No Odoo Enterprise modules. Parity achieved via OCA + custom `ipai_*`.
+2. **Config → OCA → Delta** — Always prefer configuration, then OCA, then custom code.
+3. **Secrets in Vault** — Azure Key Vault for all credentials. Never hardcode.
+4. **MCP First** — All reusable agent tools must be MCP-compliant.
+5. **Evidence-Driven** — Every deployment produces verifiable evidence.

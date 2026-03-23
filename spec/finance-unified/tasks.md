@@ -56,7 +56,7 @@
 
 - [ ] **T6.1** Consolidate overlapping docs (if any contradict unified doc)
 - [ ] **T6.2** Add `002_finance_seed.sql` deprecation to Supabase migration notes
-- [ ] **T6.3** Add finance system to Superset view registry (11 SQL views from technical guide)
+- [ ] **T6.3** Integrate finance system with Power BI (via Databricks SQL / Unity Catalog)
 
 ---
 

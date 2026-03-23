@@ -1,0 +1,19 @@
+{
+  "name": "learning_path_designer",
+  "version": "1.0.0",
+  "description": "Design personalized learning paths to close capability gaps. Recommends resources, timelines, and milestones based on gap analysis results.",
+  "intent": "Generate a learning plan to close identified capability gaps",
+  "inputs": [
+    {"name": "entity_id", "type": "integer", "description": "Odoo record ID for the person or agent", "required": true},
+    {"name": "gap_analysis_id", "type": "integer", "description": "Reference to gap analysis result", "required": true},
+    {"name": "priority_gaps", "type": "array", "description": "Subset of gaps to prioritize", "required": false}
+  ],
+  "outputs": [
+    {"name": "learning_plan", "type": "object", "description": "Structured learning plan with phases and milestones"},
+    {"name": "resources", "type": "array", "description": "Recommended learning resources with links"},
+    {"name": "estimated_duration", "type": "string", "description": "Estimated time to close prioritized gaps"},
+    {"name": "checkpoints", "type": "array", "description": "Assessment checkpoints within the plan"}
+  ],
+  "kb_segments": ["kb_people_capability"],
+  "agentInstructions": "Based on the gap analysis, design a phased learning plan with specific resources, timelines, and assessment checkpoints. Prioritize critical gaps. Route plan for approval before publishing."
+}

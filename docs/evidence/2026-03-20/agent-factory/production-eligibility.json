@@ -1,0 +1,12 @@
+{
+  "component": "agent-factory",
+  "acceptance_status": "accepted",
+  "runtime_production_status": "conditional-approved",
+  "release_status": "ready_for_conditional_production_release",
+  "evidence_path": "docs/evidence/2026-03-20/agent-factory",
+  "tests_passed": true,
+  "deployment_contract_valid": true,
+  "remaining_risks": [
+    "runtime guarantees remain bounded by documented storage and topology assumptions"
+  ]
+}

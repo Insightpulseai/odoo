@@ -1,0 +1,110 @@
+# Workflow: Goal Status Synthesis
+# Generates evidence-backed goal status narratives via agent pipeline.
+
+id: goal-status-synthesis
+name: Goal Status Synthesis
+version: 1.0.0
+domain: goals
+source: Diva Goals Product Family
+created: 2026-03-23
+
+trigger:
+  type: scheduled_or_on_demand
+  schedule: weekly
+  filters:
+    goal_state:
+      - active
+      - at_risk
+
+input_schema:
+  required:
+    - goal_id
+  properties:
+    goal_id:
+      type: integer
+      description: Odoo goal record ID
+    review_depth:
+      type: string
+      enum: [summary, detailed, full]
+      default: summary
+    include_sub_goals:
+      type: boolean
+      default: true
+
+steps:
+  - id: orchestrate
+    name: Initialize Synthesis Pipeline
+    agent: diva_orchestrator
+    action: workflow.initialize
+    inputs:
+      workflow_id: goal-status-synthesis
+      goal_id: "{{ input.goal_id }}"
+    outputs:
+      - execution_context
+
+  - id: harvest_evidence
+    name: Collect Goal Evidence
+    agent: evidence_harvester
+    action: evidence.collect
+    inputs:
+      goal_id: "{{ input.goal_id }}"
+      include_sub_goals: "{{ input.include_sub_goals }}"
+      sources:
+        - odoo_goal_records
+        - odoo_task_progress
+        - databricks_metrics
+    outputs:
+      - evidence_bundle
+      - source_count
+
+  - id: synthesize_status
+    name: Generate Status Narrative
+    agent: status_synthesizer
+    action: status.synthesize
+    inputs:
+      goal_id: "{{ input.goal_id }}"
+      evidence_bundle: "{{ steps.harvest_evidence.outputs.evidence_bundle }}"
+      review_depth: "{{ input.review_depth }}"
+    outputs:
+      - status_narrative
+      - risk_level
+      - confidence_score
+      - citations
+
+  - id: judge_policy
+    name: Evaluate Against Governance Policies
+    agent: policy_judge
+    action: policy.evaluate
+    inputs:
+      proposal_type: goal_status_synthesis
+      content: "{{ steps.synthesize_status.outputs.status_narrative }}"
+      confidence: "{{ steps.synthesize_status.outputs.confidence_score }}"
+    outputs:
+      - policy_verdict
+      - policy_reasoning
+
+  - id: route_approval
+    name: Route for Approval
+    agent: approval_coordinator
+    action: approval.route
+    inputs:
+      proposal_type: goal_status_synthesis
+      content: "{{ steps.synthesize_status.outputs.status_narrative }}"
+      confidence: "{{ steps.synthesize_status.outputs.confidence_score }}"
+      policy_verdict: "{{ steps.judge_policy.outputs.policy_verdict }}"
+    outputs:
+      - approval_status
+      - assigned_reviewer
+
+output_schema:
+  properties:
+    status_narrative:
+      type: string
+    risk_level:
+      type: string
+    confidence_score:
+      type: float
+    approval_status:
+      type: string
+    proposal_state:
+      type: string

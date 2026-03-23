@@ -1,0 +1,86 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "ipai.passport.v1",
+  "title": "Agent Passport",
+  "description": "Schema for an Agent's identity, metadata, and current lifecycle state",
+  "type": "object",
+  "properties": {
+    "schema": {
+      "type": "string",
+      "const": "ipai.passport.v1"
+    },
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z0-9-]+$",
+      "description": "Kebab case unique identifier for the agent"
+    },
+    "version": {
+      "type": "string",
+      "description": "Semver version of the agent passport"
+    },
+    "name": {
+      "type": "string",
+      "description": "Human readable name of the agent"
+    },
+    "domain": {
+      "type": "string",
+      "description": "Functional domain this agent belongs to (e.g. 'platform', 'odoo', 'data')"
+    },
+    "stage": {
+      "type": "string",
+      "pattern": "^S(0[1-9]|1[0-6])$",
+      "description": "Current lifecycle stage (S01 to S16)"
+    },
+    "maturity": {
+      "type": "string",
+      "enum": ["L0", "L1", "L2", "L3", "L4", "L5"],
+      "description": "Current maturity level"
+    },
+    "contract_ref": {
+      "type": "string",
+      "description": "Path to the agent's I/O manifest contract"
+    },
+    "skills": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "List of skill packages bound to this agent"
+    },
+    "tools": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "List of tool references bound to this agent"
+    },
+    "policies": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "List of local governance policy references applied to this agent"
+    },
+    "kill_switch": {
+      "type": "object",
+      "properties": {
+        "enabled": { "type": "boolean" },
+        "active": { "type": "boolean" },
+        "reason": { "type": "string" }
+      },
+      "required": ["enabled"]
+    },
+    "owners": {
+      "type": "array",
+      "items": { "type": "string", "format": "email" },
+      "minItems": 1
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "updated_at": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "required": [
+    "schema", "id", "version", "name", "domain", 
+    "stage", "maturity", "contract_ref", "kill_switch", "owners",
+    "created_at", "updated_at"
+  ]
+}

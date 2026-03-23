@@ -1,0 +1,309 @@
+{
+  "name": "Collections Reminder — Weekly Overdue Invoice Follow-up",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 9 * * 1"
+            }
+          ]
+        }
+      },
+      "id": "schedule-trigger",
+      "name": "Weekly Monday 9AM Manila",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [200, 300]
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "collections-reminder",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "webhook-trigger",
+      "name": "Webhook — Collections Reminder",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [200, 520]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://erp.insightpulseai.com/xmlrpc/2/object",
+        "authentication": "none",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify(['odoo', 2, 'admin', 'account.move', 'search_read', [[['company_id', '=', 2], ['move_type', '=', 'out_invoice'], ['payment_state', '!=', 'paid'], ['payment_state', '!=', 'reversed'], ['state', '=', 'posted'], ['invoice_date_due', '<', new Date().toISOString().split('T')[0]]]], {'fields': ['name', 'partner_id', 'invoice_date', 'invoice_date_due', 'amount_total', 'amount_residual', 'currency_id', 'invoice_user_id', 'payment_state'], 'limit': 100, 'order': 'invoice_date_due asc'}]) }}"
+      },
+      "id": "odoo-get-overdue",
+      "name": "Odoo — Get Overdue Invoices",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [480, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "const invoices = $input.all().map(i => i.json);\nconst flat = Array.isArray(invoices[0]) ? invoices[0] : invoices;\n\nif (!flat || flat.length === 0 || !flat[0]?.id) {\n  return [{ json: { has_overdue: false, count: 0, invoices: [] } }];\n}\n\nconst today = new Date();\nconst enriched = flat.map(inv => {\n  const dueDate = new Date(inv.invoice_date_due);\n  const daysOverdue = Math.floor((today - dueDate) / (1000 * 60 * 60 * 24));\n  return {\n    id: inv.id,\n    name: inv.name,\n    partner: Array.isArray(inv.partner_id) ? inv.partner_id[1] : inv.partner_id,\n    partner_id: Array.isArray(inv.partner_id) ? inv.partner_id[0] : inv.partner_id,\n    invoice_date: inv.invoice_date,\n    due_date: inv.invoice_date_due,\n    days_overdue: daysOverdue,\n    amount_total: inv.amount_total,\n    amount_residual: inv.amount_residual,\n    currency: Array.isArray(inv.currency_id) ? inv.currency_id[1] : 'PHP',\n    account_manager_id: Array.isArray(inv.invoice_user_id) ? inv.invoice_user_id[0] : 17,\n    account_manager: Array.isArray(inv.invoice_user_id) ? inv.invoice_user_id[1] : 'BOM',\n    urgency: daysOverdue > 90 ? 'critical' : daysOverdue > 60 ? 'high' : daysOverdue > 30 ? 'medium' : 'low'\n  };\n});\n\nreturn enriched.map(inv => ({ json: inv }));"
+      },
+      "id": "enrich-invoices",
+      "name": "Enrich Invoice Data",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [700, 300]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": ""
+          },
+          "conditions": [
+            {
+              "id": "has-id",
+              "leftValue": "={{ $json.id }}",
+              "rightValue": "",
+              "operator": {
+                "type": "exists",
+                "operation": "exists"
+              }
+            }
+          ]
+        }
+      },
+      "id": "if-has-overdue",
+      "name": "Has Overdue?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [920, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://data-intel-ph-resource.openai.azure.com/openai/deployments/gpt-4.1/chat/completions?api-version=2024-08-01-preview",
+        "authentication": "none",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "api-key",
+              "value": "={{ $env.AZURE_FOUNDRY_API_KEY }}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ model: 'gpt-4.1', messages: [{ role: 'system', content: 'You are a professional collections specialist for TBWA\\\\SMP Philippines. Draft a polite but firm collection reminder email. Be professional, reference the invoice number and amount, mention the days overdue, and request prompt payment. Include payment details reference. Keep it under 150 words. Output ONLY the email body text, no subject line.' }, { role: 'user', content: 'Draft a collection reminder for:\\n- Customer: ' + $json.partner + '\\n- Invoice: ' + $json.name + '\\n- Amount Due: ' + $json.currency + ' ' + $json.amount_residual.toFixed(2) + '\\n- Due Date: ' + $json.due_date + '\\n- Days Overdue: ' + $json.days_overdue + '\\n- Urgency: ' + $json.urgency }], max_tokens: 300, temperature: 0.4 }) }}"
+      },
+      "id": "gpt-draft-email",
+      "name": "GPT-4.1 — Draft Reminder",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1160, 200]
+    },
+    {
+      "parameters": {
+        "jsCode": "const gptResponse = $input.first().json;\nconst emailBody = gptResponse.choices?.[0]?.message?.content || 'Please follow up on overdue payment.';\nconst invoice = $('Enrich Invoice Data').first().json;\n\nreturn [{ json: {\n  invoice_id: invoice.id,\n  partner: invoice.partner,\n  days_overdue: invoice.days_overdue,\n  amount_residual: invoice.amount_residual,\n  currency: invoice.currency,\n  urgency: invoice.urgency,\n  account_manager_id: invoice.account_manager_id,\n  email_body: emailBody,\n  activity_note: `**Collections Follow-up — ${invoice.name}**\\n\\nCustomer: ${invoice.partner}\\nAmount Due: ${invoice.currency} ${invoice.amount_residual.toFixed(2)}\\nDays Overdue: ${invoice.days_overdue}\\nUrgency: ${invoice.urgency.toUpperCase()}\\n\\n---\\n\\n**Suggested Email:**\\n${emailBody}`\n}}];"
+      },
+      "id": "format-activity",
+      "name": "Format Activity",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1380, 200]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://erp.insightpulseai.com/xmlrpc/2/object",
+        "authentication": "none",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify(['odoo', 2, 'admin', 'mail.activity', 'create', [{'res_model_id': 219, 'res_id': $json.invoice_id, 'activity_type_id': 1, 'summary': 'Collections follow-up — ' + $json.days_overdue + ' days overdue (' + $json.currency + ' ' + $json.amount_residual.toFixed(2) + ')', 'note': $json.activity_note, 'user_id': $json.account_manager_id, 'date_deadline': new Date(Date.now() + 3 * 86400000).toISOString().split('T')[0]}]]) }}"
+      },
+      "id": "odoo-create-activity",
+      "name": "Odoo — Create Activity",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1600, 200]
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = $input.all();\nconst count = items.length;\nconst totalAmount = items.reduce((s, i) => s + (i.json.amount_residual || 0), 0);\n\nreturn [{ json: {\n  status: 'ok',\n  invoices_processed: count,\n  total_overdue: totalAmount,\n  message: `Processed ${count} overdue invoices, activities created`\n}}];"
+      },
+      "id": "aggregate-results",
+      "name": "Aggregate Results",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1820, 200]
+    },
+    {
+      "parameters": {
+        "channel": "#finance-alerts",
+        "text": "=:bell: *Collections Reminders Sent*\n• Overdue invoices processed: {{ $json.invoices_processed }}\n• Total overdue: PHP {{ $json.total_overdue.toFixed(2) }}\n• Activities created and assigned to account managers",
+        "otherOptions": {}
+      },
+      "id": "slack-notify",
+      "name": "Slack — Notify",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.2,
+      "position": [2040, 200]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ status: 'ok', message: 'Collections reminders processed', count: $json.invoices_processed }) }}"
+      },
+      "id": "webhook-response",
+      "name": "Webhook Response",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [2040, 420]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "log",
+              "name": "log",
+              "type": "string",
+              "value": "=No overdue invoices found at {{ $now.toISO() }}"
+            }
+          ]
+        }
+      },
+      "id": "no-overdue",
+      "name": "No Overdue Invoices",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [1160, 420]
+    }
+  ],
+  "connections": {
+    "Weekly Monday 9AM Manila": {
+      "main": [
+        [
+          {
+            "node": "Odoo — Get Overdue Invoices",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook — Collections Reminder": {
+      "main": [
+        [
+          {
+            "node": "Odoo — Get Overdue Invoices",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Odoo — Get Overdue Invoices": {
+      "main": [
+        [
+          {
+            "node": "Enrich Invoice Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Enrich Invoice Data": {
+      "main": [
+        [
+          {
+            "node": "Has Overdue?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Has Overdue?": {
+      "main": [
+        [
+          {
+            "node": "GPT-4.1 — Draft Reminder",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "No Overdue Invoices",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GPT-4.1 — Draft Reminder": {
+      "main": [
+        [
+          {
+            "node": "Format Activity",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Activity": {
+      "main": [
+        [
+          {
+            "node": "Odoo — Create Activity",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Odoo — Create Activity": {
+      "main": [
+        [
+          {
+            "node": "Aggregate Results",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate Results": {
+      "main": [
+        [
+          {
+            "node": "Slack — Notify",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Webhook Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "Asia/Manila"
+  },
+  "staticData": null
+}

@@ -1,0 +1,11 @@
+{
+  "agent_id": "ap-invoice-agent",
+  "readiness_score": 1.0,
+  "gates_verified": [
+    "staging_rehearsal",
+    "rollback_drill",
+    "tax_logic_verified"
+  ],
+  "recommended_next": "controlled_production_import_1_bill",
+  "timestamp": "2026-03-20T23:49:30.898452"
+}

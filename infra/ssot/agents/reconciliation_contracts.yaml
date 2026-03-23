@@ -1,0 +1,74 @@
+# SSOT: Bank Reconciliation Contracts
+
+version: "1.0"
+owner: "finance-ops"
+status: "draft"
+
+# 1. Workflow States
+# These states define the lifecycle of a bank statement line.
+workflow_states:
+  ingested:
+    description: "Line is imported but not yet processed."
+    allowed_transitions: ["matched", "ambiguous", "exception"]
+  matched:
+    description: "Candidate found with confidence > confidence_threshold_proposal."
+    allowed_transitions: ["approved_to_post", "quarantined", "ambiguous"]
+  ambiguous:
+    description: "Multiple candidates found or confidence below proposal threshold."
+    allowed_transitions: ["matched", "quarantined"]
+  exception:
+    description: "Technical error during processing (e.g. Odoo API down)."
+    allowed_transitions: ["ingested"]
+  approved_to_post:
+    description: "Match is verified and ready for GL mutation."
+    allowed_transitions: ["posted", "quarantined"]
+  posted:
+    description: "Transaction is final in the General Ledger."
+    allowed_transitions: [] # Terminal state
+  quarantined:
+    description: "Flagged for manual audit or suspicious mismatch."
+    allowed_transitions: ["ingested"]
+
+# 2. Evidence Schema
+# Every match must produce this evidence structure.
+evidence_schema:
+  type: object
+  required: ["match_id", "confidence_score", "source_documents", "rule_id"]
+  properties:
+    match_id:
+      type: string
+      description: "Unique identifier for the match attempt."
+    confidence_score:
+      type: number
+      minimum: 0
+      maximum: 1.0
+    source_documents:
+      type: array
+      items:
+        type: object
+        required: ["res_model", "res_id", "amount_parity", "ref_match"]
+        properties:
+          res_model: { type: string, enum: ["account.move", "account.payment"] }
+          res_id: { type: integer }
+          amount_parity: { type: boolean }
+          ref_match: { type: boolean }
+    rule_id:
+      type: string
+      description: "ID of the reconciliation rule applied."
+
+# 3. Decision Policies
+# Bounded logic for automated actions.
+policies:
+  confidence_threshold_proposal: 0.90 # Show to user
+  confidence_threshold_auto_post: 0.99 # Post directly (if enabled)
+  max_date_variance_days: 7
+  max_amount_variance: 0.01 # Currency units
+  require_tax_pulse_validation: true # Must check VAT/EWT parity if tax codes exist
+
+# 4. Error Codes
+error_codes:
+  RECON_001: "NO_CANDIDATE_FOUND"
+  RECON_002: "MULTIPLE_CANDIDATES_AMBIGUOUS"
+  RECON_003: "AMOUNT_MISMATCH_EXCEEDS_VARIANCE"
+  RECON_004: "TAX_PARITY_FAILURE"
+  RECON_005: "EVIDENCE_INCOMPLETE"

@@ -1,0 +1,129 @@
+---
+title: Project Management
+description: End-to-end project visibility — tasks, milestones, timesheets, budgets, and profitability in Odoo on Cloud.
+---
+
+# Project Management
+
+Project management in Odoo on Cloud provides end-to-end visibility from project planning through delivery. It connects tasks, timesheets, budgets, milestones, and profitability into one operating surface — with Copilot assistance for summarization, risk detection, and status reporting.
+
+## Key Capabilities
+
+### Project Planning
+- Template-based project creation (repeatable delivery models)
+- Milestone definition with target dates and deliverables
+- Task breakdown structure with dependencies
+- Resource assignment with availability check
+- Gantt chart and Kanban views
+
+### Task Management
+- Stage-based workflow (New → In Progress → Review → Done)
+- Priority and deadline tracking
+- Subtasks and checklists
+- Time logging per task
+- File attachments and discussion threads
+- Recurring tasks for operational cadences
+
+### Timesheet & Resource Tracking
+- Daily timesheet entry by employee
+- Manager approval workflow
+- Utilization reporting (billable vs. non-billable)
+- Capacity planning: availability vs. allocation
+- Cost rate application for profitability
+
+### Milestone Tracking
+- Milestone-based billing triggers
+- Progress tracking: tasks completed vs. planned
+- Deadline risk alerts (milestone due in 5 days, 60% complete)
+- Client-visible milestone status
+
+### Cross-Project Visibility
+- Portfolio dashboard: all active projects, status, margin, risk
+- Resource allocation across projects (over/under-allocated)
+- Timeline view: project overlap and sequencing
+- Executive summary: project count, revenue, margin, utilization
+
+## Odoo Modules Used
+
+| Module | Purpose |
+|--------|---------|
+| `project` | Core project and task management |
+| `hr_timesheet` | Time tracking |
+| `project_forecast` | Resource planning (if available) |
+| `sale_project` | Sales order → project creation |
+| `analytic` | Cost and revenue allocation |
+| `documents_project` | File management per project |
+| `ipai_finance_ppm` | Profitability and budget tracking |
+
+## Project Stages
+
+| Stage | Description | Actions |
+|-------|-------------|---------|
+| **Proposal** | Project scoped, not yet started | Budget approval, SOW finalization |
+| **Kickoff** | Team assigned, planning complete | Resource allocation, timeline set |
+| **In Progress** | Active execution | Timesheets, task updates, milestone tracking |
+| **Review** | Deliverables under review | Client approval, QA checks |
+| **Closed** | Project completed | Final invoicing, retrospective, archive |
+| **On Hold** | Paused | Reason documented, resources freed |
+
+## Task Workflow
+
+```
+New → Assigned → In Progress → Review → Done
+                     ↓
+                  Blocked → (unblocked) → In Progress
+```
+
+- **Blocked tasks** require a reason and notify the PM
+- **Overdue tasks** auto-escalate after configurable grace period
+- **Recurring tasks** auto-create on schedule (weekly standup, monthly review)
+
+## Copilot Assistance
+
+Project Copilot helps by:
+
+- **Status summary**: "Project Alpha: 45 of 60 tasks complete (75%). 3 tasks overdue. Milestone 'Phase 2 Delivery' due in 8 days — on track if blocked tasks are resolved this week."
+- **Risk detection**: "Project Beta has 5 blocked tasks, 2 team members at 120% utilization, and margin has dropped below 20%. Recommend resource reallocation."
+- **Meeting prep**: "Here's a summary for your client status call: 3 milestones completed this sprint, 1 delayed (dependency on API integration). Budget: 65% consumed, 70% timeline elapsed."
+- **Timesheet reminder**: "4 team members haven't submitted timesheets for this week. Send reminder?"
+- **Profitability alert**: "Project Gamma margin is 18% — below the 25% target. Main driver: 40 hours of unplanned scope work in Week 3."
+
+## Reporting
+
+| Report | Purpose | Audience |
+|--------|---------|----------|
+| Project Status | Overall health per project | PM, Client |
+| Task Burndown | Velocity tracking | PM, Team |
+| Timesheet Summary | Hours by project/task | PM, Finance |
+| Utilization Report | Resource efficiency | Operations |
+| Milestone Progress | Delivery tracking | PM, Client, Exec |
+| Profitability Report | Margin by project | Finance, Exec |
+| Overdue Tasks | Risk visibility | PM |
+| Resource Allocation | Capacity planning | Operations |
+
+## Integration Points
+
+| System | Direction | Data |
+|--------|-----------|------|
+| **Sales** | Sale Order → Project | Contract value, deliverables, timeline |
+| **Finance** | Project → GL | Timesheet costs, expense allocations, revenue |
+| **HR** | Employee → Resource | Availability, cost rate, skills |
+| **Plane** | Bidirectional sync | Issues ↔ Tasks (via `ipai_plane_connector`) |
+| **Superset** | Project → Dashboard | KPIs, utilization, margin trends |
+
+## FAQ
+
+**Q: Can clients see project progress?**
+A: Yes. Odoo's portal gives clients read-only access to milestones, task status, and shared documents. They can leave comments and approve deliverables.
+
+**Q: How does project management connect to finance?**
+A: Every project has an analytic account. Timesheets, expenses, and vendor bills linked to the project flow into the PPM dashboard for real-time profitability tracking.
+
+**Q: Can I create projects from templates?**
+A: Yes. Project templates include predefined stages, task structures, and checklists. Create a new project from a template and customize as needed.
+
+**Q: How are blocked tasks handled?**
+A: When a task is moved to "Blocked" status, the assignee must provide a reason. The PM is notified, and Copilot includes blocked tasks in status summaries and risk alerts.
+
+**Q: Does it support Agile/Scrum workflows?**
+A: Odoo's Kanban view supports sprint-like workflows. For full Scrum with sprints, backlog grooming, and velocity tracking, the Plane integration provides a richer project management surface that syncs back to Odoo tasks.

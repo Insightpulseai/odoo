@@ -1,0 +1,12 @@
+name: Task Router Hardening Gates
+on: [push]
+jobs:
+  validate-router:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - run: npm install -g ajv-cli
+      - run: ajv validate -s ssot/agents/task_envelope.schema.json
+      - run: ajv validate -s ssot/agents/dead_letter_record.schema.json
+      - run: grep "malformed_envelope_rejects" ssot/agents/task_router_metrics_contract.yaml
+      - run: grep "dead_lettered" spec/task-router-hardening/constitution.md

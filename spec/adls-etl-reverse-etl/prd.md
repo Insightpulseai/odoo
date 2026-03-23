@@ -39,7 +39,7 @@ Build a canonical ETL + reverse ETL architecture where:
 | Odoo CE 19 (`ipai-odoo-dev-web`) | SoR — ERP operations | Journal entries, invoices, projects, tasks, BIR tax filings, employees, vendors, analytic accounts |
 | ADLS Gen2 | Analytical lake | Replicated bronze/silver/gold datasets, ML features, BI marts, reverse ETL staging |
 | Azure AI Foundry | ML/AI compute | Model training, scoring, embedding generation |
-| Tableau Cloud | BI presentation | Dashboards consuming ADLS gold layer |
+| Power BI | BI presentation | Dashboards and reports |
 
 ## 4. Data Flow Topology
 
@@ -66,7 +66,7 @@ Supabase (SSOT)                    Odoo (SoR)
     │                    │                │
     │ BI consumption     │ ML outputs     │ Reverse ETL
     ▼                    ▼                ▼
-Tableau Cloud     Azure AI Foundry    Supabase / Odoo
+Power BI     Azure AI Foundry    Supabase / Odoo
                                       (bounded writebacks)
 ```
 

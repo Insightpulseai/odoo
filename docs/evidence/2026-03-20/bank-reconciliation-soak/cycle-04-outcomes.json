@@ -1,0 +1,16 @@
+[
+  {
+    "line_id": "C4-L1",
+    "ref": "INV-REAL-104",
+    "amount": 3200.0,
+    "final_state": "posted",
+    "evidence_attached": true
+  },
+  {
+    "line_id": "C4-L2",
+    "ref": "INV-REAL-101",
+    "amount": 1500.0,
+    "final_state": "ingested",
+    "evidence_attached": false
+  }
+]

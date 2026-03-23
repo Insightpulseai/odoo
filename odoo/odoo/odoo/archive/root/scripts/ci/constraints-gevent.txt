@@ -1,5 +1,0 @@
-# CI-only constraints to keep gevent building on GitHub Actions
-
-Cython<3
-greenlet<3
-gevent==22.10.2

@@ -28,9 +28,6 @@ class Settings(BaseModel):
     databricks_token: str = Field(default="", description="Databricks access token")
     warehouse_id: str = Field(default="", description="SQL warehouse ID")
 
-    # Notion
-    notion_token: str = Field(default="", description="Notion integration token")
-
     # Azure
     azure_subscription_id: str = Field(default="", description="Azure subscription ID")
     azure_client_id: str = Field(default="", description="Azure client ID")
@@ -49,7 +46,6 @@ class Settings(BaseModel):
             databricks_host=os.getenv("DATABRICKS_HOST", ""),
             databricks_token=os.getenv("DATABRICKS_TOKEN", ""),
             warehouse_id=os.getenv("WAREHOUSE_ID", ""),
-            notion_token=os.getenv("NOTION_TOKEN", ""),
             azure_subscription_id=os.getenv("AZURE_SUBSCRIPTION_ID", ""),
             azure_client_id=os.getenv("AZURE_CLIENT_ID", ""),
             azure_client_secret=os.getenv("AZURE_CLIENT_SECRET", ""),

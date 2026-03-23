@@ -1,0 +1,23 @@
+[
+  {
+    "line_id": "C1-L1",
+    "ref": "INV-2026-003",
+    "amount": 350.0,
+    "final_state": "posted",
+    "evidence_attached": true
+  },
+  {
+    "line_id": "C1-L2",
+    "ref": "DUPLICATE-CHECK",
+    "amount": 100.0,
+    "final_state": "ingested",
+    "evidence_attached": false
+  },
+  {
+    "line_id": "C1-L3",
+    "ref": "INV-2026-004",
+    "amount": 5000.0,
+    "final_state": "posted",
+    "evidence_attached": true
+  }
+]

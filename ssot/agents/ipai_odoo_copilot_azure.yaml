@@ -1,0 +1,30 @@
+agent_id: ipai-odoo-copilot-azure
+name: Odoo Copilot (Azure Foundry)
+version: 0.1.0-alpha
+stage: modelling
+status: specification-active
+platform:
+  orchestration: Microsoft Foundry
+  transactional_authority: Odoo
+  control_plane: Supabase
+  analytics: Fabric
+modes:
+  - research
+  - insight
+  - plan
+  - validate
+  - operate
+  - monitor
+tools:
+  allowed:
+    - file_search
+    - code_interpreter
+    - governed_workflow_invocation
+  forbidden:
+    - direct_sql_write
+    - accounting_post_bypass
+governance:
+  evidence_required: true
+  fail_closed_mode: active
+  evaluation_manifest: ssot/agents/ipai_odoo_copilot_eval_manifest.yaml
+  publish_policy: ssot/agents/ipai_odoo_copilot_publish_policy.schema.json

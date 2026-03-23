@@ -19,28 +19,18 @@ variables:
     default: gold
   warehouse_id:
     description: SQL warehouse ID for queries
-  notion_token:
-    description: Notion integration token
-  databricks_token:
-    description: Databricks token for API calls
+    default: e7d89eabce4c330c
 
 workspace:
-  host: ${var.databricks_host}
+  host: https://adb-7405610347978231.11.azuredatabricks.net
 
 include:
   - resources/*.yml
-  - resources/jobs/*.yml
   - resources/pipelines/*.yml
   - resources/clusters/*.yml
   - resources/schedules/*.yml
   - resources/permissions/*.yml
   - resources/endpoints/*.yml
-
-artifacts:
-  notion_sync_wheel:
-    type: whl
-    path: ../../services/notion-sync
-    build: python setup.py bdist_wheel
 
 targets:
   dev:
@@ -52,10 +42,6 @@ targets:
       root_path: /Workspace/Users/${workspace.current_user.userName}/finance-ppm-dev
     resources:
       jobs:
-        notion_sync_bronze:
-          name: "[DEV] Notion Sync Bronze"
-        notion_transform_silver:
-          name: "[DEV] Notion Transform Silver"
         ppm_marts_gold:
           name: "[DEV] PPM Marts Gold"
         azure_rg_ingest:

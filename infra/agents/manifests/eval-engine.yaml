@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: eval-engine
+  labels:
+    service_name: eval_engine
+    runtime_profile: stateless_judge
+    environment: prod
+    promotion_policy: strict
+spec:
+  replicas: 3
+  template:
+    spec:
+      containers:
+      - name: engine
+        image: insightpulse/eval-engine:latest
+        resources:
+          requests:
+            cpu: "1000m"
+            memory: "1Gi"
+          limits:
+            cpu: "4000m"
+            memory: "4Gi"
+        livenessProbe:
+          httpGet:
+            path: /healthz
+            port: 8082
+          timeoutSeconds: 5
+          failureThreshold: 3
+        readinessProbe:
+          httpGet:
+            path: /readyz
+            port: 8082
+          timeoutSeconds: 5
+          failureThreshold: 3
+        envFrom:
+        - secretRef:
+            name: eval-engine-secrets
+        volumeMounts:
+        - name: ephemeral-storage
+          mountPath: /tmp/evals
+      volumes:
+      - name: ephemeral-storage
+        emptyDir: {}

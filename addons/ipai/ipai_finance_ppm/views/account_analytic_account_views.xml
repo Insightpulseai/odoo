@@ -1,5 +1,23 @@
 <odoo>
-    <!-- Analytic account views will be extended when ipai_finance_ppm
-         adds computed fields to account.analytic.account.
-         Currently the analytic_account.py model adds sync logic only. -->
+    <record id="view_account_analytic_account_form_ipai_ppm" model="ir.ui.view">
+        <field name="name">account.analytic.account.form.ipai.ppm</field>
+        <field name="model">account.analytic.account</field>
+        <field name="inherit_id" ref="analytic.view_account_analytic_account_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//sheet" position="inside">
+                <group string="PPM Budget" name="ipai_ppm_budget"
+                       invisible="not ipai_ppm_budget_source_project_id">
+                    <group>
+                        <field name="ipai_ppm_budget_amount"/>
+                        <field name="ipai_ppm_budget_source_project_id" readonly="1"/>
+                    </group>
+                    <group>
+                        <field name="ipai_ppm_import_batch_id" readonly="1"/>
+                        <field name="ipai_ppm_imported_at" readonly="1"/>
+                        <field name="ipai_ppm_import_source" readonly="1"/>
+                    </group>
+                </group>
+            </xpath>
+        </field>
+    </record>
 </odoo>

@@ -15,10 +15,10 @@ Complete migration of all Supabase assets from managed cloud project `spdtwktxda
 | Database schema (tables, views, extensions, roles) | Full inventory | `supabase_cloud_inventory.py` output |
 | Table data (reference, master, transactional) | All canonical tables | Cloud Supabase PostgreSQL |
 | Seed data (canonicalized, deduplicated) | 6 duplicate groups to resolve | `SEED_DATA_INVENTORY.md` |
-| Edge Functions | 39 in deploy manifest | `ops-platform/supabase/edge-functions/deploy/manifest.yaml` |
+| Edge Functions | 39 in deploy manifest | `platform/supabase/edge-functions/deploy/manifest.yaml` |
 | pg_cron jobs | All scheduled jobs | `cron.job` table |
 | n8n workflows | ~47 workflows | n8n API + repo JSON exports |
-| Consumer rewire | 8 consumers | `ops-platform/supabase/cutover/consumers.yaml` |
+| Consumer rewire | 8 consumers | `platform/supabase/cutover/consumers.yaml` |
 | Storage buckets | Bucket metadata + objects | Supabase Storage API |
 
 ---
@@ -63,8 +63,8 @@ Complete migration of all Supabase assets from managed cloud project `spdtwktxda
 | SSH access to VM | Required | For SCP of edge functions and direct administration |
 | Seed inventory evidence | Done | `docs/architecture/SEED_DATA_INVENTORY.md` |
 | Seed canonical map | Required | `ssot/migration/seed_canonical_map.yaml` |
-| Consumer manifest | Done | `ops-platform/supabase/cutover/consumers.yaml` |
-| Edge function deploy manifest | Done | `ops-platform/supabase/edge-functions/deploy/manifest.yaml` |
+| Consumer manifest | Done | `platform/supabase/cutover/consumers.yaml` |
+| Edge function deploy manifest | Done | `platform/supabase/edge-functions/deploy/manifest.yaml` |
 | CI workflow skeleton | Done | `.github/workflows/supabase-self-host-migration.yml` (5 phases) |
 | Phase 1 (Inventory) | Done | Completed via `supabase_cloud_inventory.py` |
 
@@ -88,7 +88,7 @@ Complete migration of all Supabase assets from managed cloud project `spdtwktxda
 
 ## Consumer Rewire Order
 
-Per `ops-platform/supabase/cutover/consumers.yaml`, the 8 consumers are rewired in priority order. Each consumer is switched individually with a health check gate before proceeding to the next. If any consumer fails, its rewire is rolled back without affecting previously successful consumers.
+Per `platform/supabase/cutover/consumers.yaml`, the 8 consumers are rewired in priority order. Each consumer is switched individually with a health check gate before proceeding to the next. If any consumer fails, its rewire is rolled back without affecting previously successful consumers.
 
 ---
 

@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Tree View -->
+    <record id="l10n_ph_bir_obligation_view_list" model="ir.ui.view">
+        <field name="name">l10n.ph.bir.obligation.list</field>
+        <field name="model">l10n.ph.bir.obligation</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="branch_id"/>
+                <field name="form_id"/>
+                <field name="filing_frequency"/>
+                <field name="filing_channel"/>
+                <field name="responsible_user_id"/>
+                <field name="start_date"/>
+                <field name="end_date"/>
+                <field name="is_active"/>
+                <field name="period_count" string="Periods"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Form View -->
+    <record id="l10n_ph_bir_obligation_view_form" model="ir.ui.view">
+        <field name="name">l10n.ph.bir.obligation.form</field>
+        <field name="model">l10n.ph.bir.obligation</field>
+        <field name="arch" type="xml">
+            <form string="BIR Filing Obligation">
+                <header>
+                    <button name="action_generate_periods" type="object"
+                            string="Generate Periods" class="oe_highlight"
+                            groups="ipai_bir_compliance.group_bir_compliance_manager"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_periods" type="object"
+                                class="oe_stat_button" icon="fa-calendar">
+                            <field name="period_count" widget="statinfo" string="Periods"/>
+                        </button>
+                    </div>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" readonly="1"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                            <field name="branch_id"/>
+                            <field name="form_id"/>
+                            <field name="filing_frequency"/>
+                        </group>
+                        <group>
+                            <field name="filing_channel"/>
+                            <field name="deadline_rule_id"
+                                   domain="[('form_id', '=', form_id)]"/>
+                            <field name="responsible_user_id"/>
+                            <field name="is_active"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group>
+                            <field name="start_date"/>
+                            <field name="end_date"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Notes">
+                            <field name="notes"/>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Action -->
+    <record id="l10n_ph_bir_obligation_action" model="ir.actions.act_window">
+        <field name="name">Filing Obligations</field>
+        <field name="res_model">l10n.ph.bir.obligation</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+</odoo>

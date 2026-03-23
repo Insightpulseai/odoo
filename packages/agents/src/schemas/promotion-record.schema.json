@@ -1,0 +1,52 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "ipai.promotion.v1",
+  "title": "Promotion Record",
+  "description": "Immutable append-only record of an agent's promotion or demotion across maturity levels",
+  "type": "object",
+  "properties": {
+    "agent_id": {
+      "type": "string",
+      "description": "Identifier of the agent"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO8601 timestamp of the decision"
+    },
+    "from_level": {
+      "type": "string",
+      "enum": ["L0", "L1", "L2", "L3", "L4", "L5"]
+    },
+    "to_level": {
+      "type": "string",
+      "enum": ["L0", "L1", "L2", "L3", "L4", "L5"]
+    },
+    "type": {
+      "type": "string",
+      "enum": ["promotion", "demotion"]
+    },
+    "evidence": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Array of file references to generated evidence artifacts (e.g. eval runs, metric baselines)"
+    },
+    "gate_results": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Array of references to the StageGateResult artifacts that cleared this promotion"
+    },
+    "approver": {
+      "type": "string",
+      "description": "Identity of the system or human that approved the promotion"
+    },
+    "reason": {
+      "type": "string",
+      "description": "Context string for the promotion or demotion justification"
+    }
+  },
+  "required": [
+    "agent_id", "timestamp", "from_level", "to_level", "type",
+    "evidence", "gate_results", "approver"
+  ]
+}

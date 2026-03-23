@@ -1,0 +1,44 @@
+---
+title: Agent Platform
+---
+
+# Agent Platform
+
+The InsightPulse AI agent platform runs on Azure AI Foundry with MCP-compliant tooling.
+
+## Architecture
+
+```
+User (Odoo UI / Slack / Teams)
+    ↓
+Copilot Gateway (Express, port 8088)
+    ↓
+Azure AI Foundry (Assistants API)
+    ↓
+Sub-Agents (domain-specific)
+    ↓
+MCP Tools (Odoo, Databricks, Search)
+```
+
+## Sub-Agents
+
+| Agent | Domain | Status |
+|-------|--------|--------|
+| `project_copilot` | Project management, milestones, profitability | Planned |
+| `taxpulse_ph` | BIR tax compliance, VAT, withholding | Spec complete |
+| `finance_reconciliation` | GL reconciliation, variance analysis | Planned |
+| `expense_advisor` | Expense policy, receipt OCR | Planned |
+
+## Agent Design Principles
+
+1. **Stateless** — Session state stored externally (thread IDs in Foundry)
+2. **Sequential default** — Deterministic flow for finance; Maker-Checker for gates
+3. **Advisory first** — Read-only in Release 1; write-back requires explicit approval gates
+4. **MCP tools** — All agent tools are MCP-compliant for reuse across surfaces
+
+## Foundry Integration
+
+- Runtime: Azure AI Foundry (East US 2)
+- Models: GPT-4o (primary), GPT-4o-mini (fast path)
+- Document Intelligence: `data-intel-ph` in `rg-data-intel-ph` (Southeast Asia)
+- AI Search: `srch-ipai-dev` for knowledge base grounding

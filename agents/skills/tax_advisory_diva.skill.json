@@ -1,0 +1,19 @@
+{
+  "name": "tax_advisory_diva",
+  "version": "1.0.0",
+  "description": "Provide Philippine tax guidance within the Diva Goals context. Wraps TaxPulse sub-agent for deep compliance; handles surface-level tax queries from KB segments.",
+  "intent": "Answer tax-related queries with BIR regulation grounding",
+  "inputs": [
+    {"name": "query", "type": "string", "description": "Tax-related question from user", "required": true},
+    {"name": "context_goal_id", "type": "integer", "description": "Diva Goals context (if query relates to a specific goal)", "required": false},
+    {"name": "tax_period", "type": "string", "description": "Tax period (e.g., 2025-Q4)", "required": false}
+  ],
+  "outputs": [
+    {"name": "response", "type": "string", "description": "Tax guidance response with citations"},
+    {"name": "citations", "type": "array", "description": "BIR regulation and KB references"},
+    {"name": "delegated_to_taxpulse", "type": "boolean", "description": "Whether deep execution was delegated to TaxPulse"},
+    {"name": "confidence_score", "type": "float", "description": "Response confidence (0.0-1.0)"}
+  ],
+  "kb_segments": ["kb_tax_policy_ph", "kb_odoo_tax_runtime"],
+  "agentInstructions": "Answer from KB segments when possible. For computation, filing, or form generation, delegate to TaxPulse sub-agent. Always cite BIR regulations. Never provide ungrounded tax advice."
+}

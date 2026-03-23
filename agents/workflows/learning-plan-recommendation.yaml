@@ -1,0 +1,96 @@
+# Workflow: Learning Plan Recommendation
+# Generates personalized learning plans when capability gaps are detected.
+
+id: learning-plan-recommendation
+name: Learning Plan Recommendation
+version: 1.0.0
+domain: capability
+source: Diva Goals Product Family
+created: 2026-03-23
+
+trigger:
+  type: gap_detected
+  filters:
+    gap_severity:
+      - high
+      - critical
+
+input_schema:
+  required:
+    - entity_id
+    - gap_analysis_id
+  properties:
+    entity_id:
+      type: integer
+      description: Odoo record ID for the person or agent
+    gap_analysis_id:
+      type: integer
+      description: Reference to the gap analysis result
+    priority_gaps:
+      type: array
+      description: Subset of gaps to prioritize (optional)
+
+steps:
+  - id: orchestrate
+    name: Initialize Learning Plan Pipeline
+    agent: diva_orchestrator
+    action: workflow.initialize
+    inputs:
+      workflow_id: learning-plan-recommendation
+      entity_id: "{{ input.entity_id }}"
+
+  - id: map_gaps
+    name: Retrieve Gap Details
+    agent: capability_mapper
+    action: capability.get_gaps
+    inputs:
+      entity_id: "{{ input.entity_id }}"
+      gap_analysis_id: "{{ input.gap_analysis_id }}"
+      priority_gaps: "{{ input.priority_gaps }}"
+    outputs:
+      - detailed_gaps
+      - priority_order
+
+  - id: curate_resources
+    name: Find Learning Resources
+    agent: knowledge_curator
+    action: kb.search_learning_resources
+    inputs:
+      gap_topics: "{{ steps.map_gaps.outputs.detailed_gaps }}"
+    outputs:
+      - resource_list
+      - resource_quality_scores
+
+  - id: design_plan
+    name: Design Learning Path
+    agent: capability_mapper
+    action: learning.design_path
+    inputs:
+      entity_id: "{{ input.entity_id }}"
+      detailed_gaps: "{{ steps.map_gaps.outputs.detailed_gaps }}"
+      resources: "{{ steps.curate_resources.outputs.resource_list }}"
+    outputs:
+      - learning_plan
+      - milestones
+      - estimated_duration
+
+  - id: route_approval
+    name: Route Learning Plan for Approval
+    agent: approval_coordinator
+    action: approval.route
+    inputs:
+      proposal_type: learning_plan
+      content: "{{ steps.design_plan.outputs.learning_plan }}"
+    outputs:
+      - approval_status
+
+output_schema:
+  properties:
+    learning_plan:
+      type: object
+    milestones:
+      type: array
+    estimated_duration:
+      type: string
+    approval_status:
+      type: string

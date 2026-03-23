@@ -1,0 +1,132 @@
+# Workflow: Odoo Docs Assist
+# 3-lane retrieval workflow for Odoo product/docs questions.
+# Lane 1: Odoo runtime context → Lane 2: Odoo docs KB → Lane 3: bounded web search.
+
+id: odoo-docs-assist
+name: Odoo Docs Assist
+version: 1.0.0
+domain: odoo_docs
+source: Diva Goals Product Family
+created: 2026-03-23
+
+trigger:
+  type: copilot_invocation
+  filters:
+    mode: odoo
+    intent_category:
+      - odoo_product_question
+      - odoo_configuration_question
+      - odoo_localization_question
+      - odoo_docs_question
+
+input_schema:
+  required:
+    - query
+  properties:
+    query:
+      type: string
+      description: User's Odoo-related question
+    url_hint:
+      type: string
+      description: Documentation URL provided by user (if any)
+    odoo_context:
+      type: object
+      description: Active record, company, user role, locale
+
+steps:
+  - id: odoo_context_intake
+    name: Gather Odoo Runtime Context
+    agent: diva_orchestrator
+    action: context.assemble
+    inputs:
+      active_model: "{{ input.odoo_context.model }}"
+      active_record_id: "{{ input.odoo_context.record_id }}"
+      company_id: "{{ input.odoo_context.company_id }}"
+      user_role: "{{ input.odoo_context.user_role }}"
+      locale: "{{ input.odoo_context.locale }}"
+    outputs:
+      - runtime_context
+      - context_evidence
+
+  - id: kb_odoo_docs_retrieve
+    name: Search Odoo Docs KB
+    agent: evidence_harvester
+    action: kb.search
+    inputs:
+      query: "{{ input.query }}"
+      url_hint: "{{ input.url_hint }}"
+      kb_segment: kb_odoo_docs
+      runtime_context: "{{ steps.odoo_context_intake.outputs.runtime_context }}"
+    outputs:
+      - kb_results
+      - kb_citations
+      - evidence_strength
+
+  - id: evaluate_evidence
+    name: Check If KB Evidence Is Sufficient
+    agent: diva_orchestrator
+    action: evidence.evaluate
+    inputs:
+      evidence_strength: "{{ steps.kb_odoo_docs_retrieve.outputs.evidence_strength }}"
+      threshold: moderate
+    outputs:
+      - needs_fallback_search
+
+  - id: bounded_web_search
+    name: Bounded Web Search Fallback
+    agent: evidence_harvester
+    action: web.search
+    condition: "{{ steps.evaluate_evidence.outputs.needs_fallback_search == true }}"
+    inputs:
+      query: "{{ input.query }}"
+      config:
+        type: web_search_20250305
+        max_uses: 3
+        allowed_domains:
+          - odoo.com
+    outputs:
+      - web_results
+      - web_citations
+
+  - id: response_render
+    name: Render Response With Citations
+    agent: status_synthesizer
+    action: docs.respond
+    inputs:
+      query: "{{ input.query }}"
+      runtime_context: "{{ steps.odoo_context_intake.outputs.runtime_context }}"
+      kb_results: "{{ steps.kb_odoo_docs_retrieve.outputs.kb_results }}"
+      kb_citations: "{{ steps.kb_odoo_docs_retrieve.outputs.kb_citations }}"
+      web_results: "{{ steps.bounded_web_search.outputs.web_results }}"
+      web_citations: "{{ steps.bounded_web_search.outputs.web_citations }}"
+    outputs:
+      - response
+      - citations
+      - source_type
+      - confidence_score
+
+output_schema:
+  properties:
+    response:
+      type: string
+      description: Documentation-grounded answer
+    citations:
+      type: array
+      description: Source citations with URLs and KB segment refs
+      items:
+        type: object
+        properties:
+          text:
+            type: string
+          url:
+            type: string
+          source_type:
+            type: string
+            enum: [runtime, docs_kb, web_search]
+    source_type:
+      type: string
+      enum: [runtime, docs_kb, web_search, mixed]
+      description: Primary lane used for the answer
+    confidence_score:
+      type: float
+      description: Response confidence (0.0-1.0)

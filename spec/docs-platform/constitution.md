@@ -14,7 +14,7 @@ Spec bundles, contracts, YAML manifests, and schema definitions live in the git 
 
 The `odoo/documentation` repo informs content structure, build tooling, extension patterns, and editorial standards. It is not a UI benchmark. Do not copy its theme, navigation, or frontend patterns.
 
-## 4. Fluent 2 is UI/design-system benchmark only
+## 4. Fluent 2 is UI/design benchmark only
 
 Microsoft Fluent 2 (React v9) defines the app shell, navigation, design tokens, component library, and interaction patterns. It is not a publishing or content-authoring benchmark. Content rendering uses a separate renderer inside the Fluent shell.
 

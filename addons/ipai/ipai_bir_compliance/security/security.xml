@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="group_bir_compliance_user" model="res.groups">
+        <field name="name">BIR Compliance User</field>
+        <field name="category_id" ref="base.module_category_accounting_accounting"/>
+        <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+        <field name="comment">Can view BIR compliance data</field>
+    </record>
+
+    <record id="group_bir_compliance_manager" model="res.groups">
+        <field name="name">BIR Compliance Manager</field>
+        <field name="category_id" ref="base.module_category_accounting_accounting"/>
+        <field name="implied_ids" eval="[(4, ref('group_bir_compliance_user'))]"/>
+        <field name="comment">Can manage BIR compliance data, generate periods, record filings</field>
+    </record>
+</odoo>

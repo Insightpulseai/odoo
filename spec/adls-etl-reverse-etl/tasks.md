@@ -15,22 +15,26 @@
 
 ## T2 — ADLS Infrastructure
 
-- [ ] **T2.1** Provision ADLS Gen2 storage account (`adlsipaidev`)
-- [ ] **T2.2** Create container/filesystem structure (6 zones)
+- [x] **T2.1** Provision ADLS Gen2 storage account (`adlsipaidev`)
+- [x] **T2.2** Create container/filesystem structure (6 zones)
 - [ ] **T2.3** Configure storage RBAC (ETL-write, analytics-read, reverse-ETL-read)
 - [ ] **T2.4** Add ADLS credentials to Key Vault (`kv-ipai-dev`)
 - [ ] **T2.5** Configure managed identity for ETL compute → ADLS
-- [ ] **T2.6** Decide: Databricks workspace — provision or defer?
-- [ ] **T2.7** Decide: Delta Lake format — mandatory or optional?
+- [x] **T2.6** Provision mandatory Azure Databricks workspace (`dbw-ipai-dev`)
+- [x] **T2.7** Enforce mandatory Delta Lake format (UniForm on ADLS Gen2)
 
 ## T3 — Supabase → ADLS Bronze
 
-- [ ] **T3.1** Inventory Supabase tables for ETL (priority: auth.users, platform_events, ops.task_queue)
-- [ ] **T3.2** Select CDC mechanism (Realtime, logical replication, or batch)
-- [ ] **T3.3** Build bronze landing pipeline (Supabase → ADLS raw/)
-- [ ] **T3.4** Implement watermark tracking
+- [x] **T3.1** Inventory Supabase tables for ETL (priority: auth.users, platform_events, ops.task_queue)
+- [x] **T3.2** Select CDC mechanism: supabase/etl (Rust CDC, pgoutput logical replication) + JDBC batch bootstrap
+- [x] **T3.3** Build bronze landing pipeline (Supabase → ADLS raw/) — `ingest_supabase.py` + Databricks notebook + DAB job
+- [x] **T3.4** Implement watermark tracking — uses existing `update_watermark()` in `bronze/ingest.py`
 - [ ] **T3.5** Implement quarantine path for failed records
 - [ ] **T3.6** Add run logging and evidence output
+- [x] **T3.7** Create `iceberg` container on `stipaidevlake` ADLS Gen2 storage account
+- [x] **T3.8** Create supabase/etl Docker Compose service definition for VM deployment
+- [x] **T3.9** Create PG logical replication setup script (slot + publication)
+- [x] **T3.10** Create Databricks secret scope setup script for Supabase PG credentials
 
 ## T4 — Odoo → ADLS Bronze
 
@@ -48,7 +52,7 @@
 - [ ] **T5.2** Implement cross-source entity resolution (Supabase user ↔ Odoo employee)
 - [ ] **T5.3** Add schema validation (reject → quarantine)
 - [ ] **T5.4** Partition silver by date and source
-- [ ] **T5.5** Decide: compute runtime (Data Factory, Databricks, or Azure Functions)
+- [x] **T5.5** Use Azure Databricks for all complex transformations
 
 ## T6 — Gold Curation
 
@@ -57,7 +61,7 @@
 - [ ] **T6.3** Build compliance gold mart (BIR filing status, deadlines)
 - [ ] **T6.4** Build platform gold mart (user activity, events)
 - [ ] **T6.5** Build ML feature tables for Azure AI
-- [ ] **T6.6** Connect Tableau Cloud to gold layer
+- [ ] **T6.6** Connect Power BI to Unity Catalog / Gold layer
 - [ ] **T6.7** Validate BI dashboards against gold marts
 
 ## T7 — Reverse ETL
@@ -69,7 +73,7 @@
 - [ ] **T7.5** Implement idempotency enforcement (dedup key check)
 - [ ] **T7.6** Implement dead-letter queue for failed writebacks
 - [ ] **T7.7** Add writeback evidence (counts, field audit, errors)
-- [ ] **T7.8** Decide: reverse ETL orchestrator (Azure Functions, Data Factory, Databricks)
+- [x] **T7.8** Use Azure Functions or Databricks Jobs for reverse ETL orchestration
 
 ## T8 — Deprecate Legacy Paths
 

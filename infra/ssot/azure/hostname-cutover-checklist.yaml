@@ -63,7 +63,7 @@ waves:
           - "Front Door profile provisioned"
         status: not-started
 
-      - hostname: n8n-azure.insightpulseai.com
+      - hostname: n8n.insightpulseai.com
         current_target: "N/A (new record)"
         current_proxy: none
         current_origin_port: null
@@ -160,7 +160,7 @@ waves:
         azure_target: "Front Door → n8n Container App"
         cutover_order: 2
         cutover_group: automation
-        test_hostname: "n8n-azure.insightpulseai.com"
+        test_hostname: null
         health_check_path: /healthz
         rollback_target: "A 178.128.112.214"
         dependencies:

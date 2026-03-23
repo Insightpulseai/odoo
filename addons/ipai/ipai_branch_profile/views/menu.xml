@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <menuitem id="menu_operating_branch"
+              name="Operating Branches"
+              parent="account.account_management"
+              action="action_operating_branch"
+              sequence="50"/>
+
+</odoo>

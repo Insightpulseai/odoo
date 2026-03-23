@@ -1,0 +1,19 @@
+{
+  "name": "capability_gap_analysis",
+  "version": "1.0.0",
+  "description": "Analyze gaps between required capabilities and current capabilities for people or agents. Produces gap matrix with severity scoring.",
+  "intent": "Identify and score capability gaps for people or agents",
+  "inputs": [
+    {"name": "entity_type", "type": "string", "description": "person | agent | team", "required": true},
+    {"name": "entity_id", "type": "integer", "description": "Odoo record ID for the entity", "required": true},
+    {"name": "role_id", "type": "integer", "description": "Target role for gap analysis", "required": false}
+  ],
+  "outputs": [
+    {"name": "gap_matrix", "type": "object", "description": "Required vs actual capability matrix"},
+    {"name": "critical_gaps", "type": "array", "description": "Gaps with severity >= high"},
+    {"name": "gap_score", "type": "float", "description": "Overall gap severity (0.0=no gaps, 1.0=fully gapped)"},
+    {"name": "trend", "type": "string", "description": "improving | stable | declining"}
+  ],
+  "kb_segments": ["kb_people_capability", "kb_agent_capability"],
+  "agentInstructions": "Read the entity's current capability inventory from Odoo, compare against required capabilities for the target role or current role. Score gaps by severity. Report trend from historical assessments if available."
+}

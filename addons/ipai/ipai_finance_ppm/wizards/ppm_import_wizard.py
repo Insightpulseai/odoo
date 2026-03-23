@@ -1,7 +1,8 @@
 import base64
 import csv
 import io
-from odoo import api, fields, models
+from odoo import _, api, fields, models
+from odoo.exceptions import UserError
 
 class IpaipPmImportWizard(models.TransientModel):
     _name = "ipai.ppm.import.wizard"
@@ -19,25 +20,18 @@ class IpaipPmImportWizard(models.TransientModel):
         reader = csv.DictReader(f)
 
         # Required columns (clarity)
-        required = {"project_name", "project_key", "budget_amount", "cost_center"}
+        required = {"project_name", "budget_amount", "cost_center"}
         if not required.issubset(set(reader.fieldnames or [])):
             missing = sorted(required - set(reader.fieldnames or []))
-            raise ValueError(f"Missing required CSV columns: {missing}")
+            raise UserError(_("Missing required CSV columns: %s", ", ".join(missing)))
 
         Project = self.env["project.project"]
         for row in reader:
             name = row["project_name"].strip()
-            key = row["project_key"].strip()
             budget = float(row["budget_amount"] or 0)
             cc = row["cost_center"].strip()
 
-            # Deterministic lookup: prefer project_key if provided; fall back to name.
-            domain = [("name", "=", name)]
-            if key:
-                # NOTE: assumes you have a stored field for key; if not, this safely degrades to name-only.
-                # Replace 'ipai_project_key' with your canonical field once defined.
-                domain = ["|", ("ipai_project_key", "=", key), ("name", "=", name)]
-            proj = Project.search(domain, limit=1)
+            proj = Project.search([("name", "=", name)], limit=1)
             if not proj:
                 proj = Project.create({"name": name})
 

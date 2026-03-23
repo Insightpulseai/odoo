@@ -1,65 +1,151 @@
-# Tasks — ipai-odoo-copilot-azure
+# Tasks: Odoo Copilot
 
-## Phase 1: Configuration Surface + Live Agent Verification (v1)
+## Epic 0 — Stage 3 Azure Wiring (Completed 2026-03-23)
 
-### Addon structure
-- [x] Create `addons/ipai/ipai_odoo_copilot/__manifest__.py`
-- [x] Create `models/res_config_settings.py` with Foundry fields
-- [x] Create `models/foundry_service.py` (AbstractModel)
-- [x] Create `views/res_config_settings_views.xml`
-- [x] Create `data/ir_config_parameter.xml` (defaults)
-- [x] Create `data/ir_actions_server.xml`
-- [x] Create `data/ir_cron.xml` (nightly healthcheck)
-- [x] Create `security/ir.model.access.csv`
+- [x] Deploy gpt-4.1 model contract to oai-ipai-dev
+- [x] Deploy text-embedding-ada-002 for vector embeddings
+- [x] Create odoo-docs-kb index (vector-enabled, HNSW cosine, 1536d)
+- [x] Seed 26 Odoo doc chunks with embeddings
+- [x] Assign RBAC: project identity → Search Reader + OpenAI User
+- [x] Assign RBAC: endpoint identity → Search Reader + OpenAI User
+- [x] Create Foundry connection: srch-ipai-dev-connection (CognitiveSearch)
+- [x] Create Foundry connection: oai-ipai-dev-connection (AzureOpenAI)
+- [x] Verify ipai-copilot-endpoint scoring URI operational
+- [x] Wire ipai-copilot-gateway env vars to gpt-4.1
+- [x] Pass retrieval smoke test (grounded results, score ≥ 3.0)
+- [x] Update SSOT: foundry_stage3.yaml, models.yaml, diva_copilot.yaml
+- [x] Update AI_RUNTIME_AUTHORITY.md with Stage 3 completions
 
-### Health probe (test_connection)
-- [x] Auth-mode detection: managed identity (IMDS) → env-key → none
-- [x] IMDS resource scope: `cognitiveservices.azure.com` (correct for AI services)
-- [x] Non-mutating API endpoint reachability probe (stdlib urllib)
-- [x] Status-aware failure reporting (401/403/404/5xx/network)
-- [x] Knowledge/search binding state reported separately
-- [x] Structured logging (auth mode, target, status, no secrets)
-- [x] Separate portal URL vs API endpoint fields
+## Epic 0.1 — Stage 3 Marketplace Readiness (Not Started)
 
-### Agent resolution (ensure_agent)
-- [x] List agents via `GET /openai/assistants` (Azure AI Agent Service API)
-- [x] Search response for configured agent name
-- [x] Report found (with agent id + model) or not-found (with available agents)
-- [x] Read-only — never creates/updates/deletes agents
-- [x] HTTP status classification reused from health probe
-- [x] UI button relabeled "Verify Agent" (accurate)
+- [ ] Create Teams/M365 app package manifest
+- [ ] Create formal evaluation pack with pass/fail quality thresholds
+- [ ] Create privacy/data handling documentation
+- [ ] Prepare Partner Center submission assets
+- [ ] Establish SLO baseline (latency, availability, error rate)
+- [ ] Expand Odoo docs corpus: 26 → 7000+ chunks via full documentation crawl
+- [ ] Wire Entra identity (app registration + OIDC flow)
+- [ ] Enable write actions (flip config flag) — requires eval pack + SLO first
 
-### Spec & SSOT
-- [x] Create spec kit (constitution, prd, plan, tasks)
-- [x] Create SSOT AI manifests (agents, models, topics, tools, policies, sources, prompts)
-- [x] Create Foundry instruction artifact
-- [x] Add SSOT integrity validator
+## Epic 1 — Copilot Core
 
-### Validation
-- [x] Python compile check passes
-- [x] SSOT cross-reference validation passes
-- [x] XML parse validation passes
-- [ ] Install smoke test on Odoo 19 (requires devcontainer)
-- [ ] Live agent resolution test (requires Azure access + API endpoint)
-- [ ] Foundry evaluation runs (requires Azure access)
+- [ ] Unified gateway entrypoint
+- [ ] Auth / role resolution (Entra → Odoo user mapping)
+- [ ] Context assembly (user, company, permissions, recent activity)
+- [ ] Skill registry (discovery, routing, version tracking)
+- [ ] Run logging / artifact storage (Supabase)
+- [ ] Approval / escalation hooks
+- [ ] Channel adapters (Odoo UI, Teams, Telegram, email)
 
-## Phase 2: Knowledge Grounding (future)
+## Epic 0.7 — Compliance Rule Library
+- define check/rule object model
+- define selection/filter/scope model
+- define check outputs and finding schema
+- define lifecycle and versioning rules
 
-- [ ] Provision Azure AI Search index (srch-ipai-dev)
-- [ ] Wire search connection to Foundry agent
-- [ ] Add citation rendering
-- [ ] Run grounding evaluations
+## Epic 0.8 — Scenario Runner
+- define scenario object model
+- support draft/active/disabled lifecycle
+- support scheduled and ad hoc runs
+- persist run logs, scope, timestamps, and artifacts
 
-## Phase 3: Bounded Tools (future)
+## Epic 0.9 — Findings Inbox
+- build finding list/detail views
+- support comments, attachments, evidence links
+- support confidence/risk display
+- support assign, suppress, close, and escalate actions
 
-- [ ] Define tool schemas
-- [ ] Implement Odoo tool endpoints
-- [ ] Add approval workflow
-- [ ] Wire read-only toggle
+## Epic 1.0 — Remediation Templates
+- define task template model
+- map finding types to remediation playbooks
+- support manual and automatic task creation
+- support task completion/closure feedback into findings
 
-## Phase 4: Production Hardening (future)
+## Epic 1.1 — Audit & Retention
+- build evidence export pack generation
+- support period/entity scoped auditor exports
+- define archive and retention workflows
+- add sensitive-read access logging
 
-- [ ] Managed identity as primary auth (ACA role assignment to AI services)
-- [ ] Audit logging
-- [ ] queue_job integration
-- [ ] Evaluation dashboard
+## Epic 1.2 — Bootstrap & Landscape
+- define system landscape object model
+- define entity/calendar/jurisdiction registration
+- define scenario enablement workflow
+- add readiness/preflight checks
+
+## Epic 1.3 — Security & Access
+- define close/control role families
+- build role assignment flows
+- add authorization-group model
+- enforce permission boundaries across define/run/review/approve/archive actions
+
+## Epic 1.4 — Connectivity Registry
+- define connection/adaptor registry
+- define sync/job status model
+- define adapter contracts (read/write/auth/evidence/failure semantics)
+- expose connected-system health to operators
+
+## Epic 1.5 — Monitoring & Reliability
+- build run monitor
+- build connector-health and sync-failure views
+- build degraded-mode state handling
+- add retry/escalation logging
+
+## Epic 1.6 — Lifecycle & Retention
+- build archive/restore flows
+- build auditor export center
+- define retention/anonymization/purge workflows
+- build offboarding checklist with guarded destructive controls
+## Epic 0.5 — Data Prep Adapter
+
+- [ ] Define approved Power Query connector patterns
+- [ ] Define connection credential, gateway, and privacy handling contract
+- [ ] Define reusable finance/ERP transformation templates
+- [ ] Map shaped outputs into Odoo Copilot context packs and downstream analytics
+
+## Epic 0.6 — Analytics Mirror Adapter
+
+- [ ] Identify candidate mirrored sources (Odoo PG, Supabase, external)
+- [ ] Define Fabric Mirroring source/target topology
+- [ ] Define mirrored database monitoring and alerting contract
+- [ ] Expose replication status, lag, and failures to admin/operator observability
+- [ ] Connect mirrored outputs to analytics/reporting skills without bypassing Odoo authority
+
+## Cross-Cutting
+
+- [ ] SSOT agent contract YAML
+- [ ] Mode-to-tool mapping documentation
+- [ ] Publish gate schema and enforcement
+- [ ] Evaluation freshness policy
+- [ ] Adversarial eval suite (unsafe actions, missing evidence, prohibited mutations)
+- [ ] Observability: traces, eval outcomes, failure paths
+
+## Epic 2.0 — Sub-Agent Registry
+
+- [ ] Sub-agent registration model (domain, capabilities, tools, policy)
+- [ ] Routing logic (intent + model/view + domain → sub-agent)
+- [ ] Sub-agent response rendering in Odoo UI
+- [ ] Sub-agent lifecycle (enable, disable, version)
+
+## Epic 2.1 — project_copilot Sub-Agent
+
+- [ ] Project dashboard summarization entry point
+- [ ] Milestone/risk context builder
+- [ ] Profitability interpretation context builder
+- [ ] Advisory-only response handling (no project mutation)
+- [ ] Eval scaffold from OpenAI Academy product pack
+
+## Epic 2.2 — taxpulse_ph Integration
+
+- [ ] Wire `spec/tax-pulse-sub-agent/` into sub-agent registry
+- [ ] Tax/compliance entry points in finance surfaces
+- [ ] Advisory-only BIR guidance (Release 1)
+- [ ] Eval scaffold from OpenAI Academy finserv pack + BIR test sets
+
+## Epic 2.3 — finance_reconciliation Sub-Agent
+
+- [ ] GL/intercompany context builder
+- [ ] Variance-analysis context builder
+- [ ] Collections context builder
+- [ ] Escalation/routing metadata
+- [ ] Eval scaffold from Microsoft Copilot Finance benchmarks

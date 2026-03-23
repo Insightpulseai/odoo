@@ -1,0 +1,19 @@
+{
+  "name": "portfolio_alignment",
+  "version": "1.0.0",
+  "description": "Assess alignment between strategic portfolio goals and operational execution. Identify misalignment, resource conflicts, and priority gaps.",
+  "intent": "Evaluate portfolio-level goal alignment and resource allocation",
+  "inputs": [
+    {"name": "portfolio_scope", "type": "string", "description": "company | department", "required": true},
+    {"name": "portfolio_id", "type": "integer", "description": "Odoo record ID for portfolio scope", "required": true},
+    {"name": "time_horizon", "type": "string", "description": "quarterly | annual", "required": false, "default": "quarterly"}
+  ],
+  "outputs": [
+    {"name": "alignment_score", "type": "float", "description": "Portfolio alignment score (0.0-1.0)"},
+    {"name": "misalignments", "type": "array", "description": "Goals misaligned with strategic priorities"},
+    {"name": "resource_conflicts", "type": "array", "description": "Goals competing for same resources"},
+    {"name": "recommendations", "type": "array", "description": "Prioritization recommendations"}
+  ],
+  "kb_segments": ["kb_strategy", "kb_governance"],
+  "agentInstructions": "Read all goals within the portfolio scope, evaluate alignment with declared strategic priorities, identify resource conflicts and priority gaps. Provide recommendations with evidence citations."
+}

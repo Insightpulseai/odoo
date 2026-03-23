@@ -34,18 +34,18 @@ records:
     cutover_gate: true  # Pipeline will not proceed past DNS phase until this resolves
 
   # ── Secondary: n8n workflow automation ───────────────────────────────────
-  - subdomain: n8n-azure
-    fqdn: n8n-azure.insightpulseai.com
+  - subdomain: n8n
+    fqdn: n8n.insightpulseai.com
     type: A
     current: null   # Record does not yet exist — create it
     target: "4.193.100.31"
     proxied: true
     ttl: 300
     purpose: "n8n workflow automation, co-deployed on Supabase VM port 5678"
-    # nginx reverse-proxies n8n-azure.insightpulseai.com → localhost:5678
+    # nginx reverse-proxies n8n.insightpulseai.com → localhost:5678
     verification_commands:
-      - "dig +short n8n-azure.insightpulseai.com"
-      - "curl -sf https://n8n-azure.insightpulseai.com/healthz"
+      - "dig +short n8n.insightpulseai.com"
+      - "curl -sf https://n8n.insightpulseai.com/healthz"
     verification_expected:
       healthz: "HTTP 200"
     cutover_gate: false  # n8n is secondary; pipeline may proceed if n8n is degraded
@@ -119,7 +119,7 @@ post_cutover_checks:
 
   - id: https_n8n
     description: "n8n healthz via public hostname"
-    command: "curl -sf https://n8n-azure.insightpulseai.com/healthz"
+    command: "curl -sf https://n8n.insightpulseai.com/healthz"
     expected: "HTTP 200"
 
 # ── Rollback ──────────────────────────────────────────────────────────────

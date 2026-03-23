@@ -1,0 +1,37 @@
+---
+title: Reference
+---
+
+# Reference
+
+## Infrastructure
+
+| Service | Endpoint | Purpose |
+|---------|----------|---------|
+| Odoo ERP | `erp.insightpulseai.com` | ERP system |
+| n8n | `n8n.insightpulseai.com` | Automation |
+| Superset | `superset.insightpulseai.com` | BI dashboards |
+| Plane | `plane.insightpulseai.com` | Project management |
+| Supabase | `supabase.insightpulseai.com` | API/Edge Functions |
+
+## Azure Resources
+
+| Resource | Type | Resource Group |
+|----------|------|---------------|
+| `ipai-odoo-dev-web` | Container App | `rg-ipai-dev-odoo-runtime` |
+| `ipai-odoo-dev-pg` | PostgreSQL Flexible | `rg-ipai-dev-odoo-data` |
+| `oai-ipai-dev` | Azure OpenAI | `rg-ipai-ai-dev` |
+| `data-intel-ph` | Document Intelligence | `rg-data-intel-ph` |
+| `kv-ipai-dev` | Key Vault | `rg-ipai-dev-platform` |
+
+## Module Inventory
+
+Custom IPAI modules follow the naming convention `ipai_<domain>_<feature>`:
+
+| Module | Domain | Purpose |
+|--------|--------|---------|
+| `ipai_finance_ppm` | Finance | Project profitability management |
+| `ipai_odoo_copilot` | AI | Copilot chat bridge to Foundry |
+| `ipai_tax_compliance` | Finance | BIR tax filing automation |
+| `ipai_slack_connector` | Integration | Slack ChatOps bridge |
+| `ipai_auth_oidc` | Security | OIDC authentication (Entra target) |

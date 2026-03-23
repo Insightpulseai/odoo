@@ -1,0 +1,11 @@
+health_contract:
+  endpoints:
+    liveness: /healthz
+    readiness: /readyz
+    metrics: /metrics
+  thresholds:
+    timeout_seconds: 5
+    failure_threshold: 3
+    success_threshold: 1
+  startup:
+    grace_period_seconds: 30

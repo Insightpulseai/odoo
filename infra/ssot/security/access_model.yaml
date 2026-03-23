@@ -19,7 +19,7 @@
 # =============================================================================
 
 schema_version: "1.0"
-last_updated: "2026-03-18"
+last_updated: "2026-03-21"
 
 # -----------------------------------------------------------------------------
 # Tenant
@@ -33,6 +33,10 @@ tenant:
   primary_region: southeastasia
   entra_tier: free  # target: p1 (M365 Business Premium)
   security_defaults_enabled: false  # RISK — re-enable or deploy CA
+  users_count: 4
+  groups_count: 12
+  app_registrations_count: 4
+  hybrid_identity: none  # cloud-native — Cloud Sync not required
 
 # -----------------------------------------------------------------------------
 # Identity Classes
@@ -104,6 +108,8 @@ human_roles:
     name: Emergency Admin
     purpose: Break-glass access when primary admin is locked out
     scope: entra_global_admin_subscription_owner
+    count_required: 2  # Microsoft recommends two break-glass accounts
+    permanent_role: global_administrator  # permanently assigned, never JIT
     current_holders:
       - admin@insightpulseai.com
       - emergency-admin@insightpulseai.com
@@ -116,9 +122,10 @@ human_roles:
       - code_deployment
       - data_access
     auth_requirements:
-      - cloud_only_account
+      - cloud_only_account  # must not be federated or synced
       - fido2_security_key  # target
       - password_plus_mfa  # current
+    validation: quarterly_test  # test both accounts quarterly
 
   - id: developer
     name: Developer / Engineer
@@ -216,6 +223,61 @@ operating_model:
 
 # -----------------------------------------------------------------------------
 # Authentication Methods
+# -----------------------------------------------------------------------------
+
+authentication_methods_policy:
+  policy_type: converged  # target — migrate from legacy MFA/SSPR
+  migration_status: outstanding  # legacy policy still active
+  converged_policy_migrated: false  # Entra portal still shows migration prompt (2026-03-21)
+
+  methods:
+    - id: microsoft_authenticator
+      status: required
+      scope: all_users
+      capabilities: [passkeys, passwordless, mfa_push, oath_codes]
+
+    - id: passkey_fido2
+      status: required
+      scope: all_users
+      notes: phishing-resistant, target for break-glass accounts
+
+    - id: temporary_access_pass
+      status: required
+      scope: all_users
+      notes: onboarding and recovery
+
+    - id: software_oath_tokens
+      status: required
+      scope: all_users
+      notes: backup authenticator codes
+
+    - id: email_otp
+      status: allowed
+      scope: all_users
+      notes: only if justified by specific use case
+
+    - id: sms
+      status: disabled
+      notes: weak channel — do not enable unless business-critical
+
+    - id: voice_call
+      status: disabled
+      notes: weak channel — do not enable
+
+    - id: hardware_oath_tokens
+      status: disabled
+      notes: enable only if physical token distribution feasible
+
+    - id: certificate_based_auth
+      status: disabled
+      notes: enable only for workstation-bound scenarios
+
+    - id: qr_code
+      status: disabled
+      notes: not applicable
+
+# -----------------------------------------------------------------------------
+# Service-to-Service Auth Methods
 # -----------------------------------------------------------------------------
 
 auth_methods:

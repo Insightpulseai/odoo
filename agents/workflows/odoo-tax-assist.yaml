@@ -1,0 +1,82 @@
+# Workflow: Odoo Tax Assist
+# Routes tax queries through the 3-layer pattern: Copilot → Tax Guru → TaxPulse.
+
+id: odoo-tax-assist
+name: Odoo Tax Assist
+version: 1.0.0
+domain: tax
+source: Diva Goals Product Family
+created: 2026-03-23
+
+trigger:
+  type: copilot_invocation
+  filters:
+    mode: tax_guru
+    intent_category: tax
+
+input_schema:
+  required:
+    - query
+  properties:
+    query:
+      type: string
+      description: User's tax-related query
+    context_goal_id:
+      type: integer
+      description: Diva Goals context if query relates to a goal
+    tax_period:
+      type: string
+      description: Tax period (e.g., 2025-Q4)
+    bir_form_type:
+      type: string
+      description: BIR form identifier if specified
+
+steps:
+  - id: classify_intent
+    name: Classify Tax Query Intent
+    agent: diva_orchestrator
+    action: intent.classify
+    inputs:
+      query: "{{ input.query }}"
+      domain: tax
+    outputs:
+      - intent_type
+      - requires_taxpulse
+      - kb_segments_needed
+
+  - id: kb_lookup
+    name: Search Tax Knowledge Bases
+    agent: evidence_harvester
+    action: kb.search
+    inputs:
+      query: "{{ input.query }}"
+      segments: "{{ steps.classify_intent.outputs.kb_segments_needed }}"
+    outputs:
+      - kb_results
+      - citations
+
+  - id: generate_response
+    name: Generate Tax Guidance
+    agent: status_synthesizer
+    action: tax.advise
+    inputs:
+      query: "{{ input.query }}"
+      kb_results: "{{ steps.kb_lookup.outputs.kb_results }}"
+      requires_taxpulse: "{{ steps.classify_intent.outputs.requires_taxpulse }}"
+      tax_period: "{{ input.tax_period }}"
+    outputs:
+      - response
+      - citations
+      - confidence_score
+      - delegated_to_taxpulse
+
+output_schema:
+  properties:
+    response:
+      type: string
+    citations:
+      type: array
+    confidence_score:
+      type: float
+    delegated_to_taxpulse:
+      type: boolean

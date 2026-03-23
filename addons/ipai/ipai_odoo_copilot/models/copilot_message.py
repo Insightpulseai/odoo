@@ -49,6 +49,11 @@ class CopilotMessage(models.Model):
         index=True,
     )
 
+    _sql_constraints = [
+        ('request_id_uniq', 'unique(request_id)',
+         'Request ID must be unique.'),
+    ]
+
     # -------------------------------------------------------------------------
     # Constraints
     # -------------------------------------------------------------------------

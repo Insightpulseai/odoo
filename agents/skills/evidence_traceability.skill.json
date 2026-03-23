@@ -1,0 +1,17 @@
+{
+  "name": "evidence_traceability",
+  "version": "1.0.0",
+  "description": "Trace evidence chains from goals through key results to source data. Verify citation integrity and identify gaps in evidence coverage.",
+  "intent": "Validate and trace evidence chains for goal assertions",
+  "inputs": [
+    {"name": "goal_id", "type": "integer", "description": "Odoo goal record ID", "required": true},
+    {"name": "assertion_ids", "type": "array", "description": "List of assertion IDs to trace", "required": false}
+  ],
+  "outputs": [
+    {"name": "trace_map", "type": "object", "description": "Assertion-to-evidence mapping with chain visualization"},
+    {"name": "coverage_score", "type": "float", "description": "Evidence coverage percentage (0.0-1.0)"},
+    {"name": "gaps", "type": "array", "description": "Assertions without sufficient evidence"}
+  ],
+  "kb_segments": ["kb_strategy", "kb_execution"],
+  "agentInstructions": "For each assertion about a goal, trace the evidence chain back to source records in Odoo or Databricks. Flag any assertion without a verifiable source. Report coverage score and gaps."
+}

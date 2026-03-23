@@ -17,26 +17,10 @@ resources:
       catalog_name: ${var.catalog}
       comment: "Business-ready data marts and aggregations"
 
-# Note: Tables are created dynamically by notebooks
-# This file documents the expected schema
-
-# Bronze Tables:
-# - bronze.notion_raw_pages: Raw Notion page payloads
-# - bronze.azure_rg_raw: Raw Azure Resource Graph results
-# - bronze.sync_watermarks: Sync tracking
-
-# Silver Tables:
-# - silver.notion_programs: Normalized programs
-# - silver.notion_projects: Normalized projects
-# - silver.notion_budget_lines: Normalized budget lines
-# - silver.notion_risks: Normalized risks
-# - silver.azure_advisor_recommendations: Normalized advisor recs
-
-# Gold Tables:
-# - gold.ppm_budget_vs_actual: Budget vs actual by period
-# - gold.ppm_forecast: Run-rate forecast
-# - gold.ppm_risk_summary: Risk rollups
-# - gold.ppm_projects: Enriched projects table
-# - gold.azure_advisor_summary: Advisor summary
-# - gold.control_room_status: Pipeline health metrics
-# - gold.dq_issues: Data quality issues
+# Tables created by DLT pipelines (proven 2026-03-21):
+#
+# dev_ppm.bronze.raw_projects          — Seed project records
+# dev_ppm.bronze.raw_budget_lines      — Seed budget line items
+# dev_ppm.bronze.projects              — Cleansed projects (DLT expectations)
+# dev_ppm.bronze.budget_lines          — Cleansed budget lines (DLT expectations)
+# dev_ppm.bronze.project_budget_summary — Budget vs actual aggregates (gold)

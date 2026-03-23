@@ -3,5 +3,7 @@ access_copilot_conversation_user,ipai.copilot.conversation.user,model_ipai_copil
 access_copilot_conversation_admin,ipai.copilot.conversation.admin,model_ipai_copilot_conversation,group_copilot_admin,1,1,1,1
 access_copilot_message_user,ipai.copilot.message.user,model_ipai_copilot_message,group_copilot_user,1,1,1,0
 access_copilot_message_admin,ipai.copilot.message.admin,model_ipai_copilot_message,group_copilot_admin,1,1,1,1
-access_copilot_audit_user,ipai.copilot.audit.user,model_ipai_copilot_audit,group_copilot_user,1,0,0,0
-access_copilot_audit_admin,ipai.copilot.audit.admin,model_ipai_copilot_audit,group_copilot_admin,1,0,1,0
+access_copilot_action_queue_user,ipai.copilot.action.queue.user,model_ipai_copilot_action_queue,group_copilot_user,1,0,0,0
+access_copilot_action_queue_admin,ipai.copilot.action.queue.admin,model_ipai_copilot_action_queue,group_copilot_admin,1,1,1,1
+access_copilot_audit_user,ipai.copilot.audit.user,model_ipai_copilot_audit,group_copilot_user,1,0,1,0
+access_copilot_audit_admin,ipai.copilot.audit.admin,model_ipai_copilot_audit,group_copilot_admin,1,1,1,0

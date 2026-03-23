@@ -5,7 +5,10 @@
 > architecture for Foundry in an Azure landing zone.
 >
 > Ref: https://learn.microsoft.com/en-us/azure/architecture/ai-ml/architecture/baseline-microsoft-foundry-landing-zone
+> SaaS authority: https://learn.microsoft.com/en-us/azure/architecture/guide/saas/plan-journey-saas
 > Cross-references:
+>   - `docs/architecture/target-platform-architecture.md` (architecture authority hierarchy)
+>   - `docs/architecture/microsoft_collection_alignment.md` §7 (SaaS workload alignment)
 >   - `infra/ssot/azure/PLATFORM_TARGET_STATE.md` (infrastructure)
 >   - `infra/ssot/azure/resources.yaml` (resource inventory)
 >   - `docs/architecture/AI_CONSOLIDATION_FOUNDRY.md` (agent consolidation)

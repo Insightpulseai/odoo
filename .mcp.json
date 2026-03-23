@@ -27,6 +27,14 @@
     "playwright": {
       "command": "npx",
       "args": ["-y", "@playwright/mcp@latest"]
+    },
+    "plane": {
+      "command": "npx",
+      "args": ["-y", "mcp-remote@latest", "https://mcp.plane.so/http/mcp"]
+    },
+    "azure-devops": {
+      "command": "npx",
+      "args": ["-y", "@azure-devops/mcp", "insightpulseai"]
     }
   }
 }

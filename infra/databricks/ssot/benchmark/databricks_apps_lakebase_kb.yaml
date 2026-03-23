@@ -1,0 +1,331 @@
+version: 1
+namespace: lakehouse.knowledge.databricks_apps_lakebase
+last_reviewed: "2026-03-15"
+source:
+  kind: vendor_guide_extract
+  title: "A Hands-On Guide to Apps on Databricks"
+  vendor: Databricks
+  year: 2026
+description: >
+  Knowledge base extracted from the Databricks hands-on guide covering
+  Databricks Apps, Lakebase, DABs, reverse ETL, secure real-time apps,
+  and AI agents with conversational memory. This is the reference for
+  how Databricks positions its application platform layer and what
+  patterns Odoo Copilot should benchmark against for analytics/intelligence.
+
+# ─────────────────────────────────────────────
+# 1. Platform Components
+# ─────────────────────────────────────────────
+platform_components:
+  databricks_apps:
+    label: Databricks Apps
+    type: serverless_app_hosting
+    description: >
+      Serverless application hosting platform for web applications built
+      with open-source frameworks (Streamlit, Dash, Flask, FastAPI, React).
+      No infrastructure to provision, no containers to manage, no scaling
+      policies to configure.
+    key_capabilities:
+      - Serverless compute with zero infrastructure management
+      - Built-in OAuth and Unity Catalog integration
+      - Service principal authentication for app-level access
+      - On-behalf-of-user authorization for user-level permissions
+      - Static file serving via FastAPI StaticFiles
+      - Automatic environment variable injection (PGHOST, PGUSER, DATABRICKS_CLIENT_ID)
+    supported_frameworks:
+      - Streamlit
+      - Dash
+      - Flask
+      - FastAPI
+      - React
+      - Gradio
+      - Plotly Dash
+      - Shiny
+    auth_modes:
+      - app_authorization: Service principal identity
+      - user_authorization: On-behalf-of-user (OBO)
+
+  lakebase:
+    label: Lakebase
+    type: managed_postgres
+    description: >
+      Fully managed PostgreSQL database deeply integrated with the lakehouse.
+      Provides transactional, low-latency data access with automatic
+      synchronization from Unity Catalog tables. Postgres-compatible with
+      support for ACID transactions, indexes, joins, and extensions.
+    key_capabilities:
+      - Sub-10ms query latency
+      - Thousands of QPS
+      - Multi-AZ high availability
+      - Point-in-time recovery
+      - Encrypted storage
+      - Compute/storage separation for independent scaling
+      - Database branching
+      - OAuth M2M authentication
+      - Unity Catalog governance integration
+      - Cloud-agnostic architecture
+    extensions:
+      - PostGIS
+      - pgvector
+      - pg_stat_statements
+      - databricks_auth
+    sync_modes:
+      snapshot:
+        description: Full table replacement on each run
+        latency: high
+        cost: lowest
+        best_for:
+          - Infrequent changes
+          - Modifying >10% of source table
+          - Low-urgency high-volume updates
+        limitations:
+          - Full table re-creation each time
+      triggered:
+        description: Initial full copy then incremental changes on demand
+        latency: medium
+        cost: balanced
+        best_for:
+          - Compromise between cost and latency
+          - Reasonably current data
+          - Controlled refresh timing
+        limitations:
+          - Requires change data feed
+          - Avoid running more frequently than every 5 minutes
+      continuous:
+        description: Initial load then real-time streaming updates (~15s)
+        latency: lowest
+        cost: highest
+        best_for:
+          - Mission-critical systems
+          - Real-time data requirements
+          - No manual refresh tolerance
+        limitations:
+          - Requires change data feed
+          - Continuous resource consumption
+
+  databricks_asset_bundles:
+    label: Databricks Asset Bundles (DABs)
+    type: deployment_framework
+    description: >
+      Declarative deployment framework that packages application code,
+      infrastructure definitions, and data sync configurations into a
+      single version-controlled bundle. Deploys consistently across
+      dev, staging, and production environments.
+    key_capabilities:
+      - Single-command deployment
+      - Environment-specific configurations via variables
+      - CI/CD integration (GitHub Actions, Azure DevOps)
+      - Resource definitions for apps, database instances, synced tables
+      - Modular and reusable bundle patterns
+
+  unity_catalog:
+    label: Unity Catalog
+    type: governance
+    description: >
+      Unified governance layer for data, AI, and application resources.
+      Provides fine-grained access control, audit trails, lineage tracking,
+      and consistent policy enforcement across analytical and operational systems.
+
+# ─────────────────────────────────────────────
+# 2. Architecture Patterns
+# ─────────────────────────────────────────────
+architecture_patterns:
+  notebook_to_production:
+    label: From Notebooks to Production Applications
+    description: >
+      Pattern for moving from analytical notebooks to deployed production
+      apps using Databricks Apps + Lakebase + DABs.
+    components:
+      - React/TypeScript/Vite frontend
+      - FastAPI backend
+      - Lakebase synced table (read-only, auto-synced from Unity Catalog)
+      - DABs bundle for deployment
+    data_flow:
+      - Unity Catalog Delta table is source of truth
+      - Synced table mirrors Delta table to Postgres automatically
+      - App queries Postgres via OAuth-authenticated connection
+      - Changes in source Delta table appear in app within seconds
+    auth_pattern:
+      - App service principal obtains OAuth token via WorkspaceClient
+      - Token auto-refreshes (1-hour expiry)
+      - Psycopg adapter connects to Lakebase with token as password
+
+  transactional_foundation:
+    label: Transactional Foundation for Intelligent Applications
+    description: >
+      Pattern for building OLTP apps that read AND write to Lakebase,
+      with governed data access and built-in identity controls.
+    example: Holiday request approval app
+    components:
+      - Streamlit or Dash frontend
+      - SQLAlchemy ORM layer
+      - Lakebase database with app-created tables
+      - OAuth token management via Databricks SDK
+    key_insight: >
+      App service principal gets automatic Postgres role creation when
+      Lakebase is added as app resource. GRANT statements control
+      schema/table-level access.
+
+  reverse_etl:
+    label: Turning Analytics Into Applications (Reverse ETL)
+    description: >
+      Pattern for syncing curated lakehouse data into operational
+      applications. Lakebase replaces fragmented reverse ETL setups
+      with a fully managed, integrated capability.
+    components:
+      - Lakehouse Gold tables as source
+      - Lakebase synced tables (continuous mode for real-time)
+      - Separate state tables for user-written data
+      - Flask/Streamlit app for interactive dashboard
+    key_insight: >
+      Synced tables handle analytical data flow. Separate tables handle
+      user state. This separation is critical for clean architecture.
+    example: Intelligent support portal with ML-driven incident triage
+
+  secure_realtime:
+    label: Delivering Secure Real-Time Applications
+    description: >
+      Pattern for CI/CD-enabled apps with OAuth security, DABs deployment,
+      and synced Lakebase tables.
+    components:
+      - Streamlit UI
+      - SQLAlchemy + Databricks SDK for secure connection
+      - DABs for declarative deployment
+      - GitHub for version control and pipeline automation
+    auth_details:
+      token_refresh: Every 15 minutes
+      method: OAuth via Databricks SDK
+      no_manual_token_management: true
+
+  stateful_ai_agents:
+    label: AI Agents With Conversational Memory
+    description: >
+      Pattern for building stateful AI agents that persist conversational
+      memory across sessions using Lakebase as the checkpoint store for
+      LangGraph.
+    components:
+      - Chat model served on Databricks
+      - Unity Catalog functions as governed tools
+      - LangGraph orchestration for control flow
+      - Lakebase as transactional checkpointer
+      - Databricks AI Agent Framework for deployment
+      - Streamlit Databricks app for end-user interaction
+      - MLflow for tracing and lifecycle management
+    memory_patterns:
+      short_term:
+        description: Thread-level checkpointing for conversation continuity
+        storage: Lakebase via langgraph-checkpoint-postgres
+        identifier: thread_id
+        capability: Pause and resume investigations across sessions
+      long_term:
+        description: Persists user preferences and accumulated findings across sessions
+        storage: Lakebase
+        considerations:
+          - Scope management
+          - Retention policies
+          - Governance controls
+    key_libraries:
+      - databricks-langchain
+      - unitycatalog-langchain
+      - langgraph-checkpoint-postgres==2.0.21
+      - langgraph==0.3.4
+      - mlflow
+    deployment:
+      framework: Databricks AI Agent Framework
+      steps:
+        - Log agent with MLflow (models from code approach)
+        - Declare dependent resources (endpoints, functions, Lakebase)
+        - Deploy with agents.deploy()
+        - Test via AI Playground or Review App
+        - Expose via Streamlit Databricks app
+
+# ─────────────────────────────────────────────
+# 3. Code Patterns (Reference)
+# ─────────────────────────────────────────────
+code_patterns:
+  lakebase_oauth_connection:
+    language: python
+    description: OAuth-authenticated Psycopg connection to Lakebase
+    key_elements:
+      - WorkspaceClient handles token refresh
+      - Token used as password in psycopg.connect()
+      - sslmode=require always
+      - PGHOST and database from environment variables
+
+  sqlalchemy_oauth_connection:
+    language: python
+    description: SQLAlchemy engine with OAuth token injection
+    key_elements:
+      - create_engine with postgresql+psycopg driver
+      - event.listens_for(pool, "do_connect") hook for token injection
+      - Token refresh every 15 minutes via WorkspaceClient
+      - client_id as Postgres username
+
+  dabs_bundle_structure:
+    description: Minimal DABs bundle for app + Lakebase
+    files:
+      - databricks.yml (bundle config, targets, variables)
+      - resources/database.yml (database_instance + synced_database_table)
+      - resources/app.yml (app resource with Lakebase reference)
+      - app/ (application source code)
+      - requirements.txt (Python dependencies)
+
+  langgraph_checkpoint:
+    language: python
+    description: LangGraph checkpointing with Lakebase
+    key_elements:
+      - CheckpointSaver(instance_name=LAKEBASE_INSTANCE_NAME) as context manager
+      - graph.stream() with checkpoint_config containing thread_id
+      - DatabricksLakebase resource declaration for MLflow logging
+      - predict_stream pattern for streaming responses
+
+# ─────────────────────────────────────────────
+# 4. Best Practices (from guide)
+# ─────────────────────────────────────────────
+best_practices:
+  deployment:
+    - Use DABs for single-command, reproducible deployments
+    - Define environment-specific configs via DABs variables
+    - Automate with CI/CD (GitHub Actions, Azure DevOps)
+    - Use modular, reusable bundle patterns
+
+  lakebase:
+    - Choose sync mode based on cost/latency tradeoff
+    - Set up notifications for sync pipeline failures
+    - Right-size instance capacity for workload
+    - Create indexes matching query patterns
+    - Use pg_stat_statements for query performance analysis
+    - Separate synced tables (read-only) from app state tables (read-write)
+
+  security:
+    - Use OAuth 2.0, never legacy PATs in production
+    - Use Databricks CLI for local OAuth U2M authentication
+    - Apps use service principal for OAuth M2M
+    - Use on-behalf-of-user authorization for user-level permissions
+    - Store secrets in Databricks secret scopes
+
+  performance:
+    - Consider WebSockets or server-sent events instead of polling
+    - Implement caching (e.g., fastapi-cache) for in-memory query results
+    - Use database branching for safe schema migrations
+    - Use Flyway or Liquibase for schema version management
+
+# ─────────────────────────────────────────────
+# 5. Relevance to Odoo Copilot Benchmark
+# ─────────────────────────────────────────────
+benchmark_relevance:
+  category: analytics_recommendations
+  weight: 5
+  what_databricks_demonstrates:
+    - Notebook-to-production pipeline with zero infrastructure management
+    - Managed reverse ETL that eliminates custom sync pipelines
+    - Stateful AI agents with persistent conversational memory
+    - Unified governance across analytical and operational data
+    - SDK-first deployment with DABs
+    - OAuth-based security without manual token management
+  lessons_for_odoo_copilot:
+    - Odoo Copilot should integrate with Databricks for analytics/intelligence rather than replicate it
+    - Agent memory patterns (thread-based checkpointing) are directly applicable to Odoo workflows
+    - Reverse ETL from lakehouse to operational apps is a solved problem on Databricks
+    - Unity Catalog functions as governed tools is the pattern for exposing Odoo data to agents
+    - DABs-style declarative deployment is the bar for reproducible agent deployment

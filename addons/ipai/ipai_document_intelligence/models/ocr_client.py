@@ -67,7 +67,7 @@ class OcrClientService(models.AbstractModel):
 
         try:
             endpoint = config.endpoint.rstrip('/')
-            api_key = os.getenv('AZURE_DI_API_KEY', '')
+            api_key = os.getenv('AZURE_DI_API_KEY') or os.getenv('AZURE_DOC_INTEL_KEY', '')
             if not api_key:
                 job.action_fail('Missing env var AZURE_DI_API_KEY.', 'auth')
                 return None

@@ -1,0 +1,19 @@
+{
+  "name": "agent_readiness",
+  "version": "1.0.0",
+  "description": "Assess agent readiness for promotion across environments (dev -> staging -> production). Evaluates eval scores, capability coverage, and governance compliance.",
+  "intent": "Evaluate whether an agent is ready for environment promotion",
+  "inputs": [
+    {"name": "agent_id", "type": "string", "description": "Agent identifier from SSOT", "required": true},
+    {"name": "target_environment", "type": "string", "description": "staging | production", "required": true},
+    {"name": "eval_manifest_ref", "type": "string", "description": "Reference to eval manifest YAML", "required": false}
+  ],
+  "outputs": [
+    {"name": "readiness_verdict", "type": "string", "description": "ready | not_ready | conditional"},
+    {"name": "score_summary", "type": "object", "description": "Eval scores breakdown by category"},
+    {"name": "blockers", "type": "array", "description": "Issues blocking promotion"},
+    {"name": "conditions", "type": "array", "description": "Conditions that must be met for conditional readiness"}
+  ],
+  "kb_segments": ["kb_agent_capability"],
+  "agentInstructions": "Read the agent's eval results, capability inventory, and governance compliance status. Apply promotion criteria for the target environment. Fail-closed on missing evidence — if eval data is incomplete, verdict is not_ready."
+}

@@ -1,3 +1,12 @@
+# Nested git repos (managed as separate repo boundaries)
+/odoo/
+/data-intelligence/
+/documentaion/
+/web-site/
+/archive/dot-github-repo/
+/archive/work/
+/archive/root/addons/oca/
+
 # SOPS / age secrets (never commit private keys)
 ops/secrets/age-key.txt
 ops/secrets/*.key
@@ -47,6 +56,9 @@ share/python-wheels/
 .installed.cfg
 *.egg
 MANIFEST
+# Databricks
+.databricks/
+
 # Odoo
 *.pyc
 .odoo-bin

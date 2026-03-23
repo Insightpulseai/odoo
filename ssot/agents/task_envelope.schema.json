@@ -1,0 +1,29 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "ipai.task_envelope.v2",
+  "type": "object",
+  "required": [
+    "task_id",
+    "task_type",
+    "created_at",
+    "payload",
+    "routing_key",
+    "attempt",
+    "max_attempts",
+    "trace_id",
+    "source",
+    "spec_slug"
+  ],
+  "properties": {
+    "task_id": { "type": "string" },
+    "task_type": { "type": "string" },
+    "created_at": { "type": "string", "format": "date-time" },
+    "payload": { "type": "object" },
+    "routing_key": { "type": "string" },
+    "attempt": { "type": "integer", "minimum": 1 },
+    "max_attempts": { "type": "integer" },
+    "trace_id": { "type": "string" },
+    "source": { "type": "string" },
+    "spec_slug": { "type": "string" }
+  }
+}

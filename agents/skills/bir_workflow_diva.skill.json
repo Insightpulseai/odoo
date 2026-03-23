@@ -1,0 +1,19 @@
+{
+  "name": "bir_workflow_diva",
+  "version": "1.0.0",
+  "description": "Coordinate BIR filing workflows within the Diva Goals context. Tracks filing deadlines, preparation status, and submission progress.",
+  "intent": "Manage BIR filing workflow coordination and status tracking",
+  "inputs": [
+    {"name": "workflow_type", "type": "string", "description": "filing_status | deadline_check | preparation_guide", "required": true},
+    {"name": "bir_form_type", "type": "string", "description": "BIR form identifier (e.g., 1601-E, 2550M)", "required": false},
+    {"name": "tax_period", "type": "string", "description": "Tax period for the workflow", "required": false}
+  ],
+  "outputs": [
+    {"name": "workflow_status", "type": "object", "description": "Current workflow state and next steps"},
+    {"name": "deadlines", "type": "array", "description": "Relevant filing deadlines"},
+    {"name": "preparation_checklist", "type": "array", "description": "Required preparation steps"},
+    {"name": "blockers", "type": "array", "description": "Items blocking workflow progress"}
+  ],
+  "kb_segments": ["kb_tax_policy_ph", "kb_odoo_tax_runtime", "kb_tax_evidence"],
+  "agentInstructions": "Read filing status from Odoo records. For deadline checks, reference BIR calendar from KB. For preparation guides, provide step-by-step checklist from KB. Delegate actual filing execution to TaxPulse."
+}

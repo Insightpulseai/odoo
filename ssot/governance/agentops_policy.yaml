@@ -1,0 +1,91 @@
+# SSOT: AgentOps Policy
+# Cross-referenced by: docs/architecture/AGENTOPS_DOCTRINE.md
+# Updated: 2026-03-24
+
+version: "1.0.0"
+
+release_doctrine:
+  evaluation_gated: true
+  mandatory_rule: >
+    No assistant surface reaches production without passing its evaluation pack.
+
+rollout_model:
+  stages:
+    - id: pre_merge_ci
+      gate: lint_typecheck_unit_yaml_validation
+      automated: true
+    - id: staging_validation
+      gate: eval_pack_pass_integration_smoke_manual_review
+      automated: false
+    - id: gated_production
+      gate: canary_feature_flag_blue_green
+      automated: partial
+
+safe_rollout_strategies:
+  canary:
+    when: agent_model_or_prompt_changes
+    default: true
+  feature_flag:
+    when: new_capabilities_gradual_exposure
+  blue_green:
+    when: infrastructure_changes
+
+observability:
+  loop: observe_act_evolve
+  required_signals:
+    logs:
+      format: structured_json
+      destination: app_insights
+    traces:
+      mechanism: correlation_ids
+      scope: mcp_a2a_calls
+    metrics:
+      items:
+        - p95_response_latency
+        - error_rate
+        - eval_score
+        - groundedness_score
+
+  required_metrics:
+    p95_latency_advisory:
+      target_ms: 5000
+      alert_threshold: 10000
+    p95_latency_action:
+      target_ms: 10000
+      alert_threshold: 20000
+    error_rate:
+      target_pct: 1.0
+      alert_threshold_pct: 5.0
+    eval_score:
+      staging_gate: 0.70
+      block_deploy: 0.60
+    groundedness_score:
+      target: 0.80
+      alert_threshold: 0.65
+
+interop_doctrine:
+  direct_call:
+    when: simple_single_step_work
+    preferred: true
+  mcp:
+    when: structured_reusable_tool_access
+    use_cases:
+      - odoo_record_crud
+      - azure_resource_queries
+      - databricks_sql
+      - github_operations
+  a2a:
+    when: complex_cross_assistant_delegation
+    use_cases:
+      - diva_to_odoo_copilot_erp_execution
+      - studio_to_document_intelligence_extraction
+    current_state: not_implemented
+    note: Diva modes are internal routing, not true A2A yet.
+
+registry_policy:
+  current: ssot_yaml_files
+  custom_registry_when:
+    - more_than_10_active_surfaces
+    - more_than_50_registered_tools
+    - multi_team_concurrent_development
+  note: Registries deferred until scale justifies them.

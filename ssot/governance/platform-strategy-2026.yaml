@@ -15,8 +15,8 @@
 # =============================================================================
 
 schema_version: "1.0"
-last_updated: "2026-03-18"
-revision: "2.1 — Task status sync + KPI namespace fix (KPI-* → SKPI-*)"
+last_updated: "2026-03-21"
+revision: "2.2 — SaaS workload readiness status fields added"
 
 strategy:
   id: ipai-platform-2026
@@ -50,6 +50,24 @@ platform_doctrine:
   infrastructure_mode: infrastructure_as_code
   preferred_runtime_pattern: self_hosted_except_tableau_cloud
   governance_model: ssot_plus_ci_plus_evidence
+
+# ---------------------------------------------------------------------------
+# SaaS Workload Readiness — machine-readable status fields
+# Ref: docs/architecture/target-platform-architecture.md §SaaS Readiness Gate
+# Ref: docs/architecture/microsoft_collection_alignment.md §7
+# ---------------------------------------------------------------------------
+saas_workload_readiness:
+  saas_workload_assessment_status: not_run        # not_run | in_progress | complete
+  saas_workload_assessment_last_run: null
+  saas_workload_assessment_owner: platform-lead
+  billing_metering_status: partial                 # not_started | partial | complete
+  billing_metering_authority: docs/architecture/saas_billing_metering.md
+  incident_management_status: partial              # not_started | partial | complete
+  incident_management_authority: docs/architecture/reliability_operating_model.md
+  blocking_gaps:
+    - per-tenant metering implementation deferred (design authority documented)
+    - SaaS assessment not yet executed against platform
+    - SaaS incident playbook not yet exercised in production
 
 current_context:
   active_repositories:

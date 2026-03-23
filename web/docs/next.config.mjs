@@ -1,20 +1,10 @@
-import type { MDXComponents } from 'mdx/types'
-import createMDX from '@next/mdx'
+import nextra from 'nextra'
 
-const withMDX = createMDX({
-  extension: /\.mdx?$/,
-  options: {
-    remarkPlugins: [],
-    rehypePlugins: [],
-  },
+const withNextra = nextra({
+  defaultShowCopyCode: true,
+  search: true,
 })
 
-/** @type {import('next').NextConfig} */
-const nextConfig = {
-  pageExtensions: ['js', 'jsx', 'ts', 'tsx', 'md', 'mdx'],
-  experimental: {
-    mdxRs: false,
-  },
-}
-
-export default withMDX(nextConfig)
+export default withNextra({
+  output: 'standalone',
+})

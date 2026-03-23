@@ -14,6 +14,8 @@ knowledge_domains:
   - automation
   - mobile_development
   - security_compliance
+  - cloud_governance
+  - diva_goals
 
 # ============================================================================
 # DOCUMENTATION SOURCES
@@ -168,6 +170,111 @@ documentation:
       - "Approval workflows"
       - "Reporting requirements"
     agent_use: "Reference for business requirements and workflows"
+
+  # --- Diva Goals ---
+  - id: diva_goals_target_state
+    title: "Diva Goals Target State Architecture"
+    path: "docs/architecture/DIVA_GOALS_TARGET_STATE.md"
+    domain: diva_goals
+    type: architecture
+    topics:
+      - "10-agent catalog rationale"
+      - "Copilot family model"
+      - "Fluent 2 alignment"
+      - "Reference architecture flow"
+      - "TaxPulse integration pattern"
+    agent_use: "Primary architecture reference for Diva Goals product family"
+
+  - id: diva_copilot_sources
+    title: "Diva Copilot KB Segment Registry"
+    path: "agents/knowledge/diva-copilot-sources.yaml"
+    domain: diva_goals
+    type: configuration
+    topics:
+      - "8 KB segments for Diva Copilot grounding"
+      - "Source paths and update frequencies"
+      - "Azure AI Search index targets"
+    agent_use: "KB segment configuration for Diva Copilot modes"
+
+  - id: diva_goals_spec
+    title: "Diva Goals Spec Bundle"
+    path: "spec/diva-goals/"
+    domain: diva_goals
+    type: specification
+    topics:
+      - "Constitution D1-D10"
+      - "Product requirements (6 modules)"
+      - "Implementation plan (4 phases)"
+      - "Task tracking (4 epics)"
+    agent_use: "Authoritative spec bundle for Diva Goals product family"
+
+  - id: diva_kb_strategy
+    title: "KB Segment: Strategic Planning"
+    path: "agents/knowledge/diva-copilot-sources.yaml#kb_strategy"
+    domain: diva_goals
+    type: knowledge_segment
+    topics:
+      - "OKR frameworks"
+      - "Strategic planning methodology"
+      - "Goal cascade patterns"
+    agent_use: "Grounding segment for Executive and Strategy copilot modes"
+
+  - id: diva_kb_execution
+    title: "KB Segment: Execution Tracking"
+    path: "agents/knowledge/diva-copilot-sources.yaml#kb_execution"
+    domain: diva_goals
+    type: knowledge_segment
+    topics:
+      - "Progress aggregation rules"
+      - "Execution tracking patterns"
+      - "Blocker management"
+    agent_use: "Grounding segment for goal progress synthesis"
+
+  - id: diva_kb_people_capability
+    title: "KB Segment: People Capability"
+    path: "agents/knowledge/diva-copilot-sources.yaml#kb_people_capability"
+    domain: diva_goals
+    type: knowledge_segment
+    topics:
+      - "Skills taxonomies"
+      - "Competency frameworks"
+      - "Learning design patterns"
+    agent_use: "Grounding segment for Capability copilot mode (people)"
+
+  - id: diva_kb_agent_capability
+    title: "KB Segment: Agent Capability"
+    path: "agents/knowledge/diva-copilot-sources.yaml#kb_agent_capability"
+    domain: diva_goals
+    type: knowledge_segment
+    topics:
+      - "Agent skill inventories"
+      - "Readiness criteria"
+      - "Promotion gate definitions"
+    agent_use: "Grounding segment for Capability copilot mode (agents)"
+
+  - id: diva_kb_governance
+    title: "KB Segment: Governance Policies"
+    path: "agents/knowledge/diva-copilot-sources.yaml#kb_governance"
+    domain: diva_goals
+    type: knowledge_segment
+    topics:
+      - "Policy templates"
+      - "Drift detection thresholds"
+      - "Compliance gate definitions"
+    agent_use: "Grounding segment for Governance copilot mode"
+
+  # --- Azure Governance ---
+  - id: azure_resource_graph
+    title: "Azure Resource Graph (ARG) Reference"
+    path: "/Users/tbwa/Documents/GitHub/Insightpulseai/agents/knowledge/azure_resource_graph.md"
+    domain: cloud_governance
+    type: reference
+    topics:
+      - "KQL syntax for ARG"
+      - "Resource inventory patterns"
+      - "Advisor cost savings queries"
+      - "Resource health monitoring"
+    agent_use: "Primary reference for querying Azure resources at scale"
 
 # ============================================================================
 # CODE PATTERNS

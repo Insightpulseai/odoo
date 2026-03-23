@@ -82,7 +82,7 @@ These items are strictly sequential. Each depends on the prior.
 | Copilot bounded actions | Phase 3 feature |
 | SAP Concur integration | Future; no Concur tenant |
 | CDC/lakehouse pipeline | Phase 2 intelligence layer |
-| Tableau Cloud publication | Requires lakehouse |
+| Power BI publication | Requires lakehouse |
 | Automation consolidation (OBJ-005) | Post go-live operational maturity |
 | OLTP/OLAP separation (OBJ-006) | Phase 2+ |
 | VNet injection for Databricks | Not needed until Databricks activates |

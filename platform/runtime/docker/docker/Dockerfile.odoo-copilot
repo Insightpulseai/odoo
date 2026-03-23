@@ -1,0 +1,102 @@
+# syntax=docker/dockerfile:1
+# Dockerfile.odoo-copilot - Odoo 19 CE + OCA Must-Have + Copilot + Document Intelligence
+# =============================================================================
+# Build: az acr build --registry ipaiodoodevacr --resource-group rg-ipai-dev-platform \
+#        --image ipai-odoo:19.0-copilot --file platform/runtime/docker/docker/Dockerfile.odoo-copilot .
+# Context: repo root
+# =============================================================================
+
+FROM odoo:19.0
+
+LABEL maintainer="InsightPulse AI <devops@insightpulseai.com>"
+LABEL description="Odoo 19 CE + 22 OCA must-have modules + IPAI Copilot + Document Intelligence"
+LABEL version="19.0.3.0.0"
+
+USER root
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    curl \
+    git \
+    && rm -rf /var/lib/apt/lists/*
+
+# Create overlay addons directories
+RUN mkdir -p /mnt/extra-addons/ipai /mnt/extra-addons/oca
+
+# ---------------------------------------------------------------------------
+# OCA must-have modules — sparse checkout (module dirs only, not full repos)
+# Branch: 19.0 for all repos
+# ---------------------------------------------------------------------------
+
+# Helper script for sparse-cloning individual OCA modules
+RUN printf '#!/bin/bash\nset -e\nREPO="$1"; shift\nTMPDIR=$(mktemp -d)\ngit clone --depth 1 --filter=blob:none --sparse -b 19.0 "https://github.com/OCA/${REPO}.git" "$TMPDIR"\ncd "$TMPDIR"\ngit sparse-checkout set "$@"\nfor MOD in "$@"; do\n  if [ -d "$MOD" ]; then\n    cp -r "$MOD" /mnt/extra-addons/oca/\n  else\n    echo "WARNING: module $MOD not found in OCA/$REPO (19.0 branch)" >&2\n  fi\ndone\nrm -rf "$TMPDIR"\n' > /tmp/oca_sparse_clone.sh \
+    && chmod +x /tmp/oca_sparse_clone.sh
+
+# --- server-auth: password_security ---
+RUN /tmp/oca_sparse_clone.sh server-auth password_security
+
+# --- server-brand: disable_odoo_online, remove_odoo_enterprise ---
+RUN /tmp/oca_sparse_clone.sh server-brand disable_odoo_online remove_odoo_enterprise
+
+# --- server-tools: base_name_search_improved ---
+RUN /tmp/oca_sparse_clone.sh server-tools base_name_search_improved
+
+# --- server-ux: server_action_mass_edit ---
+RUN /tmp/oca_sparse_clone.sh server-ux server_action_mass_edit
+
+# --- web: 6 modules ---
+RUN /tmp/oca_sparse_clone.sh web \
+    web_advanced_search \
+    web_listview_range_select \
+    web_m2x_options \
+    web_no_bubble \
+    web_pivot_computed_measure \
+    web_tree_many2one_clickable
+
+# --- social: 4 modules ---
+RUN /tmp/oca_sparse_clone.sh social \
+    mail_debrand \
+    mail_tracking \
+    base_search_mail_content \
+    mail_activity_plan
+
+# --- currency: currency_rate_update ---
+RUN /tmp/oca_sparse_clone.sh currency currency_rate_update
+
+# --- account-payment: account_payment_partner ---
+RUN /tmp/oca_sparse_clone.sh account-payment account_payment_partner
+
+# --- bank-payment: account_reconcile_oca ---
+RUN /tmp/oca_sparse_clone.sh bank-payment account_reconcile_oca
+
+# --- project: 2 modules ---
+RUN /tmp/oca_sparse_clone.sh project project_task_dependency project_task_recurrence
+
+# Cleanup helper script and git (reduce image size)
+RUN rm -f /tmp/oca_sparse_clone.sh \
+    && apt-get purge -y git && apt-get autoremove -y && rm -rf /var/lib/apt/lists/*
+
+# ---------------------------------------------------------------------------
+# IPAI custom modules (minimal footprint)
+# ---------------------------------------------------------------------------
+COPY addons/ipai/ipai_copilot_actions /mnt/extra-addons/ipai/ipai_copilot_actions/
+COPY addons/ipai/ipai_document_intelligence /mnt/extra-addons/ipai/ipai_document_intelligence/
+COPY addons/ipai/ipai_odoo_copilot /mnt/extra-addons/ipai/ipai_odoo_copilot/
+COPY addons/ipai/ipai_enterprise_bridge /mnt/extra-addons/ipai/ipai_enterprise_bridge/
+
+# ---------------------------------------------------------------------------
+# Configure addons_path: OCA + IPAI + core
+# ---------------------------------------------------------------------------
+RUN cat /etc/odoo/odoo.conf && echo "--- BEFORE ---" \
+    && sed -i '/^addons_path/d' /etc/odoo/odoo.conf \
+    && sed -i '/^\[options\]/a addons_path = /mnt/extra-addons/oca,/mnt/extra-addons/ipai,/usr/lib/python3/dist-packages/odoo/addons' /etc/odoo/odoo.conf \
+    && echo "--- AFTER ---" && cat /etc/odoo/odoo.conf
+
+RUN chown -R odoo:odoo /mnt/extra-addons /etc/odoo/odoo.conf
+
+USER odoo
+
+HEALTHCHECK --interval=30s --timeout=10s --start-period=90s --retries=5 \
+    CMD curl -sf http://localhost:8069/web/health || exit 1
+
+ENTRYPOINT ["/entrypoint.sh"]
+CMD ["odoo", "--addons-path=/mnt/extra-addons/oca,/mnt/extra-addons/ipai,/usr/lib/python3/dist-packages/odoo/addons"]
