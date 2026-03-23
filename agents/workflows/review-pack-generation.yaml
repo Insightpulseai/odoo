@@ -1,0 +1,107 @@
+# Workflow: Review Pack Generation
+# Assembles periodic review packs from synthesized evidence.
+
+id: review-pack-generation
+name: Review Pack Generation
+version: 1.0.0
+domain: reviews
+source: Diva Goals Product Family
+created: 2026-03-23
+
+trigger:
+  type: stage_transition
+  filters:
+    model: review.period
+    stage_from: preparation
+    stage_to: assembly
+
+input_schema:
+  required:
+    - review_period_id
+    - scope
+    - scope_id
+  properties:
+    review_period_id:
+      type: integer
+      description: Odoo review period record ID
+    scope:
+      type: string
+      enum: [individual, team, department, company]
+    scope_id:
+      type: integer
+      description: Odoo record ID for the scope entity
+
+steps:
+  - id: orchestrate
+    name: Initialize Review Pack Pipeline
+    agent: diva_orchestrator
+    action: workflow.initialize
+    inputs:
+      workflow_id: review-pack-generation
+      review_period_id: "{{ input.review_period_id }}"
+
+  - id: harvest_evidence
+    name: Collect Review Evidence
+    agent: evidence_harvester
+    action: evidence.collect_review
+    inputs:
+      review_period_id: "{{ input.review_period_id }}"
+      scope: "{{ input.scope }}"
+      scope_id: "{{ input.scope_id }}"
+    outputs:
+      - evidence_bundle
+      - goal_summaries
+
+  - id: synthesize_goals
+    name: Synthesize Goal Status for Period
+    agent: status_synthesizer
+    action: status.synthesize_batch
+    inputs:
+      goal_summaries: "{{ steps.harvest_evidence.outputs.goal_summaries }}"
+      review_period_id: "{{ input.review_period_id }}"
+    outputs:
+      - synthesized_sections
+      - overall_confidence
+
+  - id: assemble_pack
+    name: Assemble Review Pack Document
+    agent: review_pack_writer
+    action: review.assemble
+    inputs:
+      review_period_id: "{{ input.review_period_id }}"
+      synthesized_sections: "{{ steps.synthesize_goals.outputs.synthesized_sections }}"
+      evidence_bundle: "{{ steps.harvest_evidence.outputs.evidence_bundle }}"
+    outputs:
+      - review_pack
+      - evidence_appendix
+
+  - id: judge_policy
+    name: Evaluate Review Pack Against Policies
+    agent: policy_judge
+    action: policy.evaluate
+    inputs:
+      proposal_type: review_pack
+      content: "{{ steps.assemble_pack.outputs.review_pack }}"
+      confidence: "{{ steps.synthesize_goals.outputs.overall_confidence }}"
+    outputs:
+      - policy_verdict
+
+  - id: route_approval
+    name: Route Review Pack for Approval
+    agent: approval_coordinator
+    action: approval.route
+    inputs:
+      proposal_type: review_pack
+      content: "{{ steps.assemble_pack.outputs.review_pack }}"
+      policy_verdict: "{{ steps.judge_policy.outputs.policy_verdict }}"
+    outputs:
+      - approval_status
+
+output_schema:
+  properties:
+    review_pack:
+      type: object
+    evidence_appendix:
+      type: array
+    approval_status:
+      type: string

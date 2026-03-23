@@ -1,0 +1,19 @@
+{
+  "name": "drift_orphan_detection",
+  "version": "1.0.0",
+  "description": "Detect goal drift (stale objectives, declining progress) and orphan tasks (tasks without parent goals). Produces detection report for governance review.",
+  "intent": "Identify drift and orphan conditions in the goal hierarchy",
+  "inputs": [
+    {"name": "scope", "type": "string", "description": "company | department | team", "required": true},
+    {"name": "scope_id", "type": "integer", "description": "Odoo record ID for scope entity", "required": true},
+    {"name": "staleness_threshold_days", "type": "integer", "description": "Days without update to flag as stale", "required": false, "default": 30}
+  ],
+  "outputs": [
+    {"name": "drift_items", "type": "array", "description": "Goals with detected drift (stale, declining, blocked)"},
+    {"name": "orphan_tasks", "type": "array", "description": "Tasks without parent goal linkage"},
+    {"name": "health_score", "type": "float", "description": "Goal hierarchy health (0.0=critical, 1.0=healthy)"},
+    {"name": "recommendations", "type": "array", "description": "Suggested remediation actions"}
+  ],
+  "kb_segments": ["kb_governance"],
+  "agentInstructions": "Scan all goals within scope for staleness (no update within threshold), declining progress trends, and blocked states. Identify tasks not linked to any goal. Report findings without remediation — detection only."
+}

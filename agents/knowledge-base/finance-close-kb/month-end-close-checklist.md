@@ -11,7 +11,24 @@ last_updated: "2026-03-15"
 
 This document provides a step-by-step procedure for completing the month-end close in Odoo CE 19.0 with OCA accounting modules. The checklist is designed for Philippine-based businesses and includes BIR compliance checkpoints.
 
-The month-end close should be completed within 5 business days after the period end. All steps should be performed by the accounting team and reviewed by the Finance Manager before the period is locked.
+**Timeline:**
+- **Pre-Close Preparation:** The month-end closing workflow actually begins early, starting in the **last week of the current month** (e.g., October 24) with activities such as "Payroll Processing & Tax Provision".
+- **Completion:** The month-end close should be completed within 5 business days after the period end.
+
+All steps should be performed by the accounting team and reviewed by the Finance Manager before the period is locked.
+
+---
+
+## Step 0: Pre-Close Preparation (Begins Last Week of the Month)
+
+### Objective
+Initiate the month-end close early to ensure all preliminary data is gathered and provisions are calculated before the period end.
+
+### Procedure
+
+1. **Payroll Processing & Tax Provision**
+   - Begin compiling payroll data and calculating tax provisions for the current month.
+   - Accrue expected payroll expenses for the remainder of the month.
 
 ---
 

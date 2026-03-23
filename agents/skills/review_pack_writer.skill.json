@@ -1,0 +1,18 @@
+{
+  "name": "review_pack_writer",
+  "version": "1.0.0",
+  "description": "Assemble periodic review packs from synthesized evidence, goal status, and capability assessments into a structured review document.",
+  "intent": "Generate a complete review pack document for approval",
+  "inputs": [
+    {"name": "review_period_id", "type": "integer", "description": "Odoo review period record ID", "required": true},
+    {"name": "scope", "type": "string", "description": "individual | team | department | company", "required": true},
+    {"name": "scope_id", "type": "integer", "description": "Odoo record ID for the scope entity", "required": true}
+  ],
+  "outputs": [
+    {"name": "review_pack", "type": "object", "description": "Structured review pack with sections"},
+    {"name": "evidence_appendix", "type": "array", "description": "Evidence documents attached to the pack"},
+    {"name": "approval_routing", "type": "object", "description": "Suggested approval chain"}
+  ],
+  "kb_segments": ["kb_strategy", "kb_execution", "kb_governance"],
+  "agentInstructions": "Collect all goal status syntheses for the review period, assemble into a structured document with sections (summary, goals, key results, evidence, recommendations). Attach evidence appendix. Route to approval_coordinator. Never self-approve."
+}
