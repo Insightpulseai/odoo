@@ -161,7 +161,7 @@ adls-ipai-dev/
   - `compliance/` — BIR filing status, deadline adherence
   - `platform/` — user activity, event aggregates, feature adoption
   - `ml_features/` — feature tables for Azure AI scoring
-- Tableau Cloud connector pointed at gold layer
+- Power BI connector pointed at Unity Catalog
 - BI dashboard validation against gold marts
 
 ## Phase 7 — Reverse ETL (Bounded)

@@ -49,21 +49,21 @@
 
 **Owner**: Human (infrastructure) | **Priority**: P0 | **Dependencies**: Keycloak, Front Door, Key Vault
 
-- [ ] P0 | Human | Provision PostgreSQL database for Plane (separate from Odoo)
-- [ ] P0 | Human | Create container app `ipai-plane-dev` in `cae-ipai-dev`
-- [ ] P0 | Agent | Deploy Plane Docker images (web, api, worker, beat-worker, migrator, proxy)
-- [ ] P0 | Agent | Register `plane.insightpulseai.com` in `infra/dns/subdomain-registry.yaml`
-- [ ] P0 | Agent | Run `scripts/dns/generate-dns-artifacts.sh` and commit generated files
-- [ ] P0 | Human | Configure Azure Front Door origin group for Plane (port 3002)
-- [ ] P0 | Human | Create Keycloak OIDC client for Plane
-- [ ] P0 | Human | Store secrets in Azure Key Vault: `PLANE_SECRET_KEY`
-- [ ] P0 | Human | Store secrets in Azure Key Vault: `PLANE_DB_URL`, `PLANE_DB_USER`, `PLANE_DB_PASSWORD`
+- [x] P0 | Human | Provision PostgreSQL database for Plane (separate from Odoo) — **done, runtime active**
+- [x] P0 | Human | Create container app `ipai-plane-dev` in `cae-ipai-dev` — **done, active in `rg-ipai-dev-odoo-runtime`**
+- [x] P0 | Agent | Deploy Plane Docker images (web, api, worker, beat-worker, migrator, proxy) — **done, SPA serving**
+- [x] P0 | Agent | Register `plane.insightpulseai.com` in `infra/dns/subdomain-registry.yaml` — **done, DNS live**
+- [x] P0 | Agent | Run `scripts/dns/generate-dns-artifacts.sh` and commit generated files — **done**
+- [x] P0 | Human | Configure Azure Front Door origin group for Plane (port 3002) — **done, TLS terminating**
+- [x] P0 | Human | Create Keycloak OIDC client for Plane — **done (Keycloak transitional)**
+- [x] P0 | Human | Store secrets in Azure Key Vault: `PLANE_SECRET_KEY` — **done**
+- [x] P0 | Human | Store secrets in Azure Key Vault: `PLANE_DB_URL`, `PLANE_DB_USER`, `PLANE_DB_PASSWORD` — **done**
 - [ ] P1 | Human | Store secrets in Azure Key Vault: `PLANE_SMTP_USER`, `PLANE_SMTP_PASSWORD`
 - [ ] P1 | Human | Configure Azure Blob Storage (S3-compatible) for Plane uploads
 - [ ] P1 | Agent | Configure Zoho SMTP for Plane notifications
 - [ ] P1 | Agent | Set up daily `pg_dump` backup cron for Plane database
-- [ ] P0 | Agent | Verify: `https://plane.insightpulseai.com` returns 200
-- [ ] P0 | Agent | Verify: Keycloak SSO login completes end-to-end
+- [x] P0 | Agent | Verify: `https://plane.insightpulseai.com` returns 200 — **verified 2026-03-22, SPA loads**
+- [ ] P0 | Agent | Verify: Keycloak SSO login completes end-to-end — **blocked: requires browser interaction**
 - [ ] P1 | Agent | Verify: test notification email received via Zoho SMTP
 - [ ] P1 | Agent | Verify: file upload to Azure Blob Storage succeeds
 - [ ] P1 | Agent | Verify: daily backup cron produces valid `pg_dump`
@@ -125,7 +125,7 @@
 - [ ] P1 | Agent | Migrate `docs/architecture/INTEGRATIONS_SURFACE.md` -> Plane Wiki `Integrations > Surface Map`
 - [ ] P1 | Agent | Migrate `docs/architecture/N8N_AUTOMATION_CONTRACT.md` -> Plane Wiki `Integrations > n8n Contract`
 - [ ] P1 | Agent | Migrate `docs/architecture/SLACK_AGENT_CONTRACT.md` -> Plane Wiki `Integrations > Slack Agent`
-- [ ] P1 | Agent | Migrate `docs/architecture/SUPERSET.md` -> Plane Wiki `Data Platform > Superset`
+- [ ] P1 | Agent | Migrate `docs/architecture/POWER_BI.md` -> Plane Wiki `Data Platform > Power BI`
 - [ ] P1 | Agent | Migrate `docs/architecture/ODOO_EDITIONS_SSOT.md` -> Plane Wiki `ERP > Editions Policy`
 - [ ] P1 | Agent | Migrate `docs/architecture/EE_PARITY_MATRIX.md` -> Plane Wiki `ERP > Enterprise Parity`
 - [ ] P1 | Agent | Migrate `docs/architecture/MODULE_DECISION_RUBRIC.md` -> Plane Wiki `ERP > Module Decisions`
@@ -152,7 +152,7 @@
 - [ ] P1 | Agent | Create Plane initiatives for each active spec bundle in `spec/`
 - [ ] P1 | Agent | Link spec bundle paths in each initiative description
 - [ ] P1 | Agent | Assign active initiatives to current cycle
-- [ ] P1 | Agent | Deploy Plane MCP server (`mcp/servers/plane/`)
+- [x] P1 | Agent | Configure Plane hosted MCP server in `.mcp.json` — **done 2026-03-22, uses `mcp.plane.so/http/mcp` (replaces custom `mcp/servers/plane/`)**
 - [ ] P1 | Agent | Register MCP tool allowlist in `ssot/integrations/plane_mcp.yaml`
 - [ ] P1 | Agent | Verify: Claude Code can query Plane work items via MCP
 - [ ] P1 | Agent | Verify: Claude Code can create Plane work items via MCP

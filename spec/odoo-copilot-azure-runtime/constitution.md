@@ -68,7 +68,7 @@ Owns:
 - Azure runtime/service inventory
 - domain routing and health topology
 
-### `ops-platform`
+### `platform`
 Optional owner for:
 - control-plane metadata if provider settings are tracked there
 

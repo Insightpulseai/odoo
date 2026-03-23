@@ -73,7 +73,7 @@
 - [ ] Deployment history dashboard
 - [ ] Alert rules (container restart, PG connection exhaustion, cron failure)
 - [ ] Promotion evidence pack (automated capture)
-- [ ] Browser-based log viewer (Superset or Azure Workbooks)
+- [ ] Browser-based log viewer (Power BI or Azure Workbooks)
 
 ## Progress Summary
 

@@ -66,3 +66,34 @@ OCA modules may be used where they provide CE-compatible alternatives.
 When BIR updates rates (e.g., TRAIN law amendments), a new version file is created.
 Old versions are retained for historical computation and audit.
 The engine loader selects the correct version based on the return's period dates.
+
+## C8: Azure Resource Binding
+
+Tax Pulse uses Azure Document Intelligence for BIR document extraction and classification:
+
+- **Resource**: `data-intel-ph` in resource group `rg-data-intel-ph`
+- **Purpose**: Receipt/invoice extraction, BIR form classification, supporting document OCR
+- **Flow**: Document Intelligence extracts → structured data feeds into Odoo operational flows → Tax Pulse checks/scenarios evaluate the extracted data
+- **Auth**: Managed identity from ACA to Document Intelligence resource
+
+Document Intelligence is an extraction substrate, not a tax-computation authority. All tax logic remains in rules, rates, and Odoo workflow.
+
+## C9: AvaTax as Future Complement
+
+AvaTax (Avalara) is a benchmark-only reference for global tax engine patterns:
+
+- AvaTax is **not available in the PH market** for BIR compliance
+- TaxPulse-PH-Pack remains the canonical PH tax core
+- Future bridge: `ipai_tax_compliance_bridge` module when a global tax engine integration is justified (e.g., multi-country expansion)
+- Until that bridge exists, AvaTax patterns inform design benchmarks only — no runtime dependency, no adapter, no API calls
+
+## C10: Sovos as E-Invoicing Watch Item
+
+Sovos is a global compliance and e-invoicing platform with strong presence in Latin America and the EU.
+
+- Sovos does **not currently cover PH BIR** at depth, but is expanding in APAC
+- If BIR mandates electronic invoicing (similar to Brazil's NF-e or Mexico's CFDI), Sovos is the most likely commercial entrant to the PH market
+- Tax Pulse must monitor BIR e-invoicing regulatory signals (Revenue Memorandum Circulars, pilot programs)
+- If BIR mandates e-invoicing, the response is an **adapter** (`sovos_adapter` behind `ipai_tax_compliance_bridge`), not a replacement for Tax Pulse
+- Sovos would handle e-invoicing transmission/certification only — filing lifecycle, approval gates, and tax computation remain in Tax Pulse and Odoo
+- No preemptive integration — build the adapter only when a BIR mandate is published or a pilot program is announced

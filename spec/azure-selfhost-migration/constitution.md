@@ -12,7 +12,7 @@
 | **Active source** | Managed Supabase (cloud) | Project `spdtwktxdalcfigzeqrz` |
 | **Migration target** | Azure self-hosted VM | `4.193.100.31` (Docker Compose, 14 services + n8n) |
 | **Migration workflow** | GitHub Actions | `.github/workflows/supabase-self-host-migration.yml` |
-| **Consumer manifest** | Repo | `ops-platform/supabase/cutover/consumers.yaml` |
+| **Consumer manifest** | Repo | `platform/supabase/cutover/consumers.yaml` |
 | **Seed evidence** | Repo | `docs/architecture/SEED_DATA_INVENTORY.md` |
 | **Migration manifests** | Repo | `ssot/migration/*.yaml` |
 
