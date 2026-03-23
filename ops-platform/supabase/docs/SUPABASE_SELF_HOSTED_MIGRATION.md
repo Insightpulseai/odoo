@@ -304,7 +304,7 @@ during Phase 5 and is never committed to git.
 Full DNS manifest: `ops-platform/supabase/cutover/dns.yaml`
 
 ### Pre-conditions
-- VM nginx is running with vhosts for `supabase.insightpulseai.com` and `n8n-azure.insightpulseai.com`
+- VM nginx is running with vhosts for `supabase.insightpulseai.com` and `n8n.insightpulseai.com`
 - Kong responds on `localhost:8000` from within the VM
 - Cloudflare SSL mode is set to Full or Full(strict) for `insightpulseai.com`
 
@@ -318,10 +318,10 @@ cf api POST /zones/73f587aee652fc24fd643aec00dcca81/dns_records \
   --field proxied=true \
   --field ttl=300
 
-# Create n8n-azure A record
+# Create n8n A record
 cf api POST /zones/73f587aee652fc24fd643aec00dcca81/dns_records \
   --field type=A \
-  --field name=n8n-azure \
+  --field name=n8n \
   --field content=4.193.100.31 \
   --field proxied=true \
   --field ttl=300
@@ -339,7 +339,7 @@ curl -sf https://supabase.insightpulseai.com/storage/v1/health
 curl -sf https://supabase.insightpulseai.com/functions/v1/ops-health
 
 # n8n healthy
-curl -sf https://n8n-azure.insightpulseai.com/healthz
+curl -sf https://n8n.insightpulseai.com/healthz
 ```
 
 ---
@@ -355,7 +355,7 @@ No new writes go to cloud after cutover; it is read-only backup.
 |---|---|---|
 | Supabase API health | `curl -sf https://supabase.insightpulseai.com/functions/v1/ops-health` | HTTP 200 |
 | Auth health | `curl -sf https://supabase.insightpulseai.com/auth/v1/health` | `{"status":"ok"}` |
-| n8n health | `curl -sf https://n8n-azure.insightpulseai.com/healthz` | HTTP 200 |
+| n8n health | `curl -sf https://n8n.insightpulseai.com/healthz` | HTTP 200 |
 | Odoo ERP health | `curl -sf https://erp.insightpulseai.com/web/health` | HTTP 200 |
 | Edge Function error rate | Check Deno logs on VM | < 1% 5xx rate |
 | PostgreSQL connection count | `ssh ... 'psql -c "SELECT count(*) FROM pg_stat_activity"'` | < 80% of max_connections |

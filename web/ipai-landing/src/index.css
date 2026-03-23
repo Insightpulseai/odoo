@@ -1,0 +1,20 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --color-brand-primary: #00E5FF;
+  --color-brand-dark: #0B1117;
+  --color-brand-light: #F0FDFF;
+}
+
+@layer base {
+  body {
+    @apply font-sans text-black antialiased;
+  }
+}
+
+.grid-pattern {
+  background-image: radial-gradient(circle, #ffffff10 1px, transparent 1px);
+  background-size: 30px 30px;
+}

@@ -1,0 +1,301 @@
+{
+  "name": "Close Orchestrator — Month-End + Tax Projects",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 23 * * *"
+            }
+          ]
+        }
+      },
+      "id": "cron-7am-pht",
+      "name": "Daily 7AM Manila (23:00 UTC)",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [200, 200]
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "close-orchestrator",
+        "responseMode": "lastNode",
+        "options": {}
+      },
+      "id": "webhook-trigger",
+      "name": "Webhook Trigger",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [200, 400],
+      "webhookId": "close-orchestrator"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Determine period\nconst now = new Date();\nconst month = String(now.getMonth() + 1).padStart(2, '0');\nconst year = now.getFullYear();\nconst monthName = now.toLocaleDateString('en-US', { month: 'long' });\n\nreturn {\n  json: {\n    period: `${year}-${month}`,\n    month_name: monthName,\n    year: year,\n    today: now.toISOString().split('T')[0],\n    odoo_url: 'https://erp.insightpulseai.com',\n    db: 'odoo',\n    uid: 2,\n    password: 'admin'\n  }\n};"
+      },
+      "id": "init-period",
+      "name": "Init Period",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [440, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $json.odoo_url }}/jsonrpc",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"jsonrpc\": \"2.0\",\n  \"method\": \"call\",\n  \"params\": {\n    \"service\": \"object\",\n    \"method\": \"execute_kw\",\n    \"args\": [\n      \"{{ $json.db }}\",\n      {{ $json.uid }},\n      \"{{ $json.password }}\",\n      \"project.task\",\n      \"search_read\",\n      [[\"project_id\", \"=\", 4]],\n      {\"fields\": [\"name\", \"stage_id\", \"user_ids\", \"date_deadline\", \"date_last_stage_update\"], \"limit\": 500}\n    ]\n  },\n  \"id\": 1\n}",
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "id": "fetch-project4",
+      "name": "Fetch Month-End Tasks (P4)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [680, 200]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $('Init Period').item.json.odoo_url }}/jsonrpc",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"jsonrpc\": \"2.0\",\n  \"method\": \"call\",\n  \"params\": {\n    \"service\": \"object\",\n    \"method\": \"execute_kw\",\n    \"args\": [\n      \"{{ $('Init Period').item.json.db }}\",\n      {{ $('Init Period').item.json.uid }},\n      \"{{ $('Init Period').item.json.password }}\",\n      \"project.task\",\n      \"search_read\",\n      [[\"project_id\", \"=\", 5]],\n      {\"fields\": [\"name\", \"stage_id\", \"user_ids\", \"date_deadline\", \"date_last_stage_update\"], \"limit\": 500}\n    ]\n  },\n  \"id\": 2\n}",
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "id": "fetch-project5",
+      "name": "Fetch Tax Tasks (P5)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [680, 400]
+    },
+    {
+      "parameters": {
+        "jsCode": "const p4Tasks = $('Fetch Month-End Tasks (P4)').first().json.result || [];\nconst p5Tasks = $('Fetch Tax Tasks (P5)').first().json.result || [];\nconst period = $('Init Period').first().json;\nconst today = period.today;\n\n// Month-End stages\nconst p4Stages = ['Preparation', 'Accruals', 'Review', 'Approval', 'Submitted', 'Closed'];\nconst p4Closed = ['Closed'];\n\n// Tax stages\nconst p5Stages = ['Data Collection', 'Computation', 'Internal Review', 'Submission', 'Posted', 'Compliance Closed'];\nconst p5Closed = ['Compliance Closed'];\n\nfunction analyzeCluster(tasks, closedStages, allStages) {\n  const total = tasks.length;\n  const byStage = {};\n  allStages.forEach(s => byStage[s] = 0);\n  \n  const blockers = [];\n  let closedCount = 0;\n  \n  tasks.forEach(t => {\n    const stageName = t.stage_id ? t.stage_id[1] : 'Unknown';\n    byStage[stageName] = (byStage[stageName] || 0) + 1;\n    \n    if (closedStages.includes(stageName)) {\n      closedCount++;\n    }\n    \n    // Blocker: overdue and not in closed stage\n    if (t.date_deadline && t.date_deadline < today && !closedStages.includes(stageName)) {\n      blockers.push({\n        id: t.id,\n        name: t.name,\n        stage: stageName,\n        deadline: t.date_deadline,\n        assignees: (t.user_ids || []).join(', ')\n      });\n    }\n  });\n  \n  return {\n    total,\n    closed: closedCount,\n    progress_pct: total > 0 ? Math.round((closedCount / total) * 100) : 0,\n    by_stage: byStage,\n    blockers,\n    blocker_count: blockers.length\n  };\n}\n\nconst monthEnd = analyzeCluster(p4Tasks, p4Closed, p4Stages);\nconst taxCompliance = analyzeCluster(p5Tasks, p5Closed, p5Stages);\n\nconst overallProgress = (monthEnd.total + taxCompliance.total) > 0\n  ? Math.round(((monthEnd.closed + taxCompliance.closed) / (monthEnd.total + taxCompliance.total)) * 100)\n  : 0;\n\nreturn {\n  json: {\n    period: period.period,\n    month_name: period.month_name,\n    year: period.year,\n    today: today,\n    overall_progress_pct: overallProgress,\n    month_end_closing: monthEnd,\n    tax_compliance: taxCompliance,\n    total_blockers: monthEnd.blocker_count + taxCompliance.blocker_count,\n    all_blockers: [...monthEnd.blockers, ...taxCompliance.blockers]\n  }\n};"
+      },
+      "id": "analyze-progress",
+      "name": "Analyze Close Progress",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [940, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://data-intel-ph-resource.openai.azure.com/openai/deployments/gpt-4.1/chat/completions?api-version=2024-08-01-preview",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "api-key",
+              "value": "={{ $env.AZURE_FOUNDRY_API_KEY }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"messages\": [\n    {\n      \"role\": \"system\",\n      \"content\": \"You are a finance close status analyst. Generate a concise close status report. Use markdown formatting. Include: executive summary, progress bars (using block chars), blocker list with owners, and recommended actions. Keep it under 500 words.\"\n    },\n    {\n      \"role\": \"user\",\n      \"content\": \"Generate close status report for {{ $json.month_name }} {{ $json.year }}:\\n\\nOverall Progress: {{ $json.overall_progress_pct }}%\\n\\nMonth-End Closing (Project 4):\\n- Total tasks: {{ $json.month_end_closing.total }}\\n- Closed: {{ $json.month_end_closing.closed }}\\n- Progress: {{ $json.month_end_closing.progress_pct }}%\\n- Stage breakdown: {{ JSON.stringify($json.month_end_closing.by_stage) }}\\n- Blockers: {{ $json.month_end_closing.blocker_count }}\\n\\nTax Compliance (Project 5):\\n- Total tasks: {{ $json.tax_compliance.total }}\\n- Closed: {{ $json.tax_compliance.closed }}\\n- Progress: {{ $json.tax_compliance.progress_pct }}%\\n- Stage breakdown: {{ JSON.stringify($json.tax_compliance.by_stage) }}\\n- Blockers: {{ $json.tax_compliance.blocker_count }}\\n\\nAll Blockers:\\n{{ JSON.stringify($json.all_blockers, null, 2) }}\"\n    }\n  ],\n  \"temperature\": 0.3,\n  \"max_tokens\": 1500\n}",
+        "options": {
+          "timeout": 60000
+        }
+      },
+      "id": "gpt-report",
+      "name": "GPT-4.1 Close Report",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1180, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "const analysis = $('Analyze Close Progress').first().json;\nconst gptResponse = $json;\nconst report = gptResponse.choices?.[0]?.message?.content || 'Report generation failed.';\n\nconst taskName = `Close Status — ${analysis.month_name} ${analysis.year}`;\nconst description = `## Auto-Generated Close Status Report\\n\\n**Period**: ${analysis.month_name} ${analysis.year}\\n**Overall Progress**: ${analysis.overall_progress_pct}%\\n**Total Blockers**: ${analysis.total_blockers}\\n**Generated**: ${analysis.today}\\n\\n---\\n\\n${report}\\n\\n---\\n\\n### Raw Metrics\\n- Month-End: ${analysis.month_end_closing.progress_pct}% (${analysis.month_end_closing.closed}/${analysis.month_end_closing.total})\\n- Tax: ${analysis.tax_compliance.progress_pct}% (${analysis.tax_compliance.closed}/${analysis.tax_compliance.total})`;\n\nreturn {\n  json: {\n    task_name: taskName,\n    description: description,\n    report: report,\n    analysis: analysis,\n    odoo_url: $('Init Period').first().json.odoo_url,\n    db: $('Init Period').first().json.db,\n    uid: $('Init Period').first().json.uid,\n    password: $('Init Period').first().json.password\n  }\n};"
+      },
+      "id": "format-report",
+      "name": "Format Report",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1420, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $json.odoo_url }}/jsonrpc",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"jsonrpc\": \"2.0\",\n  \"method\": \"call\",\n  \"params\": {\n    \"service\": \"object\",\n    \"method\": \"execute_kw\",\n    \"args\": [\n      \"{{ $json.db }}\",\n      {{ $json.uid }},\n      \"{{ $json.password }}\",\n      \"project.task\",\n      \"search_read\",\n      [[\"project_id\", \"=\", 4], [\"name\", \"=\", \"{{ $json.task_name }}\"]],\n      {\"fields\": [\"id\"], \"limit\": 1}\n    ]\n  },\n  \"id\": 3\n}",
+        "options": {
+          "timeout": 15000
+        }
+      },
+      "id": "find-existing-task",
+      "name": "Find Existing Summary Task",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1660, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "const searchResult = $json.result || [];\nconst prev = $('Format Report').first().json;\n\nif (searchResult.length > 0) {\n  // Update existing task\n  return {\n    json: {\n      action: 'update',\n      task_id: searchResult[0].id,\n      task_name: prev.task_name,\n      description: prev.description,\n      report: prev.report,\n      analysis: prev.analysis,\n      odoo_url: prev.odoo_url,\n      db: prev.db,\n      uid: prev.uid,\n      password: prev.password\n    }\n  };\n} else {\n  // Create new task\n  return {\n    json: {\n      action: 'create',\n      task_id: null,\n      task_name: prev.task_name,\n      description: prev.description,\n      report: prev.report,\n      analysis: prev.analysis,\n      odoo_url: prev.odoo_url,\n      db: prev.db,\n      uid: prev.uid,\n      password: prev.password\n    }\n  };\n}"
+      },
+      "id": "decide-create-update",
+      "name": "Create or Update?",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1900, 300]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": { "caseSensitive": true, "leftValue": "", "typeValidation": "strict" },
+          "conditions": [
+            {
+              "id": "create-condition",
+              "leftValue": "={{ $json.action }}",
+              "rightValue": "create",
+              "operator": { "type": "string", "operation": "equals" }
+            }
+          ]
+        }
+      },
+      "id": "if-create",
+      "name": "IF Create",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [2120, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $json.odoo_url }}/jsonrpc",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"jsonrpc\": \"2.0\",\n  \"method\": \"call\",\n  \"params\": {\n    \"service\": \"object\",\n    \"method\": \"execute_kw\",\n    \"args\": [\n      \"{{ $json.db }}\",\n      {{ $json.uid }},\n      \"{{ $json.password }}\",\n      \"project.task\",\n      \"create\",\n      [{\n        \"name\": \"{{ $json.task_name }}\",\n        \"project_id\": 4,\n        \"description\": {{ JSON.stringify($json.description) }},\n        \"user_ids\": [18]\n      }]\n    ]\n  },\n  \"id\": 4\n}",
+        "options": {
+          "timeout": 15000
+        }
+      },
+      "id": "create-task",
+      "name": "Create Summary Task",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [2360, 200]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $json.odoo_url }}/jsonrpc",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"jsonrpc\": \"2.0\",\n  \"method\": \"call\",\n  \"params\": {\n    \"service\": \"object\",\n    \"method\": \"execute_kw\",\n    \"args\": [\n      \"{{ $json.db }}\",\n      {{ $json.uid }},\n      \"{{ $json.password }}\",\n      \"project.task\",\n      \"write\",\n      [{{ $json.task_id }}, {\n        \"description\": {{ JSON.stringify($json.description) }},\n        \"user_ids\": [[6, 0, [18]]]\n      }]\n    ]\n  },\n  \"id\": 5\n}",
+        "options": {
+          "timeout": 15000
+        }
+      },
+      "id": "update-task",
+      "name": "Update Summary Task",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [2360, 400]
+    },
+    {
+      "parameters": {
+        "jsCode": "const analysis = $('Analyze Close Progress').first().json;\nconst report = $('Format Report').first().json.report;\nconst action = $('Create or Update?').first().json.action;\n\nreturn {\n  json: {\n    status: 'ok',\n    action_taken: action,\n    period: `${analysis.month_name} ${analysis.year}`,\n    overall_progress_pct: analysis.overall_progress_pct,\n    month_end_progress_pct: analysis.month_end_closing.progress_pct,\n    tax_progress_pct: analysis.tax_compliance.progress_pct,\n    total_blockers: analysis.total_blockers,\n    report_preview: report.substring(0, 500)\n  }\n};"
+      },
+      "id": "final-output",
+      "name": "Final Output",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [2600, 300]
+    }
+  ],
+  "connections": {
+    "Daily 7AM Manila (23:00 UTC)": {
+      "main": [
+        [{ "node": "Init Period", "type": "main", "index": 0 }]
+      ]
+    },
+    "Webhook Trigger": {
+      "main": [
+        [{ "node": "Init Period", "type": "main", "index": 0 }]
+      ]
+    },
+    "Init Period": {
+      "main": [
+        [
+          { "node": "Fetch Month-End Tasks (P4)", "type": "main", "index": 0 },
+          { "node": "Fetch Tax Tasks (P5)", "type": "main", "index": 0 }
+        ]
+      ]
+    },
+    "Fetch Month-End Tasks (P4)": {
+      "main": [
+        [{ "node": "Analyze Close Progress", "type": "main", "index": 0 }]
+      ]
+    },
+    "Fetch Tax Tasks (P5)": {
+      "main": [
+        [{ "node": "Analyze Close Progress", "type": "main", "index": 0 }]
+      ]
+    },
+    "Analyze Close Progress": {
+      "main": [
+        [{ "node": "GPT-4.1 Close Report", "type": "main", "index": 0 }]
+      ]
+    },
+    "GPT-4.1 Close Report": {
+      "main": [
+        [{ "node": "Format Report", "type": "main", "index": 0 }]
+      ]
+    },
+    "Format Report": {
+      "main": [
+        [{ "node": "Find Existing Summary Task", "type": "main", "index": 0 }]
+      ]
+    },
+    "Find Existing Summary Task": {
+      "main": [
+        [{ "node": "Create or Update?", "type": "main", "index": 0 }]
+      ]
+    },
+    "Create or Update?": {
+      "main": [
+        [{ "node": "IF Create", "type": "main", "index": 0 }]
+      ]
+    },
+    "IF Create": {
+      "main": [
+        [{ "node": "Create Summary Task", "type": "main", "index": 0 }],
+        [{ "node": "Update Summary Task", "type": "main", "index": 0 }]
+      ]
+    },
+    "Create Summary Task": {
+      "main": [
+        [{ "node": "Final Output", "type": "main", "index": 0 }]
+      ]
+    },
+    "Update Summary Task": {
+      "main": [
+        [{ "node": "Final Output", "type": "main", "index": 0 }]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "Asia/Manila",
+    "saveDataSuccessExecution": "all",
+    "saveDataErrorExecution": "all"
+  },
+  "tags": [
+    { "name": "finance" },
+    { "name": "close-orchestrator" },
+    { "name": "phase-d" }
+  ]
+}
