@@ -1,0 +1,218 @@
+agent_id: diva-goals
+name: Diva Goals Agent Catalog
+version: 0.1.0-alpha
+stage: modelling
+status: specification-active
+created_at: "2026-03-23"
+spec_bundle: spec/diva-goals/
+
+platform:
+  orchestration: Microsoft Foundry
+  transactional_authority: Odoo
+  analytics: Databricks
+
+agents:
+  - id: diva_orchestrator
+    role: Workflow coordination and step sequencing
+    tools:
+      allowed:
+        - workflow_invoke
+        - step_sequence
+        - context_assemble
+      forbidden:
+        - content_generation
+        - direct_odoo_write
+    boundary: Never generates content directly; delegates to specialist agents
+
+  - id: evidence_harvester
+    role: Evidence collection from Odoo, Databricks, and external sources
+    tools:
+      allowed:
+        - odoo_read
+        - databricks_query
+        - kb_search
+        - attachment_read
+      forbidden:
+        - odoo_write
+        - content_synthesis
+    boundary: Read-only; never synthesizes or interprets evidence
+
+  - id: status_synthesizer
+    role: Goal status narrative generation from collected evidence
+    tools:
+      allowed:
+        - evidence_summarize
+        - citation_attach
+        - narrative_generate
+      forbidden:
+        - data_invention
+        - uncited_assertion
+    boundary: Every claim must have a citation; never invents data
+
+  - id: policy_judge
+    role: Proposal evaluation against governance policies
+    tools:
+      allowed:
+        - policy_lookup
+        - rule_evaluate
+        - compliance_check
+      forbidden:
+        - remediation_suggest
+        - policy_modify
+    boundary: Binary pass/fail with reasoning; never suggests remediation
+
+  - id: review_pack_writer
+    role: Review document assembly from synthesized evidence
+    tools:
+      allowed:
+        - template_render
+        - evidence_attach
+        - section_compose
+      forbidden:
+        - self_approve
+        - evidence_modify
+    boundary: Cannot approve its own output; assembles only
+
+  - id: capability_mapper
+    role: Skills-to-roles mapping and gap identification
+    tools:
+      allowed:
+        - skills_inventory
+        - gap_compute
+        - competency_lookup
+      forbidden:
+        - learning_plan_assign
+        - role_modify
+    boundary: Identifies gaps; does not assign learning plans or modify roles
+
+  - id: drift_detector
+    role: Goal drift and orphan task identification
+    tools:
+      allowed:
+        - goal_scan
+        - staleness_check
+        - orphan_detect
+      forbidden:
+        - goal_modify
+        - task_close
+    boundary: Detection only; does not remediate or modify goals
+
+  - id: readiness_judge
+    role: Agent or team readiness assessment for promotion
+    tools:
+      allowed:
+        - eval_metrics_read
+        - criteria_check
+        - threshold_evaluate
+      forbidden:
+        - promotion_execute
+        - criteria_modify
+    boundary: Fail-closed on missing evidence; never promotes directly
+
+  - id: approval_coordinator
+    role: Approval routing, sign-off tracking, gate enforcement
+    tools:
+      allowed:
+        - approval_route
+        - signoff_track
+        - gate_enforce
+      forbidden:
+        - auto_approve
+        - gate_bypass
+    boundary: No authority to auto-approve; routes to designated approvers
+
+  - id: taxpulse
+    role: Tax computation worker, BIR filing preparation, evidence collection
+    tools:
+      allowed:
+        - tax_compute
+        - bir_form_render
+        - evidence_collect
+        - odoo_tax_read
+      forbidden:
+        - tax_file_submit
+        - journal_post
+        - auto_approve
+    boundary: Computes and prepares; never files or posts without approval
+
+optional_agents:
+  - id: tax_policy_judge
+    role: Tax policy compliance evaluation (maker/judge split for tax)
+    tools:
+      allowed:
+        - tax_policy_lookup
+        - bir_rule_evaluate
+        - compliance_check
+      forbidden:
+        - tax_compute
+        - remediation_suggest
+    boundary: Binary pass/fail on tax compliance; never remediates
+    recommendation: Recommended for proper maker/judge split in tax domain
+
+workflows:
+  - id: goal-status-synthesis
+    ref: agents/workflows/goal-status-synthesis.yaml
+    domain: goals
+    trigger: scheduled_or_on_demand
+
+  - id: review-pack-generation
+    ref: agents/workflows/review-pack-generation.yaml
+    domain: reviews
+    trigger: stage_transition
+
+  - id: capability-readiness-review
+    ref: agents/workflows/capability-readiness-review.yaml
+    domain: capability
+    trigger: scheduled_or_promotion_request
+
+  - id: learning-plan-recommendation
+    ref: agents/workflows/learning-plan-recommendation.yaml
+    domain: capability
+    trigger: gap_detected
+
+  - id: odoo-tax-assist
+    ref: agents/workflows/odoo-tax-assist.yaml
+    domain: tax
+    trigger: copilot_invocation
+
+proposal_states:
+  states:
+    - draft
+    - evidence_collected
+    - synthesized
+    - judged
+    - needs_human_review
+    - approved
+    - published
+    - blocked_insufficient_evidence
+    - blocked_policy_violation
+    - blocked_confidence_low
+  transitions:
+    - from: draft
+      to: evidence_collected
+      agent: evidence_harvester
+    - from: evidence_collected
+      to: synthesized
+      agent: status_synthesizer
+    - from: synthesized
+      to: judged
+      agent: policy_judge
+    - from: judged
+      to: needs_human_review
+      condition: confidence < 0.85
+    - from: judged
+      to: approved
+      condition: confidence >= 0.85 AND policy_pass
+      agent: approval_coordinator
+    - from: needs_human_review
+      to: approved
+      agent: human
+    - from: approved
+      to: published
+      agent: human
+      gate: confirmation_required
+
+governance:
+  evidence_required: true
+  fail_closed_mode: active
+  human_gate_on_publish: true

@@ -1,0 +1,53 @@
+{
+  "name": "odoo_docs_retrieval",
+  "version": "1.0.0",
+  "description": "Answer Odoo product and configuration questions using official Odoo docs before fallback web search. Implements the 3-lane retrieval model: Odoo runtime context → Odoo docs KB → bounded web search.",
+  "intent": "Retrieve and summarize Odoo documentation with citations",
+  "inputs": [
+    {"name": "user_query", "type": "string", "description": "User's Odoo-related question", "required": true},
+    {"name": "odoo_context", "type": "object", "description": "Active record, company, user role, locale from Odoo runtime", "required": false},
+    {"name": "kb_results", "type": "array", "description": "Results from kb_odoo_docs retrieval (Lane 2)", "required": false},
+    {"name": "url_hint", "type": "string", "description": "Documentation URL provided by user, if any", "required": false}
+  ],
+  "outputs": [
+    {"name": "answer", "type": "string", "description": "Documentation-grounded answer"},
+    {"name": "citations", "type": "array", "description": "Source citations (KB chunks or web search results)"},
+    {"name": "source_type", "type": "string", "description": "Lane used: runtime | docs_kb | web_search"},
+    {"name": "evidence_strength", "type": "string", "description": "strong | moderate | weak | insufficient"},
+    {"name": "needs_fallback_search", "type": "boolean", "description": "Whether Lane 3 web search was triggered"}
+  ],
+  "kb_segments": ["kb_odoo_docs"],
+  "retrieval_policy": {
+    "lane_1": {
+      "name": "Odoo runtime context",
+      "source": "odoo_context_builder",
+      "priority": 1,
+      "use_for": ["active record state", "company settings", "user role/locale"]
+    },
+    "lane_2": {
+      "name": "Odoo docs KB",
+      "source": "kb_odoo_docs",
+      "priority": 2,
+      "use_for": ["product behavior", "configuration steps", "module features", "localization", "tax docs"]
+    },
+    "lane_3": {
+      "name": "Bounded web search",
+      "source": "web_search_20250305",
+      "priority": 3,
+      "use_for": ["freshness gaps", "latest docs changes", "public release notes"],
+      "config": {
+        "max_uses": 3,
+        "allowed_domains": ["odoo.com"]
+      },
+      "trigger": "lane_2_evidence_insufficient"
+    }
+  },
+  "agentInstructions": "Search the Odoo docs KB first. If the KB has a strong match, answer from it with citations. If the KB match is weak or missing, trigger bounded web search limited to odoo.com. Always include citations in the response. Never claim inability to search. Never use web search for internal ERP state, approval decisions, or tax policy authority — those go through runtime tools, internal KBs, and TaxPulse respectively.",
+  "guardrails": [
+    "Always cite sources — never answer docs questions from memory alone",
+    "Web search is Lane 3 fallback, not the default",
+    "Never use web search for internal Odoo runtime state",
+    "Tax interpretation questions route to Tax Guru / TaxPulse, not docs retrieval",
+    "If no retrieval tool is available at runtime, say deployment is not wired for retrieval — not that copilot cannot search"
+  ]
+}

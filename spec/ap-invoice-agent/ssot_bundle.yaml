@@ -1,0 +1,19 @@
+schema: ipai.ssot.bundle.v1
+id: ap-invoice-contracts
+agent: ap-invoice-agent
+contracts:
+  - id: ap-invoice-evidence
+    type: json-schema
+    ref: ssot/agents/ap_invoice_evidence.schema.json
+  - id: ap-tax-verification
+    type: taxpulse-mapping
+    specialist: taxpulse
+    rules:
+      - vat_verification
+      - ewt_withholding_check
+  - id: posting-gates
+    type: governance-gate
+    policies:
+      - fail_closed_on_tax_ambiguity: true
+      - require_vendor_verification: true
+      - require_atc_match: true

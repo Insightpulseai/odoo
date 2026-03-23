@@ -1,0 +1,113 @@
+# SSOT: Assistant Surfaces — Product Taxonomy
+# Three distinct surfaces on one shared runtime plane.
+# Cross-referenced by: docs/architecture/ASSISTANT_SURFACES.md
+# Updated: 2026-03-23
+
+version: "1.0.0"
+
+assistant_surfaces:
+  odoo_copilot:
+    role: erp_transactional_assistant
+    scope: authenticated
+    grounding_model:
+      - odoo_runtime_context
+      - curated_odoo_docs
+      - bounded_web_fallback
+    action_mode: read_only_first
+    launch_posture: internal_beta
+    ssot_ref: ssot/agents/diva_copilot.yaml#modes.odoo
+
+  diva_copilot:
+    role: orchestration_and_schema_assistant
+    scope: authenticated
+    routing_modes:
+      - strategy
+      - odoo
+      - tax_guru
+      - capability
+      - governance
+    action_mode: route_and_assemble
+    ssot_ref: ssot/agents/diva_copilot.yaml
+
+  studio_copilot:
+    role: creative_finishing_and_mediaops_assistant
+    scope: authenticated
+    workflow_backbone:
+      - capture_ingest
+      - ai_polish
+      - brand_presets
+      - platform_exports
+      - scheduling_publish_handoff
+      - analytics_next_steps
+    generation_policy:
+      stills_fast: gemini_direct
+      stills_premium: imagen
+      mixed_media: fal
+      multimodal_review: openai
+    product_name: W9 Studio
+
+  genie:
+    role: conversational_analytics
+    scope: authenticated
+    citation_model: query_provenance
+    is_copilot: false
+
+  document_intelligence:
+    role: document_review_and_extraction
+    scope: authenticated
+    citation_model: page_field_anchor
+    is_copilot: false
+
+shared_runtime:
+  identity: entra_id
+  tool_registry: foundry_agent_service
+  retrieval: azure_ai_search
+  audit: ipai_copilot_audit
+  evals: per_surface_eval_packs
+  provider: azure_openai
+  design_system: fluent_2
+
+domain_intelligence_shells:
+  marketing:
+    diva_role: customer_360_campaign_brand_intelligence
+    odoo_role: crm_campaigns_partners
+    studio_role: campaign_creative_social_content
+  media:
+    diva_role: audience_content_monetization_qoe
+    odoo_role: scheduling_rights_revenue
+    studio_role: content_production_platform_export
+  retail:
+    diva_role: inventory_supply_chain_demand_forecasting
+    odoo_role: purchase_orders_inventory_sales
+    studio_role: product_visuals_catalog
+  financial_operations:
+    diva_role: growth_protection_efficiency_risk_compliance
+    odoo_role: journals_invoices_tax_close
+    studio_role: financial_reports_rare
+  doctrine: >
+    Diva decides/routes/analyzes.
+    Odoo executes/governs/tracks.
+    Studio creates/polishes/exports when creative activation is relevant.
+
+naming_rules:
+  use:
+    - Odoo Copilot
+    - Diva Copilot
+    - W9 Studio
+    - Studio Copilot
+    - Genie
+    - Document Intelligence
+  avoid:
+    - calling everything Diva
+    - calling Genie a copilot
+    - calling public landing assistant Odoo Copilot
+    - making Studio Copilot sound like generic social-media chatbot
+    - using Foundry as user-facing brand
+
+cross_references:
+  tenancy_model: ssot/architecture/tenancy_model.yaml
+  agentops_policy: ssot/governance/agentops_policy.yaml
+  release_stages: ssot/governance/copilot_release_stages.yaml
+  creative_provider: ssot/creative/provider_policy.yaml
+  repo_boundaries: ssot/repo/ownership-boundaries.yaml
+  domain_shells_doc: docs/architecture/DOMAIN_INTELLIGENCE_SHELLS.md

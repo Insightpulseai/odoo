@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_bank_statement_line_form_ipai" model="ir.ui.view">
+        <field name="name">account.bank.statement.line.form.ipai</field>
+        <field name="model">account.bank.statement.line</field>
+        <field name="inherit_id" ref="account.view_bank_statement_line_form"/>
+        <field name="arch" type="xml">
+            <header>
+                <button name="action_approve_reconciliation" string="Approve Recon" type="object" class="oe_highlight" invisible="reconciliation_state != 'matched'"/>
+                <button name="action_reset_to_ingested" string="Reset Recon" type="object" invisible="reconciliation_state in ('ingested', 'posted')"/>
+                <field name="reconciliation_state" widget="statusbar" statusbar_visible="ingested,matched,approved_to_post,posted"/>
+            </header>
+            <xpath expr="//sheet" position="inside">
+                <group string="IPAI Agentic Reconciliation">
+                    <field name="confidence_score" widget="priority" readonly="1"/>
+                    <field name="agent_evidence_pack" readonly="1"/>
+                </group>
+            </xpath>
+        </field>
+    </record>
+</odoo>

@@ -1,0 +1,92 @@
+# Odoo Docs Knowledge Base
+# Version: 1.0.0
+# Created: 2026-03-23
+# Purpose: Official Odoo 19 documentation as a curated KB for the Odoo Copilot.
+#   This is Lane 2 retrieval — searched BEFORE bounded web search (Lane 3)
+#   and AFTER Odoo runtime context (Lane 1).
+
+name: kb_odoo_docs
+domain: odoo_docs
+version: 1.0.0
+status: active
+
+description: >
+  Curated knowledge base built from official Odoo 19 documentation.
+  Covers all product modules, configuration, localization, accounting,
+  tax, and developer reference. This is the primary retrieval source
+  for Odoo product and configuration questions.
+
+sources:
+  - url: https://www.odoo.com/documentation/19.0/
+    type: docs_site
+    crawl_strategy: full_site
+    version: "19.0"
+    priority: P0
+
+  # Key subsections with high query density
+  - url: https://www.odoo.com/documentation/19.0/applications/finance/accounting.html
+    type: docs_page
+    tags: [accounting, finance, journal_entries, reconciliation]
+    priority: P0
+
+  - url: https://www.odoo.com/documentation/19.0/applications/finance/accounting/taxes.html
+    type: docs_page
+    tags: [taxes, vat, withholding, fiscal_positions]
+    priority: P0
+
+  - url: https://www.odoo.com/documentation/19.0/applications/finance/fiscal_localizations.html
+    type: docs_page
+    tags: [localizations, country_specific, philippines]
+    priority: P0
+
+  - url: https://www.odoo.com/documentation/19.0/developer.html
+    type: docs_page
+    tags: [developer, api, orm, views, models]
+    priority: P1
+
+routing:
+  preferred_for:
+    - odoo_product_questions
+    - odoo_configuration_questions
+    - odoo_tax_questions
+    - odoo_localization_questions
+    - odoo_module_features
+    - odoo_accounting_questions
+    - odoo_developer_questions
+
+  not_for:
+    - internal_approval_state
+    - company_tax_policy_truth
+    - odoo_runtime_record_state
+    - posting_or_filing_decisions
+
+consumers:
+  - copilot: odoo
+    role: primary_retrieval_source
+  - copilot: tax_guru
+    role: supplementary_source
+
+web_search_fallback:
+  enabled: true
+  config:
+    type: web_search_20250305
+    name: web_search
+    max_uses: 3
+    allowed_domains:
+      - odoo.com
+  trigger: insufficient_kb_evidence
+  notes: >
+    Bounded web search is Lane 3 — only used when the curated KB
+    does not contain the answer. Citations from web search must be
+    rendered to the user. Never use web search for internal ERP truth.
+
+index:
+  service: azure_ai_search
+  index_name: odoo-docs-kb
+  vector_dimensions: 1536
+  scoring_profile: bm25_plus_vector
+
+refresh_strategy:
+  method: scheduled
+  interval_days: 7
+  on_demand_trigger: odoo_version_release

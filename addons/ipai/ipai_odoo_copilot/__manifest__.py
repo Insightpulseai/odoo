@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'IPAI Odoo Copilot',
-    'version': '19.0.1.0.0',
-    'summary': 'Odoo Copilot precursor — systray chat entry and agent gateway bridge',
+    'version': '19.0.2.0.0',
+    'summary': 'Odoo Copilot — systray chat with audit, rate limiting, and action dispatch',
     'category': 'Productivity',
     'license': 'LGPL-3',
     'author': 'InsightPulse AI',

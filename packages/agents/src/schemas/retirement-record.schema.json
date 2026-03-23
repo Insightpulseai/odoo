@@ -1,0 +1,33 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "ipai.retirement.v1",
+  "title": "Retirement Record",
+  "description": "Record tracking the sunsetting and archival of an agent at the end of its lifecycle",
+  "type": "object",
+  "properties": {
+    "agent_id": {
+      "type": "string",
+      "description": "Identifier of the agent being retired"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO8601 timestamp of the retirement event execution"
+    },
+    "reason": {
+      "type": "string",
+      "description": "Reason for retirement (e.g. replaced, deprecated, unmaintained)"
+    },
+    "successor_agent_id": {
+      "type": "string",
+      "description": "Optional identifier of the agent taking over routing responsibilities"
+    },
+    "approver": {
+      "type": "string",
+      "description": "Identity of the system or human that approved the retirement"
+    }
+  },
+  "required": [
+    "agent_id", "timestamp", "reason", "approver"
+  ]
+}

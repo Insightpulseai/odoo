@@ -1,0 +1,511 @@
+# =============================================================================
+# Azure RG Normalization Matrix — Dev Tier
+# =============================================================================
+#
+# Maps every confirmed resource from its current RG to target RG.
+# Tracks moveability constraints and migration phase.
+#
+# Target model: 5 lifecycle-aligned RGs + 1 shared observability RG
+# Reference: docs/architecture/INSIGHTPULSEAI_ODOO_ON_AZURE_TARGET_STATE.md
+#
+# Created: 2026-03-20
+# =============================================================================
+
+schema_version: "1.1"
+last_updated: "2026-03-20"
+status: phase_4_complete
+notes: >
+  Phases 0-4 executed 2026-03-20. Phase 5 (CI/CD + SSOT update) in progress.
+  72h stabilization hold on rg-ipai-dev old apps until 2026-03-23.
+
+# -----------------------------------------------------------------------------
+# Target RG Model (dev)
+# -----------------------------------------------------------------------------
+target_rgs:
+  - name: rg-ipai-shared-observability
+    purpose: Log Analytics, App Insights, Monitor action groups
+    phase: 1
+    action: create_new
+
+  - name: rg-ipai-dev-edge
+    purpose: Front Door, WAF policy, custom domains
+    phase: deferred
+    action: accept_existing
+    notes: >
+      Pragmatic decision: accept rg-ipai-shared-dev as de facto edge RG.
+      Front Door cannot be moved cross-RG (must recreate).
+      Cosmetic rename is high-risk for live system. Apply clean model to staging/prod.
+
+  - name: rg-ipai-dev-odoo-runtime
+    purpose: ACA environment, web/worker/cron apps, runtime identities
+    phase: 3
+    action: create_new
+
+  - name: rg-ipai-dev-odoo-data
+    purpose: PostgreSQL, storage (filestore), Azure Files
+    phase: 2
+    action: create_new
+
+  - name: rg-ipai-dev-platform
+    purpose: Key Vault, ACR, auth, MCP, OCR, Superset, Plane, Shelf, CRM, website
+    phase: 2
+    action: create_new
+
+  - name: rg-ipai-dev-ai
+    purpose: OpenAI, DocAI, Vision, Language, Search, Foundry, Databricks
+    phase: 1
+    action: accept_existing
+    notes: >
+      Pragmatic decision: accept rg-ipai-ai-dev as-is (cannot rename RG).
+      Databricks, Foundry, and managed resources cannot move cross-RG.
+      Move only the 5 Cognitive Services in. Update SSOT to map rg-ipai-ai-dev
+      as the canonical AI RG.
+
+# -----------------------------------------------------------------------------
+# Resource Migration Matrix
+# -----------------------------------------------------------------------------
+# Fields:
+#   resource       — Azure resource name
+#   type           — Azure resource type
+#   current_rg     — Current resource group
+#   target_rg      — Target resource group
+#   moveable       — yes | no | recreate
+#   phase          — Migration phase (0-5)
+#   action         — move | recreate | keep | retire | review
+#   notes          — Context
+# -----------------------------------------------------------------------------
+
+resources:
+
+  # --- Observability (Phase 1) ---
+  - resource: law-ipai-dev
+    type: logAnalytics
+    current_rg: rg-ipai-shared-dev
+    target_rg: rg-ipai-shared-observability
+    moveable: "yes"
+    phase: 1
+    action: move
+
+  - resource: appi-ipai-dev
+    type: appInsights
+    current_rg: rg-ipai-shared-dev
+    target_rg: rg-ipai-shared-observability
+    moveable: "yes"
+    phase: 1
+    action: move
+    notes: Must move after law-ipai-dev (dependency)
+
+  - resource: "Smart Detection action group"
+    type: actionGroup
+    current_rg: rg-ipai-shared-dev
+    target_rg: rg-ipai-shared-observability
+    moveable: "yes"
+    phase: 1
+    action: move
+
+  # --- AI / Cognitive Services (Phase 1) ---
+  - resource: oai-ipai-dev
+    type: openAI
+    current_rg: rg-ipai-ai-dev
+    target_rg: rg-ipai-ai-dev
+    moveable: "yes"
+    phase: 1
+    action: keep
+    notes: Already in target RG (rg-ipai-ai-dev accepted as canonical)
+
+  - resource: docai-ipai-dev
+    type: documentIntelligence
+    current_rg: rg-ipai-ai-dev
+    target_rg: rg-ipai-ai-dev
+    moveable: "yes"
+    phase: 1
+    action: keep
+
+  - resource: vision-ipai-dev
+    type: computerVision
+    current_rg: rg-ipai-ai-dev
+    target_rg: rg-ipai-ai-dev
+    moveable: "yes"
+    phase: 1
+    action: keep
+
+  - resource: lang-ipai-dev
+    type: language
+    current_rg: rg-ipai-ai-dev
+    target_rg: rg-ipai-ai-dev
+    moveable: "yes"
+    phase: 1
+    action: keep
+
+  - resource: srch-ipai-dev
+    type: searchService
+    current_rg: rg-ipai-ai-dev
+    target_rg: rg-ipai-ai-dev
+    moveable: "yes"
+    phase: 1
+    action: keep
+
+  - resource: dbw-ipai-dev
+    type: databricksWorkspace
+    current_rg: rg-ipai-ai-dev
+    target_rg: rg-ipai-ai-dev
+    moveable: no
+    phase: 1
+    action: keep
+    notes: Databricks workspaces cannot move cross-RG
+
+  - resource: aifoundry-ipai-dev
+    type: mlWorkspace
+    current_rg: rg-ipai-ai-dev
+    target_rg: rg-ipai-ai-dev
+    moveable: no
+    phase: 1
+    action: keep
+    notes: AI Foundry workspaces cannot move cross-RG
+
+  # --- Data Resources (Phase 2) ---
+  - resource: ipai-odoo-dev-pg
+    type: postgresFlexibleServer
+    current_rg: rg-ipai-dev
+    target_rg: rg-ipai-dev-odoo-data
+    moveable: "yes"
+    phase: 2
+    action: move
+    notes: PG must be in Running state during move
+
+  - resource: stipaiodoodev
+    type: storageAccount
+    current_rg: rg-ipai-dev
+    target_rg: rg-ipai-dev-odoo-data
+    moveable: "yes"
+    phase: 2
+    action: move
+
+  - resource: pg-ipai-dev
+    type: postgresFlexibleServer
+    current_rg: rg-ipai-data-dev
+    target_rg: rg-ipai-dev-odoo-data
+    moveable: "yes"
+    phase: 2
+    action: review
+    notes: >
+      Validate which apps connect here. If only Supabase/platform uses it, move.
+      If unused, retire. If Deployment A only, retire with Deployment A.
+
+  # --- Key Vaults (Phase 2) ---
+  - resource: kv-ipai-dev
+    type: keyVault
+    current_rg: rg-ipai-shared-dev
+    target_rg: rg-ipai-dev-platform
+    moveable: "yes"
+    phase: 2
+    action: move
+
+  - resource: ipai-odoo-dev-kv
+    type: keyVault
+    current_rg: rg-ipai-dev
+    target_rg: rg-ipai-dev-platform
+    moveable: "yes"
+    phase: 2
+    action: move
+
+  # --- Container Registries (Phase 2) ---
+  - resource: cripaidev
+    type: containerRegistry
+    current_rg: rg-ipai-shared-dev
+    target_rg: rg-ipai-dev-platform
+    moveable: "yes"
+    phase: 2
+    action: move
+
+  - resource: ipaiodoodevacr
+    type: containerRegistry
+    current_rg: rg-ipai-dev
+    target_rg: rg-ipai-dev-platform
+    moveable: "yes"
+    phase: 2
+    action: move
+
+  - resource: ipaiwebacr
+    type: containerRegistry
+    current_rg: rg-ipai-dev
+    target_rg: rg-ipai-dev-platform
+    moveable: "yes"
+    phase: 2
+    action: review
+    notes: Consolidation candidate — merge into cripaidev
+
+  # --- Managed Identities (Phase 2) ---
+  # DISCOVERY: UserAssignedIdentities CANNOT be moved cross-RG.
+  # Azure error: ResourceMoveNotSupported for Microsoft.ManagedIdentity/userAssignedIdentities
+  # Decision: Keep in rg-ipai-shared-dev. Accept as shared identity plane.
+  # Recreate in target RGs only when staging/prod are provisioned greenfield.
+  - resource: mi-ipai-odoo-dev
+    type: managedIdentity
+    current_rg: rg-ipai-shared-dev
+    target_rg: rg-ipai-shared-dev
+    moveable: no
+    phase: 2
+    action: keep
+    notes: Cannot move cross-RG (Azure limitation). Keep in shared-dev.
+
+  - resource: mi-ipai-platform-dev
+    type: managedIdentity
+    current_rg: rg-ipai-shared-dev
+    target_rg: rg-ipai-shared-dev
+    moveable: no
+    phase: 2
+    action: keep
+
+  - resource: mi-ipai-lakehouse-dev
+    type: managedIdentity
+    current_rg: rg-ipai-shared-dev
+    target_rg: rg-ipai-shared-dev
+    moveable: no
+    phase: 2
+    action: keep
+
+  - resource: id-ipai-aca-dev
+    type: managedIdentity
+    current_rg: rg-ipai-agents-dev
+    target_rg: rg-ipai-agents-dev
+    moveable: no
+    phase: 2
+    action: keep
+
+  # --- ACA Environment + Apps (Phase 3 — RECREATE) ---
+  - resource: ipai-odoo-dev-env
+    type: managedEnvironment
+    current_rg: rg-ipai-dev
+    target_rg: rg-ipai-dev-odoo-runtime
+    moveable: no
+    phase: 3
+    action: recreate
+    notes: ACA environments cannot move — must recreate
+
+  - resource: ipai-odoo-dev-web
+    type: containerApp
+    current_rg: rg-ipai-dev
+    target_rg: rg-ipai-dev-odoo-runtime
+    moveable: no
+    phase: 3
+    action: recreate
+
+  - resource: ipai-odoo-dev-worker
+    type: containerApp
+    current_rg: rg-ipai-dev
+    target_rg: rg-ipai-dev-odoo-runtime
+    moveable: no
+    phase: 3
+    action: recreate
+
+  - resource: ipai-odoo-dev-cron
+    type: containerApp
+    current_rg: rg-ipai-dev
+    target_rg: rg-ipai-dev-odoo-runtime
+    moveable: no
+    phase: 3
+    action: recreate
+
+  - resource: ipai-auth-dev
+    type: containerApp
+    current_rg: rg-ipai-dev
+    target_rg: rg-ipai-dev-odoo-runtime
+    moveable: no
+    phase: 3
+    action: recreate
+    notes: Platform app, deployed in shared ACA environment
+
+  - resource: ipai-mcp-dev
+    type: containerApp
+    current_rg: rg-ipai-dev
+    target_rg: rg-ipai-dev-odoo-runtime
+    moveable: no
+    phase: 3
+    action: recreate
+
+  - resource: ipai-ocr-dev
+    type: containerApp
+    current_rg: rg-ipai-dev
+    target_rg: rg-ipai-dev-odoo-runtime
+    moveable: no
+    phase: 3
+    action: recreate
+
+  - resource: ipai-superset-dev
+    type: containerApp
+    current_rg: rg-ipai-dev
+    target_rg: rg-ipai-dev-odoo-runtime
+    moveable: no
+    phase: 3
+    action: recreate
+
+  - resource: ipai-plane-dev
+    type: containerApp
+    current_rg: rg-ipai-dev
+    target_rg: rg-ipai-dev-odoo-runtime
+    moveable: no
+    phase: 3
+    action: recreate
+
+  - resource: ipai-shelf-dev
+    type: containerApp
+    current_rg: rg-ipai-dev
+    target_rg: rg-ipai-dev-odoo-runtime
+    moveable: no
+    phase: 3
+    action: recreate
+
+  - resource: ipai-crm-dev
+    type: containerApp
+    current_rg: rg-ipai-dev
+    target_rg: rg-ipai-dev-odoo-runtime
+    moveable: no
+    phase: 3
+    action: recreate
+
+  - resource: ipai-website-dev
+    type: containerApp
+    current_rg: rg-ipai-dev
+    target_rg: rg-ipai-dev-odoo-runtime
+    moveable: no
+    phase: 3
+    action: recreate
+
+  # --- ACA Jobs (Phase 3 — RECREATE) ---
+  - resource: ipai-odoo-dev-wave1
+    type: containerAppJob
+    current_rg: rg-ipai-dev
+    target_rg: rg-ipai-dev-odoo-runtime
+    moveable: no
+    phase: 3
+    action: recreate
+
+  - resource: ipai-odoo-install
+    type: containerAppJob
+    current_rg: rg-ipai-dev
+    target_rg: rg-ipai-dev-odoo-runtime
+    moveable: no
+    phase: 3
+    action: recreate
+
+  - resource: ipai-branding-install
+    type: containerAppJob
+    current_rg: rg-ipai-dev
+    target_rg: rg-ipai-dev-odoo-runtime
+    moveable: no
+    phase: 3
+    action: recreate
+
+  # --- Edge (DEFERRED — keep in place) ---
+  - resource: ipai-fd-dev
+    type: frontDoor
+    current_rg: rg-ipai-shared-dev
+    target_rg: rg-ipai-shared-dev
+    moveable: no
+    phase: deferred
+    action: keep
+    notes: >
+      Front Door cannot move cross-RG. Accept rg-ipai-shared-dev as de facto
+      edge RG for dev. Apply clean model to staging/prod greenfield.
+
+  - resource: ipaiDevWafPolicy
+    type: wafPolicy
+    current_rg: rg-ipai-shared-dev
+    target_rg: rg-ipai-shared-dev
+    moveable: no
+    phase: deferred
+    action: keep
+
+  # --- Legacy / Retire (Phase 4) ---
+  - resource: debug-odoo-ep
+    type: containerGroup
+    current_rg: rg-ipai-agents-dev
+    target_rg: none
+    moveable: n/a
+    phase: 4
+    action: retire
+
+  - resource: odoo-init
+    type: containerAppJob
+    current_rg: rg-ipai-agents-dev
+    target_rg: none
+    moveable: n/a
+    phase: 4
+    action: retire
+
+  - resource: cae-ipai-dev
+    type: managedEnvironment
+    current_rg: rg-ipai-agents-dev
+    target_rg: none
+    moveable: n/a
+    phase: 4
+    action: retire
+
+  - resource: vm-ipai-supabase-dev
+    type: virtualMachine
+    current_rg: rg-ipai-agents-dev
+    target_rg: rg-ipai-agents-dev
+    moveable: n/a
+    phase: 4
+    action: review
+    notes: Keep isolated or retire — depends on Supabase self-hosted decision
+
+# -----------------------------------------------------------------------------
+# Phase Summary
+# -----------------------------------------------------------------------------
+phases:
+  - phase: 0
+    name: Preparation
+    downtime: none
+    risk: none
+    deliverables:
+      - This migration matrix
+      - Per-RG Bicep modules
+      - Updated SSOT files
+
+  - phase: 1
+    name: Observability + AI
+    downtime: none
+    risk: low
+    actions:
+      - "az resource move: law-ipai-dev → rg-ipai-shared-observability"
+      - "az resource move: appi-ipai-dev → rg-ipai-shared-observability"
+      - "Verify: all AI resources confirmed in rg-ipai-ai-dev"
+
+  - phase: 2
+    name: Data + Identity + Registry
+    downtime: none
+    risk: low
+    actions:
+      - "az resource move: ipai-odoo-dev-pg → rg-ipai-dev-odoo-data"
+      - "az resource move: Key Vaults → rg-ipai-dev-platform"
+      - "az resource move: ACRs → rg-ipai-dev-platform"
+      - "az resource move: managed identities → owning RGs"
+      - "Re-grant all RBAC role assignments at new scope"
+
+  - phase: 3
+    name: Odoo Runtime Recreation
+    downtime: "5-15 min (maintenance window)"
+    risk: high
+    actions:
+      - Deploy new ACA environment in rg-ipai-dev-odoo-runtime
+      - Deploy all apps (same images, same PG FQDN, same KV refs)
+      - Update Front Door origins to new ACA FQDNs
+      - 72h stabilization hold
+
+  - phase: 4
+    name: Retire Legacy
+    downtime: none
+    risk: none
+    actions:
+      - Delete debug-odoo-ep, odoo-init, cae-ipai-dev
+      - Delete empty RGs (rg-ipai-dev, rg-ipai-data-dev)
+
+  - phase: 5
+    name: CI/CD + SSOT Update
+    downtime: none
+    risk: none
+    actions:
+      - Update all workflow files with new RG names
+      - Update all SSOT files to final state

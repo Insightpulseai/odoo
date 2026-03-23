@@ -1,0 +1,17 @@
+{
+  "agent_id": "ap-invoice-agent",
+  "batch_id": "PROD-AP-001",
+  "timestamp": "2026-03-20T23:50:43.161403",
+  "input_count": 1,
+  "success_count": 1,
+  "anomalies": [],
+  "operator_review": "PASSED",
+  "data": {
+    "vendor": "Microsoft Azure",
+    "date": "2026-03-20",
+    "amount": 1250.0,
+    "tax_verified": true,
+    "po_matched": true,
+    "state": "approved_to_post"
+  }
+}

@@ -1,0 +1,83 @@
+name: Deploy IPAI Landing → Azure Container Apps
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'web/ipai-landing/**'
+  workflow_dispatch:
+
+permissions:
+  id-token: write
+  contents: read
+
+env:
+  ACR_NAME: ipaiwebacr
+  ACR_LOGIN_SERVER: ipaiwebacr.azurecr.io
+  IMAGE_NAME: ipai-website
+  CONTAINER_APP: ipai-website-dev
+  RESOURCE_GROUP: rg-ipai-dev-odoo-runtime
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: web/ipai-landing
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Azure Login (OIDC)
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Build and push to ACR
+        run: |
+          TAG=$(date +%Y%m%d-%H%M%S)
+          az acr build \
+            --registry ${{ env.ACR_NAME }} \
+            --resource-group rg-ipai-dev-platform \
+            --image ${{ env.IMAGE_NAME }}:${TAG} \
+            --image ${{ env.IMAGE_NAME }}:latest \
+            .
+
+      - name: Create or update Container App
+        run: |
+          # Check if container app exists
+          if az containerapp show --name ${{ env.CONTAINER_APP }} --resource-group ${{ env.RESOURCE_GROUP }} &>/dev/null; then
+            az containerapp update \
+              --name ${{ env.CONTAINER_APP }} \
+              --resource-group ${{ env.RESOURCE_GROUP }} \
+              --image ${{ env.ACR_LOGIN_SERVER }}/${{ env.IMAGE_NAME }}:latest
+          else
+            az containerapp create \
+              --name ${{ env.CONTAINER_APP }} \
+              --resource-group ${{ env.RESOURCE_GROUP }} \
+              --environment ipai-odoo-dev-env \
+              --image ${{ env.ACR_LOGIN_SERVER }}/${{ env.IMAGE_NAME }}:latest \
+              --registry-server ${{ env.ACR_LOGIN_SERVER }} \
+              --target-port 3000 \
+              --ingress external \
+              --min-replicas 0 \
+              --max-replicas 2
+          fi
+
+      - name: Verify deployment
+        run: |
+          sleep 30
+          FQDN=$(az containerapp show \
+            --name ${{ env.CONTAINER_APP }} \
+            --resource-group ${{ env.RESOURCE_GROUP }} \
+            --query "properties.configuration.ingress.fqdn" -o tsv)
+          STATUS=$(curl -s -o /dev/null -w "%{http_code}" "https://${FQDN}")
+          echo "FQDN: ${FQDN}"
+          echo "HTTP Status: ${STATUS}"
+          if [ "$STATUS" != "200" ]; then
+            echo "::error::Deployment verification failed with status ${STATUS}"
+            exit 1
+          fi
+          echo "Deployment verified"

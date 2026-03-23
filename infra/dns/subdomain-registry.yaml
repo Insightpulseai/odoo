@@ -130,17 +130,18 @@ subdomains:
       claim_ref: "ssot:azure-front-door"
 
   - name: n8n
-    type: CNAME
-    target: ipai-fd-dev-ep-fnh4e8d6gtdhc8ax.z03.azurefd.net
+    type: A
+    target: "4.193.100.31"
     service: n8n_workflow_automation
     health_check: /healthz
-    owner_system: "n8n automation"
+    owner_system: "n8n on Azure VM (vm-ipai-supabase-dev, shared with Supabase)"
     cloudflare_proxied: true
     tls_mode: "Full (strict)"
     lifecycle: active
     status: active
-    backing_status: not_provisioned
-    notes: "DNS points to Front Door. ACA container ipai-n8n-dev not yet provisioned."
+    notes: >
+      Live n8n instance on Azure VM. Renamed from n8n-azure (2026-03-23).
+      Target is to move to ACA behind Front Door when container is provisioned.
     azure_target:
       front_door_origin_group: n8n
       container_app: n8n
@@ -148,8 +149,8 @@ subdomains:
     provider_claim:
       provider: azure
       status: claimed
-      claimed_at: "2026-03-12"
-      claim_ref: "ssot:azure-front-door"
+      claimed_at: "2026-03-23"
+      claim_ref: "ssot:azure-vm"
 
   - name: plane
     type: CNAME
@@ -465,13 +466,14 @@ subdomains:
     service: n8n_workflow_automation
     owner_system: "n8n on Azure VM (vm-ipai-supabase-dev, shared with Supabase)"
     cloudflare_proxied: true
-    lifecycle: active
-    status: active
+    lifecycle: deprecated
+    status: deprecated
+    deprecated_date: "2026-03-23"
+    removal_target: "2026-04-15"
     notes: >
-      Direct A record to Azure VM running n8n alongside self-hosted Supabase.
-      Temporary exception — target is to move n8n to ACA behind Front Door
-      (see n8n subdomain entry). This record coexists with the Front Door-backed
-      n8n entry as a migration bridge.
+      Renamed to n8n.insightpulseai.com (2026-03-23). Remove -azure suffix
+      to match subdomain naming convention. Retain DNS temporarily as redirect
+      until all consumers are updated.
     provider_claim:
       provider: azure
       status: claimed

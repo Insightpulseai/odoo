@@ -1,21 +1,15 @@
 # =============================================================================
 # Supabase Configuration for InsightPulse AI
 # =============================================================================
-# Project: spdtwktxdalcfigzeqrz (Production)
+# Instance: Self-hosted on Azure VM (vm-ipai-supabase-dev)
+# API URL:  https://supabase.insightpulseai.com
+# Studio:   https://supabase.insightpulseai.com (Kong-proxied)
 #
-# Branching:
-#   - Preview branches are created automatically via GitHub integration
-#   - Each branch gets isolated database, Auth, Storage, and Edge Functions
-#   - Merge to main deploys to production
-#
-# Usage:
-#   supabase link --project-ref spdtwktxdalcfigzeqrz
-#   supabase db push
-#   supabase functions deploy
-#   supabase branches list
+# Managed Supabase (spdtwktxdalcfigzeqrz) is deprecated.
+# Self-hosted instance is canonical.
 # =============================================================================
 
-project_id = "spdtwktxdalcfigzeqrz"
+project_id = "ipai-supabase-dev"
 
 # =============================================================================
 # Branching Configuration

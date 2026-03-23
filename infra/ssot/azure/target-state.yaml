@@ -1,5 +1,5 @@
-version: "2.0"
-last_updated: "2026-03-13"
+version: "2.1"
+last_updated: "2026-03-21"
 governance: "spec/azure-target-state/constitution.md"
 
 # -- Runtime plane policy --
@@ -11,10 +11,10 @@ governance: "spec/azure-target-state/constitution.md"
 
 platforms:
   github:
-    role: primary
+    role: source_control
     capabilities:
       source_control: { status: active, service: "GitHub Repos" }
-      ci_cd: { status: active, service: "GitHub Actions" }
+      ci_cd: { status: deprecated, service: "GitHub Actions — DEPRECATED. Use AzDO Pipelines." }
       code_review: { status: active, service: "GitHub PRs" }
       issue_tracking: { status: active, service: "GitHub Issues + Plane" }
       documentation: { status: active, service: "In-repo spec kits" }
@@ -23,17 +23,24 @@ platforms:
       security: { status: active, service: "Dependabot + CodeQL" }
 
   azure_devops:
-    role: bounded
-    constraint: "Boards-only program overlay"
+    role: primary_devops
+    constraint: "Canonical CI/CD + Boards. Source code stays in GitHub."
     capabilities:
-      boards: { status: optional, service: "Azure Boards" }
-      executive_reporting: { status: optional, service: "Azure Dashboards" }
+      pipelines: { status: active, service: "Azure Pipelines (YAML)" }
+      boards: { status: active, service: "Azure Boards" }
+      artifacts: { status: planned, service: "Azure Artifacts" }
+      test_plans: { status: planned, service: "Azure Test Plans" }
+      executive_reporting: { status: active, service: "Azure Dashboards" }
     prohibited:
-      - repos
-      - pipelines
-      - artifacts
-      - test_plans
-      - wiki
+      - repos  # source code stays in GitHub
+      - wiki   # docs stay in-repo
+    service_connections:
+      - name: github-insightpulseai
+        type: GitHub
+      - name: azure-ipai
+        type: AzureResourceManager
+    build_pool: ipai-build-pool
+    project: ipai-platform
 
   azure_cloud:
     role: primary_runtime
@@ -52,6 +59,24 @@ platforms:
         status: phase-2
         service: "Azure Dev Center"
         prerequisite: "Front Door cutover complete (Wave 1+)"
+
+  microsoft_fabric:
+    role: required_analytics_platform
+    constraint: "Required complementary Microsoft-native mirroring / OneLake / semantic integration plane."
+    status: not_deployed
+    capabilities:
+      mirroring: { status: planned, service: "Fabric Mirroring for Azure PostgreSQL (Odoo)" }
+      onelake: { status: planned, service: "OneLake unified storage" }
+      power_bi: { status: planned, service: "Power BI Semantic Models + Copilot" }
+    note: "Canonical Odoo operational analytics path = Fabric mirroring (not direct PG federation)."
+
+  power_bi:
+    role: required_primary_bi
+    constraint: "Required primary business consumption plane. Entra ID native auth."
+    status: not_deployed
+    connector: "Databricks SQL Warehouse"
+    auth: "Entra ID"
+    note: "Superset is supplemental/internal only. Power BI is the canonical BI destination."
 
   external_saas:
     tableau_cloud:

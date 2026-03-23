@@ -1,0 +1,25 @@
+metrics:
+  tasks_enqueued:
+    type: counter
+  tasks_claimed:
+    type: counter
+  claim_conflicts:
+    type: counter
+  retries_scheduled:
+    type: counter
+  retry_exhaustion_count:
+    type: counter
+  dead_letter_count:
+    type: counter
+  malformed_envelope_rejects:
+    type: counter
+  duplicate_suppression_count:
+    type: counter
+  lease_expiries:
+    type: counter
+  queue_depth_gauge:
+    type: gauge
+  claim_latency:
+    type: histogram
+  task_age_gauge:
+    type: gauge

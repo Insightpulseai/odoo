@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Tree View -->
+    <record id="l10n_ph_bir_form_view_list" model="ir.ui.view">
+        <field name="name">l10n.ph.bir.form.list</field>
+        <field name="model">l10n.ph.bir.form</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="code"/>
+                <field name="name"/>
+                <field name="tax_domain"/>
+                <field name="frequency"/>
+                <field name="default_channel"/>
+                <field name="has_payment"/>
+                <field name="has_attachments"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Form View -->
+    <record id="l10n_ph_bir_form_view_form" model="ir.ui.view">
+        <field name="name">l10n.ph.bir.form.form</field>
+        <field name="model">l10n.ph.bir.form</field>
+        <field name="arch" type="xml">
+            <form string="BIR Form">
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="code" placeholder="e.g. 0619E"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="tax_domain"/>
+                            <field name="frequency"/>
+                        </group>
+                        <group>
+                            <field name="default_channel"/>
+                            <field name="has_payment"/>
+                            <field name="has_attachments"/>
+                            <field name="active"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Action -->
+    <record id="l10n_ph_bir_form_action" model="ir.actions.act_window">
+        <field name="name">BIR Forms</field>
+        <field name="res_model">l10n.ph.bir.form</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <!-- Deadline Rule Views (inline — no separate file needed) -->
+
+    <!-- Deadline Rule Tree View -->
+    <record id="l10n_ph_bir_deadline_rule_view_list" model="ir.ui.view">
+        <field name="name">l10n.ph.bir.deadline.rule.list</field>
+        <field name="model">l10n.ph.bir.deadline.rule</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="form_id"/>
+                <field name="rule_code"/>
+                <field name="rule_kind"/>
+                <field name="month_offset"/>
+                <field name="day_of_month"/>
+                <field name="fixed_month"/>
+                <field name="fixed_day"/>
+                <field name="deadline_source"/>
+                <field name="is_efps_variant"/>
+                <field name="active"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Deadline Rule Form View -->
+    <record id="l10n_ph_bir_deadline_rule_view_form" model="ir.ui.view">
+        <field name="name">l10n.ph.bir.deadline.rule.form</field>
+        <field name="model">l10n.ph.bir.deadline.rule</field>
+        <field name="arch" type="xml">
+            <form string="BIR Deadline Rule">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="form_id"/>
+                            <field name="rule_code"/>
+                            <field name="rule_kind"/>
+                            <field name="deadline_source"/>
+                        </group>
+                        <group>
+                            <field name="month_offset"/>
+                            <field name="day_of_month"/>
+                            <field name="quarter_position"/>
+                            <field name="fixed_month"/>
+                            <field name="fixed_day"/>
+                            <field name="is_efps_variant"/>
+                            <field name="active"/>
+                        </group>
+                    </group>
+                    <group>
+                        <field name="special_case_json"/>
+                        <field name="notes"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Deadline Rule Action -->
+    <record id="l10n_ph_bir_deadline_rule_action" model="ir.actions.act_window">
+        <field name="name">Deadline Rules</field>
+        <field name="res_model">l10n.ph.bir.deadline.rule</field>
+        <field name="view_mode">list,form</field>
+        <field name="context">{'active_test': False}</field>
+    </record>
+
+</odoo>

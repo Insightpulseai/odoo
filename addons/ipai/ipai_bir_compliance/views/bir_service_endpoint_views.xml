@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Tree View -->
+    <record id="l10n_ph_bir_service_endpoint_view_list" model="ir.ui.view">
+        <field name="name">l10n.ph.bir.service.endpoint.list</field>
+        <field name="model">l10n.ph.bir.service.endpoint</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="code"/>
+                <field name="name"/>
+                <field name="service_type"/>
+                <field name="official_url" widget="url"/>
+                <field name="supports_filing"/>
+                <field name="supports_payment"/>
+                <field name="supports_reference"/>
+                <field name="current_version"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Form View -->
+    <record id="l10n_ph_bir_service_endpoint_view_form" model="ir.ui.view">
+        <field name="name">l10n.ph.bir.service.endpoint.form</field>
+        <field name="model">l10n.ph.bir.service.endpoint</field>
+        <field name="arch" type="xml">
+            <form string="BIR Service Endpoint">
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="code"/>
+                            <field name="service_type"/>
+                            <field name="official_url" widget="url"/>
+                            <field name="current_version"/>
+                        </group>
+                        <group>
+                            <field name="supports_filing"/>
+                            <field name="supports_payment"/>
+                            <field name="supports_reference"/>
+                            <field name="active"/>
+                        </group>
+                    </group>
+                    <group>
+                        <field name="notes"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Action -->
+    <record id="l10n_ph_bir_service_endpoint_action" model="ir.actions.act_window">
+        <field name="name">Service Endpoints</field>
+        <field name="res_model">l10n.ph.bir.service.endpoint</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+</odoo>

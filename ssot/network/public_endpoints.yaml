@@ -54,8 +54,9 @@ hostnames:
     origin: ipai-mcp-dev
 
   n8n:
-    target: ipai-fd-dev-ep-fnh4e8d6gtdhc8ax.z03.azurefd.net
-    status: canonical
+    target: 4.193.100.31
+    status: transitional_direct
+    notes: live n8n on Azure VM, renamed from n8n-azure (2026-03-23), pending AFD migration
 
   ocr:
     target: ipai-fd-dev-ep-fnh4e8d6gtdhc8ax.z03.azurefd.net
@@ -93,8 +94,8 @@ hostnames:
 
   n8n-azure:
     target: 4.193.100.31
-    status: transitional_direct
-    notes: direct IP, pending AFD migration
+    status: deprecated
+    notes: renamed to n8n (2026-03-23), remove after consumers updated
 
   # -- Legacy External (not on Azure) --
 

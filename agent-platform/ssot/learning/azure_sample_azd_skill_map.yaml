@@ -2,6 +2,8 @@
 # Azure Sample Catalog + azd + Azure CLI Skill Map
 # Family: azure_sample_azd
 # Created: 2026-03-17
+# Companion: infra/ssot/azure/approved_reference_samples.yaml (approved sample registry)
+# Policy: docs/architecture/SAMPLE_ADOPTION_POLICY.md
 
 meta:
   name: azure_sample_azd_skill_map

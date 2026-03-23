@@ -1,5 +1,5 @@
-version: "1.1"
-last_updated: "2026-03-11"
+version: "1.2"
+last_updated: "2026-03-21"
 parent: "ssot/azure/target-state.yaml"
 governance: "spec/azure-target-state/constitution.md"
 
@@ -70,7 +70,7 @@ services:
 
   - id: svc_007
     name: "Superset"
-    category: bi
+    category: bi_supplemental
     hosting: azure_container_apps
     edge: azure_front_door
     endpoint: "superset.insightpulseai.com"
@@ -78,7 +78,31 @@ services:
     status: active
     promotion_state: live
     migrated_from_do: "2026-03-11"
-    note: "Running apache/superset:latest. Configure metadata DB and datasources."
+    note: "Supplemental/internal analytics surface. NOT the canonical BI plane — Power BI is the required primary business consumption plane."
+
+  - id: svc_011
+    name: "Power BI"
+    category: bi_primary
+    hosting: microsoft_fabric
+    status: planned
+    promotion_state: not_deployed
+    note: "Required primary business consumption plane. Connects to Databricks SQL Warehouse via built-in connector. Entra ID native auth."
+
+  - id: svc_012
+    name: "Microsoft Fabric"
+    category: analytics_platform
+    hosting: microsoft_fabric
+    status: planned
+    promotion_state: not_deployed
+    note: "Required complementary Microsoft-native mirroring / OneLake / semantic integration plane. Enables Fabric mirroring for Odoo Azure PostgreSQL."
+
+  - id: svc_013
+    name: "Databricks SQL Warehouse"
+    category: serving
+    hosting: azure_databricks
+    status: planned
+    promotion_state: not_deployed
+    note: "Governed serving layer. Primary downstream connection point for Power BI semantic models and ad-hoc analytics."
 
   - id: svc_008
     name: "Plane"

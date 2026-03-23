@@ -71,5 +71,17 @@
   },
   "python.languageServer": "None",
   "git.ignoreLimitWarning": true,
-  "vscode-pull-requests-azure-devops.collection": "https://dev.azure.com/insightpulseai"
+  "vscode-pull-requests-azure-devops.collection": "https://dev.azure.com/insightpulseai",
+  "vscode-pull-requests-azure-devops.access-token": "https://dev.azure.com/insightpulseai/",
+  "databricks.overrideDefaultProfile": "azure-dev",
+  "databricks.experiments.optInto": [
+    "views.cluster"
+  ],
+  "jupyter.interactiveWindow.cellMarker.codeRegex": "^# COMMAND ----------|^# Databricks notebook source|^(#\\s*%%|#\\s*\\<codecell\\>|#\\s*In\\[\\d*?\\]|#\\s*In\\[ \\])",
+  "jupyter.interactiveWindow.cellMarker.default": "# COMMAND ----------",
+
+  // n8n-utils: n8n source code dev tool (not a remote connector)
+  // For self-hosted n8n management, use https://n8n-azure.insightpulseai.com
+  "n8n-utils.launcher.port": 5678,
+  "postgres-language-server.bin": null
 }

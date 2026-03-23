@@ -70,6 +70,81 @@ The platform architecture is built on five mandatory execution lanes and a forma
 > Refer to the [Go-Live Checklist](file:///Users/tbwa/Documents/GitHub/Insightpulseai/docs/architecture/GO_LIVE_CHECKLIST.md) for mandatory release gates.
 
 ---
+
+## Agent platform architecture
+
+The agent platform follows two mandatory design lenses:
+
+1. **Component model**
+   - Frontend/app surface
+   - Agent runtime/framework
+   - Tool layer
+   - Memory/state layer
+   - Model/runtime layer
+   - Coordination layer
+
+2. **Execution model**
+   - Sequential orchestration for deterministic multi-step enterprise workflows
+   - Concurrent orchestration for parallel specialist analysis
+   - Maker-checker/group-chat orchestration for review and quality gates
+   - Handoff orchestration for dynamic specialist routing
+   - Magentic orchestration only for open-ended adaptive planning
+
+### Hard rules
+
+- MCP is the required interoperability contract for reusable tools across agents.
+- Production agents must externalize durable state; critical process state must not live only in agent memory.
+- Do not use agentic workflows for simple deterministic tasks that are better served by fixed workflows or single calls.
+
+---
+
+## Actual Current State
+
+This repository currently contains:
+
+- Odoo CE/OCA/IPAI runtime artifacts
+- ERP deployment/config/runtime contracts
+- shared infra and deployment assets
+- Supabase/platform artifacts
+- agent/runbook/registry assets
+- automation assets
+- platform app artifacts
+- web/public surface artifacts
+- design assets
+
+This means the repository is **currently broader than a pure ERP runtime repo**.
+
+> **This is intentionally NOT structured like upstream `odoo/odoo`.**
+> Upstream places CE addons directly under `/addons/`. We separate three addon stacks
+> to enforce OCA-first parity, restrict `ipai_*` to integration bridges, and maintain
+> deterministic deploy + CI governance. See [REPO_LAYOUT.md](docs/architecture/REPO_LAYOUT.md).
+
+### What counts as an "integration bridge"?
+
+If it talks to something **outside Odoo** (daemon, cloud API, hardware, queue) → it is a bridge (`addons/ipai/`).
+If it extends **Odoo business logic** or replaces EE features → it must be CE or OCA (`addons/oca/`).
+
+**Production URL:** https://erp.insightpulseai.com
+**Documentation:** https://insightpulseai.github.io/odoo/
+
+---
+
+## Target State
+
+The intended end state is:
+
+- `odoo` repo owns ERP runtime, addons, Odoo config, ERP deployment contracts, ERP SSOT
+- `platform` repo owns OdooOps console and platform admin apps
+- `infra` repo owns cloud/network/edge/IaC
+- `web` repo owns apex/public marketing surfaces
+- `agents` repo owns shared agent/skill/runbook assets
+- `automations` repo owns shared workflow assets
+- `design` repo owns shared design assets/tokens
+- `data-intelligence` repo owns Databricks/lakehouse analytics
+- `docs` repo owns cross-platform documentation
+
+Until decomposition is completed, this repository remains the authoritative source of truth for the ERP runtime layer.
+
 ---
 
 ## Canonical runtime contract
@@ -163,7 +238,9 @@ These are hosted in this repo temporarily. They may move to owning repos during 
 
 - **Cloudflare** = authoritative DNS only (DNS-only mode for Front Door-backed records)
 - **Azure Front Door** = public application edge for all app surfaces
-- **ACA / Azure origins** = backend runtimes
+- No direct VM/Container IP A-records in final DNS — all traffic via Azure Front Door
+- **Microsoft 365 Agents SDK** is a channel layer, not a replacement for `agent-platform`.
+- Mail DNS (`MX`, `SPF`, `DKIM`, `DMARC`, `zoho._domainkey`) always DNS-only, never proxied
 - **Zoho** = mail (MX, SPF, DKIM, DMARC)
 
 ### Rules
@@ -245,10 +322,22 @@ Target ownership boundaries (decomposition in progress):
 - Shared infrastructure and edge: `infra`
 - Shared web surfaces and docs sites outside ERP: `web`
 - Shared agent/skills/orchestration assets: `agents`
-- Shared agent runtime/orchestration engine: `agent-platform`
 - Shared automation/runbooks: `automations`
 - Shared design tokens/components/assets: `design`
-- **M365 Copilot Channel Layer**: Microsoft 365 Agents SDK (delivery only)
+
+### Tranche 1 decomposition lock
+
+The following top-level domains are under active extraction and must not gain new cross-domain ownership inside this repository except for temporary compatibility shims explicitly tracked for removal:
+
+- `infra/` → target repo `infra`
+- `platform/` + `ops-platform/` + non-ERP `supabase/` → target repo `platform`
+- `agents/` + shared reusable `skills/` → target repo `agents`
+- `automations/` → target repo `automations`
+- `web/` + `web-site/` + published `docs-site/` → target repo `web`
+
+`odoo` remains authoritative only for ERP runtime concerns: addon stacks, config, docker/runtime, ERP-specific scripts/tests/docs/spec/ssot, and runtime contracts.
+
+See [`ssot/repo/tranche_1_move_plan.yaml`](./ssot/repo/tranche_1_move_plan.yaml) for the full move map, cutover gates, and completion criteria.
 
 ---
 

@@ -1,7 +1,0 @@
-id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-access_ipai_ai_source_user,ipai.ai.source user,model_ipai_ai_source,base.group_user,1,0,0,0
-access_ipai_ai_source_admin,ipai.ai.source admin,model_ipai_ai_source,base.group_system,1,1,1,1
-access_ipai_ai_chunk_user,ipai.ai.chunk user,model_ipai_ai_chunk,base.group_user,1,0,0,0
-access_ipai_ai_chunk_admin,ipai.ai.chunk admin,model_ipai_ai_chunk,base.group_system,1,1,1,1
-access_ipai_ai_embedding_user,ipai.ai.embedding user,model_ipai_ai_embedding,base.group_user,1,0,0,0
-access_ipai_ai_embedding_admin,ipai.ai.embedding admin,model_ipai_ai_embedding,base.group_system,1,1,1,1

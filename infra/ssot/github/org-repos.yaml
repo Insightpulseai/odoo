@@ -1,24 +1,23 @@
-# InsightPulseAI GitHub Organization — 5-Layer Governance Manifest
-# SSOT for the 9 canonical repos: layer, type, lifecycle, required files, directory layout.
-# Complements: desired-end-state.yaml (scaffolding), target-state-repos.yaml (Azure taxonomy)
-# Supersedes: org_repos.yaml (stale tier-based model)
+# InsightPulseAI GitHub Organization — Canonical 12-Repo Governance Manifest
+# SSOT for the 12 canonical repos: layer, type, lifecycle, required files, directory layout.
+# Aligned with: ssot/repo/org_topology.yaml (8-plane model), ssot/repo/ownership-boundaries.yaml
 # Read by: scripts/github/check_org_repos.sh
 
 org:
   name: "InsightPulseAI"
   github_org: "Insightpulseai"
-  governance_version: "1.0.0"
+  governance_version: "2.0.0"
 
 layers:
   - id: platform
     name: "Platform"
-    purpose: "Org-wide governance, IaC, CI/CD, secrets, automations"
+    purpose: "Org-wide governance, IaC, CI/CD, control plane, automations"
   - id: core-runtime
     name: "Core Runtime"
-    purpose: "Revenue-bearing product code: ERP, web surfaces, data pipelines"
+    purpose: "Revenue-bearing product code: ERP, web surfaces, data pipelines, agent runtime"
   - id: shared-library
     name: "Shared Systems"
-    purpose: "Cross-repo packages, tokens, agent definitions"
+    purpose: "Cross-repo packages, tokens, agent definitions, documentation"
   - id: template
     name: "Templates"
     purpose: "Scaffolds and starter kits for new repos/modules"
@@ -46,10 +45,10 @@ repos:
 
   - name: platform
     layer: platform
-    type: supabase-platform
+    type: control-plane
     visibility: private
     lifecycle: active
-    description: "Platform admin apps, SSOT, control-plane"
+    description: "Platform control plane and SSOT — vault references, platform metadata, backend/control-plane contracts, and edge/runtime glue"
     note: "Renamed from ops-platform"
     default_branch: main
     required_files:
@@ -72,7 +71,7 @@ repos:
     type: iac
     visibility: private
     lifecycle: active
-    description: "IaC: Azure, Cloudflare, Terraform, Bicep"
+    description: "Azure-first infrastructure as code, Cloudflare edge/security, and remaining legacy/runtime infrastructure"
     default_branch: main
     required_files:
       - README.md
@@ -115,8 +114,8 @@ repos:
     layer: core-runtime
     type: web-app
     visibility: private
-    lifecycle: active
-    description: "Product web surfaces: ops console, marketing, docs site"
+    lifecycle: planned
+    description: "User-facing web surfaces — ops console, marketing sites, docs sites, and browser-facing product apps"
     default_branch: main
     required_files:
       - README.md
@@ -137,7 +136,7 @@ repos:
     type: lakehouse
     visibility: private
     lifecycle: active
-    description: "Medallion data pipelines, Unity Catalog, data governance"
+    description: "Databricks + Unity Catalog analytics engineering, medallion contracts, semantic-serving prep, and BI delivery artifacts"
     note: "Renamed from lakehouse"
     default_branch: main
     required_files:
@@ -183,7 +182,7 @@ repos:
     type: agents
     visibility: public
     lifecycle: active
-    description: "Agent registry, personas, skills, runbooks, MCP definitions"
+    description: "Agent personas, skills, judges, evals, metadata, registries, and prompt contracts"
     default_branch: main
     required_files:
       - README.md
@@ -199,6 +198,61 @@ repos:
       - agents/mcp/
       - docs/
       - scripts/
+
+  - name: agent-platform
+    layer: core-runtime
+    type: agent-runtime
+    visibility: private
+    lifecycle: active
+    description: "Agent runtime platform — orchestration, task ledger, execution contracts, control-room integrations, and runtime glue"
+    default_branch: main
+    required_files:
+      - README.md
+      - CLAUDE.md
+      - CONTRIBUTING.md
+      - .github/CODEOWNERS
+      - .github/workflows/ci.yml
+    directory_layout:
+      - apps/
+      - packages/
+      - ssot/runtime/
+      - docs/
+      - scripts/
+
+  - name: automations
+    layer: platform
+    type: automation
+    visibility: private
+    lifecycle: active
+    description: "Workflow automation, scheduled jobs, n8n assets, and operational runbooks"
+    default_branch: main
+    required_files:
+      - README.md
+      - CLAUDE.md
+      - CONTRIBUTING.md
+      - .github/CODEOWNERS
+    directory_layout:
+      - n8n/workflows/
+      - scripts/
+      - docs/
+
+  - name: docs
+    layer: shared-library
+    type: documentation
+    visibility: public
+    lifecycle: active
+    description: "Cross-repo architecture, strategy, governance, runbooks, evidence, and operating model docs"
+    default_branch: main
+    required_files:
+      - README.md
+      - CLAUDE.md
+      - CONTRIBUTING.md
+      - .github/CODEOWNERS
+    directory_layout:
+      - architecture/
+      - governance/
+      - runbooks/
+      - evidence/
 
   # --- Template ---
   - name: templates

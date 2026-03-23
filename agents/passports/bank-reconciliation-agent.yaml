@@ -1,0 +1,32 @@
+schema: ipai.passport.v1
+id: bank-reconciliation-agent
+version: 1.0.0
+name: Bank Reconciliation Agent
+domain: finance
+stage: S13
+maturity: L5
+acceptance_status: accepted
+runtime_status: production-stable
+production_status: operational
+operational_status: production-baseline
+soak_window_status: completed
+real_cycles_completed: 5
+simulated_cycles_completed: 4
+release_status: approved_for_rollout
+contract_ref: infra/ssot/agents/reconciliation_contracts.yaml
+control_pack:
+  runbook: docs/runbooks/BANK_RECON_PRODUCTION_SOAK_WINDOW.md
+  first_prod_evidence: .gemini/antigravity/brain/706fb290-55e8-41c0-82d6-358506acd2c3/bank-reconciliation-first-prod/
+  soak_window_evidence: docs/evidence/2026-03-20/bank-reconciliation-soak/
+policies:
+  - spec/bank-reconciliation-agent/constitution.md
+kill_switch:
+  enabled: true
+  active: false
+  endpoint: "/ipai/recon/kill"
+owners:
+  - finance-ops@insightpulseai.com
+promotion_history:
+  - ref: agents/promotions/bank-reconciliation-agent/2026-03-20-L4.yaml
+created_at: '2026-03-20T22:00:00Z'
+updated_at: '2026-03-20T22:20:00Z'

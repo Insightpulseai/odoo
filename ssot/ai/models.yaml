@@ -7,10 +7,10 @@ models:
     provider: azure-openai
     deployment_name: gpt-4.1
     model_family: gpt-4
-    model_version: "4.1"
-    region: eastus2
-    resource: data-intel-ph-resource
-    resource_group: rg-data-intel-ph
+    model_version: "2025-04-14"
+    region: eastus
+    resource: oai-ipai-dev
+    resource_group: rg-ipai-ai-dev
     context_window: 1048576
     max_output_tokens: 32768
     supports_tools: true
@@ -19,3 +19,36 @@ models:
     cost_tier: standard
     used_by:
       - ipai-odoo-copilot-azure
+    also_available_via:
+      - resource: data-intel-ph-resource
+        resource_group: rg-data-intel-ph
+        region: eastus2
+        note: "AIServices endpoint, used by copilot gateway"
+
+  gpt-4.1-mini:
+    provider: azure-openai
+    deployment_name: gpt-4o-mini
+    model_family: gpt-4
+    model_version: "2025-04-14"
+    region: eastus
+    resource: oai-ipai-dev
+    resource_group: rg-ipai-ai-dev
+    context_window: 1048576
+    max_output_tokens: 16384
+    supports_tools: true
+    supports_streaming: true
+    cost_tier: standard
+    used_by: []
+    note: "Available for cost-sensitive workloads; not the Stage 3 contract model"
+
+  text-embedding-ada-002:
+    provider: azure-openai
+    deployment_name: text-embedding-ada-002
+    model_family: embedding
+    model_version: "2"
+    region: eastus
+    resource: oai-ipai-dev
+    resource_group: rg-ipai-ai-dev
+    dimensions: 1536
+    used_by:
+      - odoo-docs-kb-indexer

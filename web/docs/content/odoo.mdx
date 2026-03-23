@@ -1,0 +1,55 @@
+---
+title: Odoo ERP
+---
+
+# Odoo ERP
+
+Odoo CE 19.0 is the operational system of record for InsightPulse AI. It handles finance, HR, projects, sales, CRM, and compliance workflows.
+
+## Module Philosophy
+
+```
+Config → OCA → Delta (ipai_*)
+```
+
+1. **Config**: Use built-in Odoo configuration first
+2. **OCA**: Vetted community modules from the Odoo Community Association
+3. **Delta**: Custom `ipai_*` modules only for truly custom business logic
+
+## Key Modules
+
+### Finance & Accounting
+- `account` — Core accounting (GL, AR, AP, bank reconciliation)
+- `account_asset_management` (OCA) — Fixed asset depreciation
+- `mis_builder` (OCA) — Management information system / financial reporting
+- `ipai_finance_ppm` — Project profitability management
+
+### BIR Tax Compliance
+- `ipai_tax_compliance` — Philippine BIR tax filing (2550M, 1601-C, 1601-E, 2550Q)
+- TaxPulse-PH sub-agent for Copilot-assisted tax preparation
+
+### Project Management
+- `project` — Task management, milestones, Kanban
+- `hr_timesheet` — Time tracking per project/task
+- `ipai_finance_ppm` — Budget vs. actual, profitability dashboards
+
+### Expense Management
+- `hr_expense` — Employee expense submission and approval
+- Azure Document Intelligence for receipt OCR
+
+## Environments
+
+| Environment | Database | Purpose |
+|-------------|----------|---------|
+| Development | `odoo_dev` | Feature development |
+| Staging | `odoo_staging` | Pre-production validation |
+| Production | `odoo` | Live operations |
+| Demo | `odoo_dev_demo` | Showroom / training (on-demand) |
+
+## Copilot Integration
+
+The Odoo Copilot (`ipai_odoo_copilot`) bridges Odoo's UI to Azure AI Foundry:
+
+- Systray chat widget for contextual AI assistance
+- Sub-agents: `project_copilot`, `taxpulse_ph`, `finance_reconciliation`
+- Read-only advisory in Release 1 (no write-back to Odoo)

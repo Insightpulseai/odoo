@@ -1,0 +1,265 @@
+{
+  "name": "Telegram ↔ Odoo Copilot — Chat + Expense + BIR",
+  "nodes": [
+    {
+      "parameters": {
+        "updates": ["message"],
+        "additionalFields": { "download": true }
+      },
+      "id": "tg-trigger",
+      "name": "Telegram Trigger",
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.2,
+      "position": [200, 300],
+      "webhookId": "tg-odoo-copilot"
+    },
+    {
+      "parameters": {
+        "jsCode": "const msg = $json.message || {};\nconst text = msg.text || msg.caption || '';\nconst hasPhoto = !!(msg.photo && msg.photo.length);\nconst hasDocument = !!msg.document;\nconst chatId = msg.chat?.id;\nconst userName = (msg.from?.first_name || '') + ' ' + (msg.from?.last_name || '');\n\n// Route: /ask = copilot, /expense = expense, /bir = BIR, photo = OCR\nlet route = 'copilot';\nif (text.startsWith('/expense') || hasPhoto || hasDocument) route = 'expense';\nif (text.startsWith('/bir')) route = 'bir';\nif (text.startsWith('/help')) route = 'help';\nif (text.startsWith('/ask')) { route = 'copilot'; }\n\nreturn [{ json: { chatId, userName: userName.trim(), text, hasPhoto, hasDocument, route, fileId: hasPhoto ? msg.photo[msg.photo.length-1].file_id : (hasDocument ? msg.document.file_id : '') } }];"
+      },
+      "id": "router",
+      "name": "Route Message",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [420, 300]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "string": [
+            { "value1": "={{ $json.route }}", "value2": "copilot", "operation": "equals" },
+            { "value1": "={{ $json.route }}", "value2": "expense", "operation": "equals" },
+            { "value1": "={{ $json.route }}", "value2": "bir", "operation": "equals" },
+            { "value1": "={{ $json.route }}", "value2": "help", "operation": "equals" }
+          ],
+          "combinator": "or"
+        }
+      },
+      "id": "switch",
+      "name": "Switch Route",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3,
+      "position": [640, 300],
+      "parameters_v2": {
+        "rules": {
+          "values": [
+            { "outputKey": "copilot", "conditions": { "conditions": [{ "leftValue": "={{ $json.route }}", "rightValue": "copilot", "operator": { "type": "string", "operation": "equals" } }] } },
+            { "outputKey": "expense", "conditions": { "conditions": [{ "leftValue": "={{ $json.route }}", "rightValue": "expense", "operator": { "type": "string", "operation": "equals" } }] } },
+            { "outputKey": "bir", "conditions": { "conditions": [{ "leftValue": "={{ $json.route }}", "rightValue": "bir", "operator": { "type": "string", "operation": "equals" } }] } },
+            { "outputKey": "help", "conditions": { "conditions": [{ "leftValue": "={{ $json.route }}", "rightValue": "help", "operator": { "type": "string", "operation": "equals" } }] } }
+          ]
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.AZURE_OPENAI_ENDPOINT || 'https://data-intel-ph-resource.openai.azure.com' }}/openai/deployments/gpt-4.1/chat/completions?api-version=2024-08-01-preview",
+        "authentication": "none",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "api-key", "value": "={{ $env.AZURE_FOUNDRY_API_KEY }}" },
+            { "name": "Content-Type", "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"model\": \"gpt-4.1\",\n  \"messages\": [\n    {\"role\": \"system\", \"content\": \"You are IPAI Odoo Copilot on Telegram. You help TBWA\\\\SMP Finance PPM users with Odoo 19 ERP, Philippine finance, BIR tax compliance, HR, expenses, and general business questions. Be concise. Use plain text (no markdown — Telegram doesn't render it well). Keep answers under 300 words.\"},\n    {\"role\": \"user\", \"content\": \"{{ $json.text.replace('/ask ', '').replace('/ask', '') }}\"}\n  ],\n  \"max_tokens\": 500,\n  \"temperature\": 0.7\n}",
+        "options": { "timeout": 30000 }
+      },
+      "id": "copilot-call",
+      "name": "Foundry — GPT-4.1 Chat",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [900, 100]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Route Message').item.json.chatId }}",
+        "text": "={{ $json.choices?.[0]?.message?.content || 'Sorry, I could not process your request.' }}",
+        "additionalFields": { "appendAttribution": false }
+      },
+      "id": "tg-reply-copilot",
+      "name": "Telegram — Copilot Reply",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [1140, 100]
+    },
+    {
+      "parameters": {
+        "resource": "file",
+        "fileId": "={{ $('Route Message').item.json.fileId }}",
+        "additionalFields": {}
+      },
+      "id": "tg-download",
+      "name": "Telegram — Download Receipt",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [900, 300]
+    },
+    {
+      "parameters": {
+        "operation": "binaryToPropery",
+        "options": {}
+      },
+      "id": "extract-bin",
+      "name": "Extract Binary",
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1,
+      "position": [1100, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://southeastasia.api.cognitive.microsoft.com/documentintelligence/documentModels/prebuilt-receipt:analyze?api-version=2024-11-30",
+        "authentication": "none",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "Ocp-Apim-Subscription-Key", "value": "={{ $env.AZURE_DOC_INTEL_KEY }}" },
+            { "name": "Content-Type", "value": "image/jpeg" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "string",
+        "body": "={{ $json.data }}",
+        "options": { "response": { "response": { "fullResponse": true } } }
+      },
+      "id": "di-submit",
+      "name": "Azure DI — Submit Receipt",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1300, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Poll for DI result\nconst opUrl = $json.headers?.['operation-location'];\nif (!opUrl) return [{ json: { error: 'No operation URL' } }];\n\nconst apiKey = $env.AZURE_DOC_INTEL_KEY;\nlet attempts = 0;\nwhile (attempts < 15) {\n  const resp = await fetch(opUrl, { headers: { 'Ocp-Apim-Subscription-Key': apiKey } });\n  const data = await resp.json();\n  if (data.status === 'succeeded') {\n    const doc = data.analyzeResult?.documents?.[0]?.fields || {};\n    return [{ json: {\n      merchant: doc.MerchantName?.valueString || 'Unknown',\n      total: doc.Total?.valueNumber || 0,\n      date: doc.TransactionDate?.valueDate || '',\n      currency: 'PHP',\n      confidence: doc.MerchantName?.confidence || 0,\n      raw_fields: doc\n    }}];\n  }\n  if (data.status === 'failed') return [{ json: { error: data.error?.message || 'DI failed' } }];\n  await new Promise(r => setTimeout(r, 2000));\n  attempts++;\n}\nreturn [{ json: { error: 'DI timeout' } }];"
+      },
+      "id": "di-poll",
+      "name": "Poll DI Result",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1520, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.N8N_ODOO_URL }}/xmlrpc/2/object",
+        "sendBody": true,
+        "specifyBody": "string",
+        "body": "=<?xml version=\"1.0\"?><methodCall><methodName>execute_kw</methodName><params><param><value><string>{{ $env.N8N_ODOO_DB }}</string></value></param><param><value><int>2</int></value></param><param><value><string>{{ $env.N8N_ODOO_PASSWORD }}</string></value></param><param><value><string>hr.expense</string></value></param><param><value><string>create</string></value></param><param><value><array><data><value><struct><member><name>name</name><value><string>{{ $json.merchant }} - {{ $json.date || 'Telegram' }}</string></value></member><member><name>total_amount</name><value><double>{{ $json.total || 0 }}</double></value></member><member><name>payment_mode</name><value><string>own_account</string></value></member><member><name>product_id</name><value><int>1</int></value></member></struct></value></data></array></value></param></params></methodCall>",
+        "options": { "response": { "response": { "responseFormat": "text" } } }
+      },
+      "id": "odoo-expense",
+      "name": "Odoo — Create Expense",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1740, 300]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Route Message').item.json.chatId }}",
+        "text": "={{ $('Poll DI Result').item.json.error ? '❌ OCR Error: ' + $('Poll DI Result').item.json.error : '✅ Expense created\\n\\nMerchant: ' + $('Poll DI Result').item.json.merchant + '\\nTotal: PHP ' + $('Poll DI Result').item.json.total + '\\nDate: ' + ($('Poll DI Result').item.json.date || 'n/a') + '\\nConfidence: ' + Math.round(($('Poll DI Result').item.json.confidence || 0) * 100) + '%\\n\\nSaved to Odoo hr.expense' }}",
+        "additionalFields": { "appendAttribution": false }
+      },
+      "id": "tg-reply-expense",
+      "name": "Telegram — Expense Reply",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [1960, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.AZURE_OPENAI_ENDPOINT || 'https://data-intel-ph-resource.openai.azure.com' }}/openai/deployments/gpt-4.1/chat/completions?api-version=2024-08-01-preview",
+        "authentication": "none",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "api-key", "value": "={{ $env.AZURE_FOUNDRY_API_KEY }}" },
+            { "name": "Content-Type", "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"model\": \"gpt-4.1\",\n  \"messages\": [\n    {\"role\": \"system\", \"content\": \"You are a Philippine BIR tax compliance expert for TBWA\\\\SMP. Answer questions about BIR forms (1601-C, 0619-E, 2550M, 2550Q, 1702Q, Alphalist, 2307, eAFS), filing deadlines, eFPS procedures, and withholding tax calculations. Be precise with dates and rates. Use plain text.\"},\n    {\"role\": \"user\", \"content\": \"{{ $json.text.replace('/bir ', '').replace('/bir', '') }}\"}\n  ],\n  \"max_tokens\": 500,\n  \"temperature\": 0.3\n}",
+        "options": { "timeout": 30000 }
+      },
+      "id": "bir-call",
+      "name": "Foundry — BIR Expert",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [900, 500]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Route Message').item.json.chatId }}",
+        "text": "={{ $json.choices?.[0]?.message?.content || 'Sorry, could not process BIR query.' }}",
+        "additionalFields": { "appendAttribution": false }
+      },
+      "id": "tg-reply-bir",
+      "name": "Telegram — BIR Reply",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [1140, 500]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $json.chatId }}",
+        "text": "🤖 IPAI Odoo Copilot — Telegram\n\nCommands:\n/ask <question> — Ask the copilot anything (Odoo, finance, HR)\n/bir <question> — BIR tax compliance expert\n/expense — Send a photo of a receipt to create an expense\n/help — Show this message\n\nOr just send a receipt photo directly!",
+        "additionalFields": { "appendAttribution": false }
+      },
+      "id": "tg-help",
+      "name": "Telegram — Help",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [900, 700]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.SUPABASE_URL }}/rest/v1/rpc/log_ocr_event",
+        "authentication": "none",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "apikey", "value": "={{ $env.SUPABASE_SERVICE_ROLE_KEY }}" },
+            { "name": "Authorization", "value": "=Bearer {{ $env.SUPABASE_SERVICE_ROLE_KEY }}" },
+            { "name": "Content-Type", "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"source\": \"telegram\",\n  \"chat_id\": \"{{ $('Route Message').item.json.chatId }}\",\n  \"doc_type\": \"receipt\",\n  \"payload\": {{ JSON.stringify($('Poll DI Result').item.json) }}\n}",
+        "options": {}
+      },
+      "id": "supabase-log",
+      "name": "Supabase — Log Event",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1740, 450],
+      "onError": "continueRegularOutput"
+    }
+  ],
+  "connections": {
+    "Telegram Trigger": { "main": [[{ "node": "Route Message", "type": "main", "index": 0 }]] },
+    "Route Message": { "main": [[{ "node": "Switch Route", "type": "main", "index": 0 }]] },
+    "Switch Route": {
+      "main": [
+        [{ "node": "Foundry — GPT-4.1 Chat", "type": "main", "index": 0 }],
+        [{ "node": "Telegram — Download Receipt", "type": "main", "index": 0 }],
+        [{ "node": "Foundry — BIR Expert", "type": "main", "index": 0 }],
+        [{ "node": "Telegram — Help", "type": "main", "index": 0 }]
+      ]
+    },
+    "Foundry — GPT-4.1 Chat": { "main": [[{ "node": "Telegram — Copilot Reply", "type": "main", "index": 0 }]] },
+    "Telegram — Download Receipt": { "main": [[{ "node": "Extract Binary", "type": "main", "index": 0 }]] },
+    "Extract Binary": { "main": [[{ "node": "Azure DI — Submit Receipt", "type": "main", "index": 0 }]] },
+    "Azure DI — Submit Receipt": { "main": [[{ "node": "Poll DI Result", "type": "main", "index": 0 }]] },
+    "Poll DI Result": { "main": [[{ "node": "Odoo — Create Expense", "type": "main", "index": 0 }, { "node": "Supabase — Log Event", "type": "main", "index": 0 }]] },
+    "Odoo — Create Expense": { "main": [[{ "node": "Telegram — Expense Reply", "type": "main", "index": 0 }]] },
+    "Foundry — BIR Expert": { "main": [[{ "node": "Telegram — BIR Reply", "type": "main", "index": 0 }]] }
+  },
+  "settings": { "executionOrder": "v1" }
+}

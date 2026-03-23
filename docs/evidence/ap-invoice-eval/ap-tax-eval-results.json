@@ -1,0 +1,38 @@
+{
+  "results": [
+    {
+      "id": "AP-SC-001",
+      "name": "Clean Local Vendor Bill",
+      "action_taken": "posted",
+      "expected": "posted",
+      "passed": true
+    },
+    {
+      "id": "AP-SC-002",
+      "name": "Tax Mismatch (VAT)",
+      "action_taken": "exception_diverted",
+      "expected": "exception_diverted",
+      "passed": true
+    },
+    {
+      "id": "AP-SC-003",
+      "name": "Unregistered Vendor",
+      "action_taken": "ingested",
+      "expected": "ingested",
+      "passed": true
+    },
+    {
+      "id": "AP-SC-004",
+      "name": "Missing EWT for Service Vendor",
+      "action_taken": "exception_diverted",
+      "expected": "exception_diverted",
+      "passed": true
+    }
+  ],
+  "summary": {
+    "total": 4,
+    "passed": 4,
+    "failed": 0,
+    "diverted_correctly": 2
+  }
+}

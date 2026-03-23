@@ -1,0 +1,86 @@
+# SSOT: Copilot Release Stages
+# Cross-referenced by: docs/architecture/AGENTOPS_DOCTRINE.md, docs/architecture/GO_LIVE_MATRIX.md
+# Updated: 2026-03-24
+
+version: "1.0.0"
+
+release_stages:
+  - id: dev
+    description: Local development, no eval required
+    gate: none
+  - id: staging
+    description: Eval pack must pass, integration tests green
+    gate: eval_score_above_0_70
+  - id: internal_beta
+    description: Trusted internal users, monitoring active
+    gate: manual_approval_plus_eval_pass
+  - id: limited_ga
+    description: Selected customers, SLO baseline established
+    gate: slo_met_7_days
+  - id: ga
+    description: General availability
+    gate: slo_met_30_days_plus_privacy_docs_plus_partner_center
+
+surface_stages:
+  odoo_copilot:
+    current_stage: internal_beta
+    next_gate: eval_pack_creation
+  diva_copilot:
+    current_stage: internal_beta
+    next_gate: eval_pack_creation
+  studio_copilot:
+    current_stage: dev
+    next_gate: prd_finalization
+  genie:
+    current_stage: dev
+    next_gate: semantic_layer_wiring
+  document_intelligence:
+    current_stage: dev
+    next_gate: extraction_accuracy_baseline
+
+go_live_waves:
+  wave_1:
+    name: Internal Beta
+    status: current
+    surfaces:
+      - odoo_copilot
+      - diva_copilot
+    description: Advisory read-only, trusted internal users
+
+  wave_2:
+    name: Grounded Retrieval GA
+    prerequisites:
+      - eval_pack_pass
+      - docs_corpus_expansion
+      - slo_baseline
+    surfaces:
+      - odoo_copilot
+      - diva_copilot
+
+  wave_3:
+    name: Action Execution
+    prerequisites:
+      - write_gate_validation
+      - maker_checker_for_sensitive_actions
+    surfaces:
+      - odoo_copilot
+      - document_intelligence
+
+  wave_4:
+    name: Analytics and Creative
+    prerequisites:
+      - semantic_layer
+      - provider_broker
+      - workspace_isolation
+    surfaces:
+      - genie
+      - studio_copilot
+
+  wave_5:
+    name: Marketplace
+    prerequisites:
+      - teams_app_package
+      - partner_center_submission
+      - privacy_docs
+    surfaces:
+      - all

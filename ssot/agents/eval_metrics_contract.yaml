@@ -1,0 +1,15 @@
+metrics:
+  eval_requests_total:
+    type: counter
+  eval_success_total:
+    type: counter
+  eval_fail_explicit_total:
+    type: counter
+  eval_fail_ambiguity_total:
+    type: counter
+  eval_fail_timeout_total:
+    type: counter
+  eval_fail_malformed_total:
+    type: counter
+  eval_latency_ms:
+    type: histogram

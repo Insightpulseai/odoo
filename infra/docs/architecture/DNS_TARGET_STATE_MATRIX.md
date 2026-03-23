@@ -27,7 +27,7 @@ Cloudflare remains the authoritative DNS control plane.
 | **`agent`** | CNAME | `*.agents.do-ai.run` | **Retire** | Remove DigitalOcean residue |
 | **`ops`** | CNAME | `cname.vercel-dns.com` | **Retire** | Remove Vercel residue (migrate to prod AFD if keeping) |
 | **`erp-azure`** | CNAME | `ipai-fd-dev-ep-*.azurefd.net` | **Retire** | Transitional alias; rely on canonical `erp` |
-| **`n8n-azure`** | A | `4.193.100.31` | **Temporary Exception** | Direct-IP bypass. Migrate to Front Door -> ACA |
+| **`n8n-azure`** | A | `4.193.100.31` | **Retired** | Replaced by canonical `n8n` subdomain via Front Door |
 | **`supabase`** | A | `4.193.100.31` | **Temporary Exception** | Direct-IP bypass. Migrate to Front Door -> ACA |
 | **`email.mg`** | CNAME | `mailgun.org` | **Keep** | Mail service record |
 | **`insightpulseai.com`** | MX | `mx.zoho.com` (10, 20, 50) | **Keep** | Canonical Mail routing |
@@ -41,7 +41,7 @@ Cloudflare remains the authoritative DNS control plane.
 
 ## Architecture Decisions
 
-1. **Stop Direct-IP Bypasses**: `n8n-azure` and `supabase` pointing raw A records at `4.193.100.31` bypasses the Front Door WAF/edge posture. They should be integrated dynamically via Front Door acting as ingress to Azure Container Apps or equivalent endpoints.
+1. **Stop Direct-IP Bypasses**: `supabase` pointing a raw A record at `4.193.100.31` bypasses the Front Door WAF/edge posture. It should be integrated dynamically via Front Door acting as ingress to Azure Container Apps or equivalent endpoints. The `n8n-azure` subdomain has been retired in favor of the canonical `n8n` subdomain routed through Front Door.
 2. **Promote the Edge Configuration**: The primary public-facing hostnames currently route to an explicitly named "dev" Azure Front Door endpoint (`ipai-fd-dev-ep-...`). A production AFD endpoint must be correctly provisioned, and CNAMEs repointed, removing the naming drift.
 3. **Purge Third-Party Residue**: Vercel (`ops`) and DigitalOcean (`agent`) must be retired entirely to adhere properly to the target Azure platform.
 4. **Proxy State Integrity**: Records routed through Front Door only need Cloudflare acting as **DNS only** (Gray Cloud). Proxied (Orange Cloud) on top of Front Door creates double-proxy overhead unless explicit Cloudflare WAF capabilities are needed on top of AFD's edge processing.

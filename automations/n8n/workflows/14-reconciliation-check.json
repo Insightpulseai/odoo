@@ -1,0 +1,232 @@
+{
+  "name": "Reconciliation Check — Daily Unreconciled Entry Analysis",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 6 * * *"
+            }
+          ]
+        }
+      },
+      "id": "schedule-trigger",
+      "name": "Daily 6AM Manila",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [200, 300]
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "reconciliation-check",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "webhook-trigger",
+      "name": "Webhook — Reconciliation Check",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [200, 520]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://erp.insightpulseai.com/xmlrpc/2/object",
+        "authentication": "none",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify(['odoo', 2, 'admin', 'account.move.line', 'search_read', [[['company_id', '=', 2], ['reconciled', '=', false], ['parent_state', '=', 'posted'], ['account_id.reconcile', '=', true]]], {'fields': ['name', 'account_id', 'partner_id', 'debit', 'credit', 'date', 'move_id', 'amount_residual', 'amount_residual_currency'], 'limit': 500}]) }}",
+        "options": {
+          "response": {
+            "response": {
+              "fullResponse": false
+            }
+          }
+        }
+      },
+      "id": "odoo-get-unreconciled",
+      "name": "Odoo — Get Unreconciled Lines",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [480, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "const lines = $input.all().map(i => i.json);\n\n// Flatten if nested array from XML-RPC\nconst flat = Array.isArray(lines[0]) ? lines[0] : lines;\n\n// Group by account type\nconst groups = { AR: [], AP: [], Bank: [], Other: [] };\n\nfor (const line of flat) {\n  if (!line || !line.account_id) continue;\n  const acctName = Array.isArray(line.account_id) ? line.account_id[1] : String(line.account_id);\n  const lower = acctName.toLowerCase();\n  \n  const entry = {\n    id: line.id,\n    name: line.name || '',\n    account: acctName,\n    partner: Array.isArray(line.partner_id) ? line.partner_id[1] : (line.partner_id || 'N/A'),\n    debit: line.debit || 0,\n    credit: line.credit || 0,\n    residual: line.amount_residual || 0,\n    date: line.date || '',\n    move: Array.isArray(line.move_id) ? line.move_id[1] : (line.move_id || '')\n  };\n  \n  if (lower.includes('receivable') || lower.includes('1200')) {\n    groups.AR.push(entry);\n  } else if (lower.includes('payable') || lower.includes('2100')) {\n    groups.AP.push(entry);\n  } else if (lower.includes('bank') || lower.includes('cash') || lower.includes('1010')) {\n    groups.Bank.push(entry);\n  } else {\n    groups.Other.push(entry);\n  }\n}\n\nconst summary = {\n  ar_count: groups.AR.length,\n  ar_total: groups.AR.reduce((s, e) => s + Math.abs(e.residual), 0),\n  ap_count: groups.AP.length,\n  ap_total: groups.AP.reduce((s, e) => s + Math.abs(e.residual), 0),\n  bank_count: groups.Bank.length,\n  bank_total: groups.Bank.reduce((s, e) => s + Math.abs(e.residual), 0),\n  other_count: groups.Other.length,\n  total_unreconciled: flat.length,\n  groups: groups\n};\n\nreturn [{ json: summary }];"
+      },
+      "id": "group-by-account",
+      "name": "Group by Account Type",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [700, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://data-intel-ph-resource.openai.azure.com/openai/deployments/gpt-4.1/chat/completions?api-version=2024-08-01-preview",
+        "authentication": "none",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "api-key",
+              "value": "={{ $env.AZURE_FOUNDRY_API_KEY }}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ model: 'gpt-4.1', messages: [{ role: 'system', content: 'You are a senior accountant analyzing unreconciled journal entries for TBWA\\\\SMP (Philippines). Provide actionable findings: identify potential matches, flag aging items (>30 days), highlight large variances, and suggest specific corrections. Format as markdown with sections: ## Summary, ## AR Analysis, ## AP Analysis, ## Bank Analysis, ## Recommended Actions.' }, { role: 'user', content: 'Analyze these unreconciled entries for Company 2 (TBWA\\\\SMP):\\n\\nAR: ' + $json.ar_count + ' entries, total residual PHP ' + $json.ar_total.toFixed(2) + '\\nAP: ' + $json.ap_count + ' entries, total residual PHP ' + $json.ap_total.toFixed(2) + '\\nBank: ' + $json.bank_count + ' entries, total residual PHP ' + $json.bank_total.toFixed(2) + '\\nOther: ' + $json.other_count + ' entries\\n\\nTop AR items: ' + JSON.stringify(($json.groups.AR || []).slice(0, 10)) + '\\nTop AP items: ' + JSON.stringify(($json.groups.AP || []).slice(0, 10)) + '\\nTop Bank items: ' + JSON.stringify(($json.groups.Bank || []).slice(0, 10)) }], max_tokens: 1500, temperature: 0.3 }) }}"
+      },
+      "id": "gpt-analyze",
+      "name": "GPT-4.1 — Analyze Variances",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [940, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "const gptResponse = $input.first().json;\nconst analysis = gptResponse.choices?.[0]?.message?.content || 'No analysis generated';\nconst summary = $('Group by Account Type').first().json;\n\nconst today = new Date().toISOString().split('T')[0];\n\nreturn [{ json: {\n  task_name: `Reconciliation Review — ${today}`,\n  description: `## Automated Reconciliation Check\\n\\n**Run date**: ${today}\\n**Company**: TBWA\\\\SMP (CID=2)\\n\\n### Unreconciled Summary\\n- AR: ${summary.ar_count} entries (PHP ${summary.ar_total.toFixed(2)})\\n- AP: ${summary.ap_count} entries (PHP ${summary.ap_total.toFixed(2)})\\n- Bank: ${summary.bank_count} entries (PHP ${summary.bank_total.toFixed(2)})\\n- Total: ${summary.total_unreconciled} unreconciled lines\\n\\n---\\n\\n${analysis}`,\n  project_id: 4,\n  user_id: 17\n}}];"
+      },
+      "id": "format-task",
+      "name": "Format Task Payload",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1160, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://erp.insightpulseai.com/xmlrpc/2/object",
+        "authentication": "none",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify(['odoo', 2, 'admin', 'project.task', 'create', [{'name': $json.task_name, 'description': $json.description, 'project_id': $json.project_id, 'user_ids': [[6, 0, [$json.user_id]]], 'tag_ids': [[0, 0, {'name': 'reconciliation'}]], 'priority': '1'}]]) }}"
+      },
+      "id": "odoo-create-task",
+      "name": "Odoo — Create Review Task",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1380, 300]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ status: 'ok', task_id: $json, message: 'Reconciliation check completed' }) }}"
+      },
+      "id": "webhook-response",
+      "name": "Webhook Response",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [1600, 520]
+    },
+    {
+      "parameters": {
+        "channel": "#finance-alerts",
+        "text": "=:ledger: *Reconciliation Check Complete*\n• AR: {{ $('Group by Account Type').first().json.ar_count }} unreconciled (PHP {{ $('Group by Account Type').first().json.ar_total.toFixed(2) }})\n• AP: {{ $('Group by Account Type').first().json.ap_count }} unreconciled (PHP {{ $('Group by Account Type').first().json.ap_total.toFixed(2) }})\n• Bank: {{ $('Group by Account Type').first().json.bank_count }} unreconciled (PHP {{ $('Group by Account Type').first().json.bank_total.toFixed(2) }})\n• Task created and assigned to BOM for review",
+        "otherOptions": {}
+      },
+      "id": "slack-notify",
+      "name": "Slack — Notify Finance",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.2,
+      "position": [1600, 300]
+    }
+  ],
+  "connections": {
+    "Daily 6AM Manila": {
+      "main": [
+        [
+          {
+            "node": "Odoo — Get Unreconciled Lines",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook — Reconciliation Check": {
+      "main": [
+        [
+          {
+            "node": "Odoo — Get Unreconciled Lines",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Odoo — Get Unreconciled Lines": {
+      "main": [
+        [
+          {
+            "node": "Group by Account Type",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Group by Account Type": {
+      "main": [
+        [
+          {
+            "node": "GPT-4.1 — Analyze Variances",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GPT-4.1 — Analyze Variances": {
+      "main": [
+        [
+          {
+            "node": "Format Task Payload",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Task Payload": {
+      "main": [
+        [
+          {
+            "node": "Odoo — Create Review Task",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Odoo — Create Review Task": {
+      "main": [
+        [
+          {
+            "node": "Slack — Notify Finance",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Webhook Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "Asia/Manila"
+  },
+  "staticData": null
+}

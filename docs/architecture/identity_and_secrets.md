@@ -8,22 +8,53 @@
 
 ## 1. Identity Plane
 
-### Microsoft Entra ID
+### Microsoft Entra ID (Mandatory Identity Plane)
 
-Entra ID is the identity plane for platform resources and human access.
+Entra ID is the **mandatory** identity plane for all platform resources and human access. This is non-optional for the target state.
 
 | Principle | Rule |
 |-----------|------|
 | Named accounts | All admins use named accounts — no shared or generic accounts |
 | MFA | Required for all platform admin accounts |
 | Global Admin | Zero day-to-day usage — break-glass only |
+| Break-glass accounts | **Two cloud-only emergency access accounts**, permanently assigned Global Administrator, not used for daily operations |
 | Managed identities | Preferred over service principals for service-to-service auth |
 | Workload identity federation | OIDC for AzDo ↔ ARM (no long-lived secrets in service connections) |
+
+### Authentication Methods Baseline
+
+Strong-auth target state for all human identities:
+
+| Method | Status | Notes |
+|--------|--------|-------|
+| Microsoft Authenticator | **Required** | Primary MFA — passkeys, passwordless, push notifications |
+| Passkey / FIDO2 | **Required** | Phishing-resistant, target for break-glass accounts |
+| Temporary Access Pass | **Required** | Onboarding and recovery |
+| Software OATH tokens | **Required** | Backup authenticator codes |
+| Email OTP | Allowed | Only if justified by specific use case |
+| SMS | **Disabled** | Weak channel — do not enable unless business-critical requirement exists |
+| Voice call | **Disabled** | Weak channel — do not enable |
+| Hardware OATH tokens | Disabled | Enable only if physical token distribution is feasible |
+| Certificate-based auth | Disabled | Enable only for workstation-bound scenarios |
+
+**Migration requirement**: Legacy MFA/SSPR policy remnants must be fully migrated to the converged Authentication Methods policy.
+
+### Hybrid Identity (Cloud Sync)
+
+Cloud Sync is **conditional**, not a universal baseline requirement.
+
+- **If no on-prem AD forest exists**: Cloud Sync is **not required**. Keep the tenant cloud-native.
+- **If on-prem AD exists and must sync**: Cloud Sync is **required** as the hybrid bridge.
+
+Current posture: **cloud-native** (no on-prem AD). Do not model Cloud Sync as required baseline.
 
 ### Current IdP Posture
 
 - **Current**: Keycloak (`ipai-auth-dev`) — transitional
 - **Target**: Microsoft Entra ID
+- **Tenant**: `ceoinsightpulseai.onmicrosoft.com` (Free tier)
+- **Users**: 4 (Emergency Admin, Platform Admin, Jake Tolentino, 1 guest)
+- **Groups**: 12 | **App registrations**: 4 | **Devices**: 0
 - **Migration gates**: OIDC/SAML parity, group/role mapping, service-account replacement, break-glass admin, user provisioning, per-app cutover
 - **Status**: Not started — do not delete `ipai-auth-dev` until all gates pass
 
@@ -136,9 +167,9 @@ Multi-tenant isolation patterns are documented here for future scaling.
 
 ## 5. Secrets Authority
 
-### Azure Key Vault (`kv-ipai-dev`)
+### Azure Key Vault (Mandatory Secrets Plane)
 
-Key Vault is the canonical secret store. All runtime secrets flow through Key Vault.
+Key Vault is the **mandatory** secret/key/certificate authority. All runtime secrets flow through Key Vault. Azure RBAC is the **default** authorization model for vault access.
 
 ```
 Managed Identity → Key Vault → Environment Variables → Application
@@ -152,6 +183,7 @@ Managed Identity → Key Vault → Environment Variables → Application
 | No secrets in pipelines | AzDo variable groups reference Key Vault, not inline values |
 | No secrets in images | Runtime injection only, never baked into container images |
 | No secrets in logs | Secrets never echoed in CI logs, debug output, or evidence docs |
+| Odoo Storage | Azure Client Secret for Blob offload must be vault-governed application credentials |
 | GitHub Actions | Uses GitHub Secrets (scoped per repo/environment) |
 
 ### Key Vault Inventory
@@ -188,6 +220,7 @@ Never ask users to paste secret values. Never hardcode fallback values.
 | Managed identity | ACA ↔ Key Vault, ACA ↔ PG, ACA ↔ ACR | System-assigned managed identity |
 | Workload identity federation | AzDo ↔ ARM | OIDC token exchange (no long-lived secrets) |
 | API key via Key Vault | External services (OpenAI, Zoho) | Key Vault → env var at container start |
+| Odoo Blob Storage | Odoo chatter/email offload | App Registration Secret → Key Vault → env var |
 | OAuth2 bearer token | Agent ↔ Odoo (FastAPI) | Token issued by IdP, validated by endpoint |
 
 ---
@@ -201,4 +234,4 @@ Never ask users to paste secret values. Never hardcode fallback values.
 
 ---
 
-*Last updated: 2026-03-17*
+*Last updated: 2026-03-21*

@@ -1,0 +1,14 @@
+{
+  "phase": "task-router-hardening",
+  "status": "ready_for_acceptance_review",
+  "schemas_validated": true,
+  "state_machine_verified": true,
+  "duplicate_suppression_verified": true,
+  "retry_exhaustion_verified": true,
+  "dead_letter_verified": true,
+  "metrics_contract_verified": true,
+  "remaining_risks": [
+    "delivery remains at-least-once, not universal exactly-once",
+    "lease correctness depends on documented runtime timing/storage assumptions"
+  ]
+}

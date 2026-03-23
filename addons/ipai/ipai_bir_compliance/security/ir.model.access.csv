@@ -1,0 +1,13 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_bir_form_user,l10n.ph.bir.form.user,model_l10n_ph_bir_form,group_bir_compliance_user,1,0,0,0
+access_bir_form_manager,l10n.ph.bir.form.manager,model_l10n_ph_bir_form,group_bir_compliance_manager,1,1,1,1
+access_bir_deadline_rule_user,l10n.ph.bir.deadline.rule.user,model_l10n_ph_bir_deadline_rule,group_bir_compliance_user,1,0,0,0
+access_bir_deadline_rule_manager,l10n.ph.bir.deadline.rule.manager,model_l10n_ph_bir_deadline_rule,group_bir_compliance_manager,1,1,1,1
+access_bir_obligation_user,l10n.ph.bir.obligation.user,model_l10n_ph_bir_obligation,group_bir_compliance_user,1,0,0,0
+access_bir_obligation_manager,l10n.ph.bir.obligation.manager,model_l10n_ph_bir_obligation,group_bir_compliance_manager,1,1,1,1
+access_bir_period_user,l10n.ph.bir.period.user,model_l10n_ph_bir_period,group_bir_compliance_user,1,0,0,0
+access_bir_period_manager,l10n.ph.bir.period.manager,model_l10n_ph_bir_period,group_bir_compliance_manager,1,1,1,1
+access_bir_filing_user,l10n.ph.bir.filing.user,model_l10n_ph_bir_filing,group_bir_compliance_user,1,0,0,0
+access_bir_filing_manager,l10n.ph.bir.filing.manager,model_l10n_ph_bir_filing,group_bir_compliance_manager,1,1,1,1
+access_bir_service_endpoint_user,l10n.ph.bir.service.endpoint.user,model_l10n_ph_bir_service_endpoint,group_bir_compliance_user,1,0,0,0
+access_bir_service_endpoint_manager,l10n.ph.bir.service.endpoint.manager,model_l10n_ph_bir_service_endpoint,group_bir_compliance_manager,1,1,1,1

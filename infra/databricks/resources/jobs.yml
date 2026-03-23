@@ -1,43 +1,12 @@
 # Databricks Jobs Configuration
-# Compute: Serverless (no VM SKU dependency — avoids Southeast Asia stockouts)
 
 resources:
   jobs:
     # ============================================
     # Bronze Layer: Data Ingestion
     # ============================================
-
-    notion_sync_bronze:
-      name: "Notion Sync Bronze"
-      description: "Sync Notion databases to bronze layer"
-      tags:
-        layer: bronze
-        source: notion
-        team: platform
-
-      tasks:
-        - task_key: sync_all
-          description: "Sync all Notion databases"
-          notebook_task:
-            notebook_path: ../notebooks/bronze/ingest_notion.py
-            source: WORKSPACE
-          environment_key: default
-          timeout_seconds: 1800
-          max_retries: 2
-
-      environments:
-        - environment_key: default
-          spec:
-            client: "1"
-
-      schedule:
-        quartz_cron_expression: "0 */15 * * * ?"
-        timezone_id: "UTC"
-        pause_status: UNPAUSED
-
-      email_notifications:
-        on_failure:
-          - platform-alerts@insightpulseai.com
+    # Notion sync jobs removed — Notion is not a canonical data source.
+    # Bronze ingest is via ADLS Gen2 Auto Loader or DLT pipelines.
 
     azure_rg_ingest:
       name: "Azure Resource Graph Ingest"
@@ -53,14 +22,18 @@ resources:
           notebook_task:
             notebook_path: ../notebooks/bronze/ingest_azure_rg.py
             source: WORKSPACE
-          environment_key: default
+          new_cluster:
+            spark_version: "14.3.x-scala2.12"
+            node_type_id: "Standard_DS3_v2"
+            num_workers: 1
+            spark_env_vars:
+              AZURE_SUBSCRIPTION_ID: "{{secrets/finance-ppm/azure_subscription_id}}"
+              AZURE_CLIENT_ID: "{{secrets/finance-ppm/azure_client_id}}"
+              AZURE_CLIENT_SECRET: "{{secrets/finance-ppm/azure_client_secret}}"
+              AZURE_TENANT_ID: "{{secrets/finance-ppm/azure_tenant_id}}"
+              DATABRICKS_CATALOG: "${var.catalog}"
           timeout_seconds: 1800
           max_retries: 2
-
-      environments:
-        - environment_key: default
-          spec:
-            client: "1"
 
       schedule:
         quartz_cron_expression: "0 0 */6 * * ?"
@@ -70,71 +43,7 @@ resources:
     # ============================================
     # Silver Layer: Transformation
     # ============================================
-
-    notion_transform_silver:
-      name: "Notion Transform Silver"
-      description: "Transform Notion bronze data to silver tables"
-      tags:
-        layer: silver
-        source: notion
-        team: platform
-
-      tasks:
-        - task_key: transform_programs
-          description: "Transform programs"
-          notebook_task:
-            notebook_path: ../notebooks/silver/transform_notion.py
-            base_parameters:
-              table_name: programs
-            source: WORKSPACE
-          environment_key: default
-          timeout_seconds: 900
-
-        - task_key: transform_projects
-          description: "Transform projects"
-          notebook_task:
-            notebook_path: ../notebooks/silver/transform_notion.py
-            base_parameters:
-              table_name: projects
-            source: WORKSPACE
-          depends_on:
-            - task_key: transform_programs
-          environment_key: default
-          timeout_seconds: 900
-
-        - task_key: transform_budget_lines
-          description: "Transform budget lines"
-          notebook_task:
-            notebook_path: ../notebooks/silver/transform_notion.py
-            base_parameters:
-              table_name: budget_lines
-            source: WORKSPACE
-          depends_on:
-            - task_key: transform_projects
-          environment_key: default
-          timeout_seconds: 900
-
-        - task_key: transform_risks
-          description: "Transform risks"
-          notebook_task:
-            notebook_path: ../notebooks/silver/transform_notion.py
-            base_parameters:
-              table_name: risks
-            source: WORKSPACE
-          depends_on:
-            - task_key: transform_projects
-          environment_key: default
-          timeout_seconds: 900
-
-      environments:
-        - environment_key: default
-          spec:
-            client: "1"
-
-      schedule:
-        quartz_cron_expression: "0 0 * * * ?"
-        timezone_id: "UTC"
-        pause_status: UNPAUSED
+    # Notion transform jobs removed — silver transforms handled by DLT pipelines.
 
     # ============================================
     # Gold Layer: Business Marts
@@ -154,7 +63,10 @@ resources:
           notebook_task:
             notebook_path: ../notebooks/gold/budget_vs_actual.py
             source: WORKSPACE
-          environment_key: default
+          new_cluster:
+            spark_version: "14.3.x-scala2.12"
+            node_type_id: "Standard_DS3_v2"
+            num_workers: 2
           timeout_seconds: 1800
 
         - task_key: forecast
@@ -164,7 +76,10 @@ resources:
             source: WORKSPACE
           depends_on:
             - task_key: budget_vs_actual
-          environment_key: default
+          new_cluster:
+            spark_version: "14.3.x-scala2.12"
+            node_type_id: "Standard_DS3_v2"
+            num_workers: 2
           timeout_seconds: 1800
 
         - task_key: risk_summary
@@ -172,7 +87,10 @@ resources:
           notebook_task:
             notebook_path: ../notebooks/gold/risk_summary.py
             source: WORKSPACE
-          environment_key: default
+          new_cluster:
+            spark_version: "14.3.x-scala2.12"
+            node_type_id: "Standard_DS3_v2"
+            num_workers: 1
           timeout_seconds: 900
 
         - task_key: projects_summary
@@ -183,13 +101,11 @@ resources:
           depends_on:
             - task_key: budget_vs_actual
             - task_key: risk_summary
-          environment_key: default
+          new_cluster:
+            spark_version: "14.3.x-scala2.12"
+            node_type_id: "Standard_DS3_v2"
+            num_workers: 1
           timeout_seconds: 900
-
-      environments:
-        - environment_key: default
-          spec:
-            client: "1"
 
       schedule:
         quartz_cron_expression: "0 30 * * * ?"
@@ -214,13 +130,11 @@ resources:
           notebook_task:
             notebook_path: ../notebooks/gold/dq_checks.py
             source: WORKSPACE
-          environment_key: default
+          new_cluster:
+            spark_version: "14.3.x-scala2.12"
+            node_type_id: "Standard_DS3_v2"
+            num_workers: 1
           timeout_seconds: 1800
-
-      environments:
-        - environment_key: default
-          spec:
-            client: "1"
 
       schedule:
         quartz_cron_expression: "0 0 * * * ?"
@@ -241,13 +155,11 @@ resources:
           notebook_task:
             notebook_path: ../notebooks/gold/control_room_status.py
             source: WORKSPACE
-          environment_key: default
+          new_cluster:
+            spark_version: "14.3.x-scala2.12"
+            node_type_id: "Standard_DS3_v2"
+            num_workers: 1
           timeout_seconds: 600
-
-      environments:
-        - environment_key: default
-          spec:
-            client: "1"
 
       schedule:
         quartz_cron_expression: "0 */15 * * * ?"
