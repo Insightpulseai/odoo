@@ -1,3 +1,0 @@
-Resources
-| where location !in ("southeastasia", "eastus", "eastus2")
-| project name, type, resourceGroup, location

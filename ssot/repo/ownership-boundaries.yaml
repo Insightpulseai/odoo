@@ -1,6 +1,168 @@
-# Canonical Ownership Boundaries — Frozen 2026-03-20
-# Authority: CLAUDE.md + Canonical Unified Baseline
-# This file is the SSOT for repo authority, naming, and local runtime doctrine.
+version: 3
+updated: "2026-03-24"
+repo: Insightpulseai  # umbrella monorepo
+role: platform_umbrella
+
+repo_boundaries:
+  umbrella_repo:
+    must_not_track:
+      - odoo/**
+      - archive/dot-github-repo/**
+      - archive/work/**
+      - data-intelligence/**
+      - documentaion/**
+      - web-site/**
+      - archive/root/addons/oca/**
+    enforcement: .gitignore
+    note: >
+      Nested git repos must never be staged in the umbrella index.
+      Each is managed as its own git boundary.
+  nested_repos:
+    odoo:
+      ownership: separate_git_repo
+      tracked_in_umbrella: false
+      purpose: ERP runtime (Odoo 19 CE + OCA + IPAI bridge)
+    data-intelligence:
+      ownership: separate_git_repo
+      tracked_in_umbrella: false
+      purpose: Databricks analytics engineering
+    documentaion:
+      ownership: separate_git_repo
+      tracked_in_umbrella: false
+      purpose: Legacy documentation (review for archival)
+    web-site:
+      ownership: separate_git_repo
+      tracked_in_umbrella: false
+      purpose: Legacy web site (review for archival)
+
+current_state:
+  contains_cross_domain_artifacts: true
+  note: >
+    Repository currently hosts ERP runtime plus transitional cross-domain
+    artifacts pending decomposition to owning repositories.
+
+target_ownership:
+  addons: odoo
+  config: odoo
+  docker: odoo
+  erp_docs: odoo
+  erp_scripts: odoo
+  erp_ssot: odoo
+  erp_spec: odoo
+  tests: odoo
+  infra: infra
+  platform_apps: platform
+  shared_agents: agents
+  agent_platform: agent-platform
+  automations: automations
+  design_assets: design
+  public_web: web
+  lakehouse: data-intelligence
+  supabase: platform
+  cross_platform_docs: docs
+
+canonical_repos:
+  - name: .github
+    visibility: private
+    purpose: Org governance, reusable workflows, policies
+  - name: odoo
+    visibility: public
+    purpose: ERP runtime (Odoo 19 CE + OCA + IPAI bridge)
+  - name: agents
+    visibility: public
+    purpose: Agent personas, skills, judges, evals, metadata, registries, and prompt contracts
+  - name: agent-platform
+    visibility: private
+    purpose: Agent runtime platform — orchestration, task ledger, execution contracts, control-room integrations, and runtime glue
+  - name: platform
+    visibility: private
+    purpose: Platform control plane and SSOT — vault references, platform metadata, backend/control-plane contracts, and edge/runtime glue
+  - name: data-intelligence
+    visibility: private
+    purpose: Databricks + Unity Catalog analytics engineering, medallion contracts, semantic-serving prep, and BI delivery artifacts
+  - name: infra
+    visibility: private
+    purpose: Azure-first infrastructure as code, Cloudflare edge/security, and remaining legacy/runtime infrastructure
+  - name: web
+    visibility: private
+    purpose: User-facing web surfaces — ops console, marketing sites, docs sites, and browser-facing product apps
+  - name: automations
+    visibility: private
+    purpose: Workflow automation, scheduled jobs, n8n assets, and operational runbooks
+  - name: design
+    visibility: internal
+    purpose: Design tokens, component specs, icon pipeline, and brand assets
+  - name: docs
+    visibility: public
+    purpose: Cross-repo architecture, strategy, governance, runbooks, evidence, and operating model docs
+  - name: templates
+    visibility: private
+    purpose: Bootstrap-only starter kits, scaffolds, repo templates, and Spec Kit starters
+
+deprecated_runtime_surfaces:
+  - name: vercel
+    deprecated: "2026-03-11"
+    replacement: azure_container_apps
+  - name: digitalocean
+    deprecated: "2026-03-15"
+    replacement: azure_container_apps
+  - name: mailgun
+    deprecated: "2026-03-11"
+    replacement: zoho_smtp
+
+deprecated_labels:
+  - name: control-plane
+    replacement: platform
+  - name: design-system
+    replacement: design
+  - name: lakehouse
+    replacement: data-intelligence
+  - name: ops-platform
+    replacement: platform
+
+auth_model:
+  target_authority: entra_id
+  transitional_runtime: keycloak
+  standalone_auth_workload: false
+  note: >
+    Auth is a capability provided by Entra ID (target) or Keycloak
+    (transitional). It is NOT modeled as a standalone workload.
+
+addon_layers:
+  canonical_extension_layers:
+    - addons/oca
+    - addons/ipai
+    - addons/local
+  vendor_core:
+    note: >
+      Odoo CE core addons are managed via vendor runtime paths
+      (e.g. vendor/odoo/addons/ or /opt/odoo/addons/).
+      They are NOT counted as extension layers.
+
+github_ui_metadata_drift:
+  note: >
+    The following GitHub UI metadata items require separate cleanup
+    via gh CLI or GitHub settings. They cannot be fixed by README edits alone.
+  items:
+    - "Repository website field may still show Vercel URLs"
+    - "Deployment history may still show Vercel deployments"
+    - "Environment settings may reference deprecated DO endpoints"
+
+decomposition:
+  tranche_1:
+    status: planned
+    repos:
+      - infra
+      - platform
+      - agents
+      - automations
+      - web
+    source_repo: odoo
+    strategy: copy_then_cutover
+    notes:
+      - "Preserve ERP runtime authority in odoo."
+      - "Do not centralize mixed spec/ssot/tests/scripts; split by owning repo."
+      - "skills/odoo-implementation remains in odoo for tranche 1."
 
 canonical_project:
   azure_devops_project: ipai-platform
@@ -12,77 +174,43 @@ authority_model:
   repo_ssot: intended_state_truth
   executable_contracts: iac_migrations_pipelines_tests
 
-canonical_repos:
-  - odoo             # ERP runtime only
-  - infra            # cloud/network/edge/IaC
-  - platform         # control-plane/admin/supabase-shared
-  - agents           # shared skills/prompts/registries
-  - automations      # schedulers/jobs/runbooks
-  - web              # public/product web surfaces outside ERP
-  - design           # tokens/components/brand assets
-  - data-intelligence  # Databricks/lakehouse/BI
-  - agent-platform   # Foundry/hosted agent runtime/evals
-  - docs             # cross-platform docs only
-  - templates        # starter/scaffold assets only
-
 naming_normalization:
-  deprecated_name: canonical_name
   ops-platform: platform
   design-system: design
   lakehouse: data-intelligence
-  odoo_core: odoo_dev
-  odoo_stage: odoo_staging
-  odoo_prod: odoo
 
 local_runtime:
   docker_context: colima-odoo
-  compose_contract: docker-compose.yml  # repo-root
-  compose_project_name: odoo
+  compose_contract: docker-compose.yml
   devcontainer_role: tooling_only
   canonical_databases:
-    - odoo_dev        # local development
-    - odoo_staging    # staging rehearsal
-    - odoo            # production
-  canonical_services:
+    - odoo_dev
+    - odoo_staging
     - odoo
-    - db
-    - redis
-  canonical_containers:
-    - odoo-odoo-1
-    - odoo-db-1
-    - odoo-redis-1
-  canonical_volumes:
-    - odoo-db-data
-    - odoo-web-data
-    - odoo-redis-data
-  canonical_network: odoo-net
 
-tooling_doctrine:
-  ai_toolkit: canonical_foundry_editor
-  foundry_sidebar: deprecated_transitional
-  databricks: canonical_only_for_data_intelligence
-  postgresql_editor: optional_convenience
-  azure_devops_integration: one_primary_path
+canonical_target_state:
+  architecture_doc: docs/architecture/INSIGHTPULSEAI_ODOO_ON_AZURE_TARGET_STATE.md
+  benchmark_model:
+    informational: true
+    navigational: true
+    transactional: true
+  canonical_runtime_roles:
+    odoo: transactional_system_of_record
+    odoo_copilot: user_facing_erp_copilot
+    foundry_agent_applications: governed_ai_runtime
+    document_intelligence: ocr_and_structured_extraction
 
-deprecated_items:
-  - name: supabase_managed_subscription
-    replacement: self-hosted Supabase on Azure VM (vm-ipai-supabase-dev)
-    date: 2026-03-20
-  - name: ops-platform
-    replacement: platform
-    date: 2026-03-20
-  - name: design-system
-    replacement: design
-    date: 2026-03-20
-  - name: lakehouse
-    replacement: data-intelligence
-    date: 2026-03-20
-  - name: devcontainer_as_runtime
-    replacement: repo-root docker-compose.yml
-    date: 2026-03-20
-  - name: docker-desktop_context
-    replacement: colima-odoo
-    date: 2026-03-20
-  - name: "~/docker-compose.yml (home-dir compose)"
-    replacement: odoo/docker-compose.yml (repo-root)
-    date: 2026-03-20
+resource_group_target:
+  model: "16-RG: 1 shared + 5 per env x 3 envs"
+  shared:
+    - rg-ipai-shared-observability
+  per_environment:
+    edge: "rg-ipai-<env>-edge"
+    odoo_runtime: "rg-ipai-<env>-odoo-runtime"
+    odoo_data: "rg-ipai-<env>-odoo-data"
+    platform: "rg-ipai-<env>-platform"
+    ai: "rg-ipai-<env>-ai"
+  environments:
+    - dev
+    - staging
+    - prod
