@@ -1,6 +1,7 @@
 /** @odoo-module */
 
 import { registry } from "@web/core/registry";
+import { rpc } from "@web/core/network/rpc";
 
 /**
  * CopilotService — manages copilot conversation state and gateway communication.
@@ -9,9 +10,9 @@ import { registry } from "@web/core/registry";
  * via useService("copilot").
  */
 const copilotService = {
-    dependencies: ["rpc"],
+    dependencies: [],
 
-    start(env, { rpc }) {
+    start(env) {
         let currentConversationId = null;
 
         /**

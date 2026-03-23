@@ -11,6 +11,7 @@ _logger = logging.getLogger(__name__)
 class CopilotConversation(models.Model):
     _name = 'ipai.copilot.conversation'
     _description = 'Copilot Conversation'
+    _inherit = ['mail.thread']
     _order = 'write_date desc, id desc'
 
     # -------------------------------------------------------------------------
@@ -44,6 +45,7 @@ class CopilotConversation(models.Model):
         default='active',
         required=True,
         index=True,
+        tracking=True,
     )
     context_model = fields.Char(
         string='Context Model',
@@ -63,6 +65,11 @@ class CopilotConversation(models.Model):
         compute='_compute_message_count',
         string='Messages',
     )
+
+    _sql_constraints = [
+        ('gateway_correlation_id_uniq', 'unique(gateway_correlation_id)',
+         'Gateway correlation ID must be unique.'),
+    ]
 
     # -------------------------------------------------------------------------
     # Compute
