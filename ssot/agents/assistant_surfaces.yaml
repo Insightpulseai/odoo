@@ -16,6 +16,14 @@ assistant_surfaces:
     action_mode: read_only_first
     launch_posture: internal_beta
     ssot_ref: ssot/agents/diva_copilot.yaml#modes.odoo
+    a2a_role: participant
+    a2a_enabled: true
+    a2a_allowed_targets:
+      - diva_copilot
+      - genie
+      - document_intelligence
+      - studio_copilot
+    a2a_default_mode: bounded_escalation
 
   diva_copilot:
     role: orchestration_and_schema_assistant
@@ -28,6 +36,17 @@ assistant_surfaces:
       - governance
     action_mode: route_and_assemble
     ssot_ref: ssot/agents/diva_copilot.yaml
+    a2a_role: hub
+    a2a_enabled: true
+    a2a_allowed_targets:
+      - odoo_copilot
+      - studio_copilot
+      - genie
+      - document_intelligence
+      - tax_guru
+      - capability_assistant
+      - governance_assistant
+    a2a_default_mode: route_and_aggregate
 
   studio_copilot:
     role: creative_finishing_and_mediaops_assistant
@@ -45,18 +64,47 @@ assistant_surfaces:
       mixed_media: fal
       multimodal_review: openai
     product_name: W9 Studio
+    a2a_role: participant
+    a2a_enabled: true
+    a2a_allowed_targets:
+      - diva_copilot
+      - genie
+      - document_intelligence
+      - odoo_copilot
+    a2a_default_mode: workflow_handoff
 
   genie:
     role: conversational_analytics
     scope: authenticated
     citation_model: query_provenance
     is_copilot: false
+    a2a_role: participant
+    a2a_enabled: true
+    a2a_allowed_targets:
+      - diva_copilot
+      - odoo_copilot
+      - studio_copilot
+    a2a_default_mode: return_analytics_context
 
   document_intelligence:
     role: document_review_and_extraction
     scope: authenticated
     citation_model: page_field_anchor
     is_copilot: false
+    a2a_role: participant
+    a2a_enabled: true
+    a2a_allowed_targets:
+      - diva_copilot
+      - odoo_copilot
+      - studio_copilot
+    a2a_default_mode: return_document_context
+
+  landing_public_assistant:
+    role: public_marketing_and_onboarding
+    scope: public
+    is_copilot: false
+    a2a_role: none
+    a2a_enabled: false
 
 shared_runtime:
   identity: entra_id
@@ -103,6 +151,44 @@ naming_rules:
     - calling public landing assistant Odoo Copilot
     - making Studio Copilot sound like generic social-media chatbot
     - using Foundry as user-facing brand
+
+a2a_interop:
+  status: planned
+  doctrine_ref: docs/architecture/A2A_INTEROP.md
+  doctrine_summary: >
+    Use A2A for delegate/handoff/coordinate/aggregate across distinct assistant
+    surfaces. NOT for simple retrieval or single-step tool calls.
+  hub_assistant: diva_copilot
+  initial_message_types:
+    - delegate_task
+    - request_context
+    - return_result
+  tenancy_rules:
+    customer_tenant_id_required: true
+    workspace_id_required_when: workspace_scoped_surface
+    public_surfaces_excluded: true
+    cross_tenant_delegation: forbidden
+  prohibited_patterns:
+    - a2a_for_every_tool_call
+    - a2a_for_simple_retrieval
+    - recursive_delegation_loops
+    - silent_delegation
+    - public_surface_initiating_a2a
+    - bypassing_hub_for_cross_domain_aggregation
+  max_delegation_depth: 2
+  rollout:
+    phase_1:
+      target: "Q2 2026"
+      scope: hub_to_participant_read_only
+      participants: [odoo_copilot, genie]
+    phase_2:
+      target: "Q3 2026"
+      scope: full_participant_mesh_with_writes
+      participants: [odoo_copilot, genie, studio_copilot, document_intelligence]
+    phase_3:
+      target: "Q4 2026"
+      scope: multi_tenant_production
+      features: [cross_workspace, sla_enforcement, external_onboarding]
 
 cross_references:
   tenancy_model: ssot/architecture/tenancy_model.yaml
