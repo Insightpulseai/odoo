@@ -1,3 +1,9 @@
+---
+name: azure-resource-graph
+description: Azure Resource Graph exploration, cloud governance, and cost optimization via KQL
+microsoft_capability_family: "Azure / Architecture / Operations"
+---
+
 # Skill: Azure Resource Graph Exploration
 
 This skill enables an agent to perform advanced cloud governance, resource discovery, and cost optimization using Azure Resource Graph (ARG) and Kusto Query Language (KQL).

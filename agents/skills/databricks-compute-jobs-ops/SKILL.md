@@ -1,3 +1,9 @@
+---
+name: databricks-compute-jobs-ops
+description: Manage Databricks compute resources and job execution via CLI
+microsoft_capability_family: "Azure / Databricks"
+---
+
 # Databricks Compute & Jobs Ops Skill
 
 ## Purpose

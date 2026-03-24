@@ -1,5 +1,7 @@
 ---
+name: azure-document-intelligence
 description: "Azure Document Intelligence skill — Extract structured data from documents using prebuilt and custom models. Produces integration code, entity contracts, and verification artifacts."
+microsoft_capability_family: "Azure / AI / Document Intelligence"
 ---
 
 # Azure Document Intelligence Skill

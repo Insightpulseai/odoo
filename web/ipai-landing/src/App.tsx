@@ -7,7 +7,7 @@ import {
   Layers, FileText, Phone, Calendar, Lightbulb, Palette, PenTool, Eye, Quote, Menu
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
-import { AIChatCopilot } from './components/AIChatCopilot';
+import { AskPulser } from './components/AskPulser';
 
 // --- Types ---
 type PageId = 'home' | 'products' | 'solutions' | 'marketing' | 'media' | 'retail' | 'finance' | 'resources' | 'pricing' | 'company' | 'docs' | 'trust' | 'contact' | 'marketing_use_cases' | 'media_reference_patterns' | 'privacy' | 'terms' | 'careers' | 'newsroom' | 'login';
@@ -137,7 +137,7 @@ const Navbar = ({ currentPage, setPage }: { currentPage: PageId, setPage: (p: Pa
     <nav className="fixed top-0 left-0 right-0 h-16 bg-white/90 backdrop-blur-md z-50 px-6 md:px-12 flex items-center justify-between border-b border-gray-100">
       <div className="flex items-center gap-12">
         <button onClick={() => { setPage('home'); setMobileOpen(false); }} className="flex items-center gap-3 group" aria-label="Home">
-          <img src="/logo.png" alt="InsightPulse AI" className="w-12 h-12 rounded-lg group-hover:scale-105 transition-transform" />
+          <img src="/logo.png" alt="InsightPulseAI" className="w-12 h-12 rounded-lg group-hover:scale-105 transition-transform" />
         </button>
 
         <div className="hidden xl:flex items-center gap-8 text-[14px] font-bold text-gray-800">
@@ -153,7 +153,7 @@ const Navbar = ({ currentPage, setPage }: { currentPage: PageId, setPage: (p: Pa
                 <div className="grid grid-cols-2 gap-2">
                   {[
                     { icon: <Cloud size={20} />, title: "Odoo on Cloud", desc: "Hosted ERP, CRM, finance, inventory", page: 'products' as PageId },
-                    { icon: <Cpu size={20} />, title: "Odoo Copilot", desc: "AI guidance inside your workflows", page: 'products' as PageId },
+                    { icon: <Cpu size={20} />, title: "Pulser", desc: "AI guidance inside your workflows", page: 'products' as PageId },
                     { icon: <ShieldCheck size={20} />, title: "Cloud Operations", desc: "Deploy, govern, monitor, evolve", page: 'products' as PageId },
                     { icon: <BarChart size={20} />, title: "Analytics", desc: "Operational dashboards & reporting", page: 'products' as PageId },
                   ].map((item, i) => (
@@ -324,9 +324,9 @@ const Navbar = ({ currentPage, setPage }: { currentPage: PageId, setPage: (p: Pa
               {mobileSection === 'products' && (
                 <div className="pl-4 pb-3 space-y-1">
                   <button onClick={() => mobilNav('products')} className="block w-full text-left py-2 text-sm text-gray-600 hover:text-brand-primary">Odoo on Cloud</button>
-                  <button onClick={() => mobilNav('products')} className="block w-full text-left py-2 text-sm text-gray-600 hover:text-brand-primary">Odoo Copilot</button>
+                  <button onClick={() => mobilNav('products')} className="block w-full text-left py-2 text-sm text-gray-600 hover:text-brand-primary">Pulser</button>
                   <button onClick={() => mobilNav('products')} className="block w-full text-left py-2 text-sm text-gray-600 hover:text-brand-primary">Analytics</button>
-                  <button onClick={() => mobilNav('products')} className="block w-full text-left py-2 text-sm text-gray-600 hover:text-brand-primary">Managed Operations</button>
+                  <button onClick={() => mobilNav('products')} className="block w-full text-left py-2 text-sm text-gray-600 hover:text-brand-primary">Cloud Operations</button>
                 </div>
               )}
             </div>
@@ -404,7 +404,7 @@ const Footer = ({ setPage }: { setPage: (p: PageId) => void }) => (
         <div className="col-span-2 lg:col-span-1">
           <div className="flex items-center gap-2 mb-8">
             <button onClick={() => setPage('home')} aria-label="Home">
-              <img src="/logo.png" alt="InsightPulse AI" className="w-12 h-12 rounded-lg" />
+              <img src="/logo.png" alt="InsightPulseAI" className="w-12 h-12 rounded-lg" />
             </button>
           </div>
           <p className="text-gray-400 text-sm leading-relaxed mb-8">
@@ -424,9 +424,9 @@ const Footer = ({ setPage }: { setPage: (p: PageId) => void }) => (
           <h4 className="font-bold mb-6 text-sm uppercase tracking-widest text-brand-primary">Products</h4>
           <ul className="space-y-5 text-gray-400 text-sm">
             <li><button onClick={() => setPage('products')} className="hover:text-white transition-colors">Odoo on Cloud</button></li>
-            <li><button onClick={() => setPage('products')} className="hover:text-white transition-colors">Odoo Copilot</button></li>
+            <li><button onClick={() => setPage('products')} className="hover:text-white transition-colors">Pulser</button></li>
             <li><button onClick={() => setPage('products')} className="hover:text-white transition-colors">Analytics</button></li>
-            <li><button onClick={() => setPage('products')} className="hover:text-white transition-colors">Managed Operations</button></li>
+            <li><button onClick={() => setPage('products')} className="hover:text-white transition-colors">Cloud Operations</button></li>
           </ul>
         </div>
 
@@ -519,7 +519,7 @@ const HomePage = ({ setPage }: { setPage: (p: PageId) => void }) => (
               AI-native operations for marketing, media, retail, and financial services
             </h1>
             <p className="text-xl md:text-2xl text-gray-300 leading-relaxed mb-12 font-medium max-w-3xl">
-              InsightPulseAI combines <span className="text-brand-primary">Odoo on Cloud</span>, <span className="text-brand-primary">Odoo Copilot</span>, and modern data workflows to help teams unify operations, automate execution, and scale with stronger control.
+              InsightPulseAI combines <span className="text-brand-primary">Odoo on Cloud</span>, <span className="text-brand-primary">Pulser</span>, and modern data workflows to help teams unify operations, automate execution, and scale with stronger control.
             </p>
             <div className="flex flex-col sm:flex-row gap-6">
               <button onClick={() => setPage('contact')} className="px-8 py-4 bg-brand-primary text-black font-bold rounded-full hover:bg-cyan-400 transition-all text-lg" style={{ boxShadow: SHADOW.shadow8 }}>
@@ -611,7 +611,7 @@ const HomePage = ({ setPage }: { setPage: (p: PageId) => void }) => (
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
           {[
             { icon: <Cloud size={32} />, title: "Odoo on Cloud", desc: "Run ERP, CRM, sales, inventory, projects, HR, finance, and operations from one hosted platform." },
-            { icon: <Cpu size={32} />, title: "Odoo Copilot", desc: "Use AI assistance to reduce manual work, guide users, summarize activity, and improve decision-making." },
+            { icon: <Cpu size={32} />, title: "Pulser", desc: "Use AI assistance to reduce manual work, guide users, summarize activity, and improve decision-making." },
             { icon: <ShieldCheck size={32} />, title: "Cloud Operations", desc: "Deploy, govern, monitor, and evolve Odoo with a more reliable cloud delivery model." },
             { icon: <BarChart size={32} />, title: "Analytics", desc: "Turn operational data into real-time executive and team-level visibility." }
           ].map((p, i) => (
@@ -646,7 +646,7 @@ const HomePage = ({ setPage }: { setPage: (p: PageId) => void }) => (
           {
             icon: <Cpu size={40} className="text-brand-primary" />,
             title: "Add AI where work stalls",
-            desc: "Use Odoo Copilot to guide users, summarize records, surface exceptions, and accelerate repetitive execution."
+            desc: "Use Pulser to guide users, summarize records, surface exceptions, and accelerate repetitive execution."
           },
           {
             icon: <BarChart3 size={40} className="text-brand-primary" />,
@@ -764,9 +764,9 @@ const HomePage = ({ setPage }: { setPage: (p: PageId) => void }) => (
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
           {[
             { icon: <Cloud size={32} />, title: "Odoo on Cloud", desc: "Business workflows and system of record" },
-            { icon: <Cpu size={32} />, title: "Copilot Gateway", desc: "Guided assistance, retrieval, and safe handoff paths" },
+            { icon: <Cpu size={32} />, title: "Pulser", desc: "AI assistance, guided workflows, and safe handoff paths" },
             { icon: <BarChart3 size={32} />, title: "Analytics & Dashboards", desc: "Performance visibility and executive reporting" },
-            { icon: <Settings size={32} />, title: "Managed Operations", desc: "Deployment, reliability, upgrades, and governance" }
+            { icon: <Settings size={32} />, title: "Cloud Operations", desc: "Deployment, reliability, upgrades, and governance" }
           ].map((block, i) => (
             <div key={i} className="bg-white/5 p-8 rounded-2xl border border-white/10">
               <div className="mb-6 text-brand-primary">{block.icon}</div>
@@ -789,7 +789,7 @@ const HomePage = ({ setPage }: { setPage: (p: PageId) => void }) => (
           "Approval and exception handling patterns",
           "Operational visibility across teams and entities",
           "Cloud reliability, backup discipline, and lifecycle support",
-          "Current Copilot posture: internal beta, trusted users, read-only advisory"
+          "Current Pulser posture: internal beta, trusted users, read-only advisory"
         ].map((item, i) => (
           <div key={i} className="p-8 rounded-2xl bg-brand-light border border-gray-100 flex items-start gap-4">
             <ShieldCheck className="text-brand-primary flex-shrink-0" size={24} />
@@ -808,9 +808,9 @@ const HomePage = ({ setPage }: { setPage: (p: PageId) => void }) => (
         <div className="space-y-6">
           {[
             { q: "What is Odoo on Cloud?", a: "A hosted operating platform built around Odoo, modern cloud delivery, and operational support." },
-            { q: "What is Odoo Copilot?", a: "An AI-assisted workflow layer that helps users understand, navigate, and accelerate work inside the platform." },
+            { q: "What is Pulser?", a: "An AI-assisted workflow layer that helps users understand, navigate, and accelerate work inside the platform." },
             { q: "Can the website assistant access my ERP?", a: "No. The landing-page assistant is public and documentation-grounded only." },
-            { q: "Is Copilot generally available?", a: "Not yet. Current launch posture is internal beta for trusted users with read-only advisory behavior." },
+            { q: "Is Pulser generally available?", a: "Not yet. Current launch posture is internal beta for trusted users with read-only advisory behavior." },
             { q: "Which industries are the best fit?", a: "Marketing, media, retail, and financial operations are the clearest starting lanes in the current site structure." }
           ].map((faq, i) => (
             <div key={i} className="p-8 rounded-2xl bg-white border border-gray-100" style={{ boxShadow: SHADOW.shadow4 }}>
@@ -845,7 +845,7 @@ const ProductsPage = ({ setPage }: { setPage: (p: PageId) => void }) => (
           image: "/images/product-odoo-cloud.png"
         },
         {
-          title: "Odoo Copilot",
+          title: "Pulser",
           desc: "An AI-powered assistance layer that helps teams move faster with less manual work. It helps users navigate processes, draft updates, summarize records, and surface exceptions.",
           features: ["Guided Approvals", "Record Summarization", "Exception Detection", "Workflow Acceleration", "AI Reporting"],
           icon: <Cpu size={48} className="text-brand-primary" />,
@@ -957,7 +957,7 @@ const SolutionsPage = ({ setPage }: { setPage: (p: PageId) => void }) => (
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {[
             "Odoo on Cloud deployment and lifecycle management",
-            "AI-assisted guidance through Odoo Copilot",
+            "AI-assisted guidance through Pulser",
             "Dashboards, reporting, and executive visibility",
             "Approvals, controls, and audit-ready workflows",
             "Multi-company and multi-entity operating support",
@@ -993,7 +993,7 @@ const DocsPage = ({ setPage }: { setPage: (p: PageId) => void }) => (
           Documentation for operators, evaluators, and implementation teams
         </h1>
         <p className="text-xl text-gray-600 max-w-4xl leading-relaxed">
-          Explore product documentation, architecture guidance, implementation patterns, and operational runbooks for InsightPulseAI, Odoo on Cloud, and Odoo Copilot.
+          Explore product documentation, architecture guidance, implementation patterns, and operational runbooks for InsightPulseAI, Odoo on Cloud, and Pulser.
         </p>
       </div>
 
@@ -1015,8 +1015,8 @@ const DocsPage = ({ setPage }: { setPage: (p: PageId) => void }) => (
           },
           {
             icon: <Cpu size={32} className="text-brand-primary" />,
-            title: "Odoo Copilot Guide",
-            desc: "Where Copilot helps, what it can and cannot do, and how public advisory mode differs from authenticated product assistance.",
+            title: "Pulser Guide",
+            desc: "Where Pulser helps, what it can and cannot do, and how public advisory mode differs from authenticated product assistance.",
             page: 'products' as PageId
           },
           {
@@ -1044,7 +1044,7 @@ const DocsPage = ({ setPage }: { setPage: (p: PageId) => void }) => (
       </div>
 
       <div className="p-8 rounded-2xl bg-gray-50 border border-gray-200 mb-24">
-        <h3 className="text-lg font-bold mb-3">Public prompt packs vs authenticated copilots</h3>
+        <h3 className="text-lg font-bold mb-3">Public prompt packs vs authenticated assistants</h3>
         <p className="text-gray-600 text-sm leading-relaxed">
           These use cases are public educational resources. They show how AI can support marketing workflows, but they do not imply tenant data access or authenticated product actions from this page.
         </p>
@@ -1063,7 +1063,7 @@ const TrustPage = ({ setPage }: { setPage: (p: PageId) => void }) => (
           Built for operational trust, with product readiness clearly stated
         </h1>
         <p className="text-xl text-gray-600 max-w-4xl leading-relaxed">
-          InsightPulseAI is designed for teams that need governed workflows, clear operational boundaries, and role-aware assistance. Public product guidance and authenticated operational copilots are separate surfaces, and current Copilot launch posture remains internal beta for trusted users.
+          InsightPulseAI is designed for teams that need governed workflows, clear operational boundaries, and role-aware assistance. Public product guidance and authenticated Pulser are separate surfaces, and current Pulser launch posture remains internal beta for trusted users.
         </p>
       </div>
 
@@ -1082,12 +1082,12 @@ const TrustPage = ({ setPage }: { setPage: (p: PageId) => void }) => (
           {
             icon: <Cloud size={32} className="text-brand-primary" />,
             title: "Read-only advisory launch posture",
-            desc: "Current Copilot posture is internal beta, trusted users, and fail-closed write behavior by default."
+            desc: "Current Pulser posture is internal beta, trusted users, and fail-closed write behavior by default."
           },
           {
             icon: <Lock size={32} className="text-brand-primary" />,
             title: "AI boundary clarity",
-            desc: "Public assistants answer from approved public knowledge only; authenticated copilots are separate product surfaces."
+            desc: "Public assistants answer from approved public knowledge only; authenticated Pulser is a separate product surface."
           }
         ].map((pillar, i) => (
           <div key={i} className="p-10 rounded-2xl bg-brand-light border border-gray-100">
@@ -1099,7 +1099,7 @@ const TrustPage = ({ setPage }: { setPage: (p: PageId) => void }) => (
       </div>
 
       <div className="mb-24">
-        <h2 className="text-3xl font-bold mb-12 tracking-tight">Current Copilot readiness</h2>
+        <h2 className="text-3xl font-bold mb-12 tracking-tight">Current Pulser readiness</h2>
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {[
             "Foundation complete",
@@ -1125,11 +1125,11 @@ const TrustPage = ({ setPage }: { setPage: (p: PageId) => void }) => (
               a: "No. The public assistant does not access tenant or company data from this page."
             },
             {
-              q: "Is Odoo Copilot generally available?",
+              q: "Is Pulser generally available?",
               a: "Not yet. Current launch posture is internal beta / trusted users / read-only advisory."
             },
             {
-              q: "Can Copilot execute write actions today?",
+              q: "Can Pulser execute write actions today?",
               a: "Write actions remain gated until evaluation, SLO, and readiness thresholds are completed."
             }
           ].map((faq, i) => (
@@ -1226,7 +1226,7 @@ const MarketingPage = ({ setPage }: { setPage: (p: PageId) => void }) => (
       <div className="grid md:grid-cols-3 gap-8">
         {[
           { title: "Unified customer and campaign operations", desc: "Connect your customer data with campaign execution for a true 360-degree view." },
-          { title: "AI-assisted planning and execution", desc: "Use Odoo Copilot to draft briefs, summarize results, and guide workflows." },
+          { title: "AI-assisted planning and execution", desc: "Use Pulser to draft briefs, summarize results, and guide workflows." },
           { title: "Better measurement and visibility", desc: "Real-time dashboards that show exactly where your marketing spend is going." }
         ].map((v, i) => (
           <div key={i} className="p-10 rounded-2xl bg-brand-light border border-gray-100">
@@ -1358,7 +1358,7 @@ const MediaPage = ({ setPage }: { setPage: (p: PageId) => void }) => (
             Media organizations generate audience, engagement, campaign, subscription, advertising, and content data across both structured and unstructured systems. The lakehouse pattern brings those sources together so teams can move faster across quality of experience, churn reduction, recommendation, personalization, attribution, pricing, and inventory planning.
           </p>
           <p className="text-gray-600 text-lg leading-relaxed mb-10">
-            InsightPulseAI uses that intelligence layer to power downstream operational execution in Odoo and downstream creative finishing in Studio Copilot — so audience and monetization signals do not stop at dashboards, but become briefs, workflows, approvals, and publish-ready outputs.
+            InsightPulseAI uses that intelligence layer to power downstream operational execution in Odoo and downstream creative finishing in Pulser — so audience and monetization signals do not stop at dashboards, but become briefs, workflows, approvals, and publish-ready outputs.
           </p>
           <div className="grid grid-cols-2 gap-4">
             {["Quality of Experience", "Churn / Survivorship", "Next Best Offer", "Content Recommendations", "Yield & Pricing", "Inventory Forecasting"].map((item, i) => (
@@ -1741,7 +1741,7 @@ const ResourcesPage = ({ setPage }: { setPage: (p: PageId) => void }) => (
     <div className="mb-16">
       <h1 className="text-3xl md:text-4xl font-bold mb-8 tracking-tight">Resource Hub</h1>
       <p className="text-xl text-gray-600 max-w-3xl leading-relaxed">
-        Your one place for guides, insights, case studies, implementation advice, and the latest thinking on Odoo, AI copilots, and cloud operations.
+        Your one place for guides, insights, case studies, implementation advice, and the latest thinking on Odoo, Pulser, and cloud operations.
       </p>
     </div>
 
@@ -1751,7 +1751,7 @@ const ResourcesPage = ({ setPage }: { setPage: (p: PageId) => void }) => (
         { icon: <Newspaper />, title: "Blog", desc: "The latest ideas, lessons, and best practices for modern ERP and AI.", link: "Read the Blog", page: 'resources' as PageId },
         { icon: <BookOpen />, title: "Learning Center", desc: "Explore deeper guides on Odoo, automation, and implementation.", link: "Go to the Learning Center", page: 'docs' as PageId },
         { icon: <Users />, title: "Customer Stories", desc: "See how teams modernize operations with InsightPulseAI.", link: "Read Customer Stories", page: 'company' as PageId },
-        { icon: <PlayCircle />, title: "Webinars", desc: "Practical sessions on ERP modernization and AI copilots.", link: "Explore Webinars", page: 'resources' as PageId },
+        { icon: <PlayCircle />, title: "Webinars", desc: "Practical sessions on ERP modernization and AI-assisted operations.", link: "Explore Webinars", page: 'resources' as PageId },
         { icon: <HelpCircle />, title: "Support and FAQs", desc: "Need implementation help or product guidance?", link: "Get Support", page: 'contact' as PageId },
         { icon: <Globe />, title: "Partners", desc: "Work with us as an implementation or technology partner.", link: "Explore Partnerships", page: 'contact' as PageId },
         { icon: <Tv />, title: "Media Reference Patterns", desc: "Technical reference patterns for media infrastructure, stream processing, storage, and legacy Azure media deployment examples.", link: "View Reference Patterns", page: 'media_reference_patterns' as PageId }
@@ -1816,7 +1816,7 @@ const PricingPage = ({ setPage }: { setPage: (p: PageId) => void }) => (
         {
           title: "Growth",
           price: "Custom",
-          features: ["Multi-workflow automation", "Enhanced reporting & dashboards", "Odoo Copilot assistance", "Integration support", "Sandbox & rollout guidance", "Expanded operational support"],
+          features: ["Multi-workflow automation", "Enhanced reporting & dashboards", "Pulser assistance", "Integration support", "Sandbox & rollout guidance", "Expanded operational support"],
           cta: "Contact Sales",
           highlight: true
         },
@@ -1879,7 +1879,7 @@ const CompanyPage = ({ setPage }: { setPage: (p: PageId) => void }) => (
           We build modern operating systems for ambitious businesses
         </h1>
         <p className="text-xl text-gray-400 leading-relaxed mb-12 max-w-3xl">
-          InsightPulseAI helps growing companies modernize operations with Odoo on Cloud, AI copilots, analytics, and automation. We combine architecture, implementation, and execution support into one operating model designed to scale with the business.
+          InsightPulseAI helps growing companies modernize operations with Odoo on Cloud, Pulser, analytics, and automation. We combine architecture, implementation, and execution support into one operating model designed to scale with the business.
         </p>
         <div className="flex flex-wrap gap-4">
           <a href={EXTERNAL_URLS.demo} target="_blank" rel="noopener noreferrer" className="px-10 py-5 bg-brand-primary text-black font-extrabold rounded-full hover:bg-cyan-400 transition-all inline-block">Book Demo</a>
@@ -1902,9 +1902,9 @@ const CompanyPage = ({ setPage }: { setPage: (p: PageId) => void }) => (
       <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
         {[
           { icon: <Cloud size={32} className="text-brand-primary" />, title: "Odoo on Cloud", desc: "We design, deploy, and evolve cloud-based Odoo environments that give teams a stronger operational core." },
-          { icon: <Cpu size={32} className="text-brand-primary" />, title: "AI Copilots", desc: "We add AI assistance where work slows down — helping teams navigate workflows, reduce friction, and accelerate execution." },
+          { icon: <Cpu size={32} className="text-brand-primary" />, title: "Pulser", desc: "We add AI assistance where work slows down — helping teams navigate workflows, reduce friction, and accelerate execution." },
           { icon: <BarChart3 size={32} className="text-brand-primary" />, title: "Analytics & Visibility", desc: "We connect data, reporting, and operational insight so leaders can see what is happening and what should happen next." },
-          { icon: <Settings size={32} className="text-brand-primary" />, title: "Managed Operations", desc: "We support environments over time with practical operating discipline, not just one-time implementation." },
+          { icon: <Settings size={32} className="text-brand-primary" />, title: "Cloud Operations", desc: "We support environments over time with practical operating discipline, not just one-time implementation." },
         ].map((item, i) => (
           <div key={i} className="p-8 rounded-2xl bg-brand-light border border-gray-100">
             <div className="mb-6">{item.icon}</div>
@@ -1925,7 +1925,7 @@ const CompanyPage = ({ setPage }: { setPage: (p: PageId) => void }) => (
         {[
           { title: "Architecture-led", desc: "We design for scale, governance, and long-term system evolution." },
           { title: "Execution-focused", desc: "We care about operational outcomes, not just project completion." },
-          { title: "AI-assisted", desc: "We use copilots and automation where they create real leverage." },
+          { title: "AI-assisted", desc: "We use Pulser and automation where they create real leverage." },
           { title: "Cloud-native", desc: "We modernize delivery, observability, and lifecycle management from the start." },
         ].map((item, i) => (
           <div key={i} className="flex items-start gap-6 p-8 rounded-2xl border border-gray-100">
@@ -1949,7 +1949,7 @@ const CompanyPage = ({ setPage }: { setPage: (p: PageId) => void }) => (
         {[
           { step: "01", title: "Assess the operating model", desc: "Understand the current state, pain points, and growth trajectory." },
           { step: "02", title: "Design the cloud and workflow foundation", desc: "Architect the Odoo environment, integrations, and delivery model." },
-          { step: "03", title: "Evolve with AI, analytics, and automation", desc: "Add copilots, dashboards, and workflows that compound over time." },
+          { step: "03", title: "Evolve with AI, analytics, and automation", desc: "Add Pulser, dashboards, and workflows that compound over time." },
         ].map((item, i) => (
           <div key={i} className="p-8 rounded-2xl bg-brand-dark text-white">
             <span className="text-brand-primary font-bold text-sm mb-4 block">{item.step}</span>
@@ -2031,7 +2031,7 @@ const TermsPage = ({ setPage }: { setPage: (p: PageId) => void }) => (
         </div>
         <div className="p-8 rounded-2xl bg-brand-light border border-gray-100">
           <h2 className="text-xl font-bold mb-4">Services</h2>
-          <p className="text-gray-600 leading-relaxed">InsightPulseAI provides cloud-hosted Odoo ERP environments, AI-assisted copilot features, analytics dashboards, and managed operations services. Service availability and features may vary by plan.</p>
+          <p className="text-gray-600 leading-relaxed">InsightPulseAI provides cloud-hosted Odoo ERP environments, Pulser AI assistance, analytics dashboards, and cloud operations services. Service availability and features may vary by plan.</p>
         </div>
         <div className="p-8 rounded-2xl bg-brand-light border border-gray-100">
           <h2 className="text-xl font-bold mb-4">User responsibilities</h2>
@@ -2108,7 +2108,7 @@ const NewsroomPage = ({ setPage }: { setPage: (p: PageId) => void }) => (
       </div>
       <div className="grid md:grid-cols-2 gap-8 mb-24">
         {[
-          { date: "March 2026", title: "InsightPulseAI launches Odoo on Cloud with AI Copilot", desc: "Our platform combines hosted Odoo ERP, AI-assisted workflows, and cloud operations into one governed operating model for marketing, media, retail, and financial services." },
+          { date: "March 2026", title: "InsightPulseAI launches Odoo on Cloud with Pulser", desc: "Our platform combines hosted Odoo ERP, AI-assisted workflows, and cloud operations into one governed operating model for marketing, media, retail, and financial services." },
           { date: "March 2026", title: "Media & Entertainment solution goes live", desc: "Audience intelligence, content operations, and monetization workflows now available as a dedicated vertical solution." },
           { date: "February 2026", title: "Azure infrastructure migration complete", desc: "Full migration from DigitalOcean to Azure Container Apps with Front Door edge, managed PostgreSQL, and enterprise identity readiness." },
           { date: "January 2026", title: "Retail Operations solution announced", desc: "Real-time inventory, supply chain intelligence, and omnichannel customer visibility for retail organizations." },
@@ -2210,7 +2210,7 @@ export default function App() {
         {renderPage()}
       </AnimatePresence>
       <Footer setPage={setCurrentPage} />
-      <AIChatCopilot />
+      <AskPulser />
     </div>
   );
 }

@@ -8,10 +8,14 @@ async function startServer() {
 
   app.use(express.json());
 
-  // --- Backend Chat Gateway ---
-  // This route acts as the secure entry point for the landing page chat.
-  // It proxies requests to Azure AI Foundry Agent Service.
-  app.post("/api/copilot/chat", async (req, res) => {
+  // --- Pulser Chat Gateway ---
+  // Secure entry point for the landing page product assistant.
+  // Proxies requests to Azure AI Foundry Agent Service.
+  // DEPRECATED: Remove after 2026-04-30. Use /api/pulser/chat.
+  app.post("/api/copilot/chat", handleChat);
+  app.post("/api/pulser/chat", handleChat);
+
+  async function handleChat(req: express.Request, res: express.Response) {
     const { message, sessionId, conversationId, context } = req.body;
 
     // Security: Validate surface
@@ -20,19 +24,12 @@ async function startServer() {
     }
 
     try {
-      // In a real production environment, you would use the Azure AI Foundry REST API:
-      // const foundryEndpoint = `https://${process.env.AZURE_AI_FOUNDRY_PROJECT_NAME}.services.ai.azure.com/api/projects/${process.env.AZURE_AI_FOUNDRY_PROJECT_NAME}/agents/${process.env.AZURE_AI_FOUNDRY_AGENT_ID}/chat`;
-      
-      // For this implementation, we will simulate the Foundry Agent Service response
-      // using the Gemini API on the backend to maintain the "Secure Gateway" pattern.
-      // This keeps the API keys hidden from the client.
-
-      // Mocking the "Public Advisory" logic
-      const reply = await simulateFoundryResponse(message);
+      const { reply, sourceLabel } = await simulatePulserResponse(message);
 
       res.json({
-        conversationId: conversationId || "foundry-thread-" + Math.random().toString(36).substring(7),
+        conversationId: conversationId || "pulser-thread-" + Math.random().toString(36).substring(7),
         reply: reply,
+        sourceLabel: sourceLabel,
         citations: [],
         suggestedPrompts: [
           "Show me the core modules",
@@ -47,9 +44,9 @@ async function startServer() {
       });
     } catch (error) {
       console.error("Gateway error:", error);
-      res.status(500).json({ error: "Failed to reach Odoo Copilot" });
+      res.status(500).json({ error: "Failed to reach Pulser service" });
     }
-  });
+  }
 
   // Vite middleware for development
   if (process.env.NODE_ENV !== "production") {
@@ -71,22 +68,45 @@ async function startServer() {
   });
 }
 
-// Simple simulation of the Odoo Copilot advisory brain
-async function simulateFoundryResponse(message: string): Promise<string> {
-  // In production, this would be a fetch() call to Azure Foundry
+// Pulser product assistant — mock responses (replace with Foundry in production)
+async function simulatePulserResponse(message: string): Promise<{ reply: string; sourceLabel: string }> {
   const lowerMsg = message.toLowerCase();
-  
-  if (lowerMsg.includes("what is odoo")) {
-    return "Odoo on Cloud is a modern, modular ERP platform hosted in a secure environment. It allows you to run finance, CRM, inventory, and more without managing your own servers.";
+
+  if (lowerMsg.includes("what is pulser")) {
+    return {
+      reply: "Pulser is the intelligent assistant family by InsightPulseAI. It helps teams navigate ERP workflows, summarize records, and make faster operational decisions — all built on Odoo CE and Azure.",
+      sourceLabel: "Product Docs"
+    };
   }
-  if (lowerMsg.includes("copilot")) {
-    return "Odoo Copilot is our AI-native assistant layer. It helps teams automate repetitive tasks, summarize complex records, and guide users through operational workflows.";
+  if (lowerMsg.includes("what is odoo") || lowerMsg.includes("odoo on cloud")) {
+    return {
+      reply: "Odoo on Cloud is a modern, modular ERP platform hosted in a secure Azure environment. It allows you to run finance, CRM, inventory, and more without managing your own servers. Pulser adds intelligent assistance on top.",
+      sourceLabel: "Product Docs"
+    };
   }
   if (lowerMsg.includes("industries")) {
-    return "We specialize in Marketing, Media & Entertainment, Retail, and Financial Services operations.";
+    return {
+      reply: "We specialize in Marketing, Media & Entertainment, Retail, and Financial Services operations.",
+      sourceLabel: "Product Docs"
+    };
   }
-  
-  return "Odoo Copilot helps teams unify operations and automate execution. For specific implementation details or a deep dive into your industry, I recommend booking a demo with our specialists.";
+  if (lowerMsg.includes("architecture") || lowerMsg.includes("how does it work")) {
+    return {
+      reply: "InsightPulseAI runs on Azure Container Apps with Odoo CE 19 as the ERP backbone, Databricks for analytics, and Azure AI Foundry for the Pulser assistant runtime. All services are behind Azure Front Door with managed identity and Key Vault for secrets.",
+      sourceLabel: "Architecture"
+    };
+  }
+  if (lowerMsg.includes("pricing") || lowerMsg.includes("cost") || lowerMsg.includes("plan")) {
+    return {
+      reply: "InsightPulseAI offers Starter, Growth, and Scale plans. Each includes Odoo on Cloud, Pulser assistant access, and managed operations. I'd recommend speaking with our team for a pricing conversation tailored to your needs.",
+      sourceLabel: "Pricing"
+    };
+  }
+
+  return {
+    reply: "Pulser helps teams unify operations and automate execution across ERP, analytics, and creative workflows. For specific implementation details or a deep dive into your industry, I recommend booking a demo with our specialists.",
+    sourceLabel: "Product Docs"
+  };
 }
 
 startServer();

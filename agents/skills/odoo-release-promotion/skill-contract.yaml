@@ -1,0 +1,50 @@
+version: 1
+name: odoo-release-promotion
+status: draft
+owner: agents
+type: benchmark_skill
+
+microsoft_capability_family: "GitHub / DevOps / Azure Deployment"
+
+purpose: "Validate release promotion workflow with stage gates from dev to staging to production"
+triggers:
+  - "check release promotion"
+  - "validate deployment pipeline"
+  - "promotion gate audit"
+inputs:
+  - pipeline_name: ""
+  - target_environment: "production"
+dependencies:
+  - infra/ssot/azure/service-matrix.yaml
+  - scripts/deploy-odoo-modules.sh
+steps:
+  - read pipeline definitions for stage gates
+  - verify dev->staging requires test pass + scan clean
+  - verify staging->prod requires manual approval
+  - check Container Apps revision management
+  - validate traffic splitting configuration
+outputs:
+  - docs/evidence/<stamp>/release-promotion/promotion-log.json
+  - docs/evidence/<stamp>/release-promotion/gate-results.json
+guardrails:
+  - never promote to production without passing all gates
+  - never bypass manual approval for production
+evidence:
+  - pipeline stage gate definitions
+  - promotion timestamps with gate pass/fail
+  - revision traffic split configuration
+evals:
+  - pipeline_has_dev_staging_prod_stages
+  - staging_requires_test_pass
+  - prod_requires_manual_approval
+  - revision_traffic_splitting_configured
+
+mcp_search_prompts:
+  - "Azure Container Apps revision management traffic splitting"
+  - "Azure DevOps pipeline stage gates approval"
+  - "Azure Container Apps blue green deployment"
+mcp_fetch_targets:
+  - "Revisions in Azure Container Apps"
+  - "Define approvals and checks in Azure Pipelines"
+mcp_code_sample_queries:
+  - "Azure Container Apps revision traffic split deployment"
