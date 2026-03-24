@@ -1,0 +1,58 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Creative Benchmark Report",
+  "type": "object",
+  "required": ["timestamp", "models"],
+  "properties": {
+    "timestamp": { "type": "string", "format": "date-time" },
+    "models": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "required": ["scores", "failures", "summary"],
+        "properties": {
+          "scores": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["fixture_id", "score_overall", "pass_fail"],
+              "properties": {
+                "fixture_id": { "type": "string" },
+                "score_overall": { "type": "number", "minimum": 0, "maximum": 1 },
+                "dimension_scores": { "type": "object" },
+                "pass_fail": { "type": "string", "enum": ["pass", "warn", "fail", "skip"] },
+                "issues": { "type": "array", "items": { "type": "string" } },
+                "brand_violations": { "type": "array", "items": { "type": "string" } },
+                "gen_time_ms": { "type": "integer" },
+                "eval_time_ms": { "type": "integer" }
+              }
+            }
+          },
+          "failures": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["fixture_id", "reason"],
+              "properties": {
+                "fixture_id": { "type": "string" },
+                "reason": { "type": "string" }
+              }
+            }
+          },
+          "total_time_ms": { "type": "integer" },
+          "summary": {
+            "type": "object",
+            "required": ["total_fixtures", "passed", "failed", "avg_score"],
+            "properties": {
+              "total_fixtures": { "type": "integer" },
+              "passed": { "type": "integer" },
+              "failed": { "type": "integer" },
+              "avg_score": { "type": "number" },
+              "cost_relative": { "type": "number" }
+            }
+          }
+        }
+      }
+    }
+  }
+}

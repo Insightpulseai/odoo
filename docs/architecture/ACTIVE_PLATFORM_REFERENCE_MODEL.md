@@ -81,14 +81,37 @@
 
 Supabase, n8n, Plane, Shelf, standalone CRM, Keycloak. See `RETIRED_SERVICES.md`.
 
+## Doctrinal Split
+
+> **Entra authenticates. Foundry thinks. Document Intelligence reads. Odoo records.**
+
+| Service | Role | Does NOT |
+|---------|------|----------|
+| **Entra ID** | SSO/OAuth into Odoo and all Azure apps ([Odoo 19 native](https://www.odoo.com/documentation/19.0/applications/general/users/azure.html)) | Replace Odoo's internal authorization model (groups, record rules, finance permissions) |
+| **Foundry Agent Service** | Pulser agent runtime, reasoning, orchestration, tool calls ([Azure AI Foundry](https://learn.microsoft.com/azure/ai-foundry/agents/overview)) | Own transactional state (invoices, approvals, expenses, tickets stay in Odoo) |
+| **Document Intelligence** | OCR/document extraction for invoices, receipts, BIR forms, vendor bills ([Azure Doc Intel](https://learn.microsoft.com/azure/ai-services/document-intelligence/overview)) | Replace Odoo's document management (Odoo stores the record, Doc Intel extracts the data) |
+| **Odoo CE 19** | Transactional SoR: approvals, accounting, expenses, documents, projects | Reason about data (that's Foundry/Pulser) or extract from images (that's Doc Intel) |
+
+### Document Intelligence Flow
+
+```
+File → Odoo attachment/intake → Document Intelligence (Read/Layout/Prebuilt) →
+  structured output → Odoo maps to vendor bill/receipt/expense/document record →
+  Pulser/Foundry for review, exception handling, guided corrections
+```
+
+**Rule**: Use Document Intelligence Read/Layout for documents (PDFs, scans, receipts, invoices, forms). Use Azure AI Vision OCR only for non-document images (street signs, labels, posters).
+
 ## Invariants
 
 1. **Databricks is primary** for data engineering. Fabric/Power BI are consumption only.
 2. **Foundry is the AI plane.** Agent behavior lives in `agents/`, execution on Foundry.
 3. **Spec Kit drives SDLC.** `spec/` → coding agent → quality gate → deploy.
-4. **Entra is identity authority.** All services authenticate through Entra.
+4. **Entra is identity authority.** All services authenticate through Entra via OAuth/OIDC.
 5. **No retired services in new designs.** Supabase, n8n, Plane, Shelf are not reference architecture.
 6. **Pulser UI in `web/`, logic in `agents/`, Odoo module in `addons/ipai/`.**
+7. **Odoo is the transactional SoR.** Foundry agents call Odoo APIs — they do not own business state.
+8. **Document Intelligence is the OCR plane.** Documents flow through Doc Intel, records land in Odoo.
 
 ## Detailed Docs
 
