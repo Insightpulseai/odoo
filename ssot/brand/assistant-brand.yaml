@@ -1,0 +1,101 @@
+# SSOT: Assistant Brand Registry
+# Canonical source for all Pulser product naming
+# Authority: docs/brand/PULSER_NAMING_DOCTRINE.md
+# Updated: 2026-03-25
+
+corporate_brand: InsightPulseAI
+assistant_family_brand:
+  canonical: Pulser
+  tagline: "Intelligent Assistant"
+  derivation: "InsightPulseAI → Pulse → Pulser"
+  deprecated_spellings:
+    - Pulsar
+
+products:
+  core:
+    canonical_name: Pulser
+    ui_label: Pulser
+    compact_label: Pulser
+    platform_explicit: Pulser for Odoo
+    legacy_aliases:
+      - Odoo Copilot
+      - Copilot
+    status: active
+
+  diva:
+    canonical_name: Pulser Diva
+    ui_label: Diva
+    compact_label: Diva
+    legacy_aliases:
+      - DIVA Copilot
+      - Diva Copilot
+    status: active
+
+  studio:
+    canonical_name: Pulser Studio
+    ui_label: Studio
+    compact_label: Studio
+    legacy_aliases:
+      - W9 Studio Copilot
+      - W9 Studio
+      - Studio Copilot
+    status: active
+
+  genie:
+    canonical_name: Pulser Genie
+    ui_label: Genie
+    compact_label: Genie
+    legacy_aliases: []
+    status: active
+
+  docs:
+    canonical_name: Pulser Docs
+    ui_label: Docs
+    compact_label: Docs
+    legacy_aliases:
+      - Document Intelligence
+    status: active
+
+widgets:
+  ask_widget:
+    canonical_name: Ask Pulser
+    ui_label: Ask Pulser
+    compact_label: Ask Pulser
+    legacy_aliases:
+      - Ask Odoo Copilot
+    status: active
+
+third_party_descriptor_policy:
+  odoo:
+    allowed_descriptive_forms:
+      - Pulser for Odoo
+      - Ask Pulser for Odoo
+      - "built on Odoo CE"
+      - "works with Odoo"
+    prohibited_primary_brand_forms:
+      - Odoo Copilot
+      - Odoo Pulser
+      - InsightPulseAI Odoo
+      - Odoo Assistant
+  microsoft:
+    allowed_descriptive_forms:
+      - "works with Microsoft Teams"
+      - "runs on Azure"
+      - "powered by Azure AI Foundry"
+    prohibited_primary_brand_forms:
+      - Copilot (as product name)
+      - Microsoft Copilot (implying our product)
+      - Teams Copilot
+  generic:
+    preferred_descriptors:
+      - intelligent assistant
+      - AI assistant
+      - AI-powered assistant
+    avoid_descriptors:
+      - copilot (capitalized, as product identity)
+      - AI copilot (as brand)
+
+attribution_footer: >
+  Odoo is a registered trademark of Odoo S.A. Microsoft, Azure, Copilot,
+  Teams, and Power BI are trademarks of Microsoft Corporation. InsightPulseAI
+  is not affiliated with or endorsed by Odoo S.A. or Microsoft Corporation.

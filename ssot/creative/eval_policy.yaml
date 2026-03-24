@@ -1,0 +1,140 @@
+# SSOT: Creative Evaluation Policy
+# Scoring dimensions, thresholds, retry rules for AI-generated assets
+# Implementation: infra/ai/provider_router/creative_eval.py
+# Updated: 2026-03-25
+
+version: 1
+
+image_dimensions:
+  - id: prompt_adherence
+    weight: 0.25
+    description: "Does the image match what was requested?"
+  - id: composition
+    weight: 0.15
+    description: "Layout balance, hierarchy, visual weight distribution"
+  - id: aesthetic_quality
+    weight: 0.15
+    description: "Overall polish, lighting, color harmony, professional finish"
+  - id: text_rendering_accuracy
+    weight: 0.20
+    description: "Legibility, spelling, font quality of any text in the image"
+    hard_fail_if_below: 0.5
+  - id: brand_compliance
+    weight: 0.15
+    description: "Correct brand names, no deprecated terms, style alignment"
+    hard_fail_if_below: 0.5
+  - id: artifact_detection
+    weight: 0.10
+    description: "No corrupted regions, watermarks, gibberish, broken anatomy"
+    hard_fail_if_below: 0.3
+
+video_dimensions:
+  - id: prompt_adherence
+    weight: 0.25
+    description: "Does the video match what was requested?"
+  - id: temporal_coherence
+    weight: 0.25
+    description: "Frame-to-frame consistency, no flicker, stable subjects"
+    hard_fail_if_below: 0.4
+  - id: motion_quality
+    weight: 0.15
+    description: "Camera stability, natural movement, no jitter"
+  - id: visual_quality
+    weight: 0.15
+    description: "Resolution, sharpness, color grading, professional look"
+  - id: brand_compliance
+    weight: 0.10
+    description: "Correct brand names if visible, style alignment"
+    hard_fail_if_below: 0.5
+  - id: artifact_detection
+    weight: 0.10
+    description: "No corrupted frames, morphing errors, or visual glitches"
+    hard_fail_if_below: 0.3
+
+thresholds:
+  pass: 0.85
+  warn: 0.70
+  fail_below: 0.70
+
+surface_presets:
+  brand_og:
+    text_rendering_accuracy_min: 0.9
+    brand_compliance_min: 0.95
+    overall_min: 0.85
+  landing_hero:
+    composition_min: 0.8
+    aesthetic_quality_min: 0.8
+    overall_min: 0.80
+  product_ui:
+    prompt_adherence_min: 0.85
+    composition_min: 0.8
+    overall_min: 0.80
+  ad_creative:
+    text_rendering_accuracy_min: 0.9
+    brand_compliance_min: 0.95
+    aesthetic_quality_min: 0.8
+    overall_min: 0.85
+  video_teaser:
+    temporal_coherence_min: 0.8
+    motion_quality_min: 0.75
+    overall_min: 0.75
+
+retry_policy:
+  max_attempts: 3
+  reroute_on_fail:
+    stills_fast: stills_standard
+    stills_standard: stills_premium
+    stills_premium: reject
+    video_default: reject
+  retry_triggers:
+    - score_below_warn
+    - hard_fail_dimension
+    - brand_violation
+  no_retry_triggers:
+    - prompt_fundamentally_wrong
+    - unsafe_content
+
+model_comparison:
+  image_models:
+    - id: nano-banana-2-preview
+      tier: fast
+      cost_relative: 1.0
+    - id: nano-banana-pro-preview
+      tier: standard
+      cost_relative: 3.0
+    - id: imagen-4
+      tier: premium
+      cost_relative: 5.0
+  video_models:
+    - id: veo-3.1-preview
+      tier: premium
+      cost_relative: 10.0
+
+brand_rules:
+  required_corporate: InsightPulseAI
+  required_assistant: Pulser
+  allowed_public_names:
+    - InsightPulseAI
+    - Pulser
+    - Odoo on Cloud
+    - Cloud Operations
+    - Analytics & Dashboards
+    - Ask Pulser
+    - Pulser for Odoo
+  forbidden_public_names:
+    - Odoo Copilot
+    - Ask Odoo Copilot
+    - Pulsar
+    - InsightPulse AI
+  text_rendering_check: true
+  forbidden_in_generated_text: true
+
+references:
+  generation_service: infra/ai/provider_router/creative.py
+  eval_runner: infra/ai/provider_router/creative_eval.py
+  judge_image: agents/evals/creative/judge_image.md
+  judge_video: agents/evals/creative/judge_video.md
+  rubric_image: agents/evals/creative/rubric_image.yaml
+  rubric_video: agents/evals/creative/rubric_video.yaml
+  golden_fixtures: agents/evals/creative/fixtures/
+  benchmark: agents/evals/creative/benchmark.py

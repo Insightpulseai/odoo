@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1200">
+<title>InsightPulseAI - Executive OG Card</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+  *, *::before, *::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  body {
+    width: 1200px;
+    height: 630px;
+    overflow: hidden;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: #0B1120;
+    position: relative;
+  }
+
+  .card {
+    width: 1200px;
+    height: 630px;
+    overflow: hidden;
+    position: relative;
+    background: linear-gradient(135deg, #0B1120 0%, #111B2E 40%, #0F1926 100%);
+  }
+
+  /* Subtle geometric grid on right side */
+  .grid-pattern {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 520px;
+    height: 630px;
+    opacity: 0.08;
+  }
+
+  .grid-line-h {
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent 0%, #4DA8DA 30%, #4DA8DA 70%, transparent 100%);
+  }
+
+  .grid-line-v {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 1px;
+    background: linear-gradient(180deg, transparent 0%, #4DA8DA 30%, #4DA8DA 70%, transparent 100%);
+  }
+
+  /* Accent nodes at grid intersections */
+  .grid-node {
+    position: absolute;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #4DA8DA;
+    opacity: 0.4;
+  }
+
+  /* Top accent line */
+  .top-accent {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #1A8FCA 0%, #2DD4BF 50%, transparent 80%);
+  }
+
+  /* Content area */
+  .content {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    padding: 64px 80px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    z-index: 2;
+  }
+
+  /* Wordmark */
+  .wordmark {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .wordmark-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    background: linear-gradient(135deg, #1A8FCA, #2DD4BF);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+
+  .wordmark-icon::after {
+    content: '';
+    width: 14px;
+    height: 14px;
+    border: 2.5px solid #fff;
+    border-radius: 50%;
+    box-shadow: 0 0 0 3px rgba(255,255,255,0.15);
+  }
+
+  .wordmark-text {
+    font-size: 22px;
+    font-weight: 700;
+    color: #E8EDF5;
+    letter-spacing: -0.02em;
+  }
+
+  .wordmark-text span {
+    color: #4DA8DA;
+  }
+
+  /* Headline */
+  .headline-block {
+    max-width: 640px;
+  }
+
+  .headline {
+    font-size: 52px;
+    font-weight: 800;
+    line-height: 1.12;
+    color: #FFFFFF;
+    letter-spacing: -0.03em;
+    margin-bottom: 24px;
+  }
+
+  .headline .accent {
+    color: #2DD4BF;
+  }
+
+  /* Sub-label */
+  .sub-label {
+    font-size: 17px;
+    font-weight: 500;
+    color: #6B8299;
+    letter-spacing: 0.04em;
+  }
+
+  .sub-label .dot {
+    display: inline-block;
+    margin: 0 12px;
+    color: #2C4259;
+  }
+
+  /* Bottom bar */
+  .bottom-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .domain {
+    font-size: 15px;
+    font-weight: 500;
+    color: #3D5A73;
+    letter-spacing: 0.02em;
+  }
+
+  /* Right-side decorative elements */
+  .structure-block {
+    position: absolute;
+    right: 80px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 380px;
+    height: 340px;
+    z-index: 1;
+  }
+
+  .s-row {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+
+  .s-cell {
+    border: 1px solid rgba(77, 168, 218, 0.1);
+    border-radius: 6px;
+    background: rgba(77, 168, 218, 0.02);
+    height: 44px;
+    flex: 1;
+    position: relative;
+  }
+
+  .s-cell.active {
+    border-color: rgba(45, 212, 191, 0.2);
+    background: rgba(45, 212, 191, 0.04);
+  }
+
+  .s-cell.wide { flex: 2; }
+  .s-cell.narrow { flex: 0.6; }
+
+  .s-cell::after {
+    content: '';
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    right: 30%;
+    height: 4px;
+    border-radius: 2px;
+    background: rgba(77, 168, 218, 0.12);
+  }
+
+  .s-cell.active::after {
+    background: rgba(45, 212, 191, 0.18);
+  }
+
+  /* Subtle glow behind structure */
+  .glow {
+    position: absolute;
+    right: 120px;
+    top: 45%;
+    width: 400px;
+    height: 400px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(26, 143, 202, 0.06) 0%, transparent 70%);
+    z-index: 0;
+  }
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="top-accent"></div>
+  <div class="glow"></div>
+
+  <!-- Grid pattern -->
+  <div class="grid-pattern">
+    <div class="grid-line-h" style="top: 90px;"></div>
+    <div class="grid-line-h" style="top: 180px;"></div>
+    <div class="grid-line-h" style="top: 270px;"></div>
+    <div class="grid-line-h" style="top: 360px;"></div>
+    <div class="grid-line-h" style="top: 450px;"></div>
+    <div class="grid-line-h" style="top: 540px;"></div>
+    <div class="grid-line-v" style="left: 90px;"></div>
+    <div class="grid-line-v" style="left: 180px;"></div>
+    <div class="grid-line-v" style="left: 270px;"></div>
+    <div class="grid-line-v" style="left: 360px;"></div>
+    <div class="grid-line-v" style="left: 450px;"></div>
+    <div class="grid-node" style="top: 177px; left: 177px;"></div>
+    <div class="grid-node" style="top: 267px; left: 267px;"></div>
+    <div class="grid-node" style="top: 177px; left: 357px;"></div>
+    <div class="grid-node" style="top: 357px; left: 177px;"></div>
+    <div class="grid-node" style="top: 447px; left: 87px;"></div>
+    <div class="grid-node" style="top: 267px; left: 447px;"></div>
+    <div class="grid-node" style="top: 357px; left: 357px;"></div>
+  </div>
+
+  <!-- Structural blocks -->
+  <div class="structure-block">
+    <div class="s-row">
+      <div class="s-cell wide"></div>
+      <div class="s-cell narrow"></div>
+    </div>
+    <div class="s-row">
+      <div class="s-cell narrow"></div>
+      <div class="s-cell active wide"></div>
+    </div>
+    <div class="s-row">
+      <div class="s-cell"></div>
+      <div class="s-cell"></div>
+      <div class="s-cell narrow"></div>
+    </div>
+    <div class="s-row">
+      <div class="s-cell wide active"></div>
+      <div class="s-cell"></div>
+    </div>
+    <div class="s-row">
+      <div class="s-cell narrow"></div>
+      <div class="s-cell"></div>
+      <div class="s-cell active"></div>
+    </div>
+    <div class="s-row">
+      <div class="s-cell"></div>
+      <div class="s-cell narrow active"></div>
+      <div class="s-cell wide"></div>
+    </div>
+  </div>
+
+  <!-- Content -->
+  <div class="content">
+    <div class="wordmark">
+      <div class="wordmark-icon"></div>
+      <div class="wordmark-text">InsightPulse<span>AI</span></div>
+    </div>
+
+    <div class="headline-block">
+      <h1 class="headline">Run Odoo in the Cloud<br>with <span class="accent">Practical AI</span></h1>
+      <div class="sub-label">
+        Odoo on Cloud<span class="dot">&middot;</span>Cloud Operations<span class="dot">&middot;</span>Analytics
+      </div>
+    </div>
+
+    <div class="bottom-bar">
+      <div class="domain">insightpulseai.com</div>
+    </div>
+  </div>
+</div>
+</body>
+</html>
