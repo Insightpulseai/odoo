@@ -1,3 +1,9 @@
+---
+name: databricks-ml-serving-ops
+description: Manage Databricks ML experiments, model registry, and serving endpoints via CLI
+microsoft_capability_family: "Azure / Databricks"
+---
+
 # Databricks ML & Serving Ops Skill
 
 ## Purpose
