@@ -1,0 +1,49 @@
+version: 1
+name: azure-policy-guardrails
+status: draft
+owner: agents
+type: benchmark_skill
+
+microsoft_capability_family: "Azure / Governance / Security"
+
+purpose: "Validate Azure Policy assignments enforce region, tagging, SKU, and security baselines"
+triggers:
+  - "check azure policy compliance"
+  - "validate governance guardrails"
+  - "policy assignment audit"
+inputs:
+  - subscription_id: ""
+  - resource_group: "rg-ipai-dev-odoo-runtime"
+dependencies:
+  - infra/azure/policy/
+  - infra/ssot/azure/resources.yaml
+steps:
+  - read policy definitions and assignments from IaC
+  - query az policy assignment list for live state
+  - check compliance state via az policy state
+  - compare against CAF baseline recommendations
+  - report non-compliant resources
+outputs:
+  - docs/evidence/<stamp>/azure-policy/compliance-report.json
+  - docs/evidence/<stamp>/azure-policy/policy-assignments.json
+guardrails:
+  - never assign deny-effect policies without approval
+  - never remove existing policy assignments
+evidence:
+  - policy assignment list
+  - compliance percentage per initiative
+  - non-compliant resource details
+evals:
+  - allowed_locations_enforced
+  - required_tags_enforced
+  - compliance_gte_90_percent
+
+mcp_search_prompts:
+  - "Azure Policy built-in definitions Container Apps"
+  - "Azure Policy deny effect allowed locations"
+  - "Azure Policy compliance evaluation remediation"
+mcp_fetch_targets:
+  - "Azure Policy overview"
+  - "Azure Policy built-in definitions for Container Apps"
+mcp_code_sample_queries:
+  - "Azure Policy assignment Bicep allowed locations"

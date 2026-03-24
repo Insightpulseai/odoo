@@ -1,0 +1,50 @@
+version: 1
+name: odoo-image-supply-chain
+status: draft
+owner: agents
+type: benchmark_skill
+
+microsoft_capability_family: "GitHub / DevOps / Azure Container Registry"
+
+purpose: "Validate container image build pipeline, vulnerability scanning, and registry governance"
+triggers:
+  - "check image supply chain"
+  - "validate container scanning"
+  - "ACR governance audit"
+inputs:
+  - acr_name: "acripaiodoo"
+  - image_repo: "ipai-odoo"
+dependencies:
+  - docker/odoo/Dockerfile
+  - infra/ssot/azure/resources.yaml
+steps:
+  - read Dockerfile for multi-stage build compliance
+  - check CI pipeline for build-scan-push flow
+  - verify ACR is the only push target
+  - check vulnerability scan integration
+  - verify production images use immutable digests
+outputs:
+  - docs/evidence/<stamp>/image-supply-chain/scan-report.json
+  - docs/evidence/<stamp>/image-supply-chain/image-digest.txt
+guardrails:
+  - never push images from local workstation to production ACR
+  - never skip vulnerability scanning
+evidence:
+  - CI pipeline build logs
+  - vulnerability scan report
+  - image digest for production tag
+evals:
+  - images_built_via_ci
+  - scan_runs_before_deploy
+  - production_uses_immutable_digest
+  - acr_is_only_push_target
+
+mcp_search_prompts:
+  - "Azure Container Registry image scanning Defender for Containers"
+  - "ACR tasks automated container build GitHub"
+  - "Container image signing content trust Azure"
+mcp_fetch_targets:
+  - "Azure Container Registry best practices"
+  - "Defender for Containers vulnerability assessment"
+mcp_code_sample_queries:
+  - "Azure Container Registry task build push GitHub Actions"

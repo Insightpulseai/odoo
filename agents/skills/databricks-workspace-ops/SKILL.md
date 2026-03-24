@@ -1,3 +1,9 @@
+---
+name: databricks-workspace-ops
+description: Manage Databricks workspace artifacts via CLI
+microsoft_capability_family: "Azure / Databricks"
+---
+
 # Databricks Workspace Ops Skill
 
 ## Purpose

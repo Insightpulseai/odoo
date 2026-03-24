@@ -1,0 +1,49 @@
+version: 1
+name: aca-private-networking
+status: draft
+owner: agents
+type: benchmark_skill
+
+microsoft_capability_family: "Azure / Networking / Container Apps"
+
+purpose: "Validate VNet integration, ingress configuration, and NSG rules for Container Apps"
+triggers:
+  - "check container apps networking"
+  - "validate private networking"
+  - "NSG rules audit"
+inputs:
+  - environment: "ipai-odoo-dev-env"
+  - resource_group: "rg-ipai-dev-odoo-runtime"
+dependencies:
+  - infra/ssot/azure/service-matrix.yaml
+  - infra/azure/networking/
+steps:
+  - read service-matrix.yaml for public/internal classification
+  - query az containerapp show for ingress config per app
+  - check VNet integration for environment
+  - check NSG rules for Front Door restriction
+  - report misconfigurations
+outputs:
+  - docs/evidence/<stamp>/aca-networking/ingress-config.json
+  - docs/evidence/<stamp>/aca-networking/nsg-rules.json
+guardrails:
+  - never change ingress from internal to external without approval
+  - never remove NSG rules without approval
+evidence:
+  - az containerapp show output per app
+  - VNet/subnet configuration
+  - NSG rules listing
+evals:
+  - internal_apps_not_public
+  - public_apps_front_door_only
+  - vnet_integration_enabled
+
+mcp_search_prompts:
+  - "Azure Container Apps VNet integration internal environment"
+  - "Azure Container Apps NSG rules Front Door origin"
+  - "Azure Container Apps private DNS zone configuration"
+mcp_fetch_targets:
+  - "Networking in Azure Container Apps"
+  - "Secure traffic between Container Apps and Front Door"
+mcp_code_sample_queries:
+  - "Azure Container Apps VNet integration Bicep"

@@ -1,0 +1,48 @@
+version: 1
+name: azure-pg-ha-dr
+status: draft
+owner: agents
+type: benchmark_skill
+
+microsoft_capability_family: "Azure / Database / PostgreSQL"
+
+purpose: "Validate PostgreSQL HA/DR posture for Azure Database for PostgreSQL Flexible Server"
+triggers:
+  - "check postgres HA"
+  - "validate database disaster recovery"
+  - "pg failover posture"
+inputs:
+  - pg_server_name: "pg-ipai-odoo"
+  - resource_group: "rg-ipai-dev-odoo-data"
+dependencies:
+  - infra/ssot/azure/resources.yaml
+  - infra/ssot/azure/service-matrix.yaml
+steps:
+  - read service-matrix.yaml for PG server config
+  - query az postgres flexible-server show for live state
+  - compare HA mode, backup retention, geo-redundancy
+  - report drift between declared and live
+outputs:
+  - docs/evidence/<stamp>/azure-pg-ha-dr/drift-report.json
+  - docs/evidence/<stamp>/azure-pg-ha-dr/failover-test.log
+guardrails:
+  - never modify production database settings without approval
+  - never run failover drill without explicit user consent
+evidence:
+  - az postgres flexible-server show output
+  - backup retention configuration
+  - failover time measurement
+evals:
+  - ha_mode_matches_declared
+  - backup_retention_gte_7_days
+  - pitr_enabled
+
+mcp_search_prompts:
+  - "Azure PostgreSQL Flexible Server high availability zone redundant"
+  - "Azure PostgreSQL backup geo-redundant PITR"
+  - "Azure PostgreSQL Flexible Server disaster recovery failover"
+mcp_fetch_targets:
+  - "High availability concepts for PostgreSQL Flexible Server"
+  - "Backup and restore in PostgreSQL Flexible Server"
+mcp_code_sample_queries:
+  - "Azure PostgreSQL Flexible Server Bicep high availability"

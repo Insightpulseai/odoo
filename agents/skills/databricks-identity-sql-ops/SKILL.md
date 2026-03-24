@@ -1,3 +1,9 @@
+---
+name: databricks-identity-sql-ops
+description: Manage Databricks identity, auth profiles, and SQL warehouses via CLI
+microsoft_capability_family: "Azure / Databricks"
+---
+
 # Databricks Identity & SQL Ops Skill
 
 ## Purpose

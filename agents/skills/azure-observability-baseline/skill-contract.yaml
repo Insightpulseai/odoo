@@ -1,0 +1,51 @@
+version: 1
+name: azure-observability-baseline
+status: draft
+owner: agents
+type: benchmark_skill
+
+microsoft_capability_family: "Azure / Monitor / App Insights"
+
+purpose: "Validate diagnostic settings, alerting, and Log Analytics coverage for all platform services"
+triggers:
+  - "check observability baseline"
+  - "validate monitoring coverage"
+  - "diagnostic settings audit"
+inputs:
+  - resource_group: "rg-ipai-dev-odoo-runtime"
+  - log_analytics_workspace: ""
+dependencies:
+  - infra/ssot/azure/service-matrix.yaml
+  - infra/azure/monitor/
+steps:
+  - read service-matrix.yaml for observability column
+  - query diagnostic settings per resource via az monitor
+  - check Application Insights connection
+  - check alert rules and action groups
+  - report coverage gaps
+outputs:
+  - docs/evidence/<stamp>/azure-observability/diagnostic-settings.json
+  - docs/evidence/<stamp>/azure-observability/alert-rules.json
+guardrails:
+  - never disable existing diagnostic settings
+  - never modify alert thresholds without approval
+evidence:
+  - diagnostic settings per ACA app
+  - Application Insights connection string
+  - alert rule definitions
+  - Log Analytics query showing data flow
+evals:
+  - all_aca_apps_have_diagnostics
+  - app_insights_connected
+  - alert_rules_gte_3
+  - data_flowing_to_log_analytics
+
+mcp_search_prompts:
+  - "Azure Container Apps diagnostic settings Log Analytics"
+  - "Azure Monitor alert rules Container Apps"
+  - "Application Insights Azure PostgreSQL Flexible Server"
+mcp_fetch_targets:
+  - "Monitor Azure Container Apps with Azure Monitor"
+  - "Diagnostic settings in Azure Monitor"
+mcp_code_sample_queries:
+  - "Azure Monitor diagnostic settings Bicep Container Apps"

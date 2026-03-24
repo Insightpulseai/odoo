@@ -1,0 +1,50 @@
+version: 1
+name: service-matrix-truth
+status: draft
+owner: agents
+type: benchmark_skill
+
+microsoft_capability_family: "Azure / Architecture / Operations"
+
+purpose: "Validate service-matrix.yaml against live Azure resource state via Resource Graph"
+triggers:
+  - "check service matrix drift"
+  - "validate resource inventory"
+  - "service topology audit"
+inputs:
+  - service_matrix_path: "infra/ssot/azure/service-matrix.yaml"
+  - resource_group: "rg-ipai-dev-odoo-runtime"
+dependencies:
+  - infra/ssot/azure/service-matrix.yaml
+  - infra/ssot/azure/resources.yaml
+  - scripts/azure/validate-service-matrix.sh
+steps:
+  - parse service-matrix.yaml for declared services
+  - query Azure Resource Graph for live resources
+  - diff declared vs live (name, SKU, region, public/internal)
+  - identify undeclared resources
+  - generate drift report
+outputs:
+  - docs/evidence/<stamp>/service-matrix/drift-report.json
+  - docs/evidence/<stamp>/service-matrix/resource-graph-snapshot.json
+guardrails:
+  - never delete undeclared resources without approval
+  - never modify service-matrix.yaml to match drift without review
+evidence:
+  - Resource Graph query results
+  - drift count (declared vs live)
+  - undeclared resource list
+evals:
+  - zero_drift_or_documented_exceptions
+  - no_undeclared_resources
+  - validation_script_passes
+
+mcp_search_prompts:
+  - "Azure Resource Graph query container apps inventory"
+  - "Azure Resource Graph Kusto query examples"
+  - "Azure architecture documentation best practices"
+mcp_fetch_targets:
+  - "Azure Resource Graph overview"
+  - "Starter queries for Azure Resource Graph"
+mcp_code_sample_queries:
+  - "Azure Resource Graph query container apps KQL"

@@ -1,0 +1,51 @@
+version: 1
+name: odoo-copilot-evals
+status: draft
+owner: agents
+type: benchmark_skill
+
+microsoft_capability_family: "Microsoft Copilot / Azure AI"
+
+purpose: "Run evaluation suite for Odoo AI Copilot measuring accuracy, latency, hallucination, and safety"
+triggers:
+  - "evaluate copilot quality"
+  - "run copilot evals"
+  - "benchmark AI assistant"
+inputs:
+  - golden_test_set: "agents/skills/odoo-copilot-evals/fixtures/golden-tests.jsonl"
+  - model_deployment: "oai-ipai-dev"
+dependencies:
+  - addons/ipai/ipai_ai_copilot/
+  - infra/ssot/azure/resources.yaml
+steps:
+  - load golden test set (>= 20 prompt/response pairs)
+  - run copilot against each prompt
+  - measure accuracy vs expected responses
+  - measure latency p50/p95
+  - detect hallucinations on factual queries
+  - score overall quality
+outputs:
+  - docs/evidence/<stamp>/copilot-evals/eval-results.json
+  - docs/evidence/<stamp>/copilot-evals/latency-report.json
+guardrails:
+  - never run evals against production endpoint without rate limiting
+  - never expose eval results containing PII
+evidence:
+  - accuracy score per category
+  - latency p50 and p95
+  - hallucination rate
+  - content safety filter triggers
+evals:
+  - accuracy_gte_80_percent
+  - latency_p95_lt_5s
+  - hallucination_rate_lt_10_percent
+
+mcp_search_prompts:
+  - "Azure OpenAI evaluation metrics accuracy hallucination"
+  - "Azure AI Foundry model evaluation framework"
+  - "Microsoft Copilot extensibility evaluation best practices"
+mcp_fetch_targets:
+  - "Evaluate your generative AI application (Azure AI Foundry)"
+  - "Azure OpenAI content filtering and safety"
+mcp_code_sample_queries:
+  - "Azure AI evaluation SDK Python model quality"

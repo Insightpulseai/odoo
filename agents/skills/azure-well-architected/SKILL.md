@@ -1,6 +1,7 @@
 ---
 name: azure-well-architected
 description: Elite Azure Well-Architected Framework (WAF) standards for building reliable, secure, and optimized cloud workloads.
+microsoft_capability_family: "Azure / Architecture"
 ---
 
 # Azure Well-Architected Framework (WAF)
