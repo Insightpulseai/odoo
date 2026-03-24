@@ -145,6 +145,27 @@ See `docs/architecture/DOMAIN_INTELLIGENCE_SHELLS.md` for the full doctrine.
 
 ---
 
+## 7. A2A Role by Surface
+
+Agent-to-Agent (A2A) interop enables cross-surface delegation and handoff. Each surface has exactly one A2A role. Full doctrine: `docs/architecture/A2A_INTEROP.md`.
+
+| Surface | A2A Role | Mode | Description |
+|---------|----------|------|-------------|
+| **Diva Copilot** | Hub | route_and_aggregate | Classifies intent, delegates to specialists, aggregates cross-surface results |
+| **Odoo Copilot** | Participant | bounded_escalation | Receives ERP tasks from hub, escalates out-of-scope requests back to Diva |
+| **Studio Copilot** | Participant | workflow_handoff | Receives creative/asset handoffs, can delegate extraction to Document Intelligence |
+| **Genie** | Participant | return_analytics_context | Returns analytics query results and provenance to requesting surface |
+| **Document Intelligence Assistant** | Participant | return_document_context | Returns structured extraction/review results to requesting surface |
+| **Landing Public Assistant** | None | n/a | Public surface with no tenant context -- excluded from all A2A flows |
+
+**Key rules:**
+- Only the hub (Diva) may aggregate results from multiple participants
+- `customer_tenant_id` is required on every A2A message
+- Public surfaces cannot initiate or receive A2A messages
+- A2A is for delegation and handoff, not for simple retrieval or single tool calls
+
+---
+
 ## SSOT References
 
 - Machine-readable: `ssot/agents/assistant_surfaces.yaml`
