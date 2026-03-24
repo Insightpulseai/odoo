@@ -1,0 +1,87 @@
+# platform/ssot/external_dependencies.yaml
+# Non-Azure external services the platform depends on
+# Last updated: 2026-03-25
+
+schema_version: "1.0"
+updated: "2026-03-25"
+
+active:
+
+  - key: squarespace
+    name: Squarespace
+    role: registrar_only
+    domain: insightpulseai.com
+    purpose: Domain registrar. DNS is delegated — Squarespace holds the registration only.
+    integration_surface: none
+    data_flow: none
+    cost_model: annual_domain_fee
+    notes: >
+      DNS resolution is handled by Azure Front Door custom domains.
+      No API integration with Squarespace exists or is planned.
+
+  - key: zoho_mail
+    name: Zoho Mail
+    role: production_domain_email
+    domain: insightpulseai.com
+    purpose: Outbound and inbound email for insightpulseai.com organizational mailboxes.
+    integration_surface: smtp
+    data_flow: outbound_smtp_587
+    cost_model: per_mailbox
+    smtp:
+      host: smtp.zoho.com
+      port: 587
+      tls: starttls
+      credentials_source: kv-ipai-prod (zoho-smtp-user, zoho-smtp-password)
+    dns_records:
+      - type: MX
+        name: "@"
+        target: Zoho MX servers
+      - type: TXT
+        name: "@"
+        target: SPF for Zoho
+      - type: TXT
+        name: zoho._domainkey
+        target: DKIM key
+      - type: TXT
+        name: _dmarc
+        target: DMARC policy
+    notes: >
+      Zoho replaced Mailgun (mg.insightpulseai.com) as of 2026-03-11.
+      Credentials are in Azure Key Vault, never in tracked config.
+
+retired:
+
+  - key: cloudflare
+    name: Cloudflare
+    role: dns_and_cdn
+    retired_date: "2026-03-15"
+    replacement: Azure Front Door + Azure DNS
+    reason: Edge routing, TLS, and WAF consolidated to Azure Front Door.
+
+  - key: supabase
+    name: Supabase (managed + self-hosted)
+    role: backend_as_a_service
+    retired_date: "2026-03-15"
+    replacement: Azure PostgreSQL Flexible Server + native Azure services
+    reason: Database and auth consolidated to Azure-native stack.
+
+  - key: n8n
+    name: n8n
+    role: workflow_automation
+    retired_date: "2026-03-21"
+    replacement: Azure DevOps Pipelines + Foundry agents
+    reason: Automation consolidated to Azure-native execution surfaces.
+
+  - key: plane
+    name: Plane
+    role: project_management
+    retired_date: "2026-03-21"
+    replacement: Azure DevOps Boards
+    reason: Project tracking moved to Azure DevOps.
+
+  - key: shelf
+    name: Shelf
+    role: knowledge_base
+    retired_date: "2026-03-21"
+    replacement: Odoo Knowledge + agent knowledge layer
+    reason: Knowledge consolidated into Odoo and platform agents.
