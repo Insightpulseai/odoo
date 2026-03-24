@@ -1,0 +1,111 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Gemini Image Prompt Asset",
+  "type": "object",
+  "required": [
+    "id",
+    "title",
+    "category",
+    "owner",
+    "status",
+    "intent",
+    "brand",
+    "prompt"
+  ],
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z0-9\\-]+$"
+    },
+    "title": {
+      "type": "string"
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "brand",
+        "marketing",
+        "product-ui",
+        "ads",
+        "docs-diagrams",
+        "edit-workflows"
+      ]
+    },
+    "owner": {
+      "type": "string"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "draft",
+        "approved",
+        "deprecated"
+      ]
+    },
+    "intent": {
+      "type": "string",
+      "enum": [
+        "generate",
+        "edit",
+        "refine",
+        "diagram"
+      ]
+    },
+    "brand": {
+      "type": "object",
+      "required": ["corporate", "assistant_family"],
+      "properties": {
+        "corporate": { "type": "string" },
+        "assistant_family": { "type": "string" },
+        "allowed_public_names": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "forbidden_public_names": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      }
+    },
+    "surface": {
+      "type": "string"
+    },
+    "aspect_ratio": {
+      "type": "string",
+      "enum": [
+        "1:1",
+        "4:3",
+        "16:9",
+        "3:2",
+        "1200x630",
+        "custom"
+      ]
+    },
+    "model_family": {
+      "type": "string"
+    },
+    "tags": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "variables": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name", "description"],
+        "properties": {
+          "name": { "type": "string" },
+          "description": { "type": "string" },
+          "required": { "type": "boolean" },
+          "default": {}
+        }
+      }
+    },
+    "prompt": {
+      "type": "string"
+    },
+    "notes": {
+      "type": "string"
+    }
+  }
+}

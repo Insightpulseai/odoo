@@ -1,0 +1,89 @@
+library: gemini-image
+version: 1
+brand:
+  corporate: InsightPulseAI
+  assistant_family: Pulser
+  allowed_public_names:
+    - InsightPulseAI
+    - Pulser
+    - Odoo on Cloud
+    - Cloud Operations
+    - Analytics & Dashboards
+    - Ask Pulser
+    - Pulser for Odoo
+  forbidden_public_names:
+    - Odoo Copilot
+    - Ask Odoo Copilot
+    - Pulsar
+
+prompts:
+  - id: og-card
+    path: brand/og-card/base.prompt.md
+    category: brand
+    status: approved
+    surface: social-preview
+  - id: og-card-premium-dark
+    path: brand/og-card/premium-dark.variant.prompt.md
+    category: brand
+    status: approved
+    surface: social-preview
+  - id: keynote-cover
+    path: brand/keynote-cover/base.prompt.md
+    category: brand
+    status: approved
+    surface: presentation
+  - id: homepage-hero
+    path: marketing/homepage-hero/base.prompt.md
+    category: marketing
+    status: approved
+    surface: website-hero
+  - id: campaign-poster
+    path: marketing/campaign-poster/base.prompt.md
+    category: marketing
+    status: draft
+    surface: campaign
+  - id: pulser-card
+    path: product-ui/pulser-card/base.prompt.md
+    category: product-ui
+    status: approved
+    surface: product-card
+  - id: dashboard-mockup
+    path: product-ui/dashboard-mockup/base.prompt.md
+    category: product-ui
+    status: approved
+    surface: product-ui
+  - id: approval-workflow
+    path: product-ui/approval-workflow/base.prompt.md
+    category: product-ui
+    status: approved
+    surface: product-ui
+  - id: odoo-on-cloud-ad
+    path: ads/odoo-on-cloud/base.prompt.md
+    category: ads
+    status: approved
+    surface: campaign
+  - id: ask-pulser-ad
+    path: ads/ask-pulser/base.prompt.md
+    category: ads
+    status: draft
+    surface: campaign
+  - id: architecture-stack
+    path: docs-diagrams/architecture-stack/base.prompt.md
+    category: docs-diagrams
+    status: approved
+    surface: docs
+  - id: document-intelligence
+    path: docs-diagrams/document-intelligence/base.prompt.md
+    category: docs-diagrams
+    status: approved
+    surface: docs
+  - id: sketch-to-ui
+    path: edit-workflows/sketch-to-ui/base.prompt.md
+    category: edit-workflows
+    status: approved
+    surface: refinement
+  - id: brand-replacement
+    path: edit-workflows/brand-replacement/base.prompt.md
+    category: edit-workflows
+    status: approved
+    surface: refinement
