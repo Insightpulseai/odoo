@@ -53,11 +53,11 @@ resource server 'Microsoft.DBforPostgreSQL/flexibleServers@2023-06-01-preview' =
       autoGrow: 'Enabled'
     }
     backup: {
-      backupRetentionDays: 7
-      geoRedundantBackup: 'Disabled'
+      backupRetentionDays: 35
+      geoRedundantBackup: 'Enabled'
     }
     highAvailability: {
-      mode: 'Disabled'
+      mode: 'ZoneRedundant'
     }
     network: subnetId != '' ? {
       delegatedSubnetResourceId: subnetId
@@ -75,6 +75,9 @@ resource database 'Microsoft.DBforPostgreSQL/flexibleServers/databases@2023-06-0
 }
 
 // Allow Azure services (Container Apps) to connect
+// TODO(P1): Replace 0.0.0.0 AllowAzureServices with private endpoints for production.
+// This rule allows any Azure-internal IP to reach PG. Private endpoints + VNet integration
+// should be used once ACA VNet injection is confirmed.
 resource firewallRule 'Microsoft.DBforPostgreSQL/flexibleServers/firewallRules@2023-06-01-preview' = if (subnetId == '') {
   parent: server
   name: 'AllowAzureServices'
