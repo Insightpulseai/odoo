@@ -155,7 +155,7 @@ const Navbar = ({ currentPage, setPage }: { currentPage: PageId, setPage: (p: Pa
                     { icon: <Cloud size={20} />, title: "Odoo on Cloud", desc: "Hosted ERP, CRM, finance, inventory", page: 'products' as PageId },
                     { icon: <Cpu size={20} />, title: "Pulser", desc: "AI guidance inside your workflows", page: 'products' as PageId },
                     { icon: <ShieldCheck size={20} />, title: "Cloud Operations", desc: "Deploy, govern, monitor, evolve", page: 'products' as PageId },
-                    { icon: <BarChart size={20} />, title: "Analytics", desc: "Operational dashboards & reporting", page: 'products' as PageId },
+                    { icon: <BarChart size={20} />, title: "Analytics & Dashboards", desc: "Operational dashboards & reporting", page: 'products' as PageId },
                   ].map((item, i) => (
                     <button key={i} onClick={() => { setPage(item.page); setOpenMenu(null); }}
                       className="flex items-start gap-3 p-3 hover:bg-brand-light rounded-xl transition-colors text-left">
@@ -265,7 +265,7 @@ const Navbar = ({ currentPage, setPage }: { currentPage: PageId, setPage: (p: Pa
                     <p className="text-[11px] font-bold text-gray-400 uppercase tracking-widest mb-3 px-3">Explore</p>
                     {[
                       { icon: <Target size={18} />, title: "Marketing Use Cases", desc: "Real-world campaign workflows", page: 'marketing_use_cases' as PageId },
-                      { icon: <ShieldCheck size={18} />, title: "Trust & Readiness", desc: "Security, compliance, SLAs", page: 'trust' as PageId },
+                      { icon: <ShieldCheck size={18} />, title: "Trust Center", desc: "Security, compliance, SLAs", page: 'trust' as PageId },
                       { icon: <HelpCircle size={18} />, title: "Support & FAQs", desc: "Get help and answers fast", page: 'resources' as PageId },
                     ].map((item, i) => (
                       <button key={i} onClick={() => { setPage(item.page); setOpenMenu(null); }}
@@ -291,12 +291,9 @@ const Navbar = ({ currentPage, setPage }: { currentPage: PageId, setPage: (p: Pa
         <a href={EXTERNAL_URLS.login} target="_blank" rel="noopener noreferrer" className="hidden sm:block px-6 py-2.5 text-[14px] font-bold text-gray-800 hover:text-brand-primary transition-colors">
           Log In
         </a>
-        <a href={EXTERNAL_URLS.demo} target="_blank" rel="noopener noreferrer" className="hidden sm:block px-6 py-2.5 text-[14px] font-bold text-gray-800 border border-gray-200 rounded-lg hover:border-brand-primary hover:text-brand-primary transition-all">
+        <a href={EXTERNAL_URLS.demo} target="_blank" rel="noopener noreferrer" className="hidden sm:block px-6 py-2.5 text-[14px] font-bold bg-brand-primary text-black rounded-lg hover:bg-cyan-400 transition-all" style={{ boxShadow: SHADOW.shadow8 }}>
           Book Demo
         </a>
-        <button onClick={() => setPage('contact')} className="hidden sm:block px-6 py-2.5 text-[14px] font-bold bg-brand-primary text-black rounded-lg hover:bg-cyan-400 transition-all" style={{ boxShadow: SHADOW.shadow8 }}>
-          Get Started
-        </button>
         {/* Mobile hamburger */}
         <button onClick={() => setMobileOpen(!mobileOpen)} className="xl:hidden p-2.5 hover:bg-gray-100 rounded-full transition-colors" aria-label="Toggle menu">
           {mobileOpen ? <X size={24} /> : <Menu size={24} />}
@@ -358,7 +355,7 @@ const Navbar = ({ currentPage, setPage }: { currentPage: PageId, setPage: (p: Pa
                   <button onClick={() => mobilNav('docs')} className="block w-full text-left py-2 text-sm text-gray-600 hover:text-brand-primary">Documentation</button>
                   <button onClick={() => mobilNav('resources')} className="block w-full text-left py-2 text-sm text-gray-600 hover:text-brand-primary">Resource Library</button>
                   <button onClick={() => mobilNav('marketing_use_cases')} className="block w-full text-left py-2 text-sm text-gray-600 hover:text-brand-primary">Marketing Use Cases</button>
-                  <button onClick={() => mobilNav('trust')} className="block w-full text-left py-2 text-sm text-gray-600 hover:text-brand-primary">Trust & Readiness</button>
+                  <button onClick={() => mobilNav('trust')} className="block w-full text-left py-2 text-sm text-gray-600 hover:text-brand-primary">Trust Center</button>
                   <button onClick={() => mobilNav('media_reference_patterns')} className="block w-full text-left py-2 text-sm text-gray-600 hover:text-brand-primary">Media Patterns</button>
                 </div>
               )}
@@ -382,12 +379,9 @@ const Navbar = ({ currentPage, setPage }: { currentPage: PageId, setPage: (p: Pa
               <a href={EXTERNAL_URLS.login} target="_blank" rel="noopener noreferrer" className="block w-full text-center py-3 text-sm font-bold text-gray-800 border border-gray-200 rounded-lg hover:border-brand-primary hover:text-brand-primary transition-all">
                 Log In
               </a>
-              <a href={EXTERNAL_URLS.demo} target="_blank" rel="noopener noreferrer" className="block w-full text-center py-3 text-sm font-bold text-gray-800 border border-gray-200 rounded-lg hover:border-brand-primary hover:text-brand-primary transition-all">
+              <a href={EXTERNAL_URLS.demo} target="_blank" rel="noopener noreferrer" className="block w-full text-center py-3 text-sm font-bold bg-brand-primary text-black rounded-lg hover:bg-cyan-400 transition-all">
                 Book Demo
               </a>
-              <button onClick={() => mobilNav('contact')} className="block w-full text-center py-3 text-sm font-bold bg-brand-primary text-black rounded-lg hover:bg-cyan-400 transition-all">
-                Get Started
-              </button>
             </div>
           </div>
         </motion.div>
@@ -467,7 +461,7 @@ const Footer = ({ setPage }: { setPage: (p: PageId) => void }) => (
       <div className="pt-12 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-6 text-xs text-gray-500">
         <p>&copy; 2026 InsightPulseAI. All rights reserved.</p>
         <div className="flex gap-8">
-          <button onClick={() => setPage('trust')} className="hover:text-white transition-colors">Trust & Readiness</button>
+          <button onClick={() => setPage('trust')} className="hover:text-white transition-colors">Trust Center</button>
           <button onClick={() => setPage('privacy')} className="hover:text-white transition-colors">Privacy</button>
           <button onClick={() => setPage('terms')} className="hover:text-white transition-colors">Terms</button>
           <button onClick={() => setPage('contact')} className="hover:text-white transition-colors">Contact</button>
@@ -489,12 +483,12 @@ const GlobalCTA = ({ setPage }: { setPage: (p: PageId) => void }) => (
           Move from fragmented tools and manual work to one connected operating system with InsightPulseAI.
         </p>
         <div className="flex flex-col sm:flex-row justify-center gap-4">
-          <button onClick={() => setPage('contact')} className="px-10 py-4 bg-black text-white font-bold rounded-lg hover:bg-gray-900 transition-all" style={{ boxShadow: SHADOW.shadow8 }}>
-            Get Started
-          </button>
-          <a href={EXTERNAL_URLS.demo} target="_blank" rel="noopener noreferrer" className="px-10 py-4 bg-white text-black font-bold rounded-lg hover:bg-gray-100 transition-all inline-block" style={{ boxShadow: SHADOW.shadow8 }}>
-            Request a Demo
+          <a href={EXTERNAL_URLS.demo} target="_blank" rel="noopener noreferrer" className="px-10 py-4 bg-black text-white font-bold rounded-lg hover:bg-gray-900 transition-all inline-block" style={{ boxShadow: SHADOW.shadow8 }}>
+            Book Demo
           </a>
+          <button onClick={() => setPage('contact')} className="px-10 py-4 bg-white text-black font-bold rounded-lg hover:bg-gray-100 transition-all" style={{ boxShadow: SHADOW.shadow8 }}>
+            Contact Sales
+          </button>
         </div>
       </div>
     </div>
@@ -523,7 +517,7 @@ const HomePage = ({ setPage }: { setPage: (p: PageId) => void }) => (
             </p>
             <div className="flex flex-col sm:flex-row gap-6">
               <button onClick={() => setPage('contact')} className="px-8 py-4 bg-brand-primary text-black font-bold rounded-full hover:bg-cyan-400 transition-all text-lg" style={{ boxShadow: SHADOW.shadow8 }}>
-                Get Started
+                Book Demo
               </button>
               <a href={EXTERNAL_URLS.demo} target="_blank" rel="noopener noreferrer" className="px-8 py-4 bg-white/10 text-white font-bold rounded-lg hover:bg-white/20 transition-all border border-white/10 text-lg backdrop-blur-sm inline-block text-center">
                 Book Demo
@@ -613,7 +607,7 @@ const HomePage = ({ setPage }: { setPage: (p: PageId) => void }) => (
             { icon: <Cloud size={32} />, title: "Odoo on Cloud", desc: "Run ERP, CRM, sales, inventory, projects, HR, finance, and operations from one hosted platform." },
             { icon: <Cpu size={32} />, title: "Pulser", desc: "Use AI assistance to reduce manual work, guide users, summarize activity, and improve decision-making." },
             { icon: <ShieldCheck size={32} />, title: "Cloud Operations", desc: "Deploy, govern, monitor, and evolve Odoo with a more reliable cloud delivery model." },
-            { icon: <BarChart size={32} />, title: "Analytics", desc: "Turn operational data into real-time executive and team-level visibility." }
+            { icon: <BarChart size={32} />, title: "Analytics & Dashboards", desc: "Turn operational data into real-time executive and team-level visibility." }
           ].map((p, i) => (
             <div key={i} className="bg-white/5 p-8 rounded-2xl border border-white/10 hover:bg-white/10 transition-all group">
               <div className="mb-8 text-brand-primary group-hover:scale-110 transition-transform duration-[150ms] origin-left">{p.icon}</div>
@@ -1058,7 +1052,7 @@ const TrustPage = ({ setPage }: { setPage: (p: PageId) => void }) => (
   <motion.div {...PAGE_TRANSITION}>
     <section className="pt-28 pb-24 px-6 md:px-12 max-w-7xl mx-auto">
       <div className="mb-24">
-        <span className="text-brand-primary font-bold uppercase tracking-widest text-sm mb-6 block">Trust & Readiness</span>
+        <span className="text-brand-primary font-bold uppercase tracking-widest text-sm mb-6 block">Trust Center</span>
         <h1 className="text-3xl md:text-4xl font-bold mb-10 tracking-tight leading-[1.05]">
           Built for operational trust, with product readiness clearly stated
         </h1>
@@ -1213,7 +1207,7 @@ const MarketingPage = ({ setPage }: { setPage: (p: PageId) => void }) => (
             Run campaign workflows, content operations, approvals, reporting, budgets, and performance visibility from one AI-assisted operating system.
           </p>
           <button onClick={() => setPage('contact')} className="px-8 py-4 bg-brand-primary text-black font-bold rounded-full hover:bg-cyan-400 transition-all">
-            Get Started
+            Book Demo
           </button>
         </div>
         <div className="rounded-lg overflow-hidden border border-white/10" style={{ boxShadow: SHADOW.shadow28 }}>
@@ -1277,7 +1271,7 @@ const MediaPage = ({ setPage }: { setPage: (p: PageId) => void }) => (
           </p>
           <div className="flex flex-col sm:flex-row gap-4">
             <button onClick={() => setPage('contact')} className="px-8 py-4 bg-brand-primary text-black font-bold rounded-full hover:bg-cyan-400 transition-all">
-              Get Started
+              Book Demo
             </button>
             <a href={EXTERNAL_URLS.demo} target="_blank" rel="noopener noreferrer" className="px-8 py-4 bg-white/10 text-white font-bold rounded-lg hover:bg-white/20 transition-all border border-white/10 backdrop-blur-sm inline-block text-center">
               Book Demo
@@ -1404,7 +1398,7 @@ const RetailPage = ({ setPage }: { setPage: (p: PageId) => void }) => (
             InsightPulseAI helps retailers unify transaction, clickstream, customer, inventory, logistics, and merchandising signals into one governed operating layer. Use real-time intelligence to improve product availability, replenishment, forecasting, fulfillment, and customer experience across channels.
           </p>
           <button onClick={() => setPage('contact')} className="px-8 py-4 bg-brand-primary text-black font-bold rounded-full hover:bg-cyan-400 transition-all">
-            Get Started
+            Book Demo
           </button>
         </div>
         <div className="rounded-lg overflow-hidden border border-white/10" style={{ boxShadow: SHADOW.shadow28 }}>
@@ -1482,7 +1476,7 @@ const FinancePage = ({ setPage }: { setPage: (p: PageId) => void }) => (
             InsightPulseAI helps financial teams unify customer, risk, fraud, compliance, pricing, and operational signals into one governed operating layer. Use data intelligence to improve growth, protect the firm, and accelerate financial execution across regulated environments.
           </p>
           <button onClick={() => setPage('contact')} className="px-8 py-4 bg-brand-primary text-black font-bold rounded-full hover:bg-cyan-400 transition-all">
-            Get Started
+            Book Demo
           </button>
         </div>
         <div className="rounded-lg overflow-hidden border border-white/10" style={{ boxShadow: SHADOW.shadow28 }}>
@@ -1800,7 +1794,7 @@ const PricingPage = ({ setPage }: { setPage: (p: PageId) => void }) => (
     <div className="mb-16 text-center">
       <h1 className="text-3xl md:text-4xl font-bold mb-8 tracking-tight">Pricing and Plans</h1>
       <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
-        Our pricing is designed to grow with your business. Start with the foundation you need today, then expand as complexity grows.
+        Every deployment is shaped by your operating model, workflow scope, and support needs. We package InsightPulseAI around rollout complexity, governance requirements, and the level of cloud and AI assistance your team needs.
       </p>
     </div>
 
@@ -1808,30 +1802,34 @@ const PricingPage = ({ setPage }: { setPage: (p: PageId) => void }) => (
       {[
         {
           title: "Launch",
-          price: "$99/month",
-          features: ["Hosted Odoo environment", "Core module setup", "Role-based user access", "Standard reporting setup", "Baseline support", "Upgrade-ready foundation"],
-          cta: "Contact Sales",
+          price: "Starting from",
+          subtitle: "For teams starting with a focused cloud Odoo rollout.",
+          features: ["Odoo on Cloud foundation", "Core workflow setup", "Standard environment configuration", "Baseline reporting", "Guided rollout support", "Upgrade-ready foundation"],
+          cta: "Book Demo",
           highlight: false
         },
         {
           title: "Growth",
           price: "Custom",
-          features: ["Multi-workflow automation", "Enhanced reporting & dashboards", "Pulser assistance", "Integration support", "Sandbox & rollout guidance", "Expanded operational support"],
-          cta: "Contact Sales",
+          subtitle: "For teams expanding workflows, analytics, and AI-assisted operations.",
+          features: ["Broader workflow rollout", "Pulser assistance", "Analytics & Dashboards", "Integration support", "Sandbox and rollout guidance", "Expanded operational support"],
+          cta: "Book Demo",
           highlight: true
         },
         {
           title: "Enterprise",
           price: "Custom",
-          features: ["Multi-company architecture", "Advanced governance & controls", "Priority support", "Deeper integrations", "AI-assisted operations rollout", "Tailored cloud operating model"],
+          subtitle: "For multi-entity, governed, high-complexity operating models.",
+          features: ["Multi-company architecture", "Advanced governance and controls", "Priority support", "Deeper integrations", "AI-assisted operations rollout", "Tailored cloud operating model"],
           cta: "Contact Sales",
           highlight: false
         }
       ].map((tier, i) => (
         <div key={i} className={`p-12 rounded-2xl border ${tier.highlight ? 'bg-brand-dark text-white border-brand-dark' : 'bg-brand-light border-gray-100'}`}
           style={{ boxShadow: tier.highlight ? SHADOW.shadow28 : SHADOW.shadow4 }}>
-          <h3 className="text-2xl font-bold mb-4">{tier.title}</h3>
-          <div className={`text-4xl font-bold mb-10 ${tier.highlight ? 'text-brand-primary' : 'text-black'}`}>{tier.price}</div>
+          <h3 className="text-2xl font-bold mb-2">{tier.title}</h3>
+          <div className={`text-4xl font-bold mb-3 ${tier.highlight ? 'text-brand-primary' : 'text-black'}`}>{tier.price}</div>
+          {tier.subtitle && <p className={`text-sm mb-8 ${tier.highlight ? 'text-gray-400' : 'text-gray-500'}`}>{tier.subtitle}</p>}
           <ul className="space-y-4 mb-12">
             {tier.features.map((f, j) => (
               <li key={j} className="flex items-start gap-3 text-sm">
@@ -1840,12 +1838,22 @@ const PricingPage = ({ setPage }: { setPage: (p: PageId) => void }) => (
               </li>
             ))}
           </ul>
-          <button onClick={() => setPage('contact')} className={`w-full py-5 rounded-lg font-bold transition-all ${tier.highlight ? 'bg-brand-primary text-black hover:bg-cyan-400' : 'bg-black text-white hover:bg-gray-800'}`}>
-            {tier.cta}
-          </button>
+          {tier.cta === 'Book Demo' ? (
+            <a href={EXTERNAL_URLS.demo} target="_blank" rel="noopener noreferrer" className={`block w-full py-5 rounded-lg font-bold text-center transition-all ${tier.highlight ? 'bg-brand-primary text-black hover:bg-cyan-400' : 'bg-black text-white hover:bg-gray-800'}`}>
+              {tier.cta}
+            </a>
+          ) : (
+            <button onClick={() => setPage('contact')} className={`w-full py-5 rounded-lg font-bold transition-all ${tier.highlight ? 'bg-brand-primary text-black hover:bg-cyan-400' : 'bg-black text-white hover:bg-gray-800'}`}>
+              {tier.cta}
+            </button>
+          )}
         </div>
       ))}
     </div>
+
+    <p className="text-center text-sm text-gray-400 mb-16 max-w-2xl mx-auto">
+      Pricing depends on implementation scope, environment design, support level, integrations, and operating complexity. Final pricing is defined during solution scoping.
+    </p>
 
     <div className="bg-brand-light rounded-2xl p-8 md:p-16 text-center">
       <h2 className="text-4xl font-bold mb-8 tracking-tight">Automation pays</h2>
@@ -1883,7 +1891,7 @@ const CompanyPage = ({ setPage }: { setPage: (p: PageId) => void }) => (
         </p>
         <div className="flex flex-wrap gap-4">
           <a href={EXTERNAL_URLS.demo} target="_blank" rel="noopener noreferrer" className="px-10 py-5 bg-brand-primary text-black font-extrabold rounded-full hover:bg-cyan-400 transition-all inline-block">Book Demo</a>
-          <button onClick={() => setPage('contact')} className="px-10 py-5 bg-white/10 text-white font-extrabold rounded-full border border-white/20 hover:bg-white/20 transition-all">Get Started</button>
+          <button onClick={() => setPage('contact')} className="px-10 py-5 bg-white/10 text-white font-extrabold rounded-full border border-white/20 hover:bg-white/20 transition-all">Contact Sales</button>
         </div>
       </div>
     </section>
