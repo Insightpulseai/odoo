@@ -50,15 +50,14 @@ az containerapp update \
   --image acripaiodoo.azurecr.io/ipai-website:latest
 ```
 
-### 3. Purge CDN cache
+### 3. Verify custom domain
+
+DNS goes directly to ACA (no CDN/Front Door in dev). Verify the ACA custom domain binding:
 
 ```bash
-az afd endpoint purge \
-  --resource-group rg-ipai-dev-platform \
-  --profile-name ipai-fd-dev \
-  --endpoint-name ipai-fd-dev-ep \
-  --content-paths '/*' \
-  --domains www.insightpulseai.com insightpulseai.com
+az containerapp show --name ipai-website-dev \
+  --resource-group rg-ipai-dev-odoo-runtime \
+  --query "properties.configuration.ingress.customDomains" -o table
 ```
 
 ### 4. Verify
@@ -93,7 +92,7 @@ curl -s -X POST https://www.insightpulseai.com/api/pulser/chat \
 - **Container:** `node:22-alpine`, port 3000
 - **Registry:** `acripaiodoo.azurecr.io/ipai-website`
 - **ACA:** `ipai-website-dev` in `rg-ipai-dev-odoo-runtime`
-- **Edge:** Azure Front Door (`ipai-fd-dev`)
+- **Edge:** Direct to ACA (Front Door deleted; prod BOM specifies `afd-ipai-prod`)
 - **Domains:** `insightpulseai.com`, `www.insightpulseai.com`
 
 ## Governance
