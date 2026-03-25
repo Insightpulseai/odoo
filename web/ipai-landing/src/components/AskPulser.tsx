@@ -319,7 +319,7 @@ export const AskPulser = ({ onNavigate }: { onNavigate?: (page: string) => void 
             <motion.div key="open" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="flex flex-col items-center">
               <MessageSquare size={28} />
               <span className="absolute -top-12 right-0 bg-brand-dark text-white text-[10px] font-bold px-3 py-1.5 rounded-full whitespace-nowrap shadow-xl border border-white/10 opacity-0 group-hover:opacity-100 transition-opacity">
-                Ask Pulser
+                Open Pulser
               </span>
             </motion.div>
           )}
