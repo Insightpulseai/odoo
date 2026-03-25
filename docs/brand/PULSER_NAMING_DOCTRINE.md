@@ -209,6 +209,35 @@ Applies to all materials including: product names, UI labels, marketing copy, we
 **Marketplace listing:**
 > Pulser is an independently developed intelligent assistant that works with Odoo CE. Odoo is a trademark of Odoo S.A. This product is not developed, endorsed, or certified by Odoo S.A.
 
+### 10. Microsoft Copilot Referential Allowlist
+
+Microsoft uses "Copilot" in three ways: (1) as a product brand, (2) as a platform/extensibility surface, and (3) in educational content as a pattern word. This does **not** grant permission to brand your own product as "Copilot."
+
+**Allowed referential strings (CI allowlist):**
+
+| String | Context | Example |
+|--------|---------|---------|
+| `Microsoft Copilot` | Product reference | "Integrates with Microsoft Copilot" |
+| `Microsoft 365 Copilot` | Product reference | "Works with Microsoft 365 Copilot" |
+| `Security Copilot` | Product reference | "Send to Security Copilot" |
+| `GitHub Copilot SDK` | SDK/platform reference | "Built with GitHub Copilot SDK" |
+| `GitHub Copilot` | Product reference | "Powered by GitHub Copilot" |
+| `copilot-style` | Generic descriptor (lowercase) | "A copilot-style assistant for ERP" |
+| `build a copilot` | Educational context (lowercase) | "Learn how to build a copilot experience" |
+
+**Still prohibited as first-party product names:**
+
+| Prohibited | Why |
+|-----------|-----|
+| `Odoo Copilot` | Two third-party marks as product name |
+| `InsightPulse Copilot` | Microsoft trademark as product modifier |
+| `Pulser Copilot` | "Copilot" should not appear as product suffix |
+| `IPAI Copilot` | First-party brand + Microsoft trademark |
+
+**Governance clause (for automated enforcement):**
+
+> Public-facing first-party AI branding must use Pulser. The term Copilot may appear only in referential usage for Microsoft-owned products, platforms, SDKs, or integrations (for example: Microsoft Copilot, Microsoft 365 Copilot, Security Copilot, GitHub Copilot SDK). Internal technical symbols may retain copilot naming temporarily, but public UI, routes, metadata, APIs, and marketing copy must expose Pulser terminology.
+
 ---
 
 ## D. Brand Architecture
