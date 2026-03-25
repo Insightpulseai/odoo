@@ -3,13 +3,14 @@
 
 Fails on:
 - "Odoo Copilot", "InsightPulse Copilot", "IPAI Copilot" etc.
-- bare "copilot" unless referencing Microsoft products
 - "Odoo AI" as a product name
 
 Allows:
-- "Microsoft Copilot", "Microsoft 365 Copilot", "Security Copilot"
+- Microsoft referential: Microsoft Copilot, GitHub Copilot SDK, etc.
+- Integration phrases: "integrates with ... Copilot", "built with ... Copilot"
+- Pattern descriptors: "copilot-style", "copilot pattern"
 - Internal code files (not scanned)
-- Governance docs (excluded to avoid self-flagging)
+- Governance/naming docs (excluded to avoid self-flagging)
 
 Exit 0 = clean. Exit 1 = violations found.
 """
@@ -22,14 +23,12 @@ import re
 ROOT = pathlib.Path(__file__).resolve().parents[2]
 
 # Directories to scan (public-facing surfaces)
-PUBLIC_DIRS = [
-    "web",
-    "docs",
-]
+PUBLIC_DIRS = ["web", "docs"]
 
 # Paths to exclude
 EXCLUDE_PATTERNS = [
-    r"docs/governance/.*",  # governance docs define the rules, not violate them
+    r"docs/governance/.*",
+    r"docs/brand/.*",
     r".*node_modules/.*",
     r".*dist/.*",
     r".*build/.*",
@@ -49,20 +48,45 @@ FORBIDDEN_PATTERNS = [
     re.compile(r"\bOdoo AI\b", re.IGNORECASE),
 ]
 
-# Allowed referential Microsoft phrases and pattern descriptors
+# Allowed referential Microsoft phrases
 ALLOWED_REFERENTIAL = [
     re.compile(r"\bMicrosoft Copilot\b", re.IGNORECASE),
     re.compile(r"\bMicrosoft 365 Copilot\b", re.IGNORECASE),
+    re.compile(r"\bMicrosoft 365 Copilot app\b", re.IGNORECASE),
     re.compile(r"\bSecurity Copilot\b", re.IGNORECASE),
     re.compile(r"\bGitHub Copilot\b", re.IGNORECASE),
     re.compile(r"\bGitHub Copilot SDK\b", re.IGNORECASE),
-    re.compile(r"\bcopilot-style\b", re.IGNORECASE),  # pattern descriptor OK
-    re.compile(r"\bcopilot pattern\b", re.IGNORECASE),  # pattern descriptor OK
+    re.compile(r"\bCopilot Studio\b", re.IGNORECASE),
+    re.compile(r"\bcopilot-style\b", re.IGNORECASE),
+    re.compile(r"\bcopilot pattern\b", re.IGNORECASE),
+]
+
+# Allowed contextual integration phrases
+ALLOWED_CONTEXT = [
+    re.compile(
+        r"\bintegrates?\s+with\s+.*\bCopilot\b", re.IGNORECASE
+    ),
+    re.compile(
+        r"\bbuilt\s+with\s+.*\bCopilot\b", re.IGNORECASE
+    ),
+    re.compile(
+        r"\bworks\s+with\s+.*\bCopilot\b", re.IGNORECASE
+    ),
+    re.compile(
+        r"\bextends?\s+.*\bCopilot\b", re.IGNORECASE
+    ),
+    re.compile(
+        r"\bfor\s+Microsoft\s+.*Copilot\b", re.IGNORECASE
+    ),
+    re.compile(
+        r"\bpowered\s+by\s+.*\bCopilot\b", re.IGNORECASE
+    ),
 ]
 
 TEXT_EXTENSIONS = {
-    ".ts", ".tsx", ".js", ".jsx", ".md", ".mdx", ".html", ".css", ".scss",
-    ".json", ".yml", ".yaml", ".txt", ".xml",
+    ".ts", ".tsx", ".js", ".jsx", ".md", ".mdx",
+    ".html", ".css", ".scss", ".json", ".yml",
+    ".yaml", ".txt", ".xml",
 }
 
 
@@ -77,15 +101,24 @@ def iter_files() -> list[pathlib.Path]:
         target = ROOT / d
         if target.is_dir():
             for f in target.rglob("*"):
-                if f.is_file() and f.suffix.lower() in TEXT_EXTENSIONS:
+                if (
+                    f.is_file()
+                    and f.suffix.lower() in TEXT_EXTENSIONS
+                ):
                     rel = f.relative_to(ROOT)
                     if not is_excluded(rel):
                         files.append(rel)
     return sorted(set(files))
 
 
-def line_is_referential(line: str) -> bool:
-    return any(p.search(line) for p in ALLOWED_REFERENTIAL)
+def is_allowed_referential(line: str) -> bool:
+    """Return True if the line contains only allowed
+    Microsoft-referential or integration-context usage."""
+    if any(p.search(line) for p in ALLOWED_REFERENTIAL):
+        return True
+    if any(p.search(line) for p in ALLOWED_CONTEXT):
+        return True
+    return False
 
 
 def main() -> int:
@@ -98,19 +131,28 @@ def main() -> int:
         except (UnicodeDecodeError, OSError):
             continue
 
-        for lineno, line in enumerate(content.splitlines(), start=1):
-            # Check explicit forbidden patterns
+        for lineno, line in enumerate(
+            content.splitlines(), start=1
+        ):
             for pattern in FORBIDDEN_PATTERNS:
                 if pattern.search(line):
                     violations.append(
-                        f"  {rel}:{lineno}: {pattern.pattern} -> {line.strip()[:80]}"
+                        f"  {rel}:{lineno}: "
+                        f"{pattern.pattern} -> "
+                        f"{line.strip()[:80]}"
                     )
 
     if violations:
-        print(f"Branding policy violations ({len(violations)}):\n")
+        print(
+            f"Branding policy violations "
+            f"({len(violations)}):\n"
+        )
         for v in violations:
             print(v)
-        print(f"\nSee docs/governance/BRANDING_STRING_MATRIX.md for replacements.")
+        print(
+            "\nSee docs/governance/"
+            "BRANDING_STRING_MATRIX.md for replacements."
+        )
         return 1
 
     print("Branding policy check passed.")
