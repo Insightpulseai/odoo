@@ -541,20 +541,24 @@ const HomePage = ({ setPage }: { setPage: (p: PageId) => void }) => (
       </div>
     </section>
 
-    {/* Built On — Technology Partners */}
-    <section className="py-12 px-6 md:px-12 max-w-7xl mx-auto">
-      <p className="text-center text-xs font-bold uppercase tracking-widest text-gray-400 mb-8">Built on</p>
-      <div className="flex flex-wrap justify-center items-center gap-12 opacity-40 grayscale hover:opacity-60 transition-opacity">
-        {[
-          { name: "Microsoft Azure", src: "/logos/azure.svg" },
-          { name: "Odoo", src: "/logos/odoo.svg" },
-          { name: "Databricks", src: "/logos/databricks.svg" },
-          { name: "Power BI", src: "/logos/powerbi.svg" },
-          { name: "Slack", src: "/logos/slack.svg" },
-          { name: "GitHub", src: "/logos/github.svg" },
-          { name: "Zoho", src: "/logos/zoho.svg" },
-        ].map((logo, i) => (
-          <img key={i} src={logo.src} alt={logo.name} className="h-8" title={logo.name} />
+    {/* Works With Your Stack — Continuous Marquee with Color Logos */}
+    <section className="py-12 border-b border-gray-100 overflow-hidden">
+      <p className="text-center text-xs font-bold uppercase tracking-widest text-gray-400 mb-8">Works with your existing stack</p>
+      <div className="flex animate-marquee whitespace-nowrap">
+        {[...Array(3)].map((_, setIndex) => (
+          <div key={setIndex} className="flex items-center gap-16 px-8 shrink-0">
+            {[
+              { name: "Microsoft Azure", src: "/logos/azure.svg" },
+              { name: "GitHub", src: "/logos/github.svg" },
+              { name: "Databricks", src: "/logos/databricks.svg" },
+              { name: "Odoo", src: "/logos/odoo.svg" },
+              { name: "Zoho Mail", src: "/logos/zoho.svg" },
+              { name: "Slack", src: "/logos/slack.svg" },
+              { name: "Power BI", src: "/logos/powerbi.svg" },
+            ].map((logo, i) => (
+              <img key={i} src={logo.src} alt={logo.name} title={logo.name} className="h-8 shrink-0" />
+            ))}
+          </div>
         ))}
       </div>
     </section>
