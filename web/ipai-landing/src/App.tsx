@@ -402,7 +402,7 @@ const Footer = ({ setPage }: { setPage: (p: PageId) => void }) => (
             </button>
           </div>
           <p className="text-gray-400 text-sm leading-relaxed mb-8">
-            Modern operations that put you in control. Run Odoo in the cloud with AI assistance, analytics, and scalable workflows built for growth.
+            Modern operations that put you in control. Run Odoo in the cloud with operational intelligence, analytics, and scalable workflows built for growth.
           </p>
           <div className="flex gap-4">
             <a href={EXTERNAL_URLS.github} target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-brand-primary hover:text-black transition-all" aria-label="GitHub">
@@ -477,10 +477,10 @@ const GlobalCTA = ({ setPage }: { setPage: (p: PageId) => void }) => (
       <div className="absolute inset-0 grid-pattern opacity-20"></div>
       <div className="relative z-10">
         <h2 className="text-4xl md:text-4xl font-bold text-black mb-8 tracking-tight">
-          Ready to run Odoo in the cloud with AI built in?
+          Ready to run Odoo in the cloud with intelligence built in?
         </h2>
         <p className="text-xl text-black/80 mb-12 max-w-3xl mx-auto font-medium">
-          Move from fragmented tools and manual work to one connected operating system with InsightPulseAI.
+          Move from fragmented tools and manual work to one connected operating model with InsightPulseAI.
         </p>
         <div className="flex flex-col sm:flex-row justify-center gap-4">
           <a href={EXTERNAL_URLS.demo} target="_blank" rel="noopener noreferrer" className="px-10 py-4 bg-black text-white font-bold rounded-lg hover:bg-gray-900 transition-all inline-block" style={{ boxShadow: SHADOW.shadow8 }}>
@@ -605,7 +605,7 @@ const HomePage = ({ setPage }: { setPage: (p: PageId) => void }) => (
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
           {[
             { icon: <Cloud size={32} />, title: "Odoo on Cloud", desc: "Run ERP, CRM, sales, inventory, projects, HR, finance, and operations from one hosted platform." },
-            { icon: <Cpu size={32} />, title: "Pulser", desc: "Use AI assistance to reduce manual work, guide users, summarize activity, and improve decision-making." },
+            { icon: <Cpu size={32} />, title: "Pulser", desc: "Operational intelligence that surfaces what matters, summarizes context, and accelerates action across workflows." },
             { icon: <ShieldCheck size={32} />, title: "Cloud Operations", desc: "Deploy, govern, monitor, and evolve Odoo with a more reliable cloud delivery model." },
             { icon: <BarChart size={32} />, title: "Analytics & Dashboards", desc: "Turn operational data into real-time executive and team-level visibility." }
           ].map((p, i) => (
@@ -627,7 +627,7 @@ const HomePage = ({ setPage }: { setPage: (p: PageId) => void }) => (
       <div className="mb-16">
         <h2 className="text-3xl md:text-4xl font-bold mb-8 tracking-tight">How InsightPulseAI modernizes operations</h2>
         <p className="text-gray-600 text-xl max-w-4xl leading-relaxed">
-          Adopt the platform in three layers: establish the operational system of record, add AI assistance where work slows down, and turn business activity into timely dashboards and decisions.
+          Adopt the platform in three layers: establish the operational system of record, add operational intelligence where work slows down, and turn business activity into timely dashboards and decisions.
         </p>
       </div>
       <div className="grid md:grid-cols-3 gap-8">
@@ -752,13 +752,13 @@ const HomePage = ({ setPage }: { setPage: (p: PageId) => void }) => (
         <div className="mb-16">
           <h2 className="text-3xl md:text-4xl font-bold mb-8 tracking-tight">A controlled architecture, not another layer of sprawl</h2>
           <p className="text-gray-400 text-xl max-w-4xl leading-relaxed">
-            InsightPulseAI combines operational system of record, AI assistance, analytics, and managed cloud operations into one coherent operating model.
+            InsightPulseAI combines operational system of record, operational intelligence, analytics, and managed cloud operations into one coherent operating model.
           </p>
         </div>
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
           {[
             { icon: <Cloud size={32} />, title: "Odoo on Cloud", desc: "Business workflows and system of record" },
-            { icon: <Cpu size={32} />, title: "Pulser", desc: "AI assistance, guided workflows, and safe handoff paths" },
+            { icon: <Cpu size={32} />, title: "Pulser", desc: "Operational intelligence, guided workflows, and safe handoff paths" },
             { icon: <BarChart3 size={32} />, title: "Analytics & Dashboards", desc: "Performance visibility and executive reporting" },
             { icon: <Settings size={32} />, title: "Cloud Operations", desc: "Deployment, reliability, upgrades, and governance" }
           ].map((block, i) => (
@@ -825,7 +825,7 @@ const ProductsPage = ({ setPage }: { setPage: (p: PageId) => void }) => (
     <div className="mb-24">
       <h1 className="text-3xl md:text-4xl font-bold mb-10 tracking-tight">The InsightPulseAI Platform</h1>
       <p className="text-xl text-gray-600 max-w-3xl leading-relaxed">
-        Combine modular ERP, cloud delivery, automation, and practical AI assistance to improve speed, accuracy, and control across the business.
+        Combine modular ERP, cloud delivery, operational intelligence, and automation to improve speed, accuracy, and control across the business.
       </p>
     </div>
 
@@ -840,8 +840,8 @@ const ProductsPage = ({ setPage }: { setPage: (p: PageId) => void }) => (
         },
         {
           title: "Pulser",
-          desc: "An AI-powered assistance layer that helps teams move faster with less manual work. It helps users navigate processes, draft updates, summarize records, and surface exceptions.",
-          features: ["Guided Approvals", "Record Summarization", "Exception Detection", "Workflow Acceleration", "AI Reporting"],
+          desc: "An AI-native intelligence layer that runs across workflows, records, and operational activity. Pulser surfaces what matters, summarizes context, detects exceptions, and accelerates action across the business.",
+          features: ["Operational Guidance", "Context Summaries", "Exception Detection", "Workflow Acceleration", "AI Reporting"],
           icon: <Cpu size={48} className="text-brand-primary" />,
           image: "/images/product-copilot.png"
         },
@@ -1016,7 +1016,7 @@ const DocsPage = ({ setPage }: { setPage: (p: PageId) => void }) => (
           {
             icon: <Layers size={32} className="text-brand-primary" />,
             title: "Architecture Overview",
-            desc: "How cloud delivery, workflow automation, AI assistance, and analytics fit together in one system.",
+            desc: "How cloud delivery, workflow automation, operational intelligence, and analytics fit together in one system.",
             page: 'trust' as PageId
           },
           {
@@ -1884,10 +1884,10 @@ const CompanyPage = ({ setPage }: { setPage: (p: PageId) => void }) => (
       <div className="max-w-7xl mx-auto relative z-10">
         <span className="text-brand-primary font-bold uppercase tracking-widest text-sm mb-6 block">Company</span>
         <h1 className="text-5xl md:text-7xl font-bold mb-10 tracking-tight leading-[1.1] max-w-4xl">
-          We build modern operating systems for ambitious businesses
+          We build modern operating models for ambitious businesses
         </h1>
         <p className="text-xl text-gray-400 leading-relaxed mb-12 max-w-3xl">
-          InsightPulseAI helps growing companies modernize operations with Odoo on Cloud, Pulser, analytics, and automation. We combine architecture, implementation, and execution support into one operating model designed to scale with the business.
+          InsightPulseAI helps growing companies modernize operations with Odoo on Cloud, Pulser, analytics, and automation. We combine architecture, implementation, and operational support into one scalable operating model.
         </p>
         <div className="flex flex-wrap gap-4">
           <a href={EXTERNAL_URLS.demo} target="_blank" rel="noopener noreferrer" className="px-10 py-5 bg-brand-primary text-black font-extrabold rounded-full hover:bg-cyan-400 transition-all inline-block">Book Demo</a>
@@ -1900,7 +1900,7 @@ const CompanyPage = ({ setPage }: { setPage: (p: PageId) => void }) => (
     <section className="py-24 px-6 md:px-12 max-w-7xl mx-auto">
       <h2 className="text-4xl font-bold mb-10 tracking-tight">Why InsightPulseAI exists</h2>
       <p className="text-gray-600 text-lg leading-relaxed max-w-4xl">
-        InsightPulseAI was built around a simple problem: operations often move faster than systems can adapt. Teams outgrow fragmented tools, manual workflows, and ERP environments that are too rigid to evolve with the business. We built InsightPulseAI to close that gap with a more adaptive operating model powered by Odoo, cloud delivery, and AI-assisted workflows.
+        InsightPulseAI was built around a simple problem: operations often move faster than systems can adapt. Teams outgrow fragmented tools, manual workflows, and ERP environments that are too rigid to evolve with the business. We built InsightPulseAI to close that gap with a more adaptive operating model powered by Odoo, cloud delivery, operational intelligence, and automation.
       </p>
     </section>
 
@@ -1910,7 +1910,7 @@ const CompanyPage = ({ setPage }: { setPage: (p: PageId) => void }) => (
       <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
         {[
           { icon: <Cloud size={32} className="text-brand-primary" />, title: "Odoo on Cloud", desc: "We design, deploy, and evolve cloud-based Odoo environments that give teams a stronger operational core." },
-          { icon: <Cpu size={32} className="text-brand-primary" />, title: "Pulser", desc: "We add AI assistance where work slows down — helping teams navigate workflows, reduce friction, and accelerate execution." },
+          { icon: <Cpu size={32} className="text-brand-primary" />, title: "Pulser", desc: "We add an intelligence layer where work slows down — helping teams surface context, detect exceptions, reduce friction, and accelerate execution." },
           { icon: <BarChart3 size={32} className="text-brand-primary" />, title: "Analytics & Visibility", desc: "We connect data, reporting, and operational insight so leaders can see what is happening and what should happen next." },
           { icon: <Settings size={32} className="text-brand-primary" />, title: "Cloud Operations", desc: "We support environments over time with practical operating discipline, not just one-time implementation." },
         ].map((item, i) => (
@@ -1933,7 +1933,7 @@ const CompanyPage = ({ setPage }: { setPage: (p: PageId) => void }) => (
         {[
           { title: "Architecture-led", desc: "We design for scale, governance, and long-term system evolution." },
           { title: "Execution-focused", desc: "We care about operational outcomes, not just project completion." },
-          { title: "AI-assisted", desc: "We use Pulser and automation where they create real leverage." },
+          { title: "Intelligence-led", desc: "We use Pulser and automation where they create measurable operational leverage." },
           { title: "Cloud-native", desc: "We modernize delivery, observability, and lifecycle management from the start." },
         ].map((item, i) => (
           <div key={i} className="flex items-start gap-6 p-8 rounded-2xl border border-gray-100">
@@ -1974,7 +1974,7 @@ const CompanyPage = ({ setPage }: { setPage: (p: PageId) => void }) => (
         <div className="max-w-xl">
           <h2 className="text-4xl font-bold mb-8 tracking-tight">Join us</h2>
           <p className="text-gray-400 text-lg leading-relaxed">
-            We're building the future of practical AI-assisted business operations. If you care about systems, execution, and building tools that help teams work better, we'd love to hear from you.
+            We're building the future of intelligent business operations. If you care about systems, execution, and building tools that help teams work better, we'd love to hear from you.
           </p>
         </div>
         <button onClick={() => setPage('careers')} className="px-12 py-5 bg-brand-primary text-black font-bold rounded-lg hover:bg-cyan-400 transition-all whitespace-nowrap">
@@ -2039,7 +2039,7 @@ const TermsPage = ({ setPage }: { setPage: (p: PageId) => void }) => (
         </div>
         <div className="p-8 rounded-2xl bg-brand-light border border-gray-100">
           <h2 className="text-xl font-bold mb-4">Services</h2>
-          <p className="text-gray-600 leading-relaxed">InsightPulseAI provides cloud-hosted Odoo ERP environments, Pulser AI assistance, analytics dashboards, and cloud operations services. Service availability and features may vary by plan.</p>
+          <p className="text-gray-600 leading-relaxed">InsightPulseAI provides cloud-hosted Odoo ERP environments, Pulser operational intelligence, analytics dashboards, and cloud operations services. Service availability and features may vary by plan.</p>
         </div>
         <div className="p-8 rounded-2xl bg-brand-light border border-gray-100">
           <h2 className="text-xl font-bold mb-4">User responsibilities</h2>
