@@ -541,6 +541,24 @@ const HomePage = ({ setPage }: { setPage: (p: PageId) => void }) => (
       </div>
     </section>
 
+    {/* Built On — Technology Partners */}
+    <section className="py-12 px-6 md:px-12 max-w-7xl mx-auto">
+      <p className="text-center text-xs font-bold uppercase tracking-widest text-gray-400 mb-8">Built on</p>
+      <div className="flex flex-wrap justify-center items-center gap-12 opacity-40 grayscale hover:opacity-60 transition-opacity">
+        {[
+          { name: "Microsoft Azure", src: "/logos/azure.svg" },
+          { name: "Odoo", src: "/logos/odoo.svg" },
+          { name: "Databricks", src: "/logos/databricks.svg" },
+          { name: "Power BI", src: "/logos/powerbi.svg" },
+          { name: "Slack", src: "/logos/slack.svg" },
+          { name: "GitHub", src: "/logos/github.svg" },
+          { name: "Zoho", src: "/logos/zoho.svg" },
+        ].map((logo, i) => (
+          <img key={i} src={logo.src} alt={logo.name} className="h-8" title={logo.name} />
+        ))}
+      </div>
+    </section>
+
     {/* Industry Focus */}
     <section className="py-24 px-6 md:px-12 max-w-7xl mx-auto">
       <div className="mb-16">
