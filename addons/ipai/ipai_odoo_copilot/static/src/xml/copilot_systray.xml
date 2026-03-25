@@ -6,7 +6,7 @@
             <!-- Systray Icon -->
             <button class="o_ipai_copilot_btn btn border-0 bg-transparent"
                     t-on-click="togglePanel"
-                    title="IPAI Copilot"
+                    title="Pulser"
                     t-att-class="{'o_ipai_copilot_btn_active': state.isOpen}">
                 <svg class="o_ipai_copilot_icon" width="20" height="20" viewBox="0 0 24 24"
                      fill="none" stroke="currentColor" stroke-width="2"
@@ -33,7 +33,7 @@
                             <circle cx="9" cy="13" r="1.5"/>
                             <circle cx="15" cy="13" r="1.5"/>
                         </svg>
-                        <strong>IPAI Copilot</strong>
+                        <strong>Pulser</strong>
                     </div>
                     <div class="d-flex gap-1">
                         <button class="btn btn-sm btn-outline-secondary border-0"
@@ -63,7 +63,7 @@
                             <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
                         </svg>
                         <p class="mb-1 fw-bold">How can I help?</p>
-                        <p class="small">Ask about your Odoo data, workflows, reports, or configuration.</p>
+                        <p class="small">Ask about Odoo modules, workflows, BIR compliance, or your ERP data. I can search documentation and your records.</p>
                     </div>
 
                     <!-- Messages -->
@@ -120,7 +120,7 @@
                         <textarea
                             t-ref="promptInput"
                             class="form-control form-control-sm"
-                            placeholder="Ask IPAI Copilot..."
+                            placeholder="Ask Pulser..."
                             rows="1"
                             t-on-keydown="onKeyDown"
                             t-att-disabled="state.isLoading"/>
