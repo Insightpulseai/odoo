@@ -6,10 +6,10 @@
             <!-- Systray Icon -->
             <button class="o_ipai_copilot_btn btn border-0 bg-transparent"
                     t-on-click="togglePanel"
-                    title="Odoo Copilot"
+                    title="Pulser"
                     t-att-class="{'o_ipai_copilot_btn_active': state.isOpen}">
                 <img src="/mail/static/src/img/odoobot.png"
-                     alt="Odoo Copilot"
+                     alt="Pulser"
                      class="o_ipai_copilot_icon"
                      style="width: 24px; height: 24px; border-radius: 50%;"/>
             </button>
@@ -22,9 +22,9 @@
                 <div class="o_ipai_copilot_header d-flex align-items-center justify-content-between px-3 py-2 border-bottom">
                     <div class="d-flex align-items-center gap-2">
                         <img src="/mail/static/src/img/odoobot.png"
-                             alt="Odoo Copilot"
+                             alt="Pulser"
                              style="width: 20px; height: 20px; border-radius: 50%;"/>
-                        <strong>Odoo Copilot</strong>
+                        <strong>Pulser</strong>
                     </div>
                     <div class="d-flex gap-1">
                         <button class="btn btn-sm btn-outline-secondary border-0"
@@ -111,7 +111,7 @@
                         <textarea
                             t-ref="promptInput"
                             class="form-control form-control-sm"
-                            placeholder="Ask IPAI Copilot..."
+                            placeholder="Ask Pulser..."
                             rows="1"
                             t-on-keydown="onKeyDown"
                             t-att-disabled="state.isLoading"/>

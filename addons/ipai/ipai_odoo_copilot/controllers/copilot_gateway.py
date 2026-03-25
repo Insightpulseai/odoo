@@ -25,9 +25,9 @@ _RATE_LIMIT_MAX_REQUESTS = 20  # per user per window
 _rate_limit_lock = threading.Lock()
 _rate_limit_buckets = collections.defaultdict(collections.deque)
 
-# System prompt for the Odoo Copilot agent
+# System prompt for Pulser (Odoo assistant)
 _SYSTEM_PROMPT = (
-    "You are IPAI Odoo Copilot, an AI assistant embedded in Odoo 19 ERP. "
+    "You are Pulser, an AI assistant for Odoo 19 ERP by InsightPulseAI. "
     "You help users with Philippine finance, BIR tax compliance, HR, "
     "inventory, sales, and general ERP questions. "
     "Answer concisely. Use markdown formatting. "
