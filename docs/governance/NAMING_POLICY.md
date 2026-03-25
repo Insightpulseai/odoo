@@ -30,8 +30,10 @@
 - Odoo AI
 
 **Notes:**
-- "Copilot" may only appear referentially for Microsoft-owned products or integrations.
+- "Copilot" may only appear referentially for Microsoft-owned products, platforms, SDKs, or integrations (e.g. Microsoft Copilot, Microsoft 365 Copilot, Security Copilot, GitHub Copilot SDK).
 - "Odoo" may only appear referentially for platform/runtime/integration context, not as a first-party branded product name.
+- "copilot-style" as a lowercase pattern descriptor is acceptable in educational/blog content (e.g. "a copilot-style assistant for ERP workflows").
+- Microsoft uses "Copilot" as (1) product brand, (2) extensibility surface, and (3) pattern word in education. None of these grant third-party branding rights.
 
 ### Internal code
 

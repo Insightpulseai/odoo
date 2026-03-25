@@ -18,7 +18,6 @@ from __future__ import annotations
 
 import pathlib
 import re
-import sys
 
 ROOT = pathlib.Path(__file__).resolve().parents[2]
 
@@ -50,13 +49,15 @@ FORBIDDEN_PATTERNS = [
     re.compile(r"\bOdoo AI\b", re.IGNORECASE),
 ]
 
-# Allowed referential Microsoft phrases
+# Allowed referential Microsoft phrases and pattern descriptors
 ALLOWED_REFERENTIAL = [
     re.compile(r"\bMicrosoft Copilot\b", re.IGNORECASE),
     re.compile(r"\bMicrosoft 365 Copilot\b", re.IGNORECASE),
     re.compile(r"\bSecurity Copilot\b", re.IGNORECASE),
     re.compile(r"\bGitHub Copilot\b", re.IGNORECASE),
-    re.compile(r"\bcopilot-style\b", re.IGNORECASE),  # descriptor OK
+    re.compile(r"\bGitHub Copilot SDK\b", re.IGNORECASE),
+    re.compile(r"\bcopilot-style\b", re.IGNORECASE),  # pattern descriptor OK
+    re.compile(r"\bcopilot pattern\b", re.IGNORECASE),  # pattern descriptor OK
 ]
 
 TEXT_EXTENSIONS = {
