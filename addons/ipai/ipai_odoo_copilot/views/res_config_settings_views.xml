@@ -7,7 +7,7 @@
         <field name="arch" type="xml">
             <xpath expr="//app[@name='general_settings']" position="inside">
 
-                <block title="Odoo Copilot" name="ipai_copilot_settings">
+                <block title="Pulser for Odoo" name="ipai_copilot_settings">
                     <setting string="Copilot"
                              help="Enable AI copilot assistant in the systray">
                         <field name="ipai_copilot_enabled"/>
