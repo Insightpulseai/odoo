@@ -1,0 +1,110 @@
+schema_version: 1
+kind: foundry_python_sdk_surfaces
+
+scope:
+  language: python
+  applies_to:
+    - microsoft_foundry
+    - azure_ai_services_tools
+    - odoo_foundry_bridge
+
+endpoint_policy:
+  foundry_project_endpoint:
+    pattern: "https://<resource-name>.services.ai.azure.com/api/projects/<project-name>"
+    purpose:
+      - foundry_project_client
+      - foundry_native_operations
+      - project_scoped_openai_compatible_client
+  openai_compatibility_endpoint:
+    pattern: "https://<resource-name>.openai.azure.com/openai/v1"
+    purpose:
+      - max_openai_api_compatibility
+      - api_key_compatible_access
+  note: >
+    Foundry resources expose the project endpoint and OpenAI-compatible access patterns.
+    Azure OpenAI resources expose only the /openai/v1 endpoint.
+
+authentication_policy:
+  default:
+    credential: DefaultAzureCredential
+    package: azure-identity
+    posture: entra_first
+  compatibility_exception:
+    allowed_for:
+      - openai_v1_api_key_flows
+    note: api keys are exception-path only for compatibility flows
+
+sdk_surfaces:
+  foundry_project_sdk:
+    canonical: true
+    package_family:
+      - azure-ai-projects
+      - azure-identity
+    optional_companion:
+      - openai
+    client_types:
+      - project_client
+      - openai_compatible_client_from_project
+    responsibilities:
+      - project_properties
+      - connections
+      - tracing
+      - agents
+      - evaluations
+      - fine_tuning
+      - foundry_direct_models_via_responses_api
+    version_policy:
+      foundry_new_portal:
+        package: "azure-ai-projects>=2.0.0"
+        status: preview
+      foundry_classic:
+        package: "azure-ai-projects==1.0.0"
+        status: stable
+
+  foundry_tools_services:
+    canonical: true
+    package_family_policy: service_specific
+    services:
+      - speech
+      - content_safety
+      - vision
+      - language
+      - translator
+      - document_intelligence
+      - azure_ai_search
+    package_name_source_of_truth: microsoft_sdk_package_resources_reference
+    note: >
+      Keep exact per-service package names sourced from the official Microsoft
+      package reference. Do not invent umbrella package names in this SSOT file.
+
+  openai_compatibility_sdk:
+    canonical: conditional
+    package_family:
+      - openai
+    use_when:
+      - maximum_openai_compatibility_required
+      - direct_openai_api_surface_needed
+    not_default_for:
+      - foundry_project_management
+      - foundry_native_setup
+      - project_connections
+      - tracing_configuration
+
+guardrails:
+  - do_not_collapse_all_python_ai_packages_into_one_foundry_sdk_label
+  - do_not_use_openai_sdk_as_default_control_surface_for_foundry_native_project_operations
+  - do_not_mix_foundry_classic_and_foundry_new_portal_package_guidance_without_explicit_decision
+  - do_not_promote_preview_foundry_new_portal_packages_to_production_default_without_exception_record
+
+production_policy:
+  default_runtime_track: foundry_classic_stable_until_exception_approved
+  preview_usage_requires_exception: true
+  exception_record_must_include:
+    - business_reason
+    - target_environment
+    - rollback_plan
+    - package_version_pin
+
+references:
+  microsoft_foundry_sdk_overview: "official"
+  microsoft_sdk_package_resources_reference: "official"
