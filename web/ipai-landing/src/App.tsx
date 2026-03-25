@@ -516,12 +516,12 @@ const HomePage = ({ setPage }: { setPage: (p: PageId) => void }) => (
               InsightPulseAI combines <span className="text-brand-primary">Odoo on Cloud</span>, <span className="text-brand-primary">Pulser</span>, and modern data workflows to help teams unify operations, automate execution, and scale with stronger control.
             </p>
             <div className="flex flex-col sm:flex-row gap-6">
-              <button onClick={() => setPage('contact')} className="px-8 py-4 bg-brand-primary text-black font-bold rounded-full hover:bg-cyan-400 transition-all text-lg" style={{ boxShadow: SHADOW.shadow8 }}>
-                Book Demo
-              </button>
-              <a href={EXTERNAL_URLS.demo} target="_blank" rel="noopener noreferrer" className="px-8 py-4 bg-white/10 text-white font-bold rounded-lg hover:bg-white/20 transition-all border border-white/10 text-lg backdrop-blur-sm inline-block text-center">
+              <a href={EXTERNAL_URLS.demo} target="_blank" rel="noopener noreferrer" className="px-8 py-4 bg-brand-primary text-black font-bold rounded-full hover:bg-cyan-400 transition-all text-lg inline-block text-center" style={{ boxShadow: SHADOW.shadow8 }}>
                 Book Demo
               </a>
+              <button onClick={() => setPage('contact')} className="px-8 py-4 bg-white/10 text-white font-bold rounded-lg hover:bg-white/20 transition-all border border-white/10 text-lg backdrop-blur-sm">
+                Contact Sales
+              </button>
             </div>
           </motion.div>
         </div>
@@ -1270,9 +1270,9 @@ const MediaPage = ({ setPage }: { setPage: (p: PageId) => void }) => (
             InsightPulseAI helps media and entertainment teams unify audience, campaign, content, and monetization signals into one governed operating layer. Use lakehouse-driven intelligence to improve acquisition, engagement, retention, pricing, inventory planning, and downstream content workflows.
           </p>
           <div className="flex flex-col sm:flex-row gap-4">
-            <button onClick={() => setPage('contact')} className="px-8 py-4 bg-brand-primary text-black font-bold rounded-full hover:bg-cyan-400 transition-all">
+            <a href={EXTERNAL_URLS.demo} target="_blank" rel="noopener noreferrer" className="px-8 py-4 bg-brand-primary text-black font-bold rounded-full hover:bg-cyan-400 transition-all inline-block text-center">
               Book Demo
-            </button>
+            </a>
             <a href={EXTERNAL_URLS.demo} target="_blank" rel="noopener noreferrer" className="px-8 py-4 bg-white/10 text-white font-bold rounded-lg hover:bg-white/20 transition-all border border-white/10 backdrop-blur-sm inline-block text-center">
               Book Demo
             </a>
