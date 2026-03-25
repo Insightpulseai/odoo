@@ -541,28 +541,6 @@ const HomePage = ({ setPage }: { setPage: (p: PageId) => void }) => (
       </div>
     </section>
 
-    {/* Works With Your Stack — Continuous Marquee with Color Logos */}
-    <section className="py-12 border-b border-gray-100 overflow-hidden">
-      <p className="text-center text-xs font-bold uppercase tracking-widest text-gray-400 mb-8">Works with your existing stack</p>
-      <div className="flex animate-marquee whitespace-nowrap">
-        {[...Array(3)].map((_, setIndex) => (
-          <div key={setIndex} className="flex items-center gap-16 px-8 shrink-0">
-            {[
-              { name: "Microsoft Azure", src: "/logos/azure.svg" },
-              { name: "GitHub", src: "/logos/github.svg" },
-              { name: "Databricks", src: "/logos/databricks.svg" },
-              { name: "Odoo", src: "/logos/odoo.svg" },
-              { name: "Zoho Mail", src: "/logos/zoho.svg" },
-              { name: "Slack", src: "/logos/slack.svg" },
-              { name: "Power BI", src: "/logos/powerbi.svg" },
-            ].map((logo, i) => (
-              <img key={i} src={logo.src} alt={logo.name} title={logo.name} className="h-8 shrink-0" />
-            ))}
-          </div>
-        ))}
-      </div>
-    </section>
-
     {/* Industry Focus */}
     <section className="py-24 px-6 md:px-12 max-w-7xl mx-auto">
       <div className="mb-16">
@@ -699,24 +677,24 @@ const HomePage = ({ setPage }: { setPage: (p: PageId) => void }) => (
       </div>
     </section>
 
-    {/* Integrations Proof Rail */}
-    <section className="py-16 px-6 md:px-12 border-y border-gray-100 bg-gray-50/50">
+    {/* Works With Your Stack — Color Logo Marquee */}
+    <section className="py-16 px-6 md:px-12 border-y border-gray-100 bg-gray-50/50 overflow-hidden">
       <div className="max-w-7xl mx-auto">
         <p className="text-center text-sm font-bold text-gray-400 uppercase tracking-widest mb-10">Works with your existing stack</p>
-        <div className="flex flex-wrap justify-center items-center gap-x-12 gap-y-6">
-          {[
-            { name: "Microsoft Azure", icon: <Cloud size={28} /> },
-            { name: "GitHub", icon: <Globe size={28} /> },
-            { name: "Databricks", icon: <Database size={28} /> },
-            { name: "Cloudflare", icon: <ShieldCheck size={28} /> },
-            { name: "Odoo CE", icon: <Box size={28} /> },
-            { name: "Zoho Mail", icon: <Mail size={28} /> },
-            { name: "Slack", icon: <MessageSquare size={28} /> },
-            { name: "Power BI", icon: <BarChart3 size={28} /> },
-          ].map((int, i) => (
-            <div key={i} className="flex items-center gap-2.5 text-gray-500 hover:text-brand-primary transition-colors group">
-              <div className="group-hover:scale-110 transition-transform">{int.icon}</div>
-              <span className="text-sm font-bold">{int.name}</span>
+        <div className="flex animate-marquee whitespace-nowrap">
+          {[...Array(3)].map((_, setIndex) => (
+            <div key={setIndex} className="flex items-center gap-16 px-8 shrink-0">
+              {[
+                { name: "Microsoft Azure", src: "/logos/azure.svg" },
+                { name: "GitHub", src: "/logos/github.svg" },
+                { name: "Databricks", src: "/logos/databricks.svg" },
+                { name: "Odoo", src: "/logos/odoo.svg" },
+                { name: "Zoho Mail", src: "/logos/zoho.svg" },
+                { name: "Slack", src: "/logos/slack.svg" },
+                { name: "Power BI", src: "/logos/powerbi.svg" },
+              ].map((logo, i) => (
+                <img key={i} src={logo.src} alt={logo.name} title={logo.name} className="h-8 shrink-0" />
+              ))}
             </div>
           ))}
         </div>
