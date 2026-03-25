@@ -37,7 +37,7 @@ const FOUNDRY_CONFIG = {
   endpoint: process.env.AZURE_AI_FOUNDRY_OPENAI_ENDPOINT || '',
   apiKey: process.env.AZURE_AI_FOUNDRY_API_KEY || '',
   agentId: process.env.AZURE_AI_FOUNDRY_AGENT_ID || '',
-  apiVersion: '2025-05-01-preview',
+  apiVersion: '2024-10-01-preview',
 };
 
 const SYSTEM_PROMPT = `You are Pulser, the InsightPulseAI product assistant on the public marketing website.
