@@ -1,30 +1,78 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Copyright 2026 InsightPulse AI
+<!-- Copyright 2026 InsightPulseAI
      License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl.html). -->
 <odoo>
 
-    <!-- Override login layout: replace "Powered by Odoo" footer with IPAI branding -->
-    <template id="login_layout_ipai" inherit_id="web.login_layout" name="IPAI Login Layout">
-
-        <!-- Replace default company logo with IPAI branded logo -->
-        <xpath expr="//div[hasclass('text-center','pb-3','border-bottom')]" position="replace">
-            <div class="text-center pb-3 border-bottom mb-4 o_ipai_login_logo">
-                <img src="/ipai_web_branding/static/src/img/ipai_logo.svg"
-                     alt="InsightPulse AI"
-                     style="max-height:80px; max-width: 100%; width:auto"/>
-            </div>
+    <!-- Dark/cyan login branding — matches insightpulseai.com aesthetic -->
+    <template id="login_branding_css" inherit_id="web.login_layout" name="IPAI Login Branding CSS">
+        <xpath expr="//div[hasclass('card-body')]" position="before">
+            <style>
+                body.bg-100 {
+                    background: linear-gradient(160deg, #0B1117 0%, #0f1923 50%, #0B1117 100%) !important;
+                }
+                .o_database_list {
+                    background: rgba(255,255,255,0.06) !important;
+                    backdrop-filter: blur(16px);
+                    border: 1px solid rgba(255,255,255,0.1) !important;
+                    border-radius: 24px !important;
+                    box-shadow: 0 8px 32px rgba(0,0,0,0.4) !important;
+                    max-width: 400px !important;
+                }
+                .o_database_list .card-body { padding: 2.5rem !important; }
+                .o_database_list label, .o_database_list .form-label {
+                    color: rgba(255,255,255,0.85) !important;
+                }
+                .o_database_list .form-control {
+                    border-radius: 12px !important;
+                    border: 1px solid rgba(255,255,255,0.15) !important;
+                    background: rgba(255,255,255,0.08) !important;
+                    color: #fff !important;
+                }
+                .o_database_list .form-control:focus {
+                    border-color: #00E5FF !important;
+                    box-shadow: 0 0 0 3px rgba(0,229,255,0.15) !important;
+                }
+                .o_database_list .btn-primary {
+                    background: linear-gradient(135deg, #00E5FF, #00B8D4) !important;
+                    border: none !important;
+                    border-radius: 12px !important;
+                    font-weight: 700 !important;
+                    color: #0B1117 !important;
+                }
+                .o_database_list .btn-primary:hover {
+                    box-shadow: 0 4px 16px rgba(0,229,255,0.3) !important;
+                }
+                .o_database_list a { color: #00E5FF !important; }
+                .o_database_list a:hover { color: #00B8D4 !important; }
+                .o_database_list .text-muted { color: rgba(255,255,255,0.5) !important; }
+                .o_database_list .text-center.small { color: rgba(255,255,255,0.3) !important; }
+                .o_database_list .text-center.small a { color: rgba(255,255,255,0.4) !important; }
+                .o_database_list hr, .o_database_list .border-bottom, .o_database_list .border-top {
+                    border-color: rgba(255,255,255,0.1) !important;
+                }
+                .o_database_list .btn-link { color: #00E5FF !important; }
+                .o_database_list .btn-outline-secondary {
+                    border: 1px solid rgba(255,255,255,0.15) !important;
+                    background: rgba(255,255,255,0.08) !important;
+                    color: #fff !important;
+                    border-radius: 12px !important;
+                }
+                .o_database_list .form-check-label { color: rgba(255,255,255,0.7) !important; }
+                .text-center.pb-3 img { border-radius: 12px; }
+            </style>
         </xpath>
+    </template>
 
-        <!-- Replace "Powered by Odoo" footer with IPAI footer -->
+    <!-- Replace "Powered by Odoo" footer -->
+    <template id="login_footer_ipai" inherit_id="web.login_layout" name="IPAI Login Footer">
         <xpath expr="//div[hasclass('text-center','small','mt-4')]" position="replace">
-            <div class="text-center small mt-4 pt-3 border-top o_ipai_login_footer" t-if="not disable_footer">
+            <div class="text-center small mt-4 pt-3 border-top" t-if="not disable_footer">
                 <t t-if="not disable_database_manager">
                     <a class="border-end pe-2 me-1" href="/web/database/manager">Manage Databases</a>
                 </t>
-                <span class="text-muted">InsightPulse AI</span>
+                <span style="color: rgba(255,255,255,0.3);">InsightPulseAI</span>
             </div>
         </xpath>
-
     </template>
 
 </odoo>
