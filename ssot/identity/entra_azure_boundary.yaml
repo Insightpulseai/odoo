@@ -1,0 +1,163 @@
+# =============================================================================
+# Entra vs Azure Control Plane Boundary — SSOT
+# =============================================================================
+# Defines what belongs in the Entra identity plane vs the Azure resource plane.
+# This is an enforcement boundary, not a suggestion.
+#
+# Rule: Entra roles control Entra resources. Azure roles control Azure resources.
+# These are separate control planes.
+#
+# Refs:
+#   - https://learn.microsoft.com/entra/fundamentals/introduction-identity-access-management
+#   - https://learn.microsoft.com/entra/identity/role-based-access-control/custom-overview
+#   - https://learn.microsoft.com/entra/identity/managed-identities-azure-resources/overview
+#
+# Last updated: 2026-03-26
+# =============================================================================
+
+schema_version: 1
+kind: identity_boundary_contract
+last_reviewed: "2026-03-26"
+
+# ─────────────────────────────────────────────────────────────────────────────
+# ENTRA-ONLY — identity authority surface
+# ─────────────────────────────────────────────────────────────────────────────
+# These objects exist only in Entra. They are not Azure resources.
+
+entra_only:
+  directory_objects:
+    - users
+    - groups
+    - administrative_units
+    - verified_domains
+    - licenses
+
+  access_policy:
+    - conditional_access_policies
+    - mfa_sign_in_methods
+    - break_glass_accounts
+    - entra_rbac_role_assignments
+
+  application_identity:
+    - app_registrations
+    - enterprise_apps_service_principals
+    - federated_identity_credentials
+
+  ssot_files:
+    - ssot/identity/entra_target_state.yaml
+    - ssot/identity/entra_app_registrations.yaml
+    - ssot/identity/entra_rbac_roles.yaml
+    - ssot/identity/entra_branding.yaml
+    - ssot/entra/app_registrations.azure_native.yaml
+    - ssot/entra/app_registrations.excluded.yaml
+
+# ─────────────────────────────────────────────────────────────────────────────
+# AZURE-ONLY — resource plane
+# ─────────────────────────────────────────────────────────────────────────────
+# These are Azure resources, even if they authenticate through Entra.
+
+azure_only:
+  workload:
+    - container_apps
+    - container_registries
+    - app_service
+    - function_apps
+
+  data:
+    - postgresql_flexible_server
+    - storage_accounts
+    - adls_gen2
+    - databricks_workspaces
+    - databricks_access_connectors
+
+  ai:
+    - azure_openai
+    - ai_foundry
+    - document_intelligence
+    - computer_vision
+    - language
+    - ai_search
+
+  networking:
+    - vnets
+    - nsgs
+    - front_door
+    - dns_zones
+    - private_endpoints
+
+  security:
+    - key_vault
+    - defender_for_cloud
+
+  observability:
+    - azure_monitor
+    - log_analytics
+    - application_insights
+
+# ─────────────────────────────────────────────────────────────────────────────
+# CROSS-PLANE — managed identities
+# ─────────────────────────────────────────────────────────────────────────────
+# Identity authority in Entra, lifecycle/attachment in Azure.
+
+cross_plane:
+  managed_identities:
+    rule: >
+      Identity governance and trust model lives in Entra.
+      Resource object lifecycle lives in Azure where it is attached.
+      System-assigned MIs are tied to the parent Azure resource.
+      User-assigned MIs are standalone Azure resources with Entra identity.
+
+    inventory:
+      # From Azure resource inventory — the 13 managed identity resources
+      - name: dbmanagedidentity
+        type: system_assigned
+        notes: "Databricks workspace system identity"
+      - name: id-ipai-aca-dev
+        type: user_assigned
+        scope: container_apps
+      - name: id-ipai-agents-dev
+        type: user_assigned
+        scope: agent_workloads
+      - name: id-ipai-databricks-dev
+        type: user_assigned
+        scope: databricks
+      - name: mi-ipai-lakehouse-dev
+        type: user_assigned
+        scope: lakehouse_dev
+      - name: mi-ipai-lakehouse-prod
+        type: user_assigned
+        scope: lakehouse_prod
+      - name: mi-ipai-lakehouse-staging
+        type: user_assigned
+        scope: lakehouse_staging
+      - name: mi-ipai-odoo-dev
+        type: user_assigned
+        scope: odoo_dev
+      - name: mi-ipai-odoo-prod
+        type: user_assigned
+        scope: odoo_prod
+      - name: mi-ipai-odoo-staging
+        type: user_assigned
+        scope: odoo_staging
+      - name: mi-ipai-platform-dev
+        type: user_assigned
+        scope: platform_dev
+      - name: mi-ipai-platform-prod
+        type: user_assigned
+        scope: platform_prod
+      - name: mi-ipai-platform-staging
+        type: user_assigned
+        scope: platform_staging
+
+# ─────────────────────────────────────────────────────────────────────────────
+# ENFORCEMENT RULES
+# ─────────────────────────────────────────────────────────────────────────────
+
+enforcement:
+  - "Entra roles control Entra resources — never use Entra RBAC for Azure resources"
+  - "Azure roles control Azure resources — never use Azure RBAC for Entra directory objects"
+  - "Managed identity governance lives in Entra; resource attachment lives in Azure"
+  - "Databricks access connectors are Azure resources, not Entra objects"
+  - "Key Vault is an Azure resource — secrets access is via Azure RBAC, not Entra RBAC"
+  - "App registrations are Entra objects — track in ssot/identity/ and ssot/entra/"
+  - "No Supabase identity surface — all identity is Azure-native (Entra + managed identity)"
