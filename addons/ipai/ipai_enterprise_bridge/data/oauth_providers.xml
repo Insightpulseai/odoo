@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    OAuth Provider Data Records — IPAI Enterprise Bridge
+    =====================================================
+    Defines auth_oauth.provider records for SSO login buttons on /web/login.
+
+    Secrets policy:
+      - client_id fields use ir.config_parameter placeholders.
+        Set the real value via Settings > Technical > Parameters or env var injection.
+      - client_secret is NEVER stored in this file.
+        Store in Azure Key Vault (kv-ipai-dev) and inject at runtime.
+
+    SSOT cross-reference:
+      - infra/ssot/auth/oidc_clients.yaml (canonical provider registry)
+      - ssot/contracts/identity.yaml (auth boundary contract)
+      - ssot/entra/app_registrations.azure_native.yaml (Entra app lifecycle)
+-->
+<odoo noupdate="1">
+
+    <!-- ================================================================
+         Microsoft Entra ID (primary IdP)
+         ================================================================
+         Entra app registration: ipai-odoo-login-prod
+         Key Vault secrets:
+           - entra-odoo-login-client-id
+           - entra-odoo-login-client-secret
+         Redirect URI: https://erp.insightpulseai.com/auth_oauth/signin
+    -->
+    <record id="provider_entra_id" model="auth.oauth.provider">
+        <field name="name">Microsoft Entra ID</field>
+        <field name="flow">id_token_code</field>
+        <field name="client_id">ENTRA_CLIENT_ID_PLACEHOLDER</field>
+        <field name="auth_endpoint">https://login.microsoftonline.com/common/oauth2/v2.0/authorize</field>
+        <field name="validation_endpoint">https://login.microsoftonline.com/common/oauth2/v2.0/token</field>
+        <field name="data_endpoint">https://graph.microsoft.com/oidc/userinfo</field>
+        <field name="scope">openid email profile User.Read</field>
+        <field name="enabled" eval="True"/>
+        <field name="body">Sign in with Microsoft</field>
+        <field name="css_class">fa fa-fw fa-windows</field>
+        <field name="sequence">10</field>
+    </record>
+
+    <!-- ================================================================
+         Google Workspace (secondary provider — w9studio.net)
+         ================================================================
+         Google Cloud Console project: w9studio.net Workspace admin
+         Consent screen type: Internal (restricts to @w9studio.net)
+         Key Vault secrets:
+           - google-oauth-w9studio-client-id
+           - google-oauth-w9studio-client-secret
+         Redirect URI: https://erp.insightpulseai.com/auth_oauth/signin
+    -->
+    <record id="provider_google_workspace" model="auth.oauth.provider">
+        <field name="name">Google Workspace</field>
+        <field name="flow">id_token_code</field>
+        <field name="client_id">GOOGLE_CLIENT_ID_PLACEHOLDER</field>
+        <field name="auth_endpoint">https://accounts.google.com/o/oauth2/v2/auth</field>
+        <field name="validation_endpoint">https://www.googleapis.com/oauth2/v1/tokeninfo</field>
+        <field name="data_endpoint">https://www.googleapis.com/oauth2/v1/userinfo</field>
+        <field name="scope">openid email profile</field>
+        <field name="enabled" eval="True"/>
+        <field name="body">Sign in with Google</field>
+        <field name="css_class">fa fa-fw fa-google</field>
+        <field name="sequence">20</field>
+    </record>
+
+</odoo>

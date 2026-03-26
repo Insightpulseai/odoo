@@ -64,6 +64,44 @@ class ResConfigSettingsActions(models.TransientModel):
             "res_id": config.id,
         }
 
+    def action_apply_google_oauth(self):
+        """Create or update the Google Workspace auth.oauth.provider record."""
+        self.ensure_one()
+        ICP = self.env["ir.config_parameter"].sudo()
+        enabled = ICP.get_param("ipai.oauth.google.enabled", "False") == "True"
+        client_id = ICP.get_param("ipai.oauth.google.client_id", "")
+        domain = ICP.get_param("ipai.oauth.google.workspace_domain", "insightpulseai.com")
+
+        Provider = self.env["auth.oauth.provider"].sudo()
+        google = Provider.search([("name", "=like", "Google Workspace%")], limit=1)
+
+        vals = {
+            "name": "Google Workspace (W9 Studio)",
+            "enabled": enabled and bool(client_id),
+            "client_id": client_id,
+            "auth_endpoint": "https://accounts.google.com/o/oauth2/v2/auth",
+            "validation_endpoint": "https://www.googleapis.com/oauth2/v3/tokeninfo",
+            "scope": "openid email profile",
+            "data_endpoint": "https://www.googleapis.com/oauth2/v1/userinfo?access_token=",
+            "css_class": "fa fa-fw fa-google",
+            "body": "Log in with Google",
+            "sequence": 20,
+        }
+        if domain:
+            vals["auth_endpoint"] += "?hd=" + domain
+
+        if google:
+            google.write(vals)
+        else:
+            Provider.create(vals)
+
+        msg = _("Google Workspace provider updated.") if google else _("Google Workspace provider created.")
+        return {
+            "type": "ir.actions.client",
+            "tag": "display_notification",
+            "params": {"title": _("Google OAuth"), "message": msg, "type": "success", "sticky": False},
+        }
+
     def action_test_foundry_connection(self):
         """Test the Foundry endpoint connection from Settings."""
         config = self.env["ipai.foundry.provider.config"].search([], limit=1)
