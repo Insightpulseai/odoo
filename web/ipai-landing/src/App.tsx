@@ -14,7 +14,7 @@ type PageId = 'home' | 'products' | 'solutions' | 'marketing' | 'media' | 'retai
 
 // --- External URLs ---
 const EXTERNAL_URLS = {
-  demo: 'https://calendar.google.com/calendar/appointments',
+  demo: '#contact',  // TODO: replace with real booking URL (Google Calendar or Zoho Bookings)
   login: 'https://erp.insightpulseai.com/web/login',
   github: 'https://github.com/InsightPulseAI',
   email: 'mailto:hello@insightpulseai.com',
