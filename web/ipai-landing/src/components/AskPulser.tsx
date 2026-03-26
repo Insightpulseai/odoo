@@ -56,7 +56,7 @@ const INITIAL_CTAS: ChatCtaAction[] = [
   { type: 'send_prompt', label: 'What is Pulser?', prompt: 'What is Pulser?', analytics_id: 'chat_what_is_pulser' },
   { type: 'send_prompt', label: 'How does Odoo on Cloud work?', prompt: 'How does Odoo on Cloud work?', analytics_id: 'chat_odoo_on_cloud' },
   { type: 'send_prompt', label: 'Which industries do you support?', prompt: 'Which industries do you support?', analytics_id: 'chat_industries' },
-  { type: 'open_scheduler', label: 'Book a demo', href: 'https://calendar.google.com/calendar/appointments', analytics_id: 'chat_book_demo' },
+  { type: 'open_scheduler', label: 'Book a demo', href: '#contact', analytics_id: 'chat_book_demo' },
 ];
 
 const FIRST_USE_DISCLOSURE = "I'm the InsightPulseAI product assistant. I answer from approved public sources — our docs, architecture pages, FAQs, pricing, and selected release content. I can't access your ERP, company data, tenant records, or perform actions from this page.";
@@ -340,7 +340,7 @@ function mapLegacyResponse(data: { suggestedPrompts?: string[]; handoff?: { type
     for (const prompt of data.suggestedPrompts) {
       const lower = prompt.toLowerCase();
       if (lower.includes('demo')) {
-        ctas.push({ type: 'open_scheduler', label: prompt, href: 'https://calendar.google.com/calendar/appointments', analytics_id: 'chat_book_demo' });
+        ctas.push({ type: 'open_scheduler', label: prompt, href: '#contact', analytics_id: 'chat_book_demo' });
       } else {
         ctas.push({ type: 'send_prompt', label: prompt, prompt, analytics_id: `chat_suggested_${prompt.replace(/\s+/g, '_').toLowerCase().slice(0, 30)}` });
       }
