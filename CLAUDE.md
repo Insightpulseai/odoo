@@ -17,7 +17,7 @@ If you cannot execute due to missing credentials/tooling/access, say exactly wha
 
 **Output format**: Outcome (1-3 lines) + Evidence + Verification (pass/fail) + Changes shipped. No "Next steps", no tutorials.
 
-**Execution surfaces**: Git, GitHub Actions, SSH, Docker, Supabase CLI, Azure CLI.
+**Execution surfaces**: Git, GitHub Actions, SSH, Docker, Azure CLI.
 
 **Banned**: "here's a guide", "run these commands", "you should...", asking for confirmation, time estimates, UI clickpaths.
 
@@ -29,12 +29,11 @@ If you cannot execute due to missing credentials/tooling/access, say exactly wha
 |------|-------|
 | **Stack** | Odoo CE 19.0 + OCA + n8n + Slack + PostgreSQL 16 |
 | **Domain** | `insightpulseai.com` (`.net` is deprecated) |
-| **DNS** | Cloudflare (delegated from Spacesquare) |
+| **DNS** | Azure DNS (authoritative, delegated from Squarespace) |
 | **Mail** | Zoho SMTP (`smtp.zoho.com:587`, domain: `insightpulseai.com`) |
 | **Hosting** | Azure Container Apps (behind Azure Front Door) |
 | **Node** | >= 18.0.0 (pnpm workspaces, Turborepo) |
 | **Python** | 3.12+ (Odoo 19) |
-| **Supabase** | `spdtwktxdalcfigzeqrz` — Edge Functions, Vault, Auth, Realtime, pgvector |
 | **Web/CMS** | Azure Container Apps (public + internal), Odoo website |
 | **EE Parity** | Target >=80% via `CE + OCA + ipai_*` (current: ~35-45%, audited 2026-03-08) |
 | **Repo** | `Insightpulseai/odoo` (renamed from `odoo-ce`) |
@@ -78,8 +77,8 @@ See `.claude/rules/security-baseline.md` for full policy (sections 2.1-2.6).
 - **Service-to-service auth**: All internal flows must use Managed Identities + Azure Key Vault.
 
 1. **Secrets**: `.env` files only, never hardcode. Azure Key Vault for runtime.
-2. **Database**: Odoo uses PostgreSQL (local or Azure managed), NOT Supabase.
-3. **Supabase**: Only for n8n workflows, task bus, external integrations.
+2. **Database**: Odoo uses PostgreSQL (local or Azure managed). All Azure-native.
+3. **No Supabase**: Supabase is fully deprecated (2026-03-26). All services are Azure-native.
 4. **CE Only**: No Enterprise modules, no odoo.com IAP dependencies.
 5. **OCA First**: Prefer OCA modules over custom `ipai_*` when available. Config -> OCA -> Delta.
 6. **Specs Required**: Significant changes must reference a spec bundle.
@@ -92,6 +91,10 @@ See `.claude/rules/security-baseline.md` for full policy (sections 2.1-2.6).
 15. **Sequential Default**: Use Sequential orchestration for deterministic finance flows; Maker-Checker for gates.
 16. **Release Gate**: All production releases must pass the [Go-Live Checklist](file:///Users/tbwa/Documents/GitHub/Insightpulseai/docs/architecture/GO_LIVE_CHECKLIST.md).
 17. **SAP Adapter Only**: SAP is an integrated external enterprise surface. Use Azure Functions or App Service with SAP Cloud SDK for adapter services. Do not adopt SAP infrastructure hosting templates (NetWeaver, HANA, LaMa, S/4HANA) as canonical platform architecture unless SAP runtime hosting is explicitly in scope.
+18. **iOS Wrapper Skill Pack**: When working on the iOS native wrapper (`web/mobile/`), apply `docs/skills/ios-native-wrapper.md`. Prefer native auth (`AuthenticationServices`), native biometrics (`LocalAuthentication`), allowlist-based webview navigation, automated simulator smoke tests, and CI + `fastlane` release automation. No cross-platform frameworks.
+19. **Apple Design Authority (iOS)**: For iOS wrapper UI, treat Apple's current App design and UI / Liquid Glass guidance as the visual system authority. Native shell chrome follows current Apple design language. `Icon Composer` for app icons, `SF Symbols` for native shell iconography. Liquid Glass applies to native shell surfaces, not arbitrary overlays on hosted web content.
+20. **iOS Wrapper UI Contract**: For wrapper-shell changes (`WrapperViewController`, `BiometricAuth`, native chrome, auth handoff, icon assets), apply `docs/skills/ios-wrapper-ui-contract.md`. This contract is subordinate to `docs/skills/ios-native-wrapper.md` and defines enforceable code-review gates.
+21. **iOS Wrapper Code Contract**: When editing wrapper-shell implementation files, also apply `docs/skills/ios-wrapper-code-contract.md`. File-level review emphasis: `WrapperViewController.swift` owns shell orchestration only, `BiometricAuth.swift` owns biometric policy/orchestration only, `Assets.xcassets` stays minimal and governed, `Environment.swift` remains the source of routing/environment configuration, `Info.plist` remains aligned with native auth/biometric requirements.
 
 ---
 
@@ -147,8 +150,8 @@ pnpm install                            # Install Node dependencies
 | Mattermost (all) | Slack | 2026-01-28 |
 | Appfine (all) | Removed | 2026-02 |
 | `ipai_mattermost_connector` | `ipai_slack_connector` | 2026-01-28 |
-| Supabase `xkxyvboeubffxxbebsll` | N/A | -- |
-| Supabase `ublqmilcjtpnflofprkr` | N/A | -- |
+| Supabase (all instances, all usage) | Azure-native services | 2026-03-26 |
+| Cloudflare (DNS proxy) | Azure DNS (authoritative) | 2026-03-26 |
 | `ipai_ai_widget` (global patches) | Native Odoo 19 Ask AI + `ipai_ai_copilot` | 2026-03-09 |
 | DigitalOcean (all) | Azure (ACA + VM + managed PG) | 2026-03-15 |
 | Public nginx edge | Azure Front Door | 2026-03-15 |
