@@ -219,7 +219,6 @@ export const AskPulser = ({ onNavigate }: { onNavigate?: (page: string) => void 
                     Pulser <Sparkles size={14} className="text-brand-primary animate-pulse" />
                   </h3>
                   <div className="flex items-center gap-1.5 mt-1.5">
-                    <div className="w-1.5 h-1.5 bg-brand-primary rounded-full animate-pulse"></div>
                     <span className="text-gray-400 text-[10px] uppercase font-bold tracking-widest">Product Assistant</span>
                   </div>
                 </div>
