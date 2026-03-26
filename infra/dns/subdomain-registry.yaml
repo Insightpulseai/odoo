@@ -2,13 +2,15 @@
 # DNS Subdomain Registry — Single Source of Truth
 # =============================================================================
 # This file is the CANONICAL source for all subdomains under insightpulseai.com.
-# All DNS configuration (Terraform, runtime JSON, monitoring) is generated from this file.
+# All DNS configuration is generated from this file.
+# DNS authority: Azure DNS (nameservers delegated from Squarespace).
+# Cloudflare is deprecated as of 2026-03-26 — Azure DNS is authoritative.
 #
 # Generation: ./scripts/generate-dns-artifacts.sh
 # Validation: .github/workflows/dns-sync-check.yml (CI enforces sync)
+# Authority contract: ssot/infrastructure/dns_mail_authority.yaml
 #
 # DO NOT manually edit generated files:
-#   - infra/cloudflare/envs/prod/subdomains.auto.tfvars
 #   - docs/architecture/runtime_identifiers.json
 #   - infra/dns/dns-validation-spec.json
 # =============================================================================
@@ -33,7 +35,8 @@
 # Required on ALL subdomains (active and planned alike).
 #
 #   provider:    WHO owns/manages the target endpoint.
-#                Allowed: cloudflare | azure | vercel | digitalocean | other
+#                Allowed: azure | other
+#                Deprecated: cloudflare | vercel | digitalocean
 #
 #   status:      Claim state.
 #                Allowed: unclaimed | claimed
@@ -42,20 +45,20 @@
 #
 #   claim_ref:   String — REQUIRED when status=claimed.
 #                  "ssot:azure-front-door"         → Azure Front Door CNAME
-#                  "ssot:cloudflare"                → Cloudflare-managed
-#                  "vercel:prj_<id>"                → Vercel project ID
+#                  "ssot:azure-dns"                → Azure DNS direct record
 #
 #   expires_at:  YYYY-MM-DD — OPTIONAL, only meaningful on planned records.
 #
 # =============================================================================
-# POLICY NOTES (2026-03-12)
+# POLICY NOTES (2026-03-26)
 # =============================================================================
+# - DNS authority: Azure DNS (NS delegated from Squarespace). Cloudflare retired.
+# - Registrar: Squarespace (NS delegation only, no record edits).
+# - Mail: Zoho (service only). MX/SPF/DKIM/DMARC records in Azure DNS.
 # - DigitalOcean is fully decommissioned. No A records may point to 178.128.112.214.
-# - Vercel is deprecated as a deployment target. Existing Vercel CNAMEs are transitional.
-# - Mailgun (mg.insightpulseai.com) is deprecated for outbound mail. Zoho SMTP is canonical.
+# - Vercel is deprecated. Mailgun is deprecated. Supabase is deprecated.
 # - Azure Front Door is the canonical public ingress for all platform apps.
 # - Front Door endpoint: ipai-fd-dev-ep-fnh4e8d6gtdhc8ax.z03.azurefd.net
-# - Keycloak auth subdomains (auth, auth-dev, auth-staging) route through Front Door.
 # - Apex (insightpulseai.com) serves the standalone website, NOT a redirect to ERP.
 # =============================================================================
 
@@ -86,15 +89,14 @@ subdomains:
     target: ipai-fd-dev-ep-fnh4e8d6gtdhc8ax.z03.azurefd.net
     service: website
     owner_system: "InsightPulse AI website (standalone, NOT erp)"
-    cloudflare_proxied: true
-    tls_mode: "Full (strict)"
+    tls: azure_front_door
     lifecycle: active
     status: active
     notes: >
       Apex serves the standalone InsightPulse AI website.
       erp.insightpulseai.com is the separate ERP runtime host.
       No apex → ERP redirect. These are independent surfaces.
-      Cloudflare CNAME flattening applies (apex CNAME → A at edge).
+      Azure DNS alias record applies (apex CNAME → Front Door).
     azure_target:
       front_door_origin_group: website
       container_app: website
@@ -114,8 +116,7 @@ subdomains:
     service: odoo_ce_19
     health_check: /web/login
     owner_system: "Odoo CE 19.0"
-    cloudflare_proxied: true
-    tls_mode: "Full (strict)"
+    tls: azure_front_door
     lifecycle: active
     status: active
     notes: "Standalone ERP host. Not aliased to apex. Front Door routes to ACA odoo-web."
@@ -131,86 +132,45 @@ subdomains:
 
   - name: n8n
     type: A
-    target: "4.193.100.31"
+    target: null
     service: n8n_workflow_automation
-    health_check: /healthz
-    owner_system: "n8n on Azure VM (vm-ipai-supabase-dev, shared with Supabase)"
-    cloudflare_proxied: true
-    tls_mode: "Full (strict)"
-    lifecycle: active
-    status: active
+    owner_system: "decommissioned"
+    lifecycle: removed
+    status: removed
+    removed_date: "2026-03-25"
     notes: >
-      Live n8n instance on Azure VM. Renamed from n8n-azure (2026-03-23).
-      Target is to move to ACA behind Front Door when container is provisioned.
-    azure_target:
-      front_door_origin_group: n8n
-      container_app: n8n
-      cutover_wave: 2
-    provider_claim:
-      provider: azure
-      status: claimed
-      claimed_at: "2026-03-23"
-      claim_ref: "ssot:azure-vm"
+      VM deleted 2026-03-25. DNS record removed. Service decommissioned.
+      Workflows migrating to Foundry agents + DevOps pipelines.
 
   - name: plane
     type: CNAME
-    target: ipai-fd-dev-ep-fnh4e8d6gtdhc8ax.z03.azurefd.net
+    target: null
     service: plane_project_management
-    health_check: /
-    owner_system: "Plane CE (self-hosted)"
-    cloudflare_proxied: true
-    tls_mode: "Full (strict)"
-    lifecycle: active
-    status: active
-    azure_target:
-      front_door_origin_group: plane
-      container_app: plane
-      cutover_wave: 3
-    provider_claim:
-      provider: azure
-      status: claimed
-      claimed_at: "2026-03-12"
-      claim_ref: "ssot:azure-front-door"
+    owner_system: "decommissioned"
+    lifecycle: removed
+    status: removed
+    removed_date: "2026-03-25"
+    notes: "ACA app deleted. Replaced by Azure DevOps Boards."
 
   - name: shelf
     type: CNAME
-    target: ipai-fd-dev-ep-fnh4e8d6gtdhc8ax.z03.azurefd.net
+    target: null
     service: shelf_asset_management
-    health_check: /healthcheck
-    owner_system: "Shelf.nu (self-hosted, ipai fork)"
-    cloudflare_proxied: true
-    tls_mode: "Full (strict)"
-    lifecycle: active
-    status: active
-    azure_target:
-      front_door_origin_group: shelf
-      container_app: shelf
-      cutover_wave: 3
-    provider_claim:
-      provider: azure
-      status: claimed
-      claimed_at: "2026-03-12"
-      claim_ref: "ssot:azure-front-door"
+    owner_system: "decommissioned"
+    lifecycle: removed
+    status: removed
+    removed_date: "2026-03-25"
+    notes: "ACA app deleted. Replaced by Odoo Knowledge + Databricks."
 
   - name: crm
     type: CNAME
-    target: ipai-fd-dev-ep-fnh4e8d6gtdhc8ax.z03.azurefd.net
+    target: null
     service: atomic_crm
-    health_check: /
-    owner_system: "Atomic CRM (marmelab/atomic-crm, Supabase-backed)"
-    cloudflare_proxied: true
-    tls_mode: "Full (strict)"
-    lifecycle: active
-    status: active
-    azure_target:
-      front_door_origin_group: crm
-      container_app: crm
-      cutover_wave: 3
-    provider_claim:
-      provider: azure
-      status: claimed
-      claimed_at: "2026-03-12"
-      claim_ref: "ssot:azure-front-door"
+    owner_system: "decommissioned"
+    lifecycle: removed
+    status: removed
+    removed_date: "2026-03-25"
+    notes: "ACA app deleted. Odoo CRM is canonical."
 
   - name: ocr
     type: CNAME
@@ -218,8 +178,7 @@ subdomains:
     service: paddleocr_microservice
     health_check: /health
     owner_system: "PaddleOCR microservice"
-    cloudflare_proxied: true
-    tls_mode: "Full (strict)"
+    tls: azure_front_door
     lifecycle: active
     status: active
     notes: "PaddleOCR needs Front Door origin group. GPU-capable ACA container."
@@ -239,8 +198,7 @@ subdomains:
     service: apache_superset_bi
     health_check: /health
     owner_system: "Apache Superset BI"
-    cloudflare_proxied: true
-    tls_mode: "Full (strict)"
+    tls: azure_front_door
     lifecycle: active
     status: active
     azure_target:
@@ -259,8 +217,7 @@ subdomains:
     service: mcp_gateway
     health_check: /healthz
     owner_system: "MCP Hub Coordinator"
-    cloudflare_proxied: true
-    tls_mode: "Full (strict)"
+    tls: azure_front_door
     lifecycle: active
     status: active
     azure_target:
@@ -279,8 +236,7 @@ subdomains:
     service: ops_console
     health_check: /api/health
     owner_system: "Ops Console (Next.js on ACA)"
-    cloudflare_proxied: true
-    tls_mode: "Full (strict)"
+    tls: azure_front_door
     lifecycle: active
     status: active
     notes: "Repointed from Vercel to Front Door (2026-03-12). Vercel is deprecated."
@@ -299,24 +255,13 @@ subdomains:
   # ---------------------------------------------------------------------------
   - name: auth
     type: CNAME
-    target: ipai-fd-dev-ep-fnh4e8d6gtdhc8ax.z03.azurefd.net
+    target: null
     service: keycloak_sso
-    health_check: /realms/ipai-prod
-    owner_system: "Keycloak (primary IdP, production realm)"
-    cloudflare_proxied: true
-    tls_mode: "Full (strict)"
-    lifecycle: active
-    status: active
-    notes: "Keycloak production realm. OIDC issuer: https://auth.insightpulseai.com/realms/ipai-prod"
-    azure_target:
-      front_door_origin_group: auth
-      container_app: keycloak
-      cutover_wave: 1
-    provider_claim:
-      provider: azure
-      status: claimed
-      claimed_at: "2026-03-12"
-      claim_ref: "ssot:azure-front-door"
+    owner_system: "decommissioned"
+    lifecycle: removed
+    status: removed
+    removed_date: "2026-03-25"
+    notes: "ACA app deleted. Never operationalized. Entra ID is canonical IdP."
 
   - name: auth-dev
     type: CNAME
@@ -324,8 +269,7 @@ subdomains:
     service: keycloak_sso_dev
     health_check: /realms/ipai-dev
     owner_system: "Keycloak (dev realm)"
-    cloudflare_proxied: true
-    tls_mode: "Full (strict)"
+    tls: azure_front_door
     lifecycle: planned
     status: planned
     environment: dev
@@ -344,8 +288,7 @@ subdomains:
     service: keycloak_sso_staging
     health_check: /realms/ipai-staging
     owner_system: "Keycloak (staging realm)"
-    cloudflare_proxied: true
-    tls_mode: "Full (strict)"
+    tls: azure_front_door
     lifecycle: planned
     status: planned
     environment: staging
@@ -367,8 +310,7 @@ subdomains:
     service: odoo_ce_19_dev
     health_check: /web/login
     owner_system: "Odoo CE 19.0 (dev)"
-    cloudflare_proxied: true
-    tls_mode: "Full (strict)"
+    tls: azure_front_door
     lifecycle: planned
     status: planned
     environment: dev
@@ -387,8 +329,7 @@ subdomains:
     service: odoo_ce_19_staging
     health_check: /web/login
     owner_system: "Odoo CE 19.0 (staging)"
-    cloudflare_proxied: true
-    tls_mode: "Full (strict)"
+    tls: azure_front_door
     lifecycle: planned
     status: planned
     environment: staging
@@ -409,8 +350,7 @@ subdomains:
     target: ipai-fd-dev-ep-fnh4e8d6gtdhc8ax.z03.azurefd.net
     service: website_redirect
     owner_system: "Redirect to apex (insightpulseai.com)"
-    cloudflare_proxied: true
-    tls_mode: "Full (strict)"
+    tls: azure_front_door
     lifecycle: active
     status: active
     notes: "www redirects to apex. Front Door handles 301."
@@ -433,8 +373,7 @@ subdomains:
     service: api_gateway
     health_check: /api/health
     owner_system: "API Gateway"
-    cloudflare_proxied: true
-    tls_mode: "Full (strict)"
+    tls: azure_front_door
     lifecycle: planned
     status: planned
     backing_status: not_provisioned
@@ -450,7 +389,7 @@ subdomains:
     type: CNAME
     target: ipai-fd-dev-ep-fnh4e8d6gtdhc8ax.z03.azurefd.net
     description: "Ops Console — alias (if needed alongside ops subdomain)"
-    cloudflare_proxied: true
+    tls: azure_front_door
     lifecycle: planned
     provider_claim:
       provider: azure
@@ -462,31 +401,21 @@ subdomains:
   # ---------------------------------------------------------------------------
   - name: n8n-azure
     type: A
-    target: "4.193.100.31"
+    target: null
     service: n8n_workflow_automation
-    owner_system: "n8n on Azure VM (vm-ipai-supabase-dev, shared with Supabase)"
-    cloudflare_proxied: true
-    lifecycle: deprecated
-    status: deprecated
-    deprecated_date: "2026-03-23"
-    removal_target: "2026-04-15"
+    owner_system: "decommissioned"
+    lifecycle: removed
+    status: removed
+    removed_date: "2026-03-25"
     notes: >
-      Renamed to n8n.insightpulseai.com (2026-03-23). Remove -azure suffix
-      to match subdomain naming convention. Retain DNS temporarily as redirect
-      until all consumers are updated.
-    provider_claim:
-      provider: azure
-      status: claimed
-      claimed_at: "2026-03-17"
-      claim_ref: "ssot:azure-vm"
+      VM deleted 2026-03-25. DNS record removed. Was deprecated alias for n8n subdomain.
 
   - name: erp-azure
     type: CNAME
     target: ipai-fd-dev-ep-fnh4e8d6gtdhc8ax.z03.azurefd.net
     service: odoo_ce_19
     owner_system: "Odoo CE 19.0 (Azure-specific alias)"
-    cloudflare_proxied: true
-    tls_mode: "Full (strict)"
+    tls: azure_front_door
     lifecycle: active
     status: active
     notes: >
@@ -508,42 +437,28 @@ subdomains:
   # ---------------------------------------------------------------------------
   - name: supabase
     type: A
-    target: "4.193.100.31"
+    target: null
     service: supabase_platform
-    owner_system: "Self-hosted Supabase on Azure VM (vm-ipai-supabase-dev, rg-ipai-agents-dev)"
-    cloudflare_proxied: true
-    lifecycle: active
-    status: active
+    owner_system: "decommissioned"
+    lifecycle: removed
+    status: removed
+    removed_date: "2026-03-25"
     notes: >
-      Self-hosted Supabase instance on Azure VM. Migrated from Supabase-hosted
-      (spdtwktxdalcfigzeqrz.supabase.co) to self-hosted on Azure VM 4.193.100.31.
-      Cloudflare proxied for TLS termination and WAF.
-      This is an intentional exception to the ACA-only model (VM, not container).
-    provider_claim:
-      provider: azure
-      status: claimed
-      claimed_at: "2026-03-17"
-      claim_ref: "ssot:azure-vm"
+      VM deleted 2026-03-25. DNS record removed. Service decommissioned.
+      Auth → Entra, data → Databricks, functions → ACA/Foundry, vault → Key Vault.
 
   # ---------------------------------------------------------------------------
   # Inventory-Only Subdomains (referenced in code/docs, no DNS provisioned)
   # ---------------------------------------------------------------------------
   - name: app
     type: CNAME
-    target: ipai-fd-dev-ep-fnh4e8d6gtdhc8ax.z03.azurefd.net
+    target: null
     service: web_application
-    health_check: /
-    owner_system: "Web application (Supabase OAuth callback)"
-    cloudflare_proxied: true
-    tls_mode: "Full (strict)"
-    lifecycle: planned
-    status: planned
-    backing_status: not_provisioned
-    notes: "Referenced in Supabase OAuth callback (2 code refs). No DNS, no container, no spec."
-    provider_claim:
-      provider: azure
-      status: unclaimed
-      expires_at: "2026-09-01"
+    owner_system: "decommissioned"
+    lifecycle: removed
+    status: removed
+    removed_date: "2026-03-26"
+    notes: "Was for Supabase OAuth callback. Supabase deprecated. Auth → Entra."
 
   - name: boards
     type: CNAME
@@ -551,8 +466,7 @@ subdomains:
     service: kanban_board
     health_check: /
     owner_system: "Focalboard/kanban"
-    cloudflare_proxied: true
-    tls_mode: "Full (strict)"
+    tls: azure_front_door
     lifecycle: planned
     status: planned
     backing_status: not_provisioned
@@ -568,7 +482,7 @@ subdomains:
     target: insightpulseai.github.io
     health_check: /
     owner_system: "Documentation (GitHub Pages / mkdocs)"
-    cloudflare_proxied: false
+    tls: passthrough
     lifecycle: planned
     status: planned
     backing_status: not_provisioned
@@ -584,8 +498,7 @@ subdomains:
     service: gpu_inference
     health_check: /healthz
     owner_system: "GPU/LLM inference (ollama or Azure GPU ACA)"
-    cloudflare_proxied: true
-    tls_mode: "Full (strict)"
+    tls: azure_front_door
     lifecycle: planned
     status: planned
     backing_status: not_provisioned
@@ -601,8 +514,7 @@ subdomains:
     service: ml_experiment_tracking
     health_check: /health
     owner_system: "MLflow experiment tracking"
-    cloudflare_proxied: true
-    tls_mode: "Full (strict)"
+    tls: azure_front_door
     lifecycle: planned
     status: planned
     backing_status: not_provisioned
@@ -626,7 +538,7 @@ subdomains:
     service: mailgun_tracking
     target: "mailgun.org"
     description: "Mailgun email tracking CNAME (open/click tracking for mg.insightpulseai.com)"
-    cloudflare_proxied: false
+    tls: passthrough
     lifecycle: active
     status: active
     notes: "Confirmed valid 2026-03-02 via Mailgun Management API — valid:valid. Mailgun sender deprecated again as of 2026-03-11; tracking CNAME retained temporarily for legacy flows."
@@ -639,13 +551,13 @@ subdomains:
   # DKIM status: Two DKIM keys configured for mg.insightpulseai.com:
   #   - mx._domainkey.mg  (selector: mx)  — primary signing key
   #   - pic._domainkey.mg (selector: pic) — rotation key
-  # Both added to Cloudflare records SSOT on 2026-03-09.
+  # Both added to DNS SSOT on 2026-03-09 (originally Cloudflare, now Azure DNS).
 
   # ---------------------------------------------------------------------------
   # Staging Environment (CNAME → Azure Front Door)
   # ---------------------------------------------------------------------------
   # ALL staging entries are lifecycle=planned because no staging containers exist.
-  # DNS records are live in Cloudflare (claimed) but no backing service is running.
+  # DNS records are live in Azure DNS (claimed) but no backing service is running.
   # Do not flip to lifecycle=active until docker-compose staging stack is provisioned.
   # These replace the old DO-era A records pointing to 178.128.112.214.
   # ---------------------------------------------------------------------------
@@ -655,8 +567,7 @@ subdomains:
     service: odoo_ce_19_staging
     health_check: /web/login
     owner_system: "Odoo CE 19.0 (staging)"
-    cloudflare_proxied: true
-    tls_mode: "Full (strict)"
+    tls: azure_front_door
     lifecycle: planned
     status: planned
     backing_status: not_provisioned
@@ -675,8 +586,7 @@ subdomains:
     service: api_gateway_staging
     health_check: /api/health
     owner_system: "API Gateway (staging)"
-    cloudflare_proxied: true
-    tls_mode: "Full (strict)"
+    tls: azure_front_door
     lifecycle: planned
     status: planned
     backing_status: not_provisioned
@@ -692,8 +602,7 @@ subdomains:
     service: keycloak_sso_staging
     health_check: /realms/ipai-staging
     owner_system: "Keycloak (staging, via stage-auth subdomain)"
-    cloudflare_proxied: true
-    tls_mode: "Full (strict)"
+    tls: azure_front_door
     lifecycle: planned
     status: planned
     backing_status: not_provisioned
@@ -709,8 +618,7 @@ subdomains:
     service: mcp_gateway_staging
     health_check: /healthz
     owner_system: "MCP coordination (staging)"
-    cloudflare_proxied: true
-    tls_mode: "Full (strict)"
+    tls: azure_front_door
     lifecycle: planned
     status: planned
     backing_status: not_provisioned
@@ -722,16 +630,13 @@ subdomains:
 
   - name: stage-n8n
     type: CNAME
-    target: ipai-fd-dev-ep-fnh4e8d6gtdhc8ax.z03.azurefd.net
+    target: null
     service: n8n_workflow_automation_staging
-    health_check: /healthz
-    owner_system: "n8n automation (staging)"
-    cloudflare_proxied: true
-    tls_mode: "Full (strict)"
-    lifecycle: planned
-    status: planned
-    backing_status: not_provisioned
-    environment: staging
+    owner_system: "decommissioned"
+    lifecycle: removed
+    status: removed
+    removed_date: "2026-03-25"
+    notes: "n8n decommissioned. Staging never provisioned."
     provider_claim:
       provider: azure
       status: unclaimed
@@ -743,8 +648,7 @@ subdomains:
     service: apache_superset_bi_staging
     health_check: /health
     owner_system: "Apache Superset BI (staging)"
-    cloudflare_proxied: true
-    tls_mode: "Full (strict)"
+    tls: azure_front_door
     lifecycle: planned
     status: planned
     backing_status: not_provisioned
@@ -760,8 +664,7 @@ subdomains:
     service: paddleocr_microservice_staging
     health_check: /health
     owner_system: "PaddleOCR microservice (staging)"
-    cloudflare_proxied: true
-    tls_mode: "Full (strict)"
+    tls: azure_front_door
     lifecycle: planned
     status: planned
     backing_status: not_provisioned
@@ -772,7 +675,7 @@ subdomains:
       expires_at: "2026-09-01"
 
 # =============================================================================
-# Deprecated Records (scheduled for removal from Cloudflare)
+# Deprecated Records (scheduled for removal from Azure DNS)
 # =============================================================================
 deprecated:
 
@@ -801,7 +704,7 @@ deprecated:
     removal_target: "2026-04-01"
     previous_target: wr2azp5dsl6mu6xvxtpglk5v.agents.do-ai.run
     dns_removed: false
-    notes: "CNAME to DO AI Agents. Remove from Cloudflare after confirming no dependencies."
+    notes: "CNAME to DO AI Agents. Remove from Azure DNS after confirming no dependencies."
 
   # --- Mail routing A record (DO IP is dead) ---
   - name: mail
