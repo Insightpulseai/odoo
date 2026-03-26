@@ -1,0 +1,111 @@
+# =============================================================================
+# Odoo 19 Integration Adoption Decision Table — SSOT
+# =============================================================================
+# Defines the adoption priority for each integration lane:
+#   1. Native Odoo config first
+#   2. OCA module second
+#   3. ipai_* bridge only for external Azure/Foundry services
+#
+# Ref: https://www.odoo.com/documentation/19.0/applications/general/integrations.html
+# Last reviewed: 2026-03-27
+# =============================================================================
+
+schema_version: 1
+kind: integration_adoption_table
+last_reviewed: "2026-03-27"
+
+# ─────────────────────────────────────────────────────────────────────────────
+# NATIVE FIRST — Odoo 19 documents these as built-in integration surfaces.
+# Prefer configuration over custom code.
+# ─────────────────────────────────────────────────────────────────────────────
+
+native_first:
+  payments:
+    providers: [stripe, paypal, adyen, authorize_net, razorpay, xendit]
+    notes: "Built-in payment providers. Config only — no custom module needed."
+
+  bank_sync:
+    notes: "Native bank synchronization. Config per institution."
+
+  edi:
+    notes: "Electronic invoicing / EDI. Native Odoo 19 compliance surface."
+
+  document_digitization:
+    notes: "Native Odoo document digitization. For Azure Doc Intelligence, use external bridge."
+
+  commerce_connectors:
+    providers: [amazon, shopee, gelato, google_merchant_center]
+    notes: "Built-in marketplace connectors. Config + activation."
+
+  website:
+    surfaces: [domain_names, google_search_console, address_autocomplete, cdn, spam_protection]
+    notes: "Native website integration lanes."
+
+  pos_terminals:
+    notes: "POS payment terminal integrations. Hardware config."
+
+  philippines_localization:
+    notes: "PH-specific tax/compliance localization in Odoo 19 finance tree."
+
+# ─────────────────────────────────────────────────────────────────────────────
+# OCA FIRST — Use OCA when native is insufficient but the pattern exists.
+# Check OCA before creating ipai_*.
+# ─────────────────────────────────────────────────────────────────────────────
+
+oca_first:
+  generic_connector_framework:
+    repo: OCA/connector
+    notes: "Jobs queue, async tasks, channels, decoupled connector components."
+
+  importer_interfaces:
+    repo: OCA/connector-interfaces
+    notes: "Import-session style connector flows (ODBC, CSV, etc.)."
+
+  electronic_payment_extensions:
+    repo: OCA/bank-payment
+    notes: "Electronic payment addons beyond native Odoo payment providers."
+
+  odoo_to_odoo:
+    repo: OCA/connector-odoo2odoo
+    notes: "Intercompany process patterns. Use if multi-company sync needed."
+
+# ─────────────────────────────────────────────────────────────────────────────
+# EXTERNAL BRIDGE FIRST — Azure/Foundry services outside Odoo's native lane.
+# These stay as thin ipai_* bridges, not feature-parity reimplementations.
+# ─────────────────────────────────────────────────────────────────────────────
+
+external_bridge_first:
+  entra_oidc:
+    module: ipai_auth_oidc
+    notes: "Entra ID authentication. Native auth_oauth + OCA auth_oidc."
+
+  azure_document_intelligence:
+    module: ipai_enterprise_bridge
+    notes: "Azure Doc Intelligence OCR. Thin bridge to Foundry endpoint."
+
+  foundry_agents:
+    module: ipai_odoo_copilot
+    notes: "Foundry agent runtime / Pulser orchestration."
+
+  ai_search:
+    module: ipai_odoo_copilot
+    notes: "Azure AI Search for RAG grounding. Part of copilot tool executor."
+
+  databricks_fabric_analytics:
+    repo: data-intelligence
+    notes: "Sits entirely outside Odoo. No Odoo module — data flows via ETL."
+
+  ops_control_plane:
+    repo: platform
+    notes: "Platform observability and control. Not an Odoo module."
+
+# ─────────────────────────────────────────────────────────────────────────────
+# ADOPTION RULE
+# ─────────────────────────────────────────────────────────────────────────────
+
+adoption_rule:
+  - "Check Odoo 19 native integrations first"
+  - "If native lane exists, prefer configuration over custom code"
+  - "If native is insufficient, check OCA before creating ipai_*"
+  - "Reserve ipai_* for thin bridges to external Azure/Foundry services"
+  - "Never build feature-parity reimplementations inside ipai_*"

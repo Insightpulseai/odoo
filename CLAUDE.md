@@ -95,6 +95,7 @@ See `.claude/rules/security-baseline.md` for full policy (sections 2.1-2.6).
 19. **Apple Design Authority (iOS)**: For iOS wrapper UI, treat Apple's current App design and UI / Liquid Glass guidance as the visual system authority. Native shell chrome follows current Apple design language. `Icon Composer` for app icons, `SF Symbols` for native shell iconography. Liquid Glass applies to native shell surfaces, not arbitrary overlays on hosted web content.
 20. **iOS Wrapper UI Contract**: For wrapper-shell changes (`WrapperViewController`, `BiometricAuth`, native chrome, auth handoff, icon assets), apply `docs/skills/ios-wrapper-ui-contract.md`. This contract is subordinate to `docs/skills/ios-native-wrapper.md` and defines enforceable code-review gates.
 21. **iOS Wrapper Code Contract**: When editing wrapper-shell implementation files, also apply `docs/skills/ios-wrapper-code-contract.md`. File-level review emphasis: `WrapperViewController.swift` owns shell orchestration only, `BiometricAuth.swift` owns biometric policy/orchestration only, `Assets.xcassets` stays minimal and governed, `Environment.swift` remains the source of routing/environment configuration, `Info.plist` remains aligned with native auth/biometric requirements.
+22. **Odoo Integration Adoption**: Check Odoo 19 native integrations first (payments, bank sync, EDI, commerce connectors, website). If native is insufficient, check OCA before creating `ipai_*`. Reserve `ipai_*` for thin bridges to external Azure/Foundry services only. SSOT: `ssot/odoo/integration_adoption.yaml`.
 
 ---
 
