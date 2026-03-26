@@ -1,0 +1,355 @@
+# schema: ssot.foundry.runtime_inventory.v2
+# Microsoft Foundry Runtime Inventory — SSOT
+#
+# Canonical resource coordinates for the InsightPulse AI Foundry surface.
+# Source: Azure portal Keys & Endpoint view + Microsoft endpoint documentation.
+#
+# UPDATED 2026-03-25: Added companion services, Odoo module bindings,
+# legacy resource reconciliation map, and stale reference index.
+#
+# References:
+#   - Endpoint patterns: https://learn.microsoft.com/azure/ai-foundry/model-inference/concepts/endpoints
+#   - Project REST API: https://learn.microsoft.com/azure/ai-foundry/reference/foundry-project-rest-preview
+#   - AI consolidation: ssot/governance/ai-consolidation-foundry.yaml
+#   - SDK surfaces: ssot/foundry/python_sdk_surfaces.yaml
+#   - Tool contracts: ssot/contracts/foundry_tools.yaml
+
+schema_version: 2
+kind: foundry_runtime_inventory
+last_reviewed: "2026-03-25"
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# OBSERVED STATE — from Azure portal Keys & Endpoint + endpoint URLs
+# ═══════════════════════════════════════════════════════════════════════════════
+
+observed_state:
+  foundry_resources:
+    - name: data-intel-ph-resource
+      type: ai_foundry_resource
+      resource_group: rg-data-intel-ph
+      region: eastus2
+      status: active
+      canonical_candidate: true
+      endpoint_evidence:
+        openai_base_url: "https://data-intel-ph-resource.openai.azure.com/"
+        services_ai_base_url: "https://data-intel-ph-resource.services.ai.azure.com/"
+        confirmed_from:
+          - azure_portal_keys_and_endpoint
+          - user_supplied_endpoint_urls
+
+  projects:
+    - name: data-intel-ph
+      type: foundry_project
+      parent_resource: data-intel-ph-resource
+      status: active
+      canonical_candidate: true
+      lane: resource_project
+      project_endpoint: "https://data-intel-ph-resource.services.ai.azure.com/api/projects/data-intel-ph"
+
+    - name: proj-ipai-claude
+      type: legacy_project
+      parent_hub: aifoundry-ipai-dev
+      status: active
+      canonical_candidate: false
+      lane: legacy_hub_project
+
+  hubs:
+    - name: aifoundry-ipai-dev
+      type: hub
+      resource_group: rg-ipai-ai-dev
+      region: eastus2
+      status: active
+      canonical_candidate: false
+      lane: legacy_hub
+
+  azure_openai_resources:
+    - name: oai-ipai-dev
+      type: azure_openai_resource
+      resource_group: rg-ipai-ai-dev
+      region: eastus
+      status: active
+      canonical_candidate: conditional
+      lane: standalone_openai
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# ENDPOINT POLICY — Two API Lanes on canonical resource
+# ═══════════════════════════════════════════════════════════════════════════════
+
+endpoint_policy:
+  resource_level:
+    openai_compatibility_base: "https://data-intel-ph-resource.openai.azure.com/"
+    foundry_services_base: "https://data-intel-ph-resource.services.ai.azure.com/"
+    notes: >
+      Both lanes are backed by the same resource. The OpenAI endpoint is for
+      Azure OpenAI-compatible API calls. The Foundry endpoint is for
+      project-scoped operations and Foundry-native surfaces.
+      Microsoft documents these as different endpoint types with different uses.
+
+  project_level:
+    pattern: "https://data-intel-ph-resource.services.ai.azure.com/api/projects/<project-name>"
+    canonical_project: data-intel-ph
+    canonical_url: "https://data-intel-ph-resource.services.ai.azure.com/api/projects/data-intel-ph"
+
+  openai_v1:
+    base: "https://data-intel-ph-resource.openai.azure.com/openai/v1/"
+    notes: "Responses API (Agents v2) endpoint for agent operations"
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# TARGET STATE
+# ═══════════════════════════════════════════════════════════════════════════════
+
+target_state:
+  canonical_foundry_resource: data-intel-ph-resource
+  canonical_project: data-intel-ph
+  canonical_project_endpoint: "https://data-intel-ph-resource.services.ai.azure.com/api/projects/data-intel-ph"
+  canonical_openai_compatibility_base: "https://data-intel-ph-resource.openai.azure.com/openai/v1/"
+  canonical_services_base: "https://data-intel-ph-resource.services.ai.azure.com/"
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# CANONICAL AGENT
+# ═══════════════════════════════════════════════════════════════════════════════
+
+agent:
+  name: ipai-odoo-copilot-azure
+  versions: 7
+  type: prompt
+  model_deployment: gpt-4.1
+  api_surface: "Responses API (Agents v2)"
+  project: data-intel-ph
+  resource: data-intel-ph-resource
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# COMPANION AI SERVICES
+# ═══════════════════════════════════════════════════════════════════════════════
+
+companion_services:
+  - name: doc-intel-ipai-dev
+    type: document_intelligence
+    resource_group: rg-ipai-ai-dev
+    region: southeastasia
+    status: active
+    models: [prebuilt-read, prebuilt-layout, prebuilt-invoice, prebuilt-receipt]
+
+  - name: srch-ipai-dev
+    type: ai_search
+    resource_group: rg-ipai-ai-dev
+    region: southeastasia
+    status: active
+    notes: "Semantic search for RAG grounding"
+
+  - name: vision-ipai-dev
+    type: computer_vision
+    resource_group: rg-ipai-ai-dev
+    region: southeastasia
+    status: active
+
+  - name: lang-ipai-dev
+    type: language
+    resource_group: rg-ipai-ai-dev
+    region: southeastasia
+    status: active
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# AUTH POSTURE
+# ═══════════════════════════════════════════════════════════════════════════════
+
+auth:
+  primary: managed_identity
+  credential: DefaultAzureCredential
+  scope: "https://ai.azure.com/.default"
+  fallback: api_key
+  secret_source: azure_key_vault
+  notes: >
+    Entra-native auth is primary. API key fallback only for
+    OpenAI-compatible flows that cannot use managed identity.
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# ODOO MODULE BINDING
+# ═══════════════════════════════════════════════════════════════════════════════
+
+odoo_binding:
+  settings_module: ipai_enterprise_bridge
+  config_parameters:
+    - key: ipai.foundry.endpoint
+      target_value: "https://data-intel-ph-resource.services.ai.azure.com"
+    - key: ipai.foundry.project_name
+      target_value: "data-intel-ph"
+    - key: ipai.foundry.model_deployment
+      target_value: "gpt-4.1"
+    - key: ipai.foundry.auth_mode
+      target_value: "managed_identity"
+    - key: ipai.foundry.api_version
+      target_value: "2025-03-01-preview"
+    - key: ipai.foundry.auth_audience
+      target_value: "https://ai.azure.com/.default"
+
+  gateway_module: ipai_odoo_copilot
+  gateway_config:
+    - key: ipai.copilot.gateway_url
+      value: "http://localhost:8088"
+      notes: "Copilot gateway service (internal, ACA sidecar)"
+    - key: ipai.copilot.mode
+      value: "PROD-ADVISORY"
+
+  install_order:
+    - ipai_enterprise_bridge
+    - ipai_ai_core
+    - ipai_foundry_bridge
+    - ipai_document_intelligence_bridge
+    - ipai_odoo_copilot
+    - ipai_ap_expense_capture
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# LEGACY RESOURCE RECONCILIATION
+# ═══════════════════════════════════════════════════════════════════════════════
+
+resource_reconciliation:
+
+  canonical:
+    name: data-intel-ph-resource
+    resource_group: rg-data-intel-ph
+    region: eastus2
+    status: active
+    endpoints:
+      openai: "https://data-intel-ph-resource.openai.azure.com/"
+      foundry: "https://data-intel-ph-resource.services.ai.azure.com/"
+
+  legacy_resources:
+
+    - name: oai-ipai-dev
+      type: azure_openai
+      resource_group: rg-ipai-ai-dev
+      region: eastus
+      status: review_required
+      files_referencing: 16
+      decision: >
+        REVIEW: Determine if oai-ipai-dev has active model deployments that
+        are not replicated on data-intel-ph-resource. If all deployments
+        exist on the canonical resource, retire oai-ipai-dev.
+      action_items:
+        - List model deployments on oai-ipai-dev via Azure CLI
+        - Compare with data-intel-ph-resource deployments
+        - If subset, migrate remaining deployments and retire
+        - Update all 16 referencing YAML files
+
+    - name: aifoundry-ipai-dev
+      type: ai_hub
+      resource_group: rg-ipai-ai-dev
+      region: eastus2
+      status: review_required
+      files_referencing: 23
+      decision: >
+        REVIEW: aifoundry-ipai-dev was the original AI Hub resource.
+        data-intel-ph-resource is a newer, correctly scoped Foundry resource.
+        Determine if aifoundry-ipai-dev is still needed or if it can be
+        retired after confirming all projects are on data-intel-ph-resource.
+      action_items:
+        - Check if any active projects remain on aifoundry-ipai-dev
+        - Verify data-intel-ph-resource has all needed capabilities
+        - If clean, retire aifoundry-ipai-dev and update 23 referencing files
+
+    - name: proj-ipai-claude
+      type: legacy_project
+      parent_hub: aifoundry-ipai-dev
+      status: review_required
+      decision: >
+        REVIEW: Legacy project on the old hub. Determine if any agent
+        definitions or deployments exist here that are not on data-intel-ph.
+      action_items:
+        - List agents on proj-ipai-claude
+        - If none active, confirm safe to retire
+
+  reconciliation_rules:
+    - rule: "All new Foundry code must use data-intel-ph-resource endpoints"
+    - rule: "Do not create new model deployments on oai-ipai-dev"
+    - rule: "Do not create new projects on aifoundry-ipai-dev"
+    - rule: "Update referencing files incrementally as resources are verified retired"
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# STALE REFERENCE INDEX
+# ═══════════════════════════════════════════════════════════════════════════════
+
+stale_references:
+  oai-ipai-dev:
+    count: 16
+    key_files:
+      - ssot/architecture/services.yaml
+      - infra/ssot/azure/resources.yaml
+      - infra/ssot/azure/rg-normalization-matrix.yaml
+      - infra/ssot/security/workload_identities.yaml
+      - ssot/ai/models.yaml
+      - ssot/azure/resource_rationalization.yaml
+      - ssot/azure/operator_view.yaml
+      - ssot/agent-platform/agent_factory.yaml
+      - ssot/agents/diva_copilot.yaml
+      - ssot/ai/foundry_stage3.yaml
+      - infra/ssot/azure/approved_reference_samples.yaml
+      - ssot/governance/repo-azure-alignment.yaml
+      - ssot/azure/resource-consolidation.yaml
+      - infra/ssot/security/entra_groups.yaml
+      - infra/ssot/security/azure_rbac_matrix.yaml
+      - agents/skills/odoo-copilot-evals/skill-contract.yaml
+
+  aifoundry-ipai-dev:
+    count: 23
+    key_files:
+      - ssot/architecture/services.yaml
+      - infra/ssot/azure/resources.yaml
+      - docs/architecture/INSIGHTPULSEAI_TARGET_STATE_ARCHITECTURE.md
+      - docs/architecture/AZURE_BILL_OF_MATERIALS.md
+      - docs/architecture/PULSER_MINIMAL_RUNTIME.md
+      - docs/architecture/AZURE_NATIVE_TARGET_STATE.md
+      - ssot/azure/resource_rationalization.yaml
+      - ssot/azure/resource-consolidation.yaml
+      - ssot/integrations/sap-joule-concur-odoo-azure.yaml
+      - docs/architecture/foundry_landing_zone_operating_model.md
+      - docs/governance/DEV_TOOLING_TARGET_STATE.md
+      - docs/architecture/CLOUD_INTEGRATION_STATUS.md
+      - docs/architecture/azure/REPO_AZURE_ALIGNMENT.md
+      - docs/architecture/AZURE_OPERATOR_VIEW_ACTUAL_VS_TARGET.md
+      - infra/ssot/azure/rg-normalization-matrix.yaml
+      - ssot/governance/repo-azure-alignment.yaml
+      - ssot/agents/diva_copilot.yaml
+      - ssot/ai/foundry_stage3.yaml
+      - agents/skills/claude-foundry-runtime-integration/examples.md
+      - spec/sap-joule-concur-odoo-azure/constitution.md
+      - ssot/integrations/adls-etl-reverse-etl.yaml
+      - docs/architecture/azure/FOUNDRY_PROVIDER_SETUP.md
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# POLICY
+# ═══════════════════════════════════════════════════════════════════════════════
+
+policy:
+  new_work_defaults_to: resource_project
+  legacy_hub_assets_require_explicit_exception: true
+  provider_lock_in_disallowed_by_default: true
+  portal_ui_is_not_runtime_authority: true
+  model_provider_signals:
+    providers_visible: [openai, anthropic, fireworks]
+    source: microsoft_foundry_portal_catalog_observation
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# FOUNDRY PLATFORM FRAMING
+# ═══════════════════════════════════════════════════════════════════════════════
+#
+# Microsoft positions Foundry as a unified end-to-end platform, not a single
+# product. The blog post (2026-05) and sample repo below are reference material
+# only — the sample is a JS/TS buildathon quest, not a production baseline.
+#
+# References:
+#   - Blog: https://techcommunity.microsoft.com/blog/azure-ai-foundry-blog/microsoft-foundry-an-end-to-end-platform-for-building-governing-and-scaling-ai/4496736
+#   - Sample: https://github.com/microsoft/microsoft-foundry-e2e-js (learning reference only)
+
+platform_framing:
+  portal_surface: ai.azure.com
+  sdk_mode: code_first
+  lifecycle_stages:
+    - selection
+    - optimization
+    - observability
+    - security
+  notes: >
+    IPAI uses the SDK path exclusively. Portal is for exploration and
+    evaluation, not runtime authority. The Microsoft sample repo is a
+    buildathon learning reference, not a deployment template.
