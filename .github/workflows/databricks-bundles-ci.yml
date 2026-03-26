@@ -1,5 +1,9 @@
 name: Databricks Bundles CI
 
+env:
+  DATABRICKS_HOST: ${{ vars.DATABRICKS_HOST }}
+  DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN }}
+
 on:
   pull_request:
     paths:
@@ -56,9 +60,6 @@ jobs:
 
       - name: Validate bundle
         run: databricks bundle validate
-        env:
-          DATABRICKS_HOST: ${{ vars.DATABRICKS_HOST }}
-          DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN }}
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -88,9 +89,6 @@ jobs:
 
       - name: Validate bundle
         run: databricks bundle validate
-        env:
-          DATABRICKS_HOST: ${{ vars.DATABRICKS_HOST }}
-          DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN }}
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -118,9 +116,6 @@ jobs:
 
       - name: Validate bundle
         run: databricks bundle validate
-        env:
-          DATABRICKS_HOST: ${{ vars.DATABRICKS_HOST }}
-          DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN }}
 
   enforce-doc-spec-alignment:
     name: Doc and spec alignment
