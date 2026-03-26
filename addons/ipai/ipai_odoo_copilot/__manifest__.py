@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'Pulser for Odoo',
-    'version': '19.0.1.1.0',
+    'version': '19.0.1.1.1',
     'summary': 'Pulser assistant — systray chat entry and agent gateway bridge',
     'category': 'Productivity',
     'license': 'LGPL-3',
@@ -13,7 +13,6 @@
         'security/ir.model.access.csv',
         'data/ir_config_parameter.xml',
         'data/copilot_partner_data.xml',
-        'views/copilot_assets.xml',
         'views/copilot_audit_views.xml',
     ],
     'assets': {
