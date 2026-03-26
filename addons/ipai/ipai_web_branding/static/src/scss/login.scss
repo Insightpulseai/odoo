@@ -1,67 +1,130 @@
-// Copyright 2026 InsightPulse AI
+// Copyright 2026 InsightPulseAI
 // License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl.html).
 
-// IPAI Login Page Branding
+// IPAI Login Page Branding — dark/cyan aesthetic matching insightpulseai.com
 // Uses o_ipai_ prefix per Odoo 19 CSS conventions
 
+// Dark background
+body.bg-100 {
+  background: linear-gradient(160deg, #0B1117 0%, #0f1923 50%, #0B1117 100%) !important;
+  min-height: 100vh;
+}
+
+// Logo
 .o_ipai_login_logo {
+  border-bottom: none !important;
   img {
-    max-height: 80px;
+    max-height: 72px;
     width: auto;
     max-width: 100%;
+    border-radius: 12px;
   }
 }
 
-// Login card refinements
+// Login card — glassmorphism on dark
 .o_database_list {
-  max-width: 360px !important;
-  border-radius: 16px !important;
-  box-shadow: 0 4px 24px rgba(27, 31, 59, 0.08) !important;
-  background: #fff !important;
+  max-width: 400px !important;
+  border-radius: 24px !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4) !important;
+  background: rgba(255, 255, 255, 0.06) !important;
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
 
   .card-body {
-    padding: 2rem;
+    padding: 2.5rem;
   }
-}
 
-// Footer
-.o_ipai_login_footer {
-  color: #6c757d;
-  font-size: 0.8rem;
-}
+  label, .form-label {
+    color: rgba(255, 255, 255, 0.85) !important;
+    font-weight: 500;
+  }
 
-// Background
-body.bg-100 {
-  background: linear-gradient(135deg, #f0f4ff 0%, #e8ecf4 50%, #f5f7fa 100%);
-}
+  a {
+    color: #00E5FF !important;
+    &:hover { color: #00B8D4 !important; }
+  }
 
-// Login button
-.oe_login_buttons {
-  .btn-primary {
-    background-color: #1B1F3B;
-    border-color: #1B1F3B;
-    border-radius: 8px;
-    padding: 0.6rem 1.5rem;
-    font-weight: 600;
+  .text-muted {
+    color: rgba(255, 255, 255, 0.5) !important;
+  }
 
-    &:hover,
-    &:focus {
-      background-color: #2a3060;
-      border-color: #2a3060;
-    }
+  h5, .card-title {
+    color: #ffffff !important;
   }
 }
 
 // Input fields
 .oe_login_form {
   .form-control {
-    border-radius: 8px;
-    border: 1.5px solid #d0d5dd;
-    padding: 0.6rem 0.875rem;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    padding: 0.75rem 1rem;
+    background: rgba(255, 255, 255, 0.08) !important;
+    color: #ffffff !important;
+
+    &::placeholder { color: rgba(255, 255, 255, 0.4); }
 
     &:focus {
-      border-color: #4F8CFF;
-      box-shadow: 0 0 0 3px rgba(79, 140, 255, 0.15);
+      border-color: #00E5FF;
+      box-shadow: 0 0 0 3px rgba(0, 229, 255, 0.15);
+      background: rgba(255, 255, 255, 0.12) !important;
+    }
+  }
+
+  .form-check-input {
+    background-color: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.2);
+  }
+
+  .form-check-label {
+    color: rgba(255, 255, 255, 0.7) !important;
+  }
+}
+
+// Login button — cyan
+.oe_login_buttons {
+  .btn-primary {
+    background: linear-gradient(135deg, #00E5FF, #00B8D4) !important;
+    border: none !important;
+    border-radius: 12px;
+    padding: 0.75rem 1.5rem;
+    font-weight: 700;
+    color: #0B1117 !important;
+
+    &:hover, &:focus {
+      background: linear-gradient(135deg, #00B8D4, #0097A7) !important;
+      box-shadow: 0 4px 16px rgba(0, 229, 255, 0.3);
     }
   }
 }
+
+// OAuth / passkey buttons
+.btn-link { color: #00E5FF !important; }
+
+.o_oauth_providers .btn,
+.btn-outline-secondary {
+  border-radius: 12px !important;
+  border: 1px solid rgba(255, 255, 255, 0.15) !important;
+  background: rgba(255, 255, 255, 0.08) !important;
+  color: #ffffff !important;
+  &:hover { background: rgba(255, 255, 255, 0.15) !important; }
+}
+
+// Dividers and borders
+hr, .border-bottom, .border-top {
+  border-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+// Footer
+.o_ipai_login_footer {
+  color: rgba(255, 255, 255, 0.4) !important;
+  font-size: 0.75rem;
+  a {
+    color: rgba(255, 255, 255, 0.5) !important;
+    &:hover { color: #00E5FF !important; }
+  }
+}
+
+// "Powered by" and misc text
+.text-center.small { color: rgba(255, 255, 255, 0.3) !important; }
+.text-center.pb-3 { border-bottom-color: rgba(255, 255, 255, 0.1) !important; }
