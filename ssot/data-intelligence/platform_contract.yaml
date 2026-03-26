@@ -1,0 +1,119 @@
+# =============================================================================
+# Data Intelligence Platform Contract — SSOT
+# =============================================================================
+# Canonical technology assignments for the data intelligence plane.
+# Source: Microsoft reference architecture (Databricks + Fabric E2E) adapted
+# for InsightPulse AI operating model.
+#
+# Ref: https://techcommunity.microsoft.com/blog/azurearchitectureblog/data-intelligence-end-to-end-with-azure-databricks-and-microsoft-fabric/4232621
+# Cross-refs:
+#   - docs/architecture/enterprise_data_platform.md
+#   - ssot/data-intelligence/migration_inventory.yaml
+#   - ssot/foundry/runtime_inventory.yaml
+# =============================================================================
+
+schema_version: 1
+kind: data_intelligence_platform_contract
+last_reviewed: "2026-03-26"
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Platform Role Assignments
+# ─────────────────────────────────────────────────────────────────────────────
+
+lakehouse_platform: databricks
+storage_platform: adls_gen2
+governance_catalog: unity_catalog
+metadata_plane: purview
+bi_consumption_plane: power_bi_fabric
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Ingestion Technologies
+# ─────────────────────────────────────────────────────────────────────────────
+
+ingestion:
+  batch:
+    technology: auto_loader
+    sources:
+      - odoo_pg_extracts
+      - supabase_exports
+      - external_api_dumps
+    landing: "bronze/{source}/{table}/{date}/"
+    format: parquet
+
+  streaming:
+    technology: event_hubs
+    sources:
+      - operational_events
+      - platform_telemetry
+    notes: "Deferred — no streaming sources active yet"
+
+  relational_federation:
+    technology: lakehouse_federation
+    sources:
+      - odoo_pg
+    notes: "Live query against Odoo PG without extraction. Read-only."
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Modeling Pattern
+# ─────────────────────────────────────────────────────────────────────────────
+
+modeling_pattern:
+  - bronze    # Raw/immutable landing
+  - silver    # Validated/conformed, schema-enforced
+  - gold      # Business-ready aggregates and data products
+
+transformation_engine: delta_live_tables
+compute_engine: photon
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Serving Model
+# ─────────────────────────────────────────────────────────────────────────────
+
+serving:
+  primary:
+    technology: databricks_sql
+    purpose: "Concurrency-optimized warehouse for gold-layer queries"
+  consumption:
+    technology: power_bi_semantic_models
+    purpose: "Published from Databricks SQL, consumed in Fabric dashboards and Copilot"
+  supplemental:
+    technology: superset
+    purpose: "Platform-internal operational dashboards only"
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Governance
+# ─────────────────────────────────────────────────────────────────────────────
+
+governance:
+  catalog: unity_catalog
+  metadata_visibility: purview
+  identity: entra_id
+  secrets: azure_key_vault
+  monitoring: azure_monitor
+  security: defender_for_cloud
+  ci_cd: azure_devops
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Platform Controls (from reference architecture)
+# ─────────────────────────────────────────────────────────────────────────────
+
+platform_controls:
+  - "Entra ID for all identity and RBAC"
+  - "Key Vault for secrets — no inline credentials"
+  - "Azure Monitor for observability and alerting"
+  - "Defender for Cloud for security posture"
+  - "Azure DevOps for CI/CD pipeline execution"
+  - "Unity Catalog for data + AI asset governance"
+  - "Purview for estate-wide metadata cataloging"
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Invariants
+# ─────────────────────────────────────────────────────────────────────────────
+
+invariants:
+  - "Databricks is the engineering/transformation plane — Fabric is not"
+  - "Fabric is the BI/Copilot consumption plane — Databricks SQL serves it"
+  - "The analytical lake is never the source of truth for operational data"
+  - "Reverse ETL is bounded, typed, and contract-governed"
+  - "Business users access Power BI — they never query Databricks directly"
+  - "Unity Catalog governs; Purview provides estate-wide visibility"

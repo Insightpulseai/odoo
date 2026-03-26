@@ -36,6 +36,18 @@ Odoo (System of Record)         Supabase (Control Plane)
 **Invariant**: The analytical lake is never the source of truth for operational data.
 Reverse ETL is bounded, typed, and contract-governed.
 
+### Platform Role Separation
+
+| Platform | Role | Not |
+| -------- | ---- | --- |
+| **Databricks** | Governed lakehouse, transformation, AI/ML, SQL serving | Not a BI tool |
+| **Fabric** | BI consumption, Power BI semantic models, Copilot analytics | Not the engineering/transformation plane |
+| **Unity Catalog** | Data + AI governance, lineage, RBAC | Not optional |
+| **Purview** | Estate-wide metadata visibility, sensitivity classification | Not a replacement for Unity Catalog |
+| **ADLS Gen2** | Analytical lake storage (Bronze/Silver/Gold) | Not an operational database |
+
+Ref: [Data Intelligence E2E with Databricks and Fabric](https://techcommunity.microsoft.com/blog/azurearchitectureblog/data-intelligence-end-to-end-with-azure-databricks-and-microsoft-fabric/4232621)
+
 ---
 
 ## 2. Medallion / Lakehouse Design
@@ -145,6 +157,25 @@ Unity Catalog
 - **Lineage**: Unity Catalog automatic lineage tracking
 - **Cataloging**: All tables tagged with domain, owner, sensitivity, refresh cadence
 - **PII**: Classified at silver layer; masked for non-privileged consumers
+- **Purview**: Unity Catalog publishes metadata to Purview for estate-wide visibility
+
+### Ingestion Technology Map
+
+| Pattern | Technology | Use Case |
+| ------- | ---------- | -------- |
+| Batch (relational) | Auto Loader / Extract API | Odoo PG daily extracts to Bronze |
+| Streaming | Event Hubs | Real-time operational events |
+| Relational federation | Lakehouse Federation | Live queries against Odoo PG without extraction |
+| External APIs | n8n workflows → ADLS | Third-party data landing |
+
+### Serving & Consumption
+
+Gold-layer data products are served through a two-stage model:
+
+1. **Databricks SQL** — concurrency-optimized warehouse for analyst and service queries
+2. **Power BI semantic models** — published from Databricks SQL, consumed in Fabric dashboards and Copilot experiences
+
+Business users access Power BI dashboards and Copilot in Fabric. They never query Databricks directly. Superset remains supplemental for platform-internal operational dashboards only.
 
 ---
 
