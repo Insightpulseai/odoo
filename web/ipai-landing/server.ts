@@ -16,7 +16,7 @@ interface PulserResponse {
   ctas: ChatCtaAction[];
 }
 
-const DEMO_URL = '#contact';
+const DEMO_URL = 'https://insightpulseai.zohobookings.com/';
 
 const DEFAULT_FOLLOWUP_CTAS: ChatCtaAction[] = [
   { type: 'send_prompt', label: 'Show me the core modules', prompt: 'Show me the core modules in Odoo on Cloud.', analytics_id: 'chat_core_modules' },

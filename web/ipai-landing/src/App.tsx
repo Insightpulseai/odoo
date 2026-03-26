@@ -14,10 +14,12 @@ type PageId = 'home' | 'products' | 'solutions' | 'marketing' | 'media' | 'retai
 
 // --- External URLs ---
 const EXTERNAL_URLS = {
-  demo: '#contact',  // TODO: replace with real booking URL (Google Calendar or Zoho Bookings)
+  demo: 'https://insightpulseai.zohobookings.com/',  // Zoho Bookings — set up at bookings.zoho.com
   login: 'https://erp.insightpulseai.com/web/login',
   github: 'https://github.com/InsightPulseAI',
-  email: 'mailto:hello@insightpulseai.com',
+  email: 'mailto:business@insightpulseai.com',
+  mail: 'mailto:business@insightpulseai.com',
+  support: 'mailto:support@insightpulseai.com',
 } as const;
 
 // Hash <-> PageId mapping for URL sync
@@ -2017,7 +2019,7 @@ const PrivacyPage = ({ setPage }: { setPage: (p: PageId) => void }) => (
         </div>
         <div className="p-8 rounded-2xl bg-brand-light border border-gray-100">
           <h2 className="text-xl font-bold mb-4">Contact</h2>
-          <p className="text-gray-600 leading-relaxed">For privacy-related questions, contact us at <a href={EXTERNAL_URLS.email} className="text-brand-primary hover:underline">hello@insightpulseai.com</a> or visit our <button onClick={() => setPage('contact')} className="text-brand-primary hover:underline">contact page</button>.</p>
+          <p className="text-gray-600 leading-relaxed">For privacy-related questions, contact us at <a href={EXTERNAL_URLS.email} className="text-brand-primary hover:underline">business@insightpulseai.com</a> or visit our <button onClick={() => setPage('contact')} className="text-brand-primary hover:underline">contact page</button>.</p>
         </div>
       </div>
     </section>
@@ -2051,7 +2053,7 @@ const TermsPage = ({ setPage }: { setPage: (p: PageId) => void }) => (
         </div>
         <div className="p-8 rounded-2xl bg-brand-light border border-gray-100">
           <h2 className="text-xl font-bold mb-4">Contact</h2>
-          <p className="text-gray-600 leading-relaxed">Questions about these terms? Contact us at <a href={EXTERNAL_URLS.email} className="text-brand-primary hover:underline">hello@insightpulseai.com</a> or visit our <button onClick={() => setPage('contact')} className="text-brand-primary hover:underline">contact page</button>.</p>
+          <p className="text-gray-600 leading-relaxed">Questions about these terms? Contact us at <a href={EXTERNAL_URLS.email} className="text-brand-primary hover:underline">business@insightpulseai.com</a> or visit our <button onClick={() => setPage('contact')} className="text-brand-primary hover:underline">contact page</button>.</p>
         </div>
       </div>
     </section>
@@ -2097,7 +2099,7 @@ const CareersPage = ({ setPage }: { setPage: (p: PageId) => void }) => (
       </div>
       <div className="p-8 rounded-2xl bg-gray-50 border border-gray-200 text-center">
         <p className="text-gray-600 mb-4">Do not see a role that fits? We are always open to conversations with talented people.</p>
-        <a href={EXTERNAL_URLS.email} className="text-brand-primary font-bold hover:underline">Reach out at hello@insightpulseai.com</a>
+        <a href={EXTERNAL_URLS.email} className="text-brand-primary font-bold hover:underline">Reach out at business@insightpulseai.com</a>
       </div>
     </section>
     <GlobalCTA setPage={setPage} />
@@ -2130,7 +2132,7 @@ const NewsroomPage = ({ setPage }: { setPage: (p: PageId) => void }) => (
       </div>
       <div className="text-center">
         <p className="text-gray-600 mb-4">For press inquiries, contact us at</p>
-        <a href={EXTERNAL_URLS.email} className="text-brand-primary font-bold hover:underline">hello@insightpulseai.com</a>
+        <a href={EXTERNAL_URLS.email} className="text-brand-primary font-bold hover:underline">business@insightpulseai.com</a>
       </div>
     </section>
     <GlobalCTA setPage={setPage} />
