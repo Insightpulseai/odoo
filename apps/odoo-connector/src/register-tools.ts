@@ -4,8 +4,9 @@ import {
   buildAnnotations,
   buildSecuritySchemes,
   getToolOrThrow,
-} from "./policy";
-import { OdooClient } from "./odoo-client";
+} from "./policy.js";
+import { OdooClient } from "./odoo-client.js";
+import { CmsGateway } from "./cms-gateway.js";
 
 type AuthorizeResult =
   | { ok: true }
@@ -30,11 +31,13 @@ function authError(resourceMetadataUrl: string, error: string, errorDescription:
 }
 
 export function registerOdooTools(server: McpServer, deps: ToolDeps) {
+  const cms = new CmsGateway(deps.odoo);
+
   registerSearchSaleOrders(server, deps);
   registerListOverdueInvoices(server, deps);
-  registerCmsListPages(server, deps);
-  registerCmsUpdatePageContent(server, deps);
-  registerCmsPublishPage(server, deps);
+  registerCmsListPages(server, deps, cms);
+  registerCmsUpdatePageContent(server, deps, cms);
+  registerCmsPublishPage(server, deps, cms);
   registerHealthCheck(server, deps);
 }
 
@@ -139,7 +142,7 @@ function registerListOverdueInvoices(server: McpServer, deps: ToolDeps) {
   );
 }
 
-function registerCmsListPages(server: McpServer, deps: ToolDeps) {
+function registerCmsListPages(server: McpServer, deps: ToolDeps, cms: CmsGateway) {
   const toolName = "odoo_cms_list_pages";
   const tool = getToolOrThrow(deps.policy, toolName);
 
@@ -162,15 +165,7 @@ function registerCmsListPages(server: McpServer, deps: ToolDeps) {
         return authError(deps.policy.oauth.resource_metadata_url, authz.error, authz.errorDescription);
       }
 
-      const records = await deps.odoo.searchRead<Array<Record<string, unknown>>>(
-        "website.page",
-        {
-          domain: args.query ? [["name", "ilike", args.query]] : [],
-          fields: ["id", "name", "url", "is_published"],
-          limit: args.limit ?? 25,
-          context: args.website_id ? { website_id: args.website_id } : {},
-        },
-      );
+      const records = await cms.listPages(args.query, args.website_id, args.limit ?? 25);
 
       return {
         structuredContent: { count: records.length, records },
@@ -181,7 +176,7 @@ function registerCmsListPages(server: McpServer, deps: ToolDeps) {
   );
 }
 
-function registerCmsUpdatePageContent(server: McpServer, deps: ToolDeps) {
+function registerCmsUpdatePageContent(server: McpServer, deps: ToolDeps, cms: CmsGateway) {
   const toolName = "odoo_cms_update_page_content";
   const tool = getToolOrThrow(deps.policy, toolName);
 
@@ -204,11 +199,7 @@ function registerCmsUpdatePageContent(server: McpServer, deps: ToolDeps) {
         return authError(deps.policy.oauth.resource_metadata_url, authz.error, authz.errorDescription);
       }
 
-      const result = await deps.odoo.call<Record<string, unknown>>(
-        "website.page",
-        "write",
-        { ids: [args.page_id], vals: { arch_db: args.html } },
-      );
+      const result = await cms.updatePageContent(args.page_id, args.html);
 
       return {
         structuredContent: { ok: true, result },
@@ -218,7 +209,7 @@ function registerCmsUpdatePageContent(server: McpServer, deps: ToolDeps) {
   );
 }
 
-function registerCmsPublishPage(server: McpServer, deps: ToolDeps) {
+function registerCmsPublishPage(server: McpServer, deps: ToolDeps, cms: CmsGateway) {
   const toolName = "odoo_cms_publish_page";
   const tool = getToolOrThrow(deps.policy, toolName);
 
@@ -241,11 +232,7 @@ function registerCmsPublishPage(server: McpServer, deps: ToolDeps) {
         return authError(deps.policy.oauth.resource_metadata_url, authz.error, authz.errorDescription);
       }
 
-      const result = await deps.odoo.call<Record<string, unknown>>(
-        "website.page",
-        "write",
-        { ids: [args.page_id], vals: { is_published: true } },
-      );
+      const result = await cms.publishPage(args.page_id);
 
       return {
         structuredContent: { ok: true, result },

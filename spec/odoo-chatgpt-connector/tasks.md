@@ -32,6 +32,15 @@
 
 ## Phase 1 — Read-only tools
 
+### T-009 — Bootstrap MCP server (index.ts)
+
+- Status: done
+- Priority: P0
+- Output: `apps/odoo-connector/src/index.ts`, `src/cms-gateway.ts`
+- Acceptance: server loads policy, creates OdooClient from env, registers tools, connects via stdio
+
+> **Note**: CMS mutation tools are scaffolded but remain **candidate-mapped** until validated against the target Odoo database `/doc` surface. Do not treat CMS writes as production-verified until that validation is complete.
+
 ### T-010 — Implement Odoo JSON-2 client
 
 - Status: todo
