@@ -14,11 +14,11 @@ spec/<connector-slug>/
 └── tasks.md
 ```
 
-## Ingestion ownership model (required)
+## Connector mode (required)
 
-Every connector must declare one of two ingestion modes:
+Every connector must declare exactly one of three connector modes:
 
-### `platform_managed`
+### `platform_managed.runtime_bound`
 The platform owns the extraction runtime.
 Benchmark: Azure Data Factory connector pattern (self-hosted IR, service principal, Key Vault, provider registration).
 
@@ -31,6 +31,23 @@ Required contract areas:
 - runtime topology and network placement
 - runtime dependencies
 - onboarding sequence
+- validation sequence
+- rollback/decommission path
+
+### `platform_managed.cloud_connection`
+The platform owns the connector contract through managed cloud connection objects.
+Benchmark: Salesforce / managed SaaS connector pattern (cloud connection object, connection ID binding, no source-adjacent runtime).
+
+Required contract areas:
+- source-system prerequisites
+- source connection type
+- source connection ID
+- orchestration/metadata connection type
+- orchestration/metadata connection ID
+- authentication method
+- managed connection trust boundary
+- post-create dataset/relationship handoff
+- onboarding sequence (connection binding + dataset activation flow)
 - validation sequence
 - rollback/decommission path
 
@@ -50,7 +67,7 @@ Required contract areas:
 - validation sequence
 - rollback/decommission path
 
-Platform-managed sections (identity, secrets, runtime topology, network) are optional for partner-managed connectors
+Runtime-bound sections (identity, secrets, runtime topology, network) are optional for cloud-connection and partner-managed connectors
 but must be explicitly marked N/A with justification if omitted.
 
 ## Relationship to workload items
@@ -59,14 +76,15 @@ A connector is the governed onboarding path for a source feeding that workload i
 
 ## Recommended naming
 - workload item: `<domain-solution-slug>`
-- platform-managed connector: `<workload-item-slug>-<source-system>-connector`
+- runtime-bound connector: `<workload-item-slug>-<source-system>-connector`
+- cloud-connection connector: `<workload-item-slug>-<source-system>-cloud-connector`
 - partner-managed connector: `<workload-item-slug>-<partner>-<source-system>-connector`
 
 ## Supported modes (detailed)
 
 See `docs/architecture/CONNECTOR_ONBOARDING_MODES.md` for full mode definitions and decision rules.
 
-### 1. `platform_managed`
+### 1. `platform_managed.runtime_bound`
 Use when the workload/platform owns the extraction runtime.
 Required emphasis:
 - provider/service prerequisites
@@ -77,7 +95,18 @@ Required emphasis:
 - network placement
 - dependency installation
 
-### 2. `partner_managed`
+### 2. `platform_managed.cloud_connection`
+Use when the workload/platform owns the connector contract through managed cloud connection objects rather than a runtime-heavy extractor.
+Required emphasis:
+- source connection type
+- source connection ID
+- orchestration connection type
+- orchestration connection ID
+- authentication method
+- managed connection trust boundary
+- dataset/relationship handoff after source creation
+
+### 3. `partner_managed`
 Use when ingestion is delegated to an external mirroring/partner tool and the workload item binds to that ingestion through a partner contract.
 Required emphasis:
 - partner name
@@ -101,4 +130,5 @@ Connector failure modes must map to the platform failure taxonomy:
 - pipeline_config
 - runtime_health
 - source_system (connector-specific addition)
+- connection_object (cloud-connection addition)
 - partner_escalation (partner-managed addition)

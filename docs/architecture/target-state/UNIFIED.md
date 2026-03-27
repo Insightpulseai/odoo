@@ -34,14 +34,14 @@
 | Edge | Azure Front Door (`ipai-fd-dev`) |
 | ERP | Odoo CE 19.0 + OCA + `ipai_*` |
 | Database | PostgreSQL 16 (Odoo-local) |
-| Control Plane | Supabase (`spdtwktxdalcfigzeqrz`) |
+| Control Plane | Azure-native (Supabase deprecated 2026-03-26) |
 | Analytical Lake | Azure Data Lake Storage Gen2 |
 | AI Compute | Azure AI Foundry |
 | BI | Power BI (mandatory; live connection to Unity Catalog) |
-| Automation | n8n (self-hosted on Azure) |
+| Automation | Azure DevOps Pipelines + Foundry agents (n8n retired 2026-03-25) |
 | Identity | Microsoft Entra ID (SSO plane) |
 | Chat | Slack |
-| DNS | Cloudflare (delegated from Spacesquare) |
+| DNS | Azure DNS (authoritative, delegated from Squarespace) |
 | Mail | Zoho SMTP (`smtp.zoho.com:587`) |
 | Secrets | Azure Key Vault (`kv-ipai-dev`) |
 | Productivity Surface | Microsoft 365 Copilot / Copilot Agents |
@@ -128,16 +128,16 @@ Every system has exactly one role. No system may claim authority beyond its desi
 | System | Role | Owns | Does NOT Own |
 |--------|------|------|-------------|
 | **Odoo CE 19** | System of Record (SoR) | Accounting, invoicing, projects, tasks, BIR filings, employees, vendors, analytic accounts, expense documents | Identity, platform events, vector embeddings |
-| **Supabase** | Single Source of Truth (SSOT) | Platform control plane, app metadata, workflow state, vector embeddings, agent memory, Auth identity, Edge Function state | ERP data, accounting, HR |
+| **Supabase** | **DEPRECATED** (was SSOT) | ~~Platform control plane~~ — replaced by Azure-native services (Entra, Key Vault, ACA, Databricks) | All — fully deprecated 2026-03-26 |
 | **ADLS Gen2** | Analytical Lake | Replicated bronze/silver/gold datasets, ML features, BI marts, reverse ETL staging | Nothing operational |
 | **Azure AI Foundry** | Compute Only | Model training, scoring, hosting, agent runtime, tracing, evaluations | No data ownership |
 | **Document Intelligence** | Extraction Authority | Specialized OCR, invoice/receipt parsing, document classification | No operational state |
 | **SAP Concur** | SoR (T&E) | Expense reports, travel bookings, invoice captures | ERP posting, tax compliance |
 | **SAP Joule** | Copilot Surface | Conversational interface, Microsoft 365 interop | No data ownership, no direct writes |
 | **Power BI** | Presentation Only | BI dashboards and reports | No data ownership |
-| **n8n** | Automation | Workflow orchestration, event routing | No data ownership |
+| **n8n** | **DEPRECATED** (was Automation) | ~~Workflow orchestration~~ — replaced by Foundry agents + DevOps pipelines | All — retired 2026-03-25 |
 | **Slack** | Communication | ChatOps, notifications, alerts | No data ownership |
-| **Cloudflare** | Edge DNS | DNS resolution, CDN | No data ownership |
+| **Azure DNS** | Authoritative DNS | DNS resolution | No data ownership |
 | **Azure Key Vault** | Secrets Store | All credentials, tokens, API keys | No application data |
 | **Microsoft Entra ID** | Identity Plane | SSO federation, SAML/OIDC tokens | No application data |
 | **Databricks Apps** | Data Agent Runtime | RAG, lakehouse retrieval, data-intelligence agents (ResponsesAgent) | Transactional SoR |
@@ -279,11 +279,11 @@ Identity flow:
 
 ### Phase 1 — Foundation (Current)
 - [x] Odoo CE 19 on Azure Container Apps
-- [x] Supabase as control plane (Auth, Edge Functions, pgvector)
-- [x] Cloudflare DNS + Azure Front Door
+- [x] ~~Supabase as control plane~~ (deprecated 2026-03-26, replaced by Azure-native)
+- [x] Azure DNS + Azure Front Door (Cloudflare retired 2026-03-26)
 - [x] Zoho SMTP for outbound mail
 - [x] Slack for ChatOps
-- [x] n8n for automation
+- [x] ~~n8n for automation~~ (retired 2026-03-25, replaced by Foundry agents + DevOps pipelines)
 - [x] Spec bundle governance (`spec/`, `ssot/`, `docs/contracts/`)
 
 ### Phase 2 — Data Lake
