@@ -112,39 +112,18 @@ async function main() {
   const mode = process.env.TRANSPORT ?? "stdio";
 
   if (mode === "http") {
-    const { createHttpServer } = await import("./http-transport.js");
+    const { startHttpServer } = await import("./http-transport.js");
     const port = parseInt(process.env.PORT ?? "3100", 10);
-    const basePath = process.env.MCP_BASE_PATH ?? "/odoo-connector/mcp";
+    const mcpPath = process.env.MCP_PATH ?? "/mcp";
 
-    const httpServer = createHttpServer(
-      { port, basePath },
-      {
-        onMcpMessage: async (body) => {
-          // Route MCP JSON-RPC messages through the server
-          // Full MCP HTTP transport wiring requires SDK streamable-http adapter
-          return { jsonrpc: "2.0", result: { ok: true }, id: (body as any)?.id };
-        },
-        onHealthCheck: async () => {
-          return odoo.ping();
-        },
-        onOAuthCallback: async (code, state) => {
-          try {
-            const { exchangeCodeForTokens } = await import("./auth/entra-oauth.js");
-            const tokens = await exchangeCodeForTokens(entraConfig, code);
-            return { ok: true };
-          } catch (err) {
-            return { ok: false, error: String(err) };
-          }
-        },
-      },
-    );
+    // Factory creates a fresh server per session (each gets its own tool set)
+    const serverFactory = () => {
+      const s = new McpServer({ name: "odoo-connector", version: "0.1.0" });
+      registerOdooTools(s, { policy, odoo, authorize });
+      return s;
+    };
 
-    httpServer.listen(port, () => {
-      console.log(`[odoo-connector] HTTP server listening on :${port}`);
-      console.log(`[odoo-connector] MCP endpoint: ${basePath}`);
-      console.log(`[odoo-connector] Health: ${basePath}/health`);
-      console.log(`[odoo-connector] OAuth callback: /odoo-connector/oauth/callback`);
-    });
+    await startHttpServer({ port, mcpPath }, serverFactory);
   } else {
     const transport = new StdioServerTransport();
     await server.connect(transport);

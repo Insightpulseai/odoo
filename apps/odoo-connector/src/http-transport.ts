@@ -1,138 +1,95 @@
 /**
- * HTTP/SSE Transport for the Odoo MCP Connector.
+ * Streamable HTTP Transport for the Odoo MCP Connector.
+ *
+ * Uses @modelcontextprotocol/sdk StreamableHTTPServerTransport
+ * which implements the MCP Streamable HTTP protocol that ChatGPT expects.
  *
  * Endpoints:
- *   GET  /mcp          — SSE stream (MCP transport)
- *   POST /mcp          — MCP message handler
- *   GET  /mcp/health   — health check (no auth)
- *
- * OAuth endpoints (separate from MCP transport):
- *   GET  /oauth/callback — OAuth redirect URI for Entra code exchange
+ *   POST /mcp  — MCP Streamable HTTP (ChatGPT connects here)
+ *   GET  /mcp  — SSE stream for server-initiated messages
+ *   DELETE /mcp — Session termination
  *
  * ChatGPT connector config:
- *   MCP Server URL: https://erp.insightpulseai.com/odoo-connector/mcp
- *   Auth: OAuth 2.0 (or none for initial testing)
+ *   MCP Server URL: https://<host>/mcp
+ *   Auth: No Auth (for testing) or OAuth 2.0 (production)
  */
 
-import http from "node:http";
-import { URL } from "node:url";
+import express from "express";
+import { randomUUID } from "node:crypto";
+import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
+import { StreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/streamableHttp.js";
 
-export interface HttpTransportConfig {
+export interface HttpServerConfig {
   port: number;
-  basePath: string;
+  mcpPath: string;
 }
 
-export function createHttpServer(
-  config: HttpTransportConfig,
-  handlers: {
-    onMcpMessage: (body: unknown) => Promise<unknown>;
-    onHealthCheck: () => Promise<{ ok: boolean; version?: string }>;
-    onOAuthCallback?: (code: string, state: string) => Promise<{ ok: boolean; error?: string }>;
-  },
-): http.Server {
-  const server = http.createServer(async (req, res) => {
-    const url = new URL(req.url ?? "/", `http://${req.headers.host}`);
-    const path = url.pathname.replace(/\/$/, "");
+export async function startHttpServer(
+  config: HttpServerConfig,
+  serverFactory: () => McpServer,
+) {
+  const app = express();
 
-    // CORS headers for ChatGPT
-    res.setHeader("Access-Control-Allow-Origin", "*");
-    res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
-    res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
+  // Store transports by session ID
+  const transports = new Map<string, StreamableHTTPServerTransport>();
 
-    if (req.method === "OPTIONS") {
-      res.writeHead(204);
-      res.end();
-      return;
-    }
-
-    try {
-      // Health check — no auth required
-      if (path === `${config.basePath}/health` && req.method === "GET") {
-        const health = await handlers.onHealthCheck();
-        res.writeHead(200, { "Content-Type": "application/json" });
-        res.end(JSON.stringify(health));
-        return;
-      }
-
-      // MCP message endpoint (POST)
-      if (path === config.basePath && req.method === "POST") {
-        const body = await readBody(req);
-        const parsed = JSON.parse(body);
-        const result = await handlers.onMcpMessage(parsed);
-        res.writeHead(200, { "Content-Type": "application/json" });
-        res.end(JSON.stringify(result));
-        return;
-      }
-
-      // MCP SSE stream (GET) — for streaming transport
-      if (path === config.basePath && req.method === "GET") {
-        res.writeHead(200, {
-          "Content-Type": "text/event-stream",
-          "Cache-Control": "no-cache",
-          "Connection": "keep-alive",
-        });
-
-        // Send initial connection event
-        res.write(`data: ${JSON.stringify({ type: "connection", status: "ok" })}\n\n`);
-
-        // Keep alive
-        const keepAlive = setInterval(() => {
-          res.write(": keepalive\n\n");
-        }, 30000);
-
-        req.on("close", () => {
-          clearInterval(keepAlive);
-        });
-
-        return;
-      }
-
-      // OAuth callback — separate from MCP transport
-      if (path === `${config.basePath.replace("/mcp", "")}/oauth/callback` && req.method === "GET") {
-        const code = url.searchParams.get("code") ?? "";
-        const state = url.searchParams.get("state") ?? "";
-
-        if (!code) {
-          res.writeHead(400, { "Content-Type": "application/json" });
-          res.end(JSON.stringify({ error: "missing_code" }));
-          return;
-        }
-
-        if (handlers.onOAuthCallback) {
-          const result = await handlers.onOAuthCallback(code, state);
-          if (result.ok) {
-            res.writeHead(200, { "Content-Type": "text/html" });
-            res.end("<html><body><h1>Connected</h1><p>You can close this window.</p></body></html>");
-          } else {
-            res.writeHead(401, { "Content-Type": "application/json" });
-            res.end(JSON.stringify({ error: result.error }));
-          }
-        } else {
-          res.writeHead(501, { "Content-Type": "application/json" });
-          res.end(JSON.stringify({ error: "oauth_not_configured" }));
-        }
-
-        return;
-      }
-
-      // 404
-      res.writeHead(404, { "Content-Type": "application/json" });
-      res.end(JSON.stringify({ error: "not_found", path }));
-    } catch (err) {
-      console.error("[http-transport] error:", err);
-      res.writeHead(500, { "Content-Type": "application/json" });
-      res.end(JSON.stringify({ error: "internal_error" }));
-    }
+  // Health endpoint
+  app.get("/health", (_req, res) => {
+    res.json({ ok: true, transport: "streamable-http", timestamp: new Date().toISOString() });
   });
 
-  return server;
-}
+  // MCP Streamable HTTP endpoint
+  app.post(config.mcpPath, async (req, res) => {
+    const sessionId = req.headers["mcp-session-id"] as string | undefined;
+    let transport: StreamableHTTPServerTransport;
 
-function readBody(req: http.IncomingMessage): Promise<string> {
-  return new Promise((resolve, reject) => {
-    const chunks: Buffer[] = [];
-    req.on("data", (chunk) => chunks.push(chunk));
-    req.on("end", () => resolve(Buffer.concat(chunks).toString("utf8")));
-    req.on("error", reject);
+    if (sessionId && transports.has(sessionId)) {
+      transport = transports.get(sessionId)!;
+    } else {
+      // New session — create transport and connect server
+      const newSessionId = randomUUID();
+      transport = new StreamableHTTPServerTransport({
+        sessionId: newSessionId,
+      });
+      transports.set(newSessionId, transport);
+
+      const server = serverFactory();
+      await server.connect(transport);
+
+      // Clean up on close
+      transport.onclose = () => {
+        transports.delete(newSessionId);
+      };
+    }
+
+    await transport.handleRequest(req, res, req.body);
+  });
+
+  // SSE stream for server-initiated messages
+  app.get(config.mcpPath, async (req, res) => {
+    const sessionId = req.headers["mcp-session-id"] as string | undefined;
+    if (!sessionId || !transports.has(sessionId)) {
+      res.status(400).json({ error: "Invalid or missing session ID" });
+      return;
+    }
+    const transport = transports.get(sessionId)!;
+    await transport.handleRequest(req, res);
+  });
+
+  // Session termination
+  app.delete(config.mcpPath, async (req, res) => {
+    const sessionId = req.headers["mcp-session-id"] as string | undefined;
+    if (sessionId && transports.has(sessionId)) {
+      const transport = transports.get(sessionId)!;
+      await transport.close();
+      transports.delete(sessionId);
+    }
+    res.status(200).json({ ok: true });
+  });
+
+  app.listen(config.port, () => {
+    console.log(`[odoo-connector] Streamable HTTP server on :${config.port}`);
+    console.log(`[odoo-connector] MCP endpoint: ${config.mcpPath}`);
+    console.log(`[odoo-connector] Health: /health`);
   });
 }
