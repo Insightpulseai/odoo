@@ -144,6 +144,109 @@ feature_groups:
         phase: 2
         requires_confirmation: true
 
+  cms:
+    scopes:
+      pages_read: odoo.cms.pages.read
+      pages_write: odoo.cms.pages.write
+      navigation_read: odoo.cms.navigation.read
+      navigation_write: odoo.cms.navigation.write
+      media_read: odoo.cms.media.read
+      media_write: odoo.cms.media.write
+      seo_read: odoo.cms.seo.read
+      seo_write: odoo.cms.seo.write
+      publish_write: odoo.cms.publish.write
+    tools:
+      # Read tools
+      - name: odoo_cms_list_pages
+        scope: odoo.cms.pages.read
+        readOnly: true
+        model: website.page
+        method: search_read
+        fields: [name, url, website_published, date_publish, website_indexed]
+      - name: odoo_cms_get_page
+        scope: odoo.cms.pages.read
+        readOnly: true
+        model: website.page
+        method: read
+      - name: odoo_cms_list_menus
+        scope: odoo.cms.navigation.read
+        readOnly: true
+        model: website.menu
+        method: search_read
+        fields: [name, url, parent_id, sequence]
+      - name: odoo_cms_get_page_seo
+        scope: odoo.cms.seo.read
+        readOnly: true
+        model: website.page
+        method: read
+        fields: [website_meta_title, website_meta_description, website_meta_keywords, seo_name]
+      - name: odoo_cms_list_media
+        scope: odoo.cms.media.read
+        readOnly: true
+        model: ir.attachment
+        method: search_read
+        domain_filter: "[('res_model','=','website')]"
+        fields: [name, mimetype, url, file_size, create_date]
+      # Write tools (Phase 2)
+      - name: odoo_cms_create_page_draft
+        scope: odoo.cms.pages.write
+        readOnly: false
+        model: website.page
+        method: create
+        phase: 2
+        requires_confirmation: true
+      - name: odoo_cms_update_page_content
+        scope: odoo.cms.pages.write
+        readOnly: false
+        model: website.page
+        method: write
+        phase: 2
+        requires_confirmation: true
+      - name: odoo_cms_update_page_properties
+        scope: odoo.cms.pages.write
+        readOnly: false
+        model: website.page
+        method: write
+        phase: 2
+        requires_confirmation: true
+        notes: "title, URL/slug, menu inclusion, visibility, indexing"
+      - name: odoo_cms_publish_page
+        scope: odoo.cms.publish.write
+        readOnly: false
+        model: website.page
+        method: write
+        phase: 2
+        requires_confirmation: true
+        notes: "Sets website_published = True"
+      - name: odoo_cms_unpublish_page
+        scope: odoo.cms.publish.write
+        readOnly: false
+        model: website.page
+        method: write
+        phase: 2
+        requires_confirmation: true
+      - name: odoo_cms_create_menu_item
+        scope: odoo.cms.navigation.write
+        readOnly: false
+        model: website.menu
+        method: create
+        phase: 2
+        requires_confirmation: true
+      - name: odoo_cms_update_menu_item
+        scope: odoo.cms.navigation.write
+        readOnly: false
+        model: website.menu
+        method: write
+        phase: 2
+        requires_confirmation: true
+      - name: odoo_cms_upload_media
+        scope: odoo.cms.media.write
+        readOnly: false
+        model: ir.attachment
+        method: create
+        phase: 2
+        requires_confirmation: true
+
   reporting:
     scopes:
       read: odoo.reporting.read
@@ -197,6 +300,30 @@ access_presets:
       - odoo.reporting.read
       - odoo.activities.write
 
+  content_editor:
+    description: "CMS read + pages/media/SEO write + publish"
+    scopes:
+      - odoo.cms.pages.read
+      - odoo.cms.pages.write
+      - odoo.cms.media.read
+      - odoo.cms.media.write
+      - odoo.cms.seo.read
+      - odoo.cms.seo.write
+      - odoo.cms.publish.write
+
+  web_operator:
+    description: "Content editor + navigation write"
+    scopes:
+      - odoo.cms.pages.read
+      - odoo.cms.pages.write
+      - odoo.cms.navigation.read
+      - odoo.cms.navigation.write
+      - odoo.cms.media.read
+      - odoo.cms.media.write
+      - odoo.cms.seo.read
+      - odoo.cms.seo.write
+      - odoo.cms.publish.write
+
   admin:
     description: "Admin diagnostics + selective access"
     scopes:
@@ -206,6 +333,7 @@ access_presets:
       - odoo.finance.read
       - odoo.projects.read
       - odoo.inventory.read
+      - odoo.cms.pages.read
 
 # ─────────────────────────────────────────────────────────────────────────────
 # ODOO API IDENTITY
