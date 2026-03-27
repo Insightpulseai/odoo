@@ -23,6 +23,7 @@ feature_groups:
   admin_debug:
     label: "Admin / Debug"
 
+tool_count: 19
 tools:
   odoo_search_sale_orders:
     title: "Search sale orders"
