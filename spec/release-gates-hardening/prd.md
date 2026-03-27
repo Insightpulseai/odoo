@@ -14,7 +14,7 @@ Convert all Agent Factory contracts into enforced, automated release barriers th
 - Automated validation of all Spec bundles and SSOT contracts.
 - Automated verification of `acceptance.json` artifacts for all subsystems.
 - Rollup `production-eligibility.json` artifact generation.
-- GitHub Actions workflow that blocks on any validation failure.
+- Azure DevOps Pipelines workflow that blocks on any validation failure.
 - Enforcement of `runtime_production_status` and topology compatibility.
 
 ## Acceptance Criteria

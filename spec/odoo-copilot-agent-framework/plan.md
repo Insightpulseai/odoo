@@ -27,7 +27,7 @@
 **Files changed**:
 - `scripts/foundry/run_evaluations.py` — new: evaluation runner for all three agents
 - `ssot/ai/evaluation_thresholds.yaml` — new: threshold definitions per agent
-- `.github/workflows/foundry-eval-gate.yml` — new: CI gate on eval scores
+- `pipelines/foundry-eval-gate.yml` — new: Azure DevOps Pipelines CI gate on eval scores
 
 **Dependencies**: Phase 1
 
