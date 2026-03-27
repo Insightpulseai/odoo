@@ -78,7 +78,7 @@ RUN rm -f /tmp/oca_sparse_clone.sh \
 # ---------------------------------------------------------------------------
 # Python dependencies for IPAI modules
 # ---------------------------------------------------------------------------
-RUN pip3 install --no-cache-dir paho-mqtt
+RUN pip3 install --no-cache-dir --break-system-packages paho-mqtt
 
 # ---------------------------------------------------------------------------
 # IPAI custom modules
