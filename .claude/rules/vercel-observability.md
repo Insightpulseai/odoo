@@ -3,7 +3,9 @@ paths:
   - "apps/**/vercel*"
 ---
 
-# Vercel Observability & Figma Dev Mode
+> **ARCHIVED — Vercel fully deprecated 2026-03-11. All deployments moved to Azure Container Apps. The Vercel sections below are historical only. The Figma Dev Mode section remains current.**
+
+# Vercel Observability & Figma Dev Mode (ARCHIVED — Vercel Section Only)
 
 > Vercel observability plus integration and Figma dev mode access.
 
