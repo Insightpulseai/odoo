@@ -3,12 +3,16 @@ import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js"
 import { loadPolicy } from "./policy.js";
 import { OdooClient } from "./odoo-client.js";
 import { registerOdooTools } from "./register-tools.js";
+import {
+  buildEntraConfig,
+  validateToken,
+  buildAuthenticatedUser,
+  type AuthenticatedUser,
+} from "./auth/entra-oauth.js";
 
 type SessionContext = {
-  user?: {
-    id: string;
-    scopes: string[];
-  };
+  user?: AuthenticatedUser;
+  accessToken?: string;
 };
 
 function requireEnv(name: string): string {
@@ -16,6 +20,18 @@ function requireEnv(name: string): string {
   if (!value) throw new Error(`Missing required environment variable: ${name}`);
   return value;
 }
+
+/**
+ * Authorize a tool call against the user's Entra-derived scopes.
+ *
+ * Flow:
+ *   1. Extract access token from session context
+ *   2. Validate token against Entra (issuer, audience, expiry)
+ *   3. Extract odoo.* scopes from token claims
+ *   4. Check if required scope is present
+ *   5. Return ok or error with OAuth challenge metadata
+ */
+const entraConfig = buildEntraConfig();
 
 async function authorize(
   ctx: unknown,
@@ -26,23 +42,50 @@ async function authorize(
 > {
   const session = (ctx ?? {}) as SessionContext;
 
-  if (!session.user) {
-    return {
-      ok: false,
-      error: "invalid_token",
-      errorDescription: "Sign-in required.",
-    };
+  // If we already have a validated user in context, check scopes
+  if (session.user) {
+    if (!session.user.scopes.includes(requiredScope)) {
+      return {
+        ok: false,
+        error: "insufficient_scope",
+        errorDescription: `Missing required scope: ${requiredScope}`,
+      };
+    }
+    return { ok: true };
   }
 
-  if (!session.user.scopes.includes(requiredScope)) {
-    return {
-      ok: false,
-      error: "insufficient_scope",
-      errorDescription: `Missing required scope: ${requiredScope}`,
-    };
+  // Try to validate from access token
+  if (session.accessToken) {
+    const claims = validateToken(entraConfig, session.accessToken);
+    if (!claims) {
+      return {
+        ok: false,
+        error: "invalid_token",
+        errorDescription: "Token validation failed. Sign in again.",
+      };
+    }
+
+    const user = buildAuthenticatedUser(claims);
+    // Cache validated user back into session
+    (session as any).user = user;
+
+    if (!user.scopes.includes(requiredScope)) {
+      return {
+        ok: false,
+        error: "insufficient_scope",
+        errorDescription: `Missing required scope: ${requiredScope}`,
+      };
+    }
+
+    return { ok: true };
   }
 
-  return { ok: true };
+  // No token at all
+  return {
+    ok: false,
+    error: "invalid_token",
+    errorDescription: "Sign-in required.",
+  };
 }
 
 async function main() {
