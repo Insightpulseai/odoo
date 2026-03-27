@@ -24,7 +24,7 @@ inputs:
 
 dependencies:
   - agents/knowledge/benchmarks/databricks-production-ready.md
-  - docs/architecture/enterprise_data_platform.md
+  - docs/architecture/data/ENTERPRISE_DATA_PLATFORM.md
 
 steps:
   - verify agent follows Databricks Agent Framework template (not ad-hoc LLM calls)

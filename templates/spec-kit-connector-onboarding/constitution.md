@@ -25,13 +25,13 @@ Define the invariant operating contract for `<connector-slug>`, the governed onb
 - Domain: `<finance | sales | procurement | tax | other>`
 - Source system: `<source-system>`
 - Source type: `<erp | crm | db | api | file | other>`
-- Ingestion ownership model: `<platform_managed | partner_managed>`
+- Connector mode: `<platform_managed.runtime_bound | platform_managed.cloud_connection | partner_managed>`
 
-## 3a. Ingestion ownership model (required)
-Every connector must declare one of two ingestion ownership modes.
+## 3a. Connector mode (required)
+Every connector must declare exactly one of three connector modes.
 The mode determines which contract sections are mandatory.
 
-### `platform_managed`
+### `platform_managed.runtime_bound`
 The platform owns the extraction runtime. Required:
 - providers/services
 - execution identity
@@ -41,6 +41,18 @@ The platform owns the extraction runtime. Required:
 - local/runtime dependencies
 
 Benchmark: Azure Data Factory connector pattern (self-hosted IR, service principal, Key Vault, provider registration).
+
+### `platform_managed.cloud_connection`
+The platform owns the connector contract through managed cloud connection objects. Required:
+- source connection type
+- source connection ID
+- orchestration/metadata connection type
+- orchestration/metadata connection ID
+- authentication method
+- managed connection trust boundary
+- post-create handoff into dataset/relationship setup
+
+Benchmark: Salesforce / managed SaaS connector pattern (cloud connection object, connection ID binding, no source-adjacent runtime).
 
 ### `partner_managed`
 A third-party platform owns extraction. The workload item owns processing only. Required:
@@ -53,7 +65,7 @@ A third-party platform owns extraction. The workload item owns processing only. 
 
 Benchmark: Open Mirroring connector pattern (partner selection, connection ID binding, external extraction).
 
-Platform-managed sections (identity, secrets, runtime topology, network) are optional for partner-managed connectors
+Runtime-bound sections (identity, secrets, runtime topology, network) are optional for cloud-connection and partner-managed connectors
 but must be explicitly marked N/A with justification if omitted.
 
 ## 4. Prerequisite invariants
@@ -66,8 +78,8 @@ The connector must define:
 
 No connector may be treated as deployable unless all prerequisites are explicit.
 
-### 4.1 Platform-managed minimums
-If `ingestion_ownership_model = platform_managed`, the spec must explicitly define:
+### 4.1 Runtime-bound minimums
+If `connector_mode = platform_managed.runtime_bound`, the spec must explicitly define:
 - required providers/services
 - required roles/permissions
 - execution identity
@@ -76,8 +88,19 @@ If `ingestion_ownership_model = platform_managed`, the spec must explicitly defi
 - network placement
 - runtime dependencies
 
-### 4.2 Partner-managed minimums
-If `ingestion_ownership_model = partner_managed`, the spec must explicitly define:
+### 4.2 Cloud-connection minimums
+If `connector_mode = platform_managed.cloud_connection`, the spec must explicitly define:
+- source connection type
+- source connection ID
+- orchestration/metadata connection type
+- orchestration/metadata connection ID
+- authentication method
+- SaaS login/server endpoint if applicable
+- trust boundary for the managed connection object
+- post-create handoff into dataset/relationship setup
+
+### 4.3 Partner-managed minimums
+If `connector_mode = partner_managed`, the spec must explicitly define:
 - mirroring/ingestion partner name
 - connection ID / partner binding identifier
 - partner trust boundary
@@ -95,7 +118,8 @@ If `ingestion_ownership_model = partner_managed`, the spec must explicitly defin
 Connector credentials must never be treated as repo state.
 
 ### 5.1 Conditional identity rule
-- `platform_managed`: execution identity is mandatory
+- `platform_managed.runtime_bound`: execution identity is mandatory
+- `platform_managed.cloud_connection`: managed connection auth method and connection-owner boundary are mandatory
 - `partner_managed`: connector-bound execution identity may be external to the workload item, but the trust boundary and partner connection contract are mandatory
 
 ## 6. Runtime topology invariants
@@ -107,7 +131,8 @@ The connector must declare:
 - what isolation boundary it assumes
 
 ### 6.1 Conditional runtime rule
-- `platform_managed`: runtime topology must include connector runtime placement and source reachability assumptions
+- `platform_managed.runtime_bound`: runtime topology must include connector runtime placement and source reachability assumptions
+- `platform_managed.cloud_connection`: runtime topology must define managed connection ownership plus workload-item handoff boundary
 - `partner_managed`: runtime topology must define the external ingestion boundary and landing/handoff boundary into the workload item
 
 ## 7. Validation invariants
@@ -150,5 +175,6 @@ Spec updates are required for:
 - network placement changes
 - connector dependency changes
 - validation workflow changes
-- ingestion ownership model changes (platform_managed ↔ partner_managed)
-- partner name or connection ID changes (if partner_managed)
+- connector mode changes (runtime_bound ↔ cloud_connection ↔ partner_managed)
+- connection ID changes (if cloud_connection or partner_managed)
+- partner name changes (if partner_managed)

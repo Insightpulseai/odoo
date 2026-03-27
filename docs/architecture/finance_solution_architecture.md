@@ -7,7 +7,7 @@
 > Ref: https://learn.microsoft.com/en-us/credentials/certifications/exams/mb-700/
 > Cross-references:
 >   - `odoo/.claude/rules/ee-parity.md` (parity strategy)
->   - `docs/architecture/UNIFIED_TARGET_ARCHITECTURE.md` (platform architecture)
+>   - `docs/architecture/target-state/UNIFIED.md` (platform architecture)
 >   - `ssot/governance/azdo-execution-hierarchy.yaml` (OBJ-002 Epic)
 
 ---
@@ -39,7 +39,7 @@ MB-700 tests solution architects on 6 domains. Here is how each maps to the Odoo
 
 | MB-700 Expectation | Odoo CE Equivalent |
 |--------------------|-------------------|
-| Define solution architecture | `docs/architecture/UNIFIED_TARGET_ARCHITECTURE.md` |
+| Define solution architecture | `docs/architecture/target-state/UNIFIED.md` |
 | Solution components | Odoo CE core + 56 OCA must-have + 69 `ipai_*` modules |
 | Integration architecture | `docs/architecture/ADLS_ETL_REVERSE_ETL_ARCHITECTURE.md` |
 | Data migration strategy | `scripts/migrate-pg-to-azure.sh` + Odoo XML/CSV import |

@@ -147,7 +147,7 @@ One assistant contract, one disclosure policy, one citation/provenance policy â€
 ## SSOT References
 
 - Machine-readable: `ssot/creative/provider_policy.yaml`
-- Assistant surfaces: `docs/architecture/ASSISTANT_SURFACES.md`
+- Assistant surfaces: `../agents/ASSISTANT_SURFACES.md`
 - Model tiering: `docs/architecture/AI_RUNTIME_AUTHORITY.md`
 
 ---

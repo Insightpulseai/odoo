@@ -120,7 +120,7 @@ This project is abstracted from W9 Studio's operating workflow:
 
 ## SSOT References
 
-- Surface taxonomy: `docs/architecture/ASSISTANT_SURFACES.md`
+- Surface taxonomy: `docs/architecture/agents/ASSISTANT_SURFACES.md`
 - Creative provider policy: `docs/architecture/CREATIVE_PROVIDER_POLICY.md`
 - Provider SSOT: `ssot/creative/provider_policy.yaml`
 - W9 Studio spec: `spec/w9-studio-copilot/prd.md`

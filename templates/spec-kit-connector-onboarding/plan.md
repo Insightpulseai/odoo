@@ -5,13 +5,16 @@
 - Environment(s): `<dev/staging/prod>`
 - Region: `<region>`
 - Data residency assumption: `<assumption>`
-- Ingestion ownership model: `<platform_managed | partner_managed>`
+- Connector mode: `<platform_managed.runtime_bound | platform_managed.cloud_connection | partner_managed>`
 
-## 2. Ingestion ownership model
-- Model: `<platform_managed | partner_managed>`
+## 2. Connector mode
+- Mode: `<platform_managed.runtime_bound | platform_managed.cloud_connection | partner_managed>`
 
-### If `platform_managed`
+### If `platform_managed.runtime_bound`
 Fill sections 3–6 fully.
+
+### If `platform_managed.cloud_connection`
+Fill section 2b instead of sections 4–6. Sections 4–6 may be marked N/A with justification.
 
 ### If `partner_managed`
 Fill section 2a instead of sections 4–6. Sections 4–6 may be marked N/A with justification.
@@ -33,6 +36,19 @@ Fill section 2a instead of sections 4–6. Sections 4–6 may be marked N/A with
   - Partner contact: `<contact>`
   - Escalation path: `<path>`
   - Platform fallback: `<what happens if partner ingestion fails>`
+
+## 2b. Cloud-connection contract (if `platform_managed.cloud_connection`)
+- Source connection type: `<salesforce | dynamics365 | other>`
+- Source connection ID: `<connection-id>`
+- Orchestration connection type: `<fabric-sql | other>`
+- Orchestration connection ID: `<connection-id>`
+- Authentication method: `<oauth | api-key | managed-identity | other>`
+- SaaS login / server endpoint: `<endpoint if applicable>`
+- Managed connection trust boundary: `<what the connection object can access>`
+- Post-create handoff:
+  - Dataset activation: `<manual | automatic>`
+  - Relationship setup: `<required tables/objects>`
+  - Discovery validation: `<how to verify source is visible>`
 
 ## 3. Source contract
 - Source system: `<source-system>`
@@ -56,12 +72,20 @@ Fill section 2a instead of sections 4–6. Sections 4–6 may be marked N/A with
   - `<scope>` -> `<role>`
 - Approval owner: `<owner>`
 
-### 4.1 Platform-managed identity plan
+### 4.1 Runtime-bound identity plan
 - Azure/provider prerequisites: `<provider/service>`
 - Role requirements: `<role>`
 - Secret bootstrap path: `<path>`
 
-### 4.2 Partner-managed identity plan
+### 4.2 Cloud-connection identity plan
+- Source connection type: `<salesforce | other>`
+- Source connection ID: `<connection-id>`
+- Orchestration connection type: `<fabric-sql | other>`
+- Orchestration connection ID: `<connection-id>`
+- Auth method: `<oauth | other>`
+- Managed connection owner: `<owner>`
+
+### 4.3 Partner-managed identity plan
 - Partner name: `<partner>`
 - Connection ID: `<connection-id>`
 - Partner-owned identity boundary: `<boundary>`
@@ -83,12 +107,18 @@ Fill section 2a instead of sections 4–6. Sections 4–6 may be marked N/A with
   - `<dependency>`
   - `<dependency>`
 
-### 6.1 Platform-managed topology expectations
+### 6.1 Runtime-bound topology expectations
 - Direct source connectivity requirements
 - Connector runtime location
 - Dependency installation requirements
 
-### 6.2 Partner-managed topology expectations
+### 6.2 Cloud-connection topology expectations
+- Managed cloud connection boundary
+- Workload-item binding boundary
+- Expected landed object/schema contract
+- Post-create dataset/relationship configuration dependency
+
+### 6.3 Partner-managed topology expectations
 - External ingestion runtime owner
 - Handoff/landing boundary into workload item
 - Expected delivered schema/object contract
@@ -96,7 +126,7 @@ Fill section 2a instead of sections 4–6. Sections 4–6 may be marked N/A with
 
 ## 7. Onboarding sequence
 
-### If `platform_managed`
+### If `platform_managed.runtime_bound`
 1. verify source prerequisites
 2. verify providers/services
 3. provision/verify identity
@@ -106,6 +136,16 @@ Fill section 2a instead of sections 4–6. Sections 4–6 may be marked N/A with
 7. run source handshake validation
 8. run first extraction/discovery validation
 9. record post-create evidence
+
+### If `platform_managed.cloud_connection`
+1. verify source prerequisites
+2. verify source connection object exists
+3. verify orchestration/metadata connection exists
+4. bind both connection IDs to workload item
+5. validate source visibility/discovery
+6. hand off to dataset/relationship setup
+7. validate dataset activation
+8. record post-create evidence
 
 ### If `partner_managed`
 1. verify source prerequisites

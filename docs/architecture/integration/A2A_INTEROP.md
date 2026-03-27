@@ -266,7 +266,7 @@ Tools are registered in Azure AI Foundry Agent Service. Each tool has:
 - Machine-readable surfaces: `ssot/agents/assistant_surfaces.yaml`
 - AgentOps policy: `ssot/governance/agentops_policy.yaml`
 - Tool profiles: `ssot/agents/diva_copilot.yaml#tool_profiles`
-- Assistant surfaces doc: `docs/architecture/ASSISTANT_SURFACES.md`
+- Assistant surfaces doc: `../agents/ASSISTANT_SURFACES.md`
 - Tenancy model: `ssot/architecture/tenancy_model.yaml`
 
 ---

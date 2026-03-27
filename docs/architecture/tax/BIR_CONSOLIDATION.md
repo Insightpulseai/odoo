@@ -93,8 +93,8 @@ Philippine tax/BIR compliance work is distributed across **3 repos** and **1 ext
 |-------|------|
 | TaxPulse Salvage Map | `docs/architecture/TAXPULSE_SALVAGE_MAP.md` |
 | Agent Production Reality | `docs/architecture/AGENT_PRODUCTION_REALITY.md` |
-| Unified Target Architecture | `docs/architecture/UNIFIED_TARGET_ARCHITECTURE.md` |
-| Platform Target State | `docs/architecture/PLATFORM_TARGET_STATE.md` |
+| Unified Target Architecture | `../target-state/UNIFIED.md` |
+| Platform Target State | `../target-state/PLATFORM.md` |
 
 #### Scripts
 

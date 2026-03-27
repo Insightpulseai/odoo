@@ -1,12 +1,12 @@
 # Wholesale SaaS ERP on Azure — Architecture Rationale
 
 > **Role:** Long-form rationale and deep-research synthesis.
-> **Not canonical target doctrine** — that is `PLATFORM_TARGET_STATE.md`.
-> **Not cross-domain topology** — that is `UNIFIED_TARGET_ARCHITECTURE.md`.
+> **Not canonical target doctrine** — that is `../target-state/PLATFORM.md`.
+> **Not cross-domain topology** — that is `../target-state/UNIFIED.md`.
 >
 > Cross-references:
-> - `docs/architecture/PLATFORM_TARGET_STATE.md` (canonical target doctrine)
-> - `docs/architecture/UNIFIED_TARGET_ARCHITECTURE.md` (cross-domain topology)
+> - `../target-state/PLATFORM.md` (canonical target doctrine)
+> - `../target-state/UNIFIED.md` (cross-domain topology)
 > - `ssot/architecture/platform-boundaries.yaml` (machine-readable boundaries)
 > - `ssot/architecture/data-flows.yaml` (machine-readable data flows)
 > - `spec/wholesale-saas-erp-azure/` (spec bundle: constitution, PRD, plan, tasks)

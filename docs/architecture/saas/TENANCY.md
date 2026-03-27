@@ -88,7 +88,7 @@ Multi-customer tenancy is a future milestone. Current runtime is single-company.
 ## SSOT References
 
 - Machine-readable: `ssot/architecture/tenancy_model.yaml`
-- Assistant surfaces: `docs/architecture/ASSISTANT_SURFACES.md`
+- Assistant surfaces: `../agents/ASSISTANT_SURFACES.md`
 - Identity: `ssot/identity/entra_target_state.yaml`
 
 ---

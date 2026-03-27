@@ -32,9 +32,9 @@ Ownership boundaries: [`ssot/repo/ownership-boundaries.yaml`](ssot/repo/ownershi
 
 ## Architecture
 
-Odoo CE 19 is the transactional system of record. Databricks + Unity Catalog is the governed analytics plane. Azure AI Foundry hosts agent applications. Azure Container Apps (behind Azure Front Door) is the runtime surface. Cloudflare provides DNS; Zoho handles outbound mail.
+Odoo CE 19 is the transactional system of record. Databricks + Unity Catalog is the governed analytics plane. Microsoft Foundry hosts agent applications. Azure Container Apps (behind Azure Front Door) is the runtime surface. Azure DNS provides authoritative DNS; Zoho handles outbound mail.
 
-Details: [`docs/architecture/UNIFIED_TARGET_ARCHITECTURE.md`](docs/architecture/UNIFIED_TARGET_ARCHITECTURE.md) | [`docs/architecture/PLATFORM_TARGET_STATE.md`](docs/architecture/PLATFORM_TARGET_STATE.md)
+Details: [`docs/architecture/target-state/UNIFIED.md`](docs/architecture/target-state/UNIFIED.md) | [`docs/architecture/target-state/PLATFORM.md`](docs/architecture/target-state/PLATFORM.md)
 
 ## Assistant Surfaces
 
@@ -46,7 +46,7 @@ Details: [`docs/architecture/UNIFIED_TARGET_ARCHITECTURE.md`](docs/architecture/
 | Azure Genie | Cloud ops assistant | Infrastructure and deployment |
 | Document AI | OCR and extraction | Invoice, receipt, document processing |
 
-Details: [`docs/architecture/ASSISTANT_SURFACES.md`](docs/architecture/ASSISTANT_SURFACES.md)
+Details: [`docs/architecture/agents/ASSISTANT_SURFACES.md`](docs/architecture/agents/ASSISTANT_SURFACES.md)
 
 ## Key Constraints
 
@@ -60,13 +60,13 @@ Details: [`docs/architecture/ASSISTANT_SURFACES.md`](docs/architecture/ASSISTANT
 
 | Topic | Location |
 |-------|----------|
-| Target architecture | [`docs/architecture/UNIFIED_TARGET_ARCHITECTURE.md`](docs/architecture/UNIFIED_TARGET_ARCHITECTURE.md) |
-| Odoo on Azure target state | [`docs/architecture/INSIGHTPULSEAI_ODOO_ON_AZURE_TARGET_STATE.md`](docs/architecture/INSIGHTPULSEAI_ODOO_ON_AZURE_TARGET_STATE.md) |
-| Odoo runtime contract | [`docs/architecture/ODOO_RUNTIME.md`](docs/architecture/ODOO_RUNTIME.md) |
-| Agent platform | [`docs/architecture/AGENT_PLATFORM.md`](docs/architecture/AGENT_PLATFORM.md) |
-| Assistant surfaces | [`docs/architecture/ASSISTANT_SURFACES.md`](docs/architecture/ASSISTANT_SURFACES.md) |
-| Data platform | [`docs/architecture/enterprise_data_platform.md`](docs/architecture/enterprise_data_platform.md) |
-| Identity and secrets | [`docs/architecture/identity_and_secrets.md`](docs/architecture/identity_and_secrets.md) |
+| Target architecture | [`docs/architecture/target-state/UNIFIED.md`](docs/architecture/target-state/UNIFIED.md) |
+| Odoo on Azure target state | [`docs/architecture/odoo/ON_AZURE_TARGET_STATE.md`](docs/architecture/odoo/ON_AZURE_TARGET_STATE.md) |
+| Odoo runtime contract | [`docs/architecture/odoo/RUNTIME.md`](docs/architecture/odoo/RUNTIME.md) |
+| Agent platform | [`docs/architecture/agents/PLATFORM.md`](docs/architecture/agents/PLATFORM.md) |
+| Assistant surfaces | [`docs/architecture/agents/ASSISTANT_SURFACES.md`](docs/architecture/agents/ASSISTANT_SURFACES.md) |
+| Data platform | [`docs/architecture/data/ENTERPRISE_DATA_PLATFORM.md`](docs/architecture/data/ENTERPRISE_DATA_PLATFORM.md) |
+| Identity and secrets | [`docs/architecture/identity/IDENTITY_AND_SECRETS.md`](docs/architecture/identity/IDENTITY_AND_SECRETS.md) |
 | Go-live checklist | [`docs/architecture/GO_LIVE_CHECKLIST.md`](docs/architecture/GO_LIVE_CHECKLIST.md) |
 | Delivery evidence | [`docs/evidence/`](docs/evidence/) |
 | Runbooks | [`docs/runbooks/`](docs/runbooks/) |

@@ -1,0 +1,258 @@
+# azure-pipelines.yml — Docs validation and publish
+# Validates documentation structure, spec bundles, terminology, and links on PR.
+# Publishes docs artifacts on merge to main.
+trigger:
+  branches:
+    include:
+      - main
+  paths:
+    include:
+      - docs/**
+      - spec/**
+      - templates/**
+      - CLAUDE.md
+
+pr:
+  branches:
+    include:
+      - main
+  paths:
+    include:
+      - docs/**
+      - spec/**
+      - templates/**
+      - CLAUDE.md
+
+pool:
+  vmImage: ubuntu-latest
+
+stages:
+  # --- Validate ---
+  - stage: Validate
+    displayName: 'Docs: Validate'
+    jobs:
+      - job: ValidateDocs
+        displayName: Validate documentation and spec bundles
+        steps:
+          - checkout: self
+            fetchDepth: 1
+
+          - script: |
+              set -euo pipefail
+              echo "## Internal Link Check"
+
+              # Check for broken internal links (relative .md references)
+              # Handles both relative and repo-root paths
+              BROKEN=0
+              CHECKED=0
+              for md in $(find docs/ spec/ templates/ -name '*.md' 2>/dev/null); do
+                # Extract relative .md links from markdown link syntax
+                grep -oP '\]\(\K[^)#]+\.md' "$md" 2>/dev/null | while read -r link; do
+                  CHECKED=$((CHECKED + 1))
+                  DIR=$(dirname "$md")
+
+                  # Try as relative path from file's directory
+                  if [ -f "$DIR/$link" ]; then
+                    continue
+                  fi
+
+                  # Try as repo-root path
+                  if [ -f "$link" ]; then
+                    continue
+                  fi
+
+                  # Try resolving ../ chains
+                  RESOLVED=$(cd "$DIR" 2>/dev/null && realpath --relative-to=. "$link" 2>/dev/null || echo "")
+                  if [ -n "$RESOLVED" ] && [ -f "$DIR/$RESOLVED" ]; then
+                    continue
+                  fi
+
+                  echo "::warning file=$md::BROKEN LINK: $md -> $link"
+                  BROKEN=$((BROKEN + 1))
+                done
+              done
+
+              echo "Checked links in docs/, spec/, templates/"
+              if [ "$BROKEN" -gt 0 ]; then
+                echo "##vso[task.logissue type=warning]Found $BROKEN broken links"
+              else
+                echo "No broken links detected"
+              fi
+            displayName: Check internal links
+
+          - script: |
+              set -euo pipefail
+              echo "## Spec Bundle Validation"
+
+              ERRORS=0
+              ARCHIVED=0
+              COMPLETE=0
+              for SPEC_DIR in spec/*/; do
+                [ -d "$SPEC_DIR" ] || continue
+                BUNDLE=$(basename "$SPEC_DIR")
+
+                # Skip archived/complete bundles
+                if [ -f "${SPEC_DIR}STATUS.md" ]; then
+                  STATUS_LINE=$(head -1 "${SPEC_DIR}STATUS.md")
+                  if echo "$STATUS_LINE" | grep -qi "ARCHIVED\|COMPLETE\|MERGED"; then
+                    ARCHIVED=$((ARCHIVED + 1))
+                    continue
+                  fi
+                fi
+
+                HAS_PRD=false
+                HAS_TASKS=false
+                [ -f "${SPEC_DIR}prd.md" ] && HAS_PRD=true
+                [ -f "${SPEC_DIR}tasks.md" ] && HAS_TASKS=true
+
+                if [ "$HAS_PRD" = true ] && [ "$HAS_TASKS" = true ]; then
+                  COMPLETE=$((COMPLETE + 1))
+                else
+                  echo "::warning::INCOMPLETE: $BUNDLE (prd=$HAS_PRD, tasks=$HAS_TASKS)"
+                  ERRORS=$((ERRORS + 1))
+                fi
+              done
+
+              echo "Complete: $COMPLETE | Archived: $ARCHIVED | Incomplete: $ERRORS"
+              if [ "$ERRORS" -gt 0 ]; then
+                echo "##vso[task.logissue type=warning]$ERRORS incomplete spec bundles"
+              fi
+            displayName: Validate spec bundles
+
+          - script: |
+              set -euo pipefail
+              echo "## Terminology Guard"
+
+              # Deprecated terms that must not appear in new/changed docs
+              # Format: "term|replacement"
+              DEPRECATED_TERMS=(
+                "insightpulseai\.net|insightpulseai.com"
+                "Mattermost|Slack"
+                "DigitalOcean|Azure"
+                "Mailgun|Zoho SMTP"
+                "mg\.insightpulseai\.com|smtp.zoho.com"
+                "odoo-ce|odoo (repo name)"
+                "Appfine|removed"
+              )
+
+              VIOLATIONS=0
+              # Only check non-archived, non-evidence docs
+              for md in $(find docs/ spec/ templates/ CLAUDE.md -name '*.md' \
+                -not -path '*/archive/*' \
+                -not -path '*/evidence/*' \
+                -not -path '*/STATUS.md' \
+                2>/dev/null); do
+                for ENTRY in "${DEPRECATED_TERMS[@]}"; do
+                  TERM="${ENTRY%%|*}"
+                  REPLACEMENT="${ENTRY##*|}"
+                  if grep -qP "$TERM" "$md" 2>/dev/null; then
+                    # Allow in deprecated tables, changelogs, historical sections
+                    HITS=$(grep -cP "$TERM" "$md" 2>/dev/null || echo 0)
+                    echo "::warning file=$md::$HITS occurrence(s) of deprecated term '$TERM' (use: $REPLACEMENT)"
+                    VIOLATIONS=$((VIOLATIONS + 1))
+                  fi
+                done
+              done
+
+              if [ "$VIOLATIONS" -gt 0 ]; then
+                echo "##vso[task.logissue type=warning]$VIOLATIONS files contain deprecated terminology"
+              else
+                echo "No deprecated terminology detected"
+              fi
+            displayName: Terminology guard
+
+          - script: |
+              set -euo pipefail
+              echo "## Architecture Structure Check"
+
+              # Verify expected subdirectory structure exists
+              EXPECTED_DIRS=(
+                "docs/architecture/target-state"
+                "docs/architecture/agents"
+                "docs/architecture/azure"
+                "docs/architecture/odoo"
+                "docs/architecture/data"
+                "docs/architecture/connectors"
+                "docs/architecture/identity"
+                "docs/architecture/integration"
+                "docs/architecture/security"
+                "docs/architecture/operations"
+                "docs/architecture/governance"
+                "docs/architecture/saas"
+                "docs/architecture/tax"
+                "docs/architecture/ai"
+                "docs/architecture/marketing"
+                "docs/architecture/adr"
+                "docs/architecture/docs-platform"
+                "docs/architecture/w9-studio"
+              )
+
+              MISSING=0
+              for DIR in "${EXPECTED_DIRS[@]}"; do
+                if [ -d "$DIR" ]; then
+                  COUNT=$(find "$DIR" -name '*.md' | wc -l)
+                  echo "  $DIR: $COUNT files"
+                else
+                  echo "  $DIR: MISSING"
+                  MISSING=$((MISSING + 1))
+                fi
+              done
+
+              # Verify key root-level files
+              REQUIRED_ROOT=(
+                "docs/architecture/RETIRED_SERVICES.md"
+                "docs/architecture/GO_LIVE_CHECKLIST.md"
+                "docs/architecture/EDGE_DNS_MAIL_AUTHORITY.md"
+                "docs/architecture/README.md"
+                "docs/README.md"
+              )
+
+              for DOC in "${REQUIRED_ROOT[@]}"; do
+                if [ -f "$DOC" ]; then
+                  echo "  $DOC: present"
+                else
+                  echo "::warning::MISSING required doc: $DOC"
+                  MISSING=$((MISSING + 1))
+                fi
+              done
+
+              if [ "$MISSING" -gt 0 ]; then
+                echo "##vso[task.logissue type=warning]$MISSING missing directories or required docs"
+              else
+                echo "All architecture structure checks passed"
+              fi
+            displayName: Check architecture structure
+
+  # --- Publish (main only) ---
+  - stage: Publish
+    displayName: 'Docs: Publish'
+    dependsOn: Validate
+    condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
+    jobs:
+      - job: PublishDocs
+        displayName: Publish documentation artifacts
+        steps:
+          - checkout: self
+            fetchDepth: 1
+
+          - task: PublishBuildArtifacts@1
+            displayName: Publish docs artifact
+            inputs:
+              pathToPublish: docs/
+              artifactName: documentation
+              publishLocation: Container
+
+          - task: PublishBuildArtifacts@1
+            displayName: Publish spec bundles artifact
+            inputs:
+              pathToPublish: spec/
+              artifactName: spec-bundles
+              publishLocation: Container
+
+          - script: |
+              echo "## Docs Published"
+              echo "Timestamp: $(date -u +%Y-%m-%dT%H:%M:%SZ)"
+              echo "Branch:    $(Build.SourceBranch)"
+              echo "Commit:    $(Build.SourceVersion)"
+              echo "Artifacts: documentation, spec-bundles"
+            displayName: Publish evidence

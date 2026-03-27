@@ -80,5 +80,5 @@ Key criteria:
 ## Cross-References
 
 - `docs/architecture/reference-benchmarks.md` — cross-vendor benchmark registry
-- `docs/architecture/enterprise_data_platform.md` — platform data architecture
+- `docs/architecture/data/ENTERPRISE_DATA_PLATFORM.md` — platform data architecture
 - `agent-platform/ssot/learning/databricks_production_ready_skill_map.yaml` — machine-readable skill map

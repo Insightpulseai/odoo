@@ -27,7 +27,7 @@ dependencies:
   - agents/skills/databricks-agent-production-readiness/
   - agents/skills/databricks-model-serving-production-readiness/
   - agents/knowledge/benchmarks/databricks-production-ready.md
-  - docs/architecture/enterprise_data_platform.md
+  - docs/architecture/data/ENTERPRISE_DATA_PLATFORM.md
 
 steps:
   - classify the Databricks feature's release maturity (GA / Public Preview / Beta / Private Preview / Experimental)

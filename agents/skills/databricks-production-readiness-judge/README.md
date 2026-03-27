@@ -17,5 +17,5 @@ This judge determines the final classification: production-ready (GA-grade), pre
 - `agents/skills/databricks-agent-production-readiness/`
 - `agents/skills/databricks-model-serving-production-readiness/`
 - `agents/knowledge/benchmarks/databricks-production-ready.md`
-- `docs/architecture/enterprise_data_platform.md`
+- `docs/architecture/data/ENTERPRISE_DATA_PLATFORM.md`
 - `agent-platform/ssot/learning/databricks_production_ready_skill_map.yaml`

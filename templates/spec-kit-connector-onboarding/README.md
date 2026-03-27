@@ -12,12 +12,15 @@ spec/<connector-slug>/
 └── tasks.md
 ```
 
-## Ingestion ownership model
+## Supported connector modes
 
-Every connector must declare one of two modes:
+Every connector must declare exactly one mode:
 
-### `platform_managed` (ADF benchmark)
+### `platform_managed.runtime_bound` (ADF benchmark)
 Platform owns the extraction runtime. Full identity, secret, runtime, network contract required.
+
+### `platform_managed.cloud_connection` (Salesforce/SaaS benchmark)
+Platform owns the connector contract through managed cloud connection objects. Source connection ID + orchestration connection ID required. No self-hosted runtime.
 
 ### `partner_managed` (Open Mirroring benchmark)
 Third-party owns extraction. Partner name, connection ID, trust boundary, SLA, handoff schema required.
@@ -26,8 +29,8 @@ Third-party owns extraction. Partner name, connection ID, trust boundary, SLA, h
 This template is for connector onboarding only:
 - source prerequisites
 - required roles and providers
-- ingestion ownership model
-- connector execution identity (platform_managed) or partner contract (partner_managed)
+- connector mode
+- connector execution identity (runtime_bound), managed connection contract (cloud_connection), or partner contract (partner_managed)
 - secret storage authority
 - runtime topology / network placement
 - runtime dependencies
@@ -39,5 +42,8 @@ It is not the semantic-model spec and not the agent UX spec.
 ## Canonical relationship
 - workload item spec = deployable domain solution
 - connector onboarding spec = deployable source-ingestion contract for that workload item
-- platform_managed = platform owns extraction runtime
-- partner_managed = partner owns extraction, platform owns processing
+
+## Supported connector modes
+- `platform_managed.runtime_bound`
+- `platform_managed.cloud_connection`
+- `partner_managed`

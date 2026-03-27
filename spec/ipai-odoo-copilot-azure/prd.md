@@ -29,7 +29,7 @@ Create a Foundry-hosted Odoo Copilot that:
 
 ## Surface Classification
 
-Odoo Copilot is one of five canonical assistant surfaces. See `docs/architecture/ASSISTANT_SURFACES.md`.
+Odoo Copilot is one of five canonical assistant surfaces. See `docs/architecture/agents/ASSISTANT_SURFACES.md`.
 
 - **Role:** ERP / transactional assistant
 - **Scope:** Authenticated, record-aware

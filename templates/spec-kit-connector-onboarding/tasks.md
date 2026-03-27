@@ -1,7 +1,7 @@
 # Tasks — <Connector Name>
 
-## Phase 0 — Ingestion ownership model
-- [ ] declare ingestion ownership model: `platform_managed` or `partner_managed`
+## Phase 0 — Connector mode
+- [ ] declare connector mode: `platform_managed.runtime_bound`, `platform_managed.cloud_connection`, or `partner_managed`
 
 ## Phase 1 — Source and prerequisites
 - [ ] identify source owner
@@ -9,7 +9,7 @@
 - [ ] document required providers/services
 - [ ] document required roles/permissions
 
-## Phase 2a — Identity and secrets (platform_managed)
+## Phase 2a — Identity and secrets (runtime_bound)
 - [ ] define execution identity
 - [ ] define role assignments
 - [ ] define secret authority
@@ -18,7 +18,15 @@
 - [ ] define first-party connector execution identity
 - [ ] define secret bootstrap and runtime injection
 
-## Phase 2b — Partner contract (partner_managed)
+## Phase 2b — Cloud-connection contract (cloud_connection)
+- [ ] define source connection type
+- [ ] define source connection ID
+- [ ] define orchestration connection type
+- [ ] define orchestration connection ID
+- [ ] define authentication method
+- [ ] define managed connection ownership boundary
+
+## Phase 2c — Partner contract (partner_managed)
 - [ ] document partner name and version
 - [ ] obtain precreated connection ID
 - [ ] document partner trust boundary
@@ -31,13 +39,20 @@
 
 ## Phase 3 — Runtime and network
 
-### Platform-managed
+### Runtime-bound
 - [ ] define runtime type
 - [ ] define network placement
 - [ ] define required endpoints
 - [ ] define runtime dependencies
 - [ ] define direct source connectivity requirements
 - [ ] define dependency installation requirements
+
+### Cloud-connection
+- [ ] define managed cloud connection boundary
+- [ ] define workload-item binding boundary
+- [ ] define expected landed object/schema contract
+- [ ] define post-create dataset/relationship handoff
+- [ ] define discovery/visibility validation
 
 ### Partner-managed
 - [ ] define external ingestion runtime owner
