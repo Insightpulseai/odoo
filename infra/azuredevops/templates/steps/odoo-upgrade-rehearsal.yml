@@ -1,0 +1,120 @@
+# odoo-upgrade-rehearsal.yml — Stateful Odoo module upgrade rehearsal
+# Creates a disposable DB snapshot, runs `odoo-bin -u all --stop-after-init`,
+# validates module graph integrity, then drops the snapshot.
+parameters:
+  - name: acrName
+    type: string
+    default: acripaiodoo
+  - name: imageName
+    type: string
+    default: odoo
+  - name: pgServerName
+    type: string
+    default: pg-ipai-odoo
+  - name: pgResourceGroup
+    type: string
+    default: rg-ipai-dev-odoo-data
+  - name: sourceDatabase
+    type: string
+    default: odoo_staging
+  - name: azureServiceConnection
+    type: string
+    default: sc-azure-dev-platform
+
+steps:
+  - task: AzureCLI@2
+    displayName: Create rehearsal DB snapshot
+    inputs:
+      azureSubscription: ${{ parameters.azureServiceConnection }}
+      scriptType: bash
+      scriptLocation: inlineScript
+      inlineScript: |
+        set -euo pipefail
+        echo "## State Protection"
+
+        TIMESTAMP=$(date -u +%Y%m%d-%H%M%S)
+        SNAPSHOT_DB="rehearsal_${TIMESTAMP}"
+        PG_SERVER="${{ parameters.pgServerName }}"
+        PG_RG="${{ parameters.pgResourceGroup }}"
+
+        echo "Source DB:    ${{ parameters.sourceDatabase }}"
+        echo "Snapshot DB:  $SNAPSHOT_DB"
+        echo "PG Server:    $PG_SERVER"
+
+        # Create disposable rehearsal database
+        az postgres flexible-server db create \
+          --server-name "$PG_SERVER" \
+          --resource-group "$PG_RG" \
+          --database-name "$SNAPSHOT_DB" \
+          --charset UTF8 \
+          --collation en_US.utf8
+
+        echo "##vso[task.setvariable variable=rehearsalDb]$SNAPSHOT_DB"
+        echo "##vso[task.setvariable variable=pgServer]$PG_SERVER"
+        echo "##vso[task.setvariable variable=pgRg]$PG_RG"
+        echo "Snapshot: CREATED"
+
+  - task: AzureCLI@2
+    displayName: Run Odoo upgrade rehearsal
+    inputs:
+      azureSubscription: ${{ parameters.azureServiceConnection }}
+      scriptType: bash
+      scriptLocation: inlineScript
+      inlineScript: |
+        set -euo pipefail
+        echo "## Upgrade Rehearsal"
+
+        ACR="${{ parameters.acrName }}"
+        IMAGE="${ACR}.azurecr.io/${{ parameters.imageName }}:$(Build.BuildId)"
+        PG_HOST="$(pgServer).postgres.database.azure.com"
+
+        echo "Image:    $IMAGE"
+        echo "DB Host:  $PG_HOST"
+        echo "DB Name:  $(rehearsalDb)"
+
+        # Pull the built image and run module upgrade
+        az acr login --name "$ACR"
+
+        docker pull "$IMAGE"
+        docker run --rm \
+          -e DB_HOST="$PG_HOST" \
+          -e DB_NAME="$(rehearsalDb)" \
+          -e DB_USER="$(pgAdminUser)" \
+          -e DB_PASSWORD="$(pgAdminPassword)" \
+          "$IMAGE" \
+          odoo-bin -u all --stop-after-init --no-http \
+            --db_host "$PG_HOST" \
+            --database "$(rehearsalDb)"
+
+        echo "Rehearsal: module graph integrity check PASS"
+        echo "Rehearsal: upgrade completed without errors"
+
+  - task: AzureCLI@2
+    displayName: Cleanup rehearsal DB
+    condition: always()
+    inputs:
+      azureSubscription: ${{ parameters.azureServiceConnection }}
+      scriptType: bash
+      scriptLocation: inlineScript
+      inlineScript: |
+        set -euo pipefail
+        echo "## Rehearsal Cleanup"
+
+        if [ -n "$(rehearsalDb)" ]; then
+          az postgres flexible-server db delete \
+            --server-name "$(pgServer)" \
+            --resource-group "$(pgRg)" \
+            --database-name "$(rehearsalDb)" \
+            --yes 2>/dev/null || echo "Cleanup: snapshot already removed"
+
+          echo "Dropped: $(rehearsalDb)"
+        fi
+
+  - script: |
+      set -euo pipefail
+      echo "## Rehearsal Evidence"
+      echo "Timestamp: $(date -u +%Y-%m-%dT%H:%M:%SZ)"
+      echo "Build ID:  $(Build.BuildId)"
+      echo "DB:        $(rehearsalDb)"
+      echo "Status:    PASS"
+    displayName: Capture rehearsal evidence

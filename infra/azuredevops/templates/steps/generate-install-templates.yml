@@ -1,0 +1,155 @@
+# Generate rendered install/deploy contract from BOM + SSOT inputs
+# SAP benchmark: BOM defines approved software, generated templates define exact deploy parameters.
+# Layer 1 = BOM (what versions), Layer 2 = rendered template (what config), Layer 3 = attestation (proof).
+parameters:
+  - name: appName
+    type: string
+  - name: workloadType
+    type: string
+    values:
+      - web
+      - odoo
+  - name: targetEnvironment
+    type: string
+  - name: acrName
+    type: string
+    default: acripaiodoo
+  - name: resourceGroup
+    type: string
+    default: rg-ipai-dev-odoo-runtime
+  - name: containerAppName
+    type: string
+    default: ""
+  - name: healthEndpoint
+    type: string
+    default: "/"
+  - name: assistantEndpoint
+    type: string
+    default: ""
+  - name: dbTargetName
+    type: string
+    default: ""
+  - name: addonLockPath
+    type: string
+    default: ""
+  - name: filestoreVolume
+    type: string
+    default: ""
+  - name: upgradeScope
+    type: string
+    default: ""
+  - name: configPath
+    type: string
+    default: ""
+
+steps:
+  - task: UsePythonVersion@0
+    inputs:
+      versionSpec: "3.11"
+    displayName: Use Python for template generation
+
+  - bash: |
+      set -euo pipefail
+      mkdir -p artifacts
+
+      python - <<'PY'
+      import json, os, hashlib
+
+      workload = os.environ["WORKLOAD_TYPE"]
+
+      # --- Shared contract fields ---
+      contract = {
+        "artifact_contract": {
+          "kind": "rendered-deploy-contract",
+          "schema_version": 1,
+          "workload_type": workload
+        },
+        "source": {
+          "git_sha": os.environ["BUILD_SOURCEVERSION"],
+          "build_id": os.environ["BUILD_BUILDID"],
+          "build_number": os.environ["BUILD_BUILDNUMBER"],
+          "pipeline_definition": os.environ["BUILD_DEFINITIONNAME"]
+        },
+        "target": {
+          "app_name": os.environ["APP_NAME"],
+          "environment": os.environ["TARGET_ENVIRONMENT"],
+          "resource_group": os.environ["RESOURCE_GROUP"],
+          "container_app": os.environ["CONTAINER_APP_NAME"],
+          "acr": os.environ["ACR_NAME"] + ".azurecr.io"
+        },
+        "image": {
+          "ref": os.environ["ACR_NAME"] + ".azurecr.io/" + os.environ["APP_NAME"] + ":" + os.environ["BUILD_BUILDID"],
+          "rollback_target": ""
+        },
+        "health": {
+          "endpoint": os.environ["HEALTH_ENDPOINT"],
+          "expected_status": [200, 301, 302]
+        }
+      }
+
+      # --- Web-specific contract ---
+      if workload == "web":
+        contract["web"] = {
+          "assistant_endpoint": os.environ.get("ASSISTANT_ENDPOINT", ""),
+          "telemetry_sink": "application-insights"
+        }
+        out_name = "web-release-render.json"
+
+      # --- Odoo-specific contract ---
+      elif workload == "odoo":
+        addon_lock = os.environ.get("ADDON_LOCK_PATH", "")
+        addon_hash = ""
+        if addon_lock and os.path.isfile(addon_lock):
+          with open(addon_lock, "rb") as f:
+            addon_hash = hashlib.sha256(f.read()).hexdigest()[:16]
+
+        config_path = os.environ.get("CONFIG_PATH", "")
+        config_hash = ""
+        if config_path and os.path.isfile(config_path):
+          with open(config_path, "rb") as f:
+            config_hash = hashlib.sha256(f.read()).hexdigest()[:16]
+
+        contract["odoo"] = {
+          "db_target": os.environ.get("DB_TARGET_NAME", ""),
+          "addon_lock_path": addon_lock,
+          "addon_lock_hash": addon_hash,
+          "config_path": config_path,
+          "config_hash": config_hash,
+          "filestore_volume": os.environ.get("FILESTORE_VOLUME", ""),
+          "upgrade_scope": os.environ.get("UPGRADE_SCOPE", ""),
+          "smoke_checks": [
+            "login",
+            "assets",
+            "attachments",
+            "media"
+          ]
+        }
+        out_name = "odoo-runtime-render.json"
+
+      else:
+        out_name = "deploy-render.json"
+
+      with open("artifacts/" + out_name, "w", encoding="utf-8") as f:
+        json.dump(contract, f, indent=2, sort_keys=True)
+
+      print(f"Rendered contract: artifacts/{out_name}")
+      PY
+    displayName: Generate install templates
+    env:
+      APP_NAME: ${{ parameters.appName }}
+      WORKLOAD_TYPE: ${{ parameters.workloadType }}
+      TARGET_ENVIRONMENT: ${{ parameters.targetEnvironment }}
+      ACR_NAME: ${{ parameters.acrName }}
+      RESOURCE_GROUP: ${{ parameters.resourceGroup }}
+      CONTAINER_APP_NAME: ${{ parameters.containerAppName }}
+      HEALTH_ENDPOINT: ${{ parameters.healthEndpoint }}
+      ASSISTANT_ENDPOINT: ${{ parameters.assistantEndpoint }}
+      DB_TARGET_NAME: ${{ parameters.dbTargetName }}
+      ADDON_LOCK_PATH: ${{ parameters.addonLockPath }}
+      FILESTORE_VOLUME: ${{ parameters.filestoreVolume }}
+      UPGRADE_SCOPE: ${{ parameters.upgradeScope }}
+      CONFIG_PATH: ${{ parameters.configPath }}
+
+  - publish: artifacts/
+    artifact: rendered-deploy-contract
+    displayName: Publish rendered deploy contract

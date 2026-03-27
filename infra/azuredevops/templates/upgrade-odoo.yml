@@ -1,0 +1,231 @@
+# Stateful Odoo ERP upgrade template
+# Benchmarked against SAP automation upgrade choreography:
+#   Preflight → BOM → Install Templates → Build → Upgrade_Rehearsal → Deploy_Staging → Release_Readiness → Promote_Prod → Attestation → Diagnostics
+# Layer 1: BOM — approved software inputs (SAP BOMS pattern)
+# Layer 2: Generated install templates — rendered runtime/install contract (SAP ini-file pattern)
+# Layer 3: Attestation — proof environment matches intent
+# Key difference from web: rehearsal against real DB + filestore state before any promotion.
+# Failure taxonomy: always-on diagnostic classification (SAP troubleshooting pattern)
+# Approvals/checks belong on AzDO Environments, not in YAML.
+
+parameters:
+  - name: appName
+    type: string
+  - name: stagingEnvironment
+    type: string
+  - name: prodEnvironment
+    type: string
+  - name: templateVersion
+    type: string
+    default: v1
+  - name: imageRef
+    type: string
+    default: ""
+  - name: dbImageRef
+    type: string
+    default: ""
+  - name: pythonVersion
+    type: string
+    default: "3.11"
+  - name: addonLockPath
+    type: string
+    default: "ssot/odoo/oca.lock.ce19.json"
+  - name: modelDeploymentId
+    type: string
+    default: ""
+  - name: containerAppName
+    type: string
+    default: ""
+  - name: healthEndpoint
+    type: string
+    default: "/web/login"
+  - name: dbTargetName
+    type: string
+    default: ""
+  - name: filestoreVolume
+    type: string
+    default: ""
+  - name: upgradeScope
+    type: string
+    default: "all"
+  - name: configPath
+    type: string
+    default: "config/dev/odoo.conf"
+
+stages:
+  - stage: Preflight
+    displayName: Preflight
+    jobs:
+      - job: Preflight
+        displayName: Azure auth & resource preflight
+        pool:
+          vmImage: ubuntu-latest
+        steps:
+          - checkout: self
+          - template: steps/preflight-azure.yml
+
+  - stage: Resolve_Software_BOM
+    displayName: Resolve Software BOM
+    dependsOn: Preflight
+    condition: succeeded()
+    jobs:
+      - job: ResolveSoftwareBOM
+        displayName: Verify pinned versions & publish BOM
+        pool:
+          vmImage: ubuntu-latest
+        steps:
+          - checkout: self
+          - template: steps/resolve-software-bom.yml
+            parameters:
+              appName: ${{ parameters.appName }}
+              workloadType: odoo
+              templateVersion: ${{ parameters.templateVersion }}
+              imageRef: ${{ parameters.imageRef }}
+              dbImageRef: ${{ parameters.dbImageRef }}
+              pythonVersion: ${{ parameters.pythonVersion }}
+              addonLockPath: ${{ parameters.addonLockPath }}
+              modelDeploymentId: ${{ parameters.modelDeploymentId }}
+              targetEnvironment: ${{ parameters.stagingEnvironment }}
+
+  - stage: Generate_Install_Templates
+    displayName: Generate Install Templates
+    dependsOn: Resolve_Software_BOM
+    condition: succeeded()
+    jobs:
+      - job: GenerateTemplates
+        displayName: Render runtime/install contract from BOM + SSOT
+        pool:
+          vmImage: ubuntu-latest
+        steps:
+          - checkout: self
+          - template: steps/generate-install-templates.yml
+            parameters:
+              appName: ${{ parameters.appName }}
+              workloadType: odoo
+              targetEnvironment: ${{ parameters.stagingEnvironment }}
+              containerAppName: ${{ parameters.containerAppName }}
+              healthEndpoint: ${{ parameters.healthEndpoint }}
+              dbTargetName: ${{ parameters.dbTargetName }}
+              addonLockPath: ${{ parameters.addonLockPath }}
+              filestoreVolume: ${{ parameters.filestoreVolume }}
+              upgradeScope: ${{ parameters.upgradeScope }}
+              configPath: ${{ parameters.configPath }}
+
+  - stage: Build
+    displayName: Build
+    dependsOn: Generate_Install_Templates
+    condition: succeeded()
+    jobs:
+      - job: Build
+        displayName: Build ${{ parameters.appName }} image
+        pool:
+          vmImage: ubuntu-latest
+        steps:
+          - checkout: self
+          - template: steps/build-odoo-image.yml
+            parameters:
+              appName: ${{ parameters.appName }}
+
+  - stage: Upgrade_Rehearsal
+    displayName: Upgrade Rehearsal
+    dependsOn: Build
+    condition: succeeded()
+    jobs:
+      - job: Rehearsal
+        displayName: Odoo upgrade rehearsal (DB + filestore)
+        pool:
+          vmImage: ubuntu-latest
+        steps:
+          - checkout: self
+          - template: steps/odoo-upgrade-rehearsal.yml
+
+  - stage: Deploy_Staging
+    displayName: Deploy to Staging
+    dependsOn: Upgrade_Rehearsal
+    condition: succeeded()
+    jobs:
+      - deployment: DeployStaging
+        displayName: Deploy to ${{ parameters.stagingEnvironment }}
+        environment: ${{ parameters.stagingEnvironment }}
+        pool:
+          vmImage: ubuntu-latest
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - checkout: self
+                - template: steps/deploy-containerapp.yml
+                  parameters:
+                    imageName: ${{ parameters.appName }}
+
+  - stage: Release_Readiness
+    displayName: Release Readiness
+    dependsOn: Deploy_Staging
+    condition: succeeded()
+    jobs:
+      - job: ReleaseReadiness
+        displayName: Release readiness gates
+        pool:
+          vmImage: ubuntu-latest
+        steps:
+          - checkout: self
+          - template: steps/release-gates.yml
+
+  - stage: Promote_Prod
+    displayName: Promote to Prod
+    dependsOn: Release_Readiness
+    condition: succeeded()
+    jobs:
+      - deployment: DeployProd
+        displayName: Deploy to ${{ parameters.prodEnvironment }}
+        environment: ${{ parameters.prodEnvironment }}
+        pool:
+          vmImage: ubuntu-latest
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - checkout: self
+                - template: steps/deploy-containerapp.yml
+                  parameters:
+                    imageName: ${{ parameters.appName }}
+        lockBehavior: sequential
+
+  - stage: Post_Deploy_Attestation
+    displayName: Post-Deploy Attestation
+    dependsOn: Promote_Prod
+    condition: succeeded()
+    jobs:
+      - job: Attest
+        displayName: Environment attestation
+        pool:
+          vmImage: ubuntu-latest
+        steps:
+          - checkout: self
+          - template: steps/environment-attestation.yml
+
+  - stage: Diagnostics_Artifacts
+    displayName: Diagnostics Artifacts
+    dependsOn:
+      - Preflight
+      - Resolve_Software_BOM
+      - Generate_Install_Templates
+      - Build
+      - Upgrade_Rehearsal
+      - Deploy_Staging
+      - Release_Readiness
+      - Promote_Prod
+      - Post_Deploy_Attestation
+    condition: always()
+    jobs:
+      - job: DiagnosticsArtifacts
+        displayName: Publish failure taxonomy
+        pool:
+          vmImage: ubuntu-latest
+        steps:
+          - checkout: self
+          - template: steps/failure-taxonomy.yml
+            parameters:
+              appName: ${{ parameters.appName }}
+              workloadType: odoo
+              targetEnvironment: ${{ parameters.prodEnvironment }}

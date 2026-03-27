@@ -1,0 +1,48 @@
+# web/ipai-landing upgrade pipeline
+# Stateless web workload — SAP-benchmarked upgrade choreography
+# Template authority: Insightpulseai/infra → azuredevops/templates/upgrade-web.yml
+trigger:
+  branches:
+    include:
+      - main
+      - release/*
+  paths:
+    include:
+      - web/ipai-landing/src/**
+      - web/ipai-landing/public/**
+      - web/ipai-landing/server.ts
+      - web/ipai-landing/Dockerfile
+      - web/ipai-landing/package.json
+      - web/ipai-landing/azure-pipelines.upgrade.yml
+
+pr:
+  branches:
+    include:
+      - main
+
+resources:
+  repositories:
+    - repository: templates
+      type: github
+      name: Insightpulseai/infra
+      endpoint: github-insightpulseai
+      ref: refs/heads/main
+
+variables:
+  - name: acrName
+    value: acripaiodoo
+  - name: resourceGroup
+    value: rg-ipai-dev-odoo-runtime
+  - name: containerAppName
+    value: ipai-website-dev
+  - name: imageName
+    value: ipai-website
+  - name: azureServiceConnection
+    value: azure-ipai
+
+extends:
+  template: azuredevops/templates/upgrade-web.yml@templates
+  parameters:
+    appName: ipai-website
+    devEnvironment: ipai-web-dev
+    prodEnvironment: ipai-web-prod

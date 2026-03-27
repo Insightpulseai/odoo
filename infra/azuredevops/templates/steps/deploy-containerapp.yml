@@ -1,0 +1,49 @@
+# deploy-containerapp.yml — Update Azure Container App with new image
+parameters:
+  - name: acrName
+    type: string
+    default: acripaiodoo
+  - name: imageName
+    type: string
+  - name: containerAppName
+    type: string
+  - name: resourceGroup
+    type: string
+    default: rg-ipai-dev-odoo-runtime
+  - name: azureServiceConnection
+    type: string
+    default: sc-azure-dev-platform
+
+steps:
+  - task: AzureCLI@2
+    displayName: Deploy to Container App (${{ parameters.containerAppName }})
+    inputs:
+      azureSubscription: ${{ parameters.azureServiceConnection }}
+      scriptType: bash
+      scriptLocation: inlineScript
+      inlineScript: |
+        set -euo pipefail
+
+        IMAGE="${{ parameters.acrName }}.azurecr.io/${{ parameters.imageName }}:$(Build.BuildId)"
+        APP="${{ parameters.containerAppName }}"
+        RG="${{ parameters.resourceGroup }}"
+
+        echo "## Container App Deploy"
+        echo "Image:  $IMAGE"
+        echo "Target: $APP in $RG"
+
+        az containerapp update \
+          --name "$APP" \
+          --resource-group "$RG" \
+          --image "$IMAGE"
+
+        # Capture revision for rollback reference
+        REVISION=$(az containerapp revision list \
+          --name "$APP" \
+          --resource-group "$RG" \
+          --query "[?properties.active].name | [0]" -o tsv 2>/dev/null || echo "unknown")
+
+        echo "Revision: $REVISION"
+        echo "Deploy:   PASS"
+        echo "##vso[task.setvariable variable=deployedImage]$IMAGE"
+        echo "##vso[task.setvariable variable=activeRevision]$REVISION"
