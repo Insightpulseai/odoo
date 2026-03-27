@@ -5,6 +5,7 @@
 - Environment(s): `<dev/staging/prod>`
 - Region: `<region>`
 - Data residency assumption: `<assumption>`
+- Ingestion ownership model: `<platform_managed | partner_managed>`
 
 ## 2. Ingestion ownership model
 - Model: `<platform_managed | partner_managed>`
@@ -55,6 +56,17 @@ Fill section 2a instead of sections 4–6. Sections 4–6 may be marked N/A with
   - `<scope>` -> `<role>`
 - Approval owner: `<owner>`
 
+### 4.1 Platform-managed identity plan
+- Azure/provider prerequisites: `<provider/service>`
+- Role requirements: `<role>`
+- Secret bootstrap path: `<path>`
+
+### 4.2 Partner-managed identity plan
+- Partner name: `<partner>`
+- Connection ID: `<connection-id>`
+- Partner-owned identity boundary: `<boundary>`
+- Workload-owned trust binding: `<binding>`
+
 ## 5. Secret plan
 - Secret authority: `<vault/store>`
 - Secret names/refs:
@@ -70,6 +82,17 @@ Fill section 2a instead of sections 4–6. Sections 4–6 may be marked N/A with
 - Runtime dependencies:
   - `<dependency>`
   - `<dependency>`
+
+### 6.1 Platform-managed topology expectations
+- Direct source connectivity requirements
+- Connector runtime location
+- Dependency installation requirements
+
+### 6.2 Partner-managed topology expectations
+- External ingestion runtime owner
+- Handoff/landing boundary into workload item
+- Expected delivered schema/object contract
+- Freshness/update contract
 
 ## 7. Onboarding sequence
 

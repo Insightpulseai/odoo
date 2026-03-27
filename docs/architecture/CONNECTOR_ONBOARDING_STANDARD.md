@@ -62,6 +62,31 @@ A connector is the governed onboarding path for a source feeding that workload i
 - platform-managed connector: `<workload-item-slug>-<source-system>-connector`
 - partner-managed connector: `<workload-item-slug>-<partner>-<source-system>-connector`
 
+## Supported modes (detailed)
+
+See `docs/architecture/CONNECTOR_ONBOARDING_MODES.md` for full mode definitions and decision rules.
+
+### 1. `platform_managed`
+Use when the workload/platform owns the extraction runtime.
+Required emphasis:
+- provider/service prerequisites
+- role assignments
+- execution identity
+- secret authority
+- runtime topology
+- network placement
+- dependency installation
+
+### 2. `partner_managed`
+Use when ingestion is delegated to an external mirroring/partner tool and the workload item binds to that ingestion through a partner contract.
+Required emphasis:
+- partner name
+- connection ID
+- trust boundary
+- landing/handoff contract
+- freshness/SLA
+- escalation path
+
 ## Template location
 `templates/spec-kit-connector-onboarding/`
 
