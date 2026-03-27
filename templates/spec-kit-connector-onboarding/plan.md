@@ -6,7 +6,34 @@
 - Region: `<region>`
 - Data residency assumption: `<assumption>`
 
-## 2. Source contract
+## 2. Ingestion ownership model
+- Model: `<platform_managed | partner_managed>`
+
+### If `platform_managed`
+Fill sections 3–6 fully.
+
+### If `partner_managed`
+Fill section 2a instead of sections 4–6. Sections 4–6 may be marked N/A with justification.
+
+## 2a. Partner-managed ingestion contract (if `partner_managed`)
+- Partner name: `<partner>`
+- Partner version: `<version>`
+- Connection ID: `<precreated connection ID>`
+- Partner trust boundary: `<what data the partner sees / does not see>`
+- Ingestion SLA:
+  - Freshness: `<target>`
+  - Availability: `<target>`
+  - Retry behavior: `<description>`
+- Handoff schema:
+  - Landing location: `<where data lands>`
+  - Format: `<parquet | delta | json | mirrored tables>`
+  - Schema contract: `<explicit columns / tables or discovery-based>`
+- Failure escalation:
+  - Partner contact: `<contact>`
+  - Escalation path: `<path>`
+  - Platform fallback: `<what happens if partner ingestion fails>`
+
+## 3. Source contract
 - Source system: `<source-system>`
 - Source owner: `<team/owner>`
 - Source connectivity method: `<runtime/protocol>`
@@ -45,6 +72,8 @@
   - `<dependency>`
 
 ## 7. Onboarding sequence
+
+### If `platform_managed`
 1. verify source prerequisites
 2. verify providers/services
 3. provision/verify identity
@@ -54,6 +83,16 @@
 7. run source handshake validation
 8. run first extraction/discovery validation
 9. record post-create evidence
+
+### If `partner_managed`
+1. verify source prerequisites
+2. verify partner availability and version
+3. obtain precreated connection ID from partner
+4. bind connection ID to workload item
+5. verify partner handshake / landing schema
+6. run first extraction/discovery validation
+7. verify ingestion SLA baseline
+8. record post-create evidence
 
 ## 8. Validation plan
 ### Preflight
