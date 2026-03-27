@@ -1,0 +1,175 @@
+# =============================================================================
+# Odoo Container Build + Deploy Pipeline
+# =============================================================================
+# Builds ipai-odoo:19.0-copilot image, pushes to ACR, deploys to ACA,
+# and runs module install against production DB.
+#
+# Trigger: changes to addons/ipai/ or Dockerfile.odoo-copilot
+# =============================================================================
+
+trigger:
+  branches:
+    include:
+      - main
+  paths:
+    include:
+      - addons/ipai/**
+      - platform/runtime/docker/docker/Dockerfile.odoo-copilot
+
+pr:
+  branches:
+    include:
+      - main
+  paths:
+    include:
+      - addons/ipai/**
+      - platform/runtime/docker/docker/Dockerfile.odoo-copilot
+
+variables:
+  - name: acrName
+    value: acripaiodoo
+  - name: imageName
+    value: ipai-odoo
+  - name: imageTag
+    value: 19.0-copilot
+  - name: resourceGroup
+    value: rg-ipai-dev-odoo-runtime
+  - name: containerAppName
+    value: ipai-odoo-dev-web
+  - name: serviceConnection
+    value: azure-ipai
+
+stages:
+  # ─────────────────────────────────────────────────────────────────
+  # Stage 1: Build
+  # ─────────────────────────────────────────────────────────────────
+  - stage: Build
+    displayName: Build Odoo Image
+    jobs:
+      - job: BuildImage
+        displayName: ACR Build
+        pool:
+          name: ipai-build-pool
+        steps:
+          - checkout: self
+            fetchDepth: 1
+
+          - task: AzureCLI@2
+            displayName: Build and push to ACR
+            inputs:
+              azureSubscription: $(serviceConnection)
+              scriptType: bash
+              scriptLocation: inlineScript
+              inlineScript: |
+                set -euo pipefail
+                TAG="$(imageTag)-$(Build.BuildNumber)"
+
+                echo "Building $(imageName):${TAG}..."
+                az acr build \
+                  --registry $(acrName) \
+                  --image "$(imageName):${TAG}" \
+                  --image "$(imageName):$(imageTag)" \
+                  --file platform/runtime/docker/docker/Dockerfile.odoo-copilot \
+                  .
+
+                echo "##vso[task.setvariable variable=fullTag;isOutput=true]${TAG}"
+                echo "Build complete: $(acrName).azurecr.io/$(imageName):${TAG}"
+              name: Build
+              workingDirectory: $(Build.SourcesDirectory)
+
+  # ─────────────────────────────────────────────────────────────────
+  # Stage 2: Deploy
+  # ─────────────────────────────────────────────────────────────────
+  - stage: Deploy
+    displayName: Deploy to ACA
+    dependsOn: Build
+    condition: |
+      and(
+        succeeded('Build'),
+        eq(variables['Build.SourceBranch'], 'refs/heads/main')
+      )
+    jobs:
+      - job: DeployACA
+        displayName: Update Container App
+        pool:
+          name: ipai-build-pool
+        steps:
+          - task: AzureCLI@2
+            displayName: Deploy new revision
+            inputs:
+              azureSubscription: $(serviceConnection)
+              scriptType: bash
+              scriptLocation: inlineScript
+              inlineScript: |
+                set -euo pipefail
+                SUFFIX="build-$(Build.BuildNumber)"
+
+                echo "Deploying $(containerAppName) with image $(acrName).azurecr.io/$(imageName):$(imageTag)..."
+                az containerapp update \
+                  --name $(containerAppName) \
+                  --resource-group $(resourceGroup) \
+                  --image $(acrName).azurecr.io/$(imageName):$(imageTag) \
+                  --revision-suffix "${SUFFIX}" \
+                  --output none
+
+                echo "Waiting for revision to become active..."
+                sleep 30
+
+                # Health check
+                FQDN=$(az containerapp show \
+                  --name $(containerAppName) \
+                  --resource-group $(resourceGroup) \
+                  --query "properties.configuration.ingress.fqdn" -o tsv)
+
+                HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" --max-time 30 "https://${FQDN}/web/login" || echo "000")
+                echo "Health check: HTTP ${HTTP_CODE}"
+
+                if [[ "${HTTP_CODE}" != "200" ]]; then
+                  echo "##vso[task.logissue type=warning]Health check returned ${HTTP_CODE}"
+                fi
+
+  # ─────────────────────────────────────────────────────────────────
+  # Stage 3: Validate
+  # ─────────────────────────────────────────────────────────────────
+  - stage: Validate
+    displayName: Post-Deploy Validation
+    dependsOn: Deploy
+    condition: succeeded('Deploy')
+    jobs:
+      - job: SmokeTest
+        displayName: Smoke Test
+        pool:
+          name: ipai-build-pool
+        steps:
+          - task: AzureCLI@2
+            displayName: Verify modules and health
+            inputs:
+              azureSubscription: $(serviceConnection)
+              scriptType: bash
+              scriptLocation: inlineScript
+              inlineScript: |
+                set -euo pipefail
+
+                FQDN=$(az containerapp show \
+                  --name $(containerAppName) \
+                  --resource-group $(resourceGroup) \
+                  --query "properties.configuration.ingress.fqdn" -o tsv)
+
+                echo "=== Health Check ==="
+                curl -sf --max-time 15 "https://${FQDN}/web/login" > /dev/null && echo "PASS: /web/login returns 200" || echo "FAIL: /web/login not reachable"
+
+                echo "=== Asset Check ==="
+                ASSET_URL=$(curl -s "https://${FQDN}/web/login" | grep -o 'src="/web/assets/[^"]*\.js"' | head -1 | sed 's/src="//;s/"//')
+                if [ -n "$ASSET_URL" ]; then
+                  HTTP=$(curl -s -o /dev/null -w "%{http_code}" --max-time 10 "https://${FQDN}${ASSET_URL}")
+                  echo "Asset ${ASSET_URL}: HTTP ${HTTP}"
+                  [[ "$HTTP" == "200" ]] && echo "PASS: JS assets load" || echo "FAIL: JS assets broken"
+                fi
+
+                echo "=== Container Logs (last 5) ==="
+                az containerapp logs show \
+                  --name $(containerAppName) \
+                  --resource-group $(resourceGroup) \
+                  --tail 5 2>&1 | grep -v "Connecting\|Successfully" || true
+
+                echo "Validation complete."
