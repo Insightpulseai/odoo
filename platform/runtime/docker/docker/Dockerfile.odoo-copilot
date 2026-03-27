@@ -87,9 +87,8 @@ RUN pip3 install --no-cache-dir --break-system-packages paho-mqtt
 COPY addons/ipai/ipai_odoo_copilot /mnt/extra-addons/ipai/ipai_odoo_copilot/
 COPY addons/ipai/ipai_copilot_actions /mnt/extra-addons/ipai/ipai_copilot_actions/
 
-# Enterprise bridge + agent runtime
+# Enterprise bridge
 COPY addons/ipai/ipai_enterprise_bridge /mnt/extra-addons/ipai/ipai_enterprise_bridge/
-COPY addons/ipai/ipai_agent /mnt/extra-addons/ipai/ipai_agent/
 
 # Document Intelligence
 COPY addons/ipai/ipai_document_intelligence /mnt/extra-addons/ipai/ipai_document_intelligence/
@@ -108,6 +107,9 @@ COPY addons/ipai/ipai_aca_proxy /mnt/extra-addons/ipai/ipai_aca_proxy/
 
 # Gmail plugin bridge
 COPY addons/ipai/ipai_mail_plugin_bridge /mnt/extra-addons/ipai/ipai_mail_plugin_bridge/
+
+# Entra OIDC SSO — module not yet built, uncomment when ready
+# COPY addons/ipai/ipai_auth_oidc /mnt/extra-addons/ipai/ipai_auth_oidc/
 
 # ---------------------------------------------------------------------------
 # Configure addons_path: OCA + IPAI + core
