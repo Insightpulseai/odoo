@@ -1,17 +1,19 @@
 # =============================================================================
 # Odoo ChatGPT Connector — Permission Matrix (SSOT)
 # =============================================================================
-# Defines feature groups, OAuth scopes, tools, and allowed Odoo models/methods.
-# Enforced at the connector gateway, not at the ChatGPT/model layer.
+# Feature-group scopes enforced at the MCP gateway before calling Odoo JSON-2.
+# Apps SDK: per-tool securitySchemes, readOnlyHint annotations, _meta www_authenticate.
+# Scope naming: odoo.<domain>.<capability>.<mode>
 #
 # Ref: spec/odoo-chatgpt-connector/
 # Last reviewed: 2026-03-27
 # =============================================================================
 
-schema_version: 1
+schema_version: 2
 kind: connector_permission_matrix
 connector: odoo-chatgpt-connector
 odoo_api: json_2
+scope_convention: "odoo.<domain>.<capability>.<mode>"
 last_reviewed: "2026-03-27"
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -22,141 +24,173 @@ feature_groups:
 
   contacts:
     scopes:
-      read: odoo.contacts.read
-      write: odoo.contacts.write
+      - odoo.contacts.records.read
+      - odoo.contacts.records.write
     tools:
       - name: odoo_search_partners
-        scope: odoo.contacts.read
+        scope: odoo.contacts.records.read
         readOnly: true
         model: res.partner
         method: search_read
         fields: [name, email, phone, mobile, company_name, city, country_id]
       - name: odoo_get_partner
-        scope: odoo.contacts.read
+        scope: odoo.contacts.records.read
         readOnly: true
         model: res.partner
         method: read
-      - name: odoo_update_contact
-        scope: odoo.contacts.write
+      - name: odoo_update_partner_basic
+        scope: odoo.contacts.records.write
         readOnly: false
         model: res.partner
         method: write
+        allowed_fields: [phone, mobile, email, street, city]
         phase: 2
+        requires_confirmation: true
+
+  crm:
+    scopes:
+      - odoo.crm.leads.read
+      - odoo.crm.leads.write
+      - odoo.crm.activities.write
+    tools:
+      - name: odoo_list_opportunities
+        scope: odoo.crm.leads.read
+        readOnly: true
+        model: crm.lead
+        method: search_read
+        fields: [name, partner_id, expected_revenue, stage_id, probability, user_id]
+      - name: odoo_get_opportunity
+        scope: odoo.crm.leads.read
+        readOnly: true
+        model: crm.lead
+        method: read
+      - name: odoo_create_activity_for_lead
+        scope: odoo.crm.activities.write
+        readOnly: false
+        model: mail.activity
+        method: create
+        phase: 2
+        requires_confirmation: true
 
   sales:
     scopes:
-      read: odoo.sales.read
-      write: odoo.sales.write
+      - odoo.sales.orders.read
+      - odoo.sales.quotes.read
+      - odoo.sales.notes.write
     tools:
       - name: odoo_search_sale_orders
-        scope: odoo.sales.read
+        scope: odoo.sales.orders.read
         readOnly: true
         model: sale.order
         method: search_read
         fields: [name, partner_id, amount_total, state, date_order]
       - name: odoo_get_sale_order
-        scope: odoo.sales.read
+        scope: odoo.sales.orders.read
         readOnly: true
         model: sale.order
         method: read
-      - name: odoo_list_pipeline_opportunities
-        scope: odoo.sales.read
-        readOnly: true
-        model: crm.lead
-        method: search_read
-        fields: [name, partner_id, expected_revenue, stage_id, probability]
+      - name: odoo_post_sale_order_note
+        scope: odoo.sales.notes.write
+        readOnly: false
+        model: sale.order
+        method: message_post
+        phase: 2
+        requires_confirmation: true
 
   finance:
     scopes:
-      read: odoo.finance.read
-      write: odoo.finance.write
+      - odoo.finance.invoices.read
+      - odoo.finance.statements.read
+      - odoo.finance.notes.write
+      - odoo.finance.actions.write
     tools:
       - name: odoo_list_overdue_invoices
-        scope: odoo.finance.read
+        scope: odoo.finance.invoices.read
         readOnly: true
         model: account.move
         method: search_read
         domain_filter: "[('payment_state','!=','paid'),('invoice_date_due','<',today)]"
         fields: [name, partner_id, amount_total, amount_residual, invoice_date_due, state]
       - name: odoo_get_invoice
-        scope: odoo.finance.read
+        scope: odoo.finance.invoices.read
         readOnly: true
         model: account.move
         method: read
+      - name: odoo_get_customer_statement
+        scope: odoo.finance.statements.read
+        readOnly: true
+        phase: 2
+        notes: "Custom aggregation — implementation TBD"
+      - name: odoo_post_invoice_note
+        scope: odoo.finance.notes.write
+        readOnly: false
+        model: account.move
+        method: message_post
+        phase: 2
+        requires_confirmation: true
 
   projects:
     scopes:
-      read: odoo.projects.read
-      write: odoo.projects.write
+      - odoo.projects.projects.read
+      - odoo.projects.tasks.read
+      - odoo.projects.tasks.write
+      - odoo.projects.activities.write
     tools:
       - name: odoo_search_projects
-        scope: odoo.projects.read
+        scope: odoo.projects.projects.read
         readOnly: true
         model: project.project
         method: search_read
         fields: [name, partner_id, task_count, date_start, date]
       - name: odoo_get_project_status
-        scope: odoo.projects.read
+        scope: odoo.projects.projects.read
         readOnly: true
         model: project.project
         method: read
       - name: odoo_list_project_tasks
-        scope: odoo.projects.read
+        scope: odoo.projects.tasks.read
         readOnly: true
         model: project.task
         method: search_read
         fields: [name, project_id, user_ids, stage_id, date_deadline, priority]
-
-  inventory:
-    scopes:
-      read: odoo.inventory.read
-      write: odoo.inventory.write
-    tools:
-      - name: odoo_get_product_availability
-        scope: odoo.inventory.read
-        readOnly: true
-        model: product.product
-        method: search_read
-        fields: [name, default_code, qty_available, virtual_available, uom_id]
-      - name: odoo_get_inventory_snapshot
-        scope: odoo.inventory.read
-        readOnly: true
-        model: stock.quant
-        method: search_read
-        fields: [product_id, location_id, quantity, reserved_quantity]
-
-  collaboration:
-    scopes:
-      write: odoo.activities.write
-    tools:
-      - name: odoo_create_activity
-        scope: odoo.activities.write
+      - name: odoo_create_project_activity
+        scope: odoo.projects.activities.write
         readOnly: false
         model: mail.activity
         method: create
         phase: 2
         requires_confirmation: true
-      - name: odoo_post_record_note
-        scope: odoo.activities.write
-        readOnly: false
-        model: mail.message
-        method: message_post
-        phase: 2
-        requires_confirmation: true
 
-  cms:
+  inventory:
     scopes:
-      pages_read: odoo.cms.pages.read
-      pages_write: odoo.cms.pages.write
-      navigation_read: odoo.cms.navigation.read
-      navigation_write: odoo.cms.navigation.write
-      media_read: odoo.cms.media.read
-      media_write: odoo.cms.media.write
-      seo_read: odoo.cms.seo.read
-      seo_write: odoo.cms.seo.write
-      publish_write: odoo.cms.publish.write
+      - odoo.inventory.products.read
+      - odoo.inventory.stock.read
+      - odoo.inventory.actions.write
     tools:
-      # Read tools
+      - name: odoo_get_product_availability
+        scope: odoo.inventory.products.read
+        readOnly: true
+        model: product.product
+        method: search_read
+        fields: [name, default_code, qty_available, virtual_available, uom_id]
+      - name: odoo_get_inventory_snapshot
+        scope: odoo.inventory.stock.read
+        readOnly: true
+        model: stock.quant
+        method: search_read
+        fields: [product_id, location_id, quantity, reserved_quantity]
+      - name: odoo_reserve_stock_request
+        scope: odoo.inventory.actions.write
+        readOnly: false
+        phase: 3
+        requires_confirmation: true
+        notes: "Purpose-built transactional method, not generic write"
+
+  cms_pages:
+    scopes:
+      - odoo.cms.pages.read
+      - odoo.cms.pages.write
+    tools:
       - name: odoo_cms_list_pages
         scope: odoo.cms.pages.read
         readOnly: true
@@ -168,26 +202,6 @@ feature_groups:
         readOnly: true
         model: website.page
         method: read
-      - name: odoo_cms_list_menus
-        scope: odoo.cms.navigation.read
-        readOnly: true
-        model: website.menu
-        method: search_read
-        fields: [name, url, parent_id, sequence]
-      - name: odoo_cms_get_page_seo
-        scope: odoo.cms.seo.read
-        readOnly: true
-        model: website.page
-        method: read
-        fields: [website_meta_title, website_meta_description, website_meta_keywords, seo_name]
-      - name: odoo_cms_list_media
-        scope: odoo.cms.media.read
-        readOnly: true
-        model: ir.attachment
-        method: search_read
-        domain_filter: "[('res_model','=','website')]"
-        fields: [name, mimetype, url, file_size, create_date]
-      # Write tools (Phase 2)
       - name: odoo_cms_create_page_draft
         scope: odoo.cms.pages.write
         readOnly: false
@@ -202,29 +216,18 @@ feature_groups:
         method: write
         phase: 2
         requires_confirmation: true
-      - name: odoo_cms_update_page_properties
-        scope: odoo.cms.pages.write
-        readOnly: false
-        model: website.page
-        method: write
-        phase: 2
-        requires_confirmation: true
-        notes: "title, URL/slug, menu inclusion, visibility, indexing"
-      - name: odoo_cms_publish_page
-        scope: odoo.cms.publish.write
-        readOnly: false
-        model: website.page
-        method: write
-        phase: 2
-        requires_confirmation: true
-        notes: "Sets website_published = True"
-      - name: odoo_cms_unpublish_page
-        scope: odoo.cms.publish.write
-        readOnly: false
-        model: website.page
-        method: write
-        phase: 2
-        requires_confirmation: true
+
+  cms_navigation:
+    scopes:
+      - odoo.cms.navigation.read
+      - odoo.cms.navigation.write
+    tools:
+      - name: odoo_cms_list_menus
+        scope: odoo.cms.navigation.read
+        readOnly: true
+        model: website.menu
+        method: search_read
+        fields: [name, url, parent_id, sequence]
       - name: odoo_cms_create_menu_item
         scope: odoo.cms.navigation.write
         readOnly: false
@@ -239,8 +242,99 @@ feature_groups:
         method: write
         phase: 2
         requires_confirmation: true
+
+  cms_seo:
+    scopes:
+      - odoo.cms.seo.read
+      - odoo.cms.seo.write
+    tools:
+      - name: odoo_cms_get_page_seo
+        scope: odoo.cms.seo.read
+        readOnly: true
+        model: website.page
+        method: read
+        fields: [website_meta_title, website_meta_description, website_meta_keywords, seo_name]
+      - name: odoo_cms_update_page_seo
+        scope: odoo.cms.seo.write
+        readOnly: false
+        model: website.page
+        method: write
+        allowed_fields: [website_meta_title, website_meta_description, website_meta_keywords, seo_name]
+        phase: 2
+        requires_confirmation: true
+
+  cms_publish:
+    scopes:
+      - odoo.cms.publish.read
+      - odoo.cms.publish.write
+    tools:
+      - name: odoo_cms_publish_page
+        scope: odoo.cms.publish.write
+        readOnly: false
+        model: website.page
+        method: write
+        allowed_fields: [website_published]
+        phase: 2
+        requires_confirmation: true
+      - name: odoo_cms_unpublish_page
+        scope: odoo.cms.publish.write
+        readOnly: false
+        model: website.page
+        method: write
+        allowed_fields: [website_published]
+        phase: 2
+        requires_confirmation: true
+      - name: odoo_cms_schedule_publish
+        scope: odoo.cms.publish.write
+        readOnly: false
+        model: website.page
+        method: write
+        allowed_fields: [date_publish]
+        phase: 2
+        requires_confirmation: true
+
+  cms_media:
+    scopes:
+      - odoo.cms.media.read
+      - odoo.cms.media.write
+    tools:
+      - name: odoo_cms_list_media
+        scope: odoo.cms.media.read
+        readOnly: true
+        model: ir.attachment
+        method: search_read
+        domain_filter: "[('res_model','=','website')]"
+        fields: [name, mimetype, url, file_size, create_date]
       - name: odoo_cms_upload_media
         scope: odoo.cms.media.write
+        readOnly: false
+        model: ir.attachment
+        method: create
+        phase: 2
+        requires_confirmation: true
+      - name: odoo_cms_attach_media_to_page
+        scope: odoo.cms.media.write
+        readOnly: false
+        phase: 2
+        requires_confirmation: true
+
+  documents:
+    scopes:
+      - odoo.docs.records.read
+      - odoo.docs.records.write
+    tools:
+      - name: odoo_list_record_attachments
+        scope: odoo.docs.records.read
+        readOnly: true
+        model: ir.attachment
+        method: search_read
+      - name: odoo_get_attachment
+        scope: odoo.docs.records.read
+        readOnly: true
+        model: ir.attachment
+        method: read
+      - name: odoo_upload_attachment
+        scope: odoo.docs.records.write
         readOnly: false
         model: ir.attachment
         method: create
@@ -249,22 +343,48 @@ feature_groups:
 
   reporting:
     scopes:
-      read: odoo.reporting.read
+      - odoo.reporting.kpis.read
     tools:
-      - name: odoo_dashboard_summary
-        scope: odoo.reporting.read
+      - name: odoo_get_sales_kpis
+        scope: odoo.reporting.kpis.read
         readOnly: true
-        phase: 3
-        notes: "Aggregated KPI extracts — implementation TBD"
+        phase: 2
+      - name: odoo_get_receivables_summary
+        scope: odoo.reporting.kpis.read
+        readOnly: true
+        phase: 2
+      - name: odoo_get_project_health_summary
+        scope: odoo.reporting.kpis.read
+        readOnly: true
+        phase: 2
 
   admin:
     scopes:
-      read: odoo.admin.read
+      - odoo.admin.metadata.read
     tools:
-      - name: odoo_connector_health
-        scope: odoo.admin.read
+      - name: odoo_get_instance_info
+        scope: odoo.admin.metadata.read
         readOnly: true
-        notes: "Connector diagnostics, environment health"
+      - name: odoo_list_enabled_modules
+        scope: odoo.admin.metadata.read
+        readOnly: true
+      - name: odoo_get_model_capabilities
+        scope: odoo.admin.metadata.read
+        readOnly: true
+
+  debug:
+    scopes:
+      - odoo.admin.debug.read
+    tools:
+      - name: odoo_health_check
+        scope: odoo.admin.debug.read
+        readOnly: true
+      - name: odoo_connector_diag
+        scope: odoo.admin.debug.read
+        readOnly: true
+      - name: odoo_last_sync_status
+        scope: odoo.admin.debug.read
+        readOnly: true
 
 # ─────────────────────────────────────────────────────────────────────────────
 # ACCESS PRESETS
@@ -273,67 +393,97 @@ feature_groups:
 access_presets:
 
   analyst:
-    description: "Read-only access to all business data"
+    description: "Read-only across all business data + CMS pages/SEO"
     scopes:
-      - odoo.contacts.read
-      - odoo.sales.read
-      - odoo.finance.read
-      - odoo.projects.read
-      - odoo.inventory.read
-      - odoo.reporting.read
+      - odoo.contacts.records.read
+      - odoo.crm.leads.read
+      - odoo.sales.orders.read
+      - odoo.sales.quotes.read
+      - odoo.finance.invoices.read
+      - odoo.projects.projects.read
+      - odoo.projects.tasks.read
+      - odoo.inventory.products.read
+      - odoo.inventory.stock.read
+      - odoo.reporting.kpis.read
+      - odoo.cms.pages.read
+      - odoo.cms.seo.read
 
   operator:
-    description: "Analyst access + create activities and notes"
+    description: "Analyst + create activities, notes, and tasks"
     scopes:
-      - odoo.contacts.read
-      - odoo.sales.read
-      - odoo.finance.read
-      - odoo.projects.read
-      - odoo.inventory.read
-      - odoo.reporting.read
-      - odoo.activities.write
-
-  finance_operator:
-    description: "Finance-focused read + limited write"
-    scopes:
-      - odoo.finance.read
-      - odoo.reporting.read
-      - odoo.activities.write
+      - odoo.contacts.records.read
+      - odoo.crm.leads.read
+      - odoo.crm.activities.write
+      - odoo.sales.orders.read
+      - odoo.sales.notes.write
+      - odoo.finance.invoices.read
+      - odoo.projects.projects.read
+      - odoo.projects.tasks.read
+      - odoo.projects.tasks.write
+      - odoo.projects.activities.write
+      - odoo.reporting.kpis.read
+      - odoo.cms.pages.read
+      - odoo.cms.seo.read
 
   content_editor:
-    description: "CMS read + pages/media/SEO write + publish"
-    scopes:
-      - odoo.cms.pages.read
-      - odoo.cms.pages.write
-      - odoo.cms.media.read
-      - odoo.cms.media.write
-      - odoo.cms.seo.read
-      - odoo.cms.seo.write
-      - odoo.cms.publish.write
-
-  web_operator:
-    description: "Content editor + navigation write"
+    description: "CMS read/write across all CMS lanes"
     scopes:
       - odoo.cms.pages.read
       - odoo.cms.pages.write
       - odoo.cms.navigation.read
       - odoo.cms.navigation.write
-      - odoo.cms.media.read
-      - odoo.cms.media.write
       - odoo.cms.seo.read
       - odoo.cms.seo.write
+      - odoo.cms.media.read
+      - odoo.cms.media.write
       - odoo.cms.publish.write
 
-  admin:
-    description: "Admin diagnostics + selective access"
+  finance_operator:
+    description: "Finance-focused read + limited write"
     scopes:
-      - odoo.admin.read
-      - odoo.contacts.read
-      - odoo.sales.read
-      - odoo.finance.read
-      - odoo.projects.read
-      - odoo.inventory.read
+      - odoo.finance.invoices.read
+      - odoo.finance.statements.read
+      - odoo.finance.notes.write
+      - odoo.reporting.kpis.read
+
+  platform_admin:
+    description: "Admin diagnostics + selective domain reads"
+    scopes:
+      - odoo.admin.metadata.read
+      - odoo.admin.debug.read
+      - odoo.contacts.records.read
+      - odoo.sales.orders.read
+      - odoo.finance.invoices.read
+      - odoo.projects.projects.read
       - odoo.cms.pages.read
+
+# ─────────────────────────────────────────────────────────────────────────────
+# TOOL AUTH TEMPLATES
+# ─────────────────────────────────────────────────────────────────────────────
+
+auth_templates:
+
+  auth_required_read:
+    securitySchemes:
+      - type: oauth2
+        scopes: ["<scope>"]
+    annotations:
+      readOnlyHint: true
+
+  auth_required_write:
+    securitySchemes:
+      - type: oauth2
+        scopes: ["<scope>"]
+    annotations:
+      readOnlyHint: false
+
+  privileged_write:
+    securitySchemes:
+      - type: oauth2
+        scopes: ["<scope>"]
+    annotations:
+      destructiveHint: false
+      idempotentHint: false
 
 # ─────────────────────────────────────────────────────────────────────────────
 # ODOO API IDENTITY
@@ -348,17 +498,48 @@ odoo_api_identity:
   acl_policy: "Minimum required Odoo ACLs per feature group"
   secret_source: azure_key_vault
   secret_name: odoo-chatgpt-connector-api-key
+  notes: >
+    Model/method mapping is deployment-specific. Available models and
+    fields vary by database and can be inspected via /doc. Tool names
+    and scopes are stable; underlying mappings are tenant-specific.
 
 # ─────────────────────────────────────────────────────────────────────────────
-# POLICY RULES
+# HARD BOUNDARIES
 # ─────────────────────────────────────────────────────────────────────────────
 
-rules:
-  - "All tools must declare securitySchemes per OpenAI Apps SDK convention"
-  - "Read-only tools must set readOnlyHint: true in annotations"
-  - "Write tools must require human confirmation via structured content preview"
-  - "No generic execute_kw or arbitrary model/method passthrough"
-  - "No full_access or admin-level scope bundles"
-  - "Gateway must validate every tool call against the allowed model/method mapping"
-  - "All write operations must be audit-logged"
-  - "Phase 1 is read-only. Write scopes are Phase 2+."
+allowed:
+  - search_read
+  - read
+  - message_post
+  - create (on approved models only)
+  - write (on approved fields only)
+  - purpose-built wrapper methods
+
+not_allowed:
+  - arbitrary model selection
+  - arbitrary method selection
+  - generic execute_kw passthrough
+  - bulk writes without explicit policy
+  - direct destructive finance/inventory actions from free-form prompts
+  - chained multi-step state changes (use single server-side method)
+
+# ─────────────────────────────────────────────────────────────────────────────
+# V1 CUT
+# ─────────────────────────────────────────────────────────────────────────────
+
+v1_scopes:
+  - odoo.contacts.records.read
+  - odoo.crm.leads.read
+  - odoo.sales.orders.read
+  - odoo.finance.invoices.read
+  - odoo.projects.projects.read
+  - odoo.projects.tasks.read
+  - odoo.reporting.kpis.read
+  - odoo.cms.pages.read
+  - odoo.cms.pages.write
+  - odoo.cms.seo.read
+  - odoo.cms.seo.write
+  - odoo.cms.publish.write
+  - odoo.crm.activities.write
+  - odoo.sales.notes.write
+  - odoo.admin.debug.read
