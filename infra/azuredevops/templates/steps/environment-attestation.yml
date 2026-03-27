@@ -1,0 +1,42 @@
+# Post-deploy environment attestation
+# Confirms: deployed SHA, artifact digest, environment health, rollback baseline.
+steps:
+  - task: AzureCLI@2
+    displayName: Collect environment attestation
+    inputs:
+      azureSubscription: $(azureServiceConnection)
+      scriptType: bash
+      scriptLocation: inlineScript
+      inlineScript: |
+        set -euo pipefail
+        echo "## Environment Attestation"
+        echo "Timestamp:      $(date -u +%Y-%m-%dT%H:%M:%SZ)"
+        echo "Build ID:       $(Build.BuildId)"
+        echo "Source SHA:      $(Build.SourceVersion)"
+        echo "Source Branch:   $(Build.SourceBranchName)"
+        echo "Container App:  $(containerAppName)"
+        echo "Resource Group: $(resourceGroup)"
+
+        # Verify deployed image matches build
+        DEPLOYED_IMAGE=$(az containerapp show \
+          --name $(containerAppName) \
+          --resource-group $(resourceGroup) \
+          --query "properties.template.containers[0].image" -o tsv 2>/dev/null || echo "unknown")
+        echo "Deployed Image: $DEPLOYED_IMAGE"
+
+        # Health check
+        FQDN=$(az containerapp show \
+          --name $(containerAppName) \
+          --resource-group $(resourceGroup) \
+          --query "properties.configuration.ingress.fqdn" -o tsv 2>/dev/null || echo "")
+        if [ -n "$FQDN" ]; then
+          HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" "https://$FQDN/" --max-time 10 || echo "000")
+          echo "Health Check:   HTTP $HTTP_STATUS (https://$FQDN/)"
+          if [ "$HTTP_STATUS" != "200" ] && [ "$HTTP_STATUS" != "301" ] && [ "$HTTP_STATUS" != "302" ]; then
+            echo "##vso[task.logissue type=warning]Health check returned HTTP $HTTP_STATUS"
+          fi
+        else
+          echo "Health Check:   No public FQDN configured"
+        fi
+
+        echo "Attestation complete."

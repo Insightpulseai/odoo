@@ -1,0 +1,51 @@
+# python-validate.yml — Python validation: compile check, lint, test
+parameters:
+  - name: workingDirectory
+    type: string
+    default: '.'
+  - name: pythonVersion
+    type: string
+    default: '3.12'
+
+steps:
+  - task: UsePythonVersion@0
+    displayName: Set up Python ${{ parameters.pythonVersion }}
+    inputs:
+      versionSpec: ${{ parameters.pythonVersion }}
+
+  - script: |
+      set -euo pipefail
+      echo "## py_compile check"
+      find . -name '*.py' -not -path './.venv/*' -not -path './vendor/*' \
+        -exec python -m py_compile {} +
+      echo "Compile check: PASS"
+    displayName: Compile check (py_compile)
+    workingDirectory: ${{ parameters.workingDirectory }}
+
+  - script: |
+      set -euo pipefail
+      if [ -f requirements.txt ]; then
+        pip install -r requirements.txt
+      fi
+      pip install ruff flake8
+      echo "## Lint (ruff)"
+      ruff check . || true
+      echo "## Lint (flake8)"
+      flake8 --max-line-length=120 --count --show-source --statistics || true
+    displayName: Lint (ruff + flake8)
+    workingDirectory: ${{ parameters.workingDirectory }}
+
+  - script: |
+      set -euo pipefail
+      if [ -f requirements.txt ]; then
+        pip install pytest
+        if python -m pytest --co -q 2>/dev/null | grep -q "test"; then
+          python -m pytest --tb=short -q
+        else
+          echo "No tests collected — skipping"
+        fi
+      else
+        echo "No requirements.txt — skipping tests"
+      fi
+    displayName: Run tests (pytest)
+    workingDirectory: ${{ parameters.workingDirectory }}

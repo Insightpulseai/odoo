@@ -8,8 +8,8 @@
 # Samples not listed here are optional reference material only.
 
 id: approved_reference_samples
-version: 2
-updated: "2026-03-21"
+version: 3
+updated: "2026-03-28"
 status: active
 
 adoption_policy:
@@ -150,6 +150,113 @@ approved_samples:
     status: approved
     priority: adopt_selectively
 
+  # --- Entra Identity Platform Samples (2026-03-28) ---
+
+  - id: entra-react-spa-sign-in
+    name: "React SPA Sign-in with MSAL React"
+    url: "https://github.com/Azure-Samples/ms-identity-docs-code-javascript/tree/main/react-spa"
+    use_for: "SPA authentication — sign in users to React apps with Entra ID using auth code + PKCE"
+    owning_repo:
+      - web
+    target_runtime: react_spa
+    target_control_plane: entra_msal_react
+    secrets_model: "No backend secrets — public client with PKCE, tokens in browser memory only"
+    adaptation_notes: >
+      Reference for web/ipai-landing Entra sign-in. Use MSAL React with auth code + PKCE flow.
+      Pulser widget auth should go through the Node.js BFF proxy instead (see entra-node-express-bff).
+      This sample covers the pure SPA path for lightweight pages that don't need backend token handling.
+    status: approved
+    priority: adopt_now
+
+  - id: entra-node-express-bff
+    name: "Node.js Express Web App with MSAL Node (BFF Proxy)"
+    url: "https://github.com/Azure-Samples/ms-identity-node"
+    use_for: "Server-side auth with BFF proxy — keeps tokens server-side, proxies Graph/API calls for the SPA"
+    owning_repo:
+      - web
+      - platform
+    target_runtime: node_express
+    target_control_plane: entra_msal_node
+    secrets_model: "Confidential client — app secret or certificate in Key Vault, tokens never exposed to browser"
+    adaptation_notes: >
+      Best fit for Pulser/landing page auth. BFF proxy pattern keeps tokens server-side.
+      Aligns with ipai-copilot-gateway architecture. The Express server handles auth code flow,
+      stores tokens in server session, and proxies downstream API calls (Graph, Copilot GW, MCP).
+      Prefer this over pure SPA token handling for any surface that calls protected APIs.
+    status: approved
+    priority: adopt_now
+
+  - id: entra-python-daemon
+    name: "Python Daemon — Client Credentials with Secret"
+    url: "https://github.com/Azure-Samples/ms-identity-python-daemon/tree/master/1-Call-MsGraph-WithSecret"
+    use_for: "Service-to-service auth — Python backends acquiring tokens via client credentials grant"
+    owning_repo:
+      - odoo
+      - platform
+    target_runtime: python_daemon
+    target_control_plane: entra_client_credentials
+    secrets_model: "App registration client secret or certificate — stored in Key Vault, resolved via managed identity"
+    adaptation_notes: >
+      Reference for Odoo backend service auth. Use client credentials flow for daemon/cron/worker processes
+      that call Graph API or downstream services without a user context.
+      Applies to: ipai-odoo-dev-worker, ipai-odoo-dev-cron, n8n automation backends.
+      Prefer certificate over secret for production. Secret acceptable for dev.
+    status: approved
+    priority: adopt_now
+
+  - id: entra-node-web-api-protect
+    name: "Node.js Web API Protection with MSAL Node"
+    url: "https://github.com/Azure-Samples/ms-identity-javascript-tutorial/tree/main/3-Authorization-II/1-call-api"
+    use_for: "API protection — validate bearer tokens on Node.js APIs using Entra ID"
+    owning_repo:
+      - platform
+      - agent-platform
+    target_runtime: node_express_api
+    target_control_plane: entra_bearer_validation
+    secrets_model: "API does not hold secrets for token acquisition — validates incoming bearer tokens against Entra ID metadata"
+    adaptation_notes: >
+      Reference for protecting ipai-copilot-gateway, ipai-mcp-dev, and any Node.js API endpoints.
+      Validates Entra-issued bearer tokens. Use audience/scope checks to enforce least-privilege.
+      Combine with entra-node-express-bff for full BFF + protected API pattern.
+    status: approved
+    priority: adopt_now
+
+  - id: entra-ios-msal-swift
+    name: "iOS Sign-in with MSAL for iOS (Swift/ObjC)"
+    url: "https://github.com/Azure-Samples/ms-identity-mobile-apple-swift-objc"
+    use_for: "Native iOS authentication — sign in users on iOS with Entra ID using auth code + PKCE"
+    owning_repo:
+      - web
+    target_runtime: ios_native
+    target_control_plane: entra_msal_ios
+    secrets_model: "Public client — PKCE flow, system browser/ASWebAuthenticationSession, no embedded secrets"
+    adaptation_notes: >
+      Reference for web/mobile/OdooWrapper.xcodeproj Entra sign-in.
+      Use ASWebAuthenticationSession (AuthenticationServices) per iOS wrapper skill pack.
+      The wrapper authenticates natively, then passes the Entra token to the hosted Odoo webview
+      for session handoff. Aligns with ios-native-wrapper.md and ios-wrapper-code-contract.md.
+    status: approved
+    priority: adopt_now
+
+  - id: entra-python-azure-functions-api
+    name: "Python Azure Function Web API Secured by Entra ID"
+    url: "https://github.com/Azure-Samples/ms-identity-python-webapi-azurefunctions"
+    use_for: "Serverless API auth — protect Python Azure Functions with Entra ID bearer validation"
+    owning_repo:
+      - platform
+      - agent-platform
+    target_runtime: azure_functions_python
+    target_control_plane: entra_bearer_validation
+    secrets_model: "Managed identity for outbound calls — Entra bearer validation for inbound"
+    adaptation_notes: >
+      Reference for Python-based serverless APIs (OCR, Document Intelligence wrappers, agent skill endpoints).
+      Applies to ipai-ocr-dev and any Python Functions adjuncts.
+      Combine with managed identity for outbound calls to Azure AI services.
+    status: approved
+    priority: adopt_selectively
+
+  # --- End Entra Identity Platform Samples ---
+
   - id: azure-functions-flex-secure-default
     name: "Azure Functions Flex Consumption Secure-by-Default"
     url: "https://learn.microsoft.com/en-us/samples/azure-samples/remote-mcp-functions-typescript/remote-mcp-functions-typescript/"
@@ -189,3 +296,13 @@ excluded_patterns:
     reason: "Databricks + Unity Catalog is mandatory engineering/governance plane; Synapse is accelerator-only for Purview connector"
   - category: "Purview replacing Unity Catalog"
     reason: "Unity Catalog = mandatory Databricks governance; Purview = optional cross-platform extension only"
+  - category: "MSAL desktop/WPF/MAUI samples"
+    reason: "No desktop app surfaces in scope — Odoo is web-based, iOS is native mobile"
+  - category: "Blazor/ASP.NET identity samples"
+    reason: "Stack is Node.js + Python + React — .NET is not a canonical runtime"
+  - category: "Java Spring/Servlet identity samples"
+    reason: "Java is not a canonical runtime — Odoo is Python, web services are Node.js"
+  - category: "Device code / headless auth samples"
+    reason: "All user-facing surfaces have a browser — device code flow not needed"
+  - category: "Keycloak/external IdP bridge samples"
+    reason: "Keycloak is decommission candidate — Entra ID is target IdP, no bridge needed"

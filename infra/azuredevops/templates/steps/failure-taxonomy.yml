@@ -1,0 +1,91 @@
+parameters:
+  - name: appName
+    type: string
+  - name: workloadType
+    type: string
+  - name: targetEnvironment
+    type: string
+    default: ""
+
+steps:
+  - task: UsePythonVersion@0
+    inputs:
+      versionSpec: "3.11"
+    displayName: Use Python for failure taxonomy generation
+
+  - bash: |
+      set -euo pipefail
+      mkdir -p artifacts
+
+      python - <<'PY'
+      import json, os
+
+      taxonomy = {
+        "app_name": os.environ["APP_NAME"],
+        "workload_type": os.environ["WORKLOAD_TYPE"],
+        "git_sha": os.environ["BUILD_SOURCEVERSION"],
+        "build_id": os.environ["BUILD_BUILDID"],
+        "build_number": os.environ["BUILD_BUILDNUMBER"],
+        "pipeline_definition": os.environ["BUILD_DEFINITIONNAME"],
+        "target_environment": os.environ["TARGET_ENVIRONMENT"],
+        "artifact_contract": {
+          "kind": "failure-taxonomy",
+          "schema_version": 1
+        },
+        "classes": [
+          {
+            "id": "identity",
+            "description": "Wrong principal/managed identity/service connection used"
+          },
+          {
+            "id": "rbac",
+            "description": "Missing role assignment or insufficient permissions"
+          },
+          {
+            "id": "state",
+            "description": "Cannot access or reconcile deployment state, storage, DB, or filestore"
+          },
+          {
+            "id": "network",
+            "description": "DNS/private endpoint/connectivity preconditions not met"
+          },
+          {
+            "id": "artifact",
+            "description": "Pinned software/image/package/model artifact missing or wrong"
+          },
+          {
+            "id": "toolchain",
+            "description": "Runner/agent CLI or dependency version drift"
+          },
+          {
+            "id": "pipeline_config",
+            "description": "Variable group, template, or pipeline configuration error"
+          },
+          {
+            "id": "runtime_health",
+            "description": "Health/smoke/attestation failure after deployment"
+          },
+          {
+            "id": "capacity",
+            "description": "Target SKU/zone/allocation constraint prevented rollout"
+          }
+        ],
+        "diagnostic_hints": {
+          "identity_fields": ["service_connection", "principal_type", "client_id"],
+          "state_fields": ["storage_account", "database", "filestore", "artifact_digest"],
+          "runtime_fields": ["deployment", "environment", "health", "rollback_target"]
+        }
+      }
+
+      with open("artifacts/failure-taxonomy.json", "w", encoding="utf-8") as f:
+          json.dump(taxonomy, f, indent=2, sort_keys=True)
+      PY
+    displayName: Generate failure taxonomy artifact
+    env:
+      APP_NAME: ${{ parameters.appName }}
+      WORKLOAD_TYPE: ${{ parameters.workloadType }}
+      TARGET_ENVIRONMENT: ${{ parameters.targetEnvironment }}
+
+  - publish: artifacts/failure-taxonomy.json
+    artifact: failure-taxonomy
+    displayName: Publish failure taxonomy artifact

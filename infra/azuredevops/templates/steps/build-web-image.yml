@@ -1,0 +1,33 @@
+# Build web (stateless) container image and publish digest artifact
+parameters:
+  - name: appName
+    type: string
+    default: $(appName)
+
+steps:
+  - task: AzureCLI@2
+    displayName: ACR login
+    inputs:
+      azureSubscription: $(azureServiceConnection)
+      scriptType: bash
+      scriptLocation: inlineScript
+      inlineScript: |
+        az acr login --name $(acrName)
+
+  - script: |
+      set -euo pipefail
+      IMAGE="$(acrName).azurecr.io/${{ parameters.appName }}:$(Build.BuildId)"
+      IMAGE_LATEST="$(acrName).azurecr.io/${{ parameters.appName }}:latest"
+
+      docker build -t "$IMAGE" -t "$IMAGE_LATEST" .
+
+      docker push "$IMAGE"
+      docker push "$IMAGE_LATEST"
+
+      # Capture digest for attestation
+      DIGEST=$(docker inspect --format='{{index .RepoDigests 0}}' "$IMAGE" 2>/dev/null || echo "$IMAGE")
+      echo "##vso[task.setvariable variable=imageDigest;isOutput=true]$DIGEST"
+      echo "Image: $IMAGE"
+      echo "Digest: $DIGEST"
+    displayName: Build and push web image
+    name: buildStep

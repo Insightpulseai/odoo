@@ -1,0 +1,63 @@
+# build-container.yml — ACR build step with tag and digest output
+parameters:
+  - name: acrName
+    type: string
+    default: acripaiodoo
+  - name: imageName
+    type: string
+  - name: dockerfilePath
+    type: string
+    default: Dockerfile
+  - name: buildContext
+    type: string
+    default: '.'
+  - name: azureServiceConnection
+    type: string
+    default: sc-azure-dev-platform
+  - name: additionalTags
+    type: string
+    default: latest
+
+steps:
+  - task: AzureCLI@2
+    displayName: Build and push to ACR
+    inputs:
+      azureSubscription: ${{ parameters.azureServiceConnection }}
+      scriptType: bash
+      scriptLocation: inlineScript
+      inlineScript: |
+        set -euo pipefail
+
+        ACR="${{ parameters.acrName }}"
+        IMAGE="${{ parameters.imageName }}"
+        TAG="$(Build.BuildId)"
+        FULL_IMAGE="${ACR}.azurecr.io/${IMAGE}"
+
+        echo "## ACR Build"
+        echo "Registry:   ${ACR}.azurecr.io"
+        echo "Image:      ${IMAGE}"
+        echo "Build tag:  ${TAG}"
+        echo "Dockerfile: ${{ parameters.dockerfilePath }}"
+        echo "Context:    ${{ parameters.buildContext }}"
+
+        # Use ACR Tasks for server-side build (no local Docker daemon needed)
+        az acr build \
+          --registry "$ACR" \
+          --image "${IMAGE}:${TAG}" \
+          --image "${IMAGE}:${{ parameters.additionalTags }}" \
+          --file "${{ parameters.dockerfilePath }}" \
+          "${{ parameters.buildContext }}"
+
+        # Capture digest for traceability
+        DIGEST=$(az acr repository show-manifests \
+          --name "$ACR" \
+          --repository "$IMAGE" \
+          --orderby time_desc \
+          --top 1 \
+          --query "[0].digest" -o tsv 2>/dev/null || echo "unknown")
+
+        echo "Digest:     ${DIGEST}"
+        echo "##vso[task.setvariable variable=imageTag;isOutput=true]${TAG}"
+        echo "##vso[task.setvariable variable=imageDigest;isOutput=true]${DIGEST}"
+        echo "##vso[task.setvariable variable=fullImageRef;isOutput=true]${FULL_IMAGE}:${TAG}"
+    name: containerBuild

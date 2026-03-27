@@ -1,0 +1,70 @@
+# base-ci.yml — Shared CI stage with parameterized validate + build steps
+# Consumed via `extends` from repo-local wrapper pipelines.
+# Authority: infra/azuredevops/templates/
+parameters:
+  - name: repoType
+    type: string
+    values:
+      - node
+      - python
+      - dotnet
+  - name: workingDirectory
+    type: string
+    default: '.'
+  - name: validateSteps
+    type: stepList
+    default: []
+  - name: buildSteps
+    type: stepList
+    default: []
+  - name: nodeVersion
+    type: string
+    default: '18.x'
+  - name: pythonVersion
+    type: string
+    default: '3.12'
+
+stages:
+  - stage: Validate
+    displayName: 'CI: Validate'
+    pool:
+      vmImage: ubuntu-latest
+    jobs:
+      - job: Validate
+        displayName: Validate (${{ parameters.repoType }})
+        steps:
+          - checkout: self
+            fetchDepth: 1
+
+          # Built-in validation per repo type
+          - ${{ if eq(parameters.repoType, 'node') }}:
+              - template: steps/node-validate.yml
+                parameters:
+                  workingDirectory: ${{ parameters.workingDirectory }}
+                  nodeVersion: ${{ parameters.nodeVersion }}
+
+          - ${{ if eq(parameters.repoType, 'python') }}:
+              - template: steps/python-validate.yml
+                parameters:
+                  workingDirectory: ${{ parameters.workingDirectory }}
+                  pythonVersion: ${{ parameters.pythonVersion }}
+
+          # Additional caller-supplied validation steps
+          - ${{ each step in parameters.validateSteps }}:
+              - ${{ step }}
+
+  - stage: Build
+    displayName: 'CI: Build'
+    dependsOn: Validate
+    pool:
+      vmImage: ubuntu-latest
+    jobs:
+      - job: Build
+        displayName: Build (${{ parameters.repoType }})
+        steps:
+          - checkout: self
+            fetchDepth: 1
+
+          # Caller-supplied build steps
+          - ${{ each step in parameters.buildSteps }}:
+              - ${{ step }}

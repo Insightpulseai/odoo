@@ -1,0 +1,140 @@
+# base-cd-odoo.yml — CD for stateful Odoo workloads
+# Pipeline: Upgrade_Rehearsal → Deploy_Staging → Release_Readiness → Deploy_Prod
+# Prod uses lockBehavior: sequential (exclusive lock).
+parameters:
+  - name: imageName
+    type: string
+    default: odoo
+  - name: containerAppName
+    type: string
+    default: ipai-odoo-dev-web
+  - name: stagingEnvironment
+    type: string
+    default: ipai-odoo-staging
+  - name: prodEnvironment
+    type: string
+    default: ipai-odoo-prod
+  - name: acrName
+    type: string
+    default: acripaiodoo
+  - name: resourceGroup
+    type: string
+    default: rg-ipai-dev-odoo-runtime
+  - name: azureServiceConnection
+    type: string
+    default: sc-azure-dev-platform
+  - name: pgServerName
+    type: string
+    default: pg-ipai-odoo
+  - name: pgResourceGroup
+    type: string
+    default: rg-ipai-dev-odoo-data
+  - name: dockerfilePath
+    type: string
+    default: Dockerfile
+  - name: buildContext
+    type: string
+    default: '.'
+
+stages:
+  # --- Build container image ---
+  - stage: Build_Image
+    displayName: 'CD: Build Odoo Image'
+    pool:
+      vmImage: ubuntu-latest
+    jobs:
+      - job: BuildImage
+        displayName: Build and push Odoo container image
+        steps:
+          - checkout: self
+            fetchDepth: 1
+          - template: steps/build-container.yml
+            parameters:
+              acrName: ${{ parameters.acrName }}
+              imageName: ${{ parameters.imageName }}
+              dockerfilePath: ${{ parameters.dockerfilePath }}
+              buildContext: ${{ parameters.buildContext }}
+              azureServiceConnection: ${{ parameters.azureServiceConnection }}
+
+  # --- Upgrade Rehearsal (stateful safety net) ---
+  - stage: Upgrade_Rehearsal
+    displayName: 'CD: Upgrade Rehearsal'
+    dependsOn: Build_Image
+    pool:
+      vmImage: ubuntu-latest
+    jobs:
+      - job: Rehearsal
+        displayName: Odoo upgrade rehearsal
+        steps:
+          - checkout: self
+            fetchDepth: 1
+          - template: steps/odoo-upgrade-rehearsal.yml
+            parameters:
+              acrName: ${{ parameters.acrName }}
+              imageName: ${{ parameters.imageName }}
+              pgServerName: ${{ parameters.pgServerName }}
+              pgResourceGroup: ${{ parameters.pgResourceGroup }}
+              azureServiceConnection: ${{ parameters.azureServiceConnection }}
+
+  # --- Deploy to Staging ---
+  - stage: Deploy_Staging
+    displayName: 'CD: Deploy Staging'
+    dependsOn: Upgrade_Rehearsal
+    pool:
+      vmImage: ubuntu-latest
+    jobs:
+      - deployment: DeployStaging
+        displayName: Deploy to ${{ parameters.stagingEnvironment }}
+        environment: ${{ parameters.stagingEnvironment }}
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - template: steps/deploy-containerapp.yml
+                  parameters:
+                    acrName: ${{ parameters.acrName }}
+                    imageName: ${{ parameters.imageName }}
+                    containerAppName: ${{ parameters.containerAppName }}
+                    resourceGroup: ${{ parameters.resourceGroup }}
+                    azureServiceConnection: ${{ parameters.azureServiceConnection }}
+
+  # --- Release Readiness ---
+  - stage: Release_Readiness
+    displayName: 'CD: Release Readiness'
+    dependsOn: Deploy_Staging
+    pool:
+      vmImage: ubuntu-latest
+    jobs:
+      - job: ReleaseGates
+        displayName: Release readiness gates
+        steps:
+          - checkout: self
+            fetchDepth: 1
+          - template: steps/release-gates.yml
+            parameters:
+              containerAppName: ${{ parameters.containerAppName }}
+              resourceGroup: ${{ parameters.resourceGroup }}
+              azureServiceConnection: ${{ parameters.azureServiceConnection }}
+
+  # --- Deploy to Prod (exclusive lock) ---
+  - stage: Deploy_Prod
+    displayName: 'CD: Deploy Prod'
+    dependsOn: Release_Readiness
+    pool:
+      vmImage: ubuntu-latest
+    jobs:
+      - deployment: DeployProd
+        displayName: Deploy to ${{ parameters.prodEnvironment }}
+        environment: ${{ parameters.prodEnvironment }}
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - template: steps/deploy-containerapp.yml
+                  parameters:
+                    acrName: ${{ parameters.acrName }}
+                    imageName: ${{ parameters.imageName }}
+                    containerAppName: ${{ parameters.containerAppName }}
+                    resourceGroup: ${{ parameters.resourceGroup }}
+                    azureServiceConnection: ${{ parameters.azureServiceConnection }}
+        lockBehavior: sequential
