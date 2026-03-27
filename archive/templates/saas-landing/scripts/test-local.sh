@@ -144,7 +144,7 @@ if command -v psql > /dev/null 2>&1; then
     echo "✅ Database credentials available"
 
     # Test if we can query the functions (using the connection string from earlier)
-    DB_URL="postgres://postgres.spdtwktxdalcfigzeqrz:SHWYXDMFAwXI1drT@aws-1-us-east-1.pooler.supabase.com:5432/postgres?sslmode=require"
+    DB_URL="postgres://postgres.spdtwktxdalcfigzeqrz:REDACTED_BY_AUDIT_20260327@aws-1-us-east-1.pooler.supabase.com:5432/postgres?sslmode=require"
 
     FUNC_COUNT=$(psql "$DB_URL" -t -c "SELECT count(*) FROM pg_proc WHERE pronamespace = 'registry'::regnamespace AND proname LIKE '%invite%'" 2>/dev/null || echo "0")
     FUNC_COUNT=$(echo "$FUNC_COUNT" | tr -d ' ')

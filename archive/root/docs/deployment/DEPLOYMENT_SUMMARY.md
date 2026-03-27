@@ -85,7 +85,7 @@ make provision-tbwa
 
 **Connection String**:
 ```bash
-POSTGRES_URL=postgres://postgres.spdtwktxdalcfigzeqrz:SHWYXDMFAwXI1drT@aws-1-us-east-1.pooler.supabase.com:6543/postgres?sslmode=require
+POSTGRES_URL=postgres://postgres.spdtwktxdalcfigzeqrz:REDACTED_BY_AUDIT_20260327@aws-1-us-east-1.pooler.supabase.com:6543/postgres?sslmode=require
 ```
 
 **API Keys**:

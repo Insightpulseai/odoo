@@ -103,7 +103,7 @@ git commit -m "test"
 ### Database Contract
 
 ```bash
-export DB_URL="postgres://postgres.spdtwktxdalcfigzeqrz:SHWYXDMFAwXI1drT@aws-1-us-east-1.pooler.supabase.com:5432/postgres?sslmode=require"
+export DB_URL="postgres://postgres.spdtwktxdalcfigzeqrz:REDACTED_BY_AUDIT_20260327@aws-1-us-east-1.pooler.supabase.com:5432/postgres?sslmode=require"
 
 psql "$DB_URL" <<'SQL'
 \df registry.*invite*

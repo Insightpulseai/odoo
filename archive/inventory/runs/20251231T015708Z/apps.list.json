@@ -2476,12 +2476,12 @@
             "envs": [
               {
                 "key": "SUPERSET_SECRET_KEY",
-                "value": "1eRsQ4+93UP6OIP2xPLoOKfFCs89kLJMcJ/2cWyMSeJ0gqqRr87Q1jeA",
+                "value": "REDACTED_BY_AUDIT_20260327",
                 "scope": "RUN_AND_BUILD_TIME"
               },
               {
                 "key": "SQLALCHEMY_DATABASE_URI",
-                "value": "postgresql+psycopg2://postgres.spdtwktxdalcfigzeqrz:SHWYXDMFAwXI1drT@aws-1-us-east-1.pooler.supabase.com:6543/postgres",
+                "value": "postgresql+psycopg2://postgres.spdtwktxdalcfigzeqrz:REDACTED_BY_AUDIT_20260327@aws-1-us-east-1.pooler.supabase.com:6543/postgres",
                 "scope": "RUN_AND_BUILD_TIME"
               },
               {

@@ -52,11 +52,11 @@ SUPABASE_PROJECT_REF=spdtwktxdalcfigzeqrz
 SUPABASE_URL=https://spdtwktxdalcfigzeqrz.supabase.co
 
 # PostgreSQL Connection (via pooler - port 6543)
-POSTGRES_URL=postgres://postgres.spdtwktxdalcfigzeqrz:SHWYXDMFAwXI1drT@aws-1-us-east-1.pooler.supabase.com:6543/postgres?sslmode=require&supa=base-pooler.x
+POSTGRES_URL=postgres://postgres.spdtwktxdalcfigzeqrz:REDACTED_BY_AUDIT_20260327@aws-1-us-east-1.pooler.supabase.com:6543/postgres?sslmode=require&supa=base-pooler.x
 
 # API Keys
-SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNwZHR3a3R4ZGFsY2ZpZ3plcXJ6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjA2NDQwMzUsImV4cCI6MjA3NjIyMDAzNX0.IHBJ0cNTMKJvRozljqaEqWph_gC0zlW2Td5Xl_GENs4
-SUPABASE_SERVICE_ROLE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNwZHR3a3R4ZGFsY2ZpZ3plcXJ6Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc2MDY0NDAzNSwiZXhwIjoyMDc2MjIwMDM1fQ.Rhdi18B5EuUeaSGfdB4rqZ6UoPSrJ9IbzkN_YboyvhU
+SUPABASE_ANON_KEY=REDACTED_BY_AUDIT_20260327
+SUPABASE_SERVICE_ROLE_KEY=REDACTED_BY_AUDIT_20260327
 ```
 
 **Storage**: All credentials in `~/.zshrc` or platform secrets (DigitalOcean, GitHub Actions)

@@ -3,7 +3,7 @@
 Use this as the **release gate** for the Azure-native SaaS + data platform. This checklist ensures adherence to the canonical architecture and mandatory platform controls.
 
 **Last reviewed**: 2026-03-27
-**Current verdict**: NO-GO (5 blocking defects — see bottom)
+**Current verdict**: NO-GO (3 remaining blockers: B-1 DOCUMENTED, B-2 IN PROGRESS, B-3 DOCUMENTED; B-4 CLOSED, B-5 CLOSED)
 
 ---
 
@@ -133,15 +133,43 @@ Use this as the **release gate** for the Azure-native SaaS + data platform. This
 
 ---
 
-## Current Blocking Defects (2026-03-27)
+## Blocker Burn-Down (2026-03-27)
 
-| # | Defect | Section | Remediation |
-|---|--------|---------|-------------|
-| 1 | **Entra ID not operational as IdP** — local password is only working auth | §1 | Complete `spec/entra-identity-migration/` Phase 0-1 |
-| 2 | **12 credentials exposed in archive/** | §1 | Rotate and remove per audit finding C-3 |
-| 3 | **No break-glass accounts** | §1 | Create 2 cloud-only Global Admin accounts |
-| 4 | **No incident/rollback plans** | §9 | Write runbooks for identity, data, and deployment rollback |
-| 5 | **Fabric capacity not active** | §4, §5 | Provision Fabric capacity to complete mirroring + Power BI |
+| # | Blocker | Owner | Evidence required | Gate status |
+|---|---------|-------|-------------------|-------------|
+| B-1 | **Entra ID not operational as IdP** — local password is only working auth | Identity / Platform | Production login round-trip via Entra SSO succeeds. Enterprise apps assigned. Conditional access baseline applied. `ipai_auth_oidc` module installed. | **DOCUMENTED** — activation runbook at `docs/runbooks/entra-idp-activation.md`, execution pending |
+| B-2 | **12 credentials exposed in `archive/`** — Odoo admin password (5 locations), PG password, Supabase SERVICE_ROLE key, ANON key (x2), PG pooler string, 3 user passwords | Security / Platform | All 12 credentials rotated. `archive/` files sanitized or deleted. Old credentials confirmed non-functional. Pre-commit hook scanning added. | **IN PROGRESS** — repo sanitized (see `docs/evidence/20260327-blockers/B2-credential-sanitization.md`), runtime rotation still needed |
+| B-3 | **No break-glass accounts** — tenant recovery path absent | Identity / Platform | Two cloud-only Global Admin accounts created. Credentials vaulted. MFA exclusion policy documented. Recovery procedure tested. | **DOCUMENTED** — procedure at `docs/runbooks/break-glass-accounts.md`, execution pending |
+| B-4 | **No incident / rollback plans** — operational recovery not production-ready | Platform / Ops | Incident severity model exists. Rollback path for identity, data, and deployment cutover documented. Owner and escalation chain defined. Stop conditions explicit. | **CLOSED** — runbooks at `docs/runbooks/incident-response.md` |
+| B-5 | **Fabric capacity not active** | Data / Analytics | *Conditional*: blocker **only if** a production workload in this release depends on Fabric capacity. Otherwise downgrade to post-go-live enablement. Currently blocks: Fabric mirroring completion, Power BI Premium/PPU, XMLA endpoint. | **CLOSED** — explicitly deferred to post-go-live (see `docs/runbooks/fabric-capacity-decision.md`) |
+
+### Burn-down sequence
+
+```text
+B-2 (credentials)  ──→  can be done independently, immediate
+B-3 (break-glass)  ──→  prerequisite for B-1
+B-1 (Entra IdP)    ──→  depends on B-3, largest effort
+B-4 (runbooks)     ──→  can be done in parallel with B-1
+B-5 (Fabric)       ──→  scope decision first, then provision or defer
+```
+
+### Exit criteria per blocker
+
+**B-1 done when**: Production login path is Entra-backed. Target enterprise apps assigned. User/group access model validated. SSO round-trip works. Conditional access / MFA baseline applied.
+
+**B-2 done when**: All 12 credentials rotated. `archive/` no longer contains live secrets. Repo and runtime references updated. Validation confirms old credentials no longer work.
+
+**B-3 done when**: Two cloud-only Global Admin accounts exist. Credentials vaulted. MFA exclusion policy intentionally designed. Recovery procedure documented and tested.
+
+**B-4 done when**: Incident severity model exists. Rollback path for cutover documented. Owner / escalation chain defined. Validation steps and stop conditions explicit.
+
+**B-5 done when**: Either capacity provisioned and validated for in-scope workloads, **or** the checklist explicitly marks Fabric as out of release scope.
+
+### Release posture (updated 2026-03-27)
+
+> **NO-GO (reduced):** B-4 (runbooks) and B-5 (Fabric) are closed. B-2 (credentials) is in progress -- repo sanitized but runtime rotation pending. B-1 (Entra IdP) and B-3 (break-glass) are documented with executable runbooks but require Entra admin execution.
+
+**Remaining blockers before go-live**: Execute B-3 (create break-glass accounts), then B-1 (activate Entra OIDC), then complete B-2 (runtime credential rotation). Treat the 7 runtime verifications (`RUNTIME_VERIFICATION_PLAN.md`) as the final evidence gate after blocker closure.
 
 ---
 

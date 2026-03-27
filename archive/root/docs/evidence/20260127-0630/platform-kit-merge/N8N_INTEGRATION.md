@@ -28,7 +28,7 @@
 
 **Test Command:**
 ```bash
-export N8N_API_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIzNjQ1M2ZhNS0zM2ZiLTQ5MjAtOTIxOS00M2FhYTJiYTg2Y2MiLCJpc3MiOiJuOG4iLCJhdWQiOiJwdWJsaWMtYXBpIiwiaWF0IjoxNzY5NDc1MTE0LCJleHAiOjE3NzcyMTkyMDB9.lg1vYem-vyNJex69h1wYoDe-qmtGz_zA11roUU98C78"
+export N8N_API_KEY="REDACTED_BY_AUDIT_20260327"
 
 curl -H "X-N8N-API-KEY: $N8N_API_KEY" \
   "https://n8n.insightpulseai.com/api/v1/workflows" | jq '.'
