@@ -3,7 +3,7 @@
 > Version: 1.0.0
 > Last updated: 2026-03-14
 > Canonical repo: `infra`
-> Parent: `docs/architecture/IDENTITY_TARGET_STATE.md`
+> Parent: `docs/architecture/identity/ENTRA_TARGET_STATE.md`
 
 ## Purpose
 
