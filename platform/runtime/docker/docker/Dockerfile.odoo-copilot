@@ -90,6 +90,9 @@ COPY addons/ipai/ipai_copilot_actions /mnt/extra-addons/ipai/ipai_copilot_action
 # Enterprise bridge
 COPY addons/ipai/ipai_enterprise_bridge /mnt/extra-addons/ipai/ipai_enterprise_bridge/
 
+# Agent runtime
+COPY addons/ipai/ipai_agent /mnt/extra-addons/ipai/ipai_agent/
+
 # Document Intelligence
 COPY addons/ipai/ipai_document_intelligence /mnt/extra-addons/ipai/ipai_document_intelligence/
 
