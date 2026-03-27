@@ -9,8 +9,8 @@
 FROM odoo:19.0
 
 LABEL maintainer="InsightPulse AI <devops@insightpulseai.com>"
-LABEL description="Odoo 19 CE + 22 OCA must-have modules + IPAI Copilot + Document Intelligence"
-LABEL version="19.0.3.0.0"
+LABEL description="Odoo 19 CE + OCA must-have + IPAI Copilot + Agent + Tax Guru + Doc Intelligence"
+LABEL version="19.0.4.0.0"
 
 USER root
 
@@ -76,13 +76,40 @@ RUN rm -f /tmp/oca_sparse_clone.sh \
     && apt-get purge -y git && apt-get autoremove -y && rm -rf /var/lib/apt/lists/*
 
 # ---------------------------------------------------------------------------
-# IPAI custom modules (minimal footprint)
+# Python dependencies for IPAI modules
 # ---------------------------------------------------------------------------
-COPY addons/ipai/ipai_aca_proxy /mnt/extra-addons/ipai/ipai_aca_proxy/
-COPY addons/ipai/ipai_copilot_actions /mnt/extra-addons/ipai/ipai_copilot_actions/
-COPY addons/ipai/ipai_document_intelligence /mnt/extra-addons/ipai/ipai_document_intelligence/
-COPY addons/ipai/ipai_odoo_copilot /mnt/extra-addons/ipai/ipai_odoo_copilot/
+RUN pip3 install --no-cache-dir paho-mqtt
+
+# ---------------------------------------------------------------------------
+# IPAI custom modules
+# ---------------------------------------------------------------------------
+# Core / foundation
+COPY addons/ipai/ipai_foundation /mnt/extra-addons/ipai/ipai_foundation/
+COPY addons/ipai/ipai_ai_core /mnt/extra-addons/ipai/ipai_ai_core/
 COPY addons/ipai/ipai_enterprise_bridge /mnt/extra-addons/ipai/ipai_enterprise_bridge/
+
+# Copilot / Pulser
+COPY addons/ipai/ipai_odoo_copilot /mnt/extra-addons/ipai/ipai_odoo_copilot/
+COPY addons/ipai/ipai_copilot_actions /mnt/extra-addons/ipai/ipai_copilot_actions/
+
+# Agent runtime
+COPY addons/ipai/ipai_agent /mnt/extra-addons/ipai/ipai_agent/
+
+# Document Intelligence / OCR
+COPY addons/ipai/ipai_document_intelligence /mnt/extra-addons/ipai/ipai_document_intelligence/
+COPY addons/ipai/ipai_expense_ocr /mnt/extra-addons/ipai/ipai_expense_ocr/
+
+# BIR tax compliance (Tax Guru)
+COPY addons/ipai/ipai_bir_tax_compliance /mnt/extra-addons/ipai/ipai_bir_tax_compliance/
+
+# HR Expense Liquidation
+COPY addons/ipai/ipai_hr_expense_liquidation /mnt/extra-addons/ipai/ipai_hr_expense_liquidation/
+
+# Branding
+COPY addons/ipai/ipai_web_branding /mnt/extra-addons/ipai/ipai_web_branding/
+
+# Infrastructure
+COPY addons/ipai/ipai_aca_proxy /mnt/extra-addons/ipai/ipai_aca_proxy/
 
 # ---------------------------------------------------------------------------
 # Configure addons_path: OCA + IPAI + core
