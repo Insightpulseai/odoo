@@ -388,6 +388,21 @@ Use the lightest correct plane:
 - engineering/ML-heavy data work → Databricks
 - AI app/agent workflows → Foundry
 
+## Wix headless lane
+
+### Role in architecture
+
+Wix Headless is an experience/business-solution lane for selected customer-facing capabilities and does not replace Odoo operational workflows, Azure-native ingress/governance, Fabric analytics ingress, Databricks data-intelligence workloads, or Foundry AI runtime/governance.
+
+### Supported development paths
+
+- `self_managed_headless` — any framework, hosted anywhere, authentication and deployment handled by us
+- `wix_managed_headless` — Wix-hosted, Astro-based managed path, automatic auth/environment setup via Wix CLI/Vibe
+
+### Default choice
+
+For this architecture, prefer `self_managed_headless` when Wix is used, because it preserves Azure-native hosting and integration ownership.
+
 ## 7. Implementation Phases
 
 ### Phase 0 — Foundation
@@ -535,3 +550,6 @@ Include: manifest version, deployment ID, approved tenant registry snapshot, smo
 20. Which downstream workloads should read directly from Fabric-mirrored analytical surfaces versus curated Databricks data products
 21. Whether Foundry consumes mirrored Fabric data directly, Databricks-curated products, or both
 22. What the canonical contract is between the Odoo operational plane and the Foundry AI plane
+23. Which Wix business capabilities, if any, are in-scope first: bookings, events, stores, pricing plans, blog, groups, inbox, or loyalty
+24. Whether any project intentionally chooses `wix_managed_headless` instead of `self_managed_headless`
+25. What the canonical contract is between Wix-managed business data and Odoo operational records when both are present

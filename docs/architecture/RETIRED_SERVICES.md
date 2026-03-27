@@ -21,6 +21,18 @@
 
 ## Retired Services
 
+### Cloudflare (Proxy Role Only)
+
+| Field | Value |
+|-------|-------|
+| **Role** | DNS management + proxy |
+| **Current status** | **Still active** — Cloudflare remains authoritative DNS for `insightpulseai.com` |
+| **Proxy retirement** | Proxy mode disabled — Cloudflare is DNS-only; Front Door handles TLS/WAF/edge |
+| **Target replacement** | Azure DNS (authoritative) — only if/when DNS authority is migrated |
+| **DNS migration plan** | Zone export → Azure DNS zone import → Squarespace NS delegation update |
+| **Status** | Proxy role retired 2026-03-25; DNS authority migration **not started** |
+| **Mail records** | MX/SPF/DKIM/DMARC managed in Cloudflare DNS (Zoho Mail unchanged) |
+
 ### Supabase (Self-Hosted on Azure VM)
 
 | Field | Value |
@@ -30,20 +42,20 @@
 | **Role** | Auth, Edge Functions, Vault, Realtime, pgvector, n8n bridge |
 | **Retirement reason** | Non-Azure-native; operational burden of self-hosted VM; capabilities replaced by Entra (auth), Databricks (data), ACA (serverless functions) |
 | **Data migration** | Edge Functions → ACA or Foundry agents; Auth → Entra ID; pgvector → Databricks ML; Vault → Azure Key Vault |
-| **Status** | Sunset in progress — target Q2 2026 |
-| **DNS** | `supabase.insightpulseai.com` → to be removed |
+| **Status** | **Decommissioned 2026-03-25** — VM deleted, DNS removed, RG empty |
+| **DNS** | `supabase.insightpulseai.com` — **removed** (no longer resolves) |
 | **Previously deprecated instances** | `xkxyvboeubffxxbebsll`, `ublqmilcjtpnflofprkr` (already decommissioned) |
 
 ### n8n
 
 | Field | Value |
 |-------|-------|
-| **Endpoint** | `n8n.insightpulseai.com` (via Azure Front Door) |
+| **Endpoint** | `n8n.insightpulseai.com` (was via Azure Front Door) |
 | **Role** | Workflow automation, Slack/GitHub integrations, task bus |
 | **Retirement reason** | Workflow automation consolidated into Foundry agents + Azure DevOps pipelines; reduces operational surface |
 | **Data migration** | Critical workflows → Foundry agent skills; GitHub integrations → DevOps pipelines; Slack integrations → direct Slack MCP |
-| **Status** | Sunset in progress — target Q2 2026 |
-| **DNS** | `n8n.insightpulseai.com` → to be removed |
+| **Status** | **Decommissioned 2026-03-25** — VM deleted, DNS removed |
+| **DNS** | `n8n.insightpulseai.com` — **removed** (no longer resolves) |
 
 ### Plane
 
@@ -54,8 +66,8 @@
 | **Role** | Project management, task tracking |
 | **Retirement reason** | Consolidate to Azure DevOps Boards; eliminates separate identity silo |
 | **Data migration** | Active projects → DevOps Boards; archived data → export + docs |
-| **Status** | Sunset in progress — target Q2 2026 |
-| **DNS** | `plane.insightpulseai.com` → to be removed |
+| **Status** | **Decommissioned 2026-03-25** — ACA app deleted, DNS removed |
+| **DNS** | `plane.insightpulseai.com` — **removed** (no longer resolves) |
 
 ### Shelf
 
@@ -66,8 +78,8 @@
 | **Role** | Knowledge base service |
 | **Retirement reason** | Consolidate to Odoo Knowledge module + Databricks for search/embeddings |
 | **Data migration** | Articles → Odoo Knowledge; embeddings → Databricks/pgvector |
-| **Status** | Sunset in progress — target Q2 2026 |
-| **DNS** | `shelf.insightpulseai.com` → to be removed |
+| **Status** | **Decommissioned 2026-03-25** — ACA app deleted, DNS removed |
+| **DNS** | `shelf.insightpulseai.com` — **removed** (no longer resolves) |
 
 ### Standalone CRM Service
 
@@ -78,8 +90,8 @@
 | **Role** | CRM service (separate from Odoo) |
 | **Retirement reason** | Redundant — Odoo CRM module is the canonical CRM surface |
 | **Data migration** | Merge any unique data into Odoo CRM |
-| **Status** | Sunset in progress — target Q2 2026 |
-| **DNS** | `crm.insightpulseai.com` → to be removed |
+| **Status** | **Decommissioned 2026-03-25** — ACA app deleted, DNS removed |
+| **DNS** | `crm.insightpulseai.com` — **removed** (no longer resolves) |
 
 ### Keycloak
 
@@ -90,8 +102,8 @@
 | **Role** | SSO / Identity Provider |
 | **Retirement reason** | Never operationalized — no apps authenticate through it; Entra ID is the target IdP |
 | **Data migration** | None (no production users) |
-| **Status** | Decommission candidate — delete when Entra is active |
-| **DNS** | `auth.insightpulseai.com` → to be repurposed or removed |
+| **Status** | **Decommissioned 2026-03-25** — ACA app deleted, DNS removed |
+| **DNS** | `auth.insightpulseai.com` — **removed** (no longer resolves) |
 
 ---
 

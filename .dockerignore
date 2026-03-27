@@ -5,6 +5,7 @@
 !addons/oca/
 !addons/ipai/
 !config/prod/
+!config/azure/
 !docker/requirements/
 
 # Exclude .git inside OCA repos (not needed in image)

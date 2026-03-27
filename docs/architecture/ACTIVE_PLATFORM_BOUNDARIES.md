@@ -21,19 +21,21 @@
 | **Azure Key Vault** | Secrets, certificates, managed identity binding | Azure-native | Platform |
 | **Azure Container Apps** | Application hosting (all services) | Azure-native | Infra |
 | **Azure DevOps** | CI/CD pipelines, promotion gates | Azure-native | Platform |
-| **Cloudflare** | DNS (delegated from Spacesquare) | External | Infra |
+| **Azure Monitor** | Observability, Application Insights | Azure-native | Platform |
+| **Cloudflare** | Authoritative DNS (proxy mode off) | External | Infra |
 | **Zoho** | SMTP outbound mail (`insightpulseai.com`) | External | Comms |
 
 ## Retired Plane (Decommission Targets)
 
 | Service | Reason | Replacement | Retire Date | Status |
 |---------|--------|-------------|-------------|--------|
-| **Supabase** (self-hosted VM) | Non-Azure-native, operational burden | Entra (auth), Databricks (data), ACA (functions) | 2026-Q2 | Sunset in progress |
-| **n8n** | Workflow automation replaced by Foundry agents + DevOps pipelines | Azure AI Foundry + DevOps | 2026-Q2 | Sunset in progress |
-| **Plane** | Project management — consolidate to Azure DevOps | Azure DevOps Boards | 2026-Q2 | Sunset in progress |
-| **Shelf** | Knowledge base — consolidate to Odoo Knowledge + Databricks | Odoo Knowledge module | 2026-Q2 | Sunset in progress |
-| **Standalone CRM** (`ipai-crm-dev`) | Redundant — Odoo CRM is canonical | Odoo CRM module | 2026-Q2 | Sunset in progress |
-| **Keycloak** (`ipai-auth-dev`) | Never operationalized — Entra is target IdP | Entra ID | 2026-Q2 | Decommission candidate |
+| **Supabase** (self-hosted VM) | Non-Azure-native, operational burden | Entra (auth), Databricks (data), ACA (functions) | 2026-03-25 | **Decommissioned** — VM deleted, DNS removed |
+| **n8n** | Workflow automation replaced by Foundry agents + DevOps pipelines | Azure AI Foundry + DevOps | 2026-03-25 | **Decommissioned** — VM deleted, DNS removed |
+| **Plane** | Project management — consolidate to Azure DevOps | Azure DevOps Boards | 2026-03-25 | **Decommissioned** — ACA deleted |
+| **Shelf** | Knowledge base — consolidate to Odoo Knowledge + Databricks | Odoo Knowledge module | 2026-03-25 | **Decommissioned** — ACA deleted |
+| **Standalone CRM** (`ipai-crm-dev`) | Redundant — Odoo CRM is canonical | Odoo CRM module | 2026-03-25 | **Decommissioned** — ACA deleted |
+| **Keycloak** (`ipai-auth-dev`) | Never operationalized — Entra is target IdP | Entra ID | 2026-03-25 | **Decommissioned** — ACA deleted |
+| **Cloudflare** (as long-term DNS) | Target: migrate DNS authority to Azure DNS | Azure DNS (when deployed) | TBD | Active (migration planned) |
 | **Superset** (as primary BI) | Supplemental only — Power BI is primary | Power BI | 2026-03-21 | Demoted |
 | **GitHub Actions** (as CI/CD) | Migrating to Azure DevOps Pipelines | Azure DevOps | 2026-03-21 | Transitional |
 

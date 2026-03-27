@@ -9,15 +9,16 @@
 # =============================================================================
 
 schema_version: "1.0"
-last_updated: "2026-03-10"
+last_updated: "2026-03-25"
 replaces: "managed Supabase project spdtwktxdalcfigzeqrz"
-status: runtime-up
+status: decommissioned
 status_detail: >
-  Deployed and externally reachable. DNS, TLS, and Front Door migration
-  are pending before production sign-off. Transition-phase hardening complete.
-classification: internal-platform-dependency
-target_url: "https://supabase.insightpulseai.com"
-vm_ip: "4.193.100.31"
+  VM deleted 2026-03-25. All Azure resources (VM, disk, NIC, NSG, public IP) removed.
+  DNS record supabase.insightpulseai.com removed. Resource group rg-ipai-agents-dev is empty.
+  Data migration targets: Auth → Entra ID, data → Databricks, functions → ACA/Foundry, vault → Key Vault.
+classification: retired
+target_url: null
+vm_ip: null
 deployment_order: >
   This is NOT the first production milestone. Execution order:
   1. Odoo Azure runtime complete

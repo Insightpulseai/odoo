@@ -9,7 +9,7 @@ tenant:
 selection_policy:
   include:
     - Azure/Microsoft-native platform operations
-    - Odoo backend and Odoo workforce sign-in because Odoo is an Azure-hosted first-class workload
+    - Odoo backend and Odoo workforce sign-in because Odoo is a first-class Azure-hosted workload
   exclude:
     - Tableau-specific identities
     - Diva Goals identities
@@ -23,8 +23,8 @@ benchmark_policy:
     implementation_dependency: false
     note: >
       SAP remains a reference benchmark for workload lifecycle/operator patterns.
-      The Azure CLI workloads extension is SAP-focused and is not a canonical implementation
-      dependency for the Odoo backend lane.
+      The Azure CLI workloads extension is SAP-focused and is not a canonical
+      implementation dependency for the Odoo backend lane.
 
 registrations:
   - key: ipai_odoo_login_prod
@@ -50,7 +50,11 @@ registrations:
         use_microsoft_graph: true
     odoo_contract:
       redirect_uri_path: /auth_oauth/signin
+      redirect_uris:
+        - "https://erp.insightpulseai.com/auth_oauth/signin"
       single_tenant_preferred: true
+      external_oauth_providers:
+        - google_workspace  # tracked in infra/ssot/auth/oidc_clients.yaml, not here
     ownership:
       minimum_owners: 2
       required_roles:
@@ -179,37 +183,6 @@ registrations:
     notes:
       - keep isolated from interactive login apps
       - prefer federated identity for pipeline scenarios where supported
-
-exclusions:
-  - current_display_name: InsightPulse AI - Tableau Cloud
-    client_id: 91e6b87f-20f3-4143-b791-85f3fcce9f20
-    reason: third_party_product_boundary
-    target_lane: tableau
-
-  - current_display_name: ipai-tableau-sso
-    client_id: 3296fb56-dd47-4bdf-a942-1e3ac5f43bba
-    reason: third_party_product_boundary
-    target_lane: tableau
-
-  - current_display_name: Diva Goals Web
-    client_id: f2dcb8af-872f-49d9-bf2b-fd5cfd083fe2
-    reason: line_of_business_app_boundary
-    target_lane: diva_goals
-
-  - current_display_name: Diva Goals API
-    client_id: ac3237cd-3c02-4dcc-b610-b54246aee41c
-    reason: line_of_business_app_boundary
-    target_lane: diva_goals
-
-  - current_display_name: ipai-n8n-entra
-    client_id: bf78cade-1727-4adc-9d8d-807e8bb5b723
-    reason: legacy_decommissioned_lane
-    target_lane: retired
-
-  - current_display_name: ipai-github-oidc
-    client_id: ede45dfb-518b-4d19-8e76-102c53dc9c4d
-    reason: external_federated_caller_not_azure_native_or_odoo_native
-    target_lane: external_federation
 
 policy:
   naming:

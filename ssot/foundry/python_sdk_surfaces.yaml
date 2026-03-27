@@ -12,14 +12,25 @@ endpoint_policy:
   foundry_project_endpoint:
     pattern: "https://<resource-name>.services.ai.azure.com/api/projects/<project-name>"
     purpose:
-      - foundry_project_client
-      - foundry_native_operations
+      - project_native_foundry_operations
+      - agents
+      - evaluations
+      - tracing
       - project_scoped_openai_compatible_client
+
   openai_compatibility_endpoint:
-    pattern: "https://<resource-name>.openai.azure.com/openai/v1"
+    pattern: "https://<resource-name>.openai.azure.com/openai/v1/"
     purpose:
-      - max_openai_api_compatibility
-      - api_key_compatible_access
+      - maximum_openai_api_compatibility
+      - compatibility_first_model_calls
+
+  services_tools_base_endpoint:
+    pattern: "https://<resource-name>.services.ai.azure.com/"
+    purpose:
+      - resource_scoped_service_access
+      - endpoint_discovery
+      - tool_connection_lookup
+
   note: >
     Foundry resources expose the project endpoint and OpenAI-compatible access patterns.
     Azure OpenAI resources expose only the /openai/v1 endpoint.

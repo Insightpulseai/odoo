@@ -35,6 +35,10 @@
     "azure-devops": {
       "command": "npx",
       "args": ["-y", "@azure-devops/mcp", "insightpulseai"]
+    },
+    "wix": {
+      "command": "npx",
+      "args": ["-y", "@wix/mcp"]
     }
   }
 }

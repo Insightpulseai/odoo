@@ -38,6 +38,25 @@ This creates drift, duplicated logic, and weak operational traceability.
 - Replacing `odoo` business logic
 - Building all end-user UI in this repo
 - Collapsing every AI-related artifact into one repo
+- Using `az workloads` as an implementation dependency for Odoo or Foundry (SAP-specific extension)
+- Treating SAP workload automation surfaces as interchangeable with Foundry or Odoo control surfaces
+- Relying on deprecated hub-based Agent Service connection-string patterns for new work
+- Treating the Foundry portal landing page as runtime authority
+- Assuming hub-backed assets are already retired without explicit evidence
+- Collapsing Foundry SDK, OpenAI SDK, and service-specific SDKs into one package surface
+- Moving Odoo login/auth configuration into Foundry control-plane ownership
+
+## Assumptions
+
+- `data-intel-ph-resource` is the canonical Foundry resource candidate
+- `data-intel-ph` is the canonical Foundry project candidate
+- Foundry-native project operations use the project endpoint (`https://<resource>.services.ai.azure.com/api/projects/<project>`)
+- Foundry model deployment uses the `cognitiveservices` Azure CLI extension where CLI-based deployment is required
+- Foundry project connection setup may require the `ml` Azure CLI extension
+- New Agent Service integrations use the Foundry project endpoint pattern (not legacy hub-based connection strings)
+- Python AI dependencies are classified into: foundry_project_sdk, openai_compatibility_sdk, foundry_tools_services
+- `azure-ai-projects` 1.x is GA/classic; 2.x is preview/new-portal (not default production path)
+- Odoo remains a federated application boundary using Entra/OAuth, not the Foundry control plane
 
 ## Primary Users
 

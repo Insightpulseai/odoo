@@ -453,6 +453,31 @@
 
 ---
 
+## 7.Y Wix headless lane
+
+### T-071 — Write Wix headless lane architecture note
+
+- Status: todo
+- Priority: P1
+- Output: `docs/architecture/wix-headless-lane.md`
+- Acceptance: classifies Wix as an experience/business-solution lane, separates self-managed vs wix-managed modes, preserves Azure-native/Odoo baseline
+
+### T-072 — Define Wix capability matrix
+
+- Status: todo
+- Priority: P1
+- Output: capability matrix for bookings, events, contacts, stores, pricing plans, blog, groups, inbox, loyalty, marketing tags
+- Acceptance: records which capabilities are candidates for adoption, identifies whether each stays isolated to experience layer or needs Odoo synchronization
+
+### T-073 — Define Wix-to-Odoo contract
+
+- Status: todo
+- Priority: P1
+- Output: interface/policy note
+- Acceptance: specifies which records stay authoritative in Wix and which must synchronize into Odoo
+
+---
+
 ## 8. Backlog / Post-v1
 
 ### T-100 — AI-assisted summary

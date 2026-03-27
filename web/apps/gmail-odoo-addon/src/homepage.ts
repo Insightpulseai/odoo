@@ -3,6 +3,7 @@
  *
  * Entry point rendered when the add-on sidebar is opened
  * outside the context of a specific email message.
+ * Shows explicit connected-state with provider, tenant, and session actions.
  */
 
 /**
@@ -14,13 +15,41 @@ function homepage(): GoogleAppsScript.Card_Service.Card {
     return loginCard();
   }
 
-  const openErpAction = CardService.newAction().setFunctionName("openErpLink");
+  const summary = getSessionSummary();
 
   const header = CardService.newCardHeader()
-    .setTitle("InsightPulseAI")
+    .setTitle("InsightPulseAI ERP")
     .setSubtitle("Odoo ERP Integration");
 
-  const summarySection = CardService.newCardSection()
+  // Connection status section
+  const providerName = summary.provider
+    ? PROVIDER_DISPLAY_NAMES[summary.provider]
+    : "Unknown";
+
+  const statusSection = CardService.newCardSection()
+    .setHeader("Connection")
+    .addWidget(
+      CardService.newKeyValue()
+        .setTopLabel("Status")
+        .setText(`Connected with ${providerName}`)
+    );
+
+  if (summary.userEmail) {
+    statusSection.addWidget(
+      CardService.newKeyValue()
+        .setTopLabel("ERP account")
+        .setText(summary.userEmail)
+    );
+  }
+
+  statusSection.addWidget(
+    CardService.newDecoratedText()
+      .setTopLabel("ERP tenant")
+      .setText(`${summary.tenantDisplayName}\n${TENANT_CONFIG.odooBaseUrl.replace("https://", "")}`)
+  );
+
+  // Quick access section
+  const accessSection = CardService.newCardSection()
     .setHeader("Quick Access")
     .addWidget(
       CardService.newTextParagraph().setText(
@@ -31,12 +60,32 @@ function homepage(): GoogleAppsScript.Card_Service.Card {
       CardService.newTextButton()
         .setText("Open Odoo ERP")
         .setOpenLink(
-          CardService.newOpenLink().setUrl("https://erp.insightpulseai.com/web")
+          CardService.newOpenLink().setUrl(`${TENANT_CONFIG.odooBaseUrl}/web`)
+        )
+    );
+
+  // Session actions section
+  const actionsSection = CardService.newCardSection()
+    .setHeader("Session")
+    .addWidget(
+      CardService.newTextButton()
+        .setText("Switch sign-in method")
+        .setOnClickAction(
+          CardService.newAction().setFunctionName("handleDisconnect")
+        )
+    )
+    .addWidget(
+      CardService.newTextButton()
+        .setText("Disconnect")
+        .setOnClickAction(
+          CardService.newAction().setFunctionName("handleDisconnect")
         )
     );
 
   return CardService.newCardBuilder()
     .setHeader(header)
-    .addSection(summarySection)
+    .addSection(statusSection)
+    .addSection(accessSection)
+    .addSection(actionsSection)
     .build();
 }

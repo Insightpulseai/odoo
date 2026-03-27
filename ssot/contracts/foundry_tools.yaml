@@ -1,0 +1,80 @@
+# SSOT Contract: Foundry Agent Tool Bindings
+# Maps Foundry agent tools to backend services.
+# Rule: Foundry reasons and orchestrates. Odoo records. Doc Intel reads.
+# Cross-referenced by: docs/architecture/INSIGHTPULSEAI_TARGET_STATE_ARCHITECTURE.md §4.3
+# Updated: 2026-03-25
+
+version: "1.0.0"
+
+tools:
+  # Odoo tools (read/write business data)
+  odoo_read_records:
+    target: odoo_json_rpc
+    method: search_read
+    auth: managed_identity_to_api_key
+    direction: read
+    used_by: [pulser_erp, pulser_diva, pulser_genie]
+    key_vault_secret: odoo-api-key-pulser
+
+  odoo_create_record:
+    target: odoo_json_rpc
+    method: create
+    auth: managed_identity_to_api_key
+    direction: write
+    used_by: [pulser_erp, pulser_diva]
+    key_vault_secret: odoo-api-key-pulser
+    note: "Creates draft records. Human approval required for financial transactions."
+
+  odoo_execute_action:
+    target: odoo_json_rpc
+    method: call_kw
+    auth: managed_identity_to_api_key
+    direction: write
+    used_by: [pulser_erp, pulser_diva]
+    key_vault_secret: odoo-api-key-pulser
+    note: "Executes Odoo actions (stage transitions, activity assignments). Respects Odoo permission model."
+
+  # Document Intelligence tools
+  doc_intel_analyze:
+    target: document_intelligence_api
+    method: analyze
+    auth: managed_identity
+    direction: read
+    used_by: [pulser_docs]
+    models: [prebuilt-read, prebuilt-layout, prebuilt-invoice, prebuilt-receipt]
+    key_vault_secret: doc-intel-key
+
+  # Search tools
+  search_query:
+    target: azure_ai_search
+    method: search
+    auth: managed_identity
+    direction: read
+    used_by: [pulser_diva, pulser_genie, ask_pulser]
+
+  # Creative tools
+  creative_generate:
+    target: gemini_direct_api
+    method: generate_image
+    auth: api_key
+    direction: read
+    used_by: [pulser_studio]
+    key_vault_secret: gemini-api-key
+    policy_ref: ssot/creative/provider_policy.yaml
+
+  creative_evaluate:
+    target: azure_openai
+    method: chat_completion
+    auth: managed_identity
+    direction: read
+    used_by: [pulser_studio]
+    note: "OpenAI gpt-4.1 as eval judge. Never as generator."
+
+# Agent-to-tool access matrix
+access_matrix:
+  pulser_erp:     [odoo_read_records, odoo_create_record, odoo_execute_action, search_query]
+  pulser_diva:    [odoo_read_records, odoo_create_record, odoo_execute_action, search_query]
+  pulser_studio:  [creative_generate, creative_evaluate, search_query]
+  pulser_genie:   [odoo_read_records, search_query]
+  pulser_docs:    [doc_intel_analyze, odoo_read_records, search_query]
+  ask_pulser:     [search_query]  # No Odoo access, no PII

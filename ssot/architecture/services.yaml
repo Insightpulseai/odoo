@@ -94,6 +94,27 @@ active_services:
     resource: cripaidev
     scope: [docker_images]
 
+  cloudflare_dns:
+    role: authoritative_dns
+    type: external
+    scope: [dns_zone, record_management]
+    domain: insightpulseai.com
+    note: "Current DNS authority. Proxy mode disabled (DNS-only). Azure DNS is target replacement (not deployed)."
+
+  azure_monitor:
+    role: observability
+    type: azure_native
+    scope: [metrics, logs, application_insights, alerts]
+
+  # API Facade
+  api_facade:
+    role: public_api_proxy
+    type: aca_hosted
+    repo: web/packages/api-facade/
+    scope: [lead_capture, demo_booking, contact_form]
+    note: "Thin proxy between browser and Odoo. No direct browser-to-Odoo coupling."
+    contract_ref: ssot/contracts/api_facade.yaml
+
   # SDLC Plane
   github:
     role: source_control
@@ -125,9 +146,9 @@ active_services:
 
 external_dependencies:
 
-  cloudflare:
-    role: dns
-    justification: "DNS delegation from Spacesquare registrar"
+  squarespace:
+    role: domain_registrar
+    scope: "NS delegation to Azure DNS only"
 
   zoho_smtp:
     role: outbound_mail
@@ -146,22 +167,32 @@ external_dependencies:
 retired_services:
   - name: supabase
     reason: "Non-Azure-native; replaced by Entra (auth), Databricks (data), ACA (functions)"
-    target_retirement: 2026-Q2
+    decommissioned: 2026-03-25
+    note: "VM deleted, DNS removed, RG empty."
   - name: n8n
     reason: "Replaced by Foundry agents + DevOps pipelines"
-    target_retirement: 2026-Q2
+    decommissioned: 2026-03-25
+    note: "VM deleted, DNS removed."
   - name: plane
     reason: "Replaced by Azure DevOps Boards"
-    target_retirement: 2026-Q2
+    decommissioned: 2026-03-25
+    note: "ACA app deleted, DNS removed."
   - name: shelf
     reason: "Replaced by Odoo Knowledge + Databricks"
-    target_retirement: 2026-Q2
+    decommissioned: 2026-03-25
+    note: "ACA app deleted, DNS removed."
   - name: standalone_crm
     reason: "Redundant — Odoo CRM is canonical"
-    target_retirement: 2026-Q2
+    decommissioned: 2026-03-25
+    note: "ACA app deleted, DNS removed."
   - name: keycloak
     reason: "Never operationalized — Entra is target IdP"
-    target_retirement: 2026-Q2
+    decommissioned: 2026-03-25
+    note: "ACA app deleted, DNS removed."
+  - name: cloudflare_proxy
+    reason: "Proxy/WAF role retired — Front Door handles edge. DNS authority remains on Cloudflare until Azure DNS migration."
+    retired: 2026-03-25
+    note: "Cloudflare DNS-only mode is still active. See active_services.cloudflare_dns."
 
 # --- Doctrinal Split ---
 # Entra authenticates. Foundry thinks. Document Intelligence reads. Odoo records.

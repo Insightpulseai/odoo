@@ -1,0 +1,70 @@
+# SSOT Contract: Identity / Authentication
+# Cross-referenced by: docs/architecture/INSIGHTPULSEAI_TARGET_STATE_ARCHITECTURE.md §7
+# Updated: 2026-03-25
+
+version: "1.0.0"
+
+identity_provider: microsoft_entra_id
+
+# Entra app registrations
+app_registrations:
+
+  insightpulseai_odoo:
+    purpose: Odoo ERP SSO
+    redirect_uri: erp.insightpulseai.com/auth_oauth/signin
+    scopes: [User.Read]
+    conditional_access: mfa_for_finance_group
+    note: "Entra provides SSO. Odoo retains groups, record rules, finance permissions."
+
+  pulser_gateway:
+    purpose: Pulser copilot gateway
+    auth_type: managed_identity
+    key_vault_access: [openai-api-key, gemini-api-key]
+    scopes: [odoo_api_custom]
+
+  pulser_diva_agent:
+    purpose: Pulser Diva orchestration agent
+    auth_type: managed_identity
+    key_vault_access: [odoo-api-key-pulser]
+    foundry_binding: true
+
+  pulser_studio_agent:
+    purpose: Pulser Studio creative agent
+    auth_type: managed_identity
+    key_vault_access: [gemini-api-key, fal-api-key]
+    odoo_access: none
+
+  pulser_docs_agent:
+    purpose: Pulser Docs extraction agent
+    auth_type: managed_identity
+    key_vault_access: [doc-intel-key]
+    odoo_access: read_only
+
+  ask_pulser_agent:
+    purpose: Public Ask Pulser (anonymous)
+    auth_type: managed_identity
+    key_vault_access: [openai-api-key]
+    odoo_access: none
+    pii_access: none
+
+  databricks_extract:
+    purpose: Databricks JDBC extract from Odoo PG
+    auth_type: service_principal
+    key_vault_access: [pg-odoo-jdbc-password]
+    odoo_access: read_only_jdbc
+
+# Auth boundaries
+auth_model:
+  user_authentication: entra_id  # SSO for all human users
+  user_authorization: odoo       # groups, record rules, finance permissions
+  agent_identity: entra_agent_id # managed identity per agent
+  service_to_service: managed_identity_to_key_vault
+  public_api: front_door_waf_plus_captcha
+
+# What Entra does NOT do
+entra_does_not:
+  - replace_odoo_groups
+  - replace_odoo_record_rules
+  - manage_finance_permissions
+  - store_business_authorization
+  - control_odoo_menu_visibility
