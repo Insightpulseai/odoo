@@ -81,38 +81,9 @@ RUN rm -f /tmp/oca_sparse_clone.sh \
 RUN pip3 install --no-cache-dir --break-system-packages paho-mqtt
 
 # ---------------------------------------------------------------------------
-# IPAI custom modules (only modules that exist in addons/ipai/)
+# IPAI custom modules — copy ALL modules at once
 # ---------------------------------------------------------------------------
-# Copilot / Pulser
-COPY addons/ipai/ipai_odoo_copilot /mnt/extra-addons/ipai/ipai_odoo_copilot/
-COPY addons/ipai/ipai_copilot_actions /mnt/extra-addons/ipai/ipai_copilot_actions/
-
-# Enterprise bridge
-COPY addons/ipai/ipai_enterprise_bridge /mnt/extra-addons/ipai/ipai_enterprise_bridge/
-
-# Agent runtime
-COPY addons/ipai/ipai_agent /mnt/extra-addons/ipai/ipai_agent/
-
-# Document Intelligence
-COPY addons/ipai/ipai_document_intelligence /mnt/extra-addons/ipai/ipai_document_intelligence/
-
-# BIR tax compliance (Tax Guru)
-COPY addons/ipai/ipai_bir_tax_compliance /mnt/extra-addons/ipai/ipai_bir_tax_compliance/
-
-# HR Expense
-COPY addons/ipai/ipai_hr_expense_liquidation /mnt/extra-addons/ipai/ipai_hr_expense_liquidation/
-
-# Branding
-COPY addons/ipai/ipai_web_branding /mnt/extra-addons/ipai/ipai_web_branding/
-
-# Infrastructure
-COPY addons/ipai/ipai_aca_proxy /mnt/extra-addons/ipai/ipai_aca_proxy/
-
-# Gmail plugin bridge
-COPY addons/ipai/ipai_mail_plugin_bridge /mnt/extra-addons/ipai/ipai_mail_plugin_bridge/
-
-# Entra OIDC SSO — module not yet built, uncomment when ready
-# COPY addons/ipai/ipai_auth_oidc /mnt/extra-addons/ipai/ipai_auth_oidc/
+COPY addons/ipai/ /mnt/extra-addons/ipai/
 
 # ---------------------------------------------------------------------------
 # Configure addons_path: OCA + IPAI + core
