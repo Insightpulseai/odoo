@@ -29,7 +29,8 @@ export interface PolicyFile {
 export function loadPolicy(policyPath?: string): PolicyFile {
   const resolved =
     policyPath ??
-    path.resolve(process.cwd(), "apps/odoo-connector/config/odoo-policy.yaml");
+    process.env.POLICY_PATH ??
+    path.resolve(process.cwd(), "config/odoo-policy.yaml");
 
   const raw = fs.readFileSync(resolved, "utf8");
   const parsed = YAML.parse(raw) as PolicyFile;
