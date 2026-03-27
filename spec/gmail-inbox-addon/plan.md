@@ -388,6 +388,34 @@ Use the lightest correct plane:
 - engineering/ML-heavy data work → Databricks
 - AI app/agent workflows → Foundry
 
+## Entra MCP Server for Enterprise
+
+### Role in architecture
+
+The Microsoft MCP Server for Enterprise provides AI agent access to Entra tenant data via natural language → Microsoft Graph API calls. It is the governance and audit automation surface for the identity plane.
+
+### Capabilities
+
+- Security posture: auth methods, Conditional Access, Security Defaults
+- Privileged access: directory roles, PIM status, role assignments
+- Application risk: app registrations, permissions, ownerless/external apps
+- Access governance: group membership, access reviews, entitlement
+- Device readiness: compliance, join state, OS distribution
+- Investigation: sign-in logs, audit logs, provisioning telemetry
+- Hygiene: license usage, stale groups, unused apps
+
+### Integration points
+
+- Odoo user provisioning audit (Entra users → Odoo `res.users` reconciliation)
+- App registration governance (reconcile with SSOT app registry)
+- Sign-in telemetry → Fabric analytics pipeline
+- Conditional Access review → governance documentation
+- Gmail addon app verification and permissions audit
+
+### Prerequisite
+
+One-time tenant provisioning via PowerShell (`Grant-EntraBetaMCPServerPermission`). Skill contract at `agents/skills/entra-mcp-server/SKILL.md`.
+
 ## Wix headless lane
 
 ### Role in architecture

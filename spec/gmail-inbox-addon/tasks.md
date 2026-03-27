@@ -453,6 +453,38 @@
 
 ---
 
+## 7.W Entra MCP Server
+
+### T-074 — Provision Microsoft MCP Server for Enterprise in tenant
+
+- Status: todo
+- Priority: P0
+- Output: tenant provisioning confirmed
+- Acceptance: `Grant-EntraBetaMCPServerPermission` completes, VS Code MCP extension connects, tenant queries return data
+
+### T-075 — Write Entra MCP Server skill contract
+
+- Status: done
+- Priority: P0
+- Output: `agents/skills/entra-mcp-server/SKILL.md`
+- Acceptance: covers setup, tools, query categories, auth model, integration points
+
+### T-076 — Validate Entra MCP queries for IPAI use cases
+
+- Status: todo
+- Priority: P0
+- Output: smoke results for user audit, app registration list, sign-in logs, Conditional Access review
+- Acceptance: at least 4 query categories return valid results against the tenant
+
+### T-077 — Register custom MCP client for Claude Code
+
+- Status: todo
+- Priority: P1
+- Output: MCP client app registration with MCP.* scopes
+- Acceptance: Claude Code can query Entra tenant data via the MCP server
+
+---
+
 ## 7.Y Wix headless lane
 
 ### T-071 — Write Wix headless lane architecture note
