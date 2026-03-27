@@ -236,6 +236,35 @@ Agent/application AI workflows, governed AI deployment patterns, and AI scaling 
 - Solve full org-wide SaaS admin governance beyond what is needed for private deployment
 - Shipping Gmail and Zoho Mail hosts simultaneously in v1
 - Forcing Fabric, Databricks, and Foundry into one interchangeable runtime role
+- Replatforming the Azure-native Odoo operational stack onto Wix
+
+## Wix headless integration lane
+
+Wix Headless is a future or optional experience/business-solution lane for projects that need Wix-managed commercial or engagement capabilities exposed through custom frontend experiences.
+
+### Supported solution classes
+
+Wix Headless business APIs can support: Bookings, Events, Contacts, eCommerce/Stores, Pricing Plans, Blog, Groups, Inbox, Loyalty, and Marketing Tags.
+
+### Preferred development path
+
+For the current Azure-native architecture, the default Wix mode is `self_managed_headless` so hosting, deployment, auth integration, and runtime ownership remain under the existing platform model.
+
+### Alternate mode
+
+`wix_managed_headless` may be used only when the project intentionally accepts Wix-managed hosting, Wix CLI/Vibe scaffolding, and Wix-handled auth/runtime conveniences.
+
+### FR-22 Wix lane classification
+
+If Wix is introduced, the tenant/project metadata must classify it as `self_managed_headless` or `wix_managed_headless`.
+
+### FR-23 Wix capability declaration
+
+The system must record which Wix business capabilities are in use, such as bookings, events, stores, pricing plans, blog, groups, inbox, or loyalty.
+
+### FR-24 Azure-native preservation
+
+Introducing Wix must not change the default Azure-native/Odoo/Fabric/Databricks/Foundry role split unless explicitly documented as an exception.
 
 ## 6. Personas
 

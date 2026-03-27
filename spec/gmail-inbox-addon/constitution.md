@@ -155,6 +155,14 @@ Invariants:
 - do not treat Fabric mirroring as a replacement for Databricks data-engineering or ML workloads.
 - do not treat Foundry as the operational database, analytics mirror, or lakehouse runtime.
 
+### 4.Z Wix headless is an experience/business-solution lane
+
+Wix Headless, when used, is an experience-layer and business-solution integration lane rather than an operational system-of-record, identity authority, or platform-control-plane replacement.
+
+Supported Wix business-solution use cases may include: bookings, events, contacts, eCommerce/stores, pricing plans, blog, groups, inbox, loyalty, and marketing tags.
+
+Wix adoption must not replace the Azure-native/Odoo operational baseline unless explicitly approved by architecture change.
+
 ### 4.5 Private-first distribution
 
 The initial deployment target is a private Marketplace listing or private domain deployment. Public publication is a later decision, with a separate readiness bar for legal, security, review, and support obligations.
@@ -228,7 +236,8 @@ The product must not:
 - conflate Gmail/Outlook mailbox integration with Odoo SSO provider configuration,
 - treat Zoho Mail host integration as equivalent to an Odoo authentication provider,
 - model Zoho OAuth/OIDC as an Odoo auth provider unless a tenant explicitly uses Zoho as the identity authority for Odoo,
-- or couple the product to Cloudflare-era assumptions or third-party DNS/edge services when the platform baseline is Azure-native.
+- couple the product to Cloudflare-era assumptions or third-party DNS/edge services when the platform baseline is Azure-native,
+- or model Wix Headless as an Odoo auth provider, operational SoR, or Azure platform substitute.
 
 ## 7. Success Conditions
 

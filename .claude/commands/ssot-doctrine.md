@@ -1,72 +1,89 @@
-# SSOT Doctrine Command
+Enforce architecture consistency by reconciling SSOT docs against Azure Resource Graph truth.
 
-Apply the Supabase SSOT / Odoo SoR doctrine to evaluate and enforce architectural boundaries.
+## What This Does
 
-## Usage
+1. **Query Azure Resource Graph** for all live resources (the ground truth)
+2. **Reconcile** against architecture SSOT files
+3. **Fix drift** — update docs to match reality, not the other way around
+4. **Report** errors, warnings, and resource summary
 
-Invoke with `/project:ssot-doctrine` to:
-1. Verify data ownership boundaries
-2. Check secret management compliance
-3. Validate orchestration patterns
-4. Ensure AI agent access rules
+## Default Behavior
 
-## Core Doctrine
+Every time you touch architecture docs, infra SSOT, or DNS config — run the Resource Graph query first. Resource Graph is truth. Docs follow.
 
-**Supabase** = Single Source of Truth (SSOT)
-- Platform state, analytics, AI, secrets, orchestration
+## Execution
 
-**Odoo** = System of Record (SoR)
-- Business transactions, compliance, auditable records
+```bash
+# Query Resource Graph (requires az login)
+# Reference: https://learn.microsoft.com/en-us/azure/governance/resource-graph/first-query-azurecli
+az graph query -q "Resources | project name, type, resourceGroup, location | order by resourceGroup asc" --first 200 -o json > /tmp/azure-rg-snapshot.json
 
-## Quick Rules
+# Run reconciliation
+python3 scripts/ci/azure_resource_reconcile.py --snapshot /tmp/azure-rg-snapshot.json
 
-```
-[10-RULE SSOT DOCTRINE]
-1. Supabase = platform truth, Odoo = business truth
-2. Financial/HR/CRM records → Odoo only
-3. Analytics/AI/agents → Supabase only
-4. Secrets → Supabase Vault only
-5. Scheduled jobs → pg_cron or n8n, never Odoo
-6. AI reads Supabase by default, Odoo with permission
-7. AI outputs → Supabase schemas (ops, ai, audit, analytics)
-8. Odoo canonical when data exists in both
-9. Never hardcode secrets or store in Odoo
-10. Violation → STOP, EXPLAIN, PROPOSE alternative
+# Save snapshot as SSOT artifact
+cp /tmp/azure-rg-snapshot.json infra/ssot/azure/resource-graph-snapshot.json
 ```
 
-## Enforcement Actions
+If `az` is not logged in, tell the user to run `! az login` first.
 
-When this command is invoked:
+## Useful Resource Graph Queries
 
-### 1. Data Ownership Check
-- Verify no business transactions written to Supabase
-- Verify no analytics/AI data written to Odoo
-- Check for data duplication without justification
+```bash
+# All resources by RG
+az graph query -q "Resources | summarize count() by resourceGroup | order by count_ desc" -o table
 
-### 2. Secret Audit
-- Scan for hardcoded secrets in codebase
-- Check Odoo models for secret storage
-- Verify Supabase Vault usage
+# Container Apps only
+az graph query -q "Resources | where type =~ 'microsoft.app/containerapps' | project name, resourceGroup" -o table
 
-### 3. Orchestration Review
-- Verify no Odoo cron jobs (should be pg_cron/n8n)
-- Check scheduled job locations
-- Validate webhook configurations
+# AI services
+az graph query -q "Resources | where type contains 'cognitiveservices' or type contains 'machinelearning' | project name, type, resourceGroup" -o table
 
-### 4. AI Access Review
-- Verify agent default reads from Supabase
-- Check for unauthorized Odoo access
-- Validate output storage schemas
+# Resources created in last 7 days
+az graph query -q "Resources | where properties.creationTime > ago(7d) | project name, type, resourceGroup" -o table
 
-## Reference
+# Cost-bearing resources (exclude MIs, NSGs, etc.)
+az graph query -q "Resources | where type !contains 'managedidentity' and type !contains 'networksecurity' and type !contains 'networkwatcher' | project name, type, resourceGroup" -o table
+```
 
-Full specification: `spec/supabase-ssot-doctrine/`
-Architecture doc: `docs/arch/SOURCE_OF_TRUTH.md`
-Agent prompt: `spec/supabase-ssot-doctrine/agent-prompt.md`
+## Core Doctrine (Current)
+
+**Entra authenticates. Foundry thinks. Document Intelligence reads. Odoo records.**
+
+| Plane | Owner | SSOT File |
+|-------|-------|-----------|
+| Identity | Entra ID | `ssot/contracts/identity.yaml` |
+| Edge | Front Door + Cloudflare DNS | `infra/dns/subdomain-registry.yaml` |
+| ERP | Odoo CE 19 | `ssot/architecture/services.yaml` |
+| AI | Foundry + OpenAI | `ssot/contracts/foundry_tools.yaml` |
+| OCR | Document Intelligence | `ssot/contracts/document_ocr.yaml` |
+| Data | Databricks + Unity Catalog | `ssot/contracts/analytics_pipeline.yaml` |
+| Reporting | Power BI | (planned) |
+| Secrets | Azure Key Vault | Key Vault resources |
+
+## Reconciliation Files
+
+| File | What It Tracks |
+|------|---------------|
+| `ssot/architecture/services.yaml` | Active vs retired services |
+| `infra/ssot/azure/service-matrix.yaml` | Per-service status + ACA mapping |
+| `infra/dns/subdomain-registry.yaml` | DNS subdomain lifecycle |
+| `infra/ssot/azure/resource-graph-snapshot.json` | Last Resource Graph snapshot |
+| `docs/architecture/AZURE_BILL_OF_MATERIALS.md` | Resource inventory + target alignment |
+
+## Drift Protocol
+
+When drift is detected:
+
+1. **Resource Graph wins** over docs — update the doc, not Azure
+2. **State the drift**: what the doc says vs what Resource Graph shows
+3. **Fix the doc** immediately
+4. **Re-run reconciliation** to confirm PASS
+5. If FAIL persists, report the remaining gaps as actionable items
 
 ## Violation Protocol
 
-If doctrine violation detected:
-1. **STOP** - Do not proceed with violating action
-2. **EXPLAIN** - Document the specific violation
-3. **PROPOSE** - Suggest compliant alternative
+If a change would violate doctrine:
+1. **STOP** — do not proceed
+2. **EXPLAIN** — which rule is violated
+3. **PROPOSE** — compliant alternative

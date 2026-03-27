@@ -78,6 +78,7 @@ RUN rm -f /tmp/oca_sparse_clone.sh \
 # ---------------------------------------------------------------------------
 # IPAI custom modules (minimal footprint)
 # ---------------------------------------------------------------------------
+COPY addons/ipai/ipai_aca_proxy /mnt/extra-addons/ipai/ipai_aca_proxy/
 COPY addons/ipai/ipai_copilot_actions /mnt/extra-addons/ipai/ipai_copilot_actions/
 COPY addons/ipai/ipai_document_intelligence /mnt/extra-addons/ipai/ipai_document_intelligence/
 COPY addons/ipai/ipai_odoo_copilot /mnt/extra-addons/ipai/ipai_odoo_copilot/
@@ -86,10 +87,14 @@ COPY addons/ipai/ipai_enterprise_bridge /mnt/extra-addons/ipai/ipai_enterprise_b
 # ---------------------------------------------------------------------------
 # Configure addons_path: OCA + IPAI + core
 # ---------------------------------------------------------------------------
-RUN cat /etc/odoo/odoo.conf && echo "--- BEFORE ---" \
-    && sed -i '/^addons_path/d' /etc/odoo/odoo.conf \
+# Patch default config: addons_path, proxy_mode, db routing
+RUN sed -i '/^addons_path/d' /etc/odoo/odoo.conf \
     && sed -i '/^\[options\]/a addons_path = /mnt/extra-addons/oca,/mnt/extra-addons/ipai,/usr/lib/python3/dist-packages/odoo/addons' /etc/odoo/odoo.conf \
-    && echo "--- AFTER ---" && cat /etc/odoo/odoo.conf
+    && sed -i '/^\[options\]/a proxy_mode = True' /etc/odoo/odoo.conf \
+    && sed -i '/^\[options\]/a db_name = odoo' /etc/odoo/odoo.conf \
+    && sed -i '/^\[options\]/a dbfilter = ^odoo$$' /etc/odoo/odoo.conf \
+    && sed -i '/^\[options\]/a list_db = False' /etc/odoo/odoo.conf \
+    && sed -i '/^\[options\]/a server_wide_modules = base,web,ipai_aca_proxy' /etc/odoo/odoo.conf
 
 RUN chown -R odoo:odoo /mnt/extra-addons /etc/odoo/odoo.conf
 

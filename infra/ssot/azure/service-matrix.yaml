@@ -18,31 +18,32 @@ services:
     name: "n8n Automation"
     category: automation
     hosting: azure_vm_transition
-    edge: azure_front_door
     endpoint: "n8n.insightpulseai.com"
-    status: active_transition
-    promotion_state: live
-    health_check: "https://n8n.insightpulseai.com/healthz"
+    status: decommissioned
+    promotion_state: deleted
+    decommissioned: "2026-03-25"
+    note: "VM and DNS deleted. Workflows migrating to Foundry agents + DevOps pipelines."
 
   - id: svc_003
-    name: "Supabase"
+    name: "Supabase (Self-Hosted)"
     category: database
-    hosting: supabase_cloud
+    hosting: azure_vm
     project_ref: "spdtwktxdalcfigzeqrz"
-    status: active
-    promotion_state: live
+    status: decommissioned
+    promotion_state: deleted
+    decommissioned: "2026-03-25"
+    note: "VM deleted. Auth → Entra, data → Databricks, functions → ACA/Foundry."
 
   - id: svc_004
-    name: "Auth Gateway"
+    name: "Auth Gateway (Keycloak)"
     category: identity
     hosting: azure_container_apps
-    edge: azure_front_door
     endpoint: "auth.insightpulseai.com"
     aca_name: ipai-auth-dev
-    status: active
-    promotion_state: live
-    migrated_from_do: "2026-03-11"
-    note: "Stub (nginx:alpine). Replace with Keycloak when auth requirements defined."
+    status: decommissioned
+    promotion_state: deleted
+    decommissioned: "2026-03-25"
+    note: "Never operationalized. ACA app deleted. Entra ID is canonical IdP."
 
   - id: svc_005
     name: "MCP Coordinator"
@@ -108,28 +109,31 @@ services:
     name: "Plane"
     category: project_management
     hosting: azure_container_apps
-    edge: azure_front_door
     endpoint: "plane.insightpulseai.com"
-    status: active
-    promotion_state: live
+    status: decommissioned
+    promotion_state: deleted
+    decommissioned: "2026-03-25"
+    note: "ACA app deleted. Replaced by Azure DevOps Boards."
 
   - id: svc_009
     name: "CRM"
     category: business_app
     hosting: azure_container_apps
-    edge: azure_front_door
     endpoint: "crm.insightpulseai.com"
-    status: active
-    promotion_state: live
+    status: decommissioned
+    promotion_state: deleted
+    decommissioned: "2026-03-25"
+    note: "ACA app deleted. Odoo CRM is canonical."
 
   - id: svc_010
     name: "Shelf"
     category: business_app
     hosting: azure_container_apps
-    edge: azure_front_door
     endpoint: "shelf.insightpulseai.com"
-    status: active
-    promotion_state: live
+    status: decommissioned
+    promotion_state: deleted
+    decommissioned: "2026-03-25"
+    note: "ACA app deleted. Replaced by Odoo Knowledge + Databricks."
 
   - id: svc_020
     name: "DigitalOcean droplet odoo-erp-prod"

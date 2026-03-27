@@ -13,6 +13,20 @@ class ResConfigSettings(models.TransientModel):
         string="Google OAuth Enabled",
         config_parameter="ipai.oauth.google.enabled",
     )
+    ipai_oauth_google_client_id = fields.Char(
+        string="Google Client ID",
+        config_parameter="ipai.oauth.google.client_id",
+    )
+    ipai_oauth_google_client_secret = fields.Char(
+        string="Google Client Secret",
+        config_parameter="ipai.oauth.google.client_secret",
+        password=True,
+    )
+    ipai_oauth_google_workspace_domain = fields.Char(
+        string="Google Workspace Domain",
+        config_parameter="ipai.oauth.google.workspace_domain",
+        default="w9studio.net",
+    )
     ipai_oauth_azure_enabled = fields.Boolean(
         string="Azure AD OAuth Enabled",
         config_parameter="ipai.oauth.azure.enabled",

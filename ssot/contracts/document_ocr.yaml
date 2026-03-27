@@ -1,0 +1,62 @@
+# SSOT Contract: Document Upload / OCR / Extraction
+# Cross-referenced by: docs/architecture/INSIGHTPULSEAI_TARGET_STATE_ARCHITECTURE.md §4.5
+# Updated: 2026-03-25
+
+version: "1.0.0"
+
+flow:
+  trigger: ir.attachment.create
+  trigger_types: [invoice, receipt, vendor_bill, expense_receipt, bir_form, custom_document]
+
+  steps:
+    - step: 1
+      action: Odoo sends binary to Document Intelligence
+      endpoint: "{doc_intel_endpoint}/documentModels/{model}:analyze"
+      auth: managed_identity
+      models:
+        invoice: prebuilt-invoice
+        receipt: prebuilt-receipt
+        general: prebuilt-read
+        layout: prebuilt-layout
+        bir_form: custom-bir-2307  # custom-trained model
+      addons: [highResolution, barcodes, keyValuePairs]
+
+    - step: 2
+      action: Document Intelligence returns structured JSON
+      output:
+        text: extracted_full_text
+        tables: extracted_tables
+        key_values: extracted_key_value_pairs
+        layout: page_layout_elements
+        confidence: per_field_confidence_score
+
+    - step: 3
+      action: Odoo maps extracted data to target model
+      mapping:
+        invoice: account.move (type=in_invoice)
+        receipt: hr.expense
+        vendor_bill: account.move (type=in_invoice)
+        bir_form: ipai_bir.filing
+        general: documents.document
+
+    - step: 4
+      action: Confidence check + Pulser review
+      threshold: 0.85
+      below_threshold: flag_for_human_review
+      pulser_agent: pulser-docs-agent
+      review_actions: [verify_amounts, check_vendor, validate_tax_id, flag_anomaly]
+
+    - step: 5
+      action: Odoo stores final record + original attachment
+      attachment: linked_to_target_record
+      audit: mail.tracking + auditlog
+
+security:
+  upload_size_limit: 50MB
+  allowed_mime_types: [application/pdf, image/jpeg, image/png, image/tiff]
+  auth: entra_bearer
+  network: internal_vnet (OCR container)
+  pii_handling: "Documents may contain PII. Process in-region (Southeast Asia). No external logging of content."
+
+odoo_module: ipai_doc_intelligence
+repo: addons/ipai/ipai_doc_intelligence/

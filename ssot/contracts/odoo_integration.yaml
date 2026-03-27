@@ -1,0 +1,63 @@
+# SSOT Contract: Odoo Integration Points
+# Cross-referenced by: docs/architecture/INSIGHTPULSEAI_TARGET_STATE_ARCHITECTURE.md §4.4
+# Updated: 2026-03-25
+
+version: "1.0.0"
+
+integrations:
+
+  entra_sso:
+    direction: inbound
+    protocol: oauth2_oidc
+    auth: entra_app_registration
+    odoo_module: auth_oauth  # Odoo 19 native
+    redirect_uri: /auth_oauth/signin
+    scopes: [User.Read]
+    note: "Entra provides SSO. Odoo retains internal authorization (groups, record rules, finance permissions)."
+
+  foundry_agents:
+    direction: bidirectional
+    protocol: json_rpc
+    auth: api_key_via_key_vault
+    key_vault_secret: odoo-api-key-pulser
+    network: internal_vnet
+    odoo_module: ipai_ai_copilot
+    methods: [search_read, create, write, call_kw]
+    note: "Foundry agents reason and orchestrate. Odoo is the transactional SoR."
+
+  document_intelligence:
+    direction: outbound
+    protocol: rest
+    auth: managed_identity
+    odoo_module: ipai_doc_intelligence
+    flow: "ir.attachment → Doc Intel API → structured output → account.move / hr.expense / documents.document"
+    note: "Doc Intel extracts. Odoo stores records."
+
+  zoho_smtp:
+    direction: outbound
+    protocol: smtp_tls
+    port: 587
+    auth: credentials_in_key_vault
+    key_vault_secrets: [zoho-smtp-user, zoho-smtp-password]
+    odoo_config: ir.mail_server
+    note: "Odoo sends mail via standard ir.mail_server with Zoho SMTP."
+
+  databricks_extract:
+    direction: outbound
+    protocol: jdbc
+    auth: service_principal
+    key_vault_secret: pg-odoo-jdbc-password
+    access: read_only
+    tables: [sale_order, account_move, crm_lead, hr_expense, project_project, documents_document]
+    note: "Databricks extracts incrementally. No write access to Odoo."
+
+  api_facade:
+    direction: inbound
+    protocol: json_rpc
+    auth: api_key_via_key_vault
+    key_vault_secret: odoo-api-key-facade
+    network: internal_vnet
+    source: web/packages/api-facade/
+    methods: [create]
+    targets: [crm.lead, calendar.event, mail.mail]
+    note: "Thin proxy for public form submissions. No browser-to-Odoo coupling."

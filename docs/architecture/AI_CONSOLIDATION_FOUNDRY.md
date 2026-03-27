@@ -390,7 +390,118 @@ The five capability modes consolidate into three logical agents + one determinis
 
 ---
 
+## Observed Current Foundry Topology
+
+Current platform evidence shows a mixed estate:
+
+- `data-intel-ph-resource` — Foundry resource (canonical candidate)
+- `data-intel-ph` — Foundry project under `data-intel-ph-resource`
+- `oai-ipai-dev` — standalone Azure OpenAI resource
+- `aifoundry-ipai-dev` — legacy hub
+- `proj-ipai-claude` — legacy hub-backed project
+
+### Interpretation
+
+The platform currently spans three control-plane lanes:
+
+1. **Resource + project lane** — Forward path and canonical default.
+2. **Standalone Azure OpenAI lane** — Conditional lane for direct OpenAI-resource separation.
+3. **Legacy hub/project lane** — Transitional lane that must be explicitly tracked until retired or migrated.
+
+## Portal UX vs Runtime Authority
+
+The Microsoft Foundry landing page is not a runtime authority surface.
+
+### Evidence classes
+
+- **UI evidence** — Confirms portal experience and visible features.
+- **Control-plane evidence** — Confirms resources, projects, hubs, endpoints, and SDK bindings.
+- **Runtime evidence** — Confirms real calls, agent execution, health checks, traces, and active bindings.
+
+### Rule
+
+Do not infer canonical runtime binding from the portal home screen alone.
+
+## Canonical Target State
+
+### Canonical defaults
+
+- **Foundry resource:** `data-intel-ph-resource`
+- **Foundry project:** `data-intel-ph`
+- **Project endpoint:** `https://data-intel-ph-resource.services.ai.azure.com/api/projects/data-intel-ph`
+- **OpenAI compatibility base:** `https://data-intel-ph-resource.openai.azure.com/openai/v1/`
+
+### Rules
+
+- New work targets the resource + project lane by default.
+- Hub-backed assets are legacy until explicitly normalized.
+- `oai-ipai-dev` remains conditional, not default.
+- Model-provider policy must not assume OpenAI-only.
+
+## Python Package Governance
+
+Use three distinct Python lanes:
+
+1. **Foundry project SDK lane** — `azure-ai-projects` + `azure-identity`, optional `openai` companion
+2. **OpenAI compatibility lane** — `openai`
+3. **Service-specific tools lane** — Speech, Content Safety, Vision, Language, Translator, Document Intelligence, Azure AI Search
+
+### Rules
+
+- Do not label all Python AI dependencies as a single "Foundry SDK".
+- Do not use `openai` as the default surface for project-native Foundry operations.
+- Do not mix classic and new-portal SDK guidance without an explicit version decision.
+- Keep preview/new-portal SDK usage (`azure-ai-projects` 2.x) behind an exception record.
+- SSOT: `ssot/foundry/python_sdk_surfaces.yaml`
+
+## Odoo Federation Boundary
+
+Odoo is a federated application workload, not the Foundry control plane.
+
+### Odoo/Entra contract
+
+- Single-tenant web app registration preferred for workforce login
+- Redirect URI path: `/auth_oauth/signin`
+- Odoo system parameter: `auth_oauth.authorization_header=1`
+- Microsoft Graph delegated permission: `User.Read`
+
+### Rule
+
+Keep Odoo login/auth concerns in the Odoo/Entra lane. Do not move them into Foundry runtime governance.
+
+## Azure CLI Surface Boundaries
+
+### In scope
+
+The canonical CLI surfaces for the Foundry-enabled Odoo platform are:
+
+- `az cognitiveservices ...` for Foundry model deployment and model endpoint management
+- `az ml ...` where Microsoft Foundry project connection flows explicitly require the `ml` extension
+- SDK / REST / project-endpoint based agent operations for Azure AI Agent Service
+
+### Out of scope
+
+`az workloads` is not part of the canonical Odoo + Foundry implementation surface.
+
+It is a SAP-specific Azure CLI extension for managing Virtual Instance for SAP solutions and related SAP workload resources. It may be referenced only as an architectural benchmark for Azure-managed workload lifecycle patterns, not as an implementation dependency for Odoo, Foundry, or the multi-agent runtime.
+
+### Design rule
+
+Do not add `az workloads` to platform runbooks, bootstrap scripts, CI pipelines, or deployment contracts for the Odoo + Foundry stack unless a separate SAP workload lane is intentionally introduced.
+
+## Control Surface Mapping
+
+| Concern | Canonical surface | Notes |
+|---|---|---|
+| Odoo application lifecycle | repo IaC / app runtime automation | Not handled by `az workloads` |
+| Foundry model deployment | `az cognitiveservices` | Model deployment and endpoint management |
+| Foundry project connection setup | `az ml` where required by Microsoft docs | Project-scoped connection workflows |
+| Agent runtime operations | SDK / REST against Foundry project endpoint | Agent Service uses project endpoint model |
+| SAP managed workload operations | `az workloads` | Benchmark/reference only, out of current scope |
+
+---
+
 *SSOT: `ssot/governance/ai-consolidation-foundry.yaml`*
 *Agent policy: `infra/ssot/agents/prod_policy.yaml`*
 *Target state: `docs/architecture/COPILOT_TARGET_STATE.md`*
-*Last updated: 2026-03-15*
+*Last updated: 2026-03-25*

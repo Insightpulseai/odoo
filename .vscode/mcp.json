@@ -1,1 +1,20 @@
-{"servers":{"MCP_DOCKER":{"command":"docker","args":["mcp","gateway","run"],"type":"stdio"}}}
+{
+	"servers": {
+		"MCP_DOCKER": {
+			"command": "docker",
+			"args": [
+				"mcp",
+				"gateway",
+				"run"
+			],
+			"type": "stdio"
+		},
+		"com.wix/mcp": {
+			"type": "http",
+			"url": "https://mcp.wix.com/sse",
+			"gallery": "https://api.mcp.github.com",
+			"version": "1.0.2"
+		}
+	},
+	"inputs": []
+}

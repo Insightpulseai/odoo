@@ -1,0 +1,81 @@
+schema_version: 1
+kind: entra_app_registrations_excluded
+scope: non_azure_native_or_non_odoo_native
+
+tenant:
+  primary_domain: insightpulseai.com
+  fallback_domain: ceoinsightpulseai.onmicrosoft.com
+
+exclusions:
+  - key: ipai_tableau_cloud_prod
+    current_display_name: InsightPulse AI - Tableau Cloud
+    client_id: 91e6b87f-20f3-4143-b791-85f3fcce9f20
+    created_on: "2026-03-21"
+    status: current
+    exclusion_reason: third_party_product_boundary
+    target_lane: tableau
+    notes:
+      - remains valid as a separate product identity
+      - not part of azure_native_with_odoo_backend scope
+
+  - key: ipai_tableau_sso_prod
+    current_display_name: ipai-tableau-sso
+    client_id: 3296fb56-dd47-4bdf-a942-1e3ac5f43bba
+    created_on: "2026-03-21"
+    status: unclassified
+    exclusion_reason: third_party_product_boundary
+    target_lane: tableau
+    notes:
+      - review separately for duplication versus Tableau Cloud identity
+
+  - key: diva_goals_web_prod
+    current_display_name: Diva Goals Web
+    client_id: f2dcb8af-872f-49d9-bf2b-fd5cfd083fe2
+    created_on: "2026-03-23"
+    status: current
+    exclusion_reason: line_of_business_app_boundary
+    target_lane: diva_goals
+    notes:
+      - separate application boundary from Azure platform and Odoo backend
+
+  - key: diva_goals_api_prod
+    current_display_name: Diva Goals API
+    client_id: ac3237cd-3c02-4dcc-b610-b54246aee41c
+    created_on: "2026-03-23"
+    status: unclassified
+    exclusion_reason: line_of_business_app_boundary
+    target_lane: diva_goals
+    notes:
+      - keep aligned with Diva Goals Web if both remain active
+
+  - key: ipai_n8n_entra_legacy
+    current_display_name: ipai-n8n-entra
+    client_id: bf78cade-1727-4adc-9d8d-807e8bb5b723
+    created_on: "2026-03-21"
+    status: current
+    exclusion_reason: legacy_decommissioned_lane
+    target_lane: retired
+    notes:
+      - conflicts with current decommissioned n8n baseline
+      - retire unless a legacy exception is explicitly reopened
+
+  - key: ipai_github_oidc_external
+    current_display_name: ipai-github-oidc
+    client_id: ede45dfb-518b-4d19-8e76-102c53dc9c4d
+    created_on: "2026-03-14"
+    status: unclassified
+    exclusion_reason: external_federated_caller_not_azure_native_or_odoo_native
+    target_lane: external_federation
+    notes:
+      - valid external federation lane
+      - not part of Azure-native/Odoo-native active workload set
+
+policy:
+  purpose:
+    note: >
+      This file is a holding inventory for registrations intentionally excluded
+      from the active Azure-native + Odoo backend scope.
+  handling:
+    excluded_items_must_not_be_imported_into_active_scope_without_explicit_review: true
+    each_exclusion_requires_target_lane: true
+    retired_items_should_be_reviewed_for_disable_or_deletion: true

@@ -1,0 +1,76 @@
+# SSOT: External Service Dependencies
+# Services outside Azure that require explicit justification.
+# Cross-referenced by: docs/architecture/INSIGHTPULSEAI_TARGET_STATE_ARCHITECTURE.md §8
+# Updated: 2026-03-25
+
+version: "1.0.0"
+
+external_dependencies:
+
+  squarespace:
+    role: domain_registrar
+    scope: "NS record delegation to Cloudflare (current) or Azure DNS (target)"
+    does_not: [host_website, manage_dns_records, provide_email, serve_content]
+    domain: insightpulseai.com
+    note: "Registrar only. NS currently points to Cloudflare."
+
+  cloudflare:
+    role: authoritative_dns
+    scope: "DNS-only mode for insightpulseai.com (proxy mode disabled)"
+    does_not: [proxy_traffic, terminate_tls, serve_waf]
+    note: "Current DNS authority. Azure DNS is target replacement (not deployed)."
+    migration_target: azure_dns
+
+  zoho_mail:
+    role: domain_email_provider
+    scope: "Inbound + outbound mail for insightpulseai.com"
+    protocol: smtp_tls
+    port: 587
+    host: smtp.zoho.com
+    credentials: azure_key_vault
+    key_vault_secrets: [zoho-smtp-user, zoho-smtp-password]
+    dns_records: [MX, SPF, DKIM, DMARC]
+    does_not: [host_website, manage_dns, provide_identity]
+
+  gemini_direct_api:
+    role: creative_image_generation
+    justification: "Nano Banana / Imagen / Veo models not available on Azure OpenAI"
+    models: [nano-banana-2-preview, nano-banana-pro-preview, imagen-4, veo-3.1-preview]
+    credentials: azure_key_vault
+    key_vault_secret: gemini-api-key
+    migration_path: "Switchable to Vertex AI if needed"
+    policy_ref: ssot/creative/provider_policy.yaml
+
+  fal:
+    role: mixed_media_generation
+    justification: "Kling video, LTX, audio, SFX not available on Azure"
+    models: [kling-video/v3/pro, ltx-2.3, audio models]
+    credentials: azure_key_vault
+    key_vault_secret: fal-api-key
+    usage: "Via infra/ai/provider_router/ only"
+
+  github:
+    role: source_control
+    scope: "Git hosting, code review, issues"
+    migration: "CI/CD migrating to Azure DevOps Pipelines"
+    does_not: [host_infrastructure, manage_secrets, deploy_to_production]
+
+# Retired external services
+retired:
+  - name: cloudflare_proxy
+    was: edge_proxy_and_waf
+    replaced_by: azure_front_door
+    retired: 2026-03-25
+    note: "Proxy role only. DNS authority remains on Cloudflare."
+  - name: digitalocean
+    was: hosting
+    replaced_by: azure_container_apps
+    retired: 2026-03-15
+  - name: vercel
+    was: web_deployment
+    replaced_by: azure_container_apps
+    retired: 2026-03-11
+  - name: mailgun
+    was: smtp
+    replaced_by: zoho_smtp
+    retired: 2026-03-11

@@ -2,79 +2,102 @@
 # Odoo Outbound Mail — SSOT
 # Defines the canonical SMTP transport per environment and the mail catcher policy.
 #
-# DECISION (2026-03-02):
-#   Prod SMTP  → Mailgun SMTP (smtp.mailgun.org:2525) via ipai_mailgun_smtp module
-#   Non-prod   → Mailgun SMTP catcher (same host:port, separate credential + routing)
+# DECISION (2026-03-25):
+#   Prod SMTP  → Zoho SMTP (smtppro.zoho.com:587) via ipai_zoho_mail module
+#   Non-prod   → MailHog/Mailpit (localhost:1025) — email never delivered externally
+#
+# History:
+#   2026-03-02: Mailgun SMTP (smtp.mailgun.org:2525) — initial decision
+#   2026-03-11: Mailgun DEPRECATED — replaced by Zoho SMTP
+#   2026-03-25: mail.yaml rewritten to match actual config (prod/staging/azure .conf files)
 #
 # Rationale:
-#   - E2E Mailgun SMTP proven working (evidence: ops.mail_events subject E2E-MAILGUN-ODOO-TEXT)
-#   - ops-mailgun-ingest provides webhook-driven audit trail (ops.mail_events rows)
-#   - Mailgun Events API enables delivery confirmation without manual polling
-#   - Zoho Mail handles INBOUND mail (MX records) and OAuth API; not outbound SMTP
+#   - Mailgun (mg.insightpulseai.com) is on the deprecated list since 2026-03-11
+#   - All Odoo .conf files (prod, staging, azure) already specify Zoho SMTP
+#   - Zoho Mail handles both INBOUND (MX) and OUTBOUND (SMTP) for insightpulseai.com
+#   - Credentials injected via Azure Key Vault managed identity → env vars
 #
-# Odoo module: addons/ipai/ipai_mailgun_smtp/ (sequence=1, authoritative)
-# Password injection: post_install_hook reads ODOO_MAILGUN_SMTP_PASSWORD env var
-# Competitor deactivation: same hook deactivates Zoho servers in prod (RUNNING_ENV=prod)
+# Odoo module: addons/ipai/ipai_zoho_mail/
+# Credential source: Azure Key Vault (kv-ipai-dev)
+#   - zoho-smtp-user → ZOHO_SMTP_USER
+#   - zoho-smtp-password → ZOHO_SMTP_PASSWORD
 #
-# See: docs/runbooks/mail/MAIL_TRANSPORT.md
-#      ssot/integrations/mailgun.yaml
-#      ssot/maintenance/schedules.yaml § daily_mailgun_smtp_smoke
+# See: config/prod/odoo.conf, config/azure/odoo.conf
 
-version: "2.0.0"
+version: "3.0.0"
 schema: ssot.odoo.mail.v1
-last_reviewed: "2026-03-02"
+last_reviewed: "2026-03-25"
 
 # ── Production transport ──────────────────────────────────────────────────────
 production:
-  provider: mailgun_smtp
-  smtp_server: smtp.mailgun.org
-  smtp_port: 2525                       # Mailgun alternate port; not blocked on DO
+  provider: zoho_smtp
+  smtp_server: smtppro.zoho.com
+  smtp_port: 587
   smtp_ssl: starttls
-  smtp_user: no-reply@mg.insightpulseai.com
-  email_from: no-reply@mg.insightpulseai.com
-  smtp_password_secret: odoo_mailgun_smtp_password  # registry: ssot/secrets/registry.yaml
-  odoo_module: ipai_mailgun_smtp
-  ir_mail_server_xmlid: ipai_mailgun_smtp.mail_server_mailgun_smtp
-  sequence: 1                           # lowest sequence = highest Odoo priority
+  smtp_user_secret: zoho-smtp-user          # Azure Key Vault secret name
+  email_from_domain: insightpulseai.com
+  smtp_password_secret: zoho-smtp-password   # Azure Key Vault secret name
+  odoo_module: ipai_zoho_mail
+  credential_injection: azure_key_vault      # managed identity → Key Vault → env var
 
   odoo_params:
     - key: mail.catchall.domain
       value: insightpulseai.com
     - key: mail.default.from
-      value: no-reply@mg.insightpulseai.com
+      value: notifications
 
   policy:
     block_port_25: true
     require_auth: true
+    require_starttls: true
     max_retry: 3
-    evidence_required: true             # every prod send creates ops.mail_events row
+    sender_must_be_authorized_zoho_mailbox: true
 
-# ── Inbound mail (Zoho — unchanged) ──────────────────────────────────────────
+# ── Inbound mail (Zoho — MX records) ─────────────────────────────────────────
 inbound:
   provider: zoho
   mx_domain: insightpulseai.com
-  notes: >
-    Zoho Mail handles inbound MX. The Zoho API module (ipai_zoho_mail_api, sequence=1)
-    must be deactivated in prod if installed — Mailgun SMTP at sequence=1 wins only
-    when no other active ir.mail_server has sequence <= 1. Verify via convergence check
-    mailgun_server_selected_by_sequence (see convergence_checks below).
+  dns_records:
+    - type: MX
+      host: "@"
+      targets:
+        - mx.zoho.com (priority 10)
+        - mx2.zoho.com (priority 20)
+        - mx3.zoho.com (priority 50)
+    - type: TXT
+      host: "@"
+      value: "v=spf1 include:zoho.com ~all"
+    - type: TXT
+      host: "zoho._domainkey"
+      value: "(DKIM key — managed in Zoho admin)"
+    - type: TXT
+      host: "_dmarc"
+      value: "v=DMARC1; p=quarantine; rua=mailto:dmarc@insightpulseai.com"
 
 # ── Non-production transport (mail catcher) ──────────────────────────────────
 non_production:
-  # Environments: staging, dev, CI
-  provider: mailgun_catcher
-  smtp_server: smtp.mailgun.org
-  smtp_port: 2525
-  smtp_ssl: starttls
-  smtp_user: postmaster@mg.insightpulseai.com
-  email_from: noreply@mg.insightpulseai.com
-  smtp_password_secret: mailgun_smtp_password     # registry: ssot/secrets/registry.yaml
+  dev:
+    provider: mailpit
+    smtp_server: localhost
+    smtp_port: 1025
+    smtp_ssl: none
+    notes: "Dev config (config/dev/odoo.conf) — email captured locally, never sent"
+
+  staging:
+    provider: mailhog
+    smtp_server: mailhog
+    smtp_port: 1025
+    smtp_ssl: none
+    notes: "Staging config (config/staging/odoo.conf) — email captured at http://mailhog:8025"
+
+  ci:
+    provider: none
+    notes: "CI tests do not send email. SMTP disabled."
 
   policy:
-    block_port_25: true
     never_use_prod_credentials: true
     enforce_catcher_routing: true
-    evidence_required: true
+    block_external_delivery: true
 
 # ── CI gate rules ─────────────────────────────────────────────────────────────
 ci_gates:
@@ -83,80 +106,65 @@ ci_gates:
     severity: error
 
   - id: no_prod_creds_in_non_prod
-    check: "SMTP_USER != no-reply@mg.insightpulseai.com when ENV in [staging, dev] AND using prod password"
+    check: "SMTP credentials must not be Zoho prod credentials in dev/staging"
     severity: error
 
-# ── Convergence checks (enforced by ops-convergence-scan) ────────────────────
+  - id: no_mailgun_references
+    check: "No references to smtp.mailgun.org or mg.insightpulseai.com in active config"
+    severity: error
+
+# ── Convergence checks ───────────────────────────────────────────────────────
 convergence_checks:
-  - id: mailgun_server_exists
+  - id: zoho_server_exists
     check: >
       SELECT count(*) FROM ir_mail_server
-      WHERE smtp_host = 'smtp.mailgun.org' AND active = true
+      WHERE smtp_host ILIKE '%zoho%' AND active = true
     expected: ">= 1"
     severity: high
-    remediation: "Install ipai_mailgun_smtp module: odoo -i ipai_mailgun_smtp"
+    remediation: "Install/update ipai_zoho_mail module"
 
-  - id: mailgun_server_selected_by_sequence
+  - id: zoho_server_is_primary
     check: >
       SELECT smtp_host FROM ir_mail_server
       WHERE active = true ORDER BY sequence ASC LIMIT 1
-    expected: "smtp.mailgun.org"
+    expected_contains: "zoho"
     severity: high
-    remediation: >
-      Ensure no other active ir.mail_server has sequence <= 1 besides Mailgun.
-      Deactivate ipai_zoho_mail_api record if present (also sequence=1).
+    remediation: "Ensure Zoho mail server has lowest sequence among active ir.mail_server records"
 
-  - id: mailgun_password_present
-    check: >
-      SELECT count(*) FROM ir_mail_server
-      WHERE smtp_host = 'smtp.mailgun.org' AND (smtp_pass IS NOT NULL AND smtp_pass != '')
-    expected: ">= 1"
-    severity: high
-    remediation: >
-      Set ODOO_MAILGUN_SMTP_PASSWORD env var and run:
-        odoo -u ipai_mailgun_smtp --stop-after-init
-
-  - id: running_env_matches_prod
-    check: >
-      SELECT value FROM ir_config_parameter
-      WHERE key = 'web.base.url'
-    expected_contains: "insightpulseai.com"
-    additional_check: >
-      config/prod/odoo.conf sets running_env = prod; Docker/systemd passes RUNNING_ENV=prod
-      env var so hooks can detect prod without a DB query.
-    severity: medium
-    remediation: >
-      Verify running_env = prod in config/prod/odoo.conf (committed to repo).
-      Set RUNNING_ENV=prod in Docker env or systemd EnvironmentFile on prod droplet.
-
-  - id: no_competing_mail_servers
+  - id: no_mailgun_servers_active
     check: >
       SELECT count(*) FROM ir_mail_server
       WHERE active = true
-        AND (smtp_host ILIKE '%zoho%' OR smtp_host = 'mail.zoho.com')
+        AND (smtp_host ILIKE '%mailgun%' OR smtp_host ILIKE '%mg.insightpulseai%')
     expected: "0"
     severity: high
-    remediation: >
-      Upgrade ipai_mailgun_smtp to trigger the deactivation hook:
-        RUNNING_ENV=prod odoo -d odoo_prod -u ipai_mailgun_smtp --stop-after-init
-      The hook will automatically deactivate all active Zoho mail servers.
+    remediation: "Deactivate all Mailgun mail servers — Mailgun is deprecated"
 
-# ── Evidence anchor ───────────────────────────────────────────────────────────
-evidence_anchor:
-  kind: e2e_mail_smoke
-  from: no-reply@mg.insightpulseai.com
-  transport: smtp.mailgun.org:2525
-  subject_prefix: "E2E-MAILGUN-ODOO-TEXT "
-  ops_table: ops.mail_events
-  artifact_table: ops.artifacts
+  - id: zoho_password_present
+    check: >
+      SELECT count(*) FROM ir_mail_server
+      WHERE smtp_host ILIKE '%zoho%' AND (smtp_pass IS NOT NULL AND smtp_pass != '')
+    expected: ">= 1"
+    severity: high
+    remediation: "Set ZOHO_SMTP_PASSWORD env var via Azure Key Vault injection"
 
 # ── Boundary rules ────────────────────────────────────────────────────────────
 boundary_rules:
-  - rule: "Prod Odoo MUST use odoo_mailgun_smtp_password via ODOO_MAILGUN_SMTP_PASSWORD env var"
-    rationale: "Secret injected by post_install_hook; never seeded in XML"
-  - rule: "Mailgun SMTP must have the lowest sequence among active ir.mail_server records"
-    rationale: "Odoo selects the server with the lowest sequence; determinism requires no lower-sequence competitor"
-  - rule: "ops-mailgun-ingest Edge Function is the sole writer to ops.mail_events"
-    rationale: "Single writer maintains SSOT for mail audit trail"
+  - rule: "Prod Odoo MUST use Zoho SMTP via Azure Key Vault credential injection"
+    rationale: "Secrets never hardcoded; managed identity → Key Vault → env var"
+  - rule: "Zoho SMTP must have the lowest sequence among active ir.mail_server records"
+    rationale: "Odoo selects server with lowest sequence; determinism requires no lower-sequence competitor"
   - rule: "smtp_pass values are never committed to git or XML data files"
-    rationale: "Secrets in env vars / keychain only; hooks.py is the injection point"
+    rationale: "Secrets in env vars / Key Vault only"
+  - rule: "Sender addresses must be authorized Zoho mailboxes on insightpulseai.com"
+    rationale: "Zoho rejects unauthorized sender addresses"
+
+# ── Deprecated (never reintroduce) ───────────────────────────────────────────
+deprecated:
+  - provider: mailgun
+    domain: mg.insightpulseai.com
+    smtp_server: smtp.mailgun.org
+    retired_date: "2026-03-11"
+    reason: "Replaced by Zoho SMTP per CLAUDE.md deprecated items list"
+    module: ipai_mailgun_smtp
+    action: "Deactivate ir.mail_server records; do not uninstall module (may leave orphan data)"
