@@ -45,30 +45,26 @@ export async function startHttpServer(
     if (sessionId && transports.has(sessionId)) {
       // Existing session
       transport = transports.get(sessionId)!;
-    } else if (!sessionId && isInitializeRequest(req.body)) {
-      // New session — only on initialize
+    } else if (isInitializeRequest(req.body)) {
+      // New session on initialize (with or without session ID header)
+      const newId = randomUUID();
       transport = new StreamableHTTPServerTransport({
-        sessionIdGenerator: () => randomUUID(),
+        sessionIdGenerator: () => newId,
       });
+
+      transports.set(newId, transport);
 
       const server = serverFactory();
       await server.connect(transport);
 
-      // Cache session after connection
-      if (transport.sessionId) {
-        transports.set(transport.sessionId, transport);
-      }
-
       transport.onclose = () => {
-        if (transport.sessionId) {
-          transports.delete(transport.sessionId);
-        }
+        transports.delete(newId);
       };
     } else {
       res.status(400).json({
         jsonrpc: "2.0",
-        error: { code: -32000, message: "Bad request: no session ID or not an initialize request" },
-        id: null,
+        error: { code: -32000, message: "Bad request: missing mcp-session-id header. Send initialize first." },
+        id: (req.body as any)?.id ?? null,
       });
       return;
     }
