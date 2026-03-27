@@ -1,0 +1,236 @@
+# =============================================================================
+# Odoo ChatGPT Connector — Permission Matrix (SSOT)
+# =============================================================================
+# Defines feature groups, OAuth scopes, tools, and allowed Odoo models/methods.
+# Enforced at the connector gateway, not at the ChatGPT/model layer.
+#
+# Ref: spec/odoo-chatgpt-connector/
+# Last reviewed: 2026-03-27
+# =============================================================================
+
+schema_version: 1
+kind: connector_permission_matrix
+connector: odoo-chatgpt-connector
+odoo_api: json_2
+last_reviewed: "2026-03-27"
+
+# ─────────────────────────────────────────────────────────────────────────────
+# FEATURE GROUPS
+# ─────────────────────────────────────────────────────────────────────────────
+
+feature_groups:
+
+  contacts:
+    scopes:
+      read: odoo.contacts.read
+      write: odoo.contacts.write
+    tools:
+      - name: odoo_search_partners
+        scope: odoo.contacts.read
+        readOnly: true
+        model: res.partner
+        method: search_read
+        fields: [name, email, phone, mobile, company_name, city, country_id]
+      - name: odoo_get_partner
+        scope: odoo.contacts.read
+        readOnly: true
+        model: res.partner
+        method: read
+      - name: odoo_update_contact
+        scope: odoo.contacts.write
+        readOnly: false
+        model: res.partner
+        method: write
+        phase: 2
+
+  sales:
+    scopes:
+      read: odoo.sales.read
+      write: odoo.sales.write
+    tools:
+      - name: odoo_search_sale_orders
+        scope: odoo.sales.read
+        readOnly: true
+        model: sale.order
+        method: search_read
+        fields: [name, partner_id, amount_total, state, date_order]
+      - name: odoo_get_sale_order
+        scope: odoo.sales.read
+        readOnly: true
+        model: sale.order
+        method: read
+      - name: odoo_list_pipeline_opportunities
+        scope: odoo.sales.read
+        readOnly: true
+        model: crm.lead
+        method: search_read
+        fields: [name, partner_id, expected_revenue, stage_id, probability]
+
+  finance:
+    scopes:
+      read: odoo.finance.read
+      write: odoo.finance.write
+    tools:
+      - name: odoo_list_overdue_invoices
+        scope: odoo.finance.read
+        readOnly: true
+        model: account.move
+        method: search_read
+        domain_filter: "[('payment_state','!=','paid'),('invoice_date_due','<',today)]"
+        fields: [name, partner_id, amount_total, amount_residual, invoice_date_due, state]
+      - name: odoo_get_invoice
+        scope: odoo.finance.read
+        readOnly: true
+        model: account.move
+        method: read
+
+  projects:
+    scopes:
+      read: odoo.projects.read
+      write: odoo.projects.write
+    tools:
+      - name: odoo_search_projects
+        scope: odoo.projects.read
+        readOnly: true
+        model: project.project
+        method: search_read
+        fields: [name, partner_id, task_count, date_start, date]
+      - name: odoo_get_project_status
+        scope: odoo.projects.read
+        readOnly: true
+        model: project.project
+        method: read
+      - name: odoo_list_project_tasks
+        scope: odoo.projects.read
+        readOnly: true
+        model: project.task
+        method: search_read
+        fields: [name, project_id, user_ids, stage_id, date_deadline, priority]
+
+  inventory:
+    scopes:
+      read: odoo.inventory.read
+      write: odoo.inventory.write
+    tools:
+      - name: odoo_get_product_availability
+        scope: odoo.inventory.read
+        readOnly: true
+        model: product.product
+        method: search_read
+        fields: [name, default_code, qty_available, virtual_available, uom_id]
+      - name: odoo_get_inventory_snapshot
+        scope: odoo.inventory.read
+        readOnly: true
+        model: stock.quant
+        method: search_read
+        fields: [product_id, location_id, quantity, reserved_quantity]
+
+  collaboration:
+    scopes:
+      write: odoo.activities.write
+    tools:
+      - name: odoo_create_activity
+        scope: odoo.activities.write
+        readOnly: false
+        model: mail.activity
+        method: create
+        phase: 2
+        requires_confirmation: true
+      - name: odoo_post_record_note
+        scope: odoo.activities.write
+        readOnly: false
+        model: mail.message
+        method: message_post
+        phase: 2
+        requires_confirmation: true
+
+  reporting:
+    scopes:
+      read: odoo.reporting.read
+    tools:
+      - name: odoo_dashboard_summary
+        scope: odoo.reporting.read
+        readOnly: true
+        phase: 3
+        notes: "Aggregated KPI extracts — implementation TBD"
+
+  admin:
+    scopes:
+      read: odoo.admin.read
+    tools:
+      - name: odoo_connector_health
+        scope: odoo.admin.read
+        readOnly: true
+        notes: "Connector diagnostics, environment health"
+
+# ─────────────────────────────────────────────────────────────────────────────
+# ACCESS PRESETS
+# ─────────────────────────────────────────────────────────────────────────────
+
+access_presets:
+
+  analyst:
+    description: "Read-only access to all business data"
+    scopes:
+      - odoo.contacts.read
+      - odoo.sales.read
+      - odoo.finance.read
+      - odoo.projects.read
+      - odoo.inventory.read
+      - odoo.reporting.read
+
+  operator:
+    description: "Analyst access + create activities and notes"
+    scopes:
+      - odoo.contacts.read
+      - odoo.sales.read
+      - odoo.finance.read
+      - odoo.projects.read
+      - odoo.inventory.read
+      - odoo.reporting.read
+      - odoo.activities.write
+
+  finance_operator:
+    description: "Finance-focused read + limited write"
+    scopes:
+      - odoo.finance.read
+      - odoo.reporting.read
+      - odoo.activities.write
+
+  admin:
+    description: "Admin diagnostics + selective access"
+    scopes:
+      - odoo.admin.read
+      - odoo.contacts.read
+      - odoo.sales.read
+      - odoo.finance.read
+      - odoo.projects.read
+      - odoo.inventory.read
+
+# ─────────────────────────────────────────────────────────────────────────────
+# ODOO API IDENTITY
+# ─────────────────────────────────────────────────────────────────────────────
+
+odoo_api_identity:
+  auth_method: bearer_api_key
+  api_surface: json_2
+  endpoint_pattern: "/json/2/<model>/<method>"
+  user_type: dedicated_bot_user
+  user_name: chatgpt-connector@insightpulseai.com
+  acl_policy: "Minimum required Odoo ACLs per feature group"
+  secret_source: azure_key_vault
+  secret_name: odoo-chatgpt-connector-api-key
+
+# ─────────────────────────────────────────────────────────────────────────────
+# POLICY RULES
+# ─────────────────────────────────────────────────────────────────────────────
+
+rules:
+  - "All tools must declare securitySchemes per OpenAI Apps SDK convention"
+  - "Read-only tools must set readOnlyHint: true in annotations"
+  - "Write tools must require human confirmation via structured content preview"
+  - "No generic execute_kw or arbitrary model/method passthrough"
+  - "No full_access or admin-level scope bundles"
+  - "Gateway must validate every tool call against the allowed model/method mapping"
+  - "All write operations must be audit-logged"
+  - "Phase 1 is read-only. Write scopes are Phase 2+."
