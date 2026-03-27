@@ -1,0 +1,65 @@
+# deploy-docs-pages.yml — Build and deploy docs to GitHub Pages
+# GitHub Pages deployment requires GitHub Actions (platform-specific, not CI/CD).
+# CI/CD validation runs in Azure DevOps Pipelines (docs/azure-pipelines.yml).
+name: Deploy Docs to GitHub Pages
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'docs-site/**'
+      - 'mkdocs.yml'
+      - '.github/workflows/deploy-docs-pages.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install MkDocs and dependencies
+        run: |
+          pip install \
+            mkdocs-material==9.* \
+            mkdocs-minify-plugin \
+            pymdown-extensions \
+            pillow \
+            cairosvg
+
+      - name: Build docs
+        run: mkdocs build --strict --verbose
+        env:
+          ENABLE_PDF_EXPORT: 0
+
+      - name: Upload pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: docs-site/site
+
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

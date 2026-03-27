@@ -1,6 +1,9 @@
-# Supabase
+# Supabase (Deprecated)
 
-Supabase is the **identity and real-time data authority** for InsightPulse AI. Odoo is a relying party that consumes a minimal projection of Supabase identity data.
+!!! warning "Fully deprecated 2026-03-26"
+    Supabase is no longer used in the InsightPulse AI platform. All services have been replaced by Azure-native equivalents: Entra ID (auth), Azure Key Vault (secrets), Azure Container Apps (serverless functions), Databricks (pgvector/ML). This page is retained for historical reference only.
+
+Supabase was the identity and real-time data authority for InsightPulse AI.
 
 ## Project reference
 

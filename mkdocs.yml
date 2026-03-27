@@ -1,9 +1,12 @@
 site_name: InsightPulse AI Documentation
 site_description: AI-first ERP platform documentation — Odoo CE 19 + OCA + Azure
-site_url: https://docs.insightpulseai.com
+site_url: https://insightpulseai.github.io/odoo
 repo_url: https://github.com/Insightpulseai/odoo
 repo_name: Insightpulseai/odoo
 edit_uri: edit/main/docs-site/docs/
+
+# Custom domain: uncomment and set CNAME to use docs.insightpulseai.com
+# site_url: https://docs.insightpulseai.com
 
 theme:
   name: material
@@ -146,11 +149,14 @@ nav:
 
   - Integrations:
     - integrations/index.md
-    - Supabase (SSOT): integrations/supabase.md
     - ADLS ETL pipeline: integrations/adls-etl.md
     - SAP Concur & Joule: integrations/sap-integration.md
     - Slack & n8n: integrations/slack-n8n.md
-    - Azure AI Foundry: integrations/azure-ai.md
+    - Microsoft Foundry: integrations/azure-ai.md
+
+  - Operations:
+    - Change management: operations/change-management.md
+    - Monthly close runbook: operations/monthly-close-runbook.md
 
   - Contracts:
     - contracts/index.md

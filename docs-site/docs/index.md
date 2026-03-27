@@ -13,11 +13,12 @@ Welcome to the InsightPulse AI platform documentation. This site covers the arch
 |-----------|-----------|
 | **ERP** | Odoo CE 19.0 + OCA + `ipai_*` modules |
 | **Runtime** | Azure Container Apps (Southeast Asia) |
-| **Control plane** | Supabase (Auth, Edge Functions, pgvector) |
+| **Data platform** | Databricks + Unity Catalog |
 | **Analytical lake** | Azure Data Lake Storage Gen2 |
-| **AI compute** | Azure AI Foundry |
+| **AI compute** | Microsoft Foundry |
 | **Identity** | Microsoft Entra ID (SSO) |
-| **Automation** | n8n (self-hosted) |
+| **DNS** | Azure DNS (authoritative) |
+| **CI/CD** | Azure DevOps Pipelines |
 | **Chat** | Slack |
 
 ## Documentation sections
