@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="hr_expense_liquidation_view_form" model="ir.ui.view">
+        <field name="name">hr.expense.liquidation.form</field>
+        <field name="model">hr.expense.liquidation</field>
+        <field name="arch" type="xml">
+            <form string="Expense Liquidation">
+                <header>
+                    <button name="action_submit" type="object" string="Submit"
+                            class="oe_highlight"
+                            invisible="state != 'draft'"/>
+                    <button name="action_approve" type="object" string="Approve"
+                            class="oe_highlight"
+                            invisible="state != 'submitted'"
+                            groups="ipai_hr_expense_liquidation.group_expense_liquidation_manager"/>
+                    <button name="action_done" type="object" string="Mark Done"
+                            invisible="state != 'approved'"
+                            groups="ipai_hr_expense_liquidation.group_expense_liquidation_manager"/>
+                    <button name="action_reject" type="object" string="Reject"
+                            invisible="state not in ('submitted', 'approved')"
+                            groups="ipai_hr_expense_liquidation.group_expense_liquidation_manager"/>
+                    <button name="action_cancel" type="object" string="Cancel"
+                            invisible="state in ('done', 'cancelled')"/>
+                    <button name="action_draft" type="object" string="Reset to Draft"
+                            invisible="state not in ('rejected', 'cancelled')"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="draft,submitted,approved,done"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="name" readonly="1"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="employee_id" readonly="state != 'draft'"/>
+                            <field name="liquidation_type" readonly="state != 'draft'"/>
+                            <field name="company_id" invisible="1"/>
+                            <field name="currency_id" invisible="1"/>
+                        </group>
+                        <group>
+                            <field name="advance_amount" readonly="state != 'draft'"/>
+                            <field name="total_expenses"/>
+                            <field name="balance"/>
+                            <field name="date_submit"/>
+                            <field name="date_approve"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Expense Lines">
+                            <field name="line_ids" readonly="state not in ('draft', 'submitted')">
+                                <list editable="bottom">
+                                    <field name="date"/>
+                                    <field name="name"/>
+                                    <field name="category"/>
+                                    <field name="amount"/>
+                                    <field name="receipt_attached"/>
+                                    <field name="notes" optional="hide"/>
+                                    <field name="currency_id" column_invisible="1"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Notes">
+                            <field name="notes"/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="hr_expense_liquidation_view_list" model="ir.ui.view">
+        <field name="name">hr.expense.liquidation.list</field>
+        <field name="model">hr.expense.liquidation</field>
+        <field name="arch" type="xml">
+            <list string="Expense Liquidations">
+                <field name="name"/>
+                <field name="employee_id"/>
+                <field name="liquidation_type"/>
+                <field name="advance_amount"/>
+                <field name="total_expenses"/>
+                <field name="balance"/>
+                <field name="state" widget="badge"
+                       decoration-info="state == 'draft'"
+                       decoration-warning="state == 'submitted'"
+                       decoration-success="state in ('approved', 'done')"
+                       decoration-danger="state in ('rejected', 'cancelled')"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="hr_expense_liquidation_action" model="ir.actions.act_window">
+        <field name="name">Expense Liquidations</field>
+        <field name="res_model">hr.expense.liquidation</field>
+        <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create your first expense liquidation
+            </p>
+        </field>
+    </record>
+</odoo>

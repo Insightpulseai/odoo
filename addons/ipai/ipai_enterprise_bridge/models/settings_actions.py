@@ -70,16 +70,35 @@ class ResConfigSettingsActions(models.TransientModel):
         ICP = self.env["ir.config_parameter"].sudo()
         enabled = ICP.get_param("ipai.oauth.google.enabled", "False") == "True"
         client_id = ICP.get_param("ipai.oauth.google.client_id", "")
-        domain = ICP.get_param("ipai.oauth.google.workspace_domain", "insightpulseai.com")
+        domain = ICP.get_param("ipai.oauth.google.workspace_domain", "w9studio.net")
+
+        if not client_id:
+            return {
+                "type": "ir.actions.client",
+                "tag": "display_notification",
+                "params": {
+                    "title": _("Google OAuth"),
+                    "message": _("Client ID is empty. Configure it before enabling the provider."),
+                    "type": "warning",
+                    "sticky": False,
+                },
+            }
 
         Provider = self.env["auth.oauth.provider"].sudo()
         google = Provider.search([("name", "=like", "Google Workspace%")], limit=1)
 
+        # Always compute auth_endpoint from constant base + domain.
+        # This is idempotent: repeated calls never double-append ?hd=.
+        _GOOGLE_AUTH_BASE = "https://accounts.google.com/o/oauth2/v2/auth"
+        auth_endpoint = _GOOGLE_AUTH_BASE
+        if domain:
+            auth_endpoint = f"{_GOOGLE_AUTH_BASE}?hd={domain}"
+
         vals = {
             "name": "Google Workspace (W9 Studio)",
-            "enabled": enabled and bool(client_id),
+            "enabled": enabled,
             "client_id": client_id,
-            "auth_endpoint": "https://accounts.google.com/o/oauth2/v2/auth",
+            "auth_endpoint": auth_endpoint,
             "validation_endpoint": "https://www.googleapis.com/oauth2/v3/tokeninfo",
             "scope": "openid email profile",
             "data_endpoint": "https://www.googleapis.com/oauth2/v1/userinfo?access_token=",
@@ -87,8 +106,6 @@ class ResConfigSettingsActions(models.TransientModel):
             "body": "Log in with Google",
             "sequence": 20,
         }
-        if domain:
-            vals["auth_endpoint"] += "?hd=" + domain
 
         if google:
             google.write(vals)

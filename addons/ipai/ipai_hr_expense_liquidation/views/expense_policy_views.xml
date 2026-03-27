@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="hr_expense_policy_rule_view_form" model="ir.ui.view">
+        <field name="name">hr.expense.policy.rule.form</field>
+        <field name="model">hr.expense.policy.rule</field>
+        <field name="arch" type="xml">
+            <form string="Expense Policy Rule">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="sequence"/>
+                            <field name="active"/>
+                            <field name="company_id"/>
+                        </group>
+                        <group>
+                            <field name="rule_type"/>
+                            <field name="amount_limit" invisible="rule_type != 'amount_limit'"/>
+                            <field name="category" invisible="rule_type != 'category_limit'"/>
+                            <field name="severity"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="hr_expense_policy_rule_view_list" model="ir.ui.view">
+        <field name="name">hr.expense.policy.rule.list</field>
+        <field name="model">hr.expense.policy.rule</field>
+        <field name="arch" type="xml">
+            <list string="Expense Policy Rules">
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="rule_type"/>
+                <field name="severity"/>
+                <field name="active"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="hr_expense_policy_rule_action" model="ir.actions.act_window">
+        <field name="name">Policy Rules</field>
+        <field name="res_model">hr.expense.policy.rule</field>
+        <field name="view_mode">list,form</field>
+    </record>
+</odoo>

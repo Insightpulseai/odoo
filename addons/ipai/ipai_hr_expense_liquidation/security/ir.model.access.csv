@@ -1,0 +1,7 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_hr_expense_liquidation_user,hr.expense.liquidation.user,model_hr_expense_liquidation,group_expense_liquidation_user,1,1,1,0
+access_hr_expense_liquidation_manager,hr.expense.liquidation.manager,model_hr_expense_liquidation,group_expense_liquidation_manager,1,1,1,1
+access_hr_expense_liquidation_line_user,hr.expense.liquidation.line.user,model_hr_expense_liquidation_line,group_expense_liquidation_user,1,1,1,0
+access_hr_expense_liquidation_line_manager,hr.expense.liquidation.line.manager,model_hr_expense_liquidation_line,group_expense_liquidation_manager,1,1,1,1
+access_hr_expense_policy_rule_user,hr.expense.policy.rule.user,model_hr_expense_policy_rule,group_expense_liquidation_user,1,0,0,0
+access_hr_expense_policy_rule_manager,hr.expense.policy.rule.manager,model_hr_expense_policy_rule,group_expense_liquidation_manager,1,1,1,1
