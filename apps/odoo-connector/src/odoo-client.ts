@@ -11,6 +11,7 @@ export interface SearchReadParams {
   limit?: number;
   order?: string;
   context?: Record<string, unknown>;
+  [key: string]: unknown;
 }
 
 export class OdooClient {
