@@ -1,0 +1,76 @@
+/* Entra Sign-in Page — InsightPulseAI Branding
+   Apply at: Entra admin center → Company branding → Edit → Custom CSS
+   Reference: https://learn.microsoft.com/en-us/entra/fundamentals/reference-company-branding-css-template
+*/
+
+/* Background */
+body {
+  background: linear-gradient(135deg, #0F2A44 0%, #1a3d5c 100%) !important;
+}
+
+/* Sign-in card — glassmorphism */
+.ext-sign-in-box {
+  background: rgba(255, 255, 255, 0.1) !important;
+  backdrop-filter: blur(16px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  border-radius: 24px !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4) !important;
+}
+
+/* Input fields */
+.ext-text-input {
+  background: rgba(255, 255, 255, 0.1) !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  border-radius: 12px !important;
+  color: #fff !important;
+}
+
+.ext-text-input:focus {
+  border-color: #7BC043 !important;
+  box-shadow: 0 0 0 2px rgba(123, 192, 67, 0.3) !important;
+}
+
+/* Primary button */
+.ext-button.ext-primary {
+  background: linear-gradient(135deg, #7BC043, #64B9CA) !important;
+  border: none !important;
+  border-radius: 12px !important;
+  color: #fff !important;
+  font-weight: 700 !important;
+}
+
+.ext-button.ext-primary:hover {
+  box-shadow: 0 4px 16px rgba(123, 192, 67, 0.3) !important;
+}
+
+/* Secondary button */
+.ext-button.ext-secondary {
+  background: rgba(255, 255, 255, 0.1) !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  border-radius: 12px !important;
+  color: #fff !important;
+}
+
+/* Labels and text */
+.ext-text-body, .ext-label {
+  color: rgba(255, 255, 255, 0.85) !important;
+}
+
+/* Links */
+.ext-link {
+  color: #64B9CA !important;
+}
+
+.ext-link:hover {
+  color: #7BC043 !important;
+}
+
+/* Error messages */
+.ext-error {
+  color: #ff6b6b !important;
+}
+
+/* Footer */
+.ext-footer {
+  color: rgba(255, 255, 255, 0.5) !important;
+}
