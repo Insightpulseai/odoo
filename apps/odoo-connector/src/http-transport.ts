@@ -15,9 +15,8 @@
  */
 
 import express from "express";
-import { randomUUID } from "node:crypto";
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
-import { StreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/streamableHttp.js";
+import { SSEServerTransport } from "@modelcontextprotocol/sdk/server/sse.js";
 
 export interface HttpServerConfig {
   port: number;
@@ -30,66 +29,46 @@ export async function startHttpServer(
 ) {
   const app = express();
 
-  // Store transports by session ID
-  const transports = new Map<string, StreamableHTTPServerTransport>();
+  // Store transports by session
+  const transports = new Map<string, SSEServerTransport>();
 
   // Health endpoint
   app.get("/health", (_req, res) => {
-    res.json({ ok: true, transport: "streamable-http", timestamp: new Date().toISOString() });
+    res.json({ ok: true, transport: "sse", timestamp: new Date().toISOString() });
   });
 
-  // MCP Streamable HTTP endpoint
-  app.post(config.mcpPath, async (req, res) => {
-    const sessionId = req.headers["mcp-session-id"] as string | undefined;
-    let transport: StreamableHTTPServerTransport;
-
-    if (sessionId && transports.has(sessionId)) {
-      transport = transports.get(sessionId)!;
-    } else {
-      // New session — create transport and connect server
-      const newSessionId = randomUUID();
-      transport = new StreamableHTTPServerTransport({
-        sessionId: newSessionId,
-      });
-      transports.set(newSessionId, transport);
-
-      const server = serverFactory();
-      await server.connect(transport);
-
-      // Clean up on close
-      transport.onclose = () => {
-        transports.delete(newSessionId);
-      };
-    }
-
-    await transport.handleRequest(req, res, req.body);
-  });
-
-  // SSE stream for server-initiated messages
+  // SSE connection endpoint — client connects here for the event stream
   app.get(config.mcpPath, async (req, res) => {
-    const sessionId = req.headers["mcp-session-id"] as string | undefined;
-    if (!sessionId || !transports.has(sessionId)) {
-      res.status(400).json({ error: "Invalid or missing session ID" });
+    const transport = new SSEServerTransport(`${config.mcpPath}/message`, res);
+    const sessionId = transport.sessionId;
+    transports.set(sessionId, transport);
+
+    const server = serverFactory();
+
+    res.on("close", () => {
+      transports.delete(sessionId);
+    });
+
+    await server.connect(transport);
+  });
+
+  // Message endpoint — client sends JSON-RPC messages here
+  app.post(`${config.mcpPath}/message`, express.json(), async (req, res) => {
+    const sessionId = req.query.sessionId as string;
+    const transport = transports.get(sessionId);
+
+    if (!transport) {
+      res.status(400).json({ error: "Invalid or missing session. Connect to GET /mcp first." });
       return;
     }
-    const transport = transports.get(sessionId)!;
-    await transport.handleRequest(req, res);
-  });
 
-  // Session termination
-  app.delete(config.mcpPath, async (req, res) => {
-    const sessionId = req.headers["mcp-session-id"] as string | undefined;
-    if (sessionId && transports.has(sessionId)) {
-      const transport = transports.get(sessionId)!;
-      await transport.close();
-      transports.delete(sessionId);
-    }
-    res.status(200).json({ ok: true });
+    await transport.handlePostMessage(req, res);
   });
 
   app.listen(config.port, () => {
-    console.log(`[odoo-connector] Streamable HTTP server on :${config.port}`);
-    console.log(`[odoo-connector] MCP endpoint: ${config.mcpPath}`);
-    console.log(`[odoo-connector] Health: /health`);
+    console.log(`[odoo-connector] SSE MCP server on :${config.port}`);
+    console.log(`[odoo-connector] SSE endpoint: GET ${config.mcpPath}`);
+    console.log(`[odoo-connector] Message endpoint: POST ${config.mcpPath}/message`);
+    console.log(`[odoo-connector] Health: GET /health`);
   });
 }
