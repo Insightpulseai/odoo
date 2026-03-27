@@ -25,6 +25,36 @@ Define the invariant operating contract for `<connector-slug>`, the governed onb
 - Domain: `<finance | sales | procurement | tax | other>`
 - Source system: `<source-system>`
 - Source type: `<erp | crm | db | api | file | other>`
+- Ingestion ownership model: `<platform_managed | partner_managed>`
+
+## 3a. Ingestion ownership model (required)
+Every connector must declare one of two ingestion ownership modes.
+The mode determines which contract sections are mandatory.
+
+### `platform_managed`
+The platform owns the extraction runtime. Required:
+- providers/services
+- execution identity
+- secrets authority
+- runtime topology
+- network placement
+- local/runtime dependencies
+
+Benchmark: Azure Data Factory connector pattern (self-hosted IR, service principal, Key Vault, provider registration).
+
+### `partner_managed`
+A third-party platform owns extraction. The workload item owns processing only. Required:
+- partner name
+- connection ID (precreated by partner)
+- partner trust boundary
+- ingestion SLA / freshness contract
+- handoff schema / landing contract
+- failure escalation path back to the partner
+
+Benchmark: Open Mirroring connector pattern (partner selection, connection ID binding, external extraction).
+
+Platform-managed sections (identity, secrets, runtime topology, network) are optional for partner-managed connectors
+but must be explicitly marked N/A with justification if omitted.
 
 ## 4. Prerequisite invariants
 The connector must define:
@@ -73,7 +103,17 @@ Every connector spec must classify failure modes under:
 - runtime_health
 - source_system
 
-## 9. Change control
+## 9. Partner-managed invariants (if `partner_managed`)
+When ingestion is partner-managed:
+- partner name and version must be documented
+- connection ID must be captured before workload-item binding
+- partner trust boundary must be explicit (what data the partner sees, what it does not)
+- ingestion SLA must be documented (freshness, availability, retry behavior)
+- handoff schema must be explicit (what lands, in what format, where)
+- failure escalation path must name who to contact for partner-side failures
+- platform cannot assume control over partner extraction behavior
+
+## 10. Change control
 Spec updates are required for:
 - source endpoint changes
 - identity or role changes
@@ -82,3 +122,5 @@ Spec updates are required for:
 - network placement changes
 - connector dependency changes
 - validation workflow changes
+- ingestion ownership model changes (platform_managed ↔ partner_managed)
+- partner name or connection ID changes (if partner_managed)
