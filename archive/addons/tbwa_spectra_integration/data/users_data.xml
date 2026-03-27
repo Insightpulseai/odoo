@@ -14,7 +14,7 @@
             <field name="company_id" ref="base.main_company"/>
             <field name="company_ids" eval="[(6, 0, [ref('base.main_company')])]"/>
             <field name="active" eval="True"/>
-            <field name="password">finance@tbwa2025</field>
+            <field name="password">REDACTED_BY_AUDIT_20260327</field>
         </record>
 
         <!-- CFO User -->
@@ -26,7 +26,7 @@
             <field name="company_id" ref="base.main_company"/>
             <field name="company_ids" eval="[(6, 0, [ref('base.main_company')])]"/>
             <field name="active" eval="True"/>
-            <field name="password">cfo@tbwa2025</field>
+            <field name="password">REDACTED_BY_AUDIT_20260327</field>
         </record>
 
         <!-- Finance Manager User -->
@@ -38,7 +38,7 @@
             <field name="company_id" ref="base.main_company"/>
             <field name="company_ids" eval="[(6, 0, [ref('base.main_company')])]"/>
             <field name="active" eval="True"/>
-            <field name="password">finance.mgr@tbwa2025</field>
+            <field name="password">REDACTED_BY_AUDIT_20260327</field>
         </record>
 
         <!-- ============================================= -->
