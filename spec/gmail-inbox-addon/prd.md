@@ -591,3 +591,43 @@ The PRD is satisfied for v1 when:
 - create or link at least one supported Odoo record from a Gmail message,
 - log selected message context to chatter,
 - and open the resulting Odoo record successfully.
+
+---
+
+## Gmail Mail Plugin (merged)
+
+> Merged from `spec/gmail-mail-plugin/prd.md` on 2026-03-28. The original spec described an earlier iteration of the Gmail-to-Odoo bridge using `ipai_mail_plugin_bridge`. Content below is preserved for historical reference and architectural context.
+
+### Original Bridge Architecture
+
+```
+Gmail UI (Card Service)
+    |
+    | HTTPS / JSON-RPC
+    v
+erp.insightpulseai.com/ipai/mail_plugin/*
+    |
+    | ORM
+    v
+Odoo CE 19 (res.partner, crm.lead, project.task, mail.thread)
+```
+
+### V1 Endpoint Scope (Original)
+
+| Feature | Endpoint |
+|---------|----------|
+| Auth via API key | `POST /ipai/mail_plugin/session` |
+| Contact lookup by sender email | `POST /ipai/mail_plugin/context` |
+| View related leads | included in context response |
+| View related tasks/tickets | included in context response |
+| Create CRM lead | `POST /ipai/mail_plugin/actions/create_lead` |
+| Create ticket (project.task) | `POST /ipai/mail_plugin/actions/create_ticket` |
+| Log note to chatter | `POST /ipai/mail_plugin/actions/log_note` |
+| Open record in Odoo | client-side OpenLink |
+
+### Security (Original)
+
+- Tokens stored as SHA-256 hashes server-side; raw tokens stay client-side.
+- API key authentication; no session cookies exposed to the add-on.
+- Credentials stored in `PropertiesService.getUserProperties()` (per-user, encrypted by Google).
+- All traffic over TLS via Azure Front Door.

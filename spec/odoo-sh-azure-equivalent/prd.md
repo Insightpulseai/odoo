@@ -72,3 +72,37 @@ Secrets must come from Key Vault-backed variable groups or managed identity-back
 - [ ] A failed prod rollout can return traffic to the prior known-good revision
 - [ ] DB restore runbook exists and has been rehearsed
 - [ ] Every promotion has an evidence pack (image digest, test results, approvals, health check)
+
+---
+
+## Staging Lifecycle Engine (merged)
+
+> Merged from `spec/odoo-sh-equivalent-staging/` on 2026-03-28. The original spec described the control surface split between Platform Engine and Odoo UI. Content below is preserved for architectural context.
+
+### Authority Model
+
+- **Platform Engine**: Sovereign authority over infrastructure (cloning, sanitization, DNS cutover).
+- **Odoo UI**: Thin client for status observation and request initiation.
+
+### Control Surface Split
+
+```
+Platform Control Plane (Authority)
+  - Staging Lifecycle Engine
+  - Data Sanitizer
+  - V2 Release Gate
+  - Azure DevOps Pipeline
+
+Odoo Transactional Plane (SoR)
+  - Operator Dashboard
+  - ipai.deployment.status (audit log)
+  - Request Refresh Button
+```
+
+Flow: Operator Button --> Webhook/API --> Engine --> Pipeline --> Sanitizer --> Gate --> Status Update --> Audit Log --> Dashboard
+
+### Implementation Rules (Original)
+
+1. **No Local DB Mutations**: Odoo shall NOT perform its own DB cloning or sanitization logic.
+2. **Asynchronous Feedback**: Odoo calls the Engine API and waits for a background callback to update status.
+3. **Evidence First**: All staging refreshes must generate a machine-readable evidence pack before the environment is marked 'Healthy' in Odoo.
