@@ -4,7 +4,9 @@ paths:
   - "db/**"
 ---
 
-# Supabase Usage
+> **ARCHIVED — Supabase fully deprecated 2026-03-26. All Supabase services replaced by Azure-native equivalents (Entra ID for auth, Azure Key Vault for secrets, ACA for serverless functions, Databricks for pgvector/ML). Do not use any guidance in this file for new work.**
+
+# Supabase Usage (ARCHIVED)
 
 > Supabase maximization, current usage, features to activate, and security fixes.
 

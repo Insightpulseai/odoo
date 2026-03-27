@@ -25,13 +25,13 @@
 
 | Field | Value |
 |-------|-------|
-| **Role** | DNS management + proxy |
-| **Current status** | **Still active** — Cloudflare remains authoritative DNS for `insightpulseai.com` |
-| **Proxy retirement** | Proxy mode disabled — Cloudflare is DNS-only; Front Door handles TLS/WAF/edge |
-| **Target replacement** | Azure DNS (authoritative) — only if/when DNS authority is migrated |
-| **DNS migration plan** | Zone export → Azure DNS zone import → Squarespace NS delegation update |
-| **Status** | Proxy role retired 2026-03-25; DNS authority migration **not started** |
-| **Mail records** | MX/SPF/DKIM/DMARC managed in Cloudflare DNS (Zoho Mail unchanged) |
+| **Role** | DNS management + proxy (both retired) |
+| **Current status** | **Fully retired** — Azure DNS is authoritative for `insightpulseai.com` |
+| **Proxy retirement** | Proxy mode disabled 2026-03-25; Front Door handles TLS/WAF/edge |
+| **DNS retirement** | DNS authority migrated to Azure DNS 2026-03-26 |
+| **Replacement** | Azure DNS (authoritative, delegated from Squarespace) |
+| **Status** | Proxy retired 2026-03-25; DNS authority retired **2026-03-26** |
+| **Mail records** | MX/SPF/DKIM/DMARC managed in Azure DNS (Zoho Mail unchanged) |
 
 ### Supabase (Self-Hosted on Azure VM)
 
