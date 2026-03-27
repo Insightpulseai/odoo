@@ -1,22 +1,21 @@
 /**
  * Streamable HTTP Transport for the Odoo MCP Connector.
  *
- * Uses @modelcontextprotocol/sdk StreamableHTTPServerTransport
+ * Uses @modelcontextprotocol/sdk StreamableHTTPServerTransport (v1.27+)
  * which implements the MCP Streamable HTTP protocol that ChatGPT expects.
  *
  * Endpoints:
- *   POST /mcp  — MCP Streamable HTTP (ChatGPT connects here)
- *   GET  /mcp  — SSE stream for server-initiated messages
- *   DELETE /mcp — Session termination
- *
- * ChatGPT connector config:
- *   MCP Server URL: https://<host>/mcp
- *   Auth: No Auth (for testing) or OAuth 2.0 (production)
+ *   POST /mcp    — MCP messages (ChatGPT connects here)
+ *   GET  /mcp    — SSE stream for server-initiated messages
+ *   DELETE /mcp  — Session termination
+ *   GET /health  — Health check
  */
 
 import express from "express";
+import { randomUUID } from "node:crypto";
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
-import { SSEServerTransport } from "@modelcontextprotocol/sdk/server/sse.js";
+import { StreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/streamableHttp.js";
+import { isInitializeRequest } from "@modelcontextprotocol/sdk/types.js";
 
 export interface HttpServerConfig {
   port: number;
@@ -28,47 +27,80 @@ export async function startHttpServer(
   serverFactory: () => McpServer,
 ) {
   const app = express();
+  app.use(express.json());
 
-  // Store transports by session
-  const transports = new Map<string, SSEServerTransport>();
+  // Store transports by session ID
+  const transports = new Map<string, StreamableHTTPServerTransport>();
 
   // Health endpoint
   app.get("/health", (_req, res) => {
-    res.json({ ok: true, transport: "sse", timestamp: new Date().toISOString() });
+    res.json({ ok: true, transport: "streamable-http", timestamp: new Date().toISOString() });
   });
 
-  // SSE connection endpoint — client connects here for the event stream
-  app.get(config.mcpPath, async (req, res) => {
-    const transport = new SSEServerTransport(`${config.mcpPath}/message`, res);
-    const sessionId = transport.sessionId;
-    transports.set(sessionId, transport);
+  // MCP Streamable HTTP — POST handles messages
+  app.post(config.mcpPath, async (req, res) => {
+    const sessionId = req.headers["mcp-session-id"] as string | undefined;
+    let transport: StreamableHTTPServerTransport;
 
-    const server = serverFactory();
+    if (sessionId && transports.has(sessionId)) {
+      // Existing session
+      transport = transports.get(sessionId)!;
+    } else if (!sessionId && isInitializeRequest(req.body)) {
+      // New session — only on initialize
+      transport = new StreamableHTTPServerTransport({
+        sessionIdGenerator: () => randomUUID(),
+      });
 
-    res.on("close", () => {
-      transports.delete(sessionId);
-    });
+      const server = serverFactory();
+      await server.connect(transport);
 
-    await server.connect(transport);
-  });
+      // Cache session after connection
+      if (transport.sessionId) {
+        transports.set(transport.sessionId, transport);
+      }
 
-  // Message endpoint — client sends JSON-RPC messages here
-  app.post(`${config.mcpPath}/message`, express.json(), async (req, res) => {
-    const sessionId = req.query.sessionId as string;
-    const transport = transports.get(sessionId);
-
-    if (!transport) {
-      res.status(400).json({ error: "Invalid or missing session. Connect to GET /mcp first." });
+      transport.onclose = () => {
+        if (transport.sessionId) {
+          transports.delete(transport.sessionId);
+        }
+      };
+    } else {
+      res.status(400).json({
+        jsonrpc: "2.0",
+        error: { code: -32000, message: "Bad request: no session ID or not an initialize request" },
+        id: null,
+      });
       return;
     }
 
-    await transport.handlePostMessage(req, res);
+    await transport.handleRequest(req, res, req.body);
+  });
+
+  // SSE stream for server-initiated messages
+  app.get(config.mcpPath, async (req, res) => {
+    const sessionId = req.headers["mcp-session-id"] as string | undefined;
+    if (!sessionId || !transports.has(sessionId)) {
+      res.status(400).json({ error: "Invalid or missing session ID" });
+      return;
+    }
+    const transport = transports.get(sessionId)!;
+    await transport.handleRequest(req, res);
+  });
+
+  // Session termination
+  app.delete(config.mcpPath, async (req, res) => {
+    const sessionId = req.headers["mcp-session-id"] as string | undefined;
+    if (sessionId && transports.has(sessionId)) {
+      const transport = transports.get(sessionId)!;
+      await transport.close();
+      transports.delete(sessionId);
+    }
+    res.status(200).json({ ok: true });
   });
 
   app.listen(config.port, () => {
-    console.log(`[odoo-connector] SSE MCP server on :${config.port}`);
-    console.log(`[odoo-connector] SSE endpoint: GET ${config.mcpPath}`);
-    console.log(`[odoo-connector] Message endpoint: POST ${config.mcpPath}/message`);
+    console.log(`[odoo-connector] Streamable HTTP MCP server on :${config.port}`);
+    console.log(`[odoo-connector] MCP endpoint: POST ${config.mcpPath}`);
     console.log(`[odoo-connector] Health: GET /health`);
   });
 }

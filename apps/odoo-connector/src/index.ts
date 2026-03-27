@@ -116,7 +116,6 @@ async function main() {
     const port = parseInt(process.env.PORT ?? "3100", 10);
     const mcpPath = process.env.MCP_PATH ?? "/mcp";
 
-    // Factory creates a fresh server per session (each gets its own tool set)
     const serverFactory = () => {
       const s = new McpServer({ name: "odoo-connector", version: "0.1.0" });
       registerOdooTools(s, { policy, odoo, authorize });
@@ -124,6 +123,7 @@ async function main() {
     };
 
     await startHttpServer({ port, mcpPath }, serverFactory);
+    console.log("[odoo-connector] Ready for ChatGPT connections");
   } else {
     const transport = new StdioServerTransport();
     await server.connect(transport);
