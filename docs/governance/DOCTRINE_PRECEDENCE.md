@@ -14,7 +14,7 @@
 | 2 | Public assistant behavior | `docs/architecture/MARKETING_ASSISTANT_DOCTRINE.md` | Ask Pulser disclosure, source policy, CTA behavior. If UI copy or response behavior conflicts with implementation convenience, this wins. |
 | 3 | Route and CTA execution | `platform/ssot/routes.yaml` | Executable route/CTA registry. The site implements what this file says, not whatever is hardcoded in a component. |
 | 4 | Tool exposure (Pulser→Odoo) | `platform/ssot/tool_contracts.yaml` | Curated tools only. If the assistant can do it in UI but it is not allowed here, it must not ship. |
-| 5 | Public vs authenticated boundaries | `docs/architecture/ASSISTANT_SURFACES.md` + `ssot/agents/assistant_surfaces.yaml` + `ssot/architecture/tenancy_model.yaml` | Decides whether something belongs on public landing, authenticated surface, or different shell. |
+| 5 | Public vs authenticated boundaries | `docs/architecture/agents/ASSISTANT_SURFACES.md` + `ssot/agents/assistant_surfaces.yaml` + `ssot/architecture/tenancy_model.yaml` | Decides whether something belongs on public landing, authenticated surface, or different shell. |
 | 6 | Runtime and infra constraints | `docs/architecture/PULSER_MINIMAL_RUNTIME.md` | Infrastructure, identity, runtime routing. If a surface idea violates runtime doctrine, runtime wins. |
 | 7 | Ship/no-ship gate | `docs/audits/WEBSITE_BRANDING_ROUTE_AUDIT.md` | Publishability gate for route inventory, CTA audit, branding compliance. Last gate before deploy. |
 | 8 | Cross-cutting contracts | `docs/contracts/PLATFORM_CONTRACTS_INDEX.md` + `.claude/rules/ssot-platform.md` | Boundary, secret, DNS, or platform-rule conflicts not fully resolved by marketing docs. |
@@ -43,7 +43,7 @@ Update in this order:
 3. `platform/ssot/routes.yaml`
 4. `platform/ssot/tool_contracts.yaml`
 5. Surface/boundary docs:
-   - `ASSISTANT_SURFACES.md`
+   - `agents/ASSISTANT_SURFACES.md`
    - `assistant_surfaces.yaml`
    - `tenancy_model.yaml`
 6. `WEBSITE_BRANDING_ROUTE_AUDIT.md`

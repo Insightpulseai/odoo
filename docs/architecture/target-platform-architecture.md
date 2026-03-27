@@ -233,7 +233,7 @@ See `docs/architecture/diagram-conventions.md`.
 - `ssot/architecture/tenant-model.yaml` — tenant model definition
 - `ssot/architecture/data-flows.yaml` — core data flows between planes
 - `ssot/architecture/runtime-authority-map.yaml` — truth-plane authorities
-- `docs/architecture/enterprise_data_platform.md` — data platform doctrine
+- `docs/architecture/data/ENTERPRISE_DATA_PLATFORM.md` — data platform doctrine
 - `docs/architecture/reference-benchmarks.md` — benchmark registry
 - `docs/contracts/azure-resource-graph-contract.md` — C-36 live inventory contract
 

@@ -202,20 +202,20 @@ canonical_ssot_files:
   - ssot/delivery/go_live_plan.yaml
 
 canonical_architecture_docs:
-  - docs/architecture/ASSISTANT_SURFACES.md
-  - docs/architecture/TENANCY_MODEL.md
-  - docs/architecture/A2A_INTEROP.md
-  - docs/architecture/AGENTOPS_DOCTRINE.md
-  - docs/architecture/AI_RUNTIME_AUTHORITY.md
-  - docs/architecture/CREATIVE_PROVIDER_POLICY.md
-  - docs/architecture/RETRIEVAL_AND_MEMORY_POLICY.md
+  - docs/architecture/agents/ASSISTANT_SURFACES.md
+  - docs/architecture/saas/TENANCY.md
+  - docs/architecture/integration/A2A_INTEROP.md
+  - docs/architecture/agents/AGENTOPS_DOCTRINE.md
+  - docs/architecture/security/AI_RUNTIME_AUTHORITY.md
+  - docs/architecture/marketing/CREATIVE_PROVIDER.md
+  - docs/architecture/security/RETRIEVAL_AND_MEMORY.md
   - docs/architecture/GO_LIVE_MATRIX.md
   - docs/architecture/GO_LIVE_CHECKLIST.md
-  - docs/architecture/DOMAIN_INTELLIGENCE_SHELLS.md
-  - docs/architecture/REPO_BOUNDARIES.md
+  - docs/architecture/saas/DOMAIN_SHELLS.md
+  - docs/architecture/governance/REPO_BOUNDARIES.md
 
 canonical_target_state:
-  architecture_doc: docs/architecture/INSIGHTPULSEAI_ODOO_ON_AZURE_TARGET_STATE.md
+  architecture_doc: docs/architecture/odoo/ON_AZURE_TARGET_STATE.md
   benchmark_model:
     informational: true
     navigational: true

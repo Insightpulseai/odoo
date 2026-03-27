@@ -9,7 +9,7 @@
 > Foundry serves as the agent factory and hosted agent runtime plane.
 >
 > Cross-references:
-> - `docs/architecture/PLATFORM_TARGET_STATE.md` (canonical target doctrine)
+> - `PLATFORM.md` (canonical target doctrine)
 > - `docs/architecture/WHOLESALE_SAAS_ERP_ON_AZURE.md` (long-form rationale)
 > - `ssot/architecture/platform-boundaries.yaml` (machine-readable boundaries)
 > - `ssot/architecture/data-flows.yaml` (machine-readable data flows)

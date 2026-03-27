@@ -124,7 +124,7 @@ If sources conflict: prefer most local, prefer machine-readable over narrative, 
 - `policies/**`, `landing-zones/**`
 
 ### For `odoo`
-- `docs/architecture/ODOO_RUNTIME.md`, `ADDON_BOUNDARIES.md`, `ODOO_ON_AZURE_RUNTIME.md`
+- `docs/architecture/odoo/RUNTIME.md`, `ADDON_BOUNDARIES.md`, `ODOO_ON_AZURE_RUNTIME.md`
 - `ssot/odoo/*`, `addons/**/__manifest__.py` for touched modules
 
 ### For `agent-platform`

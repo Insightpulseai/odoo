@@ -79,5 +79,5 @@ Every production connector must declare exactly one connector mode.
 The mode cannot be left unset or deferred — it determines which contract sections are mandatory.
 
 ## Companion documents
-- Standard: `docs/architecture/CONNECTOR_ONBOARDING_STANDARD.md`
+- Standard: `STANDARD.md`
 - Template: `templates/spec-kit-connector-onboarding/`

@@ -82,7 +82,7 @@ A connector is the governed onboarding path for a source feeding that workload i
 
 ## Supported modes (detailed)
 
-See `docs/architecture/CONNECTOR_ONBOARDING_MODES.md` for full mode definitions and decision rules.
+See `MODES.md` for full mode definitions and decision rules.
 
 ### 1. `platform_managed.runtime_bound`
 Use when the workload/platform owns the extraction runtime.

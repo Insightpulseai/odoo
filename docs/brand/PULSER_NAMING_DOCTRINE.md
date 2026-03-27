@@ -615,7 +615,7 @@ Note: Internal technical identifiers (Odoo modules, Azure resources, Docker imag
 | Update landing page hero/nav references | `web/ipai-landing/src/App.tsx` | **P0** |
 | Update `assistant_surfaces.yaml` naming rules | `ssot/agents/assistant_surfaces.yaml` | **P0** |
 | Update `MARKETING_ASSISTANT_DOCTRINE.md` | `docs/architecture/MARKETING_ASSISTANT_DOCTRINE.md` | **P0** |
-| Update `ASSISTANT_SURFACES.md` | `docs/architecture/ASSISTANT_SURFACES.md` | **P0** |
+| Update `ASSISTANT_SURFACES.md` | `docs/architecture/agents/ASSISTANT_SURFACES.md` | **P0** |
 | Add trademark disclaimer to website footer | `web/ipai-landing/src/App.tsx` | **P0** |
 
 ### Phase 2: Documentation (Week 2) — Architecture & SSOT

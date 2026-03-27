@@ -7,7 +7,7 @@
 > Ref: https://learn.microsoft.com/en-us/azure/architecture/solution-ideas/articles/ingest-etl-stream-with-adb
 > Cross-references:
 >   - `docs/architecture/ADLS_ETL_REVERSE_ETL_ARCHITECTURE.md` (integration surfaces)
->   - `infra/ssot/azure/PLATFORM_TARGET_STATE.md` §Analytics (serving surfaces)
+>   - `../target-state/PLATFORM.md` §Analytics (serving surfaces)
 >   - `ssot/governance/azdo-execution-hierarchy.yaml` (OBJ-004 Epic)
 >   - `docs/contracts/DATA_AUTHORITY_CONTRACT.md` (authority model)
 

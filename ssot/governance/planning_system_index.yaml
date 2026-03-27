@@ -254,7 +254,7 @@ related_artifacts:
     layer: governance
     status: on_main
 
-  - file: docs/architecture/identity_and_secrets.md
+  - file: docs/architecture/identity/IDENTITY_AND_SECRETS.md
     purpose: "Identity/RBAC/secrets: Entra ID posture, Key Vault, secret rotation, RBAC rules"
     layer: governance
     status: on_main

@@ -11,7 +11,7 @@
 > - Azure Boards = execution coordination
 >
 > **Cross-references**:
-> - `docs/architecture/enterprise_data_platform.md` § 8 (accelerator summary)
+> - `../data/ENTERPRISE_DATA_PLATFORM.md` § 8 (accelerator summary)
 > - `ssot/governance/azdo-execution-hierarchy.yaml` (OBJ-004, OBJ-007)
 
 ---
@@ -94,7 +94,7 @@ Before adopting any accelerator into the platform:
 - [ ] Evaluate notebook code against current Databricks workspace version
 - [ ] Map input data requirements to existing bronze/silver tables
 - [ ] Confirm no Enterprise-only Databricks features are required (or document the dependency)
-- [ ] Estimate DBU cost impact using cluster policies from § 5 of enterprise_data_platform.md
+- [ ] Estimate DBU cost impact using cluster policies from § 5 of data/ENTERPRISE_DATA_PLATFORM.md
 - [ ] Create Azure Boards Task under the mapped Issue with acceptance criteria
 - [ ] Document any custom modifications in `spec/data-intelligence-pipeline/`
 - [ ] Output artifacts land in gold layer, served via Unity Catalog + Databricks SQL
@@ -107,8 +107,8 @@ These accelerators are starting points. They do not replace:
 
 | What | Canonical Source |
 |------|-----------------|
-| Plane boundaries (Odoo/Databricks/Foundry) | `docs/architecture/UNIFIED_TARGET_ARCHITECTURE.md` |
-| Azure landing zone / identity / network | `docs/architecture/identity_and_secrets.md`, infra/ |
+| Plane boundaries (Odoo/Databricks/Foundry) | `../target-state/UNIFIED.md` |
+| Azure landing zone / identity / network | `../identity/IDENTITY_AND_SECRETS.md`, infra/ |
 | ERP integration contracts | `docs/contracts/DATA_AUTHORITY_CONTRACT.md` |
 | SSOT and runtime authority | `ssot/governance/operating-model.yaml` |
 | Delivery / DevSecOps / reliability | `docs/governance/devops_operating_model.md` |
