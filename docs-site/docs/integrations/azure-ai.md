@@ -1,6 +1,6 @@
-# Azure AI Foundry
+# Microsoft Foundry
 
-Azure AI Foundry provides **compute-only** ML capabilities for InsightPulse AI. It does not own data. All training data comes from ADLS, and all scoring results write back to Supabase or Odoo through classified reverse ETL flows.
+Microsoft Foundry (formerly Azure AI Foundry) provides **compute-only** ML capabilities for InsightPulse AI. It does not own data. All training data comes from ADLS, and all scoring results write back to Odoo through classified reverse ETL flows.
 
 ## Role boundaries
 
