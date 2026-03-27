@@ -15,20 +15,35 @@
 - [ ] define secret authority
 - [ ] define secret references
 - [ ] define rotation owner
+- [ ] define first-party connector execution identity
+- [ ] define secret bootstrap and runtime injection
 
 ## Phase 2b — Partner contract (partner_managed)
 - [ ] document partner name and version
 - [ ] obtain precreated connection ID
 - [ ] document partner trust boundary
+- [ ] document partner-owned identity boundary
+- [ ] document workload-owned trust binding
+- [ ] define escalation/ownership split
 - [ ] document ingestion SLA (freshness, availability, retry)
 - [ ] document handoff schema (landing location, format, schema contract)
 - [ ] document failure escalation path (partner contact, escalation path, platform fallback)
 
-## Phase 3 — Runtime and network (platform_managed only; N/A for partner_managed)
+## Phase 3 — Runtime and network
+
+### Platform-managed
 - [ ] define runtime type
 - [ ] define network placement
 - [ ] define required endpoints
 - [ ] define runtime dependencies
+- [ ] define direct source connectivity requirements
+- [ ] define dependency installation requirements
+
+### Partner-managed
+- [ ] define external ingestion runtime owner
+- [ ] define landing/handoff boundary into workload item
+- [ ] define expected delivered schema/object contract
+- [ ] define freshness/update contract
 
 ## Phase 4 — Onboarding flow
 - [ ] define preflight checks

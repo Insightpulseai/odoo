@@ -17,6 +17,7 @@ Current source onboarding fails when:
 - make execution identity and secret authority explicit
 - make runtime topology and dependencies explicit
 - make post-create validation deterministic
+- support both platform-managed and partner-managed ingestion patterns
 
 ### Secondary goals
 - reduce onboarding drift across environments
@@ -84,6 +85,24 @@ The connector shall define preflight, deployment, and post-create validation ste
 ### FR-7 Failure handling
 The connector shall map failures into the approved failure taxonomy.
 Partner-managed connectors must additionally define a partner escalation path.
+
+### FR-8 Platform-managed connector contract (platform_managed: required | partner_managed: N/A)
+If `platform_managed`, the connector shall define:
+- required providers/services
+- execution identity
+- secret authority
+- runtime dependencies
+- network placement
+- source connectivity validation
+
+### FR-9 Partner-managed connector contract (partner_managed: required | platform_managed: N/A)
+If `partner_managed`, the connector shall define:
+- partner name
+- connection ID
+- trust boundary
+- landing/handoff contract
+- freshness/SLA expectations
+- partner escalation path
 
 ## 8. Success metrics
 - 100% of production connectors declare ingestion ownership model

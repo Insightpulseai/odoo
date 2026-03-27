@@ -66,6 +66,26 @@ The connector must define:
 
 No connector may be treated as deployable unless all prerequisites are explicit.
 
+### 4.1 Platform-managed minimums
+If `ingestion_ownership_model = platform_managed`, the spec must explicitly define:
+- required providers/services
+- required roles/permissions
+- execution identity
+- secret authority
+- runtime topology
+- network placement
+- runtime dependencies
+
+### 4.2 Partner-managed minimums
+If `ingestion_ownership_model = partner_managed`, the spec must explicitly define:
+- mirroring/ingestion partner name
+- connection ID / partner binding identifier
+- partner trust boundary
+- ingestion SLA / freshness contract
+- handoff schema / landing contract
+- partner escalation path
+- ownership of extraction runtime outside the workload item
+
 ## 5. Identity and secret invariants
 - Execution identity type: `<managed identity | service principal | other>`
 - Identity owner: `<team/role>`
@@ -74,6 +94,10 @@ No connector may be treated as deployable unless all prerequisites are explicit.
 
 Connector credentials must never be treated as repo state.
 
+### 5.1 Conditional identity rule
+- `platform_managed`: execution identity is mandatory
+- `partner_managed`: connector-bound execution identity may be external to the workload item, but the trust boundary and partner connection contract are mandatory
+
 ## 6. Runtime topology invariants
 The connector must declare:
 - where it runs
@@ -81,6 +105,10 @@ The connector must declare:
 - what target endpoints it needs
 - what runtime dependencies it needs
 - what isolation boundary it assumes
+
+### 6.1 Conditional runtime rule
+- `platform_managed`: runtime topology must include connector runtime placement and source reachability assumptions
+- `partner_managed`: runtime topology must define the external ingestion boundary and landing/handoff boundary into the workload item
 
 ## 7. Validation invariants
 Minimum validations:
