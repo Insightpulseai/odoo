@@ -1,12 +1,16 @@
 # Exclude everything by default
-*
+**
 
 # Include only what Dockerfile needs
+!addons/
 !addons/oca/
+!addons/oca/**
 !addons/ipai/
 !addons/ipai/**
+!config/
 !config/prod/
 !config/prod/**
+!docker/
 !docker/requirements/
 !docker/requirements/**
 
