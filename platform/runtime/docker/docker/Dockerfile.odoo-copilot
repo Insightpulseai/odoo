@@ -84,6 +84,8 @@ RUN pip3 install --no-cache-dir --break-system-packages paho-mqtt
 # IPAI custom modules — explicit COPY per module (22 modules with manifests)
 # Regenerate: find addons/ipai/ -maxdepth 2 -name "__manifest__.py" | sort
 # ---------------------------------------------------------------------------
+# DO NOT add modules that don't exist in addons/ipai/
+# Verify with: find addons/ipai/ -maxdepth 2 -name "__manifest__.py" | sort
 COPY addons/ipai/ipai_aca_proxy /mnt/extra-addons/ipai/ipai_aca_proxy/
 COPY addons/ipai/ipai_agent /mnt/extra-addons/ipai/ipai_agent/
 COPY addons/ipai/ipai_ai_channel_actions /mnt/extra-addons/ipai/ipai_ai_channel_actions/
