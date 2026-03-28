@@ -35,34 +35,13 @@ body.bg-100 > div > .container {
 }
 
 .ipai-brand {
-  display: flex;
-  align-items: center;
-  gap: 10px;
   margin-bottom: 24px;
 }
 
-.ipai-brand-mark {
-  width: 34px;
-  height: 34px;
-  border-radius: 8px;
-  background: rgba(255, 255, 255, 0.14);
-  border: 1px solid rgba(255, 255, 255, 0.22);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  span {
-    font-size: 11px;
-    font-weight: 700;
-    letter-spacing: 0.04em;
-    color: #fff;
-  }
-}
-
-.ipai-brand-name {
-  font-size: 16px;
-  font-weight: 600;
-  color: rgba(255, 255, 255, 0.92);
+.ipai-brand-logo {
+  max-height: 48px;
+  width: auto;
+  filter: brightness(1.1);
 }
 
 .ipai-hero {
@@ -271,7 +250,25 @@ body.bg-100 > div > .container {
 // ── Logo area ────────────────────────────────────────────────
 .ipai-login-card .text-center.pb-3 {
   border-bottom-color: #e2e6ed !important;
-  img { border-radius: 8px; }
+  img { border-radius: 8px; max-height: 60px; }
+}
+
+// ── Remove violet/purple shading from Odoo default ──────────
+.ipai-login-card,
+.ipai-login-card .card-body,
+.ipai-login-card h5,
+.ipai-login-card .card-title,
+.ipai-login-card p {
+  color: #2d3340 !important;
+}
+
+// Ensure the login card background is white, not violet
+.o_database_list.ipai-login-card {
+  background-color: #f8f9fb !important;
+}
+
+.o_database_list.ipai-login-card .card-body {
+  background: #ffffff !important;
 }
 
 // ── Responsive ───────────────────────────────────────────────

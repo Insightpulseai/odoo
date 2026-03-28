@@ -16,8 +16,9 @@
         <xpath expr="//div[hasclass('o_database_list')]" position="before">
             <div class="ipai-login-left d-none d-lg-flex">
                 <div class="ipai-brand">
-                    <div class="ipai-brand-mark"><span>IP</span></div>
-                    <span class="ipai-brand-name">InsightPulse</span>
+                    <img src="/ipai_web_branding/static/src/img/logo_white.png"
+                         alt="InsightPulse"
+                         class="ipai-brand-logo"/>
                 </div>
                 <div class="ipai-hero">
                     <h1 class="ipai-hero-title">Welcome to your smarter financial workspace</h1>
