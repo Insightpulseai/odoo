@@ -81,9 +81,29 @@ RUN rm -f /tmp/oca_sparse_clone.sh \
 RUN pip3 install --no-cache-dir --break-system-packages paho-mqtt
 
 # ---------------------------------------------------------------------------
-# IPAI custom modules — copy ALL modules at once
+# IPAI custom modules — explicit COPY per module (21 modules with manifests)
 # ---------------------------------------------------------------------------
-COPY addons/ipai/ /mnt/extra-addons/ipai/
+COPY addons/ipai/ipai_aca_proxy /mnt/extra-addons/ipai/ipai_aca_proxy/
+COPY addons/ipai/ipai_agent /mnt/extra-addons/ipai/ipai_agent/
+COPY addons/ipai/ipai_ai_channel_actions /mnt/extra-addons/ipai/ipai_ai_channel_actions/
+COPY addons/ipai/ipai_ai_copilot /mnt/extra-addons/ipai/ipai_ai_copilot/
+COPY addons/ipai/ipai_ai_platform /mnt/extra-addons/ipai/ipai_ai_platform/
+COPY addons/ipai/ipai_ai_widget /mnt/extra-addons/ipai/ipai_ai_widget/
+COPY addons/ipai/ipai_ask_ai_azure /mnt/extra-addons/ipai/ipai_ask_ai_azure/
+COPY addons/ipai/ipai_bir_tax_compliance /mnt/extra-addons/ipai/ipai_bir_tax_compliance/
+COPY addons/ipai/ipai_copilot_actions /mnt/extra-addons/ipai/ipai_copilot_actions/
+COPY addons/ipai/ipai_document_intelligence /mnt/extra-addons/ipai/ipai_document_intelligence/
+COPY addons/ipai/ipai_enterprise_bridge /mnt/extra-addons/ipai/ipai_enterprise_bridge/
+COPY addons/ipai/ipai_finance_close_seed /mnt/extra-addons/ipai/ipai_finance_close_seed/
+COPY addons/ipai/ipai_finance_ppm /mnt/extra-addons/ipai/ipai_finance_ppm/
+COPY addons/ipai/ipai_hr_expense_liquidation /mnt/extra-addons/ipai/ipai_hr_expense_liquidation/
+COPY addons/ipai/ipai_llm_supabase_bridge /mnt/extra-addons/ipai/ipai_llm_supabase_bridge/
+COPY addons/ipai/ipai_mail_plugin_bridge /mnt/extra-addons/ipai/ipai_mail_plugin_bridge/
+COPY addons/ipai/ipai_odoo_copilot /mnt/extra-addons/ipai/ipai_odoo_copilot/
+COPY addons/ipai/ipai_project_seed /mnt/extra-addons/ipai/ipai_project_seed/
+COPY addons/ipai/ipai_security_frontdoor /mnt/extra-addons/ipai/ipai_security_frontdoor/
+COPY addons/ipai/ipai_web_branding /mnt/extra-addons/ipai/ipai_web_branding/
+COPY addons/ipai/ipai_workspace_core /mnt/extra-addons/ipai/ipai_workspace_core/
 
 # ---------------------------------------------------------------------------
 # Configure addons_path: OCA + IPAI + core
