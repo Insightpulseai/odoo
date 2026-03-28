@@ -19,6 +19,7 @@
         'web.assets_backend': [
             'ipai_odoo_copilot/static/src/js/copilot_systray.js',
             'ipai_odoo_copilot/static/src/xml/copilot_systray.xml',
+            'ipai_odoo_copilot/static/src/scss/copilot.scss',
         ],
     },
     'installable': True,

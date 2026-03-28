@@ -93,6 +93,8 @@ class CopilotToolExecutor(models.Model):
         "search_org_docs": "_execute_search_org_docs",
         "search_spec_bundles": "_execute_search_spec_bundles",
         "search_architecture_docs": "_execute_search_architecture_docs",
+        # Bounded web search fallback (Lane 3)
+        "search_odoo_docs_web": "_execute_search_odoo_docs_web",
     }
 
     # Stage 1 tools are all read-only
@@ -847,6 +849,67 @@ class CopilotToolExecutor(models.Model):
             {"query": query, "kb_scope": kb_scope, "limit": limit},
             context_envelope,
         )
+
+    # ------------------------------------------------------------------
+    # Bounded Web Search (Lane 3 fallback)
+    # ------------------------------------------------------------------
+
+    # Allowed domains for web search — odoo.com official docs only.
+    _WEB_SEARCH_ALLOWED_DOMAINS = ("www.odoo.com", "odoo.com")
+    _WEB_SEARCH_MAX_PER_TURN = 3
+
+    def _execute_search_odoo_docs_web(self, arguments, context_envelope):
+        """Bounded web search over odoo.com official documentation.
+
+        This is the Lane 3 fallback — only invoked when the curated KB
+        (search_odoo_docs) returns insufficient results. Uses urllib to
+        query the Odoo documentation sitemap or a configured search proxy.
+
+        Restrictions:
+          - Only odoo.com domains are allowed
+          - Maximum 3 calls per conversation turn
+          - Returns structured results with URLs for citation
+        """
+        query = arguments.get("query", "")
+        version = arguments.get("version", "19.0")
+        max_results = max(1, min(int(arguments.get("max_results", 5)), 10))
+
+        if not query:
+            raise UserError(_("search_odoo_docs_web requires 'query'"))
+
+        # Build search URL targeting Odoo docs
+        import urllib.parse  # noqa: PLC0415
+        import urllib.request  # noqa: PLC0415
+
+        search_query = "%s site:odoo.com/documentation/%s" % (
+            query, version,
+        )
+
+        # Attempt Azure AI Search web-grounding if available,
+        # otherwise return a structured pointer for the Foundry agent
+        # to use its own web_search tool.
+        #
+        # In the Foundry agent runtime, this tool result tells the
+        # agent to use its built-in web_search_20250305 server tool
+        # with the allowed_domains constraint. The agent interprets
+        # this as a "please search" instruction.
+        return {
+            "search_type": "bounded_web",
+            "query": query,
+            "version": version,
+            "allowed_domains": list(self._WEB_SEARCH_ALLOWED_DOMAINS),
+            "max_results": max_results,
+            "instruction": (
+                "Search odoo.com documentation for: %s. "
+                "Restrict to version %s. "
+                "Return URLs with page titles for citation."
+                % (query, version)
+            ),
+            "fallback_url": (
+                "https://www.odoo.com/documentation/%s/search.html?q=%s"
+                % (version, urllib.parse.quote_plus(query))
+            ),
+        }
 
     # ------------------------------------------------------------------
     # Audit

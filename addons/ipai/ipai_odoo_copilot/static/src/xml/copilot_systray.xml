@@ -8,14 +8,9 @@
                     t-on-click="togglePanel"
                     title="Pulser"
                     t-att-class="{'o_ipai_copilot_btn_active': state.isOpen}">
-                <svg class="o_ipai_copilot_icon" width="20" height="20" viewBox="0 0 24 24"
-                     fill="none" stroke="currentColor" stroke-width="2"
-                     stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M12 2a4 4 0 0 1 4 4v1h1a3 3 0 0 1 3 3v6a3 3 0 0 1-3 3H7a3 3 0 0 1-3-3v-6a3 3 0 0 1 3-3h1V6a4 4 0 0 1 4-4z"/>
-                    <circle cx="9" cy="13" r="1.5"/>
-                    <circle cx="15" cy="13" r="1.5"/>
-                    <path d="M9 17h6"/>
-                </svg>
+                <img class="o_ipai_copilot_icon_img"
+                     src="/ipai_odoo_copilot/static/src/img/pulser_icon.png"
+                     alt="Pulser"/>
             </button>
 
             <!-- Chat Panel (right side drawer) -->
@@ -25,14 +20,9 @@
                 <!-- Header -->
                 <div class="o_ipai_copilot_header d-flex align-items-center justify-content-between px-3 py-2 border-bottom">
                     <div class="d-flex align-items-center gap-2">
-                        <svg width="16" height="16" viewBox="0 0 24 24"
-                             fill="none" stroke="currentColor" stroke-width="2"
-                             stroke-linecap="round" stroke-linejoin="round"
-                             class="text-primary">
-                            <path d="M12 2a4 4 0 0 1 4 4v1h1a3 3 0 0 1 3 3v6a3 3 0 0 1-3 3H7a3 3 0 0 1-3-3v-6a3 3 0 0 1 3-3h1V6a4 4 0 0 1 4-4z"/>
-                            <circle cx="9" cy="13" r="1.5"/>
-                            <circle cx="15" cy="13" r="1.5"/>
-                        </svg>
+                        <img class="o_ipai_copilot_header_icon"
+                             src="/ipai_odoo_copilot/static/src/img/pulser_icon.png"
+                             alt="Pulser"/>
                         <strong>Pulser</strong>
                     </div>
                     <div class="d-flex gap-1">

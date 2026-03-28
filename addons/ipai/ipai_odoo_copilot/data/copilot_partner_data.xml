@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo noupdate="1">
-    <!-- IPAI Copilot partner — the "bot" identity for AI responses.
+    <!-- Pulser partner — the "bot" identity for AI responses.
          Separate from OdooBot (base.partner_root) to avoid conflicts.
          Email is informational only (not a real mailbox). -->
     <record id="partner_copilot" model="res.partner">
-        <field name="name">IPAI Copilot</field>
-        <field name="email">copilot@insightpulseai.com</field>
+        <field name="name">Pulser</field>
+        <field name="email">pulser@insightpulseai.com</field>
         <field name="active" eval="True"/>
         <field name="is_company" eval="False"/>
         <field name="type">contact</field>
