@@ -1,0 +1,383 @@
+schema_version: "1.0"
+namespace: odoo.runtime_contract
+last_reviewed: "2026-03-28"
+description: >
+  Machine-readable runtime contract for the Odoo CE 19 container. Defines
+  source roots, data directories, log paths, addons_path resolution, identity
+  configuration, and Foundry auth. Consumable by CI validators and agents.
+
+# ---------------------------------------------------------------------------
+# Source roots — directories that contain Odoo code or addons (repo-relative)
+# ---------------------------------------------------------------------------
+source_roots:
+  - addons/ipai
+  - addons/oca
+
+# ---------------------------------------------------------------------------
+# Addon paths — top-level ordered list (canonical, used by tests)
+# ---------------------------------------------------------------------------
+addon_paths:
+  container:
+    - /opt/odoo/addons
+    - /workspaces/odoo/addons/ipai
+    - /workspaces/odoo/addons/oca
+  local:
+    - vendor/odoo/addons
+    - addons/ipai
+    - addons/oca
+
+# ---------------------------------------------------------------------------
+# Config paths — top-level (canonical, used by tests)
+# ---------------------------------------------------------------------------
+config_path:
+  container: /etc/odoo/odoo.conf
+  local: config/dev/odoo.conf
+
+data_dir:
+  container: /var/lib/odoo
+  local: /tmp/odoo-data
+
+log_path:
+  container: /var/log/odoo/odoo-server.log
+  local: /tmp/odoo-data/odoo-server.log
+
+log_level: info
+
+# ---------------------------------------------------------------------------
+# Health endpoint
+# ---------------------------------------------------------------------------
+health_endpoint: /web/health
+
+# ---------------------------------------------------------------------------
+# Container image
+# ---------------------------------------------------------------------------
+container_image: acripaiodoo.azurecr.io/ipai-odoo:latest
+container_registry: acripaiodoo.azurecr.io
+
+environments:
+  production:
+    platform: azure_container_apps
+    aca_environment: ipai-odoo-dev-env
+    aca_domain: salmontree-b7d27e19.southeastasia.azurecontainerapps.io
+    base_url: https://erp.insightpulseai.com
+    containers:
+      web: ipai-odoo-dev-web
+      worker: ipai-odoo-dev-worker
+      cron: ipai-odoo-dev-cron
+      copilot_gateway: ipai-copilot-gateway
+
+    filesystem:
+      odoo_root: /opt/odoo
+      odoo_bin: /opt/odoo/odoo-bin
+      core_addons: /opt/odoo/addons
+      workspace_root: /workspaces/odoo
+      ipai_addons: /workspaces/odoo/addons/ipai
+      oca_addons: /workspaces/odoo/addons/oca
+      local_addons: /workspaces/odoo/addons/local
+      config_file: /etc/odoo/odoo.conf
+      data_dir: /var/lib/odoo
+      filestore: /var/lib/odoo/filestore
+      sessions: /var/lib/odoo/sessions
+      log_dir: /var/log/odoo
+      log_file: /var/log/odoo/odoo-server.log
+
+    addons_path:
+      - /opt/odoo/addons
+      - /workspaces/odoo/addons/oca
+      - /workspaces/odoo/addons/ipai
+    addons_path_notes:
+      - "Order matters: core first, OCA second, IPAI last."
+      - "First match wins for module name collisions."
+      - "addons/local not in default path; add explicitly when needed."
+
+    database:
+      host_env: DB_HOST
+      port: 5432
+      user_env: DB_USER
+      password_env: DB_PASSWORD
+      name: odoo
+      server: pg-ipai-odoo
+      resource_group: rg-ipai-dev-odoo-data
+      list_db: false
+
+    logging:
+      target: stdout
+      level: info
+      copilot_logger: ipai.copilot
+
+  local_dev:
+    platform: native_mac
+    filesystem:
+      odoo_root: vendor/odoo
+      odoo_bin: vendor/odoo/odoo-bin
+      core_addons: vendor/odoo/addons
+      workspace_root: "."
+      ipai_addons: addons/ipai
+      oca_addons: addons/oca
+      data_dir: /tmp/odoo-data
+      config_file: null  # CLI args used instead
+
+    addons_path:
+      - vendor/odoo/addons
+      - addons/oca
+      - addons/ipai
+
+    database:
+      host: localhost
+      port: 5432
+      user: tbwa
+      password: "False"
+      name: odoo_dev
+      list_db: false
+
+    logging:
+      target: stdout
+      level: debug
+      copilot_logger: ipai.copilot
+
+  devcontainer:
+    platform: docker
+    filesystem:
+      odoo_root: /opt/odoo
+      odoo_bin: /opt/odoo/odoo-bin
+      core_addons: /opt/odoo/addons
+      workspace_root: /workspaces/odoo
+      ipai_addons: /workspaces/odoo/addons/ipai
+      oca_addons: /workspaces/odoo/addons/oca
+      config_file: /etc/odoo/odoo.conf
+      data_dir: /var/lib/odoo
+      log_dir: /var/log/odoo
+
+    addons_path:
+      - /opt/odoo/addons
+      - /workspaces/odoo/addons/oca
+      - /workspaces/odoo/addons/ipai
+
+    database:
+      host: db
+      port: 5432
+      user_env: POSTGRES_USER
+      password_env: POSTGRES_PASSWORD
+      name: odoo_dev
+      list_db: false
+
+identity:
+  provider: microsoft_entra_id
+  entra_tenant: 402de71a-87ec-4302-a609-fb76098d1da7
+  entra_app_id: "07bd9669"
+  domain: insightpulseai.com
+  key_vault: kv-ipai-dev
+  secrets_source: azure_key_vault
+  auth_modes:
+    web: entra_oidc
+    worker: managed_identity
+    cron: managed_identity
+    copilot_gateway: managed_identity
+  token_audience: "api://ipai-odoo"
+  # No hardcoded secrets. All runtime credentials resolved via:
+  #   managed identity -> Key Vault -> env vars
+  workforce_auth:
+    protocol: oidc
+    providers:
+      - name: Microsoft Entra ID
+        type: entra
+        authorize_endpoint: https://login.microsoftonline.com/402de71a-87ec-4302-a609-fb76098d1da7/oauth2/v2.0/authorize
+        token_endpoint: https://login.microsoftonline.com/402de71a-87ec-4302-a609-fb76098d1da7/oauth2/v2.0/token
+        scopes: "openid profile email"
+        redirect_uri: https://erp.insightpulseai.com/auth_oauth/signin
+      - name: Google OAuth
+        type: google
+        authorize_endpoint: https://accounts.google.com/o/oauth2/v2/auth
+        scopes: "openid email profile"
+        redirect_uri: https://erp.insightpulseai.com/auth_oauth/signin
+        default_group: base.group_portal
+
+  workload_auth:
+    type: managed_identity
+    token_scope: https://cognitiveservices.azure.com/.default
+    principals:
+      - container: ipai-odoo-dev-web
+        identity_type: system_assigned
+        roles:
+          - role: Cognitive Services OpenAI User
+            scope: data-intel-ph-resource
+          - role: Key Vault Secrets User
+            scope: kv-ipai-dev
+      - container: ipai-copilot-gateway
+        identity_type: system_assigned
+        roles:
+          - role: Cognitive Services OpenAI User
+            scope: data-intel-ph-resource
+
+foundry:
+  project: data-intel-ph
+  resource: data-intel-ph-resource
+  model_deployment: gpt-4.1
+  api_mode: responses
+  timeout_seconds: 60
+  token_scope: https://cognitiveservices.azure.com/.default
+  auth_preference:
+    - managed_identity
+    - api_key  # fallback for local dev only
+
+copilot:
+  modules:
+    - ipai_odoo_copilot
+    - ipai_copilot_actions
+  config_parameters:
+    enabled: ipai_copilot.enabled
+    allowed_groups: ipai_copilot.allowed_groups
+    beta_groups: ipai_copilot.beta_groups
+  health_endpoint: /ipai/copilot/health
+  audit_model: ipai.copilot.audit.log
+  logger: ipai.copilot
+
+key_vault:
+  name: kv-ipai-dev
+  resource_group: rg-ipai-dev-platform
+  secrets:
+    - name: azure-openai-api-key
+      consumer: odoo-web
+      purpose: Foundry API key (dev fallback)
+    - name: odoo-db-password
+      consumer: odoo-web-worker-cron
+      purpose: PostgreSQL auth
+    - name: zoho-smtp-user
+      consumer: odoo-web
+      purpose: Outbound email
+    - name: zoho-smtp-password
+      consumer: odoo-web
+      purpose: Outbound email
+
+# ---------------------------------------------------------------------------
+# Interop — external service integration points
+# ---------------------------------------------------------------------------
+interop:
+  foundry_endpoint: "https://aifoundry-ipai-dev.eastus2.api.azureml.ms"
+  m365_plugin_id: "placeholder-pending-registration"
+  render_classes:
+    - host-safe       # renders in Odoo web client
+    - degraded        # renders with reduced features (e.g., mobile, iframe)
+    - native-only     # requires native Odoo JS client (no iframe)
+
+# ---------------------------------------------------------------------------
+# Observables — endpoints and commands for runtime verification
+# ---------------------------------------------------------------------------
+observables:
+  health_check:
+    method: GET
+    path: /web/health
+    expected_status: 200
+  addon_discovery:
+    method: GET
+    path: /web/session/modules
+    description: "Returns list of installed modules (requires auth)"
+  config_dump:
+    command: "odoo-bin --config /etc/odoo/odoo.conf --stop-after-init 2>&1 | head -50"
+    description: "Dump effective configuration at startup"
+  startup_log:
+    path: /var/log/odoo/odoo-server.log
+    description: "Odoo server startup log for verification"
+
+data_intelligence:
+  architecture_model: medallion
+  benchmark: "Databricks + Fabric (techcommunity.microsoft.com/blog/azurearchitectureblog/data-intelligence-end-to-end)"
+  last_reviewed: "2026-03-28"
+
+  sources:
+    - name: odoo_pg
+      type: postgresql
+      server: pg-ipai-odoo
+      database: odoo
+      ingestion: fabric_mirroring
+      cdc: true
+      notes: "Operational system of record. Fabric Mirroring for CDC to OneLake."
+    - name: adls_raw
+      type: azure_data_lake
+      purpose: raw files, documents, external feeds
+      ingestion: databricks_autoloader
+    - name: external_feeds
+      type: api
+      purpose: third-party data (exchange rates, tax tables)
+      ingestion: databricks_dlt
+
+  layers:
+    bronze:
+      purpose: raw_retention_auditability
+      format: delta
+      schema_mode: schema_on_read
+      retention: append_only
+      governance: unity_catalog
+      notes: >
+        Raw data preserved as-is from source systems. Source fidelity maintained.
+        Used for audit trails and reprocessing. Never served directly to consumers.
+    silver:
+      purpose: cleansed_joined_curated
+      format: delta
+      schema_mode: schema_on_write
+      governance: unity_catalog
+      transformations:
+        - deduplication
+        - type_casting
+        - business_key_resolution
+        - join_enrichment
+        - null_handling
+      notes: >
+        Cleansed and normalized data. Business keys resolved. Ready for
+        domain-specific aggregation but not yet consumer-facing.
+    gold:
+      purpose: business_ready_semantic_serving
+      format: delta
+      schema_mode: schema_on_write
+      governance: unity_catalog
+      serving_targets:
+        - power_bi_semantic_model
+        - databricks_sql_endpoint
+        - copilot_grounding_index
+        - fabric_onelake
+      notes: >
+        Business-ready dimensional and aggregated data. SCD handling applied.
+        This is the only layer served to BI, Copilot, and external consumers.
+
+  governance:
+    primary_catalog: unity_catalog
+    workspace: dbw-ipai-dev
+    sql_warehouse: e7d89eabce4c330c
+    metadata_publication: microsoft_purview
+    data_classification: true
+    lineage_tracking: true
+    row_column_security: true
+
+  serving:
+    semantic_models: required
+    copilot_grounding: gold_preferred
+    direct_bronze_access: false
+    direct_silver_access: false
+    fallback_policy: >
+      When a requested domain has no gold table, copilot falls back to
+      operational ORM query and clearly indicates data is not from the
+      governed analytical source. Never silently serve bronze/silver as gold.
+
+  interoperability:
+    storage_format: delta_lake
+    uniform_support:
+      - delta
+      - iceberg
+    notes: >
+      Storage and semantic layer stays interoperable via Delta UniForm.
+      Copilot grounding does not assume one locked-in downstream consumer.
+
+  platform_services:
+    identity: entra_id
+    monitoring: azure_monitor
+    secrets: key_vault
+    cicd:
+      - azure_devops
+      - github
+    cloud_security: defender_for_cloud
+    cost_management: azure_cost_management
+
+  key_principle: >
+    Copilot, BI, and downstream AI consume a governed semantic/gold layer.
+    They never ground directly on raw operational exhaust. Copilot does not
+    redefine business truth — it consumes governed semantic products.
