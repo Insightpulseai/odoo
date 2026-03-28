@@ -3,12 +3,17 @@
 {
     "name": "InsightPulseAI Login Branding",
     "summary": "Dark/cyan login page matching insightpulseai.com aesthetic",
-    "version": "19.0.2.0.0",
+    "version": "19.0.3.0.0",
     "category": "Website",
     "author": "InsightPulseAI",
     "website": "https://insightpulseai.com",
     "license": "LGPL-3",
     "depends": ["web"],
+    "assets": {
+        "web.assets_frontend": [
+            "ipai_web_branding/static/src/scss/login.scss",
+        ],
+    },
     "data": [
         "views/login_templates.xml",
     ],
