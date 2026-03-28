@@ -1,0 +1,15 @@
+{"input": "Show me the top 5 overdue invoices", "expected_tool": "odoo_list_overdue_invoices", "expected_contains": ["invoice", "overdue", "amount"], "category": "finance", "type": "informational"}
+{"input": "Search for customer TBWA", "expected_tool": "odoo_search_partners", "expected_contains": ["TBWA", "partner"], "category": "contacts", "type": "informational"}
+{"input": "What is the status of sale order SO-001?", "expected_tool": "odoo_get_sale_order", "expected_contains": ["SO-001", "state"], "category": "sales", "type": "informational"}
+{"input": "List all open CRM opportunities worth more than 100k", "expected_tool": "odoo_list_opportunities", "expected_contains": ["opportunity", "revenue"], "category": "crm", "type": "informational"}
+{"input": "Show project tasks for the Makati project that are overdue", "expected_tool": "odoo_list_project_tasks", "expected_contains": ["task", "deadline"], "category": "projects", "type": "informational"}
+{"input": "Check stock availability for product SKU-2456", "expected_tool": "odoo_get_product_availability", "expected_contains": ["qty_available", "product"], "category": "inventory", "type": "informational"}
+{"input": "Create a follow-up activity for lead 42 about the proposal", "expected_tool": "odoo_create_activity", "expected_contains": ["activity", "created"], "category": "collaboration", "type": "transactional"}
+{"input": "Post a note on partner 16 saying we discussed the contract terms", "expected_tool": "odoo_post_note", "expected_contains": ["note", "posted"], "category": "collaboration", "type": "transactional"}
+{"input": "List all CMS pages on the website", "expected_tool": "odoo_cms_list_pages", "expected_contains": ["page", "url"], "category": "cms", "type": "informational"}
+{"input": "Check if the Odoo server is healthy", "expected_tool": "odoo_health_check", "expected_contains": ["reachable", "ok"], "category": "admin", "type": "informational"}
+{"input": "Get the SEO metadata for CMS page 5", "expected_tool": "odoo_cms_get_page_seo", "expected_contains": ["meta", "title"], "category": "cms", "type": "informational"}
+{"input": "Show me invoice details for INV/2026/0042", "expected_tool": "odoo_get_invoice", "expected_contains": ["amount", "partner"], "category": "finance", "type": "informational"}
+{"input": "Find the contact details for Rey Meran", "expected_tool": "odoo_search_partners", "expected_contains": ["Rey", "email"], "category": "contacts", "type": "informational"}
+{"input": "What projects are currently active?", "expected_tool": "odoo_search_projects", "expected_contains": ["project", "name"], "category": "projects", "type": "informational"}
+{"input": "Publish CMS page 12", "expected_tool": "odoo_cms_publish_page", "expected_contains": ["published", "page"], "category": "cms", "type": "transactional"}
