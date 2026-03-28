@@ -15,9 +15,11 @@
 
 ## Current State
 
-**Internal Prototype** — allowed.
+**Advisory Release** — promoted 2026-03-15.
 
-All other levels blocked until evaluation evidence exists.
+Evaluation evidence: `agents/evals/odoo-copilot/results/eval-20260315-full-final.json` (30/30 pass).
+
+Grounded Advisory and higher levels blocked until retrieval, telemetry, and Entra roles are active.
 
 ## Promotion Rules
 
@@ -46,3 +48,5 @@ Until GA, the copilot defaults to `read_only` mode:
 | Date | From | To | Evidence |
 |------|------|----|----------|
 | 2026-03-14 | — | Internal Prototype | Runtime contract C-30 v1.3.0, health probe passing |
+| 2026-03-15 | Internal Prototype | Advisory Release | eval-20260315-full-final: 30/30 pass, 0 safety failures |
+| 2026-03-27 | Advisory Release | Advisory Release | Productization audit; publish-policy aligned with eval evidence |
