@@ -1,7 +1,7 @@
 # syntax=docker/dockerfile:1
 # Dockerfile.odoo-copilot - Odoo 19 CE + OCA Must-Have + Copilot + Document Intelligence
 # =============================================================================
-# Build: az acr build --registry ipaiodoodevacr --resource-group rg-ipai-dev-platform \
+# Build: az acr build --registry acripaiodoo --resource-group rg-ipai-dev-odoo-runtime \
 #        --image ipai-odoo:19.0-copilot --file platform/runtime/docker/docker/Dockerfile.odoo-copilot .
 # Context: repo root
 # =============================================================================
@@ -10,7 +10,7 @@ FROM odoo:19.0
 
 LABEL maintainer="InsightPulse AI <devops@insightpulseai.com>"
 LABEL description="Odoo 19 CE + OCA must-have + IPAI Copilot + Agent + Tax Guru + Doc Intelligence"
-LABEL version="19.0.4.0.0"
+LABEL version="19.0.5.0.0"
 
 USER root
 
@@ -81,7 +81,8 @@ RUN rm -f /tmp/oca_sparse_clone.sh \
 RUN pip3 install --no-cache-dir --break-system-packages paho-mqtt
 
 # ---------------------------------------------------------------------------
-# IPAI custom modules — explicit COPY per module (21 modules with manifests)
+# IPAI custom modules — explicit COPY per module (22 modules with manifests)
+# Regenerate: find addons/ipai/ -maxdepth 2 -name "__manifest__.py" | sort
 # ---------------------------------------------------------------------------
 COPY addons/ipai/ipai_aca_proxy /mnt/extra-addons/ipai/ipai_aca_proxy/
 COPY addons/ipai/ipai_agent /mnt/extra-addons/ipai/ipai_agent/
@@ -104,6 +105,15 @@ COPY addons/ipai/ipai_project_seed /mnt/extra-addons/ipai/ipai_project_seed/
 COPY addons/ipai/ipai_security_frontdoor /mnt/extra-addons/ipai/ipai_security_frontdoor/
 COPY addons/ipai/ipai_web_branding /mnt/extra-addons/ipai/ipai_web_branding/
 COPY addons/ipai/ipai_workspace_core /mnt/extra-addons/ipai/ipai_workspace_core/
+
+# ---------------------------------------------------------------------------
+# Build-time assertion: fail if IPAI module count drops below expected
+# ---------------------------------------------------------------------------
+RUN MANIFEST_COUNT=$(find /mnt/extra-addons/ipai/ -name "__manifest__.py" -maxdepth 2 | wc -l) \
+    && echo "IPAI modules: $MANIFEST_COUNT manifests" \
+    && if [ "$MANIFEST_COUNT" -lt 21 ]; then \
+         echo "FATAL: Expected >= 21 __manifest__.py, found $MANIFEST_COUNT" && exit 1; \
+       fi
 
 # ---------------------------------------------------------------------------
 # Configure addons_path: OCA + IPAI + core
