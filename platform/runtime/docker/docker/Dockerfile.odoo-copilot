@@ -10,7 +10,7 @@ FROM odoo:19.0
 
 LABEL maintainer="InsightPulse AI <devops@insightpulseai.com>"
 LABEL description="Odoo 19 CE + OCA must-have + IPAI Copilot + Agent + Tax Guru + Doc Intelligence"
-LABEL version="19.0.5.0.0"
+LABEL version="19.0.5.1.0"
 
 USER root
 
@@ -31,17 +31,31 @@ RUN mkdir -p /mnt/extra-addons/ipai /mnt/extra-addons/oca
 RUN printf '#!/bin/bash\nset -e\nREPO="$1"; shift\nTMPDIR=$(mktemp -d)\ngit clone --depth 1 --filter=blob:none --sparse -b 19.0 "https://github.com/OCA/${REPO}.git" "$TMPDIR"\ncd "$TMPDIR"\ngit sparse-checkout set "$@"\nfor MOD in "$@"; do\n  if [ -d "$MOD" ]; then\n    cp -r "$MOD" /mnt/extra-addons/oca/\n  else\n    echo "WARNING: module $MOD not found in OCA/$REPO (19.0 branch)" >&2\n  fi\ndone\nrm -rf "$TMPDIR"\n' > /tmp/oca_sparse_clone.sh \
     && chmod +x /tmp/oca_sparse_clone.sh
 
-# --- server-auth: password_security ---
-RUN /tmp/oca_sparse_clone.sh server-auth password_security
+# --- server-auth: auth + security ---
+RUN /tmp/oca_sparse_clone.sh server-auth \
+    auth_oidc \
+    auth_oidc_environment \
+    auth_session_timeout \
+    password_security \
+    auth_api_key
 
-# --- server-brand: disable_odoo_online, remove_odoo_enterprise ---
+# --- server-brand: debranding ---
 RUN /tmp/oca_sparse_clone.sh server-brand disable_odoo_online remove_odoo_enterprise
 
-# --- server-tools: base_name_search_improved ---
-RUN /tmp/oca_sparse_clone.sh server-tools base_name_search_improved
+# --- server-tools: admin + audit ---
+RUN /tmp/oca_sparse_clone.sh server-tools \
+    base_name_search_improved \
+    base_exception \
+    auditlog \
+    auto_backup
 
-# --- server-ux: server_action_mass_edit ---
+# --- server-ux ---
 RUN /tmp/oca_sparse_clone.sh server-ux server_action_mass_edit
+
+# --- queue: async jobs ---
+RUN /tmp/oca_sparse_clone.sh queue \
+    queue_job \
+    queue_job_cron
 
 # --- web: 6 modules ---
 RUN /tmp/oca_sparse_clone.sh web \
@@ -52,24 +66,69 @@ RUN /tmp/oca_sparse_clone.sh web \
     web_pivot_computed_measure \
     web_tree_many2one_clickable
 
-# --- social: 4 modules ---
+# --- social / mail: activity + debranding ---
 RUN /tmp/oca_sparse_clone.sh social \
     mail_debrand \
     mail_tracking \
     base_search_mail_content \
-    mail_activity_plan
+    mail_activity_plan \
+    mail_activity_done \
+    mail_composer_cc_bcc
 
-# --- currency: currency_rate_update ---
+# --- currency ---
 RUN /tmp/oca_sparse_clone.sh currency currency_rate_update
 
-# --- account-payment: account_payment_partner ---
+# --- account-payment ---
 RUN /tmp/oca_sparse_clone.sh account-payment account_payment_partner
 
-# --- bank-payment: account_reconcile_oca ---
+# --- account-financial-tools ---
+RUN /tmp/oca_sparse_clone.sh account-financial-tools \
+    account_asset_management \
+    account_chart_update
+
+# --- account-financial-reporting ---
+RUN /tmp/oca_sparse_clone.sh account-financial-reporting \
+    account_financial_report \
+    account_tax_balance \
+    partner_statement
+
+# --- account-reconcile ---
+RUN /tmp/oca_sparse_clone.sh account-reconcile \
+    account_move_base_import
+
+# --- bank-payment ---
 RUN /tmp/oca_sparse_clone.sh bank-payment account_reconcile_oca
 
-# --- project: 2 modules ---
-RUN /tmp/oca_sparse_clone.sh project project_task_dependency project_task_recurrence
+# --- sale-workflow ---
+RUN /tmp/oca_sparse_clone.sh sale-workflow \
+    sale_automatic_workflow \
+    sale_advance_payment
+
+# --- purchase-workflow ---
+RUN /tmp/oca_sparse_clone.sh purchase-workflow \
+    purchase_blanket_order \
+    purchase_advance_payment \
+    purchase_cancel_reason
+
+# --- project ---
+RUN /tmp/oca_sparse_clone.sh project \
+    project_task_dependency \
+    project_task_recurrence \
+    project_template \
+    project_role \
+    project_task_stage_mgmt
+
+# --- helpdesk ---
+RUN /tmp/oca_sparse_clone.sh helpdesk \
+    helpdesk_mgmt \
+    helpdesk_mgmt_project \
+    helpdesk_mgmt_crm
+
+# --- dms ---
+RUN /tmp/oca_sparse_clone.sh dms \
+    dms \
+    dms_field \
+    dms_user_role
 
 # Cleanup helper script and git (reduce image size)
 RUN rm -f /tmp/oca_sparse_clone.sh \
@@ -81,19 +140,19 @@ RUN rm -f /tmp/oca_sparse_clone.sh \
 RUN pip3 install --no-cache-dir --break-system-packages paho-mqtt
 
 # ---------------------------------------------------------------------------
-# IPAI custom modules — explicit COPY per module (22 modules with manifests)
-# Regenerate: find addons/ipai/ -maxdepth 2 -name "__manifest__.py" | sort
+# IPAI custom modules (22 with __manifest__.py)
+# Regenerate list: find addons/ipai/ -maxdepth 2 -name "__manifest__.py" -exec dirname {} \; | xargs -I{} basename {} | sort
 # ---------------------------------------------------------------------------
-# DO NOT add modules that don't exist in addons/ipai/
-# Verify with: find addons/ipai/ -maxdepth 2 -name "__manifest__.py" | sort
 COPY addons/ipai/ipai_aca_proxy /mnt/extra-addons/ipai/ipai_aca_proxy/
-COPY addons/ipai/ipai_agent /mnt/extra-addons/ipai/ipai_agent/
 COPY addons/ipai/ipai_ai_channel_actions /mnt/extra-addons/ipai/ipai_ai_channel_actions/
 COPY addons/ipai/ipai_ai_copilot /mnt/extra-addons/ipai/ipai_ai_copilot/
 COPY addons/ipai/ipai_ai_platform /mnt/extra-addons/ipai/ipai_ai_platform/
 COPY addons/ipai/ipai_ai_widget /mnt/extra-addons/ipai/ipai_ai_widget/
 COPY addons/ipai/ipai_ask_ai_azure /mnt/extra-addons/ipai/ipai_ask_ai_azure/
-COPY addons/ipai/ipai_bir_tax_compliance /mnt/extra-addons/ipai/ipai_bir_tax_compliance/
+COPY addons/ipai/ipai_auth_oidc /mnt/extra-addons/ipai/ipai_auth_oidc/
+COPY addons/ipai/ipai_bank_recon /mnt/extra-addons/ipai/ipai_bank_recon/
+COPY addons/ipai/ipai_bir_compliance /mnt/extra-addons/ipai/ipai_bir_compliance/
+COPY addons/ipai/ipai_branch_profile /mnt/extra-addons/ipai/ipai_branch_profile/
 COPY addons/ipai/ipai_copilot_actions /mnt/extra-addons/ipai/ipai_copilot_actions/
 COPY addons/ipai/ipai_document_intelligence /mnt/extra-addons/ipai/ipai_document_intelligence/
 COPY addons/ipai/ipai_enterprise_bridge /mnt/extra-addons/ipai/ipai_enterprise_bridge/
@@ -101,7 +160,6 @@ COPY addons/ipai/ipai_finance_close_seed /mnt/extra-addons/ipai/ipai_finance_clo
 COPY addons/ipai/ipai_finance_ppm /mnt/extra-addons/ipai/ipai_finance_ppm/
 COPY addons/ipai/ipai_hr_expense_liquidation /mnt/extra-addons/ipai/ipai_hr_expense_liquidation/
 COPY addons/ipai/ipai_llm_supabase_bridge /mnt/extra-addons/ipai/ipai_llm_supabase_bridge/
-COPY addons/ipai/ipai_mail_plugin_bridge /mnt/extra-addons/ipai/ipai_mail_plugin_bridge/
 COPY addons/ipai/ipai_odoo_copilot /mnt/extra-addons/ipai/ipai_odoo_copilot/
 COPY addons/ipai/ipai_project_seed /mnt/extra-addons/ipai/ipai_project_seed/
 COPY addons/ipai/ipai_security_frontdoor /mnt/extra-addons/ipai/ipai_security_frontdoor/
