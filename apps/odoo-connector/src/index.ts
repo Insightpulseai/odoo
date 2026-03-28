@@ -1,3 +1,6 @@
+import { initTracing } from "./tracing.js";
+initTracing();
+
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { loadPolicy } from "./policy.js";
