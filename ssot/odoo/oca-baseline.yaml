@@ -1,0 +1,197 @@
+# =============================================================================
+# OCA Baseline — Curated Module Inventory for Odoo CE 19
+# =============================================================================
+# Grouped by domain per OCA repo taxonomy.
+# Status: target = planned for install, verify = needs 19.0 branch check
+# =============================================================================
+
+schema_version: 1
+odoo_version: "19.0"
+last_reviewed: "2026-03-28"
+
+# ─── MUST-HAVE ───────────────────────────────────────────────────────────────
+
+must_have:
+
+  server_auth:
+    repo: OCA/server-auth
+    modules:
+      - name: auth_oidc
+        status: target
+        priority: P0
+        notes: "Entra/Google OIDC SSO"
+      - name: auth_oidc_environment
+        status: target
+        priority: P0
+      - name: auth_session_timeout
+        status: target
+        priority: P1
+      - name: password_security
+        status: target
+        priority: P0
+      - name: auth_api_key
+        status: target
+        priority: P1
+        notes: "API key auth for service integrations"
+
+  queue:
+    repo: OCA/queue
+    modules:
+      - name: queue_job
+        status: target
+        priority: P0
+        notes: "Async job processing — required for scale"
+      - name: queue_job_cron
+        status: target
+        priority: P0
+
+  server_tools:
+    repo: OCA/server-tools
+    modules:
+      - name: auditlog
+        status: verify
+        priority: P0
+        notes: "Already in Dockerfile sparse checkout"
+      - name: base_exception
+        status: target
+        priority: P1
+      - name: auto_backup
+        status: target
+        priority: P1
+
+  mail:
+    repo: OCA/social
+    modules:
+      - name: mail_activity_done
+        status: target
+        priority: P1
+      - name: mail_composer_cc_bcc
+        status: target
+        priority: P1
+      - name: mail_debrand
+        status: verify
+        priority: P0
+        notes: "Already in Dockerfile sparse checkout"
+
+  account_financial_tools:
+    repo: OCA/account-financial-tools
+    modules:
+      - name: account_asset_management
+        status: verify
+        priority: P0
+        notes: "Already installed on production"
+      - name: account_chart_update
+        status: target
+        priority: P1
+
+  account_financial_reporting:
+    repo: OCA/account-financial-reporting
+    modules:
+      - name: account_financial_report
+        status: verify
+        priority: P0
+        notes: "Already installed on production"
+      - name: account_tax_balance
+        status: verify
+        priority: P0
+        notes: "Already installed on production"
+      - name: partner_statement
+        status: target
+        priority: P1
+
+  account_reconcile:
+    repo: OCA/account-reconcile
+    modules:
+      - name: account_move_base_import
+        status: target
+        priority: P1
+      - name: account_in_payment
+        status: target
+        priority: P2
+
+# ─── STRONGLY RECOMMENDED ────────────────────────────────────────────────────
+
+recommended:
+
+  sale_workflow:
+    repo: OCA/sale-workflow
+    modules:
+      - name: sale_automatic_workflow
+        status: target
+        priority: P1
+      - name: sale_automatic_workflow_job
+        status: target
+        priority: P1
+      - name: sale_advance_payment
+        status: target
+        priority: P2
+
+  purchase_workflow:
+    repo: OCA/purchase-workflow
+    modules:
+      - name: purchase_blanket_order
+        status: target
+        priority: P1
+      - name: purchase_advance_payment
+        status: target
+        priority: P2
+      - name: purchase_cancel_reason
+        status: target
+        priority: P2
+
+  project:
+    repo: OCA/project
+    modules:
+      - name: project_template
+        status: target
+        priority: P1
+      - name: project_role
+        status: target
+        priority: P2
+      - name: project_task_stage_mgmt
+        status: target
+        priority: P1
+      - name: project_timeline
+        status: target
+        priority: P2
+
+  helpdesk:
+    repo: OCA/helpdesk
+    modules:
+      - name: helpdesk_mgmt
+        status: target
+        priority: P0
+        notes: "Replaces EE helpdesk"
+      - name: helpdesk_mgmt_project
+        status: target
+        priority: P1
+      - name: helpdesk_mgmt_crm
+        status: target
+        priority: P1
+
+  dms:
+    repo: OCA/dms
+    modules:
+      - name: dms
+        status: target
+        priority: P1
+      - name: dms_field
+        status: target
+        priority: P2
+      - name: dms_user_role
+        status: target
+        priority: P2
+
+# ─── NOT OCA (stays in addons/ipai/) ─────────────────────────────────────────
+
+excluded_from_oca:
+  - ipai_odoo_copilot
+  - ipai_copilot_actions
+  - ipai_enterprise_bridge
+  - ipai_document_intelligence
+  - ipai_web_branding
+  - ipai_mail_plugin_bridge
+  - ipai_bir_tax_compliance
+  - ipai_hr_expense_liquidation
+  - ipai_aca_proxy
+  notes: "Platform/bridge concerns — not generic ERP community modules"
