@@ -1,9 +1,10 @@
 # Benchmark Matrix — Repo Structure
 
-Three-tier benchmark hierarchy:
+Four-tier benchmark hierarchy:
 1. **SAP on Azure** → product docs, decision matrices, ops surface
 2. **OCA** → addon taxonomy, governance, lifecycle separation
-3. **odoo/odoo** → core runtime conventions
+3. **Odoo.sh containers** → runtime/container contract, filesystem layout, debug procedures
+4. **odoo/odoo** → core runtime conventions, addon composition
 
 ## Path-Level Mapping
 
@@ -24,6 +25,10 @@ Three-tier benchmark hierarchy:
 | `docs/runbooks/` | SAP operations surface | Every runtime surface has a runbook |
 | `.github/workflows/` | OCA bot automation | CI fails on manifest/catalog drift |
 | `tests/` | OCA/OpenUpgrade quality gates | Addon discovery + upgrade + smoke coverage |
+| `docs/architecture/runtime-container-contract.md` | Odoo.sh containers | Source tree, data dirs, logs, addon roots, runtime path |
+| `docs/runbooks/odoo-shell.md` | Odoo.sh containers | Shell/install/update/test/debug via odoo-bin |
+| `tests/test_runtime_contract.py` | Odoo.sh containers | Assert addon roots and runtime path parity |
+| `ssot/odoo/runtime_contract.yaml` | Odoo.sh containers | Machine-readable source/data/log/addons-path contract |
 
 ## Classification Model
 
