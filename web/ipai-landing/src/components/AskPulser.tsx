@@ -10,12 +10,20 @@ export type ChatCtaAction =
   | { type: 'open_scheduler'; label: string; href: string; analytics_id?: string }
   | { type: 'open_contact'; label: string; page?: string; analytics_id?: string };
 
+interface Activity {
+  id: string;
+  label: string;
+  status: 'active' | 'done' | 'error';
+  ts?: string;
+}
+
 interface Message {
   id: string;
   role: 'user' | 'assistant';
   content: string;
   sourceLabel?: string;
   ctas?: ChatCtaAction[];
+  activities?: Activity[];
 }
 
 // --- CTA Validation ---
@@ -66,6 +74,32 @@ function nextMsgId(): string {
   return `msg_${++msgCounter}_${Date.now()}`;
 }
 
+// --- Activity Timeline Component ---
+
+function ActivityTimeline({ activities }: { activities: Activity[] }) {
+  const visible = activities.filter(a => a.status !== 'pending');
+  if (!visible.length) return null;
+
+  return (
+    <div className="flex flex-col gap-1 pl-11 py-2">
+      {visible.map((act) => (
+        <div key={act.id} className="flex items-center gap-2 text-[11px]">
+          <span className={`w-1.5 h-1.5 rounded-full flex-shrink-0 ${
+            act.status === 'active' ? 'bg-blue-500 animate-pulse' :
+            act.status === 'done' ? 'bg-emerald-500' :
+            'bg-red-400'
+          }`} />
+          <span className={`font-medium ${
+            act.status === 'active' ? 'text-blue-600' :
+            act.status === 'done' ? 'text-gray-400' :
+            'text-red-500'
+          }`}>{act.label}</span>
+        </div>
+      ))}
+    </div>
+  );
+}
+
 // --- CTA Button Component ---
 
 function CtaButton({ action, onAction, messageId }: { action: ChatCtaAction; onAction: (a: ChatCtaAction, msgId: string) => void; messageId: string }) {
@@ -106,6 +140,7 @@ export const AskPulser = ({ onNavigate }: { onNavigate?: (page: string) => void 
     }
   ]);
   const [isLoading, setIsLoading] = useState(false);
+  const [pendingActivities, setPendingActivities] = useState<Activity[]>([]);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -121,6 +156,9 @@ export const AskPulser = ({ onNavigate }: { onNavigate?: (page: string) => void 
     setMessages(prev => [...prev, userMsg]);
     setInput('');
     setIsLoading(true);
+    setPendingActivities([
+      { id: 'classify', label: 'Classifying request', status: 'active' },
+    ]);
 
     try {
       const response = await fetch('/api/pulser/chat', {
@@ -138,21 +176,31 @@ export const AskPulser = ({ onNavigate }: { onNavigate?: (page: string) => void 
       const data = await response.json();
 
       setConversationId(data.conversationId);
+      const responseActivities: Activity[] = data.activities || [
+        { id: 'classify', label: 'Classifying request', status: 'done' },
+        { id: 'respond', label: 'Preparing response', status: 'done' },
+      ];
+      setPendingActivities(responseActivities);
       setMessages(prev => [...prev, {
         id: nextMsgId(),
         role: 'assistant',
         content: data.reply,
         sourceLabel: data.sourceLabel || 'Product Docs',
         ctas: data.ctas ?? mapLegacyResponse(data),
+        activities: responseActivities,
       }]);
+      // Fade activities after 4 seconds
+      setTimeout(() => setPendingActivities([]), 4000);
     } catch (error) {
       console.error('Chat error:', error);
+      setPendingActivities([{ id: 'error', label: 'Connection error', status: 'error' }]);
       setMessages(prev => [...prev, {
         id: nextMsgId(),
         role: 'assistant',
         content: "I'm sorry, I'm having trouble connecting right now. Please try again or contact our team.",
         sourceLabel: 'System',
       }]);
+      setTimeout(() => setPendingActivities([]), 4000);
     } finally {
       setIsLoading(false);
     }
@@ -211,8 +259,7 @@ export const AskPulser = ({ onNavigate }: { onNavigate?: (page: string) => void 
               <div className="absolute inset-0 grid-pattern opacity-10"></div>
               <div className="flex items-center gap-3 relative z-10">
                 <div className="relative w-10 h-10 flex items-center justify-center">
-                  <div className="absolute inset-0 bg-brand-primary/30 rounded-full blur-md"></div>
-                  <div className="relative w-8 h-4 bg-brand-primary rounded-full"></div>
+                  <img src="/pulser-avatar.png" alt="Pulser" className="w-10 h-10 rounded-full object-cover" />
                 </div>
                 <div>
                   <h3 className="text-white font-bold text-base leading-none flex items-center gap-2">
@@ -273,6 +320,11 @@ export const AskPulser = ({ onNavigate }: { onNavigate?: (page: string) => void 
                   )}
                 </div>
               ))}
+              {/* Activity timeline — visible during and after request */}
+              {pendingActivities.length > 0 && (
+                <ActivityTimeline activities={pendingActivities} />
+              )}
+
               <div ref={messagesEndRef} />
             </div>
 

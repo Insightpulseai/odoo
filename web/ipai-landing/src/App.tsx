@@ -158,6 +158,7 @@ const Navbar = ({ currentPage, setPage }: { currentPage: PageId, setPage: (p: Pa
                     { icon: <Cpu size={20} />, title: "Pulser", desc: "AI guidance inside your workflows", page: 'products' as PageId },
                     { icon: <ShieldCheck size={20} />, title: "Cloud Operations", desc: "Deploy, govern, monitor, evolve", page: 'products' as PageId },
                     { icon: <BarChart size={20} />, title: "Analytics & Dashboards", desc: "Operational dashboards & reporting", page: 'products' as PageId },
+                    { icon: <BookOpen size={20} />, title: "PrismaLab", desc: "Systematic reviews & meta-analysis", page: 'products' as PageId },
                   ].map((item, i) => (
                     <button key={i} onClick={() => { setPage(item.page); setOpenMenu(null); }}
                       className="flex items-start gap-3 p-3 hover:bg-brand-light rounded-xl transition-colors text-left">
@@ -326,6 +327,7 @@ const Navbar = ({ currentPage, setPage }: { currentPage: PageId, setPage: (p: Pa
                   <button onClick={() => mobilNav('products')} className="block w-full text-left py-2 text-sm text-gray-600 hover:text-brand-primary">Pulser</button>
                   <button onClick={() => mobilNav('products')} className="block w-full text-left py-2 text-sm text-gray-600 hover:text-brand-primary">Analytics</button>
                   <button onClick={() => mobilNav('products')} className="block w-full text-left py-2 text-sm text-gray-600 hover:text-brand-primary">Cloud Operations</button>
+                  <a href="https://prismalab.insightpulseai.com" target="_blank" rel="noopener noreferrer" className="block w-full text-left py-2 text-sm text-gray-600 hover:text-brand-primary">PrismaLab</a>
                 </div>
               )}
             </div>
@@ -423,6 +425,7 @@ const Footer = ({ setPage }: { setPage: (p: PageId) => void }) => (
             <li><button onClick={() => setPage('products')} className="hover:text-white transition-colors">Pulser</button></li>
             <li><button onClick={() => setPage('products')} className="hover:text-white transition-colors">Analytics</button></li>
             <li><button onClick={() => setPage('products')} className="hover:text-white transition-colors">Cloud Operations</button></li>
+            <li><a href="https://prismalab.insightpulseai.com" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">PrismaLab</a></li>
           </ul>
         </div>
 
@@ -461,7 +464,10 @@ const Footer = ({ setPage }: { setPage: (p: PageId) => void }) => (
       </div>
 
       <div className="pt-12 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-6 text-xs text-gray-500">
-        <p>&copy; 2026 InsightPulseAI. All rights reserved.</p>
+        <div>
+          <p>&copy; 2026 InsightPulseAI. All rights reserved.</p>
+          <p className="mt-2 text-gray-600">Dataverse IT Consultancy &middot; La Fuerza Plaza, 2241 Chino Roces Ave, Makati City 1231, Philippines</p>
+        </div>
         <div className="flex gap-8">
           <button onClick={() => setPage('trust')} className="hover:text-white transition-colors">Trust Center</button>
           <button onClick={() => setPage('privacy')} className="hover:text-white transition-colors">Privacy</button>
@@ -502,31 +508,30 @@ const GlobalCTA = ({ setPage }: { setPage: (p: PageId) => void }) => (
 const HomePage = ({ setPage }: { setPage: (p: PageId) => void }) => (
   <motion.div {...PAGE_TRANSITION}>
     {/* Hero */}
-    <section className="pt-28 pb-20 px-6 md:px-12">
-      <div className="max-w-7xl mx-auto bg-brand-dark rounded-2xl p-8 md:p-16 relative overflow-hidden min-h-[540px] flex flex-col justify-center border border-white/10" style={{ boxShadow: SHADOW.shadow28 }}>
-        <div className="absolute inset-0 grid-pattern opacity-10"></div>
-        <div className="relative z-10 max-w-4xl">
-          <motion.div
-            initial={{ y: 12, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ delay: 0.1, duration: MOTION.durationGentle, ease: MOTION.curveDecelerateMin }}
-          >
-            <h1 className="text-3xl md:text-4xl font-bold text-white leading-[1.05] mb-10 tracking-tight">
-              AI-native operations for marketing, media, retail, and financial services
-            </h1>
-            <p className="text-xl md:text-2xl text-gray-300 leading-relaxed mb-12 font-medium max-w-3xl">
-              InsightPulseAI combines <span className="text-brand-primary">Odoo on Cloud</span>, <span className="text-brand-primary">Pulser</span>, and modern data workflows to help teams unify operations, automate execution, and scale with stronger control.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-6">
-              <a href={EXTERNAL_URLS.demo} target="_blank" rel="noopener noreferrer" className="px-8 py-4 bg-brand-primary text-black font-bold rounded-full hover:bg-cyan-400 transition-all text-lg inline-block text-center" style={{ boxShadow: SHADOW.shadow8 }}>
-                Book Demo
-              </a>
-              <button onClick={() => setPage('contact')} className="px-8 py-4 bg-white/10 text-white font-bold rounded-lg hover:bg-white/20 transition-all border border-white/10 text-lg backdrop-blur-sm">
-                Contact Sales
-              </button>
-            </div>
-          </motion.div>
-        </div>
+    <section className="pt-40 pb-24 px-6 md:px-12 bg-brand-dark text-white relative overflow-hidden">
+      <div className="absolute inset-0 z-0">
+        <video autoPlay muted loop playsInline className="w-full h-full object-cover">
+          <source src="/hero-home.mp4" type="video/mp4" />
+        </video>
+        <div className="absolute inset-0" style={{ background: 'linear-gradient(to right, rgba(10,15,28,0.92) 0%, rgba(10,15,28,0.75) 45%, rgba(10,15,28,0.3) 75%, rgba(10,15,28,0.1) 100%)' }}></div>
+      </div>
+      <div className="max-w-7xl mx-auto relative z-10">
+        <motion.div
+          initial={{ y: 12, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ delay: 0.1, duration: MOTION.durationGentle, ease: MOTION.curveDecelerateMin }}
+        >
+          <h1 className="text-6xl md:text-8xl font-bold leading-[1.05] mb-10 tracking-tight max-w-4xl">
+            AI-native operations for marketing, media, retail, and financial services
+          </h1>
+          <p className="text-xl text-gray-400 leading-relaxed mb-12 max-w-3xl">
+            InsightPulseAI combines Odoo on Cloud, Pulser, and modern data workflows to help teams unify operations, automate execution, and scale with stronger control.
+          </p>
+          <div className="flex flex-wrap gap-4">
+            <a href={EXTERNAL_URLS.demo} target="_blank" rel="noopener noreferrer" className="px-10 py-5 bg-brand-primary text-black font-extrabold rounded-full hover:bg-cyan-400 transition-all inline-block">Book Demo</a>
+            <button onClick={() => setPage('contact')} className="px-10 py-5 bg-white/10 text-white font-extrabold rounded-full border border-white/20 hover:bg-white/20 transition-all">Contact Sales</button>
+          </div>
+        </motion.div>
       </div>
     </section>
 
@@ -604,20 +609,27 @@ const HomePage = ({ setPage }: { setPage: (p: PageId) => void }) => (
           <h2 className="text-3xl md:text-4xl font-bold mb-8 tracking-tight">One intelligent operating system</h2>
           <p className="text-gray-400 text-xl max-w-3xl mx-auto">Start with what you need. Scale with AI-assisted cloud operations.</p>
         </div>
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6">
           {[
             { icon: <Cloud size={32} />, title: "Odoo on Cloud", desc: "Run ERP, CRM, sales, inventory, projects, HR, finance, and operations from one hosted platform." },
             { icon: <Cpu size={32} />, title: "Pulser", desc: "Operational intelligence that surfaces what matters, summarizes context, and accelerates action across workflows." },
             { icon: <ShieldCheck size={32} />, title: "Cloud Operations", desc: "Deploy, govern, monitor, and evolve Odoo with a more reliable cloud delivery model." },
-            { icon: <BarChart size={32} />, title: "Analytics & Dashboards", desc: "Turn operational data into real-time executive and team-level visibility." }
+            { icon: <BarChart size={32} />, title: "Analytics & Dashboards", desc: "Turn operational data into real-time executive and team-level visibility." },
+            { icon: <BookOpen size={32} />, title: "PrismaLab", desc: "PRISMA-aligned systematic reviews and meta-analysis support for research teams.", href: "https://prismalab.insightpulseai.com" }
           ].map((p, i) => (
             <div key={i} className="bg-white/5 p-8 rounded-2xl border border-white/10 hover:bg-white/10 transition-all group">
               <div className="mb-8 text-brand-primary group-hover:scale-110 transition-transform duration-[150ms] origin-left">{p.icon}</div>
               <h3 className="text-xl font-bold mb-4">{p.title}</h3>
               <p className="text-gray-400 text-sm leading-relaxed mb-8">{p.desc}</p>
-              <button onClick={() => setPage('products')} className="text-brand-primary font-bold text-sm flex items-center gap-2">
-                Learn More <ChevronRight size={16} />
-              </button>
+              {(p as any).href ? (
+                <a href={(p as any).href} target="_blank" rel="noopener noreferrer" className="text-brand-primary font-bold text-sm flex items-center gap-2">
+                  Visit PrismaLab <ChevronRight size={16} />
+                </a>
+              ) : (
+                <button onClick={() => setPage('products')} className="text-brand-primary font-bold text-sm flex items-center gap-2">
+                  Learn More <ChevronRight size={16} />
+                </button>
+              )}
             </div>
           ))}
         </div>
@@ -859,6 +871,13 @@ const ProductsPage = ({ setPage }: { setPage: (p: PageId) => void }) => (
           desc: "Turn operational data into real-time executive and team-level visibility. Get a clear view of performance, exceptions, and business health.",
           features: ["Real-time KPIs", "Custom Dashboards", "Drill-down Reporting", "AI-assisted Insights", "Cross-functional Views"],
           icon: <BarChart size={48} className="text-brand-primary" />,
+          image: "/images/product-analytics.png"
+        },
+        {
+          title: "PrismaLab",
+          desc: "PRISMA-aligned systematic review and meta-analysis support for academic, clinical, and advisory teams. PrismaLab helps researchers deliver rigorous evidence synthesis with structured methodology and publication-ready clarity.",
+          features: ["Systematic Reviews", "Meta-Analysis", "Scoping & Rapid Reviews", "Research Writing Support", "PRISMA 2020 Compliance"],
+          icon: <BookOpen size={48} className="text-brand-primary" />,
           image: "/images/product-analytics.png"
         }
       ].map((p, i) => (
@@ -1190,6 +1209,26 @@ const ContactPage = ({ setPage }: { setPage: (p: PageId) => void }) => (
             </span>
           </a>
         ))}
+      </div>
+
+      <div className="p-10 rounded-2xl bg-gray-50 border border-gray-100 mb-24">
+        <h3 className="text-lg font-bold mb-6">Office</h3>
+        <div className="grid md:grid-cols-2 gap-8">
+          <div className="flex items-start gap-4">
+            <MapPin size={20} className="text-brand-primary mt-1 shrink-0" />
+            <div>
+              <p className="font-semibold text-sm mb-1">Dataverse IT Consultancy</p>
+              <p className="text-sm text-gray-600 leading-relaxed">La Fuerza Plaza, 2241 Chino Roces Ave<br />Makati City, Metro Manila 1231<br />Philippines</p>
+            </div>
+          </div>
+          <div className="flex items-start gap-4">
+            <Mail size={20} className="text-brand-primary mt-1 shrink-0" />
+            <div>
+              <p className="text-sm text-gray-600 mb-2"><a href="mailto:business@insightpulseai.com" className="hover:text-brand-primary transition-colors">business@insightpulseai.com</a></p>
+              <p className="text-sm text-gray-600"><a href="mailto:admin@insightpulseai.com" className="hover:text-brand-primary transition-colors">admin@insightpulseai.com</a></p>
+            </div>
+          </div>
+        </div>
       </div>
     </section>
     <GlobalCTA setPage={setPage} />
