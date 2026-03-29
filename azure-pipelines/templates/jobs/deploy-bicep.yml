@@ -1,0 +1,70 @@
+# =============================================================================
+# Reusable Job: Deploy Bicep Template
+# =============================================================================
+# Runs `az deployment group create` with the specified Bicep template.
+#
+# Usage:
+#   jobs:
+#     - template: templates/jobs/deploy-bicep.yml
+#       parameters:
+#         serviceConnection: azure-ipai
+#         resourceGroup: rg-ipai-dev
+#         bicepTemplatePath: infra/azure/main.bicep
+#         parametersPath: infra/azure/parameters/dev.json
+#         deploymentName: ipai-bicep-123
+# =============================================================================
+
+parameters:
+  - name: serviceConnection
+    type: string
+    default: azure-ipai
+  - name: resourceGroup
+    type: string
+  - name: bicepTemplatePath
+    type: string
+  - name: parametersPath
+    type: string
+    default: ''
+  - name: deploymentName
+    type: string
+    default: 'ipai-bicep-$(Build.BuildNumber)'
+  - name: enableFrontDoor
+    type: string
+    default: 'true'
+  - name: enableApim
+    type: string
+    default: 'false'
+  - name: environmentLabel
+    type: string
+    default: dev
+
+steps:
+  - task: AzureCLI@2
+    displayName: 'Deploy Bicep → ${{ parameters.resourceGroup }} (${{ parameters.environmentLabel }})'
+    inputs:
+      azureSubscription: ${{ parameters.serviceConnection }}
+      scriptType: bash
+      scriptLocation: inlineScript
+      inlineScript: |
+        set -euo pipefail
+
+        echo "=== Bicep Deploy ==="
+        echo "Template: ${{ parameters.bicepTemplatePath }}"
+        echo "Resource Group: ${{ parameters.resourceGroup }}"
+        echo "Environment: ${{ parameters.environmentLabel }}"
+
+        PARAMS=""
+        if [[ -n "${{ parameters.parametersPath }}" && -f "${{ parameters.parametersPath }}" ]]; then
+          PARAMS="--parameters ${{ parameters.parametersPath }}"
+        fi
+
+        az deployment group create \
+          --resource-group "${{ parameters.resourceGroup }}" \
+          --template-file "${{ parameters.bicepTemplatePath }}" \
+          ${PARAMS} \
+          --parameters enableFrontDoor=${{ parameters.enableFrontDoor }} enableApim=${{ parameters.enableApim }} \
+          --name "${{ parameters.deploymentName }}" \
+          --mode Incremental \
+          --output none
+
+        echo "PASS: Bicep deployment completed for ${{ parameters.resourceGroup }}"

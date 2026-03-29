@@ -1,75 +1,38 @@
+# =============================================================================
+# DEPRECATED — Re-homed to platform/ci/foundry-runtime-ci.yml
+# =============================================================================
+# agent-platform is not a canonical boundary. Foundry runtime/governance
+# belongs under platform/; agent assets belong under agents/.
+#
+# This file is a thin wrapper to avoid breaking AzDO pipeline ID 10.
+# Delete after updating AzDO pipeline definition to point to:
+#   platform/ci/foundry-runtime-ci.yml
+# =============================================================================
+
 trigger:
   branches:
     include:
       - main
   paths:
     include:
+      - platform/**
       - packages/**
       - apps/**
 
 pool:
-  vmImage: 'ubuntu-latest'
+  vmImage: ubuntu-latest
 
 stages:
-  - stage: Build
-    displayName: 'Build & Test'
+  - stage: Redirect
+    displayName: 'Redirected to platform/ci'
     jobs:
-      - job: BuildAndTest
-        displayName: 'TypeScript Build + Smoke Tests'
+      - job: Notice
         steps:
-          - task: NodeTool@0
-            inputs:
-              versionSpec: '20.x'
-            displayName: 'Use Node.js 20.x'
-
-          - script: npm ci
-            displayName: 'Install dependencies'
-
-          - script: npm run build
-            displayName: 'TypeScript build'
-
-          - script: npm run test -w @ipai/builder-factory
-            displayName: 'Run smoke tests'
-
-          - publish: $(System.DefaultWorkingDirectory)/apps/builder-factory/dist
-            artifact: builder-factory
-            displayName: 'Publish build artifact'
-
-  - stage: Evaluate
-    displayName: 'Eval Gate'
-    dependsOn: Build
-    condition: succeeded()
-    jobs:
-      - job: RunEvals
-        displayName: 'Run precursor eval suite'
-        steps:
-          - task: NodeTool@0
-            inputs:
-              versionSpec: '20.x'
-
-          - script: npm ci && npm run build
-            displayName: 'Rebuild for eval'
-
           - script: |
-              node apps/builder-factory/dist/index.js eval 2>&1 | tee $(Build.ArtifactStagingDirectory)/eval-results.txt
-              grep -q "PASS" $(Build.ArtifactStagingDirectory)/eval-results.txt || exit 1
-            displayName: 'Run eval suite (fail on regression)'
-
-          - publish: $(Build.ArtifactStagingDirectory)/eval-results.txt
-            artifact: eval-evidence
-            displayName: 'Publish eval evidence'
-
-  - stage: Release
-    displayName: 'Release Gate'
-    dependsOn: Evaluate
-    condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
-    jobs:
-      - deployment: DeployStaging
-        displayName: 'Deploy to staging'
-        environment: 'agent-platform-staging'
-        strategy:
-          runOnce:
-            deploy:
-              steps:
-                - script: echo "Staging deployment — placeholder until ACA target is configured"
-                  displayName: 'Deploy to staging (placeholder)'
+              echo "=============================================="
+              echo "This pipeline has moved to:"
+              echo "  platform/ci/foundry-runtime-ci.yml"
+              echo ""
+              echo "Update AzDO pipeline ID 10 to point there."
+              echo "=============================================="
+            displayName: 'Pipeline moved — update AzDO definition'

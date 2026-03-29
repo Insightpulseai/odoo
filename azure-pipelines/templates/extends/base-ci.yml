@@ -1,0 +1,24 @@
+# =============================================================================
+# Extends Template: Base CI Pipeline
+# =============================================================================
+# Policy-enforced CI skeleton. All CI entrypoints should `extends` this.
+# Provides: checkout, pool, artifact retention, common guardrails.
+#
+# Usage:
+#   extends:
+#     template: azure-pipelines/templates/extends/base-ci.yml
+#     parameters:
+#       stages: [ ... ]
+# =============================================================================
+
+parameters:
+  - name: stages
+    type: stageList
+    default: []
+
+pool:
+  vmImage: ubuntu-latest
+
+stages:
+  - ${{ each stage in parameters.stages }}:
+    - ${{ stage }}

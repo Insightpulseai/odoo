@@ -1,5 +1,10 @@
-# azure-pipelines.yml — Marketing site (ipai-landing)
-# Self-contained: ACR build + ACA deploy on push to main.
+# =============================================================================
+# ipai-landing deploy — insightpulseai.com
+# =============================================================================
+# Thin entrypoint using shared base-deploy template.
+# Build → Deploy ACA → Smoke → Evidence.
+# =============================================================================
+
 trigger:
   branches:
     include:
@@ -16,44 +21,14 @@ pr:
     include:
       - web/ipai-landing/**
 
-pool:
-  vmImage: ubuntu-latest
-
-variables:
-  - name: acrName
-    value: acripaiodoo
-  - name: imageName
-    value: ipai-website
-  - name: imageTag
-    value: $(Build.BuildId)
-  - name: containerApp
-    value: ipai-website-dev
-  - name: resourceGroup
-    value: rg-ipai-dev-odoo-runtime
-
-steps:
-  - task: AzureCLI@2
-    displayName: Build and push to ACR
-    inputs:
-      azureSubscription: azure-ipai
-      scriptType: bash
-      scriptLocation: inlineScript
-      inlineScript: |
-        az acr build \
-          --registry $(acrName) \
-          --image $(imageName):$(imageTag) \
-          --image $(imageName):latest \
-          --file web/ipai-landing/Dockerfile \
-          web/ipai-landing
-
-  - task: AzureCLI@2
-    displayName: Deploy to Container App
-    inputs:
-      azureSubscription: azure-ipai
-      scriptType: bash
-      scriptLocation: inlineScript
-      inlineScript: |
-        az containerapp update \
-          --name $(containerApp) \
-          --resource-group $(resourceGroup) \
-          --image $(acrName).azurecr.io/$(imageName):$(imageTag)
+extends:
+  template: ../../azure-pipelines/templates/extends/base-deploy.yml
+  parameters:
+    imageName: ipai-website
+    imageTag: latest
+    dockerfile: web/ipai-landing/Dockerfile
+    buildContext: web/ipai-landing
+    containerAppName: ipai-website-dev
+    resourceGroup: rg-ipai-dev-odoo-runtime
+    smokeUrl: https://insightpulseai.com
+    smokeContentMatch: InsightPulse

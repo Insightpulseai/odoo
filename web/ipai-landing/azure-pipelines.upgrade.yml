@@ -1,48 +1,20 @@
-# web/ipai-landing upgrade pipeline
-# Stateless web workload — SAP-benchmarked upgrade choreography
-# Template authority: Insightpulseai/infra → azuredevops/templates/upgrade-web.yml
-trigger:
-  branches:
-    include:
-      - main
-      - release/*
-  paths:
-    include:
-      - web/ipai-landing/src/**
-      - web/ipai-landing/public/**
-      - web/ipai-landing/server.ts
-      - web/ipai-landing/Dockerfile
-      - web/ipai-landing/package.json
-      - web/ipai-landing/azure-pipelines.upgrade.yml
+# =============================================================================
+# DEPRECATED — merged into azure-pipelines.yml
+# =============================================================================
+# The upgrade-web.yml@templates reference was broken (template repo missing).
+# All deploy logic is now in azure-pipelines.yml using in-repo shared templates.
+# This file is retained to avoid AzDO pipeline definition breakage.
+# Remove after AzDO pipeline ID 12 (ipai-landing-upgrade) is deleted.
+# =============================================================================
 
-pr:
-  branches:
-    include:
-      - main
+trigger: none
+pr: none
 
-resources:
-  repositories:
-    - repository: templates
-      type: github
-      name: Insightpulseai/infra
-      endpoint: github-insightpulseai
-      ref: refs/heads/main
+pool:
+  vmImage: ubuntu-latest
 
-variables:
-  - name: acrName
-    value: acripaiodoo
-  - name: resourceGroup
-    value: rg-ipai-dev-odoo-runtime
-  - name: containerAppName
-    value: ipai-website-dev
-  - name: imageName
-    value: ipai-website
-  - name: azureServiceConnection
-    value: azure-ipai
-
-extends:
-  template: azuredevops/templates/upgrade-web.yml@templates
-  parameters:
-    appName: ipai-website
-    devEnvironment: ipai-web-dev
-    prodEnvironment: ipai-web-prod
+steps:
+  - script: |
+      echo "This pipeline is deprecated. Deploy logic moved to web/ipai-landing/azure-pipelines.yml"
+      echo "Delete AzDO pipeline ID 12 (ipai-landing-upgrade) to complete cleanup."
+    displayName: 'DEPRECATED — see azure-pipelines.yml'
