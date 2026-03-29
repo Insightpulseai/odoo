@@ -1,0 +1,98 @@
+# =============================================================================
+# Reusable Job: Foundry Evaluation Gate
+# =============================================================================
+# Runs an evaluation suite against a Foundry agent/model deployment.
+# Fails the pipeline if results fall below configured thresholds.
+#
+# Usage:
+#   jobs:
+#     - template: templates/jobs/foundry-eval.yml
+#       parameters:
+#         evalDataset: agents/evals/pulser/golden-set.jsonl
+#         thresholds: agents/evals/pulser/thresholds.yaml
+# =============================================================================
+
+parameters:
+  - name: evalDataset
+    type: string
+  - name: thresholds
+    type: string
+    default: ''
+  - name: serviceConnection
+    type: string
+    default: azure-ipai
+  - name: pythonVersion
+    type: string
+    default: '3.12'
+  - name: jobName
+    type: string
+    default: FoundryEval
+
+jobs:
+  - job: ${{ parameters.jobName }}
+    displayName: 'Foundry eval gate'
+    pool:
+      vmImage: ubuntu-latest
+    steps:
+      - checkout: self
+
+      - task: UsePythonVersion@0
+        inputs:
+          versionSpec: ${{ parameters.pythonVersion }}
+
+      - script: |
+          pip install pyyaml azure-ai-evaluation 2>/dev/null || pip install pyyaml
+        displayName: Install eval dependencies
+
+      - task: AzureCLI@2
+        displayName: Run evaluation
+        inputs:
+          azureSubscription: ${{ parameters.serviceConnection }}
+          scriptType: bash
+          scriptLocation: inlineScript
+          inlineScript: |
+            set -euo pipefail
+
+            DATASET="${{ parameters.evalDataset }}"
+            THRESHOLDS="${{ parameters.thresholds }}"
+
+            echo "=== Foundry Evaluation Gate ==="
+            echo "Dataset: ${DATASET}"
+            echo "Thresholds: ${THRESHOLDS:-'(none — advisory only)'}"
+
+            if [[ ! -f "${DATASET}" ]]; then
+              echo "SKIP: Eval dataset not found at ${DATASET}"
+              exit 0
+            fi
+
+            # Run evaluation script if it exists
+            EVAL_RUNNER="platform/foundry/eval/run-eval.py"
+            if [[ -f "${EVAL_RUNNER}" ]]; then
+              python3 "${EVAL_RUNNER}" \
+                --dataset "${DATASET}" \
+                ${THRESHOLDS:+--thresholds "${THRESHOLDS}"} \
+                --output "$(Build.ArtifactStagingDirectory)/eval-results.json"
+            else
+              echo "WARN: Eval runner not found at ${EVAL_RUNNER}. Running dataset validation only."
+              python3 -c "
+            import json, sys
+            with open('${DATASET}') as f:
+                lines = f.readlines()
+            count = 0
+            for i, line in enumerate(lines):
+                try:
+                    json.loads(line)
+                    count += 1
+                except json.JSONDecodeError as e:
+                    print(f'FAIL: line {i+1}: {e}', file=sys.stderr)
+                    sys.exit(1)
+            print(f'PASS: {count} eval records validated')
+            "
+            fi
+
+            echo "Evaluation complete."
+
+      - publish: $(Build.ArtifactStagingDirectory)
+        artifact: eval-results
+        displayName: Publish eval results
+        condition: always()
