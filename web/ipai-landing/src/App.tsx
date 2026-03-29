@@ -525,7 +525,7 @@ const HomePage = ({ setPage }: { setPage: (p: PageId) => void }) => (
           transition={{ delay: 0.1, duration: MOTION.durationGentle, ease: MOTION.curveDecelerateMin }}
         >
           <h1 className="text-6xl md:text-8xl font-bold leading-[1.05] mb-10 tracking-tight max-w-4xl">
-            AI-native operations for marketing, media, retail, financial services, and health
+            AI-native operations for marketing, media, retail, financial, and health services
           </h1>
           <p className="text-xl text-gray-400 leading-relaxed mb-12 max-w-3xl">
             InsightPulseAI combines Odoo on Cloud, Pulser, and modern data workflows to help teams unify operations, automate execution, and scale with stronger control.
