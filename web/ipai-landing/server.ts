@@ -1,5 +1,7 @@
 import express from "express";
 import path from "path";
+import cors from "cors";
+import rateLimit from "express-rate-limit";
 import { createServer as createViteServer } from "vite";
 
 // --- CTA Action Types (mirrors client ChatCtaAction) ---
@@ -10,10 +12,18 @@ type ChatCtaAction =
   | { type: 'open_scheduler'; label: string; href: string; analytics_id?: string }
   | { type: 'open_contact'; label: string; page?: string; analytics_id?: string };
 
+interface Activity {
+  id: string;
+  label: string;
+  status: 'active' | 'done' | 'error';
+  ts: string;
+}
+
 interface PulserResponse {
   reply: string;
   sourceLabel: string;
   ctas: ChatCtaAction[];
+  activities: Activity[];
 }
 
 const DEMO_URL = 'https://insightpulseai.zohobookings.com/';
@@ -174,14 +184,25 @@ function inferCtas(message: string, reply: string): ChatCtaAction[] {
 
 // --- Mock fallback (used when Foundry is not configured) ---
 
+function mockActivities(): Activity[] {
+  const ts = new Date().toISOString();
+  return [
+    { id: 'classify', label: 'Classifying request', status: 'done', ts },
+    { id: 'lookup', label: 'Searching knowledge base', status: 'done', ts },
+    { id: 'respond', label: 'Preparing response', status: 'done', ts },
+  ];
+}
+
 async function buildMockResponse(message: string): Promise<PulserResponse> {
   const lowerMsg = message.toLowerCase();
+  const activities = mockActivities();
 
   if (lowerMsg.includes("what is pulser")) {
     return {
       reply: "Pulser is the intelligent assistant family by InsightPulseAI. It helps teams navigate ERP workflows, summarize records, and make faster operational decisions — all built on Odoo CE and Azure.",
       sourceLabel: "Product Docs",
       ctas: inferCtas(message, "pulser intelligence"),
+      activities,
     };
   }
   if (lowerMsg.includes("core modules") || lowerMsg.includes("what modules")) {
@@ -189,6 +210,7 @@ async function buildMockResponse(message: string): Promise<PulserResponse> {
       reply: "Odoo on Cloud includes Finance & Accounting, CRM & Sales, Inventory & Purchasing, Project Management, and HR & Operations. Each module runs in a secure Azure environment with Pulser assistance available across workflows.",
       sourceLabel: "Product Docs",
       ctas: inferCtas(message, "modules finance crm"),
+      activities,
     };
   }
   if (lowerMsg.includes("odoo") && lowerMsg.includes("cloud")) {
@@ -196,6 +218,7 @@ async function buildMockResponse(message: string): Promise<PulserResponse> {
       reply: "Odoo on Cloud is a modern, modular ERP platform hosted in a secure Azure environment. It allows you to run finance, CRM, inventory, and more without managing your own servers. Pulser adds operational intelligence on top.",
       sourceLabel: "Product Docs",
       ctas: inferCtas(message, "odoo cloud modules"),
+      activities,
     };
   }
   if (lowerMsg.includes("industr")) {
@@ -208,6 +231,7 @@ async function buildMockResponse(message: string): Promise<PulserResponse> {
         { type: 'navigate', label: 'Retail solutions', href: '#retail', analytics_id: 'chat_nav_retail' },
         { type: 'navigate', label: 'Finance solutions', href: '#finance', analytics_id: 'chat_nav_finance' },
       ],
+      activities,
     };
   }
   if (lowerMsg.includes("pricing") || lowerMsg.includes("cost") || lowerMsg.includes("plan")) {
@@ -215,6 +239,7 @@ async function buildMockResponse(message: string): Promise<PulserResponse> {
       reply: "InsightPulseAI offers Launch, Growth, and Enterprise plans. Each is shaped by your operating model, workflow scope, and support needs. I'd recommend speaking with our team for a conversation tailored to your requirements.",
       sourceLabel: "Pricing",
       ctas: inferCtas(message, "pricing plan cost"),
+      activities,
     };
   }
   if (lowerMsg.includes("demo") || lowerMsg.includes("trial") || lowerMsg.includes("get started")) {
@@ -222,6 +247,7 @@ async function buildMockResponse(message: string): Promise<PulserResponse> {
       reply: "I'd be happy to connect you with our team. You can book a demo directly or reach out to discuss your specific requirements.",
       sourceLabel: "Product Docs",
       ctas: inferCtas(message, "demo book"),
+      activities,
     };
   }
   if (lowerMsg.includes("architecture") || lowerMsg.includes("how does it work")) {
@@ -229,6 +255,7 @@ async function buildMockResponse(message: string): Promise<PulserResponse> {
       reply: "InsightPulseAI runs on Azure Container Apps with Odoo CE 19 as the ERP backbone, Databricks for analytics, and Azure AI Foundry for the Pulser agent runtime. All services use managed identity and Key Vault for secrets.",
       sourceLabel: "Architecture",
       ctas: inferCtas(message, "architecture azure security"),
+      activities,
     };
   }
   if (lowerMsg.includes("security") || lowerMsg.includes("compliance")) {
@@ -236,6 +263,7 @@ async function buildMockResponse(message: string): Promise<PulserResponse> {
       reply: "InsightPulseAI uses Azure managed identity, Key Vault for secrets, role-based access, and encrypted data at rest and in transit. The platform is hosted in Azure Southeast Asia with managed certificates for TLS.",
       sourceLabel: "Architecture",
       ctas: inferCtas(message, "security azure trust"),
+      activities,
     };
   }
 
@@ -243,6 +271,7 @@ async function buildMockResponse(message: string): Promise<PulserResponse> {
     reply: "Pulser helps teams unify operations and automate execution across ERP, analytics, and workflows. I can walk you through the platform or connect you with a specialist.",
     sourceLabel: "Product Docs",
     ctas: [...DEFAULT_FOLLOWUP_CTAS, HANDOFF_CTA],
+    activities,
   };
 }
 
@@ -252,14 +281,28 @@ async function startServer() {
   const app = express();
   const PORT = 3000;
 
+  app.use(cors());
   app.use(express.json());
+
+  // Security headers
+  app.use((_req, res, next) => {
+    res.setHeader('X-Content-Type-Options', 'nosniff');
+    res.setHeader('X-Frame-Options', 'DENY');
+    res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
+    next();
+  });
 
   const foundryEnabled = isFoundryConfigured();
   console.log(`Pulser backend: ${foundryEnabled ? 'Azure AI Foundry Agent Service' : 'mock responses (set AZURE_AI_FOUNDRY_* env vars to enable Foundry)'}`);
 
-  // DEPRECATED: /api/copilot/chat — Remove after 2026-04-30
-  app.post("/api/copilot/chat", handleChat);
-  app.post("/api/pulser/chat", handleChat);
+  // Health check
+  app.get("/health", (_req, res) => {
+    res.json({ status: "ok", foundry: foundryEnabled, timestamp: new Date().toISOString() });
+  });
+
+  // Rate limit chat endpoint
+  const chatLimiter = rateLimit({ windowMs: 60_000, max: 20, standardHeaders: true, legacyHeaders: false });
+  app.post("/api/pulser/chat", chatLimiter, handleChat);
 
   async function handleChat(req: express.Request, res: express.Response) {
     const { message, sessionId, conversationId, context } = req.body;
@@ -271,16 +314,27 @@ async function startServer() {
     try {
       let result: PulserResponse;
 
+      const now = () => new Date().toISOString();
+
       if (foundryEnabled) {
         // --- Foundry Agent Service ---
+        const activities: Activity[] = [
+          { id: 'classify', label: 'Classifying request', status: 'done', ts: now() },
+          { id: 'foundry', label: 'Consulting Foundry agent', status: 'active', ts: now() },
+        ];
+
         const { reply, threadId } = await foundryChat(message, conversationId);
         const newConvId = conversationId || "pulser-thread-" + Math.random().toString(36).substring(7);
         threads.set(newConvId, threadId);
+
+        activities.find(a => a.id === 'foundry')!.status = 'done';
+        activities.push({ id: 'respond', label: 'Preparing response', status: 'done', ts: now() });
 
         result = {
           reply,
           sourceLabel: 'Pulser',
           ctas: inferCtas(message, reply),
+          activities,
         };
 
         return res.json({
@@ -288,6 +342,7 @@ async function startServer() {
           reply: result.reply,
           sourceLabel: result.sourceLabel,
           ctas: result.ctas,
+          activities: result.activities,
           citations: [],
           mode: "public_advisory",
         });
@@ -300,6 +355,7 @@ async function startServer() {
           reply: result.reply,
           sourceLabel: result.sourceLabel,
           ctas: result.ctas,
+          activities: result.activities,
           citations: [],
           mode: "public_advisory",
         });
@@ -316,6 +372,10 @@ async function startServer() {
             reply: fallback.reply,
             sourceLabel: fallback.sourceLabel + ' (fallback)',
             ctas: fallback.ctas,
+            activities: [
+              { id: 'classify', label: 'Classifying request', status: 'done', ts: now() },
+              { id: 'fallback', label: 'Using cached knowledge', status: 'done', ts: now() },
+            ],
             citations: [],
             mode: "public_advisory",
           });
