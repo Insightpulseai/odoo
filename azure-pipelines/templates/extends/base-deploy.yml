@@ -1,0 +1,128 @@
+# =============================================================================
+# Extends Template: Base Deploy Pipeline
+# =============================================================================
+# Policy-enforced deploy skeleton for container workloads.
+# Provides: build → deploy → smoke stages using shared job templates.
+#
+# Usage:
+#   extends:
+#     template: azure-pipelines/templates/extends/base-deploy.yml
+#     parameters:
+#       imageName: ipai-website
+#       dockerfile: web/ipai-landing/Dockerfile
+#       buildContext: web/ipai-landing
+#       containerAppName: ipai-website-dev
+#       resourceGroup: rg-ipai-dev-odoo-runtime
+#       smokeUrl: https://insightpulseai.com
+#       smokeContentMatch: InsightPulse
+# =============================================================================
+
+parameters:
+  - name: imageName
+    type: string
+  - name: imageTag
+    type: string
+    default: latest
+  - name: dockerfile
+    type: string
+  - name: buildContext
+    type: string
+    default: '.'
+  - name: acrName
+    type: string
+    default: acripaiodoo
+  - name: serviceConnection
+    type: string
+    default: azure-ipai
+  - name: containerAppName
+    type: string
+  - name: resourceGroup
+    type: string
+    default: rg-ipai-dev-odoo-runtime
+  - name: smokeUrl
+    type: string
+    default: ''
+  - name: smokeContentMatch
+    type: string
+    default: ''
+  - name: buildArgs
+    type: string
+    default: ''
+  - name: preBuildSteps
+    type: stepList
+    default: []
+  - name: postDeploySteps
+    type: stepList
+    default: []
+
+pool:
+  vmImage: ubuntu-latest
+
+stages:
+  # ─────────────────────────────────────────────────────────────────
+  # Stage 1: Build
+  # ─────────────────────────────────────────────────────────────────
+  - stage: Build
+    displayName: 'Build ${{ parameters.imageName }}'
+    jobs:
+      - template: ../jobs/build-container.yml
+        parameters:
+          imageName: ${{ parameters.imageName }}
+          imageTag: ${{ parameters.imageTag }}
+          dockerfile: ${{ parameters.dockerfile }}
+          buildContext: ${{ parameters.buildContext }}
+          acrName: ${{ parameters.acrName }}
+          serviceConnection: ${{ parameters.serviceConnection }}
+
+  # ─────────────────────────────────────────────────────────────────
+  # Stage 2: Deploy (main branch only)
+  # ─────────────────────────────────────────────────────────────────
+  - stage: Deploy
+    displayName: 'Deploy ${{ parameters.containerAppName }}'
+    dependsOn: Build
+    condition: |
+      and(
+        succeeded('Build'),
+        eq(variables['Build.SourceBranch'], 'refs/heads/main')
+      )
+    jobs:
+      - template: ../jobs/deploy-containerapp.yml
+        parameters:
+          containerAppName: ${{ parameters.containerAppName }}
+          resourceGroup: ${{ parameters.resourceGroup }}
+          imageName: ${{ parameters.imageName }}
+          imageTag: ${{ parameters.imageTag }}
+          acrName: ${{ parameters.acrName }}
+          serviceConnection: ${{ parameters.serviceConnection }}
+
+  # ─────────────────────────────────────────────────────────────────
+  # Stage 3: Smoke (only if smokeUrl is provided)
+  # ─────────────────────────────────────────────────────────────────
+  - ${{ if ne(parameters.smokeUrl, '') }}:
+    - stage: Smoke
+      displayName: 'Smoke test'
+      dependsOn: Deploy
+      condition: succeeded('Deploy')
+      jobs:
+        - template: ../jobs/smoke-http.yml
+          parameters:
+            url: ${{ parameters.smokeUrl }}
+            contentMatch: ${{ parameters.smokeContentMatch }}
+
+  # ─────────────────────────────────────────────────────────────────
+  # Stage 4: Evidence
+  # ─────────────────────────────────────────────────────────────────
+  - stage: Evidence
+    displayName: 'Publish evidence'
+    dependsOn:
+      - Build
+      - Deploy
+      - ${{ if ne(parameters.smokeUrl, '') }}:
+        - Smoke
+    condition: succeededOrFailed()
+    jobs:
+      - template: ../jobs/publish-evidence.yml
+        parameters:
+          surface: ${{ parameters.containerAppName }}
+          imageRef: ${{ parameters.acrName }}.azurecr.io/${{ parameters.imageName }}:${{ parameters.imageTag }}
+          smokeUrl: ${{ parameters.smokeUrl }}

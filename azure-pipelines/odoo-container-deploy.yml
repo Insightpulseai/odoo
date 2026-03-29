@@ -1,8 +1,8 @@
 # =============================================================================
 # Odoo Container Build + Deploy Pipeline
 # =============================================================================
-# Builds ipai-odoo:19.0-copilot image, pushes to ACR, deploys to ACA,
-# and runs module install against production DB.
+# Builds ipai-odoo:19.0-copilot image, deploys to ACA, runs smoke test.
+# Uses shared job templates — no inline deploy logic.
 #
 # Trigger: changes to addons/ipai/ or Dockerfile.odoo-copilot
 # =============================================================================
@@ -46,39 +46,17 @@ stages:
   - stage: Build
     displayName: Build Odoo Image
     jobs:
-      - job: BuildImage
-        displayName: ACR Build
-        pool:
-          name: ipai-build-pool
-        steps:
-          - checkout: self
-            fetchDepth: 1
-
-          - task: AzureCLI@2
-            displayName: Build and push to ACR
-            inputs:
-              azureSubscription: $(serviceConnection)
-              scriptType: bash
-              scriptLocation: inlineScript
-              inlineScript: |
-                set -euo pipefail
-                TAG="$(imageTag)-$(Build.BuildNumber)"
-
-                echo "Building $(imageName):${TAG}..."
-                az acr build \
-                  --registry $(acrName) \
-                  --image "$(imageName):${TAG}" \
-                  --image "$(imageName):$(imageTag)" \
-                  --file platform/runtime/docker/docker/Dockerfile.odoo-copilot \
-                  .
-
-                echo "##vso[task.setvariable variable=fullTag;isOutput=true]${TAG}"
-                echo "Build complete: $(acrName).azurecr.io/$(imageName):${TAG}"
-              name: Build
-              workingDirectory: $(Build.SourcesDirectory)
+      - template: templates/jobs/build-container.yml
+        parameters:
+          imageName: $(imageName)
+          imageTag: $(imageTag)
+          dockerfile: platform/runtime/docker/docker/Dockerfile.odoo-copilot
+          buildContext: .
+          acrName: $(acrName)
+          serviceConnection: $(serviceConnection)
 
   # ─────────────────────────────────────────────────────────────────
-  # Stage 2: Deploy
+  # Stage 2: Deploy (main only)
   # ─────────────────────────────────────────────────────────────────
   - stage: Deploy
     displayName: Deploy to ACA
@@ -89,87 +67,42 @@ stages:
         eq(variables['Build.SourceBranch'], 'refs/heads/main')
       )
     jobs:
-      - job: DeployACA
-        displayName: Update Container App
-        pool:
-          name: ipai-build-pool
-        steps:
-          - task: AzureCLI@2
-            displayName: Deploy new revision
-            inputs:
-              azureSubscription: $(serviceConnection)
-              scriptType: bash
-              scriptLocation: inlineScript
-              inlineScript: |
-                set -euo pipefail
-                SUFFIX="build-$(Build.BuildNumber)"
-
-                echo "Deploying $(containerAppName) with image $(acrName).azurecr.io/$(imageName):$(imageTag)..."
-                az containerapp update \
-                  --name $(containerAppName) \
-                  --resource-group $(resourceGroup) \
-                  --image $(acrName).azurecr.io/$(imageName):$(imageTag) \
-                  --revision-suffix "${SUFFIX}" \
-                  --output none
-
-                echo "Waiting for revision to become active..."
-                sleep 30
-
-                # Health check
-                FQDN=$(az containerapp show \
-                  --name $(containerAppName) \
-                  --resource-group $(resourceGroup) \
-                  --query "properties.configuration.ingress.fqdn" -o tsv)
-
-                HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" --max-time 30 "https://${FQDN}/web/login" || echo "000")
-                echo "Health check: HTTP ${HTTP_CODE}"
-
-                if [[ "${HTTP_CODE}" != "200" ]]; then
-                  echo "##vso[task.logissue type=warning]Health check returned ${HTTP_CODE}"
-                fi
+      - template: templates/jobs/deploy-containerapp.yml
+        parameters:
+          containerAppName: $(containerAppName)
+          resourceGroup: $(resourceGroup)
+          imageName: $(imageName)
+          imageTag: $(imageTag)
+          acrName: $(acrName)
+          serviceConnection: $(serviceConnection)
 
   # ─────────────────────────────────────────────────────────────────
-  # Stage 3: Validate
+  # Stage 3: Smoke
   # ─────────────────────────────────────────────────────────────────
-  - stage: Validate
-    displayName: Post-Deploy Validation
+  - stage: Smoke
+    displayName: Post-Deploy Smoke
     dependsOn: Deploy
     condition: succeeded('Deploy')
     jobs:
-      - job: SmokeTest
-        displayName: Smoke Test
-        pool:
-          name: ipai-build-pool
-        steps:
-          - task: AzureCLI@2
-            displayName: Verify modules and health
-            inputs:
-              azureSubscription: $(serviceConnection)
-              scriptType: bash
-              scriptLocation: inlineScript
-              inlineScript: |
-                set -euo pipefail
+      - template: templates/jobs/smoke-http.yml
+        parameters:
+          url: https://erp.insightpulseai.com/web/login
+          expectedStatus: '200'
+          contentMatch: Odoo
 
-                FQDN=$(az containerapp show \
-                  --name $(containerAppName) \
-                  --resource-group $(resourceGroup) \
-                  --query "properties.configuration.ingress.fqdn" -o tsv)
-
-                echo "=== Health Check ==="
-                curl -sf --max-time 15 "https://${FQDN}/web/login" > /dev/null && echo "PASS: /web/login returns 200" || echo "FAIL: /web/login not reachable"
-
-                echo "=== Asset Check ==="
-                ASSET_URL=$(curl -s "https://${FQDN}/web/login" | grep -o 'src="/web/assets/[^"]*\.js"' | head -1 | sed 's/src="//;s/"//')
-                if [ -n "$ASSET_URL" ]; then
-                  HTTP=$(curl -s -o /dev/null -w "%{http_code}" --max-time 10 "https://${FQDN}${ASSET_URL}")
-                  echo "Asset ${ASSET_URL}: HTTP ${HTTP}"
-                  [[ "$HTTP" == "200" ]] && echo "PASS: JS assets load" || echo "FAIL: JS assets broken"
-                fi
-
-                echo "=== Container Logs (last 5) ==="
-                az containerapp logs show \
-                  --name $(containerAppName) \
-                  --resource-group $(resourceGroup) \
-                  --tail 5 2>&1 | grep -v "Connecting\|Successfully" || true
-
-                echo "Validation complete."
+  # ─────────────────────────────────────────────────────────────────
+  # Stage 4: Evidence
+  # ─────────────────────────────────────────────────────────────────
+  - stage: Evidence
+    displayName: Publish Evidence
+    dependsOn:
+      - Build
+      - Deploy
+      - Smoke
+    condition: succeededOrFailed()
+    jobs:
+      - template: templates/jobs/publish-evidence.yml
+        parameters:
+          surface: $(containerAppName)
+          imageRef: $(acrName).azurecr.io/$(imageName):$(imageTag)
+          smokeUrl: https://erp.insightpulseai.com/web/login
