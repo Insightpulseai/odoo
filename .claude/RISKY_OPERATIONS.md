@@ -2,7 +2,7 @@
 
 > **Contract**: For operations in this list, teammates MUST produce a plan and request lead approval BEFORE making ANY changes.
 > **Rationale**: These operations can cause data loss, security breaches, or break production systems.
-> **Last Updated**: 2026-02-20
+> **Last Updated**: 2026-03-30
 
 ---
 
@@ -11,7 +11,7 @@
 ### 🔴 ALWAYS Require Plan Approval
 
 #### 1. Schema & Migration Changes
-**Scope**: `supabase/migrations/*.sql`, database schema modifications
+**Scope**: Odoo model changes, PostgreSQL migrations, database schema modifications
 **Risk**: Data loss, breaking changes, irreversible migrations
 
 **Plan Must Include**:
@@ -23,43 +23,40 @@
 **Examples**:
 ```sql
 -- ❌ NEVER without approval
-ALTER TABLE users DROP COLUMN email;
-ALTER TABLE orders ADD CONSTRAINT fk_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE;
+ALTER TABLE res_partner DROP COLUMN email;
+ALTER TABLE sale_order ADD CONSTRAINT fk_user FOREIGN KEY (user_id) REFERENCES res_users(id) ON DELETE CASCADE;
 
 -- ✅ Requires explicit plan
--- Migration: 20260220_add_audit_columns.sql
-ALTER TABLE orders ADD COLUMN created_by uuid REFERENCES auth.users(id);
-ALTER TABLE orders ADD COLUMN updated_at timestamptz DEFAULT now();
+-- Odoo module migration: pre-migrate or post-migrate script
+ALTER TABLE sale_order ADD COLUMN IF NOT EXISTS approved_by integer REFERENCES res_users(id);
+ALTER TABLE sale_order ADD COLUMN IF NOT EXISTS updated_at timestamptz DEFAULT now();
 
--- Rollback: 20260220_add_audit_columns_rollback.sql
-ALTER TABLE orders DROP COLUMN created_by;
-ALTER TABLE orders DROP COLUMN updated_at;
+-- Rollback: revert module version and run downgrade
+ALTER TABLE sale_order DROP COLUMN IF EXISTS approved_by;
+ALTER TABLE sale_order DROP COLUMN IF EXISTS updated_at;
 ```
 
-#### 2. RLS Policy Changes
-**Scope**: Row-Level Security policies in Supabase
+#### 2. Access Control & Security Policy Changes
+**Scope**: `ir.model.access.csv`, `ir.rule` record rules, Entra ID / OAuth config
 **Risk**: Security breaches, data leaks, unauthorized access
 
 **Plan Must Include**:
-- Policy name and table
-- Full policy SQL (before/after)
+- ACL or record rule name and model
+- Full before/after diff
 - Security test cases (who should/shouldn't have access)
-- Verification queries
+- Verification steps
 
 **Examples**:
-```sql
--- ❌ NEVER without approval
-DROP POLICY "users_select_policy" ON users;
-ALTER POLICY "orders_select" ON orders USING (true); -- Public access!
+```xml
+<!-- ❌ NEVER without approval -->
+<record id="sale_order_rule_all" model="ir.rule">
+  <field name="domain_force">[(1, '=', 1)]</field> <!-- Public access! -->
+</record>
 
--- ✅ Requires explicit plan
-CREATE POLICY "users_own_data" ON users
-  FOR SELECT USING (auth.uid() = id);
-
--- Test cases:
--- 1. User A can see only their own data
--- 2. User B cannot see User A's data
--- 3. Service role can see all data
+<!-- ✅ Requires explicit plan -->
+<record id="sale_order_rule_company" model="ir.rule">
+  <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+</record>
 ```
 
 #### 3. CI Gate Logic Changes
@@ -134,15 +131,15 @@ oca-port 18.0 19.0 purchase_tier_validation  # Depends on base_tier_validation!
 
 ## 🟡 Moderate Risk - Approval Recommended
 
-#### 6. Edge Function Deployment
-**Scope**: `supabase/functions/**`
-**Risk**: Runtime errors, API breakage, performance issues
+#### 6. Azure Infrastructure Changes
+**Scope**: `infra/azure/**`, Bicep/ARM templates, Container App config
+**Risk**: Runtime errors, service disruption, cost impact
 
 **Plan Should Include**:
-- Function name and trigger
-- Code diff
-- Test invocation (curl command)
-- Performance expectations
+- Resource name and type
+- Template diff
+- Validation (`az deployment group what-if`)
+- Rollback procedure
 
 #### 7. Pre-commit Hook Changes
 **Scope**: `.pre-commit-config.yaml`
@@ -193,7 +190,7 @@ When requesting approval, teammates MUST use this format:
 ```markdown
 ## Plan Approval Request
 
-**Teammate**: [OCA Porter | CI Gatekeeper | Platform SSOT | Runtime Engineer]
+**Teammate**: [OCA Porter | CI Gatekeeper | Azure Platform | Runtime Engineer]
 **Risk Category**: [Critical | Moderate | Low]
 **Operation**: [Brief description]
 
