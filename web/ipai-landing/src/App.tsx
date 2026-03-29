@@ -1919,18 +1919,18 @@ const PricingPage = ({ setPage }: { setPage: (p: PageId) => void }) => (
 const CompanyPage = ({ setPage }: { setPage: (p: PageId) => void }) => (
   <motion.div {...PAGE_TRANSITION}>
     {/* 1. Hero */}
-    <section className="pt-40 pb-24 px-6 md:px-12 bg-brand-dark text-white relative overflow-hidden">
+    <section className="pt-40 pb-32 px-6 md:px-12 bg-brand-dark text-white relative overflow-hidden min-h-[90vh] flex items-center">
       <div className="absolute inset-0 z-0">
         <video autoPlay muted loop playsInline className="w-full h-full object-cover opacity-30">
           <source src="/company-hero.mp4" type="video/mp4" />
         </video>
       </div>
-      <div className="max-w-7xl mx-auto relative z-10">
+      <div className="max-w-7xl mx-auto relative z-10 w-full">
         <span className="text-brand-primary font-bold uppercase tracking-widest text-sm mb-6 block">Company</span>
-        <h1 className="text-5xl md:text-7xl font-bold mb-10 tracking-tight leading-[1.1] max-w-4xl">
+        <h1 className="text-6xl md:text-8xl font-bold mb-10 tracking-tight leading-[1.05] max-w-4xl">
           We build modern operating models for ambitious businesses
         </h1>
-        <p className="text-xl text-gray-400 leading-relaxed mb-12 max-w-3xl">
+        <p className="text-xl md:text-2xl text-gray-400 leading-relaxed mb-12 max-w-3xl">
           InsightPulseAI helps growing companies modernize operations with Odoo on Cloud, Pulser, analytics, and automation. We combine architecture, implementation, and operational support into one scalable operating model.
         </p>
         <div className="flex flex-wrap gap-4">
@@ -1941,16 +1941,16 @@ const CompanyPage = ({ setPage }: { setPage: (p: PageId) => void }) => (
     </section>
 
     {/* 2. Why we exist */}
-    <section className="py-24 px-6 md:px-12 max-w-7xl mx-auto">
-      <h2 className="text-4xl font-bold mb-10 tracking-tight">Why InsightPulseAI exists</h2>
-      <p className="text-gray-600 text-lg leading-relaxed max-w-4xl">
+    <section className="py-32 px-6 md:px-12 max-w-7xl mx-auto">
+      <h2 className="text-4xl md:text-5xl font-bold mb-10 tracking-tight">Why InsightPulseAI exists</h2>
+      <p className="text-gray-600 text-lg md:text-xl leading-relaxed max-w-4xl">
         InsightPulseAI was built around a simple problem: operations often move faster than systems can adapt. Teams outgrow fragmented tools, manual workflows, and ERP environments that are too rigid to evolve with the business. We built InsightPulseAI to close that gap with a more adaptive operating model powered by Odoo, cloud delivery, operational intelligence, and automation.
       </p>
     </section>
 
     {/* 3. What we do */}
-    <section className="py-24 px-6 md:px-12 max-w-7xl mx-auto border-t border-gray-100">
-      <h2 className="text-4xl font-bold mb-16 tracking-tight">What we do</h2>
+    <section className="py-32 px-6 md:px-12 max-w-7xl mx-auto border-t border-gray-100">
+      <h2 className="text-4xl md:text-5xl font-bold mb-16 tracking-tight">What we do</h2>
       <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
         {[
           { icon: <Cloud size={32} className="text-brand-primary" />, title: "Odoo on Cloud", desc: "We design, deploy, and evolve cloud-based Odoo environments that give teams a stronger operational core." },
@@ -1968,9 +1968,9 @@ const CompanyPage = ({ setPage }: { setPage: (p: PageId) => void }) => (
     </section>
 
     {/* 4. What sets us apart */}
-    <section className="py-24 px-6 md:px-12 max-w-7xl mx-auto border-t border-gray-100">
-      <h2 className="text-4xl font-bold mb-8 tracking-tight">What sets us apart</h2>
-      <p className="text-gray-600 text-lg leading-relaxed mb-16 max-w-3xl">
+    <section className="py-32 px-6 md:px-12 max-w-7xl mx-auto border-t border-gray-100">
+      <h2 className="text-4xl md:text-5xl font-bold mb-8 tracking-tight">What sets us apart</h2>
+      <p className="text-gray-600 text-lg md:text-xl leading-relaxed mb-16 max-w-3xl">
         We are not just an implementation shop and not just an automation vendor. InsightPulseAI combines four disciplines into one coherent operating model.
       </p>
       <div className="grid md:grid-cols-2 gap-8">
@@ -1992,9 +1992,9 @@ const CompanyPage = ({ setPage }: { setPage: (p: PageId) => void }) => (
     </section>
 
     {/* 5. How we work */}
-    <section className="py-24 px-6 md:px-12 max-w-7xl mx-auto border-t border-gray-100">
-      <h2 className="text-4xl font-bold mb-8 tracking-tight">How we work</h2>
-      <p className="text-gray-600 text-lg leading-relaxed mb-16 max-w-3xl">
+    <section className="py-32 px-6 md:px-12 max-w-7xl mx-auto border-t border-gray-100">
+      <h2 className="text-4xl md:text-5xl font-bold mb-8 tracking-tight">How we work</h2>
+      <p className="text-gray-600 text-lg md:text-xl leading-relaxed mb-16 max-w-3xl">
         We partner with teams that need more than disconnected tooling or one-off implementation. Our work is grounded in business workflows, operating realities, and the need to keep systems flexible as the organization grows.
       </p>
       <div className="grid md:grid-cols-3 gap-8">
@@ -2013,10 +2013,10 @@ const CompanyPage = ({ setPage }: { setPage: (p: PageId) => void }) => (
     </section>
 
     {/* 6. Careers */}
-    <section className="py-24 px-6 md:px-12 max-w-7xl mx-auto border-t border-gray-100">
+    <section className="py-32 px-6 md:px-12 max-w-7xl mx-auto border-t border-gray-100">
       <div className="bg-brand-dark text-white rounded-2xl p-8 md:p-16 flex flex-col lg:flex-row items-center justify-between gap-12" style={{ boxShadow: SHADOW.shadow16 }}>
         <div className="max-w-xl">
-          <h2 className="text-4xl font-bold mb-8 tracking-tight">Join us</h2>
+          <h2 className="text-4xl md:text-5xl font-bold mb-8 tracking-tight">Join us</h2>
           <p className="text-gray-400 text-lg leading-relaxed">
             We're building the future of intelligent business operations. If you care about systems, execution, and building tools that help teams work better, we'd love to hear from you.
           </p>
