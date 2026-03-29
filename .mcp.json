@@ -16,21 +16,9 @@
       "type": "http",
       "url": "https://figma.com/mcp"
     },
-    "supabase": {
-      "command": "npx",
-      "args": ["-y", "@supabase/mcp-server"],
-      "env": {
-        "SUPABASE_ACCESS_TOKEN": "${SUPABASE_ACCESS_TOKEN}",
-        "SUPABASE_PROJECT_REF": "${SUPABASE_PROJECT_REF:-spdtwktxdalcfigzeqrz}"
-      }
-    },
     "playwright": {
       "command": "npx",
       "args": ["-y", "@playwright/mcp@latest"]
-    },
-    "plane": {
-      "command": "npx",
-      "args": ["-y", "mcp-remote@latest", "https://mcp.plane.so/http/mcp"]
     },
     "azure-devops": {
       "command": "npx",
@@ -38,7 +26,15 @@
     },
     "wix": {
       "command": "npx",
-      "args": ["-y", "@wix/mcp"]
+      "args": [
+        "-y", "@wix/mcp-remote@latest",
+        "https://mcp.wix.com/mcp",
+        "--header", "Authorization:${WIX_API_KEY}",
+        "--header", "wix-account-id:c169c522-8188-4fc5-a7c4-8dcce7700ef6"
+      ],
+      "env": {
+        "WIX_API_KEY": "${WIX_API_KEY}"
+      }
     }
   }
 }

@@ -1,0 +1,174 @@
+{
+  "audit_date": "2026-03-28",
+  "audit_scope": "OneLake + Fabric + Azure Databricks E2E integration",
+  "overall_status": "NOT_OPERATIONAL",
+  "summary": "Infrastructure provisioned but zero data flow operational. Fabric mirroring not configured. Unity Catalog metastore unverified. No data in ADLS. Power BI not deployed.",
+
+  "infrastructure": {
+    "status": "PROVISIONED",
+    "components": {
+      "pg_server": {
+        "name": "pg-ipai-odoo",
+        "status": "PASS",
+        "state": "Ready",
+        "version": "16",
+        "tier": "GeneralPurpose",
+        "wal_level": "logical",
+        "max_worker_processes": 11,
+        "databases": ["odoo", "odoo_staging", "odoo_prod"]
+      },
+      "adls_storage": {
+        "name": "stipaidevlake",
+        "status": "PASS",
+        "hns_enabled": true,
+        "region": "southeastasia",
+        "containers": ["bronze", "silver", "gold", "platinum", "checkpoints", "iceberg"],
+        "data_present": "UNKNOWN",
+        "data_access_blocked": true,
+        "block_reason": "CLI user lacks Storage Blob Data Reader role"
+      },
+      "databricks_workspace": {
+        "name": "dbw-ipai-dev",
+        "status": "PASS",
+        "provisioning_state": "Succeeded",
+        "sku": "premium",
+        "url": "adb-7405610347978231.11.azuredatabricks.net",
+        "cli_auth_status": "BLOCKED",
+        "cli_auth_type": "databricks-cli"
+      }
+    }
+  },
+
+  "fabric_mirroring": {
+    "status": "NOT_CONFIGURED",
+    "pg_server_mirroring_property": null,
+    "fabric_capacity_provisioned": false,
+    "fabric_workspace_created": false,
+    "mirrored_database_created": false,
+    "cdc_replicating": false,
+    "blocker": "No Microsoft Fabric capacity provisioned. PG server mirroring feature not enabled."
+  },
+
+  "unity_catalog": {
+    "status": "UNVERIFIED",
+    "metastore_status": "pending (per SSOT)",
+    "claimed_catalogs": ["ipai_lakehouse_dev", "ipai_lakehouse_staging", "ipai_lakehouse"],
+    "catalog_name_collision": true,
+    "conflicting_names_in_code": ["ipai", "dbw_ipai_dev", "dev_ppm", "ipai_lakehouse_dev"],
+    "blocker": "Cannot verify live state -- Databricks CLI blocked"
+  },
+
+  "medallion_pipeline": {
+    "status": "CODE_ONLY",
+    "code_quality": "HIGH",
+    "code_assets": {
+      "bronze_ingestion": "data-intelligence/notebooks/01_odoo_bronze_ingestion.py",
+      "seed_synthetic": "data-intelligence/notebooks/tests/seed_synthetic.py",
+      "test_pipeline": "data-intelligence/notebooks/tests/test_medallion_pipeline.py",
+      "dlt_pipeline": "data-intelligence/databricks/pipelines/medallion_test_dlt.py",
+      "dab_job": "data-intelligence/databricks/bundles/medallion_test_job.yml",
+      "sql_ddl": "data-intelligence/databricks/sql/*.sql"
+    },
+    "deployed": false,
+    "ever_executed": false,
+    "bronze_tables_populated": false,
+    "silver_tables_populated": false,
+    "gold_tables_populated": false
+  },
+
+  "power_bi": {
+    "status": "NOT_DEPLOYED",
+    "workspace_exists": false,
+    "semantic_models": 0,
+    "dashboards": 0,
+    "blocker": "No Power BI Pro/PPU licenses or Fabric capacity provisioned"
+  },
+
+  "test_results": {
+    "total_tests": 41,
+    "pass": 11,
+    "fail": 6,
+    "blocked": 22,
+    "unverified": 2,
+    "pass_rate_of_executable": "64.7%",
+    "pass_rate_of_total": "26.8%"
+  },
+
+  "critical_blockers": [
+    {
+      "id": "B1",
+      "component": "fabric_mirroring",
+      "severity": "CRITICAL",
+      "description": "Fabric mirroring not configured on pg-ipai-odoo (fabricMirroring: null)",
+      "fix": "Provision Fabric capacity, enable mirroring on PG server, create mirrored database"
+    },
+    {
+      "id": "B2",
+      "component": "unity_catalog",
+      "severity": "CRITICAL",
+      "description": "UC metastore status is 'pending' -- cannot verify if attached",
+      "fix": "Verify via Databricks CLI or UI. If not attached, create and assign metastore."
+    },
+    {
+      "id": "B3",
+      "component": "adls_storage",
+      "severity": "HIGH",
+      "description": "CLI user lacks Storage Blob Data Reader on stipaidevlake",
+      "fix": "Grant Storage Blob Data Reader role to current user"
+    },
+    {
+      "id": "B4",
+      "component": "databricks_cli",
+      "severity": "HIGH",
+      "description": "Databricks CLI commands blocked -- cannot verify workspace state",
+      "fix": "Re-authenticate via 'databricks auth login' with AAD browser flow"
+    },
+    {
+      "id": "B5",
+      "component": "catalog_naming",
+      "severity": "MEDIUM",
+      "description": "Four different catalog names used across code -- no single canonical name",
+      "fix": "Decide on 'ipai' as canonical, update all references"
+    },
+    {
+      "id": "B6",
+      "component": "power_bi",
+      "severity": "MEDIUM",
+      "description": "Power BI not deployed -- no business consumption layer",
+      "fix": "Provision Power BI Pro/PPU or Fabric capacity, create workspace and semantic models"
+    }
+  ],
+
+  "deprecated_references_in_code": [
+    {
+      "file": "databricks/databricks.yml",
+      "issue": "References Notion database IDs and notion-sync artifact (Notion is deprecated)"
+    },
+    {
+      "file": "databricks/sql/bronze_odoo.sql",
+      "issue": "Contains Notion-specific tables (notion_raw_pages)"
+    },
+    {
+      "file": "databricks/sql/silver_odoo.sql",
+      "issue": "Contains Notion-specific tables (notion_programs, notion_projects, etc.)"
+    },
+    {
+      "file": "databricks/config/dev.yaml",
+      "issue": "Contains Notion database ID placeholders and Supabase config (Supabase is deprecated)"
+    }
+  ],
+
+  "minimum_viable_e2e_estimate": {
+    "phases": "0-3 (CLI unblock, naming, federation, test pipeline)",
+    "effort": "2-3 hours",
+    "cost": "$0 (uses existing Databricks compute)",
+    "prerequisite": "Databricks workspace is operational with compute"
+  },
+
+  "full_e2e_estimate": {
+    "phases": "0-6 (all phases including Fabric and Power BI)",
+    "effort": "1-2 days",
+    "cost": "~$5,000/month for Fabric F64 capacity (or free 60-day trial)",
+    "prerequisite": "Budget approval for Fabric capacity + Power BI licenses"
+  }
+}

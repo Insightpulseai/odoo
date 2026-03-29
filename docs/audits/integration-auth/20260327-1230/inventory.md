@@ -32,8 +32,12 @@
 | VS Code Editor Environment | Developer workstation | Dev/control surface, extension-bound credentials | Local | Extension APIs | Extension-delegated (GitHub, Azure CLI, Docker socket) | Multiple (per extension) | Extension credential stores | Development | **Active** | Screenshot: Azure ML workspace + Docker Desktop context bound in editor |
 | Azure ML Workspace (`proj-ipai-claude`) | VS Code -> Azure ML | AI/ML workspace context (Foundry/ML experiments) | Client -> Server | HTTPS | Azure CLI auth / Entra token | Microsoft Entra ID | Azure CLI credential cache | Development | **Active (editor-bound)** | VS Code status bar: `Azure ML workspace: proj-ipai-claude` |
 | Local Container Runtime (Docker Desktop) | Developer workstation | Local dev runtime, container builds, devcontainer | Local | Docker socket | Docker daemon (local OS user) | Local OS | Docker daemon socket | Development | **Active** | VS Code status bar: `docker-desktop` context, `default` profile |
+| iOS Mobile Wrapper (OdooWrapper) | iOS app -> Odoo web | Native iOS shell for ERP access | Client -> Server | HTTPS (WKWebView) | Biometric re-entry (Face ID/Touch ID) + WKWebView session cookies + Keychain token storage | Odoo local (via webview) | Keychain (`com.insightpulseai.odoo`) | Development | **Active -- no SSO, no host allowlist, no Entra integration** | `web/mobile/Sources/BiometricAuth.swift`, `WrapperViewController.swift`, `KeychainService.swift` |
 | Superset BI | Browser -> Superset ACA | Supplemental analytics | Browser -> Server | HTTPS | Local login (no SSO) | Superset local | Superset DB | Production | **Active, no SSO** | `infra/ssot/azure/service-matrix.yaml:74-82`, `infra/ssot/auth/oidc_clients.yaml:131-153` |
-| Cloudflare DNS | Platform -> Cloudflare | DNS resolution | Config push | API/Terraform | API token | Cloudflare account | Cloudflare API token | Production | **Active** (conflicting with Azure DNS claim) | `infra/dns/subdomain-registry.yaml` |
+| Azure DNS | Platform -> Azure DNS | DNS resolution (authoritative) | Config push | Azure CLI / Terraform | Managed Identity / Azure CLI | Microsoft Entra ID | Azure platform | Production | **Active** -- confirmed via `dig NS` (ns1-05.azure-dns.com etc.) | `infra/dns/subdomain-registry.yaml` |
+| Zoho Mail REST API (archived) | Odoo -> Zoho API | Outbound email via REST (bypasses SMTP) | Client -> Server | HTTPS REST | OAuth2 refresh token | Zoho account | `ir.config_parameter` (archived -- NOT Key Vault) | Archived | **Archived** -- `ipai_zoho_mail_api` in `archive/`, not active | `archive/root/addons/ipai/ipai_zoho_mail_api/services/zoho_client.py` |
+| Slack Agent (Pulser) | Slack -> Vercel -> Supabase | Ops ChatOps, slash commands, event handling | Bidirectional | HTTPS + WebSocket (Socket Mode) | Bot Token (`xoxb-`) + HMAC-SHA256 signing secret | Slack (workspace auth) | Vercel env + Supabase Vault (status unknown) | Production | **Active** -- bot token verified 2026-03-02, signing secret unverified | `infra/ssot/integrations/slack_agent.yaml`, `infra/ssot/integrations/slack_agent.install.yaml` |
+| Slack Plane Intake | Slack -> Plane -> Odoo | Issue intake from Slack channels | Inbound | HTTPS (OAuth 2.0 callbacks) | Workspace OAuth 2.0 + Bot Token + HMAC signing | Slack + Plane | Supabase Vault + GitHub Actions (unverified) | Planned | **Planned, not active** | `infra/ssot/integrations/plane_slack_intake.yaml` |
 | Keycloak (auth.insightpulseai.com) | N/A | SSO gateway (never used) | N/A | OIDC | N/A | Keycloak | N/A | Decommissioned | **Decommissioned 2026-03-25** | `infra/ssot/azure/service-matrix.yaml:38-46` |
 | n8n Automation | N/A | Workflow automation (retired) | N/A | HTTPS/webhooks | N/A | N/A | N/A | Decommissioned | **Decommissioned 2026-03-25** | `infra/ssot/azure/service-matrix.yaml:18-25` |
 
@@ -41,7 +45,10 @@
 
 ## Notes
 
-- **21 active/planned integration surfaces** (incl. 3 dev-environment surfaces), **5 decommissioned**, **2 deprecated MCP servers still configured**
+- **24 active/planned integration surfaces** (incl. 3 dev-environment surfaces, 2 Slack apps), **1 archived** (Zoho REST API), **5 decommissioned**, **2 deprecated MCP servers still configured**
 - The most critical gap is the absent backend controller layer (`ipai_mail_plugin`, `ipai_auth_oidc`) that all OAuth flows depend on
-- Managed Identity is the canonical auth mechanism for Azure service-to-service flows but has not been verified as operational
+- Managed Identity is the canonical auth mechanism for Azure service-to-service flows -- verified correct in Bicep modules (Pass 1, WS-05)
 - Secret management is well-architected (Azure Key Vault) but has gaps: Google OAuth client_secret in `ir.config_parameter`, hardcoded passwords in archive files
+- DNS authority confirmed as **Azure DNS** (not Cloudflare) via live NS record check (Pass 2)
+- `ipai_enterprise_bridge` manifest declares `data/mail_server.xml` and `data/oauth_providers.xml` but the `data/` directory does not exist -- module cannot install cleanly (Pass 2, DG-10)
+- Archived Zoho REST API module (`ipai_zoho_mail_api`) used OAuth2 with credentials in `ir.config_parameter` -- not active, should not be reintroduced without Key Vault migration (Pass 2)
