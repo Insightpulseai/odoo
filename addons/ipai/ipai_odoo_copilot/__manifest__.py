@@ -1,13 +1,18 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'Pulser for Odoo',
-    'version': '19.0.1.1.1',
-    'summary': 'Pulser assistant — systray chat entry and agent gateway bridge',
+    'version': '19.0.2.0.0',
+    'summary': 'Pulser assistant — Foundry-backed skill router with tool execution',
     'category': 'Productivity',
     'license': 'LGPL-3',
     'author': 'InsightPulse AI',
     'website': 'https://insightpulseai.com',
     'depends': ['base', 'web', 'mail', 'bus'],
+    'external_dependencies': {
+        'python': [
+            'requests',
+        ],
+    },
     'data': [
         'security/copilot_groups.xml',
         'security/ir.model.access.csv',
@@ -20,6 +25,11 @@
             'ipai_odoo_copilot/static/src/js/copilot_systray.js',
             'ipai_odoo_copilot/static/src/xml/copilot_systray.xml',
             'ipai_odoo_copilot/static/src/scss/copilot.scss',
+            'ipai_odoo_copilot/static/src/components/activity_timeline/activity_timeline.js',
+            'ipai_odoo_copilot/static/src/components/activity_timeline/activity_timeline.xml',
+            'ipai_odoo_copilot/static/src/components/activity_timeline/activity_timeline.scss',
+            'ipai_odoo_copilot/static/src/components/chat_panel/chat_panel.js',
+            'ipai_odoo_copilot/static/src/components/chat_panel/chat_panel.xml',
         ],
     },
     'installable': True,

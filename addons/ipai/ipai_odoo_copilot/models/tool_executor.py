@@ -95,16 +95,26 @@ class CopilotToolExecutor(models.Model):
         "search_architecture_docs": "_execute_search_architecture_docs",
         # Bounded web search fallback (Lane 3)
         "search_odoo_docs_web": "_execute_search_odoo_docs_web",
+        # Fabric SQL endpoint (governed business data)
+        "query_fabric_data": "_execute_query_fabric_data",
+        # Write lane (action queue only)
+        "propose_action": "_execute_propose_action",
     }
 
-    # Stage 1 tools are all read-only
-    _READ_ONLY_TOOLS = frozenset(_TOOL_HANDLERS.keys())
+    # Read-only tools — safe to execute without approval.
+    # propose_action is a write-lane tool but is safe because it only
+    # queues actions (does not execute them).
+    _READ_ONLY_TOOLS = frozenset(
+        k for k in _TOOL_HANDLERS if k != "propose_action"
+    )
+    _WRITE_LANE_TOOLS = frozenset({"propose_action"})
 
     # ------------------------------------------------------------------
     # Public API
     # ------------------------------------------------------------------
 
-    def execute_tool(self, tool_name, arguments, context_envelope):
+    def execute_tool(self, tool_name, arguments, context_envelope=None,
+                     user_id=None):
         """Dispatch a tool call and return structured results.
 
         Args:
@@ -908,6 +918,295 @@ class CopilotToolExecutor(models.Model):
             "fallback_url": (
                 "https://www.odoo.com/documentation/%s/search.html?q=%s"
                 % (version, urllib.parse.quote_plus(query))
+            ),
+        }
+
+    # ------------------------------------------------------------------
+    # Fabric SQL endpoint (governed business data)
+    # ------------------------------------------------------------------
+
+    # Schemas allowed for Fabric queries — prevents access to raw/staging data
+    _FABRIC_ALLOWED_SCHEMAS = frozenset({"gold", "semantic"})
+
+    # Explicit object allowlist — only these tables/views are queryable.
+    # Matches ssot/knowledge/odoo-copilot-indexes.yaml entities.
+    _FABRIC_ALLOWED_OBJECTS = frozenset({
+        "gold.fact_invoices",
+        "gold.fact_payments",
+        "gold.dim_partners",
+        "gold.fact_aging",
+        "gold.fact_budget_lines",
+        "semantic.partner_aging_summary",
+        "semantic.budget_vs_actual",
+        "semantic.monthly_kpis",
+        "semantic.cash_flow_forecast",
+    })
+
+    # SQL tokens that are never allowed in Fabric queries
+    _FABRIC_BLOCKED_TOKENS = frozenset({
+        "INSERT", "UPDATE", "DELETE", "DROP", "ALTER", "TRUNCATE",
+        "CREATE", "EXEC", "EXECUTE", "GRANT", "REVOKE", "MERGE",
+        "CALL", "INTO", "SET",
+    })
+
+    # Configurable limits
+    _FABRIC_MAX_ROWS = 500
+    _FABRIC_QUERY_TIMEOUT = 30
+
+    # Pre-approved query templates for common KPI patterns.
+    # The agent can use template_id instead of raw SQL.
+    _FABRIC_QUERY_TEMPLATES = {
+        "monthly_kpis": (
+            "SELECT * FROM semantic.monthly_kpis "
+            "WHERE period_month = {month} AND period_year = {year} "
+            "ORDER BY metric_name"
+        ),
+        "partner_aging": (
+            "SELECT * FROM semantic.partner_aging_summary "
+            "WHERE partner_id = {partner_id} "
+            "ORDER BY bucket"
+        ),
+        "budget_variance": (
+            "SELECT * FROM semantic.budget_vs_actual "
+            "WHERE fiscal_year = {fiscal_year} "
+            "ORDER BY variance_pct DESC"
+        ),
+        "revenue_trend": (
+            "SELECT period_year, period_month, "
+            "SUM(amount_total) as revenue "
+            "FROM gold.fact_invoices "
+            "WHERE state = 'posted' "
+            "GROUP BY period_year, period_month "
+            "ORDER BY period_year, period_month"
+        ),
+        "cash_forecast": (
+            "SELECT * FROM semantic.cash_flow_forecast "
+            "ORDER BY forecast_date"
+        ),
+    }
+
+    def _execute_query_fabric_data(self, arguments, context_envelope):
+        """Query governed business data from Fabric SQL endpoint.
+
+        Two modes:
+          1. template_id + params: uses a pre-approved query template
+          2. raw query: validated against object allowlist + blocked tokens
+
+        Only SELECT against explicitly allowed objects. Read-only enforced
+        via SET TRANSACTION READ ONLY.
+        """
+        import re as _re  # noqa: PLC0415
+
+        template_id = arguments.get("template_id", "")
+        query = arguments.get("query", "")
+        params = arguments.get("params", {})
+        max_rows = max(1, min(
+            int(arguments.get("max_rows", 100)),
+            self._FABRIC_MAX_ROWS,
+        ))
+
+        # Mode 1: Template query (preferred, safer)
+        if template_id:
+            template = self._FABRIC_QUERY_TEMPLATES.get(template_id)
+            if not template:
+                raise UserError(
+                    _("Unknown query template: '%s'. Available: %s",
+                      template_id,
+                      ", ".join(sorted(self._FABRIC_QUERY_TEMPLATES)))
+                )
+            # Validate params are simple values (no SQL injection)
+            for key, val in params.items():
+                if not isinstance(val, (int, float, str)):
+                    raise UserError(
+                        _("Template param '%s' must be a simple value", key)
+                    )
+                if isinstance(val, str) and not _re.match(
+                    r'^[a-zA-Z0-9_\-. ]+$', val
+                ):
+                    raise UserError(
+                        _("Template param '%s' contains invalid characters", key)
+                    )
+            try:
+                query = template.format(**params)
+            except KeyError as e:
+                raise UserError(
+                    _("Missing template parameter: %s", str(e))
+                )
+
+        if not query:
+            raise UserError(
+                _("query_fabric_data requires 'query' or 'template_id'")
+            )
+
+        # Validate: must start with SELECT
+        query_upper = query.strip().upper()
+        if not query_upper.startswith("SELECT"):
+            raise UserError(
+                _("Only SELECT queries are allowed against Fabric endpoint")
+            )
+
+        # Validate: no blocked tokens
+        tokens = set(query_upper.split())
+        blocked_found = tokens & self._FABRIC_BLOCKED_TOKENS
+        if blocked_found:
+            raise UserError(
+                _("Blocked operations in query: %s",
+                  ", ".join(sorted(blocked_found)))
+            )
+
+        # Validate: no semicolons (prevent multi-statement)
+        if ";" in query:
+            raise UserError(
+                _("Multi-statement queries are not allowed")
+            )
+
+        # Validate: no comments (prevent comment-based injection)
+        if "--" in query or "/*" in query:
+            raise UserError(
+                _("SQL comments are not allowed in Fabric queries")
+            )
+
+        # Validate: only allowed objects referenced
+        query_lower = query.lower()
+        referenced_objects = set()
+        for obj in self._FABRIC_ALLOWED_OBJECTS:
+            if obj.lower() in query_lower:
+                referenced_objects.add(obj)
+
+        if not referenced_objects:
+            raise UserError(
+                _("Query must reference approved objects. Allowed: %s",
+                  ", ".join(sorted(self._FABRIC_ALLOWED_OBJECTS)))
+            )
+
+        # Check no unapproved schema.object patterns
+        schema_obj_pattern = _re.findall(
+            r'(?:FROM|JOIN)\s+([a-zA-Z_][a-zA-Z0-9_]*\.[a-zA-Z_][a-zA-Z0-9_]*)',
+            query, _re.IGNORECASE,
+        )
+        for ref in schema_obj_pattern:
+            if ref.lower() not in {o.lower() for o in self._FABRIC_ALLOWED_OBJECTS}:
+                raise UserError(
+                    _("Object '%s' is not in the approved allowlist", ref)
+                )
+
+        # Get Fabric SQL connection
+        fabric_conn_str = os.environ.get("FABRIC_SQL_CONNECTION_STRING", "")
+        if not fabric_conn_str:
+            return {
+                "status": "not_configured",
+                "message": (
+                    "Fabric SQL endpoint not configured. "
+                    "Set FABRIC_SQL_CONNECTION_STRING environment variable."
+                ),
+                "query": query,
+            }
+
+        try:
+            import pyodbc  # noqa: PLC0415
+        except ImportError:
+            return {
+                "status": "dependency_missing",
+                "message": "pyodbc not installed. Required for Fabric SQL access.",
+            }
+
+        try:
+            conn = pyodbc.connect(
+                fabric_conn_str,
+                timeout=self._FABRIC_QUERY_TIMEOUT,
+            )
+            cursor = conn.cursor()
+
+            # Enforce read-only at session level
+            cursor.execute("SET TRANSACTION ISOLATION LEVEL READ COMMITTED")
+
+            cursor.execute(query)
+
+            columns = [desc[0] for desc in cursor.description]
+            rows = cursor.fetchmany(max_rows)
+            data = [dict(zip(columns, row)) for row in rows]
+
+            cursor.close()
+            conn.close()
+
+            return {
+                "status": "success",
+                "columns": columns,
+                "data": data,
+                "row_count": len(data),
+                "truncated": len(data) >= max_rows,
+                "objects_queried": sorted(referenced_objects),
+                "template_used": template_id or None,
+            }
+        except pyodbc.Error as e:
+            _logger.error("Fabric SQL query error: %s", e)
+            return {
+                "status": "error",
+                "message": "Query execution failed: %s" % str(e)[:200],
+            }
+
+    # ------------------------------------------------------------------
+    # Write lane — action queue (propose, never execute directly)
+    # ------------------------------------------------------------------
+
+    def _execute_propose_action(self, arguments, context_envelope):
+        """Propose a write action for human approval.
+
+        Creates a record in ipai.copilot.action.queue. The action is
+        NOT executed — a human must review and approve it first.
+        """
+        summary = arguments.get("summary", "")
+        target_model = arguments.get("target_model", "")
+        target_res_id = arguments.get("target_res_id", 0)
+        action_type = arguments.get("action_type", "")
+        payload = arguments.get("payload", {})
+
+        if not summary:
+            raise UserError(_("propose_action requires 'summary'"))
+        if not target_model:
+            raise UserError(_("propose_action requires 'target_model'"))
+        if not action_type:
+            raise UserError(_("propose_action requires 'action_type'"))
+        if action_type not in ("create", "write", "action"):
+            raise UserError(
+                _("Invalid action_type: '%s'. Must be create/write/action", action_type)
+            )
+
+        # Block sensitive models
+        if target_model in _BLOCKED_MODELS:
+            raise UserError(
+                _("Actions on model '%s' are not allowed", target_model)
+            )
+
+        # For write/action, validate target record exists
+        if action_type in ("write", "action") and target_res_id:
+            if target_model not in self.env:
+                raise UserError(_("Model '%s' does not exist", target_model))
+            record = self.env[target_model].browse(target_res_id)
+            if not record.exists():
+                raise UserError(
+                    _("Target record %s/%d not found", target_model, target_res_id)
+                )
+
+        queue_record = self.env["ipai.copilot.action.queue"].sudo().create({
+            "summary": summary[:256],
+            "workflow_id": "copilot-agent",
+            "agent_run_id": context_envelope.get("agent_run_id", ""),
+            "target_model": target_model,
+            "target_res_id": target_res_id or 0,
+            "action_type": action_type,
+            "action_payload": json.dumps(payload, default=str),
+            "state": "pending",
+        })
+
+        return {
+            "status": "queued",
+            "queue_id": queue_record.id,
+            "summary": summary,
+            "message": (
+                "Action queued for human approval (ID: %d). "
+                "A reviewer will approve or reject this action."
+                % queue_record.id
             ),
         }
 
