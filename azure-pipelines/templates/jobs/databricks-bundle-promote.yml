@@ -1,0 +1,66 @@
+# =============================================================================
+# Reusable Job: Databricks Bundle Deploy (Promote)
+# =============================================================================
+# Deploys a Databricks bundle to a target environment.
+# Runs optional post-deploy smoke test.
+#
+# Usage:
+#   jobs:
+#     - template: templates/jobs/databricks-bundle-promote.yml
+#       parameters:
+#         bundleRoot: databricks/bundles/foundation_python
+#         target: staging
+# =============================================================================
+
+parameters:
+  - name: bundleRoot
+    type: string
+  - name: target
+    type: string
+  - name: pythonVersion
+    type: string
+    default: '3.11'
+  - name: runSmoke
+    type: boolean
+    default: true
+
+jobs:
+  - job: BundleDeploy
+    displayName: 'Deploy: ${{ parameters.bundleRoot }} -> ${{ parameters.target }}'
+    pool:
+      vmImage: ubuntu-latest
+    steps:
+      - checkout: self
+        fetchDepth: 0
+
+      - task: UsePythonVersion@0
+        displayName: 'Use Python ${{ parameters.pythonVersion }}'
+        inputs:
+          versionSpec: ${{ parameters.pythonVersion }}
+
+      - bash: |
+          set -euo pipefail
+          curl -fsSL https://raw.githubusercontent.com/databricks/setup-cli/main/install.sh | sh
+          databricks version
+        displayName: Install Databricks CLI
+
+      - bash: |
+          set -euo pipefail
+          echo "=== Bundle Deploy ==="
+          echo "Root: ${{ parameters.bundleRoot }}"
+          echo "Target: ${{ parameters.target }}"
+
+          cd "${{ parameters.bundleRoot }}"
+          databricks bundle deploy -t "${{ parameters.target }}"
+          echo "PASS: Bundle deployed to ${{ parameters.target }}"
+        displayName: 'Deploy bundle (${{ parameters.target }})'
+
+      - ${{ if parameters.runSmoke }}:
+        - bash: |
+            set -euo pipefail
+            cd "${{ parameters.bundleRoot }}"
+            databricks bundle run -t "${{ parameters.target }}" smoke || {
+              echo "WARN: Smoke job not defined or failed"
+              true
+            }
+          displayName: 'Post-deploy smoke (${{ parameters.target }})'

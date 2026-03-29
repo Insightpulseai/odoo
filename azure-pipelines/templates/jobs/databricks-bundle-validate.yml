@@ -1,0 +1,73 @@
+# =============================================================================
+# Reusable Job: Databricks Bundle Validate
+# =============================================================================
+# Installs the Databricks CLI and runs `databricks bundle validate`
+# against a specified bundle root directory.
+#
+# Usage:
+#   jobs:
+#     - template: templates/jobs/databricks-bundle-validate.yml
+#       parameters:
+#         bundleRoot: databricks/bundles/foundation_python
+#         target: dev
+# =============================================================================
+
+parameters:
+  - name: bundleRoot
+    type: string
+  - name: target
+    type: string
+    default: dev
+  - name: pythonVersion
+    type: string
+    default: '3.11'
+  - name: runTests
+    type: boolean
+    default: true
+
+jobs:
+  - job: BundleValidate
+    displayName: 'Validate: ${{ parameters.bundleRoot }}'
+    pool:
+      vmImage: ubuntu-latest
+    steps:
+      - checkout: self
+        fetchDepth: 1
+
+      - task: UsePythonVersion@0
+        displayName: 'Use Python ${{ parameters.pythonVersion }}'
+        inputs:
+          versionSpec: ${{ parameters.pythonVersion }}
+
+      - bash: |
+          set -euo pipefail
+          curl -fsSL https://raw.githubusercontent.com/databricks/setup-cli/main/install.sh | sh
+          databricks version
+        displayName: Install Databricks CLI
+
+      - bash: |
+          set -euo pipefail
+          echo "=== Bundle Validate ==="
+          echo "Root: ${{ parameters.bundleRoot }}"
+          echo "Target: ${{ parameters.target }}"
+
+          cd "${{ parameters.bundleRoot }}"
+          databricks bundle validate -t "${{ parameters.target }}"
+          echo "PASS: Bundle validation succeeded"
+        displayName: 'Validate bundle (${{ parameters.target }})'
+
+      - ${{ if parameters.runTests }}:
+        - bash: |
+            set -euo pipefail
+            BUNDLE_ROOT="${{ parameters.bundleRoot }}"
+
+            if [ -f "${BUNDLE_ROOT}/pyproject.toml" ] && [ -d "${BUNDLE_ROOT}/tests" ]; then
+              echo "Running tests for ${BUNDLE_ROOT}..."
+              python -m pip install --upgrade pip
+              pip install -e "${BUNDLE_ROOT}" pytest
+              pytest -q "${BUNDLE_ROOT}/tests"
+              echo "PASS: Tests passed"
+            else
+              echo "SKIP: No test surface found for ${BUNDLE_ROOT}"
+            fi
+          displayName: 'Run bundle tests'

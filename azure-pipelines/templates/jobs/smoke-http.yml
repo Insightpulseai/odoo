@@ -1,0 +1,124 @@
+# =============================================================================
+# Reusable Job: HTTP Smoke Test
+# =============================================================================
+# Runs curl-based health and content checks against a live URL.
+# Fails the pipeline if HTTP status or content checks do not pass.
+#
+# Usage:
+#   jobs:
+#     - template: templates/jobs/smoke-http.yml
+#       parameters:
+#         url: https://www.insightpulseai.com
+#         expectedStatus: 200
+#         contentMatch: InsightPulse
+# =============================================================================
+
+parameters:
+  - name: url
+    type: string
+  - name: expectedStatus
+    type: string
+    default: '200'
+  - name: contentMatch
+    type: string
+    default: ''
+  - name: contentExclude
+    type: string
+    default: ''
+  - name: timeoutSeconds
+    type: number
+    default: 30
+  - name: retries
+    type: number
+    default: 3
+  - name: retryDelaySeconds
+    type: number
+    default: 10
+  - name: jobName
+    type: string
+    default: SmokeTest
+
+jobs:
+  - job: ${{ parameters.jobName }}
+    displayName: 'Smoke: ${{ parameters.url }}'
+    pool:
+      vmImage: ubuntu-latest
+    steps:
+      - bash: |
+          set -euo pipefail
+
+          URL="${{ parameters.url }}"
+          EXPECTED="${{ parameters.expectedStatus }}"
+          MATCH="${{ parameters.contentMatch }}"
+          EXCLUDE="${{ parameters.contentExclude }}"
+          TIMEOUT=${{ parameters.timeoutSeconds }}
+          RETRIES=${{ parameters.retries }}
+          DELAY=${{ parameters.retryDelaySeconds }}
+
+          echo "=== HTTP Smoke Test ==="
+          echo "URL: ${URL}"
+          echo "Expected status: ${EXPECTED}"
+          echo "Content match: ${MATCH:-'(none)'}"
+          echo "Content exclude: ${EXCLUDE:-'(none)'}"
+
+          PASSED=true
+
+          # Retry loop for HTTP status
+          for i in $(seq 1 ${RETRIES}); do
+            HTTP_CODE=$(curl -s -o /tmp/smoke_body.txt -w "%{http_code}" \
+              --max-time ${TIMEOUT} -L "${URL}" 2>/dev/null || echo "000")
+
+            echo "Attempt ${i}: HTTP ${HTTP_CODE}"
+
+            if [[ "${HTTP_CODE}" == "${EXPECTED}" ]]; then
+              break
+            fi
+
+            if [[ ${i} -lt ${RETRIES} ]]; then
+              echo "Retrying in ${DELAY}s..."
+              sleep ${DELAY}
+            fi
+          done
+
+          if [[ "${HTTP_CODE}" != "${EXPECTED}" ]]; then
+            echo "FAIL: Expected HTTP ${EXPECTED}, got ${HTTP_CODE}"
+            PASSED=false
+          else
+            echo "PASS: HTTP ${HTTP_CODE}"
+          fi
+
+          # Content match check
+          if [[ -n "${MATCH}" ]]; then
+            if grep -qi "${MATCH}" /tmp/smoke_body.txt 2>/dev/null; then
+              echo "PASS: Content contains '${MATCH}'"
+            else
+              echo "FAIL: Content does not contain '${MATCH}'"
+              PASSED=false
+            fi
+          fi
+
+          # Content exclude check
+          if [[ -n "${EXCLUDE}" ]]; then
+            if grep -qi "${EXCLUDE}" /tmp/smoke_body.txt 2>/dev/null; then
+              echo "FAIL: Content contains excluded pattern '${EXCLUDE}'"
+              PASSED=false
+            else
+              echo "PASS: Content does not contain '${EXCLUDE}'"
+            fi
+          fi
+
+          # Summary
+          BODY_SIZE=$(wc -c < /tmp/smoke_body.txt 2>/dev/null || echo "0")
+          echo ""
+          echo "=== Summary ==="
+          echo "URL: ${URL}"
+          echo "Status: ${HTTP_CODE}"
+          echo "Body size: ${BODY_SIZE} bytes"
+
+          if [[ "${PASSED}" != "true" ]]; then
+            echo "RESULT: FAIL"
+            exit 1
+          fi
+
+          echo "RESULT: PASS"
+        displayName: 'HTTP smoke test'

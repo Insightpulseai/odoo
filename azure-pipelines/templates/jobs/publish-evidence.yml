@@ -1,0 +1,94 @@
+# =============================================================================
+# Reusable Job: Publish Evidence Artifact
+# =============================================================================
+# Emits a pipeline artifact containing commit SHA, image ref, timestamp,
+# and smoke test results for audit trail and release gating.
+#
+# Usage:
+#   jobs:
+#     - template: templates/jobs/publish-evidence.yml
+#       parameters:
+#         surface: web-landing
+#         imageRef: acripaiodoo.azurecr.io/ipai-website:latest
+#         smokeUrl: https://www.insightpulseai.com
+# =============================================================================
+
+parameters:
+  - name: surface
+    type: string
+  - name: imageRef
+    type: string
+    default: ''
+  - name: smokeUrl
+    type: string
+    default: ''
+  - name: additionalNotes
+    type: string
+    default: ''
+
+jobs:
+  - job: PublishEvidence
+    displayName: 'Evidence: ${{ parameters.surface }}'
+    pool:
+      vmImage: ubuntu-latest
+    steps:
+      - checkout: self
+        fetchDepth: 1
+
+      - bash: |
+          set -euo pipefail
+
+          EVIDENCE_DIR="$(Build.ArtifactStagingDirectory)/evidence"
+          mkdir -p "${EVIDENCE_DIR}"
+
+          TIMESTAMP=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+          COMMIT=$(git rev-parse HEAD)
+          SHORT_SHA=$(git rev-parse --short HEAD)
+          BRANCH=$(git rev-parse --abbrev-ref HEAD 2>/dev/null || echo "$(Build.SourceBranchName)")
+
+          cat > "${EVIDENCE_DIR}/release-evidence.json" <<EOJSON
+          {
+            "schema_version": "1.0",
+            "surface": "${{ parameters.surface }}",
+            "timestamp": "${TIMESTAMP}",
+            "build_number": "$(Build.BuildNumber)",
+            "build_id": "$(Build.BuildId)",
+            "commit_sha": "${COMMIT}",
+            "commit_short": "${SHORT_SHA}",
+            "branch": "${BRANCH}",
+            "image_ref": "${{ parameters.imageRef }}",
+            "smoke_url": "${{ parameters.smokeUrl }}",
+            "pipeline": "$(Build.DefinitionName)",
+            "triggered_by": "$(Build.RequestedFor)",
+            "notes": "${{ parameters.additionalNotes }}"
+          }
+          EOJSON
+
+          echo "=== Release Evidence ==="
+          cat "${EVIDENCE_DIR}/release-evidence.json"
+
+          # Also write a human-readable summary
+          cat > "${EVIDENCE_DIR}/SUMMARY.md" <<EOMD
+          # Release Evidence: ${{ parameters.surface }}
+
+          | Field | Value |
+          |-------|-------|
+          | Surface | ${{ parameters.surface }} |
+          | Timestamp | ${TIMESTAMP} |
+          | Build | $(Build.BuildNumber) |
+          | Commit | ${SHORT_SHA} |
+          | Branch | ${BRANCH} |
+          | Image | ${{ parameters.imageRef }} |
+          | Smoke URL | ${{ parameters.smokeUrl }} |
+          | Pipeline | $(Build.DefinitionName) |
+          | Triggered By | $(Build.RequestedFor) |
+          EOMD
+
+        displayName: 'Generate evidence pack'
+
+      - task: PublishBuildArtifacts@1
+        displayName: 'Publish evidence artifact'
+        inputs:
+          pathToPublish: '$(Build.ArtifactStagingDirectory)/evidence'
+          artifactName: 'evidence-${{ parameters.surface }}-$(Build.BuildNumber)'
+          publishLocation: Container

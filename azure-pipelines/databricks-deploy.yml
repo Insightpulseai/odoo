@@ -1,0 +1,248 @@
+# =============================================================================
+# Databricks Deploy Pipeline
+# =============================================================================
+# Validate -> Deploy -> Smoke -> Evidence for Databricks bundles.
+# Detects which bundles changed and validates/deploys only those.
+# =============================================================================
+
+trigger:
+  branches:
+    include:
+      - main
+  paths:
+    include:
+      - databricks/**
+      - data-intelligence/**
+
+pr:
+  branches:
+    include:
+      - main
+  paths:
+    include:
+      - databricks/**
+      - data-intelligence/**
+
+pool:
+  vmImage: ubuntu-latest
+
+variables:
+  PYTHON_VERSION: '3.11'
+  DATABRICKS_HOST: 'https://adb-7405610347978231.11.azuredatabricks.net'
+  WAREHOUSE_ID: 'e7d89eabce4c330c'
+
+stages:
+  # ── Stage 1: Detect Changes ──
+  - stage: Detect
+    displayName: Detect Changed Bundles
+    jobs:
+      - job: DetectChanges
+        displayName: Detect changed bundle roots
+        steps:
+          - checkout: self
+            fetchDepth: 0
+
+          - bash: |
+              set -euo pipefail
+
+              if [ "$(Build.Reason)" = "PullRequest" ]; then
+                BASE_BRANCH=$(echo "$(System.PullRequest.TargetBranch)" | sed 's#refs/heads/##')
+                git fetch origin "${BASE_BRANCH}"
+                DIFF_FILES=$(git diff --name-only "origin/${BASE_BRANCH}"...HEAD)
+              else
+                if git rev-parse HEAD~1 >/dev/null 2>&1; then
+                  DIFF_FILES=$(git diff --name-only HEAD~1 HEAD)
+                else
+                  DIFF_FILES=$(git ls-files)
+                fi
+              fi
+
+              echo "Changed files:"
+              echo "${DIFF_FILES}"
+
+              foundation=false
+              lakeflow=false
+              sql=false
+
+              if echo "${DIFF_FILES}" | grep -qE '^databricks/bundles/foundation_python/'; then
+                foundation=true
+              fi
+              if echo "${DIFF_FILES}" | grep -qE '^databricks/bundles/lakeflow_ingestion/'; then
+                lakeflow=true
+              fi
+              if echo "${DIFF_FILES}" | grep -qE '^databricks/bundles/sql_warehouse/'; then
+                sql=true
+              fi
+
+              echo "##vso[task.setvariable variable=foundation;isOutput=true]${foundation}"
+              echo "##vso[task.setvariable variable=lakeflow;isOutput=true]${lakeflow}"
+              echo "##vso[task.setvariable variable=sql;isOutput=true]${sql}"
+            name: changes
+            displayName: Compute changed bundle roots
+
+  # ── Stage 2: Validate ──
+  - stage: Validate
+    displayName: Validate Bundles
+    dependsOn: Detect
+    jobs:
+      - job: ValidateFoundation
+        displayName: Validate foundation_python
+        condition: eq(stageDependencies.Detect.DetectChanges.outputs['changes.foundation'], 'true')
+        pool:
+          vmImage: ubuntu-latest
+        steps:
+          - checkout: self
+          - task: UsePythonVersion@0
+            inputs:
+              versionSpec: '$(PYTHON_VERSION)'
+          - bash: |
+              set -euo pipefail
+              curl -fsSL https://raw.githubusercontent.com/databricks/setup-cli/main/install.sh | sh
+              cd databricks/bundles/foundation_python
+              databricks bundle validate -t dev
+              echo "PASS: foundation_python validated"
+            displayName: Validate foundation_python
+
+      - job: ValidateLakeflow
+        displayName: Validate lakeflow_ingestion
+        condition: eq(stageDependencies.Detect.DetectChanges.outputs['changes.lakeflow'], 'true')
+        pool:
+          vmImage: ubuntu-latest
+        steps:
+          - checkout: self
+          - task: UsePythonVersion@0
+            inputs:
+              versionSpec: '$(PYTHON_VERSION)'
+          - bash: |
+              set -euo pipefail
+              curl -fsSL https://raw.githubusercontent.com/databricks/setup-cli/main/install.sh | sh
+              cd databricks/bundles/lakeflow_ingestion
+              databricks bundle validate -t dev
+              echo "PASS: lakeflow_ingestion validated"
+            displayName: Validate lakeflow_ingestion
+
+      - job: ValidateSQL
+        displayName: Validate sql_warehouse
+        condition: eq(stageDependencies.Detect.DetectChanges.outputs['changes.sql'], 'true')
+        pool:
+          vmImage: ubuntu-latest
+        steps:
+          - checkout: self
+          - bash: |
+              set -euo pipefail
+              curl -fsSL https://raw.githubusercontent.com/databricks/setup-cli/main/install.sh | sh
+              cd databricks/bundles/sql_warehouse
+              databricks bundle validate -t dev
+              echo "PASS: sql_warehouse validated"
+            displayName: Validate sql_warehouse
+
+  # ── Stage 3: Deploy ──
+  - stage: Deploy
+    displayName: Deploy to Dev
+    dependsOn: Validate
+    condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
+    jobs:
+      - job: DeployFoundation
+        displayName: Deploy foundation_python
+        condition: eq(stageDependencies.Detect.DetectChanges.outputs['changes.foundation'], 'true')
+        pool:
+          vmImage: ubuntu-latest
+        steps:
+          - checkout: self
+            fetchDepth: 0
+          - task: UsePythonVersion@0
+            inputs:
+              versionSpec: '$(PYTHON_VERSION)'
+          - bash: |
+              set -euo pipefail
+              curl -fsSL https://raw.githubusercontent.com/databricks/setup-cli/main/install.sh | sh
+              cd databricks/bundles/foundation_python
+              databricks bundle deploy -t dev
+              echo "PASS: foundation_python deployed to dev"
+            displayName: Deploy foundation_python
+
+      - job: DeployLakeflow
+        displayName: Deploy lakeflow_ingestion
+        condition: eq(stageDependencies.Detect.DetectChanges.outputs['changes.lakeflow'], 'true')
+        pool:
+          vmImage: ubuntu-latest
+        steps:
+          - checkout: self
+            fetchDepth: 0
+          - task: UsePythonVersion@0
+            inputs:
+              versionSpec: '$(PYTHON_VERSION)'
+          - bash: |
+              set -euo pipefail
+              curl -fsSL https://raw.githubusercontent.com/databricks/setup-cli/main/install.sh | sh
+              cd databricks/bundles/lakeflow_ingestion
+              databricks bundle deploy -t dev
+              echo "PASS: lakeflow_ingestion deployed to dev"
+            displayName: Deploy lakeflow_ingestion
+
+      - job: DeploySQL
+        displayName: Deploy sql_warehouse
+        condition: eq(stageDependencies.Detect.DetectChanges.outputs['changes.sql'], 'true')
+        pool:
+          vmImage: ubuntu-latest
+        steps:
+          - checkout: self
+            fetchDepth: 0
+          - bash: |
+              set -euo pipefail
+              curl -fsSL https://raw.githubusercontent.com/databricks/setup-cli/main/install.sh | sh
+              cd databricks/bundles/sql_warehouse
+              databricks bundle deploy -t dev
+              echo "PASS: sql_warehouse deployed to dev"
+            displayName: Deploy sql_warehouse
+
+  # ── Stage 4: Smoke ──
+  - stage: Smoke
+    displayName: Smoke Test
+    dependsOn: Deploy
+    condition: succeeded()
+    jobs:
+      - job: WarehouseHealth
+        displayName: SQL Warehouse health check
+        pool:
+          vmImage: ubuntu-latest
+        steps:
+          - checkout: self
+          - task: UsePythonVersion@0
+            inputs:
+              versionSpec: '$(PYTHON_VERSION)'
+          - bash: |
+              set -euo pipefail
+              curl -fsSL https://raw.githubusercontent.com/databricks/setup-cli/main/install.sh | sh
+
+              RESULT=$(databricks api post /api/2.0/sql/statements \
+                --json "{
+                  \"warehouse_id\": \"$(WAREHOUSE_ID)\",
+                  \"statement\": \"SELECT 1 AS health\",
+                  \"wait_timeout\": \"10s\"
+                }")
+
+              STATE=$(echo "${RESULT}" | python3 -c 'import sys,json; print(json.load(sys.stdin).get("status",{}).get("state","FAIL"))')
+              echo "Warehouse health: ${STATE}"
+
+              if [[ "${STATE}" == "SUCCEEDED" || "${STATE}" == "CLOSED" ]]; then
+                echo "PASS: SQL Warehouse is healthy"
+              else
+                echo "FAIL: SQL Warehouse returned ${STATE}"
+                exit 1
+              fi
+            displayName: Check SQL Warehouse health
+            env:
+              DATABRICKS_HOST: $(DATABRICKS_HOST)
+
+  # ── Stage 5: Evidence ──
+  - stage: Evidence
+    displayName: Publish Evidence
+    dependsOn: Smoke
+    condition: succeededOrFailed()
+    jobs:
+      - template: templates/jobs/publish-evidence.yml
+        parameters:
+          surface: databricks
+          smokeUrl: $(DATABRICKS_HOST)
+          additionalNotes: 'Warehouse ID: $(WAREHOUSE_ID)'
