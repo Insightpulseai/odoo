@@ -3,6 +3,17 @@
 **Audit Date**: 2026-03-27 12:30 PHT
 **Scope**: All integration surfaces and authentication flows across the InsightPulseAI platform
 **Auditor**: Claude Opus 4.6 (automated codebase audit)
+**Status**: PARTIAL — REPO-AUTHORITATIVE, RUNTIME-PENDING
+
+The audit is substantially complete and authoritative for repository, documentation,
+and static configuration evidence. Remaining open items are runtime-only verification
+surfaces that require live Azure, Odoo database, or vendor source/runtime access.
+
+See `RUNTIME_VERIFICATION_PLAN.md` for the 5 targeted runtime verification items (RV-01 through RV-05).
+
+**Passes completed**: Pass 1 (13 workstreams), Pass 2 (DNS, Zoho, manifest, iOS, archive, Slack, OAuth providers)
+**Gap closure**: See `GAP_REGISTER.md` for full register, `GAP_CLOSURE_PASS_1.md` for evidence.
+**Strength**: Strong enough for architecture decisions and remediation backlog execution. Not yet final for operational attestation until runtime evidence is added.
 
 ---
 
@@ -22,7 +33,7 @@ Authentication is in a transitional state. The Gmail add-on has a well-designed 
 
 2. **CRITICAL -- Entra OIDC module not built**: `ipai_auth_oidc` is referenced in OIDC SSOT and spec bundles but does not exist as a module. Workforce SSO via Microsoft Entra is non-functional.
 
-3. **CRITICAL -- Hardcoded production database password in archive files**: `archive/root/scripts/prod_access_check.py` line 7 and `archive/root/scripts/prod_db_guess.py` line 6 contain a plaintext Base64-encoded password. Though in archive/, these files are tracked in git.
+3. **CRITICAL -- 12 real credentials exposed in archive files (78+ days)**: Full scan found Odoo admin password (5 locations), PostgreSQL password, Supabase SERVICE_ROLE key (full admin), Supabase ANON key (2 locations), PG pooler connection string with embedded password, 3 plaintext user passwords, and DigitalOcean infrastructure hostname. Minimum exposure: 78+ days since runtime snapshot 2026-01-08. ALL must be rotated immediately.
 
 4. **HIGH -- Platform admin CLI credential requires rotation**: `ipai-platform-admin-cli-prod` is flagged `rotate_required` / `current_risk: expiring_soon` in `ssot/entra/app_registrations.azure_native.yaml`.
 
@@ -48,7 +59,7 @@ Authentication is in a transitional state. The Gmail add-on has a well-designed 
 
 3. **Rotate `ipai-platform-admin-cli-prod` credential** immediately and migrate to workload identity federation or certificate.
 
-4. **Delete or purge hardcoded secrets** from `archive/root/scripts/prod_access_check.py` and `archive/root/scripts/prod_db_guess.py`.
+4. **Rotate ALL exposed credentials and purge 12 real secrets** from archive files: Odoo admin password (5 files), PostgreSQL password, Supabase SERVICE_ROLE + ANON keys, PG pooler connection string, 3 user passwords. Sanitize or delete affected files. Consider `git filter-repo` to purge from history. Add pre-commit credential scanning.
 
 5. **Prune Front Door routes** for decommissioned services (n8n, Plane, Shelf, CRM, auth).
 

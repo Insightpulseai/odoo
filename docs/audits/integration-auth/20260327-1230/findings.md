@@ -26,15 +26,41 @@
 - **Owner Lane**: Identity plane / Odoo backend
 - **Evidence**: `infra/ssot/auth/oidc_clients.yaml:108`, `ssot/entra/app_registrations.azure_native.yaml:30-69` (app registration exists with `client_id: 07bd9669-1eca-4d93-8880-fd3abb87f812`). Module not found via `ls addons/ipai/ipai_auth_oidc/`.
 
-### C-3: Hardcoded Production Credentials in Archive Files
+### C-3: 12 Real Credentials Exposed Across Archive Files (78+ Days)
 
-- **Impacted Systems**: PostgreSQL production database
-- **Current Behavior**: `archive/root/scripts/prod_access_check.py` line 7 contains `password = "UbQbX75Wi+P3R+bItzO/NapptGbL4n/9MvIDVw71Oww="`. `archive/root/scripts/prod_db_guess.py` line 6 contains the same value. These files are tracked in git.
-- **Expected Behavior**: No credentials, tokens, or password hashes should exist in any tracked file, including archive directories.
-- **Root Cause**: Legacy scripts from early development were archived but not sanitized.
-- **Recommended Fix**: Remove the password values from these files (replace with placeholder), or delete the files entirely. If the credential is still active, rotate it immediately.
-- **Owner Lane**: Security / Platform operations
-- **Evidence**: `archive/root/scripts/prod_access_check.py:7`, `archive/root/scripts/prod_db_guess.py:6`
+- **Impacted Systems**: Production Odoo ERP, PostgreSQL database, Supabase (deprecated), DigitalOcean (deprecated)
+- **Current Behavior**: Full credential scan of `archive/` found **12 real credentials** in git-tracked files:
+
+  **Odoo admin password** (Base64-encoded, 5 locations):
+  - `archive/root/scripts/prod_access_check.py:7`
+  - `archive/root/scripts/prod_db_guess.py:6`
+  - `archive/root/docs/architecture/runtime_snapshot/20260108_013846/PROOFS/odoo_conf.txt:29`
+  - `archive/root/docs/architecture/runtime_snapshot/20260108_013846/PROOFS/docker_compose_config.txt:17,53`
+
+  **PostgreSQL password** (Base64-encoded):
+  - `archive/root/docs/architecture/runtime_snapshot/20260108_013846/PROOFS/docker_compose_config.txt:56`
+
+  **Supabase SERVICE_ROLE key** (CRITICAL -- full admin access):
+  - `archive/root/docs/guides/QUICK_START.md:13` -- `eyJhbGci...Rhdi18B5...`
+
+  **Supabase ANON key** (2 locations):
+  - `archive/work/apps/web/.env.local:2`
+  - `archive/root/docs/guides/QUICK_START.md:12`
+
+  **Supabase PostgreSQL pooler connection string** (embedded password):
+  - `archive/root/docs/guides/QUICK_START.md:11` -- `postgres://postgres.spdtwktxdalcfigzeqrz:SHWYXDMFAwXI1drT@...`
+
+  **Plaintext user passwords** (3 accounts):
+  - `archive/addons/tbwa_spectra_integration/data/users_data.xml:17,29,41` -- `finance@tbwa2025`, `cfo@tbwa2025`, `finance.mgr@tbwa2025`
+
+  **DigitalOcean PG hostname** (infrastructure exposure):
+  - `archive/root/config/secrets_inventory.md:25-26`
+
+- **Expected Behavior**: No credentials in any tracked file, including archive directories.
+- **Root Cause**: Legacy scripts, runtime snapshots, quickstart docs, and .env.local files archived without sanitization. Runtime snapshot from 2026-01-08 captured live config with embedded credentials.
+- **Recommended Fix**: (1) Rotate ALL exposed credentials immediately (Odoo admin, PostgreSQL, Supabase keys). (2) Sanitize or delete the affected archive files. (3) Consider `git filter-repo` / `bfg` to purge from git history. (4) Add pre-commit hook to scan for credential patterns. (5) Audit access logs for `erp.insightpulseai.com` during the 78+ day exposure window.
+- **Owner Lane**: Security / Platform operations -- IMMEDIATE ACTION REQUIRED
+- **Evidence**: Full scan results in `GAP_CLOSURE_PASS_1.md` (WS-09) and Pass 2 DG-05 expansion. Minimum exposure: 78+ days (runtime snapshot dated 2026-01-08).
 
 ---
 
@@ -89,6 +115,26 @@
 - **Recommended Fix**: Remove the `ipai_oauth_google_client_secret` field from Settings. Reference Key Vault secret names instead. The client_secret is needed by Odoo's `auth_oauth` during token exchange -- inject it via env var.
 - **Owner Lane**: Odoo backend / Security
 - **Evidence**: `addons/ipai/ipai_enterprise_bridge/models/res_config_settings.py:22-24`
+
+### H-6: iOS Mobile Wrapper Has No Host Allowlist and No SSO Integration
+
+- **Impacted Systems**: iOS OdooWrapper app, mobile ERP access security
+- **Current Behavior**: The iOS wrapper (`web/mobile/`) accepts arbitrary URLs via `navigateTo(url:)` with no `WKNavigationDelegate` host validation. No `ASWebAuthenticationSession` for OAuth/SSO. No Entra integration. Biometric auth is re-entry gating only (not identity). Keychain stores `odoo_session_id` and `odoo_csrf_token` but does NOT re-inject them on app restart. `Info.plist` is missing `NSFaceIDUsageDescription` (App Store rejection risk). Entitlements file is empty.
+- **Expected Behavior**: Host allowlist policy struct enforcing navigation to `erp.insightpulseai.com` only. `ASWebAuthenticationSession` for Entra/Google OAuth. `NSFaceIDUsageDescription` in Info.plist. Session tokens re-injected on app resume.
+- **Root Cause**: Wrapper was built as a minimal WKWebView shell. Auth and navigation policy were deferred.
+- **Recommended Fix**: (1) Add `WKNavigationDelegate` with host allowlist. (2) Add `NSFaceIDUsageDescription` to Info.plist. (3) Implement session token re-injection from Keychain. (4) Add explicit logout handler. (5) Plan `ASWebAuthenticationSession` for Entra SSO when `ipai_auth_oidc` is built.
+- **Owner Lane**: iOS / Mobile
+- **Evidence**: `web/mobile/Sources/WrapperViewController.swift` (no `decidePolicyFor` delegate), `web/mobile/Sources/Info.plist` (minimal, no Face ID description), `web/mobile/Sources/OdooWrapper.entitlements` (empty dict), `web/mobile/Sources/KeychainService.swift` (stores but doesn't re-inject)
+
+### H-7: ipai_enterprise_bridge Data Files Missing in Monorepo (Out of Sync with odoo/ Repo)
+
+- **Impacted Systems**: Odoo module installation, reproducible environment setup
+- **Current Behavior**: `ipai_enterprise_bridge/__manifest__.py` declares `data/mail_server.xml`, `data/oauth_providers.xml`, and 4 other data files. The `data/` directory does not exist at `addons/ipai/ipai_enterprise_bridge/data/` in the monorepo. **However**, the nested `odoo/` repo has `odoo/addons/ipai/ipai_enterprise_bridge/data/oauth_providers.xml` with well-structured Entra ID + Google Workspace providers using Key Vault placeholders. The two repos are out of sync.
+- **Expected Behavior**: Data files synced between monorepo and nested odoo/ repo. Module installable from either location.
+- **Root Cause**: Monorepo and nested `odoo/` repo have diverged. The `odoo/` repo is ahead with a proper `data/` directory; the monorepo copy is behind.
+- **Recommended Fix**: Sync `odoo/addons/ipai/ipai_enterprise_bridge/data/` to `addons/ipai/ipai_enterprise_bridge/data/`. Create remaining missing data files (`mail_server.xml`, `groups.xml`, `sequences.xml`, `scheduled_actions.xml`, `enterprise_bridge_data.xml`).
+- **Owner Lane**: Odoo backend / Repo governance
+- **Evidence**: `ls addons/ipai/ipai_enterprise_bridge/data/` (not found), `ls odoo/addons/ipai/ipai_enterprise_bridge/data/` (contains `oauth_providers.xml` with Entra + Google providers)
 
 ---
 

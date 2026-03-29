@@ -163,6 +163,22 @@ inventory:
     status: aligned
     notes: "Web apps: ai-control-plane, apps, bi-architect, platform-kit, docs/evidence"
     owner: frontend
+    surfaces:
+      - path: web/apps/gmail-odoo-addon
+        type: google_workspace_marketplace_app
+        classification:
+          - mailbox_host_surface
+          - erp_integration_boundary
+          - auth_sensitive_integration
+        host: Gmail (Google Workspace)
+        target: Odoo CE 19 (erp.insightpulseai.com)
+        auth_providers: [microsoft_entra_oauth, google_oauth, local_odoo]
+        default_auth: microsoft_entra_oauth
+        spec_bundle: spec/gmail-inbox-addon/
+        deployment: clasp -> Google Apps Script
+        script_id: "1QaH14jbBl7PcvjLXgkzZogh6SzqS_kXoTJ_MzzmavW6CRLMANG24Ko4q"
+        status: active
+        notes: "Provider-first auth UX. Backend bridge (ipai_mail_plugin) not yet built."
 
   - path: odoo19
     status: aligned

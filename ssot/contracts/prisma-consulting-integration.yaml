@@ -1,0 +1,124 @@
+# Prisma Consulting → InsightPulseAI Integration Contract
+# Source repo: github.com/jgtolentino/Prismaconsulting (private)
+# Target: Odoo SoR + Pulser AI assistant + Azure-native data plane
+
+version: 1
+created: "2026-03-28"
+status: planned
+
+# --- Source system ---
+source:
+  repo: jgtolentino/Prismaconsulting
+  stack: React 18 + Vite 6 + Radix UI + Tailwind + Recharts
+  current_backend: Supabase (DEPRECATED — remove entirely)
+  current_ai: PrismaAssistant (RAG via Supabase pgvector + OpenAI — DEPRECATED)
+  current_deploy: DigitalOcean (DEPRECATED)
+  legacy_db_schema:
+    table: prisma_document_embeddings
+    columns: [id, content, embedding, metadata, source_file, chunk_index, created_at, updated_at]
+    vector_dim: 1536  # text-embedding-3-small
+    search_fn: match_documents(query_embedding, threshold, count)
+    note: Schema to be recreated on Azure PostgreSQL. No data migration from Supabase.
+
+# --- Target integration ---
+target:
+  erp: Odoo CE 19 (erp.insightpulseai.com)
+  assistant_brand: Pulser
+  data_plane: Azure PostgreSQL (pg-ipai-odoo) with pgvector extension
+  ai_backend: Azure AI Foundry (oai-ipai-dev)
+  embedding_model: text-embedding-3-small (via Foundry)
+  search_alternative: Azure AI Search (srch-ipai-dev) if pgvector insufficient
+  deploy_target: Azure Container Apps (ipai-website-dev or dedicated ACA)
+  auth: Microsoft Entra (workforce) / local Odoo (fallback)
+
+# --- Wiring plan ---
+wiring:
+  # 1. Replace Supabase with Azure PostgreSQL pgvector
+  data_migration:
+    from: supabase/migrations/001_vector_store.sql
+    to: Azure PostgreSQL pg-ipai-odoo
+    action: |
+      - Enable pgvector extension on pg-ipai-odoo
+      - Create prisma_document_embeddings table (same schema)
+      - Create match_documents() function
+      - Migrate existing embeddings if any
+    auth: Managed Identity → Key Vault → connection string
+
+  # 2. Replace Supabase client with direct PG / Foundry client
+  api_rewire:
+    remove:
+      - "'@supabase/supabase-js' dependency"
+      - "'@jsr/supabase__supabase-js' dependency"
+      - src/supabase/ functions
+      - supabase/ directory
+    add:
+      - Azure Foundry SDK for embeddings
+      - Direct PostgreSQL client (via API endpoint on Odoo or dedicated Azure Function)
+    endpoints:
+      embed: POST /api/v1/embed (Azure Function or Odoo controller)
+      search: POST /api/v1/search (semantic search via match_documents)
+      context: GET /api/v1/odoo/context (CRM/project data from Odoo)
+
+  # 3. Rebrand PrismaAssistant → Pulser
+  assistant_rebrand:
+    component: src/components/PrismaAssistant.tsx
+    rename_to: PulserAssistant.tsx
+    changes:
+      - Replace "Prisma" branding with "Pulser"
+      - Wire to Foundry chat completion (not direct OpenAI)
+      - Add Odoo context injection (current leads, projects, tasks)
+      - Maintain RAG search against pgvector
+      - Add CTA actions: send_prompt, navigate, open_scheduler, open_contact
+
+  # 4. Odoo integration points
+  odoo_integration:
+    read:
+      - res.partner (contacts/leads for context)
+      - project.task (active tasks)
+      - crm.lead (pipeline data)
+    write:
+      - crm.lead (create from assistant)
+      - mail.message (log assistant interactions)
+    auth: API key or OAuth token via /ipai/mail_plugin/session
+    protocol: JSON-RPC 2.0
+
+  # 5. Deploy to Azure
+  deployment:
+    from: DigitalOcean
+    to: Azure Container Apps (or Azure Static Web Apps for SPA)
+    domain: prisma.insightpulseai.com (or subdomain TBD)
+    tls: Azure Front Door
+    ci: Azure DevOps Pipeline
+
+# --- Dependencies ---
+dependencies:
+  blocked_by:
+    - ipai_mail_plugin module (C-1 from audit — backend endpoints)
+    - pgvector extension enabled on pg-ipai-odoo
+    - Azure Foundry embedding endpoint operational
+  nice_to_have:
+    - ipai_auth_oidc module (for Entra SSO on the consulting site)
+    - Pulser widget shared component (from web/ipai-landing/)
+
+# --- Sequence ---
+sequence:
+  - phase: 0  # Can start now
+    tasks:
+      - Enable pgvector on pg-ipai-odoo
+      - Create schema (port 001_vector_store.sql)
+      - Rebrand PrismaAssistant → PulserAssistant in source
+      - Remove Supabase dependencies from package.json
+
+  - phase: 1  # After ipai_mail_plugin exists
+    tasks:
+      - Wire search endpoint to Azure PG pgvector
+      - Wire embedding endpoint to Azure Foundry
+      - Add Odoo context injection via mail_plugin bridge
+      - Deploy to Azure Container Apps
+
+  - phase: 2  # Polish
+    tasks:
+      - Add Entra SSO (after ipai_auth_oidc)
+      - Migrate historical embeddings from Supabase
+      - Add Pulser CTA actions (navigate, scheduler, contact)
+      - Wire to Azure Front Door with custom domain
