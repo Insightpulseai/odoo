@@ -4,7 +4,7 @@ import {
   Cpu, Cloud, BarChart3, Users, Settings, Briefcase, ShieldCheck, CheckCircle2,
   ArrowRight, PlayCircle, BookOpen, MessageSquare, Newspaper, Zap, Lock, BarChart,
   Target, Tv, ShoppingBag, Landmark, TrendingUp, HelpCircle, Mail, MapPin, ExternalLink,
-  Layers, FileText, Phone, Calendar, Lightbulb, Palette, PenTool, Eye, Quote, Menu
+  Layers, FileText, Phone, Calendar, Lightbulb, Palette, PenTool, Eye, Quote, Menu, HeartPulse
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { AskPulser } from './components/AskPulser';
@@ -196,8 +196,9 @@ const Navbar = ({ currentPage, setPage }: { currentPage: PageId, setPage: (p: Pa
                       { icon: <Tv size={18} />, title: "Media & Entertainment", desc: "Audience & monetization workflows", page: 'media' as PageId },
                       { icon: <ShoppingBag size={18} />, title: "Retail Operations", desc: "Inventory & supply-chain resilience", page: 'retail' as PageId },
                       { icon: <Landmark size={18} />, title: "Financial Operations", desc: "Controls, risk & AI decisions", page: 'finance' as PageId },
+                      { icon: <HeartPulse size={18} />, title: "Health & Research", desc: "Evidence synthesis & clinical reviews", page: null as unknown as PageId, href: 'https://prismalab.insightpulseai.com' },
                     ].map((item, i) => (
-                      <button key={i} onClick={() => { setPage(item.page); setOpenMenu(null); }}
+                      <button key={i} onClick={() => { if ((item as any).href) { window.open((item as any).href, '_blank'); } else { setPage(item.page); } setOpenMenu(null); }}
                         className="flex items-start gap-3 p-3 hover:bg-brand-light rounded-xl transition-colors text-left w-full">
                         <div className="text-brand-primary mt-0.5">{item.icon}</div>
                         <div>
@@ -344,6 +345,7 @@ const Navbar = ({ currentPage, setPage }: { currentPage: PageId, setPage: (p: Pa
                   <button onClick={() => mobilNav('media')} className="block w-full text-left py-2 text-sm text-gray-600 hover:text-brand-primary">Media & Entertainment</button>
                   <button onClick={() => mobilNav('retail')} className="block w-full text-left py-2 text-sm text-gray-600 hover:text-brand-primary">Retail Operations</button>
                   <button onClick={() => mobilNav('finance')} className="block w-full text-left py-2 text-sm text-gray-600 hover:text-brand-primary">Financial Operations</button>
+                  <a href="https://prismalab.insightpulseai.com" target="_blank" rel="noopener noreferrer" className="block w-full text-left py-2 text-sm text-gray-600 hover:text-brand-primary">Health & Research</a>
                 </div>
               )}
             </div>
@@ -437,6 +439,7 @@ const Footer = ({ setPage }: { setPage: (p: PageId) => void }) => (
             <li><button onClick={() => setPage('media')} className="hover:text-white transition-colors">Media & Entertainment</button></li>
             <li><button onClick={() => setPage('retail')} className="hover:text-white transition-colors">Retail Operations</button></li>
             <li><button onClick={() => setPage('finance')} className="hover:text-white transition-colors">Financial Operations</button></li>
+            <li><a href="https://prismalab.insightpulseai.com" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">Health & Research</a></li>
           </ul>
         </div>
 
@@ -522,7 +525,7 @@ const HomePage = ({ setPage }: { setPage: (p: PageId) => void }) => (
           transition={{ delay: 0.1, duration: MOTION.durationGentle, ease: MOTION.curveDecelerateMin }}
         >
           <h1 className="text-6xl md:text-8xl font-bold leading-[1.05] mb-10 tracking-tight max-w-4xl">
-            AI-native operations for marketing, media, retail, and financial services
+            AI-native operations for marketing, media, retail, financial services, and health
           </h1>
           <p className="text-xl text-gray-400 leading-relaxed mb-12 max-w-3xl">
             InsightPulseAI combines Odoo on Cloud, Pulser, and modern data workflows to help teams unify operations, automate execution, and scale with stronger control.
