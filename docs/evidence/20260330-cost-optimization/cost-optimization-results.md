@@ -9,7 +9,7 @@
 
 | # | Resource | Action | Result | Est. Saving/mo |
 |---|----------|--------|--------|----------------|
-| 1 | `fcipaidev` (Fabric F2) | Suspended | **Paused** — verified via Resource Graph | $262–524 |
+| 1 | `fcipaidev` (Fabric F2) | ~~Suspended~~ **RESUMED** | Active — Finance PPM workspace + Odoo ERP Mirror live | $0 (kept running) |
 | 2 | `ipai-copilot-endpoint` (ML endpoint) | Deleted | **Gone** — ResourceNotFound confirms deletion | $72–360 |
 | 3 | `srch-ipai-dev` (AI Search Basic) | Deleted | **Gone** — verified via Resource Graph | $70 |
 | 4 | `oai-ipai-dev` (OpenAI standalone) | Deleted | **Gone** — redundant with Foundry | $0–50 |
@@ -20,7 +20,11 @@
 | 9 | `w9studio-landing-dev` (ACA) | Scaled to 0/2 | **Min replicas = 0** — will scale to 0 with no traffic | $5–10 |
 | 10 | `ipai-prismalab-dev` (ACA) | Revision deactivated | **Deactivated** — no running replicas | $5–10 |
 
-**Estimated total monthly savings: $429–1,069**
+**Estimated total monthly savings: $167–545**
+
+> Note: Fabric capacity `fcipaidev` was paused then immediately **resumed** after
+> discovering it has active workloads (Finance PPM workspace, Odoo ERP Mirror,
+> Finance PPM OKR Report). Fabric Mirroring is the live Odoo → analytics CDC pipeline.
 
 ---
 
@@ -52,7 +56,7 @@ Scaled to 0: 3 container apps (superset, w9studio, prismalab)
 
 | Category | Resources | Status |
 |----------|-----------|--------|
-| Fabric capacity | `fcipaidev` | **Paused** |
+| Fabric capacity | `fcipaidev` | **Active** — Finance PPM + Odoo Mirror |
 | AI Search | `srch-ipai-copilot` (free) | Running |
 | Cognitive Services | `docai-ipai-dev` (FormRecognizer) | Running — Phase 1 (OCR) |
 | Foundry | `aifoundry-ipai-dev` (Hub) + `proj-ipai-claude` (Project) | Running — canonical |
