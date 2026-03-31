@@ -10,11 +10,17 @@ meta_ads_integration:
     app_id: "971674085514908"
     purpose: "Meta CAPI + Marketing API bridge"
     products: ["Marketing API"]
+    domain: "www.insightpulseai.com"
+    privacy_url: "https://www.insightpulseai.com/privacy"  # redirects to /legal/privacy.html
+    terms_url: "https://www.insightpulseai.com/terms"  # redirects to /legal/terms.html
+    data_deletion_url: "https://www.insightpulseai.com/data-deletion"  # redirects to /legal/data-deletion.html
+    contact_email: "jgtolentino_rn@yahoo.com"
     app_type: "business"
-    app_mode: "development"
+    app_mode: "live"
     token_vaulted: true
     token_vault_key: "meta-marketing-api-token"
     token_vault_date: "2026-03-31"
+    token_type: "system_user"  # non-expiring
 
   # ─────────────────────────────────────────────────────────────────────────
   # SECONDARY APP — Insightpulseai Ads (legacy, no valid token yet)
@@ -33,8 +39,17 @@ meta_ads_integration:
   business:
     portfolio_name: "Dataverse"
     portfolio_id: "1419103389914952"
-    verification_status: "verified"
+    verification_status: "verified"  # confirmed 2026-03-31
     legal_entity: "Dataverse IT Consultancy"
+
+  pixel:
+    name: "InsightPulseAI CAPI Pixel"
+    id: "1317926690266775"
+    created: "2026-03-31"
+    vault_key: "meta-pixel-id"
+    test_event_code: "TEST_CAPI_IPAI"
+    first_event: "2026-03-31T10:40Z"  # Lead event, events_received: 1
+    sandbox_events_total: 6  # 1 curl + 5 pytest live (Lead, Purchase, batch of 3)
 
   ad_account:
     name: "Insightpulseai Ads"
@@ -87,19 +102,19 @@ meta_ads_integration:
     - step: "Store token in Key Vault"
       status: "done"  # kv-ipai-dev/meta-marketing-api-token + meta-marketing-api-app-id
     - step: "Enable App Secret Proof in app settings"
-      status: "pending"
+      status: "done"  # app secret vaulted 2026-03-31 as meta-marketing-api-app-secret
     - step: "Update site URL from prismalab.insightpulseai.com to insightpulseai.com"
-      status: "pending"
+      status: "done"  # confirmed 2026-03-31, domain set to www.insightpulseai.com
     - step: "Complete business verification for primary app"
-      status: "pending"
+      status: "done"  # Dataverse ID 1419103389914952, verified
     - step: "Switch primary app from development to live mode"
-      status: "pending"
+      status: "done"  # confirmed by user 2026-03-31
 
   blockers:
-    - "App Secret Proof not enabled on primary app (971674085514908)"
-    - "App business verification pending for primary app"
-    - "Site URL still shows prismalab.insightpulseai.com on secondary app"
-    - "Primary app still in development mode"
+    # Resolved: App business verification completed (Dataverse, verified) 2026-03-31
+    # Resolved: Site URL updated to www.insightpulseai.com 2026-03-31
+    # Resolved: Primary app switched to live mode 2026-03-31
+    - "Access verification (Tech Provider) not yet submitted — required for accessing other businesses' assets"
 
 # ---------------------------------------------------------------------------
 # Bridge Architecture (added 2026-03-31, updated with repo audit)
@@ -108,7 +123,7 @@ integration: meta
 mode: bridge
 
 current_state:
-  meta_ads_api: development_not_live
+  meta_ads_api: live
   whatsapp_conversational_messaging: active_via_oca
   facebook_instagram_embeds: active_via_upstream_odoo
   legacy_ipai_whatsapp_connector: deprecated
@@ -122,6 +137,27 @@ authorities:
   whatsapp_module_path: addons/oca/social/mail_gateway_whatsapp/
   legacy_deprecated_path: archive/root/addons/ipai/ipai_whatsapp_connector/
   ads_contract_path: ssot/external/meta_ads_integration.yaml
+  odoo_bridge_module: addons/ipai/ipai_social_capi/
+  azure_function_bridge: platform/services/meta-capi-bridge/
+
+odoo_module:
+  name: ipai_social_capi
+  version: "19.0.1.0.0"
+  status: beta
+  depends: [crm, account, utm]
+  events_tracked:
+    - lead_created      # crm.lead create → Meta Lead
+    - lead_qualified    # crm.lead stage progression → Meta Lead (qualified)
+    - opportunity_won   # crm.lead stage.is_won → Meta Purchase
+    - invoice_paid      # account.move payment_state=paid → Meta Purchase
+  config_parameters:
+    - key: ipai_social_capi.enabled
+      default: "False"
+    - key: ipai_social_capi.bridge_url
+      default: ""
+    - key: ipai_social_capi.bridge_function_key
+      default: ""
+  evidence: docs/evidence/20260331-1900/meta-capi-bridge/test-results.md
 
 runtime:
   outbound_path: "odoo -> queue/webhook -> azure_function -> meta"

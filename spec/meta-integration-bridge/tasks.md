@@ -4,20 +4,20 @@
 - [x] Confirm `ssot/external/meta_ads_integration.yaml` is the canonical Meta Ads contract
 - [x] Resolve ad-account assignment blocker for system user `claude-automation`
 - [x] Generate access token (primary app 971674085514908) — vaulted 2026-03-31
-- [ ] Enable App Secret Proof on primary app (971674085514908)
+- [x] Enable App Secret Proof on primary app (971674085514908) — app secret vaulted, HMAC verified in live tests 2026-03-31
 - [x] Store token in Key Vault as `meta-marketing-api-token` — done 2026-03-31
-- [ ] Update site URL to `insightpulseai.com`
-- [ ] Complete app business verification for primary app
-- [ ] Switch primary app from development to live mode
+- [x] Update site URL to `insightpulseai.com` — confirmed 2026-03-31 (www.insightpulseai.com)
+- [x] Complete app business verification for primary app — Dataverse verified 2026-03-31
+- [x] Switch primary app from development to live mode — confirmed 2026-03-31
 - [ ] Consolidation decision: deprecate secondary app (951394464039117) or keep both
 
 ## B. Contract / SSOT
-- [ ] Define canonical event schema for lead_created
-- [ ] Define canonical event schema for lead_qualified
-- [ ] Define canonical event schema for opportunity_won
-- [ ] Define canonical event schema for invoice_paid / purchase_completed
-- [ ] Extend `ssot/external/meta_ads_integration.yaml` with runtime/security/reliability fields
-- [ ] Record OCA WhatsApp authority and deprecated IPAI connector status in SSOT/spec
+- [x] Define canonical event schema for lead_created — `events.py` EVENT_MAP + `crm_lead.py` hook
+- [x] Define canonical event schema for lead_qualified — stage progression detection in `crm_lead.py`
+- [x] Define canonical event schema for opportunity_won — `stage.is_won` transition in `crm_lead.py`
+- [x] Define canonical event schema for invoice_paid / purchase_completed — `payment_state` transition in `account_move.py`
+- [x] Extend `ssot/external/meta_ads_integration.yaml` with runtime/security/reliability fields — added 2026-03-31
+- [x] Record OCA WhatsApp authority and deprecated IPAI connector status in SSOT/spec — `authorities` section in SSOT
 
 ## C. Platform / Bridge
 - [x] Create Azure Function adapter for outbound Meta requests — `platform/services/meta-capi-bridge/`
@@ -46,6 +46,6 @@
 - [ ] Proceed only after approved non-overlap decision
 
 ## G. Evidence / Readiness
-- [ ] Capture sandbox verification evidence for CAPI
-- [ ] Capture security review for secrets, webhook verification, and PII handling
+- [x] Capture sandbox verification evidence for CAPI — `docs/evidence/20260331-1900/meta-capi-bridge/test-results.md` (14/14 tests, 5 sandbox events)
+- [x] Capture security review for secrets, webhook verification, and PII handling — all secrets in KV, HMAC verified, PII SHA-256 hashed
 - [ ] Capture go-live checklist and rollback criteria
