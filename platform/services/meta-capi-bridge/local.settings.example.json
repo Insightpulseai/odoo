@@ -1,0 +1,14 @@
+{
+  "IsEncrypted": false,
+  "Values": {
+    "AzureWebJobsStorage": "UseDevelopmentStorage=true",
+    "FUNCTIONS_WORKER_RUNTIME": "python",
+    "META_PIXEL_ID": "",
+    "META_ACCESS_TOKEN": "@Microsoft.KeyVault(SecretUri=https://kv-ipai-dev.vault.azure.net/secrets/meta-marketing-api-token)",
+    "META_APP_SECRET": "@Microsoft.KeyVault(SecretUri=https://kv-ipai-dev.vault.azure.net/secrets/meta-marketing-api-app-secret)",
+    "META_APP_ID": "971674085514908",
+    "META_API_VERSION": "v21.0",
+    "META_TEST_EVENT_CODE": "",
+    "DEAD_LETTER_QUEUE": "meta-capi-deadletter"
+  }
+}

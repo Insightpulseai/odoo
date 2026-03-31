@@ -20,18 +20,18 @@
 - [ ] Record OCA WhatsApp authority and deprecated IPAI connector status in SSOT/spec
 
 ## C. Platform / Bridge
-- [ ] Create Azure Function adapter for outbound Meta requests
-- [ ] Add Key Vault-backed secret resolution
-- [ ] Add idempotency middleware
-- [ ] Add retry / dead-letter / replay workflow
-- [ ] Add webhook signature verification
-- [ ] Add structured logging and correlation IDs
+- [x] Create Azure Function adapter for outbound Meta requests — `platform/services/meta-capi-bridge/`
+- [x] Add Key Vault-backed secret resolution — `local.settings.example.json` + managed identity
+- [x] Add idempotency middleware — event_id on every event, auto-generated if missing
+- [x] Add retry / dead-letter / replay workflow — 3 retries + Azure Storage Queue dead-letter
+- [x] Add webhook signature verification — HMAC-SHA256 per Meta spec
+- [x] Add structured logging and correlation IDs — X-Correlation-ID header propagation
 
 ## D. Conversions API
-- [ ] Map canonical events to CAPI payloads
-- [ ] Add sandbox/test-event validation path
-- [ ] Persist delivery status and diagnostics result
-- [ ] Add contract tests and failure-path tests
+- [x] Map canonical events to CAPI payloads — 5 event types (lead_created, lead_qualified, opportunity_won, invoice_paid, refund_issued)
+- [x] Add sandbox/test-event validation path — META_TEST_EVENT_CODE support
+- [x] Persist delivery status and diagnostics result — logging + dead-letter queue
+- [x] Add contract tests and failure-path tests — 11 tests, all passing
 
 ## E. Marketing API
 - [ ] Implement audience hashing and sync
