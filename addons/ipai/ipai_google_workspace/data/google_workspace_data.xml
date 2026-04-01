@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo noupdate="1">
+    <!-- Cron: Clean up expired Google Workspace sessions -->
+    <record id="ir_cron_gc_gws_sessions" model="ir.cron">
+        <field name="name">Google Workspace: Clean Expired Sessions</field>
+        <field name="model_id" ref="model_google_workspace_session"/>
+        <field name="state">code</field>
+        <field name="code">model._gc_expired_sessions()</field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">hours</field>
+        <field name="numbercall">-1</field>
+        <field name="active">True</field>
+    </record>
+</odoo>

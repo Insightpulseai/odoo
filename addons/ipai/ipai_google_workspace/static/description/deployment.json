@@ -1,0 +1,60 @@
+{
+  "$schema": "https://developers.google.com/workspace/add-ons/reference/rest/v1/projects.deployments",
+  "_comment": "Google Workspace Add-on Deployment Descriptor — W9 Studio",
+  "_ref": "https://developers.google.com/workspace/add-ons/concepts/deployment-resource",
+
+  "oauthScopes": [
+    "https://www.googleapis.com/auth/gmail.addons.execute",
+    "https://www.googleapis.com/auth/calendar.addons.execute",
+    "https://www.googleapis.com/auth/userinfo.email"
+  ],
+
+  "addOns": {
+    "common": {
+      "name": "Studio W9 — Production Studio Booking",
+      "logoUrl": "https://erp.insightpulseai.com/web/image/website/1/logo",
+      "layoutProperties": {
+        "primaryColor": "#FF4500",
+        "secondaryColor": "#292929"
+      },
+      "homepageTrigger": {
+        "runFunction": "onHomepage"
+      },
+      "universalActions": [
+        {
+          "label": "Book Studio",
+          "openLink": {
+            "url": "https://insightpulseai.com/w9studio#book"
+          }
+        },
+        {
+          "label": "View Rates",
+          "openLink": {
+            "url": "https://insightpulseai.com/w9studio#rates"
+          }
+        }
+      ]
+    },
+
+    "gmail": {
+      "homepageTrigger": {
+        "runFunction": "onGmailHomepage"
+      },
+      "contextualTriggers": [
+        {
+          "unconditional": {},
+          "onTriggerFunction": "onGmailMessage"
+        }
+      ]
+    },
+
+    "calendar": {
+      "homepageTrigger": {
+        "runFunction": "onCalendarHomepage"
+      },
+      "eventOpenTrigger": {
+        "runFunction": "onCalendarEventOpen"
+      }
+    }
+  }
+}

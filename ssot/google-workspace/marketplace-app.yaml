@@ -1,0 +1,71 @@
+# SSOT: Google Workspace Marketplace App Listing
+# Source of truth for the InsightPulseAI Gmail Add-on Marketplace metadata.
+# CI guard: .github/workflows/marketplace-metadata.yml
+# Last updated: 2026-03-28
+
+app_name: "InsightPulseAI for Gmail"
+app_type: "google_workspace_addon"
+host_app: "gmail"
+
+visibility: "private"
+visibility_domain: "insightpulseai.com"
+
+listing_category: "Business Tools"
+pricing: "free"
+
+short_description: >-
+  Connect Gmail to Odoo ERP. Look up contacts, create leads,
+  log emails, and submit expenses without leaving your inbox.
+
+developer:
+  name: "InsightPulse AI"
+  website: "https://insightpulseai.com"
+  contact_email: "ops@insightpulseai.com"
+
+support_url: "https://insightpulseai.com/support"
+privacy_url: "https://insightpulseai.com/privacy"
+terms_url: "https://insightpulseai.com/terms"
+
+google_cloud_project: "PLACEHOLDER"
+apps_script_id: "1QaH14jbBl7PcvjLXgkzZogh6SzqS_kXoTJ_MzzmavW6CRLMANG24Ko4q"
+deployment_id: "PLACEHOLDER"
+
+review_status: "not_submitted"
+review_notes: "Private listing. Submit after local validation passes."
+
+assets:
+  icon_128: "PLACEHOLDER"
+  banner_220x140: "PLACEHOLDER"
+  screenshots: []
+
+source_path: "web/apps/gmail-odoo-addon/"
+docs_path: "docs/product/gmail-addon/"
+
+distribution:
+  current_lane: private
+  target_lane: public
+  visibility_locked: true
+  notes: "Cannot flip private→public after publish. Must create new listing for public."
+
+listing:
+  website_url: https://insightpulseai.com
+  support_url: https://insightpulseai.com/support
+  privacy_policy_url: https://insightpulseai.com/privacy
+  terms_url: https://insightpulseai.com/terms
+  logo_asset: pending
+  screenshots_complete: false
+  categories: ["Business Tools", "Communication"]
+
+review_readiness:
+  marketplace_review_ready: false
+  oauth_verification_required: true
+  oauth_verification_ready: false
+  oauth_verification_scopes_requiring_review:
+    - https://www.googleapis.com/auth/gmail.readonly
+    - https://www.googleapis.com/auth/gmail.send
+    - https://www.googleapis.com/auth/gmail.compose
+  demo_video_ready: false
+  billing_enabled: false
+  last_reviewed: "2026-03-28"
+
+last_updated: "2026-03-28"
