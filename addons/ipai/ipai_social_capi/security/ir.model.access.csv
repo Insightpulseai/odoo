@@ -1,0 +1,3 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_ipai_capi_event_log_manager,ipai.capi.event.log.manager,model_ipai_capi_event_log,sales_team.group_sale_manager,1,1,1,0
+access_ipai_capi_event_log_user,ipai.capi.event.log.user,model_ipai_capi_event_log,sales_team.group_sale_salesman,1,0,0,0

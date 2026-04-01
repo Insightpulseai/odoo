@@ -171,6 +171,7 @@ resource wafPolicy 'Microsoft.Network/FrontDoorWebApplicationFirewallPolicies@20
                 '/health'
                 '/healthz'
                 '/web/health'
+                '/web/login'
                 '/api/health'
               ]
               transforms: [
@@ -209,6 +210,9 @@ resource securityPolicy 'Microsoft.Cdn/profiles/securityPolicies@2023-05-01' = i
       ]
     }
   }
+  dependsOn: [
+    afdCustomDomains
+  ]
 }
 
 // ---------------------------------------------------------------------------
@@ -227,7 +231,7 @@ resource afdOriginGroups 'Microsoft.Cdn/profiles/originGroups@2023-05-01' = [
       }
       healthProbeSettings: {
         probePath: og.healthProbePath
-        probeRequestType: 'HEAD'
+        probeRequestType: 'GET'
         probeProtocol: og.healthProbeProtocol
         probeIntervalInSeconds: og.healthProbeIntervalInSeconds
       }
@@ -236,30 +240,23 @@ resource afdOriginGroups 'Microsoft.Cdn/profiles/originGroups@2023-05-01' = [
   }
 ]
 
-// Flatten origins: [{ogIndex, origin, originIndex}] so every origin gets its own resource
-var flattenedOrigins = flatten([
-  for (og, ogIndex) in originGroups: [
-    for (origin, originIndex) in og.origins: {
-      ogIndex: ogIndex
-      ogName: og.name
-      origin: origin
-      originIndex: originIndex
-    }
-  ]
-])
+// Flatten origins manually — Bicep does not support nested for-expressions in flatten()
+// For Phase 1 (single origin group, single origin), we use originGroups[0].origins directly
+// For multi-origin-group support, refactor to a flat param array
 
-// Origins within each origin group
+// Origins — one resource per origin in each origin group
+// Phase 1: single origin group with single origin. For multi-OG, extend with indexed params.
 resource afdOrigins 'Microsoft.Cdn/profiles/originGroups/origins@2023-05-01' = [
-  for (entry, i) in flattenedOrigins: {
-    parent: afdOriginGroups[entry.ogIndex]
-    name: '${entry.ogName}-origin-${entry.originIndex}'
+  for (og, ogIndex) in originGroups: {
+    parent: afdOriginGroups[ogIndex]
+    name: '${og.name}-origin-0'
     properties: {
-      hostName: entry.origin.hostName
-      httpPort: entry.origin.httpPort
-      httpsPort: entry.origin.httpsPort
-      priority: entry.origin.priority
-      weight: entry.origin.weight
-      originHostHeader: entry.origin.?originHostHeader ?? entry.origin.hostName
+      hostName: og.origins[0].hostName
+      httpPort: og.origins[0].httpPort
+      httpsPort: og.origins[0].httpsPort
+      priority: og.origins[0].priority
+      weight: og.origins[0].weight
+      originHostHeader: og.origins[0].hostName
       enabledState: 'Enabled'
       enforceCertificateNameCheck: true
     }
@@ -606,17 +603,24 @@ resource afdRoutes 'Microsoft.Cdn/profiles/afdEndpoints/routes@2023-05-01' = [
       originGroup: {
         id: resourceId('Microsoft.Cdn/profiles/originGroups', profileName, route.originGroupName)
       }
-      originPath: contains(route, 'originPath') ? route.originPath : null
+      originPath: route.?originPath ?? null
       patternsToMatch: route.patternsToMatch
       forwardingProtocol: route.forwardingProtocol
       linkToDefaultDomain: 'Enabled'
       httpsRedirect: 'Enabled'
       enabledState: route.enabledState
       cacheConfiguration: route.cacheEnabled ? {
-        cacheBehavior: 'OverrideAlways'
-        cacheDuration: route.cacheDuration
-        isCompressionEnabled: 'Enabled'
         queryStringCachingBehavior: 'IgnoreQueryString'
+        compressionSettings: {
+          isCompressionEnabled: true
+          contentTypesToCompress: [
+            'text/html'
+            'text/css'
+            'application/javascript'
+            'application/json'
+            'image/svg+xml'
+          ]
+        }
       } : null
       ruleSets: [
         {
@@ -632,7 +636,11 @@ resource afdRoutes 'Microsoft.Cdn/profiles/afdEndpoints/routes@2023-05-01' = [
     }
     dependsOn: [
       afdOriginGroups
+      afdOrigins
       afdCustomDomains
+      securityHeadersRuleSet
+      cacheRuleSet
+      websocketRuleSet
     ]
   }
 ]

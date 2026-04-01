@@ -1,0 +1,8 @@
+# token-registry.yaml — Design token source of truth
+# Authority: design/ssot/tokens/
+# See also: design/tokens/ for token definition files
+schema: design/schema.tokens.json
+sources:
+  core: tokens/core/
+  semantic: tokens/semantic/
+  brand: tokens/brand/

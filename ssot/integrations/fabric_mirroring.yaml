@@ -1,0 +1,26 @@
+# Fabric Mirroring Integration — SSOT
+version: "1.0.0"
+schema: ssot.integrations.v1
+updated_at: "2026-03-31"
+
+integration:
+  id: fabric_mirroring
+  name: "Microsoft Fabric Mirroring (Odoo PG)"
+  vendor: microsoft
+  status: active
+  category: data_replication
+
+source:
+  server: pg-ipai-odoo
+  database: odoo
+  rg: rg-ipai-dev-odoo-data
+
+target:
+  workspace: Finance PPM
+  capacity: fcipaidev
+  notes: "Fabric capacity ACTIVE — do NOT pause"
+
+constraints:
+  - no_ddl_during_mirror
+  - no_truncate
+  - table_ownership_required

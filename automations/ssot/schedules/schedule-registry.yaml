@@ -1,0 +1,5 @@
+# schedule-registry.yaml — Canonical automation schedule inventory
+# Authority: automations/ssot/schedules/
+# Schema: each entry has name, trigger (cron|event), schedule (cron expr or event source),
+#          category (scheduled|event-driven|maintenance), handler, enabled
+schedules: []

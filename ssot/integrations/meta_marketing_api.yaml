@@ -1,0 +1,48 @@
+# Meta Marketing API Integration — SSOT
+# Spec: spec/meta-integration-bridge/
+# Contract: ssot/external/meta_ads_integration.yaml (primary ads contract)
+
+version: "1.0.0"
+schema: ssot.integrations.v1
+updated_at: "2026-03-31"
+
+integration:
+  id: meta_marketing_api
+  name: "Meta Marketing API (Marketing-API-Test)"
+  vendor: meta
+  status: development
+  category: advertising
+
+app:
+  name: "Marketing-API-Test"
+  app_id: "971674085514908"
+  app_mode: development
+  app_type: business
+
+secrets:
+  vault: kv-ipai-dev
+  entries:
+    - name: meta-marketing-api-token
+      type: access_token
+      vaulted_date: "2026-03-31"
+    - name: meta-marketing-api-app-id
+      type: app_id
+      vaulted_date: "2026-03-31"
+
+capabilities:
+  - marketing_api_campaigns
+  - marketing_api_audiences
+  - marketing_api_insights
+
+runtime:
+  bridge: azure_function
+  direct_odoo_to_meta: false
+  analytics_path: "meta_insights -> databricks_bronze -> silver_gold"
+
+relationship:
+  primary_ads_contract: ssot/external/meta_ads_integration.yaml
+  spec_bundle: spec/meta-integration-bridge/
+  notes: >
+    This is the second Meta app. Primary app is 951394464039117
+    (Insightpulseai Ads) for CAPI. This app (971674085514908) is
+    for Marketing API testing. Consolidation decision pending.

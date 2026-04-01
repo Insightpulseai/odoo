@@ -1,0 +1,33 @@
+# environments.yaml — canonical environment registry
+# All platform services must target one of these environments.
+
+environments:
+  dev:
+    name: Development
+    azure_resource_group: rg-ipai-dev-odoo-runtime
+    azure_region: southeastasia
+    key_vault: kv-ipai-dev
+    container_app_env: ipai-odoo-dev-env
+    domain_suffix: salmontree-b7d27e19.southeastasia.azurecontainerapps.io
+    purpose: Local and cloud development iteration
+
+  staging:
+    name: Staging
+    azure_resource_group: rg-ipai-shared-staging
+    azure_region: southeastasia
+    key_vault: kv-ipai-staging
+    container_app_env: ipai-odoo-staging-env
+    domain_suffix: ""  # TODO: Provision staging ACA environment
+    purpose: Pre-production validation
+
+  prod:
+    name: Production
+    azure_resource_group: rg-ipai-shared-prod
+    azure_region: southeastasia
+    key_vault: kv-ipai-prod
+    container_app_env: ipai-odoo-prod-env
+    domain_suffix: ""  # TODO: Provision production ACA environment
+    purpose: Live production workloads
+
+version: "1.0.0"
+last_updated: "2026-03-30"

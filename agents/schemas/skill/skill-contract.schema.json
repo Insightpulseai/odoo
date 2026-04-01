@@ -1,0 +1,65 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://insightpulseai.com/schemas/skill/skill-contract.schema.json",
+  "title": "Skill Contract",
+  "description": "Schema for skill contract files that define a skill's inputs, outputs, tools, and constraints.",
+  "type": "object",
+  "required": ["name", "description", "inputs", "outputs"],
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Unique skill identifier"
+    },
+    "description": {
+      "type": "string",
+      "description": "Human-readable description of what the skill does"
+    },
+    "domain": {
+      "type": "string",
+      "description": "Domain this skill belongs to"
+    },
+    "inputs": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name", "type"],
+        "properties": {
+          "name": { "type": "string" },
+          "type": { "type": "string" },
+          "required": { "type": "boolean", "default": true },
+          "description": { "type": "string" }
+        }
+      },
+      "description": "Input parameters the skill accepts"
+    },
+    "outputs": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name", "type"],
+        "properties": {
+          "name": { "type": "string" },
+          "type": { "type": "string" },
+          "description": { "type": "string" }
+        }
+      },
+      "description": "Output values the skill produces"
+    },
+    "tools": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Tools required to execute this skill"
+    },
+    "preconditions": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Conditions that must be true before skill execution"
+    },
+    "postconditions": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Conditions guaranteed after successful execution"
+    }
+  },
+  "additionalProperties": false
+}

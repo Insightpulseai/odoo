@@ -1,0 +1,73 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://insightpulseai.com/schemas/workflow/workflow-graph.schema.json",
+  "title": "Workflow Graph",
+  "description": "Schema for workflow graph files that define multi-step agent execution flows.",
+  "type": "object",
+  "required": ["name", "description", "steps"],
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Unique workflow identifier"
+    },
+    "description": {
+      "type": "string",
+      "description": "What this workflow accomplishes"
+    },
+    "trigger": {
+      "type": "string",
+      "enum": ["manual", "schedule", "event", "api"],
+      "description": "How this workflow is initiated"
+    },
+    "orchestration": {
+      "type": "string",
+      "enum": ["sequential", "parallel", "maker-checker"],
+      "default": "sequential",
+      "description": "Orchestration pattern for step execution"
+    },
+    "steps": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "agent", "action"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique step identifier within this workflow"
+          },
+          "agent": {
+            "type": "string",
+            "description": "Agent manifest name to execute this step"
+          },
+          "action": {
+            "type": "string",
+            "description": "Skill or capability to invoke"
+          },
+          "inputs": {
+            "type": "object",
+            "description": "Input parameters for this step"
+          },
+          "depends_on": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "Step IDs that must complete before this step"
+          },
+          "on_failure": {
+            "type": "string",
+            "enum": ["abort", "skip", "retry"],
+            "default": "abort",
+            "description": "Behavior when this step fails"
+          }
+        }
+      },
+      "minItems": 1,
+      "description": "Ordered list of workflow steps"
+    },
+    "timeout_ms": {
+      "type": "integer",
+      "minimum": 1000,
+      "description": "Maximum time for the entire workflow"
+    }
+  },
+  "additionalProperties": false
+}

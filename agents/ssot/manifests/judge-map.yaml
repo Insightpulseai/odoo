@@ -1,0 +1,12 @@
+# judge-map.yaml — maps judge names to their rubric files
+# Referenced by: tests/contract/test_schemas.py
+# TODO: Populate as judge rubrics are formalized
+
+version: "1.0.0"
+last_updated: "2026-03-30"
+
+judges: []
+  # Example entry:
+  # - name: code-quality-judge
+  #   domain: odoo_sh
+  #   file: judges/odoo_sh/code-quality.yaml

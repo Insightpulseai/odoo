@@ -1,0 +1,26 @@
+# runtime-boundary.yaml — agent-platform repo ownership contract
+# SSOT: defines what the agent-platform/ directory owns and does not own.
+# Referenced by: tests/contract/test_runtime_boundary.py
+
+owns:
+  - orchestrator
+  - executor
+  - checkpointing
+  - gateways
+  - runtime-api
+  - worker-manager
+  - eval-runner
+  - telemetry-bridge
+
+does_not_own:
+  - personas
+  - skill-definitions
+  - judge-rubrics
+  - eval-suite-content
+  - control-plane-ui
+  - shared-platform-apis
+
+decision_rule: "runs as a deployable service"
+
+version: "1.0.0"
+last_updated: "2026-03-30"

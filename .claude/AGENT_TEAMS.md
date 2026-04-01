@@ -2,7 +2,7 @@
 
 > **Status**: Enabled via `.claude/settings.json` (`CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1`)
 > **Mode**: `in-process` (all teammates in same session, shared context)
-> **Last Updated**: 2026-02-20
+> **Last Updated**: 2026-03-30
 
 ---
 
@@ -79,27 +79,27 @@ Do NOT use for:
 **Blocked Tools**:
 - `Bash(git push*)` (only Release Captain)
 
-#### 3. Platform SSOT (Supabase)
-**Domain**: `supabase/**`, ops tables, RLS policies, edge functions
+#### 3. Azure Platform
+**Domain**: `infra/azure/**`, `ssot/governance/**`, Azure DevOps pipelines, Bicep/ARM templates
 **Triggers**:
-- Migration files (`supabase/migrations/*.sql`)
-- RLS policy changes
-- Edge function changes (`supabase/functions/`)
-- Ops/monitoring tables (`ops.*`)
+- Infrastructure-as-code changes (`infra/azure/**`)
+- SSOT governance contracts (`ssot/governance/**`)
+- Azure DevOps pipeline definitions
+- Container App / Front Door / Key Vault config
 
 **Guardrails**:
-- **CRITICAL**: Must request plan approval for ALL schema/RLS changes
-- Cannot modify migration files that already ran (only add new)
-- Must include rollback SQL in plan
+- **CRITICAL**: Must request plan approval for ALL infra/identity changes
+- Cannot modify production resource configs without explicit permission
+- Must include rollback strategy in plan
 
 **Allowed Tools**:
 - Read, Edit, Grep, Glob
 - `Bash(git *)` (status, diff, add, commit)
-- `Bash(./scripts/verify.sh)` (schema validation)
+- `Bash(az *)` (read-only queries)
 
 **Blocked Tools**:
 - `Bash(git push*)` (only Release Captain)
-- Direct DB execution (migrations only)
+- `Bash(az * create|delete|update)` (destructive Azure CLI — only via pipelines)
 
 #### 4. Runtime Engineer
 **Domain**: Dev/stage/prod runtime contracts, scripts, Docker, DevContainer
@@ -135,7 +135,7 @@ You are the TEAM LEAD. Create an agent team and run in parallel.
 Team to spawn:
 1) "OCA Porter" — addons/oca porting hygiene
 2) "CI Gatekeeper" — workflows and gates
-3) "Platform SSOT" — Supabase patterns
+3) "Azure Platform" — infra/governance patterns
 4) "Runtime Engineer" — runtime contracts
 
 Task: [specific goal]
@@ -222,8 +222,8 @@ Use teams when **parallelism benefit > token overhead**.
 
 ### ✅ Good Team Use Cases
 - Systematic OCA porting (15 modules, 4 repos)
-- Multi-domain release prep (OCA + CI + Supabase + Docker)
-- Large refactor (schema + RLS + edge functions + CI)
+- Multi-domain release prep (OCA + CI + Azure infra + Docker)
+- Large refactor (schema + identity + pipelines + CI)
 
 ### ❌ Bad Team Use Cases
 - Single manifest version bump (just edit directly)

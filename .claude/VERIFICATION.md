@@ -2,7 +2,7 @@
 
 > **Purpose**: Deterministic verification that agent teams are configured correctly and operating as intended.
 > **Run This**: After enabling teams, after each team execution, before merging team-generated PRs.
-> **Last Updated**: 2026-02-20
+> **Last Updated**: 2026-03-30
 
 ---
 
@@ -59,7 +59,7 @@ For each operation in plan, check against `.claude/RISKY_OPERATIONS.md`:
 | CI Gate Logic | 🔴 Critical | YES |
 | Prod Config | 🔴 Critical | YES |
 | Multi-Module Port | 🔴 Critical | YES |
-| Edge Function | 🟡 Moderate | Recommended |
+| Azure Infra | 🟡 Moderate | Recommended |
 | Pre-commit Hook | 🟡 Moderate | Recommended |
 | Docker/DevContainer | 🟡 Moderate | Recommended |
 | Documentation | 🟢 Low | Optional |
@@ -134,7 +134,7 @@ grep -q "Rollback:" plan.md && echo "✅ Rollback exists"
 ```bash
 # Check teammate status
 echo "Team Completion Status:"
-for teammate in "OCA Porter" "CI Gatekeeper" "Platform SSOT" "Runtime Engineer"; do
+for teammate in "OCA Porter" "CI Gatekeeper" "Azure Platform" "Runtime Engineer"; do
   # (Manual check in team log/task list)
   echo "  $teammate: [COMPLETE | IN_PROGRESS | BLOCKED]"
 done
@@ -149,7 +149,7 @@ git diff --name-only main...HEAD | sort | while read file; do
   case "$file" in
     addons/oca/*) echo "  OCA: $file" ;;
     .github/workflows/*) echo "  CI: $file" ;;
-    supabase/*) echo "  SSOT: $file" ;;
+    infra/azure/*|ssot/governance/*) echo "  Platform: $file" ;;
     .devcontainer/*|docker-compose*) echo "  Runtime: $file" ;;
     *) echo "  ⚠️  OTHER: $file" ;;
   esac
@@ -286,7 +286,7 @@ After team execution, fill this out:
 ```markdown
 ## Agent Team Verification - [DATE]
 
-**Team**: [OCA Porter | CI Gatekeeper | Platform SSOT | Runtime Engineer]
+**Team**: [OCA Porter | CI Gatekeeper | Azure Platform | Runtime Engineer]
 **Task**: [Brief description]
 
 ### Pre-Flight

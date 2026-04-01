@@ -1,0 +1,385 @@
+# org-repo-target-state.yaml — Canonical Target Org Backbone
+# Authority: docs/architecture/TARGET_ORG_REPO_MAP.md
+# Last updated: 2026-03-30
+#
+# Rules:
+#   - No Cloudflare (Azure DNS is authoritative)
+#   - No nginx (Azure Front Door is edge)
+#   - No Supabase (deprecated 2026-03-26)
+#   - No n8n (deprecated 2026-03-28)
+#   - No DigitalOcean, Vercel, Mailgun, Mattermost
+
+meta:
+  org: Insightpulseai
+  domain: insightpulseai.com
+  dns: Azure DNS
+  edge: Azure Front Door
+  identity: Microsoft Entra ID
+  mail: Zoho SMTP
+  compute: Azure Container Apps
+  data: Databricks + Azure PostgreSQL
+  agents: Microsoft Foundry + agent-platform
+
+# ─── FILE EXTENSION POLICY (org-wide) ───────────────────────────
+
+file_extension_policy:
+  authoritative_docs: [".md"]
+  authoritative_contracts: [".yaml", ".yml", ".json"]
+  authoritative_diagrams: [".drawio"]  # exported as .png
+  executable_truth: [".py", ".sh", ".ts", ".sql", ".tf", ".bicep"]
+  extensions:
+    ".md":       { purpose: "README, docs, ADRs, runbooks, specs", repos: "all" }
+    ".yaml":     { purpose: "workflows, SSOT, contracts, CI, config", repos: "all" }
+    ".yml":      { purpose: "alias for .yaml in CI tooling", repos: "all" }
+    ".json":     { purpose: "manifests, machine-readable contracts", repos: "all" }
+    ".jsonc":    { purpose: "local tooling config with comments", repos: ["agents", "platform", "design"] }
+    ".py":       { purpose: "services, automation, eval runners, scripts", repos: ["odoo", "agents", "agent-platform", "automations", "data-intelligence"] }
+    ".sh":       { purpose: "bootstrap, validation, release, ops wrappers", repos: "infra-heavy" }
+    ".ts":       { purpose: "shared libraries, backend/frontend logic", repos: ["platform", "web", "design", "templates"] }
+    ".tsx":      { purpose: "React UI apps and components", repos: ["web", "platform", "design"] }
+    ".js":       { purpose: "build/tool scripts where TS not required", repos: ["web", ".github", "templates"] }
+    ".sql":      { purpose: "migrations, analytics, validation queries", repos: ["platform", "data-intelligence", "odoo"] }
+    ".tf":       { purpose: "Terraform IaC", repos: ["infra"] }
+    ".bicep":    { purpose: "Azure-native declarative IaC", repos: ["infra"] }
+    ".ipynb":    { purpose: "exploratory notebooks only, not authority", repos: ["data-intelligence", "agent-platform"] }
+    ".toml":     { purpose: "Python/tooling config", repos: ["odoo", "agents", "agent-platform"] }
+    ".conf":     { purpose: "runtime/app config", repos: ["odoo", "infra"] }
+    ".xml":      { purpose: "Odoo views, data files, security", repos: ["odoo"] }
+    ".po":       { purpose: "translation catalogs", repos: ["odoo"] }
+    ".csv":      { purpose: "fixtures, reference mappings, test datasets", repos: ["odoo", "agents", "data-intelligence"] }
+    ".parquet":  { purpose: "data artifacts for governed pipelines", repos: ["data-intelligence"] }
+    ".svg":      { purpose: "logos, diagrams, icons", repos: ["design", "docs", "web"] }
+    ".drawio":   { purpose: "canonical editable diagrams", repos: ["docs", "infra", "platform", "odoo"] }
+    ".png":      { purpose: "exported previews, evidence, assets", repos: ["design", "docs", "web"] }
+  banned:
+    - ".env"     # never committed; use .env.example
+    - ".pem"     # never committed; Key Vault only
+    - ".key"     # never committed; Key Vault only
+
+# ─── THREE-WAY BOUNDARY DOCTRINE ────────────────────────────────
+#
+# platform       = control plane / operator surfaces / shared APIs
+# agent-platform = deployable agent runtime and orchestration plane
+# agents         = personas / skills / judges / evals / schemas / manifests
+#
+# Decision rule:
+#   If it runs as a deployable service → agent-platform
+#   If it defines how an agent should think, act, evaluate, or route → agents
+#   If it is shared control-plane or operator-facing product surface → platform
+
+boundary_doctrine:
+  platform:
+    role: "control plane, operator surfaces, shared APIs, cross-plane contracts"
+    decision_rule: "shared control-plane or operator-facing product surface"
+  agent_platform:
+    role: "deployable agent runtime and orchestration plane"
+    decision_rule: "runs as a deployable service"
+  agents:
+    role: "agent definitions, skills, personas, judges, eval suites, routing maps, schemas"
+    decision_rule: "defines how an agent should think, act, evaluate, or route"
+
+# ─── CORE BACKBONE REPOS ────────────────────────────────────────
+
+repos:
+
+  # ── .github ──────────────────────────────────────────────────
+  - name: ".github"
+    purpose: "Org-wide GitHub governance, reusable workflows/actions, policy templates, community profile"
+    visibility: public
+    authority:
+      owns: ["org policy", "reusable workflows", "reusable actions", "repo templates", "community profile"]
+      does_not_own: ["repo-specific CI", "runtime code", "product logic"]
+    readme_contract:
+      opening: "Org-wide GitHub governance, reusable automation, repo standards, and bootstrap templates."
+      must_include: ["scope", "governed policies", "reusable workflows/actions", "downstream consumption model", "template catalog"]
+    l3_tree:
+      - ".github/actions/{policy-check,setup-python,docs-sync}"
+      - ".github/workflows/{org-governance,reusable-ci,reusable-release}.yml"
+      - ".github/ISSUE_TEMPLATE/"
+      - ".github/profile/README.md"
+      - ".github/PULL_REQUEST_TEMPLATE.md"
+      - "docs/{governance,standards,runbooks}"
+      - "repo-templates/{service,docs-site,oss}"
+      - "scripts/{bootstrap,checks,org}"
+      - "spec/github-governance/"
+      - "ssot/{policies,rulesets,workflows}"
+
+  # ── odoo ─────────────────────────────────────────────────────
+  - name: "odoo"
+    purpose: "Transactional system of record; Odoo CE + OCA + thin IPAI bridges"
+    visibility: private
+    authority:
+      owns: ["ERP runtime", "Odoo addons", "OCA curation", "IPAI bridge modules", "Odoo config", "migration scripts"]
+      does_not_own: ["agent runtime", "lakehouse", "web frontend", "infrastructure IaC"]
+    readme_contract:
+      opening: "Transactional system of record built on Odoo CE + OCA with thin IPAI bridge modules only."
+      must_include: ["scope", "addon layers (oca/ipai/local)", "runtime contract", "DB/env naming", "local dev + CI", "deploy authority", "what ipai_* may NOT do"]
+    l3_tree:
+      - ".github/workflows/"
+      - "addons/oca/{account_*,stock_*,hr_*}"
+      - "addons/ipai/{ipai_meta,ipai_bridge_*,ipai_connector_*}"
+      - "addons/local/{sandbox_*,experimental_*}"
+      - "config/{dev,staging,prod}/{odoo.conf,env.example}"
+      - "docker/{compose,images,init}"
+      - "docs/{architecture,runbooks,evidence}"
+      - "evidence/{runtime,migrations,releases}"
+      - "scripts/{ci,dev,odoo,azure}"
+      - "spec/{odoo-runtime,copilot,finance}"
+      - "ssot/odoo/{addons.manifest.yaml,oca-baseline.yaml,runtime-identifiers.json}"
+      - "tests/{contract,integration,smoke}"
+
+  # ── platform ─────────────────────────────────────────────────
+  - name: "platform"
+    purpose: "Shared control-plane apps, operator/admin surfaces, cross-plane contracts, shared APIs"
+    visibility: private
+    authority:
+      owns: ["control plane", "admin console", "ops portal", "internal APIs", "shared SDK", "shared UI", "cross-plane contracts", "identity bridge", "metadata/registry APIs"]
+      does_not_own: ["deployable agent runtime (agent-platform)", "agent definitions/skills/judges (agents)", "Odoo runtime", "lakehouse", "public web"]
+    decision_rule: "If it is shared control-plane or operator-facing product surface, it belongs in platform."
+    readme_contract:
+      opening: "Shared control-plane applications, contracts, APIs, and operator surfaces for the InsightPulseAI platform."
+      must_include: ["scope", "apps/packages/services map", "integration points", "identity refs", "deploy surfaces", "verification", "what it does NOT own (agent runtime, agent content)"]
+    l3_tree:
+      - ".github/workflows/"
+      - "apps/{control-plane,admin-console,ops-portal}/{app,tests}"
+      - "packages/{contracts,sdk,shared-ui}"
+      - "services/{api,workers,identity-bridge}"
+      - "docs/{architecture,runbooks,adr}"
+      - "scripts/{ci,release,ops}"
+      - "spec/{control-plane,identity,governance}"
+      - "ssot/{contracts,config,policies}"
+      - "tests/{contract,integration,smoke}"
+
+  # ── data-intelligence ────────────────────────────────────────
+  - name: "data-intelligence"
+    purpose: "Databricks-centered governed lakehouse, semantic models, analytics delivery"
+    visibility: private
+    authority:
+      owns: ["lakehouse", "governed data products", "semantic layer", "Databricks bundles", "analytics SQL"]
+      does_not_own: ["Odoo runtime", "web frontend", "agent runtime", "infrastructure IaC"]
+    readme_contract:
+      opening: "Databricks-centered governed lakehouse, semantic models, and analytics delivery plane."
+      must_include: ["medallion model", "jobs/bundles structure", "schema locations", "data quality flow", "reporting outputs", "evidence policy"]
+    l3_tree:
+      - ".github/workflows/"
+      - "bundles/{jobs,pipelines,workflows}"
+      - "notebooks/{ingestion,curation,semantic}"
+      - "models/{metrics,marts,serving}"
+      - "schemas/{bronze,silver,gold}"
+      - "docs/{architecture,runbooks,data-products}"
+      - "scripts/{validation,release,bootstrap}"
+      - "spec/{lakehouse,semantic-layer,governance}"
+      - "ssot/{catalogs,contracts,jobs}"
+      - "tests/{data-quality,contract,smoke}"
+
+  # ── agent-platform ──────────────────────────────────────────
+  - name: "agent-platform"
+    purpose: "Deployable agent runtime, orchestration, gateways, execution workers, eval runtime hooks, telemetry"
+    visibility: private
+    authority:
+      owns: ["agent orchestration engine", "execution workers", "runtime gateways", "scheduler/executor loops", "state/checkpointing", "eval execution hooks", "runtime telemetry/tracing adapters", "Foundry/runtime integration code"]
+      does_not_own: ["canonical skill docs (agents)", "persona definitions (agents)", "judge definitions (agents)", "business/control-plane UI (platform)", "generic shared APIs (platform)"]
+    decision_rule: "If it runs as a deployable service, it belongs in agent-platform."
+    readme_contract:
+      opening: "Deployable runtime and orchestration plane for agent execution, tool routing, evaluation runtime hooks, and telemetry."
+      must_include: ["what deploys from this repo", "runtime services", "contracts consumed from agents", "contracts consumed from platform", "what it does NOT own"]
+    l3_tree:
+      - ".github/workflows/"
+      - "runtimes/{orchestrator,executor,checkpointing,gateways}"
+      - "services/{runtime-api,worker-manager,eval-runner,telemetry-bridge}"
+      - "packages/{runtime-sdk,tracing,adapters}"
+      - "configs/{dev,staging,prod}"
+      - "docs/{architecture,runbooks,adr}"
+      - "scripts/{ci,release,ops}"
+      - "spec/{runtime,orchestration,observability}"
+      - "ssot/{runtime,routing,policies}"
+      - "tests/{contract,integration,smoke}"
+
+  # ── web ──────────────────────────────────────────────────────
+  - name: "web"
+    purpose: "Customer-facing and operator-facing web experiences, shared UI packages, edge delivery"
+    visibility: private
+    authority:
+      owns: ["marketing site", "product portals", "shared UI packages", "edge config", "SEO"]
+      does_not_own: ["Odoo runtime", "agent runtime", "infrastructure IaC"]
+    readme_contract:
+      opening: "Customer-facing and operator-facing web experiences, shared UI packages, and edge delivery surfaces."
+      must_include: ["app map", "shared packages", "deployment lanes", "route/content ownership", "design-token source", "accessibility policy"]
+    l3_tree:
+      - ".github/workflows/"
+      - "apps/{marketing,product,landing-redirect}/{app,tests}"
+      - "packages/{ui,brand,content}"
+      - "edge/{redirects,headers,middleware}"
+      - "docs/{architecture,design,runbooks}"
+      - "scripts/{ci,preview,release}"
+      - "spec/{marketing,portals,content}"
+      - "ssot/{routes,seo,content-model}"
+      - "tests/{e2e,accessibility,smoke}"
+
+  # ── infra ────────────────────────────────────────────────────
+  - name: "infra"
+    purpose: "Azure-native infrastructure as code, DNS, identity, observability"
+    visibility: private
+    authority:
+      owns: ["Azure IaC", "Azure DNS", "Front Door config", "Key Vault", "OIDC federation", "observability", "runner pools"]
+      does_not_own: ["application code", "Odoo modules", "agent logic", "web frontend"]
+    deprecated_surfaces:
+      - { name: "cloudflare", replaced_by: "azure/dns", date: "2026-03-26" }
+      - { name: "nginx", replaced_by: "Azure Front Door", date: "2026-03-15" }
+      - { name: "digitalocean", replaced_by: "azure", date: "2026-03-15" }
+    readme_contract:
+      opening: "Azure-native infrastructure as code, DNS, identity, observability, and platform policy."
+      must_include: ["provisioned resources", "env topology", "IaC toolchain (tf vs bicep)", "OIDC/service connections", "plan/apply/validate", "rollback policy"]
+    l3_tree:
+      - ".github/workflows/"
+      - "azure/{foundations,workload,identity,dns,front-door}"
+      - "github/{oidc,runners,policies}"
+      - "observability/{monitor,alerts,dashboards}"
+      - "env/{dev,staging,prod}"
+      - "docs/{architecture,runbooks,evidence}"
+      - "scripts/{plan,apply,validate}"
+      - "spec/{landing-zone,identity,observability}"
+      - "ssot/{topology,inventory,policies}"
+
+  # ── automations ──────────────────────────────────────────────
+  - name: "automations"
+    purpose: "Scheduled and event-driven automation layer"
+    visibility: private
+    authority:
+      owns: ["scheduled jobs", "event-driven triggers", "connectors", "ops runbooks"]
+      does_not_own: ["Odoo runtime", "agent runtime", "infrastructure IaC"]
+    deprecated_surfaces:
+      - { name: "n8n", replaced_by: "Azure-native jobs", date: "2026-03-28" }
+    readme_contract:
+      opening: "Scheduled and event-driven automation jobs with explicit connectors, contracts, and runbooks."
+      must_include: ["job categories", "trigger model", "secrets/identity policy", "retry/idempotency", "monitoring model"]
+    l3_tree:
+      - ".github/workflows/"
+      - "jobs/{scheduled,event-driven,maintenance}"
+      - "connectors/{github,azure,odoo}"
+      - "runbooks/{ops,finance,marketing}"
+      - "docs/{architecture,runbooks,evidence}"
+      - "scripts/{bootstrap,validate,release}"
+      - "spec/{scheduled-jobs,event-automation,retry-policy}"
+      - "ssot/{schedules,connectors,contracts}"
+      - "tests/{contract,integration,smoke}"
+
+  # ── agents ───────────────────────────────────────────────────
+  - name: "agents"
+    purpose: "Agent definitions, skills, personas, judges, eval suites, routing maps, schemas, workflow samples"
+    visibility: private
+    authority:
+      owns: ["personas", "skill definitions", "judge rubrics", "eval suites", "agent schemas", "agent manifests", "routing maps", "workflow samples", "agent-samples"]
+      does_not_own: ["deployable runtime services (agent-platform)", "long-lived APIs (platform)", "operator UI (platform)", "infrastructure"]
+    decision_rule: "If it defines how an agent should think, act, evaluate, or route, it belongs in agents."
+    readme_contract:
+      opening: "Canonical registry of agents, skills, judges, evals, schemas, and workflow samples."
+      must_include: ["product structure vs .claude overlay", "registry model", "schemas", "samples vs manifests", "eval/judge pipeline", "contribution rules", "what it does NOT own (runtime, APIs, UI)"]
+    l3_tree:
+      - ".github/workflows/"
+      - ".claude/{commands,skills,agents}"
+      - ".mcp.json"
+      - "personas/{odoo_sh,platform,cross-functional}"
+      - "skills/{odoo,azure,release,governance}"
+      - "judges/{odoo,runtime,release}"
+      - "evals/{suites,fixtures,reports}"
+      - "schemas/{agent,skill,judge,workflow}"
+      - "agent-samples/"
+      - "workflow-samples/"
+      - "registry/"
+      - "docs/{architecture,concepts,runbooks}"
+      - "spec/{registry,evals,governance}"
+      - "ssot/{manifests,routing,policies}"
+
+  # ── design ───────────────────────────────────────────────────
+  - name: "design"
+    purpose: "Brand tokens, component mappings, assets, design-to-code contracts"
+    visibility: private
+    authority:
+      owns: ["design tokens", "component mappings", "brand assets", "Figma exports", "handoff specs"]
+      does_not_own: ["runtime UI code (web repo)", "Odoo theme code (odoo repo)"]
+    readme_contract:
+      opening: "Brand tokens, component mappings, assets, and design-to-code contracts."
+      must_include: ["token hierarchy", "component surfaces", "Figma/code parity", "export policy", "asset usage", "handoff workflow"]
+    l3_tree:
+      - ".github/workflows/"
+      - "tokens/{core,semantic,brand}"
+      - "components/{web,marketing,odoo}"
+      - "assets/{logos,icons,illustrations}"
+      - "docs/{guidelines,patterns,handoff}"
+      - "exports/{figma,codegen,previews}"
+      - "spec/{brand-system,component-library,token-governance}"
+      - "ssot/{tokens,mappings,policy}"
+
+  # ── docs ─────────────────────────────────────────────────────
+  - name: "docs"
+    purpose: "Cross-repo architecture, governance, decisions, evidence, strategy"
+    visibility: public
+    authority:
+      owns: ["cross-repo architecture", "governance docs", "ADRs", "runbooks", "evidence policy", "strategy"]
+      does_not_own: ["repo-specific docs (each repo owns its own docs/)", "runtime code"]
+    readme_contract:
+      opening: "Cross-repo architecture, governance, runbooks, evidence, and strategic operating model documentation."
+      must_include: ["authority model", "doc taxonomy", "evidence pack structure", "freshness/ownership", "links to SSOT"]
+    l3_tree:
+      - ".github/workflows/"
+      - "architecture/{platform,repo,adr}"
+      - "governance/{policy,standards,evidence}"
+      - "runbooks/{ops,release,incident}"
+      - "strategy/{okr,roadmap,portfolio}"
+      - "templates/{adr,runbook,evidence-pack}"
+      - "spec/{docs-governance,evidence-model,architecture-index}"
+      - "ssot/{indexes,contracts,freshness}"
+
+  # ── templates ────────────────────────────────────────────────
+  - name: "templates"
+    purpose: "Reusable starter kits and scaffolds for repos, specs, docs, automation, design"
+    visibility: public
+    authority:
+      owns: ["repo scaffolds", "spec templates", "automation templates", "design deck templates"]
+      does_not_own: ["instantiated repos", "live specs", "runtime code"]
+    readme_contract:
+      opening: "Reusable starter kits and scaffolds for repos, specs, docs, automations, and design artifacts."
+      must_include: ["template catalog", "use cases", "versioning policy", "validation checks", "compatibility"]
+    l3_tree:
+      - ".github/workflows/"
+      - "repo/{service,library,docs-site}"
+      - "spec/{prd,plan,tasks}"
+      - "automation/{workflow,issue,adr}"
+      - "design/{deck,proposal,one-pager}"
+      - "docs/{usage,standards,migration}"
+      - "tests/{template-contract,render}"
+      - "ssot/{catalog,versions,policy}"
+
+# ─── SATELLITE REPOS (not core backbone) ────────────────────────
+
+satellite_repos:
+  - name: "landing.io"
+    purpose: "Public redirect shell"
+    target: "fold into web/apps/landing-redirect or keep standalone"
+    visibility: public
+
+  - name: "ugc-mediaops-kit"
+    purpose: "Public OSS product repo for media ops toolkit"
+    target: "keep standalone, not core backbone"
+    visibility: public
+
+# ─── REPO COMPLETENESS GATE ─────────────────────────────────────
+
+completeness_gate:
+  description: "A repo is 'done' only when it has all of these"
+  required_surfaces:
+    - "README.md"
+    - ".github/workflows/"
+    - "docs/"
+    - "spec/"
+    - "ssot/"
+    - "scripts/"
+    - "tests/"
+    - "<repo-native domain directories>"
+  required_answers:
+    - "what it owns"
+    - "what it does not own"
+    - "what files are authoritative"
+    - "how changes are validated"
+    - "how release evidence is produced"

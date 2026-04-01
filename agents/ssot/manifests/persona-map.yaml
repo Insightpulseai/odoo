@@ -1,0 +1,30 @@
+# persona-map.yaml — maps persona names to their definition files
+# Referenced by: tests/contract/test_persona_map.py
+
+version: "1.0.0"
+last_updated: "2026-03-30"
+
+personas:
+  - name: Developer
+    domain: odoo_sh
+    file: personas/odoo_sh/developer.yaml
+
+  - name: Tester
+    domain: odoo_sh
+    file: personas/odoo_sh/tester.yaml
+
+  - name: Upgrade Maintainer
+    domain: odoo_sh
+    file: personas/odoo_sh/upgrade_maintainer.yaml
+
+  - name: System Administrator
+    domain: platform
+    file: personas/platform/system_administrator.yaml
+
+  - name: Release Conductor
+    domain: platform
+    file: personas/platform/release_conductor.yaml
+
+  - name: Project Manager
+    domain: cross-functional
+    file: personas/cross-functional/project_manager.yaml
