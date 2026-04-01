@@ -62,34 +62,31 @@ IPAI follows the **SAP composite pattern**, not the Odoo.sh monolith:
 
 - If you want "what is the closest SAP on Azure single thing to Odoo.sh?" → **Azure Center for SAP solutions**
 - If you want "what stack gets me closest to Odoo.sh behavior?" → **Center + deployment automation + Monitor + Azure DevOps**
-- IPAI is architecturally aligned with the SAP composite approach, achieving **84% parity with Odoo.sh** (63/75 features PARITY or EXCEEDS) while **exceeding Odoo.sh** on SLA, scaling, security, and developer tooling.
+- IPAI is architecturally aligned with the SAP composite approach, achieving **86.7% parity with Odoo.sh** (65/75 features PARITY or EXCEEDS, **0 gaps remaining**) while **exceeding Odoo.sh** on SLA, scaling, security, and developer tooling.
 
 ---
 
 ## Parity Assessment Reference
 
-See `agents/library/odoo/odoosh_parity_judge.md` for the full 71-feature inventory with per-feature verdicts.
+See `agents/library/odoo/odoosh_parity_judge.md` for the full 75-feature inventory with per-feature verdicts.
 
 | Verdict | Count | Percentage |
 |---------|-------|------------|
-| PARITY | 51 | 68.0% |
+| PARITY | 53 | 70.7% |
 | EXCEEDS | 12 | 16.0% |
 | PARTIAL | 8 | 10.7% |
-| GAP | 2 | 2.7% |
+| GAP | 0 | 0.0% |
 | N/A | 2 | 2.7% |
 
-### 2 Remaining Gaps
-
-1. **Instant branch deployment** — ACA revision per PR (not yet automated)
-2. **Build garbage collection** — ACA revision lifecycle automation
-
-### 5 Gaps Closed (2026-04-01)
+### All 7 Gaps Closed (2026-04-01)
 
 1. **Persistent filestore** — Azure Files `stipaidev/odoo-filestore` mounted on all Odoo ACA apps
 2. **Mail catcher** — Mailpit (`ipai-mailpit-dev`) deployed as ACA container
 3. **Immutable cold storage** — Azure Blob immutable policy on `stipaidev/odoo-backups` (30-day retention)
 4. **Staging neutralization** — `scripts/odoo/neutralize_environment.sh` (staging mode) + AzDO pipeline Stage 3
 5. **Post-import safety** — `scripts/odoo/neutralize_environment.sh` (post-import mode) + CI verification
+6. **Instant branch deployment** — `azure-pipelines/odoo-preview-deploy.yml` → ACA revision per PR, deterministic label, 0% prod traffic
+7. **Integrated version upgrade pipeline** — `azure-pipelines/odoo-upgrade-rehearsal.yml` → clone/neutralize/upgrade/validate/evidence, fail-closed
 
 ---
 

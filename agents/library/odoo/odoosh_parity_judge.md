@@ -51,7 +51,7 @@ For each Odoo.sh feature, produce a verdict:
 | 2.2 | Automated test suite on commit | `--test-enable --test-tags` in CI pipeline | PARITY |
 | 2.3 | Dedicated runbot (test dashboard) | GitHub Actions summary + Azure DevOps test results | PARTIAL |
 | 2.4 | GitHub integration (webhooks, branch mapping) | Native GitHub + Azure DevOps service connection | PARITY |
-| 2.5 | Instant branch deployment | ACA revision per PR (not yet implemented) | GAP |
+| 2.5 | Instant branch deployment | `azure-pipelines/odoo-preview-deploy.yml` → ACA revision + label per PR, deterministic URL, 0% prod traffic, cleanup on close | PARITY |
 | 2.6 | Build history & logs | GitHub Actions logs + Azure Log Analytics | PARITY |
 | 2.7 | Build garbage collection | ACA revision cleanup (manual/scripted) | PARTIAL |
 
@@ -74,7 +74,7 @@ For each Odoo.sh feature, produce a verdict:
 | 4.1 | Database import (on-premise → cloud) | `pg_restore` to Azure PG | PARITY |
 | 4.2 | Database export/backup | Azure PG automated backups + manual | PARITY |
 | 4.3 | Database isolation (per-customer) | Single-tenant PG (by design) | PARITY |
-| 4.4 | Integrated version upgrade pipeline | Manual upgrade path (no automation) | GAP |
+| 4.4 | Integrated version upgrade pipeline | `azure-pipelines/odoo-upgrade-rehearsal.yml` → clone/neutralize/upgrade/validate/evidence, fail-closed, manual queue only | PARITY |
 | 4.5 | Post-import safety (disable mail servers, crons, payments) | `scripts/odoo/neutralize_environment.sh --mode=post-import` + `scripts/ci/verify_neutralization.sh` | PARITY |
 | 4.6 | Import storage headroom (4× dump size requirement) | Azure PG storage auto-grow + Azure Files | PARITY |
 
@@ -180,27 +180,28 @@ For each Odoo.sh feature, produce a verdict:
 
 | Verdict | Count | Percentage |
 |---------|-------|------------|
-| **PARITY** | 51 | 68.0% |
+| **PARITY** | 53 | 70.7% |
 | **EXCEEDS** | 12 | 16.0% |
 | **PARTIAL** | 8 | 10.7% |
-| **GAP** | 2 | 2.7% |
+| **GAP** | 0 | 0.0% |
 | **N/A** | 2 | 2.7% |
 
-**Effective parity (PARITY + EXCEEDS)**: 63/75 = **84.0%**
-**Including PARTIAL**: 71/75 = **94.7%**
+**Effective parity (PARITY + EXCEEDS)**: 65/75 = **86.7%**
+**Including PARTIAL**: 73/75 = **97.3%**
 
-## Key Gaps to Close (2 items)
+## Gaps: NONE
 
-1. **Instant branch deployment** — ACA revision per PR / preview environments (2.5)
-2. **Integrated version upgrade pipeline** — Automated `upgrade_code` + migration (4.4)
+All identified gaps have been closed. Remaining PARTIAL items are refinement opportunities, not blockers.
 
-## Recently Closed Gaps (5 items, 2026-04-01)
+## All Gaps Closed (7 items, 2026-04-01)
 
 1. **Persistent filestore on Azure Files** — `stipaidev/odoo-filestore` mounted at `/var/lib/odoo/filestore` on all 3 Odoo ACA apps (1.12)
 2. **Mail catcher** — Mailpit (`ipai-mailpit-dev`) deployed: SMTP:1025 / Web:8025 (9.3)
 3. **Immutable cold storage** — Azure Blob immutable policy on `stipaidev/odoo-backups` with 30-day retention + versioning (5.4, 12.5)
 4. **Staging neutralization** — `scripts/odoo/neutralize_environment.sh --mode=staging` + AzDO pipeline Stage 3 (3.3, 3.4)
 5. **Post-import safety** — `scripts/odoo/neutralize_environment.sh --mode=post-import` + CI verification (4.5)
+6. **Instant branch deployment** — `azure-pipelines/odoo-preview-deploy.yml` + `deploy-preview.yml` template → ACA revision per PR, deterministic label/URL, 0% prod traffic (2.5)
+7. **Integrated version upgrade pipeline** — `azure-pipelines/odoo-upgrade-rehearsal.yml` + `scripts/odoo/upgrade_rehearsal.sh` → clone/neutralize/upgrade/validate/evidence, fail-closed (4.4)
 
 ## SAP on Azure Cross-Reference
 
