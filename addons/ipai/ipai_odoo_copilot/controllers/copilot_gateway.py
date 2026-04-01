@@ -39,12 +39,13 @@ class CopilotGatewayController(http.Controller):
     """Controller bridging the systray copilot UI to Azure Foundry / OpenAI.
 
     Supports two backends:
-    - Track 1: Azure OpenAI Chat Completions (immediate, env-var based)
+    - Track 1: Azure OpenAI Chat Completions (managed identity or API key)
     - Track 2: Custom gateway endpoint (for Foundry Agent SDK / agent-platform)
 
-    Backend is selected automatically:
-    - If AZURE_FOUNDRY_API_KEY env var is set → Track 1 (direct OpenAI)
-    - Otherwise → Track 2 (custom gateway URL from ir.config_parameter)
+    Auth resolution (Track 1):
+    1. Managed Identity (DefaultAzureCredential) — production default, keyless
+    2. API key (AZURE_FOUNDRY_API_KEY env var) — dev/rollback fallback
+    3. Falls back to Track 2 (custom gateway) if neither is available
     """
 
     # ------------------------------------------------------------------
@@ -139,18 +140,39 @@ class CopilotGatewayController(http.Controller):
         )
 
     def _get_backend(self):
-        """Determine which backend to use.
+        """Determine which backend and auth mode to use.
 
-        Returns ('openai', endpoint, api_key) or ('gateway', url, None).
+        Auth resolution order:
+          1. Managed Identity (DefaultAzureCredential) — production default
+          2. API key (AZURE_FOUNDRY_API_KEY env var) — dev/rollback fallback
+          3. Custom gateway URL — agent-platform track
+
+        Returns ('openai', endpoint, auth_headers) or ('gateway', url, None).
         """
         import os
-        api_key = os.getenv('AZURE_FOUNDRY_API_KEY', '')
         endpoint = os.getenv(
             'AZURE_OPENAI_ENDPOINT',
-            'https://data-intel-ph-resource.openai.azure.com/openai/v1',
+            'https://ipai-copilot-resource.openai.azure.com',
         )
+
+        # Priority 1: Managed Identity (keyless — recommended for production)
+        try:
+            from azure.identity import DefaultAzureCredential
+            credential = DefaultAzureCredential()
+            token = credential.get_token('https://cognitiveservices.azure.com/.default')
+            _logger.info('copilot-auth: managed-identity (keyless)')
+            return 'openai', endpoint, {'Authorization': 'Bearer ' + token.token}
+        except Exception as mi_err:
+            _logger.debug('copilot-auth: managed-identity unavailable (%s)', mi_err)
+
+        # Priority 2: API key fallback (dev convenience)
+        api_key = os.getenv('AZURE_FOUNDRY_API_KEY', '')
         if api_key:
-            return 'openai', endpoint, api_key
+            _logger.info('copilot-auth: api-key fallback')
+            return 'openai', endpoint, {'api-key': api_key}
+
+        # Priority 3: Custom gateway
+        _logger.info('copilot-auth: gateway fallback')
         return 'gateway', self._get_gateway_url(), None
 
     def _call_openai(self, messages, correlation_id):
@@ -163,7 +185,7 @@ class CopilotGatewayController(http.Controller):
         Returns:
             (response_dict, latency_ms) on success.
         """
-        _, endpoint, api_key = self._get_backend()
+        _, endpoint, auth_headers = self._get_backend()
         model = (
             request.env['ir.config_parameter']
             .sudo()
@@ -175,7 +197,7 @@ class CopilotGatewayController(http.Controller):
             base = base.split('/openai/v1')[0]
         url = (
             f"{base}/openai/deployments/{model}"
-            f"/chat/completions?api-version=2024-08-01-preview"
+            f"/chat/completions?api-version=2024-10-21"
         )
 
         payload = {
@@ -187,9 +209,11 @@ class CopilotGatewayController(http.Controller):
         body = json.dumps(payload).encode('utf-8')
         headers = {
             'Content-Type': 'application/json',
-            'api-key': api_key,
             'X-Correlation-Id': correlation_id,
         }
+        # Merge auth headers (Bearer token or api-key)
+        if auth_headers:
+            headers.update(auth_headers)
 
         req = urllib.request.Request(url, data=body, headers=headers, method='POST')
         start = time.monotonic()
