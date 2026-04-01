@@ -41,7 +41,7 @@ For each Odoo.sh feature, produce a verdict:
 | 1.10 | Automatic SSL/TLS (Let's Encrypt) | AFD managed certificates | PARITY |
 | 1.11 | CDN compatibility | Azure Front Door CDN built-in | EXCEEDS |
 
-| 1.12 | Persistent filestore (attachments, reports) | Azure Files share mounted into ACA environment | GAP |
+| 1.12 | Persistent filestore (attachments, reports) | Azure Files `stipaidev/odoo-filestore` mounted at `/var/lib/odoo/filestore` on all 3 Odoo ACA apps | PARITY |
 
 ### 2. CI/CD & Automated Testing (7 features)
 
@@ -85,7 +85,7 @@ For each Odoo.sh feature, produce a verdict:
 | 5.1 | Automated daily backups | Azure PG automated backups | PARITY |
 | 5.2 | 14 backup retention (3 months) | Azure PG retention up to 35 days (configurable) | PARTIAL |
 | 5.3 | Geographic replication (3+ DCs) | Azure PG geo-redundant backup | PARITY |
-| 5.4 | Immutable cold storage (4th copy) | Azure Blob immutable storage (not yet configured) | GAP |
+| 5.4 | Immutable cold storage (4th copy) | Azure Blob immutable policy on `stipaidev/odoo-backups` (30-day retention, versioning enabled) | PARITY |
 | 5.5 | AES-256 encryption at rest | Azure PG encryption at rest (AES-256) | PARITY |
 | 5.6 | DR SLA (RPO: 24h, RTO: 6h/24h) | Azure PG PITR (RPO: 5min), ACA restart (RTO: minutes) | EXCEEDS |
 
@@ -123,7 +123,7 @@ For each Odoo.sh feature, produce a verdict:
 |---|----------------|------------------|----------------|
 | 9.1 | Production mail servers (auto-configured) | Zoho SMTP via ir.mail_server | PARITY |
 | 9.2 | Mail deactivation (staging/dev) | Neutralization script (not yet automated) | PARTIAL |
-| 9.3 | Built-in mail catcher | No mail catcher equivalent | GAP |
+| 9.3 | Built-in mail catcher | Mailpit (`ipai-mailpit-dev`) SMTP:1025 / Web:8025 in ACA env | PARITY |
 
 ### 10. DNS & Networking (3 features)
 
@@ -150,7 +150,7 @@ For each Odoo.sh feature, produce a verdict:
 | 12.2 | Database isolation | Single-tenant PG | PARITY |
 | 12.3 | Container isolation | ACA managed isolation | PARITY |
 | 12.4 | Automatic SSL | AFD managed certificates | PARITY |
-| 12.5 | Immutable backup (ransomware protection) | Azure Blob immutable (not yet configured) | GAP |
+| 12.5 | Immutable backup (ransomware protection) | Azure Blob immutable policy on `stipaidev/odoo-backups` (30-day retention) | PARITY |
 
 ### 13. Scheduled Actions / Cron (3 features)
 
@@ -180,24 +180,27 @@ For each Odoo.sh feature, produce a verdict:
 
 | Verdict | Count | Percentage |
 |---------|-------|------------|
-| **PARITY** | 39 | 54.9% |
+| **PARITY** | 42 | 59.2% |
 | **EXCEEDS** | 13 | 18.3% |
 | **PARTIAL** | 9 | 12.7% |
-| **GAP** | 7 | 9.9% |
+| **GAP** | 4 | 5.6% |
 | **N/A** | 3 | 4.2% |
 
-**Effective parity (PARITY + EXCEEDS)**: 52/71 = **73.2%**
-**Including PARTIAL**: 61/71 = **85.9%**
+**Effective parity (PARITY + EXCEEDS)**: 55/71 = **77.5%**
+**Including PARTIAL**: 64/71 = **90.1%**
 
-## Key Gaps to Close (7 items)
+## Key Gaps to Close (4 items)
 
-1. **Persistent filestore on Azure Files** — Mount Azure Files share into ACA for Odoo attachments/reports (1.12)
-2. **Staging neutralization automation** — Script to disable crons, mail, payments on staging copy (3.4)
-3. **Post-import safety** — Disable mail servers, scheduled actions, payments after DB import (4.5)
-4. **Instant branch deployment** — ACA revision per PR / preview environments (2.5)
-5. **Mail catcher** — Dev/staging email interception tool (Mailpit/MailHog container) (9.3)
-6. **Immutable cold storage** — Azure Blob immutable policy for backup copies (5.4)
-7. **Build garbage collection automation** — ACA revision lifecycle management (2.7 → upgrade from PARTIAL)
+1. **Staging neutralization automation** — Script to disable crons, mail, payments on staging copy (3.4)
+2. **Post-import safety** — Disable mail servers, scheduled actions, payments after DB import (4.5)
+3. **Instant branch deployment** — ACA revision per PR / preview environments (2.5)
+4. **Build garbage collection automation** — ACA revision lifecycle management (2.7 → upgrade from PARTIAL)
+
+## Recently Closed Gaps (3 items, 2026-04-01)
+
+1. **Persistent filestore on Azure Files** — `stipaidev/odoo-filestore` mounted at `/var/lib/odoo/filestore` on all 3 Odoo ACA apps (1.12)
+2. **Mail catcher** — Mailpit (`ipai-mailpit-dev`) deployed: SMTP:1025 / Web:8025 (9.3)
+3. **Immutable cold storage** — Azure Blob immutable policy on `stipaidev/odoo-backups` with 30-day retention + versioning (5.4, 12.5)
 
 ## SAP on Azure Cross-Reference
 

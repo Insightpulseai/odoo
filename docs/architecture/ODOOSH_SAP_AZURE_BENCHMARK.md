@@ -62,37 +62,68 @@ IPAI follows the **SAP composite pattern**, not the Odoo.sh monolith:
 
 - If you want "what is the closest SAP on Azure single thing to Odoo.sh?" → **Azure Center for SAP solutions**
 - If you want "what stack gets me closest to Odoo.sh behavior?" → **Center + deployment automation + Monitor + Azure DevOps**
-- IPAI is architecturally aligned with the SAP composite approach, achieving **73% parity with Odoo.sh** (52/71 features PARITY or EXCEEDS) while **exceeding Odoo.sh** on SLA, scaling, security, and developer tooling.
+- IPAI is architecturally aligned with the SAP composite approach, achieving **77.5% parity with Odoo.sh** (55/71 features PARITY or EXCEEDS) while **exceeding Odoo.sh** on SLA, scaling, security, and developer tooling.
 
 ---
 
 ## Parity Assessment Reference
 
-See `agents/library/odoo/odoosh_parity_judge.md` for the full 68-feature inventory with per-feature verdicts.
+See `agents/library/odoo/odoosh_parity_judge.md` for the full 71-feature inventory with per-feature verdicts.
 
 | Verdict | Count | Percentage |
 |---------|-------|------------|
-| PARITY | 39 | 54.9% |
+| PARITY | 42 | 59.2% |
 | EXCEEDS | 13 | 18.3% |
 | PARTIAL | 9 | 12.7% |
-| GAP | 7 | 9.9% |
+| GAP | 4 | 5.6% |
 | N/A | 3 | 4.2% |
 
-### 7 Key Gaps to Close
+### 4 Remaining Gaps
 
-1. **Persistent filestore on Azure Files** — mount Azure Files share into ACA for Odoo attachments/reports
-2. **Staging neutralization** — automated disable of crons, mail, payments on staging copy
-3. **Post-import safety** — disable mail servers, scheduled actions, payments after DB import
-4. **Instant branch deployment** — ACA revision per PR (not yet automated)
-5. **Mail catcher** — dev/staging email interception (Mailpit/MailHog container)
-6. **Immutable cold storage** — Azure Blob immutable policy for backups
-7. **Build garbage collection** — ACA revision lifecycle automation
+1. **Staging neutralization** — automated disable of crons, mail, payments on staging copy
+2. **Post-import safety** — disable mail servers, scheduled actions, payments after DB import
+3. **Instant branch deployment** — ACA revision per PR (not yet automated)
+4. **Build garbage collection** — ACA revision lifecycle automation
+
+### 3 Gaps Closed (2026-04-01)
+
+1. **Persistent filestore** — Azure Files `stipaidev/odoo-filestore` mounted on all Odoo ACA apps
+2. **Mail catcher** — Mailpit (`ipai-mailpit-dev`) deployed as ACA container
+3. **Immutable cold storage** — Azure Blob immutable policy on `stipaidev/odoo-backups` (30-day retention)
+
+---
+
+## Benchmark Classification
+
+| Benchmark Source | Classification | What It Governs |
+|------------------|---------------|-----------------|
+| **Odoo.sh admin docs** | Platform behavior benchmark | Branch/build lifecycle, staging semantics, neutralization, backups, shell/log/operator experience |
+| **Azure SAP DevOps automation** | Deploy control-plane benchmark | Azure DevOps project/pipeline wiring, variable groups, service connections, deployment orchestration |
+| **Azure Container Apps docs** | Runtime implementation benchmark | Ingress, revisions, routing, app-hosting substrate |
+| **Odoo 18 developer how-tos** | Module/application engineering benchmark | Frontend customization, Owl/client actions, reporting, localization, upgrades, testing, External API |
+| **SAP on Azure product docs** | Governance benchmark | PIM, Azure Policy, WAR, monitoring separation, automation |
+| **OCA addon lifecycle** | Addon governance benchmark | Module maturity, porting workflow, quality gates, manifest management |
+
+### Odoo 18 Developer How-Tos as Benchmark
+
+The [Odoo 18 developer how-tos](https://www.odoo.com/documentation/18.0/developer/howtos.html) are the benchmark for **how custom Odoo code should be built, tested, upgraded, and integrated**. They cover:
+
+- **Frontend development**: Owl components, client actions, web framework patterns
+- **Server-side development**: Model extensions, business logic, ORM patterns
+- **Custom development**: Module scaffolding, manifest, data files, views
+- **Testing**: `odoo-bin --test-enable`, JavaScript unit testing, test DB isolation
+- **Upgrade scripts**: Migration scripts, version compatibility
+- **External API**: XML-RPC, JSON-RPC integration patterns
+- **CLI**: `odoo-bin` flags, scaffold, shell
+
+This benchmark answers: "Are we building Odoo modules the Odoo-native way?" It does **not** answer platform parity questions (staging, neutralization, build lifecycle) — those belong to the Odoo.sh admin docs benchmark.
 
 ---
 
 ## Source
 
 - [Odoo.sh — The Odoo Cloud Platform](https://www.odoo.sh/)
+- [Odoo 18 Developer How-Tos](https://www.odoo.com/documentation/18.0/developer/howtos.html)
 - SAP on Azure product documentation (VM Workloads, Azure Center for SAP, Deployment Automation Framework, Azure Monitor for SAP)
 
 ---
