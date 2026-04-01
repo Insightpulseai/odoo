@@ -1,0 +1,5 @@
+# doc-freshness.yaml — Document freshness policy
+max_stale_days: 90
+review_cadence: quarterly
+owners: []
+# TODO: Assign doc owners per domain

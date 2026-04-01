@@ -159,10 +159,19 @@ pnpm install                            # Install Node dependencies
 | Self-hosted runners | GitHub-hosted / Azure DevOps pool | 2026-03-15 |
 | Mailgun (`mg.insightpulseai.com`) | Zoho SMTP | 2026-03-11 |
 | Vercel deployment | Azure Container Apps | 2026-03-11 |
-| GitHub Actions (CI/CD) | Azure DevOps Pipelines | 2026-03-21 |
+| GitHub Actions (blanket deprecation) | GitHub Actions = CI + website/docs deploy; Azure DevOps = Odoo/Databricks/Infra deploy (see `ssot/governance/platform-authority-split.yaml`) | 2026-03-30 |
 | `ipai-odoo-dev-pg` (Burstable PG) | `pg-ipai-odoo` (General Purpose, Fabric mirroring) | 2026-03-21 |
 | Superset (as canonical BI) | Power BI (primary) + Superset (supplemental only) | 2026-03-21 |
 | Notion (as data source) | Removed from Databricks bundle | 2026-03-21 |
+
+### Engineering & Delivery Authority (Option C)
+
+Authoritative rule:
+- **GitHub Actions** remains the default CI authority and the deploy authority for docs/web properties.
+- **Azure DevOps** remains the deploy authority for Odoo, Databricks, and infra lanes requiring environment/service-connection gating.
+- **Azure Boards** is the portfolio/planning system of record.
+- **GitHub Issues** is the engineering execution backlog.
+- See `ssot/governance/platform-authority-split.yaml`, `ssot/governance/ci-cd-authority-matrix.yaml`, and `ssot/governance/repo-delivery-disposition.yaml`.
 
 ---
 
@@ -192,5 +201,4 @@ pnpm install                            # Install Node dependencies
 
 ---
 
-*Query `.claude/project_memory.db` for detailed configuration*
-*Last updated: 2026-03-16*
+*Last updated: 2026-03-30*

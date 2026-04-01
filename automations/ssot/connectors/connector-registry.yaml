@@ -1,0 +1,4 @@
+# connector-registry.yaml — Canonical automation connector inventory
+# Authority: automations/ssot/connectors/
+# Schema: each entry has name, type (github|azure|odoo|custom), auth_method, module_path
+connectors: []

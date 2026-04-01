@@ -1,0 +1,64 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://insightpulseai.com/schemas/agent/agent-manifest.schema.json",
+  "title": "Agent Manifest",
+  "description": "Schema for agent manifest files that define an agent's identity, capabilities, tools, and constraints.",
+  "type": "object",
+  "required": ["name", "version", "description", "capabilities", "tools"],
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Unique agent name identifier"
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$",
+      "description": "Semantic version of the agent manifest"
+    },
+    "description": {
+      "type": "string",
+      "description": "Human-readable description of the agent's purpose"
+    },
+    "domain": {
+      "type": "string",
+      "description": "Domain the agent operates in (e.g., odoo_sh, platform, cross-functional)"
+    },
+    "persona_ref": {
+      "type": "string",
+      "description": "Path to the persona YAML file this agent implements"
+    },
+    "capabilities": {
+      "type": "array",
+      "items": { "type": "string" },
+      "minItems": 1,
+      "description": "List of capability identifiers this agent supports"
+    },
+    "tools": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "List of tools this agent is allowed to invoke"
+    },
+    "guardrails": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Safety and policy guardrails enforced at runtime"
+    },
+    "routing": {
+      "type": "object",
+      "properties": {
+        "executor": { "type": "string" },
+        "priority": { "type": "integer", "minimum": 0 }
+      },
+      "description": "Routing hints consumed by the orchestrator"
+    },
+    "metadata": {
+      "type": "object",
+      "properties": {
+        "created": { "type": "string", "format": "date" },
+        "updated": { "type": "string", "format": "date" },
+        "owner": { "type": "string" }
+      }
+    }
+  },
+  "additionalProperties": false
+}

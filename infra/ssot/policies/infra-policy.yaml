@@ -1,0 +1,10 @@
+# infra-policy.yaml — Infrastructure policy
+azure_native_only: true
+deprecated:
+  - cloudflare
+  - nginx
+  - digitalocean
+  - vercel
+edge: Azure Front Door
+dns: Azure DNS
+identity: Microsoft Entra ID
