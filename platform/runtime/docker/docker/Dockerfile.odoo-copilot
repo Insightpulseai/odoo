@@ -193,7 +193,7 @@ RUN rm -f /tmp/oca_sparse_clone.sh \
 RUN pip3 install --no-cache-dir --break-system-packages paho-mqtt
 
 # ---------------------------------------------------------------------------
-# IPAI custom modules (22 with __manifest__.py)
+# IPAI custom modules (23 with __manifest__.py)
 # Regenerate list: find addons/ipai/ -maxdepth 2 -name "__manifest__.py" -exec dirname {} \; | xargs -I{} basename {} | sort
 # ---------------------------------------------------------------------------
 COPY addons/ipai/ipai_aca_proxy /mnt/extra-addons/ipai/ipai_aca_proxy/
@@ -217,6 +217,7 @@ COPY addons/ipai/ipai_odoo_copilot /mnt/extra-addons/ipai/ipai_odoo_copilot/
 COPY addons/ipai/ipai_project_seed /mnt/extra-addons/ipai/ipai_project_seed/
 COPY addons/ipai/ipai_security_frontdoor /mnt/extra-addons/ipai/ipai_security_frontdoor/
 COPY addons/ipai/ipai_web_branding /mnt/extra-addons/ipai/ipai_web_branding/
+COPY addons/ipai/ipai_workload_center /mnt/extra-addons/ipai/ipai_workload_center/
 COPY addons/ipai/ipai_workspace_core /mnt/extra-addons/ipai/ipai_workspace_core/
 
 # ---------------------------------------------------------------------------
@@ -224,7 +225,7 @@ COPY addons/ipai/ipai_workspace_core /mnt/extra-addons/ipai/ipai_workspace_core/
 # ---------------------------------------------------------------------------
 RUN MANIFEST_COUNT=$(find /mnt/extra-addons/ipai/ -name "__manifest__.py" -maxdepth 2 | wc -l) \
     && echo "IPAI modules: $MANIFEST_COUNT manifests" \
-    && if [ "$MANIFEST_COUNT" -lt 21 ]; then \
+    && if [ "$MANIFEST_COUNT" -lt 22 ]; then \
          echo "FATAL: Expected >= 21 __manifest__.py, found $MANIFEST_COUNT" && exit 1; \
        fi
 
