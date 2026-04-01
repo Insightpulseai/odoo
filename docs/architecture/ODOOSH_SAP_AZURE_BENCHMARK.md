@@ -43,14 +43,14 @@ IPAI follows the **SAP composite pattern**, not the Odoo.sh monolith:
 |--------------------|-----------------|---------------------|
 | PaaS hosting | Azure Container Apps (`ipai-odoo-dev-web`) | Azure Center for SAP |
 | Branch environments | ACA revisions + separate DBs | Deployment automation framework |
-| CI/CD | GitHub Actions + Azure DevOps Pipelines | Azure DevOps |
+| CI/CD | Azure DevOps Pipelines (canonical deploy) | Azure DevOps |
 | Monitoring | Azure Monitor + Application Insights | Azure Monitor for SAP |
 | Edge/CDN/TLS | Azure Front Door (`afd-ipai-dev`) | Azure Load Balancer / App Gateway |
 | Database | Azure PG Flexible Server (`pg-ipai-odoo`) | Azure PG / HANA |
 | Backups | Azure PG PITR + geo-redundancy | Azure Backup |
 | Identity | Entra ID (`ipai_auth_oidc`) | SAP + Entra integration |
 | Secrets | Azure Key Vault (`kv-ipai-dev`) | Azure Key Vault |
-| Mail | Zoho SMTP + MailHog (staging) | Customer-managed SMTP |
+| Mail | Zoho SMTP (prod) + Mailpit (non-prod) | Customer-managed SMTP |
 
 ---
 
@@ -62,7 +62,7 @@ IPAI follows the **SAP composite pattern**, not the Odoo.sh monolith:
 
 - If you want "what is the closest SAP on Azure single thing to Odoo.sh?" → **Azure Center for SAP solutions**
 - If you want "what stack gets me closest to Odoo.sh behavior?" → **Center + deployment automation + Monitor + Azure DevOps**
-- IPAI is architecturally aligned with the SAP composite approach, achieving **77.5% parity with Odoo.sh** (55/71 features PARITY or EXCEEDS) while **exceeding Odoo.sh** on SLA, scaling, security, and developer tooling.
+- IPAI is architecturally aligned with the SAP composite approach, achieving **84% parity with Odoo.sh** (63/75 features PARITY or EXCEEDS) while **exceeding Odoo.sh** on SLA, scaling, security, and developer tooling.
 
 ---
 
@@ -72,24 +72,24 @@ See `agents/library/odoo/odoosh_parity_judge.md` for the full 71-feature invento
 
 | Verdict | Count | Percentage |
 |---------|-------|------------|
-| PARITY | 42 | 59.2% |
-| EXCEEDS | 13 | 18.3% |
-| PARTIAL | 9 | 12.7% |
-| GAP | 4 | 5.6% |
-| N/A | 3 | 4.2% |
+| PARITY | 51 | 68.0% |
+| EXCEEDS | 12 | 16.0% |
+| PARTIAL | 8 | 10.7% |
+| GAP | 2 | 2.7% |
+| N/A | 2 | 2.7% |
 
-### 4 Remaining Gaps
+### 2 Remaining Gaps
 
-1. **Staging neutralization** — automated disable of crons, mail, payments on staging copy
-2. **Post-import safety** — disable mail servers, scheduled actions, payments after DB import
-3. **Instant branch deployment** — ACA revision per PR (not yet automated)
-4. **Build garbage collection** — ACA revision lifecycle automation
+1. **Instant branch deployment** — ACA revision per PR (not yet automated)
+2. **Build garbage collection** — ACA revision lifecycle automation
 
-### 3 Gaps Closed (2026-04-01)
+### 5 Gaps Closed (2026-04-01)
 
 1. **Persistent filestore** — Azure Files `stipaidev/odoo-filestore` mounted on all Odoo ACA apps
 2. **Mail catcher** — Mailpit (`ipai-mailpit-dev`) deployed as ACA container
 3. **Immutable cold storage** — Azure Blob immutable policy on `stipaidev/odoo-backups` (30-day retention)
+4. **Staging neutralization** — `scripts/odoo/neutralize_environment.sh` (staging mode) + AzDO pipeline Stage 3
+5. **Post-import safety** — `scripts/odoo/neutralize_environment.sh` (post-import mode) + CI verification
 
 ---
 
@@ -101,6 +101,7 @@ See `agents/library/odoo/odoosh_parity_judge.md` for the full 71-feature invento
 | **Azure SAP DevOps automation** | Deploy control-plane benchmark | Azure DevOps project/pipeline wiring, variable groups, service connections, deployment orchestration |
 | **Azure Container Apps docs** | Runtime implementation benchmark | Ingress, revisions, routing, app-hosting substrate |
 | **Odoo 18 developer how-tos** | Module/application engineering benchmark | Frontend customization, Owl/client actions, reporting, localization, upgrades, testing, External API |
+| **Odoo Azure-related docs** | App integration spec | Azure sign-in (Entra OAuth), Outlook 365 mail, cloud storage attachment offload |
 | **SAP on Azure product docs** | Governance benchmark | PIM, Azure Policy, WAR, monitoring separation, automation |
 | **OCA addon lifecycle** | Addon governance benchmark | Module maturity, porting workflow, quality gates, manifest management |
 

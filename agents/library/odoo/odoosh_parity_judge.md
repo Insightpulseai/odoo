@@ -61,8 +61,8 @@ For each Odoo.sh feature, produce a verdict:
 |---|----------------|------------------|----------------|
 | 3.1 | Three-stage model (prod/staging/dev) | `odoo` / `odoo_staging` / `odoo_dev` DBs + ACA environments | PARITY |
 | 3.2 | Production branch deployment | Azure DevOps release pipeline → ACA | PARITY |
-| 3.3 | Staging with production data copy | `pg_dump` + neutralization script | PARTIAL |
-| 3.4 | Staging neutralization (disable crons, mail, payments) | Custom neutralization script needed | GAP |
+| 3.3 | Staging with production data copy | `scripts/odoo/refresh_staging.sh` (pg_dump → restore → neutralize) | PARITY |
+| 3.4 | Staging neutralization (disable crons, mail, payments) | `scripts/odoo/neutralize_environment.sh --mode=staging` + AzDO pipeline Stage 3 | PARITY |
 | 3.5 | Development branches with demo data | `test_<module>` disposable DBs | PARITY |
 | 3.6 | Branch promotion (drag-and-drop) | PR merge flow + ACA revision promotion | PARTIAL |
 | 3.7 | Build modes (new/update per commit) | CI pipeline modes (configurable) | PARITY |
@@ -75,7 +75,7 @@ For each Odoo.sh feature, produce a verdict:
 | 4.2 | Database export/backup | Azure PG automated backups + manual | PARITY |
 | 4.3 | Database isolation (per-customer) | Single-tenant PG (by design) | PARITY |
 | 4.4 | Integrated version upgrade pipeline | Manual upgrade path (no automation) | GAP |
-| 4.5 | Post-import safety (disable mail servers, crons, payments) | Custom neutralization script needed | GAP |
+| 4.5 | Post-import safety (disable mail servers, crons, payments) | `scripts/odoo/neutralize_environment.sh --mode=post-import` + `scripts/ci/verify_neutralization.sh` | PARITY |
 | 4.6 | Import storage headroom (4× dump size requirement) | Azure PG storage auto-grow + Azure Files | PARITY |
 
 ### 5. Backup & Disaster Recovery (6 features)
@@ -180,27 +180,27 @@ For each Odoo.sh feature, produce a verdict:
 
 | Verdict | Count | Percentage |
 |---------|-------|------------|
-| **PARITY** | 42 | 59.2% |
-| **EXCEEDS** | 13 | 18.3% |
-| **PARTIAL** | 9 | 12.7% |
-| **GAP** | 4 | 5.6% |
-| **N/A** | 3 | 4.2% |
+| **PARITY** | 51 | 68.0% |
+| **EXCEEDS** | 12 | 16.0% |
+| **PARTIAL** | 8 | 10.7% |
+| **GAP** | 2 | 2.7% |
+| **N/A** | 2 | 2.7% |
 
-**Effective parity (PARITY + EXCEEDS)**: 55/71 = **77.5%**
-**Including PARTIAL**: 64/71 = **90.1%**
+**Effective parity (PARITY + EXCEEDS)**: 63/75 = **84.0%**
+**Including PARTIAL**: 71/75 = **94.7%**
 
-## Key Gaps to Close (4 items)
+## Key Gaps to Close (2 items)
 
-1. **Staging neutralization automation** — Script to disable crons, mail, payments on staging copy (3.4)
-2. **Post-import safety** — Disable mail servers, scheduled actions, payments after DB import (4.5)
-3. **Instant branch deployment** — ACA revision per PR / preview environments (2.5)
-4. **Build garbage collection automation** — ACA revision lifecycle management (2.7 → upgrade from PARTIAL)
+1. **Instant branch deployment** — ACA revision per PR / preview environments (2.5)
+2. **Integrated version upgrade pipeline** — Automated `upgrade_code` + migration (4.4)
 
-## Recently Closed Gaps (3 items, 2026-04-01)
+## Recently Closed Gaps (5 items, 2026-04-01)
 
 1. **Persistent filestore on Azure Files** — `stipaidev/odoo-filestore` mounted at `/var/lib/odoo/filestore` on all 3 Odoo ACA apps (1.12)
 2. **Mail catcher** — Mailpit (`ipai-mailpit-dev`) deployed: SMTP:1025 / Web:8025 (9.3)
 3. **Immutable cold storage** — Azure Blob immutable policy on `stipaidev/odoo-backups` with 30-day retention + versioning (5.4, 12.5)
+4. **Staging neutralization** — `scripts/odoo/neutralize_environment.sh --mode=staging` + AzDO pipeline Stage 3 (3.3, 3.4)
+5. **Post-import safety** — `scripts/odoo/neutralize_environment.sh --mode=post-import` + CI verification (4.5)
 
 ## SAP on Azure Cross-Reference
 
@@ -233,6 +233,59 @@ IPAI follows the **SAP composite pattern**, not the Odoo.sh monolith. The table 
 The closest single Azure product to Odoo.sh is **Azure Center for SAP solutions** — unified lifecycle management with portal integration. But achieving full Odoo.sh parity requires the composite: Center + deployment automation + Monitor + Azure DevOps. IPAI assembles the same composite using ACA + Azure DevOps + Monitor + AFD.
 
 See `docs/architecture/ODOOSH_SAP_AZURE_BENCHMARK.md` for the full three-way comparison matrix.
+
+---
+
+## Deploy Authority
+
+Azure DevOps native is the canonical control plane for Odoo.sh-equivalent delivery:
+- **Azure Repos** = branch / PR / protection workflow
+- **Azure Pipelines** = CI / deploy orchestration
+- **Environments + approvals/checks** = staging/prod promotion gates
+
+GitHub is optional source integration, not the default control plane.
+
+### Control Plane Mapping
+
+| Odoo.sh capability | Azure DevOps native equivalent |
+|---|---|
+| Unlimited dev branches | Azure Repos branches + PR workflow + branch policies |
+| Automated testing on change | Azure Pipelines CI + build validation policies |
+| Staging / prod promotion | Azure Pipelines stages + Environments + approvals/checks |
+| Protected main/prod branch | Azure Repos branch policies |
+| Release gating | Approvals/checks on environments and service connections |
+| Branch workflow discipline | Azure Repos PR policies and target-branch configuration |
+
+---
+
+## Odoo.sh Marketing Capability Layer
+
+These items are benchmarked from public Odoo.sh product capability claims and are scored as behavioral/platform targets, not literal implementation mimicry.
+
+### Release Platform
+- Enterprise-grade release cycle
+- Development / Staging / Deployment workflow
+- Unlimited development branches
+- Git-integrated workflow (Azure Repos native)
+
+### Platform Services
+- Staging servers (staging clone from prod restore)
+- Backup servers (PG restore + immutable blob storage)
+- Automated testing (AzDO pipeline test stages)
+- SSH access (ACA exec/console)
+- DNS & routes (ACA ingress + Azure Front Door)
+- Email gateways (non-prod: Mailpit catch-all, prod: Zoho SMTP)
+- 24/7 monitoring (Azure Monitor + Log Analytics)
+- Per-feature-branch testing (ACA preview revisions + branch deploy lane)
+
+### Scoring Rule
+A capability is considered matched when the Azure implementation provides equivalent operator/developer outcomes, even if implemented with Azure-native primitives rather than Odoo.sh internals.
+
+### Benchmark Source Hierarchy
+- **Odoo.sh docs** = authoritative behavior (build semantics, staging clone, neutralization, backup, tooling)
+- **Odoo.sh marketing page** = capability claims (platform promise, feature list)
+- **Azure implementation docs** = implementation benchmark (ACA, PG, Azure Files, AzDO)
+- **Odoo Azure-related docs** = app integration spec (Entra OAuth, Outlook 365, cloud storage)
 
 ---
 
