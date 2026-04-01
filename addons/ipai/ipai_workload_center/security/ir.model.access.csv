@@ -1,0 +1,17 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_ipai_workload_user,ipai.workload user,model_ipai_workload,base.group_user,1,0,0,0
+access_ipai_workload_manager,ipai.workload manager,model_ipai_workload,base.group_system,1,1,1,1
+access_ipai_workload_environment_user,ipai.workload.environment user,model_ipai_workload_environment,base.group_user,1,0,0,0
+access_ipai_workload_environment_manager,ipai.workload.environment manager,model_ipai_workload_environment,base.group_system,1,1,1,1
+access_ipai_workload_component_user,ipai.workload.component user,model_ipai_workload_component,base.group_user,1,0,0,0
+access_ipai_workload_component_manager,ipai.workload.component manager,model_ipai_workload_component,base.group_system,1,1,1,1
+access_ipai_workload_release_user,ipai.workload.release user,model_ipai_workload_release,base.group_user,1,0,0,0
+access_ipai_workload_release_manager,ipai.workload.release manager,model_ipai_workload_release,base.group_system,1,1,1,1
+access_ipai_workload_validation_run_user,ipai.workload.validation.run user,model_ipai_workload_validation_run,base.group_user,1,0,0,0
+access_ipai_workload_validation_run_manager,ipai.workload.validation.run manager,model_ipai_workload_validation_run,base.group_system,1,1,1,1
+access_ipai_workload_policy_check_user,ipai.workload.policy.check user,model_ipai_workload_policy_check,base.group_user,1,0,0,0
+access_ipai_workload_policy_check_manager,ipai.workload.policy.check manager,model_ipai_workload_policy_check,base.group_system,1,1,1,1
+access_ipai_workload_evidence_user,ipai.workload.evidence user,model_ipai_workload_evidence,base.group_user,1,0,0,0
+access_ipai_workload_evidence_manager,ipai.workload.evidence manager,model_ipai_workload_evidence,base.group_system,1,1,1,1
+access_ipai_workload_cost_snapshot_user,ipai.workload.cost.snapshot user,model_ipai_workload_cost_snapshot,base.group_user,1,0,0,0
+access_ipai_workload_cost_snapshot_manager,ipai.workload.cost.snapshot manager,model_ipai_workload_cost_snapshot,base.group_system,1,1,1,1

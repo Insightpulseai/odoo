@@ -1,9 +1,9 @@
 # =============================================================================
 # Odoo Deploy Pipeline
 # =============================================================================
-# Build -> Deploy -> Smoke -> Evidence for Odoo CE 19 ERP.
+# Build -> Deploy -> Smoke -> Evidence for Odoo CE 18 ERP.
 # Surface: ipai-odoo-dev-web ACA, https://erp.insightpulseai.com
-# ACR image: acripaiodoo.azurecr.io/ipai-odoo:19.0-copilot
+# ACR image: acripaiodoo.azurecr.io/ipai-odoo:18.0-copilot
 # =============================================================================
 
 trigger:
@@ -31,11 +31,14 @@ pool:
 variables:
   acrName: acripaiodoo
   imageName: ipai-odoo
-  imageTag: 19.0-copilot
+  imageTag: 18.0-copilot
   containerAppName: ipai-odoo-dev-web
   resourceGroup: rg-ipai-dev-odoo-runtime
   serviceConnection: azure-ipai
   smokeUrl: https://erp.insightpulseai.com/web/login
+  # Neutralization: set via pipeline variables or queue-time override
+  # neutralizeMode: ''            # 'staging' or 'post-import' (empty = skip)
+  # neutralizeDatabase: ''        # target DB name (default: odoo_staging for staging mode)
 
 stages:
   # ── Stage 1: Build ──
@@ -66,11 +69,56 @@ stages:
           acrName: $(acrName)
           serviceConnection: $(serviceConnection)
 
-  # ── Stage 3: Smoke ──
+  # ── Stage 3: Neutralize (staging/post-import only) ──
+  - stage: Neutralize
+    displayName: Neutralize Non-Prod
+    dependsOn: Deploy
+    condition: and(succeeded(), ne(variables['neutralizeMode'], ''))
+    jobs:
+      - job: RunNeutralization
+        displayName: Neutralize environment
+        steps:
+          - checkout: self
+
+          - task: AzureCLI@2
+            displayName: Run neutralization script
+            inputs:
+              azureSubscription: $(serviceConnection)
+              scriptType: bash
+              scriptLocation: inlineScript
+              inlineScript: |
+                set -euo pipefail
+
+                # Resolve DB credentials from Key Vault
+                export DB_HOST=$(az keyvault secret show --vault-name kv-ipai-dev --name odoo-pg-host --query value -o tsv)
+                export DB_USER=$(az keyvault secret show --vault-name kv-ipai-dev --name odoo-pg-user --query value -o tsv)
+                export DB_PASSWORD=$(az keyvault secret show --vault-name kv-ipai-dev --name odoo-pg-password --query value -o tsv)
+                export DB_PORT=5432
+
+                NEUTRALIZE_DB="${NEUTRALIZE_DATABASE:-odoo_staging}"
+
+                bash scripts/odoo/neutralize_environment.sh \
+                  --mode=$(neutralizeMode) \
+                  --database="${NEUTRALIZE_DB}" \
+                  2>&1 | tee $(Build.ArtifactStagingDirectory)/neutralize-output.log
+            env:
+              NEUTRALIZE_DATABASE: $(neutralizeDatabase)
+
+          - publish: $(Build.ArtifactStagingDirectory)/neutralize-output.log
+            artifact: neutralization-evidence
+            condition: always()
+
+  # ── Stage 4: Smoke ──
   - stage: Smoke
     displayName: Smoke Test
-    dependsOn: Deploy
-    condition: succeeded()
+    dependsOn:
+      - Deploy
+      - Neutralize
+    condition: |
+      and(
+        succeeded('Deploy'),
+        in(dependencies.Neutralize.result, 'Succeeded', 'Skipped')
+      )
     jobs:
       - template: templates/jobs/smoke-http.yml
         parameters:
@@ -81,7 +129,7 @@ stages:
           retries: 3
           retryDelaySeconds: 20
 
-  # ── Stage 4: Evidence ──
+  # ── Stage 5: Evidence ──
   - stage: Evidence
     displayName: Publish Evidence
     dependsOn: Smoke

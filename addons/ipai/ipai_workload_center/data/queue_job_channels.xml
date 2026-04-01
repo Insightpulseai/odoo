@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="channel_workload_lifecycle" model="queue.job.channel">
+        <field name="name">workload_lifecycle</field>
+        <field name="parent_id" ref="queue_job.channel_root"/>
+    </record>
+
+    <record id="channel_workload_validation" model="queue.job.channel">
+        <field name="name">workload_validation</field>
+        <field name="parent_id" ref="queue_job.channel_root"/>
+    </record>
+
+</odoo>

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Root menu — visible to Settings / Administration group only -->
+    <menuitem id="ipai_workload_center_menu_root"
+              name="Workload Center"
+              web_icon="ipai_workload_center,static/description/icon.png"
+              groups="base.group_system"
+              sequence="90"/>
+
+    <!-- Workloads -->
+    <menuitem id="ipai_workload_center_menu_workloads"
+              name="Workloads"
+              parent="ipai_workload_center_menu_root"
+              action="ipai_workload_action"
+              sequence="10"/>
+
+    <!-- Environments -->
+    <menuitem id="ipai_workload_center_menu_environments"
+              name="Environments"
+              parent="ipai_workload_center_menu_root"
+              action="ipai_workload_environment_action"
+              sequence="20"/>
+
+    <!-- Releases -->
+    <menuitem id="ipai_workload_center_menu_releases"
+              name="Releases"
+              parent="ipai_workload_center_menu_root"
+              action="ipai_workload_release_action"
+              sequence="30"/>
+
+    <!-- Validations -->
+    <menuitem id="ipai_workload_center_menu_validations"
+              name="Validations"
+              parent="ipai_workload_center_menu_root"
+              action="ipai_workload_validation_run_action"
+              sequence="40"/>
+
+    <!-- Evidence -->
+    <menuitem id="ipai_workload_center_menu_evidence"
+              name="Evidence"
+              parent="ipai_workload_center_menu_root"
+              action="ipai_workload_evidence_action"
+              sequence="50"/>
+
+</odoo>

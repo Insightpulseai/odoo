@@ -80,18 +80,26 @@ psql -h "$DB_HOST" -p "$DB_PORT" -U "$DB_USER" -d "$STAGING_DB" \
 echo "    Restore complete"
 
 # ---------------------------------------------------------------------------
-# Phase 4: Sanitize PII
+# Phase 4: Neutralize environment
 # ---------------------------------------------------------------------------
 echo ""
-echo ">>> Phase 4: Sanitizing PII..."
+echo ">>> Phase 4: Neutralizing staging environment..."
 
-if [[ -f "$SANITIZE_SQL" ]]; then
+NEUTRALIZE_SCRIPT="$REPO_ROOT/scripts/odoo/neutralize_environment.sh"
+
+if [[ -x "$NEUTRALIZE_SCRIPT" ]]; then
+    DB_HOST="$DB_HOST" DB_USER="$DB_USER" DB_PASSWORD="$PGPASSWORD" DB_PORT="$DB_PORT" \
+        bash "$NEUTRALIZE_SCRIPT" --mode=staging --database="$STAGING_DB"
+    echo "    Neutralization complete (via neutralize_environment.sh)"
+elif [[ -f "$SANITIZE_SQL" ]]; then
+    # Fallback to legacy SQL-only sanitization
     psql -h "$DB_HOST" -p "$DB_PORT" -U "$DB_USER" -d "$STAGING_DB" \
         -f "$SANITIZE_SQL" \
         2>&1 | grep -E 'UPDATE|NOTICE|ERROR'
-    echo "    Sanitization complete"
+    echo "    Sanitization complete (via sanitize_staging.sql fallback)"
 else
-    echo "    WARNING: $SANITIZE_SQL not found — skipping sanitization"
+    echo "    ERROR: No neutralization script or SQL found"
+    exit 1
 fi
 
 # ---------------------------------------------------------------------------

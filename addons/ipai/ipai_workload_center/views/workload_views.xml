@@ -1,0 +1,454 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ============================================================ -->
+    <!-- WORKLOAD                                                      -->
+    <!-- ============================================================ -->
+
+    <!-- Workload: Form -->
+    <record id="ipai_workload_view_form" model="ir.ui.view">
+        <field name="name">ipai.workload.form</field>
+        <field name="model">ipai.workload</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_register" type="object"
+                            string="Register"
+                            class="btn-primary"
+                            invisible="status != 'draft'"/>
+                    <button name="action_activate" type="object"
+                            string="Activate"
+                            class="btn-primary"
+                            invisible="status != 'registered'"/>
+                    <button name="action_retire" type="object"
+                            string="Retire"
+                            class="btn-secondary"
+                            invisible="status not in ('active', 'degraded')"/>
+                    <field name="status" widget="statusbar"
+                           statusbar_visible="draft,registered,active"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="key"/>
+                            <field name="workload_type"/>
+                            <field name="topology_kind"/>
+                        </group>
+                        <group>
+                            <field name="owner_user_id"/>
+                            <field name="owner_team"/>
+                            <field name="source_repo"/>
+                            <field name="source_system"/>
+                        </group>
+                    </group>
+                    <field name="description"
+                           placeholder="Workload description..."/>
+                    <notebook>
+                        <page string="Environments"
+                              name="environments">
+                            <field name="environment_ids">
+                                <list>
+                                    <field name="name"/>
+                                    <field name="environment_type"/>
+                                    <field name="url" widget="url"/>
+                                    <field name="health_status"/>
+                                    <field name="last_sync_at"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Releases" name="releases">
+                            <field name="release_ids">
+                                <list>
+                                    <field name="release_key"/>
+                                    <field name="version_label"/>
+                                    <field name="status"/>
+                                    <field name="deployed_at"/>
+                                    <field name="deployed_by"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Validations"
+                              name="validations">
+                            <field name="validation_run_ids">
+                                <list>
+                                    <field name="validation_type"/>
+                                    <field name="status"/>
+                                    <field name="started_at"/>
+                                    <field name="finished_at"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Components"
+                              name="components">
+                            <field name="component_ids">
+                                <list>
+                                    <field name="name"/>
+                                    <field name="component_type"/>
+                                    <field name="runtime_kind"/>
+                                    <field name="status"/>
+                                    <field name="version"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- Workload: List -->
+    <record id="ipai_workload_view_list" model="ir.ui.view">
+        <field name="name">ipai.workload.list</field>
+        <field name="model">ipai.workload</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="key"/>
+                <field name="workload_type"/>
+                <field name="status" widget="badge"
+                       decoration-success="status == 'active'"
+                       decoration-warning="status == 'degraded'"
+                       decoration-muted="status == 'retired'"/>
+                <field name="owner_team"/>
+                <field name="environment_count"/>
+                <field name="release_count"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Workload: Search -->
+    <record id="ipai_workload_view_search" model="ir.ui.view">
+        <field name="name">ipai.workload.search</field>
+        <field name="model">ipai.workload</field>
+        <field name="arch" type="xml">
+            <search string="Search Workloads">
+                <field name="name"/>
+                <field name="key"/>
+                <filter name="active_workloads" string="Active"
+                        domain="[('status', '=', 'active')]"/>
+            </search>
+        </field>
+    </record>
+
+    <!-- ============================================================ -->
+    <!-- ENVIRONMENT                                                   -->
+    <!-- ============================================================ -->
+
+    <!-- Environment: Form -->
+    <record id="ipai_workload_environment_view_form"
+            model="ir.ui.view">
+        <field name="name">ipai.workload.environment.form</field>
+        <field name="model">ipai.workload.environment</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="workload_id"/>
+                            <field name="name"/>
+                            <field name="environment_type"/>
+                        </group>
+                        <group>
+                            <field name="url" widget="url"/>
+                            <field name="health_status"/>
+                            <field name="last_sync_at"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Components"
+                              name="components">
+                            <field name="component_ids">
+                                <list>
+                                    <field name="name"/>
+                                    <field name="component_type"/>
+                                    <field name="runtime_kind"/>
+                                    <field name="status"/>
+                                    <field name="version"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- Environment: List -->
+    <record id="ipai_workload_environment_view_list"
+            model="ir.ui.view">
+        <field name="name">ipai.workload.environment.list</field>
+        <field name="model">ipai.workload.environment</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="workload_id"/>
+                <field name="name"/>
+                <field name="environment_type"/>
+                <field name="url" widget="url"/>
+                <field name="health_status" widget="badge"
+                       decoration-success="health_status == 'healthy'"
+                       decoration-danger="health_status == 'down'"
+                       decoration-warning="health_status == 'degraded'"/>
+                <field name="last_sync_at"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Environment: Search -->
+    <record id="ipai_workload_environment_view_search"
+            model="ir.ui.view">
+        <field name="name">ipai.workload.environment.search</field>
+        <field name="model">ipai.workload.environment</field>
+        <field name="arch" type="xml">
+            <search string="Search Environments">
+                <field name="workload_id"/>
+                <field name="name"/>
+                <filter name="prod" string="Production"
+                        domain="[('environment_type', '=', 'prod')]"/>
+                <filter name="staging" string="Staging"
+                        domain="[('environment_type', '=', 'staging')]"/>
+            </search>
+        </field>
+    </record>
+
+    <!-- ============================================================ -->
+    <!-- RELEASE                                                       -->
+    <!-- ============================================================ -->
+
+    <!-- Release: Form -->
+    <record id="ipai_workload_release_view_form"
+            model="ir.ui.view">
+        <field name="name">ipai.workload.release.form</field>
+        <field name="model">ipai.workload.release</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <field name="status" widget="statusbar"
+                           statusbar_visible="pending,deployed,validated"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="workload_id"/>
+                            <field name="environment_id"/>
+                            <field name="release_key"/>
+                            <field name="version_label"/>
+                        </group>
+                        <group>
+                            <field name="artifact_ref"/>
+                            <field name="deployed_at"/>
+                            <field name="deployed_by"/>
+                            <field name="rollback_ref"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Evidence" name="evidence">
+                            <field name="evidence_ids">
+                                <list>
+                                    <field name="name"/>
+                                    <field name="evidence_type"/>
+                                    <field name="url" widget="url"/>
+                                    <field name="captured_at"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- Release: List -->
+    <record id="ipai_workload_release_view_list"
+            model="ir.ui.view">
+        <field name="name">ipai.workload.release.list</field>
+        <field name="model">ipai.workload.release</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="release_key"/>
+                <field name="workload_id"/>
+                <field name="environment_id"/>
+                <field name="version_label"/>
+                <field name="status" widget="badge"
+                       decoration-success="status == 'validated'"
+                       decoration-info="status == 'deployed'"
+                       decoration-danger="status == 'failed'"/>
+                <field name="deployed_at"/>
+                <field name="deployed_by"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Release: Search -->
+    <record id="ipai_workload_release_view_search"
+            model="ir.ui.view">
+        <field name="name">ipai.workload.release.search</field>
+        <field name="model">ipai.workload.release</field>
+        <field name="arch" type="xml">
+            <search string="Search Releases">
+                <field name="release_key"/>
+                <field name="workload_id"/>
+                <filter name="deployed" string="Deployed"
+                        domain="[('status', '=', 'deployed')]"/>
+                <filter name="validated" string="Validated"
+                        domain="[('status', '=', 'validated')]"/>
+            </search>
+        </field>
+    </record>
+
+    <!-- ============================================================ -->
+    <!-- VALIDATION RUN                                                -->
+    <!-- ============================================================ -->
+
+    <!-- Validation: Form -->
+    <record id="ipai_workload_validation_run_view_form"
+            model="ir.ui.view">
+        <field name="name">ipai.workload.validation.run.form</field>
+        <field name="model">ipai.workload.validation.run</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <field name="status" widget="statusbar"
+                           statusbar_visible="pending,running,passed"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="workload_id"/>
+                            <field name="environment_id"/>
+                            <field name="release_id"/>
+                            <field name="validation_type"/>
+                        </group>
+                        <group>
+                            <field name="started_at"/>
+                            <field name="finished_at"/>
+                        </group>
+                    </group>
+                    <field name="summary_json"
+                           string="Results (JSON)"/>
+                    <notebook>
+                        <page string="Evidence" name="evidence">
+                            <field name="evidence_ids">
+                                <list>
+                                    <field name="name"/>
+                                    <field name="evidence_type"/>
+                                    <field name="url" widget="url"/>
+                                    <field name="captured_at"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- Validation: List -->
+    <record id="ipai_workload_validation_run_view_list"
+            model="ir.ui.view">
+        <field name="name">ipai.workload.validation.run.list</field>
+        <field name="model">ipai.workload.validation.run</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="workload_id"/>
+                <field name="validation_type"/>
+                <field name="status" widget="badge"
+                       decoration-success="status == 'passed'"
+                       decoration-danger="status in ('failed', 'error')"
+                       decoration-info="status == 'running'"/>
+                <field name="started_at"/>
+                <field name="finished_at"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Validation: Search -->
+    <record id="ipai_workload_validation_run_view_search"
+            model="ir.ui.view">
+        <field name="name">ipai.workload.validation.run.search</field>
+        <field name="model">ipai.workload.validation.run</field>
+        <field name="arch" type="xml">
+            <search string="Search Validations">
+                <field name="workload_id"/>
+                <filter name="passed" string="Passed"
+                        domain="[('status', '=', 'passed')]"/>
+                <filter name="failed" string="Failed"
+                        domain="[('status', '=', 'failed')]"/>
+            </search>
+        </field>
+    </record>
+
+    <!-- ============================================================ -->
+    <!-- EVIDENCE                                                      -->
+    <!-- ============================================================ -->
+
+    <!-- Evidence: Form -->
+    <record id="ipai_workload_evidence_view_form"
+            model="ir.ui.view">
+        <field name="name">ipai.workload.evidence.form</field>
+        <field name="model">ipai.workload.evidence</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="evidence_type"/>
+                            <field name="workload_id"/>
+                        </group>
+                        <group>
+                            <field name="environment_id"/>
+                            <field name="release_id"/>
+                            <field name="validation_run_id"/>
+                        </group>
+                    </group>
+                    <group>
+                        <field name="url" widget="url"/>
+                        <field name="attachment_id"/>
+                        <field name="checksum"/>
+                        <field name="captured_at"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Evidence: List -->
+    <record id="ipai_workload_evidence_view_list"
+            model="ir.ui.view">
+        <field name="name">ipai.workload.evidence.list</field>
+        <field name="model">ipai.workload.evidence</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="evidence_type"/>
+                <field name="workload_id"/>
+                <field name="release_id"/>
+                <field name="url" widget="url"/>
+                <field name="captured_at"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Evidence: Search -->
+    <record id="ipai_workload_evidence_view_search"
+            model="ir.ui.view">
+        <field name="name">ipai.workload.evidence.search</field>
+        <field name="model">ipai.workload.evidence</field>
+        <field name="arch" type="xml">
+            <search string="Search Evidence">
+                <field name="name"/>
+                <field name="workload_id"/>
+                <filter name="reports" string="Reports"
+                        domain="[('evidence_type', '=', 'report')]"/>
+                <filter name="logs" string="Logs"
+                        domain="[('evidence_type', '=', 'log')]"/>
+            </search>
+        </field>
+    </record>
+
+</odoo>

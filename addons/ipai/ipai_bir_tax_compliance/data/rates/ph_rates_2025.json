@@ -13,85 +13,146 @@
   },
 
   "expanded_withholding_tax": {
-    "W010": {
-      "code": "W010",
+    "_namespace_note": "ATC codes use official BIR WI/WC namespace per RR 11-2018. Legacy W-series accepted via legacy_code.",
+    "WI010": {
+      "code": "WI010",
+      "legacy_code": "W010",
       "description": "Professional fees - individuals",
       "rate": 0.10,
       "base": "gross",
+      "payee_type": "individual",
       "atc_category": "Professional fees",
       "notes": "10% of gross professional fees for individuals"
     },
-    "W020": {
-      "code": "W020",
+    "WC020": {
+      "code": "WC020",
+      "legacy_code": "W020",
       "description": "Professional fees - juridical",
       "rate": 0.10,
       "base": "gross",
+      "payee_type": "corporate",
       "atc_category": "Professional fees",
       "notes": "10% of gross professional fees for corporations"
     },
-    "W030": {
-      "code": "W030",
+    "WI030": {
+      "code": "WI030",
+      "legacy_code": "W030",
       "description": "Professional fees - medical practitioners",
       "rate": 0.10,
       "base": "gross",
+      "payee_type": "individual",
       "atc_category": "Professional fees",
       "notes": "10% of gross professional fees for doctors, dentists, etc."
     },
-    "W040": {
-      "code": "W040",
+    "WI040": {
+      "code": "WI040",
+      "legacy_code": "W040",
       "description": "Professional fees - lawyers",
       "rate": 0.10,
       "base": "gross",
+      "payee_type": "individual",
       "atc_category": "Professional fees",
       "notes": "10% of gross professional fees for lawyers"
     },
-    "W050": {
-      "code": "W050",
+    "WI050": {
+      "code": "WI050",
+      "legacy_code": "W050",
       "description": "Professional entertainers",
       "rate": 0.10,
       "base": "gross",
+      "payee_type": "individual",
       "atc_category": "Professional fees",
       "notes": "10% of gross receipts for entertainers"
     },
-    "W157": {
-      "code": "W157",
-      "description": "Income payments to suppliers",
+    "WI157": {
+      "code": "WI157",
+      "legacy_code": "W157",
+      "description": "Income payments to suppliers - goods (individual)",
       "rate": 0.01,
       "base": "gross",
+      "payee_type": "individual",
       "atc_category": "Income payments",
-      "notes": "1% creditable withholding on goods"
+      "notes": "1% creditable withholding on goods from individuals"
     },
-    "W158": {
-      "code": "W158",
-      "description": "Income payments to suppliers",
+    "WC157": {
+      "code": "WC157",
+      "legacy_code": "W157",
+      "description": "Income payments to suppliers - goods (corporate)",
+      "rate": 0.01,
+      "base": "gross",
+      "payee_type": "corporate",
+      "atc_category": "Income payments",
+      "notes": "1% creditable withholding on goods from corporations"
+    },
+    "WI158": {
+      "code": "WI158",
+      "legacy_code": "W158",
+      "description": "Income payments to suppliers - services (individual)",
       "rate": 0.02,
       "base": "gross",
+      "payee_type": "individual",
       "atc_category": "Income payments",
-      "notes": "2% creditable withholding on services"
+      "notes": "2% creditable withholding on services from individuals"
     },
-    "W161": {
-      "code": "W161",
-      "description": "Professional fees - commission agents",
+    "WC158": {
+      "code": "WC158",
+      "legacy_code": "W158",
+      "description": "Income payments to suppliers - services (corporate)",
+      "rate": 0.02,
+      "base": "gross",
+      "payee_type": "corporate",
+      "atc_category": "Income payments",
+      "notes": "2% creditable withholding on services from corporations"
+    },
+    "WI161": {
+      "code": "WI161",
+      "legacy_code": "W161",
+      "description": "Commission agents - individual",
       "rate": 0.10,
       "base": "gross",
+      "payee_type": "individual",
       "atc_category": "Professional fees",
-      "notes": "10% on commissions paid to agents"
+      "notes": "10% on commissions paid to individual agents"
     },
-    "W169": {
-      "code": "W169",
-      "description": "Rent - real property",
+    "WI169": {
+      "code": "WI169",
+      "legacy_code": "W169",
+      "description": "Rent - real property (individual lessor)",
       "rate": 0.05,
       "base": "gross",
+      "payee_type": "individual",
       "atc_category": "Rent",
-      "notes": "5% on rental payments for real property"
+      "notes": "5% on rental payments for real property from individuals"
     },
-    "W170": {
-      "code": "W170",
-      "description": "Rent - personal property",
+    "WC169": {
+      "code": "WC169",
+      "legacy_code": "W169",
+      "description": "Rent - real property (corporate lessor)",
       "rate": 0.05,
       "base": "gross",
+      "payee_type": "corporate",
       "atc_category": "Rent",
-      "notes": "5% on rental payments for personal property"
+      "notes": "5% on rental payments for real property from corporations"
+    },
+    "WI170": {
+      "code": "WI170",
+      "legacy_code": "W170",
+      "description": "Rent - personal property (individual lessor)",
+      "rate": 0.05,
+      "base": "gross",
+      "payee_type": "individual",
+      "atc_category": "Rent",
+      "notes": "5% on rental payments for personal property from individuals"
+    },
+    "WC170": {
+      "code": "WC170",
+      "legacy_code": "W170",
+      "description": "Rent - personal property (corporate lessor)",
+      "rate": 0.05,
+      "base": "gross",
+      "payee_type": "corporate",
+      "atc_category": "Rent",
+      "notes": "5% on rental payments for personal property from corporations"
     }
   },
 

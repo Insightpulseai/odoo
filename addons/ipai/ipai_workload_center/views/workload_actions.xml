@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Actions must load before views that reference them via %(...)d -->
+
+    <record id="ipai_workload_action" model="ir.actions.act_window">
+        <field name="name">Workloads</field>
+        <field name="res_model">ipai.workload</field>
+        <field name="view_mode">list,form</field>
+        <field name="context">{'search_default_active_workloads': 1}</field>
+    </record>
+
+    <record id="ipai_workload_environment_action" model="ir.actions.act_window">
+        <field name="name">Environments</field>
+        <field name="res_model">ipai.workload.environment</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <record id="ipai_workload_release_action" model="ir.actions.act_window">
+        <field name="name">Releases</field>
+        <field name="res_model">ipai.workload.release</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <record id="ipai_workload_validation_run_action"
+            model="ir.actions.act_window">
+        <field name="name">Validation Runs</field>
+        <field name="res_model">ipai.workload.validation.run</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <record id="ipai_workload_evidence_action" model="ir.actions.act_window">
+        <field name="name">Evidence</field>
+        <field name="res_model">ipai.workload.evidence</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+</odoo>
