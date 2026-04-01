@@ -1,16 +1,16 @@
 # syntax=docker/dockerfile:1
-# Dockerfile.odoo-copilot - Odoo 19 CE + OCA Must-Have + Copilot + Document Intelligence
+# Dockerfile.odoo-copilot - Odoo 18 CE + OCA Must-Have + Copilot + Document Intelligence
 # =============================================================================
 # Build: az acr build --registry acripaiodoo --resource-group rg-ipai-dev-odoo-runtime \
-#        --image ipai-odoo:19.0-copilot --file platform/runtime/docker/docker/Dockerfile.odoo-copilot .
+#        --image ipai-odoo:18.0-copilot --file platform/runtime/docker/docker/Dockerfile.odoo-copilot .
 # Context: repo root
 # =============================================================================
 
-FROM odoo:19.0
+FROM odoo:18.0
 
 LABEL maintainer="InsightPulse AI <devops@insightpulseai.com>"
-LABEL description="Odoo 19 CE + OCA must-have + IPAI Copilot + Agent + Tax Guru + Doc Intelligence"
-LABEL version="19.0.5.1.0"
+LABEL description="Odoo 18 CE + OCA must-have + IPAI Copilot + Agent + Tax Guru + Doc Intelligence"
+LABEL version="18.0.5.1.0"
 
 USER root
 
@@ -24,11 +24,11 @@ RUN mkdir -p /mnt/extra-addons/ipai /mnt/extra-addons/oca
 
 # ---------------------------------------------------------------------------
 # OCA must-have modules — sparse checkout (module dirs only, not full repos)
-# Branch: 19.0 for all repos
+# Branch: 18.0 for all repos (Odoo 18 is canonical runtime)
 # ---------------------------------------------------------------------------
 
 # Helper script for sparse-cloning individual OCA modules
-RUN printf '#!/bin/bash\nset -e\nREPO="$1"; shift\nTMPDIR=$(mktemp -d)\ngit clone --depth 1 --filter=blob:none --sparse -b 19.0 "https://github.com/OCA/${REPO}.git" "$TMPDIR"\ncd "$TMPDIR"\ngit sparse-checkout set "$@"\nfor MOD in "$@"; do\n  if [ -d "$MOD" ]; then\n    cp -r "$MOD" /mnt/extra-addons/oca/\n  else\n    echo "WARNING: module $MOD not found in OCA/$REPO (19.0 branch)" >&2\n  fi\ndone\nrm -rf "$TMPDIR"\n' > /tmp/oca_sparse_clone.sh \
+RUN printf '#!/bin/bash\nset -e\nREPO="$1"; shift\nTMPDIR=$(mktemp -d)\ngit clone --depth 1 --filter=blob:none --sparse -b 18.0 "https://github.com/OCA/${REPO}.git" "$TMPDIR"\ncd "$TMPDIR"\ngit sparse-checkout set "$@"\nfor MOD in "$@"; do\n  if [ -d "$MOD" ]; then\n    cp -r "$MOD" /mnt/extra-addons/oca/\n  else\n    echo "WARNING: module $MOD not found in OCA/$REPO (18.0 branch)" >&2\n  fi\ndone\nrm -rf "$TMPDIR"\n' > /tmp/oca_sparse_clone.sh \
     && chmod +x /tmp/oca_sparse_clone.sh
 
 # --- server-auth: auth + security ---

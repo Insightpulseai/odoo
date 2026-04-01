@@ -1,9 +1,9 @@
 # =============================================================================
 # Odoo Deploy Pipeline
 # =============================================================================
-# Build -> Deploy -> Smoke -> Evidence for Odoo CE 19 ERP.
+# Build -> Deploy -> Smoke -> Evidence for Odoo CE 18 ERP.
 # Surface: ipai-odoo-dev-web ACA, https://erp.insightpulseai.com
-# ACR image: acripaiodoo.azurecr.io/ipai-odoo:19.0-copilot
+# ACR image: acripaiodoo.azurecr.io/ipai-odoo:18.0-copilot
 # =============================================================================
 
 trigger:
@@ -31,7 +31,7 @@ pool:
 variables:
   acrName: acripaiodoo
   imageName: ipai-odoo
-  imageTag: 19.0-copilot
+  imageTag: 18.0-copilot
   containerAppName: ipai-odoo-dev-web
   resourceGroup: rg-ipai-dev-odoo-runtime
   serviceConnection: azure-ipai
