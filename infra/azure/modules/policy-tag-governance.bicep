@@ -26,8 +26,8 @@ param enforcementMode string = 'DoNotEnforce'
 
 // Built-in policy: "Require a tag on resources"
 // This policy audits/denies resources missing a specific tag.
-// Azure built-in ID: 871b6d14-10aa-478d-b466-208cb8a14081
-var requireTagPolicyId = subscriptionResourceId('Microsoft.Authorization/policyDefinitions', '871b6d14-10aa-478d-b466-208cb8a14081')
+// Azure built-in ID: 871b6d14-10aa-478d-b590-94f262ecfa99
+var requireTagPolicyId = tenantResourceId('Microsoft.Authorization/policyDefinitions', '871b6d14-10aa-478d-b590-94f262ecfa99')
 
 // --- Assignment: Require Environment Tag -----------------------------------
 resource requireEnvironmentTagAssignment 'Microsoft.Authorization/policyAssignments@2022-06-01' = {

@@ -20,7 +20,7 @@
 set -euo pipefail
 
 # --- Configuration -----------------------------------------------------------
-TENANT_ID="402de71a-da66-494f-8049-cfa0dade7532"  # insightpulseai.com
+TENANT_ID="402de71a-87ec-4302-a609-fb76098d1da7"  # insightpulseai.com
 SUBSCRIPTION_ID=""  # Will be detected
 
 # Entra security groups (must be created in Entra ID portal or via Graph API)
@@ -124,7 +124,8 @@ create_eligible_assignment() {
     "scheduleInfo": {
       "startDateTime": "$(date -u +%Y-%m-%dT%H:%M:%S.000Z)",
       "expiration": {
-        "type": "NoExpiration"
+        "type": "AfterDateTime",
+        "endDateTime": "$(date -u -v+1y +%Y-%m-%dT%H:%M:%S.000Z 2>/dev/null || date -u -d '+1 year' +%Y-%m-%dT%H:%M:%S.000Z)"
       }
     },
     "justification": "SAP benchmark #644: PIM eligible assignment for least-privilege governance"
@@ -138,7 +139,7 @@ EOF
 
   az rest \
     --method PUT \
-    --uri "$scope/providers/Microsoft.Authorization/roleEligibilityScheduleRequests/$request_name?api-version=2022-04-01" \
+    --uri "$scope/providers/Microsoft.Authorization/roleEligibilityScheduleRequests/$request_name?api-version=2020-10-01" \
     --body "$request_body" \
     --output none 2>&1 || {
       warn "Failed to create eligible assignment for $role_name. This may require Entra P2 license or Privileged Role Administrator permissions."
@@ -177,26 +178,32 @@ main() {
   local rg_runtime_scope="$sub_scope/resourceGroups/$RG_RUNTIME"
   local rg_data_scope="$sub_scope/resourceGroups/$RG_DATA"
 
+  local pim_failures=0
+
   # 1. Contributor on runtime RG (8h max, justification required)
   create_eligible_assignment \
     "$ROLE_CONTRIBUTOR" "Contributor" "$rg_runtime_scope" \
-    "$PLATFORM_ADMIN_GROUP_ID" "$MAX_DURATION_CONTRIBUTOR"
+    "$PLATFORM_ADMIN_GROUP_ID" "$MAX_DURATION_CONTRIBUTOR" || pim_failures=$((pim_failures + 1))
 
   # 2. Contributor on data RG (8h max, justification required)
   create_eligible_assignment \
     "$ROLE_CONTRIBUTOR" "Contributor" "$rg_data_scope" \
-    "$PLATFORM_ADMIN_GROUP_ID" "$MAX_DURATION_CONTRIBUTOR"
+    "$PLATFORM_ADMIN_GROUP_ID" "$MAX_DURATION_CONTRIBUTOR" || pim_failures=$((pim_failures + 1))
 
   # 3. Key Vault Secrets Officer (4h max, justification required)
   local kv_scope="$rg_runtime_scope/providers/Microsoft.KeyVault/vaults/$KV_NAME"
   create_eligible_assignment \
     "$ROLE_KV_SECRETS_OFFICER" "Key Vault Secrets Officer" "$kv_scope" \
-    "$PLATFORM_ADMIN_GROUP_ID" "$MAX_DURATION_KV_OFFICER"
+    "$PLATFORM_ADMIN_GROUP_ID" "$MAX_DURATION_KV_OFFICER" || pim_failures=$((pim_failures + 1))
 
   # 4. Owner at subscription level (4h max, approval required)
   create_eligible_assignment \
     "$ROLE_OWNER" "Owner" "$sub_scope" \
-    "$PLATFORM_ADMIN_GROUP_ID" "$MAX_DURATION_OWNER" "true"
+    "$PLATFORM_ADMIN_GROUP_ID" "$MAX_DURATION_OWNER" "true" || pim_failures=$((pim_failures + 1))
+
+  if [[ $pim_failures -gt 0 ]]; then
+    log "[WARN] $pim_failures PIM eligible assignment(s) failed. See warnings above."
+  fi
 
   log ""
   log "=== PIM Configuration Complete ==="

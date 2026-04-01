@@ -1,0 +1,105 @@
+{
+  "id": "/subscriptions/536d8cf6-89e1-4815-aef3-d5f2c5f4d070/resourceGroups/rg-ipai-dev-odoo-runtime/providers/Microsoft.Resources/deployments/ipai-tag-governance-20260401-0844",
+  "location": null,
+  "name": "ipai-tag-governance-20260401-0844",
+  "properties": {
+    "correlationId": "41b514f5-5b79-4495-ae76-31309a2a82ae",
+    "debugSetting": null,
+    "dependencies": [],
+    "diagnostics": null,
+    "duration": "PT1.3226649S",
+    "error": null,
+    "extensions": [],
+    "mode": "Incremental",
+    "onErrorDeployment": null,
+    "outputResources": [
+      {
+        "apiVersion": null,
+        "extension": null,
+        "id": "/subscriptions/536d8cf6-89e1-4815-aef3-d5f2c5f4d070/resourceGroups/rg-ipai-dev-odoo-runtime/providers/Microsoft.Authorization/policyAssignments/ipai-req-env-tag-dev",
+        "identifiers": null,
+        "resourceGroup": "rg-ipai-dev-odoo-runtime",
+        "resourceType": "Microsoft.Authorization/policyAssignments"
+      },
+      {
+        "apiVersion": null,
+        "extension": null,
+        "id": "/subscriptions/536d8cf6-89e1-4815-aef3-d5f2c5f4d070/resourceGroups/rg-ipai-dev-odoo-runtime/providers/Microsoft.Authorization/policyAssignments/ipai-req-mgby-tag-dev",
+        "identifiers": null,
+        "resourceGroup": "rg-ipai-dev-odoo-runtime",
+        "resourceType": "Microsoft.Authorization/policyAssignments"
+      },
+      {
+        "apiVersion": null,
+        "extension": null,
+        "id": "/subscriptions/536d8cf6-89e1-4815-aef3-d5f2c5f4d070/resourceGroups/rg-ipai-dev-odoo-runtime/providers/Microsoft.Authorization/policyAssignments/ipai-req-proj-tag-dev",
+        "identifiers": null,
+        "resourceGroup": "rg-ipai-dev-odoo-runtime",
+        "resourceType": "Microsoft.Authorization/policyAssignments"
+      }
+    ],
+    "outputs": {
+      "enforcementMode": {
+        "type": "String",
+        "value": "DoNotEnforce"
+      },
+      "environmentTagAssignment": {
+        "type": "String",
+        "value": "ipai-req-env-tag-dev"
+      },
+      "managedByTagAssignment": {
+        "type": "String",
+        "value": "ipai-req-mgby-tag-dev"
+      },
+      "projectTagAssignment": {
+        "type": "String",
+        "value": "ipai-req-proj-tag-dev"
+      }
+    },
+    "parameters": {
+      "enforcementMode": {
+        "type": "String",
+        "value": "DoNotEnforce"
+      },
+      "environment": {
+        "type": "String",
+        "value": "dev"
+      }
+    },
+    "parametersLink": null,
+    "providers": [
+      {
+        "id": null,
+        "namespace": "Microsoft.Authorization",
+        "providerAuthorizationConsentState": null,
+        "registrationPolicy": null,
+        "registrationState": null,
+        "resourceTypes": [
+          {
+            "aliases": null,
+            "apiProfiles": null,
+            "apiVersions": null,
+            "capabilities": null,
+            "defaultApiVersion": null,
+            "locationMappings": null,
+            "locations": [
+              "southeastasia"
+            ],
+            "properties": null,
+            "resourceType": "policyAssignments",
+            "zoneMappings": null
+          }
+        ]
+      }
+    ],
+    "provisioningState": "Succeeded",
+    "templateHash": "7277260597306894081",
+    "templateLink": null,
+    "timestamp": "2026-04-01T08:44:41.726651+00:00",
+    "validatedResources": null,
+    "validationLevel": null
+  },
+  "resourceGroup": "rg-ipai-dev-odoo-runtime",
+  "tags": null,
+  "type": "Microsoft.Resources/deployments"
+}
