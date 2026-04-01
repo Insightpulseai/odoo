@@ -163,6 +163,7 @@ pnpm install                            # Install Node dependencies
 | `ipai-odoo-dev-pg` (Burstable PG) | `pg-ipai-odoo` (General Purpose, Fabric mirroring) | 2026-03-21 |
 | Superset (as canonical BI) | Power BI (primary) + Superset (supplemental only) | 2026-03-21 |
 | Notion (as data source) | Removed from Databricks bundle | 2026-03-21 |
+| Wix (all — hosting, CMS, DNS, API) | Azure DNS + Azure Container Apps + Odoo CMS | 2026-04-02 |
 
 ### Engineering & Delivery Authority (Option C)
 
