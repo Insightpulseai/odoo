@@ -223,14 +223,13 @@ COPY addons/ipai/ipai_workspace_core /mnt/extra-addons/ipai/ipai_workspace_core/
 # ---------------------------------------------------------------------------
 # Build-time assertion: fail if IPAI module count drops below expected
 # ---------------------------------------------------------------------------
-# Verify IPAI module count (fatal if zero)
-RUN set +o pipefail; \
-    OCA_COUNT=$(find /mnt/extra-addons/oca -maxdepth 2 -name "__manifest__.py" 2>/dev/null | wc -l); \
-    IPAI_COUNT=$(find /mnt/extra-addons/ipai -maxdepth 2 -name "__manifest__.py" 2>/dev/null | wc -l); \
-    echo "OCA modules: $OCA_COUNT, IPAI modules: $IPAI_COUNT"; \
-    if [ "$IPAI_COUNT" -lt 22 ]; then \
-      echo "FATAL: Expected >= 22 IPAI modules, found $IPAI_COUNT" && exit 1; \
-    fi
+# Verify module counts
+SHELL ["/bin/bash", "-c"]
+RUN OCA_COUNT=$(find /mnt/extra-addons/oca -maxdepth 2 -name "__manifest__.py" 2>/dev/null | wc -l || echo 0) \
+    && IPAI_COUNT=$(find /mnt/extra-addons/ipai -maxdepth 2 -name "__manifest__.py" 2>/dev/null | wc -l || echo 0) \
+    && echo "OCA modules: $OCA_COUNT, IPAI modules: $IPAI_COUNT" \
+    && if [ "$IPAI_COUNT" -lt 22 ]; then echo "FATAL: Expected >= 22 IPAI, found $IPAI_COUNT" && exit 1; fi
+SHELL ["/bin/bash", "-xo", "pipefail", "-c"]
 
 # ---------------------------------------------------------------------------
 # Configure addons_path: OCA + IPAI + core
@@ -252,4 +251,4 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=90s --retries=5 \
     CMD curl -sf http://localhost:8069/web/health || exit 1
 
 ENTRYPOINT ["/entrypoint.sh"]
-CMD ["odoo", "--addons-path=/mnt/extra-addons/oca,/mnt/extra-addons/ipai,/usr/lib/python3/dist-packages/odoo/addons"]
+CMD ["odoo"]
