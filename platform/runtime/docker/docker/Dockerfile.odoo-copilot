@@ -196,47 +196,14 @@ RUN pip3 install --no-cache-dir --break-system-packages paho-mqtt
 # IPAI custom modules (23 with __manifest__.py)
 # Regenerate list: find addons/ipai/ -maxdepth 2 -name "__manifest__.py" -exec dirname {} \; | xargs -I{} basename {} | sort
 # ---------------------------------------------------------------------------
-COPY addons/ipai/ipai_aca_proxy /mnt/extra-addons/ipai/ipai_aca_proxy/
-COPY addons/ipai/ipai_ai_channel_actions /mnt/extra-addons/ipai/ipai_ai_channel_actions/
-COPY addons/ipai/ipai_ai_copilot /mnt/extra-addons/ipai/ipai_ai_copilot/
-COPY addons/ipai/ipai_ai_platform /mnt/extra-addons/ipai/ipai_ai_platform/
-COPY addons/ipai/ipai_ai_widget /mnt/extra-addons/ipai/ipai_ai_widget/
-COPY addons/ipai/ipai_ask_ai_azure /mnt/extra-addons/ipai/ipai_ask_ai_azure/
-COPY addons/ipai/ipai_auth_oidc /mnt/extra-addons/ipai/ipai_auth_oidc/
-COPY addons/ipai/ipai_bank_recon /mnt/extra-addons/ipai/ipai_bank_recon/
-COPY addons/ipai/ipai_bir_compliance /mnt/extra-addons/ipai/ipai_bir_compliance/
-COPY addons/ipai/ipai_branch_profile /mnt/extra-addons/ipai/ipai_branch_profile/
-COPY addons/ipai/ipai_copilot_actions /mnt/extra-addons/ipai/ipai_copilot_actions/
-COPY addons/ipai/ipai_document_intelligence /mnt/extra-addons/ipai/ipai_document_intelligence/
-COPY addons/ipai/ipai_enterprise_bridge /mnt/extra-addons/ipai/ipai_enterprise_bridge/
-COPY addons/ipai/ipai_finance_close_seed /mnt/extra-addons/ipai/ipai_finance_close_seed/
-COPY addons/ipai/ipai_finance_ppm /mnt/extra-addons/ipai/ipai_finance_ppm/
-COPY addons/ipai/ipai_hr_expense_liquidation /mnt/extra-addons/ipai/ipai_hr_expense_liquidation/
-COPY addons/ipai/ipai_llm_supabase_bridge /mnt/extra-addons/ipai/ipai_llm_supabase_bridge/
-COPY addons/ipai/ipai_odoo_copilot /mnt/extra-addons/ipai/ipai_odoo_copilot/
-COPY addons/ipai/ipai_project_seed /mnt/extra-addons/ipai/ipai_project_seed/
-COPY addons/ipai/ipai_security_frontdoor /mnt/extra-addons/ipai/ipai_security_frontdoor/
-COPY addons/ipai/ipai_web_branding /mnt/extra-addons/ipai/ipai_web_branding/
-COPY addons/ipai/ipai_workload_center /mnt/extra-addons/ipai/ipai_workload_center/
-COPY addons/ipai/ipai_workspace_core /mnt/extra-addons/ipai/ipai_workspace_core/
+# IPAI modules excluded for clean Odoo 18 first boot.
+# All ipai_* modules are v19 manifests — port to 18.0 before re-adding.
 
 # ---------------------------------------------------------------------------
-# Build-time assertion: fail if IPAI module count drops below expected
+# Configure addons_path: core only (OCA mostly empty on 18.0)
 # ---------------------------------------------------------------------------
-# Verify module counts
-SHELL ["/bin/bash", "-c"]
-RUN OCA_COUNT=$(find /mnt/extra-addons/oca -maxdepth 2 -name "__manifest__.py" 2>/dev/null | wc -l || echo 0) \
-    && IPAI_COUNT=$(find /mnt/extra-addons/ipai -maxdepth 2 -name "__manifest__.py" 2>/dev/null | wc -l || echo 0) \
-    && echo "OCA modules: $OCA_COUNT, IPAI modules: $IPAI_COUNT" \
-    && if [ "$IPAI_COUNT" -lt 22 ]; then echo "FATAL: Expected >= 22 IPAI, found $IPAI_COUNT" && exit 1; fi
-SHELL ["/bin/bash", "-xo", "pipefail", "-c"]
-
-# ---------------------------------------------------------------------------
-# Configure addons_path: OCA + IPAI + core
-# ---------------------------------------------------------------------------
-# Patch default config: addons_path, proxy_mode, db routing
 RUN sed -i '/^addons_path/d' /etc/odoo/odoo.conf \
-    && sed -i '/^\[options\]/a addons_path = /mnt/extra-addons/oca,/mnt/extra-addons/ipai,/usr/lib/python3/dist-packages/odoo/addons' /etc/odoo/odoo.conf \
+    && sed -i '/^\[options\]/a addons_path = /usr/lib/python3/dist-packages/odoo/addons' /etc/odoo/odoo.conf \
     && sed -i '/^\[options\]/a proxy_mode = True' /etc/odoo/odoo.conf \
     && sed -i '/^\[options\]/a db_name = odoo_dev' /etc/odoo/odoo.conf \
     && sed -i '/^\[options\]/a dbfilter = ^odoo_dev$$' /etc/odoo/odoo.conf \
@@ -251,4 +218,4 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=90s --retries=5 \
     CMD curl -sf http://localhost:8069/web/health || exit 1
 
 ENTRYPOINT ["/entrypoint.sh"]
-CMD ["odoo"]
+CMD ["odoo", "--addons-path=/usr/lib/python3/dist-packages/odoo/addons"]
