@@ -196,14 +196,14 @@ RUN pip3 install --no-cache-dir --break-system-packages paho-mqtt
 # IPAI custom modules (23 with __manifest__.py)
 # Regenerate list: find addons/ipai/ -maxdepth 2 -name "__manifest__.py" -exec dirname {} \; | xargs -I{} basename {} | sort
 # ---------------------------------------------------------------------------
-# IPAI modules excluded for clean Odoo 18 first boot.
-# All ipai_* modules are v19 manifests — port to 18.0 before re-adding.
+# Only verified 18.0-compatible modules added here.
+COPY addons/ipai/ipai_workload_center /mnt/extra-addons/ipai/ipai_workload_center/
 
 # ---------------------------------------------------------------------------
-# Configure addons_path: core only (OCA mostly empty on 18.0)
+# Configure addons_path: IPAI + core
 # ---------------------------------------------------------------------------
 RUN sed -i '/^addons_path/d' /etc/odoo/odoo.conf \
-    && sed -i '/^\[options\]/a addons_path = /usr/lib/python3/dist-packages/odoo/addons' /etc/odoo/odoo.conf \
+    && sed -i '/^\[options\]/a addons_path = /mnt/extra-addons/ipai,/usr/lib/python3/dist-packages/odoo/addons' /etc/odoo/odoo.conf \
     && sed -i '/^\[options\]/a proxy_mode = True' /etc/odoo/odoo.conf \
     && sed -i '/^\[options\]/a db_name = odoo_dev' /etc/odoo/odoo.conf \
     && sed -i '/^\[options\]/a dbfilter = ^odoo_dev$$' /etc/odoo/odoo.conf \
@@ -218,4 +218,4 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=90s --retries=5 \
     CMD curl -sf http://localhost:8069/web/health || exit 1
 
 ENTRYPOINT ["/entrypoint.sh"]
-CMD ["odoo", "--addons-path=/usr/lib/python3/dist-packages/odoo/addons"]
+CMD ["odoo", "--addons-path=/mnt/extra-addons/ipai,/usr/lib/python3/dist-packages/odoo/addons"]
