@@ -113,6 +113,22 @@ stages:
                 echo "##vso[task.setvariable variable=TEST_DB;isReadOnly=true]${TEST_DB}"
 
           # -----------------------------------------------------------------
+          # Step 2b: Resilience config check
+          # -----------------------------------------------------------------
+          - bash: |
+              set -euo pipefail
+              chmod +x scripts/ci/check_pg_resilience.sh
+              scripts/ci/check_pg_resilience.sh
+            displayName: Check PG resilience config
+            env:
+              ODOO_CONF: config/azure/odoo.conf
+              PGHOST: $(PG_HOST)
+              PGPORT: $(PG_PORT)
+              PGDATABASE: $(TEST_DB)
+              PGUSER: $(PG_ADMIN_USER)
+              PGPASSWORD: $(pg-admin-password)
+
+          # -----------------------------------------------------------------
           # Step 3: Run Odoo module tests
           # -----------------------------------------------------------------
           - bash: |
