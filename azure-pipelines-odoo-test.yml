@@ -1,0 +1,267 @@
+# =============================================================================
+# azure-pipelines-odoo-test.yml — Odoo Finance Readiness Tests on Azure PG
+# =============================================================================
+# PURPOSE: Finance-readiness test lane against Azure PostgreSQL (pg-ipai-odoo).
+#          This is the Odoo-specific test pipeline — NOT the general CI pipeline.
+#          For general CI (lint, boundary, SSOT): see azure-pipelines-ci.yml
+#
+# Runs Odoo 18 module tests against pg-ipai-odoo using a disposable database.
+# Implements gate-sequenced test matrices for finance readiness:
+#   Gate 1: ipai_auth_oidc       (Entra → Odoo authorization)
+#   Gate 3: ipai_document_intelligence (OCR mailbox ingestion)
+#   Gate 4A: ipai_ops_api        (Error Lens real backend)
+#
+# VALIDATION STATUS:
+#   - YAML syntax: PASS (yaml.safe_load)
+#   - Shell syntax: PASS (bash -n on run_odoo_tests.sh)
+#   - Local dry-run: PASS (invocation proven, FK failure confirms disposable DB requirement)
+#   - Azure pipeline execution: NOT YET PROVEN — run testMatrix=gate1 first
+#
+# Service connection: sc-azure-dev-platform (ARM, workload identity federation)
+# Key Vault: kv-ipai-dev
+# PostgreSQL: pg-ipai-odoo.postgres.database.azure.com
+# Pool: ipai-build-pool (self-hosted, VNet-reachable)
+# =============================================================================
+
+trigger: none
+pr: none
+
+parameters:
+  - name: installModules
+    type: string
+    displayName: Modules to install (comma-separated)
+    default: 'ipai_auth_oidc'
+  - name: testTags
+    type: string
+    displayName: Test tags (Odoo --test-tags format)
+    default: '/ipai_auth_oidc'
+  - name: testMatrix
+    type: string
+    displayName: Pre-defined test matrix
+    default: 'gate1'
+    values:
+      - gate1
+      - gate3
+      - gate4a
+      - integrated
+      - custom
+
+variables:
+  - group: vg-ipai-platform-secrets
+  - name: AZURE_SERVICE_CONNECTION
+    value: 'sc-azure-dev-platform'
+  - name: KEY_VAULT_NAME
+    value: 'kv-ipai-dev'
+  - name: PG_SERVER
+    value: 'pg-ipai-odoo'
+  - name: PG_HOST
+    value: 'pg-ipai-odoo.postgres.database.azure.com'
+  - name: PG_PORT
+    value: '5432'
+  - name: PG_ADMIN_USER
+    value: 'odoo_admin'
+  - name: ODOO_BIN
+    value: 'vendor/odoo/odoo-bin'
+  - name: ODOO_HTTP_PORT
+    value: '18069'
+  - name: ODOO_DB_SSLMODE
+    value: 'require'
+  - name: pythonVersion
+    value: '3.11'
+
+stages:
+  - stage: odoo_finance_readiness
+    displayName: Odoo Finance Readiness Tests (Azure PG)
+    jobs:
+      - job: run_odoo_tests
+        displayName: 'Gate test: ${{ parameters.testMatrix }}'
+        timeoutInMinutes: 90
+        pool: ipai-build-pool
+        steps:
+          - checkout: self
+            submodules: recursive
+            clean: true
+            fetchDepth: 0
+
+          # -----------------------------------------------------------------
+          # Resolve test matrix → INSTALL_MODULES + TEST_TAGS
+          # -----------------------------------------------------------------
+          - script: |
+              set -euo pipefail
+              MATRIX="${{ parameters.testMatrix }}"
+
+              case "$MATRIX" in
+                gate1)
+                  MODULES="ipai_auth_oidc"
+                  TAGS="/ipai_auth_oidc"
+                  ;;
+                gate3)
+                  MODULES="ipai_document_intelligence"
+                  TAGS="/ipai_document_intelligence"
+                  ;;
+                gate4a)
+                  MODULES="ipai_ops_api"
+                  TAGS="/ipai_ops_api"
+                  ;;
+                integrated)
+                  MODULES="ipai_auth_oidc,ipai_document_intelligence,ipai_ops_api"
+                  TAGS="/ipai_auth_oidc,/ipai_document_intelligence,/ipai_ops_api"
+                  ;;
+                custom)
+                  MODULES="${{ parameters.installModules }}"
+                  TAGS="${{ parameters.testTags }}"
+                  ;;
+              esac
+
+              echo "##vso[task.setvariable variable=INSTALL_MODULES]${MODULES}"
+              echo "##vso[task.setvariable variable=TEST_TAGS]${TAGS}"
+              echo "Matrix: ${MATRIX} → modules=${MODULES}, tags=${TAGS}"
+            displayName: Resolve test matrix
+
+          # -----------------------------------------------------------------
+          # Load secrets from Key Vault
+          # -----------------------------------------------------------------
+          - task: AzureKeyVault@2
+            displayName: Load secrets from kv-ipai-dev
+            inputs:
+              azureSubscription: '$(AZURE_SERVICE_CONNECTION)'
+              KeyVaultName: '$(KEY_VAULT_NAME)'
+              SecretsFilter: 'pg-admin-password'
+              RunAsPreJob: false
+
+          # -----------------------------------------------------------------
+          # Setup Python + Odoo 18 deps
+          # -----------------------------------------------------------------
+          - task: UsePythonVersion@0
+            inputs:
+              versionSpec: $(pythonVersion)
+
+          - script: |
+              set -euo pipefail
+              pip install setuptools wheel
+              pip install -r vendor/odoo/requirements.txt
+              pip install -e vendor/odoo/
+              pip install python-jose sentry-sdk || true
+              echo "PASS: Odoo 18 + deps installed."
+            displayName: Install Odoo 18 and dependencies
+
+          # -----------------------------------------------------------------
+          # Create disposable test database on pg-ipai-odoo
+          # -----------------------------------------------------------------
+          - task: AzureCLI@2
+            name: prepare_db
+            displayName: Create disposable test database
+            inputs:
+              azureSubscription: '$(AZURE_SERVICE_CONNECTION)'
+              scriptType: bash
+              scriptLocation: inlineScript
+              inlineScript: |
+                set -euo pipefail
+
+                PG_RG="$(az resource list \
+                  --name "$(PG_SERVER)" \
+                  --resource-type "Microsoft.DBforPostgreSQL/flexibleServers" \
+                  --query '[0].resourceGroup' -o tsv)"
+
+                TEST_DB="odoo_test_$(Build.BuildId)_$(System.JobAttempt)"
+
+                echo "Resource group: ${PG_RG}"
+                echo "Test database:  ${TEST_DB}"
+
+                az postgres flexible-server db create \
+                  --resource-group "${PG_RG}" \
+                  --server-name "$(PG_SERVER)" \
+                  --database-name "${TEST_DB}"
+
+                echo "##vso[task.setvariable variable=PG_RG;isReadOnly=true]${PG_RG}"
+                echo "##vso[task.setvariable variable=TEST_DB;isReadOnly=true]${TEST_DB}"
+
+          # -----------------------------------------------------------------
+          # Smoke-check database connectivity
+          # -----------------------------------------------------------------
+          - task: AzureCLI@2
+            displayName: Verify test database connectivity
+            inputs:
+              azureSubscription: '$(AZURE_SERVICE_CONNECTION)'
+              scriptType: bash
+              scriptLocation: inlineScript
+              inlineScript: |
+                set -euo pipefail
+                az postgres flexible-server execute \
+                  --name "$(PG_SERVER)" \
+                  --admin-user "$(PG_ADMIN_USER)" \
+                  --admin-password "$(pg-admin-password)" \
+                  --database-name "$(TEST_DB)" \
+                  --querytext "SELECT current_database(), now();"
+
+          # -----------------------------------------------------------------
+          # Run Odoo module tests
+          # -----------------------------------------------------------------
+          - bash: |
+              set -euo pipefail
+              chmod +x scripts/ci/run_odoo_tests.sh
+              scripts/ci/run_odoo_tests.sh
+            displayName: 'Run Odoo tests: $(INSTALL_MODULES)'
+            env:
+              PGHOST: $(PG_HOST)
+              PGPORT: $(PG_PORT)
+              PGDATABASE: $(TEST_DB)
+              PGUSER: $(PG_ADMIN_USER)
+              PGPASSWORD: $(pg-admin-password)
+              ODOO_BIN: $(ODOO_BIN)
+              ODOO_HTTP_PORT: $(ODOO_HTTP_PORT)
+              ODOO_DB_SSLMODE: $(ODOO_DB_SSLMODE)
+              INSTALL_MODULES: $(INSTALL_MODULES)
+              TEST_TAGS: $(TEST_TAGS)
+
+          # -----------------------------------------------------------------
+          # Publish test evidence
+          # -----------------------------------------------------------------
+          - publish: .artifacts/test-logs
+            artifact: 'odoo-test-logs-${{ parameters.testMatrix }}'
+            displayName: Publish Odoo test logs
+            condition: always()
+
+          # -----------------------------------------------------------------
+          # Verify modules installed in disposable DB
+          # -----------------------------------------------------------------
+          - task: AzureCLI@2
+            displayName: Verify installed modules
+            condition: succeededOrFailed()
+            inputs:
+              azureSubscription: '$(AZURE_SERVICE_CONNECTION)'
+              scriptType: bash
+              scriptLocation: inlineScript
+              inlineScript: |
+                set -euo pipefail
+                az postgres flexible-server execute \
+                  --name "$(PG_SERVER)" \
+                  --admin-user "$(PG_ADMIN_USER)" \
+                  --admin-password "$(pg-admin-password)" \
+                  --database-name "$(TEST_DB)" \
+                  --querytext "SELECT name, state FROM ir_module_module WHERE name LIKE 'ipai_%' ORDER BY name;" \
+                  || echo "WARN: Could not query modules (DB may already be dropping)."
+
+          # -----------------------------------------------------------------
+          # Drop disposable test database (always, even on failure)
+          # -----------------------------------------------------------------
+          - task: AzureCLI@2
+            displayName: Drop disposable test database
+            condition: always()
+            inputs:
+              azureSubscription: '$(AZURE_SERVICE_CONNECTION)'
+              scriptType: bash
+              scriptLocation: inlineScript
+              inlineScript: |
+                set -euo pipefail
+                if [ -n "${PG_RG:-}" ] && [ -n "${TEST_DB:-}" ]; then
+                  echo "Dropping ${TEST_DB} on ${PG_SERVER}..."
+                  az postgres flexible-server db delete \
+                    --resource-group "${PG_RG}" \
+                    --server-name "$(PG_SERVER)" \
+                    --database-name "${TEST_DB}" \
+                    --yes
+                  echo "PASS: Test database dropped."
+                else
+                  echo "SKIP: No test database to drop."
+                fi
