@@ -108,11 +108,20 @@ tools:
 knowledge:
   primary_kb: ipai-knowledge-index
   search_service: srch-ipai-dev
+  registry: agents/knowledge/pulser/KB_REGISTRY.yaml
   sources:
     - odoo_19_official_docs
     - oca_module_documentation
     - bir_compliance_rules
     - ipai_internal_procedures
+
+skills:
+  registry: agents/skills/pulser/SKILL_REGISTRY.yaml
+  active_packs:
+    - pulser_erp_core
+    - pulser_taxpulse_ph
+    - pulser_finance_ops
+    - pulser_knowledge_search
 
 consumption:
   odoo_discuss: true     # Via ipai_odoo_copilot Discuss bot

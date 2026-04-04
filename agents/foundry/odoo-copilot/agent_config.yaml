@@ -1,5 +1,5 @@
 # =============================================================================
-# Odoo Copilot — Foundry Agent Configuration
+# Pulser — Foundry Agent Configuration
 # =============================================================================
 # Defines the hosted agent for Azure AI Foundry deployment.
 # Uses Responses API (Agents v2) with function calling.
@@ -7,6 +7,9 @@
 # Foundry project: data-intel-ph
 # Foundry resource: data-intel-ph-resource
 # Model: gpt-4.1
+#
+# Skill registry: agents/skills/pulser/SKILL_REGISTRY.yaml
+# KB registry: agents/knowledge/pulser/KB_REGISTRY.yaml
 # =============================================================================
 
 agent:
@@ -146,6 +149,11 @@ search:
   index: odoo-knowledge
   semantic_config: default
   top_k: 5
+
+# Consolidated registries (canonical skill + KB definitions)
+registries:
+  skills: agents/skills/pulser/SKILL_REGISTRY.yaml
+  knowledge: agents/knowledge/pulser/KB_REGISTRY.yaml
 
 auth:
   mode: entra_id
