@@ -1,0 +1,91 @@
+# MCP Server Configuration: oca-docs
+# OCA (Odoo Community Association) module documentation server.
+# Pattern: same as learn_mcp (Microsoft Learn) but for OCA repos.
+#
+# Source: https://github.com/OCA (18.0 branches)
+# Index: Azure AI Search (srch-ipai-copilot, index: oca-docs-18)
+
+server:
+  name: oca-docs
+  version: "1.0.0"
+  description: >
+    OCA module documentation search via MCP. Provides search, module info,
+    and README fetch tools for OCA community modules on 18.0 branches.
+    Used by Pulser (Odoo Copilot) and Claude Code for OCA knowledge grounding.
+  transport: stdio
+
+source:
+  github_org: OCA
+  branch: "18.0"
+  repos:
+    # Accounting
+    - {repo: account-financial-reporting, description: "Financial reports (MIS Builder, trial balance, aged partner)"}
+    - {repo: account-financial-tools, description: "Accounting tools (reconcile, lock dates, asset management)"}
+    - {repo: account-invoicing, description: "Invoice enhancements (blocking, refund links)"}
+    - {repo: account-payment, description: "Payment partner, modes, orders"}
+    - {repo: bank-statement-import, description: "Bank statement import (OFX, CAMT, CSV)"}
+    # Sales
+    - {repo: sale-workflow, description: "Sale order enhancements (cancel reason, approval)"}
+    - {repo: sale-reporting, description: "Sale reporting and analytics"}
+    # Purchases
+    - {repo: purchase-workflow, description: "Purchase order enhancements (request, approval)"}
+    # HR
+    - {repo: hr, description: "HR modules (attendance, leave, expense)"}
+    - {repo: payroll, description: "Payroll modules"}
+    # Project
+    - {repo: project, description: "Project management (timeline, templates, milestones)"}
+    # Server tools
+    - {repo: server-tools, description: "Server tools (auditlog, queue_job, sentry)"}
+    - {repo: server-ux, description: "UX improvements (responsive, dialog size, ribbon)"}
+    - {repo: server-auth, description: "Authentication (TOTP, OAuth, LDAP)"}
+    # Web
+    - {repo: web, description: "Web UI modules (responsive, widget enhancements)"}
+    # REST
+    - {repo: rest-framework, description: "REST framework (FastAPI endpoints for Odoo)"}
+
+tools:
+  - name: search_oca_modules
+    description: "Search OCA modules by keyword across all tracked repos"
+    parameters:
+      query:
+        type: string
+        description: "Search query (e.g., 'reconciliation', 'queue_job', 'payroll')"
+        required: true
+      repo:
+        type: string
+        description: "Restrict to specific OCA repo (e.g., 'account-financial-tools')"
+        required: false
+      limit:
+        type: integer
+        description: "Max results (default 10, max 30)"
+        required: false
+
+  - name: get_oca_module_info
+    description: "Get README, manifest, and metadata for a specific OCA module"
+    parameters:
+      repo:
+        type: string
+        description: "OCA repo name (e.g., 'account-financial-tools')"
+        required: true
+      module:
+        type: string
+        description: "Module technical name (e.g., 'account_reconcile_oca')"
+        required: true
+
+  - name: list_oca_repos
+    description: "List all tracked OCA repositories with descriptions"
+    parameters: {}
+
+indexing:
+  strategy: azure_ai_search
+  search_service: srch-ipai-copilot
+  index_name: oca-docs-18
+  chunking:
+    method: semantic
+    max_chunk_tokens: 512
+    overlap_tokens: 64
+  schedule: quarterly
+
+auth:
+  mode: anonymous  # GitHub public repos
+  github_token_env: GITHUB_TOKEN  # Optional, for rate limit increase
