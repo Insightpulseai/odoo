@@ -19,13 +19,19 @@ jobs:
       - playwright_log
 
   - id: evidence_pack
-    description: Normalize and assemble production evidence
-    tools:
-      - markitdown
-      - azure-devops
+    description: Collect verification artifacts into auditable evidence bundle
+    script: automations/scripts/evidence_pack.sh
+    required_env:
+      - BUILD_ID
+    optional_env:
+      - EVIDENCE_ROOT
+      - OUTPUT_DIR
+      - BASE_URL
     outputs:
-      - markdown_bundle
-      - artifact_manifest
+      - evidence_pack_json
+      - screenshots_dir
+      - logs_dir
+      - tarball
 
   - id: docs_grounding_refresh
     description: Refresh Microsoft reference grounding for operational docs
