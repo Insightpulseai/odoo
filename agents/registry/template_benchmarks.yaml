@@ -1,0 +1,168 @@
+version: 2
+owner_repo: agents
+updated: "2026-04-04"
+
+benchmarks:
+  # --- SaaS / Marketplace benchmarks ---
+
+  - id: ava-tax
+    name: "AvaTax: Agentic Tax and Compliance"
+    vendor: Avalara
+    source: Azure Marketplace (SaaS)
+    role: tax_engine_pattern
+    description: >
+      Agentic tax calculation engine. 20ms avg response, 55B+ API calls/yr,
+      190+ countries, 330+ product tax categories. Certified SST CSP.
+      Real-time and batch. Governments license Avalara's tax data.
+    reuse_for:
+      - compliance_engine_shape
+      - auditability
+      - transactional_tax_validation
+      - real_time_tax_calculation_pattern
+      - multi_jurisdiction_tax_rules
+      - ap_use_tax_compliance
+    do_not_reuse_for:
+      - direct_adoption (not available in PH market)
+      - replacing_odoo_fiscal_positions
+    key_patterns:
+      - api_first_tax_engine (REST, real-time + batch)
+      - geolocation_jurisdiction_resolution (rooftop-level)
+      - continuous_content_update (rates/rules auto-refresh)
+      - erp_connector_model (D365, NetSuite, SAP, Shopify, etc.)
+      - undercharge_overcharge_limits (AP use tax control)
+      - certified_service_provider (SST liability shift)
+    market_constraint: "No plans available for market 'PH' — benchmark only"
+
+  - id: sap-joule
+    name: SAP Joule
+    vendor: SAP SE
+    source: Microsoft 365 Marketplace (Free, requires SAP + M365 Copilot license)
+    role: assistant_behavior_pattern
+    description: >
+      Conversational AI assistant bridging SAP business systems via M365 Copilot
+      and Teams. Three capability modes: transactional, navigational, informational.
+      Role-based access. Document grounding. GenAI-powered summarization.
+    reuse_for:
+      - informational_mode (docs grounding + summarization)
+      - navigational_mode (app/feature discovery without deep menus)
+      - transactional_proposal_mode (CRUD on business data via conversation)
+      - role_based_access_pattern (transparent security context)
+      - document_grounding_pattern (uploaded docs + help portal)
+      - copilot_extension_pattern (M365 Copilot plugin shape)
+    do_not_reuse_for:
+      - sap_infrastructure_hosting
+      - replacing_odoo_business_logic
+    key_patterns:
+      - three_mode_assistant (transactional / navigational / informational)
+      - erp_conversational_bridge (SAP backend via natural language)
+      - m365_copilot_integration (Teams + Copilot as channel)
+      - document_grounding (SAP Help Portal + custom docs)
+      - role_based_capability_gating (user role determines available skills)
+    related_sap_products:
+      - SAP SuccessFactors (HCM)
+      - SAP Concur (Expense)
+      - SAP S/4HANA (ERP)
+      - SAP Analytics Cloud (BI)
+      - SAP Sales and Service Cloud (CRM)
+
+  # --- Azure platform benchmarks ---
+
+  - id: sap-on-azure
+    name: SAP on Azure Offerings
+    vendor: Microsoft
+    source: Microsoft Learn (SAP on Azure documentation)
+    role: enterprise_erp_hosting_pattern
+    description: >
+      Reference architecture for running enterprise ERP on Azure.
+      VM workloads, Azure Center for SAP, deployment automation framework,
+      Azure Monitor for SAP. Storage (NetApp Files, Azure Files),
+      security (Key Vault, Defender), backup (Azure Backup, Site Recovery),
+      analytics (Synapse, Fabric), DevOps (Azure DevOps, IaC, Policy).
+    reuse_for:
+      - azure_hosting_patterns (ACA, VM, managed PG, Front Door)
+      - monitoring_patterns (Azure Monitor for SAP → adapt for Odoo)
+      - backup_dr_patterns (Azure Backup + Site Recovery)
+      - devops_patterns (Azure DevOps CI/CD, IaC, Policy governance)
+      - security_patterns (Key Vault, Defender for Cloud, managed identity)
+      - storage_patterns (NetApp Files for high-perf, Azure Files for shared)
+      - analytics_integration (Synapse / Fabric for ERP data)
+    do_not_reuse_for:
+      - sap_runtime_hosting (per invariant 17: SAP adapter only)
+      - sap_hana_infrastructure
+      - sap_netweaver_deployment
+      - sap_landscape_management
+    key_patterns:
+      - azure_center_for_erp (top-level workload management)
+      - deployment_automation_framework (IaC for ERP environments)
+      - erp_monitor_integration (Azure Monitor with ERP-specific metrics)
+      - key_vault_secret_management (centralized for ERP connections)
+      - site_recovery_orchestration (ERP-aware failover sequencing)
+      - azure_policy_governance (naming, security, cost enforcement)
+    invariant_ref: "CLAUDE.md invariant 17 — SAP Adapter Only"
+
+  - id: microsoft-finance-agents
+    name: Microsoft Finance Agents
+    vendor: Microsoft
+    source: Dynamics 365 Finance (announced 2025)
+    role: finance_workflow_pattern
+    description: >
+      Autonomous finance agents for AP, AR, reconciliation, and financial
+      reporting. Discrepancy detection, root cause analysis, correction
+      suggestions, escalation to human reviewers.
+    reuse_for:
+      - discrepancy_detection
+      - root_cause_analysis
+      - correction_suggestion
+      - escalation
+      - maker_checker_pattern
+      - financial_close_automation
+    do_not_reuse_for:
+      - replacing_odoo_accounting
+    key_patterns:
+      - autonomous_agent_with_human_gate
+      - financial_discrepancy_detection_loop
+      - correction_proposal_with_evidence
+
+  - id: odoo19-agents
+    name: Odoo 19 AI Agents (conceptual)
+    vendor: Odoo SA
+    source: Odoo 19 roadmap (Topics + Tools + Sources model)
+    role: conceptual_pattern_only
+    description: >
+      Odoo 19 introduces a Topics/Tools/Sources agent model.
+      Benchmark only — not execution authority for IPAI platform.
+    reuse_for:
+      - topics_tools_sources_model
+    do_not_reuse_for:
+      - execution_authority
+      - production_agent_runtime
+    constraints:
+      - benchmark_only
+      - not_execution_authority
+
+  - id: azd-ai-templates
+    name: Azure AI App Templates (azd catalog)
+    vendor: Microsoft
+    source: Azure Developer CLI template catalog
+    role: hosting_orchestration_pattern
+    description: >
+      5 priority templates for agent shell, production environment,
+      document pipeline, release assistant, and finance orchestration.
+    reuse_for:
+      - agent_shell
+      - production_environment
+      - document_pipeline
+      - release_assistant
+    templates:
+      - ai-agents-starter
+      - ai-production
+      - multimodal-content-processing
+      - release-manager-assistant
+      - home-banking-assistant
+
+execution_authority:
+  primary: odoo18_ce_oca
+  note: >
+    All benchmarks are reference patterns only.
+    Odoo 18 CE + OCA remains the business execution authority.
+    SAP is adapter-only per CLAUDE.md invariant 17.
