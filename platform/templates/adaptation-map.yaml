@@ -242,6 +242,33 @@ developer_tools:
     - id: partner-center-csp-apis
       reason: IPAI is SaaS builder, not Azure reseller — CSP APIs not applicable
 
+# --- Microsoft runtime & operating-model guidance ---
+microsoft_runtime_guidance:
+  azure_architecture_center:
+    docs: "https://learn.microsoft.com/en-us/azure/architecture/best-practices/index-best-practices"
+    use_for:
+      - api_design
+      - api_implementation
+      - background_jobs
+      - monitoring_and_diagnostics
+      - transient_fault_handling
+    also_relevant:
+      - autoscaling
+      - caching
+      - data_partitioning
+      - host_name_preservation
+  azure_ai_finops_guidance:
+    use_for:
+      - business_case
+      - ai_governance
+      - genaiops
+      - usage_monitoring
+      - unit_economics
+      - efficiency_optimization
+    note: >
+      Separate from Partner Center (commercial/GTM lane).
+      This governs runtime and operating-model decisions.
+
 # --- Repo mapping ---
 repo_mapping:
   odoo:

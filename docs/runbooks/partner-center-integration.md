@@ -4,6 +4,7 @@
 
 Partner Center and the commercial marketplace are **commercial control-plane surfaces only**.
 They do not replace Odoo as execution authority or platform services as runtime authority.
+Azure Architecture Center and Azure AI FinOps guidance govern runtime and operating-model decisions.
 
 ```
 Partner program / marketplace enrollment
