@@ -1,0 +1,31 @@
+version: 1
+owner_repo: automations
+
+jobs:
+  - id: prod_verify
+    description: Run production verification using platform checks and browser smoke
+    tools:
+      - azure
+      - azure-devops
+      - playwright
+    outputs:
+      - verification_json
+      - screenshot_artifacts
+      - evidence_index
+
+  - id: evidence_pack
+    description: Normalize and assemble production evidence
+    tools:
+      - markitdown
+      - azure-devops
+    outputs:
+      - markdown_bundle
+      - artifact_manifest
+
+  - id: docs_grounding_refresh
+    description: Refresh Microsoft reference grounding for operational docs
+    tools:
+      - microsoft-learn
+    outputs:
+      - source_snapshot
+      - citation_index

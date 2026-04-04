@@ -1,0 +1,43 @@
+version: 1
+owner_repo: agents
+
+tools:
+  - id: azure.inspect
+    server: azure
+    mode: read_only
+    allowed_uses:
+      - aca_env_lookup
+      - key_vault_ref_check
+      - postgres_runtime_check
+
+  - id: azdo.release_status
+    server: azure-devops
+    mode: read_only
+    allowed_uses:
+      - build_status
+      - release_status
+      - work_item_lookup
+
+  - id: mslearn.lookup
+    server: microsoft-learn
+    mode: read_only
+    allowed_uses:
+      - official_docs_grounding
+      - cli_reference_lookup
+      - foundry_guidance_lookup
+
+  - id: browser.smoke
+    server: playwright
+    mode: bounded_exec
+    allowed_uses:
+      - login_smoke
+      - dashboard_smoke
+      - screenshot_capture
+
+  - id: doc.normalize
+    server: markitdown
+    mode: bounded_exec
+    allowed_uses:
+      - pdf_to_markdown
+      - office_to_markdown
+      - evidence_normalization

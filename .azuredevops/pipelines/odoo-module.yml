@@ -79,13 +79,77 @@ stages:
     jobs:
       - job: test
         pool:
-          vmImage: ubuntu-latest
+          name: ipai-private-linux  # self-hosted agent with VNet access to pg-ipai-odoo
+        timeoutInMinutes: 90
         steps:
           - checkout: self
-          - script: echo "TODO: Run L0/L1/L2 tests"
-            displayName: Execute shift-left tests
-          - script: echo "TODO: Publish test evidence"
-            displayName: Publish test summary
+            clean: true
+
+          - task: AzureKeyVault@2
+            displayName: Load Key Vault secrets
+            inputs:
+              azureSubscription: ipai-dev-wif
+              KeyVaultName: kv-ipai-dev
+              SecretsFilter: 'pg-admin-password'
+              RunAsPreJob: false
+
+          - task: AzureCLI@2
+            name: prepare_db
+            displayName: Create disposable test database
+            inputs:
+              azureSubscription: ipai-dev-wif
+              scriptType: bash
+              scriptLocation: inlineScript
+              inlineScript: |
+                set -euo pipefail
+                PG_RG="$(az resource list \
+                  --name pg-ipai-odoo \
+                  --resource-type "Microsoft.DBforPostgreSQL/flexibleServers" \
+                  --query '[0].resourceGroup' -o tsv)"
+                TEST_DB="odoo_test_$(Build.BuildId)_$(System.JobAttempt)"
+                az postgres flexible-server db create \
+                  --resource-group "${PG_RG}" \
+                  --server-name pg-ipai-odoo \
+                  --database-name "${TEST_DB}"
+                echo "##vso[task.setvariable variable=PG_RG;isReadOnly=true]${PG_RG}"
+                echo "##vso[task.setvariable variable=TEST_DB;isReadOnly=true]${TEST_DB}"
+
+          - bash: |
+              set -euo pipefail
+              chmod +x scripts/ci/run_odoo_tests.sh
+              scripts/ci/run_odoo_tests.sh
+            displayName: Run Odoo module tests
+            env:
+              PGHOST: pg-ipai-odoo.postgres.database.azure.com
+              PGPORT: '5432'
+              PGDATABASE: $(TEST_DB)
+              PGUSER: odoo_admin
+              PGPASSWORD: $(pg-admin-password)
+              ODOO_BIN: ./vendor/odoo/odoo-bin
+              INSTALL_MODULES: ${{ parameters.moduleName }}
+              TEST_TAGS: '/${{ parameters.moduleName }}'
+
+          - publish: .artifacts/test-logs
+            artifact: odoo-test-logs-$(Build.BuildId)
+            displayName: Publish test logs
+            condition: always()
+
+          - task: AzureCLI@2
+            displayName: Drop disposable test database
+            condition: always()
+            inputs:
+              azureSubscription: ipai-dev-wif
+              scriptType: bash
+              scriptLocation: inlineScript
+              inlineScript: |
+                set -euo pipefail
+                if [ -n "${PG_RG:-}" ] && [ -n "${TEST_DB:-}" ]; then
+                  az postgres flexible-server db delete \
+                    --resource-group "${PG_RG}" \
+                    --server-name pg-ipai-odoo \
+                    --database-name "${TEST_DB}" \
+                    --yes
+                fi
 
   # ---------------------------------------------------------------------------
   # Stage 3: Package module/release artifact
