@@ -49,7 +49,7 @@ parameters:
 variables:
   - group: vg-ipai-platform-secrets
   - name: AZURE_SERVICE_CONNECTION
-    value: 'sc-azure-dev-platform'
+    value: 'azure-ipai'
   - name: KEY_VAULT_NAME
     value: 'kv-ipai-dev'
   - name: PG_SERVER
