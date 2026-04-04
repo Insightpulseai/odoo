@@ -26,6 +26,14 @@ parameters:
     type: string
     default: '/ipai_auth_oidc,/ipai_document_intelligence,/ipai_ops_api'
     displayName: Odoo --test-tags filter
+  - name: runProdVerify
+    type: boolean
+    default: false
+    displayName: Run production verification (Playwright smoke) after tests
+  - name: prodVerifyUrl
+    type: string
+    default: 'https://erp.insightpulseai.com'
+    displayName: Target URL for production verification
 
 pool:
   name: ipai-private-linux   # self-hosted agent on VNet that can reach pg-ipai-odoo
@@ -164,3 +172,45 @@ stages:
                 else
                   echo "No test database to drop (PG_RG or TEST_DB not set)"
                 fi
+
+  # =========================================================================
+  # Stage 2: Production Verification (Playwright smoke tests)
+  # =========================================================================
+  - stage: prod_verification
+    displayName: Production verification (Playwright)
+    dependsOn: odoo_module_tests
+    condition: and(succeeded(), eq('${{ parameters.runProdVerify }}', 'true'))
+    jobs:
+      - job: playwright_smoke
+        displayName: Playwright prod-verify smoke tests
+        timeoutInMinutes: 15
+
+        steps:
+          - checkout: self
+            clean: true
+
+          - task: NodeTool@0
+            displayName: Use Node.js 20.x
+            inputs:
+              versionSpec: '20.x'
+
+          - bash: |
+              set -euo pipefail
+              cd infra/tests/e2e
+              npm install --no-audit --no-fund
+              npx playwright install chromium --with-deps
+            displayName: Install Playwright and browsers
+
+          - bash: |
+              set -euo pipefail
+              chmod +x automations/scripts/prod_verify_playwright.sh
+              automations/scripts/prod_verify_playwright.sh
+            displayName: Run production verification
+            env:
+              BASE_URL: ${{ parameters.prodVerifyUrl }}
+              SKIP_INSTALL: '1'
+
+          - publish: docs/evidence
+            artifact: prod-verify-evidence-$(Build.BuildId)
+            displayName: Publish verification evidence
+            condition: always()
