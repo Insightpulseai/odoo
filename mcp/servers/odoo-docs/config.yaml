@@ -1,0 +1,79 @@
+# MCP Server Configuration: odoo-docs
+# Odoo 18 documentation search server for Foundry agents + Claude Code.
+# Pattern: same as learn_mcp (Microsoft Learn) but for Odoo docs.
+#
+# Source: https://www.odoo.com/documentation/18.0/
+# Index: Azure AI Search (srch-ipai-copilot, index: odoo-docs-18)
+
+server:
+  name: odoo-docs
+  version: "1.0.0"
+  description: >
+    Odoo 18 official documentation search via MCP. Provides search,
+    fetch, and browse tools for Odoo developer and functional docs.
+    Used by Pulser (Odoo Copilot) and Claude Code for ERP knowledge grounding.
+  transport: stdio
+
+source:
+  base_url: https://www.odoo.com/documentation/18.0
+  sections:
+    - path: /developer
+      description: "Developer docs — ORM, controllers, views, JS framework, testing"
+    - path: /developer/reference
+      description: "API reference — fields, methods, decorators, XML"
+    - path: /developer/tutorials
+      description: "Tutorials — module creation, web development, testing"
+    - path: /applications
+      description: "Functional docs — accounting, HR, sales, inventory, CRM"
+    - path: /administration
+      description: "Admin — installation, configuration, security, upgrade"
+    - path: /contributing
+      description: "Contributing — coding guidelines, documentation, git"
+
+tools:
+  - name: search_odoo_docs
+    description: "Search Odoo 18 documentation by keyword or topic"
+    parameters:
+      query:
+        type: string
+        description: "Search query (e.g., 'compute fields', 'account.move', 'QWeb templates')"
+        required: true
+      section:
+        type: string
+        description: "Restrict to section: developer, applications, administration, contributing"
+        required: false
+      limit:
+        type: integer
+        description: "Max results (default 5, max 20)"
+        required: false
+
+  - name: get_odoo_doc_page
+    description: "Fetch a specific Odoo documentation page by path"
+    parameters:
+      path:
+        type: string
+        description: "Doc path relative to base (e.g., '/developer/reference/backend/orm')"
+        required: true
+
+  - name: list_odoo_doc_sections
+    description: "List available documentation sections and their topics"
+    parameters: {}
+
+indexing:
+  strategy: azure_ai_search
+  search_service: srch-ipai-copilot
+  index_name: odoo-docs-18
+  chunking:
+    method: semantic
+    max_chunk_tokens: 512
+    overlap_tokens: 64
+  schedule: on_release  # Re-index when Odoo releases updates
+
+auth:
+  mode: anonymous  # Public documentation, no auth needed
+
+notes: |
+  Odoo 18 docs are used because Odoo 19 docs are not yet publicly available
+  as a complete documentation set. Odoo 19 breaking changes are documented
+  separately in .claude/rules/odoo19-coding.md and applied as an overlay.
+  When Odoo 19 docs become available, create odoo-docs-19 index and update.
