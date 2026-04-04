@@ -160,9 +160,103 @@ benchmarks:
       - release-manager-assistant
       - home-banking-assistant
 
+  # --- Commercial Marketplace / Partner benchmarks ---
+
+  - id: azure-marketplace-saas
+    name: Azure Marketplace SaaS Fulfillment + Metering
+    vendor: Microsoft
+    source: "https://learn.microsoft.com/en-us/partner-center/marketplace-offers/pc-saas-fulfillment-apis"
+    role: saas_monetization_pattern
+    description: >
+      SaaS Fulfillment API v2 + Marketplace Metering Service API.
+      Landing page → resolve token → activate subscription → webhook lifecycle.
+      Custom metering dimensions (up to 30) for consumption billing.
+      No official Python SDK; use azure-identity + direct REST via httpx.
+    reuse_for:
+      - saas_subscription_lifecycle (resolve, activate, suspend, reinstate, unsubscribe)
+      - consumption_billing_pattern (per-document, per-inference, per-API-call)
+      - marketplace_webhook_handling (ChangePlan, ChangeQuantity, Suspend, Reinstate)
+      - landing_page_onboarding (customer provisioning from marketplace purchase)
+      - macc_eligibility (Azure consumption commitment)
+    do_not_reuse_for:
+      - csp_reseller_apis (not relevant to ISV model)
+      - replacing_odoo_subscription_management (Odoo manages operational state)
+    key_patterns:
+      - saas_fulfillment_v2 (10 REST endpoints, Entra app auth)
+      - metering_service (hourly usage event emission, batch support)
+      - marketplace_webhook (subscription lifecycle events)
+      - landing_page_flow (resolve purchase token → provision tenant)
+    implementation_notes:
+      sdk: "none official for Python; use azure-identity + httpx"
+      dotnet_sdk: "archived at v3.4.0 — do not depend"
+      auth: "Entra ID with fixed app ID for SaaS (marketplace-mandated)"
+      mfa: "enforced on all app+user calls since April 2026"
+    prerequisites:
+      - maicpp_membership
+      - partner_center_publisher_account
+      - entra_app_registration_for_marketplace
+      - packaged_saas_offer
+
+  - id: maicpp-partner-program
+    name: Microsoft AI Cloud Partner Program (MAICPP)
+    vendor: Microsoft
+    source: "https://learn.microsoft.com/en-us/partner-center/benefits/benefits-faq-new"
+    role: partner_program_benchmark
+    description: >
+      Umbrella partner program. Tiers: Launch (free) → Core → Expanded →
+      Solutions Partner designations → Specializations. Gateway to marketplace
+      publishing, co-sell, Azure credits, and Microsoft field seller access.
+    reuse_for:
+      - partner_tier_planning
+      - designation_pursuit_strategy
+      - azure_credits_optimization
+      - co_sell_eligibility_requirements
+    target_designations:
+      - name: "Solutions Partner for Data & AI (Azure)"
+        relevance: high
+        maps_to: "Databricks + Azure AI + Document Intelligence workload"
+      - name: "Solutions Partner for Digital & App Innovation (Azure)"
+        relevance: high
+        maps_to: "ACA + Odoo SaaS workload"
+      - name: "Solutions Partner for Infrastructure (Azure)"
+        relevance: medium
+        maps_to: "Azure hosting footprint"
+    specializations_of_interest:
+      - "AI & Machine Learning on Azure"
+      - "Copilot (new FY26)"
+      - "Cloud Security"
+    action: adopt_now
+    prerequisites:
+      - entra_tenant (have: 402de71a)
+      - maicpp_enrollment_at_partner_microsoft_com
+      - partner_location_account_id
+
+  - id: partner-center-referrals
+    name: Partner Center Referrals / Co-sell API
+    vendor: Microsoft
+    source: "https://learn.microsoft.com/en-us/partner-center/developer/referrals-api-introduction"
+    role: co_sell_pipeline_pattern
+    description: >
+      REST API for managing co-sell opportunities with Microsoft field sellers.
+      Three deal types: Private, Partner-Led, Co-sell. Marketplace leads auto-flow.
+      Relevant after marketplace listing is live and co-sell eligible.
+    reuse_for:
+      - co_sell_lead_capture
+      - marketplace_lead_to_odoo_crm_bridge
+      - referral_lifecycle_management
+    do_not_reuse_for:
+      - csp_customer_management
+    action: not_yet_applicable
+    prerequisites:
+      - active_marketplace_offer
+      - co_sell_ready_status
+      - solution_documentation_and_references
+
 execution_authority:
   primary: odoo18_ce_oca
   note: >
     All benchmarks are reference patterns only.
     Odoo 18 CE + OCA remains the business execution authority.
     SAP is adapter-only per CLAUDE.md invariant 17.
+    Partner Center / marketplace APIs are monetization and distribution
+    channels — they do not replace Odoo for subscription or billing state.

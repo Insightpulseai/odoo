@@ -123,11 +123,47 @@ developer_tools:
         VS Code extension using Azure MCP Server backend. Developer productivity
         layer, not a platform dependency. Install for team workflow.
 
+  evaluate_next_phase:
+    - id: azure-marketplace-saas
+      name: Azure Marketplace SaaS Publishing
+      docs: "https://learn.microsoft.com/en-us/partner-center/marketplace-offers/pc-saas-fulfillment-apis"
+      relevance: high
+      action: evaluate
+      repos: [platform, odoo]
+      note: >
+        SaaS Fulfillment API v2 + Metering Service. Enables monetizing
+        Odoo-based SaaS (BIR compliance, doc intelligence, AI ERP) through
+        Azure Marketplace. MACC-eligible. No Python SDK — use azure-identity
+        + httpx. Requires MAICPP membership and publisher account first.
+      integration_shape:
+        landing_page: "ACA (ipai-website-dev or dedicated)"
+        webhook_handler: "FastAPI endpoint on ipai-odoo-dev-web"
+        metering_emitter: "ipai-odoo-dev-worker or cron"
+        referrals_sync: "optional, bridges to Odoo CRM"
+      custom_metering_candidates:
+        - per_document_ocr_processed
+        - per_ai_inference
+        - per_bir_form_filed
+        - per_user_seat
+
+    - id: maicpp-enrollment
+      name: Microsoft AI Cloud Partner Program
+      docs: "https://partner.microsoft.com"
+      relevance: high
+      action: adopt_now
+      repos: []
+      note: >
+        Gateway to marketplace publishing, co-sell, Azure credits.
+        Enroll at Launch tier (free). Pursue Solutions Partner for
+        Data & AI designation. Entra tenant 402de71a already exists.
+
   skip:
     - id: copilot-app-modernization
       reason: Java/.NET only — not applicable to Python/Odoo stack
     - id: typespec
       reason: FastAPI native OpenAPI generation is sufficient
+    - id: partner-center-csp-apis
+      reason: IPAI is SaaS builder, not Azure reseller — CSP APIs not applicable
 
 # --- Repo mapping ---
 repo_mapping:
