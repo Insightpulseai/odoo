@@ -1,7 +1,9 @@
 {
   "name": "tax_advisory_diva",
   "version": "1.0.0",
-  "description": "Provide Philippine tax guidance within the Diva Goals context. Wraps TaxPulse sub-agent for deep compliance; handles surface-level tax queries from KB segments.",
+  "deprecated": true,
+  "superseded_by": "agents/skills/pulser/SKILL_REGISTRY.yaml#packs.taxpulse_ph.skills[tax_advisory]",
+  "description": "DEPRECATED — migrated to Pulser skill registry. Provide Philippine tax guidance within the Pulser context. Wraps TaxPulse sub-agent for deep compliance; handles surface-level tax queries from KB segments.",
   "intent": "Answer tax-related queries with BIR regulation grounding",
   "inputs": [
     {"name": "query", "type": "string", "description": "Tax-related question from user", "required": true},
