@@ -140,6 +140,46 @@ benchmarks:
       - expense-liquidation-agent (agentic OCR + multi-channel submission)
       - travel-expense-ops (operations-grade travel expense orchestration)
 
+  - id: sap-s4hana-teams
+    name: SAP S/4HANA for Microsoft Teams
+    vendor: SAP SE
+    source: Microsoft 365 Marketplace (Office app + Outlook + Teams, requires SAP license)
+    role: erp_collaboration_channel_pattern
+    description: >
+      ERP-to-Teams collaboration surface. Shares SAP Fiori records as
+      chat/tab/adaptive card with in-context actions (e.g. approve PO from card).
+      Pushes task and situation notifications to Teams Activity Feed.
+      Includes SAP Community search inside Teams.
+    reuse_for:
+      - share_as_chat_pattern (link to specific ERP record state)
+      - share_as_tab_pattern (embed ERP view in Teams tab)
+      - adaptive_card_with_actions (approve/reject without leaving Teams)
+      - task_notification_to_activity_feed (push Odoo activities to chat platform)
+      - community_search_in_chat (knowledge lookup without context switch)
+    do_not_reuse_for:
+      - sap_fiori_ux_adoption
+      - sap_infrastructure_hosting
+    parity_assessment:
+      no_oca_equivalent: >
+        No verified OCA 18 collaboration equivalent. Third-party Odoo 18 Teams
+        connectors exist (Softhealer, BrowseInfo, Aktiv, TechTrolls) but mainly
+        cover meeting/calendar integration, not SAP's broader record sharing,
+        task notifications, and contextual actions.
+      oca_microsoft_adjacent:
+        - microsoft_drive_account (OneDrive/SharePoint file storage)
+        - fs_storage_ms_drive (file system storage via MS Drive)
+      ipai_current_path: >
+        Slack-first via ipai_slack_connector. Covers most of the same UX patterns
+        (record links, approval buttons via Block Kit, notifications) but not as
+        a drop-in OCA equivalent for Teams.
+      ipai_future_path: >
+        M365 Agents SDK as channel layer when agent-platform is operational.
+        Would natively surface in Teams/Copilot with adaptive cards.
+    action: benchmark_only
+    note: >
+      IPAI should not build a Teams connector now. Slack is primary channel.
+      Teams deferred until enterprise distribution requires it.
+
   - id: microsoft-finance-agents
     name: Microsoft Finance Agents
     vendor: Microsoft
