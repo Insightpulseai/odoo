@@ -241,16 +241,15 @@ benchmarks:
     name: Microsoft AI Cloud Partner Program (MAICPP)
     vendor: Microsoft
     source: "https://learn.microsoft.com/en-us/partner-center/benefits/benefits-faq-new"
-    role: partner_program_benchmark
+    role: partner_enablement_dependency
+    note: >
+      NOT a runtime/product benchmark. This is a go-to-market enablement
+      dependency — gateway to marketplace publishing, co-sell, and Azure credits.
+      Tracked here for completeness; sequencing lives in adaptation-map.yaml
+      and docs/runbooks/partner-center-integration.md.
     description: >
-      Umbrella partner program. Tiers: Launch (free) → Core → Expanded →
-      Solutions Partner designations → Specializations. Gateway to marketplace
-      publishing, co-sell, Azure credits, and Microsoft field seller access.
-    reuse_for:
-      - partner_tier_planning
-      - designation_pursuit_strategy
-      - azure_credits_optimization
-      - co_sell_eligibility_requirements
+      Umbrella partner program. Tiers: Launch (free) → Core → Expanded ��
+      Solutions Partner designations → Specializations.
     target_designations:
       - name: "Solutions Partner for Data & AI (Azure)"
         relevance: high
@@ -258,18 +257,10 @@ benchmarks:
       - name: "Solutions Partner for Digital & App Innovation (Azure)"
         relevance: high
         maps_to: "ACA + Odoo SaaS workload"
-      - name: "Solutions Partner for Infrastructure (Azure)"
-        relevance: medium
-        maps_to: "Azure hosting footprint"
-    specializations_of_interest:
-      - "AI & Machine Learning on Azure"
-      - "Copilot (new FY26)"
-      - "Cloud Security"
     action: adopt_now
     prerequisites:
       - entra_tenant (have: 402de71a)
       - maicpp_enrollment_at_partner_microsoft_com
-      - partner_location_account_id
 
   - id: partner-center-referrals
     name: Partner Center Referrals / Co-sell API

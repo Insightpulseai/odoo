@@ -123,39 +123,116 @@ developer_tools:
         VS Code extension using Azure MCP Server backend. Developer productivity
         layer, not a platform dependency. Install for team workflow.
 
-  evaluate_next_phase:
-    - id: azure-marketplace-saas
-      name: Azure Marketplace SaaS Publishing
-      docs: "https://learn.microsoft.com/en-us/partner-center/marketplace-offers/pc-saas-fulfillment-apis"
-      relevance: high
-      action: evaluate
-      repos: [platform, odoo]
-      note: >
-        SaaS Fulfillment API v2 + Metering Service. Enables monetizing
-        Odoo-based SaaS (BIR compliance, doc intelligence, AI ERP) through
-        Azure Marketplace. MACC-eligible. No Python SDK — use azure-identity
-        + httpx. Requires MAICPP membership and publisher account first.
-      integration_shape:
-        landing_page: "ACA (ipai-website-dev or dedicated)"
-        webhook_handler: "FastAPI endpoint on ipai-odoo-dev-web"
-        metering_emitter: "ipai-odoo-dev-worker or cron"
-        referrals_sync: "optional, bridges to Odoo CRM"
-      custom_metering_candidates:
-        - per_document_ocr_processed
-        - per_ai_inference
-        - per_bir_form_filed
-        - per_user_seat
+  # -----------------------------------------------------------------------
+  # Partner Center / Marketplace — 3-lane model
+  # -----------------------------------------------------------------------
+  # Lane A: Partner program (enablement dependency, not runtime)
+  # Lane B: Marketplace listing / go-to-market
+  # Lane C: Fulfillment + metering runtime
+  #
+  # Doctrine: Partner Center is commercial control-plane only.
+  # It does not replace Odoo as execution authority or platform services
+  # as runtime authority.
+  # -----------------------------------------------------------------------
 
-    - id: maicpp-enrollment
-      name: Microsoft AI Cloud Partner Program
-      docs: "https://partner.microsoft.com"
-      relevance: high
+  partner_center:
+    # Lane A — Partner / Program
+    lane_a_partner_program:
       action: adopt_now
-      repos: []
-      note: >
-        Gateway to marketplace publishing, co-sell, Azure credits.
-        Enroll at Launch tier (free). Pursue Solutions Partner for
-        Data & AI designation. Entra tenant 402de71a already exists.
+      items:
+        - id: maicpp-enrollment
+          name: Microsoft AI Cloud Partner Program (Launch tier)
+          docs: "https://partner.microsoft.com"
+          note: >
+            Gateway to marketplace publishing, co-sell, Azure credits.
+            Enroll at Launch tier (free). Entra tenant 402de71a exists.
+          prerequisites:
+            - entra_tenant_verified
+            - partner_location_account_id
+        - id: solutions-partner-target
+          name: "Solutions Partner for Data & AI (Azure)"
+          note: >
+            Target designation. Maps to Databricks + Azure AI + Document
+            Intelligence workload. Pursue after Launch tier enrollment.
+
+    # Lane B — Marketplace Listing / Go-to-Market
+    lane_b_marketplace_listing:
+      action: evaluate_next_phase
+      items:
+        - id: publisher-account
+          name: Partner Center publisher account
+          note: "Required before any SaaS offer can be submitted"
+        - id: saas-offer-packaging
+          name: SaaS offer packaging (metadata, assets, pricing)
+          note: >
+            Package Odoo-based SaaS (BIR compliance, doc intelligence, AI ERP).
+            Define plans, pricing tiers, and MACC eligibility.
+        - id: co-sell-readiness
+          name: Co-sell ready status
+          action: defer_until_listing_live
+          note: >
+            Requires solution documentation, reference architecture,
+            customer references. Enables Microsoft field seller referrals.
+
+    # Lane C — Fulfillment + Metering Runtime
+    lane_c_fulfillment_runtime:
+      action: evaluate_next_phase
+      doctrine: >
+        REST-first. azure-identity + httpx. No SDK dependencies.
+        Marketplace is commercial control-plane — never ERP authority.
+      items:
+        - id: saas-fulfillment-v2
+          name: SaaS Fulfillment API v2
+          docs: "https://learn.microsoft.com/en-us/partner-center/marketplace-offers/pc-saas-fulfillment-apis"
+          integration_shape:
+            landing_page: "ACA (ipai-website-dev or dedicated)"
+            webhook_handler: "FastAPI endpoint on ipai-odoo-dev-web"
+            subscription_state: "Odoo model (marketplace gates entitlement, Odoo owns record)"
+          scope:
+            - resolve_purchase_token
+            - activate_subscription
+            - handle_webhooks (ChangePlan, ChangeQuantity, Suspend, Reinstate, Unsubscribe)
+          gates_but_does_not_own:
+            - subscription_entitlement
+            - plan_tier_access
+            - suspension_cancellation_effects
+          does_not_become:
+            - finance_transaction_authority
+            - odoo_posting_authority
+            - document_processing_authority
+
+        - id: metering-service
+          name: Marketplace Metering Service API
+          custom_dimensions:
+            - per_document_ocr_processed
+            - per_ai_inference
+            - per_bir_form_filed
+            - per_user_seat
+          requirements:
+            idempotency: >
+              Each usage event must have a unique immutable key
+              (e.g., document_id + timestamp). Retries must not
+              double-count. Metering client must deduplicate before emit.
+            event_sourcing: >
+              Usage events originate from Odoo/platform runtime logs.
+              Metering emitter reads from event source, not from
+              aggregate state.
+            retry_safety: >
+              Metering API accepts 24-hour submission window with
+              hourly aggregation. Failed submissions must be retried
+              with the same event key. No silent drops.
+            reconciliation: >
+              Usage events must be reconcilable back to Odoo runtime
+              logs and platform telemetry. Evidence path:
+              runtime log → usage event → metering API → Microsoft invoice.
+          integration_shape:
+            emitter: "ipai-odoo-dev-worker or dedicated cron"
+            event_source: "Odoo ir.logging / platform telemetry"
+
+        - id: referrals-api
+          name: Partner Center Referrals / Co-sell API
+          action: defer_until_listing_live
+          note: "Bridges marketplace leads to Odoo CRM. Not actionable until offer is live."
 
   skip:
     - id: copilot-app-modernization
