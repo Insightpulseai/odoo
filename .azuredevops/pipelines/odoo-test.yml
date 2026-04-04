@@ -143,7 +143,25 @@ stages:
           #     testRunTitle: 'Odoo module tests ($(TEST_DB))'
 
           # -----------------------------------------------------------------
-          # Step 5: Drop disposable test database (always, even on failure)
+          # Step 5: Assemble and publish evidence pack (always)
+          # -----------------------------------------------------------------
+          - bash: |
+              set -euo pipefail
+              chmod +x automations/scripts/evidence_pack.sh
+              automations/scripts/evidence_pack.sh || true
+            displayName: Assemble evidence pack
+            condition: always()
+            env:
+              BUILD_ID: $(Build.BuildId)
+              BASE_URL: 'https://erp.insightpulseai.com'
+
+          - publish: .artifacts/evidence-pack
+            artifact: evidence-pack-$(Build.BuildId)
+            displayName: Publish evidence pack
+            condition: always()
+
+          # -----------------------------------------------------------------
+          # Step 6: Drop disposable test database (always, even on failure)
           # -----------------------------------------------------------------
           - task: AzureCLI@2
             displayName: Drop disposable PostgreSQL test database
