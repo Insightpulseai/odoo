@@ -31,6 +31,7 @@ origin_groups:
         https_port: 443
         priority: 1
         weight: 1000
+        origin_host_header: erp.insightpulseai.com
     health_probe:
       path: /web/health
       protocol: Https
@@ -44,6 +45,7 @@ origin_groups:
         https_port: 443
         priority: 1
         weight: 1000
+        origin_host_header: n8n.insightpulseai.com
     health_probe:
       path: /healthz
       protocol: Https
@@ -57,6 +59,7 @@ origin_groups:
         https_port: 443
         priority: 1
         weight: 1000
+        origin_host_header: mcp.insightpulseai.com
     health_probe:
       path: /healthz
       protocol: Https
@@ -70,6 +73,7 @@ origin_groups:
         https_port: 443
         priority: 1
         weight: 1000
+        origin_host_header: plane.insightpulseai.com
     health_probe:
       path: /
       protocol: Https
@@ -83,6 +87,7 @@ origin_groups:
         https_port: 443
         priority: 1
         weight: 1000
+        origin_host_header: shelf.insightpulseai.com
     health_probe:
       path: /healthcheck
       protocol: Https
@@ -96,6 +101,7 @@ origin_groups:
         https_port: 443
         priority: 1
         weight: 1000
+        origin_host_header: crm.insightpulseai.com
     health_probe:
       path: /
       protocol: Https
@@ -109,6 +115,7 @@ origin_groups:
         https_port: 443
         priority: 1
         weight: 1000
+        origin_host_header: superset.insightpulseai.com
     health_probe:
       path: /health
       protocol: Https
@@ -122,6 +129,7 @@ origin_groups:
         https_port: 443
         priority: 1
         weight: 1000
+        origin_host_header: ocr.insightpulseai.com
     health_probe:
       path: /health
       protocol: Https
@@ -135,6 +143,7 @@ origin_groups:
         https_port: 443
         priority: 1
         weight: 1000
+        origin_host_header: auth.insightpulseai.com
     health_probe:
       path: /
       protocol: Https
@@ -149,6 +158,7 @@ origin_groups:
         https_port: 443
         priority: 1
         weight: 1000
+        origin_host_header: insightpulseai.com
     health_probe:
       path: /web/health
       protocol: Https
