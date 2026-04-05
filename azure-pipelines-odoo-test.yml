@@ -199,6 +199,7 @@ stages:
               scriptLocation: inlineScript
               inlineScript: |
                 set -euo pipefail
+                az extension add --name rdbms-connect --yes 2>/dev/null || true
                 az postgres flexible-server execute \
                   --name "$(PG_SERVER)" \
                   --admin-user "$(PG_ADMIN_USER)" \
@@ -246,6 +247,7 @@ stages:
               scriptLocation: inlineScript
               inlineScript: |
                 set -euo pipefail
+                az extension add --name rdbms-connect --yes 2>/dev/null || true
                 az postgres flexible-server execute \
                   --name "$(PG_SERVER)" \
                   --admin-user "$(PG_ADMIN_USER)" \
