@@ -20,7 +20,7 @@ parameters:
     default: ''
   - name: serviceConnection
     type: string
-    default: azure-ipai
+    default: ipai-dev-wif
   - name: pythonVersion
     type: string
     default: '3.12'

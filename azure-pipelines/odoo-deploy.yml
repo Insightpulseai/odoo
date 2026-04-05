@@ -34,7 +34,7 @@ variables:
   imageTag: 18.0-copilot
   containerAppName: ipai-odoo-dev-web
   resourceGroup: rg-ipai-dev-odoo-runtime
-  serviceConnection: azure-ipai
+  serviceConnection: ipai-dev-wif
   smokeUrl: https://erp.insightpulseai.com/web/login
   # Neutralization: set via pipeline variables or queue-time override
   # neutralizeMode: ''            # 'staging' or 'post-import' (empty = skip)

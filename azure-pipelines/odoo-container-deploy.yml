@@ -37,7 +37,7 @@ variables:
   - name: containerAppName
     value: ipai-odoo-dev-web
   - name: serviceConnection
-    value: azure-ipai
+    value: ipai-dev-wif
 
 stages:
   # ─────────────────────────────────────────────────────────────────

@@ -7,7 +7,7 @@
 #   jobs:
 #     - template: templates/jobs/deploy-bicep.yml
 #       parameters:
-#         serviceConnection: azure-ipai
+#         serviceConnection: ipai-dev-wif
 #         resourceGroup: rg-ipai-dev
 #         bicepTemplatePath: infra/azure/main.bicep
 #         parametersPath: infra/azure/parameters/dev.json
@@ -17,7 +17,7 @@
 parameters:
   - name: serviceConnection
     type: string
-    default: azure-ipai
+    default: ipai-dev-wif
   - name: resourceGroup
     type: string
   - name: bicepTemplatePath

@@ -27,7 +27,7 @@ parameters:
     default: true
   - name: serviceConnection
     type: string
-    default: azure-ipai
+    default: ipai-dev-wif
 
 jobs:
   - job: ValidateBicep

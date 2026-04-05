@@ -4,7 +4,7 @@
 # Deploys Azure infrastructure via Bicep for InsightPulse AI.
 #
 # Replaces GitHub Actions billing-locked workflows.
-# Service connection: azure-ipai (Azure Resource Manager)
+# Service connection: ipai-dev-wif (Azure Resource Manager)
 # Variable group:    azure-ipai-config (non-secret runtime config)
 #
 # Stage order:
@@ -48,7 +48,7 @@ variables:
   - name: prodParametersPath
     value: infra/azure/parameters/front-door-prod.parameters.json
   - name: serviceConnection
-    value: azure-ipai
+    value: ipai-dev-wif
   - name: devResourceGroup
     value: rg-ipai-dev
   - name: prodResourceGroup

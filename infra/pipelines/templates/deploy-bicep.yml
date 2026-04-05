@@ -8,7 +8,7 @@
 #
 #   - template: pipelines/templates/deploy-bicep.yml
 #     parameters:
-#       serviceConnection:   azure-ipai
+#       serviceConnection:   ipai-dev-wif
 #       resourceGroup:       rg-ipai-dev
 #       bicepTemplatePath:   infra/azure/main.bicep
 #       parametersPath:      infra/azure/parameters/front-door-prod.parameters.json

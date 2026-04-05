@@ -37,7 +37,7 @@ parameters:
     default: ''
 
 variables:
-  serviceConnection: azure-ipai
+  serviceConnection: ipai-dev-wif
   containerAppName: ipai-odoo-dev-web
   resourceGroup: rg-ipai-dev-odoo-runtime
   keyVaultName: kv-ipai-dev
