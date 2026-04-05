@@ -1,8 +1,9 @@
 # Azure DevOps Board Normalization — Agent Skill
 # Structural board cleanup: hierarchy enforcement, legacy migration, canonical alignment
+# Hierarchy: Epic → Issue → Task (Basic process, no Feature/Story)
 
 id: azdo.board.normalization
-version: 1
+version: 2
 description: "Normalize Azure DevOps board hierarchy to match canonical spec bundle model: audit, reparent, close legacy, verify"
 maturity: L2
 
@@ -19,9 +20,17 @@ inputs:
     type: array
     description: "List of canonical Epic titles that define the target state"
     required: true
+  retain_epics:
+    type: array
+    description: "Epic IDs explicitly retained — never closed or converted"
+    required: false
+  delete_placeholders:
+    type: array
+    description: "Work item titles to delete (exact match only)"
+    required: false
   dry_run:
     type: boolean
-    description: "If true, audit and report only — do not modify work items"
+    description: "If true, audit and report only — do not modify work items. Phase 1 always runs dry."
     required: false
 
 requires:
@@ -31,8 +40,10 @@ requires:
 
 outputs:
   artifacts:
-    - docs/evidence/<stamp>/board-normalization/normalization-matrix.md
-  evidence: "docs/evidence/<stamp>/board-normalization/"
+    - docs/evidence/boards/<stamp>/normalization-matrix.md
+    - docs/evidence/boards/<stamp>/work-item-migration.csv
+    - docs/evidence/boards/<stamp>/board-state-summary.md
+  evidence: "docs/evidence/boards/<stamp>/"
 
 policies:
   no_plaintext_secrets: true
@@ -40,13 +51,17 @@ policies:
   idempotent: true
   rollback_supported: false
   destructive_operations: [delete]
+  # Phase 1 (audit) is always dry-run. Phases 2-6 require matrix review first.
+  dry_run_first: true
+  # Board normalization is structural only — it must not imply platform blocker closure.
+  structural_only: true
 
 verification:
   checks:
     - name: "canonical_epics_exist"
       type: command
       target: "az boards query --wiql \"SELECT [System.Id] FROM workitems WHERE [System.WorkItemType] = 'Epic' AND [System.State] <> 'Done'\""
-      notes: "Only canonical Epics should be open"
+      notes: "Only canonical + retained Epics should be open"
     - name: "no_orphan_tasks"
       type: command
       target: "az boards query --wiql \"SELECT [System.Id] FROM workitems WHERE [System.WorkItemType] = 'Task' AND [System.Parent] = 0\""
@@ -55,3 +70,7 @@ verification:
       type: command
       target: "az boards query --wiql \"SELECT [System.Id] FROM workitems WHERE [System.WorkItemType] = 'Issue'\""
       notes: "Issue layer must exist between Epics and Tasks"
+    - name: "evidence_artifacts_written"
+      type: file_exists
+      target: "docs/evidence/boards/<stamp>/normalization-matrix.md"
+      notes: "Normalization matrix must be committed before run is complete"
