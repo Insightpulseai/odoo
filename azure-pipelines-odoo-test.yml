@@ -146,6 +146,9 @@ stages:
               python3 --version
               export PATH="/azp/.local/bin:$PATH"
               python3 -m pip install --upgrade pip setuptools wheel
+              # Install gevent from binary wheel to avoid Cython 3.x build issues
+              python3 -m pip install --only-binary :all: gevent greenlet || \
+                python3 -m pip install "gevent==24.2.1" "greenlet==3.0.3"
               python3 -m pip install -r vendor/odoo/requirements.txt
               python3 -m pip install -e vendor/odoo/
               python3 -m pip install python-jose sentry-sdk || true
