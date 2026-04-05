@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'Pulser for Odoo',
-    'version': '19.0.2.0.0',
+    'version': '18.0.2.0.0',
     'summary': 'Pulser assistant — Foundry-backed skill router with tool execution',
     'category': 'Productivity',
     'license': 'LGPL-3',

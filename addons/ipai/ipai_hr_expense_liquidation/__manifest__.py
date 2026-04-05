@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'IPAI HR Expense Liquidation',
-    'version': '19.0.2.0.0',
+    'version': '18.0.2.0.0',
     'category': 'Human Resources/Expenses',
     'sequence': 85,
     'summary': 'Concur-like cash advance with multi-step approval, policy engine, and monitoring',

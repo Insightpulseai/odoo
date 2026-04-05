@@ -1,6 +1,6 @@
 {
     "name": "Mail Plugin Bridge",
-    "version": "19.0.1.0.0",
+    "version": "18.0.1.0.0",
     "summary": "Bridge endpoints for the InsightPulseAI Gmail add-on",
     "description": """
         Provides JSON-RPC endpoints consumed by the org-owned

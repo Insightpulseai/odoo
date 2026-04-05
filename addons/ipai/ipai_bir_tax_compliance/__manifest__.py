@@ -1,7 +1,7 @@
 {
     "name": "IPAI BIR Tax Compliance",
     "summary": "Philippine BIR tax compliance, withholding tax, and filing support",
-    "version": "19.0.1.0.0",
+    "version": "18.0.1.0.0",
     "category": "Accounting/Localizations",
     "author": "InsightPulseAI",
     "website": "https://insightpulseai.com",

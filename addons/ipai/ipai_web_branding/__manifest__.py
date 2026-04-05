@@ -3,7 +3,7 @@
 {
     "name": "InsightPulseAI Login Branding",
     "summary": "Dark/cyan login page matching insightpulseai.com aesthetic",
-    "version": "19.0.3.0.0",
+    "version": "18.0.3.0.0",
     "category": "Website",
     "author": "InsightPulseAI",
     "website": "https://insightpulseai.com",
