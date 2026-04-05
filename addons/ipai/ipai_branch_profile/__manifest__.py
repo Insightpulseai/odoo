@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'IPAI Branch Profile',
-    'version': '19.0.1.0.0',
+    'version': '18.0.1.0.0',
     'category': 'Accounting/Localization',
     'sequence': 80,
     'summary': 'Operating branch registry for same-TIN BIR branch registrations',

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'IPAI BIR Compliance',
-    'version': '19.0.1.0.0',
+    'version': '18.0.1.0.0',
     'category': 'Accounting/Localization',
     'sequence': 81,
     'summary': 'Philippine BIR compliance — form registry, deadline engine, filing calendar, evidence tracking',

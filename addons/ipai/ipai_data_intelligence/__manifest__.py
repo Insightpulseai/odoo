@@ -1,0 +1,27 @@
+# -*- coding: utf-8 -*-
+{
+    'name': 'PH Data Intelligence',
+    'version': '18.0.1.0.0',
+    'summary': 'Backend system of record for PH market-intelligence platform',
+    'category': 'Productivity/Data Intelligence',
+    'license': 'LGPL-3',
+    'author': 'InsightPulse AI',
+    'website': 'https://insightpulseai.com',
+    'depends': ['base', 'mail'],
+    'data': [
+        'security/di_groups.xml',
+        'security/ir.model.access.csv',
+        'data/maturity_grades.xml',
+        'data/taxonomy_seed.xml',
+        'data/source_seed.xml',
+        'views/taxonomy_views.xml',
+        'views/source_views.xml',
+        'views/content_views.xml',
+        'views/cta_views.xml',
+        'views/evidence_views.xml',
+        'views/ingestion_views.xml',
+        'views/menu.xml',
+    ],
+    'installable': True,
+    'application': True,
+}
