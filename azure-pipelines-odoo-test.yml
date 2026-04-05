@@ -130,11 +130,21 @@ stages:
               RunAsPreJob: false
 
           # -----------------------------------------------------------------
+          # Clone Odoo 18 source (vendor/odoo/ is gitignored)
+          # -----------------------------------------------------------------
+          - script: |
+              set -euo pipefail
+              git clone --depth 1 --branch 18.0 https://github.com/odoo/odoo.git vendor/odoo
+              echo "PASS: Odoo 18 source cloned to vendor/odoo/"
+            displayName: Clone Odoo 18 source
+
+          # -----------------------------------------------------------------
           # Setup Python + Odoo 18 deps
           # -----------------------------------------------------------------
           - script: |
               set -euo pipefail
               python3 --version
+              export PATH="/azp/.local/bin:$PATH"
               python3 -m pip install --upgrade pip setuptools wheel
               python3 -m pip install -r vendor/odoo/requirements.txt
               python3 -m pip install -e vendor/odoo/
