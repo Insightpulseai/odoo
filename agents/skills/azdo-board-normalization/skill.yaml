@@ -1,0 +1,57 @@
+# Azure DevOps Board Normalization — Agent Skill
+# Structural board cleanup: hierarchy enforcement, legacy migration, canonical alignment
+
+id: azdo.board.normalization
+version: 1
+description: "Normalize Azure DevOps board hierarchy to match canonical spec bundle model: audit, reparent, close legacy, verify"
+maturity: L2
+
+inputs:
+  organization:
+    type: string
+    description: "Azure DevOps organization URL"
+    required: true
+  project:
+    type: string
+    description: "Azure DevOps project name"
+    required: true
+  canonical_epics:
+    type: array
+    description: "List of canonical Epic titles that define the target state"
+    required: true
+  dry_run:
+    type: boolean
+    description: "If true, audit and report only — do not modify work items"
+    required: false
+
+requires:
+  secrets: []
+  ssot_files:
+    - ssot/governance/azdo-execution-hierarchy.yaml
+
+outputs:
+  artifacts:
+    - docs/evidence/<stamp>/board-normalization/normalization-matrix.md
+  evidence: "docs/evidence/<stamp>/board-normalization/"
+
+policies:
+  no_plaintext_secrets: true
+  must_pass_ci: []
+  idempotent: true
+  rollback_supported: false
+  destructive_operations: [delete]
+
+verification:
+  checks:
+    - name: "canonical_epics_exist"
+      type: command
+      target: "az boards query --wiql \"SELECT [System.Id] FROM workitems WHERE [System.WorkItemType] = 'Epic' AND [System.State] <> 'Done'\""
+      notes: "Only canonical Epics should be open"
+    - name: "no_orphan_tasks"
+      type: command
+      target: "az boards query --wiql \"SELECT [System.Id] FROM workitems WHERE [System.WorkItemType] = 'Task' AND [System.Parent] = 0\""
+      notes: "All Tasks must have a parent Issue"
+    - name: "issue_layer_populated"
+      type: command
+      target: "az boards query --wiql \"SELECT [System.Id] FROM workitems WHERE [System.WorkItemType] = 'Issue'\""
+      notes: "Issue layer must exist between Epics and Tasks"
