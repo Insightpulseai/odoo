@@ -1,0 +1,58 @@
+# =============================================================================
+# azure-pipelines-estate-audit.yml — Azure Estate Drift Detection
+# =============================================================================
+# Runs scripts/ci/azure_estate_audit.sh on the self-hosted agent to produce
+# a live inventory of all Azure resources, then diffs against the committed
+# expected baseline in ssot/azure/expected-estate.yaml.
+#
+# Schedule: Weekly (Monday 06:00 UTC) + manual trigger
+# Pool: ipai-aca-agents (same self-hosted agent as Odoo tests)
+# =============================================================================
+
+trigger: none
+pr: none
+
+schedules:
+  - cron: '0 6 * * 1'
+    displayName: Weekly estate audit (Monday 06:00 UTC)
+    branches:
+      include:
+        - main
+        - feat/odoo-18-azure-pipelines
+    always: true
+
+pool: ipai-aca-agents
+
+steps:
+  - checkout: self
+    submodules: false
+    clean: true
+    fetchDepth: 1
+
+  - task: AzureCLI@2
+    displayName: Run Azure estate audit
+    inputs:
+      azureSubscription: 'azure-ipai'
+      scriptType: bash
+      scriptLocation: inlineScript
+      inlineScript: |
+        set -euo pipefail
+        chmod +x scripts/ci/azure_estate_audit.sh
+        scripts/ci/azure_estate_audit.sh
+
+  - publish: .artifacts/azure-estate
+    artifact: azure-estate-audit
+    displayName: Publish estate inventory
+    condition: always()
+
+  - bash: |
+      set -euo pipefail
+      DRIFT=".artifacts/azure-estate/drift-report.txt"
+      if [ -f "$DRIFT" ]; then
+        cat "$DRIFT"
+        if grep -q "MISSING\|UNEXPECTED" "$DRIFT"; then
+          echo "##vso[task.logissue type=warning]Estate drift detected — review artifact"
+        fi
+      fi
+    displayName: Report drift status
+    condition: always()
