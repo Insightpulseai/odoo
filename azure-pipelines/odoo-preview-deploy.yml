@@ -34,7 +34,7 @@ variables:
   imageTag: 18.0-copilot
   containerAppName: ipai-odoo-dev-web
   resourceGroup: rg-ipai-dev-odoo-runtime
-  serviceConnection: azure-ipai
+  serviceConnection: ipai-dev-wif
   smokeUrl: ''  # Computed at runtime from preview URL
 
 stages:

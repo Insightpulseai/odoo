@@ -12,7 +12,7 @@ pool:
   name: odoo-private-linux   # Self-hosted agent pool with private VNet access
 
 variables:
-  AZURE_SERVICE_CONNECTION: 'Azure-IPAI-ServiceConnection' # ARM Service Connection
+  AZURE_SERVICE_CONNECTION: 'ipai-dev-wif' # WIF Service Connection (migrated from Azure-IPAI-ServiceConnection)
   KEY_VAULT_NAME: 'kv-ipai-dev'                            # Key Vault ID
   PG_SERVER: 'pg-ipai-odoo'                                # Server name to search for RG
   PG_HOST: 'pg-ipai-odoo.postgres.database.azure.com'

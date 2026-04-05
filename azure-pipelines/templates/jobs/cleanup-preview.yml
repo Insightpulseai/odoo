@@ -20,7 +20,7 @@ parameters:
     type: string
   - name: serviceConnection
     type: string
-    default: azure-ipai
+    default: ipai-dev-wif
   - name: previewLabel
     type: string
 
