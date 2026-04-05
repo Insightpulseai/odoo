@@ -1,0 +1,107 @@
+version: 1
+namespace: ipai.azure.estate_coverage.v1
+artifact_type: policy
+updated: "2026-04-05"
+
+# Coverage contract for scripts/ci/azure_estate_audit.sh
+# Every Azure resource type in the subscription MUST appear in exactly one tier.
+# The audit is considered "complete" only for authoritative_types.
+
+authoritative_types:
+  # Tier A — service estate. Queried explicitly. Drift is gated.
+  - type: Microsoft.App/containerApps
+    query_key: container_apps
+  - type: Microsoft.App/managedEnvironments
+    query_key: container_app_environments
+  - type: Microsoft.App/jobs
+    query_key: container_app_jobs
+  - type: Microsoft.Web/sites
+    query_key: function_apps
+    note: "functionapp kind only"
+  - type: Microsoft.DBforPostgreSQL/flexibleServers
+    query_key: postgresql_servers
+  - type: Microsoft.KeyVault/vaults
+    query_key: key_vaults
+  - type: Microsoft.ContainerRegistry/registries
+    query_key: container_registries
+  - type: Microsoft.Cdn/profiles
+    query_key: front_doors
+  - type: Microsoft.Network/frontDoorWebApplicationFirewallPolicies
+    query_key: waf_policies
+  - type: Microsoft.Network/virtualNetworks
+    query_key: virtual_networks
+  - type: Microsoft.Network/dnsZones
+    query_key: dns_zones
+  - type: Microsoft.Network/privateDnsZones
+    query_key: private_dns_zones
+  - type: Microsoft.Network/privateEndpoints
+    query_key: private_endpoints
+  - type: Microsoft.Insights/components
+    query_key: application_insights
+  - type: Microsoft.OperationalInsights/workspaces
+    query_key: log_analytics_workspaces
+  - type: Microsoft.Storage/storageAccounts
+    query_key: storage_accounts
+  - type: Microsoft.Insights/metricAlerts
+    query_key: alert_rules
+  - type: Microsoft.Insights/actionGroups
+    query_key: action_groups
+  - type: Microsoft.CognitiveServices/accounts
+    query_key: cognitive_services
+    note: "Foundry resources"
+
+derived_types:
+  # Tier B — auto-managed by a Tier A parent. Not queried independently.
+  # Drift follows from parent drift. Reported separately, never gated.
+  - type: Microsoft.Network/networkInterfaces
+    parent: Microsoft.Network/privateEndpoints
+    count: 3
+    note: "pe-kv-ipai-dev.nic.*, pe-pg-ipai-odoo.nic.* (×2 RGs)"
+  - type: Microsoft.Network/loadBalancers
+    parent: Microsoft.App/managedEnvironments
+    count: 1
+    note: "capp-svc-lb — auto-created by ipai-odoo-ha-env"
+  - type: Microsoft.Network/publicIPAddresses
+    parent: Microsoft.Network/loadBalancers
+    count: 1
+    note: "capp-svc-lb-ip — auto-created with HA LB"
+  - type: Microsoft.Web/serverFarms
+    parent: Microsoft.Web/sites
+    count: 1
+    note: "SoutheastAsiaLinuxDynamicPlan — auto-created for func-ipai-meta-capi"
+
+out_of_band_types:
+  # Tier C — not reliably enumerable as ARM resources.
+  # Tracked outside the audit script. Verified manually or via separate tools.
+  - type: Microsoft.Insights/workbooks
+    resource: "1aef4d92-f17f-494e-b7a0-ec1e621b8063 (Odoo Platform Health)"
+    verification: "Azure Portal only — no stable CLI list command"
+  - type: Microsoft.VisualStudio/account
+    resource: "insightpulseai (Azure DevOps organization)"
+    verification: "az devops project list --org https://dev.azure.com/insightpulseai"
+
+ignored_types: []
+  # No types are currently ignored. Any new type found in the subscription
+  # must be classified into one of the above tiers before the audit passes.
+
+critical_types:
+  # Subset of authoritative_types. Missing = pipeline FAIL.
+  # Unexpected = pipeline WARN (may be legitimate new deploy).
+  - Microsoft.DBforPostgreSQL/flexibleServers
+  - Microsoft.KeyVault/vaults
+  - Microsoft.App/containerApps
+  - Microsoft.Network/privateEndpoints
+  - Microsoft.Network/privateDnsZones
+  - Microsoft.Cdn/profiles
+  - Microsoft.Network/frontDoorWebApplicationFirewallPolicies
+  - Microsoft.ContainerRegistry/registries
+
+drift_gate_policy:
+  critical_missing: fail
+  critical_unexpected: warn
+  non_critical_missing: warn
+  non_critical_unexpected: info
+  promotion_rule: |
+    expected-estate.yaml must only be updated via a reviewed PR commit.
+    Never auto-update from a pipeline run. Never overwrite with observed state.
+    Workflow: run audit → review drift report → update expected-estate.yaml → PR with justification.

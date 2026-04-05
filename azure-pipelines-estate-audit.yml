@@ -1,12 +1,17 @@
 # =============================================================================
 # azure-pipelines-estate-audit.yml — Azure Estate Drift Detection
 # =============================================================================
-# Runs scripts/ci/azure_estate_audit.sh on the self-hosted agent to produce
-# a live inventory of all Azure resources, then diffs against the committed
-# expected baseline in ssot/azure/expected-estate.yaml.
+# Coverage-driven estate audit against ssot/azure/expected-estate.yaml.
+# Fails on critical authoritative resource drift (Tier A).
+# Warns on non-critical and derived drift (Tier B/C).
 #
 # Schedule: Weekly (Monday 06:00 UTC) + manual trigger
-# Pool: ipai-aca-agents (same self-hosted agent as Odoo tests)
+# Pool: ipai-aca-agents (self-hosted ACA Job)
+#
+# Artifacts published:
+#   - estate-<timestamp>.yaml  (observed inventory)
+#   - drift-report.txt         (expected vs observed diff)
+#   - coverage-report.txt      (type coverage summary)
 # =============================================================================
 
 trigger: none
@@ -18,7 +23,6 @@ schedules:
     branches:
       include:
         - main
-        - feat/odoo-18-azure-pipelines
     always: true
 
 pool: ipai-aca-agents
@@ -42,17 +46,25 @@ steps:
 
   - publish: .artifacts/azure-estate
     artifact: azure-estate-audit
-    displayName: Publish estate inventory
+    displayName: Publish estate audit artifacts
     condition: always()
 
   - bash: |
       set -euo pipefail
-      DRIFT=".artifacts/azure-estate/drift-report.txt"
-      if [ -f "$DRIFT" ]; then
-        cat "$DRIFT"
-        if grep -q "MISSING\|UNEXPECTED" "$DRIFT"; then
-          echo "##vso[task.logissue type=warning]Estate drift detected — review artifact"
-        fi
+      echo "=== Coverage Report ==="
+      cat .artifacts/azure-estate/coverage-report.txt 2>/dev/null || echo "No coverage report"
+      echo ""
+      echo "=== Drift Report ==="
+      cat .artifacts/azure-estate/drift-report.txt 2>/dev/null || echo "No drift report"
+
+      # Emit ADO annotations for visibility
+      if grep -q "CRITICAL DRIFT" .artifacts/azure-estate/drift-report.txt 2>/dev/null; then
+        echo "##vso[task.logissue type=error]Critical authoritative resource drift detected — pipeline will fail"
+        echo "##vso[task.complete result=Failed;]Critical drift"
+      elif grep -q "MISSING\|UNEXPECTED" .artifacts/azure-estate/drift-report.txt 2>/dev/null; then
+        echo "##vso[task.logissue type=warning]Non-critical estate drift detected — review artifact"
+      else
+        echo "##vso[task.logissue type=info]Estate audit passed — no drift"
       fi
-    displayName: Report drift status
+    displayName: Report drift and coverage status
     condition: always()
