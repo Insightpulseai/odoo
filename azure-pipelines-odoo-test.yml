@@ -132,16 +132,13 @@ stages:
           # -----------------------------------------------------------------
           # Setup Python + Odoo 18 deps
           # -----------------------------------------------------------------
-          - task: UsePythonVersion@0
-            inputs:
-              versionSpec: $(pythonVersion)
-
           - script: |
               set -euo pipefail
-              pip install setuptools wheel
-              pip install -r vendor/odoo/requirements.txt
-              pip install -e vendor/odoo/
-              pip install python-jose sentry-sdk || true
+              python3 --version
+              python3 -m pip install --upgrade pip setuptools wheel
+              python3 -m pip install -r vendor/odoo/requirements.txt
+              python3 -m pip install -e vendor/odoo/
+              python3 -m pip install python-jose sentry-sdk || true
               echo "PASS: Odoo 18 + deps installed."
             displayName: Install Odoo 18 and dependencies
 
