@@ -20,7 +20,7 @@
 # Service connection: sc-azure-dev-platform (ARM, workload identity federation)
 # Key Vault: kv-ipai-dev
 # PostgreSQL: pg-ipai-odoo.postgres.database.azure.com
-# Pool: ipai-build-pool (self-hosted, VNet-reachable)
+# Pool: ipai-aca-agents (self-hosted ACA Job, VNet-reachable)
 # =============================================================================
 
 trigger: none
@@ -76,7 +76,7 @@ stages:
       - job: run_odoo_tests
         displayName: 'Gate test: ${{ parameters.testMatrix }}'
         timeoutInMinutes: 90
-        pool: ipai-build-pool
+        pool: ipai-aca-agents
         steps:
           - checkout: self
             submodules: recursive
