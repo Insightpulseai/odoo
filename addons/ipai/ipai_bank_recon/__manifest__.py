@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'IPAI Bank Reconciliation Agent',
-    'version': '19.0.1.0.0',
+    'version': '18.0.1.0.0',
     'summary': 'Agentic bank reconciliation with fail-closed governance and evidence-first matching.',
     'category': 'Accounting',
     'license': 'LGPL-3',
