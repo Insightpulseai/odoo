@@ -126,7 +126,7 @@ stages:
             inputs:
               azureSubscription: '$(AZURE_SERVICE_CONNECTION)'
               KeyVaultName: '$(KEY_VAULT_NAME)'
-              SecretsFilter: 'pg-admin-password'
+              SecretsFilter: 'pg-ipai-odoo-admin-password'
               RunAsPreJob: false
 
           # -----------------------------------------------------------------
@@ -190,7 +190,7 @@ stages:
                 az postgres flexible-server execute \
                   --name "$(PG_SERVER)" \
                   --admin-user "$(PG_ADMIN_USER)" \
-                  --admin-password "$(pg-admin-password)" \
+                  --admin-password "$(pg-ipai-odoo-admin-password)" \
                   --database-name "$(TEST_DB)" \
                   --querytext "SELECT current_database(), now();"
 
@@ -207,7 +207,7 @@ stages:
               PGPORT: $(PG_PORT)
               PGDATABASE: $(TEST_DB)
               PGUSER: $(PG_ADMIN_USER)
-              PGPASSWORD: $(pg-admin-password)
+              PGPASSWORD: $(pg-ipai-odoo-admin-password)
               ODOO_BIN: $(ODOO_BIN)
               ODOO_HTTP_PORT: $(ODOO_HTTP_PORT)
               ODOO_DB_SSLMODE: $(ODOO_DB_SSLMODE)
@@ -237,7 +237,7 @@ stages:
                 az postgres flexible-server execute \
                   --name "$(PG_SERVER)" \
                   --admin-user "$(PG_ADMIN_USER)" \
-                  --admin-password "$(pg-admin-password)" \
+                  --admin-password "$(pg-ipai-odoo-admin-password)" \
                   --database-name "$(TEST_DB)" \
                   --querytext "SELECT name, state FROM ir_module_module WHERE name LIKE 'ipai_%' ORDER BY name;" \
                   || echo "WARN: Could not query modules (DB may already be dropping)."
