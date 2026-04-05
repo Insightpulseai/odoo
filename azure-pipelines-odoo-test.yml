@@ -79,9 +79,9 @@ stages:
         pool: ipai-aca-agents
         steps:
           - checkout: self
-            submodules: recursive
+            submodules: false
             clean: true
-            fetchDepth: 0
+            fetchDepth: 1
 
           # -----------------------------------------------------------------
           # Resolve test matrix → INSTALL_MODULES + TEST_TAGS
