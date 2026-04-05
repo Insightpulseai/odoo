@@ -146,10 +146,12 @@ stages:
               python3 --version
               export PATH="/azp/.local/bin:$PATH"
               python3 -m pip install --upgrade pip setuptools wheel
-              # Install gevent from binary wheel to avoid Cython 3.x build issues
-              python3 -m pip install --only-binary :all: gevent greenlet || \
-                python3 -m pip install "gevent==24.2.1" "greenlet==3.0.3"
-              python3 -m pip install -r vendor/odoo/requirements.txt
+              # Odoo 18 pins gevent==21.8.0 for Python 3.10 which fails to
+              # build from source with Cython 3.x. Pre-install compatible
+              # binary wheels and skip gevent/greenlet in requirements.txt.
+              python3 -m pip install --only-binary :all: gevent greenlet
+              grep -iv '^gevent\|^greenlet' vendor/odoo/requirements.txt > /tmp/requirements-filtered.txt
+              python3 -m pip install -r /tmp/requirements-filtered.txt
               python3 -m pip install -e vendor/odoo/
               python3 -m pip install python-jose sentry-sdk || true
               echo "PASS: Odoo 18 + deps installed."
