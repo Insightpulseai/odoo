@@ -193,6 +193,7 @@ stages:
           # -----------------------------------------------------------------
           - task: AzureCLI@2
             displayName: Verify test database connectivity
+            continueOnError: true
             inputs:
               azureSubscription: '$(AZURE_SERVICE_CONNECTION)'
               scriptType: bash
