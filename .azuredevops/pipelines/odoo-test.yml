@@ -187,24 +187,21 @@ stages:
           # -----------------------------------------------------------------
           # Step 6: Drop disposable test database (always, even on failure)
           # -----------------------------------------------------------------
-          - task: AzureCLI@2
+          - task: Bash@3
             displayName: Drop disposable PostgreSQL test database
             condition: always()
             inputs:
-              azureSubscription: '$(AZURE_SERVICE_CONNECTION)'
-              scriptType: bash
-              scriptLocation: inlineScript
-              inlineScript: |
+              targetType: inline
+              script: |
                 set -euo pipefail
-                if [ -n "${PG_RG:-}" ] && [ -n "${TEST_DB:-}" ]; then
-                  echo "Dropping test database: ${TEST_DB}"
-                  az postgres flexible-server db delete \
-                    --resource-group "${PG_RG}" \
-                    --server-name "$(PG_SERVER)" \
-                    --database-name "${TEST_DB}" \
-                    --yes
+                if [ -n "${TEST_DB:-}" ]; then
+                  echo "Dropping ${TEST_DB} on $(PG_HOST) via psql..."
+                  export PGPASSWORD="$(pg-admin-password)"
+                  psql "host=$(PG_HOST) port=$(PG_PORT) dbname=postgres user=$(PG_ADMIN_USER) sslmode=require" \
+                    -c "DROP DATABASE IF EXISTS \"${TEST_DB}\";"
+                  echo "PASS: Test database dropped."
                 else
-                  echo "No test database to drop (PG_RG or TEST_DB not set)"
+                  echo "No test database to drop (TEST_DB not set)"
                 fi
 
   # =========================================================================

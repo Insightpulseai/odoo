@@ -134,21 +134,19 @@ stages:
             displayName: Publish test logs
             condition: always()
 
-          - task: AzureCLI@2
+          - task: Bash@3
             displayName: Drop disposable test database
             condition: always()
             inputs:
-              azureSubscription: ipai-dev-wif
-              scriptType: bash
-              scriptLocation: inlineScript
-              inlineScript: |
+              targetType: inline
+              script: |
                 set -euo pipefail
-                if [ -n "${PG_RG:-}" ] && [ -n "${TEST_DB:-}" ]; then
-                  az postgres flexible-server db delete \
-                    --resource-group "${PG_RG}" \
-                    --server-name pg-ipai-odoo \
-                    --database-name "${TEST_DB}" \
-                    --yes
+                if [ -n "${TEST_DB:-}" ]; then
+                  echo "Dropping ${TEST_DB} via psql..."
+                  export PGPASSWORD="$(pg-admin-password)"
+                  psql "host=pg-ipai-odoo.postgres.database.azure.com port=5432 dbname=postgres user=odoo_admin sslmode=require" \
+                    -c "DROP DATABASE IF EXISTS \"${TEST_DB}\";"
+                  echo "PASS: Test database dropped."
                 fi
 
   # ---------------------------------------------------------------------------

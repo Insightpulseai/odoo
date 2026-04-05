@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'IPAI Copilot Actions',
-    'version': '19.0.1.0.0',
+    'version': '18.0.1.0.0',
     'summary': 'AI job state, server actions, automation rules, and approval gates',
     'category': 'Productivity',
     'license': 'LGPL-3',
