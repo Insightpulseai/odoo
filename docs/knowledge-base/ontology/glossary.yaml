@@ -1,0 +1,164 @@
+# Enterprise ERP Glossary
+# Canonical terms with business definitions and implementation mappings
+#
+# Each term maps: business meaning → SAP equivalent → Odoo implementation
+
+artifact_status: draft
+source_type: generated_seed
+review_required: true
+generated: "2026-04-07"
+owner: knowledge-architecture
+review_tracker: ../REVIEW_QUEUE.md
+
+terms:
+
+  # ── FINANCE TERMS ──────────────────────────────────────────────────
+
+  chart_of_accounts:
+    definition: Structured list of all GL accounts used by a legal entity for financial reporting
+    sap_term: Chart of Accounts (T004)
+    odoo_implementation: account.account records grouped by account.group, linked to res.company
+    abbreviation: CoA
+
+  fiscal_year:
+    definition: Accounting reporting period, typically 12 months, may not align with calendar year
+    sap_term: Fiscal Year Variant (T009)
+    odoo_implementation: date_range.type + date_range records (OCA date_range module)
+    note: Odoo CE uses date-based filtering rather than explicit fiscal year objects
+
+  period_close:
+    definition: Process of finalizing all transactions for an accounting period to prevent further posting
+    sap_term: Period Lock (OB52)
+    odoo_implementation: account.move lock_date fields on res.company
+    note: CE has basic lock dates; enterprise-grade close needs ipai_finance_ppm
+
+  journal_entry:
+    definition: A balanced debit/credit record that captures a financial transaction
+    sap_term: FI Document
+    odoo_implementation: account.move with account.move.line items
+
+  reconciliation:
+    definition: Matching process that verifies transactions against external sources (bank, vendor, customer)
+    sap_term: Clearing (F-44, F-32)
+    odoo_implementation: account.bank.statement.line matching via account.reconcile.model
+
+  withholding_tax:
+    definition: Tax deducted at source by the payer on behalf of the tax authority
+    sap_term: Extended Withholding Tax
+    odoo_implementation: account.tax with tax_group_id; PH-specific via ipai_bir_2307
+    abbreviation: WHT
+
+  three_way_match:
+    definition: Verification that purchase order, goods receipt, and vendor invoice agree before payment
+    sap_term: 3-Way Match (Invoice Verification)
+    odoo_implementation: Manual in CE; OCA purchase_stock_picking_invoice_link assists
+    abbreviation: 3WM
+
+  intercompany:
+    definition: Transactions between legal entities within the same corporate group
+    sap_term: Intercompany (ICo)
+    odoo_implementation: OCA account_invoice_inter_company + inter_company_rules
+
+  analytic_accounting:
+    definition: Tracking costs and revenues by business dimensions (project, department, product line) independent of GL structure
+    sap_term: CO (Controlling) — cost centers, profit centers, internal orders
+    odoo_implementation: account.analytic.account + account.analytic.plan + account.analytic.line
+
+  # ── PROCUREMENT TERMS ──────────────────────────────────────────────
+
+  purchase_requisition:
+    definition: Internal request for goods/services that must be approved before becoming a purchase order
+    sap_term: Purchase Requisition (BANF)
+    odoo_implementation: purchase.request (OCA purchase_request module)
+
+  blanket_order:
+    definition: Long-term agreement with a vendor for a quantity or amount, called off as needed
+    sap_term: Contract/Scheduling Agreement
+    odoo_implementation: OCA purchase_blanket_order
+    abbreviation: BO
+
+  goods_receipt:
+    definition: Confirmation that ordered goods have been physically received at the warehouse
+    sap_term: Goods Receipt (MIGO 101)
+    odoo_implementation: stock.picking (incoming type) validated
+
+  # ── SALES TERMS ────────────────────────────────────────────────────
+
+  quotation:
+    definition: A formal price offer to a customer that may be accepted and converted to a sales order
+    sap_term: Quotation (VA21)
+    odoo_implementation: sale.order in "draft" state
+
+  order_to_cash:
+    definition: End-to-end process from customer order through delivery and payment collection
+    sap_term: Order-to-Cash (O2C)
+    odoo_implementation: sale.order → stock.picking → account.move → payment
+    abbreviation: O2C
+
+  procure_to_pay:
+    definition: End-to-end process from purchase request through goods receipt and vendor payment
+    sap_term: Procure-to-Pay (P2P)
+    odoo_implementation: purchase.request → purchase.order → stock.picking → account.move → payment
+    abbreviation: P2P
+
+  record_to_report:
+    definition: End-to-end process from transaction recording through financial statement preparation
+    sap_term: Record-to-Report (R2R)
+    odoo_implementation: account.move → period close → financial reports
+    abbreviation: R2R
+
+  # ── INVENTORY TERMS ────────────────────────────────────────────────
+
+  stock_keeping_unit:
+    definition: Unique identifier for a specific product variant at a specific location
+    sap_term: Material Number + Plant + Storage Location
+    odoo_implementation: product.product (variant) at stock.location
+    abbreviation: SKU
+
+  bill_of_materials:
+    definition: List of raw materials, components, and quantities needed to manufacture a product
+    sap_term: BOM (CS01)
+    odoo_implementation: mrp.bom + mrp.bom.line
+    abbreviation: BOM
+
+  lot_tracking:
+    definition: Grouping inventory units by production batch for traceability
+    sap_term: Batch (MSC1N)
+    odoo_implementation: stock.lot
+
+  # ── COMPLIANCE TERMS ───────────────────────────────────────────────
+
+  segregation_of_duties:
+    definition: Principle requiring different people for authorization, custody, and record-keeping to prevent fraud
+    sap_term: SoD (GRC Access Control)
+    odoo_implementation: res.groups hierarchy + ir.rule; no native SoD matrix
+    abbreviation: SoD
+
+  audit_trail:
+    definition: Chronological record of all changes to a record for accountability and compliance
+    sap_term: Change Documents (CDHDR)
+    odoo_implementation: mail.tracking.value via mail.thread mixin
+
+  tier_validation:
+    definition: Multi-level approval workflow where different authority levels must approve in sequence
+    sap_term: Release Strategy / Approval Workflow
+    odoo_implementation: OCA base_tier_validation + *_tier_validation modules
+
+  # ── PLATFORM TERMS ─────────────────────────────────────────────────
+
+  landing_zone:
+    definition: Pre-configured cloud environment with governance, networking, identity, and policy baselines
+    sap_term: N/A (SAP uses BTP subaccounts)
+    odoo_implementation: Azure subscription + resource groups + Bicep templates
+
+  managed_identity:
+    definition: Azure-assigned identity for a service to authenticate to other Azure services without stored credentials
+    sap_term: N/A
+    odoo_implementation: ACA container → managed identity → Key Vault
+    abbreviation: MI
+
+  infrastructure_as_code:
+    definition: Managing infrastructure through version-controlled configuration files rather than manual processes
+    sap_term: N/A (SAP Cloud uses cockpit/APIs)
+    odoo_implementation: Bicep/Terraform in infra/ directory
+    abbreviation: IaC
