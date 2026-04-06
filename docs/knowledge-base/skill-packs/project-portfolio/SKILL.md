@@ -18,7 +18,7 @@ analysis, and portfolio-level health dashboards. Targets parity with SAP PS
 | Timesheet Entry | CATS (Time Sheet) | `account.analytic.line` |
 | Analytic Account | Cost Center / WBS | `account.analytic.account` |
 | Milestone Billing | Billing Plan | `sale.order.line` (delivered qty) |
-| Resource Allocation | Capacity Planning | `resource.resource` + `planning.slot` |
+| Resource Allocation | Capacity Planning | `resource.resource` + `resource.calendar` (no `planning.slot` in CE — EE only) |
 | Earned Value | EVA in PS | Computed from planned vs. actual cost on analytic |
 | Portfolio | Portfolio in PPM | Tag/category grouping on `project.project` |
 
@@ -56,7 +56,7 @@ Key fields on `product.template`: `type='service'`, `service_tracking='task_in_p
 ### 2. Task Decomposition and Planning
 
 - Create parent tasks (phases) with child tasks (work packages).
-- Assign `planned_hours` per task for EV baseline.
+- Assign `allocated_hours` per task for EV baseline (no `planned_hours` field in CE).
 - Use `project.tags` for cross-project categorization.
 - OCA `project_timeline` adds Gantt-style date ranges (`date_start`, `date_end`).
 - OCA `project_task_code` auto-generates unique task references (e.g., PRJ-001-T042).
@@ -73,13 +73,13 @@ Key fields on `product.template`: `type='service'`, `service_tracking='task_in_p
 - Create SO lines with `product.template.service_policy = 'delivered_manual'`.
 - Project manager marks milestones as delivered (updates `qty_delivered`).
 - Finance creates invoice from SO: only delivered milestones appear.
-- OCA `project_status` provides stage-gate tracking (draft/active/on-hold/done/cancelled).
+- Native `project.project.stage_id` provides stage-gate tracking. No `project_status` OCA module exists.
 
 ### 5. Earned Value Computation
 
 ```
-PV  = sum(planned_hours * standard_cost_rate) for tasks due by today
-EV  = sum(planned_hours * standard_cost_rate * task.progress / 100)
+PV  = sum(allocated_hours * standard_cost_rate) for tasks due by today
+EV  = sum(allocated_hours * standard_cost_rate * completion_pct / 100)  # requires custom progress field
 AC  = sum(analytic_line.amount) where account = project.analytic_account_id
 CPI = EV / AC
 SPI = EV / PV
@@ -100,8 +100,8 @@ or spreadsheet formulas over analytic data.
    constraint to block timesheets on tasks with `stage_id.fold = True`.
 4. **Currency mismatch**: Service SO in USD, timesheets costed in PHP. Ensure
    analytic lines use the company currency; currency conversion happens at SO level.
-5. **Resource over-allocation**: No native capacity check. OCA `project_forecast`
-   or Planning module provides visual conflict detection.
+5. **Resource over-allocation**: No native capacity check in CE. Planning module is
+   EE-only. No `project_forecast` OCA module exists. Requires custom implementation.
 
 ---
 
@@ -128,7 +128,7 @@ or spreadsheet formulas over analytic data.
 | `analytic` | Core | Cost tracking and reporting |
 | `project_timeline` | OCA | Gantt-style date range on tasks |
 | `project_task_code` | OCA | Auto-generated task reference codes |
-| `project_status` | OCA | Stage-gate status tracking |
+| `project_milestone_status` | OCA | Milestone status tracking |
 | `hr_timesheet_sheet` | OCA | Timesheet approval sheets |
 | `project_template` | OCA | Reusable project templates |
 | `project_task_default_stage` | OCA | Default stages per project type |

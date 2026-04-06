@@ -91,13 +91,13 @@ Covers enterprise warehouse complexity achievable on Odoo 18 CE with OCA modules
 1. Product configured with `tracking='lot'` or `tracking='serial'`.
 2. On receipt: assign lot/serial numbers to `stock.move.line`.
 3. Full traceability: upstream (where did this lot come from?) and downstream (where did it go?).
-4. Expiry dates via `product_expiry` module (installed by default in 18 CE).
+4. Expiry dates via `product_expiry` module (available in CE, must be explicitly installed).
 5. Lot recall: trace all deliveries containing the affected lot.
 
 ### 6. Reorder Rules and Procurement
 1. Create `stock.warehouse.orderpoint` for product at specific warehouse/location.
 2. Set minimum quantity, maximum quantity, and multiple.
-3. Scheduler (`stock.scheduler`) runs periodically (cron) to check and trigger.
+3. Scheduler (`stock.rule._run_scheduler_tasks()`) runs periodically via `ir.cron`.
 4. Triggers procurement based on product route: PO (buy) or MO (manufacture).
 5. Lead times from `product.supplierinfo` or `mrp.bom` used for scheduling.
 
@@ -171,17 +171,17 @@ Covers enterprise warehouse complexity achievable on Odoo 18 CE with OCA modules
 - `mrp.workcenter` / `mrp.workorder` -- production operations
 
 ### OCA Modules (18.0-compatible)
-| Module | Repo | Purpose |
-|--------|------|---------|
-| `stock_available_unreserved` | OCA/stock-logistics-warehouse | Show unreserved available qty |
-| `stock_demand_estimate` | OCA/stock-logistics-warehouse | Demand forecasting for reorder |
-| `stock_no_negative` | OCA/stock-logistics-warehouse | Prevent negative stock |
-| `stock_inventory_discrepancy` | OCA/stock-logistics-warehouse | Threshold alerts on count discrepancies |
-| `stock_putaway_product_template` | OCA/stock-logistics-warehouse | Putaway by product template |
-| `stock_picking_batch` | OCA/stock-logistics-workflow | Batch picking for wave picking |
-| `stock_move_line_auto_fill` | OCA/stock-logistics-workflow | Auto-fill done qty on moves |
-| `stock_landed_costs_delivery` | OCA/stock-logistics-workflow | Landed cost on delivery |
-| `product_expiry_simple` | OCA/product-attribute | Simplified expiry tracking |
+| Module | Repo | Status | Purpose |
+|--------|------|--------|---------|
+| `stock_no_negative` | OCA/stock-logistics-workflow | On disk | Prevent negative stock |
+| `stock_picking_batch` | Core (not OCA) | On disk | Batch picking for wave picking |
+| `stock_available_unreserved` | OCA/stock-logistics-warehouse | **Not on disk** | Show unreserved available qty |
+| `stock_demand_estimate` | OCA/stock-logistics-warehouse | **Not on disk** | Demand forecasting for reorder |
+| `stock_inventory_discrepancy` | OCA/stock-logistics-warehouse | **Not on disk** | Threshold alerts on count discrepancies |
+| `stock_putaway_product_template` | OCA/stock-logistics-warehouse | **Not on disk** | Putaway by product template |
+| `stock_move_line_auto_fill` | OCA/stock-logistics-workflow | **Not on disk** | Auto-fill done qty on moves |
+| `stock_landed_costs_delivery` | OCA/stock-logistics-workflow | **Not on disk** | Landed cost on delivery |
+| `product_expiry_simple` | OCA/product-attribute | **Not on disk** | Simplified expiry tracking |
 
 ---
 
@@ -191,8 +191,8 @@ Covers enterprise warehouse complexity achievable on Odoo 18 CE with OCA modules
   via Azure Front Door. Low-latency requirement (<200ms) for scan-to-validate.
 - **Stock valuation table size**: `stock.valuation.layer` and `stock.move.line` grow fast.
   Partition by `create_date` or archive older layers.
-- **MRP scheduler**: The procurement scheduler (`stock.scheduler`) can be CPU-intensive.
-  Run via dedicated cron with timeout >300s on Azure Container Apps.
+- **MRP scheduler**: The procurement scheduler (`stock.rule._run_scheduler_tasks()`) can be
+  CPU-intensive. Run via dedicated cron with timeout >300s on Azure Container Apps.
 - **Multi-warehouse sync**: Inter-warehouse transfers via transit locations. Monitor
   in-transit stock with scheduled reports.
 - **IoT integration**: Weigh scales, label printers via Odoo IoT Box (CE-compatible).

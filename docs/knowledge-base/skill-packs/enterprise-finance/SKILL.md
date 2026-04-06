@@ -40,7 +40,9 @@ backbone required for enterprise-grade accounting on Odoo 18 CE without Enterpri
 - **account.full.reconcile**: Marks a set of move lines as fully reconciled.
 - **account.partial.reconcile**: Partial matching (e.g., partial payment against invoice).
 - **Sequence**: Auto-numbering per journal. Field `sequence_override_regex` controls format.
-- **Lock Date**: `fiscalyear_lock_date` (hard) and `period_lock_date` (advisors only).
+- **Lock Date**: `fiscalyear_lock_date` (hard), `tax_lock_date`, `sale_lock_date`,
+  `purchase_lock_date` (soft locks — bypassed via `account.lock_exception`),
+  `hard_lock_date` (irreversible).
 - **Multi-company**: `company_id` on every financial record. `allowed_company_ids` in context.
 
 ---
@@ -73,7 +75,7 @@ backbone required for enterprise-grade accounting on Odoo 18 CE without Enterpri
 4. Unmatched lines create journal entries on reconciliation.
 
 ### 5. Period Close
-1. Set `period_lock_date` to prevent non-advisor edits on closed months.
+1. Set `tax_lock_date` / `sale_lock_date` / `purchase_lock_date` to prevent edits on closed months.
 2. Run OCA `account_financial_report` trial balance to verify balances.
 3. Post adjusting entries (accruals, deferrals, FX revaluation).
 4. Set `fiscalyear_lock_date` after year-end audit.
@@ -99,8 +101,8 @@ backbone required for enterprise-grade accounting on Odoo 18 CE without Enterpri
   differences. Set at company level and document the choice.
 - **Negative invoices**: Odoo 18 handles credit notes separately (`out_refund`/`in_refund`).
   Do not use negative lines on invoices.
-- **Lock date bypass**: Users in the Adviser group can still post before `period_lock_date`.
-  Only `fiscalyear_lock_date` is absolute.
+- **Lock date bypass**: Soft lock dates (tax, sale, purchase) can be bypassed via
+  `account.lock_exception` records. `hard_lock_date` is irreversible — no bypass.
 
 ---
 
@@ -110,7 +112,7 @@ backbone required for enterprise-grade accounting on Odoo 18 CE without Enterpri
 |---------|---------------|
 | Segregation of duties | Odoo groups: Invoicing, Payments, Adviser. OCA `base_tier_validation` for approval chains. |
 | Audit trail | `account.move` is immutable once posted. Reversals create new entries. |
-| Lock dates | `period_lock_date` + `fiscalyear_lock_date` on `res.company`. |
+| Lock dates | `tax_lock_date` + `fiscalyear_lock_date` + `hard_lock_date` on `res.company`. |
 | Tax compliance | `account.tax` with correct `tax_group_id`. BIR/VAT reports via localization. |
 | Bank statement import | OFX/CAMT/CSV parsers validate format before import. |
 | Payment approval | OCA `account_payment_order` with two-step (draft -> open -> generated -> uploaded). |
@@ -182,7 +184,7 @@ Verify the resulting `account.payment` records.
 ### Exercise 5: Period Close Checklist
 Write a server action that: (1) checks all draft moves for a given month, (2) lists
 unreconciled bank statement lines, (3) verifies trial balance debits = credits, and
-(4) sets `period_lock_date` if all checks pass.
+(4) sets `tax_lock_date` if all checks pass.
 
 ---
 

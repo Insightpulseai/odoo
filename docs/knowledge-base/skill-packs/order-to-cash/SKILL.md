@@ -31,8 +31,8 @@ discounts, customer portal, and returns -- all on Odoo 18 CE with OCA modules.
 
 ## Must-Know Vocabulary
 
-- **sale.order**: The sales order model. States: draft (quotation), sent, sale (confirmed),
-  done, cancel. Quotation becomes SO on confirmation.
+- **sale.order**: The sales order model. States: draft (quotation), sent, sale (sales order),
+  cancel. No `done` state in Odoo 18 CE — orders remain in `sale` until cancelled.
 - **sale.order.line**: Line items linking to `product.product` with qty, price, tax.
 - **sale.order.type**: OCA model to classify orders (standard, sample, consignment, return).
   Drives default journal, warehouse, invoice policy.

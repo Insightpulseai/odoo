@@ -40,8 +40,8 @@ Odoo 18 CE. Targets parity with SAP GRC Access Control, SAP Authorization Concep
   phases of a critical transaction (e.g., cannot both create and approve a PO).
 - **Implied Group**: Group inheritance via `implied_ids`. If user has Group A which
   implies Group B, user effectively has both. Maps to SAP composite roles.
-- **Superuser Bypass**: `res.users` with `id=2` (OdooBot) or `sudo()` bypasses all
-  ACL and record rules. Never use for regular operations.
+- **Superuser Bypass**: `res.users` with `id=1` (OdooBot, SUPERUSER_ID) or `sudo()` bypasses
+  all ACL and record rules. `id=2` is the human admin user. Never use for regular operations.
 - **OIDC (OpenID Connect)**: Protocol for identity federation. Entra ID acts as IdP;
   Odoo acts as relying party via `auth_oidc`.
 - **SCIM**: System for Cross-domain Identity Management. Protocol for automated

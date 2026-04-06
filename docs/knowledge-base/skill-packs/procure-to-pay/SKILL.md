@@ -22,9 +22,9 @@ Odoo 18 CE with OCA modules.
 | Purchase Order | ME21N (PO) | `purchase.order` (state=purchase) |
 | Goods Receipt | MIGO (GR) | `stock.picking` (type=incoming) |
 | Invoice Verification | MIRO | `account.move` (type=in_invoice) |
-| Three-Way Match | GR/IR clearing | PO line qty vs receipt qty vs invoice qty |
+| Three-Way Match | GR/IR clearing | Core CE feature via Purchase Settings (`purchase_method='receive'`) |
 | Blanket Order | Outline Agreement (ME31) | OCA `purchase.blanket.order` |
-| Vendor Evaluation | MM Vendor Rating | OCA `supplier_evaluation` |
+| Vendor Evaluation | MM Vendor Rating | No OCA equivalent — requires custom `ipai_*` module |
 | Approval Workflow | Release Strategy | OCA `base_tier_validation` |
 | Payment Run | F110 | OCA `account.payment.order` |
 
@@ -145,8 +145,7 @@ Odoo 18 CE with OCA modules.
 | `base_tier_validation` | OCA/server-ux | Generic approval engine |
 | `purchase_request_tier_validation` | OCA/purchase-workflow | Approval tiers on requisitions |
 | `account_payment_order` | OCA/bank-payment | Batch payment processing |
-| `purchase_stock_picking_return_invoicing` | OCA/purchase-workflow | Invoice adjustments on returns |
-| `purchase_order_line_price_history` | OCA/purchase-workflow | Price comparison across PO history |
+| `purchase_stock_picking_return_invoicing` | OCA/stock-logistics-workflow | Invoice adjustments on returns |
 
 ---
 

@@ -26,16 +26,16 @@
 | `evaluation/risks-blind-spots.md` | — | unreviewed | — | no (living doc) | Update as risks materialize or are mitigated |
 | `learning/phases.yaml` | — | unreviewed | — | no (planning) | Validate exercise feasibility |
 | `learning/execution-plan-30-60-90.md` | — | unreviewed | — | no (planning) | Adjust timeline based on actual progress |
-| `skill-packs/enterprise-finance/SKILL.md` | — | unreviewed | — | no (reference) | Verify OCA module names exist at 18.0 |
-| `skill-packs/procure-to-pay/SKILL.md` | — | unreviewed | — | no (reference) | Verify 3-way match OCA claims |
-| `skill-packs/order-to-cash/SKILL.md` | — | unreviewed | — | no (reference) | Verify process steps match CE behavior |
+| `skill-packs/enterprise-finance/SKILL.md` | — | spot-checked | codebase | no (reference) | Fixed: `period_lock_date` → actual lock date fields (tax/sale/purchase/hard), lock exception mechanism corrected |
+| `skill-packs/procure-to-pay/SKILL.md` | — | spot-checked | codebase | no (reference) | Fixed: removed non-existent `supplier_evaluation` and `purchase_order_line_price_history`, 3-way match is core CE not OCA, fixed repo path for return invoicing module |
+| `skill-packs/order-to-cash/SKILL.md` | — | spot-checked | codebase | no (reference) | Fixed: removed non-existent `done` state from sale.order (valid: draft, sent, sale, cancel) |
 | `skill-packs/record-to-report/SKILL.md` | — | spot-checked | codebase | no (reference) | Fixed account.asset CE claim → corrected to OCA-only |
-| `skill-packs/inventory-warehouse/SKILL.md` | — | unreviewed | — | no (reference) | Verify MRP claims in CE |
-| `skill-packs/management-accounting/SKILL.md` | — | unreviewed | — | no (reference) | Verify analytic plan features in CE 18 |
-| `skill-packs/project-portfolio/SKILL.md` | — | unreviewed | — | no (reference) | Verify timesheet billing model |
+| `skill-packs/inventory-warehouse/SKILL.md` | — | spot-checked | codebase | no (reference) | Fixed: `stock.scheduler` → `stock.rule._run_scheduler_tasks()`, `product_expiry` not default, `stock_picking_batch` is Core not OCA, 7 OCA modules marked not-on-disk |
+| `skill-packs/management-accounting/SKILL.md` | — | spot-checked | codebase | no (reference) | Fixed: `root_plan_id` → `parent_id` for hierarchy, corrected OCA module names (`account_analytic_tag`, `account_analytic_line_commercial_partner`) |
+| `skill-packs/project-portfolio/SKILL.md` | — | spot-checked | codebase | no (reference) | Fixed: `planning.slot` EE-only, `planned_hours` → `allocated_hours`, removed non-existent `project_status` and `project_forecast`, `task.progress` requires custom field |
 | `skill-packs/tax-compliance-ph/SKILL.md` | — | spot-checked | codebase + rates file | no (reference) | Corrected: removed 15% EWT (max 10%), fixed ATC codes (W157/W158 not WI010/WC010), qualified FWT rates (max 20% in rates file), marked 3 OCA modules as not-on-disk, marked 3 ipai modules as planned, added `ipai_bir_tax_compliance` as available, BIR 2307 clarified as core `l10n_ph` |
-| `skill-packs/reporting-bi/SKILL.md` | — | unreviewed | — | no (reference) | Verify MIS Builder and bi_sql_editor capabilities |
-| `skill-packs/identity-rbac-sod/SKILL.md` | — | unreviewed | — | no (reference) | Verify SoD implementation claims |
+| `skill-packs/reporting-bi/SKILL.md` | — | validated | codebase | no (reference) | All claims verified correct: mis_builder, bi_sql_editor, spreadsheet (CE), account_financial_report, report_xlsx all on disk |
+| `skill-packs/identity-rbac-sod/SKILL.md` | — | spot-checked | codebase | no (reference) | Fixed: SUPERUSER_ID is 1 (OdooBot) not 2 (admin). All OCA modules verified (base_user_role, auth_oidc, auditlog, auth_session_timeout, password_security) |
 | `skill-packs/copilot-agent-erp/SKILL.md` | — | unreviewed | — | no (reference) | Verify MCP tool patterns are current |
 | `patterns/architecture/enterprise-erp-patterns.md` | — | unreviewed | — | no (reference) | Validate code examples compile |
 | `patterns/anti-patterns/enterprise-anti-patterns.md` | — | unreviewed | — | no (reference) | Review for completeness |

@@ -59,7 +59,8 @@ accounting and OCA MIS Builder as the primary reporting engine.
    - **Project**: profit centers or project tracking.
    - **Product Line**: product-level profitability analysis.
 2. Create `account.analytic.account` records under each plan.
-3. Set `root_plan_id` for hierarchy. Child plans enable sub-dimensions.
+3. Set `parent_id` to create child plans for hierarchical sub-dimensions.
+   (`root_plan_id` on `account.analytic.account` is computed/read-only.)
 4. Configure applicability: which plans appear on which document types
    (invoices, POs, timesheets, manual entries).
 
@@ -166,8 +167,8 @@ accounting and OCA MIS Builder as the primary reporting engine.
 | `mis_builder_demo` | OCA/mis-builder | Sample P&L/BS templates to start from |
 | `account_analytic_parent` | OCA/account-analytic | Hierarchical analytic accounts |
 | `account_analytic_sequence` | OCA/account-analytic | Auto-numbering for analytic accounts |
-| `account_analytic_tag_default` | OCA/account-analytic | Default tags on partners/products |
-| `analytic_partner` | OCA/account-analytic | Partner dimension in analytics |
+| `account_analytic_tag` | OCA/account-analytic | Analytic tagging framework |
+| `account_analytic_line_commercial_partner` | OCA/account-analytic | Commercial partner field on analytic lines |
 | `account_financial_report` | OCA/account-financial-reporting | Trial balance with analytic filter |
 
 ---
