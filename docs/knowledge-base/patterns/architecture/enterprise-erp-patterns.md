@@ -184,7 +184,7 @@ Poor master data quality cascades into every business process. Duplicate partner
 MDG workflows with staging, approval, replication.
 
 ### Odoo Implementation
-- Partner deduplication: OCA partner_deduplicate_acl, partner_deduplicate_by_ref
+- Partner deduplication: OCA partner_deduplicate_acl, partner_deduplicate_filter
 - Product lifecycle: product_state for lifecycle tracking
 - Change approval: base_tier_validation on partner/product changes
 - Data quality: constraints, computed fields, server actions for cleanup

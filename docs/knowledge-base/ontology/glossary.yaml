@@ -23,14 +23,14 @@ terms:
   fiscal_year:
     definition: Accounting reporting period, typically 12 months, may not align with calendar year
     sap_term: Fiscal Year Variant (T009)
-    odoo_implementation: date_range.type + date_range records (OCA date_range module)
-    note: Odoo CE uses date-based filtering rather than explicit fiscal year objects
+    odoo_implementation: OCA account_fiscal_year + date_range module (not in CE). CE uses date-based filtering only.
+    note: CE has no explicit fiscal year objects; OCA provides them via account-financial-tools repo
 
   period_close:
     definition: Process of finalizing all transactions for an accounting period to prevent further posting
     sap_term: Period Lock (OB52)
-    odoo_implementation: account.move lock_date fields on res.company
-    note: CE has basic lock dates; enterprise-grade close needs ipai_finance_ppm
+    odoo_implementation: res.company lock date fields (fiscalyear_lock_date, tax_lock_date, sale_lock_date, purchase_lock_date, hard_lock_date)
+    note: CE has granular lock dates by function; enterprise-grade close workflow needs ipai_finance_ppm
 
   journal_entry:
     definition: A balanced debit/credit record that captures a financial transaction
@@ -69,12 +69,12 @@ terms:
   purchase_requisition:
     definition: Internal request for goods/services that must be approved before becoming a purchase order
     sap_term: Purchase Requisition (BANF)
-    odoo_implementation: purchase.request (OCA purchase_request module)
+    odoo_implementation: purchase.requisition (CE purchase_requisition module). OCA purchase_request provides an alternative requisition model.
 
   blanket_order:
     definition: Long-term agreement with a vendor for a quantity or amount, called off as needed
     sap_term: Contract/Scheduling Agreement
-    odoo_implementation: OCA purchase_blanket_order
+    odoo_implementation: CE purchase.requisition (requisition_type='blanket_order'). OCA purchase_blanket_order provides an alternative.
     abbreviation: BO
 
   goods_receipt:

@@ -35,7 +35,7 @@ process_to_model:
   record_to_report:
     steps:
       - {process: "Transaction posting", odoo_model: "account.move", oca_addon: null, azure: null}
-      - {process: "Bank reconciliation", odoo_model: "account.bank.statement", oca_addon: "account_statement_import_*", azure: null}
+      - {process: "Bank reconciliation", odoo_model: "account.bank.statement", oca_addon: "account_reconcile_oca", azure: null}
       - {process: "Accruals", odoo_model: "account.move", oca_addon: null, azure: null}
       - {process: "Period close", odoo_model: "res.company", oca_addon: null, azure: null}
       - {process: "Financial reporting", odoo_model: null, oca_addon: "account_financial_report", azure: "Power BI"}

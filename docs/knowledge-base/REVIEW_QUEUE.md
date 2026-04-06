@@ -19,8 +19,8 @@
 | `benchmark/sap-to-odoo-matrix.yaml` | — | spot-checked | codebase | candidate | 2 errors fixed (fixed_assets CE claim, helpdesk CE claim). OCA modules verified: mis_builder, bi_sql_editor, purchase_request, purchase_blanket_order, queue_job, connector, auth_oidc, account_payment_order, base_tier_validation all on disk. Spreadsheet confirmed CE. |
 | `benchmark/gap-analysis.md` | — | spot-checked | derivative | no (derivative) | Fixed assets correctly classified as O (OCA). No helpdesk claim. Consistent with corrected matrix. |
 | `ontology/entities.yaml` | — | spot-checked | codebase | candidate | 23/23 Odoo models verified against vendor/odoo/ source. OCA addons confirmed: base_user_role (server-backend), auth_oidc (server-auth), base_tier_validation (server-ux), all partner/purchase/sale/project/hr modules. |
-| `ontology/glossary.yaml` | — | unreviewed | — | candidate | Verify SAP term accuracy and Odoo implementation mappings |
-| `ontology/relationships.yaml` | — | unreviewed | — | candidate | Cross-check process-to-model mappings against actual install |
+| `ontology/glossary.yaml` | — | spot-checked | codebase | candidate | Fixed: lock_date → granular fields, purchase.request → purchase.requisition (CE), blanket_order is CE not OCA, fiscal_year clarified as OCA-only |
+| `ontology/relationships.yaml` | — | spot-checked | codebase | candidate | Fixed: account_statement_import_* → account_reconcile_oca. All process-to-model mappings verified correct. |
 | `evaluation/scenarios.yaml` | — | validated | codebase | candidate | 13/13 claims verified against source. move_type values confirmed (account_move.py:160-177). ir.rule OR/AND logic confirmed (ir_rule.py:94,168). analytic plans confirmed CE. Studio confirmed EE-only. |
 | `evaluation/scoring-rubric.md` | — | unreviewed | — | no (methodology) | Review thresholds for reasonableness |
 | `evaluation/risks-blind-spots.md` | — | unreviewed | — | no (living doc) | Update as risks materialize or are mitigated |
@@ -36,13 +36,13 @@
 | `skill-packs/tax-compliance-ph/SKILL.md` | — | spot-checked | codebase + rates file | no (reference) | Corrected: removed 15% EWT (max 10%), fixed ATC codes (W157/W158 not WI010/WC010), qualified FWT rates (max 20% in rates file), marked 3 OCA modules as not-on-disk, marked 3 ipai modules as planned, added `ipai_bir_tax_compliance` as available, BIR 2307 clarified as core `l10n_ph` |
 | `skill-packs/reporting-bi/SKILL.md` | — | validated | codebase | no (reference) | All claims verified correct: mis_builder, bi_sql_editor, spreadsheet (CE), account_financial_report, report_xlsx all on disk |
 | `skill-packs/identity-rbac-sod/SKILL.md` | — | spot-checked | codebase | no (reference) | Fixed: SUPERUSER_ID is 1 (OdooBot) not 2 (admin). All OCA modules verified (base_user_role, auth_oidc, auditlog, auth_session_timeout, password_security) |
-| `skill-packs/copilot-agent-erp/SKILL.md` | — | unreviewed | — | no (reference) | Verify MCP tool patterns are current |
-| `patterns/architecture/enterprise-erp-patterns.md` | — | unreviewed | — | no (reference) | Validate code examples compile |
-| `patterns/anti-patterns/enterprise-anti-patterns.md` | — | unreviewed | — | no (reference) | Review for completeness |
-| `patterns/integration/integration-patterns.md` | — | unreviewed | — | no (reference) | Verify Azure service names and auth patterns |
-| `process-maps/order-to-cash.md` | — | unreviewed | — | no (reference) | Walk through on odoo_dev |
-| `process-maps/procure-to-pay.md` | — | unreviewed | — | no (reference) | Walk through on odoo_dev |
-| `process-maps/record-to-report.md` | — | unreviewed | — | no (reference) | Walk through on odoo_dev |
+| `skill-packs/copilot-agent-erp/SKILL.md` | — | spot-checked | codebase | no (reference) | Fixed: "Ask AI" not native CE, 3 ipai modules marked planned (ipai_ai_tools, ipai_agent_log, ipai_doc_intelligence), corrected module name to ipai_odoo_copilot |
+| `patterns/architecture/enterprise-erp-patterns.md` | — | spot-checked | codebase | no (reference) | Fixed: partner_deduplicate_by_ref → partner_deduplicate_filter |
+| `patterns/anti-patterns/enterprise-anti-patterns.md` | — | validated | codebase | no (reference) | All claims verified correct |
+| `patterns/integration/integration-patterns.md` | — | validated | codebase | no (reference) | All claims verified correct (auth_oidc, queue_job, etc.) |
+| `process-maps/order-to-cash.md` | — | validated | codebase | no (reference) | All model names verified correct |
+| `process-maps/procure-to-pay.md` | — | validated | codebase | no (reference) | All OCA module references verified correct |
+| `process-maps/record-to-report.md` | — | spot-checked | codebase | no (reference) | Fixed: truncated model name account.bank → account.bank.statement |
 | `domain-primers/*.md` | — | unreviewed | — | no (reference) | Light review sufficient |
 | `checklists/*.md` | — | unreviewed | — | no (reference) | Test against actual module creation |
 | `decision-records/ADR-001-*.md` | — | unreviewed | — | no (ADR) | Verify rationale still holds |

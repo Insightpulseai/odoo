@@ -10,7 +10,7 @@ Daily Postings         Bank Matching         Period Lock          Financial Stmt
 Post → Reconcile → Accrue → Adjust → Lock Period → Generate Reports → Analyze
   │                       │                     │                     │
 account.move         account.bank           res.company          mis.report
-                     .statement             (lock_date)          (OCA)
+                     .statement             (lock dates)         (OCA)
 ```
 
 ## Step Details

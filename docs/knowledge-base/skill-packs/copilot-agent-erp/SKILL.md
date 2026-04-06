@@ -215,7 +215,7 @@ No hallucinated numbers. Every figure comes from a tool call with a traceable re
 | Control | Implementation |
 |---------|---------------|
 | Human-in-the-loop for financial state changes | Agent passport `requires_human_approval` list |
-| Tool call audit trail | All MCP calls logged to `ipai_agent_log` model + Azure Monitor |
+| Tool call audit trail | All MCP calls logged to audit model (planned `ipai_agent_log`) + Azure Monitor |
 | Prompt version control | Prompt templates in `ipai_ai_copilot` with `mail.thread` versioning |
 | PII filtering | Strip PII from LLM context unless explicitly needed for the operation |
 | Cost tracking | Token usage per agent per day logged; alert on anomalous spikes |
@@ -229,11 +229,11 @@ No hallucinated numbers. Every figure comes from a tool call with a traceable re
 |--------|--------|---------|
 | `mail` | Core | Activity scheduling, chatter for agent annotations |
 | `base_automation` | Core | Server actions triggered by agent recommendations |
-| `web` (Ask AI) | Core | Native Odoo 18 AI assistant interface |
-| `ipai_ai_copilot` | Custom | Prompt registry, tool routing, governance engine |
-| `ipai_ai_tools` | Custom | MCP tool server implementation for Odoo |
-| `ipai_agent_log` | Custom | Agent action audit trail model |
-| `ipai_doc_intelligence` | Custom | Azure Document Intelligence integration |
+| `web` | Core | Odoo web client (no native "Ask AI" — custom via ipai_ai_widget, now deprecated) |
+| `ipai_odoo_copilot` | Custom (live) | Prompt registry, tool routing, Foundry ask mode |
+| `ipai_ai_tools` | Custom (**planned**) | MCP tool server implementation for Odoo |
+| `ipai_agent_log` | Custom (**planned**) | Agent action audit trail model |
+| `ipai_doc_intelligence` | Custom (**planned**) | Azure Document Intelligence integration |
 
 ---
 
