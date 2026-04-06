@@ -22,10 +22,8 @@
 | `ontology/glossary.yaml` | — | spot-checked | codebase | candidate | Fixed: lock_date → granular fields, purchase.request → purchase.requisition (CE), blanket_order is CE not OCA, fiscal_year clarified as OCA-only |
 | `ontology/relationships.yaml` | — | spot-checked | codebase | candidate | Fixed: account_statement_import_* → account_reconcile_oca. All process-to-model mappings verified correct. |
 | `evaluation/scenarios.yaml` | — | validated | codebase | candidate | 13/13 claims verified against source. move_type values confirmed (account_move.py:160-177). ir.rule OR/AND logic confirmed (ir_rule.py:94,168). analytic plans confirmed CE. Studio confirmed EE-only. |
-| `evaluation/scoring-rubric.md` | — | unreviewed | — | no (methodology) | Review thresholds for reasonableness |
-| `evaluation/risks-blind-spots.md` | — | unreviewed | — | no (living doc) | Update as risks materialize or are mitigated |
-| `learning/phases.yaml` | — | unreviewed | — | no (planning) | Validate exercise feasibility |
-| `learning/execution-plan-30-60-90.md` | — | unreviewed | — | no (planning) | Adjust timeline based on actual progress |
+| `evaluation/scoring-rubric.md` | — | unreviewed | — | no (methodology) | Methodology doc — review thresholds for reasonableness |
+| `evaluation/risks-blind-spots.md` | — | unreviewed | — | no (living doc) | Living doc — update as risks materialize or are mitigated |
 | `skill-packs/enterprise-finance/SKILL.md` | — | spot-checked | codebase | no (reference) | Fixed: `period_lock_date` → actual lock date fields (tax/sale/purchase/hard), lock exception mechanism corrected |
 | `skill-packs/procure-to-pay/SKILL.md` | — | spot-checked | codebase | no (reference) | Fixed: removed non-existent `supplier_evaluation` and `purchase_order_line_price_history`, 3-way match is core CE not OCA, fixed repo path for return invoicing module |
 | `skill-packs/order-to-cash/SKILL.md` | — | spot-checked | codebase | no (reference) | Fixed: removed non-existent `done` state from sale.order (valid: draft, sent, sale, cancel) |
@@ -43,9 +41,17 @@
 | `process-maps/order-to-cash.md` | — | validated | codebase | no (reference) | All model names verified correct |
 | `process-maps/procure-to-pay.md` | — | validated | codebase | no (reference) | All OCA module references verified correct |
 | `process-maps/record-to-report.md` | — | spot-checked | codebase | no (reference) | Fixed: truncated model name account.bank → account.bank.statement |
-| `domain-primers/*.md` | — | unreviewed | — | no (reference) | Light review sufficient |
-| `checklists/*.md` | — | unreviewed | — | no (reference) | Test against actual module creation |
-| `decision-records/ADR-001-*.md` | — | unreviewed | — | no (ADR) | Verify rationale still holds |
+| `domain-primers/finance.md` | — | validated | codebase | no (reference) | All models and OCA refs verified correct |
+| `domain-primers/procurement.md` | — | validated | codebase | no (reference) | All models and OCA refs verified correct |
+| `domain-primers/sales-crm.md` | — | validated | codebase | no (reference) | All models and OCA refs verified correct |
+| `domain-primers/inventory-scm.md` | — | validated | codebase | no (reference) | All models and OCA refs verified correct |
+| `domain-primers/hr-payroll.md` | — | spot-checked | codebase | no (reference) | Fixed: hr.payslip is EE-only, added hr.work.entry (CE), noted ipai_hr_payroll_ph needed |
+| `checklists/module-creation.md` | — | validated | codebase | no (reference) | All conventions and patterns correct |
+| `checklists/month-end-close.md` | — | validated | codebase | no (reference) | Procedures accurate for CE |
+| `checklists/fit-gap-template.md` | — | validated | — | no (reference) | Classification framework sound |
+| `learning/phases.yaml` | — | validated | codebase | no (planning) | Model refs correct, structure sound |
+| `learning/execution-plan-30-60-90.md` | — | validated | codebase | no (planning) | No errors, no deprecated refs |
+| `decision-records/ADR-001-*.md` | — | validated | — | no (ADR) | Rationale sound, version correct |
 
 ## Review Priority
 

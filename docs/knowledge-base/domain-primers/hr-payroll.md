@@ -2,7 +2,7 @@
 
 ## One-paragraph summary
 
-HR manages the employee lifecycle from hiring through separation. Payroll handles compensation calculation including statutory deductions. In SAP, this is HCM (Human Capital Management). Odoo CE provides employee management, attendance, leave, and basic payroll — but PH-specific statutory compliance (SSS, PhilHealth, Pag-IBIG, BIR) requires custom modules.
+HR manages the employee lifecycle from hiring through separation. Payroll handles compensation calculation including statutory deductions. In SAP, this is HCM (Human Capital Management). Odoo 18 CE provides employee management, attendance, leave, and contracts — but `hr_payroll` (payslip generation) is **Enterprise-only**. PH-specific statutory compliance (SSS, PhilHealth, Pag-IBIG, BIR) requires custom `ipai_hr_payroll_ph` module development.
 
 ## Key Concepts
 
@@ -13,7 +13,8 @@ HR manages the employee lifecycle from hiring through separation. Payroll handle
 | Contract | Employment terms and compensation | hr.contract |
 | Leave | Time-off request and allocation | hr.leave, hr.leave.allocation |
 | Attendance | Clock-in/clock-out records | hr.attendance |
-| Payslip | Salary computation document | hr.payslip |
+| Work Entry | Work period records for payroll | hr.work.entry (CE via hr_work_entry) |
+| Payslip | Salary computation document | hr.payslip (**Enterprise-only** — CE needs custom ipai_hr_payroll_ph) |
 
 ## SAP-to-Odoo Quick Map
 
@@ -23,7 +24,7 @@ HR manages the employee lifecycle from hiring through separation. Payroll handle
 | Org Unit | hr.department |
 | Infotype 0001 (Org) | hr.contract |
 | Time Management (PT) | hr.attendance + hr.leave |
-| Payroll (PY) | hr.payslip |
+| Payroll (PY) | hr.payslip (**EE-only**) — CE uses hr.work.entry + custom ipai_hr_payroll_ph |
 
 ## PH-Specific Gaps
 
