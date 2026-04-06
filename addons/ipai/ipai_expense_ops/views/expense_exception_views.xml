@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Exception Form -->
+    <record id="expense_exception_form" model="ir.ui.view">
+        <field name="name">ipai.expense.exception.form</field>
+        <field name="model">ipai.expense.exception</field>
+        <field name="arch" type="xml">
+            <form string="Expense Exception">
+                <header>
+                    <button name="action_resolve" type="object"
+                            string="Resolve" class="btn-primary"
+                            invisible="state not in ('new', 'in_process')"/>
+                    <button name="action_waive" type="object"
+                            string="Waive"
+                            invisible="state not in ('new', 'in_process')"
+                            confirm="Waive this exception without resolution?"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="new,in_process,resolved"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="exception_code"/>
+                            <field name="severity"/>
+                            <field name="is_blocking"/>
+                            <field name="visibility"/>
+                        </group>
+                        <group>
+                            <field name="sheet_id"/>
+                            <field name="expense_id"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                        </group>
+                    </group>
+                    <group string="Message">
+                        <field name="message" nolabel="1"/>
+                    </group>
+                    <group string="Resolution" invisible="state in ('new',)">
+                        <field name="resolution_note"/>
+                        <field name="resolved_by"/>
+                        <field name="resolved_date"/>
+                    </group>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- Exception List -->
+    <record id="expense_exception_list" model="ir.ui.view">
+        <field name="name">ipai.expense.exception.list</field>
+        <field name="model">ipai.expense.exception</field>
+        <field name="arch" type="xml">
+            <list decoration-danger="is_blocking and state in ('new', 'in_process')"
+                  decoration-muted="state in ('resolved', 'waived')">
+                <field name="exception_code"/>
+                <field name="message"/>
+                <field name="severity"/>
+                <field name="is_blocking"/>
+                <field name="state" widget="badge"
+                       decoration-danger="state == 'new'"
+                       decoration-warning="state == 'in_process'"
+                       decoration-success="state == 'resolved'"/>
+                <field name="sheet_id"/>
+                <field name="expense_id"/>
+                <field name="create_date"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Exception Action -->
+    <record id="action_expense_exception" model="ir.actions.act_window">
+        <field name="name">Expense Exceptions</field>
+        <field name="res_model">ipai.expense.exception</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+</odoo>

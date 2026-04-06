@@ -1,0 +1,9 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_closing_template_user,closing.template.user,model_closing_template,account.group_account_user,1,0,0,0
+access_closing_template_manager,closing.template.manager,model_closing_template,account.group_account_manager,1,1,1,1
+access_closing_template_line_user,closing.template.line.user,model_closing_template_line,account.group_account_user,1,0,0,0
+access_closing_template_line_manager,closing.template.line.manager,model_closing_template_line,account.group_account_manager,1,1,1,1
+access_closing_task_list_user,closing.task.list.user,model_closing_task_list,account.group_account_user,1,1,0,0
+access_closing_task_list_manager,closing.task.list.manager,model_closing_task_list,account.group_account_manager,1,1,1,1
+access_closing_task_user,closing.task.user,model_closing_task,account.group_account_user,1,1,0,0
+access_closing_task_manager,closing.task.manager,model_closing_task,account.group_account_manager,1,1,1,1

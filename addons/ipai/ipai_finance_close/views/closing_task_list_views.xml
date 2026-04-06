@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Task List Form -->
+    <record id="closing_task_list_form" model="ir.ui.view">
+        <field name="name">closing.task.list.form</field>
+        <field name="model">closing.task.list</field>
+        <field name="arch" type="xml">
+            <form string="Closing Task List">
+                <header>
+                    <button name="action_generate_tasks" type="object"
+                            string="Generate Tasks" class="btn-primary"
+                            invisible="state != 'draft'"/>
+                    <button name="action_start" type="object"
+                            string="Start" invisible="state != 'draft'"/>
+                    <button name="action_close" type="object"
+                            string="Close" class="btn-primary"
+                            invisible="state not in ('in_progress', 'review', 'approval')"/>
+                    <button name="action_cancel" type="object"
+                            string="Cancel"
+                            invisible="state in ('closed', 'canceled')"
+                            confirm="Cancel this task list?"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="draft,in_progress,closed"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button class="oe_stat_button" icon="fa-tasks"
+                                name="%(ipai_finance_close.action_closing_task)d"
+                                type="action"
+                                context="{'search_default_task_list_id': active_id}">
+                            <field name="task_count" widget="statinfo" string="Tasks"/>
+                        </button>
+                    </div>
+                    <div class="oe_title">
+                        <h1><field name="name" placeholder="Task List Name"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="template_id"/>
+                            <field name="closing_type"/>
+                            <field name="period_start"/>
+                            <field name="period_end"/>
+                            <field name="bir_deadline"/>
+                        </group>
+                        <group>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                            <field name="progress" widget="progressbar"/>
+                            <field name="completed_count"/>
+                            <field name="overdue_count" decoration-danger="overdue_count > 0"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Tasks" name="tasks">
+                            <field name="task_ids">
+                                <list>
+                                    <field name="sequence" widget="handle"/>
+                                    <field name="code"/>
+                                    <field name="name"/>
+                                    <field name="task_type"/>
+                                    <field name="stage"/>
+                                    <field name="state" widget="badge"
+                                           decoration-success="state in ('completed', 'approved')"
+                                           decoration-danger="state == 'failed'"
+                                           decoration-warning="state in ('completed_warning', 'completed_error')"
+                                           decoration-info="state == 'in_progress'"/>
+                                    <field name="planned_date"/>
+                                    <field name="is_overdue" invisible="True"/>
+                                    <field name="processor_id"/>
+                                    <field name="responsible_id"/>
+                                    <field name="can_start"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- Task List List -->
+    <record id="closing_task_list_list" model="ir.ui.view">
+        <field name="name">closing.task.list.list</field>
+        <field name="model">closing.task.list</field>
+        <field name="arch" type="xml">
+            <list decoration-danger="overdue_count > 0"
+                  decoration-muted="state in ('closed', 'canceled')">
+                <field name="name"/>
+                <field name="closing_type"/>
+                <field name="period_start"/>
+                <field name="period_end"/>
+                <field name="state" widget="badge"/>
+                <field name="progress" widget="progressbar"/>
+                <field name="task_count"/>
+                <field name="overdue_count"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Task List Action -->
+    <record id="action_closing_task_list" model="ir.actions.act_window">
+        <field name="name">Closing Task Lists</field>
+        <field name="res_model">closing.task.list</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+</odoo>

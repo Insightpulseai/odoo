@@ -1,6 +1,6 @@
 {
     "name": "IPAI Social CAPI Bridge",
-    "version": "19.0.1.0.0",
+    "version": "18.0.1.0.0",
     "category": "Marketing",
     "summary": "Bridge CRM events to Meta Conversions API via Azure Function",
     "description": """

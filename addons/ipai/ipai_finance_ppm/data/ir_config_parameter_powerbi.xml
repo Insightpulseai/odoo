@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <!-- Power BI integration parameters.
+             Set powerbi_report_url to the published "Publish to web" URL
+             or the secure embed URL from Power BI Service. -->
+
+        <record id="ipai_ppm_powerbi_workspace" model="ir.config_parameter">
+            <field name="key">ipai_ppm.powerbi_workspace_id</field>
+            <field name="value"></field>
+        </record>
+
+        <record id="ipai_ppm_powerbi_dataset" model="ir.config_parameter">
+            <field name="key">ipai_ppm.powerbi_dataset_id</field>
+            <field name="value"></field>
+        </record>
+
+        <record id="ipai_ppm_powerbi_report_url" model="ir.config_parameter">
+            <field name="key">ipai_ppm.powerbi_report_url</field>
+            <field name="value"></field>
+        </record>
+
+    </data>
+</odoo>
