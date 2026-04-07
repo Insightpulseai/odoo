@@ -3,42 +3,70 @@
     <data noupdate="1">
 
         <!-- ============================================================
-             Kanban Stages (project.task.type) — shared across both projects
+             Month-End Close Stages (3-stage workflow)
+             Preparation → Review → Approval
              ============================================================ -->
 
-        <record id="stage_todo" model="project.task.type">
-            <field name="name">To Do</field>
+        <record id="stage_me_preparation" model="project.task.type">
+            <field name="name">Preparation</field>
             <field name="sequence">10</field>
             <field name="fold" eval="False"/>
         </record>
 
-        <record id="stage_in_preparation" model="project.task.type">
-            <field name="name">In Preparation</field>
+        <record id="stage_me_review" model="project.task.type">
+            <field name="name">Review</field>
             <field name="sequence">20</field>
             <field name="fold" eval="False"/>
         </record>
 
-        <record id="stage_under_review" model="project.task.type">
-            <field name="name">Under Review</field>
+        <record id="stage_me_approval" model="project.task.type">
+            <field name="name">Approval</field>
             <field name="sequence">30</field>
             <field name="fold" eval="False"/>
         </record>
 
-        <record id="stage_pending_approval" model="project.task.type">
-            <field name="name">Pending Approval</field>
+        <!-- ============================================================
+             BIR Tax Filing Stages (4-stage workflow)
+             Preparation → Report Approval → Payment Approval → Filing & Payment
+             ============================================================ -->
+
+        <record id="stage_bir_preparation" model="project.task.type">
+            <field name="name">Preparation</field>
+            <field name="sequence">10</field>
+            <field name="fold" eval="False"/>
+        </record>
+
+        <record id="stage_bir_report_approval" model="project.task.type">
+            <field name="name">Report Approval</field>
+            <field name="sequence">20</field>
+            <field name="fold" eval="False"/>
+        </record>
+
+        <record id="stage_bir_payment_approval" model="project.task.type">
+            <field name="name">Payment Approval</field>
+            <field name="sequence">30</field>
+            <field name="fold" eval="False"/>
+        </record>
+
+        <record id="stage_bir_filing_payment" model="project.task.type">
+            <field name="name">Filing &amp; Payment</field>
             <field name="sequence">40</field>
             <field name="fold" eval="False"/>
         </record>
 
+        <!-- ============================================================
+             Shared Terminal Stages
+             ============================================================ -->
+
         <record id="stage_done" model="project.task.type">
             <field name="name">Done</field>
-            <field name="sequence">50</field>
+            <field name="sequence">90</field>
             <field name="fold" eval="True"/>
         </record>
 
         <record id="stage_cancelled" model="project.task.type">
             <field name="name">Cancelled</field>
-            <field name="sequence">60</field>
+            <field name="sequence">99</field>
             <field name="fold" eval="True"/>
         </record>
 

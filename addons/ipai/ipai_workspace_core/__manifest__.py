@@ -3,7 +3,7 @@
 # License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl-3.0.en.html).
 {
     "name": "IPAI Workspace Core",
-    "version": "19.0.2.0.0",
+    "version": "18.0.2.0.0",
     "category": "Productivity",
     "summary": "Notion-like collaborative workspace with ERP data integration",
     "author": "InsightPulse AI",

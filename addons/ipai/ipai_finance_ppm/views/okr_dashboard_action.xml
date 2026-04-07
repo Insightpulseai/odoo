@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
-    <!-- ir.actions.client — renders the OWL OKRDashboard component -->
+    <!-- ir.actions.client — embeds Power BI report in Odoo backend -->
     <record id="action_finance_ppm_okr_dashboard" model="ir.actions.client">
-        <field name="name">OKR Dashboard</field>
+        <field name="name">Finance Dashboard (Power BI)</field>
         <field name="tag">finance_ppm.okr_dashboard</field>
         <field name="target">current</field>
     </record>
 
     <menuitem
         id="menu_finance_ppm_okr_dashboard"
-        name="OKR Dashboard"
+        name="Finance Dashboard"
         parent="menu_ipai_finance_ppm_root"
         action="action_finance_ppm_okr_dashboard"
         sequence="10"

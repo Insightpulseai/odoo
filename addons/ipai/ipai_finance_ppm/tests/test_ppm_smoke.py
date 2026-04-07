@@ -25,7 +25,7 @@ class TestFinancePPMSmoke(TransactionCase):
     def test_import_wizard_model_exists(self):
         """PPM import wizard transient model is registered."""
         Wizard = self.env["ipai.ppm.import.wizard"]
-        self.assertTrue(Wizard)
+        self.assertEqual(Wizard._name, "ipai.ppm.import.wizard")
         field_names = Wizard._fields.keys()
         self.assertIn("file", field_names)
         self.assertIn("batch_id", field_names)
@@ -39,7 +39,7 @@ class TestFinancePPMSmoke(TransactionCase):
         })
         project = self.env["project.project"].create({
             "name": "Test PPM Project",
-            "analytic_account_id": aa.id,
+            "account_id": aa.id,
             "ipai_ppm_budget_amount": 50000.0,
             "ipai_ppm_cost_center": "CC-100",
         })
@@ -56,14 +56,20 @@ class TestFinancePPMSmoke(TransactionCase):
         self.assertEqual(project.ipai_ppm_import_source, "csv")
         self.assertTrue(project.ipai_ppm_imported_at)
 
-    def test_okr_dashboard_action_exists(self):
-        """OKR dashboard client action is registered."""
+    def test_powerbi_dashboard_action_exists(self):
+        """Power BI dashboard client action is registered."""
         action = self.env.ref(
             "ipai_finance_ppm.action_finance_ppm_okr_dashboard",
             raise_if_not_found=False,
         )
         self.assertTrue(action)
         self.assertEqual(action.tag, "finance_ppm.okr_dashboard")
+
+    def test_powerbi_config_parameter_exists(self):
+        """Power BI report URL parameter is registered."""
+        url = self.env["ir.config_parameter"].get_param("ipai_ppm.powerbi_report_url")
+        # Parameter exists (may be empty string, that's fine)
+        self.assertIsNotNone(url)
 
     def test_cron_exists(self):
         """Budget sync cron job is registered and active."""

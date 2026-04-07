@@ -1,0 +1,11 @@
+# Power BI local cache and settings
+**/.pbi/cache.abf
+**/.pbi/localSettings.json
+**/.pbi/unappliedChanges.json
+
+# Compiled output
+*.pbix
+
+# OS files
+.DS_Store
+Thumbs.db

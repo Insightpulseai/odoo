@@ -3,7 +3,7 @@
 {
     "name": "IPAI Enterprise Bridge",
     "summary": "Minimal stubs and redirections for EE model references (does not reimplement EE features)",
-    "version": "19.0.1.1.0",
+    "version": "18.0.1.1.0",
     "category": "Technical",
     "author": "InsightPulseAI",
     "website": "https://github.com/jgtolentino/odoo",

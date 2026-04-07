@@ -3,7 +3,7 @@
 {
     "name": "IPAI AI Widget",
     "summary": "Ask AI widget for Odoo 19 CE — calls IPAI provider bridge (no IAP dependency)",
-    "version": "19.0.2.0.0",
+    "version": "18.0.2.0.0",
     "category": "Technical",
     "author": "InsightPulse AI",
     "website": "https://insightpulseai.com",

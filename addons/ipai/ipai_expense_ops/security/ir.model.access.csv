@@ -1,0 +1,4 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_expense_exception_user,ipai.expense.exception.user,model_ipai_expense_exception,base.group_user,1,0,0,0
+access_expense_exception_officer,ipai.expense.exception.officer,model_ipai_expense_exception,hr_expense.group_hr_expense_team_approver,1,1,1,0
+access_expense_exception_manager,ipai.expense.exception.manager,model_ipai_expense_exception,hr_expense.group_hr_expense_manager,1,1,1,1

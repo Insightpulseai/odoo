@@ -1,6 +1,6 @@
 {
     "name": "IPAI AI Channel Actions",
-    "version": "19.0.1.0.0",
+    "version": "18.0.1.0.0",
     "summary": "Expose Odoo business actions to external channels via Odoo Copilot",
     "description": """
 Odoo Copilot — Channel Actions

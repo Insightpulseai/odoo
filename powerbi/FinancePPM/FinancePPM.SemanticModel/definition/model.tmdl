@@ -1,0 +1,10 @@
+model Model
+	culture: en-US
+	defaultPowerBIDataSourceVersion: powerBI_V3
+	discourageImplicitMeasures: true
+	sourceQueryCulture: en-US
+
+	/// Direct Lake: reads from OneLake mirrored delta tables
+	/// Source: Fabric Mirrored Database (odoo-mirror)
+	/// No Import refresh needed — near real-time from PostgreSQL
+	annotation DirectLakeMode = true

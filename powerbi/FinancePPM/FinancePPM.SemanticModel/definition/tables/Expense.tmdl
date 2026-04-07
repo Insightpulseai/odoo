@@ -1,0 +1,99 @@
+/// Fact: Approved expenses linked to analytic accounts
+/// Source: hr_expense joined with hr_expense_sheet
+table Expense
+	lineageTag: a1b2c3d4-0005-0001-0001-000000000001
+
+	column ExpenseID
+		dataType: int64
+		isKey: true
+		sourceColumn: id
+		summarizeBy: none
+		lineageTag: a1b2c3d4-0005-0001-0001-100000000001
+
+	column ExpenseName
+		dataType: string
+		sourceColumn: name
+		summarizeBy: none
+		lineageTag: a1b2c3d4-0005-0001-0001-100000000002
+
+	column TotalAmount
+		dataType: decimal
+		sourceColumn: total_amount_currency
+		summarizeBy: sum
+		formatString: ₱#,##0.00
+		lineageTag: a1b2c3d4-0005-0001-0001-100000000003
+
+	column ExpenseDate
+		dataType: dateTime
+		sourceColumn: date
+		summarizeBy: none
+		lineageTag: a1b2c3d4-0005-0001-0001-100000000004
+
+	column AnalyticAccountID
+		dataType: int64
+		sourceColumn: analytic_account_id
+		summarizeBy: none
+		isHidden
+		lineageTag: a1b2c3d4-0005-0001-0001-100000000005
+
+	column EmployeeID
+		dataType: int64
+		sourceColumn: employee_id
+		summarizeBy: none
+		isHidden
+		lineageTag: a1b2c3d4-0005-0001-0001-100000000006
+
+	column State
+		dataType: string
+		sourceColumn: state
+		summarizeBy: none
+		lineageTag: a1b2c3d4-0005-0001-0001-100000000007
+
+	column IsPulserDraft
+		dataType: boolean
+		sourceColumn: is_pulser_draft
+		summarizeBy: none
+		lineageTag: a1b2c3d4-0005-0001-0001-100000000008
+
+	/// Total approved expenses
+	measure Total_Expenses =
+		CALCULATE(
+			SUM(Expense[TotalAmount]),
+			Expense[State] IN {"approved", "done"}
+		)
+		formatString: ₱#,##0.00
+		displayFolder: Expenses
+
+	/// Budget utilization = expenses / budget
+	measure Budget_Utilization =
+		DIVIDE([Total_Expenses], [Total_Budget])
+		formatString: 0.0%
+		displayFolder: Budget
+
+	/// Remaining budget
+	measure Budget_Remaining =
+		[Total_Budget] - [Total_Expenses]
+		formatString: ₱#,##0.00
+		displayFolder: Budget
+
+	/// Expense count
+	measure Expense_Count =
+		COUNTROWS(Expense)
+		formatString: #,##0
+		displayFolder: Counts
+
+	/// AI-drafted expense ratio
+	measure Pulser_Draft_Rate =
+		DIVIDE(
+			CALCULATE(COUNTROWS(Expense), Expense[IsPulserDraft] = TRUE),
+			[Expense_Count]
+		)
+		formatString: 0.0%
+		displayFolder: AI Metrics
+
+	partition Expense = entity
+		mode: directLake
+		source
+			entityName: hr_expense
+			schemaName: public
+			expressionSource: DatabaseQuery

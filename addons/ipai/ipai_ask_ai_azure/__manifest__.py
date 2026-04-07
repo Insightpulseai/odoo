@@ -3,7 +3,7 @@
 {
     "name": "IPAI Ask AI (Azure OpenAI)",
     "summary": "Systray Ask AI widget backed by Azure OpenAI — no IAP dependency",
-    "version": "19.0.1.0.0",
+    "version": "18.0.1.0.0",
     "category": "Technical",
     "author": "InsightPulse AI",
     "website": "https://insightpulseai.com",

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     "name": "IPAI Front Door Security",
-    "version": "19.0.1.0.0",
+    "version": "18.0.1.0.0",
     "category": "Hidden",
     "summary": "Validates X-Azure-FDID header at the WSGI level to prevent WAF bypass",
     "description": """

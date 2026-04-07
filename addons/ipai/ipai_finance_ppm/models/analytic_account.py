@@ -23,7 +23,7 @@ class AccountAnalyticAccount(models.Model):
         p = self.env["project.project"].browse(project_id)
         if not p.exists():
             return False
-        aa = p.analytic_account_id
+        aa = p.account_id
         if not aa:
             return False
         aa.write({
