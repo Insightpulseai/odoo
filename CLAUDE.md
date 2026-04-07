@@ -174,6 +174,15 @@ Authoritative rule:
 - **GitHub Issues** is the engineering execution backlog.
 - See `ssot/governance/platform-authority-split.yaml`, `ssot/governance/ci-cd-authority-matrix.yaml`, and `ssot/governance/repo-delivery-disposition.yaml`.
 
+### Engineering & Delivery Authority (Option C)
+
+Authoritative rule:
+- **GitHub Actions** remains the default CI authority and the deploy authority for docs/web properties.
+- **Azure DevOps** remains the deploy authority for Odoo, Databricks, and infra lanes requiring environment/service-connection gating.
+- **Azure Boards** is the portfolio/planning system of record.
+- **GitHub Issues** is the engineering execution backlog.
+- See `ssot/governance/platform-authority-split.yaml`, `ssot/governance/ci-cd-authority-matrix.yaml`, and `ssot/governance/repo-delivery-disposition.yaml`.
+
 ---
 
 ## Deep Reference
