@@ -1,6 +1,6 @@
 # InsightPulse AI
 
-Umbrella monorepo for the InsightPulse AI platform: Odoo CE 19 ERP, agent platform, data intelligence, automation workflows, and web surfaces -- all running on Azure.
+Umbrella monorepo for the InsightPulse AI platform: Odoo CE 18 ERP, agent platform, data intelligence, and web surfaces -- all running on Azure.
 
 ## Quick Start
 
@@ -19,7 +19,7 @@ Production: [erp.insightpulseai.com](https://erp.insightpulseai.com)
 | `addons/ipai/` | Custom IPAI Odoo modules (integration bridges) |
 | `agents/` | Agent personas, skills, knowledge bases, workflows |
 | `agent-platform/` | Agent runtime and orchestration engine |
-| `automations/` | n8n workflow definitions |
+| `automations/` | Azure Logic Apps / Functions workflows |
 | `design/` | Shared design tokens and assets |
 | `docs/` | Architecture, runbooks, evidence, guides |
 | `infra/` | Azure IaC, DNS, Databricks bundles |
@@ -32,7 +32,7 @@ Ownership boundaries: [`ssot/repo/ownership-boundaries.yaml`](ssot/repo/ownershi
 
 ## Architecture
 
-Odoo CE 19 is the transactional system of record. Databricks + Unity Catalog is the governed analytics plane. Microsoft Foundry hosts agent applications. Azure Container Apps (behind Azure Front Door) is the runtime surface. Azure DNS provides authoritative DNS; Zoho handles outbound mail.
+Odoo CE 18 is the transactional system of record. Databricks + Unity Catalog is the governed analytics plane. Microsoft Foundry hosts agent applications. Azure Container Apps (behind Azure Front Door) is the runtime surface. Azure DNS provides authoritative DNS; Zoho handles outbound mail.
 
 Details: [`docs/architecture/target-state/UNIFIED.md`](docs/architecture/target-state/UNIFIED.md) | [`docs/architecture/target-state/PLATFORM.md`](docs/architecture/target-state/PLATFORM.md)
 
