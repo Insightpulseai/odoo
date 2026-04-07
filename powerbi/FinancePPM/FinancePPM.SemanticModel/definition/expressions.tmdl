@@ -1,10 +1,10 @@
-/// Direct Lake source — Fabric Mirrored Database
-/// Tables are auto-bound to OneLake delta tables from pg-ipai-odoo mirroring
-/// No M query parameters needed (Direct Lake reads delta files directly)
+/// Odoo PostgreSQL connection parameters
+/// Configure per environment (dev/staging/prod)
+expression OdooServer =
+	"pg-ipai-odoo.postgres.database.azure.com" meta [IsParameterQuery=true, Type="Text", IsParameterQueryRequired=true]
 
-expression DatabaseQuery =
-	let
-		Source = Sql.Database("", "odoo-mirror")
-	in
-		Source
-	meta [IsParameterQuery=false]
+expression OdooDatabase =
+	"odoo" meta [IsParameterQuery=true, Type="Text", IsParameterQueryRequired=true]
+
+expression OdooPort =
+	"5432" meta [IsParameterQuery=true, Type="Text", IsParameterQueryRequired=true]
