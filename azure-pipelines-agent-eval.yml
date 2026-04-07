@@ -1,0 +1,622 @@
+# =============================================================================
+# azure-pipelines-agent-eval.yml — Agent Factory CI/CD Pipeline
+# =============================================================================
+# Automates the full agent lifecycle: sync → eval → gate check → promote.
+#
+# Pipeline stages:
+#   1. Validate    — SSOT schema + dataset integrity
+#   2. Sync        — Push instructions to Foundry agents
+#   3. Eval        — Run G2 retrieval + G3 behavioral evaluations
+#   4. GateCheck   — Aggregate gate status, block on failure
+#   5. Promote     — Promote agents to staging (auto) or production (manual)
+#
+# Triggers: Changes to agent instructions, eval datasets, or SSOT configs.
+# Service connection: ipai-dev-wif (Workload Identity Federation)
+# Pool: ubuntu-latest (hosted)
+# =============================================================================
+
+trigger:
+  branches:
+    include:
+      - main
+  paths:
+    include:
+      - ssot/ai/**
+      - ssot/agents/**
+      - agents/evals/**
+      - scripts/foundry/**
+
+pr:
+  branches:
+    include:
+      - main
+  paths:
+    include:
+      - ssot/ai/**
+      - ssot/agents/**
+      - agents/evals/**
+      - scripts/foundry/**
+
+resources:
+  repositories:
+    - repository: source
+      type: github
+      name: Insightpulseai/odoo
+      endpoint: github-insightpulseai
+      ref: refs/heads/main
+
+variables:
+  - name: pythonVersion
+    value: '3.12'
+  - name: projectEndpoint
+    value: 'https://ipai-copilot-resource.services.ai.azure.com/api/projects/ipai-copilot'
+  # Variable group must contain:
+  #   AZURE_TENANT_ID, AZURE_CLIENT_ID, AZURE_SUBSCRIPTION_ID
+  # (for WIF-based DefaultAzureCredential)
+  - group: ipai-foundry-eval
+
+stages:
+
+  # ===========================================================================
+  # Stage 1: Validate — SSOT schemas + eval dataset integrity
+  # ===========================================================================
+  - stage: Validate
+    displayName: Validate SSOT & Datasets
+    jobs:
+      - job: ValidateSchemas
+        displayName: SSOT schema validation
+        pool:
+          vmImage: ubuntu-latest
+        steps:
+          - checkout: source
+            fetchDepth: 1
+
+          - task: UsePythonVersion@0
+            inputs:
+              versionSpec: $(pythonVersion)
+
+          - script: pip install pyyaml
+            displayName: Install PyYAML
+
+          - script: |
+              set -euo pipefail
+              echo "=== Validating SSOT YAML schemas ==="
+
+              python3 -c "
+              import yaml, sys
+              errors = []
+
+              # Validate agents.yaml
+              with open('ssot/ai/agents.yaml') as f:
+                  agents = yaml.safe_load(f)
+              if 'agents' not in agents:
+                  errors.append('agents.yaml: missing agents key')
+              if 'foundry_project' not in agents:
+                  errors.append('agents.yaml: missing foundry_project key')
+              else:
+                  ep = agents['foundry_project'].get('project_endpoint', '')
+                  if not ep.startswith('https://'):
+                      errors.append(f'agents.yaml: invalid project_endpoint: {ep}')
+
+              # Validate agent-factory-lifecycle.yaml
+              with open('ssot/agents/agent-factory-lifecycle.yaml') as f:
+                  lifecycle = yaml.safe_load(f)
+              if 'gates' not in lifecycle:
+                  errors.append('lifecycle.yaml: missing gates')
+              if 'agent_status' not in lifecycle:
+                  errors.append('lifecycle.yaml: missing agent_status')
+              for agent, status in lifecycle.get('agent_status', {}).items():
+                  if 'stage' not in status:
+                      errors.append(f'lifecycle.yaml: {agent} missing stage')
+                  if 'gates' not in status:
+                      errors.append(f'lifecycle.yaml: {agent} missing gates')
+
+              # Validate knowledge-bindings.yaml exists
+              with open('ssot/agents/knowledge-bindings.yaml') as f:
+                  kb = yaml.safe_load(f)
+              if 'collections' not in kb:
+                  errors.append('knowledge-bindings.yaml: missing collections')
+
+              if errors:
+                  for e in errors:
+                      print(f'FAIL: {e}')
+                  sys.exit(1)
+              else:
+                  print(f'PASS: All SSOT schemas valid')
+                  print(f'  agents: {len(agents.get(\"agents\", {}))}')
+                  print(f'  gates: {len(lifecycle.get(\"gates\", {}))}')
+                  print(f'  collections: {len(kb.get(\"collections\", {}))}')
+              "
+            displayName: Validate SSOT YAML schemas
+
+          - script: |
+              set -euo pipefail
+              echo "=== Validating eval datasets ==="
+
+              python3 -c "
+              import json, sys
+              from pathlib import Path
+
+              datasets_dir = Path('agents/evals/odoo-copilot/datasets')
+              errors = []
+              total = 0
+
+              for f in sorted(datasets_dir.glob('retrieval-*-v1.jsonl')):
+                  count = 0
+                  with open(f) as fh:
+                      for i, line in enumerate(fh, 1):
+                          line = line.strip()
+                          if not line:
+                              continue
+                          try:
+                              obj = json.loads(line)
+                              for field in ('query', 'expected_kb_topic', 'expected_collection', 'ground_truth'):
+                                  if field not in obj:
+                                      errors.append(f'{f.name}:{i} missing {field}')
+                              count += 1
+                          except json.JSONDecodeError as e:
+                              errors.append(f'{f.name}:{i} invalid JSON: {e}')
+                  print(f'  OK: {f.name} — {count} cases')
+                  total += count
+
+              if errors:
+                  for e in errors:
+                      print(f'FAIL: {e}')
+                  sys.exit(1)
+              else:
+                  print(f'\nPASS: {total} retrieval eval cases across {len(list(datasets_dir.glob(\"retrieval-*-v1.jsonl\")))} datasets')
+              "
+            displayName: Validate retrieval eval datasets
+
+          - script: |
+              set -euo pipefail
+              echo "=== Validating foundry_instructions.md ==="
+
+              python3 -c "
+              import sys
+              with open('ssot/ai/foundry_instructions.md') as f:
+                  content = f.read()
+              required_sections = ['Ask Agent Mode', 'Authoring Agent Mode', 'Livechat Agent Mode', 'Transaction Agent Mode']
+              missing = [s for s in required_sections if s not in content]
+              if missing:
+                  print(f'FAIL: foundry_instructions.md missing sections: {missing}')
+                  sys.exit(1)
+              print(f'PASS: foundry_instructions.md has all {len(required_sections)} mode sections')
+              print(f'  Length: {len(content)} chars')
+              "
+            displayName: Validate instruction document
+
+  # ===========================================================================
+  # Stage 2: Sync — Push instructions to Foundry agents
+  # ===========================================================================
+  - stage: Sync
+    displayName: Sync Instructions to Foundry
+    dependsOn: Validate
+    condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
+    jobs:
+      - job: SyncAgents
+        displayName: Register agent versions in Foundry
+        pool:
+          vmImage: ubuntu-latest
+        steps:
+          - checkout: source
+            fetchDepth: 1
+
+          - task: UsePythonVersion@0
+            inputs:
+              versionSpec: $(pythonVersion)
+
+          - script: pip install pyyaml azure-ai-projects azure-identity
+            displayName: Install SDK dependencies
+
+          - task: AzureCLI@2
+            displayName: Sync all agents to Foundry
+            inputs:
+              azureSubscription: azure-ipai
+              scriptType: bash
+              scriptLocation: inlineScript
+              inlineScript: |
+                set -euo pipefail
+                echo "=== Syncing agent instructions to Foundry ==="
+                python3 scripts/foundry/register_agent_v2.py --all 2>&1
+                echo "=== Sync complete ==="
+
+  # ===========================================================================
+  # Stage 3: Eval — Run G2 retrieval + G3 behavioral evaluations
+  # ===========================================================================
+  - stage: Eval
+    displayName: Run Agent Evaluations
+    dependsOn: Sync
+    jobs:
+      - job: RetrievalEval
+        displayName: G2 Retrieval evaluation (LLM judge)
+        pool:
+          vmImage: ubuntu-latest
+        timeoutInMinutes: 30
+        steps:
+          - checkout: source
+            fetchDepth: 1
+
+          - task: UsePythonVersion@0
+            inputs:
+              versionSpec: $(pythonVersion)
+
+          - script: pip install pyyaml azure-ai-projects azure-identity azure-ai-evaluation
+            displayName: Install SDK dependencies
+
+          - task: AzureCLI@2
+            displayName: Run G2 retrieval eval (all agents)
+            inputs:
+              azureSubscription: azure-ipai
+              scriptType: bash
+              scriptLocation: inlineScript
+              inlineScript: |
+                set -euo pipefail
+                echo "=== G2 Retrieval Evaluation ==="
+                python3 scripts/foundry/run_retrieval_eval.py \
+                  --all --cloud-eval 2>&1 | tee g2-retrieval-eval.log
+
+                # Check exit code — script exits 0 even on FAIL, parse output
+                if grep -q "COMBINED G2 RETRIEVAL GATE: FAIL" g2-retrieval-eval.log; then
+                  echo "##vso[task.logissue type=error]G2 Retrieval gate FAILED"
+                  echo "##vso[task.complete result=Failed;]G2 Retrieval FAIL"
+                  exit 1
+                fi
+                echo "G2 Retrieval gate PASSED"
+
+          - task: PublishPipelineArtifact@1
+            condition: always()
+            inputs:
+              targetPath: agents/evals/odoo-copilot/results/
+              artifact: g2-retrieval-results-$(Build.BuildId)
+            displayName: Publish G2 eval results
+
+          - task: PublishPipelineArtifact@1
+            condition: always()
+            inputs:
+              targetPath: g2-retrieval-eval.log
+              artifact: g2-retrieval-log-$(Build.BuildId)
+            displayName: Publish G2 eval log
+
+      - job: BehavioralEval
+        displayName: G3 Behavioral evaluation
+        pool:
+          vmImage: ubuntu-latest
+        timeoutInMinutes: 30
+        steps:
+          - checkout: source
+            fetchDepth: 1
+
+          - task: UsePythonVersion@0
+            inputs:
+              versionSpec: $(pythonVersion)
+
+          - script: pip install pyyaml azure-ai-projects azure-identity
+            displayName: Install SDK dependencies
+
+          - task: AzureCLI@2
+            displayName: Run G3 behavioral eval (all agents)
+            inputs:
+              azureSubscription: azure-ipai
+              scriptType: bash
+              scriptLocation: inlineScript
+              inlineScript: |
+                set -euo pipefail
+                echo "=== G3 Behavioral Evaluation ==="
+
+                FAIL=0
+                for AGENT in ask-agent authoring-agent livechat-agent transaction-agent; do
+                  echo "--- Evaluating $AGENT ---"
+                  python3 scripts/foundry/run_eval_v2.py \
+                    --agent "$AGENT" 2>&1 | tee "g3-eval-${AGENT}.log" || true
+
+                  if grep -q "FAIL" "g3-eval-${AGENT}.log"; then
+                    echo "##vso[task.logissue type=warning]G3 eval issue for $AGENT"
+                    FAIL=1
+                  fi
+                done
+
+                if [ "$FAIL" -eq 1 ]; then
+                  echo "##vso[task.logissue type=error]G3 Behavioral eval had failures"
+                  echo "##vso[task.complete result=Failed;]G3 Behavioral FAIL"
+                  exit 1
+                fi
+                echo "G3 Behavioral eval PASSED (all agents)"
+
+          - task: PublishPipelineArtifact@1
+            condition: always()
+            inputs:
+              targetPath: agents/evals/odoo-copilot/results/
+              artifact: g3-behavioral-results-$(Build.BuildId)
+            displayName: Publish G3 eval results
+
+  # ===========================================================================
+  # Stage 4: GateCheck — Aggregate all gate statuses
+  # ===========================================================================
+  - stage: GateCheck
+    displayName: Gate Aggregation Check
+    dependsOn: Eval
+    jobs:
+      - job: AggregateGates
+        displayName: Check all gates G1-G8
+        pool:
+          vmImage: ubuntu-latest
+        steps:
+          - checkout: source
+            fetchDepth: 1
+
+          - task: UsePythonVersion@0
+            inputs:
+              versionSpec: $(pythonVersion)
+
+          - script: pip install pyyaml
+            displayName: Install PyYAML
+
+          - script: |
+              set -euo pipefail
+              echo "=== Gate Aggregation Check ==="
+
+              python3 -c "
+              import yaml, sys, json
+              from datetime import datetime, timezone
+
+              with open('ssot/agents/agent-factory-lifecycle.yaml') as f:
+                  lifecycle = yaml.safe_load(f)
+
+              agent_status = lifecycle.get('agent_status', {})
+              required_for_staging = ['G1_identity', 'G2_knowledge', 'G3_evaluation',
+                                      'G4_safety', 'G5_observability', 'G7_judge_review']
+
+              all_pass = True
+              report = {'timestamp': datetime.now(timezone.utc).isoformat(), 'agents': {}}
+
+              for agent, status in agent_status.items():
+                  gates = status.get('gates', {})
+                  blocking = status.get('blocking', [])
+                  stage = status.get('stage', 'unknown')
+
+                  agent_pass = True
+                  gate_results = {}
+                  for gate in required_for_staging:
+                      result = gates.get(gate, 'NOT_EVALUATED')
+                      passed = result == 'PASS'
+                      gate_results[gate] = result
+                      if not passed:
+                          agent_pass = False
+
+                  if blocking:
+                      agent_pass = False
+
+                  report['agents'][agent] = {
+                      'stage': stage,
+                      'gates': gate_results,
+                      'blocking': blocking,
+                      'promotion_eligible': agent_pass,
+                  }
+
+                  status_icon = 'PASS' if agent_pass else 'BLOCKED'
+                  print(f'  {agent}: stage={stage} [{status_icon}]')
+                  for g, r in gate_results.items():
+                      marker = 'OK' if r == 'PASS' else 'XX'
+                      print(f'    [{marker}] {g}: {r}')
+                  if blocking:
+                      print(f'    BLOCKING: {blocking}')
+
+                  if not agent_pass:
+                      all_pass = False
+
+              # Write gate report
+              with open('gate-report.json', 'w') as f:
+                  json.dump(report, f, indent=2)
+
+              print()
+              if all_pass:
+                  print('GATE CHECK: ALL AGENTS ELIGIBLE FOR PROMOTION')
+              else:
+                  blocked = [a for a, r in report['agents'].items() if not r['promotion_eligible']]
+                  print(f'GATE CHECK: BLOCKED — {blocked}')
+                  sys.exit(1)
+              "
+            displayName: Aggregate gate status
+
+          - task: PublishPipelineArtifact@1
+            condition: always()
+            inputs:
+              targetPath: gate-report.json
+              artifact: gate-report-$(Build.BuildId)
+            displayName: Publish gate report
+
+  # ===========================================================================
+  # Stage 5: Promote — Update lifecycle YAML (staging auto, production manual)
+  # ===========================================================================
+  - stage: PromoteStaging
+    displayName: Promote to Staging
+    dependsOn: GateCheck
+    condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
+    jobs:
+      - job: UpdateLifecycle
+        displayName: Update agent stage to staging
+        pool:
+          vmImage: ubuntu-latest
+        steps:
+          - checkout: source
+            fetchDepth: 1
+            persistCredentials: true
+
+          - task: UsePythonVersion@0
+            inputs:
+              versionSpec: $(pythonVersion)
+
+          - script: pip install pyyaml
+            displayName: Install PyYAML
+
+          - script: |
+              set -euo pipefail
+              echo "=== Promotion Record ==="
+
+              python3 -c "
+              import yaml, json
+              from datetime import datetime, timezone
+
+              with open('ssot/agents/agent-factory-lifecycle.yaml') as f:
+                  lifecycle = yaml.safe_load(f)
+
+              agent_status = lifecycle.get('agent_status', {})
+              promoted = []
+
+              for agent, status in agent_status.items():
+                  if status.get('stage') == 'internal':
+                      blocking = status.get('blocking', [])
+                      if not blocking:
+                          promoted.append(agent)
+                          print(f'  Would promote: {agent} (internal -> staging)')
+
+              if not promoted:
+                  print('No agents eligible for promotion (all already in staging+)')
+              else:
+                  print(f'\n{len(promoted)} agent(s) eligible for staging promotion')
+                  print('Promotion is recorded in lifecycle YAML on merge.')
+              "
+            displayName: Check promotion eligibility
+
+  # ===========================================================================
+  # Stage 6: Smoke Test — Verify agents respond in staging
+  # ===========================================================================
+  - stage: SmokeTest
+    displayName: Staging Smoke Tests
+    dependsOn: PromoteStaging
+    condition: succeeded()
+    jobs:
+      - job: AgentSmoke
+        displayName: Smoke test all agents
+        pool:
+          vmImage: ubuntu-latest
+        timeoutInMinutes: 10
+        steps:
+          - checkout: source
+            fetchDepth: 1
+
+          - task: UsePythonVersion@0
+            inputs:
+              versionSpec: $(pythonVersion)
+
+          - script: pip install pyyaml azure-ai-projects azure-identity
+            displayName: Install SDK dependencies
+
+          - task: AzureCLI@2
+            displayName: Run agent smoke tests
+            inputs:
+              azureSubscription: azure-ipai
+              scriptType: bash
+              scriptLocation: inlineScript
+              inlineScript: |
+                set -euo pipefail
+                echo "=== Agent Smoke Tests ==="
+
+                python3 -c "
+                import sys, time
+                from azure.ai.projects import AIProjectClient
+                from azure.identity import DefaultAzureCredential
+
+                PROJECT_ENDPOINT = '$(projectEndpoint)'
+                AGENTS = ['ask-agent', 'authoring-agent', 'livechat-agent', 'transaction-agent']
+                SMOKE_QUERIES = {
+                    'ask-agent': 'What is the chart of accounts structure in Odoo 18?',
+                    'authoring-agent': 'Draft a short summary of Odoo month-end close process.',
+                    'livechat-agent': 'What ERP system does your company use?',
+                    'transaction-agent': 'What fields are required for an account.move record?',
+                }
+
+                project = AIProjectClient(
+                    endpoint=PROJECT_ENDPOINT,
+                    credential=DefaultAzureCredential(),
+                )
+                openai = project.get_openai_client()
+
+                passed = 0
+                failed = 0
+
+                for agent in AGENTS:
+                    query = SMOKE_QUERIES.get(agent, 'Hello')
+                    print(f'\n--- {agent} ---')
+                    print(f'  Query: {query[:60]}...')
+                    try:
+                        start = time.monotonic()
+                        conv = openai.conversations.create()
+                        resp = openai.responses.create(
+                            conversation=conv.id,
+                            extra_body={'agent_reference': {'name': agent, 'type': 'agent_reference'}},
+                            input=query,
+                        )
+                        elapsed = int((time.monotonic() - start) * 1000)
+
+                        # Extract response
+                        text = ''
+                        if hasattr(resp, 'output') and resp.output:
+                            for item in resp.output:
+                                if hasattr(item, 'content'):
+                                    for c in item.content:
+                                        if hasattr(c, 'text'):
+                                            text += c.text
+                        elif hasattr(resp, 'output_text'):
+                            text = resp.output_text
+
+                        if len(text) > 50:
+                            print(f'  Response: {text[:100]}...')
+                            print(f'  Latency: {elapsed}ms')
+                            print(f'  PASS')
+                            passed += 1
+                        else:
+                            print(f'  Response too short: {text!r}')
+                            print(f'  FAIL')
+                            failed += 1
+
+                    except Exception as e:
+                        print(f'  Error: {str(e)[:120]}')
+                        print(f'  FAIL')
+                        failed += 1
+
+                print(f'\n=== Smoke Test Results: {passed} PASS, {failed} FAIL ===')
+                if failed > 0:
+                    sys.exit(1)
+                "
+
+  # ===========================================================================
+  # Stage 7: Production Gate — Manual approval required
+  # ===========================================================================
+  - stage: PromoteProduction
+    displayName: Promote to Production (Manual)
+    dependsOn: SmokeTest
+    condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
+    jobs:
+      - deployment: ProductionPromotion
+        displayName: Production promotion (requires approval)
+        pool:
+          vmImage: ubuntu-latest
+        environment: production  # Azure DevOps environment with approval gate
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - checkout: source
+                  fetchDepth: 1
+
+                - task: UsePythonVersion@0
+                  inputs:
+                    versionSpec: $(pythonVersion)
+
+                - script: pip install pyyaml
+                  displayName: Install PyYAML
+
+                - script: |
+                    set -euo pipefail
+                    echo "=== Production Promotion Record ==="
+                    echo "Build: $(Build.BuildId)"
+                    echo "Commit: $(Build.SourceVersion)"
+                    echo "Date: $(date -u +%Y-%m-%dT%H:%M:%SZ)"
+                    echo ""
+                    echo "All gates passed. Smoke tests passed."
+                    echo "Agents promoted to production by pipeline approval."
+                    echo ""
+                    echo "Rollback: revert to previous agent version via register_agent_v2.py"
+                  displayName: Record production promotion
