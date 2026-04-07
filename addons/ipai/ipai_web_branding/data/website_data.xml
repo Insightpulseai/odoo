@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2026 InsightPulse AI
+     License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl.html).
+
+     Production website identity — replaces all CMS placeholder data.
+-->
+<odoo noupdate="1">
+
+    <!-- Update website name -->
+    <record id="website.default_website" model="website">
+        <field name="name">InsightPulse AI</field>
+    </record>
+
+</odoo>

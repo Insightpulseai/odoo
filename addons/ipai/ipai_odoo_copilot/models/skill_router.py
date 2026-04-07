@@ -43,7 +43,8 @@ INTENT_RULES = [
         r"generate.*model", r"manifest",
     ], 85),
     ("odoo_docs_explainer", [
-        r"how\s*(does|do|to)", r"explain", r"what\s*is",
+        r"how\s*(does|do|to)", r"explain",
+        r"what\s*is\s*(a|an|the)?\s*(model|field|view|action|module|mixin|widget|record|orm)",
         r"document", r"reference", r"api\s*(for|of)",
         r"odoo\s*(19|18|17)", r"owl", r"qweb",
     ], 70),
@@ -55,12 +56,12 @@ INTENT_RULES = [
         r"revenue.*trend", r"monthly.*report",
     ], 75),
 
-    # Write proposals
+    # Write proposals — must beat read-oriented finance_qa (80)
     ("propose_write", [
         r"create\s*(a|an|new)", r"update\s*(the|this|record)",
         r"change\s*(the|this)", r"set\s*(the|this)",
         r"approve", r"confirm", r"cancel",
-    ], 60),
+    ], 82),
 
     # General search / read
     ("search_docs", [
