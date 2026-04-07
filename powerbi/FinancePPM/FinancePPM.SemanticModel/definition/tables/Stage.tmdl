@@ -45,14 +45,9 @@ table Stage
 		)
 		displayFolder: Classification
 
-	partition Stage = m
-		mode: import
-		source =
-			let
-				Source = PostgreSQL.Database(OdooServer & ":" & OdooPort, OdooDatabase),
-				project_task_type = Source{[Schema="public", Item="project_task_type"]}[Data],
-				SelectedColumns = Table.SelectColumns(project_task_type, {
-					"id", "name", "sequence", "fold"
-				})
-			in
-				SelectedColumns
+	partition Stage = entity
+		mode: directLake
+		source
+			entityName: project_task_type
+			schemaName: public
+			expressionSource: DatabaseQuery

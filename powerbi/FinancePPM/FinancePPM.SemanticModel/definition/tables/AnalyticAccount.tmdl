@@ -46,15 +46,9 @@ table AnalyticAccount
 		formatString: ₱#,##0.00
 		displayFolder: Budget
 
-	partition AnalyticAccount = m
-		mode: import
-		source =
-			let
-				Source = PostgreSQL.Database(OdooServer & ":" & OdooPort, OdooDatabase),
-				account_analytic_account = Source{[Schema="public", Item="account_analytic_account"]}[Data],
-				SelectedColumns = Table.SelectColumns(account_analytic_account, {
-					"id", "name", "plan_id",
-					"ipai_ppm_budget_amount", "ipai_ppm_budget_source_project_id"
-				})
-			in
-				SelectedColumns
+	partition AnalyticAccount = entity
+		mode: directLake
+		source
+			entityName: account_analytic_account
+			schemaName: public
+			expressionSource: DatabaseQuery

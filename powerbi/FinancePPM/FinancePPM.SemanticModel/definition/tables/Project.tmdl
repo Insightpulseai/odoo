@@ -87,17 +87,9 @@ table Project
 		formatString: ₱#,##0.00
 		displayFolder: Budget
 
-	partition Project = m
-		mode: import
-		source =
-			let
-				Source = PostgreSQL.Database(OdooServer & ":" & OdooPort, OdooDatabase),
-				project_project = Source{[Schema="public", Item="project_project"]}[Data],
-				SelectedColumns = Table.SelectColumns(project_project, {
-					"id", "name", "active", "company_id", "account_id",
-					"ipai_ppm_budget_amount", "ipai_ppm_cost_center",
-					"ipai_ppm_import_batch_id", "ipai_ppm_import_source",
-					"ipai_ppm_imported_at"
-				})
-			in
-				SelectedColumns
+	partition Project = entity
+		mode: directLake
+		source
+			entityName: project_project
+			schemaName: public
+			expressionSource: DatabaseQuery
