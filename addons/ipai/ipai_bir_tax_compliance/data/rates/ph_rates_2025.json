@@ -8,128 +8,350 @@
     "standard_rate": 0.12,
     "zero_rated_exports": 0.00,
     "vat_exempt": 0.00,
+    "digital_services_rate": 0.12,
     "registration_threshold": 3000000,
-    "notes": "Standard 12% VAT rate since 2006. Zero-rated for exports. Exempt for basic necessities."
+    "notes": "Standard 12% VAT (NIRC Sec. 106-108). Zero-rated for exports (Sec. 106(A)(2)). Digital services VAT per RA 12023, effective 2025, IRR: RR 3-2025."
+  },
+
+  "percentage_tax": {
+    "standard_rate": 0.03,
+    "applicability": "Non-VAT registered persons with gross annual sales ≤ PHP 3,000,000",
+    "notes": "3% percentage tax (Sec. 116 NIRC). Temporary 1% rate under CREATE expired June 30, 2023; reverted to statutory 3%."
   },
 
   "expanded_withholding_tax": {
-    "W010": {
-      "code": "W010",
-      "description": "Professional fees - individuals",
+    "WI010": {
+      "code": "WI010",
+      "description": "Professional fees - individuals (VAT-registered or gross income > PHP 3M)",
       "rate": 0.10,
       "base": "gross",
       "atc_category": "Professional fees",
-      "notes": "10% of gross professional fees for individuals"
+      "notes": "10% EWT per RR 11-2018, as amended by RR 14-2018"
     },
-    "W020": {
-      "code": "W020",
-      "description": "Professional fees - juridical",
+    "WI011": {
+      "code": "WI011",
+      "description": "Professional fees - individuals (non-VAT, gross income ≤ PHP 3M)",
+      "rate": 0.05,
+      "base": "gross",
+      "atc_category": "Professional fees",
+      "notes": "5% EWT for non-VAT individuals below threshold. RR 11-2018."
+    },
+    "WI020": {
+      "code": "WI020",
+      "description": "Professional fees - juridical persons",
       "rate": 0.10,
       "base": "gross",
       "atc_category": "Professional fees",
-      "notes": "10% of gross professional fees for corporations"
+      "notes": "10% EWT per RR 11-2018"
     },
-    "W030": {
-      "code": "W030",
+    "WI030": {
+      "code": "WI030",
       "description": "Professional fees - medical practitioners",
       "rate": 0.10,
       "base": "gross",
       "atc_category": "Professional fees",
-      "notes": "10% of gross professional fees for doctors, dentists, etc."
+      "notes": "10% EWT for doctors, dentists, etc."
     },
-    "W040": {
-      "code": "W040",
-      "description": "Professional fees - lawyers",
+    "WI040": {
+      "code": "WI040",
+      "description": "Bookkeeping agents and agencies - individuals",
       "rate": 0.10,
       "base": "gross",
       "atc_category": "Professional fees",
-      "notes": "10% of gross professional fees for lawyers"
+      "notes": "10% EWT per RR 11-2018"
     },
-    "W050": {
-      "code": "W050",
-      "description": "Professional entertainers",
+    "WI050": {
+      "code": "WI050",
+      "description": "Bookkeeping agents and agencies - juridical",
       "rate": 0.10,
       "base": "gross",
       "atc_category": "Professional fees",
-      "notes": "10% of gross receipts for entertainers"
+      "notes": "10% EWT per RR 11-2018"
     },
-    "W157": {
-      "code": "W157",
-      "description": "Income payments to suppliers",
-      "rate": 0.01,
+    "WI100": {
+      "code": "WI100",
+      "description": "Management and technical consultancy fees - individuals",
+      "rate": 0.10,
+      "base": "gross",
+      "atc_category": "Professional fees",
+      "notes": "10% EWT per RR 11-2018"
+    },
+    "WI110": {
+      "code": "WI110",
+      "description": "Management and technical consultancy fees - juridical",
+      "rate": 0.10,
+      "base": "gross",
+      "atc_category": "Professional fees",
+      "notes": "10% EWT per RR 11-2018"
+    },
+    "WI120": {
+      "code": "WI120",
+      "description": "Directors' fees",
+      "rate": 0.10,
+      "base": "gross",
+      "atc_category": "Professional fees",
+      "notes": "10% EWT per RR 11-2018"
+    },
+    "WI160": {
+      "code": "WI160",
+      "description": "Marketing agents / independent contractors - individuals",
+      "rate": 0.10,
+      "base": "gross",
+      "atc_category": "Professional fees",
+      "notes": "10% EWT per RR 11-2018"
+    },
+    "WI500": {
+      "code": "WI500",
+      "description": "Tolling fees",
+      "rate": 0.05,
       "base": "gross",
       "atc_category": "Income payments",
-      "notes": "1% creditable withholding on goods"
+      "notes": "5% EWT per RR 11-2018"
     },
-    "W158": {
-      "code": "W158",
-      "description": "Income payments to suppliers",
+    "WI640": {
+      "code": "WI640",
+      "description": "Income distribution to beneficiaries of estates/trusts",
+      "rate": 0.15,
+      "base": "gross",
+      "atc_category": "Income payments",
+      "notes": "15% EWT per RR 11-2018"
+    },
+    "WC010": {
+      "code": "WC010",
+      "description": "Income payments to contractors - individuals",
       "rate": 0.02,
       "base": "gross",
-      "atc_category": "Income payments",
-      "notes": "2% creditable withholding on services"
+      "atc_category": "Contractor payments",
+      "notes": "2% EWT per RR 11-2018"
     },
-    "W161": {
-      "code": "W161",
-      "description": "Professional fees - commission agents",
+    "WC020": {
+      "code": "WC020",
+      "description": "Income payments to contractors - juridical",
+      "rate": 0.02,
+      "base": "gross",
+      "atc_category": "Contractor payments",
+      "notes": "2% EWT per RR 11-2018"
+    },
+    "WC040": {
+      "code": "WC040",
+      "description": "Income payments to customs brokers - individuals",
       "rate": 0.10,
       "base": "gross",
-      "atc_category": "Professional fees",
-      "notes": "10% on commissions paid to agents"
+      "atc_category": "Contractor payments",
+      "notes": "10% EWT per RR 11-2018"
     },
-    "W169": {
-      "code": "W169",
-      "description": "Rent - real property",
+    "WC050": {
+      "code": "WC050",
+      "description": "Income payments to customs brokers - juridical",
+      "rate": 0.10,
+      "base": "gross",
+      "atc_category": "Contractor payments",
+      "notes": "10% EWT per RR 11-2018"
+    },
+    "WC100": {
+      "code": "WC100",
+      "description": "Commissions - individuals",
+      "rate": 0.10,
+      "base": "gross",
+      "atc_category": "Contractor payments",
+      "notes": "10% EWT per RR 11-2018"
+    },
+    "WC110": {
+      "code": "WC110",
+      "description": "Commissions - juridical",
+      "rate": 0.10,
+      "base": "gross",
+      "atc_category": "Contractor payments",
+      "notes": "10% EWT per RR 11-2018"
+    },
+    "WC120": {
+      "code": "WC120",
+      "description": "Sub-contractors (of general engineering/building contractors)",
+      "rate": 0.02,
+      "base": "gross",
+      "atc_category": "Contractor payments",
+      "notes": "2% EWT per RR 11-2018"
+    },
+    "WC160": {
+      "code": "WC160",
+      "description": "Payments to partners of general professional partnerships",
+      "rate": 0.15,
+      "base": "gross",
+      "atc_category": "Contractor payments",
+      "notes": "10% or 15% depending on partnership structure. RR 11-2018."
+    },
+    "WC600": {
+      "code": "WC600",
+      "description": "Government money payments to suppliers - goods",
+      "rate": 0.01,
+      "base": "gross",
+      "atc_category": "Government payments",
+      "notes": "1% EWT on government procurement of goods. RR 11-2018."
+    },
+    "WC610": {
+      "code": "WC610",
+      "description": "Government money payments to suppliers - services",
+      "rate": 0.02,
+      "base": "gross",
+      "atc_category": "Government payments",
+      "notes": "2% EWT on government procurement of services. RR 11-2018."
+    },
+    "WC620": {
+      "code": "WC620",
+      "description": "Government money payments - purchase of agricultural products",
+      "rate": 0.01,
+      "base": "gross",
+      "atc_category": "Government payments",
+      "notes": "1% EWT per RR 11-2018"
+    },
+    "WB010": {
+      "code": "WB010",
+      "description": "Rentals - real property (individuals)",
       "rate": 0.05,
       "base": "gross",
       "atc_category": "Rent",
-      "notes": "5% on rental payments for real property"
+      "notes": "5% EWT on rental payments for real property. RR 11-2018."
     },
-    "W170": {
-      "code": "W170",
-      "description": "Rent - personal property",
+    "WB020": {
+      "code": "WB020",
+      "description": "Rentals - real property (juridical)",
       "rate": 0.05,
       "base": "gross",
       "atc_category": "Rent",
-      "notes": "5% on rental payments for personal property"
+      "notes": "5% EWT on rental payments for real property. RR 11-2018."
+    },
+    "WB050": {
+      "code": "WB050",
+      "description": "Rentals - personal property (above PHP 10,000/year)",
+      "rate": 0.05,
+      "base": "gross",
+      "atc_category": "Rent",
+      "notes": "5% EWT on rental payments for personal property > PHP 10K/yr. RR 11-2018."
     }
   },
 
   "final_withholding_tax": {
-    "F001": {
-      "code": "F001",
-      "description": "Interest on bank deposits",
-      "rate": 0.20,
-      "base": "gross",
-      "notes": "20% final tax on interest income from bank deposits"
+    "resident": {
+      "F001": {
+        "code": "F001",
+        "description": "Interest on bank deposits",
+        "rate": 0.20,
+        "base": "gross",
+        "notes": "20% FWT. Sec. 24(B)(1) NIRC."
+      },
+      "F002": {
+        "code": "F002",
+        "description": "Cash dividends from domestic corporations (to individuals)",
+        "rate": 0.10,
+        "base": "gross",
+        "notes": "10% FWT. Sec. 24(B)(2) NIRC as amended by RA 10963 (TRAIN)."
+      },
+      "F003": {
+        "code": "F003",
+        "description": "Stock dividends from domestic corporations",
+        "rate": 0.10,
+        "base": "fair_market_value",
+        "notes": "10% FWT on FMV. Sec. 24(B)(2) NIRC."
+      },
+      "F004": {
+        "code": "F004",
+        "description": "Royalties - general",
+        "rate": 0.20,
+        "base": "gross",
+        "notes": "20% FWT. Sec. 24(B)(1) NIRC."
+      },
+      "F004A": {
+        "code": "F004A",
+        "description": "Royalties - books, literary works, musical compositions",
+        "rate": 0.10,
+        "base": "gross",
+        "notes": "10% FWT. Sec. 24(B)(1) NIRC."
+      },
+      "F005": {
+        "code": "F005",
+        "description": "Prizes exceeding PHP 10,000",
+        "rate": 0.20,
+        "base": "gross",
+        "notes": "20% FWT. Sec. 24(B)(1) NIRC."
+      },
+      "F006": {
+        "code": "F006",
+        "description": "PCSO/lotto winnings exceeding PHP 10,000",
+        "rate": 0.20,
+        "base": "gross",
+        "notes": "20% FWT. Sec. 24(B)(1) NIRC as amended by TRAIN."
+      },
+      "F007": {
+        "code": "F007",
+        "description": "Fringe benefits (managerial/supervisory employees)",
+        "rate": 0.35,
+        "base": "grossed_up_monetary_value",
+        "notes": "35% FWT. Sec. 33(A) NIRC as amended by TRAIN."
+      }
     },
-    "F002": {
-      "code": "F002",
-      "description": "Cash dividends",
-      "rate": 0.10,
-      "base": "gross",
-      "notes": "10% final tax on cash dividends from domestic corporations"
+    "non_resident": {
+      "NR001": {
+        "code": "NR001",
+        "description": "NRFC - gross income from PH sources (general)",
+        "rate": 0.25,
+        "base": "gross",
+        "notes": "25% FWT. Sec. 28(B)(1) NIRC as amended by RA 11534 (CREATE). Reduced from 30%."
+      },
+      "NR002": {
+        "code": "NR002",
+        "description": "NRFC - dividends from domestic corporations",
+        "rate": 0.25,
+        "base": "gross",
+        "notes": "25% FWT. Sec. 28(B)(5)(b) NIRC as amended by CREATE."
+      },
+      "NR003": {
+        "code": "NR003",
+        "description": "NRFC - interest on loans",
+        "rate": 0.20,
+        "base": "gross",
+        "notes": "20% FWT. Sec. 28(B)(5)(a) NIRC."
+      },
+      "NR004": {
+        "code": "NR004",
+        "description": "NRFC - royalties",
+        "rate": 0.25,
+        "base": "gross",
+        "notes": "25% FWT. Sec. 28(B)(1) NIRC as amended by CREATE."
+      },
+      "NR005": {
+        "code": "NR005",
+        "description": "NRFC - rentals and charter fees",
+        "rate": 0.25,
+        "base": "gross",
+        "notes": "25% FWT. Sec. 28(B)(1) NIRC as amended by CREATE."
+      },
+      "NR010": {
+        "code": "NR010",
+        "description": "NRANETB - gross income from PH sources (general)",
+        "rate": 0.25,
+        "base": "gross",
+        "notes": "25% FWT. Sec. 25(B) NIRC."
+      },
+      "NR011": {
+        "code": "NR011",
+        "description": "NRANETB - capital gains on shares",
+        "rate": 0.15,
+        "base": "net_capital_gains",
+        "notes": "15% FWT. Sec. 25(B) NIRC."
+      }
+    }
+  },
+
+  "capital_gains_tax": {
+    "real_property": {
+      "rate": 0.06,
+      "base": "gross_selling_price_or_fmv_whichever_higher",
+      "notes": "6% CGT. Sec. 24(D) NIRC as amended by TRAIN."
     },
-    "F003": {
-      "code": "F003",
-      "description": "Stock dividends",
-      "rate": 0.10,
-      "base": "fair_market_value",
-      "notes": "10% final tax on stock dividends based on FMV"
-    },
-    "F004": {
-      "code": "F004",
-      "description": "Royalties",
-      "rate": 0.20,
-      "base": "gross",
-      "notes": "20% final tax on royalty income"
-    },
-    "F005": {
-      "code": "F005",
-      "description": "Prizes over PHP 10,000",
-      "rate": 0.20,
-      "base": "gross",
-      "notes": "20% final tax on prizes exceeding PHP 10,000"
+    "shares_not_traded": {
+      "rate": 0.15,
+      "base": "net_capital_gains",
+      "notes": "15% CGT. Sec. 24(C) NIRC as amended by TRAIN."
     }
   },
 
@@ -182,23 +404,134 @@
         "description": "PHP 2,202,500 + 35% over PHP 8,000,000"
       }
     ],
-    "notes": "TRAIN Law graduated tax rates for individual compensation income (RA 10963)"
+    "notes": "TRAIN Law graduated tax rates effective January 1, 2023 onward. Sec. 24(A)(2)(b) NIRC as amended by RA 10963."
   },
 
   "corporate_income_tax": {
     "standard_rate": 0.25,
-    "minimum_corporate_income_tax": 0.02,
-    "notes": "25% regular corporate income tax or 2% MCIT, whichever is higher (CREATE Law)"
+    "sme_rate": 0.20,
+    "sme_threshold_income": 5000000,
+    "sme_threshold_assets": 100000000,
+    "minimum_corporate_income_tax": 0.01,
+    "proprietary_edu_nonprofit_hospital_rate": 0.10,
+    "rbe_special_rate": 0.05,
+    "nrfc_rate": 0.25,
+    "notes": "25% regular CIT (Sec. 27(A) NIRC, RA 11534 CREATE). 20% for SMEs (income ≤ PHP 5M AND assets ≤ PHP 100M excl. land). MCIT permanently 1% per RA 12066 (CREATE MORE). NRFC reduced from 30% to 25% by CREATE."
+  },
+
+  "special_taxes": {
+    "stock_transaction_tax": 0.006,
+    "documentary_stamp_tax_notes": "Varies by instrument type. Sec. 173-199 NIRC.",
+    "amusement_tax": 0.10
+  },
+
+  "filing_deadlines": {
+    "BIR_2550M": {
+      "form": "2550M",
+      "description": "Monthly VAT Declaration",
+      "frequency": "monthly",
+      "deadline_rule": "25th of the following month"
+    },
+    "BIR_2550Q": {
+      "form": "2550Q",
+      "description": "Quarterly VAT Return",
+      "frequency": "quarterly",
+      "deadline_rule": "25th of the month following the close of the quarter"
+    },
+    "BIR_2551Q": {
+      "form": "2551Q",
+      "description": "Quarterly Percentage Tax Return",
+      "frequency": "quarterly",
+      "deadline_rule": "25th of the month following the close of the quarter"
+    },
+    "BIR_1601E": {
+      "form": "1601-E",
+      "description": "Monthly Remittance of Expanded Withholding Tax",
+      "frequency": "monthly",
+      "deadline_rule": "10th of the following month (non-quarter-end months only)"
+    },
+    "BIR_1601EQ": {
+      "form": "1601-EQ",
+      "description": "Quarterly Remittance of Expanded Withholding Tax",
+      "frequency": "quarterly",
+      "deadline_rule": "Last day of the month following the close of the quarter"
+    },
+    "BIR_1601F": {
+      "form": "1601-F",
+      "description": "Monthly Remittance of Final Withholding Tax",
+      "frequency": "monthly",
+      "deadline_rule": "10th of the following month (non-quarter-end months only)"
+    },
+    "BIR_1601FQ": {
+      "form": "1601-FQ",
+      "description": "Quarterly Remittance of Final Withholding Tax",
+      "frequency": "quarterly",
+      "deadline_rule": "Last day of the month following the close of the quarter"
+    },
+    "BIR_1702Q": {
+      "form": "1702Q",
+      "description": "Quarterly Income Tax Return (corporations)",
+      "frequency": "quarterly",
+      "deadline_rule": "60 days after close of each quarter"
+    },
+    "BIR_1702": {
+      "form": "1702",
+      "description": "Annual Income Tax Return (corporations)",
+      "frequency": "annual",
+      "deadline_rule": "15th day of the 4th month following close of taxable year"
+    },
+    "BIR_2307": {
+      "form": "2307",
+      "description": "Certificate of Creditable Tax Withheld at Source",
+      "frequency": "per_transaction",
+      "deadline_rule": "Issued to payee within 20 days from end of month"
+    },
+    "BIR_2316": {
+      "form": "2316",
+      "description": "Certificate of Compensation Payment/Tax Withheld (annual)",
+      "frequency": "annual",
+      "deadline_rule": "January 31 of the following year"
+    },
+    "BIR_1604E": {
+      "form": "1604-E",
+      "description": "Annual Information Return of Creditable Income Taxes Withheld (Expanded)",
+      "frequency": "annual",
+      "deadline_rule": "March 1 of the following year"
+    },
+    "BIR_1604F": {
+      "form": "1604-F",
+      "description": "Annual Information Return of Final Withholding Taxes",
+      "frequency": "annual",
+      "deadline_rule": "January 31 of the following year"
+    }
   },
 
   "metadata": {
     "source": "Bureau of Internal Revenue (BIR)",
     "legal_basis": [
-      "TRAIN Law (RA 10963) - 2018",
-      "CREATE Law (RA 11534) - 2021",
-      "NIRC Section 24, 25, 27, 28, 57"
+      "NIRC (RA 8424) - 1997 (base tax code)",
+      "TRAIN Law (RA 10963) - 2017 (individual tax, VAT threshold, excise)",
+      "CREATE Law (RA 11534) - 2021 (CIT reduction, MCIT, fiscal incentives)",
+      "CREATE MORE Act (RA 12066) - 2024 (permanent 1% MCIT, enhanced RBE incentives)",
+      "VAT on Digital Services Act (RA 12023) - 2024 (12% VAT on non-resident DSPs)",
+      "RR 11-2018 (EWT implementation of TRAIN)",
+      "RR 14-2018 (EWT amendments)",
+      "RR 3-2025 (Digital services VAT IRR)",
+      "RR 7-2024 (Updated SLSP format)"
     ],
-    "last_updated": "2025-01-21",
-    "version": "2025.1"
+    "last_updated": "2026-04-07",
+    "version": "2025.2",
+    "breaking_changes_from_2025_1": [
+      "MCIT corrected from 2% to 1% per RA 12066 (CREATE MORE)",
+      "ATC codes migrated from short-form (W010) to BIR official format (WI010) per RR 11-2018 Annex",
+      "Added 5% professional fee tier (WI011) for non-VAT individuals ≤ PHP 3M",
+      "Added non-resident FWT rates (NRFC 25% per CREATE, previously 30%)",
+      "Added percentage tax (3%, reverted from temporary 1%)",
+      "Added digital services VAT (12%, RA 12023)",
+      "Added filing deadlines section",
+      "Added capital gains tax section",
+      "Restructured FWT into resident and non_resident subsections",
+      "Added CIT detail: SME rate (20%), RBE special rate (5%), NRFC rate (25%)"
+    ]
   }
 }
