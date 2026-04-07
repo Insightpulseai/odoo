@@ -1,0 +1,54 @@
+/// Dimension: Analytic accounts with synced budget data
+/// Source: account_analytic_account + ipai_ppm fields
+table AnalyticAccount
+	lineageTag: a1b2c3d4-0004-0001-0001-000000000001
+
+	column AnalyticAccountID
+		dataType: int64
+		isKey: true
+		sourceColumn: id
+		summarizeBy: none
+		lineageTag: a1b2c3d4-0004-0001-0001-100000000001
+
+	column AccountName
+		dataType: string
+		sourceColumn: name
+		summarizeBy: none
+		lineageTag: a1b2c3d4-0004-0001-0001-100000000002
+
+	column SyncedBudget
+		dataType: decimal
+		sourceColumn: ipai_ppm_budget_amount
+		summarizeBy: sum
+		formatString: ₱#,##0.00
+		lineageTag: a1b2c3d4-0004-0001-0001-100000000003
+
+	column SourceProjectID
+		dataType: int64
+		sourceColumn: ipai_ppm_budget_source_project_id
+		summarizeBy: none
+		isHidden
+		lineageTag: a1b2c3d4-0004-0001-0001-100000000004
+
+	column PlanID
+		dataType: int64
+		sourceColumn: plan_id
+		summarizeBy: none
+		isHidden
+		lineageTag: a1b2c3d4-0004-0001-0001-100000000005
+
+	/// Budget sync status
+	measure Budget_Sync_Variance =
+		VAR __project_budget = SUM(Project[BudgetAmount])
+		VAR __synced_budget = SUM(AnalyticAccount[SyncedBudget])
+		RETURN
+			__project_budget - __synced_budget
+		formatString: ₱#,##0.00
+		displayFolder: Budget
+
+	partition AnalyticAccount = entity
+		mode: directLake
+		source
+			entityName: account_analytic_account
+			schemaName: public
+			expressionSource: DatabaseQuery

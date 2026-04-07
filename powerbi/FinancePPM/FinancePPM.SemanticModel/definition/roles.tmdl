@@ -1,0 +1,6 @@
+/// Row-Level Security: restrict by cost center
+role CostCenterManager
+	modelPermission: read
+
+	tablePermission Project =
+		Project[CostCenter] = USERPRINCIPALNAME()

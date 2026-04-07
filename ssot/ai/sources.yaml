@@ -1,28 +1,57 @@
-# SSOT: AI Knowledge Sources
-# Data sources available for knowledge grounding.
-# Cross-referenced by: agents.yaml (source_refs)
+# SSOT: Knowledge Source Definitions
+# Defines source_refs used by agents in agents.yaml.
+# Cross-references: knowledge-bindings.yaml (collection definitions),
+#   g2-knowledge-binding-evidence.yaml (binding evidence)
+# Updated: 2026-04-06
+
+version: 1
+artifact: knowledge_sources
+
+# ---------------------------------------------------------------------------
+# Source definitions
+# ---------------------------------------------------------------------------
 
 sources:
+
   source-odoo-knowledge:
-    label: Odoo Knowledge Base
-    type: azure-ai-search
     description: >
-      Azure AI Search index containing Odoo documentation,
-      module help text, process descriptions, and company policies.
-    connection_config_param: ipai_odoo_copilot.foundry_search_connection
-    index_config_param: ipai_odoo_copilot.foundry_search_index
-    content_types:
-      - odoo-module-docs
-      - company-policies
-      - process-guides
-      - faq
-    refresh_strategy: manual   # v1: manual index updates
-    citation_format: >
-      When citing from this source, include the document title
-      and section. Format: [Source: <title> § <section>]
-    status: planned            # index not yet provisioned
-    used_by:
-      - ask-agent
-      - authoring-agent
-      - livechat-agent
-      - transaction-agent
+      Odoo-domain knowledge collections for ERP copilot agents.
+      Covers Odoo CE 18 documentation, OCA modules, module governance,
+      database administration, BIR/PH tax compliance, finance domain,
+      and platform architecture.
+    search_service: srch-ipai-dev
+    search_index: ipai-knowledge-index
+    embedding_model: text-embedding-3-small
+    retrieval_mode: hybrid  # semantic + keyword
+    collections:
+      # Core Odoo
+      - id: odoo_18_docs
+        scope: Odoo CE 18 official documentation
+        agents: [ask-agent, authoring-agent, livechat-agent, transaction-agent]
+      - id: oca_18_inventory
+        scope: OCA module inventory for Odoo 18
+        agents: [ask-agent, authoring-agent, transaction-agent]
+      - id: repo_module_doctrine
+        scope: IPAI module governance and naming conventions
+        agents: [ask-agent, authoring-agent, livechat-agent, transaction-agent]
+      # Infrastructure
+      - id: postgres_admin
+        scope: PostgreSQL 16 administration and performance
+        agents: [ask-agent, transaction-agent]
+      - id: local_platform_ssot
+        scope: Platform architecture, deployment, and governance
+        agents: [ask-agent, authoring-agent, livechat-agent, transaction-agent]
+      # Compliance & Finance
+      - id: bir_compliance
+        scope: Philippine BIR tax compliance requirements
+        agents: [ask-agent, authoring-agent, livechat-agent, transaction-agent]
+      - id: tax_guru_ph
+        scope: PH tax withholding codes and computation rules
+        agents: [transaction-agent]
+      - id: finance_domain
+        scope: Finance operations (AP, close, reconciliation, expense)
+        agents: [authoring-agent, transaction-agent]
+      # Visitor-facing (livechat)
+      - id: company_info
+        scope: Company overview, products, services, contact information
+        agents: [livechat-agent]
