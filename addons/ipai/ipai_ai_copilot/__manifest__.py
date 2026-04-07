@@ -1,6 +1,6 @@
 {
     "name": "IPAI AI Copilot",
-    "version": "19.0.1.0.0",
+    "version": "18.0.1.0.0",
     "summary": "DEPRECATED — Legacy Gemini/Supabase AI copilot bridge (superseded by ipai_odoo_copilot)",
     "description": """
         DEPRECATED as of 2026-03-13 (C-30).

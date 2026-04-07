@@ -1,0 +1,38 @@
+[2026-04-01T08:54:56Z] === Entra PIM Configuration — SAP Benchmark #644 ===
+[2026-04-01T08:54:56Z] Environment: dev
+[2026-04-01T08:54:56Z] Dry run: true
+[2026-04-01T08:54:56Z] Checking prerequisites...
+[2026-04-01T08:55:01Z] Subscription: 536d8cf6-89e1-4815-aef3-d5f2c5f4d070
+[2026-04-01T08:55:03Z] Prerequisites OK
+[2026-04-01T08:55:03Z] Creating PIM eligible assignment: Contributor
+[2026-04-01T08:55:03Z]   Scope: /subscriptions/536d8cf6-89e1-4815-aef3-d5f2c5f4d070/resourceGroups/rg-ipai-dev-odoo-runtime
+[2026-04-01T08:55:03Z]   Principal: 84b0949f-7134-4913-bf04-7b089791291c
+[2026-04-01T08:55:03Z]   Max duration: PT8H
+[2026-04-01T08:55:03Z]   Require approval: false
+[2026-04-01T08:55:03Z]   [DRY-RUN] Would create eligible assignment
+[2026-04-01T08:55:04Z] Creating PIM eligible assignment: Contributor
+[2026-04-01T08:55:04Z]   Scope: /subscriptions/536d8cf6-89e1-4815-aef3-d5f2c5f4d070/resourceGroups/rg-ipai-dev-odoo-data
+[2026-04-01T08:55:04Z]   Principal: 84b0949f-7134-4913-bf04-7b089791291c
+[2026-04-01T08:55:04Z]   Max duration: PT8H
+[2026-04-01T08:55:04Z]   Require approval: false
+[2026-04-01T08:55:04Z]   [DRY-RUN] Would create eligible assignment
+[2026-04-01T08:55:04Z] Creating PIM eligible assignment: Key Vault Secrets Officer
+[2026-04-01T08:55:04Z]   Scope: /subscriptions/536d8cf6-89e1-4815-aef3-d5f2c5f4d070/resourceGroups/rg-ipai-dev-odoo-runtime/providers/Microsoft.KeyVault/vaults/kv-ipai-dev
+[2026-04-01T08:55:04Z]   Principal: 84b0949f-7134-4913-bf04-7b089791291c
+[2026-04-01T08:55:04Z]   Max duration: PT4H
+[2026-04-01T08:55:04Z]   Require approval: false
+[2026-04-01T08:55:04Z]   [DRY-RUN] Would create eligible assignment
+[2026-04-01T08:55:04Z] Creating PIM eligible assignment: Owner
+[2026-04-01T08:55:04Z]   Scope: /subscriptions/536d8cf6-89e1-4815-aef3-d5f2c5f4d070
+[2026-04-01T08:55:04Z]   Principal: 84b0949f-7134-4913-bf04-7b089791291c
+[2026-04-01T08:55:04Z]   Max duration: PT4H
+[2026-04-01T08:55:04Z]   Require approval: true
+[2026-04-01T08:55:04Z]   [DRY-RUN] Would create eligible assignment
+[2026-04-01T08:55:04Z] 
+[2026-04-01T08:55:04Z] === PIM Configuration Complete ===
+[2026-04-01T08:55:04Z] Eligible assignments created. Admins must now activate roles via:
+[2026-04-01T08:55:04Z]   - Entra ID portal → Privileged Identity Management → My roles
+[2026-04-01T08:55:04Z]   - az rest --method POST to roleAssignmentScheduleRequests
+[2026-04-01T08:55:04Z] 
+[2026-04-01T08:55:04Z] Default standing access: Reader + Monitoring Reader only
+[2026-04-01T08:55:04Z] Elevated access: requires activation with justification + MFA

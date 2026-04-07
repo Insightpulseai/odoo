@@ -31,7 +31,7 @@ variables:
   imageTag: latest
   containerAppName: ipai-website-dev
   resourceGroup: rg-ipai-dev-odoo-runtime
-  serviceConnection: azure-ipai
+  serviceConnection: ipai-dev-wif
   smokeUrl: https://www.insightpulseai.com
 
 stages:

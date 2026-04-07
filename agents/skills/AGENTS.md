@@ -4,7 +4,7 @@ This file provides guidance to AI coding agents (Claude Code, Cursor, Copilot, e
 
 ## Repository Overview
 
-Odoo 19 CE enterprise-parity stack with OdooOps platform integration. Includes agent skills for deployment, testing, and operational workflows.
+Odoo 18 CE enterprise-parity stack with OdooOps platform integration. Includes agent skills for deployment, testing, and operational workflows.
 
 ## Agent Skills
 

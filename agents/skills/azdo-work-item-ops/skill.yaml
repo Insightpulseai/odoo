@@ -1,0 +1,47 @@
+# Azure DevOps Work Item Operations — Agent Skill
+# CRUD operations on individual work items with field management
+
+id: azdo.workitem.ops
+version: 1
+description: "Create, read, update, and manage individual Azure DevOps work items with field-level control"
+maturity: L2
+
+inputs:
+  organization:
+    type: string
+    description: "Azure DevOps organization URL"
+    required: true
+  project:
+    type: string
+    description: "Azure DevOps project name"
+    required: true
+  operation:
+    type: enum
+    values: [show, create, update, add_comment, add_relation, list_comments]
+    description: "Work item operation"
+    required: true
+  work_item_id:
+    type: integer
+    description: "Work item ID (required for show/update/comment operations)"
+    required: false
+
+requires:
+  secrets: []
+  ssot_files: []
+
+outputs:
+  artifacts: []
+  evidence: "docs/evidence/<stamp>/work-item-ops/"
+
+policies:
+  no_plaintext_secrets: true
+  must_pass_ci: []
+  idempotent: true
+  rollback_supported: false
+
+verification:
+  checks:
+    - name: "work_item_state_correct"
+      type: command
+      target: "az boards work-item show --id {id} --org {org} --project {project} --output table"
+      notes: "Verify work item state matches expected after update"

@@ -1,0 +1,11 @@
+{
+  "version": "1.0",
+  "tables": {
+    "Project":         {"x": 400, "y": 100, "isExpanded": true},
+    "Task":            {"x": 100, "y": 300, "isExpanded": true},
+    "Stage":           {"x": 400, "y": 500, "isExpanded": true},
+    "Date":            {"x": 100, "y": 100, "isExpanded": false},
+    "AnalyticAccount": {"x": 700, "y": 100, "isExpanded": true},
+    "Expense":         {"x": 700, "y": 400, "isExpanded": true}
+  }
+}

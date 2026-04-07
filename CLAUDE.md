@@ -27,13 +27,13 @@ If you cannot execute due to missing credentials/tooling/access, say exactly wha
 
 | Item | Value |
 |------|-------|
-| **Stack** | Odoo CE 19.0 + OCA + n8n + Slack + PostgreSQL 16 |
+| **Stack** | Odoo CE 18.0 + OCA + n8n + Slack + PostgreSQL 16 |
 | **Domain** | `insightpulseai.com` (`.net` is deprecated) |
 | **DNS** | Azure DNS (authoritative, delegated from Squarespace) |
 | **Mail** | Zoho SMTP (`smtp.zoho.com:587`, domain: `insightpulseai.com`) |
 | **Hosting** | Azure Container Apps (behind Azure Front Door) |
 | **Node** | >= 18.0.0 (pnpm workspaces, Turborepo) |
-| **Python** | 3.12+ (Odoo 19) |
+| **Python** | 3.10+ (Odoo 18) |
 | **Web/CMS** | Azure Container Apps (public + internal), Odoo website |
 | **EE Parity** | Target >=80% via `CE + OCA + ipai_*` (current: ~35-45%, audited 2026-03-08) |
 | **Repo** | `Insightpulseai/odoo` (renamed from `odoo-ce`) |
@@ -57,7 +57,7 @@ See `.claude/rules/security-baseline.md` for full policy (sections 2.1-2.6).
 | `packages/` | Shared packages (agents, taskbus) |
 | `spec/` | 76 spec bundles |
 | `scripts/` | 1000 automation scripts in 86 categories |
-| `odoo19/` | Canonical Odoo 19 setup (config, scripts, backups) |
+| `odoo18/` | Canonical Odoo 18 setup (config, scripts, backups) |
 | `mcp/servers/` | MCP server implementations (plane is the only live one) |
 | `.github/workflows/` | 355 CI/CD pipelines |
 | `docker/`, `deploy/` | Docker configs and deployment |
@@ -95,7 +95,7 @@ See `.claude/rules/security-baseline.md` for full policy (sections 2.1-2.6).
 19. **Apple Design Authority (iOS)**: For iOS wrapper UI, treat Apple's current App design and UI / Liquid Glass guidance as the visual system authority. Native shell chrome follows current Apple design language. `Icon Composer` for app icons, `SF Symbols` for native shell iconography. Liquid Glass applies to native shell surfaces, not arbitrary overlays on hosted web content.
 20. **iOS Wrapper UI Contract**: For wrapper-shell changes (`WrapperViewController`, `BiometricAuth`, native chrome, auth handoff, icon assets), apply `docs/skills/ios-wrapper-ui-contract.md`. This contract is subordinate to `docs/skills/ios-native-wrapper.md` and defines enforceable code-review gates.
 21. **iOS Wrapper Code Contract**: When editing wrapper-shell implementation files, also apply `docs/skills/ios-wrapper-code-contract.md`. File-level review emphasis: `WrapperViewController.swift` owns shell orchestration only, `BiometricAuth.swift` owns biometric policy/orchestration only, `Assets.xcassets` stays minimal and governed, `Environment.swift` remains the source of routing/environment configuration, `Info.plist` remains aligned with native auth/biometric requirements.
-22. **Odoo Integration Adoption**: Check Odoo 19 native integrations first (payments, bank sync, EDI, commerce connectors, website). If native is insufficient, check OCA before creating `ipai_*`. Reserve `ipai_*` for thin bridges to external Azure/Foundry services only. SSOT: `ssot/odoo/integration_adoption.yaml`.
+22. **Odoo Integration Adoption**: Check Odoo 18 native integrations first (payments, bank sync, EDI, commerce connectors, website). If native is insufficient, check OCA before creating `ipai_*`. Reserve `ipai_*` for thin bridges to external Azure/Foundry services only. SSOT: `ssot/odoo/integration_adoption.yaml`.
 
 ---
 
@@ -153,7 +153,7 @@ pnpm install                            # Install Node dependencies
 | `ipai_mattermost_connector` | `ipai_slack_connector` | 2026-01-28 |
 | Supabase (all instances, all usage) | Azure-native services | 2026-03-26 |
 | Cloudflare (DNS proxy) | Azure DNS (authoritative) | 2026-03-26 |
-| `ipai_ai_widget` (global patches) | Native Odoo 19 Ask AI + `ipai_ai_copilot` | 2026-03-09 |
+| `ipai_ai_widget` (global patches) | Native Odoo 18 Ask AI + `ipai_ai_copilot` | 2026-03-09 |
 | DigitalOcean (all) | Azure (ACA + VM + managed PG) | 2026-03-15 |
 | Public nginx edge | Azure Front Door | 2026-03-15 |
 | Self-hosted runners | GitHub-hosted / Azure DevOps pool | 2026-03-15 |
@@ -163,6 +163,16 @@ pnpm install                            # Install Node dependencies
 | `ipai-odoo-dev-pg` (Burstable PG) | `pg-ipai-odoo` (General Purpose, Fabric mirroring) | 2026-03-21 |
 | Superset (as canonical BI) | Power BI (primary) + Superset (supplemental only) | 2026-03-21 |
 | Notion (as data source) | Removed from Databricks bundle | 2026-03-21 |
+| Wix (all — hosting, CMS, DNS, API) | Azure DNS + Azure Container Apps + Odoo CMS | 2026-04-02 |
+
+### Engineering & Delivery Authority (Option C)
+
+Authoritative rule:
+- **GitHub Actions** remains the default CI authority and the deploy authority for docs/web properties.
+- **Azure DevOps** remains the deploy authority for Odoo, Databricks, and infra lanes requiring environment/service-connection gating.
+- **Azure Boards** is the portfolio/planning system of record.
+- **GitHub Issues** is the engineering execution backlog.
+- See `ssot/governance/platform-authority-split.yaml`, `ssot/governance/ci-cd-authority-matrix.yaml`, and `ssot/governance/repo-delivery-disposition.yaml`.
 
 ### Engineering & Delivery Authority (Option C)
 
@@ -184,7 +194,7 @@ Authoritative rule:
 | Secrets policy, GHAS, allowed tools | `.claude/rules/security-baseline.md` |
 | GitHub governance, CI/CD, PR rules | `.claude/rules/github-governance.md` |
 | Enterprise parity strategy & tables | `.claude/rules/ee-parity.md` |
-| Odoo CE 19 rules, modules, testing | `.claude/rules/odoo-rules.md` |
+| Odoo CE 18 rules, modules, testing | `.claude/rules/odoo-rules.md` |
 | Supabase usage & activation | `.claude/rules/supabase-usage.md` |
 | BIR compliance (PH tax/payroll) | `.claude/rules/bir-compliance.md` |
 | MCP Jobs system | `.claude/rules/mcp-jobs.md` |

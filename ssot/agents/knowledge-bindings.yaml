@@ -1,0 +1,463 @@
+# knowledge-bindings.yaml
+# SSOT: Knowledge base collections, chunking strategy, and agent bindings
+# Last updated: 2026-04-06
+# Companion: ssot/agents/agent-factory-lifecycle.yaml (G2 Knowledge gate)
+
+version: 1
+artifact: knowledge_bindings
+
+retrieval:
+  engine: azure_ai_search
+  mode: hybrid  # semantic + keyword
+  embedding_model: text-embedding-3-small   # deployed: 120K TPM, Standard, 1536 dimensions
+  embedding_dimensions: 1536                # text-embedding-3-small default
+  chunk_size_tokens: 500-1000
+  overlap_tokens: 50
+  metadata_fields:
+    - cert_id
+    - domain
+    - skill_area
+    - last_updated
+    - source_type  # microsoft_learn | local_repo | oca_docs | odoo_docs | vendor_docs
+  refresh_cadence: quarterly  # aligned with Microsoft cert update cycle
+
+# ---------------------------------------------------------------------------
+# Knowledge base collections
+# ---------------------------------------------------------------------------
+
+collections:
+
+  # --- Architecture / Cross-domain ---
+
+  microsoft_learn_architecture:
+    description: Azure Solutions Architect study material and patterns
+    sources:
+      - type: microsoft_learn
+        paths:
+          - AZ-305 study guide
+          - Azure Architecture Center (reference architectures)
+          - Cloud Adoption Framework
+    cert_alignment: [AZ-305]
+    bound_to: [chief-architect]
+
+  azure_well_architected:
+    description: Well-Architected Framework pillars
+    sources:
+      - type: microsoft_learn
+        paths:
+          - WAF Reliability pillar
+          - WAF Security pillar
+          - WAF Cost Optimization pillar
+          - WAF Operational Excellence pillar
+          - WAF Performance Efficiency pillar
+    cert_alignment: [AZ-305]
+    bound_to: [chief-architect, architecture-judge, finops-judge]
+
+  agent_architecture:
+    description: Agent design patterns and orchestration
+    sources:
+      - type: microsoft_learn
+        paths:
+          - AB-100 study guide
+          - AI Agent Orchestration Patterns (Azure Architecture Center)
+          - Microsoft Agent Framework v1.0 docs
+          - Foundry Agent Service docs
+      - type: vendor_docs
+        paths:
+          - MCP specification
+          - A2A protocol specification
+    cert_alignment: [AB-100, AI-300]
+    bound_to: [chief-architect, foundry-agent, architecture-judge]
+
+  local_platform_ssot:
+    description: Repository SSOT artifacts and platform doctrine
+    sources:
+      - type: local_repo
+        paths:
+          - ssot/**/*.yaml
+          - docs/architecture/PLATFORM_DOCTRINE.md
+          - docs/architecture/CERTIFICATION_MAPPED_AGENT_ARCHITECTURE.md
+          - CLAUDE.md
+    cert_alignment: []
+    bound_to: [chief-architect, architecture-judge, governance-judge]
+
+  # --- Azure Runtime ---
+
+  azure_container_apps:
+    description: ACA deployment, scaling, revisions, health probes
+    sources:
+      - type: microsoft_learn
+        paths:
+          - AZ-104 study guide (compute sections)
+          - ACA documentation
+          - ACA networking and ingress
+          - ACA jobs and background processing
+    cert_alignment: [AZ-104, AZ-204]
+    bound_to: [azure-platform]
+
+  front_door:
+    description: Azure Front Door WAF, routing, TLS
+    sources:
+      - type: microsoft_learn
+        paths:
+          - AZ-700 study guide (load balancing sections)
+          - Front Door documentation
+          - WAF policy configuration
+    cert_alignment: [AZ-700]
+    bound_to: [azure-platform]
+
+  key_vault:
+    description: Secret management, access policies, private endpoints
+    sources:
+      - type: microsoft_learn
+        paths:
+          - AZ-104 study guide (security sections)
+          - Key Vault documentation
+          - Managed identity integration
+    cert_alignment: [AZ-104, SC-300]
+    bound_to: [azure-platform, security-judge]
+
+  postgres_flexible_server:
+    description: Azure Database for PostgreSQL administration
+    sources:
+      - type: microsoft_learn
+        paths:
+          - DP-300 study guide
+          - PostgreSQL Flexible Server docs
+          - High availability and backup
+          - Private endpoint configuration
+    cert_alignment: [DP-300]
+    bound_to: [azure-platform, odoo-runtime]
+
+  github_actions:
+    description: CI/CD workflows, runners, actions marketplace
+    sources:
+      - type: vendor_docs
+        paths:
+          - GitHub Actions documentation
+          - Workflow syntax reference
+          - Runner management
+      - type: microsoft_learn
+        paths:
+          - AZ-400 study guide (CI/CD sections)
+          - GH-200 study guide
+    cert_alignment: [AZ-400, GH-200]
+    bound_to: [release-ops, azure-platform]
+
+  azure_devops:
+    description: Pipelines, boards, artifacts, release gates
+    sources:
+      - type: microsoft_learn
+        paths:
+          - AZ-400 study guide
+          - Azure DevOps documentation
+          - Pipeline YAML reference
+    cert_alignment: [AZ-400]
+    bound_to: [release-ops, azure-platform]
+
+  # --- Odoo Runtime ---
+
+  odoo_18_docs:
+    description: Odoo 18 CE official documentation
+    sources:
+      - type: odoo_docs
+        paths:
+          - Odoo 18 developer documentation
+          - Odoo 18 administration guide
+          - Odoo 18 testing framework
+          - Module development tutorial
+    cert_alignment: []
+    bound_to: [odoo-runtime]
+    notes: Not mapped to Microsoft certs. Odoo-native knowledge.
+
+  oca_18_inventory:
+    description: OCA module inventory and documentation for Odoo 18
+    sources:
+      - type: oca_docs
+        paths:
+          - OCA repository READMEs (18.0 branches)
+          - OCA module manifests
+          - OCA contributing guidelines
+    cert_alignment: []
+    bound_to: [odoo-runtime]
+
+  repo_module_doctrine:
+    description: IPAI module governance and doctrine
+    sources:
+      - type: local_repo
+        paths:
+          - docs/architecture/ODOO_MODULE_DOCTRINE.md
+          - docs/architecture/PLATFORM_DOCTRINE.md
+          - .claude/rules/odoo-rules.md
+          - .claude/rules/odoo-proof-gates.md
+    cert_alignment: []
+    bound_to: [odoo-runtime, governance-judge, tbwa-fit-judge]
+
+  postgres_admin:
+    description: PostgreSQL 16 administration and tuning
+    sources:
+      - type: vendor_docs
+        paths:
+          - PostgreSQL 16 documentation
+          - Performance tuning guide
+          - Backup and recovery
+    cert_alignment: [DP-300]
+    bound_to: [odoo-runtime, data-intelligence]
+
+  bir_compliance:
+    description: PH Bureau of Internal Revenue compliance requirements
+    sources:
+      - type: local_repo
+        paths:
+          - docs/compliance/BIR*.md
+          - addons/ipai/ipai_bir_*/
+    cert_alignment: []
+    bound_to: [odoo-runtime, tbwa-fit-judge]
+
+  tax_guru_ph:
+    description: Tax Guru / Tax Pulse PH compliance capability pack
+    sources:
+      - type: local_repo
+        paths:
+          - spec/tax-pulse-sub-agent/
+          - ssot/agents/tax_pulse_tool_contracts.yaml
+          - docs/architecture/tax/TAX_GURU_CONSOLIDATION.md
+          - agents/skills/odoo/taxpulse-ph-pack/SKILL.md
+          - addons/ipai/ipai_bir_tax_compliance/
+          - addons/ipai/ipai_bir_tax_compliance/data/rules/
+      - type: local_repo
+        paths:
+          - infra/ssot/evals/tax_bir_benchmark_test_inventory.yaml
+          - infra/ssot/evals/tax_bir_benchmark_gap_analysis.yaml
+    cert_alignment: []
+    bound_to: [odoo-runtime, governance-judge, customer-value-judge]
+    pulser_surface: pulser-erp
+    diva_routing_mode: tax_guru
+    notes: >
+      Tax Guru is a domain skill of odoo-runtime, surfaced through pulser-erp
+      and routed by pulser-diva. Not a standalone agent.
+
+  finance_domain:
+    description: Finance domain capability packs (close, AP, recon, expense)
+    sources:
+      - type: local_repo
+        paths:
+          - spec/close-orchestration/
+          - spec/ap-invoice-agent/
+          - spec/bank-reconciliation-agent/
+          - spec/expense-liquidation-agent/
+          - spec/finance-agent-ops-console/
+          - infra/ssot/agents/reconciliation_contracts.yaml
+    cert_alignment: []
+    bound_to: [odoo-runtime, finops-judge, governance-judge]
+    pulser_surface: pulser-erp
+    notes: >
+      Finance capabilities are domain skills of odoo-runtime, surfaced through
+      pulser-erp. Not standalone agents.
+
+  # --- Visitor-facing (livechat) ---
+
+  company_info:
+    description: Company overview, products, services, and contact information for website visitors
+    sources:
+      - type: local_repo
+        paths:
+          - docs/company/about.md
+          - docs/company/products.md
+          - docs/company/contact.md
+          - docs/company/faq.md
+      - type: odoo_docs
+        paths:
+          - Website module — published pages
+          - Product catalog — public descriptions
+    cert_alignment: []
+    bound_to: [odoo-runtime]
+    pulser_surface: pulser-erp
+    notes: >
+      Visitor-facing knowledge for livechat-agent. Contains company overview,
+      product/service descriptions, pricing tiers, FAQ, and contact info.
+      Content must be non-technical and visitor-appropriate. Created to
+      address GAP-002 in g2-knowledge-binding-evidence.yaml.
+
+  # --- AI / Foundry ---
+
+  foundry_docs:
+    description: Microsoft Foundry platform documentation
+    sources:
+      - type: microsoft_learn
+        paths:
+          - Foundry Agent Service overview
+          - Foundry project management
+          - Model deployment and governance
+          - Evaluation and monitoring
+    cert_alignment: [AI-102, AI-300]
+    bound_to: [foundry-agent]
+
+  ai_search:
+    description: Azure AI Search hybrid retrieval
+    sources:
+      - type: microsoft_learn
+        paths:
+          - AI Search documentation
+          - Semantic ranking
+          - Vector search and hybrid retrieval
+          - Index management
+    cert_alignment: [AI-102]
+    bound_to: [foundry-agent, chief-architect]
+
+  mcp_specs:
+    description: Model Context Protocol specification and tooling
+    sources:
+      - type: vendor_docs
+        paths:
+          - MCP specification
+          - MCP server implementations
+          - MCP transport patterns
+    cert_alignment: [AB-100]
+    bound_to: [foundry-agent, chief-architect]
+
+  agent_framework:
+    description: Microsoft Agent Framework v1.0
+    sources:
+      - type: microsoft_learn
+        paths:
+          - Agent Framework overview
+          - Orchestration patterns (sequential, concurrent, handoff, magentic)
+          - Workflow orchestrations
+          - Connected agents
+    cert_alignment: [AB-100]
+    bound_to: [foundry-agent, chief-architect]
+
+  eval_and_rag:
+    description: Evaluation metrics and RAG optimization
+    sources:
+      - type: microsoft_learn
+        paths:
+          - AI-300 study guide (GenAI QA sections)
+          - Foundry evaluation metrics
+          - RAG chunking and retrieval patterns
+          - Groundedness, relevance, coherence, fluency metrics
+    cert_alignment: [AI-300]
+    bound_to: [foundry-agent]
+
+  # --- Data / Analytics ---
+
+  databricks:
+    description: Databricks workspace, Unity Catalog, notebooks
+    sources:
+      - type: vendor_docs
+        paths:
+          - Databricks documentation
+          - Unity Catalog
+          - Delta Lake
+          - JDBC/ODBC connectivity
+    cert_alignment: [DP-750]
+    bound_to: [data-intelligence]
+
+  fabric:
+    description: Microsoft Fabric lakehouses, dataflows, pipelines
+    sources:
+      - type: microsoft_learn
+        paths:
+          - DP-600 study guide
+          - DP-700 study guide
+          - Fabric lakehouse documentation
+          - OneLake and mirroring
+    cert_alignment: [DP-600, DP-700]
+    bound_to: [data-intelligence]
+
+  semantic_models:
+    description: Power BI semantic models and DAX
+    sources:
+      - type: microsoft_learn
+        paths:
+          - PL-300 study guide (data modeling sections)
+          - Power BI documentation
+          - DAX reference
+    cert_alignment: [PL-300]
+    bound_to: [data-intelligence]
+
+  dlt:
+    description: Delta Live Tables pipeline patterns
+    sources:
+      - type: vendor_docs
+        paths:
+          - Databricks DLT documentation
+          - Pipeline development and monitoring
+          - Data quality expectations
+    cert_alignment: [DP-700, DP-750]
+    bound_to: [data-intelligence]
+
+  # --- Release / CI ---
+
+  release_governance:
+    description: Release management, gating, promotion policies
+    sources:
+      - type: local_repo
+        paths:
+          - ssot/agents/execution_policy.yaml
+          - ssot/agents/prod_policy.yaml
+          - .github/workflows/
+    cert_alignment: [AZ-400]
+    bound_to: [release-ops, governance-judge]
+
+  ci_cd:
+    description: CI/CD pipeline patterns and tooling
+    sources:
+      - type: microsoft_learn
+        paths:
+          - AZ-400 study guide (CI/CD sections)
+          - GitHub Actions best practices
+      - type: local_repo
+        paths:
+          - .github/workflows/
+          - azure-pipelines*.yml
+    cert_alignment: [AZ-400, GH-200]
+    bound_to: [release-ops]
+
+  repo_quality_gates:
+    description: Pre-commit, linting, test gates
+    sources:
+      - type: local_repo
+        paths:
+          - .pre-commit-config.yaml
+          - scripts/repo_health.sh
+          - scripts/ci_local.sh
+    cert_alignment: [GH-300]
+    bound_to: [release-ops, governance-judge]
+
+  azure_devops_pipelines:
+    description: Azure DevOps pipeline YAML and deployment
+    sources:
+      - type: microsoft_learn
+        paths:
+          - Azure DevOps Pipelines documentation
+          - YAML pipeline reference
+          - Service connections and environments
+    cert_alignment: [AZ-400]
+    bound_to: [release-ops]
+
+  # --- Security (judge-specific) ---
+
+  security_foundations:
+    description: Zero Trust, identity, compliance baseline
+    sources:
+      - type: microsoft_learn
+        paths:
+          - SC-100 study guide
+          - Zero Trust deployment guide
+          - Entra ID documentation
+          - Conditional access policies
+    cert_alignment: [SC-100, SC-300]
+    bound_to: [security-judge]
+
+  power_bi:
+    description: Power BI report development and deployment
+    sources:
+      - type: microsoft_learn
+        paths:
+          - PL-300 study guide
+          - Power BI documentation
+          - Deployment pipelines
+    cert_alignment: [PL-300]
+    bound_to: [data-intelligence]

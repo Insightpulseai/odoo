@@ -12,7 +12,7 @@
         <record id="task_bir_jan_1601c" model="project.task">
             <field name="name">1601-C (Withholding Tax) - January 2026</field>
             <field name="project_id" ref="project_bir_tax_filing"/>
-            <field name="stage_id" ref="stage_todo"/>
+            <field name="stage_id" ref="stage_bir_preparation"/>
             <field name="tag_ids" eval="[(6, 0, [ref('tag_bir_1601c')])]"/>
             <field name="date_deadline">2026-02-10</field>
             <field name="planned_hours">8.0</field>
@@ -30,7 +30,7 @@ Preparer: BOM | Reviewer: RIM | Approver: CKVC</field>
         <record id="task_bir_jan_0619e" model="project.task">
             <field name="name">0619-E (Expanded Withholding Tax) - January 2026</field>
             <field name="project_id" ref="project_bir_tax_filing"/>
-            <field name="stage_id" ref="stage_todo"/>
+            <field name="stage_id" ref="stage_bir_preparation"/>
             <field name="tag_ids" eval="[(6, 0, [ref('tag_bir_0619e')])]"/>
             <field name="date_deadline">2026-02-20</field>
             <field name="planned_hours">8.0</field>
@@ -47,7 +47,7 @@ Preparer: BOM | Reviewer: RIM | Approver: CKVC</field>
         <record id="task_bir_feb_1601c" model="project.task">
             <field name="name">1601-C (Withholding Tax) - February 2026</field>
             <field name="project_id" ref="project_bir_tax_filing"/>
-            <field name="stage_id" ref="stage_todo"/>
+            <field name="stage_id" ref="stage_bir_preparation"/>
             <field name="tag_ids" eval="[(6, 0, [ref('tag_bir_1601c')])]"/>
             <field name="date_deadline">2026-03-10</field>
             <field name="planned_hours">8.0</field>
@@ -62,7 +62,7 @@ Preparer: BOM | Reviewer: RIM | Approver: CKVC</field>
         <record id="task_bir_feb_0619e" model="project.task">
             <field name="name">0619-E (Expanded Withholding Tax) - February 2026</field>
             <field name="project_id" ref="project_bir_tax_filing"/>
-            <field name="stage_id" ref="stage_todo"/>
+            <field name="stage_id" ref="stage_bir_preparation"/>
             <field name="tag_ids" eval="[(6, 0, [ref('tag_bir_0619e')])]"/>
             <field name="date_deadline">2026-03-20</field>
             <field name="planned_hours">8.0</field>
@@ -79,7 +79,7 @@ Preparer: BOM | Reviewer: RIM | Approver: CKVC</field>
         <record id="task_bir_mar_1601c" model="project.task">
             <field name="name">1601-C (Withholding Tax) - March 2026</field>
             <field name="project_id" ref="project_bir_tax_filing"/>
-            <field name="stage_id" ref="stage_todo"/>
+            <field name="stage_id" ref="stage_bir_preparation"/>
             <field name="tag_ids" eval="[(6, 0, [ref('tag_bir_1601c')])]"/>
             <field name="date_deadline">2026-04-10</field>
             <field name="planned_hours">8.0</field>
@@ -94,7 +94,7 @@ Preparer: BOM | Reviewer: RIM | Approver: CKVC</field>
         <record id="task_bir_mar_0619e" model="project.task">
             <field name="name">0619-E (Expanded Withholding Tax) - March 2026</field>
             <field name="project_id" ref="project_bir_tax_filing"/>
-            <field name="stage_id" ref="stage_todo"/>
+            <field name="stage_id" ref="stage_bir_preparation"/>
             <field name="tag_ids" eval="[(6, 0, [ref('tag_bir_0619e')])]"/>
             <field name="date_deadline">2026-04-20</field>
             <field name="planned_hours">8.0</field>
@@ -111,7 +111,7 @@ Preparer: BOM | Reviewer: RIM | Approver: CKVC</field>
         <record id="task_bir_q1_2550q" model="project.task">
             <field name="name">2550Q (Quarterly VAT) - Q1 2026</field>
             <field name="project_id" ref="project_bir_tax_filing"/>
-            <field name="stage_id" ref="stage_todo"/>
+            <field name="stage_id" ref="stage_bir_preparation"/>
             <field name="tag_ids" eval="[(6, 0, [ref('tag_bir_2550q')])]"/>
             <field name="date_deadline">2026-04-25</field>
             <field name="planned_hours">16.0</field>
@@ -126,7 +126,7 @@ Preparer: BOM | Reviewer: RIM | Approver: CKVC</field>
         <record id="task_bir_q1_1601eq" model="project.task">
             <field name="name">1601-EQ (Quarterly EWT) - Q1 2026</field>
             <field name="project_id" ref="project_bir_tax_filing"/>
-            <field name="stage_id" ref="stage_todo"/>
+            <field name="stage_id" ref="stage_bir_preparation"/>
             <field name="tag_ids" eval="[(6, 0, [ref('tag_bir_1601eq')])]"/>
             <field name="date_deadline">2026-04-30</field>
             <field name="planned_hours">16.0</field>
@@ -143,7 +143,7 @@ Preparer: BOM | Reviewer: RIM | Approver: CKVC</field>
         <record id="task_bir_2026_1702rt" model="project.task">
             <field name="name">1702-RT (Annual Income Tax) - 2025</field>
             <field name="project_id" ref="project_bir_tax_filing"/>
-            <field name="stage_id" ref="stage_todo"/>
+            <field name="stage_id" ref="stage_bir_preparation"/>
             <field name="tag_ids" eval="[(6, 0, [ref('tag_bir_1702rt')])]"/>
             <field name="date_deadline">2026-04-15</field>
             <field name="planned_hours">24.0</field>
@@ -160,7 +160,7 @@ Preparer: BOM | Reviewer: RIM | Approver: CKVC</field>
         <record id="task_bir_apr_1601c" model="project.task">
             <field name="name">1601-C (Withholding Tax) - April 2026</field>
             <field name="project_id" ref="project_bir_tax_filing"/>
-            <field name="stage_id" ref="stage_todo"/>
+            <field name="stage_id" ref="stage_bir_preparation"/>
             <field name="tag_ids" eval="[(6, 0, [ref('tag_bir_1601c')])]"/>
             <field name="date_deadline">2026-05-11</field>
             <field name="planned_hours">8.0</field>
@@ -175,7 +175,7 @@ Preparer: BOM | Reviewer: RIM | Approver: CKVC</field>
         <record id="task_bir_apr_0619e" model="project.task">
             <field name="name">0619-E (Expanded Withholding Tax) - April 2026</field>
             <field name="project_id" ref="project_bir_tax_filing"/>
-            <field name="stage_id" ref="stage_todo"/>
+            <field name="stage_id" ref="stage_bir_preparation"/>
             <field name="tag_ids" eval="[(6, 0, [ref('tag_bir_0619e')])]"/>
             <field name="date_deadline">2026-05-20</field>
             <field name="planned_hours">8.0</field>
@@ -192,7 +192,7 @@ Preparer: BOM | Reviewer: RIM | Approver: CKVC</field>
         <record id="task_bir_may_1601c" model="project.task">
             <field name="name">1601-C (Withholding Tax) - May 2026</field>
             <field name="project_id" ref="project_bir_tax_filing"/>
-            <field name="stage_id" ref="stage_todo"/>
+            <field name="stage_id" ref="stage_bir_preparation"/>
             <field name="tag_ids" eval="[(6, 0, [ref('tag_bir_1601c')])]"/>
             <field name="date_deadline">2026-06-10</field>
             <field name="planned_hours">8.0</field>
@@ -207,7 +207,7 @@ Preparer: BOM | Reviewer: RIM | Approver: CKVC</field>
         <record id="task_bir_may_0619e" model="project.task">
             <field name="name">0619-E (Expanded Withholding Tax) - May 2026</field>
             <field name="project_id" ref="project_bir_tax_filing"/>
-            <field name="stage_id" ref="stage_todo"/>
+            <field name="stage_id" ref="stage_bir_preparation"/>
             <field name="tag_ids" eval="[(6, 0, [ref('tag_bir_0619e')])]"/>
             <field name="date_deadline">2026-06-22</field>
             <field name="planned_hours">8.0</field>
@@ -224,7 +224,7 @@ Preparer: BOM | Reviewer: RIM | Approver: CKVC</field>
         <record id="task_bir_jun_1601c" model="project.task">
             <field name="name">1601-C (Withholding Tax) - June 2026</field>
             <field name="project_id" ref="project_bir_tax_filing"/>
-            <field name="stage_id" ref="stage_todo"/>
+            <field name="stage_id" ref="stage_bir_preparation"/>
             <field name="tag_ids" eval="[(6, 0, [ref('tag_bir_1601c')])]"/>
             <field name="date_deadline">2026-07-10</field>
             <field name="planned_hours">8.0</field>
@@ -239,7 +239,7 @@ Preparer: BOM | Reviewer: RIM | Approver: CKVC</field>
         <record id="task_bir_jun_0619e" model="project.task">
             <field name="name">0619-E (Expanded Withholding Tax) - June 2026</field>
             <field name="project_id" ref="project_bir_tax_filing"/>
-            <field name="stage_id" ref="stage_todo"/>
+            <field name="stage_id" ref="stage_bir_preparation"/>
             <field name="tag_ids" eval="[(6, 0, [ref('tag_bir_0619e')])]"/>
             <field name="date_deadline">2026-07-20</field>
             <field name="planned_hours">8.0</field>
@@ -256,7 +256,7 @@ Preparer: BOM | Reviewer: RIM | Approver: CKVC</field>
         <record id="task_bir_q2_2550q" model="project.task">
             <field name="name">2550Q (Quarterly VAT) - Q2 2026</field>
             <field name="project_id" ref="project_bir_tax_filing"/>
-            <field name="stage_id" ref="stage_todo"/>
+            <field name="stage_id" ref="stage_bir_preparation"/>
             <field name="tag_ids" eval="[(6, 0, [ref('tag_bir_2550q')])]"/>
             <field name="date_deadline">2026-07-25</field>
             <field name="planned_hours">16.0</field>
@@ -271,7 +271,7 @@ Preparer: BOM | Reviewer: RIM | Approver: CKVC</field>
         <record id="task_bir_q2_1601eq" model="project.task">
             <field name="name">1601-EQ (Quarterly EWT) - Q2 2026</field>
             <field name="project_id" ref="project_bir_tax_filing"/>
-            <field name="stage_id" ref="stage_todo"/>
+            <field name="stage_id" ref="stage_bir_preparation"/>
             <field name="tag_ids" eval="[(6, 0, [ref('tag_bir_1601eq')])]"/>
             <field name="date_deadline">2026-07-31</field>
             <field name="planned_hours">16.0</field>
@@ -288,7 +288,7 @@ Preparer: BOM | Reviewer: RIM | Approver: CKVC</field>
         <record id="task_bir_jul_1601c" model="project.task">
             <field name="name">1601-C (Withholding Tax) - July 2026</field>
             <field name="project_id" ref="project_bir_tax_filing"/>
-            <field name="stage_id" ref="stage_todo"/>
+            <field name="stage_id" ref="stage_bir_preparation"/>
             <field name="tag_ids" eval="[(6, 0, [ref('tag_bir_1601c')])]"/>
             <field name="date_deadline">2026-08-10</field>
             <field name="planned_hours">8.0</field>
@@ -303,7 +303,7 @@ Preparer: BOM | Reviewer: RIM | Approver: CKVC</field>
         <record id="task_bir_jul_0619e" model="project.task">
             <field name="name">0619-E (Expanded Withholding Tax) - July 2026</field>
             <field name="project_id" ref="project_bir_tax_filing"/>
-            <field name="stage_id" ref="stage_todo"/>
+            <field name="stage_id" ref="stage_bir_preparation"/>
             <field name="tag_ids" eval="[(6, 0, [ref('tag_bir_0619e')])]"/>
             <field name="date_deadline">2026-08-20</field>
             <field name="planned_hours">8.0</field>
@@ -320,7 +320,7 @@ Preparer: BOM | Reviewer: RIM | Approver: CKVC</field>
         <record id="task_bir_aug_1601c" model="project.task">
             <field name="name">1601-C (Withholding Tax) - August 2026</field>
             <field name="project_id" ref="project_bir_tax_filing"/>
-            <field name="stage_id" ref="stage_todo"/>
+            <field name="stage_id" ref="stage_bir_preparation"/>
             <field name="tag_ids" eval="[(6, 0, [ref('tag_bir_1601c')])]"/>
             <field name="date_deadline">2026-09-10</field>
             <field name="planned_hours">8.0</field>
@@ -335,7 +335,7 @@ Preparer: BOM | Reviewer: RIM | Approver: CKVC</field>
         <record id="task_bir_aug_0619e" model="project.task">
             <field name="name">0619-E (Expanded Withholding Tax) - August 2026</field>
             <field name="project_id" ref="project_bir_tax_filing"/>
-            <field name="stage_id" ref="stage_todo"/>
+            <field name="stage_id" ref="stage_bir_preparation"/>
             <field name="tag_ids" eval="[(6, 0, [ref('tag_bir_0619e')])]"/>
             <field name="date_deadline">2026-09-21</field>
             <field name="planned_hours">8.0</field>
@@ -352,7 +352,7 @@ Preparer: BOM | Reviewer: RIM | Approver: CKVC</field>
         <record id="task_bir_sep_1601c" model="project.task">
             <field name="name">1601-C (Withholding Tax) - September 2026</field>
             <field name="project_id" ref="project_bir_tax_filing"/>
-            <field name="stage_id" ref="stage_todo"/>
+            <field name="stage_id" ref="stage_bir_preparation"/>
             <field name="tag_ids" eval="[(6, 0, [ref('tag_bir_1601c')])]"/>
             <field name="date_deadline">2026-10-12</field>
             <field name="planned_hours">8.0</field>
@@ -367,7 +367,7 @@ Preparer: BOM | Reviewer: RIM | Approver: CKVC</field>
         <record id="task_bir_sep_0619e" model="project.task">
             <field name="name">0619-E (Expanded Withholding Tax) - September 2026</field>
             <field name="project_id" ref="project_bir_tax_filing"/>
-            <field name="stage_id" ref="stage_todo"/>
+            <field name="stage_id" ref="stage_bir_preparation"/>
             <field name="tag_ids" eval="[(6, 0, [ref('tag_bir_0619e')])]"/>
             <field name="date_deadline">2026-10-20</field>
             <field name="planned_hours">8.0</field>
@@ -384,7 +384,7 @@ Preparer: BOM | Reviewer: RIM | Approver: CKVC</field>
         <record id="task_bir_q3_2550q" model="project.task">
             <field name="name">2550Q (Quarterly VAT) - Q3 2026</field>
             <field name="project_id" ref="project_bir_tax_filing"/>
-            <field name="stage_id" ref="stage_todo"/>
+            <field name="stage_id" ref="stage_bir_preparation"/>
             <field name="tag_ids" eval="[(6, 0, [ref('tag_bir_2550q')])]"/>
             <field name="date_deadline">2026-10-26</field>
             <field name="planned_hours">16.0</field>
@@ -399,7 +399,7 @@ Preparer: BOM | Reviewer: RIM | Approver: CKVC</field>
         <record id="task_bir_q3_1601eq" model="project.task">
             <field name="name">1601-EQ (Quarterly EWT) - Q3 2026</field>
             <field name="project_id" ref="project_bir_tax_filing"/>
-            <field name="stage_id" ref="stage_todo"/>
+            <field name="stage_id" ref="stage_bir_preparation"/>
             <field name="tag_ids" eval="[(6, 0, [ref('tag_bir_1601eq')])]"/>
             <field name="date_deadline">2026-10-30</field>
             <field name="planned_hours">16.0</field>
@@ -416,7 +416,7 @@ Preparer: BOM | Reviewer: RIM | Approver: CKVC</field>
         <record id="task_bir_oct_1601c" model="project.task">
             <field name="name">1601-C (Withholding Tax) - October 2026</field>
             <field name="project_id" ref="project_bir_tax_filing"/>
-            <field name="stage_id" ref="stage_todo"/>
+            <field name="stage_id" ref="stage_bir_preparation"/>
             <field name="tag_ids" eval="[(6, 0, [ref('tag_bir_1601c')])]"/>
             <field name="date_deadline">2026-11-10</field>
             <field name="planned_hours">8.0</field>
@@ -431,7 +431,7 @@ Preparer: BOM | Reviewer: RIM | Approver: CKVC</field>
         <record id="task_bir_oct_0619e" model="project.task">
             <field name="name">0619-E (Expanded Withholding Tax) - October 2026</field>
             <field name="project_id" ref="project_bir_tax_filing"/>
-            <field name="stage_id" ref="stage_todo"/>
+            <field name="stage_id" ref="stage_bir_preparation"/>
             <field name="tag_ids" eval="[(6, 0, [ref('tag_bir_0619e')])]"/>
             <field name="date_deadline">2026-11-20</field>
             <field name="planned_hours">8.0</field>
@@ -448,7 +448,7 @@ Preparer: BOM | Reviewer: RIM | Approver: CKVC</field>
         <record id="task_bir_nov_1601c" model="project.task">
             <field name="name">1601-C (Withholding Tax) - November 2026</field>
             <field name="project_id" ref="project_bir_tax_filing"/>
-            <field name="stage_id" ref="stage_todo"/>
+            <field name="stage_id" ref="stage_bir_preparation"/>
             <field name="tag_ids" eval="[(6, 0, [ref('tag_bir_1601c')])]"/>
             <field name="date_deadline">2026-12-10</field>
             <field name="planned_hours">8.0</field>
@@ -463,7 +463,7 @@ Preparer: BOM | Reviewer: RIM | Approver: CKVC</field>
         <record id="task_bir_nov_0619e" model="project.task">
             <field name="name">0619-E (Expanded Withholding Tax) - November 2026</field>
             <field name="project_id" ref="project_bir_tax_filing"/>
-            <field name="stage_id" ref="stage_todo"/>
+            <field name="stage_id" ref="stage_bir_preparation"/>
             <field name="tag_ids" eval="[(6, 0, [ref('tag_bir_0619e')])]"/>
             <field name="date_deadline">2026-12-21</field>
             <field name="planned_hours">8.0</field>
@@ -480,7 +480,7 @@ Preparer: BOM | Reviewer: RIM | Approver: CKVC</field>
         <record id="task_bir_dec_1601c" model="project.task">
             <field name="name">1601-C (Withholding Tax) - December 2026</field>
             <field name="project_id" ref="project_bir_tax_filing"/>
-            <field name="stage_id" ref="stage_todo"/>
+            <field name="stage_id" ref="stage_bir_preparation"/>
             <field name="tag_ids" eval="[(6, 0, [ref('tag_bir_1601c')])]"/>
             <field name="date_deadline">2027-01-11</field>
             <field name="planned_hours">8.0</field>
@@ -495,7 +495,7 @@ Preparer: BOM | Reviewer: RIM | Approver: CKVC</field>
         <record id="task_bir_dec_0619e" model="project.task">
             <field name="name">0619-E (Expanded Withholding Tax) - December 2026</field>
             <field name="project_id" ref="project_bir_tax_filing"/>
-            <field name="stage_id" ref="stage_todo"/>
+            <field name="stage_id" ref="stage_bir_preparation"/>
             <field name="tag_ids" eval="[(6, 0, [ref('tag_bir_0619e')])]"/>
             <field name="date_deadline">2027-01-20</field>
             <field name="planned_hours">8.0</field>
@@ -512,7 +512,7 @@ Preparer: BOM | Reviewer: RIM | Approver: CKVC</field>
         <record id="task_bir_q4_2550q" model="project.task">
             <field name="name">2550Q (Quarterly VAT) - Q4 2026</field>
             <field name="project_id" ref="project_bir_tax_filing"/>
-            <field name="stage_id" ref="stage_todo"/>
+            <field name="stage_id" ref="stage_bir_preparation"/>
             <field name="tag_ids" eval="[(6, 0, [ref('tag_bir_2550q')])]"/>
             <field name="date_deadline">2027-01-25</field>
             <field name="planned_hours">16.0</field>
@@ -527,7 +527,7 @@ Preparer: BOM | Reviewer: RIM | Approver: CKVC</field>
         <record id="task_bir_q4_1601eq" model="project.task">
             <field name="name">1601-EQ (Quarterly EWT) - Q4 2026</field>
             <field name="project_id" ref="project_bir_tax_filing"/>
-            <field name="stage_id" ref="stage_todo"/>
+            <field name="stage_id" ref="stage_bir_preparation"/>
             <field name="tag_ids" eval="[(6, 0, [ref('tag_bir_1601eq')])]"/>
             <field name="date_deadline">2027-01-29</field>
             <field name="planned_hours">16.0</field>

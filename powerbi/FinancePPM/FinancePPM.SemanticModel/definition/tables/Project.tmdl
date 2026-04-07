@@ -1,0 +1,95 @@
+/// Dimension: Projects with PPM budget data
+/// Source: project_project + ipai_ppm fields
+table Project
+	lineageTag: a1b2c3d4-0001-0001-0001-000000000001
+
+	column ProjectID
+		dataType: int64
+		isKey: true
+		sourceColumn: id
+		summarizeBy: none
+		lineageTag: a1b2c3d4-0001-0001-0001-100000000001
+
+	column ProjectName
+		dataType: string
+		sourceColumn: name
+		summarizeBy: none
+		lineageTag: a1b2c3d4-0001-0001-0001-100000000002
+
+	column BudgetAmount
+		dataType: decimal
+		sourceColumn: ipai_ppm_budget_amount
+		summarizeBy: sum
+		formatString: ₱#,##0.00
+		lineageTag: a1b2c3d4-0001-0001-0001-100000000003
+
+	column CostCenter
+		dataType: string
+		sourceColumn: ipai_ppm_cost_center
+		summarizeBy: none
+		lineageTag: a1b2c3d4-0001-0001-0001-100000000004
+
+	column ImportBatchID
+		dataType: string
+		sourceColumn: ipai_ppm_import_batch_id
+		summarizeBy: none
+		isHidden
+		lineageTag: a1b2c3d4-0001-0001-0001-100000000005
+
+	column ImportSource
+		dataType: string
+		sourceColumn: ipai_ppm_import_source
+		summarizeBy: none
+		lineageTag: a1b2c3d4-0001-0001-0001-100000000006
+
+	column ImportedAt
+		dataType: dateTime
+		sourceColumn: ipai_ppm_imported_at
+		summarizeBy: none
+		isHidden
+		lineageTag: a1b2c3d4-0001-0001-0001-100000000007
+
+	column IsActive
+		dataType: boolean
+		sourceColumn: active
+		summarizeBy: none
+		lineageTag: a1b2c3d4-0001-0001-0001-100000000008
+
+	column CompanyID
+		dataType: int64
+		sourceColumn: company_id
+		summarizeBy: none
+		isHidden
+		lineageTag: a1b2c3d4-0001-0001-0001-100000000009
+
+	column AnalyticAccountID
+		dataType: int64
+		sourceColumn: account_id
+		summarizeBy: none
+		isHidden
+		lineageTag: a1b2c3d4-0001-0001-0001-100000000010
+
+	/// Total budget across all projects
+	measure Total_Budget =
+		SUM(Project[BudgetAmount])
+		formatString: ₱#,##0.00
+		displayFolder: Budget
+
+	/// Number of active projects
+	measure Project_Count =
+		COUNTROWS(Project)
+		formatString: #,##0
+		displayFolder: Counts
+
+	/// Average budget per project
+	measure Avg_Budget_Per_Project =
+		DIVIDE([Total_Budget], [Project_Count])
+		formatString: ₱#,##0.00
+		displayFolder: Budget
+
+	partition Project = entity
+		mode: directLake
+		source
+			entityName: project_project
+			schemaName: public
+			expressionSource: DatabaseQuery

@@ -1,0 +1,110 @@
+# =============================================================================
+# Odoo Test Runner — platform/ci/odoo-test-job.yml
+# =============================================================================
+# Automated verification using a Self-Hosted Linux Agent for private VNet 
+# access to PostgreSQL. Creates and drops disposable databases for each run.
+# =============================================================================
+
+trigger: none
+pr: none
+
+pool:
+  name: odoo-private-linux   # Self-hosted agent pool with private VNet access
+
+variables:
+  AZURE_SERVICE_CONNECTION: 'ipai-dev-wif' # WIF Service Connection (migrated from Azure-IPAI-ServiceConnection)
+  KEY_VAULT_NAME: 'kv-ipai-dev'                            # Key Vault ID
+  PG_SERVER: 'pg-ipai-odoo'                                # Server name to search for RG
+  PG_HOST: 'pg-ipai-odoo.postgres.database.azure.com'
+  PG_PORT: '5432'
+  PG_ADMIN_USER: 'odoo_admin'
+  ODOO_BIN: 'odoo'                                         # Image entrypoint
+  INSTALL_MODULES: 'ipai_auth_oidc,ipai_document_intelligence,ipai_ops_api'
+  TEST_TAGS: '/ipai_auth_oidc,/ipai_document_intelligence,/ipai_ops_api'
+
+stages:
+  - stage: odoo_tests
+    displayName: 'Odoo Module Verification'
+    jobs:
+      - job: run_tests
+        displayName: 'Provision DB, Run Tests, Cleanup'
+        timeoutInMinutes: 90
+        steps:
+          - checkout: self
+            clean: true
+
+          - task: AzureKeyVault@2
+            displayName: 'Load PostgreSQL Admin Password'
+            inputs:
+              azureSubscription: '$(AZURE_SERVICE_CONNECTION)'
+              KeyVaultName: '$(KEY_VAULT_NAME)'
+              SecretsFilter: 'pg-ipai-odoo-admin-password'
+              RunAsPreJob: false
+
+          - task: AzureCLI@2
+            name: create_db
+            displayName: 'Provision Disposable Test Database'
+            inputs:
+              azureSubscription: '$(AZURE_SERVICE_CONNECTION)'
+              scriptType: bash
+              scriptLocation: inlineScript
+              inlineScript: |
+                set -euo pipefail
+
+                # Resolve Resource Group dynamically to ensure production-safe targeting
+                PG_RG="$(az resource list \
+                  --name "$(PG_SERVER)" \
+                  --resource-type "Microsoft.DBforPostgreSQL/flexibleServers" \
+                  --query '[0].resourceGroup' -o tsv)"
+
+                if [ -z "$PG_RG" ]; then
+                  echo "Error: Could not resolve resource group for server $(PG_SERVER)"
+                  exit 1
+                fi
+
+                TEST_DB="odoo_test_$(Build.BuildId)_$(System.JobAttempt)"
+                echo "Target Resource Group: ${PG_RG}"
+                echo "Disposable Test DB: ${TEST_DB}"
+
+                az postgres flexible-server db create \
+                  --resource-group "${PG_RG}" \
+                  --server-name "$(PG_SERVER)" \
+                  --database-name "${TEST_DB}"
+
+                echo "##vso[task.setvariable variable=PG_RG]${PG_RG}"
+                echo "##vso[task.setvariable variable=TEST_DB]${TEST_DB}"
+
+          - bash: |
+              set -euo pipefail
+              chmod +x scripts/ci/run_odoo_tests.sh
+              scripts/ci/run_odoo_tests.sh
+            displayName: 'Execute Odoo Test Suite'
+            env:
+              PGHOST: $(PG_HOST)
+              PGPORT: $(PG_PORT)
+              PGDATABASE: $(TEST_DB)
+              PGUSER: $(PG_ADMIN_USER)
+              PGPASSWORD: $(pg-ipai-odoo-admin-password)
+              ODOO_BIN: $(ODOO_BIN)
+              INSTALL_MODULE_IDS: $(INSTALL_MODULES)
+              TEST_TAGS: $(TEST_TAGS)
+
+          - publish: .artifacts/test-logs
+            artifact: odoo-test-logs
+            displayName: 'Publish Execution Artifacts'
+            condition: always()
+
+          - task: Bash@3
+            displayName: 'Cleanup (Drop Disposable Database)'
+            condition: always()
+            inputs:
+              targetType: inline
+              script: |
+                set -euo pipefail
+                if [ -n "${TEST_DB:-}" ]; then
+                  echo "Dropping ${TEST_DB} via psql..."
+                  export PGPASSWORD="$(pg-ipai-odoo-admin-password)"
+                  psql "host=$(PG_HOST) port=$(PG_PORT) dbname=postgres user=$(PG_ADMIN_USER) sslmode=require" \
+                    -c "DROP DATABASE IF EXISTS \"${TEST_DB}\";"
+                  echo "PASS: Test database dropped."
+                fi
