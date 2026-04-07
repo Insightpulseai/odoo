@@ -5,7 +5,7 @@
     <record id="hr_expense_sheet_form_inherit_ops" model="ir.ui.view">
         <field name="name">hr.expense.sheet.form.inherit.ops</field>
         <field name="model">hr.expense.sheet</field>
-        <field name="inherit_id" ref="hr_expense.hr_expense_sheet_form"/>
+        <field name="inherit_id" ref="hr_expense.view_hr_expense_sheet_form"/>
         <field name="arch" type="xml">
 
             <!-- Add exception stat button -->
@@ -13,7 +13,7 @@
                 <button class="oe_stat_button" icon="fa-exclamation-triangle"
                         name="%(ipai_expense_ops.action_expense_exception)d"
                         type="action"
-                        context="{'search_default_sheet_id': active_id}">
+                        context="{'search_default_sheet_id': id}">
                     <field name="exception_count" widget="statinfo" string="Exceptions"/>
                 </button>
             </xpath>

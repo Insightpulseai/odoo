@@ -28,7 +28,7 @@
                         <button class="oe_stat_button" icon="fa-tasks"
                                 name="%(ipai_finance_close.action_closing_task)d"
                                 type="action"
-                                context="{'search_default_task_list_id': active_id}">
+                                context="{'search_default_task_list_id': id}">
                             <field name="task_count" widget="statinfo" string="Tasks"/>
                         </button>
                     </div>

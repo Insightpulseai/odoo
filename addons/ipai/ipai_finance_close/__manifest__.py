@@ -37,8 +37,8 @@ BIR deadline reference data included for PH compliance.
     "data": [
         "security/ir.model.access.csv",
         "views/closing_template_views.xml",
-        "views/closing_task_list_views.xml",
         "views/closing_task_views.xml",
+        "views/closing_task_list_views.xml",
         "views/menus.xml",
         "data/bir_deadline_reference.xml",
     ],
