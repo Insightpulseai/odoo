@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+import base64
 import hmac
 import json
 import logging
@@ -8,6 +9,18 @@ import time
 
 from odoo import http
 from odoo.http import request
+
+# Allowed MIME types for copilot file attachments
+_ALLOWED_MIMETYPES = {
+    "application/pdf",
+    "image/png", "image/jpeg", "image/gif", "image/webp",
+    "text/plain", "text/csv", "text/html",
+    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+    "application/vnd.ms-excel",
+    "application/json",
+}
+_MAX_FILE_SIZE = 10 * 1024 * 1024  # 10 MB
 
 _logger = logging.getLogger(__name__)
 
@@ -33,18 +46,24 @@ class PulserController(http.Controller):
     )
     def chat(self, prompt=None, message=None, record_model=None,
              record_id=None, surface=None, conversation_id=None,
-             context=None, **kw):
+             context=None, attachments=None, **kw):
         """Chat endpoint for Odoo-authenticated consumers.
 
         Accepts both formats:
-          - systray UI: {"message": "...", "conversation_id": N, "context": {...}}
+          - systray UI: {"message": "...", "conversation_id": N, "context": {...},
+                         "attachments": [{"name": "...", "data": "base64...", "mimetype": "..."}]}
           - API:        {"prompt": "...", "record_model": "...", "record_id": 123}
 
         Returns: {"content": "...", "blocked": false, "reason": "",
-                  "conversation_id": N, "skill": "..."}
+                  "conversation_id": N, "skill": "...",
+                  "attachment_ids": [{"id": N, "name": "...", "mimetype": "..."}]}
         """
         text = prompt or message
         ctx = context or {}
+
+        # Process file attachments
+        attachment_records = self._process_attachments(attachments or [])
+
         return self._handle_chat(
             prompt=text,
             record_model=record_model or ctx.get("context_model"),
@@ -53,6 +72,7 @@ class PulserController(http.Controller):
             user_id=request.env.uid,
             surface=surface or ctx.get("surface") or "erp",
             conversation_id=conversation_id,
+            attachment_ids=attachment_records,
         )
 
     @http.route(
@@ -119,7 +139,7 @@ class PulserController(http.Controller):
 
     def _handle_chat(self, prompt, record_model, record_id, source,
                      user_id, sudo=False, surface="erp",
-                     conversation_id=None):
+                     conversation_id=None, attachment_ids=None):
         """Shared chat handler: classify → context → Foundry → audit.
 
         Full audit trail: skill, confidence, tools, knowledge source,
@@ -127,8 +147,11 @@ class PulserController(http.Controller):
         """
         start = time.time()
 
-        if not prompt:
+        if not prompt and not attachment_ids:
             return {"content": "", "blocked": True, "reason": "Empty prompt"}
+
+        if not prompt:
+            prompt = "[User sent %d file(s)]" % len(attachment_ids)
 
         env = request.env
         if sudo:
@@ -170,7 +193,31 @@ class PulserController(http.Controller):
                 % (record_model, record_id)
             )
 
-        user_message = context_prefix + prompt
+        # Inject attachment metadata into context for the AI
+        attachment_info = []
+        if attachment_ids:
+            for att in attachment_ids:
+                att_meta = {
+                    "id": att.id,
+                    "name": att.name,
+                    "mimetype": att.mimetype,
+                    "file_size": att.file_size,
+                }
+                attachment_info.append(att_meta)
+            context_envelope["attachments"] = attachment_info
+
+        # Build user message with attachment descriptions
+        attachment_prefix = ""
+        if attachment_info:
+            file_list = ", ".join(
+                "%s (%s)" % (a["name"], a["mimetype"])
+                for a in attachment_info
+            )
+            attachment_prefix = (
+                "[Attached files: %s] " % file_list
+            )
+
+        user_message = context_prefix + attachment_prefix + prompt
 
         response_text = service.chat_completion(
             user_message=user_message,
@@ -225,7 +272,66 @@ class PulserController(http.Controller):
             "conversation_id": conversation_id,
             "skill": skill_id,
             "activities": activities,
+            "attachments": [
+                {"id": a["id"], "name": a["name"], "mimetype": a["mimetype"]}
+                for a in attachment_info
+            ] if attachment_info else [],
         }
+
+    def _process_attachments(self, attachments):
+        """Validate and create ir.attachment records from uploaded files.
+
+        Args:
+            attachments: List of dicts with keys: name, data (base64), mimetype.
+
+        Returns:
+            ir.attachment recordset.
+        """
+        if not attachments:
+            return request.env["ir.attachment"].browse()
+
+        Attachment = request.env["ir.attachment"]
+        created = Attachment.browse()
+
+        for file_info in attachments:
+            name = (file_info.get("name") or "attachment").strip()
+            data = file_info.get("data", "")
+            mimetype = file_info.get("mimetype", "application/octet-stream")
+
+            # Validate mimetype
+            if mimetype not in _ALLOWED_MIMETYPES:
+                _logger.warning(
+                    "Copilot attachment rejected: mimetype %s not allowed",
+                    mimetype,
+                )
+                continue
+
+            # Validate data is valid base64 and within size limit
+            if not data:
+                continue
+            try:
+                raw = base64.b64decode(data)
+            except Exception:
+                _logger.warning("Copilot attachment rejected: invalid base64")
+                continue
+
+            if len(raw) > _MAX_FILE_SIZE:
+                _logger.warning(
+                    "Copilot attachment rejected: %s exceeds %d bytes",
+                    name, _MAX_FILE_SIZE,
+                )
+                continue
+
+            att = Attachment.create({
+                "name": name,
+                "datas": data,
+                "mimetype": mimetype,
+                "res_model": "ipai.copilot.message",
+                "res_id": 0,  # linked after message creation
+            })
+            created |= att
+
+        return created
 
     def _classify_knowledge_source(self, tools_invoked):
         """Classify the primary knowledge source from tools used."""
@@ -316,13 +422,34 @@ class PulserController(http.Controller):
             _logger.debug("Audit record creation failed", exc_info=True)
 
     # ------------------------------------------------------------------
+    # Status endpoint (public for systray — avoids ACL on ir.config_parameter)
+    # ------------------------------------------------------------------
+
+    @http.route(
+        ["/api/pulser/status", "/ipai/copilot/status"],
+        type="json",
+        auth="user",
+        methods=["POST"],
+        csrf=True,
+    )
+    def status(self, **kw):
+        """Return Pulser enabled state for the systray widget.
+
+        Uses sudo() so non-admin users can read ir.config_parameter.
+        """
+        enabled = request.env["ir.config_parameter"].sudo().get_param(
+            "ipai_odoo_copilot.foundry_enabled", "False"
+        )
+        return {"enabled": enabled == "True"}
+
+    # ------------------------------------------------------------------
     # Conversation CRUD (used by systray)
     # ------------------------------------------------------------------
 
     def _is_enabled(self):
         """Check if Pulser is enabled via ir.config_parameter."""
         return request.env["ir.config_parameter"].sudo().get_param(
-            "ipai_copilot.enabled", "False"
+            "ipai_odoo_copilot.foundry_enabled", "False"
         ).lower() in ("true", "1")
 
     @http.route(

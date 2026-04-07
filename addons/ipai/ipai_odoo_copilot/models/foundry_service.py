@@ -64,6 +64,7 @@ TOOL_ACTIVITY_LABELS = {
     "search_architecture_docs": "Searching architecture docs",
     "search_odoo_docs_web": "Searching Odoo docs (web)",
     "query_fabric_data": "Querying Fabric",
+    "analyze_attachment": "Analyzing document",
     "propose_action": "Drafting proposed action",
     "search_docs": "Searching docs",
     "get_report": "Loading report",
@@ -194,6 +195,39 @@ TOOL_DEFINITIONS = [
     {
         "type": "function",
         "function": {
+            "name": "analyze_attachment",
+            "description": (
+                "Analyze an attached file using Azure Document Intelligence. "
+                "Use for extracting structured data from PDFs, invoices, "
+                "receipts, or images. Returns extracted text and key-value pairs."
+            ),
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "attachment_id": {
+                        "type": "integer",
+                        "description": "Odoo ir.attachment ID from the attachments in context",
+                    },
+                    "model_id": {
+                        "type": "string",
+                        "description": "Document Intelligence model to use",
+                        "enum": [
+                            "prebuilt-receipt",
+                            "prebuilt-invoice",
+                            "prebuilt-layout",
+                            "prebuilt-read",
+                            "prebuilt-idDocument",
+                        ],
+                        "default": "prebuilt-read",
+                    },
+                },
+                "required": ["attachment_id"],
+            },
+        },
+    },
+    {
+        "type": "function",
+        "function": {
             "name": "propose_action",
             "description": (
                 "Propose a write action for human approval. "
@@ -315,16 +349,33 @@ class FoundryService(models.AbstractModel):
         ICP = self.env["ir.config_parameter"].sudo()
         return {
             "enabled": ICP.get_param(
-                "ipai_copilot.enabled", "False"
+                "ipai_odoo_copilot.foundry_enabled", "False"
             ).lower() in ("true", "1"),
-            "endpoint": ICP.get_param("ipai_copilot.foundry_endpoint", ""),
-            "api_key": ICP.get_param("ipai_copilot.foundry_api_key", ""),
-            "agent_id": ICP.get_param("ipai_copilot.foundry_agent_id", ""),
+            "endpoint": ICP.get_param(
+                "ipai_odoo_copilot.foundry_api_endpoint", ""
+            ),
+            "api_key": ICP.get_param(
+                "ipai_odoo_copilot.foundry_api_key", ""
+            ),
+            "agent_id": ICP.get_param(
+                "ipai_odoo_copilot.foundry_agent_name", ""
+            ),
             "api_version": ICP.get_param(
-                "ipai_copilot.foundry_api_version", "2024-10-01-preview"
+                "ipai_odoo_copilot.foundry_api_version",
+                "2024-10-01-preview",
             ),
             "auth_mode": ICP.get_param(
-                "ipai_copilot.foundry_auth_mode", "api_key"
+                "ipai_odoo_copilot.foundry_auth_mode", "api_key"
+            ),
+            "model": ICP.get_param(
+                "ipai_odoo_copilot.foundry_model", "gpt-4.1"
+            ),
+            "search_service": ICP.get_param(
+                "ipai_odoo_copilot.foundry_search_service", ""
+            ),
+            "search_index": ICP.get_param(
+                "ipai_odoo_copilot.foundry_search_index",
+                "ipai-knowledge-index",
             ),
         }
 
@@ -754,6 +805,7 @@ class FoundryService(models.AbstractModel):
                 result = self._simple_chat_completion(
                     endpoint, api_key, settings["api_version"],
                     user_message, context_envelope,
+                    model=settings.get("model"),
                 )
                 if result:
                     self._emit_activity(
@@ -782,19 +834,27 @@ class FoundryService(models.AbstractModel):
         return self._fallback_response(user_message)
 
     def _simple_chat_completion(self, endpoint, api_key, api_version,
-                                 message, context_envelope):
+                                 message, context_envelope,
+                                 model=None):
         """Fallback: use simple chat completions API (no tools)."""
+        deployment = model or "gpt-4.1"
         messages = [{"role": "system", "content": SYSTEM_PROMPT}]
+        # Include non-internal context in the system prompt
         if context_envelope:
-            messages.append({
-                "role": "system",
-                "content": "Context: %s" % json.dumps(context_envelope),
-            })
+            safe_ctx = {
+                k: v for k, v in context_envelope.items()
+                if not k.startswith("_")
+            }
+            if safe_ctx:
+                messages.append({
+                    "role": "system",
+                    "content": "Context: %s" % json.dumps(safe_ctx),
+                })
         messages.append({"role": "user", "content": message})
 
         resp = requests.post(
-            "%s/openai/deployments/gpt-4.1/chat/completions"
-            "?api-version=%s" % (endpoint, api_version),
+            "%s/openai/deployments/%s/chat/completions"
+            "?api-version=%s" % (endpoint, deployment, api_version),
             headers={
                 "api-key": api_key,
                 "Content-Type": "application/json",
