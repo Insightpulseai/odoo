@@ -9,7 +9,7 @@
                     title="Pulser"
                     t-att-class="{'o_ipai_copilot_btn_active': state.isOpen}">
                 <img class="o_ipai_copilot_icon_img"
-                     src="/mail/static/src/img/odoobot.png"
+                     src="/ipai_odoo_copilot/static/src/img/pulser_icon.png"
                      alt="Pulser"/>
             </button>
 
@@ -21,7 +21,7 @@
                 <div class="o_ipai_copilot_header d-flex align-items-center justify-content-between px-3 py-2 border-bottom">
                     <div class="d-flex align-items-center gap-2">
                         <img class="o_ipai_copilot_header_icon"
-                             src="/mail/static/src/img/odoobot.png"
+                             src="/ipai_odoo_copilot/static/src/img/pulser_icon.png"
                              alt="Pulser"/>
                         <strong>Pulser</strong>
                     </div>
@@ -39,12 +39,9 @@
                     </div>
                 </div>
 
-                <!-- Message List (drop zone) -->
+                <!-- Message List -->
                 <div class="o_ipai_copilot_messages flex-grow-1 overflow-auto px-3 py-2"
-                     t-ref="messageList"
-                     t-on-dragover="onDragOver"
-                     t-on-dragleave="onDragLeave"
-                     t-on-drop="onDrop">
+                     t-ref="messageList">
 
                     <!-- Empty State -->
                     <div t-if="!state.messages.length"
@@ -65,17 +62,7 @@
                         <div t-if="msg.role === 'user'"
                              class="o_ipai_copilot_message o_ipai_copilot_message_user mb-2 d-flex justify-content-end">
                             <div class="o_ipai_copilot_bubble_user rounded-3 px-3 py-2 small">
-                                <t t-if="msg.attachments and msg.attachments.length">
-                                    <div class="o_ipai_copilot_attachments mb-1">
-                                        <t t-foreach="msg.attachments" t-as="fname" t-key="fname_index">
-                                            <span class="o_ipai_copilot_file_chip">
-                                                <i class="fa fa-paperclip me-1"/>
-                                                <t t-esc="fname"/>
-                                            </span>
-                                        </t>
-                                    </div>
-                                </t>
-                                <t t-if="msg.content" t-esc="msg.content"/>
+                                <t t-esc="msg.content"/>
                             </div>
                         </div>
 
@@ -119,35 +106,7 @@
 
                 <!-- Input Area -->
                 <div class="o_ipai_copilot_input border-top px-3 py-2">
-                    <!-- Pending Files -->
-                    <div t-if="state.pendingFiles.length"
-                         class="o_ipai_copilot_pending_files d-flex flex-wrap gap-1 mb-2">
-                        <t t-foreach="state.pendingFiles" t-as="pf" t-key="pf_index">
-                            <span class="o_ipai_copilot_pending_chip badge bg-secondary d-flex align-items-center gap-1">
-                                <i class="fa fa-file-o"/>
-                                <span class="text-truncate" style="max-width: 120px;">
-                                    <t t-esc="pf.name"/>
-                                </span>
-                                <button class="btn-close btn-close-white ms-1"
-                                        style="font-size: 0.5rem;"
-                                        t-on-click="() => this.removePendingFile(pf_index)"
-                                        title="Remove"/>
-                            </span>
-                        </t>
-                    </div>
                     <div class="d-flex gap-2">
-                        <button class="btn btn-sm btn-outline-secondary border-0 px-2"
-                                t-on-click="onClickAttach"
-                                t-att-disabled="state.isLoading"
-                                title="Attach file">
-                            <i class="fa fa-paperclip"/>
-                        </button>
-                        <input type="file"
-                               t-ref="fileInput"
-                               class="d-none"
-                               multiple="multiple"
-                               accept=".pdf,.png,.jpg,.jpeg,.gif,.webp,.txt,.csv,.html,.xlsx,.xls,.docx,.json"
-                               t-on-change="onFileChange"/>
                         <textarea
                             t-ref="promptInput"
                             class="form-control form-control-sm"

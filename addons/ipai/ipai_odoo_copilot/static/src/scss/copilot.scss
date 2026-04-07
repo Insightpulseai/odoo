@@ -116,42 +116,6 @@
   40% { transform: scale(1); opacity: 1; }
 }
 
-// Drag-and-drop overlay
-.o_ipai_copilot_dragover {
-  background: rgba(26, 122, 69, 0.06) !important;
-  outline: 2px dashed #1a7a45;
-  outline-offset: -4px;
-}
-
-// Attachment chips in user messages
-.o_ipai_copilot_attachments {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 4px;
-}
-
-.o_ipai_copilot_file_chip {
-  display: inline-flex;
-  align-items: center;
-  background: rgba(255, 255, 255, 0.2);
-  border-radius: 4px;
-  padding: 2px 6px;
-  font-size: 0.7rem;
-  white-space: nowrap;
-  max-width: 200px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-// Pending files badges
-.o_ipai_copilot_pending_files {
-  .o_ipai_copilot_pending_chip {
-    font-size: 0.7rem;
-    font-weight: 400;
-    padding: 3px 8px;
-  }
-}
-
 // Input area
 .o_ipai_copilot_input {
   background: #f8f9fb;
@@ -165,16 +129,6 @@
     &:focus {
       border-color: #1a7a45;
       box-shadow: 0 0 0 2px rgba(26, 122, 69, 0.12);
-    }
-  }
-
-  .btn-outline-secondary {
-    color: #6c757d;
-    font-size: 14px;
-
-    &:hover {
-      color: #1a7a45;
-      background: rgba(26, 122, 69, 0.08);
     }
   }
 

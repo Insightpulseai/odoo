@@ -55,11 +55,11 @@ _DEFAULT_SEARCH_LIMIT = 20
 _MAX_REPORT_RECORDS = 50
 
 
-class CopilotToolExecutor(models.AbstractModel):
+class CopilotToolExecutor(models.Model):
     """Dispatches tool calls from Azure Foundry agent runs to Odoo ORM.
 
-    AbstractModel — no database table. Service model registered in
-    ir.model to be accessible from other Odoo code.
+    This model has _auto = False (no database table). It is a service
+    model registered in ir.model to be accessible from other Odoo code.
 
     All tool execution respects:
       - permitted_tools list from the context envelope
@@ -70,6 +70,7 @@ class CopilotToolExecutor(models.AbstractModel):
 
     _name = "ipai.copilot.tool.executor"
     _description = "Copilot Tool Execution Dispatcher"
+    _auto = False
 
     # ------------------------------------------------------------------
     # Tool registry — maps tool names to handler methods
@@ -91,8 +92,6 @@ class CopilotToolExecutor(models.AbstractModel):
         # Org-wide documentation search tools
         "search_org_docs": "_execute_search_org_docs",
         "search_spec_bundles": "_execute_search_spec_bundles",
-        # File attachment analysis
-        "analyze_attachment": "_execute_analyze_attachment",
         "search_architecture_docs": "_execute_search_architecture_docs",
         # Bounded web search fallback (Lane 3)
         "search_odoo_docs_web": "_execute_search_odoo_docs_web",
@@ -524,9 +523,9 @@ class CopilotToolExecutor(models.AbstractModel):
             }
 
     def _execute_search_odoo_docs(self, arguments, context_envelope):
-        """Search Odoo 18 documentation knowledge base.
+        """Search Odoo 19 documentation knowledge base.
 
-        Index: odoo18-docs (RST-chunked Odoo CE documentation).
+        Index: odoo19-docs (RST-chunked Odoo CE documentation).
         """
         query = arguments.get("query", "")
         module = arguments.get("module", "")
@@ -540,7 +539,7 @@ class CopilotToolExecutor(models.AbstractModel):
             filter_expr = "module eq '%s'" % _sanitize_odata_value(module)
 
         return self._search_kb_index(
-            query, "odoo18-docs", limit, filter_expr
+            query, "odoo19-docs", limit, filter_expr
         )
 
     def _execute_search_azure_docs(self, arguments, context_envelope):
@@ -1144,79 +1143,6 @@ class CopilotToolExecutor(models.AbstractModel):
             return {
                 "status": "error",
                 "message": "Query execution failed: %s" % str(e)[:200],
-            }
-
-    # ------------------------------------------------------------------
-    # Attachment analysis — Azure Document Intelligence bridge
-    # ------------------------------------------------------------------
-
-    def _execute_analyze_attachment(self, arguments, context_envelope):
-        """Analyze an attached file using Azure Document Intelligence.
-
-        Delegates to ipai.doc.intelligence.service if available.
-        Falls back to returning basic file metadata if the service is
-        not configured.
-        """
-        attachment_id = arguments.get("attachment_id")
-        model_id = arguments.get("model_id", "prebuilt-read")
-
-        if not attachment_id:
-            return {
-                "success": False,
-                "data": None,
-                "error": "attachment_id is required",
-            }
-
-        # Verify attachment exists and is accessible
-        att = self.env["ir.attachment"].sudo().browse(int(attachment_id))
-        if not att.exists():
-            return {
-                "success": False,
-                "data": None,
-                "error": "Attachment %s not found" % attachment_id,
-            }
-
-        # Validate the attachment was sent in this conversation context
-        ctx_attachments = (context_envelope or {}).get("attachments", [])
-        allowed_ids = {a["id"] for a in ctx_attachments}
-        if allowed_ids and attachment_id not in allowed_ids:
-            return {
-                "success": False,
-                "data": None,
-                "error": "Attachment %s not in current conversation" % attachment_id,
-            }
-
-        # Try Azure Document Intelligence service
-        try:
-            doc_service = self.env["ipai.doc.intelligence.service"]
-            result = doc_service.analyze_document(
-                attachment_id=att.id,
-                model_id=model_id,
-            )
-            return {
-                "success": result.get("status") == "succeeded",
-                "data": result.get("result", {}),
-                "error": result.get("error"),
-            }
-        except (KeyError, AttributeError):
-            # Doc Intelligence service not installed — return file metadata
-            _logger.info(
-                "Doc Intelligence service not available; "
-                "returning file metadata for attachment %s", attachment_id,
-            )
-            return {
-                "success": True,
-                "data": {
-                    "id": att.id,
-                    "name": att.name,
-                    "mimetype": att.mimetype,
-                    "file_size": att.file_size,
-                    "note": (
-                        "Document Intelligence service not configured. "
-                        "File metadata returned."
-                    ),
-                },
-                "error": None,
             }
 
     # ------------------------------------------------------------------
