@@ -83,6 +83,108 @@
 
 ---
 
+## A) Opening Entries — Accounts Receivable (AR)
+
+> Adapted from Odoo 18 SF-Experts go-live checklist (accrual basis).
+> All journal entries execute via CLI against `pg-ipai-odoo` (Azure PG Flexible Server).
+
+- [ ] Create account: **AR Clearing** (ARC), type: Current Assets, allow reconciliation
+- [ ] Create account: **AP Clearing** (APC), type: Current Liabilities, allow reconciliation
+- [ ] Verify open invoice + credit note sums match open AR balance (client accountant sign-off)
+- [ ] Check multi-currency open invoices — update exchange rates before import
+- [ ] Import open invoices and credit notes
+- [ ] Adjust open customer payments to AR credit on initial balance (per line item, partner set)
+- [ ] Verify AR Clearing balance = 0 after reconciliation
+
+---
+
+## B) Opening Entries — Accounts Payable (AP)
+
+- [ ] Verify open bill + refund sums match open AP balance (client accountant sign-off)
+- [ ] Check multi-currency open bills — update exchange rates before import
+- [ ] Import open bills and refunds
+- [ ] Adjust open vendor payments to AP debit on initial balance (per line item, partner set)
+- [ ] Verify AP Clearing balance = 0 after reconciliation
+
+---
+
+## C) Inventory Opening
+
+> Choose automated or manual valuation per product category.
+
+### Automated Valuation
+
+- [ ] Accounting settings: enable Automatic Accounting
+- [ ] Product categories configured with costing method and valuation
+- [ ] Products imported with correct category, cost, type=Goods, track=Quantity
+- [ ] Create **Inventory Clearing** account (type: Current Asset, allow reconciliation)
+- [ ] Set Inventory Clearing on virtual inventory adjustment location
+- [ ] Collect inventory import file (product, location, quantity, lot/SN optional)
+- [ ] Verify: sum(cost * qty) = initial balance inventory value
+- [ ] Physical inventory imported and validated via Inventory app
+- [ ] Change normal loss account on virtual adjustment location post-import
+
+### Manual Valuation
+
+- [ ] Products set up with cost
+- [ ] Inventory file collected and imported
+- [ ] Verify: sum(cost * qty) = initial balance inventory value
+- [ ] Confirm: Balance Sheet shows no stock valuation line (manual mode)
+
+---
+
+## D) Trial Balance Import
+
+### Payment Journal Configuration
+
+> Choose A (payment entries needed) or B (no payment entries after go-live).
+
+**Option A — Bank journal with payment entry:**
+
+- [ ] Create **Outstanding Receipt** and **Outstanding Payment** accounts (Current Asset, allow reconciliation)
+- [ ] Add Outstanding Receipt/Payment to bank journal incoming/outgoing sections
+- [ ] Map bank account to Outstanding Receipt account
+
+**Option B — Bank journal without payment entry:**
+
+- [ ] Create **Bank Clearing** account (Current Asset, allow reconciliation)
+- [ ] Map bank account to Bank Clearing account
+
+### Trial Balance Steps (both options)
+
+- [ ] Prepare client original trial balance (Excel)
+- [ ] Modify TB AR account → AR Clearing (exclude open customer payments)
+- [ ] Modify TB AP account → AP Clearing (exclude open vendor payments)
+- [ ] Modify TB Inventory account → Inventory Clearing (if automated valuation)
+- [ ] Import journal entry for trial balance and post
+- [ ] Verify: General Ledger → AR Clearing = 0
+- [ ] Verify: General Ledger → AP Clearing = 0
+- [ ] Verify: General Ledger → Inventory Clearing = 0
+- [ ] **Balance Sheet ties to signed-off Trial Balance**
+
+---
+
+## E) Payment Provider Configuration (Azure + PH Market)
+
+> Module: `ipai_payment_paymongo` (v18.0.1.0.0)
+> Secrets: Azure Key Vault (`kv-ipai-dev`)
+
+- [ ] PayMongo API keys vaulted in `kv-ipai-dev` (`paymongo-secret-key`, `paymongo-public-key`)
+- [ ] Payment provider activated in Odoo (Accounting → Configuration → Payment Providers)
+- [ ] Supported methods enabled: Credit/Debit, GCash, Maya, GrabPay, BPI/UnionBank
+- [ ] Webhook endpoint registered with PayMongo (`https://erp.insightpulseai.com/payment/paymongo/webhook`)
+- [ ] Test transaction completed in sandbox mode
+- [ ] Production mode activated after sandbox verification
+
+### Bank Account Configuration
+
+- [ ] Company bank accounts created in Odoo (matching BIR-registered accounts)
+- [ ] Bank journals created per account with correct outstanding receipt/payment accounts
+- [ ] Bank statement import method configured (manual CSV or OCA bank-statement-import)
+- [ ] Reconciliation model configured for common payment patterns
+
+---
+
 ## 6. Integration Readiness
 
 - [x] **Foundry endpoint** tested (gpt-4.1 live, ~3s latency) -- 2026-03-18

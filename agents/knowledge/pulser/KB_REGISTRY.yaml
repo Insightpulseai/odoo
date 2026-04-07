@@ -120,6 +120,26 @@ segments:
     used_by: [pulser_taxpulse_ph]
 
   # ---------------------------------------------------------------------------
+  # Go-Live Domain — accounting setup, payment, opening entries
+  # ---------------------------------------------------------------------------
+  - id: kb_go_live_accounting
+    name: "Odoo Go-Live Accounting Checklist"
+    domain: go_live
+    description: "Opening entries (AR/AP), inventory valuation, trial balance import, payment journal config, PayMongo setup"
+    sources:
+      - type: runbook
+        path: docs/runbooks/ODOO19_GO_LIVE_CHECKLIST.md
+        description: "Master go-live checklist with accounting sections A-E"
+      - type: ssot
+        path: ssot/go_live/odoo19_checklist.manifest.yaml
+        description: "CI-enforced checklist manifest"
+      - type: reference
+        description: "Odoo 18 SF-Experts go-live checklist (Pei Hua Tsai, accrual basis, USA localization adapted to PH)"
+    update_frequency: on_change
+    grounding_required: true
+    used_by: [pulser_erp_core, pulser_finance_ops]
+
+  # ---------------------------------------------------------------------------
   # Finance Domain — expense, budget, close
   # ---------------------------------------------------------------------------
   - id: kb_expense_policy
