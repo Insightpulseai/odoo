@@ -1,0 +1,63 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://insightpulseai.com/schemas/judge/judge-rubric.schema.json",
+  "title": "Judge Rubric",
+  "description": "Schema for judge rubric files that define evaluation criteria for agent outputs.",
+  "type": "object",
+  "required": ["name", "description", "criteria"],
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Unique judge rubric identifier"
+    },
+    "description": {
+      "type": "string",
+      "description": "What this judge evaluates"
+    },
+    "domain": {
+      "type": "string",
+      "description": "Domain this judge applies to"
+    },
+    "model": {
+      "type": "string",
+      "description": "LLM model used for judge evaluation (e.g., gpt-4o, claude-opus)"
+    },
+    "criteria": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name", "weight", "description"],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Criterion name"
+          },
+          "weight": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1,
+            "description": "Weight of this criterion (0-1, all weights should sum to 1)"
+          },
+          "description": {
+            "type": "string",
+            "description": "What this criterion measures"
+          },
+          "scoring": {
+            "type": "string",
+            "enum": ["binary", "scale_1_5", "scale_1_10"],
+            "description": "Scoring method for this criterion"
+          }
+        }
+      },
+      "minItems": 1,
+      "description": "Evaluation criteria with weights"
+    },
+    "pass_threshold": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1,
+      "description": "Minimum weighted score to pass (0-1)"
+    }
+  },
+  "additionalProperties": false
+}

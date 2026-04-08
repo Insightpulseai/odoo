@@ -4,22 +4,34 @@
 # Pattern: PayrollEngine rules DSL with JSONLogic + ATC code matching
 # Formula: base * rate (rate looked up from ATC table)
 #
+# ATC Code Namespace (BIR RR 11-2018 / RR 2-98 as amended):
+#   WI = EWT payable by Individual payees
+#   WC = EWT payable by Corporate/Juridical payees
+#   WB = EWT payable by both (same rate)
+#
+# Legacy W-series (W010, W020) was an internal shorthand.
+# Reconciled to official BIR WI/WC namespace 2026-04-01.
+# The `atc_code` field is the official BIR ATC code.
+# The `legacy_code` field preserves backward compatibility.
+#
 # Migration note (2025.2): ATC codes migrated from short-form (W010, W157)
 # to BIR official format (WI010, WC010) per RR 11-2018 Annex.
 
 rules:
   # Professional fees - Individuals (VAT-registered or gross > PHP 3M)
   - code: EWT_PROF_WI010
-    name: Professional fees - individuals, VAT or >3M (ATC WI010)
-    description: 10% EWT on professional fees paid to VAT-registered individuals or those with gross income > PHP 3M
+    name: Professional fees - individuals (ATC WI010)
+    description: 10% EWT on professional fees paid to individuals
     priority: 100
     tax_type: ewt
     atc_code: WI010
+    legacy_code: W010
+    payee_type: individual
 
     condition:
       and:
         - "==": [{"var": "doc_type"}, "bill"]
-        - "==": [{"var": "atc_code"}, "WI010"]
+        - "in": [{"var": "atc_code"}, ["WI010", "W010"]]
         - "==": [{"var": "vendor_type"}, "PROFESSIONAL"]
         - ">": [{"var": "gross_amount"}, 0]
 
@@ -39,6 +51,7 @@ rules:
     priority: 100
     tax_type: ewt
     atc_code: WI011
+    payee_type: individual
 
     condition:
       and:
@@ -56,27 +69,28 @@ rules:
 
     notes: "5% creditable withholding on professional fees to non-VAT individuals ≤ PHP 3M. RR 11-2018."
 
-  # Professional fees - Juridical
-  - code: EWT_PROF_WI020
-    name: Professional fees - juridical (ATC WI020)
+  - code: EWT_PROF_WC020
+    name: Professional fees - juridical (ATC WC020)
     description: 10% EWT on professional fees paid to corporations
     priority: 100
     tax_type: ewt
-    atc_code: WI020
+    atc_code: WC020
+    legacy_code: W020
+    payee_type: corporate
 
     condition:
       and:
         - "==": [{"var": "doc_type"}, "bill"]
-        - "==": [{"var": "atc_code"}, "WI020"]
+        - "in": [{"var": "atc_code"}, ["WC020", "W020"]]
         - "==": [{"var": "vendor_type"}, "PROFESSIONAL"]
         - ">": [{"var": "gross_amount"}, 0]
 
     base_source: gross_amount
-    rate_code: WI020
+    rate_code: WC020
     rate_value: 0.10
     formula: "base * rate"
 
-    output_bucket: EWT_PROF_WI020
+    output_bucket: EWT_PROF_WC020
 
     notes: "10% creditable withholding on professional fees to corporations. RR 11-2018."
 
@@ -87,11 +101,13 @@ rules:
     priority: 100
     tax_type: ewt
     atc_code: WI030
+    legacy_code: W030
+    payee_type: individual
 
     condition:
       and:
         - "==": [{"var": "doc_type"}, "bill"]
-        - "==": [{"var": "atc_code"}, "WI030"]
+        - "in": [{"var": "atc_code"}, ["WI030", "W030"]]
         - "in": [{"var": "vendor_type"}, ["PROFESSIONAL", "MEDICAL"]]
         - ">": [{"var": "gross_amount"}, 0]
 
@@ -111,11 +127,13 @@ rules:
     priority: 100
     tax_type: ewt
     atc_code: WI040
+    legacy_code: W040
+    payee_type: individual
 
     condition:
       and:
         - "==": [{"var": "doc_type"}, "bill"]
-        - "==": [{"var": "atc_code"}, "WI040"]
+        - "in": [{"var": "atc_code"}, ["WI040", "W040"]]
         - "==": [{"var": "vendor_type"}, "PROFESSIONAL"]
         - ">": [{"var": "gross_amount"}, 0]
 
@@ -127,6 +145,114 @@ rules:
     output_bucket: EWT_PROF_WI040
 
     notes: "10% creditable withholding on legal professional fees. RR 11-2018."
+
+  # Income payments to suppliers - Goods (1%) — Individual payee
+  - code: EWT_SUPPLIER_WI157
+    name: Income payments - goods, individual (ATC WI157)
+    description: 1% EWT on payments for goods to individuals
+    priority: 100
+    tax_type: ewt
+    atc_code: WI157
+    legacy_code: W157
+    payee_type: individual
+
+    condition:
+      and:
+        - "==": [{"var": "doc_type"}, "bill"]
+        - "in": [{"var": "atc_code"}, ["WI157", "W157"]]
+        - "==": [{"var": "vendor_type"}, "SUPPLIER"]
+        - "==": [{"var": "payee_type"}, "individual"]
+        - ">": [{"var": "gross_amount"}, 0]
+
+    base_source: gross_amount
+    rate_code: WI157
+    rate_value: 0.01
+    formula: "base * rate"
+
+    output_bucket: EWT_SUPPLIER_WI157
+
+    notes: "1% creditable withholding on goods purchases from individuals"
+
+  # Income payments to suppliers - Goods (1%) — Corporate payee
+  - code: EWT_SUPPLIER_WC157
+    name: Income payments - goods, corporate (ATC WC157)
+    description: 1% EWT on payments for goods to corporations
+    priority: 100
+    tax_type: ewt
+    atc_code: WC157
+    legacy_code: W157
+    payee_type: corporate
+
+    condition:
+      and:
+        - "==": [{"var": "doc_type"}, "bill"]
+        - "in": [{"var": "atc_code"}, ["WC157", "W157"]]
+        - "==": [{"var": "vendor_type"}, "SUPPLIER"]
+        - "==": [{"var": "payee_type"}, "corporate"]
+        - ">": [{"var": "gross_amount"}, 0]
+
+    base_source: gross_amount
+    rate_code: WC157
+    rate_value: 0.01
+    formula: "base * rate"
+
+    output_bucket: EWT_SUPPLIER_WC157
+
+    notes: "1% creditable withholding on goods purchases from corporations"
+
+  # Income payments to suppliers - Services (2%) — Individual payee
+  - code: EWT_SUPPLIER_WI158
+    name: Income payments - services, individual (ATC WI158)
+    description: 2% EWT on payments for services to individuals
+    priority: 100
+    tax_type: ewt
+    atc_code: WI158
+    legacy_code: W158
+    payee_type: individual
+
+    condition:
+      and:
+        - "==": [{"var": "doc_type"}, "bill"]
+        - "in": [{"var": "atc_code"}, ["WI158", "W158"]]
+        - "==": [{"var": "vendor_type"}, "SUPPLIER"]
+        - "==": [{"var": "payee_type"}, "individual"]
+        - ">": [{"var": "gross_amount"}, 0]
+
+    base_source: gross_amount
+    rate_code: WI158
+    rate_value: 0.02
+    formula: "base * rate"
+
+    output_bucket: EWT_SUPPLIER_WI158
+
+    notes: "2% creditable withholding on services from individuals"
+
+  # Income payments to suppliers - Services (2%) — Corporate payee
+  - code: EWT_SUPPLIER_WC158
+    name: Income payments - services, corporate (ATC WC158)
+    description: 2% EWT on payments for services to corporations
+    priority: 100
+    tax_type: ewt
+    atc_code: WC158
+    legacy_code: W158
+    payee_type: corporate
+
+    condition:
+      and:
+        - "==": [{"var": "doc_type"}, "bill"]
+        - "in": [{"var": "atc_code"}, ["WC158", "W158"]]
+        - "==": [{"var": "vendor_type"}, "SUPPLIER"]
+        - "==": [{"var": "payee_type"}, "corporate"]
+        - ">": [{"var": "gross_amount"}, 0]
+
+    base_source: gross_amount
+    rate_code: WC158
+    rate_value: 0.02
+    formula: "base * rate"
+
+    output_bucket: EWT_SUPPLIER_WC158
+
+    notes: "2% creditable withholding on services from corporations"
 
   # Contractors - Individuals (2%)
   - code: EWT_CONTRACTOR_WC010
@@ -141,6 +267,7 @@ rules:
         - "==": [{"var": "doc_type"}, "bill"]
         - "==": [{"var": "atc_code"}, "WC010"]
         - "==": [{"var": "vendor_type"}, "SUPPLIER"]
+        - "==": [{"var": "payee_type"}, "individual"]
         - ">": [{"var": "gross_amount"}, 0]
 
     base_source: gross_amount
@@ -152,29 +279,55 @@ rules:
 
     notes: "2% creditable withholding on contractor payments (individuals). RR 11-2018."
 
-  # Contractors - Juridical (2%)
-  - code: EWT_CONTRACTOR_WC020
-    name: Income payments to contractors - juridical (ATC WC020)
-    description: 2% EWT on payments to corporate contractors
+  # Commissions — Individual agents
+  - code: EWT_COMMISSION_WI161
+    name: Commissions - individual agents (ATC WI161)
+    description: 10% EWT on commissions paid to individual agents
     priority: 100
     tax_type: ewt
-    atc_code: WC020
+    atc_code: WI161
+    legacy_code: W161
+    payee_type: individual
 
     condition:
       and:
         - "==": [{"var": "doc_type"}, "bill"]
-        - "==": [{"var": "atc_code"}, "WC020"]
-        - "==": [{"var": "vendor_type"}, "SUPPLIER"]
+        - "in": [{"var": "atc_code"}, ["WI161", "W161"]]
+        - "in": [{"var": "vendor_type"}, ["AGENT", "INDIVIDUAL"]]
         - ">": [{"var": "gross_amount"}, 0]
 
     base_source: gross_amount
-    rate_code: WC020
-    rate_value: 0.02
+    rate_code: WI161
+    rate_value: 0.10
     formula: "base * rate"
 
-    output_bucket: EWT_CONTRACTOR_WC020
+    output_bucket: EWT_COMMISSION_WI161
 
-    notes: "2% creditable withholding on contractor payments (juridical). RR 11-2018."
+    notes: "10% creditable withholding on commissions to individual agents"
+
+  # Commissions - Individuals (WC100)
+  - code: EWT_COMMISSION_WC100
+    name: Commissions - individuals (ATC WC100)
+    description: 10% EWT on commissions paid to individual agents
+    priority: 100
+    tax_type: ewt
+    atc_code: WC100
+
+    condition:
+      and:
+        - "==": [{"var": "doc_type"}, "bill"]
+        - "==": [{"var": "atc_code"}, "WC100"]
+        - "in": [{"var": "vendor_type"}, ["AGENT", "INDIVIDUAL"]]
+        - ">": [{"var": "gross_amount"}, 0]
+
+    base_source: gross_amount
+    rate_code: WC100
+    rate_value: 0.10
+    formula: "base * rate"
+
+    output_bucket: EWT_COMMISSION_WC100
+
+    notes: "10% creditable withholding on commissions (individuals). RR 11-2018."
 
   # Government purchases - Goods (1%)
   - code: EWT_GOVT_WC600
@@ -222,98 +375,109 @@ rules:
 
     notes: "2% creditable withholding on government procurement of services. RR 11-2018."
 
-  # Commissions - Individuals
-  - code: EWT_COMMISSION_WC100
-    name: Commissions - individuals (ATC WC100)
-    description: 10% EWT on commissions paid to individual agents
+  # Rent - Real property — Individual lessor
+  - code: EWT_RENT_WI169
+    name: Rent - real property, individual (ATC WI169)
+    description: 5% EWT on rental payments for real property from individuals
     priority: 100
     tax_type: ewt
-    atc_code: WC100
+    atc_code: WI169
+    legacy_code: W169
+    payee_type: individual
 
     condition:
       and:
         - "==": [{"var": "doc_type"}, "bill"]
-        - "==": [{"var": "atc_code"}, "WC100"]
-        - "in": [{"var": "vendor_type"}, ["AGENT", "INDIVIDUAL"]]
+        - "in": [{"var": "atc_code"}, ["WI169", "W169"]]
+        - "==": [{"var": "payee_type"}, "individual"]
         - ">": [{"var": "gross_amount"}, 0]
 
     base_source: gross_amount
-    rate_code: WC100
-    rate_value: 0.10
-    formula: "base * rate"
-
-    output_bucket: EWT_COMMISSION_WC100
-
-    notes: "10% creditable withholding on commissions (individuals). RR 11-2018."
-
-  # Rent - Real property (individuals)
-  - code: EWT_RENT_WB010
-    name: Rent - real property, individuals (ATC WB010)
-    description: 5% EWT on rental payments for real property to individuals
-    priority: 100
-    tax_type: ewt
-    atc_code: WB010
-
-    condition:
-      and:
-        - "==": [{"var": "doc_type"}, "bill"]
-        - "==": [{"var": "atc_code"}, "WB010"]
-        - ">": [{"var": "gross_amount"}, 0]
-
-    base_source: gross_amount
-    rate_code: WB010
+    rate_code: WI169
     rate_value: 0.05
     formula: "base * rate"
 
-    output_bucket: EWT_RENT_WB010
+    output_bucket: EWT_RENT_WI169
 
-    notes: "5% creditable withholding on real property rent (individuals). RR 11-2018."
+    notes: "5% creditable withholding on real property rent from individuals"
 
-  # Rent - Real property (juridical)
-  - code: EWT_RENT_WB020
-    name: Rent - real property, juridical (ATC WB020)
-    description: 5% EWT on rental payments for real property to juridical persons
+  # Rent - Real property — Corporate lessor
+  - code: EWT_RENT_WC169
+    name: Rent - real property, corporate (ATC WC169)
+    description: 5% EWT on rental payments for real property from corporations
     priority: 100
     tax_type: ewt
-    atc_code: WB020
+    atc_code: WC169
+    legacy_code: W169
+    payee_type: corporate
 
     condition:
       and:
         - "==": [{"var": "doc_type"}, "bill"]
-        - "==": [{"var": "atc_code"}, "WB020"]
+        - "in": [{"var": "atc_code"}, ["WC169", "W169"]]
+        - "==": [{"var": "payee_type"}, "corporate"]
         - ">": [{"var": "gross_amount"}, 0]
 
     base_source: gross_amount
-    rate_code: WB020
+    rate_code: WC169
     rate_value: 0.05
     formula: "base * rate"
 
-    output_bucket: EWT_RENT_WB020
+    output_bucket: EWT_RENT_WC169
 
-    notes: "5% creditable withholding on real property rent (juridical). RR 11-2018."
+    notes: "5% creditable withholding on real property rent from corporations"
 
-  # Rent - Personal property
-  - code: EWT_RENT_WB050
-    name: Rent - personal property (ATC WB050)
-    description: 5% EWT on rental payments for personal property (>PHP 10K/yr)
+  # Rent - Personal property — Individual lessor
+  - code: EWT_RENT_WI170
+    name: Rent - personal property, individual (ATC WI170)
+    description: 5% EWT on rental payments for personal property from individuals
     priority: 100
     tax_type: ewt
-    atc_code: WB050
+    atc_code: WI170
+    legacy_code: W170
+    payee_type: individual
 
     condition:
       and:
         - "==": [{"var": "doc_type"}, "bill"]
-        - "==": [{"var": "atc_code"}, "WB050"]
+        - "in": [{"var": "atc_code"}, ["WI170", "W170"]]
+        - "==": [{"var": "payee_type"}, "individual"]
         - ">": [{"var": "gross_amount"}, 0]
 
     base_source: gross_amount
-    rate_code: WB050
+    rate_code: WI170
     rate_value: 0.05
     formula: "base * rate"
 
-    output_bucket: EWT_RENT_WB050
+    output_bucket: EWT_RENT_WI170
 
-    notes: "5% creditable withholding on personal property rent (>PHP 10K/yr). RR 11-2018."
+    notes: "5% creditable withholding on personal property rent from individuals"
+
+  # Rent - Personal property — Corporate lessor
+  - code: EWT_RENT_WC170
+    name: Rent - personal property, corporate (ATC WC170)
+    description: 5% EWT on rental payments for personal property from corporations
+    priority: 100
+    tax_type: ewt
+    atc_code: WC170
+    legacy_code: W170
+    payee_type: corporate
+
+    condition:
+      and:
+        - "==": [{"var": "doc_type"}, "bill"]
+        - "in": [{"var": "atc_code"}, ["WC170", "W170"]]
+        - "==": [{"var": "payee_type"}, "corporate"]
+        - ">": [{"var": "gross_amount"}, 0]
+
+    base_source: gross_amount
+    rate_code: WC170
+    rate_value: 0.05
+    formula: "base * rate"
+
+    output_bucket: EWT_RENT_WC170
+
+    notes: "5% creditable withholding on personal property rent from corporations"
 
   # Aggregation rule
   - code: EWT_TOTAL
@@ -327,32 +491,52 @@ rules:
 
     formula: |
       SUM(
-        EWT_PROF_WI010, EWT_PROF_WI011, EWT_PROF_WI020,
+        EWT_PROF_WI010, EWT_PROF_WI011, EWT_PROF_WC020,
         EWT_PROF_WI030, EWT_PROF_WI040,
-        EWT_CONTRACTOR_WC010, EWT_CONTRACTOR_WC020,
+        EWT_SUPPLIER_WI157, EWT_SUPPLIER_WC157,
+        EWT_SUPPLIER_WI158, EWT_SUPPLIER_WC158,
+        EWT_CONTRACTOR_WC010,
+        EWT_COMMISSION_WI161, EWT_COMMISSION_WC100,
         EWT_GOVT_WC600, EWT_GOVT_WC610,
-        EWT_COMMISSION_WC100,
-        EWT_RENT_WB010, EWT_RENT_WB020, EWT_RENT_WB050
+        EWT_RENT_WI169, EWT_RENT_WC169,
+        EWT_RENT_WI170, EWT_RENT_WC170
       )
 
     output_bucket: EWT_TOTAL
 
     notes: "Total creditable expanded withholding tax"
 
+# Legacy code mapping for backward compatibility
+legacy_code_map:
+  W010: WI010
+  W020: WC020
+  W030: WI030
+  W040: WI040
+  W157: [WI157, WC157]
+  W158: [WI158, WC158]
+  W161: WI161
+  W169: [WI169, WC169]
+  W170: [WI170, WC170]
+
 metadata:
   version: 2.0.0
   effective_from: "2025-01-01"
+  atc_namespace_reconciled: "2026-04-01"
   legal_basis:
     - "NIRC Section 57"
     - "RR 2-98 (Consolidated Withholding Tax Regulations)"
-    - "RR 11-2018 (TRAIN Law EWT implementation)"
+    - "RR 11-2018 (TRAIN Law EWT implementation / Updated ATC Master List)"
     - "RR 14-2018 (EWT amendments)"
+    - "RMC 25-2011 (Updated ATC Codes)"
   breaking_changes:
     - "ATC codes migrated from short-form (W010, W157, W169) to BIR official format (WI010, WC010, WB010) per RR 11-2018 Annex"
     - "Added WI011 (5% for non-VAT individuals ≤ PHP 3M)"
-    - "Separated contractor codes (WC010/WC020) from supplier goods/services"
+    - "Separated supplier goods/services codes (WI157/WC157/WI158/WC158)"
     - "Added government procurement codes (WC600/WC610)"
-    - "Split rent into individual (WB010) and juridical (WB020) + personal property (WB050)"
+    - "Split rent by payee type: individual (WI169/WI170) and corporate (WC169/WC170)"
+    - "Added legacy_code and payee_type fields for all entries"
   notes: |
     EWT rules match transactions to ATC codes and apply creditable withholding rates.
     These amounts are reported on BIR Form 1601-E (Monthly) or 1601-EQ (Quarterly).
+    ATC codes use official BIR WI/WC namespace per RR 11-2018.
+    Legacy W-series codes accepted for backward compatibility via `in` conditions.

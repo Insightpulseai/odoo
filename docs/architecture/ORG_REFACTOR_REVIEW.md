@@ -478,7 +478,7 @@ These three document classes have fundamentally different lifecycles and must ne
 | **Generated** | API references, schema docs, dependency graphs, coverage reports | CI pipeline | Rebuilt every commit/release | Current only (overwritten) | `docs/generated/` (gitignored) or published to docs site |
 | **Evidence** | Test logs, deploy receipts, audit trails, compliance reports | CI pipeline or agent | Append-only, date-partitioned | 90 days local, archive to blob | `docs/evidence/YYYY-MM-DD/` |
 
-Anti-pattern observed: `odoo/docs/architecture/` mixes normative documents (PLATFORM_TARGET_STATE.md) with what should be ADRs (DATABASE_NAMING.md) with what should be generated (SEED_DATA_INVENTORY.md). This must be separated.
+Anti-pattern observed: `odoo/docs/architecture/` mixes normative documents (target-state/PLATFORM.md) with what should be ADRs (DATABASE_NAMING.md) with what should be generated (SEED_DATA_INVENTORY.md). This must be separated.
 
 #### 4.5 ADR Convention
 
@@ -1599,7 +1599,7 @@ Some documentation topics span multiple repos. These cross-cutting concerns are 
 | Anti-Pattern | Where Observed | Impact | Fix |
 |-------------|---------------|--------|-----|
 | **CLAUDE.md as README** | `odoo` | CLAUDE.md is 1500+ lines covering human-readable architecture, BIR compliance, Figma setup, n8n patterns. Agents load 1500 lines when they need 200. | Split: CLAUDE.md for agent rules (<500 lines), README.md for human context |
-| **Aspirational docs as current state** | `odoo/docs/architecture/PLATFORM_TARGET_STATE.md` | 33KB document describes target state but does not clearly distinguish what IS deployed from what SHOULD BE deployed | Separate: current-state docs vs target-state docs |
+| **Aspirational docs as current state** | `odoo/docs/architecture/target-state/PLATFORM.md` | 33KB document describes target state but does not clearly distinguish what IS deployed from what SHOULD BE deployed | Separate: current-state docs vs target-state docs |
 | **Evidence mixed with normative docs** | `odoo/docs/` | Architecture docs, evidence packs, and operational docs all in `docs/` with no clear separation | Restructure per Section 4.4 |
 | **Duplicate documentation** | `odoo` CLAUDE.md + `.claude/rules/` | Odoo coding conventions exist in both CLAUDE.md and `.claude/rules/odoo19-coding.md` | CLAUDE.md should reference rules files, not duplicate them |
 | **Stale deprecation notices** | `odoo` CLAUDE.md references DigitalOcean, Vercel, Mailgun | These are deprecated per `~/.claude/rules/infrastructure.md` but CLAUDE.md still contains detailed DigitalOcean/Vercel integration docs | Remove deprecated integration docs from CLAUDE.md |

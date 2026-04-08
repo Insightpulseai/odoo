@@ -59,14 +59,22 @@ class ProjectTaskIntegration(models.Model):
 
         stage_name = task.stage_id.name.lower()
 
-        if 'progress' in stage_name or 'doing' in stage_name or 'preparation' in stage_name:
+        # Month-End stages: Preparation → Review → Approval
+        # BIR stages: Preparation → Report Approval → Payment Approval → Filing & Payment
+        if 'preparation' in stage_name:
             return 'finance_task.in_progress'
-        elif 'review' in stage_name or 'submitted' in stage_name:
+        elif 'review' in stage_name:
             return 'finance_task.submitted'
-        elif 'done' in stage_name or 'approved' in stage_name:
+        elif 'report approval' in stage_name:
+            return 'finance_task.submitted'
+        elif 'payment approval' in stage_name:
+            return 'finance_task.payment_approved'
+        elif 'approval' in stage_name:
             return 'finance_task.approved'
-        elif 'filed' in stage_name:
+        elif 'filing' in stage_name:
             return 'finance_task.filed'
+        elif 'done' in stage_name:
+            return 'finance_task.approved'
 
         return None
 
@@ -132,7 +140,7 @@ class ProjectTaskIntegration(models.Model):
         # Find tasks past their deadline and not yet completed
         # Uses Odoo-native date_deadline field
         done_stage_ids = self.env['project.task.type'].search([
-            ('name', 'in', ['Done', 'Filed', 'Cancelled']),
+            ('name', 'in', ['Done', 'Cancelled', 'Filing & Payment']),
         ]).ids
 
         overdue_tasks = self.search([

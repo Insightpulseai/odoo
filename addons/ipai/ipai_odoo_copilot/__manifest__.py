@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'Pulser for Odoo',
-    'version': '18.0.2.0.0',
-    'summary': 'Pulser assistant — Foundry-backed skill router with tool execution',
+    'version': '18.0.2.1.0',
+    'summary': 'Pulser — AI assistant with systray chat, audit, rate limiting, and action dispatch',
     'category': 'Productivity',
     'license': 'LGPL-3',
     'author': 'InsightPulse AI',

@@ -1,0 +1,34 @@
+# =============================================================================
+# ipai-landing deploy — insightpulseai.com
+# =============================================================================
+# Thin entrypoint using shared base-deploy template.
+# Build → Deploy ACA → Smoke → Evidence.
+# =============================================================================
+
+trigger:
+  branches:
+    include:
+      - main
+  paths:
+    include:
+      - web/ipai-landing/**
+
+pr:
+  branches:
+    include:
+      - main
+  paths:
+    include:
+      - web/ipai-landing/**
+
+extends:
+  template: ../../azure-pipelines/templates/extends/base-deploy.yml
+  parameters:
+    imageName: ipai-website
+    imageTag: latest
+    dockerfile: web/ipai-landing/Dockerfile
+    buildContext: web/ipai-landing
+    containerAppName: ipai-website-dev
+    resourceGroup: rg-ipai-dev-odoo-runtime
+    smokeUrl: https://insightpulseai.com
+    smokeContentMatch: InsightPulse

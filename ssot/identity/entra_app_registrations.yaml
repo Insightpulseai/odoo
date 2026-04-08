@@ -1,0 +1,49 @@
+# schema: ssot.identity.entra_app_registrations.v1
+# Entra ID App Registrations — POINTER FILE
+#
+# SUPERSEDED 2026-03-25: The canonical paired SSOT for app registrations
+# has moved to ssot/entra/ with scope-based split:
+#
+#   Active (Azure-native + Odoo backend):
+#     ssot/entra/app_registrations.azure_native.yaml
+#
+#   Excluded (Tableau, Diva Goals, legacy, external federation):
+#     ssot/entra/app_registrations.excluded.yaml
+#
+# This file is retained as a pointer. Do not add registrations here.
+# All client IDs, lifecycle states, and policies live in the paired files.
+#
+# References:
+#   - Odoo Azure sign-in: https://www.odoo.com/documentation/19.0/applications/general/users/azure.html
+#   - MS app registration best practices: https://learn.microsoft.com/entra/identity-platform/security-best-practices-for-app-registration
+#   - Entra migration spec: spec/entra-identity-migration/
+
+version: "2.0.0"
+schema: ssot.identity.entra_app_registrations.v1
+last_reviewed: "2026-03-25"
+status: superseded
+
+canonical_sources:
+  active: ssot/entra/app_registrations.azure_native.yaml
+  excluded: ssot/entra/app_registrations.excluded.yaml
+
+summary:
+  active_registrations: 4
+  review_required: 1       # ipai-odoo-api-prod
+  rotate_required: 1       # ipai-platform-admin-cli-prod
+  excluded_registrations: 6
+  retired: 1               # ipai-n8n-entra
+
+  active_scope:
+    - ipai-odoo-login-prod        # Odoo workforce sign-in (canonical)
+    - ipai-odoo-api-prod          # Odoo backend/API (review: merge or keep?)
+    - ipai-platform-admin-cli-prod # Admin CLI (ROTATE NOW)
+    - ipai-azure-devops-automation-prod # CI/CD automation
+
+  excluded_scope:
+    - InsightPulse AI - Tableau Cloud  # third_party_product_boundary
+    - ipai-tableau-sso                 # third_party_product_boundary
+    - Diva Goals Web                   # line_of_business_app_boundary
+    - Diva Goals API                   # line_of_business_app_boundary
+    - ipai-n8n-entra                   # legacy_decommissioned_lane (RETIRE)
+    - ipai-github-oidc                 # external_federation

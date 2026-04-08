@@ -1,0 +1,28 @@
+schema: ipai.promotion.v1
+agent_id: bank-reconciliation-agent
+timestamp: '2026-03-20T22:20:00Z'
+issued_by: tbwa
+provenance: PR-RECON-20260320-001
+from_level: L0
+to_level: L4
+from_stage: S01
+to_stage: S10
+type: promotion
+evidence:
+  - path: /Users/tbwa/.gemini/antigravity/brain/706fb290-55e8-41c0-82d6-358506acd2c3/bank-reconciliation-acceptance.md
+    type: eval-result
+  - path: /Users/tbwa/.gemini/antigravity/brain/706fb290-55e8-41c0-82d6-358506acd2c3/bank-reconciliation-redteam/summary.md
+    type: red-team-verification
+  - path: /Users/tbwa/.gemini/antigravity/brain/706fb290-55e8-41c0-82d6-358506acd2c3/bank-reconciliation-rehearsal/smoke-test-results.md
+    type: staging-rehearsal
+  - path: /Users/tbwa/Documents/GitHub/Insightpulseai/docs/runbooks/BANK_RECON_FIRST_PRODUCTION_IMPORT.md
+    type: control-pack-runbook
+gate_results:
+  - gate: G-RECON-PROD
+    result: pass
+    detail: Runtime hardened, Red Team certified, and Staging verified.
+approver:
+  type: human
+  id: tbwa
+reason: Successful runtime implementation and adversarial hardening.
+rollback_trigger: Error rate > 5% in first production import.

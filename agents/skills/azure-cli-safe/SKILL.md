@@ -1,3 +1,9 @@
+---
+name: azure-cli-safe
+description: Safe non-interactive Azure CLI operations with guardrails
+microsoft_capability_family: "Azure / CLI / Resource Management"
+---
+
 # Azure CLI Safe Skill
 
 ## Purpose

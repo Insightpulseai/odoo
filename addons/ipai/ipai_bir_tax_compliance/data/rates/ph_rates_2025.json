@@ -20,11 +20,14 @@
   },
 
   "expanded_withholding_tax": {
+    "_namespace_note": "ATC codes use official BIR WI/WC namespace per RR 11-2018. Legacy W-series accepted via legacy_code.",
     "WI010": {
       "code": "WI010",
+      "legacy_code": "W010",
       "description": "Professional fees - individuals (VAT-registered or gross income > PHP 3M)",
       "rate": 0.10,
       "base": "gross",
+      "payee_type": "individual",
       "atc_category": "Professional fees",
       "notes": "10% EWT per RR 11-2018, as amended by RR 14-2018"
     },
@@ -33,38 +36,47 @@
       "description": "Professional fees - individuals (non-VAT, gross income ≤ PHP 3M)",
       "rate": 0.05,
       "base": "gross",
+      "payee_type": "individual",
       "atc_category": "Professional fees",
       "notes": "5% EWT for non-VAT individuals below threshold. RR 11-2018."
     },
-    "WI020": {
-      "code": "WI020",
-      "description": "Professional fees - juridical persons",
+    "WC020": {
+      "code": "WC020",
+      "legacy_code": "W020",
+      "description": "Professional fees - juridical",
       "rate": 0.10,
       "base": "gross",
+      "payee_type": "corporate",
       "atc_category": "Professional fees",
       "notes": "10% EWT per RR 11-2018"
     },
     "WI030": {
       "code": "WI030",
+      "legacy_code": "W030",
       "description": "Professional fees - medical practitioners",
       "rate": 0.10,
       "base": "gross",
+      "payee_type": "individual",
       "atc_category": "Professional fees",
       "notes": "10% EWT for doctors, dentists, etc."
     },
     "WI040": {
       "code": "WI040",
-      "description": "Bookkeeping agents and agencies - individuals",
+      "legacy_code": "W040",
+      "description": "Professional fees - lawyers",
       "rate": 0.10,
       "base": "gross",
+      "payee_type": "individual",
       "atc_category": "Professional fees",
       "notes": "10% EWT per RR 11-2018"
     },
     "WI050": {
       "code": "WI050",
-      "description": "Bookkeeping agents and agencies - juridical",
+      "legacy_code": "W050",
+      "description": "Professional entertainers",
       "rate": 0.10,
       "base": "gross",
+      "payee_type": "individual",
       "atc_category": "Professional fees",
       "notes": "10% EWT per RR 11-2018"
     },
@@ -73,6 +85,7 @@
       "description": "Management and technical consultancy fees - individuals",
       "rate": 0.10,
       "base": "gross",
+      "payee_type": "individual",
       "atc_category": "Professional fees",
       "notes": "10% EWT per RR 11-2018"
     },
@@ -92,19 +105,111 @@
       "atc_category": "Professional fees",
       "notes": "10% EWT per RR 11-2018"
     },
+    "WI157": {
+      "code": "WI157",
+      "legacy_code": "W157",
+      "description": "Income payments to suppliers - goods (individual)",
+      "rate": 0.01,
+      "base": "gross",
+      "payee_type": "individual",
+      "atc_category": "Income payments",
+      "notes": "1% creditable withholding on goods from individuals"
+    },
+    "WC157": {
+      "code": "WC157",
+      "legacy_code": "W157",
+      "description": "Income payments to suppliers - goods (corporate)",
+      "rate": 0.01,
+      "base": "gross",
+      "payee_type": "corporate",
+      "atc_category": "Income payments",
+      "notes": "1% creditable withholding on goods from corporations"
+    },
+    "WI158": {
+      "code": "WI158",
+      "legacy_code": "W158",
+      "description": "Income payments to suppliers - services (individual)",
+      "rate": 0.02,
+      "base": "gross",
+      "payee_type": "individual",
+      "atc_category": "Income payments",
+      "notes": "2% creditable withholding on services from individuals"
+    },
+    "WC158": {
+      "code": "WC158",
+      "legacy_code": "W158",
+      "description": "Income payments to suppliers - services (corporate)",
+      "rate": 0.02,
+      "base": "gross",
+      "payee_type": "corporate",
+      "atc_category": "Income payments",
+      "notes": "2% creditable withholding on services from corporations"
+    },
     "WI160": {
       "code": "WI160",
       "description": "Marketing agents / independent contractors - individuals",
       "rate": 0.10,
       "base": "gross",
+      "payee_type": "individual",
       "atc_category": "Professional fees",
       "notes": "10% EWT per RR 11-2018"
+    },
+    "WI161": {
+      "code": "WI161",
+      "legacy_code": "W161",
+      "description": "Commission agents - individual",
+      "rate": 0.10,
+      "base": "gross",
+      "payee_type": "individual",
+      "atc_category": "Professional fees",
+      "notes": "10% on commissions paid to individual agents"
+    },
+    "WI169": {
+      "code": "WI169",
+      "legacy_code": "W169",
+      "description": "Rent - real property (individual lessor)",
+      "rate": 0.05,
+      "base": "gross",
+      "payee_type": "individual",
+      "atc_category": "Rent",
+      "notes": "5% on rental payments for real property from individuals"
+    },
+    "WC169": {
+      "code": "WC169",
+      "legacy_code": "W169",
+      "description": "Rent - real property (corporate lessor)",
+      "rate": 0.05,
+      "base": "gross",
+      "payee_type": "corporate",
+      "atc_category": "Rent",
+      "notes": "5% on rental payments for real property from corporations"
+    },
+    "WI170": {
+      "code": "WI170",
+      "legacy_code": "W170",
+      "description": "Rent - personal property (individual lessor)",
+      "rate": 0.05,
+      "base": "gross",
+      "payee_type": "individual",
+      "atc_category": "Rent",
+      "notes": "5% on rental payments for personal property from individuals"
+    },
+    "WC170": {
+      "code": "WC170",
+      "legacy_code": "W170",
+      "description": "Rent - personal property (corporate lessor)",
+      "rate": 0.05,
+      "base": "gross",
+      "payee_type": "corporate",
+      "atc_category": "Rent",
+      "notes": "5% on rental payments for personal property from corporations"
     },
     "WI500": {
       "code": "WI500",
       "description": "Tolling fees",
       "rate": 0.05,
       "base": "gross",
+      "payee_type": "individual",
       "atc_category": "Income payments",
       "notes": "5% EWT per RR 11-2018"
     },
@@ -119,14 +224,6 @@
     "WC010": {
       "code": "WC010",
       "description": "Income payments to contractors - individuals",
-      "rate": 0.02,
-      "base": "gross",
-      "atc_category": "Contractor payments",
-      "notes": "2% EWT per RR 11-2018"
-    },
-    "WC020": {
-      "code": "WC020",
-      "description": "Income payments to contractors - juridical",
       "rate": 0.02,
       "base": "gross",
       "atc_category": "Contractor payments",
@@ -203,30 +300,6 @@
       "base": "gross",
       "atc_category": "Government payments",
       "notes": "1% EWT per RR 11-2018"
-    },
-    "WB010": {
-      "code": "WB010",
-      "description": "Rentals - real property (individuals)",
-      "rate": 0.05,
-      "base": "gross",
-      "atc_category": "Rent",
-      "notes": "5% EWT on rental payments for real property. RR 11-2018."
-    },
-    "WB020": {
-      "code": "WB020",
-      "description": "Rentals - real property (juridical)",
-      "rate": 0.05,
-      "base": "gross",
-      "atc_category": "Rent",
-      "notes": "5% EWT on rental payments for real property. RR 11-2018."
-    },
-    "WB050": {
-      "code": "WB050",
-      "description": "Rentals - personal property (above PHP 10,000/year)",
-      "rate": 0.05,
-      "base": "gross",
-      "atc_category": "Rent",
-      "notes": "5% EWT on rental payments for personal property > PHP 10K/yr. RR 11-2018."
     }
   },
 
@@ -531,7 +604,12 @@
       "Added filing deadlines section",
       "Added capital gains tax section",
       "Restructured FWT into resident and non_resident subsections",
-      "Added CIT detail: SME rate (20%), RBE special rate (5%), NRFC rate (25%)"
+      "Added CIT detail: SME rate (20%), RBE special rate (5%), NRFC rate (25%)",
+      "Added legacy_code fields for backward compatibility",
+      "Added payee_type fields to all EWT entries",
+      "Added WI157/WC157/WI158/WC158 supplier goods/services codes",
+      "Added WI161 commission agent code",
+      "Added WI169/WC169/WI170/WC170 rent codes split by payee type"
     ]
   }
 }

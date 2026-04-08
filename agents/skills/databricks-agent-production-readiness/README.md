@@ -13,5 +13,5 @@ An agent is production-grade only when: release maturity is GA or stable Public 
 
 ## Cross-references
 - `agents/knowledge/benchmarks/databricks-production-ready.md`
-- `docs/architecture/enterprise_data_platform.md`
+- `docs/architecture/data/ENTERPRISE_DATA_PLATFORM.md`
 - `agent-platform/ssot/learning/databricks_production_ready_skill_map.yaml`

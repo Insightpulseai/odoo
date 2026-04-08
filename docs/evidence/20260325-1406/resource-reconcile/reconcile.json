@@ -1,0 +1,61 @@
+{
+  "timestamp": "2026-03-25T06:06:12.220654Z",
+  "resource_count": 69,
+  "resource_summary": {
+    "ai_doc_intel": 3,
+    "ai_foundry": 3,
+    "ai_language": 1,
+    "ai_openai": 1,
+    "ai_search": 1,
+    "ai_vision": 1,
+    "compute": 13,
+    "database": 1,
+    "databricks": 3,
+    "devops": 2,
+    "identity": 13,
+    "networking": 7,
+    "observability": 4,
+    "private_dns": 4,
+    "public_dns": 1,
+    "registry": 1,
+    "secrets": 4,
+    "storage": 5,
+    "system": 1
+  },
+  "errors": [
+    {
+      "severity": "error",
+      "msg": "Subdomain '@' routes through Front Door but no Front Door resource exists"
+    },
+    {
+      "severity": "error",
+      "msg": "Subdomain 'erp' routes through Front Door but no Front Door resource exists"
+    },
+    {
+      "severity": "error",
+      "msg": "Subdomain 'ocr' routes through Front Door but no Front Door resource exists"
+    },
+    {
+      "severity": "error",
+      "msg": "Subdomain 'superset' routes through Front Door but no Front Door resource exists"
+    },
+    {
+      "severity": "error",
+      "msg": "Subdomain 'mcp' routes through Front Door but no Front Door resource exists"
+    },
+    {
+      "severity": "error",
+      "msg": "Subdomain 'ops' routes through Front Door but no Front Door resource exists"
+    },
+    {
+      "severity": "error",
+      "msg": "Subdomain 'www' routes through Front Door but no Front Door resource exists"
+    },
+    {
+      "severity": "error",
+      "msg": "Subdomain 'erp-azure' routes through Front Door but no Front Door resource exists"
+    }
+  ],
+  "warnings": [],
+  "pass": false
+}

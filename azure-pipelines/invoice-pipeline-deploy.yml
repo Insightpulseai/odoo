@@ -1,0 +1,122 @@
+# =============================================================================
+# Invoice Intelligence Pipeline — Build & Deploy
+# =============================================================================
+# Builds pipeline service + MCP server, deploys to ACA.
+# =============================================================================
+
+trigger:
+  branches:
+    include:
+      - main
+  paths:
+    include:
+      - platform/services/invoice-pipeline/**
+      - platform/services/invoice-pipeline-mcp/**
+
+pr:
+  branches:
+    include:
+      - main
+  paths:
+    include:
+      - platform/services/invoice-pipeline/**
+      - platform/services/invoice-pipeline-mcp/**
+
+variables:
+  acrName: acripaiodoo
+  resourceGroup: rg-ipai-dev-odoo-runtime
+  serviceConnection: ipai-dev-wif
+
+stages:
+  # =========================================================================
+  # Build
+  # =========================================================================
+  - stage: Build
+    displayName: 'Build Pipeline Images'
+    jobs:
+      - template: templates/jobs/build-container.yml
+        parameters:
+          imageName: ipai-invoice-pipeline
+          imageTag: latest
+          dockerfile: platform/services/invoice-pipeline/Dockerfile
+          buildContext: platform/services/invoice-pipeline
+
+      - template: templates/jobs/build-container.yml
+        parameters:
+          imageName: ipai-invoice-mcp
+          imageTag: latest
+          dockerfile: platform/services/invoice-pipeline-mcp/Dockerfile
+          buildContext: platform/services/invoice-pipeline-mcp
+
+  # =========================================================================
+  # Deploy
+  # =========================================================================
+  - stage: Deploy
+    displayName: 'Deploy to ACA'
+    dependsOn: Build
+    condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
+    jobs:
+      - template: templates/jobs/deploy-containerapp.yml
+        parameters:
+          containerAppName: ipai-invoice-pipeline
+          resourceGroup: $(resourceGroup)
+          imageName: ipai-invoice-pipeline
+          imageTag: latest
+
+      - template: templates/jobs/deploy-containerapp.yml
+        parameters:
+          containerAppName: ipai-invoice-mcp
+          resourceGroup: $(resourceGroup)
+          imageName: ipai-invoice-mcp
+          imageTag: latest
+
+  # =========================================================================
+  # Verify
+  # =========================================================================
+  - stage: Verify
+    displayName: 'Smoke Test'
+    dependsOn: Deploy
+    jobs:
+      - job: SmokeTest
+        displayName: 'Pipeline + MCP Smoke Tests'
+        pool:
+          vmImage: ubuntu-latest
+        steps:
+          - task: AzureCLI@2
+            displayName: 'Verify endpoints'
+            inputs:
+              azureSubscription: $(serviceConnection)
+              scriptType: bash
+              scriptLocation: inlineScript
+              inlineScript: |
+                set -euo pipefail
+
+                PIPELINE_FQDN=$(az containerapp show \
+                  --name ipai-invoice-pipeline \
+                  --resource-group $(resourceGroup) \
+                  --query "properties.configuration.ingress.fqdn" -o tsv)
+
+                MCP_FQDN=$(az containerapp show \
+                  --name ipai-invoice-mcp \
+                  --resource-group $(resourceGroup) \
+                  --query "properties.configuration.ingress.fqdn" -o tsv)
+
+                echo "Pipeline: https://${PIPELINE_FQDN}"
+                echo "MCP: https://${MCP_FQDN}"
+
+                # Pipeline health
+                curl -sf "https://${PIPELINE_FQDN}/health" --max-time 30 | python3 -c "import sys,json; d=json.load(sys.stdin); assert d['status']=='healthy'; print('PASS: Pipeline healthy')"
+
+                # MCP health
+                curl -sf "https://${MCP_FQDN}/health" --max-time 30 | python3 -c "import sys,json; d=json.load(sys.stdin); assert d['status']=='healthy'; print('PASS: MCP healthy')"
+
+                # MCP tool manifest
+                TOOL_COUNT=$(curl -sf "https://${MCP_FQDN}/mcp/tools/list" --max-time 30 | python3 -c "import sys,json; print(len(json.load(sys.stdin)['tools']))")
+                echo "PASS: MCP exposes ${TOOL_COUNT} tools"
+
+                # Evidence
+                echo "{\"pipeline_fqdn\": \"${PIPELINE_FQDN}\", \"mcp_fqdn\": \"${MCP_FQDN}\", \"tool_count\": ${TOOL_COUNT}, \"timestamp\": \"$(date -u +%Y-%m-%dT%H:%M:%SZ)\"}" > evidence.json
+                cat evidence.json
+
+          - publish: evidence.json
+            artifact: invoice-pipeline-deploy-evidence

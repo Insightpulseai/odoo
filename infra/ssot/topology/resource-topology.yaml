@@ -1,0 +1,14 @@
+# resource-topology.yaml — Azure resource topology
+# Authority: infra/ssot/topology/
+region: southeastasia
+resource_groups:
+  - name: rg-ipai-dev-odoo-runtime
+    purpose: "Odoo + platform container apps"
+  - name: rg-ipai-dev-odoo-data
+    purpose: "PostgreSQL and data stores"
+  - name: rg-ipai-ai-dev
+    purpose: "AI services: OpenAI, Doc Intelligence, Search"
+  - name: rg-ipai-dev-platform
+    purpose: "Shared platform: ACR, Key Vault"
+  - name: rg-ipai-data-dev
+    purpose: "Platform data services"

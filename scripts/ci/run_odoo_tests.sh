@@ -8,20 +8,17 @@
 # Safety: Refuses to run against known non-disposable databases (postgres,
 #         odoo, odoo_dev, odoo_dev_18, odoo_staging). Exit code 2 on violation.
 #
-# Validation status:
-#   - Shell syntax: PASS (bash -n)
-#   - Local dry-run: PASS (invocation proven)
-#   - Azure pipeline execution: NOT YET PROVEN
-#
 # Required env vars:
 #   PGHOST, PGPORT, PGDATABASE, PGUSER, PGPASSWORD
-#   ODOO_BIN, INSTALL_MODULES, TEST_TAGS
+#   ODOO_BIN, TEST_TAGS
+#   INSTALL_MODULES (or INSTALL_MODULE_IDS for backwards compat)
 #
 # Optional env vars:
-#   ODOO_HTTP_PORT  (default: 18069)
-#   ODOO_DB_SSLMODE (default: require)
-#   ADDONS_PATH     (auto-generated if not set)
+#   ODOO_HTTP_PORT   (default: 18069)
+#   ODOO_DB_SSLMODE  (default: require)
+#   ADDONS_PATH      (default: none — uses Odoo config default)
 # =============================================================================
+
 set -euo pipefail
 
 mkdir -p .artifacts/test-logs
@@ -33,8 +30,10 @@ mkdir -p .artifacts/test-logs
 : "${PGUSER:?PGUSER is required}"
 : "${PGPASSWORD:?PGPASSWORD is required}"
 : "${ODOO_BIN:?ODOO_BIN is required}"
-: "${INSTALL_MODULES:?INSTALL_MODULES is required}"
 : "${TEST_TAGS:?TEST_TAGS is required}"
+
+# Accept either INSTALL_MODULES or INSTALL_MODULE_IDS (backwards compat)
+MODULES="${INSTALL_MODULES:-${INSTALL_MODULE_IDS:?INSTALL_MODULES is required}}"
 
 ODOO_HTTP_PORT="${ODOO_HTTP_PORT:-18069}"
 ODOO_DB_SSLMODE="${ODOO_DB_SSLMODE:-require}"
@@ -52,38 +51,30 @@ for blocked in $BLOCKED_DBS; do
   fi
 done
 
-# Auto-generate addons path if not provided
-if [ -z "${ADDONS_PATH:-}" ]; then
-  OCA_PATHS=""
-  if [ -d "addons/oca" ]; then
-    OCA_PATHS=$(find addons/oca -mindepth 1 -maxdepth 1 -type d 2>/dev/null | sort | tr '\n' ',')
-  fi
-  ADDONS_PATH="vendor/odoo/addons,addons/ipai"
-  if [ -n "$OCA_PATHS" ]; then
-    ADDONS_PATH="${ADDONS_PATH},${OCA_PATHS%,}"
-  fi
+LOG_FILE=".artifacts/test-logs/odoo-test-${PGDATABASE}-$(date +%Y%m%d%H%M%S).log"
+
+# Build optional args
+EXTRA_ARGS=()
+if [ -n "${ADDONS_PATH:-}" ]; then
+  EXTRA_ARGS+=(--addons-path "${ADDONS_PATH}")
 fi
 
-LOG_FILE=".artifacts/test-logs/odoo-test-${PGDATABASE}.log"
-
-echo "============================================="
-echo "Odoo Test Runner"
-echo "============================================="
-echo "PGHOST=${PGHOST}"
-echo "PGPORT=${PGPORT}"
-echo "PGDATABASE=${PGDATABASE}"
-echo "PGUSER=${PGUSER}"
-echo "INSTALL_MODULES=${INSTALL_MODULES}"
-echo "TEST_TAGS=${TEST_TAGS}"
-echo "ODOO_DB_SSLMODE=${ODOO_DB_SSLMODE}"
-echo "ODOO_HTTP_PORT=${ODOO_HTTP_PORT}"
-echo "ADDONS_PATH=${ADDONS_PATH}"
-echo "============================================="
-
 {
-  ${ODOO_BIN} \
+  echo "=============================================="
+  echo "Odoo Test Runner"
+  echo "Time:            $(date)"
+  echo "PGHOST:          ${PGHOST}"
+  echo "PGPORT:          ${PGPORT}"
+  echo "PGDATABASE:      ${PGDATABASE}"
+  echo "INSTALL_MODULES: ${MODULES}"
+  echo "TEST_TAGS:       ${TEST_TAGS}"
+  echo "ODOO_DB_SSLMODE: ${ODOO_DB_SSLMODE}"
+  echo "ODOO_HTTP_PORT:  ${ODOO_HTTP_PORT}"
+  echo "=============================================="
+
+  "${ODOO_BIN}" \
     -d "${PGDATABASE}" \
-    -i "${INSTALL_MODULES}" \
+    -i "${MODULES}" \
     --test-tags "${TEST_TAGS}" \
     --stop-after-init \
     --without-demo=all \
@@ -92,8 +83,10 @@ echo "============================================="
     --db_user "${PGUSER}" \
     --db_password "${PGPASSWORD}" \
     --db_sslmode "${ODOO_DB_SSLMODE}" \
-    --addons-path "${ADDONS_PATH}" \
-    --http-port "${ODOO_HTTP_PORT}"
+    --http-port "${ODOO_HTTP_PORT}" \
+    --log-level info \
+    --log-handler odoo.tests:DEBUG \
+    "${EXTRA_ARGS[@]+"${EXTRA_ARGS[@]}"}"
 } 2>&1 | tee "${LOG_FILE}"
 
 # Classify result
@@ -105,6 +98,13 @@ if grep -qE "FAIL|CRITICAL|Traceback" "${LOG_FILE}"; then
   grep -E "FAIL|CRITICAL|ERROR" "${LOG_FILE}" | tail -20
   exit 1
 else
+  # Also check structured failure lines
+  FAIL_COUNT=$(grep -cE '^\d{4}-\d{2}-\d{2} .*(FAIL|ERROR)' "${LOG_FILE}" || true)
+  if [ "${FAIL_COUNT}" -gt 0 ]; then
+    echo "Odoo test suite: ${FAIL_COUNT} failure/error lines detected."
+    echo "Review: ${LOG_FILE}"
+    exit 1
+  fi
   echo ""
   echo "============================================="
   echo "RESULT: PASS"

@@ -1,0 +1,74 @@
+# SSOT Contract: Analytics Pipeline (Odoo → Databricks → Power BI)
+# Cross-referenced by: docs/architecture/INSIGHTPULSEAI_TARGET_STATE_ARCHITECTURE.md §4.7
+# Updated: 2026-03-25
+
+version: "1.0.0"
+
+pipeline:
+  source:
+    system: odoo_postgresql
+    resource: pg-ipai-odoo
+    access: jdbc_read_only
+    auth: service_principal (databricks_extract)
+    tables:
+      - sale_order
+      - sale_order_line
+      - account_move
+      - account_move_line
+      - crm_lead
+      - hr_expense
+      - hr_expense_sheet
+      - project_project
+      - project_task
+      - documents_document
+      - res_partner
+    extraction: incremental_by_write_date
+
+  transform:
+    engine: databricks_dlt
+    repo: data-intelligence/pipelines/
+    layers:
+      bronze:
+        format: delta
+        schema: bronze_odoo
+        policy: "Raw ingestion. No transformation. Append-only."
+      silver:
+        format: delta
+        schema: silver_odoo
+        policy: "Cleaned, typed, deduplicated. PII tagged. SCD Type 2 for dimensions."
+      gold:
+        format: delta
+        schema: gold_business
+        policy: "Business metrics, KPIs, aggregations. Ready for reporting."
+
+  govern:
+    catalog: unity_catalog
+    policies:
+      - data_lineage_tracking
+      - column_level_access_control
+      - pii_tagging_and_masking
+      - quality_rules_per_table
+    access: entra_sso_plus_catalog_acls
+
+  serve:
+    endpoint: databricks_sql_warehouse
+    consumers:
+      - power_bi (directquery or import)
+      - foundry_agents (read-only for Pulser Genie)
+
+  present:
+    tool: power_bi
+    connection: databricks_sql_endpoint
+    dashboards:
+      - revenue_pipeline
+      - expense_tracking
+      - document_processing_metrics
+      - crm_conversion_funnel
+      - project_utilization
+
+rules:
+  - "Databricks is the primary data-engineering plane. Fabric does not replace it."
+  - "Power BI / Fabric are consumption/semantic layers only."
+  - "All transformations run in Databricks DLT, not in Fabric dataflows."
+  - "Unity Catalog is mandatory for governance."
+  - "No direct Power BI connection to Odoo PostgreSQL."

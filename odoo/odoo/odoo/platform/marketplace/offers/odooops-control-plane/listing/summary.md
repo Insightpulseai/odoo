@@ -1,1 +1,0 @@
-OdooOps Control Plane is an AI-powered enterprise operations platform built on Odoo CE 19, delivering 80%+ Odoo Enterprise parity through open-source community modules and custom AI extensions. Purpose-built for Philippine BIR compliance, finance automation, and agentic AI workflows.

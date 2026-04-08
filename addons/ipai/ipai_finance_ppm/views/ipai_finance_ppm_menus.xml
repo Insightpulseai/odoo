@@ -1,6 +1,21 @@
 <odoo>
+    <!-- Action must be defined before menuitems that reference it -->
+    <record id="action_ipai_ppm_import_wizard" model="ir.actions.act_window">
+        <field name="name">PPM Import</field>
+        <field name="res_model">ipai.ppm.import.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+    <!-- Single root menu for Finance PPM under Project app -->
     <menuitem id="menu_ipai_finance_ppm_root"
               name="Finance PPM"
               parent="project.menu_main_pm"
               sequence="40"/>
+
+    <menuitem id="menu_ipai_finance_ppm_import"
+              name="PPM Import"
+              parent="menu_ipai_finance_ppm_root"
+              action="action_ipai_ppm_import_wizard"
+              sequence="20"/>
 </odoo>

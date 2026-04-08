@@ -1,0 +1,73 @@
+# =============================================================================
+# Reusable Job: Build Container Image via ACR Tasks
+# =============================================================================
+# Builds and pushes a container image to Azure Container Registry.
+# Tags with both build-specific and floating tag for deploy.
+#
+# Usage:
+#   jobs:
+#     - template: templates/jobs/build-container.yml
+#       parameters:
+#         imageName: ipai-website
+#         imageTag: latest
+#         dockerfile: web/ipai-landing/Dockerfile
+#         buildContext: web/ipai-landing
+# =============================================================================
+
+parameters:
+  - name: imageName
+    type: string
+  - name: imageTag
+    type: string
+    default: latest
+  - name: dockerfile
+    type: string
+  - name: buildContext
+    type: string
+    default: '.'
+  - name: acrName
+    type: string
+    default: acripaiodoo
+  - name: serviceConnection
+    type: string
+    default: ipai-dev-wif
+
+jobs:
+  - job: BuildContainer
+    displayName: 'Build ${{ parameters.imageName }}:${{ parameters.imageTag }}'
+    pool:
+      vmImage: ubuntu-latest
+    steps:
+      - checkout: self
+        fetchDepth: 1
+
+      - task: AzureCLI@2
+        displayName: 'ACR Build + Push'
+        inputs:
+          azureSubscription: ${{ parameters.serviceConnection }}
+          scriptType: bash
+          scriptLocation: inlineScript
+          inlineScript: |
+            set -euo pipefail
+
+            BUILD_TAG="${{ parameters.imageTag }}-$(Build.BuildNumber)"
+            IMAGE="${{ parameters.imageName }}"
+            ACR="${{ parameters.acrName }}"
+
+            echo "=== ACR Build ==="
+            echo "Image: ${ACR}.azurecr.io/${IMAGE}:${BUILD_TAG}"
+            echo "Dockerfile: ${{ parameters.dockerfile }}"
+            echo "Context: ${{ parameters.buildContext }}"
+
+            az acr build \
+              --registry "${ACR}" \
+              --image "${IMAGE}:${BUILD_TAG}" \
+              --image "${IMAGE}:${{ parameters.imageTag }}" \
+              --file "${{ parameters.dockerfile }}" \
+              "${{ parameters.buildContext }}"
+
+            echo "##vso[task.setvariable variable=builtImageTag;isOutput=true]${BUILD_TAG}"
+            echo "##vso[task.setvariable variable=builtImageFqdn;isOutput=true]${ACR}.azurecr.io/${IMAGE}:${BUILD_TAG}"
+            echo "PASS: Image pushed to ${ACR}.azurecr.io/${IMAGE}:${BUILD_TAG}"
+          name: build
+          workingDirectory: $(Build.SourcesDirectory)

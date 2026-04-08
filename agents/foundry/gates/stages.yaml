@@ -1,0 +1,92 @@
+stages:
+  - id: S01
+    name: intake
+    description: Agent blueprint submitted
+    entry_criteria: []
+    exit_criteria:
+      - name: passport_exists
+        type: artifact_exists
+        ref: "agents/passports/{agent_id}.yaml"
+  - id: S02
+    name: design
+    description: Agent contract defined
+    entry_criteria: []
+    exit_criteria:
+      - name: contract_exists
+        type: artifact_exists
+        ref: "agents/contracts/{agent_id}.manifest.yaml"
+  - id: S03
+    name: build
+    description: Agent implementation complete
+    entry_criteria: []
+    exit_criteria: []
+  - id: S04
+    name: unit-test
+    description: Unit tests pass
+    entry_criteria: []
+    exit_criteria:
+      - name: unit_eval_passing
+        type: eval_passing
+        threshold: 0.8
+  - id: S05
+    name: integration-test
+    description: Integration tests pass
+    entry_criteria: []
+    exit_criteria: []
+  - id: S06
+    name: eval-sandbox
+    description: Integration tests pass
+    entry_criteria: []
+    exit_criteria: []
+  - id: S07
+    name: judge-review
+    description: Judge agent signs off
+    entry_criteria: []
+    exit_criteria:
+      - name: judge_signed
+        type: judge_signed
+  - id: S08
+    name: canary
+    description: Shadow metrics verified
+    entry_criteria: []
+    exit_criteria: []
+  - id: S09
+    name: staging
+    description: Pre-production verification
+    entry_criteria: []
+    exit_criteria: []
+  - id: S10
+    name: production
+    description: Full live production task processing
+    entry_criteria: []
+    exit_criteria: []
+  - id: S11
+    name: scaling
+    description: Production stable for 7 days
+    entry_criteria: []
+    exit_criteria: []
+  - id: S12
+    name: hardening
+    description: Security edge cases bounded
+    entry_criteria: []
+    exit_criteria: []
+  - id: S13
+    name: mature
+    description: L5 Final State 30d runtime without incidents
+    entry_criteria: []
+    exit_criteria: []
+  - id: S14
+    name: deprecation-notice
+    description: Sunset clock starts
+    entry_criteria: []
+    exit_criteria: []
+  - id: S15
+    name: sunset
+    description: Task draining
+    entry_criteria: []
+    exit_criteria: []
+  - id: S16
+    name: retired
+    description: Archival offline
+    entry_criteria: []
+    exit_criteria: []

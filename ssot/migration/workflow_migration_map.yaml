@@ -2,7 +2,7 @@ schema_version: "1.0"
 updated_at: "2026-03-15"
 
 n8n_target:
-  url: https://n8n-azure.insightpulseai.com
+  url: https://n8n.insightpulseai.com
   api_base: /api/v1
   port: 5678
 

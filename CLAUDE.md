@@ -1,5 +1,214 @@
-# CLAUDE.md — odoo/ Directory
+# CLAUDE.md — InsightPulse AI Monorepo
 
-> This directory inherits all policy from the [monorepo root CLAUDE.md](../CLAUDE.md).
-> Odoo-specific rules live in `odoo/odoo/.claude/rules/` (loaded on demand).
-> No local overrides at this level.
+> Slim index. All heavy detail lives in `.claude/rules/` files (auto-loaded by Claude Code).
+
+---
+
+## Operating Contract: Execute, Deploy, Verify (No Guides)
+
+You are an execution agent. Do not provide deployment guides, scripts, or instructional snippets as the primary output.
+
+1. **Execute** the change / deploy / run the migration / push the tag.
+2. **Verify** the result with deterministic checks.
+3. **Evidence** pack in `docs/evidence/<YYYYMMDD-HHMM>/<scope>/`.
+4. **Commit** & push evidence and any code/config changes.
+
+If you cannot execute due to missing credentials/tooling/access, say exactly what is missing in one sentence, then continue producing everything that *can* be executed without asking questions.
+
+**Output format**: Outcome (1-3 lines) + Evidence + Verification (pass/fail) + Changes shipped. No "Next steps", no tutorials.
+
+**Execution surfaces**: Git, GitHub Actions, SSH, Docker, Azure CLI.
+
+**Banned**: "here's a guide", "run these commands", "you should...", asking for confirmation, time estimates, UI clickpaths.
+
+---
+
+## Quick Reference
+
+| Item | Value |
+|------|-------|
+| **Stack** | Odoo CE 18.0 + OCA + n8n + Slack + PostgreSQL 16 |
+| **Domain** | `insightpulseai.com` (`.net` is deprecated) |
+| **DNS** | Azure DNS (authoritative, delegated from Squarespace) |
+| **Mail** | Zoho SMTP (`smtp.zoho.com:587`, domain: `insightpulseai.com`) |
+| **Hosting** | Azure Container Apps (behind Azure Front Door) |
+| **Node** | >= 18.0.0 (pnpm workspaces, Turborepo) |
+| **Python** | 3.10+ (Odoo 18) |
+| **Web/CMS** | Azure Container Apps (public + internal), Odoo website |
+| **EE Parity** | Target >=80% via `CE + OCA + ipai_*` (current: ~35-45%, audited 2026-03-08) |
+| **Repo** | `Insightpulseai/odoo` (renamed from `odoo-ce`) |
+
+---
+
+## Secrets Policy
+
+Never hardcode, never echo, never ask user to paste. Secrets in `.env*` / env vars / Azure Key Vault only.
+See `.claude/rules/security-baseline.md` for full policy (sections 2.1-2.6).
+
+---
+
+## Repo Map
+
+| Path | Owns |
+|------|------|
+| `addons/ipai/` | 69 custom IPAI modules |
+| `addons/oca/` | OCA community modules (hydrated at runtime, not tracked) |
+| `apps/` | 9 applications (ops-console, mcp-jobs, slack-agent, etc.) |
+| `packages/` | Shared packages (agents, taskbus) |
+| `spec/` | 76 spec bundles |
+| `scripts/` | 1000 automation scripts in 86 categories |
+| `odoo18/` | Canonical Odoo 18 setup (config, scripts, backups) |
+| `mcp/servers/` | MCP server implementations (plane is the only live one) |
+| `.github/workflows/` | 355 CI/CD pipelines |
+| `docker/`, `deploy/` | Docker configs and deployment |
+| `platform/` | Canonical platform control-plane (replaces `ops-platform`) |
+| `data-intelligence/`| Canonical lakehouse/Databricks code (replaces `lakehouse`) |
+| `agents/` | Canonical agent/skill assets (personas, judges, skills) |
+| `agent-platform/` | Canonical agent runtime/orchestration engine |
+| `infra/` | Shared infrastructure and edge configuration |
+| `design/` | Shared design tokens and assets (replaces `design-system`) |
+| `ssot/` | Intended-state truth for platform and ERP runtime |
+
+---
+
+## Cross-Repo Invariants
+
+- **Microsoft 365 Agents SDK** is a channel layer for enterprise delivery (Copilot, Teams, Web). It does NOT replace the canonical `agent-platform` runtime.
+- **Service-to-service auth**: All internal flows must use Managed Identities + Azure Key Vault.
+
+1. **Secrets**: `.env` files only, never hardcode. Azure Key Vault for runtime.
+2. **Database**: Odoo uses PostgreSQL (local or Azure managed). All Azure-native.
+3. **No Supabase**: Supabase is fully deprecated (2026-03-26). All services are Azure-native.
+4. **CE Only**: No Enterprise modules, no odoo.com IAP dependencies.
+5. **OCA First**: Prefer OCA modules over custom `ipai_*` when available. Config -> OCA -> Delta.
+6. **Specs Required**: Significant changes must reference a spec bundle.
+9. **Databricks Governance**: Databricks + Unity Catalog is the mandatory governed transformation, engineering, and serving plane.
+10. **MCP First**: MCP is required for all reusable agent tools (Google Cloud contract).
+11. **SaaS Authority**: The **Azure SaaS Workload Documentation** is the canonical design framework for the platform.
+12. **Consumption**: **Power BI** is the primary mandatory business-facing reporting surface.
+13. **Fabric Complement**: Fabric is for mirroring and OneLake integration; it never replaces Databricks engineering.
+14. **Stateless Agents**: Session state must be stored externally (Stateless Application rule).
+15. **Sequential Default**: Use Sequential orchestration for deterministic finance flows; Maker-Checker for gates.
+16. **Release Gate**: All production releases must pass the [Go-Live Checklist](file:///Users/tbwa/Documents/GitHub/Insightpulseai/docs/architecture/GO_LIVE_CHECKLIST.md).
+17. **SAP Adapter Only**: SAP is an integrated external enterprise surface. Use Azure Functions or App Service with SAP Cloud SDK for adapter services. Do not adopt SAP infrastructure hosting templates (NetWeaver, HANA, LaMa, S/4HANA) as canonical platform architecture unless SAP runtime hosting is explicitly in scope.
+18. **iOS Wrapper Skill Pack**: When working on the iOS native wrapper (`web/mobile/`), apply `docs/skills/ios-native-wrapper.md`. Prefer native auth (`AuthenticationServices`), native biometrics (`LocalAuthentication`), allowlist-based webview navigation, automated simulator smoke tests, and CI + `fastlane` release automation. No cross-platform frameworks.
+19. **Apple Design Authority (iOS)**: For iOS wrapper UI, treat Apple's current App design and UI / Liquid Glass guidance as the visual system authority. Native shell chrome follows current Apple design language. `Icon Composer` for app icons, `SF Symbols` for native shell iconography. Liquid Glass applies to native shell surfaces, not arbitrary overlays on hosted web content.
+20. **iOS Wrapper UI Contract**: For wrapper-shell changes (`WrapperViewController`, `BiometricAuth`, native chrome, auth handoff, icon assets), apply `docs/skills/ios-wrapper-ui-contract.md`. This contract is subordinate to `docs/skills/ios-native-wrapper.md` and defines enforceable code-review gates.
+21. **iOS Wrapper Code Contract**: When editing wrapper-shell implementation files, also apply `docs/skills/ios-wrapper-code-contract.md`. File-level review emphasis: `WrapperViewController.swift` owns shell orchestration only, `BiometricAuth.swift` owns biometric policy/orchestration only, `Assets.xcassets` stays minimal and governed, `Environment.swift` remains the source of routing/environment configuration, `Info.plist` remains aligned with native auth/biometric requirements.
+22. **Odoo Integration Adoption**: Check Odoo 18 native integrations first (payments, bank sync, EDI, commerce connectors, website). If native is insufficient, check OCA before creating `ipai_*`. Reserve `ipai_*` for thin bridges to external Azure/Foundry services only. SSOT: `ssot/odoo/integration_adoption.yaml`.
+
+---
+
+## Common Workflows
+
+### Agent Pattern
+
+```
+explore -> plan -> implement -> verify -> commit
+```
+
+| Command | Purpose |
+|---------|---------|
+| `/project:plan` | Create detailed implementation plan |
+| `/project:implement` | Execute plan with minimal changes |
+| `/project:verify` | Run all verification checks |
+| `/project:ship` | Orchestrate full workflow end-to-end |
+| `/project:fix-github-issue` | Fix a specific GitHub issue |
+
+### Verification (run before every commit)
+
+```bash
+./scripts/repo_health.sh       # Check repo structure
+./scripts/spec_validate.sh     # Validate spec bundles
+./scripts/ci_local.sh          # Run local CI checks
+```
+
+### Agent Rules
+
+1. **Never guess**: Read files first, then change them
+2. **Simplicity first**: Prefer the simplest implementation
+3. **Verify always**: Include verification after any mutation
+4. **Minimal diffs**: Keep changes small and reviewable
+5. **Update together**: Docs and tests change with code
+
+### Common Commands
+
+```bash
+docker compose up -d                    # Start full stack
+./scripts/deploy-odoo-modules.sh        # Deploy IPAI modules
+./scripts/ci/run_odoo_tests.sh          # Run Odoo unit tests
+pnpm install                            # Install Node dependencies
+```
+
+---
+
+## Deprecated (Never Use)
+
+| Item | Replacement | Date |
+|------|-------------|------|
+| `insightpulseai.net` | `insightpulseai.com` | 2026-02 |
+| `odoo-ce` repo name | `odoo` | 2026-02-03 |
+| Mattermost (all) | Slack | 2026-01-28 |
+| Appfine (all) | Removed | 2026-02 |
+| `ipai_mattermost_connector` | `ipai_slack_connector` | 2026-01-28 |
+| Supabase (all instances, all usage) | Azure-native services | 2026-03-26 |
+| Cloudflare (DNS proxy) | Azure DNS (authoritative) | 2026-03-26 |
+| `ipai_ai_widget` (global patches) | Native Odoo 18 Ask AI + `ipai_ai_copilot` | 2026-03-09 |
+| DigitalOcean (all) | Azure (ACA + VM + managed PG) | 2026-03-15 |
+| Public nginx edge | Azure Front Door | 2026-03-15 |
+| Self-hosted runners | GitHub-hosted / Azure DevOps pool | 2026-03-15 |
+| Mailgun (`mg.insightpulseai.com`) | Zoho SMTP | 2026-03-11 |
+| Vercel deployment | Azure Container Apps | 2026-03-11 |
+| GitHub Actions (blanket deprecation) | GitHub Actions = CI + website/docs deploy; Azure DevOps = Odoo/Databricks/Infra deploy (see `ssot/governance/platform-authority-split.yaml`) | 2026-03-30 |
+| `ipai-odoo-dev-pg` (Burstable PG) | `pg-ipai-odoo` (General Purpose, Fabric mirroring) | 2026-03-21 |
+| Superset (as canonical BI) | Power BI (primary) + Superset (supplemental only) | 2026-03-21 |
+| Notion (as data source) | Removed from Databricks bundle | 2026-03-21 |
+| Wix (all — hosting, CMS, DNS, API) | Azure DNS + Azure Container Apps + Odoo CMS | 2026-04-02 |
+
+### Engineering & Delivery Authority (Option C)
+
+Authoritative rule:
+- **GitHub Actions** remains the default CI authority and the deploy authority for docs/web properties.
+- **Azure DevOps** remains the deploy authority for Odoo, Databricks, and infra lanes requiring environment/service-connection gating.
+- **Azure Boards** is the portfolio/planning system of record.
+- **GitHub Issues** is the engineering execution backlog.
+- See `ssot/governance/platform-authority-split.yaml`, `ssot/governance/ci-cd-authority-matrix.yaml`, and `ssot/governance/repo-delivery-disposition.yaml`.
+
+### Engineering & Delivery Authority (Option C)
+
+Authoritative rule:
+- **GitHub Actions** remains the default CI authority and the deploy authority for docs/web properties.
+- **Azure DevOps** remains the deploy authority for Odoo, Databricks, and infra lanes requiring environment/service-connection gating.
+- **Azure Boards** is the portfolio/planning system of record.
+- **GitHub Issues** is the engineering execution backlog.
+- See `ssot/governance/platform-authority-split.yaml`, `ssot/governance/ci-cd-authority-matrix.yaml`, and `ssot/governance/repo-delivery-disposition.yaml`.
+
+---
+
+## Deep Reference
+
+| Topic | Location |
+|-------|----------|
+| Directory structure & inventory | `.claude/rules/repo-topology.md` |
+| Architecture, Docker, integrations | `.claude/rules/platform-architecture.md` |
+| Secrets policy, GHAS, allowed tools | `.claude/rules/security-baseline.md` |
+| GitHub governance, CI/CD, PR rules | `.claude/rules/github-governance.md` |
+| Enterprise parity strategy & tables | `.claude/rules/ee-parity.md` |
+| Odoo CE 18 rules, modules, testing | `.claude/rules/odoo-rules.md` |
+| Supabase usage & activation | `.claude/rules/supabase-usage.md` |
+| BIR compliance (PH tax/payroll) | `.claude/rules/bir-compliance.md` |
+| MCP Jobs system | `.claude/rules/mcp-jobs.md` |
+| n8n automations & Claude integration | `.claude/rules/automations.md` |
+| Spec kit structure & bundles | `.claude/rules/spec-kit.md` |
+| Vercel observability & Figma | `.claude/rules/vercel-observability.md` |
+| SSOT platform rules | `.claude/rules/ssot-platform.md` |
+| Architecture & stack | `docs/ai/ARCHITECTURE.md` |
+| IPAI module naming | `docs/ai/IPAI_MODULES.md` |
+| OCA workflow | `docs/ai/OCA_WORKFLOW.md` |
+| Testing recipes | `docs/ai/TESTING.md` |
+| Docker commands | `docs/ai/DOCKER.md` |
+| Troubleshooting | `docs/ai/TROUBLESHOOTING.md` |
+
+---
+
+*Last updated: 2026-03-30*

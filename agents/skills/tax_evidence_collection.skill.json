@@ -1,0 +1,19 @@
+{
+  "name": "tax_evidence_collection",
+  "version": "1.0.0",
+  "description": "Collect and organize tax computation evidence for audit trails. Gathers computation logs, source documents, and filing artifacts.",
+  "intent": "Assemble tax evidence packs for audit and review",
+  "inputs": [
+    {"name": "tax_period", "type": "string", "description": "Tax period for evidence collection", "required": true},
+    {"name": "bir_form_type", "type": "string", "description": "BIR form type to collect evidence for", "required": false},
+    {"name": "evidence_scope", "type": "string", "description": "computation | filing | full", "required": false, "default": "full"}
+  ],
+  "outputs": [
+    {"name": "evidence_pack", "type": "object", "description": "Structured evidence pack with sections"},
+    {"name": "source_documents", "type": "array", "description": "Source document references"},
+    {"name": "computation_logs", "type": "array", "description": "Tax computation audit trail"},
+    {"name": "completeness_score", "type": "float", "description": "Evidence completeness (0.0-1.0)"}
+  ],
+  "kb_segments": ["kb_tax_evidence", "kb_odoo_tax_runtime"],
+  "agentInstructions": "Collect tax computation logs from Odoo, gather source documents (receipts, invoices, returns), and organize into structured evidence pack. Report completeness score. Flag missing evidence."
+}

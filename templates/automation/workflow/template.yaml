@@ -1,0 +1,28 @@
+# template.yaml — GitHub Actions workflow template
+# Copy and customize for new workflows.
+
+name: "TODO: Workflow Name"
+
+on:
+  pull_request:
+    paths:
+      - 'TODO: path filter'
+  # push:
+  #   branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # TODO: Add setup steps (Python, Node, etc.)
+
+      - name: Run checks
+        run: |
+          echo "TODO: Add validation commands"
+
+      # TODO: Add test/lint/deploy steps as needed

@@ -18,7 +18,7 @@
 - [ ] **2.2** Define `ssot/ai/evaluation_thresholds.yaml` with per-agent minimum scores
 - [ ] **2.3** Create evaluation datasets: 50 test cases per agent (150 total), define dataset schema
 - [ ] **2.4** Run baseline evaluations, capture scores in `docs/evidence/`
-- [ ] **2.5** Create `.github/workflows/foundry-eval-gate.yml` CI gate
+- [ ] **2.5** Create `pipelines/foundry-eval-gate.yml` Azure DevOps Pipelines CI gate
 - [ ] **2.6** Verify Advisory groundedness ≥ 0.8 on baseline dataset (mandatory, not optional)
 - [ ] **2.7** Verify Actions safety = 1.0 (no unauthorized writes in test suite)
 - [ ] **2.8** Document that safety evals are not sufficient alone — pair with policy tests + human review

@@ -1,0 +1,14 @@
+name: azure-resource-graph
+description: Advanced cloud governance and resource exploration via Azure Resource Graph (ARG) and Kusto Query Language (KQL).
+version: 1.0.0
+category: infrastructure
+capabilities:
+  - resource-discovery
+  - cloud-governance
+  - cost-optimization
+  - health-monitoring
+related_knowledge:
+  - azure_resource_graph
+supported_runtimes:
+  - azure-foundry
+  - databricks-apps

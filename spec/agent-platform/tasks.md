@@ -114,6 +114,25 @@
 - [ ] Add validation guard so runtime ownership cannot drift back into `agents`
 - [ ] Add go-live checklist for runtime readiness
 
+## Phase 9.1 — CLI boundary enforcement
+
+- [x] Add architecture note that `az workloads` is SAP-specific and benchmark-only
+- [x] Update Foundry docs to reference `az cognitiveservices` for model deployment
+- [x] Update Foundry connection docs to reference `az ml` only where Microsoft documentation explicitly requires it
+- [ ] Verify all Agent Service references use project endpoint terminology and not legacy hub-based connection-string terminology
+
+## Phase 9.2 — Foundry topology normalization
+
+- [x] Create `ssot/foundry/runtime_inventory.yaml`
+- [x] Update `ssot/foundry/python_sdk_surfaces.yaml` with services_tools_base_endpoint
+- [x] Mark `data-intel-ph-resource` as canonical Foundry resource candidate
+- [x] Mark `data-intel-ph` as canonical Foundry project candidate
+- [x] Mark `aifoundry-ipai-dev` and `proj-ipai-claude` as legacy/transitional
+- [x] Classify `oai-ipai-dev` as conditional rather than default
+- [x] Add package-boundary enforcement for Python AI dependencies
+- [x] Distinguish UI evidence from control-plane and runtime evidence in Foundry docs
+- [x] Preserve Odoo OAuth/Entra requirements outside Foundry runtime governance
+
 ## Verification gates
 
 - [ ] `agents` no longer claims runtime/orchestration ownership

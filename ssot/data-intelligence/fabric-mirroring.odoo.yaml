@@ -1,0 +1,17 @@
+kind: fabric_mirroring_contract
+version: 1
+source:
+  engine: azure_postgresql_flexible_server
+  database: odoo
+  role: operational_system_of_record
+target:
+  platform: microsoft_fabric
+  mode: database_mirroring
+  storage: onelake
+  analytics_endpoint: sql_analytics_endpoint
+policy:
+  canonical_analytics_ingress: true
+  direct_operational_reads_default: false
+readiness:
+  source_server_ready: true
+  allowed_database: odoo

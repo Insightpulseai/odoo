@@ -1,0 +1,94 @@
+[
+  {
+    "id": "CASE01_CLEAN_EWT",
+    "description": "Supplier invoice with clean EWT mapping (W010)",
+    "transaction": {
+      "txn_id": "T001",
+      "doc_type": "bill",
+      "vendor_type": "PROFESSIONAL",
+      "atc_code": "W010",
+      "gross_amount": 10000.0,
+      "tax_code": "VAT_12_PURCHASE"
+    },
+    "expected": {
+      "matched_rules": ["EWT_PROF_W010", "VAT_INPUT_STD_12"],
+      "ewt_amount": 1000.0,
+      "vat_amount": 1200.0,
+      "status": "success"
+    }
+  },
+  {
+    "id": "CASE02_VAT_ONLY",
+    "description": "Supplier invoice with VAT-only treatment (No EWT)",
+    "transaction": {
+      "txn_id": "T002",
+      "doc_type": "bill",
+      "vendor_type": "SUPPLIER",
+      "atc_code": null,
+      "gross_amount": 5000.0,
+      "tax_code": "VAT_12_PURCHASE"
+    },
+    "expected": {
+      "matched_rules": ["VAT_INPUT_STD_12"],
+      "ewt_amount": 0.0,
+      "vat_amount": 600.0,
+      "status": "success"
+    }
+  },
+  {
+    "id": "CASE03_AMBIGUOUS_MIXED",
+    "description": "Mixed case with ambiguous ATC (Vendor type doesn't match ATC)",
+    "transaction": {
+      "txn_id": "T003",
+      "doc_type": "bill",
+      "vendor_type": "SUPPLIER",
+      "atc_code": "W010",
+      "gross_amount": 2000.0,
+      "tax_code": "VAT_12_PURCHASE"
+    },
+    "expected": {
+      "matched_rules": ["VAT_INPUT_STD_12"],
+      "ewt_amount": 0.0,
+      "vat_amount": 240.0,
+      "status": "quarantine",
+      "reason": "ATC W010 requires vendor_type PROFESSIONAL"
+    }
+  },
+  {
+    "id": "CASE04_UNSUPPORTED_UNMAPPED",
+    "description": "Unsupported / unmapped transaction (Invalid ATC)",
+    "transaction": {
+      "txn_id": "T004",
+      "doc_type": "bill",
+      "vendor_type": "SUPPLIER",
+      "atc_code": "INVALID_ATC",
+      "gross_amount": 1000.0,
+      "tax_code": "VAT_12_PURCHASE"
+    },
+    "expected": {
+      "matched_rules": ["VAT_INPUT_STD_12"],
+      "ewt_amount": 0.0,
+      "vat_amount": 120.0,
+      "status": "quarantine",
+      "reason": "Unmapped ATC code: INVALID_ATC"
+    }
+  },
+  {
+    "id": "CASE05_MISSING_EVIDENCE",
+    "description": "Edge case with missing evidence fields (No gross_amount)",
+    "transaction": {
+      "txn_id": "T005",
+      "doc_type": "bill",
+      "vendor_type": "PROFESSIONAL",
+      "atc_code": "W010",
+      "tax_code": "VAT_12_PURCHASE"
+    },
+    "expected": {
+      "matched_rules": [],
+      "ewt_amount": 0.0,
+      "vat_amount": 0.0,
+      "status": "fail-closed",
+      "reason": "Missing required field: gross_amount"
+    }
+  }
+]

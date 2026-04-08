@@ -133,127 +133,75 @@ stages:
     jobs:
       - job: test
         pool:
-          vmImage: ubuntu-latest
-        services:
-          postgres: postgres:16
-        variables:
-          PGHOST: localhost
-          PGUSER: odoo
-          PGPASSWORD: odoo
+          name: ipai-private-linux  # self-hosted agent with VNet access to pg-ipai-odoo
+        timeoutInMinutes: 90
         steps:
           - checkout: self
-            submodules: recursive
-            fetchDepth: 0
+            clean: true
 
-          - task: UsePythonVersion@0
+          - task: AzureKeyVault@2
+            displayName: Load Key Vault secrets
             inputs:
-              versionSpec: $(pythonVersion)
+              azureSubscription: ipai-dev-wif
+              KeyVaultName: kv-ipai-dev
+              SecretsFilter: 'pg-admin-password'
+              RunAsPreJob: false
 
-          # Install Odoo 18 + deps
-          - script: |
-              set -euo pipefail
-              pip install setuptools wheel
-              pip install -r vendor/odoo/requirements.txt
-              pip install -e vendor/odoo/
-              pip install flake8 black isort
-              # Install OCA external deps
-              pip install python-jose sentry-sdk || true
-              echo "PASS: Odoo 18 + deps installed."
-            displayName: Install Odoo 18 and dependencies
-
-          # Python lint on the target module
-          - script: |
-              set -euo pipefail
-              MODULE_DIR="addons/ipai/${{ parameters.moduleName }}"
-              echo "=== Lint: $MODULE_DIR ==="
-              flake8 "$MODULE_DIR" --max-line-length=120 --extend-ignore=E501,W503,E203 || true
-              black --check --diff "$MODULE_DIR" || true
-              isort --check --diff "$MODULE_DIR" || true
-              python3 -m py_compile "$MODULE_DIR/__init__.py"
-              echo "Lint complete."
-            displayName: Python lint (module)
-            continueOnError: true
-
-          # Create test database
-          - script: |
-              set -euo pipefail
-              export PGPASSWORD=odoo
-              psql -h localhost -U odoo -d postgres \
-                -c "CREATE DATABASE test_${{ parameters.moduleName }} ENCODING 'UTF8' LC_COLLATE 'C' LC_CTYPE 'C' TEMPLATE template0;"
-              echo "PASS: Test DB created."
-            displayName: Create test database
-
-          # Build full addons path from OCA repos
-          - script: |
-              set -euo pipefail
-              OCA_PATHS=$(find addons/oca -mindepth 1 -maxdepth 1 -type d 2>/dev/null | sort | tr '\n' ',')
-              FULL_PATH="vendor/odoo/addons,addons/ipai,${OCA_PATHS%,}"
-              echo "##vso[task.setvariable variable=ADDONS_PATH]$FULL_PATH"
-              echo "Addons path: $FULL_PATH"
-            displayName: Build addons path
-
-          # Test install module
-          - script: |
-              set -euo pipefail
-              echo "=== Installing ${{ parameters.moduleName }} on Odoo 18 ==="
-              python vendor/odoo/odoo-bin \
-                --database=test_${{ parameters.moduleName }} \
-                --db_host=localhost --db_port=5432 \
-                --db_user=odoo --db_password=odoo \
-                --addons-path="$(ADDONS_PATH)" \
-                --stop-after-init --no-http \
-                -i ${{ parameters.moduleName }} \
-                2>&1 | tee test_install.log
-
-              # Check for errors
-              if grep -qE "ERROR|CRITICAL" test_install.log; then
-                echo "FAIL: Module install produced errors."
-                grep -E "ERROR|CRITICAL" test_install.log
-                exit 1
-              fi
-              echo "PASS: Module ${{ parameters.moduleName }} installed on Odoo 18."
-            displayName: Test install module (Odoo 18)
-
-          # Run Odoo tests for the module
-          - script: |
-              set -euo pipefail
-              echo "=== Running tests for ${{ parameters.moduleName }} ==="
-              python vendor/odoo/odoo-bin \
-                --database=test_${{ parameters.moduleName }} \
-                --db_host=localhost --db_port=5432 \
-                --db_user=odoo --db_password=odoo \
-                --addons-path="$(ADDONS_PATH)" \
-                --stop-after-init --no-http \
-                --test-enable --test-tags /${{ parameters.moduleName }} \
-                -u ${{ parameters.moduleName }} \
-                2>&1 | tee test_run.log
-
-              # Classify result
-              if grep -q "FAIL" test_run.log; then
-                echo "FAIL: Tests failed."
-                grep "FAIL" test_run.log
-                exit 1
-              elif grep -q "Ran 0 tests" test_run.log; then
-                echo "WARN: Module has no tests (init-only)."
-              else
-                echo "PASS: Tests passed."
-              fi
-            displayName: Run module tests (Odoo 18)
-
-          # Publish test evidence
-          - task: PublishPipelineArtifact@1
+          - task: AzureCLI@2
+            name: prepare_db
+            displayName: Create disposable test database
             inputs:
-              targetPath: test_install.log
-              artifact: test-evidence-install
-            displayName: Publish install evidence
+              azureSubscription: ipai-dev-wif
+              scriptType: bash
+              scriptLocation: inlineScript
+              inlineScript: |
+                set -euo pipefail
+                PG_RG="$(az resource list \
+                  --name pg-ipai-odoo \
+                  --resource-type "Microsoft.DBforPostgreSQL/flexibleServers" \
+                  --query '[0].resourceGroup' -o tsv)"
+                TEST_DB="odoo_test_$(Build.BuildId)_$(System.JobAttempt)"
+                az postgres flexible-server db create \
+                  --resource-group "${PG_RG}" \
+                  --server-name pg-ipai-odoo \
+                  --database-name "${TEST_DB}"
+                echo "##vso[task.setvariable variable=PG_RG;isReadOnly=true]${PG_RG}"
+                echo "##vso[task.setvariable variable=TEST_DB;isReadOnly=true]${TEST_DB}"
+
+          - bash: |
+              set -euo pipefail
+              chmod +x scripts/ci/run_odoo_tests.sh
+              scripts/ci/run_odoo_tests.sh
+            displayName: Run Odoo module tests
+            env:
+              PGHOST: pg-ipai-odoo.postgres.database.azure.com
+              PGPORT: '5432'
+              PGDATABASE: $(TEST_DB)
+              PGUSER: odoo_admin
+              PGPASSWORD: $(pg-admin-password)
+              ODOO_BIN: ./vendor/odoo/odoo-bin
+              INSTALL_MODULES: ${{ parameters.moduleName }}
+              TEST_TAGS: '/${{ parameters.moduleName }}'
+
+          - publish: .artifacts/test-logs
+            artifact: odoo-test-logs-$(Build.BuildId)
+            displayName: Publish test logs
             condition: always()
 
-          - task: PublishPipelineArtifact@1
-            inputs:
-              targetPath: test_run.log
-              artifact: test-evidence-run
-            displayName: Publish test evidence
+          - task: Bash@3
+            displayName: Drop disposable test database
             condition: always()
+            inputs:
+              targetType: inline
+              script: |
+                set -euo pipefail
+                if [ -n "${TEST_DB:-}" ]; then
+                  echo "Dropping ${TEST_DB} via psql..."
+                  export PGPASSWORD="$(pg-admin-password)"
+                  psql "host=pg-ipai-odoo.postgres.database.azure.com port=5432 dbname=postgres user=odoo_admin sslmode=require" \
+                    -c "DROP DATABASE IF EXISTS \"${TEST_DB}\";"
+                  echo "PASS: Test database dropped."
+                fi
 
   # ---------------------------------------------------------------------------
   # Stage 3: Package module/release artifact

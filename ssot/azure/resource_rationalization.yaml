@@ -2,15 +2,31 @@
 # Azure Resource Rationalization Matrix
 # =============================================================================
 #
-# Classification of all 82 Azure resources by keep/review/retire status.
-# Based on ARM REST API inventory (2026-03-17) + target architecture alignment.
+# Azure Resource Rationalization Matrix — post-migration counts.
+# Based on ARM REST API inventory (2026-03-17) + Phase 3-4 migration (2026-03-20).
 # Landing zone ref: ssot/azure/landing_zone.yaml
 # =============================================================================
 
-schema_version: "1.0"
-last_updated: "2026-03-17"
-total_resources: 82
+schema_version: "1.2"
+last_updated: "2026-03-20"
+total_resources: 75          # 83 pre-migration − 3 retired (Phase 4) − 5 jobs removed
+total_resources_post_hold: 62 # after 2026-03-23 stabilization hold expires (−13 old apps in rg-ipai-dev)
 status: active
+
+# RG Normalization — Phase 4 complete (2026-03-20)
+# Full migration matrix: infra/ssot/azure/rg-normalization-matrix.yaml
+# Bicep modules: odoo/odoo/infra/azure/rg-{shared-observability,dev-odoo-data,dev-odoo-runtime,dev-platform,dev-ai}.bicep
+rg_normalization:
+  phase: 4
+  completed: "2026-03-20"
+  target_model: 5-RG lifecycle-aligned
+  new_aca_domain: salmontree-b7d27e19.southeastasia.azurecontainerapps.io
+  stabilization_hold: "2026-03-23"
+  pragmatic_decisions:
+    - Front Door stays in rg-ipai-shared-dev (cannot move, cosmetic rename not worth risk)
+    - rg-ipai-ai-dev accepted as canonical AI RG (Databricks/Foundry cannot move)
+    - Single ACA environment in rg-ipai-dev-odoo-runtime for all apps (cost efficiency)
+    - UserAssignedIdentities cannot move cross-RG — stay in rg-ipai-shared-dev
 
 # =============================================================================
 # KEEP — aligned with target architecture
@@ -304,3 +320,49 @@ gaps:
   - area: Azure Monitor alerts
     status: not_verified
     note: OBJ-007 target. Log Analytics exists but alerting rules not verified.
+
+# =============================================================================
+# Migration Targets — maps keep/review resources to target RGs
+# =============================================================================
+migration_targets:
+  rg-ipai-shared-observability:
+    sources:
+      - resource: law-ipai-dev
+        from: rg-ipai-shared-dev
+      - resource: appi-ipai-dev
+        from: rg-ipai-shared-dev
+
+  rg-ipai-dev-odoo-runtime:
+    sources:
+      - resource: ipai-odoo-dev-env (recreate)
+        from: rg-ipai-dev
+      - resource: "ipai-odoo-dev-{web,worker,cron} (recreate)"
+        from: rg-ipai-dev
+      - resource: "ipai-{auth,mcp,ocr,superset,plane,shelf,crm,website}-dev (recreate)"
+        from: rg-ipai-dev
+      - resource: mi-ipai-odoo-dev
+        from: rg-ipai-shared-dev
+
+  rg-ipai-dev-odoo-data:
+    sources:
+      - resource: ipai-odoo-dev-pg
+        from: rg-ipai-dev
+      - resource: stipaiodoodev
+        from: rg-ipai-dev
+
+  rg-ipai-dev-platform:
+    sources:
+      - resource: kv-ipai-dev
+        from: rg-ipai-shared-dev
+      - resource: ipai-odoo-dev-kv
+        from: rg-ipai-dev
+      - resource: cripaidev
+        from: rg-ipai-shared-dev
+      - resource: ipaiodoodevacr
+        from: rg-ipai-dev
+      - resource: mi-ipai-platform-dev
+        from: rg-ipai-shared-dev
+
+  rg-ipai-ai-dev:
+    status: already_in_place
+    notes: All AI resources already in target RG. No moves needed.

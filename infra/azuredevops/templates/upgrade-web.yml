@@ -1,0 +1,191 @@
+# Stateless web workload upgrade template
+# Benchmarked against SAP automation upgrade choreography:
+#   Preflight → BOM → Install Templates → Build → Deploy_Dev → Release_Readiness → Promote_Prod → Attestation → Diagnostics
+# Layer 1: BOM — approved software inputs (SAP BOMS pattern)
+# Layer 2: Generated install templates — rendered deploy contract (SAP ini-file pattern)
+# Layer 3: Attestation — proof environment matches intent
+# Failure taxonomy: always-on diagnostic classification (SAP troubleshooting pattern)
+# Approvals/checks belong on AzDO Environments, not in YAML.
+
+parameters:
+  - name: appName
+    type: string
+  - name: devEnvironment
+    type: string
+  - name: prodEnvironment
+    type: string
+  - name: templateVersion
+    type: string
+    default: v1
+  - name: imageRef
+    type: string
+    default: ""
+  - name: nodeVersion
+    type: string
+    default: "22"
+  - name: containerAppName
+    type: string
+    default: ""
+  - name: healthEndpoint
+    type: string
+    default: "/"
+  - name: assistantEndpoint
+    type: string
+    default: ""
+
+stages:
+  - stage: Preflight
+    displayName: Preflight
+    jobs:
+      - job: Preflight
+        displayName: Azure auth & resource preflight
+        pool:
+          vmImage: ubuntu-latest
+        steps:
+          - checkout: self
+          - template: steps/preflight-azure.yml
+
+  - stage: Resolve_Software_BOM
+    displayName: Resolve Software BOM
+    dependsOn: Preflight
+    condition: succeeded()
+    jobs:
+      - job: ResolveSoftwareBOM
+        displayName: Verify pinned versions & publish BOM
+        pool:
+          vmImage: ubuntu-latest
+        steps:
+          - checkout: self
+          - template: steps/resolve-software-bom.yml
+            parameters:
+              appName: ${{ parameters.appName }}
+              workloadType: web
+              templateVersion: ${{ parameters.templateVersion }}
+              imageRef: ${{ parameters.imageRef }}
+              nodeVersion: ${{ parameters.nodeVersion }}
+              targetEnvironment: ${{ parameters.devEnvironment }}
+
+  - stage: Generate_Install_Templates
+    displayName: Generate Install Templates
+    dependsOn: Resolve_Software_BOM
+    condition: succeeded()
+    jobs:
+      - job: GenerateTemplates
+        displayName: Render deploy contract from BOM + SSOT
+        pool:
+          vmImage: ubuntu-latest
+        steps:
+          - checkout: self
+          - template: steps/generate-install-templates.yml
+            parameters:
+              appName: ${{ parameters.appName }}
+              workloadType: web
+              targetEnvironment: ${{ parameters.devEnvironment }}
+              containerAppName: ${{ parameters.containerAppName }}
+              healthEndpoint: ${{ parameters.healthEndpoint }}
+              assistantEndpoint: ${{ parameters.assistantEndpoint }}
+
+  - stage: Build
+    displayName: Build
+    dependsOn: Generate_Install_Templates
+    condition: succeeded()
+    jobs:
+      - job: Build
+        displayName: Build ${{ parameters.appName }} image
+        pool:
+          vmImage: ubuntu-latest
+        steps:
+          - checkout: self
+          - template: steps/build-web-image.yml
+            parameters:
+              appName: ${{ parameters.appName }}
+
+  - stage: Deploy_Dev
+    displayName: Deploy to Dev
+    dependsOn: Build
+    condition: succeeded()
+    jobs:
+      - deployment: DeployDev
+        displayName: Deploy to ${{ parameters.devEnvironment }}
+        environment: ${{ parameters.devEnvironment }}
+        pool:
+          vmImage: ubuntu-latest
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - checkout: self
+                - template: steps/deploy-containerapp.yml
+                  parameters:
+                    imageName: ${{ parameters.appName }}
+
+  - stage: Release_Readiness
+    displayName: Release Readiness
+    dependsOn: Deploy_Dev
+    condition: succeeded()
+    jobs:
+      - job: ReleaseReadiness
+        displayName: Release readiness gates
+        pool:
+          vmImage: ubuntu-latest
+        steps:
+          - checkout: self
+          - template: steps/release-gates.yml
+
+  - stage: Promote_Prod
+    displayName: Promote to Prod
+    dependsOn: Release_Readiness
+    condition: succeeded()
+    jobs:
+      - deployment: DeployProd
+        displayName: Deploy to ${{ parameters.prodEnvironment }}
+        environment: ${{ parameters.prodEnvironment }}
+        pool:
+          vmImage: ubuntu-latest
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - checkout: self
+                - template: steps/deploy-containerapp.yml
+                  parameters:
+                    imageName: ${{ parameters.appName }}
+        lockBehavior: sequential
+
+  - stage: Post_Deploy_Attestation
+    displayName: Post-Deploy Attestation
+    dependsOn: Promote_Prod
+    condition: succeeded()
+    jobs:
+      - job: Attest
+        displayName: Environment attestation
+        pool:
+          vmImage: ubuntu-latest
+        steps:
+          - checkout: self
+          - template: steps/environment-attestation.yml
+
+  - stage: Diagnostics_Artifacts
+    displayName: Diagnostics Artifacts
+    dependsOn:
+      - Preflight
+      - Resolve_Software_BOM
+      - Generate_Install_Templates
+      - Build
+      - Deploy_Dev
+      - Release_Readiness
+      - Promote_Prod
+      - Post_Deploy_Attestation
+    condition: always()
+    jobs:
+      - job: DiagnosticsArtifacts
+        displayName: Publish failure taxonomy
+        pool:
+          vmImage: ubuntu-latest
+        steps:
+          - checkout: self
+          - template: steps/failure-taxonomy.yml
+            parameters:
+              appName: ${{ parameters.appName }}
+              workloadType: web
+              targetEnvironment: ${{ parameters.prodEnvironment }}

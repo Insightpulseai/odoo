@@ -1,60 +1,192 @@
-schema_version: "1.0"
+schema_version: "2.2"
 target_state: azure_operator_view
-description: Canonical environment-first mapping for Azure Resource Groups and deployments.
+last_updated: "2026-03-20"
+description: >
+  5-RG lifecycle-aligned model for dev — LIVE as of 2026-03-20.
+  Phase 3 cutover complete: 12 apps in rg-ipai-dev-odoo-runtime.
+  Staging/prod are greenfield — provisioned from Bicep modules.
+  Reference: infra/ssot/azure/rg-normalization-matrix.yaml
 
-environments:
-  - name: shared
-    resource_group: insightpulseai-shared
+# =============================================================================
+# Official Status (2026-03-20)
+# =============================================================================
+status:
+  rg_normalization: accepted
+  aca_runtime_cutover: complete
+  legacy_agents_rg_cleanup: complete
+  old_runtime_hold: active_until_2026-03-23
+  operational_state: live_on_rg-ipai-dev-odoo-runtime
+
+# =============================================================================
+# Post-Cutover Follow-Up
+# =============================================================================
+follow_up:
+  - task: normalize_acr_auth_posture
+    description: >
+      ACA apps currently use ACR admin credentials (temporary recovery path
+      during Phase 3 recreation). Switch to managed identity + AcrPull role
+      assignment, then remove acr-password secrets from app configs.
+    priority: low
+    blocked_by: stabilization_hold_expiry
+    due: "2026-03-24"
+
+# =============================================================================
+# Shared (cross-environment)
+# =============================================================================
+shared:
+  observability:
+    resource_group: rg-ipai-shared-observability
     services:
-      - edge
-      - identity
-      - key-vault
-      - observability
-      - network
+      - law-ipai-dev          # Log Analytics
+      - appi-ipai-dev         # Application Insights
+      - action-groups         # Alert routing
 
-  - name: dev
-    resource_group: insightpulseai-dev
+# =============================================================================
+# Dev environment — 5 RGs
+# =============================================================================
+dev:
+  edge:
+    resource_group: rg-ipai-shared-dev    # accepted as-is (FD cannot move)
     services:
-      - odoo-web
-      - odoo-worker
-      - odoo-cron
-      - auth
-      - plane
-      - mcp-coordinator
-      - mcp-plane
-      - ocr
-      - supabase
-      - superset
-      - crm
-      - shelf
-      - website
+      - ipai-fd-dev           # Front Door
+      - ipaiDevWafPolicy      # WAF policy
+    notes: >
+      Front Door and WAF cannot be moved cross-RG. Accept rg-ipai-shared-dev
+      as the de facto edge RG for dev. Clean model applies to staging/prod.
 
-  - name: staging
-    resource_group: insightpulseai-staging
+  odoo_runtime:
+    resource_group: rg-ipai-dev-odoo-runtime
+    status: live  # Phase 3 cutover 2026-03-20
+    aca_domain: salmontree-b7d27e19.southeastasia.azurecontainerapps.io
+    static_ip: 57.155.216.101
+    bicep: odoo/odoo/infra/azure/rg-dev-odoo-runtime.bicep
     services:
-      - odoo-web
-      - odoo-worker
-      - odoo-cron
-      - auth
-      - plane
-      - mcp-coordinator
-      - ocr
-      - supabase
-      - superset
+      - ipai-odoo-dev-env     # ACA environment (single, shared)
+      - ipai-odoo-dev-web     # Odoo HTTP frontend
+      - ipai-odoo-dev-worker  # Odoo background worker
+      - ipai-odoo-dev-cron    # Odoo cron processor
+      - ipai-auth-dev         # Keycloak SSO
+      - ipai-mcp-dev          # MCP coordinator
+      - ipai-ocr-dev          # Document OCR
+      - ipai-superset-dev     # Superset BI
+      - ipai-plane-dev        # Plane project mgmt
+      - ipai-shelf-dev        # Shelf asset mgmt
+      - ipai-crm-dev          # CRM service
+      - ipai-website-dev      # Website
+      - ipai-copilot-gateway  # Copilot gateway
+    # Identities stay in rg-ipai-shared-dev (cannot move cross-RG)
 
-  - name: prod
-    resource_group: insightpulseai-prod
+  odoo_data:
+    resource_group: rg-ipai-dev-odoo-data
+    bicep: odoo/odoo/infra/azure/rg-dev-odoo-data.bicep
     services:
-      - odoo-web
-      - odoo-worker
-      - odoo-cron
-      - auth
-      - plane
-      - mcp-coordinator
-      - ocr
-      - supabase
-      - superset
+      - ipai-odoo-dev-pg      # PostgreSQL Flexible Server
+      - stipaiodoodev          # Storage account (filestore)
 
+  platform:
+    resource_group: rg-ipai-dev-platform
+    bicep: odoo/odoo/infra/azure/rg-dev-platform.bicep
+    services:
+      - kv-ipai-dev           # Shared Key Vault
+      - ipai-odoo-dev-kv      # Odoo Key Vault
+      - cripaidev             # Shared ACR
+      - ipaiodoodevacr         # Odoo ACR
+    # Identities stay in rg-ipai-shared-dev (cannot move cross-RG)
+
+  ai:
+    resource_group: rg-ipai-ai-dev    # accepted as-is (cannot rename RG)
+    bicep: odoo/odoo/infra/azure/rg-dev-ai.bicep
+    services:
+      - oai-ipai-dev          # Azure OpenAI
+      - docai-ipai-dev        # Document Intelligence
+      - vision-ipai-dev       # Computer Vision
+      - lang-ipai-dev         # Language service
+      - srch-ipai-dev         # AI Search
+      - dbw-ipai-dev          # Databricks workspace
+      - aifoundry-ipai-dev    # AI Foundry Hub
+      - proj-ipai-claude      # Foundry project
+      - stipaidevlake         # Lakehouse storage
+    managed:
+      - rg-dbw-managed-ipai-dev  # Databricks-managed RG (auto-created)
+    # Identities stay in rg-ipai-shared-dev (cannot move cross-RG)
+
+  identity_plane:
+    resource_group: rg-ipai-shared-dev
+    notes: >
+      UserAssignedIdentities cannot be moved cross-RG (Azure limitation).
+      All managed identities remain here. Greenfield staging/prod will
+      create identities directly in their target RGs.
+    services:
+      - mi-ipai-odoo-dev
+      - mi-ipai-platform-dev
+      - mi-ipai-lakehouse-dev
+
+  legacy:
+    resource_group: rg-ipai-agents-dev
+    status: partially_retired  # Phase 4, 2026-03-20
+    services:
+      - vm-ipai-supabase-dev  # Supabase VM (keep_exception)
+      - id-ipai-aca-dev       # Managed identity (keep)
+    retired:
+      - debug-odoo-ep         # Deleted 2026-03-20
+      - odoo-init             # Deleted 2026-03-20
+      - cae-ipai-dev          # Deleted 2026-03-20
+
+  stabilization_hold:
+    resource_group: rg-ipai-dev
+    status: hold_until_2026-03-23
+    notes: >
+      Old ACA environment (thankfulbush-191bdcb0) and 12 apps remain
+      intact during 72h stabilization. Do not delete until hold expires.
+      Front Door already points to new env (salmontree-b7d27e19).
+
+# =============================================================================
+# Staging — greenfield from Bicep modules
+# =============================================================================
+staging:
+  edge:
+    resource_group: rg-ipai-staging-edge
+    status: planned
+  odoo_runtime:
+    resource_group: rg-ipai-staging-odoo-runtime
+    status: planned
+  odoo_data:
+    resource_group: rg-ipai-staging-odoo-data
+    status: planned
+  platform:
+    resource_group: rg-ipai-shared-staging
+    services:
+      - kv-ipai-staging
+    identity:
+      - mi-ipai-odoo-staging
+      - mi-ipai-platform-staging
+      - mi-ipai-lakehouse-staging
+
+# =============================================================================
+# Prod — greenfield from Bicep modules
+# =============================================================================
+prod:
+  edge:
+    resource_group: rg-ipai-prod-edge
+    status: planned
+  odoo_runtime:
+    resource_group: rg-ipai-prod-odoo-runtime
+    status: planned
+  odoo_data:
+    resource_group: rg-ipai-prod-odoo-data
+    status: planned
+  platform:
+    resource_group: rg-ipai-shared-prod
+    services:
+      - kv-ipai-prod
+    identity:
+      - mi-ipai-odoo-prod
+      - mi-ipai-platform-prod
+      - mi-ipai-lakehouse-prod
+
+# =============================================================================
+# Naming conventions
+# =============================================================================
 naming_conventions:
   forbidden_service_names:
     - odoo

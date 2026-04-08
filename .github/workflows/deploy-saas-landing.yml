@@ -1,0 +1,92 @@
+name: Deploy SaaS Landing → Azure Container Apps
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'web/saas-landing/**'
+  workflow_dispatch:
+
+permissions:
+  id-token: write
+  contents: read
+
+env:
+  ACR_NAME: acripaiodoo
+  ACR_LOGIN_SERVER: acripaiodoo.azurecr.io
+  IMAGE_NAME: ipai-login
+  CONTAINER_APP: ipai-login-dev
+  RESOURCE_GROUP: rg-ipai-dev-odoo-runtime
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: web/saas-landing
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Azure Login (OIDC)
+        uses: azure/login@v2
+        with:
+          client-id: ${{ vars.AZURE_CLIENT_ID }}
+          tenant-id: ${{ vars.AZURE_TENANT_ID }}
+          subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Build and push to ACR
+        run: |
+          TAG=$(date +%Y%m%d-%H%M%S)
+          echo "IMAGE_TAG=${TAG}" >> $GITHUB_ENV
+          az acr build \
+            --registry ${{ env.ACR_NAME }} \
+            --image ${{ env.IMAGE_NAME }}:${TAG} \
+            --image ${{ env.IMAGE_NAME }}:latest \
+            .
+
+      - name: Deploy to Container App
+        run: |
+          az containerapp update \
+            --name ${{ env.CONTAINER_APP }} \
+            --resource-group ${{ env.RESOURCE_GROUP }} \
+            --image ${{ env.ACR_LOGIN_SERVER }}/${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }}
+
+      - name: Smoke check
+        run: |
+          sleep 20
+          FQDN=$(az containerapp show \
+            --name ${{ env.CONTAINER_APP }} \
+            --resource-group ${{ env.RESOURCE_GROUP }} \
+            --query "properties.configuration.ingress.fqdn" -o tsv)
+          STATUS=$(curl -sL -o /dev/null -w "%{http_code}" "https://${FQDN}")
+          echo "FQDN: ${FQDN}"
+          echo "HTTP Status: ${STATUS}"
+          if [ "$STATUS" != "200" ]; then
+            echo "::error::Smoke check failed — https://${FQDN} returned ${STATUS}"
+            exit 1
+          fi
+          echo "Smoke check passed"
+
+      - name: Write deploy evidence
+        if: always()
+        run: |
+          mkdir -p evidence
+          cat > evidence/deploy.json << EOF
+          {
+            "workflow": "deploy-saas-landing",
+            "sha": "${{ github.sha }}",
+            "ref": "${{ github.ref_name }}",
+            "image": "${{ env.ACR_LOGIN_SERVER }}/${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }}",
+            "container_app": "${{ env.CONTAINER_APP }}",
+            "timestamp": "$(date -u +%FT%TZ)",
+            "status": "${{ job.status }}"
+          }
+          EOF
+
+      - name: Upload evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: deploy-evidence-saas-landing
+          path: web/saas-landing/evidence/deploy.json

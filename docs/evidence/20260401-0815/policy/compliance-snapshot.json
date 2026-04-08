@@ -1,0 +1,1131 @@
+{
+  "odataContext": "https://management.azure.com/subscriptions/536d8cf6-89e1-4815-aef3-d5f2c5f4d070/resourceGroups/rg-ipai-dev-odoo-runtime/providers/Microsoft.PolicyInsights/policyStates/$metadata#summary/$entity",
+  "odataId": null,
+  "policyAssignments": [
+    {
+      "policyAssignmentId": "/subscriptions/536d8cf6-89e1-4815-aef3-d5f2c5f4d070/resourcegroups/rg-ipai-dev-odoo-runtime/providers/microsoft.authorization/policyassignments/inherit-environment-tag",
+      "policyDefinitions": [
+        {
+          "effect": "modify",
+          "policyDefinitionGroupNames": [
+            ""
+          ],
+          "policyDefinitionId": "/providers/microsoft.authorization/policydefinitions/cd3aa116-8754-49c9-a813-ad46512ece54",
+          "policyDefinitionReferenceId": "",
+          "results": {
+            "nonCompliantPolicies": null,
+            "nonCompliantResources": 24,
+            "policyDetails": [
+              {
+                "complianceState": "noncompliant",
+                "count": 1
+              }
+            ],
+            "policyGroupDetails": [
+              {
+                "complianceState": "noncompliant",
+                "count": 1
+              }
+            ],
+            "queryResultsUri": "https://management.azure.com/subscriptions/536d8cf6-89e1-4815-aef3-d5f2c5f4d070/resourceGroups/rg-ipai-dev-odoo-runtime/providers/Microsoft.PolicyInsights/policyStates/latest/queryResults?api-version=2019-10-01&$from=2026-03-31 08:47:01Z&$to=2026-04-01 08:47:01Z&$filter=PolicyAssignmentId eq '/subscriptions/536d8cf6-89e1-4815-aef3-d5f2c5f4d070/resourcegroups/rg-ipai-dev-odoo-runtime/providers/microsoft.authorization/policyassignments/inherit-environment-tag' and PolicyDefinitionId eq '/providers/microsoft.authorization/policydefinitions/cd3aa116-8754-49c9-a813-ad46512ece54'",
+            "resourceDetails": [
+              {
+                "complianceState": "noncompliant",
+                "count": 24
+              },
+              {
+                "complianceState": "compliant",
+                "count": 15
+              }
+            ]
+          }
+        }
+      ],
+      "policyGroups": [
+        {
+          "policyGroupName": "",
+          "results": {
+            "nonCompliantPolicies": null,
+            "nonCompliantResources": 24,
+            "policyDetails": [
+              {
+                "complianceState": "noncompliant",
+                "count": 1
+              }
+            ],
+            "policyGroupDetails": [
+              {
+                "complianceState": "noncompliant",
+                "count": 1
+              }
+            ],
+            "queryResultsUri": "https://management.azure.com/subscriptions/536d8cf6-89e1-4815-aef3-d5f2c5f4d070/resourceGroups/rg-ipai-dev-odoo-runtime/providers/Microsoft.PolicyInsights/policyStates/latest/queryResults?api-version=2019-10-01&$from=2026-03-31 08:47:01Z&$to=2026-04-01 08:47:01Z&$filter=PolicyAssignmentId eq '/subscriptions/536d8cf6-89e1-4815-aef3-d5f2c5f4d070/resourcegroups/rg-ipai-dev-odoo-runtime/providers/microsoft.authorization/policyassignments/inherit-environment-tag' and PolicySetDefinitionId eq '' and '' in PolicyDefinitionGroupNames",
+            "resourceDetails": [
+              {
+                "complianceState": "noncompliant",
+                "count": 24
+              },
+              {
+                "complianceState": "compliant",
+                "count": 15
+              }
+            ]
+          }
+        }
+      ],
+      "policySetDefinitionId": "",
+      "results": {
+        "nonCompliantPolicies": 1,
+        "nonCompliantResources": 24,
+        "policyDetails": [
+          {
+            "complianceState": "noncompliant",
+            "count": 1
+          }
+        ],
+        "policyGroupDetails": [
+          {
+            "complianceState": "noncompliant",
+            "count": 1
+          }
+        ],
+        "queryResultsUri": "https://management.azure.com/subscriptions/536d8cf6-89e1-4815-aef3-d5f2c5f4d070/resourceGroups/rg-ipai-dev-odoo-runtime/providers/Microsoft.PolicyInsights/policyStates/latest/queryResults?api-version=2019-10-01&$from=2026-03-31 08:47:01Z&$to=2026-04-01 08:47:01Z&$filter=PolicyAssignmentId eq '/subscriptions/536d8cf6-89e1-4815-aef3-d5f2c5f4d070/resourcegroups/rg-ipai-dev-odoo-runtime/providers/microsoft.authorization/policyassignments/inherit-environment-tag'",
+        "resourceDetails": [
+          {
+            "complianceState": "noncompliant",
+            "count": 24
+          },
+          {
+            "complianceState": "compliant",
+            "count": 15
+          }
+        ]
+      }
+    },
+    {
+      "policyAssignmentId": "/subscriptions/536d8cf6-89e1-4815-aef3-d5f2c5f4d070/providers/microsoft.authorization/policyassignments/securitycenterbuiltin",
+      "policyDefinitions": [
+        {
+          "effect": "audit",
+          "policyDefinitionGroupNames": [
+            "azure_security_benchmark_v3.0_dp-3"
+          ],
+          "policyDefinitionId": "/providers/microsoft.authorization/policydefinitions/6d555dd1-86f2-4f1c-8ed7-5abae7c6cbab",
+          "policyDefinitionReferenceId": "functionappenforcehttpsmonitoring",
+          "results": {
+            "nonCompliantPolicies": null,
+            "nonCompliantResources": 1,
+            "policyDetails": [
+              {
+                "complianceState": "noncompliant",
+                "count": 1
+              }
+            ],
+            "policyGroupDetails": [
+              {
+                "complianceState": "noncompliant",
+                "count": 1
+              }
+            ],
+            "queryResultsUri": "https://management.azure.com/subscriptions/536d8cf6-89e1-4815-aef3-d5f2c5f4d070/resourceGroups/rg-ipai-dev-odoo-runtime/providers/Microsoft.PolicyInsights/policyStates/latest/queryResults?api-version=2019-10-01&$from=2026-03-31 08:47:01Z&$to=2026-04-01 08:47:01Z&$filter=PolicyAssignmentId eq '/subscriptions/536d8cf6-89e1-4815-aef3-d5f2c5f4d070/providers/microsoft.authorization/policyassignments/securitycenterbuiltin' and PolicyDefinitionId eq '/providers/microsoft.authorization/policydefinitions/6d555dd1-86f2-4f1c-8ed7-5abae7c6cbab' and PolicyDefinitionReferenceId eq 'functionappenforcehttpsmonitoring'",
+            "resourceDetails": [
+              {
+                "complianceState": "noncompliant",
+                "count": 1
+              }
+            ]
+          }
+        },
+        {
+          "effect": "auditifnotexists",
+          "policyDefinitionGroupNames": [
+            "azure_security_benchmark_v3.0_pv-2"
+          ],
+          "policyDefinitionId": "/providers/microsoft.authorization/policydefinitions/0e60b895-3786-45da-8377-9c6b4b6ac5f9",
+          "policyDefinitionReferenceId": "functionappdisableremotedebuggingmonitoring",
+          "results": {
+            "nonCompliantPolicies": null,
+            "nonCompliantResources": 0,
+            "policyDetails": [
+              {
+                "complianceState": "compliant",
+                "count": 1
+              }
+            ],
+            "policyGroupDetails": [
+              {
+                "complianceState": "compliant",
+                "count": 1
+              }
+            ],
+            "queryResultsUri": "https://management.azure.com/subscriptions/536d8cf6-89e1-4815-aef3-d5f2c5f4d070/resourceGroups/rg-ipai-dev-odoo-runtime/providers/Microsoft.PolicyInsights/policyStates/latest/queryResults?api-version=2019-10-01&$from=2026-03-31 08:47:01Z&$to=2026-04-01 08:47:01Z&$filter=PolicyAssignmentId eq '/subscriptions/536d8cf6-89e1-4815-aef3-d5f2c5f4d070/providers/microsoft.authorization/policyassignments/securitycenterbuiltin' and PolicyDefinitionId eq '/providers/microsoft.authorization/policydefinitions/0e60b895-3786-45da-8377-9c6b4b6ac5f9' and PolicyDefinitionReferenceId eq 'functionappdisableremotedebuggingmonitoring'",
+            "resourceDetails": [
+              {
+                "complianceState": "compliant",
+                "count": 1
+              }
+            ]
+          }
+        },
+        {
+          "effect": "auditifnotexists",
+          "policyDefinitionGroupNames": [
+            "azure_security_benchmark_v3.0_pv-2"
+          ],
+          "policyDefinitionId": "/providers/microsoft.authorization/policydefinitions/0820b7b9-23aa-4725-a1ce-ae4558f718e5",
+          "policyDefinitionReferenceId": "functionapprestrictcorsaccessmonitoring",
+          "results": {
+            "nonCompliantPolicies": null,
+            "nonCompliantResources": 0,
+            "policyDetails": [
+              {
+                "complianceState": "compliant",
+                "count": 1
+              }
+            ],
+            "policyGroupDetails": [
+              {
+                "complianceState": "compliant",
+                "count": 1
+              }
+            ],
+            "queryResultsUri": "https://management.azure.com/subscriptions/536d8cf6-89e1-4815-aef3-d5f2c5f4d070/resourceGroups/rg-ipai-dev-odoo-runtime/providers/Microsoft.PolicyInsights/policyStates/latest/queryResults?api-version=2019-10-01&$from=2026-03-31 08:47:01Z&$to=2026-04-01 08:47:01Z&$filter=PolicyAssignmentId eq '/subscriptions/536d8cf6-89e1-4815-aef3-d5f2c5f4d070/providers/microsoft.authorization/policyassignments/securitycenterbuiltin' and PolicyDefinitionId eq '/providers/microsoft.authorization/policydefinitions/0820b7b9-23aa-4725-a1ce-ae4558f718e5' and PolicyDefinitionReferenceId eq 'functionapprestrictcorsaccessmonitoring'",
+            "resourceDetails": [
+              {
+                "complianceState": "compliant",
+                "count": 1
+              }
+            ]
+          }
+        },
+        {
+          "effect": "auditifnotexists",
+          "policyDefinitionGroupNames": [
+            "azure_security_benchmark_v3.0_ns-8",
+            "azure_security_benchmark_v3.0_dp-3"
+          ],
+          "policyDefinitionId": "/providers/microsoft.authorization/policydefinitions/f9d614c5-c173-4d56-95a7-b4437057d193",
+          "policyDefinitionReferenceId": "latesttlsversionshouldbeusedinyourfunctionappmonitoringeffect",
+          "results": {
+            "nonCompliantPolicies": null,
+            "nonCompliantResources": 0,
+            "policyDetails": [
+              {
+                "complianceState": "compliant",
+                "count": 1
+              }
+            ],
+            "policyGroupDetails": [
+              {
+                "complianceState": "compliant",
+                "count": 2
+              }
+            ],
+            "queryResultsUri": "https://management.azure.com/subscriptions/536d8cf6-89e1-4815-aef3-d5f2c5f4d070/resourceGroups/rg-ipai-dev-odoo-runtime/providers/Microsoft.PolicyInsights/policyStates/latest/queryResults?api-version=2019-10-01&$from=2026-03-31 08:47:01Z&$to=2026-04-01 08:47:01Z&$filter=PolicyAssignmentId eq '/subscriptions/536d8cf6-89e1-4815-aef3-d5f2c5f4d070/providers/microsoft.authorization/policyassignments/securitycenterbuiltin' and PolicyDefinitionId eq '/providers/microsoft.authorization/policydefinitions/f9d614c5-c173-4d56-95a7-b4437057d193' and PolicyDefinitionReferenceId eq 'latesttlsversionshouldbeusedinyourfunctionappmonitoringeffect'",
+            "resourceDetails": [
+              {
+                "complianceState": "compliant",
+                "count": 1
+              }
+            ]
+          }
+        },
+        {
+          "effect": "auditifnotexists",
+          "policyDefinitionGroupNames": [
+            "azure_security_benchmark_v3.0_pv-2"
+          ],
+          "policyDefinitionId": "/providers/microsoft.authorization/policydefinitions/ab6a902f-9493-453b-928d-62c30b11b5a6",
+          "policyDefinitionReferenceId": "functionappsshouldhaveclientcertificatesenabledmonitoring",
+          "results": {
+            "nonCompliantPolicies": null,
+            "nonCompliantResources": 0,
+            "policyDetails": [
+              {
+                "complianceState": "compliant",
+                "count": 1
+              }
+            ],
+            "policyGroupDetails": [
+              {
+                "complianceState": "compliant",
+                "count": 1
+              }
+            ],
+            "queryResultsUri": "https://management.azure.com/subscriptions/536d8cf6-89e1-4815-aef3-d5f2c5f4d070/resourceGroups/rg-ipai-dev-odoo-runtime/providers/Microsoft.PolicyInsights/policyStates/latest/queryResults?api-version=2019-10-01&$from=2026-03-31 08:47:01Z&$to=2026-04-01 08:47:01Z&$filter=PolicyAssignmentId eq '/subscriptions/536d8cf6-89e1-4815-aef3-d5f2c5f4d070/providers/microsoft.authorization/policyassignments/securitycenterbuiltin' and PolicyDefinitionId eq '/providers/microsoft.authorization/policydefinitions/ab6a902f-9493-453b-928d-62c30b11b5a6' and PolicyDefinitionReferenceId eq 'functionappsshouldhaveclientcertificatesenabledmonitoring'",
+            "resourceDetails": [
+              {
+                "complianceState": "compliant",
+                "count": 1
+              }
+            ]
+          }
+        },
+        {
+          "effect": "auditifnotexists",
+          "policyDefinitionGroupNames": [
+            "azure_security_benchmark_v3.0_dp-3"
+          ],
+          "policyDefinitionId": "/providers/microsoft.authorization/policydefinitions/399b2637-a50f-4f95-96f8-3a145476eb15",
+          "policyDefinitionReferenceId": "ftpsonlyshouldberequiredinyourfunctionappmonitoringeffect",
+          "results": {
+            "nonCompliantPolicies": null,
+            "nonCompliantResources": 0,
+            "policyDetails": [
+              {
+                "complianceState": "compliant",
+                "count": 1
+              }
+            ],
+            "policyGroupDetails": [
+              {
+                "complianceState": "compliant",
+                "count": 1
+              }
+            ],
+            "queryResultsUri": "https://management.azure.com/subscriptions/536d8cf6-89e1-4815-aef3-d5f2c5f4d070/resourceGroups/rg-ipai-dev-odoo-runtime/providers/Microsoft.PolicyInsights/policyStates/latest/queryResults?api-version=2019-10-01&$from=2026-03-31 08:47:01Z&$to=2026-04-01 08:47:01Z&$filter=PolicyAssignmentId eq '/subscriptions/536d8cf6-89e1-4815-aef3-d5f2c5f4d070/providers/microsoft.authorization/policyassignments/securitycenterbuiltin' and PolicyDefinitionId eq '/providers/microsoft.authorization/policydefinitions/399b2637-a50f-4f95-96f8-3a145476eb15' and PolicyDefinitionReferenceId eq 'ftpsonlyshouldberequiredinyourfunctionappmonitoringeffect'",
+            "resourceDetails": [
+              {
+                "complianceState": "compliant",
+                "count": 1
+              }
+            ]
+          }
+        },
+        {
+          "effect": "auditifnotexists",
+          "policyDefinitionGroupNames": [
+            "azure_security_benchmark_v3.0_im-3"
+          ],
+          "policyDefinitionId": "/providers/microsoft.authorization/policydefinitions/0da106f2-4ca3-48e8-bc85-c638fe6aea8f",
+          "policyDefinitionReferenceId": "managedidentityshouldbeusedinyourfunctionappmonitoringeffect",
+          "results": {
+            "nonCompliantPolicies": null,
+            "nonCompliantResources": 0,
+            "policyDetails": [
+              {
+                "complianceState": "compliant",
+                "count": 1
+              }
+            ],
+            "policyGroupDetails": [
+              {
+                "complianceState": "compliant",
+                "count": 1
+              }
+            ],
+            "queryResultsUri": "https://management.azure.com/subscriptions/536d8cf6-89e1-4815-aef3-d5f2c5f4d070/resourceGroups/rg-ipai-dev-odoo-runtime/providers/Microsoft.PolicyInsights/policyStates/latest/queryResults?api-version=2019-10-01&$from=2026-03-31 08:47:01Z&$to=2026-04-01 08:47:01Z&$filter=PolicyAssignmentId eq '/subscriptions/536d8cf6-89e1-4815-aef3-d5f2c5f4d070/providers/microsoft.authorization/policyassignments/securitycenterbuiltin' and PolicyDefinitionId eq '/providers/microsoft.authorization/policydefinitions/0da106f2-4ca3-48e8-bc85-c638fe6aea8f' and PolicyDefinitionReferenceId eq 'managedidentityshouldbeusedinyourfunctionappmonitoringeffect'",
+            "resourceDetails": [
+              {
+                "complianceState": "compliant",
+                "count": 1
+              }
+            ]
+          }
+        },
+        {
+          "effect": "audit",
+          "policyDefinitionGroupNames": [
+            "azure_security_benchmark_v3.0_dp-3"
+          ],
+          "policyDefinitionId": "/providers/microsoft.authorization/policydefinitions/404c3081-a854-4457-ae30-26a93ef643f9",
+          "policyDefinitionReferenceId": "securetransfertostorageaccountmonitoring",
+          "results": {
+            "nonCompliantPolicies": null,
+            "nonCompliantResources": 0,
+            "policyDetails": [
+              {
+                "complianceState": "compliant",
+                "count": 1
+              }
+            ],
+            "policyGroupDetails": [
+              {
+                "complianceState": "compliant",
+                "count": 1
+              }
+            ],
+            "queryResultsUri": "https://management.azure.com/subscriptions/536d8cf6-89e1-4815-aef3-d5f2c5f4d070/resourceGroups/rg-ipai-dev-odoo-runtime/providers/Microsoft.PolicyInsights/policyStates/latest/queryResults?api-version=2019-10-01&$from=2026-03-31 08:47:01Z&$to=2026-04-01 08:47:01Z&$filter=PolicyAssignmentId eq '/subscriptions/536d8cf6-89e1-4815-aef3-d5f2c5f4d070/providers/microsoft.authorization/policyassignments/securitycenterbuiltin' and PolicyDefinitionId eq '/providers/microsoft.authorization/policydefinitions/404c3081-a854-4457-ae30-26a93ef643f9' and PolicyDefinitionReferenceId eq 'securetransfertostorageaccountmonitoring'",
+            "resourceDetails": [
+              {
+                "complianceState": "compliant",
+                "count": 1
+              }
+            ]
+          }
+        },
+        {
+          "effect": "audit",
+          "policyDefinitionGroupNames": [
+            "azure_security_benchmark_v3.0_am-2"
+          ],
+          "policyDefinitionId": "/providers/microsoft.authorization/policydefinitions/37e0d2fe-28a5-43d6-a273-67d37d1f5606",
+          "policyDefinitionReferenceId": "classicstorageaccountsmonitoring",
+          "results": {
+            "nonCompliantPolicies": null,
+            "nonCompliantResources": 0,
+            "policyDetails": [
+              {
+                "complianceState": "compliant",
+                "count": 1
+              }
+            ],
+            "policyGroupDetails": [
+              {
+                "complianceState": "compliant",
+                "count": 1
+              }
+            ],
+            "queryResultsUri": "https://management.azure.com/subscriptions/536d8cf6-89e1-4815-aef3-d5f2c5f4d070/resourceGroups/rg-ipai-dev-odoo-runtime/providers/Microsoft.PolicyInsights/policyStates/latest/queryResults?api-version=2019-10-01&$from=2026-03-31 08:47:01Z&$to=2026-04-01 08:47:01Z&$filter=PolicyAssignmentId eq '/subscriptions/536d8cf6-89e1-4815-aef3-d5f2c5f4d070/providers/microsoft.authorization/policyassignments/securitycenterbuiltin' and PolicyDefinitionId eq '/providers/microsoft.authorization/policydefinitions/37e0d2fe-28a5-43d6-a273-67d37d1f5606' and PolicyDefinitionReferenceId eq 'classicstorageaccountsmonitoring'",
+            "resourceDetails": [
+              {
+                "complianceState": "compliant",
+                "count": 1
+              }
+            ]
+          }
+        },
+        {
+          "effect": "audit",
+          "policyDefinitionGroupNames": [
+            "azure_security_benchmark_v3.0_ns-2"
+          ],
+          "policyDefinitionId": "/providers/microsoft.authorization/policydefinitions/4fa4b6c0-31ca-4c0d-b10d-24b96f62a751",
+          "policyDefinitionReferenceId": "storagedisallowpublicaccess",
+          "results": {
+            "nonCompliantPolicies": null,
+            "nonCompliantResources": 0,
+            "policyDetails": [
+              {
+                "complianceState": "compliant",
+                "count": 1
+              }
+            ],
+            "policyGroupDetails": [
+              {
+                "complianceState": "compliant",
+                "count": 1
+              }
+            ],
+            "queryResultsUri": "https://management.azure.com/subscriptions/536d8cf6-89e1-4815-aef3-d5f2c5f4d070/resourceGroups/rg-ipai-dev-odoo-runtime/providers/Microsoft.PolicyInsights/policyStates/latest/queryResults?api-version=2019-10-01&$from=2026-03-31 08:47:01Z&$to=2026-04-01 08:47:01Z&$filter=PolicyAssignmentId eq '/subscriptions/536d8cf6-89e1-4815-aef3-d5f2c5f4d070/providers/microsoft.authorization/policyassignments/securitycenterbuiltin' and PolicyDefinitionId eq '/providers/microsoft.authorization/policydefinitions/4fa4b6c0-31ca-4c0d-b10d-24b96f62a751' and PolicyDefinitionReferenceId eq 'storagedisallowpublicaccess'",
+            "resourceDetails": [
+              {
+                "complianceState": "compliant",
+                "count": 1
+              }
+            ]
+          }
+        },
+        {
+          "effect": "audit",
+          "policyDefinitionGroupNames": [
+            "azure_security_benchmark_v3.0_ns-2"
+          ],
+          "policyDefinitionId": "/providers/microsoft.authorization/policydefinitions/2a1a9cdf-e04d-429a-8416-3bfb72a1b26f",
+          "policyDefinitionReferenceId": "storageaccountsshouldrestrictnetworkaccessusingvirtualnetworkrulesmonitoringeffect",
+          "results": {
+            "nonCompliantPolicies": null,
+            "nonCompliantResources": 1,
+            "policyDetails": [
+              {
+                "complianceState": "noncompliant",
+                "count": 1
+              }
+            ],
+            "policyGroupDetails": [
+              {
+                "complianceState": "noncompliant",
+                "count": 1
+              }
+            ],
+            "queryResultsUri": "https://management.azure.com/subscriptions/536d8cf6-89e1-4815-aef3-d5f2c5f4d070/resourceGroups/rg-ipai-dev-odoo-runtime/providers/Microsoft.PolicyInsights/policyStates/latest/queryResults?api-version=2019-10-01&$from=2026-03-31 08:47:01Z&$to=2026-04-01 08:47:01Z&$filter=PolicyAssignmentId eq '/subscriptions/536d8cf6-89e1-4815-aef3-d5f2c5f4d070/providers/microsoft.authorization/policyassignments/securitycenterbuiltin' and PolicyDefinitionId eq '/providers/microsoft.authorization/policydefinitions/2a1a9cdf-e04d-429a-8416-3bfb72a1b26f' and PolicyDefinitionReferenceId eq 'storageaccountsshouldrestrictnetworkaccessusingvirtualnetworkrulesmonitoringeffect'",
+            "resourceDetails": [
+              {
+                "complianceState": "noncompliant",
+                "count": 1
+              }
+            ]
+          }
+        },
+        {
+          "effect": "audit",
+          "policyDefinitionGroupNames": [
+            "azure_security_benchmark_v3.0_ns-2"
+          ],
+          "policyDefinitionId": "/providers/microsoft.authorization/policydefinitions/db4f9b05-5ffd-4b34-b714-3c710dbb3fd6",
+          "policyDefinitionReferenceId": "storageaccountsshouldrestrictnetworkaccessusingvirtualnetworkrulesexdatabricksmonitoringeffect",
+          "results": {
+            "nonCompliantPolicies": null,
+            "nonCompliantResources": 1,
+            "policyDetails": [
+              {
+                "complianceState": "noncompliant",
+                "count": 1
+              }
+            ],
+            "policyGroupDetails": [
+              {
+                "complianceState": "noncompliant",
+                "count": 1
+              }
+            ],
+            "queryResultsUri": "https://management.azure.com/subscriptions/536d8cf6-89e1-4815-aef3-d5f2c5f4d070/resourceGroups/rg-ipai-dev-odoo-runtime/providers/Microsoft.PolicyInsights/policyStates/latest/queryResults?api-version=2019-10-01&$from=2026-03-31 08:47:01Z&$to=2026-04-01 08:47:01Z&$filter=PolicyAssignmentId eq '/subscriptions/536d8cf6-89e1-4815-aef3-d5f2c5f4d070/providers/microsoft.authorization/policyassignments/securitycenterbuiltin' and PolicyDefinitionId eq '/providers/microsoft.authorization/policydefinitions/db4f9b05-5ffd-4b34-b714-3c710dbb3fd6' and PolicyDefinitionReferenceId eq 'storageaccountsshouldrestrictnetworkaccessusingvirtualnetworkrulesexdatabricksmonitoringeffect'",
+            "resourceDetails": [
+              {
+                "complianceState": "noncompliant",
+                "count": 1
+              }
+            ]
+          }
+        },
+        {
+          "effect": "audit",
+          "policyDefinitionGroupNames": [
+            "azure_security_benchmark_v3.0_im-1"
+          ],
+          "policyDefinitionId": "/providers/microsoft.authorization/policydefinitions/8c6a50c6-9ffd-4ae7-986f-5fa6111f9a54",
+          "policyDefinitionReferenceId": "storageaccountsshouldpreventsharedkeyaccess",
+          "results": {
+            "nonCompliantPolicies": null,
+            "nonCompliantResources": 1,
+            "policyDetails": [
+              {
+                "complianceState": "noncompliant",
+                "count": 1
+              }
+            ],
+            "policyGroupDetails": [
+              {
+                "complianceState": "noncompliant",
+                "count": 1
+              }
+            ],
+            "queryResultsUri": "https://management.azure.com/subscriptions/536d8cf6-89e1-4815-aef3-d5f2c5f4d070/resourceGroups/rg-ipai-dev-odoo-runtime/providers/Microsoft.PolicyInsights/policyStates/latest/queryResults?api-version=2019-10-01&$from=2026-03-31 08:47:01Z&$to=2026-04-01 08:47:01Z&$filter=PolicyAssignmentId eq '/subscriptions/536d8cf6-89e1-4815-aef3-d5f2c5f4d070/providers/microsoft.authorization/policyassignments/securitycenterbuiltin' and PolicyDefinitionId eq '/providers/microsoft.authorization/policydefinitions/8c6a50c6-9ffd-4ae7-986f-5fa6111f9a54' and PolicyDefinitionReferenceId eq 'storageaccountsshouldpreventsharedkeyaccess'",
+            "resourceDetails": [
+              {
+                "complianceState": "noncompliant",
+                "count": 1
+              }
+            ]
+          }
+        },
+        {
+          "effect": "audit",
+          "policyDefinitionGroupNames": [
+            "azure_security_benchmark_v3.0_im-1"
+          ],
+          "policyDefinitionId": "/providers/microsoft.authorization/policydefinitions/fd9903f1-38c2-4d36-8e44-5c1c20c561e8",
+          "policyDefinitionReferenceId": "storageaccountsshouldpreventsharedkeyaccessexdatabricks",
+          "results": {
+            "nonCompliantPolicies": null,
+            "nonCompliantResources": 1,
+            "policyDetails": [
+              {
+                "complianceState": "noncompliant",
+                "count": 1
+              }
+            ],
+            "policyGroupDetails": [
+              {
+                "complianceState": "noncompliant",
+                "count": 1
+              }
+            ],
+            "queryResultsUri": "https://management.azure.com/subscriptions/536d8cf6-89e1-4815-aef3-d5f2c5f4d070/resourceGroups/rg-ipai-dev-odoo-runtime/providers/Microsoft.PolicyInsights/policyStates/latest/queryResults?api-version=2019-10-01&$from=2026-03-31 08:47:01Z&$to=2026-04-01 08:47:01Z&$filter=PolicyAssignmentId eq '/subscriptions/536d8cf6-89e1-4815-aef3-d5f2c5f4d070/providers/microsoft.authorization/policyassignments/securitycenterbuiltin' and PolicyDefinitionId eq '/providers/microsoft.authorization/policydefinitions/fd9903f1-38c2-4d36-8e44-5c1c20c561e8' and PolicyDefinitionReferenceId eq 'storageaccountsshouldpreventsharedkeyaccessexdatabricks'",
+            "resourceDetails": [
+              {
+                "complianceState": "noncompliant",
+                "count": 1
+              }
+            ]
+          }
+        },
+        {
+          "effect": "auditifnotexists",
+          "policyDefinitionGroupNames": [
+            "azure_security_benchmark_v3.0_ns-2"
+          ],
+          "policyDefinitionId": "/providers/microsoft.authorization/policydefinitions/6edd7eda-6dd8-40f7-810d-67160c639cd9",
+          "policyDefinitionReferenceId": "storageaccountshoulduseaprivatelinkconnectionmonitoringeffect",
+          "results": {
+            "nonCompliantPolicies": null,
+            "nonCompliantResources": 1,
+            "policyDetails": [
+              {
+                "complianceState": "noncompliant",
+                "count": 1
+              }
+            ],
+            "policyGroupDetails": [
+              {
+                "complianceState": "noncompliant",
+                "count": 1
+              }
+            ],
+            "queryResultsUri": "https://management.azure.com/subscriptions/536d8cf6-89e1-4815-aef3-d5f2c5f4d070/resourceGroups/rg-ipai-dev-odoo-runtime/providers/Microsoft.PolicyInsights/policyStates/latest/queryResults?api-version=2019-10-01&$from=2026-03-31 08:47:01Z&$to=2026-04-01 08:47:01Z&$filter=PolicyAssignmentId eq '/subscriptions/536d8cf6-89e1-4815-aef3-d5f2c5f4d070/providers/microsoft.authorization/policyassignments/securitycenterbuiltin' and PolicyDefinitionId eq '/providers/microsoft.authorization/policydefinitions/6edd7eda-6dd8-40f7-810d-67160c639cd9' and PolicyDefinitionReferenceId eq 'storageaccountshoulduseaprivatelinkconnectionmonitoringeffect'",
+            "resourceDetails": [
+              {
+                "complianceState": "noncompliant",
+                "count": 1
+              }
+            ]
+          }
+        },
+        {
+          "effect": "auditifnotexists",
+          "policyDefinitionGroupNames": [
+            "azure_security_benchmark_v3.0_ns-2"
+          ],
+          "policyDefinitionId": "/providers/microsoft.authorization/policydefinitions/1604f626-4d8d-4124-8bb8-b1e5f95562de",
+          "policyDefinitionReferenceId": "storageaccountshoulduseaprivatelinkconnectionexdatabricksmonitoringeffect",
+          "results": {
+            "nonCompliantPolicies": null,
+            "nonCompliantResources": 1,
+            "policyDetails": [
+              {
+                "complianceState": "noncompliant",
+                "count": 1
+              }
+            ],
+            "policyGroupDetails": [
+              {
+                "complianceState": "noncompliant",
+                "count": 1
+              }
+            ],
+            "queryResultsUri": "https://management.azure.com/subscriptions/536d8cf6-89e1-4815-aef3-d5f2c5f4d070/resourceGroups/rg-ipai-dev-odoo-runtime/providers/Microsoft.PolicyInsights/policyStates/latest/queryResults?api-version=2019-10-01&$from=2026-03-31 08:47:01Z&$to=2026-04-01 08:47:01Z&$filter=PolicyAssignmentId eq '/subscriptions/536d8cf6-89e1-4815-aef3-d5f2c5f4d070/providers/microsoft.authorization/policyassignments/securitycenterbuiltin' and PolicyDefinitionId eq '/providers/microsoft.authorization/policydefinitions/1604f626-4d8d-4124-8bb8-b1e5f95562de' and PolicyDefinitionReferenceId eq 'storageaccountshoulduseaprivatelinkconnectionexdatabricksmonitoringeffect'",
+            "resourceDetails": [
+              {
+                "complianceState": "noncompliant",
+                "count": 1
+              }
+            ]
+          }
+        },
+        {
+          "effect": "auditifnotexists",
+          "policyDefinitionGroupNames": [
+            "azure_security_benchmark_v3.0_ns-5"
+          ],
+          "policyDefinitionId": "/providers/microsoft.authorization/policydefinitions/a7aca53f-2ed4-4466-a25e-0b45ade68efd",
+          "policyDefinitionReferenceId": "vnetenableddosprotectionmonitoring",
+          "results": {
+            "nonCompliantPolicies": null,
+            "nonCompliantResources": 0,
+            "policyDetails": [
+              {
+                "complianceState": "compliant",
+                "count": 1
+              }
+            ],
+            "policyGroupDetails": [
+              {
+                "complianceState": "compliant",
+                "count": 1
+              }
+            ],
+            "queryResultsUri": "https://management.azure.com/subscriptions/536d8cf6-89e1-4815-aef3-d5f2c5f4d070/resourceGroups/rg-ipai-dev-odoo-runtime/providers/Microsoft.PolicyInsights/policyStates/latest/queryResults?api-version=2019-10-01&$from=2026-03-31 08:47:01Z&$to=2026-04-01 08:47:01Z&$filter=PolicyAssignmentId eq '/subscriptions/536d8cf6-89e1-4815-aef3-d5f2c5f4d070/providers/microsoft.authorization/policyassignments/securitycenterbuiltin' and PolicyDefinitionId eq '/providers/microsoft.authorization/policydefinitions/a7aca53f-2ed4-4466-a25e-0b45ade68efd' and PolicyDefinitionReferenceId eq 'vnetenableddosprotectionmonitoring'",
+            "resourceDetails": [
+              {
+                "complianceState": "compliant",
+                "count": 1
+              }
+            ]
+          }
+        },
+        {
+          "effect": "auditifnotexists",
+          "policyDefinitionGroupNames": [
+            "azure_security_benchmark_v3.0_ir-4"
+          ],
+          "policyDefinitionId": "/providers/microsoft.authorization/policydefinitions/b6e2945c-0b7b-40f5-9233-7a5323b5cdc6",
+          "policyDefinitionReferenceId": "networkwatchershouldbeenabledmonitoringeffect",
+          "results": {
+            "nonCompliantPolicies": null,
+            "nonCompliantResources": 0,
+            "policyDetails": [
+              {
+                "complianceState": "compliant",
+                "count": 1
+              }
+            ],
+            "policyGroupDetails": [
+              {
+                "complianceState": "compliant",
+                "count": 1
+              }
+            ],
+            "queryResultsUri": "https://management.azure.com/subscriptions/536d8cf6-89e1-4815-aef3-d5f2c5f4d070/resourceGroups/rg-ipai-dev-odoo-runtime/providers/Microsoft.PolicyInsights/policyStates/latest/queryResults?api-version=2019-10-01&$from=2026-03-31 08:47:01Z&$to=2026-04-01 08:47:01Z&$filter=PolicyAssignmentId eq '/subscriptions/536d8cf6-89e1-4815-aef3-d5f2c5f4d070/providers/microsoft.authorization/policyassignments/securitycenterbuiltin' and PolicyDefinitionId eq '/providers/microsoft.authorization/policydefinitions/b6e2945c-0b7b-40f5-9233-7a5323b5cdc6' and PolicyDefinitionReferenceId eq 'networkwatchershouldbeenabledmonitoringeffect'",
+            "resourceDetails": [
+              {
+                "complianceState": "compliant",
+                "count": 1
+              }
+            ]
+          }
+        },
+        {
+          "effect": "audit",
+          "policyDefinitionGroupNames": [
+            "azure_security_benchmark_v3.0_ns-2"
+          ],
+          "policyDefinitionId": "/providers/microsoft.authorization/policydefinitions/d0793b48-0edc-4296-a390-4c75d1bdfd71",
+          "policyDefinitionReferenceId": "containerregistriesshouldnotallowunrestrictednetworkaccessmonitoringeffect",
+          "results": {
+            "nonCompliantPolicies": null,
+            "nonCompliantResources": 1,
+            "policyDetails": [
+              {
+                "complianceState": "noncompliant",
+                "count": 1
+              }
+            ],
+            "policyGroupDetails": [
+              {
+                "complianceState": "noncompliant",
+                "count": 1
+              }
+            ],
+            "queryResultsUri": "https://management.azure.com/subscriptions/536d8cf6-89e1-4815-aef3-d5f2c5f4d070/resourceGroups/rg-ipai-dev-odoo-runtime/providers/Microsoft.PolicyInsights/policyStates/latest/queryResults?api-version=2019-10-01&$from=2026-03-31 08:47:01Z&$to=2026-04-01 08:47:01Z&$filter=PolicyAssignmentId eq '/subscriptions/536d8cf6-89e1-4815-aef3-d5f2c5f4d070/providers/microsoft.authorization/policyassignments/securitycenterbuiltin' and PolicyDefinitionId eq '/providers/microsoft.authorization/policydefinitions/d0793b48-0edc-4296-a390-4c75d1bdfd71' and PolicyDefinitionReferenceId eq 'containerregistriesshouldnotallowunrestrictednetworkaccessmonitoringeffect'",
+            "resourceDetails": [
+              {
+                "complianceState": "noncompliant",
+                "count": 1
+              }
+            ]
+          }
+        },
+        {
+          "effect": "audit",
+          "policyDefinitionGroupNames": [
+            "azure_security_benchmark_v3.0_ns-2"
+          ],
+          "policyDefinitionId": "/providers/microsoft.authorization/policydefinitions/e8eef0a8-67cf-4eb4-9386-14b0e78733d4",
+          "policyDefinitionReferenceId": "containerregistriesshoulduseprivatelinkmonitoringeffect",
+          "results": {
+            "nonCompliantPolicies": null,
+            "nonCompliantResources": 1,
+            "policyDetails": [
+              {
+                "complianceState": "noncompliant",
+                "count": 1
+              }
+            ],
+            "policyGroupDetails": [
+              {
+                "complianceState": "noncompliant",
+                "count": 1
+              }
+            ],
+            "queryResultsUri": "https://management.azure.com/subscriptions/536d8cf6-89e1-4815-aef3-d5f2c5f4d070/resourceGroups/rg-ipai-dev-odoo-runtime/providers/Microsoft.PolicyInsights/policyStates/latest/queryResults?api-version=2019-10-01&$from=2026-03-31 08:47:01Z&$to=2026-04-01 08:47:01Z&$filter=PolicyAssignmentId eq '/subscriptions/536d8cf6-89e1-4815-aef3-d5f2c5f4d070/providers/microsoft.authorization/policyassignments/securitycenterbuiltin' and PolicyDefinitionId eq '/providers/microsoft.authorization/policydefinitions/e8eef0a8-67cf-4eb4-9386-14b0e78733d4' and PolicyDefinitionReferenceId eq 'containerregistriesshoulduseprivatelinkmonitoringeffect'",
+            "resourceDetails": [
+              {
+                "complianceState": "noncompliant",
+                "count": 1
+              }
+            ]
+          }
+        },
+        {
+          "effect": "auditifnotexists",
+          "policyDefinitionGroupNames": [
+            "azure_security_benchmark_v3.0_pv-6",
+            "azure_security_benchmark_v3.0_ds-6"
+          ],
+          "policyDefinitionId": "/providers/microsoft.authorization/policydefinitions/090c7b07-b4ed-4561-ad20-e9075f3ccaff",
+          "policyDefinitionReferenceId": "azurecontainerregistryvulnerabilityassessment",
+          "results": {
+            "nonCompliantPolicies": null,
+            "nonCompliantResources": 1,
+            "policyDetails": [
+              {
+                "complianceState": "noncompliant",
+                "count": 1
+              }
+            ],
+            "policyGroupDetails": [
+              {
+                "complianceState": "noncompliant",
+                "count": 2
+              }
+            ],
+            "queryResultsUri": "https://management.azure.com/subscriptions/536d8cf6-89e1-4815-aef3-d5f2c5f4d070/resourceGroups/rg-ipai-dev-odoo-runtime/providers/Microsoft.PolicyInsights/policyStates/latest/queryResults?api-version=2019-10-01&$from=2026-03-31 08:47:01Z&$to=2026-04-01 08:47:01Z&$filter=PolicyAssignmentId eq '/subscriptions/536d8cf6-89e1-4815-aef3-d5f2c5f4d070/providers/microsoft.authorization/policyassignments/securitycenterbuiltin' and PolicyDefinitionId eq '/providers/microsoft.authorization/policydefinitions/090c7b07-b4ed-4561-ad20-e9075f3ccaff' and PolicyDefinitionReferenceId eq 'azurecontainerregistryvulnerabilityassessment'",
+            "resourceDetails": [
+              {
+                "complianceState": "noncompliant",
+                "count": 1
+              }
+            ]
+          }
+        }
+      ],
+      "policyGroups": [
+        {
+          "policyGroupName": "azure_security_benchmark_v3.0_dp-3",
+          "results": {
+            "nonCompliantPolicies": null,
+            "nonCompliantResources": 1,
+            "policyDetails": [
+              {
+                "complianceState": "noncompliant",
+                "count": 1
+              },
+              {
+                "complianceState": "compliant",
+                "count": 3
+              }
+            ],
+            "policyGroupDetails": [
+              {
+                "complianceState": "noncompliant",
+                "count": 1
+              }
+            ],
+            "queryResultsUri": "https://management.azure.com/subscriptions/536d8cf6-89e1-4815-aef3-d5f2c5f4d070/resourceGroups/rg-ipai-dev-odoo-runtime/providers/Microsoft.PolicyInsights/policyStates/latest/queryResults?api-version=2019-10-01&$from=2026-03-31 08:47:01Z&$to=2026-04-01 08:47:01Z&$filter=PolicyAssignmentId eq '/subscriptions/536d8cf6-89e1-4815-aef3-d5f2c5f4d070/providers/microsoft.authorization/policyassignments/securitycenterbuiltin' and PolicySetDefinitionId eq '/providers/Microsoft.Authorization/policySetDefinitions/1f3afdf9-d0c9-4c3d-847f-89da613e70a8' and 'azure_security_benchmark_v3.0_dp-3' in PolicyDefinitionGroupNames",
+            "resourceDetails": [
+              {
+                "complianceState": "noncompliant",
+                "count": 1
+              },
+              {
+                "complianceState": "compliant",
+                "count": 1
+              }
+            ]
+          }
+        },
+        {
+          "policyGroupName": "azure_security_benchmark_v3.0_pv-2",
+          "results": {
+            "nonCompliantPolicies": null,
+            "nonCompliantResources": 0,
+            "policyDetails": [
+              {
+                "complianceState": "compliant",
+                "count": 3
+              }
+            ],
+            "policyGroupDetails": [
+              {
+                "complianceState": "compliant",
+                "count": 1
+              }
+            ],
+            "queryResultsUri": "https://management.azure.com/subscriptions/536d8cf6-89e1-4815-aef3-d5f2c5f4d070/resourceGroups/rg-ipai-dev-odoo-runtime/providers/Microsoft.PolicyInsights/policyStates/latest/queryResults?api-version=2019-10-01&$from=2026-03-31 08:47:01Z&$to=2026-04-01 08:47:01Z&$filter=PolicyAssignmentId eq '/subscriptions/536d8cf6-89e1-4815-aef3-d5f2c5f4d070/providers/microsoft.authorization/policyassignments/securitycenterbuiltin' and PolicySetDefinitionId eq '/providers/Microsoft.Authorization/policySetDefinitions/1f3afdf9-d0c9-4c3d-847f-89da613e70a8' and 'azure_security_benchmark_v3.0_pv-2' in PolicyDefinitionGroupNames",
+            "resourceDetails": [
+              {
+                "complianceState": "compliant",
+                "count": 1
+              }
+            ]
+          }
+        },
+        {
+          "policyGroupName": "azure_security_benchmark_v3.0_ns-8",
+          "results": {
+            "nonCompliantPolicies": null,
+            "nonCompliantResources": 0,
+            "policyDetails": [
+              {
+                "complianceState": "compliant",
+                "count": 1
+              }
+            ],
+            "policyGroupDetails": [
+              {
+                "complianceState": "compliant",
+                "count": 1
+              }
+            ],
+            "queryResultsUri": "https://management.azure.com/subscriptions/536d8cf6-89e1-4815-aef3-d5f2c5f4d070/resourceGroups/rg-ipai-dev-odoo-runtime/providers/Microsoft.PolicyInsights/policyStates/latest/queryResults?api-version=2019-10-01&$from=2026-03-31 08:47:01Z&$to=2026-04-01 08:47:01Z&$filter=PolicyAssignmentId eq '/subscriptions/536d8cf6-89e1-4815-aef3-d5f2c5f4d070/providers/microsoft.authorization/policyassignments/securitycenterbuiltin' and PolicySetDefinitionId eq '/providers/Microsoft.Authorization/policySetDefinitions/1f3afdf9-d0c9-4c3d-847f-89da613e70a8' and 'azure_security_benchmark_v3.0_ns-8' in PolicyDefinitionGroupNames",
+            "resourceDetails": [
+              {
+                "complianceState": "compliant",
+                "count": 1
+              }
+            ]
+          }
+        },
+        {
+          "policyGroupName": "azure_security_benchmark_v3.0_im-3",
+          "results": {
+            "nonCompliantPolicies": null,
+            "nonCompliantResources": 0,
+            "policyDetails": [
+              {
+                "complianceState": "compliant",
+                "count": 1
+              }
+            ],
+            "policyGroupDetails": [
+              {
+                "complianceState": "compliant",
+                "count": 1
+              }
+            ],
+            "queryResultsUri": "https://management.azure.com/subscriptions/536d8cf6-89e1-4815-aef3-d5f2c5f4d070/resourceGroups/rg-ipai-dev-odoo-runtime/providers/Microsoft.PolicyInsights/policyStates/latest/queryResults?api-version=2019-10-01&$from=2026-03-31 08:47:01Z&$to=2026-04-01 08:47:01Z&$filter=PolicyAssignmentId eq '/subscriptions/536d8cf6-89e1-4815-aef3-d5f2c5f4d070/providers/microsoft.authorization/policyassignments/securitycenterbuiltin' and PolicySetDefinitionId eq '/providers/Microsoft.Authorization/policySetDefinitions/1f3afdf9-d0c9-4c3d-847f-89da613e70a8' and 'azure_security_benchmark_v3.0_im-3' in PolicyDefinitionGroupNames",
+            "resourceDetails": [
+              {
+                "complianceState": "compliant",
+                "count": 1
+              }
+            ]
+          }
+        },
+        {
+          "policyGroupName": "azure_security_benchmark_v3.0_am-2",
+          "results": {
+            "nonCompliantPolicies": null,
+            "nonCompliantResources": 0,
+            "policyDetails": [
+              {
+                "complianceState": "compliant",
+                "count": 1
+              }
+            ],
+            "policyGroupDetails": [
+              {
+                "complianceState": "compliant",
+                "count": 1
+              }
+            ],
+            "queryResultsUri": "https://management.azure.com/subscriptions/536d8cf6-89e1-4815-aef3-d5f2c5f4d070/resourceGroups/rg-ipai-dev-odoo-runtime/providers/Microsoft.PolicyInsights/policyStates/latest/queryResults?api-version=2019-10-01&$from=2026-03-31 08:47:01Z&$to=2026-04-01 08:47:01Z&$filter=PolicyAssignmentId eq '/subscriptions/536d8cf6-89e1-4815-aef3-d5f2c5f4d070/providers/microsoft.authorization/policyassignments/securitycenterbuiltin' and PolicySetDefinitionId eq '/providers/Microsoft.Authorization/policySetDefinitions/1f3afdf9-d0c9-4c3d-847f-89da613e70a8' and 'azure_security_benchmark_v3.0_am-2' in PolicyDefinitionGroupNames",
+            "resourceDetails": [
+              {
+                "complianceState": "compliant",
+                "count": 1
+              }
+            ]
+          }
+        },
+        {
+          "policyGroupName": "azure_security_benchmark_v3.0_ns-2",
+          "results": {
+            "nonCompliantPolicies": null,
+            "nonCompliantResources": 2,
+            "policyDetails": [
+              {
+                "complianceState": "noncompliant",
+                "count": 6
+              },
+              {
+                "complianceState": "compliant",
+                "count": 1
+              }
+            ],
+            "policyGroupDetails": [
+              {
+                "complianceState": "noncompliant",
+                "count": 1
+              }
+            ],
+            "queryResultsUri": "https://management.azure.com/subscriptions/536d8cf6-89e1-4815-aef3-d5f2c5f4d070/resourceGroups/rg-ipai-dev-odoo-runtime/providers/Microsoft.PolicyInsights/policyStates/latest/queryResults?api-version=2019-10-01&$from=2026-03-31 08:47:01Z&$to=2026-04-01 08:47:01Z&$filter=PolicyAssignmentId eq '/subscriptions/536d8cf6-89e1-4815-aef3-d5f2c5f4d070/providers/microsoft.authorization/policyassignments/securitycenterbuiltin' and PolicySetDefinitionId eq '/providers/Microsoft.Authorization/policySetDefinitions/1f3afdf9-d0c9-4c3d-847f-89da613e70a8' and 'azure_security_benchmark_v3.0_ns-2' in PolicyDefinitionGroupNames",
+            "resourceDetails": [
+              {
+                "complianceState": "noncompliant",
+                "count": 2
+              }
+            ]
+          }
+        },
+        {
+          "policyGroupName": "azure_security_benchmark_v3.0_im-1",
+          "results": {
+            "nonCompliantPolicies": null,
+            "nonCompliantResources": 1,
+            "policyDetails": [
+              {
+                "complianceState": "noncompliant",
+                "count": 2
+              }
+            ],
+            "policyGroupDetails": [
+              {
+                "complianceState": "noncompliant",
+                "count": 1
+              }
+            ],
+            "queryResultsUri": "https://management.azure.com/subscriptions/536d8cf6-89e1-4815-aef3-d5f2c5f4d070/resourceGroups/rg-ipai-dev-odoo-runtime/providers/Microsoft.PolicyInsights/policyStates/latest/queryResults?api-version=2019-10-01&$from=2026-03-31 08:47:01Z&$to=2026-04-01 08:47:01Z&$filter=PolicyAssignmentId eq '/subscriptions/536d8cf6-89e1-4815-aef3-d5f2c5f4d070/providers/microsoft.authorization/policyassignments/securitycenterbuiltin' and PolicySetDefinitionId eq '/providers/Microsoft.Authorization/policySetDefinitions/1f3afdf9-d0c9-4c3d-847f-89da613e70a8' and 'azure_security_benchmark_v3.0_im-1' in PolicyDefinitionGroupNames",
+            "resourceDetails": [
+              {
+                "complianceState": "noncompliant",
+                "count": 1
+              }
+            ]
+          }
+        },
+        {
+          "policyGroupName": "azure_security_benchmark_v3.0_ns-5",
+          "results": {
+            "nonCompliantPolicies": null,
+            "nonCompliantResources": 0,
+            "policyDetails": [
+              {
+                "complianceState": "compliant",
+                "count": 1
+              }
+            ],
+            "policyGroupDetails": [
+              {
+                "complianceState": "compliant",
+                "count": 1
+              }
+            ],
+            "queryResultsUri": "https://management.azure.com/subscriptions/536d8cf6-89e1-4815-aef3-d5f2c5f4d070/resourceGroups/rg-ipai-dev-odoo-runtime/providers/Microsoft.PolicyInsights/policyStates/latest/queryResults?api-version=2019-10-01&$from=2026-03-31 08:47:01Z&$to=2026-04-01 08:47:01Z&$filter=PolicyAssignmentId eq '/subscriptions/536d8cf6-89e1-4815-aef3-d5f2c5f4d070/providers/microsoft.authorization/policyassignments/securitycenterbuiltin' and PolicySetDefinitionId eq '/providers/Microsoft.Authorization/policySetDefinitions/1f3afdf9-d0c9-4c3d-847f-89da613e70a8' and 'azure_security_benchmark_v3.0_ns-5' in PolicyDefinitionGroupNames",
+            "resourceDetails": [
+              {
+                "complianceState": "compliant",
+                "count": 1
+              }
+            ]
+          }
+        },
+        {
+          "policyGroupName": "azure_security_benchmark_v3.0_ir-4",
+          "results": {
+            "nonCompliantPolicies": null,
+            "nonCompliantResources": 0,
+            "policyDetails": [
+              {
+                "complianceState": "compliant",
+                "count": 1
+              }
+            ],
+            "policyGroupDetails": [
+              {
+                "complianceState": "compliant",
+                "count": 1
+              }
+            ],
+            "queryResultsUri": "https://management.azure.com/subscriptions/536d8cf6-89e1-4815-aef3-d5f2c5f4d070/resourceGroups/rg-ipai-dev-odoo-runtime/providers/Microsoft.PolicyInsights/policyStates/latest/queryResults?api-version=2019-10-01&$from=2026-03-31 08:47:01Z&$to=2026-04-01 08:47:01Z&$filter=PolicyAssignmentId eq '/subscriptions/536d8cf6-89e1-4815-aef3-d5f2c5f4d070/providers/microsoft.authorization/policyassignments/securitycenterbuiltin' and PolicySetDefinitionId eq '/providers/Microsoft.Authorization/policySetDefinitions/1f3afdf9-d0c9-4c3d-847f-89da613e70a8' and 'azure_security_benchmark_v3.0_ir-4' in PolicyDefinitionGroupNames",
+            "resourceDetails": [
+              {
+                "complianceState": "compliant",
+                "count": 1
+              }
+            ]
+          }
+        },
+        {
+          "policyGroupName": "azure_security_benchmark_v3.0_pv-6",
+          "results": {
+            "nonCompliantPolicies": null,
+            "nonCompliantResources": 1,
+            "policyDetails": [
+              {
+                "complianceState": "noncompliant",
+                "count": 1
+              }
+            ],
+            "policyGroupDetails": [
+              {
+                "complianceState": "noncompliant",
+                "count": 1
+              }
+            ],
+            "queryResultsUri": "https://management.azure.com/subscriptions/536d8cf6-89e1-4815-aef3-d5f2c5f4d070/resourceGroups/rg-ipai-dev-odoo-runtime/providers/Microsoft.PolicyInsights/policyStates/latest/queryResults?api-version=2019-10-01&$from=2026-03-31 08:47:01Z&$to=2026-04-01 08:47:01Z&$filter=PolicyAssignmentId eq '/subscriptions/536d8cf6-89e1-4815-aef3-d5f2c5f4d070/providers/microsoft.authorization/policyassignments/securitycenterbuiltin' and PolicySetDefinitionId eq '/providers/Microsoft.Authorization/policySetDefinitions/1f3afdf9-d0c9-4c3d-847f-89da613e70a8' and 'azure_security_benchmark_v3.0_pv-6' in PolicyDefinitionGroupNames",
+            "resourceDetails": [
+              {
+                "complianceState": "noncompliant",
+                "count": 1
+              }
+            ]
+          }
+        },
+        {
+          "policyGroupName": "azure_security_benchmark_v3.0_ds-6",
+          "results": {
+            "nonCompliantPolicies": null,
+            "nonCompliantResources": 1,
+            "policyDetails": [
+              {
+                "complianceState": "noncompliant",
+                "count": 1
+              }
+            ],
+            "policyGroupDetails": [
+              {
+                "complianceState": "noncompliant",
+                "count": 1
+              }
+            ],
+            "queryResultsUri": "https://management.azure.com/subscriptions/536d8cf6-89e1-4815-aef3-d5f2c5f4d070/resourceGroups/rg-ipai-dev-odoo-runtime/providers/Microsoft.PolicyInsights/policyStates/latest/queryResults?api-version=2019-10-01&$from=2026-03-31 08:47:01Z&$to=2026-04-01 08:47:01Z&$filter=PolicyAssignmentId eq '/subscriptions/536d8cf6-89e1-4815-aef3-d5f2c5f4d070/providers/microsoft.authorization/policyassignments/securitycenterbuiltin' and PolicySetDefinitionId eq '/providers/Microsoft.Authorization/policySetDefinitions/1f3afdf9-d0c9-4c3d-847f-89da613e70a8' and 'azure_security_benchmark_v3.0_ds-6' in PolicyDefinitionGroupNames",
+            "resourceDetails": [
+              {
+                "complianceState": "noncompliant",
+                "count": 1
+              }
+            ]
+          }
+        }
+      ],
+      "policySetDefinitionId": "/providers/Microsoft.Authorization/policySetDefinitions/1f3afdf9-d0c9-4c3d-847f-89da613e70a8",
+      "results": {
+        "nonCompliantPolicies": 10,
+        "nonCompliantResources": 3,
+        "policyDetails": [
+          {
+            "complianceState": "noncompliant",
+            "count": 10
+          },
+          {
+            "complianceState": "compliant",
+            "count": 11
+          }
+        ],
+        "policyGroupDetails": [
+          {
+            "complianceState": "noncompliant",
+            "count": 5
+          },
+          {
+            "complianceState": "compliant",
+            "count": 8
+          }
+        ],
+        "queryResultsUri": "https://management.azure.com/subscriptions/536d8cf6-89e1-4815-aef3-d5f2c5f4d070/resourceGroups/rg-ipai-dev-odoo-runtime/providers/Microsoft.PolicyInsights/policyStates/latest/queryResults?api-version=2019-10-01&$from=2026-03-31 08:47:01Z&$to=2026-04-01 08:47:01Z&$filter=PolicyAssignmentId eq '/subscriptions/536d8cf6-89e1-4815-aef3-d5f2c5f4d070/providers/microsoft.authorization/policyassignments/securitycenterbuiltin'",
+        "resourceDetails": [
+          {
+            "complianceState": "noncompliant",
+            "count": 3
+          },
+          {
+            "complianceState": "compliant",
+            "count": 1
+          }
+        ]
+      }
+    }
+  ],
+  "results": {
+    "nonCompliantPolicies": 2,
+    "nonCompliantResources": 26,
+    "policyDetails": [
+      {
+        "complianceState": "noncompliant",
+        "count": 2
+      }
+    ],
+    "policyGroupDetails": [
+      {
+        "complianceState": "noncompliant",
+        "count": 6
+      },
+      {
+        "complianceState": "compliant",
+        "count": 6
+      }
+    ],
+    "queryResultsUri": "https://management.azure.com/subscriptions/536d8cf6-89e1-4815-aef3-d5f2c5f4d070/resourceGroups/rg-ipai-dev-odoo-runtime/providers/Microsoft.PolicyInsights/policyStates/latest/queryResults?api-version=2019-10-01&$from=2026-03-31 08:47:01Z&$to=2026-04-01 08:47:01Z",
+    "resourceDetails": [
+      {
+        "complianceState": "noncompliant",
+        "count": 26
+      },
+      {
+        "complianceState": "compliant",
+        "count": 13
+      }
+    ]
+  }
+}

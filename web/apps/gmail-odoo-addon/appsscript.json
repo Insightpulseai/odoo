@@ -1,0 +1,43 @@
+{
+  "timeZone": "Asia/Manila",
+  "dependencies": {},
+  "exceptionLogging": "STACKDRIVER",
+  "runtimeVersion": "V8",
+  "oauthScopes": [
+    "https://www.googleapis.com/auth/gmail.readonly",
+    "https://www.googleapis.com/auth/gmail.addons.current.message.readonly",
+    "https://www.googleapis.com/auth/gmail.addons.current.action.compose",
+    "https://www.googleapis.com/auth/script.external_request",
+    "https://www.googleapis.com/auth/script.locale",
+    "https://www.googleapis.com/auth/gmail.addons.execute",
+    "https://www.googleapis.com/auth/userinfo.email"
+  ],
+  "addOns": {
+    "common": {
+      "name": "InsightPulseAI for Gmail",
+      "logoUrl": "https://erp.insightpulseai.com/web/static/img/logo.png",
+      "useLocaleFromApp": true,
+      "homepageTrigger": {
+        "runFunction": "homepage",
+        "enabled": true
+      },
+      "universalActions": [
+        {
+          "label": "Open Odoo ERP",
+          "openLink": "https://erp.insightpulseai.com"
+        }
+      ]
+    },
+    "gmail": {
+      "contextualTriggers": [
+        {
+          "unconditional": {},
+          "onTriggerFunction": "onGmailMessage"
+        }
+      ]
+    }
+  },
+  "urlFetchWhitelist": [
+    "https://erp.insightpulseai.com/"
+  ]
+}

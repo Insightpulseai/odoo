@@ -61,6 +61,7 @@ Cloud Sync is **conditional** — only required when an on-prem AD forest exists
 | Platform admin | Entra ID | Required (Authenticator/passkey) | Admin policy |
 | Odoo admin | Entra ID + Odoo session | Required | Admin policy |
 | Odoo user | Odoo local auth | Optional | N/A |
+| M365 Admin | Entra ID (M365 Portal) | Required | Admin policy |
 | Docs visitor | Anonymous | N/A | N/A |
 
 ### Workload Identity
@@ -70,6 +71,7 @@ Cloud Sync is **conditional** — only required when an on-prem AD forest exists
 | Odoo Container App | Managed identity | DefaultAzureCredential | Foundry project, Key Vault |
 | CI/CD pipeline | Service principal (`sp-ipai-azdevops`) | Client credentials | Foundry, Azure resources |
 | Docs Express proxy | App registration | Client credentials | Foundry threads/runs API |
+| Odoo Azure Storage | App registration | Client credentials (KV) | Azure Blob container |
 | n8n automations | Service principal or managed identity | Client credentials | Odoo API, Supabase |
 
 ### Auth Flow Target
@@ -79,7 +81,14 @@ Human → Entra MFA → Azure Portal / Foundry
 Odoo User → Odoo Session → Copilot → Managed Identity → Foundry
 Docs Widget → Anonymous → Express Proxy → Service Principal → Foundry
 CI/CD → Service Principal → Foundry / Azure Resources
+M365 Copilot → Entra Identity → agent-platform APIs
 ```
+
+## Microsoft 365 Copilot Governance
+
+- M365 Copilot admin/deployment surfaces are governed under the Entra/M365 admin model.
+- Readiness assessment for Copilot not yet completed (Phase 4 blocker).
+- Access is role-controlled via Entra RBAC.
 
 ## Migration Path
 
@@ -93,6 +102,7 @@ CI/CD → Service Principal → Foundry / Azure Resources
 - Service principal for docs proxy
 - MFA enforced for all admins
 - Converged auth methods policy
+- Cloud Storage: Azure client secret for Odoo offload governed by Key Vault; secret rotation tracked operationally (not managed identity native).
 - Conditional Access for admin operations
 
 ### Phase 3 — Hardened

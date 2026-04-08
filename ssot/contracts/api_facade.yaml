@@ -1,0 +1,79 @@
+# SSOT Contract: Public API Facade
+# The facade sits between browser and Odoo. No direct browser-to-Odoo coupling.
+# Cross-referenced by: docs/architecture/PUBLIC_TO_ODOO_INTEGRATION_FLOW.md
+# Updated: 2026-03-25
+
+version: "1.0.0"
+
+facade:
+  name: ipai-api-facade
+  type: aca_container
+  repo: web/packages/api-facade/
+  runtime: node  # or python — thin proxy, either works
+
+responsibilities:
+  - json_schema_validation
+  - captcha_verification
+  - rate_limiting
+  - input_sanitization
+  - odoo_json_rpc_proxy
+  - error_abstraction
+
+does_not:
+  - store_data
+  - authenticate_users
+  - execute_business_logic
+  - reason_about_data
+  - expose_odoo_errors
+
+endpoints:
+  leads:
+    path: /api/v1/leads
+    method: POST
+    input_schema:
+      type: object
+      required: [name, email]
+      properties:
+        name: { type: string, maxLength: 200 }
+        email: { type: string, format: email }
+        company: { type: string, maxLength: 200 }
+        message: { type: string, maxLength: 2000 }
+        captcha_token: { type: string }
+    odoo_call: crm.lead.create
+    response: { status: 201, body: { id: integer, status: "created" } }
+
+  demo:
+    path: /api/v1/demo
+    method: POST
+    input_schema:
+      type: object
+      required: [name, email]
+      properties:
+        name: { type: string, maxLength: 200 }
+        email: { type: string, format: email }
+        preferred_date: { type: string, format: date }
+        captcha_token: { type: string }
+    odoo_call: calendar.event.create
+    response: { status: 201, body: { id: integer, status: "created" } }
+
+  contact:
+    path: /api/v1/contact
+    method: POST
+    input_schema:
+      type: object
+      required: [name, email, subject]
+      properties:
+        name: { type: string, maxLength: 200 }
+        email: { type: string, format: email }
+        subject: { type: string, maxLength: 200 }
+        body: { type: string, maxLength: 5000 }
+        captcha_token: { type: string }
+    odoo_call: mail.mail.create
+    response: { status: 201, body: { status: "sent" } }
+
+security:
+  odoo_api_key_source: azure_key_vault
+  odoo_api_key_name: odoo-api-key-facade
+  network: internal_vnet_only
+  ingress: front_door_only
+  captcha_provider: turnstile  # or reCAPTCHA v3

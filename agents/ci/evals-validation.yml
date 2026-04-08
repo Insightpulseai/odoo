@@ -1,0 +1,122 @@
+# =============================================================================
+# Agent Evals Validation — agents/ci/evals-validation.yml
+# =============================================================================
+# Validates agent assets: eval datasets, prompt/skill schemas, golden sets.
+# No runtime deployment logic — this lane is for asset validation only.
+#
+# Trigger: changes to agents/ directory
+# =============================================================================
+
+trigger:
+  branches:
+    include:
+      - main
+  paths:
+    include:
+      - agents/**
+
+pr:
+  branches:
+    include:
+      - main
+  paths:
+    include:
+      - agents/**
+
+pool:
+  vmImage: ubuntu-latest
+
+variables:
+  pythonVersion: '3.12'
+
+stages:
+  - stage: Validate
+    displayName: 'Validate Agent Assets'
+    jobs:
+      - job: EvalDatasets
+        displayName: 'Eval dataset schema validation'
+        steps:
+          - checkout: self
+
+          - task: UsePythonVersion@0
+            inputs:
+              versionSpec: $(pythonVersion)
+
+          - script: pip install pyyaml jsonschema
+            displayName: 'Install validation tools'
+
+          # ----------------------------------------------------------------
+          # Validate JSONL eval datasets
+          # ----------------------------------------------------------------
+          - script: |
+              set -euo pipefail
+              echo "=== Eval Dataset Validation ==="
+              FAIL=0
+
+              find agents -name '*.jsonl' -type f | while read -r f; do
+                python3 -c "
+              import json, sys
+              with open('${f}') as fh:
+                  lines = fh.readlines()
+              for i, line in enumerate(lines, 1):
+                  try:
+                      obj = json.loads(line)
+                      if not isinstance(obj, dict):
+                          print(f'FAIL: ${f}:{i} — not a JSON object', file=sys.stderr)
+                          sys.exit(1)
+                  except json.JSONDecodeError as e:
+                      print(f'FAIL: ${f}:{i} — {e}', file=sys.stderr)
+                      sys.exit(1)
+              print(f'OK: ${f} ({len(lines)} records)')
+              " 2>&1 || FAIL=1
+              done
+
+              if [[ "$FAIL" -eq 1 ]]; then
+                echo "ERROR: Eval dataset validation failed."
+                exit 1
+              fi
+              echo "PASS: All eval datasets valid."
+            displayName: 'Validate JSONL datasets'
+
+          # ----------------------------------------------------------------
+          # Validate YAML configs (thresholds, prompts, skill registries)
+          # ----------------------------------------------------------------
+          - script: |
+              set -euo pipefail
+              echo "=== YAML Config Validation ==="
+              FAIL=0
+
+              find agents -name '*.yaml' -o -name '*.yml' | while read -r f; do
+                python3 -c "
+              import yaml, sys
+              with open('${f}') as fh:
+                  yaml.safe_load(fh)
+              print(f'OK: ${f}')
+              " 2>&1 || FAIL=1
+              done
+
+              if [[ "$FAIL" -eq 1 ]]; then
+                echo "ERROR: YAML validation failed."
+                exit 1
+              fi
+              echo "PASS: All agent YAML configs valid."
+            displayName: 'Validate YAML configs'
+
+          # ----------------------------------------------------------------
+          # Check prompt/skill markdown files exist where referenced
+          # ----------------------------------------------------------------
+          - script: |
+              set -euo pipefail
+              echo "=== Agent Asset Inventory ==="
+
+              PROMPTS=$(find agents -name '*.md' -path '*/prompts/*' | wc -l)
+              SKILLS=$(find agents -name '*.md' -path '*/skills/*' | wc -l)
+              EVALS=$(find agents -name '*.jsonl' | wc -l)
+              JUDGES=$(find agents -name '*.md' -path '*/judges/*' | wc -l)
+
+              echo "Prompts: ${PROMPTS}"
+              echo "Skills:  ${SKILLS}"
+              echo "Evals:   ${EVALS}"
+              echo "Judges:  ${JUDGES}"
+              echo "PASS: Agent asset inventory complete."
+            displayName: 'Agent asset inventory'

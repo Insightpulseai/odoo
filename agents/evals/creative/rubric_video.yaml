@@ -1,0 +1,82 @@
+# Video Evaluation Rubric
+# Used by judge_video.md and creative_eval.py
+# Version: 1
+
+rubric_version: 1
+asset_type: video
+
+dimensions:
+  prompt_adherence:
+    weight: 0.25
+    scale: "0.0-1.0"
+    scoring:
+      1.0: "Video perfectly matches all elements of the prompt"
+      0.8: "Video matches most elements; minor deviations"
+      0.6: "Video partially matches; some key elements missing"
+      0.4: "Video loosely related to prompt"
+      0.2: "Video barely relates to prompt"
+      0.0: "Video is completely unrelated"
+
+  temporal_coherence:
+    weight: 0.25
+    scale: "0.0-1.0"
+    hard_fail_below: 0.4
+    scoring:
+      1.0: "Perfect frame-to-frame consistency, stable subjects, no flicker"
+      0.8: "Very good consistency with rare minor flicker"
+      0.6: "Acceptable but with noticeable consistency breaks"
+      0.4: "Frequent flicker, morphing, or subject instability"
+      0.2: "Severe temporal issues, subjects change identity between frames"
+      0.0: "Unwatchable, constant flickering or morphing"
+
+  motion_quality:
+    weight: 0.15
+    scale: "0.0-1.0"
+    scoring:
+      1.0: "Smooth, natural, cinematic motion and camera movement"
+      0.8: "Good motion with minor jitter or unnatural moments"
+      0.6: "Acceptable motion, some stiffness or unnatural movement"
+      0.4: "Poor motion, robotic or jerky"
+      0.2: "Very poor, mostly static or severely jittery"
+      0.0: "No coherent motion"
+
+  visual_quality:
+    weight: 0.15
+    scale: "0.0-1.0"
+    scoring:
+      1.0: "Crisp, well-lit, professional color grading, high detail"
+      0.8: "High quality with minor softness or grading issues"
+      0.6: "Acceptable quality, visible compression or softness"
+      0.4: "Below professional standard, blurry or poorly lit"
+      0.2: "Low quality, significant visual degradation"
+      0.0: "Unusable quality"
+
+  brand_compliance:
+    weight: 0.10
+    scale: "0.0-1.0"
+    hard_fail_below: 0.5
+    scoring:
+      1.0: "All visible brand elements correct, style aligned"
+      0.8: "Brand correct, minor style drift"
+      0.6: "Brand present but with issues"
+      0.4: "Brand name wrong or deprecated term visible"
+      0.0: "Forbidden brand name prominently displayed"
+    notes: "Score 1.0 if no brand text was expected to appear"
+
+  artifact_detection:
+    weight: 0.10
+    scale: "0.0-1.0"
+    hard_fail_below: 0.3
+    scoring:
+      1.0: "No artifacts across all frames"
+      0.8: "Very minor artifacts in 1-2 frames"
+      0.6: "Noticeable artifacts in several frames"
+      0.4: "Obvious artifacts throughout (warping, seams, glitches)"
+      0.2: "Severe visual corruption"
+      0.0: "Unwatchable due to artifacts"
+
+aggregate:
+  method: weighted_sum
+  pass_threshold: 0.85
+  warn_threshold: 0.70
+  any_hard_fail_overrides_pass: true

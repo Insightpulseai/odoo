@@ -1,0 +1,56 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "ipai.task.v1",
+  "title": "Task Envelope",
+  "description": "Schema for typed task messages routed via the Task Bus",
+  "type": "object",
+  "properties": {
+    "task_id": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Unique UUIDv7 identifier for the task instance"
+    },
+    "type": {
+      "type": "string",
+      "description": "Dotted path describing the task type (e.g. task.odoo.lint-module)"
+    },
+    "priority": {
+      "type": "string",
+      "enum": ["low", "normal", "high", "critical"],
+      "default": "normal"
+    },
+    "payload": {
+      "type": "object",
+      "description": "The specific task payload matching the contract of the task type"
+    },
+    "source_agent_id": {
+      "type": "string",
+      "description": "The AgentId that created this task"
+    },
+    "target_agent_id": {
+      "type": "string",
+      "description": "The explicitly requested AgentId, if any (router may override)"
+    },
+    "correlation_id": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Correlation identifier to group related tasks in a distributed tracing context"
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO8601 timestamp of task creation"
+    },
+    "timeout_ms": {
+      "type": "integer",
+      "minimum": 1,
+      "default": 300000,
+      "description": "Maximum execution time before timeout"
+    },
+    "idempotency_key": {
+      "type": "string",
+      "description": "Optional key to ensure task is only executed once"
+    }
+  },
+  "required": ["task_id", "type", "payload", "correlation_id", "created_at"]
+}

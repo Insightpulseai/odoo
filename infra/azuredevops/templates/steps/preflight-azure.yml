@@ -1,0 +1,28 @@
+# Preflight: verify Azure auth, resource reachability, and dependency checks
+# Fail early before build/deploy — aligned to SAP automation readiness pattern.
+steps:
+  - task: AzureCLI@2
+    displayName: Verify Azure service connection
+    inputs:
+      azureSubscription: $(azureServiceConnection)
+      scriptType: bash
+      scriptLocation: inlineScript
+      inlineScript: |
+        set -euo pipefail
+        echo "## Preflight — Azure resource verification"
+        echo "Subscription: $(az account show --query name -o tsv)"
+        echo "Tenant:       $(az account show --query tenantId -o tsv)"
+
+        # Verify ACR reachability
+        az acr show --name $(acrName) --query loginServer -o tsv \
+          && echo "ACR: OK" || { echo "ACR: FAIL"; exit 1; }
+
+        # Verify target resource group exists
+        az group show --name $(resourceGroup) --query name -o tsv \
+          && echo "RG: OK" || { echo "RG: FAIL"; exit 1; }
+
+        # Verify target container app exists
+        az containerapp show --name $(containerAppName) --resource-group $(resourceGroup) --query name -o tsv \
+          && echo "ACA: OK" || { echo "ACA: FAIL"; exit 1; }
+
+        echo "Preflight passed."

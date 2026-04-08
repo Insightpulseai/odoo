@@ -1,0 +1,58 @@
+# Claude Platform KB — Source Registry
+# Version: 1.0.0
+# Created: 2026-03-23
+# Purpose: Canonical source URLs for the Claude Platform knowledge base.
+#   These pages are ingested, chunked, and indexed into Azure AI Search
+#   for KB-grounded agent retrieval via knowledge_base_retrieve (MCP).
+
+version: 1
+kb_id: claude_platform
+name: Claude Platform Knowledge Base
+description: >
+  Covers Claude API, SDK, tool use (client + server), web search,
+  MCP integration, agent patterns, and platform best practices.
+status: active
+
+sources:
+  # --- Tool Use (core doctrine) ---
+  - url: https://platform.claude.com/docs/en/agents-and-tools/tool-use/overview
+    domain: tool_use
+    tags: [client_tools, server_tools, strict_tool_use, mcp_tool_conversion, pause_turn]
+    priority: P0
+    notes: >
+      Defines client vs server tool taxonomy, tool execution loop,
+      strict schema mode, MCP-to-Claude tool conversion, and pause_turn
+      behavior for server tools.
+
+  - url: https://platform.claude.com/docs/en/agents-and-tools/tool-use/web-search-tool
+    domain: web_search
+    tags: [web_search, citations, allowed_domains, blocked_domains, max_uses, pricing]
+    priority: P0
+    notes: >
+      Web search tool (web_search_20250305): parameters, domain restrictions,
+      citation behavior, billing ($10/1000 searches), and usage patterns.
+
+  # --- Agent Patterns ---
+  - url: https://www.anthropic.com/engineering/writing-tools-for-agents
+    domain: agent_tooling
+    tags: [tool_design, agent_patterns, tool_descriptions]
+    priority: P0
+    notes: >
+      Anthropic engineering blog on tool design for agents.
+      Covers naming, descriptions, response shaping, auth hierarchy.
+
+  # --- Existing coverage (extend as needed) ---
+  - url: https://platform.claude.com/docs/en/agents-and-tools/tool-use/client-tools
+    domain: tool_use
+    tags: [client_tools, tool_schemas, tool_results]
+    priority: P1
+
+  - url: https://platform.claude.com/docs/en/agents-and-tools/tool-use/server-tools
+    domain: tool_use
+    tags: [server_tools, web_search, code_execution]
+    priority: P1
+
+refresh_strategy:
+  method: scheduled
+  interval_days: 14
+  on_demand_trigger: claude_api_version_change

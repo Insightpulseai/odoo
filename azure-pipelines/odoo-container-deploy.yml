@@ -1,0 +1,108 @@
+# =============================================================================
+# Odoo Container Build + Deploy Pipeline
+# =============================================================================
+# Builds ipai-odoo:19.0-copilot image, deploys to ACA, runs smoke test.
+# Uses shared job templates — no inline deploy logic.
+#
+# Trigger: changes to addons/ipai/ or Dockerfile.odoo-copilot
+# =============================================================================
+
+trigger:
+  branches:
+    include:
+      - main
+  paths:
+    include:
+      - addons/ipai/**
+      - platform/runtime/docker/docker/Dockerfile.odoo-copilot
+
+pr:
+  branches:
+    include:
+      - main
+  paths:
+    include:
+      - addons/ipai/**
+      - platform/runtime/docker/docker/Dockerfile.odoo-copilot
+
+variables:
+  - name: acrName
+    value: acripaiodoo
+  - name: imageName
+    value: ipai-odoo
+  - name: imageTag
+    value: 19.0-copilot
+  - name: resourceGroup
+    value: rg-ipai-dev-odoo-runtime
+  - name: containerAppName
+    value: ipai-odoo-dev-web
+  - name: serviceConnection
+    value: ipai-dev-wif
+
+stages:
+  # ─────────────────────────────────────────────────────────────────
+  # Stage 1: Build
+  # ─────────────────────────────────────────────────────────────────
+  - stage: Build
+    displayName: Build Odoo Image
+    jobs:
+      - template: templates/jobs/build-container.yml
+        parameters:
+          imageName: $(imageName)
+          imageTag: $(imageTag)
+          dockerfile: platform/runtime/docker/docker/Dockerfile.odoo-copilot
+          buildContext: .
+          acrName: $(acrName)
+          serviceConnection: $(serviceConnection)
+
+  # ─────────────────────────────────────────────────────────────────
+  # Stage 2: Deploy (main only)
+  # ─────────────────────────────────────────────────────────────────
+  - stage: Deploy
+    displayName: Deploy to ACA
+    dependsOn: Build
+    condition: |
+      and(
+        succeeded('Build'),
+        eq(variables['Build.SourceBranch'], 'refs/heads/main')
+      )
+    jobs:
+      - template: templates/jobs/deploy-containerapp.yml
+        parameters:
+          containerAppName: $(containerAppName)
+          resourceGroup: $(resourceGroup)
+          imageName: $(imageName)
+          imageTag: $(imageTag)
+          acrName: $(acrName)
+          serviceConnection: $(serviceConnection)
+
+  # ─────────────────────────────────────────────────────────────────
+  # Stage 3: Smoke
+  # ─────────────────────────────────────────────────────────────────
+  - stage: Smoke
+    displayName: Post-Deploy Smoke
+    dependsOn: Deploy
+    condition: succeeded('Deploy')
+    jobs:
+      - template: templates/jobs/smoke-http.yml
+        parameters:
+          url: https://erp.insightpulseai.com/web/login
+          expectedStatus: '200'
+          contentMatch: Odoo
+
+  # ─────────────────────────────────────────────────────────────────
+  # Stage 4: Evidence
+  # ─────────────────────────────────────────────────────────────────
+  - stage: Evidence
+    displayName: Publish Evidence
+    dependsOn:
+      - Build
+      - Deploy
+      - Smoke
+    condition: succeededOrFailed()
+    jobs:
+      - template: templates/jobs/publish-evidence.yml
+        parameters:
+          surface: $(containerAppName)
+          imageRef: $(acrName).azurecr.io/$(imageName):$(imageTag)
+          smokeUrl: https://erp.insightpulseai.com/web/login

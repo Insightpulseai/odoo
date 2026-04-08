@@ -1,0 +1,329 @@
+# =============================================================================
+# Odoo Upgrade Rehearsal Pipeline
+# =============================================================================
+# Odoo.sh parity: "integrated version upgrade pipeline"
+#
+# Behavior: Clone source → Neutralize → Upgrade → Validate → Evidence
+# Trigger: Manual queue only (never automatic — upgrade rehearsal is intentional)
+# Production impact: Zero — runs entirely on isolated rehearsal DB
+# Fail-closed: blocks promotion if any migration/validation error
+# =============================================================================
+
+trigger: none
+pr: none
+
+pool:
+  vmImage: ubuntu-latest
+
+parameters:
+  - name: sourceDatabase
+    displayName: Source database to clone
+    type: string
+    default: odoo
+    values:
+      - odoo
+      - odoo_staging
+  - name: targetDatabase
+    displayName: Rehearsal target database name
+    type: string
+    default: odoo_upgrade_rehearsal
+  - name: targetVersion
+    displayName: Target Odoo version
+    type: string
+    default: '18.0'
+  - name: addonsPath
+    displayName: Addons path override (leave empty for default)
+    type: string
+    default: ''
+
+variables:
+  serviceConnection: ipai-dev-wif
+  containerAppName: ipai-odoo-dev-web
+  resourceGroup: rg-ipai-dev-odoo-runtime
+  keyVaultName: kv-ipai-dev
+
+stages:
+  # ── Stage 1: Clone & Neutralize ──
+  - stage: CloneAndNeutralize
+    displayName: Clone Source & Neutralize
+    jobs:
+      - job: CloneDB
+        displayName: 'Clone ${{ parameters.sourceDatabase }} → ${{ parameters.targetDatabase }}'
+        steps:
+          - checkout: self
+
+          - task: AzureCLI@2
+            displayName: Clone and neutralize database
+            inputs:
+              azureSubscription: $(serviceConnection)
+              scriptType: bash
+              scriptLocation: inlineScript
+              inlineScript: |
+                set -euo pipefail
+
+                # Resolve DB credentials from Key Vault
+                export DB_HOST=$(az keyvault secret show --vault-name $(keyVaultName) --name odoo-pg-host --query value -o tsv)
+                export DB_USER=$(az keyvault secret show --vault-name $(keyVaultName) --name odoo-pg-user --query value -o tsv)
+                export DB_PASSWORD=$(az keyvault secret show --vault-name $(keyVaultName) --name pg-ipai-odoo-admin-password --query value -o tsv)
+                export DB_PORT=5432
+
+                TARGET="${{ parameters.targetDatabase }}"
+                SOURCE="${{ parameters.sourceDatabase }}"
+
+                # Production guard
+                for forbidden in "odoo" "odoo_staging"; do
+                  if [[ "$TARGET" == "$forbidden" ]]; then
+                    echo "ERROR: Cannot use '$forbidden' as upgrade target"
+                    exit 1
+                  fi
+                done
+
+                echo "=== Clone $SOURCE → $TARGET ==="
+
+                # Terminate connections to target
+                PGPASSWORD="$DB_PASSWORD" psql -h "$DB_HOST" -p "$DB_PORT" -U "$DB_USER" -d postgres -c \
+                  "SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE datname='$TARGET' AND pid <> pg_backend_pid();" \
+                  2>/dev/null || true
+
+                # Drop and clone
+                PGPASSWORD="$DB_PASSWORD" psql -h "$DB_HOST" -p "$DB_PORT" -U "$DB_USER" -d postgres -c \
+                  "DROP DATABASE IF EXISTS \"$TARGET\";"
+
+                # Try template copy first, then fallback
+                PGPASSWORD="$DB_PASSWORD" psql -h "$DB_HOST" -p "$DB_PORT" -U "$DB_USER" -d postgres -c \
+                  "CREATE DATABASE \"$TARGET\" TEMPLATE \"$SOURCE\";" 2>/dev/null || {
+                  echo "Template copy failed, using pg_dump/restore..."
+                  PGPASSWORD="$DB_PASSWORD" psql -h "$DB_HOST" -p "$DB_PORT" -U "$DB_USER" -d postgres -c \
+                    "CREATE DATABASE \"$TARGET\";"
+                  PGPASSWORD="$DB_PASSWORD" pg_dump -h "$DB_HOST" -p "$DB_PORT" -U "$DB_USER" \
+                    -d "$SOURCE" --no-owner --no-acl | \
+                  PGPASSWORD="$DB_PASSWORD" psql -h "$DB_HOST" -p "$DB_PORT" -U "$DB_USER" -d "$TARGET" --quiet
+                }
+
+                echo "Clone complete."
+
+                # Neutralize
+                echo "=== Neutralize $TARGET ==="
+                bash scripts/odoo/neutralize_environment.sh \
+                  --mode=post-import \
+                  --database="$TARGET" \
+                  2>&1 | tee $(Build.ArtifactStagingDirectory)/neutralize.log
+
+                echo "##vso[task.setvariable variable=targetDb;isOutput=true]$TARGET"
+            name: clone
+
+          - publish: $(Build.ArtifactStagingDirectory)/neutralize.log
+            artifact: neutralize-log
+            condition: always()
+
+  # ── Stage 2: Upgrade ──
+  - stage: Upgrade
+    displayName: 'Run Module Upgrade (${{ parameters.targetVersion }})'
+    dependsOn: CloneAndNeutralize
+    condition: succeeded()
+    jobs:
+      - job: RunUpgrade
+        displayName: Execute Odoo upgrade on rehearsal DB
+        timeoutInMinutes: 60
+        steps:
+          - task: AzureCLI@2
+            displayName: Run odoo-bin -u all on rehearsal DB
+            inputs:
+              azureSubscription: $(serviceConnection)
+              scriptType: bash
+              scriptLocation: inlineScript
+              inlineScript: |
+                set -euo pipefail
+
+                export DB_HOST=$(az keyvault secret show --vault-name $(keyVaultName) --name odoo-pg-host --query value -o tsv)
+                export DB_USER=$(az keyvault secret show --vault-name $(keyVaultName) --name odoo-pg-user --query value -o tsv)
+                export DB_PASSWORD=$(az keyvault secret show --vault-name $(keyVaultName) --name pg-ipai-odoo-admin-password --query value -o tsv)
+
+                TARGET="${{ parameters.targetDatabase }}"
+                ADDONS="${{ parameters.addonsPath }}"
+
+                echo "=== Odoo Module Upgrade ==="
+                echo "Target DB:  $TARGET"
+                echo "Version:    ${{ parameters.targetVersion }}"
+
+                # Build upgrade command
+                UPGRADE_CMD="odoo-bin -d $TARGET -u all --stop-after-init --no-http"
+                if [[ -n "$ADDONS" ]]; then
+                  UPGRADE_CMD="$UPGRADE_CMD --addons-path=$ADDONS"
+                fi
+
+                echo "Executing upgrade via ACA exec..."
+                echo "Command: $UPGRADE_CMD"
+
+                # Run upgrade inside the Odoo container
+                az containerapp exec \
+                  --name $(containerAppName) \
+                  --resource-group $(resourceGroup) \
+                  --command "$UPGRADE_CMD" \
+                  2>&1 | tee $(Build.ArtifactStagingDirectory)/upgrade-output.log || {
+                    echo "##vso[task.logissue type=error]Upgrade command failed"
+                    exit 1
+                  }
+
+                # Check for critical errors
+                if grep -qi "CRITICAL\|OperationalError\|could not serialize" $(Build.ArtifactStagingDirectory)/upgrade-output.log; then
+                  echo "##vso[task.logissue type=error]Critical errors found in upgrade output"
+                  exit 1
+                fi
+
+                echo "Upgrade completed."
+            name: upgrade
+
+          - publish: $(Build.ArtifactStagingDirectory)/upgrade-output.log
+            artifact: upgrade-log
+            condition: always()
+
+  # ── Stage 3: Validate ──
+  - stage: Validate
+    displayName: Validate Upgrade Result
+    dependsOn: Upgrade
+    condition: succeeded()
+    jobs:
+      - job: ValidateUpgrade
+        displayName: Check module states and DB health
+        steps:
+          - checkout: self
+
+          - task: AzureCLI@2
+            displayName: Validate module states
+            inputs:
+              azureSubscription: $(serviceConnection)
+              scriptType: bash
+              scriptLocation: inlineScript
+              inlineScript: |
+                set -euo pipefail
+
+                export DB_HOST=$(az keyvault secret show --vault-name $(keyVaultName) --name odoo-pg-host --query value -o tsv)
+                export DB_USER=$(az keyvault secret show --vault-name $(keyVaultName) --name odoo-pg-user --query value -o tsv)
+                export DB_PASSWORD=$(az keyvault secret show --vault-name $(keyVaultName) --name pg-ipai-odoo-admin-password --query value -o tsv)
+                export PGPASSWORD="$DB_PASSWORD"
+
+                TARGET="${{ parameters.targetDatabase }}"
+                FAILURES=0
+
+                echo "=== Validate Upgrade ==="
+
+                # 1. DB accessible
+                if ! psql -h "$DB_HOST" -p 5432 -U "$DB_USER" -d "$TARGET" -c "SELECT 1;" --quiet 2>/dev/null; then
+                  echo "FAIL: Target DB not accessible"
+                  FAILURES=$((FAILURES + 1))
+                else
+                  echo "PASS: Target DB accessible"
+                fi
+
+                # 2. Module counts
+                INSTALLED=$(psql -h "$DB_HOST" -p 5432 -U "$DB_USER" -d "$TARGET" \
+                  -t -c "SELECT count(*) FROM ir_module_module WHERE state = 'installed';" 2>/dev/null | tr -d ' ')
+                echo "Installed modules: $INSTALLED"
+
+                # 3. Bad-state modules
+                BAD_MODULES=$(psql -h "$DB_HOST" -p 5432 -U "$DB_USER" -d "$TARGET" \
+                  -t -c "SELECT string_agg(name || '(' || state || ')', ', ') FROM ir_module_module WHERE state NOT IN ('installed', 'uninstalled', 'uninstallable');" \
+                  2>/dev/null | tr -d ' ')
+
+                if [[ -n "$BAD_MODULES" && "$BAD_MODULES" != "" ]]; then
+                  echo "FAIL: Modules in bad state: $BAD_MODULES"
+                  FAILURES=$((FAILURES + 1))
+                else
+                  echo "PASS: No modules in bad state"
+                fi
+
+                # 4. Neutralization check
+                bash scripts/ci/verify_neutralization.sh "$TARGET" || {
+                  echo "FAIL: Neutralization verification failed"
+                  FAILURES=$((FAILURES + 1))
+                }
+
+                # 5. Write validation summary
+                cat > $(Build.ArtifactStagingDirectory)/validation-result.json <<RESULT
+                {
+                  "targetDb": "$TARGET",
+                  "targetVersion": "${{ parameters.targetVersion }}",
+                  "installedModules": $INSTALLED,
+                  "badModules": "${BAD_MODULES:-none}",
+                  "failures": $FAILURES,
+                  "result": "$(if [[ $FAILURES -eq 0 ]]; then echo "PASS"; else echo "FAIL"; fi)",
+                  "timestamp": "$(date -u +%Y-%m-%dT%H:%M:%SZ)",
+                  "productionMutated": false
+                }
+                RESULT
+
+                if [[ $FAILURES -gt 0 ]]; then
+                  echo "##vso[task.logissue type=error]Upgrade validation failed with $FAILURES issues"
+                  echo "Production promotion is BLOCKED."
+                  exit 1
+                fi
+
+                echo "PASS: Upgrade validation complete. Promotion authorized."
+            name: validate
+
+          - publish: $(Build.ArtifactStagingDirectory)/validation-result.json
+            artifact: validation-result
+            condition: always()
+
+  # ── Stage 4: Evidence ──
+  - stage: Evidence
+    displayName: Publish Rehearsal Evidence
+    dependsOn:
+      - CloneAndNeutralize
+      - Upgrade
+      - Validate
+    condition: succeededOrFailed()
+    jobs:
+      - job: PublishEvidence
+        displayName: Aggregate upgrade evidence
+        steps:
+          - task: DownloadPipelineArtifact@2
+            displayName: Download all artifacts
+            inputs:
+              buildType: current
+              targetPath: $(Build.ArtifactStagingDirectory)/all-evidence
+
+          - bash: |
+              set -euo pipefail
+
+              EVIDENCE_DIR=$(Build.ArtifactStagingDirectory)/evidence
+              mkdir -p "$EVIDENCE_DIR"
+
+              cat > "$EVIDENCE_DIR/upgrade-rehearsal-evidence.json" <<EVIDENCE
+              {
+                "schemaVersion": "1.0",
+                "type": "upgrade-rehearsal",
+                "timestamp": "$(date -u +%Y-%m-%dT%H:%M:%SZ)",
+                "pipeline": "$(Build.DefinitionName)",
+                "buildNumber": "$(Build.BuildNumber)",
+                "sourceDatabase": "${{ parameters.sourceDatabase }}",
+                "targetDatabase": "${{ parameters.targetDatabase }}",
+                "targetVersion": "${{ parameters.targetVersion }}",
+                "triggeredBy": "$(Build.RequestedFor)",
+                "productionMutated": false,
+                "artifacts": ["neutralize-log", "upgrade-log", "validation-result"]
+              }
+              EVIDENCE
+
+              cat > "$EVIDENCE_DIR/SUMMARY.md" <<SUMMARY
+              # Upgrade Rehearsal Evidence
+
+              | Field | Value |
+              |-------|-------|
+              | Source DB | ${{ parameters.sourceDatabase }} |
+              | Target DB | ${{ parameters.targetDatabase }} |
+              | Target Version | ${{ parameters.targetVersion }} |
+              | Pipeline | $(Build.DefinitionName) |
+              | Build | $(Build.BuildNumber) |
+              | Triggered by | $(Build.RequestedFor) |
+              | Prod Mutated | No |
+              | Timestamp | $(date -u +%Y-%m-%dT%H:%M:%SZ) |
+              SUMMARY
+
+              echo "Evidence pack ready."
+            displayName: Generate evidence summary
+
+          - publish: $(Build.ArtifactStagingDirectory)/evidence
+            artifact: upgrade-rehearsal-evidence-$(Build.BuildNumber)
+            condition: always()

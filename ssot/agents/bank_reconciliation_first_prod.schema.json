@@ -1,0 +1,31 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Bank Reconciliation First Production Import Acceptance",
+  "type": "object",
+  "required": [
+    "phase",
+    "status",
+    "batch_scope",
+    "illegal_post_blocked",
+    "ambiguous_fail_closed",
+    "duplicate_post_blocked",
+    "evidence_present_for_posted_lines",
+    "operator_review_completed",
+    "remaining_risks"
+  ],
+  "properties": {
+    "phase": { "type": "string" },
+    "status": { "type": "string" },
+    "batch_scope": { "type": "string" },
+    "illegal_post_blocked": { "type": "boolean" },
+    "ambiguous_fail_closed": { "type": "boolean" },
+    "duplicate_post_blocked": { "type": "boolean" },
+    "evidence_present_for_posted_lines": { "type": "boolean" },
+    "operator_review_completed": { "type": "boolean" },
+    "remaining_risks": {
+      "type": "array",
+      "items": { "type": "string" }
+    }
+  },
+  "additionalProperties": false
+}

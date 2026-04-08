@@ -1,0 +1,17 @@
+schema: ipai.passport.v1
+id: data-forge
+version: 0.1.0
+name: Data Forge
+domain: data
+stage: S03
+maturity: L1
+contract_ref: agents/contracts/data-forge.manifest.yaml
+skills:
+  - duckdb-analytics
+kill_switch:
+  enabled: true
+  active: false
+owners:
+  - data@insightpulseai.com
+created_at: '2026-03-20T00:00:00Z'
+updated_at: '2026-03-20T00:00:00Z'

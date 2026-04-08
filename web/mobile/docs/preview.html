@@ -1,0 +1,1752 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OdooWrapper iOS Preview - InsightPulse</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ===== Design Tokens from Theme.swift ===== */
+:root {
+  --primary-navy: #163D73;
+  --secondary-navy: #274B7A;
+  --bg-soft: #EEF1F4;
+  --card-surface: #FFFFFF;
+  --accent-green: #6FAF88;
+  --accent-green-secondary: #4E9C73;
+  --accent-green-fill: #E4F2E9;
+  --text-primary: #22324A;
+  --text-secondary: #5D6B80;
+  --text-muted: #6E7B8F;
+  --border: #D7DEE7;
+  --glass-bg: rgba(255, 255, 255, 0.72);
+  --glass-border: rgba(255, 255, 255, 0.45);
+  --glass-shadow: rgba(22, 61, 115, 0.08);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;
+  background: linear-gradient(135deg, #0f1923 0%, #1a2d4a 50%, #0f1923 100%);
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  color: var(--text-primary);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ===== iPhone 15 Pro Frame ===== */
+.iphone-frame {
+  width: 393px;
+  height: 852px;
+  background: #1a1a1a;
+  border-radius: 55px;
+  padding: 12px;
+  position: relative;
+  box-shadow:
+    0 0 0 2px #2a2a2a,
+    0 0 0 4px #1a1a1a,
+    inset 0 0 0 2px #333,
+    0 30px 80px rgba(0, 0, 0, 0.6),
+    0 0 120px rgba(22, 61, 115, 0.15);
+}
+
+/* Side buttons */
+.iphone-frame::before {
+  content: '';
+  position: absolute;
+  right: -4px;
+  top: 180px;
+  width: 4px;
+  height: 80px;
+  background: #2a2a2a;
+  border-radius: 0 2px 2px 0;
+}
+
+.iphone-frame::after {
+  content: '';
+  position: absolute;
+  left: -4px;
+  top: 160px;
+  width: 4px;
+  height: 40px;
+  background: #2a2a2a;
+  border-radius: 2px 0 0 2px;
+  box-shadow: 0 55px 0 #2a2a2a, 0 95px 0 #2a2a2a;
+}
+
+.screen {
+  width: 100%;
+  height: 100%;
+  background: var(--bg-soft);
+  border-radius: 44px;
+  overflow: hidden;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ===== Dynamic Island ===== */
+.dynamic-island {
+  position: absolute;
+  top: 11px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 126px;
+  height: 37px;
+  background: #000;
+  border-radius: 20px;
+  z-index: 100;
+}
+
+/* ===== Status Bar ===== */
+.status-bar {
+  height: 59px;
+  padding: 14px 32px 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  font-size: 15px;
+  font-weight: 600;
+  position: relative;
+  z-index: 50;
+  flex-shrink: 0;
+}
+
+.status-bar.dark {
+  color: #fff;
+}
+
+.status-bar.light {
+  color: var(--text-primary);
+}
+
+.status-time { letter-spacing: 0.2px; }
+
+.status-icons {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+}
+
+.status-icons svg { width: 18px; height: 12px; }
+
+/* ===== Content Area ===== */
+.content-area {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  position: relative;
+  -webkit-overflow-scrolling: touch;
+}
+
+.content-area::-webkit-scrollbar { display: none; }
+
+/* ===== Tab Bar (Liquid Glass) ===== */
+.tab-bar {
+  height: 83px;
+  padding: 0 8px;
+  padding-bottom: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  position: relative;
+  flex-shrink: 0;
+  background: rgba(255, 255, 255, 0.55);
+  backdrop-filter: blur(40px) saturate(1.8);
+  -webkit-backdrop-filter: blur(40px) saturate(1.8);
+  border-top: 0.5px solid rgba(255, 255, 255, 0.6);
+}
+
+.tab-bar::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(255,255,255,0.3) 0%, rgba(255,255,255,0.1) 100%);
+  pointer-events: none;
+}
+
+.tab-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  cursor: pointer;
+  position: relative;
+  z-index: 1;
+  padding: 4px 12px;
+  border-radius: 16px;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+}
+
+.tab-item:hover { background: rgba(22, 61, 115, 0.06); }
+
+.tab-item.active {
+  background: rgba(22, 61, 115, 0.1);
+  backdrop-filter: blur(10px);
+}
+
+.tab-item svg {
+  width: 24px;
+  height: 24px;
+  fill: none;
+  stroke: var(--text-muted);
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transition: all 0.25s;
+}
+
+.tab-item.active svg { stroke: var(--primary-navy); stroke-width: 2.2; }
+
+.tab-label {
+  font-size: 10px;
+  font-weight: 500;
+  color: var(--text-muted);
+  transition: color 0.25s;
+}
+
+.tab-item.active .tab-label {
+  color: var(--primary-navy);
+  font-weight: 600;
+}
+
+/* ===== Screens ===== */
+.app-screen {
+  display: none;
+  min-height: 100%;
+}
+
+.app-screen.active { display: block; }
+
+/* ===== Lock Screen ===== */
+.lock-screen {
+  background: linear-gradient(160deg, #0e2a50 0%, var(--primary-navy) 35%, var(--secondary-navy) 70%, #1a4a8a 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100%;
+  padding: 40px 32px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.lock-screen::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(ellipse at 30% 20%, rgba(111, 175, 136, 0.12) 0%, transparent 50%),
+              radial-gradient(ellipse at 70% 80%, rgba(111, 175, 136, 0.08) 0%, transparent 50%);
+  animation: lockAurora 8s ease-in-out infinite alternate;
+}
+
+@keyframes lockAurora {
+  0% { transform: translate(0, 0) rotate(0deg); }
+  100% { transform: translate(-3%, 3%) rotate(2deg); }
+}
+
+.lock-logo {
+  width: 80px;
+  height: 80px;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 24px;
+  position: relative;
+  z-index: 1;
+}
+
+.lock-logo svg {
+  width: 44px;
+  height: 44px;
+  fill: none;
+  stroke: rgba(255, 255, 255, 0.9);
+  stroke-width: 1.5;
+}
+
+.lock-title {
+  font-size: 28px;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: -0.5px;
+  margin-bottom: 8px;
+  position: relative;
+  z-index: 1;
+}
+
+.lock-subtitle {
+  font-size: 15px;
+  color: rgba(255, 255, 255, 0.55);
+  margin-bottom: 48px;
+  position: relative;
+  z-index: 1;
+}
+
+.face-id-container {
+  margin-bottom: 40px;
+  position: relative;
+  z-index: 1;
+}
+
+.face-id-icon {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.face-id-icon svg {
+  width: 48px;
+  height: 48px;
+  fill: none;
+  stroke: rgba(255, 255, 255, 0.85);
+  stroke-width: 2;
+  stroke-linecap: round;
+}
+
+.face-id-icon .pulse-ring {
+  position: absolute;
+  inset: -8px;
+  border: 2px solid rgba(111, 175, 136, 0.4);
+  border-radius: 50%;
+  animation: facePulse 2.5s ease-in-out infinite;
+}
+
+@keyframes facePulse {
+  0%, 100% { transform: scale(1); opacity: 0.4; }
+  50% { transform: scale(1.15); opacity: 0; }
+}
+
+.unlock-btn {
+  padding: 16px 48px;
+  border-radius: 50px;
+  border: none;
+  cursor: pointer;
+  font-size: 17px;
+  font-weight: 600;
+  letter-spacing: 0.2px;
+  position: relative;
+  z-index: 1;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  /* Glass effect */
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+}
+
+.unlock-btn:hover {
+  background: rgba(255, 255, 255, 0.22);
+  transform: translateY(-1px);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
+}
+
+.unlock-btn:active {
+  transform: translateY(0);
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.lock-company {
+  position: absolute;
+  bottom: 40px;
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.3);
+  letter-spacing: 0.5px;
+  z-index: 1;
+}
+
+/* ===== Home Screen ===== */
+.screen-header {
+  padding: 8px 20px 16px;
+}
+
+.screen-header h1 {
+  font-size: 32px;
+  font-weight: 700;
+  color: var(--text-primary);
+  letter-spacing: -0.5px;
+}
+
+.screen-header .greeting {
+  font-size: 15px;
+  color: var(--text-secondary);
+  margin-bottom: 2px;
+}
+
+.glass-card {
+  margin: 0 16px 12px;
+  padding: 18px;
+  background: rgba(255, 255, 255, 0.82);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  box-shadow: 0 2px 16px var(--glass-shadow), 0 0.5px 0 rgba(255,255,255,0.5) inset;
+}
+
+.card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+
+.card-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.card-badge {
+  font-size: 12px;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 12px;
+  background: var(--accent-green-fill);
+  color: var(--accent-green-secondary);
+}
+
+.stat-row {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.stat-item {
+  flex: 1;
+  padding: 14px;
+  background: var(--bg-soft);
+  border-radius: 12px;
+  text-align: center;
+}
+
+.stat-value {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--primary-navy);
+  line-height: 1.1;
+}
+
+.stat-label {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-top: 4px;
+  font-weight: 500;
+}
+
+.quick-action-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.quick-action {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px;
+  background: var(--bg-soft);
+  border-radius: 12px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.quick-action:hover { background: #e4e8ed; }
+
+.quick-action-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.quick-action-icon.navy { background: rgba(22, 61, 115, 0.1); }
+.quick-action-icon.green { background: var(--accent-green-fill); }
+
+.quick-action-icon svg {
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.quick-action-icon.navy svg { stroke: var(--primary-navy); }
+.quick-action-icon.green svg { stroke: var(--accent-green-secondary); }
+
+.quick-action-text {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+/* ===== Expenses Screen ===== */
+.expense-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 0;
+  border-bottom: 1px solid rgba(215, 222, 231, 0.5);
+}
+
+.expense-item:last-child { border-bottom: none; }
+
+.expense-thumb {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+}
+
+.expense-thumb.food { background: #FFF3E0; }
+.expense-thumb.transport { background: #E3F2FD; }
+.expense-thumb.hotel { background: #F3E5F5; }
+.expense-thumb.office { background: #E8F5E9; }
+.expense-thumb.client { background: #FFF8E1; }
+
+.expense-info { flex: 1; min-width: 0; }
+
+.expense-name {
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.expense-date {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+.expense-right { text-align: right; flex-shrink: 0; }
+
+.expense-amount {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.expense-status {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 8px;
+  margin-top: 3px;
+  display: inline-block;
+}
+
+.expense-status.draft { background: #F5F5F5; color: var(--text-muted); }
+.expense-status.submitted { background: #E3F2FD; color: #1565C0; }
+.expense-status.approved { background: var(--accent-green-fill); color: var(--accent-green-secondary); }
+
+/* FAB */
+.fab {
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  /* Glass FAB */
+  background: var(--primary-navy);
+  box-shadow: 0 6px 24px rgba(22, 61, 115, 0.35);
+}
+
+.fab:hover {
+  transform: scale(1.08);
+  box-shadow: 0 8px 32px rgba(22, 61, 115, 0.45);
+}
+
+.fab:active { transform: scale(0.95); }
+
+.fab svg {
+  width: 26px;
+  height: 26px;
+  fill: none;
+  stroke: #fff;
+  stroke-width: 2.2;
+  stroke-linecap: round;
+}
+
+/* ===== Analytics Screen ===== */
+.chart-container {
+  margin: 0 16px 12px;
+  padding: 20px;
+  background: rgba(255, 255, 255, 0.82);
+  backdrop-filter: blur(20px);
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  box-shadow: 0 2px 16px var(--glass-shadow);
+}
+
+.chart-bars {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  height: 120px;
+  gap: 8px;
+  padding-top: 10px;
+}
+
+.chart-bar-wrapper {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100%;
+  justify-content: flex-end;
+}
+
+.chart-bar {
+  width: 100%;
+  max-width: 28px;
+  border-radius: 6px 6px 2px 2px;
+  transition: height 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.chart-bar.navy { background: linear-gradient(180deg, var(--primary-navy), var(--secondary-navy)); }
+.chart-bar.green { background: linear-gradient(180deg, var(--accent-green), var(--accent-green-secondary)); }
+
+.chart-bar-label {
+  font-size: 10px;
+  color: var(--text-muted);
+  margin-top: 6px;
+  font-weight: 500;
+}
+
+.metric-row {
+  display: flex;
+  gap: 10px;
+  margin: 0 16px 12px;
+}
+
+.metric-card {
+  flex: 1;
+  padding: 16px;
+  background: rgba(255, 255, 255, 0.82);
+  backdrop-filter: blur(20px);
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  box-shadow: 0 2px 12px var(--glass-shadow);
+}
+
+.metric-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 10px;
+}
+
+.metric-icon svg {
+  width: 16px;
+  height: 16px;
+  fill: none;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.metric-value {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.metric-label {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+.metric-change {
+  font-size: 11px;
+  font-weight: 600;
+  margin-top: 4px;
+}
+
+.metric-change.up { color: var(--accent-green-secondary); }
+.metric-change.down { color: #d32f2f; }
+
+/* ===== Search Screen ===== */
+.search-container { padding: 0 16px; }
+
+.search-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 16px;
+  background: rgba(255, 255, 255, 0.82);
+  backdrop-filter: blur(20px);
+  border-radius: 14px;
+  border: 1px solid var(--border);
+  margin-bottom: 20px;
+}
+
+.search-bar svg {
+  width: 20px;
+  height: 20px;
+  fill: none;
+  stroke: var(--text-muted);
+  stroke-width: 2;
+  stroke-linecap: round;
+}
+
+.search-bar input {
+  border: none;
+  outline: none;
+  background: transparent;
+  font-size: 16px;
+  font-family: inherit;
+  color: var(--text-primary);
+  flex: 1;
+}
+
+.search-bar input::placeholder { color: var(--text-muted); }
+
+.search-section-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 10px;
+  padding: 0 4px;
+}
+
+.search-result-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.search-result-item:hover { background: rgba(22, 61, 115, 0.04); }
+
+.search-result-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  background: var(--bg-soft);
+}
+
+.search-result-icon svg {
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: var(--text-secondary);
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.search-result-text { flex: 1; }
+.search-result-title { font-size: 15px; font-weight: 500; color: var(--text-primary); }
+.search-result-sub { font-size: 12px; color: var(--text-muted); margin-top: 1px; }
+
+/* ===== Settings Screen ===== */
+.settings-profile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 16px 16px 24px;
+}
+
+.settings-avatar {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--primary-navy), var(--secondary-navy));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 12px;
+  font-size: 28px;
+  font-weight: 600;
+  color: #fff;
+}
+
+.settings-name {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.settings-email {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+.settings-group {
+  margin: 0 16px 16px;
+  background: rgba(255, 255, 255, 0.82);
+  backdrop-filter: blur(20px);
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  box-shadow: 0 2px 12px var(--glass-shadow);
+  overflow: hidden;
+}
+
+.settings-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 16px;
+  border-bottom: 0.5px solid var(--border);
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.settings-item:last-child { border-bottom: none; }
+.settings-item:hover { background: rgba(0,0,0,0.02); }
+
+.settings-item-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.settings-item-icon svg {
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: #fff;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.settings-item-text { flex: 1; }
+.settings-item-title { font-size: 15px; color: var(--text-primary); }
+.settings-item-sub { font-size: 12px; color: var(--text-muted); margin-top: 1px; }
+
+.settings-chevron {
+  color: var(--text-muted);
+  font-size: 14px;
+}
+
+.settings-footer {
+  text-align: center;
+  padding: 16px;
+  font-size: 11px;
+  color: var(--text-muted);
+  line-height: 1.6;
+}
+
+/* ===== Offline Banner ===== */
+.offline-banner {
+  display: none;
+  margin: 0 16px 12px;
+  padding: 14px 16px;
+  background: rgba(211, 47, 47, 0.08);
+  border: 1px solid rgba(211, 47, 47, 0.2);
+  border-radius: 12px;
+  align-items: center;
+  gap: 12px;
+}
+
+.offline-banner.visible { display: flex; }
+
+.offline-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgba(211, 47, 47, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.offline-icon svg {
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: #d32f2f;
+  stroke-width: 2;
+  stroke-linecap: round;
+}
+
+.offline-text { flex: 1; }
+.offline-title { font-size: 14px; font-weight: 600; color: #b71c1c; }
+.offline-sub { font-size: 12px; color: #c62828; margin-top: 1px; }
+
+/* ===== Camera Overlay ===== */
+.camera-overlay {
+  display: none;
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.92);
+  z-index: 200;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border-radius: 44px;
+}
+
+.camera-overlay.visible {
+  display: flex;
+}
+
+.camera-viewfinder {
+  width: 280px;
+  height: 200px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 16px;
+  position: relative;
+  margin-bottom: 24px;
+}
+
+.camera-viewfinder::before,
+.camera-viewfinder::after {
+  content: '';
+  position: absolute;
+  width: 30px;
+  height: 30px;
+  border-color: var(--accent-green);
+  border-style: solid;
+}
+
+.camera-viewfinder::before {
+  top: -2px;
+  left: -2px;
+  border-width: 3px 0 0 3px;
+  border-radius: 8px 0 0 0;
+}
+
+.camera-viewfinder::after {
+  bottom: -2px;
+  right: -2px;
+  border-width: 0 3px 3px 0;
+  border-radius: 0 0 8px 0;
+}
+
+.camera-corners-tr, .camera-corners-bl {
+  position: absolute;
+  width: 30px;
+  height: 30px;
+  border-color: var(--accent-green);
+  border-style: solid;
+}
+
+.camera-corners-tr {
+  top: -2px; right: -2px;
+  border-width: 3px 3px 0 0;
+  border-radius: 0 8px 0 0;
+}
+
+.camera-corners-bl {
+  bottom: -2px; left: -2px;
+  border-width: 0 0 3px 3px;
+  border-radius: 0 0 0 8px;
+}
+
+.camera-label {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 15px;
+  margin-bottom: 32px;
+}
+
+.camera-shutter {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  border: 4px solid rgba(255, 255, 255, 0.8);
+  background: rgba(255, 255, 255, 0.15);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s;
+  margin-bottom: 20px;
+}
+
+.camera-shutter:active {
+  background: rgba(255, 255, 255, 0.4);
+  transform: scale(0.92);
+}
+
+.camera-shutter-inner {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: #fff;
+}
+
+.camera-close {
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 15px;
+  font-family: inherit;
+  cursor: pointer;
+  padding: 8px 20px;
+}
+
+/* ===== Animations ===== */
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-in { animation: slideUp 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards; }
+.animate-in:nth-child(2) { animation-delay: 0.05s; }
+.animate-in:nth-child(3) { animation-delay: 0.1s; }
+.animate-in:nth-child(4) { animation-delay: 0.15s; }
+
+/* ===== Offline Toggle (demo control) ===== */
+.demo-controls {
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  z-index: 1000;
+}
+
+.demo-btn {
+  padding: 8px 16px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(10px);
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 12px;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.demo-btn:hover {
+  background: rgba(255, 255, 255, 0.15);
+  color: #fff;
+}
+
+.demo-btn.active {
+  background: rgba(211, 47, 47, 0.2);
+  border-color: rgba(211, 47, 47, 0.3);
+  color: #ef9a9a;
+}
+
+.demo-title {
+  color: rgba(255, 255, 255, 0.4);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+</style>
+</head>
+<body>
+
+<!-- Demo Controls -->
+<div class="demo-controls">
+  <div class="demo-title">Demo Controls</div>
+  <button class="demo-btn" id="offlineToggle" onclick="toggleOffline()">Toggle Offline</button>
+  <button class="demo-btn" id="lockToggle" onclick="showLockScreen()">Show Lock Screen</button>
+</div>
+
+<!-- iPhone Frame -->
+<div class="iphone-frame">
+  <div class="screen" id="appScreen">
+    <div class="dynamic-island"></div>
+
+    <!-- ============ LOCK SCREEN ============ -->
+    <div class="app-screen active" id="screen-lock">
+      <div class="status-bar dark">
+        <span class="status-time">9:41</span>
+        <div class="status-icons">
+          <svg viewBox="0 0 18 12"><path d="M1 8.5C3 4 7 1.5 9 1.5s6 2.5 8 7" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/><circle cx="9" cy="10" r="1.5" fill="currentColor"/></svg>
+          <svg viewBox="0 0 18 12"><rect x="0.5" y="1" width="4" height="10" rx="0.5" fill="currentColor" opacity="0.3"/><rect x="0.5" y="5" width="4" height="6" rx="0.5" fill="currentColor"/><rect x="5.5" y="1" width="4" height="10" rx="0.5" fill="currentColor" opacity="0.3"/><rect x="5.5" y="3" width="4" height="8" rx="0.5" fill="currentColor"/><rect x="10.5" y="1" width="4" height="10" rx="0.5" fill="currentColor"/></svg>
+          <svg viewBox="0 0 28 12"><rect x="0" y="1" width="23" height="10" rx="2" stroke="currentColor" stroke-width="1.2" fill="none"/><rect x="2" y="3" width="16" height="6" rx="1" fill="currentColor"/><rect x="24" y="4" width="3" height="4" rx="1" fill="currentColor" opacity="0.3"/></svg>
+        </div>
+      </div>
+      <div class="lock-screen" style="flex:1">
+        <div class="lock-logo">
+          <svg viewBox="0 0 48 48"><rect x="8" y="20" width="32" height="22" rx="4" stroke-width="2"/><path d="M16 20V14a8 8 0 0116 0v6" stroke-width="2" fill="none"/><circle cx="24" cy="32" r="3" fill="rgba(255,255,255,0.9)"/></svg>
+        </div>
+        <div class="lock-title">InsightPulse</div>
+        <div class="lock-subtitle">Authenticate to continue</div>
+        <div class="face-id-container" onclick="unlockApp()">
+          <div class="face-id-icon">
+            <div class="pulse-ring"></div>
+            <!-- Face ID icon -->
+            <svg viewBox="0 0 48 48">
+              <path d="M12 8h-2a2 2 0 00-2 2v2M36 8h2a2 2 0 012 2v2M12 40h-2a2 2 0 01-2-2v-2M36 40h2a2 2 0 002-2v-2"/>
+              <path d="M18 18v3M30 18v3"/>
+              <path d="M18 32c1.5 2 4 3 6 3s4.5-1 6-3"/>
+              <path d="M24 18v8h-2"/>
+            </svg>
+          </div>
+        </div>
+        <button class="unlock-btn" onclick="unlockApp()">
+          Unlock
+        </button>
+        <div class="lock-company">Dataverse IT Consultancy</div>
+      </div>
+    </div>
+
+    <!-- ============ MAIN APP (hidden until unlock) ============ -->
+    <div id="mainApp" style="display:none;flex:1;display:none;flex-direction:column;height:100%;">
+      <div class="status-bar light">
+        <span class="status-time">9:41</span>
+        <div class="status-icons">
+          <svg viewBox="0 0 18 12"><path d="M1 8.5C3 4 7 1.5 9 1.5s6 2.5 8 7" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/><circle cx="9" cy="10" r="1.5" fill="currentColor"/></svg>
+          <svg viewBox="0 0 18 12"><rect x="0.5" y="1" width="4" height="10" rx="0.5" fill="currentColor" opacity="0.3"/><rect x="0.5" y="5" width="4" height="6" rx="0.5" fill="currentColor"/><rect x="5.5" y="1" width="4" height="10" rx="0.5" fill="currentColor" opacity="0.3"/><rect x="5.5" y="3" width="4" height="8" rx="0.5" fill="currentColor"/><rect x="10.5" y="1" width="4" height="10" rx="0.5" fill="currentColor"/></svg>
+          <svg viewBox="0 0 28 12"><rect x="0" y="1" width="23" height="10" rx="2" stroke="currentColor" stroke-width="1.2" fill="none"/><rect x="2" y="3" width="16" height="6" rx="1" fill="currentColor"/><rect x="24" y="4" width="3" height="4" rx="1" fill="currentColor" opacity="0.3"/></svg>
+        </div>
+      </div>
+
+      <div class="content-area" id="contentArea">
+
+        <!-- ===== HOME TAB ===== -->
+        <div class="app-screen active" id="screen-home">
+          <div class="screen-header" style="padding-top:4px;">
+            <div class="greeting">Good morning</div>
+            <h1>Home</h1>
+          </div>
+
+          <!-- Offline Banner placeholder -->
+          <div class="offline-banner" id="offlineBanner">
+            <div class="offline-icon">
+              <svg viewBox="0 0 24 24"><path d="M1 1l22 22M16.72 11.06A10.94 10.94 0 0119 12.55M5 12.55a10.94 10.94 0 015.17-3.03M10.71 5.05A16 16 0 0122.56 9M1.42 9a15.91 15.91 0 014.7-2.88M8.53 16.11a6 6 0 016.95 0M12 20h.01"/></svg>
+            </div>
+            <div class="offline-text">
+              <div class="offline-title">No Connection</div>
+              <div class="offline-sub">Waiting for network...</div>
+            </div>
+          </div>
+
+          <!-- Recent Expenses Card -->
+          <div class="glass-card animate-in">
+            <div class="card-header">
+              <span class="card-title">Recent Expenses</span>
+              <span class="card-badge">3 pending</span>
+            </div>
+            <div class="stat-row">
+              <div class="stat-item">
+                <div class="stat-value">P24,500</div>
+                <div class="stat-label">This Month</div>
+              </div>
+              <div class="stat-item">
+                <div class="stat-value">P18,200</div>
+                <div class="stat-label">Last Month</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Pending Approvals Card -->
+          <div class="glass-card animate-in">
+            <div class="card-header">
+              <span class="card-title">Pending Approvals</span>
+              <span class="card-badge">5 items</span>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:10px;">
+              <div style="display:flex;align-items:center;gap:10px;">
+                <div style="width:8px;height:8px;border-radius:50%;background:#F59E0B;flex-shrink:0;"></div>
+                <span style="font-size:14px;color:var(--text-primary);flex:1;">Purchase Order #2847</span>
+                <span style="font-size:13px;color:var(--text-muted);">P12,000</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:10px;">
+                <div style="width:8px;height:8px;border-radius:50%;background:#F59E0B;flex-shrink:0;"></div>
+                <span style="font-size:14px;color:var(--text-primary);flex:1;">Leave Request - M. Cruz</span>
+                <span style="font-size:13px;color:var(--text-muted);">2 days</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:10px;">
+                <div style="width:8px;height:8px;border-radius:50%;background:#F59E0B;flex-shrink:0;"></div>
+                <span style="font-size:14px;color:var(--text-primary);flex:1;">Expense Report - J. Santos</span>
+                <span style="font-size:13px;color:var(--text-muted);">P8,450</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Quick Actions -->
+          <div class="glass-card animate-in">
+            <div class="card-header">
+              <span class="card-title">Quick Actions</span>
+            </div>
+            <div class="quick-action-grid">
+              <div class="quick-action">
+                <div class="quick-action-icon navy">
+                  <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+                </div>
+                <span class="quick-action-text">New Expense</span>
+              </div>
+              <div class="quick-action">
+                <div class="quick-action-icon green">
+                  <svg viewBox="0 0 24 24"><path d="M9 11l3 3L22 4M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+                </div>
+                <span class="quick-action-text">Approvals</span>
+              </div>
+              <div class="quick-action">
+                <div class="quick-action-icon navy">
+                  <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+                </div>
+                <span class="quick-action-text">Timesheet</span>
+              </div>
+              <div class="quick-action">
+                <div class="quick-action-icon green">
+                  <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/></svg>
+                </div>
+                <span class="quick-action-text">Reports</span>
+              </div>
+            </div>
+          </div>
+
+          <div style="height:20px;"></div>
+        </div>
+
+        <!-- ===== EXPENSES TAB ===== -->
+        <div class="app-screen" id="screen-expenses" style="position:relative;">
+          <div class="screen-header" style="padding-top:4px;">
+            <div class="greeting">March 2026</div>
+            <h1>Expenses</h1>
+          </div>
+
+          <div class="offline-banner" id="offlineBannerExpenses">
+            <div class="offline-icon">
+              <svg viewBox="0 0 24 24"><path d="M1 1l22 22M16.72 11.06A10.94 10.94 0 0119 12.55M5 12.55a10.94 10.94 0 015.17-3.03M10.71 5.05A16 16 0 0122.56 9M1.42 9a15.91 15.91 0 014.7-2.88M8.53 16.11a6 6 0 016.95 0M12 20h.01"/></svg>
+            </div>
+            <div class="offline-text">
+              <div class="offline-title">No Connection</div>
+              <div class="offline-sub">Waiting for network...</div>
+            </div>
+          </div>
+
+          <div class="glass-card">
+            <div class="expense-item">
+              <div class="expense-thumb food">&#127829;</div>
+              <div class="expense-info">
+                <div class="expense-name">Client Lunch - BGC</div>
+                <div class="expense-date">Mar 24, 2026</div>
+              </div>
+              <div class="expense-right">
+                <div class="expense-amount">P2,450</div>
+                <div class="expense-status approved">Approved</div>
+              </div>
+            </div>
+            <div class="expense-item">
+              <div class="expense-thumb transport">&#128663;</div>
+              <div class="expense-info">
+                <div class="expense-name">Grab to Makati Office</div>
+                <div class="expense-date">Mar 23, 2026</div>
+              </div>
+              <div class="expense-right">
+                <div class="expense-amount">P385</div>
+                <div class="expense-status submitted">Submitted</div>
+              </div>
+            </div>
+            <div class="expense-item">
+              <div class="expense-thumb hotel">&#127976;</div>
+              <div class="expense-info">
+                <div class="expense-name">Hotel - Cebu Trip</div>
+                <div class="expense-date">Mar 20, 2026</div>
+              </div>
+              <div class="expense-right">
+                <div class="expense-amount">P8,500</div>
+                <div class="expense-status approved">Approved</div>
+              </div>
+            </div>
+            <div class="expense-item">
+              <div class="expense-thumb office">&#128221;</div>
+              <div class="expense-info">
+                <div class="expense-name">Office Supplies</div>
+                <div class="expense-date">Mar 18, 2026</div>
+              </div>
+              <div class="expense-right">
+                <div class="expense-amount">P1,250</div>
+                <div class="expense-status draft">Draft</div>
+              </div>
+            </div>
+            <div class="expense-item">
+              <div class="expense-thumb client">&#9749;</div>
+              <div class="expense-info">
+                <div class="expense-name">Coffee Meeting</div>
+                <div class="expense-date">Mar 17, 2026</div>
+              </div>
+              <div class="expense-right">
+                <div class="expense-amount">P680</div>
+                <div class="expense-status submitted">Submitted</div>
+              </div>
+            </div>
+          </div>
+
+          <div style="height:80px;"></div>
+
+          <!-- FAB: Capture Receipt -->
+          <button class="fab" id="captureFab" onclick="showCamera()">
+            <svg viewBox="0 0 24 24"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg>
+          </button>
+        </div>
+
+        <!-- ===== ANALYTICS TAB ===== -->
+        <div class="app-screen" id="screen-analytics">
+          <div class="screen-header" style="padding-top:4px;">
+            <div class="greeting">Expense Insights</div>
+            <h1>Analytics</h1>
+          </div>
+
+          <div class="metric-row">
+            <div class="metric-card">
+              <div class="metric-icon" style="background:rgba(22,61,115,0.1);">
+                <svg viewBox="0 0 24 24" stroke="var(--primary-navy)"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
+              </div>
+              <div class="metric-value">P42.7K</div>
+              <div class="metric-label">Total Spend</div>
+              <div class="metric-change up">+12.3%</div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-icon" style="background:var(--accent-green-fill);">
+                <svg viewBox="0 0 24 24" stroke="var(--accent-green-secondary)"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+              </div>
+              <div class="metric-value">87%</div>
+              <div class="metric-label">Approval Rate</div>
+              <div class="metric-change up">+5.1%</div>
+            </div>
+          </div>
+
+          <!-- Bar Chart -->
+          <div class="chart-container">
+            <div class="card-header">
+              <span class="card-title">Monthly Expenses</span>
+              <span class="card-badge">2026</span>
+            </div>
+            <div class="chart-bars">
+              <div class="chart-bar-wrapper">
+                <div class="chart-bar navy" style="height:45%;"></div>
+                <div class="chart-bar-label">Oct</div>
+              </div>
+              <div class="chart-bar-wrapper">
+                <div class="chart-bar navy" style="height:60%;"></div>
+                <div class="chart-bar-label">Nov</div>
+              </div>
+              <div class="chart-bar-wrapper">
+                <div class="chart-bar green" style="height:35%;"></div>
+                <div class="chart-bar-label">Dec</div>
+              </div>
+              <div class="chart-bar-wrapper">
+                <div class="chart-bar navy" style="height:72%;"></div>
+                <div class="chart-bar-label">Jan</div>
+              </div>
+              <div class="chart-bar-wrapper">
+                <div class="chart-bar navy" style="height:55%;"></div>
+                <div class="chart-bar-label">Feb</div>
+              </div>
+              <div class="chart-bar-wrapper">
+                <div class="chart-bar green" style="height:88%;"></div>
+                <div class="chart-bar-label">Mar</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Category Breakdown -->
+          <div class="glass-card">
+            <div class="card-header">
+              <span class="card-title">By Category</span>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:12px;">
+              <div style="display:flex;align-items:center;gap:12px;">
+                <div style="font-size:20px;">&#127829;</div>
+                <div style="flex:1;">
+                  <div style="display:flex;justify-content:space-between;margin-bottom:4px;">
+                    <span style="font-size:13px;font-weight:500;">Meals</span>
+                    <span style="font-size:13px;color:var(--text-muted);">P15,200</span>
+                  </div>
+                  <div style="height:6px;background:var(--bg-soft);border-radius:3px;overflow:hidden;">
+                    <div style="height:100%;width:65%;background:var(--primary-navy);border-radius:3px;"></div>
+                  </div>
+                </div>
+              </div>
+              <div style="display:flex;align-items:center;gap:12px;">
+                <div style="font-size:20px;">&#128663;</div>
+                <div style="flex:1;">
+                  <div style="display:flex;justify-content:space-between;margin-bottom:4px;">
+                    <span style="font-size:13px;font-weight:500;">Transport</span>
+                    <span style="font-size:13px;color:var(--text-muted);">P8,900</span>
+                  </div>
+                  <div style="height:6px;background:var(--bg-soft);border-radius:3px;overflow:hidden;">
+                    <div style="height:100%;width:38%;background:var(--accent-green);border-radius:3px;"></div>
+                  </div>
+                </div>
+              </div>
+              <div style="display:flex;align-items:center;gap:12px;">
+                <div style="font-size:20px;">&#127976;</div>
+                <div style="flex:1;">
+                  <div style="display:flex;justify-content:space-between;margin-bottom:4px;">
+                    <span style="font-size:13px;font-weight:500;">Accommodation</span>
+                    <span style="font-size:13px;color:var(--text-muted);">P12,400</span>
+                  </div>
+                  <div style="height:6px;background:var(--bg-soft);border-radius:3px;overflow:hidden;">
+                    <div style="height:100%;width:53%;background:var(--secondary-navy);border-radius:3px;"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div style="height:20px;"></div>
+        </div>
+
+        <!-- ===== SEARCH TAB ===== -->
+        <div class="app-screen" id="screen-search">
+          <div class="screen-header" style="padding-top:4px;">
+            <h1>Search</h1>
+          </div>
+
+          <div class="search-container">
+            <div class="search-bar">
+              <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+              <input type="text" placeholder="Search Odoo..." readonly>
+            </div>
+
+            <div class="search-section-title">Recent</div>
+
+            <div class="search-result-item">
+              <div class="search-result-icon">
+                <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6"/></svg>
+              </div>
+              <div class="search-result-text">
+                <div class="search-result-title">PO-2847 - Office Equipment</div>
+                <div class="search-result-sub">Purchase Order</div>
+              </div>
+            </div>
+
+            <div class="search-result-item">
+              <div class="search-result-icon">
+                <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+              </div>
+              <div class="search-result-text">
+                <div class="search-result-title">Maria Cruz</div>
+                <div class="search-result-sub">Employee</div>
+              </div>
+            </div>
+
+            <div class="search-result-item">
+              <div class="search-result-icon">
+                <svg viewBox="0 0 24 24"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
+              </div>
+              <div class="search-result-text">
+                <div class="search-result-title">EXP-0342 - Cebu Trip</div>
+                <div class="search-result-sub">Expense Report</div>
+              </div>
+            </div>
+
+            <div class="search-result-item">
+              <div class="search-result-icon">
+                <svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><path d="M22 6l-10 7L2 6"/></svg>
+              </div>
+              <div class="search-result-text">
+                <div class="search-result-title">INV-2026-0089</div>
+                <div class="search-result-sub">Invoice</div>
+              </div>
+            </div>
+
+            <div style="margin-top:20px;">
+              <div class="search-section-title">Suggested</div>
+              <div class="search-result-item">
+                <div class="search-result-icon" style="background:var(--accent-green-fill);">
+                  <svg viewBox="0 0 24 24" stroke="var(--accent-green-secondary)"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><path d="M22 4L12 14.01l-3-3"/></svg>
+                </div>
+                <div class="search-result-text">
+                  <div class="search-result-title">My Pending Approvals</div>
+                  <div class="search-result-sub">5 items need attention</div>
+                </div>
+              </div>
+              <div class="search-result-item">
+                <div class="search-result-icon" style="background:rgba(22,61,115,0.08);">
+                  <svg viewBox="0 0 24 24" stroke="var(--primary-navy)"><path d="M18 20V10M12 20V4M6 20v-6"/></svg>
+                </div>
+                <div class="search-result-text">
+                  <div class="search-result-title">This Month's Report</div>
+                  <div class="search-result-sub">Expense analytics</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div style="height:20px;"></div>
+        </div>
+
+        <!-- ===== SETTINGS TAB ===== -->
+        <div class="app-screen" id="screen-settings">
+          <div class="screen-header" style="padding-top:4px;">
+            <h1>Settings</h1>
+          </div>
+
+          <div class="settings-profile">
+            <div class="settings-avatar">JT</div>
+            <div class="settings-name">Juan Tolentino</div>
+            <div class="settings-email">j.tolentino@insightpulseai.com</div>
+          </div>
+
+          <div class="settings-group">
+            <div class="settings-item">
+              <div class="settings-item-icon" style="background:var(--primary-navy);">
+                <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+              </div>
+              <div class="settings-item-text">
+                <div class="settings-item-title">Account</div>
+                <div class="settings-item-sub">Profile, password, 2FA</div>
+              </div>
+              <div class="settings-chevron">&#8250;</div>
+            </div>
+            <div class="settings-item">
+              <div class="settings-item-icon" style="background:var(--accent-green-secondary);">
+                <svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+              </div>
+              <div class="settings-item-text">
+                <div class="settings-item-title">Security</div>
+                <div class="settings-item-sub">Face ID, biometric lock</div>
+              </div>
+              <div class="settings-chevron">&#8250;</div>
+            </div>
+            <div class="settings-item">
+              <div class="settings-item-icon" style="background:#5B7FFF;">
+                <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 01-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+              </div>
+              <div class="settings-item-text">
+                <div class="settings-item-title">Preferences</div>
+                <div class="settings-item-sub">Notifications, theme</div>
+              </div>
+              <div class="settings-chevron">&#8250;</div>
+            </div>
+          </div>
+
+          <div class="settings-group">
+            <div class="settings-item">
+              <div class="settings-item-icon" style="background:#8B5CF6;">
+                <svg viewBox="0 0 24 24"><path d="M2 20h.01M7 20v-4M12 20v-8M17 20V8M22 4v16"/></svg>
+              </div>
+              <div class="settings-item-text">
+                <div class="settings-item-title">Environment</div>
+                <div class="settings-item-sub">erp.insightpulseai.com (Production)</div>
+              </div>
+              <div class="settings-chevron">&#8250;</div>
+            </div>
+            <div class="settings-item">
+              <div class="settings-item-icon" style="background:#F59E0B;">
+                <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+              </div>
+              <div class="settings-item-text">
+                <div class="settings-item-title">Session</div>
+                <div class="settings-item-sub">Active since 9:32 AM</div>
+              </div>
+              <div class="settings-chevron">&#8250;</div>
+            </div>
+          </div>
+
+          <div class="settings-group">
+            <div class="settings-item" style="justify-content:center;">
+              <span style="color:#d32f2f;font-weight:500;font-size:15px;">Sign Out</span>
+            </div>
+          </div>
+
+          <div class="settings-footer">
+            InsightPulse v1.0.0 (Build 42)<br>
+            com.insightpulseai.odoo<br>
+            Dataverse IT Consultancy
+          </div>
+
+          <div style="height:20px;"></div>
+        </div>
+      </div>
+
+      <!-- Camera Overlay -->
+      <div class="camera-overlay" id="cameraOverlay">
+        <div class="camera-viewfinder">
+          <div class="camera-corners-tr"></div>
+          <div class="camera-corners-bl"></div>
+        </div>
+        <div class="camera-label">Position receipt within frame</div>
+        <div class="camera-shutter" onclick="capturePhoto()">
+          <div class="camera-shutter-inner"></div>
+        </div>
+        <button class="camera-close" onclick="hideCamera()">Cancel</button>
+      </div>
+
+      <!-- Tab Bar -->
+      <div class="tab-bar">
+        <div class="tab-item active" data-tab="home" onclick="switchTab('home')">
+          <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+          <span class="tab-label">Home</span>
+        </div>
+        <div class="tab-item" data-tab="expenses" onclick="switchTab('expenses')">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v8M8 12h8"/></svg>
+          <span class="tab-label">Expenses</span>
+        </div>
+        <div class="tab-item" data-tab="analytics" onclick="switchTab('analytics')">
+          <svg viewBox="0 0 24 24"><path d="M18 20V10M12 20V4M6 20v-6"/></svg>
+          <span class="tab-label">Analytics</span>
+        </div>
+        <div class="tab-item" data-tab="search" onclick="switchTab('search')">
+          <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+          <span class="tab-label">Search</span>
+        </div>
+        <div class="tab-item" data-tab="settings" onclick="switchTab('settings')">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 01-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+          <span class="tab-label">Settings</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+// State
+let currentTab = 'home';
+let isLocked = true;
+let isOffline = false;
+
+// Unlock
+function unlockApp() {
+  const lockScreen = document.getElementById('screen-lock');
+  const mainApp = document.getElementById('mainApp');
+
+  lockScreen.style.transition = 'opacity 0.35s ease, transform 0.35s ease';
+  lockScreen.style.opacity = '0';
+  lockScreen.style.transform = 'scale(0.95)';
+
+  setTimeout(() => {
+    lockScreen.style.display = 'none';
+    mainApp.style.display = 'flex';
+    mainApp.style.flexDirection = 'column';
+    mainApp.style.flex = '1';
+    mainApp.style.height = '100%';
+    isLocked = false;
+
+    // Animate cards in
+    document.querySelectorAll('#screen-home .glass-card').forEach((card, i) => {
+      card.style.opacity = '0';
+      card.style.transform = 'translateY(20px)';
+      setTimeout(() => {
+        card.style.transition = 'opacity 0.4s ease, transform 0.4s ease';
+        card.style.opacity = '1';
+        card.style.transform = 'translateY(0)';
+      }, 80 + i * 60);
+    });
+  }, 300);
+}
+
+// Show lock screen
+function showLockScreen() {
+  const lockScreen = document.getElementById('screen-lock');
+  const mainApp = document.getElementById('mainApp');
+
+  mainApp.style.display = 'none';
+  lockScreen.style.display = 'block';
+  lockScreen.style.opacity = '1';
+  lockScreen.style.transform = 'scale(1)';
+  isLocked = true;
+}
+
+// Tab switching
+function switchTab(tab) {
+  currentTab = tab;
+
+  // Update tab items
+  document.querySelectorAll('.tab-item').forEach(item => {
+    item.classList.toggle('active', item.dataset.tab === tab);
+  });
+
+  // Update screens
+  document.querySelectorAll('#contentArea .app-screen').forEach(screen => {
+    screen.classList.remove('active');
+  });
+  const targetScreen = document.getElementById('screen-' + tab);
+  if (targetScreen) {
+    targetScreen.classList.add('active');
+
+    // Scroll to top
+    document.getElementById('contentArea').scrollTop = 0;
+  }
+}
+
+// Camera overlay
+function showCamera() {
+  document.getElementById('cameraOverlay').classList.add('visible');
+}
+
+function hideCamera() {
+  document.getElementById('cameraOverlay').classList.remove('visible');
+}
+
+function capturePhoto() {
+  const shutter = document.querySelector('.camera-shutter-inner');
+  shutter.style.transition = 'transform 0.1s';
+  shutter.style.transform = 'scale(0.85)';
+  setTimeout(() => {
+    shutter.style.transform = 'scale(1)';
+    // Flash
+    const overlay = document.getElementById('cameraOverlay');
+    overlay.style.background = 'rgba(255,255,255,0.8)';
+    setTimeout(() => {
+      overlay.style.background = 'rgba(0,0,0,0.92)';
+      setTimeout(hideCamera, 300);
+    }, 150);
+  }, 100);
+}
+
+// Offline toggle
+function toggleOffline() {
+  isOffline = !isOffline;
+  document.getElementById('offlineToggle').classList.toggle('active', isOffline);
+  document.querySelectorAll('.offline-banner').forEach(b => {
+    b.classList.toggle('visible', isOffline);
+  });
+}
+</script>
+</body>
+</html>

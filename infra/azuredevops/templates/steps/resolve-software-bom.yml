@@ -1,0 +1,85 @@
+parameters:
+  - name: appName
+    type: string
+  - name: workloadType
+    type: string
+  - name: templateVersion
+    type: string
+    default: v1
+  - name: imageRef
+    type: string
+    default: ""
+  - name: dbImageRef
+    type: string
+    default: ""
+  - name: nodeVersion
+    type: string
+    default: ""
+  - name: pythonVersion
+    type: string
+    default: ""
+  - name: addonLockPath
+    type: string
+    default: ""
+  - name: modelDeploymentId
+    type: string
+    default: ""
+  - name: targetEnvironment
+    type: string
+    default: ""
+
+steps:
+  - task: UsePythonVersion@0
+    inputs:
+      versionSpec: "3.11"
+    displayName: Use Python for BOM generation
+
+  - bash: |
+      set -euo pipefail
+      mkdir -p artifacts
+
+      python - <<'PY'
+      import json, os
+
+      bom = {
+        "app_name": os.environ["APP_NAME"],
+        "workload_type": os.environ["WORKLOAD_TYPE"],
+        "git_sha": os.environ["BUILD_SOURCEVERSION"],
+        "build_id": os.environ["BUILD_BUILDID"],
+        "build_number": os.environ["BUILD_BUILDNUMBER"],
+        "pipeline_definition": os.environ["BUILD_DEFINITIONNAME"],
+        "template_version": os.environ["TEMPLATE_VERSION"],
+        "target_environment": os.environ["TARGET_ENVIRONMENT"],
+        "software": {
+          "runtime_image": os.environ["IMAGE_REF"],
+          "database_image": os.environ["DB_IMAGE_REF"],
+          "node_version": os.environ["NODE_VERSION"],
+          "python_version": os.environ["PYTHON_VERSION"],
+          "addon_lock_path": os.environ["ADDON_LOCK_PATH"],
+          "model_deployment_id": os.environ["MODEL_DEPLOYMENT_ID"],
+        },
+        "artifact_contract": {
+          "kind": "software-bom",
+          "schema_version": 1
+        }
+      }
+
+      with open("artifacts/software-bom.json", "w", encoding="utf-8") as f:
+          json.dump(bom, f, indent=2, sort_keys=True)
+      PY
+    displayName: Resolve software BOM
+    env:
+      APP_NAME: ${{ parameters.appName }}
+      WORKLOAD_TYPE: ${{ parameters.workloadType }}
+      TEMPLATE_VERSION: ${{ parameters.templateVersion }}
+      IMAGE_REF: ${{ parameters.imageRef }}
+      DB_IMAGE_REF: ${{ parameters.dbImageRef }}
+      NODE_VERSION: ${{ parameters.nodeVersion }}
+      PYTHON_VERSION: ${{ parameters.pythonVersion }}
+      ADDON_LOCK_PATH: ${{ parameters.addonLockPath }}
+      MODEL_DEPLOYMENT_ID: ${{ parameters.modelDeploymentId }}
+      TARGET_ENVIRONMENT: ${{ parameters.targetEnvironment }}
+
+  - publish: artifacts/software-bom.json
+    artifact: software-bom
+    displayName: Publish software BOM artifact

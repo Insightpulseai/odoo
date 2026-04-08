@@ -1,23 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <record id="hr_expense_policy_rule_view_form" model="ir.ui.view">
+
+    <!-- ── Policy Rule Views ─────────────────────────────────────────────── -->
+
+    <record id="view_expense_policy_rule_tree" model="ir.ui.view">
+        <field name="name">hr.expense.policy.rule.tree</field>
+        <field name="model">hr.expense.policy.rule</field>
+        <field name="arch" type="xml">
+            <list string="Policy Rules">
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="rule_code"/>
+                <field name="rule_type"/>
+                <field name="threshold_amount"/>
+                <field name="max_days"/>
+                <field name="severity" widget="badge"
+                       decoration-warning="severity=='warning'"
+                       decoration-danger="severity=='block'"/>
+                <field name="active"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_expense_policy_rule_form" model="ir.ui.view">
         <field name="name">hr.expense.policy.rule.form</field>
         <field name="model">hr.expense.policy.rule</field>
         <field name="arch" type="xml">
-            <form string="Expense Policy Rule">
+            <form string="Policy Rule">
                 <sheet>
                     <group>
                         <group>
                             <field name="name"/>
-                            <field name="sequence"/>
-                            <field name="active"/>
-                            <field name="company_id"/>
+                            <field name="rule_code"/>
+                            <field name="rule_type"/>
+                            <field name="severity"/>
                         </group>
                         <group>
-                            <field name="rule_type"/>
-                            <field name="amount_limit" invisible="rule_type != 'amount_limit'"/>
-                            <field name="category" invisible="rule_type != 'category_limit'"/>
-                            <field name="severity"/>
+                            <field name="threshold_amount"
+                                   attrs="{'invisible': [('rule_type', '=', 'overdue_check')]}"/>
+                            <field name="max_days"
+                                   attrs="{'invisible': [('rule_type', '!=', 'overdue_check')]}"/>
+                            <field name="sequence"/>
+                            <field name="active"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
                         </group>
                     </group>
                 </sheet>
@@ -25,23 +50,65 @@
         </field>
     </record>
 
-    <record id="hr_expense_policy_rule_view_list" model="ir.ui.view">
-        <field name="name">hr.expense.policy.rule.list</field>
-        <field name="model">hr.expense.policy.rule</field>
-        <field name="arch" type="xml">
-            <list string="Expense Policy Rules">
-                <field name="sequence" widget="handle"/>
-                <field name="name"/>
-                <field name="rule_type"/>
-                <field name="severity"/>
-                <field name="active"/>
-            </list>
-        </field>
-    </record>
-
-    <record id="hr_expense_policy_rule_action" model="ir.actions.act_window">
+    <record id="action_expense_policy_rule" model="ir.actions.act_window">
         <field name="name">Policy Rules</field>
         <field name="res_model">hr.expense.policy.rule</field>
         <field name="view_mode">list,form</field>
     </record>
+
+    <!-- ── Policy Violation Views ────────────────────────────────────────── -->
+
+    <record id="view_expense_policy_violation_tree" model="ir.ui.view">
+        <field name="name">hr.expense.policy.violation.tree</field>
+        <field name="model">hr.expense.policy.violation</field>
+        <field name="arch" type="xml">
+            <list string="Policy Violations"
+                  decoration-warning="severity=='warning' and not resolved"
+                  decoration-danger="severity=='block' and not resolved"
+                  decoration-muted="resolved">
+                <field name="liquidation_id"/>
+                <field name="rule_code"/>
+                <field name="severity" widget="badge"
+                       decoration-warning="severity=='warning'"
+                       decoration-danger="severity=='block'"/>
+                <field name="description"/>
+                <field name="resolved"/>
+                <field name="resolved_by"/>
+                <field name="resolved_date"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_expense_policy_violation_form" model="ir.ui.view">
+        <field name="name">hr.expense.policy.violation.form</field>
+        <field name="model">hr.expense.policy.violation</field>
+        <field name="arch" type="xml">
+            <form string="Policy Violation">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="liquidation_id"/>
+                            <field name="rule_code"/>
+                            <field name="severity"/>
+                        </group>
+                        <group>
+                            <field name="resolved"/>
+                            <field name="resolved_by" attrs="{'invisible': [('resolved', '=', False)]}"/>
+                            <field name="resolved_date" attrs="{'invisible': [('resolved', '=', False)]}"/>
+                        </group>
+                    </group>
+                    <group>
+                        <field name="description"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_expense_policy_violation" model="ir.actions.act_window">
+        <field name="name">Policy Violations</field>
+        <field name="res_model">hr.expense.policy.violation</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
 </odoo>

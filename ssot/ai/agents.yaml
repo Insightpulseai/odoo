@@ -1,71 +1,140 @@
 # SSOT: AI Agents Registry
-# Physical Foundry agents and their logical modes.
+# Foundry project agents and their named agent definitions.
 # Cross-referenced by: models.yaml, policies.yaml, prompts.yaml
+# Companion: ssot/agents/agent-factory-lifecycle.yaml (universal lifecycle gates)
+# Updated: 2026-04-06
+#
+# NOTE: Uses Foundry SDK v2 (azure-ai-projects >= 2.0.0).
+#   - Client: AIProjectClient(endpoint=PROJECT_ENDPOINT, credential=DefaultAzureCredential())
+#   - Agents: project.agents.create_version(name, definition=PromptAgentDefinition(...))
+#   - Chat: project.get_openai_client() → openai.responses.create(agent_reference=...)
+#   - Conversations: openai.conversations.create() for server-side state
+#
+# Customer-facing product name is "Pulser" (not "Odoo Copilot").
+# See ssot/agents/assistant_surfaces.yaml for canonical surface taxonomy.
+# See ssot/agents/certification-agent-architecture.yaml for agent framework.
+
+# ---------------------------------------------------------------------------
+# Foundry project
+# ---------------------------------------------------------------------------
+
+foundry_project:
+  project: ipai-copilot
+  resource: ipai-copilot-resource
+  resource_group: rg-data-intel-ph
+  region: eastus2
+  tier: S0
+  sdk_version: ">=2.0.0"            # azure-ai-projects v2 (Foundry projects new API)
+  project_endpoint: "https://ipai-copilot-resource.services.ai.azure.com/api/projects/ipai-copilot"
+  openai_endpoint: "https://ipai-copilot-resource.openai.azure.com/openai/v1"
+  tools_endpoint: "https://ipai-copilot-resource.cognitiveservices.azure.com/"
+  auth_mode: managed-identity        # DefaultAzureCredential → managed identity
+  auth_token_scope: "https://ai.azure.com/.default"
+  required_rbac_role: Cognitive Services User  # on ipai-copilot-resource scope
+  instruction_artifact: ssot/ai/foundry_instructions.md
+
+  # --- Model deployments (verified 2026-04-06 from Foundry console) ---
+  model_deployments:
+    gpt-4.1:
+      model: gpt-4.1
+      version: "2025-04-14"
+      sku: Global Standard
+      tpm: 50000
+      expires: 2026-10-14
+      purpose: primary chat/reasoning model for all Pulser agents
+
+    text-embedding-3-small:
+      model: text-embedding-3-small
+      version: "1"
+      sku: Standard
+      tpm: 120000
+      expires: 2027-04-15
+      purpose: vector embeddings for Azure AI Search KB indexes
+
+    w9-pulser:
+      model: gpt-4o-mini
+      version: "2024-07-18"
+      sku: Global Standard
+      tpm: 10000
+      expires: 2026-10-01
+      purpose: lightweight Pulser surface model (cost-optimized for high-volume)
+
+  # --- AI service endpoints (all Standard tier, eastus2) ---
+  service_endpoints:
+    - Azure AI Content Safety        # G4 Safety gate
+    - Azure AI Document Intelligence  # OCR bridge (invoices, receipts, BIR forms)
+    - Azure AI Language               # entity/sentiment extraction
+    - Azure AI Speech                 # future voice interface
+    - Azure AI Translator             # PH multilingual support
+    - Azure AI Vision                 # document/image processing
+    - Azure AI Content Understanding  # multimodal content analysis
+
+# ---------------------------------------------------------------------------
+# Named agents (each is a Foundry Agent Service named agent)
+# ---------------------------------------------------------------------------
+# In SDK v2, each agent is registered via:
+#   project.agents.create_version(agent_name=NAME, definition=PromptAgentDefinition(...))
+# Diva routing selects which agent_reference to pass:
+#   openai.responses.create(conversation=conv.id, extra_body={"agent_reference": {"name": NAME}}, ...)
 
 agents:
-  # --- Physical Agent (Azure Foundry) ---
-  ipai-odoo-copilot-azure:
-    type: physical
-    runtime: azure-foundry
-    project: data-intel-ph
-    resource: data-intel-ph-resource
-    resource_group: rg-data-intel-ph
-    region: eastus2
-    version: 1
-    model_ref: gpt-4.1            # → models.yaml
-    auth_mode: managed-identity    # target; v1 uses env var fallback
-    api_endpoint_pattern: "https://{resource}.services.ai.azure.com"
-    agents_api: "GET /openai/assistants?api-version=2024-12-01-preview"
-    memory_default: false
-    read_only_default: true
-    instruction_artifact: ssot/ai/foundry_instructions.md
-    logical_agents:
-      - ask-agent
-      - authoring-agent
-      - livechat-agent
-      - transaction-agent
 
-  # --- Logical Agents (modes of the physical agent) ---
   ask-agent:
-    type: logical
-    physical_agent_ref: ipai-odoo-copilot-azure
+    type: prompt                       # PromptAgentDefinition
+    foundry_name: ask-agent            # agent_reference name in Foundry
     purpose: Answer questions about Odoo data and processes
     policy_ref: policy-read-only       # → policies.yaml
     prompt_ref: prompt-ask-agent       # → prompts.yaml
     tools: []
     write_access: none
+    pulser_surface: ask-pulser
     source_refs:
       - source-odoo-knowledge          # → sources.yaml
 
   authoring-agent:
-    type: logical
-    physical_agent_ref: ipai-odoo-copilot-azure
+    type: prompt
+    foundry_name: authoring-agent
     purpose: Draft documents, reports, and emails
     policy_ref: policy-draft-only      # → policies.yaml
     prompt_ref: prompt-authoring-agent # → prompts.yaml
     tools: []
     write_access: draft-only
+    pulser_surface: pulser-docs
     source_refs:
       - source-odoo-knowledge
 
   livechat-agent:
-    type: logical
-    physical_agent_ref: ipai-odoo-copilot-azure
+    type: prompt
+    foundry_name: livechat-agent
     purpose: Handle website visitor questions
     policy_ref: policy-read-only       # → policies.yaml
     prompt_ref: prompt-livechat-agent  # → prompts.yaml
     tools: []
     write_access: none
+    pulser_surface: pulser-erp
     source_refs:
       - source-odoo-knowledge
 
   transaction-agent:
-    type: logical
-    physical_agent_ref: ipai-odoo-copilot-azure
+    type: prompt
+    foundry_name: transaction-agent
     purpose: Assist with bounded CRUD operations
     policy_ref: policy-bounded-write   # → policies.yaml
     prompt_ref: prompt-transaction-agent # → prompts.yaml
-    tools: []                          # v1: no tools; future: bounded CRUD
-    write_access: draft-then-approve   # v1: stubbed
+    tools: []                          # future: bounded CRUD tool definitions
+    write_access: draft-then-approve
+    pulser_surface: pulser-erp
     source_refs:
       - source-odoo-knowledge
+
+# ---------------------------------------------------------------------------
+# Legacy mapping
+# ---------------------------------------------------------------------------
+
+legacy:
+  ipai-odoo-copilot-azure:
+    disposition: >
+      v1 physical agent ID. In SDK v2, replaced by named agents registered
+      individually via project.agents.create_version(). Retained for
+      runtime migration reference only.
+    migrated_to: [ask-agent, authoring-agent, livechat-agent, transaction-agent]

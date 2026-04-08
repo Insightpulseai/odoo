@@ -10,6 +10,7 @@
 !config/
 !config/prod/
 !config/prod/**
+!config/azure/
 !docker/
 !docker/requirements/
 !docker/requirements/**

@@ -259,7 +259,7 @@ Cloudflare.
 |----------|--------|
 | `docs/architecture/PUBLISHABILITY_GATES.md` | This file |
 | `docs/architecture/DNS_TARGET_STATE_MATRIX.md` | Done |
-| `docs/architecture/IDENTITY_TARGET_STATE.md` | Done |
+| `docs/architecture/identity/ENTRA_TARGET_STATE.md` | Done |
 | `docs/architecture/ENTRA_IDENTITY_BASELINE_FOR_COPILOT.md` | Done |
 | `docs/architecture/FOUNDRY_ODOO_AUTH_AND_ENDPOINT_POLICY.md` | Done |
 | `docs/architecture/COPILOT_RUNTIME_STAGE_POLICY.md` | Done |

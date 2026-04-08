@@ -1,0 +1,90 @@
+# =============================================================================
+# Web Landing Deploy Pipeline
+# =============================================================================
+# Build -> Deploy -> Smoke -> Evidence for the public landing page.
+# Surface: ipai-website-dev ACA, https://www.insightpulseai.com
+# ACR image: acripaiodoo.azurecr.io/ipai-website:latest
+# =============================================================================
+
+trigger:
+  branches:
+    include:
+      - main
+  paths:
+    include:
+      - web/ipai-landing/**
+
+pr:
+  branches:
+    include:
+      - main
+  paths:
+    include:
+      - web/ipai-landing/**
+
+pool:
+  vmImage: ubuntu-latest
+
+variables:
+  acrName: acripaiodoo
+  imageName: ipai-website
+  imageTag: latest
+  containerAppName: ipai-website-dev
+  resourceGroup: rg-ipai-dev-odoo-runtime
+  serviceConnection: ipai-dev-wif
+  smokeUrl: https://www.insightpulseai.com
+
+stages:
+  # ── Stage 1: Build ──
+  - stage: Build
+    displayName: Build Landing Image
+    jobs:
+      - template: templates/jobs/build-container.yml
+        parameters:
+          imageName: $(imageName)
+          imageTag: $(imageTag)
+          dockerfile: web/ipai-landing/Dockerfile
+          buildContext: web/ipai-landing
+          acrName: $(acrName)
+          serviceConnection: $(serviceConnection)
+
+  # ── Stage 2: Deploy ──
+  - stage: Deploy
+    displayName: Deploy to ACA
+    dependsOn: Build
+    condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
+    jobs:
+      - template: templates/jobs/deploy-containerapp.yml
+        parameters:
+          containerAppName: $(containerAppName)
+          resourceGroup: $(resourceGroup)
+          imageName: $(imageName)
+          imageTag: $(imageTag)
+          acrName: $(acrName)
+          serviceConnection: $(serviceConnection)
+
+  # ── Stage 3: Smoke ──
+  - stage: Smoke
+    displayName: Smoke Test
+    dependsOn: Deploy
+    condition: succeeded()
+    jobs:
+      - template: templates/jobs/smoke-http.yml
+        parameters:
+          url: $(smokeUrl)
+          expectedStatus: '200'
+          contentMatch: InsightPulse
+          retries: 3
+          retryDelaySeconds: 15
+
+  # ── Stage 4: Evidence ──
+  - stage: Evidence
+    displayName: Publish Evidence
+    dependsOn: Smoke
+    condition: succeededOrFailed()
+    jobs:
+      - template: templates/jobs/publish-evidence.yml
+        parameters:
+          surface: web-landing
+          imageRef: $(acrName).azurecr.io/$(imageName):$(imageTag)
+          smokeUrl: $(smokeUrl)

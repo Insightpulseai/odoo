@@ -1,0 +1,67 @@
+{
+  "name": "IPAI Finance",
+  "dataColors": [
+    "#0078D4",
+    "#00B294",
+    "#FFB900",
+    "#E74856",
+    "#8764B8",
+    "#00CC6A",
+    "#F7630C",
+    "#0099BC"
+  ],
+  "background": "#FFFFFF",
+  "foreground": "#252423",
+  "tableAccent": "#0078D4",
+  "textClasses": {
+    "callout": {
+      "fontSize": 28,
+      "fontFace": "Segoe UI Semibold",
+      "color": "#252423"
+    },
+    "title": {
+      "fontSize": 14,
+      "fontFace": "Segoe UI Semibold",
+      "color": "#252423"
+    },
+    "header": {
+      "fontSize": 12,
+      "fontFace": "Segoe UI Semibold",
+      "color": "#252423"
+    },
+    "label": {
+      "fontSize": 10,
+      "fontFace": "Segoe UI",
+      "color": "#605E5C"
+    }
+  },
+  "visualStyles": {
+    "*": {
+      "*": {
+        "background": [{"color": {"solid": {"color": "#FFFFFF"}}}],
+        "border": [{"show": false}],
+        "visualHeader": [{"show": false}],
+        "visualHeaderTooltip": [{"show": true}]
+      }
+    },
+    "page": {
+      "*": {
+        "background": [{"color": {"solid": {"color": "#FAF9F8"}}, "transparency": 0}],
+        "wallpaper": [{"color": {"solid": {"color": "#F3F2F1"}}}]
+      }
+    },
+    "card": {
+      "*": {
+        "labels": [{
+          "color": {"solid": {"color": "#252423"}},
+          "fontSize": 28,
+          "fontFamily": "Segoe UI Semibold"
+        }],
+        "categoryLabels": [{
+          "color": {"solid": {"color": "#605E5C"}},
+          "fontSize": 10
+        }]
+      }
+    }
+  }
+}

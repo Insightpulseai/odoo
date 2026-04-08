@@ -1,0 +1,136 @@
+version: 1
+name: claude-platform-tooling
+description: >
+  Claude tool-use doctrine: client vs server tools, strict schemas,
+  web search configuration, MCP tool conversion, and citation handling.
+type: benchmark_skill
+skill_classification: capability_uplift
+owner_persona: claude-runtime-integrator
+source_family: anthropic_skill_authoring
+status: active
+
+triggers:
+  - "Claude tool use"
+  - "client vs server tools"
+  - "Claude web search"
+  - "strict tool use"
+  - "MCP to Claude tool conversion"
+  - "Claude citations"
+
+capabilities:
+  - id: tool_use_overview
+    description: >
+      Two classes of Claude tools: client tools (you implement) and
+      server tools (Anthropic runs). Client tools use tool_result blocks;
+      server tools execute during model inference and may use pause_turn.
+    source: https://platform.claude.com/docs/en/agents-and-tools/tool-use/overview
+
+  - id: client_tool_design
+    description: >
+      Client tools require JSON schema definitions with name, description,
+      and input_schema. Claude generates tool_use blocks; your code executes
+      them and returns tool_result blocks. Use structured tool descriptions
+      that teach the model when and how to use each tool.
+    source: https://platform.claude.com/docs/en/agents-and-tools/tool-use/overview
+
+  - id: server_tool_design
+    description: >
+      Server tools (web_search, code_execution) are executed by Anthropic
+      during model inference. They use pause_turn to return partial results.
+      Server tools are billed separately from token costs.
+    source: https://platform.claude.com/docs/en/agents-and-tools/tool-use/overview
+
+  - id: web_search_tool_usage
+    description: >
+      Web search tool (web_search_20250305) supports max_uses, allowed_domains
+      OR blocked_domains (never both), optional user_location, and always
+      returns citations. Billed at $10/1000 searches; failed searches not billed.
+    source: https://platform.claude.com/docs/en/agents-and-tools/tool-use/web-search-tool
+
+  - id: strict_schema_tooling
+    description: >
+      Set strict:true on tool schemas for production-sensitive client tools.
+      Guarantees schema-valid tool inputs from Claude. Recommended when
+      invalid parameters would cause failures or security issues.
+    source: https://platform.claude.com/docs/en/agents-and-tools/tool-use/overview
+
+  - id: mcp_to_claude_tool_conversion
+    description: >
+      MCP tools can be converted to Claude tool definitions. MCP server
+      tool schemas map to Claude input_schema. Auth, naming, and description
+      quality carry over — invest in tool descriptions as prompt engineering.
+    source: https://platform.claude.com/docs/en/agents-and-tools/tool-use/overview
+
+rules:
+  - id: prefer_strict_for_production
+    rule: >
+      Set strict:true on all production client tool schemas.
+      Anthropic recommends this when invalid parameters would cause failures.
+    source: https://platform.claude.com/docs/en/agents-and-tools/tool-use/overview
+
+  - id: web_search_for_external_freshness_only
+    rule: >
+      Use Claude web search only for external document freshness, public docs
+      lookups, and public policy/library changes. Never use it as a substitute
+      for governed internal KBs (tax policy, Odoo state, approval decisions).
+    rationale: >
+      Web search is a server tool for fresh public retrieval, not an internal
+      system of record. Internal truth comes from governed KB segments.
+
+  - id: preserve_citations
+    rule: >
+      When rendering web search results directly to end users, always include
+      the citations returned by the web search tool. Citations are always
+      enabled for web search.
+    source: https://platform.claude.com/docs/en/agents-and-tools/tool-use/web-search-tool
+
+  - id: no_mixed_domain_restrictions
+    rule: >
+      Never combine allowed_domains and blocked_domains in the same web search
+      request. Use one or the other.
+    source: https://platform.claude.com/docs/en/agents-and-tools/tool-use/web-search-tool
+
+  - id: cap_web_search_uses
+    rule: >
+      Always set max_uses on web search to prevent runaway tool loops.
+      Default: 3 for KB helper agents; adjust per use case.
+    source: https://platform.claude.com/docs/en/agents-and-tools/tool-use/web-search-tool
+
+inputs:
+  - tool_type: "client or server"
+  - tool_purpose: "What the tool does"
+  - production_sensitivity: "Whether strict:true is needed"
+  - domain_restrictions: "allowed_domains or blocked_domains if web search"
+
+outputs:
+  - tool_definition: "Claude-compatible tool schema"
+  - web_search_config: "Web search configuration if applicable"
+  - integration_notes: "MCP conversion notes if applicable"
+
+guardrails:
+  - "Client tools: you implement execution; Claude generates tool_use blocks"
+  - "Server tools: Anthropic executes; you receive results via pause_turn"
+  - "strict:true for production tools — guarantees schema-valid inputs"
+  - "Web search: $10/1000 searches, failed searches not billed"
+  - "allowed_domains OR blocked_domains — never both"
+  - "Citations always returned for web search — display them to users"
+  - "MCP tools convert to Claude tools — description quality is critical"
+  - "Web search is external freshness, not internal KB authority"
+
+web_search_defaults:
+  recommended_config:
+    type: web_search_20250305
+    name: web_search
+    max_uses: 3
+    allowed_domains:
+      - platform.claude.com
+      - docs.anthropic.com
+  notes: >
+    This config is for a Claude Platform KB helper agent.
+    Adjust allowed_domains and max_uses per use case.
+    Do not use for internal Odoo/tax/approval queries.
+
+benchmark_sources:
+  - "https://platform.claude.com/docs/en/agents-and-tools/tool-use/overview"
+  - "https://platform.claude.com/docs/en/agents-and-tools/tool-use/web-search-tool"
+  - "https://www.anthropic.com/engineering/writing-tools-for-agents"

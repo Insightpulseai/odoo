@@ -1,0 +1,116 @@
+/// Fact: Project tasks with stage tracking
+/// Source: project_task with stage and deadline data
+table Task
+	lineageTag: a1b2c3d4-0002-0001-0001-000000000001
+
+	column TaskID
+		dataType: int64
+		isKey: true
+		sourceColumn: id
+		summarizeBy: none
+		lineageTag: a1b2c3d4-0002-0001-0001-100000000001
+
+	column TaskName
+		dataType: string
+		sourceColumn: name
+		summarizeBy: none
+		lineageTag: a1b2c3d4-0002-0001-0001-100000000002
+
+	column ProjectID
+		dataType: int64
+		sourceColumn: project_id
+		summarizeBy: none
+		isHidden
+		lineageTag: a1b2c3d4-0002-0001-0001-100000000003
+
+	column StageID
+		dataType: int64
+		sourceColumn: stage_id
+		summarizeBy: none
+		isHidden
+		lineageTag: a1b2c3d4-0002-0001-0001-100000000004
+
+	column DateDeadline
+		dataType: dateTime
+		sourceColumn: date_deadline
+		summarizeBy: none
+		lineageTag: a1b2c3d4-0002-0001-0001-100000000005
+
+	column CreateDate
+		dataType: dateTime
+		sourceColumn: create_date
+		summarizeBy: none
+		lineageTag: a1b2c3d4-0002-0001-0001-100000000006
+
+	column WriteDate
+		dataType: dateTime
+		sourceColumn: write_date
+		summarizeBy: none
+		isHidden
+		lineageTag: a1b2c3d4-0002-0001-0001-100000000007
+
+	column MilestoneID
+		dataType: int64
+		sourceColumn: milestone_id
+		summarizeBy: none
+		isHidden
+		lineageTag: a1b2c3d4-0002-0001-0001-100000000008
+
+	column Priority
+		dataType: string
+		sourceColumn: priority
+		summarizeBy: none
+		lineageTag: a1b2c3d4-0002-0001-0001-100000000009
+
+	column IsActive
+		dataType: boolean
+		sourceColumn: active
+		summarizeBy: none
+		lineageTag: a1b2c3d4-0002-0001-0001-100000000010
+
+	/// Total number of tasks
+	measure Task_Count =
+		COUNTROWS(Task)
+		formatString: #,##0
+		displayFolder: Counts
+
+	/// Tasks past deadline and not in Done/Cancelled
+	measure Overdue_Tasks =
+		VAR __today = TODAY()
+		RETURN
+			CALCULATE(
+				COUNTROWS(Task),
+				Task[DateDeadline] < __today,
+				Task[DateDeadline] <> BLANK(),
+				NOT(Stage[StageName] IN {"Done", "Cancelled", "Filing & Payment"})
+			)
+		formatString: #,##0
+		displayFolder: Status
+
+	/// Completion rate (Done + Filing & Payment / Total)
+	measure Completion_Rate =
+		VAR __completed =
+			CALCULATE(
+				COUNTROWS(Task),
+				Stage[StageName] IN {"Done", "Filing & Payment"}
+			)
+		RETURN
+			DIVIDE(__completed, [Task_Count])
+		formatString: 0.0%
+		displayFolder: Status
+
+	/// Tasks in progress (not Done, not Cancelled)
+	measure In_Progress_Tasks =
+		CALCULATE(
+			COUNTROWS(Task),
+			NOT(Stage[StageName] IN {"Done", "Cancelled"})
+		)
+		formatString: #,##0
+		displayFolder: Status
+
+	partition Task = entity
+		mode: directLake
+		source
+			entityName: project_task
+			schemaName: public
+			expressionSource: DatabaseQuery

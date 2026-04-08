@@ -1,0 +1,62 @@
+# node-validate.yml — Node.js validation: install, lint, test, build
+parameters:
+  - name: workingDirectory
+    type: string
+    default: '.'
+  - name: nodeVersion
+    type: string
+    default: '18.x'
+  - name: packageManager
+    type: string
+    default: npm
+    values:
+      - npm
+      - pnpm
+
+steps:
+  - task: NodeTool@0
+    displayName: Use Node.js ${{ parameters.nodeVersion }}
+    inputs:
+      versionSpec: ${{ parameters.nodeVersion }}
+
+  - ${{ if eq(parameters.packageManager, 'pnpm') }}:
+      - script: npm install -g pnpm
+        displayName: Install pnpm
+        workingDirectory: ${{ parameters.workingDirectory }}
+
+  - ${{ if eq(parameters.packageManager, 'pnpm') }}:
+      - script: pnpm install --frozen-lockfile
+        displayName: Install dependencies (pnpm)
+        workingDirectory: ${{ parameters.workingDirectory }}
+
+  - ${{ if eq(parameters.packageManager, 'npm') }}:
+      - script: npm ci
+        displayName: Install dependencies (npm ci)
+        workingDirectory: ${{ parameters.workingDirectory }}
+
+  - script: |
+      if [ -f package.json ] && grep -q '"lint"' package.json; then
+        ${{ parameters.packageManager }} run lint
+      else
+        echo "No lint script found — skipping"
+      fi
+    displayName: Lint
+    workingDirectory: ${{ parameters.workingDirectory }}
+
+  - script: |
+      if [ -f package.json ] && grep -q '"test"' package.json; then
+        ${{ parameters.packageManager }} test
+      else
+        echo "No test script found — skipping"
+      fi
+    displayName: Test
+    workingDirectory: ${{ parameters.workingDirectory }}
+
+  - script: |
+      if [ -f package.json ] && grep -q '"build"' package.json; then
+        ${{ parameters.packageManager }} run build
+      else
+        echo "No build script found — skipping"
+      fi
+    displayName: Build
+    workingDirectory: ${{ parameters.workingDirectory }}

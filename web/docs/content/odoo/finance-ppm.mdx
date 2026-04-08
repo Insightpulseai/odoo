@@ -1,0 +1,96 @@
+---
+title: Finance PPM (Project Portfolio Management)
+description: Budget planning, profitability analysis, and portfolio visibility for project-driven finance teams.
+---
+
+# Finance PPM (Project Portfolio Management)
+
+Finance PPM connects project execution to financial performance inside Odoo on Cloud. It gives finance and operations teams a unified view of project profitability, budget consumption, and margin risk — without switching between systems.
+
+## Key Capabilities
+
+### Budget Planning & Tracking
+- Set project budgets by cost category (labor, materials, subcontractors, overhead)
+- Track committed vs. actual spend in real time
+- Alert on budget threshold breaches (80%, 90%, 100%)
+- Compare budget-to-actual with variance analysis
+
+### Profitability Analysis
+- Real-time gross margin per project, client, and portfolio
+- Revenue recognition aligned with milestone completion
+- Cost allocation across shared resources and overhead
+- Margin waterfall: contract value → direct cost → gross margin → net margin
+
+### Resource Cost Management
+- Timesheet-to-cost integration (employee cost rate × hours)
+- External contractor and vendor cost capture
+- Expense allocation by project and analytic account
+- Capacity planning with cost impact forecasting
+
+### Portfolio-Level Visibility
+- Cross-project dashboard: status, margin, risk, timeline
+- Portfolio heat map by profitability tier
+- Executive summary: top 10 projects by revenue, bottom 10 by margin
+- Drill-down from portfolio → project → task → cost line
+
+## Odoo Modules Used
+
+| Module | Purpose |
+|--------|---------|
+| `project` | Project and task management |
+| `hr_timesheet` | Employee time tracking |
+| `analytic` | Cost and revenue allocation |
+| `account` | General ledger and journal entries |
+| `purchase` | Vendor and subcontractor costs |
+| `sale_project` | Sales order to project linking |
+| `ipai_finance_ppm` | Custom margin analysis and budget alerts |
+
+## Common Workflows
+
+### 1. Project Setup with Budget
+1. Create project from sales order (auto-links revenue)
+2. Define budget lines by analytic account
+3. Set alert thresholds
+4. Assign team with cost rates
+
+### 2. Ongoing Tracking
+1. Timesheets captured daily → auto-costed
+2. Purchase orders linked to project analytic
+3. Expenses submitted and allocated
+4. Dashboard updates in real time
+
+### 3. Monthly Review
+1. Finance reviews margin variance report
+2. PM reviews budget consumption by category
+3. Escalation for projects below target margin
+4. Reforecast if needed
+
+## Key Metrics
+
+| Metric | Definition |
+|--------|-----------|
+| **Gross Margin %** | (Revenue - Direct Cost) / Revenue × 100 |
+| **Budget Consumption %** | Actual Spend / Approved Budget × 100 |
+| **EAC (Estimate at Completion)** | Actual to Date + Forecast to Complete |
+| **Margin at Risk** | Projects with GM% below threshold (default: 25%) |
+| **Utilization Rate** | Billable Hours / Available Hours × 100 |
+
+## Copilot Assistance
+
+Finance Copilot helps by:
+
+- **Budget alerts**: "Project Alpha has consumed 85% of budget with 60% timeline elapsed. Review resource allocation."
+- **Margin watch**: "3 projects dropped below 25% gross margin this month. Top driver: unplanned contractor spend."
+- **Portfolio summary**: "Portfolio margin: 32% (target: 30%). 2 of 12 active projects are margin-at-risk."
+- **Reforecast nudge**: "EAC for Project Beta exceeds approved budget by 15%. Recommend reforecast review."
+
+## FAQ
+
+**Q: Can I see profitability by client across multiple projects?**
+A: Yes. The analytic account hierarchy groups projects by client, letting you roll up margin from individual projects to client-level profitability.
+
+**Q: How are overhead costs allocated?**
+A: Overhead is allocated using configurable distribution keys (headcount, revenue, or direct cost ratio) via the analytic distribution model.
+
+**Q: Does it integrate with billing?**
+A: Yes. Sale orders linked to projects auto-generate invoices based on milestones, time-and-materials, or fixed-fee schedules.

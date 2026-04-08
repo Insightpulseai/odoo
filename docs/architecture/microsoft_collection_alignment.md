@@ -19,10 +19,10 @@ testing approach, identity/governance/monitoring, storage/continuity/infrastruct
 | Expected Output | Repo Artifact | Epic | Status |
 |----------------|---------------|------|--------|
 | Solution strategy | `ssot/governance/platform-strategy-2026.yaml` | — | Complete |
-| Architecture decisions | `docs/architecture/UNIFIED_TARGET_ARCHITECTURE.md` | OBJ-001 | Complete |
+| Architecture decisions | `docs/architecture/target-state/UNIFIED.md` | OBJ-001 | Complete |
 | Implementation approach | `ssot/governance/azdo-execution-hierarchy.yaml` | OBJ-001 | Complete |
 | Testing approach | `odoo/.claude/rules/testing.md` | OBJ-005 | Complete |
-| Identity architecture | `infra/ssot/azure/PLATFORM_TARGET_STATE.md` §Identity | OBJ-001/FEAT-001-01 | Documented, not implemented |
+| Identity architecture | `docs/architecture/target-state/PLATFORM.md` §Identity | OBJ-001/FEAT-001-01 | Documented, not implemented |
 | Governance model | `ssot/governance/platform-constitution.yaml` | — | Complete |
 | Monitoring/observability | `docs/architecture/microsoft_collection_alignment.md` (this file, §2) | OBJ-001/FEAT-001-03 | Gap — see Gap 2 |
 | Storage/continuity | `docs/architecture/ADLS_ETL_REVERSE_ETL_ARCHITECTURE.md` | OBJ-004 | Complete |
@@ -39,8 +39,8 @@ shared IAM, policy, monitoring, governance and change management.
 |----------------|---------------|------|--------|
 | Platform landing zone | `docs/architecture/foundry_landing_zone_operating_model.md` | OBJ-001 | **New** |
 | Application landing zone | `docs/architecture/foundry_landing_zone_operating_model.md` | OBJ-003 | **New** |
-| Shared networking | `infra/ssot/azure/PLATFORM_TARGET_STATE.md` §Networking | OBJ-001 | Complete |
-| Shared IAM | `infra/ssot/azure/PLATFORM_TARGET_STATE.md` §Identity | OBJ-001/FEAT-001-01 | Documented |
+| Shared networking | `docs/architecture/target-state/PLATFORM.md` §Networking | OBJ-001 | Complete |
+| Shared IAM | `docs/architecture/target-state/PLATFORM.md` §Identity | OBJ-001/FEAT-001-01 | Documented |
 | Policy | `ssot/governance/platform-constitution.yaml` | — | Complete |
 | Monitoring | `docs/architecture/foundry_landing_zone_operating_model.md` §Monitoring | OBJ-001/FEAT-001-03 | **New** |
 | Governance / change mgmt | `ssot/governance/operating-model.yaml` | — | Complete |
@@ -73,13 +73,13 @@ governance, cost controls, BI serving, ML/MLOps, operational model.
 | Expected Output | Repo Artifact | Epic | Status |
 |----------------|---------------|------|--------|
 | Ingestion architecture | `docs/architecture/ADLS_ETL_REVERSE_ETL_ARCHITECTURE.md` §3-4 | OBJ-004 | Complete |
-| Medallion/lakehouse design | `docs/architecture/enterprise_data_platform.md` §2 | OBJ-004 | **New** (consolidates existing) |
-| Data domains / products | `docs/architecture/enterprise_data_platform.md` §3 | OBJ-004 | **New** |
-| Governance | `docs/architecture/enterprise_data_platform.md` §4 | OBJ-004 | **New** |
-| Cost controls | `docs/architecture/enterprise_data_platform.md` §5 | OBJ-004 | **New** |
-| BI serving path | `docs/architecture/ADLS_ETL_REVERSE_ETL_ARCHITECTURE.md` + `PLATFORM_TARGET_STATE.md` §Analytics | OBJ-004 | Complete |
-| ML/MLOps path | `docs/architecture/enterprise_data_platform.md` §6 | OBJ-004 | **New** |
-| Operational model / RACI | `docs/architecture/enterprise_data_platform.md` §7 | OBJ-004 | **New** |
+| Medallion/lakehouse design | `docs/architecture/data/ENTERPRISE_DATA_PLATFORM.md` §2 | OBJ-004 | **New** (consolidates existing) |
+| Data domains / products | `docs/architecture/data/ENTERPRISE_DATA_PLATFORM.md` §3 | OBJ-004 | **New** |
+| Governance | `docs/architecture/data/ENTERPRISE_DATA_PLATFORM.md` §4 | OBJ-004 | **New** |
+| Cost controls | `docs/architecture/data/ENTERPRISE_DATA_PLATFORM.md` §5 | OBJ-004 | **New** |
+| BI serving path | `docs/architecture/ADLS_ETL_REVERSE_ETL_ARCHITECTURE.md` + `docs/architecture/target-state/PLATFORM.md` §Analytics | OBJ-004 | Complete |
+| ML/MLOps path | `docs/architecture/data/ENTERPRISE_DATA_PLATFORM.md` §6 | OBJ-004 | **New** |
+| Operational model / RACI | `docs/architecture/data/ENTERPRISE_DATA_PLATFORM.md` §7 | OBJ-004 | **New** |
 
 ---
 
@@ -114,6 +114,30 @@ assessment evidence, promotion/readiness gates.
 
 ---
 
+## 7. SaaS Workload Documentation (Azure Well-Architected — SaaS Track)
+
+Microsoft expects: SaaS-specific design decisions across nine design areas,
+plus use of the SaaS assessment tool as an architecture readiness gate.
+This is the **primary SaaS design authority** for the platform — supersedes generic CAF
+for SaaS-specific design areas.
+
+Ref: https://learn.microsoft.com/en-us/azure/architecture/guide/saas/plan-journey-saas
+
+| Expected Output | Repo Artifact | Epic | Status |
+|----------------|---------------|------|--------|
+| Resource organization | `infra/ssot/azure/resources.yaml`, `infra/ssot/azure/rg-normalization-matrix.yaml` | OBJ-001 | Complete |
+| Identity and access management | `infra/ssot/security/access_model.yaml`, `infra/ssot/security/entra_groups.yaml` | OBJ-001/FEAT-001-01 | Documented, partial |
+| Compute | `infra/ssot/azure/service-matrix.yaml` | OBJ-001 | Complete |
+| Networking | `infra/dns/subdomain-registry.yaml`, `docs/architecture/target-platform-architecture.md` §Plane 2 | OBJ-001 | Complete |
+| Data | `data-intelligence/CLAUDE.md` (4-lane model), `docs/architecture/data/ENTERPRISE_DATA_PLATFORM.md` | OBJ-004 | Complete |
+| Billing and cost management | `docs/architecture/saas_billing_metering.md`, `ssot/governance/platform-strategy-2026.yaml` | OBJ-001 | **Partial** — design authority documented, implementation deferred |
+| Governance | `ssot/governance/platform-constitution.yaml`, `ssot/governance/operating-model.yaml` | — | Complete |
+| DevOps practices | `ssot/governance/azdo-execution-hierarchy.yaml`, `.github/workflows/` | OBJ-005 | Complete |
+| Incident management | `docs/architecture/reliability_operating_model.md` §9 (SaaS incident model) | OBJ-001/FEAT-001-03 | **Partial** — SaaS/tenant-aware playbook documented, not yet exercised |
+| SaaS assessment (readiness gate) | `docs/architecture/target-platform-architecture.md` §SaaS Readiness Gate | — | **Not run** — gate defined, assessment not yet executed |
+
+---
+
 ## Intentionally Out of Scope
 
 | Microsoft Reference | Why Excluded |
@@ -123,7 +147,6 @@ assessment evidence, promotion/readiness gates.
 | Power Platform / Dataverse | Not in stack. Supabase + n8n cover equivalent automation surface. |
 | Microsoft Fabric (full) | Using Databricks as primary. Fabric referenced only for Tableau connector. |
 | Dynamics 365 Copilot | Using Azure AI Foundry agents, not D365 Copilot. Mapped in AI_CONSOLIDATION_FOUNDRY.md. |
-| Multi-tenant architecture | Single-tenant platform (per project charter constraints). |
 
 ---
 
@@ -135,4 +158,4 @@ Each alignment claim must be backed by one of:
 - An execution Epic/Feature in `azdo-execution-hierarchy.yaml`
 - An explicit "Gap" or "New" marker for artifacts being created
 
-*Last updated: 2026-03-17*
+*Last updated: 2026-03-21*

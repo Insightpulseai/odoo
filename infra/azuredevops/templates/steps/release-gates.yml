@@ -1,0 +1,97 @@
+# release-gates.yml — Release readiness: health check, governance, spec kit
+parameters:
+  - name: containerAppName
+    type: string
+  - name: resourceGroup
+    type: string
+    default: rg-ipai-dev-odoo-runtime
+  - name: azureServiceConnection
+    type: string
+    default: sc-azure-dev-platform
+  - name: specBundlePath
+    type: string
+    default: ''
+
+steps:
+  - task: AzureCLI@2
+    displayName: Verify deployment health
+    inputs:
+      azureSubscription: ${{ parameters.azureServiceConnection }}
+      scriptType: bash
+      scriptLocation: inlineScript
+      inlineScript: |
+        set -euo pipefail
+        echo "## Release Readiness — Deployment Health"
+
+        APP="${{ parameters.containerAppName }}"
+        RG="${{ parameters.resourceGroup }}"
+
+        FQDN=$(az containerapp show \
+          --name "$APP" \
+          --resource-group "$RG" \
+          --query "properties.configuration.ingress.fqdn" -o tsv 2>/dev/null || echo "")
+
+        if [ -n "$FQDN" ]; then
+          HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" "https://$FQDN/" --max-time 15 || echo "000")
+          echo "Endpoint: https://$FQDN/"
+          echo "HTTP:     $HTTP_STATUS"
+          if [ "$HTTP_STATUS" = "200" ] || [ "$HTTP_STATUS" = "301" ] || [ "$HTTP_STATUS" = "302" ]; then
+            echo "Health: PASS"
+          else
+            echo "Health: FAIL (HTTP $HTTP_STATUS)"
+            exit 1
+          fi
+        else
+          echo "No public FQDN — internal app, skipping HTTP health check"
+        fi
+
+  - script: |
+      set -euo pipefail
+      echo "## Release Readiness — Governance Checks"
+
+      # Verify spec bundle completeness (if path provided)
+      SPEC_PATH="${{ parameters.specBundlePath }}"
+      if [ -n "$SPEC_PATH" ] && [ -d "$SPEC_PATH" ]; then
+        echo "Check: spec bundle at $SPEC_PATH"
+        for REQUIRED in prd.md tasks.md; do
+          if [ -f "$SPEC_PATH/$REQUIRED" ]; then
+            echo "  $REQUIRED: present"
+          else
+            echo "  $REQUIRED: MISSING"
+            exit 1
+          fi
+        done
+        echo "Spec bundle: PASS"
+      else
+        echo "Check: no spec bundle path — skipping"
+      fi
+
+      # Verify changelog / release notes
+      if [ -f CHANGELOG.md ]; then
+        echo "Check: CHANGELOG.md present"
+      else
+        echo "Check: CHANGELOG.md not found (non-blocking)"
+      fi
+
+      # Verify no unresolved migration scripts
+      PENDING_MIGRATIONS=$(find . -path '*/migrations/*.py' -newer .git/HEAD 2>/dev/null | head -5)
+      if [ -n "$PENDING_MIGRATIONS" ]; then
+        echo "Check: pending migrations detected"
+        echo "$PENDING_MIGRATIONS"
+      else
+        echo "Check: no pending migrations"
+      fi
+
+      echo "Release readiness: PASS"
+    displayName: Release governance checks
+
+  - script: |
+      set -euo pipefail
+      echo "## Release Readiness — Evidence"
+      echo "Timestamp:  $(date -u +%Y-%m-%dT%H:%M:%SZ)"
+      echo "Build ID:   $(Build.BuildId)"
+      echo "Pipeline:   $(Build.DefinitionName)"
+      echo "Source:      $(Build.SourceBranch)"
+      echo "Commit:     $(Build.SourceVersion)"
+      echo "Requested:  $(Build.RequestedFor)"
+    displayName: Capture release evidence

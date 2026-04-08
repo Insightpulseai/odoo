@@ -4,7 +4,7 @@
 # Deploys Azure infrastructure via Bicep for InsightPulse AI.
 #
 # Replaces GitHub Actions billing-locked workflows.
-# Service connection: azure-ipai (Azure Resource Manager)
+# Service connection: ipai-dev-wif (Azure Resource Manager)
 # Variable group:    azure-ipai-config (non-secret runtime config)
 #
 # Stage order:
@@ -48,7 +48,7 @@ variables:
   - name: prodParametersPath
     value: infra/azure/parameters/front-door-prod.parameters.json
   - name: serviceConnection
-    value: azure-ipai
+    value: ipai-dev-wif
   - name: devResourceGroup
     value: rg-ipai-dev
   - name: prodResourceGroup
@@ -68,7 +68,7 @@ stages:
       - job: LintAndWhatIf
         displayName: Lint, What-If, YAML check
         pool:
-          name: ipai-build-pool
+          vmImage: ubuntu-latest
         steps:
           - checkout: self
             fetchDepth: 0  # Full history for accurate diff in PR context
@@ -206,11 +206,11 @@ stages:
       - job: BicepDeployDev
         displayName: Bicep deploy → rg-ipai-dev
         pool:
-          name: ipai-build-pool
+          vmImage: ubuntu-latest
         steps:
           - checkout: self
 
-          - template: ../pipelines/templates/deploy-bicep.yml
+          - template: ../../azure-pipelines/templates/jobs/deploy-bicep.yml
             parameters:
               serviceConnection: $(serviceConnection)
               resourceGroup: $(devResourceGroup)
@@ -241,13 +241,13 @@ stages:
       - job: BicepDeployProd
         displayName: Bicep deploy → rg-ipai-shared-prod
         pool:
-          name: ipai-build-pool
+          vmImage: ubuntu-latest
         # TODO: Convert back to deployment job with 'environment: production'
         # once environments are configured in Azure Pipelines UI.
         steps:
           - checkout: self
 
-          - template: ../pipelines/templates/deploy-bicep.yml
+          - template: ../../azure-pipelines/templates/jobs/deploy-bicep.yml
             parameters:
               serviceConnection: $(serviceConnection)
               resourceGroup: $(prodResourceGroup)
@@ -269,7 +269,7 @@ stages:
       - job: CutoverValidation
         displayName: Run cutover validation script
         pool:
-          name: ipai-build-pool
+          vmImage: ubuntu-latest
         variables:
           # VALIDATE_LIVE is set to 'true' only via a manual pipeline run
           # (Queue pipeline → Variables → VALIDATE_LIVE=true).

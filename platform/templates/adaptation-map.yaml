@@ -1,0 +1,322 @@
+version: 2
+owner_repo: platform
+updated: "2026-04-04"
+
+# --- Azure AI App Templates ---
+template_sources:
+  - id: ai-agents-starter
+    name: Get started with AI agents
+    use_for:
+      - agent_shell_pattern
+      - aca_hosting_pattern
+      - basic_chat_runtime
+    do_not_use_for:
+      - odoo_business_logic
+      - accounting_execution
+
+  - id: ai-production
+    name: Deploy Your AI Application in Production
+    use_for:
+      - prod_environment_pattern
+      - security_posture
+      - operational_readiness
+      - health_and_monitoring
+    do_not_use_for:
+      - replacing_existing_runtime_contracts
+
+  - id: multimodal-content-processing
+    name: Multi-modal Content Processing
+    use_for:
+      - invoice_receipt_bank_statement_ingestion
+      - extraction_pipeline_patterns
+      - structured_output_mapping
+    do_not_use_for:
+      - odoo_source_of_truth_replacement
+
+  - id: release-manager-assistant
+    name: Release Manager Assistant
+    use_for:
+      - release_verification_flow
+      - evidence_pack_pattern
+      - post_deploy_analysis
+    do_not_use_for:
+      - release_authority_override
+
+  - id: home-banking-assistant
+    name: Home Banking Assistant
+    use_for:
+      - finance_agent_orchestration_pattern
+      - conversational_finance_flows
+      - foundry_agent_framework_reference
+    do_not_use_for:
+      - banking_domain_copy_paste
+
+# --- Azure Developer Tools ---
+developer_tools:
+  adopt_now:
+    - id: azure-mcp-server
+      name: Azure MCP Server (first-party)
+      docs: "https://learn.microsoft.com/en-us/azure/developer/azure-mcp-server/overview"
+      relevance: high
+      action: adopt_now
+      repos: [infra, agent-platform, platform]
+      note: >
+        40+ namespaces. Covers postgres, keyvault, acr, monitor, foundry, search.
+        Replaces community Azure MCP entries. Read-only default, Entra ID auth.
+
+    - id: azure-python-sdk-ai
+      name: Azure AI Python SDK (GA packages)
+      relevance: high
+      action: adopt_now
+      repos: [agent-platform, odoo, data-intelligence]
+      packages:
+        - name: azure-ai-agents
+          version: ">=1.1.0"
+          purpose: Agent runtime SDK
+        - name: azure-ai-projects
+          version: ">=2.0.1"
+          purpose: Foundry project management (resolves AIProjectClient pending)
+        - name: azure-ai-evaluation
+          version: ">=1.16.3"
+          purpose: Agent quality evaluation
+        - name: azure-ai-documentintelligence
+          version: ">=1.0.2"
+          purpose: OCR (BIR forms, invoices, receipts)
+        - name: azure-search-documents
+          version: ">=11.6.0"
+          purpose: AI Search (KB retrieval)
+        - name: azure-identity
+          version: ">=1.25.3"
+          purpose: Entra auth for ipai_auth_oidc
+        - name: azure-keyvault-secrets
+          version: ">=4.10.0"
+          purpose: Runtime secret access
+
+  evaluate:
+    - id: azd-cli
+      name: Azure Developer CLI (azd)
+      docs: "https://learn.microsoft.com/en-us/azure/developer/azure-developer-cli/overview"
+      relevance: medium
+      action: evaluate
+      repos: [infra, agent-platform]
+      note: >
+        Create azd template for IPAI ACA environment (ipai-odoo-dev-env).
+        March 2026 release adds local agent debugging. Exposed via Azure MCP Server.
+
+    - id: dev-proxy
+      name: Dev Proxy
+      docs: "https://learn.microsoft.com/en-us/microsoft-cloud/dev/dev-proxy/overview"
+      relevance: medium
+      action: evaluate
+      repos: [agent-platform, automations]
+      note: >
+        API simulator for chaos testing. LLM rate-limit plugin for Azure OpenAI
+        resilience testing. Not MCP, but complements agent test harness.
+
+    - id: copilot-for-azure
+      name: GitHub Copilot for Azure (@azure)
+      docs: "https://learn.microsoft.com/en-us/azure/developer/github-copilot-azure/overview"
+      relevance: medium
+      action: evaluate
+      repos: [docs]
+      note: >
+        VS Code extension using Azure MCP Server backend. Developer productivity
+        layer, not a platform dependency. Install for team workflow.
+
+  # -----------------------------------------------------------------------
+  # Partner Center / Marketplace — 3-lane model
+  # -----------------------------------------------------------------------
+  # Lane A: Partner program (enablement dependency, not runtime)
+  # Lane B: Marketplace listing / go-to-market
+  # Lane C: Fulfillment + metering runtime
+  #
+  # Doctrine: Partner Center is commercial control-plane only.
+  # It does not replace Odoo as execution authority or platform services
+  # as runtime authority.
+  # -----------------------------------------------------------------------
+
+  partner_center:
+    # Lane A — Partner / Program
+    lane_a_partner_program:
+      action: adopt_now
+      items:
+        - id: maicpp-enrollment
+          name: Microsoft AI Cloud Partner Program (Launch tier)
+          docs: "https://partner.microsoft.com"
+          note: >
+            Gateway to marketplace publishing, co-sell, Azure credits.
+            Enroll at Launch tier (free). Entra tenant 402de71a exists.
+          prerequisites:
+            - entra_tenant_verified
+            - partner_location_account_id
+        - id: solutions-partner-target
+          name: "Solutions Partner for Data & AI (Azure)"
+          note: >
+            Target designation. Maps to Databricks + Azure AI + Document
+            Intelligence workload. Pursue after Launch tier enrollment.
+
+    # Lane B — Marketplace Listing / Go-to-Market
+    lane_b_marketplace_listing:
+      action: evaluate_next_phase
+      items:
+        - id: publisher-account
+          name: Partner Center publisher account
+          note: "Required before any SaaS offer can be submitted"
+        - id: saas-offer-packaging
+          name: SaaS offer packaging (metadata, assets, pricing)
+          note: >
+            Package Odoo-based SaaS (BIR compliance, doc intelligence, AI ERP).
+            Define plans, pricing tiers, and MACC eligibility.
+        - id: co-sell-readiness
+          name: Co-sell ready status
+          action: defer_until_listing_live
+          note: >
+            Requires solution documentation, reference architecture,
+            customer references. Enables Microsoft field seller referrals.
+
+    # Lane C — Fulfillment + Metering Runtime
+    lane_c_fulfillment_runtime:
+      action: evaluate_next_phase
+      doctrine: >
+        REST-first. azure-identity + httpx. No SDK dependencies.
+        Marketplace is commercial control-plane — never ERP authority.
+      items:
+        - id: saas-fulfillment-v2
+          name: SaaS Fulfillment API v2
+          docs: "https://learn.microsoft.com/en-us/partner-center/marketplace-offers/pc-saas-fulfillment-apis"
+          integration_shape:
+            landing_page: "ACA (ipai-website-dev or dedicated)"
+            webhook_handler: "FastAPI endpoint on ipai-odoo-dev-web"
+            subscription_state: "Odoo model (marketplace gates entitlement, Odoo owns record)"
+          scope:
+            - resolve_purchase_token
+            - activate_subscription
+            - handle_webhooks (ChangePlan, ChangeQuantity, Suspend, Reinstate, Unsubscribe)
+          gates_but_does_not_own:
+            - subscription_entitlement
+            - plan_tier_access
+            - suspension_cancellation_effects
+          does_not_become:
+            - finance_transaction_authority
+            - odoo_posting_authority
+            - document_processing_authority
+
+        - id: metering-service
+          name: Marketplace Metering Service API
+          custom_dimensions:
+            - per_document_ocr_processed
+            - per_ai_inference
+            - per_bir_form_filed
+            - per_user_seat
+          requirements:
+            idempotency: >
+              Each usage event must have a unique immutable key
+              (e.g., document_id + timestamp). Retries must not
+              double-count. Metering client must deduplicate before emit.
+            event_sourcing: >
+              Usage events originate from Odoo/platform runtime logs.
+              Metering emitter reads from event source, not from
+              aggregate state.
+            retry_safety: >
+              Metering API accepts 24-hour submission window with
+              hourly aggregation. Failed submissions must be retried
+              with the same event key. No silent drops.
+            reconciliation: >
+              Usage events must be reconcilable back to Odoo runtime
+              logs and platform telemetry. Evidence path:
+              runtime log → usage event → metering API → Microsoft invoice.
+          integration_shape:
+            emitter: "ipai-odoo-dev-worker or dedicated cron"
+            event_source: "Odoo ir.logging / platform telemetry"
+
+        - id: referrals-api
+          name: Partner Center Referrals / Co-sell API
+          action: defer_until_listing_live
+          note: "Bridges marketplace leads to Odoo CRM. Not actionable until offer is live."
+
+  skip:
+    - id: copilot-app-modernization
+      reason: Java/.NET only — not applicable to Python/Odoo stack
+    - id: typespec
+      reason: FastAPI native OpenAPI generation is sufficient
+    - id: partner-center-csp-apis
+      reason: IPAI is SaaS builder, not Azure reseller — CSP APIs not applicable
+
+# --- Microsoft runtime & operating-model guidance ---
+microsoft_runtime_guidance:
+  azure_architecture_center:
+    docs: "https://learn.microsoft.com/en-us/azure/architecture/best-practices/index-best-practices"
+    use_for:
+      - api_design
+      - api_implementation
+      - background_jobs
+      - monitoring_and_diagnostics
+      - transient_fault_handling
+    also_relevant:
+      - autoscaling
+      - caching
+      - data_partitioning
+      - host_name_preservation
+  azure_ai_finops_guidance:
+    use_for:
+      - business_case
+      - ai_governance
+      - genaiops
+      - usage_monitoring
+      - unit_economics
+      - efficiency_optimization
+    note: >
+      Separate from Partner Center (commercial/GTM lane).
+      This governs runtime and operating-model decisions.
+
+# --- Repo mapping ---
+repo_mapping:
+  odoo:
+    adopt: []
+    preserve:
+      - business_execution_authority
+      - approvals
+      - proposals
+      - audit_trail
+  platform:
+    adopt:
+      - ai-agents-starter
+      - ai-production
+      - multimodal-content-processing
+  automations:
+    adopt:
+      - release-manager-assistant
+      - multimodal-content-processing
+  agents:
+    adopt:
+      - home-banking-assistant
+      - ai-agents-starter
+  docs:
+    adopt:
+      - ai-production
+      - release-manager-assistant
+  web:
+    adopt:
+      - ai-agents-starter
+    optional: true
+  agent-platform:
+    adopt:
+      - ai-agents-starter
+      - ai-production
+    sdk:
+      - azure-ai-agents
+      - azure-ai-projects
+      - azure-ai-evaluation
+    tools:
+      - azure-mcp-server
+      - dev-proxy (evaluate)
+  infra:
+    adopt:
+      - ai-production
+    tools:
+      - azure-mcp-server
+      - azd-cli (evaluate)
+  data-intelligence:
+    sdk:
+      - azure-search-documents
+      - azure-ai-documentintelligence

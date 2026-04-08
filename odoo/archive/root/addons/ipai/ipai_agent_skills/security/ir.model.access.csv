@@ -1,7 +1,0 @@
-id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-access_skill_category_user,ipai.skill.category.user,model_ipai_skill_category,base.group_user,1,0,0,0
-access_skill_category_admin,ipai.skill.category.admin,model_ipai_skill_category,base.group_system,1,1,1,1
-access_skill_definition_user,ipai.skill.definition.user,model_ipai_skill_definition,base.group_user,1,0,0,0
-access_skill_definition_admin,ipai.skill.definition.admin,model_ipai_skill_definition,base.group_system,1,1,1,1
-access_skill_execution_user,ipai.skill.execution.user,model_ipai_skill_execution,base.group_user,1,1,1,0
-access_skill_execution_admin,ipai.skill.execution.admin,model_ipai_skill_execution,base.group_system,1,1,1,1

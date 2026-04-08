@@ -1,0 +1,49 @@
+version: 1
+name: entra-mfa-ca-hardening
+status: draft
+owner: agents
+type: benchmark_skill
+
+microsoft_capability_family: "Microsoft Entra / Security"
+
+purpose: "Validate MFA enforcement and Conditional Access policy coverage for Entra ID tenant"
+triggers:
+  - "check MFA enforcement"
+  - "validate conditional access policies"
+  - "entra identity hardening"
+inputs:
+  - tenant_id: ""
+  - target_scope: "all-users"
+dependencies:
+  - spec/entra-identity-migration/
+  - infra/ssot/azure/service-matrix.yaml
+steps:
+  - read entra migration spec for planned CA policies
+  - query Entra CA policies via az rest
+  - check MFA enforcement coverage
+  - check legacy auth blocking
+  - report gaps vs Microsoft baseline
+outputs:
+  - docs/evidence/<stamp>/entra-mfa-ca/ca-policy-export.json
+  - docs/evidence/<stamp>/entra-mfa-ca/mfa-coverage-report.json
+guardrails:
+  - never create or modify CA policies without approval
+  - never disable existing security policies
+evidence:
+  - CA policy export from Entra
+  - MFA registration coverage percentage
+  - legacy auth block confirmation
+evals:
+  - mfa_enforced_all_users
+  - legacy_auth_blocked
+  - admin_roles_have_extra_constraints
+
+mcp_search_prompts:
+  - "Entra ID Conditional Access policy MFA enforcement"
+  - "Microsoft Entra block legacy authentication"
+  - "Entra ID authentication strength requirements"
+mcp_fetch_targets:
+  - "Conditional Access: Require MFA for all users"
+  - "Block legacy authentication with Conditional Access"
+mcp_code_sample_queries:
+  - "Entra Conditional Access policy Bicep template"

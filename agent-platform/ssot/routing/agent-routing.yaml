@@ -1,0 +1,18 @@
+# agent-routing.yaml — placeholder routing configuration
+# Defines how inbound agent requests are routed to executors.
+# TODO: Populate with real routing rules when agent manifests are registered.
+
+version: "1.0.0"
+last_updated: "2026-03-30"
+
+default_executor: "general"
+
+routes:
+  # Example route (uncomment and populate when ready):
+  # - agent_pattern: "odoo_sh/*"
+  #   executor: "odoo-specialized"
+  #   priority: 10
+  # - agent_pattern: "*"
+  #   executor: "general"
+  #   priority: 0
+  []

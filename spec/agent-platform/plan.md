@@ -299,6 +299,29 @@ Every execution class must emit:
 
 * add operator-facing evidence/telemetry and hardened policy integration
 
+## WS6 — Foundry topology normalization
+
+Scope:
+- Record current resource / project / hub / standalone OpenAI inventory in `ssot/foundry/runtime_inventory.yaml`
+- Mark one canonical resource + project pair (`data-intel-ph-resource` / `data-intel-ph`)
+- Classify legacy hub-backed assets (`aifoundry-ipai-dev`, `proj-ipai-claude`) as transitional
+- Define package-boundary policy for Python in `ssot/foundry/python_sdk_surfaces.yaml`
+- Bind app integrations to canonical control-plane objects
+- Distinguish UI evidence from control-plane and runtime evidence
+
+## CLI Boundary Enforcement
+
+- Approved Azure CLI surfaces for this platform:
+  - `cognitiveservices` — Foundry model deployment and endpoint management
+  - `ml` — only where Microsoft docs explicitly require it for Foundry project connection flows
+- Excluded: `az workloads` (SAP-specific Virtual Instance management, benchmark-only for this platform)
+- Agent Service references must use Foundry project endpoints rather than legacy hub-based connection strings
+- Runbooks, bootstrap scripts, and CI pipelines must not include `az workloads` commands
+
+## Foundry Reference Materials
+
+The Microsoft sample repo `microsoft/microsoft-foundry-e2e-js` is a **learning reference** (JS/TS buildathon quest), not a deployment template. The canonical IPAI implementation remains Odoo + Azure-native infra + Foundry-backed agents. The adoptable artifact from that repo is the four-stage lifecycle model (selection → optimization → observability → security), which is encoded in `ssot/foundry/runtime_inventory.yaml` under `platform_framing.lifecycle_stages`.
+
 ## Open Constraints
 
 * no runtime ownership may remain implicitly in `agents`

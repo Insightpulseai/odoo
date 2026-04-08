@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>W9 Studio — Asset Gallery</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #0a0a0a; color: #fff; font-family: 'Sora', Arial, sans-serif; }
+  header { padding: 48px 32px 24px; text-align: center; }
+  header h1 { font-size: 48px; font-weight: 400; letter-spacing: -0.03em; color: #fff; }
+  header p { font-size: 14px; color: #949494; margin-top: 8px; }
+  .gallery { max-width: 1280px; margin: 0 auto; padding: 24px 32px 64px; display: flex; flex-direction: column; gap: 48px; }
+  .card { position: relative; }
+  .card img { width: 100%; height: auto; display: block; border-radius: 8px; }
+  .card .label { margin-top: 12px; display: flex; justify-content: space-between; align-items: baseline; }
+  .card .label h2 { font-size: 18px; font-weight: 400; color: #fff; }
+  .card .label span { font-size: 12px; color: #949494; }
+  .hero-card img { border-radius: 12px; }
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+  .divider { border: none; border-top: 1px solid #222; margin: 0; }
+  .section-title { font-size: 14px; text-transform: uppercase; letter-spacing: 0.1em; color: #FF5E1A; margin-bottom: -24px; }
+  @media (max-width: 750px) {
+    header h1 { font-size: 32px; }
+    .grid-2 { grid-template-columns: 1fr; }
+    .gallery { padding: 16px 16px 48px; gap: 32px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>W9 Studio</h1>
+  <p>Asset Gallery — Generated via Gemini 2.5 Flash Image &bull; 2026-03-27</p>
+</header>
+
+<div class="gallery">
+
+  <p class="section-title">Hero</p>
+  <div class="card hero-card">
+    <img src="hero-exterior.png" alt="W9 Studio — Hero Exterior">
+    <div class="label">
+      <h2>Hero Exterior</h2>
+      <span>Blue-hour warehouse facade</span>
+    </div>
+  </div>
+
+  <hr class="divider">
+  <p class="section-title">Primary Spaces</p>
+
+  <div class="card">
+    <img src="recording-floor.png" alt="W9 Studio — Recording Floor">
+    <div class="label">
+      <h2>Recording / Shooting Floor</h2>
+      <span>Main production space</span>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <img src="lounge.png" alt="W9 Studio — Lounge">
+      <div class="label">
+        <h2>Lounge</h2>
+        <span>Client waiting / collaboration</span>
+      </div>
+    </div>
+    <div class="card">
+      <img src="meeting-room.png" alt="W9 Studio — Meeting Room">
+      <div class="label">
+        <h2>Meeting Room</h2>
+        <span>Planning &amp; client review</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <img src="dressing-room.png" alt="W9 Studio — Dressing Room">
+    <div class="label">
+      <h2>Dressing Room</h2>
+      <span>Talent prep &amp; styling</span>
+    </div>
+  </div>
+
+  <hr class="divider">
+  <p class="section-title">Gallery</p>
+
+  <div class="grid-2">
+    <div class="card">
+      <img src="gallery-reception.png" alt="W9 Studio — Reception">
+      <div class="label">
+        <h2>Reception</h2>
+        <span>Entry threshold</span>
+      </div>
+    </div>
+    <div class="card">
+      <img src="gallery-acoustic-corridor.png" alt="W9 Studio — Acoustic Corridor">
+      <div class="label">
+        <h2>Acoustic Corridor</h2>
+        <span>Soundproofed circulation</span>
+      </div>
+    </div>
+    <div class="card">
+      <img src="gallery-mezzanine.png" alt="W9 Studio — Mezzanine">
+      <div class="label">
+        <h2>Mezzanine</h2>
+        <span>Vertical circulation</span>
+      </div>
+    </div>
+    <div class="card">
+      <img src="gallery-storage-zone.png" alt="W9 Studio — Equipment Storage">
+      <div class="label">
+        <h2>Equipment Storage</h2>
+        <span>Flight cases &amp; rack gear</span>
+      </div>
+    </div>
+    <div class="card">
+      <img src="gallery-blackbox-corner.png" alt="W9 Studio — Black Box">
+      <div class="label">
+        <h2>Black Box Studio</h2>
+        <span>Isolation / recording booth</span>
+      </div>
+    </div>
+  </div>
+
+  <hr class="divider">
+  <p class="section-title">Before</p>
+
+  <div class="card">
+    <img src="before-warehouse.png" alt="W9 Studio — Before (Raw Warehouse)">
+    <div class="label">
+      <h2>Before — Raw Warehouse</h2>
+      <span>Existing shell before conversion</span>
+    </div>
+  </div>
+
+  <hr class="divider">
+  <p class="section-title">Wix Site Replacements</p>
+
+  <div class="card hero-card">
+    <img src="site-hero-banner.png" alt="Site — Hero Banner">
+    <div class="label">
+      <h2>Hero Banner</h2>
+      <span>Top of page background</span>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <img src="site-photo-studio.png" alt="Site — Photo Studio">
+      <div class="label">
+        <h2>Photo Studio</h2>
+        <span>Replaces "Boxing Arena"</span>
+      </div>
+    </div>
+    <div class="card">
+      <img src="site-recording-booth.png" alt="Site — Recording Booth">
+      <div class="label">
+        <h2>Recording Booth</h2>
+        <span>Replaces "Dance Studio"</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <img src="site-svc-visual-production.png" alt="Site — Visual Production">
+      <div class="label">
+        <h2>Visual Production</h2>
+        <span>Service thumbnail</span>
+      </div>
+    </div>
+    <div class="card">
+      <img src="site-svc-audio-sound.png" alt="Site — Audio / Sound">
+      <div class="label">
+        <h2>Audio / Sound</h2>
+        <span>Service thumbnail</span>
+      </div>
+    </div>
+    <div class="card">
+      <img src="site-svc-creative-tech.png" alt="Site — Creative Tech">
+      <div class="label">
+        <h2>Creative Tech</h2>
+        <span>Service thumbnail</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <img src="site-team-director.png" alt="Site — Team: Director">
+      <div class="label">
+        <h2>The Director</h2>
+        <span>Replaces "Jordan"</span>
+      </div>
+    </div>
+    <div class="card">
+      <img src="site-team-audio-specialist.png" alt="Site — Team: Audio Specialist">
+      <div class="label">
+        <h2>Audio Specialist</h2>
+        <span>Replaces "Hanna"</span>
+      </div>
+    </div>
+    <div class="card">
+      <img src="site-team-designer.png" alt="Site — Team: Designer">
+      <div class="label">
+        <h2>Designer</h2>
+        <span>Replaces "Emily"</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <img src="site-facility-overview.png" alt="Site — Facility Overview">
+    <div class="label">
+      <h2>Facility Overview</h2>
+      <span>Replaces "Our New Studio"</span>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <img src="site-app-promo.png" alt="Site — App Promo">
+      <div class="label">
+        <h2>App / Booking Promo</h2>
+        <span>Replaces "Download PulseFit"</span>
+      </div>
+    </div>
+    <div class="card">
+      <img src="site-footer-cta.png" alt="Site — Footer CTA">
+      <div class="label">
+        <h2>Footer CTA</h2>
+        <span>Replaces "Become a Member"</span>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>

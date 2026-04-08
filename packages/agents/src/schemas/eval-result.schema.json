@@ -1,0 +1,38 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "ipai.eval.v1",
+  "type": "object",
+  "required": [
+    "schema",
+    "agent_id",
+    "suite_id",
+    "judge_id",
+    "score",
+    "passed",
+    "executed_at"
+  ],
+  "properties": {
+    "schema": {
+      "type": "string",
+      "const": "ipai.eval.v1"
+    },
+    "agent_id": { "$ref": "#/definitions/agent_id" },
+    "suite_id": { "type": "string" },
+    "judge_id": { "type": "string" },
+    "score": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1
+    },
+    "passed": { "type": "boolean" },
+    "executed_at": { "type": "string", "format": "date-time" },
+    "feedback": { "type": "string" },
+    "metadata": { "type": "object" }
+  },
+  "definitions": {
+    "agent_id": {
+      "type": "string",
+      "pattern": "^[a-z0-9-]+$"
+    }
+  }
+}

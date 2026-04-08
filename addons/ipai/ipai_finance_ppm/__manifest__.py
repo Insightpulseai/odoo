@@ -8,6 +8,7 @@
         "project",
         "account",
         "analytic",
+        "hr_expense",
         "mail",
         "web",
     ],
@@ -20,6 +21,11 @@
         "views/okr_dashboard_action.xml",
         "data/ir_cron_ppm_sync.xml",
         "data/ir_config_parameter_powerbi.xml",
+    ],
+    "demo": [
+        "demo/ipai_finance_ppm_demo_projects.xml",
+        "demo/ipai_finance_ppm_demo_month_end_close.xml",
+        "demo/ipai_finance_ppm_demo_bir_tax_filing.xml",
     ],
     "assets": {
         "web.assets_backend": [

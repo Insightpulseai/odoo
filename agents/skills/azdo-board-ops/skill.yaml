@@ -1,0 +1,60 @@
+# Azure DevOps Board Operations — Agent Skill
+# Manages board hierarchy: Epic → Issue → Task (Basic process)
+
+id: azdo.board.ops
+version: 1
+description: "Query, create, update, reparent, and close Azure DevOps work items using az boards CLI"
+maturity: L2
+
+inputs:
+  organization:
+    type: string
+    description: "Azure DevOps organization URL (e.g. https://dev.azure.com/insightpulseai)"
+    required: true
+  project:
+    type: string
+    description: "Azure DevOps project name"
+    required: true
+  operation:
+    type: enum
+    values: [query, create, update, reparent, close, delete]
+    description: "Board operation to perform"
+    required: true
+  work_item_type:
+    type: enum
+    values: [Epic, Issue, Task]
+    description: "Work item type (Basic process template: Epic/Issue/Task only)"
+    required: false
+  work_item_id:
+    type: integer
+    description: "Work item ID for update/reparent/close/delete operations"
+    required: false
+
+requires:
+  secrets: []
+  ssot_files:
+    - ssot/governance/azdo-execution-hierarchy.yaml
+
+outputs:
+  artifacts: []
+  evidence: "docs/evidence/<stamp>/board-ops/"
+
+policies:
+  no_plaintext_secrets: true
+  must_pass_ci: []
+  idempotent: true
+  rollback_supported: false
+  # Safety: delete requires --yes flag, close is reversible
+  destructive_operations: [delete]
+  reversible_operations: [create, update, reparent, close]
+
+verification:
+  checks:
+    - name: "work_item_exists"
+      type: command
+      target: "az boards work-item show --id {id} --org {org} --project {project}"
+      notes: "Verify work item was created/updated successfully"
+    - name: "parent_link_valid"
+      type: command
+      target: "az boards query --wiql \"SELECT [System.Id] FROM workitems WHERE [System.Parent] = {parent_id}\""
+      notes: "Verify parent-child relationship after reparent"

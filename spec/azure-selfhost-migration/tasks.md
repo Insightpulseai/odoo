@@ -70,7 +70,7 @@
 
 ## WS4 -- Edge Function Deployment
 
-- [ ] Verify deploy manifest: `ops-platform/supabase/edge-functions/deploy/manifest.yaml` (39 functions)
+- [ ] Verify deploy manifest: `platform/supabase/edge-functions/deploy/manifest.yaml` (39 functions)
 - [ ] SCP function directories to VM `4.193.100.31`
 - [ ] Map secrets/env aliases for each function (cloud names to Key Vault refs)
 - [ ] Deploy function batch 1: auth functions
@@ -147,7 +147,7 @@
 
 ## WS7 -- Consumer Cutover
 
-- [ ] Review `ops-platform/supabase/cutover/consumers.yaml` -- confirm 8 consumers, priority order
+- [ ] Review `platform/supabase/cutover/consumers.yaml` -- confirm 8 consumers, priority order
 - [ ] Prepare write-freeze procedure for managed Supabase
 - [ ] Execute write-freeze on cloud Supabase
 - [ ] Run final delta ETL (capture changes since Phase 3)
