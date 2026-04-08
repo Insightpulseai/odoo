@@ -1,0 +1,300 @@
+name: Codebase Quality Audit
+
+on:
+  schedule:
+    - cron: '0 6 * * 1'  # Weekly Monday 06:00 UTC (14:00 PH)
+  workflow_dispatch:       # Manual trigger
+
+permissions:
+  contents: read
+  security-events: write
+  pull-requests: read
+  issues: read
+
+jobs:
+  python-quality:
+    name: Python Quality
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install analysis tools
+        run: |
+          pip install flake8 pylint bandit radon vulture black isort mypy pip-audit jscpd-python
+
+      - name: Lint (flake8)
+        id: flake8
+        continue-on-error: true
+        run: |
+          flake8 addons/ipai/ --max-line-length=120 --statistics --count \
+            --exclude='__pycache__,*.pyc,migrations' \
+            --output-file=flake8-report.txt 2>&1 || true
+          ERRORS=$(tail -1 flake8-report.txt | grep -oE '^[0-9]+' || echo 0)
+          echo "errors=$ERRORS" >> "$GITHUB_OUTPUT"
+          cat flake8-report.txt
+
+      - name: Style check (black + isort)
+        id: style
+        continue-on-error: true
+        run: |
+          echo "=== Black ==="
+          black --check --diff addons/ipai/ 2>&1 | tail -5 || true
+          BLACK_EXIT=$?
+          echo "=== isort ==="
+          isort --check --diff addons/ipai/ 2>&1 | tail -5 || true
+          ISORT_EXIT=$?
+          echo "black_clean=$([ $BLACK_EXIT -eq 0 ] && echo true || echo false)" >> "$GITHUB_OUTPUT"
+          echo "isort_clean=$([ $ISORT_EXIT -eq 0 ] && echo true || echo false)" >> "$GITHUB_OUTPUT"
+
+      - name: Security scan (bandit)
+        id: bandit
+        continue-on-error: true
+        run: |
+          bandit -r addons/ipai/ -f json -o bandit-report.json \
+            --skip B101,B311 -ll 2>&1 || true
+          HIGH=$(python3 -c "import json; r=json.load(open('bandit-report.json')); print(sum(1 for i in r.get('results',[]) if i['issue_severity']=='HIGH'))")
+          MEDIUM=$(python3 -c "import json; r=json.load(open('bandit-report.json')); print(sum(1 for i in r.get('results',[]) if i['issue_severity']=='MEDIUM'))")
+          echo "high=$HIGH" >> "$GITHUB_OUTPUT"
+          echo "medium=$MEDIUM" >> "$GITHUB_OUTPUT"
+          echo "Security: $HIGH high, $MEDIUM medium severity issues"
+
+      - name: Complexity analysis (radon)
+        id: complexity
+        continue-on-error: true
+        run: |
+          echo "=== Cyclomatic Complexity (C+ = needs attention) ==="
+          radon cc addons/ipai/ -a -nc 2>&1 | tail -20
+          echo ""
+          echo "=== Maintainability Index (A=best, F=worst) ==="
+          radon mi addons/ipai/ -s 2>&1 | grep -E ' [CDF] ' | head -20 || echo "All files A/B rated"
+          AVG=$(radon cc addons/ipai/ -a -nc 2>&1 | grep 'Average complexity' | grep -oE '[0-9.]+' || echo "0")
+          echo "avg_complexity=$AVG" >> "$GITHUB_OUTPUT"
+
+      - name: Dead code detection (vulture)
+        id: deadcode
+        continue-on-error: true
+        run: |
+          vulture addons/ipai/ --min-confidence 80 2>&1 | head -30 || true
+          DEAD=$(vulture addons/ipai/ --min-confidence 80 2>&1 | wc -l)
+          echo "dead_code_items=$DEAD" >> "$GITHUB_OUTPUT"
+
+      - name: Dependency audit (pip-audit)
+        id: deps
+        continue-on-error: true
+        run: |
+          if [ -f requirements.txt ]; then
+            pip-audit -r requirements.txt --format json --output pip-audit.json 2>&1 || true
+            VULNS=$(python3 -c "import json; r=json.load(open('pip-audit.json')); print(len(r.get('dependencies',[])))" 2>/dev/null || echo 0)
+            echo "vuln_deps=$VULNS" >> "$GITHUB_OUTPUT"
+          else
+            echo "vuln_deps=0" >> "$GITHUB_OUTPUT"
+            echo "No requirements.txt found"
+          fi
+
+      - name: Upload reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: python-quality-reports
+          path: |
+            flake8-report.txt
+            bandit-report.json
+            pip-audit.json
+
+  repo-health:
+    name: Repository Health
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Module test coverage
+        id: test_coverage
+        run: |
+          TOTAL=$(ls -d addons/ipai/ipai_* 2>/dev/null | wc -l)
+          WITH_TESTS=$(find addons/ipai -name 'test_*.py' -path '*/tests/*' | sed 's|.*/ipai/||;s|/tests/.*||' | sort -u | wc -l)
+          PCT=$(( WITH_TESTS * 100 / TOTAL ))
+          echo "=== Module Test Coverage ==="
+          echo "Modules with tests: $WITH_TESTS / $TOTAL ($PCT%)"
+          echo ""
+          echo "Modules WITHOUT tests:"
+          comm -23 \
+            <(ls -d addons/ipai/ipai_* | xargs -I{} basename {} | sort) \
+            <(find addons/ipai -name 'test_*.py' -path '*/tests/*' | sed 's|.*/ipai/||;s|/tests/.*||' | sort -u) \
+            | head -30
+          echo "modules_total=$TOTAL" >> "$GITHUB_OUTPUT"
+          echo "modules_tested=$WITH_TESTS" >> "$GITHUB_OUTPUT"
+          echo "test_coverage_pct=$PCT" >> "$GITHUB_OUTPUT"
+
+      - name: Commit convention compliance
+        id: commits
+        run: |
+          TOTAL=$(git log --oneline -100 | wc -l)
+          COMPLIANT=$(git log --oneline -100 | grep -cE '^[a-f0-9]+ (feat|fix|refactor|docs|test|chore)\(' || echo 0)
+          PCT=$(( COMPLIANT * 100 / TOTAL ))
+          echo "=== Commit Convention (last 100) ==="
+          echo "Compliant: $COMPLIANT / $TOTAL ($PCT%)"
+          echo ""
+          echo "Non-compliant examples:"
+          git log --oneline -100 | grep -vE '^[a-f0-9]+ (feat|fix|refactor|docs|test|chore)\(' | head -10
+          echo "commit_compliance=$PCT" >> "$GITHUB_OUTPUT"
+
+      - name: Code duplication
+        id: duplication
+        continue-on-error: true
+        run: |
+          npx jscpd addons/ipai/ --min-lines 10 --min-tokens 50 \
+            --reporters console --format "python" 2>&1 | tail -20 || echo "jscpd not available"
+
+      - name: File size hotspots
+        run: |
+          echo "=== Largest Python files (potential complexity hotspots) ==="
+          find addons/ipai -name '*.py' -exec wc -l {} + 2>/dev/null | sort -rn | head -15
+          echo ""
+          echo "=== Largest XML files ==="
+          find addons/ipai -name '*.xml' -exec wc -l {} + 2>/dev/null | sort -rn | head -10
+
+      - name: Dependency graph depth
+        run: |
+          echo "=== Module Dependency Analysis ==="
+          python3 << 'PYEOF'
+          import ast, os, json
+
+          deps = {}
+          for root, dirs, files in os.walk("addons/ipai"):
+              manifest = os.path.join(root, "__manifest__.py")
+              if os.path.exists(manifest):
+                  module = os.path.basename(root)
+                  try:
+                      with open(manifest) as f:
+                          data = ast.literal_eval(f.read())
+                      dep_list = data.get("depends", [])
+                      ipai_deps = [d for d in dep_list if d.startswith("ipai_")]
+                      if ipai_deps:
+                          deps[module] = ipai_deps
+                  except:
+                      pass
+
+          # Find max depth
+          def depth(mod, visited=None):
+              if visited is None: visited = set()
+              if mod in visited: return 0
+              visited.add(mod)
+              if mod not in deps: return 0
+              return 1 + max((depth(d, visited.copy()) for d in deps[mod]), default=0)
+
+          print(f"Modules with IPAI dependencies: {len(deps)}")
+          for mod, d in sorted(deps.items()):
+              print(f"  {mod} → {', '.join(d)} (depth={depth(mod)})")
+
+          # Check for circular deps
+          def has_cycle(mod, path=None):
+              if path is None: path = []
+              if mod in path: return path[path.index(mod):]
+              if mod not in deps: return None
+              for d in deps[mod]:
+                  cycle = has_cycle(d, path + [mod])
+                  if cycle: return cycle
+              return None
+
+          cycles = set()
+          for mod in deps:
+              c = has_cycle(mod)
+              if c: cycles.add(tuple(c))
+          if cycles:
+              print(f"\nCircular dependencies detected: {len(cycles)}")
+              for c in cycles:
+                  print(f"  {'→'.join(c)}→{c[0]}")
+          else:
+              print("\nNo circular dependencies")
+          PYEOF
+
+      - name: Stale files detection
+        run: |
+          echo "=== Files not touched in 90+ days ==="
+          CUTOFF=$(date -d '90 days ago' +%Y-%m-%d 2>/dev/null || date -v-90d +%Y-%m-%d)
+          git log --all --format='%ai %H' --diff-filter=AM -- 'addons/ipai/**/*.py' | \
+            sort | head -20 || echo "Analysis requires full history"
+
+  pr-health:
+    name: PR & Issue Health
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: PR metrics
+        run: |
+          echo "=== Open PRs ==="
+          gh pr list --state open --json number,title,createdAt,reviews \
+            --jq '.[] | "#\(.number) \(.title) (opened: \(.createdAt | split("T")[0]), reviews: \(.reviews | length))"' | head -20
+
+          echo ""
+          echo "=== PR Merge Time (last 20 merged) ==="
+          gh pr list --state merged --limit 20 --json number,createdAt,mergedAt \
+            --jq '.[] | {number, created: .createdAt, merged: .mergedAt}' | \
+            python3 -c "
+          import json, sys, datetime
+          prs = [json.loads(l) for l in sys.stdin if l.strip()]
+          times = []
+          for pr in prs:
+              c = datetime.datetime.fromisoformat(pr['created'].replace('Z','+00:00'))
+              m = datetime.datetime.fromisoformat(pr['merged'].replace('Z','+00:00'))
+              hours = (m-c).total_seconds()/3600
+              times.append(hours)
+              print(f'  PR #{pr[\"number\"]}: {hours:.1f}h')
+          if times:
+              print(f'\n  Avg merge time: {sum(times)/len(times):.1f}h')
+              print(f'  Median: {sorted(times)[len(times)//2]:.1f}h')
+          " 2>/dev/null || echo "  Could not compute merge times"
+
+      - name: Issue velocity
+        run: |
+          echo "=== Issue Stats (last 30 days) ==="
+          SINCE=$(date -d '30 days ago' +%Y-%m-%d 2>/dev/null || date -v-30d +%Y-%m-%d)
+          OPENED=$(gh issue list --state all --search "created:>=$SINCE" --json number --jq 'length' 2>/dev/null || echo "?")
+          CLOSED=$(gh issue list --state closed --search "closed:>=$SINCE" --json number --jq 'length' 2>/dev/null || echo "?")
+          OPEN=$(gh issue list --state open --json number --jq 'length' 2>/dev/null || echo "?")
+          echo "  Opened (30d): $OPENED"
+          echo "  Closed (30d): $CLOSED"
+          echo "  Currently open: $OPEN"
+
+  scorecard:
+    name: Quality Scorecard
+    runs-on: ubuntu-latest
+    needs: [python-quality, repo-health]
+    if: always()
+    steps:
+      - name: Generate scorecard
+        run: |
+          cat << 'SCORE'
+          ╔══════════════════════════════════════════════════╗
+          ║          CODEBASE QUALITY SCORECARD              ║
+          ╠══════════════════════════════════════════════════╣
+          ║                                                  ║
+          ║  Check workflow run artifacts and job logs for    ║
+          ║  detailed metrics on:                            ║
+          ║                                                  ║
+          ║  • Python lint errors (flake8)                   ║
+          ║  • Style compliance (black, isort)               ║
+          ║  • Security issues (bandit)                      ║
+          ║  • Cyclomatic complexity (radon)                 ║
+          ║  • Dead code (vulture)                           ║
+          ║  • Dependency vulnerabilities (pip-audit)        ║
+          ║  • Module test coverage ratio                    ║
+          ║  • Commit convention compliance                  ║
+          ║  • Code duplication                              ║
+          ║  • Dependency graph & circular deps              ║
+          ║  • PR merge velocity                             ║
+          ║  • Issue throughput                               ║
+          ║                                                  ║
+          ╚══════════════════════════════════════════════════╝
+          SCORE

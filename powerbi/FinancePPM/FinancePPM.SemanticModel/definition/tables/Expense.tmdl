@@ -91,9 +91,21 @@ table Expense
 		formatString: 0.0%
 		displayFolder: AI Metrics
 
-	partition Expense = entity
-		mode: directLake
-		source
-			entityName: hr_expense
-			schemaName: public
-			expressionSource: DatabaseQuery
+	partition Expense = m
+		mode: import
+		source =
+			let
+				Source = PostgreSQL.Database(OdooServer & ":" & OdooPort, OdooDatabase),
+				hr_expense = Source{[Schema="public", Item="hr_expense"]}[Data],
+				SelectedColumns = Table.SelectColumns(hr_expense, {
+					"id", "name", "total_amount_currency", "date",
+					"analytic_distribution", "employee_id", "state",
+					"is_pulser_draft"
+				}),
+				// Extract analytic account ID from jsonb distribution
+				AddedAnalyticID = Table.AddColumn(SelectedColumns, "analytic_account_id",
+					each try Record.FieldNames([analytic_distribution]){0} otherwise null,
+					Int64.Type
+				)
+			in
+				AddedAnalyticID
