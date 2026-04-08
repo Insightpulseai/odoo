@@ -1,0 +1,40 @@
+version: 1
+artifact: feature_ship_readiness_gates
+status: active
+
+gates:
+  product:
+    required:
+      - acceptance_criteria_explicit
+      - spec_behavior_match
+      - user_visible_ambiguity_resolved
+
+  correctness:
+    required:
+      - unit_tests_green
+      - integration_tests_green
+      - negative_fixtures_green
+      - no_blocking_regressions
+
+  runtime:
+    required:
+      - staging_or_revision_available
+      - live_smoke_executed
+      - dependencies_reachable
+      - ingress_verified
+
+  operational_safety:
+    required:
+      - rollback_defined
+      - observability_present
+      - security_review_complete
+
+  evidence:
+    required:
+      - test_evidence_attached
+      - smoke_evidence_attached
+      - known_exceptions_logged
+      - decision_owner_recorded
+
+decision_rule:
+  ship_ready_only_if_all_required_gates_pass: true
