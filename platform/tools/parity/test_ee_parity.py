@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Odoo 19 Enterprise Edition Parity Test Suite
+Odoo 18 Enterprise Edition Parity Test Suite
 Automated validation of CE + OCA + ipai_* against EE features
 
 Usage:
@@ -963,7 +963,7 @@ class ParityTester:
         html = f"""<!DOCTYPE html>
 <html>
 <head>
-    <title>Odoo 19 EE Parity Report</title>
+    <title>Odoo 18 EE Parity Report</title>
     <style>
         body {{ font-family: system-ui, -apple-system, sans-serif; margin: 40px; background: #f5f5f5; }}
         .container {{ max-width: 1200px; margin: 0 auto; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }}
@@ -989,7 +989,7 @@ class ParityTester:
 </head>
 <body>
     <div class="container">
-        <h1>Odoo 19 Enterprise Edition Parity Report</h1>
+        <h1>Odoo 18 Enterprise Edition Parity Report</h1>
         <p>Generated: {self.report.timestamp}</p>
 
         <div class="score {score_class}">
@@ -1095,7 +1095,7 @@ class ParityTester:
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Odoo 19 EE Parity Testing")
+    parser = argparse.ArgumentParser(description="Odoo 18 EE Parity Testing")
     parser.add_argument(
         "--odoo-url", default="http://localhost:8069", help="Odoo URL"
     )

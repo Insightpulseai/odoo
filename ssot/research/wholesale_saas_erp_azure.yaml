@@ -13,7 +13,7 @@ architecture:
 
 planes:
   system_of_record:
-    platform: Odoo CE 19
+    platform: Odoo CE 18
     owns:
       - orders
       - invoices
@@ -29,7 +29,7 @@ planes:
       - agent_orchestration
       - agent_governance
     runtime:
-      python: ">=3.10"  # Odoo 19 requirement; repo standard is 3.11
+      python: ">=3.10"  # Odoo 18 requirement; repo standard is 3.11
       postgresql: ">=13"
       hosting: Azure Container Apps
       database: Azure Database for PostgreSQL Flexible Server
@@ -100,7 +100,7 @@ roadmap:
     focus: Landing zone, identity, secrets, observability, devcontainer cockpit
   - phase: P1
     name: MVP ERP
-    focus: Odoo 19 DB-per-tenant + dbfilter, customer portal, APIM
+    focus: Odoo 18 DB-per-tenant + dbfilter, customer portal, APIM
   - phase: P2
     name: Analytics
     focus: Databricks lakehouse + Unity Catalog, medallion from Odoo

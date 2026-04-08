@@ -200,7 +200,7 @@ module_map:
       note: "Kept as internal model layer; all user-facing AI routes through Foundry"
 
     - module: ipai_ai_agent_builder
-      role: "Agent/topic/tool builder (Odoo 19 parity)"
+      role: "Agent/topic/tool builder (Odoo 18 parity)"
       status: retained
       note: "Agent definitions sync to Foundry; builder UI stays in Odoo"
 

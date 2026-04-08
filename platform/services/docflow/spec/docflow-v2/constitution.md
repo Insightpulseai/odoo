@@ -1,12 +1,12 @@
-# Constitution — DocFlow v2 (Odoo 19)
+# Constitution — DocFlow v2 (Odoo 18)
 
 ## Purpose
 
-DocFlow v2 automates bank statement ingestion and reconciliation in Odoo 19 using local OCR/parsing plus LLM-assisted classification/extraction, and enforces an activity-driven SLA for manual approvals.
+DocFlow v2 automates bank statement ingestion and reconciliation in Odoo 18 using local OCR/parsing plus LLM-assisted classification/extraction, and enforces an activity-driven SLA for manual approvals.
 
 ## Non-Negotiables
 
-- Odoo 19 compatible (views use <list>, view_mode="list,form").
+- Odoo 18 compatible (views use <list>, view_mode="list,form").
 - No third-party Document AI APIs (Azure DI, Google DI, etc.).
 - LLMs (OpenAI/Gemini/Anthropic) are allowed for reasoning/extraction only.
 - All decisions must be explainable and auditable (confidence + evidence stored).

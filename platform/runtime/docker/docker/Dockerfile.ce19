@@ -1,25 +1,25 @@
 # syntax=docker/dockerfile:1.7
 # =============================================================================
-# Odoo CE 19 + OCA + IPAI Enterprise Bridge - EE Parity Image
+# Odoo CE 18 + OCA + IPAI Enterprise Bridge - EE Parity Image
 # =============================================================================
-# Purpose: Custom Odoo CE 19 image with Enterprise Edition feature parity
+# Purpose: Custom Odoo CE 18 image with Enterprise Edition feature parity
 #          achieved through CE + OCA addons + ipai_enterprise_bridge module
 #
 # EE Parity Strategy:
-#   - Base: Odoo CE 19.0 (official image)
-#   - Community: OCA addons (v19.0 branches)
+#   - Base: Odoo CE 18.0 (official image)
+#   - Community: OCA addons (v18.0 branches)
 #   - Bridge: ipai_enterprise_bridge (thin enterprise-style glue layer)
 #
 # NO proprietary Odoo EE code is used. This image is 100% open source.
 #
 # Build Examples:
 #   docker build -f docker/Dockerfile.ce19 -t odoo-ce19-ee-parity:latest .
-#   docker build -f docker/Dockerfile.ce19 --build-arg ODOO_BASE_IMAGE=odoo:19.0-20260115 -t odoo-ce19-ee-parity:v19.0.1 .
+#   docker build -f docker/Dockerfile.ce19 --build-arg ODOO_BASE_IMAGE=odoo:18.0-20260115 -t odoo-ce18-ee-parity:v18.0.1 .
 #
 # =============================================================================
 
 # Pin exact base image (supports digest pinning for reproducibility)
-ARG ODOO_BASE_IMAGE=odoo:19.0
+ARG ODOO_BASE_IMAGE=odoo:18.0
 
 FROM ${ODOO_BASE_IMAGE} AS base
 
@@ -56,7 +56,7 @@ RUN mkdir -p /mnt/addons/ipai \
 # =============================================================================
 # Copy OCA Modules (external-src → /mnt/addons/oca - FLATTENED)
 # =============================================================================
-# Source of truth: external-src/ (OCA git submodules for v19.0)
+# Source of truth: external-src/ (OCA git submodules for v18.0)
 # Strategy: Flatten all OCA modules into single /mnt/addons/oca root
 # Benefit: Single addon path instead of multiple enumerated paths
 
@@ -66,7 +66,7 @@ COPY ./external-src /tmp/external-src
 # Flatten OCA modules with collision detection
 RUN set -eux; \
   mkdir -p /mnt/addons/oca; \
-  echo "Flattening OCA modules from external-src (Odoo 19)..."; \
+  echo "Flattening OCA modules from external-src (Odoo 18)..."; \
   module_count=0; \
   for repo in /tmp/external-src/*; do \
     [ -d "$repo" ] || continue; \
@@ -88,7 +88,7 @@ RUN set -eux; \
   done; \
   echo ""; \
   echo "========================================"; \
-  echo "OCA Module Flatten Summary (Odoo 19)"; \
+  echo "OCA Module Flatten Summary (Odoo 18)"; \
   echo "========================================"; \
   echo "Total modules flattened: $module_count"; \
   find /mnt/addons/oca -maxdepth 1 -type d -name "*" ! -name "oca" | sort; \
@@ -132,8 +132,8 @@ RUN pip3 install --no-cache-dir --break-system-packages \
     -r /tmp/requirements-oca.txt \
     && rm /tmp/requirements-oca.txt /tmp/requirements-constraints.txt
 
-# Patch odoo-test-helper for Odoo 19 compatibility.
-# MetaModel.module_to_models was renamed to _module_to_models__ in Odoo 19;
+# Patch odoo-test-helper for Odoo 18 compatibility.
+# MetaModel.module_to_models was renamed to _module_to_models__ in Odoo 18;
 # the published package still references the old name and crashes at import time.
 # base_tier_validation/tests imports FakeModelLoader which triggers the crash
 # and blocks the entire test runner.  This one-liner makes the attribute access
@@ -180,12 +180,12 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
 # =============================================================================
 # OCI Labels (Self-Describing Image)
 # =============================================================================
-LABEL org.opencontainers.image.title="Odoo CE 19 + OCA + IPAI Enterprise Bridge (EE Parity)" \
-      org.opencontainers.image.description="Odoo CE 19 with Enterprise Edition feature parity via OCA + ipai_enterprise_bridge. 100% open source." \
+LABEL org.opencontainers.image.title="Odoo CE 18 + OCA + IPAI Enterprise Bridge (EE Parity)" \
+      org.opencontainers.image.description="Odoo CE 18 with Enterprise Edition feature parity via OCA + ipai_enterprise_bridge. 100% open source." \
       org.opencontainers.image.vendor="InsightPulse AI" \
-      org.opencontainers.image.version="19.0.1.0.0" \
+      org.opencontainers.image.version="18.0.1.0.0" \
       org.opencontainers.image.base.name="${ODOO_BASE_IMAGE}" \
-      com.insightpulseai.odoo.version="19.0" \
+      com.insightpulseai.odoo.version="18.0" \
       com.insightpulseai.ee.parity="true" \
       com.insightpulseai.ee.parity.strategy="CE+OCA+ipai_enterprise_bridge" \
       com.insightpulseai.license="LGPL-3.0"

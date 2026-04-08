@@ -2,7 +2,7 @@
 
 ## 1. Goals
 
-1. Ingest bank statements (PDF/CSV/OFX) into Odoo 19 via DocFlow.
+1. Ingest bank statements (PDF/CSV/OFX) into Odoo 18 via DocFlow.
 2. Reconcile statements against Odoo transactions (payments, invoices, bank journal entries).
 3. Enforce approval SLA with automatic assignment and escalations.
 
@@ -58,7 +58,7 @@ Outputs:
 
 ## 4. Non-Functional Requirements
 
-- Odoo 19 compliant
+- Odoo 18 compliant
 - Idempotent ingestion
 - Deterministic scoring
 - Auditability: store evidence + match reasons

@@ -74,7 +74,7 @@ critical_path:
     blocker_type: runtime_functionality
     inputs:
       - Cron log with analytic_account_id error
-      - Odoo 19 field schema reference
+      - Odoo 18 field schema reference
     done_criteria:
       - Server action runs without field error
       - Cron log shows successful execution

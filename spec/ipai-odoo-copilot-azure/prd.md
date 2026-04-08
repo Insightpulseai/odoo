@@ -37,6 +37,19 @@ Odoo Copilot is one of five canonical assistant surfaces. See `docs/architecture
 - **Action mode:** Read-only first, actions later by policy
 - **Not:** The public landing assistant (that is the Marketing Assistant), not the orchestration shell (that is Diva), not the creative assistant (that is Studio)
 
+## Acceptance Criteria
+
+1. Addon installs cleanly on Odoo 18 CE with `--stop-after-init`
+2. Settings UI renders under Administration → IPAI Copilot
+3. Test Connection validates config completeness
+4. Ensure Agent logs intent without remote calls
+5. Open Portal opens endpoint URL in new tab
+6. Nightly healthcheck cron fires without error
+7. No Azure secrets stored in Odoo DB
+8. Memory defaults to off, read-only defaults to on
+9. SSOT AI manifests pass integrity validation
+10. Foundry evaluation runs demonstrate grounded responses
+
 ## Non-Goals
 
 - Shipping separate end-user products for each finance agent capability

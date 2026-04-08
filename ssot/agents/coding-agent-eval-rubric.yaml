@@ -1,0 +1,120 @@
+version: 1
+artifact: coding_agent_eval_rubric
+status: active
+
+purpose:
+  - measure_agent_coding_quality_over_time
+  - separate_capability_execution_and_business_usefulness
+  - support_repeatable_model_comparisons
+
+evaluation_dimensions:
+  capability:
+    description: can the agent solve the coding task at all
+    metrics:
+      - id: first_pass_tests_green
+        type: boolean
+        weight: 10
+      - id: task_completed_end_to_end
+        type: boolean
+        weight: 10
+      - id: benchmark_pack_pass
+        type: percentage
+        weight: 8
+
+  execution_quality:
+    description: how well the agent behaves inside the real repo workflow
+    metrics:
+      - id: accepted_diff_ratio
+        type: percentage
+        weight: 10
+      - id: manual_patch_edits_required
+        type: integer_inverse
+        weight: 8
+      - id: hallucination_count
+        type: integer_inverse
+        weight: 10
+      - id: tool_misuse_count
+        type: integer_inverse
+        weight: 8
+      - id: regressions_introduced
+        type: integer_inverse
+        weight: 10
+      - id: scope_control_score
+        type: ordinal_1_5
+        weight: 6
+      - id: repo_convention_alignment_score
+        type: ordinal_1_5
+        weight: 6
+
+  efficiency:
+    description: how much effort and time the agent needs to finish correctly
+    metrics:
+      - id: prompts_to_completion
+        type: integer_inverse
+        weight: 6
+      - id: tool_calls_to_completion
+        type: integer_inverse
+        weight: 4
+      - id: time_to_green_minutes
+        type: integer_inverse
+        weight: 8
+      - id: time_to_merge_minutes
+        type: integer_inverse
+        weight: 6
+
+  reliability:
+    description: whether the agent can be trusted to finish without rescue
+    metrics:
+      - id: manual_takeover_required
+        type: boolean_inverse
+        weight: 10
+      - id: stalled_or_derailed
+        type: boolean_inverse
+        weight: 8
+      - id: retry_cycles
+        type: integer_inverse
+        weight: 6
+
+  business_usefulness:
+    description: whether the agent improves shipping velocity and reduces rework
+    metrics:
+      - id: shipped
+        type: boolean
+        weight: 10
+      - id: rollback_or_revert
+        type: boolean_inverse
+        weight: 10
+      - id: escaped_defect
+        type: boolean_inverse
+        weight: 10
+
+scoring:
+  score_bands:
+    excellent: [85, 100]
+    good: [70, 84]
+    borderline: [55, 69]
+    poor: [0, 54]
+
+normalization_guidance:
+  accepted_diff_ratio:
+    formula: accepted_hunks / total_hunks
+  benchmark_pack_pass:
+    formula: passed_tasks / total_tasks
+  integer_inverse_rule:
+    description: lower is better
+  boolean_inverse_rule:
+    description: false is better than true
+
+task_taxonomy:
+  - bugfix
+  - feature
+  - refactor
+  - infra
+  - spec
+  - migration
+  - test_only
+
+required_notes:
+  - what_went_well
+  - what_went_wrong
+  - whether_outcome_reflects_model_prompt_or_repo_change

@@ -33,9 +33,17 @@
 - [ ] Auth / role resolution (Entra → Odoo user mapping)
 - [ ] Context assembly (user, company, permissions, recent activity)
 - [ ] Skill registry (discovery, routing, version tracking)
-- [ ] Run logging / artifact storage (Supabase)
+- [ ] Run logging / artifact storage
 - [ ] Approval / escalation hooks
 - [ ] Channel adapters (Odoo UI, Teams, Telegram, email)
+
+### Validation
+- [x] Python compile check passes
+- [x] SSOT cross-reference validation passes
+- [x] XML parse validation passes
+- [ ] Install smoke test on Odoo 18 (requires devcontainer)
+- [ ] Live agent resolution test (requires Azure access + API endpoint)
+- [ ] Foundry evaluation runs (requires Azure access)
 
 ## Epic 0.7 — Compliance Rule Library
 - define check/rule object model

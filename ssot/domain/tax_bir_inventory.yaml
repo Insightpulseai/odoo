@@ -1099,7 +1099,7 @@ assets:
     source_class: salvage
     duplicate_group: null
     recommended_action: review_before_salvage
-    notes: "Odoo 18 + OCA architecture skill. May be outdated (we are on Odoo 19)."
+    notes: "Odoo 18 + OCA architecture skill. Review for currency against current 18.0 platform."
 
   - id: TXP-033
     title: sap-odoo18-taxpulse-certified skill
@@ -1127,7 +1127,7 @@ assets:
     source_class: salvage
     duplicate_group: null
     recommended_action: drop
-    notes: "Certification spec for Odoo 18 CE+OCA custom dev. Obsolete (we are on Odoo 19)."
+    notes: "Certification spec for Odoo 18 CE+OCA custom dev. Review for current 18.0 applicability."
 
   - id: TXP-035
     title: Odoo 18 CE+OCA dev agent prompt
@@ -1140,7 +1140,7 @@ assets:
     source_class: salvage
     duplicate_group: null
     recommended_action: drop
-    notes: "Agent prompt for Odoo 18 CE+OCA dev. Obsolete (we are on Odoo 19)."
+    notes: "Agent prompt for Odoo 18 CE+OCA dev. Review for current 18.0 applicability."
 
   # --- CI/CD ---
 

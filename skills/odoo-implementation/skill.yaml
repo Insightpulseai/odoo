@@ -17,7 +17,7 @@ intents:
   - set up odoo
 
 guardrails:
-  - Follow canonical setup (odoo19/ directory patterns)
+  - Follow canonical setup (odoo18/ directory patterns)
   - Single database per environment (list_db = False)
   - File-based secrets only (never hardcode)
   - Always run --stop-after-init verification
@@ -107,7 +107,7 @@ agentInstructions: |
   When implementing Odoo:
 
   1. **Environment Setup**:
-     - Use canonical setup from odoo19/ directory
+     - Use canonical setup from odoo18/ directory
      - Configure docker-compose with health checks
      - Set db_name per environment (odoo_dev / odoo_staging / odoo)
      - Disable database selector (list_db = False)
@@ -128,7 +128,7 @@ agentInstructions: |
      - Set company info, currency, fiscal year
      - Configure chart of accounts
      - Set up user roles and access groups
-     - Configure email (Mailgun SMTP on mg.insightpulseai.com)
+     - Configure email (Zoho SMTP on smtp.zoho.com:587)
 
   5. **Go-Live Validation**:
      - Health check: curl http://localhost:8069/web/health

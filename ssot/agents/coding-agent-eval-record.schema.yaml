@@ -1,0 +1,37 @@
+version: 1
+artifact: coding_agent_eval_record_schema
+
+fields:
+  date: string
+  agent: string
+  model_version: string
+  repo: string
+  branch: string
+  task_id: string
+  task_type: string
+  shipped: boolean
+  first_pass_tests_green: boolean
+  task_completed_end_to_end: boolean
+  manual_takeover_required: boolean
+  rollback_or_revert: boolean
+  escaped_defect: boolean
+  prompts_to_completion: integer
+  tool_calls_to_completion: integer
+  manual_patch_edits_required: integer
+  hallucination_count: integer
+  tool_misuse_count: integer
+  retry_cycles: integer
+  stalled_or_derailed: boolean
+  time_to_green_minutes: number
+  time_to_merge_minutes: number
+  accepted_diff_ratio: number
+  scope_control_score: integer
+  repo_convention_alignment_score: integer
+  what_went_well: string
+  what_went_wrong: string
+  attribution:
+    model_improvement: boolean
+    prompt_improvement: boolean
+    repo_improvement: boolean
+    test_harness_improvement: boolean
+    context_packaging_improvement: boolean
