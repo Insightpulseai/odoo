@@ -64,8 +64,7 @@ Tests must validate:
 ## Rule 6: Version Alignment
 
 All active finance modules must target the same Odoo major version.
-Currently: **19.0**. Any module still on `18.0.x.x.x` must be migrated
-before the next release cut.
+Currently: **18.0**. All active finance modules must target `18.0.x.x.x`.
 
 ## Rule 7: No Module Sprawl
 

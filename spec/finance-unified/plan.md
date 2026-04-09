@@ -15,7 +15,7 @@
 │  Foundation Layer (standalone, no IPAI deps):               │
 │  ┌──────────────────────┐  ┌──────────────────────────────┐│
 │  │ ipai_finance_ppm     │  │ ipai_bir_tax_compliance      ││
-│  │ v19.0.1.0.0          │  │ v18.0.1.0.0 → 19.0.1.0.0    ││
+│  │ v18.0.1.0.0          │  │ v18.0.1.0.0 → 18.0.1.0.0    ││
 │  │ project, account,    │  │ base, mail, account, project ││
 │  │ analytic, mail, web  │  │ 36 eBIRForms, dashboard      ││
 │  └──────────────────────┘  └──────────┬───────────────────┘│
@@ -25,7 +25,7 @@
 │  │                                    │                     │
 │  │  ┌─────────────────────┐  ┌───────┴──────────────┐      │
 │  │  │ ipai_bir_notifications│ │ ipai_bir_plane_sync  │      │
-│  │  │ v19.0.1.0.0          │ │ v19.0.1.0.0          │      │
+│  │  │ v18.0.1.0.0          │ │ v18.0.1.0.0          │      │
 │  │  │ mail alerts, cron    │ │ Plane.so bidirectional│      │
 │  │  │ installable: False   │ │ installable: False    │      │
 │  │  └─────────────────────┘  └──────────────────────┘      │
@@ -33,7 +33,7 @@
 │  Data Layer (no code, only seed data):                      │
 │  ┌─────────────────────────────────────────────────────┐    │
 │  │ ipai_finance_close_seed                             │    │
-│  │ v19.0.1.0.0 | 7 XML + 2 CSV                        │    │
+│  │ v18.0.1.0.0 | 7 XML + 2 CSV                        │    │
 │  │ 39 close tasks + 50 BIR tasks + team + milestones   │    │
 │  └─────────────────────────────────────────────────────┘    │
 │                                                             │
@@ -121,11 +121,11 @@ They are subordinate to `FINANCE_UNIFIED_SYSTEM.md` for system-level truth.
 
 | Module | Current Version | Target | Action |
 |--------|----------------|--------|--------|
-| `ipai_bir_tax_compliance` | 18.0.1.0.0 | 19.0.1.0.0 | Bump version in `__manifest__.py` |
-| `ipai_bir_notifications` | 19.0.1.0.0 | — | Already aligned |
-| `ipai_bir_plane_sync` | 19.0.1.0.0 | — | Already aligned |
-| `ipai_finance_ppm` | 19.0.1.0.0 | — | Already aligned |
-| `ipai_finance_close_seed` | 19.0.1.0.0 | — | Already aligned |
+| `ipai_bir_tax_compliance` | 18.0.1.0.0 | — | Already aligned |
+| `ipai_bir_notifications` | 18.0.1.0.0 | — | Already aligned |
+| `ipai_bir_plane_sync` | 18.0.1.0.0 | — | Already aligned |
+| `ipai_finance_ppm` | 18.0.1.0.0 | — | Already aligned |
+| `ipai_finance_close_seed` | 18.0.1.0.0 | — | Already aligned |
 
 ## 6. Installability Assessment
 
@@ -139,7 +139,47 @@ Two satellite modules are currently `installable: False`:
 These are not deprecated — they are **planned but unfinished**. They remain
 in the active module graph but gated behind installability.
 
-## 7. Test and Validator Plan
+## 7. Cross-Repo Capability Sourcing
+
+Do not constrain solution discovery to OCA/project.
+
+The implementation plan must perform a cross-repo addon scan and prefer
+composition over custom development. Thin custom models are allowed only
+for capabilities that remain unresolved after adjacent-repo evaluation.
+
+**Anti-pattern**: declaring a custom `ipai_finance_ppm` feature because the
+feature is absent from `project` repo alone.
+
+### Adjacent repos to scan
+
+| OCA Repo | PPM-relevant capabilities |
+|---|---|
+| [helpdesk](https://github.com/OCA/helpdesk) | Issue register substrate (project-linked tickets, SLA, stages) |
+| [knowledge](https://github.com/OCA/knowledge) | Governance approvals, decision records (`document_page_approval`, `document_page_project`) |
+| [mis-builder](https://github.com/OCA/mis-builder) | KPI rollups, financial reporting, budget vs. actual |
+| [project-agile](https://github.com/OCA/project-agile) | Demand/backlog/intake approximation |
+| [reporting-engine](https://github.com/OCA/reporting-engine) | Spreadsheet/dashboard composition |
+| [account-analytic](https://github.com/OCA/account-analytic) | Analytic budget surfaces, financial rollups |
+| [project-reporting](https://github.com/OCA/project-reporting) | Project-level reporting and metrics |
+
+### Capabilities downgraded from "custom" to "candidate composable"
+
+- **Issue register** → OCA Helpdesk has 18.0 modules for project-linked tickets, SLA, related tickets, stage validation, and timesheets
+- **Governance approvals / decision records** → OCA Knowledge has 18.0 addons (`document_page_approval`, `document_page_project`)
+- **Executive / operational dashboards** → MIS Builder + OCA Spreadsheet + Odoo global-filter dashboard pattern
+- **Demand / intake** → not proven solved, but must be tested against project-agile and helpdesk/form intake before declaring custom-only
+
+### Capabilities that remain likely real gaps
+
+- Enterprise capacity planning / optimization
+- Advanced drag-and-drop resource scheduling
+- Scenario scoring / investment prioritization
+- Portfolio-level optimization logic
+
+OCA project discussions still point to forecasts/planning as an open area
+rather than a mature, established 18.0 solution.
+
+## 8. Test and Validator Plan
 
 ### 7.1 Seed Integrity Tests
 
@@ -188,6 +228,6 @@ File: `tests/contracts/test_finance_system.py` (repo-level)
 | Test | What it validates |
 |------|-------------------|
 | `test_no_deprecated_modules_installable` | `ipai_finance_workflow` and `ipai_finance_tax_return` remain `installable: False` |
-| `test_active_modules_version_aligned` | All 5 active modules have `19.0.x.x.x` version |
+| `test_active_modules_version_aligned` | All 5 active modules have `18.0.x.x.x` version |
 | `test_seed_canonical_doc_exists` | `docs/modules/FINANCE_UNIFIED_SYSTEM.md` exists |
 | `test_spec_bundle_complete` | All 4 spec files exist in `spec/finance-unified/` |

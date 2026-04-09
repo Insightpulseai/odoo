@@ -60,6 +60,58 @@ the full finance operations picture.
 | Clarity-style WBS hierarchy | 5 levels: goal → outcome → objective → workstream → task |
 | Budget vs. actual variance analysis | Analytic account extensions with forecast fields |
 
+### 3.4 Gap Evaluation Rule
+
+A capability is classified as **Gap = unresolved** only after a
+**cross-repo CE/OCA 18 scan** across:
+
+- project / project-reporting / project-agile
+- timesheet
+- helpdesk
+- knowledge / document approval
+- spreadsheet / dashboard
+- MIS Builder / financial reporting
+- analytic / accounting-adjacent modules
+- other adjacent CE/OCA 18 repos materially relevant to PPM
+
+A capability absent from `OCA/project` alone is **not** evidence of a gap.
+
+## Capability Sourcing Doctrine
+
+A capability must be classified in this order:
+
+1. **CE-native** — covered by Odoo 18 CE core
+2. **OCA-native (project/timesheet)** — covered by OCA project or timesheet repos
+3. **OCA-native (adjacent)** — covered by non-project OCA repos (helpdesk, knowledge, MIS, etc.)
+4. **Composite CE+OCA** — composable from multiple modules, no custom model yet
+5. **Thin custom delta** — `ipai_*` module required for genuinely unresolved capability
+6. **External analytics / planning assist** — Power BI, Databricks, or external tool
+
+A capability may only be labeled "custom delta required" after steps 1–4 fail.
+
+## Capability Coverage Classification
+
+| Classification | Meaning |
+|---|---|
+| **Covered directly** | CE or OCA module provides the capability as-is |
+| **Covered compositionally** | Capability achievable by composing adjacent CE/OCA 18 modules |
+| **Unresolved after cross-repo scan** | No proven CE/OCA 18 pattern exists; custom delta or external assist required |
+
+## Revised Sourcing Matrix
+
+| Capability family | Likely source lane | Current status |
+|---|---|---|
+| Project execution / WBS / milestones | CE Project + OCA/project | Strong |
+| Timesheet governance / approvals | OCA/timesheet | Strong |
+| Portfolio structure / grouping | OCA/project | Strong / partial by design |
+| Issue register | Candidate: OCA/helpdesk linked to project | Likely composable |
+| Risk register | Candidate: helpdesk/customized ticketing or governance records | Unresolved, but not yet proven custom-only |
+| Governance approvals / decision records | OCA/knowledge document approval + project-linked docs | Likely composable |
+| KPI rollups / dashboards | MIS Builder + spreadsheet/dashboard layer | Likely composable |
+| Demand / backlog / intake | Candidate: project-agile + helpdesk/form intake + project templates | Partial / unresolved |
+| Capacity planning / optimization | No strong proof of mature OCA parity yet | Likely real gap |
+| Prioritization / scoring / scenario analysis | No proven CE/OCA 18 pattern yet | Likely real gap |
+
 ## 4. Non-Goals
 
 - Rebuilding existing modules from scratch

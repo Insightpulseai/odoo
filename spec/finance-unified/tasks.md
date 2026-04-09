@@ -11,7 +11,7 @@
 - [x] **T1.2** Classify active vs. deprecated modules in spec constitution
 - [x] **T1.3** Define canonical seed strategy (XML = canonical, JSON = derived, SQL = deprecated)
 - [x] **T1.4** Define canonical dependency graph
-- [ ] **T1.5** Bump `ipai_bir_tax_compliance` version from `18.0.1.0.0` to `19.0.1.0.0`
+- [x] **T1.5** Verify `ipai_bir_tax_compliance` version is `18.0.1.0.0` (already aligned)
 - [ ] **T1.6** Add `DEPRECATED` note to `ipai_finance_workflow` manifest description (if not already present)
 - [ ] **T1.7** Add derivation note to `ipai_finance_closing_seed.json` (repo root)
 
@@ -20,6 +20,21 @@
 - [x] **T2.1** Create `docs/modules/FINANCE_UNIFIED_SYSTEM.md`
 - [ ] **T2.2** Verify existing module doc stubs do not contradict unified doc
 - [ ] **T2.3** Add cross-reference from `finance_ppm_technical_guide.md` to unified doc
+
+## Phase 2.5: Cross-Repo Capability Discovery (NEW)
+
+- [ ] **T2.5.1** Build a cross-repo CE/OCA 18 capability inventory for PPM
+- [ ] **T2.5.2** Map each PPM capability to one of: direct / composable / unresolved
+- [ ] **T2.5.3** Prove candidate compositions for issue, risk, governance, and dashboards
+- [ ] **T2.5.4** Only then open custom-delta tasks for unresolved capabilities
+
+### Specific discovery lanes
+
+- [ ] **T2.5.5** Evaluate OCA/helpdesk as issue-register substrate
+- [ ] **T2.5.6** Evaluate OCA/knowledge as approval / decision-log / governance substrate
+- [ ] **T2.5.7** Evaluate OCA/spreadsheet + MIS Builder for portfolio dashboarding
+- [ ] **T2.5.8** Evaluate project-agile for demand/backlog approximation
+- [ ] **T2.5.9** Evaluate accounting / analytic budget surfaces for financial rollups
 
 ## Phase 3: Seed Validation Tests
 
@@ -40,7 +55,7 @@
 
 - [ ] **T4.1** Create `tests/contracts/test_finance_system.py`
   - Deprecated modules remain `installable: False`
-  - Active modules version-aligned to 19.0
+  - Active modules version-aligned to 18.0
   - Canonical doc and spec bundle existence checks
 - [ ] **T4.2** Add finance system contract tests to CI workflow
 
@@ -70,7 +85,9 @@
 ```
 T1.1–T1.4 ──► T2.1 ──► T2.2, T2.3
 T1.5–T1.7 ──► T4.1 (version alignment needed before contract tests)
-T2.1 ──► T3.1, T3.2, T3.3 (tests reference canonical doc for expected counts)
+T2.1 ──► T2.5.1–T2.5.9 (cross-repo scan before custom build decisions)
+T2.5.* ──► T3.3 (PPM smoke tests depend on sourcing decisions)
+T2.1 ──► T3.1, T3.2 (tests reference canonical doc for expected counts)
 T3.* ──► T4.2 (tests must exist before adding to CI)
 T4.1 ──► T5.* (contract tests gate satellite activation)
 ```
