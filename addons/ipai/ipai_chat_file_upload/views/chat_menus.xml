@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Root menu under Settings / Technical -->
+    <menuitem id="menu_chat_root"
+              name="Chat Sources"
+              parent="base.menu_administration"
+              sequence="25"/>
+
+    <menuitem id="menu_chat_sessions"
+              name="Sessions"
+              parent="menu_chat_root"
+              action="chat_session_action"
+              sequence="10"/>
+
+    <menuitem id="menu_chat_sources"
+              name="Sources"
+              parent="menu_chat_root"
+              action="chat_source_action"
+              sequence="20"/>
+</odoo>

@@ -1,8 +1,0 @@
-polling_interval_ms: 60000
-auto_promote_stages:
-  - S04
-  - S05
-  - S06
-alerting:
-  slack_webhook_url: ""
-metrics_port: 9091

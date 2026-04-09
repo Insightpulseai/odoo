@@ -1,0 +1,7 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_chat_session_user,ipai.chat.session.user,model_ipai_chat_session,group_chat_user,1,1,1,0
+access_chat_session_admin,ipai.chat.session.admin,model_ipai_chat_session,group_chat_admin,1,1,1,1
+access_chat_message_user,ipai.chat.message.user,model_ipai_chat_message,group_chat_user,1,1,1,0
+access_chat_message_admin,ipai.chat.message.admin,model_ipai_chat_message,group_chat_admin,1,1,1,1
+access_chat_source_user,ipai.chat.source.user,model_ipai_chat_source,group_chat_user,1,1,1,0
+access_chat_source_admin,ipai.chat.source.admin,model_ipai_chat_source,group_chat_admin,1,1,1,1
