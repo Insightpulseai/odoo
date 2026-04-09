@@ -1,6 +1,6 @@
 # EE Parity Gate
 
-Enterprise Edition parity assessment for the Odoo 19 CE + OCA platform.
+Enterprise Edition parity assessment for the Odoo 18 CE + OCA platform.
 
 > **Gate Status: ALL CAPABILITIES PASS. SHIP.**
 >

@@ -9,7 +9,7 @@
 IPAI AI Agent Builder
 =====================
 
-This module provides Odoo 19 AI Agents feature parity for CE/OCA deployments:
+This module provides Odoo 18 AI Agents feature parity for CE/OCA deployments:
 
 - **Agents**: Configurable AI assistants with system prompts and response styles
 - **Topics**: Instruction bundles that assign specific tools to agents
@@ -24,7 +24,7 @@ Features:
 - REST API endpoints
 
 References:
-- Odoo 19 AI Agents: https://www.odoo.com/documentation/19.0/applications/productivity/ai/agents.html
+- Odoo 18 AI Agents: https://www.odoo.com/documentation/19.0/applications/productivity/ai/agents.html
     """,
     "author": "InsightPulse AI",
     "website": "https://insightpulseai.com",

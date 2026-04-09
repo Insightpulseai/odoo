@@ -23,9 +23,9 @@ Odoo stores compiled SCSS→CSS bundles in `/var/lib/odoo/filestore/<db>/`. If t
 - Prod compose volume: `odoo-filestore:/var/lib/odoo`
 - If volume name changed or was wiped → all assets lost
 
-**2. Odoo 19 asset pipeline incompatibility**
+**2. Odoo 18 asset pipeline incompatibility**
 
-Odoo 19 changed the asset bundling system. Old v18 compiled bundles in the filestore are invalid and need regeneration.
+Odoo 18 changed the asset bundling system. Old v18 compiled bundles in the filestore are invalid and need regeneration.
 
 **3. Missing SCSS source files in theme modules**
 
@@ -121,7 +121,7 @@ Multiple active config files reference `odoo_core` as the database name. The can
 | `config/odoo-core.conf` | `db_name = odoo_core` | `db_name = odoo` |
 | `CLAUDE_CODE_WEB.md` | `DB_NAME=odoo_core` | `DB_NAME=odoo` |
 | `ship_v1_1_0.sh` | `${ODOO_DB:=odoo_core}` | `${ODOO_DB:=odoo}` |
-| `stack/odoo19_stack.yaml` | `name: "odoo_core"` | `name: "odoo"` |
+| `stack/odoo18_stack.yaml` | `name: "odoo_core"` | `name: "odoo"` |
 | `VERIFY.md` | Multiple `-d odoo_core` | `-d odoo` |
 | `infra/deploy/docker-compose.ce19.yml` | `${POSTGRES_DB:-odoo_ce19}` | `${POSTGRES_DB:-odoo}` |
 

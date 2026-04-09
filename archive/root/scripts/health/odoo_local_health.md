@@ -6,7 +6,7 @@
 
 | Container | Service | Health Check Endpoint |
 |-----------|---------|----------------------|
-| `odoo-core` | Odoo 19 CE | `/web/health` (port 8069) |
+| `odoo-core` | Odoo 18 CE | `/web/health` (port 8069) |
 | `odoo-db` | PostgreSQL 16 | `pg_isready -h db -p 5432` |
 | `odoo-redis` | Redis 7 | `redis-cli -h redis ping` |
 

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Vendor Odoo docs (odoo/documentation branch 19.0) into docs/kb/odoo19/upstream/.
+Vendor Odoo docs (odoo/documentation branch 19.0) into docs/kb/odoo18/upstream/.
 
 Design goals:
   - deterministic directory snapshot
@@ -29,7 +29,7 @@ import tempfile
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
-KB_ROOT_DEFAULT = ROOT / "docs" / "kb" / "odoo19"
+KB_ROOT_DEFAULT = ROOT / "docs" / "kb" / "odoo18"
 
 UPSTREAM_URL_DEFAULT = "https://github.com/odoo/documentation"
 BRANCH_DEFAULT = "19.0"

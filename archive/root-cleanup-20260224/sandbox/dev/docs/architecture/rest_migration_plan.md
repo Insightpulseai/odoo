@@ -10,7 +10,7 @@
 
 ## Executive Summary
 
-**Problem:** OCA `base_rest` module uninstallable in Odoo 19.0 due to incomplete upstream migration.
+**Problem:** OCA `base_rest` module uninstallable in Odoo 18.0 due to incomplete upstream migration.
 
 **Root Cause:** Missing `component` module dependency (OCA/connector not migrated to 19.0).
 
@@ -314,7 +314,7 @@ cd /Users/tbwa/Documents/GitHub/Insightpulseai/odoo/sandbox/dev
 - [ ] Automated alerts when migration ready
 
 ### ⏳ Phase 3 (Future)
-- [ ] base_rest installable in Odoo 19
+- [ ] base_rest installable in Odoo 18
 - [ ] All Python dependencies available (already done)
 - [ ] API contract preserved during migration
 - [ ] Native implementation deprecated cleanly

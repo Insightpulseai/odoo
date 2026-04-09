@@ -148,7 +148,7 @@ export function OdooStyleLanding({ onOpenManager }: { onOpenManager: () => void 
               </h1>
               <p className="mt-8 text-lg text-neutral-400 max-w-lg font-medium leading-relaxed">
                 Deploy, monitor, and scale your Supabase infra with a Git-driven workflow.
-                Built for mission-critical Odoo 19 SaaS delivery.
+                Built for mission-critical Odoo 18 SaaS delivery.
               </p>
 
               <div className="mt-10 flex flex-wrap items-center gap-4">

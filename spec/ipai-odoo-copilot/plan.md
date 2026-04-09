@@ -137,12 +137,12 @@ addons/ipai/ipai_odoo_copilot/
 
 ### DD-1: OWL Systray Component (not legacy widget)
 
-The systray icon and chat panel are implemented as Odoo 19 OWL components,
+The systray icon and chat panel are implemented as Odoo 18 OWL components,
 not legacy jQuery widgets. This ensures forward compatibility with Odoo's
 web framework direction and avoids deprecation warnings.
 
 **Trade-off**: OWL has a steeper learning curve but is the only supported
-path for Odoo 19+ frontend components.
+path for Odoo 18+ frontend components.
 
 ### DD-2: `requests` Library for HTTP (not `urllib3` directly)
 

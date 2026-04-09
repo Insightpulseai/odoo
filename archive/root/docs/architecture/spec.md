@@ -801,7 +801,7 @@ odoo.pid
 |-- ODOO_INTEGRATION_MAP.md
 |-- compose
 |-- ipai_finance_closing_seed.json
-odoo19
+odoo18
 |-- CANONICAL_SETUP.md
 |-- MIGRATION_COMPLETE.md
 |-- MIGRATION_FROM_OLD_STACK.md
@@ -1322,7 +1322,7 @@ scripts
 |-- validate_manifest.py
 |-- validate_manifests.py
 |-- validate_no_deprecated_installed.sh
-|-- validate_odoo19_spec.sh
+|-- validate_odoo18_spec.sh
 |-- validate_odoo_parity_plans.mjs
 |-- validate_production.sh
 |-- validate_registries.py
@@ -1442,7 +1442,7 @@ specs
 src
 |-- lakehouse
 stack
-|-- odoo19_stack.yaml
+|-- odoo18_stack.yaml
 supabase
 |-- SECURITY_LINTER_REMEDIATION.md
 |-- config.toml

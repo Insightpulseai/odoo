@@ -14,7 +14,7 @@ TBWA\SMP Philippines must file 9 BIR form types (1601-C, 0619-E, 2550M, 2550Q,
 
 ## CE Attempt
 
-Odoo 19 CE Philippine localization (`l10n_ph`) provides:
+Odoo 18 CE Philippine localization (`l10n_ph`) provides:
 - Chart of accounts aligned to Philippine GAAP
 - Fiscal positions for withholding tax
 - Basic tax configuration

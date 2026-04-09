@@ -178,7 +178,7 @@ rg -n "Plane" README.md docs/ || EXIT_CODE=$?
 **Failure Remediation**:
 1. **Mailgun**: Replace with "Zoho Mail SMTP" and `smtp.zoho.com:587`
 2. **insightpulseai.net**: Replace with `insightpulseai.com`
-3. **Odoo 18**: Replace with "Odoo 19 CE"
+3. **Odoo 18**: Replace with "Odoo 18 CE"
 4. **Plane**: Remove or move to `docs/deprecated/PLANE_ARCHIVE.md` with clear deprecation notice
 
 **Allowed Exceptions** (must be in `docs/deprecated/` or `docs/archive/`):
@@ -353,7 +353,7 @@ git mv docs/MAILGUN_INTEGRATION.md docs/deprecated/MAILGUN_INTEGRATION_DEPRECATE
 |-------|---------------|--------------|
 | Finance PPM counts: 8/12/144/36/36 | `.github/workflows/finance-ppm-health.yml` | 33-34, 40 |
 | Mailgun deprecated, Zoho canonical | `CLAUDE.md` | Line referencing Zoho Mail SMTP |
-| Odoo 19 (not 18) | `CLAUDE.md` | "Stack: Odoo CE 19.0" |
+| Odoo 18 (not 18) | `CLAUDE.md` | "Stack: Odoo CE 19.0" |
 | .net domains deprecated | `CLAUDE.md` | "Domain: insightpulseai.com (.net is deprecated)" |
 | Plane deprecated | `CLAUDE.md` | "Deprecated: Plane (all)" |
 

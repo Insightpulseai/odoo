@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-install_waves.py — Idempotent OCA module wave installer for Odoo 19.0.
+install_waves.py — Idempotent OCA module wave installer for Odoo 18.0.
 
 Reads docs/oca/install_manifest.yaml, queries which modules are already
 installed via XML-RPC, and installs/upgrades missing modules in waves.

@@ -8,7 +8,7 @@
 
 ## Outcome
 
-✅ **Complete Odoo 19 module for itemized expense liquidation with cash advance tracking**
+✅ **Complete Odoo 18 module for itemized expense liquidation with cash advance tracking**
 
 - **3 Liquidation Types**: Cash Advance, Reimbursement, Petty Cash
 - **Itemized Expenses**: Line-by-line entry with receipt attachments
@@ -515,7 +515,7 @@ Expected: 1 report action
 ```
 feat(hr): add ipai_hr_expense_liquidation module
 
-Complete Odoo 19 module for itemized expense liquidation with cash advance tracking:
+Complete Odoo 18 module for itemized expense liquidation with cash advance tracking:
 
 - 3 liquidation types: Cash Advance / Reimbursement / Petty Cash
 - Itemized expense lines with bucket categorization

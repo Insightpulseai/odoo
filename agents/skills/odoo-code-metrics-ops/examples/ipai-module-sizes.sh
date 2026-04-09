@@ -4,7 +4,7 @@ set -euo pipefail
 
 echo "=== IPAI module line counts ==="
 # Using cloc with path (no database needed)
-# ~/.pyenv/versions/odoo-19-dev/bin/python vendor/odoo/odoo-bin cloc --path addons/ipai
+# ~/.pyenv/versions/odoo-18-dev/bin/python vendor/odoo/odoo-bin cloc --path addons/ipai
 
 echo "=== Quick file-based count ==="
 for module_dir in addons/ipai/ipai_*/; do

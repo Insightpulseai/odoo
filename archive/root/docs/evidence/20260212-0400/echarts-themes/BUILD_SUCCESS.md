@@ -274,7 +274,7 @@ DTS Build success
 This package serves as the SSOT (Single Source of Truth) for:
 
 1. **Apache Superset** - Custom visualization plugin themes
-2. **Odoo 19** - `ipai_echarts_dashboard` module themes
+2. **Odoo 18** - `ipai_echarts_dashboard` module themes
 3. **React Apps** - web, control-room, platform-kit via `@ipai/echarts-react`
 4. **Dev Tools** - Graph generators (knowledge graph, schema ERD)
 

@@ -1,5 +1,5 @@
 # =============================================================================
-# Odoo 19 Integration Adoption Decision Table — SSOT
+# Odoo 18 Integration Adoption Decision Table — SSOT
 # =============================================================================
 # Defines the adoption priority for each integration lane:
 #   1. Native Odoo config first
@@ -15,7 +15,7 @@ kind: integration_adoption_table
 last_reviewed: "2026-03-27"
 
 # ─────────────────────────────────────────────────────────────────────────────
-# NATIVE FIRST — Odoo 19 documents these as built-in integration surfaces.
+# NATIVE FIRST — Odoo 18 documents these as built-in integration surfaces.
 # Prefer configuration over custom code.
 # ─────────────────────────────────────────────────────────────────────────────
 
@@ -28,7 +28,7 @@ native_first:
     notes: "Native bank synchronization. Config per institution."
 
   edi:
-    notes: "Electronic invoicing / EDI. Native Odoo 19 compliance surface."
+    notes: "Electronic invoicing / EDI. Native Odoo 18 compliance surface."
 
   document_digitization:
     notes: "Native Odoo document digitization. For Azure Doc Intelligence, use external bridge."
@@ -45,7 +45,7 @@ native_first:
     notes: "POS payment terminal integrations. Hardware config."
 
   philippines_localization:
-    notes: "PH-specific tax/compliance localization in Odoo 19 finance tree."
+    notes: "PH-specific tax/compliance localization in Odoo 18 finance tree."
 
 # ─────────────────────────────────────────────────────────────────────────────
 # OCA FIRST — Use OCA when native is insufficient but the pattern exists.
@@ -104,7 +104,7 @@ external_bridge_first:
 # ─────────────────────────────────────────────────────────────────────────────
 
 adoption_rule:
-  - "Check Odoo 19 native integrations first"
+  - "Check Odoo 18 native integrations first"
   - "If native lane exists, prefer configuration over custom code"
   - "If native is insufficient, check OCA before creating ipai_*"
   - "Reserve ipai_* for thin bridges to external Azure/Foundry services"

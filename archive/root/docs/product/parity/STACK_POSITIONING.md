@@ -77,11 +77,11 @@ Source: `docs/ee_parity_map.md` (if exists) or create from CLAUDE.md section 8
 ### ❌ Prohibited Statements
 
 **DO NOT say**:
-- ❌ "We run Odoo 19 Enterprise"
+- ❌ "We run Odoo 18 Enterprise"
 - ❌ "This is an official Odoo Enterprise 19 image"
 - ❌ "We use Odoo Enterprise Edition"
 - ❌ "Powered by Odoo EE"
-- ❌ "Odoo 19 production deployment"
+- ❌ "Odoo 18 production deployment"
 
 **Why**: Factually incorrect. We run **Odoo 18 CE**, not 19, and not Enterprise Edition.
 
@@ -96,11 +96,11 @@ Source: `docs/ee_parity_map.md` (if exists) or create from CLAUDE.md section 8
 
 ---
 
-## Odoo 19 Relationship
+## Odoo 18 Relationship
 
-### What Odoo 19 Offers (Official Release Notes)
+### What Odoo 18 Offers (Official Release Notes)
 
-Source: `docs/parity/odoo19/odoo_19_release_notes.html` (baseline snapshot)
+Source: `docs/parity/odoo18/odoo_18_release_notes.html` (baseline snapshot)
 
 **UX Improvements**:
 - Enhanced activities, kanban, Gantt views
@@ -151,7 +151,7 @@ Source: `docs/parity/odoo19/odoo_19_release_notes.html` (baseline snapshot)
 > 1. Eliminates recurring platform costs (~$30K-$100K/year savings)
 > 2. Maintains full IP ownership of customizations
 > 3. Enables AI-first development (not possible with Enterprise black-box modules)
-> 4. Provides controlled upgrade path to Odoo 19+ when OCA ecosystem stabilizes
+> 4. Provides controlled upgrade path to Odoo 18+ when OCA ecosystem stabilizes
 
 ---
 
@@ -160,7 +160,7 @@ Source: `docs/parity/odoo19/odoo_19_release_notes.html` (baseline snapshot)
 **Q: "Why not just use Odoo Enterprise?"**
 > A: Enterprise costs $10K-$50K/year for features we can replicate with open-source alternatives. We achieve 88% feature parity for our specific use cases (finance SSC, BIR compliance, project management) while maintaining full source control and AI customization capability.
 
-**Q: "What's your upgrade path to Odoo 19?"**
+**Q: "What's your upgrade path to Odoo 18?"**
 > A: We monitor OCA 19.0 branch maturity and will upgrade core when the ecosystem stabilizes (estimated Q3-Q4 2026). Our `ipai_*` bridge modules are version-agnostic and will maintain Enterprise parity regardless of core version.
 
 **Q: "How do you handle support without Enterprise?"**
@@ -202,12 +202,12 @@ grep -r "DEPRECATED.*Migrated to ipai_enterprise_bridge" addons/ipai/*/.__manife
 ## Baseline References
 
 ### Local Snapshots
-- **Odoo 19 Release Notes**: `docs/parity/odoo19/odoo_19_release_notes.html`
-- **Editions Comparison**: `docs/parity/odoo19/odoo_editions_comparison.html`
-- **Feature Mapping**: `docs/parity/odoo19/EE_PARITY_NOTES_19.md` (TODO: complete)
+- **Odoo 18 Release Notes**: `docs/parity/odoo18/odoo_18_release_notes.html`
+- **Editions Comparison**: `docs/parity/odoo18/odoo_editions_comparison.html`
+- **Feature Mapping**: `docs/parity/odoo18/EE_PARITY_NOTES_19.md` (TODO: complete)
 
 ### External Sources
-- [Odoo 19 Release Notes](https://www.odoo.com/odoo-19-release-notes)
+- [Odoo 18 Release Notes](https://www.odoo.com/odoo-18-release-notes)
 - [Odoo Editions Comparison](https://www.odoo.com/page/editions)
 - [Odoo Community Edition GitHub](https://github.com/odoo/odoo/tree/18.0)
 - [OCA GitHub Organization](https://github.com/OCA)
@@ -224,7 +224,7 @@ grep -r "DEPRECATED.*Migrated to ipai_enterprise_bridge" addons/ipai/*/.__manife
 
 ### Technical Debt
 - ⚠️ Deprecated `ipai_*` modules with 19.0 versions should be cleaned up
-- ⚠️ Forward migration to Odoo 19 CE requires OCA ecosystem readiness
+- ⚠️ Forward migration to Odoo 18 CE requires OCA ecosystem readiness
 - ✅ `ipai_enterprise_bridge` architecture designed for core-agnostic operation
 
 ### Market Positioning
@@ -237,13 +237,13 @@ grep -r "DEPRECATED.*Migrated to ipai_enterprise_bridge" addons/ipai/*/.__manife
 ## Recommended Actions
 
 ### Immediate (Week 1)
-1. ✅ **DONE**: Created parity baseline docs (`docs/parity/odoo19/`)
-2. ⏳ **TODO**: Update pitch deck language (remove any "Odoo 19 EE" claims)
+1. ✅ **DONE**: Created parity baseline docs (`docs/parity/odoo18/`)
+2. ⏳ **TODO**: Update pitch deck language (remove any "Odoo 18 EE" claims)
 3. ⏳ **TODO**: Audit public-facing docs (website, GitHub README) for accuracy
 4. ⏳ **TODO**: Clean up deprecated `ipai_*` modules with 19.0 versions
 
 ### Short-Term (Month 1)
-1. Complete `docs/parity/odoo19/EE_PARITY_NOTES_19.md` feature mapping
+1. Complete `docs/parity/odoo18/EE_PARITY_NOTES_19.md` feature mapping
 2. Run parity tests and document results in `docs/evidence/`
 3. Create investor deck appendix: "Odoo Stack Technical Overview"
 4. Submit PR to OCA for any upstream-worthy contributions

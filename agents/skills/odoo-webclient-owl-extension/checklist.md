@@ -1,6 +1,6 @@
 # Checklist — odoo-webclient-owl-extension
 
-- [ ] OWL component follows Odoo 19 pattern (static template, static props, setup())
+- [ ] OWL component follows Odoo 18 pattern (static template, static props, setup())
 - [ ] Existing components extended via `patch()` (not monkey-patching)
 - [ ] No global Composer or mail patches (ipai_ai_widget anti-pattern avoided)
 - [ ] JS file uses `/** @odoo-module **/` header

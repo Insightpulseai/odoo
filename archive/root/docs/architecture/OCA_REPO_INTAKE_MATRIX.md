@@ -18,7 +18,7 @@ belong in the curated baseline.
 
 | Criterion | Required for INCLUDE |
 |-----------|---------------------|
-| Odoo 19 branch exists | Yes |
+| Odoo 18 branch exists | Yes |
 | At least one module needed for active P0/P1 feature | Yes |
 | Not already covered by existing repo | Yes |
 | Has installable modules (not empty 19.0 branch) | Yes |
@@ -28,7 +28,7 @@ belong in the curated baseline.
 
 ## Candidate Repos
 
-| # | Repo | Target EE Gap | Odoo 19 Compat | Dependency Impact | Decision | Rationale |
+| # | Repo | Target EE Gap | Odoo 18 Compat | Dependency Impact | Decision | Rationale |
 |---|------|---------------|----------------|-------------------|----------|-----------|
 | 1 | **OCA/payroll** | `hr_payroll` (P0) | Unknown — needs 19.0 branch check | `ipai_hr_payroll_ph` depends on OCA payroll engine | **EVALUATE** | High priority. Check `payroll`, `payroll_account` on 19.0. |
 | 2 | **OCA/field-service** | `industry_fsm` (P2) | Unknown | None — no ipai_* module exists | **DEFER** | P2. No active FSM use case. |
@@ -56,7 +56,7 @@ For each EVALUATE candidate:
 
 1. Check if OCA repo has a `19.0` branch with installable modules
 2. Identify specific modules needed
-3. Test installation on Odoo 19 CE baseline (`--stop-after-init`)
+3. Test installation on Odoo 18 CE baseline (`--stop-after-init`)
 4. If installable, add to `oca-aggregate.yml` and `vendor/oca.lock.ce19.json`
 5. Run `python3 scripts/oca/validate_aggregate.py` to confirm sync
 6. Update `ssot/parity/ee_oca_verification_matrix.yaml` tier from T1 to T2

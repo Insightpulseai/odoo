@@ -37,7 +37,7 @@
 
 ## External API deprecation warning
 
-**XML-RPC (`/xmlrpc/2/*`) and JSON-RPC 1 are deprecated in Odoo 19.0 and will be removed in Odoo 20 (estimated late 2026).**
+**XML-RPC (`/xmlrpc/2/*`) and JSON-RPC 1 are deprecated in Odoo 18.0 and will be removed in Odoo 20 (estimated late 2026).**
 
 All integrations using these endpoints must migrate to the JSON-2 API (`Authorization: Bearer <api_key>`) before the Odoo 20 release window.
 

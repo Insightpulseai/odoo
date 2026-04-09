@@ -117,7 +117,7 @@ Every correction feeds back into process — not just fixed and forgotten:
 
 | Layer | Technology |
 |-------|-----------|
-| ERP | Odoo 19 Community Edition + OCA modules |
+| ERP | Odoo 18 Community Edition + OCA modules |
 | Custom modules | 48 `ipai_*` integration bridges |
 | Database | PostgreSQL 16 (self-hosted, DigitalOcean) |
 | Control plane | Supabase (Auth, Vault, Edge Functions, Realtime, pgvector) |

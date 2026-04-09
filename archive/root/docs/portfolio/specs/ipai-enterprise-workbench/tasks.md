@@ -51,11 +51,11 @@
   - [ ] future Mattermost adapter hooks
 - [ ] Add visual regression checks where feasible (token snapshots)
 
-## M6 — Odoo 19 Readiness + "EE Replacement" mapping refresh
-- [ ] Create Odoo 19 compatibility matrix (CE + OCA + IPAI)
+## M6 — Odoo 18 Readiness + "EE Replacement" mapping refresh
+- [ ] Create Odoo 18 compatibility matrix (CE + OCA + IPAI)
 - [ ] Add upgrade preflight script and gating tests
 - [ ] Refresh EE/IAP replacement mapping docs
-- [ ] Add CI branch workflow for Odoo 19 install validation
+- [ ] Add CI branch workflow for Odoo 18 install validation
 
 ## Global Documentation & Canonical URLs
 - [ ] Replace docs base references to `https://docs.insightpulseai.com/erp` with `https://jgtolentino.github.io/odoo/`

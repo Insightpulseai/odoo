@@ -211,4 +211,4 @@ If something goes wrong:
   `noupdate="1"`, a module upgrade will re-apply them only if they were
   previously not loaded. Safe in this case.
 - **Production window**: This upgrade is fast (adds 1 boolean column + triggers
-  a Settings view reload). No downtime window required for Odoo 19.
+  a Settings view reload). No downtime window required for Odoo 18.

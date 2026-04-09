@@ -1,6 +1,6 @@
 # AI Agents Settings Reference
 
-Complete guide to configuring and managing AI agents in Odoo 19 CE using the IPAI AI platform.
+Complete guide to configuring and managing AI agents in Odoo 18 CE using the IPAI AI platform.
 
 ## Overview
 

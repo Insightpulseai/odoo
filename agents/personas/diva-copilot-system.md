@@ -71,7 +71,7 @@ If retrieval is unavailable in the current runtime, say that the current deploym
 ### Correct responses
 
 When asked "do you have web search capabilities?":
-> "Yes, for approved sources. I search your Odoo context first, then curated documentation such as the official Odoo 19 docs, and when needed I can use bounded public web retrieval with citations. I do not use unrestricted web search for ERP truth or approval-sensitive actions."
+> "Yes, for approved sources. I search your Odoo context first, then curated documentation such as the official Odoo 18 docs, and when needed I can use bounded public web retrieval with citations. I do not use unrestricted web search for ERP truth or approval-sensitive actions."
 
 When given a documentation URL:
 > "I can use that as a docs source. Tell me the exact topic and I'll retrieve the relevant section and summarize it with citations."

@@ -10,7 +10,7 @@
         <mxCell id="layer-val" value="Validation" parent="0" />
 
         <!-- Header -->
-        <mxCell id="title" value="OCA Governance Flow — Skills Gen &amp; Odoo 19 CE Validation Gate" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=24;fontStyle=1;fontColor=#2D3436;" vertex="1" parent="1">
+        <mxCell id="title" value="OCA Governance Flow — Skills Gen &amp; Odoo 18 CE Validation Gate" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=24;fontStyle=1;fontColor=#2D3436;" vertex="1" parent="1">
           <mxGeometry x="60" y="20" width="1280" height="50" as="geometry" />
         </mxCell>
 
@@ -28,11 +28,11 @@
         </mxCell>
 
         <!-- Developer Content -->
-        <mxCell id="dev-kb" value="Vendored Odoo 19.0 CE KB" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;gradientColor=#b3cde3;glass=1;shadow=1;fontStyle=1;" vertex="1" parent="lane-dev" tooltip="Source truth (pinned commit) for Odoo 19 skill generation" link="../../kb">
+        <mxCell id="dev-kb" value="Vendored Odoo 18.0 CE KB" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;gradientColor=#b3cde3;glass=1;shadow=1;fontStyle=1;" vertex="1" parent="lane-dev" tooltip="Source truth (pinned commit) for Odoo 18 skill generation" link="../../kb">
           <mxGeometry x="25" y="60" width="250" height="100" as="geometry" />
         </mxCell>
 
-        <mxCell id="dev-gen" value="Procedural Skill Gen (v19)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;gradientColor=#97d077;glass=1;shadow=1;fontStyle=1;" vertex="1" parent="lane-dev" tooltip="Generates Odoo 19 SKILL.md from pinned KB docs" link="../../../scripts/kb/generate_skill_from_kb.py">
+        <mxCell id="dev-gen" value="Procedural Skill Gen (v19)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;gradientColor=#97d077;glass=1;shadow=1;fontStyle=1;" vertex="1" parent="lane-dev" tooltip="Generates Odoo 18 SKILL.md from pinned KB docs" link="../../../scripts/kb/generate_skill_from_kb.py">
           <mxGeometry x="25" y="185" width="250" height="100" as="geometry" />
         </mxCell>
 
@@ -46,7 +46,7 @@
         </mxCell>
 
         <!-- CI Content -->
-        <mxCell id="ci-validate" value="validate_skill_registry.py" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;gradientColor=#ea9999;glass=1;shadow=1;fontStyle=1;" vertex="1" parent="lane-ci" tooltip="Odoo 19 Verification of checksums, schemas, and risk-tiers" link="../../../scripts/skills/refresh_odoo19_kb.py" tags="risk:entry;type:gate">
+        <mxCell id="ci-validate" value="validate_skill_registry.py" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;gradientColor=#ea9999;glass=1;shadow=1;fontStyle=1;" vertex="1" parent="lane-ci" tooltip="Odoo 18 Verification of checksums, schemas, and risk-tiers" link="../../../scripts/skills/refresh_odoo18_kb.py" tags="risk:entry;type:gate">
           <mxGeometry x="20" y="90" width="290" height="130" as="geometry" />
         </mxCell>
 
@@ -59,7 +59,7 @@
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
 
-        <mxCell id="val-note" value="✅ Odoo 19 CE Compliant" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=12;fontStyle=1;fontColor=#2D3436;" vertex="1" parent="1">
+        <mxCell id="val-note" value="✅ Odoo 18 CE Compliant" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=12;fontStyle=1;fontColor=#2D3436;" vertex="1" parent="1">
           <mxGeometry x="780" y="800" width="250" height="30" as="geometry" />
         </mxCell>
 

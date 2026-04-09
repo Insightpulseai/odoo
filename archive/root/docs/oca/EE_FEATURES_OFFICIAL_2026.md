@@ -1,4 +1,4 @@
-# Odoo 19 Enterprise vs Community - Official Feature Comparison (2026)
+# Odoo 18 Enterprise vs Community - Official Feature Comparison (2026)
 
 > **Sources**: Web research from official Odoo documentation and partner analyses
 > **Last Updated**: 2026-02-20
@@ -308,7 +308,7 @@ Based on official EE features analysis, prioritize porting:
 - [Odoo Community vs Enterprise: Key Differences & Costs](https://gloriumtech.com/odoo-community-vs-enterprise/)
 - [Odoo Community vs Enterprise | Comparison Guide 2026 | BizTechCS](https://www.biztechcs.com/blog/odoo-community-vs-odoo-enterprise/)
 - [Odoo Community vs Enterprise: Data-Driven Comparison for 2026](https://www.cudio.com/blog/odoo-community-vs-enterprise)
-- [Odoo 19 Features: What's New in Community & Enterprise](https://www.devintellecs.com/blog/odoo-19-odoo-explore-9/odoo-19-features-what-s-new-in-community-and-enterprise-195)
+- [Odoo 18 Features: What's New in Community & Enterprise](https://www.devintellecs.com/blog/odoo-18-odoo-explore-9/odoo-18-features-what-s-new-in-community-and-enterprise-195)
 - [Odoo Community vs Enterprise: What Are the Differences and Which One to Choose?](https://smarttek.solutions/blog/odoo-community-vs-odoo-enterprise-key-differences/)
 - [Odoo Community vs Odoo Enterprise: Why the Upgrade Matters in 2025](https://www.braincrewapps.com/odoo-community-vs-odoo-enterprise-why-the-upgrade-matters/)
 - [Odoo Community vs Enterprise | Features, Pricing, & More](https://www.bistasolutions.com/odoo-community-vs-enterprise/)

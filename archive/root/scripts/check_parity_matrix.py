@@ -3,7 +3,7 @@
 Parity Matrix Contract Gate
 
 Validates ssot/parity/ee_to_oca_proof_matrix.yaml:
-  1. All entries have required fields (ee_feature_id, parity_path, route, odoo19_support)
+  1. All entries have required fields (ee_feature_id, parity_path, route, odoo18_support)
   2. Entries with parity_path oca_direct|oca_partial have non-empty oca_repo and oca_modules
   3. Entries with parity_path bridge have at least one evidence_link pointing to ipai_*
   4. Summary counts match actual entry counts
@@ -28,8 +28,8 @@ MATRIX_PATH = Path("ssot/parity/ee_to_oca_proof_matrix.yaml")
 
 ALLOWED_PARITY_PATHS = {"oca_direct", "oca_partial", "bridge", "gap"}
 ALLOWED_ROUTES = {"adopt_oca", "port_then_adopt", "bridge", "build_ipai", "accept_gap"}
-ALLOWED_ODOO19 = {"yes", "needs_port", "unknown", "n/a"}
-REQUIRED_FIELDS = ["ee_feature_id", "parity_path", "route", "odoo19_support"]
+ALLOWED_ODOO18 = {"yes", "needs_port", "unknown", "n/a"}
+REQUIRED_FIELDS = ["ee_feature_id", "parity_path", "route", "odoo18_support"]
 
 
 def main() -> int:
@@ -78,10 +78,10 @@ def main() -> int:
         if route:
             route_counts[route] = route_counts.get(route, 0) + 1
 
-        # Check odoo19_support values
-        o19 = str(entry.get("odoo19_support", ""))
-        if o19 and o19 not in ALLOWED_ODOO19:
-            errors.append(f"{fid}: invalid odoo19_support '{o19}'")
+        # Check odoo18_support values
+        o19 = str(entry.get("odoo18_support", ""))
+        if o19 and o19 not in ALLOWED_ODOO18:
+            errors.append(f"{fid}: invalid odoo18_support '{o19}'")
 
         # Count milestones
         ms = entry.get("milestone")

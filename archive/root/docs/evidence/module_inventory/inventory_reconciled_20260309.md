@@ -26,9 +26,9 @@ Filter active: "Module: oca"
 | 11 | Cloud Storage Migration | cloud_storage_migration | Odoo S.A. | 19.0.1.0 | Not Installed |
 | 12 | IPAI Account Settings Compat | ipai_account_settings_compat | InsightPulse AI | 19.0.1.0.0 | **Installed** |
 | 13 | DEPRECATED: Documents AI | ipai_documents_ai | InsightPulse AI | 19.0.1.0.0 | **Uninstallable** |
-| 14 | IPAI Mail Compatibility Shims (Odoo 19) — TEMPORARY | ipai_mail_compat | InsightPulse AI | 19.0.1.0.0 | Not Installed |
+| 14 | IPAI Mail Compatibility Shims (Odoo 18) — TEMPORARY | ipai_mail_compat | InsightPulse AI | 19.0.1.0.0 | Not Installed |
 | 15 | DEPRECATED: Electronic Sign | ipai_sign | InsightPulse AI | 19.0.1.0.0 | Not Installed |
-| 16 | Odoo 19 Web Mail Compat (OCA overlays) | ipai_web_mail_compat | InsightPulse AI | 19.0.1.0.0 | Not Installed |
+| 16 | Odoo 18 Web Mail Compat (OCA overlays) | ipai_web_mail_compat | InsightPulse AI | 19.0.1.0.0 | Not Installed |
 | 17 | Belgian POS Restaurant Localization | l10n_be_pos_restaurant | Odoo S.A. | 19.0.1.0 | Not Installed |
 | 18 | Spain - Point of Sale | l10n_es_pos | Odoo S.A. | 19.0.1.0 | Not Installed |
 | 19 | France - Localizations | l10n_fr | Odoo S.A. | 19.0.2.1 | Not Installed |

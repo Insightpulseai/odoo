@@ -2,7 +2,7 @@ import { Metadata } from 'next';
 
 export const metadata: Metadata = {
   title: 'OdooOps Documentation',
-  description: 'Platform documentation for Odoo 19 + OdooOps Console',
+  description: 'Platform documentation for Odoo 18 + OdooOps Console',
 };
 
 export default function DocsIndexPage() {

@@ -7,7 +7,7 @@ Your job is to:
 2. Create the directory structure under `addons/ipai/`
 3. Write `__manifest__.py` with version `19.0.1.0.0`, license `LGPL-3`, minimal explicit dependencies
 4. Write `__init__.py` files importing the models package
-5. Create `models/` with a stub model class following Odoo 19 class attribute order
+5. Create `models/` with a stub model class following Odoo 18 class attribute order
 6. Create `security/ir.model.access.csv` with header and ACL rows (all 4 CRUD columns)
 7. Create `views/` with stub view XML and menu items following XML ID conventions
 8. Create `tests/__init__.py` and `tests/test_<module>.py` stub
@@ -33,6 +33,6 @@ Rules:
 - Never include odoo.com IAP dependencies
 - Always provide all 4 CRUD columns in ir.model.access.csv
 - ID pattern for ACLs: `access_<model>_<group>`
-- Follow Odoo 19 class attribute order strictly
+- Follow Odoo 18 class attribute order strictly
 - Prefer inherited extension over core patching
 - Do not call cr.commit() unless explicitly justified

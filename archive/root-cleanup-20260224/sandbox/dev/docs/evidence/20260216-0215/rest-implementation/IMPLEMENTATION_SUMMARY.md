@@ -8,7 +8,7 @@
 
 ## Executive Summary
 
-Successfully implemented Phase 1 of the OCA REST Framework migration plan by creating a native REST controller module (`ipai_rest_controllers`) that unblocks external integrations while waiting for upstream OCA migration to Odoo 19.0.
+Successfully implemented Phase 1 of the OCA REST Framework migration plan by creating a native REST controller module (`ipai_rest_controllers`) that unblocks external integrations while waiting for upstream OCA migration to Odoo 18.0.
 
 **Outcome:** REST functionality restored using native Odoo HTTP controllers with clear migration path to base_rest when available.
 
@@ -272,7 +272,7 @@ curl -X POST http://localhost:8069/api/v1/partners/search \
 - [ ] Automated alerts when migration ready
 
 ### ⏳ Phase 3 (Pending Upstream)
-- [ ] base_rest installable in Odoo 19
+- [ ] base_rest installable in Odoo 18
 - [ ] All Python dependencies available (already done)
 - [ ] API contract preserved during migration
 - [ ] Native implementation deprecated cleanly
@@ -366,7 +366,7 @@ Implement Phase 1 of OCA REST Framework migration plan:
 - Add monitoring script for upstream OCA migration status
 - Document complete migration strategy
 
-Root cause: OCA base_rest uninstallable in Odoo 19.0 due to:
+Root cause: OCA base_rest uninstallable in Odoo 18.0 due to:
 - Missing component module dependency (OCA/connector not migrated)
 - Version still at 18.0.x (not bumped to 19.0.x)
 - All rest-framework modules marked installable=False

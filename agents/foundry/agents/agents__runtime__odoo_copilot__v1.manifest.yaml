@@ -21,7 +21,7 @@ foundry:
 identity:
   name: ipai-odoo-copilot
   description: >
-    Workspace-native AI copilot for Odoo 19 CE. Benchmarked against
+    Workspace-native AI copilot for Odoo 18 CE. Benchmarked against
     Notion 3.0 at the behavior layer: context-aware, action-oriented,
     structured outputs, memory/instructions, workflow completion.
     Not a chatbot — an ERP operator agent.
@@ -110,7 +110,7 @@ knowledge:
   search_service: srch-ipai-dev
   registry: agents/knowledge/pulser/KB_REGISTRY.yaml
   sources:
-    - odoo_19_official_docs
+    - odoo_18_official_docs
     - oca_module_documentation
     - bir_compliance_rules
     - ipai_internal_procedures

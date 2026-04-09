@@ -119,7 +119,7 @@
 - `ocr_service`
 - `odoo-schema-mirror`
 - `odoo.code-workspace`
-- `odoo19`
+- `odoo18`
 - `odoo_local`
 - `ops`
 - `osi`
@@ -497,11 +497,11 @@ Every top-level path is assigned to a bucket. This clarifies what is
 - `dbt/`
 - `odoo-schema-mirror/`
 - `odoo-schema-mirror/tests/`
-- `odoo19/`
-- `odoo19/backups/`
-- `odoo19/config/`
-- `odoo19/docs/`
-- `odoo19/scripts/`
+- `odoo18/`
+- `odoo18/backups/`
+- `odoo18/config/`
+- `odoo18/docs/`
+- `odoo18/scripts/`
 - `odoo_local/`
 - `schemas/`
 - `schemas/parity/`
@@ -622,7 +622,7 @@ boundaries between runtime and non-runtime content:
 Logical Layer Model
 ====================
 
-L0  Odoo 19 CE (core server)
+L0  Odoo 18 CE (core server)
     odoo/           framework + core
     addons/          official community addons
     odoo-bin          server entrypoint

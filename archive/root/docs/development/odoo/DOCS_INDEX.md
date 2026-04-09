@@ -1,6 +1,6 @@
 # Odoo Docs Index — Insightpulseai/odoo
 
-> Curated reference: official Odoo 19.0 documentation pages mapped to concrete repo actions.
+> Curated reference: official Odoo 18.0 documentation pages mapped to concrete repo actions.
 > Generated: 2026-03-02 | Source: `ssot/docs/odoo_docs.yaml`
 > Update: edit `ssot/docs/odoo_docs.yaml`, then re-curate this table.
 > SaaS/EE-only pages are flagged — they inform parity mapping only, not requirements.

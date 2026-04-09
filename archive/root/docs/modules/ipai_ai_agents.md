@@ -6,7 +6,7 @@
 
 ## Summary
 
-Odoo 19-style Ask AI / AI agents UX for Odoo CE 18 (OCA-friendly custom addon)
+Odoo 18-style Ask AI / AI agents UX for Odoo CE 18 (OCA-friendly custom addon)
 
 ## Dependencies
 

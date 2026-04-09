@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# verify_stack.sh - Verify Odoo 19 CE + OCA stack installation
+# verify_stack.sh - Verify Odoo 18 CE + OCA stack installation
 # Usage: ./scripts/stack/verify_stack.sh [--verbose] [--json]
 #
 # Runs comprehensive verification checks and outputs results.

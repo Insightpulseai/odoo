@@ -15,10 +15,10 @@ the module system:
   credits, or a managed service is a **platform/service capability**, not an
   EE module.
 
-## 2. Odoo 19 Release Notes (version-specific changes)
+## 2. Odoo 18 Release Notes (version-specific changes)
 
-- **URL**: https://www.odoo.com/odoo-19-release-notes
-- **Used for**: Detecting Odoo 19-specific UX/engine changes that are behavioral
+- **URL**: https://www.odoo.com/odoo-18-release-notes
+- **Used for**: Detecting Odoo 18-specific UX/engine changes that are behavioral
   (not new modules) and should not be treated as EE-module gaps.
 
 ## Interpretation Rules

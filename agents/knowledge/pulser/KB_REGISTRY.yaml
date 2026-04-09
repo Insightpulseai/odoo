@@ -26,15 +26,15 @@ index:
 segments:
 
   # ---------------------------------------------------------------------------
-  # ERP Domain — Odoo 19 CE documentation and runtime
+  # ERP Domain — Odoo 18 CE documentation and runtime
   # ---------------------------------------------------------------------------
   - id: kb_odoo_docs
-    name: "Odoo 19 Official Documentation"
+    name: "Odoo 18 Official Documentation"
     domain: erp
-    description: "Odoo 19 CE official docs — modules, ORM, controllers, views, JS framework"
+    description: "Odoo 18 CE official docs — modules, ORM, controllers, views, JS framework"
     sources:
       - type: documentation
-        origin: "Odoo 19 official docs (crawled)"
+        origin: "Odoo 18 official docs (crawled)"
         chunk_count: 7224
         status: active
     update_frequency: on_release
@@ -128,10 +128,10 @@ segments:
     description: "Opening entries (AR/AP), inventory valuation, trial balance import, payment journal config, PayMongo setup"
     sources:
       - type: runbook
-        path: docs/runbooks/ODOO19_GO_LIVE_CHECKLIST.md
+        path: docs/runbooks/ODOO18_GO_LIVE_CHECKLIST.md
         description: "Master go-live checklist with accounting sections A-E"
       - type: ssot
-        path: ssot/go_live/odoo19_checklist.manifest.yaml
+        path: ssot/go_live/odoo18_checklist.manifest.yaml
         description: "CI-enforced checklist manifest"
       - type: reference
         description: "Odoo 18 SF-Experts go-live checklist (Pei Hua Tsai, accrual basis, USA localization adapted to PH)"

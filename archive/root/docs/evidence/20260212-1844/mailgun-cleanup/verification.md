@@ -6,7 +6,7 @@
 
 ## Summary
 
-Successfully deprecated core Mailgun documentation and established Zoho Mail as the canonical email system for Odoo 19.
+Successfully deprecated core Mailgun documentation and established Zoho Mail as the canonical email system for Odoo 18.
 
 ## Changes Implemented
 
@@ -25,7 +25,7 @@ Successfully deprecated core Mailgun documentation and established Zoho Mail as 
 
 ### Canonical Guide
 - Settings-as-code approach (no UI steps)
-- Odoo 19 SMTP configuration
+- Odoo 18 SMTP configuration
 - DNS records (SPF/DKIM/DMARC)
 - Microsoft 365/Outlook compatibility
 - Comprehensive troubleshooting

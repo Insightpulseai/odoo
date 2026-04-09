@@ -12,7 +12,7 @@
 # Install order is dependency-safe (lower number = install first).
 #
 # CRITICAL (2026-03-02): ALL 9 OCA modules below are NOT yet ported
-# to Odoo 19.0 in their respective OCA repos. The 19.0 branches exist
+# to Odoo 18.0 in their respective OCA repos. The 19.0 branches exist
 # but the actual module directories are empty or missing.
 # Action: Use `oca-port` to contribute ports, or wait for OCA community.
 

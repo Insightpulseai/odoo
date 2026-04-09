@@ -9,7 +9,7 @@ skill:
   lane: backend_customization
   purpose: >
     Extend Odoo models with new fields, computed fields, constraints, and
-    business logic using _inherit. Ensures all extensions follow Odoo 19
+    business logic using _inherit. Ensures all extensions follow Odoo 18
     ORM conventions, class attribute order, and field naming standards.
 
   triggers:
@@ -28,7 +28,7 @@ skill:
   steps:
     - identify target model and its existing fields
     - create or update inherited model class using _inherit
-    - add fields in correct order (related, computed, stored) per Odoo 19 conventions
+    - add fields in correct order (related, computed, stored) per Odoo 18 conventions
     - implement compute methods with @api.depends decorators
     - implement inverse methods if needed
     - add SQL constraints with _sql_constraints
@@ -49,7 +49,7 @@ skill:
   guardrails:
     - never modify OCA or core source files — use _inherit in ipai_* module
     - never copy OCA files into addons/ipai/ — use proper _inherit overrides
-    - follow Odoo 19 class attribute order strictly
+    - follow Odoo 18 class attribute order strictly
     - field naming: *_id for Many2one, *_ids for One2many/Many2many, is_*/has_* for Boolean
     - compute method naming: _compute_<field>
     - constraint method naming: _check_<field>
@@ -74,5 +74,5 @@ skill:
 cross_references:
   - agents/knowledge/benchmarks/odoo-developer-howtos.md
   - agents/knowledge/benchmarks/odoo-coding-guidelines.md
-  - .claude/rules/odoo19-coding.md
+  - .claude/rules/odoo18-coding.md
   - .claude/rules/oca-governance.md

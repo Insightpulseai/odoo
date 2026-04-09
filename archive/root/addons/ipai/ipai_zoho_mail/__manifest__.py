@@ -45,7 +45,7 @@ E2E verified 2026-03-10: smtppro.zoho.com:587/TLS, sender no-reply@insightpulsea
     "license": "LGPL-3",
     "depends": [
         "mail",
-        # "fetchmail" removed — merged into mail in Odoo 19
+        # "fetchmail" removed — merged into mail in Odoo 18
     ],
     "data": [
         "security/ir.model.access.csv",

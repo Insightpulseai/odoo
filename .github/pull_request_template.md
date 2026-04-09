@@ -8,7 +8,7 @@
 All 5 policy gates must be green before merge:
 - **Gate 1** Spec Bundle Presence (feat/* with >3 scoped changes)
 - **Gate 2** Secret Pattern Diff (no hardcoded credentials in changed lines)
-- **Gate 3** Odoo 19 View Convention (`<list>` not `<tree>`)
+- **Gate 3** Odoo 18 View Convention (`<list>` not `<tree>`)
 - **Gate 4** Migration RLS Contract (new tables must enable RLS)
 - **Gate 5** Deprecated Reference Block (no `.net`, Mattermost, Mailgun, etc.)
 

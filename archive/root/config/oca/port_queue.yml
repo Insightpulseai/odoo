@@ -1,4 +1,4 @@
-# OCA Module Porting Queue for Odoo 19.0
+# OCA Module Porting Queue for Odoo 18.0
 # Auto-generated timestamp: 2026-02-20T18:00:00+08:00
 # Last updated: 2026-02-20T23:30:00+08:00 by Teammate 2 (connector porter)
 # Purpose: Track systematic porting of 40 OCA modules from 18.0 → 19.0
@@ -157,7 +157,7 @@ priorities:
           - version: 19.0.1.0.1 CONFIRMED (via __manifest__.py read)
           - Python syntax: VERIFIED (40 .py files scanned — job.py, runner.py, models/, wizards/, tests/, jobrunner/)
           - Module structure: complete (controllers, fields, models, wizards, jobrunner, tests)
-          - depends: ["mail", "base_sparse_field", "web"] — all standard Odoo 19 modules
+          - depends: ["mail", "base_sparse_field", "web"] — all standard Odoo 18 modules
           - post_init_hook + post_load declared and present
           - development_status: Mature; maintainers: guewen, sbidoul
           - Git state: HEAD=oca/19.0 (d2a8e902) — initial pull from upstream, no uncommitted changes

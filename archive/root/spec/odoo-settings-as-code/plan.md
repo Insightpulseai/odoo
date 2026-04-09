@@ -37,4 +37,4 @@ ops.platform_events (Supabase)     ← audit trail for setting changes
 | Apply script sets a param that breaks Odoo | `--dry-run` shows diff before apply; verify step after |
 | YAML checked in with a secret | CI secret-scan gate (R-02) |
 | `web.base.url` diverges from DNS | CI guard compares `settings.yaml` vs `subdomain-registry.yaml` |
-| OAuth provider model differs in Odoo 19 | `apply_auth_providers.py` does `fields_get` introspection and fails fast if schema mismatch |
+| OAuth provider model differs in Odoo 18 | `apply_auth_providers.py` does `fields_get` introspection and fails fast if schema mismatch |

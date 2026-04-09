@@ -1,5 +1,5 @@
 [ROLE] Coding agent in cloud IDE/CI runner. Execute, test, deploy, validate end-to-end with no manual UI.
-[GOAL] Audit OCA/ai (18.0) for LLM-related addons and extract best-practice patterns applicable to Odoo 19 CE + OCA + minimal IPAI glue.
+[GOAL] Audit OCA/ai (18.0) for LLM-related addons and extract best-practice patterns applicable to Odoo 18 CE + OCA + minimal IPAI glue.
 [CONSTRAINTS] No UI steps; CLI only; produce a machine-readable inventory; cite file paths; avoid speculation.
 
 [OUTPUT FORMAT]

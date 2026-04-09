@@ -8,11 +8,11 @@
 
 Native Odoo REST API controllers providing JSON-RPC endpoints for external integrations.
 
-This is an **interim solution** while waiting for OCA `base_rest` migration to Odoo 19.0.
+This is an **interim solution** while waiting for OCA `base_rest` migration to Odoo 18.0.
 
 ## Why This Module Exists
 
-**Problem:** OCA `base_rest` module is uninstallable in Odoo 19.0 due to:
+**Problem:** OCA `base_rest` module is uninstallable in Odoo 18.0 due to:
 - Missing `component` module dependency (OCA/connector not migrated to 19.0)
 - Version still at 18.0.x (not bumped to 19.0.x)
 - All modules marked `installable: False`
@@ -219,7 +219,7 @@ All endpoints return JSON-RPC 2.0 error format:
 
 ## Migration to base_rest
 
-When OCA `base_rest` becomes available for Odoo 19.0:
+When OCA `base_rest` becomes available for Odoo 18.0:
 
 1. **Monitor upstream:**
    ```bash

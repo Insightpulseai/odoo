@@ -37,7 +37,7 @@ All 4 next actions completed successfully in order:
 - Databases deleted: 6
   - odoo (100 MB)
   - odoo-prod (7.8 MB)
-  - odoo19 (103 MB, 5 connections terminated)
+  - odoo18 (103 MB, 5 connections terminated)
   - n8n (10 MB)
   - plane (19 MB)
   - superset (13 MB, 5 connections terminated)

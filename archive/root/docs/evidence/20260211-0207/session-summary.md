@@ -24,7 +24,7 @@ Result: Record exists with all expected fields populated
 **Components Fixed**: 15+ integration issues resolved
 - OCR service integration
 - LLM API configuration (switched to OpenAI)
-- Odoo 19 compatibility (numbercall, supplier_rank, label tags, group.user_ids)
+- Odoo 18 compatibility (numbercall, supplier_rank, label tags, group.user_ids)
 - Schema field alignment
 - JSON-RPC response unwrapping
 - Authentication flow

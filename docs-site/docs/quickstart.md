@@ -40,7 +40,7 @@ devcontainer exec --workspace-folder . bash
 ## Bring up the stack
 
 ```bash
-cd /workspaces/odoo/odoo19
+cd /workspaces/odoo/odoo18
 docker compose up -d
 ```
 
