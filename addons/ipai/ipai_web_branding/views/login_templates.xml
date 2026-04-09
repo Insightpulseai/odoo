@@ -1,28 +1,101 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Copyright 2026 InsightPulse AI
+<!-- Copyright 2026 InsightPulseAI
      License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl.html). -->
 <odoo>
 
-    <!-- Override login layout: replace "Powered by Odoo" footer with IPAI branding -->
-    <template id="login_layout_ipai" inherit_id="web.login_layout" name="IPAI Login Layout">
+    <!--
+        InsightPulse Branded Login Shell
 
-        <!-- Replace default company logo with IPAI branded logo -->
-        <xpath expr="//div[hasclass('text-center','pb-3','border-bottom')]" position="replace">
-            <div class="text-center pb-3 border-bottom mb-4 o_ipai_login_logo">
-                <img src="/ipai_web_branding/static/src/img/ipai_logo.svg"
-                     alt="InsightPulse AI"
-                     style="max-height:80px; max-width: 100%; width:auto"/>
-            </div>
-        </xpath>
+        When `website` is installed, website.login_layout replaces the entire
+        web.login_layout <t> block with t-call="website.layout", wrapping the
+        login form in the full website header/footer/nav.
 
-        <!-- Replace "Powered by Odoo" footer with IPAI footer -->
-        <xpath expr="//div[hasclass('text-center','small','mt-4')]" position="replace">
-            <div class="text-center small mt-4 pt-3 border-top o_ipai_login_footer" t-if="not disable_footer">
-                <t t-if="not disable_database_manager">
-                    <a class="border-end pe-2 me-1" href="/web/database/manager">Manage Databases</a>
-                </t>
-                <span class="text-muted">InsightPulse AI</span>
-            </div>
+        We inherit website.login_layout to inject our branded panel and
+        control the login page rendering.
+    -->
+
+    <template id="ipai_login_shell"
+              inherit_id="website.login_layout"
+              name="IPAI Login Shell"
+              priority="99">
+
+        <!-- Replace the website layout wrapper with our split-panel login -->
+        <xpath expr="//t[@t-call='website.layout']" position="replace">
+            <t t-call="web.frontend_layout">
+                <t t-set="html_data" t-value="{'style': 'height: 100%;'}"/>
+                <t t-set="body_classname" t-value="'bg-100'"/>
+                <t t-set="no_header" t-value="True"/>
+                <t t-set="no_footer" t-value="True"/>
+
+                <div class="ipai-login-wrapper d-flex" style="min-height: 100vh;">
+                    <!-- Left branded panel -->
+                    <div class="ipai-login-left d-none d-lg-flex">
+                        <div class="ipai-brand">
+                            <img src="/ipai_web_branding/static/src/img/logo_white.png"
+                                 alt="InsightPulse AI"
+                                 class="ipai-brand-logo"/>
+                        </div>
+                        <div class="ipai-hero">
+                            <h1 class="ipai-hero-title">AI-powered business operations platform</h1>
+                            <p class="ipai-hero-sub">ERP, agents, and analytics — unified on Azure.</p>
+                        </div>
+                        <ul class="ipai-features">
+                            <li class="ipai-feature">
+                                <div class="ipai-feature-icon">&#x1F6E1;</div>
+                                <div><strong>Enterprise Security</strong><br/><span>Entra ID authentication, role-based access, and audit trails.</span></div>
+                            </li>
+                            <li class="ipai-feature">
+                                <div class="ipai-feature-icon">&#x26A1;</div>
+                                <div><strong>AI Copilot</strong><br/><span>Conversational agents grounded in your operational data.</span></div>
+                            </li>
+                            <li class="ipai-feature">
+                                <div class="ipai-feature-icon">&#x1F4CA;</div>
+                                <div><strong>Integrated Analytics</strong><br/><span>Databricks lakehouse and Power BI dashboards.</span></div>
+                            </li>
+                            <li class="ipai-feature">
+                                <div class="ipai-feature-icon">&#x2705;</div>
+                                <div><strong>Compliance Ready</strong><br/><span>BIR tax compliance, automated reporting, and document intelligence.</span></div>
+                            </li>
+                        </ul>
+                        <p class="ipai-trust">
+                            <a href="https://insightpulseai.com" target="_blank"
+                               style="color: rgba(255,255,255,0.45); text-decoration: none;">
+                                insightpulseai.com
+                            </a>
+                        </p>
+                    </div>
+
+                    <!-- Right panel: login form -->
+                    <div class="ipai-login-card d-flex align-items-center justify-content-center flex-grow-1">
+                        <div style="max-width: 380px; width: 100%;">
+                            <div class="card border-0 bg-white shadow-sm" style="border-radius: 12px;">
+                                <div class="card-body p-4">
+                                    <div class="text-center pb-3 border-bottom mb-4">
+                                        <img t-attf-src="/web/binary/company_logo{{ '?dbname='+db if db else '' }}"
+                                             alt="InsightPulse AI"
+                                             style="max-height:60px; max-width: 100%; width:auto"/>
+                                    </div>
+                                    <t t-out="0"/>
+                                    <div class="text-center small mt-4 pt-3 border-top">
+                                        <div class="ipai-support">
+                                            Need help?
+                                            <a href="mailto:support@insightpulseai.com">support@insightpulseai.com</a>
+                                        </div>
+                                        <p class="ipai-legal">
+                                            By signing in, you agree to our
+                                            <a href="/terms" target="_blank">Terms</a>
+                                            and <a href="/privacy" target="_blank">Privacy Policy</a>.
+                                        </p>
+                                        <p class="ipai-legal" style="margin-top: 4px;">
+                                            &#169; 2026 InsightPulse AI
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </t>
         </xpath>
 
     </template>

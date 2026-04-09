@@ -24,7 +24,7 @@ ERP lack MFA enforcement through Entra.
 | `infra/entra/app-roles-manifest.json` | App registrations, role definitions |
 | `infra/entra/role-tool-mapping.yaml` | Role-to-tool mappings for copilot |
 | `infra/ssot/azure/resources.yaml` | Key Vault entries (secrets for service principals) |
-| `docs/runbooks/ODOO19_GO_LIVE_CHECKLIST.md` | Identity/MFA line items |
+| `docs/runbooks/ODOO18_GO_LIVE_CHECKLIST.md` | Identity/MFA line items |
 | `docs/audits/ODOO_AZURE_ENTERPRISE_BENCHMARK.md` | MFA/CA gap row |
 | `addons/ipai/ipai_security_frontdoor/middleware.py` | Current auth middleware |
 
@@ -56,7 +56,7 @@ Optional deeper fetches:
    users, MFA for admin roles, device compliance for sensitive apps).
 4. **Patch** -- Create or update:
    - `infra/entra/conditional-access-policies.json` with baseline CA policies.
-   - `docs/runbooks/ODOO19_GO_LIVE_CHECKLIST.md` with MFA/CA verification steps.
+   - `docs/runbooks/ODOO18_GO_LIVE_CHECKLIST.md` with MFA/CA verification steps.
    - `infra/entra/app-roles-manifest.json` if role definitions are incomplete.
    Document the P1 license upgrade decision in an ADR or the checklist.
 5. **Verify** -- Confirm policy JSON is syntactically valid. Confirm the go-live
@@ -69,7 +69,7 @@ Optional deeper fetches:
 |------|--------|
 | `infra/entra/conditional-access-policies.json` | Baseline CA policy definitions |
 | `infra/entra/app-roles-manifest.json` | Complete app role definitions |
-| `docs/runbooks/ODOO19_GO_LIVE_CHECKLIST.md` | MFA/CA verification steps |
+| `docs/runbooks/ODOO18_GO_LIVE_CHECKLIST.md` | MFA/CA verification steps |
 | `addons/ipai/ipai_security_frontdoor/middleware.py` | Entra token validation (if missing) |
 | `docs/evidence/<stamp>/entra-mfa-ca-hardening/` | Policy JSON, MCP excerpts |
 

@@ -5,7 +5,7 @@ set -euo pipefail
 MODULE="ipai_finance_budget"
 
 echo "=== Scaffold module ==="
-# ~/.pyenv/versions/odoo-19-dev/bin/python vendor/odoo/odoo-bin scaffold "${MODULE}" addons/ipai
+# ~/.pyenv/versions/odoo-18-dev/bin/python vendor/odoo/odoo-bin scaffold "${MODULE}" addons/ipai
 
 echo "=== Expected __manifest__.py content ==="
 cat <<'MANIFEST'
@@ -31,6 +31,6 @@ cat <<'MANIFEST'
 MANIFEST
 
 echo "=== Test install ==="
-# ~/.pyenv/versions/odoo-19-dev/bin/python vendor/odoo/odoo-bin \
+# ~/.pyenv/versions/odoo-18-dev/bin/python vendor/odoo/odoo-bin \
 #   -d test_${MODULE} -i ${MODULE} --stop-after-init \
 #   --addons-path=vendor/odoo/addons,addons/ipai

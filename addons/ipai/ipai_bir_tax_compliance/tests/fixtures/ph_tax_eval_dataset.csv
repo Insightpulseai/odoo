@@ -1,0 +1,210 @@
+scenario_id,category,subcategory,doc_type,partner_type,partner_vat_status,partner_country,atc_code,fiscal_position,gross_amount,currency,tax_type,expected_tax_rate,expected_tax_amount,expected_net,expected_form,expected_behavior,authority,notes
+# ============================================================================
+# PH TAX COMPUTATION EVAL DATASET — Comprehensive Scenario Coverage
+# Version: 1.0.0 | Effective: 2025-01-01 | Rate file: ph_rates_2025.json v2025.2
+# Authority: NIRC as amended by RA 10963 (TRAIN), RA 11534 (CREATE),
+#            RA 12066 (CREATE MORE), RA 12023 (Digital VAT), RR 11-2018
+# ============================================================================
+
+# --- SECTION 1: VAT OUTPUT (Sales) — 12 scenarios ---
+
+VAT-OUT-001,vat,output_standard,invoice,CUSTOMER,vat_registered,PH,,VAT Registered (Domestic),112000.00,PHP,vat_output,0.12,12000.00,100000.00,2550M,tax_computed,"Sec. 106 NIRC",Standard domestic sale VAT-inclusive (112000/1.12=100000 base)
+VAT-OUT-002,vat,output_standard,invoice,CUSTOMER,vat_registered,PH,,VAT Registered (Domestic),560000.00,PHP,vat_output,0.12,60000.00,500000.00,2550M,tax_computed,"Sec. 106 NIRC",Large domestic sale
+VAT-OUT-003,vat,output_zero_export,invoice,FOREIGN,not_applicable,US,,Zero-Rated (Export),224000.00,PHP,vat_output,0.00,0.00,224000.00,2550M,tax_computed,"Sec. 106(A)(2) NIRC",Export sale zero-rated
+VAT-OUT-004,vat,output_zero_export,invoice,FOREIGN,not_applicable,SG,,Zero-Rated (Export),500000.00,PHP,vat_output,0.00,0.00,500000.00,2550M,tax_computed,"Sec. 106(A)(2) NIRC",ASEAN export sale zero-rated
+VAT-OUT-005,vat,output_exempt,invoice,CUSTOMER,vat_registered,PH,,VAT Exempt,50000.00,PHP,vat_exempt,0.00,0.00,50000.00,2550M,no_tax,"Sec. 109 NIRC",Exempt sale (educational services)
+VAT-OUT-006,vat,output_exempt_agri,invoice,CUSTOMER,vat_registered,PH,,VAT Exempt,30000.00,PHP,vat_exempt,0.00,0.00,30000.00,2550M,no_tax,"Sec. 109(A) NIRC",Agricultural food products in original state
+VAT-OUT-007,vat,output_credit_note,credit_note,CUSTOMER,vat_registered,PH,,VAT Registered (Domestic),-56000.00,PHP,vat_output,0.12,-6000.00,-50000.00,2550M,tax_computed,"Sec. 106 NIRC",Credit note reverses output VAT
+VAT-OUT-008,vat,output_mixed,invoice,CUSTOMER,vat_registered,PH,,VAT Registered (Domestic),336000.00,PHP,vat_output,0.12,36000.00,300000.00,2550M,tax_computed,"Sec. 106 NIRC",Invoice with both taxable and exempt lines (taxable portion only)
+VAT-OUT-009,vat,output_threshold_below,invoice,CUSTOMER,non_vat,PH,,Non-VAT (Below Threshold),100000.00,PHP,percentage_tax,0.03,3000.00,100000.00,2551Q,tax_computed,"Sec. 116 NIRC",Non-VAT seller below PHP 3M threshold — percentage tax applies
+VAT-OUT-010,vat,output_govt_sale,invoice,GOVERNMENT,vat_registered,PH,,Government Entity,224000.00,PHP,vat_output,0.12,24000.00,200000.00,2550M,tax_computed,"Sec. 106 NIRC",Sale to government entity (5% final WHT withheld by govt)
+VAT-OUT-011,vat,output_foreign_currency,invoice,FOREIGN,not_applicable,US,,Zero-Rated (Export),10000.00,USD,vat_output,0.00,0.00,10000.00,2550M,tax_computed,"Sec. 108(B) NIRC",Foreign currency denominated sale zero-rated
+VAT-OUT-012,vat,output_digital_service,invoice,CUSTOMER,vat_registered,PH,,VAT Registered (Domestic),11200.00,PHP,vat_output,0.12,1200.00,10000.00,2550M,tax_computed,"RA 12023",Digital service sale by PH-registered DSP
+
+# --- SECTION 2: VAT INPUT (Purchases) — 10 scenarios ---
+
+VAT-IN-001,vat,input_standard,bill,SUPPLIER,vat_registered,PH,WC020,VAT Registered (Domestic),56000.00,PHP,vat_input,0.12,6000.00,50000.00,2550M,tax_computed,"Sec. 110 NIRC",Standard domestic purchase with input VAT credit
+VAT-IN-002,vat,input_capital_goods,bill,SUPPLIER,vat_registered,PH,WC020,VAT Registered (Domestic),1120000.00,PHP,vat_input,0.12,120000.00,1000000.00,2550M,tax_computed_amortized,"Sec. 110(A) NIRC",Capital goods >PHP 1M — input VAT amortized over 60 months
+VAT-IN-003,vat,input_import,bill,FOREIGN,not_applicable,CN,,Import,500000.00,PHP,vat_input,0.12,60000.00,500000.00,2550M,tax_computed,"Sec. 107 NIRC",Import purchase — VAT paid to customs
+VAT-IN-004,vat,input_exempt_purchase,bill,SUPPLIER,vat_exempt,PH,,VAT Exempt,25000.00,PHP,none,0.00,0.00,25000.00,2550M,no_input_credit,"Sec. 109 NIRC",Purchase from VAT-exempt supplier — no input credit
+VAT-IN-005,vat,input_non_vat_supplier,bill,SUPPLIER,non_vat,PH,WC010,Non-VAT (Below Threshold),15000.00,PHP,none,0.00,0.00,15000.00,2550M,no_input_credit,"Sec. 110 NIRC",Purchase from non-VAT supplier — no input credit
+VAT-IN-006,vat,input_services,bill,PROFESSIONAL,vat_registered,PH,WI010,VAT Registered (Domestic),112000.00,PHP,vat_input,0.12,12000.00,100000.00,2550M,tax_computed,"Sec. 110 NIRC",Professional services with input VAT
+VAT-IN-007,vat,input_digital_foreign,bill,FOREIGN,not_applicable,US,,Digital Services Import,50000.00,PHP,vat_reverse_charge,0.12,6000.00,50000.00,2550M,reverse_charge,"RA 12023 / RR 3-2025",Purchase of digital services from non-resident DSP — reverse charge
+VAT-IN-008,vat,input_mixed_use,bill,SUPPLIER,vat_registered,PH,WC020,VAT Registered (Domestic),224000.00,PHP,vat_input_apportioned,0.12,14400.00,200000.00,2550M,tax_computed_apportioned,"Sec. 110(A) NIRC",Mixed-use purchase — input VAT apportioned (60% taxable use)
+VAT-IN-009,vat,input_credit_note,debit_note,SUPPLIER,vat_registered,PH,,-28000.00,-28000.00,PHP,vat_input,0.12,-3000.00,-25000.00,2550M,reversal,"Sec. 110 NIRC",Vendor credit note reverses input VAT
+VAT-IN-010,vat,input_excess_carryover,n/a,n/a,n/a,PH,,n/a,0.00,PHP,vat_excess_credit,0.00,15000.00,0.00,2550M,carry_forward,"Sec. 110(B) NIRC",Excess input VAT from prior period carried forward
+
+# --- SECTION 3: EWT — Professional Fees — 8 scenarios ---
+
+EWT-PROF-001,ewt,professional_individual_vat,bill,PROFESSIONAL,vat_registered,PH,WI010,VAT Registered (Domestic),100000.00,PHP,ewt,0.10,10000.00,90000.00,1601-EQ,tax_computed,"RR 11-2018",10% EWT — individual professional VAT-registered
+EWT-PROF-002,ewt,professional_individual_nonvat,bill,PROFESSIONAL,non_vat,PH,WI011,Non-VAT (Below Threshold),80000.00,PHP,ewt,0.05,4000.00,76000.00,1601-EQ,tax_computed,"RR 11-2018",5% EWT — individual professional non-VAT ≤ PHP 3M
+EWT-PROF-003,ewt,professional_juridical,bill,PROFESSIONAL,vat_registered,PH,WI020,VAT Registered (Domestic),250000.00,PHP,ewt,0.10,25000.00,225000.00,1601-EQ,tax_computed,"RR 11-2018",10% EWT — juridical professional
+EWT-PROF-004,ewt,professional_medical,bill,PROFESSIONAL,vat_registered,PH,WI030,VAT Registered (Domestic),50000.00,PHP,ewt,0.10,5000.00,45000.00,1601-EQ,tax_computed,"RR 11-2018",10% EWT — medical practitioner
+EWT-PROF-005,ewt,professional_legal,bill,PROFESSIONAL,vat_registered,PH,WI040,VAT Registered (Domestic),75000.00,PHP,ewt,0.10,7500.00,67500.00,1601-EQ,tax_computed,"RR 11-2018",10% EWT — lawyer
+EWT-PROF-006,ewt,bookkeeping_individual,bill,PROFESSIONAL,vat_registered,PH,WI040,VAT Registered (Domestic),30000.00,PHP,ewt,0.10,3000.00,27000.00,1601-EQ,tax_computed,"RR 11-2018",10% EWT — bookkeeping agent (individual)
+EWT-PROF-007,ewt,management_consultancy,bill,PROFESSIONAL,vat_registered,PH,WI100,VAT Registered (Domestic),200000.00,PHP,ewt,0.10,20000.00,180000.00,1601-EQ,tax_computed,"RR 11-2018",10% EWT — management/technical consultancy (individual)
+EWT-PROF-008,ewt,directors_fees,bill,INDIVIDUAL,vat_registered,PH,WI120,VAT Registered (Domestic),150000.00,PHP,ewt,0.10,15000.00,135000.00,1601-EQ,tax_computed,"RR 11-2018",10% EWT — director's fees
+
+# --- SECTION 4: EWT — Contractor / Supplier Payments — 6 scenarios ---
+
+EWT-CONT-001,ewt,contractor_individual,bill,SUPPLIER,vat_registered,PH,WC010,VAT Registered (Domestic),500000.00,PHP,ewt,0.02,10000.00,490000.00,1601-EQ,tax_computed,"RR 11-2018",2% EWT — individual contractor
+EWT-CONT-002,ewt,contractor_juridical,bill,SUPPLIER,vat_registered,PH,WC020,VAT Registered (Domestic),1000000.00,PHP,ewt,0.02,20000.00,980000.00,1601-EQ,tax_computed,"RR 11-2018",2% EWT — juridical contractor
+EWT-CONT-003,ewt,subcontractor,bill,SUPPLIER,vat_registered,PH,WC120,VAT Registered (Domestic),300000.00,PHP,ewt,0.02,6000.00,294000.00,1601-EQ,tax_computed,"RR 11-2018",2% EWT — subcontractor of general contractor
+EWT-CONT-004,ewt,customs_broker_individual,bill,PROFESSIONAL,vat_registered,PH,WC040,VAT Registered (Domestic),45000.00,PHP,ewt,0.10,4500.00,40500.00,1601-EQ,tax_computed,"RR 11-2018",10% EWT — customs broker (individual)
+EWT-CONT-005,ewt,customs_broker_juridical,bill,PROFESSIONAL,vat_registered,PH,WC050,VAT Registered (Domestic),120000.00,PHP,ewt,0.10,12000.00,108000.00,1601-EQ,tax_computed,"RR 11-2018",10% EWT — customs broker (juridical)
+EWT-CONT-006,ewt,commission_individual,bill,AGENT,vat_registered,PH,WC100,VAT Registered (Domestic),85000.00,PHP,ewt,0.10,8500.00,76500.00,1601-EQ,tax_computed,"RR 11-2018",10% EWT — commission agent (individual)
+
+# --- SECTION 5: EWT — Government Payments — 3 scenarios ---
+
+EWT-GOVT-001,ewt,govt_goods,bill,SUPPLIER,vat_registered,PH,WC600,Government Entity,200000.00,PHP,ewt,0.01,2000.00,198000.00,1601-EQ,tax_computed,"RR 11-2018",1% EWT — government purchase of goods
+EWT-GOVT-002,ewt,govt_services,bill,SUPPLIER,vat_registered,PH,WC610,Government Entity,150000.00,PHP,ewt,0.02,3000.00,147000.00,1601-EQ,tax_computed,"RR 11-2018",2% EWT — government purchase of services
+EWT-GOVT-003,ewt,govt_agricultural,bill,SUPPLIER,vat_registered,PH,WC620,Government Entity,80000.00,PHP,ewt,0.01,800.00,79200.00,1601-EQ,tax_computed,"RR 11-2018",1% EWT — government purchase of agricultural products
+
+# --- SECTION 6: EWT — Rent — 4 scenarios ---
+
+EWT-RENT-001,ewt,rent_real_individual,bill,SUPPLIER,vat_registered,PH,WB010,VAT Registered (Domestic),50000.00,PHP,ewt,0.05,2500.00,47500.00,1601-EQ,tax_computed,"RR 11-2018",5% EWT — real property rent (individual landlord)
+EWT-RENT-002,ewt,rent_real_juridical,bill,SUPPLIER,vat_registered,PH,WB020,VAT Registered (Domestic),120000.00,PHP,ewt,0.05,6000.00,114000.00,1601-EQ,tax_computed,"RR 11-2018",5% EWT — real property rent (corporate landlord)
+EWT-RENT-003,ewt,rent_personal,bill,SUPPLIER,vat_registered,PH,WB050,VAT Registered (Domestic),15000.00,PHP,ewt,0.05,750.00,14250.00,1601-EQ,tax_computed,"RR 11-2018",5% EWT — personal property rent (>PHP 10K/yr)
+EWT-RENT-004,ewt,rent_personal_below_threshold,bill,SUPPLIER,vat_registered,PH,,VAT Registered (Domestic),8000.00,PHP,none,0.00,0.00,8000.00,none,no_ewt,"RR 11-2018",No EWT — personal property rent ≤ PHP 10K/yr
+
+# --- SECTION 7: EWT — Special / Edge Cases — 5 scenarios ---
+
+EWT-EDGE-001,ewt,tolling_fees,bill,SUPPLIER,vat_registered,PH,WI500,VAT Registered (Domestic),60000.00,PHP,ewt,0.05,3000.00,57000.00,1601-EQ,tax_computed,"RR 11-2018",5% EWT — tolling fees
+EWT-EDGE-002,ewt,gpp_partner_distribution,bill,PARTNER,vat_registered,PH,WC160,VAT Registered (Domestic),500000.00,PHP,ewt,0.15,75000.00,425000.00,1601-EQ,tax_computed,"RR 11-2018",15% EWT — GPP partner income distribution
+EWT-EDGE-003,ewt,estate_trust_distribution,bill,BENEFICIARY,not_applicable,PH,WI640,n/a,100000.00,PHP,ewt,0.15,15000.00,85000.00,1601-EQ,tax_computed,"RR 11-2018",15% EWT — income distribution from estate/trust
+EWT-EDGE-004,ewt,combined_vat_ewt,bill,PROFESSIONAL,vat_registered,PH,WI010,VAT Registered (Domestic),112000.00,PHP,vat_plus_ewt,0.22,22000.00,90000.00,2550M+1601-EQ,dual_tax,"RR 11-2018",Combined: 12% VAT input + 10% EWT on same bill (base=100K)
+EWT-EDGE-005,ewt,credit_note_ewt_reversal,credit_note,PROFESSIONAL,vat_registered,PH,WI020,VAT Registered (Domestic),-50000.00,PHP,ewt,0.10,-5000.00,-45000.00,1601-EQ,reversal,"RR 11-2018",Credit note reverses EWT — replacement 2307 required
+
+# --- SECTION 8: FWT — Resident — 8 scenarios ---
+
+FWT-RES-001,fwt,interest_deposits,n/a,BANK,not_applicable,PH,F001,n/a,100000.00,PHP,fwt,0.20,20000.00,80000.00,1601-FQ,tax_computed,"Sec. 24(B)(1) NIRC",20% FWT on bank deposit interest
+FWT-RES-002,fwt,cash_dividends,n/a,CORPORATION,vat_registered,PH,F002,n/a,500000.00,PHP,fwt,0.10,50000.00,450000.00,1601-FQ,tax_computed,"Sec. 24(B)(2) NIRC",10% FWT on cash dividends from domestic corp
+FWT-RES-003,fwt,stock_dividends,n/a,CORPORATION,vat_registered,PH,F003,n/a,200000.00,PHP,fwt,0.10,20000.00,180000.00,1601-FQ,tax_computed,"Sec. 24(B)(2) NIRC",10% FWT on stock dividends (FMV)
+FWT-RES-004,fwt,royalties_general,n/a,LICENSOR,vat_registered,PH,F004,n/a,300000.00,PHP,fwt,0.20,60000.00,240000.00,1601-FQ,tax_computed,"Sec. 24(B)(1) NIRC",20% FWT on general royalties
+FWT-RES-005,fwt,royalties_literary,n/a,AUTHOR,not_applicable,PH,F004A,n/a,150000.00,PHP,fwt,0.10,15000.00,135000.00,1601-FQ,tax_computed,"Sec. 24(B)(1) NIRC",10% FWT on books/literary/musical royalties
+FWT-RES-006,fwt,prizes_over_10k,n/a,INDIVIDUAL,not_applicable,PH,F005,n/a,50000.00,PHP,fwt,0.20,10000.00,40000.00,1601-FQ,tax_computed,"Sec. 24(B)(1) NIRC",20% FWT on prizes > PHP 10K
+FWT-RES-007,fwt,lotto_winnings,n/a,INDIVIDUAL,not_applicable,PH,F006,n/a,100000.00,PHP,fwt,0.20,20000.00,80000.00,1601-FQ,tax_computed,"Sec. 24(B)(1) NIRC (TRAIN)",20% FWT on PCSO/lotto > PHP 10K
+FWT-RES-008,fwt,fringe_benefits,n/a,EMPLOYEE,not_applicable,PH,F007,n/a,200000.00,PHP,fwt,0.35,70000.00,130000.00,1601-FQ,tax_computed,"Sec. 33(A) NIRC (TRAIN)",35% FWT on fringe benefits (managerial)
+
+# --- SECTION 9: FWT — Non-Resident — 7 scenarios ---
+
+FWT-NR-001,fwt,nrfc_general,bill,FOREIGN,not_applicable,US,NR001,Non-Resident Foreign Corp,1000000.00,PHP,fwt,0.25,250000.00,750000.00,1601-FQ,tax_computed,"Sec. 28(B)(1) NIRC (CREATE)",25% FWT on NRFC general income (reduced from 30%)
+FWT-NR-002,fwt,nrfc_dividends,n/a,FOREIGN,not_applicable,JP,NR002,Non-Resident Foreign Corp,500000.00,PHP,fwt,0.25,125000.00,375000.00,1601-FQ,tax_computed,"Sec. 28(B)(5)(b) NIRC (CREATE)",25% FWT on dividends to NRFC
+FWT-NR-003,fwt,nrfc_interest,n/a,FOREIGN,not_applicable,SG,NR003,Non-Resident Foreign Corp,200000.00,PHP,fwt,0.20,40000.00,160000.00,1601-FQ,tax_computed,"Sec. 28(B)(5)(a) NIRC",20% FWT on interest to NRFC
+FWT-NR-004,fwt,nrfc_royalties,bill,FOREIGN,not_applicable,DE,NR004,Non-Resident Foreign Corp,300000.00,PHP,fwt,0.25,75000.00,225000.00,1601-FQ,tax_computed,"Sec. 28(B)(1) NIRC (CREATE)",25% FWT on royalties to NRFC
+FWT-NR-005,fwt,nrfc_rentals,bill,FOREIGN,not_applicable,HK,NR005,Non-Resident Foreign Corp,180000.00,PHP,fwt,0.25,45000.00,135000.00,1601-FQ,tax_computed,"Sec. 28(B)(1) NIRC (CREATE)",25% FWT on rentals/charter fees to NRFC
+FWT-NR-006,fwt,nranetb_general,bill,FOREIGN,not_applicable,AU,NR010,Non-Resident Alien NE,500000.00,PHP,fwt,0.25,125000.00,375000.00,1601-FQ,tax_computed,"Sec. 25(B) NIRC",25% FWT on NRANETB gross income
+FWT-NR-007,fwt,nranetb_capital_gains,n/a,FOREIGN,not_applicable,UK,NR011,Non-Resident Alien NE,1000000.00,PHP,fwt,0.15,150000.00,850000.00,1601-FQ,tax_computed,"Sec. 25(B) NIRC",15% FWT on NRANETB capital gains on shares
+
+# --- SECTION 10: FWT — Treaty Rate Override — 5 scenarios ---
+
+FWT-TREATY-001,fwt,treaty_us_dividends,n/a,FOREIGN,not_applicable,US,NR002,RP-US Treaty,500000.00,PHP,fwt_treaty,0.20,100000.00,400000.00,1601-FQ,treaty_rate,"RP-US Tax Treaty",Treaty rate 20% vs statutory 25% — requires CORTT
+FWT-TREATY-002,fwt,treaty_japan_interest,n/a,FOREIGN,not_applicable,JP,NR003,RP-Japan Treaty,200000.00,PHP,fwt_treaty,0.10,20000.00,180000.00,1601-FQ,treaty_rate,"RP-Japan Tax Treaty",Treaty rate 10% vs statutory 20% — requires CORTT
+FWT-TREATY-003,fwt,treaty_singapore_royalties,bill,FOREIGN,not_applicable,SG,NR004,RP-SG Treaty,300000.00,PHP,fwt_treaty,0.15,45000.00,255000.00,1601-FQ,treaty_rate,"RP-Singapore Tax Treaty",Treaty rate 15% vs statutory 25% — requires CORTT
+FWT-TREATY-004,fwt,treaty_china_dividends,n/a,FOREIGN,not_applicable,CN,NR002,RP-China Treaty,400000.00,PHP,fwt_treaty,0.10,40000.00,360000.00,1601-FQ,treaty_rate,"RP-China Tax Treaty",Treaty rate 10% vs statutory 25% — requires CORTT
+FWT-TREATY-005,fwt,treaty_germany_interest,n/a,FOREIGN,not_applicable,DE,NR003,RP-Germany Treaty,150000.00,PHP,fwt_treaty,0.10,15000.00,135000.00,1601-FQ,treaty_rate,"RP-Germany Tax Treaty",Treaty rate 10% vs statutory 20% — requires CORTT
+
+# --- SECTION 11: CIT — Corporate Income Tax — 6 scenarios ---
+
+CIT-001,cit,standard_rate,n/a,CORPORATION,vat_registered,PH,,n/a,10000000.00,PHP,cit,0.25,2500000.00,7500000.00,1702Q,tax_computed,"Sec. 27(A) NIRC (CREATE)",25% CIT on net taxable income
+CIT-002,cit,sme_rate,n/a,CORPORATION,vat_registered,PH,,n/a,3000000.00,PHP,cit,0.20,600000.00,2400000.00,1702Q,tax_computed,"Sec. 27(A) NIRC (CREATE)",20% CIT — income ≤ PHP 5M AND assets ≤ PHP 100M
+CIT-003,cit,mcit_applies,n/a,CORPORATION,vat_registered,PH,,n/a,50000000.00,PHP,mcit,0.01,500000.00,49500000.00,1702Q,mcit_higher,"Sec. 27(E) NIRC (CREATE MORE)",1% MCIT on gross income — higher than regular CIT
+CIT-004,cit,proprietary_edu,n/a,EDUCATIONAL,vat_exempt,PH,,n/a,5000000.00,PHP,cit,0.10,500000.00,4500000.00,1702Q,tax_computed,"Sec. 27(B) NIRC (CREATE)",10% CIT — proprietary educational institution
+CIT-005,cit,rbe_special,n/a,CORPORATION,vat_registered,PH,,n/a,20000000.00,PHP,cit_special,0.05,1000000.00,19000000.00,1702Q,tax_computed,"RA 12066 (CREATE MORE)",5% special CIT on gross income — registered business enterprise
+CIT-006,cit,nrfc,n/a,FOREIGN,not_applicable,US,,Non-Resident Foreign Corp,5000000.00,PHP,cit,0.25,1250000.00,3750000.00,1702Q,tax_computed,"Sec. 28(A)(1) NIRC (CREATE)",25% CIT on NRFC net income from PH sources
+
+# --- SECTION 12: Individual Income Tax — Graduated Brackets — 7 scenarios ---
+
+PIT-001,pit,bracket_1_exempt,n/a,EMPLOYEE,not_applicable,PH,,n/a,200000.00,PHP,pit,0.00,0.00,200000.00,2316,no_tax,"Sec. 24(A)(2)(b) NIRC (TRAIN)",Exempt — annual income ≤ PHP 250K
+PIT-002,pit,bracket_2_15pct,n/a,EMPLOYEE,not_applicable,PH,,n/a,350000.00,PHP,pit,0.15,15000.00,335000.00,2316,tax_computed,"Sec. 24(A)(2)(b) NIRC (TRAIN)",15% on excess over 250K = (350K-250K) x 0.15 = 15000
+PIT-003,pit,bracket_3_20pct,n/a,EMPLOYEE,not_applicable,PH,,n/a,600000.00,PHP,pit,0.20,62500.00,537500.00,2316,tax_computed,"Sec. 24(A)(2)(b) NIRC (TRAIN)",22500 + 20% of (600K-400K) = 22500+40000 = 62500
+PIT-004,pit,bracket_4_25pct,n/a,EMPLOYEE,not_applicable,PH,,n/a,1500000.00,PHP,pit,0.25,277500.00,1222500.00,2316,tax_computed,"Sec. 24(A)(2)(b) NIRC (TRAIN)",102500 + 25% of (1.5M-800K) = 102500+175000 = 277500
+PIT-005,pit,bracket_5_30pct,n/a,EMPLOYEE,not_applicable,PH,,n/a,5000000.00,PHP,pit,0.30,1302500.00,3697500.00,2316,tax_computed,"Sec. 24(A)(2)(b) NIRC (TRAIN)",402500 + 30% of (5M-2M) = 402500+900000 = 1302500
+PIT-006,pit,bracket_6_35pct,n/a,EMPLOYEE,not_applicable,PH,,n/a,12000000.00,PHP,pit,0.35,3602500.00,8397500.00,2316,tax_computed,"Sec. 24(A)(2)(b) NIRC (TRAIN)",2202500 + 35% of (12M-8M) = 2202500+1400000 = 3602500
+PIT-007,pit,bracket_exact_boundary,n/a,EMPLOYEE,not_applicable,PH,,n/a,250000.00,PHP,pit,0.00,0.00,250000.00,2316,no_tax,"Sec. 24(A)(2)(b) NIRC (TRAIN)",Exact threshold — PHP 250K is still exempt
+
+# --- SECTION 13: Capital Gains Tax — 3 scenarios ---
+
+CGT-001,cgt,real_property,n/a,INDIVIDUAL,not_applicable,PH,,n/a,5000000.00,PHP,cgt,0.06,300000.00,4700000.00,1706,tax_computed,"Sec. 24(D) NIRC (TRAIN)",6% CGT on sale of real property (GSP or FMV whichever higher)
+CGT-002,cgt,shares_not_traded,n/a,INDIVIDUAL,not_applicable,PH,,n/a,1000000.00,PHP,cgt,0.15,150000.00,850000.00,1707,tax_computed,"Sec. 24(C) NIRC (TRAIN)",15% CGT on net capital gains from shares not traded
+CGT-003,cgt,stock_transaction_tax,n/a,INDIVIDUAL,not_applicable,PH,,n/a,2000000.00,PHP,stt,0.006,12000.00,1988000.00,n/a,tax_computed,"Sec. 127(A) NIRC (TRAIN)",0.6% stock transaction tax on sale of listed shares
+
+# --- SECTION 14: Percentage Tax — 3 scenarios ---
+
+PCT-001,percentage_tax,standard,invoice,SUPPLIER,non_vat,PH,,Non-VAT (Below Threshold),100000.00,PHP,percentage_tax,0.03,3000.00,97000.00,2551Q,tax_computed,"Sec. 116 NIRC",3% percentage tax for non-VAT registered (reverted from temp 1%)
+PCT-002,percentage_tax,domestic_carrier,invoice,CARRIER,not_applicable,PH,,n/a,500000.00,PHP,percentage_tax,0.03,15000.00,485000.00,2551Q,tax_computed,"Sec. 117 NIRC",3% percentage tax — domestic carrier
+PCT-003,percentage_tax,franchise_utility,invoice,FRANCHISE,not_applicable,PH,,n/a,8000000000.00,PHP,percentage_tax,0.02,160000000.00,7840000000.00,2551Q,tax_computed,"Sec. 119 NIRC",2% franchise tax — gas/water utility (gross receipts ≤ PHP 10B)
+
+# --- SECTION 15: BIR 2307 Generation — 6 scenarios ---
+
+F2307-001,form_2307,standard_ewt,bill,PROFESSIONAL,vat_registered,PH,WI020,,250000.00,PHP,ewt,0.10,25000.00,225000.00,2307,generate_2307,"RR 2-98",Generate 2307 — standard professional fees
+F2307-002,form_2307,multi_atc_single_bill,bill,SUPPLIER,vat_registered,PH,WC010+WB020,,400000.00,PHP,ewt,mixed,14000.00,386000.00,2307,generate_2307_multi_line,"RR 2-98",Single bill with contractor (2%) + rent (5%) lines — multi-ATC 2307
+F2307-003,form_2307,credit_note_replacement,credit_note,PROFESSIONAL,vat_registered,PH,WI020,,-100000.00,PHP,ewt,0.10,-10000.00,-90000.00,2307,cancel_and_replace,"RR 2-98",Credit note — cancel original 2307 and issue replacement
+F2307-004,form_2307,quarterly_aggregate,n/a,n/a,n/a,PH,,,0.00,PHP,n/a,n/a,0.00,0.00,2307,aggregate_check,"RR 2-98",Sum of all 2307 amounts must equal 1601-EQ total for quarter
+F2307-005,form_2307,missing_2307_detection,bill,SUPPLIER,vat_registered,PH,WC020,,180000.00,PHP,ewt,0.02,3600.00,176400.00,2307,exception_missing,"RR 2-98",Bill with WHT lines but no linked 2307 — should flag as exception
+F2307-006,form_2307,below_threshold_no_2307,bill,SUPPLIER,vat_registered,PH,,,5000.00,PHP,none,0.00,0.00,5000.00,none,no_2307,"RR 2-98",Small purchase with no EWT applicable — no 2307 needed
+
+# --- SECTION 16: SLSP Scenarios — 4 scenarios ---
+
+SLSP-001,slsp,sales_list_mixed,n/a,n/a,n/a,PH,,,0.00,PHP,n/a,n/a,0.00,0.00,SLSP,generate_sales_list,"RR 7-2024",Sales list with VATable + zero-rated + exempt transactions
+SLSP-002,slsp,purchases_list_multi_ewt,n/a,n/a,n/a,PH,,,0.00,PHP,n/a,n/a,0.00,0.00,SLSP,generate_purchases_list,"RR 7-2024",Purchases list with multiple EWT rates across vendors
+SLSP-003,slsp,reconciliation_pass,n/a,n/a,n/a,PH,,,0.00,PHP,n/a,n/a,0.00,0.00,SLSP,reconcile,"RR 7-2024",SLSP totals reconcile to GL tax account balances
+SLSP-004,slsp,reconciliation_fail,n/a,n/a,n/a,PH,,,0.00,PHP,n/a,n/a,0.00,0.00,SLSP,exception_mismatch,"RR 7-2024",SLSP totals do NOT reconcile — discrepancy detected
+
+# --- SECTION 17: Filing Deadline Computation — 8 scenarios ---
+
+DEADLINE-001,deadline,vat_monthly_jan,n/a,n/a,n/a,PH,,,0.00,PHP,n/a,n/a,0.00,0.00,2550M,2025-02-25,"Sec. 114 NIRC",2550M for January 2025 due February 25
+DEADLINE-002,deadline,vat_quarterly_q1,n/a,n/a,n/a,PH,,,0.00,PHP,n/a,n/a,0.00,0.00,2550Q,2025-04-25,"Sec. 114 NIRC",2550Q for Q1 2025 due April 25
+DEADLINE-003,deadline,ewt_monthly_jan,n/a,n/a,n/a,PH,,,0.00,PHP,n/a,n/a,0.00,0.00,1601-E,2025-02-10,"RR 2-98",1601-E for January due February 10
+DEADLINE-004,deadline,ewt_quarterly_q1,n/a,n/a,n/a,PH,,,0.00,PHP,n/a,n/a,0.00,0.00,1601-EQ,2025-04-30,"RR 2-98",1601-EQ for Q1 due April 30
+DEADLINE-005,deadline,cit_quarterly_q1,n/a,n/a,n/a,PH,,,0.00,PHP,n/a,n/a,0.00,0.00,1702Q,2025-05-30,"Sec. 77 NIRC",1702Q for Q1 due 60 days after March 31
+DEADLINE-006,deadline,cit_annual,n/a,n/a,n/a,PH,,,0.00,PHP,n/a,n/a,0.00,0.00,1702,2025-04-15,"Sec. 77 NIRC",Annual ITR due April 15
+DEADLINE-007,deadline,form_2307_issuance,n/a,n/a,n/a,PH,,,0.00,PHP,n/a,n/a,0.00,0.00,2307,within_20_days,"RR 2-98",2307 issued within 20 days from month-end
+DEADLINE-008,deadline,annual_info_return,n/a,n/a,n/a,PH,,,0.00,PHP,n/a,n/a,0.00,0.00,1604-E,2026-03-01,"RR 2-98",1604-E due March 1 of following year
+
+# --- SECTION 18: TIN Validation — 6 scenarios ---
+
+TIN-001,validation,tin_valid,n/a,SUPPLIER,vat_registered,PH,,,0.00,PHP,n/a,n/a,0.00,0.00,n/a,valid,"RR 11-2018",Valid TIN: 123-456-789-000
+TIN-002,validation,tin_invalid_short,n/a,SUPPLIER,vat_registered,PH,,,0.00,PHP,n/a,n/a,0.00,0.00,n/a,invalid,"RR 11-2018",Invalid TIN: 123-456-789 (too short — missing branch code)
+TIN-003,validation,tin_invalid_letters,n/a,SUPPLIER,vat_registered,PH,,,0.00,PHP,n/a,n/a,0.00,0.00,n/a,invalid,"RR 11-2018",Invalid TIN: ABC-DEF-GHI-000 (contains letters)
+TIN-004,validation,tin_invalid_separator,n/a,SUPPLIER,vat_registered,PH,,,0.00,PHP,n/a,n/a,0.00,0.00,n/a,invalid,"RR 11-2018",Invalid TIN: 123.456.789.000 (wrong separator — must be hyphen)
+TIN-005,validation,tin_missing,n/a,SUPPLIER,vat_registered,PH,,,0.00,PHP,n/a,n/a,0.00,0.00,n/a,block_posting,"RR 11-2018",Missing TIN on PH partner — block invoice posting
+TIN-006,validation,tin_non_ph_no_check,n/a,FOREIGN,not_applicable,US,,,0.00,PHP,n/a,n/a,0.00,0.00,n/a,skip_validation,"RR 11-2018",Non-PH partner — TIN validation not required
+
+# --- SECTION 19: Fiscal Position Auto-Detection — 8 scenarios ---
+
+FP-001,fiscal_position,domestic_vat,n/a,CUSTOMER,vat_registered,PH,,,0.00,PHP,n/a,n/a,0.00,0.00,n/a,VAT Registered (Domestic),"Sec. 236 NIRC",PH customer VAT-registered → domestic VAT fiscal position
+FP-002,fiscal_position,domestic_nonvat,n/a,CUSTOMER,non_vat,PH,,,0.00,PHP,n/a,n/a,0.00,0.00,n/a,Non-VAT (Below Threshold),"Sec. 236 NIRC",PH customer non-VAT → percentage tax fiscal position
+FP-003,fiscal_position,export,n/a,FOREIGN,not_applicable,US,,,0.00,PHP,n/a,n/a,0.00,0.00,n/a,Zero-Rated (Export),"Sec. 106(A)(2) NIRC",Foreign customer → zero-rated export
+FP-004,fiscal_position,vat_exempt,n/a,EDUCATIONAL,vat_exempt,PH,,,0.00,PHP,n/a,n/a,0.00,0.00,n/a,VAT Exempt,"Sec. 109 NIRC",Educational institution → VAT exempt
+FP-005,fiscal_position,government,n/a,GOVERNMENT,vat_registered,PH,,,0.00,PHP,n/a,n/a,0.00,0.00,n/a,Government Entity,"Sec. 114(C) NIRC",Government entity → special withholding rules
+FP-006,fiscal_position,nrfc,n/a,FOREIGN,not_applicable,JP,,,0.00,PHP,n/a,n/a,0.00,0.00,n/a,Non-Resident Foreign Corp,"Sec. 28(B) NIRC",Foreign corp → NRFC fiscal position with FWT
+FP-007,fiscal_position,asean_export,n/a,FOREIGN,not_applicable,SG,,,0.00,PHP,n/a,n/a,0.00,0.00,n/a,Zero-Rated (Export),"Sec. 106(A)(2) NIRC",ASEAN partner → zero-rated export
+FP-008,fiscal_position,treaty_country,n/a,FOREIGN,not_applicable,DE,,,0.00,PHP,n/a,n/a,0.00,0.00,n/a,RP-Germany Treaty,"RP-DE Tax Treaty",Germany partner → treaty fiscal position with reduced rates
+
+# --- SECTION 20: VAT Return Computation (2550M) — 5 scenarios ---
+
+RETURN-001,vat_return,standard_payable,n/a,n/a,n/a,PH,,,0.00,PHP,n/a,n/a,30840.00,0.00,2550M,vat_payable,"Sec. 114 NIRC",Output 42000 - Input 11160 = VAT payable 30840
+RETURN-002,vat_return,excess_input_credit,n/a,n/a,n/a,PH,,,0.00,PHP,n/a,n/a,-15000.00,15000.00,2550M,carry_forward,"Sec. 110(B) NIRC",Input > Output — excess credit carried to next period
+RETURN-003,vat_return,zero_rated_refund,n/a,n/a,n/a,PH,,,0.00,PHP,n/a,n/a,-50000.00,50000.00,2550M,refundable,"Sec. 112 NIRC",Zero-rated exporter — excess input VAT refundable
+RETURN-004,vat_return,quarterly_aggregation,n/a,n/a,n/a,PH,,,0.00,PHP,n/a,n/a,92520.00,0.00,2550Q,vat_payable,"Sec. 114 NIRC",2550Q = sum of 3 monthly 2550M amounts
+RETURN-005,vat_return,with_prior_credit,n/a,n/a,n/a,PH,,,0.00,PHP,n/a,n/a,15840.00,0.00,2550M,vat_payable,"Sec. 110(B) NIRC",Output 42000 - Input 11160 - Prior credit 15000 = 15840
+
+# --- SECTION 21: Approval / SoD Scenarios — 5 scenarios ---
+
+SOD-001,approval,bill_above_threshold,bill,SUPPLIER,vat_registered,PH,WC020,,600000.00,PHP,ewt,0.02,12000.00,588000.00,n/a,require_approval,"base_tier_validation",Bill > PHP 500K requires accounting manager approval
+SOD-002,approval,bill_below_threshold,bill,SUPPLIER,vat_registered,PH,WC020,,100000.00,PHP,ewt,0.02,2000.00,98000.00,n/a,auto_approve,"base_tier_validation",Bill ≤ PHP 500K — auto-approved
+SOD-003,approval,filing_submission,n/a,n/a,n/a,PH,,,0.00,PHP,n/a,n/a,0.00,0.00,2550M,require_signatory,"Constitution P5",Filing submission requires authorized signatory (never auto)
+SOD-004,approval,same_user_prepare_approve,n/a,n/a,n/a,PH,,,0.00,PHP,n/a,n/a,0.00,0.00,n/a,block_sod_violation,"Constitution P8",Same user cannot prepare and approve — SoD violation blocked
+SOD-005,approval,rate_file_change,n/a,n/a,n/a,PH,,,0.00,PHP,n/a,n/a,0.00,0.00,n/a,require_pr_review,"Constitution §4.2",Rate file change requires PR review + CI schema validation
+
+# --- SECTION 22: Error / Edge Case Scenarios — 8 scenarios ---
+
+EDGE-001,error,missing_atc_code,bill,SUPPLIER,vat_registered,PH,,,50000.00,PHP,ewt,n/a,n/a,n/a,n/a,block_missing_atc,"Constitution P9",No ATC code on bill with qualifying purchase — fail closed
+EDGE-002,error,unknown_jurisdiction,bill,FOREIGN,not_applicable,XX,,,100000.00,PHP,n/a,n/a,n/a,n/a,n/a,block_unknown_jurisdiction,"Constitution P9",Unknown country code — transaction blocked
+EDGE-003,error,expired_rate_file,n/a,n/a,n/a,PH,,,0.00,PHP,n/a,n/a,0.00,0.00,n/a,warning_stale_rates,"Constitution §7.2",Rate file past effective_to — warn + block after grace period
+EDGE-004,error,hash_mismatch,n/a,n/a,n/a,PH,,,0.00,PHP,n/a,n/a,0.00,0.00,n/a,block_tampering,"Constitution §4.2",Rate file SHA-256 hash mismatch on module load
+EDGE-005,error,zero_amount_bill,bill,SUPPLIER,vat_registered,PH,WC020,,0.00,PHP,ewt,0.02,0.00,0.00,n/a,no_ewt,"RR 11-2018",Zero-amount bill — EWT is 0 (no 2307 needed)
+EDGE-006,error,negative_amount_not_credit,bill,SUPPLIER,vat_registered,PH,WC020,,-50000.00,PHP,ewt,n/a,n/a,n/a,n/a,block_invalid,"Odoo constraint",Negative amount on regular bill (not credit note) — reject
+EDGE-007,error,multi_currency_usd,bill,FOREIGN,not_applicable,US,NR001,,10000.00,USD,fwt,0.25,2500.00,7500.00,1601-FQ,tax_in_txn_currency,"Sec. 28(B) NIRC",USD bill — tax computed in USD then converted to PHP at BSP rate
+EDGE-008,error,duplicate_2307,bill,PROFESSIONAL,vat_registered,PH,WI020,,100000.00,PHP,ewt,0.10,10000.00,90000.00,2307,reject_duplicate,"RR 2-98",Attempt to create second 2307 for same bill — reject duplicate

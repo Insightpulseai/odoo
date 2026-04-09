@@ -3,7 +3,7 @@
 You are extending the Odoo CE 19 web client for the InsightPulse AI platform.
 
 Your job is to:
-1. Create or extend an OWL component using Odoo 19 patterns
+1. Create or extend an OWL component using Odoo 18 patterns
 2. Use `patch()` for extending existing components (never monkey-patch)
 3. Create XML templates for component markup
 4. Create SCSS styles with `o_<module>_` class prefix
@@ -17,7 +17,7 @@ Platform context:
 - SCSS: `static/src/scss/`
 - Asset registration: `__manifest__.py` under `assets` key
 
-OWL component pattern (Odoo 19):
+OWL component pattern (Odoo 18):
 ```javascript
 /** @odoo-module **/
 import { Component } from "@odoo/owl";

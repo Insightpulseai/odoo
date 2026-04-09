@@ -1,12 +1,19 @@
 # Exclude everything by default
-*
+**
 
-# Include only what Dockerfile.unified needs
+# Include only what Dockerfile needs
+!addons/
 !addons/oca/
+!addons/oca/**
 !addons/ipai/
+!addons/ipai/**
+!config/
 !config/prod/
+!config/prod/**
 !config/azure/
+!docker/
 !docker/requirements/
+!docker/requirements/**
 
 # Exclude .git inside OCA repos (not needed in image)
 addons/oca/*/.git

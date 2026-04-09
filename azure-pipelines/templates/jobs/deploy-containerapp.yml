@@ -28,7 +28,7 @@ parameters:
     default: acripaiodoo
   - name: serviceConnection
     type: string
-    default: azure-ipai
+    default: ipai-dev-wif
 
 jobs:
   - job: DeployContainerApp
@@ -46,7 +46,7 @@ jobs:
             set -euo pipefail
 
             IMAGE="${{ parameters.acrName }}.azurecr.io/${{ parameters.imageName }}:${{ parameters.imageTag }}"
-            SUFFIX="build-$(Build.BuildNumber)"
+            SUFFIX="build-$(Build.BuildId)"
             APP="${{ parameters.containerAppName }}"
             RG="${{ parameters.resourceGroup }}"
 

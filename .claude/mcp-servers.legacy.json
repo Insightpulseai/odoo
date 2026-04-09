@@ -1,7 +1,8 @@
 {
   "$schema": "https://modelcontextprotocol.io/schemas/mcp-servers.json",
   "version": "2.0.0",
-  "description": "MCP server configuration for InsightPulse AI / TBWA stack — expanded with Microsoft/Azure + official platform servers",
+  "status": "archive",
+  "description": "ARCHIVED — MCP server catalog for reference only. Active config lives in settings.json and .mcp.json. Supabase, n8n, DigitalOcean, and Vercel entries are deprecated.",
 
   "mcpServers": {
 

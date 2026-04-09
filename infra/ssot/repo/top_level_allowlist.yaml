@@ -179,11 +179,11 @@ tier2:
       migrate_to: "infra/integrations/ or platform/integrations/"
 
     - name: "odoo"
-      purpose: "Legacy Odoo 19 path (addons are now canonical in addons/)"
+      purpose: "Legacy Odoo 18 path (addons are now canonical in addons/)"
       migrate_to: "addons/"
 
-    - name: "odoo19"
-      purpose: "Legacy Odoo 19 runtime path"
+    - name: "odoo18"
+      purpose: "Legacy Odoo 18 runtime path"
       migrate_to: "addons/ or config/"
 
     - name: "ci"

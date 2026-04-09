@@ -142,10 +142,17 @@ class RulesLoader:
         if rate_code in ewt_data:
             return ewt_data[rate_code].get("rate", 0.0)
 
-        # Check FWT rates
+        # Check FWT rates (resident and non_resident subsections)
         fwt_data = rates_data.get("final_withholding_tax", {})
+        # Support both flat and nested FWT structure
         if rate_code in fwt_data:
-            return fwt_data[rate_code].get("rate", 0.0)
+            entry = fwt_data[rate_code]
+            if isinstance(entry, dict) and "rate" in entry:
+                return entry.get("rate", 0.0)
+        for subsection in ("resident", "non_resident"):
+            sub = fwt_data.get(subsection, {})
+            if rate_code in sub:
+                return sub[rate_code].get("rate", 0.0)
 
         return 0.0
 

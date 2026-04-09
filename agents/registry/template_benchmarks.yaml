@@ -1,0 +1,333 @@
+version: 2
+owner_repo: agents
+updated: "2026-04-04"
+
+benchmarks:
+  # --- SaaS / Marketplace benchmarks ---
+
+  - id: ava-tax
+    name: "AvaTax: Agentic Tax and Compliance"
+    vendor: Avalara
+    source: Azure Marketplace (SaaS)
+    role: tax_engine_pattern
+    description: >
+      Agentic tax calculation engine. 20ms avg response, 55B+ API calls/yr,
+      190+ countries, 330+ product tax categories. Certified SST CSP.
+      Real-time and batch. Governments license Avalara's tax data.
+    reuse_for:
+      - compliance_engine_shape
+      - auditability
+      - transactional_tax_validation
+      - real_time_tax_calculation_pattern
+      - multi_jurisdiction_tax_rules
+      - ap_use_tax_compliance
+    do_not_reuse_for:
+      - direct_adoption (not available in PH market)
+      - replacing_odoo_fiscal_positions
+    key_patterns:
+      - api_first_tax_engine (REST, real-time + batch)
+      - geolocation_jurisdiction_resolution (rooftop-level)
+      - continuous_content_update (rates/rules auto-refresh)
+      - erp_connector_model (D365, NetSuite, SAP, Shopify, etc.)
+      - undercharge_overcharge_limits (AP use tax control)
+      - certified_service_provider (SST liability shift)
+    market_constraint: "No plans available for market 'PH' — benchmark only"
+
+  - id: sap-joule
+    name: SAP Joule
+    vendor: SAP SE
+    source: Microsoft 365 Marketplace (Free, requires SAP + M365 Copilot license)
+    role: assistant_behavior_pattern
+    description: >
+      Conversational AI assistant bridging SAP business systems via M365 Copilot
+      and Teams. Three capability modes: transactional, navigational, informational.
+      Role-based access. Document grounding. GenAI-powered summarization.
+    reuse_for:
+      - informational_mode (docs grounding + summarization)
+      - navigational_mode (app/feature discovery without deep menus)
+      - transactional_proposal_mode (CRUD on business data via conversation)
+      - role_based_access_pattern (transparent security context)
+      - document_grounding_pattern (uploaded docs + help portal)
+      - copilot_extension_pattern (M365 Copilot plugin shape)
+    do_not_reuse_for:
+      - sap_infrastructure_hosting
+      - replacing_odoo_business_logic
+    key_patterns:
+      - three_mode_assistant (transactional / navigational / informational)
+      - erp_conversational_bridge (SAP backend via natural language)
+      - m365_copilot_integration (Teams + Copilot as channel)
+      - document_grounding (SAP Help Portal + custom docs)
+      - role_based_capability_gating (user role determines available skills)
+    related_sap_products:
+      - SAP SuccessFactors (HCM)
+      - SAP Concur (Expense)
+      - SAP S/4HANA (ERP)
+      - SAP Analytics Cloud (BI)
+      - SAP Sales and Service Cloud (CRM)
+
+  # --- Azure platform benchmarks ---
+
+  - id: sap-on-azure
+    name: SAP on Azure Offerings
+    vendor: Microsoft
+    source: Microsoft Learn (SAP on Azure documentation)
+    role: enterprise_erp_hosting_pattern
+    description: >
+      Reference architecture for running enterprise ERP on Azure.
+      VM workloads, Azure Center for SAP, deployment automation framework,
+      Azure Monitor for SAP. Storage (NetApp Files, Azure Files),
+      security (Key Vault, Defender), backup (Azure Backup, Site Recovery),
+      analytics (Synapse, Fabric), DevOps (Azure DevOps, IaC, Policy).
+    reuse_for:
+      - azure_hosting_patterns (ACA, VM, managed PG, Front Door)
+      - monitoring_patterns (Azure Monitor for SAP → adapt for Odoo)
+      - backup_dr_patterns (Azure Backup + Site Recovery)
+      - devops_patterns (Azure DevOps CI/CD, IaC, Policy governance)
+      - security_patterns (Key Vault, Defender for Cloud, managed identity)
+      - storage_patterns (NetApp Files for high-perf, Azure Files for shared)
+      - analytics_integration (Synapse / Fabric for ERP data)
+    do_not_reuse_for:
+      - sap_runtime_hosting (per invariant 17: SAP adapter only)
+      - sap_hana_infrastructure
+      - sap_netweaver_deployment
+      - sap_landscape_management
+    key_patterns:
+      - azure_center_for_erp (top-level workload management)
+      - deployment_automation_framework (IaC for ERP environments)
+      - erp_monitor_integration (Azure Monitor with ERP-specific metrics)
+      - key_vault_secret_management (centralized for ERP connections)
+      - site_recovery_orchestration (ERP-aware failover sequencing)
+      - azure_policy_governance (naming, security, cost enforcement)
+    invariant_ref: "CLAUDE.md invariant 17 — SAP Adapter Only"
+
+  - id: sap-concur
+    name: SAP Concur (Expense + Travel)
+    vendor: SAP SE
+    source: Microsoft 365 Marketplace (Teams app, requires SAP Concur contract)
+    role: expense_travel_benchmark
+    description: >
+      Enterprise expense report and travel booking platform. Receipt OCR,
+      mobile capture, multi-step approval, credit card feeds, mileage/per diem,
+      Teams integration for share/approve. Benchmark for expense automation only.
+    reuse_for:
+      - receipt_ocr_mobile_capture_pattern (built-in OCR + mobile app)
+      - expense_approval_ux_pattern (approve in Teams without context switch)
+      - credit_card_reconciliation_pattern (bank feed matching)
+      - travel_policy_engine_pattern (configurable rules + audit)
+    do_not_reuse_for:
+      - replacing_ipai_hr_expense_liquidation (IPAI module is ahead on workflow)
+      - travel_booking (out of IPAI scope)
+      - sap_infrastructure_adoption
+    parity_assessment:
+      ipai_ahead:
+        - 8_state_approval_workflow (vs Concur configurable but simpler)
+        - cash_advance_lifecycle (native, 3 liquidation types)
+        - idempotent_gl_posting (direct Odoo accounting)
+        - policy_violation_tracking (native configurable rules)
+        - branch_aware_routing (via ipai_branch_profile)
+        - overdue_monitoring_cron
+      gaps_to_close:
+        - receipt_ocr_agent (spec exists: expense-liquidation-agent, Foundry DocIntel GA)
+        - mobile_submission_edge (spec exists: Telegram + n8n normalization)
+      out_of_scope:
+        - travel_booking (Concur Travel is separate product)
+        - credit_card_feeds (depends on PH bank feed availability)
+        - mileage_per_diem (not common for PH operations)
+    ipai_module: ipai_hr_expense_liquidation
+    ipai_module_version: "19.0.3.0.0"
+    ipai_module_status: production
+    related_specs:
+      - expense-liquidation-agent (agentic OCR + multi-channel submission)
+      - travel-expense-ops (operations-grade travel expense orchestration)
+
+  - id: sap-s4hana-teams
+    name: SAP S/4HANA for Microsoft Teams
+    vendor: SAP SE
+    source: Microsoft 365 Marketplace (Office app + Outlook + Teams, requires SAP license)
+    role: erp_collaboration_channel_pattern
+    description: >
+      ERP-to-Teams collaboration surface. Shares SAP Fiori records as
+      chat/tab/adaptive card with in-context actions (e.g. approve PO from card).
+      Pushes task and situation notifications to Teams Activity Feed.
+      Includes SAP Community search inside Teams.
+    reuse_for:
+      - share_as_chat_pattern (link to specific ERP record state)
+      - share_as_tab_pattern (embed ERP view in Teams tab)
+      - adaptive_card_with_actions (approve/reject without leaving Teams)
+      - task_notification_to_activity_feed (push Odoo activities to chat platform)
+      - community_search_in_chat (knowledge lookup without context switch)
+    do_not_reuse_for:
+      - sap_fiori_ux_adoption
+      - sap_infrastructure_hosting
+    parity_assessment:
+      no_oca_equivalent: >
+        No verified OCA 18 collaboration equivalent. Third-party Odoo 18 Teams
+        connectors exist (Softhealer, BrowseInfo, Aktiv, TechTrolls) but mainly
+        cover meeting/calendar integration, not SAP's broader record sharing,
+        task notifications, and contextual actions.
+      oca_microsoft_adjacent:
+        - microsoft_drive_account (OneDrive/SharePoint file storage)
+        - fs_storage_ms_drive (file system storage via MS Drive)
+      ipai_current_path: >
+        Slack-first via ipai_slack_connector. Covers most of the same UX patterns
+        (record links, approval buttons via Block Kit, notifications) but not as
+        a drop-in OCA equivalent for Teams.
+      ipai_future_path: >
+        M365 Agents SDK as channel layer when agent-platform is operational.
+        Would natively surface in Teams/Copilot with adaptive cards.
+    action: benchmark_only
+    note: >
+      IPAI should not build a Teams connector now. Slack is primary channel.
+      Teams deferred until enterprise distribution requires it.
+
+  - id: microsoft-finance-agents
+    name: Microsoft Finance Agents
+    vendor: Microsoft
+    source: Dynamics 365 Finance (announced 2025)
+    role: finance_workflow_pattern
+    description: >
+      Autonomous finance agents for AP, AR, reconciliation, and financial
+      reporting. Discrepancy detection, root cause analysis, correction
+      suggestions, escalation to human reviewers.
+    reuse_for:
+      - discrepancy_detection
+      - root_cause_analysis
+      - correction_suggestion
+      - escalation
+      - maker_checker_pattern
+      - financial_close_automation
+    do_not_reuse_for:
+      - replacing_odoo_accounting
+    key_patterns:
+      - autonomous_agent_with_human_gate
+      - financial_discrepancy_detection_loop
+      - correction_proposal_with_evidence
+
+  - id: odoo18-agents
+    name: Odoo 18 AI Agents (conceptual)
+    vendor: Odoo SA
+    source: Odoo 18 roadmap (Topics + Tools + Sources model)
+    role: conceptual_pattern_only
+    description: >
+      Odoo 18 introduces a Topics/Tools/Sources agent model.
+      Benchmark only — not execution authority for IPAI platform.
+    reuse_for:
+      - topics_tools_sources_model
+    do_not_reuse_for:
+      - execution_authority
+      - production_agent_runtime
+    constraints:
+      - benchmark_only
+      - not_execution_authority
+
+  - id: azd-ai-templates
+    name: Azure AI App Templates (azd catalog)
+    vendor: Microsoft
+    source: Azure Developer CLI template catalog
+    role: hosting_orchestration_pattern
+    description: >
+      5 priority templates for agent shell, production environment,
+      document pipeline, release assistant, and finance orchestration.
+    reuse_for:
+      - agent_shell
+      - production_environment
+      - document_pipeline
+      - release_assistant
+    templates:
+      - ai-agents-starter
+      - ai-production
+      - multimodal-content-processing
+      - release-manager-assistant
+      - home-banking-assistant
+
+  # --- Commercial Marketplace / Partner benchmarks ---
+
+  - id: azure-marketplace-saas
+    name: Azure Marketplace SaaS Fulfillment + Metering
+    vendor: Microsoft
+    source: "https://learn.microsoft.com/en-us/partner-center/marketplace-offers/pc-saas-fulfillment-apis"
+    role: saas_monetization_pattern
+    description: >
+      SaaS Fulfillment API v2 + Marketplace Metering Service API.
+      Landing page → resolve token → activate subscription → webhook lifecycle.
+      Custom metering dimensions (up to 30) for consumption billing.
+      No official Python SDK; use azure-identity + direct REST via httpx.
+    reuse_for:
+      - saas_subscription_lifecycle (resolve, activate, suspend, reinstate, unsubscribe)
+      - consumption_billing_pattern (per-document, per-inference, per-API-call)
+      - marketplace_webhook_handling (ChangePlan, ChangeQuantity, Suspend, Reinstate)
+      - landing_page_onboarding (customer provisioning from marketplace purchase)
+      - macc_eligibility (Azure consumption commitment)
+    do_not_reuse_for:
+      - csp_reseller_apis (not relevant to ISV model)
+      - replacing_odoo_subscription_management (Odoo manages operational state)
+    key_patterns:
+      - saas_fulfillment_v2 (10 REST endpoints, Entra app auth)
+      - metering_service (hourly usage event emission, batch support)
+      - marketplace_webhook (subscription lifecycle events)
+      - landing_page_flow (resolve purchase token → provision tenant)
+    implementation_notes:
+      sdk: "none official for Python; use azure-identity + httpx"
+      dotnet_sdk: "archived at v3.4.0 — do not depend"
+      auth: "Entra ID with fixed app ID for SaaS (marketplace-mandated)"
+      mfa: "enforced on all app+user calls since April 2026"
+    prerequisites:
+      - maicpp_membership
+      - partner_center_publisher_account
+      - entra_app_registration_for_marketplace
+      - packaged_saas_offer
+
+  - id: maicpp-partner-program
+    name: Microsoft AI Cloud Partner Program (MAICPP)
+    vendor: Microsoft
+    source: "https://learn.microsoft.com/en-us/partner-center/benefits/benefits-faq-new"
+    role: partner_enablement_dependency
+    note: >
+      NOT a runtime/product benchmark. This is a go-to-market enablement
+      dependency — gateway to marketplace publishing, co-sell, and Azure credits.
+      Tracked here for completeness; sequencing lives in adaptation-map.yaml
+      and docs/runbooks/partner-center-integration.md.
+    description: >
+      Umbrella partner program. Tiers: Launch (free) → Core → Expanded ��
+      Solutions Partner designations → Specializations.
+    target_designations:
+      - name: "Solutions Partner for Data & AI (Azure)"
+        relevance: high
+        maps_to: "Databricks + Azure AI + Document Intelligence workload"
+      - name: "Solutions Partner for Digital & App Innovation (Azure)"
+        relevance: high
+        maps_to: "ACA + Odoo SaaS workload"
+    action: adopt_now
+    prerequisites:
+      - entra_tenant (have: 402de71a)
+      - maicpp_enrollment_at_partner_microsoft_com
+
+  - id: partner-center-referrals
+    name: Partner Center Referrals / Co-sell API
+    vendor: Microsoft
+    source: "https://learn.microsoft.com/en-us/partner-center/developer/referrals-api-introduction"
+    role: co_sell_pipeline_pattern
+    description: >
+      REST API for managing co-sell opportunities with Microsoft field sellers.
+      Three deal types: Private, Partner-Led, Co-sell. Marketplace leads auto-flow.
+      Relevant after marketplace listing is live and co-sell eligible.
+    reuse_for:
+      - co_sell_lead_capture
+      - marketplace_lead_to_odoo_crm_bridge
+      - referral_lifecycle_management
+    do_not_reuse_for:
+      - csp_customer_management
+    action: not_yet_applicable
+    prerequisites:
+      - active_marketplace_offer
+      - co_sell_ready_status
+      - solution_documentation_and_references
+
+execution_authority:
+  primary: odoo18_ce_oca
+  note: >
+    All benchmarks are reference patterns only.
+    Odoo 18 CE + OCA remains the business execution authority.
+    SAP is adapter-only per CLAUDE.md invariant 17.
+    Partner Center / marketplace APIs are monetization and distribution
+    channels — they do not replace Odoo for subscription or billing state.

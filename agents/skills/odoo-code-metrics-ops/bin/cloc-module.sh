@@ -7,7 +7,7 @@ DB_NAME="${1:?Usage: cloc-module.sh <db-name> [--module <name>]}"
 shift
 
 ODOO_BIN="${ODOO_BIN:-vendor/odoo/odoo-bin}"
-PYTHON="${PYTHON:-$HOME/.pyenv/versions/odoo-19-dev/bin/python}"
+PYTHON="${PYTHON:-$HOME/.pyenv/versions/odoo-18-dev/bin/python}"
 ADDONS_PATH="${ADDONS_PATH:-vendor/odoo/addons,addons/ipai}"
 
 MODULE_FLAG=""

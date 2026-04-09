@@ -1,0 +1,137 @@
+# =============================================================================
+# Travel & Expense Platform — Build & Deploy
+# =============================================================================
+# Builds T&E service + MCP server, deploys to ACA.
+# =============================================================================
+
+trigger:
+  branches:
+    include:
+      - main
+  paths:
+    include:
+      - platform/services/travel-expense/**
+      - platform/services/travel-expense-mcp/**
+
+pr:
+  branches:
+    include:
+      - main
+  paths:
+    include:
+      - platform/services/travel-expense/**
+      - platform/services/travel-expense-mcp/**
+
+variables:
+  acrName: acripaiodoo
+  resourceGroup: rg-ipai-dev-odoo-runtime
+  serviceConnection: ipai-dev-wif
+
+stages:
+  # =========================================================================
+  # Build
+  # =========================================================================
+  - stage: Build
+    displayName: 'Build T&E Images'
+    jobs:
+      - template: templates/jobs/build-container.yml
+        parameters:
+          imageName: ipai-te-service
+          imageTag: latest
+          dockerfile: platform/services/travel-expense/Dockerfile
+          buildContext: platform/services/travel-expense
+
+      - template: templates/jobs/build-container.yml
+        parameters:
+          imageName: ipai-te-mcp
+          imageTag: latest
+          dockerfile: platform/services/travel-expense-mcp/Dockerfile
+          buildContext: platform/services/travel-expense-mcp
+
+  # =========================================================================
+  # Deploy
+  # =========================================================================
+  - stage: Deploy
+    displayName: 'Deploy to ACA'
+    dependsOn: Build
+    condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
+    jobs:
+      - template: templates/jobs/deploy-containerapp.yml
+        parameters:
+          containerAppName: ipai-te-service
+          resourceGroup: $(resourceGroup)
+          imageName: ipai-te-service
+          imageTag: latest
+
+      - template: templates/jobs/deploy-containerapp.yml
+        parameters:
+          containerAppName: ipai-te-mcp
+          resourceGroup: $(resourceGroup)
+          imageName: ipai-te-mcp
+          imageTag: latest
+
+  # =========================================================================
+  # Verify
+  # =========================================================================
+  - stage: Verify
+    displayName: 'Smoke Test'
+    dependsOn: Deploy
+    jobs:
+      - job: SmokeTest
+        displayName: 'T&E Service + MCP Smoke Tests'
+        pool:
+          vmImage: ubuntu-latest
+        steps:
+          - task: AzureCLI@2
+            displayName: 'Verify endpoints'
+            inputs:
+              azureSubscription: $(serviceConnection)
+              scriptType: bash
+              scriptLocation: inlineScript
+              inlineScript: |
+                set -euo pipefail
+
+                TE_FQDN=$(az containerapp show \
+                  --name ipai-te-service \
+                  --resource-group $(resourceGroup) \
+                  --query "properties.configuration.ingress.fqdn" -o tsv)
+
+                MCP_FQDN=$(az containerapp show \
+                  --name ipai-te-mcp \
+                  --resource-group $(resourceGroup) \
+                  --query "properties.configuration.ingress.fqdn" -o tsv)
+
+                echo "T&E Service: https://${TE_FQDN}"
+                echo "T&E MCP: https://${MCP_FQDN}"
+
+                # T&E service health
+                curl -sf "https://${TE_FQDN}/health" --max-time 30 \
+                  | python3 -c "import sys,json; d=json.load(sys.stdin); assert d['status']=='healthy'; print('PASS: T&E service healthy')"
+
+                # MCP health
+                curl -sf "https://${MCP_FQDN}/health" --max-time 30 \
+                  | python3 -c "import sys,json; d=json.load(sys.stdin); assert d['status']=='healthy'; print('PASS: T&E MCP healthy')"
+
+                # MCP tool manifest — expect 18 tools
+                TOOL_COUNT=$(curl -sf "https://${MCP_FQDN}/mcp/tools/list" --max-time 30 \
+                  | python3 -c "import sys,json; print(len(json.load(sys.stdin)['tools']))")
+                if [ "${TOOL_COUNT}" -ne 18 ]; then
+                  echo "WARN: Expected 18 tools, got ${TOOL_COUNT}"
+                fi
+                echo "PASS: MCP exposes ${TOOL_COUNT} tools"
+
+                # Evidence
+                cat > evidence.json <<EOJSON
+                {
+                  "service": "travel-expense",
+                  "te_service_fqdn": "${TE_FQDN}",
+                  "te_mcp_fqdn": "${MCP_FQDN}",
+                  "tool_count": ${TOOL_COUNT},
+                  "expected_tools": 18,
+                  "timestamp": "$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+                }
+                EOJSON
+                cat evidence.json
+
+          - publish: evidence.json
+            artifact: travel-expense-deploy-evidence

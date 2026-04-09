@@ -1,7 +1,9 @@
 {
   "name": "bir_workflow_diva",
   "version": "1.0.0",
-  "description": "Coordinate BIR filing workflows within the Diva Goals context. Tracks filing deadlines, preparation status, and submission progress.",
+  "deprecated": true,
+  "superseded_by": "agents/skills/pulser/SKILL_REGISTRY.yaml#packs.taxpulse_ph.skills[bir_workflow]",
+  "description": "DEPRECATED — migrated to Pulser skill registry. Coordinate BIR filing workflows within the Pulser context. Tracks filing deadlines, preparation status, and submission progress.",
   "intent": "Manage BIR filing workflow coordination and status tracking",
   "inputs": [
     {"name": "workflow_type", "type": "string", "description": "filing_status | deadline_check | preparation_guide", "required": true},

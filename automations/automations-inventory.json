@@ -10570,7 +10570,7 @@
     },
     {
       "id": "n8n_ai_journal_posting",
-      "name": "Finance PPM - AI Journal Posting (Claude API + Odoo 19)",
+      "name": "Finance PPM - AI Journal Posting (Claude API + Odoo 18)",
       "type": "n8n-workflow",
       "platform": "n8n",
       "source_path": "automations/n8n/workflows/n8n_ai_journal_posting.json",
@@ -10583,7 +10583,7 @@
       "confidence": "medium",
       "owner": "Auto",
       "notes": "",
-      "canonical_key": "n8n.n8n_workflow:Finance PPM - AI Journal Posting (Claude API + Odoo 19)",
+      "canonical_key": "n8n.n8n_workflow:Finance PPM - AI Journal Posting (Claude API + Odoo 18)",
       "kind": "n8n_workflow",
       "status_provenance": "repo-scan",
       "trigger_normalized": [
@@ -10632,7 +10632,7 @@
     },
     {
       "id": "n8n_bir_form_generation",
-      "name": "Finance PPM - BIR Form Generation (Odoo 19 PH)",
+      "name": "Finance PPM - BIR Form Generation (Odoo 18 PH)",
       "type": "n8n-workflow",
       "platform": "n8n",
       "source_path": "automations/n8n/workflows/n8n_bir_form_generation.json",
@@ -10645,7 +10645,7 @@
       "confidence": "medium",
       "owner": "Auto",
       "notes": "",
-      "canonical_key": "n8n.n8n_workflow:Finance PPM - BIR Form Generation (Odoo 19 PH)",
+      "canonical_key": "n8n.n8n_workflow:Finance PPM - BIR Form Generation (Odoo 18 PH)",
       "kind": "n8n_workflow",
       "status_provenance": "repo-scan",
       "trigger_normalized": [
@@ -10662,11 +10662,11 @@
       "status_lifecycle": "active"
     },
     {
-      "id": "n8n_finance_ppm_workflow_odoo19",
-      "name": "Finance PPM - Recurrent Alerts (Odoo 19)",
+      "id": "n8n_finance_ppm_workflow_odoo18",
+      "name": "Finance PPM - Recurrent Alerts (Odoo 18)",
       "type": "n8n-workflow",
       "platform": "n8n",
-      "source_path": "automations/n8n/workflows/n8n_finance_ppm_workflow_odoo19.json",
+      "source_path": "automations/n8n/workflows/n8n_finance_ppm_workflow_odoo18.json",
       "trigger": "scheduleTrigger",
       "definition_status": "present",
       "config_status": "configured",
@@ -10676,7 +10676,7 @@
       "confidence": "medium",
       "owner": "Auto",
       "notes": "",
-      "canonical_key": "n8n.n8n_workflow:Finance PPM - Recurrent Alerts (Odoo 19)",
+      "canonical_key": "n8n.n8n_workflow:Finance PPM - Recurrent Alerts (Odoo 18)",
       "kind": "n8n_workflow",
       "status_provenance": "repo-scan",
       "trigger_normalized": [

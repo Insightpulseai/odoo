@@ -22,7 +22,7 @@
 
 ## C3: Odoo is the transactional system of record
 
-- Odoo 19 owns accounting, CRM, projects, expenses, approvals, documents, posted business records
+- Odoo 18 owns accounting, CRM, projects, expenses, approvals, documents, posted business records
 - Odoo exposes **server actions, automation rules, scheduled actions, client actions** as the trigger layer
 - Business state is persisted and approved in Odoo, not in agent memory or external services
 - Copilot explains, inspects, routes, and triggers — it never replaces the workflow engine
@@ -84,7 +84,7 @@
 |---|---|---|---|
 | **Identity** | Entra ID / Workload ID / Agent ID | Auth, access, agent governance | Business workflow state |
 | **Platform foundation** | Azure Landing Zone (CAF) | Subscription structure, shared services, policy | Application-specific business logic |
-| **Business core** | Odoo 19 | Transactions, approvals, posted records, trigger surface | LLM orchestration, knowledge retrieval |
+| **Business core** | Odoo 18 | Transactions, approvals, posted records, trigger surface | LLM orchestration, knowledge retrieval |
 | **AI runtime** | Foundry Agent Service | Agent hosting, tool execution, reasoning | Unrestricted DB writes, canonical business state |
 | **Document processing** | Document Intelligence | OCR, extraction, classification | Business interpretation or approval decisions |
 | **Knowledge** | Foundry tools + AI Search | Grounded retrieval, scoped tool access | Transactional state |

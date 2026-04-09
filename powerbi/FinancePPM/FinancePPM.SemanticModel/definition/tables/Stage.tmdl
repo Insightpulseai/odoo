@@ -1,0 +1,58 @@
+/// Dimension: Task stages (workflow states)
+/// Source: project_task_type
+table Stage
+	lineageTag: a1b2c3d4-0003-0001-0001-000000000001
+
+	column StageID
+		dataType: int64
+		isKey: true
+		sourceColumn: id
+		summarizeBy: none
+		lineageTag: a1b2c3d4-0003-0001-0001-100000000001
+
+	column StageName
+		dataType: string
+		sourceColumn: name
+		summarizeBy: none
+		lineageTag: a1b2c3d4-0003-0001-0001-100000000002
+
+	column Sequence
+		dataType: int64
+		sourceColumn: sequence
+		summarizeBy: none
+		lineageTag: a1b2c3d4-0003-0001-0001-100000000003
+
+	column IsFolded
+		dataType: boolean
+		sourceColumn: fold
+		summarizeBy: none
+		isHidden
+		lineageTag: a1b2c3d4-0003-0001-0001-100000000004
+
+	/// Stage category for conditional formatting
+	measure Stage_Category =
+		SWITCH(
+			SELECTEDVALUE(Stage[StageName]),
+			"Preparation", "In Progress",
+			"Review", "In Progress",
+			"Report Approval", "Pending Approval",
+			"Payment Approval", "Pending Approval",
+			"Approval", "Pending Approval",
+			"Filing & Payment", "Complete",
+			"Done", "Complete",
+			"Cancelled", "Cancelled",
+			"Other"
+		)
+		displayFolder: Classification
+
+	partition Stage = m
+		mode: import
+		source =
+			let
+				Source = PostgreSQL.Database(OdooServer & ":" & OdooPort, OdooDatabase),
+				project_task_type = Source{[Schema="public", Item="project_task_type"]}[Data],
+				SelectedColumns = Table.SelectColumns(project_task_type, {
+					"id", "name", "sequence", "fold"
+				})
+			in
+				SelectedColumns

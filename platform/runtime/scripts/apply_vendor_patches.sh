@@ -24,7 +24,7 @@ die()  { echo "[vendor-patch] ERROR: $*" >&2; exit 1; }
 # ---------------------------------------------------------------------------
 # Patch: odoo-test-helper / fake_model_loader.py
 #
-# Problem: MetaModel.module_to_models renamed to _module_to_models__ in Odoo 19.
+# Problem: MetaModel.module_to_models renamed to _module_to_models__ in Odoo 18.
 # The published odoo-test-helper still accesses the old attribute; crashes at
 # import time and blocks the whole test runner.
 #
@@ -90,7 +90,7 @@ content = path.read_text(encoding="utf-8")
 
 OLD = "module_to_models = models.MetaModel.module_to_models"
 NEW = (
-    "# Odoo 19: MetaModel.module_to_models was renamed to _module_to_models__.\n"
+    "# Odoo 18: MetaModel.module_to_models was renamed to _module_to_models__.\n"
     "# Patched by: runtime/scripts/apply_vendor_patches.sh\n"
     "_module_to_models = (\n"
     "    getattr(models.MetaModel, \"module_to_models\", None)\n"

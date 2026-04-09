@@ -1,0 +1,164 @@
+# =============================================================================
+# OdooOps Control Plane — Build & Deploy Pipeline
+# =============================================================================
+# Builds both OdooOps API (FastAPI) and Console (React) images,
+# pushes to ACR, and deploys to Azure Container Apps.
+#
+# Trigger: push to main with changes in platform/services/ipai-odooops/
+#          or apps/odooops-console/
+# =============================================================================
+
+trigger:
+  branches:
+    include:
+      - main
+  paths:
+    include:
+      - platform/services/ipai-odooops/**
+      - apps/odooops-console/**
+
+pr:
+  branches:
+    include:
+      - main
+  paths:
+    include:
+      - platform/services/ipai-odooops/**
+      - apps/odooops-console/**
+
+variables:
+  acrName: acripaiodoo
+  resourceGroup: rg-ipai-dev-odoo-runtime
+  serviceConnection: ipai-dev-wif
+
+stages:
+  # =========================================================================
+  # Stage 1: Build both container images
+  # =========================================================================
+  - stage: Build
+    displayName: 'Build OdooOps Images'
+    jobs:
+      # -- Backend API --
+      - template: templates/jobs/build-container.yml
+        parameters:
+          imageName: ipai-odooops-api
+          imageTag: latest
+          dockerfile: platform/services/ipai-odooops/Dockerfile
+          buildContext: platform/services/ipai-odooops
+
+      # -- Frontend Console --
+      - template: templates/jobs/build-container.yml
+        parameters:
+          imageName: ipai-odooops-console
+          imageTag: latest
+          dockerfile: apps/odooops-console/Dockerfile
+          buildContext: apps/odooops-console
+
+  # =========================================================================
+  # Stage 2: Deploy to Azure Container Apps
+  # =========================================================================
+  - stage: Deploy
+    displayName: 'Deploy OdooOps to ACA'
+    dependsOn: Build
+    condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
+    jobs:
+      # -- Deploy API --
+      - template: templates/jobs/deploy-containerapp.yml
+        parameters:
+          containerAppName: ipai-odooops-api
+          resourceGroup: $(resourceGroup)
+          imageName: ipai-odooops-api
+          imageTag: latest
+
+      # -- Deploy Console --
+      - template: templates/jobs/deploy-containerapp.yml
+        parameters:
+          containerAppName: ipai-odooops-console
+          resourceGroup: $(resourceGroup)
+          imageName: ipai-odooops-console
+          imageTag: latest
+
+  # =========================================================================
+  # Stage 3: Smoke Test
+  # =========================================================================
+  - stage: Verify
+    displayName: 'Verify Deployment'
+    dependsOn: Deploy
+    jobs:
+      - job: SmokeTest
+        displayName: 'OdooOps Smoke Tests'
+        pool:
+          vmImage: ubuntu-latest
+        steps:
+          - task: AzureCLI@2
+            displayName: 'Get FQDNs and verify'
+            inputs:
+              azureSubscription: $(serviceConnection)
+              scriptType: bash
+              scriptLocation: inlineScript
+              inlineScript: |
+                set -euo pipefail
+
+                # Get API FQDN
+                API_FQDN=$(az containerapp show \
+                  --name ipai-odooops-api \
+                  --resource-group $(resourceGroup) \
+                  --query "properties.configuration.ingress.fqdn" -o tsv)
+
+                # Get Console FQDN
+                CONSOLE_FQDN=$(az containerapp show \
+                  --name ipai-odooops-console \
+                  --resource-group $(resourceGroup) \
+                  --query "properties.configuration.ingress.fqdn" -o tsv)
+
+                echo "API: https://${API_FQDN}"
+                echo "Console: https://${CONSOLE_FQDN}"
+
+                # Test 1: API health
+                echo "=== Test 1: API Health ==="
+                HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" "https://${API_FQDN}/health" --max-time 30)
+                if [ "$HTTP_CODE" -ge 200 ] && [ "$HTTP_CODE" -lt 400 ]; then
+                  echo "PASS: API health returned HTTP ${HTTP_CODE}"
+                else
+                  echo "FAIL: API health returned HTTP ${HTTP_CODE}"
+                  exit 1
+                fi
+
+                # Test 2: API overview endpoint
+                echo "=== Test 2: API Overview ==="
+                HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" "https://${API_FQDN}/api/v1/overview" --max-time 30)
+                if [ "$HTTP_CODE" -ge 200 ] && [ "$HTTP_CODE" -lt 400 ]; then
+                  echo "PASS: API overview returned HTTP ${HTTP_CODE}"
+                else
+                  echo "FAIL: API overview returned HTTP ${HTTP_CODE}"
+                  exit 1
+                fi
+
+                # Test 3: Console serves HTML
+                echo "=== Test 3: Console HTML ==="
+                HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" "https://${CONSOLE_FQDN}/" --max-time 30)
+                if [ "$HTTP_CODE" -ge 200 ] && [ "$HTTP_CODE" -lt 400 ]; then
+                  echo "PASS: Console returned HTTP ${HTTP_CODE}"
+                else
+                  echo "FAIL: Console returned HTTP ${HTTP_CODE}"
+                  exit 1
+                fi
+
+                # Test 4: Console contains expected content
+                echo "=== Test 4: Console Content ==="
+                BODY=$(curl -s "https://${CONSOLE_FQDN}/" --max-time 30)
+                if echo "$BODY" | grep -q "OdooOps"; then
+                  echo "PASS: Console contains 'OdooOps'"
+                else
+                  echo "FAIL: Console does not contain 'OdooOps'"
+                  exit 1
+                fi
+
+                # Evidence
+                echo "=== Evidence ==="
+                echo "{\"api_fqdn\": \"${API_FQDN}\", \"console_fqdn\": \"${CONSOLE_FQDN}\", \"timestamp\": \"$(date -u +%Y-%m-%dT%H:%M:%SZ)\", \"pipeline\": \"$(Build.BuildNumber)\", \"commit\": \"$(Build.SourceVersion)\"}" > evidence.json
+                cat evidence.json
+
+          - publish: evidence.json
+            artifact: odooops-deploy-evidence
+            displayName: 'Publish deployment evidence'

@@ -101,6 +101,22 @@ param odooMemoryCron string = '1Gi'
 @description('Enable Log Analytics workspace')
 param enableLogAnalytics bool = true
 
+@description('Enable PIM governance (RBAC foundation + custom roles)')
+param enablePimGovernance bool = false
+
+@description('Entra ID group object ID for platform admins')
+param platformAdminGroupId string = ''
+
+@description('Entra ID group object ID for Odoo operators')
+param odooOperatorGroupId string = ''
+
+@description('Enable Azure Policy tag governance')
+param enableTagGovernance bool = false
+
+@description('Policy enforcement mode: Default (deny) or DoNotEnforce (audit)')
+@allowed(['Default', 'DoNotEnforce'])
+param policyEnforcementMode string = 'DoNotEnforce'
+
 @description('Log Analytics retention in days')
 @minValue(30)
 @maxValue(730)
@@ -232,6 +248,27 @@ module odooServices 'modules/aca-odoo-services.bicep' = if (enableOdooServices) 
   }
 }
 
+// PIM Governance (RBAC foundation + custom Odoo Operator role)
+module pimGovernance 'modules/pim-governance.bicep' = if (enablePimGovernance && !empty(platformAdminGroupId)) {
+  name: 'pimGovernanceDeployment'
+  params: {
+    platformAdminGroupId: platformAdminGroupId
+    odooOperatorGroupId: odooOperatorGroupId
+    keyVaultName: keyVault.outputs.keyVaultName
+    environment: environment
+    tags: tags
+  }
+}
+
+// Azure Policy — Tag Governance (audit mode by default)
+module tagGovernance 'modules/policy-tag-governance.bicep' = if (enableTagGovernance) {
+  name: 'tagGovernanceDeployment'
+  params: {
+    environment: environment
+    enforcementMode: policyEnforcementMode
+  }
+}
+
 // Outputs
 output keyVaultName string = keyVault.outputs.keyVaultName
 output keyVaultUri string = keyVault.outputs.keyVaultUri
@@ -250,3 +287,6 @@ output logAnalyticsWorkspaceId string = enableLogAnalytics ? logAnalytics.output
 output logAnalyticsCustomerId string = enableLogAnalytics ? logAnalytics.outputs.customerId : 'not-deployed'
 output appInsightsConnectionString string = enableLogAnalytics ? appInsights.outputs.connectionString : 'not-deployed'
 output appInsightsInstrumentationKey string = enableLogAnalytics ? appInsights.outputs.instrumentationKey : 'not-deployed'
+output pimOdooOperatorRole string = enablePimGovernance && !empty(platformAdminGroupId) ? pimGovernance.outputs.odooOperatorRoleName : 'not-deployed'
+output tagGovernanceEnvAssignment string = enableTagGovernance ? tagGovernance.outputs.environmentTagAssignment : 'not-deployed'
+output tagGovernanceEnforcementMode string = enableTagGovernance ? tagGovernance.outputs.enforcementMode : 'not-deployed'

@@ -1,6 +1,6 @@
 ---
 name: odoo_views_and_actions
-description: Define Odoo 19 views, actions, and menus
+description: Define Odoo 18 views, actions, and menus
 category: backend
 priority: high
 version: "1.0"
@@ -13,7 +13,7 @@ version: "1.0"
 | Type | Tag | Notes |
 |------|-----|-------|
 | Form | `<form>` | Detail/edit view for single record |
-| List | `<list>` | Tabular view. **Odoo 19 uses `list`, NOT `tree`** |
+| List | `<list>` | Tabular view. **Odoo 18 uses `list`, NOT `tree`** |
 | Kanban | `<kanban>` | Card-based view |
 | Search | `<search>` | Filter/group/search panel |
 | Pivot | `<pivot>` | Pivot table analysis |
@@ -21,7 +21,7 @@ version: "1.0"
 | Calendar | `<calendar>` | Date-based view |
 | Gantt | `<gantt>` | Timeline view (EE in some versions, CE in 19) |
 
-**Critical**: Odoo 19 renamed `tree` to `list`. Always use `<list>` in view definitions and `list` in `view_mode`.
+**Critical**: Odoo 18 renamed `tree` to `list`. Always use `<list>` in view definitions and `list` in `view_mode`.
 
 ## XML ID Naming Convention
 
@@ -133,7 +133,7 @@ Use underscores in XML IDs, matching the model's dotted name with dots replaced 
 - Use `<notebook>/<page>` for tabbed sections
 - Add `name` attribute to `<page>` and `<group>` for inheritance targets
 - Place `<chatter/>` after `</sheet>` for mail thread integration
-- **Odoo 19**: Use `invisible="expression"` directly, NOT `attrs="{'invisible': [...]}"` (attrs is deprecated)
+- **Odoo 18**: Use `invisible="expression"` directly, NOT `attrs="{'invisible': [...]}"` (attrs is deprecated)
 
 ## List View Pattern
 
@@ -209,9 +209,9 @@ Use underscores in XML IDs, matching the model's dotted name with dots replaced 
 </record>
 ```
 
-### Kanban Rules (Odoo 19)
+### Kanban Rules (Odoo 18)
 
-- Use `<t t-name="card">` template (Odoo 19 simplified kanban)
+- Use `<t t-name="card">` template (Odoo 18 simplified kanban)
 - `default_group_by` sets the initial grouping column
 - `quick_create="false"` disables inline record creation in columns
 - Access field values directly with `<field>` tags inside the template

@@ -1,6 +1,10 @@
 # =============================================================================
-# azure-pipelines-ci.yml — CI Validation Pipeline
+# azure-pipelines-ci.yml — General CI Validation Pipeline
 # =============================================================================
+# PURPOSE: General repo CI (lint, boundaries, SSOT, secrets scanning).
+#          This is NOT the Odoo-specific test pipeline.
+#          For Odoo finance-readiness tests on Azure PG: see azure-pipelines-odoo-test.yml
+#
 # Replaces GitHub Actions CI checks (billing-locked since 2026-03).
 # Runs linting, SSOT validation, boundary checks, and secrets scanning.
 #
@@ -36,7 +40,7 @@ pr:
 
 variables:
   - name: pythonVersion
-    value: '3.12'
+    value: '3.11'
 
 stages:
   # ---------------------------------------------------------------------------
@@ -61,7 +65,7 @@ stages:
               set -euo pipefail
               echo "=== Top-level directory allowlist check ==="
 
-              ALLOWED="addons|apps|automations|config|db|deploy|docker|docs|infra|mcp|n8n|odoo|odoo19|ops-platform|packages|pipelines|scripts|spec|ssot|supabase|templates|tests|web|.claude|.devcontainer|.github|.vscode|node_modules"
+              ALLOWED="addons|apps|automations|config|db|deploy|docker|docs|infra|mcp|n8n|odoo|odoo18|ops-platform|packages|pipelines|scripts|spec|ssot|supabase|templates|tests|web|.claude|.devcontainer|.github|.vscode|node_modules"
               FAIL=0
 
               for dir in $(find . -maxdepth 1 -mindepth 1 -type d | sed 's|^\./||' | sort); do

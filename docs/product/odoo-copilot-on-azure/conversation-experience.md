@@ -144,7 +144,7 @@ When the user navigates within the Odoo web client (e.g., from the invoice list 
 
 Thread state is stored in the browser's `sessionStorage` under the key `ipai_copilot_thread_id`. The copilot OWL component reads this value on mount and resumes the thread if it is still active.
 
-Page navigation within the Odoo SPA does not destroy the copilot component. Full page reloads (rare in Odoo 19's SPA architecture) trigger a re-mount, but the thread ID is recovered from `sessionStorage`.
+Page navigation within the Odoo SPA does not destroy the copilot component. Full page reloads (rare in Odoo 18's SPA architecture) trigger a re-mount, but the thread ID is recovered from `sessionStorage`.
 
 ### Cross-Tab Behavior
 

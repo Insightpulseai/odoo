@@ -66,7 +66,7 @@ COPY ./external-src /tmp/external-src
 # Flatten OCA modules with collision detection
 RUN set -eux; \
   mkdir -p /mnt/addons/oca; \
-  echo "Flattening OCA modules from external-src (Odoo 19)..."; \
+  echo "Flattening OCA modules from external-src (Odoo 18)..."; \
   module_count=0; \
   for repo in /tmp/external-src/*; do \
     [ -d "$repo" ] || continue; \
@@ -88,7 +88,7 @@ RUN set -eux; \
   done; \
   echo ""; \
   echo "========================================"; \
-  echo "OCA Module Flatten Summary (Odoo 19)"; \
+  echo "OCA Module Flatten Summary (Odoo 18)"; \
   echo "========================================"; \
   echo "Total modules flattened: $module_count"; \
   find /mnt/addons/oca -maxdepth 1 -type d -name "*" ! -name "oca" | sort; \
@@ -132,8 +132,8 @@ RUN pip3 install --no-cache-dir --break-system-packages \
     -r /tmp/requirements-oca.txt \
     && rm /tmp/requirements-oca.txt /tmp/requirements-constraints.txt
 
-# Patch odoo-test-helper for Odoo 19 compatibility.
-# MetaModel.module_to_models was renamed to _module_to_models__ in Odoo 19;
+# Patch odoo-test-helper for Odoo 18 compatibility.
+# MetaModel.module_to_models was renamed to _module_to_models__ in Odoo 18;
 # the published package still references the old name and crashes at import time.
 # base_tier_validation/tests imports FakeModelLoader which triggers the crash
 # and blocks the entire test runner.  This one-liner makes the attribute access

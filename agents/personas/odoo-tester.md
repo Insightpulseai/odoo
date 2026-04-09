@@ -39,7 +39,7 @@ Owns automated tests, staging validation, manual test access, and test evidence 
 | `odoo-staging-validation` | Staging branch testing with production-like data, evidence capture |
 | `odoo-branch-test-tracking` | Track branch changes and assess test impact across modules |
 | `odoo-manual-test-orchestration` | Manual test session planning, execution, evidence collection |
-| `odoo-community-module-test-fit` | OCA module compatibility testing for Odoo 19 |
+| `odoo-community-module-test-fit` | OCA module compatibility testing for Odoo 18 |
 
 ## Benchmark Source
 

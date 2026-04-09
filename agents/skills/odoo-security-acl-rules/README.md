@@ -10,10 +10,10 @@ Defines security groups, ACLs, and record rules for Odoo CE 19 module security.
 
 ## Key rule
 Every model must have at least one ACL row in `ir.model.access.csv` with all 4 CRUD columns.
-Portal and Internal User groups are mutually exclusive in Odoo 19. Security XML must be listed
+Portal and Internal User groups are mutually exclusive in Odoo 18. Security XML must be listed
 first in `__manifest__.py` data section.
 
 ## Cross-references
 - `agents/knowledge/benchmarks/odoo-developer-howtos.md`
 - `agents/knowledge/benchmarks/odoo-coding-guidelines.md`
-- `~/.claude/rules/odoo19-coding.md`
+- `~/.claude/rules/odoo18-coding.md`

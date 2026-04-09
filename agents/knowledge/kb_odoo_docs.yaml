@@ -1,7 +1,7 @@
 # Odoo Docs Knowledge Base
 # Version: 1.0.0
 # Created: 2026-03-23
-# Purpose: Official Odoo 19 documentation as a curated KB for the Odoo Copilot.
+# Purpose: Official Odoo 18 documentation as a curated KB for the Odoo Copilot.
 #   This is Lane 2 retrieval — searched BEFORE bounded web search (Lane 3)
 #   and AFTER Odoo runtime context (Lane 1).
 
@@ -11,7 +11,7 @@ version: 1.0.0
 status: active
 
 description: >
-  Curated knowledge base built from official Odoo 19 documentation.
+  Curated knowledge base built from official Odoo 18 documentation.
   Covers all product modules, configuration, localization, accounting,
   tax, and developer reference. This is the primary retrieval source
   for Odoo product and configuration questions.

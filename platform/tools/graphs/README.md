@@ -33,7 +33,7 @@ dot -V
 ```
 
 **Already available:**
-- Python 3.11+ (required by Odoo 19)
+- Python 3.11+ (required by Odoo 18)
 - Standard library only (no pip installs)
 
 ## Quick Start

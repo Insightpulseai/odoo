@@ -140,7 +140,7 @@ The organization has outgrown its monorepo-plus-satellites structure. The `odoo`
 - `addons/oca/` -- OCA community modules, properly managed
 - `vendor/odoo/` -- upstream Odoo CE mirror
 - `config/` -- Odoo-specific configuration
-- `odoo19/` -- canonical Odoo 19 setup scripts
+- `odoo18/` -- canonical Odoo 18 setup scripts
 - Odoo-specific scripts in `scripts/`
 - Odoo-specific CI workflows
 - `.claude/` directory with comprehensive agent guidance
@@ -1601,7 +1601,7 @@ Some documentation topics span multiple repos. These cross-cutting concerns are 
 | **CLAUDE.md as README** | `odoo` | CLAUDE.md is 1500+ lines covering human-readable architecture, BIR compliance, Figma setup, n8n patterns. Agents load 1500 lines when they need 200. | Split: CLAUDE.md for agent rules (<500 lines), README.md for human context |
 | **Aspirational docs as current state** | `odoo/docs/architecture/target-state/PLATFORM.md` | 33KB document describes target state but does not clearly distinguish what IS deployed from what SHOULD BE deployed | Separate: current-state docs vs target-state docs |
 | **Evidence mixed with normative docs** | `odoo/docs/` | Architecture docs, evidence packs, and operational docs all in `docs/` with no clear separation | Restructure per Section 4.4 |
-| **Duplicate documentation** | `odoo` CLAUDE.md + `.claude/rules/` | Odoo coding conventions exist in both CLAUDE.md and `.claude/rules/odoo19-coding.md` | CLAUDE.md should reference rules files, not duplicate them |
+| **Duplicate documentation** | `odoo` CLAUDE.md + `.claude/rules/` | Odoo coding conventions exist in both CLAUDE.md and `.claude/rules/odoo18-coding.md` | CLAUDE.md should reference rules files, not duplicate them |
 | **Stale deprecation notices** | `odoo` CLAUDE.md references DigitalOcean, Vercel, Mailgun | These are deprecated per `~/.claude/rules/infrastructure.md` but CLAUDE.md still contains detailed DigitalOcean/Vercel integration docs | Remove deprecated integration docs from CLAUDE.md |
 | **Orphaned specs** | `odoo/spec/` (76 bundles) | No status tracking. No way to know which specs are implemented, which are abandoned, which are in progress | Add status field to spec bundles, validate in CI |
 | **Missing decision history** | `data-intelligence`, `agents`, `automations` | Key decisions (Databricks over X, n8n over Y, agent architecture choices) exist only in memory, not in repos | Write ADRs retroactively |
@@ -2420,7 +2420,7 @@ The largest risk in Phase 2 is moving files between repos. This checklist specif
 | `addons/oca/` | OCA modules -- legitimate |
 | `vendor/odoo/` | Upstream mirror -- legitimate |
 | `config/` | Odoo-specific config -- legitimate |
-| `odoo19/` | Canonical setup -- legitimate |
+| `odoo18/` | Canonical setup -- legitimate |
 | `docker/` | Odoo Docker configs -- legitimate |
 | `deploy/docker-compose.yml` | Odoo deployment -- legitimate (deployment != infrastructure) |
 | `deploy/nginx/` | Odoo-specific nginx -- legitimate |

@@ -51,7 +51,7 @@ registry.category("systray").add("ipai_health.HealthSystray", {
 **Output**:
 - Validation: FAIL (BLOCKER)
 - Reason: Global Composer/mail patches caused the `ipai_ai_widget` deprecation (View types not defined form error)
-- Recommendation: Use a scoped approach — extend only the specific view or use Odoo 19 native Ask AI patterns
+- Recommendation: Use a scoped approach — extend only the specific view or use Odoo 18 native Ask AI patterns
 
 ## Example 3: SCSS with incorrect class naming
 
