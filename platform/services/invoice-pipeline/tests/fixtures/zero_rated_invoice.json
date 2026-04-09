@@ -1,0 +1,29 @@
+{
+  "supplier_name": "Global Export Services Ltd.",
+  "supplier_tin": "444-555-666-000",
+  "customer_name": "Overseas Client Pte. Ltd.",
+  "customer_tin": "",
+  "invoice_no": "EXP-2026-007",
+  "invoice_date": "2026-04-05",
+  "lines": [
+    {
+      "line_no": 1,
+      "description": "BPO Services - Q1 2026",
+      "quantity": "1",
+      "unit_price": "250000.00",
+      "amount": "250000.00",
+      "tax_type": "zero_rated",
+      "vat_amount": "0",
+      "ewt_rate": "0",
+      "ewt_amount": "0"
+    }
+  ],
+  "printed_subtotal": "250000.00",
+  "printed_vat": "0.00",
+  "printed_gross": "250000.00",
+  "printed_withholding": "0.00",
+  "printed_total_due": "250000.00",
+  "extraction_confidence": 0.98,
+  "extraction_notes": [],
+  "source_file": "fixtures/zero_rated_invoice.pdf"
+}

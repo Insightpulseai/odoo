@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <!-- Tree view -->
+    <record id="view_tax_review_tree" model="ir.ui.view">
+        <field name="name">ipai.tax.review.tree</field>
+        <field name="model">ipai.tax.review</field>
+        <field name="arch" type="xml">
+            <tree decoration-danger="state == 'rejected'"
+                  decoration-warning="state == 'needs_review'"
+                  decoration-success="state in ('validated', 'overridden')">
+                <field name="name"/>
+                <field name="move_id"/>
+                <field name="state" widget="badge"
+                       decoration-danger="state == 'rejected'"
+                       decoration-warning="state == 'needs_review'"
+                       decoration-success="state in ('validated', 'overridden')"/>
+                <field name="expected_payable"/>
+                <field name="printed_total_due"/>
+                <field name="delta"/>
+                <field name="extraction_confidence"/>
+                <field name="reviewer_id"/>
+                <field name="create_date"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Form view -->
+    <record id="view_tax_review_form" model="ir.ui.view">
+        <field name="name">ipai.tax.review.form</field>
+        <field name="model">ipai.tax.review</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_override" type="object" string="Override"
+                            class="btn-primary"
+                            invisible="state not in ('needs_review',)"
+                            confirm="Are you sure you want to override this review?"/>
+                    <button name="action_reject" type="object" string="Reject"
+                            class="btn-danger"
+                            invisible="state not in ('needs_review',)"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="needs_review,validated,overridden"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="name" readonly="1"/></h1>
+                    </div>
+                    <group>
+                        <group string="Document">
+                            <field name="move_id"/>
+                            <field name="source_attachment_id"/>
+                            <field name="extraction_confidence"/>
+                        </group>
+                        <group string="Validation">
+                            <field name="expected_subtotal"/>
+                            <field name="expected_vat"/>
+                            <field name="expected_gross"/>
+                            <field name="expected_withholding"/>
+                            <field name="expected_payable"/>
+                            <field name="printed_total_due"/>
+                            <field name="delta"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Explanation">
+                            <field name="explanation_summary"/>
+                        </page>
+                        <page string="Findings (JSON)">
+                            <field name="findings_json"/>
+                        </page>
+                        <page string="Review">
+                            <group>
+                                <field name="reviewer_id"/>
+                                <field name="reviewed_date"/>
+                                <field name="override_reason"/>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <!-- Action -->
+    <record id="action_tax_review" model="ir.actions.act_window">
+        <field name="name">Tax Reviews</field>
+        <field name="res_model">ipai.tax.review</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No tax reviews yet.
+            </p>
+            <p>
+                Tax reviews are created automatically when documents are
+                validated by the TaxPulse PH service.
+            </p>
+        </field>
+    </record>
+
+    <!-- Menu -->
+    <menuitem id="menu_tax_review"
+              name="Tax Reviews"
+              parent="account.menu_finance"
+              action="action_tax_review"
+              sequence="90"/>
+
+</odoo>
