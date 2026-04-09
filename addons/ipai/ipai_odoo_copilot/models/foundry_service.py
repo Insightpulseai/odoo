@@ -48,6 +48,7 @@ SKILL_TOOL_MAP = {
     "search_docs": ["search_odoo_docs", "search_azure_docs", "search_spec_bundles"],
     "fabric_data_query": ["query_fabric_data"],
     "propose_write": ["propose_action"],
+    "document_extract": ["extract_document"],
 }
 
 # ---------------------------------------------------------------------------
@@ -65,6 +66,7 @@ TOOL_ACTIVITY_LABELS = {
     "search_odoo_docs_web": "Searching Odoo docs (web)",
     "query_fabric_data": "Querying Fabric",
     "propose_action": "Drafting proposed action",
+    "extract_document": "Extracting document data",
     "search_docs": "Searching docs",
     "get_report": "Loading report",
     "read_finance_close": "Reading finance close data",
@@ -226,6 +228,38 @@ TOOL_DEFINITIONS = [
                     },
                 },
                 "required": ["summary", "target_model", "action_type", "payload"],
+            },
+        },
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "extract_document",
+            "description": (
+                "Extract text, fields, and tables from an uploaded document "
+                "using Azure Document Intelligence."
+            ),
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "attachment_id": {
+                        "type": "integer",
+                        "description": "ir.attachment record ID of the uploaded document",
+                    },
+                    "model_id": {
+                        "type": "string",
+                        "description": (
+                            "Document Intelligence model: "
+                            "prebuilt-read, prebuilt-invoice, prebuilt-receipt, prebuilt-layout"
+                        ),
+                        "enum": [
+                            "prebuilt-read", "prebuilt-invoice",
+                            "prebuilt-receipt", "prebuilt-layout",
+                        ],
+                        "default": "prebuilt-read",
+                    },
+                },
+                "required": ["attachment_id"],
             },
         },
     },

@@ -99,6 +99,8 @@ class CopilotToolExecutor(models.Model):
         "query_fabric_data": "_execute_query_fabric_data",
         # Write lane (action queue only)
         "propose_action": "_execute_propose_action",
+        # Document extraction (read-only, delegates to Document Intelligence)
+        "extract_document": "_execute_extract_document",
     }
 
     # Read-only tools — safe to execute without approval.
@@ -523,9 +525,9 @@ class CopilotToolExecutor(models.Model):
             }
 
     def _execute_search_odoo_docs(self, arguments, context_envelope):
-        """Search Odoo 19 documentation knowledge base.
+        """Search Odoo 18 documentation knowledge base.
 
-        Index: odoo19-docs (RST-chunked Odoo CE documentation).
+        Index: odoo18-docs (RST-chunked Odoo CE documentation).
         """
         query = arguments.get("query", "")
         module = arguments.get("module", "")
@@ -539,7 +541,7 @@ class CopilotToolExecutor(models.Model):
             filter_expr = "module eq '%s'" % _sanitize_odata_value(module)
 
         return self._search_kb_index(
-            query, "odoo19-docs", limit, filter_expr
+            query, "odoo18-docs", limit, filter_expr
         )
 
     def _execute_search_azure_docs(self, arguments, context_envelope):
@@ -881,7 +883,7 @@ class CopilotToolExecutor(models.Model):
           - Returns structured results with URLs for citation
         """
         query = arguments.get("query", "")
-        version = arguments.get("version", "19.0")
+        version = arguments.get("version", "18.0")
         max_results = max(1, min(int(arguments.get("max_results", 5)), 10))
 
         if not query:
@@ -1144,6 +1146,32 @@ class CopilotToolExecutor(models.Model):
                 "status": "error",
                 "message": "Query execution failed: %s" % str(e)[:200],
             }
+
+    # ------------------------------------------------------------------
+    # Document extraction — delegates to Document Intelligence
+    # ------------------------------------------------------------------
+
+    def _execute_extract_document(self, arguments, context_envelope):
+        """Extract text/fields from a document via Azure Document Intelligence.
+
+        Delegates to ipai.doc.intelligence.service.analyze_document().
+        Read-only: does not create or modify records.
+        """
+        attachment_id = arguments.get("attachment_id")
+        model_id = arguments.get("model_id", "prebuilt-read")
+
+        if not attachment_id:
+            raise UserError(_("extract_document requires 'attachment_id'"))
+
+        # Validate attachment exists and is accessible
+        attachment = self.env["ir.attachment"].browse(int(attachment_id))
+        if not attachment.exists():
+            raise UserError(
+                _("Attachment %s not found", attachment_id)
+            )
+
+        service = self.env["ipai.doc.intelligence.service"]
+        return service.analyze_document(int(attachment_id), model_id)
 
     # ------------------------------------------------------------------
     # Write lane — action queue (propose, never execute directly)

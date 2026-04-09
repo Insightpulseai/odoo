@@ -1,10 +1,13 @@
 # -*- coding: utf-8 -*-
 
+import base64
 import hmac
 import json
 import logging
 import os
 import time
+
+from werkzeug.wrappers import Response as WerkzeugResponse
 
 from odoo import http
 from odoo.http import request
@@ -21,6 +24,84 @@ class PulserController(http.Controller):
     """
 
     # ------------------------------------------------------------------
+    # File upload endpoint
+    # ------------------------------------------------------------------
+
+    @http.route(
+        ["/api/pulser/upload", "/ipai/copilot/upload"],
+        type="http",
+        auth="user",
+        methods=["POST"],
+        csrf=False,
+    )
+    def upload_files(self, **kwargs):
+        """Accept file uploads from the chat UI, store as ir.attachment.
+
+        Returns JSON: {"attachment_ids": [...], "files": [...]}
+        """
+        ALLOWED_MIMES = {
+            'image/png', 'image/jpeg', 'image/webp', 'image/gif',
+            'application/pdf',
+            'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        }
+        MAX_SIZE = 50 * 1024 * 1024  # 50 MB
+        MAX_FILES = 10
+
+        uploaded_files = request.httprequest.files.getlist('files')
+        if not uploaded_files:
+            return WerkzeugResponse(
+                json.dumps({'error': True, 'message': 'No files provided.'}),
+                content_type='application/json',
+                status=400,
+            )
+        if len(uploaded_files) > MAX_FILES:
+            return WerkzeugResponse(
+                json.dumps({'error': True, 'message': 'Too many files (max %d).' % MAX_FILES}),
+                content_type='application/json',
+                status=400,
+            )
+
+        attachment_ids = []
+        file_info = []
+
+        Attachment = request.env['ir.attachment']
+        for f in uploaded_files:
+            if f.content_type not in ALLOWED_MIMES:
+                _logger.warning('Upload rejected: unsupported MIME %s', f.content_type)
+                continue
+            data = f.read()
+            if len(data) > MAX_SIZE:
+                _logger.warning('Upload rejected: file too large %s (%d bytes)', f.filename, len(data))
+                continue
+
+            att = Attachment.create({
+                'name': f.filename,
+                'datas': base64.b64encode(data),
+                'mimetype': f.content_type,
+                'res_model': 'ipai.copilot.conversation',
+                'res_id': 0,
+            })
+            attachment_ids.append(att.id)
+            file_info.append({
+                'id': att.id,
+                'name': f.filename,
+                'mimetype': f.content_type,
+                'size': len(data),
+            })
+
+        _logger.info('Copilot upload: %d files stored as ir.attachment', len(attachment_ids))
+
+        return WerkzeugResponse(
+            json.dumps({
+                'attachment_ids': attachment_ids,
+                'files': file_info,
+            }),
+            content_type='application/json',
+            status=200,
+        )
+
+    # ------------------------------------------------------------------
     # Chat endpoints (Pulser-branded primary + legacy aliases)
     # ------------------------------------------------------------------
 
@@ -33,7 +114,7 @@ class PulserController(http.Controller):
     )
     def chat(self, prompt=None, message=None, record_model=None,
              record_id=None, surface=None, conversation_id=None,
-             context=None, **kw):
+             context=None, attachment_ids=None, **kw):
         """Chat endpoint for Odoo-authenticated consumers.
 
         Accepts both formats:
@@ -53,6 +134,7 @@ class PulserController(http.Controller):
             user_id=request.env.uid,
             surface=surface or ctx.get("surface") or "erp",
             conversation_id=conversation_id,
+            attachment_ids=attachment_ids,
         )
 
     @http.route(
@@ -119,7 +201,7 @@ class PulserController(http.Controller):
 
     def _handle_chat(self, prompt, record_model, record_id, source,
                      user_id, sudo=False, surface="erp",
-                     conversation_id=None):
+                     conversation_id=None, attachment_ids=None):
         """Shared chat handler: classify → context → Foundry → audit.
 
         Full audit trail: skill, confidence, tools, knowledge source,
@@ -152,6 +234,31 @@ class PulserController(http.Controller):
             surface=surface,
         )
 
+        # Resolve attached files and inject metadata into context
+        attachment_context = ""
+        if attachment_ids:
+            attachments = env["ir.attachment"].browse(attachment_ids).exists()
+            if attachments:
+                file_descriptions = []
+                for att in attachments:
+                    size_kb = round(att.file_size / 1024, 1) if att.file_size else 0
+                    file_descriptions.append(
+                        "%s (%s, %s KB)" % (att.name, att.mimetype, size_kb)
+                    )
+                context_envelope["attachment_ids"] = attachment_ids
+                context_envelope["attachment_files"] = [
+                    {"id": a.id, "name": a.name, "mimetype": a.mimetype,
+                     "size": a.file_size}
+                    for a in attachments
+                ]
+                context_envelope["has_attachments"] = True
+                context_envelope["attachment_mimes"] = [
+                    a.mimetype for a in attachments
+                ]
+                attachment_context = (
+                    "[Attached files: %s] " % "; ".join(file_descriptions)
+                )
+
         # Classify intent via skill router
         router = env["ipai.copilot.skill.router"]
         intent = router.classify_intent(prompt, context_envelope)
@@ -170,7 +277,35 @@ class PulserController(http.Controller):
                 % (record_model, record_id)
             )
 
-        user_message = context_prefix + prompt
+        user_message = attachment_context + context_prefix + prompt
+
+        # Deterministic extraction short-circuit: if the skill router
+        # classified as document_extract and attachments are present,
+        # call Document Intelligence directly — no Foundry needed.
+        if skill_id == "document_extract" and attachment_ids:
+            response_text = self._handle_extraction(
+                env, attachment_ids, context_envelope,
+            )
+            if response_text:
+                latency_ms = int((time.time() - start) * 1000)
+                self._write_audit(
+                    env=env, user_id=user_id, prompt=prompt,
+                    response=response_text, source=source,
+                    surface=surface, context_envelope=context_envelope,
+                    skill_id=skill_id, skill_confidence=skill_confidence,
+                    tools_invoked=["extract_document"],
+                    knowledge_source="odoo",
+                    write_queued=False, disposition="answered",
+                    latency_ms=latency_ms,
+                )
+                return {
+                    "content": response_text,
+                    "blocked": False,
+                    "reason": "",
+                    "conversation_id": conversation_id,
+                    "skill": skill_id,
+                    "activities": context_envelope.get("_activities", []),
+                }
 
         response_text = service.chat_completion(
             user_message=user_message,
@@ -254,6 +389,80 @@ class PulserController(http.Controller):
         if has_odoo:
             return "odoo"
         return "none"
+
+    def _handle_extraction(self, env, attachment_ids, context_envelope):
+        """Extract document data via Document Intelligence (deterministic).
+
+        Auto-selects the DI model based on context:
+          - prebuilt-invoice for finance/accounting records
+          - prebuilt-receipt for expense context
+          - prebuilt-read for everything else
+
+        Returns formatted response text, or None on failure.
+        """
+        service = env["ipai.doc.intelligence.service"]
+        attachments = env["ir.attachment"].browse(attachment_ids).exists()
+        if not attachments:
+            return None
+
+        # Auto-select DI model from context
+        record_model = context_envelope.get("record_model", "")
+        surface = context_envelope.get("surface", "")
+        mimes = context_envelope.get("attachment_mimes", [])
+
+        if record_model in ("account.move", "account.move.line"):
+            model_id = "prebuilt-invoice"
+        elif record_model in ("hr.expense",):
+            model_id = "prebuilt-receipt"
+        elif surface == "analytics":
+            model_id = "prebuilt-read"
+        else:
+            # Default: try invoice for PDFs (most common upload), read for rest
+            has_pdf = any(m == "application/pdf" for m in mimes)
+            model_id = "prebuilt-invoice" if has_pdf else "prebuilt-read"
+
+        parts = []
+        for att in attachments:
+            result = service.analyze_document(att.id, model_id)
+            if result.get("status") != "success":
+                parts.append(
+                    "**%s**: Extraction failed — %s"
+                    % (att.name, result.get("message", "unknown error"))
+                )
+                continue
+
+            analyze_result = result.get("result", {})
+            documents = analyze_result.get("documents", [])
+
+            if documents:
+                # Structured extraction (invoice/receipt)
+                doc = documents[0]
+                fields = doc.get("fields", {})
+                confidence = doc.get("confidence", 0.0)
+                lines = ["**%s** (confidence: %.0f%%)" % (att.name, confidence * 100)]
+                for key, val in fields.items():
+                    display_val = (
+                        val.get("valueString")
+                        or val.get("valueNumber")
+                        or val.get("valueDate")
+                        or val.get("content", "")
+                    )
+                    if display_val:
+                        lines.append("- **%s**: %s" % (key, display_val))
+                parts.append("\n".join(lines))
+            else:
+                # General read — return raw text
+                content = analyze_result.get("content", "")
+                if content:
+                    parts.append(
+                        "**%s**:\n\n%s" % (att.name, content[:3000])
+                    )
+                else:
+                    parts.append(
+                        "**%s**: No text extracted." % att.name
+                    )
+
+        return "\n\n---\n\n".join(parts) if parts else None
 
     def _write_audit(self, env, user_id, prompt, response, source,
                      surface, context_envelope, skill_id,

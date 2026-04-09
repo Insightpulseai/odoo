@@ -229,3 +229,28 @@ class TestSkillRouter(TransactionCase):
         """'general' is the fallback and has no specific instructions."""
         instructions = self.router.get_skill_instructions("general")
         self.assertFalse(instructions)
+
+    # ------------------------------------------------------------------
+    # Document extraction
+    # ------------------------------------------------------------------
+
+    def test_extract_intent_detected(self):
+        """'extract' triggers document_extract at priority 95."""
+        result = self._classify("Extract data from this PDF")
+        self.assertEqual(result["skill_id"], "document_extract")
+        self.assertEqual(result["confidence"], "high")
+
+    def test_extract_with_attachment_context(self):
+        """Attachment context boosts document_extract for ambiguous queries."""
+        context = {
+            "attachment_ids": [42],
+            "has_attachments": True,
+            "attachment_mimes": ["application/pdf"],
+        }
+        result = self._classify("What's in this file?", context)
+        self.assertEqual(result["skill_id"], "document_extract")
+
+    def test_extract_beats_finance_qa(self):
+        """document_extract (95) beats finance_qa (80) for 'extract invoice'."""
+        result = self._classify("Extract the invoice data")
+        self.assertEqual(result["skill_id"], "document_extract")

@@ -14,6 +14,14 @@ _logger = logging.getLogger(__name__)
 # Each rule: (skill_id, pattern_list, priority)
 # First match with highest priority wins.
 INTENT_RULES = [
+    # Document extraction (highest priority — unambiguous with attachments)
+    ("document_extract", [
+        r"extract", r"ocr", r"scan", r"digitize",
+        r"read\s*(this|the)\s*(pdf|document|file|receipt|invoice)",
+        r"what('s|\s*is)\s*in\s*(this|the)\s*(file|pdf|document)",
+        r"parse\s*(this|the)",
+    ], 95),
+
     # Finance-specific
     ("reconciliation_assist", [
         r"reconcil", r"bank\s*statement", r"match.*transaction",
@@ -123,6 +131,9 @@ class SkillRouter(models.AbstractModel):
             if surface == "analytics":
                 context_boost = True
 
+        # Attachment boost: if files are attached, boost extraction skill
+        has_attachments = bool(context_envelope.get("attachment_ids"))
+
         best_skill = None
         best_priority = -1
 
@@ -133,6 +144,8 @@ class SkillRouter(models.AbstractModel):
                 "finance_qa", "reconciliation_assist",
                 "collections_assist", "variance_analysis",
             ):
+                effective_priority += 20
+            if has_attachments and skill_id == "document_extract":
                 effective_priority += 20
 
             for pattern in patterns:
@@ -190,12 +203,12 @@ class SkillRouter(models.AbstractModel):
             "odoo_module_scaffolder": (
                 "The user wants to create or modify an Odoo module. "
                 "Use search_odoo_docs for patterns and conventions. "
-                "Follow ipai_* naming, Odoo 19 coding standards."
+                "Follow ipai_* naming, Odoo 18 coding standards."
             ),
             "odoo_upgrade_advisor": (
                 "The user needs help with Odoo version migration. "
                 "Search docs for breaking changes and migration guides. "
-                "Note: Odoo 19 renamed groups_id to group_ids, tree to list."
+                "Note: Odoo 18 renamed groups_id to group_ids, tree to list."
             ),
             "fabric_data_query": (
                 "The user wants business analytics data. "
@@ -215,6 +228,12 @@ class SkillRouter(models.AbstractModel):
                 "The user wants to view record data. "
                 "Use read_record or search_records. "
                 "Format output clearly with field labels."
+            ),
+            "document_extract": (
+                "The user wants to extract data from an uploaded document. "
+                "Use extract_document to analyze the attachment via Document Intelligence. "
+                "Present extracted fields clearly. For invoices, show vendor, total, tax, date. "
+                "For receipts, show merchant, total, date. For general docs, show full text."
             ),
         }
         return instructions_map.get(skill_id, "")
