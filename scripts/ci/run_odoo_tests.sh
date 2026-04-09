@@ -1,8 +1,12 @@
 #!/usr/bin/env bash
 # =============================================================================
-# Run Odoo Module Tests — scripts/ci/run_odoo_tests.sh
+# run_odoo_tests.sh — Odoo module test runner for Azure PostgreSQL
 # =============================================================================
-# Encapsulates Odoo test execution with artifact-ready log capture.
+# Runs Odoo CLI test execution against a disposable database on pg-ipai-odoo.
+# Called by azure-pipelines-odoo-test.yml and local dev.
+#
+# Safety: Refuses to run against known non-disposable databases (postgres,
+#         odoo, odoo_dev, odoo_dev_18, odoo_staging). Exit code 2 on violation.
 #
 # Required env vars:
 #   PGHOST, PGPORT, PGDATABASE, PGUSER, PGPASSWORD
@@ -19,6 +23,7 @@ set -euo pipefail
 
 mkdir -p .artifacts/test-logs
 
+# Validate required env vars
 : "${PGHOST:?PGHOST is required}"
 : "${PGPORT:?PGPORT is required}"
 : "${PGDATABASE:?PGDATABASE is required}"
@@ -32,6 +37,19 @@ MODULES="${INSTALL_MODULES:-${INSTALL_MODULE_IDS:?INSTALL_MODULES is required}}"
 
 ODOO_HTTP_PORT="${ODOO_HTTP_PORT:-18069}"
 ODOO_DB_SSLMODE="${ODOO_DB_SSLMODE:-require}"
+
+# ---------------------------------------------------------------------------
+# Safety guard: refuse to run against known non-disposable databases
+# ---------------------------------------------------------------------------
+BLOCKED_DBS="postgres odoo odoo_dev odoo_dev_18 odoo_staging"
+for blocked in $BLOCKED_DBS; do
+  if [ "${PGDATABASE}" = "${blocked}" ]; then
+    echo "FATAL: PGDATABASE='${PGDATABASE}' is a known shared/non-disposable database."
+    echo "Odoo test execution requires a disposable database (e.g. odoo_test_<buildid>)."
+    echo "Aborting to protect production/dev data."
+    exit 2
+  fi
+done
 
 LOG_FILE=".artifacts/test-logs/odoo-test-${PGDATABASE}-$(date +%Y%m%d%H%M%S).log"
 
@@ -71,13 +89,24 @@ fi
     "${EXTRA_ARGS[@]+"${EXTRA_ARGS[@]}"}"
 } 2>&1 | tee "${LOG_FILE}"
 
-# Fail if Odoo logged test failures (FAIL) or unhandled errors (ERROR)
-# Exclude false positives from log-handler registration lines
-FAIL_COUNT=$(grep -cE '^\d{4}-\d{2}-\d{2} .*(FAIL|ERROR)' "${LOG_FILE}" || true)
-if [ "${FAIL_COUNT}" -gt 0 ]; then
-  echo "Odoo test suite: ${FAIL_COUNT} failure/error lines detected."
-  echo "Review: ${LOG_FILE}"
+# Classify result
+if grep -qE "FAIL|CRITICAL|Traceback" "${LOG_FILE}"; then
+  echo ""
+  echo "============================================="
+  echo "RESULT: FAIL — errors detected in test output"
+  echo "============================================="
+  grep -E "FAIL|CRITICAL|ERROR" "${LOG_FILE}" | tail -20
   exit 1
+else
+  # Also check structured failure lines
+  FAIL_COUNT=$(grep -cE '^\d{4}-\d{2}-\d{2} .*(FAIL|ERROR)' "${LOG_FILE}" || true)
+  if [ "${FAIL_COUNT}" -gt 0 ]; then
+    echo "Odoo test suite: ${FAIL_COUNT} failure/error lines detected."
+    echo "Review: ${LOG_FILE}"
+    exit 1
+  fi
+  echo ""
+  echo "============================================="
+  echo "RESULT: PASS"
+  echo "============================================="
 fi
-
-echo "Odoo test suite: all tests passed."

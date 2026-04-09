@@ -1,3 +1,0 @@
-id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-access_ipai_workos_comment_user,access_ipai_workos_comment_user,model_ipai_workos_comment,base.group_user,1,1,1,1
-access_ipai_workos_comment_manager,access_ipai_workos_comment_manager,model_ipai_workos_comment,base.group_system,1,1,1,1

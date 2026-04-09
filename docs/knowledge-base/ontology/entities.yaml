@@ -1,0 +1,331 @@
+# Enterprise Knowledge Base Ontology — Entity Definitions
+#
+# Purpose: Consistent terminology across business process, Odoo model,
+# OCA addon, Azure service, integration bridge, and KPI/report layers.
+#
+# Each entity has:
+#   canonical_term: The preferred term in this knowledge base
+#   synonyms: Acceptable alternatives (SAP terms, common abbreviations)
+#   forbidden_labels: Ambiguous terms that must not be used without qualification
+
+artifact_status: draft
+source_type: generated_seed
+review_required: true
+generated: "2026-04-07"
+owner: knowledge-architecture
+review_tracker: ../REVIEW_QUEUE.md
+#   odoo_model: The Odoo technical model name(s)
+#   oca_addon: OCA addon(s) that extend this entity
+#   azure_service: Azure service(s) involved
+#   sap_equivalent: SAP module/object equivalent
+#   relationships: Links to other entities
+
+entities:
+
+  # ── CORE BUSINESS ENTITIES ──────────────────────────────────────────
+
+  partner:
+    canonical_term: Business Partner
+    synonyms: [customer, vendor, supplier, contact, account]
+    forbidden_labels:
+      - "account" (ambiguous with GL account)
+      - "client" (ambiguous with OAuth client)
+    odoo_model: res.partner
+    oca_addon: [partner_contact_*, partner_deduplicate_*]
+    azure_service: null
+    sap_equivalent: BP (Business Partner), KNA1 (Customer), LFA1 (Vendor)
+    relationships:
+      - has_many: sales_order
+      - has_many: purchase_order
+      - has_many: invoice
+      - belongs_to: company
+
+  product:
+    canonical_term: Product
+    synonyms: [item, material, SKU, article]
+    forbidden_labels:
+      - "material" (SAP term, confusing in Odoo context)
+    odoo_model: [product.template, product.product]
+    oca_addon: [product_variant_*, product_attribute_*]
+    azure_service: null
+    sap_equivalent: MARA (Material Master)
+    relationships:
+      - has_many: product_variant
+      - belongs_to: product_category
+      - used_in: bom
+      - sold_via: sales_order_line
+      - purchased_via: purchase_order_line
+
+  company:
+    canonical_term: Company
+    synonyms: [legal entity, organization, operating unit]
+    forbidden_labels:
+      - "org" (ambiguous — could be GitHub org, Entra org)
+    odoo_model: res.company
+    oca_addon: null
+    azure_service: Entra ID (tenant)
+    sap_equivalent: Company Code (BUKRS)
+    relationships:
+      - has_many: partner
+      - has_many: journal
+      - has_many: warehouse
+      - has_many: employee
+
+  # ── FINANCIAL ENTITIES ──────────────────────────────────────────────
+
+  journal_entry:
+    canonical_term: Journal Entry
+    synonyms: [accounting entry, posting, document]
+    forbidden_labels:
+      - "transaction" (too generic)
+      - "document" (ambiguous — could be DMS document)
+    odoo_model: account.move
+    oca_addon: null
+    azure_service: null
+    sap_equivalent: FI Document (BKPF/BSEG)
+    relationships:
+      - has_many: journal_entry_line
+      - belongs_to: journal
+      - belongs_to: fiscal_period
+      - references: partner
+
+  journal:
+    canonical_term: Journal
+    synonyms: [accounting journal, book]
+    forbidden_labels: []
+    odoo_model: account.journal
+    oca_addon: null
+    azure_service: null
+    sap_equivalent: Document Type + Number Range
+    relationships:
+      - belongs_to: company
+      - has_many: journal_entry
+
+  gl_account:
+    canonical_term: General Ledger Account
+    synonyms: [GL account, chart of accounts entry, account]
+    forbidden_labels:
+      - "account" alone (must qualify as "GL account" or "user account")
+    odoo_model: account.account
+    oca_addon: [account_chart_update]
+    azure_service: null
+    sap_equivalent: GL Account (SKA1/SKB1)
+    relationships:
+      - belongs_to: account_group
+      - used_in: journal_entry_line
+
+  invoice:
+    canonical_term: Invoice
+    synonyms: [bill, vendor bill, customer invoice, credit note]
+    forbidden_labels:
+      - "bill" alone (must qualify as "vendor bill")
+    odoo_model: account.move (type in_invoice/out_invoice/in_refund/out_refund)
+    oca_addon: [account_invoice_*]
+    azure_service: Azure Document Intelligence (for extraction)
+    sap_equivalent: FI Invoice Document
+    relationships:
+      - is_a: journal_entry
+      - references: partner
+      - has_many: invoice_line
+      - linked_to: purchase_order (vendor bills)
+      - linked_to: sales_order (customer invoices)
+
+  tax:
+    canonical_term: Tax
+    synonyms: [VAT, withholding tax, sales tax, WHT]
+    forbidden_labels: []
+    odoo_model: account.tax
+    oca_addon: [account_tax_*, l10n_ph_*]
+    azure_service: null
+    sap_equivalent: Tax Code (T007A)
+    relationships:
+      - applied_to: invoice_line
+      - governed_by: fiscal_position
+
+  analytic_account:
+    canonical_term: Analytic Account
+    synonyms: [cost center, profit center, project account, analytic dimension]
+    forbidden_labels:
+      - "cost center" alone (SAP term — in Odoo it's an analytic account with a plan)
+    odoo_model: account.analytic.account
+    oca_addon: [analytic_*, mis_builder]
+    azure_service: null
+    sap_equivalent: Cost Center (CSKS), Profit Center (CEPC), Internal Order (AUFK)
+    relationships:
+      - belongs_to: analytic_plan
+      - has_many: analytic_line
+      - linked_to: project
+
+  # ── PROCUREMENT ENTITIES ────────────────────────────────────────────
+
+  purchase_order:
+    canonical_term: Purchase Order
+    synonyms: [PO, procurement order]
+    forbidden_labels: []
+    odoo_model: purchase.order
+    oca_addon: [purchase_request, purchase_order_approval_block]
+    azure_service: null
+    sap_equivalent: Purchase Order (EKKO/EKPO)
+    relationships:
+      - references: partner (vendor)
+      - has_many: purchase_order_line
+      - triggers: stock_receipt
+      - matched_with: invoice (3-way match)
+
+  purchase_request:
+    canonical_term: Purchase Request
+    synonyms: [purchase requisition, PR, req]
+    forbidden_labels:
+      - "PR" (ambiguous with pull request in dev context)
+    odoo_model: purchase.request (OCA)
+    oca_addon: [purchase_request, purchase_request_tier_validation]
+    azure_service: null
+    sap_equivalent: Purchase Requisition (EBAN)
+    relationships:
+      - created_by: employee
+      - converts_to: purchase_order
+
+  # ── SALES ENTITIES ─────────────────────────────────────────────────
+
+  sales_order:
+    canonical_term: Sales Order
+    synonyms: [SO, customer order, order]
+    forbidden_labels:
+      - "order" alone (ambiguous — could be PO or SO)
+    odoo_model: sale.order
+    oca_addon: [sale_order_type, sale_tier_validation]
+    azure_service: null
+    sap_equivalent: Sales Order (VBAK/VBAP)
+    relationships:
+      - references: partner (customer)
+      - has_many: sales_order_line
+      - triggers: delivery
+      - triggers: invoice
+
+  opportunity:
+    canonical_term: Sales Opportunity
+    synonyms: [lead, prospect, deal, pipeline item]
+    forbidden_labels:
+      - "lead" alone (in Odoo, lead and opportunity are same model, different stage)
+    odoo_model: crm.lead
+    oca_addon: [crm_stage_probability]
+    azure_service: null
+    sap_equivalent: CRM Opportunity
+    relationships:
+      - references: partner
+      - converts_to: sales_order
+      - belongs_to: sales_team
+
+  # ── INVENTORY ENTITIES ─────────────────────────────────────────────
+
+  warehouse:
+    canonical_term: Warehouse
+    synonyms: [WH, storage facility, plant]
+    forbidden_labels:
+      - "plant" (SAP term with broader meaning)
+    odoo_model: stock.warehouse
+    oca_addon: [stock_available_*]
+    azure_service: null
+    sap_equivalent: Plant (WERKS) + Storage Location (LGORT)
+    relationships:
+      - belongs_to: company
+      - has_many: stock_location
+      - processes: stock_transfer
+
+  stock_transfer:
+    canonical_term: Stock Transfer
+    synonyms: [picking, shipment, receipt, delivery, goods movement]
+    forbidden_labels:
+      - "picking" alone without context (internal term)
+    odoo_model: stock.picking
+    oca_addon: null
+    azure_service: null
+    sap_equivalent: Goods Movement (MKPF/MSEG)
+    relationships:
+      - references: partner (for incoming/outgoing)
+      - has_many: stock_move
+      - belongs_to: warehouse
+
+  # ── PROJECT ENTITIES ───────────────────────────────────────────────
+
+  project:
+    canonical_term: Project
+    synonyms: [engagement, initiative]
+    forbidden_labels: []
+    odoo_model: project.project
+    oca_addon: [project_timeline, project_task_code, project_status]
+    azure_service: Azure Boards (planning mirror)
+    sap_equivalent: WBS Element (PRPS)
+    relationships:
+      - has_many: task
+      - has_many: milestone
+      - linked_to: analytic_account
+      - belongs_to: company
+
+  # ── HR ENTITIES ────────────────────────────────────────────────────
+
+  employee:
+    canonical_term: Employee
+    synonyms: [staff, team member, worker]
+    forbidden_labels:
+      - "user" (ambiguous — res.users is the login, hr.employee is the person)
+    odoo_model: hr.employee
+    oca_addon: [hr_employee_*]
+    azure_service: Entra ID (identity)
+    sap_equivalent: Personnel Number (PA0000)
+    relationships:
+      - belongs_to: department
+      - has_one: user_account
+      - has_many: contract
+      - has_many: leave_allocation
+
+  # ── PLATFORM ENTITIES ──────────────────────────────────────────────
+
+  user_account:
+    canonical_term: User Account
+    synonyms: [login, user, system user]
+    forbidden_labels:
+      - "account" alone (ambiguous with GL account or partner)
+    odoo_model: res.users
+    oca_addon: [auth_oidc, base_user_role]
+    azure_service: Entra ID (user object)
+    sap_equivalent: SAP User (USR02)
+    relationships:
+      - has_many: group_membership
+      - linked_to: employee
+      - authenticated_by: identity_provider
+
+  security_group:
+    canonical_term: Security Group
+    synonyms: [role, permission group, access group]
+    forbidden_labels:
+      - "role" alone (Odoo uses "groups," SAP uses "roles" — always qualify)
+    odoo_model: res.groups
+    oca_addon: [base_user_role]
+    azure_service: Entra ID (group/role)
+    sap_equivalent: Role (AGR_*)
+    relationships:
+      - has_many: user_account
+      - grants: acl_entry
+      - governed_by: record_rule
+
+# ── RELATIONSHIP TYPES ──────────────────────────────────────────────
+
+relationship_types:
+  - has_many: One-to-many composition or association
+  - belongs_to: Many-to-one reference
+  - has_one: One-to-one link
+  - is_a: Subtype/specialization
+  - references: Loose reference (not FK)
+  - converts_to: Process transformation (e.g., quote → order)
+  - triggers: Causes creation of another entity
+  - linked_to: Bidirectional association
+  - used_in: Component usage
+  - applied_to: Rule/policy application
+  - governed_by: Governance relationship
+  - authenticated_by: Identity provider relationship
+  - sold_via: Commercial channel
+  - purchased_via: Procurement channel
+  - matched_with: Reconciliation/matching
+  - granted_by: Permission chain
+  - processed_by: Operational processing

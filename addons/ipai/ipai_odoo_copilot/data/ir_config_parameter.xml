@@ -1,19 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo noupdate="1">
-
-    <record id="param_gateway_url" model="ir.config_parameter">
-        <field name="key">ipai.copilot.gateway_url</field>
-        <field name="value">http://localhost:8088</field>
+    <!-- Default Foundry coordinates (known from Azure project) -->
+    <record id="param_foundry_enabled" model="ir.config_parameter">
+        <field name="key">ipai_odoo_copilot.foundry_enabled</field>
+        <field name="value">False</field>
     </record>
-
-    <record id="param_enabled" model="ir.config_parameter">
-        <field name="key">ipai.copilot.enabled</field>
+    <record id="param_foundry_api_endpoint" model="ir.config_parameter">
+        <field name="key">ipai_odoo_copilot.foundry_api_endpoint</field>
+        <field name="value">https://data-intel-ph-resource.services.ai.azure.com</field>
+    </record>
+    <record id="param_foundry_project" model="ir.config_parameter">
+        <field name="key">ipai_odoo_copilot.foundry_project</field>
+        <field name="value">data-intel-ph</field>
+    </record>
+    <record id="param_foundry_agent_name" model="ir.config_parameter">
+        <field name="key">ipai_odoo_copilot.foundry_agent_name</field>
+        <field name="value">ipai-odoo-copilot-azure</field>
+    </record>
+    <record id="param_foundry_model" model="ir.config_parameter">
+        <field name="key">ipai_odoo_copilot.foundry_model</field>
+        <field name="value">gpt-4.1</field>
+    </record>
+    <record id="param_foundry_read_only_mode" model="ir.config_parameter">
+        <field name="key">ipai_odoo_copilot.foundry_read_only_mode</field>
         <field name="value">True</field>
     </record>
-
-    <record id="param_mode" model="ir.config_parameter">
-        <field name="key">ipai.copilot.mode</field>
-        <field name="value">PROD-ADVISORY</field>
+    <record id="param_foundry_memory_enabled" model="ir.config_parameter">
+        <field name="key">ipai_odoo_copilot.foundry_memory_enabled</field>
+        <field name="value">False</field>
     </record>
-
+    <record id="param_foundry_search_service" model="ir.config_parameter">
+        <field name="key">ipai_odoo_copilot.foundry_search_service</field>
+        <field name="value">srch-ipai-dev</field>
+    </record>
 </odoo>
