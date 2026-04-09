@@ -1,0 +1,30 @@
+{
+  "supplier_name": "ProTech Solutions Inc.",
+  "supplier_tin": "777-888-999-000",
+  "customer_name": "Dataverse IT Consultancy",
+  "customer_tin": "987-654-321-000",
+  "invoice_no": "PT-2026-0155",
+  "invoice_date": "2026-03-15",
+  "lines": [
+    {
+      "line_no": 1,
+      "description": "Software Development Services",
+      "quantity": "1",
+      "unit_price": "500000.00",
+      "amount": "500000.00",
+      "tax_type": "vatable",
+      "vat_amount": "60000.00",
+      "ewt_rate": "0.02",
+      "ewt_amount": "10000.00"
+    }
+  ],
+  "printed_subtotal": "500000.00",
+  "printed_vat": "60000.00",
+  "printed_gross": "560000.00",
+  "printed_withholding": "5000.00",
+  "printed_total_due": "555000.00",
+  "extraction_confidence": 0.96,
+  "extraction_notes": [],
+  "source_file": "fixtures/withholding_mismatch_invoice.pdf",
+  "_test_note": "EWT should be 500000 * 0.02 = 10000, but printed withholding is 5000 (wrong rate applied). Expected payable = 560000 - 10000 = 550000, printed 555000."
+}
