@@ -1,3 +1,10 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 access_ipai_tax_review_user,ipai.tax.review.user,model_ipai_tax_review,account.group_account_invoice,1,0,0,0
 access_ipai_tax_review_manager,ipai.tax.review.manager,model_ipai_tax_review,account.group_account_manager,1,1,1,1
+access_ipai_tax_rule_config_user,ipai.tax.rule.config.user,model_ipai_tax_rule_config,account.group_account_invoice,1,0,0,0
+access_ipai_tax_rule_config_manager,ipai.tax.rule.config.manager,model_ipai_tax_rule_config,account.group_account_manager,1,1,1,1
+access_ipai_tax_review_explanation_user,ipai.tax.review.explanation.user,model_ipai_tax_review_explanation,account.group_account_invoice,1,0,0,0
+access_ipai_tax_review_explanation_manager,ipai.tax.review.explanation.manager,model_ipai_tax_review_explanation,account.group_account_manager,1,1,1,1
+access_ipai_bir_export_batch_user,ipai.bir.export.batch.user,model_ipai_bir_export_batch,account.group_account_invoice,1,0,0,0
+access_ipai_bir_export_batch_manager,ipai.bir.export.batch.manager,model_ipai_bir_export_batch,account.group_account_manager,1,1,1,1
+access_ipai_tax_review_override_wizard,ipai.tax.review.override.wizard,model_ipai_tax_review_override_wizard,account.group_account_manager,1,1,1,0

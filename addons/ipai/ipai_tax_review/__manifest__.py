@@ -1,12 +1,15 @@
 {
     "name": "IPAI Tax Review",
-    "version": "18.0.1.0.0",
+    "version": "18.0.2.0.0",
     "category": "Accounting",
-    "summary": "TaxPulse PH — deterministic invoice validation and review workflow",
+    "summary": "TaxPulse PH — deterministic invoice validation, review workflow, BIR export",
     "description": """
-        Thin bridge between the TaxPulse PH validation service and Odoo 18.
-        Stores validation results, blocks autoposting on failure, and provides
-        a review queue for AP/AR exceptions.
+        TaxPulse PH for Odoo 18 — Philippines-first tax and compliance layer.
+
+        Phase 1: Deterministic validation engine bridge, posting blocker
+        Phase 2: Multi-company config, kanban queue, override wizard
+        Phase 3: AI explanation bridge (Foundry integration)
+        Phase 4: BIR export batches, compliance datasets, dashboard
     """,
     "author": "InsightPulse AI",
     "website": "https://insightpulseai.com",
@@ -14,8 +17,14 @@
     "depends": ["account", "mail"],
     "data": [
         "security/ir.model.access.csv",
+        "data/ir_sequence_data.xml",
+        "wizards/tax_review_override_wizard_views.xml",
         "views/tax_review_views.xml",
+        "views/tax_review_kanban.xml",
+        "views/tax_review_report_views.xml",
         "views/account_move_views.xml",
+        "views/tax_rule_config_views.xml",
+        "views/bir_export_views.xml",
     ],
     "installable": True,
     "application": False,
