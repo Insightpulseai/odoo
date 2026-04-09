@@ -1,15 +1,154 @@
 # =============================================================================
-# OCA Baseline — Curated Module Inventory for Odoo CE 19
+# OCA Baseline — Curated Module Inventory for Odoo CE 18
 # =============================================================================
 # Grouped by domain per OCA repo taxonomy.
-# Status: target = planned for install, verify = needs 19.0 branch check
+# Status: adopted = installed for day-1, target = planned, verify = needs check
 # =============================================================================
 
-schema_version: 1
-odoo_version: "19.0"
-last_reviewed: "2026-03-28"
+schema_version: 2
+odoo_version: "18.0"
+last_reviewed: "2026-04-09"
 
-# ─── MUST-HAVE ───────────────────────────────────────────────────────────────
+# ─── DAY-1 ADOPTED (16 modules + 3 transitive deps) ────────────────────────
+
+day1_adopted:
+
+  hr_expense:
+    repo: OCA/hr-expense
+    modules:
+      - name: hr_expense_advance_clearing
+        version: 18.0.1.0.3
+        status: adopted
+        priority: P0
+        notes: "Cash advance clearing on expense reports"
+      - name: hr_expense_payment
+        version: 18.0.1.0.0
+        status: adopted
+        priority: P0
+        notes: "Expense payment management"
+      - name: hr_expense_tier_validation
+        version: 18.0.1.0.0
+        status: adopted
+        priority: P0
+        notes: "Multi-tier expense approval"
+        depends_oca: [base_tier_validation]
+      - name: hr_expense_advance_clearing_sequence
+        version: 18.0.1.0.0
+        status: adopted
+        priority: P1
+        notes: "Sequenced advance clearing"
+        depends_oca: [hr_expense_sequence, hr_expense_advance_clearing]
+      # transitive dep
+      - name: hr_expense_sequence
+        version: 18.0.1.0.0
+        status: adopted
+        priority: P1
+        notes: "Transitive dep for advance_clearing_sequence"
+
+  project:
+    repo: OCA/project
+    modules:
+      - name: project_template
+        version: 18.0.1.0.0
+        status: adopted
+        priority: P1
+        notes: "Project templates"
+      - name: project_timeline
+        version: 18.0.1.0.0
+        status: adopted
+        priority: P1
+        notes: "Gantt-like timeline view"
+        depends_oca: [web_timeline]
+      - name: project_role
+        version: 18.0.1.0.1
+        status: adopted
+        priority: P1
+        notes: "Project roles"
+      - name: project_timeline_hr_timesheet
+        version: 18.0.1.0.0
+        status: adopted
+        priority: P2
+        notes: "Timesheet on timeline"
+        depends_oca: [project_timeline]
+      - name: project_timesheet_time_control
+        version: 18.0.1.0.6
+        status: adopted
+        priority: P1
+        notes: "Timesheet start/stop"
+
+  timesheet:
+    repo: OCA/timesheet
+    modules:
+      - name: hr_timesheet_sheet
+        version: 18.0.1.3.2
+        status: adopted
+        priority: P0
+        notes: "Timesheet sheets — depends on sale_timesheet (CE) + web_widget_x2many_2d_matrix"
+        depends_oca: [web_widget_x2many_2d_matrix]
+      - name: hr_timesheet_sheet_policy_project_manager
+        version: 18.0.1.0.0
+        status: adopted
+        priority: P1
+        notes: "PM policy for timesheet sheets"
+        depends_oca: [hr_timesheet_sheet]
+
+  account_budgeting:
+    repo: OCA/account-budgeting
+    modules:
+      - name: account_budget_oca
+        version: 18.0.1.0.0
+        status: adopted
+        priority: P0
+        notes: "Budget management — replaces EE account_budget"
+
+  account_closing:
+    repo: OCA/account-closing
+    modules:
+      - name: account_fiscal_year_closing
+        version: 18.0.1.0.0
+        status: adopted
+        priority: P0
+        notes: "Fiscal year close workflow"
+      - name: account_cutoff_base
+        version: 18.0.1.0.0
+        status: adopted
+        priority: P0
+        notes: "Accrual cutoff base"
+
+  server_backend:
+    repo: OCA/server-backend
+    modules:
+      - name: base_user_role
+        version: 18.0.1.0.5
+        status: adopted
+        priority: P0
+        notes: "Role-based access profiles"
+
+  server_ux:
+    repo: OCA/server-ux
+    modules:
+      - name: base_tier_validation
+        version: 18.0.3.3.1
+        status: adopted
+        priority: P0
+        notes: "Multi-tier approval framework — used by hr_expense_tier_validation"
+
+  web:
+    repo: OCA/web
+    modules:
+      # transitive deps
+      - name: web_timeline
+        version: 18.0.1.0.3
+        status: adopted
+        priority: P1
+        notes: "Transitive dep for project_timeline"
+      - name: web_widget_x2many_2d_matrix
+        version: 18.0.2.1.0
+        status: adopted
+        priority: P1
+        notes: "Transitive dep for hr_timesheet_sheet"
+
+# ─── MUST-HAVE (existing baseline, not yet adopted) ─────────────────────────
 
 must_have:
 
@@ -139,21 +278,12 @@ recommended:
         status: target
         priority: P2
 
-  project:
+  project_extended:
     repo: OCA/project
     modules:
-      - name: project_template
-        status: target
-        priority: P1
-      - name: project_role
-        status: target
-        priority: P2
       - name: project_task_stage_mgmt
         status: target
         priority: P1
-      - name: project_timeline
-        status: target
-        priority: P2
 
   helpdesk:
     repo: OCA/helpdesk
