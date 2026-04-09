@@ -1,0 +1,63 @@
+name: azure-runtime-smoke
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - "scripts/smoke/**"
+      - ".github/workflows/azure-runtime-smoke.yml"
+
+jobs:
+  runtime-smoke:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Azure login
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Install tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y jq postgresql-client
+
+      - name: Container App revision smoke
+        env:
+          BASE_URL: ${{ vars.ACA_STAGING_BASE_URL }}
+          HEALTH_PATH: /web/health
+          LOGIN_PATH: /web/login
+        run: bash scripts/smoke/check_container_app_revision.sh
+
+      - name: Front Door smoke
+        env:
+          FRONTDOOR_URL: ${{ vars.FRONTDOOR_BASE_URL }}
+          HEALTH_PATH: /web/health
+          LOGIN_PATH: /web/login
+        run: bash scripts/smoke/check_frontdoor.sh
+
+      - name: Managed identity RBAC smoke
+        env:
+          RESOURCE_GROUP: ${{ vars.ACA_RESOURCE_GROUP }}
+          CONTAINER_APP_NAME: ${{ vars.ACA_APP_NAME }}
+          RBAC_SCOPE: ${{ vars.FOUNDRY_SCOPE }}
+          REQUIRED_ROLE_NAMES: Azure AI User,Cognitive Services OpenAI User
+        run: bash scripts/smoke/check_managed_identity_rbac.sh
+
+      - name: PostgreSQL HA smoke
+        env:
+          RESOURCE_GROUP: ${{ vars.POSTGRES_RESOURCE_GROUP }}
+          POSTGRES_SERVER_NAME: ${{ vars.POSTGRES_SERVER_NAME }}
+          PGHOST: ${{ secrets.PGHOST }}
+          PGDATABASE: ${{ secrets.PGDATABASE }}
+          PGUSER: ${{ secrets.PGUSER }}
+          PGPASSWORD: ${{ secrets.PGPASSWORD }}
+        run: bash scripts/smoke/check_postgres_ha.sh

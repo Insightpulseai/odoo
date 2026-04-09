@@ -1,0 +1,47 @@
+# Azure DevOps Project Settings — Agent Skill
+# Manages project-level configuration: teams, areas, iterations, services, security
+
+id: azdo.project.settings
+version: 1
+description: "Configure Azure DevOps project settings: teams, area paths, iterations, services, permissions, and notifications"
+maturity: L1
+
+inputs:
+  organization:
+    type: string
+    description: "Azure DevOps organization URL"
+    required: true
+  project:
+    type: string
+    description: "Azure DevOps project name"
+    required: true
+  setting_area:
+    type: enum
+    values: [teams, areas, iterations, services, security, notifications, repos, pipelines]
+    description: "Which project setting area to configure"
+    required: true
+
+requires:
+  secrets: []
+  ssot_files:
+    - ssot/governance/azdo-execution-hierarchy.yaml
+    - ssot/governance/ci-cd-authority-matrix.yaml
+
+outputs:
+  artifacts: []
+  evidence: "docs/evidence/<stamp>/azdo-settings/"
+
+policies:
+  no_plaintext_secrets: true
+  must_pass_ci: []
+  idempotent: true
+  rollback_supported: false
+  # Security operations require PCA role awareness
+  elevated_operations: [security, services]
+
+verification:
+  checks:
+    - name: "project_accessible"
+      type: command
+      target: "az devops project show --project {project} --org {org}"
+      notes: "Verify project exists and is accessible"

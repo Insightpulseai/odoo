@@ -1,0 +1,248 @@
+{
+  "config": {
+    "version": "5.56",
+    "themeCollection": {
+      "baseTheme": {
+        "name": "IPAI Finance",
+        "reportVersionAtImport": "5.56",
+        "type": 2
+      }
+    }
+  },
+  "sections": [
+    {
+      "name": "Overview",
+      "displayName": "Executive Overview",
+      "displayOption": 1,
+      "width": 1280,
+      "height": 720,
+      "config": {
+        "layouts": [
+          {
+            "id": 0,
+            "position": {
+              "x": 0,
+              "y": 0,
+              "width": 1280,
+              "height": 720
+            }
+          }
+        ]
+      },
+      "visualContainers": [
+        {
+          "x": 20, "y": 20, "z": 1, "width": 290, "height": 140,
+          "config": {
+            "name": "kpi_total_budget",
+            "singleVisual": {
+              "visualType": "card",
+              "projections": { "Values": [{"queryRef": "Project.Total_Budget"}] }
+            }
+          }
+        },
+        {
+          "x": 330, "y": 20, "z": 2, "width": 290, "height": 140,
+          "config": {
+            "name": "kpi_total_expenses",
+            "singleVisual": {
+              "visualType": "card",
+              "projections": { "Values": [{"queryRef": "Expense.Total_Expenses"}] }
+            }
+          }
+        },
+        {
+          "x": 640, "y": 20, "z": 3, "width": 290, "height": 140,
+          "config": {
+            "name": "kpi_budget_utilization",
+            "singleVisual": {
+              "visualType": "card",
+              "projections": { "Values": [{"queryRef": "Expense.Budget_Utilization"}] }
+            }
+          }
+        },
+        {
+          "x": 950, "y": 20, "z": 4, "width": 310, "height": 140,
+          "config": {
+            "name": "kpi_completion_rate",
+            "singleVisual": {
+              "visualType": "card",
+              "projections": { "Values": [{"queryRef": "Task.Completion_Rate"}] }
+            }
+          }
+        },
+        {
+          "x": 20, "y": 180, "z": 5, "width": 620, "height": 260,
+          "config": {
+            "name": "chart_budget_by_project",
+            "singleVisual": {
+              "visualType": "barChart",
+              "projections": {
+                "Y": [{"queryRef": "Project.ProjectName"}],
+                "Values": [
+                  {"queryRef": "Project.Total_Budget"},
+                  {"queryRef": "Expense.Total_Expenses"}
+                ]
+              }
+            }
+          }
+        },
+        {
+          "x": 660, "y": 180, "z": 6, "width": 600, "height": 260,
+          "config": {
+            "name": "chart_tasks_by_stage",
+            "singleVisual": {
+              "visualType": "donutChart",
+              "projections": {
+                "Category": [{"queryRef": "Stage.StageName"}],
+                "Values": [{"queryRef": "Task.Task_Count"}]
+              }
+            }
+          }
+        },
+        {
+          "x": 20, "y": 460, "z": 7, "width": 1240, "height": 240,
+          "config": {
+            "name": "table_project_summary",
+            "singleVisual": {
+              "visualType": "tableEx",
+              "projections": {
+                "Values": [
+                  {"queryRef": "Project.ProjectName"},
+                  {"queryRef": "Project.CostCenter"},
+                  {"queryRef": "Project.Total_Budget"},
+                  {"queryRef": "Expense.Total_Expenses"},
+                  {"queryRef": "Expense.Budget_Utilization"},
+                  {"queryRef": "Task.Task_Count"},
+                  {"queryRef": "Task.Completion_Rate"},
+                  {"queryRef": "Task.Overdue_Tasks"}
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "TaskDetail",
+      "displayName": "Task Tracker",
+      "displayOption": 1,
+      "width": 1280,
+      "height": 720,
+      "visualContainers": [
+        {
+          "x": 20, "y": 20, "z": 1, "width": 200, "height": 680,
+          "config": {
+            "name": "slicer_project",
+            "singleVisual": {
+              "visualType": "slicer",
+              "projections": { "Values": [{"queryRef": "Project.ProjectName"}] }
+            }
+          }
+        },
+        {
+          "x": 240, "y": 20, "z": 2, "width": 260, "height": 120,
+          "config": {
+            "name": "kpi_overdue",
+            "singleVisual": {
+              "visualType": "card",
+              "projections": { "Values": [{"queryRef": "Task.Overdue_Tasks"}] }
+            }
+          }
+        },
+        {
+          "x": 520, "y": 20, "z": 3, "width": 260, "height": 120,
+          "config": {
+            "name": "kpi_in_progress",
+            "singleVisual": {
+              "visualType": "card",
+              "projections": { "Values": [{"queryRef": "Task.In_Progress_Tasks"}] }
+            }
+          }
+        },
+        {
+          "x": 800, "y": 20, "z": 4, "width": 460, "height": 120,
+          "config": {
+            "name": "kpi_task_completion",
+            "singleVisual": {
+              "visualType": "card",
+              "projections": { "Values": [{"queryRef": "Task.Completion_Rate"}] }
+            }
+          }
+        },
+        {
+          "x": 240, "y": 160, "z": 5, "width": 1020, "height": 540,
+          "config": {
+            "name": "matrix_tasks",
+            "singleVisual": {
+              "visualType": "pivotTable",
+              "projections": {
+                "Rows": [
+                  {"queryRef": "Project.ProjectName"},
+                  {"queryRef": "Task.TaskName"}
+                ],
+                "Columns": [{"queryRef": "Stage.StageName"}],
+                "Values": [{"queryRef": "Task.Task_Count"}]
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "BIRCompliance",
+      "displayName": "BIR Compliance",
+      "displayOption": 1,
+      "width": 1280,
+      "height": 720,
+      "visualContainers": [
+        {
+          "x": 20, "y": 20, "z": 1, "width": 1240, "height": 140,
+          "config": {
+            "name": "kpi_row_bir",
+            "singleVisual": {
+              "visualType": "multiRowCard",
+              "projections": {
+                "Values": [
+                  {"queryRef": "Task.Task_Count"},
+                  {"queryRef": "Task.Completion_Rate"},
+                  {"queryRef": "Task.Overdue_Tasks"},
+                  {"queryRef": "Task.In_Progress_Tasks"}
+                ]
+              }
+            }
+          }
+        },
+        {
+          "x": 20, "y": 180, "z": 2, "width": 620, "height": 520,
+          "config": {
+            "name": "chart_bir_stages",
+            "singleVisual": {
+              "visualType": "funnel",
+              "projections": {
+                "Category": [{"queryRef": "Stage.StageName"}],
+                "Values": [{"queryRef": "Task.Task_Count"}]
+              }
+            }
+          }
+        },
+        {
+          "x": 660, "y": 180, "z": 3, "width": 600, "height": 520,
+          "config": {
+            "name": "table_bir_deadlines",
+            "singleVisual": {
+              "visualType": "tableEx",
+              "projections": {
+                "Values": [
+                  {"queryRef": "Task.TaskName"},
+                  {"queryRef": "Stage.StageName"},
+                  {"queryRef": "Task.DateDeadline"},
+                  {"queryRef": "Task.Priority"}
+                ]
+              }
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

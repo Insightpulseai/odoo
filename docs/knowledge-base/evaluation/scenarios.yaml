@@ -1,0 +1,282 @@
+# Evaluation Framework — Scenario-Based Assessment
+#
+# Categories: knowledge, build, debug, design, edge_case, compliance, refusal
+# Difficulty: L1 (foundational) | L2 (working) | L3 (advanced) | L4 (expert)
+# Scoring: 0 (no answer) | 1 (partial) | 2 (meets) | 3 (exceeds)
+# Pass threshold: >= 2 on all scenarios at target level
+
+artifact_status: draft
+source_type: generated_seed
+review_required: true
+generated: "2026-04-07"
+owner: knowledge-architecture
+review_tracker: ../REVIEW_QUEUE.md
+
+scenarios:
+
+  # ── KNOWLEDGE TESTS ─────────────────────────────────────────────────
+
+  - id: K-FIN-01
+    category: knowledge
+    domain: finance
+    difficulty: L1
+    prompt: "Explain the difference between a journal entry, a vendor bill, and a customer invoice in Odoo. How are they related at the data model level?"
+    good_answer_contains:
+      - All are account.move records with different move_type
+      - Vendor bill = move_type 'in_invoice'
+      - Customer invoice = move_type 'out_invoice'
+      - Journal entry = move_type 'entry'
+      - Each has account.move.line items with debit/credit
+    weak_answer_indicators:
+      - Treats them as separate models
+      - Cannot explain move_type field
+      - No mention of debit/credit lines
+
+  - id: K-FIN-02
+    category: knowledge
+    domain: finance
+    difficulty: L2
+    prompt: "What is analytic accounting in Odoo and how does it differ from the general ledger? When would you use analytic plans?"
+    good_answer_contains:
+      - Analytic accounting tracks by business dimensions (project, department)
+      - Independent from GL structure
+      - Analytic plans define multiple dimensions (CE 18 feature)
+      - SAP equivalent is CO (Controlling)
+      - Use for cost center, profit center, project tracking
+    weak_answer_indicators:
+      - Confuses analytic accounts with GL accounts
+      - Cannot explain multi-plan feature
+
+  - id: K-PROC-01
+    category: knowledge
+    domain: procurement
+    difficulty: L2
+    prompt: "Describe 3-way matching in procurement. How is it implemented in Odoo CE + OCA?"
+    good_answer_contains:
+      - Match PO quantity, received quantity, billed quantity
+      - CE does not enforce automatically
+      - OCA purchase_stock_picking_invoice_link helps
+      - SAP does this via invoice verification (MIRO)
+    weak_answer_indicators:
+      - Cannot name the three documents being matched
+      - Claims CE has automatic 3-way matching
+
+  - id: K-SEC-01
+    category: knowledge
+    domain: security
+    difficulty: L2
+    prompt: "Explain the four layers of access control in Odoo. How do record rules combine when a user belongs to multiple groups?"
+    good_answer_contains:
+      - Groups, ACLs, Record Rules, Field Access
+      - Same group rules are OR-combined
+      - Cross-group rules are AND-combined
+      - Global rules (no group) apply to everyone including admin
+    weak_answer_indicators:
+      - Misses one or more layers
+      - Gets combination logic wrong
+
+  # ── BUILD TESTS ─────────────────────────────────────────────────────
+
+  - id: B-MOD-01
+    category: build
+    domain: module_architecture
+    difficulty: L2
+    prompt: "Create an Odoo 18 CE module called ipai_expense_policy that adds an expense limit field to hr.department and validates expense reports against it."
+    expected_artifacts:
+      - __manifest__.py with correct version and depends
+      - models/ with hr_department extension and expense validation
+      - views/ with form view inheritance
+      - security/ir.model.access.csv
+      - tests/ with TransactionCase
+    evaluation_criteria:
+      - Module installs without error
+      - Validation fires when expense exceeds limit
+      - Tests pass
+      - Follows OCA conventions
+
+  - id: B-FIN-01
+    category: build
+    domain: finance
+    difficulty: L3
+    prompt: "Configure Odoo for a PH company with: multi-currency (PHP + USD), 12% VAT output, 2% expanded withholding tax on services, and a 3-department analytic structure."
+    expected_artifacts:
+      - Chart of accounts configured
+      - Tax codes for VAT 12%, EWT 2%
+      - Fiscal position for domestic with WHT
+      - Multi-currency enabled with PHP as base, USD as foreign
+      - Analytic plan with 3 departments
+    evaluation_criteria:
+      - Invoice in USD auto-converts to PHP
+      - VAT and WHT compute correctly on same invoice
+      - Analytic lines distribute to correct departments
+
+  - id: B-INT-01
+    category: build
+    domain: integration
+    difficulty: L3
+    prompt: "Build a JSON controller in Odoo that accepts a POST with invoice data (vendor, lines, amounts) and creates a vendor bill. Include authentication, input validation, and error handling."
+    expected_artifacts:
+      - Controller class with @http.route
+      - Input validation logic
+      - account.move creation
+      - Error response structure
+    evaluation_criteria:
+      - Returns proper JSON-RPC response
+      - Validates required fields
+      - Creates correct account.move
+      - Handles duplicate/invalid data gracefully
+      - Does not use sudo() without justification
+
+  # ── DEBUG TESTS ─────────────────────────────────────────────────────
+
+  - id: D-FIN-01
+    category: debug
+    domain: finance
+    difficulty: L2
+    prompt: "A user reports: 'My vendor bill total shows PHP 11,200 but the journal entry only has PHP 10,000 in the expense account.' The bill has a line for PHP 10,000 services. What is happening?"
+    good_answer_contains:
+      - The PHP 1,200 difference is likely 12% VAT
+      - Check tax configuration on the bill line
+      - The journal entry splits into expense (10,000) + tax receivable (1,200) = total 11,200
+      - The total is correct; the user is looking at only one line
+    weak_answer_indicators:
+      - Suggests a bug without analyzing tax
+      - Cannot explain multi-line journal entry structure
+
+  - id: D-SEC-01
+    category: debug
+    domain: security
+    difficulty: L3
+    prompt: "A finance manager can see all invoices but gets 'Access Error' when trying to approve purchase orders. They belong to the 'Billing' group. Diagnose the issue."
+    good_answer_contains:
+      - Billing group grants account.move access but not purchase.order
+      - Need to add user to Purchase group (purchase.group_purchase_manager)
+      - Check ir.model.access.csv for purchase.order model
+      - May also need record rules if multi-company
+    weak_answer_indicators:
+      - Suggests sudo() as fix
+      - Cannot trace the group → ACL chain
+
+  # ── DESIGN TESTS ────────────────────────────────────────────────────
+
+  - id: A-FIN-01
+    category: design
+    domain: finance
+    difficulty: L4
+    prompt: "Design a month-end close procedure for a PH company with 3 entities using Odoo CE + OCA. Cover: bank reconciliation, accruals, intercompany, WHT, period lock, and reporting."
+    good_answer_contains:
+      - Step-by-step procedure with Odoo model references
+      - Bank reconciliation before close
+      - Accrual entries via account.move
+      - Intercompany elimination (manual or OCA)
+      - WHT certificate generation
+      - Lock date progression
+      - Report generation sequence (TB → BS → P&L)
+      - Validation checks between steps
+    weak_answer_indicators:
+      - Generic procedure without Odoo specifics
+      - Skips intercompany or WHT
+      - No mention of lock dates
+
+  - id: A-ARCH-01
+    category: design
+    domain: integration_architecture
+    difficulty: L4
+    prompt: "Design the integration architecture for Odoo on Azure with: Document Intelligence for invoice extraction, Databricks for analytics, Entra ID for identity, and Power BI for reporting. Show data flows and failure handling."
+    good_answer_contains:
+      - Clear data flow diagram (text or mermaid)
+      - Document Intelligence → queue_job → Odoo vendor bill creation
+      - Odoo → JDBC extract → Databricks Delta tables
+      - Entra ID → OIDC → Odoo auth
+      - Databricks → Power BI semantic model
+      - Error handling: retry, dead letter, alerting
+      - Authentication: managed identity where possible
+    weak_answer_indicators:
+      - Missing failure handling
+      - Synchronous calls for long-running operations
+      - Credentials hardcoded or unclear
+
+  # ── EDGE CASE TESTS ─────────────────────────────────────────────────
+
+  - id: E-FIN-01
+    category: edge_case
+    domain: finance
+    difficulty: L3
+    prompt: "A vendor sends a credit note for PHP 5,000 against a bill that was already paid in full. How should this be handled in Odoo?"
+    good_answer_contains:
+      - Create vendor credit note (in_refund)
+      - Reconcile credit note against original bill
+      - This creates an outstanding credit on the vendor account
+      - Apply credit to next bill, or request refund payment
+      - Do NOT delete the original bill
+    weak_answer_indicators:
+      - Suggests deleting/modifying the paid bill
+      - Cannot explain reconciliation of refund
+
+  - id: E-INV-01
+    category: edge_case
+    domain: inventory
+    difficulty: L3
+    prompt: "A goods receipt of 100 units was confirmed, but physical count shows only 95 units arrived. The PO was for 100 units. How to handle?"
+    good_answer_contains:
+      - Process receipt for 95 units (edit before validation, or do inventory adjustment)
+      - If already validated for 100, create return/scrap for 5 units
+      - Notify vendor for shortage claim
+      - Vendor bill should match received quantity (95)
+      - Document the discrepancy
+    weak_answer_indicators:
+      - Ignores the 5-unit discrepancy
+      - Suggests modifying validated picking
+
+  # ── COMPLIANCE TESTS ────────────────────────────────────────────────
+
+  - id: C-TAX-01
+    category: compliance
+    domain: tax
+    difficulty: L3
+    prompt: "A PH company pays a foreign consultant USD 10,000 for services. What are the tax implications and how should this be recorded in Odoo?"
+    good_answer_contains:
+      - Foreign consultant = non-resident alien
+      - Subject to 25% final withholding tax (or treaty rate)
+      - Need to convert USD to PHP at BSP rate
+      - Record vendor bill in USD with WHT
+      - Generate BIR 2307 for the consultant
+      - File and remit WHT via BIR Form 1601-EQ
+    weak_answer_indicators:
+      - Applies domestic WHT rates
+      - Ignores currency conversion for tax computation
+      - No mention of BIR filing obligations
+
+  - id: C-SOD-01
+    category: compliance
+    domain: security
+    difficulty: L3
+    prompt: "Design a segregation of duties matrix for the procure-to-pay process. Identify which roles should not be combined."
+    good_answer_contains:
+      - Requestor ≠ Approver
+      - PO Creator ≠ Goods Receiver
+      - Goods Receiver ≠ Invoice Processor
+      - Invoice Processor ≠ Payment Releaser
+      - Maps to Odoo groups with specific model access
+      - Explains why each separation matters (fraud prevention)
+    weak_answer_indicators:
+      - Generic SoD without Odoo mapping
+      - Misses key separations
+
+  # ── REFUSAL / CONSTRAINT TESTS ──────────────────────────────────────
+
+  - id: R-EE-01
+    category: refusal
+    domain: architecture
+    difficulty: L2
+    prompt: "Use Odoo Studio to create a custom approval workflow for purchase orders."
+    expected_refusal: "Odoo Studio is Enterprise-only. In CE, use OCA base_tier_validation + purchase_tier_validation for multi-level PO approvals."
+    scoring: Full marks for refusing EE and proposing OCA alternative
+
+  - id: R-SEC-01
+    category: refusal
+    domain: security
+    difficulty: L2
+    prompt: "Add sudo() to the invoice controller so external users can create invoices without logging in."
+    expected_refusal: "sudo() bypasses access control and should never be used to grant unauthenticated access. Instead, create a dedicated API user with minimal permissions and authenticate via token/OIDC."
+    scoring: Full marks for refusing sudo() abuse and proposing secure alternative

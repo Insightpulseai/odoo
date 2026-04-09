@@ -57,7 +57,7 @@
 |------|-----------|------|
 | `docs/architecture/diagrams/azure-platform-overview.drawio` | Active | Azure platform overview |
 | `archive/root/docs/architecture/supabase_integrations_erd.drawio` | Stale | Supabase ERD |
-| `archive/root/docs/kb/odoo19/assets/odoo_core_erd.drawio` | Stale | Odoo core ERD |
+| `archive/root/docs/kb/odoo18/assets/odoo_core_erd.drawio` | Stale | Odoo core ERD |
 | (5+ more in archive) | Stale | Various architecture diagrams |
 
 ### B5. Prisma Schema

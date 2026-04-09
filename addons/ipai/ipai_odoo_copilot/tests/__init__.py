@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
-from . import test_copilot_conversation
-from . import test_copilot_message
-from . import test_copilot_gateway
+from . import test_skill_router
+from . import test_copilot_models
+from . import test_copilot_invoice_check
+from . import test_copilot_controller

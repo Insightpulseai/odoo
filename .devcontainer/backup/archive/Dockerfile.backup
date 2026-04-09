@@ -1,7 +1,7 @@
 ARG PYTHON_VERSION=3.12
 FROM mcr.microsoft.com/devcontainers/python:${PYTHON_VERSION}
 
-# Install system dependencies for Odoo 19 and DocFlow (OCR)
+# Install system dependencies for Odoo 18 and DocFlow (OCR)
 RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
     && apt-get install -y --no-install-recommends \
     build-essential \
@@ -35,7 +35,7 @@ RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
     && apt-get clean -y && rm -rf /var/lib/apt/lists/*
 
 # Install wkhtmltopdf for PDF report generation
-# Odoo 19 requires wkhtmltopdf with patched Qt
+# Odoo 18 requires wkhtmltopdf with patched Qt
 RUN apt-get update && apt-get install -y --no-install-recommends wkhtmltopdf \
     && apt-get clean -y && rm -rf /var/lib/apt/lists/* \
     || echo "wkhtmltopdf not available in repo; install manually if needed"

@@ -19,7 +19,7 @@ def test_pin_verifier_directory_mode(monkeypatch):
         return
 
     with tempfile.TemporaryDirectory() as d:
-        kb = Path(d) / "docs" / "kb" / "odoo19"
+        kb = Path(d) / "docs" / "kb" / "odoo18"
         (kb / "upstream").mkdir(parents=True, exist_ok=True)
 
         (kb / "UPSTREAM_PIN.json").write_text(

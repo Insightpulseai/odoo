@@ -21,7 +21,7 @@ repos:
 
   - id: odoo
     plane: transactional
-    purpose: Transactional system of record — Odoo 19 CE + OCA + thin IPAI bridge modules
+    purpose: Transactional system of record — Odoo 18 CE + OCA + thin IPAI bridge modules
     status: active
 
   - id: platform

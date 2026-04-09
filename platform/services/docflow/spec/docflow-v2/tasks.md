@@ -1,6 +1,6 @@
 # Tasks — DocFlow v2
 
-## A. Odoo 19 Module: ipai_docflow_review
+## A. Odoo 18 Module: ipai_docflow_review
 
 - [ ] Add doc_type=bank_statement
 - [ ] Add models: docflow.bank.statement, docflow.bank.statement.line

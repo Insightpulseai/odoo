@@ -9,7 +9,7 @@
 - [ ] Window actions have correct `res_model` and `view_mode`
 - [ ] Menus have correct `parent` reference and `action` binding
 - [ ] No core or OCA XML files directly modified
-- [ ] Odoo 19 terminology used: "list" not "tree" in user-facing strings
+- [ ] Odoo 18 terminology used: "list" not "tree" in user-facing strings
 - [ ] View XML is well-formed (valid XML syntax)
 - [ ] View file listed in `__manifest__.py` data section
 - [ ] View renders correctly on disposable test DB

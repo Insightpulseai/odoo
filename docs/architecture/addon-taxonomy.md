@@ -78,7 +78,7 @@ Every `ipai_*` module manifest must include:
 ### Core (vendor/odoo/)
 
 - Read-only. Never modify files under `vendor/odoo/`.
-- Updated via `git pull` from upstream Odoo 19 branch.
+- Updated via `git pull` from upstream Odoo 18 branch.
 - If core behavior needs adjustment, create an `ipai_*` module using `_inherit`.
 
 ### OCA (addons/oca/)
@@ -92,7 +92,7 @@ Every `ipai_*` module manifest must include:
 ### Bridge (addons/ipai/)
 
 - Full ownership by InsightPulse AI team.
-- Must follow Odoo 19 coding conventions (`odoo19-coding.md`).
+- Must follow Odoo 18 coding conventions (`odoo18-coding.md`).
 - Must have `ir.model.access.csv` with all 4 CRUD columns.
 - Must not depend on Enterprise modules or odoo.com IAP.
 - Minimal dependencies -- depend only on what you actually use.

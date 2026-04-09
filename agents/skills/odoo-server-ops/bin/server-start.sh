@@ -18,7 +18,7 @@ while [[ $# -gt 0 ]]; do
 done
 
 ODOO_BIN="${ODOO_BIN:-vendor/odoo/odoo-bin}"
-PYTHON="${PYTHON:-$HOME/.pyenv/versions/odoo-19-dev/bin/python}"
+PYTHON="${PYTHON:-$HOME/.pyenv/versions/odoo-18-dev/bin/python}"
 ADDONS_PATH="${ADDONS_PATH:-vendor/odoo/addons,addons/ipai}"
 
 echo "Starting Odoo CE 19 on port ${PORT} with database ${DB}"

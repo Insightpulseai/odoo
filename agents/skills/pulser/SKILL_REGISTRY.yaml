@@ -1,0 +1,205 @@
+# =============================================================================
+# Pulser Skill Registry — Canonical Index
+# =============================================================================
+# Master registry of all skills available to the Pulser assistant family.
+# Naming doctrine: docs/brand/PULSER_NAMING_DOCTRINE.md
+# Foundry manifest: agents/foundry/agents/agents__runtime__odoo_copilot__v1.manifest.yaml
+# =============================================================================
+
+version: 1.0.0
+created: 2026-04-04
+domain: pulser
+owner: "@Insightpulseai/platform"
+
+naming:
+  brand: Pulser
+  doctrine: docs/brand/PULSER_NAMING_DOCTRINE.md
+  rule: >
+    All skills use "pulser_" prefix internally. Customer-facing labels use
+    "Pulser" or "Pulser [Edition]". Never "Copilot" as proper noun.
+    Never "Diva" standalone — use "Pulser Diva" if referencing orchestration.
+
+# =============================================================================
+# Skill Packs
+# =============================================================================
+
+packs:
+
+  # ---------------------------------------------------------------------------
+  # ERP Core — base Odoo operations
+  # ---------------------------------------------------------------------------
+  erp_core:
+    id: pulser_erp_core
+    display_name: "Pulser ERP Core"
+    description: "Core ERP read/write skills for Odoo 18 CE"
+    module: ipai_odoo_copilot
+    foundry_tools:
+      - odoo_search_partners
+      - odoo_list_opportunities
+      - odoo_search_sale_orders
+      - odoo_list_overdue_invoices
+      - odoo_list_project_tasks
+      - odoo_get_product_availability
+      - odoo_create_activity
+      - odoo_health_check
+    capabilities:
+      - navigational
+      - informational
+      - transactional
+    write_policy: read_only  # Default; escalates per action_mode
+    kb_segments:
+      - kb_odoo_docs
+      - kb_oca_docs
+
+  # ---------------------------------------------------------------------------
+  # TaxPulse PH — Philippine BIR tax compliance
+  # ---------------------------------------------------------------------------
+  taxpulse_ph:
+    id: pulser_taxpulse_ph
+    display_name: "TaxPulse PH"
+    description: "Philippine BIR tax compliance — form generation, filing workflows, AI review"
+    module: ipai_bir_tax_compliance
+    upstream: agents/skills/odoo/taxpulse-ph-pack/SKILL.md
+    skills:
+      - id: tax_advisory
+        description: "Answer tax queries with BIR regulation grounding"
+        intent: "Provide Philippine tax guidance within Pulser context"
+        inputs:
+          - {name: query, type: string, required: true}
+          - {name: tax_period, type: string, required: false}
+        outputs:
+          - {name: response, type: string}
+          - {name: citations, type: array}
+          - {name: delegated_to_taxpulse, type: boolean}
+          - {name: confidence_score, type: float}
+        kb_segments: [kb_tax_policy_ph, kb_odoo_tax_runtime]
+        instructions: >
+          Answer from KB segments when possible. For computation, filing,
+          or form generation, delegate to TaxPulse engine. Always cite
+          BIR regulations. Never provide ungrounded tax advice.
+
+      - id: bir_workflow
+        description: "Coordinate BIR filing workflows — deadlines, preparation, submission"
+        intent: "Manage BIR filing workflow coordination and status tracking"
+        inputs:
+          - {name: workflow_type, type: string, required: true, enum: [filing_status, deadline_check, preparation_guide]}
+          - {name: bir_form_type, type: string, required: false}
+          - {name: tax_period, type: string, required: false}
+        outputs:
+          - {name: workflow_status, type: object}
+          - {name: deadlines, type: array}
+          - {name: preparation_checklist, type: array}
+          - {name: blockers, type: array}
+        kb_segments: [kb_tax_policy_ph, kb_odoo_tax_runtime, kb_tax_evidence]
+        instructions: >
+          Read filing status from Odoo records. For deadline checks,
+          reference BIR calendar from KB. For preparation guides,
+          provide step-by-step checklist from KB. Delegate actual
+          filing execution to TaxPulse engine.
+
+      - id: tax_computation
+        description: "Compute tax from Odoo account.move records"
+        intent: "Run BIR tax computation engine against journal entries"
+        inputs:
+          - {name: entity_id, type: string, required: true}
+          - {name: form_type, type: string, required: true, enum: ["1601-C", "2550Q", "1702-RT"]}
+          - {name: date_from, type: string, required: true}
+          - {name: date_to, type: string, required: true}
+        outputs:
+          - {name: computed_values, type: object}
+          - {name: form_data, type: object}
+          - {name: audit_trail, type: object}
+        kb_segments: [kb_tax_policy_ph]
+        instructions: >
+          Execute via TaxPulse engine. Source data from account.move
+          records. Return computed values with full audit trail.
+          Never modify tax data without explicit user confirmation.
+
+    supported_forms:
+      - {form: "1601-C", type: Monthly, description: "Withholding tax on compensation + final payments"}
+      - {form: "2550Q", type: Quarterly, description: "VAT return"}
+      - {form: "1702-RT", type: Annual, description: "Income tax return"}
+    entities: [RIM, CKVC, BOM, JPAL, JLI, JAP, LAS, RMQB]
+    capabilities:
+      - informational
+      - compliance_intel
+      - transactional
+    write_policy: approval_required
+
+  # ---------------------------------------------------------------------------
+  # Finance Ops — expense, budget, close
+  # ---------------------------------------------------------------------------
+  finance_ops:
+    id: pulser_finance_ops
+    display_name: "Pulser Finance Ops"
+    description: "Finance operations — expense intelligence, budget tracking, period close"
+    modules:
+      - ipai_finance_ppm
+      - ipai_hr_expense_liquidation
+      - ipai_copilot_actions
+    skills:
+      - id: expense_draft
+        description: "Draft expense reports from natural language"
+        intent: "Create expense report drafts with policy validation"
+        proposal_schema: agents/schemas/pulser_proposals.py#PulserFinanceActionProposal
+        kb_segments: [kb_expense_policy]
+        write_policy: draft_only
+
+      - id: budget_query
+        description: "Query budget utilization and variance"
+        intent: "Report on budget status across cost centers"
+        kb_segments: [kb_odoo_docs]
+        write_policy: read_only
+
+    capabilities:
+      - informational
+      - transactional
+    write_policy: draft_only
+
+  # ---------------------------------------------------------------------------
+  # Knowledge Search — documentation grounding
+  # ---------------------------------------------------------------------------
+  knowledge_search:
+    id: pulser_knowledge_search
+    display_name: "Pulser Knowledge"
+    description: "Documentation and knowledge base search via Azure AI Search"
+    foundry_tools:
+      - search_odoo_knowledge
+    search:
+      service: srch-ipai-copilot
+      index: odoo-knowledge
+      semantic_config: default
+      top_k: 5
+    kb_segments:
+      - kb_odoo_docs
+      - kb_oca_docs
+      - kb_ipai_procedures
+    capabilities:
+      - informational
+
+# =============================================================================
+# Proposal Schema
+# =============================================================================
+
+proposal_schema:
+  base: agents/schemas/pulser_proposals.py#PulserActionProposal
+  extensions:
+    tax: agents/schemas/pulser_proposals.py#PulserTaxActionProposal
+    finance: agents/schemas/pulser_proposals.py#PulserFinanceActionProposal
+  action_modes:
+    - suggest_only     # Default — show proposal, no execution
+    - approval_required  # Require explicit user confirmation
+    - direct           # Execute immediately (admin only)
+
+# =============================================================================
+# Supersedes (deprecated — do not reference)
+# =============================================================================
+
+supersedes:
+  - path: agents/skills/tax_advisory_diva.skill.json
+    replaced_by: packs.taxpulse_ph.skills[tax_advisory]
+    reason: "Diva naming retired per PULSER_NAMING_DOCTRINE"
+
+  - path: agents/skills/bir_workflow_diva.skill.json
+    replaced_by: packs.taxpulse_ph.skills[bir_workflow]
+    reason: "Diva naming retired per PULSER_NAMING_DOCTRINE"

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <record id="view_tax_review_override_wizard_form" model="ir.ui.view">
+        <field name="name">ipai.tax.review.override.wizard.form</field>
+        <field name="model">ipai.tax.review.override.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Override Tax Review">
+                <group>
+                    <field name="review_id" readonly="1"/>
+                    <field name="override_reason" placeholder="Explain why this review is being overridden..."/>
+                </group>
+                <footer>
+                    <button name="action_confirm_override" type="object"
+                            string="Confirm Override" class="btn-primary"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+</odoo>

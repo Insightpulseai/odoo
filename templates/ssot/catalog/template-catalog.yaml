@@ -1,0 +1,48 @@
+# template-catalog.yaml — Registry of all available templates
+# Authority: templates/ssot/catalog/
+
+templates:
+  - name: service-repo
+    path: templates/repo/service/
+    description: Scaffold for a deployable service repository
+    category: repo
+
+  - name: library-repo
+    path: templates/repo/library/
+    description: Scaffold for a shared library/package repository
+    category: repo
+
+  - name: docs-site-repo
+    path: templates/repo/docs-site/
+    description: Scaffold for a documentation site (MkDocs)
+    category: repo
+
+  - name: prd
+    path: templates/spec/prd/
+    description: Product Requirements Document template
+    category: spec
+
+  - name: plan
+    path: templates/spec/plan/
+    description: Implementation plan template
+    category: spec
+
+  - name: tasks
+    path: templates/spec/tasks/
+    description: Task checklist template
+    category: spec
+
+  - name: workflow
+    path: templates/automation/workflow/
+    description: GitHub Actions workflow template
+    category: automation
+
+  - name: adr
+    path: templates/automation/adr/
+    description: Architecture Decision Record template
+    category: automation
+
+  - name: deck
+    path: templates/design/deck/
+    description: Slide deck starter template
+    category: design

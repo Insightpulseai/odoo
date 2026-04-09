@@ -1,18 +1,18 @@
 ---
 paths:
   - "addons/**"
-  - "odoo19/**"
+  - "odoo18/**"
   - "scripts/odoo*"
   - "docker-compose*"
 ---
 
 # Odoo Rules
 
-> Odoo CE 19 rules, canonical setup, module naming, testing, OCA workflow, Docker commands, troubleshooting.
+> Odoo CE 18 rules, canonical setup, module naming, testing, OCA workflow, Docker commands, troubleshooting.
 
 ---
 
-## Odoo CE 19 Rules (Self-Hosted)
+## Odoo CE 18 Rules (Self-Hosted)
 
 ### Prefer
 
@@ -43,9 +43,9 @@ Whenever an Odoo task is requested, generate:
 
 ---
 
-## Canonical Odoo 19 Setup
+## Canonical Odoo 18 Setup
 
-**Location**: `odoo19/` directory - **Recommended for all AI agent operations**
+**Location**: `odoo18/` directory - **Recommended for all AI agent operations**
 
 **Philosophy**: Deterministic, single-database, zero-ambiguity configuration.
 
@@ -53,13 +53,13 @@ Whenever an Odoo task is requested, generate:
 |---------|-----------|----------------|
 | AI Agent Commands | 36 possible combinations | 1 deterministic command |
 | Database Targets | 4 databases (all deprecated) | 1 database per env: `odoo_dev`, `odoo_staging`, `odoo` |
-| Container Names | Custom | Project-prefixed (odoo19-web-1, odoo19-db-1) |
+| Container Names | Custom | Project-prefixed (odoo18-web-1, odoo18-db-1) |
 | Configuration | Docker volumes (not tracked) | Version-controlled (./config/odoo.conf) |
 | Database Selector | Enabled (UI confusion) | Disabled (list_db = False) |
 
 **Quick Start:**
 ```bash
-cd odoo19
+cd odoo18
 docker compose up -d                              # Start stack
 docker compose exec -T web odoo -d odoo_dev -i base   # Install module
 ./scripts/backup_db.sh                            # Backup database

@@ -115,5 +115,5 @@ the full finance operations picture.
 2. One canonical doc (`docs/modules/FINANCE_UNIFIED_SYSTEM.md`) describes the full system
 3. Active vs. deprecated modules are explicitly classified and enforced
 4. Seed data has at least one validation test per domain (BIR schedules, close tasks, PPM objects)
-5. All active modules target Odoo 19.0 (`ipai_bir_tax_compliance` version bump from 18.0 to 19.0)
+5. All active modules target Odoo 18.0 (`ipai_bir_tax_compliance` version bump from 18.0 to 19.0)
 6. No duplicate SSOT surfaces remain unresolved

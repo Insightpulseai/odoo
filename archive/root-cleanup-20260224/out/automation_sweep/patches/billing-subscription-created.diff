@@ -1,4 +1,0 @@
---- a/n8n/workflows/billing-subscription-created.json
-+++ b/automations/n8n/workflows/billing-subscription-created.json
-@@ Move stray workflow to canonical location @@
-# git mv 'n8n/workflows/billing-subscription-created.json' 'automations/n8n/workflows/billing-subscription-created.json'

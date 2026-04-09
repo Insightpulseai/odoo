@@ -1,6 +1,6 @@
 ---
 name: odoo_frontend
-description: Odoo 19 frontend development — Owl components, assets, SCSS, client actions
+description: Odoo 18 frontend development — Owl components, assets, SCSS, client actions
 category: frontend
 priority: high
 version: "1.0"
@@ -8,8 +8,8 @@ version: "1.0"
 
 # Odoo Frontend Development
 
-## Owl Components (Odoo 19)
-- Odoo 19 uses Owl 2.x framework
+## Owl Components (Odoo 18)
+- Odoo 18 uses Owl 2.x framework
 - Components in static/src/js/ or static/src/components/
 - Templates in static/src/xml/
 - Import pattern: import { Component } from "@odoo/owl"
@@ -34,7 +34,7 @@ version: "1.0"
 - XML action: <record model="ir.actions.client"> with tag field
 
 ## JS Module System
-- Odoo 19 uses native ES modules with @web, @odoo/owl imports
+- Odoo 18 uses native ES modules with @web, @odoo/owl imports
 - "use strict" in all JS files
 - Never add minified JS libraries to static/
 

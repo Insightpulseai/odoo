@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'IPAI Document Intelligence Bridge',
-    'version': '19.0.1.0.0',
+    'version': '18.0.1.0.0',
     'summary': 'Azure Document Intelligence OCR, extraction, and classification bridge',
     'category': 'Productivity',
     'license': 'LGPL-3',

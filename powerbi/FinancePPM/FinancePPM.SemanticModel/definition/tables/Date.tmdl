@@ -1,0 +1,81 @@
+/// Standard date dimension — marked as date table
+/// Computed table (no external source)
+table 'Date'
+	dataCategory: Time
+	lineageTag: a1b2c3d4-0006-0001-0001-000000000001
+
+	column Date
+		dataType: dateTime
+		isKey: true
+		formatString: yyyy-MM-dd
+		summarizeBy: none
+		lineageTag: a1b2c3d4-0006-0001-0001-100000000001
+
+	column Year
+		dataType: int64
+		summarizeBy: none
+		lineageTag: a1b2c3d4-0006-0001-0001-100000000002
+
+	column Quarter
+		dataType: string
+		summarizeBy: none
+		lineageTag: a1b2c3d4-0006-0001-0001-100000000003
+
+	column Month
+		dataType: int64
+		summarizeBy: none
+		lineageTag: a1b2c3d4-0006-0001-0001-100000000004
+
+	column MonthName
+		dataType: string
+		summarizeBy: none
+		sortByColumn: Month
+		lineageTag: a1b2c3d4-0006-0001-0001-100000000005
+
+	column YearMonth
+		dataType: string
+		summarizeBy: none
+		lineageTag: a1b2c3d4-0006-0001-0001-100000000006
+
+	column DayOfWeek
+		dataType: int64
+		summarizeBy: none
+		isHidden
+		lineageTag: a1b2c3d4-0006-0001-0001-100000000007
+
+	column IsWeekend
+		dataType: boolean
+		summarizeBy: none
+		lineageTag: a1b2c3d4-0006-0001-0001-100000000008
+
+	/// BIR fiscal calendar (Jan-Dec, Philippines)
+	column BIRQuarter
+		dataType: string
+		summarizeBy: none
+		lineageTag: a1b2c3d4-0006-0001-0001-100000000009
+
+	hierarchy 'Date Hierarchy'
+		level Year
+			column: Year
+		level Quarter
+			column: Quarter
+		level MonthName
+			column: MonthName
+
+	partition 'Date' = calculated
+		mode: import
+		source =
+			VAR __minDate = DATE(2024, 1, 1)
+			VAR __maxDate = DATE(2027, 12, 31)
+			RETURN
+			ADDCOLUMNS(
+				CALENDAR(__minDate, __maxDate),
+				"Year", YEAR([Date]),
+				"Quarter", "Q" & FORMAT(QUARTER([Date]), "0"),
+				"Month", MONTH([Date]),
+				"MonthName", FORMAT([Date], "MMMM"),
+				"YearMonth", FORMAT([Date], "YYYY-MM"),
+				"DayOfWeek", WEEKDAY([Date]),
+				"IsWeekend", WEEKDAY([Date]) IN {1, 7},
+				"BIRQuarter", "BIR-Q" & FORMAT(QUARTER([Date]), "0")
+			)

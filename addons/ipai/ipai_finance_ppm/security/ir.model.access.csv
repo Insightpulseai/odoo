@@ -1,2 +1,14 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 access_ppm_import_wizard,ppm.import.wizard,model_ipai_ppm_import_wizard,base.group_system,1,1,1,1
+access_ppm_budget_line_user,ppm.budget.line.user,model_ppm_budget_line,project.group_project_user,1,0,0,0
+access_ppm_budget_line_manager,ppm.budget.line.manager,model_ppm_budget_line,project.group_project_manager,1,1,1,1
+access_ppm_portfolio_health_user,ppm.portfolio.health.user,model_ppm_portfolio_health,project.group_project_user,1,0,0,0
+access_ppm_portfolio_health_manager,ppm.portfolio.health.manager,model_ppm_portfolio_health,project.group_project_manager,1,1,1,1
+access_ppm_risk_user,ppm.risk.user,model_ppm_risk,project.group_project_user,1,0,0,0
+access_ppm_risk_manager,ppm.risk.manager,model_ppm_risk,project.group_project_manager,1,1,1,1
+access_ppm_issue_user,ppm.issue.user,model_ppm_issue,project.group_project_user,1,0,0,0
+access_ppm_issue_manager,ppm.issue.manager,model_ppm_issue,project.group_project_manager,1,1,1,1
+access_ppm_scoring_user,ppm.scoring.user,model_ppm_scoring,project.group_project_user,1,0,0,0
+access_ppm_scoring_manager,ppm.scoring.manager,model_ppm_scoring,project.group_project_manager,1,1,1,1
+access_ppm_gate_review_user,ppm.gate.review.user,model_ppm_gate_review,project.group_project_user,1,0,0,0
+access_ppm_gate_review_manager,ppm.gate.review.manager,model_ppm_gate_review,project.group_project_manager,1,1,1,1
