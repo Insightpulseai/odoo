@@ -1,0 +1,41 @@
+{
+  "supplier_name": "Manila Office Supplies Inc.",
+  "supplier_tin": "111-222-333-000",
+  "customer_name": "Dataverse IT Consultancy",
+  "customer_tin": "987-654-321-000",
+  "invoice_no": "INV-MOS-2026-042",
+  "invoice_date": "2026-03-28",
+  "lines": [
+    {
+      "line_no": 1,
+      "description": "Printer Cartridges (Black) x20",
+      "quantity": "20",
+      "unit_price": "1500.00",
+      "amount": "30000.00",
+      "tax_type": "vatable",
+      "vat_amount": "3600.00",
+      "ewt_rate": "0.01",
+      "ewt_amount": "300.00"
+    },
+    {
+      "line_no": 2,
+      "description": "A4 Paper (5 reams)",
+      "quantity": "5",
+      "unit_price": "400.00",
+      "amount": "2000.00",
+      "tax_type": "vatable",
+      "vat_amount": "240.00",
+      "ewt_rate": "0.01",
+      "ewt_amount": "20.00"
+    }
+  ],
+  "printed_subtotal": "32000.00",
+  "printed_vat": "3840.00",
+  "printed_gross": "35840.00",
+  "printed_withholding": "320.00",
+  "printed_total_due": "36000.00",
+  "extraction_confidence": 0.94,
+  "extraction_notes": ["Total due on document appears manually overwritten"],
+  "source_file": "fixtures/mismatched_payable_invoice.pdf",
+  "_test_note": "Expected payable = 35840.00 - 320.00 = 35520.00, but printed total due is 36000.00 — delta of 480.00. Must be flagged."
+}

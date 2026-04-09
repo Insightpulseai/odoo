@@ -1,0 +1,30 @@
+{
+  "supplier_name": "Unclear Vendor",
+  "supplier_tin": "",
+  "customer_name": "Dataverse IT Consultancy",
+  "customer_tin": "987-654-321-000",
+  "invoice_no": "",
+  "invoice_date": "",
+  "lines": [
+    {
+      "line_no": 1,
+      "description": "Various supplies",
+      "quantity": "1",
+      "unit_price": "5000.00",
+      "amount": "5000.00",
+      "tax_type": "vatable",
+      "vat_amount": "600.00",
+      "ewt_rate": "0",
+      "ewt_amount": "0"
+    }
+  ],
+  "printed_subtotal": "5000.00",
+  "printed_vat": "600.00",
+  "printed_gross": "5600.00",
+  "printed_withholding": "0.00",
+  "printed_total_due": "5600.00",
+  "extraction_confidence": 0.62,
+  "extraction_notes": ["Poor scan quality", "Multiple fields uncertain"],
+  "source_file": "fixtures/low_confidence_invoice.pdf",
+  "_test_note": "Confidence 0.62 < 0.85 threshold. Must be flagged as needs_review even though math is correct."
+}

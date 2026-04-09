@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <!-- Form view -->
+    <record id="view_tax_rule_config_form" model="ir.ui.view">
+        <field name="name">ipai.tax.rule.config.form</field>
+        <field name="model">ipai.tax.rule.config</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="name" placeholder="Rule Configuration Name"/></h1>
+                    </div>
+                    <group>
+                        <group string="Company">
+                            <field name="company_id"/>
+                            <field name="active"/>
+                        </group>
+                        <group string="VAT Settings">
+                            <field name="vat_rate"/>
+                            <field name="tolerance_amount"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group string="Confidence Thresholds">
+                            <field name="confidence_error_threshold"/>
+                            <field name="confidence_warning_threshold"/>
+                        </group>
+                        <group string="Posting Controls">
+                            <field name="block_on_needs_review"/>
+                            <field name="block_on_rejected"/>
+                            <field name="auto_validate_on_upload"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Tree view -->
+    <record id="view_tax_rule_config_tree" model="ir.ui.view">
+        <field name="name">ipai.tax.rule.config.tree</field>
+        <field name="model">ipai.tax.rule.config</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+                <field name="company_id"/>
+                <field name="vat_rate"/>
+                <field name="tolerance_amount"/>
+                <field name="block_on_needs_review"/>
+                <field name="block_on_rejected"/>
+                <field name="active"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Action -->
+    <record id="action_tax_rule_config" model="ir.actions.act_window">
+        <field name="name">Tax Rule Configuration</field>
+        <field name="res_model">ipai.tax.rule.config</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create a tax rule configuration
+            </p>
+            <p>
+                Configure VAT rates, confidence thresholds, and posting
+                controls per company for TaxPulse PH validation.
+            </p>
+        </field>
+    </record>
+
+    <!-- Menu under Accounting > Configuration -->
+    <menuitem id="menu_tax_rule_config"
+              name="Tax Validation Rules"
+              parent="account.menu_finance_configuration"
+              action="action_tax_rule_config"
+              sequence="95"/>
+
+</odoo>
