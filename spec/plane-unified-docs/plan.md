@@ -24,7 +24,7 @@ This plan migrates InsightPulseAI's documentation surface from a repo-only model
 
 ### Key Actions
 
-1. Enumerate all files in `docs/`, `spec/`, `ssot/`, `.claude/`, `odoo19/`, `apps/*/docs/`
+1. Enumerate all files in `docs/`, `spec/`, `ssot/`, `.claude/`, `odoo18/`, `apps/*/docs/`
 2. Classify each file using the three-layer model from the constitution (L1/L2/L3)
 3. Flag duplicates (same content in multiple locations)
 4. Flag stale content (no update in 90+ days, references deprecated systems)

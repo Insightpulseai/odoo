@@ -24,7 +24,7 @@ docker compose --profile tools up -d
 
 ## Canonical setup
 
-The Odoo instance runs from the `odoo19/` directory with `list_db=False`. Each environment uses a single, named database:
+The Odoo instance runs from the `odoo18/` directory with `list_db=False`. Each environment uses a single, named database:
 
 | Environment | Database |
 |-------------|----------|

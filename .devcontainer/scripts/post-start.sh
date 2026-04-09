@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-echo "[post-start] Odoo 19 Development - Post-Start"
+echo "[post-start] Odoo 18 Development - Post-Start"
 
 # Verify workspace mount
 if [ ! -d "/workspaces/odoo/addons" ]; then

@@ -2,7 +2,7 @@
 
 **Date:** 2026-02-20
 **Status:** Decision made — `gitaggregate` (OCA standard)
-**Scope:** 21 OCA modules from 10+ repos, Odoo 19.0 CE
+**Scope:** 21 OCA modules from 10+ repos, Odoo 18.0 CE
 
 ---
 

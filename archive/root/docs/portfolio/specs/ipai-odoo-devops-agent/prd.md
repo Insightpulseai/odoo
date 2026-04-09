@@ -306,7 +306,7 @@ tools:
 - `PRODUCTION_DEPLOYMENT_DO.md` - Full production runbook
 - `DIGITALOCEAN_MCP_INTEGRATION.md` - MCP integration guide
 - `N8N_INTEGRATION_GUIDE.md` - Workflow orchestration
-- `ODOO_19_AI_INTEGRATION.md` - AI agent architecture
+- `ODOO_18_AI_INTEGRATION.md` - AI agent architecture
 
 ### 5.2 Runtime Facts
 ```yaml

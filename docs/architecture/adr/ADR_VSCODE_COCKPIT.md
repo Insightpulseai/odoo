@@ -53,8 +53,8 @@ and CI.
 
 - All VS Code settings PRs must pass: no hardcoded local paths, no `python.languageServer`
   overrides, no user-scope leaks of runtime config
-- Devcontainer image updates require testing against Odoo 19 source install constraints
-- Python 3.11 is the repo standard (matches pyenv `odoo-19-dev` virtualenv)
+- Devcontainer image updates require testing against Odoo 18 source install constraints
+- Python 3.11 is the repo standard (matches pyenv `odoo-18-dev` virtualenv)
 - New workspace folders must inherit root settings or document overrides
 
 ## Alternatives considered

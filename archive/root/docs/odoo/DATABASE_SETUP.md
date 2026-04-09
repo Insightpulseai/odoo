@@ -12,7 +12,7 @@
 **Databases:**
 - `odoo_dev` - Development database (use for local IDE)
 - `odoo_stage` - Staging database
-- `odoo_prod` - Production database (mapped to odoo19)
+- `odoo_prod` - Production database (mapped to odoo18)
 
 **Authentication:**
 - **Admin Role**: `doadmin` (full privileges, DO managed)
@@ -291,12 +291,12 @@ ALTER ROLE odoo_app WITH PASSWORD 'NewSecurePassword';
 ## Production Database Mapping
 
 **Current State** (from production config):
-- Production uses database `odoo19` (not `odoo_prod`)
+- Production uses database `odoo18` (not `odoo_prod`)
 - User: `doadmin`
 - Host: `private-odoo-db-sgp1-do-user-27714628-0.g.db.ondigitalocean.com` (private endpoint)
 
 **Recommended Migration**:
-1. Rename `odoo19` → `odoo_prod` for consistency
+1. Rename `odoo18` → `odoo_prod` for consistency
 2. Create `odoo_app` role for production (least-privilege)
 3. Update production odoo.conf to use `odoo_app` role
 
@@ -306,7 +306,7 @@ ssh root@178.128.112.214
 PGPASSWORD="REDACTED_DO_DB_PASSWORD" psql -h odoo-db-sgp1-do-user-27714628-0.g.db.ondigitalocean.com -p 25060 -U doadmin -d defaultdb
 
 -- Stop Odoo first
-ALTER DATABASE odoo19 RENAME TO odoo_prod;
+ALTER DATABASE odoo18 RENAME TO odoo_prod;
 
 -- Verify
 \l odoo_prod

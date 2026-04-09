@@ -2,7 +2,7 @@
 
 > **Module**: Finance PPM (Project Portfolio Management)
 > **Client**: TBWA\SMP Philippines
-> **Stack**: Odoo 19 CE + OCA 19.0 + PostgreSQL 16
+> **Stack**: Odoo 18 CE + OCA 19.0 + PostgreSQL 16
 > **Version**: 1.3.0
 
 ---
@@ -181,9 +181,9 @@ and automation support, including ML acceleration for tax determination:
 - **Compliance Calendar**: Jurisdiction-aware deadline tracking with
   escalation and notification rules
 
-### Odoo 19 Implementation Status
+### Odoo 18 Implementation Status
 
-| SAP Feature | Odoo 19 Layer | Implementation | Status |
+| SAP Feature | Odoo 18 Layer | Implementation | Status |
 |-------------|--------------|---------------|--------|
 | Timeline view | OCA (module) | `project_timeline` + `project_task_dependency` | Verified for 19.0 |
 | Critical path | — | Not available | Unverified; see ADR-0006 |
@@ -236,7 +236,7 @@ SEED_ROOT = "data/seed/finance_ppm/tbwa_smp"
 | Workflow | Trigger | Purpose |
 |----------|---------|---------|
 | Recurrent Alerts | Cron 9AM/5PM PHT | Due/overdue/handover Slack alerts |
-| BIR Form Generation | Weekly + Webhook | Generate .dat files via Odoo 19 PH |
+| BIR Form Generation | Weekly + Webhook | Generate .dat files via Odoo 18 PH |
 | BIR e-Filing | Webhook | eFPS/eBIRForms/eAFS packaging |
 | AI Journal Posting | Weekday 6AM + Webhook | Claude API JE validation → draft |
 
@@ -300,4 +300,4 @@ Odoo project_task_integration.py
 | Seed SSOT enforcement | `scripts/finance/validate_seed_ssot.py` | PR touching data/seed, data/archive, scripts |
 | Parity map enforcement | `scripts/policy/validate_parity_map.py` | PR touching spec, bridges, addons/ipai |
 | Finance PPM data | `scripts/validate_finance_ppm_data.py` | Existing gate |
-| Deployment test | `scripts/test_finance_ppm_odoo19.sh` | Post-deploy |
+| Deployment test | `scripts/test_finance_ppm_odoo18.sh` | Post-deploy |

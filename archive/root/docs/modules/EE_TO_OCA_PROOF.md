@@ -105,5 +105,5 @@ OCA maintains an [OCA/sign repository](https://github.com/OCA/sign) with signatu
 1. When evaluating a new EE feature for parity, **add an entry** to `ee_to_oca_proof_matrix.yaml`
 2. Every entry **must** have at least one `evidence_link`
 3. Do not claim `oca_direct` without a source explicitly stating the module is an alternative
-4. Mark `odoo19_support: unknown` when not yet verified — do not assume
+4. Mark `odoo18_support: unknown` when not yet verified — do not assume
 5. Update `summary` counts when adding/removing entries

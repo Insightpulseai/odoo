@@ -74,13 +74,13 @@
           "repo_path": "ssot/ai/odoo_ai.yaml",
           "corpus_id": "ssot_yaml",
           "score": 0.105344034731388,
-          "content_preview": "not supported in Odoo 19 Enterprise (EE ships ChatGPT + Gemini BYOK only). IPAI's llm_anthropic port"
+          "content_preview": "not supported in Odoo 18 Enterprise (EE ships ChatGPT + Gemini BYOK only). IPAI's llm_anthropic port"
         },
         {
           "repo_path": "ssot/ai/odoo_ai.yaml",
           "corpus_id": "ssot_yaml",
           "score": 0.0807673633098602,
-          "content_preview": "# schema: ssot.ai.odoo_ai.v1 # AI provider configuration for Odoo 19 CE deployment. # This file gove"
+          "content_preview": "# schema: ssot.ai.odoo_ai.v1 # AI provider configuration for Odoo 18 CE deployment. # This file gove"
         },
         {
           "repo_path": "spec/ai-copilot/constitution.md",
@@ -136,7 +136,7 @@
           "repo_path": "ssot/odoo/settings_catalog.yaml",
           "corpus_id": "ssot_yaml",
           "score": 0.111246526241302,
-          "content_preview": "# ssot/odoo/settings_catalog.yaml # # Odoo 19 CE res.config.settings field catalog \u2014 runtime-derived"
+          "content_preview": "# ssot/odoo/settings_catalog.yaml # # Odoo 18 CE res.config.settings field catalog \u2014 runtime-derived"
         },
         {
           "repo_path": "docs/ai/IPAI_MODULES.md",

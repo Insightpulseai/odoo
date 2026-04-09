@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # =============================================================================
-# OCA Fetch and Pin Script for Odoo 19
+# OCA Fetch and Pin Script for Odoo 18
 # =============================================================================
 # Fetches OCA repositories and pins them to specific commits for reproducibility.
 # Uses the canonical lockfile at vendor/oca.lock.ce19.json
@@ -28,7 +28,7 @@ BLUE='\033[0;34m'
 NC='\033[0m'
 
 echo -e "${BLUE}═══════════════════════════════════════════════════════════${NC}"
-echo -e "${BLUE}   OCA Fetch and Pin (Odoo 19)${NC}"
+echo -e "${BLUE}   OCA Fetch and Pin (Odoo 18)${NC}"
 echo -e "${BLUE}═══════════════════════════════════════════════════════════${NC}"
 
 # Check dependencies

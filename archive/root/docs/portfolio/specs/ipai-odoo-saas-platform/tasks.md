@@ -4,7 +4,7 @@
 
 - [ ] Initialize K8s cluster and namespaces.
 - [ ] Configure PostgreSQL high availability (CloudNativePG).
-- [ ] Build Odoo 19 "Golden Image" with pre-cached OCA modules.
+- [ ] Build Odoo 18 "Golden Image" with pre-cached OCA modules.
 
 ## Milestone 2: Provisioning & Portal
 

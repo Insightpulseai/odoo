@@ -1,5 +1,5 @@
 {
-    "name": "IPAI DocFlow Manual Review (Odoo 19)",
+    "name": "IPAI DocFlow Manual Review (Odoo 18)",
     "version": "19.0.1.0.0",
     "category": "Accounting",
     "summary": "Manual review queue for OCR+LLM extracted expenses and vendor bills",

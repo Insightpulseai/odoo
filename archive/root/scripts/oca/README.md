@@ -1,6 +1,6 @@
 # OCA Module Installation Guide
 
-This guide explains how to install OCA (Odoo Community Association) modules for your Odoo 19 CE instance.
+This guide explains how to install OCA (Odoo Community Association) modules for your Odoo 18 CE instance.
 
 ---
 
@@ -108,7 +108,7 @@ _(If configured)_
 The modules must exist in your `addons/` directory. Clone OCA repos:
 
 ```bash
-# Example: Clone OCA server-tools for Odoo 19
+# Example: Clone OCA server-tools for Odoo 18
 git clone -b 19.0 https://github.com/OCA/server-tools.git oca/server-tools
 
 # Clone other repos as needed
@@ -251,4 +251,4 @@ After installing OCA modules:
 
 - [OCA GitHub](https://github.com/OCA)
 - [OCA Module Index](https://odoo-community.org/)
-- [Odoo 19 Documentation](https://www.odoo.com/documentation/19.0/)
+- [Odoo 18 Documentation](https://www.odoo.com/documentation/19.0/)

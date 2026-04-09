@@ -480,7 +480,7 @@ erp.insightpulseai.com:
   ssl: full
   cache: bypass
   proxy: nginx
-  purpose: Odoo 19 CE
+  purpose: Odoo 18 CE
 
 api.insightpulseai.com:
   target: supabase-edge-functions

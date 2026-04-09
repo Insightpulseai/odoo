@@ -1,6 +1,6 @@
 """
 Index a pinned snapshot of https://github.com/odoo/documentation (branch 19.0)
-into docs/kb/odoo19/index/* JSON artifacts.
+into docs/kb/odoo18/index/* JSON artifacts.
 
 Outputs (deterministic):
   - manifest.json: list of indexed files + sha256 + bytes + mtime
@@ -9,8 +9,8 @@ Outputs (deterministic):
   - skills_coverage.json: which skills declare which topics and whether covered
 
 Requirements:
-  - docs/kb/odoo19/UPSTREAM_PIN.json must contain pinned_commit != "REPLACE_WITH_SHA"
-  - docs/kb/odoo19/upstream/ must exist
+  - docs/kb/odoo18/UPSTREAM_PIN.json must contain pinned_commit != "REPLACE_WITH_SHA"
+  - docs/kb/odoo18/upstream/ must exist
 """
 
 from __future__ import annotations
@@ -32,7 +32,7 @@ except Exception:
 
 
 ROOT = Path(__file__).resolve().parents[2]
-KB_ROOT_DEFAULT = ROOT / "docs" / "kb" / "odoo19"
+KB_ROOT_DEFAULT = ROOT / "docs" / "kb" / "odoo18"
 INDEX_DIR_NAME = "index"
 UPSTREAM_DIR_NAME = "upstream"
 
@@ -143,7 +143,7 @@ def _validate_pin(pin: Dict[str, Any]) -> None:
     if not pinned_commit or pinned_commit == "REPLACE_WITH_SHA":
         raise SystemExit(
             "UPSTREAM_PIN.json pinned_commit is not set. "
-            "Set it to the commit SHA you vendored under docs/kb/odoo19/upstream/."
+            "Set it to the commit SHA you vendored under docs/kb/odoo18/upstream/."
         )
 
 
@@ -276,7 +276,7 @@ def build_skills_coverage(
     args = ap.parse_args()
 
     kb_root = Path(args.kb_root).resolve()
-    repo_root = kb_root.parents[2]  # ../../.. from docs/kb/odoo19
+    repo_root = kb_root.parents[2]  # ../../.. from docs/kb/odoo18
 
     # Layers
     upstream_dir = kb_root / "upstream"
@@ -323,8 +323,8 @@ def build_skills_coverage(
         for p in files:
             rel = p.relative_to(root)
             # Upstream has `content/` prefix usually?
-            # Step 1297 find output was `docs/kb/odoo19/upstream/content/last_build.rst`
-            # So upstream root is `docs/kb/odoo19/upstream`?
+            # Step 1297 find output was `docs/kb/odoo18/upstream/content/last_build.rst`
+            # So upstream root is `docs/kb/odoo18/upstream`?
             # If so, rel path is `content/foo/bar.rst`.
             # User wants standard slug.
             # If overrides mimic this, they should be `content/foo/bar.md`?
@@ -414,7 +414,7 @@ def build_skills_coverage(
             slug = rel.with_suffix("").as_posix()
             if layer == "upstream" and slug.startswith("content/"):
                 slug = slug[len("content/") :]
-            canonical_id = f"kb://odoo19/{slug}"
+            canonical_id = f"kb://odoo18/{slug}"
 
             full_manifest_entries.append(
                 {
@@ -747,7 +747,7 @@ def main() -> None:
             slug = rel.with_suffix("").as_posix()
             if layer == "upstream" and slug.startswith("content/"):
                 slug = slug[len("content/") :]
-            canonical_id = f"kb://odoo19/{slug}"
+            canonical_id = f"kb://odoo18/{slug}"
 
             entries.append(
                 {
@@ -806,7 +806,7 @@ def main() -> None:
                 s = str(Path(r).with_suffix(""))
                 if l == "upstream" and s.startswith("content/"):
                     s = s[len("content/") :]
-                item["canonical_id"] = f"kb://odoo19/{s}"
+                item["canonical_id"] = f"kb://odoo18/{s}"
 
     # Coverage
     skills_coverage = build_skills_coverage(repo_root, kb_root, topics)

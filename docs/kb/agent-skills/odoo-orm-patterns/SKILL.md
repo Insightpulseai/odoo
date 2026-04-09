@@ -1,6 +1,6 @@
 ---
 name: odoo_orm_patterns
-description: Odoo 19 ORM operations, recordsets, domains, and compute patterns
+description: Odoo 18 ORM operations, recordsets, domains, and compute patterns
 category: backend
 priority: critical
 version: "1.0"

@@ -32,7 +32,7 @@
 - [ ] Data files listed third
 - [ ] View files listed last
 
-## Odoo 19 compatibility
+## Odoo 18 compatibility
 - [ ] No `tree` view type (must be `list`)
 - [ ] No `<tree>` tags (must be `<list>`)
 - [ ] No XML IDs using `_tree` pattern (must be `_list`)

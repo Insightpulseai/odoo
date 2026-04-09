@@ -73,7 +73,7 @@ adls-ipai-dev/
 
 ---
 
-## Odoo Integration Surfaces (from Odoo 19 Developer Reference)
+## Odoo Integration Surfaces (from Odoo 18 Developer Reference)
 
 | Surface | Use in ETL | Use in Reverse ETL |
 |---------|-----------|-------------------|

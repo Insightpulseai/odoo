@@ -1,6 +1,6 @@
 # Odoo Settings Reference
 
-> Comprehensive guide to Odoo 19 CE settings, configuration, and access methods.
+> Comprehensive guide to Odoo 18 CE settings, configuration, and access methods.
 > Last updated: 2026-02-09
 
 ## Overview
@@ -13,7 +13,7 @@ The Odoo settings page is the central hub for system configuration, covering eve
 
 ---
 
-## Settings Sections (Odoo 19 CE)
+## Settings Sections (Odoo 18 CE)
 
 ### General Settings
 
@@ -233,7 +233,7 @@ Configure API access for external systems:
 - Endpoint: `/xmlrpc/2/` (XML-RPC), `/jsonrpc` (JSON-RPC)
 - Authentication: Database, username, password
 - Session management
-- API keys (Odoo 19+)
+- API keys (Odoo 18+)
 
 **RESTful API (via modules):**
 - Third-party modules for REST API

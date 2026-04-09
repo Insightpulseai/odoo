@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Validate Addons Manifest — Odoo 19.0 CE
+Validate Addons Manifest — Odoo 18.0 CE
 
 Validates config/addons.manifest.yaml against the actual repo state:
   1. Manifest ↔ oca-aggregate.yml sync (repos must match)

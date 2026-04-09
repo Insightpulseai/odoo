@@ -58,7 +58,7 @@ Slack/n8n notifications
 
 ## 3. Odoo Integration Surfaces
 
-The Odoo 19 developer reference defines 7 integration mechanisms:
+The Odoo 18 developer reference defines 7 integration mechanisms:
 
 | Surface | ETL Role | Reverse ETL Role |
 |---------|----------|-----------------|

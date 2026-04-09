@@ -86,14 +86,14 @@
 
 ### 1.4 XML View Tag Migration (`<tree>` → `<list>`)
 
-Odoo 17+ renamed the `<tree>` XML tag to `<list>`. While Odoo 18 supports both for backward compatibility, Odoo 19 may break.
+Odoo 17+ renamed the `<tree>` XML tag to `<list>`. While Odoo 18 supports both for backward compatibility, Odoo 18 may break.
 
 | Version | `<tree>` | `<list>` |
 |---------|----------|----------|
 | Odoo 16 | ✅ | ❌ |
 | Odoo 17 | ⚠️ deprecated | ✅ |
 | Odoo 18 | ⚠️ warnings | ✅ |
-| Odoo 19 | ❌ may break | ✅ |
+| Odoo 18 | ❌ may break | ✅ |
 
 - [ ] Audit custom modules for deprecated `<tree>` tags:
 

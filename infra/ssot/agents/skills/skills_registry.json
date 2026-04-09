@@ -82,7 +82,7 @@
     },
     {
       "path": "agents/skills/generate-odoo-skill-from-kb/SKILL.md",
-      "name": "SKILL: Generate Procedural Skill From Odoo19 KB",
+      "name": "SKILL: Generate Procedural Skill From Odoo18 KB",
       "type": "skill_md",
       "sha256_prefix": "23289518ef8a25cc",
       "lines": 165
@@ -117,7 +117,7 @@
     },
     {
       "path": "agents/skills/odoo-fullstack-ai-dev/SKILL.md",
-      "name": "Odoo 19 Full Stack AI-First Developer Skill",
+      "name": "Odoo 18 Full Stack AI-First Developer Skill",
       "type": "skill_md",
       "sha256_prefix": "cb05c6113752c355",
       "lines": 199
@@ -130,8 +130,8 @@
       "lines": 349
     },
     {
-      "path": "agents/skills/refresh-odoo19-kb/SKILL.md",
-      "name": "SKILL: Refresh Odoo 19 Knowledge Base (Vendored, Pinned, Indexed)",
+      "path": "agents/skills/refresh-odoo18-kb/SKILL.md",
+      "name": "SKILL: Refresh Odoo 18 Knowledge Base (Vendored, Pinned, Indexed)",
       "type": "skill_md",
       "sha256_prefix": "2f5370cd906e6a1e",
       "lines": 253
@@ -152,7 +152,7 @@
     },
     {
       "path": "agents/skills/validate-odoo-module-against-kb/SKILL.md",
-      "name": "SKILL: Validate Odoo Module Against Odoo19 KB",
+      "name": "SKILL: Validate Odoo Module Against Odoo18 KB",
       "type": "skill_md",
       "sha256_prefix": "61648dbdc304798a",
       "lines": 173
@@ -214,659 +214,659 @@
       "lines": 222
     },
     {
-      "path": "skills/odoo/odoo19-actions/SKILL.md",
-      "name": "Odoo 19 Actions",
+      "path": "skills/odoo/odoo18-actions/SKILL.md",
+      "name": "Odoo 18 Actions",
       "type": "skill_md",
       "sha256_prefix": "c5bd3678e344b613",
       "lines": 861
     },
     {
-      "path": "skills/odoo/odoo19-assets/SKILL.md",
-      "name": "Odoo 19 Assets",
+      "path": "skills/odoo/odoo18-assets/SKILL.md",
+      "name": "Odoo 18 Assets",
       "type": "skill_md",
       "sha256_prefix": "cd83efcb1e9fde2b",
       "lines": 594
     },
     {
-      "path": "skills/odoo/odoo19-cli/SKILL.md",
-      "name": "Odoo 19 CLI Reference",
+      "path": "skills/odoo/odoo18-cli/SKILL.md",
+      "name": "Odoo 18 CLI Reference",
       "type": "skill_md",
       "sha256_prefix": "d02c5ce9354bce1c",
       "lines": 845
     },
     {
-      "path": "skills/odoo/odoo19-coding-guidelines/SKILL.md",
-      "name": "Odoo 19 Coding Guidelines",
+      "path": "skills/odoo/odoo18-coding-guidelines/SKILL.md",
+      "name": "Odoo 18 Coding Guidelines",
       "type": "skill_md",
       "sha256_prefix": "84b8faa3b2fe47a3",
       "lines": 1095
     },
     {
-      "path": "skills/odoo/odoo19-data-files/SKILL.md",
-      "name": "Odoo 19 Data Files",
+      "path": "skills/odoo/odoo18-data-files/SKILL.md",
+      "name": "Odoo 18 Data Files",
       "type": "skill_md",
       "sha256_prefix": "bd17a14a3c3dcbde",
       "lines": 950
     },
     {
-      "path": "skills/odoo/odoo19-external-api/SKILL.md",
-      "name": "Odoo 19 External JSON-2 API",
+      "path": "skills/odoo/odoo18-external-api/SKILL.md",
+      "name": "Odoo 18 External JSON-2 API",
       "type": "skill_md",
       "sha256_prefix": "f88ed4263e4f1484",
       "lines": 670
     },
     {
-      "path": "skills/odoo/odoo19-frontend/SKILL.md",
-      "name": "Odoo 19 Frontend Framework",
+      "path": "skills/odoo/odoo18-frontend/SKILL.md",
+      "name": "Odoo 18 Frontend Framework",
       "type": "skill_md",
       "sha256_prefix": "27448a561f4c5950",
       "lines": 1265
     },
     {
-      "path": "skills/odoo/odoo19-git-guidelines/SKILL.md",
-      "name": "Odoo 19 Git Guidelines",
+      "path": "skills/odoo/odoo18-git-guidelines/SKILL.md",
+      "name": "Odoo 18 Git Guidelines",
       "type": "skill_md",
       "sha256_prefix": "62c9acb789803a0c",
       "lines": 621
     },
     {
-      "path": "skills/odoo/odoo19-http-controllers/SKILL.md",
-      "name": "Odoo 19 HTTP Controllers",
+      "path": "skills/odoo/odoo18-http-controllers/SKILL.md",
+      "name": "Odoo 18 HTTP Controllers",
       "type": "skill_md",
       "sha256_prefix": "f07fb4962067af18",
       "lines": 605
     },
     {
-      "path": "skills/odoo/odoo19-mixins/SKILL.md",
-      "name": "Odoo 19 Mixins and Useful Classes",
+      "path": "skills/odoo/odoo18-mixins/SKILL.md",
+      "name": "Odoo 18 Mixins and Useful Classes",
       "type": "skill_md",
       "sha256_prefix": "10f92c1f6e34677c",
       "lines": 1061
     },
     {
-      "path": "skills/odoo/odoo19-module/SKILL.md",
-      "name": "Odoo 19 Module Manifests",
+      "path": "skills/odoo/odoo18-module/SKILL.md",
+      "name": "Odoo 18 Module Manifests",
       "type": "skill_md",
       "sha256_prefix": "240938e1f290f886",
       "lines": 673
     },
     {
-      "path": "skills/odoo/odoo19-orm/SKILL.md",
-      "name": "Odoo 19 ORM API",
+      "path": "skills/odoo/odoo18-orm/SKILL.md",
+      "name": "Odoo 18 ORM API",
       "type": "skill_md",
       "sha256_prefix": "e9a59bf2d3b9f3fb",
       "lines": 1259
     },
     {
-      "path": "skills/odoo/odoo19-owl-components/SKILL.md",
-      "name": "Odoo 19 OWL Components",
+      "path": "skills/odoo/odoo18-owl-components/SKILL.md",
+      "name": "Odoo 18 OWL Components",
       "type": "skill_md",
       "sha256_prefix": "0948dcc590f80f17",
       "lines": 918
     },
     {
-      "path": "skills/odoo/odoo19-performance/SKILL.md",
-      "name": "Odoo 19 Performance",
+      "path": "skills/odoo/odoo18-performance/SKILL.md",
+      "name": "Odoo 18 Performance",
       "type": "skill_md",
       "sha256_prefix": "4b2650492da17f28",
       "lines": 517
     },
     {
-      "path": "skills/odoo/odoo19-qweb/SKILL.md",
-      "name": "Odoo 19 QWeb Templates",
+      "path": "skills/odoo/odoo18-qweb/SKILL.md",
+      "name": "Odoo 18 QWeb Templates",
       "type": "skill_md",
       "sha256_prefix": "e3878c823bd31ace",
       "lines": 897
     },
     {
-      "path": "skills/odoo/odoo19-reports/SKILL.md",
-      "name": "Odoo 19 QWeb Reports",
+      "path": "skills/odoo/odoo18-reports/SKILL.md",
+      "name": "Odoo 18 QWeb Reports",
       "type": "skill_md",
       "sha256_prefix": "6ec08ec45678e083",
       "lines": 710
     },
     {
-      "path": "skills/odoo/odoo19-security/SKILL.md",
-      "name": "Odoo 19 Security",
+      "path": "skills/odoo/odoo18-security/SKILL.md",
+      "name": "Odoo 18 Security",
       "type": "skill_md",
       "sha256_prefix": "14e7320ed2659ed7",
       "lines": 799
     },
     {
-      "path": "skills/odoo/odoo19-testing/SKILL.md",
-      "name": "Odoo 19 Testing",
+      "path": "skills/odoo/odoo18-testing/SKILL.md",
+      "name": "Odoo 18 Testing",
       "type": "skill_md",
       "sha256_prefix": "ae9f52b697b512fd",
       "lines": 1363
     },
     {
-      "path": "skills/odoo/odoo19-upgrade/SKILL.md",
-      "name": "Odoo 19 Upgrade Scripts & Utils",
+      "path": "skills/odoo/odoo18-upgrade/SKILL.md",
+      "name": "Odoo 18 Upgrade Scripts & Utils",
       "type": "skill_md",
       "sha256_prefix": "ab3defbdd83dec8a",
       "lines": 776
     },
     {
-      "path": "skills/odoo19/accounting/SKILL.md",
-      "name": "accounting \u2014 Odoo 19.0 Skill Reference",
+      "path": "skills/odoo18/accounting/SKILL.md",
+      "name": "accounting \u2014 Odoo 18.0 Skill Reference",
       "type": "skill_md",
       "sha256_prefix": "24f0b6cc2b285179",
       "lines": 161
     },
     {
-      "path": "skills/odoo19/activities/SKILL.md",
-      "name": "activities \u2014 Odoo 19.0 Skill Reference",
+      "path": "skills/odoo18/activities/SKILL.md",
+      "name": "activities \u2014 Odoo 18.0 Skill Reference",
       "type": "skill_md",
       "sha256_prefix": "a9284cb87ee2b81d",
       "lines": 129
     },
     {
-      "path": "skills/odoo19/administration/SKILL.md",
-      "name": "Administration -- Odoo 19.0 Skill Reference",
+      "path": "skills/odoo18/administration/SKILL.md",
+      "name": "Administration -- Odoo 18.0 Skill Reference",
       "type": "skill_md",
       "sha256_prefix": "07b56244fb28a811",
       "lines": 307
     },
     {
-      "path": "skills/odoo19/ai/SKILL.md",
-      "name": "ai -- Odoo 19.0 Skill Reference",
+      "path": "skills/odoo18/ai/SKILL.md",
+      "name": "ai -- Odoo 18.0 Skill Reference",
       "type": "skill_md",
       "sha256_prefix": "f6c5350dfb962630",
       "lines": 97
     },
     {
-      "path": "skills/odoo19/appointments/SKILL.md",
-      "name": "appointments -- Odoo 19.0 Skill Reference",
+      "path": "skills/odoo18/appointments/SKILL.md",
+      "name": "appointments -- Odoo 18.0 Skill Reference",
       "type": "skill_md",
       "sha256_prefix": "0e0d638a9638d512",
       "lines": 92
     },
     {
-      "path": "skills/odoo19/appraisals/SKILL.md",
-      "name": "Appraisals \u2014 Odoo 19.0 Skill Reference",
+      "path": "skills/odoo18/appraisals/SKILL.md",
+      "name": "Appraisals \u2014 Odoo 18.0 Skill Reference",
       "type": "skill_md",
       "sha256_prefix": "ef014619987a470a",
       "lines": 115
     },
     {
-      "path": "skills/odoo19/apps_modules/SKILL.md",
-      "name": "apps_modules \u2014 Odoo 19.0 Skill Reference",
+      "path": "skills/odoo18/apps_modules/SKILL.md",
+      "name": "apps_modules \u2014 Odoo 18.0 Skill Reference",
       "type": "skill_md",
       "sha256_prefix": "6cf1c10da7bde5ad",
       "lines": 89
     },
     {
-      "path": "skills/odoo19/attendances/SKILL.md",
-      "name": "Attendances \u2014 Odoo 19.0 Skill Reference",
+      "path": "skills/odoo18/attendances/SKILL.md",
+      "name": "Attendances \u2014 Odoo 18.0 Skill Reference",
       "type": "skill_md",
       "sha256_prefix": "714b721a9e834910",
       "lines": 110
     },
     {
-      "path": "skills/odoo19/barcode/SKILL.md",
-      "name": "Barcode \u2014 Odoo 19.0 Skill Reference",
+      "path": "skills/odoo18/barcode/SKILL.md",
+      "name": "Barcode \u2014 Odoo 18.0 Skill Reference",
       "type": "skill_md",
       "sha256_prefix": "76a7c092e7590471",
       "lines": 140
     },
     {
-      "path": "skills/odoo19/blog/SKILL.md",
-      "name": "blog -- Odoo 19.0 Skill Reference",
+      "path": "skills/odoo18/blog/SKILL.md",
+      "name": "blog -- Odoo 18.0 Skill Reference",
       "type": "skill_md",
       "sha256_prefix": "5a7a852b21beb058",
       "lines": 138
     },
     {
-      "path": "skills/odoo19/calendar/SKILL.md",
-      "name": "calendar -- Odoo 19.0 Skill Reference",
+      "path": "skills/odoo18/calendar/SKILL.md",
+      "name": "calendar -- Odoo 18.0 Skill Reference",
       "type": "skill_md",
       "sha256_prefix": "7297944aafdd480a",
       "lines": 78
     },
     {
-      "path": "skills/odoo19/companies/SKILL.md",
-      "name": "companies \u2014 Odoo 19.0 Skill Reference",
+      "path": "skills/odoo18/companies/SKILL.md",
+      "name": "companies \u2014 Odoo 18.0 Skill Reference",
       "type": "skill_md",
       "sha256_prefix": "958b5d4b87e60919",
       "lines": 113
     },
     {
-      "path": "skills/odoo19/contacts/SKILL.md",
-      "name": "contacts \u2014 Odoo 19.0 Skill Reference",
+      "path": "skills/odoo18/contacts/SKILL.md",
+      "name": "contacts \u2014 Odoo 18.0 Skill Reference",
       "type": "skill_md",
       "sha256_prefix": "6089d6441fc21543",
       "lines": 122
     },
     {
-      "path": "skills/odoo19/crm/SKILL.md",
-      "name": "crm -- Odoo 19.0 Skill Reference",
+      "path": "skills/odoo18/crm/SKILL.md",
+      "name": "crm -- Odoo 18.0 Skill Reference",
       "type": "skill_md",
       "sha256_prefix": "f7614076a2d0244a",
       "lines": 149
     },
     {
-      "path": "skills/odoo19/dashboards/SKILL.md",
-      "name": "dashboards -- Odoo 19.0 Skill Reference",
+      "path": "skills/odoo18/dashboards/SKILL.md",
+      "name": "dashboards -- Odoo 18.0 Skill Reference",
       "type": "skill_md",
       "sha256_prefix": "61865be2b20198bf",
       "lines": 98
     },
     {
-      "path": "skills/odoo19/data_cleaning/SKILL.md",
-      "name": "data_cleaning -- Odoo 19.0 Skill Reference",
+      "path": "skills/odoo18/data_cleaning/SKILL.md",
+      "name": "data_cleaning -- Odoo 18.0 Skill Reference",
       "type": "skill_md",
       "sha256_prefix": "487e6a2c7ba1fe66",
       "lines": 105
     },
     {
-      "path": "skills/odoo19/developer_mode/SKILL.md",
-      "name": "developer_mode \u2014 Odoo 19.0 Skill Reference",
+      "path": "skills/odoo18/developer_mode/SKILL.md",
+      "name": "developer_mode \u2014 Odoo 18.0 Skill Reference",
       "type": "skill_md",
       "sha256_prefix": "9818ae45541e9c1d",
       "lines": 96
     },
     {
-      "path": "skills/odoo19/discuss/SKILL.md",
-      "name": "discuss -- Odoo 19.0 Skill Reference",
+      "path": "skills/odoo18/discuss/SKILL.md",
+      "name": "discuss -- Odoo 18.0 Skill Reference",
       "type": "skill_md",
       "sha256_prefix": "efdea09639573d6c",
       "lines": 96
     },
     {
-      "path": "skills/odoo19/documents/SKILL.md",
-      "name": "documents -- Odoo 19.0 Skill Reference",
+      "path": "skills/odoo18/documents/SKILL.md",
+      "name": "documents -- Odoo 18.0 Skill Reference",
       "type": "skill_md",
       "sha256_prefix": "6e1d6edc51348818",
       "lines": 98
     },
     {
-      "path": "skills/odoo19/ecommerce/SKILL.md",
-      "name": "ecommerce -- Odoo 19.0 Skill Reference",
+      "path": "skills/odoo18/ecommerce/SKILL.md",
+      "name": "ecommerce -- Odoo 18.0 Skill Reference",
       "type": "skill_md",
       "sha256_prefix": "3def12ff8f76ea30",
       "lines": 171
     },
     {
-      "path": "skills/odoo19/elearning/SKILL.md",
-      "name": "elearning -- Odoo 19.0 Skill Reference",
+      "path": "skills/odoo18/elearning/SKILL.md",
+      "name": "elearning -- Odoo 18.0 Skill Reference",
       "type": "skill_md",
       "sha256_prefix": "e11e5db822efabb7",
       "lines": 142
     },
     {
-      "path": "skills/odoo19/email_communication/SKILL.md",
-      "name": "email_communication \u2014 Odoo 19.0 Skill Reference",
+      "path": "skills/odoo18/email_communication/SKILL.md",
+      "name": "email_communication \u2014 Odoo 18.0 Skill Reference",
       "type": "skill_md",
       "sha256_prefix": "c2f68f9b4b497a5a",
       "lines": 118
     },
     {
-      "path": "skills/odoo19/email_marketing/SKILL.md",
-      "name": "email_marketing \u2014 Odoo 19.0 Skill Reference",
+      "path": "skills/odoo18/email_marketing/SKILL.md",
+      "name": "email_marketing \u2014 Odoo 18.0 Skill Reference",
       "type": "skill_md",
       "sha256_prefix": "ff6f4089a536f508",
       "lines": 138
     },
     {
-      "path": "skills/odoo19/employees/SKILL.md",
-      "name": "Employees \u2014 Odoo 19.0 Skill Reference",
+      "path": "skills/odoo18/employees/SKILL.md",
+      "name": "Employees \u2014 Odoo 18.0 Skill Reference",
       "type": "skill_md",
       "sha256_prefix": "b390da5112de71ce",
       "lines": 123
     },
     {
-      "path": "skills/odoo19/esg/SKILL.md",
-      "name": "esg \u2014 Odoo 19.0 Skill Reference",
+      "path": "skills/odoo18/esg/SKILL.md",
+      "name": "esg \u2014 Odoo 18.0 Skill Reference",
       "type": "skill_md",
       "sha256_prefix": "4167e7e5f5642938",
       "lines": 125
     },
     {
-      "path": "skills/odoo19/events/SKILL.md",
-      "name": "events \u2014 Odoo 19.0 Skill Reference",
+      "path": "skills/odoo18/events/SKILL.md",
+      "name": "events \u2014 Odoo 18.0 Skill Reference",
       "type": "skill_md",
       "sha256_prefix": "ae167bc9b54bada6",
       "lines": 146
     },
     {
-      "path": "skills/odoo19/expenses/SKILL.md",
-      "name": "expenses \u2014 Odoo 19.0 Skill Reference",
+      "path": "skills/odoo18/expenses/SKILL.md",
+      "name": "expenses \u2014 Odoo 18.0 Skill Reference",
       "type": "skill_md",
       "sha256_prefix": "f0f3e34d135eb08f",
       "lines": 136
     },
     {
-      "path": "skills/odoo19/export_import_data/SKILL.md",
-      "name": "export_import_data \u2014 Odoo 19.0 Skill Reference",
+      "path": "skills/odoo18/export_import_data/SKILL.md",
+      "name": "export_import_data \u2014 Odoo 18.0 Skill Reference",
       "type": "skill_md",
       "sha256_prefix": "6fe34c98f1f66a62",
       "lines": 127
     },
     {
-      "path": "skills/odoo19/field_service/SKILL.md",
-      "name": "field_service -- Odoo 19.0 Skill Reference",
+      "path": "skills/odoo18/field_service/SKILL.md",
+      "name": "field_service -- Odoo 18.0 Skill Reference",
       "type": "skill_md",
       "sha256_prefix": "4b11faadc8e54d39",
       "lines": 170
     },
     {
-      "path": "skills/odoo19/fiscal_localizations/SKILL.md",
-      "name": "fiscal_localizations \u2014 Odoo 19.0 Skill Reference",
+      "path": "skills/odoo18/fiscal_localizations/SKILL.md",
+      "name": "fiscal_localizations \u2014 Odoo 18.0 Skill Reference",
       "type": "skill_md",
       "sha256_prefix": "ec9b381572b07869",
       "lines": 97
     },
     {
-      "path": "skills/odoo19/fleet/SKILL.md",
-      "name": "Fleet \u2014 Odoo 19.0 Skill Reference",
+      "path": "skills/odoo18/fleet/SKILL.md",
+      "name": "Fleet \u2014 Odoo 18.0 Skill Reference",
       "type": "skill_md",
       "sha256_prefix": "e2216fb844380e2c",
       "lines": 123
     },
     {
-      "path": "skills/odoo19/forum/SKILL.md",
-      "name": "forum -- Odoo 19.0 Skill Reference",
+      "path": "skills/odoo18/forum/SKILL.md",
+      "name": "forum -- Odoo 18.0 Skill Reference",
       "type": "skill_md",
       "sha256_prefix": "e622a9ae7662445a",
       "lines": 159
     },
     {
-      "path": "skills/odoo19/frontdesk/SKILL.md",
-      "name": "Frontdesk \u2014 Odoo 19.0 Skill Reference",
+      "path": "skills/odoo18/frontdesk/SKILL.md",
+      "name": "Frontdesk \u2014 Odoo 18.0 Skill Reference",
       "type": "skill_md",
       "sha256_prefix": "7ae56d22bb6d9e33",
       "lines": 118
     },
     {
-      "path": "skills/odoo19/helpdesk/SKILL.md",
-      "name": "helpdesk -- Odoo 19.0 Skill Reference",
+      "path": "skills/odoo18/helpdesk/SKILL.md",
+      "name": "helpdesk -- Odoo 18.0 Skill Reference",
       "type": "skill_md",
       "sha256_prefix": "0eddcb2fc27f88cc",
       "lines": 168
     },
     {
-      "path": "skills/odoo19/html_editor/SKILL.md",
-      "name": "html_editor \u2014 Odoo 19.0 Skill Reference",
+      "path": "skills/odoo18/html_editor/SKILL.md",
+      "name": "html_editor \u2014 Odoo 18.0 Skill Reference",
       "type": "skill_md",
       "sha256_prefix": "6418517400dd397d",
       "lines": 110
     },
     {
-      "path": "skills/odoo19/in_app_purchase/SKILL.md",
-      "name": "in_app_purchase \u2014 Odoo 19.0 Skill Reference",
+      "path": "skills/odoo18/in_app_purchase/SKILL.md",
+      "name": "in_app_purchase \u2014 Odoo 18.0 Skill Reference",
       "type": "skill_md",
       "sha256_prefix": "16fefd6614abb745",
       "lines": 110
     },
     {
-      "path": "skills/odoo19/integrations/SKILL.md",
-      "name": "integrations \u2014 Odoo 19.0 Skill Reference",
+      "path": "skills/odoo18/integrations/SKILL.md",
+      "name": "integrations \u2014 Odoo 18.0 Skill Reference",
       "type": "skill_md",
       "sha256_prefix": "30ec42d8ca53089c",
       "lines": 112
     },
     {
-      "path": "skills/odoo19/inventory/SKILL.md",
-      "name": "Inventory \u2014 Odoo 19.0 Skill Reference",
+      "path": "skills/odoo18/inventory/SKILL.md",
+      "name": "Inventory \u2014 Odoo 18.0 Skill Reference",
       "type": "skill_md",
       "sha256_prefix": "c9bcaa828593f726",
       "lines": 186
     },
     {
-      "path": "skills/odoo19/iot/SKILL.md",
-      "name": "iot \u2014 Odoo 19.0 Skill Reference",
+      "path": "skills/odoo18/iot/SKILL.md",
+      "name": "iot \u2014 Odoo 18.0 Skill Reference",
       "type": "skill_md",
       "sha256_prefix": "d83fff21825ce736",
       "lines": 95
     },
     {
-      "path": "skills/odoo19/keyboard_shortcuts/SKILL.md",
-      "name": "keyboard_shortcuts \u2014 Odoo 19.0 Skill Reference",
+      "path": "skills/odoo18/keyboard_shortcuts/SKILL.md",
+      "name": "keyboard_shortcuts \u2014 Odoo 18.0 Skill Reference",
       "type": "skill_md",
       "sha256_prefix": "c1ad14ce486f3aec",
       "lines": 83
     },
     {
-      "path": "skills/odoo19/livechat/SKILL.md",
-      "name": "livechat -- Odoo 19.0 Skill Reference",
+      "path": "skills/odoo18/livechat/SKILL.md",
+      "name": "livechat -- Odoo 18.0 Skill Reference",
       "type": "skill_md",
       "sha256_prefix": "492166bf55ee0aa8",
       "lines": 156
     },
     {
-      "path": "skills/odoo19/lunch/SKILL.md",
-      "name": "Lunch \u2014 Odoo 19.0 Skill Reference",
+      "path": "skills/odoo18/lunch/SKILL.md",
+      "name": "Lunch \u2014 Odoo 18.0 Skill Reference",
       "type": "skill_md",
       "sha256_prefix": "77aad0a743624e1c",
       "lines": 130
     },
     {
-      "path": "skills/odoo19/maintenance/SKILL.md",
-      "name": "Maintenance \u2014 Odoo 19.0 Skill Reference",
+      "path": "skills/odoo18/maintenance/SKILL.md",
+      "name": "Maintenance \u2014 Odoo 18.0 Skill Reference",
       "type": "skill_md",
       "sha256_prefix": "5f2428a18101a558",
       "lines": 150
     },
     {
-      "path": "skills/odoo19/manufacturing/SKILL.md",
-      "name": "Manufacturing \u2014 Odoo 19.0 Skill Reference",
+      "path": "skills/odoo18/manufacturing/SKILL.md",
+      "name": "Manufacturing \u2014 Odoo 18.0 Skill Reference",
       "type": "skill_md",
       "sha256_prefix": "fcca76eb0dc7d0ff",
       "lines": 159
     },
     {
-      "path": "skills/odoo19/marketing_automation/SKILL.md",
-      "name": "marketing_automation \u2014 Odoo 19.0 Skill Reference",
+      "path": "skills/odoo18/marketing_automation/SKILL.md",
+      "name": "marketing_automation \u2014 Odoo 18.0 Skill Reference",
       "type": "skill_md",
       "sha256_prefix": "0c3383263bece9ae",
       "lines": 152
     },
     {
-      "path": "skills/odoo19/payment_providers/SKILL.md",
-      "name": "payment_providers \u2014 Odoo 19.0 Skill Reference",
+      "path": "skills/odoo18/payment_providers/SKILL.md",
+      "name": "payment_providers \u2014 Odoo 18.0 Skill Reference",
       "type": "skill_md",
       "sha256_prefix": "bad8927dbb69c40f",
       "lines": 157
     },
     {
-      "path": "skills/odoo19/payroll/SKILL.md",
-      "name": "Payroll \u2014 Odoo 19.0 Skill Reference",
+      "path": "skills/odoo18/payroll/SKILL.md",
+      "name": "Payroll \u2014 Odoo 18.0 Skill Reference",
       "type": "skill_md",
       "sha256_prefix": "f875d3b84f3ff252",
       "lines": 137
     },
     {
-      "path": "skills/odoo19/planning/SKILL.md",
-      "name": "planning -- Odoo 19.0 Skill Reference",
+      "path": "skills/odoo18/planning/SKILL.md",
+      "name": "planning -- Odoo 18.0 Skill Reference",
       "type": "skill_md",
       "sha256_prefix": "fc93b12a4fa4a050",
       "lines": 160
     },
     {
-      "path": "skills/odoo19/plm/SKILL.md",
-      "name": "PLM \u2014 Odoo 19.0 Skill Reference",
+      "path": "skills/odoo18/plm/SKILL.md",
+      "name": "PLM \u2014 Odoo 18.0 Skill Reference",
       "type": "skill_md",
       "sha256_prefix": "88ee91a520c9b2a4",
       "lines": 124
     },
     {
-      "path": "skills/odoo19/point_of_sale/SKILL.md",
-      "name": "point_of_sale -- Odoo 19.0 Skill Reference",
+      "path": "skills/odoo18/point_of_sale/SKILL.md",
+      "name": "point_of_sale -- Odoo 18.0 Skill Reference",
       "type": "skill_md",
       "sha256_prefix": "13095844e7230f2b",
       "lines": 150
     },
     {
-      "path": "skills/odoo19/project/SKILL.md",
-      "name": "project -- Odoo 19.0 Skill Reference",
+      "path": "skills/odoo18/project/SKILL.md",
+      "name": "project -- Odoo 18.0 Skill Reference",
       "type": "skill_md",
       "sha256_prefix": "bab25bd2fa145eb9",
       "lines": 177
     },
     {
-      "path": "skills/odoo19/purchase/SKILL.md",
-      "name": "Purchase \u2014 Odoo 19.0 Skill Reference",
+      "path": "skills/odoo18/purchase/SKILL.md",
+      "name": "Purchase \u2014 Odoo 18.0 Skill Reference",
       "type": "skill_md",
       "sha256_prefix": "7678c0ef074698cc",
       "lines": 146
     },
     {
-      "path": "skills/odoo19/quality/SKILL.md",
-      "name": "Quality \u2014 Odoo 19.0 Skill Reference",
+      "path": "skills/odoo18/quality/SKILL.md",
+      "name": "Quality \u2014 Odoo 18.0 Skill Reference",
       "type": "skill_md",
       "sha256_prefix": "139c39e2dca2a19b",
       "lines": 130
     },
     {
-      "path": "skills/odoo19/recruitment/SKILL.md",
-      "name": "Recruitment \u2014 Odoo 19.0 Skill Reference",
+      "path": "skills/odoo18/recruitment/SKILL.md",
+      "name": "Recruitment \u2014 Odoo 18.0 Skill Reference",
       "type": "skill_md",
       "sha256_prefix": "1658fcc01f4db9ae",
       "lines": 111
     },
     {
-      "path": "skills/odoo19/referrals/SKILL.md",
-      "name": "Referrals \u2014 Odoo 19.0 Skill Reference",
+      "path": "skills/odoo18/referrals/SKILL.md",
+      "name": "Referrals \u2014 Odoo 18.0 Skill Reference",
       "type": "skill_md",
       "sha256_prefix": "485930d59932bee3",
       "lines": 134
     },
     {
-      "path": "skills/odoo19/rental/SKILL.md",
-      "name": "rental -- Odoo 19.0 Skill Reference",
+      "path": "skills/odoo18/rental/SKILL.md",
+      "name": "rental -- Odoo 18.0 Skill Reference",
       "type": "skill_md",
       "sha256_prefix": "b2349af2d3a5fa98",
       "lines": 142
     },
     {
-      "path": "skills/odoo19/repairs/SKILL.md",
-      "name": "Repairs \u2014 Odoo 19.0 Skill Reference",
+      "path": "skills/odoo18/repairs/SKILL.md",
+      "name": "Repairs \u2014 Odoo 18.0 Skill Reference",
       "type": "skill_md",
       "sha256_prefix": "0616b709df44a18a",
       "lines": 127
     },
     {
-      "path": "skills/odoo19/reporting/SKILL.md",
-      "name": "reporting \u2014 Odoo 19.0 Skill Reference",
+      "path": "skills/odoo18/reporting/SKILL.md",
+      "name": "reporting \u2014 Odoo 18.0 Skill Reference",
       "type": "skill_md",
       "sha256_prefix": "d54e28ce244a8c67",
       "lines": 104
     },
     {
-      "path": "skills/odoo19/sales/SKILL.md",
-      "name": "sales -- Odoo 19.0 Skill Reference",
+      "path": "skills/odoo18/sales/SKILL.md",
+      "name": "sales -- Odoo 18.0 Skill Reference",
       "type": "skill_md",
       "sha256_prefix": "073e584b8afb7b03",
       "lines": 157
     },
     {
-      "path": "skills/odoo19/search/SKILL.md",
-      "name": "search \u2014 Odoo 19.0 Skill Reference",
+      "path": "skills/odoo18/search/SKILL.md",
+      "name": "search \u2014 Odoo 18.0 Skill Reference",
       "type": "skill_md",
       "sha256_prefix": "ad068a679b18055b",
       "lines": 125
     },
     {
-      "path": "skills/odoo19/sign/SKILL.md",
-      "name": "sign -- Odoo 19.0 Skill Reference",
+      "path": "skills/odoo18/sign/SKILL.md",
+      "name": "sign -- Odoo 18.0 Skill Reference",
       "type": "skill_md",
       "sha256_prefix": "37524158d6495341",
       "lines": 101
     },
     {
-      "path": "skills/odoo19/sms_marketing/SKILL.md",
-      "name": "sms_marketing \u2014 Odoo 19.0 Skill Reference",
+      "path": "skills/odoo18/sms_marketing/SKILL.md",
+      "name": "sms_marketing \u2014 Odoo 18.0 Skill Reference",
       "type": "skill_md",
       "sha256_prefix": "c5e5a534745cb201",
       "lines": 138
     },
     {
-      "path": "skills/odoo19/social_marketing/SKILL.md",
-      "name": "social_marketing \u2014 Odoo 19.0 Skill Reference",
+      "path": "skills/odoo18/social_marketing/SKILL.md",
+      "name": "social_marketing \u2014 Odoo 18.0 Skill Reference",
       "type": "skill_md",
       "sha256_prefix": "d71c0fc67888a280",
       "lines": 138
     },
     {
-      "path": "skills/odoo19/spreadsheet/SKILL.md",
-      "name": "spreadsheet -- Odoo 19.0 Skill Reference",
+      "path": "skills/odoo18/spreadsheet/SKILL.md",
+      "name": "spreadsheet -- Odoo 18.0 Skill Reference",
       "type": "skill_md",
       "sha256_prefix": "ef38391fe30a73a6",
       "lines": 100
     },
     {
-      "path": "skills/odoo19/stages/SKILL.md",
-      "name": "stages \u2014 Odoo 19.0 Skill Reference",
+      "path": "skills/odoo18/stages/SKILL.md",
+      "name": "stages \u2014 Odoo 18.0 Skill Reference",
       "type": "skill_md",
       "sha256_prefix": "811a53c0c9c634a8",
       "lines": 121
     },
     {
-      "path": "skills/odoo19/studio/SKILL.md",
-      "name": "Studio -- Odoo 19.0 Skill Reference",
+      "path": "skills/odoo18/studio/SKILL.md",
+      "name": "Studio -- Odoo 18.0 Skill Reference",
       "type": "skill_md",
       "sha256_prefix": "eaebd19fd777fcc8",
       "lines": 249
     },
     {
-      "path": "skills/odoo19/subscriptions/SKILL.md",
-      "name": "subscriptions -- Odoo 19.0 Skill Reference",
+      "path": "skills/odoo18/subscriptions/SKILL.md",
+      "name": "subscriptions -- Odoo 18.0 Skill Reference",
       "type": "skill_md",
       "sha256_prefix": "09264da77b41235c",
       "lines": 137
     },
     {
-      "path": "skills/odoo19/surveys/SKILL.md",
-      "name": "surveys \u2014 Odoo 19.0 Skill Reference",
+      "path": "skills/odoo18/surveys/SKILL.md",
+      "name": "surveys \u2014 Odoo 18.0 Skill Reference",
       "type": "skill_md",
       "sha256_prefix": "b61c8b0abedd7bba",
       "lines": 166
     },
     {
-      "path": "skills/odoo19/time_off/SKILL.md",
-      "name": "Time Off \u2014 Odoo 19.0 Skill Reference",
+      "path": "skills/odoo18/time_off/SKILL.md",
+      "name": "Time Off \u2014 Odoo 18.0 Skill Reference",
       "type": "skill_md",
       "sha256_prefix": "c1d8e46025d616a9",
       "lines": 141
     },
     {
-      "path": "skills/odoo19/timesheets/SKILL.md",
-      "name": "timesheets -- Odoo 19.0 Skill Reference",
+      "path": "skills/odoo18/timesheets/SKILL.md",
+      "name": "timesheets -- Odoo 18.0 Skill Reference",
       "type": "skill_md",
       "sha256_prefix": "9c370c8af8b24bd8",
       "lines": 148
     },
     {
-      "path": "skills/odoo19/to_do/SKILL.md",
-      "name": "to_do -- Odoo 19.0 Skill Reference",
+      "path": "skills/odoo18/to_do/SKILL.md",
+      "name": "to_do -- Odoo 18.0 Skill Reference",
       "type": "skill_md",
       "sha256_prefix": "58dc6926e885205a",
       "lines": 79
     },
     {
-      "path": "skills/odoo19/users/SKILL.md",
-      "name": "users \u2014 Odoo 19.0 Skill Reference",
+      "path": "skills/odoo18/users/SKILL.md",
+      "name": "users \u2014 Odoo 18.0 Skill Reference",
       "type": "skill_md",
       "sha256_prefix": "d82d25391e4f0c06",
       "lines": 121
     },
     {
-      "path": "skills/odoo19/voip/SKILL.md",
-      "name": "voip -- Odoo 19.0 Skill Reference",
+      "path": "skills/odoo18/voip/SKILL.md",
+      "name": "voip -- Odoo 18.0 Skill Reference",
       "type": "skill_md",
       "sha256_prefix": "17bdff5d7b94fb09",
       "lines": 100
     },
     {
-      "path": "skills/odoo19/website/SKILL.md",
-      "name": "website -- Odoo 19.0 Skill Reference",
+      "path": "skills/odoo18/website/SKILL.md",
+      "name": "website -- Odoo 18.0 Skill Reference",
       "type": "skill_md",
       "sha256_prefix": "2bb7191f96f0498b",
       "lines": 151
     },
     {
-      "path": "skills/odoo19/whatsapp/SKILL.md",
-      "name": "whatsapp -- Odoo 19.0 Skill Reference",
+      "path": "skills/odoo18/whatsapp/SKILL.md",
+      "name": "whatsapp -- Odoo 18.0 Skill Reference",
       "type": "skill_md",
       "sha256_prefix": "6c9bafecdc698a12",
       "lines": 98
@@ -1090,7 +1090,7 @@
     },
     {
       "path": "agents/skills/generate-odoo-skill-from-kb/skill.md",
-      "name": "SKILL: Generate Procedural Skill From Odoo19 KB",
+      "name": "SKILL: Generate Procedural Skill From Odoo18 KB",
       "type": "skill_contract",
       "sha256_prefix": "23289518ef8a25cc",
       "lines": 165
@@ -1125,7 +1125,7 @@
     },
     {
       "path": "agents/skills/odoo-fullstack-ai-dev/skill.md",
-      "name": "Odoo 19 Full Stack AI-First Developer Skill",
+      "name": "Odoo 18 Full Stack AI-First Developer Skill",
       "type": "skill_contract",
       "sha256_prefix": "cb05c6113752c355",
       "lines": 199
@@ -1138,8 +1138,8 @@
       "lines": 349
     },
     {
-      "path": "agents/skills/refresh-odoo19-kb/skill.md",
-      "name": "SKILL: Refresh Odoo 19 Knowledge Base (Vendored, Pinned, Indexed)",
+      "path": "agents/skills/refresh-odoo18-kb/skill.md",
+      "name": "SKILL: Refresh Odoo 18 Knowledge Base (Vendored, Pinned, Indexed)",
       "type": "skill_contract",
       "sha256_prefix": "2f5370cd906e6a1e",
       "lines": 253
@@ -1160,7 +1160,7 @@
     },
     {
       "path": "agents/skills/validate-odoo-module-against-kb/skill.md",
-      "name": "SKILL: Validate Odoo Module Against Odoo19 KB",
+      "name": "SKILL: Validate Odoo Module Against Odoo18 KB",
       "type": "skill_contract",
       "sha256_prefix": "61648dbdc304798a",
       "lines": 173

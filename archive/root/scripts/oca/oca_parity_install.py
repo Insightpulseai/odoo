@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-oca_parity_install.py — Unified OCA parity installer for Odoo 19.0.
+oca_parity_install.py — Unified OCA parity installer for Odoo 18.0.
 
 Single entry point replacing install_from_allowlist*.sh scripts.
 Reads docs/oca/install_manifest.yaml, validates against

@@ -32,7 +32,7 @@ odoo-cli-operator
 
 - Update `__manifest__.py` with correct version (19.0.x.y.z), license (LGPL-3), dependencies
 - Add `ir.model.access.csv` to security/
-- Follow model class attribute order per odoo19-coding.md
+- Follow model class attribute order per odoo18-coding.md
 - Add to addons path if not already present
 
 ## Generated Structure

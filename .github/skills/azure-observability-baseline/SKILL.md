@@ -24,7 +24,7 @@ assumptions in documentation that do not apply to the ACA runtime.
 | `infra/azure/odoo-runtime.bicep` | ACA env diagnostic settings, App Insights binding |
 | `infra/azure/main.bicep` | Log Analytics workspace, module wiring |
 | `infra/ssot/azure/resources.yaml` | Log Analytics, App Insights entries |
-| `docs/runbooks/ODOO19_GO_LIVE_CHECKLIST.md` | Monitoring/alerting line items |
+| `docs/runbooks/ODOO18_GO_LIVE_CHECKLIST.md` | Monitoring/alerting line items |
 | `docs/audits/ODOO_AZURE_ENTERPRISE_BENCHMARK.md` | Observability gap row |
 
 ## Microsoft Learn MCP Usage
@@ -73,7 +73,7 @@ Optional:
 | `infra/azure/modules/postgres-flexible.bicep` | Diagnostic settings |
 | `infra/azure/modules/alerts.bicep` | Alert rules (new file) |
 | `infra/ssot/azure/resources.yaml` | Log Analytics, App Insights entries |
-| `docs/runbooks/ODOO19_GO_LIVE_CHECKLIST.md` | Monitoring verification steps |
+| `docs/runbooks/ODOO18_GO_LIVE_CHECKLIST.md` | Monitoring verification steps |
 | `docs/evidence/<stamp>/azure-observability-baseline/` | Bicep diffs, MCP excerpts |
 
 ## Completion Criteria

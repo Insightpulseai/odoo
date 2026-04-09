@@ -23,7 +23,7 @@ procedure, and no promotion gate between environments.
 | `infra/azure/odoo-runtime.bicep` | ACA app definitions per environment |
 | `infra/ssot/azure/service-matrix.yaml` | Environment definitions |
 | `infra/ssot/azure/resources.yaml` | ACA apps, PG servers per environment |
-| `docs/runbooks/ODOO19_GO_LIVE_CHECKLIST.md` | Deployment/promotion line items |
+| `docs/runbooks/ODOO18_GO_LIVE_CHECKLIST.md` | Deployment/promotion line items |
 | `docs/audits/ODOO_AZURE_ENTERPRISE_BENCHMARK.md` | Release process gap row |
 | `addons/ipai/` | Module manifests with version numbers |
 
@@ -69,7 +69,7 @@ Optional:
 | File | Change |
 |------|--------|
 | `docs/runbooks/ODOO_RELEASE_PROMOTION.md` | Full promotion pipeline (new) |
-| `docs/runbooks/ODOO19_GO_LIVE_CHECKLIST.md` | Promotion gate line items |
+| `docs/runbooks/ODOO18_GO_LIVE_CHECKLIST.md` | Promotion gate line items |
 | `infra/azure/odoo-runtime.bicep` | Staging ACA apps if missing |
 | `docs/evidence/<stamp>/odoo-release-promotion/` | Runbook, MCP excerpts |
 

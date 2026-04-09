@@ -1,7 +1,7 @@
 """
 E2E Test: Partner/Contact Management Workflow
 
-Tests the complete partner creation and management workflow in Odoo 19.
+Tests the complete partner creation and management workflow in Odoo 18.
 
 Reference: docs/integrations/ODOO_AI_TESTING_AUTOMATION.md
 """

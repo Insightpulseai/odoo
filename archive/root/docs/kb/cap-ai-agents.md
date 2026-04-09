@@ -5,7 +5,7 @@
 
 ## Overview
 
-AI Agents provides Odoo 19-style "Ask AI" functionality for Odoo CE 18, with RAG (Retrieval-Augmented Generation) powered by Supabase and OpenAI-compatible LLMs.
+AI Agents provides Odoo 18-style "Ask AI" functionality for Odoo CE 18, with RAG (Retrieval-Augmented Generation) powered by Supabase and OpenAI-compatible LLMs.
 
 ## Features
 

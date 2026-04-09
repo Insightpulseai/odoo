@@ -8,7 +8,7 @@
 ## Scope
 
 **PPM Clarity** synchronises planning truth (Plane.so, self-hosted) with
-operational truth (Odoo 19 CE) through a deterministic, auditable contract
+operational truth (Odoo 18 CE) through a deterministic, auditable contract
 stored in the Supabase `ops` schema.
 
 ---
@@ -20,7 +20,7 @@ stored in the Supabase `ops` schema.
 | Layer | System | Truth Domain |
 |-------|--------|-------------|
 | Planning | Plane.so (self-hosted) | Templates, states, labels, priorities, cycles |
-| Operational | Odoo 19 CE | Tasks, timesheets, costs, assignments, chatter |
+| Operational | Odoo 18 CE | Tasks, timesheets, costs, assignments, chatter |
 | Reconciliation | Supabase `ops` | Bidirectional ID mapping, event ledger, drift detection |
 
 No layer may claim authority over another layer's fields.

@@ -55,9 +55,9 @@ SEED_INDICATORS = [
 
 # Scripts that should reference canonical root
 IMPORT_SCRIPTS = [
-    os.path.join(REPO_ROOT, "scripts", "bulk_import_tasks_odoo19.py"),
-    os.path.join(REPO_ROOT, "scripts", "seed_finance_ppm_stages_odoo19.py"),
-    os.path.join(REPO_ROOT, "scripts", "seed_logframe_milestones_odoo19.py"),
+    os.path.join(REPO_ROOT, "scripts", "bulk_import_tasks_odoo18.py"),
+    os.path.join(REPO_ROOT, "scripts", "seed_finance_ppm_stages_odoo18.py"),
+    os.path.join(REPO_ROOT, "scripts", "seed_logframe_milestones_odoo18.py"),
 ]
 
 VERBOSE = "--verbose" in sys.argv

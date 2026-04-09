@@ -2,11 +2,11 @@
 # ============================================================================
 # OCA Timeline + Dependencies for Finance PPM
 # ============================================================================
-# Installs OCA project_timeline + project_task_dependency on Odoo 19 CE
+# Installs OCA project_timeline + project_task_dependency on Odoo 18 CE
 # to provide timeline visualization and task dependency management.
 #
 # NOTE: project_timeline provides a timeline bar view, NOT a full Gantt chart.
-# Critical-path highlighting is NOT available (unverified for Odoo 19).
+# Critical-path highlighting is NOT available (unverified for Odoo 18).
 # See: spec/finance-ppm/decisions/0006-critical-path-unavailable.md
 #
 # Modules installed:
@@ -16,7 +16,7 @@
 #
 # Prerequisites:
 #   - OCA project repo cloned under external-src/project or vendor/oca/project
-#   - Odoo 19 CE running with XML-RPC enabled
+#   - Odoo 18 CE running with XML-RPC enabled
 #
 # Usage:
 #   scripts/install_oca_gantt_bridge.sh <admin_password>
@@ -173,7 +173,7 @@ echo "  ✓ Task Dependencies       → OCA project_task_dependency"
 echo "  ✓ Stage Closed Detection  → OCA project_stage_closed"
 echo ""
 echo "NOT available (see ADR-0006):"
-echo "  ✗ Critical Path Analysis  → Unverified for Odoo 19"
+echo "  ✗ Critical Path Analysis  → Unverified for Odoo 18"
 echo "  ✗ Interactive Gantt       → project_timeline is read-only timeline"
 echo "  ✗ Resource Leveling       → No CE/OCA module available"
 echo ""

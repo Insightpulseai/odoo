@@ -5,7 +5,7 @@
 
 ---
 
-## Priority 1 — This PR (safety + Odoo 19 correctness)
+## Priority 1 — This PR (safety + Odoo 18 correctness)
 
 ### P1-A: Disable deprecated-but-incorrectly-enabled module
 
@@ -25,9 +25,9 @@
 | `ipai_vertical_media` | `installable=True` → `installable=False` | `ipai_workspace_core` |
 | `ipai_vertical_retail` | `installable=True` → `installable=False` | `ipai_workspace_core` |
 
-### P1-C: Patch tree→list (Odoo 19 view compatibility)
+### P1-C: Patch tree→list (Odoo 18 view compatibility)
 
-In Odoo 19 CE, `<tree>` view elements and `view_mode` values containing `tree` generate deprecation warnings and may fail in strict mode. All occurrences must be renamed to `<list>` / `list`.
+In Odoo 18 CE, `<tree>` view elements and `view_mode` values containing `tree` generate deprecation warnings and may fail in strict mode. All occurrences must be renamed to `<list>` / `list`.
 
 | Module | File | Changes |
 |--------|------|---------|

@@ -4,9 +4,9 @@
 
      Replaces: mail_tracking/static/src/core/discuss/discuss_sidebar_mailboxes.xml
      Reason  : OCA template inherits from mail.Discuss.mobileTopbar which was
-               renamed to mail.DiscussContent.mobileTopbar in Odoo 19.
+               renamed to mail.DiscussContent.mobileTopbar in Odoo 18.
 
-     Odoo 19 compat notes:
+     Odoo 18 compat notes:
        - Mailbox.main removed: //span[@t-esc='mailbox.counter'] no longer exists.
        - DiscussSidebarMailboxes removed: <Mailbox mailbox="store.failed" /> triggers
          ctx.mailbox.notEq() crash because store.failed is a plain JS object, not a
@@ -14,9 +14,9 @@
        - mobileTopbar removed for same reason: t-call="mail.MobileMailbox" passes
          store.failed which has no notEq().
      All three extensions are disabled until store.failed is ported to a proper
-     Record or OCA releases an Odoo 19 compatible mail_tracking.
+     Record or OCA releases an Odoo 18 compatible mail_tracking.
 -->
 <templates xml:space="preserve">
-    <!-- Sidebar extensions intentionally empty for Odoo 19 compatibility.
+    <!-- Sidebar extensions intentionally empty for Odoo 18 compatibility.
          See comments above. -->
 </templates>

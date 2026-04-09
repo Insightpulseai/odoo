@@ -49,7 +49,7 @@ Insightpulseai/                      # Parent workspace (separate git repo)
     ├── apps/                       # Temporary app experiments
     ├── spec/                       # Spec experiments (migrate to odoo/spec/)
     ├── .github/workflows/          # CI guards (no shadow odoo roots)
-    └── .gitignore                  # Blocks: odoo/, odoo-ce/, odoo-ce-*, odoo19/
+    └── .gitignore                  # Blocks: odoo/, odoo-ce/, odoo-ce-*, odoo18/
 ```
 
 ---
@@ -66,7 +66,7 @@ Insightpulseai/                      # Parent workspace (separate git repo)
 - `work/odoo/`
 - `work/odoo-ce/`
 - `work/odoo-ce-*/`
-- `work/odoo19/`
+- `work/odoo18/`
 - Nested `odoo/` within this canonical repo
 
 ### 2. Gitignore Enforcement
@@ -78,7 +78,7 @@ Insightpulseai/                      # Parent workspace (separate git repo)
 odoo/
 odoo-ce/
 odoo-ce-*/
-odoo19/
+odoo18/
 ```
 
 ### 3. Documentation Requirements

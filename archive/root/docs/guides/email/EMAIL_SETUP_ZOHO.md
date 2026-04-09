@@ -1,14 +1,14 @@
 # Email Setup with Zoho Mail (Canonical Guide)
 
-**Canonical Email System for Odoo 19** | Updated: 2026-02-12
+**Canonical Email System for Odoo 18** | Updated: 2026-02-12
 
-This guide documents the **settings-as-code** approach for configuring Zoho Mail SMTP with Odoo 19.
+This guide documents the **settings-as-code** approach for configuring Zoho Mail SMTP with Odoo 18.
 
 ---
 
 ## Overview
 
-**Zoho Mail SMTP** is the canonical email delivery system for InsightPulse AI's Odoo 19 deployment.
+**Zoho Mail SMTP** is the canonical email delivery system for InsightPulse AI's Odoo 18 deployment.
 
 **Key Benefits**:
 - ✅ Enterprise-grade email delivery with 99.9% uptime
@@ -31,7 +31,7 @@ This guide documents the **settings-as-code** approach for configuring Zoho Mail
 1. **Zoho Mail Account**: Active account for `insightpulseai.com` domain
 2. **Domain Ownership**: Verified domain in Zoho Mail admin
 3. **DNS Access**: Ability to add TXT records to `insightpulseai.com`
-4. **Odoo 19**: Running instance with admin access
+4. **Odoo 18**: Running instance with admin access
 5. **Environment Variables**: Secure storage for credentials
 
 ---
@@ -56,7 +56,7 @@ export ZOHO_SMTP_APP_PASSWORD="your-16-character-app-password"
 **Manual Creation** (if API unavailable):
 1. Log into Zoho Mail: https://mail.zoho.com
 2. Navigate: Settings → Security → App Passwords
-3. Generate new password for "Odoo 19 Production"
+3. Generate new password for "Odoo 18 Production"
 4. Save password immediately (shown only once)
 
 ### 1.2 SMTP Server Details
@@ -183,7 +183,7 @@ echo -e "\n=== Verification Complete ==="
 
 ---
 
-## Part 3: Odoo 19 Configuration (Settings-as-Code)
+## Part 3: Odoo 18 Configuration (Settings-as-Code)
 
 ### 3.1 Environment Variables
 
@@ -217,7 +217,7 @@ ZOHO_SMTP_SECURITY=starttls
 
 ### 3.2 Odoo Configuration File
 
-**File**: `odoo19/odoo.conf`
+**File**: `odoo18/odoo.conf`
 
 ```ini
 [options]
@@ -248,7 +248,7 @@ mail_catchall_alias = postmaster@insightpulseai.com
 #!/bin/bash
 set -euo pipefail
 
-ODOO_CONF="/path/to/odoo19/odoo.conf"
+ODOO_CONF="/path/to/odoo18/odoo.conf"
 ENV_FILE="${1:-.env.production}"
 
 # Load environment variables
@@ -332,10 +332,10 @@ def test_smtp_connection():
         msg = MIMEMultipart()
         msg['From'] = SMTP_FROM
         msg['To'] = SMTP_USER  # Send to self
-        msg['Subject'] = "Zoho Mail SMTP Test - Odoo 19"
+        msg['Subject'] = "Zoho Mail SMTP Test - Odoo 18"
 
         body = """
-        This is a test email from Odoo 19 using Zoho Mail SMTP.
+        This is a test email from Odoo 18 using Zoho Mail SMTP.
 
         If you receive this, email configuration is working correctly.
 
@@ -391,7 +391,7 @@ python3 scripts/verify/test-smtp.py
 **Via Odoo Shell**:
 ```bash
 # Start Odoo shell
-cd odoo19
+cd odoo18
 ./odoo-bin shell -c odoo.conf
 
 # In Python shell:
@@ -406,8 +406,8 @@ cd odoo19
 >>> mail = env['mail.mail'].sudo().create({
 ...     'email_from': 'no-reply@insightpulseai.com',
 ...     'email_to': 'admin@insightpulseai.com',
-...     'subject': 'Odoo 19 Email Test',
-...     'body_html': '<p>Test email from Odoo 19 via Zoho Mail SMTP</p>',
+...     'subject': 'Odoo 18 Email Test',
+...     'body_html': '<p>Test email from Odoo 18 via Zoho Mail SMTP</p>',
 ... })
 >>> mail.send()
 >>>
@@ -422,7 +422,7 @@ cd odoo19
 #!/bin/bash
 set -euo pipefail
 
-echo "=== Odoo 19 Email Configuration Verification ==="
+echo "=== Odoo 18 Email Configuration Verification ==="
 
 # 1. DNS checks
 echo -e "\n[1/5] DNS Configuration..."
@@ -441,7 +441,7 @@ done
 
 # 3. Odoo config
 echo -e "\n[3/5] Odoo Configuration..."
-if grep -q "smtp_server = smtp.zoho.com" odoo19/odoo.conf; then
+if grep -q "smtp_server = smtp.zoho.com" odoo18/odoo.conf; then
   echo "✅ Odoo config: Zoho SMTP configured"
 else
   echo "❌ Odoo config: Missing or incorrect"
@@ -714,11 +714,11 @@ tail -f /var/log/odoo/odoo-server.log | grep -i "smtp.*authentication"
 
 **Email Delivery Path**:
 ```
-Odoo 19 → Zoho SMTP (port 587/STARTTLS) → Recipient Inbox
+Odoo 18 → Zoho SMTP (port 587/STARTTLS) → Recipient Inbox
 ```
 
 **Key Configuration Files**:
-- `odoo19/odoo.conf` - Odoo SMTP settings
+- `odoo18/odoo.conf` - Odoo SMTP settings
 - `.env.production` - Environment variables (not in git)
 - `scripts/deploy/configure-email.sh` - Deployment automation
 - `scripts/verify/test-smtp.py` - Connection testing

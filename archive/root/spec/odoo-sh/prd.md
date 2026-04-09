@@ -150,7 +150,7 @@ Track all builds, deployments, and migrations with structured evidence in Supaba
 - Configuration changes (odoo.conf) require manual restart (documented)
 
 **Dependencies:**
-- Odoo 19 `--dev=all` flag support
+- Odoo 18 `--dev=all` flag support
 - Watchdog or similar file change detection
 - Asset build toolchain (for JS/CSS)
 

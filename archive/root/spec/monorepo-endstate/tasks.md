@@ -9,7 +9,7 @@
 
 ### 1.1 List EE-only features
 - **Owner**: Engineering
-- **Input**: Odoo 19 Enterprise docs, internal feature wishlist
+- **Input**: Odoo 18 Enterprise docs, internal feature wishlist
 - **Output**: Raw list of desired EE features (markdown)
 - **Acceptance**: >=20 features listed
 
@@ -103,7 +103,7 @@ If doc is incomplete, extend it.
 | 4.1 | `docs/architecture/MONOREPO_END_STATE_OKR.md` | All 4 OKRs with KRs |
 | 4.2 | `docs/architecture/AI_PROVIDER_BRIDGE.md` | Provider table + route contract |
 | 4.3 | `docs/runbooks/SECRETS_SSOT.md` | All 3 approved stores documented |
-| 4.4 | `docs/runbooks/ODOO19_GO_LIVE_CHECKLIST.md` | Sections A-H present |
+| 4.4 | `docs/runbooks/ODOO18_GO_LIVE_CHECKLIST.md` | Sections A-H present |
 | 4.5 | `docs/ai/SSOT.md` | References to all new SSOT registries |
 
 ---

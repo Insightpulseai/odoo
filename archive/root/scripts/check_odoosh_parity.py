@@ -136,7 +136,7 @@ def run_parity_checks() -> list[ParityCheck]:
             name="Staging Environment",
             category="staging_production",
             implemented=check_file_exists("docker-compose.yml") or
-                       check_file_exists("docker-compose.odoo19.yml"),
+                       check_file_exists("docker-compose.odoo18.yml"),
             weight=2.0,
             evidence_path="docker-compose*.yml",
             notes="Docker Compose multi-environment support"

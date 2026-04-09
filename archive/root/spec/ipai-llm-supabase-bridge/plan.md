@@ -7,7 +7,7 @@
 ## Phase 1 — Vendor + Port Apexive Core Modules to 19.0
 
 **Goal**: Running `llm`, `llm_tool`, `llm_assistant`, `llm_thread`, `llm_openai`,
-`llm_mcp_server` in Odoo 19 devcontainer.
+`llm_mcp_server` in Odoo 18 devcontainer.
 
 **Estimated effort**: Low (automated migration checklist, minimal OWL risk)
 

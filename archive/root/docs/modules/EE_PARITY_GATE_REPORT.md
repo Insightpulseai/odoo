@@ -1,7 +1,7 @@
 # EE Parity Gate Report — Ship Readiness Assessment
 
 **Date:** 2026-02-11
-**Stack:** Odoo 19 CE + OCA + ipai_* delta modules
+**Stack:** Odoo 18 CE + OCA + ipai_* delta modules
 **Target:** Ship Finance PPM (Clarity parity), OCR/Document Digitization, Supabase Integration, AI Agents, Zoho Mail SMTP
 **Policy:** CE → OCA → Delta (ipai_*). No Enterprise. No IAP.
 
@@ -16,7 +16,7 @@
 | **Supabase Integration** | **YES** | PASS | `ipai_ops_mirror` SSOT sync, n8n webhooks, Edge Functions |
 | **AI Agents** | **YES** | PASS | `ipai_ai_agent_builder` complete (8 models, multi-provider LLM, RAG, audit) |
 | **Zoho Mail SMTP** | **YES** | PASS | Configured `smtp.zoho.com:587`, secret pending env var only |
-| **Project CE (Work Management)** | **YES** | PASS | Odoo 19 CE `project` native + OCA `project` extensions |
+| **Project CE (Work Management)** | **YES** | PASS | Odoo 18 CE `project` native + OCA `project` extensions |
 
 **Verdict: ALL CAPABILITIES PASS THE EE PARITY GATE. SHIP.**
 
@@ -197,7 +197,7 @@ Odoo (System of Record)  ←→  n8n (workflow)  ←→  Supabase (SSOT for ops/
 
 ### 5.1 Implementation
 
-`ipai_ai_agent_builder` (v19.0.1.0.0 target) provides Odoo 19 AI Agents feature parity for CE:
+`ipai_ai_agent_builder` (v19.0.1.0.0 target) provides Odoo 18 AI Agents feature parity for CE:
 
 | Feature | Detail |
 |---------|--------|
@@ -223,7 +223,7 @@ Odoo (System of Record)  ←→  n8n (workflow)  ←→  Supabase (SSOT for ops/
 
 ### 5.3 EE Feature Replaced
 
-| Odoo 19 EE | ipai_ai_agent_builder |
+| Odoo 18 EE | ipai_ai_agent_builder |
 |-------------|----------------------|
 | AI Agents (IAP/OpenAI) | Self-hosted, multi-provider |
 | Odoo Discuss AI | Chatter integration via `ipai_ask_ai_chatter` |
@@ -261,7 +261,7 @@ Odoo (System of Record)  ←→  n8n (workflow)  ←→  Supabase (SSOT for ops/
 
 ---
 
-## 7. OCA Module Readiness for Odoo 19
+## 7. OCA Module Readiness for Odoo 18
 
 ### 7.1 Available Now (19.0 ported)
 
@@ -332,7 +332,7 @@ Odoo (System of Record)  ←→  n8n (workflow)  ←→  Supabase (SSOT for ops/
 ```
 ┌─────────────────────────────────────────┐
 │          erp.insightpulseai.com          │
-│      Odoo 19 CE + OCA + ipai_*          │
+│      Odoo 18 CE + OCA + ipai_*          │
 │      PostgreSQL 16 (local)               │
 │      Docker: ghcr.io/...                 │
 ├─────────────────────────────────────────┤

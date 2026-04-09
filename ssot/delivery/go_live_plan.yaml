@@ -74,7 +74,7 @@ critical_path:
     blocker_type: runtime_functionality
     inputs:
       - Cron log with analytic_account_id error
-      - Odoo 19 field schema reference
+      - Odoo 18 field schema reference
     done_criteria:
       - Server action runs without field error
       - Cron log shows successful execution
@@ -476,7 +476,7 @@ targets:
     status: done
     owner: platform_operator
     acceptance:
-      - "docs/runbooks/ODOO19_GO_LIVE_CHECKLIST.md exists"
+      - "docs/runbooks/ODOO18_GO_LIVE_CHECKLIST.md exists"
       - "All 9 sections present"
       - "Manifest contract passes"
     evidence:

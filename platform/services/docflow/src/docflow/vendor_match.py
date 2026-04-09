@@ -88,7 +88,7 @@ def resolve_vendor_partner_id(
             method="fallback" if fallback else "none",
         )
 
-    # 2) Fuzzy over all active partners (supplier_rank field removed in Odoo 19)
+    # 2) Fuzzy over all active partners (supplier_rank field removed in Odoo 18)
     limit = int(os.getenv("VENDOR_MATCH_CANDIDATE_LIMIT", "500"))
     candidates = odoo.call_kw(
         "res.partner",

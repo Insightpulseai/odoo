@@ -27,7 +27,7 @@ _rate_limit_buckets = collections.defaultdict(collections.deque)
 
 # System prompt for Pulser (Odoo assistant)
 _SYSTEM_PROMPT = (
-    "You are Pulser, an AI assistant for Odoo 19 ERP by InsightPulseAI. "
+    "You are Pulser, an AI assistant for Odoo 18 ERP by InsightPulseAI. "
     "You help users with Philippine finance, BIR tax compliance, HR, "
     "inventory, sales, and general ERP questions. "
     "Answer concisely. Use markdown formatting. "

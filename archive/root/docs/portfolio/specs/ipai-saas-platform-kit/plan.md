@@ -204,7 +204,7 @@
 **Day 29: Staging Deployment**
 - [ ] Provision staging droplet: staging.insightpulseai.com
   - Install Docker + docker-compose
-  - Configure Odoo 19 CE
+  - Configure Odoo 18 CE
   - Apply Supabase migrations
   - Deploy Edge Functions
   - Configure DNS (Cloudflare A record)
@@ -267,9 +267,9 @@
 - **Action:** Verify sufficient quota (Edge Functions, Storage, Database)
 - **Timeline:** N/A (already provisioned)
 
-**Odoo 19 CE Deployment:**
+**Odoo 18 CE Deployment:**
 - **Status:** Live (erp.insightpulseai.com)
-- **Action:** Verify Odoo 19 CE running, addons/ipai/ directory writable
+- **Action:** Verify Odoo 18 CE running, addons/ipai/ directory writable
 - **Timeline:** N/A (already deployed)
 
 **CI/CD Workflows:**

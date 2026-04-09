@@ -9,7 +9,7 @@
 
 ## Executive Summary
 
-A structured benchmark for evaluating Azure platform maturity across six domains. Produces a weighted score used as a cutover readiness gate for production workloads (Odoo 19 CE, n8n, Superset, Keycloak) migrating to or operating on Azure infrastructure.
+A structured benchmark for evaluating Azure platform maturity across six domains. Produces a weighted score used as a cutover readiness gate for production workloads (Odoo 18 CE, n8n, Superset, Keycloak) migrating to or operating on Azure infrastructure.
 
 ---
 

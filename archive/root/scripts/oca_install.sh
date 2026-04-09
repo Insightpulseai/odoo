@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # =============================================================================
-# OCA Module Installer for Odoo 19.0 CE — InsightPulse AI
+# OCA Module Installer for Odoo 18.0 CE — InsightPulse AI
 # =============================================================================
 # Usage:
 #   ./scripts/oca_install.sh wave1           # Activate already-present modules
@@ -324,7 +324,7 @@ case "${1:-help}" in
     wave4-install) wave4_install ;;
     status)        status ;;
     *)
-        echo "OCA Module Installer — Odoo 19.0 CE (InsightPulse AI)"
+        echo "OCA Module Installer — Odoo 18.0 CE (InsightPulse AI)"
         echo ""
         echo "Usage: $0 {wave1|wave2-clone|wave2-install|wave3-clone|wave3-install|wave4-clone|wave4-install|status}"
         echo ""

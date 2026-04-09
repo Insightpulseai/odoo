@@ -31,7 +31,7 @@ Dev Containers use Docker to provide reproducible development environments insid
 
 ```json
 {
-  "name": "Odoo 19 Dev",
+  "name": "Odoo 18 Dev",
   "dockerComposeFile": ["../docker-compose.yml", "docker-compose.devcontainer.yml"],
   "service": "devcontainer",
   "workspaceFolder": "/workspaces/odoo",
@@ -216,5 +216,5 @@ Add to README for one-click setup:
 
 ## Related Skills
 
-- [odoo19-accounting-map](../../odoo/odoo19-accounting-map/SKILL.md) — Accounting features to configure in dev
+- [odoo18-accounting-map](../../odoo/odoo18-accounting-map/SKILL.md) — Accounting features to configure in dev
 - [n8n-odoo-supabase-etl](../../integration/n8n-odoo-supabase-etl/SKILL.md) — Docker Compose patterns

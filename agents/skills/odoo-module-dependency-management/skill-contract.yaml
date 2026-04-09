@@ -29,7 +29,7 @@ skill:
     - resolve full transitive dependency chain
     - verify all dependencies are available in addons path
     - check for circular dependencies
-    - validate OCA module compatibility with Odoo 19
+    - validate OCA module compatibility with Odoo 18
     - verify no Enterprise module dependencies
     - check addons manifest alignment with installed modules
     - produce dependency graph report with compliance status

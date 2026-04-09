@@ -20,8 +20,8 @@
 #   build_ipai        — No OCA path; build custom ipai_* addon
 #   accept_gap        — Gap accepted; not in scope or waived
 #
-# odoo19_support values:
-#   yes           — Module confirmed working on Odoo 19.0
+# odoo18_support values:
+#   yes           — Module confirmed working on Odoo 18.0
 #   needs_port    — Module exists for older versions, 19.0 port required
 #   unknown       — Not yet evaluated for 19.0 compatibility
 
@@ -42,10 +42,10 @@ schema_rules:
     - ee_feature_id
     - parity_path
     - route
-    - odoo19_support
+    - odoo18_support
   parity_path_values: [oca_direct, oca_partial, bridge, gap]
   route_values: [adopt_oca, port_then_adopt, bridge, build_ipai, accept_gap]
-  odoo19_support_values: [yes, needs_port, unknown, "n/a"]
+  odoo18_support_values: [yes, needs_port, unknown, "n/a"]
 
 # ── Proven entries (with evidence links + execution fields) ───────────────────
 
@@ -68,7 +68,7 @@ entries:
     evidence_links:
       - url: "https://apps.odoo.com/apps/modules/16.0/spreadsheet_oca"
         description: "OCA app store listing — explicitly states alternative to spreadsheet_edition (EE)"
-    odoo19_support: needs_port
+    odoo18_support: needs_port
     notes: >
       spreadsheet_oca is listed as a direct alternative to the proprietary spreadsheet_edition.
       Available for 16.0; 19.0 port status needs verification.
@@ -90,7 +90,7 @@ entries:
         description: "OCA/dms GitHub repo — document management ecosystem"
       - url: "https://www.odoo.com/forum/help-1/cant-find-documents-modul-in-oddo-17-community-edition-270485"
         description: "Odoo forum — community recommends OCA DMS as CE alternative to Documents"
-    odoo19_support: needs_port
+    odoo18_support: needs_port
     notes: >
       OCA/dms provides open-source document management. Forum users recommend it as the CE
       alternative. UX is simpler than EE Documents but covers core DMS outcome.
@@ -114,7 +114,7 @@ entries:
         description: "OCA shop — Purchase Sign module (sign flows on business docs)"
       - url: "https://www.odoo.com/app/sign"
         description: "Odoo Sign marketing page — reference for full EE feature set"
-    odoo19_support: unknown
+    odoo18_support: unknown
     notes: >
       OCA/sign provides signature flows on business documents. Classified as oca_partial
       because Odoo's EE Sign is a polished standalone product with templates, roles, and
@@ -138,7 +138,7 @@ entries:
     evidence_links:
       - url: "https://github.com/OCA/account-financial-tools"
         description: "OCA account-financial-tools — supplementary accounting modules"
-    odoo19_support: needs_port
+    odoo18_support: needs_port
     notes: >
       CE account module covers core accounting. OCA supplements advanced features.
       account_accountant's reconciliation widget has no full OCA equivalent — partial parity.
@@ -158,7 +158,7 @@ entries:
     evidence_links:
       - url: "https://github.com/Insightpulseai/odoo/tree/main/addons/ipai/ipai_expense_ocr"
         description: "ipai_expense_ocr module — PaddleOCR-VL bridge for receipt OCR"
-    odoo19_support: "yes"
+    odoo18_support: "yes"
     notes: >
       EE uses IAP credits for OCR. We use self-hosted PaddleOCR-VL on DO droplet.
       ipai_expense_ocr bridges Odoo to the OCR service. No OCA equivalent exists.
@@ -178,7 +178,7 @@ entries:
     evidence_links:
       - url: "https://github.com/OCA/hr-expense"
         description: "OCA/hr-expense repo — submodule present but empty for 19.0"
-    odoo19_support: unknown
+    odoo18_support: unknown
     notes: >
       OCA has hr_expense_advance_clearing for older versions. 19.0 port status unknown.
       Submodule is checked out but empty. Using ipai_hr_expense_liquidation as interim.
@@ -202,7 +202,7 @@ entries:
         description: "ipai_ai_copilot — 14-tool copilot sidebar with Gemini provider"
       - url: "https://github.com/Insightpulseai/odoo/blob/main/ssot/ai/provider_policy.yaml"
         description: "Provider policy SSOT — Gemini-first routing with capability-specific models"
-    odoo19_support: "yes"
+    odoo18_support: "yes"
     notes: >
       EE v19 BYOM: AI app with bring-your-own API key. IAP NOT used for v19 AI.
       CE replacement: IPAI AI Provider Bridge + ipai_ai_copilot (14 tools).
@@ -225,7 +225,7 @@ entries:
         description: "ipai_ai_copilot covers chatter surface; OCA ai module covers html_editor"
       - url: "https://github.com/Insightpulseai/odoo/blob/main/ssot/ai/oca_ai_integration.yaml"
         description: "OCA/ai integration model — Topics, Tools, Sources mapping"
-    odoo19_support: "yes"
+    odoo18_support: "yes"
     notes: >
       OCA fallback: ai_oca_native_generate_ollama (html_editor surface only, Ollama).
       Full surface parity requires: copilot sidebar (ipai_ai_copilot) + html_editor
@@ -248,7 +248,7 @@ entries:
     evidence_links:
       - url: "https://github.com/OCA/helpdesk"
         description: "OCA/helpdesk repo — basic helpdesk ticketing"
-    odoo19_support: needs_port
+    odoo18_support: needs_port
     notes: >
       OCA helpdesk covers basic ticketing. EE helpdesk adds SLA tracking, ratings,
       Knowledge base integration, and self-service portal. Classified oca_partial.
@@ -271,7 +271,7 @@ entries:
         description: "Odoo Editions page — Studio listed as EE-only"
       - url: "https://oec.sh/blog/odoo-community-vs-enterprise"
         description: "OEC analysis — acknowledges EE-only features without open alternatives"
-    odoo19_support: "n/a"
+    odoo18_support: "n/a"
     notes: >
       Studio is a proprietary no-code builder deeply integrated into EE.
       No OCA equivalent exists. Gap accepted — custom ipai_* override modules cover
@@ -291,7 +291,7 @@ entries:
     evidence_links:
       - url: "https://www.odoo.com/page/editions"
         description: "Odoo Editions page — Odoo.sh listed as EE-only platform service"
-    odoo19_support: "n/a"
+    odoo18_support: "n/a"
     notes: >
       Odoo.sh is a platform service, not a module. No open equivalent exists.
       IPAI uses DigitalOcean self-hosted with ops-convergence-scan for drift detection.
@@ -311,7 +311,7 @@ entries:
     evidence_links:
       - url: "https://www.odoo.com/page/editions"
         description: "Odoo Editions page — IAP is EE-only service infrastructure"
-    odoo19_support: "n/a"
+    odoo18_support: "n/a"
     notes: >
       IAP is a payment/credits infrastructure for Odoo-hosted services.
       Not applicable to self-hosted CE. OCR uses PaddleOCR, AI uses Gemini — no IAP needed.
@@ -331,7 +331,7 @@ entries:
     evidence_links:
       - url: "https://www.odoo.com/page/editions"
         description: "Odoo Editions page — Social Marketing listed as EE-only"
-    odoo19_support: "n/a"
+    odoo18_support: "n/a"
     notes: "Not a priority for InsightPulse AI use case. Gap accepted."
 
   - ee_feature_id: SERVICES.LOYALTY
@@ -348,7 +348,7 @@ entries:
     evidence_links:
       - url: "https://www.odoo.com/page/editions"
         description: "Odoo Editions page — Loyalty listed as EE-only"
-    odoo19_support: "n/a"
+    odoo18_support: "n/a"
     notes: "Not applicable to current business model. Gap accepted."
 
 # ── Summary statistics ────────────────────────────────────────────────────────

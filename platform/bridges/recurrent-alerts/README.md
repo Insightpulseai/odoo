@@ -19,7 +19,7 @@ See `env.example` in this directory.
 
 ## Workflow
 
-Source: `scripts/n8n_finance_ppm_workflow_odoo19.json`
+Source: `scripts/n8n_finance_ppm_workflow_odoo18.json`
 
 1. Cron triggers at 9AM and 5PM PHT
 2. Query Odoo for tasks where `date_deadline <= today` and `stage != Done/Cancelled`

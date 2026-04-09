@@ -677,7 +677,7 @@
 - **Deliverables:**
   - Provision staging.insightpulseai.com droplet (2GB RAM, 50GB SSD)
   - Install Docker + docker-compose
-  - Configure Odoo 19 CE (same setup as production)
+  - Configure Odoo 18 CE (same setup as production)
   - Apply all Supabase migrations
   - Deploy all Edge Functions
   - Configure DNS (Cloudflare A record)

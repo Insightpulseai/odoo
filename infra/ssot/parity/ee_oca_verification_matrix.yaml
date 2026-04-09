@@ -5,7 +5,7 @@
 # Tier definitions:
 #   T0: Unmapped — no replacement identified
 #   T1: Mapped — replacement identified, OCA repo verified to exist
-#   T2: Installable — installs on our Odoo 19 CE baseline without error
+#   T2: Installable — installs on our Odoo 18 CE baseline without error
 #   T3: Functional — ≥80% feature coverage for our workflows (evidence required)
 #   T4: Verified — production-tested, 30-day soak complete
 #
@@ -437,4 +437,4 @@ summary:
   repos_in_aggregate_lock: 14
   repos_needing_intake: 2  # payroll, field-service
   bridge_modules_required: 3
-  next_action: "Promote P0 features to T2 by running install tests on Odoo 19 CE"
+  next_action: "Promote P0 features to T2 by running install tests on Odoo 18 CE"

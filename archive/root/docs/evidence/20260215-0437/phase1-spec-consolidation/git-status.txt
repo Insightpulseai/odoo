@@ -151,17 +151,17 @@ Changes to be committed:
 	renamed:    docs/portfolio/specs/lakehouse-control-room/plan.md -> spec/portfolio/lakehouse-control-room/plan.md
 	renamed:    docs/portfolio/specs/lakehouse-control-room/prd.md -> spec/portfolio/lakehouse-control-room/prd.md
 	renamed:    docs/portfolio/specs/lakehouse-control-room/tasks.md -> spec/portfolio/lakehouse-control-room/tasks.md
-	renamed:    docs/portfolio/specs/mappings/concur_to_odoo19_ce_oca_ipai.yaml -> spec/portfolio/mappings/concur_to_odoo19_ce_oca_ipai.yaml
-	renamed:    docs/portfolio/specs/mappings/concur_to_odoo19ce_oca.yaml -> spec/portfolio/mappings/concur_to_odoo19ce_oca.yaml
+	renamed:    docs/portfolio/specs/mappings/concur_to_odoo18_ce_oca_ipai.yaml -> spec/portfolio/mappings/concur_to_odoo18_ce_oca_ipai.yaml
+	renamed:    docs/portfolio/specs/mappings/concur_to_odoo18ce_oca.yaml -> spec/portfolio/mappings/concur_to_odoo18ce_oca.yaml
 	renamed:    docs/portfolio/specs/mobile/ipai_mobile_app_spec.md -> spec/portfolio/mobile/ipai_mobile_app_spec.md
 	renamed:    docs/portfolio/specs/notion-finance-ppm-control-room/constitution.md -> spec/portfolio/notion-finance-ppm-control-room/constitution.md
 	renamed:    docs/portfolio/specs/notion-finance-ppm-control-room/plan.md -> spec/portfolio/notion-finance-ppm-control-room/plan.md
 	renamed:    docs/portfolio/specs/notion-finance-ppm-control-room/prd.md -> spec/portfolio/notion-finance-ppm-control-room/prd.md
 	renamed:    docs/portfolio/specs/notion-finance-ppm-control-room/tasks.md -> spec/portfolio/notion-finance-ppm-control-room/tasks.md
-	renamed:    docs/portfolio/specs/odoo-19-migration/constitution.md -> spec/portfolio/odoo-19-migration/constitution.md
-	renamed:    docs/portfolio/specs/odoo-19-migration/plan.md -> spec/portfolio/odoo-19-migration/plan.md
-	renamed:    docs/portfolio/specs/odoo-19-migration/prd.md -> spec/portfolio/odoo-19-migration/prd.md
-	renamed:    docs/portfolio/specs/odoo-19-migration/tasks.md -> spec/portfolio/odoo-19-migration/tasks.md
+	renamed:    docs/portfolio/specs/odoo-18-migration/constitution.md -> spec/portfolio/odoo-18-migration/constitution.md
+	renamed:    docs/portfolio/specs/odoo-18-migration/plan.md -> spec/portfolio/odoo-18-migration/plan.md
+	renamed:    docs/portfolio/specs/odoo-18-migration/prd.md -> spec/portfolio/odoo-18-migration/prd.md
+	renamed:    docs/portfolio/specs/odoo-18-migration/tasks.md -> spec/portfolio/odoo-18-migration/tasks.md
 	renamed:    docs/portfolio/specs/odoo-alternatives/constitution.md -> spec/portfolio/odoo-alternatives/constitution.md
 	renamed:    docs/portfolio/specs/odoo-alternatives/plan.md -> spec/portfolio/odoo-alternatives/plan.md
 	renamed:    docs/portfolio/specs/odoo-alternatives/prd.md -> spec/portfolio/odoo-alternatives/prd.md
@@ -204,10 +204,10 @@ Changes to be committed:
 	renamed:    docs/portfolio/specs/odoo-sh-next/plan.md -> spec/portfolio/odoo-sh-next/plan.md
 	renamed:    docs/portfolio/specs/odoo-sh-next/prd.md -> spec/portfolio/odoo-sh-next/prd.md
 	renamed:    docs/portfolio/specs/odoo-sh-next/tasks.md -> spec/portfolio/odoo-sh-next/tasks.md
-	renamed:    docs/portfolio/specs/odoo19-ee-surface-parity/constitution.md -> spec/portfolio/odoo19-ee-surface-parity/constitution.md
-	renamed:    docs/portfolio/specs/odoo19-ee-surface-parity/plan.md -> spec/portfolio/odoo19-ee-surface-parity/plan.md
-	renamed:    docs/portfolio/specs/odoo19-ee-surface-parity/prd.md -> spec/portfolio/odoo19-ee-surface-parity/prd.md
-	renamed:    docs/portfolio/specs/odoo19-ee-surface-parity/tasks.md -> spec/portfolio/odoo19-ee-surface-parity/tasks.md
+	renamed:    docs/portfolio/specs/odoo18-ee-surface-parity/constitution.md -> spec/portfolio/odoo18-ee-surface-parity/constitution.md
+	renamed:    docs/portfolio/specs/odoo18-ee-surface-parity/plan.md -> spec/portfolio/odoo18-ee-surface-parity/plan.md
+	renamed:    docs/portfolio/specs/odoo18-ee-surface-parity/prd.md -> spec/portfolio/odoo18-ee-surface-parity/prd.md
+	renamed:    docs/portfolio/specs/odoo18-ee-surface-parity/tasks.md -> spec/portfolio/odoo18-ee-surface-parity/tasks.md
 	renamed:    docs/portfolio/specs/odooops-browser-automation/constitution.md -> spec/portfolio/odooops-browser-automation/constitution.md
 	renamed:    docs/portfolio/specs/odooops-browser-automation/plan.md -> spec/portfolio/odooops-browser-automation/plan.md
 	renamed:    docs/portfolio/specs/odooops-browser-automation/prd.md -> spec/portfolio/odooops-browser-automation/prd.md

@@ -77,7 +77,7 @@ Is there an OCA module?
 - [ ] 4.1 Verify `docs/architecture/MONOREPO_END_STATE_OKR.md` is complete (Workstream A)
 - [ ] 4.2 Verify `docs/architecture/AI_PROVIDER_BRIDGE.md` is complete (Workstream C)
 - [ ] 4.3 Verify `docs/runbooks/SECRETS_SSOT.md` is complete (Workstream D)
-- [ ] 4.4 Verify `docs/runbooks/ODOO19_GO_LIVE_CHECKLIST.md` is complete (Workstream D)
+- [ ] 4.4 Verify `docs/runbooks/ODOO18_GO_LIVE_CHECKLIST.md` is complete (Workstream D)
 - [ ] 4.5 Update `docs/ai/SSOT.md` to reference new SSOT registries
 
 **Output**: All 4 reference docs present and linked from SSOT

@@ -16,7 +16,7 @@ last_updated: 2026-02-09
 
 # Odoo Developer Complete Reference
 
-Consolidated reference covering QWeb reports, testing patterns, performance optimization, mixins, website themes, translations, and version migrations for Odoo 19.
+Consolidated reference covering QWeb reports, testing patterns, performance optimization, mixins, website themes, translations, and version migrations for Odoo 18.
 
 ---
 
@@ -580,7 +580,7 @@ class MyModel(models.Model):
         # Check Odoo version
         version = release.version_info[0]
         if version >= 19:
-            # Odoo 19+ code
+            # Odoo 18+ code
             pass
         else:
             # Older version code
@@ -633,7 +633,7 @@ Frontend:
 - `odoo-hoot-testing` - Frontend testing
 
 Backend:
-- `odoo19-oca-devops` - OCA compliance
+- `odoo18-oca-devops` - OCA compliance
 - `odoo-module-scaffold` - Module generation
 - `odoo-agile-scrum-devops` - Development workflow
 

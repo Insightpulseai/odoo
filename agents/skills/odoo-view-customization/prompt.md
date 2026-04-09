@@ -43,6 +43,6 @@ Rules:
 - Never replace core views — always inherit
 - Never directly edit OCA or core XML files
 - Always specify xpath position explicitly
-- Use Odoo 19 terminology: "list" not "tree" in user-facing text
+- Use Odoo 18 terminology: "list" not "tree" in user-facing text
 - Prefer inherited extension over core patching
 - Do not call cr.commit() unless explicitly justified

@@ -1,6 +1,6 @@
 # OCA Porting Toolchain Documentation
 
-> Official OCA tooling reference for Odoo 19.0 module migration
+> Official OCA tooling reference for Odoo 18.0 module migration
 
 ---
 
@@ -154,7 +154,7 @@ which oca-port
 ### Issue: OpenUpgrade migration not found
 
 **Solution**: Manual migration required. Consult:
-1. Odoo 19.0 changelog: https://www.odoo.com/documentation/19.0/developer/howtos/upgrade.html
+1. Odoo 18.0 changelog: https://www.odoo.com/documentation/19.0/developer/howtos/upgrade.html
 2. OCA community forum: https://github.com/OCA/OpenUpgrade/discussions
 3. Manual patch creation
 
@@ -179,4 +179,4 @@ pre-commit run --all-files
 - **OpenUpgrade GitHub**: https://github.com/OCA/OpenUpgrade
 - **OCA Maintainer Tools**: https://github.com/OCA/maintainer-tools
 - **OCA Migration Wiki**: https://github.com/OCA/maintainer-tools/wiki/Migration-to-version-X.0
-- **Odoo 19.0 Migration Guide**: https://www.odoo.com/documentation/19.0/developer/howtos/upgrade.html
+- **Odoo 18.0 Migration Guide**: https://www.odoo.com/documentation/19.0/developer/howtos/upgrade.html

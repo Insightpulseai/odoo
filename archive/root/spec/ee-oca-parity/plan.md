@@ -27,7 +27,7 @@ the evidence tier model defined in `constitution.md`.
 ### Batch 1 (Top 20 modules by IPAI workflow priority)
 
 1. Create `scripts/ci/test_oca_install.sh` to run `odoo-bin -i <module> --stop-after-init`.
-2. Run Batch 1 against Odoo 19 CE + PostgreSQL 16 baseline.
+2. Run Batch 1 against Odoo 18 CE + PostgreSQL 16 baseline.
 3. Record per-module install evidence (exit code, log hash, date).
 4. Update `reports/ee_oca_parity_proof.json` tier field from T1 to T2 for passing modules.
 5. File issues for modules that fail install (dependency gaps, 19.0 port needed).

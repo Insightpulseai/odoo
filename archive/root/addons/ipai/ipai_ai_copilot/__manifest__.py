@@ -1,9 +1,9 @@
 {
     "name": "IPAI AI Copilot",
     "version": "19.0.2.0.0",
-    "summary": "M365 Copilot / SAP Joule-class AI for Odoo 19 CE — Azure ACA-ready",
+    "summary": "M365 Copilot / SAP Joule-class AI for Odoo 18 CE — Azure ACA-ready",
     "description": """
-        Pervasive AI copilot for Odoo 19 CE. Surpasses Odoo EE AI Agents with:
+        Pervasive AI copilot for Odoo 18 CE. Surpasses Odoo EE AI Agents with:
         - Azure OpenAI (Responses + Chat Completions API modes)
         - Gemini function calling (AI can execute Odoo actions)
         - Persistent sidebar on every screen

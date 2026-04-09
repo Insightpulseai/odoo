@@ -1,4 +1,4 @@
-// Odoo 19 CE Runtime — Azure Infrastructure
+// Odoo 18 CE Runtime — Azure Infrastructure
 // Deploys: ACR + Container Apps + PostgreSQL Flexible Server + Key Vault
 // SSOT: docs/ops/AZURE_ODOO_AUTOMATION.md
 
@@ -54,7 +54,7 @@ var tags = {
   Environment: environment
   Project: 'IPAI Odoo Runtime'
   ManagedBy: 'Bicep'
-  Stack: 'Odoo 19 CE'
+  Stack: 'Odoo 18 CE'
 }
 
 // Key Vault for secrets
@@ -95,7 +95,7 @@ module postgres 'modules/postgres-flexible.bicep' = {
   }
 }
 
-// Official Odoo 19 image from Docker Hub (public, no ACR auth needed)
+// Official Odoo 18 image from Docker Hub (public, no ACR auth needed)
 var odooImage = 'docker.io/library/odoo:19.0'
 
 // Container Apps — odoo-web (with ingress)

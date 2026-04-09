@@ -89,7 +89,7 @@ bridges:
     notes: "PaddleOCR-VL self-hosted on DO droplet (178.128.112.214). REST API at ocr.insightpulseai.com."
 
   - name: ipai_ai_widget
-    display_name: "Ask AI Widget (Odoo 19 CE Chatter)"
+    display_name: "Ask AI Widget (Odoo 18 CE Chatter)"
     replaces_ee_feature: "Ask AI (EE/BYOM — OpenAI or Gemini key in AI app Settings)"
     ee_module: enterprise_ai
     addon_path: addons/ipai/ipai_ai_widget/
@@ -128,7 +128,7 @@ bridges:
       - n8n_automation_bridge
       - supabase_rag
     notes: >
-      Full AI copilot for Odoo 19 CE. Surpasses EE AI agents in:
+      Full AI copilot for Odoo 18 CE. Surpasses EE AI agents in:
       multi-provider support, cross-system n8n automation, Supabase-backed RAG,
       and provider cost routing (Flash/Pro). Gemini function calling enables
       create/update/search Odoo records from natural language.

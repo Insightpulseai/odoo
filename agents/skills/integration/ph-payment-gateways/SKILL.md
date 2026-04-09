@@ -648,4 +648,4 @@ Sources:
 - [taxpulse-ph-pack](../../odoo/taxpulse-ph-pack/SKILL.md) — Tax computation engine
 - [sap-concur-parity](../../industries/sap-concur-parity/SKILL.md) — Expense/payment parity
 - [n8n-odoo-supabase-etl](../n8n-odoo-supabase-etl/SKILL.md) — Workflow orchestration
-- [odoo19-expenses](../../odoo/odoo19-expenses/SKILL.md) — Expense workflow
+- [odoo18-expenses](../../odoo/odoo18-expenses/SKILL.md) — Expense workflow

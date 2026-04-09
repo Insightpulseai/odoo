@@ -10,7 +10,7 @@ const OVERRIDES_DIR = path.join(
   "src/content/docs/upstream_overrides",
 );
 const DEPLOYED_DIR = path.join(process.cwd(), "src/content/docs/stack");
-const UPSTREAM_DIR = path.resolve(REPO_ROOT, "docs/kb/odoo19/upstream");
+const UPSTREAM_DIR = path.resolve(REPO_ROOT, "docs/kb/odoo18/upstream");
 
 export interface DocMetadata {
   layer: "override" | "deployed" | "upstream";
@@ -84,9 +84,9 @@ function loadFile(
   const fileContent = fs.readFileSync(filePath, "utf8");
   const { data, content } = matter(fileContent);
 
-  // Canonical ID: kb://odoo19/<slug>
+  // Canonical ID: kb://odoo18/<slug>
   // This ID is stable regardless of which layer serves the content.
-  const canonicalId = `kb://odoo19/${slug}`;
+  const canonicalId = `kb://odoo18/${slug}`;
 
   // For upstream, we could read PIN file, but that might differ if verifying pin.
   // We'll leave pinnedSha undefined for now or inject it if needed by UI.

@@ -11,7 +11,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
 OCA_DIR="$REPO_ROOT/addons/oca"
 LOCKFILE="$REPO_ROOT/oca19.lock.json"
-STACK_MANIFEST="$REPO_ROOT/stack/odoo19_stack.yaml"
+STACK_MANIFEST="$REPO_ROOT/stack/odoo18_stack.yaml"
 
 # Colors for output
 RED='\033[0;31m'

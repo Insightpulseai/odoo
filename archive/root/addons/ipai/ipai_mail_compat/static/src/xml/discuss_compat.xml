@@ -16,7 +16,7 @@
 
     <t t-name="mail.Discuss.mobileTopbar">
         <!-- Stub: original showed inbox/starred/history toggle buttons.
-             Odoo 19 handles mobile navigation differently (burger menu). -->
+             Odoo 18 handles mobile navigation differently (burger menu). -->
     </t>
 
     <t t-name="mail.MobileMailbox">

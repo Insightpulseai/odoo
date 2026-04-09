@@ -22,7 +22,7 @@ Details:
 - Record formatting: one attribute per line, 4-space indent — PASS
 - Manifest data order: security/security.xml, security/ir.model.access.csv,
   data/helpdesk_data.xml, views/helpdesk_ticket_views.xml — PASS
-- Odoo 19: no deprecated tree views — PASS
+- Odoo 18: no deprecated tree views — PASS
 - ACL CSV: proper header, all CRUD columns, ID pattern access_helpdesk_ticket_user — PASS
 
 Upgrade safety: no issues
@@ -59,8 +59,8 @@ Fix suggestions:
 3. Update any references to this XML ID in other files
 
 Upgrade safety:
-- BLOCKING: tree→list migration required for Odoo 19. Module will not load correctly
-  with deprecated tree views in Odoo 19.
+- BLOCKING: tree→list migration required for Odoo 18. Module will not load correctly
+  with deprecated tree views in Odoo 18.
 ```
 
 ## Example 3: Multiple structure violations — FAIL

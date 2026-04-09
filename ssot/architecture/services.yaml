@@ -14,7 +14,7 @@ active_services:
     role: identity_authority
     type: azure_native
     scope: [sso, agent_identity, rbac, conditional_access]
-    odoo_integration: "OAuth provider → /auth_oauth/signin (Odoo 19 native)"
+    odoo_integration: "OAuth provider → /auth_oauth/signin (Odoo 18 native)"
     note: "Canonical IdP for all services. Replaces Keycloak."
 
   # Edge Plane

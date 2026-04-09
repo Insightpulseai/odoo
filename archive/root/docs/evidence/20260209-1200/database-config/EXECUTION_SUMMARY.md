@@ -97,14 +97,14 @@ Configure Odoo development environment to use DigitalOcean managed PostgreSQL cl
 |------------|---------|-------------|-------------|
 | `odoo`     | 100 MB  | 0           | DELETE      |
 | `odoo-prod`| 7.6 MB  | 0           | DELETE      |
-| `odoo19`   | 103 MB  | 5 (active)  | DELETE*     |
+| `odoo18`   | 103 MB  | 5 (active)  | DELETE*     |
 | `n8n`      | 10 MB   | 0           | DELETE      |
 | `plane`    | 19 MB   | 0           | DELETE      |
 | `superset` | 13 MB   | 5 (active)  | DELETE*     |
 
 **Total to reclaim**: ~253 MB
 
-**Note**: Databases with active connections (odoo19, superset) require connection termination before deletion. Script handles this automatically with `--execute`.
+**Note**: Databases with active connections (odoo18, superset) require connection termination before deletion. Script handles this automatically with `--execute`.
 
 **Canonical Databases** (KEEP):
 - ✅ defaultdb

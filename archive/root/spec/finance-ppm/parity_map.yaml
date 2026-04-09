@@ -16,14 +16,14 @@
 
 capabilities:
 
-  # ── CE Layer (native Odoo 19 configuration) ─────────────────────────
+  # ── CE Layer (native Odoo 18 configuration) ─────────────────────────
 
   - capability_id: project-management
     capability_name: Project structure (2 projects, stages, tasks)
     target_parity: ce
     implementation_refs:
-      - scripts/seed_finance_ppm_stages_odoo19.py
-      - scripts/bulk_import_tasks_odoo19.py
+      - scripts/seed_finance_ppm_stages_odoo18.py
+      - scripts/bulk_import_tasks_odoo18.py
     status: verified
     notes: Native project.project + project.task + project.task.type
 
@@ -31,7 +31,7 @@ capabilities:
     capability_name: 6-stage Kanban workflow
     target_parity: ce
     implementation_refs:
-      - scripts/seed_finance_ppm_stages_odoo19.py
+      - scripts/seed_finance_ppm_stages_odoo18.py
     status: verified
     notes: Native project.task.type stages
 
@@ -39,7 +39,7 @@ capabilities:
     capability_name: Task assignment to team members
     target_parity: ce
     implementation_refs:
-      - scripts/bulk_import_tasks_odoo19.py
+      - scripts/bulk_import_tasks_odoo18.py
     status: verified
     notes: Native res.users assignment on project.task
 
@@ -47,7 +47,7 @@ capabilities:
     capability_name: Task deadline tracking (WD offsets + fixed BIR dates)
     target_parity: ce
     implementation_refs:
-      - scripts/bulk_import_tasks_odoo19.py
+      - scripts/bulk_import_tasks_odoo18.py
     status: verified
     notes: Native date_deadline field on project.task
 
@@ -56,7 +56,7 @@ capabilities:
     target_parity: ce
     implementation_refs:
       - data/seed/finance_ppm/tbwa_smp/tags.csv
-      - scripts/bulk_import_tasks_odoo19.py
+      - scripts/bulk_import_tasks_odoo18.py
     status: verified
     notes: Native project.tags model
 
@@ -64,7 +64,7 @@ capabilities:
     capability_name: Logframe milestones mapped to projects
     target_parity: ce
     implementation_refs:
-      - scripts/seed_logframe_milestones_odoo19.py
+      - scripts/seed_logframe_milestones_odoo18.py
     status: verified
     notes: Native project.milestone model (Odoo 16+)
 
@@ -114,7 +114,7 @@ capabilities:
       - addons/ipai/ipai_finance_ppm/
     decision: >
       CE project model lacks budget/forecast/variance fields.
-      No OCA module provides finance-specific PPM extensions for Odoo 19.
+      No OCA module provides finance-specific PPM extensions for Odoo 18.
     evidence: spec/finance-ppm/decisions/0001-finance-ppm-controls.md
     status: verified
 
@@ -126,7 +126,7 @@ capabilities:
     decision: >
       Philippine BIR tax compliance is jurisdiction-specific.
       No OCA module covers BIR eBIRForms filing for Philippines.
-      Odoo 19 PH localization covers fiscal positions but not filing workflows.
+      Odoo 18 PH localization covers fiscal positions but not filing workflows.
     evidence: spec/finance-ppm/decisions/0002-bir-tax-compliance.md
     status: verified
 
@@ -171,7 +171,7 @@ capabilities:
     target_parity: bridge
     implementation_refs:
       - platform/bridges/recurrent-alerts/
-      - scripts/n8n_finance_ppm_workflow_odoo19.json
+      - scripts/n8n_finance_ppm_workflow_odoo18.json
     decision: >
       EE provides built-in activity scheduling and email digests.
       CE lacks Slack integration and cron-triggered alert workflows.
@@ -224,7 +224,7 @@ capabilities:
     target_parity: bridge
     implementation_refs:
       - platform/bridges/compliance-dashboard/
-      - scripts/dashboard_queries_odoo19.sql
+      - scripts/dashboard_queries_odoo18.sql
     decision: >
       SAP FCC provides built-in closing cockpit dashboard.
       Odoo CE dashboards are limited. Superset provides
@@ -241,14 +241,14 @@ capabilities:
     decision: >
       SAP FCC provides critical-path designation on tasks.
       OCA project_timeline_critical_path exists but is verified only for
-      older series (≤14.0), NOT for Odoo 19.
+      older series (≤14.0), NOT for Odoo 18.
       Status: NOT AVAILABLE until independently verified and evidenced.
     evidence: spec/finance-ppm/decisions/0006-critical-path-unavailable.md
     status: planned
     notes: >
       Workaround: task dependencies + deadline tracking provide
       implicit ordering. True critical-path computation requires
-      verification of project_timeline_critical_path on Odoo 19
+      verification of project_timeline_critical_path on Odoo 18
       or a custom implementation.
 
   - capability_id: resource-leveling
@@ -257,7 +257,7 @@ capabilities:
     implementation_refs: []
     decision: >
       SAP provides resource leveling in Planning module.
-      No CE, OCA, or custom module provides this for Odoo 19.
+      No CE, OCA, or custom module provides this for Odoo 18.
       Status: NOT AVAILABLE. Workaround: manual workload balancing
       via v_assignee_workload Superset view.
     evidence: spec/finance-ppm/decisions/0006-critical-path-unavailable.md

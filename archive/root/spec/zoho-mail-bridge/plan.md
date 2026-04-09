@@ -40,7 +40,7 @@
 ## Architecture
 
 ```
-Odoo 19 CE
+Odoo 18 CE
   └─ ipai_zoho_mail module
        ├─ ir.mail_server  →  smtppro.zoho.com:587 (app pwd)
        └─ fetchmail.server → imappro.zoho.com:993 (app pwd)

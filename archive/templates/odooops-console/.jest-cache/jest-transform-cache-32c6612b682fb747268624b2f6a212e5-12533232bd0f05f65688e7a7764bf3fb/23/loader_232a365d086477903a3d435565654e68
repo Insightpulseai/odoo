@@ -21,7 +21,7 @@ function _interop_require_default(obj) {
 const REPO_ROOT = _path.default.resolve(process.cwd(), "../.."); // Assuming running from templates/odooops-console
 const OVERRIDES_DIR = _path.default.join(process.cwd(), "src/content/docs/upstream_overrides");
 const DEPLOYED_DIR = _path.default.join(process.cwd(), "src/content/docs/stack");
-const UPSTREAM_DIR = _path.default.resolve(REPO_ROOT, "docs/kb/odoo19/upstream");
+const UPSTREAM_DIR = _path.default.resolve(REPO_ROOT, "docs/kb/odoo18/upstream");
 async function getDocPage(slugParts) {
     const slugPath = slugParts.join("/");
     // 1. Check Overrides (Highest Priority)

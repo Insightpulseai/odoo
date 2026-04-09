@@ -2306,7 +2306,7 @@ Ranked by priority (P0 → P2). Tags: [ROI:H/M/L] [Risk:H/M/L] [Effort:Nd]
   - **Owner**: DevOps  **ROI**: High  **Risk**: Low  **Effort**: 1d
   - **Next action**: Extract logic → create n8n workflow in `automations/n8n/workflows/`
 
-- **`sandbox/dev/upgrade-to-odoo19.sh`**
+- **`sandbox/dev/upgrade-to-odoo18.sh`**
   - Convert to n8n workflow: polling sleep: scheduled n8n workflow candidate
   - Signals: polling sleep: scheduled n8n workflow candidate
   - **Owner**: DevOps  **ROI**: High  **Risk**: Low  **Effort**: 1d
@@ -3801,7 +3801,7 @@ Ranked by priority (P0 → P2). Tags: [ROI:H/M/L] [Risk:H/M/L] [Effort:Nd]
   - **Owner**: DevOps  **ROI**: Medium  **Risk**: Low  **Effort**: 0.25d
   - **Next action**: Update references to canonical paths and domains
 
-- **Fix**: `docs/releases/ODOO_19_PARITY_ANALYSIS.md` (old_path)
+- **Fix**: `docs/releases/ODOO_18_PARITY_ANALYSIS.md` (old_path)
   - **Owner**: DevOps  **ROI**: Medium  **Risk**: Low  **Effort**: 0.25d
   - **Next action**: Update references to canonical paths and domains
 
@@ -3885,11 +3885,11 @@ Ranked by priority (P0 → P2). Tags: [ROI:H/M/L] [Risk:H/M/L] [Effort:Nd]
   - **Owner**: DevOps  **ROI**: Medium  **Risk**: Low  **Effort**: 0.25d
   - **Next action**: Update references to canonical paths and domains
 
-- **Fix**: `docs/kb/odoo19/index/sections.json` (old_path)
+- **Fix**: `docs/kb/odoo18/index/sections.json` (old_path)
   - **Owner**: DevOps  **ROI**: Medium  **Risk**: Low  **Effort**: 0.25d
   - **Next action**: Update references to canonical paths and domains
 
-- **Fix**: `docs/kb/odoo19/index/index.json` (old_path)
+- **Fix**: `docs/kb/odoo18/index/index.json` (old_path)
   - **Owner**: DevOps  **ROI**: Medium  **Risk**: Low  **Effort**: 0.25d
   - **Next action**: Update references to canonical paths and domains
 
@@ -4341,19 +4341,19 @@ Ranked by priority (P0 → P2). Tags: [ROI:H/M/L] [Risk:H/M/L] [Effort:Nd]
   - **Owner**: DevOps  **ROI**: Medium  **Risk**: Low  **Effort**: 0.25d
   - **Next action**: Update references to canonical paths and domains
 
-- **Fix**: `odoo19/MIGRATION_COMPLETE.md` (old_path)
+- **Fix**: `odoo18/MIGRATION_COMPLETE.md` (old_path)
   - **Owner**: DevOps  **ROI**: Medium  **Risk**: Low  **Effort**: 0.25d
   - **Next action**: Update references to canonical paths and domains
 
-- **Fix**: `odoo19/CANONICAL_SETUP.md` (old_path)
+- **Fix**: `odoo18/CANONICAL_SETUP.md` (old_path)
   - **Owner**: DevOps  **ROI**: Medium  **Risk**: Low  **Effort**: 0.25d
   - **Next action**: Update references to canonical paths and domains
 
-- **Fix**: `odoo19/MIGRATION_FROM_OLD_STACK.md` (old_path)
+- **Fix**: `odoo18/MIGRATION_FROM_OLD_STACK.md` (old_path)
   - **Owner**: DevOps  **ROI**: Medium  **Risk**: Low  **Effort**: 0.25d
   - **Next action**: Update references to canonical paths and domains
 
-- **Fix**: `odoo19/QUICK_REFERENCE.md` (old_path)
+- **Fix**: `odoo18/QUICK_REFERENCE.md` (old_path)
   - **Owner**: DevOps  **ROI**: Medium  **Risk**: Low  **Effort**: 0.25d
   - **Next action**: Update references to canonical paths and domains
 

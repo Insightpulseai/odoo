@@ -251,7 +251,7 @@ See: [new_location.md](../guides/canonical/NEW_LOCATION.md)
 ```yaml
 site_name: Odoo Documentation
 site_url: https://insightpulseai.github.io/odoo/  # Updated from jgtolentino
-site_description: Documentation for the Odoo platform — InsightPulse AI platform built on Odoo 19 CE  # Updated from Odoo 18
+site_description: Documentation for the Odoo platform — InsightPulse AI platform built on Odoo 18 CE  # Updated from Odoo 18
 site_author: InsightPulse AI Team
 
 repo_name: Insightpulseai/odoo  # Updated from jgtolentino/odoo
@@ -354,7 +354,7 @@ jobs:
 
 | Current (Incorrect) | Correct | Evidence |
 |---------------------|---------|----------|
-| Odoo 18 Community Edition | Odoo 19 Community Edition | `CLAUDE.md` line "Stack: Odoo CE 19.0" |
+| Odoo 18 Community Edition | Odoo 18 Community Edition | `CLAUDE.md` line "Stack: Odoo CE 19.0" |
 | jgtolentino/odoo repo | Insightpulseai/odoo | `CLAUDE.md` line "Repo: Insightpulseai/odoo" |
 | Mailgun SMTP | Zoho Mail SMTP (`smtp.zoho.com:587`) | `CLAUDE.md` line "Email: Zoho Mail" |
 | mg.insightpulseai.com | mail.insightpulseai.com | Zoho Mail domain |
@@ -363,7 +363,7 @@ jobs:
 | Plane integration | Deprecated (remove section) | `CLAUDE.md` line "Deprecated: Plane (all)" |
 
 **Sections to Update**:
-1. Title/Description (line 1-5): Change "Odoo 18" → "Odoo 19"
+1. Title/Description (line 1-5): Change "Odoo 18" → "Odoo 18"
 2. Badges (line 3): Change `jgtolentino/odoo` → `Insightpulseai/odoo`
 3. Documentation URL (line 12): Change `jgtolentino.github.io` → `insightpulseai.github.io`
 4. Email Integration section (lines 296-394): Replace Mailgun docs with Zoho Mail
@@ -381,7 +381,7 @@ jobs:
 - [ ] Move Plane docs to `docs/deprecated/`
 
 **Phase 2: README Truth** (Priority: High)
-- [ ] Update README.md Odoo 18 → Odoo 19 references (715 instances!)
+- [ ] Update README.md Odoo 18 → Odoo 18 references (715 instances!)
 - [ ] Update mkdocs.yml repo URLs and site description
 - [ ] Update README.md email section (remove Mailgun, add Zoho)
 - [ ] Remove or archive Plane section

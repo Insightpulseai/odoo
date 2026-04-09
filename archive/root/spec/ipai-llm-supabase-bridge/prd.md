@@ -8,7 +8,7 @@
 
 ## Context
 
-Odoo 19 CE has no built-in LLM framework. Apexive's `odoo-llm` (github.com/apexive/odoo-llm)
+Odoo 18 CE has no built-in LLM framework. Apexive's `odoo-llm` (github.com/apexive/odoo-llm)
 fills this gap with 30+ modules covering tool calling, assistant UIs, MCP server, RAG,
 pgvector, and multi-provider support (OpenAI, Ollama, Mistral — plus an unmaintained 16.0
 Anthropic provider). It is LGPL-3, architecturally sound, and the de-facto community standard.

@@ -249,7 +249,7 @@ Day 25:    Quarter-end: file 2550Q, 1601-EQ
 
 - [taxpulse-ph-pack](../taxpulse-ph-pack/SKILL.md) — Core tax engine
 - [bir-tax-filing](../../bir-tax-filing/SKILL.md) — Agent skill for BIR forms
-- [odoo19-accounting-map](../odoo19-accounting-map/SKILL.md) — Accounting feature map
+- [odoo18-accounting-map](../odoo18-accounting-map/SKILL.md) — Accounting feature map
 - [sap-concur-parity](../../industries/sap-concur-parity/SKILL.md) — Expense/tax parity
 - [landing-ai-ade](../../inference/landing-ai-ade/SKILL.md) — ADE for BIR form extraction
 - [azure-document-intelligence](../../azure-foundry/document-intelligence/SKILL.md) — Custom model for BIR forms

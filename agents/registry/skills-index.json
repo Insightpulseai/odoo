@@ -310,7 +310,7 @@
     },
     {
       "id": "odoo-services-ee-parity",
-      "name": "Odoo 19 Services — EE Parity",
+      "name": "Odoo 18 Services — EE Parity",
       "domain": "odoo_ce",
       "path": "skills/odoo-services-ee-parity/SKILL.md",
       "tags": ["odoo", "ee-parity", "helpdesk", "planning", "timesheets", "field-service", "project"],
@@ -594,10 +594,10 @@
       "last_validated": "2026-03-15"
     },
     {
-      "id": "odoo-19-functional-architecture",
-      "name": "Odoo 19 Functional Architecture",
+      "id": "odoo-18-functional-architecture",
+      "name": "Odoo 18 Functional Architecture",
       "domain": "odoo_ce",
-      "path": "knowledge/odoo_19_functional_architecture.md",
+      "path": "knowledge/odoo_18_functional_architecture.md",
       "tags": ["odoo", "architecture", "functional"],
       "last_validated": "2026-03-15"
     },

@@ -1,6 +1,6 @@
 # Content guidelines
 
-Follow these guidelines for all documentation, UI text, and inline comments. Adapted from Odoo 19 content standards.
+Follow these guidelines for all documentation, UI text, and inline comments. Adapted from Odoo 18 content standards.
 
 ## Language
 

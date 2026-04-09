@@ -30,7 +30,7 @@ Use Odoo's built-in configuration, views, actions, and server actions before wri
 The Odoo Community Association maintains hundreds of production-grade modules. Adopt OCA modules when:
 
 - The module covers >=80% of the requirement
-- It is maintained for Odoo 19.0 (or portable from 18.0)
+- It is maintained for Odoo 18.0 (or portable from 18.0)
 - It has active maintainers and CI
 
 ### Delta / `ipai_*` (Layer 3)

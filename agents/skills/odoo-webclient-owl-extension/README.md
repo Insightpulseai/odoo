@@ -16,4 +16,4 @@ patches (learned from `ipai_ai_widget` deprecation).
 ## Cross-references
 - `agents/knowledge/benchmarks/odoo-developer-howtos.md`
 - `agents/knowledge/benchmarks/odoo-coding-guidelines.md`
-- `~/.claude/rules/odoo19-coding.md`
+- `~/.claude/rules/odoo18-coding.md`

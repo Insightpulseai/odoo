@@ -25,7 +25,7 @@ evidence.
 | `infra/ssot/azure/resources.yaml` | `pg-ipai-odoo` entry -- lifecycle, region, notes |
 | `infra/ssot/azure/service-matrix.yaml` | Odoo service entry -- database reference |
 | `docs/runbooks/DR_BACKUP_RESTORE.md` | Restore drill procedure and evidence |
-| `docs/runbooks/ODOO19_GO_LIVE_CHECKLIST.md` | DB backup/HA line items |
+| `docs/runbooks/ODOO18_GO_LIVE_CHECKLIST.md` | DB backup/HA line items |
 | `docs/audits/ODOO_AZURE_ENTERPRISE_BENCHMARK.md` | PG HA/DR gap row |
 
 ## Microsoft Learn MCP Usage
@@ -57,7 +57,7 @@ Optional deeper fetches:
    - `backup.retentionDays: 35`
    - `backup.geoRedundantBackup: 'Enabled'`
    Update `docs/runbooks/DR_BACKUP_RESTORE.md` with restore drill procedure.
-   Update `docs/runbooks/ODOO19_GO_LIVE_CHECKLIST.md` with RPO/RTO targets.
+   Update `docs/runbooks/ODOO18_GO_LIVE_CHECKLIST.md` with RPO/RTO targets.
 5. **Verify** -- Confirm Bicep lints clean (`az bicep build`). Confirm SSOT YAML
    reflects the new HA posture. Confirm runbook contains a step-by-step restore
    drill with expected completion time.
@@ -69,7 +69,7 @@ Optional deeper fetches:
 | `infra/azure/modules/postgres-flexible.bicep` | HA mode, backup retention, geo-backup |
 | `infra/ssot/azure/resources.yaml` | Update `pg-ipai-odoo` entry with HA metadata |
 | `docs/runbooks/DR_BACKUP_RESTORE.md` | Restore drill procedure, RPO/RTO targets |
-| `docs/runbooks/ODOO19_GO_LIVE_CHECKLIST.md` | DB HA/DR line items checked |
+| `docs/runbooks/ODOO18_GO_LIVE_CHECKLIST.md` | DB HA/DR line items checked |
 | `docs/evidence/<stamp>/azure-pg-ha-dr/` | Bicep diff, MCP query results, drill log |
 
 ## Completion Criteria

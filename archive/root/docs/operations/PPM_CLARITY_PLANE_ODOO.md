@@ -30,7 +30,7 @@ PPM Clarity provides enterprise-grade portfolio/program/project management throu
 
 ```
 ┌──────────────────┐            ┌──────────────────┐            ┌──────────────────┐
-│   Plane.so       │            │   Supabase       │            │   Odoo 19        │
+│   Plane.so       │            │   Supabase       │            │   Odoo 18        │
 │  (Planning)      │            │    (SSOT)        │            │  (Execution)     │
 ├──────────────────┤            ├──────────────────┤            ├──────────────────┤
 │ • Projects       │ Webhook    │ • work_item_     │  n8n Cron  │ • project.task   │

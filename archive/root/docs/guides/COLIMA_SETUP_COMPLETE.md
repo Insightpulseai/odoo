@@ -1,7 +1,7 @@
 # Colima + Odoo Setup Verification Report
 
 **Date**: 2026-02-15
-**Setup**: Colima VM + Docker + Odoo 19 CE
+**Setup**: Colima VM + Docker + Odoo 18 CE
 
 ---
 

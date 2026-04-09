@@ -11,7 +11,7 @@ Tracks how Dependabot and other security findings are handled in this monorepo.
 |--------|-------|----------|------|--------|-----|
 | Dependabot (npm/pnpm) | ~195 | 8 | 87 | 71 | 29 |
 
-Last surfaced: 2026-02-22 (push to `claude/deploy-finance-ppm-odoo19-LbLm4`).
+Last surfaced: 2026-02-22 (push to `claude/deploy-finance-ppm-odoo18-LbLm4`).
 
 ---
 

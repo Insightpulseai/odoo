@@ -14,7 +14,7 @@ fi
 
 DEST="${DEST:-addons/ipai}"
 ODOO_BIN="${ODOO_BIN:-vendor/odoo/odoo-bin}"
-PYTHON="${PYTHON:-$HOME/.pyenv/versions/odoo-19-dev/bin/python}"
+PYTHON="${PYTHON:-$HOME/.pyenv/versions/odoo-18-dev/bin/python}"
 
 echo "Scaffolding ${MODULE_NAME} in ${DEST}/"
 "${PYTHON}" "${ODOO_BIN}" scaffold "${MODULE_NAME}" "${DEST}"

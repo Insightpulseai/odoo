@@ -12,7 +12,7 @@ fi
 
 # Create PR
 gh pr create \
-    --title "feat(parity): add Odoo 19 EE parity test runner framework" \
+    --title "feat(parity): add Odoo 18 EE parity test runner framework" \
     --body "$(cat <<'EOF'
 ## Summary
 

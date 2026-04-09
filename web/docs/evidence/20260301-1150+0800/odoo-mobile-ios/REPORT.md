@@ -1,7 +1,7 @@
 # odoo-mobile-ios — Phase 3 Evidence
 
 **Stamp**: 2026-03-01T11:50+0800
-**Branch**: feat/ipai-module-audit-odoo19
+**Branch**: feat/ipai-module-audit-odoo18
 **Scope**: `apps/odoo-mobile-ios/`
 **Swift**: 6.2.3 (arm64-apple-macosx26.0)
 
@@ -16,7 +16,7 @@
 ## [CONTEXT]
 
 - **repo**: /Users/tbwa/Documents/GitHub/Insightpulseai/odoo
-- **branch**: feat/ipai-module-audit-odoo19
+- **branch**: feat/ipai-module-audit-odoo18
 - **cwd**: apps/odoo-mobile-ios
 - **goal**: Implement OfflineQueue CoreData store + 4 tests; add GitHub Actions Swift CI workflow
 - **stamp**: 2026-03-01T11:50+0800
@@ -117,5 +117,5 @@ Used by `OfflineQueue.makeInMemory()` — each test creates a fresh instance.
 
 1. `xcodes install "16.4"` — **[MANUAL_REQUIRED]** Apple ID credentials needed; enables local Simulator test runs
 2. Pin `DEVELOPER_DIR=/Applications/Xcode_16.x.app/Contents/Developer` in CI workflow and flip `continue-on-error: false` once Simulator test is green
-3. Wire `OdooClient.call` → live `odoo_dev` JSON-RPC (requires local Odoo 19 dev instance)
+3. Wire `OdooClient.call` → live `odoo_dev` JSON-RPC (requires local Odoo 18 dev instance)
 4. Add `BiometricGate` tests (LAContext requires device/simulator, not testable on macOS CLT)

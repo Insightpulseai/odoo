@@ -242,7 +242,7 @@ This skill composes three core skills:
 │ Production Environment (Before Promotion)                    │
 │                                                              │
 │  Traffic → Blue (Current Production)                         │
-│           └─ Odoo 19.0 + Current Modules                    │
+│           └─ Odoo 18.0 + Current Modules                    │
 └─────────────────────────────────────────────────────────────┘
 
                            ▼ Promotion

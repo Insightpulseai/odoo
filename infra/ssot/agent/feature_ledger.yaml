@@ -93,7 +93,7 @@ capabilities:
       - addons/ipai/ipai_finance_cash_advance/
     required_gates:
       - gate: install_smoke
-        description: "Module installs on clean Odoo 19 CE without errors"
+        description: "Module installs on clean Odoo 18 CE without errors"
         evidence: "docs/evidence/cash_advance/install_smoke.log"
         passing: false
       - gate: upgrade_smoke

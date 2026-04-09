@@ -13,7 +13,7 @@ Since `product.json` is not present in the repository, we implemented a build-ti
 
 ### Assets
 
-- `docs/kb/odoo19/assets/odoo_core_erd.drawio`: Added minimal valid XML to prevent "file not found" errors.
+- `docs/kb/odoo18/assets/odoo_core_erd.drawio`: Added minimal valid XML to prevent "file not found" errors.
 
 ### CI
 

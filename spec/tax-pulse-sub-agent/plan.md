@@ -135,7 +135,7 @@ The following phases extend the original 7-wave plan with AFC parity requirement
 
 **Files**:
 - Azure AI Search index `ipai-ph-tax-knowledge` with content:
-  - Odoo 19 accounting docs
+  - Odoo 18 accounting docs
   - BIR forms catalog (all form types, requirements, deadlines)
   - BIR Revenue Regulations (full text)
   - Internal SOPs and compliance procedures

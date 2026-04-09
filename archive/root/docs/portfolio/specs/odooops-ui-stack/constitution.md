@@ -46,7 +46,7 @@
 ```
 registry.insightpulseai.com → Squarespace (marketing/docs/SEO)
 ops.insightpulseai.com      → Vercel (Next.js console)
-erp.insightpulseai.com      → nginx → Odoo 19 CE
+erp.insightpulseai.com      → nginx → Odoo 18 CE
 api.insightpulseai.com      → Supabase Edge Functions (optional gateway)
 obs.insightpulseai.com      → Observability dashboards (optional)
 ```

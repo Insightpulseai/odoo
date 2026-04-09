@@ -1,6 +1,6 @@
 # OCA Module Porting Runbook
 
-**Target**: Odoo 19.0 CE
+**Target**: Odoo 18.0 CE
 **SSOT**: `ssot/odoo/oca_repos.yaml`
 **CI gate**: `.github/workflows/oca-19-readiness-report.yml`
 **Scanner**: `scripts/ci/scan_oca_repos.py`

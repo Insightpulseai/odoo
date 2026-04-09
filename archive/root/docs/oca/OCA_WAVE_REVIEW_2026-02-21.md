@@ -2,7 +2,7 @@
 
 **Date**: 2026-02-21T16:00:00+08:00
 **Reviewer**: Claude Code (automated)
-**Scope**: 4 waves, 21 modules, Odoo 19.0 CE
+**Scope**: 4 waves, 21 modules, Odoo 18.0 CE
 **Instance**: erp.insightpulseai.com (DO droplet 178.128.112.214)
 
 ---

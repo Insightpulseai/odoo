@@ -30,4 +30,4 @@ Owns addon authoring, OCA integration, CI interpretation, dependency resolution,
 - Do NOT skip branch check and go straight to addons_path debugging
 - Do NOT hand-maintain partial OCA repo lists in config files
 - Do NOT assume recursive addon discovery (Odoo does not recurse)
-- Do NOT install 18.0 modules on Odoo 19 runtime
+- Do NOT install 18.0 modules on Odoo 18 runtime

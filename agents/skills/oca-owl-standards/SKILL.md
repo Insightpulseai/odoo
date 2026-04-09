@@ -30,9 +30,9 @@ Building "Enterprise-killing" Odoo CE frontends using the latest OWL (Odoo Web L
 - **Standard Actions**: Extend `ActionMenus` and `ControlPanel` using standard OCA patches.
 - **Consistency**: Follow the OCA CSS naming convention (prefix with `o_oca_`).
 
-## Odoo 19 + OWL 2.0+ Specifics
+## Odoo 18 + OWL 2.0+ Specifics
 
-- **use() Hook**: Embrace the new `use()` hook for consuming providers in Odoo 19.
+- **use() Hook**: Embrace the new `use()` hook for consuming providers in Odoo 18.
 - **Simplified Syntax**: Use the latest Owl template syntax (e.g., self-closing tags).
 
 ## Implementation Checklist

@@ -42,8 +42,8 @@ Odoo Studio is an **Enterprise-only** visual builder ($$$) that lets non-develop
 User (natural language request via Odoo Discuss or web widget)
     ↓
 ipai-odoo-copilot (Foundry Agent)
-    ↓ understands: Odoo 19 ORM, view types, module structure
-    ↓ references: odoo19-* skills (75+ domain skills)
+    ↓ understands: Odoo 18 ORM, view types, module structure
+    ↓ references: odoo18-* skills (75+ domain skills)
     ↓ validates: OCA coding standards, IPAI naming convention
     ↓
 Generates one of:
@@ -250,7 +250,7 @@ addons/ipai/ipai_meeting_notes/
 | **Data workspace** | Model/field definition from NL |
 | **Security workspace** | Access rights + web roles from NL |
 | **Dataverse integration** | ORM model generation |
-| **Bootstrap responsive** | Odoo 19 responsive framework |
+| **Bootstrap responsive** | Odoo 18 responsive framework |
 | **Template library** | Module template families |
 
 ## Implementation Layers
@@ -305,13 +305,13 @@ Copilot generates QWeb report templates from NL description.
 
 | Skill | Provides |
 |-------|---------|
-| `odoo19-orm/SKILL.md` | Model class patterns, field types, ORM methods |
-| `odoo19-frontend/SKILL.md` | View types, XML structure, widgets |
-| `odoo19-module/SKILL.md` | Module structure, manifest, naming |
-| `odoo19-security/SKILL.md` | Access rights, groups, record rules |
-| `odoo19-actions/SKILL.md` | Server actions, automated actions |
+| `odoo18-orm/SKILL.md` | Model class patterns, field types, ORM methods |
+| `odoo18-frontend/SKILL.md` | View types, XML structure, widgets |
+| `odoo18-module/SKILL.md` | Module structure, manifest, naming |
+| `odoo18-security/SKILL.md` | Access rights, groups, record rules |
+| `odoo18-actions/SKILL.md` | Server actions, automated actions |
 | `oca-development-standards/SKILL.md` | OCA quality standards |
-| `odoo19-coding-guidelines/SKILL.md` | Coding conventions |
+| `odoo18-coding-guidelines/SKILL.md` | Coding conventions |
 
 ## Concur/Studio Parity Impact
 

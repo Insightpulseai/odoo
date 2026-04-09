@@ -1,11 +1,11 @@
 ---
 name: odoo-testing
-description: Odoo 19 test patterns — TransactionCase, HttpCase, test data, assertions
+description: Odoo 18 test patterns — TransactionCase, HttpCase, test data, assertions
 category: qa
 priority: high
 ---
 
-# Odoo 19 Testing Patterns
+# Odoo 18 Testing Patterns
 
 ## Test Classes
 
@@ -15,7 +15,7 @@ priority: high
 | `HttpCase` | Controller routes, full HTTP stack | Separate transaction per request |
 | `tagged()` | Control when tests run | Decorator on class or method |
 
-`SavepointCase` is **deprecated in Odoo 19** — use `TransactionCase` instead.
+`SavepointCase` is **deprecated in Odoo 18** — use `TransactionCase` instead.
 
 ```python
 # Correct

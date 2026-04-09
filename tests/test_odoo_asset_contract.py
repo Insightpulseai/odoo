@@ -24,7 +24,7 @@ from pathlib import Path
 REPO_ROOT = Path(__file__).resolve().parent.parent
 ADDONS_IPAI = REPO_ROOT / "addons" / "ipai"
 
-# Valid Odoo asset bundle keys (Odoo 19)
+# Valid Odoo asset bundle keys (Odoo 18)
 VALID_BUNDLE_KEYS = {
     "web.assets_backend",
     "web.assets_frontend",

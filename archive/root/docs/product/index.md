@@ -1,6 +1,6 @@
-# InsightPulse AI — Odoo 19 CE Platform
+# InsightPulse AI — Odoo 18 CE Platform
 
-Documentation portal for the `odoo` monorepo — the InsightPulse AI ERP platform built on Odoo 19 CE + OCA.
+Documentation portal for the `odoo` monorepo — the InsightPulse AI ERP platform built on Odoo 18 CE + OCA.
 
 ## Quick Links
 
@@ -16,7 +16,7 @@ Documentation portal for the `odoo` monorepo — the InsightPulse AI ERP platfor
 
 | Component | Technology |
 |-----------|------------|
-| **ERP** | Odoo 19 CE + OCA |
+| **ERP** | Odoo 18 CE + OCA |
 | **Database** | PostgreSQL 16 |
 | **Automation** | n8n |
 | **Chat** | Slack |

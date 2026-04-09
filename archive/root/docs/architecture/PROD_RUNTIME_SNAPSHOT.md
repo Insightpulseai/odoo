@@ -1,6 +1,6 @@
 # Prod Runtime Snapshot (SSOT)
 
-- **Platform Version**: Odoo 19.0 CE
+- **Platform Version**: Odoo 18.0 CE
 - **Last Deploy**: 2026-02-22 (sha-8f2a1b)
 - **Database**: PostgreSQL 16 (Managed Cluster)
 - **Active Waves**: 1, 2, 3

@@ -1,7 +1,7 @@
 # PPM Clarity — Product Requirements Document
 
 > Portfolio/Program/Project Management integration between Plane.so (self-hosted)
-> and Odoo 19 CE with SSOT governance.
+> and Odoo 18 CE with SSOT governance.
 
 ---
 

@@ -142,7 +142,7 @@ IPAI Odoo Copilot (Foundry Agent)
 ```
 
 **Internal knowledge sources**:
-- Odoo 19 official docs (indexed in Azure AI Search)
+- Odoo 18 official docs (indexed in Azure AI Search)
 - OCA module documentation (indexed)
 - BIR tax rules and compliance guides (indexed)
 - IPAI-specific procedures (from `agents/knowledge-base/`)

@@ -18,7 +18,7 @@ Step-ups require a decision record with evidence.
 Layer 1: CE native / configuration
   ↓ (only if CE cannot express the capability)
 Layer 2: OCA add-on (19.0 series, verified installable)
-  ↓ (only if no OCA module covers it for Odoo 19)
+  ↓ (only if no OCA module covers it for Odoo 18)
 Layer 3: Minimal ipai_* delta module
   ↓ (only if the gap is inherently service/platform-based, not module-based)
 Layer 4: Platform bridge (n8n workflow, external API, infra substitute)
@@ -50,13 +50,13 @@ The authoritative mapping lives in `spec/finance-ppm/parity_map.yaml`.
 
 Do not claim a capability is "solved" or "available" unless:
 
-1. The module/bridge is **installed and tested** on Odoo 19 CE, or
+1. The module/bridge is **installed and tested** on Odoo 18 CE, or
 2. The claim explicitly states the verification status (e.g., "unverified for 19.0")
 
 Specific guardrails:
 
 - **Gantt view**: OCA `project_timeline` provides a **timeline visualization**, not a full Gantt chart. Do not claim "Gantt" unless the module provides interactive Gantt with drag-and-drop resource allocation.
-- **Critical path**: OCA `project_timeline_critical_path` is verified only for older series (≤14.0). Do not claim critical-path highlighting for Odoo 19 unless independently verified and evidenced.
+- **Critical path**: OCA `project_timeline_critical_path` is verified only for older series (≤14.0). Do not claim critical-path highlighting for Odoo 18 unless independently verified and evidenced.
 - **Resource leveling**: Not available in any CE/OCA module. Do not claim availability.
 
 ### Rule 4: Team Directory Invariants
@@ -105,7 +105,7 @@ Enforced by `scripts/policy/validate_parity_map.py` + CI gate.
 ### Forbidden Claims
 
 - "All EE modules have OCA equivalents" — false; some gaps are platform-level
-- "Critical path analysis solved" — unverified for Odoo 19; use "timeline visualization available"
+- "Critical path analysis solved" — unverified for Odoo 18; use "timeline visualization available"
 - "Full Gantt support" — OCA `project_timeline` is a timeline, not a full Gantt
 - "Enterprise parity achieved" — parity is explicitly tiered (CE/OCA/Delta/Bridge), not binary
 - ">=80% EE parity" — only valid with explicit denominator and exclusion list

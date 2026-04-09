@@ -234,17 +234,17 @@ The Odoo Copilot architecture operates across five distinct service planes. Each
 
 Odoo.sh is benchmark-only — it is not a runtime target for this platform.
 
-## Odoo 19 AI Agent Alignment
+## Odoo 18 AI Agent Alignment
 
-Odoo 19 introduces a native AI agent abstraction with four configuration surfaces: **purpose**, **prompt**, **topics**, and **tools**. These are the in-app agent model for registration and selection.
+Odoo 18 introduces a native AI agent abstraction with four configuration surfaces: **purpose**, **prompt**, **topics**, and **tools**. These are the in-app agent model for registration and selection.
 
 `ipai_odoo_copilot` aligns to this vocabulary:
-- Agent registration uses Odoo 19 native agent records
-- Agent selection/routing uses Odoo 19 topic and tool bindings
+- Agent registration uses Odoo 18 native agent records
+- Agent selection/routing uses Odoo 18 topic and tool bindings
 - Foundry remains the external runtime for orchestration, evaluation, and publication
 - Odoo AI agents are the UX/config surface; Foundry is the execution plane
 
-The copilot does not replace or bypass the native Odoo 19 agent model — it extends it with Foundry-backed orchestration.
+The copilot does not replace or bypass the native Odoo 18 agent model — it extends it with Foundry-backed orchestration.
 
 ## External Benchmark Sources
 

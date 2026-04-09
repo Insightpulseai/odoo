@@ -28,7 +28,7 @@ auditlog: "19.0.1.0.1"
 
 ## Diagnosis
 
-1. **OCA rest-framework** repository for Odoo 19.0 either:
+1. **OCA rest-framework** repository for Odoo 18.0 either:
    - Doesn't exist yet (OCA hasn't released it)
    - Wasn't aggregated correctly (git-aggregator fell back to 18.0)
 
@@ -36,7 +36,7 @@ auditlog: "19.0.1.0.1"
    - Not present in aggregated modules
    - Likely also version 18.0 only
 
-3. **Odoo 18.x modules may not be compatible with Odoo 19 runtime**
+3. **Odoo 18.x modules may not be compatible with Odoo 18 runtime**
 
 ## Solutions
 
@@ -51,7 +51,7 @@ Monitor: https://github.com/OCA/rest-framework
 
 ### Option 3: Use alternative REST implementation
 - Odoo native HTTP controllers
-- Custom REST wrapper for Odoo 19
+- Custom REST wrapper for Odoo 18
 
 ### Option 4: Install component dependency (risky)
 - Add OCA/connector to oca-aggregate.yml
@@ -69,8 +69,8 @@ Monitor: https://github.com/OCA/rest-framework
 ## Recommendation
 
 **Hold on REST framework installation** until:
-1. OCA releases rest-framework for Odoo 19.0, OR
-2. Verify component module exists for Odoo 19 and add to oca-aggregate.yml
+1. OCA releases rest-framework for Odoo 18.0, OR
+2. Verify component module exists for Odoo 18 and add to oca-aggregate.yml
 
 **Success achieved:**
 - ✅ Deterministic Python dependency packaging (SSOT)

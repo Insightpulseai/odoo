@@ -40,7 +40,7 @@ This document describes the complete email architecture for InsightPulse AI, fol
 │  ══════════════════════════════════════                                      │
 │                                                                              │
 │  ┌─────────────────────────────┐                                            │
-│  │      Odoo 19 ERP            │                                            │
+│  │      Odoo 18 ERP            │                                            │
 │  │  erp.insightpulseai.com     │                                            │
 │  └─────────────────────────────┘                                            │
 │       │                                                                      │
@@ -132,7 +132,7 @@ Encryption: STARTTLS
 Authentication: Required
 ```
 
-## Odoo 19 Configuration
+## Odoo 18 Configuration
 
 ### Outgoing Mail Server
 

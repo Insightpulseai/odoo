@@ -18,10 +18,10 @@
 #   mail_tracking/static/src/services/store_service_patch.esm.js
 #   mail_tracking/static/src/core/discuss/discuss_sidebar_mailboxes.xml
 {
-    "name": "Odoo 19 Web Mail Compat (OCA overlays)",
+    "name": "Odoo 18 Web Mail Compat (OCA overlays)",
     "summary": (
         "Compat overlay for OCA mail_tracking 19.0.x: fixes Record.one() "
-        "removal and mail.DiscussContent.mobileTopbar template rename in Odoo 19."
+        "removal and mail.DiscussContent.mobileTopbar template rename in Odoo 18."
     ),
     "version": "19.0.1.0.0",
     "category": "Technical",
@@ -39,7 +39,7 @@
         # Target: same bundle mail_tracking uses (web.assets_backend).
         # Order matters: remove first, then add replacement, then probe.
         "web.assets_backend": [
-            # -- Fix 1: Record.one() removed in Odoo 19 ------------------
+            # -- Fix 1: Record.one() removed in Odoo 18 ------------------
             # OCA file calls Record.one("Thread") in Store.setup(); that
             # static method no longer exists.  Our replacement initialises
             # store.failed as a plain object in onStarted() instead.
@@ -48,7 +48,7 @@
                 "mail_tracking/static/src/services/store_service_patch.esm.js",
             ),
             "ipai_web_mail_compat/static/src/services/store_service_patch.esm.js",
-            # -- Fix 2: template parent renamed in Odoo 19 ----------------
+            # -- Fix 2: template parent renamed in Odoo 18 ----------------
             # OCA template inherits from mail.Discuss.mobileTopbar which no
             # longer exists; correct parent is mail.DiscussContent.mobileTopbar.
             # We remove the whole file and re-add a corrected copy that keeps

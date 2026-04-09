@@ -212,7 +212,7 @@ capability_class: capability_pack  # Not a standalone runtime stack
 knowledge_sources:
   - type: azure_ai_search
     index: ipai-ph-tax-knowledge
-    content: [odoo_19_docs, bir_forms_catalog, bir_deadlines, internal_sops]
+    content: [odoo_18_docs, bir_forms_catalog, bir_deadlines, internal_sops]
   - type: file_search
     content: [bir_revenue_regulations, compliance_procedures]
   - type: ssot_yaml

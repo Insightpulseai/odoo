@@ -146,7 +146,7 @@
       "Bash(DOCKER_HOST=unix:///Users/tbwa/.colima/_lima/colima-odoo/sock/docker.sock az acr login --name ipaiodoodevacr)",
       "WebFetch(domain:n8n.io)",
       "WebFetch(domain:docs.n8n.io)",
-      "Bash(~/.pyenv/versions/odoo-19-dev/bin/python3:*)",
+      "Bash(~/.pyenv/versions/odoo-18-dev/bin/python3:*)",
       "Bash(find /Users/tbwa/Documents/GitHub/Insightpulseai -path */plane* -name *.py -o -path */plane* -name *.ts -o -path */plane* -name *.json)",
       "WebFetch(domain:supabase.com)",
       "Bash(for mod:*)",

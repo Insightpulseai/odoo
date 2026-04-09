@@ -1,6 +1,6 @@
 # OCR & Document Digitization Settings Reference
 
-Complete guide to configuring and managing OCR and document digitization in Odoo 19 CE.
+Complete guide to configuring and managing OCR and document digitization in Odoo 18 CE.
 
 ## Overview
 

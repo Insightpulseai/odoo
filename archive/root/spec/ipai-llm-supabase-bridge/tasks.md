@@ -29,7 +29,7 @@
   - AC: `odoo -i llm,llm_tool,llm_thread --stop-after-init` exits 0
 
 - [ ] **T1.6** Apply 19.0 checklist to `llm_assistant`
-  - AC: Assistant UI renders in Odoo 19 Discuss sidebar
+  - AC: Assistant UI renders in Odoo 18 Discuss sidebar
 
 - [ ] **T1.7** Apply 19.0 checklist to `llm_openai`
   - AC: OpenAI provider creates a completion with test API key
@@ -224,7 +224,7 @@
   - Record matching tag/SHA from `https://github.com/OCA/ai`
   - Set `pinned_ref` in `ssot/ai/dependencies.yaml`
   - AC: `pinned_ref != null` AND `dependency_policy.prod_activation_requires` passes
-    AND module installs cleanly on Odoo 19 (`--stop-after-init` exits 0)
+    AND module installs cleanly on Odoo 18 (`--stop-after-init` exits 0)
 
 - [ ] **T6.5** Prod readiness SSOT gate (email + OCR + invariants)
   - SSOT artifact: `ssot/runtime/prod_settings.yaml` (schema `ssot.runtime.prod_settings.v1`)

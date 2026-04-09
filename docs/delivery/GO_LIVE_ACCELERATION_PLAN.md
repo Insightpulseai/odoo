@@ -144,7 +144,7 @@ Six independent lanes that can execute simultaneously. Each lane touches differe
 - Odoo database configuration (`dbfilter`, hostname routing)
 - Core module installation verification
 
-**Allowed files:** `addons/ipai/**`, `config/**`, `odoo19/**`, `scripts/odoo/**`
+**Allowed files:** `addons/ipai/**`, `config/**`, `odoo18/**`, `scripts/odoo/**`
 **Forbidden files:** `infra/`, `.azure/`, `ssot/network/`, `ssot/security/`
 
 **Outputs:**
@@ -316,10 +316,10 @@ Six independent lanes that can execute simultaneously. Each lane touches differe
 ### CP-4: Fix Odoo Cron (W2)
 
 **Why:** Broken server actions block Finance PPM, the primary business capability.
-**Inputs:** Cron log showing `analytic_account_id` error; Odoo 19 field schema
+**Inputs:** Cron log showing `analytic_account_id` error; Odoo 18 field schema
 **Steps:**
 1. Identify the server action referencing `analytic_account_id` on `project.project`
-2. Determine the correct Odoo 19 replacement (likely `analytic_plan_id` or a relational path)
+2. Determine the correct Odoo 18 replacement (likely `analytic_plan_id` or a relational path)
 3. Update the module code
 4. Test install on disposable DB (`test_ipai_finance_ppm`)
 5. Verify cron runs without error
@@ -520,7 +520,7 @@ Items completed during the Phase 0-to-1 acceleration sessions (2026-03-18/19):
 | Copilot Skills framework | OPERATIONAL | 4 skills, 16 tests passing |
 | Azure DevOps pipelines | CREATED | ci-cd.yml in ADO project ipai-platform |
 | All keys vaulted | DONE | foundry, search, pg-admin, ADO PAT in kv-ipai-dev |
-| Go-live runbook | CREATED | `docs/runbooks/ODOO19_GO_LIVE_CHECKLIST.md` (9 sections) |
+| Go-live runbook | CREATED | `docs/runbooks/ODOO18_GO_LIVE_CHECKLIST.md` (9 sections) |
 
 ---
 
@@ -590,7 +590,7 @@ Eight targets that map 1:1 to the critical path, with no overlapping work items.
 - **Status:** DONE
 - **Owner:** platform_operator
 - **Acceptance:**
-  - [x] `docs/runbooks/ODOO19_GO_LIVE_CHECKLIST.md` exists
+  - [x] `docs/runbooks/ODOO18_GO_LIVE_CHECKLIST.md` exists
   - [x] All 9 sections present
   - [x] Manifest contract passes
 - **Evidence:** Created 2026-03-19

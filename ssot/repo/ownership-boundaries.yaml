@@ -21,7 +21,7 @@ repo_boundaries:
     odoo:
       ownership: separate_git_repo
       tracked_in_umbrella: false
-      purpose: ERP runtime (Odoo 19 CE + OCA + IPAI bridge)
+      purpose: ERP runtime (Odoo 18 CE + OCA + IPAI bridge)
     data-intelligence:
       ownership: separate_git_repo
       tracked_in_umbrella: false
@@ -67,7 +67,7 @@ canonical_repos:
     purpose: Org governance, reusable workflows, policies
   - name: odoo
     visibility: public
-    purpose: ERP runtime (Odoo 19 CE + OCA + IPAI bridge)
+    purpose: ERP runtime (Odoo 18 CE + OCA + IPAI bridge)
   - name: agents
     visibility: public
     purpose: Agent personas, skills, judges, evals, metadata, registries, and prompt contracts

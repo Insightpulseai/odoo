@@ -110,7 +110,7 @@ def your_endpoint(self, **kwargs):
 ## 4. Monitor Upstream Migration (weekly)
 
 ```bash
-# Check if OCA base_rest is ready for Odoo 19.0
+# Check if OCA base_rest is ready for Odoo 18.0
 ./scripts/oca/check_rest_framework_19.sh
 ```
 

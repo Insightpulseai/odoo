@@ -31,7 +31,7 @@ tools:
   - psql
 policies:
   - secrets-policy
-  - odoo19-coding
+  - odoo18-coding
   - oca-governance
   - path-contract
   - testing

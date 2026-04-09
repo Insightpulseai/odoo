@@ -14,7 +14,7 @@ to track month-end close and BIR tax filing financial metrics.
 
 ## CE Attempt
 
-Odoo 19 CE `project.project` has no budget/forecast/variance fields natively.
+Odoo 18 CE `project.project` has no budget/forecast/variance fields natively.
 Server actions and computed fields cannot express the full reporting model needed.
 
 ## OCA Search
@@ -35,5 +35,5 @@ Created `ipai_finance_ppm` as a minimal delta module adding:
 
 ## Consequences
 
-- Module must be maintained for Odoo 19 upgrades
+- Module must be maintained for Odoo 18 upgrades
 - Budget/variance logic is Finance PPM-specific, not generalizable

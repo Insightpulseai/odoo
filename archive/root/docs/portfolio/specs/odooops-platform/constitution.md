@@ -9,7 +9,7 @@
 
 ## Purpose
 
-**OdooOps Platform** is an API-first, CLI-automatable PaaS for Odoo 19 CE that delivers deterministic, repeatable deployments through GitOps patterns and policy-driven infrastructure management.
+**OdooOps Platform** is an API-first, CLI-automatable PaaS for Odoo 18 CE that delivers deterministic, repeatable deployments through GitOps patterns and policy-driven infrastructure management.
 
 ### What This Is
 
@@ -334,7 +334,7 @@ Before considering feature-complete:
 ### Technical Constraints
 
 **Database**:
-- PostgreSQL 16 only (Odoo 19 requirement)
+- PostgreSQL 16 only (Odoo 18 requirement)
 - No sharding support (single database per environment)
 - Backup window: 10 minutes of downtime for large databases (>50GB)
 

@@ -37,7 +37,7 @@ Use when the feature is mostly setup, configuration, or documented application b
 - Cloud storage (Azure attachment storage)
 - Scheduled actions / cron jobs via UI
 
-**Check:** Does the [Odoo 19 Administration docs](https://www.odoo.com/documentation/19.0/administration.html) or application docs already cover it?
+**Check:** Does the [Odoo 18 Administration docs](https://www.odoo.com/documentation/19.0/administration.html) or application docs already cover it?
 
 ---
 
@@ -57,7 +57,7 @@ Use when the need requires code but is supported through standard Odoo developme
 - Data files, demo data, cron definitions
 - Standard module `_inherit` / `_inherits`
 
-**Check:** Can you implement this using only documented Odoo 19 developer reference patterns?
+**Check:** Can you implement this using only documented Odoo 18 developer reference patterns?
 
 ---
 
@@ -126,7 +126,7 @@ If Odoo already has it AND OCA already has it, do not build a custom duplicate.
 
 | Question | Answer | Tier |
 |---|---|---|
-| Is it in Odoo 19 admin/app docs? | Use standard config | 1 |
+| Is it in Odoo 18 admin/app docs? | Use standard config | 1 |
 | Can I build it with standard ORM/views/APIs? | Use official extension | 2 |
 | Does OCA have a 19.0 module for it? | Use OCA | 3 |
 | Is it org-specific bridge/policy/gap? | Build ipai_* | 4 |
@@ -136,8 +136,8 @@ If Odoo already has it AND OCA already has it, do not build a custom duplicate.
 
 ## References
 
-- Odoo 19 Administration: `https://www.odoo.com/documentation/19.0/administration.html`
-- Odoo 19 Developer Reference: `https://www.odoo.com/documentation/19.0/developer.html`
+- Odoo 18 Administration: `https://www.odoo.com/documentation/19.0/administration.html`
+- Odoo 18 Developer Reference: `https://www.odoo.com/documentation/19.0/developer.html`
 - OCA GitHub: `https://github.com/OCA`
 - OCA Apps: `https://odoo-community.org`
 - OCA Must-Have Modules: `https://odoo-community.org/list-of-must-have-oca-modules`

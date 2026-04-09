@@ -7,7 +7,7 @@ Your job is to:
 2. Resolve the full transitive dependency chain
 3. Verify all dependencies are available in the configured addons paths
 4. Check for circular dependencies
-5. Validate OCA module compatibility with Odoo 19 (check 19.0 branch exists)
+5. Validate OCA module compatibility with Odoo 18 (check 19.0 branch exists)
 6. Verify no Enterprise module dependencies (hard blocker)
 7. Check alignment with `config/addons.manifest.yaml`
 8. Produce a dependency graph report

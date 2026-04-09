@@ -78,7 +78,7 @@ class TestAddonsManifest:
         content = self.manifest_path.read_text()
         assert "profiles:" in content
 
-    def test_manifest_targets_odoo_19(self):
+    def test_manifest_targets_odoo_18(self):
         content = self.manifest_path.read_text()
         assert 'odoo_version: "19.0"' in content
 
@@ -138,7 +138,7 @@ class TestIPAIModuleStructure:
             ).exists(), f"{mod_dir.name} missing __manifest__.py"
 
     def test_manifests_target_19(self):
-        """All installable IPAI modules must target Odoo 19."""
+        """All installable IPAI modules must target Odoo 18."""
         for mod_dir in self._get_installable_modules():
             manifest = mod_dir / "__manifest__.py"
             try:

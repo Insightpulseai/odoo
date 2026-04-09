@@ -1,6 +1,6 @@
 /** @odoo-module **/
 /**
- * ipai_ai_widget — OWL 2 "Ask AI" component for Odoo 19 CE.
+ * ipai_ai_widget — OWL 2 "Ask AI" component for Odoo 18 CE.
  *
  * Architecture:
  *   AskAiButton  — injected into Chatter via mail.chatter/action registry

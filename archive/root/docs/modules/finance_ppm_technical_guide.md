@@ -1,7 +1,7 @@
 # Finance PPM — Custom Module Technical Guide
 
-> **Odoo 19 CE** | TBWA\SMP Philippines | `erp.insightpulseai.com`
-> **Branch**: `claude/deploy-finance-ppm-odoo19-LbLm4`
+> **Odoo 18 CE** | TBWA\SMP Philippines | `erp.insightpulseai.com`
+> **Branch**: `claude/deploy-finance-ppm-odoo18-LbLm4`
 > **Date**: 2026-02-16
 
 ---
@@ -305,11 +305,11 @@ python3 scripts/install_module_xmlrpc.py --modules "ipai_bir_plane_sync"
 bash scripts/install_oca_gantt_bridge.sh "$ODOO_ADMIN_PASSWORD"
 
 # 4. Seed Finance PPM data
-python3 scripts/seed_finance_ppm_stages_odoo19.py "$ODOO_ADMIN_PASSWORD"
-python3 scripts/bulk_import_tasks_odoo19.py "$ODOO_ADMIN_PASSWORD"
+python3 scripts/seed_finance_ppm_stages_odoo18.py "$ODOO_ADMIN_PASSWORD"
+python3 scripts/bulk_import_tasks_odoo18.py "$ODOO_ADMIN_PASSWORD"
 
 # 5. Verify
-bash scripts/test_finance_ppm_odoo19.sh "$ODOO_ADMIN_PASSWORD"
+bash scripts/test_finance_ppm_odoo18.sh "$ODOO_ADMIN_PASSWORD"
 ```
 
 ---
@@ -361,8 +361,8 @@ bash scripts/test_finance_ppm_odoo19.sh "$ODOO_ADMIN_PASSWORD"
 
 | Workflow | File | Trigger | Purpose |
 |----------|------|---------|---------|
-| Recurrent Alerts | `n8n_finance_ppm_workflow_odoo19.json` | Cron 9AM/5PM PHT | Due/overdue/handover alerts |
-| BIR Form Generation | `n8n_bir_form_generation.json` | Weekly + Webhook | Generate .dat files via Odoo 19 PH |
+| Recurrent Alerts | `n8n_finance_ppm_workflow_odoo18.json` | Cron 9AM/5PM PHT | Due/overdue/handover alerts |
+| BIR Form Generation | `n8n_bir_form_generation.json` | Weekly + Webhook | Generate .dat files via Odoo 18 PH |
 | BIR e-Filing | `n8n_bir_efiling_automation.json` | Webhook | eFPS/eBIRForms/eAFS packaging |
 | AI Journal Posting | `n8n_ai_journal_posting.json` | Weekday 6AM + Webhook | Claude API JE validation |
 
@@ -415,7 +415,7 @@ N8N_SUPABASE_URL=https://spdtwktxdalcfigzeqrz.supabase.co
 > **Parity map**: `spec/finance-ppm/parity_map.yaml`
 > **Decision records**: `spec/finance-ppm/decisions/`
 
-| # | Gap | SAP Feature | Layer | Odoo 19 Implementation | Status |
+| # | Gap | SAP Feature | Layer | Odoo 18 Implementation | Status |
 |---|-----|------------|-------|----------------------|--------|
 | 1 | Timeline view | FCC Task Scheduler | OCA (module) | `project_timeline` + `project_task_dependency` | Verified 19.0 |
 | 2 | Critical path | FCC critical-path designation | — | Not available | Unverified; see ADR-0006 |
@@ -450,7 +450,7 @@ N8N_SUPABASE_URL=https://spdtwktxdalcfigzeqrz.supabase.co
 - **Tier counts**: Director=1, Senior Manager=1, Manager=1, Analyst=6
 - **Uniqueness**: Code and Name are both unique
 - **JPAL**: must be Finance Analyst (enforced by validator)
-- **Cross-artifact parity**: CSV must match EMPLOYEES dict in `bulk_import_tasks_odoo19.py`
+- **Cross-artifact parity**: CSV must match EMPLOYEES dict in `bulk_import_tasks_odoo18.py`
 
 ### How Drift Is Prevented
 
@@ -503,7 +503,7 @@ CE native → OCA add-on → ipai_* delta → Platform bridge
 
 | Question | If yes | If no |
 |---------|--------|-------|
-| Can Odoo 19 CE express this natively (config, views, server actions)? | Use CE — done | → Next |
+| Can Odoo 18 CE express this natively (config, views, server actions)? | Use CE — done | → Next |
 | Does an OCA module (19.0 series, verified) cover this? | Install OCA — done | → Next |
 | Is this a module-level gap (needs new models/views/logic inside Odoo)? | Create `ipai_*` delta — done | → Next |
 | Is this a platform/service gap (runs outside Odoo process)? | Create a platform bridge | → Investigate further |
@@ -560,13 +560,13 @@ Odoo process.
 
 | Script | Purpose |
 |--------|---------|
-| `seed_finance_ppm_stages_odoo19.py` | Seeds 6 stages + 2 projects |
-| `bulk_import_tasks_odoo19.py` | Imports 89 tasks (39 close + 50 BIR) |
-| `seed_logframe_milestones_odoo19.py` | Seeds logframe milestones |
-| `deploy_finance_ppm_odoo19.sh` | Full deployment orchestrator |
-| `test_finance_ppm_odoo19.sh` | 10-point verification test suite |
+| `seed_finance_ppm_stages_odoo18.py` | Seeds 6 stages + 2 projects |
+| `bulk_import_tasks_odoo18.py` | Imports 89 tasks (39 close + 50 BIR) |
+| `seed_logframe_milestones_odoo18.py` | Seeds logframe milestones |
+| `deploy_finance_ppm_odoo18.sh` | Full deployment orchestrator |
+| `test_finance_ppm_odoo18.sh` | 10-point verification test suite |
 | `install_oca_gantt_bridge.sh` | OCA timeline + dependency install |
-| `dashboard_queries_odoo19.sql` | 11 Superset SQL views |
+| `dashboard_queries_odoo18.sql` | 11 Superset SQL views |
 | `finance/validate_team_directory.py` | Team roster invariant validator |
 | `finance/validate_seed_ssot.py` | Seed data SSOT enforcement |
 | `policy/validate_parity_map.py` | Parity map enforcement (CE→OCA→Delta→Bridge) |
@@ -599,4 +599,4 @@ Analyst prepares → Manager reviews → Senior Manager validates → Director a
 
 ---
 
-*Generated: 2026-02-16 | Odoo 19 CE + OCA 19.0 | TBWA\SMP Philippines*
+*Generated: 2026-02-16 | Odoo 18 CE + OCA 19.0 | TBWA\SMP Philippines*

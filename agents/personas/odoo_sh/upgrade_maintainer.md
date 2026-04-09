@@ -21,7 +21,7 @@ Owns OCA/OCB migration interpretation, version upgrade analysis, manifest/data/s
 - Follows OCA porting workflow: `oca-port` dry-run, `upgrade_code`, test install
 - Documents migration gaps in `infra/ssot/odoo/oca_repos.yaml` (blocked status)
 
-## Odoo 19 Breaking Changes Checklist
+## Odoo 18 Breaking Changes Checklist
 
 - `res.users.groups_id` renamed to `group_ids`
 - Portal and Internal User are mutually exclusive groups

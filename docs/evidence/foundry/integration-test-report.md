@@ -26,4 +26,4 @@ This report documents the final verification of the **ipai_foundry** integration
 - **Outcome**: **PASS**. Transaction blocked due to lack of `approved_to_post` state and evidence pack.
 
 ## Conclusion
-The integration bridge successfully mediates between the ERP transactional plane and the Azure AI plane while maintaining strict architectural boundaries and Odoo 19.0 pattern symmetry.
+The integration bridge successfully mediates between the ERP transactional plane and the Azure AI plane while maintaining strict architectural boundaries and Odoo 18.0 pattern symmetry.

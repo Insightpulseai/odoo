@@ -21,7 +21,7 @@
 
 ---
 
-## O2: Odoo 19 CE + OCA Feature Parity
+## O2: Odoo 18 CE + OCA Feature Parity
 
 **Objective**: ≥80% Enterprise Edition feature parity via CE + OCA + ipai_* modules.
 
@@ -56,7 +56,7 @@
 | KR4.1 | Odoo container update deployable via single `gh workflow run` | `deploy-odoo.yml` workflow exists |
 | KR4.2 | Supabase migrations auto-applied on merge via CI | `supabase-migrate.yml` passes on main |
 | KR4.3 | n8n workflow deployments idempotent and scriptable | `deploy_n8n_all.py --apply` works |
-| KR4.4 | Go-live checklist automated to ≥70% | `docs/runbooks/ODOO19_GO_LIVE_CHECKLIST.md` |
+| KR4.4 | Go-live checklist automated to ≥70% | `docs/runbooks/ODOO18_GO_LIVE_CHECKLIST.md` |
 
 ---
 

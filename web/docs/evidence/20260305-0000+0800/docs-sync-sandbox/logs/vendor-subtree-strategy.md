@@ -116,7 +116,7 @@ Create `vendor/docs/odoo-official/README.md`:
 
 ## Directory Structure
 
-- `19.0/` - Odoo 19.0 documentation (current)
+- `19.0/` - Odoo 18.0 documentation (current)
 - Future: `20.0/`, `21.0/` as versions are released
 
 ## Sync Schedule

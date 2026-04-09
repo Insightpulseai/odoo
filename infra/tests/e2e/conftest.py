@@ -1,7 +1,7 @@
 """
 Playwright E2E Test Configuration
 
-Shared fixtures and utilities for Odoo 19 E2E testing.
+Shared fixtures and utilities for Odoo 18 E2E testing.
 
 Reference: docs/integrations/ODOO_AI_TESTING_AUTOMATION.md
 """

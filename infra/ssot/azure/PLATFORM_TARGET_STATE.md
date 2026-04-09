@@ -14,7 +14,7 @@
 | ------- | ---------- | --------------------------------------------------------------------------------------------------- |
 | 1.0.0   | 2026-03-07 | Initial Azure target state extracted from org restructuring                                          |
 | 1.1.0   | 2026-03-08 | Added DNS target state, identity architecture, Databricks layer                                     |
-| 1.2.0   | 2026-03-09 | Added Odoo 19 CE conventions, end-to-end data flow, n8n integration                                 |
+| 1.2.0   | 2026-03-09 | Added Odoo 18 CE conventions, end-to-end data flow, n8n integration                                 |
 | 1.3.0   | 2026-03-10 | Full Azure resource inventory (55 resources across 6 RGs), CI/CD contract, 30-day sprint            |
 | 1.4.0   | 2026-03-11 | Tableau Cloud added as active analytics app surface; analytics surfaces section; SSO target updated  |
 | 1.4.1   | 2026-03-11 | Analytics: 4 surfaces (Superset, Databricks, Tableau connector, Power BI). Full DO→Azure migration mandate |
@@ -320,7 +320,7 @@ Phase 3 (Done):     DO droplet decommissioned (snapshot complete, droplet delete
 
 | Surface       | Current Auth     | Target Auth              | Protocol  |
 | ------------- | ---------------- | ------------------------ | --------- |
-| Odoo 19       | Local DB         | Entra ID via Keycloak    | OIDC      |
+| Odoo 18       | Local DB         | Entra ID via Keycloak    | OIDC      |
 | n8n           | Local DB         | Entra ID via Keycloak    | OIDC      |
 | Superset      | Local DB         | Entra ID via Keycloak    | OIDC      |
 | Databricks    | Entra ID         | Entra ID (no change)     | SAML/OIDC |
@@ -399,7 +399,7 @@ Phase 3 (Done):     DO droplet decommissioned (snapshot complete, droplet delete
 
 ---
 
-## 6. Odoo 19 CE Development Conventions
+## 6. Odoo 18 CE Development Conventions
 
 ### Module Structure
 
@@ -472,7 +472,7 @@ addons/ipai/ipai_<domain>_<feature>/
 
 ```
 ┌─────────────┐    ┌──────────┐    ┌──────────────┐    ┌────────────┐
-│  Odoo 19    │    │   n8n    │    │  Databricks  │    │  Consumers │
+│  Odoo 18    │    │   n8n    │    │  Databricks  │    │  Consumers │
 │  (Source)   │───►│ (ETL)   │───►│  (Lakehouse) │───►│            │
 │             │    │          │    │              │    │  Superset  │
 │  Invoices   │    │  Extract │    │  Bronze →    │    │  Tableau   │
@@ -730,7 +730,7 @@ Health check ──► Rollback if unhealthy
 | 2  | Run Supabase `search_path` fix + RLS hardening    | Platform | 2026-03-15  | Planned  |
 | 3  | Configure GitHub Actions OIDC federation           | DevOps   | 2026-03-18  | Planned  |
 | 4  | Build unified Docker image pipeline               | DevOps   | 2026-03-20  | Planned  |
-| 5  | Deploy Odoo 19 to Container Apps (dev)             | Platform | 2026-03-22  | Planned  |
+| 5  | Deploy Odoo 18 to Container Apps (dev)             | Platform | 2026-03-22  | Planned  |
 | 6  | Deploy n8n to Container Apps (dev)                 | Platform | 2026-03-24  | Planned  |
 | 7  | Configure Front Door routing for api.* / app.*     | Platform | 2026-03-26  | Planned  |
 | 8  | Set up Keycloak → Entra ID OIDC bridge             | Identity | 2026-03-28  | Planned  |

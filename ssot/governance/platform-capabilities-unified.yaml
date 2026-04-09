@@ -213,7 +213,7 @@ oca_adoption:
       - sale_delivery_state
 
   manifest_gaps: 7
-  note: "7 modules need ports or new repos for Odoo 19"
+  note: "7 modules need ports or new repos for Odoo 18"
 
 # =============================================================================
 # C. Platform Operations — Odoo.sh Equivalence

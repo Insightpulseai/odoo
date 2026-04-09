@@ -7,7 +7,7 @@ DB_NAME="${1:?Usage: shell-exec.sh <db-name> <script.py>}"
 SCRIPT="${2:?Usage: shell-exec.sh <db-name> <script.py>}"
 
 ODOO_BIN="${ODOO_BIN:-vendor/odoo/odoo-bin}"
-PYTHON="${PYTHON:-$HOME/.pyenv/versions/odoo-19-dev/bin/python}"
+PYTHON="${PYTHON:-$HOME/.pyenv/versions/odoo-18-dev/bin/python}"
 ADDONS_PATH="${ADDONS_PATH:-vendor/odoo/addons,addons/ipai}"
 
 echo "Executing ${SCRIPT} in Odoo shell (database: ${DB_NAME})"

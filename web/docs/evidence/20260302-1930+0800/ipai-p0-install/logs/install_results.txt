@@ -53,7 +53,7 @@ Post-install count: 388 modules (+5 new)
 7. ipai_finance_close_seed
    Error: ParseError in 04_projects.xml:9
    Cause: project.project creation fails (schema mismatch with sale_project override)
-   Fix: Update XML to match Odoo 19 project.project model constraints
+   Fix: Update XML to match Odoo 18 project.project model constraints
 
 === BLOCKED — Missing dependencies (6 modules) ===
 
@@ -61,8 +61,8 @@ Post-install count: 388 modules (+5 new)
 9. ipai_finance_workflow — needs ipai_workspace_core (NOT ON DISK)
 10. ipai_bir_notifications — needs ipai_bir_tax_compliance (NOT ON DISK)
 11. ipai_hr_payroll_ph — needs ipai_bir_tax_compliance + hr_contract (NOT AVAILABLE)
-12. ipai_enterprise_bridge — needs fetchmail (OBSOLETE in Odoo 19, merged into mail)
-13. ipai_zoho_mail — needs fetchmail (OBSOLETE in Odoo 19, merged into mail)
+12. ipai_enterprise_bridge — needs fetchmail (OBSOLETE in Odoo 18, merged into mail)
+13. ipai_zoho_mail — needs fetchmail (OBSOLETE in Odoo 18, merged into mail)
 
 === BLOCKED — OCA not ported to 19.0 (9 modules) ===
 

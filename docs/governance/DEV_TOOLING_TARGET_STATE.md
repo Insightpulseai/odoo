@@ -369,7 +369,7 @@ See `docs/governance/TEST_STRATEGY_TARGET_STATE.md` for the full test strategy s
 
 | Service | Role | Boundary |
 |---------|------|----------|
-| **Odoo 19 CE + OCA** | Operational SoR, user-facing business workflows | Not analytics, not agent orchestration |
+| **Odoo 18 CE + OCA** | Operational SoR, user-facing business workflows | Not analytics, not agent orchestration |
 | **Odoo.sh** | Delivery benchmark (Git/branch/build/settings semantics) | Not the runtime destination (Azure is) |
 | **Microsoft Foundry** | Primary AI and agent application plane | Not the transactional backend |
 | **Document Intelligence** | OCR / extraction / classification bridge | Outputs feed Odoo workflows + Databricks analytics |
@@ -416,7 +416,7 @@ Odoo is the operational SoR, Odoo.sh is the delivery benchmark, Foundry is the p
 | Azure DevOps PATs | Restricted: scoped, 30-day max, no full-scope, migration to Entra planned |
 | Azure DevOps auth | Entra ID first (service principals, managed identities, MSAL OAuth) |
 | Service-to-service | Service principals + managed identities only (no PATs) |
-| Odoo 19 CE + OCA | Operational SoR + business application surface |
+| Odoo 18 CE + OCA | Operational SoR + business application surface |
 | Odoo.sh | Delivery benchmark only (not runtime target) |
 | Microsoft Foundry | Primary AI and agent application plane |
 | Foundry project model | New portal Foundry projects (not classic hubs) |

@@ -9,7 +9,7 @@
 
 ## Purpose
 
-This spec defines the **scoring rubric and non-negotiable rules** for benchmarking Azure platform maturity across identity, networking, compute, monitoring, backup, and deployment domains. It is inspired by SAP-on-Azure landing zone patterns but adapted for Odoo 19 CE workloads on Azure Container Apps (ACA) + Cloudflare + GitHub Actions.
+This spec defines the **scoring rubric and non-negotiable rules** for benchmarking Azure platform maturity across identity, networking, compute, monitoring, backup, and deployment domains. It is inspired by SAP-on-Azure landing zone patterns but adapted for Odoo 18 CE workloads on Azure Container Apps (ACA) + Cloudflare + GitHub Actions.
 
 ### What This Is
 

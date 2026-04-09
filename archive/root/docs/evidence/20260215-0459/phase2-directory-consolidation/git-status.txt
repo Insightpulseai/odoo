@@ -28,7 +28,7 @@ Changes to be committed:
 	renamed:    agent-library-pack/router/agent_router.yaml -> agents/library/packs/router/agent_router.yaml
 	renamed:    agent-library-pack/router/router.ts -> agents/library/packs/router/router.ts
 	renamed:    agent-library-pack/schemas/evidence/form_evidence_bundle.schema.json -> agents/library/packs/schemas/evidence/form_evidence_bundle.schema.json
-	renamed:    agent-library-pack/schemas/mapping/concur_to_odoo19_ce_oca_ipai.yaml -> agents/library/packs/schemas/mapping/concur_to_odoo19_ce_oca_ipai.yaml
+	renamed:    agent-library-pack/schemas/mapping/concur_to_odoo18_ce_oca_ipai.yaml -> agents/library/packs/schemas/mapping/concur_to_odoo18_ce_oca_ipai.yaml
 	renamed:    agent-library-pack/schemas/taxonomy/accounting_competency_framework.yaml -> agents/library/packs/schemas/taxonomy/accounting_competency_framework.yaml
 	renamed:    agent-library-pack/schemas/taxonomy/core_taxonomy.yaml -> agents/library/packs/schemas/taxonomy/core_taxonomy.yaml
 	renamed:    agent-library-pack/schemas/taxonomy/philippines_tax.yaml -> agents/library/packs/schemas/taxonomy/philippines_tax.yaml

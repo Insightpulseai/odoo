@@ -90,7 +90,7 @@ Fields:
 | Workflow | File | Odoo Operations |
 |----------|------|-----------------|
 | Finance Close Orchestrator | `03-finance-close-orchestrator.json` | Read `account.move`, check close status |
-| Finance PPM | `n8n_finance_ppm_workflow_odoo19.json` | Read `project.task` alerts |
+| Finance PPM | `n8n_finance_ppm_workflow_odoo18.json` | Read `project.task` alerts |
 | Invoice OCR → Odoo | `invoice_ocr_to_odoo.json` | Create `account.move` from OCR output |
 | Odoo Reverse Mapper | `odoo_reverse_mapper.json` | Read + transform Odoo data |
 
@@ -177,7 +177,7 @@ HTTP POST → Supabase REST API
 
 | Method | When to Use | Pros | Cons |
 |--------|------------|------|------|
-| **Extract API** | Structured ERP data, large volumes | Efficient, paginated, incremental | Requires Odoo 19 API |
+| **Extract API** | Structured ERP data, large volumes | Efficient, paginated, incremental | Requires Odoo 18 API |
 | **JSON-2 API** | Simple reads, small datasets | Easy to implement | No incremental support |
 | **DB Replica** | Full table access, complex joins | Most flexible | Requires read replica setup |
 
@@ -427,8 +427,8 @@ IF total_data_volume > 10M rows
 
 - [azure-document-intelligence](../../azure-foundry/document-intelligence/SKILL.md) — OCR for invoice/receipt extraction
 - [landing-ai-ade](../../inference/landing-ai-ade/SKILL.md) — Agentic document extraction for novel documents
-- [odoo19-expenses](../../odoo/odoo19-expenses/SKILL.md) — Expense workflow + automation pipelines
-- [odoo19-accounting-map](../../odoo/odoo19-accounting-map/SKILL.md) — Full accounting feature map
+- [odoo18-expenses](../../odoo/odoo18-expenses/SKILL.md) — Expense workflow + automation pipelines
+- [odoo18-accounting-map](../../odoo/odoo18-accounting-map/SKILL.md) — Full accounting feature map
 - [sap-concur-parity](../../industries/sap-concur-parity/SKILL.md) — Concur replacement scorecard
 - [agentic-sdlc-msft-pattern](../../sdlc/agentic-sdlc-msft-pattern/SKILL.md) — SDLC feedback loop
 

@@ -126,7 +126,7 @@ docker compose exec postgres psql -U odoo -d "$POSTGRES_DB_DEV" -c \
 
 Expected:
 - Table count: ~150-200 tables
-- Version: 19.0.x.x.x (Odoo 19)
+- Version: 19.0.x.x.x (Odoo 18)
 
 ---
 
@@ -311,7 +311,7 @@ git add docs/evidence/
 git commit -m "docs(evidence): database initialization baseline - Phase 2
 
 - Created databases: odoo_dev, odoo_stage
-- Initialized Odoo 19.0 schema
+- Initialized Odoo 18.0 schema
 - Created roles: odoo_app (rw), odoo_reporting (ro)
 - Captured baseline evidence pack
 

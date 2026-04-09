@@ -29,10 +29,10 @@
 **Blocking Factor**: Budget approval pending
 **Recommendation**: Await Q2 2026 budget approval, prepare Phase 1 migration plan
 
-### Priority 2: Odoo 19 Migration (No Change)
+### Priority 2: Odoo 18 Migration (No Change)
 **Status**: 0% deployed, specification complete
 **Effort**: 12-16 weeks
-**Blocking Factor**: Odoo 19.0 release (Q3 2026)
+**Blocking Factor**: Odoo 18.0 release (Q3 2026)
 **Recommendation**: Monitor OCA module readiness, prepare migration scripts
 
 ### Priority 3: GitHub Projects v2 Automation (UPGRADED FROM PRIORITY 6)
@@ -96,7 +96,7 @@
 | Priority | Item | Previous Status | New Status | Change Reason |
 |----------|------|----------------|------------|---------------|
 | 1 | Azure Databricks | Blocked (budget) | Blocked (budget) | No change |
-| 2 | Odoo 19 Migration | Blocked (release) | Blocked (release) | No change |
+| 2 | Odoo 18 Migration | Blocked (release) | Blocked (release) | No change |
 | 3 | **GitHub Projects v2** | **Blocked (API)** | **✅ Ready** | **API capabilities verified** |
 | 4 | Dev Sandbox | In Progress (20%) | In Progress (20%) | No change |
 | 5 | IPAI Module Audit | Not Started | Not Started | No change |
@@ -159,8 +159,8 @@
    - Phase 3: Scout data pipeline
    - Phase 4: Advanced analytics
 
-5. **Q3 2026**: Odoo 19 migration (after release)
-   - Wait for Odoo 19.0 stable release
+5. **Q3 2026**: Odoo 18 migration (after release)
+   - Wait for Odoo 18.0 stable release
    - Monitor OCA module readiness
    - Execute migration plan
 

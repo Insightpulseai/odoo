@@ -3,9 +3,9 @@ namespace: odoo.expenses
 source:
   kind: user_docs_contract
   docs:
-    - odoo_19_finance_expenses
+    - odoo_18_finance_expenses
 description: >
-  Canonical business-entity contract for Odoo 19 expense workflows. This is a
+  Canonical business-entity contract for Odoo 18 expense workflows. This is a
   business/schema contract for integrations, analytics, copilots, and approval
   orchestration. It is not a claim of exact ORM/database parity.
 

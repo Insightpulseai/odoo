@@ -1,4 +1,4 @@
-# Odoo 19 Services — EE Parity Skill
+# Odoo 18 Services — EE Parity Skill
 
 > Source: https://www.odoo.com/documentation/19.0/applications/services.html
 > Domain: `odoo_ce` / `ee_parity`

@@ -1,5 +1,5 @@
 # =============================================================================
-# .devcontainer/Dockerfile — InsightPulseAI Odoo 19 CE Dev Container
+# .devcontainer/Dockerfile — InsightPulseAI Odoo 18 CE Dev Container
 # Thin image: Python 3.12 + Odoo CE 19.0 (pinned) + system deps
 # Runtime config mounted via Compose (config/dev/odoo.conf → /etc/odoo/odoo.conf)
 # =============================================================================
@@ -38,7 +38,7 @@ RUN groupadd --gid $USER_GID $USERNAME \
     && echo "$USERNAME ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
 
 # ---------------------------------------------------------------------------
-# Clone Odoo 19.0 from GitHub — pinned to immutable commit
+# Clone Odoo 18.0 from GitHub — pinned to immutable commit
 # Override ODOO_COMMIT at build time: --build-arg ODOO_COMMIT=<sha>
 # ---------------------------------------------------------------------------
 RUN git clone --branch ${ODOO_BRANCH} --single-branch --depth 1 \

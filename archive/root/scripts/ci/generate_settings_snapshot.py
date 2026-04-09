@@ -215,7 +215,7 @@ def build_parity(parity_yaml: dict | None) -> dict:
         "missing": missing,
         "waived": waived,
         "required_missing": required_missing,
-        "scope": parity_yaml.get("scope", "Odoo 19.0 CE self-hosted"),
+        "scope": parity_yaml.get("scope", "Odoo 18.0 CE self-hosted"),
         "features": [
             {
                 "id": f.get("id", ""),

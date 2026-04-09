@@ -2,7 +2,7 @@
 """
 scripts/odoo/extract_settings_catalog.py
 =========================================
-Extract Odoo 19 CE res.config.settings field catalog from a running instance.
+Extract Odoo 18 CE res.config.settings field catalog from a running instance.
 
 Produces a deterministic, stably-sorted YAML artifact at
 ssot/odoo/settings_catalog.yaml.
@@ -381,13 +381,13 @@ def _parse_settings_source(source: str, module_name: str) -> list[dict]:
 HEADER = """\
 # ssot/odoo/settings_catalog.yaml
 #
-# Odoo 19 CE res.config.settings field catalog — runtime-derived SSOT.
+# Odoo 18 CE res.config.settings field catalog — runtime-derived SSOT.
 #
 # Schema: ssot.odoo.settings_catalog.v1
 # Validator: scripts/ci/check_settings_catalog.py
 # Generator: scripts/odoo/extract_settings_catalog.py
 #
-# DO NOT EDIT DIRECTLY — regenerate from a running Odoo 19 CE instance.
+# DO NOT EDIT DIRECTLY — regenerate from a running Odoo 18 CE instance.
 #
 """
 
@@ -430,7 +430,7 @@ def write_catalog(catalog: dict, output: Path) -> None:
 
 def main() -> None:
     parser = argparse.ArgumentParser(
-        description="Extract Odoo 19 CE settings catalog"
+        description="Extract Odoo 18 CE settings catalog"
     )
     parser.add_argument(
         "--output", "-o",

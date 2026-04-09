@@ -32,7 +32,7 @@ The benchmark covers Odoo Copilot's ability to handle three capability classes a
 
 This benchmark assumes the current InsightPulse AI platform target state, including:
 
-- Odoo 19 CE as System of Record (SOR)
+- Odoo 18 CE as System of Record (SOR)
 - Supabase as SSOT for platform state
 - Azure Databricks as intelligence layer
 - OCA-first module strategy

@@ -68,7 +68,7 @@ Prerequisites: Teams app package, Partner Center submission, privacy docs
 | Eval pack not created | All | Create per-surface eval packs with pass/fail thresholds |
 | SLO baseline missing | All | Establish 7-day baseline in staging |
 | Entra identity not wired | All | Complete Entra app registration + OIDC |
-| Full docs corpus (26 -> 7000+) | Odoo Copilot, Diva | Full Odoo 19 documentation crawl + index |
+| Full docs corpus (26 -> 7000+) | Odoo Copilot, Diva | Full Odoo 18 documentation crawl + index |
 | Semantic layer not wired | Genie | Databricks SQL + Power BI semantic model |
 | Provider broker not implemented | Studio | fal/Gemini/Imagen integration |
 | Workspace isolation not implemented | Studio | `workspace_id` scoping |

@@ -57,7 +57,7 @@
 Stage 3 = Marketplace Readiness. The copilot's approved retrieval lanes post-Stage-3:
 
 1. **Odoo runtime context** (Lane 1) — active record, company, user role, locale
-2. **Odoo docs KB** (Lane 2) — curated Odoo 19 docs in `odoo-docs-kb` Azure AI Search index
+2. **Odoo docs KB** (Lane 2) — curated Odoo 18 docs in `odoo-docs-kb` Azure AI Search index
 3. **Bounded web retrieval** (Lane 3) — allowed domains only (`odoo.com`), max 3 uses per query
 
 The copilot is no longer a static wrapper. Grounded retrieval is live via the `odoo-docs-kb` index (26 chunks, vector-enabled, HNSW cosine).

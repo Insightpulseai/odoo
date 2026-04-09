@@ -126,7 +126,7 @@ def apply_providers(
             "css_class": p.get("css_class", ""),
             "sequence": p.get("sequence", 10),
             "scope": p.get("scopes", "openid profile email"),
-            # Odoo 19 auth_oauth field name is auth_endpoint (not auth_link)
+            # Odoo 18 auth_oauth field name is auth_endpoint (not auth_link)
             "auth_endpoint": p.get("auth_endpoint", ""),
             "validation_endpoint": p.get("userinfo_endpoint", ""),
         }

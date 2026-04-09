@@ -176,7 +176,7 @@ Version: 1.0.0 | Status: Active | Last updated: 2026-02-27
 - Commit 3: feat(platform): add gemini_tools bridge (function calling endpoint)
 - Commit 4: chore(ssot): register ipai_ai_copilot bridge + contract doc
 - Push: git push -u origin feat/ai-copilot
-- PR: title "feat(ipai): IPAI AI Copilot — M365/SAP Joule-class AI for Odoo 19 CE"
+- PR: title "feat(ipai): IPAI AI Copilot — M365/SAP Joule-class AI for Odoo 18 CE"
 - Acceptance: PR opens, all commits visible, CI starts
 
 ---

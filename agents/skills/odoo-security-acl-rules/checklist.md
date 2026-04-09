@@ -7,7 +7,7 @@
 - [ ] All ACL rows have all 4 CRUD columns (perm_read, perm_write, perm_create, perm_unlink)
 - [ ] ACL ID pattern: `access_<model>_<group>`
 - [ ] No full CRUD granted to public/portal without explicit justification
-- [ ] Portal and Internal User groups are mutually exclusive (Odoo 19 rule)
+- [ ] Portal and Internal User groups are mutually exclusive (Odoo 18 rule)
 - [ ] Multi-company record rules use correct domain: `['|', ('company_id', '=', False), ('company_id', 'in', company_ids)]`
 - [ ] Record rules have correct `model_id` reference
 - [ ] Security XML listed first in `__manifest__.py` data section

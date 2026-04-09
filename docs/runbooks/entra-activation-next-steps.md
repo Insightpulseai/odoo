@@ -174,7 +174,7 @@ az containerapp update \
     "ENTRA_ODOO_TENANT_ID=402de71a-b159-4006-87d6-50d39f2dfd3d"
 ```
 
-Note: The client secret is NOT set as an env var. Odoo's `auth_oauth` reads it from the `auth.oauth.provider` record's `client_secret` field (if Odoo 19 supports it) or uses the Authorization Code flow where the server-side token exchange reads the secret from a secure config.
+Note: The client secret is NOT set as an env var. Odoo's `auth_oauth` reads it from the `auth.oauth.provider` record's `client_secret` field (if Odoo 18 supports it) or uses the Authorization Code flow where the server-side token exchange reads the secret from a secure config.
 
 ### Option B: Direct Odoo Configuration (via XML-RPC or Settings UI)
 

@@ -350,7 +350,7 @@ python scripts/report_ee_parity.py --output docs/evidence/parity_report.html
 - [OCA Must-Have Base Modules](https://odoo-community.org/list-of-must-have-oca-modules)
 - [OCA Must-Have Accounting Modules](https://test.odoo-community.org/list-of-must-have-oca-accounting-modules)
 - [OCA Must-Have Sales Modules](https://test.odoo-community.org/list-of-must-have-sales-modules)
-- [Odoo 19 Release Notes](https://www.odoo.com/odoo-19-release-notes)
+- [Odoo 18 Release Notes](https://www.odoo.com/odoo-18-release-notes)
 - [CLAUDE.md Enterprise Parity Strategy](../CLAUDE.md#enterprise-parity-strategy)
 
 ---

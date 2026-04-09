@@ -177,7 +177,7 @@ Replace direct push with PR creation:
   uses: peter-evans/create-pull-request@v5
   with:
     branch: docs-sync-${{ github.run_id }}
-    title: "docs(sync): Odoo 19.0 official docs - ${{ steps.metadata.outputs.date }}"
+    title: "docs(sync): Odoo 18.0 official docs - ${{ steps.metadata.outputs.date }}"
     body: |
       **Files Changed**: ${{ steps.diff.outputs.files }}
       **Lines Added**: +${{ steps.diff.outputs.added }}

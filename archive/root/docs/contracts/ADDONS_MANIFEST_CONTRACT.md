@@ -165,4 +165,4 @@ Tiers determine installation priority but do not affect runtime addon path order
 | Source | Status | Replacement |
 |--------|--------|-------------|
 | `server-env` OCA repo | Excluded | Azure Key Vault handles env-dependent config |
-| `bank-statement-import` OCA repo | Excluded | Merged into `account-reconcile` in Odoo 19 |
+| `bank-statement-import` OCA repo | Excluded | Merged into `account-reconcile` in Odoo 18 |

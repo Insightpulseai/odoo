@@ -26,7 +26,7 @@ verdict: PASS
    - Retained: onStarted() with plain object assignment only
 
 2. /opt/odoo/repo/addons/OCA/mail/mail_tracking/static/src/core/discuss/discuss_sidebar_mailboxes.xml
-   - Removed: mail_tracking.Mailbox.main template (targeted //span[@t-esc='mailbox.counter'] removed in Odoo 19)
+   - Removed: mail_tracking.Mailbox.main template (targeted //span[@t-esc='mailbox.counter'] removed in Odoo 18)
    - Fixed:    t-inherit="mail.Discuss.mobileTopbar" → t-inherit="mail.DiscussContent.mobileTopbar"
 
 [ODOO.CONF FIXES — /opt/odoo/repo/deploy/odoo.conf]

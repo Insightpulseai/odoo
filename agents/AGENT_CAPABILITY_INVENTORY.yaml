@@ -157,8 +157,8 @@ skills_production:
     path: skills/odoo.mail.configure/
     reason: "Prompt + skill.yaml + examples (zoho-dev, zoho-prod, missing-secret). References live Zoho SMTP"
 
-  # --- Odoo 19 domain skills with Python ---
-  - id: odoo19-config-params
+  # --- Odoo 18 domain skills with Python ---
+  - id: odoo18-config-params
     domain: odoo_ce
     has_scripts: true
     path: skills/odoo/
@@ -245,7 +245,7 @@ skills_staging:
     readiness: staging
     blocker: "Needs web search / fetch capabilities at runtime"
 
-  - id: refresh-odoo19-kb
+  - id: refresh-odoo18-kb
     domain: odoo_ce
     readiness: staging
     blocker: "Needs web fetch from odoo.com docs"
@@ -314,49 +314,49 @@ skills_staging:
 # SKILLS — DEVELOPMENT (SKILL.md only, no executables)
 # =============================================================================
 skills_development:
-  # --- Odoo 19 functional domain skills (75 total) ---
-  odoo19_domain:
+  # --- Odoo 18 functional domain skills (75 total) ---
+  odoo18_domain:
     count: 75
-    path_pattern: "skills/odoo/odoo19-*/SKILL.md"
+    path_pattern: "skills/odoo/odoo18-*/SKILL.md"
     domains:
-      - accounting (odoo19-accounting)
-      - crm (odoo19-crm)
-      - sales (odoo19-sales)
-      - inventory (odoo19-inventory)
-      - manufacturing (odoo19-manufacturing)
-      - purchase (odoo19-purchase)
-      - project (odoo19-project)
-      - hr (odoo19-hr)
-      - payroll (odoo19-payroll)
-      - fleet (odoo19-fleet)
-      - helpdesk (odoo19-helpdesk)
-      - website (odoo19-website)
-      - ecommerce (odoo19-ecommerce)
-      - pos (odoo19-pos)
-      - barcode (odoo19-barcode)
+      - accounting (odoo18-accounting)
+      - crm (odoo18-crm)
+      - sales (odoo18-sales)
+      - inventory (odoo18-inventory)
+      - manufacturing (odoo18-manufacturing)
+      - purchase (odoo18-purchase)
+      - project (odoo18-project)
+      - hr (odoo18-hr)
+      - payroll (odoo18-payroll)
+      - fleet (odoo18-fleet)
+      - helpdesk (odoo18-helpdesk)
+      - website (odoo18-website)
+      - ecommerce (odoo18-ecommerce)
+      - pos (odoo18-pos)
+      - barcode (odoo18-barcode)
     readiness: development
     reason: "SKILL.md knowledge docs for agent context. Not directly executable — used to inform agent code generation."
 
-  # --- Odoo 19 technical skills (19 total) ---
-  odoo19_technical:
+  # --- Odoo 18 technical skills (19 total) ---
+  odoo18_technical:
     count: 19
-    path_pattern: "skills/odoo/odoo19-*/SKILL.md"
+    path_pattern: "skills/odoo/odoo18-*/SKILL.md"
     domains:
-      - orm (odoo19-orm)
-      - frontend (odoo19-frontend)
-      - owl-components (odoo19-owl-components)
-      - security (odoo19-security)
-      - performance (odoo19-performance)
-      - testing (odoo19-testing)
-      - module (odoo19-module)
-      - assets (odoo19-assets)
-      - cli (odoo19-cli)
-      - external-api (odoo19-external-api)
-      - http-controllers (odoo19-http-controllers)
-      - mixins (odoo19-mixins)
-      - git-guidelines (odoo19-git-guidelines)
-      - data-files (odoo19-data-files)
-      - actions (odoo19-actions)
+      - orm (odoo18-orm)
+      - frontend (odoo18-frontend)
+      - owl-components (odoo18-owl-components)
+      - security (odoo18-security)
+      - performance (odoo18-performance)
+      - testing (odoo18-testing)
+      - module (odoo18-module)
+      - assets (odoo18-assets)
+      - cli (odoo18-cli)
+      - external-api (odoo18-external-api)
+      - http-controllers (odoo18-http-controllers)
+      - mixins (odoo18-mixins)
+      - git-guidelines (odoo18-git-guidelines)
+      - data-files (odoo18-data-files)
+      - actions (odoo18-actions)
     readiness: development
     reason: "Technical reference for agent code generation. Directly usable as context but not standalone executables."
 
@@ -442,10 +442,10 @@ skills_deprecated:
     reason: "Vercel is deprecated (2026-03-11). Use Azure Container Apps."
     replacement: azure-cli-safe
 
-  - id: odoo19-skills (odoo19/ top-level)
+  - id: odoo18-skills (odoo18/ top-level)
     domain: odoo_ce
-    reason: "Superseded by skills/odoo/odoo19-* nested structure"
-    replacement: "skills/odoo/odoo19-*"
+    reason: "Superseded by skills/odoo/odoo18-* nested structure"
+    replacement: "skills/odoo/odoo18-*"
 
 # =============================================================================
 # SKILLS — TEMPLATE
@@ -520,10 +520,10 @@ knowledge:
     readiness: reference
     path: knowledge/anthropic_engineering_practices.md
 
-  - id: odoo-19-functional-architecture
+  - id: odoo-18-functional-architecture
     domain: odoo_ce
     readiness: reference
-    path: knowledge/odoo_19_functional_architecture.md
+    path: knowledge/odoo_18_functional_architecture.md
 
 knowledge_base_domains:
   - finance-close-kb (5 articles)
@@ -653,7 +653,7 @@ production_ready:
     - superset-health (Python scripts)
     - ocr-bridge-configure (prompt + examples)
     - odoo-mail-configure (prompt + examples)
-    - odoo19-config-params (Python)
+    - odoo18-config-params (Python)
     - supabase-schema-catalog (shell script)
     - visio-drawio-export (Docker entrypoint)
     - oca-development-standards (agent entrypoint)

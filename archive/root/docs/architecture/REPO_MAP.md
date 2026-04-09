@@ -18,7 +18,7 @@
 | Supabase        | `spdtwktxdalcfigzeqrz` (us-east-1)             |
 | Production IP   | `178.128.112.214` (DO Singapore)               |
 | Domain          | `insightpulseai.com` (.net deprecated)         |
-| Python          | 3.12+ (pyenv: odoo-19-dev)                     |
+| Python          | 3.12+ (pyenv: odoo-18-dev)                     |
 | Node            | ≥18.0, pnpm 9+, Turborepo                     |
 | EE parity target| ≥80% via CE + OCA + ipai_*                    |
 

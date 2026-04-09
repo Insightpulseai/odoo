@@ -11,7 +11,7 @@ This document maps the high-fidelity UI sections from the **Finwise** template t
 | **Features**    | **Agent Skill Registry**   | `agents/registry/odoo_skills.yaml`    |
 | **Statistics**  | **Infra Health Metrics**   | DO Managed Metrics / Loki             |
 | **Pricing**     | **Cost Pillar Assessment** | WAF Cost Optimization Skill           |
-| **FAQ**         | **Odoo19 Knowledge Base**  | `docs/kb/odoo19/`                     |
+| **FAQ**         | **Odoo18 Knowledge Base**  | `docs/kb/odoo18/`                     |
 | **CTA**         | **Console Access**         | `odooops-console` login               |
 
 ## Implementation Strategy

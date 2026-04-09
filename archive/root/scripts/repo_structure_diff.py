@@ -105,7 +105,7 @@ BUCKET_DEFINITIONS = {
         "description": "Database tooling, seeds, schemas, migrations",
         "paths": {
             "db", "dbt", "data", "seeds", "seed_export", "schemas",
-            "supabase", "odoo-schema-mirror", "odoo_local", "odoo19",
+            "supabase", "odoo-schema-mirror", "odoo_local", "odoo18",
         },
     },
     # Misc / uncategorized
@@ -392,7 +392,7 @@ def generate_markdown(report: dict) -> str:
         "Logical Layer Model",
         "====================",
         "",
-        "L0  Odoo 19 CE (core server)",
+        "L0  Odoo 18 CE (core server)",
         "    odoo/           framework + core",
         "    addons/          official community addons",
         "    odoo-bin          server entrypoint",

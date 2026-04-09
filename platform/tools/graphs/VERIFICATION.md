@@ -40,7 +40,7 @@ tools/graphs/
 
 ### Required Dependencies
 - ✅ **Graphviz** (`dot` command) - Found at `/opt/homebrew/bin/dot` (v14.0.5)
-- ✅ **Python 3** - Available (Odoo 19 requirement)
+- ✅ **Python 3** - Available (Odoo 18 requirement)
 
 ### Existing Infrastructure (Unchanged)
 - ✅ `scripts/generate_erd_graphviz.py` - 9.5KB (295 lines)

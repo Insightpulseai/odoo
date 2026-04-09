@@ -1,7 +1,7 @@
-# Odoo 19 Developer How-To Guides — Skill Reference
+# Odoo 18 Developer How-To Guides — Skill Reference
 
-> Knowledge base reference derived from Odoo 19 developer documentation (howtos section).
-> Source: Odoo 19 developer documentation
+> Knowledge base reference derived from Odoo 18 developer documentation (howtos section).
+> Source: Odoo 18 developer documentation
 > Purpose: Maps developer how-to guides to implementation skill lanes for agent execution.
 > Cross-references: `agents/knowledge/benchmarks/odoo-coding-guidelines.md` (guardrail source)
 
@@ -19,7 +19,7 @@ convention for custom modules.
 ### 2. ORM Model Extension (backend_customization)
 
 Extend Odoo models with fields, computed fields, constraints, and business logic using `_inherit`.
-Covers Odoo 19 class attribute order (10-step sequence), field naming conventions (`*_id`, `*_ids`,
+Covers Odoo 18 class attribute order (10-step sequence), field naming conventions (`*_id`, `*_ids`,
 `is_*`, `has_*`), `Command` tuples for x2many writes, recordset methods (`mapped`, `filtered`,
 `sorted`), and the prohibition on `cr.commit()`.
 
@@ -27,14 +27,14 @@ Covers Odoo 19 class attribute order (10-step sequence), field naming convention
 
 Safely extend Odoo UI through inherited views, actions, and menus. Covers xpath expressions
 (inside, after, before, replace, attributes), XML ID conventions (`<model>_view_form`,
-`<model>_action`), window actions, menu wiring, and the Odoo 19 terminology change from
+`<model>_action`), window actions, menu wiring, and the Odoo 18 terminology change from
 `tree` to `list` in user-facing strings.
 
 ### 4. Security and ACL Rules (security)
 
 Define security groups, ACLs (`ir.model.access.csv`), and record rules for module security.
 Covers the mandatory 4 CRUD columns, `access_<model>_<group>` ID pattern, group hierarchy
-with `implied_ids`, multi-company record rules, and the Odoo 19 mutual exclusivity of Portal
+with `implied_ids`, multi-company record rules, and the Odoo 18 mutual exclusivity of Portal
 and Internal User groups.
 
 ### 5. Test Authoring (quality)
@@ -49,7 +49,7 @@ env issue, migration gap, real defect).
 Ensure all changes use inheritance-based patterns and survive Odoo version upgrades. Covers
 `_inherit` enforcement, vendor/OCA file protection, migration script requirements for schema
 changes, deprecated pattern detection (`cr.commit()`, context mutation, f-string translations,
-raw x2many tuples), and Odoo 19 breaking changes (`groups_id` to `group_ids`, `tree` to `list`).
+raw x2many tuples), and Odoo 18 breaking changes (`groups_id` to `group_ids`, `tree` to `list`).
 
 ### 7. Report Customization (reporting)
 

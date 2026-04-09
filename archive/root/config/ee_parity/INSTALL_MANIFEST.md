@@ -1,7 +1,7 @@
 # EE Parity Complete Installation Manifest
 
 **Generated**: 2026-01-26
-**Target**: Odoo 19.0 Full EE Parity
+**Target**: Odoo 18.0 Full EE Parity
 **Total Features**: 40
 
 ---

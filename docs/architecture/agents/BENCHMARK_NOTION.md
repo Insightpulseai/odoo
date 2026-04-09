@@ -46,7 +46,7 @@ The Agent Factory's **Supervisor/Router** is designed for **deterministic workfl
 
 Both systems embrace the **Model Context Protocol (MCP)** for tool connectivity.
 *   **Notion 3.0** uses MCP to bridge knowledge silos (GitHub, Slack, Jira).
-*   **Agent Factory** uses MCP to create a high-fidelity bridge between the AI reasoning layer and the **Odoo 19.0 ORM**, ensuring that tools have deep, type-safe access to the ERP's business logic.
+*   **Agent Factory** uses MCP to create a high-fidelity bridge between the AI reasoning layer and the **Odoo 18.0 ORM**, ensuring that tools have deep, type-safe access to the ERP's business logic.
 
 ---
 

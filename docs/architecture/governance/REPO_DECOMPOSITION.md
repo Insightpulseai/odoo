@@ -101,7 +101,7 @@ This file tracks top-level directories currently present in `Insightpulseai/odoo
 - kb
 
 ### ARCHIVE / DELETE CANDIDATES
-- odoo19
+- odoo18
 - odoo-schema-mirror
 - dot-github-repo
 - dev

@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 """
-Verify docs/kb/odoo19/upstream snapshot matches docs/kb/odoo19/UPSTREAM_PIN.json.
+Verify docs/kb/odoo18/upstream snapshot matches docs/kb/odoo18/UPSTREAM_PIN.json.
 
 Supports two modes:
   1) upstream is a git checkout -> compare `git rev-parse HEAD` to pinned_commit
-  2) upstream is a plain directory -> compare docs/kb/odoo19/UPSTREAM_REV.txt to pinned_commit
+  2) upstream is a plain directory -> compare docs/kb/odoo18/UPSTREAM_REV.txt to pinned_commit
 
 Fails loudly if:
   - pinned_commit is unset / placeholder
@@ -21,7 +21,7 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
-KB_ROOT_DEFAULT = ROOT / "docs" / "kb" / "odoo19"
+KB_ROOT_DEFAULT = ROOT / "docs" / "kb" / "odoo18"
 
 
 def _read_json(p: Path) -> dict:

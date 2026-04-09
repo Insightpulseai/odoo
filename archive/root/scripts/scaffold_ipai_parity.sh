@@ -74,7 +74,7 @@ ${title_underline}
 
 ${module_desc}
 
-This module provides Odoo 19 Enterprise Edition parity for CE deployments.
+This module provides Odoo 18 Enterprise Edition parity for CE deployments.
 
 **Features:**
 - Feature 1
@@ -170,7 +170,7 @@ EOF
 
 ${module_desc}
 
-This module provides Odoo 19 Enterprise Edition parity for CE deployments.
+This module provides Odoo 18 Enterprise Edition parity for CE deployments.
 
 ## Dependencies
 

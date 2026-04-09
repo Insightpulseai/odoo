@@ -198,7 +198,7 @@ InsightPulseAI Wiki
 |   +-- Module Decision Rubric
 |   +-- OCA Workflow
 |   +-- IPAI Module Catalog
-|   +-- Canonical Setup (odoo19/)
+|   +-- Canonical Setup (odoo18/)
 |
 +-- Platform / Azure
 |   +-- Azure Container Apps

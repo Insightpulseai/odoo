@@ -13,7 +13,7 @@
 |1.1.0    |2026-03-11    |DNS + infrastructure + Cloudflare transition architecture integrated                                                                                  |
 |1.2.0    |2026-03-11    |Full 55-resource Azure inventory from CSV integrated                                                                                                  |
 |1.3.0    |2026-03-11    |Odoo version corrected to 19 CE; `<tree>` removal enforced in CI                                                                                      |
-|**1.4.0**|**2026-03-11**|**Full synthesis: all sources merged, SSOT/SOR doctrine, Databricks capabilities, DNS map, auth model, Odoo 19 CE conventions, resource cleanup plan**|
+|**1.4.0**|**2026-03-11**|**Full synthesis: all sources merged, SSOT/SOR doctrine, Databricks capabilities, DNS map, auth model, Odoo 18 CE conventions, resource cleanup plan**|
 |**1.5.0**|**2026-03-22**|**Canonical service-plane split: Odoo=operations, Foundry=agents, DocIntel=extraction, Databricks=analytics, Odoo.sh=benchmark only**|
 
 -----
@@ -63,7 +63,7 @@
 
 |Layer                     |System                      |Azure Resource                                                                        |Role                                                                          |
 |--------------------------|----------------------------|--------------------------------------------------------------------------------------|------------------------------------------------------------------------------|
-|**System of Record (SOR)**|**Odoo 19 CE**              |`ipai-odoo-dev-web/cron/worker` (Container Apps, `rg-ipai-dev`)                       |ERP transactions, ledger, invoices, tax filings, stock; selective attachment offload to Azure Blob|
+|**System of Record (SOR)**|**Odoo 18 CE**              |`ipai-odoo-dev-web/cron/worker` (Container Apps, `rg-ipai-dev`)                       |ERP transactions, ledger, invoices, tax filings, stock; selective attachment offload to Azure Blob|
 |**System of Truth (SSOT)**|Supabase                    |`vm-ipai-supabase-dev` + `pg-ipai-dev` (PG Flex, `rg-ipai-data-dev`)                  |Control plane, identity, orchestration state, governance, analytics-ready data|
 |**Intelligence Layer**    |Azure Databricks            |`dbw-ipai-dev` (`rg-ipai-ai-dev`)                                                     |ML, feature store, serving endpoints, Gold KPIs; Databricks Apps for data agents      |
 |**Orchestration**         |n8n                         |Target: Container App (`cae-ipai-dev` or `ipai-odoo-dev-env`)                         |Workflow automation, connector glue, retry logic                              |
@@ -133,7 +133,7 @@ No plane table may substitute for this truth-authority model.
 
 |Resource Group           |Purpose                                                                       |Count|
 |-------------------------|------------------------------------------------------------------------------|-----|
-|`rg-ipai-dev`            |Core platform — Odoo 19 CE, Plane, Shelf, CRM (Container Apps) + PG + KV + ACR|12   |
+|`rg-ipai-dev`            |Core platform — Odoo 18 CE, Plane, Shelf, CRM (Container Apps) + PG + KV + ACR|12   |
 |`rg-ipai-ai-dev`         |AI/ML — Databricks, OpenAI, Search, Vision, Language, DocAI, VNet, NSGs, ADLS |13   |
 |`rg-ipai-agents-dev`     |Agent runtime — Supabase VM, CAE, Managed Identity, LB, Networking            |9    |
 |`rg-ipai-shared-dev`     |Shared — App Insights, Log Analytics, ACR, Key Vault, Managed Identity        |6    |
@@ -146,7 +146,7 @@ No plane table may substitute for this truth-authority model.
 
 |Resource              |Type                      |Role                         |Status  |
 |----------------------|--------------------------|-----------------------------|--------|
-|`ipai-odoo-dev-web`   |Container App             |Odoo 19 CE web frontend (SOR)|Active  |
+|`ipai-odoo-dev-web`   |Container App             |Odoo 18 CE web frontend (SOR)|Active  |
 |`ipai-odoo-dev-cron`  |Container App             |Odoo scheduled jobs          |Active  |
 |`ipai-odoo-dev-worker`|Container App             |Odoo async workers           |Active  |
 |`ipai-odoo-dev-wave1` |Container App Job         |Odoo migration/wave job      |Active  |
@@ -171,7 +171,7 @@ No plane table may substitute for this truth-authority model.
 |Resource          |Type          |RG                |Role                   |Status |
 |------------------|--------------|------------------|-----------------------|-------|
 |`pg-ipai-dev`     |PG Flex Server|`rg-ipai-data-dev`|Supabase SSOT Postgres |Active |
-|`ipai-odoo-dev-pg`|PG Flex Server|`rg-ipai-dev`     |Odoo 19 CE SOR Postgres|Active |
+|`ipai-odoo-dev-pg`|PG Flex Server|`rg-ipai-dev`     |Odoo 18 CE SOR Postgres|Active |
 
 ### AI / ML Stack
 
@@ -192,7 +192,7 @@ No plane table may substitute for this truth-authority model.
 |Resource                        |Type                |RG                       |Scope                      |
 |--------------------------------|--------------------|-------------------------|---------------------------|
 |`kv-ipai-dev`                   |Key Vault           |`rg-ipai-shared-dev`     |Platform-wide secrets      |
-|`ipai-odoo-dev-kv`              |Key Vault           |`rg-ipai-dev`            |Odoo 19 CE scoped secrets  |
+|`ipai-odoo-dev-kv`              |Key Vault           |`rg-ipai-dev`            |Odoo 18 CE scoped secrets  |
 |`id-ipai-agents-dev`            |Managed Identity    |`rg-ipai-shared-dev`     |Agent workloads            |
 |`id-ipai-aca-dev`               |Managed Identity    |`rg-ipai-agents-dev`     |Container Apps             |
 |`id-ipai-databricks-dev`        |Managed Identity    |`rg-ipai-ai-dev`         |Databricks service identity|
@@ -260,7 +260,7 @@ Cloudflare DNS (authoritative, DNS-only for mail)
 |Databricks           |Entra ID SSO       |`id-ipai-databricks-dev`          |Primary workforce identity                                |
 |Container Apps       |Managed Identity   |`id-ipai-aca-dev`                 |No human credentials                                      |
 |Agent workloads      |Managed Identity   |`id-ipai-agents-dev`              |Scoped least-privilege                                    |
-|Odoo 19 CE           |Odoo-native RBAC   |—                                 |Entra ID LDAP sync planned; `ipai-odoo-dev-kv` for secrets|
+|Odoo 18 CE           |Odoo-native RBAC   |—                                 |Entra ID LDAP sync planned; `ipai-odoo-dev-kv` for secrets|
 |Supabase app surfaces|Supabase Auth + RLS|`pg-ipai-dev`                     |JWT claims: `org_id`, `company_id`, `role`                |
 |All secrets          |Azure Key Vault    |`kv-ipai-dev` + `ipai-odoo-dev-kv`|Never in git, env vars, or container specs                |
 
@@ -311,13 +311,13 @@ Cloudflare DNS (authoritative, DNS-only for mail)
 
 -----
 
-## 6. Odoo 19 CE — Development Conventions
+## 6. Odoo 18 CE — Development Conventions
 
 **These are enforced as CI gate failures — not guidelines.**
 
 |Rule             |Correct                                                        |Forbidden                                     |
 |-----------------|---------------------------------------------------------------|----------------------------------------------|
-|View tag         |`<list>`                                                       |`<tree>` — removed in Odoo 19, runtime error  |
+|View tag         |`<list>`                                                       |`<tree>` — removed in Odoo 18, runtime error  |
 |Action view_mode |`view_mode="list,form"`                                        |`"tree,form"` — invalid in 19                 |
 |Module selection |OCA-first — evaluate all OCA modules before custom code        |Custom-first                                  |
 |Deprecated APIs  |`_cr`, `_context`, `_uid`, `osv` all removed                   |Do not use                                    |
@@ -331,7 +331,7 @@ Cloudflare DNS (authoritative, DNS-only for mail)
 ## 7. End-to-End Data Flow
 
 ```
-Odoo 19 CE  (ipai-odoo-dev-pg + Container Apps — SOR)
+Odoo 18 CE  (ipai-odoo-dev-pg + Container Apps — SOR)
     │ XML-RPC / Webhooks → n8n (Container App)
     │ + Fivetran Partner Connect
     ▼
@@ -393,7 +393,7 @@ Finance Copilot · BIR Compliance · MCP Agents · Ops Console
 ```
 PR → Lint (sqlfluff · ruff · markdownlint · odoo-xml-lint [<tree> banned]) →
 Unit Tests (pytest · dbt test) →
-Schema Validation (RLS coverage · migration safety · Odoo 19 view conventions) →
+Schema Validation (RLS coverage · migration safety · Odoo 18 view conventions) →
 Build + Push → cripaidev ACR →
 Staging Deploy →
 Integration Tests →
@@ -402,7 +402,7 @@ Smoke Tests →
 Notify (Slack)
 ```
 
-**Odoo 19 CE gate:** XML linter must fail any view using `<tree>` or `view_mode` containing `"tree"`. Zero tolerance — breaks production at runtime.
+**Odoo 18 CE gate:** XML linter must fail any view using `<tree>` or `view_mode` containing `"tree"`. Zero tolerance — breaks production at runtime.
 
 -----
 
@@ -420,7 +420,7 @@ Notify (Slack)
 |8 |Connect `docai-ipai-dev` to BIR receipt/invoice OCR pipeline via n8n                    |`docai-ipai-dev`, n8n                     |2026-03-28|
 |9 |First Gold dashboard: AR Aging, Cash Position, BIR VAT summary                          |`dbw-ipai-dev`, `law-ipai-dev`            |2026-03-31|
 |10|Publish Databricks MCP Server for Claude agent access                                   |`dbw-ipai-dev`, `mcp` DNS                 |2026-03-31|
-|11|Add Odoo 19 CE `<tree>` linter gate to Azure DevOps CI                                  |`ipai-build-pool`, ADO pipelines          |2026-04-07|
+|11|Add Odoo 18 CE `<tree>` linter gate to Azure DevOps CI                                  |`ipai-build-pool`, ADO pipelines          |2026-04-07|
 |12|Review `data-intel-ph-resource` network isolation (East US 2 to SEA VNet peering)       |`rg-data-intel-ph`, `vnet-ipai-databricks`|2026-04-07|
 |13|Evaluate Superset retirement; migrate users to Databricks Dashboards                    |`superset` DNS, DO droplet                |2026-04-15|
 
@@ -434,7 +434,7 @@ Notify (Slack)
 - Databricks must never write to `ipai-odoo-dev-pg` — Odoo owns its database
 - Supabase RLS on every exposed table/view; JWT must carry `org_id`, `company_id`, `role`
 - No human prod access via local accounts — Entra ID + Managed Identities only
-- Odoo 19 CE: `<list>` only — `<tree>` is a runtime error; `view_mode="list,form"` only
+- Odoo 18 CE: `<list>` only — `<tree>` is a runtime error; `view_mode="list,form"` only
 - Odoo Azure Blob offload: Wildcard CORS (`*`) forbidden; scope to known Odoo origins only
 - Odoo Azure Blob integration covers chatter/email attachments only; generated documents (SO/Invoice) remain on local storage
 - Production Databricks workloads via Jobs/DLT only — no interactive cluster SQL in prod
@@ -462,7 +462,7 @@ Notify (Slack)
 - [ ] All 4 Managed Identities assigned least-privilege RBAC (no wildcard)
 - [ ] Both Key Vaults — no workload uses direct env var secrets
 
-### Odoo 19 CE
+### Odoo 18 CE
 
 - [ ] All XML views use `<list>` — zero `<tree>` occurrences in repo
 - [ ] All actions use `view_mode="list,form"` — zero `"tree"` in view_mode
@@ -490,7 +490,7 @@ Notify (Slack)
 ### CI/CD
 
 - [ ] `ipai-build-pool` Managed DevOps Pool operational for all workloads
-- [ ] Odoo 19 CE `<tree>` XML linter running as required PR gate
+- [ ] Odoo 18 CE `<tree>` XML linter running as required PR gate
 - [ ] ACR consolidation: `ipaiodoodevacr` images migrated to `cripaidev`
 - [ ] Azure DevOps pipeline gates: dbt test pass required before Delta production deploy
 
@@ -502,7 +502,7 @@ Notify (Slack)
 
 | Plane | Service | Role |
 |-------|---------|------|
-| Operations | Odoo 19 CE + OCA | Transactional SoR, business app surface |
+| Operations | Odoo 18 CE + OCA | Transactional SoR, business app surface |
 | Delivery benchmark | Odoo.sh semantics | Git/branch/build/settings promotion model (not runtime) |
 | Runtime | Azure Container Apps | Default containerized service hosting |
 | Analytics | Azure Databricks | Governed medallion transforms, SQL serving, dashboards |

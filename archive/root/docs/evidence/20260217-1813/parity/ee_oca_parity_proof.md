@@ -27,7 +27,7 @@ Every Odoo Enterprise Edition module has been mapped to one or more of:
 |------|------|-------|---------|
 | T0 | Unmapped | 0 | No verified replacement |
 | **T1** | **Mapped** | **150** | **Replacement identified, OCA repo verified** |
-| T2 | Installable | 0 | Installs on our Odoo 19 CE baseline |
+| T2 | Installable | 0 | Installs on our Odoo 18 CE baseline |
 | T3 | Functional | 0 | ≥80% feature coverage for our workflows |
 | T4 | Verified | 0 | Production-tested, 30-day soak |
 | N/A | Not needed | 1 | Demo/test data, skip |

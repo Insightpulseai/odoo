@@ -23,7 +23,7 @@ created without tags, with public endpoints, and without secrets management.
 | `infra/azure/main.bicep` | Existing policy assignment resources |
 | `infra/ssot/azure/resources.yaml` | Resource tags, naming patterns |
 | `infra/ssot/azure/service-matrix.yaml` | Services that need tag compliance |
-| `docs/runbooks/ODOO19_GO_LIVE_CHECKLIST.md` | Policy/governance line items |
+| `docs/runbooks/ODOO18_GO_LIVE_CHECKLIST.md` | Policy/governance line items |
 | `docs/audits/ODOO_AZURE_ENTERPRISE_BENCHMARK.md` | Policy gap row |
 
 ## Microsoft Learn MCP Usage
@@ -66,7 +66,7 @@ Optional:
 |------|--------|
 | `infra/azure/modules/policy-assignments.bicep` | Policy assignments (new) |
 | `infra/azure/main.bicep` | Wire policy module |
-| `docs/runbooks/ODOO19_GO_LIVE_CHECKLIST.md` | Policy verification steps |
+| `docs/runbooks/ODOO18_GO_LIVE_CHECKLIST.md` | Policy verification steps |
 | `infra/ssot/azure/resources.yaml` | Policy assignment entries |
 | `docs/evidence/<stamp>/azure-policy-guardrails/` | Policy defs, MCP excerpts |
 

@@ -1,4 +1,4 @@
-# POC Evidence Pack — Odoo 19 Go-Live
+# POC Evidence Pack — Odoo 18 Go-Live
 
 ## Date: 2026-03-20 (updated)
 ## Purpose: Go-live readiness evidence for critical-path items

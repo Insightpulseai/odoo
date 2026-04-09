@@ -17,7 +17,7 @@
         "bridge": "",
         "connector": ""
       },
-      "notes": "Hard rule: PPM scope is Odoo 19 CE + OCA only. Gaps are handled via process/automation, not custom EE-parity modules.",
+      "notes": "Hard rule: PPM scope is Odoo 18 CE + OCA only. Gaps are handled via process/automation, not custom EE-parity modules.",
       "risk": "low"
     },
     {
@@ -121,7 +121,7 @@
         "bridge": "",
         "connector": ""
       },
-      "notes": "Validate CE capability in Odoo 19 CE build before finalising. Editions page lists Barcode under Inventory.",
+      "notes": "Validate CE capability in Odoo 18 CE build before finalising. Editions page lists Barcode under Inventory.",
       "risk": "low"
     },
     {

@@ -103,7 +103,7 @@
     "ipai_vertical_retail":         { "domain": "vertical", "policy": "editable", "purpose": "Retail vertical" },
     "ipai_web_fluent2":             { "domain": "ui",       "policy": "editable", "purpose": "Web Fluent 2 assets" },
     "ipai_web_icons_fluent":        { "domain": "ui",       "policy": "editable", "purpose": "Fluent icon set" },
-    "ipai_web_mail_compat":         { "domain": "ops",      "policy": "editable", "purpose": "Mail JS compat shim for Odoo 19" },
+    "ipai_web_mail_compat":         { "domain": "ops",      "policy": "editable", "purpose": "Mail JS compat shim for Odoo 18" },
     "ipai_web_theme_tbwa":          { "domain": "ui",       "policy": "editable", "purpose": "Web theme assets" },
     "ipai_website_coming_soon":     { "domain": "ui",       "policy": "editable", "purpose": "Coming-soon page" },
     "ipai_whatsapp_connector":      { "domain": "vertical", "policy": "editable", "purpose": "WhatsApp integration" },

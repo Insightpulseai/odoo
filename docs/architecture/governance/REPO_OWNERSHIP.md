@@ -30,7 +30,7 @@
 
 ## Odoo Application Layers (4-Layer Benchmark)
 
-`odoo/` owns four application-local layers, benchmarked against Odoo 19 documentation:
+`odoo/` owns four application-local layers, benchmarked against Odoo 18 documentation:
 
 ### Layer 1: General / Foundational
 

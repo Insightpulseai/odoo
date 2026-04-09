@@ -40,7 +40,7 @@
       "name": "accounting",
       "type": "skill",
       "location": "repo_only",
-      "path": "skills/odoo19/accounting/SKILL.md"
+      "path": "skills/odoo18/accounting/SKILL.md"
     },
     {
       "id": "script_activate-n8n-workflows.sh",
@@ -54,7 +54,7 @@
       "name": "activities",
       "type": "skill",
       "location": "repo_only",
-      "path": "skills/odoo19/activities/SKILL.md"
+      "path": "skills/odoo18/activities/SKILL.md"
     },
     {
       "id": "script_add_or_update_database.sh",
@@ -68,7 +68,7 @@
       "name": "administration",
       "type": "skill",
       "location": "repo_only",
-      "path": "skills/odoo19/administration/SKILL.md"
+      "path": "skills/odoo18/administration/SKILL.md"
     },
     {
       "id": "tool_adopt_model_repo.sh",
@@ -96,7 +96,7 @@
       "name": "ai",
       "type": "skill",
       "location": "repo_only",
-      "path": "skills/odoo19/ai/SKILL.md"
+      "path": "skills/odoo18/ai/SKILL.md"
     },
     {
       "id": "skill_ai-agent-patterns",
@@ -229,21 +229,21 @@
       "name": "appointments",
       "type": "skill",
       "location": "repo_only",
-      "path": "skills/odoo19/appointments/SKILL.md"
+      "path": "skills/odoo18/appointments/SKILL.md"
     },
     {
       "id": "skill_appraisals",
       "name": "appraisals",
       "type": "skill",
       "location": "repo_only",
-      "path": "skills/odoo19/appraisals/SKILL.md"
+      "path": "skills/odoo18/appraisals/SKILL.md"
     },
     {
       "id": "skill_apps_modules",
       "name": "apps_modules",
       "type": "skill",
       "location": "repo_only",
-      "path": "skills/odoo19/apps_modules/SKILL.md"
+      "path": "skills/odoo18/apps_modules/SKILL.md"
     },
     {
       "id": "script_assess_opportunities.py",
@@ -264,7 +264,7 @@
       "name": "attendances",
       "type": "skill",
       "location": "repo_only",
-      "path": "skills/odoo19/attendances/SKILL.md"
+      "path": "skills/odoo18/attendances/SKILL.md"
     },
     {
       "id": "script_audit-secrets.sh",
@@ -383,7 +383,7 @@
       "name": "barcode",
       "type": "skill",
       "location": "repo_only",
-      "path": "skills/odoo19/barcode/SKILL.md"
+      "path": "skills/odoo18/barcode/SKILL.md"
     },
     {
       "id": "script_baseline-validation.sh",
@@ -411,7 +411,7 @@
       "name": "blog",
       "type": "skill",
       "location": "repo_only",
-      "path": "skills/odoo19/blog/SKILL.md"
+      "path": "skills/odoo18/blog/SKILL.md"
     },
     {
       "id": "script_bootstrap.sh",
@@ -540,18 +540,18 @@
       "path": "scripts/build_v0.9.1.sh"
     },
     {
-      "id": "script_bulk_import_tasks_odoo19.py",
-      "name": "bulk_import_tasks_odoo19.py",
+      "id": "script_bulk_import_tasks_odoo18.py",
+      "name": "bulk_import_tasks_odoo18.py",
       "type": "tool",
       "location": "repo_only",
-      "path": "scripts/bulk_import_tasks_odoo19.py"
+      "path": "scripts/bulk_import_tasks_odoo18.py"
     },
     {
       "id": "skill_calendar",
       "name": "calendar",
       "type": "skill",
       "location": "repo_only",
-      "path": "skills/odoo19/calendar/SKILL.md"
+      "path": "skills/odoo18/calendar/SKILL.md"
     },
     {
       "id": "script_canonical_audit.py",
@@ -1090,7 +1090,7 @@
       "name": "companies",
       "type": "skill",
       "location": "repo_only",
-      "path": "skills/odoo19/companies/SKILL.md"
+      "path": "skills/odoo18/companies/SKILL.md"
     },
     {
       "id": "script_company_bootstrap.py",
@@ -1237,7 +1237,7 @@
       "name": "contacts",
       "type": "skill",
       "location": "repo_only",
-      "path": "skills/odoo19/contacts/SKILL.md"
+      "path": "skills/odoo18/contacts/SKILL.md"
     },
     {
       "id": "script_convert_csv_to_xml.py",
@@ -1356,7 +1356,7 @@
       "name": "crm",
       "type": "skill",
       "location": "repo_only",
-      "path": "skills/odoo19/crm/SKILL.md"
+      "path": "skills/odoo18/crm/SKILL.md"
     },
     {
       "id": "script_curate_surface_catalog.sh",
@@ -1370,14 +1370,14 @@
       "name": "dashboards",
       "type": "skill",
       "location": "repo_only",
-      "path": "skills/odoo19/dashboards/SKILL.md"
+      "path": "skills/odoo18/dashboards/SKILL.md"
     },
     {
       "id": "skill_data_cleaning",
       "name": "data_cleaning",
       "type": "skill",
       "location": "repo_only",
-      "path": "skills/odoo19/data_cleaning/SKILL.md"
+      "path": "skills/odoo18/data_cleaning/SKILL.md"
     },
     {
       "id": "script_db-cleanup-legacy.sh",
@@ -1534,11 +1534,11 @@
       "path": "scripts/deploy_custom_image.sh"
     },
     {
-      "id": "script_deploy_finance_ppm_odoo19.sh",
-      "name": "deploy_finance_ppm_odoo19.sh",
+      "id": "script_deploy_finance_ppm_odoo18.sh",
+      "name": "deploy_finance_ppm_odoo18.sh",
       "type": "tool",
       "location": "repo_only",
-      "path": "scripts/deploy_finance_ppm_odoo19.sh"
+      "path": "scripts/deploy_finance_ppm_odoo18.sh"
     },
     {
       "id": "script_deploy_n8n_all.py",
@@ -1678,7 +1678,7 @@
       "name": "developer_mode",
       "type": "skill",
       "location": "repo_only",
-      "path": "skills/odoo19/developer_mode/SKILL.md"
+      "path": "skills/odoo18/developer_mode/SKILL.md"
     },
     {
       "id": "script_diagnose_502.sh",
@@ -1797,7 +1797,7 @@
       "name": "discuss",
       "type": "skill",
       "location": "repo_only",
-      "path": "skills/odoo19/discuss/SKILL.md"
+      "path": "skills/odoo18/discuss/SKILL.md"
     },
     {
       "id": "script_distill_packs.sh",
@@ -1853,7 +1853,7 @@
       "name": "documents",
       "type": "skill",
       "location": "repo_only",
-      "path": "skills/odoo19/documents/SKILL.md"
+      "path": "skills/odoo18/documents/SKILL.md"
     },
     {
       "id": "script_down.sh",
@@ -1867,7 +1867,7 @@
       "name": "ecommerce",
       "type": "skill",
       "location": "repo_only",
-      "path": "skills/odoo19/ecommerce/SKILL.md"
+      "path": "skills/odoo18/ecommerce/SKILL.md"
     },
     {
       "id": "script_ee_oca_parity_proof.py",
@@ -1888,28 +1888,28 @@
       "name": "elearning",
       "type": "skill",
       "location": "repo_only",
-      "path": "skills/odoo19/elearning/SKILL.md"
+      "path": "skills/odoo18/elearning/SKILL.md"
     },
     {
       "id": "skill_email_communication",
       "name": "email_communication",
       "type": "skill",
       "location": "repo_only",
-      "path": "skills/odoo19/email_communication/SKILL.md"
+      "path": "skills/odoo18/email_communication/SKILL.md"
     },
     {
       "id": "skill_email_marketing",
       "name": "email_marketing",
       "type": "skill",
       "location": "repo_only",
-      "path": "skills/odoo19/email_marketing/SKILL.md"
+      "path": "skills/odoo18/email_marketing/SKILL.md"
     },
     {
       "id": "skill_employees",
       "name": "employees",
       "type": "skill",
       "location": "repo_only",
-      "path": "skills/odoo19/employees/SKILL.md"
+      "path": "skills/odoo18/employees/SKILL.md"
     },
     {
       "id": "tool_enforce_gate.mjs",
@@ -1972,7 +1972,7 @@
       "name": "esg",
       "type": "skill",
       "location": "repo_only",
-      "path": "skills/odoo19/esg/SKILL.md"
+      "path": "skills/odoo18/esg/SKILL.md"
     },
     {
       "id": "script_evaluate_goals.py",
@@ -1986,7 +1986,7 @@
       "name": "events",
       "type": "skill",
       "location": "repo_only",
-      "path": "skills/odoo19/events/SKILL.md"
+      "path": "skills/odoo18/events/SKILL.md"
     },
     {
       "id": "script_execute_rationalization.sh",
@@ -2014,7 +2014,7 @@
       "name": "expenses",
       "type": "skill",
       "location": "repo_only",
-      "path": "skills/odoo19/expenses/SKILL.md"
+      "path": "skills/odoo18/expenses/SKILL.md"
     },
     {
       "id": "script_export-dns-to-terraform.sh",
@@ -2049,7 +2049,7 @@
       "name": "export_import_data",
       "type": "skill",
       "location": "repo_only",
-      "path": "skills/odoo19/export_import_data/SKILL.md"
+      "path": "skills/odoo18/export_import_data/SKILL.md"
     },
     {
       "id": "tool_export_schema.py",
@@ -2119,7 +2119,7 @@
       "name": "field_service",
       "type": "skill",
       "location": "repo_only",
-      "path": "skills/odoo19/field_service/SKILL.md"
+      "path": "skills/odoo18/field_service/SKILL.md"
     },
     {
       "id": "skill_figma-agent",
@@ -2196,7 +2196,7 @@
       "name": "fiscal_localizations",
       "type": "skill",
       "location": "repo_only",
-      "path": "skills/odoo19/fiscal_localizations/SKILL.md"
+      "path": "skills/odoo18/fiscal_localizations/SKILL.md"
     },
     {
       "id": "script_fix-finance-ppm-schema.sh",
@@ -2280,7 +2280,7 @@
       "name": "fleet",
       "type": "skill",
       "location": "repo_only",
-      "path": "skills/odoo19/fleet/SKILL.md"
+      "path": "skills/odoo18/fleet/SKILL.md"
     },
     {
       "id": "script_force_asset_regeneration.sh",
@@ -2294,14 +2294,14 @@
       "name": "forum",
       "type": "skill",
       "location": "repo_only",
-      "path": "skills/odoo19/forum/SKILL.md"
+      "path": "skills/odoo18/forum/SKILL.md"
     },
     {
       "id": "skill_frontdesk",
       "name": "frontdesk",
       "type": "skill",
       "location": "repo_only",
-      "path": "skills/odoo19/frontdesk/SKILL.md"
+      "path": "skills/odoo18/frontdesk/SKILL.md"
     },
     {
       "id": "script_full_backup.sh",
@@ -2742,7 +2742,7 @@
       "name": "helpdesk",
       "type": "skill",
       "location": "repo_only",
-      "path": "skills/odoo19/helpdesk/SKILL.md"
+      "path": "skills/odoo18/helpdesk/SKILL.md"
     },
     {
       "id": "script_hotfix_icon_crash.sh",
@@ -2770,7 +2770,7 @@
       "name": "html_editor",
       "type": "skill",
       "location": "repo_only",
-      "path": "skills/odoo19/html_editor/SKILL.md"
+      "path": "skills/odoo18/html_editor/SKILL.md"
     },
     {
       "id": "tool_http_crawler.py",
@@ -2854,7 +2854,7 @@
       "name": "in_app_purchase",
       "type": "skill",
       "location": "repo_only",
-      "path": "skills/odoo19/in_app_purchase/SKILL.md"
+      "path": "skills/odoo18/in_app_purchase/SKILL.md"
     },
     {
       "id": "skill_incident-triage",
@@ -3099,7 +3099,7 @@
       "name": "integrations",
       "type": "skill",
       "location": "repo_only",
-      "path": "skills/odoo19/integrations/SKILL.md"
+      "path": "skills/odoo18/integrations/SKILL.md"
     },
     {
       "id": "script_introspect_feature_inventory.py",
@@ -3120,7 +3120,7 @@
       "name": "inventory",
       "type": "skill",
       "location": "repo_only",
-      "path": "skills/odoo19/inventory/SKILL.md"
+      "path": "skills/odoo18/inventory/SKILL.md"
     },
     {
       "id": "script_inventory_config_keys.sh",
@@ -3155,7 +3155,7 @@
       "name": "iot",
       "type": "skill",
       "location": "repo_only",
-      "path": "skills/odoo19/iot/SKILL.md"
+      "path": "skills/odoo18/iot/SKILL.md"
     },
     {
       "id": "script_ipai_ai_seed.sh",
@@ -3197,7 +3197,7 @@
       "name": "keyboard_shortcuts",
       "type": "skill",
       "location": "repo_only",
-      "path": "skills/odoo19/keyboard_shortcuts/SKILL.md"
+      "path": "skills/odoo18/keyboard_shortcuts/SKILL.md"
     },
     {
       "id": "script_keychain-setup.sh",
@@ -3295,7 +3295,7 @@
       "name": "livechat",
       "type": "skill",
       "location": "repo_only",
-      "path": "skills/odoo19/livechat/SKILL.md"
+      "path": "skills/odoo18/livechat/SKILL.md"
     },
     {
       "id": "script_load_env.sh",
@@ -3316,21 +3316,21 @@
       "name": "lunch",
       "type": "skill",
       "location": "repo_only",
-      "path": "skills/odoo19/lunch/SKILL.md"
+      "path": "skills/odoo18/lunch/SKILL.md"
     },
     {
       "id": "skill_maintenance",
       "name": "maintenance",
       "type": "skill",
       "location": "repo_only",
-      "path": "skills/odoo19/maintenance/SKILL.md"
+      "path": "skills/odoo18/maintenance/SKILL.md"
     },
     {
       "id": "skill_manufacturing",
       "name": "manufacturing",
       "type": "skill",
       "location": "repo_only",
-      "path": "skills/odoo19/manufacturing/SKILL.md"
+      "path": "skills/odoo18/manufacturing/SKILL.md"
     },
     {
       "id": "script_map_logframe.py",
@@ -3344,7 +3344,7 @@
       "name": "marketing_automation",
       "type": "skill",
       "location": "repo_only",
-      "path": "skills/odoo19/marketing_automation/SKILL.md"
+      "path": "skills/odoo18/marketing_automation/SKILL.md"
     },
     {
       "id": "script_migrate-dns-to-do.sh",
@@ -3606,137 +3606,137 @@
       "path": "scripts/odoo.sh"
     },
     {
-      "id": "skill_odoo19-actions",
-      "name": "odoo19-actions",
+      "id": "skill_odoo18-actions",
+      "name": "odoo18-actions",
       "type": "skill",
       "location": "repo_only",
-      "path": "skills/odoo/odoo19-actions/SKILL.md"
+      "path": "skills/odoo/odoo18-actions/SKILL.md"
     },
     {
-      "id": "skill_odoo19-assets",
-      "name": "odoo19-assets",
+      "id": "skill_odoo18-assets",
+      "name": "odoo18-assets",
       "type": "skill",
       "location": "repo_only",
-      "path": "skills/odoo/odoo19-assets/SKILL.md"
+      "path": "skills/odoo/odoo18-assets/SKILL.md"
     },
     {
-      "id": "skill_odoo19-cli",
-      "name": "odoo19-cli",
+      "id": "skill_odoo18-cli",
+      "name": "odoo18-cli",
       "type": "skill",
       "location": "repo_only",
-      "path": "skills/odoo/odoo19-cli/SKILL.md"
+      "path": "skills/odoo/odoo18-cli/SKILL.md"
     },
     {
-      "id": "skill_odoo19-coding-guidelines",
-      "name": "odoo19-coding-guidelines",
+      "id": "skill_odoo18-coding-guidelines",
+      "name": "odoo18-coding-guidelines",
       "type": "skill",
       "location": "repo_only",
-      "path": "skills/odoo/odoo19-coding-guidelines/SKILL.md"
+      "path": "skills/odoo/odoo18-coding-guidelines/SKILL.md"
     },
     {
-      "id": "skill_odoo19-data-files",
-      "name": "odoo19-data-files",
+      "id": "skill_odoo18-data-files",
+      "name": "odoo18-data-files",
       "type": "skill",
       "location": "repo_only",
-      "path": "skills/odoo/odoo19-data-files/SKILL.md"
+      "path": "skills/odoo/odoo18-data-files/SKILL.md"
     },
     {
-      "id": "skill_odoo19-external-api",
-      "name": "odoo19-external-api",
+      "id": "skill_odoo18-external-api",
+      "name": "odoo18-external-api",
       "type": "skill",
       "location": "repo_only",
-      "path": "skills/odoo/odoo19-external-api/SKILL.md"
+      "path": "skills/odoo/odoo18-external-api/SKILL.md"
     },
     {
-      "id": "skill_odoo19-frontend",
-      "name": "odoo19-frontend",
+      "id": "skill_odoo18-frontend",
+      "name": "odoo18-frontend",
       "type": "skill",
       "location": "repo_only",
-      "path": "skills/odoo/odoo19-frontend/SKILL.md"
+      "path": "skills/odoo/odoo18-frontend/SKILL.md"
     },
     {
-      "id": "skill_odoo19-git-guidelines",
-      "name": "odoo19-git-guidelines",
+      "id": "skill_odoo18-git-guidelines",
+      "name": "odoo18-git-guidelines",
       "type": "skill",
       "location": "repo_only",
-      "path": "skills/odoo/odoo19-git-guidelines/SKILL.md"
+      "path": "skills/odoo/odoo18-git-guidelines/SKILL.md"
     },
     {
-      "id": "skill_odoo19-http-controllers",
-      "name": "odoo19-http-controllers",
+      "id": "skill_odoo18-http-controllers",
+      "name": "odoo18-http-controllers",
       "type": "skill",
       "location": "repo_only",
-      "path": "skills/odoo/odoo19-http-controllers/SKILL.md"
+      "path": "skills/odoo/odoo18-http-controllers/SKILL.md"
     },
     {
-      "id": "skill_odoo19-mixins",
-      "name": "odoo19-mixins",
+      "id": "skill_odoo18-mixins",
+      "name": "odoo18-mixins",
       "type": "skill",
       "location": "repo_only",
-      "path": "skills/odoo/odoo19-mixins/SKILL.md"
+      "path": "skills/odoo/odoo18-mixins/SKILL.md"
     },
     {
-      "id": "skill_odoo19-module",
-      "name": "odoo19-module",
+      "id": "skill_odoo18-module",
+      "name": "odoo18-module",
       "type": "skill",
       "location": "repo_only",
-      "path": "skills/odoo/odoo19-module/SKILL.md"
+      "path": "skills/odoo/odoo18-module/SKILL.md"
     },
     {
-      "id": "skill_odoo19-orm",
-      "name": "odoo19-orm",
+      "id": "skill_odoo18-orm",
+      "name": "odoo18-orm",
       "type": "skill",
       "location": "repo_only",
-      "path": "skills/odoo/odoo19-orm/SKILL.md"
+      "path": "skills/odoo/odoo18-orm/SKILL.md"
     },
     {
-      "id": "skill_odoo19-owl-components",
-      "name": "odoo19-owl-components",
+      "id": "skill_odoo18-owl-components",
+      "name": "odoo18-owl-components",
       "type": "skill",
       "location": "repo_only",
-      "path": "skills/odoo/odoo19-owl-components/SKILL.md"
+      "path": "skills/odoo/odoo18-owl-components/SKILL.md"
     },
     {
-      "id": "skill_odoo19-performance",
-      "name": "odoo19-performance",
+      "id": "skill_odoo18-performance",
+      "name": "odoo18-performance",
       "type": "skill",
       "location": "repo_only",
-      "path": "skills/odoo/odoo19-performance/SKILL.md"
+      "path": "skills/odoo/odoo18-performance/SKILL.md"
     },
     {
-      "id": "skill_odoo19-qweb",
-      "name": "odoo19-qweb",
+      "id": "skill_odoo18-qweb",
+      "name": "odoo18-qweb",
       "type": "skill",
       "location": "repo_only",
-      "path": "skills/odoo/odoo19-qweb/SKILL.md"
+      "path": "skills/odoo/odoo18-qweb/SKILL.md"
     },
     {
-      "id": "skill_odoo19-reports",
-      "name": "odoo19-reports",
+      "id": "skill_odoo18-reports",
+      "name": "odoo18-reports",
       "type": "skill",
       "location": "repo_only",
-      "path": "skills/odoo/odoo19-reports/SKILL.md"
+      "path": "skills/odoo/odoo18-reports/SKILL.md"
     },
     {
-      "id": "skill_odoo19-security",
-      "name": "odoo19-security",
+      "id": "skill_odoo18-security",
+      "name": "odoo18-security",
       "type": "skill",
       "location": "repo_only",
-      "path": "skills/odoo/odoo19-security/SKILL.md"
+      "path": "skills/odoo/odoo18-security/SKILL.md"
     },
     {
-      "id": "skill_odoo19-testing",
-      "name": "odoo19-testing",
+      "id": "skill_odoo18-testing",
+      "name": "odoo18-testing",
       "type": "skill",
       "location": "repo_only",
-      "path": "skills/odoo/odoo19-testing/SKILL.md"
+      "path": "skills/odoo/odoo18-testing/SKILL.md"
     },
     {
-      "id": "skill_odoo19-upgrade",
-      "name": "odoo19-upgrade",
+      "id": "skill_odoo18-upgrade",
+      "name": "odoo18-upgrade",
       "type": "skill",
       "location": "repo_only",
-      "path": "skills/odoo/odoo19-upgrade/SKILL.md"
+      "path": "skills/odoo/odoo18-upgrade/SKILL.md"
     },
     {
       "id": "script_odoo_check_ai_ocr_params.py",
@@ -4009,14 +4009,14 @@
       "name": "payment_providers",
       "type": "skill",
       "location": "repo_only",
-      "path": "skills/odoo19/payment_providers/SKILL.md"
+      "path": "skills/odoo18/payment_providers/SKILL.md"
     },
     {
       "id": "skill_payroll",
       "name": "payroll",
       "type": "skill",
       "location": "repo_only",
-      "path": "skills/odoo19/payroll/SKILL.md"
+      "path": "skills/odoo18/payroll/SKILL.md"
     },
     {
       "id": "script_phase1_archive_deprecated.sh",
@@ -4058,7 +4058,7 @@
       "name": "pip3",
       "type": "cli",
       "location": "machine_only",
-      "path": "/Users/tbwa/.pyenv/versions/odoo-19-dev/bin/pip3"
+      "path": "/Users/tbwa/.pyenv/versions/odoo-18-dev/bin/pip3"
     },
     {
       "id": "script_plan.sh",
@@ -4072,14 +4072,14 @@
       "name": "planning",
       "type": "skill",
       "location": "repo_only",
-      "path": "skills/odoo19/planning/SKILL.md"
+      "path": "skills/odoo18/planning/SKILL.md"
     },
     {
       "id": "skill_plm",
       "name": "plm",
       "type": "skill",
       "location": "repo_only",
-      "path": "skills/odoo19/plm/SKILL.md"
+      "path": "skills/odoo18/plm/SKILL.md"
     },
     {
       "id": "cli_pnpm",
@@ -4093,7 +4093,7 @@
       "name": "point_of_sale",
       "type": "skill",
       "location": "repo_only",
-      "path": "skills/odoo19/point_of_sale/SKILL.md"
+      "path": "skills/odoo18/point_of_sale/SKILL.md"
     },
     {
       "id": "script_policy-check.sh",
@@ -4170,7 +4170,7 @@
       "name": "project",
       "type": "skill",
       "location": "repo_only",
-      "path": "skills/odoo19/project/SKILL.md"
+      "path": "skills/odoo18/project/SKILL.md"
     },
     {
       "id": "skill_promote-staging-to-prod",
@@ -4219,7 +4219,7 @@
       "name": "purchase",
       "type": "skill",
       "location": "repo_only",
-      "path": "skills/odoo19/purchase/SKILL.md"
+      "path": "skills/odoo18/purchase/SKILL.md"
     },
     {
       "id": "script_purge_assets.sh",
@@ -4233,14 +4233,14 @@
       "name": "python3",
       "type": "cli",
       "location": "machine_only",
-      "path": "/Users/tbwa/.pyenv/versions/odoo-19-dev/bin/python3"
+      "path": "/Users/tbwa/.pyenv/versions/odoo-18-dev/bin/python3"
     },
     {
       "id": "skill_quality",
       "name": "quality",
       "type": "skill",
       "location": "repo_only",
-      "path": "skills/odoo19/quality/SKILL.md"
+      "path": "skills/odoo18/quality/SKILL.md"
     },
     {
       "id": "script_query_memory.py",
@@ -4268,21 +4268,21 @@
       "name": "recruitment",
       "type": "skill",
       "location": "repo_only",
-      "path": "skills/odoo19/recruitment/SKILL.md"
+      "path": "skills/odoo18/recruitment/SKILL.md"
     },
     {
       "id": "skill_referrals",
       "name": "referrals",
       "type": "skill",
       "location": "repo_only",
-      "path": "skills/odoo19/referrals/SKILL.md"
+      "path": "skills/odoo18/referrals/SKILL.md"
     },
     {
-      "id": "skill_refresh-odoo19-kb",
-      "name": "refresh-odoo19-kb",
+      "id": "skill_refresh-odoo18-kb",
+      "name": "refresh-odoo18-kb",
       "type": "skill",
       "location": "repo_only",
-      "path": "agents/skills/refresh-odoo19-kb/SKILL.md"
+      "path": "agents/skills/refresh-odoo18-kb/SKILL.md"
     },
     {
       "id": "script_refresh_docs.py",
@@ -4292,11 +4292,11 @@
       "path": "scripts/docs/refresh_docs.py"
     },
     {
-      "id": "script_refresh_odoo19_kb.py",
-      "name": "refresh_odoo19_kb.py",
+      "id": "script_refresh_odoo18_kb.py",
+      "name": "refresh_odoo18_kb.py",
       "type": "tool",
       "location": "repo_only",
-      "path": "scripts/skills/refresh_odoo19_kb.py"
+      "path": "scripts/skills/refresh_odoo18_kb.py"
     },
     {
       "id": "script_regen_install_sets.sh",
@@ -4317,14 +4317,14 @@
       "name": "rental",
       "type": "skill",
       "location": "repo_only",
-      "path": "skills/odoo19/rental/SKILL.md"
+      "path": "skills/odoo18/rental/SKILL.md"
     },
     {
       "id": "skill_repairs",
       "name": "repairs",
       "type": "skill",
       "location": "repo_only",
-      "path": "skills/odoo19/repairs/SKILL.md"
+      "path": "skills/odoo18/repairs/SKILL.md"
     },
     {
       "id": "script_replace_seed_from_excel.py",
@@ -4380,7 +4380,7 @@
       "name": "reporting",
       "type": "skill",
       "location": "repo_only",
-      "path": "skills/odoo19/reporting/SKILL.md"
+      "path": "skills/odoo18/reporting/SKILL.md"
     },
     {
       "id": "tool_require_audit_artifacts.sh",
@@ -4583,7 +4583,7 @@
       "name": "sales",
       "type": "skill",
       "location": "repo_only",
-      "path": "skills/odoo19/sales/SKILL.md"
+      "path": "skills/odoo18/sales/SKILL.md"
     },
     {
       "id": "script_scaffold_ipai_parity.py",
@@ -4681,7 +4681,7 @@
       "name": "search",
       "type": "skill",
       "location": "repo_only",
-      "path": "skills/odoo19/search/SKILL.md"
+      "path": "skills/odoo18/search/SKILL.md"
     },
     {
       "id": "script_secret-scan.sh",
@@ -4712,18 +4712,18 @@
       "path": "scripts/seed_finance_ppm_stages.py"
     },
     {
-      "id": "script_seed_finance_ppm_stages_odoo19.py",
-      "name": "seed_finance_ppm_stages_odoo19.py",
+      "id": "script_seed_finance_ppm_stages_odoo18.py",
+      "name": "seed_finance_ppm_stages_odoo18.py",
       "type": "tool",
       "location": "repo_only",
-      "path": "scripts/seed_finance_ppm_stages_odoo19.py"
+      "path": "scripts/seed_finance_ppm_stages_odoo18.py"
     },
     {
-      "id": "script_seed_logframe_milestones_odoo19.py",
-      "name": "seed_logframe_milestones_odoo19.py",
+      "id": "script_seed_logframe_milestones_odoo18.py",
+      "name": "seed_logframe_milestones_odoo18.py",
       "type": "tool",
       "location": "repo_only",
-      "path": "scripts/seed_logframe_milestones_odoo19.py"
+      "path": "scripts/seed_logframe_milestones_odoo18.py"
     },
     {
       "id": "script_seed_org_companies_users_integrations.py",
@@ -4863,7 +4863,7 @@
       "name": "sign",
       "type": "skill",
       "location": "repo_only",
-      "path": "skills/odoo19/sign/SKILL.md"
+      "path": "skills/odoo18/sign/SKILL.md"
     },
     {
       "id": "script_simple_deploy.sh",
@@ -4933,7 +4933,7 @@
       "name": "sms_marketing",
       "type": "skill",
       "location": "repo_only",
-      "path": "skills/odoo19/sms_marketing/SKILL.md"
+      "path": "skills/odoo18/sms_marketing/SKILL.md"
     },
     {
       "id": "script_snapshot-baseline.sh",
@@ -4954,7 +4954,7 @@
       "name": "social_marketing",
       "type": "skill",
       "location": "repo_only",
-      "path": "skills/odoo19/social_marketing/SKILL.md"
+      "path": "skills/odoo18/social_marketing/SKILL.md"
     },
     {
       "id": "script_spec-kit-enforce.py",
@@ -4982,7 +4982,7 @@
       "name": "spreadsheet",
       "type": "skill",
       "location": "repo_only",
-      "path": "skills/odoo19/spreadsheet/SKILL.md"
+      "path": "skills/odoo18/spreadsheet/SKILL.md"
     },
     {
       "id": "script_ssh-tunnel-db.sh",
@@ -5010,7 +5010,7 @@
       "name": "stages",
       "type": "skill",
       "location": "repo_only",
-      "path": "skills/odoo19/stages/SKILL.md"
+      "path": "skills/odoo18/stages/SKILL.md"
     },
     {
       "id": "script_staging_down.sh",
@@ -5101,14 +5101,14 @@
       "name": "studio",
       "type": "skill",
       "location": "repo_only",
-      "path": "skills/odoo19/studio/SKILL.md"
+      "path": "skills/odoo18/studio/SKILL.md"
     },
     {
       "id": "skill_subscriptions",
       "name": "subscriptions",
       "type": "skill",
       "location": "repo_only",
-      "path": "skills/odoo19/subscriptions/SKILL.md"
+      "path": "skills/odoo18/subscriptions/SKILL.md"
     },
     {
       "id": "cli_supabase",
@@ -5213,7 +5213,7 @@
       "name": "surveys",
       "type": "skill",
       "location": "repo_only",
-      "path": "skills/odoo19/surveys/SKILL.md"
+      "path": "skills/odoo18/surveys/SKILL.md"
     },
     {
       "id": "script_sweep_repo.py",
@@ -5440,11 +5440,11 @@
       "path": "scripts/supabase/test_email_otp_curl.sh"
     },
     {
-      "id": "script_test_finance_ppm_odoo19.sh",
-      "name": "test_finance_ppm_odoo19.sh",
+      "id": "script_test_finance_ppm_odoo18.sh",
+      "name": "test_finance_ppm_odoo18.sh",
       "type": "tool",
       "location": "repo_only",
-      "path": "scripts/test_finance_ppm_odoo19.sh"
+      "path": "scripts/test_finance_ppm_odoo18.sh"
     },
     {
       "id": "script_test_ipai_install_upgrade.py",
@@ -5514,21 +5514,21 @@
       "name": "time_off",
       "type": "skill",
       "location": "repo_only",
-      "path": "skills/odoo19/time_off/SKILL.md"
+      "path": "skills/odoo18/time_off/SKILL.md"
     },
     {
       "id": "skill_timesheets",
       "name": "timesheets",
       "type": "skill",
       "location": "repo_only",
-      "path": "skills/odoo19/timesheets/SKILL.md"
+      "path": "skills/odoo18/timesheets/SKILL.md"
     },
     {
       "id": "skill_to_do",
       "name": "to_do",
       "type": "skill",
       "location": "repo_only",
-      "path": "skills/odoo19/to_do/SKILL.md"
+      "path": "skills/odoo18/to_do/SKILL.md"
     },
     {
       "id": "script_triage.py",
@@ -5612,7 +5612,7 @@
       "name": "users",
       "type": "skill",
       "location": "repo_only",
-      "path": "skills/odoo19/users/SKILL.md"
+      "path": "skills/odoo18/users/SKILL.md"
     },
     {
       "id": "script_validate-compose-ssot.sh",
@@ -5811,11 +5811,11 @@
       "path": "scripts/odoo/validate_oca_layout.py"
     },
     {
-      "id": "script_validate_odoo19_spec.sh",
-      "name": "validate_odoo19_spec.sh",
+      "id": "script_validate_odoo18_spec.sh",
+      "name": "validate_odoo18_spec.sh",
       "type": "tool",
       "location": "repo_only",
-      "path": "scripts/validate_odoo19_spec.sh"
+      "path": "scripts/validate_odoo18_spec.sh"
     },
     {
       "id": "script_validate_parity_map.py",
@@ -6403,7 +6403,7 @@
       "name": "voip",
       "type": "skill",
       "location": "repo_only",
-      "path": "skills/odoo19/voip/SKILL.md"
+      "path": "skills/odoo18/voip/SKILL.md"
     },
     {
       "id": "script_wait_for_postgres.sh",
@@ -6438,7 +6438,7 @@
       "name": "website",
       "type": "skill",
       "location": "repo_only",
-      "path": "skills/odoo19/website/SKILL.md"
+      "path": "skills/odoo18/website/SKILL.md"
     },
     {
       "id": "script_whats_deployed.py",
@@ -6459,7 +6459,7 @@
       "name": "whatsapp",
       "type": "skill",
       "location": "repo_only",
-      "path": "skills/odoo19/whatsapp/SKILL.md"
+      "path": "skills/odoo18/whatsapp/SKILL.md"
     },
     {
       "id": "script_wiki_sync.sh",

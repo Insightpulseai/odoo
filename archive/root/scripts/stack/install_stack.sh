@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# install_stack.sh - Install Odoo 19 CE + OCA stack
+# install_stack.sh - Install Odoo 18 CE + OCA stack
 # Usage: ./scripts/stack/install_stack.sh [--tier N] [--module MODULE]
 #
 # Installs modules in tier order (0-11) for proper dependency resolution.
@@ -10,7 +10,7 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
 LOCKFILE="$REPO_ROOT/oca19.lock.json"
-STACK_MANIFEST="$REPO_ROOT/stack/odoo19_stack.yaml"
+STACK_MANIFEST="$REPO_ROOT/stack/odoo18_stack.yaml"
 
 # Configuration
 ODOO_BIN="${ODOO_BIN:-odoo}"
@@ -150,7 +150,7 @@ if [[ -n "$TIER_FILTER" ]]; then
 fi
 
 # Full stack installation (all tiers in order)
-log_info "Installing full Odoo 19 CE + OCA stack"
+log_info "Installing full Odoo 18 CE + OCA stack"
 log_info "Database: $DB_NAME"
 log_info "Docker mode: $DOCKER_MODE"
 echo ""

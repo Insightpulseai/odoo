@@ -1,6 +1,6 @@
 # OCA Module Inventory for EE→CE+OCA Migration
 
-**Target Version:** Odoo 19.0 CE
+**Target Version:** Odoo 18.0 CE
 **Generated:** 2026-01-27
 **Purpose:** Curated, proven OCA modules for replacing Enterprise-only features
 
@@ -317,6 +317,6 @@
 
 - [OCA GitHub](https://github.com/oca)
 - [OCA Must-Have Modules List](https://odoo-community.org/list-of-must-have-oca-modules)
-- [Odoo 19 Release Notes](https://www.odoo.com/odoo-19-release-notes)
+- [Odoo 18 Release Notes](https://www.odoo.com/odoo-18-release-notes)
 - [OCA account-financial-reporting](https://github.com/OCA/account-financial-reporting)
 - [OCA reporting-engine](https://github.com/OCA/reporting-engine)

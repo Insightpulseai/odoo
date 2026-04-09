@@ -175,7 +175,7 @@ files:
     action: stay
     reason: Odoo.sh mapping
 
-  - path: ODOO19_REPO_MIRRORING.md
+  - path: ODOO18_REPO_MIRRORING.md
     current_repo: odoo
     target_repo: odoo
     action: stay

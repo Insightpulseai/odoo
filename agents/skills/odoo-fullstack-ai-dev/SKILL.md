@@ -1,9 +1,9 @@
 ---
 name: odoo-fullstack-ai-dev
-description: Comprehensive guide for AI-First Odoo 19 full-stack development, covering Backend (ORM), Frontend (Owl), and Testing.
+description: Comprehensive guide for AI-First Odoo 18 full-stack development, covering Backend (ORM), Frontend (Owl), and Testing.
 ---
 
-# Odoo 19 Full Stack AI-First Developer Skill
+# Odoo 18 Full Stack AI-First Developer Skill
 
 ## 1. AI-First Development Protocol
 
@@ -43,7 +43,7 @@ This skill empowers you to act as an elite "AI-First" Odoo developer.
 
 ### Components
 
-Odoo 19 uses **Owl** (Odoo Web Library), a React-like component system.
+Odoo 18 uses **Owl** (Odoo Web Library), a React-like component system.
 
 - **Structure**:
   ```javascript

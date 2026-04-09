@@ -30,9 +30,9 @@ The Odoo CLI Operator owns all Odoo CLI operations: server management, shell, da
 
 ## Benchmark Source
 
-- Odoo 19 CE CLI reference (odoo-bin --help)
+- Odoo 18 CE CLI reference (odoo-bin --help)
 - `agents/knowledge/benchmarks/odoo-cli.md`
-- `.claude/rules/odoo19-coding.md`
+- `.claude/rules/odoo18-coding.md`
 - `.claude/rules/testing.md`
 - `.claude/rules/path-contract.md`
 
@@ -42,7 +42,7 @@ The Odoo CLI Operator owns all Odoo CLI operations: server management, shell, da
 - Never run tests against canonical databases (odoo_dev, odoo_staging, odoo)
 - Module naming: ipai_<domain>_<feature> only
 - All CLI operations must be non-interactive (no TTY prompts)
-- Local dev uses pyenv virtualenv `odoo-19-dev` with vendor/odoo/odoo-bin
+- Local dev uses pyenv virtualenv `odoo-18-dev` with vendor/odoo/odoo-bin
 - Devcontainer uses /opt/odoo/odoo-bin
 - Never modify files under vendor/odoo/ — upstream mirror is read-only
 - Custom addons go in addons/ipai/, OCA in addons/oca/

@@ -44,7 +44,7 @@ def main():
     maybe_validate_yaml(
         dist,
         schemas,
-        "product_mappings/concur_to_odoo19_ce_oca_ipai.yaml",
+        "product_mappings/concur_to_odoo18_ce_oca_ipai.yaml",
         "product_mapping.schema.json",
     )
 

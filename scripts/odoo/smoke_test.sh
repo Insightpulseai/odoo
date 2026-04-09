@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # scripts/odoo/smoke_test.sh
-# Core business smoke test for Odoo 19 go-live
+# Core business smoke test for Odoo 18 go-live
 # Tests: login page, web health, assets, database manager blocked, module presence
 # Usage: ./scripts/odoo/smoke_test.sh [BASE_URL]
 set -uo pipefail
@@ -22,7 +22,7 @@ check() {
   fi
 }
 
-echo "Odoo 19 Go-Live Smoke Test"
+echo "Odoo 18 Go-Live Smoke Test"
 echo "Target: $BASE_URL"
 echo "Date: $(date -u +%Y-%m-%dT%H:%M:%SZ)"
 echo "---"

@@ -73,7 +73,7 @@ to both projects.
 
 ## Phase 2: OCA Module Installation
 
-Install in dependency order on the target Odoo 19 instance:
+Install in dependency order on the target Odoo 18 instance:
 
 ```bash
 # OCA dependencies (verified 19.0 series)
@@ -283,7 +283,7 @@ python scripts/finance/validate_team_directory.py
 python scripts/finance/validate_seed_ssot.py
 python scripts/policy/validate_parity_map.py
 python scripts/validate_finance_ppm_data.py
-bash scripts/test_finance_ppm_odoo19.sh
+bash scripts/test_finance_ppm_odoo18.sh
 ```
 
 ### 5.2 Logframe KPI Baseline

@@ -65,7 +65,7 @@
         },
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={\n  \"model\": \"gpt-4.1\",\n  \"messages\": [\n    {\"role\": \"system\", \"content\": \"You are IPAI Odoo Copilot on Telegram. You help TBWA\\\\SMP Finance PPM users with Odoo 19 ERP, Philippine finance, BIR tax compliance, HR, expenses, and general business questions. Be concise. Use plain text (no markdown — Telegram doesn't render it well). Keep answers under 300 words.\"},\n    {\"role\": \"user\", \"content\": \"{{ $json.text.replace('/ask ', '').replace('/ask', '') }}\"}\n  ],\n  \"max_tokens\": 500,\n  \"temperature\": 0.7\n}",
+        "jsonBody": "={\n  \"model\": \"gpt-4.1\",\n  \"messages\": [\n    {\"role\": \"system\", \"content\": \"You are IPAI Odoo Copilot on Telegram. You help TBWA\\\\SMP Finance PPM users with Odoo 18 ERP, Philippine finance, BIR tax compliance, HR, expenses, and general business questions. Be concise. Use plain text (no markdown — Telegram doesn't render it well). Keep answers under 300 words.\"},\n    {\"role\": \"user\", \"content\": \"{{ $json.text.replace('/ask ', '').replace('/ask', '') }}\"}\n  ],\n  \"max_tokens\": 500,\n  \"temperature\": 0.7\n}",
         "options": { "timeout": 30000 }
       },
       "id": "copilot-call",

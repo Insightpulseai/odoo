@@ -19,8 +19,8 @@
 ## IPAI Modules — Bug Fixes Required
 
 - [ ] Fix `ipai_helpdesk`: Change `base.module_category_services_helpdesk` to CE category in security XML
-- [ ] Fix `ipai_finance_close_seed`: Update `04_projects.xml` for Odoo 19 project.project model
-- [ ] Fix `ipai_enterprise_bridge`: Remove `fetchmail` from depends (merged into `mail` in Odoo 19)
+- [ ] Fix `ipai_finance_close_seed`: Update `04_projects.xml` for Odoo 18 project.project model
+- [ ] Fix `ipai_enterprise_bridge`: Remove `fetchmail` from depends (merged into `mail` in Odoo 18)
 - [ ] Fix `ipai_zoho_mail`: Remove `fetchmail` from depends (same reason)
 
 ## IPAI Modules — Missing Dependencies (Scaffolding Required)
@@ -31,7 +31,7 @@
 
 ## P0 OCA Module Installation (ALL BLOCKED)
 
-All 9 P0 OCA modules are NOT yet ported to Odoo 19.0 in their OCA repos.
+All 9 P0 OCA modules are NOT yet ported to Odoo 18.0 in their OCA repos.
 
 ### Option A: Wait for OCA community
 

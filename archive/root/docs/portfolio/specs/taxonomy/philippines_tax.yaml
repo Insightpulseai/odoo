@@ -152,5 +152,5 @@ process_templates:
 integration_expectations:
   odoo:
     notes:
-      - "Overlay is taxonomy-only; implementation maps to Odoo 19 CE + OCA modules."
+      - "Overlay is taxonomy-only; implementation maps to Odoo 18 CE + OCA modules."
       - "Keep PH specifics in data/config (YAML/XML) unless a statutory computation truly requires code."

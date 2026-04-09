@@ -286,4 +286,4 @@ docker compose exec odoo_db psql -U odoo -d odoo -c "SELECT 1"
 
 - [Supabase Maximization Plan](../.claude/plans/cozy-petting-fountain.md)
 - [MCP Jobs System](../mcp/servers/mcp-jobs/)
-- [Odoo 19 Canonical Setup](../odoo19/CANONICAL_SETUP.md)
+- [Odoo 18 Canonical Setup](../odoo18/CANONICAL_SETUP.md)

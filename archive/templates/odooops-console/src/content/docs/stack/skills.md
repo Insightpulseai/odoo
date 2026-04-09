@@ -53,16 +53,16 @@ A complete catalog of active skills available effectively in this environment.
   - `rollback_default`: True
   - `evidence_required`: True
 
-## refresh-odoo19-kb
+## refresh-odoo18-kb
 
-- **ID**: `refresh-odoo19-kb`
+- **ID**: `refresh-odoo18-kb`
 - **Type**: `procedural`
 - **Domains**: odoo, docs, knowledge
 - **Guardrails**:
   - `redact_secrets_in_evidence`: True
   - `integrity_checks_required`: True
 
-## Validate Odoo Module Against Odoo19 KB
+## Validate Odoo Module Against Odoo18 KB
 
 - **ID**: `validate-odoo-module-against-kb`
 - **Type**: `procedural`
@@ -71,7 +71,7 @@ A complete catalog of active skills available effectively in this environment.
   - `forbid_enterprise_modules`: True
   - `prod_requires_staging_success`: False
 
-## Generate Procedural Skill From Odoo19 KB
+## Generate Procedural Skill From Odoo18 KB
 
 - **ID**: `generate-odoo-skill-from-kb`
 - **Type**: `procedural`

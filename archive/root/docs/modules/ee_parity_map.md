@@ -35,7 +35,7 @@
 | **Dockerfile** | `docker/Dockerfile.ce19` |
 | **Build Script** | `docker/build-ce19.sh` |
 | **Test Script** | `docker/test-ce19.sh` |
-| **CI Workflow** | `.github/workflows/build-odoo19-ee-parity.yml` |
+| **CI Workflow** | `.github/workflows/build-odoo18-ee-parity.yml` |
 
 ## EE Feature Mapping Matrix
 
@@ -222,8 +222,8 @@ python scripts/test_ee_parity.py --odoo-url http://localhost:8069 --db odoo_core
    ```bash
    # Example: rollback to previous version
    docker pull ghcr.io/jgtolentino/odoo:19.0-ee-parity-prev
-   docker stop odoo19 && docker rm odoo19
-   docker run -d --name odoo19 ghcr.io/jgtolentino/odoo:19.0-ee-parity-prev
+   docker stop odoo18 && docker rm odoo18
+   docker run -d --name odoo18 ghcr.io/jgtolentino/odoo:19.0-ee-parity-prev
    ```
 
 ## References

@@ -58,7 +58,7 @@
 |------------|--------------|------------------------|
 | `odoo`     | ❌ Redundant | DELETE (violates SSOT) |
 | `odoo-prod`| ❌ Redundant | DELETE (violates SSOT) |
-| `odoo19`   | ❌ Redundant | DELETE (violates SSOT) |
+| `odoo18`   | ❌ Redundant | DELETE (violates SSOT) |
 | `n8n`      | ❌ Unused    | DELETE (unused)        |
 | `plane`    | ❌ Unused    | DELETE (unused)        |
 | `superset` | ❌ Unused    | DELETE (unused)        |

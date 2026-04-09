@@ -85,7 +85,7 @@ This file tracks deprecated documentation and maps it to canonical replacements.
 ### Outdated Version References (Odoo 18 → 19)
 
 **Deprecated Patterns** (715 instances):
-- "Odoo 18" → "Odoo 19"
+- "Odoo 18" → "Odoo 18"
 - "odoo.*18" → "odoo.*19"
 - Version-specific docs for Odoo 18
 
@@ -197,7 +197,7 @@ This document is **deprecated** as of YYYY-MM-DD.
 3. **Update README.md**:
    ```bash
    # Find-replace:
-   sed -i 's/Odoo 18/Odoo 19/g' README.md
+   sed -i 's/Odoo 18/Odoo 18/g' README.md
    sed -i 's/jgtolentino\/odoo/Insightpulseai\/odoo/g' README.md
    sed -i 's/jgtolentino\.github\.io/insightpulseai.github.io/g' README.md
    # Manual: Update email section, remove Plane section

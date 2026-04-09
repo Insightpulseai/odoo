@@ -372,9 +372,9 @@ curl -f http://localhost:8069/web/health
 
 ---
 
-## Migration Path (Future Odoo 19 Upgrade)
+## Migration Path (Future Odoo 18 Upgrade)
 
-### Pre-Requisites for Odoo 19 Upgrade
+### Pre-Requisites for Odoo 18 Upgrade
 1. ✅ OCA 19.0 ecosystem mature (≥50% modules ported)
 2. ⏳ IPAI modules tested on 19 CE staging
 3. ⏳ Database migration script validated

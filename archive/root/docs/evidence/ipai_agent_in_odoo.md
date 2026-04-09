@@ -2,7 +2,7 @@
 
 **Date:** 2026-02-27
 **Status:** Active — `addons/ipai/ipai_agent`
-**Branch:** `feat/ipai-module-audit-odoo19`
+**Branch:** `feat/ipai-module-audit-odoo18`
 
 ---
 

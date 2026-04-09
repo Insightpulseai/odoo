@@ -10,7 +10,7 @@ Project Templates
 
 Project and task templates
 
-This module provides Odoo 19 Enterprise Edition parity for CE deployments.
+This module provides Odoo 18 Enterprise Edition parity for CE deployments.
 
 **Features:**
 - Core functionality for project templates

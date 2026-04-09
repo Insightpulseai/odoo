@@ -280,7 +280,7 @@ POST /
 | App ID | `951394464039117` |
 | Landing URL | `https://prismalab.insightpulseai.com` |
 | Booking URL | `https://insightpulseai.zohobookings.com` |
-| SDK installed | `facebook_business==25.0.0` (pyenv `odoo-19-dev`) |
+| SDK installed | `facebook_business==25.0.0` (pyenv `odoo-18-dev`) |
 | Token status | `public_profile` only — needs `ads_management` via System User or App Review |
 
 ### Next step to unlock API access

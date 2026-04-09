@@ -85,7 +85,7 @@ class MailMail(models.Model):
         Falls back to standard Odoo SMTP if ZOHO_MAIL_BRIDGE_URL or
         ZOHO_MAIL_BRIDGE_SECRET env vars are not set (safe for local dev).
 
-        Note: smtp_session was removed in Odoo 19 (replaced by post_send_callback).
+        Note: smtp_session was removed in Odoo 18 (replaced by post_send_callback).
         Using **kwargs forwards any version-specific params to super().
         """
         if not self._ipai_bridge_enabled():

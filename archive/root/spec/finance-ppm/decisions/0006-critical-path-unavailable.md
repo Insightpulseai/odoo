@@ -26,7 +26,7 @@ Gantt charts. These were initially claimed as "solved" via OCA modules.
    It does not provide drag-and-drop resource allocation or interactive scheduling.
 
 2. **`project_timeline_critical_path`** is verified only for Odoo ≤14.0.
-   It is **NOT verified for Odoo 19.0**. It cannot be claimed as available
+   It is **NOT verified for Odoo 18.0**. It cannot be claimed as available
    without independent installation testing and evidence.
 
 3. **Resource leveling** does not exist in any CE or OCA module.

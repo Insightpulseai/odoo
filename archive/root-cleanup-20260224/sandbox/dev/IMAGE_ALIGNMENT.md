@@ -179,7 +179,7 @@ docker compose ps
 # Verify Odoo version
 curl -s http://localhost:8069/web/database/manager | grep -o 'Odoo [0-9.]*'
 
-# Expected: Odoo 19.0
+# Expected: Odoo 18.0
 
 # Verify IPAI modules available
 docker compose exec odoo odoo --version

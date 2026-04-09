@@ -29,7 +29,7 @@ This report documents the end-to-end normalization, benchmarking finalization, a
 All legacy residue and non-ERP platform artifacts are now located in:
 - `archive/` (Root level)
   - `archive/root/` (Misaligned root configs)
-  - `archive/odoo19/` (Legacy Odoo source residue)
+  - `archive/odoo18/` (Legacy Odoo source residue)
   - `archive/work/` (Scratch folders)
   - `archive/dot-github-repo/` (Shadow .github structures)
 

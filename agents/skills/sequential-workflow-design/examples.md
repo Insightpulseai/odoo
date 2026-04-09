@@ -37,7 +37,7 @@ Step 1: Port
 Step 2: Upgrade Code
   Input: Ported module
   Process: odoo-bin upgrade_code
-  Output: Odoo 19 compatible code (tree→list, etc.)
+  Output: Odoo 18 compatible code (tree→list, etc.)
   Gate: No syntax errors
 
 Step 3: Test Install

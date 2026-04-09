@@ -10,9 +10,9 @@ Safely extends Odoo UI through inherited views, actions, and menus using xpath e
 
 ## Key rule
 Always use inherited views with xpath expressions. Never replace core views or directly edit
-OCA/core XML files. Follow Odoo 19 XML ID conventions and use `list` (not `tree`) in user-facing strings.
+OCA/core XML files. Follow Odoo 18 XML ID conventions and use `list` (not `tree`) in user-facing strings.
 
 ## Cross-references
 - `agents/knowledge/benchmarks/odoo-developer-howtos.md`
 - `agents/knowledge/benchmarks/odoo-coding-guidelines.md`
-- `~/.claude/rules/odoo19-coding.md`
+- `~/.claude/rules/odoo18-coding.md`

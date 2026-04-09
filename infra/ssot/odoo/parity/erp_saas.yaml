@@ -40,7 +40,7 @@ installed_modules_source:
     command on the production droplet (178.128.112.214).
     Updated 2026-03-02: 5 IPAI modules installed (ipai_ai_platform,
     ipai_expense_ocr, ipai_auth_oidc, ipai_theme_fluent2, ipai_web_icons_fluent).
-    P0 OCA modules NOT on disk (not yet ported to Odoo 19.0 in OCA repos).
+    P0 OCA modules NOT on disk (not yet ported to Odoo 18.0 in OCA repos).
 
 # ─── Parity targets by domain ────────────────────────────────────────
 parity_targets:
@@ -101,7 +101,7 @@ parity_targets:
 
 # ─── P0 Gaps: OCA modules ────────────────────────────────────────────
 # CRITICAL FINDING (2026-03-02): All 9 P0 OCA modules are NOT ported
-# to Odoo 19.0 in the OCA repos. The repos are vendored but the module
+# to Odoo 18.0 in the OCA repos. The repos are vendored but the module
 # directories are empty or missing. These remain blocked until OCA
 # completes the 19.0 port. Use `oca-port` skill to contribute ports.
 gaps:
@@ -115,7 +115,7 @@ gaps:
         dependencies: [account]
         install_order: 1
         status: blocked_not_ported
-        blocker: "Module not yet ported to Odoo 19.0 in OCA repo"
+        blocker: "Module not yet ported to Odoo 18.0 in OCA repo"
 
       - module: account_asset_management
         oca_repo: OCA/account-financial-tools
@@ -125,7 +125,7 @@ gaps:
         dependencies: [account]
         install_order: 2
         status: blocked_not_ported
-        blocker: "Module not yet ported to Odoo 19.0 in OCA repo"
+        blocker: "Module not yet ported to Odoo 18.0 in OCA repo"
 
       - module: dms
         oca_repo: OCA/dms
@@ -291,7 +291,7 @@ gaps:
         why: "Prevents import errors when EE model references appear"
         dependencies: [base, base_setup, mail, auth_oauth, fetchmail, web, hr_expense, maintenance, project]
         status: blocked_stale_dep
-        blocker: "Declares fetchmail dependency; fetchmail merged into mail in Odoo 19"
+        blocker: "Declares fetchmail dependency; fetchmail merged into mail in Odoo 18"
         action: "Remove fetchmail from depends list in __manifest__.py"
 
       - module: ipai_zoho_mail
@@ -299,7 +299,7 @@ gaps:
         why: "Zoho Mail SMTP/IMAP with settings panel and user linking"
         dependencies: [mail, fetchmail]
         status: blocked_stale_dep
-        blocker: "Declares fetchmail dependency; fetchmail merged into mail in Odoo 19"
+        blocker: "Declares fetchmail dependency; fetchmail merged into mail in Odoo 18"
         action: "Remove fetchmail from depends list in __manifest__.py"
 
       - module: ipai_ai_agents_ui
@@ -315,7 +315,7 @@ gaps:
         dependencies: [project, hr]
         status: blocked_bug
         blocker: "project.project creation fails — schema mismatch in 04_projects.xml"
-        action: "Fix XML data to match Odoo 19 project.project model"
+        action: "Fix XML data to match Odoo 18 project.project model"
 
   # ─── P1 Gaps: install within 30 days ─────────────────────────────────
   p1:

@@ -10,7 +10,7 @@ Tax Pulse attaches to the existing 3-agent + 1-workflow system as the **BIR Comp
 It does not create a new prompt agent, runtime, or workflow.
 The canonical runtime remains: Advisory, Ops, Actions, Router.
 
-## C2: Odoo 19 CE is the workflow and state engine
+## C2: Odoo 18 CE is the workflow and state engine
 
 All filing lifecycle state lives in Odoo records (`bir.tax.return`, `bir.filing.deadline`, `project.task`).
 Tax Pulse tools trigger Odoo state transitions — they do not hold state, invent stages, or maintain a parallel workflow.
@@ -56,7 +56,7 @@ Advisory can explain and inspect. Ops can diagnose. Only Actions can execute.
 
 ## C6: No Enterprise Edition dependencies
 
-All computation, reporting, and filing must work on Odoo 19 CE.
+All computation, reporting, and filing must work on Odoo 18 CE.
 No dependency on `account_reports`, `account_accountant`, or any EE module.
 OCA modules may be used where they provide CE-compatible alternatives.
 

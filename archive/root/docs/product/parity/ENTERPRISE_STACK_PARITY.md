@@ -50,9 +50,9 @@
 | **BIR-002** | BIR 2316 Certificate | EE Tax Compliance | `ipai_bir_compliance` | 🔴 Not implemented | Azure: Certificate archive |
 | **BIR-003** | BIR Alphalist | EE Tax Compliance | `ipai_bir_compliance` | 🔴 Not implemented | Databricks: Analytics |
 | **SVC-001** | Helpdesk Ticketing | `helpdesk` | `helpdesk_mgmt` (OCA) | 🟡 OCA module installed | Vercel: Customer portal |
-| **AI-001** | AI Agents | `ai` (Odoo 19) | `ipai_ai_agent_builder` | 🟢 Implemented | Azure OpenAI: LLM provider |
-| **AI-002** | AI RAG Sources | `ai` (Odoo 19) | `ipai_ai_rag` | 🟢 Implemented | Supabase: Vector storage |
-| **AI-003** | AI Tools | `ai` (Odoo 19) | `ipai_ai_tools` | 🟢 Implemented | Vercel: Tool execution |
+| **AI-001** | AI Agents | `ai` (Odoo 18) | `ipai_ai_agent_builder` | 🟢 Implemented | Azure OpenAI: LLM provider |
+| **AI-002** | AI RAG Sources | `ai` (Odoo 18) | `ipai_ai_rag` | 🟢 Implemented | Supabase: Vector storage |
+| **AI-003** | AI Tools | `ai` (Odoo 18) | `ipai_ai_tools` | 🟢 Implemented | Vercel: Tool execution |
 | **TAX-001** | Tax Return Workflow | `account_tax` (EE) | `ipai_finance_ppm` | 🟡 Partial | Databricks: Tax analytics |
 
 **P0 Status**: 5/12 implemented (41.7%), 3/12 OCA modules (25%), 4/12 not implemented (33.3%)
@@ -72,8 +72,8 @@
 | **SVC-002** | Approval Workflows | `approvals` | `ipai_approvals` | 🟢 Implemented | Supabase: Approval queue |
 | **SVC-003** | Project Management | `project_enterprise` | `ipai_project_ppm` | 🔴 Not implemented | Databricks: Project analytics |
 | **BIR-004** | VAT Compliance | EE Tax | `ipai_bir_vat` | 🔴 Not implemented | Azure: VAT archive |
-| **AI-004** | AI Fields | `ai` (Odoo 19) | `ipai_ai_fields` | 🔴 Not implemented | Azure OpenAI: Field generation |
-| **WA-001** | WhatsApp Integration | `whatsapp` (Odoo 19) | `ipai_connector_whatsapp` | 🔴 Not implemented | Vercel: WhatsApp webhook |
+| **AI-004** | AI Fields | `ai` (Odoo 18) | `ipai_ai_fields` | 🔴 Not implemented | Azure OpenAI: Field generation |
+| **WA-001** | WhatsApp Integration | `whatsapp` (Odoo 18) | `ipai_connector_whatsapp` | 🔴 Not implemented | Vercel: WhatsApp webhook |
 | **PRJ-001** | Project Templates | `project` (EE) | `project_template` (OCA) | 🟡 OCA module installed | Figma: Template designs |
 | **PLN-001** | Planning/Attendance Analysis | `planning` (EE) | `ipai_planning` | 🔴 Not implemented | Databricks: Planning analytics |
 | **DOC-001** | Documents AI Management | `documents_ai` (EE) | `ipai_docs_ai` | 🔴 Not implemented | Supabase Storage + Azure AI |
@@ -92,9 +92,9 @@
 | **SVC-004** | Timesheet Entry | `timesheet_grid` | `ipai_timesheet` | 🔴 Not implemented | Vercel: Timesheet UI |
 | **INT-001** | Workflow Automation | `studio` | `ipai_connector_n8n` | 🟢 Implemented | Vercel: n8n hosting |
 | **INT-002** | Document Storage | `documents` | `ipai_connector_supabase` | 🟢 Implemented | Supabase Storage |
-| **AI-005** | AI Livechat | `ai` (Odoo 19) | `ipai_ai_livechat` | 🔴 Not implemented | Vercel: Chatbot UI |
-| **ESG-001** | Carbon Analytics | `esg` (Odoo 19) | `ipai_esg_carbon` | 🔴 Not implemented | Databricks: Carbon metrics |
-| **ESG-002** | Social Metrics | `esg` (Odoo 19) | `ipai_esg_social` | 🔴 Not implemented | Databricks: ESG analytics |
+| **AI-005** | AI Livechat | `ai` (Odoo 18) | `ipai_ai_livechat` | 🔴 Not implemented | Vercel: Chatbot UI |
+| **ESG-001** | Carbon Analytics | `esg` (Odoo 18) | `ipai_esg_carbon` | 🔴 Not implemented | Databricks: Carbon metrics |
+| **ESG-002** | Social Metrics | `esg` (Odoo 18) | `ipai_esg_social` | 🔴 Not implemented | Databricks: ESG analytics |
 | **PLN-002** | Resource Forecasting | `planning` (EE) | `ipai_planning_forecast` | 🔴 Not implemented | Databricks: Forecasting |
 
 **P2 Status**: 2/7 implemented (28.6%), 0/7 OCA modules, 5/7 not implemented (71.4%)
@@ -108,7 +108,7 @@
 
 | ID | Feature | EE Module | IPAI/OCA Module | Status | Stack Integration |
 |----|---------|-----------|-----------------|--------|-------------------|
-| **EQU-001** | Share Tracking | `equity` (Odoo 19) | `ipai_equity` | 🔴 Not implemented | Databricks: Cap table analytics |
+| **EQU-001** | Share Tracking | `equity` (Odoo 18) | `ipai_equity` | 🔴 Not implemented | Databricks: Cap table analytics |
 
 **P3 Status**: 0/1 implemented (0%)
 **P3 Score**: 0/0.5 points (0%)

@@ -29,7 +29,7 @@ import sys
 
 REPO_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
 CANONICAL_CSV = os.path.join(REPO_ROOT, "data", "seed", "finance_ppm", "tbwa_smp", "team_directory.csv")
-IMPORT_SCRIPT = os.path.join(REPO_ROOT, "scripts", "bulk_import_tasks_odoo19.py")
+IMPORT_SCRIPT = os.path.join(REPO_ROOT, "scripts", "bulk_import_tasks_odoo18.py")
 
 # ── Invariants ──────────────────────────────────────────────────────────────
 

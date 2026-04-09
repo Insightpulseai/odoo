@@ -2,7 +2,7 @@
 
 ## Purpose
 
-This document defines the non-negotiable rules and constraints for the IPAI AI Agent Builder module, which provides Odoo 19 AI Agents feature parity for CE/OCA deployments.
+This document defines the non-negotiable rules and constraints for the IPAI AI Agent Builder module, which provides Odoo 18 AI Agents feature parity for CE/OCA deployments.
 
 ## Non-Negotiable Rules
 

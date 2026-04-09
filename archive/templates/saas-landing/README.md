@@ -12,7 +12,7 @@ Next.js 16 SaaS landing page with Odoo CMS integration, inspired by Odoo.sh.
 - 📱 **Responsive Design** - Mobile-first with Tailwind CSS
 - 🔐 **Authentication Ready** - Supabase OAuth integration
 
-### Backend Integration (Odoo 19)
+### Backend Integration (Odoo 18)
 - 🔌 **REST API Module** (`ipai_platform_api`) - JSON-RPC endpoints for frontend
 - 📝 **CMS Management** - Manage features, deployments, and content in Odoo
 - 🚀 **Deployment System** - Track and trigger deployments via n8n
@@ -265,7 +265,7 @@ curl -X POST http://localhost:3000/api/deployments \
 ## Tech Stack
 
 - **Frontend**: Next.js 16, React 19, Tailwind CSS, shadcn/ui
-- **Backend**: Odoo 19 CE, Python 3.12, PostgreSQL 16
+- **Backend**: Odoo 18 CE, Python 3.12, PostgreSQL 16
 - **Platform**: Supabase, n8n, MCP, Vercel, DigitalOcean
 - **Monitoring**: (To be integrated: Prometheus, Grafana)
 

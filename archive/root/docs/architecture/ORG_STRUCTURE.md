@@ -58,7 +58,7 @@ The `odoo` repository follows a strict monorepo structure.
 | Contract          | Description                               | Mechanism                |
 | :---------------- | :---------------------------------------- | :----------------------- |
 | **Org Structure** | This document matches repo state          | `org-structure-gate.yml` |
-| **Documentation** | `docs/kb/` is the single source of truth  | `refesh-odoo19-kb` skill |
+| **Documentation** | `docs/kb/` is the single source of truth  | `refesh-odoo18-kb` skill |
 | **CI/CD**         | `.github/workflows` drives all automation | Branch protection rules  |
 
 ## 4. Ownership

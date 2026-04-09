@@ -1532,7 +1532,7 @@
       ]
     },
     {
-      "path": "docs/releases/ODOO_19_PARITY_ANALYSIS.md",
+      "path": "docs/releases/ODOO_18_PARITY_ANALYSIS.md",
       "issues": [
         "old_path"
       ]
@@ -1658,13 +1658,13 @@
       ]
     },
     {
-      "path": "docs/kb/odoo19/index/sections.json",
+      "path": "docs/kb/odoo18/index/sections.json",
       "issues": [
         "old_path"
       ]
     },
     {
-      "path": "docs/kb/odoo19/index/index.json",
+      "path": "docs/kb/odoo18/index/index.json",
       "issues": [
         "old_path"
       ]
@@ -2345,25 +2345,25 @@
       ]
     },
     {
-      "path": "odoo19/MIGRATION_COMPLETE.md",
+      "path": "odoo18/MIGRATION_COMPLETE.md",
       "issues": [
         "old_path"
       ]
     },
     {
-      "path": "odoo19/CANONICAL_SETUP.md",
+      "path": "odoo18/CANONICAL_SETUP.md",
       "issues": [
         "old_path"
       ]
     },
     {
-      "path": "odoo19/MIGRATION_FROM_OLD_STACK.md",
+      "path": "odoo18/MIGRATION_FROM_OLD_STACK.md",
       "issues": [
         "old_path"
       ]
     },
     {
-      "path": "odoo19/QUICK_REFERENCE.md",
+      "path": "odoo18/QUICK_REFERENCE.md",
       "issues": [
         "old_path"
       ]
@@ -6346,7 +6346,7 @@
       "recommendation": "Convert to n8n workflow: email notification: n8n email node candidate"
     },
     {
-      "path": "sandbox/dev/upgrade-to-odoo19.sh",
+      "path": "sandbox/dev/upgrade-to-odoo18.sh",
       "type": "script_candidate",
       "signals": [
         "polling sleep: scheduled n8n workflow candidate"

@@ -24,7 +24,7 @@ This creates false confidence in the platform's operational surface.
 |------|-----------------|
 | `infra/ssot/azure/service-matrix.yaml` | Services with `note:` containing "Stub" or "nginx:alpine" |
 | `infra/ssot/azure/resources.yaml` | ACA entries for stub services |
-| `docs/runbooks/ODOO19_GO_LIVE_CHECKLIST.md` | Service verification line items |
+| `docs/runbooks/ODOO18_GO_LIVE_CHECKLIST.md` | Service verification line items |
 | `docs/audits/ODOO_AZURE_ENTERPRISE_BENCHMARK.md` | Inventory accuracy gap row |
 
 ## Microsoft Learn MCP Usage
@@ -64,7 +64,7 @@ Run at least these three queries:
 |------|--------|
 | `infra/ssot/azure/service-matrix.yaml` | Stub status correction |
 | `infra/ssot/azure/resources.yaml` | Lifecycle alignment |
-| `docs/runbooks/ODOO19_GO_LIVE_CHECKLIST.md` | Service verification criteria |
+| `docs/runbooks/ODOO18_GO_LIVE_CHECKLIST.md` | Service verification criteria |
 | `docs/evidence/<stamp>/service-matrix-truth/` | Before/after diff, MCP excerpts |
 
 ## Completion Criteria

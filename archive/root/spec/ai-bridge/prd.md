@@ -8,7 +8,7 @@
 
 ## Context
 
-Odoo 19 CE does not expose "Ask AI" natively — that is an Enterprise/IAP feature.
+Odoo 18 CE does not expose "Ask AI" natively — that is an Enterprise/IAP feature.
 This spec defines the requirements for a CE-compatible AI widget addon (`ipai_ai_widget`)
 that wires Odoo UI into the IPAI provider bridge (self-hosted, governed by SSOT).
 

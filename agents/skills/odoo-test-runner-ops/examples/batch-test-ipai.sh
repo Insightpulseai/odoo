@@ -17,7 +17,7 @@ for module_dir in "${ADDONS_DIR}"/ipai_*/; do
   echo "--- Testing ${MODULE} ---"
   dropdb -h localhost -U tbwa --if-exists "${TEST_DB}" 2>/dev/null || true
 
-  if ~/.pyenv/versions/odoo-19-dev/bin/python vendor/odoo/odoo-bin \
+  if ~/.pyenv/versions/odoo-18-dev/bin/python vendor/odoo/odoo-bin \
     --database="${TEST_DB}" \
     --db_host=localhost --db_port=5432 --db_user=tbwa --db_password=False \
     --addons-path=vendor/odoo/addons,addons/ipai \

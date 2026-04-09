@@ -87,7 +87,7 @@ All website content uses Odoo's built-in page builder, templates, and apps. No f
 
 ## Google Calendar Integration
 
-- **Module:** `google_calendar` (Odoo 19 built-in)
+- **Module:** `google_calendar` (Odoo 18 built-in)
 - **OAuth client:** `916601142061-f7j0sh49utn78fpm3oikr7eu72lrrpsa.apps.googleusercontent.com`
 - **Secret:** Azure Key Vault `kv-ipai-dev` key `google-oauth-w9studio-client-secret`
 - **Calendar sync:** Odoo Calendar ↔ Google Calendar (bidirectional)

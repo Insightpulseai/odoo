@@ -2,7 +2,7 @@
 
 **Repository**: `odoo` (jgtolentino/odoo)
 **Odoo Series**: 18.0 CE + OCA baseline
-**Reference**: Odoo 19 EE introspection (Contacts, Knowledge, PoS, Studio, AI, IoT)
+**Reference**: Odoo 18 EE introspection (Contacts, Knowledge, PoS, Studio, AI, IoT)
 **Last Updated**: 2026-01-20
 **Status**: Canonical technical guide for EE → CE migration
 

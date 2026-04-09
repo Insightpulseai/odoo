@@ -1,6 +1,6 @@
 # Automated Odoo Documentation Platform
 
-> Production-grade automation for building a searchable, AI-enhanced documentation platform using official Odoo 19.0 documentation sources
+> Production-grade automation for building a searchable, AI-enhanced documentation platform using official Odoo 18.0 documentation sources
 
 **Status**: ✅ Production-ready | **Last Updated**: 2026-03-05
 
@@ -18,7 +18,7 @@
 
 This documentation platform provides:
 
-1. **Automated Daily Sync** - Official Odoo 19.0 docs from GitHub
+1. **Automated Daily Sync** - Official Odoo 18.0 docs from GitHub
 2. **AI-Powered Search** - Real-time RAG with Claude Sonnet 4.6
 3. **Static Documentation Site** - Sphinx HTML on GitHub Pages
 4. **Hybrid Search** - pgvector (70%) + full-text search (30%)
@@ -80,7 +80,7 @@ This documentation platform provides:
 ## Workflow 1: Official Docs Sync & Processing
 
 ### Use Case
-Automatically sync and process official Odoo 19.0 documentation from GitHub, enhancing it with AI-generated summaries and examples.
+Automatically sync and process official Odoo 18.0 documentation from GitHub, enhancing it with AI-generated summaries and examples.
 
 ### Workflow File
 
@@ -168,7 +168,7 @@ jobs:
           git config user.email "docs@insightpulseai.com"
 
           git add docs/odoo-official/
-          git commit -m "docs(sync): update official Odoo 19.0 documentation
+          git commit -m "docs(sync): update official Odoo 18.0 documentation
 
           Synced from: https://github.com/odoo/documentation/tree/19.0
           Sync date: $(date -u +"%Y-%m-%d")
@@ -585,7 +585,7 @@ jobs:
             📚 **Documentation Platform Updated**
 
             **Site**: https://docs.insightpulseai.com
-            **Sync**: Official Odoo 19.0 docs synchronized
+            **Sync**: Official Odoo 18.0 docs synchronized
             **Enhancements**: AI summaries and code examples added
 
             View the latest documentation.
@@ -778,7 +778,7 @@ serve(async (req) => {
       messages: [
         {
           role: "user",
-          content: `You are an Odoo 19.0 documentation assistant. Answer the question based on this documentation context.
+          content: `You are an Odoo 18.0 documentation assistant. Answer the question based on this documentation context.
 
 Context:
 ${context}
@@ -848,9 +848,9 @@ const searchDocs = async (query) => {
 Users can ask questions directly in the documentation:
 
 ```
-User: "How do I create a computed field in Odoo 19?"
+User: "How do I create a computed field in Odoo 18?"
 
-AI Assistant: "To create a computed field in Odoo 19, use the @api.depends decorator:
+AI Assistant: "To create a computed field in Odoo 18, use the @api.depends decorator:
 
 ```python
 from odoo import models, fields, api

@@ -138,7 +138,7 @@ injected via Key Vault managed identity bindings.
 
 ## References
 
-- [Odoo 19 Deployment Guide](https://www.odoo.com/documentation/19.0/administration/on_premise/deploy.html)
+- [Odoo 18 Deployment Guide](https://www.odoo.com/documentation/19.0/administration/on_premise/deploy.html)
 - [Azure Front Door Origin Security](https://learn.microsoft.com/en-us/azure/frontdoor/origin-security)
 - [Azure PostgreSQL Flexible Server Private Access](https://learn.microsoft.com/en-us/azure/postgresql/flexible-server/concepts-networking-private)
 

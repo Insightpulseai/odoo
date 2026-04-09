@@ -1,5 +1,5 @@
 # schema: ssot.ai.copilot_parity_priorities.v1
-# Prioritized AI copilot capabilities for Odoo 19 CE IPAI deployment.
+# Prioritized AI copilot capabilities for Odoo 18 CE IPAI deployment.
 # Referenced by: spec/ai-copilot/prd.md, ssot/ai/odoo_ai_mapping.yaml
 # Gate: capabilities must reach "active" status before production enablement.
 
@@ -26,7 +26,7 @@ meta:
   odoo_baseline:
     mapping: "ssot/ai/odoo_ai_mapping.yaml"
     native_capabilities: [ask_ai, ai_agents, topics_tools, sources_rag, live_chat_ai]
-    note: "Odoo 19 EE-only; CE has zero native AI. All capabilities must be provided by ipai_* modules."
+    note: "Odoo 18 EE-only; CE has zero native AI. All capabilities must be provided by ipai_* modules."
 
 priorities:
 

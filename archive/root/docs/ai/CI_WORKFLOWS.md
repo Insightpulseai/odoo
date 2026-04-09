@@ -29,7 +29,7 @@ Run `ls .github/workflows/*.yml | wc -l` for current count.
 |----------|---------|
 | `build-unified-image.yml` | Build unified Docker image |
 | `build-seeded-image.yml` | Build pre-seeded image |
-| `build-odoo19-ee-parity.yml` | Build Odoo CE 19 with EE parity |
+| `build-odoo18-ee-parity.yml` | Build Odoo CE 19 with EE parity |
 | `deploy-production.yml` | Production deployment |
 | `deploy-odoo-prod.yml` | Odoo-specific deployment |
 | `cd-production.yml` | Continuous delivery to production |

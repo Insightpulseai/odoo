@@ -28,7 +28,7 @@ Use this as the minimum production gate for the InsightPulse AI target stack.
 
 ## 4. Odoo Application Readiness
 
-- [ ] All custom modules install cleanly on target Odoo 19 build
+- [ ] All custom modules install cleanly on target Odoo 18 build
 - [ ] All cron jobs / server actions are green (no `analytic_account_id` drift or deprecated field errors)
 - [ ] Login page, assets, branding, and core user journeys are smoke-tested on the real hostname
 - [ ] Core business paths pass: sales/order, purchasing, invoicing, payments, projects/tasks, Finance PPM
@@ -90,7 +90,7 @@ Only go live when ALL of the above are true.
 
 - Multiple "authoritative" Odoo databases with unclear ownership
 - Missing `dbfilter` in multi-database production
-- Broken Odoo 19 custom jobs / fields / cron actions
+- Broken Odoo 18 custom jobs / fields / cron actions
 - Databricks without Unity Catalog governance
 - PostgreSQL without tested restore path
 - Public edge without WAF

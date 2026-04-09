@@ -146,7 +146,7 @@
 
 **Finding**: Production Odoo config is correctly locked down: `proxy_mode=True`, `list_db=False`, `admin_passwd=False`. Front Door and nginx configs set security headers (HSTS, X-Frame-Options). However, no explicit `session_timeout` or `session_gc_interval` is set in any `odoo.conf`. The OCA module `auth_session_timeout` is listed in the addons manifest (`config/addons.manifest.yaml:107`) but installation status is unknown. No SameSite cookie configuration is visible in config files.
 
-**Remaining**: Runtime check for `auth_session_timeout` installation status. Verify SameSite cookie attribute on live session cookies. Check if Odoo 19 sets `Secure` flag on cookies when `proxy_mode=True`.
+**Remaining**: Runtime check for `auth_session_timeout` installation status. Verify SameSite cookie attribute on live session cookies. Check if Odoo 18 sets `Secure` flag on cookies when `proxy_mode=True`.
 
 ---
 
@@ -184,13 +184,13 @@
 **Status**: PARTIALLY CLOSED
 **Evidence**:
 - `vendor/odoo/addons/auth_oauth/controllers/main.py` — File does not exist at expected path (vendor/odoo/ may not be hydrated in monorepo)
-- `docs/skills/odoo19-google-oauth.md:360` — Documents that `auth_oauth` controller searches providers via `request.env['auth.oauth.provider'].sudo().search_read()`
-- `docs/skills/odoo19-google-oauth.md:382` — Login page renders OAuth buttons when `auth_oauth` is installed and at least one provider is enabled
+- `docs/skills/odoo18-google-oauth.md:360` — Documents that `auth_oauth` controller searches providers via `request.env['auth.oauth.provider'].sudo().search_read()`
+- `docs/skills/odoo18-google-oauth.md:382` — Login page renders OAuth buttons when `auth_oauth` is installed and at least one provider is enabled
 - `addons/ipai/ipai_enterprise_bridge/models/settings_actions.py:87` — Accesses `auth.oauth.provider` model
 
 **Finding**: The `vendor/odoo/` directory does not contain a hydrated Odoo source tree in the monorepo (it is likely in the nested `odoo/` repo). The auth_oauth flow is documented in skills docs: the controller at `/auth_oauth/signin` handles the OAuth callback, validates the token, matches/creates users by email, and creates a session. The `state` parameter is used for CSRF protection. The `ipai_enterprise_bridge` module correctly uses the `auth.oauth.provider` model to manage providers.
 
-**Remaining**: Direct source review of `auth_oauth/controllers/main.py` from the Odoo 19 source to verify state handling and user matching edge cases (e.g., email collision, case sensitivity). This requires accessing the nested `odoo/` repo.
+**Remaining**: Direct source review of `auth_oauth/controllers/main.py` from the Odoo 18 source to verify state handling and user matching edge cases (e.g., email collision, case sensitivity). This requires accessing the nested `odoo/` repo.
 
 ---
 

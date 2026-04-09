@@ -19,7 +19,7 @@ knowledge grounding, and multi-step orchestration.
 
 ### Does the copilot replace Odoo's built-in "Ask AI"?
 
-No. Odoo 19's native Ask AI is a lightweight assistant with limited
+No. Odoo 18's native Ask AI is a lightweight assistant with limited
 customization. `ipai_odoo_copilot` extends it with:
 - Custom tool definitions (finance, HR, inventory)
 - Azure AI Foundry as the inference backend (instead of odoo.com IAP)

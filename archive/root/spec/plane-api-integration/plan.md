@@ -23,7 +23,7 @@ From the PRD:
 | Dimension | Value |
 |-----------|-------|
 | Language | Python 3.12+ |
-| Framework | Odoo 19.0 CE |
+| Framework | Odoo 18.0 CE |
 | Database | PostgreSQL 16 (Odoo-local) |
 | Testing | `unittest` via Odoo test runner |
 | Existing pattern | `ipai_slack_connector` (AbstractModel + pure client) |

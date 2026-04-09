@@ -23,7 +23,7 @@ class TestOdooCopilotIntegration:
 
     def test_01_ocr_bridge_flow(self):
         print("--- TEST 01: OCR BRIDGE & AZURE AUTH FLOW ---")
-        # Check Odoo 19.0 App Registration Fields
+        # Check Odoo 18.0 App Registration Fields
         tenant = self.env.get_param('ipai.azure_tenant_id')
         client = self.env.get_param('ipai.azure_client_id')
         secret = self.env.get_param('ipai.azure_client_secret')

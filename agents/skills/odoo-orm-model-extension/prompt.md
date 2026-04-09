@@ -17,7 +17,7 @@ Platform context:
 - OCA modules: `addons/oca/` — never modify, use `_inherit` overrides
 - Core Odoo: `vendor/odoo/` — never modify
 
-Odoo 19 class attribute order (strict):
+Odoo 18 class attribute order (strict):
 1. Private attributes (_name, _description, _inherit, _order)
 2. Default methods
 3. Field declarations

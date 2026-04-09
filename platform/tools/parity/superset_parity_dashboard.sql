@@ -1,4 +1,4 @@
--- Superset Dashboard: Odoo 19 EE Parity Tracking
+-- Superset Dashboard: Odoo 18 EE Parity Tracking
 -- Create these datasets in Superset for visual parity monitoring
 
 -- ==================================================

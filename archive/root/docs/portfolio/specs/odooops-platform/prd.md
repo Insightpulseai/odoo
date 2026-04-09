@@ -9,7 +9,7 @@
 
 ## Executive Summary
 
-**OdooOps Platform** is a self-hostable, API-first Platform-as-a-Service for Odoo 19 CE that automates the entire development-to-production lifecycle through GitOps workflows, policy-driven deployments, and deterministic build systems.
+**OdooOps Platform** is a self-hostable, API-first Platform-as-a-Service for Odoo 18 CE that automates the entire development-to-production lifecycle through GitOps workflows, policy-driven deployments, and deterministic build systems.
 
 ### Problem Statement
 

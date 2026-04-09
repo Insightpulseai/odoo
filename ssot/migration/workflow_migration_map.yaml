@@ -86,7 +86,7 @@ enablement_waves:
       - automations/n8n/workflows/n8n_ai_journal_posting.json
       - automations/n8n/workflows/finance_closing_automation.json
       - automations/n8n/workflows/03-finance-close-orchestrator.json
-      - automations/n8n/workflows/n8n_finance_ppm_workflow_odoo19.json
+      - automations/n8n/workflows/n8n_finance_ppm_workflow_odoo18.json
       # Expense capture (writes to Odoo)
       - automations/n8n/workflows/expense_receipt_capture.json
       - automations/n8n/workflows/invoice_ocr_to_odoo.json

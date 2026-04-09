@@ -63,7 +63,7 @@ Odoo (SOR — system of record / ledger)
 | **Auth** | Session cookies for agent calls | API key or OAuth2 bearer only |
 | **Code** | `cr.commit()` in Odoo | ORM handles transactions |
 | **Code** | f-string in `_()` translations | Use lazy interpolation |
-| **Code** | Global JS patches in Odoo | Use native Odoo 19 patterns |
+| **Code** | Global JS patches in Odoo | Use native Odoo 18 patterns |
 
 ---
 

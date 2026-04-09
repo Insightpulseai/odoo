@@ -3,135 +3,135 @@
 ## Skills
 | Name | Path | Type |
 |---|---|---|
-| accounting | `skills/odoo19/accounting/SKILL.md` | repo_only |
-| activities | `skills/odoo19/activities/SKILL.md` | repo_only |
-| administration | `skills/odoo19/administration/SKILL.md` | repo_only |
-| ai | `skills/odoo19/ai/SKILL.md` | repo_only |
+| accounting | `skills/odoo18/accounting/SKILL.md` | repo_only |
+| activities | `skills/odoo18/activities/SKILL.md` | repo_only |
+| administration | `skills/odoo18/administration/SKILL.md` | repo_only |
+| ai | `skills/odoo18/ai/SKILL.md` | repo_only |
 | ai-agent-patterns | `docs/archive/agent-skills/ai-agent-patterns/SKILL.md` | repo_only |
 | antigravity-browser | `sandbox/dev/.claude/skills/antigravity-browser/SKILL.md` | repo_only |
-| appointments | `skills/odoo19/appointments/SKILL.md` | repo_only |
-| appraisals | `skills/odoo19/appraisals/SKILL.md` | repo_only |
-| apps_modules | `skills/odoo19/apps_modules/SKILL.md` | repo_only |
-| attendances | `skills/odoo19/attendances/SKILL.md` | repo_only |
+| appointments | `skills/odoo18/appointments/SKILL.md` | repo_only |
+| appraisals | `skills/odoo18/appraisals/SKILL.md` | repo_only |
+| apps_modules | `skills/odoo18/apps_modules/SKILL.md` | repo_only |
+| attendances | `skills/odoo18/attendances/SKILL.md` | repo_only |
 | azure-well-architected | `agents/skills/azure-well-architected/SKILL.md` | repo_only |
 | backup-odoo-environment | `agents/skills/backup-odoo-environment/SKILL.md` | repo_only |
-| barcode | `skills/odoo19/barcode/SKILL.md` | repo_only |
+| barcode | `skills/odoo18/barcode/SKILL.md` | repo_only |
 | bir-compliance-automation | `.claude/superclaude/skills/finance/bir-compliance-automation/SKILL.md` | repo_only |
 | bir-tax-filing | `skills/bir-tax-filing/SKILL.md` | repo_only |
-| blog | `skills/odoo19/blog/SKILL.md` | repo_only |
-| calendar | `skills/odoo19/calendar/SKILL.md` | repo_only |
+| blog | `skills/odoo18/blog/SKILL.md` | repo_only |
+| calendar | `skills/odoo18/calendar/SKILL.md` | repo_only |
 | claude-ai-n8n-connector | `.claude/superclaude/skills/claude-ai-n8n-connector/SKILL.md` | repo_only |
 | code-review | `docs/archive/agent-skills/code-review/SKILL.md` | repo_only |
-| companies | `skills/odoo19/companies/SKILL.md` | repo_only |
+| companies | `skills/odoo18/companies/SKILL.md` | repo_only |
 | composition-patterns | `docs/archive/agent-skills/composition-patterns/SKILL.md` | repo_only |
-| contacts | `skills/odoo19/contacts/SKILL.md` | repo_only |
-| crm | `skills/odoo19/crm/SKILL.md` | repo_only |
-| dashboards | `skills/odoo19/dashboards/SKILL.md` | repo_only |
-| data_cleaning | `skills/odoo19/data_cleaning/SKILL.md` | repo_only |
+| contacts | `skills/odoo18/contacts/SKILL.md` | repo_only |
+| crm | `skills/odoo18/crm/SKILL.md` | repo_only |
+| dashboards | `skills/odoo18/dashboards/SKILL.md` | repo_only |
+| data_cleaning | `skills/odoo18/data_cleaning/SKILL.md` | repo_only |
 | deep-research | `.agent/skills/deep-research/SKILL.md` | repo_only |
 | deploy-odoo-modules-git | `agents/skills/deploy-odoo-modules-git/SKILL.md` | repo_only |
-| developer_mode | `skills/odoo19/developer_mode/SKILL.md` | repo_only |
-| discuss | `skills/odoo19/discuss/SKILL.md` | repo_only |
-| documents | `skills/odoo19/documents/SKILL.md` | repo_only |
-| ecommerce | `skills/odoo19/ecommerce/SKILL.md` | repo_only |
-| elearning | `skills/odoo19/elearning/SKILL.md` | repo_only |
-| email_communication | `skills/odoo19/email_communication/SKILL.md` | repo_only |
-| email_marketing | `skills/odoo19/email_marketing/SKILL.md` | repo_only |
-| employees | `skills/odoo19/employees/SKILL.md` | repo_only |
-| esg | `skills/odoo19/esg/SKILL.md` | repo_only |
-| events | `skills/odoo19/events/SKILL.md` | repo_only |
+| developer_mode | `skills/odoo18/developer_mode/SKILL.md` | repo_only |
+| discuss | `skills/odoo18/discuss/SKILL.md` | repo_only |
+| documents | `skills/odoo18/documents/SKILL.md` | repo_only |
+| ecommerce | `skills/odoo18/ecommerce/SKILL.md` | repo_only |
+| elearning | `skills/odoo18/elearning/SKILL.md` | repo_only |
+| email_communication | `skills/odoo18/email_communication/SKILL.md` | repo_only |
+| email_marketing | `skills/odoo18/email_marketing/SKILL.md` | repo_only |
+| employees | `skills/odoo18/employees/SKILL.md` | repo_only |
+| esg | `skills/odoo18/esg/SKILL.md` | repo_only |
+| events | `skills/odoo18/events/SKILL.md` | repo_only |
 | expense-processing | `skills/expense-processing/SKILL.md` | repo_only |
-| expenses | `skills/odoo19/expenses/SKILL.md` | repo_only |
-| export_import_data | `skills/odoo19/export_import_data/SKILL.md` | repo_only |
-| field_service | `skills/odoo19/field_service/SKILL.md` | repo_only |
+| expenses | `skills/odoo18/expenses/SKILL.md` | repo_only |
+| export_import_data | `skills/odoo18/export_import_data/SKILL.md` | repo_only |
+| field_service | `skills/odoo18/field_service/SKILL.md` | repo_only |
 | figma-agent | `skills/user/figma-agent/SKILL.md` | repo_only |
 | finance-month-end | `skills/finance-month-end/SKILL.md` | repo_only |
-| fiscal_localizations | `skills/odoo19/fiscal_localizations/SKILL.md` | repo_only |
-| fleet | `skills/odoo19/fleet/SKILL.md` | repo_only |
-| forum | `skills/odoo19/forum/SKILL.md` | repo_only |
-| frontdesk | `skills/odoo19/frontdesk/SKILL.md` | repo_only |
+| fiscal_localizations | `skills/odoo18/fiscal_localizations/SKILL.md` | repo_only |
+| fleet | `skills/odoo18/fleet/SKILL.md` | repo_only |
+| forum | `skills/odoo18/forum/SKILL.md` | repo_only |
+| frontdesk | `skills/odoo18/frontdesk/SKILL.md` | repo_only |
 | generate-odoo-skill-from-kb | `agents/skills/generate-odoo-skill-from-kb/SKILL.md` | repo_only |
 | github-well-architected | `agents/skills/github-well-architected/SKILL.md` | repo_only |
-| helpdesk | `skills/odoo19/helpdesk/SKILL.md` | repo_only |
-| html_editor | `skills/odoo19/html_editor/SKILL.md` | repo_only |
-| in_app_purchase | `skills/odoo19/in_app_purchase/SKILL.md` | repo_only |
+| helpdesk | `skills/odoo18/helpdesk/SKILL.md` | repo_only |
+| html_editor | `skills/odoo18/html_editor/SKILL.md` | repo_only |
+| in_app_purchase | `skills/odoo18/in_app_purchase/SKILL.md` | repo_only |
 | incident-triage | `.agent/antigravity/skills/incident-triage/SKILL.md` | repo_only |
-| integrations | `skills/odoo19/integrations/SKILL.md` | repo_only |
-| inventory | `skills/odoo19/inventory/SKILL.md` | repo_only |
-| iot | `skills/odoo19/iot/SKILL.md` | repo_only |
-| keyboard_shortcuts | `skills/odoo19/keyboard_shortcuts/SKILL.md` | repo_only |
-| livechat | `skills/odoo19/livechat/SKILL.md` | repo_only |
-| lunch | `skills/odoo19/lunch/SKILL.md` | repo_only |
-| maintenance | `skills/odoo19/maintenance/SKILL.md` | repo_only |
-| manufacturing | `skills/odoo19/manufacturing/SKILL.md` | repo_only |
-| marketing_automation | `skills/odoo19/marketing_automation/SKILL.md` | repo_only |
+| integrations | `skills/odoo18/integrations/SKILL.md` | repo_only |
+| inventory | `skills/odoo18/inventory/SKILL.md` | repo_only |
+| iot | `skills/odoo18/iot/SKILL.md` | repo_only |
+| keyboard_shortcuts | `skills/odoo18/keyboard_shortcuts/SKILL.md` | repo_only |
+| livechat | `skills/odoo18/livechat/SKILL.md` | repo_only |
+| lunch | `skills/odoo18/lunch/SKILL.md` | repo_only |
+| maintenance | `skills/odoo18/maintenance/SKILL.md` | repo_only |
+| manufacturing | `skills/odoo18/manufacturing/SKILL.md` | repo_only |
+| marketing_automation | `skills/odoo18/marketing_automation/SKILL.md` | repo_only |
 | oca-development-standards | `.agent/skills/oca-development-standards/SKILL.md` | repo_only |
 | oca-module-porter | `.claude/skills/oca-module-porter/SKILL.md` | repo_only |
 | oca-owl-standards | `.agent/skills/oca-owl-standards/SKILL.md` | repo_only |
 | odoo-ci-optimization | `.agent/skills/odoo-ci-optimization/SKILL.md` | repo_only |
 | odoo-fullstack-ai-dev | `agents/skills/odoo-fullstack-ai-dev/SKILL.md` | repo_only |
 | odoo-supabase-deployment | `spec/odoo-supabase-deployment/AGENT_PROMPT.md` | repo_only |
-| odoo19-actions | `skills/odoo/odoo19-actions/SKILL.md` | repo_only |
-| odoo19-assets | `skills/odoo/odoo19-assets/SKILL.md` | repo_only |
-| odoo19-cli | `skills/odoo/odoo19-cli/SKILL.md` | repo_only |
-| odoo19-coding-guidelines | `skills/odoo/odoo19-coding-guidelines/SKILL.md` | repo_only |
-| odoo19-data-files | `skills/odoo/odoo19-data-files/SKILL.md` | repo_only |
-| odoo19-external-api | `skills/odoo/odoo19-external-api/SKILL.md` | repo_only |
-| odoo19-frontend | `skills/odoo/odoo19-frontend/SKILL.md` | repo_only |
-| odoo19-git-guidelines | `skills/odoo/odoo19-git-guidelines/SKILL.md` | repo_only |
-| odoo19-http-controllers | `skills/odoo/odoo19-http-controllers/SKILL.md` | repo_only |
-| odoo19-mixins | `skills/odoo/odoo19-mixins/SKILL.md` | repo_only |
-| odoo19-module | `skills/odoo/odoo19-module/SKILL.md` | repo_only |
-| odoo19-orm | `skills/odoo/odoo19-orm/SKILL.md` | repo_only |
-| odoo19-owl-components | `skills/odoo/odoo19-owl-components/SKILL.md` | repo_only |
-| odoo19-performance | `skills/odoo/odoo19-performance/SKILL.md` | repo_only |
-| odoo19-qweb | `skills/odoo/odoo19-qweb/SKILL.md` | repo_only |
-| odoo19-reports | `skills/odoo/odoo19-reports/SKILL.md` | repo_only |
-| odoo19-security | `skills/odoo/odoo19-security/SKILL.md` | repo_only |
-| odoo19-testing | `skills/odoo/odoo19-testing/SKILL.md` | repo_only |
-| odoo19-upgrade | `skills/odoo/odoo19-upgrade/SKILL.md` | repo_only |
+| odoo18-actions | `skills/odoo/odoo18-actions/SKILL.md` | repo_only |
+| odoo18-assets | `skills/odoo/odoo18-assets/SKILL.md` | repo_only |
+| odoo18-cli | `skills/odoo/odoo18-cli/SKILL.md` | repo_only |
+| odoo18-coding-guidelines | `skills/odoo/odoo18-coding-guidelines/SKILL.md` | repo_only |
+| odoo18-data-files | `skills/odoo/odoo18-data-files/SKILL.md` | repo_only |
+| odoo18-external-api | `skills/odoo/odoo18-external-api/SKILL.md` | repo_only |
+| odoo18-frontend | `skills/odoo/odoo18-frontend/SKILL.md` | repo_only |
+| odoo18-git-guidelines | `skills/odoo/odoo18-git-guidelines/SKILL.md` | repo_only |
+| odoo18-http-controllers | `skills/odoo/odoo18-http-controllers/SKILL.md` | repo_only |
+| odoo18-mixins | `skills/odoo/odoo18-mixins/SKILL.md` | repo_only |
+| odoo18-module | `skills/odoo/odoo18-module/SKILL.md` | repo_only |
+| odoo18-orm | `skills/odoo/odoo18-orm/SKILL.md` | repo_only |
+| odoo18-owl-components | `skills/odoo/odoo18-owl-components/SKILL.md` | repo_only |
+| odoo18-performance | `skills/odoo/odoo18-performance/SKILL.md` | repo_only |
+| odoo18-qweb | `skills/odoo/odoo18-qweb/SKILL.md` | repo_only |
+| odoo18-reports | `skills/odoo/odoo18-reports/SKILL.md` | repo_only |
+| odoo18-security | `skills/odoo/odoo18-security/SKILL.md` | repo_only |
+| odoo18-testing | `skills/odoo/odoo18-testing/SKILL.md` | repo_only |
+| odoo18-upgrade | `skills/odoo/odoo18-upgrade/SKILL.md` | repo_only |
 | odooops-deploy | `skills/odooops/odooops-deploy/SKILL.md` | repo_only |
 | odooops-test | `skills/odooops/odooops-test/SKILL.md` | repo_only |
-| payment_providers | `skills/odoo19/payment_providers/SKILL.md` | repo_only |
-| payroll | `skills/odoo19/payroll/SKILL.md` | repo_only |
-| planning | `skills/odoo19/planning/SKILL.md` | repo_only |
-| plm | `skills/odoo19/plm/SKILL.md` | repo_only |
-| point_of_sale | `skills/odoo19/point_of_sale/SKILL.md` | repo_only |
-| project | `skills/odoo19/project/SKILL.md` | repo_only |
+| payment_providers | `skills/odoo18/payment_providers/SKILL.md` | repo_only |
+| payroll | `skills/odoo18/payroll/SKILL.md` | repo_only |
+| planning | `skills/odoo18/planning/SKILL.md` | repo_only |
+| plm | `skills/odoo18/plm/SKILL.md` | repo_only |
+| point_of_sale | `skills/odoo18/point_of_sale/SKILL.md` | repo_only |
+| project | `skills/odoo18/project/SKILL.md` | repo_only |
 | promote-staging-to-prod | `agents/skills/promote-staging-to-prod/SKILL.md` | repo_only |
-| purchase | `skills/odoo19/purchase/SKILL.md` | repo_only |
-| quality | `skills/odoo19/quality/SKILL.md` | repo_only |
+| purchase | `skills/odoo18/purchase/SKILL.md` | repo_only |
+| quality | `skills/odoo18/quality/SKILL.md` | repo_only |
 | react-best-practices | `docs/archive/agent-skills/react-best-practices/SKILL.md` | repo_only |
-| recruitment | `skills/odoo19/recruitment/SKILL.md` | repo_only |
-| referrals | `skills/odoo19/referrals/SKILL.md` | repo_only |
-| refresh-odoo19-kb | `agents/skills/refresh-odoo19-kb/SKILL.md` | repo_only |
-| rental | `skills/odoo19/rental/SKILL.md` | repo_only |
-| repairs | `skills/odoo19/repairs/SKILL.md` | repo_only |
-| reporting | `skills/odoo19/reporting/SKILL.md` | repo_only |
+| recruitment | `skills/odoo18/recruitment/SKILL.md` | repo_only |
+| referrals | `skills/odoo18/referrals/SKILL.md` | repo_only |
+| refresh-odoo18-kb | `agents/skills/refresh-odoo18-kb/SKILL.md` | repo_only |
+| rental | `skills/odoo18/rental/SKILL.md` | repo_only |
+| repairs | `skills/odoo18/repairs/SKILL.md` | repo_only |
+| reporting | `skills/odoo18/reporting/SKILL.md` | repo_only |
 | restore-odoo-environment | `agents/skills/restore-odoo-environment/SKILL.md` | repo_only |
 | safe-migration | `.agent/antigravity/skills/safe-migration/SKILL.md` | repo_only |
-| sales | `skills/odoo19/sales/SKILL.md` | repo_only |
+| sales | `skills/odoo18/sales/SKILL.md` | repo_only |
 | schema-appreciation | `.agent/skills/schema-appreciation/SKILL.md` | repo_only |
-| search | `skills/odoo19/search/SKILL.md` | repo_only |
-| sign | `skills/odoo19/sign/SKILL.md` | repo_only |
-| sms_marketing | `skills/odoo19/sms_marketing/SKILL.md` | repo_only |
-| social_marketing | `skills/odoo19/social_marketing/SKILL.md` | repo_only |
-| spreadsheet | `skills/odoo19/spreadsheet/SKILL.md` | repo_only |
-| stages | `skills/odoo19/stages/SKILL.md` | repo_only |
-| studio | `skills/odoo19/studio/SKILL.md` | repo_only |
-| subscriptions | `skills/odoo19/subscriptions/SKILL.md` | repo_only |
+| search | `skills/odoo18/search/SKILL.md` | repo_only |
+| sign | `skills/odoo18/sign/SKILL.md` | repo_only |
+| sms_marketing | `skills/odoo18/sms_marketing/SKILL.md` | repo_only |
+| social_marketing | `skills/odoo18/social_marketing/SKILL.md` | repo_only |
+| spreadsheet | `skills/odoo18/spreadsheet/SKILL.md` | repo_only |
+| stages | `skills/odoo18/stages/SKILL.md` | repo_only |
+| studio | `skills/odoo18/studio/SKILL.md` | repo_only |
+| subscriptions | `skills/odoo18/subscriptions/SKILL.md` | repo_only |
 | supabase-schema-catalog | `skills/user/supabase-schema-catalog/SKILL.md` | repo_only |
-| surveys | `skills/odoo19/surveys/SKILL.md` | repo_only |
-| time_off | `skills/odoo19/time_off/SKILL.md` | repo_only |
-| timesheets | `skills/odoo19/timesheets/SKILL.md` | repo_only |
-| to_do | `skills/odoo19/to_do/SKILL.md` | repo_only |
+| surveys | `skills/odoo18/surveys/SKILL.md` | repo_only |
+| time_off | `skills/odoo18/time_off/SKILL.md` | repo_only |
+| timesheets | `skills/odoo18/timesheets/SKILL.md` | repo_only |
+| to_do | `skills/odoo18/to_do/SKILL.md` | repo_only |
 | ui-ux-pro-max | `.claude/skills/ui-ux-pro-max/SKILL.md` | repo_only |
-| users | `skills/odoo19/users/SKILL.md` | repo_only |
+| users | `skills/odoo18/users/SKILL.md` | repo_only |
 | validate-odoo-module-against-kb | `agents/skills/validate-odoo-module-against-kb/SKILL.md` | repo_only |
-| voip | `skills/odoo19/voip/SKILL.md` | repo_only |
+| voip | `skills/odoo18/voip/SKILL.md` | repo_only |
 | web-design-guidelines | `docs/archive/agent-skills/web-design-guidelines/SKILL.md` | repo_only |
-| website | `skills/odoo19/website/SKILL.md` | repo_only |
-| whatsapp | `skills/odoo19/whatsapp/SKILL.md` | repo_only |
+| website | `skills/odoo18/website/SKILL.md` | repo_only |
+| whatsapp | `skills/odoo18/whatsapp/SKILL.md` | repo_only |
 
 ## Repo Tools
 | Name | Path |
@@ -197,7 +197,7 @@
 | build_skills.py | `scripts/skills/build_skills.py` |
 | build_v0.10.0.sh | `scripts/build_v0.10.0.sh` |
 | build_v0.9.1.sh | `scripts/build_v0.9.1.sh` |
-| bulk_import_tasks_odoo19.py | `scripts/bulk_import_tasks_odoo19.py` |
+| bulk_import_tasks_odoo18.py | `scripts/bulk_import_tasks_odoo18.py` |
 | canonical_audit.py | `scripts/canonical_audit.py` |
 | caps_report.mjs | `tools/routing/caps_report.mjs` |
 | ce_oca_audit.py | `scripts/ce_oca_audit.py` |
@@ -327,7 +327,7 @@
 | deploy_afc_rag.sh | `scripts/deploy_afc_rag.sh` |
 | deploy_complete_fix.sh | `scripts/deploy_complete_fix.sh` |
 | deploy_custom_image.sh | `scripts/deploy_custom_image.sh` |
-| deploy_finance_ppm_odoo19.sh | `scripts/deploy_finance_ppm_odoo19.sh` |
+| deploy_finance_ppm_odoo18.sh | `scripts/deploy_finance_ppm_odoo18.sh` |
 | deploy_n8n_all.py | `scripts/automations/deploy_n8n_all.py` |
 | deploy_notion_tasks.sh | `scripts/deploy_notion_tasks.sh` |
 | deploy_odoo_smart.sh | `scripts/deploy_odoo_smart.sh` |
@@ -635,7 +635,7 @@
 | query_memory.py | `scripts/ops/install/query_memory.py` |
 | recreate_odoo_prod.sh | `scripts/recreate_odoo_prod.sh` |
 | refresh_docs.py | `scripts/docs/refresh_docs.py` |
-| refresh_odoo19_kb.py | `scripts/skills/refresh_odoo19_kb.py` |
+| refresh_odoo18_kb.py | `scripts/skills/refresh_odoo18_kb.py` |
 | regen_install_sets.sh | `scripts/regen_install_sets.sh` |
 | release_gate.sh | `scripts/release_gate.sh` |
 | replace_seed_from_excel.py | `scripts/replace_seed_from_excel.py` |
@@ -686,8 +686,8 @@
 | seed_companies_users.py | `scripts/seed_companies_users.py` |
 | seed_finance_close_from_xlsx.py | `scripts/seed_finance_close_from_xlsx.py` |
 | seed_finance_ppm_stages.py | `scripts/seed_finance_ppm_stages.py` |
-| seed_finance_ppm_stages_odoo19.py | `scripts/seed_finance_ppm_stages_odoo19.py` |
-| seed_logframe_milestones_odoo19.py | `scripts/seed_logframe_milestones_odoo19.py` |
+| seed_finance_ppm_stages_odoo18.py | `scripts/seed_finance_ppm_stages_odoo18.py` |
+| seed_logframe_milestones_odoo18.py | `scripts/seed_logframe_milestones_odoo18.py` |
 | seed_org_companies_users_integrations.py | `scripts/odoo/seed_org_companies_users_integrations.py` |
 | seed_projects_from_xlsx.py | `scripts/seed_projects_from_xlsx.py` |
 | send_test_email.sh | `scripts/mailgun/send_test_email.sh` |
@@ -779,7 +779,7 @@
 | test_ee_parity.py | `tools/parity/test_ee_parity.py` |
 | test_email_flow.sh | `scripts/test_email_flow.sh` |
 | test_email_otp_curl.sh | `scripts/supabase/test_email_otp_curl.sh` |
-| test_finance_ppm_odoo19.sh | `scripts/test_finance_ppm_odoo19.sh` |
+| test_finance_ppm_odoo18.sh | `scripts/test_finance_ppm_odoo18.sh` |
 | test_ipai_install_upgrade.py | `scripts/test_ipai_install_upgrade.py` |
 | test_magic_link.sh | `scripts/test_magic_link.sh` |
 | test_magic_link_curl.sh | `scripts/supabase/test_magic_link_curl.sh` |
@@ -826,7 +826,7 @@
 | validate_no_deprecated_installed.sh | `scripts/validate_no_deprecated_installed.sh` |
 | validate_oca_aggregate_output.py | `scripts/validate_oca_aggregate_output.py` |
 | validate_oca_layout.py | `scripts/odoo/validate_oca_layout.py` |
-| validate_odoo19_spec.sh | `scripts/validate_odoo19_spec.sh` |
+| validate_odoo18_spec.sh | `scripts/validate_odoo18_spec.sh` |
 | validate_parity_map.py | `scripts/policy/validate_parity_map.py` |
 | validate_parity_matrix.py | `scripts/parity/validate_parity_matrix.py` |
 | validate_parity_matrix.sh | `scripts/parity/validate_parity_matrix.sh` |
@@ -931,10 +931,10 @@
 | jq | `/opt/homebrew/bin/jq` |
 | node | `/Users/tbwa/.nvm/versions/node/v22.12.0/bin/node` |
 | npm | `/Users/tbwa/.nvm/versions/node/v22.12.0/bin/npm` |
-| pip3 | `/Users/tbwa/.pyenv/versions/odoo-19-dev/bin/pip3` |
+| pip3 | `/Users/tbwa/.pyenv/versions/odoo-18-dev/bin/pip3` |
 | pnpm | `/Users/tbwa/.nvm/versions/node/v22.12.0/bin/pnpm` |
 | psql | `/opt/homebrew/bin/psql` |
-| python3 | `/Users/tbwa/.pyenv/versions/odoo-19-dev/bin/python3` |
+| python3 | `/Users/tbwa/.pyenv/versions/odoo-18-dev/bin/python3` |
 | rg | `/opt/homebrew/bin/rg` |
 | supabase | `/opt/homebrew/bin/supabase` |
 | superclaude | `/Users/tbwa/.local/bin/superclaude` |

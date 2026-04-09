@@ -1393,7 +1393,7 @@ def oca_repo_kind(name: str) -> str:
 # ---------------------------------------------------------------------------
 UPSTREAM_REFERENCES = {
     "odoo_release_notes": {
-        "url": "https://www.odoo.com/odoo-19-release-notes",
+        "url": "https://www.odoo.com/odoo-18-release-notes",
         "version": "19",
         "observed_release_month": "September 2025",
         "usage": "Version-specific behavioral expectations; detect UX/engine changes (not new modules)",
@@ -1733,7 +1733,7 @@ def generate_evidence_md(report: dict) -> str:
     t_total = sum(tier_counts.values())
     lines.append(f"| T0 | Unmapped | {t0} | No verified replacement |")
     lines.append(f"| **T1** | **Mapped** | **{t1}** | **Replacement identified, OCA repo verified** |")
-    lines.append(f"| T2 | Installable | {t2} | Installs on our Odoo 19 CE baseline |")
+    lines.append(f"| T2 | Installable | {t2} | Installs on our Odoo 18 CE baseline |")
     lines.append(f"| T3 | Functional | {t3} | ≥80% feature coverage for our workflows |")
     lines.append(f"| T4 | Verified | {t4} | Production-tested, 30-day soak |")
     lines.append(f"| N/A | Not needed | {t_na} | Demo/test data, skip |")

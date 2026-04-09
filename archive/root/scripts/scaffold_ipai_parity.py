@@ -132,7 +132,7 @@ def scaffold_module(module_name: str, title: str, desc: str, depends: list):
 
 {desc}
 
-This module provides Odoo 19 Enterprise Edition parity for CE deployments.
+This module provides Odoo 18 Enterprise Edition parity for CE deployments.
 
 **Features:**
 - Core functionality for {title.lower()}
@@ -211,7 +211,7 @@ access_{file_name}_manager,{file_name}.manager,model_ipai_{model_name.replace('.
 
 {desc}
 
-This module provides Odoo 19 Enterprise Edition parity for CE deployments.
+This module provides Odoo 18 Enterprise Edition parity for CE deployments.
 
 ## Dependencies
 

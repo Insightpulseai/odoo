@@ -14,7 +14,7 @@ from scripts.kb.index_odoo_docs import main as _main  # type: ignore
 def test_indexer_emits_expected_files(monkeypatch):
     # Create a tiny fake KB in a temp dir
     with tempfile.TemporaryDirectory() as d:
-        kb = Path(d) / "docs" / "kb" / "odoo19"
+        kb = Path(d) / "docs" / "kb" / "odoo18"
         (kb / "upstream" / "content" / "developer").mkdir(parents=True, exist_ok=True)
         (kb / "index").mkdir(parents=True, exist_ok=True)
 
@@ -34,7 +34,7 @@ def test_indexer_emits_expected_files(monkeypatch):
         (kb / "index" / "topic_map.yaml").write_text(
             "version: 1\n"
             "topics:\n"
-            "  - id: odoo19.dev.orm\n"
+            "  - id: odoo18.dev.orm\n"
             "    label: ORM\n"
             "    include_paths:\n"
             '      - "content/developer/**"\n',

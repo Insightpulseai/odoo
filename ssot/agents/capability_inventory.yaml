@@ -350,8 +350,8 @@ items:
   # ---------------------------------------------------------------------------
   # Agent Skills (~80 total, grouped)
   # ---------------------------------------------------------------------------
-  - id: skills_odoo19
-    name: "Odoo 19 Reference Skills (16)"
+  - id: skills_odoo18
+    name: "Odoo 18 Reference Skills (16)"
     path: agents/skills/odoo/
     artifact_type: skill
     origin: native_repo
@@ -364,22 +364,22 @@ items:
     env_scope: dev
     canonicality: canonical
     skills:
-      - odoo19-orm
-      - odoo19-module
-      - odoo19-frontend
-      - odoo19-owl-components
-      - odoo19-qweb
-      - odoo19-testing
-      - odoo19-security
-      - odoo19-reports
-      - odoo19-performance
-      - odoo19-upgrade
-      - odoo19-cli
-      - odoo19-http-controllers
-      - odoo19-external-api
-      - odoo19-assets
-      - odoo19-coding-guidelines
-      - odoo19-git-guidelines
+      - odoo18-orm
+      - odoo18-module
+      - odoo18-frontend
+      - odoo18-owl-components
+      - odoo18-qweb
+      - odoo18-testing
+      - odoo18-security
+      - odoo18-reports
+      - odoo18-performance
+      - odoo18-upgrade
+      - odoo18-cli
+      - odoo18-http-controllers
+      - odoo18-external-api
+      - odoo18-assets
+      - odoo18-coding-guidelines
+      - odoo18-git-guidelines
 
   - id: skills_cli_safe
     name: "CLI-Safe Wrappers (3)"

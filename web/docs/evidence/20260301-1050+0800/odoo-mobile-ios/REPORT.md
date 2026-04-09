@@ -1,7 +1,7 @@
 # odoo-mobile-ios — Phase 2 Evidence
 
 **Stamp**: 2026-03-01T10:50+0800
-**Branch**: feat/ipai-module-audit-odoo19
+**Branch**: feat/ipai-module-audit-odoo18
 **Scope**: `apps/odoo-mobile-ios/`
 **Swift**: 6.2.3 (arm64-apple-macosx26.0)
 
@@ -16,7 +16,7 @@
 ## [CONTEXT]
 
 - **repo**: /Users/tbwa/Documents/GitHub/Insightpulseai/odoo
-- **branch**: feat/ipai-module-audit-odoo19
+- **branch**: feat/ipai-module-audit-odoo18
 - **cwd**: apps/odoo-mobile-ios
 - **goal**: Implement PKCE in SSOAuthSession, OdooClient tests + uploadDocument multipart, run 26-test suite
 - **stamp**: 2026-03-01T10:50+0800

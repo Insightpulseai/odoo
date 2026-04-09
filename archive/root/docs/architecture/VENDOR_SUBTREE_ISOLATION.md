@@ -282,7 +282,7 @@ Track via workflow outputs and Slack notifications:
 📚 **Documentation Platform Updated**
 
 **Site**: https://insightpulseai.github.io/odoo/
-**Sync**: Official Odoo 19.0 docs synchronized to vendor subtree
+**Sync**: Official Odoo 18.0 docs synchronized to vendor subtree
 **AI Assistant**: Available via chat widget
 **Diff Gates**: All gates passed ✅
 ```

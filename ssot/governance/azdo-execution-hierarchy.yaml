@@ -713,7 +713,7 @@ epics:
         owner: platform-lead
         acceptance_criteria:
           - "extensions.json and settings.json canonical across all repos"
-          - "Python interpreter pinned to pyenv odoo-19-dev"
+          - "Python interpreter pinned to pyenv odoo-18-dev"
           - "Linting and formatting configured (black, isort, flake8)"
 
       - id: FEAT-005-03

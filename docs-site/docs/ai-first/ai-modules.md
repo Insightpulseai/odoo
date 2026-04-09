@@ -103,10 +103,10 @@ User-facing copilot interface within Odoo.
 - Chat widget in the Odoo web client
 - Context-aware suggestions based on current view
 - Action execution (create records, run reports)
-- Native Odoo 19 "Ask AI" integration
+- Native Odoo 18 "Ask AI" integration
 
 !!! warning "Deprecated: `ipai_ai_widget`"
-    The previous `ipai_ai_widget` module used global patches and is deprecated. Use `ipai_ai_copilot` with native Odoo 19 Ask AI instead.
+    The previous `ipai_ai_widget` module used global patches and is deprecated. Use `ipai_ai_copilot` with native Odoo 18 Ask AI instead.
 
 ## Test coverage
 

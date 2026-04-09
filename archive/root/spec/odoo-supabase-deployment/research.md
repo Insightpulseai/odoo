@@ -41,7 +41,7 @@ Conduct exhaustive research into proven, battle-tested practices for deploying a
 - How do mature Odoo deployments (Camptocamp, Acsone, Tecnativa, Therp) structure their OCA dependencies?
 - `git submodule` vs `git subtree` vs vendored copies vs `pip install odoo-addon-*` — what do production shops actually use?
 - How should `external-src/` (14 OCA repos) be versioned, pinned, and updated in CI?
-- What is the OCA-recommended approach for Odoo 19 addon path resolution when mixing OCA + custom?
+- What is the OCA-recommended approach for Odoo 18 addon path resolution when mixing OCA + custom?
 
 #### 1.2 OCA Pre-commit & Quality Gates
 - What OCA pre-commit hooks are mandatory for production-grade modules?
@@ -51,14 +51,14 @@ Conduct exhaustive research into proven, battle-tested practices for deploying a
 #### 1.3 OCA Module Flattening Strategy
 - Current approach: flatten all OCA modules from 14 repos into single `/mnt/addons/oca` during Docker build. Is this the best practice or an anti-pattern?
 - How do collision detection and namespace isolation work at scale?
-- Should OCA modules be installed via pip (`pip install odoo19-addon-account-financial-reporting`) instead of source copy?
+- Should OCA modules be installed via pip (`pip install odoo18-addon-account-financial-reporting`) instead of source copy?
 
 ---
 
 ### 2. Docker & Container Architecture
 
 #### 2.1 Odoo Docker Image Best Practices
-- What is the proven Dockerfile pattern for Odoo 19 CE + OCA in production?
+- What is the proven Dockerfile pattern for Odoo 18 CE + OCA in production?
 - Multi-stage builds: what stages are standard? (deps → build → runtime)
 - How should the addon path be structured in the final image?
 - What are the security hardening steps for Odoo Docker images? (non-root user, read-only filesystem, tmpfs for `/tmp`, no shell)
@@ -84,13 +84,13 @@ Conduct exhaustive research into proven, battle-tested practices for deploying a
 ### 3. DigitalOcean Infrastructure
 
 #### 3.1 Droplet Architecture
-- Is a single 4GB droplet sufficient for Odoo 19 + n8n + Superset + OCR + Auth? What are the resource ceilings?
-- What is the recommended droplet sizing for Odoo 19 with 4 installed modules vs 20+ modules?
+- Is a single 4GB droplet sufficient for Odoo 18 + n8n + Superset + OCR + Auth? What are the resource ceilings?
+- What is the recommended droplet sizing for Odoo 18 with 4 installed modules vs 20+ modules?
 - CPU-optimized vs memory-optimized vs general-purpose droplets for Odoo workloads?
 - SGP1 region: any known issues with managed database latency, image pulls, or DNS?
 
 #### 3.2 DigitalOcean Managed Database
-- Best practices for DO Managed PostgreSQL 16 with Odoo 19?
+- Best practices for DO Managed PostgreSQL 16 with Odoo 18?
 - Connection pooling: built-in DO pooler vs pgbouncer sidecar vs Odoo's `db_maxconn`?
 - Backup strategy: DO automated backups + custom `pg_dump` schedule — what's the right combination?
 - Read replicas: when do Odoo deployments need them? How to configure Odoo for read-replica offloading?
@@ -114,7 +114,7 @@ Conduct exhaustive research into proven, battle-tested practices for deploying a
 #### 4.1 Caddy vs Nginx vs Traefik
 - Current: Caddy 2. Is this the best choice for Odoo?
 - Odoo-specific proxy requirements: WebSocket for longpolling (`/websocket`), large upload support, `proxy_mode = True` headers?
-- What Caddy/nginx config is needed for Odoo 19's new bus/websocket architecture?
+- What Caddy/nginx config is needed for Odoo 18's new bus/websocket architecture?
 - Multi-service reverse proxy (Odoo + n8n + Superset + OCR + Auth) on a single IP — best practice config?
 - Let's Encrypt rate limits with 5+ subdomains on one IP?
 
@@ -286,7 +286,7 @@ Conduct exhaustive research into proven, battle-tested practices for deploying a
 
 ### Primary Sources
 1. **OCA Official Documentation** — oca.github.io, OCA/maintainer-tools, OCA/maintainer-quality-tools
-2. **Odoo 19 Documentation** — odoo.com/documentation/19.0 (deployment, performance, security)
+2. **Odoo 18 Documentation** — odoo.com/documentation/19.0 (deployment, performance, security)
 3. **DigitalOcean Documentation** — docs.digitalocean.com (managed databases, droplets, networking)
 4. **Supabase Documentation** — supabase.com/docs (edge functions, auth, realtime, self-hosting)
 5. **Docker Official Best Practices** — docs.docker.com (multi-stage builds, security, compose)
@@ -312,7 +312,7 @@ Conduct exhaustive research into proven, battle-tested practices for deploying a
 |-------------|--------|---------|
 | **Architecture Decision Records** | `docs/adr/NNNN-*.md` | Document key deployment decisions with rationale |
 | **Production Docker Compose** | `infra/deploy/docker-compose.prod.v2.yml` | Battle-tested compose for all services |
-| **Odoo 19 Production Dockerfile** | `Dockerfile.v3` | Multi-stage, hardened, OCA-ready |
+| **Odoo 18 Production Dockerfile** | `Dockerfile.v3` | Multi-stage, hardened, OCA-ready |
 | **Deployment Runbook** | `infra/deploy/RUNBOOK.md` | Step-by-step with verification at each stage |
 | **PostgreSQL Tuning Config** | `infra/deploy/postgresql.conf.recommended` | Tuned for Odoo on 4GB–8GB RAM |
 | **Nginx/Caddy Config** | `infra/deploy/caddy/Caddyfile.prod` | Multi-service reverse proxy with hardening |
@@ -333,7 +333,7 @@ Conduct exhaustive research into proven, battle-tested practices for deploying a
 6. **Single domain**: `insightpulseai.com` — `.net` is deprecated
 7. **Cost-conscious** — optimize for the DO $24–48/mo droplet tier
 8. **Reproducible** — entire stack must be rebuildable from repo + secrets
-9. **Python 3.12+** — Odoo 19 requirement
+9. **Python 3.12+** — Odoo 18 requirement
 10. **No UI clickpaths** — everything must be CLI/CI automatable
 
 ---

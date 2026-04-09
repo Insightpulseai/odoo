@@ -1,7 +1,7 @@
-# Custom Addons Reassessment — Odoo 19 + OCA Alignment
+# Custom Addons Reassessment — Odoo 18 + OCA Alignment
 
 **Audit date**: 2026-02-27
-**Branch**: `feat/ipai-module-audit-odoo19`
+**Branch**: `feat/ipai-module-audit-odoo18`
 **Auditor**: Claude Code (automated manifest + view scan)
 **Scope**: `addons/ipai/` — 59 real modules (primary) + `addons/ipai_*/` root-level — 40 legacy modules
 
@@ -34,7 +34,7 @@
 
 Legend — **Decision**: KEEP | KEEP/PATCH | DISABLE | DEPRECATED
 **OCA Alt**: OCA module that could replace if desired
-**Compat Gate**: known Odoo 19 issues (tree→list, view_mode, missing dep, wrong version)
+**Compat Gate**: known Odoo 18 issues (tree→list, view_mode, missing dep, wrong version)
 
 ### Core / Technical
 
@@ -180,9 +180,9 @@ These modules are referenced in `depends` but do not exist in the repo. All depe
 
 ---
 
-## Tree→List Violations (Odoo 19 Compatibility)
+## Tree→List Violations (Odoo 18 Compatibility)
 
-In Odoo 19, `<tree>` is deprecated in favor of `<list>` and `view_mode` values must use `list` not `tree`.
+In Odoo 18, `<tree>` is deprecated in favor of `<list>` and `view_mode` values must use `list` not `tree`.
 
 | Module | File | Violation Count | Patch Type |
 |--------|------|----------------|-----------|

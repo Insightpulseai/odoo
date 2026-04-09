@@ -229,7 +229,7 @@ QWeb is Odoo's templating engine used for:
 
 ---
 
-## OWL Component Template (Odoo 19)
+## OWL Component Template (Odoo 18)
 
 **Component JS** (`static/src/components/my_widget/my_widget.js`):
 
@@ -378,4 +378,4 @@ odoo.qweb.templates["ipai.MyWidget"];
 
 - [Odoo QWeb Documentation](https://www.odoo.com/documentation/19.0/developer/reference/frontend/qweb.html)
 - [OWL Documentation](https://github.com/odoo/owl)
-- [Odoo 19 Frontend Guide](https://www.odoo.com/documentation/19.0/developer/reference/frontend.html)
+- [Odoo 18 Frontend Guide](https://www.odoo.com/documentation/19.0/developer/reference/frontend.html)

@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Install OCA modules for Odoo 19 CE
+# Install OCA modules for Odoo 18 CE
 # This script reads the OCA module lists and installs them
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"

@@ -11,7 +11,7 @@
 3. **CE + OCA only** — no Enterprise modules, no odoo.com IAP
 4. **Secrets in `.env` only** — never hardcoded in git
 5. **Domain: `insightpulseai.com`** — `.net` is deprecated
-6. **Python 3.12+** — Odoo 19 requirement
+6. **Python 3.12+** — Odoo 18 requirement
 7. **Cost-conscious** — optimize for $24–48/mo droplet tier
 8. **Reproducible** — entire stack rebuildable from repo + secrets
 9. **No UI clickpaths** — everything CLI/CI automatable

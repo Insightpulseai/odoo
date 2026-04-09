@@ -1,6 +1,6 @@
 # Modules
 
-Overview of IPAI custom modules and OCA community addons for Odoo 19 CE.
+Overview of IPAI custom modules and OCA community addons for Odoo 18 CE.
 
 ## Module Philosophy
 

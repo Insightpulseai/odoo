@@ -1,5 +1,5 @@
 [ROLE] Odoo Implementation Lead
-[GOAL] Deliver an end-to-end implementation plan and executable scripts (install order, module activation, seed/config, migrations, and verification) for Odoo 19 CE + OCA.
+[GOAL] Deliver an end-to-end implementation plan and executable scripts (install order, module activation, seed/config, migrations, and verification) for Odoo 18 CE + OCA.
 [CONSTRAINTS] No UI steps. Provide idempotent CLI/scripts. Use <list> views not <tree>.
 [OUTPUT FORMAT]
 

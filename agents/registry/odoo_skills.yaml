@@ -101,9 +101,9 @@ skills:
       required: true
       path_pattern: "docs/evidence/<YYYY-MM-DD>/promote/<run_id>/"
 
-  - id: refresh-odoo19-kb
+  - id: refresh-odoo18-kb
     type: procedural
-    entrypoint: agents/skills/refresh-odoo19-kb/SKILL.md
+    entrypoint: agents/skills/refresh-odoo18-kb/SKILL.md
     domains: [odoo, docs, knowledge]
     requires:
       - git
@@ -117,14 +117,14 @@ skills:
         - log_classification
 
   - id: validate-odoo-module-against-kb
-    title: "Validate Odoo Module Against Odoo19 KB"
+    title: "Validate Odoo Module Against Odoo18 KB"
     type: procedural
     version: "1.0.0"
     entrypoint: agents/skills/validate-odoo-module-against-kb/SKILL.md
     domains: [odoo, quality, security]
     kb:
-      namespace: "docs/kb/odoo19"
-      pinned_commit_ref: "docs/kb/odoo19/UPSTREAM_PIN.json"
+      namespace: "docs/kb/odoo18"
+      pinned_commit_ref: "docs/kb/odoo18/UPSTREAM_PIN.json"
     routing:
       default_tier: local
       allow_local_steps:
@@ -138,14 +138,14 @@ skills:
       path_pattern: "docs/evidence/<YYYY-MM-DD>/kb/validate/<run_id>/"
 
   - id: generate-odoo-skill-from-kb
-    title: "Generate Procedural Skill From Odoo19 KB"
+    title: "Generate Procedural Skill From Odoo18 KB"
     type: procedural
     version: "1.0.0"
     entrypoint: agents/skills/generate-odoo-skill-from-kb/SKILL.md
     domains: [odoo, meta, devtools]
     kb:
-      namespace: "docs/kb/odoo19"
-      pinned_commit_ref: "docs/kb/odoo19/UPSTREAM_PIN.json"
+      namespace: "docs/kb/odoo18"
+      pinned_commit_ref: "docs/kb/odoo18/UPSTREAM_PIN.json"
     routing:
       default_tier: remote
       allow_local_steps:

@@ -1,4 +1,4 @@
-# SKILL: Generate Procedural Skill From Odoo19 KB
+# SKILL: Generate Procedural Skill From Odoo18 KB
 
 ## Skill ID
 
@@ -19,7 +19,7 @@ false
 ## Purpose
 
 Generate a new procedural skill (SKILL.md + registry entry stub) grounded in the
-vendored+pinned Odoo 19 KB. This converts “knowledge” (KB sections) into
+vendored+pinned Odoo 18 KB. This converts “knowledge” (KB sections) into
 “procedure” (deterministic steps).
 
 Outputs are deterministic given the same inputs and pinned commit.

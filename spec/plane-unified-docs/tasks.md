@@ -15,7 +15,7 @@
 - [ ] P0 | Agent | Enumerate all files in `spec/` with type classification
 - [ ] P0 | Agent | Enumerate all files in `ssot/` with type classification
 - [ ] P0 | Agent | Enumerate all files in `.claude/prompts/`, `.claude/rules/`, `.claude/commands/`
-- [ ] P0 | Agent | Scan `apps/*/docs/`, `odoo19/`, `mcp/` for documentation files
+- [ ] P0 | Agent | Scan `apps/*/docs/`, `odoo18/`, `mcp/` for documentation files
 - [ ] P1 | Agent | Identify duplicate content clusters (same content in multiple locations)
 - [ ] P1 | Agent | Flag stale content (no git commit touching file in 90+ days)
 - [ ] P1 | Agent | Flag content referencing deprecated systems (Mattermost, insightpulseai.net, Mailgun, DigitalOcean, Vercel)

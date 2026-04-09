@@ -1,6 +1,6 @@
 # odoo-code-review-judge
 
-Review generated Odoo code against official Odoo 19 coding guidelines. This is the primary quality gate for all Odoo module code.
+Review generated Odoo code against official Odoo 18 coding guidelines. This is the primary quality gate for all Odoo module code.
 
 ## When to use
 - Code review for any Odoo module (new or modified)
@@ -16,9 +16,9 @@ broad exception catch, direct core patching) blocks approval.
 
 ## What this is NOT
 This is not a persona, not a delivery workflow, not a skill taxonomy. It is a quality gate
-backed by the Odoo 19 coding guidelines benchmark.
+backed by the Odoo 18 coding guidelines benchmark.
 
 ## Cross-references
 - `agents/knowledge/benchmarks/odoo-coding-guidelines.md`
 - `agents/knowledge/benchmarks/odoo-developer-howtos.md`
-- `~/.claude/rules/odoo19-coding.md`
+- `~/.claude/rules/odoo18-coding.md`

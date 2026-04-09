@@ -64,7 +64,7 @@ Required fixes:
 3. Fix import ordering (models/bulk_import.py:1-5)
 
 Upgrade safety:
-- No Odoo 19 specific issues found
+- No Odoo 18 specific issues found
 
 Evidence:
 - models/bulk_import.py:47: `self.env.cr.commit()  # save progress`
@@ -87,8 +87,8 @@ Violations:
 - [HIGH] views/crm.xml — Rule 5 (XML naming) — file should be named crm_extension_views.xml
 - [HIGH] views/crm.xml:15 — Rule 5 (XML naming) — XML ID "crm_form" should be
   "crm_extension_view_form"
-- [HIGH] views/crm.xml:40 — Rule 5 (Odoo 19) — deprecated tree view type used. Must be
-  "list" in Odoo 19.
+- [HIGH] views/crm.xml:40 — Rule 5 (Odoo 18) — deprecated tree view type used. Must be
+  "list" in Odoo 18.
   Line: `<record id="crm_tree" model="ir.ui.view">`
 - [MEDIUM] models/crm_lead.py:25 — Rule 4 (translation) — f-string inside _()
   Line: `raise UserError(_(f'Lead {self.name} cannot be archived'))`
@@ -108,7 +108,7 @@ Required fixes:
 7. Fix ACL ID naming (security/ir.model.access.csv)
 
 Upgrade safety:
-- BLOCKING: tree view type must be changed to list for Odoo 19 compatibility
+- BLOCKING: tree view type must be changed to list for Odoo 18 compatibility
 - Check: if module references groups_id, change to group_ids
 
 Evidence:

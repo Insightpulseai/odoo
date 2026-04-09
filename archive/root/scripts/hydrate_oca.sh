@@ -2,7 +2,7 @@
 # =============================================================================
 # hydrate_oca.sh — Idempotent OCA module hydration via git-aggregator
 # =============================================================================
-# SSOT:   oca-aggregate.yml (Odoo 19.0)
+# SSOT:   oca-aggregate.yml (Odoo 18.0)
 # Output: addons/oca/<repo>/ (one directory per OCA repo)
 #
 # Usage:

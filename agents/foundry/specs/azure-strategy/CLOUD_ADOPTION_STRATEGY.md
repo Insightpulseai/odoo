@@ -211,7 +211,7 @@ agent-platform/
 | `templates` | `github/spec-kit`, `microsoft/App-Templates`, `Azure-Samples/azd-template-artifacts`, `azd-ai-starter-basic` |
 | `infra` | CAF tools/templates, Azure Landing Zone deploy guidance, Azure Architecture Center |
 | `control-plane` | CAF planning/operating model, `azd-deployment-environments`, GH reusable workflows |
-| `odoo` | Odoo 19 official docs, OCA development standards, OdooSH behavioral contract |
+| `odoo` | Odoo 18 official docs, OCA development standards, OdooSH behavioral contract |
 | `agent-platform` | `microsoft/agent-framework`, `azd-ai-starter-basic`, `Deploy-Your-AI-Application-In-Production`, `Microsoft-AI-Decision-Framework` |
 | `data-intelligence` | Databricks docs, Lakeflow, Unity Catalog, Databricks Financial Services solution sheet |
 | `web` | Fluent 2 design system, `microsoft/fluentui` (consumption patterns), azd full-stack templates |

@@ -332,7 +332,7 @@ InsightPulseAI adds two additional categories:
 | Category | Pattern | Example | Purpose |
 |----------|---------|---------|---------|
 | **Contract** | `<domain>.<feature>.<action>` | `odoo.mail.configure` | CI-governed skill with schema, policies, and verification |
-| **Knowledge** | `<domain>-<topic>` | `odoo19-orm`, `refresh-odoo19-kb` | Reference documentation for agent consumption |
+| **Knowledge** | `<domain>-<topic>` | `odoo18-orm`, `refresh-odoo18-kb` | Reference documentation for agent consumption |
 
 ### 2.5 Skill Composition Patterns
 
@@ -410,9 +410,9 @@ agents/
 
     # Knowledge skills (reference docs for agent consumption)
     odoo/
-      ODOO19_SKILLS_INDEX.md         # Index of all Odoo 19 knowledge skills
-      odoo19-orm/SKILL.md            # ORM reference
-      odoo19-security/SKILL.md       # Security reference
+      ODOO18_SKILLS_INDEX.md         # Index of all Odoo 18 knowledge skills
+      odoo18-orm/SKILL.md            # ORM reference
+      odoo18-security/SKILL.md       # Security reference
       ...
 
     # Persona bundles

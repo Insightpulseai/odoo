@@ -10,9 +10,9 @@ Extends Odoo models with fields, computed fields, constraints, and business logi
 
 ## Key rule
 All model extensions must use `_inherit` in a custom `ipai_*` module. Never modify OCA or core source.
-Follow Odoo 19 class attribute order, field naming conventions, and use Command tuples for x2many writes.
+Follow Odoo 18 class attribute order, field naming conventions, and use Command tuples for x2many writes.
 
 ## Cross-references
 - `agents/knowledge/benchmarks/odoo-developer-howtos.md`
 - `agents/knowledge/benchmarks/odoo-coding-guidelines.md`
-- `~/.claude/rules/odoo19-coding.md`
+- `~/.claude/rules/odoo18-coding.md`

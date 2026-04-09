@@ -4,7 +4,7 @@ Version: 1.0.0 | Status: Draft | Last updated: 2026-03-03
 
 ## Vision
 
-Deliver a Concur-like Travel & Expense experience with cash advance lifecycle, liquidation, monitoring, and OCR — as a first-party Odoo 19 CE capability using OCA + IPAI bridges.
+Deliver a Concur-like Travel & Expense experience with cash advance lifecycle, liquidation, monitoring, and OCR — as a first-party Odoo 18 CE capability using OCA + IPAI bridges.
 
 ---
 

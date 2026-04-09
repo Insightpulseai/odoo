@@ -29,7 +29,7 @@ These are separate product surfaces, not modes of one assistant.
 ### Odoo Copilot
 
 - **Lane 1:** Odoo runtime context (active record, company, user role, locale)
-- **Lane 2:** Curated Odoo 19 docs KB (`odoo-docs-kb` index)
+- **Lane 2:** Curated Odoo 18 docs KB (`odoo-docs-kb` index)
 - **Lane 3:** Bounded web retrieval (allowed domains only, max 3 per query)
 
 Primary jobs: explain ERP state, summarize records, answer module/config questions, guide workflows, draft actions, eventually execute tightly scoped actions after confirmation.

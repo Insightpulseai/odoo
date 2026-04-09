@@ -9,7 +9,7 @@ last_updated: 2026-02-09
 
 # Odoo Frontend Architecture Reference
 
-Complete guide to Odoo 19 frontend architecture, covering Owl framework, JavaScript modules, services, and testing.
+Complete guide to Odoo 18 frontend architecture, covering Owl framework, JavaScript modules, services, and testing.
 
 ## Architecture Overview
 

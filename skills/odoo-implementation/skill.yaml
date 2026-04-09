@@ -17,7 +17,7 @@ intents:
   - set up odoo
 
 guardrails:
-  - Follow canonical setup (odoo19/ directory patterns)
+  - Follow canonical setup (odoo18/ directory patterns)
   - Single database per environment (list_db = False)
   - File-based secrets only (never hardcode)
   - Always run --stop-after-init verification
@@ -107,7 +107,7 @@ agentInstructions: |
   When implementing Odoo:
 
   1. **Environment Setup**:
-     - Use canonical setup from odoo19/ directory
+     - Use canonical setup from odoo18/ directory
      - Configure docker-compose with health checks
      - Set db_name per environment (odoo_dev / odoo_staging / odoo)
      - Disable database selector (list_db = False)

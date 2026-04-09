@@ -4,8 +4,8 @@
 
 The complete InsightPulseAI Odoo on Azure stack is a six-plane system:
 
-1. **Experience plane** — Odoo 19 web UI, Copilot widget, admin/ops surfaces. Public ingress via Azure Front Door → Azure Container Apps.
-2. **Business systems plane** — Odoo 19 as business core (accounting, CRM, projects, expenses, approvals, documents). Odoo owns trigger surface: server actions, automation rules, scheduled actions, client actions.
+1. **Experience plane** — Odoo 18 web UI, Copilot widget, admin/ops surfaces. Public ingress via Azure Front Door → Azure Container Apps.
+2. **Business systems plane** — Odoo 18 as business core (accounting, CRM, projects, expenses, approvals, documents). Odoo owns trigger surface: server actions, automation rules, scheduled actions, client actions.
 3. **AI / agent runtime plane** — Azure AI Foundry Agent Service hosts bounded agents: Copilot, Document Triage, Finance Review, Compliance/Workflow.
 4. **Document processing plane** — Azure Document Intelligence for OCR, layout, tables, key/value extraction, and custom extraction models. Pattern: Document Intelligence first, Foundry interpretation second.
 5. **Knowledge / grounding plane** — Foundry agents use scoped tools and knowledge, not unrestricted DB access. Tools: `get_record_context`, `submit_ocr_job`, `write_review_result`, `create_activity`, `post_chatter_note`.
@@ -536,4 +536,4 @@ Users must be able to see:
 
 ## One-Sentence Target
 
-> Odoo 19 on Azure Container Apps, PostgreSQL Flexible Server as the ERP database, Odoo actions as the trigger layer, Foundry Agent Service as the hosted AI runtime, Document Intelligence as the OCR/extraction layer, scoped tools/knowledge between Odoo and Foundry, and an approval/audit layer that keeps Odoo as the system of record.
+> Odoo 18 on Azure Container Apps, PostgreSQL Flexible Server as the ERP database, Odoo actions as the trigger layer, Foundry Agent Service as the hosted AI runtime, Document Intelligence as the OCR/extraction layer, scoped tools/knowledge between Odoo and Foundry, and an approval/audit layer that keeps Odoo as the system of record.

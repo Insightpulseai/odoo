@@ -19,7 +19,7 @@
 - **EE Parity comparisons**: "Replaces Odoo Enterprise feature X" is allowed
 - **Prohibition statements**: "No Odoo Enterprise modules" is allowed
 - **Feature parity tables**: Referencing EE/Odoo.sh features we are replacing is allowed
-- **Upstream Odoo documentation** (`docs/kb/odoo19/upstream/`): unmodified reference material
+- **Upstream Odoo documentation** (`docs/kb/odoo18/upstream/`): unmodified reference material
 
 ## SAP-Grade Operational Maturity
 

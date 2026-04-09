@@ -4,7 +4,7 @@ kind: "odoo_ai_agent"
 metadata:
   id: "docflow.agent"
   name: "DocFlow Agent"
-  description: "OCR → LLM → Validation → Intelligence → Odoo ingest (Odoo 19)"
+  description: "OCR → LLM → Validation → Intelligence → Odoo ingest (Odoo 18)"
   owner: "finance"
   tags: ["docflow", "ap-automation", "ocr", "reconciliation", "sla"]
 

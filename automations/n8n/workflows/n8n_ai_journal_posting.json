@@ -1,5 +1,5 @@
 {
-  "name": "Finance PPM - AI Journal Posting (Claude API + Odoo 19)",
+  "name": "Finance PPM - AI Journal Posting (Claude API + Odoo 18)",
   "nodes": [
     {
       "parameters": {
@@ -197,7 +197,7 @@
     { "name": "finance" },
     { "name": "ai" },
     { "name": "journal-posting" },
-    { "name": "odoo19" },
+    { "name": "odoo18" },
     { "name": "claude-api" }
   ],
   "meta": {

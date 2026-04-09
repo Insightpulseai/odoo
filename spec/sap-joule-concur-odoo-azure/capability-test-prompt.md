@@ -87,7 +87,7 @@ C1. Odoo account.move supports draft state for external document creation.
       via XML-RPC or JSON-RPC? What fields are required?
 
 C2. Odoo supports external API authentication via token or OAuth.
-    - Test: What authentication methods does Odoo 19 CE support for API access?
+    - Test: What authentication methods does Odoo 18 CE support for API access?
       Is there native OAuth2/OIDC support, or does it require a module
       (e.g., ipai_auth_oidc, OCA auth_oauth)?
 
@@ -100,11 +100,11 @@ C4. Odoo supports analytic account mapping for cost center allocation.
       or analytic_account_id for cost center mapping?
 
 C5. Odoo supports custom API endpoints (controllers).
-    - Test: Can Odoo 19 CE expose custom REST endpoints via ir.http controllers?
+    - Test: Can Odoo 18 CE expose custom REST endpoints via ir.http controllers?
       What is the standard pattern for building bounded read/write APIs?
 
 C6. Odoo supports OIDC/SAML for user authentication.
-    - Test: Does Odoo 19 CE have native OIDC support, or does it require
+    - Test: Does Odoo 18 CE have native OIDC support, or does it require
       auth_oauth (core) + custom provider config? Can it federate with Entra ID?
 
 ---

@@ -8,7 +8,7 @@
 ### Databases
 - ✅ `odoo_dev` - Development database (UTF8, en_US.UTF-8)
 - ✅ `odoo_stage` - Staging database (UTF8, en_US.UTF-8)
-- ℹ️  `odoo19` - Production database (existing)
+- ℹ️  `odoo18` - Production database (existing)
 
 ### Roles
 - ✅ `odoo_app` - Least-privilege application role
@@ -71,7 +71,7 @@
 
 ### Database List
     Name    |  Owner   | Encoding | Locale Provider |   Collate   |    Ctype    | ICU Locale | ICU Rules |   Access privileges
- odoo19     | doadmin  | UTF8     | libc            | en_US.UTF-8 | en_US.UTF-8 |            |           |
+ odoo18     | doadmin  | UTF8     | libc            | en_US.UTF-8 | en_US.UTF-8 |            |           |
  odoo_dev   | doadmin  | UTF8     | libc            | en_US.UTF-8 | en_US.UTF-8 |            |           | =Tc/doadmin          +
  odoo_stage | doadmin  | UTF8     | libc            | en_US.UTF-8 | en_US.UTF-8 |            |           | =Tc/doadmin          +
 

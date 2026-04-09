@@ -31,7 +31,7 @@ packs:
   erp_core:
     id: pulser_erp_core
     display_name: "Pulser ERP Core"
-    description: "Core ERP read/write skills for Odoo 19 CE"
+    description: "Core ERP read/write skills for Odoo 18 CE"
     module: ipai_odoo_copilot
     foundry_tools:
       - odoo_search_partners

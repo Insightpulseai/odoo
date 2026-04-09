@@ -3,9 +3,9 @@ namespace: odoo.finance
 source:
   kind: user_docs_contract
   docs:
-    - odoo_19_finance_accounting
+    - odoo_18_finance_accounting
 description: >
-  Canonical business-entity contract for Odoo 19 finance/accounting user-facing
+  Canonical business-entity contract for Odoo 18 finance/accounting user-facing
   objects. This is a business/schema contract for integrations, analytics,
   copilots, and workflow modeling. It is not a claim of exact ORM/database parity.
 

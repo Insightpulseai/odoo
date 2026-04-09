@@ -1,5 +1,5 @@
 /**
- * k6 Comprehensive Load Test for Odoo 19
+ * k6 Comprehensive Load Test for Odoo 18
  *
  * Test Scenarios:
  * 1. User authentication (login/logout)
@@ -49,7 +49,7 @@ export const options = {
   ext: {
     loadimpact: {
       projectID: 3649635,
-      name: 'Odoo 19 Comprehensive Load Test'
+      name: 'Odoo 18 Comprehensive Load Test'
     }
   }
 };

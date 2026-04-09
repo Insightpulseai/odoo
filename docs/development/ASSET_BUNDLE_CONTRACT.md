@@ -61,7 +61,7 @@ It fails the PR if:
 | Cause | Symptom | Fix |
 |-------|---------|-----|
 | File renamed, manifest not updated | `AssetError` at runtime | Update path in `__manifest__.py` |
-| JS module syntax mismatch | `SyntaxError` in browser console | Match Odoo 19 OWL/ES module format |
+| JS module syntax mismatch | `SyntaxError` in browser console | Match Odoo 18 OWL/ES module format |
 | Duplicate registration | Asset loaded twice, UI glitch | Remove duplicate from one manifest |
 | Wrong bundle key | Asset not loaded | Use correct Odoo bundle name |
 | Missing `depends` | Asset loads before dependency | Add dependency module to `depends` |

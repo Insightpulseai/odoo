@@ -1,7 +1,7 @@
 # odoo-mobile-ios — Mobile App Test Evidence
 
 **Stamp**: 2026-03-01T09:41+0800
-**Branch**: feat/ipai-module-audit-odoo19
+**Branch**: feat/ipai-module-audit-odoo18
 **Scope**: `apps/odoo-mobile-ios/`
 **Swift**: 6.2.3 (arm64-apple-macosx26.0)
 
@@ -16,7 +16,7 @@
 ## [CONTEXT]
 
 - **repo**: /Users/tbwa/Documents/GitHub/Insightpulseai/odoo
-- **branch**: feat/ipai-module-audit-odoo19
+- **branch**: feat/ipai-module-audit-odoo18
 - **cwd**: apps/odoo-mobile-ios
 - **goal**: Build Swift package, run unit tests, verify network readiness
 - **stamp**: 2026-03-01T09:41+0800

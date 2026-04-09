@@ -13,7 +13,7 @@ echo "=== Step 2: Create development copy ==="
 # gunzip -c "/tmp/${SOURCE_DB}_$(date +%Y%m%d).sql.gz" | psql -h localhost -U tbwa -d "${NEUTRAL_DB}"
 
 echo "=== Step 3: Neutralize ==="
-# ~/.pyenv/versions/odoo-19-dev/bin/python vendor/odoo/odoo-bin neutralize \
+# ~/.pyenv/versions/odoo-18-dev/bin/python vendor/odoo/odoo-bin neutralize \
 #   --database="${NEUTRAL_DB}" \
 #   --db_host=localhost --db_port=5432 --db_user=tbwa --db_password=False \
 #   --addons-path=vendor/odoo/addons,addons/ipai
@@ -24,5 +24,5 @@ echo "=== Step 4: Verify neutralization ==="
 # psql -h localhost -U tbwa -d "${NEUTRAL_DB}" -c "SELECT name, active FROM ir_cron LIMIT 10"
 
 echo "=== Step 5: Optionally populate with test data ==="
-# ~/.pyenv/versions/odoo-19-dev/bin/python vendor/odoo/odoo-bin populate \
+# ~/.pyenv/versions/odoo-18-dev/bin/python vendor/odoo/odoo-bin populate \
 #   --database="${NEUTRAL_DB}" --size small

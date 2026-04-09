@@ -1,7 +1,7 @@
 # Project Portfolio Management (PPM) Capabilities
 
 ## Overview
-PPM capabilities in Odoo 19 CE + OCA provide enterprise-grade project portfolio management.
+PPM capabilities in Odoo 18 CE + OCA provide enterprise-grade project portfolio management.
 
 ## Core Features
 
@@ -39,4 +39,4 @@ PPM capabilities in Odoo 19 CE + OCA provide enterprise-grade project portfolio 
 Already installed via `scripts/install_oca_parity.sh`
 
 ---
-Generated: 2026-02-10 | Odoo 19.0 CE + OCA
+Generated: 2026-02-10 | Odoo 18.0 CE + OCA

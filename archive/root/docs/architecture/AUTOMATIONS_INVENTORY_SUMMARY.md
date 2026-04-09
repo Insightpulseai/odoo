@@ -65,9 +65,9 @@
 | Finance Stack Health Check | GitHub | Cron: Defined, Manual |
 | parity | GitHub | Cron: 23 3 * * *, Manual, Push/PR |
 | Docs Crawler (Daily Refresh) | GitHub | Cron: Defined, Manual |
-| Finance PPM - AI Journal Posting (Claude API + Odoo 19) | n8n | scheduleTrigger |
-| Finance PPM - BIR Form Generation (Odoo 19 PH) | n8n | scheduleTrigger |
-| Finance PPM - Recurrent Alerts (Odoo 19) | n8n | scheduleTrigger |
+| Finance PPM - AI Journal Posting (Claude API + Odoo 18) | n8n | scheduleTrigger |
+| Finance PPM - BIR Form Generation (Odoo 18 PH) | n8n | scheduleTrigger |
+| Finance PPM - Recurrent Alerts (Odoo 18) | n8n | scheduleTrigger |
 
 ## Template / Deprecated (Needs Review)
 - `[TEMPLATE]` _template-bridge (Supabase)

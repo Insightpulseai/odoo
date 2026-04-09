@@ -19,7 +19,7 @@
 
 ## XML structure
 - [ ] XML IDs follow naming convention (`_view_form`, `_view_list`, `_action`, `_menu`)
-- [ ] No deprecated `tree` views (must be `list` in Odoo 19)
+- [ ] No deprecated `tree` views (must be `list` in Odoo 18)
 - [ ] Record formatting: one attribute per line when >2 attributes
 - [ ] ACL CSV: all 4 CRUD columns present, ID pattern `access_<model>_<group>`
 

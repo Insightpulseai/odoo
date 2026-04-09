@@ -10,7 +10,7 @@
 ├─────────────────────────────────────────────────────────────┤
 │                                                             │
 │  ┌──────────────┐      ┌──────────────┐                    │
-│  │   Odoo 19    │◄────►│ PostgreSQL   │                    │
+│  │   Odoo 18    │◄────►│ PostgreSQL   │                    │
 │  │ (port 9069)  │      │   16-alpine  │                    │
 │  │              │      │ (port 5433)  │                    │
 │  └──────────────┘      └──────────────┘                    │
@@ -453,19 +453,19 @@ docker compose up -d
 
 ---
 
-## 11. Upgrade to Odoo 19
+## 11. Upgrade to Odoo 18
 
 **If running Odoo 18**, use the upgrade script:
 
 ```bash
-~/Documents/GitHub/odoo/sandbox/dev/upgrade-to-odoo19.sh
+~/Documents/GitHub/odoo/sandbox/dev/upgrade-to-odoo18.sh
 ```
 
 This will:
 1. Stop old Odoo 18 containers
 2. Remove old image
 3. Pull `ghcr.io/jgtolentino/odoo:19.0-ee-parity`
-4. Start Odoo 19.0 + OCA + IPAI Enterprise Bridge
+4. Start Odoo 18.0 + OCA + IPAI Enterprise Bridge
 
 **After upgrade**: Clear browser cache (Command + Shift + R)
 
@@ -509,11 +509,11 @@ docker compose exec odoo odoo -d mydb -i module_name --stop-after-init
 ~/Documents/GitHub/odoo/scripts/health/odoo_local_9069.sh
 
 # Upgrade
-~/Documents/GitHub/odoo/sandbox/dev/upgrade-to-odoo19.sh
+~/Documents/GitHub/odoo/sandbox/dev/upgrade-to-odoo18.sh
 ```
 
 ---
 
 **Last Updated**: 2026-01-28
-**Version**: Odoo 19.0 CE + EE Parity
+**Version**: Odoo 18.0 CE + EE Parity
 **Maintained By**: Jake Tolentino

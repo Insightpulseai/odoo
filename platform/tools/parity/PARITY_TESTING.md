@@ -1,4 +1,4 @@
-# Odoo 19 Enterprise Edition Parity Testing Framework
+# Odoo 18 Enterprise Edition Parity Testing Framework
 
 ## Overview
 

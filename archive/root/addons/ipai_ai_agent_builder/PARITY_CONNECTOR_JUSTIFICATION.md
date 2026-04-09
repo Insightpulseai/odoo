@@ -1,7 +1,7 @@
 # Connector Justification: ipai_ai_agent_builder
 
 ## What this module does
-Provides Odoo 19 AI Agents feature parity for CE/OCA deployments, including configurable AI agents with system prompts, topic-based instruction bundles, callable business tools with permission gating, and RAG-enabled knowledge sources.
+Provides Odoo 18 AI Agents feature parity for CE/OCA deployments, including configurable AI agents with system prompts, topic-based instruction bundles, callable business tools with permission gating, and RAG-enabled knowledge sources.
 
 ## What it is NOT
 - Not an OCA parity addon

@@ -82,7 +82,7 @@ Build **Tax Pulse** as a tax-compliance capability pack for Odoo Copilot that ca
 
 ## Approval Gates
 
-Modeled after Odoo 19 PLM approval patterns:
+Modeled after Odoo 18 PLM approval patterns:
 - **Required approval**: Compute, validate, file operations
 - **Optional approval**: Search, inspect, explain operations
 - **Approval flow**: Router pauses → Activity created → Approver acts → Router resumes

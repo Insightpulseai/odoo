@@ -71,7 +71,7 @@ ENTERPRISE_MODULE_PREFIXES = (
 )
 
 # Allowed Odoo server root name at repo root level (only this one is permitted)
-CANONICAL_ODOO_ROOT = "odoo19"
+CANONICAL_ODOO_ROOT = "odoo18"
 
 # Forbidden Odoo-looking root names (must not coexist at repo root)
 FORBIDDEN_ODOO_ROOTS = {"odoo", "odoo-ce", "odooenv", "odoo_ce", "odoo-server"}
@@ -246,7 +246,7 @@ def check_no_enterprise_deps_in_ipai_modules(repo_root: Path) -> bool:
 
 
 # ---------------------------------------------------------------------------
-# Check 4: Only one Odoo server root at repo root (canonical: odoo19/)
+# Check 4: Only one Odoo server root at repo root (canonical: odoo18/)
 # ---------------------------------------------------------------------------
 _ODOO_SERVER_MARKERS = (
     "odoo-bin",            # Odoo 10+ server binary
@@ -271,7 +271,7 @@ def _is_odoo_server_dir(path: Path) -> bool:
 
 
 def check_single_odoo_root(repo_root: Path) -> bool:
-    """Check 4: Only one Odoo server root at repo root level (canonical name: odoo19/)."""
+    """Check 4: Only one Odoo server root at repo root level (canonical name: odoo18/)."""
     found_forbidden: List[str] = []
     canonical_exists = (repo_root / CANONICAL_ODOO_ROOT).exists()
 
@@ -289,7 +289,7 @@ def check_single_odoo_root(repo_root: Path) -> bool:
     elif canonical_exists:
         detail = f"canonical '{CANONICAL_ODOO_ROOT}/' exists, no forbidden server roots"
     else:
-        # Neither canonical nor forbidden: fine (odoo19/ might not be checked out)
+        # Neither canonical nor forbidden: fine (odoo18/ might not be checked out)
         detail = f"'{CANONICAL_ODOO_ROOT}/' not present, no forbidden server roots either"
 
     return result("check4", f"only '{CANONICAL_ODOO_ROOT}/' as Odoo server root", ok, detail)

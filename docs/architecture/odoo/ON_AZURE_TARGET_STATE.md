@@ -16,7 +16,7 @@
 
 | System | Role | Owns | Must NOT own |
 | --- | --- | --- | --- |
-| **Odoo 19** | Transactional SoR and workflow engine | Business records, approvals, posted state, trigger surface | LLM orchestration, knowledge retrieval |
+| **Odoo 18** | Transactional SoR and workflow engine | Business records, approvals, posted state, trigger surface | LLM orchestration, knowledge retrieval |
 | **Odoo Copilot** | User-facing ERP copilot | Contextual prompts, action launch, document review entry | Agent reasoning, tool execution |
 | **Foundry Agent Applications** | Governed AI runtime | Agent reasoning, tool orchestration, stable endpoints, identity/RBAC | Unrestricted DB writes, canonical business state |
 | **Document Intelligence** | OCR and structured extraction | OCR, layout, tables, fields, custom extraction | Business interpretation, approval decisions |

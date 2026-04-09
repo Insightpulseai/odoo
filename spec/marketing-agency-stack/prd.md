@@ -18,7 +18,7 @@ Current state: an archived v18.0 custom module (`ipai_marketing_agency_pack`) wi
 
 ## Goals
 
-1. **Agency workflow parity on CE + OCA** — CRM, project, timesheet, contract, mailing verified and operational on Odoo 19.0
+1. **Agency workflow parity on CE + OCA** — CRM, project, timesheet, contract, mailing verified and operational on Odoo 18.0
 2. **Agency-specific delta ported** — `ipai_marketing_agency_pack` ported from 18.0 to 19.0 (brand, brief, asset, approval, calendar, metrics)
 3. **Foundry agent overlay** — Pulser tools for agency workflows (brief generation, campaign summary, utilization alerts) via Foundry Agent Service
 4. **Entra + M365 readiness** — Identity foundation enabling Teams/Outlook delivery when needed
@@ -49,7 +49,7 @@ Current state: an archived v18.0 custom module (`ipai_marketing_agency_pack`) wi
 
 ## Success Criteria
 
-- [ ] OCA baseline modules install and pass tests on Odoo 19.0
+- [ ] OCA baseline modules install and pass tests on Odoo 18.0
 - [ ] `ipai_marketing_agency_pack` ported to 19.0, installs clean
 - [ ] At least 3 Pulser agency tools defined in `tool_contracts.yaml`
 - [ ] Entra Phase 0 complete (prerequisite, tracked in separate spec)

@@ -10,7 +10,7 @@ The umbrella repo (`Insightpulseai`) tracks only umbrella-native assets. Nested 
 
 | Path | Ownership | Purpose |
 |------|-----------|---------|
-| `odoo/` | Separate git repo | ERP runtime (Odoo 19 CE + OCA + IPAI bridge) |
+| `odoo/` | Separate git repo | ERP runtime (Odoo 18 CE + OCA + IPAI bridge) |
 | `data-intelligence/` | Separate git repo | Databricks analytics engineering |
 | `documentaion/` | Separate git repo | Legacy docs (review for archival) |
 | `web-site/` | Separate git repo | Legacy web site (review for archival) |

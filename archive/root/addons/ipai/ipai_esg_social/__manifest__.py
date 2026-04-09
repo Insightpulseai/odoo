@@ -10,7 +10,7 @@ ESG Social Metrics
 
 Gender parity and pay gap
 
-This module provides Odoo 19 Enterprise Edition parity for CE deployments.
+This module provides Odoo 18 Enterprise Edition parity for CE deployments.
 
 **Features:**
 - Core functionality for esg social metrics

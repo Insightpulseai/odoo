@@ -120,7 +120,7 @@ clients:
 
     status: planned
     implementation_notes: >
-      Uses Odoo 19 native auth_oauth + custom ipai_auth_oidc for:
+      Uses Odoo 18 native auth_oauth + custom ipai_auth_oidc for:
       - Authorization Code Flow with PKCE
       - RS256 token validation
       - JIT user provisioning (create on first login, email matching)

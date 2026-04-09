@@ -127,7 +127,7 @@
 - 🔴 `docs/releases/TBWA_FINOPS_V1_RUNBOOK.md` — old_path
 - 🔴 `docs/releases/WHAT_DEPLOYED_prod-20260109-2219.json` — old_path
 - 🔴 `docs/releases/WHAT_DEPLOYED.json` — old_path
-- 🔴 `docs/releases/ODOO_19_PARITY_ANALYSIS.md` — old_path
+- 🔴 `docs/releases/ODOO_18_PARITY_ANALYSIS.md` — old_path
 - 🔴 `docs/releases/WHAT_DEPLOYED_prod-20260109-2219.md` — old_path
 - 🔴 `docs/releases/WHAT_SHIPPED.json` — old_path
 - 🔴 `docs/releases/WHAT_DEPLOYED.md` — old_path
@@ -148,8 +148,8 @@
 - 🔴 `docs/evidence/20260211-0930/superset-db-init/verification.md` — deprecated_domain
 - 🔴 `docs/evidence/20260211-branch-cleanup/CLEANUP_SUMMARY.md` — old_path
 - 🔴 `docs/evidence/20260216-1546/subdomain-routing-fix/IMPLEMENTATION_SUMMARY.md` — deprecated_domain
-- 🔴 `docs/kb/odoo19/index/sections.json` — old_path
-- 🔴 `docs/kb/odoo19/index/index.json` — old_path
+- 🔴 `docs/kb/odoo18/index/sections.json` — old_path
+- 🔴 `docs/kb/odoo18/index/index.json` — old_path
 - 🔴 `docs/audits/ipai_modules/inventory.json` — old_path
 - 🔴 `docs/ee-parity-gate/EE_PARITY_GATE_REPORT.md` — deprecated_domain
 - 🔴 `docs/claude_code/IMPLEMENTATION_SUMMARY.md` — old_path
@@ -262,10 +262,10 @@
 - 🔴 `scripts/automations/sweep_repo.py` — deprecated_domain, old_path
 - 🔴 `ipai-platform/scripts/setup-tls.sh` — deprecated_domain
 - 🔴 `.github/workflows/repo-structure-guard.yml` — old_path
-- 🔴 `odoo19/MIGRATION_COMPLETE.md` — old_path
-- 🔴 `odoo19/CANONICAL_SETUP.md` — old_path
-- 🔴 `odoo19/MIGRATION_FROM_OLD_STACK.md` — old_path
-- 🔴 `odoo19/QUICK_REFERENCE.md` — old_path
+- 🔴 `odoo18/MIGRATION_COMPLETE.md` — old_path
+- 🔴 `odoo18/CANONICAL_SETUP.md` — old_path
+- 🔴 `odoo18/MIGRATION_FROM_OLD_STACK.md` — old_path
+- 🔴 `odoo18/QUICK_REFERENCE.md` — old_path
 - 🔴 `ops/backup-production.sh` — old_path
 - 🔴 `ops/github/apply_labels.sh` — old_path
 - 🔴 `ops/backup/install_cron.sh` — old_path
@@ -628,7 +628,7 @@
 - [P2] `odoo-schema-mirror/tests/test_generate_dbml.py` — Convert to n8n workflow: email notification: n8n email node candidate (ROI: High, Risk: Low, Effort: 1d)
 - [P2] `prototypes/ipai_fluent_web_365_copilot/__manifest__.py` — Convert to n8n workflow: email notification: n8n email node candidate (ROI: High, Risk: Low, Effort: 1d)
 - [P2] `prototypes/ipai_fluent_web_365_copilot/models/fluent_copilot_session.py` — Convert to n8n workflow: email notification: n8n email node candidate (ROI: High, Risk: Low, Effort: 1d)
-- [P2] `sandbox/dev/upgrade-to-odoo19.sh` — Convert to n8n workflow: polling sleep: scheduled n8n workflow candidate (ROI: High, Risk: Low, Effort: 1d)
+- [P2] `sandbox/dev/upgrade-to-odoo18.sh` — Convert to n8n workflow: polling sleep: scheduled n8n workflow candidate (ROI: High, Risk: Low, Effort: 1d)
 - [P2] `sandbox/dev/addons/ipai_mailgun_bridge/__manifest__.py` — Convert to n8n workflow: email notification: n8n email node candidate (ROI: High, Risk: Low, Effort: 1d)
 - [P2] `sandbox/dev/addons/ipai_mailgun_bridge/models/__init__.py` — Convert to n8n workflow: email notification: n8n email node candidate (ROI: High, Risk: Low, Effort: 1d)
 - [P2] `sandbox/dev/addons/ipai_mailgun_bridge/models/mail_mail.py` — Convert to n8n workflow: email notification: n8n email node candidate (ROI: High, Risk: Low, Effort: 1d)

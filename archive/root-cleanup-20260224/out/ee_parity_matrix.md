@@ -1,6 +1,6 @@
 # Odoo Enterprise → CE + OCA Parity Matrix
 
-**Target Version:** Odoo 19.0 CE
+**Target Version:** Odoo 18.0 CE
 **Generated:** 2026-01-27
 **Purpose:** Complete mapping of Enterprise-only features to self-hosted replacements
 
@@ -302,6 +302,6 @@ services:
 
 - [Odoo Editions Comparison](https://www.odoo.com/page/editions)
 - [OCA GitHub](https://github.com/oca)
-- [Odoo 19 Release Notes](https://www.odoo.com/odoo-19-release-notes)
+- [Odoo 18 Release Notes](https://www.odoo.com/odoo-18-release-notes)
 - [Syncoria - EE vs CE Comparison](https://www.syncoria.com/blog/blog-6/odoo-enterprise-and-community-true-facts-on-modules-and-features-101-53)
 - [VentorTech - Odoo 17 CE vs EE](https://ventor.tech/odoo/odoo-17-community-vs-enterprise/)

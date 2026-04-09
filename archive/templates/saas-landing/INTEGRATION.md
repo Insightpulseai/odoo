@@ -24,7 +24,7 @@
 ┌─────────────────────────────────────────────────────────────────┐
 │                       Odoo Backend Layer                         │
 │  ┌──────────────────────────────────────────────────────────┐  │
-│  │   Odoo 19 CE + OCA Modules                               │  │
+│  │   Odoo 18 CE + OCA Modules                               │  │
 │  │   - Website/CMS module                                    │  │
 │  │   - ipai_platform_theme                                   │  │
 │  │   - REST API endpoints                                    │  │

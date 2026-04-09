@@ -385,7 +385,7 @@ EE_PARITY_TESTS = [
             "Access control",
         ],
     ),
-    # Odoo 19 New Features (2026-01-26)
+    # Odoo 18 New Features (2026-01-26)
     # AI Platform (P0 - Critical)
     FeatureTest(
         id="AI-001",
@@ -455,7 +455,7 @@ EE_PARITY_TESTS = [
             "Verify handoff to human",
         ],
     ),
-    # ESG App (P2 - New in Odoo 19)
+    # ESG App (P2 - New in Odoo 18)
     FeatureTest(
         id="ESG-001",
         name="Carbon Analytics",
@@ -484,7 +484,7 @@ EE_PARITY_TESTS = [
             "Generate ESG report",
         ],
     ),
-    # Equity App (P3 - New in Odoo 19)
+    # Equity App (P3 - New in Odoo 18)
     FeatureTest(
         id="EQU-001",
         name="Share Tracking",
@@ -514,7 +514,7 @@ EE_PARITY_TESTS = [
             "Use in follow-up",
         ],
     ),
-    # Tax Return (P0 - Odoo 19)
+    # Tax Return (P0 - Odoo 18)
     FeatureTest(
         id="TAX-001",
         name="Tax Return Workflow",
@@ -529,7 +529,7 @@ EE_PARITY_TESTS = [
             "Track status",
         ],
     ),
-    # Project Templates (P1 - Odoo 19)
+    # Project Templates (P1 - Odoo 18)
     FeatureTest(
         id="PRJ-001",
         name="Project Templates",
@@ -544,7 +544,7 @@ EE_PARITY_TESTS = [
             "Create project from template",
         ],
     ),
-    # Planning Analysis (P1 - Odoo 19)
+    # Planning Analysis (P1 - Odoo 18)
     FeatureTest(
         id="PLN-001",
         name="Planning/Attendance Analysis",
@@ -559,7 +559,7 @@ EE_PARITY_TESTS = [
             "Identify discrepancies",
         ],
     ),
-    # Documents AI (P2 - Odoo 19)
+    # Documents AI (P2 - Odoo 18)
     FeatureTest(
         id="DOC-001",
         name="Documents AI Management",

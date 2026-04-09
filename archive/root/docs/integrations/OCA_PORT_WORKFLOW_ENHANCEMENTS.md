@@ -668,7 +668,7 @@ curl: (7) Failed to connect to plane.insightpulseai.com
 
 - [OCA oca-port Tool](https://github.com/OCA/oca-port)
 - [OCA Development Guidelines](https://odoo-community.org/page/development-guidelines)
-- [Odoo 19.0 Developer Documentation](https://www.odoo.com/documentation/19.0/developer)
+- [Odoo 18.0 Developer Documentation](https://www.odoo.com/documentation/19.0/developer)
 - [Plane API Documentation](https://plane.so/docs/api)
 - [GitHub Actions Workflow Syntax](https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions)
 

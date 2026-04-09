@@ -1,6 +1,6 @@
 # OCA Module Porting Runbook: 18.0 → 19.0
 
-> Canonical workflow for porting OCA modules to Odoo 19.0 following OCA maintainer-tools migration guide.
+> Canonical workflow for porting OCA modules to Odoo 18.0 following OCA maintainer-tools migration guide.
 > Reference: https://github.com/OCA/maintainer-tools/wiki/Migration-to-version-19.0
 
 ---
@@ -22,7 +22,7 @@ This runbook documents the OCA canonical method for migrating modules from 18.0 
 ### Local Setup
 
 ```bash
-# Install pre-commit (handles many Odoo 19 framework changes automatically)
+# Install pre-commit (handles many Odoo 18 framework changes automatically)
 pip install pre-commit
 
 # Verify git configured
@@ -113,7 +113,7 @@ git am -3 --keep *.patch
 
 ### Step 6: Run Pre-Commit Auto-Fixes
 
-Pre-commit handles many Odoo 19 framework changes automatically:
+Pre-commit handles many Odoo 18 framework changes automatically:
 
 ```bash
 # Run all pre-commit hooks
@@ -139,7 +139,7 @@ git commit -m "[IMP] <module>: pre-commit auto fixes" --no-verify
 
 ### Step 7: Manual Framework Updates
 
-Pre-commit doesn't catch everything. Check for these Odoo 19 changes:
+Pre-commit doesn't catch everything. Check for these Odoo 18 changes:
 
 #### API Changes
 
@@ -317,7 +317,7 @@ git am -3 --keep --ignore-whitespace *.patch
 
 ---
 
-## Odoo 19.0 Framework Changes Reference
+## Odoo 18.0 Framework Changes Reference
 
 ### Field Renames
 
@@ -418,7 +418,7 @@ If porting for OCA contribution (not just local use):
 ## References
 
 - [OCA Maintainer Tools Migration Guide](https://github.com/OCA/maintainer-tools/wiki/Migration-to-version-19.0)
-- [Odoo 19.0 Release Notes](https://www.odoo.com/odoo-19-release-notes)
+- [Odoo 18.0 Release Notes](https://www.odoo.com/odoo-18-release-notes)
 - [OCA Module Template](https://github.com/OCA/maintainer-tools/tree/master/template)
 - Port Queue SSOT: `config/oca/port_queue.yml`
 - Porting Harness: `scripts/oca/port_to_19.sh`

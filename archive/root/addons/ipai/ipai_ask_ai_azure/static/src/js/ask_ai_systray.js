@@ -1,6 +1,6 @@
 /** @odoo-module **/
 /**
- * ipai_ask_ai_azure — Owl systray "Ask AI" component for Odoo 19 CE.
+ * ipai_ask_ai_azure — Owl systray "Ask AI" component for Odoo 18 CE.
  *
  * Registered in registry.category("systray") so it appears in the navbar.
  * Sends prompts to /ipai/ask_ai/chat (Azure OpenAI proxy controller).

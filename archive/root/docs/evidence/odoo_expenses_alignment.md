@@ -1,4 +1,4 @@
-# Odoo 19 Expenses Workflow Alignment
+# Odoo 18 Expenses Workflow Alignment
 
 **Date:** 2026-02-27
 **Status:** Active policy
@@ -13,7 +13,7 @@ They extend and assist it. Odoo's approval/posting state model is the authority.
 
 ---
 
-## Odoo 19 Expenses canonical workflow
+## Odoo 18 Expenses canonical workflow
 
 ```
 Employee logs expense
@@ -55,9 +55,9 @@ Employee logs expense
 
 ---
 
-## Cash advance / liquidation (not in core Odoo 19 docs)
+## Cash advance / liquidation (not in core Odoo 18 docs)
 
-Odoo 19 Expenses documentation does not describe native cash advance liquidation as a first-class feature.
+Odoo 18 Expenses documentation does not describe native cash advance liquidation as a first-class feature.
 
 **IPAI decision:** `ipai_hr_expense_liquidation` is the SSOT for this capability. It:
 - Adds `hr.expense.liquidation` model (LIQ/YYYY/#### sequence = Form No.)

@@ -1,5 +1,5 @@
 # ssot.ai.dependencies.v1
-# External AI dependency registry — Odoo 19 CE + IPAI.
+# External AI dependency registry — Odoo 18 CE + IPAI.
 # Gate rule: a dependency must have lifecycle != unknown and pinned_ref set
 #            before any consumer module can be activated.
 # CI: python scripts/ci/check_ai_dependencies.py --schema-only  (non-blocking)
@@ -31,7 +31,7 @@ dependencies:
     status:
       lifecycle: unknown            # unknown | planned | active | blocked | deprecated
       reason: >
-        Need to verify 19.0 port status + compatibility with our Odoo 19 baseline.
+        Need to verify 19.0 port status + compatibility with our Odoo 18 baseline.
         Check upstream branch list; if absent set lifecycle: blocked.
     consumers:
       odoo_modules:
@@ -98,4 +98,4 @@ dependencies:
     acceptance:
       to_activate:
         - "pinned_ref recorded after audit of vendored tree"
-        - "Module installs cleanly on Odoo 19 (odoo -i ai_oca_native_generate_ollama --stop-after-init exits 0)"
+        - "Module installs cleanly on Odoo 18 (odoo -i ai_oca_native_generate_ollama --stop-after-init exits 0)"
