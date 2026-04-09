@@ -46,7 +46,7 @@ The constitution is the governance document that constrains agent behavior. It d
 |--------|------|
 | Global agent rules | `CLAUDE.md` (repo root) |
 | OCA governance | `~/.claude/rules/oca-governance.md` |
-| Odoo 19 coding | `~/.claude/rules/odoo19-coding.md` |
+| Odoo 18 coding | `~/.claude/rules/odoo18-coding.md` |
 | SSOT platform | `.claude/rules/ssot-platform.md` |
 | Infrastructure | `~/.claude/rules/infrastructure.md` |
 | Secrets policy | `~/.claude/rules/secrets-policy.md` |

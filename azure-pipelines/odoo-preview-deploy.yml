@@ -1,0 +1,185 @@
+# =============================================================================
+# Odoo Preview Deploy Pipeline
+# =============================================================================
+# Odoo.sh parity: "unlimited development branches / your own runbot"
+#
+# Trigger: PR to main on Odoo-relevant paths
+# Behavior: Build → Deploy preview revision → Smoke → Evidence
+# Lifecycle: PR close triggers cleanup (label removal + revision deactivation)
+#
+# Preview identity: pr-<number> (deterministic, idempotent)
+# Preview URL: https://pr-<n>---<app-fqdn>
+# Production impact: zero (0% traffic weight on preview revision)
+# =============================================================================
+
+trigger: none  # Preview pipeline is PR-only
+
+pr:
+  branches:
+    include:
+      - main
+  paths:
+    include:
+      - addons/ipai/**
+      - config/**
+      - platform/runtime/docker/docker/Dockerfile.odoo-copilot
+      - platform/runtime/docker/docker/Dockerfile.ce18
+
+pool:
+  vmImage: ubuntu-latest
+
+variables:
+  acrName: acripaiodoo
+  imageName: ipai-odoo
+  imageTag: 18.0-copilot
+  containerAppName: ipai-odoo-dev-web
+  resourceGroup: rg-ipai-dev-odoo-runtime
+  serviceConnection: ipai-dev-wif
+  smokeUrl: ''  # Computed at runtime from preview URL
+
+stages:
+  # ── Stage 1: Derive Preview Identity ──
+  - stage: Identity
+    displayName: Resolve Preview Identity
+    jobs:
+      - job: ResolveLabel
+        displayName: Derive preview label from PR
+        pool:
+          vmImage: ubuntu-latest
+        steps:
+          - bash: |
+              set -euo pipefail
+
+              # Derive preview label from PR number or branch name
+              if [[ -n "${SYSTEM_PULLREQUEST_PULLREQUESTNUMBER:-}" ]]; then
+                LABEL="pr-${SYSTEM_PULLREQUEST_PULLREQUESTNUMBER}"
+              elif [[ -n "${BUILD_SOURCEBRANCH:-}" ]]; then
+                # Extract branch name, sanitize for ACA label
+                BRANCH="${BUILD_SOURCEBRANCH#refs/heads/}"
+                BRANCH="${BRANCH#refs/pull/}"
+                LABEL=$(echo "branch-${BRANCH}" | tr '[:upper:]' '[:lower:]' | sed 's/[^a-z0-9-]/-/g' | cut -c1-64 | sed 's/-$//')
+              else
+                LABEL="preview-$(Build.BuildNumber)"
+              fi
+
+              echo "Preview label: ${LABEL}"
+              echo "##vso[task.setvariable variable=previewLabel;isOutput=true]${LABEL}"
+            displayName: Derive preview label
+            name: label
+
+  # ── Stage 2: Build ──
+  - stage: Build
+    displayName: Build Odoo Preview Image
+    dependsOn: Identity
+    jobs:
+      - template: templates/jobs/build-container.yml
+        parameters:
+          imageName: $(imageName)
+          imageTag: $(imageTag)
+          dockerfile: platform/runtime/docker/docker/Dockerfile.ce18
+          buildContext: '.'
+          acrName: $(acrName)
+          serviceConnection: $(serviceConnection)
+
+  # ── Stage 3: Deploy Preview ──
+  - stage: Preview
+    displayName: Deploy Preview Revision
+    dependsOn:
+      - Identity
+      - Build
+    condition: succeeded()
+    variables:
+      previewLabel: $[ stageDependencies.Identity.ResolveLabel.outputs['label.previewLabel'] ]
+    jobs:
+      - template: templates/jobs/deploy-preview.yml
+        parameters:
+          containerAppName: $(containerAppName)
+          resourceGroup: $(resourceGroup)
+          imageName: $(imageName)
+          imageTag: $(imageTag)
+          acrName: $(acrName)
+          serviceConnection: $(serviceConnection)
+          previewLabel: $(previewLabel)
+
+  # ── Stage 4: Smoke ──
+  - stage: Smoke
+    displayName: Smoke Test Preview
+    dependsOn: Preview
+    condition: succeeded()
+    variables:
+      previewUrl: $[ stageDependencies.Preview.DeployPreview.outputs['preview.previewUrl'] ]
+    jobs:
+      - template: templates/jobs/smoke-http.yml
+        parameters:
+          url: $(previewUrl)/web/login
+          expectedStatus: '200'
+          contentMatch: Odoo
+          contentExclude: 'Internal Server Error'
+          retries: 5
+          retryDelaySeconds: 15
+
+  # ── Stage 5: Evidence ──
+  - stage: Evidence
+    displayName: Publish Preview Evidence
+    dependsOn:
+      - Identity
+      - Preview
+      - Smoke
+    condition: succeededOrFailed()
+    variables:
+      previewLabel: $[ stageDependencies.Identity.ResolveLabel.outputs['label.previewLabel'] ]
+      previewUrl: $[ stageDependencies.Preview.DeployPreview.outputs['preview.previewUrl'] ]
+      previewRevision: $[ stageDependencies.Preview.DeployPreview.outputs['preview.previewRevision'] ]
+    jobs:
+      - job: PublishPreviewEvidence
+        displayName: Record preview evidence
+        pool:
+          vmImage: ubuntu-latest
+        steps:
+          - bash: |
+              set -euo pipefail
+
+              mkdir -p $(Build.ArtifactStagingDirectory)/evidence
+
+              cat > $(Build.ArtifactStagingDirectory)/evidence/preview-evidence.json <<EVIDENCE
+              {
+                "schemaVersion": "1.0",
+                "type": "preview-deploy",
+                "timestamp": "$(date -u +%Y-%m-%dT%H:%M:%SZ)",
+                "pipeline": "$(Build.DefinitionName)",
+                "buildNumber": "$(Build.BuildNumber)",
+                "sourceCommit": "$(Build.SourceVersion)",
+                "sourceBranch": "$(Build.SourceBranch)",
+                "prNumber": "${SYSTEM_PULLREQUEST_PULLREQUESTNUMBER:-none}",
+                "previewLabel": "$(previewLabel)",
+                "previewRevision": "$(previewRevision)",
+                "previewUrl": "$(previewUrl)",
+                "containerApp": "$(containerAppName)",
+                "image": "$(acrName).azurecr.io/$(imageName):$(imageTag)",
+                "productionImpact": "none (0% traffic weight)",
+                "triggeredBy": "$(Build.RequestedFor)"
+              }
+              EVIDENCE
+
+              cat > $(Build.ArtifactStagingDirectory)/evidence/SUMMARY.md <<SUMMARY
+              # Preview Deploy Evidence
+
+              | Field | Value |
+              |-------|-------|
+              | Label | $(previewLabel) |
+              | URL | $(previewUrl) |
+              | Revision | $(previewRevision) |
+              | Image | $(acrName).azurecr.io/$(imageName):$(imageTag) |
+              | Commit | $(Build.SourceVersion) |
+              | Branch | $(Build.SourceBranch) |
+              | PR | ${SYSTEM_PULLREQUEST_PULLREQUESTNUMBER:-N/A} |
+              | Prod Impact | None (0% traffic) |
+              | Timestamp | $(date -u +%Y-%m-%dT%H:%M:%SZ) |
+              SUMMARY
+
+              echo "Evidence written to $(Build.ArtifactStagingDirectory)/evidence/"
+            displayName: Generate preview evidence
+
+          - publish: $(Build.ArtifactStagingDirectory)/evidence
+            artifact: preview-evidence-$(Build.BuildNumber)
+            condition: always()

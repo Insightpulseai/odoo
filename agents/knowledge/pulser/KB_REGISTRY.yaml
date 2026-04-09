@@ -1,0 +1,200 @@
+# =============================================================================
+# Pulser Knowledge Base Registry — Canonical Index
+# =============================================================================
+# Master registry of all knowledge base segments available to the Pulser
+# assistant family. All segments are indexed in Azure AI Search.
+#
+# Naming doctrine: docs/brand/PULSER_NAMING_DOCTRINE.md
+# Skill registry: agents/skills/pulser/SKILL_REGISTRY.yaml
+# Supersedes: agents/knowledge/diva-copilot-sources.yaml
+# =============================================================================
+
+version: 1.0.0
+created: 2026-04-04
+domain: pulser
+owner: "@Insightpulseai/platform"
+
+index:
+  service: srch-ipai-copilot
+  primary_index: odoo-knowledge
+  semantic_config: default
+
+# =============================================================================
+# Knowledge Segments
+# =============================================================================
+
+segments:
+
+  # ---------------------------------------------------------------------------
+  # ERP Domain — Odoo 18 CE documentation and runtime
+  # ---------------------------------------------------------------------------
+  - id: kb_odoo_docs
+    name: "Odoo 18 Official Documentation"
+    domain: erp
+    description: "Odoo 18 CE official docs — modules, ORM, controllers, views, JS framework"
+    sources:
+      - type: documentation
+        origin: "Odoo 18 official docs (crawled)"
+        chunk_count: 7224
+        status: active
+    update_frequency: on_release
+    grounding_required: true
+    used_by: [pulser_erp_core, pulser_knowledge_search]
+
+  - id: kb_oca_docs
+    name: "OCA Module Documentation"
+    domain: erp
+    description: "OCA community module documentation — accounting, HR, sale, purchase, project"
+    sources:
+      - type: documentation
+        origin: "OCA repos README + technical docs"
+        status: scaffold
+    update_frequency: quarterly
+    grounding_required: true
+    used_by: [pulser_erp_core, pulser_knowledge_search]
+
+  - id: kb_ipai_procedures
+    name: "IPAI Internal Procedures"
+    domain: erp
+    description: "InsightPulseAI internal workflows, policies, and module documentation"
+    sources:
+      - type: documentation
+        path: docs/
+        description: "Runbooks, architecture docs, brand guidelines"
+      - type: module_docs
+        path: addons/ipai/
+        description: "IPAI module READMEs and inline documentation"
+    update_frequency: on_change
+    grounding_required: true
+    used_by: [pulser_erp_core, pulser_knowledge_search]
+
+  # ---------------------------------------------------------------------------
+  # Tax Domain — Philippine BIR compliance
+  # ---------------------------------------------------------------------------
+  - id: kb_tax_policy_ph
+    name: "Philippine Tax Policy"
+    domain: tax
+    description: "BIR regulations, TRAIN law provisions, Revenue Memorandum Circulars, ATC codes"
+    sources:
+      - type: regulations
+        description: "BIR Revenue Regulations and Revenue Memorandum Circulars"
+      - type: rates
+        path: addons/ipai/ipai_bir_tax_compliance/data/
+        description: "TRAIN law brackets, EWT/FWT ATC codes, tax rate tables"
+      - type: reference
+        path: agents/skills/odoo/taxpulse-ph-pack/SKILL.md
+        description: "TaxPulse capability pack documentation"
+    update_frequency: on_regulation_change
+    grounding_required: true
+    used_by: [pulser_taxpulse_ph]
+
+  - id: kb_odoo_tax_runtime
+    name: "Odoo Tax Runtime"
+    domain: tax
+    description: "Odoo tax module configuration, filing workflows, form templates, computation engine"
+    sources:
+      - type: module_docs
+        path: addons/ipai/ipai_bir_tax_compliance/
+        description: "BIR tax compliance module — models, views, data"
+      - type: workflows
+        description: "BIR filing workflow definitions and stage sequences"
+      - type: configuration
+        description: "Tax computation engine configuration and entity setup"
+    update_frequency: on_config_change
+    grounding_required: true
+    used_by: [pulser_taxpulse_ph]
+
+  - id: kb_tax_evidence
+    name: "Tax Evidence & Audit"
+    domain: tax
+    description: "Tax computation audit trails, filing artifacts, evidence pack templates"
+    sources:
+      - type: audit_trails
+        description: "Computation logs and decision records"
+      - type: artifacts
+        description: "Filed BIR forms, eFPS submissions, payment confirmations"
+      - type: templates
+        description: "Evidence pack structure for tax audits"
+    update_frequency: per_filing_period
+    grounding_required: true
+    used_by: [pulser_taxpulse_ph]
+
+  # ---------------------------------------------------------------------------
+  # Go-Live Domain — accounting setup, payment, opening entries
+  # ---------------------------------------------------------------------------
+  - id: kb_go_live_accounting
+    name: "Odoo Go-Live Accounting Checklist"
+    domain: go_live
+    description: "Opening entries (AR/AP), inventory valuation, trial balance import, payment journal config, PayMongo setup"
+    sources:
+      - type: runbook
+        path: docs/runbooks/ODOO18_GO_LIVE_CHECKLIST.md
+        description: "Master go-live checklist with accounting sections A-E"
+      - type: ssot
+        path: ssot/go_live/odoo18_checklist.manifest.yaml
+        description: "CI-enforced checklist manifest"
+      - type: reference
+        description: "Odoo 18 SF-Experts go-live checklist (Pei Hua Tsai, accrual basis, USA localization adapted to PH)"
+    update_frequency: on_change
+    grounding_required: true
+    used_by: [pulser_erp_core, pulser_finance_ops]
+
+  # ---------------------------------------------------------------------------
+  # Finance Domain — expense, budget, close
+  # ---------------------------------------------------------------------------
+  - id: kb_expense_policy
+    name: "Expense & Reimbursement Policy"
+    domain: finance
+    description: "Transportation reimbursement, liquidation rules, approval thresholds"
+    sources:
+      - type: policy
+        path: docs/policies/transportation-reimbursement-policy.md
+        description: "Canonical expense and reimbursement policies"
+      - type: module_docs
+        path: addons/ipai/ipai_hr_expense_liquidation/
+        description: "Expense liquidation module documentation"
+    update_frequency: on_policy_change
+    grounding_required: true
+    used_by: [pulser_finance_ops]
+
+  # ---------------------------------------------------------------------------
+  # Agent Domain — capability inventory and governance
+  # ---------------------------------------------------------------------------
+  - id: kb_agent_capability
+    name: "Agent Capability Inventory"
+    domain: agent
+    description: "Agent skill inventories, readiness criteria, promotion gate definitions"
+    sources:
+      - type: ssot
+        path: ssot/agents/
+        description: "Agent SSOT definitions and capability inventories"
+      - type: evals
+        description: "Agent evaluation results and benchmark scores"
+      - type: criteria
+        description: "Promotion criteria per environment (dev/staging/prod)"
+    update_frequency: per_eval_cycle
+    grounding_required: true
+    used_by: [pulser_erp_core]
+
+  - id: kb_governance
+    name: "Governance & Compliance Policy"
+    domain: governance
+    description: "Policy templates, compliance rules, drift thresholds, orphan detection"
+    sources:
+      - type: policies
+        description: "Governance policy template library"
+      - type: rules
+        description: "Drift detection thresholds and orphan detection rules"
+      - type: compliance
+        description: "Compliance gate definitions and enforcement rules"
+    update_frequency: on_policy_change
+    grounding_required: true
+    used_by: [pulser_erp_core]
+
+# =============================================================================
+# Supersedes
+# =============================================================================
+
+supersedes:
+  - path: agents/knowledge/diva-copilot-sources.yaml
+    reason: "Diva naming retired per PULSER_NAMING_DOCTRINE. All segments migrated to this registry."

@@ -14,7 +14,7 @@
       "evidence": {
         "paths_must_exist": [
           "addons",
-          "odoo19"
+          "odoo18"
         ],
         "grep_must_match": [
           "ir.actions.report",

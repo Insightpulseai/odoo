@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <!-- Pivot view for reporting -->
+    <record id="view_tax_review_pivot" model="ir.ui.view">
+        <field name="name">ipai.tax.review.pivot</field>
+        <field name="model">ipai.tax.review</field>
+        <field name="arch" type="xml">
+            <pivot string="Tax Review Analysis">
+                <field name="state" type="col"/>
+                <field name="create_date" interval="month" type="row"/>
+                <field name="expected_payable" type="measure"/>
+                <field name="printed_total_due" type="measure"/>
+                <field name="delta" type="measure"/>
+                <field name="extraction_confidence" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
+    <!-- Graph view -->
+    <record id="view_tax_review_graph" model="ir.ui.view">
+        <field name="name">ipai.tax.review.graph</field>
+        <field name="model">ipai.tax.review</field>
+        <field name="arch" type="xml">
+            <graph string="Tax Review Dashboard" type="bar">
+                <field name="state" type="col"/>
+                <field name="create_date" interval="month" type="row"/>
+                <field name="delta" type="measure"/>
+            </graph>
+        </field>
+    </record>
+
+    <!-- Dashboard action (pivot + graph) -->
+    <record id="action_tax_review_dashboard" model="ir.actions.act_window">
+        <field name="name">Tax Review Dashboard</field>
+        <field name="res_model">ipai.tax.review</field>
+        <field name="view_mode">pivot,graph,tree</field>
+        <field name="search_view_id" ref="view_tax_review_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No tax review data to display.
+            </p>
+        </field>
+    </record>
+
+    <!-- Menu -->
+    <menuitem id="menu_tax_review_dashboard"
+              name="Tax Review Dashboard"
+              parent="account.menu_finance"
+              action="action_tax_review_dashboard"
+              sequence="92"/>
+
+</odoo>

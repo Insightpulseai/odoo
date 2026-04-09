@@ -1,0 +1,43 @@
+[2026-04-01T08:57:55Z] === Entra PIM Configuration — SAP Benchmark #644 ===
+[2026-04-01T08:57:55Z] Environment: dev
+[2026-04-01T08:57:55Z] Dry run: false
+[2026-04-01T08:57:55Z] Checking prerequisites...
+[2026-04-01T08:57:56Z] Subscription: 536d8cf6-89e1-4815-aef3-d5f2c5f4d070
+[2026-04-01T08:57:56Z] Prerequisites OK
+[2026-04-01T08:57:56Z] Creating PIM eligible assignment: Contributor
+[2026-04-01T08:57:56Z]   Scope: /subscriptions/536d8cf6-89e1-4815-aef3-d5f2c5f4d070/resourceGroups/rg-ipai-dev-odoo-runtime
+[2026-04-01T08:57:56Z]   Principal: 84b0949f-7134-4913-bf04-7b089791291c
+[2026-04-01T08:57:56Z]   Max duration: PT8H
+[2026-04-01T08:57:56Z]   Require approval: false
+ERROR: Bad Request({"error":{"code":"RoleAssignmentExists","message":"The Role assignment already exists."}})
+[WARN] Failed to create eligible assignment for Contributor. This may require Entra P2 license or Privileged Role Administrator permissions.
+[2026-04-01T08:58:02Z] Creating PIM eligible assignment: Contributor
+[2026-04-01T08:58:02Z]   Scope: /subscriptions/536d8cf6-89e1-4815-aef3-d5f2c5f4d070/resourceGroups/rg-ipai-dev-odoo-data
+[2026-04-01T08:58:02Z]   Principal: 84b0949f-7134-4913-bf04-7b089791291c
+[2026-04-01T08:58:02Z]   Max duration: PT8H
+[2026-04-01T08:58:02Z]   Require approval: false
+ERROR: Bad Request({"error":{"code":"RoleAssignmentExists","message":"The Role assignment already exists."}})
+[WARN] Failed to create eligible assignment for Contributor. This may require Entra P2 license or Privileged Role Administrator permissions.
+[2026-04-01T08:58:07Z] Creating PIM eligible assignment: Key Vault Secrets Officer
+[2026-04-01T08:58:07Z]   Scope: /subscriptions/536d8cf6-89e1-4815-aef3-d5f2c5f4d070/resourceGroups/rg-ipai-dev-odoo-runtime/providers/Microsoft.KeyVault/vaults/kv-ipai-dev
+[2026-04-01T08:58:07Z]   Principal: 84b0949f-7134-4913-bf04-7b089791291c
+[2026-04-01T08:58:07Z]   Max duration: PT4H
+[2026-04-01T08:58:07Z]   Require approval: false
+ERROR: Not Found({"error":{"code":"ResourceNotFound","message":"The Resource 'Microsoft.KeyVault/vaults/kv-ipai-dev' under resource group 'rg-ipai-dev-odoo-runtime' was not found. For more details please go to https://aka.ms/ARMResourceNotFoundFix"}})
+[WARN] Failed to create eligible assignment for Key Vault Secrets Officer. This may require Entra P2 license or Privileged Role Administrator permissions.
+[2026-04-01T08:58:07Z] Creating PIM eligible assignment: Owner
+[2026-04-01T08:58:07Z]   Scope: /subscriptions/536d8cf6-89e1-4815-aef3-d5f2c5f4d070
+[2026-04-01T08:58:07Z]   Principal: 84b0949f-7134-4913-bf04-7b089791291c
+[2026-04-01T08:58:07Z]   Max duration: PT4H
+[2026-04-01T08:58:07Z]   Require approval: true
+ERROR: Bad Request({"error":{"code":"RoleAssignmentExists","message":"The Role assignment already exists."}})
+[WARN] Failed to create eligible assignment for Owner. This may require Entra P2 license or Privileged Role Administrator permissions.
+[2026-04-01T08:58:17Z] [WARN] 4 PIM eligible assignment(s) failed. See warnings above.
+[2026-04-01T08:58:17Z] 
+[2026-04-01T08:58:17Z] === PIM Configuration Complete ===
+[2026-04-01T08:58:17Z] Eligible assignments created. Admins must now activate roles via:
+[2026-04-01T08:58:17Z]   - Entra ID portal → Privileged Identity Management → My roles
+[2026-04-01T08:58:17Z]   - az rest --method POST to roleAssignmentScheduleRequests
+[2026-04-01T08:58:17Z] 
+[2026-04-01T08:58:17Z] Default standing access: Reader + Monitoring Reader only
+[2026-04-01T08:58:17Z] Elevated access: requires activation with justification + MFA

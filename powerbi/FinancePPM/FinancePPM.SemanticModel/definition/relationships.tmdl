@@ -1,0 +1,36 @@
+/// Task → Project (M:1)
+relationship rel-task-project
+	fromColumn: Task.ProjectID
+	toColumn: Project.ProjectID
+	crossFilteringBehavior: oneDirection
+
+/// Task → Stage (M:1)
+relationship rel-task-stage
+	fromColumn: Task.StageID
+	toColumn: Stage.StageID
+	crossFilteringBehavior: oneDirection
+
+/// Task → Date via Deadline (M:1)
+relationship rel-task-date
+	fromColumn: Task.DateDeadline
+	toColumn: 'Date'.Date
+	crossFilteringBehavior: oneDirection
+
+/// Project → AnalyticAccount (M:1)
+relationship rel-project-analytic
+	fromColumn: Project.AnalyticAccountID
+	toColumn: AnalyticAccount.AnalyticAccountID
+	crossFilteringBehavior: oneDirection
+
+/// Expense → AnalyticAccount (M:1)
+relationship rel-expense-analytic
+	fromColumn: Expense.AnalyticAccountID
+	toColumn: AnalyticAccount.AnalyticAccountID
+	crossFilteringBehavior: oneDirection
+
+/// Expense → Date (M:1)
+relationship rel-expense-date
+	fromColumn: Expense.ExpenseDate
+	toColumn: 'Date'.Date
+	crossFilteringBehavior: oneDirection
+	isActive: false

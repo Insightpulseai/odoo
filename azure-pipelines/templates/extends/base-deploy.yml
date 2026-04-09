@@ -33,7 +33,7 @@ parameters:
     default: acripaiodoo
   - name: serviceConnection
     type: string
-    default: azure-ipai
+    default: ipai-dev-wif
   - name: containerAppName
     type: string
   - name: resourceGroup

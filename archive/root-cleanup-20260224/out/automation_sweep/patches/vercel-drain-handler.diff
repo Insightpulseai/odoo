@@ -1,4 +1,0 @@
---- a/n8n/workflows/vercel-drain-handler.json
-+++ b/automations/n8n/workflows/vercel-drain-handler.json
-@@ Move stray workflow to canonical location @@
-# git mv 'n8n/workflows/vercel-drain-handler.json' 'automations/n8n/workflows/vercel-drain-handler.json'

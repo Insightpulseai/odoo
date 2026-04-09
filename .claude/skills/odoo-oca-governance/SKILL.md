@@ -27,7 +27,7 @@ odoo-bin upgrade_code --addons-path <path>
 odoo-bin -d test_<module> -i <module> --stop-after-init --test-enable
 ```
 
-Never port without running `upgrade_code`. Odoo 19 changed `tree` to `list` globally.
+Never port without running `upgrade_code`. Odoo 18 changed `tree` to `list` globally.
 
 ## Hard rules
 

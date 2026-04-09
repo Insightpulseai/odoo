@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <!-- Kanban view for review queue -->
+    <record id="view_tax_review_kanban" model="ir.ui.view">
+        <field name="name">ipai.tax.review.kanban</field>
+        <field name="model">ipai.tax.review</field>
+        <field name="arch" type="xml">
+            <kanban default_group_by="state" class="o_kanban_small_column">
+                <field name="name"/>
+                <field name="move_id"/>
+                <field name="state"/>
+                <field name="expected_payable"/>
+                <field name="printed_total_due"/>
+                <field name="delta"/>
+                <field name="extraction_confidence"/>
+                <field name="reviewer_id"/>
+                <templates>
+                    <t t-name="kanban-box">
+                        <div t-attf-class="oe_kanban_global_click">
+                            <div class="oe_kanban_content">
+                                <div class="o_kanban_record_top mb-0">
+                                    <div class="o_kanban_record_headings">
+                                        <strong class="o_kanban_record_title">
+                                            <field name="name"/>
+                                        </strong>
+                                    </div>
+                                    <field name="state" widget="label_selection"
+                                           options="{'classes': {'validated': 'success', 'needs_review': 'warning', 'rejected': 'danger', 'overridden': 'info'}}"/>
+                                </div>
+                                <div class="o_kanban_record_body">
+                                    <field name="move_id"/>
+                                    <div class="mt-1">
+                                        <span>Expected: <field name="expected_payable" widget="monetary"/></span>
+                                    </div>
+                                    <div>
+                                        <span>Printed: <field name="printed_total_due" widget="monetary"/></span>
+                                    </div>
+                                    <div t-if="record.delta.raw_value > 0" class="text-danger">
+                                        <strong>Delta: <field name="delta" widget="monetary"/></strong>
+                                    </div>
+                                </div>
+                                <div class="o_kanban_record_bottom">
+                                    <div class="oe_kanban_bottom_left">
+                                        <span class="text-muted">
+                                            Confidence: <field name="extraction_confidence"/>
+                                        </span>
+                                    </div>
+                                    <div class="oe_kanban_bottom_right">
+                                        <field name="reviewer_id" widget="many2one_avatar_user"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- Search view with filters and group by -->
+    <record id="view_tax_review_search" model="ir.ui.view">
+        <field name="name">ipai.tax.review.search</field>
+        <field name="model">ipai.tax.review</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="move_id"/>
+                <field name="reviewer_id"/>
+                <separator/>
+                <filter name="needs_review" string="Needs Review"
+                        domain="[('state', '=', 'needs_review')]"/>
+                <filter name="rejected" string="Rejected"
+                        domain="[('state', '=', 'rejected')]"/>
+                <filter name="validated" string="Validated"
+                        domain="[('state', '=', 'validated')]"/>
+                <filter name="overridden" string="Overridden"
+                        domain="[('state', '=', 'overridden')]"/>
+                <separator/>
+                <filter name="has_delta" string="Has Delta"
+                        domain="[('delta', '>', 0)]"/>
+                <filter name="low_confidence" string="Low Confidence"
+                        domain="[('extraction_confidence', '&lt;', 0.85)]"/>
+                <separator/>
+                <filter name="my_reviews" string="My Reviews"
+                        domain="[('reviewer_id', '=', uid)]"/>
+                <filter name="unassigned" string="Unassigned"
+                        domain="[('reviewer_id', '=', False)]"/>
+                <separator/>
+                <group expand="0" string="Group By">
+                    <filter name="group_state" string="Status"
+                            context="{'group_by': 'state'}"/>
+                    <filter name="group_reviewer" string="Reviewer"
+                            context="{'group_by': 'reviewer_id'}"/>
+                    <filter name="group_create_date" string="Creation Date"
+                            context="{'group_by': 'create_date:month'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+</odoo>

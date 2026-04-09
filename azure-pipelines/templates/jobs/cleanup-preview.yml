@@ -1,0 +1,75 @@
+# =============================================================================
+# Reusable Job: Cleanup Preview Revision
+# =============================================================================
+# Deactivates a preview revision and removes its label.
+# Called on PR close/merge or as periodic GC.
+#
+# Usage:
+#   jobs:
+#     - template: templates/jobs/cleanup-preview.yml
+#       parameters:
+#         containerAppName: ipai-odoo-dev-web
+#         resourceGroup: rg-ipai-dev-odoo-runtime
+#         previewLabel: pr-42
+# =============================================================================
+
+parameters:
+  - name: containerAppName
+    type: string
+  - name: resourceGroup
+    type: string
+  - name: serviceConnection
+    type: string
+    default: ipai-dev-wif
+  - name: previewLabel
+    type: string
+
+jobs:
+  - job: CleanupPreview
+    displayName: 'Cleanup preview: ${{ parameters.previewLabel }}'
+    pool:
+      vmImage: ubuntu-latest
+    steps:
+      - task: AzureCLI@2
+        displayName: 'Deactivate preview revision and remove label'
+        inputs:
+          azureSubscription: ${{ parameters.serviceConnection }}
+          scriptType: bash
+          scriptLocation: inlineScript
+          inlineScript: |
+            set -euo pipefail
+
+            APP="${{ parameters.containerAppName }}"
+            RG="${{ parameters.resourceGroup }}"
+            LABEL="${{ parameters.previewLabel }}"
+
+            SAFE_LABEL=$(echo "$LABEL" | tr '[:upper:]' '[:lower:]' | sed 's/[^a-z0-9-]/-/g' | cut -c1-64)
+
+            echo "=== Preview Cleanup ==="
+            echo "App:   ${APP}"
+            echo "Label: ${SAFE_LABEL}"
+
+            # Remove label
+            az containerapp revision label remove \
+              --name "${APP}" --resource-group "${RG}" \
+              --label "${SAFE_LABEL}" \
+              --output none 2>/dev/null || echo "Label already removed or not found"
+
+            # Find and deactivate preview revisions
+            PREVIEW_REVISIONS=$(az containerapp revision list \
+              --name "${APP}" --resource-group "${RG}" \
+              --query "[?properties.active && contains(name, 'preview-${SAFE_LABEL}')].name" -o tsv 2>/dev/null || true)
+
+            if [[ -n "$PREVIEW_REVISIONS" ]]; then
+              while IFS= read -r rev; do
+                echo "Deactivating: ${rev}"
+                az containerapp revision deactivate \
+                  --name "${APP}" --resource-group "${RG}" \
+                  --revision "${rev}" --output none 2>/dev/null || true
+              done <<< "$PREVIEW_REVISIONS"
+              echo "PASS: Preview revisions deactivated"
+            else
+              echo "No active preview revisions found for label ${SAFE_LABEL}"
+            fi
+
+            echo "Cleanup complete for preview ${SAFE_LABEL}"

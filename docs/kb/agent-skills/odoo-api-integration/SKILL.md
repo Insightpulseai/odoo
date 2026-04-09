@@ -1,6 +1,6 @@
 ---
 name: odoo_api_integration
-description: Odoo 19 external API integration — JSON-RPC, controllers, FastAPI patterns
+description: Odoo 18 external API integration — JSON-RPC, controllers, FastAPI patterns
 category: integration
 priority: high
 version: "1.0"
@@ -60,7 +60,7 @@ context = {
 }
 ```
 
-## Odoo 19 API Notes
+## Odoo 18 API Notes
 - Field: group_ids (not groups_id) on res.users
 - Portal/Internal User are exclusive groups — cannot assign both
 - Command tuples for relational writes: (4, id) add, (3, id) remove, (6, 0, [ids]) replace

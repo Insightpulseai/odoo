@@ -21,12 +21,12 @@ touch addons/ipai_NEW_MODULE/models/__init__.py
 echo "id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink" > addons/ipai_NEW_MODULE/security/ir.model.access.csv
 ```
 
-4. Create the Manifest file using the Odoo 19 / IPAI standard template.
+4. Create the Manifest file using the Odoo 18 / IPAI standard template.
 
 ```python
 {
     "name": "IPAI New Module",
-    "version": "19.0.1.0.0",  # Odoo 19 versioning
+    "version": "19.0.1.0.0",  # Odoo 18 versioning
     "category": "Custom",
     "depends": ["base"],
     "data": [
@@ -38,4 +38,4 @@ echo "id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unli
 }
 ```
 
-5. Follow Odoo 19 ORM and OWL 2.0+ standards as defined in `.agent/rules.md`.
+5. Follow Odoo 18 ORM and OWL 2.0+ standards as defined in `.agent/rules.md`.

@@ -4,7 +4,7 @@ version: "1.0.0"
 description: >
   Azure AI Foundry agent for IPAI Odoo Copilot.
   Serves as the conversational AI backend for Philippine finance
-  and tax compliance operations on Odoo 19 CE.
+  and tax compliance operations on Odoo 18 CE.
 
 publish_target:
   type: azure-ai-agent-service

@@ -1,6 +1,6 @@
-# Odoo 19 Coding Guidelines — Guardrail & Eval Baseline
+# Odoo 18 Coding Guidelines — Guardrail & Eval Baseline
 
-> **Source**: Odoo 19 contributing/development/coding_guidelines
+> **Source**: Odoo 18 contributing/development/coding_guidelines
 > **Role**: Benchmark for code quality, guardrail source, eval source
 > **NOT**: a persona, a delivery workflow, or a runtime architecture contract
 
@@ -80,7 +80,7 @@ Judge and review skills use this as the primary eval rubric.
 
 - One attribute per line for records with more than 2 attributes.
 - Data file load order in manifest: security groups, ACLs, data, views.
-- Odoo 19: `tree` is renamed to `list` globally — never use `tree` in new code.
+- Odoo 18: `tree` is renamed to `list` globally — never use `tree` in new code.
 
 ## Rule 6: Module Structure
 
@@ -223,7 +223,7 @@ Strict sequence within a model class:
 ## Cross-References
 
 - `agents/knowledge/benchmarks/odoo-developer-howtos.md`
-- `~/.claude/rules/odoo19-coding.md`
+- `~/.claude/rules/odoo18-coding.md`
 - `~/.claude/rules/oca-governance.md`
 
 ---

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Root menu under Accounting -->
+    <menuitem id="menu_finance_close_root"
+              name="Period Close"
+              parent="account.menu_finance"
+              sequence="90"/>
+
+    <menuitem id="menu_closing_task_list"
+              name="Task Lists"
+              parent="menu_finance_close_root"
+              action="action_closing_task_list"
+              sequence="10"/>
+
+    <menuitem id="menu_closing_task"
+              name="Tasks"
+              parent="menu_finance_close_root"
+              action="action_closing_task"
+              sequence="20"/>
+
+    <!-- Configuration submenu -->
+    <menuitem id="menu_finance_close_config"
+              name="Configuration"
+              parent="menu_finance_close_root"
+              sequence="90"/>
+
+    <menuitem id="menu_closing_template"
+              name="Closing Templates"
+              parent="menu_finance_close_config"
+              action="action_closing_template"
+              sequence="10"/>
+
+</odoo>

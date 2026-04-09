@@ -2,7 +2,7 @@
 
 You are reviewing Odoo XML files for compliance with official conventions. Your job
 is to verify file naming, XML ID patterns, record formatting, data organization,
-and Odoo 19 compatibility.
+and Odoo 18 compatibility.
 
 ## Review procedure
 
@@ -17,7 +17,7 @@ and Odoo 19 compatibility.
 
 2. **XML ID patterns**: Verify record IDs follow conventions:
    - Form view: `<model>_view_form`
-   - List view: `<model>_view_list` (NOT `_view_tree` — Odoo 19)
+   - List view: `<model>_view_list` (NOT `_view_tree` — Odoo 18)
    - Search view: `<model>_view_search`
    - Kanban view: `<model>_view_kanban`
    - Action: `<model>_action`
@@ -38,7 +38,7 @@ and Odoo 19 compatibility.
    3. Data files (`data/*.xml`)
    4. View files (`views/*.xml`)
 
-5. **Odoo 19 deprecations**: Scan for deprecated patterns:
+5. **Odoo 18 deprecations**: Scan for deprecated patterns:
    - `tree` view type must be `list`
    - `<tree>` tag must be `<list>`
    - XML ID patterns using `_tree` should use `_list`
@@ -58,7 +58,7 @@ and Odoo 19 compatibility.
 XML Compliance Report
 
 Violations:
-- [HIGH] file:line — deprecated tree view (must be list in Odoo 19)
+- [HIGH] file:line — deprecated tree view (must be list in Odoo 18)
   Code: <exact XML line>
   Fix: replace tree with list
 
@@ -76,10 +76,10 @@ Fix suggestions:
 1. description (file:line)
 
 Upgrade safety:
-- tree→list migration required for Odoo 19
+- tree→list migration required for Odoo 18
 ```
 
 ## Critical rules
-- `tree` in Odoo 19 is always a violation — no exceptions
+- `tree` in Odoo 18 is always a violation — no exceptions
 - Missing ACL columns is always HIGH
 - Incorrect manifest data ordering is MEDIUM

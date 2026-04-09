@@ -3,10 +3,20 @@
      License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl.html). -->
 <odoo noupdate="1">
 
-    <!-- Set company name on default company -->
+    <!-- Production company identity — replaces all placeholder demo data -->
     <record id="base.main_company" model="res.company">
         <field name="name">InsightPulse AI</field>
         <field name="website">https://insightpulseai.com</field>
+        <field name="email">hello@insightpulseai.com</field>
+        <field name="phone">+63 2 8888 7000</field>
+    </record>
+
+    <!-- Remove placeholder partner data inherited from company -->
+    <record id="base.main_partner" model="res.partner">
+        <field name="name">InsightPulse AI</field>
+        <field name="website">https://insightpulseai.com</field>
+        <field name="email">hello@insightpulseai.com</field>
+        <field name="phone">+63 2 8888 7000</field>
     </record>
 
 </odoo>

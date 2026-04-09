@@ -9,7 +9,7 @@ echo "=== Drop existing test DB ==="
 dropdb -h localhost -U tbwa --if-exists "${TEST_DB}" 2>/dev/null || true
 
 echo "=== Run tests ==="
-~/.pyenv/versions/odoo-19-dev/bin/python vendor/odoo/odoo-bin \
+~/.pyenv/versions/odoo-18-dev/bin/python vendor/odoo/odoo-bin \
   --database="${TEST_DB}" \
   --db_host=localhost --db_port=5432 --db_user=tbwa --db_password=False \
   --addons-path=vendor/odoo/addons,addons/ipai \

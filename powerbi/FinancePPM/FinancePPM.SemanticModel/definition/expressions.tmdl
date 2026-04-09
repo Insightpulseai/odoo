@@ -1,0 +1,10 @@
+/// Odoo PostgreSQL connection parameters
+/// Configure per environment (dev/staging/prod)
+expression OdooServer =
+	"pg-ipai-odoo.postgres.database.azure.com" meta [IsParameterQuery=true, Type="Text", IsParameterQueryRequired=true]
+
+expression OdooDatabase =
+	"odoo" meta [IsParameterQuery=true, Type="Text", IsParameterQueryRequired=true]
+
+expression OdooPort =
+	"5432" meta [IsParameterQuery=true, Type="Text", IsParameterQueryRequired=true]

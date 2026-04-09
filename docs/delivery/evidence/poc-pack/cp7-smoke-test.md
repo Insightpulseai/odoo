@@ -28,7 +28,7 @@
 ## Full Output
 
 ```
-Odoo 19 Go-Live Smoke Test
+Odoo 18 Go-Live Smoke Test
 Target: https://erp.insightpulseai.com
 Date: 2026-03-19T03:14:03Z
 ---

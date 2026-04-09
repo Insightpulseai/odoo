@@ -1,0 +1,24 @@
+{
+  "benchmark": "SAP-on-Azure #649 — Well-Architected Review",
+  "timestamp": "2026-04-01T09:02:37Z",
+  "total_checks": 18,
+  "passed": 13,
+  "warned": 1,
+  "failed": 1,
+  "skipped": 3,
+  "score_pct": 86,
+  "pillars": {
+    "reliability": "assessed",
+    "security": "assessed",
+    "cost_optimization": "assessed",
+    "operational_excellence": "assessed",
+    "performance_efficiency": "assessed"
+  },
+  "findings": {
+    "pim_governance_module": "present",
+    "policy_tag_governance_module": "present",
+    "monitoring_workbook": "present",
+    "alert_rules": "present",
+    "bicep_modules": 18
+  }
+}

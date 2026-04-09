@@ -1,13 +1,22 @@
 # syntax=docker/dockerfile:1.7
 # =============================================================================
-# Odoo CE 19 Production Image — Azure Container Apps
+# Odoo CE 18 Production Image — Azure Container Apps
 # =============================================================================
 # Pipeline: .azure/pipelines/ci-cd.yml (Build stage)
 # Config:   config/azure/odoo.conf (list_db=False, proxy_mode=True)
-# Target:   ipaiodoodevacr.azurecr.io/ipai-odoo-web
+# Target:   acripaiodoo.azurecr.io/ipai-odoo-web
+#
+# Addon layout (image-baked, no runtime code mounts):
+#   /usr/lib/python3/dist-packages/odoo/addons   CE core (Debian pkg)
+#   /opt/odoo/src/oca/<repo>/                     OCA per-repo roots
+#   /opt/odoo/src/ipai/                           IPAI bridge modules
+#   /opt/odoo/src/local/                          Local-only addons
+#
+# addons_path is generated at build time from repos on disk.
+# Odoo does NOT recurse — each OCA repo root is an explicit entry.
 # =============================================================================
 
-ARG ODOO_BASE_IMAGE=odoo:19.0
+ARG ODOO_BASE_IMAGE=odoo:18.0
 
 FROM ${ODOO_BASE_IMAGE} AS base
 
@@ -23,25 +32,57 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libldap2-dev \
     libsasl2-dev \
     libssl-dev \
-    libpq-dev \
     python3-pandas \
     python3-xlrd \
     python3-xlsxwriter \
     python3-xmlsec \
     && rm -rf /var/lib/apt/lists/*
 
-# Directory structure
-RUN mkdir -p /opt/odoo/addons/ipai \
-    && mkdir -p /opt/odoo/addons/oca
+# Directory structure — per-repo OCA preservation (not flattening)
+RUN mkdir -p /opt/odoo/src/oca \
+    && mkdir -p /opt/odoo/src/ipai \
+    && mkdir -p /opt/odoo/src/local
+
+# Copy OCA repos preserving per-repo structure
+# Each OCA repo is its own addon root: /opt/odoo/src/oca/<repo>/
+COPY ./addons/oca /opt/odoo/src/oca
 
 # Copy IPAI custom addons
-COPY ./addons/ipai /opt/odoo/addons/ipai
+COPY ./addons/ipai /opt/odoo/src/ipai
 
-# Copy Azure-specific odoo.conf (list_db=False, proxy_mode=True)
-COPY ./config/azure/odoo.conf /etc/odoo/odoo.conf
+# Copy local addons
+COPY ./addons/local /opt/odoo/src/local
+
+# Copy production odoo.conf
+COPY ./config/prod/odoo.conf /etc/odoo/odoo.conf
+
+# Generate addons_path dynamically from OCA repos on disk
+# Odoo does NOT recurse — each OCA repo root must be an explicit entry
+RUN set -eux; \
+    oca_paths=""; \
+    total_modules=0; \
+    for repo_dir in /opt/odoo/src/oca/*/; do \
+        repo=$(basename "$repo_dir"); \
+        mod_count=$(find "$repo_dir" -maxdepth 2 -name "__manifest__.py" | wc -l); \
+        if [ "$mod_count" -gt 0 ]; then \
+            oca_paths="${oca_paths},${repo_dir%/}"; \
+            total_modules=$((total_modules + mod_count)); \
+            echo "  OCA repo: $repo ($mod_count modules)"; \
+        fi; \
+    done; \
+    ADDONS_PATH="/usr/lib/python3/dist-packages/odoo/addons${oca_paths},/opt/odoo/src/ipai,/opt/odoo/src/local"; \
+    echo "$ADDONS_PATH" > /etc/odoo/addons_path.generated; \
+    echo "Total OCA modules: $total_modules"; \
+    echo "Generated addons_path: $ADDONS_PATH"
+
+# Inject generated addons_path into odoo.conf at build time
+RUN GENERATED_PATH=$(cat /etc/odoo/addons_path.generated) && \
+    sed -i "s|^addons_path = .*|addons_path = ${GENERATED_PATH}|" /etc/odoo/odoo.conf && \
+    echo "Final addons_path in odoo.conf:" && \
+    grep "^addons_path" /etc/odoo/odoo.conf
 
 # Install Python deps from OCA and IPAI modules
-RUN find /opt/odoo/addons -name "requirements.txt" \
+RUN find /opt/odoo/src -name "requirements.txt" \
     -exec pip3 install --no-cache-dir --break-system-packages -r {} \; \
     2>/dev/null || true
 
@@ -49,23 +90,24 @@ RUN find /opt/odoo/addons -name "requirements.txt" \
 RUN pip3 install --no-cache-dir --break-system-packages requests || true
 
 # Permissions
-RUN chown -R odoo:odoo /opt/odoo/addons /etc/odoo/odoo.conf
+RUN chown -R odoo:odoo /opt/odoo/src /etc/odoo/odoo.conf
 
 USER odoo
 
 # Config path
 ENV ODOO_RC=/etc/odoo/odoo.conf
 
-# Health check (ACA also probes /web/health externally)
+# DB-aware health check — validates Odoo can actually serve login for bound DB
 HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
-    CMD curl -f http://localhost:8069/web/health || exit 1
+    CMD curl -f http://localhost:8069/web/login?db=odoo || exit 1
 
-LABEL org.opencontainers.image.title="IPAI Odoo CE 19 (Production)" \
+LABEL org.opencontainers.image.title="IPAI Odoo CE 18 (Production)" \
       org.opencontainers.image.vendor="InsightPulse AI" \
-      org.opencontainers.image.version="19.0.1.0.0" \
-      com.insightpulseai.odoo.version="19.0" \
+      org.opencontainers.image.version="18.0.1.0.0" \
+      com.insightpulseai.odoo.version="18.0" \
       com.insightpulseai.license="LGPL-3.0"
 
+# CMD uses odoo.conf as sole authority (no addons-path duplication)
 CMD ["odoo", "-c", "/etc/odoo/odoo.conf"]
 
 EXPOSE 8069 8071 8072

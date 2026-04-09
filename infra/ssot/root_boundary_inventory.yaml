@@ -37,7 +37,7 @@ canonical_top_level:
   - archive
   - automations
   - web
-  - odoo19
+  - odoo18
   - vendor
   - third_party
   - data
@@ -180,9 +180,9 @@ inventory:
         status: active
         notes: "Provider-first auth UX. Backend bridge (ipai_mail_plugin) not yet built."
 
-  - path: odoo19
+  - path: odoo18
     status: aligned
-    notes: "Odoo 19 runtime: config, backups, scripts, docs"
+    notes: "Odoo 18 runtime: config, backups, scripts, docs"
     owner: backend
 
   - path: vendor
@@ -426,7 +426,7 @@ inventory:
 
   - path: odoo
     status: unknown
-    notes: "Contains compose/ + ssot/ + seed data. Not the main Odoo runtime (that is odoo19/)."
+    notes: "Contains compose/ + ssot/ + seed data. Not the main Odoo runtime (that is odoo18/)."
     owner: backend
 
   - path: odoo-schema-mirror
@@ -531,7 +531,7 @@ inventory:
 
   - path: stack
     status: unknown
-    notes: "Single odoo19_stack.yaml. Could merge into infra/ or config/."
+    notes: "Single odoo18_stack.yaml. Could merge into infra/ or config/."
     owner: null
 
   - path: tasks

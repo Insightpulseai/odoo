@@ -11,10 +11,65 @@ updated_at: "2026-03-18"
 
 solutions:
   # ---------------------------------------------------------------------------
+  # Pulser Assistant (4-repo product)
+  # ---------------------------------------------------------------------------
+  - id: pulser-assistant
+    name: "Pulser Assistant"
+    type: ai_assistant
+    url: "https://erp.insightpulseai.com"
+    components:
+      - ipai_odoo_copilot
+      - ipai_ai_copilot
+      - foundry_agent: ipai-odoo-copilot-azure
+      - model: gpt-4.1
+      - knowledge: azure_ai_search (srch-ipai-dev)
+    sub_agents:
+      - id: tax-guru-ph
+        name: "Tax Guru PH"
+        type: tax_sub_agent
+        status: spec_complete
+        domain_packs:
+          - TaxPulse-PH-Pack
+        capabilities:
+          - pulser_tax_info
+          - pulser_tax_navigation
+          - pulser_tax_actions
+          - pulser_tax_grounding
+          - pulser_tax_exception_review
+          - pulser_tax_policy_guidance
+          - pulser_tax_filing_prep
+        grounding:
+          hierarchy: 6-tier-ph
+          tiers:
+            - { tier: 1, source: "BIR Revenue Issuances", class: legal_authority }
+            - { tier: 2, source: "BIR Tax Information", class: taxpayer_guidance }
+            - { tier: 3, source: "eBIRForms / BIR eServices", class: execution_entry }
+            - { tier: 4, source: "CGPA CBOK", class: professional_competency }
+            - { tier: 5, source: "Odoo 18 localization", class: erp_execution_benchmark }
+            - { tier: 6, source: "Internal records", class: internal_context }
+        spec_bundles:
+          - spec/pulser-platform/
+          - spec/pulser-agents/
+          - spec/pulser-web/
+          - spec/pulser-odoo/
+    repo_ownership:
+      platform: "PulserTaxRuleSource, TaxEvidenceBundle, TaxExceptionCase"
+      agents: "TaxDeterminationRequest/Result, TaxPolicyAnswer, TaxActionProposal"
+      web: "TaxDecisionCard, TaxExceptionQueueView, TaxEvidenceView"
+      odoo: "ipai.pulser.tax_context, tax_action_request, tax_exception_event"
+    safety:
+      default_action_mode: suggest_only
+      write_policy: read_only
+    canonicality: canonical
+    criticality: core_runtime
+    status: active
+    notes: "Pulser runtime (copilot) is live. Tax Guru PH is spec-complete, not yet runtime-deployed."
+
+  # ---------------------------------------------------------------------------
   # Core ERP Platform
   # ---------------------------------------------------------------------------
   - id: erp-platform
-    name: "Odoo CE 19 ERP"
+    name: "Odoo CE 18 ERP"
     type: erp
     url: "https://erp.insightpulseai.com"
     components:
@@ -27,7 +82,7 @@ solutions:
       - ipai_project_seed
     runtime: odoo-web-prod
     database: pg-odoo-prod
-    auth: keycloak  # transitional to Entra
+    auth: entra  # Keycloak deprecated, Entra canonical
     canonicality: canonical
     criticality: core_runtime
     status: active
@@ -191,7 +246,7 @@ solutions:
     type: skill_library
     path: agents/skills/
     components:
-      - 16 Odoo 19 reference skills
+      - 16 Odoo 18 reference skills
       - 3 CLI-safe wrappers
       - 5+ business process skills
       - OdooOps platform skills (reference only)

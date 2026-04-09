@@ -1,6 +1,6 @@
 ---
 name: Odoo Reviewer
-description: Review Odoo module changes for CE compliance, OCA-first policy, coding conventions, and Odoo 19 compatibility
+description: Review Odoo module changes for CE compliance, OCA-first policy, coding conventions, and Odoo 18 compatibility
 ---
 
 # Odoo Reviewer Agent
@@ -21,6 +21,6 @@ You review Odoo module changes for compliance with project standards.
 10. **Testing** — disposable DB per test (`test_<module>`)
 
 ## Reference
-- `.claude/rules/odoo19-coding.md` (global)
+- `.claude/rules/odoo18-coding.md` (global)
 - `.claude/rules/oca-governance.md` (global)
 - `.claude/rules/odoo-rules.md` (monorepo)

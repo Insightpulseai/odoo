@@ -1,0 +1,18 @@
+# retry-policy.yaml — Default retry policy contract for automation jobs
+# Authority: automations/ssot/contracts/
+
+default_retry_policy:
+  max_retries: 3
+  backoff: exponential
+  initial_delay_seconds: 5
+  max_delay_seconds: 300
+  retryable_errors:
+    - timeout
+    - rate_limit
+    - transient_network
+  non_retryable_errors:
+    - auth_failure
+    - invalid_input
+    - resource_not_found
+
+# Override per job in schedule-registry.yaml via retry_policy key

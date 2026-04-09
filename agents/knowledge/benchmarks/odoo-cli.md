@@ -1,6 +1,6 @@
 # Odoo CLI (odoo-bin) — Benchmark Reference
 
-> Source: Odoo 19 CE documentation and odoo-bin --help
+> Source: Odoo 18 CE documentation and odoo-bin --help
 > Status: GA — stable production interface
 > Last updated: 2026-03-17
 
@@ -12,14 +12,14 @@ Odoo CLI (odoo-bin) is the canonical CLI surface for all Odoo runtime, admin, an
 
 | Environment | Path |
 |-------------|------|
-| Local dev (Mac) | `vendor/odoo/odoo-bin` (via pyenv `odoo-19-dev`) |
+| Local dev (Mac) | `vendor/odoo/odoo-bin` (via pyenv `odoo-18-dev`) |
 | Devcontainer | `/opt/odoo/odoo-bin` |
 | Production (Docker) | Container entrypoint |
 
 ## Python Runtime
 
-- Canonical interpreter: pyenv virtualenv `odoo-19-dev` (Python 3.11.x)
-- Local launch: `~/.pyenv/versions/odoo-19-dev/bin/python vendor/odoo/odoo-bin`
+- Canonical interpreter: pyenv virtualenv `odoo-18-dev` (Python 3.11.x)
+- Local launch: `~/.pyenv/versions/odoo-18-dev/bin/python vendor/odoo/odoo-bin`
 - Never use system Python or Homebrew Python for Odoo
 
 ## Subcommands

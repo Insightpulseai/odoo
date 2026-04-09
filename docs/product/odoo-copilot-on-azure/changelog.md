@@ -29,4 +29,4 @@
 
 - **module**: `ipai_odoo_copilot` installed -- Odoo Copilot module with Azure AI Foundry backend
 - **module**: `ipai_copilot_actions` installed -- Copilot action tools for Odoo operations
-- **deprecated**: `ipai_ai_widget` replaced by native Odoo 19 Ask AI + `ipai_ai_copilot`
+- **deprecated**: `ipai_ai_widget` replaced by native Odoo 18 Ask AI + `ipai_ai_copilot`

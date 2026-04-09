@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <!-- CAPI bridge enabled (set to True to activate) -->
+        <record id="param_capi_enabled" model="ir.config_parameter">
+            <field name="key">ipai_social_capi.enabled</field>
+            <field name="value">False</field>
+        </record>
+
+        <!-- Azure Function URL for meta-capi-bridge -->
+        <record id="param_bridge_url" model="ir.config_parameter">
+            <field name="key">ipai_social_capi.bridge_url</field>
+            <field name="value"></field>
+        </record>
+
+        <!-- Azure Function key (from Key Vault at runtime) -->
+        <record id="param_bridge_function_key" model="ir.config_parameter">
+            <field name="key">ipai_social_capi.bridge_function_key</field>
+            <field name="value"></field>
+        </record>
+    </data>
+</odoo>

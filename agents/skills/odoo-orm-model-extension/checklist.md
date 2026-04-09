@@ -3,7 +3,7 @@
 - [ ] Target model identified and confirmed as CE-compatible (not Enterprise-only)
 - [ ] Extension uses `_inherit` in an `ipai_*` module (not copy-paste)
 - [ ] No files modified under `vendor/odoo/` or `addons/oca/`
-- [ ] Class attribute order follows Odoo 19 convention (10-step order)
+- [ ] Class attribute order follows Odoo 18 convention (10-step order)
 - [ ] Field names follow convention: `*_id` (M2O), `*_ids` (O2M/M2M), `is_*`/`has_*` (Boolean)
 - [ ] Compute methods named `_compute_<field>` with `@api.depends`
 - [ ] Inverse methods named `_inverse_<field>` if applicable

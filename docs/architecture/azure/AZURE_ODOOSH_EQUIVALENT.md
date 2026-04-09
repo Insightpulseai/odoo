@@ -396,7 +396,7 @@ Key Vault ──► Audit logs ──► Log Analytics
 
 | Capability | Owner Repo | Key Paths |
 |------------|-----------|-----------|
-| Odoo runtime config | `odoo` | `config/environments/`, `odoo19/` |
+| Odoo runtime config | `odoo` | `config/environments/`, `odoo18/` |
 | Odoo addons/modules | `odoo` | `addons/ipai/`, `addons/oca/` |
 | CI/CD pipelines | `odoo` + `infra` | `.github/workflows/`, `azure-pipelines/` |
 | Container images | `odoo` | `docker/Dockerfile.*` |
@@ -467,7 +467,7 @@ Key Vault ──► Audit logs ──► Log Analytics
 
 This is **not** a managed Odoo hosting platform. It is:
 
-- A **codified operating model** for running Odoo 19 CE on Azure
+- A **codified operating model** for running Odoo 18 CE on Azure
 - An **internal platform** for one organization (InsightPulse AI)
 - **Self-managed** — we own the runtime, the data, the upgrades
 - **Azure-native** — uses Azure primitives, not Odoo.sh abstractions

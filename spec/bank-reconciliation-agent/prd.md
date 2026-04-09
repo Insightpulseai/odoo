@@ -31,6 +31,6 @@ Bank reconciliation in Odoo is often a bottleneck for finance teams, requiring m
 - Integration with Odoo Chatter for human-in-the-loop clarifications.
 
 ## Constraints
-- **Odoo 19.0** runtime compatibility.
+- **Odoo 18.0** runtime compatibility.
 - Must follow the **3-Agent Topology** (Advisory/Ops/Actions).
 - Bounded by the **Bank Reconciliation Constitution**.

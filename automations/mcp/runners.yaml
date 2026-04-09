@@ -1,0 +1,42 @@
+version: 1
+owner_repo: automations
+
+jobs:
+  - id: prod_verify
+    description: Run production verification using Playwright browser smoke tests
+    script: automations/scripts/prod_verify_playwright.sh
+    specs: infra/tests/e2e/specs/prod-verify.spec.ts
+    tools:
+      - playwright
+    required_env:
+      - BASE_URL
+    optional_env:
+      - EVIDENCE_ROOT
+      - SKIP_INSTALL
+    outputs:
+      - verification_json
+      - screenshot_artifacts
+      - playwright_log
+
+  - id: evidence_pack
+    description: Collect verification artifacts into auditable evidence bundle
+    script: automations/scripts/evidence_pack.sh
+    required_env:
+      - BUILD_ID
+    optional_env:
+      - EVIDENCE_ROOT
+      - OUTPUT_DIR
+      - BASE_URL
+    outputs:
+      - evidence_pack_json
+      - screenshots_dir
+      - logs_dir
+      - tarball
+
+  - id: docs_grounding_refresh
+    description: Refresh Microsoft reference grounding for operational docs
+    tools:
+      - microsoft-learn
+    outputs:
+      - source_snapshot
+      - citation_index

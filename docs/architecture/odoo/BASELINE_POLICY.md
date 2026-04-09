@@ -1,4 +1,4 @@
-# Odoo 19 Baseline Policy
+# Odoo 18 Baseline Policy
 
 > Platform target, module placement rules, OCA migration policy, and dev environment expectations.
 > This document is the Odoo-specific implementation policy, subordinate to the platform target state.
@@ -26,7 +26,7 @@ If any rule in this document conflicts with the platform target-state document, 
 | Enterprise modules | Forbidden |
 | Odoo.sh / IAP | Forbidden |
 
-Odoo 19 is the sole target. No dual-version support for 18.0. Modules MUST declare `19.0.x.y.z` in their manifest version field.
+Odoo 18 is the sole target. No dual-version support for 18.0. Modules MUST declare `19.0.x.y.z` in their manifest version field.
 
 ---
 
@@ -175,9 +175,9 @@ Layer 2 (bridge):         ipai_ai_oca_bridge → ipai_ai_core
 - Copilot tools are Odoo-side declarations — orchestration stays in n8n
 - No LLM API calls from Odoo Python code — use bridge/Edge Function pattern
 
-### Odoo 19 AI Compatibility Notes
+### Odoo 18 AI Compatibility Notes
 
-| Odoo 19 Change | Impact | Resolution |
+| Odoo 18 Change | Impact | Resolution |
 |----------------|--------|------------|
 | `<tree>` → `<list>` | View XML | Use `<list>` in all views |
 | `numbercall` removed from `ir.cron` | Cron XML data | Remove field from XML |

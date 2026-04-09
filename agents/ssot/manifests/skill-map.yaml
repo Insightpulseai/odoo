@@ -1,0 +1,12 @@
+# skill-map.yaml — maps skill names to their definition files
+# Referenced by: tests/contract/test_skill_map.py
+# TODO: Populate as skills are formalized into contract YAML files
+
+version: "1.0.0"
+last_updated: "2026-03-30"
+
+skills: []
+  # Example entry:
+  # - name: scaffold-odoo-module
+  #   domain: odoo_sh
+  #   file: skills/odoo_sh/scaffold-odoo-module.yaml
