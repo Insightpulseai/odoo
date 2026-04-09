@@ -152,6 +152,26 @@ Updates source status/result.
 - source reuse across sessions/projects
 - advanced access control and policies
 
+## 7.5 Intent router
+
+Implement an attachment-aware intent router ahead of the generic assistant prompt path.
+
+### Routing order
+1. Active attachment detection — are there indexed sources in this session?
+2. Attachment type classification — invoice, receipt, contract, spreadsheet, general
+3. Task intent classification — extract, summarize, validate, review, compare
+4. Routed action:
+   - **extract**: run extraction pipeline, return parsed fields
+   - **summarize**: extract text, generate summary
+   - **validate / assess / check**: extract fields, run deterministic checks, report result
+   - **review**: extract and present key fields
+   - **narrow follow-up**: only if the task is genuinely ambiguous after considering attachment + intent
+
+### Implementation location
+- Intent classification: `_classify_intent()` method on controller or service
+- Prompt construction: grounded prompt builder uses intent to set system instruction
+- Deterministic validation: separate from LLM — compute totals, compare fields, flag mismatches
+
 ## 8. Risks
 
 - making Odoo too heavy by moving ingestion work into workers

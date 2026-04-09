@@ -9,6 +9,12 @@ from odoo import http
 from odoo.http import request
 
 from ..models.chat_source import MIME_TO_TYPE
+from ..models.intent_router import (
+    classify_intent,
+    classify_document_type,
+    build_system_instruction,
+    has_attachment_context,
+)
 
 _logger = logging.getLogger(__name__)
 
@@ -239,6 +245,12 @@ class ChatSourceBridgeController(http.Controller):
 
         eligible_ids = eligible.ids
 
+        # ----------------------------------------------------------
+        # Attachment-aware intent routing (FR-10)
+        # ----------------------------------------------------------
+        intent = classify_intent(message)
+        doc_type = 'general'
+
         # Store user message
         user_msg = request.env['ipai.chat.message'].create({
             'session_id': session_id,
@@ -258,17 +270,32 @@ class ChatSourceBridgeController(http.Controller):
                     f'{text}\n'
                     f'--- End: {src.name} ---'
                 )
+                # Classify doc type from first source with text
+                if doc_type == 'general':
+                    doc_type = classify_document_type(text, src.name)
+
+        # Build intent-specific system instruction
+        system_instruction = build_system_instruction(
+            intent, doc_type, len(eligible_ids),
+        )
 
         # Try Foundry-backed chat via ipai_odoo_copilot
         assistant_content = None
         foundry_used = False
         if source_context_parts:
-            grounded_prompt = (
-                'The user has uploaded the following source documents. '
-                'Use them to answer the question.\n\n'
-                + '\n\n'.join(source_context_parts)
-                + f'\n\nUser question: {message}'
-            )
+            if system_instruction:
+                grounded_prompt = (
+                    system_instruction + '\n\n'
+                    + '\n\n'.join(source_context_parts)
+                    + f'\n\nUser question: {message}'
+                )
+            else:
+                grounded_prompt = (
+                    'The user has uploaded the following source documents. '
+                    'Use them to answer the question.\n\n'
+                    + '\n\n'.join(source_context_parts)
+                    + f'\n\nUser question: {message}'
+                )
         else:
             grounded_prompt = message
 
@@ -320,4 +347,6 @@ class ChatSourceBridgeController(http.Controller):
             'content': assistant_content,
             'eligible_source_count': len(eligible_ids),
             'foundry_used': foundry_used,
+            'intent': intent,
+            'doc_type': doc_type,
         }

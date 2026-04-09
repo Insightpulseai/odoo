@@ -138,6 +138,28 @@ If source processing/indexing fails:
 - error message must be visible
 - source must not be usable for grounded chat
 
+### FR-10 Attachment-aware intent resolution
+
+The chat interface must resolve user intent against the active attachment set before falling back to generic clarification.
+
+When a message contains or immediately follows an uploaded attachment, the system must:
+1. Detect attachment presence
+2. Classify attachment type (invoice, receipt, contract, general document)
+3. Classify user intent from the message
+4. Route to the appropriate action path
+
+Intent routing examples:
+- "extract first" with an uploaded document → run extraction, return parsed fields
+- "assess if the tax computation is correct" with an uploaded invoice → run extraction + deterministic validation
+- "summarize this" with an uploaded file → summarize the file content
+- "check totals" with an uploaded invoice → extract line items, compute totals, compare against printed totals
+- "review" with an uploaded document → extract and present key fields for review
+
+Anti-patterns (must not happen):
+- Asking "what type of analysis do you want?" when the user said "assess"
+- Asking "what record/module do you mean?" when an attachment is present
+- Asking "please provide more details" when intent and attachment are both clear
+
 ### FR-9 Admin controls
 Admins/operators must be able to:
 - retry indexing

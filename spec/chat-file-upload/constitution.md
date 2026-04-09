@@ -134,6 +134,27 @@ Owns:
 - runtime ingress checks
 - rollback-ready deployment path
 
+## Attachment-grounded intent rule
+
+If a user message includes an uploaded file or directly follows an uploaded file in the same chat turn sequence, the system must treat the attachment as the primary subject by default.
+
+The assistant must not ask generic clarification questions that ignore the attachment context when the user has already expressed a valid intent such as:
+- extract
+- summarize
+- review
+- assess
+- validate
+- check discrepancy
+- check totals
+- check compliance
+
+The system may ask follow-up questions only when:
+- multiple attachments create ambiguity about which one the user means
+- the requested task is materially under-specified beyond what the document and user profile can supply
+- the requested validation requires a missing business parameter not inferable from the document or profile
+
+This rule is non-negotiable. Violating it — by asking "what type of analysis?" or "which record?" when an attachment and valid intent are present — is a product defect.
+
 ## Non-goals
 
 - building a full general-purpose document management platform
