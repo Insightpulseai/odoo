@@ -1,0 +1,198 @@
+version: 1
+metadata:
+  owner: ipai-assessment-harness
+  purpose: >
+    Mapping between Microsoft assessment families, internal simulation families,
+    and the IPAI platform/workload context.
+
+assessment_families:
+  - id: waf_core
+    name: Azure Well-Architected Framework
+    type: official_framework
+    primary: true
+    pillars:
+      - reliability
+      - security
+      - cost_optimization
+      - operational_excellence
+      - performance_efficiency
+
+  - id: waf_workload_overlays
+    name: Azure Well-Architected Workload Overlays
+    type: official_workload_guidance
+    overlays:
+      - ai
+      - saas
+      - sap
+      - mission_critical
+
+  - id: transformation_readiness
+    name: Transformation Readiness Overlay
+    type: internal_overlay
+    phases:
+      - discover
+      - analyze
+      - design
+      - implement
+      - operate
+
+  - id: devops_capability
+    name: DevOps Capability Assessment
+    type: official_adjacent_assessment
+    internal_simulation: true
+
+  - id: finops_review
+    name: FinOps Review
+    type: official_adjacent_assessment
+    internal_simulation: true
+
+  - id: platform_engineering
+    name: Platform Engineering Technical Assessment
+    type: official_adjacent_assessment
+    internal_simulation: true
+
+  - id: go_live_waf
+    name: Go-Live Well-Architected Review
+    type: official_adjacent_assessment
+    internal_simulation: true
+
+  - id: genaiops
+    name: GenAIOps Maturity Model Assessment
+    type: official_adjacent_assessment
+    internal_simulation: true
+
+  - id: saas_journey
+    name: SaaS Journey Review
+    type: official_adjacent_assessment
+    internal_simulation: true
+
+official_vs_internal:
+  official_assessments_portal:
+    hosted: true
+    registration_required: true
+    normalized_scoring: true
+    exportable: true
+    notes:
+      - internal_harness_does_not_replace_official_portal
+      - internal_harness_prepares_answers_and_calibrates_scoring
+
+ipai_mapping:
+  workload_name: odoo_on_azure
+  primary_overlay: saas
+  secondary_overlays:
+    - ai
+    - sap
+  optional_overlays:
+    - mission_critical
+  dominant_current_risk:
+    - governance_drift
+    - untracked_resources
+  internal_baseline:
+    aggregate_score: 2.7
+    waf_lens_score: 2.4
+    verdict: conditionally_ready
+
+artifact_map:
+  internal_assessment_doc:
+    path: docs/architecture/IPAI_PLATFORM_ANALYSIS.md
+  assessment_structure:
+    path: docs/architecture-review/baseline/azure_architecture_review_structure.md
+  scoring_template:
+    path: docs/architecture-review/templates/assessment_report.md
+  maturity_rubric:
+    path: ssot/azure/platform_maturity_benchmark.yaml
+
+question_group_mapping:
+  reliability:
+    official_family: waf_core
+    internal_sources:
+      - platform/docs/workload-center/**
+      - docs/odoo-on-azure/planning/ha-and-dr.md
+      - infra/docs/runtime/**
+  security:
+    official_family: waf_core
+    internal_sources:
+      - security_docs
+      - identity_docs
+      - exception_registry
+  cost_optimization:
+    official_family: waf_core
+    internal_sources:
+      - finops_docs
+      - cost_analysis_docs
+      - tagging_strategy
+  operational_excellence:
+    official_family: waf_core
+    internal_sources:
+      - .github/docs/engineering/**
+      - infra/docs/deployment-automation/**
+      - platform/docs/monitoring/**
+  performance_efficiency:
+    official_family: waf_core
+    internal_sources:
+      - runtime_docs
+      - monitoring_metrics
+      - scaling_assumptions
+
+  ai_overlay:
+    official_family: waf_workload_overlays
+    overlay: ai
+    internal_sources:
+      - platform/docs/ai-platform/**
+      - agents/docs/ai-platform/**
+  saas_overlay:
+    official_family: waf_workload_overlays
+    overlay: saas
+    internal_sources:
+      - docs/odoo-on-azure/**
+      - web/**
+      - platform/**
+  sap_overlay:
+    official_family: waf_workload_overlays
+    overlay: sap
+    internal_sources:
+      - platform/docs/workload-center/**
+      - platform/docs/monitoring/**
+      - recovery_docs
+  transformation_overlay:
+    official_family: transformation_readiness
+    internal_sources:
+      - docs/odoo-on-azure/**
+      - roadmap_artifacts
+      - stakeholder_docs
+      - process_docs
+
+benchmark_corpora:
+  - id: azure_architecture_center
+    role: azure_reference_architecture_and_workload_pattern_benchmark
+    use_for:
+      - reference_architecture_alignment
+      - container_platform_selection
+      - ai_agent_orchestration_patterns
+      - analytics_architecture_patterns
+      - landing_zone_and_workload_boundary_patterns
+    notes:
+      - benchmark_only_not_scoring_authority
+      - use to challenge topology, platform boundary, and deployment-pattern choices
+      - use WAF MCP guidance as supplemental evidence input where available
+
+  - id: sap_on_azure_offerings
+    role: workload_operating_model_taxonomy_benchmark
+    use_for:
+      - workload_center_structure
+      - deployment_automation_structure
+      - monitoring_structure
+      - integration_structure
+      - backup_dr_structure
+      - devops_iac_governance_structure
+    notes:
+      - benchmark_only_not_scoring_authority
+      - use to shape Odoo-on-Azure documentation families
+
+evidence_sources:
+  - id: waf_mcp_guidance
+    type: programmatic_guidance_source
+    use_for:
+      - evidence_harvesting
+      - recommendation_cross_check
+      - calibration_support

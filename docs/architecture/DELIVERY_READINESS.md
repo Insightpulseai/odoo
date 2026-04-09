@@ -8,7 +8,7 @@
 | Surface | Pipeline | ACR Image | Container App | Public URL | Status |
 |---------|----------|-----------|---------------|------------|--------|
 | Web Landing | `web-landing-deploy.yml` | `ipai-website:latest` | `ipai-website-dev` | `www.insightpulseai.com` | Ready |
-| Odoo ERP | `odoo-deploy.yml` | `ipai-odoo:19.0-copilot` | `ipai-odoo-dev-web` | `erp.insightpulseai.com` | Ready |
+| Odoo ERP | `odoo-deploy.yml` | `ipai-odoo:18.0-copilot` | `ipai-odoo-dev-web` | `erp.insightpulseai.com` | Ready |
 | Databricks | `databricks-deploy.yml` | N/A (bundle deploy) | N/A | Workspace URL | Ready |
 | BI Layer | `bi-deploy-promote.yml` | N/A (SQL + Fabric) | N/A | N/A | Ready |
 

@@ -1,0 +1,20 @@
+-- Customer 360 mart view
+-- Purpose: Unified customer view joining partner, sales, and support data
+-- Layer: Gold
+-- Bundle: sql_warehouse
+
+CREATE OR REPLACE VIEW ${var.catalog}.${var.gold_schema}.customer_360 AS
+SELECT
+    p.id AS partner_id,
+    p.name AS partner_name,
+    p.email,
+    p.phone,
+    p.city,
+    p.country_id,
+    p.create_date AS customer_since,
+    p.active
+FROM
+    ${var.catalog}.${var.bronze_schema}.res_partner p
+WHERE
+    p.active = true
+    AND p.customer_rank > 0;

@@ -1,0 +1,95 @@
+# Claude Platform — Indexing Contract
+
+name: claude-platform-indexing
+description: Vector index configuration for Claude Platform KB
+
+index:
+  backend: azure-ai-search
+  index_name: claude-platform-docs
+
+  api_version:
+    current: "2024-07-01"       # Stable, currently compatible
+    target: "2025-09-01"        # Newer stable data-plane API version
+
+  embedding:
+    preferred: text-embedding-3-small   # Default for new KBs (cost-effective, better retrieval)
+    high_quality: text-embedding-3-large # Use for highest retrieval quality
+    fallback: text-embedding-ada-002    # Compatibility only — do not use for new indexes
+    dimensions: 1536                     # text-embedding-3-small@1536 or ada-002@1536
+    batch_size: 100
+
+  search:
+    semantic_config: claude-platform-semantic
+    scoring_profile: claude-platform-scoring
+    default_top_k: 8
+    max_top_k: 20
+
+  fields:
+    - name: chunk_id
+      type: Edm.String
+      key: true
+      filterable: true
+    - name: content
+      type: Edm.String
+      searchable: true
+      analyzer: en.microsoft
+    - name: content_vector
+      type: Collection(Edm.Single)
+      searchable: true
+      dimensions: 1536
+      vector_search_profile: claude-platform-vector-profile
+    - name: path
+      type: Edm.String
+      filterable: true
+      facetable: true
+    - name: heading_chain
+      type: Edm.String
+      searchable: true
+      filterable: true
+    - name: domain
+      type: Edm.String
+      filterable: true
+      facetable: true
+    - name: source
+      type: Edm.String
+      filterable: true
+    - name: source_type
+      type: Edm.String
+      filterable: true
+    - name: product
+      type: Edm.String
+      filterable: true
+    - name: lang
+      type: Edm.String
+      filterable: true
+    - name: ordinal
+      type: Edm.Int32
+      sortable: true
+    - name: content_hash
+      type: Edm.String
+      filterable: true
+    - name: indexed_at
+      type: Edm.DateTimeOffset
+      sortable: true
+
+incremental:
+  strategy: content-hash
+  tracking:
+    manifest_path: agents/knowledge/claude_platform/.index_manifest.json
+  behavior:
+    on_content_changed: re-chunk + re-embed + upsert
+    on_page_removed: delete chunks by path
+    on_new_page: chunk + embed + insert
+    on_unchanged: skip
+
+refresh:
+  schedule: weekly
+  workflow: .github/workflows/claude-platform-kb-refresh.yml
+
+citation:
+  format: "domain={domain} path={path} heading={heading_chain} chunk_id={chunk_id}"
+  required_fields:
+    - domain
+    - path
+    - heading_chain
+    - chunk_id

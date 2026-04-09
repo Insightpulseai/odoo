@@ -1,0 +1,64 @@
+version: 1
+namespace: ipai.ops_platform.openai.starter_app_matrix.v1
+artifact_type: registry
+repo_key: ops_platform
+domain: openai
+subject: starter_app_matrix
+
+# ============================================================================
+# OPENAI STARTER APP → IPAI MAPPING
+# ============================================================================
+
+starters:
+  - id: chatkit
+    source: openai
+    title: ChatKit Starter App
+    description: "Reference chat UI with streaming, tool use, and conversation management"
+    tech_stack: [react, typescript, openai_sdk]
+    factory_use: bootstrap_for_chat_ui
+    target_repo: web
+    target_channel: internal_one_click
+    extraction_mode: pattern_extract
+    ipai_equivalent: ops_console_chat_surface
+
+  - id: apps_sdk
+    source: openai
+    title: Apps SDK Examples
+    description: "OpenAI SDK usage patterns for various API features"
+    tech_stack: [python, typescript, openai_sdk]
+    factory_use: sdk_reference
+    target_repo: agents
+    extraction_mode: pattern_extract
+    ipai_equivalent: foundry_sdk_quickstart
+
+  - id: responses_starter
+    source: openai
+    title: Responses Starter App
+    description: "Responses API implementation with tool calling and streaming"
+    tech_stack: [python, openai_sdk]
+    factory_use: agent_runtime_bootstrap
+    target_repo: agents
+    target_channel: internal_one_click
+    extraction_mode: bootstrap_plus_refactor
+    ipai_equivalent: foundry_agent_copilot
+
+  - id: realtime_api
+    source: openai
+    title: Realtime API Reference
+    description: "Voice and real-time interaction patterns"
+    tech_stack: [python, websocket]
+    factory_use: reference_only
+    target_repo: agents
+    extraction_mode: pattern_extract
+    ipai_relevance: low
+    note: "No voice use case currently"
+
+mapping_to_foundry_templates:
+  chatkit: get_started_with_ai_chat
+  responses_starter: get_started_with_ai_agents
+  apps_sdk: foundry_sdk_quickstart
+
+rules:
+  openai_starters_are_pattern_sources: true
+  prefer_foundry_template_when_both_exist: true
+  never_ship_openai_sample_code_unchanged: true

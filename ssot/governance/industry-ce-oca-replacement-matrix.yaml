@@ -1,0 +1,165 @@
+version: 2
+artifact: industry_ce_oca_replacement_matrix
+description: >
+  Machine-readable replacement matrix mapping Odoo Enterprise industry pages
+  to CE + OCA equivalents. Each row assesses scoped parity level and custom gap.
+last_updated: "2026-04-05"
+
+parity_labels:
+  full_operational_parity: >
+    Business operations covered end-to-end with CE+OCA/config and validated by scenario tests.
+  full_agency_ops_parity: >
+    Agency operating model covered end-to-end, excluding broader Enterprise marketing-suite polish unless separately validated.
+  full_partner_ops_parity: >
+    Delivery and commercial operations covered, with small custom UX modules allowed.
+  workflow_parity_via_ipai: >
+    Enterprise workflow emulated through CE+OCA substrate plus an approved IPAI bridge/product module.
+
+columns:
+  - page
+  - source_url
+  - capability
+  - ce_core
+  - oca_repo
+  - ipai_module
+  - exact_or_partial
+  - parity_scope
+  - custom_needed
+  - install_verified
+  - notes
+
+rows:
+  - page: marketing_automation
+    source_url: https://www.odoo.com/es_ES/app/marketing-automation
+    capability:
+      - visual_campaign_builder
+      - timed_triggers
+      - branching_if_then_actions
+      - lead_enrichment
+      - crm_email_event_integration
+    ce_core:
+      - crm
+      - website
+      - email_marketing
+      - events
+      - mass_mailing
+    oca_repo:
+      - OCA/automation
+      - OCA/mail
+      - OCA/social
+    ipai_module:
+      - ipai_marketing_automation
+    exact_or_partial: workflow_parity_via_ipai
+    parity_scope:
+      - workflow
+    custom_needed: true
+    install_verified: true
+    notes: >
+      CE+OCA provides automation_oca, mail_tracking_mass_mailing, mail_gateway,
+      and event_registration_mass_mailing as substrate. ipai_marketing_automation
+      adds multi-step campaign model with timed triggers, conditions, and actions
+      (send mailing, add tag, move stage, create activity). Cron-driven execution.
+      Does not replicate Enterprise's visual drag-and-drop designer.
+
+  - page: marketing_agency
+    source_url: https://www.odoo.com/es_ES/industries/marketing-agency
+    capability:
+      - website_and_lead_capture
+      - crm_pipeline
+      - project_management
+      - timesheets
+      - invoicing
+      - recurring_invoices
+      - purchasing
+    ce_core:
+      - website
+      - crm
+      - project
+      - timesheets
+      - sales
+      - accounting
+      - purchase
+    oca_repo:
+      - OCA/timesheet
+      - OCA/sale-workflow
+      - OCA/contract
+      - OCA/social
+    ipai_module: []
+    exact_or_partial: full_agency_ops_parity
+    parity_scope:
+      - operational
+    custom_needed: false
+    install_verified: true
+    notes: >
+      Agency operating stack covered by CE core + subscription_oca (recurring billing)
+      + mail_gateway (multi-channel) + MIS Builder templates (KPI dashboards).
+      No custom IPAI module required. Does not claim full Enterprise marketing-suite polish.
+
+  - page: odoo_partner
+    source_url: https://www.odoo.com/industries/odoo-partner
+    capability:
+      - crm_pipeline
+      - quote_calculator
+      - quotation_builder
+      - automated_project_creation
+      - timesheet_leaderboard
+      - invoicing
+    ce_core:
+      - crm
+      - sales
+      - project
+      - timesheets
+      - accounting
+    oca_repo:
+      - OCA/sale-workflow
+      - OCA/timesheet
+      - OCA/mail
+    ipai_module:
+      - ipai_service_calculator
+      - ipai_timesheet_leaderboard
+    exact_or_partial: full_partner_ops_parity
+    parity_scope:
+      - operational
+      - custom_ux
+    custom_needed: true
+    install_verified: true
+    notes: >
+      Delivery-ops backbone covered by CE+OCA. ipai_service_calculator provides
+      wizard-based pack-to-SO generation. ipai_timesheet_leaderboard provides
+      SQL view with pivot/graph ranking by billable hours. Service packs defined
+      as product bundles + sale order templates (config/data, not code).
+
+  - page: grocery_store
+    source_url: https://www.odoo.com/industries/grocery-store
+    capability:
+      - pos
+      - promotions_and_loyalty
+      - inventory_and_replenishment
+      - barcode
+      - expiration_dates
+      - integrated_accounting
+      - shift_planning
+      - reporting
+    ce_core:
+      - point_of_sale
+      - inventory
+      - purchase
+      - accounting
+      - sales
+      - employees
+    oca_repo:
+      - OCA/pos
+      - OCA/sale-promotion
+      - OCA/stock-logistics-barcode
+      - OCA/stock-logistics-workflow
+      - OCA/shift-planning
+    ipai_module: []
+    exact_or_partial: full_operational_parity
+    parity_scope:
+      - operational
+    custom_needed: false
+    install_verified: true
+    notes: >
+      Strongest CE+OCA fit. POS + loyalty/promotion + barcode + shift planning
+      all covered by OCA repos cloned and install-verified on 18.0. No custom
+      IPAI module needed. All OCA modules pass install on odoo_dev.

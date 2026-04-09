@@ -1,0 +1,120 @@
+# schema: ssot.integrations.v1
+# Plane.so webhook ingestion + API sync connector.
+# Treat Plane as external SoW; mirror into work_plane.* schema.
+# See: docs/architecture/PLANE_APP_CONNECTOR.md
+
+version: "1.0.0"
+schema: ssot.integrations.v1
+name: plane_webhooks
+display_name: "Plane App (Webhook + API sync)"
+status: planned              # planned | porting | active | deprecated
+last_reviewed: "2026-03-01"
+
+provider:
+  platform: plane
+  api_base: https://api.plane.so/api/v1/
+  auth_methods:
+    - api_key        # X-API-Key header (server-side sync worker)
+    - oauth2         # user-scoped access (code flow)
+
+components:
+  webhook_ingest:
+    description: >
+      HTTP endpoint that receives Plane webhook payloads, validates the shared
+      secret, enforces idempotency on Plane event id, then writes to ops.event_queue.
+    path: "supabase/functions/plane-webhook/"
+
+  api_sync:
+    description: >
+      Background worker that performs API backfill and incremental sync from
+      the Plane REST API into the work_plane.* mirror schema. Uses the
+      events_cursor table for incremental pagination.
+    path: "supabase/functions/plane-sync/"
+
+  oauth_callback:
+    description: >
+      OAuth2 authorization code callback handler. Exchanges code for tokens,
+      stores token ref (keyed by workspace_slug + user_id) in Supabase Vault.
+      Never stores raw tokens outside Vault.
+    path: "supabase/functions/plane-oauth-callback/"
+
+ssot_boundary_rules:
+  - "Plane is read-only by default; no writes to Plane SoR without explicit policy override"
+  - "Writeback to Plane requires a policy gate flag (work_plane.writeback_policy = enabled)"
+  - "Plane API tokens and OAuth secrets must never appear in browser-side code or Vercel env"
+  - "All webhook payloads must be validated against the shared secret before processing"
+  - "Idempotency is enforced on Plane event id — duplicate events are silently discarded"
+  - "Mirror schema (work_plane.*) is the only write target from ingest handlers"
+  - "MCP agent calls to Plane must be logged in ops.run_events"
+
+required_secrets:
+  - plane_api_key              # X-API-Key header for server-side sync worker
+  - plane_oauth_client_id      # OAuth2 app client ID for user-scoped access
+  - plane_oauth_client_secret  # OAuth2 app client secret for token exchange
+
+allowed_egress:
+  - api.plane.so               # Plane REST API (backfill, writeback when enabled)
+
+data_flows:
+  - id: inbound_webhook
+    direction: inbound
+    source: plane
+    destination: "work_plane.*"
+    path: "Plane → webhook ingest → ops.event_queue → worker → work_plane.*"
+    status: enabled
+    notes: >
+      Primary ingestion path. Plane fires events on project, issue, cycle, and
+      module changes. Worker consumes ops.event_queue and upserts into the
+      corresponding work_plane.* table.
+
+  - id: inbound_api_backfill
+    direction: inbound
+    source: plane
+    destination: "work_plane.*"
+    path: "Plane REST API → plane-sync worker → work_plane.*"
+    status: enabled
+    notes: >
+      Used for initial backfill and recovery from missed webhooks.
+      Cursor tracked in work_plane.events_cursor per workspace.
+
+  - id: outbound_writeback
+    direction: outbound
+    source: "work_plane.*"
+    destination: plane
+    path: "work_plane.* → writeback worker → Plane REST API"
+    status: disabled_by_default
+    notes: >
+      Disabled until mirror schema is stable and writeback policy is defined.
+      Requires work_plane.writeback_policy = 'enabled' per workspace.
+      See: docs/architecture/PLANE_APP_CONNECTOR.md §Writeback Policy.
+
+risk_flags:
+  - id: webhook_no_signature
+    severity: medium
+    description: >
+      Plane may not cryptographically sign webhook payloads (as of 2026-03).
+      Without signature verification, any party who knows the endpoint URL
+      can inject fake events.
+    mitigation: >
+      Use a shared secret embedded in the webhook URL path or a custom header
+      (e.g., X-Plane-Webhook-Secret). Validate on every request before processing.
+      Rotate the shared secret on team member offboarding.
+
+  - id: api_rate_limit
+    severity: low
+    description: >
+      Plane REST API enforces rate limits. Aggressive backfill or sync workers
+      may trigger 429 responses, causing data gaps.
+    mitigation: >
+      Implement exponential backoff in the sync worker. Use events_cursor for
+      incremental sync to minimize API calls after initial backfill.
+
+  - id: writeback_drift
+    severity: medium
+    description: >
+      If writeback is enabled, concurrent edits in both Plane and internal
+      work.* tables can produce conflicting states (last-write-wins drift).
+    mitigation: >
+      Keep writeback disabled by default. When enabled, implement optimistic
+      locking (use Plane's updated_at as ETag) and define conflict resolution
+      policy before enabling per workspace.

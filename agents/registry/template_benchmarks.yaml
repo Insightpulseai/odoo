@@ -134,7 +134,7 @@ benchmarks:
         - credit_card_feeds (depends on PH bank feed availability)
         - mileage_per_diem (not common for PH operations)
     ipai_module: ipai_hr_expense_liquidation
-    ipai_module_version: "19.0.3.0.0"
+    ipai_module_version: "18.0.3.0.0"
     ipai_module_status: production
     related_specs:
       - expense-liquidation-agent (agentic OCR + multi-channel submission)
@@ -203,13 +203,13 @@ benchmarks:
       - financial_discrepancy_detection_loop
       - correction_proposal_with_evidence
 
-  - id: odoo19-agents
-    name: Odoo 19 AI Agents (conceptual)
+  - id: odoo18-agents
+    name: Odoo 18 AI Agents (conceptual)
     vendor: Odoo SA
-    source: Odoo 19 roadmap (Topics + Tools + Sources model)
+    source: Odoo 18 roadmap (Topics + Tools + Sources model)
     role: conceptual_pattern_only
     description: >
-      Odoo 19 introduces a Topics/Tools/Sources agent model.
+      Odoo 18 introduces a Topics/Tools/Sources agent model.
       Benchmark only — not execution authority for IPAI platform.
     reuse_for:
       - topics_tools_sources_model

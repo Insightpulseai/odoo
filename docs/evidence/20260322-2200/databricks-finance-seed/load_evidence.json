@@ -1,0 +1,40 @@
+{
+  "bronze_schema": "bronze",
+  "catalog": "dbw_ipai_dev",
+  "executed_gold_sql_files": [
+    "01_ap_ar_cash_summary.sql",
+    "02_expense_liquidation_health.sql",
+    "03_policy_compliance_scorecard.sql",
+    "04_project_budget_vs_actual.sql",
+    "05_project_profitability.sql",
+    "06_portfolio_financial_health.sql"
+  ],
+  "generated_at_utc": "2026-03-22T05:13:45Z",
+  "gold_row_counts": {
+    "ap_ar_cash_summary": 11,
+    "expense_liquidation_health": 5,
+    "policy_compliance_scorecard": 4,
+    "portfolio_financial_health": 1,
+    "project_budget_vs_actual": 9,
+    "project_profitability": 3
+  },
+  "gold_schema": "gold",
+  "loaded_bronze_tables": {
+    "budgets": 9,
+    "cash_advances": 2,
+    "customers": 3,
+    "employees": 5,
+    "expense_reports": 3,
+    "expenses": 8,
+    "gl_journal_entries": 50,
+    "invoices": 4,
+    "milestones": 6,
+    "payments": 6,
+    "portfolios": 1,
+    "projects": 3,
+    "tasks": 15,
+    "vendor_bills": 4,
+    "vendors": 2
+  },
+  "silver_schema": "silver"
+}

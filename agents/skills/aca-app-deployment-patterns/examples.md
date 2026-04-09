@@ -28,7 +28,7 @@ resource odooWeb 'Microsoft.App/containerApps@2023-05-01' = {
     template: {
       containers: [{
         name: 'odoo-web'
-        image: 'ipaiodoodevacr.azurecr.io/odoo:19-latest'
+        image: 'ipaiodoodevacr.azurecr.io/odoo:18-latest'
         resources: {
           cpu: json('1.0')
           memory: '2Gi'
@@ -86,7 +86,7 @@ resource odooWorker 'Microsoft.App/containerApps@2023-05-01' = {
     template: {
       containers: [{
         name: 'odoo-worker'
-        image: 'ipaiodoodevacr.azurecr.io/odoo:19-latest'
+        image: 'ipaiodoodevacr.azurecr.io/odoo:18-latest'
         command: ['odoo', '--workers=2', '--no-http']
         resources: { cpu: json('0.5'), memory: '1Gi' }
       }]

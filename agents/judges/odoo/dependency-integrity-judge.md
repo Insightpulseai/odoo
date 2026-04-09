@@ -15,7 +15,7 @@ Validates that the OCA addon dependency chain is fully resolvable before install
 
 ## Verdict: FAIL when
 
-- Any OCA repo is on wrong branch (e.g. 18.0 on Odoo 19 runtime)
+- Any OCA repo is on wrong branch (e.g. 17.0 on Odoo 18 runtime)
 - Any repo with modules is missing from addons_path
 - Any declared dependency is unresolvable
 - Any Python external dependency is missing

@@ -2,12 +2,12 @@
 
 ## Scope
 
-Assesses risk of OCA module version migration (e.g. 18.0 -> 19.0).
+Assesses risk of OCA module version migration (e.g. 17.0 -> 18.0).
 
 ## Verdict: PASS when
 
 - Module manifest version matches target
-- No Odoo 19 breaking change patterns detected
+- No Odoo 18 breaking change patterns detected
 - Dependencies all available on target version
 - No `tree` view references (must be `list`)
 - No `groups_id` references (must be `group_ids`)
@@ -19,7 +19,7 @@ Assesses risk of OCA module version migration (e.g. 18.0 -> 19.0).
 - Missing dependencies on target version
 - Module not yet ported (0 modules on target branch for that repo)
 
-## Odoo 19 Breaking Change Patterns
+## Odoo 18 Breaking Change Patterns
 
 - `groups_id` -> `group_ids` on `res.users`
 - `tree` view type -> `list`

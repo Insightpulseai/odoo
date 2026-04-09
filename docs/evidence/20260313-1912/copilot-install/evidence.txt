@@ -3,8 +3,8 @@
 # Module: ipai_odoo_copilot (Azure-native Copilot Runtime)
 
 ## Environment
-- Runtime: Devcontainer (InsightPulseAI Odoo 19 CE Dev @ colima-odoo)
-- Odoo: 19.0 (pinned commit 3a6e478d483ac9b3ce323958d2b08ba0a37dbee7)
+- Runtime: Devcontainer (InsightPulseAI Odoo 18 CE Dev @ colima-odoo)
+- Odoo: 18.0 (pinned commit 3a6e478d483ac9b3ce323958d2b08ba0a37dbee7)
 - Python: 3.12
 - PostgreSQL: 16-alpine
 - Addons path: /opt/odoo/addons,/workspaces/odoo/addons/ipai
@@ -29,8 +29,8 @@
 
 ## Fixes Applied (Previous Sessions)
 1. foundry_service.py: AbstractModel → Model + _auto = False
-2. ir_cron.xml: Removed numbercall field (Odoo 19 breaking change)
-3. res_config_settings_views.xml: target 'inline' → 'main' (Odoo 19 breaking change)
+2. ir_cron.xml: Removed numbercall field (Odoo 18 breaking change)
+3. res_config_settings_views.xml: target 'inline' → 'main' (Odoo 18 breaking change)
 
 ## Non-Fatal Warnings (Expected)
 - "Model ipai.foundry.service has no table" — expected with _auto = False

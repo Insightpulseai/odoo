@@ -1,0 +1,387 @@
+version: 1
+artifact: odoo18_ce_oca_bridge_matrix
+target_odoo_version: "18.0"
+
+legend:
+  deployed_now: "Validated as installed/effectively covered in current odoo_dev baseline"
+  native_core: "Handled by Odoo 18 core, not required as separate OCA install for this baseline"
+  bridge_next: "Best handled by external bridge/service or copilot integration layer"
+  backlog_later: "Not part of current validated baseline; defer unless explicitly prioritized"
+
+environment:
+  database: odoo_dev
+  validation_summary:
+    installed_modules_count: 71
+    expected_modules_count: 75
+    effective_baseline_status: complete
+    notes:
+      - "3 of 4 apparent missing modules are already covered by Odoo 18 core"
+      - "timesheet_timer is not present in OCA 18.0 timesheet repo"
+      - "hr_timesheet_begin_end is the candidate replacement for precise start/stop timing"
+
+baseline_validation:
+  deployed_now:
+    - base
+    - accounting
+    - sales
+    - purchase
+    - projects
+  native_core:
+    - web_advanced_search
+    - web_listview_range_select
+    - mail_activity_plan
+  replacement_candidates:
+    timesheet_timer:
+      status: missing_from_oca_18
+      recommended_replacement: hr_timesheet_begin_end
+      required: false
+
+ai_lane:
+  oca_ai_repo:
+    branch: "18.0"
+    installed:
+      - ai_oca_bridge
+      - ai_oca_bridge_extra_parameters
+    optional:
+      - ai_oca_bridge_chatter
+    skipped_by_default:
+      - ai_oca_native_generate_ollama
+    strategy: foundry_first_bridge
+    notes:
+      - "OCA/ai is treated as a lightweight bridge abstraction"
+      - "Primary copilot/runtime lane remains external bridge + Foundry-style orchestration"
+
+domains:
+  base_admin_ux_controls:
+    lane: ce_oca
+    status:
+      deployed_now: true
+      native_core: []
+      bridge_next: []
+      backlog_later: []
+    oca_repos:
+      - partner-contact
+      - queue
+      - reporting-engine
+      - server-auth
+      - server-brand
+      - server-tools
+      - server-ux
+      - web
+      - mail
+      - knowledge
+      - social
+    representative_modules:
+      - queue_job
+      - report_xlsx
+      - password_security
+      - auditlog
+      - base_name_search_improved
+      - date_range
+      - server_action_mass_edit
+      - web_dialog_size
+      - web_environment_ribbon
+      - web_favicon
+      - web_m2x_options
+      - web_no_bubble
+      - web_pivot_computed_measure
+      - web_refresher
+      - web_responsive
+      - web_search_with_and
+      - web_tree_many2one_clickable
+      - mail_debrand
+      - mail_tracking
+      - document_url
+      - base_search_mail_content
+    notes:
+      - "Treat as shared baseline across all business domains"
+
+  finance:
+    lane: ce_oca_with_bridge_extensions
+    status:
+      deployed_now: true
+      native_core:
+        - core_accounting_foundation
+      bridge_next:
+        - vendor_bill_ocr
+        - expense_ocr
+        - documents
+        - spreadsheet
+        - sign
+        - ai_finance_assist
+      backlog_later:
+        - payroll
+        - esg
+    oca_repos:
+      - account-analytic
+      - account-financial-reporting
+      - account-financial-tools
+      - account-reconcile
+      - currency
+      - mis-builder
+      - server-financial-reporting
+      - server-ux
+    representative_modules:
+      - account_analytic_required
+      - partner_statement
+      - account_asset_management
+      - account_chart_update
+      - account_journal_lock_date
+      - account_lock_date_update
+      - account_move_line_tax_editable
+      - account_usability
+      - account_reconcile_oca
+      - account_reconcile_model_oca
+      - account_statement_base
+      - currency_rate_update
+      - mis_builder
+      - mis_builder_budget
+      - account_financial_report
+      - date_range_account
+    notes:
+      - "Finance core is already in the deployed CE+OCA lane"
+      - "OCR/docs/sign remain bridge responsibilities"
+
+  sales:
+    lane: ce_oca
+    status:
+      deployed_now: true
+      native_core:
+        - core_crm_sales_foundation
+      bridge_next:
+        - ai_assisted_quoting
+        - external_marketplace_connectors
+      backlog_later:
+        - pos
+        - subscriptions
+        - rental
+        - amazon_connector
+    oca_repos:
+      - sale-workflow
+      - sale-reporting
+    representative_modules:
+      - portal_sale_order_search
+      - sale_cancel_reason
+      - sale_commercial_partner
+      - sale_delivery_state
+      - sale_fixed_discount
+      - sale_order_archive
+      - sale_order_line_delivery_state
+      - sale_order_line_input
+      - sale_order_line_menu
+      - sale_order_line_price_history
+      - sale_report_salesperson_from_partner
+    notes:
+      - "Sales operations baseline is already deployed"
+
+  purchase:
+    lane: ce_oca
+    status:
+      deployed_now: true
+      native_core:
+        - core_purchase_foundation
+      bridge_next:
+        - supplier_ai_assist
+        - approval_automation
+      backlog_later:
+        - advanced_inventory_adjacent_extensions
+    oca_repos:
+      - purchase-workflow
+    representative_modules:
+      - partner_supplierinfo_smartbutton
+      - product_supplier_code_purchase
+      - purchase_cancel_reason
+      - purchase_default_terms_conditions
+      - purchase_order_archive
+      - purchase_order_line_menu
+      - purchase_last_price_info
+      - purchase_advance_payment
+      - purchase_commercial_partner
+      - purchase_order_line_stock_available
+      - purchase_request
+      - purchase_tag
+    notes:
+      - "Purchase workflow baseline is already deployed"
+
+  projects_timesheets:
+    lane: ce_oca_with_small_timer_gap
+    status:
+      deployed_now: true
+      native_core:
+        - core_project_foundation
+        - core_timesheet_foundation
+      bridge_next:
+        - copilot
+        - worklog_intelligence
+        - extraction_assist
+      backlog_later:
+        - field_service
+        - helpdesk
+        - planning
+        - appointments
+    oca_repos:
+      - project
+      - timesheet
+    representative_modules:
+      - project_parent
+      - project_pivot
+      - project_task_add_very_high
+      - project_task_name_with_id
+      - project_task_description_template
+      - project_task_default_stage
+      - project_timeline
+    gap_detail:
+      module: timesheet_timer
+      status: not_present_in_oca_18
+      replacement_candidate: hr_timesheet_begin_end
+    notes:
+      - "Core project lane is deployed"
+      - "Only timer-specific parity remains optional"
+
+  ai_copilot:
+    lane: ce_oca_bridge
+    status:
+      deployed_now:
+        - ai_oca_bridge
+        - ai_oca_bridge_extra_parameters
+      native_core: []
+      bridge_next:
+        - foundry_agent_runtime
+        - document_intelligence
+        - rag_grounding
+        - tool_router
+        - audit_trail
+        - attachment_extraction
+      backlog_later:
+        - local_ollama_native_generate
+    oca_repos:
+      - ai
+    notes:
+      - "Use OCA/ai as thin bridge substrate"
+      - "Primary intelligence plane remains external bridge/copilot service"
+
+  website:
+    lane: ce_only_for_now
+    status:
+      deployed_now: false
+      native_core:
+        - website_builder
+        - ecommerce
+        - blog
+        - forum
+        - live_chat
+        - elearning
+      bridge_next:
+        - external_cms
+        - ai_search
+        - ai_content_assist
+      backlog_later:
+        - website_specific_oca_expansion
+    oca_repos: []
+    notes:
+      - "No website-specific OCA baseline was sourced in the current evidence set"
+
+  inventory_supply_chain_advanced:
+    lane: ce_only_for_now
+    status:
+      deployed_now: false
+      native_core:
+        - inventory
+        - barcode
+        - manufacturing
+        - plm
+        - maintenance
+        - quality
+      bridge_next:
+        - external_ops_integrations
+      backlog_later:
+        - inventory_specific_oca_baseline
+        - barcode_expansion
+        - mrp_expansion
+        - quality_expansion
+        - maintenance_expansion
+    oca_repos: []
+    notes:
+      - "Purchase is covered separately"
+      - "No inventory-specific OCA baseline was sourced in the current evidence set"
+
+  hr:
+    lane: backlog_unsourced
+    status:
+      deployed_now: false
+      native_core:
+        - employees
+        - recruitment
+        - time_off
+        - referrals
+        - appraisals
+        - fleet
+      bridge_next: []
+      backlog_later:
+        - hr_specific_oca_baseline
+    oca_repos: []
+    notes:
+      - "No HR-specific OCA baseline was sourced in the current evidence set"
+
+  marketing:
+    lane: backlog_unsourced
+    status:
+      deployed_now: false
+      native_core:
+        - social_marketing
+        - email_marketing
+        - sms_marketing
+        - events
+        - marketing_automation
+        - surveys
+      bridge_next: []
+      backlog_later:
+        - marketing_specific_oca_baseline
+    oca_repos: []
+    notes:
+      - "No Marketing-specific OCA baseline was sourced in the current evidence set"
+
+  productivity_customization_platform:
+    lane: backlog_mixed
+    status:
+      deployed_now: false
+      native_core:
+        - discuss
+        - calendar
+        - to_do
+      bridge_next:
+        - odoo_sh_like_platform_capabilities
+      backlog_later:
+        - approvals
+        - iot
+        - voip
+        - studio
+        - hosted_platform_experience
+    oca_repos: []
+    notes:
+      - "Treat Odoo.sh-like capabilities as platform engineering, not addon parity"
+
+priorities:
+  p0_accept_as_done:
+    - base_admin_ux_controls
+    - finance
+    - sales
+    - purchase
+    - projects_timesheets
+  p1_small_cleanup:
+    - evaluate_hr_timesheet_begin_end
+    - decide_ai_oca_bridge_chatter
+  p2_bridge_program:
+    - ai_copilot
+    - finance.bridge_next
+    - projects_timesheets.bridge_next
+    - productivity_customization_platform.bridge_next
+  p3_backlog_program:
+    - website
+    - inventory_supply_chain_advanced
+    - hr
+    - marketing
+    - productivity_customization_platform.backlog_later
+
+acceptance_position:
+  statement: "Core ERP baseline is deployed on Odoo 18 CE + OCA; next major work is bridge-layer expansion, not baseline OCA recovery."

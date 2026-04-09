@@ -7,14 +7,14 @@
 
 ## WS1: OCA Agency Baseline
 
-- [ ] 1.1 Verify `crm` core module on Odoo 19.0 — lead/opportunity CRUD
+- [ ] 1.1 Verify `crm` core module on Odoo 18.0 — lead/opportunity CRUD
 - [ ] 1.2 Verify `project` core module — task/stage lifecycle
 - [ ] 1.3 Verify `hr_timesheet` core module — entry/approval flow
 - [ ] 1.4 Verify `mass_mailing` core module — list/campaign/send
-- [ ] 1.5 Check OCA `contract` 19.0 branch exists, CI green, test install
-- [ ] 1.6 Check OCA `hr_timesheet_sheet` 19.0 branch, test install
-- [ ] 1.7 Check OCA `project_template` 19.0 branch, test install
-- [ ] 1.8 Evaluate OCA CRM extensions (`crm_lead_scoring`, `crm_deduplicate`) for 19.0
+- [ ] 1.5 Check OCA `contract` 18.0 branch exists, CI green, test install
+- [ ] 1.6 Check OCA `hr_timesheet_sheet` 18.0 branch, test install
+- [ ] 1.7 Check OCA `project_template` 18.0 branch, test install
+- [ ] 1.8 Evaluate OCA CRM extensions (`crm_lead_scoring`, `crm_deduplicate`) for 18.0
 - [ ] 1.9 Document results in `docs/evidence/<stamp>/agency-baseline/`
 
 ---
@@ -53,12 +53,12 @@
 
 ---
 
-## WS5: Agency Pack Port (18.0 → 19.0)
+## WS5: Agency Pack Port (17.0 → 18.0)
 
-- [ ] 5.1 Dry-run: `oca-port origin/18.0 origin/19.0 ipai_marketing_agency_pack --verbose --dry-run`
+- [ ] 5.1 Dry-run: `oca-port origin/17.0 origin/18.0 ipai_marketing_agency_pack --verbose --dry-run`
 - [ ] 5.2 Apply port
 - [ ] 5.3 Run `odoo-bin upgrade_code` — tree→list, field renames
-- [ ] 5.4 Fix Odoo 19 breaking changes (`groups_id` → `group_ids`, `Command` tuples, translation patterns)
+- [ ] 5.4 Fix Odoo 18 breaking changes (`groups_id` → `group_ids`, `Command` tuples, translation patterns)
 - [ ] 5.5 Test install: `odoo-bin -d test_ipai_marketing_agency_pack -i ipai_marketing_agency_pack --stop-after-init --test-enable`
 - [ ] 5.6 Classify results per testing policy
 - [ ] 5.7 Register in `config/addons.manifest.yaml` with tier and provenance

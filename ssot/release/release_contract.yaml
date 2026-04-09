@@ -33,9 +33,9 @@ surfaces:
     evidence_artifact: evidence-web-landing-*
 
   odoo_erp:
-    display_name: Odoo CE 19 ERP
+    display_name: Odoo CE 18 ERP
     pipeline: azure-pipelines/odoo-deploy.yml
-    acr_image: acripaiodoo.azurecr.io/ipai-odoo:19.0-copilot
+    acr_image: acripaiodoo.azurecr.io/ipai-odoo:18.0-copilot
     container_app: ipai-odoo-dev-web
     resource_group: rg-ipai-dev-odoo-runtime
     public_url: https://erp.insightpulseai.com

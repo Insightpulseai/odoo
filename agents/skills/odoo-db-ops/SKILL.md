@@ -10,7 +10,7 @@ odoo-cli-operator
 
 ## Preconditions
 
-- Odoo CE 19.0 installed
+- Odoo CE 18.0 installed
 - PostgreSQL 16 accessible
 - Database user has createdb privileges (for local dev)
 - Sufficient disk space for backups

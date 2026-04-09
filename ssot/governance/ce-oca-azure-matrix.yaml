@@ -1,0 +1,846 @@
+# =============================================================================
+# CE/OCA/IPAI + Azure Service Matrix
+# =============================================================================
+# SSOT for capability-to-service mapping with SMART success criteria
+# and evidence traceability to hardening plan tranches.
+#
+# 4-layer model: Odoo Core → OCA → IPAI → Azure
+# Canonical compute: Azure Container Apps (+ Front Door)
+# CSV export: docs/exports/ce-oca-azure-matrix.csv
+# =============================================================================
+
+version: 2
+artifact: ce-oca-azure-matrix
+canonical_compute: azure_container_apps
+last_updated: "2026-04-05"
+
+# -----------------------------------------------------------------------------
+# Doctrine
+# -----------------------------------------------------------------------------
+
+capability_layering_doctrine: |
+  - Odoo core owns the transactional baseline.
+  - OCA owns open-source parity and workflow-depth extensions.
+  - IPAI owns bridge, shell, security, and copilot-specific modules.
+  - Azure owns runtime, identity, edge, observability, and AI services.
+
+compute_doctrine: |
+  The current canonical Odoo-on-Azure runtime is Azure Container Apps
+  integrated with Front Door. This is the production-aligned compute
+  baseline for the platform.
+
+  Virtual Machines / VM Scale Sets remain a valid alternate hosting lane
+  for cases requiring a deliberately self-managed runtime model, but they
+  are not the default recommendation for the current platform state.
+
+  All compute recommendations must preserve:
+  - repeatable deployment
+  - health and revision visibility
+  - rollback safety
+  - ingress control
+  - release evidence
+
+# -----------------------------------------------------------------------------
+# Matrix rules
+# -----------------------------------------------------------------------------
+
+matrix_rules:
+  exclude_from_capability_rows:
+    - ipai_finance_close_seed
+    - ipai_project_seed
+
+columns:
+  - capability
+  - odoo_core
+  - oca
+  - ipai_module
+  - azure_service
+  - baseline_or_optional
+  - smart_success_criteria
+  - evidence_traceability
+  - notes
+
+rows:
+
+  # ===========================================================================
+  # BASELINE — PLATFORM
+  # ===========================================================================
+
+  - capability: core_erp_runtime
+    odoo_core: true
+    oca: adds_workflow_depth
+    ipai_module: []
+    azure_service:
+      - azure_container_apps
+      - azure_front_door
+    baseline_or_optional: baseline
+    smart_success_criteria:
+      specific: Healthy Odoo runtime deploys repeatably to ACA.
+      measurable:
+        - /web/login responds successfully
+        - at least one release candidate promoted without manual container edits
+        - rollback path documented and tested once
+        - ingress and revision health visible in telemetry
+      achievable: Applies to current canonical ACA runtime only.
+      relevant: Required for release-quality and current production alignment.
+      time_bound: Before UAT opens.
+    evidence_traceability:
+      - current_runtime_state
+      - hardening_plan_runtime_lane
+    notes: >
+      Canonical current runtime. ACA environment ipai-odoo-dev-env
+      (salmontree-b7d27e19) behind Azure Front Door (ipai-fd-dev).
+
+  - capability: alternate_self_managed_compute
+    odoo_core: true
+    oca: adds_workflow_depth
+    ipai_module: []
+    azure_service:
+      - virtual_machines
+      - vm_scale_sets
+    baseline_or_optional: optional_alternate
+    smart_success_criteria:
+      specific: VM-based hosting adopted only with written platform decision.
+      measurable:
+        - written rationale showing ACA cannot meet requirements
+        - migration plan and rollback plan approved
+        - ownership model assigned
+      achievable: Applies only if ACA proves insufficient.
+      relevant: Alternate hosting model, not current baseline.
+      time_bound: Before implementation begins.
+    evidence_traceability: []
+    notes: >
+      Valid alternate lane. Not the current default. Adopt only if
+      ACA cannot meet availability, state, networking, or operational needs.
+
+  - capability: primary_database
+    odoo_core: true
+    oca: extends_model_and_workflows
+    ipai_module: []
+    azure_service:
+      - azure_database_for_postgresql_flexible_server
+    baseline_or_optional: baseline
+    smart_success_criteria:
+      specific: Managed PostgreSQL is the authoritative ERP database.
+      measurable:
+        - at least one backup/restore rehearsal succeeds
+        - db connectivity and schema migrations pass on current RC
+        - no Sev1 data integrity defects remain
+      achievable: Applies to staging and production lanes.
+      relevant: Required for operational and release readiness.
+      time_bound: Before go/no-go.
+    evidence_traceability:
+      - T5_complete_rto_8m8s
+    notes: >
+      pg-ipai-odoo (General Purpose). T5 restore drill completed:
+      RTO 8m8s, RPO ~5min, 722 tables verified.
+
+  - capability: runtime_edge_and_ingress_hardening
+    odoo_core: true
+    oca: false
+    ipai_module:
+      - ipai_aca_proxy
+      - ipai_security_frontdoor
+    azure_service:
+      - azure_container_apps
+      - azure_front_door
+      - waf_policy
+    baseline_or_optional: baseline
+    smart_success_criteria:
+      specific: Runtime ingress and proxy behavior stabilized through approved IPAI edge modules.
+      measurable:
+        - /web/login responds successfully through canonical ingress path
+        - at least one release candidate promoted without manual ingress rewrites
+        - one proxy/header regression test passes
+        - one rollback/revision recovery test recorded
+      achievable: Scoped to the current ACA + Front Door runtime only.
+      relevant: Required for stable production-aligned Odoo access.
+      time_bound: Before formal UAT opens.
+    evidence_traceability:
+      - aca_runtime_lane
+      - frontdoor_security_lane
+    notes: >
+      ipai_aca_proxy installs on 18.0. ipai_security_frontdoor needs
+      migration (odoo.http.Root not in 18.0). ACA remains canonical compute.
+
+  - capability: identity_and_workforce_access
+    odoo_core: partial
+    oca: partial
+    ipai_module:
+      - ipai_auth_oidc
+    azure_service:
+      - microsoft_entra_id
+    baseline_or_optional: baseline
+    smart_success_criteria:
+      specific: Workforce authentication handled through approved OIDC/MFA bridge.
+      measurable:
+        - all named UAT users authenticate through approved identity path
+        - role mapping exists for Finance, Sales, Procurement, Inventory, Admin
+        - no shared admin account used for normal UAT
+        - one end-to-end login test per critical role passes
+      achievable: Scoped to current identity model only.
+      relevant: Required for secure business access and sign-off.
+      time_bound: Before Wave 1 UAT.
+    evidence_traceability:
+      - entra_migration_spec
+      - ipai_auth_oidc_installed_18
+    notes: >
+      IPAI handles app-side bridge; Entra remains platform identity authority.
+      ipai_auth_oidc installs cleanly on Odoo 18.0.
+
+  - capability: secretless_workload_auth
+    odoo_core: false
+    oca: false
+    ipai_module: []
+    azure_service:
+      - managed_identities
+      - azure_key_vault
+    baseline_or_optional: baseline
+    smart_success_criteria:
+      specific: All Azure-native service calls use managed identity or approved exception.
+      measurable:
+        - zero plaintext cloud credentials in repo CI variables for managed paths
+        - one end-to-end connectivity proof captured
+      achievable: Applies to platform-owned workloads.
+      relevant: Required for credentialless auth posture.
+      time_bound: Before production cutover.
+    evidence_traceability:
+      - T17_tranche_1_kv_private_endpoint
+    notes: >
+      kv-ipai-dev active. T17 (KV private endpoint) scheduled Tranche 1.
+
+  - capability: monitoring_apm_logs
+    odoo_core: partial
+    oca: partial
+    ipai_module: []
+    azure_service:
+      - azure_monitor
+      - application_insights
+      - log_analytics
+    baseline_or_optional: baseline
+    smart_success_criteria:
+      specific: Telemetry exists for app, infra, and release signals.
+      measurable:
+        - 5 critical alerts or dashboards defined
+        - smoke validation visible in telemetry
+        - incident triage identifies failed requests same day
+      achievable: Applies to current monitored runtime.
+      relevant: Required for release-quality and hypercare.
+      time_bound: Before go-live.
+    evidence_traceability:
+      - T9_complete_alert_routing
+      - T11_tranche_2_kpi_dashboard
+    notes: >
+      T9 alert routing complete (rescoped to HA lane). T11 KPI dashboard
+      due 2026-04-23 (Tranche 2).
+
+  - capability: deployment_contract_iac
+    odoo_core: false
+    oca: false
+    ipai_module: []
+    azure_service:
+      - azd
+      - bicep
+      - azure_resource_manager
+    baseline_or_optional: baseline
+    smart_success_criteria:
+      specific: Repo has one environment-aware deployment contract.
+      measurable:
+        - infra and app mappings are versioned
+        - at least one clean environment provisioned from repo state
+        - no critical settings unmanaged outside contract
+      achievable: Applies to current release.
+      relevant: Required for repeatable deployment.
+      time_bound: Before first production-ready RC.
+    evidence_traceability:
+      - T8_complete_budget_bicep
+    notes: >
+      Budget Bicep template at infra/azure/modules/budget.bicep.
+      azd contract being formalized.
+
+  - capability: ci_cd_and_work_tracking
+    odoo_core: false
+    oca: false
+    ipai_module: []
+    azure_service:
+      - github
+      - azure_devops
+      - azure_boards
+    baseline_or_optional: baseline
+    smart_success_criteria:
+      specific: All release candidates built from PR-merged source.
+      measurable:
+        - every production release maps to a tracked work item
+        - test evidence attached for 100% of release candidates
+        - no direct prod hotfix without traceability
+      achievable: Applies to current CI/CD lanes.
+      relevant: Required for release governance.
+      time_bound: Before formal UAT.
+    evidence_traceability:
+      - pipeline_repo_authority_ssot
+      - T12_tranche_1_secret_drift_gate
+    notes: >
+      Pipeline authority normalized (20 files, 7/7 tests pass).
+      T12 secret drift CI gate due 2026-04-16.
+
+  - capability: storage_artifacts_backups
+    odoo_core: partial
+    oca: partial
+    ipai_module: []
+    azure_service:
+      - storage_accounts
+    baseline_or_optional: baseline
+    smart_success_criteria:
+      specific: Backup artifacts and evidence have defined storage paths.
+      measurable:
+        - at least one recovery artifact written and retrieved
+        - retention owner assigned
+        - no critical evidence depends on local machines
+      achievable: Applies to current backup/evidence workflow.
+      relevant: Required for operational resilience.
+      time_bound: Before go-live.
+    evidence_traceability:
+      - T5_complete_restore_drill
+    notes: >
+      PITR backups via PostgreSQL Flexible Server. Storage accounts
+      for evidence packs and export artifacts.
+
+  - capability: workspace_shell_and_meta_bridge
+    odoo_core: partial
+    oca: partial
+    ipai_module:
+      - ipai_workspace_core
+      - ipai_enterprise_bridge
+      - ipai_web_branding
+      - ipai_mail_plugin_bridge
+    azure_service:
+      - azure_container_apps
+      - app_configuration
+    baseline_or_optional: baseline
+    smart_success_criteria:
+      specific: Workspace shell and enterprise bridge provide approved product shell.
+      measurable:
+        - workspace shell modules install successfully
+        - one branded login/workspace flow renders correctly
+        - one mail/plugin integration path works in staging if enabled
+        - no critical navigation regression remains
+      achievable: Scoped to the current workspace and integration shell.
+      relevant: This is the IPAI product layer on top of Odoo core.
+      time_bound: Before business-facing demo/UAT entry.
+    evidence_traceability:
+      - workspace_shell_lane
+    notes: >
+      ipai_mail_plugin_bridge installs on 18.0. ipai_enterprise_bridge
+      and ipai_web_branding need migration (19.0 API). ipai_workspace_core
+      blocked by missing ipai_foundation.
+
+  # ===========================================================================
+  # STRONG CE+OCA LANES (evidenced by 18.0 inventory)
+  # ===========================================================================
+
+  - capability: subscription_management
+    odoo_core: partial
+    oca: strong_ce_oca_lane
+    ipai_module: []
+    azure_service:
+      - azure_container_apps
+    baseline_or_optional: baseline
+    smart_success_criteria:
+      specific: Subscription workflows supported through approved OCA addon path.
+      measurable:
+        - subscription_oca installable on target Odoo 18 environment
+        - at least one create-renew-close subscription scenario passes in staging
+      achievable: Scoped to Release 1 subscription flows only.
+      relevant: Removes previously uncertain Enterprise-gap area.
+      time_bound: Before subscription scope included in UAT.
+    evidence_traceability:
+      - oca_inventory_subscription_oca_18
+    notes: >
+      subscription_oca v18.0.1.0.0 in contract repo. Installs on 18.0 (PASS).
+
+  - capability: sign_and_esignature
+    odoo_core: false
+    oca: strong_ce_oca_lane
+    ipai_module: []
+    azure_service:
+      - azure_container_apps
+    baseline_or_optional: baseline
+    smart_success_criteria:
+      specific: Signature workflows supported through approved OCA sign modules.
+      measurable:
+        - sign_oca installs successfully
+        - at least one project-task-sign scenario passes in staging
+      achievable: Limited to scoped signing flows, not every Enterprise UX nuance.
+      relevant: Moves Sign from speculative to validated-addon availability.
+      time_bound: Before sign-dependent business process enters formal UAT.
+    evidence_traceability:
+      - oca_inventory_sign_oca_18
+      - oca_inventory_project_task_sign_oca_18
+    notes: >
+      sign_oca v18.0.1.4.2 and project_task_sign_oca v18.0.1.0.0 install (PASS).
+      agreement_sign_oca blocked by missing agreement_legal dep.
+
+  - capability: spreadsheet_and_dashboards
+    odoo_core: partial
+    oca: strong_ce_oca_lane
+    ipai_module: []
+    azure_service:
+      - azure_container_apps
+    baseline_or_optional: baseline
+    smart_success_criteria:
+      specific: Spreadsheet and dashboard capability via approved OCA modules.
+      measurable:
+        - spreadsheet_oca installs
+        - at least one finance or purchase dashboard renders in staging
+        - no Sev1 data-visibility issue remains
+      achievable: Applies to agreed reporting/dashboard scope only.
+      relevant: Improves previous "spreadsheet partial" position.
+      time_bound: Before dashboard/reporting scope signed off in UAT.
+    evidence_traceability:
+      - oca_inventory_spreadsheet_oca_18
+      - oca_inventory_spreadsheet_dashboard_oca_18
+    notes: >
+      spreadsheet_oca v18.0.1.3.0 and spreadsheet_dashboard_oca v18.0.1.1.0
+      install (PASS). Purchase dashboard variants also available.
+
+  - capability: quality_control
+    odoo_core: false
+    oca: strong_ce_oca_lane
+    ipai_module: []
+    azure_service:
+      - azure_container_apps
+    baseline_or_optional: baseline
+    smart_success_criteria:
+      specific: Quality control workflows via approved OCA quality modules.
+      measurable:
+        - both quality modules install in Odoo 18
+        - at least one manufacturing/stock quality checkpoint passes in staging
+      achievable: Scoped to quality flows selected for rollout.
+      relevant: Removes previously unverified supply-chain gap.
+      time_bound: Before manufacturing/warehouse quality scope enters UAT.
+    evidence_traceability:
+      - oca_inventory_quality_control_oca_18
+      - oca_inventory_quality_control_stock_oca_18
+    notes: >
+      quality_control_oca v18.0.1.3.0 and quality_control_stock_oca v18.0.1.0.1
+      install (PASS). Verified during Tier 7 OCA testing.
+
+  - capability: accounting_reporting_and_reconcile
+    odoo_core: true
+    oca: strong_ce_oca_lane
+    ipai_module: []
+    azure_service:
+      - azure_container_apps
+    baseline_or_optional: baseline
+    smart_success_criteria:
+      specific: Extended accounting reporting and reconciliation via approved OCA modules.
+      measurable:
+        - selected reporting/reconcile addons install
+        - at least one bank/account reconcile scenario passes in staging
+        - at least one financial report scenario passes in staging
+      achievable: Limited to agreed accounting extension scope.
+      relevant: One of the most mature CE+OCA parity lanes.
+      time_bound: Before finance tower UAT sign-off.
+    evidence_traceability:
+      - oca_inventory_account_financial_report_18
+      - oca_inventory_account_reconcile_oca_18
+      - oca_inventory_partner_statement_18
+    notes: >
+      account_financial_report v18.0.1.4.10, account_reconcile_oca v18.0.1.1.8,
+      partner_statement v18.0.1.1.6 all install (PASS). Verified during Tier 3 testing.
+
+  - capability: procurement_workflow_depth
+    odoo_core: true
+    oca: strong_ce_oca_lane
+    ipai_module: []
+    azure_service:
+      - azure_container_apps
+    baseline_or_optional: baseline
+    smart_success_criteria:
+      specific: Procurement workflow refinements via approved OCA purchase modules.
+      measurable:
+        - selected purchase workflow addons install
+        - at least one PO-to-receipt scenario passes with reception-status visibility
+      achievable: Scoped to procurement status/receipt enhancements only.
+      relevant: Confirms workflow-depth availability with current 18.0 evidence.
+      time_bound: Before procurement UAT sign-off.
+    evidence_traceability:
+      - oca_inventory_purchase_location_by_line_18
+      - oca_inventory_purchase_reception_status_18
+      - oca_inventory_purchase_stock_reception_status_18
+    notes: >
+      purchase_location_by_line, purchase_reception_status, and
+      purchase_stock_reception_status all install on 18.0 (PASS).
+
+  # ===========================================================================
+  # IPAI CAPABILITY LANES
+  # ===========================================================================
+
+  - capability: copilot_and_ai_interaction_layer
+    odoo_core: false
+    oca: true
+    ipai_module:
+      - ipai_agent
+      - ipai_odoo_copilot
+      - ipai_copilot_actions
+      - ipai_document_intelligence
+    azure_service:
+      - azure_openai
+      - ai_search
+      - azure_container_apps
+      - managed_identity
+    baseline_or_optional: optional_ai_lane
+    smart_success_criteria:
+      specific: Approved IPAI copilot modules deliver bounded assistive AI without breaking ERP transactions.
+      measurable:
+        - at least one copilot use case works in staging
+        - one retrieval-backed response path returns source-aware output
+        - one keyless or managed-identity auth path succeeds
+        - AI failure does not block a core ERP transaction
+      achievable: Limited to approved assistive AI scenarios.
+      relevant: Defines supported AI lane without pretending AI is core ERP.
+      time_bound: Before AI lane production activation.
+    evidence_traceability:
+      - copilot_lane
+      - ai_sidecar_lane
+      - T14_tranche_2_agent_eval
+    notes: >
+      ipai_agent, ipai_odoo_copilot, ipai_copilot_actions, ipai_document_intelligence
+      all install on 18.0 (PASS). OCA ai_oca_bridge also available as app-side bridge.
+
+  - capability: ai_bridge_oca_modules
+    odoo_core: false
+    oca: true
+    ipai_module: []
+    azure_service:
+      - azure_openai
+      - ai_search
+      - azure_container_apps
+    baseline_or_optional: optional_ai_lane
+    smart_success_criteria:
+      specific: OCA AI bridge modules connect Odoo to approved external AI services.
+      measurable:
+        - ai_oca_bridge installs successfully
+        - one bounded assistive use case works in staging
+        - AI failure does not break ERP transactional flow
+      achievable: Limited to approved assistive AI scenarios.
+      relevant: Matches bridge-first doctrine rather than fake in-core parity.
+      time_bound: Before AI lane production activation.
+    evidence_traceability:
+      - oca_inventory_ai_oca_bridge_18
+    notes: >
+      ai_oca_bridge v18.0.2.0.0 and ai_oca_bridge_extra_parameters install (PASS).
+      Use OCA bridge for app-side integration, Azure for AI runtime.
+
+  - capability: document_intelligence_bridge
+    odoo_core: partial
+    oca: bridge_first
+    ipai_module:
+      - ipai_document_intelligence
+    azure_service:
+      - document_intelligence
+      - azure_container_apps
+      - azure_openai
+    baseline_or_optional: optional_ai_lane
+    smart_success_criteria:
+      specific: Document extraction via IPAI document bridge.
+      measurable:
+        - at least one document class processed successfully in staging
+        - one low-confidence review path exists
+        - one extraction result persisted correctly in Odoo
+        - document AI failure does not block base ERP runtime
+      achievable: Scoped to first approved document classes only.
+      relevant: Keeps OCR/document AI as bridge capability.
+      time_bound: Before document AI enters formal UAT.
+    evidence_traceability:
+      - document_ai_lane
+    notes: >
+      ipai_document_intelligence installs on 18.0 (PASS).
+      docai-ipai-dev (Southeast Asia). Bridge capability.
+
+  - capability: local_domain_extensions
+    odoo_core: true
+    oca: partial
+    ipai_module:
+      - ipai_bir_tax_compliance
+      - ipai_hr_expense_liquidation
+      - ipai_finance_ppm
+    azure_service:
+      - azure_container_apps
+      - azure_database_for_postgresql_flexible_server
+    baseline_or_optional: conditional_baseline
+    smart_success_criteria:
+      specific: Local finance/compliance workflows via approved IPAI business modules.
+      measurable:
+        - each enabled module installs successfully in target Odoo 18 environment
+        - at least one scenario per enabled module passes in staging
+        - no Sev1 finance/compliance defect remains in enabled scope
+      achievable: Limited to modules selected for current release.
+      relevant: Distinguishes real business extensions from generic plumbing.
+      time_bound: Before finance/admin sign-off.
+    evidence_traceability:
+      - local_business_lane
+    notes: >
+      ipai_bir_tax_compliance and ipai_hr_expense_liquidation install on 18.0 (PASS).
+      ipai_finance_ppm needs migration (19.0 routing API).
+
+  # ===========================================================================
+  # OPTIONAL BUT RECOMMENDED
+  # ===========================================================================
+
+  - capability: config_and_feature_flags
+    odoo_core: partial
+    oca: partial
+    ipai_module: []
+    azure_service:
+      - app_configuration
+    baseline_or_optional: optional
+    smart_success_criteria:
+      specific: Centralized non-secret config across app surfaces.
+      measurable:
+        - config management path defined
+        - no config drift between environments
+      achievable: Applies when multi-surface config needed.
+      relevant: Useful for feature flags and environment parity.
+      time_bound: Before multi-surface rollout.
+    evidence_traceability: []
+    notes: Add when needed for cross-surface configuration management.
+
+  - capability: api_and_workflow_integration
+    odoo_core: partial
+    oca: strong_for_app_workflows
+    ipai_module: []
+    azure_service:
+      - api_management
+      - logic_apps
+      - service_bus
+    baseline_or_optional: optional
+    smart_success_criteria:
+      specific: External APIs inventoried and routed through approved path.
+      measurable:
+        - at least one critical integration uses approved API/workflow path
+        - retry/error handling proven
+        - failures create support-visible evidence within 1 business cycle
+      achievable: Applies to external integration scope.
+      relevant: Required before enabling external integrations in production.
+      time_bound: Before external integrations go live.
+    evidence_traceability: []
+    notes: Good for governed integrations and low-code orchestration.
+
+  - capability: cache_performance_offload
+    odoo_core: partial
+    oca: partial
+    ipai_module: []
+    azure_service:
+      - azure_cache_for_redis
+    baseline_or_optional: optional
+    smart_success_criteria:
+      specific: Caching adopted only when measurable bottleneck exists.
+      measurable:
+        - perf testing shows bottleneck without cache
+        - target response times improve against baseline
+        - no new Sev1 consistency defect introduced
+      achievable: Optimization layer, not day-0.
+      relevant: Adds value only when proven needed.
+      time_bound: After performance baseline established.
+    evidence_traceability:
+      - T15_tranche_1_perf_ci
+    notes: >
+      T15 establishes performance baseline first.
+      Cache adoption decision follows evidence.
+
+  - capability: release_quality_load_testing
+    odoo_core: false
+    oca: false
+    ipai_module: []
+    azure_service:
+      - azure_load_testing
+    baseline_or_optional: optional_recommended
+    smart_success_criteria:
+      specific: Load test validates initial go-live cohort.
+      measurable:
+        - at least one cohort simulation run
+        - login plus three critical workflows meet thresholds
+        - bottlenecks logged with owner and disposition
+      achievable: Applies to release candidate stage.
+      relevant: Required for evidence-based go/no-go.
+      time_bound: Before go/no-go.
+    evidence_traceability:
+      - T15_tranche_1
+    notes: >
+      k6 script exists (odoo-baseline.js). T15 due 2026-04-18
+      (Tranche 1). Gate: P95 <2000ms, error rate <2%.
+
+  - capability: security_posture
+    odoo_core: partial
+    oca: partial
+    ipai_module: []
+    azure_service:
+      - microsoft_defender_for_cloud
+    baseline_or_optional: optional_recommended
+    smart_success_criteria:
+      specific: Security posture reviewed on release environment.
+      measurable:
+        - critical findings have explicit disposition
+        - no unresolved cloud-config Sev1
+        - one named owner reviews posture during go/no-go
+      achievable: Applies to production environment.
+      relevant: Required for governance and compliance.
+      time_bound: Before production approval.
+    evidence_traceability: []
+    notes: Strong guardrail layer for Azure resources.
+
+  - capability: private_enterprise_connectivity
+    odoo_core: false
+    oca: false
+    ipai_module: []
+    azure_service:
+      - expressroute
+    baseline_or_optional: optional
+    smart_success_criteria:
+      specific: Private connectivity adopted only when documented requirement exists.
+      measurable:
+        - one validated private-path test succeeds
+        - failover/support owner named
+        - cost justification accepted
+      achievable: Only if required.
+      relevant: Not part of default Odoo-on-Azure baseline.
+      time_bound: Before procurement.
+    evidence_traceability: []
+    notes: Do not adopt without explicit private WAN requirement.
+
+  # ===========================================================================
+  # AI LANE (SEPARATE)
+  # ===========================================================================
+
+  - capability: ai_knowledge_retrieval
+    odoo_core: false
+    oca: false
+    ipai_module: []
+    azure_service:
+      - ai_search
+    baseline_or_optional: optional_ai_lane
+    smart_success_criteria:
+      specific: At least one approved corpus indexed for copilot retrieval.
+      measurable:
+        - retrieval quality tested on evaluation set
+        - citations appear in agreed flows
+        - no AI lane dependency blocks baseline ERP go-live
+      achievable: Applies to copilot MVP.
+      relevant: Required before AI features marketed as ready.
+      time_bound: Before AI rollout.
+    evidence_traceability:
+      - T14_tranche_2_agent_eval
+    notes: >
+      T14 agent evaluation baseline due 2026-05-05 (Tranche 2).
+
+  - capability: llm_assistant_services
+    odoo_core: false
+    oca: false
+    ipai_module: []
+    azure_service:
+      - azure_openai
+    baseline_or_optional: optional_ai_lane
+    smart_success_criteria:
+      specific: One bounded AI use case approved with safety controls.
+      measurable:
+        - prompt/response safety and access controls defined
+        - one end-to-end production-like test succeeds
+        - AI failure does not break core ERP transactions
+      achievable: Applies to approved copilot scope.
+      relevant: Adjacent capability, not system-of-record logic.
+      time_bound: Before AI rollout.
+    evidence_traceability:
+      - T14_tranche_2_agent_eval
+    notes: >
+      oai-ipai-dev (East US). Keep outside core ERP runtime.
+
+  - capability: ai_sidecars_copilots_jobs
+    odoo_core: false
+    oca: false
+    ipai_module: []
+    azure_service:
+      - container_apps
+      - container_app_jobs
+    baseline_or_optional: optional_ai_lane
+    smart_success_criteria:
+      specific: Non-core AI services deploy independently from ERP runtime.
+      measurable:
+        - service health monitored
+        - scale/job execution demonstrated once
+        - sidecar failure does not take down ERP runtime
+      achievable: Applies to AI worker/assistant deployment.
+      relevant: Required before production AI operations.
+      time_bound: Before AI production operations.
+    evidence_traceability: []
+    notes: >
+      ipai-copilot-gateway already deployed as ACA sidecar.
+      Good for assistants, workers, and background AI jobs.
+
+  - capability: event_driven_extensions
+    odoo_core: partial
+    oca: partial
+    ipai_module: []
+    azure_service:
+      - function_app
+      - event_hubs
+    baseline_or_optional: optional
+    smart_success_criteria:
+      specific: Event flow has documented producer/consumer contract.
+      measurable:
+        - one failure-and-retry path tested
+        - telemetry confirms message handling
+        - duplicate/poison-message behavior defined
+      achievable: Applies when eventing adds real value.
+      relevant: Use when justified, not by default.
+      time_bound: Before activation.
+    evidence_traceability: []
+    notes: Use for notifications, streaming, webhook fan-out.
+
+  - capability: analytics_lakehouse
+    odoo_core: partial_reporting_only
+    oca: enriches_source_data
+    ipai_module: []
+    azure_service:
+      - databricks
+      - synapse_analytics
+      - power_bi_embedded
+    baseline_or_optional: optional
+    smart_success_criteria:
+      specific: Analytics plane adopted when reporting use case requires it.
+      measurable:
+        - data ownership and refresh path defined
+        - ERP baseline operable without analytics plane
+        - cost/ops owner assigned
+      achievable: Separate data plane decision.
+      relevant: Not core ERP runtime.
+      time_bound: Before adding analytics plane.
+    evidence_traceability:
+      - T19_tranche_3_process_mining
+    notes: >
+      Databricks workspace active. T19 process mining pipeline
+      due 2026-06-02 (Tranche 3). DLT Bronze-Silver-Gold layers.
+
+  # ===========================================================================
+  # DEFER / NOT BASELINE
+  # ===========================================================================
+
+  - capability: kubernetes_platform
+    odoo_core: false
+    oca: false
+    ipai_module: []
+    azure_service:
+      - aks
+      - service_fabric
+      - azure_arc
+    baseline_or_optional: defer
+    smart_success_criteria:
+      specific: Do not adopt without written platform rationale.
+      measurable:
+        - SRE ownership assigned
+        - proof that ACA baseline cannot meet requirements
+      achievable: Only if simpler baseline is insufficient.
+      relevant: Complexity multiplier for Odoo workloads.
+      time_bound: Not scheduled.
+    evidence_traceability: []
+    notes: Present in Azure catalog but not the default Odoo lane.

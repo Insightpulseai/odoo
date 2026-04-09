@@ -1,0 +1,82 @@
+# schema: ssot.architecture.reference_adoption.v1
+# Machine-readable registry of external reference samples and their adoption classification.
+# Referenced by: docs/architecture/PLATFORM_RUNTIME_DECISIONS.md
+# Purpose: Prevent accidental runtime drift from studying external samples.
+
+version: 1
+meta:
+  owner: platform
+  purpose: "Classify external Microsoft/Azure samples as adopted, concept-only, or excluded"
+  created: "2026-03-22"
+  last_reviewed: "2026-03-22"
+
+# ── Classification legend ────────────────────────────────────────────────────
+# adopted_pattern    — actively used as a design pattern source
+# concept_reference  — allowed for conceptual study only, no code adoption
+# excluded_runtime   — explicitly prohibited as runtime/control-plane baseline
+
+references:
+
+  # ── Adopted patterns ─────────────────────────────────────────────────────
+
+  - id: agentic-app-with-fabric
+    url: https://github.com/Azure-Samples/agentic-app-with-fabric
+    classification: adopted_pattern
+    adopted_for:
+      - agent_operational_telemetry
+      - realtime_event_streaming
+      - analytics_sidecar_design
+      - kql_eventhouse_observability
+      - downstream_powerbi_semantic_model
+    prohibited_use:
+      - transactional_runtime_baseline
+      - primary_application_database
+    notes: "Fabric stays in analytics/telemetry/semantic lane, not transactional app backend"
+
+  # ── Excluded runtime references ──────────────────────────────────────────
+
+  - id: service-fabric-dotnet-getting-started
+    url: https://learn.microsoft.com/en-us/samples/azure-samples/service-fabric-dotnet-getting-started/service-fabric-getting-started-sample/
+    classification: excluded_runtime
+    allowed_use:
+      - conceptual_reference
+      - historical_pattern_review
+    prohibited_use:
+      - runtime_baseline
+      - cluster_standard
+      - actor_platform_selection
+      - service_remoting_model
+
+  - id: service-fabric-aad-helpers
+    url: https://learn.microsoft.com/en-us/samples/azure-samples/service-fabric-aad-helpers/service-fabric-aad-helpers/
+    classification: excluded_runtime
+    allowed_use:
+      - conceptual_reference
+      - historical_pattern_review
+    prohibited_use:
+      - runtime_baseline
+      - identity_bootstrap_standard
+      - cluster_auth_model
+
+  - id: service-fabric-standalone-cluster-configuration
+    url: https://learn.microsoft.com/en-us/samples/azure-samples/service-fabric-dotnet-standalone-cluster-configuration/service-fabric-standalone-cluster-configuration/
+    classification: excluded_runtime
+    allowed_use:
+      - conceptual_reference
+      - historical_pattern_review
+    prohibited_use:
+      - runtime_baseline
+      - cluster_standard
+      - ops_control_surface
+
+  - id: service-fabric-cli-samples
+    url: https://learn.microsoft.com/en-us/azure/service-fabric/samples-cli
+    classification: excluded_runtime
+    allowed_use:
+      - conceptual_reference
+      - historical_pattern_review
+    prohibited_use:
+      - runtime_baseline
+      - cluster_operations_standard
+      - deployment_standard
+      - sfctl_adoption

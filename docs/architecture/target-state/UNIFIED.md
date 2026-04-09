@@ -32,7 +32,7 @@
 | Domain | `insightpulseai.com` |
 | Runtime | Azure Container Apps (`southeastasia`) |
 | Edge | Azure Front Door (`ipai-fd-dev`) |
-| ERP | Odoo CE 19.0 + OCA + `ipai_*` |
+| ERP | Odoo CE 18.0 + OCA + `ipai_*` |
 | Database | PostgreSQL 16 (Odoo-local) |
 | Control Plane | Azure-native (Supabase deprecated 2026-03-26) |
 | Analytical Lake | Azure Data Lake Storage Gen2 |

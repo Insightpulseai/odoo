@@ -1,0 +1,4 @@
+id,name,budget_amount,cost_center,status,start_date,end_date,portfolio_id
+1,Project Alpha,500000.00,CC-FIN-01,on_track,2026-01-06,2026-06-30,1
+2,Project Beta,200000.00,CC-OPS-02,over_budget,2026-01-13,2026-04-30,1
+3,Project Gamma,150000.00,CC-IT-03,delayed,2026-01-20,2026-05-31,1

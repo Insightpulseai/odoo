@@ -1,0 +1,5 @@
+id,customer_id,date,due_date,amount,status,project_id,description
+INV-001,CUST-001,2026-01-15,2026-02-14,250000.00,paid,1,Alpha Jan milestone delivery
+INV-002,CUST-002,2026-01-20,2026-03-06,100000.00,paid,2,Beta Jan initial delivery
+INV-003,CUST-001,2026-02-15,2026-03-17,150000.00,posted_open,1,Alpha Feb progress billing
+INV-004,CUST-003,2026-01-25,2026-02-24,40000.00,overdue,3,Gamma Jan setup services

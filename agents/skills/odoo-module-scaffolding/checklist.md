@@ -2,14 +2,14 @@
 
 - [ ] Module name matches `ipai_<domain>_<feature>` pattern
 - [ ] Directory created under `addons/ipai/`
-- [ ] `__manifest__.py` has version `19.0.x.y.z`
+- [ ] `__manifest__.py` has version `18.0.x.y.z`
 - [ ] `__manifest__.py` has license `LGPL-3`
 - [ ] `__manifest__.py` has no Enterprise or IAP dependencies
 - [ ] `__manifest__.py` data order: security groups, ACLs, data, views
 - [ ] `__manifest__.py` passes `python3 -m py_compile`
 - [ ] `__init__.py` imports models package
 - [ ] `models/__init__.py` imports model files
-- [ ] Model class follows Odoo 19 attribute order (private attrs, defaults, fields, constraints, computes, CRUD, actions, business)
+- [ ] Model class follows Odoo 18 attribute order (private attrs, defaults, fields, constraints, computes, CRUD, actions, business)
 - [ ] `security/ir.model.access.csv` has header row with all columns
 - [ ] ACL rows have all 4 CRUD columns (perm_read, perm_write, perm_create, perm_unlink)
 - [ ] ACL ID pattern: `access_<model>_<group>`

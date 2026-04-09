@@ -1,0 +1,72 @@
+# =============================================================================
+# Odoo ACA Runtime — SSOT
+# =============================================================================
+# Canonical role split for Odoo CE 18 on Azure Container Apps.
+# Consumed by: infra/azure/modules/aca-odoo-services.bicep
+# Validated by: scripts/azure/validate-odoo-aca.sh
+# =============================================================================
+
+version: "1.0"
+last_updated: "2026-03-10"
+
+services:
+  - name: odoo-web
+    kind: containerapp
+    ingress: internal  # Front Door routes to this via environment FQDN
+    target_port: 8069
+    role: http
+    health_check_path: /web/health
+    min_replicas: 1
+    max_replicas: 3
+    cpu: "1.0"
+    memory: "2Gi"
+    scaling: http-concurrent-requests
+    notes: "Primary HTTP service. Only service reachable via Front Door."
+
+  - name: odoo-worker
+    kind: containerapp
+    ingress: none
+    role: background-worker
+    command_override: "--no-http --workers=2"
+    min_replicas: 1
+    max_replicas: 2
+    cpu: "0.5"
+    memory: "1Gi"
+    scaling: manual
+    notes: "Processes async queue jobs. No public or internal ingress."
+
+  - name: odoo-cron
+    kind: containerapp
+    ingress: none
+    role: scheduled-worker
+    command_override: "--no-http --max-cron-threads=2"
+    min_replicas: 1
+    max_replicas: 1  # Must be 1 to avoid duplicate cron execution
+    cpu: "0.5"
+    memory: "1Gi"
+    scaling: fixed
+    notes: "Runs ir.cron scheduled actions. Single replica mandatory."
+
+  - name: odoo-init
+    kind: containerapp-job
+    ingress: none
+    role: schema-init
+    trigger: manual  # Run on deploy / migration events
+    notes: "One-shot job for database init, module install/upgrade. Not a long-running service."
+
+shared_config:
+  image_repo: odoo-ce
+  database_engine: "Azure PG Flexible Server"
+  secret_store: "Azure Key Vault"
+  registry_auth: "Managed Identity (user-assigned)"
+  config_file: /etc/odoo/odoo.conf
+  list_db: false
+
+ingress_policy:
+  rule: "Only odoo-web may receive traffic. Worker and cron must never be externally or internally routable."
+  enforcement: "Bicep template omits ingress block for worker/cron. Validator script checks."
+
+rollback:
+  strategy: "Revert to previous revision via az containerapp revision activate"
+  database: "Point-in-time restore on PG Flexible Server (up to 35 days)"
+  dns: "Revert Cloudflare CNAME to A 178.128.112.214 (DigitalOcean origin)"

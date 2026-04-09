@@ -1,0 +1,147 @@
+# Agent Execution Policy
+# Governs telemetry, MCP access, and agent permissions for the IPAI plugin system.
+# Reference: docs/agents/AGENT_EXECUTION_MODEL.md
+# Last updated: 2026-04-05
+
+version: "1.0"
+plugin: ipai-odoo-azure
+
+# --- Telemetry ---
+telemetry:
+  format: otlp
+  export_path: "docs/evidence/<stamp>/<scope>/trace.json"
+  required_for:
+    - write_capable_runs
+    - pipeline_triggering
+    - board_mutation
+    - database_operations
+  optional_for:
+    - read_only_runs
+    - research_queries
+
+  trace_requirements:
+    span_attributes:
+      required:
+        - agent.name
+        - agent.task_class
+        - agent.repo_path_scope
+        - agent.evidence_path
+        - agent.duration_ms
+        - agent.outcome          # success | partial | failed | blocked
+        - agent.handoff_target   # null if no handoff
+      never_export:
+        - prompt.body
+        - prompt.system
+        - file.contents
+        - "secret.*"
+        - "password.*"
+        - "token.*"
+        - "env.PASSWORD"
+        - "env.*_KEY"
+        - "env.*_SECRET"
+        - "env.*_TOKEN"
+
+  handoff_logging_required: true
+  evidence_correlation:
+    trace_id_in_evidence: true
+    evidence_path_in_trace: true
+
+# --- MCP Servers ---
+mcp_servers:
+  azure_devops:
+    config_path: ".mcp.json"
+    server_key: "azure-devops"
+    org: "${ADO_ORG:-insightpulseai}"
+    project: "${ADO_PROJECT:-odoo}"
+    auth: env_pat  # ADO_PAT env var
+    default_mode: read_only
+
+    capabilities:
+      read:
+        - work_item.read
+        - pipeline.read
+        - build.read
+        - run.read
+        - artifact.read
+        - board.read
+      write:
+        - work_item.update
+        - pipeline.trigger
+        - build.queue
+      never:
+        - project.delete
+        - project.create
+        - repo.delete
+        - repo.create
+        - user.manage
+        - service_connection.manage
+        - variable_group.manage
+
+  # Existing servers (reference only — config lives in .mcp.json)
+  github:
+    default_mode: read_write
+  microsoft_learn:
+    default_mode: read_only
+  azure:
+    default_mode: read_write
+  playwright:
+    default_mode: read_only
+
+# --- Agent Tool Permissions ---
+agent_tool_permissions:
+  odoo-reviewer:
+    ado_mcp: read_only
+    trace_required: false
+    can_trigger_pipeline: false
+    can_mutate_board: false
+
+  azure-runtime-operator:
+    ado_mcp: read_only
+    trace_required: true
+    can_trigger_pipeline: false
+    can_mutate_board: false
+
+  governance-auditor:
+    ado_mcp: read_write
+    trace_required: true
+    can_trigger_pipeline: false
+    can_mutate_board: true
+    board_mutation_scope:
+      - work_item.update.state
+      - work_item.update.tags
+      - work_item.update.comment
+
+  qa-evidence-runner:
+    ado_mcp: read_only
+    trace_required: true
+    can_trigger_pipeline: true
+    pipeline_trigger_scope:
+      - "azure-pipelines-test-*.yml"
+    can_mutate_board: false
+
+  board-normalizer:
+    ado_mcp: read_write
+    trace_required: true
+    can_trigger_pipeline: false
+    can_mutate_board: true
+    board_mutation_scope:
+      - work_item.update.state
+      - work_item.update.tags
+      - work_item.update.title
+      - work_item.update.comment
+      - work_item.update.assigned_to
+
+  foundry-copilot-operator:
+    ado_mcp: read_only
+    trace_required: true
+    can_trigger_pipeline: false
+    can_mutate_board: false
+
+# --- Unattended Run Policy ---
+unattended_runs:
+  ado_mcp_mode: read_only
+  pipeline_triggering: denied
+  board_mutation: denied
+  trace_required: true
+  evidence_required: true
+  override: explicit_policy_flag  # Must set IPAI_UNATTENDED_WRITE=1 to enable writes

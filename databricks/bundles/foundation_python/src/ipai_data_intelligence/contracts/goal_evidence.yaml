@@ -1,0 +1,115 @@
+# Goal Evidence Contract — Diva Goals data-intelligence layer
+# Defines the normalized schema for goal-status evidence synthesis.
+
+id: goal-evidence-contract
+version: "1.0"
+domain: diva_goals
+last_updated: "2026-03-23"
+
+description: >
+  Normalized evidence model joining work items, specs, PR/build/deploy
+  evidence, and agent run refs into a single reviewable dataset.
+
+silver_model:
+  table: silver.goal_evidence_joined
+  grain: one row per evidence item per goal
+  columns:
+    - name: evidence_id
+      type: STRING
+      description: Unique evidence identifier
+    - name: goal_id
+      type: STRING
+      description: Strategic objective ID (e.g. OBJ-001)
+    - name: source_type
+      type: STRING
+      description: "One of: azure_boards, github_pr, github_commit, pipeline_run, eval_result, deployment, runtime_metric, agent_eval"
+    - name: source_ref_id
+      type: STRING
+      description: Reference ID in source system
+    - name: source_url
+      type: STRING
+      description: Stable URL to source artifact
+    - name: timestamp
+      type: TIMESTAMP
+      description: When the evidence was captured
+    - name: freshness_hours
+      type: DOUBLE
+      description: Hours since capture (computed at query time)
+    - name: is_stale
+      type: BOOLEAN
+      description: True if freshness exceeds policy threshold
+    - name: confidence
+      type: DOUBLE
+      description: "Confidence score 0-1 (1 = deterministic, <0.8 = derived)"
+    - name: summary
+      type: STRING
+      description: One-line evidence summary
+    - name: derivation_method
+      type: STRING
+      description: "How confidence was derived (direct, inferred, agent_assessed)"
+
+  sources:
+    - name: azure_boards_work_items
+      description: Work item state from Azure Boards API
+      join_key: goal_id
+    - name: github_pull_requests
+      description: PR merge state and linked work items
+      join_key: "AB# tag in PR body"
+    - name: pipeline_runs
+      description: Azure Pipeline run results
+      join_key: pipeline_id + commit_sha
+    - name: agent_run_refs
+      description: Foundry agent execution records
+      join_key: workflow_id + run_id
+
+gold_mart:
+  table: gold.goal_review_mart
+  grain: one row per goal
+  description: >
+    Aggregated review mart for goal-status synthesis. Powers the
+    goal-status-synthesis workflow and review-pack-generation.
+  columns:
+    - name: goal_id
+      type: STRING
+    - name: goal_title
+      type: STRING
+    - name: progress_pct
+      type: DOUBLE
+      description: "Derived progress 0-100"
+    - name: confidence
+      type: DOUBLE
+      description: "Aggregate confidence (min of evidence confidences)"
+    - name: status_color
+      type: STRING
+      description: "green / amber / red / grey"
+    - name: total_evidence_items
+      type: INT
+      description: Count of evidence items
+    - name: stale_evidence_items
+      type: INT
+      description: Count of stale evidence items
+    - name: blocker_count
+      type: INT
+      description: Count of active blockers
+    - name: blockers
+      type: STRING
+      description: "JSON array of blocker descriptions"
+    - name: last_evidence_at
+      type: TIMESTAMP
+    - name: approval_state
+      type: STRING
+      description: "draft / pending_approval / approved / published"
+    - name: snapshot_period
+      type: STRING
+      description: "ISO period (e.g. 2026-Q1)"
+    - name: computed_at
+      type: TIMESTAMP
+      description: When this row was last computed
+
+  consumers:
+    - workflow: goal-status-synthesis
+      usage: Primary input for derived status computation
+    - workflow: review-pack-generation
+      usage: Input for executive review pack assembly
+    - surface: "web/apps/diva-goals"
+      usage: Goal review page data source

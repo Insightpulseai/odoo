@@ -53,7 +53,7 @@ The InsightPulseAI platform has a **legitimately operational core** in Odoo ERP 
 
 | Component | Type | Path | Purpose | Status | Notes |
 |-----------|------|------|---------|--------|-------|
-| ODOO-SAGE | Agent | agents/registry/agents.yaml | OCA/Odoo 19 standards | IMPLEMENTED | Production entrypoint |
+| ODOO-SAGE | Agent | agents/registry/agents.yaml | OCA/Odoo 18 standards | IMPLEMENTED | Production entrypoint |
 | DEVOPS-PRIME | Agent | agents/registry/agents.yaml | CI optimization | IMPLEMENTED | Production entrypoint |
 | DATA-FORGE | Agent | agents/registry/agents.yaml | Databricks/data | PARTIAL | No entrypoint, needs creds |
 | UI-CRAFT | Agent | agents/registry/agents.yaml | OWL frontend | PARTIAL | No executable scripts |

@@ -32,7 +32,7 @@ Foundry IQ is the managed knowledge layer. It provides:
 | Source | Type | Content | Index |
 |--------|------|---------|-------|
 | `stipaidevlake/gold/` | ADLS Gen2 | Databricks gold marts (finance, PPM, projects) | `gold-marts-kb` |
-| `odoo19-docs/` | Blob Storage | Odoo CE 19 documentation (RST-chunked) | `odoo19-docs` |
+| `odoo18-docs/` | Blob Storage | Odoo CE 18 documentation (RST-chunked) | `odoo18-docs` |
 | `org-docs/` | Blob Storage | Architecture, contracts, specs, runbooks | `org-docs` |
 | `azure-platform-docs/` | Blob Storage | Azure platform documentation | `azure-platform-docs` |
 | Odoo ERP (federated) | Lakehouse Federation | Live ERP data via Unity Catalog | `odoo-erp-federated` |
@@ -43,7 +43,7 @@ Foundry IQ is the managed knowledge layer. It provides:
 |---------------|---------|--------|---------|
 | `ipai-finance-kb` | gold-marts-kb, odoo-erp-federated | Finance copilot, PPM agent | Budget, forecast, risk, close status |
 | `ipai-platform-kb` | org-docs, azure-platform-docs | Platform agent, ops agent | Architecture, contracts, runbooks |
-| `ipai-odoo-kb` | odoo19-docs, odoo-erp-federated | Odoo copilot | Module docs, config help, ERP queries |
+| `ipai-odoo-kb` | odoo18-docs, odoo-erp-federated | Odoo copilot | Module docs, config help, ERP queries |
 
 ## Agent Skills — Tool Catalog
 
@@ -117,7 +117,7 @@ tools:
 name: ipai-odoo-copilot
 model: gpt-4o
 instructions: >
-  You are an Odoo 19 CE expert. Help users with module configuration,
+  You are an Odoo 18 CE expert. Help users with module configuration,
   data queries, and ERP operations. Use the Odoo knowledge base for
   documentation and the ERP tools for live data.
 tools:

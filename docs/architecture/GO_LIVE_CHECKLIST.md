@@ -173,4 +173,57 @@ B-5 (Fabric)       ──→  scope decision first, then provision or defer
 
 ---
 
-*Last Updated: 2026-03-27*
+## 13. ERP Accounting Cutover — **Blockers**
+
+> Adapted from [Odoo 18.0 Go-Live Checklist](https://www.odoo.com/es_ES/forum/ayuda-1/180-odoo-go-live-checklist-276370) (USA localization, ~80% adaptable to PH).
+
+### A. Opening Entries Import
+
+* [ ] **AR Clearing account** created (Current Assets, allow reconciliation)
+* [ ] **AP Clearing account** created (Current Liabilities, allow reconciliation)
+* [ ] Open invoice/credit note/payment sums verified against AR balance
+* [ ] Open bill/refund/payment sums verified against AP balance
+* [ ] Multi-currency open items reviewed and conversion rates updated
+* [ ] Open invoices and credit notes imported
+* [ ] Open bills and refunds imported
+* [ ] Customer payments adjusted to AR credit on initial balance (per line, with partner)
+* [ ] Vendor payments adjusted to AP debit on initial balance (per line, with partner)
+* [ ] AR Clearing confirmed zero after reconciliation
+* [ ] AP Clearing confirmed zero after reconciliation
+
+### B. Inventory Valuation
+
+> Skip if company does not hold inventory.
+
+* [ ] Costing method chosen (Standard, FIFO, Average) and configured per product category
+* [ ] Valuation method chosen: **Automated** (journal entries on moves) or **Manual** (periodic)
+* [ ] Products imported with correct category, cost, tracked by quantity
+* [ ] If Automated: Inventory Clearing account created, set on virtual adjustment location
+* [ ] Inventory files collected (product, location, quantity; lot/SN if applicable)
+* [ ] Inventory value sum verified against initial trial balance
+* [ ] Inventory imported via Physical Inventory; adjustments validated
+* [ ] If Automated: normal loss account reset on virtual adjustment location post-import
+
+### C. Trial Balance Import
+
+* [ ] Original trial balance prepared (Excel)
+* [ ] AR account mapped to AR Clearing (excludes customer payments)
+* [ ] AP account mapped to AP Clearing (excludes vendor payments)
+* [ ] Inventory account mapped to Inventory Clearing (if Automated valuation)
+* [ ] Bank journal configured with outstanding receipt/payment accounts
+* [ ] Trial balance journal entry imported and posted
+* [ ] **AR Clearing shows zero** in General Ledger
+* [ ] **AP Clearing shows zero** in General Ledger
+* [ ] **Inventory Clearing shows zero** in General Ledger (if Automated)
+* [ ] Trial balance in Odoo matches source accounting system
+
+### D. PH-Specific (BIR Compliance)
+
+* [ ] BIR tax codes mapped to Odoo tax records (`ipai_bir_tax_compliance`)
+* [ ] Withholding tax accounts configured (EWT, FWT)
+* [ ] VAT output/input accounts aligned with BIR chart of accounts
+* [ ] Open BIR liabilities carried forward in opening entries
+
+---
+
+*Last Updated: 2026-04-09*

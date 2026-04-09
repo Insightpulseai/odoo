@@ -10,7 +10,7 @@ skill:
   purpose: >
     Create new Odoo module structure with correct directory layout, manifest,
     init files, security stubs, and README. Ensures every new ipai_* module
-    follows canonical naming, licensing, and dependency conventions for Odoo CE 19.
+    follows canonical naming, licensing, and dependency conventions for Odoo CE 18.
 
   triggers:
     - new custom module requested
@@ -27,7 +27,7 @@ skill:
   steps:
     - validate module name follows ipai_<domain>_<feature> convention
     - create module directory under addons/ipai/
-    - scaffold __manifest__.py with version 19.0.1.0.0, LGPL-3, minimal deps
+    - scaffold __manifest__.py with version 18.0.1.0.0, LGPL-3, minimal deps
     - create __init__.py importing models package
     - create models/__init__.py with model imports
     - create models/<model>.py stub with _name, _description, _inherit (if extending)
@@ -47,7 +47,7 @@ skill:
   guardrails:
     - module name must match ipai_<domain>_<feature> pattern
     - license must be LGPL-3
-    - version must be 19.0.x.y.z
+    - version must be 18.0.x.y.z
     - no Enterprise module dependencies
     - no odoo.com IAP dependencies
     - prefer inherited extension over core patching
@@ -69,5 +69,5 @@ skill:
 cross_references:
   - agents/knowledge/benchmarks/odoo-developer-howtos.md
   - agents/knowledge/benchmarks/odoo-coding-guidelines.md
-  - .claude/rules/odoo19-coding.md
+  - .claude/rules/odoo18-coding.md
   - .claude/rules/oca-governance.md

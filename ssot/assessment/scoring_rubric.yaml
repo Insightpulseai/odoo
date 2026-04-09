@@ -1,0 +1,216 @@
+version: 1
+metadata:
+  owner: ipai-assessment-harness
+  purpose: >
+    Scoring, confidence, and downgrade rules for the internal assessment harness.
+
+score_scale:
+  0:
+    label: absent
+    meaning: no meaningful control, process, or evidence exists
+  1:
+    label: ad_hoc
+    meaning: fragmented or informal practice with weak repeatability
+  2:
+    label: present_only
+    meaning: control or process exists, but governance and proof are weak
+  3:
+    label: present_and_partly_governed
+    meaning: documented and partly repeatable, but uneven or insufficiently proven
+  4:
+    label: governed_and_mostly_proven
+    meaning: governed, evidence-backed, and mostly repeatable
+  5:
+    label: governed_proven_repeatable
+    meaning: governed, proven, repeatable, and integrated into normal operations
+
+evidence_classes:
+  present:
+    definition: resource, control, or process exists in runtime or documentation
+  governed:
+    definition: source-controlled, policy-backed, owned, and explicitly maintained
+  proven:
+    definition: tested, validated, or operationally demonstrated with evidence
+
+confidence_scale:
+  low:
+    definition: answer depends on partial, stale, or unmanaged evidence
+  medium:
+    definition: answer is mostly supported but still has notable gaps
+  high:
+    definition: answer is strongly supported by current, governed, and relevant evidence
+
+scoring_dimensions:
+  core:
+    - present
+    - governed
+    - proven
+
+  overlays:
+    - workload_fit
+    - operating_model_completeness
+    - architecture_pattern_alignment
+    - workload_specific_risk
+
+  transformation:
+    - visibility
+    - alignment
+    - governance
+    - execution_readiness
+    - continuous_improvement
+
+  architecture_reference_alignment:
+    - platform_selection_fit
+    - workload_boundary_clarity
+    - landing_zone_alignment
+    - reference_pattern_completeness
+
+  agent_orchestration:
+    - orchestration_pattern_fit
+    - decomposition_justification
+    - hitl_gate_presence
+    - context_transfer_quality
+    - anti_pattern_risk
+
+weight_model:
+  waf_core_weight: 0.45
+  workload_overlay_weight: 0.20
+  transformation_readiness_weight: 0.15
+  process_intelligence_weight: 0.05
+  business_value_scenario_weight: 0.05
+  architecture_reference_alignment_weight: 0.05
+  agent_orchestration_weight: 0.05
+
+pillar_weights:
+  reliability: 0.20
+  security: 0.20
+  cost_optimization: 0.20
+  operational_excellence: 0.20
+  performance_efficiency: 0.20
+
+decision_rules:
+  - id: optimistic_without_proof
+    if:
+      present: true
+      governed: false
+      proven: false
+    action:
+      cap_score_at: 2
+      confidence: low
+
+  - id: governed_but_not_proven
+    if:
+      present: true
+      governed: true
+      proven: false
+    action:
+      cap_score_at: 3
+      confidence: medium
+
+  - id: runtime_drift_penalty
+    if:
+      unmanaged_runtime_dependency: true
+    action:
+      lower_score_by: 1
+      add_flag: drift_risk
+
+  - id: no_owner_penalty
+    if:
+      owner_missing: true
+    action:
+      lower_confidence: true
+      add_flag: ownership_gap
+
+  - id: no_recovery_evidence_penalty
+    if:
+      domain: reliability
+      restore_test_missing: true
+    action:
+      lower_score_by: 1
+      add_flag: recovery_gap
+
+  - id: no_finops_practice_penalty
+    if:
+      domain: cost_optimization
+      cost_management_absent: true
+    action:
+      cap_score_at: 2
+      add_flag: finops_gap
+
+  - id: ai_runtime_inside_odoo_penalty
+    if:
+      overlay: ai
+      ai_runtime_inside_odoo: true
+    action:
+      cap_score_at: 1
+      add_flag: boundary_violation
+
+  - id: no_single_source_of_truth_penalty
+    if:
+      transformation_phase: discover
+      single_source_of_truth_missing: true
+    action:
+      cap_score_at: 2
+      add_flag: discovery_gap
+
+  - id: multi_agent_without_justification_penalty
+    if:
+      domain: agent_orchestration
+      multi_agent_used_without_clear_need: true
+    action:
+      lower_score_by: 1
+      add_flag: over_decomposition_risk
+
+  - id: missing_hitl_gate_penalty
+    if:
+      domain: agent_orchestration
+      hitl_gate_missing_for_high_impact_flow: true
+    action:
+      lower_score_by: 1
+      add_flag: hitl_gap
+
+  - id: wrong_platform_selection_penalty
+    if:
+      domain: architecture_reference_alignment
+      platform_choice_conflicts_with_reference_pattern: true
+    action:
+      lower_confidence: true
+      add_flag: topology_mismatch
+
+question_answer_posture:
+  preferred_basis:
+    - present
+    - governed
+    - proven
+  answer_bias: conservative
+  rule: >
+    Strongly positive answers require current evidence that is both governed and,
+    where relevant, proven. Runtime presence alone is insufficient.
+
+result_bands:
+  critical:
+    min: 0.0
+    max: 1.4
+  weak:
+    min: 1.5
+    max: 2.4
+  emerging:
+    min: 2.5
+    max: 3.4
+  defined:
+    min: 3.5
+    max: 4.4
+  optimized:
+    min: 4.5
+    max: 5.0
+
+output_fields:
+  - score
+  - confidence
+  - evidence_quality
+  - blockers
+  - recommendations
+  - safe_answers
+  - risky_answers
+  - unsupported_answers
+  - follow_up_work

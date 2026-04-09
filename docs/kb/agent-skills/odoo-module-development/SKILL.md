@@ -1,6 +1,6 @@
 ---
 name: odoo_module_development
-description: Create and maintain Odoo 19 CE modules following OCA conventions
+description: Create and maintain Odoo 18 CE modules following OCA conventions
 category: backend
 priority: critical
 version: "1.0"
@@ -10,7 +10,7 @@ version: "1.0"
 
 ## Module Structure
 
-Every Odoo 19 module follows this canonical directory layout:
+Every Odoo 18 module follows this canonical directory layout:
 
 ```
 ipai_<domain>_<feature>/

@@ -1,0 +1,333 @@
+# Knowledge Base Registry — All KBs in the IPAI Agent Platform
+# Single source of truth for what knowledge is indexed and where.
+
+name: ipai-knowledge-registry
+description: Central registry of all knowledge bases powering IPAI agent skills
+
+knowledge_bases:
+  # 1. Odoo 18 Documentation
+  - name: odoo18-docs
+    description: Odoo 18 official documentation (RST)
+    status: active
+    index_name: odoo18-docs
+    source_contract: agents/knowledge/odoo18_docs/source.yaml
+    chunking_contract: agents/knowledge/odoo18_docs/chunking.yaml
+    indexing_contract: agents/knowledge/odoo18_docs/indexing.yaml
+    skill: agents/skills/odoo_docs_rag/skill.yaml
+    service: apps/odoo-docs-kb/service.py
+    loader: packages/odoo-docs-kb/loader.py
+    chunker: packages/odoo-docs-kb/chunker.py  # RST heading-aware
+    refresh_workflow: .github/workflows/odoo-docs-kb-refresh.yml
+    source_type: git-repo
+    source_repo: odoo/documentation
+    source_branch: "19.0"
+    stats:
+      files: 1106
+      chunks: 7224
+      avg_chunks_per_file: 6.5
+    embedding:
+      model: text-embedding-ada-002
+      dimensions: 1536
+    runtime:
+      service_app:
+        status: exists
+        path: apps/odoo-docs-kb/service.py
+      search_index:
+        status: missing
+      ingestion_last_run: null
+      retrieval_smoke_test: not_run
+
+  # 2. Azure Platform Documentation
+  - name: azure-platform
+    description: Azure platform docs (Container Apps, Front Door, AI Search, OpenAI, PostgreSQL, Key Vault, Entra ID, Foundry, DevOps)
+    status: scaffold
+    index_name: azure-platform-docs
+    source_contract: agents/knowledge/azure_platform/source.yaml
+    chunking_contract: agents/knowledge/azure_platform/chunking.yaml
+    indexing_contract: agents/knowledge/azure_platform/indexing.yaml
+    skill: agents/skills/azure_platform/skill.yaml
+    loader: packages/odoo-docs-kb/web_loader.py
+    chunker: packages/odoo-docs-kb/md_chunker.py  # Markdown heading-aware
+    source_type: web-crawl
+    source_domains:
+      - learn.microsoft.com
+      - azure.microsoft.com
+    service_scope:
+      - container-apps
+      - frontdoor
+      - search
+      - ai-services/openai
+      - postgresql/flexible-server
+      - key-vault
+      - entra
+      - foundry
+      - devops/repos
+    foundry:
+      description: >
+        Microsoft Foundry coverage — explicit subdomain tracking for the unified AI platform.
+        Coverage contract defined in foundry_coverage_matrix.yaml.
+      coverage_contract: agents/knowledge/azure_platform/foundry_coverage_matrix.yaml
+      coverage_buckets:
+        - get-started           # Project creation, portal, quickstarts
+        - agent-service         # Agent deployment, tools, sharing, multi-agent
+        - models                # Model catalog, deployment, inference
+        - guardrails            # Content filters, safety, tool governance
+        - responsible-ai        # RAI constraints, limited access, transparency
+        - api-sdk               # azure-ai-projects SDK, REST API, client patterns
+        - evaluation-tracing    # Evaluation, tracing, continuous monitoring
+        - developer-experience  # VS Code, playgrounds, hosted agents
+        - security-governance   # RBAC, networking, identity, data protection
+        - operations            # Quotas, regions, support, operate
+        - architecture          # Hub/project topology, resource providers
+        - migration             # Azure AI Studio to Foundry migration
+    embedding:
+      model: text-embedding-ada-002
+      dimensions: 1536
+    runtime:
+      service_app:
+        status: missing
+      search_index:
+        status: missing
+      ingestion_last_run: null
+      retrieval_smoke_test: not_run
+
+  # 3. Databricks Documentation & Solutions
+  - name: databricks
+    description: Databricks docs — CLI, data engineering, apps, Azure integration, industry solutions (financial services, marketing, retail, media)
+    status: scaffold
+    index_name: databricks-docs
+    source_contract: agents/knowledge/databricks/source.yaml
+    chunking_contract: agents/knowledge/databricks/chunking.yaml
+    indexing_contract: agents/knowledge/databricks/indexing.yaml
+    skill: agents/skills/databricks/skill.yaml
+    loader: packages/odoo-docs-kb/web_loader.py
+    chunker: packages/odoo-docs-kb/md_chunker.py
+    source_type: web-crawl
+    source_domains:
+      - docs.databricks.com
+      - www.databricks.com
+    domain_scope:
+      - developer
+      - data-engineering
+      - apps
+      - azure-integration
+      - industry-solutions
+    industry_verticals:
+      - financial-services
+      - marketing
+      - retail
+      - media-entertainment
+    embedding:
+      model: text-embedding-ada-002
+      dimensions: 1536
+    runtime:
+      service_app:
+        status: missing
+      search_index:
+        status: missing
+      ingestion_last_run: null
+      retrieval_smoke_test: not_run
+
+  # 4. Azure DevOps Documentation
+  - name: azure-devops
+    description: Azure DevOps docs — organizations, boards, pipelines, security, audit, process customization, CLI, REST API
+    status: scaffold
+    index_name: azure-devops-docs
+    source_contract: agents/knowledge/azure_devops/source.yaml
+    chunking_contract: agents/knowledge/azure_devops/chunking.yaml
+    indexing_contract: agents/knowledge/azure_devops/indexing.yaml
+    skill: agents/skills/azure_devops/skill.yaml
+    loader: packages/odoo-docs-kb/web_loader.py
+    chunker: packages/odoo-docs-kb/md_chunker.py
+    source_type: web-crawl
+    source_domains:
+      - learn.microsoft.com
+    domain_scope:
+      - organizations
+      - boards
+      - pipelines
+      - security
+      - audit
+      - process
+      - cli
+      - rest-api
+      - notifications
+    ipai_context:
+      ado_project: ipai-platform
+      ado_org: insightpulseai
+      role: governance_spine
+    embedding:
+      model: text-embedding-ada-002
+      dimensions: 1536
+    runtime:
+      service_app:
+        status: missing
+      search_index:
+        status: missing
+      ingestion_last_run: null
+      retrieval_smoke_test: not_run
+
+  # 5. Entra Identity Documentation
+  - name: entra-identity
+    description: >
+      Microsoft Entra ID docs — enterprise apps, SSO, provisioning, Conditional Access,
+      ID Protection, ID Governance, PIM, lifecycle workflows, authentication, roles,
+      devices, audit/sign-in logs, workload identities, Graph API patterns.
+      Powers the IPAI Identity Copilot (our own Security Copilot for Entra).
+    status: scaffold
+    index_name: entra-identity-docs
+    source_contract: agents/knowledge/entra_identity/source.yaml
+    chunking_contract: agents/knowledge/entra_identity/chunking.yaml
+    indexing_contract: agents/knowledge/entra_identity/indexing.yaml
+    skill: agents/skills/entra_identity_copilot/skill.yaml
+    loader: packages/odoo-docs-kb/web_loader.py
+    chunker: packages/odoo-docs-kb/md_chunker.py
+    source_type: web-crawl
+    source_domains:
+      - learn.microsoft.com
+    domain_scope:
+      - enterprise-apps
+      - conditional-access
+      - id-protection
+      - authentication
+      - id-governance
+      - roles
+      - monitoring-health
+      - workload-identities
+      - devices
+      - graph-api
+      - security-copilot-ref
+    security_copilot_parity:
+      entra_id_scenarios: 15
+      id_protection_scenarios: 2
+      id_governance_scenarios: 5
+      total_covered: 22
+      total_possible: 23
+      parity_pct: 96
+    embedding:
+      model: text-embedding-ada-002
+      dimensions: 1536
+    runtime:
+      service_app:
+        status: missing
+      search_index:
+        status: missing
+      ingestion_last_run: null
+      retrieval_smoke_test: not_run
+
+  # 6. Claude Platform Documentation
+  - name: claude-platform
+    description: Anthropic Claude platform docs — API, tool use, agents, MCP, prompt engineering, SDKs, Claude Code, extended thinking, caching, vision, batch processing
+    status: scaffold
+    index_name: claude-platform-docs
+    source_contract: agents/knowledge/claude_platform/source.yaml
+    chunking_contract: agents/knowledge/claude_platform/chunking.yaml
+    indexing_contract: agents/knowledge/claude_platform/indexing.yaml
+    skill: agents/skills/claude_platform/skill.yaml
+    loader: packages/odoo-docs-kb/web_loader.py
+    chunker: packages/odoo-docs-kb/md_chunker.py
+    source_type: web-crawl
+    source_domains:
+      - platform.claude.com
+      - modelcontextprotocol.io
+    domain_scope:
+      - tool-use
+      - agents
+      - mcp
+      - prompt-engineering
+      - api
+      - sdks
+      - claude-code
+      - extended-thinking
+      - prompt-caching
+      - vision
+      - batch-processing
+      - computer-use
+      - citations
+    ipai_context:
+      role: agent_development_platform
+      integration: foundry-agent-service
+    embedding:
+      preferred: text-embedding-3-small
+      fallback: text-embedding-ada-002
+      dimensions: 1536
+    runtime:
+      service_app:
+        status: missing
+      search_index:
+        status: missing
+      ingestion_last_run: null
+      retrieval_smoke_test: not_run
+    tests:
+      smoke_config: agents/tests/claude_platform/retrieval_smoke.yaml
+      queries: agents/tests/claude_platform/queries.yaml
+    export:
+      claude_native: agents/skills/claude_platform/dist/claude/SKILL.md
+
+  # 7. Organization-Wide Documentation
+  - name: org-docs
+    description: Organization-wide internal documentation (architecture, contracts, specs, runbooks, policies)
+    status: scaffolded
+    index_name: org-docs
+    sources:
+      - repo-docs
+      - spec-bundles
+      - architecture-docs
+      - runbooks
+      - policy-docs
+    skill: agents/skills/org_docs/skill.yaml
+    service: apps/org-docs-kb/service.py
+    refresh_workflow: .github/workflows/org-docs-refresh.yml
+    source_type: repo-local
+    doc_types:
+      - architecture
+      - contract
+      - spec
+      - runbook
+      - config
+      - reference
+      - guide
+      - policy
+    embedding:
+      model: text-embedding-ada-002
+      dimensions: 1536
+    runtime:
+      service_app:
+        status: exists
+        path: apps/org-docs-kb/service.py
+      search_index:
+        status: missing
+      ingestion_last_run: null
+      retrieval_smoke_test: not_run
+
+# Shared infrastructure
+shared:
+  embedding_service:
+    preferred: Azure OpenAI (text-embedding-3-small)   # New KBs
+    high_quality: Azure OpenAI (text-embedding-3-large) # High-precision KBs
+    legacy: Azure OpenAI (text-embedding-ada-002)       # Existing indexes only
+  vector_store:
+    backend: Azure AI Search
+    api_version_current: "2024-07-01"
+    api_version_target: "2025-09-01"
+  generation_service: Azure OpenAI (gpt-4o via Microsoft Foundry)
+  runtime: Azure Container Apps
+  secrets: Azure Key Vault (kv-ipai-dev)
+  orchestration: Microsoft Foundry (azure-ai-projects 2.x SDK)
+
+# Foundry integration
+foundry:
+  description: >
+    All KBs use Microsoft Foundry as the unified AI platform.
+    Foundry consolidates Azure OpenAI + AI Search + agent orchestration
+    under a single project client (azure-ai-projects 2.x).
+  key_capabilities:
+    - Multi-agent orchestration and workflows
+    - Tool catalog (1400+ tools)
+    - Memory (contextual information across interactions)
+    - Foundry IQ knowledge integration (grounded, citation-backed answers)
+    - Real-time observability (tracing, monitoring, evaluations)
+    - Enterprise controls (RBAC, networking, policies)
+  sdk: azure-ai-projects>=2.0
+  portal: https://ai.azure.com
+  agent_api: Responses API (Agents v2)

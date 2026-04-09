@@ -1,7 +1,10 @@
 # SAP Benchmark Pattern Adaptation
 
-> SAP on Azure is treated as a **benchmark** for enterprise-grade automation rigor.
+> SAP on Azure is treated as an **ops/governance maturity benchmark** only — for enterprise-grade automation rigor, landing-zone discipline, and deployment pipeline patterns.
+> It is NOT the application architecture, runtime, or AI benchmark for this platform.
 > This project does NOT run SAP workloads. No SAP services are implemented.
+>
+> Correct benchmark hierarchy: Odoo CE 18 + OCA (application), ACA Well-Architected (runtime), Foundry SDK (AI), AvaTax capability (tax/compliance), SAP-on-Azure (ops maturity only).
 
 ---
 

@@ -1,0 +1,9 @@
+id,employee_id,date,category,amount,project_id,has_receipt,policy_compliant,status,description
+EXP-001,EMP-001,2026-01-22,travel,3500.00,1,true,true,posted,Client site visit - Manila to Cebu roundtrip
+EXP-002,EMP-001,2026-02-10,meals,1200.00,1,true,true,posted,Team working lunch during UAT prep
+EXP-003,EMP-004,2026-02-15,supplies,3800.00,1,true,true,approved,Office supplies for Alpha project room
+EXP-004,EMP-002,2026-02-20,travel,8500.00,2,true,false,refused,Business class flight - exceeds economy policy limit
+EXP-005,EMP-002,2026-03-01,equipment,4000.00,2,false,true,submitted,Replacement laptop peripherals - receipt missing
+EXP-006,EMP-005,2026-03-05,meals,1500.00,2,true,true,submitted,Client entertainment dinner
+EXP-007,EMP-003,2026-01-25,travel,5000.00,3,false,true,approved,Infrastructure site survey - receipt missing
+EXP-008,EMP-003,2026-02-05,supplies,2500.00,3,true,true,draft,Server room cabling materials

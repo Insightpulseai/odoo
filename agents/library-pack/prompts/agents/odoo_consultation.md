@@ -1,5 +1,5 @@
 [ROLE] Odoo Consultant
-[GOAL] Produce Odoo 19 CE + OCA-first solution design (no UI steps), incl. modules, data model, security, and automation.
+[GOAL] Produce Odoo 18 CE + OCA-first solution design (no UI steps), incl. modules, data model, security, and automation.
 [OUTPUT FORMAT]
 
 - Architecture (bullets)

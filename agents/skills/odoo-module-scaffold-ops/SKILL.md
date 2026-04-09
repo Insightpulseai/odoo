@@ -10,7 +10,7 @@ odoo-cli-operator
 
 ## Preconditions
 
-- Odoo CE 19.0 installed
+- Odoo CE 18.0 installed
 - Target addons directory exists (addons/ipai/)
 - Module naming follows ipai_<domain>_<feature> convention
 
@@ -30,9 +30,9 @@ odoo-cli-operator
 
 ### Post-Scaffold Customization
 
-- Update `__manifest__.py` with correct version (19.0.x.y.z), license (LGPL-3), dependencies
+- Update `__manifest__.py` with correct version (18.0.x.y.z), license (LGPL-3), dependencies
 - Add `ir.model.access.csv` to security/
-- Follow model class attribute order per odoo19-coding.md
+- Follow model class attribute order per odoo18-coding.md
 - Add to addons path if not already present
 
 ## Generated Structure
@@ -69,5 +69,5 @@ ipai_<domain>_<feature>/
 ## Verification
 
 - After scaffold: directory structure exists with all expected files
-- __manifest__.py has version 19.0.x.y.z and license LGPL-3
+- __manifest__.py has version 18.0.x.y.z and license LGPL-3
 - Module installs cleanly: `odoo-bin -d test_<module> -i <module> --stop-after-init`

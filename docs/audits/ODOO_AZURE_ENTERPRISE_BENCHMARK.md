@@ -68,9 +68,9 @@ However, there is a **significant gap between documented architecture and operat
 
 **Evidence examined:**
 - `/infra/azure/modules/aca-odoo-services.bicep` -- web/worker/cron split with managed identity, KV refs
-- `/docker-compose.yml` -- well-documented local runtime (PG 16, Redis 7, Odoo 19)
+- `/docker-compose.yml` -- well-documented local runtime (PG 16, Redis 7, Odoo 18)
 - `/addons/ipai/` -- 22 custom modules visible
-- `/addons/ipai/ipai_odoo_copilot/__manifest__.py` -- version 19.0.2.0.0, proper deps
+- `/addons/ipai/ipai_odoo_copilot/__manifest__.py` -- version 18.0.2.0.0, proper deps
 - `/addons/ipai/ipai_security_frontdoor/middleware.py` -- WSGI-level FDID validation
 
 **Strengths:**

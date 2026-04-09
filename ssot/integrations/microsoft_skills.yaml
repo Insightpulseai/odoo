@@ -1,0 +1,63 @@
+# schema: ssot.integrations.v1
+# Microsoft Skills — domain grounding layer for coding agents.
+#
+# Skills, custom agents, AGENTS.md templates, and MCP configs for AI coding
+# agents working with Azure SDKs and Foundry. Installable skills for GitHub
+# Copilot and related hosts (VS Code, Claude Code).
+#
+# Operating rule: Install skills selectively to avoid "context rot."
+#
+# References:
+#   microsoft/skills — https://github.com/microsoft/skills
+
+version: "1.0.0"
+schema: ssot.integrations.v1
+id: microsoft_skills
+name: "Microsoft Skills (Coding Agent Grounding)"
+vendor: microsoft
+category: agent_skills
+status: planned
+reviewed: "2026-04-05"
+
+description: >
+  Domain grounding layer for coding agents. Provides reusable skills, custom
+  agent definitions, AGENTS.md templates, and MCP configurations for AI coding
+  agents working with Azure SDKs and Foundry. Supports GitHub Copilot, VS Code,
+  and Claude Code hosts.
+
+surfaces:
+  - id: skills_repo
+    name: "microsoft/skills repository"
+    url: "https://github.com/microsoft/skills"
+    auth: none
+    status: planned
+    notes: >
+      Skills are installed into agent host configuration (e.g., .github/copilot-instructions.md,
+      AGENTS.md, or Claude Code skills/). Each skill adds grounding context for a
+      specific Azure SDK or service domain. Install selectively — excessive skills
+      degrade agent context quality.
+
+repo_contract:
+  architecture_doc: "docs/architecture/AGENTIC_CODING_CONTRACT.md"
+  install_location: "agents/skills/"
+  notes: >
+    When skills are adopted, install definitions go in agents/skills/ with a manifest
+    listing active skills. CI should validate that installed skills match the manifest.
+
+ssot_boundary_rules:
+  - "Skills must not be vendored into addons/ipai/ — they are agent-runtime assets"
+  - "Install skills selectively; do not bulk-install to avoid context rot"
+  - "Skill manifest in agents/skills/manifest.yaml must list all active skills"
+  - "Skills that reference secrets must use env var or vault references, never literals"
+
+risk_flags:
+  - id: context_rot
+    severity: medium
+    description: >
+      Installing too many skills degrades agent context quality by consuming
+      token budget with irrelevant grounding material.
+    mitigation: >
+      Maintain a curated manifest. Review skill list quarterly. Remove unused skills.
+
+allowed_egress:
+  - github.com  # Skill repository access

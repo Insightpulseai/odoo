@@ -29,7 +29,7 @@ skill:
 
   steps:
     - create migrations/ directory in module
-    - create version directory (e.g. migrations/19.0.1.1.0/)
+    - create version directory (e.g. migrations/18.0.1.1.0/)
     - create pre-migrate.py for schema changes that must happen before ORM loads
     - create post-migrate.py for data transforms after ORM is available
     - define migrate(cr, version) function as entry point
@@ -72,4 +72,4 @@ skill:
 cross_references:
   - agents/knowledge/benchmarks/odoo-developer-howtos.md
   - agents/knowledge/benchmarks/odoo-coding-guidelines.md
-  - .claude/rules/odoo19-coding.md
+  - .claude/rules/odoo18-coding.md

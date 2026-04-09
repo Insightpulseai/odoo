@@ -1,0 +1,19 @@
+{
+  "type": "AdaptiveCard",
+  "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+  "version": "1.4",
+  "body": [
+    {"type": "TextBlock", "text": "Confirm Action Required", "weight": "Bolder", "size": "Medium", "color": "Warning"},
+    {"type": "TextBlock", "text": "I am about to execute the following action in Odoo on your behalf. Please review:", "wrap": true, "spacing": "Small"},
+    {"type": "FactSet", "spacing": "Medium", "facts": [
+      {"title": "Action:", "value": "${action_description}"},
+      {"title": "Record:", "value": "${record_model} / ${record_id}"},
+      {"title": "Data:", "value": "${update_payload_summary}"}
+    ]},
+    {"type": "TextBlock", "text": "Are you sure you want to proceed?", "weight": "Bolder", "wrap": true, "spacing": "Medium"}
+  ],
+  "actions": [
+    {"type": "Action.Submit", "title": "Yes, Confirm", "style": "positive", "data": {"action_id": "${pending_action_id}", "user_intent": "confirm"}},
+    {"type": "Action.Submit", "title": "No, Cancel", "style": "destructive", "data": {"action_id": "${pending_action_id}", "user_intent": "cancel"}}
+  ]
+}

@@ -1,0 +1,155 @@
+# Odoo Copilot Skills Registry
+# Maps intent packs to Foundry agent tool sets.
+# SSOT for skill definitions consumed by ipai_odoo_copilot module.
+#
+# Each skill is a deterministic intent pack — the skill router classifies
+# user messages and selects the appropriate skill. The agent's tool access
+# is scoped to the skill's tool set.
+#
+# Tool lanes:
+#   read:  Odoo JSON-2 reads, AI Search, Fabric SQL (no side effects)
+#   write: propose_action only (queued for human approval, never direct writes)
+
+agent_id: ipai-odoo-copilot-azure
+foundry_project: data-intel-ph
+model: gpt-4.1
+version: "2.0.0"
+
+knowledge_indexes:
+  - $ref: "ssot/knowledge/odoo-copilot-indexes.yaml#/indexes/odoo-framework"
+  - $ref: "ssot/knowledge/odoo-copilot-indexes.yaml#/indexes/repo-specs"
+  - $ref: "ssot/knowledge/odoo-copilot-indexes.yaml#/indexes/fabric-business"
+
+skills:
+  # --- Finance domain ---
+  - id: finance_qa
+    type: knowledge
+    description: "Answer questions about accounting, invoices, payments, and fiscal data"
+    domains: [finance, accounting]
+    tools: [read_record, search_records, query_fabric_data, search_odoo_docs]
+    lane: read
+    priority: high
+
+  - id: reconciliation_assist
+    type: procedural
+    description: "Help reconcile bank statement lines with journal entries"
+    domains: [finance, reconciliation]
+    tools: [read_record, search_records, query_fabric_data]
+    lane: read
+    priority: high
+
+  - id: collections_assist
+    type: procedural
+    description: "Assist with AR collections — aging analysis, follow-up drafts"
+    domains: [finance, collections]
+    tools: [read_record, search_records, query_fabric_data]
+    lane: read
+    priority: high
+
+  - id: variance_analysis
+    type: procedural
+    description: "Budget vs actual variance analysis with lakehouse data"
+    domains: [finance, analytics]
+    tools: [read_record, search_records, query_fabric_data]
+    lane: read
+    priority: high
+
+  # --- Odoo framework domain ---
+  - id: odoo_docs_explainer
+    type: knowledge
+    description: "Explain Odoo framework concepts, APIs, and patterns"
+    domains: [odoo, docs, framework]
+    tools: [search_odoo_docs]
+    lane: read
+    priority: medium
+
+  - id: odoo_module_scaffolder
+    type: knowledge
+    description: "Guide Odoo module creation following IPAI conventions"
+    domains: [odoo, development]
+    tools: [search_odoo_docs, read_record]
+    lane: read
+    priority: medium
+
+  - id: odoo_upgrade_advisor
+    type: knowledge
+    description: "Advise on Odoo version migration and breaking changes"
+    domains: [odoo, migration]
+    tools: [search_odoo_docs, search_records]
+    lane: read
+    priority: medium
+
+  # --- Data / analytics domain ---
+  - id: fabric_data_query
+    type: knowledge
+    description: "Query governed business data from Fabric SQL endpoint"
+    domains: [analytics, data]
+    tools: [query_fabric_data]
+    lane: read
+    priority: medium
+
+  # --- General domain ---
+  - id: search_docs
+    type: knowledge
+    description: "Search documentation, specs, and architecture docs"
+    domains: [docs, search]
+    tools: [search_odoo_docs]
+    lane: read
+    priority: low
+
+  - id: record_reader
+    type: knowledge
+    description: "Read and display Odoo records"
+    domains: [odoo, data]
+    tools: [read_record, search_records]
+    lane: read
+    priority: low
+
+  # --- Write lane (always queued) ---
+  - id: propose_write
+    type: procedural
+    description: "Propose write actions for human approval via action queue"
+    domains: [odoo, write]
+    tools: [read_record, search_records, propose_action]
+    lane: write
+    guardrails:
+      requires_human_approval: true
+      never_direct_write: true
+    priority: medium
+
+# Tool definitions reference
+tools:
+  read_record:
+    type: function
+    lane: read
+    description: "Read Odoo record via JSON-2 API"
+    endpoint: "/json/2/{model}/read"
+    auth: bearer_api_key
+
+  search_records:
+    type: function
+    lane: read
+    description: "Search Odoo records via JSON-2 API"
+    endpoint: "/json/2/{model}/search_read"
+    auth: bearer_api_key
+
+  search_odoo_docs:
+    type: azure_ai_search
+    lane: read
+    description: "Search Odoo framework and repo docs"
+    indexes:
+      - odoo-framework
+      - repo-specs
+
+  query_fabric_data:
+    type: function
+    lane: read
+    description: "Query Fabric SQL endpoint for governed business data"
+    auth: managed_identity
+    allowed_schemas: ["gold", "semantic"]
+
+  propose_action:
+    type: function
+    lane: write
+    description: "Queue write action for human approval"
+    target_model: "ipai.copilot.action.queue"

@@ -1,14 +1,14 @@
 # Prompt — odoo-upgrade-safe-extension
 
-You are auditing an Odoo CE 19 module for upgrade safety on the InsightPulse AI platform.
+You are auditing an Odoo CE 18 module for upgrade safety on the InsightPulse AI platform.
 
 Your job is to:
 1. Verify all model extensions use `_inherit` (never copy-paste of core code)
 2. Verify no files are modified under `vendor/odoo/` or `addons/oca/`
 3. Verify all view changes use inherited views with xpath (not replacements)
 4. Check that migration scripts exist for any schema changes
-5. Verify the manifest version follows `19.0.x.y.z`
-6. Check for deprecated patterns and Odoo 19 breaking changes
+5. Verify the manifest version follows `18.0.x.y.z`
+6. Check for deprecated patterns and Odoo 18 breaking changes
 7. Produce an upgrade safety assessment
 
 Platform context:
@@ -17,7 +17,7 @@ Platform context:
 - Custom modules: `addons/ipai/` — all changes go here
 - Migration scripts: `<module>/migrations/<version>/` directories
 
-Odoo 19 breaking changes to check:
+Odoo 18 breaking changes to check:
 - `res.users.groups_id` renamed to `group_ids`
 - Portal and Internal User are mutually exclusive groups
 - `tree` view type renamed to `list` in user-facing strings
@@ -35,7 +35,7 @@ Output format:
 - Core modifications: none found / list of violations
 - Migration scripts: present / missing for schema changes
 - Deprecated patterns: none / list with line references
-- Odoo 19 compatibility: pass/fail per breaking change
+- Odoo 18 compatibility: pass/fail per breaking change
 - Overall: SAFE / UNSAFE with reasons
 
 Rules:

@@ -144,7 +144,7 @@ Six independent lanes that can execute simultaneously. Each lane touches differe
 - Odoo database configuration (`dbfilter`, hostname routing)
 - Core module installation verification
 
-**Allowed files:** `addons/ipai/**`, `config/**`, `odoo19/**`, `scripts/odoo/**`
+**Allowed files:** `addons/ipai/**`, `config/**`, `odoo18/**`, `scripts/odoo/**`
 **Forbidden files:** `infra/`, `.azure/`, `ssot/network/`, `ssot/security/`
 
 **Outputs:**
@@ -316,10 +316,10 @@ Six independent lanes that can execute simultaneously. Each lane touches differe
 ### CP-4: Fix Odoo Cron (W2)
 
 **Why:** Broken server actions block Finance PPM, the primary business capability.
-**Inputs:** Cron log showing `analytic_account_id` error; Odoo 19 field schema
+**Inputs:** Cron log showing `analytic_account_id` error; Odoo 18 field schema
 **Steps:**
 1. Identify the server action referencing `analytic_account_id` on `project.project`
-2. Determine the correct Odoo 19 replacement (likely `analytic_plan_id` or a relational path)
+2. Determine the correct Odoo 18 replacement (likely `analytic_plan_id` or a relational path)
 3. Update the module code
 4. Test install on disposable DB (`test_ipai_finance_ppm`)
 5. Verify cron runs without error

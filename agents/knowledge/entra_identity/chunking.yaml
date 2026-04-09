@@ -1,0 +1,49 @@
+# Entra Identity — Chunking Contract
+
+name: entra-identity-chunking
+description: Markdown heading-aware chunking for Entra ID documentation
+
+strategy: heading-aware
+format: md
+
+chunking:
+  split_on:
+    - h1
+    - h2
+    - h3
+  max_chunk_tokens: 512
+  overlap_tokens: 64
+  min_chunk_tokens: 50
+
+  context_window:
+    include_parent_headings: true
+    include_breadcrumb: true
+    max_parent_depth: 3
+
+metadata_per_chunk:
+  id_template: "{source}:{domain}:{path}:{heading_chain}:{ordinal}:{content_hash_8}"
+  fields:
+    - source        # entra-identity, entra-id-protection, entra-id-governance, etc.
+    - domain        # enterprise-apps, conditional-access, id-protection, authentication, etc.
+    - path          # URL path
+    - heading_chain # Domain > Topic > Subtopic
+    - ordinal       # chunk index within section
+    - content_hash  # SHA-256 first 8 chars
+    - product       # entra
+    - lang          # en
+    - source_type   # documentation | api-reference | tutorial | scenario
+
+md_handling:
+  strip_elements:
+    - "<!-- -->"
+    - ":::image"
+    - ":::zone"
+    - ":::moniker"
+  preserve_elements:
+    - "```"
+    - "> [!NOTE]"
+    - "> [!TIP]"
+    - "> [!WARNING]"
+    - "> [!IMPORTANT]"
+    - "> [!CAUTION]"
+  strip_metadata_header: true

@@ -1,0 +1,12 @@
+agent:
+  name: ipai-finance-copilot
+  entry_point: agent:main
+  description: Finance copilot over Databricks gold marts
+
+serve:
+  host: 0.0.0.0
+  port: 8765
+
+tracing:
+  enabled: true
+  exporter: console

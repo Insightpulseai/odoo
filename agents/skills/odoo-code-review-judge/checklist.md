@@ -2,7 +2,7 @@
 
 ## Module structure
 - [ ] Directory layout follows conventions (models/, views/, security/, data/, static/)
-- [ ] `__manifest__.py` version is `19.0.x.y.z`
+- [ ] `__manifest__.py` version is `18.0.x.y.z`
 - [ ] `__manifest__.py` license is `LGPL-3`
 - [ ] Manifest data key order: security groups, ACLs, data, views
 - [ ] Dependencies are minimal and explicit
@@ -19,7 +19,7 @@
 
 ## XML structure
 - [ ] XML IDs follow naming convention (`_view_form`, `_view_list`, `_action`, `_menu`)
-- [ ] No deprecated `tree` views (must be `list` in Odoo 19)
+- [ ] No deprecated `tree` views (must be `list` in Odoo 18)
 - [ ] Record formatting: one attribute per line when >2 attributes
 - [ ] ACL CSV: all 4 CRUD columns present, ID pattern `access_<model>_<group>`
 

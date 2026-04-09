@@ -1,0 +1,19 @@
+Layer,Pillar,Internal Score,Challenged Score,Calibrated Official Range,Classification,Evidence Class,Confidence,Notes
+A,Reliability,1.5,1.5,1.2-1.5,conservative,present,low,No restore test; no DR rehearsal; single env
+A,Security,2.5,2.2,2.0-2.3,moderate,mixed,medium,WAF+PG PE proven; identity not operational; KV PE missing
+A,Cost Optimization,1.5,1.0,0.8-1.2,conservative,weak,low,Zero cost visibility; inventory governed only
+A,Operational Excellence,2.8,2.4,2.2-2.6,moderate,mixed,medium,IaC governed; 20+ resources drifted; alert routing unverified
+A,Performance Efficiency,2.5,2.4,1.8-2.2,conservative,mixed,medium,Sizing governed; no load test; cross-region latency unmitigated
+A,WAF Core Average,2.16,1.90,1.8-2.2,weak,,medium,
+B,SaaS Overlay,2.0,,,,governed,medium,Tenancy governed; multitenancy deferred; no billing
+B,AI Overlay,2.5,,,,mixed,medium,Foundry proven; safety not implemented; eval absent
+B,SAP Workload Ops Overlay,2.5,,,,mixed,medium-high,Monitoring present; SLO enforcement absent; DR manual
+B,Mission-Critical Overlay,1.0,,,,weak,low,Explicitly deferred; HA untested
+B,Workload Overlay Average,2.00,,,,,,
+C,Discover,2.8,,,,mixed,medium,Strong inventory; business-IT mapping incomplete
+C,Analyze,2.5,,,,mixed,medium,Bottlenecks identified; root-cause partial
+C,Design,3.0,,,,mixed,medium-high,40+ spec bundles; rollback absent
+C,Implement,1.8,,,,weak,medium,5/5 hard blockers open 25+ days
+C,Operate,1.2,,,,weak,low,Alert routing unverified; SLOs/SLAs absent
+C,Transformation Readiness Average,2.26,,,,,,
+,Final Weighted Total (0.60A + 0.20B + 0.20C),2.15,,,WEAK band,,,Prior R3 self-assessed: 2.7; delta: -0.55

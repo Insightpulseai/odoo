@@ -1,0 +1,56 @@
+slug: odoo-knowledge-surfaces
+owner_repo: agents
+version: 0.1.0
+spec: spec/odoo-knowledge-surfaces/
+
+surfaces:
+  docs_mcp:
+    enabled: true
+    description: Retrieval over curated Odoo/OCA/internal docs corpus
+    sources:
+      - odoo18_official_docs
+      - curated_oca
+      - internal_ssot_docs
+    tools:
+      - search_odoo_docs
+      - get_odoo_doc_page
+      - find_oca_module
+      - get_oca_manifest
+      - explain_module_dependencies
+      - suggest_ce_oca_parity_path
+
+  skills:
+    enabled: true
+    description: Promptable decision playbooks for Odoo/OCA work
+    packs:
+      - odoo_debugging
+      - oca_selection
+      - migration_18_to_19
+      - ce_oca_parity
+
+  runtime_mcp:
+    enabled: true
+    description: Live Odoo instance inspection (read-only in V1)
+    mode: read_only
+    write_capable: false
+    tools:
+      - inspect_models
+      - inspect_modules
+      - inspect_fields
+      - inspect_views
+      - inspect_actions
+      - read_record_metadata
+      - validate_config_state
+
+policy:
+  curated_oca_only: true
+  prod_write_blocked: true
+  audit_logging_required: true
+  databricks_dependency: false
+
+lane: production_business_agent
+note: >
+  This is NOT a monolithic "Odoo Learn MCP". The three surfaces are
+  architecturally separate: retrieval (docs), judgment (skills), and
+  inspection (runtime). Write-capable runtime actions require a
+  separate follow-on spec with policy gates and approvals.

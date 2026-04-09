@@ -1,0 +1,329 @@
+version: 1
+generated_from:
+  oca_sources:
+    - turn2file0
+    - turn2file1
+  azure_inventory_source:
+    - turn4file0
+
+metadata:
+  platform: ipai
+  workload: odoo_ce_plus_oca_on_azure
+  intent: >
+    Functional gap ledger for Odoo CE + OCA, separating what is covered by OCA,
+    what requires Azure-native bridges, and what still needs custom or third-party handling.
+  decision_policy:
+    - Prefer OCA for application-layer parity.
+    - Prefer Azure bridges for platform/system capabilities.
+    - Do not force Azure services to impersonate missing Odoo business modules.
+    - Mark unsupported or unverified areas as evidence_missing.
+
+capabilities:
+  - key: accounting_core
+    label: Accounting core, reconciliation, reports, assets, budgets
+    category: finance
+    odoo_ee_surface: accounting_depth
+    lane: oca_first
+    status: oca_covered
+    confidence: high
+    evidence_basis: verified
+    oca_modules:
+      - account_usability
+      - account_reconcile_oca
+      - account_reconcile_model_oca
+      - account_statement_base
+      - account_asset_management
+      - account_financial_report
+      - mis_builder
+      - mis_builder_budget
+      - currency_rate_update
+      - account_journal_lock_date
+      - account_lock_date_update
+      - partner_statement
+    azure_bridge_required: false
+    notes: >
+      Core finance depth is substantially covered by OCA per current input.
+      Azure still supplies runtime, database, security, and observability underneath,
+      but not as a functional parity bridge.
+
+  - key: purchase_sales_workflow
+    label: Purchase and sales workflow ergonomics
+    category: commerce
+    odoo_ee_surface: workflow_enhancements
+    lane: oca_first
+    status: oca_covered
+    confidence: high
+    evidence_basis: verified
+    oca_modules:
+      - purchase_cancel_reason
+      - purchase_default_terms_conditions
+      - purchase_order_archive
+      - purchase_order_line_menu
+      - purchase_last_price_info
+      - purchase_advance_payment
+      - purchase_commercial_partner
+      - purchase_tag
+      - sale_cancel_reason
+      - sale_commercial_partner
+      - sale_delivery_state
+      - sale_fixed_discount
+      - sale_order_archive
+      - sale_order_line_delivery_state
+      - sale_order_line_input
+      - sale_order_line_menu
+      - sale_order_line_price_history
+      - sale_report_salesperson_from_partner
+      - portal_sale_order_search
+    azure_bridge_required: false
+    notes: >
+      Covered as application-layer workflow improvement rather than Azure bridge scope.
+
+  - key: async_jobs_internal
+    label: Async jobs inside Odoo
+    category: platform_in_app
+    odoo_ee_surface: background_processing
+    lane: oca_first
+    status: partial
+    confidence: high
+    evidence_basis: verified
+    oca_modules:
+      - queue_job
+    azure_bridge_required: true
+    azure_bridge_keys:
+      - container_runtime_jobs
+      - integration_messaging
+    notes: >
+      queue_job covers deferred work inside Odoo. External event-driven, scheduled,
+      or decoupled execution should still use Azure-native workers/jobs.
+
+  - key: audit_and_operational_logging_in_app
+    label: In-app audit and operational logging
+    category: security_and_ops
+    odoo_ee_surface: auditability
+    lane: oca_first
+    status: partial
+    confidence: high
+    evidence_basis: verified
+    oca_modules:
+      - auditlog
+      - mail_tracking
+    azure_bridge_required: true
+    azure_bridge_keys:
+      - observability
+    notes: >
+      OCA covers model-level and mail-level logging, but not full cloud telemetry,
+      metrics, tracing, alerting, or log retention strategy.
+
+  - key: xlsx_reporting
+    label: XLSX exports and report output
+    category: productivity
+    odoo_ee_surface: reporting_output
+    lane: oca_first
+    status: oca_covered
+    confidence: high
+    evidence_basis: verified
+    oca_modules:
+      - report_xlsx
+    azure_bridge_required: false
+
+  - key: vendor_bill_and_expense_ocr
+    label: Vendor bill and expense OCR
+    category: documents_and_ai
+    odoo_ee_surface: ocr_digitization
+    lane: azure_bridge
+    status: bridge_required
+    confidence: medium
+    evidence_basis: mixed
+    oca_modules: []
+    azure_bridge_required: true
+    azure_bridge_keys:
+      - document_ocr
+    notes: >
+      No OCA OCR replacement is evidenced in the current pasted must-have lists.
+      Azure OCR bridge remains required.
+
+  - key: documents_workspace
+    label: Documents workspace / DMS-style UX
+    category: documents_and_ai
+    odoo_ee_surface: documents
+    lane: custom_or_selective_oca
+    status: gap_open
+    confidence: medium
+    evidence_basis: inferred
+    oca_modules:
+      - document_url
+    azure_bridge_required: partial
+    azure_bridge_keys:
+      - document_storage
+      - ai_retrieval
+    notes: >
+      document_url helps with URL attachments but does not replace a full documents workspace.
+      Azure can support storage/search/OCR, but not the complete in-app documents UX by itself.
+
+  - key: spreadsheet
+    label: Embedded spreadsheet experience
+    category: productivity
+    odoo_ee_surface: spreadsheet
+    lane: custom_or_accepted_gap
+    status: gap_open
+    confidence: medium
+    evidence_basis: inferred
+    oca_modules: []
+    azure_bridge_required: false
+    notes: >
+      No equivalent is evidenced in the current OCA input. Treat as open gap unless
+      you intentionally replace it with external analytics/reporting patterns.
+
+  - key: sign
+    label: E-signature workflow
+    category: productivity
+    odoo_ee_surface: electronic_signature
+    lane: third_party_or_custom
+    status: gap_open
+    confidence: medium
+    evidence_basis: inferred
+    oca_modules: []
+    azure_bridge_required: false
+    notes: >
+      Keep separate from Azure bridge scope. This is more likely a third-party or custom integration decision.
+
+  - key: mobile
+    label: Mobile app experience
+    category: channels
+    odoo_ee_surface: official_mobile
+    lane: custom_app
+    status: gap_open
+    confidence: medium
+    evidence_basis: inferred
+    oca_modules: []
+    azure_bridge_required: false
+    notes: >
+      Azure can host APIs/backends, but does not replace an Odoo mobile product surface.
+
+  - key: runtime_hosting
+    label: Hosting, ingress, rollouts, autoscale
+    category: platform_runtime
+    odoo_ee_surface: hosting_and_ops
+    lane: azure_bridge
+    status: bridged
+    confidence: high
+    evidence_basis: verified
+    oca_modules: []
+    azure_bridge_required: true
+    azure_bridge_keys:
+      - edge_ingress
+      - container_runtime
+      - registry
+    notes: >
+      This is platform scope, not module scope.
+
+  - key: secrets_identity
+    label: Secret handling and Azure-native workload identity
+    category: security_and_ops
+    odoo_ee_surface: secure_operations
+    lane: azure_bridge
+    status: partial
+    confidence: medium
+    evidence_basis: verified_plus_missing
+    oca_modules:
+      - password_security
+    azure_bridge_required: true
+    azure_bridge_keys:
+      - identity_and_secrets
+    notes: >
+      Key Vault is present. Managed identity and workload binding are not directly visible in the uploaded inventory,
+      so treat identity posture as only partially evidenced from this file set.
+
+  - key: observability_and_alerting
+    label: Telemetry, APM, logging, alerts, dashboards
+    category: security_and_ops
+    odoo_ee_surface: production_operations
+    lane: azure_bridge
+    status: bridged
+    confidence: high
+    evidence_basis: verified
+    oca_modules:
+      - auditlog
+    azure_bridge_required: true
+    azure_bridge_keys:
+      - observability
+    notes: >
+      Azure resources for App Insights, Log Analytics, alerts, action groups, and workbook are present.
+
+  - key: database_ha_backup_dr
+    label: Managed PostgreSQL, restore, backup, durability
+    category: platform_data
+    odoo_ee_surface: production_operations
+    lane: azure_bridge
+    status: partial
+    confidence: medium
+    evidence_basis: verified_plus_missing
+    oca_modules: []
+    azure_bridge_required: true
+    azure_bridge_keys:
+      - database
+      - backup_and_dr
+    notes: >
+      PostgreSQL Flexible Server is present. Backup and restore evidence beyond the managed service itself is not visible
+      in the uploaded inventory, so DR posture remains only partially evidenced.
+
+  - key: ai_grounding_and_copilot
+    label: AI gateway, grounding, retrieval, copilot runtime
+    category: ai
+    odoo_ee_surface: ai_assistants_and_extensions
+    lane: azure_bridge
+    status: partial
+    confidence: medium
+    evidence_basis: verified_plus_missing
+    oca_modules: []
+    azure_bridge_required: true
+    azure_bridge_keys:
+      - ai_foundry_gateway
+      - ai_retrieval
+    notes: >
+      Foundry project/resource and copilot gateway app are present.
+      Search/retrieval infrastructure is not visible in the uploaded inventory, so grounding remains partial.
+
+  - key: integration_bus
+    label: Decoupled integration and durable messaging
+    category: integrations
+    odoo_ee_surface: enterprise_integration
+    lane: azure_bridge
+    status: gap_open
+    confidence: medium
+    evidence_basis: missing
+    oca_modules:
+      - queue_job
+    azure_bridge_required: true
+    azure_bridge_keys:
+      - integration_messaging
+    notes: >
+      queue_job is not a full enterprise messaging bus. No Service Bus or equivalent was visible in the uploaded inventory.
+
+  - key: device_iot_integration
+    label: IoT / device / shop-floor connectivity
+    category: integrations
+    odoo_ee_surface: iot
+    lane: azure_bridge_if_needed
+    status: not_required_yet
+    confidence: low
+    evidence_basis: missing
+    oca_modules: []
+    azure_bridge_required: conditional
+    azure_bridge_keys:
+      - iot_bridge
+    notes: >
+      Keep dormant unless device/shop-floor scenarios are actually in scope.
+
+  - key: vendor_support_and_managed_upgrades
+    label: Odoo-managed support and upgrade convenience
+    category: operating_model
+    odoo_ee_surface: vendor_services
+    lane: ops_model_decision
+    status: self_managed
+    confidence: medium
+    evidence_basis: inferred
+    oca_modules: []
+    azure_bridge_required: false
+    notes: >
+      Azure replaces hosting infrastructure, not Odoo vendor support or managed upgrade service.

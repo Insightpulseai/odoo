@@ -1,31 +1,42 @@
 # Benchmark Matrix — Consolidated
 
-## Four-Tier Benchmark Hierarchy
+## Four-Layer Benchmark Hierarchy
 
-1. **SAP on Azure** → product surface, decision matrices, ops-as-product
-2. **OCA** → addon taxonomy, governance, lifecycle separation, manifest discipline
-3. **Odoo.sh containers** → runtime/container contract, filesystem layout, debug procedures
-4. **odoo/odoo** → core composition, addon loading conventions
+| Layer | Benchmark |
+|---|---|
+| ERP/application architecture | Odoo CE 18 + OCA + thin-bridge doctrine |
+| Cloud runtime | Azure Container Apps Well-Architected guidance |
+| AI/copilot runtime | Microsoft Foundry SDK/project model |
+| Tax/compliance product ambition | AvaTax-style capability benchmark (PH-first) |
+| Ops/governance maturity | SAP-on-Azure seriousness / landing-zone discipline |
+
+**Key rule**: SAP-on-Azure is the ops/governance maturity reference only. It is NOT the application architecture, runtime, or AI benchmark. The correct statement is: "Azure-native Odoo operating model. Benchmarks: Odoo CE 18 + OCA (application), ACA Well-Architected (runtime), Foundry SDK (AI), AvaTax capability (tax/compliance), SAP-on-Azure (ops maturity only)."
+
+Supporting benchmarks for path-level governance:
+
+- **OCA** → addon taxonomy, governance, lifecycle separation, manifest discipline
+- **Odoo.sh containers** → runtime/container contract, filesystem layout, debug procedures
+- **odoo/odoo** → core composition, addon loading conventions
 
 ## Path-Level Mapping
 
 | Path | Primary Benchmark | Secondary | Hard Rule |
 |------|-------------------|-----------|-----------|
 | `addons/oca/` | OCA domain repos | odoo/odoo addon loading | Only OCA/community modules or clean vendorized forks |
-| `addons/ipai/` | SAP service-category model | Odoo.sh runtime contract | One module = one bridge capability + one runtime contract |
+| `addons/ipai/` | Odoo CE 18 + OCA thin-bridge doctrine | Odoo.sh runtime contract | One module = one bridge capability + one runtime contract |
 | `addons/local/` | Exception lane | odoo/odoo as warning | Every entry needs written justification |
-| `spec/<slug>/constitution.md` | SAP top-level offering | — | No implementation detail dump |
-| `spec/<slug>/prd.md` | SAP decision/support model | OCA domain taxonomy | Must include decision matrix + phased path |
+| `spec/<slug>/constitution.md` | Odoo CE 18 + OCA product model | — | No implementation detail dump |
+| `spec/<slug>/prd.md` | ACA Well-Architected + OCA domain taxonomy | — | Must include decision matrix + phased path |
 | `spec/<slug>/plan.md` | OCA maintainer/OpenUpgrade | Odoo.sh operational commands | Must separate build, rollout, upgrade, rollback |
 | `spec/<slug>/tasks.md` | OCA maintainer workflow | — | Every task maps to files + verification |
-| `docs/product/<product>/index.md` | SAP overview page | — | Publish surface, not internal README |
-| `docs/product/<product>/*/overview.md` | SAP recursive doc tree | — | Every publishable capability gets its own page |
-| `docs/product/<product>/*/quickstart.md` | SAP quickstart | Odoo.sh shell/install | Must be runnable and bounded |
-| `docs/product/<product>/*/how-to.md` | SAP how-to | Odoo.sh runtime/logs | Must point to observable evidence |
-| `docs/product/<product>/*/faq.md` | SAP FAQ model | — | Only durable questions |
+| `docs/product/<product>/index.md` | Odoo CE 18 docs structure | — | Publish surface, not internal README |
+| `docs/product/<product>/*/overview.md` | Odoo CE 18 docs structure | — | Every publishable capability gets its own page |
+| `docs/product/<product>/*/quickstart.md` | ACA Well-Architected guidance | Odoo.sh shell/install | Must be runnable and bounded |
+| `docs/product/<product>/*/how-to.md` | ACA Well-Architected guidance | Odoo.sh runtime/logs | Must point to observable evidence |
+| `docs/product/<product>/*/faq.md` | Odoo CE 18 docs model | — | Only durable questions |
 | `docs/architecture/runtime-container-contract.md` | Odoo.sh containers | odoo/odoo layout | Runtime contract must be machine-checkable |
 | `docs/architecture/addon-taxonomy.md` | OCA | odoo/odoo | Every addon class must have ownership + lifecycle rules |
-| `docs/runbooks/*` | Odoo.sh operational contract | SAP ops-as-product | Every runtime surface must have a runbook |
+| `docs/runbooks/*` | Odoo.sh operational contract | SAP-on-Azure ops maturity (ops/governance only) | Every runtime surface must have a runbook |
 | `ssot/odoo/addons.manifest.yaml` | OCA apps-store | OCA maintainer tooling | No addon known only by directory name |
 | `ssot/odoo/oca-baseline.yaml` | OCA domain taxonomy | — | Group by capability domain + install intent |
 | `ssot/odoo/oca.lock.ce19.json` | OCA/OpenUpgrade lifecycle | — | Lock must be versioned and diffable |

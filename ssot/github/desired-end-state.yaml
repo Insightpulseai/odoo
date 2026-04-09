@@ -1,0 +1,300 @@
+# =============================================================================
+# GitHub Org Desired End State — InsightPulseAI
+# =============================================================================
+#
+# Single source of truth for the target GitHub org structure.
+# Updated: 2026-03-07
+# =============================================================================
+
+schema_version: "1.0"
+last_updated: "2026-03-07"
+org: Insightpulseai
+
+# =============================================================================
+# Active Repos (9)
+# =============================================================================
+active_repos:
+
+  - name: .github
+    visibility: private
+    purpose: Org governance, workflows, labels, issue templates, agents
+    scaffolding:
+      - CLAUDE.md
+      - .vscode/settings.json
+      - .vscode/extensions.json
+      - docs/engineering/AI_EDITOR_POLICY.md
+      - labels.json
+    key_content:
+      - 61+ org-wide workflows
+      - 12 agent configurations
+      - Governance documents
+      - Org-wide label definitions
+
+  - name: odoo
+    visibility: public
+    purpose: Odoo CE 18 + OCA addons + custom ipai_* modules
+    scaffolding:
+      - CLAUDE.md
+      - .vscode/settings.json
+      - .vscode/extensions.json
+    key_content:
+      - 43 ipai_* custom modules
+      - OCA addon submodules
+      - Spec bundles (62+)
+      - CI workflows (376)
+
+  - name: agents
+    visibility: public
+    purpose: Agent framework, MCP servers, tool definitions, AI runtime
+    scaffolding:
+      - CLAUDE.md
+      - .vscode/settings.json
+      - .vscode/extensions.json
+      - docs/engineering/AI_EDITOR_POLICY.md
+    key_content:
+      - Agent definitions
+      - MCP server implementations (migrated from mcp-core)
+      - Tool schemas
+      - Evaluation framework
+
+  - name: ops-platform
+    visibility: private
+    purpose: Supabase SSOT, secrets, automations control-plane
+    scaffolding:
+      - CLAUDE.md
+      - .vscode/settings.json
+      - .vscode/extensions.json
+      - docs/engineering/AI_EDITOR_POLICY.md
+    key_content:
+      - Edge Functions
+      - Database migrations
+      - Supabase configuration
+
+  - name: lakehouse
+    visibility: private
+    purpose: Databricks lakehouse — medallion pipelines, Unity Catalog, data governance
+    scaffolding:
+      - CLAUDE.md
+      - README.md
+      - .vscode/settings.json
+      - .vscode/extensions.json
+      - docs/engineering/AI_EDITOR_POLICY.md
+
+  - name: web
+    visibility: private
+    purpose: Product web surfaces — ops console, marketing, docs site
+    scaffolding:
+      - CLAUDE.md
+      - README.md
+      - .vscode/settings.json
+      - .vscode/extensions.json
+      - docs/engineering/AI_EDITOR_POLICY.md
+
+  - name: infra
+    visibility: private
+    purpose: IaC — Azure, DigitalOcean, Cloudflare, Terraform, Bicep
+    scaffolding:
+      - CLAUDE.md
+      - README.md
+      - .vscode/settings.json
+      - .vscode/extensions.json
+      - docs/engineering/AI_EDITOR_POLICY.md
+
+  - name: design-system
+    visibility: internal
+    purpose: Design tokens, components, icon pipeline, brand assets
+    scaffolding:
+      - CLAUDE.md
+      - README.md
+      - .vscode/settings.json
+      - .vscode/extensions.json
+      - docs/engineering/AI_EDITOR_POLICY.md
+
+  - name: templates
+    visibility: private
+    purpose: Repo templates — OCA scaffolds, Supabase starters, Next.js starters
+    scaffolding:
+      - CLAUDE.md
+      - README.md
+      - .vscode/settings.json
+      - .vscode/extensions.json
+      - docs/engineering/AI_EDITOR_POLICY.md
+
+# =============================================================================
+# Archived Repos (13)
+# =============================================================================
+archived_repos:
+
+  - name: mcp-core
+    archived_date: "2026-03-07"
+    reason: Content migrated to agents/mcp/
+
+  - name: learn
+    archived_date: "2026-03-07"
+    reason: Migrate content to odoo/lakehouse later
+    future_migration:
+      - target: odoo
+        content: Odoo addons
+      - target: lakehouse
+        content: Lakehouse notebooks/pipelines
+
+  - name: dev-environment
+    archived_date: "2026-03-07"
+    reason: Migrate content to web/design-system/infra later
+    future_migration:
+      - target: web
+        content: React workspace explorer
+      - target: design-system
+        content: Figma docs
+      - target: infra
+        content: Azure docs
+
+  - name: template-factory
+    archived_date: "2026-03-07"
+    reason: Empty repo (no default branch)
+
+  - name: ops-console
+    archived_date: "2026-03-07"
+    reason: Empty repo (no default branch)
+
+  - name: app-crm
+    archived_date: "2026-03-07"
+    reason: Empty repo (no default branch)
+
+  - name: app-landing
+    archived_date: "2026-03-07"
+    reason: Empty repo (no default branch)
+
+  - name: fin-ops
+    archived_date: "2026-03-07"
+    reason: Empty repo (no default branch)
+
+  - name: plugin-marketplace
+    archived_date: "2026-03-07"
+    reason: Scaffold-only (feature branch, 2-4KB)
+
+  - name: plugin-agents
+    archived_date: "2026-03-07"
+    reason: Scaffold-only (feature branch, 2-4KB)
+
+  - name: roadmap
+    archived_date: "2026-03-07"
+    reason: 1 commit, use GitHub Projects instead
+
+  - name: demo-repository
+    archived_date: pre-existing
+    reason: Demo/test repo
+
+  - name: fluent-owl
+    archived_date: pre-existing
+    reason: Archived prior to restructuring
+
+# =============================================================================
+# Org-Wide Standards
+# =============================================================================
+standards:
+
+  required_files:
+    - CLAUDE.md
+    - .vscode/settings.json
+    - .vscode/extensions.json
+
+  recommended_files:
+    - docs/engineering/AI_EDITOR_POLICY.md
+    - .github/copilot-instructions.md
+    - README.md
+
+  labels:
+    priority:
+      - {name: "priority:critical", color: "B60205"}
+      - {name: "priority:high", color: "D93F0B"}
+      - {name: "priority:medium", color: "FBCA04"}
+      - {name: "priority:low", color: "0E8A16"}
+    type:
+      - {name: "type:bug", color: "D73A4A"}
+      - {name: "type:feature", color: "0075CA"}
+      - {name: "type:chore", color: "CFD3D7"}
+      - {name: "type:docs", color: "0075CA"}
+    agent:
+      - {name: "agent:claude", color: "7B61FF"}
+      - {name: "agent:copilot", color: "1F883D"}
+      - {name: "agent:gemini", color: "4285F4"}
+
+  commit_convention: "feat|fix|refactor|docs|test|chore(scope): description"
+
+# =============================================================================
+# 5-Layer Org Model
+# =============================================================================
+org_layers:
+
+  - layer: 1_control_plane
+    description: "Governance, CI/CD, org-wide workflows, infrastructure"
+    repos: [.github, ops-platform, infra]
+
+  - layer: 2_core_runtime
+    description: "ERP, product surfaces, data/analytics"
+    repos: [odoo, web, lakehouse]
+
+  - layer: 3_shared_systems
+    description: "Design tokens, templates, agent framework"
+    repos: [design-system, templates, agents]
+
+  - layer: 4_planning_governance
+    description: "Planning tools, ADRs, contracts, environment policies"
+    systems: [GitHub Projects, ADRs, contracts, environment policies]
+    notes: "Not repos — cross-cutting governance surfaces"
+
+  - layer: 5_archived
+    description: "Archived repos hold no canonical logic"
+    rule: "Archived repos must not hold canonical logic; migrate content before archiving"
+    repos_ref: "archived_repos (see above)"
+
+# =============================================================================
+# Repo Metadata Requirements
+# =============================================================================
+repo_metadata_required:
+  fields:
+    - name: type
+      description: "Repo classification (product, platform, governance, shared, template)"
+      required: true
+    - name: lifecycle
+      description: "Current lifecycle stage (active, maintenance, deprecated, archived)"
+      required: true
+    - name: owner
+      description: "Team or individual responsible for the repo"
+      required: true
+    - name: purpose
+      description: "One-line purpose statement"
+      required: true
+    - name: README.md
+      description: "Repository overview document"
+      required: true
+    - name: CODEOWNERS
+      description: "GitHub CODEOWNERS file for review routing"
+      required: true
+    - name: branch_protection
+      description: "Main branch protection rules enabled"
+      required: true
+
+# =============================================================================
+# Cross-Platform Integration Map
+# =============================================================================
+platform_map:
+
+  planning:
+    strategy: Figma (roadmap visualization)
+    execution: Plane (workspace, initiatives, epics, work items)
+    engineering: Spec Kit bundles (engineering contracts)
+
+  runtime:
+    erp: Odoo CE 18 (system of record)
+    control_plane: Supabase (auth, Edge Functions, Vault)
+    intelligence: Databricks (lakehouse, Apps)
+    agents: Azure Foundry (copilots, tool orchestration)
+    infrastructure: Azure + DigitalOcean
+
+  engineering:
+    source: GitHub (repos, CI/CD, packages)
+    ci_cd: GitHub Actions
+    dns: Cloudflare
+    hosting_web: Vercel

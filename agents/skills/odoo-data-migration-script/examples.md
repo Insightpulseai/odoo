@@ -4,7 +4,7 @@
 
 **Input**: Add required `margin_pct` field to `project.project`, backfill existing records
 
-**Output** — migrations/19.0.1.1.0/pre-migrate.py:
+**Output** — migrations/18.0.1.1.0/pre-migrate.py:
 ```python
 import logging
 
@@ -14,7 +14,7 @@ _logger = logging.getLogger(__name__)
 def migrate(cr, version):
     if not version:
         return
-    _logger.info("Pre-migrating ipai_finance_ppm to 19.0.1.1.0")
+    _logger.info("Pre-migrating ipai_finance_ppm to 18.0.1.1.0")
     cr.execute("""
         ALTER TABLE project_project
         ADD COLUMN IF NOT EXISTS margin_pct FLOAT DEFAULT 0.0
@@ -25,7 +25,7 @@ def migrate(cr, version):
     """)
 ```
 
-**Output** — migrations/19.0.1.1.0/post-migrate.py:
+**Output** — migrations/18.0.1.1.0/post-migrate.py:
 ```python
 import logging
 from odoo import api, SUPERUSER_ID
@@ -37,7 +37,7 @@ def migrate(cr, version):
     if not version:
         return
     env = api.Environment(cr, SUPERUSER_ID, {})
-    _logger.info("Post-migrating ipai_finance_ppm to 19.0.1.1.0")
+    _logger.info("Post-migrating ipai_finance_ppm to 18.0.1.1.0")
     projects = env['project.project'].search([
         ('budget_amount', '>', 0),
         ('margin_pct', '=', 0),

@@ -48,7 +48,7 @@
 ### Local Development (Native Mac)
 
 ```
-vendor/odoo/                        # Canonical upstream Odoo 19 root
+vendor/odoo/                        # Canonical upstream Odoo 18 root
   odoo-bin
   odoo/
   addons/                           # Core addons
@@ -170,7 +170,7 @@ Used for Docker-based local development. For native Mac development, parameters
 are passed as CLI arguments to `odoo-bin`:
 
 ```bash
-~/.pyenv/versions/odoo-19-dev/bin/python vendor/odoo/odoo-bin \
+~/.pyenv/versions/odoo-18-dev/bin/python vendor/odoo/odoo-bin \
   --database=odoo_dev \
   --db_host=localhost --db_port=5432 --db_user=tbwa --db_password=False \
   --http-port=8069 \
@@ -339,8 +339,8 @@ separation of concerns.
 |   pip install -r requirements.txt                 |
 |   OCA requirements, IPAI requirements              |
 +--------------------------------------------------+
-| Layer 1: Base Odoo 19                             |
-|   /opt/odoo/ (Odoo CE 19 source)                  |
+| Layer 1: Base Odoo 18                             |
+|   /opt/odoo/ (Odoo CE 18 source)                  |
 |   System packages (PostgreSQL client, wkhtmltopdf) |
 |   Python 3.12                                      |
 +--------------------------------------------------+

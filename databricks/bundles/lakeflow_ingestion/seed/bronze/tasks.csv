@@ -1,0 +1,16 @@
+id,name,project_id,stage,priority,date_deadline,assignee_id,create_date
+1,Requirements gathering,1,done,high,2026-01-17,EMP-001,2026-01-06
+2,System design document,1,done,high,2026-01-31,EMP-003,2026-01-08
+3,Core module development,1,in_progress,high,2026-03-15,EMP-003,2026-01-20
+4,UAT testing,1,preparation,medium,2026-04-15,EMP-004,2026-01-20
+5,Go-live cutover,1,preparation,high,2026-06-15,EMP-001,2026-01-20
+6,Vendor onboarding,2,done,high,2026-01-24,EMP-002,2026-01-13
+7,Process mapping,2,done,medium,2026-02-07,EMP-005,2026-01-15
+8,Integration build,2,in_progress,high,2026-02-28,EMP-003,2026-01-27
+9,Data migration,2,review,high,2026-03-07,EMP-002,2026-02-10
+10,Deployment,2,cancelled,medium,2026-03-14,EMP-005,2026-02-10
+11,Stakeholder sign-off,2,in_progress,high,2026-03-21,EMP-002,2026-02-17
+12,Infrastructure setup,3,done,high,2026-02-07,EMP-003,2026-01-20
+13,Security audit,3,in_progress,high,2026-03-07,EMP-003,2026-02-10
+14,Pilot rollout,3,preparation,medium,2026-04-15,EMP-004,2026-02-10
+15,Full deployment,3,preparation,low,2026-05-15,EMP-004,2026-02-10

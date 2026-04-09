@@ -16,7 +16,7 @@
 
 ## Manifest Requirements
 
-- Version: `19.0.x.y.z` (always starts with 19.0)
+- Version: `18.0.x.y.z` (always starts with 18.0)
 - License: `LGPL-3` (CE-only rule)
 - Dependencies: minimal and explicit (no transitive dependency assumptions)
 - Data order: security groups -> ACLs -> data -> views
@@ -27,7 +27,7 @@
 
 - Module must install cleanly in disposable test database
 - `ir.model.access.csv` must be present with all 4 CRUD columns
-- Model classes must follow attribute order per odoo19-coding.md
+- Model classes must follow attribute order per odoo18-coding.md
 - Module must not conflict with existing IPAI or OCA modules
 
 ## Location Rules

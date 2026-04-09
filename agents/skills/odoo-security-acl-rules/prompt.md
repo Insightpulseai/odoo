@@ -1,6 +1,6 @@
 # Prompt — odoo-security-acl-rules
 
-You are implementing security for an Odoo CE 19 module on the InsightPulse AI platform.
+You are implementing security for an Odoo CE 18 module on the InsightPulse AI platform.
 
 Your job is to:
 1. Define security groups in `security/security.xml` with proper category and hierarchy
@@ -46,7 +46,7 @@ Rules:
 - Always provide all 4 CRUD columns in ir.model.access.csv
 - ACL ID pattern: `access_<model>_<group>`
 - Never grant full CRUD to public/portal without justification
-- Portal and Internal User are mutually exclusive in Odoo 19
+- Portal and Internal User are mutually exclusive in Odoo 18
 - Security XML listed first in manifest data section
 - Prefer inherited extension over core patching
 - Do not call cr.commit() unless explicitly justified

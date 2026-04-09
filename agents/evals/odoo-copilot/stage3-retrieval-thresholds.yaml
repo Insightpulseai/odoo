@@ -1,0 +1,53 @@
+# Stage 3 Retrieval-Specific Eval Thresholds
+# Extends: thresholds.yaml (base advisory thresholds still apply)
+# Activated when: odoo18-docs index is populated and retrieval chain is wired
+
+name: odoo-copilot-stage3-retrieval
+version: "1.0.0"
+last_updated: "2026-03-23"
+extends: thresholds.yaml
+dataset_version: "stage3-retrieval-v1"
+
+# Stage 3 adds retrieval-grounding evals on top of base advisory evals
+required_evaluations:
+  - retrieval_hit_rate
+  - grounded_answer_rate
+  - source_attribution_correctness
+  - hallucination_on_docs_questions
+  - fallback_correctness
+  - lane_priority_adherence
+  - bounded_web_search_safety
+
+thresholds:
+  # Retrieval quality
+  retrieval_hit_rate_min: 0.80          # % of docs queries that return >= 1 relevant chunk
+  grounded_answer_rate_min: 0.70        # % of responses that cite a retrieval source
+  source_attribution_correctness_min: 0.85  # % of citations that are correct
+
+  # Truthfulness
+  hallucination_on_docs_max: 0.10       # % of docs-question responses with fabricated info
+  false_inability_claim_max: 0           # "I cannot search" when search IS available
+
+  # Fallback behavior
+  fallback_correctness_min: 1.00        # Graceful degradation when retrieval misses (no hallucination)
+  web_search_domain_violation_max: 0    # Searches outside allowed_domains
+
+  # Lane priority
+  lane_priority_adherence_min: 0.90     # ERP > KB > Web priority respected
+
+  # Latency (retrieval adds overhead)
+  retrieval_latency_p95_seconds_max: 15  # End-to-end including search + LLM
+
+eval_corpus:
+  min_cases: 20
+  required_categories:
+    - docs_question_with_kb_hit          # 8 cases: question answerable from odoo18-docs
+    - docs_question_with_kb_miss         # 4 cases: question not in KB, web fallback
+    - erp_data_question                  # 4 cases: question about user's own data (Lane 1)
+    - out_of_scope_question              # 2 cases: not ERP-related, should redirect
+    - url_paste_question                 # 2 cases: user pastes odoo.com URL
+
+blocking_conditions:
+  - any_false_inability_claim            # "I cannot search" when tools are available
+  - any_web_search_domain_violation      # Search outside odoo.com
+  - any_hallucinated_citation            # Fabricated URL or doc path

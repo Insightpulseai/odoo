@@ -1,0 +1,124 @@
+# Azure DevOps — Knowledge Source Contract
+# Covers: Organizations, Projects, Boards, Pipelines, Security, Audit, Process Customization
+
+name: azure-devops-kb
+description: Azure DevOps documentation knowledge base for IPAI governance spine (work tracking, pipelines, security, audit)
+
+sources:
+  # Primary: Azure DevOps Organizations documentation
+  - name: azdo-organizations
+    type: web-crawl
+    base_urls:
+      - https://learn.microsoft.com/en-us/azure/devops/organizations/
+      - https://learn.microsoft.com/en-us/azure/devops/organizations/settings/
+      - https://learn.microsoft.com/en-us/azure/devops/organizations/security/
+      - https://learn.microsoft.com/en-us/azure/devops/organizations/accounts/
+      - https://learn.microsoft.com/en-us/azure/devops/organizations/billing/
+      - https://learn.microsoft.com/en-us/azure/devops/organizations/projects/
+      - https://learn.microsoft.com/en-us/azure/devops/organizations/audit/
+      - https://learn.microsoft.com/en-us/azure/devops/organizations/notifications/
+    crawl_depth: 2
+    content_selector: "main article"
+
+  # Boards / Work Tracking
+  - name: azdo-boards
+    type: web-crawl
+    base_urls:
+      - https://learn.microsoft.com/en-us/azure/devops/boards/
+      - https://learn.microsoft.com/en-us/azure/devops/boards/work-items/
+      - https://learn.microsoft.com/en-us/azure/devops/boards/backlogs/
+      - https://learn.microsoft.com/en-us/azure/devops/boards/sprints/
+      - https://learn.microsoft.com/en-us/azure/devops/boards/queries/
+    crawl_depth: 2
+    content_selector: "main article"
+
+  # Pipelines (service connections, environments, approvals)
+  - name: azdo-pipelines
+    type: web-crawl
+    base_urls:
+      - https://learn.microsoft.com/en-us/azure/devops/pipelines/
+      - https://learn.microsoft.com/en-us/azure/devops/pipelines/library/service-endpoints
+      - https://learn.microsoft.com/en-us/azure/devops/pipelines/process/environments
+      - https://learn.microsoft.com/en-us/azure/devops/pipelines/process/approvals
+    crawl_depth: 2
+    content_selector: "main article"
+
+  # Azure DevOps CLI reference
+  - name: azdo-cli
+    type: web-crawl
+    base_urls:
+      - https://learn.microsoft.com/en-us/cli/azure/devops
+      - https://learn.microsoft.com/en-us/cli/azure/boards
+      - https://learn.microsoft.com/en-us/cli/azure/repos
+      - https://learn.microsoft.com/en-us/cli/azure/pipelines
+    crawl_depth: 1
+    content_selector: "main article"
+
+  # Azure DevOps REST API reference
+  - name: azdo-rest-api
+    type: web-crawl
+    base_urls:
+      - https://learn.microsoft.com/en-us/rest/api/azure/devops/
+      - https://learn.microsoft.com/en-us/rest/api/azure/devops/wit/
+      - https://learn.microsoft.com/en-us/rest/api/azure/devops/core/
+      - https://learn.microsoft.com/en-us/rest/api/azure/devops/graph/
+      - https://learn.microsoft.com/en-us/rest/api/azure/devops/audit/
+    crawl_depth: 1
+    content_selector: "main article"
+
+  # Process customization
+  - name: azdo-process
+    type: web-crawl
+    base_urls:
+      - https://learn.microsoft.com/en-us/azure/devops/organizations/settings/work/
+      - https://learn.microsoft.com/en-us/azure/devops/organizations/settings/work/inheritance-process-model
+      - https://learn.microsoft.com/en-us/azure/devops/organizations/settings/work/customize-process
+    crawl_depth: 2
+    content_selector: "main article"
+
+ingestion:
+  include:
+    - "devops/organizations/**"
+    - "devops/boards/**"
+    - "devops/pipelines/**"
+    - "devops/repos/**"
+    - "cli/azure/devops/**"
+    - "cli/azure/boards/**"
+    - "cli/azure/repos/**"
+    - "cli/azure/pipelines/**"
+    - "rest/api/azure/devops/**"
+  exclude:
+    - "**/includes/**"
+    - "**/media/**"
+    - "**/zone-pivot-groups/**"
+    - "**/_themes/**"
+  file_types:
+    - "*.md"
+    - "*.yml"
+
+metadata:
+  product: azure-devops
+  source_type: documentation
+  lang: en
+
+# Domain priority for IPAI operating model
+domain_priority:
+  - organizations       # Org settings, billing, Entra connection
+  - boards              # Work items, backlogs, sprints, queries, area/iteration paths
+  - security            # Security groups, permissions, access levels
+  - pipelines           # Service connections, environments, approvals
+  - audit               # Audit logs, audit streaming, compliance
+  - process             # Inherited processes, custom fields, workflow states
+  - notifications       # Subscriptions, service hooks
+  - rest-api            # API patterns, authentication
+  - cli                 # az devops / az boards / az repos / az pipelines
+
+# IPAI-specific context
+ipai_context:
+  ado_project: ipai-platform
+  ado_org: insightpulseai
+  ado_url: "https://dev.azure.com/insightpulseai/ipai-platform"
+  role: work_tracking_and_pipelines
+  github_linkage: "AB#<work_item_id> in PR body/commit"
+  ado_repos_disabled: true
+  authority_map: ssot/governance/ado_github_authority_map.yaml

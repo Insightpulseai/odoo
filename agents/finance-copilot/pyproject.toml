@@ -1,0 +1,20 @@
+[build-system]
+requires = ["setuptools>=68.0"]
+build-backend = "setuptools.backends._legacy:_Backend"
+
+[project]
+name = "ipai-finance-copilot"
+version = "0.1.0"
+description = "Finance copilot agent — queries Databricks gold marts via SQL Statement API"
+requires-python = ">=3.11"
+dependencies = [
+    "azure-identity>=1.15.0",
+    "databricks-sql-connector>=3.0.0",
+    "openai>=1.0.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0",
+    "agent-framework-devui>=0.1.0",
+]

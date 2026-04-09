@@ -1,0 +1,179 @@
+# schema: ssot.integrations.platform_inventory.v1
+# =============================================================================
+# Platform Integration Inventory — Unified SSOT
+# =============================================================================
+# Single view of ALL confirmed integrations across the InsightPulse AI stack.
+# Enforced by CI: .github/workflows/integration-inventory-guard.yml
+#
+# Each entry reflects production state (not planned/aspirational).
+# For per-integration specs, see individual YAML files in this directory.
+#
+# Last updated: 2026-03-05
+# =============================================================================
+
+schema_version: "1.0"
+updated: "2026-03-05"
+org: Insightpulseai
+
+# ---------------------------------------------------------------------------
+# GitHub Platform
+# ---------------------------------------------------------------------------
+github:
+  org: Insightpulseai
+  plan: free  # no hosted runners — self-hosted required
+  runner:
+    type: self-hosted
+    host: 178.128.112.214
+    name: odoo-prod-runner
+    labels: [self-hosted, Linux, X64, odoo-prod]
+    service: actions.runner.Insightpulseai-odoo.odoo-prod-runner.service
+
+  apps:
+    - name: Claude Code
+      type: github_app
+      scope: org
+      status: active
+      repos: [odoo]
+
+    - name: ChatGPT Codex Connector
+      type: github_app
+      scope: org
+      status: active
+      repos: [odoo]
+
+  mcp_servers:
+    - name: github-mcp-server
+      registry: github/github-mcp-server
+      status: available
+      ref: https://github.com/github/github-mcp-server
+
+# ---------------------------------------------------------------------------
+# Cloud Infrastructure
+# ---------------------------------------------------------------------------
+cloud:
+  digitalocean:
+    project: fin-workspace
+    project_id: 29cde7a1-8280-46ad-9fdf-dea7b21a7825
+    status: active
+    services:
+      droplets:
+        - name: odoo-production
+          ip: 178.128.112.214
+          region: sgp1
+          hosts: [odoo, n8n, ocr, agent, auth]
+      managed_postgres:
+        - name: odoo-db-sgp1
+          status: active
+      vpc:
+        - name: fin-workspace-vpc
+          region: sgp1
+    cli:
+      tool: doctl
+      action_ref: digitalocean/action-doctl
+      ref: https://github.com/digitalocean/action-doctl
+
+  cloudflare:
+    domain: insightpulseai.com
+    status: active
+    services: [dns, proxy_waf]
+    record_count: 22
+    subdomains:
+      - erp.insightpulseai.com      # Odoo ERP (A → 178.128.112.214)
+      - n8n.insightpulseai.com      # n8n automation (A → 178.128.112.214)
+      - plane.insightpulseai.com    # Plane CE (A → 178.128.112.214)
+      - shelf.insightpulseai.com    # Shelf.nu (A → 178.128.112.214)
+      - crm.insightpulseai.com      # Atomic CRM (A → 178.128.112.214)
+      - auth.insightpulseai.com     # Authentication (A → 178.128.112.214)
+      - ocr.insightpulseai.com      # OCR service (A → 178.128.112.214)
+      - superset.insightpulseai.com # BI (A → 178.128.112.214)
+      - mcp.insightpulseai.com      # MCP Hub (A → 178.128.112.214)
+      - ops.insightpulseai.com      # OdooOps Console (CNAME → Vercel)
+      - agent.insightpulseai.com    # AI Agent (CNAME → DO AI agent)
+    ssot_file: infra/dns/subdomain-registry.yaml
+
+  supabase:
+    project_ref: spdtwktxdalcfigzeqrz
+    status: active
+    services:
+      - postgres
+      - rls
+      - edge_functions
+      - realtime
+      - storage
+      - vault
+      - auth
+      - pgvector
+    edge_function_count: 42
+    notes: "n8n+GitHub bridge, task bus, external integrations only. NOT for Odoo DB."
+
+  vercel:
+    status: active
+    services: [web_apps, edge_functions]
+    apps:
+      - name: odooops-console
+        framework: next.js
+
+  azure:
+    status: active
+    services:
+      databricks:
+        - jobs_pipelines
+        - sql_warehouses
+        - dashboards
+        - serving_endpoints
+        - agents_mcp
+      future:
+        - pg_flexible_server
+        - container_apps
+        - front_door
+
+# ---------------------------------------------------------------------------
+# Email & Communication
+# ---------------------------------------------------------------------------
+email:
+  zoho_mail:
+    type: smtp
+    domain: insightpulseai.com
+    status: active
+    mx_records: [mx.zoho.com, mx2.zoho.com, mx3.zoho.com]
+
+  mailgun:
+    type: transactional
+    domain: mg.insightpulseai.com
+    status: active
+    smtp_host: smtp.mailgun.org
+    smtp_port: 2525
+
+# ---------------------------------------------------------------------------
+# Automation & Integration
+# ---------------------------------------------------------------------------
+automation:
+  n8n:
+    host: n8n.insightpulseai.com
+    status: active
+    location: 178.128.112.214
+
+  slack:
+    type: workspace_integration
+    status: active
+    features: [notifications, slash_commands, agent]
+
+# ---------------------------------------------------------------------------
+# AI & Dev Tooling
+# ---------------------------------------------------------------------------
+ai_tooling:
+  claude_code:
+    type: cli_agent
+    status: active
+    context: [CLAUDE.md, .claude/]
+
+  cursor:
+    type: ide
+    status: active
+
+  mcp_ecosystem:
+    servers:
+      - github-mcp-server
+      - supabase-mcp
+      - databricks-mcp
+    status: active

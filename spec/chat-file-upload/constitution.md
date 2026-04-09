@@ -158,7 +158,7 @@ This rule is non-negotiable. Violating it — by asking "what type of analysis?"
 ## Non-goals
 
 - building a full general-purpose document management platform
-- replacing Odoo 19 native AI Agents implementation one-to-one
+- replacing Odoo 18 native AI Agents implementation one-to-one
 - storing large file processing logic inside Odoo workers
 - making AI authoritative for finance/compliance decisions
 - bypassing evidence-gated release process

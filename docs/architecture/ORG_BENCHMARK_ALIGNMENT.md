@@ -2,7 +2,7 @@
 
 ## Core position
 
-The platform is aligned with the Microsoft/SAP/Databricks enterprise benchmark **not because of repo count or tool presence**, but because the intended architecture separates:
+The platform is aligned with the Microsoft/Databricks enterprise data benchmark **not because of repo count or tool presence**, but because the intended architecture separates:
 
 1. **Transactional source** (Odoo/PostgreSQL)
 2. **Semantic modeling** (Databricks/data-intelligence)
@@ -12,13 +12,13 @@ The platform is aligned with the Microsoft/SAP/Databricks enterprise benchmark *
 
 ## Benchmark reading
 
-The SAP/Azure reference architecture gives Microsoft Fabric a first-class role for:
+The Microsoft Fabric reference architecture (used here for its data role, not for SAP positioning) gives Fabric a first-class role for:
 
-- SAP data source connectivity and extraction
+- ERP data source connectivity and extraction
 - Data transformation and modeling
 - Business intelligence and reporting
-- SAP data model integration
-- SAP business process analytics
+- Semantic data model integration
+- Business process analytics
 
 Fabric is rated **Primary for data warehousing** and **Comprehensive for BI** in the service selection matrix.
 

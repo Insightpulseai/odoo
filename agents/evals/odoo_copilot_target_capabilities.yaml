@@ -1,0 +1,589 @@
+# odoo_copilot_target_capabilities.yaml
+# SSOT: Odoo Copilot capability maturity assessment
+# Contract: docs/contracts/COPILOT_CAPABILITY_EVAL_CONTRACT.md
+# Scored: 2026-03-15 from code evidence
+#
+# Scale: 0=missing, 1=scaffolded, 2=partial, 3=operational, 4=target
+# release_blocker: true means current < 3 blocks release
+
+domains:
+
+  # ════════════════════════════════════════════
+  # 1. Foundry Runtime Integration (weight: 0.15)
+  # ════════════════════════════════════════════
+  foundry_runtime:
+    weight: 0.15
+    capabilities:
+
+      - id: foundry_auth_credential_chain
+        name: "Azure credential chain (DefaultAzureCredential)"
+        target: 4
+        current: 3
+        evidence:
+          - addons/ipai/ipai_odoo_copilot/models/foundry_service.py  # lines 95-132, DefaultAzureCredential with graceful fallback
+          - addons/ipai/ipai_enterprise_bridge/models/foundry_provider_config.py  # lines 89-98, managed_identity path
+        criteria:
+          - DefaultAzureCredential chain resolves in ACA runtime
+          - API key fallback works when azure-identity not installed
+          - Token refresh is automatic (handled by SDK)
+          - No secrets stored in DB or ir.config_parameter
+        release_blocker: true
+        notes: "Code path complete. Not yet validated in ACA production runtime (live check A pending)."
+
+      - id: foundry_sdk_client
+        name: "AIProjectClient SDK adoption"
+        target: 4
+        current: 1
+        evidence:
+          - addons/ipai/ipai_odoo_copilot/models/foundry_service.py  # lines 165-194, raw urllib.request
+        criteria:
+          - foundry_service.py uses AIProjectClient from azure-ai-projects
+          - Agent resolution via client.agents.list() not raw HTTP
+          - Endpoint routing handled by SDK (no manual URL construction)
+          - API version negotiation automatic
+        release_blocker: false
+        notes: "Still uses raw urllib. Migration gate per project_foundry_migration_status.md."
+
+      - id: foundry_agent_endpoint
+        name: "Agent endpoint compatibility seam"
+        target: 4
+        current: 2
+        evidence:
+          - addons/ipai/ipai_odoo_copilot/models/foundry_service.py  # lines 228-299, _resolve_agent with agents/assistants-compat paths
+          - addons/ipai/ipai_odoo_copilot/models/foundry_service.py  # lines 86-88, agent_api_mode setting
+        criteria:
+          - /agents path resolves agent by name
+          - /openai/assistants fallback works
+          - Rollback switch (agent_api_mode) toggleable at runtime
+          - Live contract test passes against Foundry project
+        release_blocker: false
+        notes: "Compat seam exists in code. Neither path validated against live Foundry endpoint."
+
+      - id: foundry_api_version
+        name: "Foundry API version contract"
+        target: 4
+        current: 2
+        evidence:
+          - addons/ipai/ipai_odoo_copilot/models/foundry_service.py  # line 20, _AGENTS_API_VERSION = 2025-03-01-preview
+          - addons/ipai/ipai_enterprise_bridge/models/foundry_provider_config.py  # line 53, api_version field
+        criteria:
+          - API version matches Foundry Responses API v2 contract
+          - Version is configurable per provider config
+          - Breaking version changes caught by contract test
+        release_blocker: false
+        notes: "Bumped to 2025-03-01-preview. No contract test validates version compatibility."
+
+  # ════════════════════════════════════════════
+  # 2. Auth and Identity (weight: 0.10)
+  # ════════════════════════════════════════════
+  auth_identity:
+    weight: 0.10
+    capabilities:
+
+      - id: managed_identity_support
+        name: "Azure Managed Identity for Foundry auth"
+        target: 4
+        current: 3
+        evidence:
+          - addons/ipai/ipai_odoo_copilot/models/foundry_service.py  # lines 95-132, DefaultAzureCredential
+          - addons/ipai/ipai_enterprise_bridge/models/foundry_provider_config.py  # lines 89-98
+        criteria:
+          - DefaultAzureCredential resolves in ACA via IMDS
+          - Token scoped to cognitiveservices.azure.com
+          - Fallback to env var when managed identity unavailable
+        release_blocker: true
+        notes: "Code complete. Needs ACA live validation (check A)."
+
+      - id: api_key_fallback
+        name: "API key fallback auth"
+        target: 4
+        current: 3
+        evidence:
+          - addons/ipai/ipai_odoo_copilot/models/foundry_service.py  # lines 107-109, AZURE_FOUNDRY_API_KEY env var
+          - addons/ipai/ipai_enterprise_bridge/models/foundry_provider_config.py  # lines 81-85
+        criteria:
+          - AZURE_FOUNDRY_API_KEY env var used when present
+          - api-key header set correctly
+          - Works without azure-identity installed
+        release_blocker: false
+        notes: "Functional. Used in local dev."
+
+      - id: entra_id_integration
+        name: "Microsoft Entra ID integration"
+        target: 4
+        current: 1
+        evidence:
+          - addons/ipai/ipai_odoo_copilot/models/foundry_service.py  # Keycloak still active per CLAUDE.md
+        criteria:
+          - Odoo users authenticate via Entra ID
+          - Token exchange between Odoo session and Foundry bearer
+          - Keycloak fully replaced
+        release_blocker: false
+        notes: "Transitional. Keycloak is current IdP. Entra ID is target but not implemented."
+
+      - id: service_to_service_auth
+        name: "Service-to-service auth (HMAC)"
+        target: 4
+        current: 3
+        evidence:
+          - addons/ipai/ipai_odoo_copilot/controllers/main.py  # lines 53-76, HMAC compare_digest
+          - addons/ipai/ipai_agent/models/agent_run.py  # lines 406-417, HMAC signature generation
+        criteria:
+          - HMAC-SHA256 signature verification on service endpoint
+          - Timing-safe comparison (hmac.compare_digest)
+          - Service key from env var only
+          - Agent run dispatch supports hmac/service_role/api_key modes
+        release_blocker: false
+        notes: "HMAC on controller + agent dispatch. Functional."
+
+  # ════════════════════════════════════════════
+  # 3. Tool Execution (weight: 0.15)
+  # ════════════════════════════════════════════
+  tool_execution:
+    weight: 0.15
+    capabilities:
+
+      - id: tool_registry_shape
+        name: "Tool registry with dispatch"
+        target: 4
+        current: 3
+        evidence:
+          - addons/ipai/ipai_odoo_copilot/models/tool_executor.py  # lines 66-79, 11 tools in _TOOL_HANDLERS dict
+          - addons/ipai/ipai_agent/models/agent_tool.py  # full model with provider/auth_mode/endpoint_param
+        criteria:
+          - All tools registered with handler methods
+          - Dispatch via getattr from registry dict
+          - Agent tool model supports multiple providers and auth modes
+          - Tool technical names are unique (SQL constraint)
+        release_blocker: true
+        notes: "11 tools registered. Dispatch works. Not live-tested with Foundry agent run."
+
+      - id: tool_permission_validation
+        name: "Tool permission validation (context envelope)"
+        target: 4
+        current: 3
+        evidence:
+          - addons/ipai/ipai_odoo_copilot/models/tool_executor.py  # lines 178-192, _validate_tool_permission
+          - addons/ipai/ipai_agent/models/agent_run.py  # lines 296-320, _check_tool_access with group enforcement
+        criteria:
+          - permitted_tools list checked before execution
+          - Agent tool access enforces allowed_group_ids
+          - Deny-by-default for inactive tools
+          - Cannot be bypassed via RPC
+        release_blocker: true
+        notes: "Dual enforcement: copilot context_envelope + agent group_ids. Functional."
+
+      - id: tool_scope_validation
+        name: "Company and entity scope validation"
+        target: 4
+        current: 3
+        evidence:
+          - addons/ipai/ipai_odoo_copilot/models/tool_executor.py  # lines 194-241, _validate_scope with company_id check
+        criteria:
+          - company_id injected into search domains
+          - Records checked against requesting company
+          - Blocked models enforced (10 models in frozenset)
+          - Model existence validated
+        release_blocker: true
+        notes: "Company scope injection + blocked model list. Functional."
+
+      - id: read_only_enforcement
+        name: "Read-only tool enforcement"
+        target: 4
+        current: 3
+        evidence:
+          - addons/ipai/ipai_odoo_copilot/models/tool_executor.py  # line 82, _READ_ONLY_TOOLS = frozenset
+          - addons/ipai/ipai_odoo_copilot/models/tool_executor.py  # lines 125-132, read_only_mode check
+        criteria:
+          - All Stage 1 tools in _READ_ONLY_TOOLS frozenset
+          - read_only_mode setting blocks non-read tools
+          - Setting check happens before dispatch
+        release_blocker: true
+        notes: "Enforced. All 11 tools are read-only in Stage 1."
+
+  # ════════════════════════════════════════════
+  # 4. KB Grounding (weight: 0.20)
+  # ════════════════════════════════════════════
+  kb_grounding:
+    weight: 0.20
+    capabilities:
+
+      - id: odoo_docs_kb
+        name: "Odoo 18 documentation KB (chunker + embedder + indexer + service)"
+        target: 4
+        current: 3
+        evidence:
+          - packages/odoo-docs-kb/chunker.py  # RSTHeadingChunker, heading-aware, breadcrumb context
+          - packages/odoo-docs-kb/embed.py  # AzureEmbedder, batch + retry, text-embedding-ada-002
+          - packages/odoo-docs-kb/index.py  # AzureSearchIndexer, upsert/delete, manifest tracking
+          - packages/odoo-docs-kb/eval.py  # RetrievalEvaluator, 10 seeded queries, MRR metric
+          - apps/odoo-docs-kb/service.py  # FastAPI service, /search + /answer + /search/module + /health
+        criteria:
+          - RST chunker produces heading-aware chunks with breadcrumbs
+          - Embedder uses Azure OpenAI with batch + exponential backoff
+          - Indexer manages Azure AI Search index with vector search
+          - Service exposes /search (hybrid), /answer (RAG), /search/module
+          - Eval suite validates retrieval quality (MRR, path hit rate)
+          - 7224 chunks indexed (per migration status)
+        release_blocker: true
+        notes: "Full pipeline exists. Eval suite has 10 queries. Service has health check. Not deployed to ACA yet."
+
+      - id: azure_platform_kb
+        name: "Azure platform documentation KB"
+        target: 4
+        current: 1
+        evidence:
+          - agents/knowledge/azure_platform/foundry_coverage_matrix.yaml  # 12-bucket coverage contract
+          - addons/ipai/ipai_odoo_copilot/models/tool_executor.py  # lines 508-526, search_azure_docs tool handler
+        criteria:
+          - Azure docs chunked and indexed in azure-platform-docs index
+          - Coverage matrix 80%+ of P0 buckets
+          - search_azure_docs tool returns grounded results
+          - Service filter support for Azure services
+        release_blocker: false
+        notes: "Coverage matrix defined (5/12 partial, 7/12 missing). Tool handler exists but no index populated."
+
+      - id: databricks_kb
+        name: "Databricks documentation KB"
+        target: 4
+        current: 1
+        evidence:
+          - addons/ipai/ipai_odoo_copilot/models/tool_executor.py  # lines 528-550, search_databricks_docs tool handler
+        criteria:
+          - Databricks docs chunked and indexed
+          - search_databricks_docs tool returns grounded results
+          - Filter support for domain and industry
+        release_blocker: false
+        notes: "Tool handler exists with domain/industry filter support. No index or content pipeline."
+
+      - id: citation_schema
+        name: "Normalized citation object in search results"
+        target: 4
+        current: 2
+        evidence:
+          - apps/odoo-docs-kb/service.py  # lines 101-105, Citation model with chunk_id/path/heading_chain/relevance
+          - addons/ipai/ipai_odoo_copilot/models/tool_executor.py  # lines 406-413, results have path/title/score but no Citation object
+        criteria:
+          - All KB search results include a Citation object
+          - Citation has chunk_id, path, heading_chain, relevance score
+          - Copilot tool executor normalizes results to citation schema
+          - Agent responses include source citations
+        release_blocker: false
+        notes: "FastAPI service has Citation model. Tool executor returns raw dict without normalization."
+
+      - id: kb_search_tools_wired
+        name: "KB search tools wired in copilot tool executor"
+        target: 4
+        current: 2
+        evidence:
+          - addons/ipai/ipai_odoo_copilot/models/tool_executor.py  # lines 75-78, 3 KB tools registered
+          - addons/ipai/ipai_odoo_copilot/models/tool_executor.py  # lines 432-550, handler implementations
+        criteria:
+          - search_odoo_docs, search_azure_docs, search_databricks_docs registered
+          - Handlers call _search_kb_index with correct index names
+          - Filter support (module, service, domain, industry)
+          - Results returned via Azure AI Search SDK
+          - Live integration test passes
+        release_blocker: false
+        notes: "3 tools registered and handlers implemented. Depend on Azure AI Search indexes existing."
+
+  # ════════════════════════════════════════════
+  # 5. Guardrails and Read-Only Enforcement (weight: 0.10)
+  # ════════════════════════════════════════════
+  guardrails:
+    weight: 0.10
+    capabilities:
+
+      - id: read_only_mode
+        name: "Read-only mode setting enforcement"
+        target: 4
+        current: 3
+        evidence:
+          - addons/ipai/ipai_odoo_copilot/models/foundry_service.py  # lines 80-82, read_only_mode setting
+          - addons/ipai/ipai_odoo_copilot/models/tool_executor.py  # lines 125-132, enforcement check
+        criteria:
+          - foundry_read_only_mode ir.config_parameter defaults to True
+          - Tool executor checks setting before dispatch
+          - Non-read tools blocked with clear error message
+        release_blocker: true
+        notes: "Defaults to True. Check before every tool dispatch."
+
+      - id: blocked_models
+        name: "Blocked model frozenset"
+        target: 4
+        current: 3
+        evidence:
+          - addons/ipai/ipai_odoo_copilot/models/tool_executor.py  # lines 24-35, 10 models in _BLOCKED_MODELS
+        criteria:
+          - Security-sensitive models blocked (ir.config_parameter, res.users, ir.cron, etc.)
+          - Check in _validate_scope before record access
+          - Cannot be bypassed via tool arguments
+        release_blocker: true
+        notes: "10 models blocked. Includes ir.config_parameter, res.users, ir.rule, ir.model.access."
+
+      - id: tool_allowlist
+        name: "Permitted tools validation"
+        target: 4
+        current: 3
+        evidence:
+          - addons/ipai/ipai_odoo_copilot/models/tool_executor.py  # lines 178-192
+        criteria:
+          - context_envelope must contain permitted_tools list
+          - Tool name checked against list before execution
+          - Rejection logged to audit
+        release_blocker: true
+        notes: "Functional. Rejection produces audit record."
+
+      - id: empty_result_handling
+        name: "Graceful empty result handling"
+        target: 4
+        current: 2
+        evidence:
+          - addons/ipai/ipai_odoo_copilot/models/tool_executor.py  # line 351, returns empty results with source=none
+        criteria:
+          - Empty results return structured response (not exception)
+          - Agent can distinguish 'no results' from 'error'
+          - Confidence degradation signal for the LLM
+        release_blocker: false
+        notes: "Returns empty list with message. No confidence signal to LLM."
+
+  # ════════════════════════════════════════════
+  # 6. Observability and Tracing (weight: 0.05)
+  # ════════════════════════════════════════════
+  observability:
+    weight: 0.05
+    capabilities:
+
+      - id: audit_logging
+        name: "Copilot audit log model"
+        target: 4
+        current: 2
+        evidence:
+          - addons/ipai/ipai_odoo_copilot/models/copilot_audit.py  # full model with user, prompt, response, blocked, source, surface
+          - addons/ipai/ipai_odoo_copilot/models/tool_executor.py  # lines 745-774, _log_tool_audit writes to model
+        criteria:
+          - Every tool invocation logged (success and failure)
+          - Fields: user, prompt, response_excerpt, blocked, reason, source, surface
+          - Context envelope captured
+          - Queryable from Odoo backend
+        release_blocker: false
+        notes: "Model has 10 fields. Tool executor writes audit on every call. No dashboard or alert."
+
+      - id: request_tracing
+        name: "Distributed request tracing"
+        target: 4
+        current: 0
+        evidence: []
+        criteria:
+          - Correlation ID propagated across Odoo -> Foundry -> KB service
+          - OpenTelemetry or Application Insights integration
+          - Trace visible in Azure Monitor
+        release_blocker: false
+        notes: "Not implemented. No tracing library or correlation ID."
+
+      - id: error_monitoring
+        name: "Error monitoring and alerting"
+        target: 4
+        current: 1
+        evidence:
+          - addons/ipai/ipai_odoo_copilot/models/tool_executor.py  # lines 163-166, logger.exception on unhandled errors
+          - addons/ipai/ipai_odoo_copilot/models/foundry_service.py  # logger.warning on auth/network failures
+        criteria:
+          - Structured error logging with context
+          - Error rate monitoring (alert on threshold)
+          - Sentry or Application Insights integration
+        release_blocker: false
+        notes: "logger.exception only. No structured metrics or external error tracking."
+
+      - id: latency_tracking
+        name: "Tool execution latency tracking"
+        target: 4
+        current: 0
+        evidence: []
+        criteria:
+          - Per-tool latency measured and recorded
+          - P50/P95/P99 latency metrics available
+          - Slow tool execution alerts
+        release_blocker: false
+        notes: "Not implemented. agent_run.duration_seconds exists but is for async runs, not copilot tools."
+
+  # ════════════════════════════════════════════
+  # 7. Deployment / Publish Repeatability (weight: 0.10)
+  # ════════════════════════════════════════════
+  deployment:
+    weight: 0.10
+    capabilities:
+
+      - id: publish_pipeline
+        name: "CI/CD publish pipeline for agent services"
+        target: 4
+        current: 1
+        evidence: []
+        criteria:
+          - GitHub Actions workflow builds and pushes container images
+          - Workflow deploys to Azure Container Apps
+          - Pipeline is idempotent and repeatable
+          - Rollback path documented and tested
+        release_blocker: false
+        notes: "No publish-agent-services.yml found in .github/workflows/. Pipeline does not exist."
+
+      - id: container_image
+        name: "Container image for KB RAG service"
+        target: 4
+        current: 1
+        evidence:
+          - apps/odoo-docs-kb/service.py  # FastAPI service, __main__ block with uvicorn
+        criteria:
+          - Dockerfile exists and builds successfully
+          - Image pushed to container registry
+          - Health check endpoint responds
+          - Environment variables documented
+        release_blocker: false
+        notes: "Service.py has uvicorn entrypoint. No Dockerfile found in apps/odoo-docs-kb/."
+
+      - id: health_check
+        name: "Health check endpoint"
+        target: 4
+        current: 2
+        evidence:
+          - apps/odoo-docs-kb/service.py  # lines 123-131, /health endpoint
+          - addons/ipai/ipai_odoo_copilot/models/foundry_service.py  # lines 305-423, test_connection
+        criteria:
+          - /health returns structured status (search_connected, openai_connected)
+          - test_connection validates config + auth + reachability + knowledge binding
+          - Health check callable from cron (nightly_healthcheck)
+          - Contract-tested (expected response shape validated)
+        release_blocker: false
+        notes: "/health exists on KB service. test_connection on Foundry service. Neither contract-tested."
+
+      - id: rollback_path
+        name: "Rollback path (agent_api_mode compat seam)"
+        target: 4
+        current: 2
+        evidence:
+          - addons/ipai/ipai_odoo_copilot/models/foundry_service.py  # lines 83-88, agent_api_mode setting
+        criteria:
+          - agent_api_mode toggleable without code deploy
+          - assistants-compat mode verified to work
+          - Rollback procedure documented
+        release_blocker: false
+        notes: "Setting exists as ir.config_parameter. Neither mode validated live."
+
+  # ════════════════════════════════════════════
+  # 8. Production Readiness (weight: 0.10)
+  # ════════════════════════════════════════════
+  production_readiness:
+    weight: 0.10
+    capabilities:
+
+      - id: config_completeness
+        name: "Configuration parameters completeness"
+        target: 4
+        current: 2
+        evidence:
+          - addons/ipai/ipai_odoo_copilot/models/foundry_service.py  # lines 66-89, _get_settings with 12 params
+        criteria:
+          - All required params have sensible defaults
+          - Missing params produce clear error messages
+          - Settings UI exposes all params
+          - Config documented in ops runbook
+        release_blocker: false
+        notes: "12 params defined. Many default to empty string. Missing config caught by test_connection."
+
+      - id: graceful_degradation
+        name: "Graceful degradation when dependencies unavailable"
+        target: 4
+        current: 3
+        evidence:
+          - addons/ipai/ipai_odoo_copilot/models/foundry_service.py  # lines 23-28, graceful azure-identity import
+          - addons/ipai/ipai_odoo_copilot/models/tool_executor.py  # lines 17-20, graceful azure-search import
+          - addons/ipai/ipai_odoo_copilot/models/tool_executor.py  # lines 340-351, fallback to Odoo knowledge.article
+          - addons/ipai/ipai_odoo_copilot/models/tool_executor.py  # lines 611-616, finance model not-installed fallback
+        criteria:
+          - Missing azure-identity handled gracefully
+          - Missing azure-search-documents handled gracefully
+          - Missing KB indexes produce structured 'not available' response
+          - Missing Odoo models produce structured fallback
+        release_blocker: false
+        notes: "Multiple fallback paths. graceful_import for SDKs. Model-not-found returns structured response."
+
+      - id: secret_management
+        name: "Secret management (env vars only)"
+        target: 4
+        current: 3
+        evidence:
+          - addons/ipai/ipai_odoo_copilot/models/foundry_service.py  # line 107, os.environ.get for API key
+          - addons/ipai/ipai_odoo_copilot/models/tool_executor.py  # line 366, os.environ.get for search key
+          - addons/ipai/ipai_odoo_copilot/controllers/main.py  # line 54, os.environ.get for service key
+          - addons/ipai/ipai_agent/models/agent_tool.py  # lines 111-123, secrets from ir.config_parameter only
+        criteria:
+          - No hardcoded secrets in source
+          - All secrets from env vars or ir.config_parameter
+          - Secrets never logged (no echo/print)
+          - Azure Key Vault integration for production
+        release_blocker: true
+        notes: "All secrets from env vars. ir.config_parameter used for tool endpoint/secret refs. No Key Vault integration yet."
+
+      - id: documentation
+        name: "Operational documentation"
+        target: 4
+        current: 2
+        evidence:
+          - addons/ipai/ipai_odoo_copilot/__manifest__.py  # module description
+        criteria:
+          - Ops runbook for copilot service
+          - Configuration reference for all params
+          - Troubleshooting guide
+          - Architecture diagram
+        release_blocker: false
+        notes: "CLAUDE.md covers architecture. No standalone ops doc for copilot service."
+
+  # ════════════════════════════════════════════
+  # 9. Governance / Approval Readiness (weight: 0.05)
+  # ════════════════════════════════════════════
+  governance:
+    weight: 0.05
+    capabilities:
+
+      - id: write_tool_policy
+        name: "Policy model for write tool governance"
+        target: 4
+        current: 1
+        evidence:
+          - addons/ipai/ipai_agent/models/agent_policy.py  # full model with require_approval, allowed_tool_ids, max_queue_depth
+        criteria:
+          - Policy model wired to copilot tool executor
+          - Write tools check policy before execution
+          - Approval workflow blocks write tool dispatch
+          - Policy configurable per model and company
+        release_blocker: false
+        notes: "ipai.agent.policy model exists with require_approval and allowed_tool_ids. Not wired to copilot tool executor."
+
+      - id: approval_workflow
+        name: "Approval workflow for agent runs"
+        target: 4
+        current: 1
+        evidence:
+          - addons/ipai/ipai_agent/models/agent_run.py  # lines 324-342, action_approve/action_reject
+          - addons/ipai/ipai_agent/models/agent_run.py  # lines 459-478, cron_dispatch_queued with policy check
+          - addons/ipai/ipai_agent/models/agent_run.py  # lines 495-533, _schedule_approval_activity
+        criteria:
+          - Approval workflow connected to copilot write tools
+          - mail.activity created for approvers
+          - Approve/reject transitions state machine correctly
+          - Approval activities visible in Odoo header clock
+        release_blocker: false
+        notes: "Full approval workflow in agent_run. Not connected to copilot tool executor (Stage 1 is read-only)."
+
+      - id: stage2_write_tools
+        name: "Stage 2 write tool capabilities"
+        target: 4
+        current: 0
+        evidence: []
+        criteria:
+          - Write tools defined and registered
+          - Policy enforcement gates write tool execution
+          - Audit trail captures write operations
+          - Rollback capability for write operations
+        release_blocker: false
+        notes: "Planned but not implemented. Stage 1 is read-only only."

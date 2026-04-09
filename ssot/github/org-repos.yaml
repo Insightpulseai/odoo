@@ -1,0 +1,271 @@
+# InsightPulseAI GitHub Organization — 5-Layer Governance Manifest
+# SSOT for the 9 canonical repos: layer, type, lifecycle, required files, directory layout.
+# Complements: desired-end-state.yaml (scaffolding), target-state-repos.yaml (Azure taxonomy)
+# Supersedes: org_repos.yaml (stale tier-based model)
+# Read by: scripts/github/check_org_repos.sh
+
+org:
+  name: "InsightPulseAI"
+  github_org: "Insightpulseai"
+  governance_version: "1.0.0"
+
+layers:
+  - id: control-plane
+    name: "Control Plane"
+    purpose: "Org-wide governance, IaC, CI/CD, secrets, automations"
+  - id: core-runtime
+    name: "Core Runtime"
+    purpose: "Revenue-bearing product code: ERP, web surfaces, data pipelines"
+  - id: shared-library
+    name: "Shared Systems"
+    purpose: "Cross-repo packages, tokens, agent definitions"
+  - id: template
+    name: "Templates"
+    purpose: "Scaffolds and starter kits for new repos/modules"
+  - id: archived
+    name: "Archived / Deprecated"
+    purpose: "Repos that are no longer maintained"
+
+repos:
+  # --- Control Plane ---
+  - name: ".github"
+    layer: control-plane
+    type: github-meta
+    visibility: private
+    lifecycle: active
+    description: "Org-wide GitHub configuration: issue templates, labels, workflows"
+    default_branch: main
+    required_files:
+      - README.md
+      - CLAUDE.md
+      - CONTRIBUTING.md
+      - .github/CODEOWNERS
+    directory_layout:
+      - .github/workflows/
+      - .github/ISSUE_TEMPLATE/
+
+  - name: ops-platform
+    layer: control-plane
+    type: supabase-platform
+    visibility: private
+    lifecycle: active
+    description: "Supabase SSOT + secrets + automations control-plane"
+    default_branch: main
+    required_files:
+      - README.md
+      - CLAUDE.md
+      - CONTRIBUTING.md
+      - .github/CODEOWNERS
+      - .github/workflows/ci.yml
+    directory_layout:
+      - supabase/migrations/
+      - supabase/functions/
+      - ssot/
+      - docs/
+      - scripts/
+      - tests/
+      - spec/
+
+  - name: infra
+    layer: control-plane
+    type: iac
+    visibility: private
+    lifecycle: active
+    description: "IaC: DigitalOcean, Cloudflare, Terraform"
+    default_branch: main
+    required_files:
+      - README.md
+      - CLAUDE.md
+      - CONTRIBUTING.md
+      - .github/CODEOWNERS
+      - .github/workflows/ci.yml
+    directory_layout:
+      - infra/digitalocean/
+      - infra/cloudflare/
+      - scripts/
+      - docs/
+      - ssot/
+
+  # --- Core Runtime ---
+  - name: odoo
+    layer: core-runtime
+    type: odoo
+    visibility: public
+    lifecycle: active
+    description: "Odoo CE 18.0 + OCA + ipai_* custom modules"
+    default_branch: main
+    required_files:
+      - README.md
+      - CLAUDE.md
+      - CONTRIBUTING.md
+      - .github/CODEOWNERS
+      - .github/workflows/ci.yml
+      - .github/pull_request_template.md
+    directory_layout:
+      - addons/
+      - scripts/odoo/
+      - docs/
+      - spec/
+      - ssot/odoo/
+      - .devcontainer/
+      - .github/workflows/
+
+  - name: web
+    layer: core-runtime
+    type: web-app
+    visibility: private
+    lifecycle: active
+    description: "Product web surfaces: ops console, marketing, docs site"
+    default_branch: main
+    required_files:
+      - README.md
+      - CLAUDE.md
+      - CONTRIBUTING.md
+      - .github/CODEOWNERS
+      - .github/workflows/ci.yml
+    directory_layout:
+      - apps/
+      - packages/
+      - src/
+      - public/
+      - config/
+      - scripts/
+
+  - name: lakehouse
+    layer: core-runtime
+    type: lakehouse
+    visibility: private
+    lifecycle: active
+    description: "Medallion data pipelines, Unity Catalog, data governance"
+    default_branch: main
+    required_files:
+      - README.md
+      - CLAUDE.md
+      - CONTRIBUTING.md
+      - .github/CODEOWNERS
+      - .github/workflows/ci.yml
+    directory_layout:
+      - src/bronze/
+      - src/silver/
+      - src/gold/
+      - src/platinum/
+      - apps/
+      - contracts/
+      - tests/
+      - ssot/
+
+  # --- Shared Systems ---
+  - name: design-system
+    layer: shared-library
+    type: design-system
+    visibility: internal
+    lifecycle: active
+    description: "Design tokens, components, icon pipeline, brand assets"
+    default_branch: main
+    required_files:
+      - README.md
+      - CLAUDE.md
+      - CONTRIBUTING.md
+      - .github/CODEOWNERS
+      - .github/workflows/ci.yml
+    directory_layout:
+      - tokens/
+      - components/
+      - icons/
+      - docs/
+      - scripts/
+
+  - name: agents
+    layer: shared-library
+    type: agents
+    visibility: public
+    lifecycle: active
+    description: "Agent registry, personas, skills, runbooks, MCP definitions"
+    default_branch: main
+    required_files:
+      - README.md
+      - CLAUDE.md
+      - CONTRIBUTING.md
+      - .github/CODEOWNERS
+      - .github/workflows/ci.yml
+    directory_layout:
+      - agents/registry/
+      - agents/personas/
+      - agents/skills/
+      - agents/runbooks/
+      - agents/mcp/
+      - docs/
+      - scripts/
+
+  # --- Template ---
+  - name: templates
+    layer: template
+    type: template
+    visibility: private
+    lifecycle: active
+    description: "Repo templates: OCA scaffolds, Supabase starters, Next.js starters"
+    default_branch: main
+    required_files:
+      - README.md
+      - CLAUDE.md
+      - CONTRIBUTING.md
+      - .github/CODEOWNERS
+    directory_layout:
+      - templates/odoo-module/
+      - templates/supabase-function/
+      - templates/nextjs-app/
+      - docs/
+
+archived:
+  - name: template-factory
+    archived_date: "2026-03-07"
+    reason: "Empty repo (no default branch)"
+    superseded_by: templates
+  - name: plugin-marketplace
+    archived_date: "2026-03-07"
+    reason: "Scaffold-only (feature branch, 2-4KB)"
+    superseded_by: ops-platform
+  - name: plugin-agents
+    archived_date: "2026-03-07"
+    reason: "Scaffold-only (feature branch, 2-4KB)"
+    superseded_by: agents
+  - name: dev-environment
+    archived_date: "2026-03-07"
+    reason: "Replaced by .devcontainer in odoo repo"
+    superseded_by: templates
+  - name: ops-console
+    archived_date: "2026-03-07"
+    reason: "Empty repo (no default branch)"
+    superseded_by: web
+  - name: app-crm
+    archived_date: "2026-03-07"
+    reason: "Empty repo (no default branch)"
+    superseded_by: odoo
+  - name: learn
+    archived_date: "2026-03-07"
+    reason: "Migrate content to odoo/lakehouse later"
+    superseded_by: templates
+  - name: fluent-owl
+    archived_date: "pre-existing"
+    reason: "Archived prior to restructuring"
+    superseded_by: design-system
+  - name: roadmap
+    archived_date: "2026-03-07"
+    reason: "1 commit, use GitHub Projects instead"
+    superseded_by: ".github"
+  - name: mcp-core
+    archived_date: "2026-03-07"
+    reason: "Content migrated to agents/mcp/"
+    superseded_by: agents
+  - name: fin-ops
+    archived_date: "2026-03-07"
+    reason: "Empty repo (no default branch)"
+    superseded_by: ops-platform
+  - name: app-landing
+    archived_date: "2026-03-07"
+    reason: "Empty repo (no default branch)"
+    superseded_by: web
+  - name: demo-repository
+    archived_date: "pre-existing"
+    reason: "Demo/test repo"
+    superseded_by: templates

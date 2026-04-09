@@ -1,0 +1,7 @@
+id,name,project_id,target_date,actual_date,status
+1,Alpha Phase 1 Complete,1,2026-01-31,2026-01-30,completed
+2,Alpha Phase 2 Complete,1,2026-03-31,,in_progress
+3,Beta MVP Delivery,2,2026-02-14,2026-03-01,completed_late
+4,Beta Production Release,2,2026-03-14,,overdue
+5,Gamma Infrastructure Ready,3,2026-02-14,2026-02-28,completed_late
+6,Gamma Pilot Launch,3,2026-03-15,,delayed

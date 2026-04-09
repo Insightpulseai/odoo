@@ -1,0 +1,164 @@
+# Odoo Copilot Knowledge Indexes — SSOT
+# Defines the three knowledge classes consumed by the Foundry agent.
+#
+# Class 1: Odoo framework docs (AI Search — unstructured)
+# Class 2: Repo/spec docs (AI Search — unstructured)
+# Class 3: Structured business data (Fabric SQL — governed)
+#
+# Agent: ipai-odoo-copilot-azure
+# Foundry project: data-intel-ph
+
+version: "1.0.0"
+
+indexes:
+  # -------------------------------------------------------------------------
+  # Class 1: Odoo Framework Documentation
+  # -------------------------------------------------------------------------
+  odoo-framework:
+    type: azure_ai_search
+    description: "Odoo 18 CE framework documentation, API references, and coding guides"
+    search_service: srch-ipai-dev
+    index_name: idx-odoo-framework-docs
+    data_sources:
+      - source: docs/kb/odoo18/
+        description: "Upstream Odoo 18 documentation (pinned)"
+        format: markdown
+        refresh: manual
+        pin_ref: docs/kb/odoo18/UPSTREAM_PIN.json
+      - source: .claude/rules/odoo18-coding.md
+        description: "Odoo 18 coding conventions"
+        format: markdown
+        refresh: on_commit
+      - source: .claude/rules/oca-governance.md
+        description: "OCA governance rules"
+        format: markdown
+        refresh: on_commit
+    embedding_model: text-embedding-3-large
+    chunk_size: 1024
+    chunk_overlap: 128
+    semantic_config: default
+    fields:
+      - name: content
+        type: string
+        searchable: true
+      - name: title
+        type: string
+        searchable: true
+        filterable: true
+      - name: source_path
+        type: string
+        filterable: true
+      - name: category
+        type: string
+        filterable: true
+        facetable: true
+
+  # -------------------------------------------------------------------------
+  # Class 2: Repository & Spec Documentation
+  # -------------------------------------------------------------------------
+  repo-specs:
+    type: azure_ai_search
+    description: "InsightPulseAI repo specs, architecture docs, and CLAUDE.md rules"
+    search_service: srch-ipai-dev
+    index_name: idx-ipai-repo-specs
+    data_sources:
+      - source: spec/
+        description: "76 spec bundles (constitution, PRD, plan, tasks)"
+        format: markdown
+        refresh: on_commit
+        glob: "spec/**/*.md"
+      - source: docs/ai/
+        description: "Architecture, CI, testing, OCA workflow docs"
+        format: markdown
+        refresh: on_commit
+      - source: .claude/rules/
+        description: "Agent rules and conventions"
+        format: markdown
+        refresh: on_commit
+      - source: CLAUDE.md
+        description: "Root project instructions"
+        format: markdown
+        refresh: on_commit
+    embedding_model: text-embedding-3-large
+    chunk_size: 1024
+    chunk_overlap: 128
+    semantic_config: default
+    fields:
+      - name: content
+        type: string
+        searchable: true
+      - name: title
+        type: string
+        searchable: true
+        filterable: true
+      - name: spec_bundle
+        type: string
+        filterable: true
+        facetable: true
+      - name: source_path
+        type: string
+        filterable: true
+      - name: doc_type
+        type: string
+        filterable: true
+        facetable: true
+        values: [constitution, prd, plan, tasks, architecture, rules]
+
+  # -------------------------------------------------------------------------
+  # Class 3: Structured Business Data (Fabric SQL)
+  # -------------------------------------------------------------------------
+  fabric-business:
+    type: fabric_sql
+    description: "Governed gold-layer business entities via Fabric SQL endpoint"
+    workspace: ipai-fabric-dev
+    lakehouse: lh-ipai-odoo
+    sql_endpoint: se-ipai-odoo
+    auth: managed_identity
+    allowed_schemas:
+      - gold
+      - semantic
+    blocked_operations:
+      - INSERT
+      - UPDATE
+      - DELETE
+      - DROP
+      - ALTER
+      - TRUNCATE
+    max_rows: 1000
+    timeout_seconds: 30
+    refresh: continuous_mirroring
+    entities:
+      # Revenue & billing
+      - name: gold.fact_invoices
+        description: "Invoice facts (amount, date, partner, state)"
+        source: "Fabric mirroring from account.move"
+      - name: gold.fact_payments
+        description: "Payment facts (amount, date, method, state)"
+        source: "Fabric mirroring from account.payment"
+      - name: gold.dim_partners
+        description: "Partner dimension (name, category, credit_limit)"
+        source: "Fabric mirroring from res.partner"
+
+      # Aging & collections
+      - name: gold.fact_aging
+        description: "AR/AP aging buckets (current, 30, 60, 90, 120+)"
+        source: "DLT pipeline from account.move.line"
+      - name: semantic.partner_aging_summary
+        description: "Partner-level aging summary with risk score"
+        source: "Semantic model from gold.fact_aging"
+
+      # Budget & variance
+      - name: gold.fact_budget_lines
+        description: "Budget line items by period and analytic account"
+        source: "DLT pipeline from account.move.budget"
+      - name: semantic.budget_vs_actual
+        description: "Pre-computed budget variance (amount, percentage, category)"
+        source: "Semantic model joining budget + actuals"
+
+      # KPIs
+      - name: semantic.monthly_kpis
+        description: "Monthly business KPIs (revenue, expenses, margin, headcount)"
+        source: "Aggregated semantic model"
+      - name: semantic.cash_flow_forecast
+        description: "30/60/90-day cash flow forecast"
+        source: "Predictive model from payment patterns"

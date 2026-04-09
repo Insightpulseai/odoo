@@ -1,11 +1,11 @@
-# Odoo 19 Azure OAuth (Microsoft Entra ID) -- Complete Reference
+# Odoo 18 Azure OAuth (Microsoft Entra ID) -- Complete Reference
 
-> Knowledge base for configuring Microsoft Entra ID SSO with Odoo 19 CE.
+> Knowledge base for configuring Microsoft Entra ID SSO with Odoo 18 CE.
 > Covers the official Odoo `auth_oauth` module, OCA `auth_oidc`, Entra app registration,
 > and Gmail add-on integration implications.
 >
 > Last researched: 2026-03-27
-> Sources: Odoo 19.0 official docs, Odoo GitHub 19.0 branch, Microsoft Learn, OCA server-auth 19.0
+> Sources: Odoo 18.0 official docs, Odoo GitHub 18.0 branch, Microsoft Learn, OCA server-auth 18.0
 
 ---
 
@@ -29,9 +29,9 @@
 
 ## 1. Module Architecture
 
-### 1.1 The `auth_oauth` Module (Odoo 19 CE -- Native)
+### 1.1 The `auth_oauth` Module (Odoo 18 CE -- Native)
 
-`auth_oauth` ships with **Odoo CE** (not Enterprise-only). It is located at `addons/auth_oauth/` in the Odoo 19 source tree.
+`auth_oauth` ships with **Odoo CE** (not Enterprise-only). It is located at `addons/auth_oauth/` in the Odoo 18 source tree.
 
 **Manifest:**
 ```
@@ -72,7 +72,7 @@ class AuthOauthProvider(models.Model):
     sequence = fields.Integer(default=10)
 ```
 
-### 1.3 Default Providers (shipped with Odoo 19)
+### 1.3 Default Providers (shipped with Odoo 18)
 
 From `data/auth_oauth_data.xml`:
 
@@ -231,7 +231,7 @@ Do NOT use v1.0 endpoints (`/oauth2/authorize`, `/oauth2/token`).
 
 **This is the first and most critical step.**
 
-1. Activate [Developer Mode](https://www.odoo.com/documentation/19.0/applications/general/developer_mode.html)
+1. Activate [Developer Mode](https://www.odoo.com/documentation/18.0/applications/general/developer_mode.html)
 2. Go to **Settings > Technical > System Parameters**
 3. Click **New**
 4. Set:
@@ -399,7 +399,7 @@ After successful OAuth login, Odoo creates a standard web session:
 
 ### 6.1 `auth_oauth` Availability
 
-**`auth_oauth` is a CE module.** It ships with Odoo Community Edition 19.0. There is NO Enterprise requirement for basic Microsoft OAuth sign-in.
+**`auth_oauth` is a CE module.** It ships with Odoo Community Edition 18.0. There is NO Enterprise requirement for basic Microsoft OAuth sign-in.
 
 The module is in `addons/auth_oauth/` in the CE repository (`github.com/odoo/odoo`), not in the Enterprise repository.
 
@@ -432,7 +432,7 @@ The **OCA `auth_oidc` module** (see Section 7) addresses CE limitations 1-3 abov
 
 ### 7.1 Module Status
 
-- **Repository:** `OCA/server-auth` branch `19.0`
+- **Repository:** `OCA/server-auth` branch `18.0`
 - **Maturity:** Beta
 - **License:** AGPL-3
 - **Dependency:** `python-jose` (NOT `jose` from PyPI -- they are different packages)
@@ -612,7 +612,7 @@ After OAuth login, Odoo creates a standard session:
 
 ### 10.1 Current Architecture
 
-The InsightPulseAI Gmail add-on needs to authenticate users against the Odoo 19 CE instance. The add-on opens `/web/login` for provider auth in a browser window.
+The InsightPulseAI Gmail add-on needs to authenticate users against the Odoo 18 CE instance. The add-on opens `/web/login` for provider auth in a browser window.
 
 ### 10.2 Login Flow from Gmail Add-On
 
@@ -821,20 +821,20 @@ This is typically needed only once per tenant.
 
 ## 13. Sources
 
-### Official Odoo 19.0 Documentation
-- [Microsoft Azure sign-in authentication](https://www.odoo.com/documentation/19.0/applications/general/users/azure.html)
-- [Google Sign-In Authentication](https://www.odoo.com/documentation/19.0/applications/general/users/google.html)
-- [Connect Microsoft Outlook 365 to Odoo using Azure OAuth](https://www.odoo.com/documentation/19.0/applications/general/email_communication/azure_oauth.html)
+### Official Odoo 18.0 Documentation
+- [Microsoft Azure sign-in authentication](https://www.odoo.com/documentation/18.0/applications/general/users/azure.html)
+- [Google Sign-In Authentication](https://www.odoo.com/documentation/18.0/applications/general/users/google.html)
+- [Connect Microsoft Outlook 365 to Odoo using Azure OAuth](https://www.odoo.com/documentation/18.0/applications/general/email_communication/azure_oauth.html)
 
-### Odoo 19.0 Source Code (GitHub)
-- [auth_oauth/models/auth_oauth.py](https://github.com/odoo/odoo/blob/19.0/addons/auth_oauth/models/auth_oauth.py)
-- [auth_oauth/models/res_users.py](https://github.com/odoo/odoo/blob/19.0/addons/auth_oauth/models/res_users.py)
-- [auth_oauth/controllers/main.py](https://github.com/odoo/odoo/blob/19.0/addons/auth_oauth/controllers/main.py)
-- [auth_oauth/data/auth_oauth_data.xml](https://github.com/odoo/odoo/blob/19.0/addons/auth_oauth/data/auth_oauth_data.xml)
-- [auth_oauth/__manifest__.py](https://github.com/odoo/odoo/blob/19.0/addons/auth_oauth/__manifest__.py)
+### Odoo 18.0 Source Code (GitHub)
+- [auth_oauth/models/auth_oauth.py](https://github.com/odoo/odoo/blob/18.0/addons/auth_oauth/models/auth_oauth.py)
+- [auth_oauth/models/res_users.py](https://github.com/odoo/odoo/blob/18.0/addons/auth_oauth/models/res_users.py)
+- [auth_oauth/controllers/main.py](https://github.com/odoo/odoo/blob/18.0/addons/auth_oauth/controllers/main.py)
+- [auth_oauth/data/auth_oauth_data.xml](https://github.com/odoo/odoo/blob/18.0/addons/auth_oauth/data/auth_oauth_data.xml)
+- [auth_oauth/__manifest__.py](https://github.com/odoo/odoo/blob/18.0/addons/auth_oauth/__manifest__.py)
 
 ### OCA server-auth
-- [auth_oidc (19.0 branch)](https://github.com/OCA/server-auth/tree/19.0/auth_oidc)
+- [auth_oidc (18.0 branch)](https://github.com/OCA/server-auth/tree/18.0/auth_oidc)
 - [auth_oidc on PyPI](https://pypi.org/project/odoo-addon-auth-oidc/)
 
 ### Microsoft Learn

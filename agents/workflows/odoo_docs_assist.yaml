@@ -1,0 +1,114 @@
+# Odoo Docs Assist — 3-Lane Retrieval Workflow
+# Governs how the Copilot resolves documentation and how-to questions.
+#
+# Lane priority: ERP context > Curated KB > Bounded web search
+# Policy: Always attempt higher-priority lane first. Only escalate
+# when the lane returns no relevant results or insufficient evidence.
+
+name: odoo-docs-assist
+description: >
+  Three-lane retrieval workflow for Odoo Copilot documentation questions.
+  Ensures grounded, cited answers by cascading through ERP data, curated KB,
+  and bounded web search before responding.
+version: "1.0"
+trigger: user_message_contains_docs_or_howto_intent
+
+steps:
+  # Step 1: Extract ERP context from the context envelope
+  - id: erp_context_intake
+    description: >
+      Check the context envelope for current model, record ID, company,
+      and user permissions. If the question is about the user's own data
+      (e.g. "what is my invoice status"), use read_record / search_records.
+    tools:
+      - read_record
+      - search_records
+    condition: context_envelope.mode in ["PROD-ADVISORY", "PROD-ACTION"]
+    on_hit: respond_with_erp_data
+    on_miss: proceed_to_kb_retrieve
+
+  # Step 2: Search curated Odoo 18 documentation KB
+  - id: kb_odoo_docs_retrieve
+    description: >
+      Search the indexed Odoo 18 documentation knowledge base via Azure AI Search.
+      Returns ranked chunks with citation metadata (path, heading, score).
+    tools:
+      - search_docs
+    parameters:
+      kb_scope: general-kb
+      top_k: 8
+      min_score: 0.65
+    on_hit: respond_with_kb_citation
+    on_miss: proceed_to_web_search
+
+  # Step 3: Bounded web search fallback (odoo.com only)
+  - id: bounded_web_search
+    description: >
+      When the KB does not contain sufficient evidence, search odoo.com
+      official documentation via bounded web search. Restricted to
+      allowed_domains only. Maximum 3 searches per turn.
+    tools:
+      - search_odoo_docs_web
+    parameters:
+      allowed_domains:
+        - "www.odoo.com"
+        - "odoo.com"
+      max_uses_per_turn: 3
+      version: "19.0"
+    on_hit: respond_with_web_citation
+    on_miss: respond_with_no_docs_found
+
+  # Step 4: Policy judge — validate response before rendering
+  - id: policy_judge
+    description: >
+      Before rendering the final response, validate:
+      - Citations are present for any factual claim
+      - No hallucinated URLs or module names
+      - Advisory disclaimer present for tax/legal/compliance topics
+      - Response stays within declared scope
+    rules:
+      - require_citation_for_facts: true
+      - no_hallucinated_urls: true
+      - advisory_disclaimer_for_compliance: true
+      - scope_boundary_check: true
+
+  # Step 5: Render response with citations
+  - id: response_render
+    description: >
+      Format the final response with:
+      - Answer text (concise, structured)
+      - Source citations (KB chunk path or web URL)
+      - Confidence indicator (high = KB hit, medium = web hit, low = no retrieval)
+    output:
+      format: markdown
+      include_citations: true
+      include_confidence: true
+
+# Retrieval policy constants
+retrieval_policy:
+  lane_priority:
+    - erp_context     # Lane 1: user's own data
+    - curated_kb      # Lane 2: indexed Odoo 18 docs
+    - bounded_web     # Lane 3: odoo.com web search
+  never_say:
+    - "I do not have real-time web search capabilities"
+    - "my knowledge has a cutoff date"
+    - "I cannot access external websites"
+    - "I don't have the ability to search"
+  always_say_when_no_results:
+    - "I could not find documentation on that topic in the Odoo 18 knowledge base or odoo.com."
+
+# KB references
+knowledge_sources:
+  primary:
+    registry_name: odoo18-docs
+    index: odoo18-docs
+    skill: agents/skills/odoo_docs_rag/skill.yaml
+  web_fallback:
+    allowed_domains:
+      - "www.odoo.com"
+      - "odoo.com"
+    blocked_domains:
+      - "*.odoo.sh"
+      - "runbot.odoo.com"
+    max_results: 5

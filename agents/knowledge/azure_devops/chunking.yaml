@@ -1,0 +1,49 @@
+# Azure DevOps — Chunking Contract
+
+name: azure-devops-chunking
+description: Markdown heading-aware chunking for Azure DevOps documentation
+
+strategy: heading-aware
+format: md
+
+chunking:
+  split_on:
+    - h1  # # heading
+    - h2  # ## heading
+    - h3  # ### heading
+  max_chunk_tokens: 512
+  overlap_tokens: 64
+  min_chunk_tokens: 50
+
+  context_window:
+    include_parent_headings: true
+    include_breadcrumb: true
+    max_parent_depth: 3
+
+metadata_per_chunk:
+  id_template: "{source}:{domain}:{path}:{heading_chain}:{ordinal}:{content_hash_8}"
+  fields:
+    - source        # azdo-organizations, azdo-boards, azdo-pipelines, azdo-cli, azdo-rest-api, azdo-process
+    - domain        # organizations, boards, pipelines, security, audit, process, cli, rest-api
+    - path          # URL path or doc path
+    - heading_chain # Domain > Topic > Subtopic
+    - ordinal       # chunk index within section
+    - content_hash  # SHA-256 first 8 chars
+    - product       # azure-devops
+    - lang          # en
+    - source_type   # documentation | cli-reference | api-reference | tutorial
+
+md_handling:
+  strip_elements:
+    - "<!-- -->"          # HTML comments
+    - ":::image"          # MS Learn image zones
+    - ":::zone"           # Zone pivots
+    - ":::moniker"        # Version moniker ranges
+  preserve_elements:
+    - "```"               # Code blocks (CLI commands, REST examples, WIQL)
+    - "> [!NOTE]"         # Note callouts
+    - "> [!TIP]"          # Tip callouts
+    - "> [!WARNING]"      # Warning callouts
+    - "> [!IMPORTANT]"    # Important callouts
+    - "> [!CAUTION]"      # Caution callouts
+  strip_metadata_header: true  # Remove YAML frontmatter from MS Learn

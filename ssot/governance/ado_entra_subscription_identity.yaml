@@ -1,0 +1,379 @@
+# =============================================================================
+# ADO ↔ Entra ↔ Subscription Identity Link Chain — SSOT
+# =============================================================================
+# Defines the 4-link identity chain binding Entra tenant, Azure Subscription,
+# ADO Organization, ADO Project, and Managed Identities.
+#
+# Companion doc: docs/architecture/ADO_ENTRA_SUBSCRIPTION_IDENTITY_TARGET_STATE.md
+# Last updated: 2026-03-23
+# =============================================================================
+
+schema_version: "1.1"
+last_updated: "2026-03-23"
+owner: "platform-architecture"
+status: "approved"
+
+# =============================================================================
+# Top-Level Status — single-glance workstream state
+# =============================================================================
+workstream_status:
+  ado_entra_link: complete
+  ceo_identity_resolution: complete
+  app_a_registration: complete
+  app_a_secret: complete
+  kv_secret_storage: complete
+  app_b_registration: complete
+  app_b_graph_registered: complete
+  pca_authority: blocked
+  sp_entitlement: blocked_on_pca
+  wif_pipeline_validation: blocked_on_sp_entitlement
+  managed_identities: not_started
+
+blockers:
+  - id: ado-pca-001
+    title: admin@ not effectively in Project Collection Administrators
+    owner: ceo@insightpulseai.com
+    type: authority
+    description: >
+      admin@ holds Project Administrators only. PCA membership is required
+      to add service principals, manage org-level entitlements, and complete
+      the WIF validation chain. Self-elevation via API was attempted and
+      did not persist — only ceo@ (current PCA member) can grant this.
+    required_for:
+      - sp_entitlement
+      - wif_pipeline_validation
+    success_condition: >
+      admin@ appears as effective member of Project Collection Administrators
+      in ADO Organization Settings → Permissions → PCA → Members.
+
+cross_references:
+  - ssot/identity/entra_target_state.yaml
+  - ssot/azure/azure_devops.yaml
+  - ssot/governance/ado_github_authority_map.yaml
+  - ssot/governance/github-entra-target-state.yaml
+  - docs/architecture/ENTRA_TARGET_STATE_2026.md
+  - docs/architecture/ADO_GITHUB_AUTHORITY_MAP_2026.md
+  - docs/architecture/AZURE_DEVOPS_OPERATING_MODEL.md
+
+# =============================================================================
+# Identity Chain — 4 links from Entra to workload identity
+# =============================================================================
+identity_chain:
+  - link: 1
+    name: entra_to_subscription
+    from: entra_tenant
+    to: azure_subscription
+    binding: subscription_iam_role_assignment
+    current_status: active
+    target_status: active
+    notes: >
+      Entra tenant 402de71a-87ec-4302-a609-fb76098d1da7 is the identity
+      authority for the Azure subscription. admin@ has Owner role.
+
+  - link: 2
+    name: entra_to_ado_org
+    from: entra_tenant
+    to: ado_organization
+    binding: ado_org_entra_connection
+    current_status: connected
+    target_status: connected
+    critical_gap: false
+    verified: "2026-03-23"
+    notes: >
+      ADO org IS connected to Entra tenant 402de71a. Both users (admin@,
+      ceo@) show origin=aad, domain=402de71a. Verified via REST API
+      /userentitlements — all members are Entra-backed. ceo@ is an
+      external/guest Entra identity (directoryAlias contains #EXT#),
+      not an MSA as previously assumed.
+
+  - link: 3
+    name: ado_org_to_ado_project
+    from: ado_organization
+    to: ado_project
+    binding: ado_project_membership
+    current_status: active
+    target_status: active
+    notes: >
+      ipai-platform project exists and is operational under the ADO org.
+      Cross-ref: ssot/azure/azure_devops.yaml
+
+  - link: 4
+    name: subscription_to_managed_identities
+    from: azure_subscription
+    to: managed_identities
+    binding: managed_identity_assignment
+    current_status: partial
+    target_status: active
+    notes: >
+      3 managed identities targeted (mi-web-runtime, mi-jobs-automation,
+      mi-data-agent). Not all provisioned yet.
+      Cross-ref: ssot/identity/entra_target_state.yaml → managed_identities
+
+# =============================================================================
+# Principals — humans and service accounts in the identity chain
+# =============================================================================
+principals:
+  - upn: admin@insightpulseai.com
+    type: entra_cloud_native
+    current_roles:
+      - azure_subscription_owner
+      - ado_project_administrator
+    target_action: retain_as_primary_admin
+    notes: Primary platform administrator
+
+  - upn: ceo@insightpulseai.com
+    type: entra_external_guest
+    display_name: "Jake Tolentino"
+    directory_alias: "ceo_insightpulseai.com#EXT#"
+    origin_id: "5c5560df-74c7-4c0a-b3bb-cbcd2a4eab45"
+    current_roles:
+      - ado_org_owner
+      - project_collection_administrators
+    target_action: elevate_admin_to_pca
+    notes: >
+      Previously assumed to be MSA — verified as Entra external guest
+      (origin=aad, directoryAlias contains #EXT#). Is in Project Collection
+      Administrators. admin@ needs PCA membership to manage org-level
+      operations (adding service principals, managing licenses). Only
+      ceo@ can grant this via ADO Organization Settings → Permissions.
+
+  - upn: devops@insightpulseai.com
+    type: entra_cloud_native
+    current_roles:
+      - ado_contributor
+    target_action: retain
+    notes: DevOps service account for pipeline execution
+
+# =============================================================================
+# ADO Organization
+# =============================================================================
+ado_organization:
+  name: insightpulseai
+  url: "https://dev.azure.com/insightpulseai"
+  entra_connection:
+    status: connected
+    verified: "2026-03-23"
+    tenant_id: 402de71a-87ec-4302-a609-fb76098d1da7
+    tenant_name: Default Directory
+    evidence: "All users show origin=aad, domain=402de71a in /userentitlements API"
+  admin_elevation:
+    description: >
+      admin@ is in Project Administrators only. ceo@ is in Project Collection
+      Administrators. admin@ needs PCA membership for org-level operations
+      (adding service principals, managing user entitlements).
+    status: pending_action
+    action: ceo@ must add admin@ to PCA via Organization Settings → Permissions
+
+# =============================================================================
+# ADO Project (cross-ref only — detail in ssot/azure/azure_devops.yaml)
+# =============================================================================
+ado_project:
+  name: ipai-platform
+  id: b4267980-f678-4fcb-b8b4-3d81d9153445
+  cross_ref: ssot/azure/azure_devops.yaml
+  single_project_rule: true
+
+# =============================================================================
+# Service Connections — WIF model
+# =============================================================================
+service_connections:
+  authentication_model: workload_identity_federation
+  rationale: >
+    WIF eliminates long-lived secrets. ADO pipeline requests a token from
+    Entra using federated credentials tied to the ADO service connection.
+    Requires Link 2 (Entra → ADO org) to be active for full trust chain.
+
+  connections:
+    - name: sc-ipai-dev
+      environment: dev
+      subscription_scope: rg-ipai-dev-*
+      identity_type: app_registration_with_federated_credential
+      app_registration: InsightPulseAI Azure DevOps Automation  # renamed from sp-ipai-azdevops
+      status: active
+      blocked_by_link2: false
+      notes: Works with basic auth but WIF trust chain incomplete without Entra connection
+
+    - name: sc-ipai-staging
+      environment: staging
+      subscription_scope: rg-ipai-shared-staging
+      identity_type: app_registration_with_federated_credential
+      app_registration: InsightPulseAI Azure DevOps Automation  # renamed from sp-ipai-azdevops
+      status: planned
+
+    - name: sc-ipai-prod
+      environment: prod
+      subscription_scope: rg-ipai-shared-prod
+      identity_type: app_registration_with_federated_credential
+      app_registration: InsightPulseAI Azure DevOps Automation  # renamed from sp-ipai-azdevops
+      status: planned
+
+# =============================================================================
+# Managed Identity References (cross-ref only)
+# =============================================================================
+managed_identity_refs:
+  cross_ref: ssot/identity/entra_target_state.yaml
+  identities:
+    - mi-web-runtime
+    - mi-jobs-automation
+    - mi-data-agent
+
+# =============================================================================
+# Linking Sequence — 6 steps to complete the identity chain
+# =============================================================================
+linking_sequence:
+  - step: 1
+    name: resolve_ceo_msa_ownership
+    description: >
+      RESOLVED: ceo@ is an Entra external guest (not MSA as assumed).
+      Both users are Entra-backed. No ownership transfer needed.
+    status: completed
+    completed_date: "2026-03-23"
+    dependencies: []
+    blockers: []
+    success_criteria:
+      - ADO org owner is an Entra-backed account
+    evidence: >
+      API verified: ceo@ shows origin=aad, directoryAlias=ceo_insightpulseai.com#EXT#
+
+  - step: 2
+    name: connect_ado_org_to_entra
+    description: >
+      ALREADY CONNECTED: ADO org is connected to Entra tenant 402de71a.
+      Verified via REST API — all users show origin=aad.
+    status: completed
+    completed_date: "2026-03-23"
+    dependencies: []
+    blockers: []
+    success_criteria:
+      - ADO org shows "Connected to Default Directory" in Organization Settings
+      - Entra directory users can be searched and added to ADO
+    evidence: >
+      /userentitlements API returns origin=aad, domain=402de71a for all members.
+
+  - step: 3
+    name: elevate_admin_to_pca_and_add_sp
+    description: >
+      admin@ needs Project Collection Administrator role to manage org-level
+      operations. Currently only in Project Administrators. ceo@ (who is in
+      PCA) must add admin@ via Organization Settings → Permissions. Then
+      admin@ can add the automation service principal.
+    status: blocked
+    dependencies:
+      - step_2
+    blockers:
+      - admin_lacks_pca_membership
+      - requires_ceo_action
+    success_criteria:
+      - admin@ is in Project Collection Administrators
+      - InsightPulseAI Azure DevOps Automation SP (833163d3) added to org
+      - SP has Basic access level and is in Contributors for ipai-platform
+
+  - step: 4
+    name: configure_wif_service_connections
+    description: >
+      Create or verify WIF-based service connections for each environment
+      (dev, staging, prod). Each connection uses sp-ipai-azdevops app
+      registration with federated credentials.
+    status: in_progress
+    dependencies: []
+    blockers: []
+    notes: >
+      Service connections can be created before Entra connection but the
+      full trust chain (Entra → ADO → pipeline → Azure) requires Step 2.
+    success_criteria:
+      - sc-ipai-dev service connection active and pipeline-tested
+      - sc-ipai-staging and sc-ipai-prod created with correct scopes
+
+  - step: 5
+    name: provision_managed_identities
+    description: >
+      Provision 3 managed identities (mi-web-runtime, mi-jobs-automation,
+      mi-data-agent) and assign RBAC roles per entra_target_state.yaml.
+    status: not_started
+    dependencies:
+      - step_2
+    blockers: []
+    notes: >
+      Step 2 is complete. Managed identities can now be provisioned.
+      These are Azure resources independent of ADO SP onboarding.
+    success_criteria:
+      - 3 managed identities exist in Azure
+      - RBAC assignments match entra_target_state.yaml
+
+  - step: 6
+    name: validate_end_to_end_identity_chain
+    description: >
+      Run a pipeline in ADO that authenticates via WIF to Azure,
+      accesses Key Vault using managed identity, and confirms the
+      full identity chain: Entra → Subscription → ADO → Pipeline → Azure.
+    status: blocked
+    dependencies:
+      - step_3
+      - step_4
+      - step_5
+    blockers:
+      - step_3_sp_onboarding_pending
+    success_criteria:
+      - Pipeline runs successfully with WIF authentication
+      - No long-lived secrets in pipeline variables
+      - Key Vault access confirmed via managed identity
+
+# =============================================================================
+# Decisions (ADRs)
+# =============================================================================
+decisions:
+  - id: ADR-IDC-001
+    title: Single ADO organization
+    decision: >
+      Use existing dev.azure.com/insightpulseai org. Do not create a second org.
+    rationale: >
+      One org simplifies Entra connection, billing, and governance.
+      Cross-ref: ssot/governance/ado_github_authority_map.yaml → single_project_rule
+
+  - id: ADR-IDC-002
+    title: Workload Identity Federation over client secrets
+    decision: >
+      All ADO-to-Azure service connections use WIF, never long-lived client secrets.
+    rationale: >
+      WIF eliminates secret rotation burden and reduces attack surface.
+      Cross-ref: ssot/identity/entra_target_state.yaml → managed_identities.policy
+
+  - id: ADR-IDC-003
+    title: ceo@ identity type resolution
+    decision: resolved
+    resolution: >
+      ceo@ is an Entra external guest (origin=aad, #EXT#), not MSA.
+      No ownership transfer needed. ceo@ retains org ownership as
+      Entra-backed identity. Action: ceo@ must add admin@ to PCA.
+    resolved_date: "2026-03-23"
+
+  - id: ADR-IDC-004
+    title: No Azure AD Domain Services
+    decision: >
+      Do not provision Domain Services. Modern-auth only (OIDC/OAuth/SAML).
+    rationale: >
+      No LDAP/Kerberos/NTLM dependency in the stack.
+      Cross-ref: ssot/identity/entra_target_state.yaml → domain_services
+
+  - id: ADR-IDC-005
+    title: Single ADO project
+    decision: >
+      All work lives in ipai-platform. No additional ADO projects.
+    rationale: >
+      Simplifies governance, area-path mapping, and service connection scoping.
+      Cross-ref: ssot/governance/ado_github_authority_map.yaml
+
+# =============================================================================
+# Success Criteria — "properly linked" checklist
+# =============================================================================
+success_criteria:
+  - ADO org connected to Entra tenant 402de71a — DONE (verified 2026-03-23)
+  - All ADO org members are Entra-backed — DONE (admin@=aad, ceo@=aad#EXT#)
+  - ceo@ identity resolved — DONE (Entra external guest, not MSA)
+  - admin@ elevated to Project Collection Administrators — PENDING (requires ceo@ action)
+  - App B service principal (833163d3) added to ADO org — PENDING (requires PCA)
+  - WIF service connections active for dev, staging, prod — IN PROGRESS (dev active)
+  - 3 managed identities provisioned with correct RBAC — NOT STARTED
+  - Pipeline can authenticate via WIF and access Azure resources — BLOCKED on SP add
+  - No long-lived client secrets in any ADO service connection — COMPLIANT
+  - App A (Odoo Login) client secret in Key Vault — DONE (kv-ipai-dev/odoo-entra-oauth-client-secret)

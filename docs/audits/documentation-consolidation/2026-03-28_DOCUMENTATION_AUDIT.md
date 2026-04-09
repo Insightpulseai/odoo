@@ -151,7 +151,7 @@ Two active SSOT registries with overlapping domains:
 | File | Topics | Status |
 |------|--------|--------|
 | `docs/architecture/ODOO_RUNTIME.md` | Odoo runtime | Active |
-| `docs/architecture/ODOO19_BASELINE_POLICY.md` | Odoo 19 baseline | Active |
+| `docs/architecture/ODOO18_BASELINE_POLICY.md` | Odoo 18 baseline | Active |
 | `docs/architecture/ODOO_RUNTIME_VERIFICATION_MATRIX.md` | Runtime verification | Active |
 | `docs/architecture/ODOO_LOCAL_VS_AZURE_PROD.md` | Local vs prod | Active |
 | `docs/architecture/ODOO_UPSTREAM_REFERENCE_SURFACES.md` | Upstream refs | Active |

@@ -1,0 +1,240 @@
+version: 1
+namespace: ipai.odoo.odoo.copilot_benchmark.v1
+artifact_type: registry
+repo_key: odoo
+domain: odoo
+subject: copilot_benchmark
+
+benchmark_context:
+  product: "Odoo Copilot"
+  review_date: "2026-03-16"
+  version: "18.0.2.0.0"
+  scope: "chat, side panel, workflow actions, accounting assistant, knowledge search, orchestration, admin config"
+
+benchmark_anchors:
+  - key: odoo_ai_agents
+    label: "Odoo AI / Odoo AI Agents"
+    role: "Native Odoo embedding, grounded knowledge, in-product actionability"
+  - key: sap_joule
+    label: "SAP Joule"
+    role: "Enterprise assistant UX, informational/navigational/transactional support, workplace integration"
+  - key: sap_afc
+    label: "SAP Advanced Financial Closing"
+    role: "Close orchestration, task planning, dependency handling, status monitoring"
+  - key: microsoft_foundry
+    label: "Microsoft Foundry"
+    role: "Agent platform maturity, hosted orchestration, control plane, evaluation, tracing, monitoring, knowledge connection"
+  - key: microsoft_copilot_finance
+    label: "Microsoft Copilot for Finance / agent platform"
+    role: "Finance-assistant UX, business-data-connected agents, role-based workflow support"
+  - key: databricks_fs
+    label: "Databricks Financial Services"
+    role: "Analytics/intelligence ceiling for fraud, risk, treasury, compliance, recommendations"
+
+scoring_scale:
+  min: 0
+  max: 5
+  levels:
+    - score: 0
+      label: absent
+    - score: 1
+      label: concept_only
+    - score: 2
+      label: partial_fragile
+    - score: 3
+      label: usable_controlled_production
+    - score: 4
+      label: strong_competitive
+    - score: 5
+      label: benchmark_class
+
+categories:
+  - key: odoo_native_actions
+    label: "Odoo-native actions"
+    weight: 18
+    question: "Can the copilot safely perform meaningful Odoo actions, not just answer questions?"
+    five_looks_like: "Reliable Odoo-native execution across real workflows with contextual suggestions and strong error handling"
+    checks:
+      - "creates/updates records correctly"
+      - "respects ACLs and business rules"
+      - "supports approval-aware actions"
+      - "handles failed actions cleanly"
+      - "gives clear confirmation when appropriate"
+
+  - key: knowledge_grounding
+    label: "Knowledge grounding / RAG"
+    weight: 14
+    question: "Are answers grounded in Odoo data plus trusted documents and knowledge sources?"
+    five_looks_like: "Grounded answers across records + documents + linked knowledge with clear provenance"
+    checks:
+      - "record-grounded answers"
+      - "doc/SOP/policy grounding"
+      - "relevance and ranking quality"
+      - "low hallucination rate"
+      - "evidence visibility"
+
+  - key: finance_workflow_depth
+    label: "Finance workflow depth"
+    weight: 18
+    question: "Does it materially help finance teams complete finance work?"
+    five_looks_like: "Materially reduces finance ops workload with role-aware finance assistance"
+    checks:
+      - "reconciliation support"
+      - "close preparation support"
+      - "exception handling"
+      - "AP/AR/accounting task support"
+      - "controller/accounting role usefulness"
+      - "tax/compliance-adjacent assistance"
+
+  - key: agent_configurability
+    label: "Agent configurability"
+    weight: 10
+    question: "Can admins or power users define scoped agents without code-heavy rework?"
+    five_looks_like: "Admin-friendly agent creation with deterministic scoping of tools and knowledge"
+    checks:
+      - "prompt/system config"
+      - "tool permissions"
+      - "source/KB selection"
+      - "reusable agent profiles"
+      - "environment-scoped settings"
+
+  - key: multi_step_orchestration
+    label: "Multi-step orchestration"
+    weight: 8
+    question: "Can it chain steps across tools and workflows instead of only doing single-turn chat?"
+    five_looks_like: "Executes bounded workflows end-to-end with approval pauses and auditability"
+    checks:
+      - "multi-step task plans"
+      - "mid-flow approvals"
+      - "retries/recovery"
+      - "state persistence"
+      - "resumable workflows"
+
+  - key: embedded_ux_quality
+    label: "Embedded UX quality"
+    weight: 8
+    question: "Does it feel native inside Odoo, or like an external assistant pasted into the product?"
+    five_looks_like: "Natural Odoo embedding with minimal mode switching and strong contextual ergonomics"
+    checks:
+      - "context-sensitive entry points"
+      - "side panel/chat/inline action UX"
+      - "screen-aware prompting"
+      - "low-friction invocation"
+      - "density and readability in operational screens"
+
+  - key: governance_safety
+    label: "Governance / safety / auditability"
+    weight: 9
+    question: "Is it safe enough for enterprise operational use?"
+    five_looks_like: "Enterprise-safe controls with auditable action trail and strong permission boundaries"
+    checks:
+      - "role-aware access"
+      - "approval gates"
+      - "audit logs"
+      - "action traceability"
+      - "clear fallback behavior"
+      - "observability of tool use and outcomes"
+
+  - key: agent_platform_maturity
+    label: "Agent platform / control plane maturity"
+    weight: 10
+    question: "Is Odoo Copilot just an assistant, or a manageable enterprise agent platform?"
+    five_looks_like: "Agents are durable, governable, and observable with centrally managed tools/knowledge/runtime"
+    checks:
+      - "hosted/durable agent runtime"
+      - "tool registry and governance"
+      - "workflow evaluation"
+      - "tracing/observability"
+      - "monitoring/alerts"
+      - "knowledge-base connection"
+      - "environment isolation"
+      - "automation/SDK friendliness"
+
+  - key: analytics_recommendations
+    label: "Analytics / recommendations"
+    weight: 5
+    question: "Does it provide useful proactive insight, not just reactive answers?"
+    five_looks_like: "Useful, grounded recommendations with clear business relevance and sensible prioritization"
+    checks:
+      - "anomaly surfacing"
+      - "prioritization"
+      - "recommendation quality"
+      - "trend awareness"
+      - "actionability of insights"
+
+target_thresholds:
+  - max_score: 2.4
+    label: prototype_only
+  - max_score: 3.4
+    label: narrow_pilot
+  - max_score: 3.9
+    label: acceptable_v1
+  - max_score: 4.2
+    label: strong_competitive
+  - max_score: 5.0
+    label: enterprise_ready
+
+red_flags:
+  - "Hallucinates business data or claims actions it did not perform"
+  - "Can bypass approval-sensitive workflows"
+  - "Breaks Odoo ACL or record-rule expectations"
+  - "Weak or absent audit trail"
+  - "Finance assistance is shallow or generic"
+  - "RAG is document-only and not Odoo-contextual"
+  - "Feels like generic chat, not workflow-native assistance"
+  - "Cannot handle multi-step tasks"
+  - "No role-specific behavior"
+  - "No usable evaluation/tracing/monitoring model"
+  - "Knowledge integration is brittle or unsafe"
+  - "Recommendations lack business grounding"
+
+competitive_snapshot:
+  - benchmark: odoo_ai_agents
+    native_erp_actions: high
+    finance_depth: medium
+    workplace_integration: medium
+    agent_platform: medium
+    analytics_depth: low_medium
+    lesson: "Must feel natively actionable inside Odoo"
+  - benchmark: sap_joule
+    native_erp_actions: medium_high
+    finance_depth: medium_high
+    workplace_integration: high
+    agent_platform: medium
+    analytics_depth: medium
+    lesson: "Must support informational + navigational + transactional assistance cleanly"
+  - benchmark: sap_afc
+    native_erp_actions: low
+    finance_depth: very_high
+    workplace_integration: low
+    agent_platform: low
+    analytics_depth: medium
+    lesson: "Must improve close-task orchestration maturity"
+  - benchmark: microsoft_foundry
+    native_erp_actions: medium
+    finance_depth: medium
+    workplace_integration: medium
+    agent_platform: very_high
+    analytics_depth: medium
+    lesson: "Must be governable, observable, evaluable, and KB-connected"
+  - benchmark: microsoft_copilot_finance
+    native_erp_actions: medium_high
+    finance_depth: high
+    workplace_integration: very_high
+    agent_platform: very_high
+    analytics_depth: medium
+    lesson: "Must support finance-role-specific assistance, not generic chat"
+  - benchmark: databricks_fs
+    native_erp_actions: low
+    finance_depth: medium
+    workplace_integration: low
+    agent_platform: low_medium
+    analytics_depth: very_high
+    lesson: "Should integrate to deeper analytics rather than pretend to replace them early"
+
+north_star: >
+  Odoo Copilot should benchmark as: more native than SAP Joule inside the ERP,
+  more configurable inside Odoo than a generic assistant, less broad than
+  Microsoft 365 Copilot across workplace surfaces initially, approaching
+  Microsoft Foundry on agent platform maturity, and paired with an analytics
+  layer rather than trying to replace Databricks-level intelligence outright.

@@ -1,0 +1,166 @@
+version: 1
+org: Insightpulseai
+
+# Canonical repo classification.
+# Every repo MUST appear here exactly once.
+# Domain values: erp, control-plane, web, data-platform, infrastructure,
+#   design-system, agents, governance, templates
+
+# Valid domains
+domains:
+  - erp
+  - control-plane
+  - web
+  - data-platform
+  - infrastructure
+  - design-system
+  - agents
+  - governance
+  - templates
+
+canonical_repos:
+  # ── Active repos ─────────────────────────────────────
+  - name: odoo
+    domain: erp
+    status: active
+    canonical: true
+    description: "Odoo CE 18 monorepo — ERP, modules, CI, specs, scripts"
+
+  - name: ops-platform
+    domain: control-plane
+    status: active
+    canonical: true
+    description: "Supabase SSOT + secrets + automations control-plane"
+
+  - name: web
+    domain: web
+    status: active
+    canonical: true
+    description: "Product web surfaces — ops console, marketing, docs"
+
+  - name: lakehouse
+    domain: data-platform
+    status: active
+    canonical: true
+    description: "Databricks lakehouse — medallion pipelines, Unity Catalog"
+
+  - name: infra
+    domain: infrastructure
+    status: active
+    canonical: true
+    description: "IaC — Azure, DigitalOcean, Cloudflare, Terraform"
+
+  - name: design-system
+    domain: design-system
+    status: active
+    canonical: true
+    description: "Design tokens, components, icon pipeline, brand assets"
+
+  - name: agents
+    domain: agents
+    status: active
+    canonical: true
+    description: "Agent definitions, skills, registries"
+
+  - name: templates
+    domain: templates
+    status: active
+    canonical: true
+    description: "Repo templates — OCA scaffolds, starters"
+
+  - name: .github
+    domain: governance
+    status: active
+    canonical: true
+    description: "Org-wide GitHub config — issue templates, labels, workflows"
+
+  - name: learn
+    domain: governance
+    status: archived
+    canonical: false
+    description: "Learning resources (archived)"
+
+  # ── Archived repos (superseded) ──────────────────────
+  - name: app-crm
+    domain: erp
+    status: archived
+    canonical: false
+    superseded_by: odoo
+    description: "CRM app (archived, merged into odoo)"
+
+  - name: app-landing
+    domain: web
+    status: archived
+    canonical: false
+    superseded_by: web
+    description: "Landing page app (archived, merged into web)"
+
+  - name: demo-repository
+    domain: governance
+    status: archived
+    canonical: false
+    description: "GitHub demo repo (archived)"
+
+  - name: dev-environment
+    domain: infrastructure
+    status: archived
+    canonical: false
+    superseded_by: infra
+    description: "Dev environment config (archived, merged into infra)"
+
+  - name: fin-ops
+    domain: erp
+    status: archived
+    canonical: false
+    superseded_by: odoo
+    description: "Finance ops (archived, merged into odoo)"
+
+  - name: fluent-owl
+    domain: design-system
+    status: archived
+    canonical: false
+    superseded_by: design-system
+    description: "Design experiments (archived)"
+
+  - name: mcp-core
+    domain: agents
+    status: archived
+    canonical: false
+    superseded_by: agents
+    description: "MCP core (archived, merged into agents)"
+
+  - name: ops-console
+    domain: control-plane
+    status: archived
+    canonical: false
+    superseded_by: web
+    description: "Ops console (archived, merged into web)"
+
+  - name: plugin-agents
+    domain: agents
+    status: archived
+    canonical: false
+    superseded_by: agents
+    description: "Agent plugins (archived, merged into agents)"
+
+  - name: plugin-marketplace
+    domain: agents
+    status: archived
+    canonical: false
+    superseded_by: agents
+    description: "Marketplace plugin (archived, merged into agents)"
+
+  - name: roadmap
+    domain: governance
+    status: archived
+    canonical: false
+    description: "Public roadmap (archived)"
+
+  - name: template-factory
+    domain: templates
+    status: archived
+    canonical: false
+    superseded_by: templates
+    description: "Template factory (archived, merged into templates)"
+
+archived_repos_should_be_superseded: true

@@ -7,7 +7,7 @@ skill:
   owner: agents
   purpose: >
     Verify XML files follow Odoo conventions — file naming, XML ID patterns,
-    record formatting, data file organization, and Odoo 19 specific rules
+    record formatting, data file organization, and Odoo 18 specific rules
     (tree renamed to list).
 
   triggers:
@@ -27,7 +27,7 @@ skill:
     - verify XML ID patterns (view_form, view_list, _action, _menu, etc.)
     - check record formatting and attribute ordering
     - verify data file organization in manifest (security groups first, then ACLs, data, views)
-    - check for deprecated patterns (tree renamed to list in Odoo 19)
+    - check for deprecated patterns (tree renamed to list in Odoo 18)
     - verify ACL CSV format (all 4 CRUD columns, proper ID pattern)
     - check for proper noupdate attributes on data records
 
@@ -35,10 +35,10 @@ skill:
     - xml_compliance_report
     - violation_list (with file, line, severity, rule)
     - fix_suggestions
-    - upgrade_safety_notes (Odoo 19 specific)
+    - upgrade_safety_notes (Odoo 18 specific)
 
   guardrails:
-    - tree views are deprecated in Odoo 19 — always flag as violation
+    - tree views are deprecated in Odoo 18 — always flag as violation
     - XML IDs must follow naming convention — no arbitrary names
     - prefer inherited extension over core patching
     - methods should remain small and single-responsibility
@@ -60,4 +60,4 @@ skill:
 cross_references:
   - agents/knowledge/benchmarks/odoo-coding-guidelines.md
   - agents/knowledge/benchmarks/odoo-developer-howtos.md
-  - ~/.claude/rules/odoo19-coding.md
+  - ~/.claude/rules/odoo18-coding.md

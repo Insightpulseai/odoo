@@ -1,0 +1,414 @@
+# =============================================================================
+# Odoo Copilot Runtime Contract (Machine-Readable)
+# =============================================================================
+# Source: Code crawl of addons/ipai/ipai_odoo_copilot/ and related files
+# Generated: 2026-03-15
+# Do NOT hand-edit — regenerate from source code crawl
+# =============================================================================
+
+name: odoo-copilot-runtime
+version: "18.0.2.0.0"
+generated: "2026-03-15"
+module_path: addons/ipai/ipai_odoo_copilot/
+
+services:
+  - name: ipai_odoo_copilot
+    type: odoo-addon
+    path: addons/ipai/ipai_odoo_copilot/
+    depends: [base_setup]
+    external_deps:
+      python: [azure-identity, azure-search-documents]
+
+  - name: ipai_enterprise_bridge
+    type: odoo-addon
+    path: addons/ipai/ipai_enterprise_bridge/
+    note: Contains foundry_provider_config.py (supplementary provider config model)
+
+  - name: odoo-docs-kb
+    type: fastapi-service
+    path: apps/odoo-docs-kb/
+    dockerfile: apps/odoo-docs-kb/Dockerfile
+    port: 8080
+    health_check: /health
+    aca_name: ipai-odoo-docs-kb
+    resource_group: rg-ipai-dev
+
+endpoints:
+  # Odoo controller routes
+  - path: /ipai/copilot/chat
+    method: POST
+    type: json-rpc
+    auth: user
+    csrf: true
+    description: Authenticated chat for Odoo session users
+    source: controllers/main.py
+
+  - path: /ipai/copilot/chat/service
+    method: POST
+    type: json-rpc
+    auth: service-key
+    csrf: false
+    auth_header: X-Copilot-Service-Key
+    auth_env_var: IPAI_COPILOT_SERVICE_KEY
+    description: Service-to-service endpoint for external widgets
+
+  # Docs KB RAG service
+  - path: /health
+    method: GET
+    auth: none
+    service: odoo-docs-kb
+    description: Health check
+
+  - path: /search
+    method: POST
+    auth: none
+    service: odoo-docs-kb
+    description: Hybrid vector+text search over Odoo 18 docs
+
+  - path: /answer
+    method: POST
+    auth: none
+    service: odoo-docs-kb
+    description: Grounded answer with citations
+
+  - path: /search/module
+    method: POST
+    auth: none
+    service: odoo-docs-kb
+    description: Module-scoped documentation search
+
+auth_modes:
+  - mode: api-key
+    priority: 1
+    env_vars: [AZURE_FOUNDRY_API_KEY]
+    description: Fast-path for dev/local without azure-identity SDK
+    header: api-key
+
+  - mode: default-credential
+    priority: 2
+    env_vars: [AZURE_CLIENT_ID, AZURE_CLIENT_SECRET, AZURE_TENANT_ID]
+    description: DefaultAzureCredential chain (env cred, managed identity, az login, azd auth)
+    token_scope: https://cognitiveservices.azure.com/.default
+
+  - mode: none
+    priority: 3
+    env_vars: []
+    description: No credentials available — reported as auth-unavailable
+
+agent_api:
+  mode: agents
+  compat_mode: assistants-compat
+  config_key: ipai_odoo_copilot.foundry_agent_api_mode
+  api_version: "2025-03-01-preview"
+  agents_path: /agents
+  assistants_path: /openai/assistants
+  sdk_migration_status: partial
+  sdk_migration_gate: foundry_service.py uses AIProjectClient for agent resolution
+  current_transport: urllib.request (raw HTTP)
+  target_transport: azure-ai-projects >= 2.0
+
+kb_indexes:
+  - name: odoo18-docs
+    status: active
+    index_type: azure-ai-search
+    search_service_config_key: ipai_odoo_copilot.foundry_search_service
+    search_service_default: srch-ipai-dev
+    source_repo: odoo/documentation
+    source_branch: "19.0"
+    chunk_count: 7224
+    file_count: 1106
+    embedding_model: text-embedding-ada-002
+    embedding_dimensions: 1536
+    service_path: apps/odoo-docs-kb/service.py
+    registry_entry: agents/knowledge/registry.yaml
+    source_contract: agents/knowledge/odoo18_docs/source.yaml
+
+  - name: azure-platform-docs
+    status: scaffolded
+    index_type: azure-ai-search
+    search_service_config_key: ipai_odoo_copilot.foundry_search_service
+    source_type: web-crawl
+    source_domains: [learn.microsoft.com, azure.microsoft.com]
+    registry_entry: agents/knowledge/registry.yaml
+    source_contract: agents/knowledge/azure_platform/source.yaml
+    note: Source contract defined, no service deployed, no index populated
+
+  - name: databricks-docs
+    status: scaffolded
+    index_type: azure-ai-search
+    search_service_config_key: ipai_odoo_copilot.foundry_search_service
+    source_type: web-crawl
+    source_domains: [docs.databricks.com, www.databricks.com]
+    registry_entry: agents/knowledge/registry.yaml
+    source_contract: agents/knowledge/databricks/source.yaml
+    note: Source contract defined, no service deployed, no index populated
+
+tools:
+  read_only:
+    - name: read_record
+      handler: _execute_read_record
+      category: orm-read
+    - name: search_records
+      handler: _execute_search_records
+      category: orm-search
+    - name: search_docs
+      handler: _execute_search_docs
+      category: knowledge-search
+    - name: get_report
+      handler: _execute_get_report
+      category: report-metadata
+    - name: read_finance_close
+      handler: _execute_read_finance_close
+      category: domain-specific
+    - name: view_campaign_perf
+      handler: _execute_view_campaign_perf
+      category: domain-specific
+    - name: view_dashboard
+      handler: _execute_view_dashboard
+      category: domain-specific
+    - name: search_strategy_docs
+      handler: _execute_search_strategy_docs
+      category: knowledge-search
+    - name: search_odoo_docs
+      handler: _execute_search_odoo_docs
+      category: kb-grounded-rag
+      index: odoo18-docs
+    - name: search_azure_docs
+      handler: _execute_search_azure_docs
+      category: kb-grounded-rag
+      index: azure-platform-docs
+    - name: search_databricks_docs
+      handler: _execute_search_databricks_docs
+      category: kb-grounded-rag
+      index: databricks-docs
+  write: []
+  stage2_planned:
+    - create_record
+    - update_record
+    - action_confirm
+
+blocked_models:
+  - ir.config_parameter
+  - ir.cron
+  - ir.module.module
+  - ir.rule
+  - ir.model.access
+  - res.users
+  - base.module.upgrade
+  - base.module.uninstall
+  - ir.actions.server
+  - ir.actions.act_window
+
+config_parameters:
+  - key: ipai_odoo_copilot.foundry_enabled
+    type: boolean
+    default: "False"
+    description: Master switch for Foundry copilot integration
+
+  - key: ipai_odoo_copilot.foundry_endpoint
+    type: string
+    default: ""
+    description: Azure AI Foundry portal URL (Open Portal button)
+
+  - key: ipai_odoo_copilot.foundry_api_endpoint
+    type: string
+    default: https://data-intel-ph-resource.services.ai.azure.com
+    description: API endpoint for health probes and agent resolution
+
+  - key: ipai_odoo_copilot.foundry_project
+    type: string
+    default: data-intel-ph
+    description: Azure Foundry project name
+
+  - key: ipai_odoo_copilot.foundry_agent_name
+    type: string
+    default: ipai-odoo-copilot-azure
+    description: Physical agent name in Foundry
+
+  - key: ipai_odoo_copilot.foundry_model
+    type: string
+    default: gpt-4.1
+    description: Model deployment name
+
+  - key: ipai_odoo_copilot.foundry_search_service
+    type: string
+    default: srch-ipai-dev
+    description: Azure AI Search service name
+
+  - key: ipai_odoo_copilot.foundry_search_connection
+    type: string
+    default: ""
+    description: Azure AI Search connection name for knowledge grounding
+
+  - key: ipai_odoo_copilot.foundry_search_index
+    type: string
+    default: ""
+    description: Default Azure AI Search index name
+
+  - key: ipai_odoo_copilot.foundry_memory_enabled
+    type: boolean
+    default: "False"
+    description: Allow Foundry agent to retain conversation memory
+
+  - key: ipai_odoo_copilot.foundry_read_only_mode
+    type: boolean
+    default: "True"
+    description: Read-only mode — blocks write tool execution
+
+  - key: ipai_odoo_copilot.foundry_agent_api_mode
+    type: selection
+    options: [agents, assistants-compat]
+    default: agents
+    description: Agent API path mode (agents = Responses API v2, assistants-compat = legacy)
+
+env_vars:
+  - name: AZURE_FOUNDRY_API_KEY
+    purpose: Fallback API key authentication for Foundry (dev/local)
+    required: false
+
+  - name: AZURE_CLIENT_ID
+    purpose: EnvironmentCredential component for DefaultAzureCredential
+    required: false
+
+  - name: AZURE_CLIENT_SECRET
+    purpose: EnvironmentCredential component for DefaultAzureCredential
+    required: false
+
+  - name: AZURE_TENANT_ID
+    purpose: EnvironmentCredential component for DefaultAzureCredential
+    required: false
+
+  - name: AZURE_SEARCH_API_KEY
+    purpose: Azure AI Search client credential for KB tools
+    required: true
+
+  - name: IPAI_COPILOT_SERVICE_KEY
+    purpose: Service-to-service auth for /chat/service endpoint
+    required: true
+
+  - name: APPINSIGHTS_CONNECTION_STRING
+    purpose: Application Insights telemetry (graceful degrade if missing)
+    required: false
+
+  - name: AZURE_SEARCH_ENDPOINT
+    purpose: AI Search endpoint URL (docs-kb service)
+    required: true
+    service: odoo-docs-kb
+
+  - name: AZURE_OPENAI_ENDPOINT
+    purpose: OpenAI endpoint for embeddings and chat (docs-kb service)
+    required: true
+    service: odoo-docs-kb
+
+  - name: AZURE_OPENAI_API_KEY
+    purpose: OpenAI credential (docs-kb service)
+    required: true
+    service: odoo-docs-kb
+
+  - name: AZURE_SEARCH_INDEX_NAME
+    purpose: Search index name override (docs-kb service, default odoo18-docs)
+    required: false
+    service: odoo-docs-kb
+
+  - name: AZURE_OPENAI_EMBEDDING_DEPLOYMENT
+    purpose: Embedding model name (docs-kb service, default text-embedding-ada-002)
+    required: false
+    service: odoo-docs-kb
+
+  - name: AZURE_OPENAI_CHAT_DEPLOYMENT
+    purpose: Chat model name (docs-kb service, default gpt-4o)
+    required: false
+    service: odoo-docs-kb
+
+cron_jobs:
+  - name: IPAI Foundry Nightly Healthcheck
+    xml_id: ir_cron_foundry_healthcheck
+    model: ipai.foundry.service
+    method: nightly_healthcheck
+    interval: 1
+    interval_type: days
+    active: true
+
+models:
+  - name: ipai.foundry.service
+    auto: false
+    description: Azure Foundry Service Bridge
+    file: models/foundry_service.py
+
+  - name: ipai.copilot.audit
+    auto: true
+    description: Copilot Interaction Audit Log
+    file: models/copilot_audit.py
+    note: NOT imported in models/__init__.py (drift)
+
+  - name: ipai.copilot.tool.executor
+    auto: false
+    description: Copilot Tool Execution Dispatcher
+    file: models/tool_executor.py
+    note: NOT imported in models/__init__.py (drift)
+
+  - name: ipai.copilot.telemetry
+    auto: false
+    description: Copilot App Insights Telemetry
+    file: models/telemetry.py
+    note: NOT imported in models/__init__.py (drift)
+
+  - name: discuss.channel
+    inherit: true
+    description: Message routing for Discuss bot
+    file: models/copilot_bot.py
+    note: NOT imported in models/__init__.py (drift)
+
+  - name: ipai.foundry.provider.config
+    auto: true
+    description: Foundry Provider Configuration (singleton)
+    file: models/foundry_provider_config.py
+    module: ipai_enterprise_bridge
+
+data_records:
+  - xml_id: partner_copilot
+    model: res.partner
+    name: IPAI Copilot
+    email: copilot@insightpulseai.com
+
+deployment:
+  pipeline: .github/workflows/publish-agent-services.yml
+  trigger_paths:
+    - apps/odoo-docs-kb/**
+    - packages/odoo-docs-kb/**
+    - addons/ipai/ipai_odoo_copilot/**
+    - addons/ipai/ipai_agent/**
+  registry: ACR
+  registry_secret: ACR_LOGIN_SERVER
+  compute: Azure Container Apps
+  resource_group: rg-ipai-dev
+  container_env: cae-ipai-dev
+  health_check: /health
+  verify_wait: 30s
+  auth: Azure OIDC (federated identity)
+
+rollback:
+  agent_api_mode: assistants-compat
+  config_key: ipai_odoo_copilot.foundry_agent_api_mode
+  description: >
+    Set config parameter to "assistants-compat" to revert from
+    /agents path to /openai/assistants path. No code change required.
+
+drift_items:
+  critical:
+    - area: chat_completion method
+      detail: Called in copilot_bot.py and controllers/main.py but not defined in foundry_service.py
+    - area: _build_context_envelope method
+      detail: Called in controllers/main.py but not defined in any model
+  high:
+    - area: model registration
+      detail: 4 of 6 model files not imported in models/__init__.py
+    - area: ir.model.access.csv
+      detail: Empty (header only) — no ACL rules for any model
+  medium:
+    - area: audit views
+      detail: copilot_audit_views.xml not in __manifest__.py data list
+    - area: ACA provisioning
+      detail: ipai-odoo-docs-kb not in resources.yaml (may not exist in Azure)
+    - area: SDK migration
+      detail: Agent resolution uses raw urllib, not azure-ai-projects SDK

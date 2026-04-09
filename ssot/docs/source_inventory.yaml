@@ -1,0 +1,563 @@
+# Organization Documentation Source Inventory
+# Schema: ssot.docs.source-inventory.v1
+# Generated: 2026-03-15
+# Purpose: Machine-readable inventory of all documentation sources in the repo
+# Human-readable counterpart: docs/platform/ORG_DOC_SOURCE_INVENTORY.md
+
+version: "1.0"
+schema: ssot.docs.source-inventory.v1
+generated_at: "2026-03-15T00:00:00Z"
+
+summary:
+  total_md_files: 8254
+  docs_directory_files: 3073
+  spec_bundle_files: 108
+  ssot_root_files: 62
+  agents_files: 587
+  infra_ssot_files: 183
+  config_files: 16
+  claude_md_files: 3
+  contracts: 38
+  architecture_docs: 196
+  evidence_bundles: 201
+  ipai_modules: 84
+
+# ============================================================================
+# SOURCE INVENTORY
+# ============================================================================
+
+sources:
+
+  # --- CLAUDE.md Files (Agent Policy) ---
+  - path: CLAUDE.md
+    owner: platform_team
+    doc_type: policy
+    freshness: active
+    sensitivity: internal
+    indexing_priority: P0
+    notes: Root project SSOT, last updated 2026-03-08
+
+  - path: odoo/CLAUDE.md
+    owner: erp_team
+    doc_type: policy
+    freshness: active
+    sensitivity: internal
+    indexing_priority: P0
+    notes: Odoo subproject context
+
+  - path: archive/root-cleanup-20260224/sandbox/dev/CLAUDE.md
+    owner: repo_admin
+    doc_type: policy
+    freshness: deprecated
+    sensitivity: internal
+    indexing_priority: P3
+    notes: Archived, superseded by root CLAUDE.md
+
+  # --- docs/ai/ (AI Reference) ---
+  - path: docs/ai/
+    owner: ai_team
+    doc_type: reference
+    freshness: active
+    sensitivity: internal
+    indexing_priority: P0
+    notes: 62 markdown files, core AI reference docs
+    file_count: 62
+
+  - path: docs/ai/external/
+    owner: ai_team
+    doc_type: reference
+    freshness: stale
+    sensitivity: internal
+    indexing_priority: P3
+    notes: 13 of 14 files are FETCH_FAILED stubs, never populated
+
+  # --- docs/contracts/ (Platform Contracts) ---
+  - path: docs/contracts/
+    owner: platform_team
+    doc_type: contract
+    freshness: active
+    sensitivity: internal
+    indexing_priority: P0
+    notes: 38 contract documents, indexed in PLATFORM_CONTRACTS_INDEX.md
+    file_count: 38
+
+  # --- docs/architecture/ (Architecture) ---
+  - path: docs/architecture/
+    owner: platform_team
+    doc_type: architecture
+    freshness: active
+    sensitivity: internal
+    indexing_priority: P0
+    notes: 196 architecture documents
+    file_count: 196
+
+  # --- spec/ (Spec Bundles) ---
+  - path: spec/
+    owner: product_team
+    doc_type: spec
+    freshness: active
+    sensitivity: internal
+    indexing_priority: P0
+    notes: 22 spec bundles, 108 total files (constitution, prd, plan, tasks per bundle)
+    file_count: 108
+    bundles:
+      - spec/docs-platform/
+      - spec/enterprise-target-state/
+      - spec/odoo-copilot/
+      - spec/odoo-copilot-benchmark/
+      - spec/finance-unified/
+      - spec/lakehouse/
+      - spec/azure-selfhost-migration/
+      - spec/platform-auth/
+      - spec/unified-api-gateway/
+      - spec/odoo-erp-saas/
+      - spec/adls-etl-reverse-etl/
+      - spec/sap-joule-concur-odoo-azure/
+      - spec/well-architected/
+      - spec/afc-parity/
+      - spec/copilot-target-state/
+      - spec/ipai-odoo-copilot-azure/
+      - spec/odoo-app-agent-skills/
+      - spec/odoo-copilot-agent-framework/
+      - spec/odoo-copilot-azure-runtime/
+      - spec/plane-unified-docs/
+      - spec/supabase-self-host-cutover/
+      - spec/tax-pulse-sub-agent/
+
+  # --- ssot/ (Machine-Readable SSOT) ---
+  - path: ssot/
+    owner: platform_team
+    doc_type: config
+    freshness: active
+    sensitivity: internal
+    indexing_priority: P0
+    notes: 62 files, platform-level SSOT manifests
+    file_count: 62
+
+  - path: ssot/
+    owner: infra_team
+    doc_type: config
+    freshness: active
+    sensitivity: internal
+    indexing_priority: P0
+    notes: Infrastructure-level SSOT manifests (consolidated from infra/ssot/)
+    file_count: 183
+
+  # --- agents/ (Agent Framework) ---
+  - path: agents/knowledge/
+    owner: ai_team
+    doc_type: config
+    freshness: active
+    sensitivity: internal
+    indexing_priority: P0
+    notes: KB contracts, source.yaml, chunking.yaml, indexing.yaml
+
+  - path: agents/evals/
+    owner: ai_team
+    doc_type: config
+    freshness: active
+    sensitivity: internal
+    indexing_priority: P0
+    notes: Capability evaluation framework (2 YAML files)
+
+  - path: agents/skills/odoo18/
+    owner: ai_team
+    doc_type: reference
+    freshness: active
+    sensitivity: internal
+    indexing_priority: P1
+    notes: 60+ Odoo 18 functional skills (SKILL.md per module)
+
+  - path: agents/skills/odoo/
+    owner: ai_team
+    doc_type: reference
+    freshness: active
+    sensitivity: internal
+    indexing_priority: P1
+    notes: 20+ Odoo development skills
+
+  - path: agents/registry/
+    owner: ai_team
+    doc_type: config
+    freshness: active
+    sensitivity: internal
+    indexing_priority: P1
+    notes: Agent and skill registries
+
+  - path: agents/mcp/
+    owner: platform_team
+    doc_type: reference
+    freshness: active
+    sensitivity: internal
+    indexing_priority: P1
+    notes: MCP server implementations (30+ files)
+
+  - path: agents/library-pack/
+    owner: ai_team
+    doc_type: reference
+    freshness: active
+    sensitivity: internal
+    indexing_priority: P2
+    notes: Prompt library
+
+  - path: agents/studio/
+    owner: ai_team
+    doc_type: reference
+    freshness: active
+    sensitivity: internal
+    indexing_priority: P2
+    notes: Agent personas (20+ files)
+
+  # --- config/ (Configuration) ---
+  - path: config/
+    owner: platform_team
+    doc_type: config
+    freshness: active
+    sensitivity: internal
+    indexing_priority: P0
+    notes: 16 files, Odoo config + addons manifest + env contracts
+    file_count: 16
+
+  # --- infra/ (Infrastructure) ---
+  - path: infra/dns/subdomain-registry.yaml
+    owner: infra_team
+    doc_type: config
+    freshness: active
+    sensitivity: internal
+    indexing_priority: P0
+    notes: DNS SSOT
+
+  - path: infra/azure/
+    owner: infra_team
+    doc_type: config
+    freshness: active
+    sensitivity: internal
+    indexing_priority: P1
+    notes: Azure infra configuration
+
+  - path: infra/cloudflare/
+    owner: infra_team
+    doc_type: config
+    freshness: active
+    sensitivity: internal
+    indexing_priority: P1
+    notes: Cloudflare DNS zones and records
+
+  - path: infra/databricks/
+    owner: data_team
+    doc_type: config
+    freshness: active
+    sensitivity: internal
+    indexing_priority: P1
+    notes: Databricks asset bundles
+
+  - path: infra/deploy/
+    owner: infra_team
+    doc_type: config
+    freshness: active
+    sensitivity: internal
+    indexing_priority: P1
+    notes: K8s deployment manifests
+
+  - path: infra/ops-control/
+    owner: infra_team
+    doc_type: reference
+    freshness: stale
+    sensitivity: internal
+    indexing_priority: P2
+    notes: 50+ docs, partially stale ops control room content
+
+  # --- packages/odoo-docs-kb/ (Reusable Components) ---
+  - path: packages/odoo-docs-kb/
+    owner: ai_team
+    doc_type: reference
+    freshness: active
+    sensitivity: internal
+    indexing_priority: P0
+    notes: Chunker, embedder, indexer, eval -- reusable for org doc platform
+    files:
+      - chunker.py
+      - md_chunker.py
+      - embed.py
+      - index.py
+      - loader.py
+      - web_loader.py
+      - eval.py
+
+  # --- apps/odoo-docs-kb/ (RAG Service) ---
+  - path: apps/odoo-docs-kb/
+    owner: ai_team
+    doc_type: reference
+    freshness: active
+    sensitivity: internal
+    indexing_priority: P0
+    notes: FastAPI RAG search service (service.py, Dockerfile, requirements.txt)
+
+  # --- docs/modules/ (Module Documentation) ---
+  - path: docs/modules/
+    owner: erp_team
+    doc_type: reference
+    freshness: active
+    sensitivity: internal
+    indexing_priority: P1
+    notes: 204 module documentation files
+    file_count: 204
+
+  # --- docs/guides/ (Guides) ---
+  - path: docs/guides/
+    owner: platform_team
+    doc_type: guide
+    freshness: active
+    sensitivity: internal
+    indexing_priority: P1
+    notes: 122 guide files
+    file_count: 122
+
+  # --- docs/governance/ (Governance) ---
+  - path: docs/governance/
+    owner: cto
+    doc_type: policy
+    freshness: active
+    sensitivity: internal
+    indexing_priority: P1
+    notes: 45 governance documents
+    file_count: 45
+
+  # --- docs/integrations/ (Integrations) ---
+  - path: docs/integrations/
+    owner: platform_team
+    doc_type: reference
+    freshness: active
+    sensitivity: internal
+    indexing_priority: P1
+    notes: 49 integration documents
+    file_count: 49
+
+  # --- docs/deployment/ (Deployment) ---
+  - path: docs/deployment/
+    owner: infra_team
+    doc_type: reference
+    freshness: active
+    sensitivity: internal
+    indexing_priority: P1
+    notes: 48 deployment documents
+    file_count: 48
+
+  # --- docs/operations/ (Operations) ---
+  - path: docs/operations/
+    owner: sre_ops
+    doc_type: reference
+    freshness: active
+    sensitivity: internal
+    indexing_priority: P1
+    notes: 106 operations documents
+    file_count: 106
+
+  # --- docs/security/ (Security) ---
+  - path: docs/security/
+    owner: security_team
+    doc_type: policy
+    freshness: active
+    sensitivity: restricted
+    indexing_priority: P1
+    notes: 15 security documents
+    file_count: 15
+
+  # --- docs/design/ (Design) ---
+  - path: docs/design/
+    owner: design_team
+    doc_type: reference
+    freshness: active
+    sensitivity: internal
+    indexing_priority: P2
+    notes: 47 design documents
+    file_count: 47
+
+  # --- docs/product/ (Product) ---
+  - path: docs/product/
+    owner: product_team
+    doc_type: reference
+    freshness: active
+    sensitivity: internal
+    indexing_priority: P2
+    notes: 63 product documents
+    file_count: 63
+
+  # --- docs/portfolio/ (Portfolio) ---
+  - path: docs/portfolio/
+    owner: product_team
+    doc_type: reference
+    freshness: active
+    sensitivity: internal
+    indexing_priority: P2
+    notes: 303 portfolio documents (large, may include specs)
+    file_count: 303
+
+  # --- docs/kb/ (Knowledge Base) ---
+  - path: docs/kb/
+    owner: ai_team
+    doc_type: reference
+    freshness: active
+    sensitivity: internal
+    indexing_priority: P2
+    notes: 1170 files, large volume, likely crawled/generated
+    file_count: 1170
+
+  # --- docs/releases/ (Releases) ---
+  - path: docs/releases/
+    owner: release_manager
+    doc_type: reference
+    freshness: active
+    sensitivity: internal
+    indexing_priority: P1
+    notes: ~20 files including GO_LIVE manifests and WHAT_SHIPPED
+
+  # --- docs/evidence/ (Evidence) ---
+  - path: docs/evidence/
+    owner: platform_team
+    doc_type: evidence
+    freshness: active
+    sensitivity: internal
+    indexing_priority: P3
+    notes: 201 evidence bundles -- derived proof, NOT source of truth
+    file_count: 201
+
+  # --- addons/ipai/ Module READMEs ---
+  - path: addons/ipai/
+    owner: erp_team
+    doc_type: reference
+    freshness: active
+    sensitivity: internal
+    indexing_priority: P1
+    notes: ~40 README.md files across 84 ipai modules
+
+  # --- .claude/ (Agent Config) ---
+  - path: .claude/
+    owner: platform_team
+    doc_type: config
+    freshness: active
+    sensitivity: internal
+    indexing_priority: P1
+    notes: 52 .md files, agent commands, skills, rules
+
+  # --- .github/workflows/ (CI Workflows) ---
+  - path: .github/workflows/
+    owner: platform_team
+    doc_type: config
+    freshness: active
+    sensitivity: internal
+    indexing_priority: P1
+    notes: ~85 workflow YAML files
+
+  # --- docs/runtime/ (Runtime Docs) ---
+  - path: docs/runtime/
+    owner: platform_team
+    doc_type: reference
+    freshness: active
+    sensitivity: internal
+    indexing_priority: P1
+    notes: 2 files -- copilot deployed state and drift report
+
+  # --- docs/data-model/ (Data Model) ---
+  - path: docs/data-model/
+    owner: erp_team
+    doc_type: data-model
+    freshness: active
+    sensitivity: internal
+    indexing_priority: P1
+    notes: DBML, ERD, ORM maps -- generated artifacts
+
+  # --- External References ---
+  - path: agents/knowledge/odoo18_docs/source.yaml
+    owner: ai_team
+    doc_type: config
+    freshness: active
+    sensitivity: public
+    indexing_priority: P0
+    notes: Points to odoo/documentation.git 19.0 branch
+
+  - path: agents/knowledge/azure_platform/source.yaml
+    owner: ai_team
+    doc_type: config
+    freshness: active
+    sensitivity: public
+    indexing_priority: P0
+    notes: Points to Azure platform docs
+
+  - path: agents/knowledge/databricks/source.yaml
+    owner: ai_team
+    doc_type: config
+    freshness: active
+    sensitivity: public
+    indexing_priority: P0
+    notes: Points to Databricks docs
+
+# ============================================================================
+# DUPLICATION MAP
+# ============================================================================
+
+duplications:
+  - area: SSOT manifests
+    locations:
+      - ssot/
+    resolution: "Consolidated. infra/ssot/ merged into ssot/."
+
+  - area: Parity tracking
+    locations:
+      - ssot/parity_targets.yaml
+      - ssot/parity/
+    resolution: "Consolidated. infra/ssot/parity/ merged into ssot/parity/."
+
+  - area: Agent registries
+    locations:
+      - agents/registry/
+      - ssot/agents/
+    resolution: "Consolidated. infra/ssot/agents/ merged into ssot/agents/."
+
+  - area: GitHub config
+    locations:
+      - ssot/github/
+    resolution: "Consolidated. infra/ssot/github/ merged into ssot/github/."
+
+  - area: Integration SSOT
+    locations:
+      - ssot/integrations/
+    resolution: "Consolidated. infra/ssot/integrations/ merged into ssot/integrations/."
+
+# ============================================================================
+# DRIFT ANALYSIS
+# ============================================================================
+
+drift:
+  - area: Knowledge Base Index
+    source: agents/knowledge/KNOWLEDGE_BASE_INDEX.yaml
+    issue: "References v18.0 and /home/user/odoo/ paths"
+    actual: "Repo is v19.0, workspace paths are /workspaces/odoo/"
+    severity: high
+
+  - area: External docs
+    source: docs/ai/external/
+    issue: "13 of 14 files are FETCH_FAILED stubs"
+    actual: "Content never populated"
+    severity: high
+
+  - area: Module count
+    source: CLAUDE.md
+    issue: "States 69 verified ipai modules"
+    actual: "84 directories in addons/ipai/"
+    severity: low
+
+# ============================================================================
+# MISSING COVERAGE
+# ============================================================================
+
+missing:
+  - topic: Onboarding guide
+    expected_path: docs/guides/ONBOARDING.md
+  - topic: Disaster recovery runbook
+    expected_path: docs/runbooks/DR_RUNBOOK.md
+  - topic: Comprehensive API docs (OpenAPI)
+    expected_path: docs/api/
+  - topic: Org doc platform architecture
+    expected_path: docs/contracts/ORG_DOC_PLATFORM_CONTRACT.md
+    note: Created by this deliverable

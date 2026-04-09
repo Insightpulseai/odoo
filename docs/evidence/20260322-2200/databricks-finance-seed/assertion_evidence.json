@@ -1,0 +1,47 @@
+{
+  "catalog": "dbw_ipai_dev",
+  "gold_schema": "gold",
+  "outcomes": [
+    {
+      "details": "count=3",
+      "name": "row_count:dbw_ipai_dev.gold.project_profitability",
+      "passed": true
+    },
+    {
+      "details": "count=9",
+      "name": "row_count:dbw_ipai_dev.gold.project_budget_vs_actual",
+      "passed": true
+    },
+    {
+      "details": "count=5",
+      "name": "row_count:dbw_ipai_dev.gold.expense_liquidation_health",
+      "passed": true
+    },
+    {
+      "details": "count=11",
+      "name": "row_count:dbw_ipai_dev.gold.ap_ar_cash_summary",
+      "passed": true
+    },
+    {
+      "details": "count=4",
+      "name": "row_count:dbw_ipai_dev.gold.policy_compliance_scorecard",
+      "passed": true
+    },
+    {
+      "details": "count=1",
+      "name": "row_count:dbw_ipai_dev.gold.portfolio_financial_health",
+      "passed": true
+    },
+    {
+      "details": "found Alpha/Beta/Gamma; budget/actual scenario checks passed; margin checks passed",
+      "name": "project_scenarios",
+      "passed": true
+    },
+    {
+      "details": "5 rows; outstanding-advance column not present, count-only assertion used",
+      "name": "expense_liquidation",
+      "passed": true
+    }
+  ],
+  "passed": true
+}

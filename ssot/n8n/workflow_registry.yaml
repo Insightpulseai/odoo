@@ -1,0 +1,585 @@
+# schema: ssot.n8n.workflow_registry.v1
+# n8n Workflow Registry — Canonical SSOT for all workflow JSON assets
+#
+# CANONICAL ROOT: automations/n8n/workflows/
+# Any workflow JSON not listed here is either archived or stale.
+# Copies outside the canonical root are non-authoritative duplicates.
+#
+# DOMAIN values: finance, github_ops, health, control_plane, integration_events, agent_runtime
+# SYSTEM_ROLE values: orchestration, sync, notification, ingestion_edge, healthcheck
+#
+# CI guard: (planned) .github/workflows/n8n-registry-check.yml
+
+version: 1
+meta:
+  owner: platform
+  canonical_root: "automations/n8n/workflows/"
+  source_of_truth: "repo (JSON export from n8n UI → committed to git)"
+  created: "2026-03-21"
+  last_reviewed: "2026-03-21"
+  total_active: 50
+
+# ─────────────────────────────────────────────────────────
+# TOP-LEVEL WORKFLOWS
+# ─────────────────────────────────────────────────────────
+
+workflows:
+
+  # ── Health / Monitoring ──
+
+  - workflow_id: wf-health-01
+    name: "01-health-check"
+    path: "automations/n8n/workflows/01-health-check.json"
+    domain: health
+    system_role: healthcheck
+    environment: all
+    active_status: active
+    owner: platform
+    depends_on: []
+    notes: "Primary stack health check"
+
+  - workflow_id: wf-health-superset
+    name: "superset-cache-refresh"
+    path: "automations/n8n/workflows/superset-cache-refresh.json"
+    domain: health
+    system_role: orchestration
+    environment: prod
+    active_status: active
+    owner: platform
+    depends_on: []
+    notes: "Superset dashboard cache refresh"
+
+  # ── GitHub Operations ──
+
+  - workflow_id: wf-git-02
+    name: "02-git-operations-hub"
+    path: "automations/n8n/workflows/02-git-operations-hub.json"
+    domain: github_ops
+    system_role: sync
+    environment: all
+    active_status: active
+    owner: platform
+    depends_on: []
+    notes: "Numbered series — main git operations hub"
+
+  - workflow_id: wf-git-05
+    name: "05-github-oauth-callback"
+    path: "automations/n8n/workflows/05-github-oauth-callback.json"
+    domain: github_ops
+    system_role: sync
+    environment: prod
+    active_status: active
+    owner: platform
+    depends_on: []
+    notes: "OAuth callback handler for pulser-hub app"
+
+  - workflow_id: wf-git-chatops
+    name: "chatops-hotfix"
+    path: "automations/n8n/workflows/chatops-hotfix.json"
+    domain: github_ops
+    system_role: orchestration
+    environment: prod
+    active_status: active
+    owner: platform
+    depends_on: []
+    notes: "Slack-triggered hotfix deployment"
+
+  - workflow_id: wf-git-deploy-notify
+    name: "deployment-notify"
+    path: "automations/n8n/workflows/deployment-notify.json"
+    domain: github_ops
+    system_role: notification
+    environment: prod
+    active_status: active
+    owner: platform
+    depends_on: []
+    notes: "Post-deployment Slack notification"
+
+  - workflow_id: wf-git-deploy-trigger
+    name: "github-deploy-trigger"
+    path: "automations/n8n/workflows/github-deploy-trigger.json"
+    domain: github_ops
+    system_role: orchestration
+    environment: prod
+    active_status: active
+    owner: platform
+    depends_on: []
+    notes: "Push-to-main deploy trigger"
+
+  - workflow_id: wf-git-events
+    name: "github-events-handler"
+    path: "automations/n8n/workflows/github-events-handler.json"
+    domain: github_ops
+    system_role: sync
+    environment: prod
+    active_status: active
+    owner: platform
+    depends_on: []
+    notes: "General GitHub webhook event handler"
+
+  - workflow_id: wf-git-router
+    name: "github-router"
+    path: "automations/n8n/workflows/github-router.json"
+    domain: github_ops
+    system_role: sync
+    environment: prod
+    active_status: active
+    owner: platform
+    depends_on: []
+    notes: "Routes GitHub events to domain-specific handlers"
+
+  - workflow_id: wf-git-ops-hub-legacy
+    name: "git_operations_hub"
+    path: "automations/n8n/workflows/git_operations_hub.json"
+    domain: github_ops
+    system_role: sync
+    environment: all
+    active_status: active
+    owner: platform
+    depends_on: []
+    replaces: null
+    notes: "Unnumbered variant — review for consolidation with wf-git-02"
+
+  # ── Finance ──
+
+  - workflow_id: wf-fin-03
+    name: "03-finance-close-orchestrator"
+    path: "automations/n8n/workflows/03-finance-close-orchestrator.json"
+    domain: finance
+    system_role: orchestration
+    environment: prod
+    active_status: active
+    owner: finance
+    depends_on: []
+    notes: "Month-end close orchestration"
+
+  - workflow_id: wf-fin-04
+    name: "04-bir-compliance"
+    path: "automations/n8n/workflows/04-bir-compliance.json"
+    domain: finance
+    system_role: orchestration
+    environment: prod
+    active_status: active
+    owner: finance
+    depends_on: []
+    notes: "BIR tax compliance automation"
+
+  - workflow_id: wf-fin-billing
+    name: "billing-subscription-created"
+    path: "automations/n8n/workflows/billing-subscription-created.json"
+    domain: finance
+    system_role: notification
+    environment: prod
+    active_status: active
+    owner: finance
+    depends_on: []
+    notes: "Subscription creation notification"
+
+  - workflow_id: wf-fin-bir-reminder
+    name: "bir_deadline_reminder"
+    path: "automations/n8n/workflows/bir_deadline_reminder.json"
+    domain: finance
+    system_role: notification
+    environment: prod
+    active_status: active
+    owner: finance
+    depends_on: []
+    notes: "BIR filing deadline reminders"
+
+  - workflow_id: wf-fin-expense
+    name: "expense_receipt_capture"
+    path: "automations/n8n/workflows/expense_receipt_capture.json"
+    domain: finance
+    system_role: ingestion_edge
+    environment: prod
+    active_status: active
+    owner: finance
+    depends_on: []
+    notes: "Telegram/photo receipt capture to Odoo"
+
+  - workflow_id: wf-fin-closing
+    name: "finance_closing_automation"
+    path: "automations/n8n/workflows/finance_closing_automation.json"
+    domain: finance
+    system_role: orchestration
+    environment: prod
+    active_status: active
+    owner: finance
+    depends_on: []
+    notes: "Automated month-end closing"
+
+  - workflow_id: wf-fin-invoice-ocr
+    name: "invoice_ocr_to_odoo"
+    path: "automations/n8n/workflows/invoice_ocr_to_odoo.json"
+    domain: finance
+    system_role: ingestion_edge
+    environment: prod
+    active_status: active
+    owner: finance
+    depends_on: []
+    notes: "OCR invoice capture to Odoo AP"
+
+  - workflow_id: wf-fin-ai-journal
+    name: "n8n_ai_journal_posting"
+    path: "automations/n8n/workflows/n8n_ai_journal_posting.json"
+    domain: finance
+    system_role: orchestration
+    environment: prod
+    active_status: active
+    owner: finance
+    depends_on: []
+    notes: "AI-assisted journal entry creation"
+
+  - workflow_id: wf-fin-bir-efiling
+    name: "n8n_bir_efiling_automation"
+    path: "automations/n8n/workflows/n8n_bir_efiling_automation.json"
+    domain: finance
+    system_role: orchestration
+    environment: prod
+    active_status: active
+    owner: finance
+    depends_on: []
+    notes: "BIR e-filing automation"
+
+  - workflow_id: wf-fin-bir-forms
+    name: "n8n_bir_form_generation"
+    path: "automations/n8n/workflows/n8n_bir_form_generation.json"
+    domain: finance
+    system_role: orchestration
+    environment: prod
+    active_status: active
+    owner: finance
+    depends_on: []
+    notes: "BIR form generation (1601-C, 2316, etc.)"
+
+  - workflow_id: wf-fin-ppm
+    name: "n8n_finance_ppm_workflow_odoo18"
+    path: "automations/n8n/workflows/n8n_finance_ppm_workflow_odoo18.json"
+    domain: finance
+    system_role: orchestration
+    environment: prod
+    active_status: active
+    owner: finance
+    depends_on: []
+    notes: "Finance PPM workflow for Odoo 18"
+
+  - workflow_id: wf-fin-monthly-close
+    name: "ppm_monthly_close_automation"
+    path: "automations/n8n/workflows/ppm_monthly_close_automation.json"
+    domain: finance
+    system_role: orchestration
+    environment: prod
+    active_status: active
+    owner: finance
+    depends_on: []
+    notes: "PPM monthly close automation"
+
+  # ── Integration Events ──
+
+  - workflow_id: wf-int-odoo-reverse
+    name: "odoo_reverse_mapper"
+    path: "automations/n8n/workflows/odoo_reverse_mapper.json"
+    domain: integration_events
+    system_role: sync
+    environment: prod
+    active_status: active
+    owner: platform
+    depends_on: []
+    notes: "Reverse-map Odoo records to external systems"
+
+  - workflow_id: wf-int-plane-odoo-gh
+    name: "plane-odoo-github-sync"
+    path: "automations/n8n/workflows/plane-odoo-github-sync.json"
+    domain: integration_events
+    system_role: sync
+    environment: prod
+    active_status: active
+    owner: platform
+    depends_on: []
+    notes: "Three-way Plane-Odoo-GitHub sync"
+
+  - workflow_id: wf-int-ppm-o2p
+    name: "ppm-clarity-odoo-to-plane"
+    path: "automations/n8n/workflows/ppm-clarity-odoo-to-plane.json"
+    domain: integration_events
+    system_role: sync
+    environment: prod
+    active_status: active
+    owner: platform
+    depends_on: []
+    notes: "PPM Clarity: Odoo → Plane sync"
+
+  - workflow_id: wf-int-ppm-p2o
+    name: "ppm-clarity-plane-to-odoo"
+    path: "automations/n8n/workflows/ppm-clarity-plane-to-odoo.json"
+    domain: integration_events
+    system_role: sync
+    environment: prod
+    active_status: active
+    owner: platform
+    depends_on: []
+    notes: "PPM Clarity: Plane → Odoo sync"
+
+  - workflow_id: wf-int-ppm-recon
+    name: "ppm-clarity-reconciliation"
+    path: "automations/n8n/workflows/ppm-clarity-reconciliation.json"
+    domain: integration_events
+    system_role: sync
+    environment: prod
+    active_status: active
+    owner: platform
+    depends_on: []
+    notes: "PPM Clarity: cross-system reconciliation"
+
+  - workflow_id: wf-int-ppm-slack
+    name: "ppm-clarity-slack-commands"
+    path: "automations/n8n/workflows/ppm-clarity-slack-commands.json"
+    domain: integration_events
+    system_role: orchestration
+    environment: prod
+    active_status: active
+    owner: platform
+    depends_on: []
+    notes: "PPM Clarity: Slack slash commands"
+
+  - workflow_id: wf-int-vercel-drain
+    name: "vercel-drain-handler"
+    path: "automations/n8n/workflows/vercel-drain-handler.json"
+    domain: integration_events
+    system_role: ingestion_edge
+    environment: prod
+    active_status: deprecated
+    owner: platform
+    depends_on: []
+    notes: "DEPRECATED — Vercel is no longer active deployment target"
+
+  - workflow_id: wf-int-wa-review
+    name: "wa-architecture-review"
+    path: "automations/n8n/workflows/wa-architecture-review.json"
+    domain: agent_runtime
+    system_role: orchestration
+    environment: prod
+    active_status: active
+    owner: platform
+    depends_on: []
+    notes: "Well-Architected review automation"
+
+  # ── Integration Handlers (subdirectory) ──
+
+  - workflow_id: wf-int-asset
+    name: "integration/asset-handler"
+    path: "automations/n8n/workflows/integration/asset-handler.json"
+    domain: integration_events
+    system_role: orchestration
+    environment: prod
+    active_status: active
+    owner: platform
+    depends_on: []
+
+  - workflow_id: wf-int-event-router
+    name: "integration/event-router"
+    path: "automations/n8n/workflows/integration/event-router.json"
+    domain: integration_events
+    system_role: sync
+    environment: prod
+    active_status: active
+    owner: platform
+    depends_on: []
+
+  - workflow_id: wf-int-expense
+    name: "integration/expense-handler"
+    path: "automations/n8n/workflows/integration/expense-handler.json"
+    domain: integration_events
+    system_role: orchestration
+    environment: prod
+    active_status: active
+    owner: finance
+    depends_on: []
+
+  - workflow_id: wf-int-finance
+    name: "integration/finance-handler"
+    path: "automations/n8n/workflows/integration/finance-handler.json"
+    domain: integration_events
+    system_role: orchestration
+    environment: prod
+    active_status: active
+    owner: finance
+    depends_on: []
+
+  - workflow_id: wf-int-gh-mirror
+    name: "integration/github-artifacts-mirror"
+    path: "automations/n8n/workflows/integration/github-artifacts-mirror.json"
+    domain: integration_events
+    system_role: sync
+    environment: prod
+    active_status: active
+    owner: platform
+    depends_on: []
+
+  - workflow_id: wf-int-workspace
+    name: "integration/workspace-events-handler"
+    path: "automations/n8n/workflows/integration/workspace-events-handler.json"
+    domain: integration_events
+    system_role: orchestration
+    environment: prod
+    active_status: active
+    owner: platform
+    depends_on: []
+
+  # ── Control Plane ──
+
+  - workflow_id: wf-cp-backup
+    name: "control-plane/backup-scheduler"
+    path: "automations/n8n/workflows/control-plane/backup-scheduler.json"
+    domain: control_plane
+    system_role: orchestration
+    environment: prod
+    active_status: active
+    owner: platform
+    depends_on: []
+
+  - workflow_id: wf-cp-deploy
+    name: "control-plane/deploy-trigger"
+    path: "automations/n8n/workflows/control-plane/deploy-trigger.json"
+    domain: control_plane
+    system_role: orchestration
+    environment: prod
+    active_status: active
+    owner: platform
+    depends_on: []
+
+  - workflow_id: wf-cp-health
+    name: "control-plane/health-check-scheduler"
+    path: "automations/n8n/workflows/control-plane/health-check-scheduler.json"
+    domain: control_plane
+    system_role: healthcheck
+    environment: prod
+    active_status: active
+    owner: platform
+    depends_on: []
+
+  # ── Claude AI MCP Workflows ──
+
+  - workflow_id: wf-mcp-telegram-ocr
+    name: "claude-ai-mcp/11_telegram_ocr_gemini_complete"
+    path: "automations/n8n/workflows/claude-ai-mcp/11_telegram_ocr_gemini_complete.json"
+    domain: agent_runtime
+    system_role: ingestion_edge
+    environment: prod
+    active_status: active
+    owner: platform
+    depends_on: []
+    notes: "Telegram OCR with Gemini — document capture"
+
+  - workflow_id: wf-mcp-ro-01
+    name: "claude-ai-mcp/read-only/01_mcp_odoo_query"
+    path: "automations/n8n/workflows/claude-ai-mcp/read-only/01_mcp_odoo_query.json"
+    domain: agent_runtime
+    system_role: sync
+    environment: prod
+    active_status: active
+    owner: platform
+    depends_on: []
+
+  - workflow_id: wf-mcp-ro-02
+    name: "claude-ai-mcp/read-only/02_mcp_supabase_ops"
+    path: "automations/n8n/workflows/claude-ai-mcp/read-only/02_mcp_supabase_ops.json"
+    domain: agent_runtime
+    system_role: sync
+    environment: prod
+    active_status: active
+    owner: platform
+    depends_on: []
+
+  - workflow_id: wf-mcp-ro-03
+    name: "claude-ai-mcp/read-only/03_mcp_finance_summary"
+    path: "automations/n8n/workflows/claude-ai-mcp/read-only/03_mcp_finance_summary.json"
+    domain: agent_runtime
+    system_role: sync
+    environment: prod
+    active_status: active
+    owner: finance
+    depends_on: []
+
+  - workflow_id: wf-mcp-ro-04
+    name: "claude-ai-mcp/read-only/04_mcp_infra_health"
+    path: "automations/n8n/workflows/claude-ai-mcp/read-only/04_mcp_infra_health.json"
+    domain: agent_runtime
+    system_role: healthcheck
+    environment: prod
+    active_status: active
+    owner: platform
+    depends_on: []
+
+  - workflow_id: wf-mcp-ro-05
+    name: "claude-ai-mcp/read-only/05_mcp_workflow_monitor"
+    path: "automations/n8n/workflows/claude-ai-mcp/read-only/05_mcp_workflow_monitor.json"
+    domain: agent_runtime
+    system_role: healthcheck
+    environment: prod
+    active_status: active
+    owner: platform
+    depends_on: []
+
+  - workflow_id: wf-mcp-ro-06
+    name: "claude-ai-mcp/read-only/06_mcp_sync_trigger"
+    path: "automations/n8n/workflows/claude-ai-mcp/read-only/06_mcp_sync_trigger.json"
+    domain: agent_runtime
+    system_role: sync
+    environment: prod
+    active_status: active
+    owner: platform
+    depends_on: []
+
+  - workflow_id: wf-mcp-test-00
+    name: "claude-ai-mcp/test/00_mcp_connection_test"
+    path: "automations/n8n/workflows/claude-ai-mcp/test/00_mcp_connection_test.json"
+    domain: agent_runtime
+    system_role: healthcheck
+    environment: dev
+    active_status: active
+    owner: platform
+    depends_on: []
+
+  - workflow_id: wf-mcp-wr-07
+    name: "claude-ai-mcp/write-path/07_mcp_workflow_manager"
+    path: "automations/n8n/workflows/claude-ai-mcp/write-path/07_mcp_workflow_manager.json"
+    domain: agent_runtime
+    system_role: orchestration
+    environment: prod
+    active_status: active
+    owner: platform
+    depends_on: []
+
+  - workflow_id: wf-mcp-wr-08
+    name: "claude-ai-mcp/write-path/08_mcp_github_ops"
+    path: "automations/n8n/workflows/claude-ai-mcp/write-path/08_mcp_github_ops.json"
+    domain: agent_runtime
+    system_role: sync
+    environment: prod
+    active_status: active
+    owner: platform
+    depends_on: []
+
+  - workflow_id: wf-mcp-wr-09
+    name: "claude-ai-mcp/write-path/09_mcp_artifact_deployer"
+    path: "automations/n8n/workflows/claude-ai-mcp/write-path/09_mcp_artifact_deployer.json"
+    domain: agent_runtime
+    system_role: orchestration
+    environment: prod
+    active_status: active
+    owner: platform
+    depends_on: []
+
+# ─────────────────────────────────────────────────────────
+# DOMAIN SUMMARY
+# ─────────────────────────────────────────────────────────
+# finance:            12 workflows
+# github_ops:          9 workflows
+# health:              2 workflows
+# control_plane:       3 workflows
+# integration_events: 12 workflows
+# agent_runtime:      12 workflows
+# TOTAL:              50 workflows
+#
+# DEPRECATED: 1 (vercel-drain-handler)

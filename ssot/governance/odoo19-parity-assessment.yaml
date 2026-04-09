@@ -1,0 +1,352 @@
+# Odoo 18 CE+OCA+IPAI Parity Assessment (vs EE feature set)
+# Generated: 2026-04-05
+# Purpose: Map EE capabilities to achievable Odoo 18 equivalents
+#
+# match_level:
+#   match_now       - achievable on Odoo 18 CE+OCA today
+#   match_with_ipai - achievable with IPAI bridge/custom module
+#   partial         - partially achievable, gaps remain
+#   not_targeted    - not attempting 1:1 parity (UX polish, native-only)
+
+version: 1
+artifact: odoo18_parity_assessment
+last_updated: "2026-04-05"
+
+match_levels:
+  match_now: >
+    Capability covered by Odoo 18 CE + OCA modules already installed or available.
+  match_with_ipai: >
+    Capability achievable through existing or planned IPAI bridge modules on Azure platform.
+  partial: >
+    Some coverage exists but full feature parity is not claimed.
+  not_targeted: >
+    UX polish, native Odoo EE internals, or features where 1:1 match is not the right goal.
+
+lanes:
+  # ============================================================
+  # MATCH NOW — Finance / Accounting
+  # ============================================================
+  - domain: finance
+    capability: reconciliation_extensions
+    match_level: match_now
+    lane: oca
+    modules:
+      - account_reconcile_oca
+      - account_reconcile_model_oca
+      - account_financial_report
+      - mis_builder
+    notes: >
+      Strongest parity lane. OCA reconciliation and financial reporting
+      already installed and validated on 18.0.
+
+  - domain: finance
+    capability: asset_management
+    match_level: match_now
+    lane: oca
+    modules:
+      - account_asset_management
+    notes: Asset lifecycle tracking via OCA.
+
+  - domain: finance
+    capability: partner_statements
+    match_level: match_now
+    lane: oca
+    modules:
+      - account_payment_partner
+      - account_invoice_refund_link
+    notes: Partner-level payment and statement workflows.
+
+  - domain: finance
+    capability: budget_and_forecasting
+    match_level: match_now
+    lane: oca
+    modules:
+      - account_move_budget
+      - account_spread_cost_revenue
+    notes: Budget and cost spreading via OCA.
+
+  # ============================================================
+  # MATCH NOW — Documents / Sign / Spreadsheet
+  # ============================================================
+  - domain: documents
+    capability: sign_flows
+    match_level: match_now
+    lane: oca
+    modules:
+      - sign_oca
+      - agreement_sign_oca
+      - project_task_sign_oca
+    notes: OCA sign module installed, covers agreement + task signing.
+
+  - domain: documents
+    capability: spreadsheet_dashboards
+    match_level: match_now
+    lane: oca
+    modules:
+      - spreadsheet_oca
+      - spreadsheet_dashboard_oca
+    notes: Spreadsheet and dashboard OCA modules installed.
+
+  # ============================================================
+  # MATCH NOW — Inventory / Warehouse / Retail
+  # ============================================================
+  - domain: inventory
+    capability: barcode_and_stock_workflow
+    match_level: match_now
+    lane: oca
+    modules:
+      - stock-logistics-barcode
+      - stock-logistics-workflow
+    notes: >
+      Strongest operational fit. All OCA repos cloned and install-verified.
+
+  - domain: retail
+    capability: pos_promotions_loyalty
+    match_level: match_now
+    lane: oca
+    modules:
+      - pos
+      - sale-promotion
+    notes: POS + loyalty/promotion covered by OCA repos on 18.0.
+
+  - domain: retail
+    capability: shift_planning
+    match_level: match_now
+    lane: oca
+    modules:
+      - shift-planning
+    notes: OCA shift-planning repo cloned and validated.
+
+  # ============================================================
+  # MATCH NOW — Project / Services / Agency Ops
+  # ============================================================
+  - domain: project
+    capability: crm_to_project_to_invoice
+    match_level: match_now
+    lane: core+oca
+    modules:
+      - crm
+      - project
+      - hr_timesheet
+      - sale_management
+      - account
+    notes: >
+      Core delivery pipeline. CE covers CRM→project→timesheet→invoice
+      end-to-end. OCA adds workflow depth.
+
+  - domain: project
+    capability: recurring_billing
+    match_level: match_now
+    lane: oca
+    modules:
+      - contract
+      - subscription_oca
+    notes: OCA contract module for subscription/recurring billing.
+
+  - domain: project
+    capability: service_delivery_ops
+    match_level: match_now
+    lane: core+oca+ipai
+    modules:
+      - sale_order_type
+      - ipai_service_calculator
+      - ipai_timesheet_leaderboard
+    notes: >
+      Partner/agency ops with 2 thin IPAI UX modules.
+
+  # ============================================================
+  # MATCH NOW — Quality / Procurement
+  # ============================================================
+  - domain: procurement
+    capability: purchase_workflow_depth
+    match_level: match_now
+    lane: oca
+    modules:
+      - purchase_request
+      - purchase_order_approved
+      - purchase_tier_validation
+      - purchase_blanket_order
+      - purchase_discount
+    notes: Full purchase workflow depth via OCA.
+
+  - domain: procurement
+    capability: quality_checks
+    match_level: match_now
+    lane: oca
+    modules:
+      - quality-control
+    notes: Quality inspection and control via OCA.
+
+  # ============================================================
+  # MATCH WITH IPAI — AI / Copilot / Document AI
+  # ============================================================
+  - domain: ai
+    capability: ai_copilot_assistant
+    match_level: match_with_ipai
+    lane: ipai
+    modules:
+      - ipai_odoo_copilot
+      - ipai_copilot_actions
+      - ipai_agent
+    notes: >
+      Assistive AI layer via IPAI + Foundry + ACA sidecars.
+      Not native EE AI, but functionally equivalent for advisory use.
+
+  - domain: ai
+    capability: document_intelligence_ocr
+    match_level: match_with_ipai
+    lane: ipai
+    modules:
+      - ipai_document_intelligence
+    notes: >
+      Azure Document Intelligence bridge for invoice/receipt extraction.
+
+  - domain: ai
+    capability: ai_search_and_actions
+    match_level: partial
+    lane: ipai
+    modules:
+      - ipai_ai_core
+    notes: >
+      EE adds native AI search/actions/drafts. On 18 CE, we match
+      advisory subset only. Full action-AI parity not targeted.
+
+  # ============================================================
+  # MATCH WITH IPAI — PH Compliance
+  # ============================================================
+  - domain: compliance
+    capability: ph_bir_tax
+    match_level: match_with_ipai
+    lane: ipai
+    modules:
+      - ipai_bir_tax_compliance
+      - ipai_bir_notifications
+    notes: >
+      PH-specific BIR tax compliance. No OCA equivalent exists.
+
+  - domain: compliance
+    capability: ph_expense_liquidation
+    match_level: match_with_ipai
+    lane: ipai
+    modules:
+      - ipai_hr_expense_liquidation
+    notes: PH expense liquidation workflow. IPAI-only lane.
+
+  # ============================================================
+  # MATCH WITH IPAI — Azure Runtime / Identity
+  # ============================================================
+  - domain: platform
+    capability: entra_oidc_sso
+    match_level: match_with_ipai
+    lane: ipai
+    modules:
+      - ipai_auth_oidc
+    notes: >
+      Azure Entra ID bridge for SSO. Exceeds Odoo CE native auth
+      for enterprise identity scenarios.
+
+  - domain: platform
+    capability: aca_proxy_runtime
+    match_level: match_with_ipai
+    lane: ipai
+    modules:
+      - ipai_aca_proxy
+    notes: Azure Container Apps proxy/ingress behavior.
+
+  # ============================================================
+  # PARTIAL — Marketing Automation
+  # ============================================================
+  - domain: marketing
+    capability: campaign_journey_builder
+    match_level: partial
+    lane: ipai
+    modules:
+      - ipai_marketing_automation
+    notes: >
+      Multi-step campaigns with timed triggers and conditions.
+      Does not replicate visual drag-and-drop designer.
+      Rated workflow_parity_via_ipai.
+
+  - domain: marketing
+    capability: marketing_suite_polish
+    match_level: not_targeted
+    lane: n/a
+    notes: >
+      Broader Enterprise marketing-suite polish (SMS marketing,
+      social marketing integration) not targeted on 18.
+
+  # ============================================================
+  # PARTIAL — Appointments / Planning
+  # ============================================================
+  - domain: planning
+    capability: appointments_scheduling
+    match_level: partial
+    lane: oca
+    notes: >
+      Some scheduling capability via OCA. Full Odoo EE appointment
+      UX (Google Reserve, flexible recurring) not matched.
+
+  - domain: planning
+    capability: shift_management_polish
+    match_level: partial
+    lane: oca
+    notes: >
+      Basic shift planning via OCA. Multi-day shift creation and
+      preview-before-publish from 19 not fully matched.
+
+  # ============================================================
+  # NOT TARGETED — Odoo EE UX Polish
+  # ============================================================
+  - domain: ux
+    capability: native_ui_improvements
+    match_level: not_targeted
+    lane: n/a
+    notes: >
+      Smoother modals, better list/kanban interactions, faster
+      navigation, refined dashboard filters, improved Gantt/mobile.
+      These are real improvements but not the right parity target
+      for Odoo 18. Match business outcome, not pixel parity.
+
+  - domain: ux
+    capability: website_ecommerce_polish
+    match_level: not_targeted
+    lane: n/a
+    notes: >
+      EE /shop improvements, abandoned cart, mobile UX, SEO tools.
+      Selectively matchable but not blanket parity.
+
+  - domain: ux
+    capability: native_ai_ux_surfaces
+    match_level: not_targeted
+    lane: n/a
+    notes: >
+      Odoo EE Ask AI button, database chat, AI page generation,
+      voice transcription. These are native EE UX, not matched
+      1:1. IPAI copilot provides equivalent assistive surface.
+
+summary:
+  match_now_count: 14
+  match_with_ipai_count: 7
+  partial_count: 4
+  not_targeted_count: 3
+  total_lanes: 28
+  strongest_lanes:
+    - finance/reconciliation/reports
+    - sign/spreadsheet/document flows
+    - inventory/barcode/retail
+    - quality/procurement workflow
+    - core project/timesheet/delivery ops
+  ipai_lanes:
+    - AI copilot
+    - document intelligence/OCR
+    - PH BIR tax compliance
+    - PH expense liquidation
+    - Entra/OIDC/ACA/Front Door
+  partial_lanes:
+    - marketing automation
+    - appointments/planning polish
+  bottom_line: >
+    Match business capability first, not Odoo EE UI polish first.
+    On Odoo 18, strongest parity lanes are already operationally
+    achievable; hardest lanes are marketing automation and newer
+    EE-native UX/AI polish surfaces.

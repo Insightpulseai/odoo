@@ -10,7 +10,7 @@ metadata:
 
 # Odoo 18 External JSON-2 API
 
-New in Odoo 18. The JSON-2 API replaces the deprecated XML-RPC and JSON-RPC APIs (scheduled for removal in Odoo 19). It provides a clean, stateless HTTP interface for calling ORM model methods externally.
+New in Odoo 18. The JSON-2 API replaces the deprecated XML-RPC and JSON-RPC APIs (scheduled for removal in a future Odoo version). It provides a clean, stateless HTTP interface for calling ORM model methods externally.
 
 ---
 

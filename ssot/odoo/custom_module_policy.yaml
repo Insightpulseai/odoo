@@ -1,0 +1,144 @@
+version: 1
+schema: ssot.odoo.custom_module_policy.v1
+
+metadata:
+  platform: ipai
+  intent: >
+    Codifies what belongs inside Odoo addons/ versus the external agent/runtime layer.
+    Prevents fat Odoo modules from absorbing SDK, MCP, orchestration, or channel
+    responsibilities that belong in the bridge/runtime estate.
+  reviewed: "2026-04-05"
+  decision_policy:
+    - Config first, OCA second, ipai_* delta third.
+    - Agent runtime, MCP/skills, and orchestration live outside addons/.
+    - Odoo addons are thin connectors to external capabilities, not hosts of those capabilities.
+
+# ---------------------------------------------------------------------------
+# Boundary: what goes INSIDE addons/ipai/ vs OUTSIDE
+# ---------------------------------------------------------------------------
+boundary:
+  inside_addons:
+    description: >
+      Code that extends or augments Odoo's ORM, views, workflows, reports, or
+      security layer. This is the ERP application plane.
+    allowed_patterns:
+      - thin_connector: >
+          Odoo model that calls an external API/service. Contains fields for
+          config (API URL, credential reference), a server action or cron trigger,
+          and result storage (attachment, log, status field). No SDK code inline.
+      - action_launch_point: >
+          Button, server action, or automated action that dispatches work to an
+          external agent/runtime. The Odoo side stores the request and polls or
+          receives the result.
+      - auth_session_mapping: >
+          Module that maps Odoo user/session to an external identity (Entra token,
+          MCP session, agent passport). Does not implement the auth protocol itself.
+      - status_result_sync: >
+          Cron or webhook receiver that syncs status/results from an external
+          system back into Odoo records.
+      - minimal_ui_hook: >
+          Widget, systray item, or form button that exposes an external capability
+          in the Odoo UI. Rendering logic stays in Odoo; business logic stays external.
+
+  outside_addons:
+    description: >
+      Code that implements agent orchestration, SDK integration, MCP tool servers,
+      LLM inference pipelines, skill definitions, eval frameworks, or channel
+      delivery. This is the agent/runtime plane.
+    belongs_in:
+      - agent-platform/
+      - agents/
+      - packages/
+      - mcp/servers/
+      - scripts/
+      - external repos (github/copilot-sdk, microsoft/skills, microsoft/azure-skills)
+    never_in_addons:
+      - SDK client libraries or wrappers
+      - MCP server implementations
+      - LLM prompt templates or chain definitions
+      - Agent orchestration logic (planners, routers, state machines)
+      - Eval datasets or scoring logic
+      - Channel delivery adapters (Teams, webchat, Copilot surfaces)
+      - Foundry/OpenAI client code beyond a single service call
+
+# ---------------------------------------------------------------------------
+# External agent repos: adoption tiers
+# ---------------------------------------------------------------------------
+external_repos:
+  tier_1_adopt_now:
+    - repo: github/copilot-sdk
+      url: https://github.com/github/copilot-sdk
+      role: Multi-language SDK for agentic developer/runtime workflows
+      transport: JSON-RPC
+      auth: BYOK (Azure AI Foundry, OpenAI, etc.)
+      fits:
+        - repo agents
+        - release assistants
+        - scaffolders
+        - bridge-side orchestration
+      odoo_addon_impact: none beyond thin connector
+
+    - repo: microsoft/skills
+      url: https://github.com/microsoft/skills
+      role: Domain grounding layer for coding agents
+      content: Skills, custom agents, AGENTS.md templates, MCP configs
+      fits:
+        - reusable grounding for coding agents in repo
+      odoo_addon_impact: none
+      operating_rule: >
+        Install skills selectively to avoid context rot.
+
+    - repo: microsoft/azure-skills
+      url: https://github.com/microsoft/azure-skills
+      role: Azure and Foundry operational grounding
+      content: Azure skills, Azure MCP Server, Foundry MCP wiring
+      auth: az login + azd auth login
+      fits:
+        - Azure runtime/inventory/deploy/diagnostics assistance
+      odoo_addon_impact: none
+
+  tier_2_channel_only:
+    - repo: microsoft/Agents
+      url: https://github.com/microsoft/Agents
+      role: M365/Teams/Copilot channel SDK
+      adopt_when: IPAI needs to ship agents into M365 Copilot, Teams, webchat, or custom app channels
+      note: >
+        M365 Copilot subscription not required unless targeting that channel specifically.
+        For current Odoo/Azure platform, this is a channel SDK, not a core dependency.
+      odoo_addon_impact: only if exposing IPAI outside Odoo
+
+    - repo: pnp/copilot-pro-dev-samples
+      url: https://github.com/pnp/copilot-pro-dev-samples
+      role: Community sample library for M365 Copilot
+      adopt_when: Deep M365 Copilot pattern mining needed
+      odoo_addon_impact: none
+
+# ---------------------------------------------------------------------------
+# Enforcement rules
+# ---------------------------------------------------------------------------
+rules:
+  - id: no_sdk_in_addons
+    description: >
+      SDK client libraries (github/copilot-sdk, microsoft/skills, azure-skills)
+      must not be vendored, pip-installed, or imported inside addons/ipai/ modules.
+    enforcement: PR review + CI lint (future)
+
+  - id: thin_connector_only
+    description: >
+      Odoo modules that interact with external agent/runtime services must follow
+      the thin_connector pattern. Maximum complexity: one API call per server action,
+      config via ir.config_parameter or env var, result stored as attachment or log.
+    enforcement: PR review
+
+  - id: no_orchestration_in_odoo
+    description: >
+      Agent planners, routers, skill executors, and multi-step orchestration chains
+      must not run inside the Odoo process. Odoo dispatches; the external runtime orchestrates.
+    enforcement: PR review
+
+  - id: tier_gate
+    description: >
+      Tier 1 repos may be adopted without additional approval.
+      Tier 2 repos require explicit architecture decision documenting the M365/Teams
+      channel requirement before adoption.
+    enforcement: Architecture review

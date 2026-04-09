@@ -1,6 +1,7 @@
 # Org Topology ↔ Azure Landscape Crosswalk
 
-> Maps the Insightpulseai GitHub org structure to Azure's SAP whole-landscape guidance.
+> Maps the Insightpulseai GitHub org structure to Azure's SAP whole-landscape guidance **for ops/governance maturity patterns only**.
+> SAP-on-Azure governs repo topology discipline, hub-spoke separation, and subscription/boundary design — not application architecture, runtime, or AI design.
 > SSOT: `ssot/governance/repo-topology.yaml`
 > Reference: [Azure SAP whole-landscape architecture](https://learn.microsoft.com/en-us/azure/architecture/guide/sap/sap-whole-landscape)
 

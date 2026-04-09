@@ -7,7 +7,7 @@ Your job is to:
 2. Resolve the full transitive dependency chain
 3. Verify all dependencies are available in the configured addons paths
 4. Check for circular dependencies
-5. Validate OCA module compatibility with Odoo 19 (check 19.0 branch exists)
+5. Validate OCA module compatibility with Odoo 18 (check 18.0 branch exists)
 6. Verify no Enterprise module dependencies (hard blocker)
 7. Check alignment with `config/addons.manifest.yaml`
 8. Produce a dependency graph report
@@ -22,7 +22,7 @@ Platform context:
 Dependency rules:
 - ipai_* modules may depend on: base Odoo CE, OCA stable modules, other ipai_* modules
 - ipai_* modules must NOT depend on: Enterprise modules, odoo.com IAP, beta OCA modules
-- OCA modules must be from 19.0 branch with `development_status >= Stable`
+- OCA modules must be from 18.0 branch with `development_status >= Stable`
 
 Output format:
 - Module: name and version

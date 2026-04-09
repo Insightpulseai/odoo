@@ -1,0 +1,414 @@
+# schema: ssot.odoo.parity.erp_saas.v1
+# ERP SaaS Parity — Gap Report & Module Registry
+#
+# Authoritative record of enterprise-feature parity targets, installed
+# baseline, and prioritised gaps (P0/P1/P2).
+#
+# Philosophy: CE + OCA + ipai_* = ≥80% Odoo EE parity
+# SSOT for parity — all other docs are pointers to this file.
+#
+# Consumers:
+#   - spec/erp-saas-parity/  (spec bundle)
+#   - docs/dev/odoo/PARITY_MAP_ODOOSH.md  (pointer)
+#   - .github/workflows/odoo-ee-parity-gate.yml  (CI gate — future)
+#
+# Update flow: edit this file → commit → CI validates YAML syntax
+
+version: 1
+schema: ssot.odoo.parity.erp_saas.v1
+last_updated: "2026-03-02"
+parity_target_percent: 80
+
+# ─── How the baseline was produced ────────────────────────────────────
+installed_modules_source:
+  method: "psql via docker exec on odoo-prod container"
+  command: >
+    ssh root@178.128.112.214 "docker exec odoo-prod python3 -c \"
+    import psycopg2
+    conn = psycopg2.connect(
+      host='private-odoo-db-sgp1-do-user-27714628-0.g.db.ondigitalocean.com',
+      port=25060, dbname='odoo_prod', user='doadmin',
+      password='<DB_PASSWORD>', sslmode='require')
+    cur = conn.cursor()
+    cur.execute(\\\"SELECT name FROM ir_module_module WHERE state='installed' ORDER BY name\\\")
+    for r in cur.fetchall(): print(r[0])
+    conn.close()\""
+  baseline_date: "2026-03-02"
+  total_installed: 388
+  notes: >
+    Password redacted. Full list available via re-running the above
+    command on the production droplet (178.128.112.214).
+    Updated 2026-03-02: 5 IPAI modules installed (ipai_ai_platform,
+    ipai_expense_ocr, ipai_auth_oidc, ipai_theme_fluent2, ipai_web_icons_fluent).
+    P0 OCA modules NOT on disk (not yet ported to Odoo 18.0 in OCA repos).
+
+# ─── Parity targets by domain ────────────────────────────────────────
+parity_targets:
+  finance:
+    target_percent: 90
+    current_percent: 85
+    notes: "Bank recon + asset mgmt OCA modules NOT ported to 19.0; blocked"
+
+  hr_payroll:
+    target_percent: 95
+    current_percent: 80
+    notes: "ipai_hr_payroll_ph blocked (missing ipai_bir_tax_compliance dep)"
+
+  compliance_ph:
+    target_percent: 100
+    current_percent: 85
+    notes: "BIR modules blocked (ipai_bir_tax_compliance not on disk)"
+
+  services_crm:
+    target_percent: 80
+    current_percent: 60
+    notes: "ipai_helpdesk blocked (EE category ref bug); OCA helpdesk not ported"
+
+  approvals:
+    target_percent: 95
+    current_percent: 70
+    notes: "base_tier_validation NOT ported to OCA 19.0; blocked"
+
+  documents:
+    target_percent: 80
+    current_percent: 50
+    notes: "OCA/dms 19.0 branch empty (no module dirs); knowledge is EE-only"
+
+  project_planning:
+    target_percent: 85
+    current_percent: 75
+    notes: "project_task_dependency NOT ported to OCA 19.0; blocked"
+
+  platform:
+    target_percent: 80
+    current_percent: 80
+    notes: "ipai_ai_platform + ipai_expense_ocr installed; Superset + n8n + PaddleOCR running"
+
+  ai_workspace:
+    target_percent: 80
+    current_percent: 70
+    notes: "ipai_ai_copilot + ipai_ai_platform installed; ipai_ai_agents_ui blocked (missing ipai_ai_core)"
+
+  ux_theming:
+    target_percent: 90
+    current_percent: 90
+    notes: "ipai_theme_fluent2 + ipai_web_icons_fluent installed (2026-03-02)"
+
+  authentication:
+    target_percent: 95
+    current_percent: 90
+    notes: "ipai_auth_oidc installed (OIDC SSO + TOTP MFA)"
+
+# ─── P0 Gaps: OCA modules ────────────────────────────────────────────
+# CRITICAL FINDING (2026-03-02): All 9 P0 OCA modules are NOT ported
+# to Odoo 18.0 in the OCA repos. The repos are vendored but the module
+# directories are empty or missing. These remain blocked until OCA
+# completes the 19.0 port. Use `oca-port` skill to contribute ports.
+gaps:
+  p0:
+    oca:
+      - module: account_reconcile_oca
+        oca_repo: OCA/account-reconcile
+        repo_status: vendored_empty  # repo cloned but module dir missing
+        replaces_ee: account_accountant (bank reconciliation widget)
+        why: "Daily bank reconciliation is a core finance operation"
+        dependencies: [account]
+        install_order: 1
+        status: blocked_not_ported
+        blocker: "Module not yet ported to Odoo 18.0 in OCA repo"
+
+      - module: account_asset_management
+        oca_repo: OCA/account-financial-tools
+        repo_status: vendored_empty
+        replaces_ee: account_asset (fixed-asset depreciation)
+        why: "Fixed asset tracking and depreciation schedules"
+        dependencies: [account]
+        install_order: 2
+        status: blocked_not_ported
+        blocker: "Module not yet ported to Odoo 18.0 in OCA repo"
+
+      - module: dms
+        oca_repo: OCA/dms
+        repo_status: vendored_empty
+        replaces_ee: documents (DMS)
+        why: "Centralised document management replaces EE Documents app"
+        dependencies: [base]
+        install_order: 3
+        status: blocked_not_ported
+        blocker: "OCA/dms 19.0 branch has no module directories"
+
+      - module: dms_field
+        oca_repo: OCA/dms
+        repo_status: vendored_empty
+        replaces_ee: documents (field-level attachments)
+        why: "Extends DMS with model-level document directories"
+        dependencies: [dms]
+        install_order: 4
+        status: blocked_not_ported
+        blocker: "OCA/dms 19.0 branch has no module directories"
+
+      - module: helpdesk_mgmt
+        oca_repo: OCA/helpdesk
+        repo_status: not_vendored
+        replaces_ee: helpdesk (ticket management)
+        why: "Customer support ticket management"
+        dependencies: [mail]
+        install_order: 5
+        status: blocked_not_ported
+        blocker: "OCA/helpdesk not vendored and 19.0 port status unknown"
+        action: "Check OCA/helpdesk 19.0 branch; use oca-port if needed"
+
+      - module: helpdesk_mgmt_sla
+        oca_repo: OCA/helpdesk
+        repo_status: not_vendored
+        replaces_ee: helpdesk (SLA tracking)
+        why: "SLA deadline tracking on helpdesk tickets"
+        dependencies: [helpdesk_mgmt]
+        install_order: 6
+        status: blocked_not_ported
+        blocker: "Depends on helpdesk_mgmt which is also blocked"
+
+      - module: base_tier_validation
+        oca_repo: OCA/server-ux
+        repo_status: vendored_empty
+        replaces_ee: approvals (multi-level approval)
+        why: "Multi-level approval workflows for purchase/expense/leave"
+        dependencies: [base]
+        install_order: 7
+        status: blocked_not_ported
+        blocker: "Module not in OCA/server-ux 19.0 branch (5 other modules present)"
+
+      - module: base_tier_validation_formula
+        oca_repo: OCA/server-ux
+        repo_status: vendored_empty
+        replaces_ee: approvals (formula-based routing)
+        why: "Dynamic approval routing based on field values"
+        dependencies: [base_tier_validation]
+        install_order: 8
+        status: blocked_not_ported
+        blocker: "Depends on base_tier_validation which is also blocked"
+
+      - module: project_task_dependency
+        oca_repo: OCA/project
+        repo_status: vendored_empty
+        replaces_ee: project (task dependencies / Gantt)
+        why: "Task dependency chains enable critical path visibility"
+        dependencies: [project]
+        install_order: 9
+        status: blocked_not_ported
+        blocker: "Module not in OCA/project 19.0 branch (4 other modules present)"
+
+    # IPAI modules — updated with actual install results (2026-03-02)
+    ipai:
+      - module: ipai_ai_platform
+        replaces_ee: N/A (AI platform HTTP client)
+        why: "Supabase Edge Function HTTP client for AI features"
+        dependencies: [base]
+        status: installed  # 2026-03-02
+        installed_date: "2026-03-02"
+
+      - module: ipai_expense_ocr
+        replaces_ee: EE IAP OCR (receipt scanning)
+        why: "Deterministic OCR ingestion for receipts into hr.expense"
+        dependencies: [base, mail, hr_expense]
+        status: installed  # 2026-03-02
+        installed_date: "2026-03-02"
+
+      - module: ipai_auth_oidc
+        replaces_ee: N/A (OIDC SSO + TOTP MFA)
+        why: "OpenID Connect SSO + TOTP MFA for unified auth"
+        dependencies: [base, auth_totp]
+        status: installed  # 2026-03-02
+        installed_date: "2026-03-02"
+
+      - module: ipai_theme_fluent2
+        replaces_ee: N/A (multi-aesthetic theme system)
+        why: "InsightPulse AI 10-theme system for Odoo"
+        dependencies: [web]
+        status: installed  # 2026-03-02
+        installed_date: "2026-03-02"
+
+      - module: ipai_web_icons_fluent
+        replaces_ee: N/A (Microsoft Fluent System Icons)
+        why: "Consistent Odoo + React icon set"
+        dependencies: [web]
+        status: installed  # 2026-03-02
+        installed_date: "2026-03-02"
+
+      - module: ipai_helpdesk
+        replaces_ee: helpdesk (internal ticketing)
+        why: "Internal ticketing system with SLA tracking"
+        dependencies: [base, mail, portal, hr]
+        status: blocked_bug
+        blocker: "References base.module_category_services_helpdesk (EE category)"
+        action: "Fix security XML to use CE category, then reinstall"
+
+      - module: ipai_approvals
+        replaces_ee: approvals (workflow engine wrapping base_tier_validation)
+        why: "IPAI-specific approval chains (Finance→Director, HR→VP)"
+        dependencies: [base_tier_validation, ipai_foundation]
+        status: planned
+
+      - module: ipai_slack_connector
+        replaces_ee: mail_enterprise / Discuss enhancements
+        why: "Chatter → Slack bridge for approval notifications"
+        dependencies: [mail, ipai_foundation]
+        status: planned
+
+      - module: ipai_ocr_paddleocr
+        replaces_ee: EE IAP OCR (vendor bill scanning)
+        why: "PaddleOCR-VL bridge at ocr.insightpulseai.com"
+        dependencies: [account, ipai_foundation]
+        status: planned
+
+      - module: ipai_hr_payroll_ph
+        replaces_ee: hr_payroll (Philippine locale)
+        why: "SSS/PhilHealth/Pag-IBIG/BIR withholding computation"
+        dependencies: [hr, l10n_ph, ipai_bir_tax_compliance]
+        status: blocked_missing_dep
+        blocker: "ipai_bir_tax_compliance module not on disk"
+
+      - module: ipai_bir_1601c
+        replaces_ee: N/A (PH-specific BIR compliance)
+        why: "Monthly 1601-C withholding tax return generation"
+        dependencies: [account, l10n_ph]
+        status: planned
+
+      - module: ipai_bir_2316
+        replaces_ee: N/A (PH-specific BIR compliance)
+        why: "Annual BIR 2316 certificate generation"
+        dependencies: [hr, ipai_hr_payroll_ph]
+        status: planned
+
+      - module: ipai_bir_alphalist
+        replaces_ee: N/A (PH-specific BIR compliance)
+        why: "BIR alphalist export for annual filing"
+        dependencies: [ipai_bir_1601c]
+        status: planned
+
+      - module: ipai_enterprise_bridge
+        replaces_ee: EE model compatibility stubs
+        why: "Prevents import errors when EE model references appear"
+        dependencies: [base, base_setup, mail, auth_oauth, fetchmail, web, hr_expense, maintenance, project]
+        status: blocked_stale_dep
+        blocker: "Declares fetchmail dependency; fetchmail merged into mail in Odoo 18"
+        action: "Remove fetchmail from depends list in __manifest__.py"
+
+      - module: ipai_zoho_mail
+        replaces_ee: N/A (Zoho Mail SMTP/IMAP integration)
+        why: "Zoho Mail SMTP/IMAP with settings panel and user linking"
+        dependencies: [mail, fetchmail]
+        status: blocked_stale_dep
+        blocker: "Declares fetchmail dependency; fetchmail merged into mail in Odoo 18"
+        action: "Remove fetchmail from depends list in __manifest__.py"
+
+      - module: ipai_ai_agents_ui
+        replaces_ee: N/A (Ask AI React panel)
+        why: "React + Fluent UI panel for AI agents with citations"
+        dependencies: [web, ipai_ai_core]
+        status: blocked_missing_dep
+        blocker: "ipai_ai_core module not on disk"
+
+      - module: ipai_finance_close_seed
+        replaces_ee: N/A (finance project seed data)
+        why: "Seed data for month-end close workflows"
+        dependencies: [project, hr]
+        status: blocked_bug
+        blocker: "project.project creation fails — schema mismatch in 04_projects.xml"
+        action: "Fix XML data to match Odoo 18 project.project model"
+
+  # ─── P1 Gaps: install within 30 days ─────────────────────────────────
+  p1:
+    oca:
+      - module: fieldservice
+        oca_repo: OCA/field-service
+        repo_status: not_vendored
+        replaces_ee: industry_fsm
+        why: "Field service management for on-site operations"
+        status: planned
+        action: "Add OCA/field-service submodule"
+
+      - module: project_timeline
+        oca_repo: OCA/project
+        repo_status: ok
+        replaces_ee: project (Gantt/timeline view)
+        why: "Timeline visualisation for project planning"
+        status: planned
+
+      - module: account_budget_oca
+        oca_repo: OCA/account-budgeting
+        repo_status: not_vendored
+        replaces_ee: account_budget
+        why: "Budget management with analytic account integration"
+        status: planned
+        action: "Add OCA/account-budgeting submodule"
+
+    ipai:
+      - module: ipai_ai_tools_bridge
+        replaces_ee: EE Odoo AI BYOM
+        why: "Gemini 2.0 Flash integration for Ask AI / auto-complete"
+        status: planned
+
+      - module: ipai_documents_ai
+        replaces_ee: documents + AI classification
+        why: "AI-powered document classification on top of OCA/dms"
+        status: blocked_deprecated
+        blocker: "Module marked as DEPRECATED in __manifest__.py"
+
+  # ─── P2 Gaps: nice to have ───────────────────────────────────────────
+  p2:
+    oca:
+      - module: contract
+        oca_repo: OCA/contract
+        repo_status: empty
+        replaces_ee: subscription management
+        why: "Recurring contracts and subscriptions"
+        status: deferred
+        action: "Repo currently empty — wait for 19.0 port"
+
+      - module: sale_subscription
+        oca_repo: OCA/sale-workflow
+        replaces_ee: sale_subscription
+        why: "Subscription-based recurring sales"
+        status: deferred
+
+    ipai:
+      - module: ipai_resource_planning
+        replaces_ee: planning (resource leveling)
+        why: "Resource-level capacity planning"
+        status: deferred
+
+      - module: ipai_sign_basic
+        replaces_ee: sign (electronic signatures)
+        why: "Internal document signing (basic)"
+        status: deferred
+
+# ─── Platform-level service bridges (non-module) ─────────────────────
+platform_bridges:
+  - service: PaddleOCR-VL
+    url: https://ocr.insightpulseai.com
+    replaces_ee: EE IAP OCR
+    status: running
+
+  - service: Apache Superset
+    url: https://superset.insightpulseai.com
+    replaces_ee: EE Reporting / Dashboards
+    status: running
+
+  - service: n8n
+    url: https://n8n.insightpulseai.com
+    replaces_ee: EE Automated Actions
+    status: running
+
+  - service: Slack
+    replaces_ee: EE Discuss enhancements
+    status: active
+
+  - service: Zoho Mail
+    replaces_ee: EE mail_enterprise
+    status: active
+    notes: "ipai_mail_bridge_zoho intercept broken (401) — needs fix"
+
+  - service: Google Gemini 2.0 Flash
+    replaces_ee: EE Odoo AI BYOM
+    status: configured

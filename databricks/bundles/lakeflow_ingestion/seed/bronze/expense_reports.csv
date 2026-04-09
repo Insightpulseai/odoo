@@ -1,0 +1,4 @@
+id,employee_id,submit_date,total_amount,status,expense_ids
+ER-001,EMP-001,2026-02-12,4700.00,posted,"EXP-001,EXP-002"
+ER-002,EMP-004,2026-02-16,3800.00,approved,"EXP-003"
+ER-003,EMP-002,2026-03-02,12500.00,submitted,"EXP-004,EXP-005"

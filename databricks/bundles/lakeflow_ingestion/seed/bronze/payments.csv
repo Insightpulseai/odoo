@@ -1,0 +1,7 @@
+id,date,amount,type,reference_type,reference_id,project_id
+PAY-001,2026-02-10,250000.00,inbound,invoice,INV-001,1
+PAY-002,2026-02-18,100000.00,inbound,invoice,INV-002,2
+PAY-003,2026-02-15,100000.00,outbound,bill,BILL-001,1
+PAY-004,2026-03-05,90000.00,outbound,bill,BILL-002,2
+PAY-005,2026-01-10,50000.00,outbound,advance,CA-001,3
+PAY-006,2026-02-05,40000.00,outbound,advance,CA-002,2

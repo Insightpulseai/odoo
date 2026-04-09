@@ -1,0 +1,138 @@
+# Entra Identity — Knowledge Source Contract
+# Covers: Enterprise apps, SSO, provisioning, Conditional Access, ID Protection,
+#         ID Governance, PIM, lifecycle workflows, authentication, security
+
+name: entra-identity-kb
+description: >
+  Microsoft Entra ID documentation knowledge base — enterprise apps, SSO, provisioning,
+  Conditional Access, ID Protection, ID Governance, PIM, lifecycle workflows, authentication,
+  roles, devices, audit logs, sign-in logs, workload identities, and Graph API patterns.
+
+sources:
+  # Core Entra ID documentation
+  - name: entra-identity
+    type: web-crawl
+    base_urls:
+      - https://learn.microsoft.com/en-us/entra/identity/
+      - https://learn.microsoft.com/en-us/entra/fundamentals/
+      - https://learn.microsoft.com/en-us/entra/identity/enterprise-apps/
+      - https://learn.microsoft.com/en-us/entra/identity/saas-apps/
+      - https://learn.microsoft.com/en-us/entra/identity/app-provisioning/
+      - https://learn.microsoft.com/en-us/entra/identity/conditional-access/
+      - https://learn.microsoft.com/en-us/entra/identity/authentication/
+      - https://learn.microsoft.com/en-us/entra/identity/role-based-access-control/
+      - https://learn.microsoft.com/en-us/entra/identity/monitoring-health/
+      - https://learn.microsoft.com/en-us/entra/identity/devices/
+      - https://learn.microsoft.com/en-us/entra/identity/hybrid/
+    crawl_depth: 2
+    content_selector: "main article"
+
+  # ID Protection (risky users, risky apps, risk detections)
+  - name: entra-id-protection
+    type: web-crawl
+    base_urls:
+      - https://learn.microsoft.com/en-us/entra/id-protection/
+    crawl_depth: 2
+    content_selector: "main article"
+
+  # ID Governance (access reviews, entitlement mgmt, PIM, lifecycle workflows)
+  - name: entra-id-governance
+    type: web-crawl
+    base_urls:
+      - https://learn.microsoft.com/en-us/entra/id-governance/
+      - https://learn.microsoft.com/en-us/entra/id-governance/privileged-identity-management/
+      - https://learn.microsoft.com/en-us/entra/id-governance/entitlement-management-overview
+      - https://learn.microsoft.com/en-us/entra/id-governance/access-reviews-overview
+    crawl_depth: 2
+    content_selector: "main article"
+
+  # Workload Identities (managed identities, service principals, app registrations)
+  - name: entra-workload-id
+    type: web-crawl
+    base_urls:
+      - https://learn.microsoft.com/en-us/entra/workload-id/
+      - https://learn.microsoft.com/en-us/entra/identity-platform/
+    crawl_depth: 2
+    content_selector: "main article"
+
+  # Security Copilot in Entra (reference architecture for our copilot)
+  - name: entra-security-copilot
+    type: web-crawl
+    base_urls:
+      - https://learn.microsoft.com/en-us/entra/security-copilot/
+    crawl_depth: 2
+    content_selector: "main article"
+
+  # Microsoft Graph API for Entra (programmatic access)
+  - name: graph-api-entra
+    type: web-crawl
+    base_urls:
+      - https://learn.microsoft.com/en-us/graph/api/resources/identity-overview
+      - https://learn.microsoft.com/en-us/graph/api/resources/user
+      - https://learn.microsoft.com/en-us/graph/api/resources/group
+      - https://learn.microsoft.com/en-us/graph/api/resources/application
+      - https://learn.microsoft.com/en-us/graph/api/resources/serviceprincipal
+      - https://learn.microsoft.com/en-us/graph/api/resources/conditionalaccesspolicy
+      - https://learn.microsoft.com/en-us/graph/api/resources/riskyuser
+      - https://learn.microsoft.com/en-us/graph/api/resources/signin
+      - https://learn.microsoft.com/en-us/graph/api/resources/directoryaudit
+      - https://learn.microsoft.com/en-us/graph/api/resources/accessreviewinstance
+    crawl_depth: 1
+    content_selector: "main article"
+
+  # Azure CLI / PowerShell for Entra
+  - name: entra-cli
+    type: web-crawl
+    base_urls:
+      - https://learn.microsoft.com/en-us/cli/azure/ad
+      - https://learn.microsoft.com/en-us/powershell/module/microsoft.graph.identity.governance/
+      - https://learn.microsoft.com/en-us/powershell/module/microsoft.graph.identity.signins/
+    crawl_depth: 1
+    content_selector: "main article"
+
+ingestion:
+  include:
+    - "entra/identity/**"
+    - "entra/fundamentals/**"
+    - "entra/id-protection/**"
+    - "entra/id-governance/**"
+    - "entra/workload-id/**"
+    - "entra/identity-platform/**"
+    - "entra/security-copilot/**"
+    - "graph/api/resources/identity*"
+    - "graph/api/resources/user*"
+    - "graph/api/resources/group*"
+    - "graph/api/resources/application*"
+    - "graph/api/resources/serviceprincipal*"
+    - "graph/api/resources/conditionalaccesspolicy*"
+    - "graph/api/resources/riskyuser*"
+    - "graph/api/resources/signin*"
+    - "graph/api/resources/directoryaudit*"
+    - "graph/api/resources/accessreview*"
+  exclude:
+    - "**/includes/**"
+    - "**/media/**"
+    - "**/zone-pivot-groups/**"
+    - "**/_themes/**"
+  file_types:
+    - "*.md"
+    - "*.yml"
+
+metadata:
+  product: entra
+  source_type: documentation
+  lang: en
+
+# Domain priority — mirrors Security Copilot scenario coverage
+domain_priority:
+  - enterprise-apps       # SSO, provisioning, consent, app governance
+  - conditional-access    # CA policies, named locations, session controls
+  - id-protection         # Risky users, risky apps, risk detections
+  - authentication        # MFA, passwordless, FIDO2, auth methods
+  - id-governance         # Access reviews, entitlement mgmt, PIM, lifecycle
+  - roles                 # RBAC, built-in roles, custom roles
+  - monitoring-health     # Sign-in logs, audit logs, health alerts, SLA
+  - workload-identities   # Managed identities, service principals, app regs
+  - devices               # Device identity, compliance, hybrid join
+  - graph-api             # Programmatic access patterns
+  - security-copilot-ref  # Reference architecture from MS Security Copilot

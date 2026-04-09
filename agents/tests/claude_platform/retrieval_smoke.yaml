@@ -1,0 +1,48 @@
+# Claude Platform KB — Retrieval Smoke Test Contract
+# Validates that the live Azure AI Search index returns relevant results
+# for a set of known queries across all major domains.
+
+name: claude-platform-retrieval-smoke
+description: Smoke test configuration for Claude Platform KB retrieval validation
+
+index:
+  name: claude-platform-docs
+  backend: azure-ai-search
+
+test_config:
+  queries_file: agents/tests/claude_platform/queries.yaml
+  top_k: 8
+  min_score: 0.65            # Minimum relevance score to count as a hit
+  pass_threshold_pct: 80     # % of queries that must pass for overall PASS
+
+domains_required:
+  # Every domain must have at least one passing query
+  - tool-use
+  - mcp
+  - agents
+  - prompt-engineering
+  - api
+  - extended-thinking
+  - prompt-caching
+  - guardrails
+  - batch-processing
+
+validation_rules:
+  - rule: min_results_met
+    description: Each query returns at least its min_results count
+  - rule: must_contain_any_hit
+    description: At least one result contains one of the must_contain_any terms
+  - rule: expected_domain_match
+    description: Top result's domain field matches expected_domain (soft — warn, don't fail)
+
+output:
+  format: json
+  path: agents/tests/claude_platform/results/smoke_latest.json
+  on_failure: exit 1
+
+runner:
+  # Smoke test runner script (to be implemented)
+  script: agents/tests/run_retrieval_smoke.py
+  args:
+    - --config agents/tests/claude_platform/retrieval_smoke.yaml
+    - --index claude-platform-docs

@@ -1,0 +1,391 @@
+version: 1
+metadata:
+  owner: ipai-assessment-harness
+  purpose: >
+    Judge roles for scoring, challenging, and calibrating internal assessment answers.
+    Judges consume creator output plus evidence and produce score, confidence,
+    downgrade reasons, and follow-up actions.
+  policy:
+    - Judges must downgrade optimistic answers that are present but not governed or proven.
+    - Judges score evidence quality separately from posture.
+    - Overlay judges adjust confidence and blind spots; they do not replace WAF core scoring.
+
+judges:
+  - id: reliability_judge
+    name: Reliability Judge
+    scope:
+      - reliability
+      - recovery
+      - resilience
+      - failure_domains
+    checks:
+      - redundancy_defined
+      - dr_documented
+      - restore_tested
+      - single_region_risk_explicit
+    downgrade_rules:
+      - if: control_present_but_not_tested
+        then: lower_score_by_1
+      - if: no_restore_evidence
+        then: set_confidence_low
+    output:
+      - score
+      - confidence
+      - blockers
+      - recommendations
+
+  - id: security_judge
+    name: Security Judge
+    scope:
+      - security
+      - identity
+      - secrets
+      - ingress
+      - governance
+    checks:
+      - secret_flow_governed
+      - identity_model_documented
+      - exposure_boundary_clear
+      - exception_registry_considered
+    downgrade_rules:
+      - if: runtime_security_without_governance
+        then: lower_score_by_1
+      - if: unmanaged_public_exposure
+        then: escalate_blocker
+    output:
+      - score
+      - confidence
+      - blockers
+      - recommendations
+
+  - id: cost_judge
+    name: Cost and FinOps Judge
+    scope:
+      - cost_optimization
+      - finops
+      - budget_controls
+      - cost_visibility
+    checks:
+      - cost_management_present
+      - budget_guardrails_present
+      - ownership_tags_present
+      - review_cycle_defined
+    downgrade_rules:
+      - if: no_cost_management_practice
+        then: cap_score_at_2
+      - if: no_budget_or_alerts
+        then: set_confidence_low
+    output:
+      - score
+      - confidence
+      - blockers
+      - recommendations
+
+  - id: operations_judge
+    name: Operational Excellence Judge
+    scope:
+      - operational_excellence
+      - automation
+      - runbooks
+      - observability
+      - repeatability
+    checks:
+      - ci_cd_documented
+      - runbooks_exist
+      - observability_owner_defined
+      - feedback_loop_exists
+    downgrade_rules:
+      - if: docs_not_reconciled_with_runtime
+        then: lower_score_by_1
+      - if: no_runbook_for_critical_path
+        then: escalate_blocker
+    output:
+      - score
+      - confidence
+      - blockers
+      - recommendations
+
+  - id: performance_judge
+    name: Performance Judge
+    scope:
+      - performance_efficiency
+      - scale_model
+      - benchmarks
+      - service_boundaries
+    checks:
+      - scale_assumptions_documented
+      - performance_signals_defined
+      - service_boundaries_clear
+      - benchmark_or_capacity_evidence_present
+    downgrade_rules:
+      - if: no_benchmark_or_load_test
+        then: lower_confidence
+      - if: scaling_claim_without_metric
+        then: lower_score_by_1
+    output:
+      - score
+      - confidence
+      - blockers
+      - recommendations
+
+  - id: discover_judge
+    name: Discover Judge
+    scope:
+      - as_is_visibility
+      - inventory_quality
+      - single_source_of_truth
+    checks:
+      - inventory_exists
+      - inventory_is_current
+      - business_it_mapping_exists
+      - source_of_truth_is_explicit
+    downgrade_rules:
+      - if: stale_or_partial_inventory
+        then: lower_score_by_1
+      - if: no_single_source_of_truth
+        then: cap_score_at_2
+    output:
+      - score
+      - confidence
+      - gaps
+
+  - id: analyze_judge
+    name: Analyze Judge
+    scope:
+      - dependency_mapping
+      - bottleneck_detection
+      - root_cause_focus
+    checks:
+      - dependencies_mapped
+      - bottlenecks_identified
+      - prioritization_is_evidence_based
+    downgrade_rules:
+      - if: no_dependency_map
+        then: lower_score_by_1
+      - if: plans_based_on_assumption
+        then: lower_confidence
+    output:
+      - score
+      - confidence
+      - gaps
+
+  - id: design_judge
+    name: Design Judge
+    scope:
+      - target_state_clarity
+      - scenario_planning
+      - roadmap_quality
+    checks:
+      - to_be_state_defined
+      - scenario_comparison_exists
+      - roadmap_is_coherent
+    downgrade_rules:
+      - if: no_target_state
+        then: cap_score_at_2
+      - if: no_scenario_testing
+        then: lower_confidence
+    output:
+      - score
+      - confidence
+      - gaps
+
+  - id: implement_judge
+    name: Implement Judge
+    scope:
+      - change_management
+      - enablement
+      - execution_alignment
+    checks:
+      - stakeholders_identified
+      - enablement_path_defined
+      - execution_tracks_design
+    downgrade_rules:
+      - if: no_adoption_or_training_plan
+        then: lower_score_by_1
+      - if: implementation_without_comms_plan
+        then: lower_confidence
+    output:
+      - score
+      - confidence
+      - gaps
+
+  - id: operate_judge
+    name: Operate Judge
+    scope:
+      - continuous_improvement
+      - governance
+      - kpi_feedback
+      - roadmap_adaptation
+    checks:
+      - post_go_live_governance_defined
+      - kpis_tracked
+      - roadmap_can_adapt
+      - improvement_loop_exists
+    downgrade_rules:
+      - if: no_operate_model
+        then: cap_score_at_2
+      - if: no_kpi_feedback_loop
+        then: lower_score_by_1
+    output:
+      - score
+      - confidence
+      - gaps
+
+  - id: ai_workload_judge
+    name: AI Workload Judge
+    scope:
+      - ai_workload_fit
+      - grounding_quality
+      - ai_eval_and_safety
+      - ai_ops_maturity
+    checks:
+      - ai_runtime_is_external
+      - grounding_is_documented
+      - eval_and_safety_exist
+      - ai_ops_owner_exists
+    downgrade_rules:
+      - if: ai_runtime_inside_odoo
+        then: escalate_blocker
+      - if: no_eval_or_safety_model
+        then: lower_score_by_1
+    output:
+      - overlay_score
+      - confidence
+      - blind_spots
+
+  - id: saas_workload_judge
+    name: SaaS Workload Judge
+    scope:
+      - saas_operating_model
+      - service_boundaries
+      - release_model
+      - scale_model
+    checks:
+      - workload_is_service_decomposed
+      - release_model_defined
+      - environment_story_clear
+      - operating_model_documented
+    downgrade_rules:
+      - if: boundaries_blurred
+        then: lower_score_by_1
+      - if: no_release_model
+        then: lower_confidence
+    output:
+      - overlay_score
+      - confidence
+      - blind_spots
+
+  - id: sap_workload_ops_judge
+    name: SAP-Like Workload Ops Judge
+    scope:
+      - workload_center_maturity
+      - operational_visibility
+      - dr_and_recovery_rigor
+      - enterprise_workload_pattern_fit
+    checks:
+      - workload_center_exists
+      - operational_dashboards_exist
+      - recovery_model_defined
+      - enterprise_integration_map_exists
+    downgrade_rules:
+      - if: no_workload_center
+        then: lower_score_by_1
+      - if: no_recovery_rigor
+        then: lower_confidence
+    output:
+      - overlay_score
+      - confidence
+      - blind_spots
+
+  - id: architecture_pattern_judge
+    name: Architecture Pattern Judge
+    scope:
+      - reference_pattern_alignment
+      - topology_completeness
+      - control_plane_vs_app_plane_separation
+    checks:
+      - topology_matches_documented_pattern
+      - control_plane_separated_from_app_plane
+      - pattern_deviation_explicit
+    downgrade_rules:
+      - if: implicit_topology
+        then: lower_score_by_1
+      - if: platform_logic_in_wrong_layer
+        then: raise_design_risk
+    output:
+      - overlay_score
+      - confidence
+      - deviations
+
+  - id: calibration_judge
+    name: Calibration Judge
+    scope:
+      - microsoft_alignment
+      - answer_safety
+      - confidence
+    checks:
+      - answer_is_conservative
+      - evidence_strength_matches_score
+      - result_can_be_compared_to_official_portal
+    downgrade_rules:
+      - if: optimistic_without_proof
+        then: lower_confidence
+      - if: answer_depends_on_untracked_resource
+        then: mark_risky
+    output:
+      - calibrated_score
+      - confidence
+      - safe_answers
+      - risky_answers
+      - unsupported_answers
+
+  - id: azure_reference_pattern_judge
+    name: Azure Reference Pattern Judge
+    scope:
+      - reference_architecture_alignment
+      - platform_selection_fit
+      - landing_zone_alignment
+      - workload_boundary_clarity
+      - analytics_pattern_fit
+    checks:
+      - chosen_platform_matches_workload_type
+      - platform_team_vs_workload_team_split_is_explicit
+      - landing_zone_pattern_is_coherent
+      - analytics_architecture_matches_medallion_doctrine
+    downgrade_rules:
+      - if: platform_choice_not_justified
+        then: lower_confidence
+      - if: workload_platform_split_missing
+        then: lower_score_by_1
+    output:
+      - overlay_score
+      - confidence
+      - blind_spots
+      - recommendations
+
+  - id: agent_orchestration_judge
+    name: Agent Orchestration Judge
+    scope:
+      - orchestration_pattern_fit
+      - decomposition_justification
+      - hitl_gate_presence
+      - context_transfer_quality
+      - anti_pattern_risk
+    checks:
+      - single_agent_considered_first
+      - selected_pattern_matches_use_case
+      - hitl_exists_for_high_impact_actions
+      - handoff_or_shared_context_model_is_explicit
+      - anti_patterns_are_avoided
+    downgrade_rules:
+      - if: multi_agent_without_clear_need
+        then: lower_score_by_1
+      - if: no_hitl_for_high_impact_flow
+        then: escalate_blocker
+      - if: context_transfer_undefined
+        then: lower_confidence
+    output:
+      - overlay_score
+      - confidence
+      - blind_spots
+      - recommendations

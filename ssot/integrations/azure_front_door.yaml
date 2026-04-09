@@ -1,0 +1,33 @@
+# Azure Front Door Integration — SSOT
+version: "1.0.0"
+schema: ssot.integrations.v1
+updated_at: "2026-03-31"
+
+integration:
+  id: azure_front_door
+  name: "Azure Front Door (Edge Routing)"
+  vendor: microsoft
+  status: active
+  category: edge_routing
+
+resources:
+  - name: afd-ipai-dev
+    type: front_door
+    endpoint: ipai-fd-dev-ep-fnh4e8d6gtdhc8ax.z03.azurefd.net
+    features:
+      - tls_termination
+      - waf
+      - security_headers
+      - caching
+
+routes:
+  - hostname: erp.insightpulseai.com
+    origin: ipai-odoo-dev-web
+  - hostname: auth.insightpulseai.com
+    origin: ipai-auth-dev
+  - hostname: n8n.insightpulseai.com
+    origin: external
+  - hostname: superset.insightpulseai.com
+    origin: ipai-superset-dev
+  - hostname: plane.insightpulseai.com
+    origin: ipai-plane-dev

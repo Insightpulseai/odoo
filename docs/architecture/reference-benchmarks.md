@@ -21,9 +21,9 @@ A benchmark becomes an integration only when an explicit integration contract is
 
 ### SAP on Azure
 
-**Role:** Benchmark for enterprise ERP landscape architecture on Azure.
+**Role:** Ops/governance maturity benchmark only. SAP-on-Azure is NOT the application architecture, runtime, or AI benchmark for this platform.
 
-**What we benchmark against:**
+**What we benchmark against (ops/governance maturity only):**
 
 - Environment separation and landing-zone discipline (dev / non-prod / prod / DR)
 - HA/DR topology and resilience patterns (Pacemaker clusters, zone-redundant storage, cross-region DR)
@@ -35,7 +35,7 @@ A benchmark becomes an integration only when an explicit integration contract is
 
 **Source:** [SAP on Azure workload documentation](https://learn.microsoft.com/en-us/azure/sap/workloads/get-started)
 
-**Our canonical implementation:** Odoo CE 19 on Azure Container Apps.
+**Our canonical implementation:** Odoo CE 18 on Azure Container Apps.
 
 ### SAP Concur
 
@@ -67,9 +67,19 @@ A benchmark becomes an integration only when an explicit integration contract is
 
 **Note:** Azure Marketplace AvaTax offer has no plan available for market PH. Do not design around Marketplace procurement as the only path. If AvaTax is later adopted as an integration, use the direct REST API / commercial path.
 
-## Canonical runtime target
+## Benchmark hierarchy
 
-SAP on Azure is the benchmark for enterprise ERP landscape shape and operating discipline; Odoo on Azure remains the implementation target.
+The platform uses a 4-layer benchmark model. Each layer has its own benchmark authority:
+
+| Layer | Benchmark |
+|---|---|
+| ERP/application architecture | Odoo CE 18 + OCA + thin-bridge doctrine |
+| Cloud runtime | Azure Container Apps Well-Architected guidance |
+| AI/copilot runtime | Microsoft Foundry SDK/project model |
+| Tax/compliance product ambition | AvaTax-style capability benchmark (PH-first) |
+| Ops/governance maturity | SAP-on-Azure seriousness / landing-zone discipline |
+
+SAP-on-Azure governs ops/governance maturity patterns only. It is not the application architecture, runtime, or AI benchmark. Never say "SAP on Azure but with Odoo." The correct framing is: "Azure-native Odoo operating model. Benchmarks: Odoo CE 18 + OCA (application), ACA Well-Architected (runtime), Foundry SDK (AI), AvaTax capability (tax/compliance), SAP-on-Azure (ops maturity only)."
 
 Odoo on Azure remains the actual implementation target for ERP, finance, project, and compliance workloads. Benchmarks inform architecture quality but do not replace the canonical stack.
 

@@ -12,7 +12,7 @@ Risk level: low
 Violations: none
 
 Module structure:
-- __manifest__.py: version 19.0.1.0.0, license LGPL-3 — PASS
+- __manifest__.py: version 18.0.1.0.0, license LGPL-3 — PASS
 - Directory layout: models/, views/, security/, data/ — PASS
 - Data order: security.xml, ir.model.access.csv, dashboard_data.xml, dashboard_views.xml — PASS
 
@@ -64,7 +64,7 @@ Required fixes:
 3. Fix import ordering (models/bulk_import.py:1-5)
 
 Upgrade safety:
-- No Odoo 19 specific issues found
+- No Odoo 18 specific issues found
 
 Evidence:
 - models/bulk_import.py:47: `self.env.cr.commit()  # save progress`
@@ -83,12 +83,12 @@ Risk level: high
 
 Violations:
 - [HIGH] __manifest__.py — Rule 6 (module structure) — version is "1.0" instead of
-  "19.0.1.0.0". License field missing.
+  "18.0.1.0.0". License field missing.
 - [HIGH] views/crm.xml — Rule 5 (XML naming) — file should be named crm_extension_views.xml
 - [HIGH] views/crm.xml:15 — Rule 5 (XML naming) — XML ID "crm_form" should be
   "crm_extension_view_form"
-- [HIGH] views/crm.xml:40 — Rule 5 (Odoo 19) — deprecated tree view type used. Must be
-  "list" in Odoo 19.
+- [HIGH] views/crm.xml:40 — Rule 5 (Odoo 18) — deprecated tree view type used. Must be
+  "list" in Odoo 18.
   Line: `<record id="crm_tree" model="ir.ui.view">`
 - [MEDIUM] models/crm_lead.py:25 — Rule 4 (translation) — f-string inside _()
   Line: `raise UserError(_(f'Lead {self.name} cannot be archived'))`
@@ -98,7 +98,7 @@ Violations:
   follow "access_<model>_<group>" pattern
 
 Required fixes:
-1. Fix manifest: version "19.0.1.0.0", add license "LGPL-3" (__manifest__.py)
+1. Fix manifest: version "18.0.1.0.0", add license "LGPL-3" (__manifest__.py)
 2. Rename views/crm.xml to views/crm_extension_views.xml
 3. Fix XML IDs to follow naming convention (views/crm_extension_views.xml)
 4. Replace tree with list (views/crm_extension_views.xml:40)
@@ -108,7 +108,7 @@ Required fixes:
 7. Fix ACL ID naming (security/ir.model.access.csv)
 
 Upgrade safety:
-- BLOCKING: tree view type must be changed to list for Odoo 19 compatibility
+- BLOCKING: tree view type must be changed to list for Odoo 18 compatibility
 - Check: if module references groups_id, change to group_ids
 
 Evidence:

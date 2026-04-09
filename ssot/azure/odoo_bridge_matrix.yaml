@@ -1,0 +1,376 @@
+version: 1
+generated_from:
+  azure_inventory_source:
+    - turn4file0
+
+metadata:
+  platform: ipai
+  workload: odoo_ce_plus_oca_on_azure
+  intent: >
+    Azure bridge ledger for Odoo CE + OCA deployment. Tracks the concrete Azure-native
+    services that replace platform/system capabilities not solved by OCA modules.
+  status_scale:
+    - present
+    - partial
+    - missing
+    - not_required_yet
+
+bridges:
+  - key: edge_ingress
+    label: Internet edge, routing, WAF, TLS termination
+    status: present
+    confidence: high
+    evidence_basis: verified
+    azure_services:
+      - Front Door
+      - Front Door WAF
+      - DNS zone
+    resources:
+      - afd-ipai-dev
+      - wafipaidev
+      - insightpulseai.com
+      - w9studio.net
+    purpose: >
+      Public entrypoint, routing, protection, and domain fronting for Odoo and companion apps.
+    odoo_touchpoints:
+      - web
+      - login
+      - public websites
+
+  - key: container_runtime
+    label: Container runtime for Odoo web, worker, cron, and companion services
+    status: present
+    confidence: high
+    evidence_basis: verified
+    azure_services:
+      - Azure Container Apps
+      - Container Apps Environment
+    resources:
+      - ipai-odoo-dev-env
+      - ipai-odoo-ha-env
+      - ipai-odoo-dev-web
+      - ipai-odoo-dev-worker
+      - ipai-odoo-dev-cron
+      - ipai-odoo-connector
+      - ipai-ocr-dev
+      - ipai-copilot-gateway
+      - ipai-build-agent
+    purpose: >
+      Runs Odoo and adjacent service workloads as containers and jobs.
+    odoo_touchpoints:
+      - web
+      - worker
+      - cron
+      - connector
+      - ocr
+      - copilot_gateway
+    notes: >
+      Two ACA environments are visible. Treat environment consolidation/role clarity as an architectural hygiene item.
+
+  - key: registry
+    label: Container image registry
+    status: present
+    confidence: high
+    evidence_basis: verified
+    azure_services:
+      - Azure Container Registry
+    resources:
+      - acripaiodoo
+    purpose: >
+      Stores runtime images for Odoo and companion workloads.
+
+  - key: database
+    label: Managed PostgreSQL for Odoo
+    status: present
+    confidence: high
+    evidence_basis: verified
+    azure_services:
+      - Azure Database for PostgreSQL Flexible Server
+      - Private DNS zone
+    resources:
+      - pg-ipai-odoo
+      - privatelink.postgres.database.azure.com
+    purpose: >
+      Primary transactional database for Odoo.
+    odoo_touchpoints:
+      - primary_database
+
+  - key: backup_and_dr
+    label: Backup, restore, and DR posture
+    status: partial
+    confidence: medium
+    evidence_basis: missing
+    azure_services: []
+    resources: []
+    purpose: >
+      Protects against data loss and supports recovery objectives.
+    odoo_touchpoints:
+      - database
+      - filestore
+    notes: >
+      PostgreSQL managed service is present, but explicit backup vault, restore drill,
+      or DR artifacts are not visible in the uploaded inventory.
+
+  - key: identity_and_secrets
+    label: Workload identity, secrets, keys, and certs
+    status: partial
+    confidence: medium
+    evidence_basis: verified_plus_missing
+    azure_services:
+      - Key Vault
+    resources:
+      - kv-ipai-dev
+    purpose: >
+      Central secret and key management for the platform.
+    odoo_touchpoints:
+      - web
+      - worker
+      - cron
+      - connector
+      - copilot_gateway
+    notes: >
+      Key Vault is present. Managed identity resources/assignments are not directly visible in the uploaded inventory.
+
+  - key: observability
+    label: Logs, APM, dashboards, alerting
+    status: present
+    confidence: high
+    evidence_basis: verified
+    azure_services:
+      - Application Insights
+      - Log Analytics
+      - Metric Alerts
+      - Action Groups
+      - Workbook
+    resources:
+      - ipai-appinsights
+      - func-ipai-meta-capi
+      - la-ipai-odoo-dev
+      - managed-ipai-appinsights-ws
+      - alert-http-5xx
+      - alert-aca-restarts
+      - alert-aca-no-replicas
+      - alert-aca-high-cpu
+      - ag-ipai-platform
+      - 1aef4d92-f17f-494e-b7a0-ec1e621b8063 (Odoo Platform Health)
+    purpose: >
+      Telemetry, diagnostics, alerting, and health visualization for production operations.
+    odoo_touchpoints:
+      - web
+      - worker
+      - cron
+      - platform_health
+
+  - key: document_ocr
+    label: OCR and document extraction bridge
+    status: present
+    confidence: medium
+    evidence_basis: verified
+    azure_services:
+      - Container App
+      - Foundry-related AI estate
+    resources:
+      - ipai-ocr-dev
+    purpose: >
+      OCR/document extraction layer for invoices, receipts, and related document ingestion.
+    odoo_touchpoints:
+      - vendor_bills
+      - expenses
+      - document_ingestion
+    notes: >
+      OCR app presence is verified. Specific underlying Azure AI service bindings are not visible in this inventory snapshot.
+
+  - key: ai_foundry_gateway
+    label: AI gateway / model access plane
+    status: present
+    confidence: high
+    evidence_basis: verified
+    azure_services:
+      - Foundry
+      - Foundry project
+      - Container App gateway
+    resources:
+      - ipai-copilot-resource
+      - ipai-copilot (ipai-copilot-resource/ipai-copilot)
+      - ipai-copilot-gateway
+    purpose: >
+      Hosts AI-facing control plane and gateway components for copilot scenarios.
+    odoo_touchpoints:
+      - copilot
+      - assistant
+      - agent_runtime
+
+  - key: ai_retrieval
+    label: Retrieval and grounding infrastructure
+    status: missing
+    confidence: medium
+    evidence_basis: missing
+    azure_services: []
+    resources: []
+    purpose: >
+      Search, indexing, vector/hybrid retrieval, and grounding for AI features.
+    odoo_touchpoints:
+      - copilot
+      - knowledge_assistant
+      - document_grounding
+    notes: >
+      No Azure AI Search or equivalent retrieval infrastructure was visible in the uploaded inventory.
+
+  - key: integration_messaging
+    label: Durable queue / pub-sub integration bus
+    status: missing
+    confidence: medium
+    evidence_basis: missing
+    azure_services: []
+    resources: []
+    purpose: >
+      Decouples Odoo from external integrations and long-running workflows.
+    odoo_touchpoints:
+      - connector
+      - integrations
+      - external_workers
+    notes: >
+      No Service Bus or equivalent messaging resource was visible in the uploaded inventory.
+
+  - key: document_storage
+    label: Blob/object storage for documents and artifacts
+    status: partial
+    confidence: medium
+    evidence_basis: verified
+    azure_services:
+      - Storage Account
+    resources:
+      - stipaidev
+      - stipaiodoodev
+    purpose: >
+      Stores opaque files, artifacts, and auxiliary platform data.
+    odoo_touchpoints:
+      - documents
+      - backups
+      - artifacts
+    notes: >
+      Storage accounts are present, but explicit document-storage mapping is not shown in the inventory.
+
+  - key: private_networking
+    label: Private network and service resolution
+    status: present
+    confidence: high
+    evidence_basis: verified
+    azure_services:
+      - Virtual Network
+      - Private DNS
+    resources:
+      - vnet-ipai-dev
+      - privatelink.postgres.database.azure.com
+    purpose: >
+      Network boundary and private service discovery for platform components.
+    odoo_touchpoints:
+      - database_connectivity
+      - platform_networking
+
+  - key: function_integrations
+    label: Function-based utility integration surface
+    status: present
+    confidence: medium
+    evidence_basis: verified
+    azure_services:
+      - Function App
+      - Application Insights
+    resources:
+      - func-ipai-meta-capi
+    purpose: >
+      Lightweight serverless integration and utility endpoint surface.
+    odoo_touchpoints:
+      - external_metadata
+      - webhook_or_utility_flows
+
+  - key: devops_control_plane
+    label: Delivery control plane and organization boundary
+    status: present
+    confidence: medium
+    evidence_basis: verified
+    azure_services:
+      - Azure DevOps organization
+    resources:
+      - insightpulseai
+    purpose: >
+      Pipeline/governance boundary for delivery workflows.
+    odoo_touchpoints:
+      - ci_cd
+      - release_governance
+
+  - key: agent_runtime_tooling
+    label: External agent/runtime SDK and skills layer
+    status: present
+    confidence: high
+    evidence_basis: verified
+    azure_services:
+      - Foundry
+      - Container App gateway
+    resources:
+      - ipai-copilot-gateway
+      - ipai-copilot-resource
+    external_repos:
+      tier_1_adopt_now:
+        - repo: github/copilot-sdk
+          role: >
+            Multi-language SDK for agentic developer/runtime workflows outside Odoo.
+            JSON-RPC transport, BYOK including Azure AI Foundry providers.
+          fits: repo agents, release assistants, scaffolders, bridge-side orchestration
+        - repo: microsoft/skills
+          role: >
+            Domain grounding layer for coding agents. Skills, custom agents, AGENTS.md
+            templates, and MCP configs for AI coding agents working with Azure SDKs and Foundry.
+          fits: reusable grounding for coding agents in repo
+        - repo: microsoft/azure-skills
+          role: >
+            Azure and Foundry operational grounding. Packages Azure skills plus Azure MCP
+            Server and Foundry MCP wiring. Supports GitHub Copilot CLI, VS Code, Claude Code.
+          fits: Azure runtime/inventory/deploy/diagnostics assistance
+      tier_2_channel_only:
+        - repo: microsoft/Agents
+          role: >
+            M365/Teams/Copilot channel SDK. Only adopt if IPAI needs to ship agents into
+            Microsoft 365 Copilot, Teams, webchat, or custom app channels.
+          fits: channel delivery layer (not core platform dependency)
+        - repo: pnp/copilot-pro-dev-samples
+          role: >
+            Community sample library for M365 Copilot. Pattern mining only.
+          fits: reference/sample mining (not a foundation dependency)
+    purpose: >
+      External agent SDKs, skills, and MCP configurations that power agentic workflows
+      outside the Odoo process boundary. These are runtime/tooling dependencies, not
+      Odoo addons. The only justified Odoo-side code is thin connectors, action launch
+      points, auth/session mapping, status/result sync, and minimal UI hooks.
+    odoo_touchpoints:
+      - copilot_gateway
+      - agent_runtime
+      - coding_agent
+      - mcp_tools
+    odoo_addon_policy: >
+      These repos strengthen the existing rule: agent runtime, MCP/skills,
+      Azure/Foundry orchestration, Copilot channel delivery, and developer-assistant
+      behavior live in the external bridge/runtime layer, NOT as fat Odoo modules.
+      Justified Odoo addons: thin connector surfaces, action launch points,
+      auth/session mapping, status/result sync, minimal UI hooks. Everything else
+      belongs outside addons/.
+    notes: >
+      Tier 1 repos are approved for immediate adoption in the external agent/runtime lane.
+      Tier 2 repos are deferred unless M365/Teams channel delivery is activated.
+      Classification reviewed 2026-04-05.
+
+  - key: iot_bridge
+    label: IoT and device integration bridge
+    status: not_required_yet
+    confidence: low
+    evidence_basis: missing
+    azure_services: []
+    resources: []
+    purpose: >
+      Device telemetry and command channel for shop-floor or hardware-connected scenarios.
+    odoo_touchpoints:
+      - maintenance
+      - manufacturing
+      - hardware_integration
+    notes: >
+      No IoT resources are visible. Keep out of scope unless hardware/device use cases are activated.

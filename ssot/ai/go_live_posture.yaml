@@ -1,0 +1,112 @@
+# Go-Live Posture — AI Surfaces
+# SSOT for launch readiness state across all AI assistant surfaces.
+# Updated: 2026-03-23
+
+release_posture:
+  label: internal_beta
+  trusted_users_only: true
+  default_mode: read_only_advisory
+  public_ga: false
+
+surfaces:
+  odoo_copilot:
+    role: transactional_process_assistant
+    write_actions_enabled: false
+    grounded_retrieval_required: true
+    current_state: internal_beta
+    ga_blocked_by:
+      - audit_model
+      - rate_limiting
+      - request_validation
+      - company_scoping
+      - odoo_docs_indexed
+      - foundry_connections
+      - foundry_endpoint
+      - gateway_wiring
+
+  databricks_genie:
+    role: conversational_analytics_assistant
+    writeback_enabled: false
+    current_state: not_launched
+    ga_blocked_by:
+      - dataset_governance
+      - business_definitions
+      - sample_queries
+      - genie_space_created
+      - warehouse_cost_ownership
+      - semantic_acceptance
+
+  document_intelligence_assistant:
+    role: document_extraction_review_assistant
+    autonomous_posting_enabled: false
+    current_state: not_launched
+    ga_blocked_by:
+      - supported_doc_types_enumerated
+      - confidence_thresholds
+      - review_queue
+      - field_mapping
+      - posting_safety
+      - evidence_controls
+
+  foundry_runtime:
+    role: agent_orchestration_serving_path
+    current_state: partial
+    ga_blocked_by:
+      - odoo_docs_indexed
+      - search_connection
+      - openai_connection
+      - online_endpoint
+      - gateway_wiring
+      - app_insights
+
+# Hard gates — ALL must be green before any GA claim
+gates:
+  - audit_model
+  - rate_limiting
+  - request_validation
+  - company_scoping
+  - odoo_docs_indexed
+  - foundry_connections
+  - foundry_endpoint
+  - gateway_wiring
+  - observability
+  - rollback
+
+# Launch order
+recommended_phases:
+  - phase: 1
+    surface: odoo_copilot
+    scope: internal_beta_read_only
+    prerequisites:
+      - odoo_sso
+      - runtime_hardening
+      - odoo_docs_retrieval
+      - monitoring
+
+  - phase: 2
+    surface: document_intelligence_assistant
+    scope: human_in_the_loop
+    prerequisites:
+      - extraction_pipeline
+      - review_queues
+      - no_autonomous_posting
+
+  - phase: 3
+    surface: databricks_genie
+    scope: curated_analytics_beta
+    prerequisites:
+      - gold_marts_populated
+      - business_definitions
+      - genie_space
+      - positioning_gate
+
+  - phase: 4
+    surface: odoo_copilot
+    scope: controlled_write_actions
+    prerequisites:
+      - audit_model
+      - rate_limiting
+      - company_scoping
+      - retrieval_maturity
+      - approval_flow
+      - rollback_proof

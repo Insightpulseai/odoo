@@ -1,0 +1,112 @@
+version: 1
+artifact: attachment_routing_policy
+owner: agent-platform
+status: proposed
+
+defaults:
+  chat_shell_template: get_started_with_ai_agents
+  retrieval_default: azure_ai_search
+  citation_mode: source_backed
+  odoo_role: thin_bridge_only
+
+pipeline:
+  stages:
+    - upload
+    - sniff
+    - route
+    - extract
+    - normalize
+    - chunk
+    - index_or_ground
+    - answer
+
+routes:
+  pdf:
+    parser: document_intelligence_layout
+    fallback_parser: document_intelligence_read
+    retrieval: azure_ai_search
+    chunking: layout_aware
+    quality: strong
+
+  image:
+    extensions: [jpg, jpeg, png, bmp, tiff, heif]
+    parser: document_intelligence_read
+    fallback_parser: document_intelligence_layout
+    retrieval: azure_ai_search_optional
+    chunking: ocr_blocks
+    quality: strong
+
+  docx:
+    parser: document_intelligence_layout
+    retrieval: azure_ai_search
+    chunking: heading_paragraph_table
+    quality: medium
+    caveats:
+      - embedded_images_not_reliably_handled_like_pdf
+
+  xlsx:
+    parser: document_intelligence_layout
+    retrieval: azure_ai_search
+    chunking: worksheet_table_range
+    quality: medium
+    caveats:
+      - normalize_sheet_and_range_metadata_before_grounding
+      - embedded_images_not_reliably_handled_like_pdf
+
+  pptx:
+    parser: document_intelligence_layout
+    retrieval: azure_ai_search
+    chunking: slide_title_body_notes
+    quality: medium
+    caveats:
+      - embedded_images_not_reliably_handled_like_pdf
+
+  eml:
+    parser: azure_ai_search_document_extraction
+    retrieval: azure_ai_search
+    chunking: message_headers_body_attachments
+    quality: medium
+    caveats:
+      - treat_as_container
+      - unpack_attachments_for_best_grounding
+
+  msg:
+    parser: azure_ai_search_document_extraction
+    retrieval: azure_ai_search
+    chunking: message_headers_body_attachments
+    quality: medium
+    caveats:
+      - treat_as_container
+      - attachments_default_to_single_document_without_custom_unpack
+
+  attachment_from_email:
+    parser: route_by_mime_type
+    retrieval: azure_ai_search
+    chunking: inherited_from_child_type
+    quality: strong_if_unpacked
+
+normalization:
+  required_fields:
+    - source_id
+    - parent_source_id
+    - file_name
+    - mime_type
+    - page_or_slide
+    - section_title
+    - extracted_text
+    - image_refs
+    - citation_anchor
+  citation_anchor_format: "{source_id}#p={page_or_slide}"
+
+policy:
+  large_binary_storage: object_store
+  searchable_text_storage: retrieval_index
+  odoo_bridge_payload:
+    - attachment_id
+    - source_id
+    - summary
+    - citation_anchor
+    - retrieval_pointer
+  forbid:
+    - direct_blob_storage_in_odoo_chat_records
+    - parser_logic_inside_odoo_module

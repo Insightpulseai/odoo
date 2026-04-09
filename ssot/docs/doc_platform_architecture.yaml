@@ -1,0 +1,224 @@
+# Organization Documentation Platform Architecture
+# Schema: ssot.docs.platform-architecture.v1
+# Version: 1.0
+# Updated: 2026-03-15
+# Contract: docs/contracts/ORG_DOC_PLATFORM_CONTRACT.md
+
+name: org-doc-platform
+version: "1.0"
+schema: ssot.docs.platform-architecture.v1
+
+components:
+  source_adapters:
+    - name: repo-docs-loader
+      extends: packages/odoo-docs-kb/loader.py
+      input: git working tree paths
+      formats: [markdown, rst, yaml]
+      trigger: git push to main (incremental), weekly full refresh
+      paths_config: ssot/docs/source_inventory.yaml
+
+    - name: web-docs-loader
+      extends: packages/odoo-docs-kb/web_loader.py
+      input: URLs from agents/knowledge/*/source.yaml
+      formats: [html, rst]
+      trigger: weekly CI refresh
+
+    - name: spec-bundle-loader
+      input: spec/*/ directories
+      structure: constitution.md + prd.md + plan.md + tasks.md
+      metadata_enrichment: bundle name from directory, inter-doc references
+
+  normalizers:
+    - name: rst-normalizer
+      input: .rst files
+      output: normalized plain text with heading hierarchy
+      operations: [strip_images, strip_directives, preserve_headings, normalize_whitespace]
+
+    - name: markdown-normalizer
+      input: .md files
+      output: normalized plain text with heading hierarchy
+      operations: [strip_frontmatter_to_metadata, preserve_headings, convert_code_blocks, normalize_whitespace]
+
+    - name: html-normalizer
+      input: .html files
+      output: extracted text with headings preserved
+
+    - name: yaml-normalizer
+      input: .yaml/.yml files
+      output: key-value pairs with path context
+
+  chunkers:
+    - name: rst-heading-chunker
+      implementation: packages/odoo-docs-kb/chunker.py
+      split_on: [h1, h2, h3]
+      max_chunk_chars: 1500
+      min_chunk_chars: 100
+      overlap: 0
+      context: heading_chain (breadcrumb)
+      id_format: "{doc_id}:{heading_chain}:{ordinal}:{content_hash_8}"
+
+    - name: markdown-heading-chunker
+      implementation: packages/odoo-docs-kb/md_chunker.py
+      split_on: ["#", "##", "###"]
+      max_chunk_chars: 1500
+      min_chunk_chars: 100
+      overlap: 0
+      context: heading_chain (breadcrumb)
+      id_format: "{doc_id}:{heading_chain}:{ordinal}:{content_hash_8}"
+
+  embedders:
+    - name: azure-openai-embedder
+      implementation: packages/odoo-docs-kb/embed.py
+      model: text-embedding-ada-002
+      dimensions: 1536
+      provider: Azure OpenAI
+      identity: DefaultAzureCredential
+
+  indexers:
+    - name: azure-ai-search-indexer
+      implementation: packages/odoo-docs-kb/index.py
+      backend: Azure AI Search
+      scoring: hybrid (BM25 + vector cosine similarity)
+      semantic_ranker: true
+      filterable_fields: [source, doc_type, sensitivity, freshness]
+      identity: DefaultAzureCredential
+
+  services:
+    - name: org-docs-search-service
+      implementation: apps/odoo-docs-kb/service.py
+      framework: FastAPI
+      port: 8000
+      health_endpoint: /health
+      search_endpoint: /search
+      citation_contract: ssot/docs/citation_contract.yaml
+
+  evals:
+    - name: retrieval-eval
+      implementation: packages/odoo-docs-kb/eval.py
+      metrics: [precision_at_5, recall_at_5]
+
+    - name: capability-eval
+      framework: agents/evals/
+      configs:
+        - agents/evals/odoo_copilot_target_capabilities.yaml
+        - agents/evals/foundry_target_capabilities.yaml
+      metrics: [groundedness, coherence, relevance, citation_accuracy]
+
+indexes:
+  - name: org-docs
+    description: Unified organization documentation index
+    sources:
+      - repo-docs (docs/architecture/, docs/contracts/, docs/ai/, docs/guides/)
+      - spec-bundles (spec/*/)
+      - config-docs (config/, ssot/)
+      - module-docs (addons/ipai/*/README.md, docs/modules/)
+      - agent-skills (agents/skills/*/SKILL.md)
+      - governance (docs/governance/)
+      - integrations (docs/integrations/)
+    status: planned
+    estimated_documents: 800
+    estimated_chunks: 8000
+
+  - name: odoo18-docs
+    description: Odoo 18 CE official documentation
+    sources:
+      - odoo/documentation.git branch 19.0
+    source_config: agents/knowledge/odoo18_docs/source.yaml
+    chunking_config: agents/knowledge/odoo18_docs/chunking.yaml
+    indexing_config: agents/knowledge/odoo18_docs/indexing.yaml
+    status: operational
+
+  - name: azure-platform-docs
+    description: Azure platform documentation
+    source_config: agents/knowledge/azure_platform/source.yaml
+    status: scaffolded
+
+  - name: databricks-docs
+    description: Databricks documentation
+    source_config: agents/knowledge/databricks/source.yaml
+    status: scaffolded
+
+shared_packages:
+  - name: packages/odoo-docs-kb
+    description: "Reusable chunker, embedder, indexer, eval patterns"
+    files:
+      - chunker.py (RST heading-aware chunker)
+      - md_chunker.py (Markdown heading-aware chunker)
+      - embed.py (Azure OpenAI embedder)
+      - index.py (Azure AI Search indexer)
+      - loader.py (Document loader)
+      - web_loader.py (Web document loader)
+      - eval.py (Retrieval evaluation)
+
+deployment:
+  compute: Azure Container Apps
+  environment: cae-ipai-dev
+  region: southeastasia
+  registry: Azure Container Registry
+  search: Azure AI Search
+  embedding: Azure OpenAI
+  identity: DefaultAzureCredential
+
+  containers:
+    - name: org-docs-search-service
+      dockerfile: apps/odoo-docs-kb/Dockerfile
+      port: 8000
+      health_probe: GET /health
+      min_replicas: 1
+      max_replicas: 3
+
+  jobs:
+    - name: org-docs-indexer
+      type: scheduled
+      schedule: "0 2 * * 0"  # weekly Sunday 02:00 UTC
+      trigger_on_push: true
+      ci_workflow: .github/workflows/odoo-docs-kb-refresh.yml
+
+refresh:
+  incremental:
+    trigger: git push to main
+    mechanism: "git diff --name-only HEAD~1 to identify changed files"
+    action: re-chunk and re-index changed documents only
+
+  full:
+    trigger: weekly CI (Sunday 02:00 UTC)
+    mechanism: full crawl of all P0 and P1 sources
+    action: rebuild all chunks, re-embed, re-index
+
+  staleness:
+    threshold_days: 90
+    deprecated_detection: true
+    evidence_skip: true
+
+observability:
+  logging:
+    format: structured JSON to stdout
+    fields: [timestamp, level, component, operation, duration_ms, doc_count, chunk_count]
+
+  metrics:
+    - name: index_document_count
+      type: gauge
+      alert_below: 100
+    - name: indexing_duration_seconds
+      type: timer
+      alert_above: 1800
+    - name: search_latency_p95_ms
+      type: timer
+      alert_above: 2000
+    - name: search_error_rate
+      type: counter
+      alert_above: 0.05
+    - name: embedding_api_errors
+      type: counter
+      alert_above: 10
+
+  health_probes:
+    - endpoint: GET /health
+      expected: '{"status": "ok"}'
+      interval_seconds: 30
+    - endpoint: GET /health/search
+      expected: Azure AI Search reachable
+      interval_seconds: 60
+    - endpoint: GET /health/embedder
+      expected: Azure OpenAI reachable
+      interval_seconds: 60

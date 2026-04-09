@@ -20,7 +20,7 @@ false
 
 Run deterministic validation of an Odoo addon/module (Python + XML + JS) against:
 
-- Odoo 19 documentation KB (vendored + pinned)
+- Odoo 18 documentation KB (vendored + pinned)
 - Repo policies (no UI steps, deterministic paths, CE/OCA constraints)
 - Style + correctness checks that do NOT require expensive models
 
@@ -30,12 +30,12 @@ Produces a machine-readable validation report and audit evidence.
 
 ## Preconditions (MUST ALL BE TRUE)
 
-1. `docs/kb/odoo19/UPSTREAM_PIN.json` exists
+1. `docs/kb/odoo18/UPSTREAM_PIN.json` exists
 2. KB pin integrity is valid (must pass `verify_odoo_docs_pin.py`)
 3. Index artifacts exist and are non-empty:
-   - `docs/kb/odoo19/index/manifest.json`
-   - `docs/kb/odoo19/index/sections.json`
-   - `docs/kb/odoo19/index/topics.json`
+   - `docs/kb/odoo18/index/manifest.json`
+   - `docs/kb/odoo18/index/sections.json`
+   - `docs/kb/odoo18/index/topics.json`
 4. Module path exists and contains `__manifest__.py`
 5. Validator script exists: `scripts/kb/validate_module_against_kb.py`
 

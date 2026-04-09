@@ -361,14 +361,14 @@ The W-series codes are **simplified aliases** and NOT the BIR-canonical ATC code
 3. Rate tables -- already ported
 
 **Stale / Drop:**
-1. Odoo 18 cert/prompt specs -- we are on Odoo 19
+1. Odoo 17 cert/prompt specs -- we are on Odoo 18
 2. `ipai_project_brief` sub-module -- unrelated
 3. CI workflow -- targets Odoo 18.0 + Python 3.11
 
 ### Recommended Salvage Priorities
 
 1. **P0**: Absorb the AI review engine (TXP-024 + TXP-022 + TXP-023 + TXP-025 + TXP-026) into `agents/` and platform Supabase migrations. This is the most valuable unported component.
-2. **P0**: Absorb BIR form Odoo models (TXP-002, TXP-003, TXP-004) and agency model (TXP-005) into `ipai_bir_tax_compliance`, with Odoo 19 migration (`tree` to `list`, etc.)
+2. **P0**: Absorb BIR form Odoo models (TXP-002, TXP-003, TXP-004) and agency model (TXP-005) into `ipai_bir_tax_compliance`, with Odoo 18 migration (`tree` to `list`, etc.)
 3. **P1**: Absorb form definitions (TXP-015), mappings (TXP-016), and validation rules (TXP-017) into the canonical rules pack
 4. **P1**: Port the detailed PRD (TXP-027) as reference documentation for the SpectraTax Engine vision
 5. **P2**: Absorb security ACLs (TXP-007) and test fixtures (TXP-018, TXP-019) into canonical module

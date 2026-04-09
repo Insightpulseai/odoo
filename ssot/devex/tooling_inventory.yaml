@@ -1,0 +1,322 @@
+# schema: ssot.devex.tooling_inventory.v1
+# ---
+# SSOT: Unified tooling inventory for Insightpulseai/odoo contributors
+# Covers VS Code extensions, Docker Desktop extensions, and MCP servers.
+# Companion files:
+#   - ssot/devex/vscode.yaml (VS Code workspace config)
+#   - docs/dev/devex/TOOLING_INDEX.md (human-readable index)
+# Validator: scripts/ci/check_tooling_inventory.py
+# CI guard: .github/workflows/tooling-inventory-check.yml
+# Last updated: 2026-03-02
+
+id: tooling_inventory
+name: "Unified tooling inventory — Insightpulseai/odoo"
+category: developer_tooling
+version: "1.0.0"
+
+meta:
+  schema_version: "1.0"
+  updated_at: "2026-03-02"
+  repo: "Insightpulseai/odoo"
+  allowed_statuses:
+    - required
+    - recommended
+    - optional
+    - avoid
+
+# ─────────────────────────────────────────────────────────────────────────────
+# VS Code Extensions
+# ─────────────────────────────────────────────────────────────────────────────
+vscode_extensions:
+
+  # --- Required ---
+  - id: ms-vscode-remote.remote-containers
+    name: Dev Containers
+    status: required
+    purpose: "Open repo in standardized devcontainer (Docker Desktop desktop-linux)"
+    evidence: ".devcontainer/devcontainer.json"
+
+  - id: GitHub.vscode-pull-request-github
+    name: GitHub Pull Requests and Issues
+    status: required
+    purpose: "Review/checkout PRs and issue comments inside VS Code"
+    evidence: "ssot/devex/vscode.yaml → vscode.required_extensions"
+
+  - id: ms-python.python
+    name: Python
+    status: required
+    purpose: "Odoo module development, scripts, linting, testing"
+    evidence: "ssot/devex/vscode.yaml → vscode.required_extensions"
+
+  - id: ms-python.vscode-pylance
+    name: Pylance
+    status: required
+    purpose: "Type checking and IntelliSense for Python/Odoo codebase"
+    evidence: "requirements.txt includes type stubs"
+
+  - id: redhat.vscode-yaml
+    name: YAML
+    status: required
+    purpose: "SSOT YAML authoring with schema validation"
+    evidence: "62+ SSOT YAML files in ssot/"
+
+  - id: editorconfig.editorconfig
+    name: EditorConfig
+    status: required
+    purpose: "Consistent whitespace and indent rules across contributors"
+    evidence: ".editorconfig"
+
+  # --- Recommended ---
+  - id: dbaeumer.vscode-eslint
+    name: ESLint
+    status: recommended
+    purpose: "JS/TS linting for MCP servers, web apps, and scripts"
+    evidence: "mcp/servers/ and apps/ contain JS/TS code"
+
+  - id: mhutchie.git-graph
+    name: Git Graph
+    status: recommended
+    purpose: "Fast branch and merge visualization"
+    evidence: "153 workflows produce complex branch activity"
+
+  # --- Optional ---
+  - id: dotjoshjohnson.xml
+    name: XML Tools
+    status: optional
+    purpose: "Odoo view XML editing and formatting"
+    evidence: "addons/ipai/**/views/*.xml"
+
+  - id: ms-edgedevtools.vscode-edge-devtools
+    name: Microsoft Edge Tools
+    status: optional
+    purpose: "Browser-side debugging for web apps (only when doing UI debug)"
+    evidence: "apps/ web frontends"
+
+  # --- Avoid ---
+  - id: "*.odoo-snippets"
+    name: "Random Odoo Snippets packs"
+    status: avoid
+    purpose: "Creates inconsistent code patterns across contributors"
+    evidence: "No repo-wide snippet standard established"
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Docker Desktop Extensions
+# ─────────────────────────────────────────────────────────────────────────────
+docker_desktop_extensions:
+
+  # --- Required ---
+  - name: Logs Explorer
+    status: required
+    purpose: "Quick container log triage without guessing container IDs"
+    evidence: "docker-compose.devcontainer.yml runs multi-container stacks"
+
+  - name: Resource Usage
+    status: required
+    purpose: "Detect runaway containers and memory spikes during Odoo/devcontainers"
+    evidence: "Odoo + PostgreSQL + devcontainer resource pressure"
+
+  # --- Recommended ---
+  - name: Aqua Trivy
+    status: recommended
+    purpose: "Image vulnerability scanning (pre-merge signal, complements GitHub Dependabot)"
+    evidence: ".github/workflows/dependency-scan.yml"
+
+  - name: Copacetic
+    status: optional
+    purpose: "Patch container images based on scanner results (only if shipping images)"
+    evidence: "Only relevant for DO App Platform image builds"
+
+  - name: Remote Docker
+    status: optional
+    purpose: "Manage remote Docker hosts via SSH tunnels (DO droplet workflows)"
+    evidence: "infra/ contains DO deployment configs"
+
+  # --- Avoid ---
+  - name: Docker MCP Toolkit (Deprecated)
+    status: avoid
+    purpose: "Deprecated — Docker Desktop has integrated MCP Toolkit in newer versions"
+    evidence: "Docker Hub deprecation notice"
+
+# ─────────────────────────────────────────────────────────────────────────────
+# MCP Servers
+# ─────────────────────────────────────────────────────────────────────────────
+mcp_servers:
+
+  # --- Active (core platform control plane) ---
+  - id: github-mcp
+    source: external
+    status: active
+    integration_surface: "GitHub repo/PR/issues/actions"
+    runner: npx
+    tools:
+      - repo_management
+      - pr_review
+      - issue_triage
+      - actions_dispatch
+    secret_refs:
+      - github_token
+    requires_approval: false
+    evidence: "mcp/servers/ and .vscode/mcp.json"
+
+  - id: supabase-mcp
+    source: external
+    status: active
+    integration_surface: "Supabase DB/Auth/Edge Functions/Vault"
+    runner: npx
+    tools:
+      - database_query
+      - edge_function_deploy
+      - vault_read
+      - auth_management
+    secret_refs:
+      - supabase_management_token
+      - supabase_service_role_key
+    requires_approval: false
+    evidence: "supabase/ directory, 42 Edge Functions"
+
+  - id: context7-mcp
+    source: external
+    status: active
+    integration_surface: "Library docs injection for up-to-date patterns"
+    runner: npx
+    tools:
+      - resolve_library_id
+      - get_library_docs
+    secret_refs: []
+    requires_approval: false
+    evidence: "Referenced in ~/.claude/MCP.md"
+
+  - id: playwright-mcp
+    source: external
+    status: active
+    integration_surface: "E2E testing + regression reproduction"
+    runner: npx
+    tools:
+      - browser_navigate
+      - browser_click
+      - browser_screenshot
+      - browser_evaluate
+    secret_refs: []
+    requires_approval: false
+    evidence: "Referenced in ~/.claude/MCP.md"
+
+  # --- Active (ops / observability) ---
+  - id: sentry-mcp
+    source: external
+    status: active
+    integration_surface: "Error tracking and alerting"
+    runner: npx
+    tools:
+      - list_issues
+      - get_issue
+      - resolve_issue
+    secret_refs:
+      - sentry_auth_token
+    requires_approval: false
+    evidence: "ssot/observability/ references Sentry"
+
+  - id: netdata-mcp
+    source: external
+    status: active
+    integration_surface: "Server observability and metrics"
+    runner: npx
+    tools:
+      - get_metrics
+      - list_alerts
+    secret_refs: []
+    requires_approval: false
+    evidence: "ssot/observability/ references Netdata (secret TBD — register before activation)"
+
+  # --- Active (docs / context) ---
+  - id: markitdown-mcp
+    source: external
+    status: active
+    integration_surface: "Convert PDF/Word/Excel/images to Markdown for agent ingestion"
+    runner: npx
+    tools:
+      - convert_document
+    secret_refs: []
+    requires_approval: false
+    evidence: "Agent workflows ingest external documents"
+
+  # --- Active (devex / testing) ---
+  - id: chrome-devtools-mcp
+    source: external
+    status: active
+    integration_surface: "Frontend perf/debug via Chrome DevTools Protocol"
+    runner: npx
+    tools:
+      - get_performance_metrics
+      - get_console_logs
+      - get_network_requests
+    secret_refs: []
+    requires_approval: false
+    evidence: "apps/ web frontends need perf profiling"
+
+  # --- Planned ---
+  - id: vercel-mcp
+    source: external
+    status: planned
+    integration_surface: "Vercel deployments and edge functions"
+    runner: npx
+    tools:
+      - list_deployments
+      - get_deployment
+      - trigger_deploy
+    secret_refs:
+      - vercel_token
+    requires_approval: true
+    evidence: "apps/ deployed on Vercel, docs/dev/vercel/"
+
+  - id: terraform-mcp
+    source: external
+    status: planned
+    integration_surface: "IaC enforcement for Cloudflare DNS and infra"
+    runner: npx
+    tools:
+      - plan
+      - apply
+      - state_list
+    secret_refs:
+      - cf_dns_edit_token
+    requires_approval: true
+    evidence: "infra/cloudflare/ Terraform configs"
+
+  # --- Optional ---
+  - id: figma-mcp
+    source: external
+    status: planned
+    integration_surface: "Design token sync from Figma"
+    runner: npx
+    tools:
+      - get_file
+      - get_styles
+      - export_tokens
+    secret_refs:
+      - figma_personal_access_token
+    requires_approval: true
+    evidence: "packages/design-tokens/"
+
+  - id: stripe-mcp
+    source: external
+    status: planned
+    integration_surface: "Payment processing integration"
+    runner: npx
+    tools:
+      - list_charges
+      - create_checkout
+    secret_refs:
+      - stripe_secret_key
+    requires_approval: true
+    evidence: "Future payment module planning"
+
+  # --- Rejected ---
+  - id: docker-mcp-toolkit-deprecated
+    source: external
+    status: rejected
+    integration_surface: "Docker Hub (deprecated toolkit)"
+    runner: npx
+    tools: []
+    secret_refs: []
+    requires_approval: false
+    evidence: "Deprecated — Docker Desktop now has native MCP integration"

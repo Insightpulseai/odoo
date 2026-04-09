@@ -1,0 +1,91 @@
+# schema: ssot.integrations.v1
+# Microsoft Azure Skills — Azure and Foundry operational grounding.
+#
+# Packages Azure skills plus Azure MCP Server and Foundry MCP wiring.
+# Supports GitHub Copilot CLI, VS Code, and Claude Code.
+# Expects `az login` + `azd auth login` for deployment workflows.
+#
+# References:
+#   microsoft/azure-skills — https://github.com/microsoft/azure-skills
+
+version: "1.0.0"
+schema: ssot.integrations.v1
+id: microsoft_azure_skills
+name: "Microsoft Azure Skills (Azure/Foundry Operational Grounding)"
+vendor: microsoft
+category: agent_skills
+status: planned
+reviewed: "2026-04-05"
+
+description: >
+  Azure and Foundry operational grounding for coding agents. Packages Azure skills
+  plus Azure MCP Server and Foundry MCP wiring. Provides inventory, deploy, and
+  diagnostics assistance for Azure resources. Supports GitHub Copilot CLI, VS Code,
+  and Claude Code agent hosts.
+
+surfaces:
+  - id: azure_skills_repo
+    name: "microsoft/azure-skills repository"
+    url: "https://github.com/microsoft/azure-skills"
+    auth: az_login
+    status: planned
+    notes: >
+      Requires `az login` for Azure resource operations and `azd auth login` for
+      Azure Developer CLI deployment workflows. Skills provide resource inventory,
+      deployment diagnostics, configuration validation, and Foundry model management.
+
+  - id: azure_mcp_server
+    name: "Azure MCP Server"
+    url: "https://github.com/microsoft/azure-skills"
+    auth: az_login
+    status: planned
+    notes: >
+      MCP server for Azure operations. Exposes Azure resource management as
+      MCP tools consumable by any MCP-compatible agent host. Registered in
+      project .mcp.json when activated.
+
+repo_contract:
+  architecture_doc: "docs/architecture/AGENTIC_CODING_CONTRACT.md"
+  mcp_config: ".mcp.json"
+  notes: >
+    When activated, Azure MCP Server is registered in .mcp.json under the project
+    MCP configuration. Skills are installed in agents/skills/ alongside microsoft/skills.
+    Auth flows through existing `az login` session — no additional secrets required
+    beyond Azure CLI authentication.
+
+ssot_boundary_rules:
+  - "Azure skills must not be embedded in addons/ipai/ — they are agent-runtime assets"
+  - "MCP server registration goes in .mcp.json, not in Odoo module configuration"
+  - "Azure operations invoked by skills must follow the IaC-first principle (no console-only changes)"
+  - "Skills that mutate Azure resources must log operations to ops.run_events"
+
+risk_flags:
+  - id: untracked_azure_mutations
+    severity: high
+    description: >
+      Azure skills can create, modify, or delete Azure resources. If these operations
+      are not tracked in IaC, they create drift (the same R2 risk from the platform assessment).
+    mitigation: >
+      Skills that mutate Azure resources must: (1) log to ops.run_events, (2) generate
+      corresponding Bicep changes or document exceptions, (3) be gated behind human
+      approval for destructive operations.
+
+  - id: credential_scope
+    severity: medium
+    description: >
+      `az login` session may have broader permissions than the skill needs.
+    mitigation: >
+      Use service principal with scoped RBAC for CI/automated contexts.
+      Interactive `az login` acceptable for developer-local usage only.
+
+allowed_egress:
+  - management.azure.com        # Azure Resource Manager
+  - "*.openai.azure.com"        # Azure OpenAI (Foundry skills)
+  - github.com                  # Skill repository access
+
+secrets_required:
+  - name: AZURE_CLIENT_ID
+    purpose: "Service principal for CI-context Azure skills"
+    store: github_actions_secrets
+    required: false
+    note: "Not required for interactive developer use (az login). Required for CI pipelines."

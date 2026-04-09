@@ -1,0 +1,74 @@
+version: 1
+description: >
+  Maps Microsoft certification roles to internal assessment personas
+  and the domains they are qualified to review. Used by the harness
+  to route questions to the right persona and validate domain coverage.
+
+role_map:
+  - certification: AZ-305
+    title: Azure Solutions Architect Expert
+    persona: waf_solutions_architect
+    domains: [reliability, performance, architecture, topology]
+    assessment_families: [waf, platform_engineering]
+    scope: >
+      Overall architecture decisions, topology trade-offs, workload design.
+      Reviews the "why" behind architectural choices, not just resource existence.
+
+  - certification: AZ-104
+    title: Azure Administrator Associate
+    persona: platform_operator
+    domains: [operations, runtime, inventory, recovery]
+    assessment_families: [waf, go_live]
+    scope: >
+      Day-2 operations, resource management, monitoring, backup/recovery.
+      Validates that controls are operationally usable, not just deployed.
+
+  - certification: AZ-500
+    title: Azure Security Engineer Associate
+    persona: security_identity_reviewer
+    domains: [security, identity, secrets, exposure]
+    assessment_families: [waf]
+    secondary_certifications: [SC-300, SC-100]
+    scope: >
+      Identity posture, MFA enforcement, network exposure, secrets management,
+      vulnerability scanning, and compliance controls.
+
+  - certification: AZ-400
+    title: DevOps Engineer Expert
+    persona: devops_delivery_reviewer
+    domains: [pipeline, release, traceability, governance]
+    assessment_families: [devops, platform_engineering]
+    secondary_certifications: [GH-200]
+    scope: >
+      CI/CD pipeline architecture, release safety, branch governance,
+      deployment automation, and build-to-deploy traceability.
+
+  - certification: AI-102
+    title: Azure AI Engineer Associate
+    persona: ai_platform_reviewer
+    domains: [ai_runtime, model_access, grounding, safety]
+    assessment_families: [genaiops]
+    secondary_certifications: [GH-300]
+    scope: >
+      AI platform architecture, model access patterns, retrieval/grounding,
+      safety controls, eval gates, and agent runtime boundaries.
+
+  - certification: DP-600
+    title: Fabric Analytics Engineer Associate
+    persona: data_intelligence_reviewer
+    domains: [lakehouse, governance, ingestion, semantic_bi]
+    assessment_families: [waf]
+    secondary_certifications: [DP-750]
+    scope: >
+      Data platform architecture, lakehouse model, Unity Catalog governance,
+      ingestion patterns, semantic BI consumption, and data/AI integration.
+
+  - certification: AZ-120
+    title: Azure for SAP Workloads Specialty
+    persona: workload_ops_specialist
+    domains: [workload_operating_model, workload_monitoring, ha_dr]
+    assessment_families: [waf, go_live, saas_journey]
+    scope: >
+      Enterprise workload operating model rigor applied to Odoo-on-Azure.
+      Workload center, OSI model, lifecycle operations, HA/DR posture.
+      Thinks in terms of SAP BASIS-equivalent discipline for Odoo.

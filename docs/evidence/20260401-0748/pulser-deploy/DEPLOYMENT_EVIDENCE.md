@@ -57,7 +57,7 @@ None (spec files do not trigger `azure-pipelines/odoo-deploy.yml` or `.github/wo
 - **Login**: `/web/login` → HTTP 200, title "Odoo"
 - **Copilot endpoint**: `/ipai/copilot/chat` → HTTP 405 (method not allowed — correct for GET, expects POST)
 - **Container App**: `ipai-odoo-dev-web` in `rg-ipai-dev-odoo-runtime`
-- **Image**: `acripaiodoo.azurecr.io/ipai-odoo:19.0-copilot`
+- **Image**: `acripaiodoo.azurecr.io/ipai-odoo:18.0-copilot`
 - **Pipeline**: `azure-pipelines/odoo-deploy.yml` (AzDO)
 
 ### Foundry Agent (Production — Configured)
@@ -70,7 +70,7 @@ None (spec files do not trigger `azure-pipelines/odoo-deploy.yml` or `.github/wo
 
 ### Release Identifiers
 - Spec bundle: commit `2eba31a0` on `main`
-- Odoo Copilot: image `acripaiodoo.azurecr.io/ipai-odoo:19.0-copilot` (latest AzDO build)
+- Odoo Copilot: image `acripaiodoo.azurecr.io/ipai-odoo:18.0-copilot` (latest AzDO build)
 - Foundry Agent: `ipai-odoo-copilot-azure` v1.0.0
 
 ---

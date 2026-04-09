@@ -62,7 +62,7 @@ IPAI follows the **SAP composite pattern**, not the Odoo.sh monolith:
 
 - If you want "what is the closest SAP on Azure single thing to Odoo.sh?" → **Azure Center for SAP solutions**
 - If you want "what stack gets me closest to Odoo.sh behavior?" → **Center + deployment automation + Monitor + Azure DevOps**
-- IPAI is architecturally aligned with the SAP composite approach, achieving **86.7% parity with Odoo.sh** (65/75 features PARITY or EXCEEDS, **0 gaps remaining**) while **exceeding Odoo.sh** on SLA, scaling, security, and developer tooling.
+- IPAI uses the SAP composite pattern for ops/governance maturity only. For application architecture, ACA Well-Architected (runtime), and Foundry SDK (AI) are the primary benchmarks. IPAI achieves **86.7% parity with Odoo.sh** (65/75 features PARITY or EXCEEDS, **0 gaps remaining**) while **exceeding Odoo.sh** on SLA, scaling, security, and developer tooling.
 
 ---
 
@@ -95,11 +95,13 @@ See `agents/library/odoo/odoosh_parity_judge.md` for the full 75-feature invento
 | Benchmark Source | Classification | What It Governs |
 |------------------|---------------|-----------------|
 | **Odoo.sh admin docs** | Platform behavior benchmark | Branch/build lifecycle, staging semantics, neutralization, backups, shell/log/operator experience |
-| **Azure SAP DevOps automation** | Deploy control-plane benchmark | Azure DevOps project/pipeline wiring, variable groups, service connections, deployment orchestration |
-| **Azure Container Apps docs** | Runtime implementation benchmark | Ingress, revisions, routing, app-hosting substrate |
-| **Odoo 18 developer how-tos** | Module/application engineering benchmark | Frontend customization, Owl/client actions, reporting, localization, upgrades, testing, External API |
+| **Azure SAP DevOps automation** | Ops/governance maturity benchmark (SAP-on-Azure layer only) | Azure DevOps project/pipeline wiring, variable groups, service connections, deployment orchestration |
+| **Azure Container Apps docs** | Runtime benchmark (Layer 2) | Ingress, revisions, routing, app-hosting substrate — primary runtime benchmark |
+| **Odoo 18 developer how-tos** | Application/module engineering benchmark (Layer 1) | Frontend customization, Owl/client actions, reporting, localization, upgrades, testing, External API |
+| **Odoo CE 18 + OCA doctrine** | Application architecture benchmark (Layer 1) | ERP application design, addon taxonomy, parity work, custom module boundaries |
+| **Microsoft Foundry SDK** | AI/copilot runtime benchmark (Layer 3) | Agent runtime, model access, orchestration, evaluation, safety, governance |
 | **Odoo Azure-related docs** | App integration spec | Azure sign-in (Entra OAuth), Outlook 365 mail, cloud storage attachment offload |
-| **SAP on Azure product docs** | Governance benchmark | PIM, Azure Policy, WAR, monitoring separation, automation |
+| **SAP on Azure product docs** | Ops/governance maturity benchmark (ops/governance only — NOT application, runtime, or AI benchmark) | Landing-zone discipline, environment separation, deployment automation, workload monitoring patterns |
 | **OCA addon lifecycle** | Addon governance benchmark | Module maturity, porting workflow, quality gates, manifest management |
 
 ### Odoo 18 Developer How-Tos as Benchmark

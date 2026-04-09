@@ -11,7 +11,7 @@
 - OCA modifications: none found — PASS
 - Migration scripts: no schema changes detected — N/A
 - Deprecated patterns: none found — PASS
-- Odoo 19 compatibility: no `groups_id` usage, no `tree` in user-facing — PASS
+- Odoo 18 compatibility: no `groups_id` usage, no `tree` in user-facing — PASS
 - Overall: **SAFE**
 
 ## Example 2: Module fails — core file modified
@@ -42,5 +42,5 @@
 **Output**:
 - Migration scripts: MISSING
 - Reason: New required field `margin_pct` on `project.project` needs a pre-migration to set default values for existing records
-- Recommendation: Create `migrations/19.0.1.1.0/pre-migrate.py` with `ALTER TABLE` or ORM default
+- Recommendation: Create `migrations/18.0.1.1.0/pre-migrate.py` with `ALTER TABLE` or ORM default
 - Overall: **UNSAFE** (will fail on upgrade for existing databases)

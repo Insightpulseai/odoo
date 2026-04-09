@@ -1,0 +1,252 @@
+# Azure DevOps RAG — Agent Skill Definition
+
+name: azure_devops_rag
+description: >
+  Retrieval-augmented generation over Azure DevOps documentation —
+  organizations, boards, pipelines, security, audit, process customization, CLI, REST API.
+  Aligned to IPAI operating model where ADO is the governance spine.
+version: "1.0"
+
+service:
+  app: apps/azure-devops-kb
+  entrypoint: service.py
+  runtime: azure-container-apps
+  health_check: /health
+
+tools:
+  # --- General search ---
+  - name: search_azdo_docs
+    description: >
+      Search Azure DevOps documentation across all domains.
+      Returns ranked chunks with citation metadata.
+    parameters:
+      query:
+        type: string
+        required: true
+        description: Natural language search query
+      domain:
+        type: string
+        required: false
+        description: >
+          Filter to domain: "organizations", "boards", "pipelines",
+          "security", "audit", "process", "cli", "rest-api", "notifications"
+      top_k:
+        type: integer
+        default: 8
+        description: Number of results (max 20)
+    returns:
+      type: array
+      items:
+        chunk_id: string
+        content: string
+        path: string
+        heading_chain: string
+        domain: string
+        score: float
+        citation: string
+
+  - name: answer_azdo_question
+    description: >
+      Answer a question about Azure DevOps using grounded retrieval.
+      Returns an answer with source citations.
+    parameters:
+      query:
+        type: string
+        required: true
+        description: Question about Azure DevOps
+      domain:
+        type: string
+        required: false
+        description: Scope to a specific domain
+    returns:
+      answer: string
+      citations:
+        type: array
+        items:
+          chunk_id: string
+          path: string
+          heading_chain: string
+          domain: string
+          relevance: float
+
+  # --- Boards / Work Tracking ---
+  - name: get_work_item_guidance
+    description: >
+      Get guidance on work items — creation, updates, queries, WIQL syntax,
+      work item types by process template (Agile, Scrum, CMMI, Basic).
+    parameters:
+      query:
+        type: string
+        required: true
+        description: Question about work items or WIQL
+      process:
+        type: string
+        required: false
+        description: "Process template: agile, scrum, cmmi, basic"
+    returns:
+      answer: string
+      citations:
+        type: array
+
+  - name: get_area_iteration_guidance
+    description: >
+      Get guidance on area paths and iteration paths —
+      creation, team assignment, hierarchy, sprint management.
+    parameters:
+      query:
+        type: string
+        required: true
+        description: Question about area or iteration paths
+    returns:
+      answer: string
+      citations:
+        type: array
+
+  - name: get_backlog_sprint_guidance
+    description: >
+      Get guidance on backlogs and sprints —
+      backlog levels, sprint planning, capacity, burndown.
+    parameters:
+      query:
+        type: string
+        required: true
+        description: Question about backlogs or sprints
+
+  # --- Security & Permissions ---
+  - name: get_security_guidance
+    description: >
+      Get guidance on Azure DevOps security — security groups,
+      permission model, access levels, permission inheritance,
+      Entra ID integration, PATs, service principals.
+    parameters:
+      query:
+        type: string
+        required: true
+        description: Question about ADO security or permissions
+    returns:
+      answer: string
+      citations:
+        type: array
+
+  # --- Pipelines ---
+  - name: get_pipeline_guidance
+    description: >
+      Get guidance on Azure DevOps Pipelines — service connections,
+      environments, approvals, YAML pipelines, triggers, variables.
+    parameters:
+      query:
+        type: string
+        required: true
+        description: Question about pipelines or service connections
+    returns:
+      answer: string
+      citations:
+        type: array
+
+  # --- CLI Reference ---
+  - name: search_azdo_cli
+    description: >
+      Search Azure DevOps CLI command reference.
+      Returns relevant CLI commands, syntax, and examples
+      for az devops, az boards, az repos, az pipelines.
+    parameters:
+      query:
+        type: string
+        required: true
+        description: CLI command or action to search for
+      command_group:
+        type: string
+        required: false
+        description: "CLI group: devops, boards, repos, pipelines, artifacts"
+      top_k:
+        type: integer
+        default: 5
+    returns:
+      type: array
+      items:
+        chunk_id: string
+        content: string
+        path: string
+        heading_chain: string
+        score: float
+
+  # --- REST API Reference ---
+  - name: search_azdo_api
+    description: >
+      Search Azure DevOps REST API reference.
+      Returns API endpoints, methods, request/response schemas.
+    parameters:
+      query:
+        type: string
+        required: true
+        description: API operation to search for
+      area:
+        type: string
+        required: false
+        description: "API area: wit, core, graph, audit, build, release, git, notification"
+      top_k:
+        type: integer
+        default: 5
+    returns:
+      type: array
+      items:
+        chunk_id: string
+        content: string
+        path: string
+        heading_chain: string
+        score: float
+
+  # --- Process Customization ---
+  - name: get_process_customization_guidance
+    description: >
+      Get guidance on process customization — inherited processes,
+      custom fields, work item types, workflow states, form layouts,
+      backlog levels, rules, and limits.
+    parameters:
+      query:
+        type: string
+        required: true
+        description: Question about process customization
+    returns:
+      answer: string
+      citations:
+        type: array
+
+  # --- Audit ---
+  - name: get_audit_guidance
+    description: >
+      Get guidance on Azure DevOps audit — audit logs, audit streaming,
+      event types, retention, SIEM integration, compliance.
+    parameters:
+      query:
+        type: string
+        required: true
+        description: Question about ADO auditing
+    returns:
+      answer: string
+      citations:
+        type: array
+
+  # --- IPAI-specific context ---
+  - name: get_ipai_azdo_context
+    description: >
+      Get IPAI-specific Azure DevOps context — ipai-platform project,
+      area path to repo mapping, AB# linkage rules, operating model.
+      Draws from both ADO docs and IPAI governance SSOT.
+    parameters:
+      query:
+        type: string
+        required: true
+        description: Question about IPAI's Azure DevOps setup
+    returns:
+      answer: string
+      citations:
+        type: array
+    note: >
+      Enriches ADO doc search with IPAI-specific context from
+      ssot/governance/ado_github_authority_map.yaml and
+      docs/architecture/ADO_GITHUB_AUTHORITY_MAP_2026.md
+
+knowledge_source: agents/knowledge/azure_devops/source.yaml
+chunking_config: agents/knowledge/azure_devops/chunking.yaml
+indexing_config: agents/knowledge/azure_devops/indexing.yaml

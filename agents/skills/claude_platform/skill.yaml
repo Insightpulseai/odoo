@@ -1,0 +1,425 @@
+# IPAI Claude Platform — Agent Skill Definition
+#
+# Powers agent development guidance using Anthropic Claude platform documentation.
+# Covers: Messages API, tool use, agents, MCP, prompt engineering, SDKs,
+# Claude Code, extended thinking, prompt caching, vision, batch processing.
+#
+# Architecture:
+#   User (natural language) → Foundry Agent Service → Tool Router
+#     ├── KB RAG tools (grounded doc retrieval from claude-platform-docs index)
+#     └── Reasoning tools (pattern selection, cost optimization, architecture advice)
+#
+# Data sources:
+#   - Azure AI Search index: claude-platform-docs (KB for guidance)
+#   - IPAI agent codebase (local repo context)
+
+name: ipai_claude_platform
+description: >
+  Claude Platform knowledge skill — grounded retrieval and guidance for building
+  AI applications with Anthropic's Claude API. Covers: Messages API, tool use,
+  agentic patterns, MCP, prompt engineering, extended thinking, prompt caching,
+  vision, batch processing, SDKs, Claude Code, and computer use.
+version: "1.0"
+
+service:
+  app: apps/claude-platform-kb
+  entrypoint: service.py
+  runtime: azure-container-apps
+  health_check: /health
+
+tools:
+  # =========================================================================
+  # SECTION 1: Knowledge Base RAG Tools
+  # =========================================================================
+
+  - name: search_claude_docs
+    description: >
+      Search Claude platform documentation across all domains.
+      Returns ranked chunks with citations.
+    parameters:
+      query:
+        type: string
+        required: true
+      domain:
+        type: string
+        required: false
+        description: >
+          Filter: "tool-use", "agents", "mcp", "prompt-engineering",
+          "api", "sdks", "claude-code", "extended-thinking",
+          "prompt-caching", "vision", "batch-processing",
+          "computer-use", "citations", "admin"
+      top_k:
+        type: integer
+        default: 8
+    returns:
+      type: array
+      items:
+        chunk_id: string
+        content: string
+        path: string
+        heading_chain: string
+        domain: string
+        score: float
+        citation: string
+
+  - name: answer_claude_question
+    description: >
+      Answer a question about Claude platform using grounded retrieval.
+      Returns answer with source citations.
+    parameters:
+      query:
+        type: string
+        required: true
+      domain:
+        type: string
+        required: false
+    returns:
+      answer: string
+      citations:
+        type: array
+
+  # =========================================================================
+  # SECTION 2: Tool Use Guidance
+  # =========================================================================
+
+  - name: get_tool_use_guidance
+    description: >
+      Get guidance on implementing Claude tool use — tool definition schemas,
+      forced tool use, parallel tools, error handling, best practices.
+    parameters:
+      topic:
+        type: string
+        required: true
+        description: >
+          "defining-tools", "forced-tool-use", "parallel-tools",
+          "error-handling", "streaming-tools", "tool-choice",
+          "json-output", "best-practices"
+    returns:
+      guidance: string
+      code_examples: array
+      citations: array
+
+  - name: generate_tool_definition
+    description: >
+      Generate a Claude-compatible tool definition (JSON Schema) from a
+      natural language description of the tool's purpose and parameters.
+    parameters:
+      tool_description:
+        type: string
+        required: true
+        description: Natural language description of the tool
+      parameters_description:
+        type: string
+        required: false
+        description: Description of expected parameters
+    returns:
+      tool_definition: object
+      usage_example: string
+
+  # =========================================================================
+  # SECTION 3: Agent Patterns
+  # =========================================================================
+
+  - name: get_agent_pattern_guidance
+    description: >
+      Get guidance on agentic patterns — agentic loops, delegation,
+      multi-agent orchestration, guardrails, error recovery.
+    parameters:
+      pattern:
+        type: string
+        required: true
+        description: >
+          "agentic-loop", "tool-agent", "multi-agent", "delegation",
+          "orchestrator-worker", "evaluator-optimizer", "guardrails",
+          "error-recovery", "human-in-the-loop", "routing"
+    returns:
+      guidance: string
+      architecture_diagram: string
+      code_examples: array
+      citations: array
+
+  - name: get_agent_sdk_guidance
+    description: >
+      Get guidance on using the Anthropic Agent SDK — agent creation,
+      tool registration, handoffs, context management.
+    parameters:
+      topic:
+        type: string
+        required: true
+        description: >
+          "quickstart", "agent-creation", "tool-registration",
+          "handoffs", "context-management", "guardrails",
+          "multi-agent", "streaming"
+    returns:
+      guidance: string
+      code_examples: array
+      citations: array
+
+  # =========================================================================
+  # SECTION 4: Prompt Engineering
+  # =========================================================================
+
+  - name: get_prompt_engineering_guidance
+    description: >
+      Get prompt engineering guidance — system prompts, few-shot examples,
+      chain-of-thought, XML tags, prompt structure, role prompting.
+    parameters:
+      technique:
+        type: string
+        required: true
+        description: >
+          "system-prompts", "few-shot", "chain-of-thought",
+          "xml-tags", "prompt-structure", "role-prompting",
+          "output-formatting", "prefilling", "long-context",
+          "prompt-chaining", "reasoning"
+    returns:
+      guidance: string
+      examples: array
+      citations: array
+
+  # =========================================================================
+  # SECTION 5: MCP (Model Context Protocol)
+  # =========================================================================
+
+  - name: get_mcp_guidance
+    description: >
+      Get MCP guidance — server implementation, tool exposure,
+      resource management, transport protocols, client integration.
+    parameters:
+      topic:
+        type: string
+        required: true
+        description: >
+          "overview", "server-implementation", "tools",
+          "resources", "prompts", "transport", "sampling",
+          "client-integration", "claude-code-mcp", "best-practices"
+    returns:
+      guidance: string
+      code_examples: array
+      citations: array
+
+  # =========================================================================
+  # SECTION 6: API Usage
+  # =========================================================================
+
+  - name: get_api_guidance
+    description: >
+      Get API usage guidance — messages endpoint, streaming, token counting,
+      rate limits, error handling, authentication.
+    parameters:
+      topic:
+        type: string
+        required: true
+        description: >
+          "messages", "streaming", "token-counting", "rate-limits",
+          "error-handling", "authentication", "headers",
+          "content-types", "models", "pricing"
+    returns:
+      guidance: string
+      code_examples: array
+      citations: array
+
+  - name: get_sdk_guidance
+    description: >
+      Get SDK-specific guidance — Python or TypeScript SDK setup,
+      client configuration, async patterns, retries.
+    parameters:
+      sdk:
+        type: string
+        required: true
+        description: "'python' or 'typescript'"
+      topic:
+        type: string
+        required: true
+        description: >
+          "setup", "client-config", "async", "retries",
+          "streaming", "tool-use", "error-handling",
+          "proxy-config", "custom-headers"
+    returns:
+      guidance: string
+      code_examples: array
+      citations: array
+
+  # =========================================================================
+  # SECTION 7: Advanced Features
+  # =========================================================================
+
+  - name: get_effort_guidance
+    description: >
+      Get guidance on the effort parameter — controls token usage vs thoroughness.
+      Levels: max (Opus only), high (default), medium, low.
+      Affects text, tool calls, and thinking tokens.
+    parameters:
+      topic:
+        type: string
+        required: true
+        description: >
+          "overview", "levels", "model-compatibility",
+          "agent-optimization", "cost-savings", "best-practices"
+    returns:
+      guidance: string
+      code_examples: array
+      citations: array
+
+  - name: get_extended_thinking_guidance
+    description: >
+      Get guidance on extended thinking and adaptive thinking —
+      enabling thinking, budget tokens, adaptive mode (Opus/Sonnet 4.6),
+      interleaved thinking with tool calls, streaming thinking.
+    parameters:
+      topic:
+        type: string
+        required: true
+        description: >
+          "extended-thinking", "adaptive-thinking", "budget-tokens",
+          "interleaved-thinking", "streaming", "model-compatibility",
+          "use-cases", "limitations"
+    returns:
+      guidance: string
+      code_examples: array
+      citations: array
+
+  - name: get_guardrails_guidance
+    description: >
+      Get guidance on strengthening guardrails — reducing hallucinations,
+      increasing output consistency, mitigating jailbreaks, handling
+      streaming refusals, reducing prompt leak.
+    parameters:
+      topic:
+        type: string
+        required: true
+        description: >
+          "reduce-hallucinations", "increase-consistency",
+          "mitigate-jailbreaks", "streaming-refusals",
+          "reduce-prompt-leak", "eval-tool", "develop-tests"
+    returns:
+      guidance: string
+      code_examples: array
+      citations: array
+
+  - name: get_prompt_caching_guidance
+    description: >
+      Get guidance on prompt caching — cache breakpoints,
+      cache hit rates, cost savings, TTL, best practices.
+    parameters:
+      topic:
+        type: string
+        required: true
+        description: >
+          "overview", "cache-breakpoints", "cost-savings",
+          "ttl", "monitoring", "best-practices"
+    returns:
+      guidance: string
+      code_examples: array
+      citations: array
+
+  - name: get_vision_guidance
+    description: >
+      Get guidance on Claude vision — image input, PDF support,
+      base64 encoding, URL images, multi-image, limitations.
+    parameters:
+      topic:
+        type: string
+        required: true
+        description: >
+          "image-input", "pdf-support", "base64",
+          "url-images", "multi-image", "limitations",
+          "best-practices"
+    returns:
+      guidance: string
+      code_examples: array
+      citations: array
+
+  - name: get_batch_processing_guidance
+    description: >
+      Get guidance on batch processing — Message Batches API,
+      batch creation, polling, results retrieval, cost savings.
+    parameters:
+      topic:
+        type: string
+        required: true
+        description: >
+          "overview", "batch-creation", "polling",
+          "results-retrieval", "cost-savings", "limits",
+          "error-handling"
+    returns:
+      guidance: string
+      code_examples: array
+      citations: array
+
+  # =========================================================================
+  # SECTION 8: Claude Code
+  # =========================================================================
+
+  - name: get_claude_code_guidance
+    description: >
+      Get guidance on Claude Code — CLI usage, hooks, MCP integration,
+      CLAUDE.md configuration, slash commands, permissions.
+    parameters:
+      topic:
+        type: string
+        required: true
+        description: >
+          "overview", "cli-usage", "hooks", "mcp",
+          "claude-md", "slash-commands", "permissions",
+          "ide-integration", "custom-commands", "settings"
+    returns:
+      guidance: string
+      code_examples: array
+      citations: array
+
+  # =========================================================================
+  # SECTION 9: IPAI-Specific Context
+  # =========================================================================
+
+  - name: get_ipai_claude_context
+    description: >
+      Get IPAI-specific context for Claude platform usage — how IPAI uses
+      Claude API, agent patterns, MCP servers, tool definitions, and
+      integration points with Foundry Agent Service.
+    parameters:
+      topic:
+        type: string
+        required: true
+        description: >
+          "agent-architecture", "tool-definitions", "mcp-servers",
+          "foundry-integration", "prompt-patterns", "cost-optimization",
+          "model-selection", "caching-strategy"
+    returns:
+      guidance: string
+      ipai_context: object
+      relevant_files: array
+
+knowledge_source: agents/knowledge/claude_platform/source.yaml
+chunking_config: agents/knowledge/claude_platform/chunking.yaml
+indexing_config: agents/knowledge/claude_platform/indexing.yaml
+
+# Architecture notes:
+#
+# This skill powers agent development guidance within IPAI.
+# It complements the Azure Foundry KB (which covers the deployment runtime)
+# by providing Claude-specific API and pattern guidance.
+#
+# Key integration points:
+#   1. IPAI agents use Foundry Agent Service as runtime
+#   2. Claude API (via Azure OpenAI or direct Anthropic) for inference
+#   3. MCP for tool exposure (Plane, Supabase, GitHub servers)
+#   4. Claude Code as primary development agent
+#   5. Tool definitions follow Claude's JSON Schema format
+#
+# Domain coverage (17 tools across 10 sections):
+#   - API usage:           Messages, streaming, batching, token counting
+#   - Tool use:            Definition, forced use, parallel, built-in tools (8 types)
+#   - Agents:              Agentic loops, multi-agent, Agent SDK, agent skills
+#   - MCP:                 Server impl, resources, tools, transport, MCP connector
+#   - Prompt engineering:  System prompts, few-shot, CoT, XML tags
+#   - Effort:              Token efficiency control (max/high/medium/low)
+#   - Thinking:            Extended thinking, adaptive thinking, interleaved
+#   - Guardrails:          Hallucination, consistency, jailbreak, prompt leak
+#   - Advanced:            Prompt caching, vision, citations, compaction
+#   - Claude Code:         CLI, hooks, MCP, CLAUDE.md, permissions
+#
+# Model reference (2026-03-23):
+#   Opus 4.6:  claude-opus-4-6    ($5/$25 MTok, 1M ctx, 128k out)
+#   Sonnet 4.6: claude-sonnet-4-6 ($3/$15 MTok, 1M ctx, 64k out)
+#   Haiku 4.5:  claude-haiku-4-5  ($1/$5 MTok, 200k ctx, 64k out)

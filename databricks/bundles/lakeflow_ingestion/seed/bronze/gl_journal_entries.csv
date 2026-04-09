@@ -1,0 +1,51 @@
+id,date,account_code,account_name,project_id,description,debit,credit,entry_type
+JE-001a,2026-01-15,1200,Accounts Receivable,1,Alpha Jan revenue recognition,250000.00,0.00,revenue
+JE-001b,2026-01-15,4000,Service Revenue,1,Alpha Jan revenue recognition,0.00,250000.00,revenue
+JE-002a,2026-01-20,5100,Cost of Goods Sold,1,Alpha Jan vendor services,100000.00,0.00,cogs
+JE-002b,2026-01-20,2100,Accounts Payable,1,Alpha Jan vendor services,0.00,100000.00,cogs
+JE-003a,2026-01-31,5200,Payroll Expense,1,Alpha Jan payroll,30000.00,0.00,payroll
+JE-003b,2026-01-31,1100,Cash and Cash Equivalents,1,Alpha Jan payroll,0.00,30000.00,payroll
+JE-004a,2026-02-15,1200,Accounts Receivable,1,Alpha Feb revenue recognition,150000.00,0.00,revenue
+JE-004b,2026-02-15,4000,Service Revenue,1,Alpha Feb revenue recognition,0.00,150000.00,revenue
+JE-005a,2026-02-20,5100,Cost of Goods Sold,1,Alpha Feb vendor services,120000.00,0.00,cogs
+JE-005b,2026-02-20,2100,Accounts Payable,1,Alpha Feb vendor services,0.00,120000.00,cogs
+JE-006a,2026-02-28,5200,Payroll Expense,1,Alpha Feb payroll,25000.00,0.00,payroll
+JE-006b,2026-02-28,1100,Cash and Cash Equivalents,1,Alpha Feb payroll,0.00,25000.00,payroll
+JE-007a,2026-03-15,1200,Accounts Receivable,1,Alpha Mar revenue recognition,100000.00,0.00,revenue
+JE-007b,2026-03-15,4000,Service Revenue,1,Alpha Mar revenue recognition,0.00,100000.00,revenue
+JE-008a,2026-03-20,5100,Cost of Goods Sold,1,Alpha Mar vendor services,80000.00,0.00,cogs
+JE-008b,2026-03-20,2100,Accounts Payable,1,Alpha Mar vendor services,0.00,80000.00,cogs
+JE-009a,2026-03-31,5200,Payroll Expense,1,Alpha Mar payroll,25000.00,0.00,payroll
+JE-009b,2026-03-31,1100,Cash and Cash Equivalents,1,Alpha Mar payroll,0.00,25000.00,payroll
+JE-010a,2026-01-20,1200,Accounts Receivable,2,Beta Jan revenue recognition,100000.00,0.00,revenue
+JE-010b,2026-01-20,4000,Service Revenue,2,Beta Jan revenue recognition,0.00,100000.00,revenue
+JE-011a,2026-01-25,5100,Cost of Goods Sold,2,Beta Jan vendor services,80000.00,0.00,cogs
+JE-011b,2026-01-25,2100,Accounts Payable,2,Beta Jan vendor services,0.00,80000.00,cogs
+JE-012a,2026-01-31,5200,Payroll Expense,2,Beta Jan payroll,15000.00,0.00,payroll
+JE-012b,2026-01-31,1100,Cash and Cash Equivalents,2,Beta Jan payroll,0.00,15000.00,payroll
+JE-013a,2026-02-15,1200,Accounts Receivable,2,Beta Feb revenue recognition,60000.00,0.00,revenue
+JE-013b,2026-02-15,4000,Service Revenue,2,Beta Feb revenue recognition,0.00,60000.00,revenue
+JE-014a,2026-02-20,5100,Cost of Goods Sold,2,Beta Feb vendor services,90000.00,0.00,cogs
+JE-014b,2026-02-20,2100,Accounts Payable,2,Beta Feb vendor services,0.00,90000.00,cogs
+JE-015a,2026-02-28,5200,Payroll Expense,2,Beta Feb payroll,15000.00,0.00,payroll
+JE-015b,2026-02-28,1100,Cash and Cash Equivalents,2,Beta Feb payroll,0.00,15000.00,payroll
+JE-016a,2026-03-10,1200,Accounts Receivable,2,Beta Mar revenue recognition,40000.00,0.00,revenue
+JE-016b,2026-03-10,4000,Service Revenue,2,Beta Mar revenue recognition,0.00,40000.00,revenue
+JE-017a,2026-03-15,5100,Cost of Goods Sold,2,Beta Mar vendor services,60000.00,0.00,cogs
+JE-017b,2026-03-15,2100,Accounts Payable,2,Beta Mar vendor services,0.00,60000.00,cogs
+JE-018a,2026-03-31,5200,Payroll Expense,2,Beta Mar payroll,15000.00,0.00,payroll
+JE-018b,2026-03-31,1100,Cash and Cash Equivalents,2,Beta Mar payroll,0.00,15000.00,payroll
+JE-019a,2026-01-25,1200,Accounts Receivable,3,Gamma Jan revenue recognition,40000.00,0.00,revenue
+JE-019b,2026-01-25,4000,Service Revenue,3,Gamma Jan revenue recognition,0.00,40000.00,revenue
+JE-020a,2026-01-28,5100,Cost of Goods Sold,3,Gamma Jan vendor services,30000.00,0.00,cogs
+JE-020b,2026-01-28,2100,Accounts Payable,3,Gamma Jan vendor services,0.00,30000.00,cogs
+JE-021a,2026-01-31,5200,Payroll Expense,3,Gamma Jan payroll,10000.00,0.00,payroll
+JE-021b,2026-01-31,1100,Cash and Cash Equivalents,3,Gamma Jan payroll,0.00,10000.00,payroll
+JE-022a,2026-02-15,1200,Accounts Receivable,3,Gamma Feb revenue recognition,20000.00,0.00,revenue
+JE-022b,2026-02-15,4000,Service Revenue,3,Gamma Feb revenue recognition,0.00,20000.00,revenue
+JE-023a,2026-02-28,5200,Payroll Expense,3,Gamma Feb payroll,5000.00,0.00,payroll
+JE-023b,2026-02-28,1100,Cash and Cash Equivalents,3,Gamma Feb payroll,0.00,5000.00,payroll
+JE-024a,2026-01-10,1300,Employee Advances Receivable,3,Cash advance - Ana Reyes infrastructure,50000.00,0.00,advance
+JE-024b,2026-01-10,1100,Cash and Cash Equivalents,3,Cash advance - Ana Reyes infrastructure,0.00,50000.00,advance
+JE-025a,2026-02-05,1300,Employee Advances Receivable,2,Cash advance - Juan dela Cruz operations,40000.00,0.00,advance
+JE-025b,2026-02-05,1100,Cash and Cash Equivalents,2,Cash advance - Juan dela Cruz operations,0.00,40000.00,advance

@@ -1,0 +1,41 @@
+name: org-docs-skill
+description: Organization-wide internal documentation search and retrieval
+
+tools:
+  - name: search_org_docs
+    description: Search all organization documentation (architecture, contracts, specs, runbooks, policies)
+    parameters:
+      query: { type: string, required: true }
+      doc_type: { type: string, required: false, enum: [architecture, contract, spec, runbook, config, reference, guide, policy] }
+      source: { type: string, required: false }
+      limit: { type: integer, required: false, default: 5 }
+
+  - name: answer_org_question
+    description: Get a grounded answer from organization docs with citations
+    parameters:
+      question: { type: string, required: true }
+      doc_type: { type: string, required: false }
+      limit: { type: integer, required: false, default: 5 }
+
+  - name: search_spec_bundles
+    description: Search spec bundles (PRDs, constitutions, plans, tasks)
+    parameters:
+      query: { type: string, required: true }
+      bundle: { type: string, required: false }
+      limit: { type: integer, required: false, default: 5 }
+
+  - name: search_architecture_docs
+    description: Search architecture and design documentation
+    parameters:
+      query: { type: string, required: true }
+      limit: { type: integer, required: false, default: 5 }
+
+  - name: search_runbooks
+    description: Search operational runbooks and procedures
+    parameters:
+      query: { type: string, required: true }
+      limit: { type: integer, required: false, default: 5 }
+
+  - name: get_doc_freshness
+    description: Check documentation freshness and index health
+    parameters: {}
