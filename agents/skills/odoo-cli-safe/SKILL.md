@@ -3,7 +3,7 @@
 ## Purpose
 
 Run Odoo module operations (install, update, test) in non-interactive mode.
-Designed for containerized Odoo 19 CE environments.
+Designed for containerized Odoo 18 CE environments.
 
 ## Preconditions
 
@@ -54,10 +54,10 @@ az containerapp job execution show -n <job> -g <rg> \
 # Expected: "Succeeded"
 ```
 
-## Odoo 19 API changes
+## Odoo 18 API changes
 
 ### post_init_hook signature
-Odoo 19 changed `post_init_hook(cr, registry)` to `post_init_hook(env)`.
+Odoo 18 changed `post_init_hook(cr, registry)` to `post_init_hook(env)`.
 The `env` parameter is an `odoo.api.Environment` instance directly.
 
 ```python
@@ -65,7 +65,7 @@ The `env` parameter is an `odoo.api.Environment` instance directly.
 def post_init_hook(cr, registry):
     env = api.Environment(cr, SUPERUSER_ID, {})
 
-# Odoo 19 (new)
+# Odoo 18 (new)
 def post_init_hook(env):
     # env is already an Environment instance
 ```

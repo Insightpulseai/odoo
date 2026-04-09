@@ -1,0 +1,271 @@
+# SAP-to-Odoo Benchmark Matrix
+# Compares SAP enterprise patterns against Odoo 18 CE + OCA implementation surfaces
+#
+# Columns:
+#   sap_capability: SAP module/function area
+#   business_purpose: Why enterprises need this
+#   enterprise_expectation: What "SAP-grade" means in practice
+#   odoo_equivalent: Nearest Odoo CE + OCA capability
+#   known_gaps: What Odoo/OCA cannot do natively
+
+artifact_status: draft
+source_type: generated_seed
+review_required: true
+generated: "2026-04-07"
+owner: knowledge-architecture
+review_tracker: ../REVIEW_QUEUE.md
+caution: SAP mappings are based on broadly established patterns. Verify specific module/transaction codes against SAP documentation before treating as authoritative.
+#   bridge_strategy: How to close gaps (Azure, ipai_*, external)
+#   difficulty: low | medium | high | very_high
+#   knowledge_depth: foundational | working | advanced | expert
+#   priority: P1 (now) | P2 (next quarter) | P3 (later) | P4 (future)
+
+entries:
+
+  # ── FINANCE ──────────────────────────────────────────────────────────
+
+  - sap_capability: FI-GL (General Ledger)
+    business_purpose: Core financial posting, trial balance, period management
+    enterprise_expectation: Real-time posting, parallel ledgers, automated period close, intercompany elimination
+    odoo_equivalent: account.move + account.account + account.journal + OCA account_financial_report
+    known_gaps: No parallel ledgers in CE; limited automated period close controls
+    bridge_strategy: OCA mis_builder for management reporting; ipai_finance_ppm for period close workflow
+    difficulty: medium
+    knowledge_depth: advanced
+    priority: P1
+
+  - sap_capability: FI-AP (Accounts Payable)
+    business_purpose: Vendor bill processing, payment execution, aging management
+    enterprise_expectation: 3-way matching (PO/receipt/invoice), payment proposal runs, withholding tax, payment blocks
+    odoo_equivalent: account.move (vendor bill) + OCA account_payment_order + account_payment_mode
+    known_gaps: 3-way matching is manual in CE; no native payment proposal run
+    bridge_strategy: OCA purchase_stock_picking_invoice_link for matching; account_payment_order for batch payments
+    difficulty: medium
+    knowledge_depth: advanced
+    priority: P1
+
+  - sap_capability: FI-AR (Accounts Receivable)
+    business_purpose: Customer invoicing, payment collection, credit management
+    enterprise_expectation: Dunning procedures, credit limits, revenue recognition, factoring support
+    odoo_equivalent: account.move (customer invoice) + OCA account_payment_* + payment follow-up
+    known_gaps: Limited dunning automation in CE; no IFRS 15 revenue recognition engine
+    bridge_strategy: OCA modules for follow-up; custom ipai_* for PH-specific billing requirements
+    difficulty: medium
+    knowledge_depth: advanced
+    priority: P1
+
+  - sap_capability: CO (Controlling / Management Accounting)
+    business_purpose: Cost tracking, profit center reporting, variance analysis, internal pricing
+    enterprise_expectation: Cost center hierarchy, profit center accounting, activity-based costing, transfer pricing
+    odoo_equivalent: analytic accounting + OCA mis_builder + analytic plans
+    known_gaps: No native activity-based costing; limited cost allocation rules; no transfer pricing
+    bridge_strategy: Databricks for advanced cost analytics; mis_builder for management reporting
+    difficulty: high
+    knowledge_depth: expert
+    priority: P2
+
+  - sap_capability: FI-AA (Fixed Assets)
+    business_purpose: Asset lifecycle from acquisition through disposal
+    enterprise_expectation: Multiple depreciation areas (tax/book/management), revaluation, impairment, group assets
+    odoo_equivalent: OCA account_asset_management (CE has NO native asset module — Enterprise-only)
+    known_gaps: CE has zero asset management; OCA module provides single depreciation book; no parallel depreciation for tax vs book
+    bridge_strategy: OCA account_asset_management covers most needs; parallel books need custom extension
+    difficulty: medium
+    knowledge_depth: advanced
+    priority: P2
+
+  - sap_capability: FI-BL (Bank Accounting)
+    business_purpose: Bank statement import, reconciliation, cash management
+    enterprise_expectation: Multi-bank feeds, auto-reconciliation rules, cash pooling, cash forecasting
+    odoo_equivalent: account.bank.statement + OCA account_statement_import_* + account_reconcile_*
+    known_gaps: No native cash pooling; limited cash forecasting
+    bridge_strategy: OCA bank statement import modules; Databricks for cash forecasting analytics
+    difficulty: medium
+    knowledge_depth: working
+    priority: P1
+
+  # ── PROCUREMENT ──────────────────────────────────────────────────────
+
+  - sap_capability: MM-PUR (Purchasing)
+    business_purpose: Requisition-to-PO, vendor selection, contract management
+    enterprise_expectation: Approval workflows, blanket agreements, source lists, quota arrangements
+    odoo_equivalent: purchase.order + OCA purchase_request + purchase_blanket_order
+    known_gaps: No native source lists; limited quota management
+    bridge_strategy: OCA purchase_request + base_tier_validation for approvals
+    difficulty: medium
+    knowledge_depth: working
+    priority: P1
+
+  - sap_capability: MM-IM (Inventory Management)
+    business_purpose: Goods receipt, goods issue, stock transfers, physical inventory
+    enterprise_expectation: Real-time stock visibility, batch/serial tracking, consignment, valuation
+    odoo_equivalent: stock.warehouse + stock.picking + stock.lot
+    known_gaps: Limited consignment stock handling
+    bridge_strategy: OCA stock_* modules for extended tracking; CE handles most standard scenarios
+    difficulty: medium
+    knowledge_depth: advanced
+    priority: P1
+
+  - sap_capability: MM-WM (Warehouse Management)
+    business_purpose: Bin-level storage, putaway, picking strategies, task management
+    enterprise_expectation: Zone management, wave picking, cross-docking, labor management
+    odoo_equivalent: stock.location hierarchy + routes + rules (CE has multi-step)
+    known_gaps: No native wave picking in CE; limited labor management; EE has barcode scanning
+    bridge_strategy: OCA stock_available_* modules; barcode scanning via OCA stock_barcodes or external
+    difficulty: high
+    knowledge_depth: advanced
+    priority: P2
+
+  # ── SALES ────────────────────────────────────────────────────────────
+
+  - sap_capability: SD (Sales & Distribution)
+    business_purpose: Quote-to-cash, pricing, availability check, delivery, billing
+    enterprise_expectation: Complex pricing with conditions, ATP check, batch billing, output management
+    odoo_equivalent: sale.order + stock.picking + account.move + OCA sale_*
+    known_gaps: Pricing conditions less flexible than SAP; no native ATP with allocation
+    bridge_strategy: OCA sale_order_type for order classification; pricelists cover most pricing needs
+    difficulty: medium
+    knowledge_depth: working
+    priority: P1
+
+  - sap_capability: CRM
+    business_purpose: Lead-to-opportunity, customer 360, activity management
+    enterprise_expectation: Lead scoring, territory management, campaign attribution, customer segmentation
+    odoo_equivalent: crm.lead + crm.team + OCA crm_*
+    known_gaps: Limited territory management; basic lead scoring in CE
+    bridge_strategy: CE covers standard CRM well; analytics via Databricks for segmentation
+    difficulty: low
+    knowledge_depth: working
+    priority: P2
+
+  # ── PROJECT & SERVICES ──────────────────────────────────────────────
+
+  - sap_capability: PS (Project System)
+    business_purpose: WBS, project budgeting, resource planning, billing
+    enterprise_expectation: WBS hierarchy, earned value, milestone billing, resource leveling
+    odoo_equivalent: project.project + project.task + analytic accounting + OCA project_*
+    known_gaps: No native WBS hierarchy in Odoo's flat task model; no earned value analysis
+    bridge_strategy: OCA project_* for enhanced tracking; Databricks for earned value analytics
+    difficulty: high
+    knowledge_depth: advanced
+    priority: P2
+
+  - sap_capability: CS/SM (Customer Service / Service Management)
+    business_purpose: Helpdesk, SLA management, field service
+    enterprise_expectation: SLA tracking, escalation rules, knowledge base, service contracts
+    odoo_equivalent: No helpdesk in CE 18 (Enterprise-only). CE alternative is project.task with stages + mail.thread for ticket tracking
+    known_gaps: CE has no native helpdesk module; must use project-based workaround or OCA
+    bridge_strategy: OCA helpdesk_mgmt (if available at 18.0); otherwise project.task with SLA fields via ipai_*
+    difficulty: medium
+    knowledge_depth: working
+    priority: P3
+
+  # ── HR ───────────────────────────────────────────────────────────────
+
+  - sap_capability: HCM (Human Capital Management)
+    business_purpose: Employee lifecycle, org management, payroll
+    enterprise_expectation: Position management, org planning, payroll with statutory compliance, talent management
+    odoo_equivalent: hr.employee + hr.department + hr.contract + OCA hr_*
+    known_gaps: CE payroll is very basic; no native PH statutory compliance (SSS, PhilHealth, Pag-IBIG)
+    bridge_strategy: OCA hr_* modules; ipai_hr_ph_* for PH statutory compliance
+    difficulty: high
+    knowledge_depth: advanced
+    priority: P2
+
+  - sap_capability: HCM-TM (Time Management)
+    business_purpose: Attendance, leave, overtime, shift management
+    enterprise_expectation: Shift scheduling, absence quotas, overtime calculation, integration with payroll
+    odoo_equivalent: hr.attendance + hr.leave + OCA hr_holidays_* + hr_attendance_*
+    known_gaps: Limited shift management in CE; overtime calculation needs customization
+    bridge_strategy: OCA hr_attendance_* for extended time management
+    difficulty: medium
+    knowledge_depth: working
+    priority: P2
+
+  # ── COMPLIANCE & TAX ────────────────────────────────────────────────
+
+  - sap_capability: Tax Engine
+    business_purpose: Multi-jurisdiction tax calculation and reporting
+    enterprise_expectation: Automatic tax determination, withholding tax, tax reporting, e-invoicing
+    odoo_equivalent: account.tax + account.fiscal.position + OCA l10n_*
+    known_gaps: PH BIR compliance (2307, 2316, SLSP) needs custom modules
+    bridge_strategy: OCA l10n_ph_* where available; ipai_bir_* for BIR-specific requirements
+    difficulty: high
+    knowledge_depth: expert
+    priority: P1
+
+  - sap_capability: GRC (Governance, Risk, Compliance)
+    business_purpose: Segregation of duties, access governance, audit management
+    enterprise_expectation: SoD matrix, access risk analysis, continuous monitoring, audit trail
+    odoo_equivalent: res.groups + ir.rule + OCA base_user_role
+    known_gaps: No native SoD matrix; limited access risk analysis; no continuous monitoring
+    bridge_strategy: OCA base_user_role for role management; custom SoD validation; Entra ID for governance
+    difficulty: high
+    knowledge_depth: expert
+    priority: P2
+
+  # ── INTEGRATION ─────────────────────────────────────────────────────
+
+  - sap_capability: PI/PO (Process Integration)
+    business_purpose: Enterprise integration bus, message routing, transformation
+    enterprise_expectation: Guaranteed delivery, message monitoring, canonical data model, adapters
+    odoo_equivalent: OCA connector + queue_job + HTTP controllers
+    known_gaps: No native ESB; limited message monitoring
+    bridge_strategy: Azure APIM + queue_job for async; n8n for workflow orchestration
+    difficulty: high
+    knowledge_depth: advanced
+    priority: P2
+
+  - sap_capability: MDG (Master Data Governance)
+    business_purpose: Central master data management, data quality, change workflows
+    enterprise_expectation: Staging/approval for master data changes, duplicate detection, data distribution
+    odoo_equivalent: base (res.partner, product.template) + OCA partner_deduplicate_*
+    known_gaps: No native master data governance workflows; limited duplicate detection rules
+    bridge_strategy: OCA deduplication modules; base_tier_validation for change approval workflows
+    difficulty: medium
+    knowledge_depth: advanced
+    priority: P3
+
+  # ── ANALYTICS & REPORTING ───────────────────────────────────────────
+
+  - sap_capability: BW/BI (Business Warehouse)
+    business_purpose: Enterprise data warehouse, OLAP, dimensional reporting
+    enterprise_expectation: Star schema, info cubes, query designer, scheduled reporting, data extraction
+    odoo_equivalent: OCA bi_sql_editor + mis_builder + Odoo pivot views
+    known_gaps: No native DWH; pivot views limited to single-model analysis
+    bridge_strategy: Databricks (Unity Catalog + DLT) for DWH; Power BI for enterprise BI
+    difficulty: high
+    knowledge_depth: advanced
+    priority: P1
+
+  - sap_capability: SAC (SAP Analytics Cloud)
+    business_purpose: Planning, BI, predictive analytics in one platform
+    enterprise_expectation: Self-service BI, collaborative planning, predictive scenarios
+    odoo_equivalent: Odoo spreadsheet + pivot views (very basic)
+    known_gaps: No native planning tool; no predictive analytics
+    bridge_strategy: Power BI (primary BI) + Databricks (ML/predictive) + Odoo spreadsheet (basic)
+    difficulty: high
+    knowledge_depth: advanced
+    priority: P2
+
+  # ── PLATFORM ────────────────────────────────────────────────────────
+
+  - sap_capability: BTP (Business Technology Platform)
+    business_purpose: Extension platform, integration, AI, data management
+    enterprise_expectation: Low-code extensions, managed APIs, AI services, data fabric
+    odoo_equivalent: Odoo Studio (EE only) → CE alternative is custom ipai_* modules
+    known_gaps: No low-code extension platform in CE; no managed API layer
+    bridge_strategy: Azure AI Foundry (AI); Azure APIM (APIs); n8n (low-code automation)
+    difficulty: very_high
+    knowledge_depth: expert
+    priority: P3
+
+  - sap_capability: Fiori (UX Platform)
+    business_purpose: Role-based, responsive enterprise UX
+    enterprise_expectation: Launchpad, tile-based navigation, responsive forms, search-driven
+    odoo_equivalent: Odoo web client + Owl components
+    known_gaps: Odoo web client is functional but less customizable than Fiori
+    bridge_strategy: Odoo web framework is adequate for most enterprise UX needs
+    difficulty: low
+    knowledge_depth: working
+    priority: P3

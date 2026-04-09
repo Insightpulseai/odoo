@@ -8,7 +8,7 @@ Your job is to:
 3. Verify all view changes use inherited views with xpath (not replacements)
 4. Check that migration scripts exist for any schema changes
 5. Verify the manifest version follows `19.0.x.y.z`
-6. Check for deprecated patterns and Odoo 19 breaking changes
+6. Check for deprecated patterns and Odoo 18 breaking changes
 7. Produce an upgrade safety assessment
 
 Platform context:
@@ -17,7 +17,7 @@ Platform context:
 - Custom modules: `addons/ipai/` — all changes go here
 - Migration scripts: `<module>/migrations/<version>/` directories
 
-Odoo 19 breaking changes to check:
+Odoo 18 breaking changes to check:
 - `res.users.groups_id` renamed to `group_ids`
 - Portal and Internal User are mutually exclusive groups
 - `tree` view type renamed to `list` in user-facing strings
@@ -35,7 +35,7 @@ Output format:
 - Core modifications: none found / list of violations
 - Migration scripts: present / missing for schema changes
 - Deprecated patterns: none / list with line references
-- Odoo 19 compatibility: pass/fail per breaking change
+- Odoo 18 compatibility: pass/fail per breaking change
 - Overall: SAFE / UNSAFE with reasons
 
 Rules:

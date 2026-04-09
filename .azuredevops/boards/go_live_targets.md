@@ -22,7 +22,7 @@ Both native Entra admins have MFA enrolled. Security Defaults are enabled (or eq
 **Acceptance Criteria:**
 - [ ] MFA evidence for both `admin@insightpulseai.com` and `emergency-admin@insightpulseai.com`
 - [ ] Security Defaults enabled in Entra ID (screenshot or CLI evidence)
-- [ ] Evidence linked from `docs/runbooks/ODOO19_GO_LIVE_CHECKLIST.md` section 1
+- [ ] Evidence linked from `docs/runbooks/ODOO18_GO_LIVE_CHECKLIST.md` section 1
 
 **Artifacts:**
 - Entra portal screenshot showing Security Defaults = Enabled
@@ -94,7 +94,7 @@ Pipeline runs from commit to deployed ACA revision. All stages (build, test, dep
 Odoo cron/server actions fail with `analytic_account_id` field drift error. This blocks Finance PPM scheduled operations and month-end close workflows.
 
 **Outcome:**
-The field reference is corrected for Odoo 19 schema. Cron job executes without error on a test database and then on production.
+The field reference is corrected for Odoo 18 schema. Cron job executes without error on a test database and then on production.
 
 **Acceptance Criteria:**
 - [ ] Module test DB (`test_ipai_finance_ppm`) execution log exists
@@ -148,12 +148,12 @@ The manifest contract references a go-live runbook that did not exist. Without a
 A 9-section go-live checklist exists at the canonical path, covering pre-flight through go/no-go decision.
 
 **Acceptance Criteria:**
-- [x] `docs/runbooks/ODOO19_GO_LIVE_CHECKLIST.md` exists
+- [x] `docs/runbooks/ODOO18_GO_LIVE_CHECKLIST.md` exists
 - [x] All 9 sections present (identity, infra, DB, runtime, modules, integrations, security, smoke test, go/no-go)
 - [x] Manifest contract passes
 
 **Artifacts:**
-- `docs/runbooks/ODOO19_GO_LIVE_CHECKLIST.md` (created 2026-03-19)
+- `docs/runbooks/ODOO18_GO_LIVE_CHECKLIST.md` (created 2026-03-19)
 
 ---
 

@@ -9,7 +9,7 @@ This document defines the authoritative taxonomy and operational boundaries for 
 | Repository | Role Boundary | Visibility |
 |------------|---------------|------------|
 | `.github` | Org governance, issue forms, reusable workflows, policies | PRIVATE |
-| `odoo` | ERP System of Record (Odoo 19 CE + OCA + IPAI bridge) | PUBLIC |
+| `odoo` | ERP System of Record (Odoo 18 CE + OCA + IPAI bridge) | PUBLIC |
 | `platform` | SSOT / Secrets / Platform (Vault, Edge Functions) | PRIVATE |
 | `data-intelligence` | Intelligence / Analytics pipelines (Databricks, Medallion) | PRIVATE |
 | `infra` | Infrastructure and Edge (IaC, Azure, DO, Cloudflare) | PRIVATE |

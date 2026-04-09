@@ -36,7 +36,7 @@ See `env.example` in this directory.
 
 ## Setup
 
-Source: `scripts/dashboard_queries_odoo19.sql`
+Source: `scripts/dashboard_queries_odoo18.sql`
 
 Execute SQL views against the Odoo PostgreSQL database, then configure
 Superset datasets to point at these views.

@@ -19,7 +19,7 @@ oca-port origin/18.0 origin/19.0 <module_path> --verbose --dry-run
 1. Module doesn't exist on target → assists full migration
 2. Module exists → retrieves unported commits grouped by PR
 
-## Odoo 19 Migration Specifics
+## Odoo 18 Migration Specifics
 - Replace 'tree' view type with 'list' everywhere (Python, JS, XML)
 - Run: odoo-bin upgrade_code --addons-path <path>
 - groups_id → group_ids on res.users

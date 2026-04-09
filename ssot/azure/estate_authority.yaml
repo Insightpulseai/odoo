@@ -1,0 +1,72 @@
+version: 1
+namespace: ipai.azure.estate_authority.v1
+artifact_type: policy
+updated: "2026-04-05"
+
+# Authority model for the Azure estate audit system.
+# Defines who can see what, how baselines are promoted, and what failures mean.
+
+audit_principal:
+  # The identity that runs the estate audit in CI
+  service_connection: azure-ipai
+  type: service_principal
+  app_id: ae2df138-*  # ADO service connection SP
+  required_roles:
+    - role: Reader
+      scope: subscription
+      note: "Needed to enumerate all resource types. Without this, az resource list returns partial results."
+    - role: "Key Vault Secrets User"
+      scope: kv-ipai-dev
+      note: "Already granted for pipeline secret access"
+  current_gaps:
+    - description: "az resource list returns 3/62 resources — principal lacks subscription-wide Reader"
+      impact: "Generic enumeration unreliable; targeted per-type queries compensate but are not exhaustive"
+      remediation: "Grant Reader on subscription 536d8cf6-89e1-4815-aef3-d5f2c5f4d070 to SP ae2df138"
+      status: open
+
+subscription_scope:
+  id: "536d8cf6-89e1-4815-aef3-d5f2c5f4d070"
+  name: "Azure subscription 1"
+  tenant: "402de71a-87ec-4302-a609-fb76098d1da7"
+  resource_groups:
+    - rg-ipai-dev-odoo-runtime
+    - rg-ipai-dev-odoo-data
+    - rg-ipai-dev-platform
+    - rg-data-intel-ph
+    - ME_ipai-odoo-ha-env_rg-ipai-dev-odoo-runtime_southeastasia
+    - ai_ipai-appinsights_1611de2f-127a-4a99-b2fd-cb37a84d6e06_managed
+    - DefaultResourceGroup-SEA
+    - NetworkWatcherRG
+    - VisualStudioOnline-134775A814F94B7B85605E3D11276127
+
+authoritative_boundary:
+  # What the audit covers and what it does not
+  tier_a_complete: true   # All Tier A types have query blocks
+  tier_b_classified: true # All derived types documented with parent
+  tier_c_documented: true # All out-of-band types listed with verification method
+  total_portal_resources: 62
+  total_tier_a_targeted: 53
+  total_tier_b_derived: 6
+  total_tier_c_out_of_band: 2
+  total_classified: 61    # 53 + 6 + 2 = 61 (1 missing = Insights Smart Detection action group, classified under Tier B)
+  gap_explanation: |
+    The 62-resource portal count includes the "Application Insights Smart Detection"
+    action group which is auto-created by App Insights (Tier B). The Tier A action_groups
+    query captures the user-created ag-ipai-platform but may not capture auto-created
+    action groups depending on RBAC. This is documented, not hidden.
+
+promotion_policy:
+  # How expected-estate.yaml gets updated
+  method: reviewed_pr
+  auto_update: never
+  workflow:
+    - "1. Pipeline runs azure_estate_audit.sh (scheduled or manual)"
+    - "2. Drift report is published as pipeline artifact"
+    - "3. Engineer reviews drift-report.txt and coverage-report.txt"
+    - "4. If drift is intentional: update expected-estate.yaml in a PR"
+    - "5. PR must include justification for each added/removed resource"
+    - "6. Merge updates the baseline; next audit run should show NO DRIFT"
+  anti_patterns:
+    - "Never copy observed state directly to expected state without review"
+    - "Never suppress drift warnings by removing resources from expected"
+    - "Never update expected-estate.yaml in the same commit as infrastructure changes"

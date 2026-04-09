@@ -593,7 +593,7 @@ infra/dns/subdomain-registry.yaml                     → Align with Cloudflare 
 
 1. Squarespace supports NS record delegation (currently to Cloudflare; future Azure DNS if migrated)
 2. Zoho Mail MX/SPF/DKIM records work on any standards-compliant DNS (currently Cloudflare, compatible with Azure DNS)
-3. Odoo 19 `auth_oauth` module supports Microsoft Graph OIDC userinfo endpoint (confirmed per Odoo docs)
+3. Odoo 18 `auth_oauth` module supports Microsoft Graph OIDC userinfo endpoint (confirmed per Odoo docs)
 4. Foundry Agent Service supports custom tool definitions via function calling (confirmed per Azure docs)
 5. Document Intelligence supports PH-specific document formats (BIR 2307, OR, SI) via custom models
 

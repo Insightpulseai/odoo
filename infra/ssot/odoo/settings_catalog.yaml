@@ -1,12 +1,12 @@
 # ssot/odoo/settings_catalog.yaml
 #
-# Odoo 19 CE res.config.settings field catalog — runtime-derived SSOT.
+# Odoo 18 CE res.config.settings field catalog — runtime-derived SSOT.
 #
 # Schema: ssot.odoo.settings_catalog.v1
 # Validator: scripts/ci/check_settings_catalog.py
 # Generator: scripts/odoo/extract_settings_catalog.py
 #
-# DO NOT EDIT DIRECTLY — regenerate from a running Odoo 19 CE instance.
+# DO NOT EDIT DIRECTLY — regenerate from a running Odoo 18 CE instance.
 #
 schema: ssot.odoo.settings_catalog.v1
 version: '1.0'
@@ -18,9 +18,9 @@ generation:
   mode: source_scan
   authoritative: false
   notes: >
-    This catalog is authoritative only when extracted from a live Odoo 19 CE
+    This catalog is authoritative only when extracted from a live Odoo 18 CE
     instance (method=xmlrpc). Source-scan mode is best-effort and incomplete.
-    Do not treat as a complete Odoo 19 CE settings reference when
+    Do not treat as a complete Odoo 18 CE settings reference when
     extraction.method=source_scan.
 extraction:
   method: source_scan
