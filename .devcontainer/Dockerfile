@@ -1,6 +1,6 @@
 # =============================================================================
-# .devcontainer/Dockerfile — InsightPulseAI Odoo 19 CE Dev Container
-# Thin image: Python 3.12 + Odoo CE 19.0 (pinned) + system deps
+# .devcontainer/Dockerfile — InsightPulseAI Odoo 18 CE Dev Container
+# Thin image: Python 3.12 + Odoo CE 18.0 (pinned) + system deps
 # Runtime config mounted via Compose (config/dev/odoo.conf → /etc/odoo/odoo.conf)
 # =============================================================================
 FROM python:3.12-slim
@@ -8,7 +8,7 @@ FROM python:3.12-slim
 ARG USERNAME=vscode
 ARG USER_UID=1000
 ARG USER_GID=$USER_UID
-ARG ODOO_BRANCH=19.0
+ARG ODOO_BRANCH=18.0
 ARG ODOO_COMMIT=3a6e478d483ac9b3ce323958d2b08ba0a37dbee7
 
 ENV LANG=C.UTF-8 \

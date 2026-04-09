@@ -1,30 +1,68 @@
-# Nested git repos (managed as separate repo boundaries)
-/odoo/
-/data-intelligence/
-/documentaion/
-/web-site/
-/archive/dot-github-repo/
-/archive/work/
-/archive/root/addons/oca/
+# =============================================================================
+# Odoo Repo .gitignore — Clean State (2026-04-08)
+# =============================================================================
 
-# SOPS / age secrets (never commit private keys)
+# Recursive self-copy (stale duplicates, never re-track)
+/odoo/
+
+# =============================================================================
+# Deprecated Services & Dirs (fully removed from tracking)
+# =============================================================================
+archive/
+supabase/
+.supabase/
+automations/n8n/
+infra/cloudflare/
+infra/digitalocean/
+infra/nginx/
+infra/superset/
+infra/supabase/
+infra/supabase-etl/
+infra/platform-kit/
+infra/ops-control/
+infra/spec/
+infra/deploy/
+infra/terraform/
+infra/observability/
+infra/github/
+infra/mattermost/
+infra/n8n/
+ops-platform/
+web/
+platform/
+design/
+docs-site/
+agent-platform/
+
+# =============================================================================
+# Secrets (never commit)
+# =============================================================================
 ops/secrets/age-key.txt
 ops/secrets/*.key
+*.key
+*.pem
+*.crt
+secrets/
+!ssot/secrets/
+!ssot/secrets/registry.yaml
+.secrets
+*.secrets.local
+*.secrets.yaml
+.env
+.env.*
+!.env.example
+!**/.env.example
+**/.supabase-token
+scripts/audit/.env
+.devcontainer/devcontainer.env
+.devcontainer/.env
+config/odoo.conf.local
+.env.smtp
+.env.cloudflare
 
-# Sandbox (local dev scratch — never canonical; see CLAUDE.md)
-sandbox/
-
-# Workspace / agent artifacts (never commit)
-.cache/
-_work/
-artifacts/figma/
-artifacts/plane/ssot/
-artifacts/odoo/install_sets/
-.pnpm-store/
-.worktrees/
-.pytest_cache/
-
+# =============================================================================
 # Python
+# =============================================================================
 __pycache__/
 *.py[cod]
 *$py.class
@@ -37,14 +75,6 @@ downloads/
 eggs/
 .eggs/
 lib/
-!clients/**/lib/
-!apps/**/lib/
-!web/**/lib/
-!templates/**/lib/
-!templates/**/src/lib/
-!templates/**/src/lib/**
-!web/**/src/lib/
-!web/**/src/lib/**
 lib64/
 parts/
 sdist/
@@ -56,49 +86,61 @@ share/python-wheels/
 .installed.cfg
 *.egg
 MANIFEST
-# Databricks
-.databricks/
+.venv/
+.ruff_cache/
+.mypy_cache/
+.pytest_cache/
 
+# =============================================================================
 # Odoo
+# =============================================================================
 *.pyc
 .odoo-bin
 filestore/
 sessions/
 *.log
-# Odoo addons - layered architecture: CE → OCA → IPAI
-# Legacy flat structure (ipai_* and tbwa_* in addons root)
+
+# Odoo addons — layered architecture: CE → OCA → IPAI
 addons/*
 !addons/ipai_*/
 !addons/ipai_*/**
 !addons/tbwa_*/
 !addons/tbwa_*/**
-# --- Deprecated addons quarantine (tracked) ---
 !addons/_deprecated/
 !addons/_deprecated/**
-# --- IPAI custom modules (tracked) ---
 !addons/ipai/
 !addons/ipai/**
 
-# --- Generated OCA aggregation output (git-aggregator target) ---
-# SSOT: oca-aggregate.yml (tracked)
-# Output: addons/oca/ (hydrated by git-aggregator, never committed)
+# OCA (hydrated by git-aggregator, never committed)
 addons/oca/*
 !addons/oca/.gitkeep
 addons/OCA/
-# Common ignores
 addons/**/__pycache__/
 addons/**/*.pyc
-# Node.js
-node_modules/
-# Docker
-.env
-docker-compose.override.yml
 
-# Vite/Node local envs (workspace artifacts)
-**/.env.local
-**/.env.*.local
+# OCA install runtime
+.oca_install_state.json
+.oca_install.lock
+
+# =============================================================================
+# Node.js
+# =============================================================================
+node_modules/
+.pnpm-store/
+**/.next/
+**/node_modules/
+*.tsbuildinfo
+
+# =============================================================================
+# Docker
+# =============================================================================
+docker-compose.override.yml
+docker-compose.local.yml
+docker-compose.*.local.yml
+
+# =============================================================================
 # IDE
-# .vscode/
+# =============================================================================
 !/.vscode/extensions.json
 !/.vscode/settings.json
 !/.vscode/tasks.json
@@ -110,58 +152,31 @@ docker-compose.override.yml
 *.swo
 *~
 .DS_Store
-# Secrets
-*.key
-*.pem
-*.crt
-secrets/
-!ssot/secrets/
-!ssot/secrets/registry.yaml
-!apps/ops-console/app/platform/secrets/
-.secrets
-# Identifier-only registry (no values) — intentionally tracked
-!ssot/secrets/
-!ssot/secrets/registry.yaml
-# Deployment
-deploy/.env
-deploy/*.local
-deploy_m1.sh
-deploy/*.log
-deploy/*.backup.*
-# OCA submodules (tracked separately)
-oca/*
-!oca/.gitkeep
-# Logs
-logs/
-# Exception: canonical evidence logs under timestamped bundles only (20YY* prefix)
-!web/docs/evidence/20*/**/logs/
-!web/docs/evidence/20*/**/logs/*.log
-# Exception: Next.js app route directories named "logs" are source code, not log files
-!apps/*/app/**/logs/
-!apps/*/app/**/logs/*.tsx
-!apps/*/app/**/logs/*.ts
-# Temporary files
+.cursor/
+
+# =============================================================================
+# Sandbox / Workspace
+# =============================================================================
+sandbox/
+.cache/
+_work/
+artifacts/*
+!artifacts/dns/
+!artifacts/dns/cloudflare_records.json
+.worktrees/
 tmp/
 temp/
 *.tmp
 *.bak
 *.orig
+
+# =============================================================================
 # Database
+# =============================================================================
 *.sql
 !db/**/*.sql
-!infra/platform-kit/**/*.sql
-!supabase/migrations/*.sql
-!supabase/supabase/migrations/*.sql
-!supabase/seed.sql
-!supabase/seeds/*.sql
-!supabase/seed/**/*.sql
-!supabase/tests/*.sql
 !scripts/lakehouse/*.sql
-!platform/db/migrations/*.sql
-!scripts/supabase/sql/*.sql
 !infra/lakehouse/**/*.sql
-!tools/audit/*.sql
-!tools/parity/*.sql
 !scripts/sql/*.sql
 !db/migrations/*.sql
 !db/migrations/**/*.sql
@@ -170,67 +185,12 @@ temp/
 !scripts/erd_dot.sql
 !docs/data-model/*.sql
 !tests/sql/*.sql
-# Parity audit generated files
-parity_report.json
 *.db
 *.sqlite
-# Exception: Claude external memory
-!.claude/project_memory.db
-.claude/settings.local.json
-.claude/worktrees/
-# DB Inventory tool output
-tools/db-inventory/output/
-.env.smtp
-*.env
-!.env.local
-!docker-compose.local.yml
-!config/odoo.conf.local
-*.code-workspace
-!odoo.code-workspace
-# Odoo import exports (generated, may contain sensitive data)
-**/odoo_import_*.csv
-**/odoo_import_*.xlsx
-**/*_mapped.xlsx
-**/*_PassA_*.csv
-**/*_PassB_*.csv
-# Raw source workbooks (sensitive data)
-**/Month-end Closing Task and Tax Filing*.xlsx
-data/source.xlsx
-# Keep templates and sample files
-!templates/odoo/import/*.csv
-!data/user_map.csv
-# --- local env / secrets ---
-.env.*
-!.env.example
-!**/.env.example
-.devcontainer/devcontainer.env
-config/odoo.conf.local
-.mcp.json
-powerbi-databricks-connection.json
-# --- local compose overrides ---
-docker-compose.local.yml
-docker-compose.*.local.yml
-# --- node / next build ---
-**/.next/
-**/node_modules/
-*.tsbuildinfo
-.cursor/
-# --- python ---
-.venv/
-.ruff_cache/
-.mypy_cache/
-# --- misc ---
-# Incident snapshots (track only templates)
-docs/incidents/*
-!docs/incidents/templates/
-# OCA local clones (dev-only, not committed — covered by sandbox/ above)
-# OCA wave installer runtime files
-.oca_install_state.json
-.oca_install.lock
-.env.local
-!scripts/lib/
-# ---- Large/derived artifacts (indexer-noise reduction) ----
-# These bloat semantic search indexes with low-value content
+
+# =============================================================================
+# Build & CI Artifacts
+# =============================================================================
 **/.turbo/
 **/.vercel/
 **/coverage/
@@ -245,78 +205,64 @@ docs/incidents/*
 **/.terraform/
 **/terraform.tfstate*
 **/terraform.tfvars
-**/.supabase-token
 .ci_artifacts/
-scripts/audit/.env
-third_party/oca/
-# MkDocs build output
 site/
-# LIB (Local Intelligence Brain)
-.lib/
-# Large brand mockup files (>1MB)
-docs/brand/mockups/
-# Graph generation output (ephemeral artifacts)
-out/graphs/
-# Terraform (Cloudflare SSOT)
-infra/cloudflare/**/.terraform/
-infra/cloudflare/**/.terraform.lock.hcl
-infra/cloudflare/**/terraform.tfstate*
-infra/cloudflare/**/tfplan
-infra/cloudflare/**/terraform.tfvars
-# Environment files — never commit secrets
-# .env.* on line 189 covers .env.stage, .env.prod, .env.dev, .env.production
-# Only .env.example and .env.*.example are tracked
-*.local.json
-# secrets (local only) - never commit
-*.secrets.local
-*.secrets.yaml
 
-# Large evidence files (>100MB)
+# =============================================================================
+# Databricks
+# =============================================================================
+.databricks/
+
+# =============================================================================
+# Misc
+# =============================================================================
+parity_report.json
+!.claude/project_memory.db
+.claude/settings.local.json
+.claude/worktrees/
+*.code-workspace
+!odoo.code-workspace
+*.local.json
+.lib/
+docs/brand/mockups/
+out/graphs/
 docs/evidence/**/*.txt
 docs/evidence/**/*.log
-
-# Archived compose files (rely on git history for restoration)
-archive/compose/
-
-# Superset local env (examples only in repo)
-infra/superset/env/.env.superset
-infra/superset/env/.env.*.local
-
-# Cloudflare local env
-.env.cloudflare
-
-# Devcontainer local overrides
-.devcontainer/.env
-
-# Generic infra env files (examples only)
-infra/**/env/.env
-infra/**/env/.env.*.local
+docs/incidents/*
+!docs/incidents/templates/
+!scripts/lib/
 odoo-docs/
+third_party/oca/
 
-# ============================================================================
-# Workspace Artifacts (Transient Development Files)
-# ============================================================================
-# Per MONOREPO_CONTRACT.md: These are ephemeral workspace artifacts
-# that should never be committed
-.cache/
-_work/
-artifacts/*
-!artifacts/dns/
-!artifacts/dns/cloudflare_records.json
-design-tokens/.figma-*
-design-tokens/figma-*.json
+# Odoo import/export (may contain sensitive data)
+**/odoo_import_*.csv
+**/odoo_import_*.xlsx
+**/*_mapped.xlsx
+**/*_PassA_*.csv
+**/*_PassB_*.csv
+**/Month-end Closing Task and Tax Filing*.xlsx
+data/source.xlsx
+!templates/odoo/import/*.csv
+!data/user_map.csv
+powerbi-databricks-connection.json
 
-# Agent Teams worktrees
-.worktrees/
+# Vite/Node local envs
+**/.env.local
+**/.env.*.local
+.env.local
+deploy/.env
+deploy/*.local
+deploy_m1.sh
+deploy/*.log
+deploy/*.backup.*
 
-# Machine-local audit output (contains local paths, never commit)
-docs/supabase/machine_integrations_detected.json
-
-# SSOT inventory snapshots (large, generated — CI artifacts only)
+# SSOT inventory snapshots (generated, CI-only)
 ssot/github/*.snapshot.json
 ssot/github/repo-details/
 ssot/vercel/*.snapshot.json
 ssot/databricks/*.snapshot.json
 ssot/supabase/*.snapshot.json
 ssot/evidence/snapshot-manifest.json
-docs-site/site/
+
+# MkDocs
+site/

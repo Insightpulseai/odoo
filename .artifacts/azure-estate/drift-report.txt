@@ -1,0 +1,14 @@
+
+Drift detection against ssot/azure/expected-estate.yaml:
+Queried at: 20260405T045418Z
+
+MISSING (expected but not found):
+  - ipai-copilot-resource/ipai-copilot
+
+UNEXPECTED (found but not in expected):
+  - ipai-odoo-dev-env
+  - ipai-odoo-ha-env
+
+!! WARNING — unexpected critical resources (may be legitimate new deploy):
+  ?? ipai-odoo-dev-env
+  ?? ipai-odoo-ha-env

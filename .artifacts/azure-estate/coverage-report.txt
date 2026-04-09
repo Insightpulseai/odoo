@@ -1,0 +1,40 @@
+Coverage Report — 20260405T045418Z
+===============================
+
+Tier A (authoritative):    19 resource types queried
+Tier B (derived):          5 resource types (auto-managed, not queried)
+Tier C (out-of-band):      2 resource types (manual verification only)
+Total classified:          26 resource types
+
+Tier A targeted resources: 54
+Generic API resources:     3 (diagnostic only, RBAC-filtered)
+Portal resource count:     62 (reference from 2026-04-05)
+
+Gap analysis:
+  Tier A covers 54 of 62 portal resources.
+  Tier B accounts for ~6 derived resources (NICs, LB, PIP, ASP).
+  Tier C accounts for 2 resources (Workbook, DevOps org).
+  Expected total: ~54 + 6 + 2 = 62
+
+Query key parity check:
+  [OK] container_apps
+  [OK] container_app_environments
+  [OK] container_app_jobs
+  [OK] function_apps
+  [OK] postgresql_servers
+  [OK] key_vaults
+  [OK] container_registries
+  [OK] front_doors
+  [OK] waf_policies
+  [OK] virtual_networks
+  [OK] dns_zones
+  [OK] private_dns_zones
+  [OK] private_endpoints
+  [OK] application_insights
+  [OK] log_analytics_workspaces
+  [OK] storage_accounts
+  [OK] alert_rules
+  [OK] action_groups
+  [OK] cognitive_services
+
+All query keys are declared in coverage policy.

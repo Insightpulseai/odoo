@@ -29,12 +29,12 @@ resource acr 'Microsoft.ContainerRegistry/registries@2023-11-01-preview' = {
 version: v1.1.0
 steps:
   - build: >-
-      -t {{.Run.Registry}}/odoo:19.0-{{.Run.ID}}
+      -t {{.Run.Registry}}/odoo:18.0-{{.Run.ID}}
       -t {{.Run.Registry}}/odoo:latest
       -f docker/Dockerfile.unified
       .
   - push:
-      - "{{.Run.Registry}}/odoo:19.0-{{.Run.ID}}"
+      - "{{.Run.Registry}}/odoo:18.0-{{.Run.ID}}"
       - "{{.Run.Registry}}/odoo:latest"
 trigger:
   sourceTrigger:
@@ -52,11 +52,11 @@ trigger:
 ```
 Registry:   ipaiodoodevacr.azurecr.io
 Repository: odoo
-Tag format: 19.0-<7-char-git-sha>
-Example:    ipaiodoodevacr.azurecr.io/odoo:19.0-abc1234
+Tag format: 18.0-<7-char-git-sha>
+Example:    ipaiodoodevacr.azurecr.io/odoo:18.0-abc1234
 
 Mutable tag: latest (always points to most recent main build)
-Immutable:   19.0-<sha> tags are never overwritten
+Immutable:   18.0-<sha> tags are never overwritten
 ```
 
 ## Example 4: MCP Query Sequence
@@ -93,7 +93,7 @@ Result: Notation (CNCF project) signs OCI artifacts stored in ACR.
 ### Build
 1. ACR Task pulls source from GitHub.
 2. Builds from `docker/Dockerfile.unified`.
-3. Tags: `19.0-<run-id>` (immutable) + `latest` (mutable).
+3. Tags: `18.0-<run-id>` (immutable) + `latest` (mutable).
 
 ### Scan
 1. Defender for Containers scans image on push.
@@ -102,9 +102,9 @@ Result: Notation (CNCF project) signs OCI artifacts stored in ACR.
 
 ### Deploy
 1. Update ACA revision with new image tag:
-   `az containerapp update --name ipai-odoo-dev-web --image ipaiodoodevacr.azurecr.io/odoo:19.0-<sha>`
+   `az containerapp update --name ipai-odoo-dev-web --image ipaiodoodevacr.azurecr.io/odoo:18.0-<sha>`
 2. Verify health: `curl -sf https://erp.insightpulseai.com/web/health`
 
 ### Rollback
-1. Set previous tag: `az containerapp update --name ipai-odoo-dev-web --image ipaiodoodevacr.azurecr.io/odoo:19.0-<prev-sha>`
+1. Set previous tag: `az containerapp update --name ipai-odoo-dev-web --image ipaiodoodevacr.azurecr.io/odoo:18.0-<prev-sha>`
 ```

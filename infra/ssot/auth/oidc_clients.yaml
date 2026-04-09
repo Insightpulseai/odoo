@@ -1,0 +1,193 @@
+# schema: ssot.auth.oidc_clients.v3
+# Single source of truth for OIDC client registrations.
+#
+# UPDATED 2026-03-25: Primary IdP changed from Keycloak to Microsoft Entra ID.
+# Keycloak was deployed but NEVER operationalized — this is a greenfield migration.
+# Supabase Auth is decommissioned (service retired 2026-03-25).
+#
+# This file tracks:
+#   - Identity Provider (IdP) configuration
+#   - Registered OIDC/OAuth2 clients (relying parties)
+#   - Per-environment callback URLs, scopes, and activation status
+#
+# NEVER include client_secret values in this file.
+# Secret references point to Azure Key Vault entries.
+#
+# Related:
+#   - ssot/identity/entra_app_registrations.yaml (app registration lifecycle)
+#   - ssot/identity/entra_rbac_roles.yaml (role mappings)
+#   - ssot/identity/entra_target_state.yaml (tenant configuration)
+#   - spec/entra-identity-migration/ (implementation spec bundle)
+#   - addons/ipai/ipai_auth_oidc/ (Odoo OIDC module — to be built)
+#
+# History:
+#   v1.0.0 (2026-02): Initial — Supabase Auth as IdP
+#   v2.0.0 (2026-03-12): Keycloak as IdP (Supabase demoted)
+#   v3.0.0 (2026-03-25): Entra ID as IdP (Keycloak + Supabase both retired)
+
+version: "3.0.0"
+schema: ssot.auth.oidc_clients.v3
+last_reviewed: "2026-03-25"
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# Identity Provider — Microsoft Entra ID
+# ═══════════════════════════════════════════════════════════════════════════════
+idp:
+  name: "Microsoft Entra ID"
+  role: "Primary IdP, SSO authority, Conditional Access enforcement"
+  type: oidc
+  tenant: ceoinsightpulseai.onmicrosoft.com
+  custom_domain: insightpulseai.com
+  issuer: "https://login.microsoftonline.com/{tenant-id}/v2.0"
+  endpoints:
+    authorization: "https://login.microsoftonline.com/{tenant-id}/oauth2/v2.0/authorize"
+    token: "https://login.microsoftonline.com/{tenant-id}/oauth2/v2.0/token"
+    userinfo: "https://graph.microsoft.com/oidc/userinfo"
+    jwks: "https://login.microsoftonline.com/{tenant-id}/discovery/v2.0/keys"
+    discovery: "https://login.microsoftonline.com/{tenant-id}/v2.0/.well-known/openid-configuration"
+  supported_scopes:
+    - openid
+    - email
+    - profile
+    - User.Read
+  supported_flows:
+    - authorization_code_pkce
+  banned_flows:
+    - implicit
+    - password
+    - client_credentials_for_user_login
+  notes: >
+    Entra ID is the single SSO authority. Keycloak was never operationalized
+    and is a decommission candidate. Supabase Auth is retired with the
+    Supabase service (2026-03-25).
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# External OAuth Providers (non-Entra)
+# ═══════════════════════════════════════════════════════════════════════════════
+external_providers:
+
+  - id: google_workspace_w9studio
+    enabled: true
+    provider_type: oauth2
+    display_name: "Google Workspace (W9 Studio)"
+    login_button_label: "Log in with Google"
+    issuer: "https://accounts.google.com"
+    client_type: web_application
+    hosted_domain: w9studio.net
+    admin_email: business@w9studio.net
+    consent_screen_type: internal
+    redirect_uri_path: /auth_oauth/signin
+    redirect_uris:
+      - "https://erp.insightpulseai.com/auth_oauth/signin"
+    scopes: [openid, email, profile]
+    secret_ref:
+      client_id: google-oauth-w9studio-client-id       # Azure Key Vault
+      client_secret: google-oauth-w9studio-client-secret # Azure Key Vault
+    notes: >
+      Google Workspace OAuth for w9studio.net (Warehouse 9 Studio / Baked Studios).
+      Internal consent screen — restricts login to @w9studio.net accounts only.
+      OAuth client created in w9studio.net Google Workspace admin console.
+      Only https:// redirect URI needed — proxy_mode fix deployed (ipai_aca_proxy).
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# Registered OIDC Clients (Relying Parties)
+# ═══════════════════════════════════════════════════════════════════════════════
+clients:
+
+  # ─── Odoo ERP (P1 — highest priority) ──────────────────────────────────────
+  - id: odoo
+    name: "Odoo ERP"
+    description: "Primary ERP — SSO via Entra ID OIDC"
+    entra_app_registration: ipai-odoo-login  # links to entra_app_registrations.yaml
+    provider: entra
+    grant_type: authorization_code_pkce
+    app_type: single_tenant_web
+    group_claim_mapping: true
+    local_password: break_glass_only
+    scopes: [openid, email, profile, User.Read]
+    module: "auth_oauth + ipai_auth_oidc"
+    priority: P1
+
+    per_env:
+      production:
+        base_url: "https://erp.insightpulseai.com"
+        callback_url: "https://erp.insightpulseai.com/auth_oauth/signin"
+        logout_url: "https://erp.insightpulseai.com/web/session/logout"
+
+    secret_ref:
+      client_id: entra-odoo-login-client-id       # Azure Key Vault
+      client_secret: entra-odoo-login-client-secret  # Azure Key Vault
+
+    status: planned
+    implementation_notes: >
+      Uses Odoo 18 native auth_oauth + custom ipai_auth_oidc for:
+      - Authorization Code Flow with PKCE
+      - RS256 token validation
+      - JIT user provisioning (create on first login, email matching)
+      - Entra security group → Odoo group_ids sync
+      - Session management (token refresh, back-channel logout)
+
+  # ─── Superset BI (P2) ──────────────────────────────────────────────────────
+  - id: superset
+    name: "Apache Superset BI"
+    description: "Supplemental BI — SSO via Entra ID OIDC"
+    provider: entra
+    grant_type: authorization_code_pkce
+    group_claim_mapping: true
+    scopes: [openid, email, profile]
+    priority: P2
+
+    per_env:
+      production:
+        base_url: "https://superset.insightpulseai.com"
+        callback_url: "https://superset.insightpulseai.com/oauth-authorized/entra"
+        logout_url: "https://superset.insightpulseai.com/logout"
+
+    secret_ref:
+      client_id: entra-superset-client-id
+      client_secret: entra-superset-client-secret
+
+    status: planned
+    implementation_notes: >
+      Superset uses Flask-AppBuilder OIDC (AUTH_TYPE = AUTH_OID).
+      Native OIDC support — no custom module needed.
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# Retired Clients (services decommissioned)
+# ═══════════════════════════════════════════════════════════════════════════════
+retired_clients:
+
+  - id: n8n
+    name: "n8n Automation"
+    retired_date: "2026-03-25"
+    reason: "n8n service decommissioned — replaced by Foundry agents + DevOps"
+
+  - id: plane
+    name: "Plane Project Management"
+    retired_date: "2026-03-25"
+    reason: "Plane service decommissioned — replaced by Azure DevOps Boards"
+
+  - id: shelf
+    name: "Shelf Knowledge Base"
+    retired_date: "2026-03-25"
+    reason: "Shelf service decommissioned — replaced by Odoo Knowledge + Databricks"
+
+  - id: ops_console
+    name: "Ops Console"
+    retired_date: "2026-03-25"
+    reason: "Ops console — evaluate if still needed; not currently active"
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# Retired Identity Providers
+# ═══════════════════════════════════════════════════════════════════════════════
+retired_idps:
+
+  - name: "Keycloak"
+    retired_date: "2026-03-25"
+    reason: "Deployed (ipai-auth-dev ACA) but never operationalized. No apps authenticate through it."
+    action: "Decommission ipai-auth-dev container app"
+
+  - name: "Supabase Auth"
+    project_ref: spdtwktxdalcfigzeqrz
+    retired_date: "2026-03-25"
+    reason: "Supabase service decommissioned (VM deleted, DNS removed)"

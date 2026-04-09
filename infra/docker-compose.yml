@@ -193,7 +193,7 @@ services:
   # Module Initialization — one-shot (profile: init)
   # ===========================================================================
   odoo-init:
-    image: odoo:19
+    image: odoo:18
     container_name: odoo-init
     profiles: ["init"]
     depends_on:
@@ -221,7 +221,7 @@ services:
   # Module Update — one-shot (profile: update)
   # ===========================================================================
   odoo-update:
-    image: odoo:19
+    image: odoo:18
     container_name: odoo-update
     profiles: ["update"]
     depends_on:

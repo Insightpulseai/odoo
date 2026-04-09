@@ -1,0 +1,71 @@
+{
+  "name": "evidence-capture",
+  "description": "Capture evidence artifacts and emit execution trace when agent session ends",
+  "event": "Stop",
+  "mode": "reporting",
+  "blocking": false,
+  "rules": [
+    {
+      "id": "evidence-reminder",
+      "description": "Remind to save evidence if module changes were made without test evidence",
+      "condition": "files_changed_in('addons/ipai/') && !files_changed_in('docs/evidence/')",
+      "action": "report",
+      "message": "Module changes detected without evidence capture. Save test output to docs/evidence/<YYYYMMDD-HHMM>/<module>/test.log"
+    },
+    {
+      "id": "uncommitted-changes",
+      "description": "Report uncommitted changes at session end",
+      "condition": "git_has_uncommitted_changes()",
+      "action": "report",
+      "message": "Session ending with uncommitted changes. Review with git status before closing."
+    },
+    {
+      "id": "execution-trace",
+      "description": "Emit OpenTelemetry-compatible execution trace at session end",
+      "condition": "always",
+      "action": "report",
+      "trace": {
+        "format": "otlp",
+        "export_to": "docs/evidence/<YYYYMMDD-HHMM>/<scope>/trace.json",
+        "span_attributes": {
+          "required": [
+            "agent.name",
+            "agent.task_class",
+            "agent.repo_path_scope",
+            "agent.evidence_path",
+            "agent.duration_ms",
+            "agent.outcome",
+            "agent.handoff_target"
+          ],
+          "never_export": [
+            "prompt.body",
+            "prompt.system",
+            "file.contents",
+            "secret.*",
+            "password.*",
+            "token.*",
+            "env.PASSWORD",
+            "env.*_KEY",
+            "env.*_SECRET",
+            "env.*_TOKEN"
+          ]
+        },
+        "outcome_values": ["success", "partial", "failed", "blocked"],
+        "span_types": [
+          {
+            "name": "agent_run",
+            "description": "Top-level span for the entire agent session"
+          },
+          {
+            "name": "handoff",
+            "description": "Span for each subagent delegation"
+          },
+          {
+            "name": "tool_group",
+            "description": "Span for a batch of parallel tool invocations"
+          }
+        ]
+      }
+    }
+  ]
+}

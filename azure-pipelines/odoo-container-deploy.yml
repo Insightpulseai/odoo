@@ -1,7 +1,7 @@
 # =============================================================================
 # Odoo Container Build + Deploy Pipeline
 # =============================================================================
-# Builds ipai-odoo:19.0-copilot image, deploys to ACA, runs smoke test.
+# Builds ipai-odoo:18.0-copilot image, deploys to ACA, runs smoke test.
 # Uses shared job templates — no inline deploy logic.
 #
 # Trigger: changes to addons/ipai/ or Dockerfile.odoo-copilot

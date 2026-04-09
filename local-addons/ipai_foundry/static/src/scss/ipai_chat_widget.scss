@@ -1,0 +1,92 @@
+.ipai_chat_wrapper {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 1000;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+.ipai_chat_button {
+    width: 60px;
+    height: 60px;
+    background: #714B67;
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    font-size: 24px;
+    transition: transform 0.2s;
+}
+
+.ipai_chat_button:hover {
+    transform: scale(1.1);
+}
+
+.ipai_chat_window {
+    position: absolute;
+    bottom: 80px;
+    right: 0;
+    width: 350px;
+    height: 500px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.ipai_chat_header {
+    background: #714B67;
+    color: white;
+    padding: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: bold;
+}
+
+.ipai_chat_content {
+    flex: 1;
+    padding: 15px;
+    overflow-y: auto;
+    background: #f8f9fa;
+}
+
+.ipai_msg {
+    margin-bottom: 15px;
+    padding: 10px;
+    border-radius: 8px;
+    max-width: 85%;
+    font-size: 14px;
+    line-height: 1.4;
+}
+
+.ipai_msg.user {
+    background: #e9ecef;
+    align-self: flex-end;
+    margin-left: auto;
+}
+
+.ipai_msg.assistant {
+    background: #714B67;
+    color: white;
+    align-self: flex-start;
+}
+
+.ipai_chat_input {
+    padding: 15px;
+    background: white;
+    border-top: 1px solid #dee2e6;
+}
+
+.ipai_chat_input input {
+    width: 100%;
+    border: 1px solid #dee2e6;
+    padding: 10px;
+    border-radius: 20px;
+    outline: none;
+}

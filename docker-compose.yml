@@ -75,10 +75,10 @@ services:
       retries: 20
 
   # =========================================================================
-  # Odoo CE 19 — Core ERP
+  # Odoo CE 18 — Core ERP
   # =========================================================================
   odoo:
-    image: odoo:19.0
+    image: odoo:18.0
     restart: unless-stopped
     depends_on:
       db:

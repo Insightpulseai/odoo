@@ -1,0 +1,51 @@
+{
+  "name": "odoo-guardrails",
+  "description": "Pre-tool guardrails for Odoo 18 CE development safety",
+  "event": "PreToolUse",
+  "mode": "reporting",
+  "blocking": false,
+  "rules": [
+    {
+      "id": "no-enterprise-deps",
+      "description": "Reject Enterprise module dependencies in ipai_* manifests",
+      "pattern": "depends.*enterprise|odoo.com.*iap",
+      "applies_to": ["addons/ipai/**/__manifest__.py"],
+      "action": "warn"
+    },
+    {
+      "id": "no-version-19",
+      "description": "Reject version 19.0.* in Odoo 18 CE manifests",
+      "pattern": "version.*19\\.0",
+      "applies_to": ["addons/ipai/**/__manifest__.py"],
+      "action": "warn"
+    },
+    {
+      "id": "no-cr-commit",
+      "description": "Reject direct cr.commit() calls",
+      "pattern": "cr\\.commit\\(\\)|self\\.env\\.cr\\.commit\\(\\)",
+      "applies_to": ["addons/ipai/**/*.py"],
+      "action": "warn"
+    },
+    {
+      "id": "no-context-mutate",
+      "description": "Reject direct context mutation",
+      "pattern": "self\\.env\\.context\\[",
+      "applies_to": ["addons/ipai/**/*.py"],
+      "action": "warn"
+    },
+    {
+      "id": "no-prod-db-in-tests",
+      "description": "Reject production database names in test files",
+      "pattern": "database.*=.*['\"]odoo['\"]|database.*=.*['\"]odoo_dev['\"]|database.*=.*['\"]odoo_staging['\"]",
+      "applies_to": ["addons/ipai/**/tests/*.py", "scripts/ci/*.sh"],
+      "action": "warn"
+    },
+    {
+      "id": "tree-not-list",
+      "description": "Warn on tree view type (should be list in Odoo 18)",
+      "pattern": "<tree|type=\"tree\"",
+      "applies_to": ["addons/ipai/**/*.xml"],
+      "action": "warn"
+    }
+  ]
+}

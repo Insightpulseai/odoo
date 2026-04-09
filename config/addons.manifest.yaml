@@ -1,5 +1,5 @@
 # =============================================================================
-# Curated Addons Manifest — Odoo 19.0 CE
+# Curated Addons Manifest — Odoo 18.0 CE
 # =============================================================================
 # SSOT for which OCA modules are included in the production runtime image.
 # Replaces: config/addons_manifest.oca_ipai.json (stale, targets Odoo 18)
@@ -488,13 +488,13 @@ ipai:
 # =============================================================================
 # Deprecated / Superseded
 # =============================================================================
-# These were in config/addons_manifest.oca_ipai.json (Odoo 18) but are NOT
-# in oca-aggregate.yml (Odoo 19). They should NOT be re-added without review.
+# These were in config/addons_manifest.oca_ipai.json (Odoo 17) but are NOT
+# in oca-aggregate.yml (Odoo 18). They should NOT be re-added without review.
 deprecated_repos:
   - repo: server-env
     reason: Not in oca-aggregate.yml; env management handled by Azure Key Vault
   - repo: bank-statement-import
-    reason: Merged into account-reconcile in Odoo 19.0
+    reason: Merged into account-reconcile in Odoo 18.0
 # =============================================================================
 # Installation Profiles — OCA Must-Have Baseline
 # =============================================================================

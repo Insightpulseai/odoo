@@ -21,7 +21,7 @@
 | Attribute | Value |
 |-----------|-------|
 | **Language/Version** | [e.g., Python 3.12] |
-| **Framework** | [e.g., Odoo 19 CE] |
+| **Framework** | [e.g., Odoo 18 CE] |
 | **Database** | [e.g., PostgreSQL 16] |
 | **Testing** | [e.g., pytest, Odoo test framework] |
 | **Target Platform** | [e.g., Linux, Docker] |

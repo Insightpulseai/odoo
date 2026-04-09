@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="ipai_foundry.ChatWidget" owl="1">
+        <div class="ipai_chat_wrapper">
+            <div class="ipai_chat_button" t-on-click="_onToggleChat">
+                <i class="fa fa-magic"/>
+            </div>
+            <div t-if="state.isOpen" class="ipai_chat_window">
+                <div class="ipai_chat_header">
+                    <span>IPAI Odoo Copilot</span>
+                    <i class="fa fa-times" t-on-click="_onToggleChat"/>
+                </div>
+                <div class="ipai_chat_content" t-ref="chatContent">
+                    <t t-foreach="state.messages" t-as="msg" t-key="msg.id">
+                        <div t-attf-class="ipai_msg #{msg.role}">
+                            <t t-esc="msg.text"/>
+                        </div>
+                    </t>
+                    <div t-if="state.isTyping" class="ipai_msg assistant typing">...</div>
+                </div>
+                <div class="ipai_chat_input">
+                    <input type="text" placeholder="Ask IPAI..." t-on-keydown="_onInputKeydown" t-ref="chatInput"/>
+                </div>
+            </div>
+        </div>
+    </t>
+</templates>

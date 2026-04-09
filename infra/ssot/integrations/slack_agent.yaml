@@ -1,0 +1,104 @@
+# schema: ssot.integrations.v1
+# Slack Agent integration register.
+# Declares components, SSOT boundary rules, and risk flags for the
+# apps/slack-agent Nitro app wired to the SSOT taskbus.
+#
+# Integration model: Slack is a pure event SOURCE.
+#   - Events/interactions/commands → verify signature → enqueue ops.run
+#   - Worker/agent holds all business logic (never Slack handler)
+#   - Slack is NEVER a direct write surface to SoR (Odoo) or SoW (work.*)
+#
+# Boundary doctrine: docs/architecture/SOW_BOUNDARY.md
+# Contract doc:      docs/architecture/SLACK_AGENT_CONTRACT.md
+
+version: "1.0.0"
+schema: ssot.integrations.v1
+name: slack_agent
+display_name: "Slack Agent (Nitro)"
+status: active              # planned | porting | active | deprecated
+last_reviewed: "2026-03-01"
+
+provider:
+  platform: slack
+  runtime: vercel            # Nitro preset: node-server (dev), vercel (prod)
+  framework: nitro
+  template: "vercel-nitro-slack-agent-template"
+
+components:
+  nitro_app:
+    description: "Nitro HTTP server handling Slack Events, Interactivity, and Slash Commands"
+    path: "apps/slack-agent/"
+    entry_routes:
+      - "POST /api/slack/events"
+      - "POST /api/slack/interactive"
+      - "POST /api/slack/commands"
+    runtime_config: "apps/slack-agent/nitro.config.ts"
+
+  signature_verifier:
+    description: "HMAC-SHA256 Web Crypto signature verification (replay window: 5 min)"
+    path: "apps/slack-agent/server/lib/verify.ts"
+    test: "apps/slack-agent/__tests__/verify.test.ts"
+
+  idempotency_keys:
+    description: "Deterministic key builders for Slack event dedup via ops.runs UNIQUE constraint"
+    path: "apps/slack-agent/server/lib/idempotency.ts"
+    test: "apps/slack-agent/__tests__/idempotency.test.ts"
+    key_formats:
+      event: "slack:event:{event_id}"
+      interaction: "slack:interaction:{trigger_id}"
+      command: "slack:command:{command}:{trigger_id}"
+
+  taskbus_adapter:
+    description: "SSOT enqueue adapter — writes ops.runs rows via @ipai/taskbus"
+    path: "apps/slack-agent/server/lib/taskbus.ts"
+    package: "@ipai/taskbus"
+    package_source: "packages/taskbus/src/enqueue.ts"
+
+  notify_helper:
+    description: "@slack/web-api WebClient wrapper for posting run results back to Slack"
+    path: "apps/slack-agent/server/lib/notify.ts"
+    package: "@slack/web-api"
+
+ssot_boundary_rules:
+  - "Slack handler MUST ACK within 3 seconds (HTTP 200) before any async work"
+  - "Signature verification MUST happen before any body parsing or business logic"
+  - "ops.runs is the only write target from Slack event handlers"
+  - "Workers (not Slack handlers) write to SoR (Odoo) or SoW (work.*)"
+  - "response_url for async follow-up is forwarded in ops.run input; worker posts result"
+
+required_secrets:
+  - slack_signing_secret      # HMAC signature verification (see ssot/secrets/registry.yaml)
+  - slack_bot_token           # @slack/web-api WebClient for posting results
+
+allowed_egress:
+  - slack.com                 # Slack API (chat.postMessage, response_url callbacks)
+  - api.slack.com
+
+risk_flags:
+  - id: slack_retry_flood
+    severity: medium
+    description: >
+      Slack retries delivery on non-2xx or slow (>3s) responses.
+      Duplicate events can flood the taskbus if idempotency keys are not applied correctly.
+    mitigation: >
+      ACK pattern: setResponseStatus(200) + send() BEFORE enqueue.
+      Idempotency: ops.runs.idempotency_key has a UNIQUE constraint — duplicate enqueue
+      calls raise a constraint error and are silently ignored by enqueueSlackRun().
+
+  - id: signature_replay
+    severity: high
+    description: >
+      Stale Slack requests replayed by an attacker can trigger duplicate runs.
+    mitigation: >
+      verifySlackSignature() enforces a 5-minute replay window on x-slack-request-timestamp.
+      Any request older than 300 seconds is rejected with 401.
+
+  - id: missing_trigger_id
+    severity: low
+    description: >
+      interactive.post.ts and commands.post.ts use trigger_id as the idempotency seed.
+      Requests without trigger_id cannot be deduplicated.
+    mitigation: >
+      Return early (after ACK) when trigger_id is absent.
+      Interactive: ACK with empty 200, skip enqueue.
+      Commands: ACK with ephemeral, skip enqueue.

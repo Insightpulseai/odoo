@@ -62,7 +62,7 @@ Custom modules use the naming convention `ipai_<domain>_<feature>` (e.g., `ipai_
 
 ## Code Style
 
-- Python: follow [Odoo 19 coding guidelines](https://www.odoo.com/documentation/19.0/contributing/development/coding_guidelines.html)
+- Python: follow [Odoo 18 coding guidelines](https://www.odoo.com/documentation/18.0/contributing/development/coding_guidelines.html)
 - TypeScript: standard ESLint + Prettier
 - No secrets in source -- use `.env` files (gitignored) or Azure Key Vault
 

@@ -1,0 +1,21 @@
+schema: ssot.plane.taxonomy.labels.v1
+version: 1
+updated: "2026-03-06"
+
+labels:
+  - RAG/Green
+  - RAG/Amber
+  - RAG/Red
+  - Type/Run
+  - Type/Change
+  - Type/Grow
+  - Role/AP
+  - Role/AR
+  - Role/Controller
+  - Role/Tax
+  - Role/PMO
+  - CostCenter/FIN
+  - CostCenter/OPS
+  - Compliance/BIR
+  - Compliance/Audit
+  - Compliance/MonthEnd

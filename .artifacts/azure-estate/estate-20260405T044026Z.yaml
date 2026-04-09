@@ -1,0 +1,193 @@
+# Azure Estate Audit — 20260405T044026Z
+subscription:
+  name: "Azure subscription 1"
+  id: "536d8cf6-89e1-4815-aef3-d5f2c5f4d070"
+  tenant: "402de71a-87ec-4302-a609-fb76098d1da7"
+  queried_at: "20260405T044026Z"
+
+resource_groups:
+  - name: "rg-data-intel-ph"
+    location: "eastus2"
+  - name: "NetworkWatcherRG"
+    location: "southeastasia"
+  - name: "VisualStudioOnline-134775A814F94B7B85605E3D11276127"
+    location: "southeastasia"
+  - name: "rg-ipai-dev-odoo-data"
+    location: "southeastasia"
+  - name: "rg-ipai-dev-platform"
+    location: "southeastasia"
+  - name: "rg-ipai-dev-odoo-runtime"
+    location: "southeastasia"
+  - name: "ai_ipai-appinsights_1611de2f-127a-4a99-b2fd-cb37a84d6e06_managed"
+    location: "southeastasia"
+  - name: "ME_ipai-odoo-ha-env_rg-ipai-dev-odoo-runtime_southeastasia"
+    location: "southeastasia"
+  - name: "DefaultResourceGroup-SEA"
+    location: "southeastasia"
+
+resources:
+  - name: "ipai-copilot-resource"
+    type: "Microsoft.CognitiveServices/accounts"
+    resource_group: "rg-data-intel-ph"
+    location: "eastus2"
+  - name: "ipai-copilot-resource/ipai-copilot"
+    type: "Microsoft.CognitiveServices/accounts/projects"
+    resource_group: "rg-data-intel-ph"
+    location: "eastus2"
+  - name: "ag-ipai-platform"
+    type: "Microsoft.Insights/actiongroups"
+    resource_group: "rg-ipai-dev-odoo-runtime"
+    location: "eastus2"
+
+# Targeted queries (RBAC-resilient)
+postgresql_servers:
+  - name: "pg-ipai-odoo"
+    resource_group: "rg-ipai-dev-odoo-data"
+    state: "Ready"
+    version: "16"
+    sku: "Standard_D2ds_v5"
+
+key_vaults:
+  - name: "kv-ipai-dev"
+    resource_group: "rg-ipai-dev-platform"
+    uri: "https://kv-ipai-dev.vault.azure.net/"
+
+container_apps:
+  - name: "ipai-odoo-dev-web"
+    resource_group: "rg-ipai-dev-odoo-runtime"
+    state: "Succeeded"
+  - name: "ipai-odoo-dev-worker"
+    resource_group: "rg-ipai-dev-odoo-runtime"
+    state: "Succeeded"
+  - name: "ipai-odoo-dev-cron"
+    resource_group: "rg-ipai-dev-odoo-runtime"
+    state: "Succeeded"
+  - name: "ipai-mcp-dev"
+    resource_group: "rg-ipai-dev-odoo-runtime"
+    state: "Succeeded"
+  - name: "ipai-ocr-dev"
+    resource_group: "rg-ipai-dev-odoo-runtime"
+    state: "Succeeded"
+  - name: "ipai-superset-dev"
+    resource_group: "rg-ipai-dev-odoo-runtime"
+    state: "Succeeded"
+  - name: "ipai-website-dev"
+    resource_group: "rg-ipai-dev-odoo-runtime"
+    state: "Succeeded"
+  - name: "ipai-copilot-gateway"
+    resource_group: "rg-ipai-dev-odoo-runtime"
+    state: "Succeeded"
+  - name: "ipai-login-dev"
+    resource_group: "rg-ipai-dev-odoo-runtime"
+    state: "Succeeded"
+  - name: "w9studio-landing-dev"
+    resource_group: "rg-ipai-dev-odoo-runtime"
+    state: "Succeeded"
+  - name: "ipai-odoo-connector"
+    resource_group: "rg-ipai-dev-odoo-runtime"
+    state: "Succeeded"
+  - name: "ipai-prismalab-dev"
+    resource_group: "rg-ipai-dev-odoo-runtime"
+    state: "Succeeded"
+  - name: "ipai-mailpit-dev"
+    resource_group: "rg-ipai-dev-odoo-runtime"
+    state: "Succeeded"
+  - name: "ipai-code-server-dev"
+    resource_group: "rg-ipai-dev-odoo-runtime"
+    state: "Succeeded"
+  - name: "ipai-grafana-dev"
+    resource_group: "rg-ipai-dev-odoo-runtime"
+    state: "Succeeded"
+  - name: "ipai-ops-dashboard"
+    resource_group: "rg-ipai-dev-odoo-runtime"
+    state: "Succeeded"
+  - name: "ipai-workload-center"
+    resource_group: "rg-ipai-dev-odoo-runtime"
+    state: "Succeeded"
+  - name: "ipai-w9studio-dev"
+    resource_group: "rg-ipai-dev-odoo-runtime"
+    state: "Succeeded"
+  - name: "ipai-odoo-ha-web"
+    resource_group: "rg-ipai-dev-odoo-runtime"
+    state: "Succeeded"
+  - name: "ipai-odoo-ha-worker"
+    resource_group: "rg-ipai-dev-odoo-runtime"
+    state: "Succeeded"
+  - name: "ipai-odoo-ha-cron"
+    resource_group: "rg-ipai-dev-odoo-runtime"
+    state: "Succeeded"
+
+container_app_jobs:
+  - name: "ipai-build-agent"
+    resource_group: "rg-ipai-dev-odoo-runtime"
+
+container_registries:
+  - name: "acripaiodoo"
+    resource_group: "rg-ipai-dev-odoo-runtime"
+    login_server: "acripaiodoo.azurecr.io"
+
+front_doors:
+  - name: "afd-ipai-dev"
+    resource_group: "rg-ipai-dev-odoo-runtime"
+    sku: "Premium_AzureFrontDoor"
+
+virtual_networks:
+  - name: "vnet-ipai-dev"
+    resource_group: "rg-ipai-dev-odoo-runtime"
+    address_space: "10.0.0.0/16"
+
+dns_zones:
+  - name: "insightpulseai.com"
+    resource_group: "rg-ipai-dev-odoo-runtime"
+  - name: "w9studio.net"
+    resource_group: "rg-ipai-dev-odoo-runtime"
+
+private_endpoints:
+  - name: "pe-kv-ipai-dev"
+    resource_group: "rg-ipai-dev-odoo-runtime"
+  - name: "pe-pg-ipai-odoo"
+    resource_group: "rg-ipai-dev-odoo-runtime"
+
+function_apps:
+  - name: "func-ipai-meta-capi"
+    resource_group: "rg-ipai-dev-odoo-runtime"
+    state: "Running"
+
+application_insights:
+
+log_analytics_workspaces:
+  - name: "la-ipai-odoo-dev"
+    resource_group: "rg-ipai-dev-odoo-runtime"
+
+storage_accounts:
+  - name: "stipaidev"
+    resource_group: "rg-ipai-dev-odoo-runtime"
+
+private_dns_zones:
+  - name: "privatelink.postgres.database.azure.com"
+    resource_group: "rg-ipai-dev-odoo-runtime"
+  - name: "privatelink.vaultcore.azure.net"
+    resource_group: "rg-ipai-dev-odoo-runtime"
+
+alert_rules:
+  - name: "alert-aca-restarts"
+    enabled: true
+  - name: "alert-http-5xx"
+    enabled: true
+  - name: "alert-aca-no-replicas"
+    enabled: true
+  - name: "alert-aca-high-cpu"
+    enabled: true
+
+waf_policies:
+  - name: "wafipaidev"
+
+
+summary:
+  total_resources_generic_api: 3
+  total_resources_targeted: 53
+  resource_groups: 9
+  container_apps: 21
+  queried_at: "20260405T044026Z"
+  queried_by: "azure_estate_audit.sh"
+  note: "total_resources_generic_api is from az resource list (RBAC-filtered). total_resources_targeted is the real count from per-type queries."

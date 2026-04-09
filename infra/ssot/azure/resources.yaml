@@ -1,0 +1,1156 @@
+# =============================================================================
+# Azure Resource Inventory — InsightPulse AI (SSOT)
+# =============================================================================
+#
+# This file is the single source of truth for all confirmed Azure resources.
+# Do NOT add resources here unless they are deployed (source: confirmed)
+# or defined in IaC (source: bicep) or formally planned (source: planned).
+#
+# Naming convention (target): {type}-ipai-{env}
+# Region: southeastasia (NOT encoded in resource names — no -sea suffix)
+# Environments: dev | staging | prod
+#
+# Fields per resource:
+#   name           — actual Azure portal name (as-is, even if non-conforming)
+#   type           — Azure resource type
+#   resource_group — actual RG name
+#   region         — Azure region
+#   source         — confirmed | bicep | planned
+#   lifecycle      — active | legacy | experimental | managed | planned
+#   owner_domain   — odoo | infra | lakehouse | platform | ai | devops
+#   managed_by     — (optional) service that auto-created this resource
+#   notes          — context
+#
+# Reconciled: 2026-03-20 from Azure Resource Graph (83 confirmed resources)
+# Previous reconcile: 2026-03-11 (65 resources). Delta: +18 new resources.
+#
+# ERRATA — Names That Do NOT Exist:
+#   oai-ipai-sea       WRONG — correct name is oai-ipai-dev
+#   kv-ipai-sea        WRONG — correct name is kv-ipai-dev
+#   vnet-ipai-sea      WRONG — correct name is vnet-ipai-databricks
+#   search-ipai-sea    WRONG — correct name is srch-ipai-dev
+# The -sea suffix does not exist in the naming convention.
+# =============================================================================
+
+schema_version: "2.2"
+last_updated: "2026-03-20"
+naming_convention: "{type}-ipai-{env}"
+default_region: southeastasia
+default_environment: dev
+total_confirmed: 83
+
+# RG Normalization target model (dev tier)
+# Full matrix: infra/ssot/azure/rg-normalization-matrix.yaml
+rg_normalization:
+  status: phase_0_prep
+  target_rgs:
+    observability: rg-ipai-shared-observability
+    edge: rg-ipai-shared-dev           # accepted as-is (Front Door cannot move)
+    odoo_runtime: rg-ipai-dev-odoo-runtime
+    odoo_data: rg-ipai-dev-odoo-data
+    platform: rg-ipai-dev-platform
+    ai: rg-ipai-ai-dev                 # accepted as-is (Databricks/Foundry cannot move)
+
+# -----------------------------------------------------------------------------
+# Resource Groups (8 confirmed + 2 auto-managed)
+# -----------------------------------------------------------------------------
+resource_groups:
+  - name: rg-ipai-dev
+    environment: dev
+    region: southeastasia
+    source: confirmed
+    lifecycle: active
+    owner_domain: odoo
+    notes: >
+      Primary Odoo compute resource group. Contains Container Apps Environment,
+      Odoo web/worker/cron apps, PG Flexible Server, Container Registry, Key Vault.
+
+  - name: rg-ipai-shared-dev
+    environment: dev
+    region: southeastasia
+    source: confirmed
+    lifecycle: active
+    owner_domain: infra
+    notes: >
+      Shared services: Key Vault, Front Door, WAF, Log Analytics, App Insights,
+      Container Registry (shared), Managed Identities.
+
+  - name: rg-ipai-ai-dev
+    environment: dev
+    region: southeastasia
+    source: confirmed
+    lifecycle: active
+    owner_domain: ai
+    notes: >
+      AI and Databricks resource group. Contains Databricks workspace, OpenAI,
+      AI Search, Document Intelligence, Language, Computer Vision, storage,
+      NSGs, Private DNS zone.
+
+  - name: rg-dbw-managed-ipai-dev
+    environment: dev
+    region: southeastasia
+    source: confirmed
+    lifecycle: managed
+    managed_by: databricks
+    owner_domain: lakehouse
+    notes: >
+      Databricks-managed resource group. Auto-created by Databricks workspace.
+      Contains managed identity, storage account, access connector.
+      Do NOT normalize naming — these are Databricks-controlled.
+
+  - name: rg-ipai-agents-dev
+    environment: dev
+    region: southeastasia
+    source: confirmed
+    lifecycle: active
+    owner_domain: platform
+    notes: >
+      Agent and Supabase VM resource group. Contains earlier Odoo deployment
+      (odoo-web, odoo-init), Supabase self-hosted VM, debug container instance.
+      SEE: exceptions/dual-odoo-deployment.yaml
+
+  - name: rg-ipai-data-dev
+    environment: dev
+    region: southeastasia
+    source: confirmed
+    lifecycle: active
+    owner_domain: lakehouse
+    notes: >
+      Data platform resource group. Contains PG Flexible Server (pg-ipai-dev)
+      shared across workloads.
+
+  - name: rg-ipai-devops
+    environment: dev
+    region: southeastasia
+    source: confirmed
+    lifecycle: active
+    owner_domain: devops
+    notes: >
+      DevOps tooling: Dev Center, Managed DevOps Pool, Dev Center Project.
+
+  - name: rg-data-intel-ph
+    environment: dev
+    region: eastus2
+    source: confirmed
+    lifecycle: active
+    owner_domain: ai
+    notes: >
+      Azure Foundry (AI Studio) resource group. Contains Foundry resource
+      and project for data-intel-ph.
+
+  # Auto-managed RGs (not directly owned)
+  - name: NetworkWatcherRG
+    environment: dev
+    region: southeastasia
+    source: confirmed
+    lifecycle: managed
+    managed_by: azure-platform
+    owner_domain: infra
+    notes: Auto-created by Azure for Network Watcher.
+
+  - name: ai_appi-ipai-dev_acfeff8b-4ea0-4b65-8ea2-0ef03b147f72_managed
+    environment: dev
+    region: southeastasia
+    source: confirmed
+    lifecycle: managed
+    managed_by: application-insights
+    owner_domain: infra
+    notes: Auto-created managed RG for Application Insights workspace.
+
+# -----------------------------------------------------------------------------
+# Compute — Container Apps
+# -----------------------------------------------------------------------------
+container_apps:
+  # --- Deployment B: rg-ipai-dev (newer, 3-role Odoo spec) ---
+  - name: ipai-odoo-dev-web
+    type: Microsoft.App/containerApps
+    resource_group: rg-ipai-dev
+    region: southeastasia
+    source: confirmed
+    lifecycle: active
+    owner_domain: odoo
+    notes: >
+      Odoo HTTP frontend. Part of Deployment B (3-role spec).
+      SEE: exceptions/dual-odoo-deployment.yaml
+
+  - name: ipai-odoo-dev-worker
+    type: Microsoft.App/containerApps
+    resource_group: rg-ipai-dev
+    region: southeastasia
+    source: confirmed
+    lifecycle: active
+    owner_domain: odoo
+    notes: >
+      Odoo background queue worker. Part of Deployment B.
+
+  - name: ipai-odoo-dev-cron
+    type: Microsoft.App/containerApps
+    resource_group: rg-ipai-dev
+    region: southeastasia
+    source: confirmed
+    lifecycle: active
+    owner_domain: odoo
+    notes: >
+      Odoo scheduled cron processor. Part of Deployment B.
+
+  - name: ipai-crm-dev
+    type: Microsoft.App/containerApps
+    resource_group: rg-ipai-dev
+    region: southeastasia
+    source: confirmed
+    lifecycle: active
+    owner_domain: odoo
+    notes: CRM service Container App.
+
+  - name: ipai-plane-dev
+    type: Microsoft.App/containerApps
+    resource_group: rg-ipai-dev
+    region: southeastasia
+    source: confirmed
+    lifecycle: active
+    owner_domain: platform
+    notes: Plane project management Container App.
+
+  - name: ipai-shelf-dev
+    type: Microsoft.App/containerApps
+    resource_group: rg-ipai-dev
+    region: southeastasia
+    source: confirmed
+    lifecycle: active
+    owner_domain: platform
+    notes: Shelf asset management Container App.
+
+  - name: ipai-auth-dev
+    type: Microsoft.App/containerApps
+    resource_group: rg-ipai-dev
+    region: southeastasia
+    source: confirmed
+    lifecycle: active
+    owner_domain: platform
+    notes: Auth surface migrated from DO origin to ACA.
+
+  - name: ipai-mcp-dev
+    type: Microsoft.App/containerApps
+    resource_group: rg-ipai-dev
+    region: southeastasia
+    source: confirmed
+    lifecycle: active
+    owner_domain: platform
+    notes: MCP coordinator surface migrated from DO origin to ACA.
+
+  - name: ipai-ocr-dev
+    type: Microsoft.App/containerApps
+    resource_group: rg-ipai-dev
+    region: southeastasia
+    source: confirmed
+    lifecycle: active
+    owner_domain: ai
+    notes: OCR service migrated from DO origin to ACA.
+
+  - name: ipai-superset-dev
+    type: Microsoft.App/containerApps
+    resource_group: rg-ipai-dev
+    region: southeastasia
+    source: confirmed
+    lifecycle: active
+    owner_domain: platform
+    notes: >
+      Superset — supplemental/internal analytics surface only.
+      NOT the canonical BI plane. Power BI is the required primary business
+      consumption plane. Superset remains for internal/ad-hoc use.
+
+  - name: ipai-website-dev
+    type: Microsoft.App/containerApps
+    resource_group: rg-ipai-dev
+    region: southeastasia
+    source: confirmed
+    lifecycle: active
+    owner_domain: platform
+    notes: Website Container App. Added 2026-03-20 reconcile.
+
+  # --- Deployment A: rg-ipai-agents-dev (decommissioned) ---
+  # odoo-web was previously listed here but is no longer live.
+  # Deployment A is retired. See exceptions/dual-odoo-deployment.yaml.
+
+# --- Container App Jobs ---
+container_app_jobs:
+  - name: ipai-odoo-dev-wave1
+    type: Microsoft.App/jobs
+    resource_group: rg-ipai-dev
+    region: southeastasia
+    source: confirmed
+    lifecycle: active
+    owner_domain: odoo
+    notes: Wave 1 migration job. Part of Deployment B.
+
+  - name: ipai-odoo-install
+    type: Microsoft.App/jobs
+    resource_group: rg-ipai-dev
+    region: southeastasia
+    source: confirmed
+    lifecycle: active
+    owner_domain: odoo
+    notes: Odoo module install/upgrade job. Part of Deployment B.
+
+  - name: ipai-branding-install
+    type: Microsoft.App/jobs
+    resource_group: rg-ipai-dev
+    region: southeastasia
+    source: confirmed
+    lifecycle: active
+    owner_domain: odoo
+    notes: Branding install job. Part of Deployment B. Added 2026-03-20 reconcile.
+
+  - name: odoo-init
+    type: Microsoft.App/jobs
+    resource_group: rg-ipai-agents-dev
+    region: southeastasia
+    source: confirmed
+    lifecycle: active
+    owner_domain: odoo
+    notes: >
+      Odoo init job (Deployment A).
+      SEE: exceptions/dual-odoo-deployment.yaml
+
+# --- Container Apps Environments ---
+container_apps_environments:
+  - name: ipai-odoo-dev-env
+    type: Microsoft.App/managedEnvironments
+    resource_group: rg-ipai-dev
+    region: southeastasia
+    source: confirmed
+    lifecycle: active
+    owner_domain: odoo
+    notes: Container Apps Environment for Deployment B (rg-ipai-dev).
+
+  - name: cae-ipai-dev
+    type: Microsoft.App/managedEnvironments
+    resource_group: rg-ipai-agents-dev
+    region: southeastasia
+    source: confirmed
+    lifecycle: active
+    owner_domain: platform
+    notes: Container Apps Environment for Deployment A (rg-ipai-agents-dev).
+
+# --- Container Instances ---
+container_instances:
+  - name: debug-odoo-ep
+    type: Microsoft.ContainerInstance/containerGroups
+    resource_group: rg-ipai-agents-dev
+    region: southeastasia
+    source: confirmed
+    lifecycle: experimental
+    owner_domain: odoo
+    notes: Debug/ephemeral Odoo container instance for troubleshooting.
+
+# -----------------------------------------------------------------------------
+# Compute — Load Balancer (managed)
+# -----------------------------------------------------------------------------
+load_balancers:
+  - name: capp-svc-lb
+    type: Microsoft.Network/loadBalancers
+    resource_group: ME_cae-ipai-dev_rg-ipai-agents-dev_southeastasia
+    region: southeastasia
+    source: confirmed
+    lifecycle: managed
+    managed_by: container-apps
+    owner_domain: infra
+    notes: >
+      Auto-created load balancer for Container Apps Environment cae-ipai-dev.
+      Managed by Azure Container Apps platform.
+
+# -----------------------------------------------------------------------------
+# Container Registries
+# -----------------------------------------------------------------------------
+container_registries:
+  - name: cripaidev
+    type: Microsoft.ContainerRegistry/registries
+    resource_group: rg-ipai-shared-dev
+    region: southeastasia
+    source: confirmed
+    lifecycle: active
+    owner_domain: infra
+    notes: >
+      Shared container registry. Name does not follow convention
+      (expected: acr-ipai-dev). Naming deviation accepted per D-002.
+
+  - name: ipaiodoodevacr
+    type: Microsoft.ContainerRegistry/registries
+    resource_group: rg-ipai-dev
+    region: southeastasia
+    source: confirmed
+    lifecycle: active
+    owner_domain: odoo
+    notes: >
+      Odoo-specific container registry in rg-ipai-dev.
+      Name does not follow convention. Part of Deployment B.
+
+  - name: ipaiwebacr
+    type: Microsoft.ContainerRegistry/registries
+    resource_group: rg-ipai-dev
+    region: southeastasia
+    source: confirmed
+    lifecycle: active
+    owner_domain: platform
+    notes: Web-specific container registry. Added 2026-03-20 reconcile.
+
+# -----------------------------------------------------------------------------
+# Database
+# -----------------------------------------------------------------------------
+database:
+  - name: pg-ipai-dev
+    type: Microsoft.DBforPostgreSQL/flexibleServers
+    resource_group: rg-ipai-data-dev
+    region: southeastasia
+    source: confirmed
+    lifecycle: active
+    owner_domain: lakehouse
+    notes: >
+      Shared PG Flexible Server. Hosts databases for Odoo, n8n, Supabase.
+      Used by Deployment A (rg-ipai-agents-dev).
+
+  - name: pg-ipai-odoo
+    type: Microsoft.DBforPostgreSQL/flexibleServers
+    resource_group: rg-ipai-dev-odoo-data
+    region: southeastasia
+    source: confirmed
+    lifecycle: active
+    owner_domain: odoo
+    fqdn: pg-ipai-odoo.postgres.database.azure.com
+    sku: Standard_D2ds_v5
+    tier: GeneralPurpose
+    version: "16"
+    sami: true
+    fabric_mirroring: enabled
+    mirrored_databases: [odoo]
+    databases: [odoo, odoo_staging]
+    notes: >
+      Canonical Odoo PG Flexible Server (General Purpose).
+      Upgraded from Burstable ipai-odoo-dev-pg on 2026-03-21.
+      Fabric mirroring enabled for odoo database.
+      FQDN: pg-ipai-odoo.postgres.database.azure.com
+
+  - name: ipai-odoo-dev-pg
+    type: Microsoft.DBforPostgreSQL/flexibleServers
+    resource_group: rg-ipai-dev-odoo-data
+    region: southeastasia
+    source: confirmed
+    lifecycle: deprecated
+    owner_domain: odoo
+    notes: >
+      DEPRECATED — replaced by pg-ipai-odoo (General Purpose, Fabric mirroring).
+      Retain until ACA apps are cut over, then delete.
+      Burstable tier (Standard_B1ms) — not eligible for Fabric mirroring.
+
+# -----------------------------------------------------------------------------
+# Network
+# -----------------------------------------------------------------------------
+network:
+  - name: vnet-ipai-databricks
+    type: Microsoft.Network/virtualNetworks
+    resource_group: rg-ipai-ai-dev
+    region: southeastasia
+    source: confirmed
+    lifecycle: active
+    owner_domain: lakehouse
+    address_space: "10.10.0.0/16"
+    subnets:
+      - name: snet-dbw-public
+        prefix: "10.10.1.0/24"
+        delegation: Microsoft.Databricks/workspaces
+      - name: snet-dbw-private
+        prefix: "10.10.2.0/24"
+        delegation: Microsoft.Databricks/workspaces
+    notes: >
+      Databricks VNet injection network. Both subnets delegated to Databricks.
+
+  - name: vm-ipai-supabase-devVNET
+    type: Microsoft.Network/virtualNetworks
+    resource_group: rg-ipai-agents-dev
+    region: southeastasia
+    source: confirmed
+    lifecycle: active
+    owner_domain: platform
+    notes: VNet for self-hosted Supabase VM.
+
+  - name: nsg-dbw-ipai-dev
+    type: Microsoft.Network/networkSecurityGroups
+    resource_group: rg-ipai-ai-dev
+    region: southeastasia
+    source: confirmed
+    lifecycle: active
+    owner_domain: lakehouse
+    notes: NSG for Databricks VNet injection subnets.
+
+  - name: nsg-cae-ipai-dev
+    type: Microsoft.Network/networkSecurityGroups
+    resource_group: rg-ipai-ai-dev
+    region: southeastasia
+    source: confirmed
+    lifecycle: active
+    owner_domain: infra
+    notes: NSG for Container Apps Environment.
+
+  - name: nsg-pg-ipai-dev
+    type: Microsoft.Network/networkSecurityGroups
+    resource_group: rg-ipai-ai-dev
+    region: southeastasia
+    source: confirmed
+    lifecycle: active
+    owner_domain: lakehouse
+    notes: NSG for PostgreSQL Flexible Server networking.
+
+  - name: vm-ipai-supabase-devNSG
+    type: Microsoft.Network/networkSecurityGroups
+    resource_group: rg-ipai-agents-dev
+    region: southeastasia
+    source: confirmed
+    lifecycle: active
+    owner_domain: platform
+    notes: NSG for Supabase VM.
+
+  - name: vm-ipai-supabase-devPublicIP
+    type: Microsoft.Network/publicIPAddresses
+    resource_group: rg-ipai-agents-dev
+    region: southeastasia
+    source: confirmed
+    lifecycle: active
+    owner_domain: platform
+    notes: Public IP for Supabase VM (4.193.100.31).
+
+  - name: vm-ipai-supabase-devVMNic
+    type: Microsoft.Network/networkInterfaces
+    resource_group: rg-ipai-agents-dev
+    region: southeastasia
+    source: confirmed
+    lifecycle: active
+    owner_domain: platform
+    notes: Network interface for Supabase VM.
+
+  - name: privatelink.postgres.database.azure.com
+    type: Microsoft.Network/privateDnsZones
+    resource_group: rg-ipai-ai-dev
+    region: global
+    source: confirmed
+    lifecycle: active
+    owner_domain: infra
+    notes: Private DNS zone for PostgreSQL private endpoint resolution.
+
+  - name: NetworkWatcher_southeastasia
+    type: Microsoft.Network/networkWatchers
+    resource_group: NetworkWatcherRG
+    region: southeastasia
+    source: confirmed
+    lifecycle: managed
+    managed_by: azure-platform
+    owner_domain: infra
+    notes: Auto-created Azure Network Watcher for SEA region.
+
+# -----------------------------------------------------------------------------
+# Front Door & WAF
+# -----------------------------------------------------------------------------
+front_door:
+  - name: ipai-fd-dev
+    type: Microsoft.Cdn/profiles
+    resource_group: rg-ipai-shared-dev
+    region: global
+    source: confirmed
+    lifecycle: active
+    owner_domain: infra
+    notes: >
+      Azure Front Door Premium profile. Global CDN + WAF + routing.
+      Name deviates from convention (expected: fd-ipai-dev). Accepted per D-002.
+
+  - name: ipai-fd-dev-ep
+    type: Microsoft.Cdn/profiles/afdEndpoints
+    resource_group: rg-ipai-shared-dev
+    region: global
+    source: confirmed
+    lifecycle: active
+    owner_domain: infra
+    notes: Front Door endpoint. Added 2026-03-20 reconcile.
+
+  - name: ipaiDevWafPolicy
+    type: Microsoft.Network/FrontDoorWebApplicationFirewallPolicies
+    resource_group: rg-ipai-shared-dev
+    region: global
+    source: confirmed
+    lifecycle: active
+    owner_domain: infra
+    notes: >
+      Front Door WAF policy. Name deviates from convention
+      (expected: waf-ipai-dev). Accepted per D-002.
+
+# -----------------------------------------------------------------------------
+# Security & Identity
+# -----------------------------------------------------------------------------
+security:
+  - name: kv-ipai-dev
+    type: Microsoft.KeyVault/vaults
+    resource_group: rg-ipai-shared-dev
+    region: southeastasia
+    source: confirmed
+    lifecycle: active
+    owner_domain: infra
+    notes: >
+      Shared Key Vault for secrets, keys, certificates.
+      Cross-RG role assignments for Databricks, Container Apps.
+
+  - name: ipai-odoo-dev-kv
+    type: Microsoft.KeyVault/vaults
+    resource_group: rg-ipai-dev
+    region: southeastasia
+    source: confirmed
+    lifecycle: active
+    owner_domain: odoo
+    notes: Odoo-specific Key Vault. Part of Deployment B.
+
+  - name: id-ipai-databricks-dev
+    type: Microsoft.ManagedIdentity/userAssignedIdentities
+    resource_group: rg-ipai-ai-dev
+    region: southeastasia
+    source: confirmed
+    lifecycle: active
+    owner_domain: lakehouse
+    notes: Managed identity for Databricks workspace access.
+
+  - name: id-ipai-agents-dev
+    type: Microsoft.ManagedIdentity/userAssignedIdentities
+    resource_group: rg-ipai-shared-dev
+    region: southeastasia
+    source: confirmed
+    lifecycle: active
+    owner_domain: platform
+    notes: Managed identity for agent workloads.
+
+  - name: id-ipai-aca-dev
+    type: Microsoft.ManagedIdentity/userAssignedIdentities
+    resource_group: rg-ipai-agents-dev
+    region: southeastasia
+    source: confirmed
+    lifecycle: active
+    owner_domain: odoo
+    notes: Managed identity for Container Apps (Deployment A).
+
+  - name: dbmanagedidentity
+    type: Microsoft.ManagedIdentity/userAssignedIdentities
+    resource_group: rg-dbw-managed-ipai-dev
+    region: southeastasia
+    source: confirmed
+    lifecycle: managed
+    managed_by: databricks
+    owner_domain: lakehouse
+    notes: Databricks-managed identity. Do NOT normalize naming.
+
+  - name: unity-catalog-access-connector
+    type: Microsoft.Databricks/accessConnectors
+    resource_group: rg-dbw-managed-ipai-dev
+    region: southeastasia
+    source: confirmed
+    lifecycle: managed
+    managed_by: databricks
+    owner_domain: lakehouse
+    role_assignments:
+      - role: Storage Blob Data Contributor
+        scope: stipaidevlake
+      - role: Key Vault Secrets User
+        scope: kv-ipai-dev
+    notes: Databricks access connector for Unity Catalog.
+
+# -----------------------------------------------------------------------------
+# Storage
+# -----------------------------------------------------------------------------
+storage:
+  - name: stipaidevlake
+    type: Microsoft.Storage/storageAccounts
+    resource_group: rg-ipai-ai-dev
+    region: southeastasia
+    source: confirmed
+    lifecycle: active
+    owner_domain: lakehouse
+    kind: StorageV2
+    sku: Standard_LRS
+    hns_enabled: true
+    containers:
+      - bronze
+      - silver
+      - gold
+      - platinum
+      - checkpoints
+    notes: >
+      ADLS Gen2 storage for Medallion Architecture data lake.
+      Name generated as st{ipai}{env}lake (no hyphens — SA naming rules).
+
+  - name: stipaiodoodev
+    type: Microsoft.Storage/storageAccounts
+    resource_group: rg-ipai-dev
+    region: southeastasia
+    source: confirmed
+    lifecycle: active
+    owner_domain: odoo
+    notes: >
+      Odoo filestore/blob storage. Part of Deployment B.
+      Added 2026-03-20 reconcile. Candidate for filestore backing.
+
+  - name: dbstoragew6tn3uhg4bluy
+    type: Microsoft.Storage/storageAccounts
+    resource_group: rg-dbw-managed-ipai-dev
+    region: southeastasia
+    source: confirmed
+    lifecycle: managed
+    managed_by: databricks
+    owner_domain: lakehouse
+    notes: >
+      Databricks-managed DBFS root storage. Auto-generated name.
+      Do NOT normalize — this is Databricks-controlled.
+
+# -----------------------------------------------------------------------------
+# AI Services
+# -----------------------------------------------------------------------------
+ai:
+  - name: oai-ipai-dev
+    type: "Microsoft.CognitiveServices/accounts (kind: OpenAI)"
+    resource_group: rg-ipai-ai-dev
+    region: eastus
+    source: confirmed
+    lifecycle: active
+    owner_domain: ai
+    notes: Azure OpenAI resource. Deployed in East US (model availability).
+
+  - name: srch-ipai-dev
+    type: Microsoft.Search/searchServices
+    resource_group: rg-ipai-ai-dev
+    region: southeastasia
+    source: confirmed
+    lifecycle: active
+    owner_domain: ai
+    notes: Azure AI Search. Vector + semantic search.
+
+  - name: docai-ipai-dev
+    type: "Microsoft.CognitiveServices/accounts (DocumentIntelligence)"
+    resource_group: rg-ipai-ai-dev
+    region: southeastasia
+    source: confirmed
+    lifecycle: active
+    owner_domain: ai
+    notes: Document Intelligence (OCR, form recognition).
+
+  - name: lang-ipai-dev
+    type: "Microsoft.CognitiveServices/accounts (TextAnalytics)"
+    resource_group: rg-ipai-ai-dev
+    region: southeastasia
+    source: confirmed
+    lifecycle: active
+    owner_domain: ai
+    notes: Language service (text analytics, NER, sentiment).
+
+  - name: vision-ipai-dev
+    type: "Microsoft.CognitiveServices/accounts (ComputerVision)"
+    resource_group: rg-ipai-ai-dev
+    region: southeastasia
+    source: confirmed
+    lifecycle: active
+    owner_domain: ai
+    notes: Computer Vision service.
+
+# -----------------------------------------------------------------------------
+# Azure Foundry (AI Studio)
+# -----------------------------------------------------------------------------
+foundry:
+  - name: data-intel-ph-resource
+    type: Microsoft.MachineLearningServices/workspaces
+    resource_group: rg-data-intel-ph
+    region: eastus2
+    source: confirmed
+    lifecycle: active
+    owner_domain: ai
+    notes: Azure Foundry resource for data-intel-ph project.
+
+  - name: data-intel-ph
+    type: Microsoft.MachineLearningServices/workspaces/projects
+    resource_group: rg-data-intel-ph
+    region: eastus2
+    source: confirmed
+    lifecycle: active
+    owner_domain: ai
+    notes: Foundry project under data-intel-ph-resource.
+
+# -----------------------------------------------------------------------------
+# Databricks
+# -----------------------------------------------------------------------------
+databricks:
+  # ---------------------------------------------------------------------------
+  # Canonical Workspace Posture
+  # ---------------------------------------------------------------------------
+  # Reference template: "Default Storage Firewall + Private Endpoint + Access Connector"
+  # https://learn.microsoft.com/en-us/samples/azure/azure-quickstart-templates/databricks-all-in-one-template-for-vnet-injection-privateendpoint-default-storage-firewall-with-nat-gateway/
+  #
+  # Target posture:
+  #   - VNet injection (mandatory)
+  #   - Private endpoint (mandatory)
+  #   - Default storage firewall enabled (mandatory)
+  #   - System-assigned access connector (mandatory)
+  #   - NAT gateway for egress normalization (mandatory)
+  #   - Secure Cluster Connectivity / no public IP (mandatory)
+  #   - Premium SKU for Unity Catalog (mandatory)
+  #
+  # Fallback baseline (lighter):
+  #   VNet injection + private endpoint (no storage firewall opinion)
+  #   https://learn.microsoft.com/en-us/samples/azure/azure-quickstart-templates/databricks-all-in-one-template-for-vnet-injection-privateendpoint-with-nat-gateway/
+  #
+  # Follow-on hardening (not day-one unless compliance requires):
+  #   - CMK for managed services
+  #   - CMK for DBFS root encryption
+  #   - Private endpoint + CMK combinations
+  #
+  # Do NOT use as canonical:
+  #   - Plain workspace deploy (too weak)
+  #   - Plain VNet injection only (too weak)
+  #   - Custom address range only (too weak)
+  # ---------------------------------------------------------------------------
+
+  - name: dbw-ipai-dev
+    type: Microsoft.Databricks/workspaces
+    resource_group: rg-ipai-ai-dev
+    region: southeastasia
+    sku: premium
+    source: confirmed
+    lifecycle: active
+    owner_domain: lakehouse
+    workspace_url: adb-7405610347978231.11.azuredatabricks.net
+    metastore_id: ec1be12a-292b-4862-a173-dbfd1f4faffc
+    workspace_posture:
+      vnet_injection: true
+      private_endpoint: true
+      storage_firewall: true  # target — verify current state
+      access_connector: system_assigned
+      nat_gateway: true  # target — verify current state
+      secure_cluster_connectivity: true
+      no_public_ip: true
+      cmk: false  # follow-on hardening wave
+    sql_warehouse:
+      id: e7d89eabce4c330c
+      name: ipai-sql-warehouse-dev
+      type: PRO
+      photon: true
+      serverless: true
+      auto_stop_mins: 10
+    catalogs:
+      - name: dbw_ipai_dev
+        type: default
+        storage: managed
+      - name: dev_ppm
+        type: medallion
+        storage: managed
+        schemas: [bronze, silver, gold]
+        first_dlt_pipeline: bb28e08f-5137-44a9-97f7-97a26c2d94ca
+        comment: "Finance PPM development catalog — first DLT pipeline proven 2026-03-21"
+    storage_credentials:
+      - name: dbw_ipai_dev
+        type: workspace_default
+        access_connector: unity-catalog-access-connector
+      - name: ipai-lake-credential
+        type: adls_gen2
+        access_connector: unity-catalog-access-connector
+        target_storage: stipaidevlake
+    external_locations:
+      - name: ipai-lake-dev
+        url: "abfss://gold@stipaidevlake.dfs.core.windows.net/"
+        credential: ipai-lake-credential
+    notes: >
+      Databricks workspace with VNet injection, Secure Cluster Connectivity
+      (no public IP). Premium SKU for Unity Catalog.
+      Canonical posture: Default Storage Firewall template.
+      First DLT pipeline proven 2026-03-21.
+
+# -----------------------------------------------------------------------------
+# Virtual Machines
+# -----------------------------------------------------------------------------
+virtual_machines:
+  - name: vm-ipai-supabase-dev
+    type: Microsoft.Compute/virtualMachines
+    resource_group: rg-ipai-agents-dev
+    region: southeastasia
+    source: confirmed
+    lifecycle: active
+    owner_domain: platform
+    notes: >
+      Self-hosted Supabase VM. Standard_B4ms (4 vCPU, 16 GiB).
+      Hosts: Supabase stack (12+ containers), n8n.
+      IP: 4.193.100.31.
+
+  - name: vm-ipai-supabase-dev_OsDisk_1_98d0c58f5b254ea4a7c90d20ffede7e2
+    type: Microsoft.Compute/disks
+    resource_group: rg-ipai-agents-dev
+    region: southeastasia
+    source: confirmed
+    lifecycle: managed
+    managed_by: azure-compute
+    owner_domain: platform
+    notes: OS disk for Supabase VM. Auto-managed.
+
+# -----------------------------------------------------------------------------
+# Monitoring & Observability
+# -----------------------------------------------------------------------------
+monitoring:
+  - name: appi-ipai-dev
+    type: Microsoft.Insights/components
+    resource_group: rg-ipai-shared-dev
+    region: southeastasia
+    source: confirmed
+    lifecycle: active
+    owner_domain: infra
+    notes: Application Insights for APM and telemetry.
+
+  - name: "Application Insights Smart Detection"
+    type: Microsoft.Insights/actionGroups
+    resource_group: rg-ipai-shared-dev
+    region: global
+    source: confirmed
+    lifecycle: managed
+    managed_by: application-insights
+    owner_domain: infra
+    notes: Auto-created action group for App Insights smart detection.
+
+  - name: law-ipai-dev
+    type: Microsoft.OperationalInsights/workspaces
+    resource_group: rg-ipai-shared-dev
+    region: southeastasia
+    source: confirmed
+    lifecycle: active
+    owner_domain: infra
+    notes: Primary Log Analytics workspace for centralized logging.
+
+  - name: managed-appi-ipai-dev-ws
+    type: Microsoft.OperationalInsights/workspaces
+    resource_group: ai_appi-ipai-dev_acfeff8b-4ea0-4b65-8ea2-0ef03b147f72_managed
+    region: southeastasia
+    source: confirmed
+    lifecycle: managed
+    managed_by: application-insights
+    owner_domain: infra
+    notes: Managed Log Analytics workspace for Application Insights.
+
+# -----------------------------------------------------------------------------
+# DevOps
+# -----------------------------------------------------------------------------
+devops:
+  - name: insightpulseai
+    type: Microsoft.VisualStudio/account
+    resource_group: VisualStudioOnline-134775A814F94B7B85605E3D11276127
+    region: southeastasia
+    source: confirmed
+    lifecycle: active
+    owner_domain: devops
+    notes: Azure DevOps organization.
+
+  - name: ipai-build-pool
+    type: Microsoft.DevOpsInfrastructure/pools
+    resource_group: rg-ipai-devops
+    region: southeastasia
+    source: confirmed
+    lifecycle: active
+    owner_domain: devops
+    notes: Managed DevOps Pool for CI/CD build agents.
+
+  - name: ipai-devcenter
+    type: Microsoft.DevCenter/devcenters
+    resource_group: rg-ipai-devops
+    region: southeastasia
+    source: confirmed
+    lifecycle: active
+    owner_domain: devops
+    notes: Dev Center for developer environments and catalogs.
+
+  - name: ipai-devcenter-project
+    type: Microsoft.DevCenter/projects
+    resource_group: rg-ipai-devops
+    region: southeastasia
+    source: confirmed
+    lifecycle: active
+    owner_domain: devops
+    notes: Dev Center project under ipai-devcenter.
+
+# -----------------------------------------------------------------------------
+# AI Foundry (new workspace — added 2026-03-20 reconcile)
+# -----------------------------------------------------------------------------
+foundry_new:
+  - name: aifoundry-ipai-dev
+    type: Microsoft.MachineLearningServices/workspaces
+    resource_group: rg-ipai-ai-dev
+    region: eastus2
+    source: confirmed
+    lifecycle: active
+    owner_domain: ai
+    notes: >
+      New AI Foundry workspace (eastus2). Supplements data-intel-ph.
+      Contains proj-ipai-claude for Claude agent development.
+
+  - name: proj-ipai-claude
+    type: Microsoft.MachineLearningServices/workspaces/projects
+    resource_group: rg-ipai-ai-dev
+    region: eastus2
+    source: confirmed
+    lifecycle: active
+    owner_domain: ai
+    notes: Foundry project for Claude agent integration under aifoundry-ipai-dev.
+
+  - name: aifoundrkeyvault67125c7c
+    type: Microsoft.KeyVault/vaults
+    resource_group: rg-ipai-ai-dev
+    region: eastus2
+    source: confirmed
+    lifecycle: managed
+    managed_by: ai-foundry
+    owner_domain: ai
+    notes: Foundry-managed Key Vault (auto-created by aifoundry-ipai-dev).
+
+  - name: aifoundrstorage6ff030454
+    type: Microsoft.Storage/storageAccounts
+    resource_group: rg-ipai-ai-dev
+    region: eastus2
+    source: confirmed
+    lifecycle: managed
+    managed_by: ai-foundry
+    owner_domain: ai
+    notes: Foundry-managed storage (auto-created by aifoundry-ipai-dev).
+
+# -----------------------------------------------------------------------------
+# Managed Identities — Environment Separation (added 2026-03-20 reconcile)
+# -----------------------------------------------------------------------------
+# These identities were provisioned for dev/staging/prod environment separation.
+# Evidence that KR-001.2 (env separation) is partially in progress.
+managed_identities_env:
+  # Dev
+  - name: mi-ipai-odoo-dev
+    type: Microsoft.ManagedIdentity/userAssignedIdentities
+    resource_group: rg-ipai-shared-dev
+    region: southeastasia
+    source: confirmed
+    lifecycle: active
+    owner_domain: odoo
+    notes: Odoo workload managed identity (dev).
+
+  - name: mi-ipai-lakehouse-dev
+    type: Microsoft.ManagedIdentity/userAssignedIdentities
+    resource_group: rg-ipai-shared-dev
+    region: southeastasia
+    source: confirmed
+    lifecycle: active
+    owner_domain: lakehouse
+    notes: Lakehouse workload managed identity (dev).
+
+  - name: mi-ipai-platform-dev
+    type: Microsoft.ManagedIdentity/userAssignedIdentities
+    resource_group: rg-ipai-shared-dev
+    region: southeastasia
+    source: confirmed
+    lifecycle: active
+    owner_domain: platform
+    notes: Platform workload managed identity (dev).
+
+  # Staging
+  - name: mi-ipai-odoo-staging
+    type: Microsoft.ManagedIdentity/userAssignedIdentities
+    resource_group: rg-ipai-shared-staging
+    region: southeastasia
+    source: confirmed
+    lifecycle: active
+    owner_domain: odoo
+    notes: Odoo workload managed identity (staging).
+
+  - name: mi-ipai-lakehouse-staging
+    type: Microsoft.ManagedIdentity/userAssignedIdentities
+    resource_group: rg-ipai-shared-staging
+    region: southeastasia
+    source: confirmed
+    lifecycle: active
+    owner_domain: lakehouse
+    notes: Lakehouse workload managed identity (staging).
+
+  - name: mi-ipai-platform-staging
+    type: Microsoft.ManagedIdentity/userAssignedIdentities
+    resource_group: rg-ipai-shared-staging
+    region: southeastasia
+    source: confirmed
+    lifecycle: active
+    owner_domain: platform
+    notes: Platform workload managed identity (staging).
+
+  # Prod
+  - name: mi-ipai-odoo-prod
+    type: Microsoft.ManagedIdentity/userAssignedIdentities
+    resource_group: rg-ipai-shared-prod
+    region: southeastasia
+    source: confirmed
+    lifecycle: active
+    owner_domain: odoo
+    notes: Odoo workload managed identity (prod).
+
+  - name: mi-ipai-lakehouse-prod
+    type: Microsoft.ManagedIdentity/userAssignedIdentities
+    resource_group: rg-ipai-shared-prod
+    region: southeastasia
+    source: confirmed
+    lifecycle: active
+    owner_domain: lakehouse
+    notes: Lakehouse workload managed identity (prod).
+
+  - name: mi-ipai-platform-prod
+    type: Microsoft.ManagedIdentity/userAssignedIdentities
+    resource_group: rg-ipai-shared-prod
+    region: southeastasia
+    source: confirmed
+    lifecycle: active
+    owner_domain: platform
+    notes: Platform workload managed identity (prod).
+
+# -----------------------------------------------------------------------------
+# Deferred Gaps — Tracked Explicitly (2026-03-21)
+# -----------------------------------------------------------------------------
+# These are required target-state components not yet deployed.
+# They are NOT intentionally absent — they are the next deployment wave.
+deferred_gaps:
+  - id: gap_fabric
+    name: Microsoft Fabric
+    category: analytics_platform
+    status: not_deployed
+    priority: high
+    role: "Required complementary Microsoft-native mirroring / OneLake / semantic integration plane"
+    next_action: "Provision Fabric capacity and configure Odoo PG mirroring"
+    note: "Canonical Odoo operational analytics path = Fabric mirroring, not direct PG federation"
+
+  - id: gap_power_bi
+    name: Power BI
+    category: bi_primary
+    status: not_deployed
+    priority: high
+    role: "Required primary business consumption plane"
+    connector: "Databricks SQL Warehouse"
+    auth: "Entra ID native"
+    next_action: "Create Power BI workspace, connect to SQL Warehouse"
+    note: "Superset is supplemental/internal only — Power BI is the canonical BI destination"
+
+  - id: gap_mlflow
+    name: MLflow / Feature Store
+    category: model_lifecycle
+    status: not_deployed
+    priority: medium
+    next_action: "Configure MLflow tracking on dbw-ipai-dev"
+
+  - id: gap_defender
+    name: Microsoft Defender for Cloud
+    category: security
+    status: not_deployed
+    priority: medium
+    next_action: "Enable Defender plans for Container Apps and PostgreSQL"
+
+  - id: gap_purview
+    name: Microsoft Purview
+    category: governance
+    status: not_deployed
+    priority: low
+    next_action: "Evaluate if needed beyond Unity Catalog governance"
+    note: "Unity Catalog covers Databricks-side governance. Purview adds cross-platform lineage."
+
+# =============================================================================

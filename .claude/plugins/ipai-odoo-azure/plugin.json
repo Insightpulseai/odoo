@@ -1,0 +1,42 @@
+{
+  "name": "ipai-odoo-azure",
+  "version": "1.0.0",
+  "description": "Odoo 18 CE on Azure — skills, hooks, agents, and MCP for InsightPulse AI platform",
+  "author": "InsightPulseAI",
+
+  "skills": [
+    "skills/odoo-models",
+    "skills/odoo-views",
+    "skills/odoo-security",
+    "skills/odoo-tests",
+    "skills/odoo-upgrade-18",
+    "skills/azure-aca-runtime",
+    "skills/azure-private-networking",
+    "skills/azure-pg-private-path",
+    "skills/azure-policy-baseline",
+    "skills/foundry-routing"
+  ],
+
+  "hooks": {
+    "PreToolUse": [
+      "hooks/pretooluse/odoo-guardrails.json"
+    ],
+    "PostToolUse": [
+      "hooks/posttooluse/repo-health.json"
+    ],
+    "Stop": [
+      "hooks/stop/evidence-capture.json"
+    ]
+  },
+
+  "agents": [
+    "agents/odoo-reviewer.md",
+    "agents/azure-runtime-operator.md",
+    "agents/governance-auditor.md",
+    "agents/qa-evidence-runner.md",
+    "agents/board-normalizer.md",
+    "agents/foundry-copilot-operator.md"
+  ],
+
+  "mcp": "mcp/.mcp.json"
+}

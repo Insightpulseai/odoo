@@ -78,9 +78,9 @@ class TestAddonsManifest:
         content = self.manifest_path.read_text()
         assert "profiles:" in content
 
-    def test_manifest_targets_odoo_19(self):
+    def test_manifest_targets_odoo_18(self):
         content = self.manifest_path.read_text()
-        assert 'odoo_version: "19.0"' in content
+        assert 'odoo_version: "18.0"' in content
 
 
 # ── OCA Aggregate Sync ───────────────────────────────────────────────────
@@ -137,16 +137,16 @@ class TestIPAIModuleStructure:
                 mod_dir / "__manifest__.py"
             ).exists(), f"{mod_dir.name} missing __manifest__.py"
 
-    def test_manifests_target_19(self):
-        """All installable IPAI modules must target Odoo 19."""
+    def test_manifests_target_18(self):
+        """All installable IPAI modules must target Odoo 18."""
         for mod_dir in self._get_installable_modules():
             manifest = mod_dir / "__manifest__.py"
             try:
                 data = ast.literal_eval(manifest.read_text())
                 version = data.get("version", "")
                 assert version.startswith(
-                    "19."
-                ), f"{mod_dir.name} version {version} does not target 19.0"
+                    "18."
+                ), f"{mod_dir.name} version {version} does not target 18.0"
             except (SyntaxError, ValueError):
                 pass  # Parse errors caught by other tests
 

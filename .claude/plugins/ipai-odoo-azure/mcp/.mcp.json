@@ -1,0 +1,25 @@
+{
+  "description": "Plugin-scoped MCP servers for ipai-odoo-azure",
+  "note": "Inherits from repo-root .mcp.json. This file adds plugin-specific constraints.",
+
+  "servers": {
+    "azure-devops": {
+      "inherits": "root",
+      "default_mode": "read_only",
+      "agent_overrides": {
+        "governance-auditor": "read_write",
+        "board-normalizer": "read_write",
+        "qa-evidence-runner": "read_trigger"
+      },
+      "blocked_operations": [
+        "project.delete",
+        "project.create",
+        "repo.delete",
+        "repo.create",
+        "user.manage",
+        "service_connection.manage",
+        "variable_group.manage"
+      ]
+    }
+  }
+}

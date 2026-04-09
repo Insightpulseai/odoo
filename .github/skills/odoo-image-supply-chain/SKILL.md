@@ -23,7 +23,7 @@ image is built locally or ad-hoc and pushed to ACR without automated gates.
 | `infra/azure/main.bicep` | ACR resource definition |
 | `infra/ssot/azure/resources.yaml` | ACR entries (`cripaidev`, `ipaiodoodevacr`) |
 | `infra/ssot/azure/service-matrix.yaml` | Odoo service -- image reference |
-| `docs/runbooks/ODOO19_GO_LIVE_CHECKLIST.md` | Image build/scan line items |
+| `docs/runbooks/ODOO18_GO_LIVE_CHECKLIST.md` | Image build/scan line items |
 | `docs/audits/ODOO_AZURE_ENTERPRISE_BENCHMARK.md` | Supply chain gap row |
 | Docker files in repo root or `docker/` | Dockerfile(s) for Odoo image |
 
@@ -56,7 +56,7 @@ Optional:
 4. **Patch** -- Create or update:
    - ACR Task definition (YAML or Bicep) that builds on push to `main`.
    - Enable Defender for Containers on the ACR (Bicep property or CLI).
-   - Add image tag convention: `<acr>.azurecr.io/odoo:19.0-<git-sha-short>`.
+   - Add image tag convention: `<acr>.azurecr.io/odoo:18.0-<git-sha-short>`.
    - Document the build-scan-sign-deploy pipeline in a runbook.
 5. **Verify** -- ACR Task definition is syntactically valid. Defender scanning
    property is set. Image tag convention is documented. Runbook exists.
@@ -68,14 +68,14 @@ Optional:
 | `infra/azure/modules/acr.bicep` | ACR with Defender scanning enabled |
 | `infra/azure/acr-task.yaml` | ACR Task for automated builds (new) |
 | `docs/runbooks/ODOO_IMAGE_BUILD_PIPELINE.md` | Build-scan-deploy procedure (new) |
-| `docs/runbooks/ODOO19_GO_LIVE_CHECKLIST.md` | Image supply chain line items |
+| `docs/runbooks/ODOO18_GO_LIVE_CHECKLIST.md` | Image supply chain line items |
 | `infra/ssot/azure/resources.yaml` | ACR entries updated with scanning metadata |
 | `docs/evidence/<stamp>/odoo-image-supply-chain/` | ACR Task def, MCP excerpts |
 
 ## Completion Criteria
 
 - [ ] ACR Task or CI pipeline exists that builds Odoo image on push to `main`.
-- [ ] Image tags include the git SHA (e.g., `19.0-abc1234`).
+- [ ] Image tags include the git SHA (e.g., `18.0-abc1234`).
 - [ ] Defender for Containers is enabled on at least one ACR.
 - [ ] A runbook documents the full build-scan-deploy pipeline.
 - [ ] Go-live checklist includes image scanning verification.

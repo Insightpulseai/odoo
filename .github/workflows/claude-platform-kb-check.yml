@@ -1,0 +1,135 @@
+name: Claude Platform KB Check
+
+on:
+  pull_request:
+    paths:
+      - 'agents/knowledge/claude_platform/**'
+      - 'agents/skills/claude_platform/**'
+      - 'agents/tests/claude_platform/**'
+      - 'agents/knowledge/registry.yaml'
+  push:
+    branches: [main]
+    paths:
+      - 'agents/knowledge/claude_platform/**'
+      - 'agents/skills/claude_platform/**'
+      - 'agents/tests/claude_platform/**'
+
+jobs:
+  validate-yaml:
+    name: Validate KB YAML structure
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install PyYAML
+        run: pip install pyyaml
+
+      - name: Validate KB contracts
+        run: |
+          python3 -c "
+          import yaml, sys, os
+
+          files = [
+              'agents/knowledge/claude_platform/source.yaml',
+              'agents/knowledge/claude_platform/chunking.yaml',
+              'agents/knowledge/claude_platform/indexing.yaml',
+              'agents/skills/claude_platform/skill.yaml',
+              'agents/knowledge/registry.yaml',
+          ]
+
+          errors = []
+          for f in files:
+              if not os.path.exists(f):
+                  errors.append(f'MISSING: {f}')
+                  continue
+              try:
+                  with open(f) as fh:
+                      data = yaml.safe_load(fh)
+                  if not isinstance(data, dict):
+                      errors.append(f'INVALID: {f} — not a YAML mapping')
+                      continue
+                  if 'name' not in data:
+                      errors.append(f'MISSING_FIELD: {f} — no \"name\" field')
+                  print(f'PASS {f}')
+              except yaml.YAMLError as e:
+                  errors.append(f'YAML_ERROR: {f} — {e}')
+
+          if errors:
+              for e in errors:
+                  print(f'ERROR: {e}', file=sys.stderr)
+              sys.exit(1)
+          print('All KB YAML files valid.')
+          "
+
+      - name: Validate registry linkage
+        run: |
+          python3 -c "
+          import yaml, sys, os
+
+          with open('agents/knowledge/registry.yaml') as f:
+              reg = yaml.safe_load(f)
+
+          kbs = reg.get('knowledge_bases', [])
+          claude_kb = None
+          for kb in kbs:
+              if kb.get('name') == 'claude-platform':
+                  claude_kb = kb
+                  break
+
+          if not claude_kb:
+              print('ERROR: claude-platform not found in registry', file=sys.stderr)
+              sys.exit(1)
+
+          # Check contract file references exist
+          contract_fields = ['source_contract', 'chunking_contract', 'indexing_contract', 'skill']
+          errors = []
+          for field in contract_fields:
+              path = claude_kb.get(field)
+              if not path:
+                  errors.append(f'Missing field: {field}')
+              elif not os.path.exists(path):
+                  errors.append(f'{field} points to missing file: {path}')
+              else:
+                  print(f'PASS {field} -> {path}')
+
+          if errors:
+              for e in errors:
+                  print(f'ERROR: {e}', file=sys.stderr)
+              sys.exit(1)
+          print('Registry linkage valid.')
+          "
+
+      - name: Validate retrieval test assets exist
+        run: |
+          python3 -c "
+          import os, sys
+
+          required = [
+              'agents/tests/claude_platform/retrieval_smoke.yaml',
+              'agents/tests/claude_platform/queries.yaml',
+          ]
+          errors = []
+          for f in required:
+              if os.path.exists(f):
+                  print(f'PASS {f}')
+              else:
+                  errors.append(f'MISSING: {f}')
+
+          if errors:
+              for e in errors:
+                  print(f'ERROR: {e}', file=sys.stderr)
+              sys.exit(1)
+          print('Retrieval test assets present.')
+          "
+
+      - name: Validate SKILL.md export exists
+        run: |
+          if [ -f agents/skills/claude_platform/dist/claude/SKILL.md ]; then
+            echo "PASS SKILL.md export exists"
+          else
+            echo "WARN SKILL.md export not found (optional)"
+          fi

@@ -1,0 +1,73 @@
+# syntax=docker/dockerfile:1.7
+# =============================================================================
+# Odoo CE 18 Dev Image — Local iteration, test, debug
+# =============================================================================
+# Same base lineage as Dockerfile.prod.
+# Adds: debugpy, dev-mode defaults, source-mount friendly paths.
+# Does NOT bake addons — expects volume mounts for fast iteration.
+#
+# Usage:
+#   docker build -f docker/Dockerfile.dev -t ipai-odoo-dev:18 .
+#   docker compose -f docker-compose.odoo.local.yml up
+# =============================================================================
+
+ARG ODOO_BASE_IMAGE=odoo:18.0
+
+FROM ${ODOO_BASE_IMAGE}
+
+USER root
+
+# System deps — same as prod + debug tools
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    git \
+    curl \
+    python3-pip \
+    postgresql-client \
+    libxml2-dev \
+    libxslt1-dev \
+    libldap2-dev \
+    libsasl2-dev \
+    libssl-dev \
+    python3-pandas \
+    python3-xlrd \
+    python3-xlsxwriter \
+    python3-xmlsec \
+    && rm -rf /var/lib/apt/lists/*
+
+# Python dev deps
+RUN pip3 install --no-cache-dir --break-system-packages \
+    debugpy \
+    ipython \
+    requests \
+    "lxml[html_clean]" \
+    freezegun \
+    openupgradelib \
+    python-barcode \
+    watchdog
+
+# Addon mount points — not baked, mounted at runtime
+RUN mkdir -p /mnt/oca /mnt/extra-addons/ipai /mnt/extra-addons/local
+
+# Entrypoint
+COPY docker/entrypoint.sh /usr/local/bin/entrypoint.sh
+RUN chmod +x /usr/local/bin/entrypoint.sh
+
+# Default config mount point
+RUN mkdir -p /etc/odoo && chown odoo:odoo /etc/odoo
+
+USER odoo
+
+ENV ODOO_RC=/etc/odoo/odoo.conf
+ENV ODOO_ROLE=web
+
+ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
+
+HEALTHCHECK --interval=30s --timeout=10s --start-period=90s --retries=3 \
+    CMD curl -sf http://localhost:8069/web/health || exit 1
+
+LABEL org.opencontainers.image.title="IPAI Odoo CE 18 (Dev)" \
+      org.opencontainers.image.vendor="InsightPulse AI" \
+      com.insightpulseai.odoo.version="18.0" \
+      com.insightpulseai.image.role="dev"
+
+EXPOSE 8069 8072 5678

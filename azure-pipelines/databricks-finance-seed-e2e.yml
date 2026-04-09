@@ -1,0 +1,81 @@
+trigger: none
+pr: none
+
+pool:
+  vmImage: ubuntu-latest
+
+variables:
+  - name: PYTHON_VERSION
+    value: '3.11'
+  - name: SEED_DIR
+    value: 'databricks/bundles/lakeflow_ingestion/seed/bronze'
+  - name: GOLD_SQL_DIR
+    value: 'databricks/bundles/sql_warehouse/src/sql/marts'
+  - name: EVIDENCE_DIR
+    value: 'artifacts/databricks-finance-seed'
+
+stages:
+  - stage: seed_e2e_dev
+    displayName: Finance seed E2E on Databricks dev
+    jobs:
+      - deployment: run_seed_pipeline
+        displayName: Load bronze -> silver -> gold and assert marts
+        environment: databricks-dev
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - checkout: self
+                  clean: true
+                  fetchDepth: 1
+
+                - task: UsePythonVersion@0
+                  inputs:
+                    versionSpec: '$(PYTHON_VERSION)'
+
+                - bash: |
+                    set -euo pipefail
+                    python -m pip install --upgrade pip
+                  displayName: Bootstrap Python
+
+                - bash: |
+                    set -euo pipefail
+                    export PYTHONPATH="databricks/bundles/foundation_python/src:${PYTHONPATH:-}"
+                    python databricks/bundles/foundation_python/src/ipai_data_intelligence/seeding/load_finance_seed_to_databricks.py \
+                      --seed-dir "$(SEED_DIR)" \
+                      --gold-sql-dir "$(GOLD_SQL_DIR)" \
+                      --catalog "$(DATABRICKS_CATALOG)" \
+                      --bronze-schema "$(DATABRICKS_BRONZE_SCHEMA)" \
+                      --silver-schema "$(DATABRICKS_SILVER_SCHEMA)" \
+                      --gold-schema "$(DATABRICKS_GOLD_SCHEMA)" \
+                      --evidence-path "$(EVIDENCE_DIR)/load_evidence.json"
+                  displayName: Load deterministic finance seed data
+                  env:
+                    DATABRICKS_HOST: $(DATABRICKS_HOST)
+                    DATABRICKS_TOKEN: $(DATABRICKS_TOKEN)
+                    DATABRICKS_WAREHOUSE_ID: $(DATABRICKS_WAREHOUSE_ID)
+                    DATABRICKS_CATALOG: $(DATABRICKS_CATALOG)
+                    DATABRICKS_BRONZE_SCHEMA: $(DATABRICKS_BRONZE_SCHEMA)
+                    DATABRICKS_SILVER_SCHEMA: $(DATABRICKS_SILVER_SCHEMA)
+                    DATABRICKS_GOLD_SCHEMA: $(DATABRICKS_GOLD_SCHEMA)
+
+                - bash: |
+                    set -euo pipefail
+                    export PYTHONPATH="databricks/bundles/foundation_python/src:${PYTHONPATH:-}"
+                    python databricks/bundles/foundation_python/src/ipai_data_intelligence/seeding/e2e_assertions.py \
+                      --catalog "$(DATABRICKS_CATALOG)" \
+                      --gold-schema "$(DATABRICKS_GOLD_SCHEMA)" \
+                      --evidence-path "$(EVIDENCE_DIR)/assertion_evidence.json"
+                  displayName: Assert six gold marts end to end
+                  env:
+                    DATABRICKS_HOST: $(DATABRICKS_HOST)
+                    DATABRICKS_TOKEN: $(DATABRICKS_TOKEN)
+                    DATABRICKS_WAREHOUSE_ID: $(DATABRICKS_WAREHOUSE_ID)
+                    DATABRICKS_CATALOG: $(DATABRICKS_CATALOG)
+                    DATABRICKS_GOLD_SCHEMA: $(DATABRICKS_GOLD_SCHEMA)
+
+                - task: PublishPipelineArtifact@1
+                  inputs:
+                    targetPath: '$(EVIDENCE_DIR)'
+                    artifact: 'databricks-finance-seed-evidence'
+                  displayName: Publish evidence

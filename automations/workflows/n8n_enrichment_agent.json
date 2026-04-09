@@ -1,0 +1,165 @@
+{
+  "meta": {
+    "instanceId": "shadow_enterprise_enrichment_agent"
+  },
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "enrich-contact",
+        "responseMode": "lastNode",
+        "options": {}
+      },
+      "id": "e6f8a2b1-0000-0000-0000-000000000001",
+      "name": "Webhook Listener",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1.1,
+      "position": [460, 340]
+    },
+    {
+      "parameters": {
+        "model": "gpt-4o-mini",
+        "prompt": "=Analyze the email domain '{{ $json.body.email }}' or website '{{ $json.body.website }}'. \n\n1. Identify the Industry (e.g., Technology, Finance, Healthcare, Retail, Agency).\n2. Write a 1-sentence summary of what the company likely does.\n\nReturn JSON format:\n{\n  \"industry\": \"Technology\",\n  \"summary\": \"A multinational technology company focusing on search engine technology.\"\n}"
+      },
+      "id": "e6f8a2b1-0000-0000-0000-000000000002",
+      "name": "AI Analyst",
+      "type": "n8n-nodes-base.openAi",
+      "typeVersion": 1,
+      "position": [680, 340],
+      "credentials": {
+        "openAiApi": {
+          "id": "YOUR_OPENAI_CREDENTIAL_ID",
+          "name": "OpenAI Account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "res.partner.category",
+        "operation": "getAll",
+        "limit": 1,
+        "options": {
+          "domain": "=[[\"name\", \"=\", \"{{ JSON.parse($json.content).industry }}\"]]"
+        }
+      },
+      "id": "e6f8a2b1-0000-0000-0000-000000000003",
+      "name": "Search Tag",
+      "type": "n8n-nodes-base.odoo",
+      "typeVersion": 1,
+      "position": [900, 340],
+      "credentials": {
+        "odooApi": {
+          "id": "YOUR_ODOO_CREDENTIAL_ID",
+          "name": "Odoo Account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "res.partner.category",
+        "fieldsToCreateOrUpdate": {
+          "fields": [
+            {
+              "fieldName": "name",
+              "value": "={{ JSON.parse($node[\"AI Analyst\"].json.content).industry }}"
+            }
+          ]
+        }
+      },
+      "id": "e6f8a2b1-0000-0000-0000-000000000004",
+      "name": "Create Tag If Missing",
+      "type": "n8n-nodes-base.odoo",
+      "typeVersion": 1,
+      "position": [1120, 240],
+      "credentials": {
+        "odooApi": {
+          "id": "YOUR_ODOO_CREDENTIAL_ID",
+          "name": "Odoo Account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "resource": "res.partner",
+        "id": "={{ $node[\"Webhook Listener\"].json.body.id }}",
+        "fieldsToCreateOrUpdate": {
+          "fields": [
+            {
+              "fieldName": "category_id",
+              "value": "=[{{ $json.id || $node[\"Search Tag\"].json.id }}]"
+            },
+            {
+              "fieldName": "comment",
+              "value": "=AI Insight: {{ JSON.parse($node[\"AI Analyst\"].json.content).summary }}"
+            }
+          ]
+        }
+      },
+      "id": "e6f8a2b1-0000-0000-0000-000000000005",
+      "name": "Update Contact",
+      "type": "n8n-nodes-base.odoo",
+      "typeVersion": 1,
+      "position": [1340, 340],
+      "credentials": {
+        "odooApi": {
+          "id": "YOUR_ODOO_CREDENTIAL_ID",
+          "name": "Odoo Account"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Webhook Listener": {
+      "main": [
+        [
+          {
+            "node": "AI Analyst",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Analyst": {
+      "main": [
+        [
+          {
+            "node": "Search Tag",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search Tag": {
+      "main": [
+        [
+          {
+            "node": "Update Contact",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Create Tag If Missing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Tag If Missing": {
+      "main": [
+        [
+          {
+            "node": "Update Contact",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  }
+}

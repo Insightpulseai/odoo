@@ -1,0 +1,33 @@
+{
+  "name": "repo-health",
+  "description": "Post-tool health checks after file modifications",
+  "event": "PostToolUse",
+  "mode": "reporting",
+  "blocking": false,
+  "rules": [
+    {
+      "id": "manifest-version-check",
+      "description": "Verify all ipai_* manifests use 18.0.x.y.z after edits",
+      "trigger_on": ["Write", "Edit"],
+      "applies_to": ["addons/ipai/**/__manifest__.py"],
+      "check": "grep -r \"version.*19\\.0\" addons/ipai/*/__manifest__.py || true",
+      "action": "report"
+    },
+    {
+      "id": "security-file-check",
+      "description": "Verify ACL files have all 4 CRUD columns after edits",
+      "trigger_on": ["Write", "Edit"],
+      "applies_to": ["addons/ipai/**/security/ir.model.access.csv"],
+      "check": "head -1 matches: id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink",
+      "action": "report"
+    },
+    {
+      "id": "no-secrets-committed",
+      "description": "Check that no .env files or secrets are staged",
+      "trigger_on": ["Bash"],
+      "applies_to": ["**/.env", "**/.env.*", "**/credentials*"],
+      "check": "git diff --cached --name-only | grep -E '\\.env|credentials|secret' || true",
+      "action": "report"
+    }
+  ]
+}
