@@ -1,0 +1,426 @@
+version: 1
+artifact: finance_copilot_scenario_pack_schema
+status: active
+
+purpose:
+  - benchmark_odoo_copilot_against_finance_scenarios
+  - merge_microsoft_finance_agent_patterns_with_ph_bir_finance_requirements
+  - support_repeatable_eval_runs_with_gold_verdicts_and_evidence
+
+pack_metadata:
+  required_fields:
+    - pack_id
+    - title
+    - version
+    - owner
+    - created_at
+    - updated_at
+    - source_benchmarks
+    - target_product
+    - target_scope
+    - localization_scope
+
+source_benchmarks:
+  type: list
+  allowed_examples:
+    - microsoft_balance_sheet_reconciliation_agent
+    - microsoft_reconcile_financial_data_to_accelerate_period_closing
+    - microsoft_collections_coordination
+    - microsoft_financial_insights
+    - microsoft_finance_qa_agent
+    - microsoft_income_tax_compliance_manager
+    - ph_bir_full_finance_operating_model
+
+target_product:
+  required_fields:
+    - product_name
+    - version
+    - model_runtime
+    - erp_system
+    - retrieval_runtime
+    - deterministic_validation_components
+
+target_scope:
+  required_fields:
+    - ar
+    - ap
+    - expenses
+    - vat
+    - withholding
+    - reconciliation
+    - policy_qa
+    - communications
+    - reporting
+
+localization_scope:
+  required_fields:
+    - country
+    - tax_regime
+    - bir_forms
+    - sawt_in_scope
+    - atc_mapping_in_scope
+
+datasets:
+  type: list
+  item_schema:
+    required_fields:
+      - dataset_id
+      - name
+      - domain
+      - modality
+      - purpose
+      - records
+      - gold_artifacts
+      - sensitivity
+    fields:
+      dataset_id:
+        type: string
+      name:
+        type: string
+      domain:
+        enum:
+          - ar
+          - ap
+          - expenses
+          - vat
+          - withholding
+          - reconciliation
+          - policy
+          - communications
+          - analytics
+          - mixed
+      modality:
+        enum:
+          - structured_table
+          - erp_record_export
+          - pdf
+          - image
+          - docx
+          - xlsx
+          - email_thread
+          - chat_thread
+          - policy_document
+          - meeting_notes
+          - mixed
+      purpose:
+        enum:
+          - retrieval
+          - extraction
+          - discrepancy_detection
+          - explanation
+          - drafting
+          - routing
+          - policy_qa
+          - tax_validation
+          - reporting
+      records:
+        required_fields:
+          - count
+          - schema_ref
+          - sample_ids
+      gold_artifacts:
+        required_fields:
+          - gold_answer_set
+          - gold_verdict_set
+          - scoring_notes
+      sensitivity:
+        required_fields:
+          - pii
+          - financial_confidential
+          - tax_sensitive
+          - customer_sensitive
+
+scenario_families:
+  type: list
+  item_schema:
+    required_fields:
+      - family_id
+      - name
+      - benchmark_source
+      - business_goal
+      - primary_domains
+      - scenarios
+    fields:
+      family_id:
+        type: string
+      name:
+        type: string
+      benchmark_source:
+        type: string
+      business_goal:
+        type: string
+      primary_domains:
+        type: list
+      scenarios:
+        type: list
+
+scenarios:
+  type: list
+  item_schema:
+    required_fields:
+      - scenario_id
+      - scenario_family_id
+      - title
+      - objective
+      - business_process
+      - inputs
+      - expected_agent_behavior
+      - deterministic_checks
+      - gold_verdict
+      - scoring_weights
+      - risk_level
+      - localization_tags
+    fields:
+      scenario_id:
+        type: string
+      scenario_family_id:
+        type: string
+      title:
+        type: string
+      objective:
+        type: string
+      business_process:
+        enum:
+          - ar_collections
+          - customer_invoicing
+          - ap_vendor_bills
+          - supplier_payments
+          - expenses_reimbursement
+          - reconciliation_close
+          - tax_policy_qa
+          - financial_analysis
+          - communications
+          - reporting
+          - mixed
+      inputs:
+        required_fields:
+          - structured_inputs
+          - unstructured_inputs
+          - user_prompt
+          - system_context
+          - policy_context
+      expected_agent_behavior:
+        required_fields:
+          - retrieve_relevant_context
+          - identify_missing_information
+          - explain_findings
+          - draft_or_route_action_if_applicable
+          - escalate_if_not_safe
+      deterministic_checks:
+        required_fields:
+          - required
+          - check_types
+          - expected_machine_verdict
+        fields:
+          required:
+            type: boolean
+          check_types:
+            type: list
+            allowed_examples:
+              - tax_math
+              - vat_classification
+              - withholding_base
+              - withholding_amount
+              - total_reconciliation
+              - posting_blocker
+              - atc_mapping
+              - report_mapping
+              - duplicate_detection
+          expected_machine_verdict:
+            enum:
+              - pass
+              - fail
+              - needs_review
+              - escalate
+      gold_verdict:
+        required_fields:
+          - outcome
+          - rationale
+          - must_cite_sources
+          - escalation_expected
+        fields:
+          outcome:
+            enum:
+              - correct
+              - partially_correct
+              - incorrect
+              - unsafe
+              - insufficient_data
+              - escalate
+      scoring_weights:
+        required_fields:
+          - retrieval_grounding
+          - finance_reasoning
+          - deterministic_boundary_respect
+          - compliance_safety
+          - explanation_quality
+          - workflow_safety
+      risk_level:
+        enum:
+          - low
+          - medium
+          - high
+          - critical
+      localization_tags:
+        type: list
+        allowed_examples:
+          - ph_bir
+          - vat
+          - withholding
+          - 2307
+          - sawt
+          - 2550q
+          - 1601c
+          - government_counterparty
+          - atc_sensitive
+
+gold_answer_sets:
+  type: list
+  item_schema:
+    required_fields:
+      - gold_answer_id
+      - scenario_id
+      - answer_type
+      - expected_content
+      - forbidden_content
+      - escalation_conditions
+    fields:
+      answer_type:
+        enum:
+          - concise_answer
+          - discrepancy_report
+          - explanation
+          - draft_email
+          - route_decision
+          - policy_answer
+          - summary
+      expected_content:
+        type: list
+      forbidden_content:
+        type: list
+      escalation_conditions:
+        type: list
+
+gold_verdict_sets:
+  type: list
+  item_schema:
+    required_fields:
+      - verdict_id
+      - scenario_id
+      - deterministic_outcome
+      - business_acceptance_outcome
+      - compliance_acceptance_outcome
+      - notes
+
+eval_runs:
+  required_fields:
+    - run_id
+    - pack_id
+    - agent_name
+    - model_version
+    - environment
+    - date
+    - scenario_results
+    - overall_score
+    - release_gate_result
+
+scenario_results:
+  type: list
+  item_schema:
+    required_fields:
+      - scenario_id
+      - result
+      - agent_output_ref
+      - retrieved_context_refs
+      - deterministic_check_results
+      - score_breakdown
+      - evidence_refs
+    fields:
+      result:
+        enum:
+          - pass
+          - fail
+          - unsafe
+          - escalate_correctly
+          - escalate_missing
+          - insufficient_data_handled
+      deterministic_check_results:
+        type: list
+      score_breakdown:
+        required_fields:
+          - retrieval_grounding
+          - finance_reasoning
+          - deterministic_boundary_respect
+          - compliance_safety
+          - explanation_quality
+          - workflow_safety
+          - weighted_total
+
+release_gates:
+  required_fields:
+    - demo_ready
+    - internal_pilot_ready
+    - finance_ops_ready
+    - ph_bir_production_ready
+  fields:
+    demo_ready:
+      required_minimums:
+        - no_unsafe_failures_in_core_scenarios
+        - retrieval_grounding_avg_gte_0_70
+    internal_pilot_ready:
+      required_minimums:
+        - no_critical_compliance_failures
+        - deterministic_boundary_respect_avg_gte_0_80
+        - escalation_correctness_avg_gte_0_80
+    finance_ops_ready:
+      required_minimums:
+        - no_failures_in_reconciliation_ap_ar_expense_core_set
+        - compliance_safety_avg_gte_0_85
+        - workflow_safety_avg_gte_0_85
+    ph_bir_production_ready:
+      required_minimums:
+        - zero_unsafe_results_in_2307_sawt_2550q_scenarios
+        - no_wrong_withholding_or_vat_classification_in_critical_set
+        - evidence_pack_complete
+        - human_review_signoff
+
+artifact_outputs:
+  required_fields:
+    - run_log
+    - scenario_scorecard
+    - family_scorecard
+    - failure_report
+    - evidence_pack
+    - regression_comparison
+
+recommended_dataset_buckets:
+  - id: ds_reconciliation
+    name: balance_sheet_and_period_close
+    domain: reconciliation
+    modality: mixed
+    purpose: discrepancy_detection
+  - id: ds_ar_collections
+    name: customer_invoices_collections_comms
+    domain: ar
+    modality: mixed
+    purpose: drafting
+  - id: ds_ap_withholding
+    name: vendor_bills_withholding_vat
+    domain: ap
+    modality: mixed
+    purpose: tax_validation
+  - id: ds_expenses
+    name: expenses_reimbursements_receipts
+    domain: expenses
+    modality: mixed
+    purpose: extraction
+  - id: ds_policy_qa
+    name: finance_policy_and_tax_guidance
+    domain: policy
+    modality: policy_document
+    purpose: policy_qa
+  - id: ds_ph_bir
+    name: ph_bir_support_docs
+    domain: mixed
+    modality: mixed
+    purpose: reporting
