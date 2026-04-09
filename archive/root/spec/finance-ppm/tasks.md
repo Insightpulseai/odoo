@@ -48,5 +48,5 @@
 - [ ] **T-23** Run `validate_team_directory.py` — exits 0
 - [ ] **T-24** Run `validate_seed_ssot.py` — exits 0
 - [ ] **T-25** Run `validate_parity_map.py` — exits 0
-- [ ] **T-26** Run `test_finance_ppm_odoo19.sh` — exits 0
+- [ ] **T-26** Run `test_finance_ppm_odoo18.sh` — exits 0
 - [ ] **T-27** Verify logframe KPI baselines (on-time filing, avg delay, TB reconciliation, BIR overdue)

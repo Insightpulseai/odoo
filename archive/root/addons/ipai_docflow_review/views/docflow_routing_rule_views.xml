@@ -21,7 +21,7 @@
     </field>
   </record>
 
-  <!-- LIST (Odoo 19 uses <list>) -->
+  <!-- LIST (Odoo 18 uses <list>) -->
   <record id="view_docflow_routing_rule_list" model="ir.ui.view">
     <field name="name">docflow.routing.rule.list</field>
     <field name="model">docflow.routing.rule</field>

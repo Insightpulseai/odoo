@@ -59,7 +59,7 @@ automatically — no special config needed, but ensure your Cloudflare SSL mode 
 
 ### Odoo bus / longpolling
 
-Odoo 19 uses HTTP/2 long-polling for the bus (notifications). Cloudflare proxies HTTP/2
+Odoo 18 uses HTTP/2 long-polling for the bus (notifications). Cloudflare proxies HTTP/2
 transparently. If you see bus timeouts, check:
 - Cloudflare SSL mode is Full (Strict)
 - nginx/Caddy `proxy_read_timeout` is high enough (≥ 300 s)

@@ -7,7 +7,7 @@
  *     Record.many(targetModel, opts)  →  one-to-many relation
  *     Record.attr(default, opts)      →  primitive attribute
  *
- * In Odoo 19 these were moved to a standalone `fields` namespace:
+ * In Odoo 18 these were moved to a standalone `fields` namespace:
  *     fields.One()   fields.Many()   fields.Attr()
  *   (exported from @mail/model/misc via @mail/core/common/record)
  *

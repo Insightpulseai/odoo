@@ -1,4 +1,4 @@
-# DocFlow Agentic Finance (Odoo 19)
+# DocFlow Agentic Finance (Odoo 18)
 
 **Status:** ACCEPTED — PRODUCTION READY
 

@@ -16,7 +16,7 @@
 1. **Module Structure**: `addons/ipai_ppm_okr/__manifest__.py` found and valid
 2. **No pip Conflicts**: No `odoo` package in site-packages (good)
 3. **Odoo Source**: Resolves to `/Users/tbwa/Documents/GitHub/Insightpulseai/odoo/vendor/odoo/`
-4. **Python Environment**: Python 3.11.13 with venv `odoo-19-dev`
+4. **Python Environment**: Python 3.11.13 with venv `odoo-18-dev`
 
 ### ❌ What's Broken
 
@@ -48,7 +48,7 @@ from . import models  # ← FAILS HERE
 This suggests one of:
 
 1. **Corrupted Odoo installation** - `vendor/odoo/` may be incomplete or damaged
-2. **Editable install conflict** - The `__editable__.odoo-19.0.finder.__path_hook__` in sys.path may be interfering
+2. **Editable install conflict** - The `__editable__.odoo-18.0.finder.__path_hook__` in sys.path may be interfering
 3. **Namespace package issue** - Multiple `odoo` packages on sys.path causing import resolution conflicts
 
 ---
@@ -99,10 +99,10 @@ ps aux | grep odoo-bin | grep -v grep
 # Backup current work
 cp -r addons/ipai_ppm_okr /tmp/ipai_ppm_okr_backup
 
-# Clone fresh Odoo 19
+# Clone fresh Odoo 18
 cd /tmp
-git clone --depth 1 --branch 19.0 https://github.com/odoo/odoo.git odoo-19-fresh
-cd odoo-19-fresh
+git clone --depth 1 --branch 19.0 https://github.com/odoo/odoo.git odoo-18-fresh
+cd odoo-18-fresh
 
 # Copy module
 cp -r /tmp/ipai_ppm_okr_backup ./addons/ipai_ppm_okr

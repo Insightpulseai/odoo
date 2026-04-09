@@ -187,7 +187,7 @@ All tools with `requires_confirmation = True` in `ipai.copilot.tool` MUST:
 □ Proactive insights appear after running _run_proactive_insights() manually
 □ trigger_workflow with unlisted workflow_id → error "not in allowlist"
 □ All write tools show confirmation dialog before executing
-□ Module installs cleanly on Odoo 19 CE (no EE deps): pip install odoo-module-check
+□ Module installs cleanly on Odoo 18 CE (no EE deps): pip install odoo-module-check
 ```
 
 ---

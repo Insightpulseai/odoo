@@ -11,10 +11,10 @@
 | Status | Count | Percentage |
 |--------|-------|------------|
 | ✅ Successfully Installed | 30 | 42.9% |
-| ❌ Not Found (Missing from Odoo 19) | 32 | 45.7% |
+| ❌ Not Found (Missing from Odoo 18) | 32 | 45.7% |
 | ⚠️ Uninstallable (Dependency Issues) | 8 | 11.4% |
 
-**STATUS**: PARTIAL — 30/70 modules available, 40 modules unavailable due to Odoo 19.0 compatibility
+**STATUS**: PARTIAL — 30/70 modules available, 40 modules unavailable due to Odoo 18.0 compatibility
 
 ---
 
@@ -22,10 +22,10 @@
 
 ### Missing Modules (32)
 
-The 32 missing modules are **not available for Odoo 19.0** because:
+The 32 missing modules are **not available for Odoo 18.0** because:
 
 1. **OCA Repository Status**: Many OCA repositories have empty 19.0 branches (e.g., `connector`, `server-backend`)
-2. **Odoo 19 Migration Status**: Odoo 19.0 was released recently (2026-02-09), and OCA migration is ongoing
+2. **Odoo 18 Migration Status**: Odoo 18.0 was released recently (2026-02-09), and OCA migration is ongoing
 3. **Module Availability**: These modules exist for Odoo 16/17/18 but haven't been ported to 19.0 yet
 
 **Missing Modules by Category**:
@@ -61,7 +61,7 @@ These modules exist in the repos but are marked as uninstallable due to missing 
 3. `fastapi`, `pydantic` — FastAPI dependencies
 4. `mis_builder`, `mis_builder_budget` — MIS Builder reporting
 
-**Likely Cause**: Circular dependencies or missing Python packages in the Odoo 19 container.
+**Likely Cause**: Circular dependencies or missing Python packages in the Odoo 18 container.
 
 ---
 
@@ -143,7 +143,7 @@ These modules exist in the repos but are marked as uninstallable due to missing 
 
 ### Long Term (3-6 months)
 
-1. **Odoo 19 Full Migration**: Wait for OCA community to complete Odoo 19 migrations
+1. **Odoo 18 Full Migration**: Wait for OCA community to complete Odoo 18 migrations
 2. **Re-run Installation**: Re-execute this installation when more modules become available
 3. **Contribute to OCA**: Consider contributing to missing module migrations if critical
 
@@ -210,8 +210,8 @@ web/docs/evidence/20260220-0645+0800/oca-install-allowlist/
 
 **Objective**: Install all 70 OCA modules from allowlist
 **Result**: 30/70 modules available (42.9% success rate)
-**Blocker**: 32 modules not yet ported to Odoo 19.0 by OCA community
-**Status**: PARTIAL — Best possible result given Odoo 19.0's recent release
+**Blocker**: 32 modules not yet ported to Odoo 18.0 by OCA community
+**Status**: PARTIAL — Best possible result given Odoo 18.0's recent release
 
 **Next Steps**:
 1. ✅ Document findings (this file)

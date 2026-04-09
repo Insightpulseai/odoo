@@ -58,5 +58,5 @@ access_ipai_finance_report_manager,ipai.finance.report manager,model_ipai_financ
 
 **Output**:
 - Validation: FAIL (BLOCKER)
-- Reason: Odoo 19 makes Portal and Internal User mutually exclusive
+- Reason: Odoo 18 makes Portal and Internal User mutually exclusive
 - Recommendation: Choose one group per user; use record rules for cross-boundary access

@@ -29,7 +29,7 @@
 | Auto-deploy on push | ✅ GitHub Actions → DO/Docker | Verified | `deploy-production.yml` |
 | Branch-based deployments | ✅ Docker Compose per branch | Planned | `infra/do-oca-stack/` |
 | Pull request preview | ✅ Vercel Preview + DO Apps | Planned | Vercel + n8n trigger |
-| Three-click project setup | ✅ `docker-compose.odoo19.yml` | Verified | Single command setup |
+| Three-click project setup | ✅ `docker-compose.odoo18.yml` | Verified | Single command setup |
 | Drag-drop branch promotion | ⚠️ Git merge + deploy script | Partial | `scripts/promote-branch.sh` |
 | Automated testing on commit | ✅ GitHub Actions test suite | Verified | `ci-odoo.yml` |
 | Test dashboard (Runbot) | ⚠️ GitHub Actions summary | Partial | Actions UI + Superset |
@@ -160,7 +160,7 @@
 │   ┌─────────────────────────────────────────────────────────────┐ │
 │   │                    Docker Compose Stack                      │ │
 │   │  ┌─────────┐  ┌─────────┐  ┌─────────┐  ┌─────────┐       │ │
-│   │  │PostgreSQL│  │ Odoo 19 │  │ Caddy   │  │ Mailpit │       │ │
+│   │  │PostgreSQL│  │ Odoo 18 │  │ Caddy   │  │ Mailpit │       │ │
 │   │  │   16    │◀─│   CE    │◀─│  (TLS)  │  │(staging)│       │ │
 │   │  └─────────┘  └─────────┘  └─────────┘  └─────────┘       │ │
 │   └─────────────────────────────────────────────────────────────┘ │
@@ -259,7 +259,7 @@ python scripts/report_ee_parity.py --output docs/evidence/$(date +%Y%m%d)/parity
 
 - [Odoo.sh Features](https://www.odoo.sh/features)
 - [Odoo.sh FAQ](https://www.odoo.sh/faq)
-- [Odoo 19.0 Documentation](https://www.odoo.com/documentation/19.0/administration/odoo_sh.html)
+- [Odoo 18.0 Documentation](https://www.odoo.com/documentation/19.0/administration/odoo_sh.html)
 - [Odoo.sh vs Self-Hosted Comparison](https://www.packetclouds.com/blog/pct-blog-1/odoo-self-hosted-vs-odoosh-6)
 - [VentorTech Hosting Comparison](https://ventor.tech/odoo/differences-between-odoo-online-odoo-sh-and-odoo-on-premises/)
 - [Odoo Hosting Types](https://www.odoo.com/page/hosting-types)

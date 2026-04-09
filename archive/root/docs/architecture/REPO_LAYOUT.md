@@ -71,7 +71,7 @@ Insightpulseai/odoo/              ← repo root
 ├── .github/
 │   └── workflows/                ← GitHub Actions workflows
 │
-├── odoo19/                       ← Canonical Odoo server root (single allowed)
+├── odoo18/                       ← Canonical Odoo server root (single allowed)
 │   └── ...                       #   Odoo configuration + data dirs
 │
 ├── turbo.json                    ← Turborepo pipeline (Vercel monorepo)
@@ -95,7 +95,7 @@ Insightpulseai/odoo/              ← repo root
 
 **Enterprise parity heuristic**: `ipai_*` modules MUST NOT declare a dependency on Odoo Enterprise modules in their `__manifest__.py`. The allowed dependency list is: Odoo CE modules + OCA modules + other `ipai_*` modules. Known Enterprise module prefixes that trigger a CI failure: `account_accountant`, `sale_management` (enterprise), `purchase_management` (enterprise), `stock_enterprise`, `helpdesk`, `timesheet_grid`, `web_studio`.
 
-**Duplicate Odoo roots**: Only ONE Odoo server root is permitted at the repo root level. The canonical name is `odoo19/`. The names `odoo/`, `odoo-ce/`, `odooenv/` at the repo root (not inside another directory) are forbidden.
+**Duplicate Odoo roots**: Only ONE Odoo server root is permitted at the repo root level. The canonical name is `odoo18/`. The names `odoo/`, `odoo-ce/`, `odooenv/` at the repo root (not inside another directory) are forbidden.
 
 ---
 
@@ -162,7 +162,7 @@ The CI guard `scripts/ci/check_repo_structure.py` enforces the following invaria
 | 1 | Every directory under `addons/ipai/` and `addons/local/` contains `__manifest__.py` |
 | 2 | No `supabase/` directory exists anywhere under `addons/` |
 | 3 | No `ipai_*` module declares a dependency on known Enterprise module prefixes |
-| 4 | Only one Odoo server root exists at the repo root (canonical: `odoo19/`) |
+| 4 | Only one Odoo server root exists at the repo root (canonical: `odoo18/`) |
 | 5 | Every directory under `apps/` has a `package.json` |
 | 6 | No `.py`, `.ts`, `.sql` files exist directly in `ssot/` subdirectories (YAML-only) |
 

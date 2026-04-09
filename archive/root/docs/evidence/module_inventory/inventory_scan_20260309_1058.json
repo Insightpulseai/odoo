@@ -276,7 +276,7 @@
       "category": "Productivity",
       "author": "InsightPulse AI",
       "license": "LGPL-3",
-      "summary": "M365 Copilot / SAP Joule-class AI for Odoo 19 CE",
+      "summary": "M365 Copilot / SAP Joule-class AI for Odoo 18 CE",
       "depends": [
         "mail",
         "web",
@@ -414,7 +414,7 @@
       "category": "Technical",
       "author": "InsightPulse AI",
       "license": "LGPL-3",
-      "summary": "Ask AI widget for Odoo 19 CE \u2014 calls IPAI provider bridge (no IAP dependency)",
+      "summary": "Ask AI widget for Odoo 18 CE \u2014 calls IPAI provider bridge (no IAP dependency)",
       "depends": [
         "mail",
         "web"
@@ -724,7 +724,7 @@
     },
     {
       "name": "ipai_docflow_review",
-      "display_name": "IPAI DocFlow Manual Review (Odoo 19)",
+      "display_name": "IPAI DocFlow Manual Review (Odoo 18)",
       "version": "19.0.1.0.0",
       "origin": "ipai",
       "installable": true,
@@ -1184,7 +1184,7 @@
     },
     {
       "name": "ipai_mail_compat",
-      "display_name": "IPAI Mail Compatibility Shims (Odoo 19) \u2014 TEMPORARY",
+      "display_name": "IPAI Mail Compatibility Shims (Odoo 18) \u2014 TEMPORARY",
       "version": "19.0.1.0.0",
       "origin": "ipai",
       "installable": true,
@@ -1867,7 +1867,7 @@
     },
     {
       "name": "ipai_web_mail_compat",
-      "display_name": "Odoo 19 Web Mail Compat (OCA overlays)",
+      "display_name": "Odoo 18 Web Mail Compat (OCA overlays)",
       "version": "19.0.1.0.0",
       "origin": "ipai",
       "installable": true,

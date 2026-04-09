@@ -61,7 +61,7 @@ stages:
               set -euo pipefail
               echo "=== Top-level directory allowlist check ==="
 
-              ALLOWED="addons|apps|automations|config|db|deploy|docker|docs|infra|mcp|n8n|odoo|odoo19|ops-platform|packages|pipelines|scripts|spec|ssot|supabase|templates|tests|web|.claude|.devcontainer|.github|.vscode|node_modules"
+              ALLOWED="addons|apps|automations|config|db|deploy|docker|docs|infra|mcp|n8n|odoo|odoo18|ops-platform|packages|pipelines|scripts|spec|ssot|supabase|templates|tests|web|.claude|.devcontainer|.github|.vscode|node_modules"
               FAIL=0
 
               for dir in $(find . -maxdepth 1 -mindepth 1 -type d | sed 's|^\./||' | sort); do

@@ -99,7 +99,7 @@ Templates live in `.specify/templates/`:
 - `odoo-mcp-server` - MCP server integration
 - `odoo-ee-parity-matrix` - EE parity tracking
 - `odoo-enterprise-replacement` - CE replacement strategy
-- `odoo-19-migration` - Odoo 19 migration plan
+- `odoo-18-migration` - Odoo 18 migration plan
 - `odoo-devops-master-plan` - DevOps master plan
 - `odoo-copilot-process-mining` - Process mining
 - `odoo-decoupled-platform` - Decoupled architecture

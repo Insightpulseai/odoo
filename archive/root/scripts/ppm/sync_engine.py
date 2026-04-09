@@ -19,7 +19,7 @@ _logger = logging.getLogger(__name__)
 
 
 class SyncEngine:
-    """Bidirectional sync between Plane.so and Odoo 19 CE."""
+    """Bidirectional sync between Plane.so and Odoo 18 CE."""
 
     def __init__(self, plane_client, odoo_client, supabase_url=None, supabase_key=None):
         self.plane = plane_client

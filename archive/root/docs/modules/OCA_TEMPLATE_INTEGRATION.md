@@ -33,7 +33,7 @@ copier copy --UNSAFE https://github.com/OCA/oca-addons-repo-template.git <repo-n
 
 Use OCA-standard branches:
 - `18.0` - Odoo 18 series
-- `19.0` - Odoo 19 series
+- `19.0` - Odoo 18 series
 
 **Rules**:
 - 18.0-specific addons belong under the 18.0 branch

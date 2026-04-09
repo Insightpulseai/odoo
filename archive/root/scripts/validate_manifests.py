@@ -46,7 +46,7 @@ VALID_LICENSES = [
 # OCA-recommended licenses
 OCA_LICENSES = ["AGPL-3", "GPL-3", "LGPL-3"]
 
-# Version pattern (Odoo 19.0.x.y.z format - strict Odoo 19 only)
+# Version pattern (Odoo 18.0.x.y.z format - strict Odoo 18 only)
 VERSION_PATTERN = re.compile(r"^19\.0\.\d+\.\d+\.\d+$")
 
 # Custom namespace prefixes that should never be flagged as Enterprise dependencies
@@ -160,7 +160,7 @@ def validate_manifest(manifest_path: Path) -> List[ManifestError]:
             ManifestError(
                 path_str,
                 "warning",
-                f"Version '{version}' does not follow Odoo 19 format (e.g., 19.0.1.0.0)",
+                f"Version '{version}' does not follow Odoo 18 format (e.g., 19.0.1.0.0)",
             )
         )
 

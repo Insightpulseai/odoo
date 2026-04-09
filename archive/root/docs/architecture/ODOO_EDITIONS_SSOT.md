@@ -24,11 +24,11 @@ Every Enterprise feature target must be mapped to exactly one of:
 
 ---
 
-## PPM scope clarification (Odoo 19 CE + OCA only)
+## PPM scope clarification (Odoo 18 CE + OCA only)
 
 For **PPM (Project / Portfolio / Program Management)** we use:
 
-- **Odoo 19 Community Edition core** features, plus
+- **Odoo 18 Community Edition core** features, plus
 - **OCA 19.0 modules** where applicable.
 
 We will **not** pursue Enterprise-only PPM parity via custom ipai_\* parity modules.
@@ -62,7 +62,7 @@ For each feature in `odoo_editions_targets.json`:
 
 - The Editions page is a product comparison; our mapping must remain conservative and
   evidence-backed. Do not guess module names — mark as `(to-fill)` until validated.
-- `ce_core` must be confirmed in an actual Odoo 19 CE install before finalising.
+- `ce_core` must be confirmed in an actual Odoo 18 CE install before finalising.
 - High-risk items (OCR, complex manufacturing, Studio) are explicitly routed to
   `bridge_connector` or `defer` unless a validated OCA alternative exists.
 - This file is the SSOT; `odoo_editions_targets.json` is the machine-readable

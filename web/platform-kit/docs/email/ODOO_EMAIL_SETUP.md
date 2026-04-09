@@ -1,4 +1,4 @@
-# Odoo 19.0 Email Configuration with Mailgun
+# Odoo 18.0 Email Configuration with Mailgun
 
 Complete email setup for `insightpulseai.com` using Mailgun for transactional email and Zoho for inbox receiving.
 
@@ -309,6 +309,6 @@ LIMIT 10;
 
 ## Related Documentation
 
-- [Odoo 19.0 Email Documentation](https://www.odoo.com/documentation/19.0/applications/general/email_communication.html)
+- [Odoo 18.0 Email Documentation](https://www.odoo.com/documentation/19.0/applications/general/email_communication.html)
 - [Mailgun Documentation](https://documentation.mailgun.com/)
 - [Zoho Mail Documentation](https://www.zoho.com/mail/help/)

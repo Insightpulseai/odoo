@@ -121,7 +121,7 @@ Insightpulseai/odoo/                     ← repo root (Git SSOT for everything 
 | `infra/dns/dns-validation-spec.json`                | **Generated**         | `infra/dns/subdomain-registry.yaml` | `scripts/dns/generate-dns-artifacts.sh` |
 | `infra/dns/subdomain-registry.yaml`                 | Git                   | (original)                          | —                                       |
 | `packages/design-tokens/tokens.json`                | **Generated**         | Figma file                          | `scripts/design/export_tokens.sh`       |
-| `ssot/odoo/settings_catalog.yaml`                   | **Generated**         | Live Odoo 19 CE instance            | `scripts/odoo/extract_settings_catalog.py` |
+| `ssot/odoo/settings_catalog.yaml`                   | **Generated**         | Live Odoo 18 CE instance            | `scripts/odoo/extract_settings_catalog.py` |
 | `ssot/mcp/servers.yaml`                             | Git                   | (original)                          | —                                       |
 | `ssot/governance/enterprise_okrs.yaml`              | Git                   | (original)                          | —                                       |
 | `ssot/runtime/prod_settings.yaml`                   | Git                   | (original)                          | —                                       |

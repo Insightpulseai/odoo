@@ -111,7 +111,7 @@ class IrMailServer(models.Model):
             limit=1,
         ) or None
 
-    # ── Override _connect__ (Odoo 19) ────────────────────────────────────────
+    # ── Override _connect__ (Odoo 18) ────────────────────────────────────────
 
     def _connect__(  # noqa: PLW3201
         self,
@@ -129,7 +129,7 @@ class IrMailServer(models.Model):
     ):
         """Skip SMTP connect for Zoho API servers (send_email handles the REST call).
 
-        Odoo 19's mail.mail.send() calls _connect__() before send_email().
+        Odoo 18's mail.mail.send() calls _connect__() before send_email().
         Attempting an actual SMTP connection to mail.zoho.com:465 would block/
         timeout on DigitalOcean (SMTP ports 25/465/587 are blocked).
         Return None so send_email() proceeds directly to our REST API path.

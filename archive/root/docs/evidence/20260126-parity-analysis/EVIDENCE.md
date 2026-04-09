@@ -1,14 +1,14 @@
-# Evidence Pack: Odoo 19 EE Parity Analysis
+# Evidence Pack: Odoo 18 EE Parity Analysis
 
 **Date**: 2026-01-26
-**Branch**: `claude/odoo-19-release-notes-HkoE9`
+**Branch**: `claude/odoo-18-release-notes-HkoE9`
 **Author**: Claude Code Agent
 
 ---
 
 ## Outcome
 
-Completed comprehensive Odoo 19 Release Notes analysis and mapped 107 feature categories to CE + OCA + ipai_* parity strategy.
+Completed comprehensive Odoo 18 Release Notes analysis and mapped 107 feature categories to CE + OCA + ipai_* parity strategy.
 
 **Key Deliverables:**
 - 42 features identified as CE-Native (no action needed)
@@ -24,22 +24,22 @@ Completed comprehensive Odoo 19 Release Notes analysis and mapped 107 feature ca
 
 | File | Action | Purpose |
 |------|--------|---------|
-| `docs/releases/ODOO_19_PARITY_ANALYSIS.md` | Created | Comprehensive feature analysis |
-| `config/ee_parity/ee_parity_mapping.yml` | Modified | Added 25+ Odoo 19 features |
+| `docs/releases/ODOO_18_PARITY_ANALYSIS.md` | Created | Comprehensive feature analysis |
+| `config/ee_parity/ee_parity_mapping.yml` | Modified | Added 25+ Odoo 18 features |
 | `scripts/test_ee_parity.py` | Modified | Added 14 new parity tests |
 | `spec/ipai-ai-agent-builder/` | Verified | Existing spec bundle confirmed |
 
 ### Git State
 
 ```
-Branch: claude/odoo-19-release-notes-HkoE9
+Branch: claude/odoo-18-release-notes-HkoE9
 Status: Changes staged for commit
 ```
 
 ### Parity Test Summary
 
 **Before (Odoo 18 baseline):** 18 tests
-**After (Odoo 19 additions):** 32 tests
+**After (Odoo 18 additions):** 32 tests
 
 **New Test Categories:**
 - AI-001 to AI-005: AI Platform tests
@@ -76,8 +76,8 @@ Status: Changes staged for commit
 
 ## Changes Shipped
 
-1. **docs/releases/ODOO_19_PARITY_ANALYSIS.md**
-   - Complete Odoo 19 release notes analysis
+1. **docs/releases/ODOO_18_PARITY_ANALYSIS.md**
+   - Complete Odoo 18 release notes analysis
    - Feature-by-feature parity mapping
    - Implementation roadmap with phases
    - Parity score projections

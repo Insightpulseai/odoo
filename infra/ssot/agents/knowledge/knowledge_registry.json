@@ -2635,7 +2635,7 @@
       "lines": 122
     },
     {
-      "path": "docs/architecture/ODOO19_REPO_MIRRORING.md",
+      "path": "docs/architecture/ODOO18_REPO_MIRRORING.md",
       "domain": "docs",
       "extension": ".md",
       "sha256_prefix": "d0824cb1150c4b54",
@@ -4803,7 +4803,7 @@
       "lines": 62
     },
     {
-      "path": "docs/evidence/20260126-0815/odoo-19-migration/VALIDATION_SUMMARY.md",
+      "path": "docs/evidence/20260126-0815/odoo-18-migration/VALIDATION_SUMMARY.md",
       "domain": "docs",
       "extension": ".md",
       "sha256_prefix": "f20d9e50c3bcd048",
@@ -4859,7 +4859,7 @@
       "lines": 83
     },
     {
-      "path": "docs/evidence/20260128-odoo-docs-review/ODOO_19_DOCS_REVIEW.md",
+      "path": "docs/evidence/20260128-odoo-docs-review/ODOO_18_DOCS_REVIEW.md",
       "domain": "docs",
       "extension": ".md",
       "sha256_prefix": "c89eba0c3ed2dd84",
@@ -7179,7 +7179,7 @@
       "lines": 257
     },
     {
-      "path": "docs/kb/odoo19/README.md",
+      "path": "docs/kb/odoo18/README.md",
       "domain": "docs",
       "extension": ".md",
       "sha256_prefix": "43f869bbe5aa831b",
@@ -7187,7 +7187,7 @@
       "lines": 70
     },
     {
-      "path": "docs/kb/odoo19/UPSTREAM_PIN.json",
+      "path": "docs/kb/odoo18/UPSTREAM_PIN.json",
       "domain": "docs",
       "extension": ".json",
       "sha256_prefix": "ee844607f85034c0",
@@ -7195,7 +7195,7 @@
       "lines": 7
     },
     {
-      "path": "docs/kb/odoo19/UPSTREAM_REV.txt",
+      "path": "docs/kb/odoo18/UPSTREAM_REV.txt",
       "domain": "docs",
       "extension": ".txt",
       "sha256_prefix": "cbe71b1f8ea639b0",
@@ -7203,7 +7203,7 @@
       "lines": 1
     },
     {
-      "path": "docs/kb/odoo19/index/index.json",
+      "path": "docs/kb/odoo18/index/index.json",
       "domain": "docs",
       "extension": ".json",
       "sha256_prefix": "c0aff2d4544b8357",
@@ -7211,7 +7211,7 @@
       "lines": 72002
     },
     {
-      "path": "docs/kb/odoo19/index/manifest.json",
+      "path": "docs/kb/odoo18/index/manifest.json",
       "domain": "docs",
       "extension": ".json",
       "sha256_prefix": "240e1b5c7bf8be52",
@@ -7219,7 +7219,7 @@
       "lines": 9093
     },
     {
-      "path": "docs/kb/odoo19/index/nav.json",
+      "path": "docs/kb/odoo18/index/nav.json",
       "domain": "docs",
       "extension": ".json",
       "sha256_prefix": "37517e5f3dc66819",
@@ -7227,7 +7227,7 @@
       "lines": 1
     },
     {
-      "path": "docs/kb/odoo19/index/sections.json",
+      "path": "docs/kb/odoo18/index/sections.json",
       "domain": "docs",
       "extension": ".json",
       "sha256_prefix": "7ac1bf1b57095099",
@@ -7235,7 +7235,7 @@
       "lines": 65157
     },
     {
-      "path": "docs/kb/odoo19/index/skills_coverage.json",
+      "path": "docs/kb/odoo18/index/skills_coverage.json",
       "domain": "docs",
       "extension": ".json",
       "sha256_prefix": "8608bed31092d84f",
@@ -7243,7 +7243,7 @@
       "lines": 18
     },
     {
-      "path": "docs/kb/odoo19/index/topic_map.yaml",
+      "path": "docs/kb/odoo18/index/topic_map.yaml",
       "domain": "docs",
       "extension": ".yaml",
       "sha256_prefix": "a445622e480d9a2e",
@@ -7251,7 +7251,7 @@
       "lines": 34
     },
     {
-      "path": "docs/kb/odoo19/index/topics.json",
+      "path": "docs/kb/odoo18/index/topics.json",
       "domain": "docs",
       "extension": ".json",
       "sha256_prefix": "cc53db7ca0ac1726",
@@ -7259,7 +7259,7 @@
       "lines": 78
     },
     {
-      "path": "docs/kb/odoo19/upstream/README.md",
+      "path": "docs/kb/odoo18/upstream/README.md",
       "domain": "docs",
       "extension": ".md",
       "sha256_prefix": "dc176a716eb57c41",
@@ -7267,7 +7267,7 @@
       "lines": 67
     },
     {
-      "path": "docs/kb/odoo19/upstream/commit_template.txt",
+      "path": "docs/kb/odoo18/upstream/commit_template.txt",
       "domain": "docs",
       "extension": ".txt",
       "sha256_prefix": "2c0003f27b04ab46",
@@ -7275,7 +7275,7 @@
       "lines": 19
     },
     {
-      "path": "docs/kb/odoo19/upstream/content/legal/licenses/enterprise_license.txt",
+      "path": "docs/kb/odoo18/upstream/content/legal/licenses/enterprise_license.txt",
       "domain": "docs",
       "extension": ".txt",
       "sha256_prefix": "371058f4b11d6b0f",
@@ -7283,7 +7283,7 @@
       "lines": 33
     },
     {
-      "path": "docs/kb/odoo19/upstream/redirects/11.0.txt",
+      "path": "docs/kb/odoo18/upstream/redirects/11.0.txt",
       "domain": "docs",
       "extension": ".txt",
       "sha256_prefix": "de143fad812f5c42",
@@ -7291,7 +7291,7 @@
       "lines": 3
     },
     {
-      "path": "docs/kb/odoo19/upstream/redirects/12.0.txt",
+      "path": "docs/kb/odoo18/upstream/redirects/12.0.txt",
       "domain": "docs",
       "extension": ".txt",
       "sha256_prefix": "04ed8d96757e921d",
@@ -7299,7 +7299,7 @@
       "lines": 16
     },
     {
-      "path": "docs/kb/odoo19/upstream/redirects/13.0.txt",
+      "path": "docs/kb/odoo18/upstream/redirects/13.0.txt",
       "domain": "docs",
       "extension": ".txt",
       "sha256_prefix": "e6098f244d0d6746",
@@ -7307,7 +7307,7 @@
       "lines": 269
     },
     {
-      "path": "docs/kb/odoo19/upstream/redirects/14.0.txt",
+      "path": "docs/kb/odoo18/upstream/redirects/14.0.txt",
       "domain": "docs",
       "extension": ".txt",
       "sha256_prefix": "0fb3d64aafb5bc63",
@@ -7315,7 +7315,7 @@
       "lines": 189
     },
     {
-      "path": "docs/kb/odoo19/upstream/redirects/15.0.txt",
+      "path": "docs/kb/odoo18/upstream/redirects/15.0.txt",
       "domain": "docs",
       "extension": ".txt",
       "sha256_prefix": "ae477dc388f5f349",
@@ -7323,7 +7323,7 @@
       "lines": 234
     },
     {
-      "path": "docs/kb/odoo19/upstream/redirects/16.0.txt",
+      "path": "docs/kb/odoo18/upstream/redirects/16.0.txt",
       "domain": "docs",
       "extension": ".txt",
       "sha256_prefix": "c5e0b9b42885b39b",
@@ -7331,7 +7331,7 @@
       "lines": 224
     },
     {
-      "path": "docs/kb/odoo19/upstream/redirects/17.0.txt",
+      "path": "docs/kb/odoo18/upstream/redirects/17.0.txt",
       "domain": "docs",
       "extension": ".txt",
       "sha256_prefix": "827f404d47248c76",
@@ -7339,7 +7339,7 @@
       "lines": 165
     },
     {
-      "path": "docs/kb/odoo19/upstream/redirects/18.0.txt",
+      "path": "docs/kb/odoo18/upstream/redirects/18.0.txt",
       "domain": "docs",
       "extension": ".txt",
       "sha256_prefix": "38d9fd9de4358473",
@@ -7347,7 +7347,7 @@
       "lines": 72
     },
     {
-      "path": "docs/kb/odoo19/upstream/redirects/19.0.txt",
+      "path": "docs/kb/odoo18/upstream/redirects/19.0.txt",
       "domain": "docs",
       "extension": ".txt",
       "sha256_prefix": "87fc5113d242b711",
@@ -7355,7 +7355,7 @@
       "lines": 100
     },
     {
-      "path": "docs/kb/odoo19/upstream/redirects/MANUAL.md",
+      "path": "docs/kb/odoo18/upstream/redirects/MANUAL.md",
       "domain": "docs",
       "extension": ".md",
       "sha256_prefix": "1de3b30e7f5171b8",
@@ -7363,7 +7363,7 @@
       "lines": 58
     },
     {
-      "path": "docs/kb/odoo19/upstream/redirects/saas-15.2.txt",
+      "path": "docs/kb/odoo18/upstream/redirects/saas-15.2.txt",
       "domain": "docs",
       "extension": ".txt",
       "sha256_prefix": "f1421bb8d214f23e",
@@ -7371,7 +7371,7 @@
       "lines": 16
     },
     {
-      "path": "docs/kb/odoo19/upstream/redirects/saas-16.1.txt",
+      "path": "docs/kb/odoo18/upstream/redirects/saas-16.1.txt",
       "domain": "docs",
       "extension": ".txt",
       "sha256_prefix": "e3b0c44298fc1c14",
@@ -7379,7 +7379,7 @@
       "lines": 0
     },
     {
-      "path": "docs/kb/odoo19/upstream/redirects/saas-16.2.txt",
+      "path": "docs/kb/odoo18/upstream/redirects/saas-16.2.txt",
       "domain": "docs",
       "extension": ".txt",
       "sha256_prefix": "9b975bb9ae1ea9a0",
@@ -7387,7 +7387,7 @@
       "lines": 7
     },
     {
-      "path": "docs/kb/odoo19/upstream/redirects/saas-17.2.txt",
+      "path": "docs/kb/odoo18/upstream/redirects/saas-17.2.txt",
       "domain": "docs",
       "extension": ".txt",
       "sha256_prefix": "2f6835572559751a",
@@ -7395,7 +7395,7 @@
       "lines": 3
     },
     {
-      "path": "docs/kb/odoo19/upstream/redirects/saas-17.4.txt",
+      "path": "docs/kb/odoo18/upstream/redirects/saas-17.4.txt",
       "domain": "docs",
       "extension": ".txt",
       "sha256_prefix": "33ea7fef00649ab9",
@@ -7403,7 +7403,7 @@
       "lines": 6
     },
     {
-      "path": "docs/kb/odoo19/upstream/redirects/saas-18.1.txt",
+      "path": "docs/kb/odoo18/upstream/redirects/saas-18.1.txt",
       "domain": "docs",
       "extension": ".txt",
       "sha256_prefix": "b94e4bb859849543",
@@ -7411,7 +7411,7 @@
       "lines": 2
     },
     {
-      "path": "docs/kb/odoo19/upstream/redirects/saas-18.2.txt",
+      "path": "docs/kb/odoo18/upstream/redirects/saas-18.2.txt",
       "domain": "docs",
       "extension": ".txt",
       "sha256_prefix": "41480faeaab5bf49",
@@ -7419,7 +7419,7 @@
       "lines": 2
     },
     {
-      "path": "docs/kb/odoo19/upstream/requirements.txt",
+      "path": "docs/kb/odoo18/upstream/requirements.txt",
       "domain": "docs",
       "extension": ".txt",
       "sha256_prefix": "fa236b7e249064f0",
@@ -7427,7 +7427,7 @@
       "lines": 11
     },
     {
-      "path": "docs/kb/odoo19/upstream/tests/requirements.txt",
+      "path": "docs/kb/odoo18/upstream/tests/requirements.txt",
       "domain": "docs",
       "extension": ".txt",
       "sha256_prefix": "a53ffd6ea7ca9151",
@@ -10659,7 +10659,7 @@
       "lines": 132
     },
     {
-      "path": "docs/portfolio/specs/mappings/concur_to_odoo19_ce_oca_ipai.yaml",
+      "path": "docs/portfolio/specs/mappings/concur_to_odoo18_ce_oca_ipai.yaml",
       "domain": "docs",
       "extension": ".yaml",
       "sha256_prefix": "986e6da01b8553ea",
@@ -10667,7 +10667,7 @@
       "lines": 104
     },
     {
-      "path": "docs/portfolio/specs/mappings/concur_to_odoo19ce_oca.yaml",
+      "path": "docs/portfolio/specs/mappings/concur_to_odoo18ce_oca.yaml",
       "domain": "docs",
       "extension": ".yaml",
       "sha256_prefix": "ecc41ad7a0da4d15",
@@ -10715,7 +10715,7 @@
       "lines": 201
     },
     {
-      "path": "docs/portfolio/specs/odoo-19-migration/constitution.md",
+      "path": "docs/portfolio/specs/odoo-18-migration/constitution.md",
       "domain": "docs",
       "extension": ".md",
       "sha256_prefix": "2133dea4a7a3c4fa",
@@ -10723,7 +10723,7 @@
       "lines": 392
     },
     {
-      "path": "docs/portfolio/specs/odoo-19-migration/plan.md",
+      "path": "docs/portfolio/specs/odoo-18-migration/plan.md",
       "domain": "docs",
       "extension": ".md",
       "sha256_prefix": "f5e3f9ed3794fdcf",
@@ -10731,7 +10731,7 @@
       "lines": 411
     },
     {
-      "path": "docs/portfolio/specs/odoo-19-migration/prd.md",
+      "path": "docs/portfolio/specs/odoo-18-migration/prd.md",
       "domain": "docs",
       "extension": ".md",
       "sha256_prefix": "a6a0204f371168e4",
@@ -10739,7 +10739,7 @@
       "lines": 305
     },
     {
-      "path": "docs/portfolio/specs/odoo-19-migration/tasks.md",
+      "path": "docs/portfolio/specs/odoo-18-migration/tasks.md",
       "domain": "docs",
       "extension": ".md",
       "sha256_prefix": "2b4c56e2dc923c2e",
@@ -11083,7 +11083,7 @@
       "lines": 86
     },
     {
-      "path": "docs/portfolio/specs/odoo19-ee-surface-parity/constitution.md",
+      "path": "docs/portfolio/specs/odoo18-ee-surface-parity/constitution.md",
       "domain": "docs",
       "extension": ".md",
       "sha256_prefix": "a15cee764ce97aa3",
@@ -11091,7 +11091,7 @@
       "lines": 38
     },
     {
-      "path": "docs/portfolio/specs/odoo19-ee-surface-parity/plan.md",
+      "path": "docs/portfolio/specs/odoo18-ee-surface-parity/plan.md",
       "domain": "docs",
       "extension": ".md",
       "sha256_prefix": "4ef5581e26f7c276",
@@ -11099,7 +11099,7 @@
       "lines": 25
     },
     {
-      "path": "docs/portfolio/specs/odoo19-ee-surface-parity/prd.md",
+      "path": "docs/portfolio/specs/odoo18-ee-surface-parity/prd.md",
       "domain": "docs",
       "extension": ".md",
       "sha256_prefix": "0913d44a25fc8ad9",
@@ -11107,7 +11107,7 @@
       "lines": 83
     },
     {
-      "path": "docs/portfolio/specs/odoo19-ee-surface-parity/tasks.md",
+      "path": "docs/portfolio/specs/odoo18-ee-surface-parity/tasks.md",
       "domain": "docs",
       "extension": ".md",
       "sha256_prefix": "16410df9b8f94f91",
@@ -12451,7 +12451,7 @@
       "lines": 19
     },
     {
-      "path": "docs/releases/ODOO_19_PARITY_ANALYSIS.md",
+      "path": "docs/releases/ODOO_18_PARITY_ANALYSIS.md",
       "domain": "docs",
       "extension": ".md",
       "sha256_prefix": "06a373b805589048",
@@ -12827,7 +12827,7 @@
       "lines": 121
     },
     {
-      "path": "docs/runbooks/ODOO19_GO_LIVE_CHECKLIST.md",
+      "path": "docs/runbooks/ODOO18_GO_LIVE_CHECKLIST.md",
       "domain": "docs",
       "extension": ".md",
       "sha256_prefix": "944e1db85ab34172",
@@ -13715,7 +13715,7 @@
       "lines": 46
     },
     {
-      "path": "docs/strategy/parity/mappings/concur_to_odoo19.yaml",
+      "path": "docs/strategy/parity/mappings/concur_to_odoo18.yaml",
       "domain": "docs",
       "extension": ".yaml",
       "sha256_prefix": "5c1377be6d6500db",
@@ -13723,7 +13723,7 @@
       "lines": 345
     },
     {
-      "path": "docs/strategy/parity/odoo19/EE_PARITY_NOTES_19.md",
+      "path": "docs/strategy/parity/odoo18/EE_PARITY_NOTES_19.md",
       "domain": "docs",
       "extension": ".md",
       "sha256_prefix": "0cf013cc8088d806",
@@ -18155,7 +18155,7 @@
       "lines": 1
     },
     {
-      "path": "ssot/go_live/odoo19_checklist.manifest.yaml",
+      "path": "ssot/go_live/odoo18_checklist.manifest.yaml",
       "domain": "ssot",
       "extension": ".yaml",
       "sha256_prefix": "889e55ef22684b08",
@@ -18547,7 +18547,7 @@
       "lines": 263
     },
     {
-      "path": "ssot/odoo/odoo19_app_skills_map.yaml",
+      "path": "ssot/odoo/odoo18_app_skills_map.yaml",
       "domain": "ssot",
       "extension": ".yaml",
       "sha256_prefix": "3c7ef65a63ff30ca",
@@ -18915,7 +18915,7 @@
       "lines": 73
     },
     {
-      "path": "ssot/skills/odoo19_docs_coverage.yaml",
+      "path": "ssot/skills/odoo18_docs_coverage.yaml",
       "domain": "ssot",
       "extension": ".yaml",
       "sha256_prefix": "440bcc822f0994cb",

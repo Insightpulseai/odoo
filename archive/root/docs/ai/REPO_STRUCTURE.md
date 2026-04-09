@@ -108,10 +108,10 @@ odoo/
 │       ├── agent-coordination-server/ # Agent coordination
 │       └── memory-mcp-server/        # Persistent memory
 │
-├── odoo19/                    # Canonical Odoo 19 setup (recommended)
+├── odoo18/                    # Canonical Odoo 18 setup (recommended)
 │   ├── compose.yaml           # Project-specific compose
 │   ├── config/                # Version-controlled Odoo config
-│   ├── scripts/               # Odoo19-specific scripts
+│   ├── scripts/               # Odoo18-specific scripts
 │   └── backups/               # Database backups
 │
 ├── n8n/                       # n8n workflow templates

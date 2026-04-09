@@ -2,7 +2,7 @@
 
 ## 0) Summary
 
-The IPAI Odoo SaaS Platform is an open-source alternative to Odoo.sh, providing a complete lifecycle for Odoo 19 CE + OCA modules, with enterprise-grade provisioning, billing, and AI integration.
+The IPAI Odoo SaaS Platform is an open-source alternative to Odoo.sh, providing a complete lifecycle for Odoo 18 CE + OCA modules, with enterprise-grade provisioning, billing, and AI integration.
 
 ## 1) Goals
 

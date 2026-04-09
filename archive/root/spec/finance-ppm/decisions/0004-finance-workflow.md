@@ -15,7 +15,7 @@ Stages must enforce role-based transitions, not just generic task movement.
 
 ## CE Attempt
 
-Odoo 19 CE `project.task.type` stages are generic — any user can move any
+Odoo 18 CE `project.task.type` stages are generic — any user can move any
 task to any stage. CE provides no mechanism for role-based stage gate enforcement
 without custom code.
 

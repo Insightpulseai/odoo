@@ -94,7 +94,7 @@ KNOWN_EXCEPTIONS: dict[str, str] = {
     "sandbox": "transient sandbox — should be gitignored or removed",
     "out": "build output — should be gitignored",
     "odoo_local": "local Odoo dev data — should be gitignored",
-    "odoo19": "Odoo 19 checkout — pending relocation",
+    "odoo18": "Odoo 18 checkout — pending relocation",
     "web": "web frontend apps — pending relocation to apps/",
     "archive": "archived content — pending relocation to docs/archive/",
     "templates": "reusable scaffolds — pending relocation",

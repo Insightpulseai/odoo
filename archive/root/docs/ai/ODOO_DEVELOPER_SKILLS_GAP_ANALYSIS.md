@@ -1,6 +1,6 @@
 # Odoo Developer Skills Gap Analysis
 
-> Comparison of current agent capabilities vs. Official Odoo 19.0 Developer Documentation
+> Comparison of current agent capabilities vs. Official Odoo 18.0 Developer Documentation
 > Date: 2026-02-09
 > Reference: https://www.odoo.com/documentation/19.0/developer.html
 
@@ -359,7 +359,7 @@
 - `notion-workflow-sync` - Notion integration
 
 **Development**:
-- `odoo19-oca-devops` - OCA compliance
+- `odoo18-oca-devops` - OCA compliance
 - `odoo-agile-scrum-devops` - Scrum framework
 - `odoo-module-scaffold` - Module generation
 - `oca-contribution-workflow` - OCA contribution
@@ -437,7 +437,7 @@
 - **Official Docs**: https://www.odoo.com/documentation/19.0/developer.html
 - **OCA Guidelines**: https://github.com/OCA/maintainer-tools
 - **Owl Framework**: https://github.com/odoo/owl
-- **HOOT Testing**: (Odoo 19.0 internal testing framework)
+- **HOOT Testing**: (Odoo 18.0 internal testing framework)
 
 ---
 
@@ -450,7 +450,7 @@
 2. 🟡 **High Priority**: Testing patterns, QWeb reports, performance optimization
 3. 🟢 **Medium Priority**: Website themes, translations, migrations
 
-**Target State**: 90%+ coverage of Odoo 19.0 developer documentation within 6-8 weeks.
+**Target State**: 90%+ coverage of Odoo 18.0 developer documentation within 6-8 weeks.
 
 **Success Criteria**:
 - ✅ Can develop complete Odoo modules (backend + frontend)

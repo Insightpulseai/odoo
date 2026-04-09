@@ -1,6 +1,6 @@
 /** @odoo-module **/
 /**
- * Composer AI Action — registers "Ask AI" button in the Odoo 19 mail composer toolbar.
+ * Composer AI Action — registers "Ask AI" button in the Odoo 18 mail composer toolbar.
  *
  * Uses the native `registerComposerAction()` API from @mail/core/common/composer_actions.
  * This places the AI button alongside emoji picker, file upload, and send button.

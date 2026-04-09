@@ -71,7 +71,7 @@ git status
 ### Local Development
 ```bash
 cd /Users/tbwa/Documents/GitHub/Insightpulseai/odoo
-pyenv shell odoo-19-dev
+pyenv shell odoo-18-dev
 ./scripts/odoo.sh -d main -c "/path/to/config.toml"
 ```
 

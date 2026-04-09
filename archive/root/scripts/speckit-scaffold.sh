@@ -30,7 +30,7 @@ usage() {
   echo ""
   echo "Examples:"
   echo "  $0 ipai-finance-ppm"
-  echo "  $0 odoo-19-migration"
+  echo "  $0 odoo-18-migration"
   exit 1
 }
 

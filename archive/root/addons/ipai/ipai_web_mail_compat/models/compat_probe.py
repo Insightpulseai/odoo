@@ -48,7 +48,7 @@ class IpaiCompatProbe(models.AbstractModel):
             "target_oca_module": "mail_tracking",
             "target_oca_version": "19.0.1.0.8",
             "fixes": [
-                "store_service_patch: Record.one() removed in Odoo 19 → plain object in onStarted()",
+                "store_service_patch: Record.one() removed in Odoo 18 → plain object in onStarted()",
                 "template_inherit: mail.Discuss.mobileTopbar → mail.DiscussContent.mobileTopbar",
             ],
             "bundle": "web.assets_backend",

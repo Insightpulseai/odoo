@@ -2,7 +2,7 @@
 """
 OCA Module Compliance Validator
 
-Comprehensive validation of OCA module compliance for Odoo 19.0 ports.
+Comprehensive validation of OCA module compliance for Odoo 18.0 ports.
 Enforces OCA quality standards, dependency resolution, and manifest integrity.
 
 Usage:
@@ -74,7 +74,7 @@ class ValidationError:
 
 
 class OCAComplianceValidator:
-    """Validates OCA module compliance for Odoo 19.0."""
+    """Validates OCA module compliance for Odoo 18.0."""
 
     def __init__(self, module_path: Path):
         self.module_path = module_path

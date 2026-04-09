@@ -1,8 +1,8 @@
-# Odoo 19 AI-Powered Testing Automation
+# Odoo 18 AI-Powered Testing Automation
 
-> Comprehensive testing automation with Odoo 19's AI capabilities for intelligent test generation, quality assurance, and continuous improvement
+> Comprehensive testing automation with Odoo 18's AI capabilities for intelligent test generation, quality assurance, and continuous improvement
 
-**Reference**: [Odoo 19.0 AI Documentation](https://www.odoo.com/documentation/19.0/applications/productivity/ai.html)
+**Reference**: [Odoo 18.0 AI Documentation](https://www.odoo.com/documentation/19.0/applications/productivity/ai.html)
 
 ---
 
@@ -10,7 +10,7 @@
 
 This guide provides AI-powered testing automation workflows that:
 
-1. **AI-Generated Tests** (using Odoo 19's built-in AI)
+1. **AI-Generated Tests** (using Odoo 18's built-in AI)
 2. **Comprehensive Test Coverage** (unit, integration, functional, performance, security)
 3. **Automated Test Generation** (from module specifications)
 4. **Intelligent Test Maintenance** (AI-powered refactoring and updates)
@@ -19,11 +19,11 @@ This guide provides AI-powered testing automation workflows that:
 
 ---
 
-## Odoo 19 AI Integration
+## Odoo 18 AI Integration
 
-### AI Capabilities in Odoo 19
+### AI Capabilities in Odoo 18
 
-Odoo 19 introduces AI-powered features that can be leveraged for testing automation:
+Odoo 18 introduces AI-powered features that can be leveraged for testing automation:
 
 ```yaml
 ai_features:
@@ -62,7 +62,7 @@ Plane + Slack Notifications
 ## Workflow 1: AI-Powered Test Generation
 
 ### Use Case
-Automatically generate comprehensive test suites using Odoo 19's AI capabilities for new or existing modules.
+Automatically generate comprehensive test suites using Odoo 18's AI capabilities for new or existing modules.
 
 ### Workflow File
 
@@ -125,7 +125,7 @@ jobs:
 
           # Generate test specification using Claude
           prompt = f"""
-          Analyze this Odoo 19 module code and generate a comprehensive test specification.
+          Analyze this Odoo 18 module code and generate a comprehensive test specification.
 
           Module: ${{ github.event.inputs.module_name }}
 

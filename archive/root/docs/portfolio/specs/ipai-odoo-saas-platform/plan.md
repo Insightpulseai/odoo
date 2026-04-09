@@ -4,7 +4,7 @@
 
 - Set up Kubernetes cluster (DigitalOcean/GKE).
 - Configure CloudNativePG for PostgreSQL management.
-- Establish base Odoo 19 Docker image with OCA modules.
+- Establish base Odoo 18 Docker image with OCA modules.
 
 ## Phase 1: Core Platform (4 Weeks)
 

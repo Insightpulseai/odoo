@@ -1,4 +1,4 @@
-# Odoo 19 Testing Strategy
+# Odoo 18 Testing Strategy
 
 > Coverage matrix, layer definitions, and tagging conventions for `ipai_*` modules.
 > Related: `docs/runbooks/ODOO_DEBUGPY.md` (debug vs test decision tree)

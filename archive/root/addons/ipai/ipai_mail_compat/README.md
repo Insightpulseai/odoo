@@ -1,10 +1,10 @@
 # ipai_mail_compat — Temporary Migration Shim
 
-> **Status**: TEMPORARY — remove when upstream OCA modules ship native Odoo 19 code.
+> **Status**: TEMPORARY — remove when upstream OCA modules ship native Odoo 18 code.
 
 ## Purpose
 
-This module exists **solely** to prevent Odoo 19 webclient boot failures caused
+This module exists **solely** to prevent Odoo 18 webclient boot failures caused
 by OCA modules ported from Odoo 17 that still reference APIs removed in Odoo 18+.
 
 It is **not** a bridge, connector, or EE-parity module. It is a temporary
@@ -17,7 +17,7 @@ compatibility shim permitted under the policy exception documented in
 | Shim | Problem | Fix |
 |------|---------|-----|
 | `discuss_compat.xml` | `mail.Discuss.mobileTopbar` template removed in Odoo 18+; OCA modules that `t-inherit` it crash the webclient | Empty stub template so extensions load without error |
-| `record_compat.js` | `Record.one()` / `.many()` / `.attr()` replaced by `fields.One()` / `.Many()` / `.Attr()` in Odoo 19; OCA JS patches throw `TypeError` | Re-attaches old aliases on the Record class |
+| `record_compat.js` | `Record.one()` / `.many()` / `.attr()` replaced by `fields.One()` / `.Many()` / `.Attr()` in Odoo 18; OCA JS patches throw `TypeError` | Re-attaches old aliases on the Record class |
 
 ## What It Must NEVER Do
 
@@ -34,7 +34,7 @@ Remove this module when **all** of the following are true:
 1. OCA `mail_tracking` no longer inherits `mail.Discuss.mobileTopbar`
 2. OCA `web_responsive` / any OCA JS no longer calls `Record.one()`
 3. All OCA modules in `oca-aggregate.yml` target 19.0 natively
-4. `addons/oca/` is fully checked out and integration-tested on Odoo 19
+4. `addons/oca/` is fully checked out and integration-tested on Odoo 18
 
 ## Sunset Plan
 

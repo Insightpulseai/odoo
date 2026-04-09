@@ -253,15 +253,15 @@ workflows:
     notes: "BIR form generation (1601-C, 2316, etc.)"
 
   - workflow_id: wf-fin-ppm
-    name: "n8n_finance_ppm_workflow_odoo19"
-    path: "automations/n8n/workflows/n8n_finance_ppm_workflow_odoo19.json"
+    name: "n8n_finance_ppm_workflow_odoo18"
+    path: "automations/n8n/workflows/n8n_finance_ppm_workflow_odoo18.json"
     domain: finance
     system_role: orchestration
     environment: prod
     active_status: active
     owner: finance
     depends_on: []
-    notes: "Finance PPM workflow for Odoo 19"
+    notes: "Finance PPM workflow for Odoo 18"
 
   - workflow_id: wf-fin-monthly-close
     name: "ppm_monthly_close_automation"

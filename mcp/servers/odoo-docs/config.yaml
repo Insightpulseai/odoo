@@ -73,7 +73,7 @@ auth:
   mode: anonymous  # Public documentation, no auth needed
 
 notes: |
-  Odoo 18 docs are used because Odoo 19 docs are not yet publicly available
-  as a complete documentation set. Odoo 19 breaking changes are documented
-  separately in .claude/rules/odoo19-coding.md and applied as an overlay.
-  When Odoo 19 docs become available, create odoo-docs-19 index and update.
+  Odoo 18 docs are used because Odoo 18 docs are not yet publicly available
+  as a complete documentation set. Odoo 18 breaking changes are documented
+  separately in .claude/rules/odoo18-coding.md and applied as an overlay.
+  When Odoo 18 docs become available, create odoo-docs-19 index and update.

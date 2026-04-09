@@ -23,7 +23,7 @@ image is built locally or ad-hoc and pushed to ACR without automated gates.
 | `infra/azure/main.bicep` | ACR resource definition |
 | `infra/ssot/azure/resources.yaml` | ACR entries (`cripaidev`, `ipaiodoodevacr`) |
 | `infra/ssot/azure/service-matrix.yaml` | Odoo service -- image reference |
-| `docs/runbooks/ODOO19_GO_LIVE_CHECKLIST.md` | Image build/scan line items |
+| `docs/runbooks/ODOO18_GO_LIVE_CHECKLIST.md` | Image build/scan line items |
 | `docs/audits/ODOO_AZURE_ENTERPRISE_BENCHMARK.md` | Supply chain gap row |
 | Docker files in repo root or `docker/` | Dockerfile(s) for Odoo image |
 
@@ -68,7 +68,7 @@ Optional:
 | `infra/azure/modules/acr.bicep` | ACR with Defender scanning enabled |
 | `infra/azure/acr-task.yaml` | ACR Task for automated builds (new) |
 | `docs/runbooks/ODOO_IMAGE_BUILD_PIPELINE.md` | Build-scan-deploy procedure (new) |
-| `docs/runbooks/ODOO19_GO_LIVE_CHECKLIST.md` | Image supply chain line items |
+| `docs/runbooks/ODOO18_GO_LIVE_CHECKLIST.md` | Image supply chain line items |
 | `infra/ssot/azure/resources.yaml` | ACR entries updated with scanning metadata |
 | `docs/evidence/<stamp>/odoo-image-supply-chain/` | ACR Task def, MCP excerpts |
 

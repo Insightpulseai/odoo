@@ -1,4 +1,4 @@
-# Odoo 19 CE + OCA Stack Runbook
+# Odoo 18 CE + OCA Stack Runbook
 
 **Version:** 1.0.0
 **Generated:** 2026-01-27
@@ -484,7 +484,7 @@ docker compose start odoo-core
 
 | Path | Purpose |
 |------|---------|
-| `stack/odoo19_stack.yaml` | Stack manifest (SSOT) |
+| `stack/odoo18_stack.yaml` | Stack manifest (SSOT) |
 | `oca19.lock.json` | OCA repository pins |
 | `addons/oca/` | OCA modules |
 | `addons/ipai/` | IPAI custom modules |

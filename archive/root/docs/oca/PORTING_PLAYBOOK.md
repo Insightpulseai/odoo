@@ -1,6 +1,6 @@
 # OCA Module Porting Playbook (18.0 → 19.0)
 
-> **Canonical reference for porting OCA modules to Odoo 19.0**
+> **Canonical reference for porting OCA modules to Odoo 18.0**
 > Uses official OCA tooling: `oca-port` CLI, OpenUpgrade libraries, maintainer-tools
 
 ---
@@ -271,7 +271,7 @@ git checkout -b 19.0-mig-${MODULE} origin/18.0
 
 # 2. Manual changes
 # - Update __manifest__.py version to 19.0.1.0.0
-# - Fix API changes (consult Odoo 19.0 migration guide)
+# - Fix API changes (consult Odoo 18.0 migration guide)
 # - Test locally
 
 # 3. Copy to addons/oca/
@@ -298,7 +298,7 @@ grep "ERROR" web/docs/evidence/${TIMESTAMP}/oca-port-${MODULE}/logs/install.log
 **Solutions**:
 
 1. **Missing dependency**: Port dependency first
-2. **API incompatibility**: Consult Odoo 19.0 changelog, manual fix required
+2. **API incompatibility**: Consult Odoo 18.0 changelog, manual fix required
 
 ### Issue: Python syntax errors
 
@@ -376,4 +376,4 @@ wait
 - OCA porting guide: https://github.com/OCA/maintainer-tools/wiki/Migration-to-version-X.0
 - `oca-port` documentation: https://pypi.org/project/oca-port/
 - OpenUpgrade project: https://github.com/OCA/OpenUpgrade
-- Odoo 19.0 migration guide: https://www.odoo.com/documentation/19.0/developer/howtos/upgrade.html
+- Odoo 18.0 migration guide: https://www.odoo.com/documentation/19.0/developer/howtos/upgrade.html

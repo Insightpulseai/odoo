@@ -2,13 +2,13 @@
 
 ## Purpose
 
-Ensure every Odoo 19 documentation section and external skill pack has a corresponding
+Ensure every Odoo 18 documentation section and external skill pack has a corresponding
 skill stub directory in `skills/`. CI fails a PR if any expected stub is missing.
 
 ## SSOT file
 
 ```
-ssot/skills/odoo19_docs_coverage.yaml
+ssot/skills/odoo18_docs_coverage.yaml
 ```
 
 ### Schema
@@ -23,7 +23,7 @@ ssot/skills/odoo19_docs_coverage.yaml
 ## Validator
 
 ```bash
-python scripts/skills/validate_odoo19_skills_coverage.py
+python scripts/skills/validate_odoo18_skills_coverage.py
 ```
 
 Exits 0 if all expected stubs exist, 1 if any are missing.
@@ -33,7 +33,7 @@ Exits 0 if all expected stubs exist, 1 if any are missing.
 ```json
 {
   "coverage": {
-    "odoo19_docs":          { "total": 63, "found": 63, "missing": 0, "pct": 100.0 },
+    "odoo18_docs":          { "total": 63, "found": 63, "missing": 0, "pct": 100.0 },
     "vercel_agent_skills":  { "total": 6,  "found": 6,  "missing": 0, "pct": 100.0 },
     "supabase_agent_skills":{ "total": 1,  "found": 1,  "missing": 0, "pct": 100.0 }
   },
@@ -55,7 +55,7 @@ scripts/skills/**
 
 ## Adding a new expected skill
 
-1. Add the entry to `ssot/skills/odoo19_docs_coverage.yaml` under `expected:`.
+1. Add the entry to `ssot/skills/odoo18_docs_coverage.yaml` under `expected:`.
 2. Create the stub directory (at minimum a `README.md`):
    ```bash
    mkdir -p skills/<slug>

@@ -50,7 +50,7 @@ These gates apply to **every PR**, regardless of changed paths:
 |------|----------|-----------------|
 | Spec Bundle Presence | `.github/workflows/policy-gates.yml` | `feat/*` with >3 scoped changes needs `spec/<slug>/` |
 | Secret Pattern Diff | `policy-gates.yml` | No hardcoded secrets in diff |
-| Odoo 19 View Convention | `policy-gates.yml` | `<list>` not `<tree>` |
+| Odoo 18 View Convention | `policy-gates.yml` | `<list>` not `<tree>` |
 | Migration RLS Contract | `policy-gates.yml` | New tables must `ENABLE ROW LEVEL SECURITY` |
 | Deprecated Reference Block | `policy-gates.yml` | No `.net`, Mattermost, Mailgun, Appfine references |
 | Agent Instructions Drift | `.github/workflows/agent-instructions-drift.yml` | CLAUDE.md/AGENTS.md/GEMINI.md in sync with SSOT |

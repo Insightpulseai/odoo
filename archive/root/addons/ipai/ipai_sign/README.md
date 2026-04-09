@@ -4,7 +4,7 @@
 
 Document envelopes for signing
 
-This module provides Odoo 19 Enterprise Edition parity for CE deployments.
+This module provides Odoo 18 Enterprise Edition parity for CE deployments.
 
 ## Dependencies
 

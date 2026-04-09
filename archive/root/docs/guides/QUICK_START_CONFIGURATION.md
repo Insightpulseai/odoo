@@ -1,6 +1,6 @@
 # Odoo Quick Start Configuration Guide
 
-Complete setup guide for Mail, AI Agents, and OCR in Odoo 19.
+Complete setup guide for Mail, AI Agents, and OCR in Odoo 18.
 
 ---
 

@@ -312,7 +312,7 @@ A: Typically 4-6 weeks from kickoff to go-live. Complex implementations with ext
 A: Yes. We provide templates and validation scripts. Self-service migration is supported for CSV/Excel sources. We handle complex migrations (API-based, database-level).
 
 **Q: What if I need a module that is not included?**
-A: We evaluate OCA modules first (200+ available for Odoo 19.0). If no OCA module fits, we develop a custom `ipai_*` module. Custom development is scoped and quoted separately.
+A: We evaluate OCA modules first (200+ available for Odoo 18.0). If no OCA module fits, we develop a custom `ipai_*` module. Custom development is scoped and quoted separately.
 
 **Q: Is training included in the subscription?**
 A: Initial training is included. Additional training sessions are available at the Business and Enterprise tiers.

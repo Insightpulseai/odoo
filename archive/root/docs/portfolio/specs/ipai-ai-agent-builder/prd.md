@@ -2,11 +2,11 @@
 
 ## Overview
 
-The IPAI AI Agent Builder provides Odoo 19 AI Agents feature parity for CE/OCA deployments, enabling organizations to create intelligent agents that combine LLM capabilities with structured tool execution and RAG-based knowledge retrieval.
+The IPAI AI Agent Builder provides Odoo 18 AI Agents feature parity for CE/OCA deployments, enabling organizations to create intelligent agents that combine LLM capabilities with structured tool execution and RAG-based knowledge retrieval.
 
 ## Problem Statement
 
-Odoo 19 Enterprise introduces an "AI Agents" framework with:
+Odoo 18 Enterprise introduces an "AI Agents" framework with:
 - Agents with configurable system prompts and response styles
 - Topics as instruction bundles that assign specific tools
 - Sources (files/URLs/knowledge) for RAG-based context
@@ -259,7 +259,7 @@ sources:
 
 ## Success Metrics
 
-1. **Feature Parity**: 90%+ coverage of Odoo 19 AI Agents functionality
+1. **Feature Parity**: 90%+ coverage of Odoo 18 AI Agents functionality
 2. **Adoption**: 5+ active agents configured within 30 days of deployment
 3. **Performance**: 95th percentile response time < 3s
 4. **Reliability**: 99.5% uptime for chat endpoints

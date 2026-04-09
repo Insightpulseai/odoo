@@ -19,4 +19,4 @@ mutated directly. `sudo()` must always have an inline comment explaining why.
 ## Cross-references
 - `agents/knowledge/benchmarks/odoo-coding-guidelines.md`
 - `agents/knowledge/benchmarks/odoo-developer-howtos.md`
-- `~/.claude/rules/odoo19-coding.md`
+- `~/.claude/rules/odoo18-coding.md`

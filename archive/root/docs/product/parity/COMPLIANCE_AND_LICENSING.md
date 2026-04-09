@@ -220,7 +220,7 @@ grep -r "iap.*credit" addons/ 2>/dev/null | grep -v "ipai_" | wc -l
 - "Enterprise feature parity for TBWA/W9 use cases"
 
 **❌ Prohibited Statements**:
-- "Odoo 19 Enterprise deployment"
+- "Odoo 18 Enterprise deployment"
 - "Official Odoo Enterprise 18 image"
 - "Powered by Odoo EE"
 - "Odoo S.A. certified solution"
@@ -288,7 +288,7 @@ All `__manifest__.py` files include:
 ### License Review History
 - **2026-01-26**: Initial license audit conducted
 - **2026-01-28**: Compliance report generated and verified
-- **Next Review**: Q2 2026 (before Odoo 19 upgrade consideration)
+- **Next Review**: Q2 2026 (before Odoo 18 upgrade consideration)
 
 ### Audit Methodology
 1. Automated grep scans for forbidden patterns

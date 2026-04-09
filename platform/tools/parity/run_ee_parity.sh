@@ -1,5 +1,5 @@
 #!/bin/bash
-# Odoo 19 EE Parity Test Runner
+# Odoo 18 EE Parity Test Runner
 # Quick-start script for running parity validation
 
 set -e
@@ -19,7 +19,7 @@ NC='\033[0m' # No Color
 
 echo -e "${BLUE}"
 echo "=============================================================="
-echo "         ODOO 19 ENTERPRISE EDITION PARITY TESTER             "
+echo "         ODOO 18 ENTERPRISE EDITION PARITY TESTER             "
 echo "=============================================================="
 echo -e "${NC}"
 

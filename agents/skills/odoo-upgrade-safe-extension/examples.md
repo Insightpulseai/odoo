@@ -11,7 +11,7 @@
 - OCA modifications: none found — PASS
 - Migration scripts: no schema changes detected — N/A
 - Deprecated patterns: none found — PASS
-- Odoo 19 compatibility: no `groups_id` usage, no `tree` in user-facing — PASS
+- Odoo 18 compatibility: no `groups_id` usage, no `tree` in user-facing — PASS
 - Overall: **SAFE**
 
 ## Example 2: Module fails — core file modified

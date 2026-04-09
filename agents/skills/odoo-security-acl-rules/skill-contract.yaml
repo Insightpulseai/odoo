@@ -29,7 +29,7 @@ skill:
     - create ir.model.access.csv with header and all 4 CRUD columns
     - use ID pattern access_<model>_<group> for ACL rows
     - create record rules in security/security.xml for multi-company isolation
-    - verify Portal and Internal User groups are mutually exclusive (Odoo 19)
+    - verify Portal and Internal User groups are mutually exclusive (Odoo 18)
     - ensure group hierarchy is correct (manager implies user)
     - test access by creating records under different users on disposable DB
     - verify no model is left without at least one ACL row
@@ -45,7 +45,7 @@ skill:
   guardrails:
     - always provide all 4 CRUD columns in ir.model.access.csv
     - ACL ID pattern must be access_<model>_<group>
-    - Portal and Internal User are mutually exclusive in Odoo 19
+    - Portal and Internal User are mutually exclusive in Odoo 18
     - never grant full CRUD to public/portal users without explicit justification
     - multi-company record rules must use ['|', ('company_id', '=', False), ('company_id', 'in', company_ids)]
     - prefer inherited extension over core patching
@@ -66,4 +66,4 @@ skill:
 cross_references:
   - agents/knowledge/benchmarks/odoo-developer-howtos.md
   - agents/knowledge/benchmarks/odoo-coding-guidelines.md
-  - .claude/rules/odoo19-coding.md
+  - .claude/rules/odoo18-coding.md

@@ -2,7 +2,7 @@
 """
 scan_oca_repos.py — OCA-19 Readiness Gate Scanner
 ===================================================
-Scans addons/oca/<repo>/ for installability on Odoo 19:
+Scans addons/oca/<repo>/ for installability on Odoo 18:
   - Reports branch, module count, manifest version prefix
   - Flags empty repos (0 manifests)
   - Flags repos on non-19.0 branch

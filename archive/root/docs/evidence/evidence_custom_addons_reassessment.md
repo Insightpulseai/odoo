@@ -1,15 +1,15 @@
 # Evidence — Custom Addons Reassessment
 
 **Audit date**: 2026-02-27
-**Branch**: `feat/ipai-module-audit-odoo19`
+**Branch**: `feat/ipai-module-audit-odoo18`
 **STATUS**: COMPLETE
 
 ---
 
 ## [CONTEXT]
 - repo: Insightpulseai/odoo
-- branch: feat/ipai-module-audit-odoo19
-- goal: Full audit + Odoo 19 compatibility patches for addons/ipai/
+- branch: feat/ipai-module-audit-odoo18
+- goal: Full audit + Odoo 18 compatibility patches for addons/ipai/
 - stamp: 2026-02-27T21:00+0800
 
 ---
@@ -81,7 +81,7 @@ OVERALL: PASS
 - `addons/ipai/ipai_mailgun_smtp/__manifest__.py`: Deprecated mailgun module disabled; summary updated
 - `addons/ipai/ipai_odooops_shell/__manifest__.py`: Version normalized to OCA convention
 - 7× `__manifest__.py` (missing-dep modules): installable set to False, preventing crash on `odoo -i`
-- 6× view XML files (4 modules): `<tree>` → `<list>`, `view_mode=tree,...` → `view_mode=list,...` for Odoo 19 compat
+- 6× view XML files (4 modules): `<tree>` → `<list>`, `view_mode=tree,...` → `view_mode=list,...` for Odoo 18 compat
 
 ---
 
@@ -99,5 +99,5 @@ None for this PR.
 ## [NEXT - DETERMINISTIC]
 
 - step 1: `git add docs/audits/ addons/ipai/` — stage audit docs + manifest patches
-- step 2: `git commit -m "feat(ipai): module audit — disable deprecated + missing-dep + tree→list Odoo19 compat"`
-- step 3: `gh pr create --base main --title "feat(ipai): module audit — Odoo 19 compat + disable 9 broken modules"`
+- step 2: `git commit -m "feat(ipai): module audit — disable deprecated + missing-dep + tree→list Odoo18 compat"`
+- step 3: `gh pr create --base main --title "feat(ipai): module audit — Odoo 18 compat + disable 9 broken modules"`

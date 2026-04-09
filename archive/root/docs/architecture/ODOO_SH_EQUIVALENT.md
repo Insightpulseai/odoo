@@ -85,7 +85,7 @@ stage (odoo_stage) ── snapshot ──→  dev (odoo_dev_*) ─── neutral
 1. Restoring a backup into stage **overwrites the stage DB** — data loss is expected and intentional
 2. Always run `scripts/odoo_neutralize.py` **immediately after restore** before any user access
 3. Code promotion to prod = `git merge main` CI pipeline (not DB promotion)
-4. DB promotion to prod = **one-time cutover only** (see `docs/runbooks/ODOO19_GO_LIVE_CHECKLIST.md`)
+4. DB promotion to prod = **one-time cutover only** (see `docs/runbooks/ODOO18_GO_LIVE_CHECKLIST.md`)
 
 ### Restore procedure
 
@@ -245,5 +245,5 @@ CI captures this line for structured evidence. The `status` field is `ok | no_op
 | `docker/compose/stage.yml` | Stage compose (IPAI_ENV=stage) |
 | `docker/compose/prod.yml` | Prod compose (IPAI_ENV=prod) |
 | `.github/workflows/odoo-env-neutralization-gate.yml` | CI enforcement |
-| `docs/runbooks/ODOO19_GO_LIVE_CHECKLIST.md` | Go-live runbook |
+| `docs/runbooks/ODOO18_GO_LIVE_CHECKLIST.md` | Go-live runbook |
 | `ssot/secrets/registry.yaml` | Secret identifier registry |
