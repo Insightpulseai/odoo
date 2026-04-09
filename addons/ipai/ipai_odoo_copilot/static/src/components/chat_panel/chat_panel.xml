@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+<t t-name="ipai_odoo_copilot.PulserChatPanel">
+    <div class="o_ipai_chat_panel">
+        <!-- Message list -->
+        <div class="o_ipai_chat_messages">
+            <t t-foreach="state.messages" t-as="msg" t-key="msg_index">
+                <div t-att-class="'o_ipai_chat_msg o_role_' + msg.role">
+                    <div class="o_ipai_chat_msg_content">
+                        <t t-esc="msg.content"/>
+                    </div>
+                </div>
+            </t>
+
+            <!-- Activity timeline — visible during and after request -->
+            <t t-if="state.activities.length">
+                <ActivityTimeline activities="state.activities"/>
+            </t>
+        </div>
+
+        <!-- Input area -->
+        <div class="o_ipai_chat_input_area">
+            <textarea
+                class="o_ipai_chat_input"
+                t-att-value="state.inputValue"
+                t-on-input="(ev) => this.state.inputValue = ev.target.value"
+                t-on-keydown="onKeydown"
+                placeholder="Ask Pulser..."
+                rows="1"
+                t-att-disabled="state.isLoading"
+            />
+            <button
+                class="o_ipai_chat_send btn btn-primary btn-sm"
+                t-on-click="onSendMessage"
+                t-att-disabled="state.isLoading or !state.inputValue.trim()"
+            >
+                Send
+            </button>
+        </div>
+    </div>
+</t>
+
+</templates>

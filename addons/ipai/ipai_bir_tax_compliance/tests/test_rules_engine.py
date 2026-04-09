@@ -267,8 +267,8 @@ class TestRulesLoader(unittest.TestCase):
         rules = self.loader.load_rules("ewt.rules.yaml")
         self.assertGreater(len(rules), 0)
         codes = [r["code"] for r in rules]
-        self.assertIn("EWT_PROF_W010", codes)
-        self.assertIn("EWT_SUPPLIER_W157", codes)
+        self.assertIn("EWT_PROF_WI010", codes)
+        self.assertIn("EWT_CONTRACTOR_WC010", codes)
         self.assertIn("EWT_TOTAL", codes)
 
     def test_load_rates(self):
@@ -288,10 +288,10 @@ class TestRulesLoader(unittest.TestCase):
     def test_get_rate_value_ewt(self):
         """get_rate_value returns correct EWT rates."""
         rates = self.loader.load_rates("ph_rates_2025.json")
-        self.assertEqual(self.loader.get_rate_value("W010", rates), 0.10)
-        self.assertEqual(self.loader.get_rate_value("W157", rates), 0.01)
-        self.assertEqual(self.loader.get_rate_value("W158", rates), 0.02)
-        self.assertEqual(self.loader.get_rate_value("W169", rates), 0.05)
+        self.assertEqual(self.loader.get_rate_value("WI010", rates), 0.10)
+        self.assertEqual(self.loader.get_rate_value("WC600", rates), 0.01)
+        self.assertEqual(self.loader.get_rate_value("WC010", rates), 0.02)
+        self.assertEqual(self.loader.get_rate_value("WB010", rates), 0.05)
 
     def test_load_all_rules(self):
         """load_all_rules finds both VAT and EWT rule files."""

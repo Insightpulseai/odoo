@@ -1,89 +1,107 @@
+# License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl-3.0)
+
+import json
 import logging
-import os
+
+import requests
+
+from odoo import api, models
+from odoo.exceptions import UserError
 
 _logger = logging.getLogger(__name__)
 
-DIVA_GOALS_ENDPOINT = os.environ.get(
-    'DIVA_GOALS_ENDPOINT', 'http://localhost:3100/api'
-)
+DIVA_TIMEOUT_SECONDS = 30
 
 
-class DivaBridge:
-    """Bridge between Odoo Copilot and the Diva Goals backend.
+class DivaBridge(models.AbstractModel):
+    """Bridge to Diva Goals backend (Foundry Agent Service).
 
-    All methods are stubs that log the call and return placeholder
-    responses.  The real implementation will POST to the Diva Goals
-    API once the backend is wired.
+    Sends normalized Odoo context, receives advisory responses.
+    Never executes business logic — that stays in the agent layer.
     """
 
-    def __init__(self, endpoint: str | None = None):
-        self._endpoint = endpoint or DIVA_GOALS_ENDPOINT
+    _name = 'ipai.copilot.diva.bridge'
+    _description = 'Diva Goals Backend Bridge'
 
-    # ------------------------------------------------------------------
-    # Public API
-    # ------------------------------------------------------------------
+    def _get_endpoint(self):
+        """Resolve Diva backend endpoint from system parameters."""
+        endpoint = self.env['ir.config_parameter'].sudo().get_param(
+            'ipai_copilot.diva_endpoint', default=''
+        )
+        if not endpoint:
+            _logger.warning("ipai_copilot.diva_endpoint not configured")
+        return endpoint
 
-    def send_context(self, context_envelope: dict) -> dict:
-        """Send an Odoo context envelope to the Diva Goals backend.
+    def _get_api_key(self):
+        """Resolve API key from system parameters (Key Vault backed)."""
+        return self.env['ir.config_parameter'].sudo().get_param(
+            'ipai_copilot.diva_api_key', default=''
+        )
+
+    @api.model
+    def send_advisory_request(self, workflow_id, context_payload):
+        """Send an advisory request to Diva Goals backend.
 
         Args:
-            context_envelope: Structured context built by
-                OdooContextBuilder (record, company, user, tax slices).
+            workflow_id: Diva workflow identifier (e.g. 'goal-status-synthesis')
+            context_payload: dict from OdooContextBuilder
 
         Returns:
-            Acknowledgement dict with a correlation id.
+            dict with advisory response or error
         """
-        _logger.info(
-            'DivaBridge.send_context: envelope keys=%s endpoint=%s',
-            list(context_envelope.keys()),
-            self._endpoint,
-        )
-        return {
-            'status': 'accepted',
-            'correlation_id': 'stub-corr-001',
-            'message': 'Context envelope queued (stub)',
+        endpoint = self._get_endpoint()
+        if not endpoint:
+            return {'status': 'error', 'message': 'Diva endpoint not configured'}
+
+        api_key = self._get_api_key()
+        headers = {
+            'Content-Type': 'application/json',
+            'Authorization': f'Bearer {api_key}',
+        }
+        payload = {
+            'workflow_id': workflow_id,
+            'context': context_payload,
+            'source': 'odoo_copilot',
         }
 
-    def get_review_status(self, goal_id: str) -> dict:
-        """Retrieve the current review status for a goal.
+        try:
+            resp = requests.post(
+                f'{endpoint}/api/v1/advisory',
+                json=payload,
+                headers=headers,
+                timeout=DIVA_TIMEOUT_SECONDS,
+            )
+            resp.raise_for_status()
+            return resp.json()
+        except requests.Timeout:
+            _logger.error("Diva backend timeout for workflow %s", workflow_id)
+            return {'status': 'error', 'message': 'Diva backend timeout'}
+        except requests.RequestException as e:
+            _logger.error("Diva backend error: %s", e)
+            return {'status': 'error', 'message': str(e)}
 
-        Args:
-            goal_id: The Diva Goals identifier (e.g. "goal-001").
+    @api.model
+    def query_goal_status(self, goal_id=None):
+        """Query goal status from Diva Goals backend (read-only)."""
+        endpoint = self._get_endpoint()
+        if not endpoint:
+            return {'status': 'error', 'message': 'Diva endpoint not configured'}
 
-        Returns:
-            Goal status dict with progress, confidence, and evidence
-            summary.
-        """
-        _logger.info(
-            'DivaBridge.get_review_status: goal_id=%s', goal_id,
-        )
-        return {
-            'goal_id': goal_id,
-            'status': 'on_track',
-            'progress': 72,
-            'confidence': 85,
-            'evidence_count': 3,
-            'message': 'Placeholder status (stub)',
-        }
+        api_key = self._get_api_key()
+        headers = {'Authorization': f'Bearer {api_key}'}
+        params = {}
+        if goal_id:
+            params['goal_id'] = goal_id
 
-    def submit_action(self, action_type: str, payload: dict) -> dict:
-        """Submit an approved action back to the Diva Goals backend.
-
-        Args:
-            action_type: One of ``approve``, ``reject``, ``defer``,
-                ``escalate``.
-            payload: Action-specific data (reason, approver, etc.).
-
-        Returns:
-            Confirmation dict.
-        """
-        _logger.info(
-            'DivaBridge.submit_action: type=%s payload_keys=%s',
-            action_type,
-            list(payload.keys()),
-        )
-        return {
-            'action_type': action_type,
-            'status': 'queued',
-            'message': 'Action submitted (stub)',
-        }
+        try:
+            resp = requests.get(
+                f'{endpoint}/api/v1/goals/status',
+                params=params,
+                headers=headers,
+                timeout=DIVA_TIMEOUT_SECONDS,
+            )
+            resp.raise_for_status()
+            return resp.json()
+        except requests.RequestException as e:
+            _logger.error("Diva goal status query error: %s", e)
+            return {'status': 'error', 'message': str(e)}

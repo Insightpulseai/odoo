@@ -8,10 +8,9 @@
                     t-on-click="togglePanel"
                     title="Pulser"
                     t-att-class="{'o_ipai_copilot_btn_active': state.isOpen}">
-                <img src="/mail/static/src/img/odoobot.png"
-                     alt="Pulser"
-                     class="o_ipai_copilot_icon"
-                     style="width: 24px; height: 24px; border-radius: 50%;"/>
+                <img class="o_ipai_copilot_icon_img"
+                     src="/ipai_odoo_copilot/static/src/img/pulser_icon.png"
+                     alt="Pulser"/>
             </button>
 
             <!-- Chat Panel (right side drawer) -->
@@ -21,9 +20,9 @@
                 <!-- Header -->
                 <div class="o_ipai_copilot_header d-flex align-items-center justify-content-between px-3 py-2 border-bottom">
                     <div class="d-flex align-items-center gap-2">
-                        <img src="/mail/static/src/img/odoobot.png"
-                             alt="Pulser"
-                             style="width: 20px; height: 20px; border-radius: 50%;"/>
+                        <img class="o_ipai_copilot_header_icon"
+                             src="/ipai_odoo_copilot/static/src/img/pulser_icon.png"
+                             alt="Pulser"/>
                         <strong>Pulser</strong>
                     </div>
                     <div class="d-flex gap-1">
@@ -54,7 +53,7 @@
                             <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
                         </svg>
                         <p class="mb-1 fw-bold">How can I help?</p>
-                        <p class="small">Ask about your Odoo data, workflows, reports, or configuration.</p>
+                        <p class="small">Ask about Odoo modules, workflows, BIR compliance, or your ERP data. I can search documentation and your records.</p>
                     </div>
 
                     <!-- Messages -->

@@ -1,0 +1,560 @@
+# Enterprise Capability Taxonomy
+# Hierarchical model: Domain > Capability > Sub-capability
+# Maturity levels: foundational | working | advanced | expert
+
+artifact_status: draft
+source_type: generated_seed
+review_required: true
+generated: "2026-04-07"
+owner: knowledge-architecture
+review_tracker: ../REVIEW_QUEUE.md
+
+domains:
+
+  erp_architecture:
+    name: ERP & Enterprise Architecture
+    why: Foundation for all business process automation; determines integration coherence and data integrity
+    sap_grade: Layered architecture with clear separation between transactional, analytical, and integration layers; extensibility without core modification
+    capabilities:
+      module_design:
+        name: Module Design & Lifecycle
+        odoo_surface: Odoo module system, __manifest__.py, _inherit/_inherits
+        oca_surface: OCA module quality standards, pre-commit hooks
+        bridge_needed: false
+        prerequisites: [python_fundamentals, xml_fundamentals]
+        evidence: Can scaffold a module that passes OCA pre-commit, installs cleanly, and follows Config→OCA→Delta hierarchy
+        maturity:
+          foundational: Understands module structure, can read manifests
+          working: Can create modules with models, views, security, tests
+          advanced: Can design multi-module dependency graphs, migration scripts
+          expert: Can architect module ecosystems with clean boundaries and upgrade paths
+
+      data_model_design:
+        name: Data Model Design
+        odoo_surface: ORM models, fields, relations, constraints
+        oca_surface: OCA naming conventions, model inheritance patterns
+        bridge_needed: false
+        prerequisites: [relational_db_fundamentals, odoo_orm]
+        evidence: Can design normalized models with proper constraints, computed fields, and delegation inheritance
+        maturity:
+          foundational: Can define basic models with standard field types
+          working: Can design multi-table schemas with proper relations and constraints
+          advanced: Can optimize for query performance, design abstract models for reuse
+          expert: Can design enterprise-grade data models handling multi-company, multi-currency, audit trails
+
+      workflow_engine:
+        name: Workflow & State Machines
+        odoo_surface: Selection fields, mail.thread, mail.activity.mixin, server actions
+        oca_surface: base_tier_validation, base_tier_validation_formula
+        bridge_needed: For complex orchestration beyond Odoo capabilities
+        prerequisites: [odoo_orm, odoo_views]
+        evidence: Can implement approval workflows with proper state transitions, activity scheduling, and tier validation
+        maturity:
+          foundational: Can implement basic state selection fields
+          working: Can implement mail.thread tracking, activity scheduling
+          advanced: Can design multi-level approval with tier validation, exception handling
+          expert: Can architect cross-module workflow orchestration with rollback and audit
+
+  finance_accounting:
+    name: Finance & Accounting
+    why: Core of enterprise ERP; determines regulatory compliance, audit readiness, and financial reporting accuracy
+    sap_grade: Real-time financial posting, multi-GAAP support, automated period controls, intercompany elimination, parallel ledgers, document-level audit trail
+    capabilities:
+      general_ledger:
+        name: General Ledger & Chart of Accounts
+        odoo_surface: account.account, account.move, account.journal
+        oca_surface: account_financial_report, account_chart_update
+        bridge_needed: false
+        prerequisites: [double_entry_bookkeeping, odoo_accounting_module]
+        evidence: Can configure CoA, create journal entries, perform period close, generate trial balance
+        maturity:
+          foundational: Understands double-entry, can navigate Odoo accounting
+          working: Can configure CoA, journals, fiscal years, generate reports
+          advanced: Can implement multi-company consolidation, analytic accounting
+          expert: Can design multi-GAAP structures, automated reconciliation, regulatory reporting
+
+      accounts_payable:
+        name: Accounts Payable
+        odoo_surface: account.move (vendor bills), payment workflows
+        oca_surface: account_payment_order, account_payment_mode, account_banking_*
+        bridge_needed: false
+        prerequisites: [general_ledger, procurement_basics]
+        evidence: Can process vendor bills, manage payment orders, handle 3-way matching
+        maturity:
+          foundational: Can create and post vendor bills
+          working: Can manage payment orders, aging reports, partial payments
+          advanced: Can implement 3-way matching, early payment discounts, withholding tax
+          expert: Can design automated AP workflows with multi-currency, intercompany, compliance controls
+
+      accounts_receivable:
+        name: Accounts Receivable
+        odoo_surface: account.move (customer invoices), payment follow-ups
+        oca_surface: account_financial_report, account_payment_*
+        bridge_needed: false
+        prerequisites: [general_ledger, sales_basics]
+        evidence: Can manage customer invoicing, payment collection, credit management
+        maturity:
+          foundational: Can create and send customer invoices
+          working: Can manage payment follow-ups, credit notes, reconciliation
+          advanced: Can implement revenue recognition rules, dunning procedures
+          expert: Can design automated AR with complex pricing, multi-entity billing
+
+      management_accounting:
+        name: Management Accounting / Controlling
+        odoo_surface: analytic accounting, analytic plans
+        oca_surface: account_analytic_*, mis_builder
+        bridge_needed: Databricks for advanced cost allocation and variance analysis
+        prerequisites: [general_ledger, cost_accounting_theory]
+        evidence: Can configure analytic plans, generate management reports, perform variance analysis
+        maturity:
+          foundational: Understands cost centers, profit centers, analytic dimensions
+          working: Can configure analytic accounting, generate analytic reports
+          advanced: Can implement multi-dimensional analysis, budget vs actual
+          expert: Can design enterprise controlling with allocation rules, transfer pricing, activity-based costing
+
+      fixed_assets:
+        name: Fixed Asset Management
+        odoo_surface: N/A (Enterprise-only in Odoo 18; CE has no native asset management)
+        oca_surface: account_asset_management (OCA — required for CE)
+        bridge_needed: false (OCA module covers the need)
+        prerequisites: [general_ledger, depreciation_methods]
+        evidence: Can manage asset lifecycle from acquisition through disposal with proper depreciation
+        maturity:
+          foundational: Understands depreciation methods and asset categories
+          working: Can configure asset categories, run depreciation schedules
+          advanced: Can handle revaluation, impairment, disposal with tax implications
+          expert: Can design multi-GAAP asset management with parallel depreciation books
+
+      bank_reconciliation:
+        name: Bank Reconciliation
+        odoo_surface: account.bank.statement, account.reconcile.model
+        oca_surface: account_statement_import_*, account_reconcile_*
+        bridge_needed: false
+        prerequisites: [general_ledger, banking_basics]
+        evidence: Can import bank statements, configure reconciliation models, handle exceptions
+        maturity:
+          foundational: Can perform manual reconciliation
+          working: Can configure auto-reconciliation rules, import bank feeds
+          advanced: Can handle multi-currency reconciliation, complex matching rules
+          expert: Can design automated reconciliation with exception handling and audit controls
+
+  procurement:
+    name: Procurement & Purchasing
+    why: Controls spend, ensures supply continuity, enforces compliance with purchasing policies
+    sap_grade: Requisition-to-PO automation, contract management, vendor evaluation, budget commitment, 3-way matching, catalog integration
+    capabilities:
+      purchase_orders:
+        name: Purchase Order Management
+        odoo_surface: purchase.order, purchase.order.line
+        oca_surface: purchase_request, purchase_order_approval_block
+        bridge_needed: false
+        prerequisites: [odoo_purchase_module, procurement_basics]
+        evidence: Can manage full PO lifecycle with approval workflows
+        maturity:
+          foundational: Can create and confirm purchase orders
+          working: Can manage blanket orders, call-offs, receipt matching
+          advanced: Can implement multi-level approvals, budget validation
+          expert: Can design automated procurement with vendor scoring, contract compliance
+
+      vendor_management:
+        name: Vendor Management
+        odoo_surface: res.partner (vendor view), vendor pricelists
+        oca_surface: partner_tier_validation, vendor_portal_*
+        bridge_needed: false
+        prerequisites: [partner_management, procurement_basics]
+        evidence: Can manage vendor lifecycle, evaluation, and classification
+        maturity:
+          foundational: Can create and categorize vendors
+          working: Can manage vendor pricelists, payment terms, contacts
+          advanced: Can implement vendor scorecards, qualification workflows
+          expert: Can design vendor governance with risk assessment, compliance monitoring
+
+      purchase_requisitions:
+        name: Purchase Requisitions
+        odoo_surface: Limited in CE
+        oca_surface: purchase_request, purchase_request_tier_validation
+        bridge_needed: false
+        prerequisites: [purchase_orders, approval_workflows]
+        evidence: Can implement requisition-to-PO flow with multi-level approval
+        maturity:
+          foundational: Understands requisition vs PO distinction
+          working: Can configure purchase requests with approvals
+          advanced: Can implement budget-aware requisitions with delegation rules
+          expert: Can design end-to-end procure-to-pay with policy enforcement
+
+  sales_crm:
+    name: Sales & CRM
+    why: Revenue generation, customer lifecycle management, pipeline visibility
+    sap_grade: Opportunity-to-cash automation, territory management, pricing engines, quotation configurators, commission management
+    capabilities:
+      opportunity_management:
+        name: Opportunity & Pipeline Management
+        odoo_surface: crm.lead, crm.stage, crm.team
+        oca_surface: crm_stage_probability, crm_phonecall
+        bridge_needed: false
+        prerequisites: [crm_fundamentals, odoo_crm_module]
+        evidence: Can configure sales pipeline, manage opportunities, generate forecasts
+        maturity:
+          foundational: Can create and track opportunities
+          working: Can configure stages, teams, automated actions
+          advanced: Can implement scoring, assignment rules, multi-team pipelines
+          expert: Can design enterprise sales process with territory management, forecasting models
+
+      quotation_management:
+        name: Quotation & Order Management
+        odoo_surface: sale.order, sale.order.line, sale.order.template
+        oca_surface: sale_order_type, sale_order_line_date, sale_tier_validation
+        bridge_needed: false
+        prerequisites: [pricing_basics, odoo_sales_module]
+        evidence: Can manage quote-to-order lifecycle with proper pricing and approvals
+        maturity:
+          foundational: Can create quotations and confirm orders
+          working: Can manage pricelists, discounts, order templates
+          advanced: Can implement approval workflows, margin controls, complex pricing
+          expert: Can design enterprise order management with configurators, multi-channel
+
+  inventory_scm:
+    name: Inventory & Supply Chain
+    why: Physical asset tracking, demand planning, logistics optimization
+    sap_grade: Real-time inventory visibility, multi-warehouse, lot/serial tracking, demand planning, MRP, quality management
+    capabilities:
+      warehouse_management:
+        name: Warehouse Management
+        odoo_surface: stock.warehouse, stock.location, stock.picking
+        oca_surface: stock_available_*, stock_demand_estimate
+        bridge_needed: false
+        prerequisites: [inventory_fundamentals, odoo_inventory_module]
+        evidence: Can configure multi-warehouse, manage transfers, handle lot/serial tracking
+        maturity:
+          foundational: Can navigate warehouse operations, process receipts/deliveries
+          working: Can configure routes, rules, multi-step picking
+          advanced: Can implement barcode operations, putaway strategies, cycle counting
+          expert: Can design enterprise WMS with zone management, wave picking, cross-docking
+
+      mrp:
+        name: Manufacturing & MRP
+        odoo_surface: mrp.production, mrp.bom (CE includes MRP)
+        oca_surface: mrp_*, manufacture_*
+        bridge_needed: false
+        prerequisites: [bom_fundamentals, inventory_management]
+        evidence: Can configure BOMs, run production orders, manage work centers
+        maturity:
+          foundational: Can create BOMs and production orders
+          working: Can configure routing, work centers, capacity planning
+          advanced: Can implement multi-level BOM, subcontracting, quality checks
+          expert: Can design enterprise manufacturing with shop floor control, OEE tracking
+
+  project_services:
+    name: Project & Services Delivery
+    why: Professional services revenue, resource utilization, project profitability
+    sap_grade: WBS-based project control, resource planning, time/expense management, milestone billing, earned value analysis
+    capabilities:
+      project_management:
+        name: Project Management
+        odoo_surface: project.project, project.task, project.milestone
+        oca_surface: project_timeline, project_task_code, project_status
+        bridge_needed: false
+        prerequisites: [pm_fundamentals, odoo_project_module]
+        evidence: Can manage projects with tasks, milestones, time tracking, and billing
+        maturity:
+          foundational: Can create projects and track tasks
+          working: Can manage milestones, subtasks, time tracking
+          advanced: Can implement resource planning, budget tracking, milestone billing
+          expert: Can design enterprise PMO with portfolio management, earned value, cross-project dependencies
+
+      timesheet_billing:
+        name: Timesheet & Billing
+        odoo_surface: account.analytic.line (timesheets), sale.order (service products)
+        oca_surface: hr_timesheet_*, sale_timesheet_*
+        bridge_needed: false
+        prerequisites: [project_management, invoicing_basics]
+        evidence: Can track time, link to projects, generate invoices from timesheets
+        maturity:
+          foundational: Can log timesheets
+          working: Can configure billable rates, generate invoices from timesheets
+          advanced: Can implement approval workflows, overtime rules, cost allocation
+          expert: Can design enterprise time management with multi-rate, retainer, and cap billing
+
+  hr_payroll:
+    name: HR & Payroll
+    why: Employee lifecycle, compensation, legal compliance
+    sap_grade: Full employee lifecycle, organizational management, payroll calculation with tax/statutory, benefits administration, talent management
+    capabilities:
+      employee_management:
+        name: Employee Master Data
+        odoo_surface: hr.employee, hr.department, hr.job
+        oca_surface: hr_employee_*, hr_org_chart
+        bridge_needed: false
+        prerequisites: [hr_fundamentals, odoo_hr_module]
+        evidence: Can manage employee records, org structure, contracts
+        maturity:
+          foundational: Can create employee records
+          working: Can manage departments, jobs, contracts, documents
+          advanced: Can implement organizational hierarchy, skill tracking
+          expert: Can design enterprise HRIS with workforce planning
+
+      leave_management:
+        name: Leave & Attendance
+        odoo_surface: hr.leave, hr.leave.allocation, hr.attendance
+        oca_surface: hr_holidays_*, hr_attendance_*
+        bridge_needed: false
+        prerequisites: [employee_management]
+        evidence: Can configure leave types, allocation policies, approval workflows
+        maturity:
+          foundational: Can manage basic leave requests
+          working: Can configure leave types, accrual plans, approvals
+          advanced: Can implement complex accrual rules, carryover policies
+          expert: Can design enterprise absence management with regional compliance
+
+  tax_compliance:
+    name: Tax & Regulatory Compliance
+    why: Legal obligation; errors create financial and reputational risk
+    sap_grade: Multi-jurisdiction tax calculation, automated filing preparation, audit-ready document management, regulatory reporting
+    capabilities:
+      tax_computation:
+        name: Tax Computation & Filing
+        odoo_surface: account.tax, account.fiscal.position
+        oca_surface: account_tax_*, l10n_*
+        bridge_needed: For PH-specific BIR compliance (ipai_bir_*)
+        prerequisites: [tax_fundamentals, local_tax_law]
+        evidence: Can configure tax rules, generate tax reports, prepare filing data
+        maturity:
+          foundational: Understands VAT/withholding tax mechanics
+          working: Can configure tax codes, fiscal positions, tax reports
+          advanced: Can implement multi-jurisdiction tax, withholding tax cascades
+          expert: Can design automated tax compliance with audit controls and regulatory reporting
+
+      document_management:
+        name: Compliance Document Management
+        odoo_surface: ir.attachment, mail.thread
+        oca_surface: dms, dms_field
+        bridge_needed: Azure Document Intelligence for OCR/extraction
+        prerequisites: [document_management_basics]
+        evidence: Can implement document lifecycle with classification, retention, and audit trail
+        maturity:
+          foundational: Can manage file attachments
+          working: Can configure DMS with directories, access control
+          advanced: Can implement automated classification, retention policies
+          expert: Can design enterprise ECM with compliance workflows and AI extraction
+
+  master_data:
+    name: Master Data & Governance
+    why: Data quality determines ERP reliability; master data inconsistency cascades into every process
+    sap_grade: Central master data governance, data quality rules, duplicate detection, change management workflows, cross-system synchronization
+    capabilities:
+      partner_master:
+        name: Partner Master Data
+        odoo_surface: res.partner (customers, vendors, contacts)
+        oca_surface: partner_deduplicate_*, partner_contact_*
+        bridge_needed: false
+        prerequisites: [data_quality_fundamentals]
+        evidence: Can design partner data model with deduplication, classification, and lifecycle management
+        maturity:
+          foundational: Can manage partner records
+          working: Can configure partner categories, deduplication rules
+          advanced: Can implement data quality workflows, merge procedures
+          expert: Can design enterprise MDM with cross-system synchronization
+
+      product_master:
+        name: Product Master Data
+        odoo_surface: product.template, product.product, product.category
+        oca_surface: product_variant_*, product_attribute_*
+        bridge_needed: false
+        prerequisites: [product_management_basics]
+        evidence: Can design product hierarchy with variants, attributes, and lifecycle
+        maturity:
+          foundational: Can create products and categories
+          working: Can manage variants, attributes, pricelists
+          advanced: Can implement product lifecycle, cross-reference systems
+          expert: Can design enterprise PIM with multi-channel, data syndication
+
+  reporting_bi:
+    name: Reporting, BI & Analytics
+    why: Decision support; transforms transactional data into actionable insight
+    sap_grade: Real-time operational reporting, OLAP cubes, semantic layer, self-service BI, regulatory reporting, embedded analytics
+    capabilities:
+      operational_reporting:
+        name: Operational Reporting
+        odoo_surface: Built-in reports, pivot/graph views, spreadsheet
+        oca_surface: mis_builder, report_xlsx, bi_sql_editor
+        bridge_needed: Power BI for enterprise BI; Databricks for semantic layer
+        prerequisites: [sql_fundamentals, reporting_basics]
+        evidence: Can build operational reports covering key business metrics
+        maturity:
+          foundational: Can use built-in reports and pivot views
+          working: Can build custom reports with MIS Builder, SQL views
+          advanced: Can design reporting architecture with semantic layer
+          expert: Can design enterprise BI with real-time dashboards, predictive analytics
+
+  integration_architecture:
+    name: Integration Architecture
+    why: Enterprise value comes from connected systems; integration failures cause data inconsistency and process breaks
+    sap_grade: ESB/iPaaS, idempotent APIs, event-driven architecture, canonical data models, error handling and retry, monitoring
+    capabilities:
+      api_design:
+        name: API Design & Management
+        odoo_surface: XML-RPC, JSON-RPC, HTTP controllers
+        oca_surface: base_rest, fastapi, connector
+        bridge_needed: Azure APIM for API gateway
+        prerequisites: [rest_api_fundamentals, odoo_web_framework]
+        evidence: Can design and implement versioned APIs with proper error handling
+        maturity:
+          foundational: Can consume Odoo XML-RPC/JSON-RPC APIs
+          working: Can build custom REST controllers with authentication
+          advanced: Can design API contracts with versioning, rate limiting
+          expert: Can architect enterprise integration platform with event-driven patterns
+
+      etl_data_sync:
+        name: ETL & Data Synchronization
+        odoo_surface: ir.cron, queue_job
+        oca_surface: connector, connector_*, queue_job
+        bridge_needed: Databricks DLT for data pipeline; Azure Data Factory for orchestration
+        prerequisites: [data_engineering_basics, odoo_connector_framework]
+        evidence: Can implement reliable data synchronization with error handling and monitoring
+        maturity:
+          foundational: Can write scheduled actions for data sync
+          working: Can implement queue-based async processing
+          advanced: Can design idempotent sync with conflict resolution
+          expert: Can architect enterprise data integration with CDC, event sourcing
+
+  identity_security:
+    name: Identity, Security & Access Control
+    why: Protects data, enforces segregation of duties, meets audit requirements
+    sap_grade: Role-based access with SoD enforcement, identity federation, audit logging, data classification, encryption at rest/transit
+    capabilities:
+      rbac:
+        name: Role-Based Access Control
+        odoo_surface: res.groups, ir.model.access, ir.rule
+        oca_surface: base_user_role
+        bridge_needed: Entra ID for identity federation
+        prerequisites: [security_fundamentals, odoo_security_model]
+        evidence: Can design role hierarchy with proper ACLs, record rules, and SoD controls
+        maturity:
+          foundational: Can configure groups and ACLs
+          working: Can design role hierarchy with record rules
+          advanced: Can implement SoD controls, field-level security
+          expert: Can design enterprise RBAC with identity federation, audit, and compliance
+
+      identity_federation:
+        name: Identity Federation & SSO
+        odoo_surface: auth_oauth
+        oca_surface: auth_oidc, auth_saml
+        bridge_needed: Entra ID as IdP
+        prerequisites: [oauth_oidc_fundamentals, entra_id_basics]
+        evidence: Can implement SSO with Entra ID, configure OIDC flows
+        maturity:
+          foundational: Understands OAuth/OIDC concepts
+          working: Can configure Odoo OIDC with Entra ID
+          advanced: Can implement MFA, conditional access policies
+          expert: Can design zero-trust identity architecture with workload identity
+
+  cloud_platform:
+    name: Cloud Platform Engineering
+    why: Operability, scalability, security, and cost efficiency of the runtime environment
+    sap_grade: Landing zone architecture, IaC, observability, disaster recovery, compliance automation
+    capabilities:
+      container_orchestration:
+        name: Container Orchestration
+        odoo_surface: Docker images (web/worker/cron roles)
+        oca_surface: N/A
+        bridge_needed: Azure Container Apps
+        prerequisites: [docker_fundamentals, azure_basics]
+        evidence: Can deploy multi-role Odoo on ACA with proper scaling and health checks
+        maturity:
+          foundational: Can build and run Odoo Docker images
+          working: Can deploy to ACA with proper configuration
+          advanced: Can implement auto-scaling, health probes, rolling deployments
+          expert: Can design enterprise container platform with multi-region, DR
+
+      infrastructure_as_code:
+        name: Infrastructure as Code
+        odoo_surface: N/A
+        oca_surface: N/A
+        bridge_needed: Bicep/Terraform for Azure resources
+        prerequisites: [iac_fundamentals, azure_resource_model]
+        evidence: Can manage all infrastructure through version-controlled templates
+        maturity:
+          foundational: Can read and modify Bicep/Terraform templates
+          working: Can design modular IaC for standard deployments
+          advanced: Can implement drift detection, policy-as-code
+          expert: Can design enterprise landing zones with governance automation
+
+  ai_copilot:
+    name: AI & Copilot Architecture
+    why: Force multiplier for productivity; differentiator for enterprise automation
+    sap_grade: Embedded AI assistants, document intelligence, predictive analytics, process mining
+    capabilities:
+      document_intelligence:
+        name: Document Intelligence
+        odoo_surface: N/A (external)
+        oca_surface: N/A
+        bridge_needed: Azure Document Intelligence + thin Odoo bridge
+        prerequisites: [ai_fundamentals, azure_doc_intel]
+        evidence: Can extract structured data from documents and route to Odoo models
+        maturity:
+          foundational: Understands OCR and document extraction concepts
+          working: Can configure prebuilt models, process common document types
+          advanced: Can train custom models, implement extraction pipelines
+          expert: Can design enterprise document processing with classification, routing, validation
+
+      erp_copilot:
+        name: ERP Copilot Integration
+        odoo_surface: Odoo 18 Ask AI (built-in)
+        oca_surface: N/A
+        bridge_needed: Azure AI Foundry for custom copilot experiences
+        prerequisites: [llm_fundamentals, odoo_web_framework, mcp_basics]
+        evidence: Can build copilot experiences that assist with ERP tasks
+        maturity:
+          foundational: Can use Odoo's built-in Ask AI
+          working: Can build custom copilot actions using Foundry
+          advanced: Can implement multi-tool agents with MCP
+          expert: Can design enterprise AI strategy with governance, evaluation, safety
+
+  implementation_methodology:
+    name: Implementation Methodology
+    why: Enterprise ERP implementations fail more often from methodology gaps than technical gaps
+    sap_grade: ASAP/Activate methodology, fit-gap analysis, cutover planning, change management, hypercare
+    capabilities:
+      fit_gap_analysis:
+        name: Fit-Gap Analysis
+        odoo_surface: N/A (methodology)
+        oca_surface: N/A
+        bridge_needed: false
+        prerequisites: [business_process_mapping, odoo_functional_knowledge]
+        evidence: Can systematically evaluate Odoo/OCA coverage against business requirements
+        maturity:
+          foundational: Can identify obvious gaps
+          working: Can perform structured fit-gap with classification (fit/config/customization/gap)
+          advanced: Can quantify gap impact and propose remediation strategies
+          expert: Can lead enterprise fit-gap with stakeholder alignment and prioritization
+
+      data_migration:
+        name: Data Migration
+        odoo_surface: base_import, ir.cron
+        oca_surface: connector, base_import_*
+        bridge_needed: Databricks for complex transformation
+        prerequisites: [etl_basics, odoo_data_model]
+        evidence: Can plan and execute data migration with validation and reconciliation
+        maturity:
+          foundational: Can import data via CSV/Excel
+          working: Can design migration scripts with transformation logic
+          advanced: Can implement incremental migration with reconciliation
+          expert: Can design enterprise migration with parallel run, cutover planning
+
+  enterprise_operations:
+    name: Enterprise Operations & Support
+    why: Go-live is the beginning, not the end; operational excellence determines long-term success
+    sap_grade: SLA management, incident management, change management, performance monitoring, capacity planning
+    capabilities:
+      monitoring_observability:
+        name: Monitoring & Observability
+        odoo_surface: ir.logging, server logs
+        oca_surface: sentry (OCA)
+        bridge_needed: Azure Monitor, Application Insights
+        prerequisites: [observability_fundamentals, azure_monitor]
+        evidence: Can implement monitoring covering application, infrastructure, and business metrics
+        maturity:
+          foundational: Can read and interpret Odoo logs
+          working: Can configure structured logging, basic alerting
+          advanced: Can implement distributed tracing, custom metrics
+          expert: Can design enterprise observability with SLOs, dashboards, incident automation

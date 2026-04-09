@@ -1,0 +1,86 @@
+version: 1
+artifact: repo_test_matrix
+deployment_target: azure_native
+
+repos:
+  odoo:
+    owns:
+      unit_and_integration:
+        - transactioncase_for_tax_rules
+        - transactioncase_for_posting_blockers
+        - form_tests_for_onchange_and_server_side_form_behavior
+        - query_count_regression_tests
+      browser_and_http:
+        - httpcase_login_flow
+        - httpcase_invoice_upload_flow
+        - browser_js_reviewer_flow
+        - post_install_tour_tests
+      functional_gates:
+        - uploaded_invoice_negative_fixture_must_return_needs_review
+        - auto_post_blocked_when_validator_not_validated
+    does_not_own:
+      - document_intelligence_live_tests
+      - foundry_project_client_tests
+      - container_apps_probe_tests
+      - frontdoor_origin_health_tests
+      - postgres_failover_tests
+
+  agent-platform:
+    owns:
+      extraction_and_validation:
+        - fixture_based_invoice_math_tests
+        - live_document_intelligence_smoke_tests
+        - foundry_sdk_project_client_smoke_tests
+        - low_confidence_fallback_tests
+        - api_contract_tests
+      dependency_gates:
+        - managed_identity_auth_path_tests
+        - azure_service_rbac_denied_path_tests
+      performance_and_reliability:
+        - extraction_latency_budget_tests
+        - retry_and_timeout_tests
+    does_not_own:
+      - odoo_browser_tours
+      - frontdoor_routing_tests
+      - container_apps_revision_cutover_tests
+
+  infra:
+    owns:
+      container_apps:
+        - startup_probe_checks
+        - readiness_probe_checks
+        - liveness_probe_checks
+        - revision_label_smoke_tests
+        - traffic_split_and_rollback_tests
+      edge:
+        - frontdoor_origin_health_probe_checks
+        - frontdoor_failover_behavior_tests
+      identity:
+        - managed_identity_binding_checks
+        - role_assignment_verification
+      data:
+        - postgres_ha_failover_tests
+        - reconnect_and_retry_smoke_tests
+    does_not_own:
+      - invoice_math_rule_tests
+      - odoo_model_logic_tests
+      - extraction_schema_tests
+
+release_gates:
+  ci_pre_azure:
+    - odoo_transactioncase_green
+    - odoo_httpcase_green
+    - agent_platform_fixture_validation_green
+    - query_count_budget_green
+  azure_staging_revision:
+    - container_apps_probes_green
+    - foundry_smoke_green
+    - document_intelligence_smoke_green
+    - managed_identity_green
+    - browser_flow_green
+  production_cutover:
+    - revision_label_test_green
+    - traffic_split_green
+    - rollback_green
+    - frontdoor_origin_health_green
+    - postgres_failover_smoke_green

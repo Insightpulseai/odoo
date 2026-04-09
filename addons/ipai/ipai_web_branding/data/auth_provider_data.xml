@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2026 InsightPulse AI
+     License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl.html).
+
+     Auth provider configuration for production login.
+     Client IDs/secrets must be set via ir.config_parameter or env vars.
+     This file only creates the provider records; credentials are NOT committed.
+-->
+<odoo noupdate="1">
+
+    <!-- ================================================================
+         1. Disable Odoo.com login (not relevant for production)
+         ================================================================ -->
+    <record id="auth_oauth.provider_openerp" model="auth.oauth.provider">
+        <field name="enabled" eval="False"/>
+    </record>
+
+    <!-- ================================================================
+         2. Disable Facebook login (not needed)
+         ================================================================ -->
+    <record id="auth_oauth.provider_facebook" model="auth.oauth.provider">
+        <field name="enabled" eval="False"/>
+    </record>
+
+    <!-- ================================================================
+         3. Microsoft Entra ID (Single Tenant OIDC)
+            Uses OCA auth_oidc provider template as base.
+            Credentials set via System Parameters:
+              ipai_auth.entra_client_id
+              ipai_auth.entra_tenant_id
+         ================================================================ -->
+    <record id="provider_entra_id" model="auth.oauth.provider">
+        <field name="name">Microsoft Entra ID</field>
+        <field name="flow">id_token_code</field>
+        <field name="enabled" eval="True"/>
+        <field name="client_id">ENTRA_CLIENT_ID_SET_VIA_ENV</field>
+        <field name="token_map">upn:user_id upn:email</field>
+        <field name="auth_endpoint">https://login.microsoftonline.com/common/oauth2/v2.0/authorize</field>
+        <field name="scope">openid profile email</field>
+        <field name="token_endpoint">https://login.microsoftonline.com/common/oauth2/v2.0/token</field>
+        <field name="jwks_uri">https://login.microsoftonline.com/common/discovery/v2.0/keys</field>
+        <field name="css_class">fa fa-fw fa-windows</field>
+        <field name="body">Sign in with Microsoft</field>
+        <field name="sequence">10</field>
+    </record>
+
+    <!-- ================================================================
+         4. Google OAuth2 (OIDC)
+            Enable the existing core provider and set placeholder client_id.
+            Credentials set via System Parameters:
+              ipai_auth.google_client_id
+         ================================================================ -->
+    <record id="auth_oauth.provider_google" model="auth.oauth.provider">
+        <field name="enabled" eval="True"/>
+        <field name="client_id">GOOGLE_CLIENT_ID_SET_VIA_ENV</field>
+        <field name="body">Sign in with Google</field>
+        <field name="sequence">20</field>
+    </record>
+
+</odoo>

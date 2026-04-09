@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2026 InsightPulseAI
+     License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl.html).
+
+     Website layout overrides:
+       - Replace default footer with production-branded footer
+       - Suppress "Powered by Odoo - Create a free website" footer
+-->
+<odoo>
+
+    <!-- ================================================================
+         Suppress "Powered by Odoo" on the website footer.
+         portal_odoo_debranding handles the portal side;
+         this handles the website.layout "brand_promotion" block.
+         ================================================================ -->
+    <template id="ipai_brand_promotion_hide"
+              inherit_id="web.brand_promotion"
+              name="IPAI: Hide Odoo brand promotion"
+              active="True"
+              priority="99">
+        <xpath expr="//div[hasclass('o_brand_promotion')]" position="attributes">
+            <attribute name="t-if">False</attribute>
+        </xpath>
+    </template>
+
+</odoo>

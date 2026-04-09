@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+<t t-name="ipai_odoo_copilot.ActivityTimeline">
+    <div class="o_ipai_activity_timeline" t-if="items.length">
+        <t t-foreach="items" t-as="item" t-key="item.id">
+            <div t-att-class="'o_ipai_activity o_status_' + item.status">
+                <span class="o_ipai_activity_dot"/>
+                <span class="o_ipai_activity_label">
+                    <t t-esc="item.label"/>
+                </span>
+            </div>
+        </t>
+    </div>
+</t>
+
+</templates>

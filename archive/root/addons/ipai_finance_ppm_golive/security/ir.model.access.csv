@@ -1,7 +1,0 @@
-id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-access_golive_checklist_user,access_golive_checklist_user,model_ipai_finance_ppm_golive_checklist,base.group_user,1,1,1,0
-access_golive_checklist_manager,access_golive_checklist_manager,model_ipai_finance_ppm_golive_checklist,base.group_system,1,1,1,1
-access_golive_section_user,access_golive_section_user,model_ipai_finance_ppm_golive_section,base.group_user,1,1,1,0
-access_golive_section_manager,access_golive_section_manager,model_ipai_finance_ppm_golive_section,base.group_system,1,1,1,1
-access_golive_item_user,access_golive_item_user,model_ipai_finance_ppm_golive_item,base.group_user,1,1,1,0
-access_golive_item_manager,access_golive_item_manager,model_ipai_finance_ppm_golive_item,base.group_system,1,1,1,1

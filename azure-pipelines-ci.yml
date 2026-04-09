@@ -1,6 +1,10 @@
 # =============================================================================
-# azure-pipelines-ci.yml — CI Validation Pipeline
+# azure-pipelines-ci.yml — General CI Validation Pipeline
 # =============================================================================
+# PURPOSE: General repo CI (lint, boundaries, SSOT, secrets scanning).
+#          This is NOT the Odoo-specific test pipeline.
+#          For Odoo finance-readiness tests on Azure PG: see azure-pipelines-odoo-test.yml
+#
 # Replaces GitHub Actions CI checks (billing-locked since 2026-03).
 # Runs linting, SSOT validation, boundary checks, and secrets scanning.
 #
@@ -36,7 +40,7 @@ pr:
 
 variables:
   - name: pythonVersion
-    value: '3.12'
+    value: '3.11'
 
 stages:
   # ---------------------------------------------------------------------------

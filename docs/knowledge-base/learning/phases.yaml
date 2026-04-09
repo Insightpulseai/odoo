@@ -1,0 +1,197 @@
+# Learning Architecture — Phased Capability Building
+# 5 phases from enterprise foundations to implementation mastery
+# Each phase: objectives, competencies, artifacts, exercises, exit gates
+
+artifact_status: draft
+source_type: generated_seed
+review_required: true
+generated: "2026-04-07"
+owner: knowledge-architecture
+review_tracker: ../REVIEW_QUEUE.md
+
+phases:
+
+  phase_1:
+    name: Enterprise Foundations
+    duration: "Days 1-30"
+    objective: Build baseline understanding of enterprise ERP patterns, Odoo architecture, and the gap between typical SMB usage and SAP-grade expectations.
+    target_competencies:
+      - Double-entry bookkeeping and chart of accounts design
+      - Odoo module architecture (Config → OCA → Delta)
+      - Odoo ORM (models, fields, inheritance, security)
+      - Enterprise process taxonomy (O2C, P2P, R2R, H2R)
+      - Difference between transactional, analytical, and integration layers
+      - Azure platform basics (ACA, Key Vault, Entra ID)
+    artifacts_to_study:
+      - knowledge-base/capability-map/capability-taxonomy.yaml
+      - knowledge-base/ontology/glossary.yaml
+      - knowledge-base/benchmark/sap-to-odoo-matrix.yaml
+      - knowledge-base/domain-primers/*.md
+      - Odoo 18 CE official documentation (accounting, purchase, sales, inventory)
+    exercises:
+      - Configure a chart of accounts for a PH services company from scratch
+      - Scaffold an ipai_* module with models, views, security, tests
+      - Map the O2C process end-to-end in Odoo (quote → delivery → invoice → payment)
+      - Map the P2P process end-to-end (request → PO → receipt → bill → payment)
+      - Install and configure 5 OCA modules, document what each adds
+      - Explain the SAP-to-Odoo equivalence for 10 capabilities from the benchmark matrix
+    exit_gates:
+      - Can explain all terms in glossary.yaml with business context
+      - Module scaffold passes OCA pre-commit and installs on test DB
+      - O2C and P2P walkthroughs complete with screenshots/evidence
+      - Can articulate where Odoo CE falls short of SAP-grade for each process
+    outputs:
+      - Personal annotations on capability taxonomy (gaps understood)
+      - Working test modules on odoo_dev
+      - Process walkthrough documentation in docs/evidence/
+
+  phase_2:
+    name: Core ERP Domains
+    duration: "Days 31-60"
+    objective: Achieve working-level competency in the 4 core ERP cycles and their Odoo/OCA implementation. Handle real business scenarios, not just happy paths.
+    target_competencies:
+      - GL configuration with multi-company and analytic accounting
+      - AP workflow with 3-way matching and payment orders
+      - AR with invoicing, credit notes, payment follow-up
+      - Purchase requisition → approval → PO workflow
+      - Sales quotation → order → delivery → billing
+      - Inventory with lot tracking, multi-warehouse, routes
+      - Period close and financial reporting
+      - Bank reconciliation with auto-matching rules
+    artifacts_to_study:
+      - knowledge-base/skill-packs/enterprise-finance/
+      - knowledge-base/skill-packs/procure-to-pay/
+      - knowledge-base/skill-packs/order-to-cash/
+      - knowledge-base/skill-packs/record-to-report/
+      - knowledge-base/skill-packs/inventory-warehouse/
+      - OCA module documentation for installed modules
+    exercises:
+      - Set up multi-company with intercompany transactions
+      - Process a full P2P cycle with purchase request approval, 3-way match
+      - Process a full O2C cycle including partial delivery and credit note
+      - Run month-end close: reconcile bank, post accruals, lock period, generate reports
+      - Configure analytic accounting with 3 dimensions
+      - Handle a multi-currency vendor bill with withholding tax
+      - Set up automated bank reconciliation rules
+    exit_gates:
+      - Month-end close procedure documented and executed on test DB
+      - Multi-company P2P and O2C cycles work end-to-end
+      - Bank reconciliation handles 80%+ auto-match rate on sample data
+      - Financial reports (BS, P&L, TB) produce correct figures
+      - Can explain every OCA module in the OPRG install baseline
+    outputs:
+      - Month-end close playbook
+      - Working multi-company configuration
+      - OCA module assessment notes
+
+  phase_3:
+    name: Platform, Integration & Governance
+    duration: "Days 31-60 (parallel with Phase 2)"
+    objective: Build the cloud platform, integration, and governance layers that transform Odoo from an application into an enterprise platform.
+    target_competencies:
+      - Azure Container Apps deployment with multi-role (web/worker/cron)
+      - Docker image build with proper addons_path
+      - Entra ID federation (OIDC → Odoo)
+      - RBAC design with SoD matrix
+      - API design (controllers, XML-RPC, FastAPI)
+      - Queue-based async processing (queue_job)
+      - Infrastructure as Code (Bicep)
+      - Monitoring and observability
+    artifacts_to_study:
+      - knowledge-base/skill-packs/identity-rbac-sod/
+      - knowledge-base/patterns/architecture/
+      - knowledge-base/patterns/integration/
+      - .claude/skills/azure-runtime-review/
+      - .claude/skills/entra-identity-governance/
+    exercises:
+      - Deploy Odoo to ACA with web + worker + cron containers
+      - Configure OIDC authentication with Entra ID
+      - Design and implement role hierarchy with SoD for finance
+      - Build a REST API endpoint with authentication and rate limiting
+      - Implement queue_job for async invoice processing
+      - Set up Application Insights for Odoo monitoring
+      - Write Bicep templates for the full deployment
+    exit_gates:
+      - Odoo running on ACA with health probes passing
+      - OIDC login working with Entra ID
+      - SoD matrix documented and enforced via groups/rules
+      - At least one async integration working via queue_job
+      - Monitoring dashboard showing key application metrics
+    outputs:
+      - Deployment runbook
+      - SoD matrix document
+      - Integration architecture diagram
+
+  phase_4:
+    name: AI/Copilot & Operational Excellence
+    duration: "Days 61-75"
+    objective: Add AI capabilities and establish operational practices for production readiness.
+    target_competencies:
+      - Azure Document Intelligence for document extraction
+      - MCP tool design for ERP agents
+      - Copilot action design (thin bridge to Odoo models)
+      - Management accounting and BI architecture
+      - Backup, recovery, and disaster recovery
+      - Performance tuning (PostgreSQL, Odoo workers)
+      - PH tax compliance (BIR 2307, SLSP)
+    artifacts_to_study:
+      - knowledge-base/skill-packs/copilot-agent-erp/
+      - knowledge-base/skill-packs/management-accounting/
+      - knowledge-base/skill-packs/tax-compliance-ph/
+      - knowledge-base/skill-packs/reporting-bi/
+      - .claude/skills/azure-document-intelligence/
+    exercises:
+      - Extract invoice data using Document Intelligence prebuilt model
+      - Build an MCP tool that reads Odoo partner data
+      - Configure MIS Builder reports for management accounting
+      - Set up Databricks pipeline for Odoo data extraction
+      - Implement BIR 2307 withholding tax certificate generation
+      - Performance baseline: measure and optimize Odoo response times
+      - Design and test backup/restore procedure
+    exit_gates:
+      - Document Intelligence extracting invoices with >90% field accuracy
+      - At least one MCP tool operational and tested
+      - MIS Builder producing monthly management reports
+      - BIR 2307 generation working for sample transactions
+      - Performance baseline documented with optimization recommendations
+    outputs:
+      - AI integration playbook
+      - Management reporting configuration
+      - Performance baseline document
+
+  phase_5:
+    name: Enterprise Implementation Mastery
+    duration: "Days 76-90"
+    objective: Synthesize all capabilities into a cohesive implementation methodology. Demonstrate ability to plan, execute, and operate an enterprise ERP deployment.
+    target_competencies:
+      - Fit-gap analysis methodology
+      - Data migration planning and execution
+      - Cutover planning
+      - User acceptance testing design
+      - Change management basics
+      - Hypercare and support model
+      - Architecture documentation
+      - Knowledge transfer
+    artifacts_to_study:
+      - knowledge-base/evaluation/ (all scenarios)
+      - knowledge-base/checklists/
+      - knowledge-base/patterns/anti-patterns/
+    exercises:
+      - Conduct fit-gap analysis for a sample company (services + trading)
+      - Plan data migration from spreadsheets to Odoo (customers, products, opening balances)
+      - Execute data migration with validation and reconciliation
+      - Design UAT test scenarios for O2C, P2P, R2R
+      - Write cutover plan with go/no-go criteria
+      - Create runbook for first month of operations
+      - Document the full architecture (C4 model or equivalent)
+    exit_gates:
+      - Fit-gap analysis document with classification and remediation plan
+      - Data migration executed with reconciliation report
+      - UAT test scenarios passing
+      - Cutover plan reviewed and complete
+      - Architecture documentation sufficient for handover
+    outputs:
+      - Implementation methodology playbook
+      - Reusable fit-gap template
+      - Data migration toolkit
+      - Architecture documentation set

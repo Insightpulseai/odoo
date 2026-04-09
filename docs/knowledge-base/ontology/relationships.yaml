@@ -1,0 +1,104 @@
+# Cross-Layer Entity Relationships
+# Maps: business process ↔ Odoo model ↔ OCA addon ↔ Azure service ↔ integration bridge ↔ KPI/report
+
+artifact_status: draft
+source_type: generated_seed
+review_required: true
+generated: "2026-04-07"
+owner: knowledge-architecture
+review_tracker: ../REVIEW_QUEUE.md
+
+process_to_model:
+  order_to_cash:
+    steps:
+      - {process: "Lead capture", odoo_model: "crm.lead", oca_addon: null, azure: null}
+      - {process: "Opportunity management", odoo_model: "crm.lead", oca_addon: "crm_stage_probability", azure: null}
+      - {process: "Quotation", odoo_model: "sale.order", oca_addon: "sale_tier_validation", azure: null}
+      - {process: "Order confirmation", odoo_model: "sale.order", oca_addon: null, azure: null}
+      - {process: "Delivery", odoo_model: "stock.picking", oca_addon: null, azure: null}
+      - {process: "Invoicing", odoo_model: "account.move", oca_addon: null, azure: null}
+      - {process: "Payment collection", odoo_model: "account.payment", oca_addon: "account_payment_order", azure: null}
+    kpis: ["quote_to_order_rate", "fulfillment_time", "days_sales_outstanding", "revenue_by_product"]
+    reports: ["sales_analysis", "aged_receivable", "revenue_report"]
+
+  procure_to_pay:
+    steps:
+      - {process: "Purchase request", odoo_model: "purchase.request", oca_addon: "purchase_request", azure: null}
+      - {process: "Approval", odoo_model: "tier.review", oca_addon: "base_tier_validation", azure: null}
+      - {process: "PO creation", odoo_model: "purchase.order", oca_addon: null, azure: null}
+      - {process: "Goods receipt", odoo_model: "stock.picking", oca_addon: null, azure: null}
+      - {process: "Invoice matching", odoo_model: "account.move", oca_addon: "purchase_stock_picking_invoice_link", azure: null}
+      - {process: "Payment", odoo_model: "account.payment", oca_addon: "account_payment_order", azure: null}
+    kpis: ["requisition_to_po_time", "on_time_delivery", "invoice_processing_time", "payment_accuracy"]
+    reports: ["purchase_analysis", "aged_payable", "vendor_performance"]
+
+  record_to_report:
+    steps:
+      - {process: "Transaction posting", odoo_model: "account.move", oca_addon: null, azure: null}
+      - {process: "Bank reconciliation", odoo_model: "account.bank.statement", oca_addon: "account_reconcile_oca", azure: null}
+      - {process: "Accruals", odoo_model: "account.move", oca_addon: null, azure: null}
+      - {process: "Period close", odoo_model: "res.company", oca_addon: null, azure: null}
+      - {process: "Financial reporting", odoo_model: null, oca_addon: "account_financial_report", azure: "Power BI"}
+      - {process: "Management reporting", odoo_model: null, oca_addon: "mis_builder", azure: "Databricks"}
+    kpis: ["close_cycle_days", "reconciliation_rate", "report_accuracy"]
+    reports: ["trial_balance", "balance_sheet", "profit_loss", "cash_flow"]
+
+  document_to_posting:
+    steps:
+      - {process: "Document capture", odoo_model: null, oca_addon: null, azure: "Document Intelligence"}
+      - {process: "Data extraction", odoo_model: null, oca_addon: null, azure: "Document Intelligence"}
+      - {process: "Vendor matching", odoo_model: "res.partner", oca_addon: null, azure: null}
+      - {process: "Bill creation", odoo_model: "account.move", oca_addon: null, azure: null}
+      - {process: "Human review", odoo_model: "account.move", oca_addon: null, azure: null}
+      - {process: "Posting", odoo_model: "account.move", oca_addon: null, azure: null}
+    kpis: ["extraction_accuracy", "processing_time", "exception_rate"]
+    bridge: "queue_job + JSON controller"
+
+model_to_azure:
+  account.move:
+    extract_to: "Databricks (bronze.account_move)"
+    visualize_in: "Power BI"
+    ai_surface: "Document Intelligence (invoice extraction)"
+  res.partner:
+    extract_to: "Databricks (bronze.res_partner)"
+    identity_link: "Entra ID (user provisioning)"
+  res.users:
+    identity_provider: "Entra ID (OIDC via auth_oidc)"
+    governance: "Entra ID Conditional Access"
+  stock.picking:
+    extract_to: "Databricks (bronze.stock_picking)"
+  sale.order:
+    extract_to: "Databricks (bronze.sale_order)"
+    visualize_in: "Power BI (sales dashboard)"
+  purchase.order:
+    extract_to: "Databricks (bronze.purchase_order)"
+    visualize_in: "Power BI (procurement dashboard)"
+
+azure_service_map:
+  container_apps:
+    purpose: "Odoo runtime (web/worker/cron)"
+    odoo_dependency: "Docker image with odoo-bin"
+  front_door:
+    purpose: "Edge routing, WAF, SSL termination"
+    odoo_dependency: "HTTP traffic to ACA"
+  key_vault:
+    purpose: "Secrets management (DB password, SMTP, API keys)"
+    odoo_dependency: "Environment variables at container startup"
+  entra_id:
+    purpose: "Identity provider, SSO, MFA, conditional access"
+    odoo_dependency: "auth_oidc module + oauth provider record"
+  document_intelligence:
+    purpose: "OCR and document extraction"
+    odoo_dependency: "queue_job + bridge controller for bill creation"
+  databricks:
+    purpose: "Data warehouse, analytics, ML"
+    odoo_dependency: "JDBC extract from PostgreSQL"
+  power_bi:
+    purpose: "Enterprise BI dashboards"
+    odoo_dependency: "Semantic model on Databricks gold layer"
+  ai_foundry:
+    purpose: "Custom AI models, copilot experiences"
+    odoo_dependency: "MCP tools + bridge controllers"
+  monitor:
+    purpose: "Application monitoring, alerting"
+    odoo_dependency: "Log export, custom metrics"

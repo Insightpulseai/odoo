@@ -1,0 +1,144 @@
+// Pulser Copilot — Systray Chat Widget
+// Scoped to .o_ipai_copilot_systray
+
+.o_ipai_copilot_systray {
+  position: relative;
+}
+
+// Systray button
+.o_ipai_copilot_btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+  border-radius: 6px;
+  transition: background 0.15s;
+
+  &:hover {
+    background: rgba(0, 0, 0, 0.06);
+  }
+
+  &.o_ipai_copilot_btn_active {
+    background: rgba(26, 122, 69, 0.12);
+  }
+}
+
+.o_ipai_copilot_icon_img {
+  width: 22px;
+  height: 22px;
+  object-fit: contain;
+}
+
+// Chat Panel
+.o_ipai_copilot_panel {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 380px;
+  height: 100vh;
+  background: #ffffff;
+  border-left: 1px solid #e2e6ed;
+  z-index: 1050;
+  display: flex;
+  flex-direction: column;
+  animation: ipai-slide-in 0.2s ease-out;
+}
+
+@keyframes ipai-slide-in {
+  from { transform: translateX(100%); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+// Header
+.o_ipai_copilot_header {
+  background: #f8f9fb;
+  min-height: 48px;
+
+  strong {
+    font-size: 14px;
+    color: #2d3340;
+  }
+}
+
+.o_ipai_copilot_header_icon {
+  width: 20px;
+  height: 20px;
+  object-fit: contain;
+}
+
+// Messages
+.o_ipai_copilot_messages {
+  flex: 1;
+  overflow-y: auto;
+  background: #ffffff;
+}
+
+.o_ipai_copilot_empty {
+  padding: 40px 20px;
+}
+
+// User bubble
+.o_ipai_copilot_bubble_user {
+  background: #1a7a45;
+  color: #ffffff;
+  max-width: 85%;
+  border-radius: 12px 12px 2px 12px !important;
+}
+
+// Assistant bubble
+.o_ipai_copilot_bubble_assistant {
+  background: #f1f3f6;
+  color: #2d3340;
+  border-radius: 12px 12px 12px 2px !important;
+}
+
+// Loading dots
+.o_ipai_copilot_typing {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+  height: 20px;
+}
+
+.o_ipai_copilot_dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #9aa3b1;
+  animation: ipai-bounce 1.4s infinite ease-in-out;
+
+  &:nth-child(2) { animation-delay: 0.16s; }
+  &:nth-child(3) { animation-delay: 0.32s; }
+}
+
+@keyframes ipai-bounce {
+  0%, 80%, 100% { transform: scale(0.6); opacity: 0.4; }
+  40% { transform: scale(1); opacity: 1; }
+}
+
+// Input area
+.o_ipai_copilot_input {
+  background: #f8f9fb;
+
+  textarea {
+    resize: none;
+    border-radius: 8px;
+    border: 1px solid #d1d9e0;
+    font-size: 13px;
+
+    &:focus {
+      border-color: #1a7a45;
+      box-shadow: 0 0 0 2px rgba(26, 122, 69, 0.12);
+    }
+  }
+
+  .btn-primary {
+    background: #1a7a45 !important;
+    border: none !important;
+    border-radius: 8px;
+
+    &:hover {
+      background: #145d35 !important;
+    }
+  }
+}

@@ -1,7 +1,7 @@
 {
     "name": "IPAI Finance Close Seed (TBWA\\SMP)",
     "version": "18.0.2.0.0",
-    "summary": "Seed data: 2 projects, 89 tasks, 7 stages, 40+ tags, 10 milestones, 9 partners",
+    "summary": "Seed data: 8 projects, 130+ tasks, 6 stages, 60+ tags, 30+ milestones, 17 partners",
     "description": """
 Finance PPM — Month-End Close + BIR Tax Filing Seed Data
 =========================================================
