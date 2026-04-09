@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <record id="view_add_agent_source_wizard_form" model="ir.ui.view">
+        <field name="name">ipai.ai.agent.source.wizard.form</field>
+        <field name="model">ipai.ai.agent.source.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Add Source">
+                <group>
+                    <field name="agent_id" invisible="1"/>
+                    <field name="source_type" widget="radio"/>
+                    <field name="auto_submit"/>
+                </group>
+                <group invisible="source_type not in ('pdf', 'docx', 'xlsx', 'pptx', 'image', 'document')">
+                    <field name="attachment_ids" widget="many2many_binary"
+                           string="Upload Files"/>
+                </group>
+                <group invisible="source_type != 'weblink'">
+                    <field name="url" placeholder="https://..."/>
+                </group>
+                <group invisible="source_type != 'knowledge'">
+                    <field name="knowledge_ref"
+                           placeholder="Knowledge article ID or reference"/>
+                </group>
+                <footer>
+                    <button name="action_add_sources" type="object"
+                            string="Add Sources" class="btn-primary"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_add_agent_source_wizard" model="ir.actions.act_window">
+        <field name="name">Add Source</field>
+        <field name="res_model">ipai.ai.agent.source.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+</odoo>

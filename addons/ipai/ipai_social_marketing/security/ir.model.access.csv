@@ -1,0 +1,7 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_social_account_user,ipai.social.account user,model_ipai_social_account,group_ipai_social_marketing_user,1,1,1,0
+access_social_account_manager,ipai.social.account manager,model_ipai_social_account,group_ipai_social_marketing_manager,1,1,1,1
+access_social_post_user,ipai.social.post user,model_ipai_social_post,group_ipai_social_marketing_user,1,1,1,0
+access_social_post_manager,ipai.social.post manager,model_ipai_social_post,group_ipai_social_marketing_manager,1,1,1,1
+access_social_post_result_user,ipai.social.post.result user,model_ipai_social_post_result,group_ipai_social_marketing_user,1,0,0,0
+access_social_post_result_manager,ipai.social.post.result manager,model_ipai_social_post_result,group_ipai_social_marketing_manager,1,1,1,1

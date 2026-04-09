@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <!-- ============================================================
+             AP &amp; Vendor Bill Review milestones
+             ============================================================ -->
+
+        <record id="ms_ap_intake_complete" model="project.milestone">
+            <field name="name">Bill Intake Complete (12 bills processed)</field>
+            <field name="project_id" ref="project_ap_review"/>
+            <field name="deadline">2026-03-05</field>
+        </record>
+        <record id="ms_ap_3way_match" model="project.milestone">
+            <field name="name">3-Way Match Verified</field>
+            <field name="project_id" ref="project_ap_review"/>
+            <field name="deadline">2026-03-10</field>
+        </record>
+        <record id="ms_ap_payment_batch" model="project.milestone">
+            <field name="name">Payment Batch Approved</field>
+            <field name="project_id" ref="project_ap_review"/>
+            <field name="deadline">2026-03-15</field>
+        </record>
+
+        <!-- ============================================================
+             Payroll Compliance milestones
+             ============================================================ -->
+
+        <record id="ms_payroll_sss" model="project.milestone">
+            <field name="name">SSS Contributions Remitted</field>
+            <field name="project_id" ref="project_payroll_compliance"/>
+            <field name="deadline">2026-03-10</field>
+        </record>
+        <record id="ms_payroll_philhealth" model="project.milestone">
+            <field name="name">PhilHealth Contributions Remitted</field>
+            <field name="project_id" ref="project_payroll_compliance"/>
+            <field name="deadline">2026-03-10</field>
+        </record>
+        <record id="ms_payroll_pagibig" model="project.milestone">
+            <field name="name">Pag-IBIG Contributions Remitted</field>
+            <field name="project_id" ref="project_payroll_compliance"/>
+            <field name="deadline">2026-03-10</field>
+        </record>
+        <record id="ms_payroll_wht_reconciled" model="project.milestone">
+            <field name="name">WHT Reconciliation Complete</field>
+            <field name="project_id" ref="project_payroll_compliance"/>
+            <field name="deadline">2026-03-15</field>
+        </record>
+
+        <!-- ============================================================
+             Document Intelligence milestones
+             ============================================================ -->
+
+        <record id="ms_docai_prebuilt_live" model="project.milestone">
+            <field name="name">Prebuilt Invoice Model Live</field>
+            <field name="project_id" ref="project_document_intelligence"/>
+            <field name="deadline">2026-03-20</field>
+        </record>
+        <record id="ms_docai_custom_bir" model="project.milestone">
+            <field name="name">Custom BIR Form Model Trained</field>
+            <field name="project_id" ref="project_document_intelligence"/>
+            <field name="deadline">2026-04-15</field>
+        </record>
+        <record id="ms_docai_odoo_writeback" model="project.milestone">
+            <field name="name">OCR-to-Odoo Writeback Wired</field>
+            <field name="project_id" ref="project_document_intelligence"/>
+            <field name="deadline">2026-04-30</field>
+        </record>
+
+        <!-- ============================================================
+             Copilot Eval milestones
+             ============================================================ -->
+
+        <record id="ms_eval_advisory_pass" model="project.milestone">
+            <field name="name">Advisory Eval: Groundedness >= 0.80</field>
+            <field name="project_id" ref="project_copilot_eval"/>
+            <field name="deadline">2026-04-01</field>
+        </record>
+        <record id="ms_eval_ops_pass" model="project.milestone">
+            <field name="name">Ops Eval: Accuracy >= 0.85</field>
+            <field name="project_id" ref="project_copilot_eval"/>
+            <field name="deadline">2026-04-15</field>
+        </record>
+        <record id="ms_eval_actions_safe" model="project.milestone">
+            <field name="name">Actions Eval: Safety = 1.0</field>
+            <field name="project_id" ref="project_copilot_eval"/>
+            <field name="deadline">2026-04-30</field>
+        </record>
+
+        <!-- ============================================================
+             Close Control Plane milestones
+             ============================================================ -->
+
+        <record id="ms_ctrl_bootstrap" model="project.milestone">
+            <field name="name">Bootstrap Readiness Validated</field>
+            <field name="project_id" ref="project_close_control_plane"/>
+            <field name="deadline">2026-03-25</field>
+        </record>
+        <record id="ms_ctrl_connectors_healthy" model="project.milestone">
+            <field name="name">All Connectors Healthy</field>
+            <field name="project_id" ref="project_close_control_plane"/>
+            <field name="deadline">2026-04-01</field>
+        </record>
+        <record id="ms_ctrl_findings_resolved" model="project.milestone">
+            <field name="name">Critical Findings Resolved</field>
+            <field name="project_id" ref="project_close_control_plane"/>
+            <field name="deadline">2026-04-15</field>
+        </record>
+
+        <!-- ============================================================
+             Artifact Pipeline milestones
+             ============================================================ -->
+
+        <record id="ms_artifact_xlsx_gen" model="project.milestone">
+            <field name="name">XLSX Generation Live</field>
+            <field name="project_id" ref="project_artifact_pipeline"/>
+            <field name="deadline">2026-04-01</field>
+        </record>
+        <record id="ms_artifact_efps_xml" model="project.milestone">
+            <field name="name">eFPS XML Export Validated</field>
+            <field name="project_id" ref="project_artifact_pipeline"/>
+            <field name="deadline">2026-04-15</field>
+        </record>
+        <record id="ms_artifact_preview_wired" model="project.milestone">
+            <field name="name">Preview/Approval Flow Wired</field>
+            <field name="project_id" ref="project_artifact_pipeline"/>
+            <field name="deadline">2026-04-30</field>
+        </record>
+
+    </data>
+</odoo>

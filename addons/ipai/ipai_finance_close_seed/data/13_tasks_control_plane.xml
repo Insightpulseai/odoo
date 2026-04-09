@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <!-- ============================================================
+             Close Control Plane — Findings &amp; Remediation Tasks
+             Demonstrates: control-plane findings, remediation tracking,
+             exceptions, connector health monitoring
+             ============================================================ -->
+
+        <!-- Finding 1: Critical — Stale DB credentials -->
+        <record id="task_ctrl_finding_db_creds" model="project.task">
+            <field name="name">FINDING: Stale DB credentials on Odoo worker container</field>
+            <field name="project_id" ref="project_close_control_plane"/>
+            <field name="stage_id" ref="stage_under_review"/>
+            <field name="milestone_id" ref="ms_ctrl_bootstrap"/>
+            <field name="user_ids" eval="[(4, ref('base.user_admin'))]"/>
+            <field name="date_deadline">2026-03-22</field>
+            <field name="priority">1</field>
+            <field name="description">CRITICAL. ACA worker container using plain-text db_password secret instead of Key Vault reference. Last rotated 2026-02-15. Risk: credential drift after next rotation breaks background jobs silently.</field>
+            <field name="tag_ids" eval="[
+                (4, ref('tag_ctrl_finding')),
+                (4, ref('tag_health_red')),
+            ]"/>
+        </record>
+
+        <!-- Remediation for Finding 1 -->
+        <record id="task_ctrl_remediate_db_creds" model="project.task">
+            <field name="name">REMEDIATE: Wire Key Vault reference for worker DB password</field>
+            <field name="project_id" ref="project_close_control_plane"/>
+            <field name="stage_id" ref="stage_in_preparation"/>
+            <field name="milestone_id" ref="ms_ctrl_bootstrap"/>
+            <field name="user_ids" eval="[(4, ref('base.user_admin'))]"/>
+            <field name="date_deadline">2026-03-23</field>
+            <field name="description">Replace plain ACA secret with Key Vault reference on ipai-odoo-dev-worker and ipai-odoo-dev-cron. Verify secret resolution after container restart.</field>
+            <field name="tag_ids" eval="[
+                (4, ref('tag_ctrl_remediation')),
+            ]"/>
+        </record>
+
+        <!-- Finding 2: Critical — Missing MFA on admin -->
+        <record id="task_ctrl_finding_mfa" model="project.task">
+            <field name="name">FINDING: MFA not enforced on Keycloak admin account</field>
+            <field name="project_id" ref="project_close_control_plane"/>
+            <field name="stage_id" ref="stage_todo"/>
+            <field name="milestone_id" ref="ms_ctrl_bootstrap"/>
+            <field name="user_ids" eval="[(4, ref('base.user_admin'))]"/>
+            <field name="date_deadline">2026-03-25</field>
+            <field name="priority">1</field>
+            <field name="description">CRITICAL. Keycloak admin (transitional IdP) has no MFA. Must enforce before Entra migration completes. Risk: admin account compromise grants full tenant access.</field>
+            <field name="tag_ids" eval="[
+                (4, ref('tag_ctrl_finding')),
+                (4, ref('tag_health_red')),
+            ]"/>
+        </record>
+
+        <!-- Finding 3: Warning — Connector health degraded -->
+        <record id="task_ctrl_finding_connector" model="project.task">
+            <field name="name">FINDING: n8n-to-Odoo connector returning 503 intermittently</field>
+            <field name="project_id" ref="project_close_control_plane"/>
+            <field name="stage_id" ref="stage_under_review"/>
+            <field name="milestone_id" ref="ms_ctrl_connectors_healthy"/>
+            <field name="user_ids" eval="[(4, ref('base.user_admin'))]"/>
+            <field name="date_deadline">2026-03-28</field>
+            <field name="description">WARNING. n8n webhook-to-Odoo XML-RPC connector returning 503 during high-load periods (3x in last 7 days). Suspected: ACA scaling lag. Recommend: min replicas=2 on web container.</field>
+            <field name="tag_ids" eval="[
+                (4, ref('tag_ctrl_finding')),
+                (4, ref('tag_health_amber')),
+            ]"/>
+        </record>
+
+        <!-- Finding 4: Exception — Manual override documented -->
+        <record id="task_ctrl_exception_manual_je" model="project.task">
+            <field name="name">EXCEPTION: Manual JE posted outside approval workflow</field>
+            <field name="project_id" ref="project_close_control_plane"/>
+            <field name="stage_id" ref="stage_pending_approval"/>
+            <field name="milestone_id" ref="ms_ctrl_findings_resolved"/>
+            <field name="user_ids" eval="[(4, ref('base.user_admin'))]"/>
+            <field name="date_deadline">2026-03-20</field>
+            <field name="description">EXCEPTION. JE #2026-03-0142 posted by Finance Director without standard approval chain. Amount: PHP 1,250,000 (intercompany transfer). Reason documented: urgent quarter-end correction. Requires retrospective approval from CFO.</field>
+            <field name="tag_ids" eval="[
+                (4, ref('tag_ctrl_exception')),
+                (4, ref('tag_approval_required')),
+            ]"/>
+        </record>
+
+        <!-- Run monitoring tasks -->
+        <record id="task_ctrl_run_feb_close" model="project.task">
+            <field name="name">RUN: Feb 2026 Month-End Close — 34/39 tasks complete</field>
+            <field name="project_id" ref="project_close_control_plane"/>
+            <field name="stage_id" ref="stage_under_review"/>
+            <field name="user_ids" eval="[(4, ref('base.user_admin'))]"/>
+            <field name="date_deadline">2026-03-05</field>
+            <field name="description">Close run for Feb 2026. 34/39 tasks complete. 5 remaining: 2 blocked (pending vendor response), 2 in review, 1 awaiting approval. Target: complete by WD+3.</field>
+            <field name="tag_ids" eval="[
+                (4, ref('tag_copilot_ops')),
+                (4, ref('tag_health_amber')),
+            ]"/>
+        </record>
+
+        <record id="task_ctrl_run_mar_close" model="project.task">
+            <field name="name">RUN: Mar 2026 Month-End Close — 0/39 (not started)</field>
+            <field name="project_id" ref="project_close_control_plane"/>
+            <field name="stage_id" ref="stage_todo"/>
+            <field name="user_ids" eval="[(4, ref('base.user_admin'))]"/>
+            <field name="date_deadline">2026-04-05</field>
+            <field name="description">Close run for Mar 2026. Not yet started. Prerequisite: Feb close must be complete. Q1 is also quarter-end — additional 1702Q and 2550Q tasks required.</field>
+            <field name="tag_ids" eval="[
+                (4, ref('tag_copilot_ops')),
+            ]"/>
+        </record>
+
+    </data>
+</odoo>

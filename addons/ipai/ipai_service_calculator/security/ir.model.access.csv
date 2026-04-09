@@ -1,0 +1,7 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_ipai_service_pack_user,ipai.service.pack.user,model_ipai_service_pack,sales_team.group_sale_salesman,1,0,0,0
+access_ipai_service_pack_manager,ipai.service.pack.manager,model_ipai_service_pack,sales_team.group_sale_manager,1,1,1,1
+access_ipai_service_pack_line_user,ipai.service.pack.line.user,model_ipai_service_pack_line,sales_team.group_sale_salesman,1,0,0,0
+access_ipai_service_pack_line_manager,ipai.service.pack.line.manager,model_ipai_service_pack_line,sales_team.group_sale_manager,1,1,1,1
+access_ipai_service_calculator_wizard_user,ipai.service.calculator.wizard.user,model_ipai_service_calculator_wizard,sales_team.group_sale_salesman,1,1,1,1
+access_ipai_service_calculator_wizard_line_user,ipai.service.calculator.wizard.line.user,model_ipai_service_calculator_wizard_line,sales_team.group_sale_salesman,1,1,1,1

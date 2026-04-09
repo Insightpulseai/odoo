@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_social_post_form" model="ir.ui.view">
+        <field name="name">ipai.social.post.form</field>
+        <field name="model">ipai.social.post</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_schedule"
+                            string="Schedule"
+                            type="object"
+                            class="btn-primary"
+                            invisible="state != 'draft'"/>
+                    <button name="action_post_now"
+                            string="Post Now"
+                            type="object"
+                            class="btn-primary"
+                            invisible="state not in ('draft', 'scheduled')"/>
+                    <button name="action_reset_draft"
+                            string="Reset to Draft"
+                            type="object"
+                            invisible="state not in ('failed', 'scheduled')"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="draft,scheduled,posted"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="account_ids" widget="many2many_tags"/>
+                            <field name="scheduled_date"/>
+                            <field name="published_date" invisible="state != 'posted'"/>
+                        </group>
+                        <group>
+                            <field name="utm_campaign_id"/>
+                            <field name="utm_source_id"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Content">
+                            <field name="message" placeholder="Write your post..."/>
+                            <field name="image_ids" widget="many2many_binary"/>
+                        </page>
+                        <page string="Analytics" invisible="state != 'posted'">
+                            <group>
+                                <group>
+                                    <field name="click_count"/>
+                                    <field name="impression_count"/>
+                                    <field name="engagement_count"/>
+                                </group>
+                            </group>
+                        </page>
+                        <page string="Publish Results" invisible="not publish_result_ids">
+                            <field name="publish_result_ids">
+                                <list>
+                                    <field name="account_id"/>
+                                    <field name="status"/>
+                                    <field name="external_url" widget="url"/>
+                                    <field name="error_message"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                    <div class="alert alert-danger" role="alert"
+                         invisible="state != 'failed'">
+                        <strong>Publish failed:</strong>
+                        <field name="failure_reason"/>
+                    </div>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_social_post_list" model="ir.ui.view">
+        <field name="name">ipai.social.post.list</field>
+        <field name="model">ipai.social.post</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="message" string="Content"/>
+                <field name="account_ids" widget="many2many_tags"/>
+                <field name="scheduled_date"/>
+                <field name="state" widget="badge"
+                       decoration-info="state == 'draft'"
+                       decoration-warning="state == 'scheduled'"
+                       decoration-success="state == 'posted'"
+                       decoration-danger="state == 'failed'"/>
+                <field name="published_date"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_social_post_calendar" model="ir.ui.view">
+        <field name="name">ipai.social.post.calendar</field>
+        <field name="model">ipai.social.post</field>
+        <field name="arch" type="xml">
+            <calendar date_start="scheduled_date" color="state" mode="month"
+                      event_open_popup="true" quick_create="false">
+                <field name="message"/>
+                <field name="account_ids"/>
+                <field name="state"/>
+            </calendar>
+        </field>
+    </record>
+
+    <record id="view_social_post_search" model="ir.ui.view">
+        <field name="name">ipai.social.post.search</field>
+        <field name="model">ipai.social.post</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="message"/>
+                <field name="account_ids"/>
+                <filter name="draft" string="Draft" domain="[('state','=','draft')]"/>
+                <filter name="scheduled" string="Scheduled" domain="[('state','=','scheduled')]"/>
+                <filter name="posted" string="Posted" domain="[('state','=','posted')]"/>
+                <filter name="failed" string="Failed" domain="[('state','=','failed')]"/>
+                <separator/>
+                <filter name="this_week" string="This Week"
+                        domain="[('scheduled_date','>=', (context_today() - relativedelta(days=context_today().weekday())).strftime('%%Y-%%m-%%d'))]"/>
+                <group expand="0" string="Group By">
+                    <filter name="group_state" string="State" context="{'group_by': 'state'}"/>
+                    <filter name="group_account" string="Account" context="{'group_by': 'account_ids'}"/>
+                    <filter name="group_campaign" string="Campaign" context="{'group_by': 'utm_campaign_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_social_post" model="ir.actions.act_window">
+        <field name="name">Social Posts</field>
+        <field name="res_model">ipai.social.post</field>
+        <field name="view_mode">list,form,calendar</field>
+        <field name="search_view_id" ref="view_social_post_search"/>
+    </record>
+
+</odoo>

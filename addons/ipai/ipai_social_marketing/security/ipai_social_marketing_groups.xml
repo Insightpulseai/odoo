@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="group_ipai_social_marketing_user" model="res.groups">
+        <field name="name">Social Marketing User</field>
+        <field name="category_id" ref="base.module_category_marketing"/>
+        <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+    </record>
+
+    <record id="group_ipai_social_marketing_manager" model="res.groups">
+        <field name="name">Social Marketing Manager</field>
+        <field name="category_id" ref="base.module_category_marketing"/>
+        <field name="implied_ids" eval="[(4, ref('group_ipai_social_marketing_user'))]"/>
+    </record>
+
+</odoo>

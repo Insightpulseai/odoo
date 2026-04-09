@@ -1,0 +1,162 @@
+{
+    "name": "TBWA SMP Finance PPM",
+    "description": "Finance PPM OKR Dashboard theme — teal/gold palette matching TBWA\\SMP brand",
+    "dataColors": [
+        "#27727B",
+        "#C1232B",
+        "#FCCE10",
+        "#E87C25",
+        "#B5C334",
+        "#FE8463",
+        "#9BCA63",
+        "#F3A43B",
+        "#60C0DD",
+        "#D7504B",
+        "#26C0C0",
+        "#C6E579"
+    ],
+    "background": "#FAFAF6",
+    "foreground": "#2C3E40",
+    "tableAccent": "#27727B",
+    "good": "#9BCA63",
+    "neutral": "#F3A43B",
+    "bad": "#C1232B",
+    "maximum": "#27727B",
+    "center": "#FCCE10",
+    "minimum": "#C1232B",
+    "textClasses": {
+        "title": {
+            "fontFace": "DM Serif Display, Georgia, serif",
+            "fontSize": 18,
+            "color": "#2C3E40"
+        },
+        "header": {
+            "fontFace": "IBM Plex Sans, Segoe UI, sans-serif",
+            "fontSize": 12,
+            "fontWeight": "Bold",
+            "color": "#2C3E40"
+        },
+        "label": {
+            "fontFace": "IBM Plex Mono, Consolas, monospace",
+            "fontSize": 9,
+            "color": "#7A8A8C"
+        },
+        "callout": {
+            "fontFace": "DM Serif Display, Georgia, serif",
+            "fontSize": 28,
+            "color": "#27727B"
+        }
+    },
+    "visualStyles": {
+        "*": {
+            "*": {
+                "background": [
+                    {
+                        "color": {"solid": {"color": "#FFFFFF"}},
+                        "transparency": 0
+                    }
+                ],
+                "border": [
+                    {
+                        "color": {"solid": {"color": "#E8E6E0"}},
+                        "radius": 10
+                    }
+                ],
+                "outlineColor": [{"solid": {"color": "#E8E6E0"}}],
+                "outlineWeight": [1]
+            }
+        },
+        "page": {
+            "*": {
+                "background": [
+                    {
+                        "color": {"solid": {"color": "#FAFAF6"}},
+                        "transparency": 0
+                    }
+                ]
+            }
+        },
+        "card": {
+            "*": {
+                "labels": [
+                    {
+                        "color": {"solid": {"color": "#27727B"}},
+                        "fontFamily": "DM Serif Display, serif",
+                        "fontSize": 28
+                    }
+                ],
+                "categoryLabels": [
+                    {
+                        "color": {"solid": {"color": "#7A8A8C"}},
+                        "fontFamily": "IBM Plex Mono, monospace",
+                        "fontSize": 9
+                    }
+                ]
+            }
+        },
+        "donutChart": {
+            "*": {
+                "labels": [
+                    {
+                        "fontFamily": "IBM Plex Mono, monospace",
+                        "fontSize": 9
+                    }
+                ]
+            }
+        },
+        "barChart": {
+            "*": {
+                "labels": [
+                    {
+                        "fontFamily": "IBM Plex Mono, monospace",
+                        "fontSize": 9
+                    }
+                ]
+            }
+        },
+        "lineChart": {
+            "*": {
+                "labels": [
+                    {
+                        "fontFamily": "IBM Plex Mono, monospace",
+                        "fontSize": 9
+                    }
+                ]
+            }
+        },
+        "table": {
+            "*": {
+                "grid": [
+                    {
+                        "gridHorizontalColor": {"solid": {"color": "#E8E6E0"}},
+                        "outlineColor": {"solid": {"color": "#E8E6E0"}}
+                    }
+                ],
+                "columnHeaders": [
+                    {
+                        "fontFamily": "IBM Plex Mono, monospace",
+                        "fontSize": 9,
+                        "fontColor": {"solid": {"color": "#7A8A8C"}},
+                        "backColor": {"solid": {"color": "#F2F1EC"}}
+                    }
+                ],
+                "values": [
+                    {
+                        "fontFamily": "IBM Plex Sans, sans-serif",
+                        "fontSize": 10,
+                        "fontColor": {"solid": {"color": "#2C3E40"}}
+                    }
+                ]
+            }
+        },
+        "kpi": {
+            "*": {
+                "indicator": [
+                    {
+                        "fontFamily": "DM Serif Display, serif"
+                    }
+                ]
+            }
+        }
+    }
+}

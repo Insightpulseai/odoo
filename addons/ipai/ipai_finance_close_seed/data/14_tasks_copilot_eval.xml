@@ -1,0 +1,223 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <!-- ============================================================
+             Copilot Eval — Benchmark &amp; Quality Tasks
+             Demonstrates: eval tracking, SAP Joule comparison,
+             groundedness/accuracy/safety metrics
+             ============================================================ -->
+
+        <record id="task_eval_advisory_baseline" model="project.task">
+            <field name="name">Run Advisory Eval baseline (50 cases, BIR domain)</field>
+            <field name="project_id" ref="project_copilot_eval"/>
+            <field name="stage_id" ref="stage_done"/>
+            <field name="milestone_id" ref="ms_eval_advisory_pass"/>
+            <field name="user_ids" eval="[(4, ref('base.user_admin'))]"/>
+            <field name="date_deadline">2026-03-15</field>
+            <field name="description">Baseline run: groundedness=0.62, relevance=0.74, coherence=0.88. Target: groundedness >= 0.80. Gap: knowledge store not yet attached.</field>
+            <field name="tag_ids" eval="[
+                (4, ref('tag_copilot_advisory')),
+                (4, ref('tag_health_red')),
+            ]"/>
+        </record>
+
+        <record id="task_eval_create_knowledge_store" model="project.task">
+            <field name="name">Create BIR regulation knowledge store in Foundry IQ</field>
+            <field name="project_id" ref="project_copilot_eval"/>
+            <field name="stage_id" ref="stage_in_preparation"/>
+            <field name="milestone_id" ref="ms_eval_advisory_pass"/>
+            <field name="user_ids" eval="[(4, ref('base.user_admin'))]"/>
+            <field name="date_deadline">2026-03-25</field>
+            <field name="description">Upload BIR form guides (2550M, 2550Q, 1601-C, 1601-E, etc.) to Foundry IQ knowledge store. Expected: groundedness improvement to 0.78+.</field>
+            <field name="tag_ids" eval="[
+                (4, ref('tag_copilot_advisory')),
+            ]"/>
+        </record>
+
+        <record id="task_eval_ops_baseline" model="project.task">
+            <field name="name">Run Ops Eval baseline (30 cases, Odoo queries)</field>
+            <field name="project_id" ref="project_copilot_eval"/>
+            <field name="stage_id" ref="stage_todo"/>
+            <field name="milestone_id" ref="ms_eval_ops_pass"/>
+            <field name="user_ids" eval="[(4, ref('base.user_admin'))]"/>
+            <field name="date_deadline">2026-04-01</field>
+            <field name="description">Ops eval: read-only Odoo queries (overdue bills, open tasks, project health). Target: accuracy >= 0.85. Blocked: ops runtime not yet wired.</field>
+            <field name="tag_ids" eval="[
+                (4, ref('tag_copilot_ops')),
+                (4, ref('tag_blocked')),
+            ]"/>
+        </record>
+
+        <record id="task_eval_actions_baseline" model="project.task">
+            <field name="name">Run Actions Eval baseline (40 cases, state transitions)</field>
+            <field name="project_id" ref="project_copilot_eval"/>
+            <field name="stage_id" ref="stage_todo"/>
+            <field name="milestone_id" ref="ms_eval_actions_safe"/>
+            <field name="user_ids" eval="[(4, ref('base.user_admin'))]"/>
+            <field name="date_deadline">2026-04-15</field>
+            <field name="description">Actions eval: approval-gated state transitions (BIR approve, payment release, JE post). Target: safety = 1.0 (no unauthorized mutations). Blocked: actions runtime not yet wired.</field>
+            <field name="tag_ids" eval="[
+                (4, ref('tag_copilot_actions')),
+                (4, ref('tag_blocked')),
+            ]"/>
+        </record>
+
+        <record id="task_eval_sap_joule_compare" model="project.task">
+            <field name="name">SAP Joule Benchmark Comparison Report</field>
+            <field name="project_id" ref="project_copilot_eval"/>
+            <field name="stage_id" ref="stage_todo"/>
+            <field name="user_ids" eval="[(4, ref('base.user_admin'))]"/>
+            <field name="date_deadline">2026-04-30</field>
+            <field name="description">Compare Odoo Copilot vs SAP Joule across 4 axes: Informational, Navigational, Transactional, Safety. Produce scorecard artifact (XLSX + PDF).</field>
+            <field name="tag_ids" eval="[
+                (4, ref('tag_copilot_advisory')),
+                (4, ref('tag_artifact_xlsx')),
+                (4, ref('tag_artifact_pdf')),
+            ]"/>
+        </record>
+
+        <!-- ============================================================
+             Document Intelligence tasks
+             ============================================================ -->
+
+        <record id="task_docai_invoice_model" model="project.task">
+            <field name="name">Configure prebuilt invoice extraction model</field>
+            <field name="project_id" ref="project_document_intelligence"/>
+            <field name="stage_id" ref="stage_in_preparation"/>
+            <field name="milestone_id" ref="ms_docai_prebuilt_live"/>
+            <field name="user_ids" eval="[(4, ref('base.user_admin'))]"/>
+            <field name="date_deadline">2026-03-20</field>
+            <field name="description">Wire Azure Document Intelligence prebuilt-invoice model. Fields: vendor_name, invoice_number, invoice_date, total_amount, line_items, tax_amount.</field>
+            <field name="tag_ids" eval="[(4, ref('tag_copilot_actions'))]"/>
+        </record>
+
+        <record id="task_docai_bir_custom" model="project.task">
+            <field name="name">Train custom BIR form extraction model</field>
+            <field name="project_id" ref="project_document_intelligence"/>
+            <field name="stage_id" ref="stage_todo"/>
+            <field name="milestone_id" ref="ms_docai_custom_bir"/>
+            <field name="user_ids" eval="[(4, ref('base.user_admin'))]"/>
+            <field name="date_deadline">2026-04-15</field>
+            <field name="description">Custom model for BIR 2550M/2550Q/1601-C forms. Need: 50+ labeled samples per form type. Training data collection in progress.</field>
+            <field name="tag_ids" eval="[(4, ref('tag_copilot_actions'))]"/>
+        </record>
+
+        <record id="task_docai_failure_triage" model="project.task">
+            <field name="name">Triage 3 OCR extraction failures (low confidence)</field>
+            <field name="project_id" ref="project_document_intelligence"/>
+            <field name="stage_id" ref="stage_under_review"/>
+            <field name="user_ids" eval="[(4, ref('base.user_admin'))]"/>
+            <field name="date_deadline">2026-03-22</field>
+            <field name="description">3 vendor invoices failed OCR extraction (confidence &lt; 0.5): (1) handwritten receipt, (2) faded thermal paper, (3) multi-page with table spanning pages. Route to manual entry or retry with layout model.</field>
+            <field name="tag_ids" eval="[
+                (4, ref('tag_copilot_actions')),
+                (4, ref('tag_ctrl_finding')),
+            ]"/>
+        </record>
+
+        <!-- ============================================================
+             Artifact Pipeline tasks
+             ============================================================ -->
+
+        <record id="task_artifact_xlsx_generator" model="project.task">
+            <field name="name">Implement XLSX artifact generator (working papers template)</field>
+            <field name="project_id" ref="project_artifact_pipeline"/>
+            <field name="stage_id" ref="stage_in_preparation"/>
+            <field name="milestone_id" ref="ms_artifact_xlsx_gen"/>
+            <field name="user_ids" eval="[(4, ref('base.user_admin'))]"/>
+            <field name="date_deadline">2026-04-01</field>
+            <field name="description">Generate working paper XLSX from scoped Odoo data (trial balance, reconciliation, aging). Template: pre-formatted headers, formulas, conditional formatting.</field>
+            <field name="tag_ids" eval="[
+                (4, ref('tag_artifact_xlsx')),
+                (4, ref('tag_copilot_actions')),
+            ]"/>
+        </record>
+
+        <record id="task_artifact_efps_xml" model="project.task">
+            <field name="name">Implement eFPS XML export for BIR forms</field>
+            <field name="project_id" ref="project_artifact_pipeline"/>
+            <field name="stage_id" ref="stage_todo"/>
+            <field name="milestone_id" ref="ms_artifact_efps_xml"/>
+            <field name="user_ids" eval="[(4, ref('base.user_admin'))]"/>
+            <field name="date_deadline">2026-04-15</field>
+            <field name="description">Generate eFPS-compliant XML for 2550M, 2550Q, 1601-C. Schema validation against BIR XSD. Must pass BIR eFPS uploader validation.</field>
+            <field name="tag_ids" eval="[
+                (4, ref('tag_artifact_xml')),
+                (4, ref('tag_copilot_actions')),
+                (4, ref('tag_evidence_required')),
+            ]"/>
+        </record>
+
+        <record id="task_artifact_preview_flow" model="project.task">
+            <field name="name">Wire artifact preview/approval flow in Copilot UI</field>
+            <field name="project_id" ref="project_artifact_pipeline"/>
+            <field name="stage_id" ref="stage_todo"/>
+            <field name="milestone_id" ref="ms_artifact_preview_wired"/>
+            <field name="user_ids" eval="[(4, ref('base.user_admin'))]"/>
+            <field name="date_deadline">2026-04-30</field>
+            <field name="description">Implement inline preview for generated artifacts. Support: XLSX table preview, PDF rendered preview, XML tree preview. Actions from preview: approve-export, approve-writeback, regenerate, discard.</field>
+            <field name="tag_ids" eval="[
+                (4, ref('tag_copilot_actions')),
+                (4, ref('tag_approval_required')),
+            ]"/>
+        </record>
+
+        <!-- ============================================================
+             Payroll Compliance tasks
+             ============================================================ -->
+
+        <record id="task_payroll_sss_compute" model="project.task">
+            <field name="name">Compute SSS contributions — Feb 2026 (PHP 315,000 total)</field>
+            <field name="project_id" ref="project_payroll_compliance"/>
+            <field name="stage_id" ref="stage_done"/>
+            <field name="milestone_id" ref="ms_payroll_sss"/>
+            <field name="user_ids" eval="[(4, ref('base.user_admin'))]"/>
+            <field name="date_deadline">2026-03-10</field>
+            <field name="description">SSS contribution computed and remitted. 85 employees. Total: PHP 315,000 (EE: PHP 105,000, ER: PHP 210,000).</field>
+            <field name="tag_ids" eval="[(4, ref('tag_payroll_personnel'))]"/>
+        </record>
+
+        <record id="task_payroll_philhealth_compute" model="project.task">
+            <field name="name">Compute PhilHealth contributions — Feb 2026 (PHP 212,500)</field>
+            <field name="project_id" ref="project_payroll_compliance"/>
+            <field name="stage_id" ref="stage_done"/>
+            <field name="milestone_id" ref="ms_payroll_philhealth"/>
+            <field name="user_ids" eval="[(4, ref('base.user_admin'))]"/>
+            <field name="date_deadline">2026-03-10</field>
+            <field name="description">PhilHealth contribution computed and remitted. 85 employees. Total: PHP 212,500.</field>
+            <field name="tag_ids" eval="[(4, ref('tag_payroll_personnel'))]"/>
+        </record>
+
+        <record id="task_payroll_pagibig_overdue" model="project.task">
+            <field name="name">OVERDUE: Pag-IBIG contributions — Feb 2026 (PHP 8,500)</field>
+            <field name="project_id" ref="project_payroll_compliance"/>
+            <field name="stage_id" ref="stage_in_preparation"/>
+            <field name="milestone_id" ref="ms_payroll_pagibig"/>
+            <field name="user_ids" eval="[(4, ref('base.user_admin'))]"/>
+            <field name="date_deadline">2026-03-10</field>
+            <field name="description">OVERDUE. Pag-IBIG remittance not yet processed. Amount: PHP 8,500. Reason: portal login issues — ticket filed with Pag-IBIG. Penalty risk: PHP 85/day.</field>
+            <field name="tag_ids" eval="[
+                (4, ref('tag_payroll_personnel')),
+                (4, ref('tag_overdue')),
+                (4, ref('tag_health_red')),
+            ]"/>
+        </record>
+
+        <record id="task_payroll_wht_variance" model="project.task">
+            <field name="name">FINDING: WHT variance — Feb 2026 (PHP 4,200 unexplained)</field>
+            <field name="project_id" ref="project_payroll_compliance"/>
+            <field name="stage_id" ref="stage_under_review"/>
+            <field name="milestone_id" ref="ms_payroll_wht_reconciled"/>
+            <field name="user_ids" eval="[(4, ref('base.user_admin'))]"/>
+            <field name="date_deadline">2026-03-15</field>
+            <field name="description">WHT reconciliation shows PHP 4,200 variance between payroll system and 1601-C filing. Suspected: mid-month salary adjustment not reflected in payroll register. Needs line-by-line comparison.</field>
+            <field name="tag_ids" eval="[
+                (4, ref('tag_payroll_personnel')),
+                (4, ref('tag_ctrl_finding')),
+                (4, ref('tag_copilot_advisory')),
+            ]"/>
+        </record>
+
+    </data>
+</odoo>

@@ -106,7 +106,34 @@
 
                 <!-- Input Area -->
                 <div class="o_ipai_copilot_input border-top px-3 py-2">
+                    <!-- Attachment preview chips -->
+                    <div t-if="state.attachments.length"
+                         class="o_ipai_copilot_attachments d-flex flex-wrap gap-1 mb-2">
+                        <t t-foreach="state.attachments" t-as="file" t-key="file_index">
+                            <span class="o_ipai_copilot_attachment_chip badge rounded-pill d-flex align-items-center gap-1">
+                                <i t-att-class="getFileIcon(file)"/>
+                                <span class="text-truncate" style="max-width: 120px;"
+                                      t-esc="file.name"/>
+                                <button class="btn-close btn-close-white ms-1"
+                                        style="font-size: 0.5rem;"
+                                        t-on-click="() => this.removeAttachment(file_index)"
+                                        t-att-disabled="state.isLoading"/>
+                            </span>
+                        </t>
+                    </div>
                     <div class="d-flex gap-2">
+                        <input type="file"
+                               t-ref="fileInput"
+                               class="d-none"
+                               multiple="multiple"
+                               accept="image/png,image/jpeg,image/webp,image/gif,application/pdf,.docx,.xlsx"
+                               t-on-change="onFileSelected"/>
+                        <button class="btn btn-outline-secondary btn-sm px-2 o_ipai_copilot_attach_btn"
+                                t-on-click="openFilePicker"
+                                t-att-disabled="state.isLoading"
+                                title="Attach file">
+                            <i class="fa fa-paperclip"/>
+                        </button>
                         <textarea
                             t-ref="promptInput"
                             class="form-control form-control-sm"

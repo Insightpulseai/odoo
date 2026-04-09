@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <!-- Agent Form -->
+    <record id="view_ipai_ai_agent_form" model="ir.ui.view">
+        <field name="name">ipai.ai.agent.form</field>
+        <field name="model">ipai.ai.agent</field>
+        <field name="arch" type="xml">
+            <form string="AI Agent">
+                <header>
+                    <button name="action_test_agent" type="object"
+                            string="Test Agent" class="btn-primary"
+                            icon="fa-comment"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_open_sources" type="object"
+                                class="oe_stat_button" icon="fa-database">
+                            <div class="o_stat_info">
+                                <span class="o_stat_value">
+                                    <field name="indexed_source_count"/>
+                                    / <field name="source_count"/>
+                                </span>
+                                <span class="o_stat_text">Sources</span>
+                            </div>
+                        </button>
+                    </div>
+                    <div class="oe_title">
+                        <h1><field name="name" placeholder="Agent Name"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="description"/>
+                            <field name="restrict_to_sources"/>
+                        </group>
+                        <group>
+                            <field name="external_agent_id"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                            <field name="active" invisible="1"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Sources" name="sources">
+                            <field name="source_ids" nolabel="1"
+                                   context="{'default_agent_id': id}">
+                                <list>
+                                    <field name="name"/>
+                                    <field name="source_type"/>
+                                    <field name="status"
+                                           decoration-success="status == 'indexed'"
+                                           decoration-warning="status == 'processing'"
+                                           decoration-danger="status == 'failed'"
+                                           decoration-muted="status == 'draft'"
+                                           widget="badge"/>
+                                    <field name="active" widget="boolean_toggle"/>
+                                    <field name="processed_at"/>
+                                    <button name="action_submit_for_indexing"
+                                            type="object" string="Index"
+                                            icon="fa-refresh"
+                                            invisible="status == 'processing'"/>
+                                </list>
+                            </field>
+                            <div>
+                                <button name="%(action_add_agent_source_wizard)d"
+                                        type="action" string="Add Source"
+                                        class="btn-primary mt-2"
+                                        icon="fa-plus"
+                                        context="{'default_agent_id': id}"/>
+                            </div>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- Agent List -->
+    <record id="view_ipai_ai_agent_list" model="ir.ui.view">
+        <field name="name">ipai.ai.agent.list</field>
+        <field name="model">ipai.ai.agent</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="source_count"/>
+                <field name="indexed_source_count"/>
+                <field name="restrict_to_sources"/>
+                <field name="external_agent_id"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Agent Action -->
+    <record id="action_ipai_ai_agent" model="ir.actions.act_window">
+        <field name="name">AI Agents</field>
+        <field name="res_model">ipai.ai.agent</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <!-- Menu (root defined in ipai_ai_agent_source_views.xml) -->
+    <menuitem id="menu_ipai_ai_agents"
+              name="Agents"
+              parent="menu_ipai_ai_root"
+              action="action_ipai_ai_agent"
+              sequence="10"/>
+
+</odoo>

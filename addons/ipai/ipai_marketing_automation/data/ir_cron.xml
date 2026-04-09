@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+
+    <record id="ir_cron_execute_campaigns" model="ir.cron">
+        <field name="name">Marketing Automation: Execute Campaigns</field>
+        <field name="model_id" ref="model_ipai_marketing_campaign"/>
+        <field name="state">code</field>
+        <field name="code">model._cron_execute_campaigns()</field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">hours</field>
+        <field name="active">True</field>
+    </record>
+
+</odoo>

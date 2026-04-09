@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="ipai_timesheet_leaderboard_view_list" model="ir.ui.view">
+        <field name="name">ipai.timesheet.leaderboard.list</field>
+        <field name="model">ipai.timesheet.leaderboard</field>
+        <field name="arch" type="xml">
+            <list decoration-bf="total_hours &gt; 40">
+                <field name="employee_id"/>
+                <field name="department_id" optional="show"/>
+                <field name="total_hours" sum="Total"/>
+                <field name="billable_hours" sum="Total Billable"/>
+                <field name="entry_count" sum="Total Entries"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="ipai_timesheet_leaderboard_view_pivot" model="ir.ui.view">
+        <field name="name">ipai.timesheet.leaderboard.pivot</field>
+        <field name="model">ipai.timesheet.leaderboard</field>
+        <field name="arch" type="xml">
+            <pivot string="Timesheet Leaderboard">
+                <field name="employee_id" type="row"/>
+                <field name="date" type="col" interval="month"/>
+                <field name="billable_hours" type="measure"/>
+                <field name="total_hours" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
+    <record id="ipai_timesheet_leaderboard_view_graph" model="ir.ui.view">
+        <field name="name">ipai.timesheet.leaderboard.graph</field>
+        <field name="model">ipai.timesheet.leaderboard</field>
+        <field name="arch" type="xml">
+            <graph string="Timesheet Leaderboard" type="bar">
+                <field name="employee_id"/>
+                <field name="billable_hours" type="measure"/>
+                <field name="total_hours" type="measure"/>
+            </graph>
+        </field>
+    </record>
+
+    <record id="ipai_timesheet_leaderboard_view_search" model="ir.ui.view">
+        <field name="name">ipai.timesheet.leaderboard.search</field>
+        <field name="model">ipai.timesheet.leaderboard</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="employee_id"/>
+                <field name="department_id"/>
+                <field name="project_id"/>
+                <filter name="this_month" string="This Month"
+                        domain="[('date', '&gt;=', (context_today() - relativedelta(day=1)).strftime('%%Y-%%m-%%d'))]"/>
+                <filter name="this_quarter" string="This Quarter"
+                        domain="[('date', '&gt;=', (context_today() - relativedelta(months=((context_today().month - 1) %% 3), day=1)).strftime('%%Y-%%m-%%d'))]"/>
+                <group expand="0" string="Group By">
+                    <filter name="group_employee" string="Employee"
+                            context="{'group_by': 'employee_id'}"/>
+                    <filter name="group_department" string="Department"
+                            context="{'group_by': 'department_id'}"/>
+                    <filter name="group_project" string="Project"
+                            context="{'group_by': 'project_id'}"/>
+                    <filter name="group_month" string="Month"
+                            context="{'group_by': 'date:month'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="ipai_timesheet_leaderboard_action" model="ir.actions.act_window">
+        <field name="name">Timesheet Leaderboard</field>
+        <field name="res_model">ipai.timesheet.leaderboard</field>
+        <field name="view_mode">pivot,graph,list</field>
+        <field name="search_view_id" ref="ipai_timesheet_leaderboard_view_search"/>
+        <field name="context">{'search_default_this_month': 1, 'search_default_group_employee': 1}</field>
+    </record>
+
+    <menuitem id="ipai_timesheet_leaderboard_menu"
+              name="Leaderboard"
+              parent="hr_timesheet.timesheet_menu_root"
+              action="ipai_timesheet_leaderboard_action"
+              sequence="50"/>
+
+</odoo>

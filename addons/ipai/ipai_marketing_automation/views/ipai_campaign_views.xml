@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Campaign Form -->
+    <record id="ipai_campaign_view_form" model="ir.ui.view">
+        <field name="name">ipai.marketing.campaign.form</field>
+        <field name="model">ipai.marketing.campaign</field>
+        <field name="arch" type="xml">
+            <form string="Marketing Campaign">
+                <header>
+                    <button name="action_start" type="object"
+                            string="Start" class="btn-primary"
+                            invisible="state != 'draft'"/>
+                    <button name="action_pause" type="object"
+                            string="Pause"
+                            invisible="state != 'running'"/>
+                    <button name="action_resume" type="object"
+                            string="Resume" class="btn-primary"
+                            invisible="state != 'paused'"/>
+                    <button name="action_done" type="object"
+                            string="Mark Done"
+                            invisible="state not in ('running', 'paused')"/>
+                    <button name="action_reset_draft" type="object"
+                            string="Reset to Draft"
+                            invisible="state not in ('done', 'paused')"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="draft,running,done"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button class="oe_stat_button" type="object"
+                                name="action_view_participants"
+                                icon="fa-users">
+                            <field name="participant_count"
+                                   widget="statinfo"
+                                   string="Participants"/>
+                        </button>
+                    </div>
+                    <div class="oe_title">
+                        <h1><field name="name" placeholder="Campaign Name"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="model_id"/>
+                            <field name="domain" widget="domain"
+                                   options="{'model': 'model_name'}"/>
+                        </group>
+                        <group>
+                            <field name="mailing_list_id"/>
+                            <field name="company_id"
+                                   groups="base.group_multi_company"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Steps" name="steps">
+                            <field name="step_ids">
+                                <list editable="bottom">
+                                    <field name="sequence"
+                                           widget="handle"/>
+                                    <field name="name"/>
+                                    <field name="trigger_type"/>
+                                    <field name="delay_days"
+                                           invisible="trigger_type == 'begin'"/>
+                                    <field name="delay_hours"
+                                           invisible="trigger_type == 'begin'"/>
+                                    <field name="action_type"/>
+                                    <field name="mailing_id"
+                                           invisible="action_type != 'send_mailing'"/>
+                                    <field name="tag_id"
+                                           invisible="action_type != 'add_tag'"/>
+                                    <field name="stage_id"
+                                           invisible="action_type != 'move_stage'"/>
+                                    <field name="activity_type_id"
+                                           invisible="action_type != 'create_activity'"/>
+                                    <field name="processed_count"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- Campaign List -->
+    <record id="ipai_campaign_view_list" model="ir.ui.view">
+        <field name="name">ipai.marketing.campaign.list</field>
+        <field name="model">ipai.marketing.campaign</field>
+        <field name="arch" type="xml">
+            <list decoration-info="state == 'draft'"
+                  decoration-success="state == 'running'"
+                  decoration-muted="state == 'done'">
+                <field name="name"/>
+                <field name="model_id"/>
+                <field name="participant_count"/>
+                <field name="state"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Campaign Kanban -->
+    <record id="ipai_campaign_view_kanban" model="ir.ui.view">
+        <field name="name">ipai.marketing.campaign.kanban</field>
+        <field name="model">ipai.marketing.campaign</field>
+        <field name="arch" type="xml">
+            <kanban default_group_by="state">
+                <field name="name"/>
+                <field name="state"/>
+                <field name="participant_count"/>
+                <templates>
+                    <t t-name="card">
+                        <field name="name" class="fw-bold"/>
+                        <div>
+                            <field name="participant_count"/> participants
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- Participant List -->
+    <record id="ipai_campaign_participant_view_list" model="ir.ui.view">
+        <field name="name">ipai.marketing.campaign.participant.list</field>
+        <field name="model">ipai.marketing.campaign.participant</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="record_name"/>
+                <field name="state"/>
+                <field name="current_step_id"/>
+                <field name="step_completed_at"/>
+                <field name="enrolled_at"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Actions -->
+    <record id="ipai_campaign_action" model="ir.actions.act_window">
+        <field name="name">Marketing Campaigns</field>
+        <field name="res_model">ipai.marketing.campaign</field>
+        <field name="view_mode">kanban,list,form</field>
+    </record>
+
+    <!-- Menu -->
+    <menuitem id="ipai_marketing_automation_menu_root"
+              name="Marketing Automation"
+              web_icon="ipai_marketing_automation,static/description/icon.png"
+              sequence="60"/>
+
+    <menuitem id="ipai_campaign_menu"
+              name="Campaigns"
+              parent="ipai_marketing_automation_menu_root"
+              action="ipai_campaign_action"
+              sequence="10"/>
+
+</odoo>

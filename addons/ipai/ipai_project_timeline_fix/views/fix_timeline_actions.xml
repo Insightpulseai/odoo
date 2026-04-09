@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2026 InsightPulseAI
+     License LGPL-3.0 or later (http://www.gnu.org/licenses/lgpl).
+
+     Override project_timeline OCA module: strip 'timeline' from all action
+     view_mode fields to prevent client-side rendering crash.
+     Per OCA governance: never modify OCA source; use ipai_* override instead.
+-->
+<odoo>
+
+    <!-- ============================================================
+         project.project actions
+         ============================================================ -->
+
+    <!-- Projects (ID 398): kanban,list,form,timeline -> kanban,list,form -->
+    <record id="project.open_view_project_all" model="ir.actions.act_window">
+        <field name="view_mode">kanban,list,form</field>
+    </record>
+
+    <!-- Projects (ID 399): kanban,list,form,calendar,activity,timeline -> kanban,list,form -->
+    <record id="project.open_view_project_all_group_stage" model="ir.actions.act_window">
+        <field name="view_mode">kanban,list,form</field>
+    </record>
+
+    <!-- ============================================================
+         project.task actions
+         ============================================================ -->
+
+    <!-- Tasks (ID 406): kanban,list,form,calendar,timeline,pivot,graph,activity -> kanban,list,form,calendar,pivot,graph,activity -->
+    <record id="project.action_view_task" model="ir.actions.act_window">
+        <field name="view_mode">kanban,list,form,calendar,pivot,graph,activity</field>
+    </record>
+
+    <!-- All Tasks (ID 408): list,kanban,form,calendar,timeline,pivot,graph,activity -> kanban,list,form,calendar,pivot,graph,activity -->
+    <record id="project.action_view_all_task" model="ir.actions.act_window">
+        <field name="view_mode">kanban,list,form,calendar,pivot,graph,activity</field>
+    </record>
+
+    <!-- Partner's Tasks (ID 411): list,kanban,form,calendar,timeline,pivot,graph,activity -> kanban,list,form,calendar,pivot,graph,activity -->
+    <record id="project.project_task_action_from_partner" model="ir.actions.act_window">
+        <field name="view_mode">kanban,list,form,calendar,pivot,graph,activity</field>
+    </record>
+
+    <!-- Project's tasks (ID 413): kanban,list,form,calendar,timeline,pivot,graph,activity -> kanban,list,form,calendar,pivot,graph,activity -->
+    <record id="project.act_project_project_2_project_task_all" model="ir.actions.act_window">
+        <field name="view_mode">kanban,list,form,calendar,pivot,graph,activity</field>
+    </record>
+
+    <!-- Overpassed Tasks (ID 412): list,form,calendar,timeline,graph,kanban -> kanban,list,form,calendar,pivot,graph,activity -->
+    <record id="project.action_view_task_overpassed_draft" model="ir.actions.act_window">
+        <field name="view_mode">kanban,list,form,calendar,pivot,graph,activity</field>
+    </record>
+
+    <!-- Scheduled Actions (ID 15): list,form,calendar,timeline -> list,form,calendar -->
+    <record id="project.dblc_proj" model="ir.actions.act_window">
+        <field name="view_mode">list,form,calendar</field>
+    </record>
+
+    <!-- ============================================================
+         report.project.task.user actions
+         ============================================================ -->
+
+    <!-- Tasks Analysis (ID 423): graph,pivot,timeline -> graph,pivot -->
+    <record id="project.action_project_task_user_tree" model="ir.actions.act_window">
+        <field name="view_mode">graph,pivot</field>
+    </record>
+
+    <!-- Tasks (ID 402) — same XML ID as action_view_task, already covered above -->
+
+</odoo>

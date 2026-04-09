@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="ipai_service_calculator_wizard_form" model="ir.ui.view">
+        <field name="name">ipai.service.calculator.wizard.form</field>
+        <field name="model">ipai.service.calculator.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Service Pack Calculator">
+                <group>
+                    <group>
+                        <field name="sale_order_id"
+                               domain="[('state', '=', 'draft')]"
+                               required="1"/>
+                        <field name="partner_id"/>
+                    </group>
+                    <group>
+                        <field name="pack_id"/>
+                        <field name="multiplier"/>
+                    </group>
+                </group>
+                <separator string="Preview"/>
+                <field name="preview_line_ids" nolabel="1">
+                    <list editable="bottom">
+                        <field name="product_id"/>
+                        <field name="name"/>
+                        <field name="quantity"/>
+                        <field name="price_unit"/>
+                        <field name="subtotal"/>
+                    </list>
+                </field>
+                <footer>
+                    <button name="action_apply" type="object"
+                            string="Apply to Order" class="btn-primary"/>
+                    <button string="Cancel" class="btn-secondary"
+                            special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_ipai_service_calculator_wizard" model="ir.actions.act_window">
+        <field name="name">Service Pack Calculator</field>
+        <field name="res_model">ipai.service.calculator.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+</odoo>

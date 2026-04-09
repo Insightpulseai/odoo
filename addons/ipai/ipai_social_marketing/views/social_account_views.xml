@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_social_account_form" model="ir.ui.view">
+        <field name="name">ipai.social.account.form</field>
+        <field name="model">ipai.social.account</field>
+        <field name="arch" type="xml">
+            <form>
+                <header/>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_posts"
+                                type="object"
+                                class="oe_stat_button"
+                                icon="fa-pencil-square-o">
+                            <field name="post_count" widget="statinfo" string="Posts"/>
+                        </button>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="platform"/>
+                            <field name="account_url" widget="url"/>
+                            <field name="active"/>
+                        </group>
+                        <group>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                            <field name="last_post_at"/>
+                            <field name="api_config_prefix"/>
+                        </group>
+                    </group>
+                    <separator string="API Configuration"/>
+                    <div class="alert alert-info" role="alert">
+                        <strong>Credentials:</strong> Set API tokens in
+                        Settings → Technical → System Parameters using the
+                        prefix shown above. For example:
+                        <code><field name="api_config_prefix"/>.access_token</code>
+                    </div>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_social_account_list" model="ir.ui.view">
+        <field name="name">ipai.social.account.list</field>
+        <field name="model">ipai.social.account</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="platform"/>
+                <field name="account_url" widget="url"/>
+                <field name="post_count"/>
+                <field name="last_post_at"/>
+                <field name="active"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="action_social_account" model="ir.actions.act_window">
+        <field name="name">Social Accounts</field>
+        <field name="res_model">ipai.social.account</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+</odoo>

@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <!-- ============================================================
+             Portfolio Health Tags
+             ============================================================ -->
+
+        <record id="tag_health_green" model="project.tags">
+            <field name="name">Health: Green</field>
+            <field name="color">10</field>
+        </record>
+        <record id="tag_health_amber" model="project.tags">
+            <field name="name">Health: Amber</field>
+            <field name="color">2</field>
+        </record>
+        <record id="tag_health_red" model="project.tags">
+            <field name="name">Health: Red</field>
+            <field name="color">1</field>
+        </record>
+        <record id="tag_health_at_risk" model="project.tags">
+            <field name="name">Health: At Risk</field>
+            <field name="color">3</field>
+        </record>
+
+        <!-- ============================================================
+             Portfolio / Program Tags
+             ============================================================ -->
+
+        <record id="tag_portfolio" model="project.tags">
+            <field name="name">Portfolio</field>
+            <field name="color">4</field>
+        </record>
+        <record id="tag_program_finance" model="project.tags">
+            <field name="name">Program: Finance Operations</field>
+            <field name="color">5</field>
+        </record>
+        <record id="tag_program_compliance" model="project.tags">
+            <field name="name">Program: Regulatory Compliance</field>
+            <field name="color">6</field>
+        </record>
+        <record id="tag_program_ai" model="project.tags">
+            <field name="name">Program: AI &amp; Automation</field>
+            <field name="color">7</field>
+        </record>
+
+        <!-- ============================================================
+             Copilot Skill Domain Tags
+             ============================================================ -->
+
+        <record id="tag_copilot_advisory" model="project.tags">
+            <field name="name">Copilot: Advisory</field>
+            <field name="color">8</field>
+        </record>
+        <record id="tag_copilot_ops" model="project.tags">
+            <field name="name">Copilot: Operations</field>
+            <field name="color">9</field>
+        </record>
+        <record id="tag_copilot_actions" model="project.tags">
+            <field name="name">Copilot: Actions</field>
+            <field name="color">10</field>
+        </record>
+
+        <!-- ============================================================
+             Artifact / Evidence Tags
+             ============================================================ -->
+
+        <record id="tag_artifact_xlsx" model="project.tags">
+            <field name="name">Artifact: XLSX</field>
+            <field name="color">1</field>
+        </record>
+        <record id="tag_artifact_pdf" model="project.tags">
+            <field name="name">Artifact: PDF</field>
+            <field name="color">2</field>
+        </record>
+        <record id="tag_artifact_xml" model="project.tags">
+            <field name="name">Artifact: XML</field>
+            <field name="color">3</field>
+        </record>
+        <record id="tag_evidence_required" model="project.tags">
+            <field name="name">Evidence Required</field>
+            <field name="color">1</field>
+        </record>
+        <record id="tag_approval_required" model="project.tags">
+            <field name="name">Approval Required</field>
+            <field name="color">4</field>
+        </record>
+
+        <!-- ============================================================
+             Control Plane Tags
+             ============================================================ -->
+
+        <record id="tag_ctrl_finding" model="project.tags">
+            <field name="name">Control: Finding</field>
+            <field name="color">1</field>
+        </record>
+        <record id="tag_ctrl_remediation" model="project.tags">
+            <field name="name">Control: Remediation</field>
+            <field name="color">5</field>
+        </record>
+        <record id="tag_ctrl_exception" model="project.tags">
+            <field name="name">Control: Exception</field>
+            <field name="color">2</field>
+        </record>
+
+        <!-- ============================================================
+             Finance Operations Tags
+             ============================================================ -->
+
+        <record id="tag_vendor_bill" model="project.tags">
+            <field name="name">Vendor Bill</field>
+            <field name="color">6</field>
+        </record>
+        <record id="tag_overdue" model="project.tags">
+            <field name="name">Overdue</field>
+            <field name="color">1</field>
+        </record>
+        <record id="tag_blocked" model="project.tags">
+            <field name="name">Blocked</field>
+            <field name="color">1</field>
+        </record>
+        <record id="tag_duplicate_suspect" model="project.tags">
+            <field name="name">Duplicate Suspect</field>
+            <field name="color">3</field>
+        </record>
+        <record id="tag_payment_ready" model="project.tags">
+            <field name="name">Payment Ready</field>
+            <field name="color">10</field>
+        </record>
+
+    </data>
+</odoo>

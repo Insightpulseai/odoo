@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <!-- ============================================================
+             Portfolio project (umbrella)
+             ============================================================ -->
+
+        <record id="project_portfolio_tbwa" model="project.project">
+            <field name="name">TBWA\SMP — Finance &amp; Compliance Portfolio</field>
+            <field name="active" eval="True"/>
+            <field name="description">Portfolio umbrella for all TBWA\SMP finance, compliance, and AI automation programs. 3 programs, 8 projects.</field>
+            <field name="allow_subtasks" eval="True"/>
+            <field name="allow_task_dependencies" eval="True"/>
+            <field name="allow_milestones" eval="True"/>
+            <field name="tag_ids" eval="[
+                (4, ref('tag_portfolio')),
+                (4, ref('tag_health_green')),
+            ]"/>
+            <field name="type_ids" eval="[
+                (4, ref('stage_todo')),
+                (4, ref('stage_in_preparation')),
+                (4, ref('stage_under_review')),
+                (4, ref('stage_pending_approval')),
+                (4, ref('stage_done')),
+                (4, ref('stage_cancelled')),
+            ]"/>
+        </record>
+
+        <!-- ============================================================
+             Project 3: AP / Vendor Bill Review (Green)
+             ============================================================ -->
+
+        <record id="project_ap_review" model="project.project">
+            <field name="name">Finance Ops — AP &amp; Vendor Bill Review</field>
+            <field name="active" eval="True"/>
+            <field name="description">Accounts payable processing: vendor bill intake, 3-way match, duplicate detection, payment batch preparation. 12 vendor bills across 8 vendors with mixed states.</field>
+            <field name="allow_subtasks" eval="True"/>
+            <field name="allow_task_dependencies" eval="True"/>
+            <field name="allow_milestones" eval="True"/>
+            <field name="tag_ids" eval="[
+                (4, ref('tag_program_finance')),
+                (4, ref('tag_health_green')),
+                (4, ref('tag_copilot_ops')),
+            ]"/>
+            <field name="type_ids" eval="[
+                (4, ref('stage_todo')),
+                (4, ref('stage_in_preparation')),
+                (4, ref('stage_under_review')),
+                (4, ref('stage_pending_approval')),
+                (4, ref('stage_done')),
+                (4, ref('stage_cancelled')),
+            ]"/>
+        </record>
+
+        <!-- ============================================================
+             Project 4: Payroll Compliance (Amber)
+             ============================================================ -->
+
+        <record id="project_payroll_compliance" model="project.project">
+            <field name="name">HR Compliance — Payroll &amp; Statutory Contributions</field>
+            <field name="active" eval="True"/>
+            <field name="description">SSS, PhilHealth, Pag-IBIG contribution computation and remittance. Withholding tax reconciliation. 2 overdue tasks flagged.</field>
+            <field name="allow_subtasks" eval="True"/>
+            <field name="allow_task_dependencies" eval="True"/>
+            <field name="allow_milestones" eval="True"/>
+            <field name="tag_ids" eval="[
+                (4, ref('tag_program_compliance')),
+                (4, ref('tag_health_amber')),
+                (4, ref('tag_copilot_advisory')),
+            ]"/>
+            <field name="type_ids" eval="[
+                (4, ref('stage_todo')),
+                (4, ref('stage_in_preparation')),
+                (4, ref('stage_under_review')),
+                (4, ref('stage_pending_approval')),
+                (4, ref('stage_done')),
+                (4, ref('stage_cancelled')),
+            ]"/>
+        </record>
+
+        <!-- ============================================================
+             Project 5: Document Intelligence / OCR Pipeline (Amber)
+             ============================================================ -->
+
+        <record id="project_document_intelligence" model="project.project">
+            <field name="name">AI Ops — Document Intelligence Pipeline</field>
+            <field name="active" eval="True"/>
+            <field name="description">OCR extraction pipeline for invoices, receipts, and BIR forms. Azure Document Intelligence integration. 3 extraction failures under investigation.</field>
+            <field name="allow_subtasks" eval="True"/>
+            <field name="allow_task_dependencies" eval="True"/>
+            <field name="allow_milestones" eval="True"/>
+            <field name="tag_ids" eval="[
+                (4, ref('tag_program_ai')),
+                (4, ref('tag_health_amber')),
+                (4, ref('tag_copilot_actions')),
+            ]"/>
+            <field name="type_ids" eval="[
+                (4, ref('stage_todo')),
+                (4, ref('stage_in_preparation')),
+                (4, ref('stage_under_review')),
+                (4, ref('stage_pending_approval')),
+                (4, ref('stage_done')),
+                (4, ref('stage_cancelled')),
+            ]"/>
+        </record>
+
+        <!-- ============================================================
+             Project 6: Copilot Agent Evaluation (Red)
+             ============================================================ -->
+
+        <record id="project_copilot_eval" model="project.project">
+            <field name="name">AI Ops — Copilot Agent Evaluation &amp; Benchmarks</field>
+            <field name="active" eval="True"/>
+            <field name="description">Evaluation pack for Odoo Copilot: advisory groundedness, ops accuracy, action safety. SAP Joule benchmark comparison. Groundedness score currently 0.62 (target: 0.80).</field>
+            <field name="allow_subtasks" eval="True"/>
+            <field name="allow_task_dependencies" eval="True"/>
+            <field name="allow_milestones" eval="True"/>
+            <field name="tag_ids" eval="[
+                (4, ref('tag_program_ai')),
+                (4, ref('tag_health_red')),
+                (4, ref('tag_copilot_advisory')),
+            ]"/>
+            <field name="type_ids" eval="[
+                (4, ref('stage_todo')),
+                (4, ref('stage_in_preparation')),
+                (4, ref('stage_under_review')),
+                (4, ref('stage_pending_approval')),
+                (4, ref('stage_done')),
+                (4, ref('stage_cancelled')),
+            ]"/>
+        </record>
+
+        <!-- ============================================================
+             Project 7: Close Control Plane (Red)
+             ============================================================ -->
+
+        <record id="project_close_control_plane" model="project.project">
+            <field name="name">Finance Ops — Close Control Plane</field>
+            <field name="active" eval="True"/>
+            <field name="description">Administrative plane for close orchestration: bootstrap readiness, connector health, run monitoring, finding remediation. 4 critical findings open.</field>
+            <field name="allow_subtasks" eval="True"/>
+            <field name="allow_task_dependencies" eval="True"/>
+            <field name="allow_milestones" eval="True"/>
+            <field name="tag_ids" eval="[
+                (4, ref('tag_program_finance')),
+                (4, ref('tag_health_red')),
+                (4, ref('tag_ctrl_finding')),
+            ]"/>
+            <field name="type_ids" eval="[
+                (4, ref('stage_todo')),
+                (4, ref('stage_in_preparation')),
+                (4, ref('stage_under_review')),
+                (4, ref('stage_pending_approval')),
+                (4, ref('stage_done')),
+                (4, ref('stage_cancelled')),
+            ]"/>
+        </record>
+
+        <!-- ============================================================
+             Project 8: Artifact &amp; Export Pipeline (At Risk)
+             ============================================================ -->
+
+        <record id="project_artifact_pipeline" model="project.project">
+            <field name="name">AI Ops — Artifact Generation &amp; Export Pipeline</field>
+            <field name="active" eval="True"/>
+            <field name="description">Sandboxed workspace for XLSX/PDF/XML artifact generation. Export pipeline for eFPS XML, alphalist CSV, working papers. Preview/approval flow not yet wired.</field>
+            <field name="allow_subtasks" eval="True"/>
+            <field name="allow_task_dependencies" eval="True"/>
+            <field name="allow_milestones" eval="True"/>
+            <field name="tag_ids" eval="[
+                (4, ref('tag_program_ai')),
+                (4, ref('tag_health_at_risk')),
+                (4, ref('tag_artifact_xlsx')),
+                (4, ref('tag_artifact_pdf')),
+            ]"/>
+            <field name="type_ids" eval="[
+                (4, ref('stage_todo')),
+                (4, ref('stage_in_preparation')),
+                (4, ref('stage_under_review')),
+                (4, ref('stage_pending_approval')),
+                (4, ref('stage_done')),
+                (4, ref('stage_cancelled')),
+            ]"/>
+        </record>
+
+    </data>
+</odoo>

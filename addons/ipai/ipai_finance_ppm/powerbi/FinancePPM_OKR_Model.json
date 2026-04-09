@@ -1,0 +1,219 @@
+{
+    "_comment": "Power BI Semantic Model Definition — Finance PPM OKR Dashboard",
+    "_version": "1.0.0",
+    "_source": "PostgreSQL views in pbi schema (ipai-odoo-dev-pg)",
+    "_instructions": "Import this into Power BI Desktop via: Get Data → PostgreSQL → pbi schema",
+
+    "connection": {
+        "server": "ipai-odoo-dev-pg.postgres.database.azure.com",
+        "database": "odoo_dev",
+        "schema": "pbi",
+        "authentication": "Azure AD / managed identity (preferred) or Basic via Key Vault",
+        "mode": "Import (recommended) or DirectQuery"
+    },
+
+    "tables": [
+        {
+            "name": "dim_team_member",
+            "source": "pbi.dim_team_member",
+            "columns": [
+                {"name": "user_id", "type": "Int64", "isKey": true},
+                {"name": "member_name", "type": "String"},
+                {"name": "login", "type": "String"},
+                {"name": "initials", "type": "String"},
+                {"name": "role", "type": "String"},
+                {"name": "department_name", "type": "String"}
+            ]
+        },
+        {
+            "name": "dim_project",
+            "source": "pbi.dim_project",
+            "columns": [
+                {"name": "project_id", "type": "Int64", "isKey": true},
+                {"name": "project_name", "type": "String"},
+                {"name": "is_active", "type": "Boolean"},
+                {"name": "start_date", "type": "Date"},
+                {"name": "end_date", "type": "Date"},
+                {"name": "manager_name", "type": "String"}
+            ]
+        },
+        {
+            "name": "dim_stage",
+            "source": "pbi.dim_stage",
+            "columns": [
+                {"name": "stage_id", "type": "Int64", "isKey": true},
+                {"name": "stage_name", "type": "String"},
+                {"name": "stage_sequence", "type": "Int64"},
+                {"name": "is_closed", "type": "Boolean"}
+            ],
+            "sortBy": {"column": "stage_name", "orderBy": "stage_sequence"}
+        },
+        {
+            "name": "dim_tag",
+            "source": "pbi.dim_tag",
+            "columns": [
+                {"name": "tag_id", "type": "Int64", "isKey": true},
+                {"name": "tag_name", "type": "String"},
+                {"name": "tag_color", "type": "Int64"}
+            ]
+        },
+        {
+            "name": "dim_milestone",
+            "source": "pbi.dim_milestone",
+            "columns": [
+                {"name": "milestone_id", "type": "Int64", "isKey": true},
+                {"name": "milestone_name", "type": "String"},
+                {"name": "deadline", "type": "Date"},
+                {"name": "is_reached", "type": "Boolean"},
+                {"name": "project_id", "type": "Int64"}
+            ]
+        },
+        {
+            "name": "fact_task",
+            "source": "pbi.fact_task",
+            "columns": [
+                {"name": "task_id", "type": "Int64", "isKey": true},
+                {"name": "task_name", "type": "String"},
+                {"name": "project_id", "type": "Int64"},
+                {"name": "stage_id", "type": "Int64"},
+                {"name": "milestone_id", "type": "Int64"},
+                {"name": "deadline", "type": "Date"},
+                {"name": "created_date", "type": "DateTime"},
+                {"name": "last_stage_update", "type": "DateTime"},
+                {"name": "is_done", "type": "Boolean"},
+                {"name": "priority", "type": "String"},
+                {"name": "kanban_state", "type": "String"},
+                {"name": "days_to_deadline", "type": "Int64"},
+                {"name": "is_overdue", "type": "Boolean"}
+            ]
+        },
+        {
+            "name": "fact_task_assignment",
+            "source": "pbi.fact_task_assignment",
+            "columns": [
+                {"name": "task_id", "type": "Int64"},
+                {"name": "user_id", "type": "Int64"}
+            ]
+        },
+        {
+            "name": "fact_task_tag",
+            "source": "pbi.fact_task_tag",
+            "columns": [
+                {"name": "task_id", "type": "Int64"},
+                {"name": "tag_id", "type": "Int64"}
+            ]
+        }
+    ],
+
+    "relationships": [
+        {"from": "fact_task.project_id",     "to": "dim_project.project_id",     "cardinality": "many-to-one"},
+        {"from": "fact_task.stage_id",        "to": "dim_stage.stage_id",          "cardinality": "many-to-one"},
+        {"from": "fact_task.milestone_id",    "to": "dim_milestone.milestone_id",  "cardinality": "many-to-one"},
+        {"from": "fact_task_assignment.task_id", "to": "fact_task.task_id",         "cardinality": "many-to-one"},
+        {"from": "fact_task_assignment.user_id", "to": "dim_team_member.user_id",  "cardinality": "many-to-one"},
+        {"from": "fact_task_tag.task_id",     "to": "fact_task.task_id",            "cardinality": "many-to-one"},
+        {"from": "fact_task_tag.tag_id",      "to": "dim_tag.tag_id",              "cardinality": "many-to-one"},
+        {"from": "dim_milestone.project_id",  "to": "dim_project.project_id",      "cardinality": "many-to-one", "active": false}
+    ],
+
+    "measures": [
+        {
+            "name": "Total Tasks",
+            "table": "fact_task",
+            "expression": "COUNTROWS(fact_task)",
+            "formatString": "#,0"
+        },
+        {
+            "name": "Done Tasks",
+            "table": "fact_task",
+            "expression": "CALCULATE(COUNTROWS(fact_task), fact_task[is_done] = TRUE())",
+            "formatString": "#,0"
+        },
+        {
+            "name": "Completion %",
+            "table": "fact_task",
+            "expression": "DIVIDE([Done Tasks], [Total Tasks], 0)",
+            "formatString": "0.0%"
+        },
+        {
+            "name": "OKR Score",
+            "table": "fact_task",
+            "expression": "ROUND([Completion %] / 100 * 1.0, 2)",
+            "description": "OKR 0.0–1.0 score. Target >= 0.7"
+        },
+        {
+            "name": "Overdue Tasks",
+            "table": "fact_task",
+            "expression": "CALCULATE(COUNTROWS(fact_task), fact_task[is_overdue] = TRUE())",
+            "formatString": "#,0"
+        },
+        {
+            "name": "In Progress Tasks",
+            "table": "fact_task",
+            "expression": "CALCULATE(COUNTROWS(fact_task), fact_task[is_done] = FALSE(), NOT(ISBLANK(fact_task[last_stage_update])))",
+            "formatString": "#,0"
+        },
+        {
+            "name": "Avg Days to Deadline",
+            "table": "fact_task",
+            "expression": "AVERAGE(fact_task[days_to_deadline])",
+            "formatString": "0.0"
+        },
+        {
+            "name": "Tasks Per Member",
+            "table": "fact_task_assignment",
+            "expression": "DIVIDE(COUNTROWS(fact_task_assignment), DISTINCTCOUNT(fact_task_assignment[user_id]), 0)",
+            "formatString": "0.0"
+        },
+        {
+            "name": "Member Completion %",
+            "table": "fact_task_assignment",
+            "expression": "VAR _assigned = COUNTROWS(fact_task_assignment)\nVAR _done = CALCULATE(COUNTROWS(fact_task_assignment), RELATEDTABLE(fact_task), fact_task[is_done] = TRUE())\nRETURN DIVIDE(_done, _assigned, 0)",
+            "formatString": "0.0%"
+        },
+        {
+            "name": "Milestone Hit Rate",
+            "table": "dim_milestone",
+            "expression": "DIVIDE(CALCULATE(COUNTROWS(dim_milestone), dim_milestone[is_reached] = TRUE()), COUNTROWS(dim_milestone), 0)",
+            "formatString": "0.0%"
+        },
+        {
+            "name": "High Priority Tasks",
+            "table": "fact_task",
+            "expression": "CALCULATE(COUNTROWS(fact_task), fact_task[priority] = \"1\")",
+            "formatString": "#,0"
+        },
+        {
+            "name": "Blocked Tasks",
+            "table": "fact_task",
+            "expression": "CALCULATE(COUNTROWS(fact_task), fact_task[kanban_state] = \"blocked\")",
+            "formatString": "#,0"
+        },
+        {
+            "name": "Risk Score",
+            "table": "fact_task",
+            "expression": "VAR _overdue = [Overdue Tasks]\nVAR _blocked = [Blocked Tasks]\nVAR _total = [Total Tasks]\nRETURN DIVIDE(_overdue + _blocked, _total, 0)",
+            "formatString": "0.0%",
+            "description": "Combined risk: (overdue + blocked) / total"
+        },
+        {
+            "name": "Completion Status",
+            "table": "fact_task",
+            "expression": "SWITCH(TRUE(), [Completion %] >= 0.95, \"On Track\", [Completion %] >= 0.70, \"At Risk\", \"Behind\")",
+            "description": "Traffic light status for KPI cards"
+        }
+    ],
+
+    "calculatedColumns": [
+        {
+            "table": "fact_task",
+            "name": "Deadline Month",
+            "expression": "FORMAT(fact_task[deadline], \"YYYY-MM\")"
+        },
+        {
+            "table": "fact_task",
+            "name": "Status Color",
+            "expression": "SWITCH(TRUE(), fact_task[is_done], \"#9BCA63\", fact_task[is_overdue], \"#C1232B\", fact_task[kanban_state] = \"blocked\", \"#E87C25\", \"#27727B\")"
+        }
+    ]
+}

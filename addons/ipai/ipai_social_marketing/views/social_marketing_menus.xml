@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Top-level application menu -->
+    <menuitem id="menu_social_marketing_root"
+              name="Social Marketing"
+              web_icon="ipai_social_marketing,static/description/icon.png"
+              sequence="65"/>
+
+    <!-- Posts -->
+    <menuitem id="menu_social_posts"
+              name="Posts"
+              parent="menu_social_marketing_root"
+              action="action_social_post"
+              sequence="10"/>
+
+    <!-- Calendar -->
+    <menuitem id="menu_social_calendar"
+              name="Calendar"
+              parent="menu_social_marketing_root"
+              action="action_social_post"
+              sequence="20"/>
+
+    <!-- Configuration -->
+    <menuitem id="menu_social_config"
+              name="Configuration"
+              parent="menu_social_marketing_root"
+              sequence="90"/>
+
+    <menuitem id="menu_social_accounts"
+              name="Social Accounts"
+              parent="menu_social_config"
+              action="action_social_account"
+              sequence="10"/>
+
+</odoo>

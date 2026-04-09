@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="ipai_service_pack_view_form" model="ir.ui.view">
+        <field name="name">ipai.service.pack.form</field>
+        <field name="model">ipai.service.pack</field>
+        <field name="arch" type="xml">
+            <form string="Service Pack">
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="name" placeholder="Pack Name"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="sale_order_type_id"/>
+                            <field name="company_id"
+                                   groups="base.group_multi_company"/>
+                        </group>
+                        <group>
+                            <field name="sequence"/>
+                            <field name="active"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Lines" name="lines">
+                            <field name="line_ids">
+                                <list editable="bottom">
+                                    <field name="sequence"
+                                           widget="handle"/>
+                                    <field name="product_id"/>
+                                    <field name="name"/>
+                                    <field name="quantity"/>
+                                    <field name="price_unit"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Description" name="description">
+                            <field name="description"/>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="ipai_service_pack_view_list" model="ir.ui.view">
+        <field name="name">ipai.service.pack.list</field>
+        <field name="model">ipai.service.pack</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="sale_order_type_id"/>
+                <field name="active"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="ipai_service_pack_action" model="ir.actions.act_window">
+        <field name="name">Service Packs</field>
+        <field name="res_model">ipai.service.pack</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <menuitem id="ipai_service_pack_menu"
+              name="Service Packs"
+              parent="sale.sale_menu_root"
+              action="ipai_service_pack_action"
+              sequence="30"/>
+
+</odoo>

@@ -44,7 +44,7 @@ class MailPluginBridgeController(http.Controller):
             _logger.warning("Mail plugin login attempt for unknown user: %s", email)
             return {"error": "invalid credentials"}
 
-        # Odoo 19 stores API keys via res.users.api_key; validate
+        # Odoo 18 stores API keys via res.users.api_key; validate
         if not user._check_credentials(api_key, env={"interactive": False}):
             _logger.warning("Mail plugin invalid API key for user: %s", email)
             return {"error": "invalid credentials"}

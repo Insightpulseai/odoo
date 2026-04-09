@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <!-- ============================================================
+             Vendor Partners — 8 vendors for finance demo
+             ============================================================ -->
+
+        <record id="partner_vendor_globe" model="res.partner">
+            <field name="name">Globe Telecom, Inc.</field>
+            <field name="is_company" eval="True"/>
+            <field name="company_type">company</field>
+            <field name="vat">000-123-456-001</field>
+            <field name="email">billing@globe.com.ph</field>
+            <field name="phone">+63 2 7730 1000</field>
+        </record>
+
+        <record id="partner_vendor_meralco" model="res.partner">
+            <field name="name">Manila Electric Company (MERALCO)</field>
+            <field name="is_company" eval="True"/>
+            <field name="company_type">company</field>
+            <field name="vat">000-234-567-002</field>
+            <field name="email">billing@meralco.com.ph</field>
+        </record>
+
+        <record id="partner_vendor_pldt" model="res.partner">
+            <field name="name">PLDT Enterprise</field>
+            <field name="is_company" eval="True"/>
+            <field name="company_type">company</field>
+            <field name="vat">000-345-678-003</field>
+            <field name="email">enterprise.billing@pldt.com.ph</field>
+        </record>
+
+        <record id="partner_vendor_gcash" model="res.partner">
+            <field name="name">GCash / Mynt</field>
+            <field name="is_company" eval="True"/>
+            <field name="company_type">company</field>
+            <field name="vat">000-456-789-004</field>
+        </record>
+
+        <record id="partner_vendor_regus" model="res.partner">
+            <field name="name">Regus Management Philippines</field>
+            <field name="is_company" eval="True"/>
+            <field name="company_type">company</field>
+            <field name="vat">000-567-890-005</field>
+            <field name="email">ph.billing@regus.com</field>
+        </record>
+
+        <record id="partner_vendor_ayala_land" model="res.partner">
+            <field name="name">Ayala Land, Inc.</field>
+            <field name="is_company" eval="True"/>
+            <field name="company_type">company</field>
+            <field name="vat">000-678-901-006</field>
+        </record>
+
+        <record id="partner_vendor_accenture" model="res.partner">
+            <field name="name">Accenture Philippines</field>
+            <field name="is_company" eval="True"/>
+            <field name="company_type">company</field>
+            <field name="vat">000-789-012-007</field>
+            <field name="email">ap.invoices@accenture.com</field>
+        </record>
+
+        <record id="partner_vendor_sgi" model="res.partner">
+            <field name="name">SGI Philippines (Supplies)</field>
+            <field name="is_company" eval="True"/>
+            <field name="company_type">company</field>
+            <field name="vat">000-890-123-008</field>
+        </record>
+
+    </data>
+</odoo>

@@ -27,7 +27,7 @@ _rate_limit_buckets = collections.defaultdict(collections.deque)
 
 # System prompt for Pulser (Odoo assistant)
 _SYSTEM_PROMPT = (
-    "You are Pulser, an AI assistant for Odoo 19 ERP by InsightPulseAI. "
+    "You are Pulser, an AI assistant for Odoo 18 ERP by InsightPulseAI. "
     "You help users with Philippine finance, BIR tax compliance, HR, "
     "inventory, sales, and general ERP questions. "
     "Answer concisely. Use markdown formatting. "
@@ -345,6 +345,104 @@ class CopilotGatewayController(http.Controller):
     # ------------------------------------------------------------------
     # Routes
     # ------------------------------------------------------------------
+
+    # ------------------------------------------------------------------
+    # File upload proxy
+    # ------------------------------------------------------------------
+
+    @http.route(
+        '/ipai/copilot/upload',
+        type='http',
+        auth='user',
+        methods=['POST'],
+        csrf=True,
+    )
+    def upload_files(self, **kwargs):
+        """Accept file uploads from the chat UI and store as ir.attachment.
+
+        Files are saved to ir.attachment (Odoo-native). The attachment IDs
+        are returned so the chat endpoint can reference them. The actual
+        forwarding to agent-platform happens when the chat message is sent
+        with attachment_ids.
+
+        Returns JSON: {"attachment_ids": [1, 2, ...], "files": [...]}
+        """
+        if not self._is_enabled():
+            return WerkzeugResponse(
+                json.dumps({'error': True, 'message': 'Copilot is disabled.'}),
+                content_type='application/json',
+                status=503,
+            )
+
+        uid = request.env.uid
+        if not self._check_rate_limit(uid):
+            return WerkzeugResponse(
+                json.dumps({'error': True, 'message': 'Rate limit exceeded.'}),
+                content_type='application/json',
+                status=429,
+            )
+
+        ALLOWED_MIMES = {
+            'image/png', 'image/jpeg', 'image/webp', 'image/gif',
+            'application/pdf',
+            'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        }
+        MAX_SIZE = 50 * 1024 * 1024  # 50 MB
+        MAX_FILES = 10
+
+        uploaded_files = request.httprequest.files.getlist('files')
+        if not uploaded_files:
+            return WerkzeugResponse(
+                json.dumps({'error': True, 'message': 'No files provided.'}),
+                content_type='application/json',
+                status=400,
+            )
+        if len(uploaded_files) > MAX_FILES:
+            return WerkzeugResponse(
+                json.dumps({'error': True, 'message': 'Too many files (max %d).' % MAX_FILES}),
+                content_type='application/json',
+                status=400,
+            )
+
+        import base64
+        attachment_ids = []
+        file_info = []
+
+        Attachment = request.env['ir.attachment']
+        for f in uploaded_files:
+            if f.content_type not in ALLOWED_MIMES:
+                continue
+            data = f.read()
+            if len(data) > MAX_SIZE:
+                continue
+
+            att = Attachment.create({
+                'name': f.filename,
+                'datas': base64.b64encode(data),
+                'mimetype': f.content_type,
+                'res_model': 'ipai.copilot.conversation',
+                'res_id': 0,
+            })
+            attachment_ids.append(att.id)
+            file_info.append({
+                'id': att.id,
+                'name': f.filename,
+                'mimetype': f.content_type,
+                'size': len(data),
+            })
+
+        self._audit_log('file_upload', user_id=uid,
+                        payload_summary='%d files uploaded' % len(attachment_ids))
+
+        return WerkzeugResponse(
+            json.dumps({
+                'attachment_ids': attachment_ids,
+                'files': file_info,
+            }),
+            content_type='application/json',
+            status=200,
+        )
 
     @http.route(
         '/ipai/copilot/chat',

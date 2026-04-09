@@ -1,0 +1,310 @@
+{
+    "_comment": "Power BI Report Layout — Finance PPM OKR Dashboard",
+    "_version": "1.0.0",
+    "_instructions": "Use this as the blueprint when building the .pbix in Power BI Desktop. Each page maps to one ECharts tab.",
+
+    "reportName": "Finance PPM — OKR Dashboard",
+    "theme": "FinancePPM_OKR_Theme.json",
+
+    "pages": [
+        {
+            "name": "OKRs & KPIs",
+            "displayName": "OKRs & KPIs",
+            "ordinal": 0,
+            "tooltip": "Overall OKR progress, objectives, key results, team rings, burndown, velocity, stage distribution",
+            "sections": [
+                {
+                    "name": "Header Banner",
+                    "type": "textbox",
+                    "content": "Finance PPM — Objectives & Key Results",
+                    "style": "title-bar-teal-gradient",
+                    "position": {"x": 0, "y": 0, "width": 1280, "height": 60}
+                },
+                {
+                    "name": "Overall Progress Donut",
+                    "type": "donutChart",
+                    "position": {"x": 16, "y": 70, "width": 200, "height": 200},
+                    "data": {
+                        "values": "[Completion %]",
+                        "legend": "dim_stage[is_closed]"
+                    },
+                    "notes": "Center label shows OKR Score (0.0–1.0). Inner ring = done/remaining. Target line at 0.7"
+                },
+                {
+                    "name": "Objective Cards (5x)",
+                    "type": "multiRowCard",
+                    "position": {"x": 230, "y": 70, "width": 1034, "height": 200},
+                    "data": {
+                        "fields": ["dim_project[project_name]", "[Completion %]", "[Total Tasks]", "[OKR Score]"],
+                        "filter": "dim_project[project_name] IN Finance PPM projects"
+                    },
+                    "notes": "5 cards in a row, each with mini-donut showing completion. Color-coded per objective. Weight % shown below."
+                },
+                {
+                    "name": "Key Results Table",
+                    "type": "table",
+                    "position": {"x": 16, "y": 280, "width": 760, "height": 220},
+                    "columns": [
+                        {"field": "KR ID", "width": 60},
+                        {"field": "Key Result", "width": 220},
+                        {"field": "Baseline", "width": 80},
+                        {"field": "Target", "width": 80},
+                        {"field": "Score (0.0–1.0)", "width": 80},
+                        {"field": "Risk Level", "width": 80, "conditionalFormatting": "red=HIGH, amber=MEDIUM, green=LOW"}
+                    ],
+                    "notes": "Static reference data — maintain as a manually-entered table or Excel source. 3 KRs from the ECharts dashboard."
+                },
+                {
+                    "name": "Outstanding Issues Bar",
+                    "type": "stackedBarChart",
+                    "position": {"x": 790, "y": 280, "width": 240, "height": 100},
+                    "data": {
+                        "values": "[Overdue Tasks], [Blocked Tasks], [High Priority Tasks]",
+                        "colors": ["#C1232B", "#E87C25", "#B5C334"]
+                    },
+                    "notes": "Horizontal stacked: HIGH (red) | MEDIUM (amber) | LOW (olive)"
+                },
+                {
+                    "name": "Milestones List",
+                    "type": "table",
+                    "position": {"x": 790, "y": 390, "width": 240, "height": 110},
+                    "data": {
+                        "rows": "dim_milestone[milestone_name]",
+                        "values": "[Milestone Hit Rate]",
+                        "icons": "conditional dot: teal=reached, red=missed, amber=pending"
+                    }
+                },
+                {
+                    "name": "Team Member Rings",
+                    "type": "multiRowCard",
+                    "position": {"x": 16, "y": 510, "width": 1248, "height": 160},
+                    "data": {
+                        "fields": ["dim_team_member[initials]", "dim_team_member[member_name]", "dim_team_member[role]", "[Member Completion %]"],
+                        "cardCount": 10
+                    },
+                    "notes": "10 team member cards, each with a gauge/ring visual showing completion %. Matches the tp-grid from ECharts."
+                },
+                {
+                    "name": "Burndown Chart",
+                    "type": "lineChart",
+                    "position": {"x": 16, "y": 680, "width": 410, "height": 200},
+                    "data": {
+                        "xAxis": "Close Day (D+0 through D+5)",
+                        "series": ["Planned (dashed red)", "Actual (solid teal with area fill)"]
+                    },
+                    "notes": "Planned = linear decrease from 36→0. Actual = from fact_task stage transitions over close cycle."
+                },
+                {
+                    "name": "Closing Velocity",
+                    "type": "combinationChart",
+                    "position": {"x": 436, "y": 680, "width": 410, "height": 200},
+                    "data": {
+                        "bars": "Tasks closed per day",
+                        "line": "Cumulative %"
+                    }
+                },
+                {
+                    "name": "Stage Distribution Donut",
+                    "type": "donutChart",
+                    "position": {"x": 856, "y": 680, "width": 410, "height": 200},
+                    "data": {
+                        "values": "[Total Tasks]",
+                        "legend": "dim_stage[stage_name]"
+                    }
+                },
+                {
+                    "name": "Quarterly KPIs",
+                    "type": "multiRowCard",
+                    "position": {"x": 16, "y": 890, "width": 1248, "height": 80},
+                    "data": {
+                        "fields": ["KPI Label", "KPI Value", "KPI Subtitle"],
+                        "cardCount": 9
+                    },
+                    "notes": "9 KPI metric cards in a 3x3 grid. Font: DM Serif Display for value, IBM Plex Mono for label."
+                }
+            ]
+        },
+        {
+            "name": "Logframe",
+            "displayName": "Logframe",
+            "ordinal": 1,
+            "sections": [
+                {
+                    "name": "PMP Logical Framework Tree",
+                    "type": "decompositionTree",
+                    "position": {"x": 16, "y": 70, "width": 1248, "height": 400},
+                    "data": {
+                        "levels": ["Goal", "Outcome", "IM1 Close", "IM2 Tax", "Outputs", "Activities (IM1)", "Activities (IM2)"],
+                        "columns": ["Name", "Indicator", "Means of Verification", "Assumption"]
+                    },
+                    "notes": "7-level logframe. Use Decomposition Tree visual or a custom matrix. Color-code each level."
+                },
+                {
+                    "name": "PMBOK Process Group Mapping",
+                    "type": "matrix",
+                    "position": {"x": 16, "y": 490, "width": 1248, "height": 200},
+                    "data": {
+                        "rows": ["Initiating", "Planning", "Executing", "M&C", "Closing"],
+                        "columns": ["OKR Fit", "Finance PPM Application"]
+                    }
+                }
+            ]
+        },
+        {
+            "name": "WBS Timeline",
+            "displayName": "WBS Timeline",
+            "ordinal": 2,
+            "sections": [
+                {
+                    "name": "WBS Phase Cards",
+                    "type": "multiRowCard",
+                    "position": {"x": 16, "y": 70, "width": 620, "height": 300},
+                    "data": {
+                        "phases": [
+                            {"name": "I. Initial & Compliance", "day": "D+1", "color": "#E87C25"},
+                            {"name": "II. Accruals & Adj.", "day": "D+2", "color": "#27727B"},
+                            {"name": "III. WIP & IC", "day": "D+3", "color": "#C1232B"},
+                            {"name": "IV. Final Close", "day": "D+4-5", "color": "#B5C334"}
+                        ]
+                    },
+                    "notes": "Click a phase → detail panel shows clusters with owner/reviewer/approver"
+                },
+                {
+                    "name": "Gantt Chart",
+                    "type": "ganttChart",
+                    "position": {"x": 16, "y": 380, "width": 1248, "height": 200},
+                    "data": {
+                        "task": "fact_task[task_name]",
+                        "start": "fact_task[created_date]",
+                        "end": "fact_task[deadline]",
+                        "category": "dim_project[project_name]"
+                    },
+                    "notes": "Use Gantt visual from AppSource (e.g., MAQ Software Gantt or xViz Gantt). Color by phase."
+                },
+                {
+                    "name": "3-Step Workflow",
+                    "type": "textbox",
+                    "position": {"x": 16, "y": 590, "width": 1248, "height": 80},
+                    "content": "Prepare → Review → Approve & File",
+                    "notes": "Static SVG or shapes showing the 3-step close workflow"
+                }
+            ]
+        },
+        {
+            "name": "Team Load",
+            "displayName": "Team Load",
+            "ordinal": 3,
+            "sections": [
+                {
+                    "name": "Finance Team List",
+                    "type": "table",
+                    "position": {"x": 16, "y": 70, "width": 300, "height": 500},
+                    "data": {
+                        "rows": "dim_team_member[member_name]",
+                        "values": ["dim_team_member[initials]", "dim_team_member[role]", "[Total Tasks]"]
+                    }
+                },
+                {
+                    "name": "Workload by Role Bar",
+                    "type": "barChart",
+                    "position": {"x": 330, "y": 70, "width": 930, "height": 220},
+                    "data": {
+                        "axis": "dim_team_member[role]",
+                        "values": "[Total Tasks]",
+                        "breakdown": "fact_task[is_done]"
+                    }
+                },
+                {
+                    "name": "Workload by Activity",
+                    "type": "treemap",
+                    "position": {"x": 330, "y": 300, "width": 930, "height": 200},
+                    "data": {
+                        "category": "dim_tag[tag_name]",
+                        "values": "[Total Tasks]"
+                    }
+                },
+                {
+                    "name": "Bottleneck Alert",
+                    "type": "kpi",
+                    "position": {"x": 330, "y": 510, "width": 930, "height": 60},
+                    "data": {
+                        "value": "MAX member task count",
+                        "target": "AVERAGE member task count",
+                        "label": "Approval Concentration Risk"
+                    },
+                    "notes": "Conditional: red when top member has >80% of approval tasks. Shows delegation recommendation."
+                }
+            ]
+        },
+        {
+            "name": "Tax Filing",
+            "displayName": "Tax Filing",
+            "ordinal": 4,
+            "sections": [
+                {
+                    "name": "Tax KPI Cards",
+                    "type": "multiRowCard",
+                    "position": {"x": 16, "y": 70, "width": 1248, "height": 80},
+                    "data": {
+                        "cards": [
+                            {"label": "Tax Tasks", "value": "66", "subtitle": "6 BIR form types"},
+                            {"label": "Filing Workflow", "value": "3-Step", "subtitle": "BOM → RIM → CKVC"}
+                        ]
+                    }
+                },
+                {
+                    "name": "BIR Tax Forms Table",
+                    "type": "table",
+                    "position": {"x": 16, "y": 160, "width": 620, "height": 250},
+                    "columns": [
+                        {"field": "Form", "width": 80},
+                        {"field": "Description", "width": 180},
+                        {"field": "Frequency", "width": 90, "conditionalFormatting": "badge color by frequency"},
+                        {"field": "Deadline", "width": 90},
+                        {"field": "Tasks/Yr", "width": 70}
+                    ],
+                    "data": {
+                        "source": "Static table — 6 BIR form types (1601-C, 0619-E, 2550Q, 1601-EQ, 1702Q, 1702-RT)"
+                    }
+                },
+                {
+                    "name": "Filing Chain Steps",
+                    "type": "funnel",
+                    "position": {"x": 650, "y": 160, "width": 614, "height": 250},
+                    "data": {
+                        "steps": [
+                            {"name": "BOM Prepare", "color": "#27727B"},
+                            {"name": "RIM Review", "color": "#E87C25"},
+                            {"name": "CKVC Approve & File", "color": "#C1232B"}
+                        ]
+                    }
+                },
+                {
+                    "name": "Filing Frequency Chart",
+                    "type": "barChart",
+                    "position": {"x": 16, "y": 420, "width": 1248, "height": 180},
+                    "data": {
+                        "axis": "BIR Form Type",
+                        "values": "Tasks per Year",
+                        "colors": "by form type"
+                    },
+                    "notes": "Horizontal bar showing annual filing volume. 1601-C dominates at 36/yr."
+                }
+            ]
+        }
+    ],
+
+    "bookmarks": [
+        {"name": "Finance PPM Projects Only", "filter": "dim_project[project_name] IN ('Finance PPM - Month-End Close', 'Finance PPM - BIR Tax Filing')"},
+        {"name": "All Portfolio Projects", "filter": "none"},
+        {"name": "Overdue Tasks", "filter": "fact_task[is_overdue] = TRUE"},
+        {"name": "Current Month", "filter": "fact_task[Deadline Month] = FORMAT(TODAY(), 'YYYY-MM')"}
+    ],
+
+    "slicers": [
+        {"field": "dim_project[project_name]", "type": "dropdown", "position": "top-right"},
+        {"field": "fact_task[Deadline Month]", "type": "relativeDate", "position": "top-right"},
+        {"field": "dim_team_member[member_name]", "type": "dropdown", "position": "top-right"},
+        {"field": "dim_stage[stage_name]", "type": "chiclet", "position": "top-right"}
+    ]
+}

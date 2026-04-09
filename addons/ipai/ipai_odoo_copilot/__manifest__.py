@@ -21,6 +21,9 @@
         'views/copilot_audit_views.xml',
     ],
     'assets': {
+        'web.assets_unit_tests': [
+            'ipai_odoo_copilot/static/tests/**/*',
+        ],
         'web.assets_backend': [
             'ipai_odoo_copilot/static/src/js/copilot_systray.js',
             'ipai_odoo_copilot/static/src/xml/copilot_systray.xml',

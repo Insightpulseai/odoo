@@ -1,0 +1,27 @@
+{
+    "name": "IPAI Social Marketing",
+    "version": "18.0.1.0.0",
+    "category": "Marketing",
+    "summary": "Schedule and publish social media posts across platforms",
+    "author": "InsightPulse AI",
+    "website": "https://insightpulseai.com",
+    "license": "LGPL-3",
+    "depends": [
+        "social_media",
+        "mail",
+        "queue_job",
+        "utm",
+    ],
+    "data": [
+        "security/ipai_social_marketing_groups.xml",
+        "security/ir.model.access.csv",
+        "views/social_account_views.xml",
+        "views/social_post_views.xml",
+        "views/social_marketing_menus.xml",
+        "data/ir_cron.xml",
+        "data/queue_job_channel.xml",
+    ],
+    "installable": True,
+    "application": True,
+    "development_status": "Alpha",
+}
