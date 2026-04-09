@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <record id="view_ppm_issue_tree" model="ir.ui.view">
+        <field name="name">ppm.issue.tree</field>
+        <field name="model">ppm.issue</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+                <field name="project_id"/>
+                <field name="category"/>
+                <field name="state" widget="badge"
+                       decoration-danger="state == 'escalated'"
+                       decoration-warning="state == 'open'"
+                       decoration-success="state in ('resolved', 'closed')"/>
+                <field name="priority"/>
+                <field name="owner_id"/>
+                <field name="raised_date"/>
+                <field name="target_date"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_ppm_issue_form" model="ir.ui.view">
+        <field name="name">ppm.issue.form</field>
+        <field name="model">ppm.issue</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <field name="state" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="name" placeholder="Issue title"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="project_id"/>
+                            <field name="category"/>
+                            <field name="priority"/>
+                            <field name="owner_id"/>
+                        </group>
+                        <group>
+                            <field name="raised_date"/>
+                            <field name="target_date"/>
+                            <field name="resolved_date"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Description">
+                            <field name="description"/>
+                        </page>
+                        <page string="Resolution">
+                            <field name="resolution"/>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_ppm_issue" model="ir.actions.act_window">
+        <field name="name">Issue Register</field>
+        <field name="res_model">ppm.issue</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+</odoo>
