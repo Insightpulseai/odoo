@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <record id="view_ppm_portfolio_health_tree" model="ir.ui.view">
+        <field name="name">ppm.portfolio.health.tree</field>
+        <field name="model">ppm.portfolio.health</field>
+        <field name="arch" type="xml">
+            <tree decoration-danger="overall_rag == 'red'"
+                  decoration-warning="overall_rag == 'amber'"
+                  decoration-success="overall_rag == 'green'">
+                <field name="project_id"/>
+                <field name="assessment_date"/>
+                <field name="schedule_rag"/>
+                <field name="budget_rag"/>
+                <field name="scope_rag"/>
+                <field name="resource_rag"/>
+                <field name="overall_rag" widget="badge"
+                       decoration-danger="overall_rag == 'red'"
+                       decoration-warning="overall_rag == 'amber'"
+                       decoration-success="overall_rag == 'green'"/>
+                <field name="health_score"/>
+                <field name="assessor_id"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_ppm_portfolio_health_form" model="ir.ui.view">
+        <field name="name">ppm.portfolio.health.form</field>
+        <field name="model">ppm.portfolio.health</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <group string="Project">
+                            <field name="project_id"/>
+                            <field name="assessment_date"/>
+                            <field name="assessor_id"/>
+                            <field name="health_score"/>
+                        </group>
+                        <group string="RAG Status">
+                            <field name="schedule_rag" widget="radio"/>
+                            <field name="budget_rag" widget="radio"/>
+                            <field name="scope_rag" widget="radio"/>
+                            <field name="resource_rag" widget="radio"/>
+                            <field name="overall_rag"/>
+                        </group>
+                    </group>
+                    <field name="commentary" placeholder="Health commentary..."/>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_ppm_portfolio_health" model="ir.actions.act_window">
+        <field name="name">Portfolio Health</field>
+        <field name="res_model">ppm.portfolio.health</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+</odoo>
