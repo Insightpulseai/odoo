@@ -9,7 +9,7 @@ Execution order (strict sequence):
 3. **RBAC** — Assign Search Index Data Reader + Cognitive Services OpenAI User to project + endpoint identities ✅
 4. **Foundry connections** — Create CognitiveSearch + AzureOpenAI connections in `proj-ipai-claude` ✅
 5. **Foundry endpoint** — Verify `ipai-copilot-endpoint` live (scoring URI operational) ✅
-6. **Gateway wired** — `ipai-copilot-gateway` env vars → `gpt-4.1` via `data-intel-ph-resource` ✅
+6. **Gateway wired** — `ipai-copilot-gateway` env vars → `gpt-4.1` via `ipai-copilot-resource` ✅
 7. **Smoke test** — Grounded retrieval returns ranked results (score 7.33) ✅
 
 ### Stage 3 remaining (Marketplace Readiness)
@@ -113,6 +113,25 @@ Staged template adoption for authenticated Odoo Copilot:
 - `Multi-Agent Workflow Automation` — until eval pack, docs corpus, SLO baseline, and write gates are policy-safe
 - `Create a multi-agent Release Manager Assistant` — until single-agent surfaces are stable
 - `Agentic applications for unified data foundation` — until data intelligence lane is mature
+
+## Foundry Project Baseline
+
+Confirmed Foundry project baseline:
+- project: `ipai-copilot`
+- parent resource: `ipai-copilot-resource`
+- resource group: `rg-data-intel-ph`
+- region: `eastus2`
+- project endpoint: `https://ipai-copilot-resource.services.ai.azure.com/api/projects/ipai-copilot`
+
+## Connected Resources Strategy
+
+The Foundry project uses attachable connections.
+Do not assume Azure AI Search, Azure OpenAI, Cosmos DB, Storage, Application Insights, Bing grounding, or Fabric are already attached unless explicitly verified.
+
+For MVP:
+- attach only the minimum required connections
+- keep preview connections (Fabric) off the critical path by default
+- document every required project connection explicitly before implementation depends on it
 
 ## Runtime Rules
 

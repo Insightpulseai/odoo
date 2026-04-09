@@ -119,6 +119,15 @@
 - [ ] Expose replication status, lag, and failures to admin/operator observability
 - [ ] Connect mirrored outputs to analytics/reporting skills without bypassing Odoo authority
 
+## Epic 1.7 — Foundry Project Connection Validation
+
+- [ ] Confirm current connected resources on `ipai-copilot`
+- [ ] Record only actually attached project connections as baseline dependencies
+- [ ] Add Azure OpenAI connection only where AI inference is required
+- [ ] Add Azure AI Search only where RAG/grounding is explicitly required
+- [ ] Keep Cosmos DB / Fabric / Bing grounding off MVP critical path unless justified
+- [ ] Document every new Foundry project connection before implementation depends on it
+
 ## Cross-Cutting
 
 - [ ] SSOT agent contract YAML
