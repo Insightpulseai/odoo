@@ -27,7 +27,7 @@ These branches were already deleted from remote and were pruned during cleanup:
 - `feat/mcp-jobs-executor-and-ipai-platform`
 - `feat/terraform-cloudflare-dns`
 - `phase3/pin-oca`
-- `pinned-odoo-19-setup`
+- `pinned-odoo-18-setup`
 
 ---
 

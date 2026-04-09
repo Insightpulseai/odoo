@@ -306,7 +306,7 @@ cd web/web && pnpm test:e2e
 
 ### Internal (Already Provisioned)
 - ✅ Supabase project (spdtwktxdalcfigzeqrz)
-- ✅ Odoo 19 CE (erp.insightpulseai.com)
+- ✅ Odoo 18 CE (erp.insightpulseai.com)
 - ✅ GitHub Actions (162 workflows operational)
 
 ---

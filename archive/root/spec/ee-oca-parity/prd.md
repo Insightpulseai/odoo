@@ -25,7 +25,7 @@ enforce along the way.
 
 - Every EE-only **module** has an OCA addon that covers ≥80% of its feature surface
 - Every EE-only **capability** has an integration bridge or external service
-- Replacements install cleanly on our Odoo 19 CE baseline
+- Replacements install cleanly on our Odoo 18 CE baseline
 - Replacements are tested against our actual workflows, not hypothetical ones
 - Evidence is machine-readable, auditable, and versioned
 
@@ -50,7 +50,7 @@ enforce along the way.
 
 ### T2: Installable
 
-**Requirement**: Each OCA module installs on our Odoo 19 CE instance.
+**Requirement**: Each OCA module installs on our Odoo 18 CE instance.
 
 **Evidence required per module**:
 ```json
@@ -141,7 +141,7 @@ The parity report (`reports/ee_oca_parity_proof.json`) must include per module:
 
 We treat the following official Odoo pages as authoritative *product-level* references:
 
-- **Odoo 19 Release Notes** (feature deltas, version positioning): https://www.odoo.com/odoo-19-release-notes
+- **Odoo 18 Release Notes** (feature deltas, version positioning): https://www.odoo.com/odoo-18-release-notes
 - **Compare Editions** (EE vs CE positioning at capability level): https://www.odoo.com/page/editions
 
 **Usage rules**:

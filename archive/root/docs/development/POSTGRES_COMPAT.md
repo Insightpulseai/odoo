@@ -35,7 +35,7 @@ psql -f scripts/db/apply_patches.sql
 
 ### Risk Notes
 - **Low Risk**: `unaccent()` function behavior is deterministic in practice (same input → same output)
-- **PostgreSQL 16 Compatibility**: Tested on PostgreSQL 16 (Odoo 19 requirement)
+- **PostgreSQL 16 Compatibility**: Tested on PostgreSQL 16 (Odoo 18 requirement)
 - **Upstream Behavior**: PostgreSQL marks `unaccent()` as STABLE for technical reasons, but Odoo's usage pattern is safe for IMMUTABLE
 - **Rollback**: If issues arise, revert with `ALTER FUNCTION public.unaccent(text) STABLE`
 

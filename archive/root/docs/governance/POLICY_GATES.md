@@ -25,7 +25,7 @@ All gates live in `.github/workflows/policy-gates.yml` and run on every PR.
 |---|------|---------|---------|
 | 1 | [Spec Bundle Presence](#gate-1--spec-bundle-presence) | `feat/*` branches with >3 scoped file changes | Warn (upgrade to block after adoption) |
 | 2 | [Secret Pattern Diff](#gate-2--secret-pattern-diff) | All PRs — changed source/config lines | **Yes** |
-| 3 | [Odoo 19 View Convention](#gate-3--odoo-19-view-convention) | Changed `addons/**/*.xml` files | **Yes** |
+| 3 | [Odoo 18 View Convention](#gate-3--odoo-18-view-convention) | Changed `addons/**/*.xml` files | **Yes** |
 | 4 | [Migration RLS Contract](#gate-4--migration-rls-contract) | New `supabase/migrations/*.sql` files | **Yes** |
 | 5 | [Deprecated Reference Block](#gate-5--deprecated-reference-block) | All PRs — changed source/config lines | **Yes** |
 
@@ -84,9 +84,9 @@ API_KEY = os.environ["ANTHROPIC_API_KEY"]
 
 ---
 
-## Gate 3 — Odoo 19 View Convention
+## Gate 3 — Odoo 18 View Convention
 
-**Purpose**: Enforce Odoo 19 API — `<list>` replaces `<tree>`.
+**Purpose**: Enforce Odoo 18 API — `<list>` replaces `<tree>`.
 
 **Trigger**: Changed XML files under `addons/`.
 
@@ -98,7 +98,7 @@ API_KEY = os.environ["ANTHROPIC_API_KEY"]
 sed -i 's/<tree\b/<list/g; s/<\/tree>/<\/list>/g' addons/your_module/views/*.xml
 ```
 
-**Reference**: [Odoo 19 Views Documentation](https://www.odoo.com/documentation/19.0/developer/reference/views.html)
+**Reference**: [Odoo 18 Views Documentation](https://www.odoo.com/documentation/19.0/developer/reference/views.html)
 
 ---
 

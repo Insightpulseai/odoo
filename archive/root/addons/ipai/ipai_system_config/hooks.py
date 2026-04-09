@@ -5,7 +5,7 @@ def _env(name, default=None):
     return v if v not in (None, "") else default
 
 def post_init_hook(env):
-    """Odoo 19 post_init_hook receives env directly."""
+    """Odoo 18 post_init_hook receives env directly."""
 
     icp = env["ir.config_parameter"].sudo()
     MailServer = env["ir.mail_server"].sudo()

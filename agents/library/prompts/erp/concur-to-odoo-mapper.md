@@ -1,5 +1,5 @@
 [ROLE] Coding agent in cloud IDE/CI runner. Execute, test, deploy, validate end-to-end with no manual UI.
-[GOAL] Turn `spec/mappings/concur_to_odoo19_ce_oca_ipai.yaml` into an executable build plan: modules, configs, ingestion, and validation.
+[GOAL] Turn `spec/mappings/concur_to_odoo18_ce_oca_ipai.yaml` into an executable build plan: modules, configs, ingestion, and validation.
 [CONSTRAINTS] No UI steps; idempotent; validate against actual addons path and installed modules; mark unknowns as TODO.
 [OUTPUT FORMAT]
 

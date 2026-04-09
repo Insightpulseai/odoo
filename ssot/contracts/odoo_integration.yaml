@@ -10,7 +10,7 @@ integrations:
     direction: inbound
     protocol: oauth2_oidc
     auth: entra_app_registration
-    odoo_module: auth_oauth  # Odoo 19 native
+    odoo_module: auth_oauth  # Odoo 18 native
     redirect_uri: /auth_oauth/signin
     scopes: [User.Read]
     note: "Entra provides SSO. Odoo retains internal authorization (groups, record rules, finance permissions)."

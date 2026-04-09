@@ -4,8 +4,8 @@
 
 | # | Upstream file (full asset path) | Bug | Fix |
 |---|--------------------------------|-----|-----|
-| 1 | `mail_tracking/static/src/services/store_service_patch.esm.js` | Calls `Record.one("Thread")` in `Store.setup()` — removed in Odoo 19 | Drops `setup()` override; `store.failed` set as plain object in `onStarted()` |
-| 2 | `mail_tracking/static/src/core/discuss/discuss_sidebar_mailboxes.xml` | Inherits from `mail.Discuss.mobileTopbar` — renamed in Odoo 19 | `t-inherit` changed to `mail.DiscussContent.mobileTopbar` |
+| 1 | `mail_tracking/static/src/services/store_service_patch.esm.js` | Calls `Record.one("Thread")` in `Store.setup()` — removed in Odoo 18 | Drops `setup()` override; `store.failed` set as plain object in `onStarted()` |
+| 2 | `mail_tracking/static/src/core/discuss/discuss_sidebar_mailboxes.xml` | Inherits from `mail.Discuss.mobileTopbar` — renamed in Odoo 18 | `t-inherit` changed to `mail.DiscussContent.mobileTopbar` |
 
 ## Upstream references
 
@@ -62,4 +62,4 @@ Odoo** — do not trust a stale browser cache.
 
 - Opened: 2026-02-23
 - Owner: devops@insightpulseai.com
-- Related issue: OCA/mail `mail_tracking` Odoo 19 JS store API + template rename
+- Related issue: OCA/mail `mail_tracking` Odoo 18 JS store API + template rename

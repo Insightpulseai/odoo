@@ -121,7 +121,7 @@ Only essential services start automatically:
 |---------|------|---------|
 | PostgreSQL 16 | 5432 (internal), 5433 (host) | Database backend |
 | Redis 7 | 6379 (internal) | Session store / cache |
-| Odoo 19 CE | 8069, 8072 | ERP application |
+| Odoo 18 CE | 8069, 8072 | ERP application |
 
 ### Optional Services (Profile: tools)
 
@@ -603,7 +603,7 @@ Debug Odoo directly from VS Code:
 
 ### Documentation
 
-- [Odoo 19 Documentation](https://www.odoo.com/documentation/19.0/)
+- [Odoo 18 Documentation](https://www.odoo.com/documentation/19.0/)
 - [OCA Guidelines](https://github.com/OCA/odoo-community.org)
 - [Dev Containers Specification](https://containers.dev/)
 - [Docker Compose Reference](https://docs.docker.com/compose/)

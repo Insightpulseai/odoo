@@ -1,6 +1,6 @@
 # Azure to IPAI Product Mapping
 
-This reference maps common Microsoft Azure products to their equivalents within the Insightpulseai (IPAI) ecosystem (Odoo 19, Supabase, DigitalOcean, and GitHub).
+This reference maps common Microsoft Azure products to their equivalents within the Insightpulseai (IPAI) ecosystem (Odoo 18, Supabase, DigitalOcean, and GitHub).
 
 ## Popular Services
 

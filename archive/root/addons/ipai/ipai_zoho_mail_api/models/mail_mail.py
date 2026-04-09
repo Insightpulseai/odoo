@@ -1,7 +1,7 @@
 # Copyright 2026 InsightPulseAI
 # License LGPL-3.0 or later (http://www.gnu.org/licenses/lgpl).
 
-"""Compatibility shim for OCA mail_tracking + Odoo 19.
+"""Compatibility shim for OCA mail_tracking + Odoo 18.
 
 Problem resolved via a two-part fix:
 1. OCA mail_tracking's _prepare_outgoing_list now accepts **kwargs and forwards
@@ -27,11 +27,11 @@ class MailMail(models.Model):
     _inherit = "mail.mail"
 
     def _prepare_outgoing_list(self, mail_server=False, **kwargs):
-        """Odoo 19 + OCA mail_tracking MRO compatibility shim.
+        """Odoo 18 + OCA mail_tracking MRO compatibility shim.
 
         OCA mail_tracking._prepare_outgoing_list (post host-patch) passes
         recipients_follower_status= and potentially other kwargs via **kwargs.
-        Odoo 19 base mail._prepare_outgoing_list only accepts mail_server and
+        Odoo 18 base mail._prepare_outgoing_list only accepts mail_server and
         doc_to_followers.  This shim sits between the two in MRO order:
 
             mass_mailing → mail_tracking (patched) → ipai_zoho_mail_api (this) → mail
@@ -46,7 +46,7 @@ class MailMail(models.Model):
         if stripped:
             _logger.warning(
                 "ipai_zoho_mail_api._prepare_outgoing_list: stripping unexpected kwargs %s "
-                "(Odoo19+OCA mail_tracking MRO mismatch — check OCA patch is applied)",
+                "(Odoo18+OCA mail_tracking MRO mismatch — check OCA patch is applied)",
                 sorted(stripped),
             )
         return super()._prepare_outgoing_list(mail_server=mail_server, **filtered)

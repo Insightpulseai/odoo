@@ -17,7 +17,7 @@
 ## In Progress
 
 - [ ] **T-6** Create `scripts/ci/test_oca_install.sh` for automated T2 installability checks
-- [ ] **T-7** Run T2 Batch 1 (top 20 OCA modules) against Odoo 19 CE baseline
+- [ ] **T-7** Run T2 Batch 1 (top 20 OCA modules) against Odoo 18 CE baseline
 - [ ] **T-8** Create `scripts/ci/check_parity_boundaries.sh` CI gate
 
 ## Backlog

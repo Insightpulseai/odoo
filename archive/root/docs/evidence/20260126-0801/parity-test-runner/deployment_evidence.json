@@ -4,7 +4,7 @@
   "git_state": {
     "branch": "claude/odoo-parity-test-runner-zeF1c",
     "commits": [
-      {"sha": "4abd842", "message": "feat(parity): add Odoo 19 EE parity test runner framework"},
+      {"sha": "4abd842", "message": "feat(parity): add Odoo 18 EE parity test runner framework"},
       {"sha": "0268d2e", "message": "chore(ci): add EE parity test runner workflow and schema migration"},
       {"sha": "b2a55c5", "message": "docs(parity): add deployment scripts and secrets documentation"}
     ]

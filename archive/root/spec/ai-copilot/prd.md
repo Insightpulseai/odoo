@@ -4,7 +4,7 @@ Version: 1.0.0 | Status: Active | Last updated: 2026-02-27
 
 ## Vision
 
-Surpass Odoo EE AI Agents + M365 Copilot + SAP Joule in Odoo 19 CE. Deliver enterprise-grade AI
+Surpass Odoo EE AI Agents + M365 Copilot + SAP Joule in Odoo 18 CE. Deliver enterprise-grade AI
 assistance that any organization running Odoo CE can use without purchasing Odoo Enterprise or
 third-party AI subscriptions beyond a single Gemini API key.
 
@@ -135,7 +135,7 @@ SSOT: `ssot/evals/swebench_harness_policy.yaml`.
 
 ## Success Criteria
 
-1. `ipai_ai_copilot` module installs cleanly on Odoo 19 CE with `depends = ["mail","web","base"]`
+1. `ipai_ai_copilot` module installs cleanly on Odoo 18 CE with `depends = ["mail","web","base"]`
 2. Copilot sidebar renders on list, form, kanban views (no EE modules required)
 3. Ctrl+Space opens command palette from any view
 4. AI can search records and navigate to them via natural language
@@ -155,7 +155,7 @@ Capabilities are prioritized in `ssot/ai/copilot_parity_priorities.yaml`:
 
 Reference models: Notion AI/Agents, M365 Copilot, SAP Joule, Kapa AI, GitHub Copilot coding agent.
 
-Odoo 19 native AI baseline mapping: `ssot/ai/odoo_ai_mapping.yaml`.
+Odoo 18 native AI baseline mapping: `ssot/ai/odoo_ai_mapping.yaml`.
 
 ---
 

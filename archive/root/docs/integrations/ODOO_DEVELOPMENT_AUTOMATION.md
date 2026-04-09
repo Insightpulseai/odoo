@@ -1,8 +1,8 @@
 # Odoo Development Automation with GitHub Actions
 
-> Complete CI/CD automation for Odoo 19.0 development, OCA module porting, custom module development, and deployment
+> Complete CI/CD automation for Odoo 18.0 development, OCA module porting, custom module development, and deployment
 
-**Reference**: [Odoo 19.0 Developer Documentation](https://www.odoo.com/documentation/19.0/developer/reference.html)
+**Reference**: [Odoo 18.0 Developer Documentation](https://www.odoo.com/documentation/19.0/developer/reference.html)
 
 ---
 
@@ -31,7 +31,7 @@ GitHub Actions
     └─ Deploy (staging → production)
         ↓
 DigitalOcean Droplet
-    ├─ Odoo 19.0 Production
+    ├─ Odoo 18.0 Production
     ├─ n8n Orchestration
     └─ Health Monitoring
         ↓
@@ -43,7 +43,7 @@ Plane + Slack Notifications
 ## Workflow 1: OCA Module Porting (Automated)
 
 ### Use Case
-Port OCA modules from older versions (14.0, 15.0, 16.0, 17.0, 18.0) to Odoo 19.0 using `oca-port` CLI with automated testing and validation.
+Port OCA modules from older versions (14.0, 15.0, 16.0, 17.0, 18.0) to Odoo 18.0 using `oca-port` CLI with automated testing and validation.
 
 ### Workflow File
 
@@ -217,7 +217,7 @@ jobs:
           name: ported-module
           path: /tmp/ported-module
 
-      - name: Set up Odoo 19.0
+      - name: Set up Odoo 18.0
         run: |
           wget -O - https://nightly.odoo.com/odoo.key | sudo gpg --dearmor -o /usr/share/keyrings/odoo-archive-keyring.gpg
           echo 'deb [signed-by=/usr/share/keyrings/odoo-archive-keyring.gpg] https://nightly.odoo.com/19.0/nightly/deb/ ./' | sudo tee /etc/apt/sources.list.d/odoo.list

@@ -6,7 +6,7 @@ set -euo pipefail
 ADDONS_DIR="${1:?Usage: cloc-path.sh <addons-dir>}"
 
 ODOO_BIN="${ODOO_BIN:-vendor/odoo/odoo-bin}"
-PYTHON="${PYTHON:-$HOME/.pyenv/versions/odoo-19-dev/bin/python}"
+PYTHON="${PYTHON:-$HOME/.pyenv/versions/odoo-18-dev/bin/python}"
 
 echo "Running cloc for path ${ADDONS_DIR}"
 "${PYTHON}" "${ODOO_BIN}" cloc --path "${ADDONS_DIR}"

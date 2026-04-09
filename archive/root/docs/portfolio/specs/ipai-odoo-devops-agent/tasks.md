@@ -197,7 +197,7 @@ def generate_evidence():
 **Workflow**: `.github/workflows/prismaconsulting-ci.yml`
 **Steps**:
 1. Checkout code
-2. Build Odoo 19 + website + n8n containers
+2. Build Odoo 18 + website + n8n containers
 3. Run health checks (HTTP 200 endpoints)
 4. Run smoke tests (basic Odoo operations)
 

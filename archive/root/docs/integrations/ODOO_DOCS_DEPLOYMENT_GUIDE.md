@@ -271,7 +271,7 @@ Visit the deployed documentation site and:
 
 1. Look for the 🤖 button in bottom-right corner
 2. Click to open chat panel
-3. Ask a test question: "How do I create a computed field in Odoo 19?"
+3. Ask a test question: "How do I create a computed field in Odoo 18?"
 4. Verify:
    - ✅ Answer appears within 3-5 seconds
    - ✅ Citations are included with clickable links

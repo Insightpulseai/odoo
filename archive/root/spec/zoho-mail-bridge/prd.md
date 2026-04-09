@@ -6,7 +6,7 @@
 
 ## Problem
 
-Odoo 19 CE needs reliable outgoing email for notifications, invoices, and CRM. Zoho Mail is the authoritative mail provider for `@insightpulseai.com`. The integration was broken because:
+Odoo 18 CE needs reliable outgoing email for notifications, invoices, and CRM. Zoho Mail is the authoritative mail provider for `@insightpulseai.com`. The integration was broken because:
 - Wrong regional SMTP host (`smtp.zoho.com` instead of US DC `smtppro.zoho.com`)
 - No settings-as-code — credentials lived only in the Odoo UI, making them invisible to CI and DR
 - No OAuth2 bridge for programmatic sends from n8n/Edge Functions without routing through Odoo

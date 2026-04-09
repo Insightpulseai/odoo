@@ -14,7 +14,7 @@ This document defines email integration patterns for TBWA agency workflows with 
 **Integration Stack**:
 - **Email Platform**: Microsoft 365 (Outlook/Exchange Online)
 - **SMTP Provider**: Zoho Mail (`smtp.zoho.com:587`) - See ADR-001
-- **ERP**: Odoo 19 CE (`mail.activity`, `mail.message`, `mail.thread`)
+- **ERP**: Odoo 18 CE (`mail.activity`, `mail.message`, `mail.thread`)
 - **Automation**: n8n workflows for email triggers
 
 ---

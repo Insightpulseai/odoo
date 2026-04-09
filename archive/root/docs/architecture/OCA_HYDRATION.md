@@ -6,7 +6,7 @@
 
 | Artifact | Role | Committed? |
 |----------|------|------------|
-| `oca-aggregate.yml` | **SSOT** — declares which OCA repos to clone, targeting Odoo 19.0 | Yes |
+| `oca-aggregate.yml` | **SSOT** — declares which OCA repos to clone, targeting Odoo 18.0 | Yes |
 | `addons/oca/` | **Generated** — hydrated by git-aggregator at dev/build time | No (`.gitkeep` only) |
 | `oca.lock.json` | **LEGACY** — stale 18.0-era lock file, do not use | Deprecated (see below) |
 
@@ -107,7 +107,7 @@ targeting Odoo 18.0. It has been moved to `docs/architecture/legacy/oca.lock.18.
 for historical reference.
 
 **Do not use `oca.lock.json` for hydration.** The canonical config is
-`oca-aggregate.yml` (Odoo 19.0).
+`oca-aggregate.yml` (Odoo 18.0).
 
 If a reproducible lockfile is needed in the future, it must be generated from
 `oca-aggregate.yml` and target 19.0.

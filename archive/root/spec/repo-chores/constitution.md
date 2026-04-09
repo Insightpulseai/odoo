@@ -26,7 +26,7 @@
 
 ## Constraints
 
-- Python 3.12+ (Odoo 19 baseline)
+- Python 3.12+ (Odoo 18 baseline)
 - Bash scripts must be POSIX-compatible where possible, `bash` shebang acceptable
 - CI workflows target `ubuntu-latest`
 - No new runtime dependencies; lint tools are pip/npm dev-only

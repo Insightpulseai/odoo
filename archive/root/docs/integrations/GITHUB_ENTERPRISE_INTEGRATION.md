@@ -370,7 +370,7 @@ if (processingError) {
 
 #### A. **OCA Module Development Workflow**
 ```
-1. Create GitHub issue: "Port OCA module X to Odoo 19"
+1. Create GitHub issue: "Port OCA module X to Odoo 18"
 2. GitHub Actions: Check OCA compatibility
 3. n8n: Create Plane issue (development backlog)
 4. Developer: Work on module in feature branch

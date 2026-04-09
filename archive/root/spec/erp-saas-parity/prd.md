@@ -2,7 +2,7 @@
 
 ## Problem Statement
 
-Insightpulseai runs Odoo 19 CE with 383 installed modules. The target is
+Insightpulseai runs Odoo 18 CE with 383 installed modules. The target is
 ≥80% feature parity with Odoo Enterprise Edition using only CE + OCA + custom
 `ipai_*` bridges. A deterministic gap analysis identified 9 OCA modules and
 7 IPAI bridges at P0 priority that are **not yet installed** in production.

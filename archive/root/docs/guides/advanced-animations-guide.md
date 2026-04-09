@@ -1,4 +1,4 @@
-# Advanced Animations in Odoo 19: SVG, Lottie, GSAP & Three.js
+# Advanced Animations in Odoo 18: SVG, Lottie, GSAP & Three.js
 
 Complete guide for implementing premium animations, micro-interactions, and 3D graphics in Odoo's OWL framework.
 
@@ -1200,7 +1200,7 @@ export class WarehouseViewer extends Component {
 ### Odoo Resources
 
 - **OWL Documentation**: https://github.com/odoo/owl
-- **Odoo 19 Frontend Guide**: https://www.odoo.com/documentation/19.0/developer/reference/frontend.html
+- **Odoo 18 Frontend Guide**: https://www.odoo.com/documentation/19.0/developer/reference/frontend.html
 
 ---
 
@@ -1247,4 +1247,4 @@ if (!prefersReducedMotion) {
 
 ---
 
-This guide provides a complete foundation for implementing premium animations in Odoo 19. Start with simple SVG micro-interactions, then progressively enhance with Lottie, GSAP, and Three.js as needed.
+This guide provides a complete foundation for implementing premium animations in Odoo 18. Start with simple SVG micro-interactions, then progressively enhance with Lottie, GSAP, and Three.js as needed.

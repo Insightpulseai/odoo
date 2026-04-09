@@ -68,7 +68,7 @@ probes:
         - "docs/UPGRADES.md"
         - "docs/arch/UPGRADE_POLICY.md"
       patterns:
-        - "Odoo 19"
+        - "Odoo 18"
         - "upgrade"
         - "migration"
         - "roll back"

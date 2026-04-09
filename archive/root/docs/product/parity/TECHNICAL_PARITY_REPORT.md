@@ -245,7 +245,7 @@ Coverage: 82% (target: ≥80%)
 
 ### Upgrade Path
 **Current**: Odoo 18 CE + OCA 18 + IPAI 18
-**Next**: Odoo 19 CE + OCA 19 + IPAI 19 (Q3-Q4 2026, when OCA ecosystem matures)
+**Next**: Odoo 18 CE + OCA 19 + IPAI 19 (Q3-Q4 2026, when OCA ecosystem matures)
 
 **Migration Strategy**:
 1. Wait for OCA 19.0 branch stability (≥50% modules ported)
@@ -275,4 +275,4 @@ Coverage: 82% (target: ≥80%)
 ---
 
 **Report Version**: 1.0.0
-**Next Review**: Q2 2026 (before evaluating Odoo 19 upgrade)
+**Next Review**: Q2 2026 (before evaluating Odoo 18 upgrade)

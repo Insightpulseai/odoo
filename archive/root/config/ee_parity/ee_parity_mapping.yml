@@ -11,7 +11,7 @@ meta:
     All features must reach 'verified' status before ipai_enterprise_bridge
     changes are allowed. This is enforced by CI.
 
-    Updated for Odoo 19 Release Notes (September 2025) parity analysis.
+    Updated for Odoo 18 Release Notes (September 2025) parity analysis.
 
 mapping:
   # ---- Accounting ----
@@ -181,9 +181,9 @@ mapping:
     owner: "platform"
     notes: "External company data enrichment API"
 
-  # ==== Odoo 19 New Features (2026-01-26) ====
+  # ==== Odoo 18 New Features (2026-01-26) ====
 
-  # ---- AI Platform (CRITICAL - New in Odoo 19) ----
+  # ---- AI Platform (CRITICAL - New in Odoo 18) ----
   - feature_id: ai_agents
     strategy: "ipai"
     ipai_modules:
@@ -191,7 +191,7 @@ mapping:
     status: "planned"
     owner: "ai-team"
     priority: "P0"
-    notes: "AI agents with system prompts, topics, tools - Odoo 19 flagship feature"
+    notes: "AI agents with system prompts, topics, tools - Odoo 18 flagship feature"
 
   - feature_id: ai_rag_sources
     strategy: "ipai"
@@ -257,7 +257,7 @@ mapping:
     priority: "P3"
     notes: "Voice transcription via external service"
 
-  # ---- ESG (New App in Odoo 19) ----
+  # ---- ESG (New App in Odoo 18) ----
   - feature_id: esg_carbon_analytics
     strategy: "ipai"
     ipai_modules:
@@ -285,7 +285,7 @@ mapping:
     priority: "P2"
     notes: "Gender parity and pay gap tracking"
 
-  # ---- Equity (New App in Odoo 19) ----
+  # ---- Equity (New App in Odoo 18) ----
   - feature_id: equity_share_tracking
     strategy: "ipai"
     ipai_modules:
@@ -295,7 +295,7 @@ mapping:
     priority: "P3"
     notes: "Share/option transactions and shareholder management"
 
-  # ---- WhatsApp Integration (Odoo 19) ----
+  # ---- WhatsApp Integration (Odoo 18) ----
   - feature_id: whatsapp_integration
     strategy: "ipai"
     ipai_modules:
@@ -305,7 +305,7 @@ mapping:
     priority: "P1"
     notes: "WhatsApp for follow-ups, calendar, shipping, sign"
 
-  # ---- Tax Return (Odoo 19) ----
+  # ---- Tax Return (Odoo 18) ----
   - feature_id: tax_return_workflow
     strategy: "ipai"
     ipai_modules:
@@ -315,7 +315,7 @@ mapping:
     priority: "P0"
     notes: "New tax return workflow with validation"
 
-  # ---- Helpdesk Enhancements (Odoo 19) ----
+  # ---- Helpdesk Enhancements (Odoo 18) ----
   - feature_id: helpdesk_rotting_tickets
     strategy: "ipai"
     ipai_modules:
@@ -334,7 +334,7 @@ mapping:
     priority: "P2"
     notes: "Gift card/voucher reimbursements"
 
-  # ---- Project Templates (Odoo 19) ----
+  # ---- Project Templates (Odoo 18) ----
   - feature_id: project_templates
     strategy: "ipai"
     ipai_modules:
@@ -344,7 +344,7 @@ mapping:
     priority: "P1"
     notes: "Project and task templates with roles"
 
-  # ---- Planning Enhancements (Odoo 19) ----
+  # ---- Planning Enhancements (Odoo 18) ----
   - feature_id: planning_attendance_analysis
     strategy: "ipai"
     ipai_modules:
@@ -354,7 +354,7 @@ mapping:
     priority: "P1"
     notes: "Compare planned vs attended hours"
 
-  # ---- Payroll Enhancements (Odoo 19) ----
+  # ---- Payroll Enhancements (Odoo 18) ----
   - feature_id: payroll_pay_runs
     strategy: "oca"
     oca_modules:
@@ -375,7 +375,7 @@ mapping:
     priority: "P1"
     notes: "Split salary across multiple accounts"
 
-  # ---- Documents AI (Odoo 19) ----
+  # ---- Documents AI (Odoo 18) ----
   - feature_id: documents_ai_management
     strategy: "ipai"
     ipai_modules:
@@ -385,7 +385,7 @@ mapping:
     priority: "P2"
     notes: "AI-driven document classification and actions"
 
-  # ---- Sign Enhancements (Odoo 19) ----
+  # ---- Sign Enhancements (Odoo 18) ----
   - feature_id: sign_document_envelopes
     strategy: "ipai"
     ipai_modules:
@@ -395,7 +395,7 @@ mapping:
     priority: "P2"
     notes: "Multiple documents in single sign request"
 
-  # ---- Philippines Localizations (Odoo 19) ----
+  # ---- Philippines Localizations (Odoo 18) ----
   - feature_id: bir_2550q_revamp
     strategy: "ipai"
     ipai_modules:

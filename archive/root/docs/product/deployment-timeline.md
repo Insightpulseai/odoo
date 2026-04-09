@@ -1,6 +1,6 @@
-# Deployment Timeline — Odoo 19 CE
+# Deployment Timeline — Odoo 18 CE
 
-Actual deployment milestones for the InsightPulse AI ERP platform migration from Odoo 18 to Odoo 19 CE.
+Actual deployment milestones for the InsightPulse AI ERP platform migration from Odoo 18 to Odoo 18 CE.
 
 ---
 
@@ -8,7 +8,7 @@ Actual deployment milestones for the InsightPulse AI ERP platform migration from
 
 | Component | Value |
 |-----------|-------|
-| **ERP** | Odoo 19 CE + OCA + ipai_* |
+| **ERP** | Odoo 18 CE + OCA + ipai_* |
 | **Database** | PostgreSQL 16 |
 | **Automation** | n8n |
 | **Chat** | Slack |
@@ -27,7 +27,7 @@ Actual deployment milestones for the InsightPulse AI ERP platform migration from
 
 | Date | Milestone | Status |
 |------|-----------|--------|
-| 2025-09 | Odoo 19 CE released (Odoo Experience 2025) | Done |
+| 2025-09 | Odoo 18 CE released (Odoo Experience 2025) | Done |
 | 2025-10 | Repository initialized (`Insightpulseai/odoo`) | Done |
 | 2025-11 | OCA submodules pinned (18.0 branches) | Done |
 | 2025-12 | Docker image baseline (`ghcr.io/...`) | Done |

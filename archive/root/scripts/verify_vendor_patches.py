@@ -33,7 +33,7 @@ def check_import() -> bool:
         return True
     except AttributeError as e:
         print(f"[vendor-patch-verify] ❌ FAIL AttributeError importing FakeModelLoader: {e}")
-        print("  This means the Odoo 19 MetaModel rename patch was not applied.")
+        print("  This means the Odoo 18 MetaModel rename patch was not applied.")
         print("  Run: bash runtime/scripts/apply_vendor_patches.sh")
         return False
     except Exception as e:

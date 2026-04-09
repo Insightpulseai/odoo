@@ -16,12 +16,12 @@ ODOO_INSTALL_MODULES="crm,sale,account" → exit 0 (clean) PASS
 [DISCUSS/MAIL XML FIX]
 discuss_sidebar_mailboxes.xml: references mail.DiscussContent.mobileTopbar (corrected)
 mobileTopbar xpath: REMOVED broken mail.Discuss.mobileTopbar reference
-mailbox.counter xpath: REMOVED (span removed in Odoo 19)
+mailbox.counter xpath: REMOVED (span removed in Odoo 18)
 store_service_patch.esm.js: Record.one() dropped, plain object in onStarted()
 
 [VENDOR PATCH CI WORKFLOW]
 .github/workflows/vendor-patch-verify.yml: PRESENT
-runtime/patches/odoo-test-helper/0001-odoo19-metamodel-module_to_models.patch: PRESENT
+runtime/patches/odoo-test-helper/0001-odoo18-metamodel-module_to_models.patch: PRESENT
 runtime/scripts/apply_vendor_patches.sh: PRESENT
 NOTE: Dockerfile.ce19 on main retains find|sed approach (working-tree hardening stashed, needs follow-on commit)
 

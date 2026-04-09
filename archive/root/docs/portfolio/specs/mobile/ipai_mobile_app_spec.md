@@ -1,4 +1,4 @@
-# IPAI Mobile App - Flutter + Odoo 19 CE Integration
+# IPAI Mobile App - Flutter + Odoo 18 CE Integration
 
 **Version**: 1.0.0
 **Target Platforms**: Android (Google Play) + iOS (App Store)
@@ -8,7 +8,7 @@
 
 ## Overview
 
-CI-first mobile app for Odoo 19 CE with:
+CI-first mobile app for Odoo 18 CE with:
 
 - ✅ **Flutter** for cross-platform (Android + iOS)
 - ✅ **Fastlane** for automated build + deploy (no UI)

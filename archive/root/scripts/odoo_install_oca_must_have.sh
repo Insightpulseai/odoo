@@ -2,7 +2,7 @@
 set -euo pipefail
 
 # =============================================================================
-# OCA Must-Have Module Installer (Odoo 19 CE)
+# OCA Must-Have Module Installer (Odoo 18 CE)
 # =============================================================================
 # Reads config/oca/module_allowlist.yml (all packs) or a single manifest,
 # validates modules against docs/oca/ADDON_NAMES.txt inventory, and installs.

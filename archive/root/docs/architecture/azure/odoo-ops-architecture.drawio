@@ -10,7 +10,7 @@
         <mxCell id="layer-core" value="Core Logic" parent="0" />
 
         <!-- Header -->
-        <mxCell id="title" value="Insightpulseai Odoo 19 CE — Confirmed Enterprise Architecture &amp; Azure AI Plane" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=24;fontStyle=1;fontColor=#2D3436;" vertex="1" parent="1">
+        <mxCell id="title" value="Insightpulseai Odoo 18 CE — Confirmed Enterprise Architecture &amp; Azure AI Plane" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=24;fontStyle=1;fontColor=#2D3436;" vertex="1" parent="1">
           <mxGeometry x="50" y="20" width="1300" height="50" as="geometry" />
         </mxCell>
 
@@ -37,32 +37,32 @@
         </mxCell>
 
         <!-- Repo Content with Links -->
-        <mxCell id="repo-core" value="Upstream Odoo&#xa;(odoo/ + addons/odoo)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;gradientColor=#b3cde3;glass=1;shadow=1;fontStyle=1;" vertex="1" parent="lane-repo" tooltip="Core Odoo 19 CE source code" link="https://github.com/Insightpulseai/odoo/tree/claude/deploy-finance-ppm-odoo19-LbLm4/odoo">
+        <mxCell id="repo-core" value="Upstream Odoo&#xa;(odoo/ + addons/odoo)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;gradientColor=#b3cde3;glass=1;shadow=1;fontStyle=1;" vertex="1" parent="lane-repo" tooltip="Core Odoo 18 CE source code" link="https://github.com/Insightpulseai/odoo/tree/claude/deploy-finance-ppm-odoo18-LbLm4/odoo">
           <mxGeometry x="25" y="60" width="270" height="110" as="geometry" />
         </mxCell>
 
-        <mxCell id="repo-oca" value="OCA Submodules&#xa;addons/oca/repos/*" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;gradientColor=#b3cde3;glass=1;shadow=1;fontStyle=1;" vertex="1" parent="lane-repo" tooltip="Shared OCA modules for Odoo community" link="https://github.com/Insightpulseai/odoo/tree/claude/deploy-finance-ppm-odoo19-LbLm4/addons">
+        <mxCell id="repo-oca" value="OCA Submodules&#xa;addons/oca/repos/*" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;gradientColor=#b3cde3;glass=1;shadow=1;fontStyle=1;" vertex="1" parent="lane-repo" tooltip="Shared OCA modules for Odoo community" link="https://github.com/Insightpulseai/odoo/tree/claude/deploy-finance-ppm-odoo18-LbLm4/addons">
           <mxGeometry x="25" y="190" width="270" height="110" as="geometry" />
         </mxCell>
 
-        <mxCell id="repo-allowlist" value="ALLOWLIST.yaml&#xa;- repo/path mapping" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;gradientColor=#ffd966;glass=1;shadow=1;fontStyle=1;" vertex="1" parent="lane-repo" tooltip="Single Source of Truth for enabled modules" link="https://github.com/Insightpulseai/odoo/blob/claude/deploy-finance-ppm-odoo19-LbLm4/ALLOWLIST.yaml">
+        <mxCell id="repo-allowlist" value="ALLOWLIST.yaml&#xa;- repo/path mapping" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;gradientColor=#ffd966;glass=1;shadow=1;fontStyle=1;" vertex="1" parent="lane-repo" tooltip="Single Source of Truth for enabled modules" link="https://github.com/Insightpulseai/odoo/blob/claude/deploy-finance-ppm-odoo18-LbLm4/ALLOWLIST.yaml">
           <mxGeometry x="25" y="320" width="270" height="110" as="geometry" />
         </mxCell>
 
-        <mxCell id="repo-skills" value="Agent Skills (Anthropic Port)&#xa;agents/skills/**/SKILL.md" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;gradientColor=#97d077;glass=1;shadow=1;fontStyle=1;" vertex="1" parent="lane-repo" tooltip="Claude-compatible agent capability definitions" link="https://github.com/Insightpulseai/odoo/tree/claude/deploy-finance-ppm-odoo19-LbLm4/agents/skills">
+        <mxCell id="repo-skills" value="Agent Skills (Anthropic Port)&#xa;agents/skills/**/SKILL.md" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;gradientColor=#97d077;glass=1;shadow=1;fontStyle=1;" vertex="1" parent="lane-repo" tooltip="Claude-compatible agent capability definitions" link="https://github.com/Insightpulseai/odoo/tree/claude/deploy-finance-ppm-odoo18-LbLm4/agents/skills">
           <mxGeometry x="25" y="450" width="270" height="130" as="geometry" />
         </mxCell>
 
-        <mxCell id="repo-sdk" value="IPAI AI SDK&#xa;Thin adapters &amp; Tools" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;gradientColor=#97d077;glass=1;shadow=1;fontStyle=1;" vertex="1" parent="lane-repo" tooltip="Bridge library for Odoo and LLM interaction" link="https://github.com/Insightpulseai/odoo/tree/claude/deploy-finance-ppm-odoo19-LbLm4/packages/ipai-ai-sdk">
+        <mxCell id="repo-sdk" value="IPAI AI SDK&#xa;Thin adapters &amp; Tools" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;gradientColor=#97d077;glass=1;shadow=1;fontStyle=1;" vertex="1" parent="lane-repo" tooltip="Bridge library for Odoo and LLM interaction" link="https://github.com/Insightpulseai/odoo/tree/claude/deploy-finance-ppm-odoo18-LbLm4/packages/ipai-ai-sdk">
           <mxGeometry x="25" y="600" width="270" height="110" as="geometry" />
         </mxCell>
 
         <!-- CI Content with Tooltips -->
-        <mxCell id="ci-gate1" value="Gate: verify_oca_allowlist.py" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;gradientColor=#ea9999;glass=1;shadow=1;fontStyle=1;" vertex="1" parent="lane-ci" tooltip="Ensures symlinks match the ALLOWLIST.yaml specification" link="https://github.com/Insightpulseai/odoo/blob/claude/deploy-finance-ppm-odoo19-LbLm4/scripts/docs/refresh_docs.py">
+        <mxCell id="ci-gate1" value="Gate: verify_oca_allowlist.py" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;gradientColor=#ea9999;glass=1;shadow=1;fontStyle=1;" vertex="1" parent="lane-ci" tooltip="Ensures symlinks match the ALLOWLIST.yaml specification" link="https://github.com/Insightpulseai/odoo/blob/claude/deploy-finance-ppm-odoo18-LbLm4/scripts/docs/refresh_docs.py">
           <mxGeometry x="25" y="90" width="270" height="120" as="geometry" />
         </mxCell>
 
-        <mxCell id="ci-skill-check" value="Gate: validate_skill_registry.py" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;gradientColor=#ea9999;glass=1;shadow=1;fontStyle=1;" vertex="1" parent="lane-ci" tooltip="Validates SKILL.md schemas and version pinning" link="https://github.com/Insightpulseai/odoo/blob/claude/deploy-finance-ppm-odoo19-LbLm4/tests/test_odoo_kb_pin_verifier.py">
+        <mxCell id="ci-skill-check" value="Gate: validate_skill_registry.py" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;gradientColor=#ea9999;glass=1;shadow=1;fontStyle=1;" vertex="1" parent="lane-ci" tooltip="Validates SKILL.md schemas and version pinning" link="https://github.com/Insightpulseai/odoo/blob/claude/deploy-finance-ppm-odoo18-LbLm4/tests/test_odoo_kb_pin_verifier.py">
           <mxGeometry x="25" y="230" width="270" height="120" as="geometry" />
         </mxCell>
 
@@ -71,7 +71,7 @@
         </mxCell>
 
         <!-- Inter-Diagram Link -->
-        <mxCell id="rt-odoo" value="Odoo App Server&#xa;(IDP Services Layer)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;gradientColor=#b3cde3;glass=1;shadow=1;fontStyle=1;" vertex="1" parent="lane-runtime" tooltip="Click to view IDP architecture details" link="https://github.com/Insightpulseai/odoo/blob/claude/deploy-finance-ppm-odoo19-LbLm4/docs/arch/ipai_idp_architecture.drawio">
+        <mxCell id="rt-odoo" value="Odoo App Server&#xa;(IDP Services Layer)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;gradientColor=#b3cde3;glass=1;shadow=1;fontStyle=1;" vertex="1" parent="lane-runtime" tooltip="Click to view IDP architecture details" link="https://github.com/Insightpulseai/odoo/blob/claude/deploy-finance-ppm-odoo18-LbLm4/docs/arch/ipai_idp_architecture.drawio">
           <mxGeometry x="20" y="90" width="320" height="120" as="geometry" />
         </mxCell>
 

@@ -14,8 +14,8 @@ Checks:
        → must match scripts/odoo_neutralize.py  __version__
   2. docs/runbooks/SECRETS_SSOT.md
        → must match scripts/check_no_plaintext_secrets.py  CONTRACT_VERSION
-  3. docs/runbooks/ODOO19_GO_LIVE_CHECKLIST.md
-       → must match ssot/go_live/odoo19_checklist.manifest.yaml  version
+  3. docs/runbooks/ODOO18_GO_LIVE_CHECKLIST.md
+       → must match ssot/go_live/odoo18_checklist.manifest.yaml  version
 
 Exit codes:
   0 — all versions aligned
@@ -118,10 +118,10 @@ CHECKS = [
     ),
     (
         "go-live-manifest",
-        "docs/runbooks/ODOO19_GO_LIVE_CHECKLIST.md",
-        "ssot/go_live/odoo19_checklist.manifest.yaml version",
+        "docs/runbooks/ODOO18_GO_LIVE_CHECKLIST.md",
+        "ssot/go_live/odoo18_checklist.manifest.yaml version",
         extract_yaml_version,
-        "ssot/go_live/odoo19_checklist.manifest.yaml",
+        "ssot/go_live/odoo18_checklist.manifest.yaml",
     ),
 ]
 

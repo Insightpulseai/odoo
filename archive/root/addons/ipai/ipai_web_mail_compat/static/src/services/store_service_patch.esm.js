@@ -2,7 +2,7 @@
 // License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 //
 // Replaces: mail_tracking/static/src/services/store_service_patch.esm.js
-// Reason  : Record.one() was removed from Odoo 19; onStarted() plain-object
+// Reason  : Record.one() was removed from Odoo 18; onStarted() plain-object
 //           initialisation is the correct pattern.
 //
 // Guard   : symbol marker prevents double-application if bundle order is
@@ -26,7 +26,7 @@ if (!Store.prototype[PATCH_MARKER]) {
         onStarted() {
             super.onStarted(...arguments);
             // Initialise the "Failed" virtual mailbox as a plain object.
-            // Record.one("Thread") was removed in Odoo 19; the mailbox object
+            // Record.one("Thread") was removed in Odoo 18; the mailbox object
             // is sufficient for OWL reactivity when assigned here.
             this.failed = {
                 id: "failed",

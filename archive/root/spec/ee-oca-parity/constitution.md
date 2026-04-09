@@ -49,7 +49,7 @@ of functional parity. Parity claims must progress through four tiers.
 |------|------|---------|----------------|
 | T0 | **Unmapped** | No replacement identified | — |
 | T1 | **Mapped** | OCA/bridge replacement identified and OCA repo verified to exist | OCA repo exists on GitHub, module name documented |
-| T2 | **Installable** | Replacement installs on our Odoo 19 CE baseline without errors | `odoo-bin -i <module> --stop-after-init` exits 0 |
+| T2 | **Installable** | Replacement installs on our Odoo 18 CE baseline without errors | `odoo-bin -i <module> --stop-after-init` exits 0 |
 | T3 | **Functional** | Replacement covers ≥80% of EE feature surface for our workflows | QA checklist signed off per domain |
 | T4 | **Verified** | Production-tested, monitored, with rollback plan | 30-day soak in staging + production deploy |
 
@@ -221,7 +221,7 @@ Production     → T4 (Verified)        — module survives 30-day soak
 ```
 
 **Staging Requirements**:
-- Staging runs the same Odoo 19 CE + PostgreSQL 16 stack as production.
+- Staging runs the same Odoo 18 CE + PostgreSQL 16 stack as production.
 - Staging database is a sanitized copy of production (no real credentials, PII anonymized).
 - Staging activates modules via the same bundle modules used in production.
 - Staging runs the full OCA + bridge + connector stack, not isolated modules.

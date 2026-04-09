@@ -1,7 +1,7 @@
 # Claude Browser Agent: Complete Mailgun Dashboard Setup
 
 ## Objective
-Configure Mailgun dashboard to add and verify the domain `mg.insightpulseai.com` for transactional email sending with Odoo 19.
+Configure Mailgun dashboard to add and verify the domain `mg.insightpulseai.com` for transactional email sending with Odoo 18.
 
 ## Prerequisites
 - Logged into Mailgun dashboard at https://app.mailgun.com

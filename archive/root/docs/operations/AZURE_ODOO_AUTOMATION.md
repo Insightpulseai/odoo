@@ -2,7 +2,7 @@
 
 ## Overview
 
-Azure-native automation for Odoo 19 development following "Odoo.sh-equivalent" patterns:
+Azure-native automation for Odoo 18 development following "Odoo.sh-equivalent" patterns:
 - **Build**: Azure Container Registry (ACR) builds from Dockerfile
 - **Deploy**: Azure Container Apps with blue-green revisions
 - **Upgrade**: Container Apps Jobs with evidence generation

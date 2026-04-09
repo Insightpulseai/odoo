@@ -21,7 +21,7 @@ ADMIN_PASSWORD="REDACTED_DO_DB_PASSWORD"
 LEGACY_DBS=(
     "odoo"
     "odoo-prod"
-    "odoo19"
+    "odoo18"
     "n8n"
     "plane"
     "superset"

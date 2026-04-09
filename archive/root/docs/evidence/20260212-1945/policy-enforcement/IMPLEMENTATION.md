@@ -36,7 +36,7 @@ $ ./scripts/validate_capabilities.sh
 [1] Validating: odoo.qweb.reporting
     Claim: Generate QWeb PDF reports
     ✅ Path exists: addons
-    ✅ Path exists: odoo19
+    ✅ Path exists: odoo18
     ✅ Grep pattern found: ir.actions.report
     ✅ Grep pattern found: qweb-pdf
     ✅ Grep pattern found: report_type.*qweb

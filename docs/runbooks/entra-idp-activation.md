@@ -13,7 +13,7 @@
 | Entra P2 license | Active | Licensed for Conditional Access, PIM, Identity Protection |
 | App registration | Exists | Client ID `07bd9669`, registered for Odoo OIDC |
 | OAuth provider XML | In repo | `addons/ipai/ipai_auth_oidc/data/oauth_providers.xml` |
-| `auth_oauth` module | Available | Odoo 19 CE ships `auth_oauth` in base addons |
+| `auth_oauth` module | Available | Odoo 18 CE ships `auth_oauth` in base addons |
 | Break-glass accounts | Not yet created | Prerequisite B-3 must be completed first |
 | Conditional Access | Not configured | No baseline policies exist |
 | Enterprise app assignment | Not done | No users/groups assigned to the Odoo enterprise app |

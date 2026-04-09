@@ -142,7 +142,7 @@ You are an execution agent. Take action, verify, commit. No guides, no tutorials
 | ------------- | -------------------------------------------- |
 | **Stack**     | Odoo CE 19.0 + OCA + PostgreSQL 16           |
 | **Domain**    | `insightpulseai.com` (`.net` deprecated)     |
-| **Python**    | 3.12+ (Odoo 19)                              |
+| **Python**    | 3.12+ (Odoo 18)                              |
 | **Supabase**  | `spdtwktxdalcfigzeqrz`                       |
 | **Repo**      | `Insightpulseai/odoo`                        |
 | **Workspace** | `ipai` (Docker, DevContainer, all dev tools) |
@@ -276,14 +276,14 @@ spec/<feature-slug>/
 - No UI clickpath instructions. CLI/CI only.
 - Every Odoo task produces: (1) module changes, (2) install/update script, (3) health check
 - Databases: `odoo` (prod), `odoo_dev` (local) — only 2, nothing else
-- Canonical setup: `odoo19/` directory (`list_db=False`)
+- Canonical setup: `odoo18/` directory (`list_db=False`)
 
-### [NEW] Odoo 19 CE — Connector Guidance
+### [NEW] Odoo 18 CE — Connector Guidance
 
-> [!NOTE] > **Validated for Odoo 19 CE**
-> Connector addons for Odoo 19 must use the modern ORM API only.
+> [!NOTE] > **Validated for Odoo 18 CE**
+> Connector addons for Odoo 18 must use the modern ORM API only.
 > Do not use legacy patterns such as `osv`, `_cr`, `_uid`, or `_context`.
-> Odoo-side artifacts must follow Odoo 19 + OCA-first conventions.
+> Odoo-side artifacts must follow Odoo 18 + OCA-first conventions.
 
 ---
 

@@ -9,7 +9,7 @@ Native Odoo REST Controllers
 
 Provides REST API endpoints using native Odoo HTTP controllers.
 
-This is an interim solution while waiting for OCA base_rest migration to Odoo 19.0.
+This is an interim solution while waiting for OCA base_rest migration to Odoo 18.0.
 
 Features:
 ---------

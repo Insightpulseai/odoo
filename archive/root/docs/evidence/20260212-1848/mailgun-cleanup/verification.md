@@ -5,7 +5,7 @@
 
 ## Summary
 
-Successfully deprecated Mailgun documentation and established Zoho Mail as the canonical email system for Odoo 19.
+Successfully deprecated Mailgun documentation and established Zoho Mail as the canonical email system for Odoo 18.
 
 ---
 
@@ -14,7 +14,7 @@ Successfully deprecated Mailgun documentation and established Zoho Mail as the c
 ### 1. Canonical Guide Created
 ✅ **Created**: `docs/guides/email/EMAIL_SETUP_ZOHO.md`
 - Settings-as-code approach (no UI steps)
-- Odoo 19 SMTP configuration with environment variables
+- Odoo 18 SMTP configuration with environment variables
 - DNS records (SPF/DKIM/DMARC) with verification commands
 - External mail compatibility note (Microsoft 365/Outlook)
 - Comprehensive troubleshooting and monitoring sections
@@ -127,7 +127,7 @@ This document is **deprecated** as of 2026-02-12.
 ```bash
 test -f docs/guides/email/EMAIL_SETUP_ZOHO.md && echo "✅ Zoho guide exists"
 grep -q "smtp.zoho.com" docs/guides/email/EMAIL_SETUP_ZOHO.md && echo "✅ SMTP config present"
-grep -q "Odoo 19" docs/guides/email/EMAIL_SETUP_ZOHO.md && echo "✅ Odoo 19 referenced"
+grep -q "Odoo 18" docs/guides/email/EMAIL_SETUP_ZOHO.md && echo "✅ Odoo 18 referenced"
 grep -q "settings-as-code" docs/guides/email/EMAIL_SETUP_ZOHO.md && echo "✅ Settings-as-code approach"
 grep -q "Microsoft 365" docs/guides/email/EMAIL_SETUP_ZOHO.md && echo "✅ External mail compatibility"
 ```
@@ -235,7 +235,7 @@ bash scripts/gates/run_parity_gates.sh forbidden-scan | tee /tmp/mailgun_refs_af
 - [x] README.md Email section rewritten for Zoho Mail
 - [x] DEPRECATED_DOCS.md updated with complete mapping
 - [x] Evidence created in docs/evidence/
-- [x] Odoo 19 confirmed in all new documentation
+- [x] Odoo 18 confirmed in all new documentation
 - [x] Settings-as-code approach (no UI steps)
 - [x] Microsoft 365/Outlook compatibility documented
 

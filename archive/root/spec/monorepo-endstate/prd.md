@@ -10,7 +10,7 @@
 
 The InsightPulse AI monorepo has grown organically. This PRD defines the requirements
 for reaching the target end-state: a fully governed, SSOT-anchored monorepo that supports
-Odoo 19 CE + OCA feature parity and zero-touch deployment.
+Odoo 18 CE + OCA feature parity and zero-touch deployment.
 
 ---
 
@@ -71,11 +71,11 @@ into `addons/ipai/` modules.
 - `docs/architecture/MONOREPO_END_STATE_OKR.md` -- OKR anchor
 - `docs/architecture/AI_PROVIDER_BRIDGE.md` -- AI provider contracts
 - `docs/runbooks/SECRETS_SSOT.md` -- Secret management workflow
-- `docs/runbooks/ODOO19_GO_LIVE_CHECKLIST.md` -- Go-live procedure
+- `docs/runbooks/ODOO18_GO_LIVE_CHECKLIST.md` -- Go-live procedure
 
 ### O5: AI Provider Bridge as Platform Contract (SSOT-native)
 
-**Problem**: Odoo 19 "Ask AI" is an EE/IAP feature; each AI surface (Chatter widget,
+**Problem**: Odoo 18 "Ask AI" is an EE/IAP feature; each AI surface (Chatter widget,
 html editor, ops-console, automations) currently re-implements AI access independently,
 creating ungoverned provider coupling and untracked secret dependencies.
 

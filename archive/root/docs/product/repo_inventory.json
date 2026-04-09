@@ -1,7 +1,7 @@
 {
   "metadata": {
     "repo": "Insightpulseai/odoo",
-    "branch": "claude/deploy-finance-ppm-odoo19-LbLm4",
+    "branch": "claude/deploy-finance-ppm-odoo18-LbLm4",
     "sha": "726068a83be480d360697881304817a6039858a2",
     "scanned_at": "2026-02-23T08:46:06.896154Z"
   },
@@ -9,25 +9,25 @@
     {
       "id": "skill_accounting",
       "name": "accounting",
-      "path": "skills/odoo19/accounting/SKILL.md",
+      "path": "skills/odoo18/accounting/SKILL.md",
       "surface": "agent_prompt"
     },
     {
       "id": "skill_activities",
       "name": "activities",
-      "path": "skills/odoo19/activities/SKILL.md",
+      "path": "skills/odoo18/activities/SKILL.md",
       "surface": "agent_prompt"
     },
     {
       "id": "skill_administration",
       "name": "administration",
-      "path": "skills/odoo19/administration/SKILL.md",
+      "path": "skills/odoo18/administration/SKILL.md",
       "surface": "agent_prompt"
     },
     {
       "id": "skill_ai",
       "name": "ai",
-      "path": "skills/odoo19/ai/SKILL.md",
+      "path": "skills/odoo18/ai/SKILL.md",
       "surface": "agent_prompt"
     },
     {
@@ -45,25 +45,25 @@
     {
       "id": "skill_appointments",
       "name": "appointments",
-      "path": "skills/odoo19/appointments/SKILL.md",
+      "path": "skills/odoo18/appointments/SKILL.md",
       "surface": "agent_prompt"
     },
     {
       "id": "skill_appraisals",
       "name": "appraisals",
-      "path": "skills/odoo19/appraisals/SKILL.md",
+      "path": "skills/odoo18/appraisals/SKILL.md",
       "surface": "agent_prompt"
     },
     {
       "id": "skill_apps_modules",
       "name": "apps_modules",
-      "path": "skills/odoo19/apps_modules/SKILL.md",
+      "path": "skills/odoo18/apps_modules/SKILL.md",
       "surface": "agent_prompt"
     },
     {
       "id": "skill_attendances",
       "name": "attendances",
-      "path": "skills/odoo19/attendances/SKILL.md",
+      "path": "skills/odoo18/attendances/SKILL.md",
       "surface": "agent_prompt"
     },
     {
@@ -81,7 +81,7 @@
     {
       "id": "skill_barcode",
       "name": "barcode",
-      "path": "skills/odoo19/barcode/SKILL.md",
+      "path": "skills/odoo18/barcode/SKILL.md",
       "surface": "agent_prompt"
     },
     {
@@ -99,13 +99,13 @@
     {
       "id": "skill_blog",
       "name": "blog",
-      "path": "skills/odoo19/blog/SKILL.md",
+      "path": "skills/odoo18/blog/SKILL.md",
       "surface": "agent_prompt"
     },
     {
       "id": "skill_calendar",
       "name": "calendar",
-      "path": "skills/odoo19/calendar/SKILL.md",
+      "path": "skills/odoo18/calendar/SKILL.md",
       "surface": "agent_prompt"
     },
     {
@@ -123,7 +123,7 @@
     {
       "id": "skill_companies",
       "name": "companies",
-      "path": "skills/odoo19/companies/SKILL.md",
+      "path": "skills/odoo18/companies/SKILL.md",
       "surface": "agent_prompt"
     },
     {
@@ -135,25 +135,25 @@
     {
       "id": "skill_contacts",
       "name": "contacts",
-      "path": "skills/odoo19/contacts/SKILL.md",
+      "path": "skills/odoo18/contacts/SKILL.md",
       "surface": "agent_prompt"
     },
     {
       "id": "skill_crm",
       "name": "crm",
-      "path": "skills/odoo19/crm/SKILL.md",
+      "path": "skills/odoo18/crm/SKILL.md",
       "surface": "agent_prompt"
     },
     {
       "id": "skill_dashboards",
       "name": "dashboards",
-      "path": "skills/odoo19/dashboards/SKILL.md",
+      "path": "skills/odoo18/dashboards/SKILL.md",
       "surface": "agent_prompt"
     },
     {
       "id": "skill_data_cleaning",
       "name": "data_cleaning",
-      "path": "skills/odoo19/data_cleaning/SKILL.md",
+      "path": "skills/odoo18/data_cleaning/SKILL.md",
       "surface": "agent_prompt"
     },
     {
@@ -171,61 +171,61 @@
     {
       "id": "skill_developer_mode",
       "name": "developer_mode",
-      "path": "skills/odoo19/developer_mode/SKILL.md",
+      "path": "skills/odoo18/developer_mode/SKILL.md",
       "surface": "agent_prompt"
     },
     {
       "id": "skill_discuss",
       "name": "discuss",
-      "path": "skills/odoo19/discuss/SKILL.md",
+      "path": "skills/odoo18/discuss/SKILL.md",
       "surface": "agent_prompt"
     },
     {
       "id": "skill_documents",
       "name": "documents",
-      "path": "skills/odoo19/documents/SKILL.md",
+      "path": "skills/odoo18/documents/SKILL.md",
       "surface": "agent_prompt"
     },
     {
       "id": "skill_ecommerce",
       "name": "ecommerce",
-      "path": "skills/odoo19/ecommerce/SKILL.md",
+      "path": "skills/odoo18/ecommerce/SKILL.md",
       "surface": "agent_prompt"
     },
     {
       "id": "skill_elearning",
       "name": "elearning",
-      "path": "skills/odoo19/elearning/SKILL.md",
+      "path": "skills/odoo18/elearning/SKILL.md",
       "surface": "agent_prompt"
     },
     {
       "id": "skill_email_communication",
       "name": "email_communication",
-      "path": "skills/odoo19/email_communication/SKILL.md",
+      "path": "skills/odoo18/email_communication/SKILL.md",
       "surface": "agent_prompt"
     },
     {
       "id": "skill_email_marketing",
       "name": "email_marketing",
-      "path": "skills/odoo19/email_marketing/SKILL.md",
+      "path": "skills/odoo18/email_marketing/SKILL.md",
       "surface": "agent_prompt"
     },
     {
       "id": "skill_employees",
       "name": "employees",
-      "path": "skills/odoo19/employees/SKILL.md",
+      "path": "skills/odoo18/employees/SKILL.md",
       "surface": "agent_prompt"
     },
     {
       "id": "skill_esg",
       "name": "esg",
-      "path": "skills/odoo19/esg/SKILL.md",
+      "path": "skills/odoo18/esg/SKILL.md",
       "surface": "agent_prompt"
     },
     {
       "id": "skill_events",
       "name": "events",
-      "path": "skills/odoo19/events/SKILL.md",
+      "path": "skills/odoo18/events/SKILL.md",
       "surface": "agent_prompt"
     },
     {
@@ -237,19 +237,19 @@
     {
       "id": "skill_expenses",
       "name": "expenses",
-      "path": "skills/odoo19/expenses/SKILL.md",
+      "path": "skills/odoo18/expenses/SKILL.md",
       "surface": "agent_prompt"
     },
     {
       "id": "skill_export_import_data",
       "name": "export_import_data",
-      "path": "skills/odoo19/export_import_data/SKILL.md",
+      "path": "skills/odoo18/export_import_data/SKILL.md",
       "surface": "agent_prompt"
     },
     {
       "id": "skill_field_service",
       "name": "field_service",
-      "path": "skills/odoo19/field_service/SKILL.md",
+      "path": "skills/odoo18/field_service/SKILL.md",
       "surface": "agent_prompt"
     },
     {
@@ -267,25 +267,25 @@
     {
       "id": "skill_fiscal_localizations",
       "name": "fiscal_localizations",
-      "path": "skills/odoo19/fiscal_localizations/SKILL.md",
+      "path": "skills/odoo18/fiscal_localizations/SKILL.md",
       "surface": "agent_prompt"
     },
     {
       "id": "skill_fleet",
       "name": "fleet",
-      "path": "skills/odoo19/fleet/SKILL.md",
+      "path": "skills/odoo18/fleet/SKILL.md",
       "surface": "agent_prompt"
     },
     {
       "id": "skill_forum",
       "name": "forum",
-      "path": "skills/odoo19/forum/SKILL.md",
+      "path": "skills/odoo18/forum/SKILL.md",
       "surface": "agent_prompt"
     },
     {
       "id": "skill_frontdesk",
       "name": "frontdesk",
-      "path": "skills/odoo19/frontdesk/SKILL.md",
+      "path": "skills/odoo18/frontdesk/SKILL.md",
       "surface": "agent_prompt"
     },
     {
@@ -303,19 +303,19 @@
     {
       "id": "skill_helpdesk",
       "name": "helpdesk",
-      "path": "skills/odoo19/helpdesk/SKILL.md",
+      "path": "skills/odoo18/helpdesk/SKILL.md",
       "surface": "agent_prompt"
     },
     {
       "id": "skill_html_editor",
       "name": "html_editor",
-      "path": "skills/odoo19/html_editor/SKILL.md",
+      "path": "skills/odoo18/html_editor/SKILL.md",
       "surface": "agent_prompt"
     },
     {
       "id": "skill_in_app_purchase",
       "name": "in_app_purchase",
-      "path": "skills/odoo19/in_app_purchase/SKILL.md",
+      "path": "skills/odoo18/in_app_purchase/SKILL.md",
       "surface": "agent_prompt"
     },
     {
@@ -327,55 +327,55 @@
     {
       "id": "skill_integrations",
       "name": "integrations",
-      "path": "skills/odoo19/integrations/SKILL.md",
+      "path": "skills/odoo18/integrations/SKILL.md",
       "surface": "agent_prompt"
     },
     {
       "id": "skill_inventory",
       "name": "inventory",
-      "path": "skills/odoo19/inventory/SKILL.md",
+      "path": "skills/odoo18/inventory/SKILL.md",
       "surface": "agent_prompt"
     },
     {
       "id": "skill_iot",
       "name": "iot",
-      "path": "skills/odoo19/iot/SKILL.md",
+      "path": "skills/odoo18/iot/SKILL.md",
       "surface": "agent_prompt"
     },
     {
       "id": "skill_keyboard_shortcuts",
       "name": "keyboard_shortcuts",
-      "path": "skills/odoo19/keyboard_shortcuts/SKILL.md",
+      "path": "skills/odoo18/keyboard_shortcuts/SKILL.md",
       "surface": "agent_prompt"
     },
     {
       "id": "skill_livechat",
       "name": "livechat",
-      "path": "skills/odoo19/livechat/SKILL.md",
+      "path": "skills/odoo18/livechat/SKILL.md",
       "surface": "agent_prompt"
     },
     {
       "id": "skill_lunch",
       "name": "lunch",
-      "path": "skills/odoo19/lunch/SKILL.md",
+      "path": "skills/odoo18/lunch/SKILL.md",
       "surface": "agent_prompt"
     },
     {
       "id": "skill_maintenance",
       "name": "maintenance",
-      "path": "skills/odoo19/maintenance/SKILL.md",
+      "path": "skills/odoo18/maintenance/SKILL.md",
       "surface": "agent_prompt"
     },
     {
       "id": "skill_manufacturing",
       "name": "manufacturing",
-      "path": "skills/odoo19/manufacturing/SKILL.md",
+      "path": "skills/odoo18/manufacturing/SKILL.md",
       "surface": "agent_prompt"
     },
     {
       "id": "skill_marketing_automation",
       "name": "marketing_automation",
-      "path": "skills/odoo19/marketing_automation/SKILL.md",
+      "path": "skills/odoo18/marketing_automation/SKILL.md",
       "surface": "agent_prompt"
     },
     {
@@ -415,117 +415,117 @@
       "surface": "agent_prompt"
     },
     {
-      "id": "skill_odoo19-actions",
-      "name": "odoo19-actions",
-      "path": "skills/odoo/odoo19-actions/SKILL.md",
+      "id": "skill_odoo18-actions",
+      "name": "odoo18-actions",
+      "path": "skills/odoo/odoo18-actions/SKILL.md",
       "surface": "agent_prompt"
     },
     {
-      "id": "skill_odoo19-assets",
-      "name": "odoo19-assets",
-      "path": "skills/odoo/odoo19-assets/SKILL.md",
+      "id": "skill_odoo18-assets",
+      "name": "odoo18-assets",
+      "path": "skills/odoo/odoo18-assets/SKILL.md",
       "surface": "agent_prompt"
     },
     {
-      "id": "skill_odoo19-cli",
-      "name": "odoo19-cli",
-      "path": "skills/odoo/odoo19-cli/SKILL.md",
+      "id": "skill_odoo18-cli",
+      "name": "odoo18-cli",
+      "path": "skills/odoo/odoo18-cli/SKILL.md",
       "surface": "agent_prompt"
     },
     {
-      "id": "skill_odoo19-coding-guidelines",
-      "name": "odoo19-coding-guidelines",
-      "path": "skills/odoo/odoo19-coding-guidelines/SKILL.md",
+      "id": "skill_odoo18-coding-guidelines",
+      "name": "odoo18-coding-guidelines",
+      "path": "skills/odoo/odoo18-coding-guidelines/SKILL.md",
       "surface": "agent_prompt"
     },
     {
-      "id": "skill_odoo19-data-files",
-      "name": "odoo19-data-files",
-      "path": "skills/odoo/odoo19-data-files/SKILL.md",
+      "id": "skill_odoo18-data-files",
+      "name": "odoo18-data-files",
+      "path": "skills/odoo/odoo18-data-files/SKILL.md",
       "surface": "agent_prompt"
     },
     {
-      "id": "skill_odoo19-external-api",
-      "name": "odoo19-external-api",
-      "path": "skills/odoo/odoo19-external-api/SKILL.md",
+      "id": "skill_odoo18-external-api",
+      "name": "odoo18-external-api",
+      "path": "skills/odoo/odoo18-external-api/SKILL.md",
       "surface": "agent_prompt"
     },
     {
-      "id": "skill_odoo19-frontend",
-      "name": "odoo19-frontend",
-      "path": "skills/odoo/odoo19-frontend/SKILL.md",
+      "id": "skill_odoo18-frontend",
+      "name": "odoo18-frontend",
+      "path": "skills/odoo/odoo18-frontend/SKILL.md",
       "surface": "agent_prompt"
     },
     {
-      "id": "skill_odoo19-git-guidelines",
-      "name": "odoo19-git-guidelines",
-      "path": "skills/odoo/odoo19-git-guidelines/SKILL.md",
+      "id": "skill_odoo18-git-guidelines",
+      "name": "odoo18-git-guidelines",
+      "path": "skills/odoo/odoo18-git-guidelines/SKILL.md",
       "surface": "agent_prompt"
     },
     {
-      "id": "skill_odoo19-http-controllers",
-      "name": "odoo19-http-controllers",
-      "path": "skills/odoo/odoo19-http-controllers/SKILL.md",
+      "id": "skill_odoo18-http-controllers",
+      "name": "odoo18-http-controllers",
+      "path": "skills/odoo/odoo18-http-controllers/SKILL.md",
       "surface": "agent_prompt"
     },
     {
-      "id": "skill_odoo19-mixins",
-      "name": "odoo19-mixins",
-      "path": "skills/odoo/odoo19-mixins/SKILL.md",
+      "id": "skill_odoo18-mixins",
+      "name": "odoo18-mixins",
+      "path": "skills/odoo/odoo18-mixins/SKILL.md",
       "surface": "agent_prompt"
     },
     {
-      "id": "skill_odoo19-module",
-      "name": "odoo19-module",
-      "path": "skills/odoo/odoo19-module/SKILL.md",
+      "id": "skill_odoo18-module",
+      "name": "odoo18-module",
+      "path": "skills/odoo/odoo18-module/SKILL.md",
       "surface": "agent_prompt"
     },
     {
-      "id": "skill_odoo19-orm",
-      "name": "odoo19-orm",
-      "path": "skills/odoo/odoo19-orm/SKILL.md",
+      "id": "skill_odoo18-orm",
+      "name": "odoo18-orm",
+      "path": "skills/odoo/odoo18-orm/SKILL.md",
       "surface": "agent_prompt"
     },
     {
-      "id": "skill_odoo19-owl-components",
-      "name": "odoo19-owl-components",
-      "path": "skills/odoo/odoo19-owl-components/SKILL.md",
+      "id": "skill_odoo18-owl-components",
+      "name": "odoo18-owl-components",
+      "path": "skills/odoo/odoo18-owl-components/SKILL.md",
       "surface": "agent_prompt"
     },
     {
-      "id": "skill_odoo19-performance",
-      "name": "odoo19-performance",
-      "path": "skills/odoo/odoo19-performance/SKILL.md",
+      "id": "skill_odoo18-performance",
+      "name": "odoo18-performance",
+      "path": "skills/odoo/odoo18-performance/SKILL.md",
       "surface": "agent_prompt"
     },
     {
-      "id": "skill_odoo19-qweb",
-      "name": "odoo19-qweb",
-      "path": "skills/odoo/odoo19-qweb/SKILL.md",
+      "id": "skill_odoo18-qweb",
+      "name": "odoo18-qweb",
+      "path": "skills/odoo/odoo18-qweb/SKILL.md",
       "surface": "agent_prompt"
     },
     {
-      "id": "skill_odoo19-reports",
-      "name": "odoo19-reports",
-      "path": "skills/odoo/odoo19-reports/SKILL.md",
+      "id": "skill_odoo18-reports",
+      "name": "odoo18-reports",
+      "path": "skills/odoo/odoo18-reports/SKILL.md",
       "surface": "agent_prompt"
     },
     {
-      "id": "skill_odoo19-security",
-      "name": "odoo19-security",
-      "path": "skills/odoo/odoo19-security/SKILL.md",
+      "id": "skill_odoo18-security",
+      "name": "odoo18-security",
+      "path": "skills/odoo/odoo18-security/SKILL.md",
       "surface": "agent_prompt"
     },
     {
-      "id": "skill_odoo19-testing",
-      "name": "odoo19-testing",
-      "path": "skills/odoo/odoo19-testing/SKILL.md",
+      "id": "skill_odoo18-testing",
+      "name": "odoo18-testing",
+      "path": "skills/odoo/odoo18-testing/SKILL.md",
       "surface": "agent_prompt"
     },
     {
-      "id": "skill_odoo19-upgrade",
-      "name": "odoo19-upgrade",
-      "path": "skills/odoo/odoo19-upgrade/SKILL.md",
+      "id": "skill_odoo18-upgrade",
+      "name": "odoo18-upgrade",
+      "path": "skills/odoo/odoo18-upgrade/SKILL.md",
       "surface": "agent_prompt"
     },
     {
@@ -543,37 +543,37 @@
     {
       "id": "skill_payment_providers",
       "name": "payment_providers",
-      "path": "skills/odoo19/payment_providers/SKILL.md",
+      "path": "skills/odoo18/payment_providers/SKILL.md",
       "surface": "agent_prompt"
     },
     {
       "id": "skill_payroll",
       "name": "payroll",
-      "path": "skills/odoo19/payroll/SKILL.md",
+      "path": "skills/odoo18/payroll/SKILL.md",
       "surface": "agent_prompt"
     },
     {
       "id": "skill_planning",
       "name": "planning",
-      "path": "skills/odoo19/planning/SKILL.md",
+      "path": "skills/odoo18/planning/SKILL.md",
       "surface": "agent_prompt"
     },
     {
       "id": "skill_plm",
       "name": "plm",
-      "path": "skills/odoo19/plm/SKILL.md",
+      "path": "skills/odoo18/plm/SKILL.md",
       "surface": "agent_prompt"
     },
     {
       "id": "skill_point_of_sale",
       "name": "point_of_sale",
-      "path": "skills/odoo19/point_of_sale/SKILL.md",
+      "path": "skills/odoo18/point_of_sale/SKILL.md",
       "surface": "agent_prompt"
     },
     {
       "id": "skill_project",
       "name": "project",
-      "path": "skills/odoo19/project/SKILL.md",
+      "path": "skills/odoo18/project/SKILL.md",
       "surface": "agent_prompt"
     },
     {
@@ -585,13 +585,13 @@
     {
       "id": "skill_purchase",
       "name": "purchase",
-      "path": "skills/odoo19/purchase/SKILL.md",
+      "path": "skills/odoo18/purchase/SKILL.md",
       "surface": "agent_prompt"
     },
     {
       "id": "skill_quality",
       "name": "quality",
-      "path": "skills/odoo19/quality/SKILL.md",
+      "path": "skills/odoo18/quality/SKILL.md",
       "surface": "agent_prompt"
     },
     {
@@ -603,37 +603,37 @@
     {
       "id": "skill_recruitment",
       "name": "recruitment",
-      "path": "skills/odoo19/recruitment/SKILL.md",
+      "path": "skills/odoo18/recruitment/SKILL.md",
       "surface": "agent_prompt"
     },
     {
       "id": "skill_referrals",
       "name": "referrals",
-      "path": "skills/odoo19/referrals/SKILL.md",
+      "path": "skills/odoo18/referrals/SKILL.md",
       "surface": "agent_prompt"
     },
     {
-      "id": "skill_refresh-odoo19-kb",
-      "name": "refresh-odoo19-kb",
-      "path": "agents/skills/refresh-odoo19-kb/SKILL.md",
+      "id": "skill_refresh-odoo18-kb",
+      "name": "refresh-odoo18-kb",
+      "path": "agents/skills/refresh-odoo18-kb/SKILL.md",
       "surface": "agent_prompt"
     },
     {
       "id": "skill_rental",
       "name": "rental",
-      "path": "skills/odoo19/rental/SKILL.md",
+      "path": "skills/odoo18/rental/SKILL.md",
       "surface": "agent_prompt"
     },
     {
       "id": "skill_repairs",
       "name": "repairs",
-      "path": "skills/odoo19/repairs/SKILL.md",
+      "path": "skills/odoo18/repairs/SKILL.md",
       "surface": "agent_prompt"
     },
     {
       "id": "skill_reporting",
       "name": "reporting",
-      "path": "skills/odoo19/reporting/SKILL.md",
+      "path": "skills/odoo18/reporting/SKILL.md",
       "surface": "agent_prompt"
     },
     {
@@ -651,7 +651,7 @@
     {
       "id": "skill_sales",
       "name": "sales",
-      "path": "skills/odoo19/sales/SKILL.md",
+      "path": "skills/odoo18/sales/SKILL.md",
       "surface": "agent_prompt"
     },
     {
@@ -663,49 +663,49 @@
     {
       "id": "skill_search",
       "name": "search",
-      "path": "skills/odoo19/search/SKILL.md",
+      "path": "skills/odoo18/search/SKILL.md",
       "surface": "agent_prompt"
     },
     {
       "id": "skill_sign",
       "name": "sign",
-      "path": "skills/odoo19/sign/SKILL.md",
+      "path": "skills/odoo18/sign/SKILL.md",
       "surface": "agent_prompt"
     },
     {
       "id": "skill_sms_marketing",
       "name": "sms_marketing",
-      "path": "skills/odoo19/sms_marketing/SKILL.md",
+      "path": "skills/odoo18/sms_marketing/SKILL.md",
       "surface": "agent_prompt"
     },
     {
       "id": "skill_social_marketing",
       "name": "social_marketing",
-      "path": "skills/odoo19/social_marketing/SKILL.md",
+      "path": "skills/odoo18/social_marketing/SKILL.md",
       "surface": "agent_prompt"
     },
     {
       "id": "skill_spreadsheet",
       "name": "spreadsheet",
-      "path": "skills/odoo19/spreadsheet/SKILL.md",
+      "path": "skills/odoo18/spreadsheet/SKILL.md",
       "surface": "agent_prompt"
     },
     {
       "id": "skill_stages",
       "name": "stages",
-      "path": "skills/odoo19/stages/SKILL.md",
+      "path": "skills/odoo18/stages/SKILL.md",
       "surface": "agent_prompt"
     },
     {
       "id": "skill_studio",
       "name": "studio",
-      "path": "skills/odoo19/studio/SKILL.md",
+      "path": "skills/odoo18/studio/SKILL.md",
       "surface": "agent_prompt"
     },
     {
       "id": "skill_subscriptions",
       "name": "subscriptions",
-      "path": "skills/odoo19/subscriptions/SKILL.md",
+      "path": "skills/odoo18/subscriptions/SKILL.md",
       "surface": "agent_prompt"
     },
     {
@@ -717,25 +717,25 @@
     {
       "id": "skill_surveys",
       "name": "surveys",
-      "path": "skills/odoo19/surveys/SKILL.md",
+      "path": "skills/odoo18/surveys/SKILL.md",
       "surface": "agent_prompt"
     },
     {
       "id": "skill_time_off",
       "name": "time_off",
-      "path": "skills/odoo19/time_off/SKILL.md",
+      "path": "skills/odoo18/time_off/SKILL.md",
       "surface": "agent_prompt"
     },
     {
       "id": "skill_timesheets",
       "name": "timesheets",
-      "path": "skills/odoo19/timesheets/SKILL.md",
+      "path": "skills/odoo18/timesheets/SKILL.md",
       "surface": "agent_prompt"
     },
     {
       "id": "skill_to_do",
       "name": "to_do",
-      "path": "skills/odoo19/to_do/SKILL.md",
+      "path": "skills/odoo18/to_do/SKILL.md",
       "surface": "agent_prompt"
     },
     {
@@ -747,7 +747,7 @@
     {
       "id": "skill_users",
       "name": "users",
-      "path": "skills/odoo19/users/SKILL.md",
+      "path": "skills/odoo18/users/SKILL.md",
       "surface": "agent_prompt"
     },
     {
@@ -759,7 +759,7 @@
     {
       "id": "skill_voip",
       "name": "voip",
-      "path": "skills/odoo19/voip/SKILL.md",
+      "path": "skills/odoo18/voip/SKILL.md",
       "surface": "agent_prompt"
     },
     {
@@ -771,13 +771,13 @@
     {
       "id": "skill_website",
       "name": "website",
-      "path": "skills/odoo19/website/SKILL.md",
+      "path": "skills/odoo18/website/SKILL.md",
       "surface": "agent_prompt"
     },
     {
       "id": "skill_whatsapp",
       "name": "whatsapp",
-      "path": "skills/odoo19/whatsapp/SKILL.md",
+      "path": "skills/odoo18/whatsapp/SKILL.md",
       "surface": "agent_prompt"
     }
   ],
@@ -1137,9 +1137,9 @@
       "surface": "script"
     },
     {
-      "id": "script_bulk_import_tasks_odoo19.py",
-      "name": "bulk_import_tasks_odoo19.py",
-      "path": "scripts/bulk_import_tasks_odoo19.py",
+      "id": "script_bulk_import_tasks_odoo18.py",
+      "name": "bulk_import_tasks_odoo18.py",
+      "path": "scripts/bulk_import_tasks_odoo18.py",
       "surface": "script"
     },
     {
@@ -1899,9 +1899,9 @@
       "surface": "script"
     },
     {
-      "id": "script_deploy_finance_ppm_odoo19.sh",
-      "name": "deploy_finance_ppm_odoo19.sh",
-      "path": "scripts/deploy_finance_ppm_odoo19.sh",
+      "id": "script_deploy_finance_ppm_odoo18.sh",
+      "name": "deploy_finance_ppm_odoo18.sh",
+      "path": "scripts/deploy_finance_ppm_odoo18.sh",
       "surface": "script"
     },
     {
@@ -3627,9 +3627,9 @@
       "surface": "script"
     },
     {
-      "id": "script_refresh_odoo19_kb.py",
-      "name": "refresh_odoo19_kb.py",
-      "path": "scripts/skills/refresh_odoo19_kb.py",
+      "id": "script_refresh_odoo18_kb.py",
+      "name": "refresh_odoo18_kb.py",
+      "path": "scripts/skills/refresh_odoo18_kb.py",
       "surface": "script"
     },
     {
@@ -3903,15 +3903,15 @@
       "surface": "script"
     },
     {
-      "id": "script_seed_finance_ppm_stages_odoo19.py",
-      "name": "seed_finance_ppm_stages_odoo19.py",
-      "path": "scripts/seed_finance_ppm_stages_odoo19.py",
+      "id": "script_seed_finance_ppm_stages_odoo18.py",
+      "name": "seed_finance_ppm_stages_odoo18.py",
+      "path": "scripts/seed_finance_ppm_stages_odoo18.py",
       "surface": "script"
     },
     {
-      "id": "script_seed_logframe_milestones_odoo19.py",
-      "name": "seed_logframe_milestones_odoo19.py",
-      "path": "scripts/seed_logframe_milestones_odoo19.py",
+      "id": "script_seed_logframe_milestones_odoo18.py",
+      "name": "seed_logframe_milestones_odoo18.py",
+      "path": "scripts/seed_logframe_milestones_odoo18.py",
       "surface": "script"
     },
     {
@@ -4449,9 +4449,9 @@
       "surface": "script"
     },
     {
-      "id": "script_test_finance_ppm_odoo19.sh",
-      "name": "test_finance_ppm_odoo19.sh",
-      "path": "scripts/test_finance_ppm_odoo19.sh",
+      "id": "script_test_finance_ppm_odoo18.sh",
+      "name": "test_finance_ppm_odoo18.sh",
+      "path": "scripts/test_finance_ppm_odoo18.sh",
       "surface": "script"
     },
     {
@@ -4731,9 +4731,9 @@
       "surface": "script"
     },
     {
-      "id": "script_validate_odoo19_spec.sh",
-      "name": "validate_odoo19_spec.sh",
-      "path": "scripts/validate_odoo19_spec.sh",
+      "id": "script_validate_odoo18_spec.sh",
+      "name": "validate_odoo18_spec.sh",
+      "path": "scripts/validate_odoo18_spec.sh",
       "surface": "script"
     },
     {

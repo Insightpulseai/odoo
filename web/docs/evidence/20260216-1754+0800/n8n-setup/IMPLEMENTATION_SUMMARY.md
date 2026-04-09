@@ -182,7 +182,7 @@ ssh root@178.128.112.214 "ls -la /opt/ipai/ | grep odoo"
 - `sandbox/dev/scripts/finish-n8n-setup.sh` (path updates)
 - `sandbox/dev/scripts/dev/sync-env.sh` (repo reference)
 - `sandbox/dev/scripts/dev/check-sync.sh` (4 references)
-- `sandbox/dev/upgrade-to-odoo19.sh` (path update)
+- `sandbox/dev/upgrade-to-odoo18.sh` (path update)
 
 **Repository Rename Impact**:
 - Droplet infrastructure path updated

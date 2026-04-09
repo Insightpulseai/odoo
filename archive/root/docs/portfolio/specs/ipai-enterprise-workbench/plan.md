@@ -62,16 +62,16 @@
 - `design/tokens/tokens.json` SSOT
 - adapter docs and verification screenshots/visual tests (where feasible)
 
-### Phase F — Odoo 19 Readiness (M6)
+### Phase F — Odoo 18 Readiness (M6)
 **Deliverables**
-- Odoo 19 CE compatibility matrix (modules, patches, constraints)
+- Odoo 18 CE compatibility matrix (modules, patches, constraints)
 - Upgrade playbook and gating tests
 - "EE replacement" mapping refreshed for 19
 
 **Key outputs**
-- `docs/odoo19/compatibility_matrix.md`
-- `scripts/upgrade_check_odoo19.sh`
-- CI workflow to validate install on Odoo 19 branch
+- `docs/odoo18/compatibility_matrix.md`
+- `scripts/upgrade_check_odoo18.sh`
+- CI workflow to validate install on Odoo 18 branch
 
 ## 2) Architecture Decisions (Hard Requirements)
 - Odoo DB remains primary transactional source.

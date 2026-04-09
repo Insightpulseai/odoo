@@ -9,7 +9,7 @@
 
 ### WS1: OCA Agency Baseline (no dependencies)
 
-Verify and install core + OCA modules for agency operations on Odoo 19.0.
+Verify and install core + OCA modules for agency operations on Odoo 18.0.
 
 | Step | Module | Action |
 |---|---|---|
@@ -74,7 +74,7 @@ Define and implement Pulser tools for agency-specific workflows.
 |---|---|
 | 5.1 | Dry-run `oca-port origin/18.0 origin/19.0 ipai_marketing_agency_pack` |
 | 5.2 | Apply `odoo-bin upgrade_code` (tree→list migration, field renames) |
-| 5.3 | Fix Odoo 19 breaking changes (`groups_id` → `group_ids`, Command tuples) |
+| 5.3 | Fix Odoo 18 breaking changes (`groups_id` → `group_ids`, Command tuples) |
 | 5.4 | Test install on `test_ipai_marketing_agency_pack` |
 | 5.5 | Classify test results per testing policy |
 | 5.6 | Register in `config/addons.manifest.yaml` |

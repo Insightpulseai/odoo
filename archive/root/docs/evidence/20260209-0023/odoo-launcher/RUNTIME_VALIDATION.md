@@ -73,16 +73,16 @@ ENV=prod ./scripts/ci/smoke_odoo_container.sh
 
 **Shell Alias**: Added to `~/.zshrc`
 ```bash
-alias odoo19='./scripts/odoo.sh'
+alias odoo18='./scripts/odoo.sh'
 ```
 
 **Prevents Muscle Memory Regressions**:
 - Before: `python odoo-bin -d ...` (breaks with SyntaxError)
-- After: `odoo19 -d ...` (always uses launcher)
+- After: `odoo18 -d ...` (always uses launcher)
 
 **Auto-Navigation**: Can add `cd` to alias if desired:
 ```bash
-alias odoo19='cd /path/to/odoo && ./scripts/odoo.sh'
+alias odoo18='cd /path/to/odoo && ./scripts/odoo.sh'
 ```
 
 ### Security Alert Automation

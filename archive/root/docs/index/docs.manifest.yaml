@@ -5,7 +5,7 @@ schema_version: "1.0.0"
 
 versions:
   - id: "v1.0"
-    label: "Platform v1 (Odoo 19)"
+    label: "Platform v1 (Odoo 18)"
     is_latest: true
     runtime_snapshot_path: "docs/architecture/PROD_RUNTIME_SNAPSHOT.md"
 

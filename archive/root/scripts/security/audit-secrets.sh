@@ -23,7 +23,7 @@ echo -e "\n${BLUE}=== 1. Finding .env files ===${NC}"
 find "$REPO_ROOT" -type f \( -name ".env" -o -name ".env.*" \) \
   ! -path "*/node_modules/*" \
   ! -path "*/.git/*" \
-  ! -path "*/odoo19/*" \
+  ! -path "*/odoo18/*" \
   ! -name "*.example" \
   ! -name "*.template" \
   > "$AUDIT_DIR/env-files.txt"
@@ -53,7 +53,7 @@ for pattern in "${SECRET_PATTERNS[@]}"; do
   grep -rE "$pattern" "$REPO_ROOT" \
     --exclude-dir=node_modules \
     --exclude-dir=.git \
-    --exclude-dir=odoo19 \
+    --exclude-dir=odoo18 \
     --exclude-dir=.next \
     --exclude="*.log" \
     --exclude="pnpm-lock.yaml" \

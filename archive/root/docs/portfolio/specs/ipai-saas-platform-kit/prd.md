@@ -553,7 +553,7 @@ The platform aims to provide an Odoo.sh-like experience, incorporating CI/CD, en
 - **Incremental Backups**: Daily backups across multiple data centers with instant recovery.
 - **Performance Optimization**: Tuned PostgreSQL and Odoo runtimes.
 - **High Availability**: Guaranteed uptime and monitoring KPIs.
-- **Odoo 19 Ready**: Architecture aligned with Odoo 19.0 developer standards (Python 3.12+, modern OWL patterns).
+- **Odoo 18 Ready**: Architecture aligned with Odoo 18.0 developer standards (Python 3.12+, modern OWL patterns).
 
 ### Scope
 
