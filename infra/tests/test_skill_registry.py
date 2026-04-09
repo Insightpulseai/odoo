@@ -94,9 +94,9 @@ def test_refresh_kb_skill_registered():
     skills = data.get("skills", [])
     by_id = {s["id"]: s for s in skills}
 
-    assert "refresh-odoo19-kb" in by_id, "refresh-odoo19-kb skill not found in registry"
+    assert "refresh-odoo18-kb" in by_id, "refresh-odoo18-kb skill not found in registry"
 
-    skill = by_id["refresh-odoo19-kb"]
+    skill = by_id["refresh-odoo18-kb"]
     guardrails = skill.get("guardrails", {})
 
     assert guardrails.get("integrity_checks_required") is True
@@ -142,7 +142,7 @@ def test_validate_module_skill_registered():
     skill = by_id["validate-odoo-module-against-kb"]
 
     assert skill["type"] == "procedural"
-    assert skill["kb"]["namespace"] == "docs/kb/odoo19"
+    assert skill["kb"]["namespace"] == "docs/kb/odoo18"
     assert skill["guardrails"]["forbid_enterprise_modules"] is True
 
 

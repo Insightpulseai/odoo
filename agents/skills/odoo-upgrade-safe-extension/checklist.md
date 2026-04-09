@@ -12,7 +12,7 @@
 - [ ] No direct `env.context` mutation (uses `with_context()` instead)
 - [ ] No f-string or `.format()` translations (uses lazy `_()` with positional args)
 - [ ] x2many writes use `Command` tuples (not raw tuples)
-- [ ] Odoo 19 `group_ids` used (not deprecated `groups_id`)
+- [ ] Odoo 18 `group_ids` used (not deprecated `groups_id`)
 - [ ] `list` used in user-facing view references (not `tree`)
 - [ ] Module installs cleanly on disposable test DB after changes
 - [ ] Evidence captured in `docs/evidence/{stamp}/odoo-dev/odoo-upgrade-safe-extension/`

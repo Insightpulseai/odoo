@@ -3,7 +3,7 @@ repo: odoo
 generated_from: manual_policy
 policy:
   doctrine:
-    - "Odoo 19 CE is the canonical runtime baseline."
+    - "Odoo 18 CE is the canonical runtime baseline."
     - "OCA-first for EE-parity and business capability."
     - "ipai_* is reserved for integration bridges, approved meta-bundles, and bounded vertical/feature packaging."
     - "Only canonical packages define the default install surface."

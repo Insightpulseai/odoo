@@ -24,7 +24,7 @@ core_rules:
   - rule: Devcontainer is the runtime/tooling contract
     scope: devcontainer.json
     constraints:
-      python: ">=3.10"  # Odoo 19; repo standard 3.11
+      python: ">=3.10"  # Odoo 18; repo standard 3.11
       postgresql: ">=13"
     enforced_by: devcontainer build + CI parity
 
@@ -45,7 +45,7 @@ settings_hierarchy:
 
   - location: odoo/.vscode/settings.json
     owns: Python interpreter (devcontainer), Odoo lint paths, debug defaults
-    why: Odoo 19 constraints are stricter than general repo
+    why: Odoo 18 constraints are stricter than general repo
 
   - location: Nested frontend .vscode/
     owns: TypeScript/Node version, formatter/linter
@@ -100,7 +100,7 @@ target_capabilities:
 
 python_standard:
   version: "3.11"
-  runtime: pyenv odoo-19-dev virtualenv
+  runtime: pyenv odoo-18-dev virtualenv
   note: >
-    Odoo 19 requires >=3.10. Repo standardizes on 3.11 for
+    Odoo 18 requires >=3.10. Repo standardizes on 3.11 for
     stability. Devcontainer image must match.

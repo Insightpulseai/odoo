@@ -17,7 +17,7 @@ Before adopting an OCA module, verify:
 
 | Criterion | Check |
 |-----------|-------|
-| Odoo 19 compatible | Branch `19.0` exists and CI passes |
+| Odoo 18 compatible | Branch `19.0` exists and CI passes |
 | Active maintenance | Commits in the last 6 months |
 | Test coverage | Module has unit tests |
 | Dependencies | No dependency on EE or unavailable modules |

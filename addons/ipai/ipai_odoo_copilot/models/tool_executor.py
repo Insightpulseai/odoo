@@ -523,9 +523,9 @@ class CopilotToolExecutor(models.Model):
             }
 
     def _execute_search_odoo_docs(self, arguments, context_envelope):
-        """Search Odoo 19 documentation knowledge base.
+        """Search Odoo 18 documentation knowledge base.
 
-        Index: odoo19-docs (RST-chunked Odoo CE documentation).
+        Index: odoo18-docs (RST-chunked Odoo CE documentation).
         """
         query = arguments.get("query", "")
         module = arguments.get("module", "")
@@ -539,7 +539,7 @@ class CopilotToolExecutor(models.Model):
             filter_expr = "module eq '%s'" % _sanitize_odata_value(module)
 
         return self._search_kb_index(
-            query, "odoo19-docs", limit, filter_expr
+            query, "odoo18-docs", limit, filter_expr
         )
 
     def _execute_search_azure_docs(self, arguments, context_envelope):

@@ -24,7 +24,7 @@ It uses the Microsoft SAP on Azure planning guide as the benchmark for planning 
 
 This guide does **not** copy SAP workload implementation. It adapts the planning discipline to:
 
-- Odoo 19
+- Odoo 18
 - Azure Container Apps
 - Azure Database for PostgreSQL Flexible Server
 - Microsoft Entra
@@ -159,7 +159,7 @@ Foundry and Document Intelligence are deployed into the relevant workload landin
 
 ### 7.1 Odoo workload
 
-- Odoo 19 web/runtime on Azure Container Apps
+- Odoo 18 web/runtime on Azure Container Apps
 - PostgreSQL Flexible Server as the primary database
 - Redis for runtime coordination/caching where required
 - Front Door as ingress

@@ -235,7 +235,7 @@ moves:
     phase: 3
     status: deferred
     notes: >
-      Root Dockerfile header says 'Odoo 18 CE' but repo is Odoo 19.
+      Root Dockerfile header says 'Odoo 18 CE' but repo is Odoo 18.
       CI workflows insightpulse-cicd.yml triggers on 'Dockerfile*' at root.
       Must audit all CI refs before moving. Deferred until CI audit complete.
 

@@ -6,7 +6,7 @@
 
 **Output**:
 - Issue: Sequence generation for account.move resets incorrectly at fiscal year boundary
-- Upstream status: Fixed in Odoo 19.0 (commit abc123), not backported to 18.0
+- Upstream status: Fixed in Odoo 18.0 (commit abc123), not backported to 18.0
 - OCB status: Backported in OCB 18.0 branch (commit def456)
 - Change scope: generic (affects all Odoo users)
 - Recommendation: Apply OCB backport

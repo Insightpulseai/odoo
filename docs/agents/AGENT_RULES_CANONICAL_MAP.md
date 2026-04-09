@@ -16,7 +16,7 @@ Repo-owned (committed, reviewable, CI-gatable)
 └── this file                            ← canonical map
 
 Local projections (per-developer, not committed)
-├── ~/.claude/rules/odoo19-coding.md     ← Odoo 19 coding conventions
+├── ~/.claude/rules/odoo18-coding.md     ← Odoo 18 coding conventions
 └── ~/.claude/rules/oca-governance.md    ← OCA module governance rules
 ```
 
@@ -60,11 +60,11 @@ Cloud DevOps skill catalog — monitoring, deployment, backup, scaling patterns.
 
 ## Local Projections
 
-### `~/.claude/rules/odoo19-coding.md`
+### `~/.claude/rules/odoo18-coding.md`
 
-**Source**: Distilled from upstream Odoo 19 coding guidelines + repo conventions.
-**Content**: Model class order, naming conventions, ORM rules, translation patterns, Odoo 19 breaking changes.
-**Sync expectation**: Manual. Regenerate from upstream docs if Odoo 19 guidelines change.
+**Source**: Distilled from upstream Odoo 18 coding guidelines + repo conventions.
+**Content**: Model class order, naming conventions, ORM rules, translation patterns, Odoo 18 breaking changes.
+**Sync expectation**: Manual. Regenerate from upstream docs if Odoo 18 guidelines change.
 **Not committed** because it applies to all Odoo projects, not just this repo.
 
 ### `~/.claude/rules/oca-governance.md`
@@ -83,7 +83,7 @@ Cloud DevOps skill catalog — monitoring, deployment, backup, scaling patterns.
 | SKILL.md files | Repo | `docs/kb/agent-skills/` | CI-gatable |
 | Addons manifest | Repo | `config/addons.manifest.yaml` | CI-validated |
 | DevOps skills | Repo | `docs/agents/` | Manual review |
-| Coding rules | Local | `~/.claude/rules/odoo19-coding.md` | Manual, upstream-derived |
+| Coding rules | Local | `~/.claude/rules/odoo18-coding.md` | Manual, upstream-derived |
 | OCA governance | Local | `~/.claude/rules/oca-governance.md` | Manual, manifest-derived |
 
 If a local rule contradicts the repo, the repo wins. Period.
