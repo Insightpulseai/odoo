@@ -1,0 +1,23 @@
+diff --git a/.agents/plugins/marketplace.json b/.agents/plugins/marketplace.json
+index 4f13813f1..248b2b42c 100644
+--- a/.agents/plugins/marketplace.json
++++ b/.agents/plugins/marketplace.json
+@@ -15,6 +15,18 @@
+         "authentication": "ON_INSTALL"
+       },
+       "category": "Productivity"
++    },
++    {
++      "name": "chrome-devtools-mcp",
++      "source": {
++        "source": "local",
++        "path": "./plugins/chrome-devtools-mcp"
++      },
++      "policy": {
++        "installation": "AVAILABLE",
++        "authentication": "ON_INSTALL"
++      },
++      "category": "Productivity"
+     }
+   ]
+ }
