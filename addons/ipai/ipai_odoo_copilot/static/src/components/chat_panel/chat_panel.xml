@@ -19,8 +19,30 @@
             </t>
         </div>
 
+        <!-- Attached file indicator -->
+        <t t-if="state.attachedFile">
+            <div class="o_ipai_chat_attachment d-flex align-items-center gap-1 px-2 py-1 bg-light border-top small">
+                <i class="fa fa-paperclip"/>
+                <span class="text-truncate" style="max-width: 200px;" t-esc="state.attachedFile.name"/>
+                <button class="btn btn-link btn-sm p-0 ms-auto" t-on-click="onRemoveAttachment">
+                    <i class="fa fa-times text-danger"/>
+                </button>
+            </div>
+        </t>
+
         <!-- Input area -->
         <div class="o_ipai_chat_input_area">
+            <input type="file" class="d-none" t-ref="fileInput"
+                   t-on-change="onFileSelected"
+                   accept=".txt,.csv,.md,.html,.xml,.json,.pdf,.png,.jpg,.jpeg,.webp,.xlsx,.docx"/>
+            <button
+                class="o_ipai_chat_upload btn btn-light btn-sm"
+                t-on-click="onClickUpload"
+                t-att-disabled="state.isLoading"
+                title="Upload file"
+            >
+                <i class="fa fa-paperclip"/>
+            </button>
             <textarea
                 class="o_ipai_chat_input"
                 t-att-value="state.inputValue"
