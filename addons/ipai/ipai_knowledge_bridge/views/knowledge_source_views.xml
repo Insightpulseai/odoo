@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <record id="view_knowledge_source_tree" model="ir.ui.view">
+        <field name="name">ipai.knowledge.source.tree</field>
+        <field name="model">ipai.knowledge.source</field>
+        <field name="arch" type="xml">
+            <tree decoration-muted="state == 'retired'"
+                  decoration-success="state == 'active'"
+                  decoration-warning="state == 'paused'">
+                <field name="name"/>
+                <field name="code"/>
+                <field name="source_type"/>
+                <field name="azure_index_name"/>
+                <field name="consumer_tag"/>
+                <field name="state" widget="badge"
+                       decoration-success="state == 'active'"
+                       decoration-warning="state == 'paused'"
+                       decoration-danger="state == 'retired'"/>
+                <field name="index_health" widget="badge"
+                       decoration-success="index_health == 'healthy'"
+                       decoration-warning="index_health == 'degraded'"
+                       decoration-danger="index_health == 'error'"/>
+                <field name="doc_count_estimate"/>
+                <field name="query_count"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_knowledge_source_form" model="ir.ui.view">
+        <field name="name">ipai.knowledge.source.form</field>
+        <field name="model">ipai.knowledge.source</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_activate" type="object"
+                            string="Activate" class="btn-success"
+                            invisible="state != 'draft'"/>
+                    <button name="action_pause" type="object"
+                            string="Pause" class="btn-warning"
+                            invisible="state != 'active'"/>
+                    <button name="action_activate" type="object"
+                            string="Reactivate" class="btn-success"
+                            invisible="state != 'paused'"/>
+                    <button name="action_retire" type="object"
+                            string="Retire" class="btn-danger"
+                            invisible="state in ('draft', 'retired')"/>
+                    <button name="action_check_index_health" type="object"
+                            string="Check Index Health"
+                            invisible="state == 'retired'"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="draft,active"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_query_logs" type="object"
+                                class="oe_stat_button" icon="fa-search">
+                            <field name="query_count" widget="statinfo"
+                                   string="Queries"/>
+                        </button>
+                    </div>
+                    <div class="oe_title">
+                        <h1><field name="name" placeholder="Source name"/></h1>
+                    </div>
+                    <group>
+                        <group string="Identity">
+                            <field name="code"/>
+                            <field name="source_type"/>
+                            <field name="consumer_tag"/>
+                            <field name="owner_id"/>
+                            <field name="company_id"
+                                   groups="base.group_multi_company"/>
+                        </group>
+                        <group string="Azure AI Search">
+                            <field name="azure_index_name"/>
+                            <field name="azure_semantic_config"/>
+                            <field name="index_health"/>
+                            <field name="doc_count_estimate"/>
+                            <field name="last_indexed_at"/>
+                        </group>
+                    </group>
+                    <group string="Confidence Policy">
+                        <field name="confidence_threshold"/>
+                        <field name="abstain_below_threshold"/>
+                        <field name="max_results"/>
+                    </group>
+                    <field name="description" placeholder="Description..."/>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_ids"/>
+                    <field name="activity_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_knowledge_source_search" model="ir.ui.view">
+        <field name="name">ipai.knowledge.source.search</field>
+        <field name="model">ipai.knowledge.source</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="code"/>
+                <field name="consumer_tag"/>
+                <filter name="active" string="Active"
+                        domain="[('state', '=', 'active')]"/>
+                <filter name="draft" string="Draft"
+                        domain="[('state', '=', 'draft')]"/>
+                <group expand="0" string="Group By">
+                    <filter name="group_type" string="Source Type"
+                            context="{'group_by': 'source_type'}"/>
+                    <filter name="group_state" string="State"
+                            context="{'group_by': 'state'}"/>
+                    <filter name="group_consumer" string="Consumer"
+                            context="{'group_by': 'consumer_tag'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_knowledge_source" model="ir.actions.act_window">
+        <field name="name">Knowledge Sources</field>
+        <field name="res_model">ipai.knowledge.source</field>
+        <field name="view_mode">tree,form</field>
+        <field name="search_view_id" ref="view_knowledge_source_search"/>
+        <field name="context">{'search_default_active': 1}</field>
+    </record>
+
+</odoo>

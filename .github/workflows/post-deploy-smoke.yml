@@ -1,0 +1,59 @@
+name: Post-Deploy Smoke Test
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Target environment'
+        required: true
+        default: 'dev'
+        type: choice
+        options:
+          - dev
+          - staging
+
+permissions:
+  contents: read
+
+jobs:
+  smoke-test:
+    name: Smoke test (${{ inputs.environment }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      ODOO_URL_DEV: https://ipai-odoo-dev-web.blackstone-0df78186.southeastasia.azurecontainerapps.io
+      ODOO_URL_STAGING: https://erp.insightpulseai.com
+    steps:
+      - name: Set target URL
+        id: target
+        run: |
+          if [ "${{ inputs.environment }}" = "staging" ]; then
+            echo "url=$ODOO_URL_STAGING" >> "$GITHUB_OUTPUT"
+          else
+            echo "url=$ODOO_URL_DEV" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Check /web/health
+        run: |
+          STATUS=$(curl -sk -o /dev/null -w "%{http_code}" --max-time 30 "${{ steps.target.outputs.url }}/web/health")
+          echo "Health check: HTTP $STATUS"
+          [ "$STATUS" -eq 200 ] || exit 1
+
+      - name: Check /web/login
+        run: |
+          STATUS=$(curl -sk -o /dev/null -w "%{http_code}" --max-time 30 "${{ steps.target.outputs.url }}/web/login")
+          echo "Login page: HTTP $STATUS"
+          [ "$STATUS" -eq 200 ] || exit 1
+
+      - name: Check response contains Odoo
+        run: |
+          BODY=$(curl -sk --max-time 30 "${{ steps.target.outputs.url }}/web/login")
+          echo "$BODY" | grep -qi "odoo" || { echo "FAIL: Response does not contain 'odoo'"; exit 1; }
+          echo "PASS: Response contains Odoo content"
+
+      - name: Check TLS certificate validity
+        if: inputs.environment == 'staging'
+        run: |
+          echo | openssl s_client -servername erp.insightpulseai.com -connect erp.insightpulseai.com:443 2>/dev/null | \
+            openssl x509 -noout -dates
+          echo "PASS: TLS certificate retrieved"

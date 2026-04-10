@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <record id="view_knowledge_query_log_tree" model="ir.ui.view">
+        <field name="name">ipai.knowledge.query.log.tree</field>
+        <field name="model">ipai.knowledge.query.log</field>
+        <field name="arch" type="xml">
+            <tree create="0" edit="0"
+                  decoration-danger="was_abstained"
+                  decoration-muted="error_message">
+                <field name="create_date"/>
+                <field name="source_id"/>
+                <field name="query_text" widget="char"/>
+                <field name="top_confidence" widget="progressbar"/>
+                <field name="was_abstained" widget="boolean"/>
+                <field name="caller_surface"/>
+                <field name="latency_ms"/>
+                <field name="citation_count"/>
+                <field name="error_message"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_knowledge_query_log_form" model="ir.ui.view">
+        <field name="name">ipai.knowledge.query.log.form</field>
+        <field name="model">ipai.knowledge.query.log</field>
+        <field name="arch" type="xml">
+            <form create="0" edit="0">
+                <sheet>
+                    <group>
+                        <group string="Query">
+                            <field name="source_id"/>
+                            <field name="query_text"/>
+                            <field name="caller_surface"/>
+                            <field name="caller_uid"/>
+                            <field name="create_date"/>
+                        </group>
+                        <group string="Result">
+                            <field name="top_confidence"/>
+                            <field name="answer_confidence"/>
+                            <field name="was_abstained"/>
+                            <field name="model_used"/>
+                            <field name="latency_ms"/>
+                            <field name="error_message"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Answer">
+                            <field name="answer_text"/>
+                        </page>
+                        <page string="Citations">
+                            <field name="citation_ids">
+                                <tree>
+                                    <field name="rank"/>
+                                    <field name="document_title"/>
+                                    <field name="section_heading"/>
+                                    <field name="score"/>
+                                    <field name="document_url" widget="url"/>
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="Raw JSON">
+                            <field name="citations_json"/>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_knowledge_query_log" model="ir.actions.act_window">
+        <field name="name">Query Logs</field>
+        <field name="res_model">ipai.knowledge.query.log</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+</odoo>

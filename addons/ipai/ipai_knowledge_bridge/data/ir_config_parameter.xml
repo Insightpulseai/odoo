@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo noupdate="1">
+
+    <record id="param_search_endpoint" model="ir.config_parameter">
+        <field name="key">ipai_knowledge.azure_search_endpoint</field>
+        <field name="value"></field>
+    </record>
+
+    <record id="param_openai_endpoint" model="ir.config_parameter">
+        <field name="key">ipai_knowledge.azure_openai_endpoint</field>
+        <field name="value"></field>
+    </record>
+
+    <record id="param_openai_deployment" model="ir.config_parameter">
+        <field name="key">ipai_knowledge.azure_openai_deployment</field>
+        <field name="value"></field>
+    </record>
+
+    <record id="param_default_confidence" model="ir.config_parameter">
+        <field name="key">ipai_knowledge.default_confidence_threshold</field>
+        <field name="value">0.70</field>
+    </record>
+
+</odoo>
