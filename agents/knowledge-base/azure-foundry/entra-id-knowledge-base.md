@@ -109,7 +109,7 @@ Microsoft Entra ID (Core)
 
 | Platform Service | Auth Method | Entra Feature | Protocol | Provisioning | Priority |
 |-----------------|-------------|---------------|----------|-------------|----------|
-| **Odoo CE 19** (erp.) | SAML SSO or OIDC | Enterprise App (non-gallery) | SAML 2.0 or OIDC | Manual (no SCIM) | **P0** |
+| **Odoo CE 18** (erp.) | SAML SSO or OIDC | Enterprise App (non-gallery) | SAML 2.0 or OIDC | Manual (no SCIM) | **P0** |
 | **Azure Container Apps** (all) | Built-in auth + Managed Identity | Built-in auth provider + MI | OIDC | N/A (infra) | **P0** |
 | **Azure Database for PostgreSQL** | Managed Identity | Entra Authentication for PG | Token-based (JWT) | Role mapping | **P0** |
 | **Azure Key Vault** | Managed Identity | RBAC / Access Policy | Token-based | N/A | **P0** |
@@ -124,7 +124,7 @@ Microsoft Entra ID (Core)
 | **GitHub Actions** | Workload Identity Federation | Federated credential on App Reg | OIDC | N/A | **P1** |
 | **Azure AI Services** (OpenAI, Doc Intel) | Managed Identity | MI RBAC | Token-based | N/A | **P1** |
 
-### 2.2 Odoo CE 19 Integration Details
+### 2.2 Odoo CE 18 Integration Details
 
 Odoo does not appear in the Entra gallery. Integration requires a **non-gallery SAML or OIDC application**.
 

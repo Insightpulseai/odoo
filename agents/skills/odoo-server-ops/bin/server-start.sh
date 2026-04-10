@@ -21,7 +21,7 @@ ODOO_BIN="${ODOO_BIN:-vendor/odoo/odoo-bin}"
 PYTHON="${PYTHON:-$HOME/.pyenv/versions/odoo-18-dev/bin/python}"
 ADDONS_PATH="${ADDONS_PATH:-vendor/odoo/addons,addons/ipai}"
 
-echo "Starting Odoo CE 19 on port ${PORT} with database ${DB}"
+echo "Starting Odoo CE 18 on port ${PORT} with database ${DB}"
 exec "${PYTHON}" "${ODOO_BIN}" \
   --database="${DB}" \
   --db_host=localhost --db_port=5432 --db_user=tbwa --db_password=False \

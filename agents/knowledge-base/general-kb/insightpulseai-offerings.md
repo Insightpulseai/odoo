@@ -23,7 +23,7 @@ InsightPulse AI provides AI-augmented business management solutions built on ope
 
 **The core ERP platform.**
 
-Odoo on Cloud is a fully managed deployment of Odoo CE 19.0 enhanced with 56+ OCA modules and custom InsightPulse AI extensions. It runs on Azure Container Apps with enterprise-grade infrastructure.
+Odoo on Cloud is a fully managed deployment of Odoo CE 18.0 enhanced with 56+ OCA modules and custom InsightPulse AI extensions. It runs on Azure Container Apps with enterprise-grade infrastructure.
 
 **What's Included:**
 

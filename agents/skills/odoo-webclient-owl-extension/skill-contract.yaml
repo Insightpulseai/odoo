@@ -8,7 +8,7 @@ skill:
   build_order: 8
   lane: frontend
   purpose: >
-    Extend the Odoo CE 19 web client using OWL components, JS/TS frontend
+    Extend the Odoo CE 18 web client using OWL components, JS/TS frontend
     customizations, and SCSS styling. Follows Odoo 18 OWL patterns including
     component patching, service registration, and systray extensions.
 

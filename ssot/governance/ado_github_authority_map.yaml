@@ -16,7 +16,7 @@ ado_github_authority_map:
   repos:
     - name: odoo
       area_path: "ipai-platform\\ERP"
-      purpose: "Odoo CE 19 + IPAI addons + OCA"
+      purpose: "Odoo CE 18 + IPAI addons + OCA"
     - name: agents
       area_path: "ipai-platform\\Agents"
       purpose: "Agent skills, evals, knowledge base"

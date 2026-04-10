@@ -5,7 +5,7 @@ doc_twin: docs/architecture/azure/REPO_AZURE_ALIGNMENT.md
 
 repos:
   - name: odoo
-    purpose: "Odoo CE 19 ERP: modules, config, deployment"
+    purpose: "Odoo CE 18 ERP: modules, config, deployment"
     azure_resources:
       - rg: rg-ipai-dev
         resources:

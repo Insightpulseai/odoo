@@ -9,7 +9,7 @@ last_updated: "2026-03-15"
 
 ## Overview
 
-Withholding tax is a mechanism where the payer deducts tax from payments made to vendors, contractors, employees, and other payees, and remits the withheld amount to the BIR. This guide covers the three types of withholding tax in the Philippine tax system and their implementation in Odoo CE 19.0.
+Withholding tax is a mechanism where the payer deducts tax from payments made to vendors, contractors, employees, and other payees, and remits the withheld amount to the BIR. This guide covers the three types of withholding tax in the Philippine tax system and their implementation in Odoo CE 18.0.
 
 **Legal Basis**: NIRC Sections 57-58, as amended by TRAIN Law (RA 10963) and Revenue Regulations No. 11-2018.
 

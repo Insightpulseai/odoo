@@ -10,7 +10,7 @@ odoo-cli-operator
 
 ## Preconditions
 
-- Odoo CE 19.0 installed
+- Odoo CE 18.0 installed
 - Target database exists and is initialized
 - PostgreSQL accessible
 - Note: Shell is interactive by nature but can be scripted via stdin piping

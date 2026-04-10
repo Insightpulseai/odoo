@@ -10,7 +10,7 @@ odoo-cli-operator
 
 ## Preconditions
 
-- Odoo CE 19.0 installed
+- Odoo CE 18.0 installed
 - Target addons directory exists (addons/ipai/)
 - Module naming follows ipai_<domain>_<feature> convention
 

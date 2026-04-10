@@ -888,7 +888,7 @@ class CopilotToolExecutor(models.Model):
           - Returns structured results with URLs for citation
         """
         query = arguments.get("query", "")
-        version = arguments.get("version", "19.0")
+        version = arguments.get("version", "18.0")
         max_results = max(1, min(int(arguments.get("max_results", 5)), 10))
 
         if not query:
