@@ -1,0 +1,202 @@
+schema_version: "1.0"
+namespace: ai.foundry_normalization
+last_reviewed: "2026-04-10"
+description: >
+  Normalization plan to migrate ipai-copilot Foundry project from classic
+  prompt-agent setup to new Foundry-native tool/knowledge/workflow model.
+  Status assessed from Azure portal screenshots on 2026-04-10.
+
+# ---------------------------------------------------------------------------
+# Current state (as of 2026-04-10)
+# ---------------------------------------------------------------------------
+
+current_state:
+  project: ipai-copilot
+  resource: ipai-copilot-resource
+  region: eastus2
+  posture: internal_alpha
+
+  agents:
+    count: 5
+    type: prompt  # classic, not new-Foundry-native
+    status: running
+    success_rate: "100.00%"
+    migration_banner: true  # "classic agents not supported in new experience"
+    inventory:
+      - name: ipai-copilot
+        role: top_level_shell
+        description_stale: false  # corrected to CE 18 in PR #708
+      - name: ask-agent
+        role: read_query_qa
+        write_access: none
+      - name: authoring-agent
+        role: drafting_summarization
+        write_access: draft_only
+      - name: livechat-agent
+        role: conversational_front_door
+        write_access: none
+      - name: transaction-agent
+        role: erp_mutation
+        write_access: draft_then_approve
+
+  model_deployments:
+    - name: gpt-4.1
+      status: healthy
+    - name: text-embedding-3-small
+      status: healthy
+    - name: wg-pulser
+      backing_model: gpt-4o-mini
+      status: healthy
+
+  guardrails:
+    - Microsoft.Default
+    - Microsoft.DefaultV2
+    applied_to:
+      - gpt-4.1
+      - text-embedding-3-small
+      - wg-pulser
+
+  evaluations:
+    completed: 1
+    name: ipai-copilot-safety-quality-v1
+    available_evaluators:
+      - relevance
+      - groundedness
+      - fluency
+      - coherence
+      - document_retrieval
+      - tool_call_success
+      - tool_selection
+      - task_completion
+      - task_adherence
+      - response_completeness
+      - service_groundedness
+      - safety
+
+  gaps:
+    tools: 0
+    knowledge_indexes: 0
+    foundry_iq: not_wired
+    workflows: 0
+    stored_completions: 0
+    monitoring_features: "0/3"
+
+# ---------------------------------------------------------------------------
+# Normalization plan
+# ---------------------------------------------------------------------------
+
+normalization:
+
+  # Phase 1 — Do now (ship-blocking for internal alpha)
+  phase_1:
+    name: "Ship-ready cleanup"
+    status: in_progress
+    items:
+      - id: N1
+        action: "Correct all stale Odoo 19 references to 18"
+        status: done  # PR #708, 93 files
+        pr: 708
+
+      - id: N2
+        action: "Define canonical role contract for 5 agents"
+        status: done  # already defined in ssot/ai/agents.yaml
+        evidence: "ssot/ai/agents.yaml lines 80-141"
+
+      - id: N3
+        action: "Enable agent monitoring features (0/3 → 3/3)"
+        status: pending
+        owner: platform_admin
+        method: "Azure portal → ipai-copilot → Agents → Monitoring"
+        note: >
+          Cannot be done via repo commit — requires portal action.
+          Enable: traces, metrics, logs.
+
+      - id: N4
+        action: "Expand eval suite from 1 run to release gate"
+        status: pending
+        owner: platform_admin
+        minimum_evaluators:
+          - groundedness
+          - relevance
+          - tool_call_success
+          - tool_selection
+          - task_completion
+          - response_completeness
+          - safety  # at least one safety evaluator set
+        method: >
+          Use eval datasets already in repo (agents/evals/odoo-copilot/datasets/).
+          Create eval runs per agent: ask, authoring, livechat, transaction.
+
+  # Phase 2 — After Phase 1 (not ship-blocking)
+  phase_2:
+    name: "Foundry-native normalization"
+    status: not_started
+    items:
+      - id: N5
+        action: "Migrate classic agents to new Foundry agent model"
+        status: not_started
+        note: >
+          Recreate or save/reload current 5 agents as new-experience agents.
+          This unlocks tool catalog, knowledge grounding, and workflows.
+
+      - id: N6
+        action: "Connect minimum tool set"
+        status: not_started
+        minimum_tools:
+          - type: function_calling
+            name: query_knowledge_base
+            description: "Route to ipai.knowledge.bridge via copilot gateway"
+          - type: function_calling
+            name: propose_action
+            description: "Queue write action for human approval"
+        note: >
+          Only add these two. Do not wire AI Search or File Search unless
+          the current prompt-agent pattern is insufficient.
+
+      - id: N7
+        action: "Keep AI Search disconnected"
+        status: decided
+        rationale: >
+          Azure AI Search grounding is already handled Odoo-side via
+          ipai_knowledge_bridge. Wiring it in Foundry IQ would be
+          redundant for MVP. Revisit if prompt-agent pattern hits limits.
+
+      - id: N8
+        action: "Keep workflows empty"
+        status: decided
+        rationale: >
+          No real orchestration need exists yet. System prompt + agent + tools
+          is sufficient for current scope. Add workflows only when multi-step
+          deterministic chains are needed (e.g., approval routing sequences).
+
+      - id: N9
+        action: "Keep stored completions empty"
+        status: decided
+        rationale: >
+          Not needed for MVP. Only matters for distillation, replay,
+          offline analysis, or synthetic eval generation. Not ship-blocking.
+
+# ---------------------------------------------------------------------------
+# Go/No-Go gates
+# ---------------------------------------------------------------------------
+
+go_nogo:
+  internal_alpha:
+    verdict: GO
+    conditions:
+      - "5 agents running"
+      - "Default guardrails applied"
+      - "At least 1 completed eval"
+      - "Stale 19.0 metadata corrected"
+      - "Odoo-side knowledge bridge wired"
+    missing_non_blocking:
+      - "Monitoring features (N3)"
+      - "Expanded eval suite (N4)"
+
+  production_mature:
+    verdict: NOT_YET
+    blocking:
+      - "Classic agent migration debt (N5)"
+      - "Tool catalog not wired (N6)"
+      - "Monitoring not enabled (N3)"
+      - "Eval suite not formalized as release gate (N4)"
