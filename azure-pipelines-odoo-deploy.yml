@@ -1,0 +1,368 @@
+# =============================================================================
+# azure-pipelines-odoo-deploy.yml — Odoo CE 18 Build + Deploy Pipeline
+# =============================================================================
+# PURPOSE: End-to-end Odoo CI/CD: build Docker image, run module tests,
+#          deploy to dev (auto), staging (gated), production (gated).
+#
+# This is the canonical Odoo deployment pipeline per the authority split:
+#   - Azure DevOps owns Odoo deploy (CLAUDE.md, platform-authority-split.yaml)
+#   - GitHub Actions owns CI lint/validation (azure-pipelines-ci.yml handles parity)
+#
+# Implements Phase 2 of azure-odoosh-equivalent.yaml:
+#   commit → image → test → deploy dev → deploy staging → deploy prod
+#
+# Service connection: ipai-dev-wif (ARM, workload identity federation)
+# ACR: acripaiodoo.azurecr.io
+# Key Vault: kv-ipai-dev
+# PostgreSQL: pg-ipai-odoo.postgres.database.azure.com
+# =============================================================================
+
+trigger:
+  branches:
+    include:
+      - main
+  paths:
+    include:
+      - addons/ipai/**
+      - addons/oca/**
+      - docker/Dockerfile.prod
+      - config/prod/**
+      - scripts/ci/**
+
+pr:
+  branches:
+    include:
+      - main
+  paths:
+    include:
+      - addons/ipai/**
+      - addons/oca/**
+      - docker/Dockerfile.prod
+      - config/prod/**
+
+resources:
+  repositories:
+    - repository: self
+      type: git
+
+# ---------------------------------------------------------------------------
+# Variables
+# ---------------------------------------------------------------------------
+variables:
+  - group: vg-ipai-platform-secrets
+  - name: acrName
+    value: acripaiodoo
+  - name: imageName
+    value: ipai-odoo-web
+  - name: serviceConnection
+    value: ipai-dev-wif
+  - name: keyVaultName
+    value: kv-ipai-dev
+  - name: pgServer
+    value: pg-ipai-odoo
+  - name: pgHost
+    value: pg-ipai-odoo.postgres.database.azure.com
+  - name: pgAdminUser
+    value: odoo_admin
+  - name: devResourceGroup
+    value: rg-ipai-dev-odoo-runtime
+  - name: stagingResourceGroup
+    value: rg-ipai-dev-odoo-runtime
+  - name: prodResourceGroup
+    value: rg-ipai-shared-prod
+  - name: devContainerApp
+    value: ipai-odoo-dev-web
+  - name: stagingContainerApp
+    value: ipai-odoo-staging-web
+  - name: prodContainerApp
+    value: ipai-odoo-prod-web
+  - name: pythonVersion
+    value: '3.11'
+
+stages:
+  # ===========================================================================
+  # Stage 1: Build — Docker image → ACR
+  # ===========================================================================
+  - stage: Build
+    displayName: 'Build Odoo Docker Image'
+    jobs:
+      - template: azure-pipelines/templates/jobs/build-container.yml
+        parameters:
+          imageName: $(imageName)
+          imageTag: '18.0'
+          dockerfile: docker/Dockerfile.prod
+          buildContext: '.'
+          acrName: $(acrName)
+          serviceConnection: $(serviceConnection)
+
+  # ===========================================================================
+  # Stage 2: Test — Odoo module tests against disposable Azure PG database
+  # ===========================================================================
+  - stage: Test
+    displayName: 'Odoo Module Tests'
+    dependsOn: Build
+    jobs:
+      - template: azure-pipelines/templates/jobs/odoo-module-test.yml
+        parameters:
+          installModules: 'ipai_auth_oidc,ipai_document_intelligence,ipai_ops_api'
+          testTags: '/ipai_auth_oidc,/ipai_document_intelligence,/ipai_ops_api'
+          serviceConnection: $(serviceConnection)
+          keyVaultName: $(keyVaultName)
+          pgServer: $(pgServer)
+          pgHost: $(pgHost)
+          pgAdminUser: $(pgAdminUser)
+          pythonVersion: $(pythonVersion)
+
+  # ===========================================================================
+  # Stage 3: Deploy Dev — Automatic on main merge
+  # ===========================================================================
+  - stage: DeployDev
+    displayName: 'Deploy → Dev'
+    dependsOn: Test
+    condition: |
+      and(
+        succeeded('Test'),
+        eq(variables['Build.SourceBranch'], 'refs/heads/main')
+      )
+    jobs:
+      - template: azure-pipelines/templates/jobs/deploy-containerapp.yml
+        parameters:
+          containerAppName: $(devContainerApp)
+          resourceGroup: $(devResourceGroup)
+          imageName: $(imageName)
+          imageTag: '18.0'
+          acrName: $(acrName)
+          serviceConnection: $(serviceConnection)
+
+  # ===========================================================================
+  # Stage 4: Smoke Dev — Verify dev deployment health
+  # ===========================================================================
+  - stage: SmokeDev
+    displayName: 'Smoke Test → Dev'
+    dependsOn: DeployDev
+    condition: succeeded('DeployDev')
+    jobs:
+      - job: OdooHealthCheck
+        displayName: 'Odoo health + login check (dev)'
+        pool:
+          vmImage: ubuntu-latest
+        steps:
+          - task: AzureCLI@2
+            displayName: 'Verify Odoo dev health'
+            inputs:
+              azureSubscription: $(serviceConnection)
+              scriptType: bash
+              scriptLocation: inlineScript
+              inlineScript: |
+                set -euo pipefail
+
+                FQDN=$(az containerapp show \
+                  --name "$(devContainerApp)" \
+                  --resource-group "$(devResourceGroup)" \
+                  --query "properties.configuration.ingress.fqdn" -o tsv)
+
+                echo "Dev FQDN: https://${FQDN}"
+
+                # Health endpoint
+                HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" \
+                  --max-time 30 -L "https://${FQDN}/web/health" || echo "000")
+
+                echo "Health: HTTP ${HTTP_CODE}"
+                if [[ "${HTTP_CODE}" != "200" ]]; then
+                  echo "##vso[task.logissue type=error]Odoo health check failed: HTTP ${HTTP_CODE}"
+                  exit 1
+                fi
+
+                # Login page reachable
+                HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" \
+                  --max-time 30 -L "https://${FQDN}/web/login" || echo "000")
+
+                echo "Login page: HTTP ${HTTP_CODE}"
+                if [[ "${HTTP_CODE}" != "200" ]]; then
+                  echo "##vso[task.logissue type=warning]Login page returned HTTP ${HTTP_CODE}"
+                fi
+
+                echo "PASS: Dev Odoo deployment healthy"
+
+  # ===========================================================================
+  # Stage 5: Deploy Staging — Manual approval required
+  # ===========================================================================
+  - stage: DeployStaging
+    displayName: 'Deploy → Staging (Gated)'
+    dependsOn: SmokeDev
+    condition: |
+      and(
+        succeeded('SmokeDev'),
+        eq(variables['Build.SourceBranch'], 'refs/heads/main')
+      )
+    jobs:
+      - deployment: StagingDeploy
+        displayName: 'Deploy Odoo to staging'
+        pool:
+          vmImage: ubuntu-latest
+        environment: staging
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - checkout: self
+                  fetchDepth: 1
+
+                - task: AzureCLI@2
+                  displayName: 'Update staging Container App'
+                  inputs:
+                    azureSubscription: $(serviceConnection)
+                    scriptType: bash
+                    scriptLocation: inlineScript
+                    inlineScript: |
+                      set -euo pipefail
+
+                      IMAGE="$(acrName).azurecr.io/$(imageName):18.0"
+                      SUFFIX="build-$(Build.BuildId)"
+                      APP="$(stagingContainerApp)"
+                      RG="$(stagingResourceGroup)"
+
+                      echo "=== Staging Deploy ==="
+                      echo "App: ${APP}"
+                      echo "Image: ${IMAGE}"
+
+                      az containerapp update \
+                        --name "${APP}" \
+                        --resource-group "${RG}" \
+                        --image "${IMAGE}" \
+                        --revision-suffix "${SUFFIX}" \
+                        --output none
+
+                      echo "Waiting for revision to activate..."
+                      sleep 30
+
+                      FQDN=$(az containerapp show \
+                        --name "${APP}" \
+                        --resource-group "${RG}" \
+                        --query "properties.configuration.ingress.fqdn" -o tsv)
+
+                      echo "Staging FQDN: https://${FQDN}"
+
+                      HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" \
+                        --max-time 30 -L "https://${FQDN}/web/health" || echo "000")
+
+                      echo "Health: HTTP ${HTTP_CODE}"
+                      if [[ "${HTTP_CODE}" != "200" ]]; then
+                        echo "##vso[task.logissue type=error]Staging health check failed"
+                        exit 1
+                      fi
+
+                      echo "PASS: Staging deployment healthy"
+
+  # ===========================================================================
+  # Stage 6: Deploy Production — Manual approval + evidence required
+  # ===========================================================================
+  - stage: DeployProd
+    displayName: 'Deploy → Production (Gated)'
+    dependsOn: DeployStaging
+    condition: |
+      and(
+        succeeded('DeployStaging'),
+        eq(variables['Build.SourceBranch'], 'refs/heads/main')
+      )
+    jobs:
+      - deployment: ProductionDeploy
+        displayName: 'Deploy Odoo to production'
+        pool:
+          vmImage: ubuntu-latest
+        environment: production
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - checkout: self
+                  fetchDepth: 1
+
+                - task: AzureCLI@2
+                  displayName: 'Update production Container App'
+                  inputs:
+                    azureSubscription: $(serviceConnection)
+                    scriptType: bash
+                    scriptLocation: inlineScript
+                    inlineScript: |
+                      set -euo pipefail
+
+                      IMAGE="$(acrName).azurecr.io/$(imageName):18.0"
+                      SUFFIX="build-$(Build.BuildId)"
+                      APP="$(prodContainerApp)"
+                      RG="$(prodResourceGroup)"
+
+                      echo "=== Production Deploy ==="
+                      echo "App: ${APP}"
+                      echo "Image: ${IMAGE}"
+
+                      az containerapp update \
+                        --name "${APP}" \
+                        --resource-group "${RG}" \
+                        --image "${IMAGE}" \
+                        --revision-suffix "${SUFFIX}" \
+                        --output none
+
+                      echo "Waiting for revision to activate..."
+                      sleep 30
+
+                      FQDN=$(az containerapp show \
+                        --name "${APP}" \
+                        --resource-group "${RG}" \
+                        --query "properties.configuration.ingress.fqdn" -o tsv)
+
+                      echo "Prod FQDN: https://${FQDN}"
+
+                      HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" \
+                        --max-time 60 -L "https://${FQDN}/web/health" || echo "000")
+
+                      echo "Health: HTTP ${HTTP_CODE}"
+                      if [[ "${HTTP_CODE}" != "200" ]]; then
+                        echo "##vso[task.logissue type=error]Production health check failed"
+                        exit 1
+                      fi
+
+                      echo "PASS: Production deployment healthy"
+
+  # ===========================================================================
+  # Stage 7: Evidence — Publish deployment evidence
+  # ===========================================================================
+  - stage: Evidence
+    displayName: 'Publish Evidence'
+    dependsOn:
+      - Build
+      - Test
+      - DeployDev
+      - SmokeDev
+      - DeployStaging
+      - DeployProd
+    condition: succeededOrFailed()
+    jobs:
+      - template: azure-pipelines/templates/jobs/publish-evidence.yml
+        parameters:
+          surface: odoo-deploy
+          imageRef: $(acrName).azurecr.io/$(imageName):18.0
+          smokeUrl: 'https://erp.insightpulseai.com/web/health'
+
+  # ===========================================================================
+  # Stage 8: Preview — PR preview environment (PR trigger only)
+  # ===========================================================================
+  - stage: Preview
+    displayName: 'PR Preview Environment'
+    dependsOn: Test
+    condition: |
+      and(
+        succeeded('Test'),
+        ne(variables['Build.SourceBranch'], 'refs/heads/main'),
+        eq(variables['Build.Reason'], 'PullRequest')
+      )
+    jobs:
+      - template: azure-pipelines/templates/jobs/deploy-preview.yml
+        parameters:
+          containerAppName: $(devContainerApp)
+          resourceGroup: $(devResourceGroup)
+          imageName: $(imageName)
+          imageTag: '18.0'
+          acrName: $(acrName)
+          serviceConnection: $(serviceConnection)
+          previewLabel: 'pr-$(System.PullRequest.PullRequestNumber)'
