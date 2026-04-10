@@ -352,7 +352,8 @@ class CopilotGatewayController(http.Controller):
         auth='user',
         methods=['POST'],
     )
-    def chat(self, conversation_id=None, message='', context=None):
+    def chat(self, conversation_id=None, message='', prompt='',
+             context=None, attachment_ref=None, **kw):
         """Send a message to the copilot and return the response.
 
         Args:
@@ -364,6 +365,9 @@ class CopilotGatewayController(http.Controller):
             dict with keys: conversation_id, content, role, request_id,
             latency_ms, error (if any).
         """
+        # Normalize: JS systray sends 'prompt', chat_panel sends 'message'
+        message = message or prompt or ''
+
         if not self._is_enabled():
             return {
                 'error': True,
@@ -436,6 +440,16 @@ class CopilotGatewayController(http.Controller):
             'surface': context.get('surface', 'erp'),
         }
 
+        # If attachment was provided, append context to the message
+        dispatch_message = message.strip()
+        if attachment_ref and isinstance(attachment_ref, dict):
+            fname = attachment_ref.get('filename', '')
+            status = attachment_ref.get('status', '')
+            if fname:
+                dispatch_message += (
+                    '\n\n[Attached file: %s (upload status: %s)]' % (fname, status or 'uploaded')
+                )
+
         self._audit_log('chat_request', user_id=uid,
                         conversation_id=conversation.id,
                         correlation_id=correlation_id,
@@ -443,7 +457,7 @@ class CopilotGatewayController(http.Controller):
 
         try:
             resp_data, latency_ms = self._dispatch_message(
-                message.strip(), ctx, conversation, correlation_id
+                dispatch_message, ctx, conversation, correlation_id
             )
         except ValueError as e:
             # Persist error as system message for audit trail
