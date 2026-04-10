@@ -177,21 +177,39 @@ def run_eval(agent_name, dry_run=False):
     project = AIProjectClient(endpoint=endpoint, credential=credential)
     openai_client = project.get_openai_client()
 
-    # Build data source content from dataset
-    content_items = []
+    # Build JSONL content from dataset
+    jsonl_lines = []
     for item in dataset:
         query = item.get("query") or item.get("input") or item.get("prompt", "")
         if query:
-            content_items.append({"item": {"query": query}})
+            jsonl_lines.append(json.dumps({"item": {"query": query}}))
 
-    if not content_items:
+    if not jsonl_lines:
         return {"agent": agent_name, "status": "error",
                 "reason": "no valid queries in dataset"}
 
     stamp = datetime.now(timezone.utc).strftime("%Y%m%d-%H%M")
     eval_name = f"{agent_name}-release-gate-{stamp}"
 
-    # 1. Create eval object
+    # 1. Upload dataset as a file (avoids asset store staging)
+    import tempfile  # noqa: PLC0415
+    jsonl_content = "\n".join(jsonl_lines) + "\n"
+    with tempfile.NamedTemporaryFile(
+        mode="w", suffix=".jsonl", prefix=f"{agent_name}-eval-",
+        delete=False,
+    ) as tmp:
+        tmp.write(jsonl_content)
+        tmp_path = tmp.name
+
+    try:
+        print(f"  Uploading dataset ({len(jsonl_lines)} items)...")
+        with open(tmp_path, "rb") as f:
+            file_obj = openai_client.files.create(file=f, purpose="evals")
+        print(f"  File ID: {file_obj.id}")
+    finally:
+        os.unlink(tmp_path)
+
+    # 2. Create eval object
     print(f"  Creating eval: {eval_name}")
     eval_obj = openai_client.evals.create(
         name=eval_name,
@@ -208,15 +226,15 @@ def run_eval(agent_name, dry_run=False):
     )
     print(f"  Eval ID: {eval_obj.id}")
 
-    # 2. Create run against agent
+    # 3. Create run against agent using uploaded file
     print(f"  Starting run against {agent_name}...")
     run = openai_client.evals.runs.create(
         eval_id=eval_obj.id,
         data_source={
             "type": "azure_ai_target_completions",
             "source": {
-                "type": "file_content",
-                "content": content_items,
+                "type": "file_id",
+                "id": file_obj.id,
             },
             "target": {
                 "type": "azure_ai_agent",

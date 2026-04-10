@@ -6,7 +6,7 @@
 
 ## Purpose
 
-This policy defines how Microsoft Foundry tools are selected, configured, and governed for the InsightPulseAI Odoo 18 MVP architecture.
+This policy defines how Microsoft Foundry tools are selected, configured, and governed for the **Pulser for Odoo** architecture.
 
 Foundry tools extend agent capabilities, but they do not replace Odoo as the system of record for workflow, approvals, accounting, tax, expenses, or project state.
 
@@ -226,10 +226,10 @@ Keep these off the critical path unless explicitly justified:
 ## Current Foundry baseline for this architecture
 
 ### Project baseline
-- Foundry project: `ipai-copilot`
-- parent resource: `ipai-copilot-resource`
+- Foundry project: `pulser-odoo`
+- parent resource: `pulser-odoo-resource`
 - region: `eastus2`
-- project endpoint: `https://ipai-copilot-resource.services.ai.azure.com/api/projects/ipai-copilot`
+- project endpoint: `https://pulser-odoo-resource.services.ai.azure.com/api/projects/pulser-odoo`
 
 ### Confirmed connections
 - AI Services
@@ -275,7 +275,7 @@ Owns:
 
 ## Default tool mapping for the MVP
 
-### Pulser / reverse SAP Joule
+### Pulser for Odoo
 Prefer:
 - File Search for policies, SOPs, help, and uploaded docs
 - Web search for current public information

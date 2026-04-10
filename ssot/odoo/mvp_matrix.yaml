@@ -38,14 +38,14 @@ azure_baseline:
     key_vault: kv-ipai-dev
     reuse_before_new_infra: true
   ai:
-    resource: ipai-copilot-resource
-    project: ipai-copilot
+    resource: pulser-odoo-resource
+    project: pulser-odoo
     region: eastus2
     endpoints:
-      foundry_project: https://ipai-copilot-resource.services.ai.azure.com/api/projects/ipai-copilot
-      azure_openai_base_host: https://ipai-copilot-resource.openai.azure.com/
-      azure_openai_sdk_base: https://ipai-copilot-resource.openai.azure.com/openai/v1/
-      ai_services_base: https://ipai-copilot-resource.services.ai.azure.com/
+      foundry_project: https://pulser-odoo-resource.services.ai.azure.com/api/projects/pulser-odoo
+      azure_openai_base_host: https://pulser-odoo-resource.openai.azure.com/
+      azure_openai_sdk_base: https://pulser-odoo-resource.openai.azure.com/openai/v1/
+      ai_services_base: https://pulser-odoo-resource.services.ai.azure.com/
     connected_resources_confirmed:
       - category: AIServices
       - category: AzureStorageAccount
@@ -196,7 +196,7 @@ bundles:
       - standalone_concur_platform
       - native_mobile_app
 
-  reverse_sap_joule:
+  pulser_odoo:
     mvp: true
     status: pulser_shell_plus_runtime
     ce18_required:
@@ -220,7 +220,7 @@ bundles:
       - audited_action_logs
       - odoo_grounded_live_state
     runtime_required:
-      foundry_project: ipai-copilot
+      foundry_project: pulser-odoo
       template: get_started_with_ai_agents
     rag_scope_only:
       - policies

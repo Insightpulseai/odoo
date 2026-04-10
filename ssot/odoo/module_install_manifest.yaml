@@ -154,6 +154,7 @@ install_sets:
       - ipai_hr_expense_liquidation
       - ipai_expense_ops
       - ipai_expense_wiring
+      - ipai_pulser_assistant
 
   ipai_mvp_optional_not_currently_required:
     root: /mnt/extra-addons/ipai
@@ -281,7 +282,7 @@ logical_verticals:
       - ipai_expense_ops
       - ipai_expense_wiring
 
-  pulser_joule:
+  pulser_odoo:
     ce_core:
       - base
       - web
@@ -293,6 +294,7 @@ logical_verticals:
       - ipai_odoo_copilot
       - ipai_copilot_actions
       - ipai_ai_agent_sources
+      - ipai_pulser_assistant
 
   avatax_reverse:
     ce_core:

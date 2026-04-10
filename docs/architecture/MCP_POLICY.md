@@ -112,7 +112,7 @@ Source: [azure-postgres-mcp-demo](https://github.com/Azure-Samples/azure-postgre
 
 ## Per-Vertical Applicability
 
-### Pulser (Reverse SAP Joule)
+### Pulser for Odoo
 
 MCP is a valid tool extension mechanism. Keep tools tightly allow-listed, require approval for risky tools, keep Odoo as final authority.
 
