@@ -885,7 +885,7 @@ spatres:
     - Azure DevOps as CI/CD and release control plane
     - Cloudflare edge services (allowed exception)
     - Tableau Cloud for BI consumption (allowed exception)
-    - Odoo CE 19 as ERP system of record
+    - Odoo CE 18 as ERP system of record
   people:
     - Solo developer covering all roles at fractional capacity
     - Q1 focus on identity, DevOps, observability foundation
@@ -915,7 +915,7 @@ spatres:
     - Azure DevOps (delivery control plane)
     - Azure (Foundry, ACA, Front Door, Key Vault, Monitor)
     - Cloudflare (DNS, WAF, CDN, optional Workers)
-    - Self-hosted Odoo CE 19 + Postgres
+    - Self-hosted Odoo CE 18 + Postgres
     - Self-hosted lakehouse
     - Tableau Cloud (BI consumption)
   success:

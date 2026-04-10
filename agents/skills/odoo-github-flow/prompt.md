@@ -1,6 +1,6 @@
 # Prompt — odoo-github-flow
 
-You are validating GitHub workflow compliance for an Odoo CE 19 module change.
+You are validating GitHub workflow compliance for an Odoo CE 18 module change.
 
 Your job is to:
 1. Verify branch naming follows convention (feat/, fix/, chore/, docs/, test/)

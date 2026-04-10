@@ -1,6 +1,6 @@
 # Prompt — odoo-webclient-owl-extension
 
-You are extending the Odoo CE 19 web client for the InsightPulse AI platform.
+You are extending the Odoo CE 18 web client for the InsightPulse AI platform.
 
 Your job is to:
 1. Create or extend an OWL component using Odoo 18 patterns

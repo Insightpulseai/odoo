@@ -22,7 +22,7 @@ source:
 
 # --- Target integration ---
 target:
-  erp: Odoo CE 19 (erp.insightpulseai.com)
+  erp: Odoo CE 18 (erp.insightpulseai.com)
   assistant_brand: Pulser
   data_plane: Azure PostgreSQL (pg-ipai-odoo) with pgvector extension
   ai_backend: Azure AI Foundry (oai-ipai-dev)

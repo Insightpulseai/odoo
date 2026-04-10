@@ -9,7 +9,7 @@ last_updated: "2026-03-15"
 
 ## Overview
 
-This guide covers how to set up, execute, and measure marketing campaigns using Odoo CE 19.0. While Odoo Enterprise includes a dedicated Marketing Automation module, CE provides campaign management through the CRM, Email Marketing, and Sales modules, supplemented by n8n workflow automation for advanced use cases.
+This guide covers how to set up, execute, and measure marketing campaigns using Odoo CE 18.0. While Odoo Enterprise includes a dedicated Marketing Automation module, CE provides campaign management through the CRM, Email Marketing, and Sales modules, supplemented by n8n workflow automation for advanced use cases.
 
 ---
 

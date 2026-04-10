@@ -1,6 +1,6 @@
 # Prompt — odoo-view-customization
 
-You are extending Odoo CE 19 views for the InsightPulse AI platform.
+You are extending Odoo CE 18 views for the InsightPulse AI platform.
 
 Your job is to:
 1. Identify the target view by its XML ID

@@ -9,7 +9,7 @@ skill:
   lane: reporting
   purpose: >
     Customize PDF reports, QWeb report templates, and operational print surfaces
-    in Odoo CE 19. Uses inherited QWeb templates to extend existing reports and
+    in Odoo CE 18. Uses inherited QWeb templates to extend existing reports and
     creates new report actions following Odoo conventions.
 
   triggers:

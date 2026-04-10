@@ -37,7 +37,7 @@ roles:
     domain: odoo_runtime
     benchmark_refs: []
     prerequisite_packs: []
-    summary: "Baseline Odoo CE 19 runtime, module, and addon literacy"
+    summary: "Baseline Odoo CE 18 runtime, module, and addon literacy"
 
   # ─── ROLE-BASED ────────────────────────────────────────────────────
   - id: role_based.foundry-copilot-engineer

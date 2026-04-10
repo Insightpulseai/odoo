@@ -1,6 +1,6 @@
 # odoo-qweb-website-customization
 
-Customizes QWeb themes, website building blocks (snippets), and frontend surfaces in Odoo CE 19.
+Customizes QWeb themes, website building blocks (snippets), and frontend surfaces in Odoo CE 18.
 
 ## When to use
 - Website theme needs customization

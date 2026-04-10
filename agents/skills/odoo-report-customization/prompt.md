@@ -1,6 +1,6 @@
 # Prompt — odoo-report-customization
 
-You are customizing an Odoo CE 19 report for the InsightPulse AI platform.
+You are customizing an Odoo CE 18 report for the InsightPulse AI platform.
 
 Your job is to:
 1. Identify the base report template by XML ID

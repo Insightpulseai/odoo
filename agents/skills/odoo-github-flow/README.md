@@ -1,6 +1,6 @@
 # odoo-github-flow
 
-Validates GitHub integration workflow for Odoo CE 19 — PR discipline, branch naming, merge rules, and status checks.
+Validates GitHub integration workflow for Odoo CE 18 — PR discipline, branch naming, merge rules, and status checks.
 
 ## When to use
 - New PR opened against main or staging

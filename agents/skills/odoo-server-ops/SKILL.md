@@ -10,7 +10,7 @@ odoo-cli-operator
 
 ## Preconditions
 
-- Odoo CE 19.0 installed (vendor/odoo/ for local, /opt/odoo/ for devcontainer)
+- Odoo CE 18.0 installed (vendor/odoo/ for local, /opt/odoo/ for devcontainer)
 - Python 3.11+ virtualenv (pyenv `odoo-18-dev` for local)
 - PostgreSQL 16 accessible
 - Addons paths configured

@@ -13,7 +13,7 @@ Versioning follows the runtime-contract.md (C-30) release ladder.
 - Top P adjusted from 1.0 to 0.9.
 - Evaluation pack: 30/30 pass (eval-20260315-full-final). ADVISORY_RELEASE_READY.
 
-### Odoo Module (ipai_odoo_copilot 19.0.2.1.0)
+### Odoo Module (ipai_odoo_copilot 18.0.3.0.0)
 
 - Dual-backend gateway controller (Azure OpenAI direct + custom gateway).
 - SSE streaming endpoint (`/ipai/copilot/stream`).

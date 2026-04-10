@@ -9,7 +9,7 @@ last_updated: "2026-03-15"
 
 ## Overview
 
-The Odoo Copilot is an AI-powered assistant integrated directly into the Odoo CE 19.0 interface. It helps users navigate the system, answer questions about business data, generate reports, and perform routine actions through natural language commands.
+The Odoo Copilot is an AI-powered assistant integrated directly into the Odoo CE 18.0 interface. It helps users navigate the system, answer questions about business data, generate reports, and perform routine actions through natural language commands.
 
 The Copilot is powered by the `ipai_ai_copilot` module and connects to large language models via the MCP (Model Context Protocol) coordination layer.
 

@@ -9,7 +9,7 @@ last_updated: "2026-03-15"
 
 ## Overview
 
-This document provides a comprehensive reference of Bureau of Internal Revenue (BIR) forms commonly used by Philippine businesses. Each form entry includes its purpose, filing frequency, deadline, and how the supporting data is generated from Odoo CE 19.0.
+This document provides a comprehensive reference of Bureau of Internal Revenue (BIR) forms commonly used by Philippine businesses. Each form entry includes its purpose, filing frequency, deadline, and how the supporting data is generated from Odoo CE 18.0.
 
 ---
 

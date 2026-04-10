@@ -139,7 +139,7 @@ Results stored in `tax_pulse_run_log` for audit trail.
 | **Geolocation** | N/A (PH nationwide) | Rooftop-level (US street address) |
 | **Product tax rules** | BIR ATC codes | 330+ product categories |
 | **AI review** | 5-dimension compliance scoring | Agentic tax compliance (new) |
-| **ERP integration** | Odoo CE 19 native | Dynamics 365, SAP, NetSuite, Shopify |
+| **ERP integration** | Odoo CE 18 native | Dynamics 365, SAP, NetSuite, Shopify |
 | **Latency** | Batch (form-level) | 20ms per transaction |
 | **Scale** | Multi-entity (8 agencies) | 55B+ API calls/year |
 | **Pricing** | Open source (AGPL-3) | $1+/year (Azure Marketplace) |

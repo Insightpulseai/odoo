@@ -6,7 +6,7 @@ skill:
   status: draft
   owner: odoo-platform-admin
   purpose: >
-    Validate monitoring and observability posture for the Odoo CE 19
+    Validate monitoring and observability posture for the Odoo CE 18
     platform on Azure. Ensure Azure Monitor, Application Insights,
     health probes, and alerting are configured and active.
 

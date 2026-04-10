@@ -44,7 +44,7 @@ mission_summary: >
 # -----------------------------------------------------------------------------
 scope:
   in_scope:
-    - "Odoo CE 19 ERP (finance, HR, CRM, project, inventory)"
+    - "Odoo CE 18 ERP (finance, HR, CRM, project, inventory)"
     - "Azure hosting (Container Apps, Front Door, managed PG, Key Vault)"
     - "AI agent framework (Azure AI Foundry, Claude, OpenAI)"
     - "Data analytics (Databricks, Superset, medallion architecture)"

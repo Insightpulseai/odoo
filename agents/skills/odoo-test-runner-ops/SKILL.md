@@ -10,7 +10,7 @@ odoo-cli-operator
 
 ## Preconditions
 
-- Odoo CE 19.0 installed
+- Odoo CE 18.0 installed
 - PostgreSQL accessible with createdb privileges
 - Module under test is in addons path
 - Disposable test database will be created/used

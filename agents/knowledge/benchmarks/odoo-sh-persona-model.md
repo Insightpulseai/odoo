@@ -26,7 +26,7 @@ Odoo.sh provides testers with:
 - **Manual tests**: Access to running instances for exploratory testing
 - **Community modules**: OCA module compatibility testing surface
 
-**Azure equivalent**: `test_<module>` disposable databases, `odoo_staging` on Azure managed PG, GitHub branch tracking, Azure Container App staging revisions, OCA 19.0 branch verification.
+**Azure equivalent**: `test_<module>` disposable databases, `odoo_staging` on Azure managed PG, GitHub branch tracking, Azure Container App staging revisions, OCA 18.0 branch verification.
 
 ### 3. Project Managers
 

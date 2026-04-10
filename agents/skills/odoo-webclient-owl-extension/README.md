@@ -1,6 +1,6 @@
 # odoo-webclient-owl-extension
 
-Extends the Odoo CE 19 web client using OWL components, JS/TS customizations, and SCSS styling.
+Extends the Odoo CE 18 web client using OWL components, JS/TS customizations, and SCSS styling.
 
 ## When to use
 - A new frontend widget or OWL component is needed

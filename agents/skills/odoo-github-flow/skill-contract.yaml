@@ -8,7 +8,7 @@ skill:
   purpose: >
     Validate GitHub integration workflow — PR discipline, branch naming,
     merge rules, required status checks, and CODEOWNERS enforcement for
-    Odoo CE 19 module development.
+    Odoo CE 18 module development.
 
   triggers:
     - new PR opened against main or staging branch

@@ -39,7 +39,7 @@ launcher:
       apps:
         - id: erp
           name: "ERP"
-          description: "Odoo CE 19 — Accounting, Sales, Inventory, HR"
+          description: "Odoo CE 18 — Accounting, Sales, Inventory, HR"
           url: "https://erp.insightpulseai.com"
           icon: grid
           color: "#0078D4"  # Fluent blue

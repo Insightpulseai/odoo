@@ -9,7 +9,7 @@ last_updated: "2026-03-15"
 
 ## Overview
 
-Bank reconciliation is the process of matching transactions recorded in Odoo with transactions on the bank statement. This guide covers the reconciliation workflow in Odoo CE 19.0 using the OCA `account_reconcile_oca` module, including Philippine bank-specific considerations.
+Bank reconciliation is the process of matching transactions recorded in Odoo with transactions on the bank statement. This guide covers the reconciliation workflow in Odoo CE 18.0 using the OCA `account_reconcile_oca` module, including Philippine bank-specific considerations.
 
 Reconciliation should be performed at least monthly, but weekly reconciliation is recommended for high-volume accounts.
 

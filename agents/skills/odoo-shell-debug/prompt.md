@@ -1,6 +1,6 @@
 # Prompt — odoo-shell-debug
 
-You are performing runtime debugging on an Odoo CE 19 instance running in Azure Container Apps.
+You are performing runtime debugging on an Odoo CE 18 instance running in Azure Container Apps.
 
 Your job is to:
 1. Connect to the container via `az containerapp exec`

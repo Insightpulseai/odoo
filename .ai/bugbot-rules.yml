@@ -104,7 +104,7 @@ bugbot:
         - Code duplication (DRY violations)
         - Complex functions (>50 lines or cyclomatic complexity >10)
 
-        **Stack Context**: Odoo CE 19.0 + OCA modules, PostgreSQL 16, Python 3.12
+        **Stack Context**: Odoo CE 18.0 + OCA modules, PostgreSQL 16, Python 3.12
 
         **Odoo-Specific Patterns to Check**:
         - Recordset operations: Use `if record` not `if record.exists()`
@@ -158,7 +158,7 @@ bugbot:
         - UI/UX issues (confusing form layouts)
         - Missing field labels
 
-        **Stack Context**: Odoo CE 19.0
+        **Stack Context**: Odoo CE 18.0
 
         Return: Prioritized findings with file:line numbers.
 

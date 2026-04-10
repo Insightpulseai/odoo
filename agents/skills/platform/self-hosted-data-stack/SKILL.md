@@ -173,7 +173,7 @@ Full integration documented in `skills/integration/n8n-odoo-supabase-etl/SKILL.m
 
 | Layer | Tool | Hosting | Status |
 |-------|------|---------|--------|
-| **ERP (SOR)** | Odoo CE 19 | ACA (`ipai-odoo-dev-web`) | **Running** |
+| **ERP (SOR)** | Odoo CE 18 | ACA (`ipai-odoo-dev-web`) | **Running** |
 | **Control Plane (SSOT)** | Supabase | Azure VM (`vm-ipai-supabase-dev`) | **Running** |
 | **Workflow Engine** | n8n | ACA (behind AFD) | **Running** |
 | **CDC Replication** | Supabase ETL | ACA job (planned) | **Planned** |

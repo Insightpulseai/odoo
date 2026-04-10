@@ -7,7 +7,7 @@ skill:
   owner: odoo-developer
   purpose: >
     Validate CI pipeline status, test gate compliance, and build
-    verification for Odoo CE 19 module changes via GitHub Actions.
+    verification for Odoo CE 18 module changes via GitHub Actions.
 
   triggers:
     - PR opened or updated with module changes

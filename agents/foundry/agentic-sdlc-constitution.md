@@ -36,7 +36,7 @@ Odoo (SOR — system of record / ledger)
 | Category | Allowed |
 |----------|---------|
 | **Language** | Python 3.12+ (Odoo), TypeScript (Edge Functions, web) |
-| **ERP** | Odoo CE 19.0 only |
+| **ERP** | Odoo CE 18.0 only |
 | **Extensions** | OCA modules (Stable+ maturity), `ipai_*` bridge modules |
 | **Database** | PostgreSQL 16 (Azure Flexible Server for Odoo, Supabase for ops) |
 | **Compute** | Azure Container Apps (Southeast Asia) |
@@ -108,13 +108,13 @@ Config → OCA → Delta (ipai_*)
 ```
 
 1. **Config**: Can Odoo's built-in configuration solve it? Use that.
-2. **OCA**: Does an OCA module (Stable+ maturity, 19.0 branch, CI green) exist? Use that.
+2. **OCA**: Does an OCA module (Stable+ maturity, 18.0 branch, CI green) exist? Use that.
 3. **Delta**: Only create `ipai_*` when (1) and (2) cannot solve the problem.
 
 ### OCA Adoption Gates
 
 Before an agent installs any OCA module:
-- 19.0 branch exists and CI green on OCA repo
+- 18.0 branch exists and CI green on OCA repo
 - `development_status` >= `Stable` in `__manifest__.py`
 - Test install in disposable DB (`test_<module>`)
 - No conflicts with existing `ipai_*` modules

@@ -1,6 +1,6 @@
 # Prompt — odoo-qweb-website-customization
 
-You are customizing the Odoo CE 19 website for the InsightPulse AI platform.
+You are customizing the Odoo CE 18 website for the InsightPulse AI platform.
 
 Your job is to:
 1. Identify the target QWeb template or create a new snippet

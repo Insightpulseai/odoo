@@ -9,11 +9,11 @@ last_updated: "2026-03-15"
 
 ## What Is Odoo on Cloud?
 
-Odoo on Cloud is InsightPulse AI's managed deployment of **Odoo Community Edition 19.0**, hosted on Azure Container Apps and designed for small-to-medium enterprises in the Philippines and Southeast Asia. It delivers a fully integrated ERP suite without the licensing costs of Odoo Enterprise, augmented by OCA (Odoo Community Association) modules and custom InsightPulse AI extensions.
+Odoo on Cloud is InsightPulse AI's managed deployment of **Odoo Community Edition 18.0**, hosted on Azure Container Apps and designed for small-to-medium enterprises in the Philippines and Southeast Asia. It delivers a fully integrated ERP suite without the licensing costs of Odoo Enterprise, augmented by OCA (Odoo Community Association) modules and custom InsightPulse AI extensions.
 
 ### Key Differentiators
 
-- **Zero Enterprise License Fees**: Built entirely on Odoo CE 19.0 with OCA modules to close feature gaps.
+- **Zero Enterprise License Fees**: Built entirely on Odoo CE 18.0 with OCA modules to close feature gaps.
 - **Managed Infrastructure**: Azure Container Apps with Azure Front Door for global edge routing, TLS termination, and WAF protection.
 - **AI-Augmented Operations**: Integrated Copilot for advisory and action modes within the Odoo interface.
 - **Philippine Compliance Built-In**: BIR tax forms, VAT handling, withholding tax automation, and localized chart of accounts.
@@ -97,7 +97,7 @@ Azure Front Door (TLS, WAF, CDN)
     v
 Azure Container Apps (cae-ipai-dev)
     |
-    +-- ipai-odoo-dev-web (Odoo CE 19.0, port 8069)
+    +-- ipai-odoo-dev-web (Odoo CE 18.0, port 8069)
     +-- ipai-auth-dev (Keycloak SSO)
     +-- ipai-mcp-dev (MCP coordination)
     +-- ipai-ocr-dev (Document OCR)
@@ -114,7 +114,7 @@ Azure Key Vault (secrets management)
 
 | Service | URL | Purpose |
 |---------|-----|---------|
-| ERP | `erp.insightpulseai.com` | Odoo CE 19.0 web interface |
+| ERP | `erp.insightpulseai.com` | Odoo CE 18.0 web interface |
 | SSO | `auth.insightpulseai.com` | Keycloak single sign-on |
 | BI | `superset.insightpulseai.com` | Apache Superset dashboards |
 | OCR | `ocr.insightpulseai.com` | Document processing API |
@@ -180,7 +180,7 @@ The platform is pre-configured with templates and workflows for:
 
 ## Licensing
 
-- **Odoo CE 19.0**: LGPL-3.0 (free, open source)
+- **Odoo CE 18.0**: LGPL-3.0 (free, open source)
 - **OCA Modules**: AGPL-3.0 or LGPL-3.0 (free, open source)
 - **InsightPulse AI Modules**: Proprietary (included in subscription)
 - **Infrastructure**: Pay-as-you-go Azure consumption
@@ -189,7 +189,7 @@ The platform is pre-configured with templates and workflows for:
 
 ## Version and Update Policy
 
-- **Odoo Core**: Follows Odoo CE 19.0 stable branch. Security patches applied within 48 hours.
+- **Odoo Core**: Follows Odoo CE 18.0 stable branch. Security patches applied within 48 hours.
 - **OCA Modules**: Pinned to tested commits. Updated monthly after regression testing.
 - **IPAI Modules**: Continuous delivery via CI/CD pipeline with automated testing.
 - **Infrastructure**: Azure Container Apps with blue-green deployment for zero-downtime updates.

@@ -1,6 +1,6 @@
 # odoo-module-scaffolding
 
-Creates new Odoo CE 19 module structure with correct directory layout, manifest, init files, security stubs, and README.
+Creates new Odoo CE 18 module structure with correct directory layout, manifest, init files, security stubs, and README.
 
 ## When to use
 - A new custom module is required for an ipai_* feature

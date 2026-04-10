@@ -1,6 +1,6 @@
 # odoo-security-acl-rules
 
-Defines security groups, ACLs, and record rules for Odoo CE 19 module security.
+Defines security groups, ACLs, and record rules for Odoo CE 18 module security.
 
 ## When to use
 - A new model is created and needs access control definitions

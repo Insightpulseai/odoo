@@ -469,7 +469,7 @@ epics:
         CE stack can match or exceed Enterprise capabilities at zero license cost.
     acceptance_criteria:
       - "EE parity score ≥80% (from current ~35-45%)"
-      - "Odoo CE 19 runtime stable with zero critical bugs"
+      - "Odoo CE 18 runtime stable with zero critical bugs"
       - "ipai_enterprise_bridge module cleaned up or deprecated"
       - "ipai_odoo_copilot integrated with Foundry agent runtime"
     strategy_objectives_ref:
@@ -481,7 +481,7 @@ epics:
     features:
 
       - id: FEAT-002-01
-        title: "[FEAT] Odoo CE 19 runtime stabilization"
+        title: "[FEAT] Odoo CE 18 runtime stabilization"
         tags: [odoo, platform]
         owner: engineering-lead
         acceptance_criteria:

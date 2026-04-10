@@ -9,7 +9,7 @@ last_updated: "2026-03-15"
 
 ## Overview
 
-This document provides a step-by-step procedure for completing the month-end close in Odoo CE 19.0 with OCA accounting modules. The checklist is designed for Philippine-based businesses and includes BIR compliance checkpoints.
+This document provides a step-by-step procedure for completing the month-end close in Odoo CE 18.0 with OCA accounting modules. The checklist is designed for Philippine-based businesses and includes BIR compliance checkpoints.
 
 **Timeline:**
 - **Pre-Close Preparation:** The month-end closing workflow actually begins early, starting in the **last week of the current month** (e.g., October 24) with activities such as "Payroll Processing & Tax Provision".

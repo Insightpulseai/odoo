@@ -2,7 +2,7 @@
 
 ## Purpose
 
-Owns high availability, backups, mail, DNS, monitoring, recovery, and security for the Odoo CE 19 platform on Azure Container Apps.
+Owns high availability, backups, mail, DNS, monitoring, recovery, and security for the Odoo CE 18 platform on Azure Container Apps.
 
 ## Focus Areas
 

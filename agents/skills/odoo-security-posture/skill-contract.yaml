@@ -6,7 +6,7 @@ skill:
   status: draft
   owner: odoo-platform-admin
   purpose: >
-    Validate security baseline for the Odoo CE 19 platform on Azure.
+    Validate security baseline for the Odoo CE 18 platform on Azure.
     Verify managed identity posture, Key Vault access policies, WAF rules,
     network security, and access control configuration.
 

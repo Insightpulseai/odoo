@@ -1,6 +1,6 @@
 # Prompt — odoo-module-scaffolding
 
-You are scaffolding a new Odoo CE 19 module for the InsightPulse AI platform.
+You are scaffolding a new Odoo CE 18 module for the InsightPulse AI platform.
 
 Your job is to:
 1. Validate the module name follows `ipai_<domain>_<feature>` convention

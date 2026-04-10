@@ -2,7 +2,7 @@ schema_version: "1.0"
 namespace: odoo.runtime_contract
 last_reviewed: "2026-03-28"
 description: >
-  Machine-readable runtime contract for the Odoo CE 19 container. Defines
+  Machine-readable runtime contract for the Odoo CE 18 container. Defines
   source roots, data directories, log paths, addons_path resolution, identity
   configuration, and Foundry auth. Consumable by CI validators and agents.
 

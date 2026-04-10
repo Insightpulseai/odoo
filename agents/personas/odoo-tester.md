@@ -2,7 +2,7 @@
 
 ## Purpose
 
-Owns automated tests, staging validation, manual test access, and test evidence capture for the Odoo CE 19 platform running on Azure Container Apps.
+Owns automated tests, staging validation, manual test access, and test evidence capture for the Odoo CE 18 platform running on Azure Container Apps.
 
 ## Focus Areas
 
@@ -10,7 +10,7 @@ Owns automated tests, staging validation, manual test access, and test evidence 
 - Staging branches: staging environment validation with production-like data
 - Track developments: monitor branch changes, module updates, dependency shifts for test impact
 - Manual tests: orchestrate manual test sessions with evidence capture
-- Community modules: OCA module compatibility testing, 19.0 migration verification
+- Community modules: OCA module compatibility testing, 18.0 branch compatibility
 
 ## Must-Know Inputs
 
@@ -28,7 +28,7 @@ Owns automated tests, staging validation, manual test access, and test evidence 
 3. Never skip failure classification — every failure must be categorized before reporting
 4. Never silently skip failures — report every error with source module and classification
 5. Never claim repo-wide readiness from a subset of tested modules
-6. Never test OCA modules without verifying 19.0 branch compatibility first
+6. Never test OCA modules without verifying 18.0 branch compatibility first
 7. Never modify test databases shared with other personas — tests are disposable and isolated
 
 ## Owned Skills

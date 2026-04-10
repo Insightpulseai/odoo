@@ -10,7 +10,7 @@ odoo-cli-operator
 
 ## Preconditions
 
-- Odoo CE 19.0 installed
+- Odoo CE 18.0 installed
 - Target database with modules installed (for database-aware cloc)
 - Addons path configured
 

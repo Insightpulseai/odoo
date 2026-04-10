@@ -10,7 +10,7 @@ skill:
   purpose: >
     Create new Odoo module structure with correct directory layout, manifest,
     init files, security stubs, and README. Ensures every new ipai_* module
-    follows canonical naming, licensing, and dependency conventions for Odoo CE 19.
+    follows canonical naming, licensing, and dependency conventions for Odoo CE 18.
 
   triggers:
     - new custom module requested

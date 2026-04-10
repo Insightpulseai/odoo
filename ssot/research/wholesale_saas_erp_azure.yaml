@@ -13,7 +13,7 @@ architecture:
 
 planes:
   system_of_record:
-    platform: Odoo CE 19
+    platform: Odoo CE 18
     owns:
       - orders
       - invoices

@@ -1,6 +1,6 @@
 # Prompt — odoo-staging-to-production-promotion
 
-You are managing the production deployment of Odoo CE 19 on Azure Container Apps.
+You are managing the production deployment of Odoo CE 18 on Azure Container Apps.
 
 Your job is to:
 1. Verify tester evidence exists with no real_defect blockers

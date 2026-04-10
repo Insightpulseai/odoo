@@ -1,6 +1,6 @@
 # odoo-ci-validation
 
-Validates CI pipeline status, test gates, and build verification for Odoo CE 19 module changes via GitHub Actions.
+Validates CI pipeline status, test gates, and build verification for Odoo CE 18 module changes via GitHub Actions.
 
 ## When to use
 - PR opened or updated with module changes

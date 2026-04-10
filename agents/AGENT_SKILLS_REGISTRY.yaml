@@ -813,7 +813,7 @@ knowledge_sources:
   - id: odoo_ce_19_docs
     type: documentation
     location: "/home/user/odoo-ce/docs/"
-    description: "Odoo CE 19 internal documentation"
+    description: "Odoo CE 18 internal documentation"
 
   - id: n8n_workflow_conventions
     type: specification
