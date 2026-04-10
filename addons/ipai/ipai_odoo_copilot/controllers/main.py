@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+import base64
 import hmac
 import json
 import logging
@@ -240,7 +241,7 @@ class PulserController(http.Controller):
             t in tools_invoked
             for t in ("search_odoo_docs", "search_azure_docs",
                        "search_spec_bundles", "search_org_docs",
-                       "search_databricks_docs")
+                       "search_databricks_docs", "query_knowledge_base")
         )
         has_fabric = "query_fabric_data" in tools_invoked
 
@@ -388,4 +389,85 @@ class PulserController(http.Controller):
                 for c in conversations
             ],
             "total": total,
+        }
+
+    # ------------------------------------------------------------------
+    # Attachment upload
+    # ------------------------------------------------------------------
+
+    ALLOWED_UPLOAD_MIMES = {
+        "text/plain", "text/csv", "text/markdown", "text/html", "text/xml",
+        "application/json", "application/xml", "application/pdf",
+        "image/png", "image/jpeg", "image/webp",
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+    }
+
+    @http.route(
+        ["/api/pulser/attachments/upload",
+         "/ipai/copilot/attachments/upload"],
+        type="json",
+        auth="user",
+        methods=["POST"],
+    )
+    def upload_attachment(self, filename=None, data=None, mime_type=None,
+                          conversation_id=None, **kw):
+        """Upload a file attachment for copilot context injection.
+
+        Params:
+            filename (str): Original filename.
+            data (str): Base64-encoded file content.
+            mime_type (str): MIME type of the file.
+            conversation_id (int): Optional conversation to attach to.
+
+        Returns:
+            dict with ref_id, filename, mime_type, ingestion_state.
+        """
+        if not filename:
+            return {"error": True, "message": "Missing filename."}
+        if not data:
+            return {"error": True, "message": "Missing data."}
+
+        mime_type = mime_type or "application/octet-stream"
+        if mime_type not in self.ALLOWED_UPLOAD_MIMES:
+            return {
+                "error": True,
+                "message": f"MIME type '{mime_type}' is not allowed.",
+            }
+
+        try:
+            raw_bytes = base64.b64decode(data)
+        except Exception:
+            return {"error": True, "message": "Invalid base64 data."}
+
+        # Create ir.attachment
+        attachment = request.env["ir.attachment"].create({
+            "name": filename,
+            "datas": data,
+            "mimetype": mime_type,
+            "res_model": "ipai.copilot.attachment.ref",
+        })
+
+        # Create copilot attachment ref
+        ref_vals = {
+            "attachment_id": attachment.id,
+            "filename": filename,
+            "mime_type": mime_type,
+            "origin": "upload",
+        }
+        if conversation_id:
+            ref_vals["conversation_id"] = int(conversation_id)
+
+        ref = request.env["ipai.copilot.attachment.ref"].create(ref_vals)
+
+        # Run extraction for quick mimes
+        ref.run_extraction()
+
+        return {
+            "ref_id": ref.id,
+            "filename": ref.filename,
+            "mime_type": ref.mime_type,
+            "ingestion_state": ref.ingestion_state,
+            "file_size": ref.file_size,
+            "content_sha256": ref.content_sha256,
         }

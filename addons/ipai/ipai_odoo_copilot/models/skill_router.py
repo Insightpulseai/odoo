@@ -14,6 +14,23 @@ _logger = logging.getLogger(__name__)
 # Each rule: (skill_id, pattern_list, priority)
 # First match with highest priority wins.
 INTENT_RULES = [
+    # Knowledge base — cited retrieval from registered knowledge sources
+    ("knowledge_qa", [
+        r"knowledge\s*base", r"kb\s+", r"policy\s*(doc|manual|guide)",
+        r"what\s*(does|is)\s*(the|our)\s*(policy|procedure|guideline)",
+        r"sop\s+", r"company\s*(handbook|manual|policy)",
+        r"check\s*(the|our)\s*(docs|documentation|knowledge)",
+    ], 88),
+
+    # Domain bridge — grounded reads across operational domains
+    ("domain_read", [
+        r"my\s*(expense|advance|reimbursement)", r"pending\s*expense",
+        r"project\s*(status|health|budget)", r"portfolio\s*(health|score)",
+        r"close\s*(task|checklist|status)", r"month.end\s*close",
+        r"tax\s*(obligation|filing|return|deadline|calendar)",
+        r"bir\s*(form|filing|deadline)",
+    ], 86),
+
     # Finance-specific
     ("reconciliation_assist", [
         r"reconcil", r"bank\s*statement", r"match.*transaction",
@@ -112,6 +129,9 @@ class SkillRouter(models.AbstractModel):
         context_boost = False
 
         # Context-based boost: if viewing a finance record, boost finance skills
+        has_attachments = bool(
+            context_envelope.get("attachment_ids") if context_envelope else False
+        )
         if context_envelope:
             model = context_envelope.get("record_model", "")
             surface = context_envelope.get("surface", "")
@@ -132,6 +152,7 @@ class SkillRouter(models.AbstractModel):
             if context_boost and skill_id in (
                 "finance_qa", "reconciliation_assist",
                 "collections_assist", "variance_analysis",
+                "domain_read",
             ):
                 effective_priority += 20
 
@@ -161,6 +182,19 @@ class SkillRouter(models.AbstractModel):
         the agent to use the right tools for this skill.
         """
         instructions_map = {
+            "knowledge_qa": (
+                "The user is asking about company policies, procedures, or knowledge base content. "
+                "Use query_knowledge_base to search the registered knowledge sources. "
+                "Cite sources using [N] markers from the returned citations. "
+                "If the knowledge base cannot answer, say so — do not guess."
+            ),
+            "domain_read": (
+                "The user wants operational data from a specific domain. "
+                "Use the appropriate domain tool: read_expense_summary for expenses/advances, "
+                "read_project_status for projects/budgets, read_close_tasks for month-end close, "
+                "read_tax_obligations for tax/BIR deadlines. "
+                "Present data clearly with amounts and dates."
+            ),
             "finance_qa": (
                 "The user is asking about finance/accounting. "
                 "Use read_record and search_records to look up Odoo accounting data. "

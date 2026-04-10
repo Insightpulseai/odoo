@@ -99,6 +99,13 @@ class CopilotToolExecutor(models.Model):
         "query_fabric_data": "_execute_query_fabric_data",
         # Write lane (action queue only)
         "propose_action": "_execute_propose_action",
+        # Knowledge bridge (cited retrieval)
+        "query_knowledge_base": "_execute_query_knowledge_base",
+        # Domain bridge stubs (wired when Wave 2 modules land)
+        "read_expense_summary": "_execute_domain_stub",
+        "read_project_status": "_execute_domain_stub",
+        "read_close_tasks": "_execute_domain_stub",
+        "read_tax_obligations": "_execute_domain_stub",
     }
 
     # Read-only tools — safe to execute without approval.
@@ -1258,3 +1265,95 @@ class CopilotToolExecutor(models.Model):
             })
         except Exception:
             _logger.exception("Failed to write tool audit record")
+
+    # ------------------------------------------------------------------
+    # Knowledge bridge tool
+    # ------------------------------------------------------------------
+
+    def _execute_query_knowledge_base(self, arguments, context_envelope=None,
+                                       user_id=None):
+        """Query ipai.knowledge.bridge for cited answers."""
+        question = arguments.get("question", "")
+        source_code = arguments.get("source_code", "")
+
+        if not question:
+            return {"success": False, "data": None,
+                    "error": "Missing 'question' parameter"}
+
+        bridge = self.env["ipai.knowledge.bridge"]
+
+        if source_code:
+            result = bridge.query(
+                source_code=source_code,
+                question=question,
+                caller_uid=user_id or self.env.uid,
+                caller_surface="copilot",
+            )
+        else:
+            # Query all active sources and return best result
+            sources = bridge.list_sources()
+            if not sources:
+                return {
+                    "success": True,
+                    "data": {
+                        "answer": "No knowledge sources are currently registered.",
+                        "citations": [],
+                        "abstained": True,
+                    },
+                    "error": None,
+                }
+
+            best_result = None
+            best_confidence = -1
+            for src in sources:
+                r = bridge.query(
+                    source_code=src["code"],
+                    question=question,
+                    caller_uid=user_id or self.env.uid,
+                    caller_surface="copilot",
+                )
+                conf = r.get("confidence", 0)
+                if conf > best_confidence:
+                    best_confidence = conf
+                    best_result = r
+
+            result = best_result
+
+        return {
+            "success": not result.get("error"),
+            "data": {
+                "answer": result.get("answer", ""),
+                "citations": result.get("citations", []),
+                "confidence": result.get("confidence", 0),
+                "abstained": result.get("abstained", False),
+            },
+            "error": result.get("error") or None,
+        }
+
+    # ------------------------------------------------------------------
+    # Domain bridge stubs (wired when Wave 2 modules land)
+    # ------------------------------------------------------------------
+
+    def _execute_domain_stub(self, arguments, context_envelope=None,
+                              user_id=None):
+        """Stub handler for domain bridge tools not yet implemented.
+
+        Returns a clear message that the domain module is pending.
+        Domain bridges (#687-#690) will replace this stub.
+        """
+        tool_name = context_envelope.get("_current_tool", "domain_read") \
+            if context_envelope else "domain_read"
+        return {
+            "success": True,
+            "data": {
+                "message": (
+                    "This domain bridge is not yet available. "
+                    "The module is planned for Wave 2 delivery. "
+                    "You can still answer from the knowledge base or "
+                    "search Odoo records directly."
+                ),
+                "tool": tool_name,
+                "status": "stub",
+            },
+            "error": None,
+        }
