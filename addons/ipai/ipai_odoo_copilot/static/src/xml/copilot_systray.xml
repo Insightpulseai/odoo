@@ -104,9 +104,29 @@
                     </div>
                 </div>
 
+                <!-- Attached file indicator -->
+                <t t-if="state.attachedFile">
+                    <div class="d-flex align-items-center gap-1 px-3 py-1 bg-light border-top small">
+                        <i class="fa fa-paperclip text-primary"/>
+                        <span class="text-truncate" style="max-width: 180px;" t-esc="state.attachedFile.name"/>
+                        <button class="btn btn-link btn-sm p-0 ms-auto" t-on-click="onRemoveAttachment">
+                            <i class="fa fa-times text-danger"/>
+                        </button>
+                    </div>
+                </t>
+
                 <!-- Input Area -->
                 <div class="o_ipai_copilot_input border-top px-3 py-2">
+                    <input type="file" class="d-none" t-ref="fileInput"
+                           t-on-change="onFileSelected"
+                           accept=".txt,.csv,.md,.html,.xml,.json,.pdf,.png,.jpg,.jpeg,.webp,.xlsx,.docx"/>
                     <div class="d-flex gap-2">
+                        <button class="btn btn-light btn-sm px-2"
+                                t-on-click="onClickUpload"
+                                t-att-disabled="state.isLoading"
+                                title="Upload file">
+                            <i class="fa fa-paperclip"/>
+                        </button>
                         <textarea
                             t-ref="promptInput"
                             class="form-control form-control-sm"

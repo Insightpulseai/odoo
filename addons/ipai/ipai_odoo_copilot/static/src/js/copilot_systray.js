@@ -19,9 +19,11 @@ export class CopilotSystrayButton extends Component {
             isLoading: false,
             error: null,
             isDisabled: false,
+            attachedFile: null,
         });
         this.inputRef = useRef("promptInput");
         this.messagesRef = useRef("messageList");
+        this.fileInputRef = useRef("fileInput");
         this.action = useService("action");
 
         // Check if copilot is enabled
@@ -97,12 +99,30 @@ export class CopilotSystrayButton extends Component {
         this._scrollToBottom();
 
         try {
+            // Upload attachment if present
+            let attachmentRef = null;
+            if (this.state.attachedFile) {
+                try {
+                    attachmentRef = await this._uploadAttachment(this.state.attachedFile);
+                    this.state.attachedFile = null;
+                } catch {
+                    this.state.messages.push({
+                        role: "error",
+                        content: "File upload failed. Please try again.",
+                        timestamp: new Date().toLocaleTimeString(),
+                    });
+                    this.state.isLoading = false;
+                    return;
+                }
+            }
+
             const context = this._getPageContext();
             const result = await rpc("/ipai/copilot/chat", {
                 prompt,
                 record_model: context.record_model,
                 record_id: context.record_id,
                 surface: context.surface || "erp",
+                attachment_ref: attachmentRef,
             });
 
             if (result.blocked) {
@@ -134,9 +154,39 @@ export class CopilotSystrayButton extends Component {
         }
     }
 
+    onClickUpload() {
+        this.fileInputRef.el?.click();
+    }
+
+    onFileSelected(ev) {
+        const file = ev.target.files?.[0];
+        if (!file) return;
+        this.state.attachedFile = file;
+        ev.target.value = "";
+    }
+
+    onRemoveAttachment() {
+        this.state.attachedFile = null;
+    }
+
+    async _uploadAttachment(file) {
+        const base64 = await new Promise((resolve) => {
+            const reader = new FileReader();
+            reader.onload = () => resolve(reader.result.split(",")[1]);
+            reader.readAsDataURL(file);
+        });
+        const result = await rpc("/api/pulser/attachments/upload", {
+            filename: file.name,
+            data: base64,
+            mime_type: file.type || "application/octet-stream",
+        });
+        return result;
+    }
+
     clearMessages() {
         this.state.messages = [];
         this.state.error = null;
+        this.state.attachedFile = null;
     }
 
     _scrollToBottom() {
