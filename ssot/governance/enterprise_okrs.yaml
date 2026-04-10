@@ -111,7 +111,7 @@ canonical_okrs:
   - id: okr_O2
     name: "Odoo as Governed Runtime"
     description: >
-      Position Odoo CE 19 as the governed ERP runtime for finance, HR, and
+      Position Odoo CE 18 as the governed ERP runtime for finance, HR, and
       approvals with CE + OCA + ipai_* achieving >= 80% EE parity.
     parent_objectives: [obj_D, obj_E]
     key_results:

@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <!-- =====================================================
+             PH BIR Compliance Pack — Version 1.0.0
+             Covers: VAT 12%, Percentage Tax, Withholding Tax,
+                     Expanded Withholding Tax (EWT), Document Completeness
+             Authority: NIRC, BIR Revenue Regulations
+             ===================================================== -->
+
+        <!-- Validation Rules (created before pack to allow linkage) -->
+
+        <record id="rule_ph_vat_rate_check" model="tax.validation.rule">
+            <field name="name">PH VAT Rate Check (12%)</field>
+            <field name="description">
+                Verifies that all taxable invoice lines have a 12% VAT tax applied.
+                Exemption-flagged lines are excluded.
+                Reference: NIRC Section 106, BIR RR No. 16-2005.
+            </field>
+            <field name="rule_type">rate_check</field>
+            <field name="applies_to">all</field>
+            <field name="country_id" ref="base.ph"/>
+            <field name="severity">blocking</field>
+            <field name="is_active" eval="True"/>
+            <field name="sequence">10</field>
+            <field name="policy_reference">NIRC Sec 106; BIR RR 16-2005</field>
+        </record>
+
+        <record id="rule_ph_ewt_check" model="tax.validation.rule">
+            <field name="name">PH Expanded Withholding Tax (EWT) Check</field>
+            <field name="description">
+                Verifies that applicable vendor bills have Expanded Withholding Tax (EWT)
+                applied. Required for payments to suppliers of goods and services.
+                Reference: NIRC Section 57(B), BIR RR No. 2-98.
+            </field>
+            <field name="rule_type">withholding_check</field>
+            <field name="applies_to">bill</field>
+            <field name="country_id" ref="base.ph"/>
+            <field name="severity">blocking</field>
+            <field name="is_active" eval="True"/>
+            <field name="sequence">20</field>
+            <field name="policy_reference">NIRC Sec 57(B); BIR RR 2-98</field>
+        </record>
+
+        <record id="rule_ph_percentage_tax_check" model="tax.validation.rule">
+            <field name="name">PH Percentage Tax Check (3%)</field>
+            <field name="description">
+                Verifies that non-VAT registered entities apply 3% percentage tax
+                on applicable transactions.
+                Reference: NIRC Section 116, BIR RR No. 13-2018.
+            </field>
+            <field name="rule_type">rate_check</field>
+            <field name="applies_to">invoice</field>
+            <field name="country_id" ref="base.ph"/>
+            <field name="severity">warning</field>
+            <field name="is_active" eval="True"/>
+            <field name="sequence">30</field>
+            <field name="policy_reference">NIRC Sec 116; BIR RR 13-2018</field>
+        </record>
+
+        <record id="rule_ph_document_completeness" model="tax.validation.rule">
+            <field name="name">PH Document Completeness — Vendor Bill Attachment</field>
+            <field name="description">
+                Verifies that vendor bills have at least one supporting document attached
+                (e.g., supplier invoice, OR, delivery receipt).
+                Required for BIR audit substantiation.
+                Reference: BIR RR No. 17-2011 (CAS requirements).
+            </field>
+            <field name="rule_type">document_completeness</field>
+            <field name="applies_to">bill</field>
+            <field name="country_id" ref="base.ph"/>
+            <field name="severity">warning</field>
+            <field name="is_active" eval="True"/>
+            <field name="sequence">40</field>
+            <field name="policy_reference">BIR RR 17-2011 (CAS)</field>
+        </record>
+
+        <!-- PH BIR Compliance Pack -->
+        <record id="pack_ph_bir_v1" model="tax.compliance.pack">
+            <field name="name">Philippines BIR Compliance Pack</field>
+            <field name="country_id" ref="base.ph"/>
+            <field name="version">1.0.0</field>
+            <field name="description">
+                Philippines Bureau of Internal Revenue (BIR) compliance pack for Odoo 18.
+                Covers VAT 12%, Expanded Withholding Tax (EWT), Percentage Tax (3%),
+                and document completeness requirements for vendor bills and invoices.
+
+                Rules are aligned with NIRC provisions and relevant BIR Revenue Regulations.
+                This pack is versioned and independently upgradeable.
+            </field>
+            <field name="is_active" eval="True"/>
+            <field name="effective_date">2024-01-01</field>
+            <field name="reference">NIRC; BIR RR 16-2005; BIR RR 2-98; BIR RR 13-2018; BIR RR 17-2011</field>
+        </record>
+
+        <!-- Link rules to pack via compliance_pack_id -->
+        <record id="rule_ph_vat_rate_check" model="tax.validation.rule">
+            <field name="compliance_pack_id" ref="pack_ph_bir_v1"/>
+        </record>
+        <record id="rule_ph_ewt_check" model="tax.validation.rule">
+            <field name="compliance_pack_id" ref="pack_ph_bir_v1"/>
+        </record>
+        <record id="rule_ph_percentage_tax_check" model="tax.validation.rule">
+            <field name="compliance_pack_id" ref="pack_ph_bir_v1"/>
+        </record>
+        <record id="rule_ph_document_completeness" model="tax.validation.rule">
+            <field name="compliance_pack_id" ref="pack_ph_bir_v1"/>
+        </record>
+    </data>
+</odoo>

@@ -7,7 +7,7 @@ Your job is to:
 2. Verify no files are modified under `vendor/odoo/` or `addons/oca/`
 3. Verify all view changes use inherited views with xpath (not replacements)
 4. Check that migration scripts exist for any schema changes
-5. Verify the manifest version follows `18.0.x.y.z`
+5. Verify the manifest version follows `19.0.x.y.z`
 6. Check for deprecated patterns and Odoo 18 breaking changes
 7. Produce an upgrade safety assessment
 

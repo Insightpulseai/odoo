@@ -6,13 +6,13 @@
 #
 # Repo status key:
 #   vendored       — submodule exists under addons/oca/
-#   vendored_empty — submodule exists but module NOT ported to 18.0
+#   vendored_empty — submodule exists but module NOT ported to 19.0
 #   pending        — submodule must be added before installation
 #
 # Install order is dependency-safe (lower number = install first).
 #
 # CRITICAL (2026-03-02): ALL 9 OCA modules below are NOT yet ported
-# to Odoo 18.0 in their respective OCA repos. The 18.0 branches exist
+# to Odoo 18.0 in their respective OCA repos. The 19.0 branches exist
 # but the actual module directories are empty or missing.
 # Action: Use `oca-port` to contribute ports, or wait for OCA community.
 
@@ -32,7 +32,7 @@ modules:
     replaces_ee: account_accountant
     dependencies: [account]
     port_status: not_started
-    notes: "Only account_statement_base exists in 18.0 branch"
+    notes: "Only account_statement_base exists in 19.0 branch"
 
   - module: account_asset_management
     oca_repo: OCA/account-financial-tools
@@ -52,7 +52,7 @@ modules:
     replaces_ee: documents
     dependencies: [base]
     port_status: not_started
-    notes: "18.0 branch has only repo boilerplate, no module dirs"
+    notes: "19.0 branch has only repo boilerplate, no module dirs"
 
   - module: dms_field
     oca_repo: OCA/dms
@@ -72,7 +72,7 @@ modules:
     replaces_ee: helpdesk
     dependencies: [mail]
     port_status: unknown
-    action: "Check OCA/helpdesk 18.0 branch status; vendor if ported"
+    action: "Check OCA/helpdesk 19.0 branch status; vendor if ported"
 
   - module: helpdesk_mgmt_sla
     oca_repo: OCA/helpdesk
@@ -92,7 +92,7 @@ modules:
     replaces_ee: approvals
     dependencies: [base]
     port_status: not_started
-    notes: "server-ux 18.0 has 5 modules but not base_tier_validation"
+    notes: "server-ux 19.0 has 5 modules but not base_tier_validation"
 
   - module: base_tier_validation_formula
     oca_repo: OCA/server-ux
@@ -112,4 +112,4 @@ modules:
     replaces_ee: project (task dependencies)
     dependencies: [project]
     port_status: not_started
-    notes: "project 18.0 has 4 modules but not project_task_dependency"
+    notes: "project 19.0 has 4 modules but not project_task_dependency"

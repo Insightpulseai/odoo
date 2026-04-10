@@ -340,7 +340,7 @@ separation of concerns.
 |   OCA requirements, IPAI requirements              |
 +--------------------------------------------------+
 | Layer 1: Base Odoo 18                             |
-|   /opt/odoo/ (Odoo CE 18 source)                  |
+|   /opt/odoo/ (Odoo CE 19 source)                  |
 |   System packages (PostgreSQL client, wkhtmltopdf) |
 |   Python 3.12                                      |
 +--------------------------------------------------+

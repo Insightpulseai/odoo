@@ -1,4 +1,4 @@
-# SKILL: Validate Odoo Module Against Odoo19 KB
+# SKILL: Validate Odoo Module Against Odoo18 KB
 
 ## Skill ID
 

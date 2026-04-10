@@ -71,7 +71,7 @@ local_rules:
     owner: local
     local_projection: ~/.claude/rules/odoo18-coding.md
     repo_source: null  # Derived from upstream Odoo 18 docs, not a repo file
-    upstream: https://www.odoo.com/documentation/18.0/contributing/development/coding_guidelines.html
+    upstream: https://www.odoo.com/documentation/19.0/contributing/development/coding_guidelines.html
     sync_expectation: manual
     description: Odoo 18 coding conventions — model order, naming, ORM rules, breaking changes
 

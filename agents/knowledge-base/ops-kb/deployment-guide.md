@@ -131,7 +131,7 @@ Steps:
 ### Docker Image Structure
 
 ```dockerfile
-# Base image: Odoo CE 19.0 on Python 3.12
+# Base image: Odoo CE 18.0 on Python 3.12
 FROM odoo:18.0
 
 # Install OCA module dependencies

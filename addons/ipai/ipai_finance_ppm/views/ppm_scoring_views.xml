@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <record id="view_ppm_scoring_tree" model="ir.ui.view">
+        <field name="name">ppm.scoring.tree</field>
+        <field name="model">ppm.scoring</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="project_id"/>
+                <field name="investment_type"/>
+                <field name="strategic_alignment"/>
+                <field name="financial_benefit"/>
+                <field name="risk_level"/>
+                <field name="resource_availability"/>
+                <field name="urgency"/>
+                <field name="total_score"/>
+                <field name="recommendation" widget="badge"/>
+                <field name="scored_by_id"/>
+                <field name="scored_date"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_ppm_scoring_form" model="ir.ui.view">
+        <field name="name">ppm.scoring.form</field>
+        <field name="model">ppm.scoring</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <group string="Project">
+                            <field name="project_id"/>
+                            <field name="investment_type"/>
+                            <field name="scored_by_id"/>
+                            <field name="scored_date"/>
+                        </group>
+                        <group string="Score">
+                            <field name="strategic_alignment"/>
+                            <field name="financial_benefit"/>
+                            <field name="risk_level"/>
+                            <field name="resource_availability"/>
+                            <field name="urgency"/>
+                            <field name="total_score"/>
+                        </group>
+                    </group>
+                    <group>
+                        <field name="recommendation"/>
+                        <field name="notes"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_ppm_scoring" model="ir.actions.act_window">
+        <field name="name">Investment Scoring</field>
+        <field name="res_model">ppm.scoring</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+</odoo>

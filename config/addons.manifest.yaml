@@ -488,7 +488,7 @@ ipai:
 # =============================================================================
 # Deprecated / Superseded
 # =============================================================================
-# These were in config/addons_manifest.oca_ipai.json (Odoo 17) but are NOT
+# These were in config/addons_manifest.oca_ipai.json (Odoo 18) but are NOT
 # in oca-aggregate.yml (Odoo 18). They should NOT be re-added without review.
 deprecated_repos:
   - repo: server-env

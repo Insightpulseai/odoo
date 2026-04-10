@@ -1,35 +1,46 @@
 # -*- coding: utf-8 -*-
+# License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl-3.0)
+
+"""Copilot invoice check model.
+
+Persists the result of the ph_invoice_math validator so findings
+can be linked to a conversation/attachment and reviewed by the user.
+"""
+
+import logging
+
 from odoo import fields, models
+
+_logger = logging.getLogger(__name__)
 
 
 class CopilotInvoiceCheck(models.Model):
-    """Stores deterministic PH invoice math validation results.
-
-    The validator (``validators.ph_invoice_math``) runs outside Odoo and
-    produces a result dict.  This model persists those results so the
-    copilot conversation can reference them and Odoo workflows can gate
-    on the ``status`` field.
-    """
-
     _name = "ipai.copilot.invoice.check"
-    _description = "Copilot Invoice Math Check"
-    _order = "create_date desc"
+    _description = "Copilot Invoice Check"
+    _order = "create_date desc, id desc"
 
+    # -------------------------------------------------------------------------
+    # Relation to attachment
+    # -------------------------------------------------------------------------
     attachment_ref_id = fields.Many2one(
-        comodel_name="ipai.copilot.attachment.ref",
+        "ipai.copilot.attachment.ref",
         string="Attachment Reference",
         ondelete="cascade",
         index=True,
     )
+
+    # -------------------------------------------------------------------------
+    # Validation outcome
+    # -------------------------------------------------------------------------
     status = fields.Selection(
-        selection=[
+        [
             ("validated", "Validated"),
             ("needs_review", "Needs Review"),
-            ("rejected", "Rejected"),
+            ("error", "Error"),
         ],
-        string="Status",
         required=True,
         default="needs_review",
+        index=True,
     )
     expected_payable = fields.Float(
         string="Expected Payable",
@@ -42,18 +53,17 @@ class CopilotInvoiceCheck(models.Model):
     delta = fields.Float(
         string="Delta",
         digits=(16, 2),
-        help="expected_payable - printed_total_due",
+        help="expected_payable minus printed_total_due",
+    )
+    currency_id = fields.Many2one(
+        "res.currency",
+        string="Currency",
+        default=lambda self: self.env.ref("base.PHP", raise_if_not_found=False),
     )
     findings_json = fields.Text(
         string="Findings (JSON)",
-        help="JSON array of finding objects from the deterministic validator.",
+        default="[]",
     )
     summary = fields.Text(
         string="Summary",
-        help="Human-readable explanation of validation results.",
-    )
-    currency_id = fields.Many2one(
-        comodel_name="res.currency",
-        string="Currency",
-        default=lambda self: self.env.ref("base.PHP", raise_if_not_found=False),
     )

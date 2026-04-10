@@ -1,0 +1,355 @@
+# MVP Module Requirements Matrix
+# SSOT for all CE, OCA, IPAI, and platform requirements across 4 verticals.
+# Generated: 2026-04-10
+# Authority: User-provided requirement map, validated against Gate A runtime proof.
+
+verticals:
+
+  # ──────────────────────────────────────────────────────────────────────────
+  # 1. Clarity-style PPM
+  # ──────────────────────────────────────────────────────────────────────────
+  ppm:
+    name: "Clarity-style PPM"
+    spec_bundle: "spec/ppm-clarity-plane-odoo"
+
+    ce:
+      - name: project
+        provides:
+          - tasks / stages / Kanban
+          - milestones
+          - project updates / status snapshots
+          - native project dashboard
+          - native project profitability
+          - native project budgets / timesheet-planning hooks
+
+    oca:
+      structure:
+        - project_parent
+        - project_group
+        - project_department
+        - project_type
+        - project_version
+        - project_key
+      execution:
+        - project_template
+        - project_task_ancestor
+        - project_task_parent_completion_blocking
+        - project_task_parent_due_auto
+        - project_task_stage_mgmt
+        - project_task_stage_change_restriction
+        - project_task_stage_state
+        - project_task_code
+        - project_task_name_with_id
+      stakeholders:
+        - project_stakeholder
+        - project_reviewer
+        - project_role
+        - project_administrator_restricted_visibility  # optional
+      timeline:
+        - project_timeline
+        - project_timeline_hr_timesheet
+        - project_timesheet_time_control
+        - hr_timesheet_sheet
+        - hr_timesheet_sheet_policy_project_manager
+        - hr_timesheet_begin_end
+      reporting:
+        - sale_timesheet_budget
+        - mis_builder
+        - mis_builder_budget
+        - project_pivot
+
+    ipai:
+      # No custom IPAI module required — PPM is fully served by CE project + OCA stack.
+      # ipai_finance_ppm dropped from MVP (2026-04-10).
+      []
+
+    platform:
+      optional:
+        - Power BI / Databricks for executive-grade portfolio analytics outside Odoo
+
+    not_in_scope:
+      - drag-drop optimization
+      - enterprise capacity planning
+      - advanced scenario optimization
+
+  # ──────────────────────────────────────────────────────────────────────────
+  # 2. Reverse SAP Concur / Expense / Cash Advance
+  # ──────────────────────────────────────────────────────────────────────────
+  expense:
+    name: "Reverse SAP Concur / Expense / Cash Advance"
+    spec_bundle: "spec/reverse-sap-concur"
+
+    ce:
+      - name: hr_expense
+        provides:
+          - expense report creation / submission
+          - multi-currency expense entry
+          - analytic allocation
+          - duplicate detection
+          - manager approval routing
+          - vendor bill / payment posting
+      - name: sale_expense
+        provides:
+          - reinvoicing expenses to customers
+
+    oca:
+      expense_core:
+        - hr_expense_advance_clearing
+        - hr_expense_advance_clearing_sequence
+        - hr_expense_payment
+        - hr_expense_sequence
+      approval:
+        - hr_expense_tier_validation
+        - base_tier_validation
+      document_management:
+        - dms
+        - dms_field
+        - document_page_approval
+      infrastructure:
+        - queue_job
+        - auditlog
+      reporting:
+        - mis_builder
+      support:
+        - helpdesk_mgmt
+
+    ipai:
+      - name: ipai_hr_expense_liquidation
+        gate_a: pass
+        provides:
+          - PH cash advance lifecycle
+          - liquidation workflows
+          - policy limits / receipts / overdue logic
+          - idempotent accounting entries
+          - overdue monitoring
+      - name: ipai_expense_wiring
+        gate_a: pass
+        provides:
+          - soft OCA integration layer
+          - boundary documentation model
+          - parity configuration
+          - graceful wiring (no-op if OCA absent)
+      - name: ipai_expense_ops
+        gate_a: pass  # 6 tests, 0 failures (run 2)
+        provides:
+          - compliance approval chain
+          - BIR validation hook
+          - compliance exception / violation model
+      - name: ipai_branch_profile
+        gate_a: pass  # transitive dependency
+        provides:
+          - branch/company profile configuration
+
+    platform:
+      required:
+        - TBWA cash advance printable form (QWeb)
+        - TBWA itemized liquidation printable form (QWeb)
+      deferred:
+        - OCR / receipt digitization bridge
+        - corporate card feeds
+        - native mobile receipt capture
+        - standalone Concur-style platform
+        - heavy travel stack (unless separately scoped)
+
+    not_in_scope:
+      - full Concur parity
+      - corporate card feeds as baseline
+      - mobile companion full app/platform
+
+  # ──────────────────────────────────────────────────────────────────────────
+  # 3. Reverse SAP Joule / Pulser Assistant
+  # ──────────────────────────────────────────────────────────────────────────
+  pulser:
+    name: "Reverse SAP Joule / Pulser Assistant"
+    spec_bundle: "spec/reverse-sap-joule-odoo18-pulser"
+
+    ce:
+      - name: base
+      - name: web
+      - name: mail
+      - name: bus
+      # Odoo remains authoritative for: permissions, records, workflows,
+      # approvals, ERP state.
+
+    oca:
+      # No single OCA copilot stack is established as mandatory in MVP.
+      # OCA REST/queue/connectors can be supportive but are not core.
+      []
+
+    ipai:
+      - name: ipai_pulser_assistant
+        gate_a: pass
+        provides:
+          - intent taxonomy
+          - action classification
+          - domain agent routing
+          - tool bindings
+          - append-only audit logging
+      - name: ipai_odoo_copilot
+        gate_a: pass  # 84 tests, 0 failures (run 2)
+        provides:
+          - canonical Pulser Odoo shell
+      - name: ipai_copilot_actions
+        gate_a: pass  # 10 tests, 0 failures (run 2)
+        provides:
+          - action dispatch / proposals / approval gates
+      - name: ipai_ai_agent_sources
+        gate_a: not_tested
+        provides:
+          - source / knowledge lifecycle indexing
+
+    platform:
+      required:
+        - "Foundry project: ipai-copilot"
+        - "Parent resource: ipai-copilot-resource"
+        - "Foundry endpoint: https://ipai-copilot-resource.services.ai.azure.com/api/projects/ipai-copilot"
+        - Azure OpenAI endpoint family for inference
+        - AI Services surface for bounded tools
+      confirmed_connections:
+        - AI Services
+        - Storage Account
+        - bing-grounding
+      behavior_targets:
+        - transactional
+        - navigational
+        - informational
+      grounding:
+        - "RAG for policies, SOPs, help, uploaded docs"
+        - "Live ERP truth stays in Odoo (never duplicated)"
+
+    not_in_scope:
+      - full Joule sub-agent family implementation
+      - spec-only sub-agents as runtime modules today
+      - governed Foundry-heavy runtime
+      - Azure AI Search / Cosmos / Fabric (unless explicitly justified)
+
+  # ──────────────────────────────────────────────────────────────────────────
+  # 4. Reverse AvaTax / Tax Intelligence
+  # ──────────────────────────────────────────────────────────────────────────
+  tax:
+    name: "Reverse AvaTax / Tax Intelligence"
+    spec_bundle: "spec/reverse-avatax-odoo18-pulser"
+
+    ce:
+      - name: account
+        provides:
+          - account.move (invoices, vendor bills, expenses)
+          - tax records
+          - journal entries
+          - posting truth
+
+    oca:
+      # No mandatory OCA tax engine established as MVP core.
+      # Reporting/support OCA layers can assist but MVP does not depend on
+      # proving a full OCA tax-engine replacement.
+      []
+
+    ipai:
+      - name: ipai_tax_intelligence
+        gate_a: pass
+        provides:
+          - pre-posting validation
+          - explainable tax exceptions
+          - approval-aware blocking / rerouting
+          - audit trail
+          - local compliance-pack boundary
+          - PH/BIR-oriented validation surfaces
+
+    platform:
+      optional:
+        - connector-bound external tax intelligence
+        - Azure OpenAI for explanation/review logic
+      not_required:
+        - third-party tax engine
+        - parallel tax ledger outside Odoo
+
+    not_in_scope:
+      - full AvaTax global parity
+
+# ──────────────────────────────────────────────────────────────────────────
+# Shared / cross-cutting requirements
+# ──────────────────────────────────────────────────────────────────────────
+shared:
+
+  azure_runtime:
+    - reuse existing Azure estate first
+    - Odoo as transactional SoR
+    - FastAPI/ACA only as facade/sidecar, not ERP truth
+    - Azure Front Door / WAF / VNet / PostgreSQL / Key Vault as runtime baseline
+
+  foundry:
+    project: ipai-copilot
+    resource_group: rg-data-intel-ph
+    region: eastus2
+    confirmed_connections:
+      - AI Services
+      - Storage
+      - Bing grounding
+    policy: treat other Foundry connections as optional, not assumed baseline
+
+  testing:
+    primary:
+      - "Odoo-native: TransactionCase, Form, HttpCase"
+    secondary:
+      - "Playwright: browser-critical paths only"
+    debugging:
+      - "Chrome DevTools: triage only, not primary correctness"
+    policy: keep browser suite thin
+
+  architecture:
+    - MVP must be a viable horizontal slice
+    - SaaS and multitenancy are separate decisions
+    - control plane is first-class
+    - Azure-first / single-cloud near-term focus
+
+# ──────────────────────────────────────────────────────────────────────────
+# Gate A verification status
+# ──────────────────────────────────────────────────────────────────────────
+gate_a:
+  date: "2026-04-10"
+  runtime: "Odoo CE 18.0"
+  python: "3.11.x (pyenv odoo-18-dev)"
+  postgresql: "16 (localhost:5432)"
+
+  # Run 1: Core modules (test_mvp_gate)
+  run_1:
+    database: test_mvp_gate
+    tests: 288
+    failures: 0
+    exit_code: 0
+    evidence: "docs/evidence/20260410-0645/gate-a/test_run_5.log"
+
+  # Run 2: Copilot + actions + expense ops (test_mvp_full)
+  run_2:
+    database: test_mvp_full
+    tests: 84
+    failures: 0
+    exit_code: 0
+    evidence: "docs/evidence/20260410-0941/gate-a-copilot/test_run_2.log"
+
+  modules_proven:
+    - ipai_pulser_assistant      # 149 tests
+    - ipai_tax_intelligence      # 69 tests
+    - ipai_hr_expense_liquidation # 43 tests
+    - ipai_expense_wiring        # 12 tests
+    - ipai_branch_profile        # 15 tests (transitive)
+    - ipai_odoo_copilot          # 84 tests
+    - ipai_copilot_actions       # 10 tests
+    - ipai_expense_ops           # 6 tests
+
+  modules_removed:
+    - ipai_finance_ppm  # PPM fully served by CE+OCA, no custom delta needed
+
+# ──────────────────────────────────────────────────────────────────────────
+# Explicitly NOT required for MVP
+# ──────────────────────────────────────────────────────────────────────────
+excluded:
+  - "Clarity: drag-drop optimization, enterprise capacity planning, advanced scenario optimization"
+  - "Concur: standalone platform, heavy travel stack, corporate card feeds, mobile companion"
+  - "Joule: full sub-agent family as runtime modules, governed Foundry-heavy runtime"
+  - "AvaTax: global multi-jurisdiction tax engine, parallel tax ledger outside Odoo"
+  - OCR as baseline (deferred — candidate via Azure Document Intelligence)
+  - corporate card feeds as baseline
+  - mobile companion full app/platform
+  - Azure AI Search / Cosmos / Fabric (unless explicitly justified)
+  - "spec-only sub-agents as runtime modules: project_copilot, taxpulse_ph, finance_reconciliation"

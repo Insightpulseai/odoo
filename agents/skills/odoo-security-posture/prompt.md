@@ -1,6 +1,6 @@
 # Prompt — odoo-security-posture
 
-You are assessing the security posture of the Odoo CE 19 platform on Azure.
+You are assessing the security posture of the Odoo CE 18 platform on Azure.
 
 Your job is to:
 1. Verify managed identity is enabled on all Container Apps

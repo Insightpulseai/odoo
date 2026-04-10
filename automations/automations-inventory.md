@@ -285,7 +285,7 @@ See `automations-inventory.json` for full JSON struct and paths.
 ## 11. Actionable Items & Pending Tasks (Based on Session)
 Based on the execution and prior chat history, here are the actionable items and pending tasks:
 
-- [ ] **[Ops] Align Odoo Version Constraint**: Confirm all rules files consistently reference Odoo 18 to prevent agent hallucination during cron/module generation.
+- [ ] **[Ops] Align Odoo Version Constraint**: Resolve the discrepancy between `rules.md` (Odoo 18) and `CLAUDE.md`/`GEMINI.md` (Odoo 18) to prevent agent hallucination during cron/module generation.
 - [ ] **[Subagents] Create Prompt Fallbacks**: Add `skills/subagents/*.prompt.md` files as mandated by `AGENTS.md` so native Gemini flows don't crash without slash commands.
 - [ ] **[Data] Edge Function Schedulers**: Write native Supabase `pg_cron` SQL migrations to execute the scheduled Edge Functions mapped in `supabase/functions/*/index.ts`.
 - [ ] **[CI/CD] MCP Servers Build Matrix**: Add an `npm run build` step to GitHub Actions for `odoo-erp`, `memory`, and other `source_only` MCP servers in `.claude/mcp-servers.json` so they are immediately accessible to SuperClaude.

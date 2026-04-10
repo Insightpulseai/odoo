@@ -128,7 +128,7 @@ segments:
     description: "Opening entries (AR/AP), inventory valuation, trial balance import, payment journal config, PayMongo setup"
     sources:
       - type: runbook
-        path: docs/runbooks/ODOO19_GO_LIVE_CHECKLIST.md
+        path: docs/runbooks/ODOO18_GO_LIVE_CHECKLIST.md
         description: "Master go-live checklist with accounting sections A-E"
       - type: ssot
         path: ssot/go_live/odoo18_checklist.manifest.yaml

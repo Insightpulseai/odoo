@@ -140,4 +140,4 @@ For existing developers:
 - VS Code Dev Containers: https://code.visualstudio.com/docs/devcontainers/containers
 - Dev Container Specification: https://containers.dev/
 - Docker Compose: https://docs.docker.com/compose/
-- Odoo 18 Documentation: https://www.odoo.com/documentation/18.0/
+- Odoo 18 Documentation: https://www.odoo.com/documentation/19.0/

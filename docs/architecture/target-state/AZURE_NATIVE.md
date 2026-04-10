@@ -77,7 +77,7 @@
 
 ### Entra ID → Odoo SSO
 
-Odoo 18 has [native Microsoft Azure / Entra sign-in](https://www.odoo.com/documentation/18.0/applications/general/users/azure.html) via OAuth provider flow:
+Odoo 18 has [native Microsoft Azure / Entra sign-in](https://www.odoo.com/documentation/19.0/applications/general/users/azure.html) via OAuth provider flow:
 
 - Register app in Entra ID with redirect URI `/auth_oauth/signin`
 - Grant `User.Read` scope minimum

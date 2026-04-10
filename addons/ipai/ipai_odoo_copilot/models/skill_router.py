@@ -14,13 +14,31 @@ _logger = logging.getLogger(__name__)
 # Each rule: (skill_id, pattern_list, priority)
 # First match with highest priority wins.
 INTENT_RULES = [
-    # Document extraction (highest priority — unambiguous with attachments)
+    # Document extraction (highest priority when the user is clearly asking
+    # to OCR or parse an uploaded file)
     ("document_extract", [
         r"extract", r"ocr", r"scan", r"digitize",
         r"read\s*(this|the)\s*(pdf|document|file|receipt|invoice)",
         r"what('s|\s*is)\s*in\s*(this|the)\s*(file|pdf|document)",
         r"parse\s*(this|the)",
     ], 95),
+
+    # Knowledge base — cited retrieval from registered knowledge sources
+    ("knowledge_qa", [
+        r"knowledge\s*base", r"kb\s+", r"policy\s*(doc|manual|guide)",
+        r"what\s*(does|is)\s*(the|our)\s*(policy|procedure|guideline)",
+        r"sop\s+", r"company\s*(handbook|manual|policy)",
+        r"check\s*(the|our)\s*(docs|documentation|knowledge)",
+    ], 88),
+
+    # Domain bridge — grounded reads across operational domains
+    ("domain_read", [
+        r"my\s*(expense|advance|reimbursement)", r"pending\s*expense",
+        r"project\s*(status|health|budget)", r"portfolio\s*(health|score)",
+        r"close\s*(task|checklist|status)", r"month.end\s*close",
+        r"tax\s*(obligation|filing|return|deadline|calendar)",
+        r"bir\s*(form|filing|deadline)",
+    ], 86),
 
     # Finance-specific
     ("reconciliation_assist", [
@@ -120,6 +138,9 @@ class SkillRouter(models.AbstractModel):
         context_boost = False
 
         # Context-based boost: if viewing a finance record, boost finance skills
+        has_attachments = bool(
+            context_envelope.get("attachment_ids") if context_envelope else False
+        )
         if context_envelope:
             model = context_envelope.get("record_model", "")
             surface = context_envelope.get("surface", "")
@@ -131,9 +152,6 @@ class SkillRouter(models.AbstractModel):
             if surface == "analytics":
                 context_boost = True
 
-        # Attachment boost: if files are attached, boost extraction skill
-        has_attachments = bool(context_envelope.get("attachment_ids"))
-
         best_skill = None
         best_priority = -1
 
@@ -143,6 +161,7 @@ class SkillRouter(models.AbstractModel):
             if context_boost and skill_id in (
                 "finance_qa", "reconciliation_assist",
                 "collections_assist", "variance_analysis",
+                "domain_read",
             ):
                 effective_priority += 20
             if has_attachments and skill_id == "document_extract":
@@ -174,6 +193,19 @@ class SkillRouter(models.AbstractModel):
         the agent to use the right tools for this skill.
         """
         instructions_map = {
+            "knowledge_qa": (
+                "The user is asking about company policies, procedures, or knowledge base content. "
+                "Use query_knowledge_base to search the registered knowledge sources. "
+                "Cite sources using [N] markers from the returned citations. "
+                "If the knowledge base cannot answer, say so — do not guess."
+            ),
+            "domain_read": (
+                "The user wants operational data from a specific domain. "
+                "Use the appropriate domain tool: read_expense_summary for expenses/advances, "
+                "read_project_status for projects/budgets, read_close_tasks for month-end close, "
+                "read_tax_obligations for tax/BIR deadlines. "
+                "Present data clearly with amounts and dates."
+            ),
             "finance_qa": (
                 "The user is asking about finance/accounting. "
                 "Use read_record and search_records to look up Odoo accounting data. "
@@ -208,7 +240,7 @@ class SkillRouter(models.AbstractModel):
             "odoo_upgrade_advisor": (
                 "The user needs help with Odoo version migration. "
                 "Search docs for breaking changes and migration guides. "
-                "Note: Odoo 18 renamed groups_id to group_ids, tree to list."
+                "Note: Odoo 18 uses groups_id (not group_ids), tree (not list)."
             ),
             "fabric_data_query": (
                 "The user wants business analytics data. "

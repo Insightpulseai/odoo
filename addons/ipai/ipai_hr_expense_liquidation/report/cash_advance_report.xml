@@ -1,0 +1,250 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Report Action: Cash Advance Request -->
+    <record id="action_report_cash_advance" model="ir.actions.report">
+        <field name="name">Cash Advance Request</field>
+        <field name="model">cash.advance</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">ipai_hr_expense_liquidation.report_cash_advance_document</field>
+        <field name="report_file">ipai_hr_expense_liquidation.report_cash_advance_document</field>
+        <field name="binding_model_id" ref="model_cash_advance"/>
+        <field name="binding_type">report</field>
+        <field name="paperformat_id" ref="base.paperformat_us"/>
+    </record>
+
+    <!-- Report Template: Cash Advance Request Form -->
+    <template id="report_cash_advance_document">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="o">
+                <t t-call="web.external_layout">
+                    <div class="page">
+
+                        <!-- Title -->
+                        <div class="row mb16">
+                            <div class="col-12 text-center">
+                                <h2><strong>CASH ADVANCE REQUEST</strong></h2>
+                            </div>
+                        </div>
+
+                        <!-- Header block: Reference + Status -->
+                        <div class="row mb16">
+                            <div class="col-6">
+                                <table class="table table-sm table-borderless">
+                                    <tr>
+                                        <td><strong>Reference No.:</strong></td>
+                                        <td><span t-field="o.name"/></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Date Needed:</strong></td>
+                                        <td><span t-field="o.date_needed"/></td>
+                                    </tr>
+                                    <tr t-if="o.travel_event_date_from">
+                                        <td><strong>Event/Travel Start:</strong></td>
+                                        <td><span t-field="o.travel_event_date_from"/></td>
+                                    </tr>
+                                    <tr t-if="o.travel_event_date_to">
+                                        <td><strong>Event/Travel End:</strong></td>
+                                        <td><span t-field="o.travel_event_date_to"/></td>
+                                    </tr>
+                                    <tr t-if="o.liquidation_due_date">
+                                        <td><strong>Liquidation Due By:</strong></td>
+                                        <td><span t-field="o.liquidation_due_date"/></td>
+                                    </tr>
+                                </table>
+                            </div>
+                            <div class="col-6">
+                                <table class="table table-sm table-borderless">
+                                    <tr>
+                                        <td><strong>Status:</strong></td>
+                                        <td><span t-field="o.state"/></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Payment Method:</strong></td>
+                                        <td><span t-field="o.payment_method"/></td>
+                                    </tr>
+                                    <tr t-if="o.branch_id">
+                                        <td><strong>Branch:</strong></td>
+                                        <td><span t-field="o.branch_id.name"/></td>
+                                    </tr>
+                                    <tr t-if="o.is_client_related">
+                                        <td><strong>Client:</strong></td>
+                                        <td><span t-field="o.client_name"/></td>
+                                    </tr>
+                                    <tr t-if="o.ce_number">
+                                        <td><strong>Cost Element:</strong></td>
+                                        <td><span t-field="o.ce_number"/></td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- Employee Info -->
+                        <div class="row mb16">
+                            <div class="col-12">
+                                <h5 class="border-bottom pb-1">Employee Information</h5>
+                            </div>
+                            <div class="col-6">
+                                <table class="table table-sm table-borderless">
+                                    <tr>
+                                        <td><strong>Employee:</strong></td>
+                                        <td><span t-field="o.employee_id.name"/></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Department:</strong></td>
+                                        <td><span t-field="o.department_id.name"/></td>
+                                    </tr>
+                                    <tr t-if="o.payee_name">
+                                        <td><strong>Payee Name:</strong></td>
+                                        <td><span t-field="o.payee_name"/></td>
+                                    </tr>
+                                </table>
+                            </div>
+                            <div class="col-6">
+                                <table class="table table-sm table-borderless">
+                                    <tr>
+                                        <td><strong>Company:</strong></td>
+                                        <td><span t-field="o.company_id.name"/></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Currency:</strong></td>
+                                        <td><span t-field="o.currency_id.name"/></td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- Purpose / Breakdown Lines -->
+                        <div class="row mb16">
+                            <div class="col-12">
+                                <h5 class="border-bottom pb-1">Purpose / Breakdown</h5>
+                                <table class="table table-sm table-bordered">
+                                    <thead class="bg-light">
+                                        <tr>
+                                            <th class="text-center" style="width:5%;">#</th>
+                                            <th>Purpose</th>
+                                            <th class="text-right" style="width:25%;">Amount</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <t t-foreach="o.purpose_line_ids" t-as="line">
+                                            <tr>
+                                                <td class="text-center">
+                                                    <span t-esc="line_index + 1"/>
+                                                </td>
+                                                <td><span t-field="line.purpose"/></td>
+                                                <td class="text-right">
+                                                    <span t-field="line.amount"
+                                                          t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
+                                                </td>
+                                            </tr>
+                                        </t>
+                                    </tbody>
+                                    <tfoot>
+                                        <tr class="bg-light">
+                                            <td colspan="2" class="text-right">
+                                                <strong>TOTAL AMOUNT REQUESTED:</strong>
+                                            </td>
+                                            <td class="text-right">
+                                                <strong>
+                                                    <span t-field="o.total_amount"
+                                                          t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
+                                                </strong>
+                                            </td>
+                                        </tr>
+                                    </tfoot>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- Purpose/Description (if any) -->
+                        <div t-if="o.description" class="row mb16">
+                            <div class="col-12">
+                                <h5 class="border-bottom pb-1">Notes / Purpose</h5>
+                                <p><span t-field="o.description"/></p>
+                            </div>
+                        </div>
+
+                        <!-- Approval Trail -->
+                        <div class="row mb32">
+                            <div class="col-12">
+                                <h5 class="border-bottom pb-1">Approval Trail</h5>
+                                <table class="table table-sm table-bordered">
+                                    <thead class="bg-light">
+                                        <tr>
+                                            <th>Stage</th>
+                                            <th>Approved By</th>
+                                            <th>Date</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>Department Approval</td>
+                                            <td>
+                                                <t t-if="o.approver_id">
+                                                    <span t-field="o.approver_id.name"/>
+                                                </t>
+                                                <t t-else=""><em>Pending</em></t>
+                                            </td>
+                                            <td>
+                                                <t t-if="o.approval_date">
+                                                    <span t-field="o.approval_date"/>
+                                                </t>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>Finance Approval</td>
+                                            <td>
+                                                <t t-if="o.finance_approver_id">
+                                                    <span t-field="o.finance_approver_id.name"/>
+                                                </t>
+                                                <t t-else=""><em>Pending</em></t>
+                                            </td>
+                                            <td>
+                                                <t t-if="o.finance_approval_date">
+                                                    <span t-field="o.finance_approval_date"/>
+                                                </t>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- Signature Blocks -->
+                        <div class="row mt32">
+                            <div class="col-4 text-center">
+                                <div style="border-top: 1px solid #000; margin-top: 40px; padding-top: 4px;">
+                                    <strong>Requested By</strong><br/>
+                                    <small><span t-field="o.employee_id.name"/></small>
+                                </div>
+                            </div>
+                            <div class="col-4 text-center">
+                                <div style="border-top: 1px solid #000; margin-top: 40px; padding-top: 4px;">
+                                    <strong>Department Head</strong><br/>
+                                    <small>
+                                        <t t-if="o.approver_id">
+                                            <span t-field="o.approver_id.name"/>
+                                        </t>
+                                        <t t-else="">___________________</t>
+                                    </small>
+                                </div>
+                            </div>
+                            <div class="col-4 text-center">
+                                <div style="border-top: 1px solid #000; margin-top: 40px; padding-top: 4px;">
+                                    <strong>Finance / Controller</strong><br/>
+                                    <small>
+                                        <t t-if="o.finance_approver_id">
+                                            <span t-field="o.finance_approver_id.name"/>
+                                        </t>
+                                        <t t-else="">___________________</t>
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div><!-- /page -->
+                </t><!-- /web.external_layout -->
+            </t><!-- /t-foreach -->
+        </t><!-- /web.html_container -->
+    </template>
+</odoo>

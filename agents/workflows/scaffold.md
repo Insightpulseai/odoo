@@ -26,7 +26,7 @@ echo "id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unli
 ```python
 {
     "name": "IPAI New Module",
-    "version": "18.0.1.0.0",  # Odoo 18 versioning
+    "version": "19.0.1.0.0",  # Odoo 18 versioning
     "category": "Custom",
     "depends": ["base"],
     "data": [

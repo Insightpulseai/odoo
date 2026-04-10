@@ -170,7 +170,7 @@ Follow the standard Month-End Close Checklist for December with these additional
 
 ### How Odoo Handles Year-End
 
-Odoo CE 19.0 handles the fiscal year rollover automatically:
+Odoo CE 18.0 handles the fiscal year rollover automatically:
 
 - **Income and expense accounts** (P&L accounts) are automatically offset to zero when viewing the Balance Sheet for the new fiscal year.
 - **The retained earnings account** automatically receives the net income/loss from the prior year.

@@ -19,7 +19,7 @@
 **Mitigation**: Knowledge base (this repo) serves as async peer review. Agent-assisted development. Documentation-first approach.
 
 ### R4: Odoo Upgrade Path
-**Risk**: When Odoo 19 or later arrives, all custom modules and OCA dependencies need migration.
+**Risk**: When Odoo 19 or 20 arrives, all custom modules and OCA dependencies need migration.
 **Impact**: Significant rework every ~18 months.
 **Mitigation**: Minimize custom code (Config → OCA → Delta). Write migration scripts proactively. Track OCA upgrade status.
 

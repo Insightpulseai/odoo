@@ -71,7 +71,7 @@ provisional_allowed:
   - .venv
   - .DS_Store
 blocked_new_top_level:
-  - odoo18-legacy
+  - odoo18
   - odoo-schema-mirror
   - app-landing
   - ops-console

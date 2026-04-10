@@ -2,7 +2,7 @@
 # Foundry project agents and their named agent definitions.
 # Cross-referenced by: models.yaml, policies.yaml, prompts.yaml
 # Companion: ssot/agents/agent-factory-lifecycle.yaml (universal lifecycle gates)
-# Updated: 2026-04-06
+# Updated: 2026-04-10
 #
 # NOTE: Uses Foundry SDK v2 (azure-ai-projects >= 2.0.0).
 #   - Client: AIProjectClient(endpoint=PROJECT_ENDPOINT, credential=DefaultAzureCredential())
@@ -32,6 +32,21 @@ foundry_project:
   auth_token_scope: "https://ai.azure.com/.default"
   required_rbac_role: Cognitive Services User  # on ipai-copilot-resource scope
   instruction_artifact: ssot/ai/foundry_instructions.md
+
+  # --- Runtime status (verified 2026-04-10 from Azure portal screenshots) ---
+  runtime_status:
+    posture: internal_alpha
+    agent_type: prompt  # classic, migration banner shown
+    agents_running: 5
+    success_rate: "100.00%"
+    tools_configured: 0
+    knowledge_indexes: 0
+    workflows: 0
+    stored_completions: 0
+    monitoring_features: "3/3"  # N3 done 2026-04-10: Azure Monitor + AIInferenceInstrumentor + App Insights
+    guardrails: [Microsoft.Default, Microsoft.DefaultV2]
+    evals_completed: 1
+    normalization_plan: ssot/ai/foundry_normalization_plan.yaml
 
   # --- Model deployments (verified 2026-04-06 from Foundry console) ---
   model_deployments:

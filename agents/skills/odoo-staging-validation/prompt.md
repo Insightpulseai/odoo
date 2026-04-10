@@ -1,6 +1,6 @@
 # Prompt — odoo-staging-validation
 
-You are validating the staging environment for an Odoo CE 19 deployment on Azure.
+You are validating the staging environment for an Odoo CE 18 deployment on Azure.
 
 Your job is to:
 1. Verify staging Container App is running the expected revision

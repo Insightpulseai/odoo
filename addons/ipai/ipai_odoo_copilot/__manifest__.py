@@ -1,13 +1,13 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'Pulser for Odoo',
-    'version': '18.0.2.1.0',
+    'version': '18.0.3.0.0',
     'summary': 'Pulser — AI assistant with systray chat, audit, rate limiting, and action dispatch',
     'category': 'Productivity',
     'license': 'LGPL-3',
     'author': 'InsightPulse AI',
     'website': 'https://insightpulseai.com',
-    'depends': ['base', 'web', 'mail', 'bus'],
+    'depends': ['base', 'web', 'mail', 'bus', 'ipai_knowledge_bridge'],
     'external_dependencies': {
         'python': [
             'requests',
@@ -21,9 +21,6 @@
         'views/copilot_audit_views.xml',
     ],
     'assets': {
-        'web.assets_unit_tests': [
-            'ipai_odoo_copilot/static/tests/**/*',
-        ],
         'web.assets_backend': [
             'ipai_odoo_copilot/static/src/js/copilot_systray.js',
             'ipai_odoo_copilot/static/src/xml/copilot_systray.xml',

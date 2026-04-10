@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <!-- Form view -->
+    <record id="view_bir_export_batch_form" model="ir.ui.view">
+        <field name="name">ipai.bir.export.batch.form</field>
+        <field name="model">ipai.bir.export.batch</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_generate" type="object"
+                            string="Generate Export"
+                            class="btn-primary"
+                            invisible="state != 'draft'"/>
+                    <button name="action_mark_exported" type="object"
+                            string="Mark as Exported"
+                            invisible="state != 'generated'"/>
+                    <button name="action_reset_to_draft" type="object"
+                            string="Reset to Draft"
+                            invisible="state == 'draft'"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="draft,generated,exported"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="name" readonly="1"/></h1>
+                    </div>
+                    <group>
+                        <group string="Period">
+                            <field name="company_id"/>
+                            <field name="export_type"/>
+                            <field name="date_from"/>
+                            <field name="date_to"/>
+                        </group>
+                        <group string="Summary">
+                            <field name="review_count"/>
+                            <field name="notes"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Included Reviews">
+                            <field name="review_ids" nolabel="1">
+                                <tree>
+                                    <field name="name"/>
+                                    <field name="move_id"/>
+                                    <field name="state" widget="badge"/>
+                                    <field name="expected_payable"/>
+                                    <field name="printed_total_due"/>
+                                    <field name="delta"/>
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="Export Data (JSON)"
+                              invisible="not export_data">
+                            <field name="export_data" readonly="1"/>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Tree view -->
+    <record id="view_bir_export_batch_tree" model="ir.ui.view">
+        <field name="name">ipai.bir.export.batch.tree</field>
+        <field name="model">ipai.bir.export.batch</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+                <field name="company_id"/>
+                <field name="export_type"/>
+                <field name="date_from"/>
+                <field name="date_to"/>
+                <field name="review_count"/>
+                <field name="state" widget="badge"
+                       decoration-info="state == 'draft'"
+                       decoration-success="state == 'generated'"
+                       decoration-muted="state == 'exported'"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Action -->
+    <record id="action_bir_export_batch" model="ir.actions.act_window">
+        <field name="name">BIR Export Batches</field>
+        <field name="res_model">ipai.bir.export.batch</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create a BIR export batch
+            </p>
+            <p>
+                Generate structured compliance datasets from validated
+                tax reviews for BIR reporting (SLSP, 2307, VAT relief).
+            </p>
+        </field>
+    </record>
+
+    <!-- Menu -->
+    <menuitem id="menu_bir_export"
+              name="BIR Exports"
+              parent="account.menu_finance"
+              action="action_bir_export_batch"
+              sequence="91"/>
+
+</odoo>

@@ -26,12 +26,12 @@ dependencies:
     upstream:
       name: "Apexive odoo-llm"
       repo: "https://github.com/apexive/odoo-llm"
-      target_branch: "18.0"
+      target_branch: "19.0"
       pinned_ref: null              # set to tag/sha once validated; REQUIRED before activation
     status:
       lifecycle: unknown            # unknown | planned | active | blocked | deprecated
       reason: >
-        Need to verify 18.0 port status + compatibility with our Odoo 18 baseline.
+        Need to verify 19.0 port status + compatibility with our Odoo 18 baseline.
         Check upstream branch list; if absent set lifecycle: blocked.
     consumers:
       odoo_modules:
@@ -54,7 +54,7 @@ dependencies:
         - "tool calling / function calling surface"
         - "no network dependency during Odoo module install"
       compatibility:
-        odoo_major: 18
+        odoo_major: 19
         python_major: 3
       licensing:
         required: true
@@ -70,7 +70,7 @@ dependencies:
       - "Provider API surface may not match our Supabase bridge contract."
     acceptance:
       to_activate:
-        - "Upstream target_branch (18.0) exists in the repo"
+        - "Upstream target_branch (19.0) exists in the repo"
         - "pinned_ref set to a reviewed tag/sha"
         - "Smoke tests pass in CI: install + basic provider invocation (stubbed key)"
 
@@ -80,7 +80,7 @@ dependencies:
     upstream:
       name: "OCA/ai (ai_oca_native_generate_ollama)"
       repo: "https://github.com/OCA/ai"
-      target_branch: "18.0"
+      target_branch: "19.0"
       pinned_ref: null              # set once audited against our vendored tree
     status:
       lifecycle: unknown

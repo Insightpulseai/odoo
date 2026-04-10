@@ -57,11 +57,15 @@ az containerapp job execution show -n <job> -g <rg> \
 ## Odoo 18 API changes
 
 ### post_init_hook signature
-Odoo 18 uses `post_init_hook(cr, registry)` signature.
-The `cr` parameter is a database cursor.
+Odoo 18 changed `post_init_hook(cr, registry)` to `post_init_hook(env)`.
+The `env` parameter is an `odoo.api.Environment` instance directly.
 
 ```python
-# Odoo 18
+# Odoo 18 (old)
 def post_init_hook(cr, registry):
     env = api.Environment(cr, SUPERUSER_ID, {})
+
+# Odoo 18 (new)
+def post_init_hook(env):
+    # env is already an Environment instance
 ```

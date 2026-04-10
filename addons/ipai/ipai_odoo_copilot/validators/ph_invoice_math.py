@@ -1,164 +1,115 @@
 # -*- coding: utf-8 -*-
-"""Deterministic PH invoice math validator.
+# License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl-3.0)
 
-Principle: LLM extracts/explains, deterministic code validates,
-Odoo decides workflow state.
+"""PH Invoice Math Validator — pure Python, no Odoo dependencies.
 
-This module has ZERO Odoo dependencies so it can be tested offline.
-All monetary arithmetic uses ``decimal.Decimal`` to avoid float drift.
+Validates Philippine invoice arithmetic:
+  - Line item sum == net_of_vat
+  - net_of_vat * vat_rate == vat_amount (within tolerance)
+  - net_of_vat + vat_amount == gross_total (within tolerance)
+  - net_of_vat * withholding_rate == withholding_amount (within tolerance)
+  - gross_total - withholding_amount == expected_payable
+  - expected_payable == printed_total_due (within tolerance)
 
-Invoice document schema (plain dict)::
-
-    {
-        "lines": [
-            {"description": str, "qty": number, "unit_cost": number, "amount": number},
-            ...
-        ],
-        "net_of_vat": number,
-        "vat_rate": number,          # default 0.12
-        "vat_amount": number,
-        "gross_total": number,
-        "withholding_rate": number,  # default 0.02 (2% EWT)
-        "withholding_amount": number,
-        "printed_total_due": number,
-    }
-
-Returns::
-
-    {
-        "status": "validated" | "needs_review",
-        "expected_payable": Decimal (as str in JSON),
-        "printed_total_due": Decimal (as str in JSON),
-        "findings": [
-            {
-                "code": str,
-                "expected": str,
-                "actual": str,
-                "delta": str,
-                "severity": "error" | "warning",
-            },
-            ...
-        ],
-    }
+Returns a dict with status, expected_payable, printed_total_due, and findings.
 """
 
-from decimal import Decimal, ROUND_HALF_UP
+from decimal import ROUND_HALF_UP, Decimal
 
-# Rounding tolerance for centavo-level differences
-_TOLERANCE = Decimal("0.01")
-
-# Default Philippine tax rates
-_DEFAULT_VAT_RATE = Decimal("0.12")
-_DEFAULT_EWT_RATE = Decimal("0.02")
+_TOLERANCE = Decimal("0.02")  # ₱0.02 rounding tolerance
 
 
-def _d(value):
-    """Convert a number to Decimal, rounding to 2 decimal places."""
+def _dec(value):
+    """Convert a numeric value to Decimal, rounding to 2 decimal places."""
     return Decimal(str(value)).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
 
 
-def _close_enough(a, b):
-    """Return True if two Decimal values are within tolerance."""
-    return abs(a - b) <= _TOLERANCE
-
-
 def validate(doc):
-    """Validate PH invoice math deterministically.
+    """Validate Philippine invoice math.
 
     Args:
-        doc: dict matching the invoice document schema above.
+        doc: dict with invoice fields (see module docstring for keys).
 
     Returns:
-        dict with status, expected_payable, printed_total_due, and findings.
+        dict:
+          status: 'validated' | 'needs_review'
+          expected_payable: Decimal
+          printed_total_due: Decimal
+          findings: list of finding dicts
     """
     findings = []
 
-    net_of_vat = _d(doc["net_of_vat"])
-    vat_rate = _d(doc.get("vat_rate", _DEFAULT_VAT_RATE))
-    vat_amount = _d(doc["vat_amount"])
-    gross_total = _d(doc["gross_total"])
-    withholding_rate = _d(doc.get("withholding_rate", _DEFAULT_EWT_RATE))
-    withholding_amount = _d(doc["withholding_amount"])
-    printed_total_due = _d(doc["printed_total_due"])
+    net_of_vat = _dec(doc.get("net_of_vat", 0))
+    vat_rate = _dec(doc.get("vat_rate", 0))
+    vat_amount = _dec(doc.get("vat_amount", 0))
+    gross_total = _dec(doc.get("gross_total", 0))
+    withholding_rate = _dec(doc.get("withholding_rate", 0))
+    withholding_amount = _dec(doc.get("withholding_amount", 0))
+    printed_total_due = _dec(doc.get("printed_total_due", 0))
 
-    # ------------------------------------------------------------------
-    # Check 1: LINE_SUM_MISMATCH
-    # ------------------------------------------------------------------
     lines = doc.get("lines", [])
-    if lines:
-        computed_line_sum = sum(
-            _d(line["qty"]) * _d(line["unit_cost"]) for line in lines
-        )
-        computed_line_sum = _d(computed_line_sum)
-        reported_line_sum = sum(_d(line["amount"]) for line in lines)
-        reported_line_sum = _d(reported_line_sum)
 
-        if not _close_enough(computed_line_sum, reported_line_sum):
+    # --- Check 1: line items sum ---
+    if lines:
+        line_sum = sum(_dec(ln.get("amount", 0)) for ln in lines)
+        if abs(line_sum - net_of_vat) > _TOLERANCE:
             findings.append({
                 "code": "LINE_SUM_MISMATCH",
-                "expected": str(computed_line_sum),
-                "actual": str(reported_line_sum),
-                "delta": str(computed_line_sum - reported_line_sum),
+                "expected": str(net_of_vat),
+                "actual": str(line_sum),
+                "delta": str(abs(line_sum - net_of_vat)),
                 "severity": "error",
             })
 
-    # ------------------------------------------------------------------
-    # Check 2: VAT_MISMATCH
-    # ------------------------------------------------------------------
-    expected_vat = _d(net_of_vat * vat_rate)
-    if not _close_enough(expected_vat, vat_amount):
+    # --- Check 2: VAT calculation ---
+    expected_vat = (net_of_vat * vat_rate).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
+    if abs(expected_vat - vat_amount) > _TOLERANCE:
         findings.append({
-            "code": "VAT_MISMATCH",
+            "code": "VAT_AMOUNT_MISMATCH",
             "expected": str(expected_vat),
             "actual": str(vat_amount),
-            "delta": str(expected_vat - vat_amount),
+            "delta": str(abs(expected_vat - vat_amount)),
             "severity": "error",
         })
 
-    # ------------------------------------------------------------------
-    # Check 3: GROSS_TOTAL_MISMATCH
-    # ------------------------------------------------------------------
-    expected_gross = _d(net_of_vat + vat_amount)
-    if not _close_enough(expected_gross, gross_total):
+    # --- Check 3: gross total ---
+    expected_gross = net_of_vat + vat_amount
+    if abs(expected_gross - gross_total) > _TOLERANCE:
         findings.append({
             "code": "GROSS_TOTAL_MISMATCH",
             "expected": str(expected_gross),
             "actual": str(gross_total),
-            "delta": str(expected_gross - gross_total),
+            "delta": str(abs(expected_gross - gross_total)),
             "severity": "error",
         })
 
-    # ------------------------------------------------------------------
-    # Check 4: WITHHOLDING_MISMATCH
-    # ------------------------------------------------------------------
-    expected_withholding = _d(net_of_vat * withholding_rate)
-    if not _close_enough(expected_withholding, withholding_amount):
+    # --- Check 4: withholding ---
+    expected_wht = (net_of_vat * withholding_rate).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
+    if abs(expected_wht - withholding_amount) > _TOLERANCE:
         findings.append({
             "code": "WITHHOLDING_MISMATCH",
-            "expected": str(expected_withholding),
+            "expected": str(expected_wht),
             "actual": str(withholding_amount),
-            "delta": str(expected_withholding - withholding_amount),
+            "delta": str(abs(expected_wht - withholding_amount)),
             "severity": "error",
         })
 
-    # ------------------------------------------------------------------
-    # Check 5: PRINTED_TOTAL_DUE_MISMATCH
-    # ------------------------------------------------------------------
-    expected_payable = _d(gross_total - withholding_amount)
-    if not _close_enough(expected_payable, printed_total_due):
+    # --- Check 5: expected payable ---
+    expected_payable = gross_total - withholding_amount
+
+    if abs(expected_payable - printed_total_due) > _TOLERANCE:
         findings.append({
             "code": "PRINTED_TOTAL_DUE_MISMATCH",
             "expected": str(expected_payable),
             "actual": str(printed_total_due),
-            "delta": str(expected_payable - printed_total_due),
+            "delta": str(abs(expected_payable - printed_total_due)),
             "severity": "error",
         })
 
     status = "validated" if not findings else "needs_review"
-
     return {
         "status": status,
-        "expected_payable": str(expected_payable),
-        "printed_total_due": str(printed_total_due),
+        "expected_payable": expected_payable,
+        "printed_total_due": printed_total_due,
         "findings": findings,
     }

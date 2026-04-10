@@ -233,6 +233,9 @@ class PulserController(http.Controller):
             record_id=record_id,
             surface=surface,
         )
+        context_envelope["source"] = source
+        context_envelope["user_id"] = user_id or env.uid
+        context_envelope["company_id"] = env.company.id
 
         # Resolve attached files and inject metadata into context
         attachment_context = ""
@@ -268,6 +271,10 @@ class PulserController(http.Controller):
         # Add skill metadata to context for tool scoping
         context_envelope["skill_id"] = skill_id
         context_envelope["skill_confidence"] = skill_confidence
+        context_envelope["permitted_tools"] = service.get_permitted_tools(skill_id)
+        context_envelope["skill_instructions"] = (
+            router.get_skill_instructions(skill_id)
+        )
 
         # Build context hint if record info provided
         context_prefix = ""
@@ -375,7 +382,7 @@ class PulserController(http.Controller):
             t in tools_invoked
             for t in ("search_odoo_docs", "search_azure_docs",
                        "search_spec_bundles", "search_org_docs",
-                       "search_databricks_docs")
+                       "search_databricks_docs", "query_knowledge_base")
         )
         has_fabric = "query_fabric_data" in tools_invoked
 
@@ -530,9 +537,8 @@ class PulserController(http.Controller):
 
     def _is_enabled(self):
         """Check if Pulser is enabled via ir.config_parameter."""
-        return request.env["ir.config_parameter"].sudo().get_param(
-            "ipai_copilot.enabled", "False"
-        ).lower() in ("true", "1")
+        settings = request.env["ipai.foundry.service"]._get_settings()
+        return settings.get("enabled", False)
 
     @http.route(
         ["/api/pulser/conversations/create",

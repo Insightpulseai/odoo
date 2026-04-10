@@ -16,7 +16,7 @@ skill:
   triggers:
     - module review or audit for upgrade safety
     - PR modifies models, views, or data files
-    - version upgrade planning (e.g. 17.0 to 18.0)
+    - version upgrade planning (e.g. 18.0 to 19.0)
     - new module added to install baseline
 
   inputs:
@@ -28,11 +28,11 @@ skill:
     - verify no files modified under vendor/odoo/ or addons/oca/
     - verify all view changes use inherited views with xpath (not replacement)
     - check for migration scripts in migrations/ for any schema changes
-    - verify __manifest__.py version follows 18.0.x.y.z
+    - verify __manifest__.py version follows 19.0.x.y.z
     - verify dependencies are explicit and minimal
     - check for deprecated patterns (raw x2many tuples, context mutation, f-string translations)
     - verify Odoo 18 breaking changes handled (groups_id renamed to group_ids, tree to list)
-    - run upgrade_code tool if porting from 17.0
+    - run upgrade_code tool if porting from 18.0
     - produce upgrade safety report
 
   outputs:

@@ -603,7 +603,7 @@ Debug Odoo directly from VS Code:
 
 ### Documentation
 
-- [Odoo 18 Documentation](https://www.odoo.com/documentation/18.0/)
+- [Odoo 18 Documentation](https://www.odoo.com/documentation/19.0/)
 - [OCA Guidelines](https://github.com/OCA/odoo-community.org)
 - [Dev Containers Specification](https://containers.dev/)
 - [Docker Compose Reference](https://docs.docker.com/compose/)

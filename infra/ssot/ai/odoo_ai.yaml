@@ -20,7 +20,7 @@
 # EE surfaces:      top-bar Ask AI, Ctrl+K palette, html editor action,
 #                   AI agents (RAG+pgvector), AI fields (Studio), voice transcription
 # CE covered now:   chatter button (ipai_ai_widget) — partial replacement
-# CE gap:           html editor action requires OCA port to 18.0 (see task T-1)
+# CE gap:           html editor action requires OCA port to 19.0 (see task T-1)
 #
 # mode values:
 #   gemini  — IPAI AI Provider Bridge (default, SaaS-grade, Vercel-hosted)
@@ -65,7 +65,7 @@ ollama:
   default_model: llama3
   notes: >
     Opt-in only. Set mode: ollama to enable. Requires ai_oca_native_generate_ollama
-    installed and active in Odoo. Module available at OCA/ai (port to 18.0 needed).
+    installed and active in Odoo. Module available at OCA/ai (port to 19.0 needed).
     Fallback disables telemetry (no trace_id) — acceptable for offline tenants only.
 
 # ── Odoo AI surfaces covered by this config ───────────────────────────────────
@@ -78,7 +78,7 @@ surfaces:
     description: >
       Native Odoo 18 html editor AI action (EE/BYOM — OpenAI or Gemini key in AI app Settings).
       Appears in: Knowledge, Discuss, email compose, notes.
-      CE gap: requires OCA ai_oca_native_generate_ollama ported to 18.0 and reconfigured
+      CE gap: requires OCA ai_oca_native_generate_ollama ported to 19.0 and reconfigured
       to call IPAI bridge instead of Ollama (task T-1 in spec/ai-bridge/tasks.md).
     modes: []           # no CE path yet; gap noted in ssot/parity/ee_to_oca_matrix.yaml
   - name: top_bar_ask_ai
@@ -90,7 +90,7 @@ surfaces:
 # ── Anthropic / Claude provider ───────────────────────────────────────────────
 # Added per spec/ipai-llm-supabase-bridge/prd.md O2 + O5.3.
 # Claude is IPAI's first-class AI provider — not available in Odoo EE natively.
-# Enabled once vendor/apexive-llm llm_anthropic port to 18.0 is complete (see
+# Enabled once vendor/apexive-llm llm_anthropic port to 19.0 is complete (see
 # ssot/ai/dependencies.yaml: apexive_odoo_llm status).
 anthropic:
   bridge: vendor_apexive_llm_anthropic     # llm_anthropic module in vendor tree
@@ -118,7 +118,7 @@ ce_ee_ipai_gap:
     providers_supported: [openai, gemini]
     providers_missing: [anthropic]
     notes: >
-      Odoo 18 EE ships ChatGPT and Gemini BYOK (via AI app → Configuration → Providers).
+      Odoo 18 EE ships ChatGPT 5.0 and Gemini BYOK (via AI app → Configuration → Providers).
       No Anthropic/Claude support. IAP credits apply to OCR/document digitization only, not AI chat.
   ipai:
     ai_native: false                       # CE base, no native AI

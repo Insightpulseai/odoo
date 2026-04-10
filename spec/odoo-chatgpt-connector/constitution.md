@@ -31,7 +31,7 @@ ChatGPT never calls Odoo directly. A thin gateway validates input, maps tool cal
 
 ### 3.4 JSON-2 API only
 
-Use Odoo 18's JSON-RPC API (`/web/dataset/call_kw`). XML-RPC is legacy; JSON-RPC is the current standard for Odoo 18.
+Use Odoo 18's External JSON-2 API (`/json/2/<model>/<method>`). XML-RPC and JSON-RPC are deprecated and scheduled for removal in Odoo 20.
 
 ### 3.5 Structured output contract
 

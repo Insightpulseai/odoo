@@ -82,7 +82,7 @@
     },
     {
       "path": "agents/skills/generate-odoo-skill-from-kb/SKILL.md",
-      "name": "SKILL: Generate Procedural Skill From Odoo19 KB",
+      "name": "SKILL: Generate Procedural Skill From Odoo18 KB",
       "type": "skill_md",
       "sha256_prefix": "23289518ef8a25cc",
       "lines": 165
@@ -152,7 +152,7 @@
     },
     {
       "path": "agents/skills/validate-odoo-module-against-kb/SKILL.md",
-      "name": "SKILL: Validate Odoo Module Against Odoo19 KB",
+      "name": "SKILL: Validate Odoo Module Against Odoo18 KB",
       "type": "skill_md",
       "sha256_prefix": "61648dbdc304798a",
       "lines": 173
@@ -1090,7 +1090,7 @@
     },
     {
       "path": "agents/skills/generate-odoo-skill-from-kb/skill.md",
-      "name": "SKILL: Generate Procedural Skill From Odoo19 KB",
+      "name": "SKILL: Generate Procedural Skill From Odoo18 KB",
       "type": "skill_contract",
       "sha256_prefix": "23289518ef8a25cc",
       "lines": 165
@@ -1160,7 +1160,7 @@
     },
     {
       "path": "agents/skills/validate-odoo-module-against-kb/skill.md",
-      "name": "SKILL: Validate Odoo Module Against Odoo19 KB",
+      "name": "SKILL: Validate Odoo Module Against Odoo18 KB",
       "type": "skill_contract",
       "sha256_prefix": "61648dbdc304798a",
       "lines": 173

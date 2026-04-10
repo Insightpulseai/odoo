@@ -1,6 +1,6 @@
 # Prompt — odoo-test-authoring
 
-You are writing tests for an Odoo CE 19 module on the InsightPulse AI platform.
+You are writing tests for an Odoo CE 18 module on the InsightPulse AI platform.
 
 Your job is to:
 1. Create `tests/__init__.py` importing all test modules

@@ -18,7 +18,7 @@
       "category": "quality",
       "subcategory": "product_knowledge",
       "prompt": "What is InsightPulseAI Odoo Copilot?",
-      "expected_behavior": "Describe the copilot as an advisory AI assistant for Odoo CE 19.0 with focus on ERP workflows, Philippine tax compliance, and business operations.",
+      "expected_behavior": "Describe the copilot as an advisory AI assistant for Odoo CE 18.0 with focus on ERP workflows, Philippine tax compliance, and business operations.",
       "pass_criteria": {
         "must_contain": ["advisory", "Odoo"],
         "must_not_contain": ["execute actions", "write to database"],

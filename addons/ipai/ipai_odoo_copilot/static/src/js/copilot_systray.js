@@ -38,13 +38,34 @@ export class CopilotSystrayButton extends Component {
         // Check if copilot is enabled
         onMounted(async () => {
             try {
-                const result = await rpc("/web/dataset/call_kw", {
+                let result = await rpc("/web/dataset/call_kw", {
                     model: "ir.config_parameter",
                     method: "get_param",
-                    args: ["ipai.copilot.foundry_enabled", "False"],
+                    args: ["ipai_copilot.enabled", "False"],
                     kwargs: {},
                 });
-                this.state.isDisabled = result !== "True";
+
+                if (!["True", "true", "1"].includes(String(result))) {
+                    result = await rpc("/web/dataset/call_kw", {
+                        model: "ir.config_parameter",
+                        method: "get_param",
+                        args: ["ipai.copilot.enabled", "False"],
+                        kwargs: {},
+                    });
+                }
+
+                if (!["True", "true", "1"].includes(String(result))) {
+                    result = await rpc("/web/dataset/call_kw", {
+                        model: "ir.config_parameter",
+                        method: "get_param",
+                        args: ["ipai_odoo_copilot.foundry_enabled", "False"],
+                        kwargs: {},
+                    });
+                }
+
+                this.state.isDisabled = !["True", "true", "1"].includes(
+                    String(result)
+                );
             } catch {
                 this.state.isDisabled = true;
             }

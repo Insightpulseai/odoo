@@ -1,6 +1,6 @@
 /** @odoo-module **/
 
-import { Component, useState } from "@odoo/owl";
+import { Component, useState, useRef } from "@odoo/owl";
 import { useService } from "@web/core/utils/hooks";
 import { ActivityTimeline } from "../activity_timeline/activity_timeline";
 
@@ -23,6 +23,7 @@ export class PulserChatPanel extends Component {
 
     setup() {
         this.rpc = useService("rpc");
+        this.fileInputRef = useRef("fileInput");
 
         this.state = useState({
             messages: [],
@@ -30,6 +31,7 @@ export class PulserChatPanel extends Component {
             isLoading: false,
             inputValue: "",
             conversationId: null,
+            attachedFile: null,
         });
     }
 
@@ -59,6 +61,28 @@ export class PulserChatPanel extends Component {
                 status: "active",
             },
         ];
+
+        // Upload attachment if present
+        let uploadRef = null;
+        if (this.state.attachedFile) {
+            this.state.activities = [
+                { id: "upload", label: `Uploading ${this.state.attachedFile.name}`, status: "active" },
+            ];
+            try {
+                uploadRef = await this._uploadAttachment(this.state.attachedFile);
+                this.state.attachedFile = null;
+            } catch {
+                this.state.activities = [
+                    { id: "upload", label: "Upload failed", status: "error" },
+                ];
+                this.state.isLoading = false;
+                return;
+            }
+            this.state.activities = [
+                { id: "upload", label: `Uploaded ${uploadRef.filename}`, status: "done" },
+                { id: "classify", label: "Classifying request", status: "active" },
+            ];
+        }
 
         try {
             const result = await this.rpc("/api/pulser/chat", {
@@ -118,6 +142,37 @@ export class PulserChatPanel extends Component {
         } finally {
             this.state.isLoading = false;
         }
+    }
+
+    onClickUpload() {
+        this.fileInputRef.el?.click();
+    }
+
+    onFileSelected(ev) {
+        const file = ev.target.files?.[0];
+        if (!file) return;
+        this.state.attachedFile = file;
+        // Reset input so the same file can be re-selected
+        ev.target.value = "";
+    }
+
+    onRemoveAttachment() {
+        this.state.attachedFile = null;
+    }
+
+    async _uploadAttachment(file) {
+        const base64 = await new Promise((resolve) => {
+            const reader = new FileReader();
+            reader.onload = () => resolve(reader.result.split(",")[1]);
+            reader.readAsDataURL(file);
+        });
+        const result = await this.rpc("/api/pulser/attachments/upload", {
+            filename: file.name,
+            data: base64,
+            mime_type: file.type || "application/octet-stream",
+            conversation_id: this.state.conversationId,
+        });
+        return result;
     }
 
     onKeydown(ev) {

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- =====================================================
+         Tax Intelligence Menu — under Accounting
+         ===================================================== -->
+    <menuitem id="menu_tax_intelligence_root"
+        name="Tax Intelligence"
+        parent="account.menu_finance"
+        sequence="60"
+        groups="ipai_tax_intelligence.group_tax_validator"/>
+
+    <menuitem id="menu_tax_exception"
+        name="Tax Exceptions"
+        parent="menu_tax_intelligence_root"
+        action="action_tax_exception"
+        sequence="10"
+        groups="ipai_tax_intelligence.group_tax_validator"/>
+
+    <menuitem id="menu_tax_audit_log"
+        name="Audit Log"
+        parent="menu_tax_intelligence_root"
+        action="action_tax_audit_log"
+        sequence="20"
+        groups="ipai_tax_intelligence.group_tax_validator"/>
+
+    <menuitem id="menu_tax_intelligence_config"
+        name="Configuration"
+        parent="menu_tax_intelligence_root"
+        sequence="90"
+        groups="ipai_tax_intelligence.group_tax_manager"/>
+
+    <menuitem id="menu_tax_validation_rule"
+        name="Validation Rules"
+        parent="menu_tax_intelligence_config"
+        action="action_tax_validation_rule"
+        sequence="10"
+        groups="ipai_tax_intelligence.group_tax_manager"/>
+
+    <menuitem id="menu_tax_compliance_pack"
+        name="Compliance Packs"
+        parent="menu_tax_intelligence_config"
+        action="action_tax_compliance_pack"
+        sequence="20"
+        groups="ipai_tax_intelligence.group_tax_manager"/>
+</odoo>

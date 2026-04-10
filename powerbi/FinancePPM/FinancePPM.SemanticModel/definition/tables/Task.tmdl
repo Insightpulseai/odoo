@@ -108,9 +108,15 @@ table Task
 		formatString: #,##0
 		displayFolder: Status
 
-	partition Task = entity
-		mode: directLake
-		source
-			entityName: project_task
-			schemaName: public
-			expressionSource: DatabaseQuery
+	partition Task = m
+		mode: import
+		source =
+			let
+				Source = PostgreSQL.Database(OdooServer & ":" & OdooPort, OdooDatabase),
+				project_task = Source{[Schema="public", Item="project_task"]}[Data],
+				SelectedColumns = Table.SelectColumns(project_task, {
+					"id", "name", "project_id", "stage_id", "date_deadline",
+					"create_date", "write_date", "milestone_id", "priority", "active"
+				})
+			in
+				SelectedColumns

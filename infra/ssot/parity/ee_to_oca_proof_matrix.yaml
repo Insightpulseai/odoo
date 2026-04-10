@@ -14,16 +14,16 @@
 #   gap           — No known open replacement; gap accepted or build/bridge needed
 #
 # route values (execution action):
-#   adopt_oca         — OCA module is 18.0-ready, pin and install
-#   port_then_adopt   — OCA module exists but needs 18.0 port first
+#   adopt_oca         — OCA module is 19.0-ready, pin and install
+#   port_then_adopt   — OCA module exists but needs 19.0 port first
 #   bridge            — Already bridged via ipai_* connector to external service
 #   build_ipai        — No OCA path; build custom ipai_* addon
 #   accept_gap        — Gap accepted; not in scope or waived
 #
 # odoo18_support values:
 #   yes           — Module confirmed working on Odoo 18.0
-#   needs_port    — Module exists for older versions, 18.0 port required
-#   unknown       — Not yet evaluated for 18.0 compatibility
+#   needs_port    — Module exists for older versions, 19.0 port required
+#   unknown       — Not yet evaluated for 19.0 compatibility
 
 version: 2
 meta:
@@ -71,7 +71,7 @@ entries:
     odoo18_support: needs_port
     notes: >
       spreadsheet_oca is listed as a direct alternative to the proprietary spreadsheet_edition.
-      Available for 16.0; 18.0 port status needs verification.
+      Available for 16.0; 19.0 port status needs verification.
 
   - ee_feature_id: PRODUCTIVITY.DOCUMENTS
     ee_module_name: documents
@@ -177,12 +177,12 @@ entries:
       - hr_expense_advance_clearing
     evidence_links:
       - url: "https://github.com/OCA/hr-expense"
-        description: "OCA/hr-expense repo — submodule present but empty for 18.0"
+        description: "OCA/hr-expense repo — submodule present but empty for 19.0"
     odoo18_support: unknown
     notes: >
-      OCA has hr_expense_advance_clearing for older versions. 18.0 port status unknown.
+      OCA has hr_expense_advance_clearing for older versions. 19.0 port status unknown.
       Submodule is checked out but empty. Using ipai_hr_expense_liquidation as interim.
-      Marked [NEEDS CLARIFICATION] — adopt OCA when 18.0 port is available.
+      Marked [NEEDS CLARIFICATION] — adopt OCA when 19.0 port is available.
 
   # --- AI / Platform ---
 

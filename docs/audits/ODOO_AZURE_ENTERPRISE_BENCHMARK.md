@@ -89,7 +89,7 @@ However, there is a **significant gap between documented architecture and operat
 
 **Evidence examined:**
 - `/infra/azure/modules/postgres-flexible.bicep` lines 58-61: HA disabled, geo-redundant backup disabled
-- `/docs/runbooks/ODOO19_GO_LIVE_CHECKLIST.md` -- database backup items unchecked
+- `/docs/runbooks/ODOO18_GO_LIVE_CHECKLIST.md` -- database backup items unchecked
 - `/infra/ssot/azure/service-matrix.yaml` -- health check URLs defined
 
 **Strengths:**
@@ -350,7 +350,7 @@ These are the verified-real paths that matter:
 | Databricks bundle | `/infra/databricks/databricks.yml` + `sql/` | Bundle + SQL |
 | Identity roles | `/infra/entra/app-roles-manifest.json` | JSON manifest |
 | Role-tool mapping | `/infra/entra/role-tool-mapping.yaml` | YAML config |
-| Go-live checklist | `/docs/runbooks/ODOO19_GO_LIVE_CHECKLIST.md` | Honest tracker |
+| Go-live checklist | `/docs/runbooks/ODOO18_GO_LIVE_CHECKLIST.md` | Honest tracker |
 | Maturity benchmark | `/infra/ssot/azure/platform_maturity_benchmark.yaml` | Self-assessment rubric |
 | Spec bundles | `/spec/<domain>/` (40+ bundles) | Planning artifacts |
 

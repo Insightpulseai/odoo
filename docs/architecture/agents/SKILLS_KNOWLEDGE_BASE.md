@@ -32,7 +32,7 @@ Foundry IQ is the managed knowledge layer. It provides:
 | Source | Type | Content | Index |
 |--------|------|---------|-------|
 | `stipaidevlake/gold/` | ADLS Gen2 | Databricks gold marts (finance, PPM, projects) | `gold-marts-kb` |
-| `odoo18-docs/` | Blob Storage | Odoo CE 18 documentation (RST-chunked) | `odoo18-docs` |
+| `odoo18-docs/` | Blob Storage | Odoo CE 19 documentation (RST-chunked) | `odoo18-docs` |
 | `org-docs/` | Blob Storage | Architecture, contracts, specs, runbooks | `org-docs` |
 | `azure-platform-docs/` | Blob Storage | Azure platform documentation | `azure-platform-docs` |
 | Odoo ERP (federated) | Lakehouse Federation | Live ERP data via Unity Catalog | `odoo-erp-federated` |

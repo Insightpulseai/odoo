@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Interaction List -->
+    <record id="view_pulser_interaction_list" model="ir.ui.view">
+        <field name="name">pulser.interaction.list</field>
+        <field name="model">pulser.interaction</field>
+        <field name="arch" type="xml">
+            <list string="Pulser Interactions" default_order="timestamp desc" delete="false">
+                <field name="timestamp"/>
+                <field name="user_id"/>
+                <field name="session_id"/>
+                <field name="intent_type"/>
+                <field name="agent_id"/>
+                <field name="feedback" decoration-success="feedback == 'positive'"
+                       decoration-danger="feedback == 'negative'"
+                       decoration-muted="feedback == 'none'"/>
+                <field name="duration_ms"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Interaction Form -->
+    <record id="view_pulser_interaction_form" model="ir.ui.view">
+        <field name="name">pulser.interaction.form</field>
+        <field name="model">pulser.interaction</field>
+        <field name="arch" type="xml">
+            <form string="Pulser Interaction" delete="false">
+                <sheet>
+                    <group>
+                        <group string="Session">
+                            <field name="session_id" readonly="1"/>
+                            <field name="timestamp" readonly="1"/>
+                            <field name="user_id" readonly="1"/>
+                            <field name="duration_ms" readonly="1"/>
+                        </group>
+                        <group string="Routing">
+                            <field name="intent_type"/>
+                            <field name="agent_id"/>
+                            <field name="tools_invoked" readonly="1"/>
+                            <field name="feedback"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Query &amp; Response">
+                            <field name="query" readonly="1"/>
+                            <field name="response" readonly="1"/>
+                        </page>
+                        <page string="Action Logs">
+                            <field name="action_log_ids">
+                                <list create="false" delete="false">
+                                    <field name="timestamp"/>
+                                    <field name="intent_type"/>
+                                    <field name="action_class"/>
+                                    <field name="action_description"/>
+                                    <field name="outcome"/>
+                                    <field name="confidence"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Interaction Search -->
+    <record id="view_pulser_interaction_search" model="ir.ui.view">
+        <field name="name">pulser.interaction.search</field>
+        <field name="model">pulser.interaction</field>
+        <field name="arch" type="xml">
+            <search string="Search Interactions">
+                <field name="session_id"/>
+                <field name="user_id"/>
+                <field name="query"/>
+                <filter name="filter_positive" string="Positive Feedback" domain="[('feedback', '=', 'positive')]"/>
+                <filter name="filter_negative" string="Negative Feedback" domain="[('feedback', '=', 'negative')]"/>
+                <filter name="filter_transactional" string="Transactional" domain="[('intent_type', '=', 'transactional')]"/>
+                <group expand="0" string="Group By">
+                    <filter name="group_by_user" string="User" context="{'group_by': 'user_id'}"/>
+                    <filter name="group_by_agent" string="Domain Agent" context="{'group_by': 'agent_id'}"/>
+                    <filter name="group_by_intent" string="Intent Type" context="{'group_by': 'intent_type'}"/>
+                    <filter name="group_by_feedback" string="Feedback" context="{'group_by': 'feedback'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Window Action -->
+    <record id="action_pulser_interaction" model="ir.actions.act_window">
+        <field name="name">Pulser Interactions</field>
+        <field name="res_model">pulser.interaction</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_pulser_interaction_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">No interactions yet</p>
+            <p>Pulser interaction traces are created automatically for every assistant session.</p>
+        </field>
+    </record>
+
+</odoo>

@@ -7,3 +7,7 @@ access_copilot_action_queue_user,ipai.copilot.action.queue.user,model_ipai_copil
 access_copilot_action_queue_admin,ipai.copilot.action.queue.admin,model_ipai_copilot_action_queue,group_copilot_admin,1,1,1,1
 access_copilot_audit_user,ipai.copilot.audit.user,model_ipai_copilot_audit,group_copilot_user,1,0,1,0
 access_copilot_audit_admin,ipai.copilot.audit.admin,model_ipai_copilot_audit,group_copilot_admin,1,1,1,0
+access_copilot_attachment_ref_user,ipai.copilot.attachment.ref.user,model_ipai_copilot_attachment_ref,group_copilot_user,1,1,1,0
+access_copilot_attachment_ref_admin,ipai.copilot.attachment.ref.admin,model_ipai_copilot_attachment_ref,group_copilot_admin,1,1,1,1
+access_copilot_invoice_check_user,ipai.copilot.invoice.check.user,model_ipai_copilot_invoice_check,group_copilot_user,1,0,0,0
+access_copilot_invoice_check_admin,ipai.copilot.invoice.check.admin,model_ipai_copilot_invoice_check,group_copilot_admin,1,1,1,1

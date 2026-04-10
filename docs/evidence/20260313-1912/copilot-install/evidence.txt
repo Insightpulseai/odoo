@@ -4,7 +4,7 @@
 
 ## Environment
 - Runtime: Devcontainer (InsightPulseAI Odoo 18 CE Dev @ colima-odoo)
-- Odoo: 18.0 (pinned commit 3a6e478d483ac9b3ce323958d2b08ba0a37dbee7)
+- Odoo: 19.0 (pinned commit 3a6e478d483ac9b3ce323958d2b08ba0a37dbee7)
 - Python: 3.12
 - PostgreSQL: 16-alpine
 - Addons path: /opt/odoo/addons,/workspaces/odoo/addons/ipai

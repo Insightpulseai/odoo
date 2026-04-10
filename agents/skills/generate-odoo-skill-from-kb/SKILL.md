@@ -1,4 +1,4 @@
-# SKILL: Generate Procedural Skill From Odoo19 KB
+# SKILL: Generate Procedural Skill From Odoo18 KB
 
 ## Skill ID
 

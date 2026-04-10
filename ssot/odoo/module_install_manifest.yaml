@@ -1,0 +1,341 @@
+version: 1
+artifact: ssot/odoo/module_install_manifest.yaml
+profile: insightpulseai-odoo18-mvp
+source_of_truth: true
+
+runtime:
+  mode: native_mac_dev_current
+  future_container_mode_supported: true
+  addons_path_roots:
+    ce_core:
+      root: core_odoo_addons
+      note: use_your_existing_core_odoo_addons_path_for_native_dev
+    oca:
+      - root: /mnt/oca/project
+        source_repo: addons/oca/project
+      - root: /mnt/oca/project-agile
+        source_repo: addons/oca/project-agile
+      - root: /mnt/oca/hr-timesheet
+        source_repo: addons/oca/hr-timesheet
+      - root: /mnt/oca/timesheet
+        source_repo: addons/oca/timesheet
+      - root: /mnt/oca/server-tools
+        source_repo: addons/oca/server-tools
+      - root: /mnt/oca/account-financial-reporting
+        source_repo: addons/oca/account-financial-reporting
+      - root: /mnt/oca/account-financial-tools
+        source_repo: addons/oca/account-financial-tools
+      - root: /mnt/oca/knowledge
+        source_repo: addons/oca/knowledge
+      - root: /mnt/oca/helpdesk
+        source_repo: addons/oca/helpdesk
+      - root: /mnt/oca/rest-framework
+        source_repo: addons/oca/rest-framework
+    ipai:
+      root: /mnt/extra-addons/ipai
+      source_repo: addons/ipai
+    local:
+      root: /mnt/extra-addons/local
+      source_repo: addons/local
+      optional: true
+
+install_sets:
+  ce_core_base:
+    modules:
+      - account
+      - account_payment
+      - account_tax_python
+      - analytic
+      - base
+      - bus
+      - hr
+      - hr_expense
+      - hr_timesheet
+      - l10n_ph
+      - l10n_account_withholding_tax
+      - mail
+      - project
+      - project_account
+      - project_hr_expense
+      - project_purchase
+      - project_sale_expense
+      - sale_expense
+      - sale_project
+      - sale_timesheet
+      - spreadsheet
+      - spreadsheet_dashboard
+      - spreadsheet_dashboard_hr_expense
+      - spreadsheet_dashboard_hr_timesheet
+      - spreadsheet_dashboard_sale_timesheet
+      - web
+      - attachment_indexation
+
+  oca_ppm_set:
+    root: /mnt/oca/project
+    modules:
+      - project_parent
+      - project_group
+      - project_department
+      - project_type
+      - project_version
+      - project_key
+      - project_template
+      - project_task_ancestor
+      - project_task_parent_completion_blocking
+      - project_task_parent_due_auto
+      - project_task_stage_mgmt
+      - project_task_stage_change_restriction
+      - project_task_stage_state
+      - project_task_code
+      - project_task_name_with_id
+      - project_stakeholder
+      - project_reviewer
+      - project_role
+      - project_timeline
+      - project_timeline_hr_timesheet
+      - project_pivot
+
+  oca_project_agile_optional:
+    root: /mnt/oca/project-agile
+    modules: []
+    optional: true
+    note: keep_available_for_future_demand_backlog_patterns_but_not_required_now
+
+  oca_timesheet_set:
+    roots:
+      - /mnt/oca/hr-timesheet
+      - /mnt/oca/timesheet
+    modules:
+      - hr_timesheet_sheet
+      - hr_timesheet_sheet_policy_project_manager
+      - hr_timesheet_begin_end
+      - project_timesheet_time_control
+
+  oca_expense_governance_set:
+    roots:
+      - /mnt/oca/server-tools
+      - /mnt/oca/knowledge
+      - /mnt/oca/helpdesk
+      - /mnt/oca/account-financial-reporting
+      - /mnt/oca/account-financial-tools
+    modules:
+      - hr_expense_advance_clearing
+      - hr_expense_advance_clearing_sequence
+      - hr_expense_payment
+      - hr_expense_sequence
+      - hr_expense_tier_validation
+      - base_tier_validation
+      - dms
+      - dms_field
+      - document_page_approval
+      - queue_job
+      - auditlog
+      - mis_builder
+      - mis_builder_budget
+      - sale_timesheet_budget
+      - helpdesk_mgmt
+
+  oca_rest_optional:
+    root: /mnt/oca/rest-framework
+    modules:
+      - base_rest
+      - base_rest_auth_api_key
+      - base_rest_pydantic
+    optional: true
+    note: allowed_for_api_edge_patterns_but_not_required_for_current_core_mvp_truth
+
+  ipai_mvp_required:
+    root: /mnt/extra-addons/ipai
+    modules:
+      - ipai_odoo_copilot
+      - ipai_copilot_actions
+      - ipai_ai_agent_sources
+      - ipai_tax_intelligence
+      - ipai_hr_expense_liquidation
+      - ipai_expense_ops
+      - ipai_expense_wiring
+      - ipai_pulser_assistant
+
+  ipai_mvp_optional_not_currently_required:
+    root: /mnt/extra-addons/ipai
+    modules:
+      - ipai_finance_ppm
+      - ipai_agent
+    notes:
+      ipai_finance_ppm: dropped_from_current_mvp_install_set_pending_ce_oca_gap_proof
+      ipai_agent: installable_stub_not_required_for_current_mvp
+
+  ipai_out_of_scope_with_tests:
+    root: /mnt/extra-addons/ipai
+    modules:
+      - ipai_bank_recon
+      - ipai_bir_compliance
+      - ipai_bir_tax_compliance
+      - ipai_finance_close
+      - ipai_tax_review
+      - ipai_enterprise_bridge
+      - ipai_document_intelligence
+
+  ipai_out_of_scope_no_test_gate:
+    root: /mnt/extra-addons/ipai
+    modules:
+      - ipai_web_branding
+      - ipai_social_capi
+      - ipai_service_calculator
+      - ipai_security_frontdoor
+      - ipai_auth_oidc
+      - ipai_ai_widget
+      - ipai_ai_platform
+      - ipai_ai_copilot
+      - ipai_ai_channel_actions
+      - ipai_aca_proxy
+      - ipai_workload_center
+      - ipai_workspace_core
+      - ipai_marketing_automation
+      - ipai_social_marketing
+      - ipai_data_intelligence
+      - ipai_google_workspace
+      - ipai_llm_supabase_bridge
+      - ipai_mail_plugin_bridge
+      - ipai_ops_api
+      - ipai_project_seed
+      - ipai_project_timeline_fix
+      - ipai_timesheet_leaderboard
+      - ipai_chat_file_upload
+      - ipai_ask_ai_azure
+      - ipai_finance_close_seed
+
+logical_verticals:
+  ppm:
+    ce_core:
+      - project
+      - project_account
+      - project_hr_expense
+      - project_purchase
+      - project_sale_expense
+      - sale_project
+      - sale_timesheet
+      - hr_timesheet
+      - analytic
+      - spreadsheet
+      - spreadsheet_dashboard
+      - spreadsheet_dashboard_hr_timesheet
+      - spreadsheet_dashboard_sale_timesheet
+    oca:
+      - project_parent
+      - project_group
+      - project_department
+      - project_type
+      - project_version
+      - project_key
+      - project_template
+      - project_task_ancestor
+      - project_task_parent_completion_blocking
+      - project_task_parent_due_auto
+      - project_task_stage_mgmt
+      - project_task_stage_change_restriction
+      - project_task_stage_state
+      - project_task_code
+      - project_task_name_with_id
+      - project_stakeholder
+      - project_reviewer
+      - project_role
+      - project_timeline
+      - project_timeline_hr_timesheet
+      - hr_timesheet_sheet
+      - hr_timesheet_sheet_policy_project_manager
+      - hr_timesheet_begin_end
+      - project_pivot
+      - mis_builder
+      - mis_builder_budget
+      - sale_timesheet_budget
+    ipai: []
+
+  expense_concur:
+    ce_core:
+      - hr_expense
+      - sale_expense
+      - project_hr_expense
+      - project_sale_expense
+      - account
+      - account_payment
+      - analytic
+      - hr
+      - mail
+      - spreadsheet_dashboard_hr_expense
+    oca:
+      - hr_expense_advance_clearing
+      - hr_expense_advance_clearing_sequence
+      - hr_expense_payment
+      - hr_expense_sequence
+      - hr_expense_tier_validation
+      - base_tier_validation
+      - dms
+      - dms_field
+      - document_page_approval
+      - queue_job
+      - auditlog
+      - mis_builder
+      - helpdesk_mgmt
+    ipai:
+      - ipai_hr_expense_liquidation
+      - ipai_expense_ops
+      - ipai_expense_wiring
+
+  pulser_odoo:
+    ce_core:
+      - base
+      - web
+      - mail
+      - bus
+      - attachment_indexation
+    oca: []
+    ipai:
+      - ipai_odoo_copilot
+      - ipai_copilot_actions
+      - ipai_ai_agent_sources
+      - ipai_pulser_assistant
+
+  avatax_reverse:
+    ce_core:
+      - account
+      - account_payment
+      - account_tax_python
+      - hr_expense
+      - sale_expense
+      - l10n_ph
+      - l10n_account_withholding_tax
+    oca: []
+    ipai:
+      - ipai_tax_intelligence
+
+post_install_validation:
+  fresh_db_install_required: true
+  runtime_upgrade_validation_required: true
+  qweb_report_render_validation_required: true
+  tax_blocking_validation_required: true
+  pulser_permissions_validation_required: true
+
+testing_gate:
+  gate_a_complete: true
+  total_tests: 388
+  total_failures: 0
+  proven_modules:
+    - ipai_pulser_assistant       # 149 tests
+    - ipai_tax_intelligence       # 69 tests
+    - ipai_hr_expense_liquidation # 43 tests
+    - ipai_expense_wiring         # 12 tests
+    - ipai_branch_profile         # 15 tests
+    - ipai_odoo_copilot           # 84 tests
+    - ipai_copilot_actions        # 10 tests
+    - ipai_expense_ops            # 6 tests
+
+deferred:
+  - mobile_companion_native_app
+  - ocr_baseline
+  - corporate_card_feeds
+  - foundry_governed_runtime
+  - azure_ai_search_as_default
+  - cosmos_db_as_default
+  - fabric_as_default
+  - full_sub_agent_runtime

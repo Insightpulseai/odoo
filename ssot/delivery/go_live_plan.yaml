@@ -476,7 +476,7 @@ targets:
     status: done
     owner: platform_operator
     acceptance:
-      - "docs/runbooks/ODOO19_GO_LIVE_CHECKLIST.md exists"
+      - "docs/runbooks/ODOO18_GO_LIVE_CHECKLIST.md exists"
       - "All 9 sections present"
       - "Manifest contract passes"
     evidence:

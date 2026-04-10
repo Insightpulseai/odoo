@@ -1,0 +1,59 @@
+{
+  "template_id": "module-documentation",
+  "description": "What documentation exists for a given Odoo module?",
+  "source_plane": "addons",
+  "target_planes": [
+    "docs",
+    "spec"
+  ],
+  "link_types": [
+    "documented_by",
+    "documents",
+    "implements"
+  ],
+  "total_edges_matched": 4,
+  "chunks_selected": 5,
+  "total_tokens": 2034,
+  "chunks": [
+    {
+      "id": "docs/docs/contracts/COPILOT_RUNTIME_CONTRACT.md#0",
+      "source": "docs/contracts/COPILOT_RUNTIME_CONTRACT.md",
+      "plane": "docs",
+      "text": "# Copilot Runtime Selection Contract (C-30)\n\nVersion: 1.0.0 | Status: Active | Created: 2026-03-13\n\n## Purpose\n\nDeclares which copilot module is the canonical runtime for the InsightPulse AI\nOdoo platform, and formally deprecates the legacy Gemini/Supabase bridge path.\n\n---\n\n## Canonical Runtime\n\n| Attribute | Value |\n|-----------|-------|\n| **Module** | `addons/ipai/ipai_odoo_copilot` |\n| **Spec bundle** | `spec/ipai-odoo-copilot-azure/` |\n| **SSOT manifests** | `ssot/ai/` |\n| **AI Runtime** | Azure AI Foundry (project `data-intel-ph`) |\n| **Model** | `gpt-4.1` via Azure AI Agent Service |\n| **Knowledge** | Azure AI Search (`srch-ipai-dev`) |\n| **Auth** | Managed identity (IMDS) → env key (`AZURE_FOUNDRY_API_KEY`) fallback |\n| **Odoo role** | Thin config/control surface — settings UI, health probe, agent verification |\n| **Foundry role** | Execution runtime — chat, tools, knowledge grounding |\n| **Secrets posture** | Never in Odoo DB; env vars / Azure Key Vault only |\n\n---\n\n## Deprecated Runtime\n\n| Attribute | Value |\n|-----------|-------|\n| **Module** | `addons/ipai/ipai_ai_copilot` |\n| **Contract** | C-17 (`AI_COPILOT_CONTRACT.md`) — status changed to **Deprecated** |\n| **AI Runtime** | Gemini via Vercel bridge → Supabase pgvector RAG |\n| **Status** | **DEPRECATED** as of 2026-03-13 |\n| **Reason** | Platform is migrating to Azure-native architecture; Gemini bridge depends on deprecated Vercel deployment and `ipai_ai_widget` (also deprecated) |\n\n### Deprecation constraints\n\n- `ipai_ai_copilot` remains `installable: True` because `ipai_workspace_core` depends on it\n- No new features, tools, or integrations should target `ipai_ai_copilot`\n- Migration path: `ipai_workspace_core` must remove its `ipai_ai_copilot` dependency before the legacy module can be set to `installable: False`\n- C-17 contract is frozen — no updates to the Gemini bridge endpoint contract\n- C-25 (Governed Tool Specs) transitions to `ipai_odoo_copilot` tool dispatch when Phase 3 tools are implemented\n\n---\n\n## Architecture\n\n```\nipai_odoo_copilot (canonical)\n  Odoo ──config/health──► Azure AI Foundry (data-intel-ph)\n                              ├── gpt-4.1 agent\n                              ├── Azure AI Search (srch-ipai-dev)\n                              └── Tool execution (Phase 3, future)\n\nipai_ai_copilot (deprecated)\n  Odoo ──bridge HTTP──► Vercel (deprecated) ──► Gemini API\n                              └── Supabase pgvector RAG\n```\n\n---\n\n## Validation\n\n| Check | Method |\n|-------|--------|\n| SSOT AI manifests valid | `python3 scripts/ci/validate_ssot_ai.py` → exit 0 |\n| Module compiles | `python3 -m py_compile addons/ipai/ipai_odoo_copilot/models/*.py` |\n| Spec bundle complete | 4 files in `spec/ipai-odoo-copilot-azure/` |\n| No secrets in module | grep for hardcoded keys → 0 matches |\n| Config resolution | `ir.config_parameter` keys only store non-secret Azure coordinates |\n\n---",
+      "tokens": 726,
+      "score": 0.6
+    },
+    {
+      "id": "addons/addons/ipai/ipai_ai_channel_actions/__manifest__.py#0",
+      "source": "addons/ipai/ipai_ai_channel_actions/__manifest__.py",
+      "plane": "addons",
+      "text": "{\n    \"name\": \"IPAI AI Channel Actions\",\n    \"version\": \"19.0.1.0.0\",\n    \"summary\": \"Expose Odoo business actions to external channels via Odoo Copilot\",\n    \"description\": \"\"\"\nOdoo Copilot — Channel Actions\n===============================\n\nThin adapter module that exposes existing Odoo business actions to external\nchannels (Slack, Teams) via copilot tools. Uses Odoo's existing mail.activity\nsystem — does not create new approval state machines.\n\nPart of the Odoo Copilot stack (spec/odoo-copilot/).\n    \"\"\",\n    \"author\": \"InsightPulse AI\",\n    \"website\": \"https://insightpulseai.com\",\n    \"category\": \"Productivity/AI\",\n    \"license\": \"LGPL-3\",\n    \"depends\": [\"base\", \"mail\", \"ipai_ai_copilot\"],\n    \"data\": [\n        \"security/ir.model.access.csv\",\n    ],\n    \"installable\": False,\n    \"application\": False,\n    \"auto_install\": False,\n    # DEPRECATED: Replaced by Foundry livechat mode via ipai_odoo_copilot (2026-03-15)\n    # See: ssot/governance/ai-consolidation-foundry.yaml\n}",
+      "tokens": 247,
+      "score": 0.6
+    },
+    {
+      "id": "addons/addons/ipai/ipai_ai_copilot/__manifest__.py#0",
+      "source": "addons/ipai/ipai_ai_copilot/__manifest__.py",
+      "plane": "addons",
+      "text": "{\n    \"name\": \"IPAI AI Copilot\",\n    \"version\": \"19.0.1.0.0\",\n    \"summary\": \"DEPRECATED — Legacy Gemini/Supabase AI copilot bridge (superseded by ipai_odoo_copilot)\",\n    \"description\": \"\"\"\n        DEPRECATED as of 2026-03-13 (C-30).\n        Superseded by ipai_odoo_copilot (Azure AI Foundry).\n\n        Kept installable only because ipai_workspace_core depends on it.\n        No new features, tools, or integrations should target this module.\n        See docs/contracts/COPILOT_RUNTIME_CONTRACT.md for migration path.\n\n        Original scope: Gemini function calling, Supabase RAG, n8n bridge.\n    \"\"\",\n    \"author\": \"InsightPulse AI\",\n    \"website\": \"https://insightpulseai.com\",\n    \"category\": \"Productivity\",\n    \"depends\": [\"mail\", \"web\", \"base\", \"ipai_ai_widget\", \"ipai_ai_core\"],  # no enterprise deps\n    \"data\": [\n        \"security/ir.model.access.csv\",\n        \"data/res_partner_bot.xml\",\n        \"data/mail_channel_ai.xml\",\n        \"data/copilot_tools.xml\",\n        \"data/copilot_cron.xml\",\n        \"views/res_config_settings_views.xml\",\n    ],\n    \"assets\": {\n        \"web.assets_backend\": [\n            \"ipai_ai_copilot/static/src/js/copilot_service.js\",\n            \"ipai_ai_copilot/static/src/js/copilot_sidebar.js\",\n            \"ipai_ai_copilot/static/src/js/copilot_palette.js\",\n            \"ipai_ai_copilot/static/src/xml/copilot_sidebar.xml\",\n            \"ipai_ai_copilot/static/src/xml/copilot_palette.xml\",\n            \"ipai_ai_copilot/static/src/css/copilot.css\",\n        ],\n    },\n    \"external_dependencies\": {\"python\": [\"requests\"]},\n    \"installable\": False,  # DEPRECATED: All dependents migrated to ipai_odoo_copilot (2026-03-15)\n    \"application\": False,\n    \"license\": \"LGPL-3\",\n}",
+      "tokens": 427,
+      "score": 0.6
+    },
+    {
+      "id": "addons/addons/ipai/ipai_odoo_copilot/README.md#2",
+      "source": "addons/ipai/ipai_odoo_copilot/README.md",
+      "plane": "addons",
+      "text": "`web`, `mail`, `bus` (Odoo core) - No OCA dependencies - No Enterprise dependencies ## Integration Policy - All new external Odoo integrations must use JSON-2 (`/json/2`). - Legacy `/xmlrpc`, `/xmlrpc/2`, and `/jsonrpc` are migration-only. - Custom Odoo controllers declared with `@route(type='jsonrpc')` are app-internal controller endpoints. - Odoo Extract API is not the default path; Azure Document Intelligence is the extraction substrate. ## Canonical Defaults\n\n| Property | Value |\n| --- | --- |\n| Foundry project | `data-intel-ph` |\n| Foundry agent name | `ipai-odoo-copilot-azure` |\n| Foundry agent ID | `asst_45er4aG28tFTABadwxEhODIf` |\n| Model | `gpt-4.1` |\n| Memory enabled | `False` |\n| Read-only mode | `True` (PROD-ADVISORY) |\n| Search service | `srch-ipai-dev` |\n| Foundry endpoint | `https://data-intel-ph-resource.services.ai.azure.com` |\n\n## Related Artifacts\n\n| Artifact | Location |\n| --- | --- |\n| Agent contracts | `agents/foundry/ipai-odoo-copilot-azure/` |\n| Spec bundle | `spec/ipai-odoo-copilot-azure/` |\n| Evaluation suite | `agents/evals/odoo-copilot/` |\n| Knowledge base | `agents/knowledge-base/` |\n| SSOT provider config | `ssot/odoo/copilot-provider.yaml` |\n| Docker build | `platform/runtime/docker/docker/Dockerfile.odoo-copilot` |",
+      "tokens": 316,
+      "score": 0.6
+    },
+    {
+      "id": "addons/addons/ipai/ipai_auth_oidc/__manifest__.py#0",
+      "source": "addons/ipai/ipai_auth_oidc/__manifest__.py",
+      "plane": "addons",
+      "text": "# Copyright 2026 InsightPulseAI\n# License LGPL-3.0 or later (http://www.gnu.org/licenses/lgpl).\n{\n    \"name\": \"IPAI Auth OIDC — Microsoft Entra ID\",\n    \"version\": \"19.0.1.0.0\",\n    \"category\": \"Authentication\",\n    \"summary\": \"Microsoft Entra ID SSO with JIT user provisioning for Odoo workforce login\",\n    \"description\": \"\"\"\n        Configures Microsoft Entra ID as the primary OAuth/OIDC provider\n        for Odoo workforce single sign-on.\n\n        Features:\n        - Entra ID OAuth provider pre-configured\n        - Just-in-time (JIT) user provisioning on first login\n        - Settings UI for tenant/client configuration\n        - Optional local password restriction for non-admin users\n\n        SSOT references:\n        - infra/ssot/auth/oidc_clients.yaml\n        - ssot/entra/app_registrations.azure_native.yaml\n        - spec/entra-identity-migration/\n    \"\"\",\n    \"author\": \"InsightPulseAI\",\n    \"website\": \"https://insightpulseai.com\",\n    \"license\": \"LGPL-3\",\n    \"depends\": [\n        \"base\",\n        \"auth_oauth\",\n        \"mail\",\n    ],\n    \"data\": [\n        \"security/ir.model.access.csv\",\n        \"data/entra_provider.xml\",\n        \"views/res_config_settings_views.xml\",\n    ],\n    \"installable\": True,\n    \"auto_install\": False,\n    \"application\": False,\n}",
+      "tokens": 318,
+      "score": 0.6
+    }
+  ]
+}

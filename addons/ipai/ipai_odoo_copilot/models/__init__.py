@@ -6,6 +6,8 @@ from . import skill_router
 from . import doc_intelligence_service
 from . import telemetry
 from . import tool_executor
+from . import copilot_attachment_ref
+from . import copilot_invoice_check
 from . import copilot_conversation
 from . import copilot_message
 from . import ipai_copilot_action_queue

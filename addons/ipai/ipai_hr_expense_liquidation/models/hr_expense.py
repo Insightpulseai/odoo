@@ -4,7 +4,10 @@ from odoo.exceptions import ValidationError
 
 
 class HrExpenseCashAdvanceLink(models.Model):
+    """Link expenses to cash advance requests."""
+
     _inherit = "hr.expense"
+    _description = "Expense (Cash Advance Link)"
 
     cash_advance_liquidation_id = fields.Many2one(
         "hr.expense.liquidation",

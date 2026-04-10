@@ -361,7 +361,7 @@ The W-series codes are **simplified aliases** and NOT the BIR-canonical ATC code
 3. Rate tables -- already ported
 
 **Stale / Drop:**
-1. Odoo 17 cert/prompt specs -- we are on Odoo 18
+1. Odoo 18 cert/prompt specs -- we are on Odoo 18
 2. `ipai_project_brief` sub-module -- unrelated
 3. CI workflow -- targets Odoo 18.0 + Python 3.11
 

@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <record id="view_ppm_gate_review_tree" model="ir.ui.view">
+        <field name="name">ppm.gate.review.tree</field>
+        <field name="model">ppm.gate.review</field>
+        <field name="arch" type="xml">
+            <list decoration-danger="state == 'failed'"
+                  decoration-warning="state == 'conditional'"
+                  decoration-success="state == 'passed'">
+                <field name="name"/>
+                <field name="project_id"/>
+                <field name="gate_type"/>
+                <field name="gate_date"/>
+                <field name="state" widget="badge"
+                       decoration-danger="state == 'failed'"
+                       decoration-warning="state == 'conditional'"
+                       decoration-success="state == 'passed'"/>
+                <field name="decided_by_id"/>
+                <field name="decision_date"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_ppm_gate_review_form" model="ir.ui.view">
+        <field name="name">ppm.gate.review.form</field>
+        <field name="model">ppm.gate.review</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_pass" type="object" string="Pass"
+                            class="btn-success"
+                            invisible="state not in ('scheduled', 'in_progress')"/>
+                    <button name="action_conditional_pass" type="object"
+                            string="Conditional Pass"
+                            class="btn-warning"
+                            invisible="state not in ('scheduled', 'in_progress')"/>
+                    <button name="action_fail" type="object" string="Fail"
+                            class="btn-danger"
+                            invisible="state not in ('scheduled', 'in_progress')"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="scheduled,in_progress,passed"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="name" placeholder="Gate name"/></h1>
+                    </div>
+                    <group>
+                        <group string="Gate">
+                            <field name="project_id"/>
+                            <field name="gate_type"/>
+                            <field name="gate_date"/>
+                            <field name="reviewer_ids" widget="many2many_tags"/>
+                        </group>
+                        <group string="Decision">
+                            <field name="decided_by_id"/>
+                            <field name="decision_date"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Criteria">
+                            <field name="criteria"/>
+                        </page>
+                        <page string="Findings">
+                            <field name="findings"/>
+                        </page>
+                        <page string="Conditions">
+                            <field name="conditions"/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_ppm_gate_review" model="ir.actions.act_window">
+        <field name="name">Gate Reviews</field>
+        <field name="res_model">ppm.gate.review</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+</odoo>

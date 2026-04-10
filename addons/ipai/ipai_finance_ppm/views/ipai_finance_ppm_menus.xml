@@ -1,5 +1,5 @@
 <odoo>
-    <!-- Action must be defined before menuitems that reference it -->
+    <!-- Import wizard action -->
     <record id="action_ipai_ppm_import_wizard" model="ir.actions.act_window">
         <field name="name">PPM Import</field>
         <field name="res_model">ipai.ppm.import.wizard</field>
@@ -7,15 +7,76 @@
         <field name="target">new</field>
     </record>
 
-    <!-- Single root menu for Finance PPM under Project app -->
+    <!-- Root menu under Project app -->
     <menuitem id="menu_ipai_finance_ppm_root"
               name="Finance PPM"
               parent="project.menu_main_pm"
               sequence="40"/>
 
+    <!-- Portfolio sub-menu -->
+    <menuitem id="menu_ipai_ppm_portfolio"
+              name="Portfolio"
+              parent="menu_ipai_finance_ppm_root"
+              sequence="10"/>
+
+    <menuitem id="menu_ipai_ppm_portfolio_health"
+              name="Portfolio Health"
+              parent="menu_ipai_ppm_portfolio"
+              action="action_ppm_portfolio_health"
+              sequence="10"/>
+
+    <menuitem id="menu_ipai_ppm_scoring"
+              name="Investment Scoring"
+              parent="menu_ipai_ppm_portfolio"
+              action="action_ppm_scoring"
+              sequence="20"/>
+
+    <menuitem id="menu_ipai_ppm_gate_reviews"
+              name="Gate Reviews"
+              parent="menu_ipai_ppm_portfolio"
+              action="action_ppm_gate_review"
+              sequence="30"/>
+
+    <!-- Finance sub-menu -->
+    <menuitem id="menu_ipai_ppm_finance"
+              name="Finance"
+              parent="menu_ipai_finance_ppm_root"
+              sequence="20"/>
+
+    <menuitem id="menu_ipai_ppm_budget_lines"
+              name="Budget Lines"
+              parent="menu_ipai_ppm_finance"
+              action="action_ppm_budget_line"
+              sequence="10"/>
+
+    <!-- Risk & Issues sub-menu -->
+    <menuitem id="menu_ipai_ppm_risk_issues"
+              name="Risk &amp; Issues"
+              parent="menu_ipai_finance_ppm_root"
+              sequence="30"/>
+
+    <menuitem id="menu_ipai_ppm_risks"
+              name="Risk Register"
+              parent="menu_ipai_ppm_risk_issues"
+              action="action_ppm_risk"
+              sequence="10"/>
+
+    <menuitem id="menu_ipai_ppm_issues"
+              name="Issue Register"
+              parent="menu_ipai_ppm_risk_issues"
+              action="action_ppm_issue"
+              sequence="20"/>
+
+    <!-- Tools sub-menu -->
+    <menuitem id="menu_ipai_ppm_tools"
+              name="Tools"
+              parent="menu_ipai_finance_ppm_root"
+              sequence="90"/>
+
     <menuitem id="menu_ipai_finance_ppm_import"
               name="PPM Import"
-              parent="menu_ipai_finance_ppm_root"
+              parent="menu_ipai_ppm_tools"
               action="action_ipai_ppm_import_wizard"
-              sequence="20"/>
+              sequence="10"/>
+
 </odoo>

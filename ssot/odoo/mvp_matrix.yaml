@@ -1,0 +1,358 @@
+version: 1
+artifact: ssot/odoo/mvp_matrix.yaml
+profile: insightpulseai-odoo18-mvp
+source_of_truth: true
+
+governance:
+  odoo_truth_rule: true
+  no_parallel_ledger: true
+  no_parallel_workflow_engine: true
+  ce_oca_first_sourcing_order:
+    - ce_native
+    - oca_native_direct
+    - oca_native_adjacent
+    - composite_ce_oca
+    - thin_ipai_delta
+    - optional_external_bridge
+  mvp_shape: viable_horizontal_slice
+  saas_vs_multitenancy:
+    saas_is_business_model: true
+    multitenancy_is_architecture_decision: true
+    tenant_definition_required_per_bundle: true
+  responsible_ai:
+    human_oversight_required: true
+    confirm_critical_actions: true
+    tool_validation_required: true
+    monitoring_required: true
+    content_safety_required: true
+
+azure_baseline:
+  runtime:
+    resource_groups:
+      runtime: rg-ipai-dev-odoo-runtime
+      data: rg-ipai-dev-odoo-data
+      platform: rg-ipai-dev-platform
+    vnet: vnet-ipai-dev
+    waf_policy: wafipaidev
+    postgres: pg-ipai-odoo
+    key_vault: kv-ipai-dev
+    reuse_before_new_infra: true
+  ai:
+    resource: pulser-odoo-resource
+    project: pulser-odoo
+    region: eastus2
+    endpoints:
+      foundry_project: https://pulser-odoo-resource.services.ai.azure.com/api/projects/pulser-odoo
+      azure_openai_base_host: https://pulser-odoo-resource.openai.azure.com/
+      azure_openai_sdk_base: https://pulser-odoo-resource.openai.azure.com/openai/v1/
+      ai_services_base: https://pulser-odoo-resource.services.ai.azure.com/
+    connected_resources_confirmed:
+      - category: AIServices
+      - category: AzureStorageAccount
+      - category: ApiKey
+        name: bing-grounding
+    optional_connections_not_assumed:
+      - Azure AI Search
+      - Azure Cosmos DB
+      - Microsoft Fabric
+      - Application Insights
+      - additional Grounding providers
+
+repos:
+  odoo:
+    role: erp_truth_and_thin_bridges
+    source_layout:
+      oca_root: addons/oca
+      ipai_root: addons/ipai
+      local_root: addons/local
+    runtime_mounts:
+      oca_repo_prefix: /mnt/oca
+      ipai_root: /mnt/extra-addons/ipai
+      local_root: /mnt/extra-addons/local
+  agent-platform:
+    role: agent_runtime_orchestration_grounding_ingestion
+    preferred_template: get_started_with_ai_agents
+    optional_templates:
+      - get_started_with_ai_chat
+      - multi_modal_content_processing
+      - build_your_own_copilot_solution_accelerator
+  agents:
+    role: declarative_agent_specs_skills_evals_registry
+  web:
+    role: optional_browser_shells
+    preferred_template_if_needed: get_started_with_ai_chat
+
+bundles:
+  ppm_clarity:
+    mvp: true
+    status: ce_oca_only_for_current_mvp
+    ce18_required:
+      - project
+      - project_account
+      - project_hr_expense
+      - project_purchase
+      - project_sale_expense
+      - sale_project
+      - sale_timesheet
+      - hr_timesheet
+      - analytic
+      - spreadsheet
+      - spreadsheet_dashboard
+      - spreadsheet_dashboard_hr_timesheet
+      - spreadsheet_dashboard_sale_timesheet
+    oca_required:
+      direct:
+        - project_parent
+        - project_group
+        - project_department
+        - project_type
+        - project_version
+        - project_key
+        - project_template
+        - project_task_ancestor
+        - project_task_parent_completion_blocking
+        - project_task_parent_due_auto
+        - project_task_stage_mgmt
+        - project_task_stage_change_restriction
+        - project_task_stage_state
+        - project_task_code
+        - project_task_name_with_id
+        - project_stakeholder
+        - project_reviewer
+        - project_role
+        - project_timeline
+        - project_timeline_hr_timesheet
+      adjacent:
+        - hr_timesheet_sheet
+        - hr_timesheet_sheet_policy_project_manager
+        - hr_timesheet_begin_end
+        - project_pivot
+        - mis_builder
+        - mis_builder_budget
+        - sale_timesheet_budget
+    ipai_required: []
+    ipai_optional:
+      - ipai_finance_ppm
+    ipai_optional_note: dropped_from_current_mvp_install_set_because_ce_plus_oca_covers_current_ppm_slice
+    non_module_optional:
+      - executive_analytics
+    deferred:
+      - drag_drop_resource_optimization
+      - enterprise_capacity_optimization
+      - scenario_optimization
+      - custom_portfolio_delta_if_ce_oca_proves_insufficient
+
+  reverse_sap_concur:
+    mvp: true
+    status: odoo_first_addon_plus_companion
+    ce18_required:
+      - hr_expense
+      - sale_expense
+      - project_hr_expense
+      - project_sale_expense
+      - account
+      - account_payment
+      - analytic
+      - hr
+      - mail
+      - spreadsheet_dashboard_hr_expense
+    oca_required:
+      direct:
+        - hr_expense_advance_clearing
+        - hr_expense_advance_clearing_sequence
+        - hr_expense_payment
+        - hr_expense_sequence
+        - hr_expense_tier_validation
+      adjacent:
+        - base_tier_validation
+        - dms
+        - dms_field
+        - document_page_approval
+        - queue_job
+        - auditlog
+        - mis_builder
+        - helpdesk_mgmt
+    ipai_required:
+      - ipai_hr_expense_liquidation
+      - ipai_expense_ops
+      - ipai_expense_wiring
+    ipai_scope:
+      - cash_advance_request
+      - approval_release_monitoring
+      - liquidation_linkage
+      - settlement_math
+      - finance_review_posting_approval_metadata
+      - tbwa_printable_forms
+    optional_companion:
+      api_edge_template: fastapi_membership_api_template_for_azure_container_apps
+      web_shell_template: get_started_with_ai_chat
+      allowed_ai_uses:
+        - reminders
+        - summaries
+        - status_queries
+    deferred:
+      - ocr_baseline
+      - corporate_card_feeds
+      - standalone_concur_platform
+      - native_mobile_app
+
+  pulser_odoo:
+    mvp: true
+    status: pulser_shell_plus_runtime
+    ce18_required:
+      - base
+      - web
+      - mail
+      - bus
+      - attachment_indexation
+    oca_required: []
+    ipai_required:
+      - ipai_odoo_copilot
+      - ipai_copilot_actions
+      - ipai_ai_agent_sources
+    ipai_optional_not_proven:
+      - ipai_agent
+      - future_sub_agents
+    ipai_scope:
+      - tri_modal_assistant
+      - safe_action_classes
+      - domain_agent_routing_contract
+      - audited_action_logs
+      - odoo_grounded_live_state
+    runtime_required:
+      foundry_project: pulser-odoo
+      template: get_started_with_ai_agents
+    rag_scope_only:
+      - policies
+      - sops
+      - help
+      - uploaded_docs
+      - curated_knowledge
+    deferred:
+      - full_sub_agent_registry_runtime
+      - broad_multi_agent_autonomy
+      - cross_suite_orchestration
+      - governed_foundry_heavy_runtime
+
+  reverse_avatax:
+    mvp: true
+    status: odoo_tax_truth_plus_review_plane
+    ce18_required:
+      - account
+      - account_payment
+      - account_tax_python
+      - hr_expense
+      - sale_expense
+      - l10n_ph
+      - l10n_account_withholding_tax
+    oca_required: []
+    ipai_required:
+      - ipai_tax_intelligence
+    ipai_scope:
+      - pre_posting_validation
+      - explainable_tax_exceptions
+      - approval_aware_blocking
+      - audit_trail
+      - compliance_pack_boundary
+    runtime_optional:
+      template: get_started_with_ai_agents
+      azure_openai_explanations: true
+      document_extraction_later: multi_modal_content_processing
+    deferred:
+      - mandatory_third_party_tax_engine
+      - multi_country_filing_automation
+      - autonomous_tax_ops
+      - global_parity_claims
+
+  expense_parity_addon:
+    mvp: true
+    status: thin_boundary_and_wiring_module
+    ce18_required:
+      - hr_expense
+      - account
+      - mail
+    oca_required:
+      adjacent:
+        - dms
+        - queue_job
+        - auditlog
+    ipai_required:
+      - ipai_expense_wiring
+    ipai_scope:
+      - boundary_documentation
+      - parity_config
+      - receipt_archival_wiring
+    deferred:
+      - ocr_baseline
+      - ai_review_baseline
+      - card_feed_baseline
+
+proven_runtime_state:
+  fresh_db_install_proven: true
+  core_test_gate_a_passed: true
+  total_passing_tests: 388
+  run_1:
+    database: test_mvp_gate
+    tests: 288
+    failures: 0
+    evidence: docs/evidence/20260410-0645/gate-a/test_run_5.log
+  run_2:
+    database: test_mvp_full
+    tests: 84
+    failures: 0
+    evidence: docs/evidence/20260410-0941/gate-a-copilot/test_run_2.log
+  proven_modules:
+    - ipai_pulser_assistant      # 149 tests — run 1
+    - ipai_tax_intelligence      # 69 tests — run 1
+    - ipai_hr_expense_liquidation # 43 tests — run 1
+    - ipai_expense_wiring        # 12 tests — run 1
+    - ipai_branch_profile        # 15 tests — run 1
+    - ipai_odoo_copilot          # 84 tests — run 2
+    - ipai_copilot_actions       # 10 tests — run 2
+    - ipai_expense_ops           # 6 tests — run 2
+  removed_from_mvp:
+    - ipai_finance_ppm  # PPM fully served by CE+OCA
+  out_of_current_mvp_scope_with_tests:
+    - ipai_bank_recon
+    - ipai_bir_compliance
+    - ipai_bir_tax_compliance
+    - ipai_finance_close
+    - ipai_tax_review
+    - ipai_enterprise_bridge
+    - ipai_document_intelligence
+
+testing:
+  doctrine:
+    odoo_native_first: true
+    playwright_secondary: true
+    devtools_debug_only: true
+  layers:
+    - transactioncase
+    - form
+    - httpcase_if_needed
+    - playwright_critical_path_only
+  required_for_release:
+    - executable_tests_for_core_workflows
+    - fresh_db_install_validation
+    - runtime_install_upgrade_validation
+
+mcp_tooling:
+  optional: true
+  not_business_truth: true
+  allowed:
+    - playwright_mcp
+    - chrome_devtools_mcp
+    - azure_mcp_server
+    - microsoft_learn_mcp
+    - azure_devops_mcp_if_needed
+    - markitdown
+  experimental_not_on_mvp_critical_path:
+    - azure_ai_foundry_mcp
+
+deferred_global:
+  - deploy_your_ai_application_in_production
+  - azure_ai_search_as_default
+  - cosmos_db_as_default
+  - fabric_as_default
+  - full_sub_agent_registry_runtime
+  - speculative_ipai_module_sprawl

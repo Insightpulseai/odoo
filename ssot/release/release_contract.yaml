@@ -32,18 +32,18 @@ surfaces:
       content_must_not_contain: null
     evidence_artifact: evidence-web-landing-*
 
-  odoo_erp:
-    display_name: Odoo CE 18 ERP
+  pulser_odoo:
+    display_name: Pulser for Odoo (Odoo CE 18)
     pipeline: azure-pipelines/odoo-deploy.yml
-    acr_image: acripaiodoo.azurecr.io/ipai-odoo:18.0-copilot
+    acr_image: acripaiodoo.azurecr.io/pulser-odoo:18.0
     container_app: ipai-odoo-dev-web
     resource_group: rg-ipai-dev-odoo-runtime
     public_url: https://erp.insightpulseai.com
-    dockerfile: platform/runtime/docker/docker/Dockerfile.odoo-copilot
+    dockerfile: platform/runtime/docker/docker/Dockerfile.pulser-odoo
     trigger_paths:
       - addons/ipai/**
       - config/**
-      - platform/runtime/docker/docker/Dockerfile.odoo-copilot
+      - platform/runtime/docker/docker/Dockerfile.pulser-odoo
     required_stages:
       - build
       - deploy
@@ -54,7 +54,7 @@ surfaces:
       smoke_path: /web/login
       content_must_contain: Odoo
       content_must_not_contain: Internal Server Error
-    evidence_artifact: evidence-odoo-erp-*
+    evidence_artifact: evidence-pulser-odoo-*
 
   databricks:
     display_name: Databricks Bundles

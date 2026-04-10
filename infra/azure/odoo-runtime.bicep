@@ -96,7 +96,7 @@ module postgres 'modules/postgres-flexible.bicep' = {
 }
 
 // Official Odoo 18 image from Docker Hub (public, no ACR auth needed)
-var odooImage = 'docker.io/library/odoo:18.0'
+var odooImage = 'docker.io/library/odoo:19.0'
 
 // Container Apps — odoo-web (with ingress)
 module odooWeb 'modules/container-apps.bicep' = {
