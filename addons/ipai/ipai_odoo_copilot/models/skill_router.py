@@ -224,12 +224,12 @@ class SkillRouter(models.AbstractModel):
             "odoo_module_scaffolder": (
                 "The user wants to create or modify an Odoo module. "
                 "Use search_odoo_docs for patterns and conventions. "
-                "Follow ipai_* naming, Odoo 19 coding standards."
+                "Follow ipai_* naming, Odoo 18 coding standards."
             ),
             "odoo_upgrade_advisor": (
                 "The user needs help with Odoo version migration. "
                 "Search docs for breaking changes and migration guides. "
-                "Note: Odoo 19 renamed groups_id to group_ids, tree to list."
+                "Note: Odoo 18 uses groups_id (not group_ids), tree (not list)."
             ),
             "fabric_data_query": (
                 "The user wants business analytics data. "

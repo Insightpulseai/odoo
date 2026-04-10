@@ -1,6 +1,6 @@
 # odoo-report-customization
 
-Customizes PDF reports, QWeb report templates, and operational print surfaces in Odoo CE 19.
+Customizes PDF reports, QWeb report templates, and operational print surfaces in Odoo CE 18.
 
 ## When to use
 - A custom report layout or additional content is needed

@@ -17,29 +17,29 @@ description: >
   for Odoo product and configuration questions.
 
 sources:
-  - url: https://www.odoo.com/documentation/19.0/
+  - url: https://www.odoo.com/documentation/18.0/
     type: docs_site
     crawl_strategy: full_site
     version: "19.0"
     priority: P0
 
   # Key subsections with high query density
-  - url: https://www.odoo.com/documentation/19.0/applications/finance/accounting.html
+  - url: https://www.odoo.com/documentation/18.0/applications/finance/accounting.html
     type: docs_page
     tags: [accounting, finance, journal_entries, reconciliation]
     priority: P0
 
-  - url: https://www.odoo.com/documentation/19.0/applications/finance/accounting/taxes.html
+  - url: https://www.odoo.com/documentation/18.0/applications/finance/accounting/taxes.html
     type: docs_page
     tags: [taxes, vat, withholding, fiscal_positions]
     priority: P0
 
-  - url: https://www.odoo.com/documentation/19.0/applications/finance/fiscal_localizations.html
+  - url: https://www.odoo.com/documentation/18.0/applications/finance/fiscal_localizations.html
     type: docs_page
     tags: [localizations, country_specific, philippines]
     priority: P0
 
-  - url: https://www.odoo.com/documentation/19.0/developer.html
+  - url: https://www.odoo.com/documentation/18.0/developer.html
     type: docs_page
     tags: [developer, api, orm, views, models]
     priority: P1

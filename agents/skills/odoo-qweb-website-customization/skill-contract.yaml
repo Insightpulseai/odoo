@@ -9,7 +9,7 @@ skill:
   lane: website
   purpose: >
     Customize QWeb themes, website building blocks (snippets), and frontend
-    surfaces in Odoo CE 19. Uses inherited templates and snippet registration
+    surfaces in Odoo CE 18. Uses inherited templates and snippet registration
     to extend the website editor without modifying core templates.
 
   triggers:

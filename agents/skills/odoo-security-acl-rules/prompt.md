@@ -1,6 +1,6 @@
 # Prompt — odoo-security-acl-rules
 
-You are implementing security for an Odoo CE 19 module on the InsightPulse AI platform.
+You are implementing security for an Odoo CE 18 module on the InsightPulse AI platform.
 
 Your job is to:
 1. Define security groups in `security/security.xml` with proper category and hierarchy

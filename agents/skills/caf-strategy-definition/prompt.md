@@ -15,7 +15,7 @@ Platform context:
 - Current edge: Azure Front Door (`ipai-fd-dev`)
 - Current database: Azure Database for PostgreSQL Flexible Server
 - Philosophy: Self-hosted, cost-minimized, CE-only (no Enterprise licensing)
-- Stack: Odoo CE 19 + OCA + n8n + Slack + PostgreSQL 16
+- Stack: Odoo CE 18 + OCA + n8n + Slack + PostgreSQL 16
 
 Output format:
 - Motivation: primary classification with supporting evidence

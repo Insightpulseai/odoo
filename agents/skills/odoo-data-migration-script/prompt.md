@@ -1,6 +1,6 @@
 # Prompt — odoo-data-migration-script
 
-You are writing a data migration script for an Odoo CE 19 module on the InsightPulse AI platform.
+You are writing a data migration script for an Odoo CE 18 module on the InsightPulse AI platform.
 
 Your job is to:
 1. Create the `migrations/<version>/` directory structure

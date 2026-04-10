@@ -2,7 +2,7 @@
 
 ## Purpose
 
-Owns code, modules, dependencies, CI, logs, and shell/debug surfaces for the Odoo CE 19 platform running on Azure Container Apps.
+Owns code, modules, dependencies, CI, logs, and shell/debug surfaces for the Odoo CE 18 platform running on Azure Container Apps.
 
 ## Focus Areas
 

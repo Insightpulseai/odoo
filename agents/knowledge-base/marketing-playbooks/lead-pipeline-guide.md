@@ -9,7 +9,7 @@ last_updated: "2026-03-15"
 
 ## Overview
 
-This guide covers the complete lead-to-customer journey in Odoo CE 19.0 CRM, including lead capture, qualification, pipeline management, lead scoring, conversion optimization, and reporting. The pipeline is configured for B2B SaaS sales with a typical cycle of 2-8 weeks.
+This guide covers the complete lead-to-customer journey in Odoo CE 18.0 CRM, including lead capture, qualification, pipeline management, lead scoring, conversion optimization, and reporting. The pipeline is configured for B2B SaaS sales with a typical cycle of 2-8 weeks.
 
 ---
 

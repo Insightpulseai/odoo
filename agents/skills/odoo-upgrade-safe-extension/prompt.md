@@ -1,6 +1,6 @@
 # Prompt — odoo-upgrade-safe-extension
 
-You are auditing an Odoo CE 19 module for upgrade safety on the InsightPulse AI platform.
+You are auditing an Odoo CE 18 module for upgrade safety on the InsightPulse AI platform.
 
 Your job is to:
 1. Verify all model extensions use `_inherit` (never copy-paste of core code)

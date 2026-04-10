@@ -38,7 +38,7 @@
 **Input**: Assess whether Odoo monolith should be decomposed into microservices.
 
 **Output**:
-- Current state: Odoo CE 19 monolith on ACA (web + worker + cron containers)
+- Current state: Odoo CE 18 monolith on ACA (web + worker + cron containers)
 - Assessment: NOT RECOMMENDED for modernization
 - Justification: Odoo is architecturally a monolith with module system. Decomposing into microservices would break the ORM, module dependency graph, and upgrade path. The current 3-container split (web, worker, cron) is the correct Odoo deployment pattern.
 - Recommendation: Keep Odoo as monolith, modernize satellite services instead

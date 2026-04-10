@@ -9,7 +9,7 @@ skill:
   lane: security
   purpose: >
     Define security groups, ACLs (ir.model.access.csv), and record rules
-    for Odoo CE 19 modules. Ensures every model has proper access control,
+    for Odoo CE 18 modules. Ensures every model has proper access control,
     multi-company record rules, and correct group hierarchy.
 
   triggers:

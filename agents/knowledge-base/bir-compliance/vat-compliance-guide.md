@@ -9,7 +9,7 @@ last_updated: "2026-03-15"
 
 ## Overview
 
-This guide covers Value Added Tax (VAT) compliance for Philippine businesses using Odoo CE 19.0. It covers VAT registration, computation, filing of BIR Forms 2550M and 2550Q, and proper tax handling in the Odoo system.
+This guide covers Value Added Tax (VAT) compliance for Philippine businesses using Odoo CE 18.0. It covers VAT registration, computation, filing of BIR Forms 2550M and 2550Q, and proper tax handling in the Odoo system.
 
 **Legal Basis**: National Internal Revenue Code (NIRC), as amended by the TRAIN Law (RA 10963, effective January 1, 2018) and CREATE Law (RA 11534, effective April 11, 2021).
 
