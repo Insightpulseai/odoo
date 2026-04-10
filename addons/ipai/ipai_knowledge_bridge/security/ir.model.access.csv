@@ -1,0 +1,7 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_knowledge_source_user,ipai.knowledge.source.user,model_ipai_knowledge_source,ipai_knowledge_bridge.group_knowledge_user,1,0,0,0
+access_knowledge_source_manager,ipai.knowledge.source.manager,model_ipai_knowledge_source,ipai_knowledge_bridge.group_knowledge_manager,1,1,1,1
+access_knowledge_log_user,ipai.knowledge.query.log.user,model_ipai_knowledge_query_log,ipai_knowledge_bridge.group_knowledge_user,1,0,0,0
+access_knowledge_log_manager,ipai.knowledge.query.log.manager,model_ipai_knowledge_query_log,ipai_knowledge_bridge.group_knowledge_manager,1,0,0,1
+access_knowledge_citation_user,ipai.knowledge.citation.user,model_ipai_knowledge_citation,ipai_knowledge_bridge.group_knowledge_user,1,0,0,0
+access_knowledge_citation_manager,ipai.knowledge.citation.manager,model_ipai_knowledge_citation,ipai_knowledge_bridge.group_knowledge_manager,1,1,1,1

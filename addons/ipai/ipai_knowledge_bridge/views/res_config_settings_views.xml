@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <record id="view_res_config_settings_knowledge" model="ir.ui.view">
+        <field name="name">res.config.settings.knowledge</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="base.res_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//form" position="inside">
+                <app data-string="Knowledge Bridge"
+                     string="Knowledge Bridge"
+                     groups="ipai_knowledge_bridge.group_knowledge_manager">
+                    <block title="Azure AI Search">
+                        <setting string="Search Endpoint"
+                                 help="Azure AI Search service endpoint URL">
+                            <field name="ipai_knowledge_search_endpoint"/>
+                        </setting>
+                    </block>
+                    <block title="Azure OpenAI">
+                        <setting string="OpenAI Endpoint"
+                                 help="Azure OpenAI endpoint URL">
+                            <field name="ipai_knowledge_openai_endpoint"/>
+                        </setting>
+                        <setting string="OpenAI Deployment"
+                                 help="Azure OpenAI model deployment name">
+                            <field name="ipai_knowledge_openai_deployment"/>
+                        </setting>
+                    </block>
+                    <block title="Defaults">
+                        <setting string="Default Confidence Threshold"
+                                 help="Minimum score to return an answer (0.0-1.0)">
+                            <field name="ipai_knowledge_default_confidence"/>
+                        </setting>
+                    </block>
+                </app>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>
