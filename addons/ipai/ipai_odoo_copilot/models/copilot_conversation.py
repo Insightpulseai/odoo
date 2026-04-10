@@ -11,7 +11,6 @@ _logger = logging.getLogger(__name__)
 class CopilotConversation(models.Model):
     _name = 'ipai.copilot.conversation'
     _description = 'Copilot Conversation'
-    _inherit = ['mail.thread']
     _order = 'write_date desc, id desc'
 
     # -------------------------------------------------------------------------
