@@ -1,0 +1,17 @@
+{
+  "template_id": "spec-implementation",
+  "description": "What modules implement a given spec bundle?",
+  "source_plane": "spec",
+  "target_planes": [
+    "addons",
+    "agents",
+    "agent-platform"
+  ],
+  "link_types": [
+    "implements"
+  ],
+  "total_edges_matched": 0,
+  "chunks_selected": 0,
+  "total_tokens": 0,
+  "chunks": []
+}

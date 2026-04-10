@@ -1,0 +1,78 @@
+{
+  "timestamp": "2026-03-30T06:40:09Z",
+  "ttl": "24h",
+  "templates": [
+    {
+      "template_id": "spec-implementation",
+      "description": "What modules implement a given spec bundle?",
+      "chunks": 0,
+      "tokens": 0,
+      "edges_matched": 0,
+      "file": "spec-implementation.json"
+    },
+    {
+      "template_id": "contract-tests",
+      "description": "What tests cover a given SSOT contract?",
+      "chunks": 11,
+      "tokens": 5186,
+      "edges_matched": 18,
+      "file": "contract-tests.json"
+    },
+    {
+      "template_id": "module-documentation",
+      "description": "What documentation exists for a given Odoo module?",
+      "chunks": 5,
+      "tokens": 2034,
+      "edges_matched": 4,
+      "file": "module-documentation.json"
+    },
+    {
+      "template_id": "infra-dependencies",
+      "description": "What infrastructure deploys a given service?",
+      "chunks": 0,
+      "tokens": 0,
+      "edges_matched": 0,
+      "file": "infra-dependencies.json"
+    },
+    {
+      "template_id": "agent-skill-map",
+      "description": "What skills and tools does an agent use?",
+      "chunks": 0,
+      "tokens": 0,
+      "edges_matched": 0,
+      "file": "agent-skill-map.json"
+    },
+    {
+      "template_id": "data-lineage",
+      "description": "What data flows from Odoo through the lakehouse?",
+      "chunks": 0,
+      "tokens": 0,
+      "edges_matched": 0,
+      "file": "data-lineage.json"
+    },
+    {
+      "template_id": "web-design-tokens",
+      "description": "What design tokens are consumed by web frontends?",
+      "chunks": 0,
+      "tokens": 0,
+      "edges_matched": 0,
+      "file": "web-design-tokens.json"
+    },
+    {
+      "template_id": "governance-coverage",
+      "description": "What governance contracts exist and what do they cover?",
+      "chunks": 0,
+      "tokens": 0,
+      "edges_matched": 0,
+      "file": "governance-coverage.json"
+    },
+    {
+      "template_id": "cross-plane-overview",
+      "description": "Overview of all cross-plane relationships for a given plane",
+      "chunks": 30,
+      "tokens": 36652,
+      "edges_matched": 16307,
+      "file": "cross-plane-overview.json"
+    }
+  ]
+}

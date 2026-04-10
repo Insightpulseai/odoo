@@ -106,7 +106,29 @@ code is approved.
 | Phase-gate / review objects | `ppm.gate.review` |
 | Finance-portfolio dashboards | Pivot/graph views on delta models |
 
-## 7. Explicit Non-Goals
+## 7. MVP Scope
+
+### MVP includes
+
+- Portfolio / program / project structure using CE + OCA first
+- Project execution (tasks, stages, recurrence, burn-down)
+- WBS / hierarchy / milestones (`project_task_ancestor`, `project_milestone_status`)
+- Stakeholders / reviewers / roles (`project_stakeholder`, `project_reviewer`, `project_role`)
+- Timesheet governance (`hr_timesheet_sheet`, `project_timesheet_time_control`)
+- Timeline / pivot / reporting shell (`project_timeline`, `project_pivot`)
+- Project financial visibility and portfolio-control baseline where CE/OCA supports
+- Thin custom delta only for unresolved portfolio-control gaps (budget/health/scoring/risk/issue/gate)
+
+### Deferred / post-MVP
+
+- Advanced enterprise capacity optimization
+- Drag-drop resource optimization parity (EE-only, no CE/OCA equivalent)
+- Full scenario optimization
+- Interactive Gantt (EE-only)
+- Task dependency chains / CPM scheduling (`project_task_dependency` not ported to 18.0)
+- Anything not proven after the wider CE/OCA cross-repo scan
+
+## 8. Explicit Non-Goals
 
 - Rebuilding OCA project capabilities inside `ipai_finance_ppm`
 - Treating `ipai_finance_ppm` as the monolithic Clarity replacement
@@ -122,3 +144,49 @@ code is approved.
 - Zero deprecated infrastructure code in PPM module
 - All generic project-shell features served by CE/OCA, not custom code
 - Known gaps documented in SSOT parity matrix
+
+## 9. MVP Framing
+
+MVP is a viable horizontal slice across the minimum required workflow
+components, not a disconnected feature fragment.
+
+## 10. External Validation Inputs
+
+This feature may be validated against:
+
+- Azure architecture review checklists for promotion-lane cloud and SaaS controls
+- Odoo 18 go-live accounting/operations checklists for cutover and finance readiness
+
+These references support review and go-live readiness only. They do not
+redefine MVP scope or architecture ownership.
+
+## 11. Testability Requirements
+
+MVP requires executable Odoo-native tests for all core business flows
+introduced by this feature.
+
+Required coverage classes:
+
+- business/model logic
+- form/onchange/default behavior
+- approval/routing logic
+- critical browser flows only where backend/form coverage is insufficient
+
+## 12. Optional Tooling Surfaces
+
+This feature may use MCP servers for testing, debugging, documentation
+lookup, and controlled platform operations. These are implementation aids
+only and do not redefine product scope or ownership boundaries.
+
+## 13. API Edge Decision
+
+This feature may expose a FastAPI-based Azure API edge, but only as a
+facade or sidecar. Odoo remains the source of truth for workflow,
+approvals, accounting, and related ERP state. FastAPI is optional and
+only for external/operator/API packaging if needed.
+
+## 14. SaaS / Tenant Framing
+
+This feature may participate in a SaaS or multitenant operating model, but
+tenant boundaries and isolation strategy must be specified explicitly and
+must not be assumed.

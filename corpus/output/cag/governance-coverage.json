@@ -1,0 +1,19 @@
+{
+  "template_id": "governance-coverage",
+  "description": "What governance contracts exist and what do they cover?",
+  "source_plane": "platform",
+  "target_planes": [
+    "addons",
+    "agents",
+    "infra",
+    "data-intelligence"
+  ],
+  "link_types": [
+    "governs",
+    "governed_by"
+  ],
+  "total_edges_matched": 0,
+  "chunks_selected": 0,
+  "total_tokens": 0,
+  "chunks": []
+}

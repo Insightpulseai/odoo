@@ -1,0 +1,19 @@
+{
+  "template_id": "agent-skill-map",
+  "description": "What skills and tools does an agent use?",
+  "source_plane": "agents",
+  "target_planes": [
+    "addons",
+    "agent-platform",
+    "apps"
+  ],
+  "link_types": [
+    "calls",
+    "runs_on",
+    "integrates"
+  ],
+  "total_edges_matched": 0,
+  "chunks_selected": 0,
+  "total_tokens": 0,
+  "chunks": []
+}

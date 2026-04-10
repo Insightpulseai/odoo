@@ -1,0 +1,17 @@
+{
+  "template_id": "data-lineage",
+  "description": "What data flows from Odoo through the lakehouse?",
+  "source_plane": "data-intelligence",
+  "target_planes": [
+    "addons",
+    "platform"
+  ],
+  "link_types": [
+    "reads_from",
+    "governs"
+  ],
+  "total_edges_matched": 0,
+  "chunks_selected": 0,
+  "total_tokens": 0,
+  "chunks": []
+}

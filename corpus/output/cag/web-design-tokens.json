@@ -1,0 +1,16 @@
+{
+  "template_id": "web-design-tokens",
+  "description": "What design tokens are consumed by web frontends?",
+  "source_plane": "web",
+  "target_planes": [
+    "design"
+  ],
+  "link_types": [
+    "consumes",
+    "consumed_by"
+  ],
+  "total_edges_matched": 0,
+  "chunks_selected": 0,
+  "total_tokens": 0,
+  "chunks": []
+}

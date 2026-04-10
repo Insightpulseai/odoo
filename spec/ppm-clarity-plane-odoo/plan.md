@@ -96,7 +96,169 @@ Only these families remain custom:
 ]
 ```
 
-## 4. Proof Gates
+## 4. MVP Deployment Mode
+
+The PPM MVP runs on Odoo CE 18 + OCA modules. No Azure bridge or governed
+runtime is required for the MVP. Azure services are promotion-lane only.
+
+- **MVP**: Odoo CE 18 + OCA project/timesheet + thin `ipai_finance_ppm` delta
+- **Promotion**: Azure-hosted dashboards, AI-assisted portfolio review, Foundry runtime
+
+## 5. SaaS / Multitenancy Guidance
+
+Treat SaaS as the business model and multitenancy as an architecture decision.
+Document:
+
+- tenant definition
+- shared vs isolated components
+- control-plane responsibilities
+- operational rollout strategy
+
+### Promotion-lane SaaS controls
+
+The following are promotion-lane capabilities unless explicitly required in MVP:
+
+- deployment stamps
+- advanced tenant isolation automation
+- safe deployment rings
+- feature flag operations
+- live-site automation at scale
+
+## 6. Testing Strategy
+
+Use Odoo-native backend testing as the default strategy.
+
+Preferred layers:
+
+- `TransactionCase` for portfolio/project/task business rules
+- `Form` for reviewer/stakeholder/task-entry flows
+- `HttpCase` only if there is a truly browser-critical operator path
+- `@tagged(...)` and `--test-tags` for explicit execution control
+
+## 7. MCP Tooling Boundary
+
+Allowed MCP tooling roles:
+
+- Microsoft Learn MCP for design/reference support
+- Azure MCP Server for platform validation
+- Playwright MCP only for thin browser-critical operator flows
+
+Prohibited role: using MCP as the primary owner of workflow or business state.
+
+## 8. Review and Go-Live Inputs
+
+### Azure review-checklists
+
+Use Azure review-checklists as a structured architecture review input for:
+
+- multitenancy
+- WAF / perimeter controls
+- AI landing zone
+- cost
+- application delivery/networking
+
+Treat these as review aids, not architecture sign-off.
+
+### Odoo 18 go-live checklist
+
+Use the Odoo 18 community go-live checklist as a cutover/readiness input for:
+
+- opening entries import
+- inventory readiness
+- receivable/payable balancing
+- payment and reconciliation checks
+- finance go-live validation
+
+Treat this as an operational checklist seed that must be adapted to the
+target localization and workflow.
+
+## 8. API Replacement Strategy
+
+Do not replace Odoo/OCA 18 as the owner of business workflow or accounting truth.
+
+Allowed replacement:
+
+- replace only the external API edge with a thin FastAPI facade or sidecar
+
+Odoo-owned:
+
+- business objects
+- approvals
+- accounting/tax/expense state
+- final write-path integrity
+
+FastAPI-owned:
+
+- external/mobile/public API surface
+- orchestration endpoints
+- async job handling
+- webhook ingestion
+- API auth/rate-limit/productization
+
+Prohibited:
+
+- direct writes from FastAPI to Odoo PostgreSQL tables
+- duplicate business rules in FastAPI
+- parallel transactional truth outside Odoo
+
+## 9. Azure API Edge Baseline
+
+The default external API edge for mobile, public, partner, and async
+workloads is a thin FastAPI layer on Azure Container Apps.
+
+Preferred accelerator baseline:
+
+- FastAPI Membership API Template for Azure Container Apps
+
+Allowed responsibilities:
+
+- external/mobile API surface
+- webhook ingestion
+- async orchestration
+- notifications/reminders
+- bounded AI-assisted facade behavior
+- optional edge-local cache/session/job state
+
+Prohibited responsibilities:
+
+- owning ERP transactional truth
+- direct writes to Odoo PostgreSQL business tables
+- duplicate approval/accounting/tax logic outside Odoo
+
+## 10. AI Template Baseline
+
+Where AI companion surfaces are required, prefer lightweight Azure
+AI/chat/agent templates and managed identity patterns. Do not make heavy
+OCR/multimodal templates part of MVP unless extraction is explicitly
+required.
+
+## Foundry Project Baseline
+
+Confirmed Foundry project baseline:
+
+- project: `ipai-copilot`
+- parent resource: `ipai-copilot-resource`
+- resource group: `rg-data-intel-ph`
+- region: `eastus2`
+- project endpoint: `https://ipai-copilot-resource.services.ai.azure.com/api/projects/ipai-copilot`
+
+## Connected Resources Strategy
+
+The Foundry project uses attachable connections. Do not assume Azure AI Search,
+Azure OpenAI, Cosmos DB, Storage, Application Insights, Bing grounding, or Fabric
+are already attached unless explicitly verified.
+
+For this bundle (PPM / Clarity parity), MVP connections:
+
+- no Foundry project connections are required for the PPM MVP — the MVP runs on
+  Odoo CE 18 + OCA modules with no AI surface
+- Azure AI-assisted portfolio review and Foundry runtime are promotion-lane only
+- if AI surfaces are added post-MVP, attach Azure OpenAI at that time and document
+  the connection before implementation depends on it
+- keep Azure AI Search, Cosmos DB, Bing grounding, Fabric, and Serverless Model
+  connections off the critical path unless explicitly justified
+
+## 11. Proof Gates
 
 The refactor is complete only when:
 - No CE/OCA-covered capability remains custom without a documented reason

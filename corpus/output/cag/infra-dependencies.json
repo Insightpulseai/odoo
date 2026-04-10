@@ -1,0 +1,19 @@
+{
+  "template_id": "infra-dependencies",
+  "description": "What infrastructure deploys a given service?",
+  "source_plane": "infra",
+  "target_planes": [
+    "addons",
+    "agent-platform",
+    "apps",
+    "web"
+  ],
+  "link_types": [
+    "deploys",
+    "deployed_by"
+  ],
+  "total_edges_matched": 0,
+  "chunks_selected": 0,
+  "total_tokens": 0,
+  "chunks": []
+}

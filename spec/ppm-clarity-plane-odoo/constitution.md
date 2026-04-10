@@ -6,9 +6,29 @@ Deliver a Clarity PPM-equivalent project portfolio management capability
 in Odoo 18 by composing CE + OCA + thin custom delta, not by building
 a monolithic replacement module.
 
-## 2. Architecture Doctrine
+## 2. MVP Doctrine
 
-### 2.1 CE + OCA first for PPM
+This feature is an explicit MVP baseline for the IPAI platform workstream.
+
+MVP sourcing order (mandatory):
+
+1. CE-native in `project` / `analytic` / `account`
+2. OCA-native in `project` / `timesheet` repos
+3. OCA-native from adjacent repos (web, server-ux, reporting-engine)
+4. Composite CE+OCA pattern
+5. Thin custom delta (`ipai_finance_ppm`) only for unresolved gaps
+6. External assist (Azure bridges) only when explicitly declared
+
+A capability must not be marked as "custom delta" only because it is absent
+from one repo. The full CE/OCA 18 ecosystem must be scanned before declaring
+a custom gap.
+
+Non-MVP bridge capabilities (OCR, AI review, governed Azure runtime) are
+not required baseline. They are promotion-lane work.
+
+## 3. Architecture Doctrine
+
+### 3.1 CE + OCA first for PPM
 
 The Clarity PPM replacement strategy for Odoo 18 must use:
 
@@ -107,3 +127,93 @@ the primary implementation layer before any custom code is written:
 | `project_task_dependency` | Task dependency chains / CPM | Not ported to OCA 18.0 |
 | Interactive drag-and-drop Gantt | Resource leveling | EE-only, no OCA equivalent |
 | Portfolio-level resource capacity | Demand vs supply planning | Requires custom delta |
+
+## 6. MVP Is a Viable Horizontal Slice
+
+For ERP/SaaS-adjacent features, MVP must be defined as the smallest viable
+cross-cutting slice that delivers end-to-end value. Avoid isolated
+component-only MVPs when the user workflow depends on multiple tightly
+connected business objects.
+
+## 7. SaaS and Multitenancy Are Separate Decisions
+
+SaaS is the delivery/business model. Multitenancy is an architecture choice.
+Tenant model, data isolation, and shared-component boundaries must be chosen
+explicitly per feature.
+
+## 8. External Checklists Inform Review, Not Source-of-Truth Design
+
+Community and external review checklists may be used to validate readiness
+and catch omissions, but they do not replace the feature bundle as the
+source of truth.
+
+- Azure review checklists are review aids and promotion-lane controls.
+- Odoo go-live checklists are operational readiness aids.
+- Neither may override Odoo-first workflow/accounting truth or the MVP
+  scope defined in this bundle.
+
+## 9. Odoo-Native Testing Is Required
+
+Addon and bridge code must follow Odoo-native testing patterns.
+
+At minimum:
+
+- model/business logic tests use Odoo test case classes
+- form-driven behaviors use server-side `Form` tests
+- HTTP / tour behavior uses `HttpCase` only where UI flow coverage is actually required
+- test selection must be explicit through tags
+- browser-critical end-to-end flows may use Playwright where backend/form
+  coverage is insufficient
+- MVP is not complete without executable tests for core workflows
+
+## 10. Browser Automation Is Targeted, Not Default
+
+Playwright is reserved for browser-critical flows and smoke coverage.
+Chrome DevTools is a debugging surface, not the primary test framework.
+Manual QA and ad hoc scripts do not replace executable automated tests.
+
+## 11. MCP Tooling Is Optional and Bounded
+
+MCP servers are optional developer and operator tooling surfaces. They
+assist with automation, debugging, reference lookup, and platform
+validation. They must never own workflow state, business logic, or
+approval truth.
+
+Allowed roles:
+
+- Playwright MCP for browser automation
+- Chrome DevTools MCP for debugging
+- Azure MCP Server for platform/runtime validation
+- Microsoft Learn MCP for documentation lookup
+
+Prohibited role: MCP as the primary owner of workflow or business state.
+
+## 12. Experimental MCP Integrations Are Non-Critical
+
+Experimental or preview MCP integrations (e.g., Azure AI Foundry MCP)
+must not be on the MVP critical path. They may be evaluated and adopted
+when stable, but must not block delivery or become implicit dependencies.
+
+## 13. Foundry Project Connections Are Optional and Minimum-Necessary
+
+The Foundry project (`ipai-copilot`) supports attachable connections (Azure OpenAI,
+AI Search, Cosmos DB, Storage, Fabric, etc.). These are optional enrichments, not
+mandatory baseline dependencies.
+
+- Do not assume any connection is already configured unless explicitly proven.
+- For the PPM / Clarity parity surface: no Foundry project connections are required
+  for the MVP — the MVP runs on Odoo CE 18 + OCA modules with no AI surface.
+  Azure AI-assisted portfolio review and Foundry runtime are promotion-lane only.
+  If AI surfaces are added post-MVP, attach Azure OpenAI at that time and document
+  the connection before implementation depends on it.
+- Add only the minimum connections required for MVP.
+- Microsoft Fabric is preview and must not be on the MVP critical path.
+- Document every new project connection before implementation depends on it.
+
+## 14. API Edge Replacement Is Facade-Only
+
+FastAPI or external API layers may replace the public/mobile API edge,
+but they must not replace Odoo/OCA as the owner of workflow, approvals,
+accounting, tax, or ERP state. The FastAPI edge may package, orchestrate,
+proxy, or expose workflows, but Odoo remains the authoritative write path
+for all ERP business objects.
