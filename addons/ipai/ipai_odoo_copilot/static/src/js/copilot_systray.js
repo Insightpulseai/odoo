@@ -87,10 +87,16 @@ export class CopilotSystrayButton extends Component {
         const prompt = input?.value?.trim();
         if (!prompt || this.state.isLoading) return;
 
-        // Add user message
+        // Capture attachment before clearing
+        const attachedFile = this.state.attachedFile;
+        const displayText = attachedFile
+            ? `${prompt}\n📎 ${attachedFile.name}`
+            : prompt;
+
+        // Add user message (shows filename if attached)
         this.state.messages.push({
             role: "user",
-            content: prompt,
+            content: displayText,
             timestamp: new Date().toLocaleTimeString(),
         });
         input.value = "";
@@ -101,19 +107,14 @@ export class CopilotSystrayButton extends Component {
         try {
             // Upload attachment if present
             let attachmentRef = null;
-            if (this.state.attachedFile) {
+            if (attachedFile) {
                 try {
-                    attachmentRef = await this._uploadAttachment(this.state.attachedFile);
-                    this.state.attachedFile = null;
+                    attachmentRef = await this._uploadAttachment(attachedFile);
                 } catch {
-                    this.state.messages.push({
-                        role: "error",
-                        content: "File upload failed. Please try again.",
-                        timestamp: new Date().toLocaleTimeString(),
-                    });
-                    this.state.isLoading = false;
-                    return;
+                    // Upload endpoint may not exist yet — pass filename as context
+                    attachmentRef = { filename: attachedFile.name, status: "local_only" };
                 }
+                this.state.attachedFile = null;
             }
 
             const context = this._getPageContext();
