@@ -5,7 +5,7 @@
         <field name="name">ppm.portfolio.health.tree</field>
         <field name="model">ppm.portfolio.health</field>
         <field name="arch" type="xml">
-            <tree decoration-danger="overall_rag == 'red'"
+            <list decoration-danger="overall_rag == 'red'"
                   decoration-warning="overall_rag == 'amber'"
                   decoration-success="overall_rag == 'green'">
                 <field name="project_id"/>
@@ -20,7 +20,7 @@
                        decoration-success="overall_rag == 'green'"/>
                 <field name="health_score"/>
                 <field name="assessor_id"/>
-            </tree>
+            </list>
         </field>
     </record>
 
@@ -54,7 +54,7 @@
     <record id="action_ppm_portfolio_health" model="ir.actions.act_window">
         <field name="name">Portfolio Health</field>
         <field name="res_model">ppm.portfolio.health</field>
-        <field name="view_mode">tree,form</field>
+        <field name="view_mode">list,form</field>
     </record>
 
 </odoo>

@@ -1,7 +1,10 @@
 from odoo import api, fields, models
 
 class ProjectProject(models.Model):
+    """PPM fields extension for project.project."""
+
     _inherit = "project.project"
+    _description = "Project (PPM Extension)"
 
     ipai_ppm_budget_amount = fields.Monetary(
         string="PPM Budget",

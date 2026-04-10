@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Top-Level Pulser Menu -->
+    <menuitem
+        id="menu_pulser_root"
+        name="Pulser"
+        sequence="90"
+        groups="ipai_pulser_assistant.group_pulser_user"
+        web_icon="ipai_pulser_assistant,static/description/icon.png"
+    />
+
+    <!-- Interactions -->
+    <menuitem
+        id="menu_pulser_interactions"
+        name="Interactions"
+        parent="menu_pulser_root"
+        sequence="10"
+        action="action_pulser_interaction"
+        groups="ipai_pulser_assistant.group_pulser_user"
+    />
+
+    <!-- Action Logs -->
+    <menuitem
+        id="menu_pulser_action_logs"
+        name="Action Logs"
+        parent="menu_pulser_root"
+        sequence="20"
+        action="action_pulser_action_log"
+        groups="ipai_pulser_assistant.group_pulser_user"
+    />
+
+    <!-- Configuration (manager-only) -->
+    <menuitem
+        id="menu_pulser_config"
+        name="Configuration"
+        parent="menu_pulser_root"
+        sequence="90"
+        groups="ipai_pulser_assistant.group_pulser_manager"
+    />
+
+    <menuitem
+        id="menu_pulser_domain_agents"
+        name="Domain Agents"
+        parent="menu_pulser_config"
+        sequence="10"
+        action="action_pulser_domain_agent"
+        groups="ipai_pulser_assistant.group_pulser_manager"
+    />
+
+    <menuitem
+        id="menu_pulser_intents"
+        name="Intent Library"
+        parent="menu_pulser_config"
+        sequence="20"
+        action="action_pulser_intent"
+        groups="ipai_pulser_assistant.group_pulser_manager"
+    />
+
+    <menuitem
+        id="menu_pulser_action_classes"
+        name="Action Classes"
+        parent="menu_pulser_config"
+        sequence="30"
+        action="action_pulser_action_class"
+        groups="ipai_pulser_assistant.group_pulser_manager"
+    />
+
+</odoo>

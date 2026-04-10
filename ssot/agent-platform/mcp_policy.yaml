@@ -1,0 +1,200 @@
+# MCP Policy — Agent Platform
+# SSOT for MCP tool integration, hosting, auth, controls, and guardrails.
+# Generated: 2026-04-10
+# Authority: Azure Agent Service MCP documentation + user-defined ERP guardrails.
+# Parent policy: ssot/agent-platform/foundry_tool_policy.yaml
+# References:
+#   - https://learn.microsoft.com/en-us/azure/ai-services/agents/how-to/tools/mcp-servers
+#   - https://github.com/Azure-Samples/azure-postgres-mcp-demo
+#
+# NOTE: MCP is one tool category within the broader Foundry tool strategy.
+# Prefer built-in tools > function calling > OpenAPI > MCP per foundry_tool_policy.
+
+version: 1
+artifact: ssot/agent-platform/mcp_policy.yaml
+source_of_truth: true
+
+# ──────────────────────────────────────────────────────────────────────────
+# Foundry MCP integration model
+# ──────────────────────────────────────────────────────────────────────────
+foundry_integration:
+  mcp_is_first_class_tool_channel: true
+  foundry_agent_service_supports:
+    - remote_mcp_servers_public
+    - remote_mcp_servers_private
+    - project_connections_for_auth
+    - tool_approval_flows
+    - tool_allow_lists_via_allowed_tools
+
+# ──────────────────────────────────────────────────────────────────────────
+# Hosting patterns
+# ──────────────────────────────────────────────────────────────────────────
+host_pattern:
+  public:
+    allowed: true
+    use_for:
+      - third_party_mcp_endpoints
+      - microsoft_hosted_mcp_surfaces
+  private:
+    allowed: true
+    required_components:
+      - standard_agent_setup
+      - private_networking
+      - azure_container_apps
+      - internal_only_ingress
+      - dedicated_mcp_subnet_in_vnet
+    use_for:
+      - database_ops_tools
+      - internal_api_tools
+      - sensitive_data_access
+
+# ──────────────────────────────────────────────────────────────────────────
+# Authentication
+# ──────────────────────────────────────────────────────────────────────────
+auth:
+  use_project_connections: true
+  hardcoded_credentials_forbidden: true
+  identity_separation:
+    foundry_side_identity: managed_identity_or_entra_app
+    aca_side_identity: separate_managed_identity
+  rule: >
+    MCP auth belongs in the Foundry project connection layer,
+    not in prompts, not in app code literals, not in ad hoc env-var sprawl.
+
+# ──────────────────────────────────────────────────────────────────────────
+# Controls
+# ──────────────────────────────────────────────────────────────────────────
+controls:
+  allowed_tools_required: true
+  approval_required_for_high_risk_tools: true
+  audit_log_tool_calls: true
+  audit_log_approvals: true
+  review_tool_name_and_arguments_before_approval: true
+
+# ──────────────────────────────────────────────────────────────────────────
+# Timeouts
+# ──────────────────────────────────────────────────────────────────────────
+timeouts:
+  non_streaming_timeout_seconds: 100
+  long_running_tasks_must_be_async: true
+  pattern_for_long_running:
+    - short_mcp_request
+    - enqueue_background_job
+    - poll_or_continue_later
+
+# ──────────────────────────────────────────────────────────────────────────
+# Allowed MCP tools (current)
+# ──────────────────────────────────────────────────────────────────────────
+allowed_now:
+  - name: azure_devops_mcp
+    purpose: CI/CD pipeline ops, work item queries
+  - name: azure_mcp_server
+    purpose: Azure resource management
+  - name: postgres_mcp
+    purpose: read-only ops/investigation against Azure Postgres
+    permissions: read_only_first
+    placement: agent-platform or infra
+  - name: playwright_mcp
+    purpose: browser testing, critical path validation
+  - name: chrome_devtools_mcp
+    purpose: debug/triage only
+  - name: microsoft_learn_mcp
+    purpose: documentation search
+  - name: markitdown
+    purpose: document conversion
+
+optional_not_critical_path:
+  - name: azure_ai_foundry_mcp
+    purpose: experimental Foundry tool surface
+    note: not on MVP critical path
+
+# ──────────────────────────────────────────────────────────────────────────
+# Postgres MCP — specific guardrails
+# ──────────────────────────────────────────────────────────────────────────
+postgres_mcp:
+  source: "https://github.com/Azure-Samples/azure-postgres-mcp-demo"
+  role: optional_ops_dba_tool
+  on_mvp_critical_path: false
+  best_placement:
+    repo: agent-platform or infra
+    mode: optional_tool_integration_ops_assistant
+  allowed:
+    - read_only_schema_discovery
+    - admin_ops_queries
+    - troubleshooting
+    - support_investigation
+    - migration_verification_helpers
+    - databricks_reporting_support_later
+  prohibited:
+    - direct_business_writes
+    - approval_state_changes
+    - accounting_state_changes
+    - tax_state_mutation
+    - expense_workflow_mutation
+    - bypassing_odoo_orm_for_erp_work
+
+# ──────────────────────────────────────────────────────────────────────────
+# Repo ownership
+# ──────────────────────────────────────────────────────────────────────────
+repo_ownership:
+  agent-platform:
+    owns:
+      - remote_mcp_server_integrations
+      - mcp_tool_binding
+      - approval_workflow_integration
+      - audit_logging_for_mcp_tool_calls
+      - private_aca_hosted_mcp_servers
+  odoo:
+    owns:
+      - erp_truth
+      - final_business_actions
+      - approval_accounting_tax_state
+      - thin_bridge_actions_only
+    must_not_own:
+      - mcp_server_hosting
+      - mcp_tool_orchestration
+  agents:
+    owns:
+      - tool_policy_metadata
+      - allowed_tool_lists
+      - sub_agent_tool_routing_contracts
+      - eval_scenarios_for_mcp_usage
+
+# ──────────────────────────────────────────────────────────────────────────
+# Per-vertical MCP applicability
+# ──────────────────────────────────────────────────────────────────────────
+vertical_applicability:
+  pulser:
+    mcp_role: valid_tool_extension_mechanism
+    rules:
+      - keep_tools_tightly_allow_listed
+      - require_approval_for_risky_tools
+      - keep_odoo_as_final_authority
+  reverse_avatax:
+    mcp_helps_with:
+      - controlled_external_tools
+      - review_assistance
+      - ops_tooling
+    mcp_not_for:
+      - tax_truth
+      - posting_logic
+      - ledger_ownership
+  reverse_concur:
+    mcp_helps_with:
+      - bounded_companion_tools
+      - reminders
+      - safe_external_integrations
+    mcp_not_for:
+      - cash_advance_truth
+      - liquidation_truth
+      - finance_workflow_ownership
+
+# ──────────────────────────────────────────────────────────────────────────
+# Global prohibitions
+# ──────────────────────────────────────────────────────────────────────────
+prohibited:
+  - direct_erp_truth_mutation_via_mcp
+  - direct_accounting_state_changes_via_mcp
+  - direct_tax_state_changes_via_mcp
+  - broad_unrestricted_tool_exposure
+  - mcp_as_business_state_ownership_layer

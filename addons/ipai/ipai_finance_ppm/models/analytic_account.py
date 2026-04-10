@@ -1,7 +1,10 @@
 from odoo import api, fields, models
 
 class AccountAnalyticAccount(models.Model):
+    """PPM fields extension for analytic accounts."""
+
     _inherit = "account.analytic.account"
+    _description = "Analytic Account (PPM Extension)"
 
     ipai_ppm_budget_amount = fields.Monetary(
         string="PPM Budget",

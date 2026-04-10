@@ -1,0 +1,4 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_expense_boundary_doc_user,expense.boundary.doc user,model_expense_boundary_doc,base.group_user,1,0,0,0
+access_expense_boundary_doc_manager,expense.boundary.doc manager,model_expense_boundary_doc,base.group_system,1,1,1,1
+access_expense_parity_config_user,expense.parity.config user,model_expense_parity_config,base.group_user,1,0,0,0

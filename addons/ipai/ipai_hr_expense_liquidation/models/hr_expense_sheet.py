@@ -4,7 +4,10 @@ from odoo.exceptions import ValidationError
 
 
 class HrExpenseSheetCAConstraint(models.Model):
+    """Cash advance constraint on expense sheets."""
+
     _inherit = "hr.expense.sheet"
+    _description = "Expense Sheet (Cash Advance Constraint)"
 
     @api.constrains("expense_line_ids")
     def _check_single_cash_advance_per_sheet(self):

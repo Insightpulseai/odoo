@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- =====================================================
+             Security Groups
+             ===================================================== -->
+        <record id="group_tax_validator" model="res.groups">
+            <field name="name">Tax Validator</field>
+            <field name="category_id" ref="base.module_category_accounting_accounting"/>
+            <field name="comment">
+                Can view tax exceptions and run tax validation.
+                Cannot resolve, waive, or escalate exceptions.
+            </field>
+        </record>
+
+        <record id="group_tax_manager" model="res.groups">
+            <field name="name">Tax Manager</field>
+            <field name="category_id" ref="base.module_category_accounting_accounting"/>
+            <field name="implied_ids" eval="[(4, ref('group_tax_validator'))]"/>
+            <field name="comment">
+                Full access to tax exceptions, validation rules, compliance packs,
+                and audit logs. Can resolve, waive, and escalate exceptions.
+            </field>
+        </record>
+
+        <!-- =====================================================
+             Record Rules
+             ===================================================== -->
+        <!-- Tax exceptions: all users can see all exceptions (multi-company
+             isolation is handled by source_model/source_id document access) -->
+        <record id="rule_tax_exception_validator" model="ir.rule">
+            <field name="name">Tax Exception: Validator read access</field>
+            <field name="model_id" ref="model_tax_exception"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[(4, ref('group_tax_validator'))]"/>
+            <field name="perm_read" eval="1"/>
+            <field name="perm_write" eval="0"/>
+            <field name="perm_create" eval="0"/>
+            <field name="perm_unlink" eval="0"/>
+        </record>
+    </data>
+</odoo>

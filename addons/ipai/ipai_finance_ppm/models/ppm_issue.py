@@ -46,7 +46,6 @@ class PPMIssue(models.Model):
         ],
         string="Status",
         default="open",
-        tracking=True,
     )
     priority = fields.Selection(
         [("0", "Low"), ("1", "Medium"), ("2", "High"), ("3", "Critical")],

@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="0">
+
+    <!-- ===== Security Groups ===== -->
+
+    <!-- Pulser User: can chat with the assistant and view own interactions -->
+    <record id="group_pulser_user" model="res.groups">
+        <field name="name">Pulser User</field>
+        <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+        <field name="comment">Access to use the Pulser assistant chat interface and view own interactions.</field>
+    </record>
+
+    <!-- Pulser Manager: full access to domain agents, action logs, and all interactions -->
+    <record id="group_pulser_manager" model="res.groups">
+        <field name="name">Pulser Manager</field>
+        <field name="implied_ids" eval="[(4, ref('group_pulser_user'))]"/>
+        <field name="comment">Full administration of Pulser: domain agents, tool bindings, action logs, all interactions.</field>
+    </record>
+
+    <!-- ===== Record Rules ===== -->
+
+    <!-- Users see only their own interactions -->
+    <record id="rule_pulser_interaction_own" model="ir.rule">
+        <field name="name">Pulser: Users see own interactions</field>
+        <field name="model_id" ref="model_pulser_interaction"/>
+        <field name="domain_force">[('user_id', '=', user.id)]</field>
+        <field name="groups" eval="[(4, ref('group_pulser_user'))]"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="True"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+
+    <!-- Managers see all interactions -->
+    <record id="rule_pulser_interaction_manager_all" model="ir.rule">
+        <field name="name">Pulser Manager: see all interactions</field>
+        <field name="model_id" ref="model_pulser_interaction"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('group_pulser_manager'))]"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="True"/>
+        <field name="perm_unlink" eval="True"/>
+    </record>
+
+    <!-- Users see only their own action logs -->
+    <record id="rule_pulser_action_log_own" model="ir.rule">
+        <field name="name">Pulser: Users see own action logs</field>
+        <field name="model_id" ref="model_pulser_action_log"/>
+        <field name="domain_force">[('user_id', '=', user.id)]</field>
+        <field name="groups" eval="[(4, ref('group_pulser_user'))]"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="False"/>
+        <field name="perm_create" eval="True"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+
+    <!-- Managers see all action logs (read + create; no unlink — append-only) -->
+    <record id="rule_pulser_action_log_manager_all" model="ir.rule">
+        <field name="name">Pulser Manager: see all action logs</field>
+        <field name="model_id" ref="model_pulser_action_log"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('group_pulser_manager'))]"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="True"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+
+</odoo>

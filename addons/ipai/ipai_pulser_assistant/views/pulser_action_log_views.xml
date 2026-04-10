@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Action Log List -->
+    <record id="view_pulser_action_log_list" model="ir.ui.view">
+        <field name="name">pulser.action.log.list</field>
+        <field name="model">pulser.action.log</field>
+        <field name="arch" type="xml">
+            <list string="Pulser Action Logs" default_order="timestamp desc" create="false" delete="false">
+                <field name="timestamp"/>
+                <field name="user_id"/>
+                <field name="agent_id"/>
+                <field name="intent_type"/>
+                <field name="action_class"/>
+                <field name="action_description"/>
+                <field name="outcome" decoration-success="outcome == 'success'"
+                       decoration-danger="outcome == 'failed'"
+                       decoration-warning="outcome == 'pending_approval'"
+                       decoration-muted="outcome == 'rejected'"/>
+                <field name="confidence"/>
+                <field name="duration_ms"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Action Log Form -->
+    <record id="view_pulser_action_log_form" model="ir.ui.view">
+        <field name="name">pulser.action.log.form</field>
+        <field name="model">pulser.action.log</field>
+        <field name="arch" type="xml">
+            <form string="Pulser Action Log" create="false" delete="false">
+                <sheet>
+                    <group>
+                        <group string="Identification">
+                            <field name="timestamp" readonly="1"/>
+                            <field name="user_id" readonly="1"/>
+                            <field name="agent_id"/>
+                            <field name="interaction_id"/>
+                        </group>
+                        <group string="Classification">
+                            <field name="intent_type"/>
+                            <field name="action_class"/>
+                            <field name="outcome"/>
+                            <field name="confidence"/>
+                            <field name="duration_ms"/>
+                        </group>
+                    </group>
+                    <group string="Target">
+                        <field name="target_model" readonly="1"/>
+                        <field name="target_record_id" readonly="1"/>
+                    </group>
+                    <notebook>
+                        <page string="Action">
+                            <field name="action_description"/>
+                        </page>
+                        <page string="Explainability">
+                            <field name="rationale"/>
+                            <field name="inputs_summary"/>
+                            <field name="policy_reference"/>
+                        </page>
+                        <page string="Error" invisible="not error_message">
+                            <field name="error_message" readonly="1"/>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Action Log Search -->
+    <record id="view_pulser_action_log_search" model="ir.ui.view">
+        <field name="name">pulser.action.log.search</field>
+        <field name="model">pulser.action.log</field>
+        <field name="arch" type="xml">
+            <search string="Search Action Logs">
+                <field name="user_id"/>
+                <field name="agent_id"/>
+                <field name="action_description"/>
+                <filter name="filter_transactional" string="Transactional" domain="[('intent_type', '=', 'transactional')]"/>
+                <filter name="filter_informational" string="Informational" domain="[('intent_type', '=', 'informational')]"/>
+                <filter name="filter_navigational" string="Navigational" domain="[('intent_type', '=', 'navigational')]"/>
+                <separator/>
+                <filter name="filter_success" string="Success" domain="[('outcome', '=', 'success')]"/>
+                <filter name="filter_failed" string="Failed" domain="[('outcome', '=', 'failed')]"/>
+                <filter name="filter_pending" string="Pending Approval" domain="[('outcome', '=', 'pending_approval')]"/>
+                <filter name="filter_advisory" string="Advisory" domain="[('action_class', '=', 'advisory')]"/>
+                <filter name="filter_approval_gated" string="Approval-Gated" domain="[('action_class', '=', 'approval_gated')]"/>
+                <filter name="filter_auto_routable" string="Auto-Routable" domain="[('action_class', '=', 'auto_routable')]"/>
+                <group expand="0" string="Group By">
+                    <filter name="group_by_user" string="User" context="{'group_by': 'user_id'}"/>
+                    <filter name="group_by_agent" string="Domain Agent" context="{'group_by': 'agent_id'}"/>
+                    <filter name="group_by_intent" string="Intent Type" context="{'group_by': 'intent_type'}"/>
+                    <filter name="group_by_outcome" string="Outcome" context="{'group_by': 'outcome'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Window Action -->
+    <record id="action_pulser_action_log" model="ir.actions.act_window">
+        <field name="name">Pulser Action Logs</field>
+        <field name="res_model">pulser.action.log</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_pulser_action_log_search"/>
+        <field name="context">{'search_default_filter_transactional': 0}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">No action logs yet</p>
+            <p>Pulser action logs are created automatically for every assistant interaction.</p>
+        </field>
+    </record>
+
+</odoo>

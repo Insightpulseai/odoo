@@ -3,6 +3,8 @@ from odoo import fields, models
 
 
 class HrExpensePolicyViolation(models.Model):
+    """Policy violation tracking for expense reports."""
+
     _name = 'hr.expense.policy.violation'
     _description = 'Cash Advance Policy Violation'
     _order = 'create_date desc'

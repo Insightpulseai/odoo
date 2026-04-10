@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'IPAI HR Expense Liquidation',
-    'version': '18.0.3.0.0',
+    'version': '18.0.3.1.0',
     'category': 'Human Resources/Expenses',
     'sequence': 85,
     'summary': 'Cash advance request, multi-step approval, liquidation, policy engine, and monitoring',
@@ -98,6 +98,7 @@ License: LGPL-3
         'views/menu.xml',
 
         # Reports
+        'report/cash_advance_report.xml',
         'report/expense_liquidation_report.xml',
     ],
     'demo': [],

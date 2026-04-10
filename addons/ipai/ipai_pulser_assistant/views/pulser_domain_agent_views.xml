@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Intent List -->
+    <record id="view_pulser_intent_list" model="ir.ui.view">
+        <field name="name">pulser.intent.list</field>
+        <field name="model">pulser.intent</field>
+        <field name="arch" type="xml">
+            <list string="Pulser Intents" editable="bottom">
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="intent_type"/>
+                <field name="domain"/>
+                <field name="is_active"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Intent Form -->
+    <record id="view_pulser_intent_form" model="ir.ui.view">
+        <field name="name">pulser.intent.form</field>
+        <field name="model">pulser.intent</field>
+        <field name="arch" type="xml">
+            <form string="Pulser Intent">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="intent_type"/>
+                            <field name="domain"/>
+                            <field name="is_active"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Details">
+                            <field name="description"/>
+                            <field name="example_query" placeholder="e.g. 'What is the status of invoice INV-2026-0042?'"/>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Action Class List -->
+    <record id="view_pulser_action_class_list" model="ir.ui.view">
+        <field name="name">pulser.action.class.list</field>
+        <field name="model">pulser.action.class</field>
+        <field name="arch" type="xml">
+            <list string="Action Classes" editable="bottom">
+                <field name="name"/>
+                <field name="class_type"/>
+                <field name="requires_approval"/>
+                <field name="max_auto_route_level"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Action Class Form -->
+    <record id="view_pulser_action_class_form" model="ir.ui.view">
+        <field name="name">pulser.action.class.form</field>
+        <field name="model">pulser.action.class</field>
+        <field name="arch" type="xml">
+            <form string="Pulser Action Class">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="class_type"/>
+                            <field name="requires_approval" readonly="1"/>
+                            <field name="max_auto_route_level"/>
+                        </group>
+                    </group>
+                    <field name="description"/>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Domain Agent List -->
+    <record id="view_pulser_domain_agent_list" model="ir.ui.view">
+        <field name="name">pulser.domain.agent.list</field>
+        <field name="model">pulser.domain.agent</field>
+        <field name="arch" type="xml">
+            <list string="Domain Agents">
+                <field name="name"/>
+                <field name="domain"/>
+                <field name="tool_count"/>
+                <field name="security_group_id"/>
+                <field name="is_active"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Domain Agent Form -->
+    <record id="view_pulser_domain_agent_form" model="ir.ui.view">
+        <field name="name">pulser.domain.agent.form</field>
+        <field name="model">pulser.domain.agent</field>
+        <field name="arch" type="xml">
+            <form string="Domain Agent">
+                <sheet>
+                    <group>
+                        <group string="Identity">
+                            <field name="name"/>
+                            <field name="domain"/>
+                            <field name="is_active"/>
+                        </group>
+                        <group string="Access Control">
+                            <field name="security_group_id"/>
+                            <field name="tool_count" readonly="1"/>
+                        </group>
+                    </group>
+                    <field name="description"/>
+                    <notebook>
+                        <page string="Supported Intents">
+                            <field name="supported_intent_ids" widget="many2many_tags"/>
+                        </page>
+                        <page string="Tool Bindings">
+                            <field name="tool_binding_ids">
+                                <list editable="bottom">
+                                    <field name="name"/>
+                                    <field name="model_name"/>
+                                    <field name="method_name"/>
+                                    <field name="action_class_id"/>
+                                    <field name="is_read_only"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Window Actions -->
+    <record id="action_pulser_intent" model="ir.actions.act_window">
+        <field name="name">Pulser Intents</field>
+        <field name="res_model">pulser.intent</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <record id="action_pulser_action_class" model="ir.actions.act_window">
+        <field name="name">Action Classes</field>
+        <field name="res_model">pulser.action.class</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <record id="action_pulser_domain_agent" model="ir.actions.act_window">
+        <field name="name">Domain Agents</field>
+        <field name="res_model">pulser.domain.agent</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+</odoo>

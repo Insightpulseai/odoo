@@ -40,52 +40,52 @@
                 <header>
                     <!-- Draft actions -->
                     <button name="action_submit" string="Submit" type="object"
-                            states="draft" class="btn-primary"/>
+                            invisible="state != 'draft'" class="btn-primary"/>
                     <button name="action_cancel" string="Cancel" type="object"
-                            states="draft" class="btn-secondary"/>
+                            invisible="state != 'draft'" class="btn-secondary"/>
 
                     <!-- Department approval -->
                     <button name="action_dept_approve" string="Department Approve" type="object"
-                            states="submitted" class="btn-primary"
+                            invisible="state != 'submitted'" class="btn-primary"
                             groups="hr.group_hr_manager"/>
                     <button name="action_reject" string="Reject" type="object"
-                            states="submitted" class="btn-danger"
+                            invisible="state != 'submitted'" class="btn-danger"
                             groups="hr.group_hr_manager"/>
 
                     <!-- Finance approval -->
                     <button name="action_finance_approve" string="Finance Approve" type="object"
-                            states="dept_approved" class="btn-primary"
+                            invisible="state != 'dept_approved'" class="btn-primary"
                             groups="account.group_account_manager"/>
                     <button name="action_reject" string="Reject" type="object"
-                            states="dept_approved" class="btn-danger"
+                            invisible="state != 'dept_approved'" class="btn-danger"
                             groups="account.group_account_manager"/>
 
                     <!-- Release -->
                     <button name="action_release" string="Release Funds" type="object"
-                            states="finance_approved" class="btn-primary"
+                            invisible="state != 'finance_approved'" class="btn-primary"
                             groups="account.group_account_manager"/>
 
                     <!-- Start Liquidation -->
                     <button name="action_start_liquidation" string="Start Liquidation" type="object"
-                            states="released" class="btn-primary"/>
+                            invisible="state != 'released'" class="btn-primary"/>
 
                     <!-- Mark Liquidated -->
                     <button name="action_mark_liquidated" string="Mark Liquidated" type="object"
-                            states="for_liquidation" class="btn-primary"
+                            invisible="state != 'for_liquidation'" class="btn-primary"
                             groups="account.group_account_user"/>
 
                     <!-- Close -->
                     <button name="action_close" string="Close" type="object"
-                            states="liquidated" class="btn-primary"
+                            invisible="state != 'liquidated'" class="btn-primary"
                             groups="account.group_account_manager"/>
 
                     <!-- Cancel from submitted -->
                     <button name="action_cancel" string="Cancel" type="object"
-                            states="submitted" class="btn-secondary"/>
+                            invisible="state != 'submitted'" class="btn-secondary"/>
 
                     <!-- Reset to draft -->
                     <button name="action_reset_to_draft" string="Reset to Draft" type="object"
-                            attrs="{'invisible': [('state', 'not in', ('rejected', 'cancelled'))]}"
+                            invisible="state not in ('rejected', 'cancelled')"
                             class="btn-secondary"/>
 
                     <field name="state" widget="statusbar"
@@ -95,14 +95,14 @@
                     <div class="oe_button_box" name="button_box">
                         <button name="action_view_liquidation" type="object"
                                 class="oe_stat_button" icon="fa-file-text-o"
-                                attrs="{'invisible': [('liquidation_id', '=', False)]}">
+                                invisible="not liquidation_id">
                             <div class="o_stat_info">
                                 <span class="o_stat_text">Liquidation</span>
                             </div>
                         </button>
                     </div>
                     <widget name="web_ribbon" title="Overdue"
-                            attrs="{'invisible': [('is_overdue', '=', False)]}"
+                            invisible="not is_overdue"
                             bg_color="bg-danger"/>
                     <div class="oe_title">
                         <label for="name" class="oe_edit_only"/>
@@ -135,7 +135,7 @@
                     </group>
 
                     <group name="client_section" string="Client Information"
-                           attrs="{'invisible': [('is_client_related', '=', False)]}">
+                           invisible="not is_client_related">
                         <group>
                             <field name="client_name"/>
                             <field name="ce_number"/>
@@ -176,7 +176,7 @@
                             </group>
                         </page>
                         <page string="Liquidation" name="liquidation_info"
-                              attrs="{'invisible': [('liquidation_id', '=', False)]}">
+                              invisible="not liquidation_id">
                             <group>
                                 <group>
                                     <field name="liquidation_id" readonly="1"/>

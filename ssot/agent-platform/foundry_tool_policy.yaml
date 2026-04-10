@@ -1,0 +1,194 @@
+version: 1
+artifact: ssot/agent-platform/foundry_tool_policy.yaml
+source_of_truth: true
+profile: insightpulseai-foundry-tool-policy
+
+purpose:
+  description: policy_for_foundry_tool_selection_configuration_and_governance
+
+core_rules:
+  odoo_remains_truth: true
+  no_external_tool_ownership_of_erp_state: true
+  no_parallel_accounting_truth: true
+  no_parallel_tax_truth: true
+  no_parallel_approval_truth: true
+
+tool_preference_order:
+  - built_in_tools
+  - function_calling
+  - openapi
+  - mcp
+  - a2a_preview_later
+
+built_in_tools:
+  approved_default_when_justified:
+    - web_search
+    - file_search
+    - code_interpreter
+    - function_calling
+    - azure_ai_search
+    - azure_functions
+  preferred_uses:
+    web_search:
+      - current_public_web_information
+      - explicit_web_grounding
+    file_search:
+      - uploaded_files
+      - internal_kb_grounding
+      - policy_sop_help_grounding
+    code_interpreter:
+      - calculations
+      - data_analysis
+      - chart_generation
+      - controlled_transformations
+    azure_ai_search:
+      - existing_index_grounding
+      - enterprise_retrieval_when_explicitly_justified
+    azure_functions:
+      - bounded_custom_actions
+      - lightweight_server_side_extensions
+
+custom_tools:
+  function_calling:
+    preferred_for:
+      - small_application_owned_actions
+      - deterministic_callbacks
+      - tightly_scoped_internal_actions
+  openapi:
+    preferred_for:
+      - stable_http_apis
+      - internal_or_trusted_service_contracts
+      - explicit_schema_and_auth
+    preferred_over_mcp_when:
+      - api_is_owned
+      - schema_is_stable
+      - action_surface_is_well_defined
+  mcp:
+    preferred_for:
+      - shared_remote_tool_servers
+      - externally_maintained_tool_surfaces
+      - browser_tooling
+      - platform_ops_tooling
+      - remote_tool_ecosystems
+    required_controls:
+      - allowed_tools
+      - approval_for_high_risk_operations
+      - project_connections_or_managed_identity
+      - audit_logging
+  a2a:
+    preview: true
+    on_mvp_critical_path: false
+
+authentication:
+  credentials_in_prompts_forbidden: true
+  hardcoded_credentials_forbidden: true
+  preferred_order:
+    - entra_managed_identity
+    - foundry_project_connections
+    - api_key_if_required
+
+structured_inputs:
+  preferred: true
+  use_for:
+    - environment_specific_values
+    - customer_specific_vector_store_ids
+    - per_request_tool_overrides
+    - request_scoped_configuration
+  avoid_agent_version_sprawl: true
+
+risk_controls:
+  high_risk_operations_require_approval: true
+  review_before_approval:
+    - tool_name
+    - arguments
+    - target_system
+    - scope_of_action
+  audit_required:
+    - tool_selection
+    - approval_decisions
+    - execution_outcomes
+    - failures_and_retries
+  avoid_logging:
+    - secrets
+    - sensitive_prompt_content
+
+preview_tools:
+  default_mvp_critical_path: false
+  examples:
+    - browser_automation
+    - computer_use
+    - microsoft_fabric
+    - sharepoint
+    - a2a
+    - preview_mcp_dependencies
+
+current_foundry_baseline:
+  project: ipai-copilot
+  parent_resource: ipai-copilot-resource
+  region: eastus2
+  project_endpoint: https://ipai-copilot-resource.services.ai.azure.com/api/projects/ipai-copilot
+  confirmed_connections:
+    - AIServices
+    - AzureStorageAccount
+    - bing-grounding
+  do_not_assume_other_connections: true
+
+repo_boundaries:
+  odoo:
+    owns:
+      - erp_truth
+      - approvals
+      - accounting
+      - tax
+      - expense_liquidation_state
+      - business_rules
+      - final_write_path
+  agent_platform:
+    owns:
+      - foundry_runtime_integration
+      - tool_binding
+      - tool_policy_implementation
+      - approval_audit_plumbing
+      - retrieval_attachment_handling
+      - orchestration_runtime
+  agents:
+    owns:
+      - allowed_tool_lists
+      - routing_metadata
+      - skill_contracts
+      - tool_usage_evals
+  web:
+    owns:
+      - optional_browser_shells
+      - companion_ux
+
+default_tool_mapping:
+  pulser_joule:
+    preferred:
+      - file_search
+      - web_search
+      - function_calling_or_openapi
+    mcp_optional: true
+  reverse_sap_concur:
+    preferred:
+      - odoo_truth
+      - file_search
+      - function_calling_or_openapi
+    mcp_optional: true
+  reverse_avatax:
+    preferred:
+      - odoo_truth
+      - file_search
+      - function_calling_or_openapi
+    mcp_optional: true
+  ppm:
+    preferred:
+      - odoo_ce_oca_baseline
+      - minimal_grounding_only_if_needed
+
+prohibited:
+  - using_foundry_tools_as_erp_truth
+  - replacing_odoo_workflows_with_tool_only_orchestration
+  - using_mcp_when_built_in_or_openapi_is_cleaner
+  - environment_specific_agent_sprawl_without_structured_inputs
+  - placing_preview_tools_on_mvp_critical_path_without_explicit_justification

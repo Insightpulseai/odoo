@@ -37,9 +37,9 @@
                         </group>
                         <group>
                             <field name="threshold_amount"
-                                   attrs="{'invisible': [('rule_type', '=', 'overdue_check')]}"/>
+                                   invisible="rule_type == 'overdue_check'"/>
                             <field name="max_days"
-                                   attrs="{'invisible': [('rule_type', '!=', 'overdue_check')]}"/>
+                                   invisible="rule_type != 'overdue_check'"/>
                             <field name="sequence"/>
                             <field name="active"/>
                             <field name="company_id" groups="base.group_multi_company"/>
@@ -93,8 +93,8 @@
                         </group>
                         <group>
                             <field name="resolved"/>
-                            <field name="resolved_by" attrs="{'invisible': [('resolved', '=', False)]}"/>
-                            <field name="resolved_date" attrs="{'invisible': [('resolved', '=', False)]}"/>
+                            <field name="resolved_by" invisible="not resolved"/>
+                            <field name="resolved_date" invisible="not resolved"/>
                         </group>
                     </group>
                     <group>

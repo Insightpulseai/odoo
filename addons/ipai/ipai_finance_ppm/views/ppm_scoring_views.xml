@@ -5,7 +5,7 @@
         <field name="name">ppm.scoring.tree</field>
         <field name="model">ppm.scoring</field>
         <field name="arch" type="xml">
-            <tree>
+            <list>
                 <field name="project_id"/>
                 <field name="investment_type"/>
                 <field name="strategic_alignment"/>
@@ -17,7 +17,7 @@
                 <field name="recommendation" widget="badge"/>
                 <field name="scored_by_id"/>
                 <field name="scored_date"/>
-            </tree>
+            </list>
         </field>
     </record>
 
@@ -55,7 +55,7 @@
     <record id="action_ppm_scoring" model="ir.actions.act_window">
         <field name="name">Investment Scoring</field>
         <field name="res_model">ppm.scoring</field>
-        <field name="view_mode">tree,form</field>
+        <field name="view_mode">list,form</field>
     </record>
 
 </odoo>

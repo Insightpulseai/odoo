@@ -836,6 +836,15 @@ class HrExpenseLiquidationLine(models.Model):
         required=True,
     )
 
+    # Computed line total from sub-amounts (if provided)
+    line_total = fields.Monetary(
+        string="Line Total",
+        currency_field="currency_id",
+        compute="_compute_line_total",
+        store=True,
+        help="Total of meals + transport + misc sub-amounts, or amount if sub-amounts not used",
+    )
+
     # Client / Cost Element per line
     client_name = fields.Char(string="Client Name")
     ce_number = fields.Char(string="Cost Element")
@@ -860,7 +869,29 @@ class HrExpenseLiquidationLine(models.Model):
     # Reference
     reference = fields.Char(string="Reference/OR Number")
 
+    # Withholding tax per line (for BIR compliance)
+    gross_amount = fields.Monetary(
+        string="Gross Amount",
+        currency_field="currency_id",
+        help="Gross amount before withholding tax",
+    )
+    withholding_tax_amount = fields.Monetary(
+        string="Withholding Tax",
+        currency_field="currency_id",
+    )
+    net_paid_amount = fields.Monetary(
+        string="Net Paid",
+        currency_field="currency_id",
+        help="Net amount after withholding tax deduction",
+    )
+
     # ── Compute methods ──────────────────────────────────────────────────────
+
+    @api.depends("meals_amount", "transport_amount", "misc_amount", "amount")
+    def _compute_line_total(self):
+        for record in self:
+            sub_total = (record.meals_amount or 0.0) + (record.transport_amount or 0.0) + (record.misc_amount or 0.0)
+            record.line_total = sub_total if sub_total > 0 else record.amount
 
     @api.depends("receipt_ids")
     def _compute_receipt_count(self):

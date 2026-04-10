@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <!-- IR Sequence for tax exceptions -->
+        <record id="seq_tax_exception" model="ir.sequence">
+            <field name="name">Tax Exception</field>
+            <field name="code">tax.exception</field>
+            <field name="prefix">TEXC/%(year)s/</field>
+            <field name="padding">5</field>
+            <field name="company_id" eval="False"/>
+        </record>
+    </data>
+</odoo>

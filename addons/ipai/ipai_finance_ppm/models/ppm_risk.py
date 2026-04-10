@@ -3,7 +3,7 @@
 Delta model: CE/OCA do not provide a risk register for projects.
 """
 
-from odoo import fields, models
+from odoo import api, fields, models
 
 
 class PPMRisk(models.Model):
@@ -46,7 +46,6 @@ class PPMRisk(models.Model):
         ],
         string="Status",
         default="identified",
-        tracking=True,
     )
     probability = fields.Selection(
         [("1", "Very Low"), ("2", "Low"), ("3", "Medium"), ("4", "High"), ("5", "Very High")],
@@ -67,6 +66,7 @@ class PPMRisk(models.Model):
     mitigation_plan = fields.Text(string="Mitigation Plan")
     target_date = fields.Date(string="Target Resolution Date")
 
+    @api.depends("probability", "impact")
     def _compute_risk_score(self):
         for risk in self:
             p = int(risk.probability or "0")

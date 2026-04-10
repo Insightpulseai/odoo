@@ -3,6 +3,8 @@ from odoo import fields, models
 
 
 class HrExpensePolicyRule(models.Model):
+    """Expense policy rule for validation checks."""
+
     _name = 'hr.expense.policy.rule'
     _description = 'Expense Policy Rule'
     _order = 'sequence, id'
