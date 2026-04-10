@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <!-- Under Settings > Technical -->
+    <menuitem id="menu_knowledge_bridge_root"
+              name="Knowledge Bridge"
+              parent="base.menu_custom"
+              sequence="90"/>
+
+    <menuitem id="menu_knowledge_sources"
+              name="Knowledge Sources"
+              parent="menu_knowledge_bridge_root"
+              action="action_knowledge_source"
+              sequence="10"/>
+
+    <menuitem id="menu_knowledge_query_logs"
+              name="Query Logs"
+              parent="menu_knowledge_bridge_root"
+              action="action_knowledge_query_log"
+              sequence="20"/>
+
+</odoo>
