@@ -79,7 +79,7 @@ identity:
 gateway:
   container_app: ipai-copilot-gateway
   rg: rg-ipai-dev-odoo-runtime
-  fqdn: ipai-copilot-gateway.internal.salmontree-b7d27e19.southeastasia.azurecontainerapps.io
+  fqdn: pulser-odoo-gateway.internal.salmontree-b7d27e19.southeastasia.azurecontainerapps.io
   deployed: true
   wired_to_foundry: true
   env_vars:
@@ -100,7 +100,7 @@ definition_of_done:
     evidence: "oai-ipai-dev-connection in proj-ipai-claude"
   - id: online_endpoint_live
     status: done
-    evidence: "ipai-copilot-endpoint scoring at https://ipai-copilot-endpoint.eastus2.inference.ml.azure.com/score"
+    evidence: "pulser-odoo-endpoint scoring at https://pulser-odoo-endpoint.eastus2.inference.ml.azure.com/score"
   - id: gateway_wired
     status: done
     evidence: "Gateway env vars point to gpt-4.1 via data-intel-ph-resource"

@@ -1,4 +1,4 @@
-# Release Objective
+# Pulser for Odoo — Release Objective
 
 ## Release name
 Odoo 18 Finance Ops MVP with Pulser Internal Assist
@@ -7,12 +7,12 @@ Odoo 18 Finance Ops MVP with Pulser Internal Assist
 - Internal controlled production
 - Human-in-the-loop required
 - Odoo remains the sole system of record for workflow, approvals, accounting, tax, expenses, and project state
-- Foundry agents and tools are assistive only
+- **Pulser for Odoo** agents and tools are assistive only
 - No claim of full Clarity / Concur / Joule / AvaTax parity
 
 ## Objective
 
-By [TARGET DATE], ship the Odoo 18 Finance Ops MVP to internal controlled production with Odoo as the sole business system of record, all installed MVP IPAI modules runtime-proven, and Pulser minimally normalized in Foundry with monitoring, approval gates, and repeatable evaluation coverage.
+By [TARGET DATE], ship the Odoo 18 Finance Ops MVP to internal controlled production with Odoo as the sole business system of record, all installed MVP IPAI modules runtime-proven, and **Pulser for Odoo** minimally normalized in Foundry with monitoring, approval gates, and repeatable evaluation coverage.
 
 ## Success criteria
 

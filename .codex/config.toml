@@ -1,6 +1,9 @@
-# Codex MCP Server Configuration
-# Microsoft Learn MCP provides first-party Microsoft documentation authority
-# for Azure/Odoo benchmark gap closure.
-
 [mcp_servers.microsoft-learn]
 url = "https://learn.microsoft.com/api/mcp"
+
+[shell_environment_policy]
+inherit = "core"
+
+[shell_environment_policy.set]
+DOCKER_CONTEXT = "colima"
+GH_HOST = "github.com"

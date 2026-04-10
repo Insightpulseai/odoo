@@ -11,8 +11,8 @@ description: >
 # ---------------------------------------------------------------------------
 
 current_state:
-  project: ipai-copilot
-  resource: ipai-copilot-resource
+  project: pulser-odoo
+  resource: pulser-odoo-resource
   region: eastus2
   posture: internal_alpha
 
@@ -23,9 +23,9 @@ current_state:
     success_rate: "100.00%"
     migration_banner: true  # "classic agents not supported in new experience"
     inventory:
-      - name: ipai-copilot
+      - name: pulser-odoo
         role: top_level_shell
-        description_stale: false  # corrected to CE 18 in PR #708
+        description: "Pulser for Odoo — InsightPulseAI operational assistant for Odoo CE 18.0 with approval-gated actions and bounded tool use."
       - name: ask-agent
         role: read_query_qa
         write_access: none
@@ -49,8 +49,9 @@ current_state:
       status: healthy
 
   guardrails:
-    - Microsoft.Default
-    - Microsoft.DefaultV2
+    policies:
+      - Microsoft.Default
+      - Microsoft.DefaultV2
     applied_to:
       - gpt-4.1
       - text-embedding-3-small
@@ -58,7 +59,7 @@ current_state:
 
   evaluations:
     completed: 1
-    name: ipai-copilot-safety-quality-v1
+    name: pulser-odoo-safety-quality-v1
     available_evaluators:
       - relevance
       - groundedness
@@ -227,8 +228,8 @@ evidence_updates:
           - transaction-agent
           - livechat-agent
           - authoring-agent
-          - ask-agent
-          - ipai-copilot
+          - pulser-odoo-ask
+          - pulser-odoo
         type: prompt
         classic_migration_debt: true
       models:
