@@ -105,21 +105,40 @@ export class CopilotSystrayButton extends Component {
         this._scrollToBottom();
 
         try {
-            // Upload attachment if present
-            let attachmentRef = null;
+            // Read file content for text-based files (< 32KB)
+            let fileContent = "";
             if (attachedFile) {
-                try {
-                    attachmentRef = await this._uploadAttachment(attachedFile);
-                } catch {
-                    // Upload endpoint may not exist yet — pass filename as context
-                    attachmentRef = { filename: attachedFile.name, status: "local_only" };
+                const textTypes = [
+                    "text/", "application/json", "application/xml",
+                    "application/csv", "text/csv",
+                ];
+                const isText = textTypes.some((t) => (attachedFile.type || "").startsWith(t))
+                    || /\.(txt|csv|json|xml|md|log|tsv)$/i.test(attachedFile.name);
+                if (isText && attachedFile.size < 32768) {
+                    fileContent = await attachedFile.text();
                 }
+            }
+
+            const attachmentRef = attachedFile
+                ? { filename: attachedFile.name, status: fileContent ? "content_read" : "local_only" }
+                : null;
+            if (attachedFile) {
                 this.state.attachedFile = null;
+            }
+
+            // Build prompt: embed file content when available
+            let fullPrompt = prompt;
+            if (attachedFile) {
+                fullPrompt = `[Attached: ${attachedFile.name}]`;
+                if (fileContent) {
+                    fullPrompt += `\nFile contents:\n${fileContent}\n\n`;
+                }
+                fullPrompt += prompt;
             }
 
             const context = this._getPageContext();
             const result = await rpc("/ipai/copilot/chat", {
-                prompt,
+                prompt: fullPrompt,
                 record_model: context.record_model,
                 record_id: context.record_id,
                 surface: context.surface || "erp",
