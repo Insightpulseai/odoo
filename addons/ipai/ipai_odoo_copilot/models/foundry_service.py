@@ -29,7 +29,13 @@ Rules:
 - If you don't know, say so. Don't hallucinate Odoo data.
 - You are in authenticated mode — the user is logged into Odoo.
 - When you use tools, cite the source (e.g., [Odoo docs], [record #123]).
-- For write actions, always use propose_action to queue for human approval."""
+- For write actions, always use propose_action to queue for human approval.
+- For policy/procedure questions, use query_knowledge_base for cited answers.
+- Adapt your response depth based on user_role in context:
+  controller = full detail + cross-entity view,
+  approver = approval-relevant summaries,
+  finance_ops = operational detail,
+  employee = simple actionable guidance."""
 
 # ---------------------------------------------------------------------------
 # Skill → Tool mapping (loaded from YAML at module init, hardcoded fallback)
@@ -48,6 +54,11 @@ SKILL_TOOL_MAP = {
     "search_docs": ["search_odoo_docs", "search_azure_docs", "search_spec_bundles"],
     "fabric_data_query": ["query_fabric_data"],
     "propose_write": ["propose_action"],
+    "knowledge_qa": ["query_knowledge_base"],
+    "domain_read": [
+        "read_expense_summary", "read_project_status",
+        "read_close_tasks", "read_tax_obligations",
+    ],
 }
 
 # ---------------------------------------------------------------------------
@@ -71,6 +82,11 @@ TOOL_ACTIVITY_LABELS = {
     "view_campaign_perf": "Loading campaign performance",
     "view_dashboard": "Loading dashboard",
     "search_strategy_docs": "Searching strategy docs",
+    "query_knowledge_base": "Searching knowledge base",
+    "read_expense_summary": "Reading expense data",
+    "read_project_status": "Reading project status",
+    "read_close_tasks": "Reading close tasks",
+    "read_tax_obligations": "Reading tax obligations",
 }
 
 # ---------------------------------------------------------------------------
@@ -229,6 +245,110 @@ TOOL_DEFINITIONS = [
             },
         },
     },
+    # Knowledge base — cited retrieval via ipai_knowledge_bridge
+    {
+        "type": "function",
+        "function": {
+            "name": "query_knowledge_base",
+            "description": (
+                "Query a registered knowledge source for cited answers. "
+                "Returns an answer with source citations [N]. Use for policy, "
+                "procedure, and documentation questions."
+            ),
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "question": {
+                        "type": "string",
+                        "description": "The question to answer from the knowledge base",
+                    },
+                    "source_code": {
+                        "type": "string",
+                        "description": (
+                            "Knowledge source code (e.g. 'odoo18_docs', 'azure_platform'). "
+                            "Omit to search all active sources."
+                        ),
+                    },
+                },
+                "required": ["question"],
+            },
+        },
+    },
+    # Domain bridge stubs — grounded reads across operational domains
+    {
+        "type": "function",
+        "function": {
+            "name": "read_expense_summary",
+            "description": "Read expense and cash advance summary for the current user or a specified employee.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "employee_id": {
+                        "type": "integer",
+                        "description": "Employee ID (omit for current user)",
+                    },
+                    "state": {
+                        "type": "string",
+                        "enum": ["draft", "reported", "approved", "done", "refused"],
+                        "description": "Filter by expense state",
+                    },
+                },
+                "required": [],
+            },
+        },
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "read_project_status",
+            "description": "Read project health, budget utilization, and gate review status.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "project_id": {
+                        "type": "integer",
+                        "description": "Project ID (omit for portfolio overview)",
+                    },
+                },
+                "required": [],
+            },
+        },
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "read_close_tasks",
+            "description": "Read month-end close checklist tasks and their completion status.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "period": {
+                        "type": "string",
+                        "description": "Period in YYYY-MM format (omit for current period)",
+                    },
+                },
+                "required": [],
+            },
+        },
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "read_tax_obligations",
+            "description": "Read upcoming tax filing obligations and BIR deadlines.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "days_ahead": {
+                        "type": "integer",
+                        "description": "Look-ahead window in days (default 30)",
+                        "default": 30,
+                    },
+                },
+                "required": [],
+            },
+        },
+    },
 ]
 
 
@@ -340,6 +460,7 @@ class FoundryService(models.AbstractModel):
             "user_name": user.name,
             "user_login": user.login,
             "company": env.company.name,
+            "user_role": self._classify_user_role(user),
         }
         if record_model and record_id:
             try:
@@ -354,6 +475,20 @@ class FoundryService(models.AbstractModel):
             except Exception:
                 pass
         return envelope
+
+    def _classify_user_role(self, user):
+        """Classify user into a copilot persona based on group membership.
+
+        Returns one of: controller, approver, finance_ops, employee.
+        Used by the agent to tailor response depth and action permissions.
+        """
+        if user.has_group("account.group_account_manager"):
+            return "controller"
+        if user.has_group("ipai_odoo_copilot.group_copilot_manager"):
+            return "approver"
+        if user.has_group("account.group_account_user"):
+            return "finance_ops"
+        return "employee"
 
     # --- SDK Client ---
 
