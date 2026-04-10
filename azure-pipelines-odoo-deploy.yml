@@ -11,6 +11,11 @@
 # Implements Phase 2 of azure-odoosh-equivalent.yaml:
 #   commit → image → test → deploy dev → deploy staging → deploy prod
 #
+# Test stage installs all 26 installable ipai_* modules (excludes 5
+# deprecated modules with installable=False: ipai_ai_channel_actions,
+# ipai_ai_copilot, ipai_ai_platform, ipai_ai_widget, ipai_ask_ai_azure).
+# ipai_finance_close_seed is excluded to avoid seed data conflicts.
+#
 # Service connection: ipai-dev-wif (ARM, workload identity federation)
 # ACR: acripaiodoo.azurecr.io
 # Key Vault: kv-ipai-dev
@@ -104,8 +109,60 @@ stages:
     jobs:
       - template: azure-pipelines/templates/jobs/odoo-module-test.yml
         parameters:
-          installModules: 'ipai_auth_oidc,ipai_document_intelligence,ipai_ops_api'
-          testTags: '/ipai_auth_oidc,/ipai_document_intelligence,/ipai_ops_api'
+          installModules: >-
+            ipai_aca_proxy,
+            ipai_agent,
+            ipai_auth_oidc,
+            ipai_bank_recon,
+            ipai_bir_compliance,
+            ipai_bir_tax_compliance,
+            ipai_branch_profile,
+            ipai_copilot_actions,
+            ipai_data_intelligence,
+            ipai_document_intelligence,
+            ipai_enterprise_bridge,
+            ipai_expense_ops,
+            ipai_finance_close,
+            ipai_finance_ppm,
+            ipai_google_workspace,
+            ipai_hr_expense_liquidation,
+            ipai_mail_plugin_bridge,
+            ipai_odoo_copilot,
+            ipai_ops_api,
+            ipai_project_seed,
+            ipai_security_frontdoor,
+            ipai_social_capi,
+            ipai_tax_review,
+            ipai_web_branding,
+            ipai_workload_center,
+            ipai_workspace_core
+          testTags: >-
+            /ipai_aca_proxy,
+            /ipai_agent,
+            /ipai_auth_oidc,
+            /ipai_bank_recon,
+            /ipai_bir_compliance,
+            /ipai_bir_tax_compliance,
+            /ipai_branch_profile,
+            /ipai_copilot_actions,
+            /ipai_data_intelligence,
+            /ipai_document_intelligence,
+            /ipai_enterprise_bridge,
+            /ipai_expense_ops,
+            /ipai_finance_close,
+            /ipai_finance_ppm,
+            /ipai_google_workspace,
+            /ipai_hr_expense_liquidation,
+            /ipai_mail_plugin_bridge,
+            /ipai_odoo_copilot,
+            /ipai_ops_api,
+            /ipai_project_seed,
+            /ipai_security_frontdoor,
+            /ipai_social_capi,
+            /ipai_tax_review,
+            /ipai_web_branding,
+            /ipai_workload_center,
+            /ipai_workspace_core
           serviceConnection: $(serviceConnection)
           keyVaultName: $(keyVaultName)
           pgServer: $(pgServer)
