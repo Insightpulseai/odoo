@@ -106,26 +106,31 @@ normalization:
         action: "Enable agent monitoring features (0/3 → 3/3)"
         status: pending
         owner: platform_admin
-        method: "Azure portal → ipai-copilot → Agents → Monitoring"
-        note: >
-          Cannot be done via repo commit — requires portal action.
-          Enable: traces, metrics, logs.
+        script: scripts/foundry/enable_monitoring.py
+        method: >
+          python scripts/foundry/enable_monitoring.py
+          Configures Azure Monitor OpenTelemetry + AIInferenceInstrumentor.
+          Prereq: pip install azure-monitor-opentelemetry azure-ai-inference
+          Verify: python scripts/foundry/enable_monitoring.py --verify
 
       - id: N4
         action: "Expand eval suite from 1 run to release gate"
         status: pending
         owner: platform_admin
+        script: scripts/foundry/run_cloud_eval.py
         minimum_evaluators:
-          - groundedness
-          - relevance
-          - tool_call_success
-          - tool_selection
-          - task_completion
-          - response_completeness
-          - safety  # at least one safety evaluator set
+          - builtin.groundedness
+          - builtin.relevance
+          - builtin.fluency
+          - builtin.coherence
+          - builtin.task_adherence
+          - builtin.violence
+          - builtin.response_completeness
         method: >
-          Use eval datasets already in repo (agents/evals/odoo-copilot/datasets/).
-          Create eval runs per agent: ask, authoring, livechat, transaction.
+          python scripts/foundry/run_cloud_eval.py --all
+          Uses openai_client.evals API with built-in evaluators.
+          Datasets: agents/evals/odoo-copilot/datasets/{agent}-eval-v1.jsonl
+          Results: agents/evals/odoo-copilot/results/{agent}-cloud-eval-{stamp}.json
 
   # Phase 2 — After Phase 1 (not ship-blocking)
   phase_2:
