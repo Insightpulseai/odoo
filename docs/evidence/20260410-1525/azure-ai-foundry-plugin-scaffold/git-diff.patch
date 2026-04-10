@@ -1,0 +1,149 @@
+diff --git a/docs/evidence/20260410-1525/azure-ai-foundry-plugin-scaffold/README.md b/docs/evidence/20260410-1525/azure-ai-foundry-plugin-scaffold/README.md
+new file mode 100644
+index 000000000..4cfbbf638
+--- /dev/null
++++ b/docs/evidence/20260410-1525/azure-ai-foundry-plugin-scaffold/README.md
+@@ -0,0 +1,28 @@
++# Azure AI Foundry Plugin Scaffold Evidence
++
++Timestamp: `20260410-1525`
++
++Scope:
++- Confirmed the repo already carried the Azure AI Foundry plugin manifest and marketplace entry.
++- Added `plugins/azure-ai-foundry/.mcp.json` as a real plugin MCP config instead of an empty stub.
++- Added `plugins/azure-ai-foundry/assets/.gitkeep` so the scaffolded assets directory is preserved in Git.
++
++Verification:
++- `python3 -m json.tool plugins/azure-ai-foundry/.codex-plugin/plugin.json`
++- `python3 -m json.tool plugins/azure-ai-foundry/.mcp.json`
++- `python3 -m json.tool .agents/plugins/marketplace.json`
++- `git diff --check -- .agents/plugins/marketplace.json plugins/azure-ai-foundry docs/evidence/20260410-1525/azure-ai-foundry-plugin-scaffold`
++
++Artifacts:
++- `plugin.json.pretty.json`
++- `mcp.pretty.json`
++- `marketplace.pretty.json`
++
++Source basis:
++- Microsoft Learn preview docs identify the Foundry MCP endpoint as `https://mcp.ai.azure.com`.
++- The MCP Registry lists Azure AI Foundry as an experimental MCP server from Microsoft.
++
++Result:
++- JSON validation passed for the plugin manifest, plugin MCP config, and marketplace manifest.
++- `git diff --check` passed with no whitespace errors.
++- The plugin now contains a concrete MCP server definition for the Microsoft Foundry preview endpoint.
+diff --git a/docs/evidence/20260410-1525/azure-ai-foundry-plugin-scaffold/marketplace.pretty.json b/docs/evidence/20260410-1525/azure-ai-foundry-plugin-scaffold/marketplace.pretty.json
+new file mode 100644
+index 000000000..faa99ef52
+--- /dev/null
++++ b/docs/evidence/20260410-1525/azure-ai-foundry-plugin-scaffold/marketplace.pretty.json
+@@ -0,0 +1,20 @@
++{
++    "name": "[TODO: marketplace-name]",
++    "interface": {
++        "displayName": "[TODO: Marketplace Display Name]"
++    },
++    "plugins": [
++        {
++            "name": "azure-ai-foundry",
++            "source": {
++                "source": "local",
++                "path": "./plugins/azure-ai-foundry"
++            },
++            "policy": {
++                "installation": "AVAILABLE",
++                "authentication": "ON_INSTALL"
++            },
++            "category": "Productivity"
++        }
++    ]
++}
+diff --git a/docs/evidence/20260410-1525/azure-ai-foundry-plugin-scaffold/mcp.pretty.json b/docs/evidence/20260410-1525/azure-ai-foundry-plugin-scaffold/mcp.pretty.json
+new file mode 100644
+index 000000000..47646f069
+--- /dev/null
++++ b/docs/evidence/20260410-1525/azure-ai-foundry-plugin-scaffold/mcp.pretty.json
+@@ -0,0 +1,8 @@
++{
++    "mcpServers": {
++        "azure-ai-foundry-mcp-preview": {
++            "type": "http",
++            "url": "https://mcp.ai.azure.com"
++        }
++    }
++}
+diff --git a/docs/evidence/20260410-1525/azure-ai-foundry-plugin-scaffold/plugin.json.pretty.json b/docs/evidence/20260410-1525/azure-ai-foundry-plugin-scaffold/plugin.json.pretty.json
+new file mode 100644
+index 000000000..52b0c7676
+--- /dev/null
++++ b/docs/evidence/20260410-1525/azure-ai-foundry-plugin-scaffold/plugin.json.pretty.json
+@@ -0,0 +1,48 @@
++{
++    "name": "azure-ai-foundry",
++    "version": "[TODO: 1.2.0]",
++    "description": "[TODO: Brief plugin description]",
++    "author": {
++        "name": "[TODO: Author Name]",
++        "email": "[TODO: author@example.com]",
++        "url": "[TODO: https://github.com/author]"
++    },
++    "homepage": "[TODO: https://docs.example.com/plugin]",
++    "repository": "[TODO: https://github.com/author/plugin]",
++    "license": "[TODO: MIT]",
++    "keywords": [
++        "[TODO: keyword1]",
++        "[TODO: keyword2]"
++    ],
++    "skills": "[TODO: ./skills/]",
++    "hooks": "[TODO: ./hooks.json]",
++    "mcpServers": "[TODO: ./.mcp.json]",
++    "apps": "[TODO: ./.app.json]",
++    "interface": {
++        "displayName": "[TODO: Plugin Display Name]",
++        "shortDescription": "[TODO: Short description for subtitle]",
++        "longDescription": "[TODO: Long description for details page]",
++        "developerName": "[TODO: OpenAI]",
++        "category": "[TODO: Productivity]",
++        "capabilities": [
++            "[TODO: Interactive]",
++            "[TODO: Write]"
++        ],
++        "websiteURL": "[TODO: https://openai.com/]",
++        "privacyPolicyURL": "[TODO: https://openai.com/policies/row-privacy-policy/]",
++        "termsOfServiceURL": "[TODO: https://openai.com/policies/row-terms-of-use/]",
++        "defaultPrompt": [
++            "[TODO: Summarize my inbox and draft replies for me.]",
++            "[TODO: Find open bugs and turn them into tickets.]",
++            "[TODO: Review today's meetings and flag gaps.]"
++        ],
++        "brandColor": "[TODO: #3B82F6]",
++        "composerIcon": "[TODO: ./assets/icon.png]",
++        "logo": "[TODO: ./assets/logo.png]",
++        "screenshots": [
++            "[TODO: ./assets/screenshot1.png]",
++            "[TODO: ./assets/screenshot2.png]",
++            "[TODO: ./assets/screenshot3.png]"
++        ]
++    }
++}
+diff --git a/plugins/azure-ai-foundry/.mcp.json b/plugins/azure-ai-foundry/.mcp.json
+new file mode 100644
+index 000000000..a3ff03f91
+--- /dev/null
++++ b/plugins/azure-ai-foundry/.mcp.json
+@@ -0,0 +1,8 @@
++{
++  "mcpServers": {
++    "azure-ai-foundry-mcp-preview": {
++      "type": "http",
++      "url": "https://mcp.ai.azure.com"
++    }
++  }
++}
+diff --git a/plugins/azure-ai-foundry/assets/.gitkeep b/plugins/azure-ai-foundry/assets/.gitkeep
+new file mode 100644
+index 000000000..8b1378917
+--- /dev/null
++++ b/plugins/azure-ai-foundry/assets/.gitkeep
+@@ -0,0 +1 @@
++
