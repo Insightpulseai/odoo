@@ -5,7 +5,7 @@
         <field name="name">ppm.risk.tree</field>
         <field name="model">ppm.risk</field>
         <field name="arch" type="xml">
-            <tree decoration-danger="risk_score &gt;= 15"
+            <list decoration-danger="risk_score &gt;= 15"
                   decoration-warning="risk_score &gt;= 9 and risk_score &lt; 15">
                 <field name="name"/>
                 <field name="project_id"/>
@@ -16,7 +16,7 @@
                 <field name="risk_score"/>
                 <field name="owner_id"/>
                 <field name="target_date"/>
-            </tree>
+            </list>
         </field>
     </record>
 
@@ -61,7 +61,7 @@
     <record id="action_ppm_risk" model="ir.actions.act_window">
         <field name="name">Risk Register</field>
         <field name="res_model">ppm.risk</field>
-        <field name="view_mode">tree,form</field>
+        <field name="view_mode">list,form</field>
     </record>
 
 </odoo>

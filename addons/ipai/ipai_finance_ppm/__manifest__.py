@@ -20,6 +20,9 @@
     "license": "LGPL-3",
     "author": "InsightPulse AI",
     "website": "https://insightpulseai.com",
+    # OCA modules (project_parent, project_milestone_status) are listed here if
+    # they are hydrated in addons/oca/. Omitted by default; add back when confirmed
+    # present in the deployment addons-path.
     "depends": [
         "project",
         "account",
@@ -38,7 +41,9 @@
         "views/ppm_gate_review_views.xml",
         "views/ppm_import_wizard_views.xml",
         "views/ipai_finance_ppm_menus.xml",
-        "data/ir_cron_ppm_sync.xml",
+        # data/ir_cron_ppm_sync.xml removed — cron referenced deprecated sync pattern.
+        # Budget sync from project to analytic is available via direct method call
+        # or future Azure Logic Apps trigger (promotion-lane).
     ],
     "demo": [
         "demo/ipai_finance_ppm_demo_projects.xml",

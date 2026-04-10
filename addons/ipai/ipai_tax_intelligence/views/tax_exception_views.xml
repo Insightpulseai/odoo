@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- =====================================================
+         Tax Exception — List View
+         ===================================================== -->
+    <record id="view_tax_exception_tree" model="ir.ui.view">
+        <field name="name">tax.exception.tree</field>
+        <field name="model">tax.exception</field>
+        <field name="arch" type="xml">
+            <list string="Tax Exceptions"
+                decoration-danger="state in ('detected', 'escalated') and severity == 'blocking'"
+                decoration-warning="state in ('detected', 'under_review') and severity == 'warning'"
+                decoration-success="state in ('resolved', 'waived')"
+                decoration-muted="state == 'resolved'">
+                <field name="name"/>
+                <field name="detected_date"/>
+                <field name="rule_id"/>
+                <field name="exception_type"/>
+                <field name="severity"
+                    decoration-danger="severity == 'blocking'"
+                    decoration-warning="severity == 'warning'"/>
+                <field name="state"
+                    decoration-danger="state in ('detected', 'escalated')"
+                    decoration-warning="state == 'under_review'"
+                    decoration-success="state in ('resolved', 'waived')"/>
+                <field name="confidence" optional="show"/>
+                <field name="reviewer_id" optional="show"/>
+                <field name="source_model" optional="hide"/>
+                <field name="source_id" optional="hide"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- =====================================================
+         Tax Exception — Form View
+         ===================================================== -->
+    <record id="view_tax_exception_form" model="ir.ui.view">
+        <field name="name">tax.exception.form</field>
+        <field name="model">tax.exception</field>
+        <field name="arch" type="xml">
+            <form string="Tax Exception">
+                <header>
+                    <button name="action_start_review" string="Start Review"
+                        type="object" class="oe_highlight"
+                        invisible="state != 'detected'"/>
+                    <button name="action_resolve" string="Resolve"
+                        type="object" class="oe_highlight"
+                        invisible="state not in ('under_review', 'escalated')"/>
+                    <button name="action_waive" string="Waive"
+                        type="object"
+                        invisible="state not in ('detected', 'under_review', 'escalated')"/>
+                    <button name="action_escalate" string="Escalate"
+                        type="object"
+                        invisible="state not in ('detected', 'under_review')"/>
+                    <button name="action_reopen" string="Reopen"
+                        type="object"
+                        invisible="state not in ('resolved', 'waived')"/>
+                    <field name="state" widget="statusbar"
+                        statusbar_visible="detected,under_review,resolved"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_audit_logs"
+                            type="object"
+                            class="oe_stat_button"
+                            icon="fa-history"
+                            invisible="audit_log_count == 0">
+                            <field name="audit_log_count" widget="statinfo"
+                                string="Audit Log"/>
+                        </button>
+                    </div>
+                    <group>
+                        <group string="Exception Details">
+                            <field name="name"/>
+                            <field name="rule_id"/>
+                            <field name="exception_type"/>
+                            <field name="severity"/>
+                            <field name="detected_date"/>
+                        </group>
+                        <group string="Source Document">
+                            <field name="source_model"/>
+                            <field name="source_id"/>
+                            <field name="reviewer_id"/>
+                            <field name="review_date"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Explainability" name="explainability">
+                            <group>
+                                <field name="confidence" widget="progressbar"/>
+                                <field name="policy_reference"/>
+                            </group>
+                            <group string="Rationale">
+                                <field name="rationale" nolabel="1" colspan="2"/>
+                            </group>
+                            <group string="Inputs">
+                                <field name="inputs_summary" nolabel="1" colspan="2"/>
+                            </group>
+                        </page>
+                        <page string="Resolution" name="resolution">
+                            <field name="resolution" placeholder="Enter resolution notes..."/>
+                        </page>
+                        <page string="Audit Log" name="audit_log">
+                            <field name="audit_log_ids" readonly="1">
+                                <list>
+                                    <field name="timestamp"/>
+                                    <field name="user_id"/>
+                                    <field name="action"/>
+                                    <field name="old_state"/>
+                                    <field name="new_state"/>
+                                    <field name="notes"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <!-- =====================================================
+         Tax Exception — Search View
+         ===================================================== -->
+    <record id="view_tax_exception_search" model="ir.ui.view">
+        <field name="name">tax.exception.search</field>
+        <field name="model">tax.exception</field>
+        <field name="arch" type="xml">
+            <search string="Tax Exceptions">
+                <field name="name" string="Reference"/>
+                <field name="rule_id" string="Rule"/>
+                <separator/>
+                <filter name="open" string="Open"
+                    domain="[('state', 'in', ('detected', 'under_review', 'escalated'))]"/>
+                <filter name="blocking" string="Blocking"
+                    domain="[('severity', '=', 'blocking')]"/>
+                <filter name="detected" string="Detected"
+                    domain="[('state', '=', 'detected')]"/>
+                <filter name="under_review" string="Under Review"
+                    domain="[('state', '=', 'under_review')]"/>
+                <filter name="resolved" string="Resolved"
+                    domain="[('state', '=', 'resolved')]"/>
+                <filter name="waived" string="Waived"
+                    domain="[('state', '=', 'waived')]"/>
+                <group expand="0" string="Group By">
+                    <filter name="group_state" string="Status"
+                        context="{'group_by': 'state'}"/>
+                    <filter name="group_exception_type" string="Exception Type"
+                        context="{'group_by': 'exception_type'}"/>
+                    <filter name="group_rule" string="Rule"
+                        context="{'group_by': 'rule_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- =====================================================
+         Tax Exception — Action
+         ===================================================== -->
+    <record id="action_tax_exception" model="ir.actions.act_window">
+        <field name="name">Tax Exceptions</field>
+        <field name="res_model">tax.exception</field>
+        <field name="view_mode">list,form</field>
+        <field name="context">{"search_default_open": 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No tax exceptions detected.
+            </p>
+            <p>
+                Tax exceptions are created when validation rules detect
+                issues on invoices or bills before posting.
+            </p>
+        </field>
+    </record>
+</odoo>

@@ -5,7 +5,7 @@
         <field name="name">ipai.knowledge.source.tree</field>
         <field name="model">ipai.knowledge.source</field>
         <field name="arch" type="xml">
-            <tree decoration-muted="state == 'retired'"
+            <list decoration-muted="state == 'retired'"
                   decoration-success="state == 'active'"
                   decoration-warning="state == 'paused'">
                 <field name="name"/>
@@ -23,7 +23,7 @@
                        decoration-danger="index_health == 'error'"/>
                 <field name="doc_count_estimate"/>
                 <field name="query_count"/>
-            </tree>
+            </list>
         </field>
     </record>
 
@@ -121,7 +121,7 @@
     <record id="action_knowledge_source" model="ir.actions.act_window">
         <field name="name">Knowledge Sources</field>
         <field name="res_model">ipai.knowledge.source</field>
-        <field name="view_mode">tree,form</field>
+        <field name="view_mode">list,form</field>
         <field name="search_view_id" ref="view_knowledge_source_search"/>
         <field name="context">{'search_default_active': 1}</field>
     </record>

@@ -1,0 +1,13 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_pulser_intent_user,pulser.intent.user,model_pulser_intent,group_pulser_user,1,0,0,0
+access_pulser_intent_manager,pulser.intent.manager,model_pulser_intent,group_pulser_manager,1,1,1,1
+access_pulser_action_class_user,pulser.action.class.user,model_pulser_action_class,group_pulser_user,1,0,0,0
+access_pulser_action_class_manager,pulser.action.class.manager,model_pulser_action_class,group_pulser_manager,1,1,1,1
+access_pulser_domain_agent_user,pulser.domain.agent.user,model_pulser_domain_agent,group_pulser_user,1,0,0,0
+access_pulser_domain_agent_manager,pulser.domain.agent.manager,model_pulser_domain_agent,group_pulser_manager,1,1,1,1
+access_pulser_tool_binding_user,pulser.tool.binding.user,model_pulser_tool_binding,group_pulser_user,1,0,0,0
+access_pulser_tool_binding_manager,pulser.tool.binding.manager,model_pulser_tool_binding,group_pulser_manager,1,1,1,1
+access_pulser_action_log_user,pulser.action.log.user,model_pulser_action_log,group_pulser_user,1,0,1,0
+access_pulser_action_log_manager,pulser.action.log.manager,model_pulser_action_log,group_pulser_manager,1,1,1,0
+access_pulser_interaction_user,pulser.interaction.user,model_pulser_interaction,group_pulser_user,1,1,1,0
+access_pulser_interaction_manager,pulser.interaction.manager,model_pulser_interaction,group_pulser_manager,1,1,1,1

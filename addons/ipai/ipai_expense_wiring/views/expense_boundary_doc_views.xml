@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- ═══ Expense Boundary Doc — List View ════════════════════════════════ -->
+    <record id="expense_boundary_doc_view_list" model="ir.ui.view">
+        <field name="name">expense.boundary.doc.list</field>
+        <field name="model">expense.boundary.doc</field>
+        <field name="arch" type="xml">
+            <list string="Expense Stack Boundaries" decoration-success="status == 'proven'" decoration-warning="status == 'candidate'" decoration-danger="status == 'gap'" decoration-muted="status == 'declared'">
+                <field name="layer"/>
+                <field name="module_name"/>
+                <field name="capability"/>
+                <field name="status"/>
+                <field name="verified_date" optional="show"/>
+                <field name="notes" optional="hide"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- ═══ Expense Boundary Doc — Form View ════════════════════════════════ -->
+    <record id="expense_boundary_doc_view_form" model="ir.ui.view">
+        <field name="name">expense.boundary.doc.form</field>
+        <field name="model">expense.boundary.doc</field>
+        <field name="arch" type="xml">
+            <form string="Expense Boundary Documentation">
+                <sheet>
+                    <group>
+                        <group string="Ownership">
+                            <field name="layer"/>
+                            <field name="module_name"/>
+                            <field name="capability"/>
+                        </group>
+                        <group string="Verification">
+                            <field name="status"/>
+                            <field name="verified_date"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                        </group>
+                    </group>
+                    <group string="Notes">
+                        <field name="notes" nolabel="1"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- ═══ Expense Boundary Doc — Search View ══════════════════════════════ -->
+    <record id="expense_boundary_doc_view_search" model="ir.ui.view">
+        <field name="name">expense.boundary.doc.search</field>
+        <field name="model">expense.boundary.doc</field>
+        <field name="arch" type="xml">
+            <search string="Search Boundary Docs">
+                <field name="capability"/>
+                <field name="module_name"/>
+                <filter string="Proven" name="proven" domain="[('status', '=', 'proven')]"/>
+                <filter string="Declared" name="declared" domain="[('status', '=', 'declared')]"/>
+                <filter string="Candidate" name="candidate" domain="[('status', '=', 'candidate')]"/>
+                <filter string="Gaps" name="gap" domain="[('status', '=', 'gap')]"/>
+                <separator/>
+                <filter string="CE Native" name="ce_native" domain="[('layer', '=', 'ce_native')]"/>
+                <filter string="OCA Direct" name="oca_direct" domain="[('layer', '=', 'oca_direct')]"/>
+                <filter string="OCA Adjacent" name="oca_adjacent" domain="[('layer', '=', 'oca_adjacent')]"/>
+                <filter string="Custom Delta" name="custom_delta" domain="[('layer', '=', 'custom_delta')]"/>
+                <filter string="Bridge" name="bridge" domain="[('layer', '=', 'bridge')]"/>
+                <group expand="0" string="Group By">
+                    <filter string="Layer" name="group_layer" context="{'group_by': 'layer'}"/>
+                    <filter string="Status" name="group_status" context="{'group_by': 'status'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- ═══ Action ══════════════════════════════════════════════════════════ -->
+    <record id="action_expense_boundary_doc" model="ir.actions.act_window">
+        <field name="name">Expense Stack Boundaries</field>
+        <field name="res_model">expense.boundary.doc</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="expense_boundary_doc_view_search"/>
+        <field name="context">{'search_default_group_layer': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No boundary documentation records found.
+            </p>
+            <p>
+                Load expense_parity_data.xml fixture to populate the baseline
+                proven/declared/candidate/gap matrix.
+            </p>
+        </field>
+    </record>
+
+    <!-- ═══ Menu: Expenses > Configuration > Stack Boundaries ═══════════════ -->
+    <menuitem
+        id="menu_expense_boundary_doc"
+        name="Expense Stack Boundaries"
+        parent="hr_expense.menu_hr_expense_configuration"
+        action="action_expense_boundary_doc"
+        sequence="99"
+        groups="base.group_system"
+    />
+</odoo>

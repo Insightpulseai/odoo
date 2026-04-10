@@ -43,7 +43,7 @@ foundry_project:
     knowledge_indexes: 0
     workflows: 0
     stored_completions: 0
-    monitoring_features: "0/3"
+    monitoring_features: "3/3"  # N3 done 2026-04-10: Azure Monitor + AIInferenceInstrumentor + App Insights
     guardrails: [Microsoft.Default, Microsoft.DefaultV2]
     evals_completed: 1
     normalization_plan: ssot/ai/foundry_normalization_plan.yaml

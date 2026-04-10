@@ -104,9 +104,13 @@ normalization:
 
       - id: N3
         action: "Enable agent monitoring features (0/3 → 3/3)"
-        status: pending
+        status: done  # 2026-04-10: Azure Monitor + AIInferenceInstrumentor enabled
         owner: platform_admin
         script: scripts/foundry/enable_monitoring.py
+        evidence: >
+          Executed 2026-04-10. Azure Monitor OpenTelemetry configured,
+          AIInferenceInstrumentor enabled, Foundry SDK CONNECTED,
+          App Insights CONFIGURED. Traces flow to appi-ipai-dev.
         method: >
           python scripts/foundry/enable_monitoring.py
           Configures Azure Monitor OpenTelemetry + AIInferenceInstrumentor.
@@ -115,8 +119,12 @@ normalization:
 
       - id: N4
         action: "Expand eval suite from 1 run to release gate"
-        status: pending
+        status: blocked  # Script proven (dry-run PASS), run blocked on RBAC
         owner: platform_admin
+        blocker: >
+          ipai-copilot-resource AI Services not in current subscription
+          resource list. evals.runs.create returns 403 on ML asset store.
+          Fix: locate hosting subscription, assign Azure AI Developer role.
         script: scripts/foundry/run_cloud_eval.py
         minimum_evaluators:
           - builtin.groundedness
@@ -203,5 +211,141 @@ go_nogo:
     blocking:
       - "Classic agent migration debt (N5)"
       - "Tool catalog not wired (N6)"
-      - "Monitoring not enabled (N3)"
-      - "Eval suite not formalized as release gate (N4)"
+      - "Eval suite not formalized as release gate (N4 — RBAC blocked)"
+
+# ---------------------------------------------------------------------------
+# Evidence updates (from Foundry portal screenshots)
+# ---------------------------------------------------------------------------
+
+evidence_updates:
+  - date: "2026-04-10"
+    source: foundry_project_screenshots
+    findings:
+      agents:
+        count: 5
+        names:
+          - transaction-agent
+          - livechat-agent
+          - authoring-agent
+          - ask-agent
+          - ipai-copilot
+        type: prompt
+        classic_migration_debt: true
+      models:
+        deployed:
+          - name: wg-pulser
+            model: gpt-4o-mini
+            status: succeeded
+          - name: text-embedding-3-small
+            model: text-embedding-3-small
+            status: succeeded
+          - name: gpt-4.1
+            model: gpt-4.1
+            status: succeeded
+      tools:
+        configured_count: 0
+      knowledge:
+        indexes_count: 0
+        ai_search_wired: false
+      data:
+        datasets:
+          - eval-data-2026-03-30_084002_01e39_UTC
+        stored_completions_count: 0
+      ai_services_available:
+        - Speech
+        - Translation
+        - Language
+        - Content Understanding
+      stale_metadata:
+        ipai_copilot_description_mentions_odoo19: true  # fixed in PR #708
+
+# ---------------------------------------------------------------------------
+# Issue status overrides (from evidence assessment)
+# ---------------------------------------------------------------------------
+
+issue_status_overrides:
+  # Blocked — requires portal/RBAC action
+  ISSUE-004: blocked   # Classic agent migration debt
+  ISSUE-006: blocked   # Stale Odoo 19 metadata (repo-side fixed, portal pending)
+  ISSUE-007: blocked   # Minimum MVP tool set (Tools=0)
+  ISSUE-008: blocked   # MVP grounding path (no indexes)
+
+  # Ready — can be executed now
+  ISSUE-011: done      # Monitoring enabled (N3 complete 2026-04-10)
+  ISSUE-012: blocked   # Eval suite (N4 script ready, RBAC blocked)
+  ISSUE-019: ready     # Stored completions decision
+
+  # Deferred — not MVP-blocking
+  ISSUE-010: deferred  # Workflows — empty is acceptable for MVP
+  ISSUE-020: deferred  # AI Search / preview expansion off MVP path
+
+  # In progress
+  ISSUE-005: done      # Role contract defined in ssot/ai/agents.yaml
+  ISSUE-016: in_progress  # Release evidence pack
+
+# ---------------------------------------------------------------------------
+# SMART release objective
+# ---------------------------------------------------------------------------
+
+release_objective:
+  document: docs/release/RELEASE_OBJECTIVE.md
+  statement: >
+    By [TARGET DATE], ship the Odoo 18 Finance Ops MVP to internal controlled
+    production with Odoo as the sole business system of record, all installed
+    MVP IPAI modules runtime-proven, and Pulser minimally normalized in Foundry
+    with monitoring, approval gates, and repeatable evaluation coverage.
+
+  target_posture: internal_controlled_production
+
+  binary_gates:
+    - id: gate_a
+      name: "Module and runtime proof"
+      criteria:
+        - "7/7 installed MVP IPAI modules proven or removed from scope"
+        - "Fresh install passes"
+        - "Upgrade path passes"
+      status: partial  # Gate A proved 5/7, remaining 2 pending Wave 2
+
+    - id: gate_b
+      name: "Business workflow proof"
+      criteria:
+        - "Cash advance → approval/release → liquidation → settlement: PASS"
+        - "Tax validation / blocker / reroute on account.move: PASS"
+        - "TBWA cash advance + liquidation QWeb reports: 2/2 PASS"
+      status: pending
+
+    - id: gate_c
+      name: "Foundry operational minimum"
+      criteria:
+        - "5/5 active agents role-defined: DONE"
+        - "0 stale Odoo 19 references: DONE (PR #708)"
+        - "Monitoring enabled: DONE (N3)"
+        - "Repeatable eval suite: BLOCKED (N4 RBAC)"
+        - "Risky actions approval-gated: DONE"
+      status: partial
+
+    - id: gate_d
+      name: "Governance and release readiness"
+      criteria:
+        - "SSOT manifests frozen"
+        - "Evidence pack complete"
+        - "Rollback plan exists"
+        - "Deferred items remain deferred"
+      status: pending
+
+  kpi_summary:
+    modules_proven: "5/7"
+    fresh_install: pending
+    upgrade_validation: pending
+    finance_workflow: pending
+    tax_workflow: pending
+    report_rendering: pending
+    agents_role_defined: "5/5"
+    stale_odoo19_refs: 0
+    model_baseline_bounded: true
+    risky_tools_gated: true
+    monitoring_enabled: true
+    eval_suite_repeatable: blocked  # N4 RBAC
+    scope_drift: 0
+    manifests_frozen: pending
+    evidence_pack: pending

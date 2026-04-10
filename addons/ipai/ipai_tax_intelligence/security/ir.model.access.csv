@@ -1,0 +1,9 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_tax_validation_rule_validator,tax.validation.rule.validator,model_tax_validation_rule,ipai_tax_intelligence.group_tax_validator,1,0,0,0
+access_tax_validation_rule_manager,tax.validation.rule.manager,model_tax_validation_rule,ipai_tax_intelligence.group_tax_manager,1,1,1,1
+access_tax_exception_validator,tax.exception.validator,model_tax_exception,ipai_tax_intelligence.group_tax_validator,1,0,0,0
+access_tax_exception_manager,tax.exception.manager,model_tax_exception,ipai_tax_intelligence.group_tax_manager,1,1,1,1
+access_tax_compliance_pack_validator,tax.compliance.pack.validator,model_tax_compliance_pack,ipai_tax_intelligence.group_tax_validator,1,0,0,0
+access_tax_compliance_pack_manager,tax.compliance.pack.manager,model_tax_compliance_pack,ipai_tax_intelligence.group_tax_manager,1,1,1,1
+access_tax_audit_log_validator,tax.audit.log.validator,model_tax_audit_log,ipai_tax_intelligence.group_tax_validator,1,0,0,0
+access_tax_audit_log_manager,tax.audit.log.manager,model_tax_audit_log,ipai_tax_intelligence.group_tax_manager,1,1,1,0

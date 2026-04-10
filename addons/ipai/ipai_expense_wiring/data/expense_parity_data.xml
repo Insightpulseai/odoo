@@ -1,0 +1,282 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    expense_parity_data.xml — Pre-loaded boundary documentation records.
+
+    Coverage matrix for the IPAI expense stack.
+    Status labels per constitution.md §2.4:
+      proven    — implemented and runtime-verified
+      declared  — mapped to CE/OCA/custom but not runtime-verified here
+      candidate — likely exists compositionally, needs proof
+      gap       — no coverage, bridge or future work required
+-->
+<odoo noupdate="1">
+
+    <!-- ══════════════════════════════════════════════════════════════════════
+         CE NATIVE — hr_expense baseline
+    ══════════════════════════════════════════════════════════════════════════ -->
+
+    <record id="boundary_ce_expense_submission" model="expense.boundary.doc">
+        <field name="layer">ce_native</field>
+        <field name="module_name">hr_expense</field>
+        <field name="capability">Expense report submission workflow</field>
+        <field name="status">declared</field>
+        <field name="notes">CE baseline. draft → submitted → approved → posted. Custom delta must not reimplement this.</field>
+    </record>
+
+    <record id="boundary_ce_expense_approval" model="expense.boundary.doc">
+        <field name="layer">ce_native</field>
+        <field name="module_name">hr_expense</field>
+        <field name="capability">Manager approval of expense reports</field>
+        <field name="status">declared</field>
+        <field name="notes">CE baseline approval action. OCA tier validation extends this — do not reimplement.</field>
+    </record>
+
+    <record id="boundary_ce_expense_posting" model="expense.boundary.doc">
+        <field name="layer">ce_native</field>
+        <field name="module_name">hr_expense + account</field>
+        <field name="capability">Journal entry posting for expenses</field>
+        <field name="status">declared</field>
+        <field name="notes">CE posts expense sheet to journal. Accounting truth lives here.</field>
+    </record>
+
+    <record id="boundary_ce_expense_reinvoice" model="expense.boundary.doc">
+        <field name="layer">ce_native</field>
+        <field name="module_name">sale_expense</field>
+        <field name="capability">Customer reinvoicing of expenses</field>
+        <field name="status">declared</field>
+        <field name="notes">CE sale_expense handles analytic account linkage and customer reinvoicing.</field>
+    </record>
+
+    <record id="boundary_ce_expense_analytic" model="expense.boundary.doc">
+        <field name="layer">ce_native</field>
+        <field name="module_name">analytic</field>
+        <field name="capability">Cost allocation via analytic accounts</field>
+        <field name="status">declared</field>
+        <field name="notes">CE analytic module provides cost allocation. Custom delta must not reimplement.</field>
+    </record>
+
+    <record id="boundary_ce_expense_attachments" model="expense.boundary.doc">
+        <field name="layer">ce_native</field>
+        <field name="module_name">hr_expense</field>
+        <field name="capability">Receipt attachments (ir.attachment)</field>
+        <field name="status">declared</field>
+        <field name="notes">CE provides standard ir.attachment. DMS wiring extends archival — does not replace.</field>
+    </record>
+
+    <!-- ══════════════════════════════════════════════════════════════════════
+         OCA DIRECT — hr-expense OCA modules
+    ══════════════════════════════════════════════════════════════════════════ -->
+
+    <record id="boundary_oca_advance_clearing" model="expense.boundary.doc">
+        <field name="layer">oca_direct</field>
+        <field name="module_name">hr_expense_advance_clearing</field>
+        <field name="capability">Cash advance clearing on expense reports</field>
+        <field name="status">declared</field>
+        <field name="notes">OCA/hr-expense module. Extends hr.expense.sheet with advance clearing. Verified as installable on 18.0.</field>
+    </record>
+
+    <record id="boundary_oca_expense_payment" model="expense.boundary.doc">
+        <field name="layer">oca_direct</field>
+        <field name="module_name">hr_expense_payment</field>
+        <field name="capability">Expense payment management</field>
+        <field name="status">declared</field>
+        <field name="notes">OCA/hr-expense module. Payment workflow for approved expense sheets.</field>
+    </record>
+
+    <record id="boundary_oca_tier_validation" model="expense.boundary.doc">
+        <field name="layer">oca_direct</field>
+        <field name="module_name">hr_expense_tier_validation</field>
+        <field name="capability">Multi-tier expense approval routing</field>
+        <field name="status">declared</field>
+        <field name="notes">OCA/hr-expense. Uses base_tier_validation engine. Custom delta must not reimplement tier logic.</field>
+    </record>
+
+    <record id="boundary_oca_expense_sequence" model="expense.boundary.doc">
+        <field name="layer">oca_direct</field>
+        <field name="module_name">hr_expense_sequence</field>
+        <field name="capability">Expense report sequencing / reference numbers</field>
+        <field name="status">declared</field>
+        <field name="notes">OCA/hr-expense. Adds ir.sequence to expense report naming.</field>
+    </record>
+
+    <record id="boundary_oca_advance_clearing_seq" model="expense.boundary.doc">
+        <field name="layer">oca_direct</field>
+        <field name="module_name">hr_expense_advance_clearing_sequence</field>
+        <field name="capability">Sequenced advance clearing reference numbers</field>
+        <field name="status">declared</field>
+        <field name="notes">OCA/hr-expense. Sequencing for advance clearing records.</field>
+    </record>
+
+    <record id="boundary_oca_base_tier_validation" model="expense.boundary.doc">
+        <field name="layer">oca_direct</field>
+        <field name="module_name">base_tier_validation</field>
+        <field name="capability">Generic tier-validation approval engine</field>
+        <field name="status">declared</field>
+        <field name="notes">OCA/server-ux. The approval engine substrate. Custom delta must not reimplement — inherit instead.</field>
+    </record>
+
+    <!-- ══════════════════════════════════════════════════════════════════════
+         OCA ADJACENT — Composable infrastructure wired into expense flow
+    ══════════════════════════════════════════════════════════════════════════ -->
+
+    <record id="boundary_oca_dms_receipts" model="expense.boundary.doc">
+        <field name="layer">oca_adjacent</field>
+        <field name="module_name">dms + dms_field</field>
+        <field name="capability">Receipt attachment archival on expense reports</field>
+        <field name="status">candidate</field>
+        <field name="notes">P1 wiring. hr.expense.sheet.receipt_archive_ref added by ipai_expense_wiring. Full dms.document creation deferred to dedicated dms wiring layer. Graceful no-op when dms absent.</field>
+    </record>
+
+    <record id="boundary_oca_auditlog_expense" model="expense.boundary.doc">
+        <field name="layer">oca_adjacent</field>
+        <field name="module_name">auditlog</field>
+        <field name="capability">Audit trail for hr.expense.sheet and cash.advance state changes</field>
+        <field name="status">candidate</field>
+        <field name="notes">P1 wiring. Audit rules for hr.expense.sheet and cash.advance registered as data records when auditlog installed. Graceful skip when absent.</field>
+    </record>
+
+    <record id="boundary_oca_queue_job_ocr" model="expense.boundary.doc">
+        <field name="layer">oca_adjacent</field>
+        <field name="module_name">queue_job</field>
+        <field name="capability">Async OCR pipeline via ipai_document_intelligence</field>
+        <field name="status">candidate</field>
+        <field name="notes">P1 wiring. queue_job is the async orchestration substrate for OCR extraction bridge. OCR logic must not creep into ipai_hr_expense_liquidation.</field>
+    </record>
+
+    <record id="boundary_oca_document_page_approval" model="expense.boundary.doc">
+        <field name="layer">oca_adjacent</field>
+        <field name="module_name">document_page_approval</field>
+        <field name="capability">Expense policy document versioning</field>
+        <field name="status">candidate</field>
+        <field name="notes">P2. Evaluation needed. Policy versioning for expense policy documents.</field>
+    </record>
+
+    <record id="boundary_oca_mis_builder" model="expense.boundary.doc">
+        <field name="layer">oca_adjacent</field>
+        <field name="module_name">mis_builder</field>
+        <field name="capability">Expense budget tracking integration</field>
+        <field name="status">candidate</field>
+        <field name="notes">P2. Evaluation needed. MIS Builder for expense vs budget comparison reporting.</field>
+    </record>
+
+    <record id="boundary_oca_helpdesk_mgmt" model="expense.boundary.doc">
+        <field name="layer">oca_adjacent</field>
+        <field name="module_name">helpdesk_mgmt</field>
+        <field name="capability">Expense dispute ticket creation</field>
+        <field name="status">candidate</field>
+        <field name="notes">P2. Evaluation needed. Helpdesk ticket creation from disputed expense reports.</field>
+    </record>
+
+    <!-- ══════════════════════════════════════════════════════════════════════
+         CUSTOM DELTA — ipai_* PH-specific thin layer
+    ══════════════════════════════════════════════════════════════════════════ -->
+
+    <record id="boundary_delta_cash_advance" model="expense.boundary.doc">
+        <field name="layer">custom_delta</field>
+        <field name="module_name">ipai_hr_expense_liquidation</field>
+        <field name="capability">Cash advance request lifecycle (PH)</field>
+        <field name="status">declared</field>
+        <field name="notes">v18.0.3.0.0. Models: cash.advance, cash.advance.line. 8-state workflow. Justified delta: PH-specific advance-before-spend pattern not in CE/OCA.</field>
+    </record>
+
+    <record id="boundary_delta_liquidation" model="expense.boundary.doc">
+        <field name="layer">custom_delta</field>
+        <field name="module_name">ipai_hr_expense_liquidation</field>
+        <field name="capability">3-type liquidation lifecycle (cash advance / reimbursement / petty cash)</field>
+        <field name="status">declared</field>
+        <field name="notes">v18.0.3.0.0. Models: hr.expense.liquidation, hr.expense.liquidation.line. PH-specific 3-type liquidation pattern.</field>
+    </record>
+
+    <record id="boundary_delta_policy_engine" model="expense.boundary.doc">
+        <field name="layer">custom_delta</field>
+        <field name="module_name">ipai_hr_expense_liquidation</field>
+        <field name="capability">Expense policy rule engine and violation tracking</field>
+        <field name="status">declared</field>
+        <field name="notes">Models: hr.expense.policy.rule, hr.expense.policy.violation. Warning/blocking severity. Overdue monitoring cron.</field>
+    </record>
+
+    <record id="boundary_delta_accounting_entries" model="expense.boundary.doc">
+        <field name="layer">custom_delta</field>
+        <field name="module_name">ipai_hr_expense_liquidation</field>
+        <field name="capability">Idempotent accounting entries for advance release and liquidation</field>
+        <field name="status">declared</field>
+        <field name="notes">Debit advance receivable / credit cash on release. Debit expense / credit advance on liquidation. Idempotency keys prevent double-posting.</field>
+    </record>
+
+    <record id="boundary_delta_branch_coupling" model="expense.boundary.doc">
+        <field name="layer">custom_delta</field>
+        <field name="module_name">ipai_hr_expense_liquidation + ipai_branch_profile</field>
+        <field name="capability">Office/branch awareness on cash advances</field>
+        <field name="status">declared</field>
+        <field name="notes">COUPLING POINT: depends on ipai_branch_profile for operating.branch. Acceptable for company-specific module per constitution.md §3.5.</field>
+    </record>
+
+    <record id="boundary_delta_exception_model" model="expense.boundary.doc">
+        <field name="layer">custom_delta</field>
+        <field name="module_name">ipai_expense_ops</field>
+        <field name="capability">Structured compliance exception model (SAP Concur Exceptions API equivalent)</field>
+        <field name="status">declared</field>
+        <field name="notes">v18.0.1.0.0. Model: ipai.expense.exception. Blocking/non-blocking flags. 3-level attachment (sheet, line). Resolution workflow.</field>
+    </record>
+
+    <record id="boundary_delta_extended_approval" model="expense.boundary.doc">
+        <field name="layer">custom_delta</field>
+        <field name="module_name">ipai_expense_ops</field>
+        <field name="capability">Extended approval states (Manager → Budget → Cost Object → BIR → Accounting)</field>
+        <field name="status">declared</field>
+        <field name="notes">Configurable per company. Uses OCA base_tier_validation if available.</field>
+    </record>
+
+    <record id="boundary_delta_bir_hook" model="expense.boundary.doc">
+        <field name="layer">custom_delta</field>
+        <field name="module_name">ipai_expense_ops</field>
+        <field name="capability">BIR compliance validation hook in approval chain</field>
+        <field name="status">declared</field>
+        <field name="notes">PH BIR validation step. External validation step for PH tax compliance. Justified delta: PH-specific regulatory requirement.</field>
+    </record>
+
+    <!-- ══════════════════════════════════════════════════════════════════════
+         EXTERNAL BRIDGES — Outside Odoo, bounded roles only
+    ══════════════════════════════════════════════════════════════════════════ -->
+
+    <record id="boundary_bridge_ocr" model="expense.boundary.doc">
+        <field name="layer">bridge</field>
+        <field name="module_name">ipai_document_intelligence</field>
+        <field name="capability">OCR receipt extraction via Azure Document Intelligence</field>
+        <field name="status">candidate</field>
+        <field name="notes">GAP: CE uses IAP (EE-only). No OCA equivalent. Bridge boundary: extraction in bridge, review queue and workflow in Odoo, queue_job for async. OCR logic must not creep into ipai_hr_expense_liquidation.</field>
+    </record>
+
+    <record id="boundary_bridge_card_feed" model="expense.boundary.doc">
+        <field name="layer">bridge</field>
+        <field name="module_name">account_bank_statement_import (OCA candidate)</field>
+        <field name="capability">Corporate card feed import</field>
+        <field name="status">gap</field>
+        <field name="notes">GAP: No proven expense-native CE/OCA pattern. Candidate: account_bank_statement_import + OCA statement modules. Bridge evaluation pending.</field>
+    </record>
+
+    <record id="boundary_bridge_mileage" model="expense.boundary.doc">
+        <field name="layer">bridge</field>
+        <field name="module_name">unresolved</field>
+        <field name="capability">Mileage/per-diem calculator (PH-specific rates)</field>
+        <field name="status">gap</field>
+        <field name="notes">GAP: No CE/OCA module for PH-specific mileage or per-diem rates. Requires custom logic or external rate table. Not in MVP scope.</field>
+    </record>
+
+    <record id="boundary_bridge_mobile_capture" model="expense.boundary.doc">
+        <field name="layer">bridge</field>
+        <field name="module_name">unresolved (EE-only in CE)</field>
+        <field name="capability">Mobile-first receipt capture</field>
+        <field name="status">gap</field>
+        <field name="notes">GAP: EE-only in current CE. No OCA equivalent for native mobile capture. Deferred — not in MVP scope.</field>
+    </record>
+
+    <record id="boundary_bridge_ai_review" model="expense.boundary.doc">
+        <field name="layer">bridge</field>
+        <field name="module_name">Azure-hosted agent surface (future)</field>
+        <field name="capability">AI-assisted expense review</field>
+        <field name="status">gap</field>
+        <field name="notes">GAP: Not in MVP scope. Promotion-lane. Foundry/Azure Foundry agent surface. Must not replace Odoo approval truth.</field>
+    </record>
+
+</odoo>

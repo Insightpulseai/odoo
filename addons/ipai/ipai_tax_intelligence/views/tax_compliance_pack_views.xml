@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- =====================================================
+         Tax Compliance Pack — List View
+         ===================================================== -->
+    <record id="view_tax_compliance_pack_tree" model="ir.ui.view">
+        <field name="name">tax.compliance.pack.tree</field>
+        <field name="model">tax.compliance.pack</field>
+        <field name="arch" type="xml">
+            <list string="Tax Compliance Packs" decoration-muted="not is_active">
+                <field name="name"/>
+                <field name="country_id"/>
+                <field name="version"/>
+                <field name="effective_date"/>
+                <field name="rule_count" string="Rules"/>
+                <field name="is_active" optional="show"/>
+                <field name="reference" optional="show"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- =====================================================
+         Tax Compliance Pack — Form View
+         ===================================================== -->
+    <record id="view_tax_compliance_pack_form" model="ir.ui.view">
+        <field name="name">tax.compliance.pack.form</field>
+        <field name="model">tax.compliance.pack</field>
+        <field name="arch" type="xml">
+            <form string="Tax Compliance Pack">
+                <sheet>
+                    <widget name="web_ribbon" title="Inactive" bg_color="text-bg-secondary"
+                        invisible="is_active"/>
+                    <group>
+                        <group string="Pack Identity">
+                            <field name="name"/>
+                            <field name="country_id"/>
+                            <field name="version"/>
+                            <field name="effective_date"/>
+                            <field name="is_active"/>
+                        </group>
+                        <group string="Legal Reference">
+                            <field name="reference"/>
+                        </group>
+                    </group>
+                    <group string="Description">
+                        <field name="description" nolabel="1" colspan="2"/>
+                    </group>
+                    <notebook>
+                        <page string="Validation Rules" name="rules">
+                            <field name="rule_ids">
+                                <list editable="bottom">
+                                    <field name="sequence" widget="handle"/>
+                                    <field name="name"/>
+                                    <field name="rule_type"/>
+                                    <field name="applies_to"/>
+                                    <field name="severity"
+                                        decoration-danger="severity == 'blocking'"
+                                        decoration-warning="severity == 'warning'"/>
+                                    <field name="is_active"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- =====================================================
+         Tax Compliance Pack — Action
+         ===================================================== -->
+    <record id="action_tax_compliance_pack" model="ir.actions.act_window">
+        <field name="name">Tax Compliance Packs</field>
+        <field name="res_model">tax.compliance.pack</field>
+        <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No compliance packs installed yet.
+            </p>
+            <p>
+                Compliance packs bundle tax validation rules by country and version.
+                The PH BIR pack is pre-installed for Philippines operations.
+            </p>
+        </field>
+    </record>
+</odoo>

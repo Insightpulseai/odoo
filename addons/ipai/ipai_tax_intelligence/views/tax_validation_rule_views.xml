@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- =====================================================
+         Tax Validation Rule — List View
+         ===================================================== -->
+    <record id="view_tax_validation_rule_tree" model="ir.ui.view">
+        <field name="name">tax.validation.rule.tree</field>
+        <field name="model">tax.validation.rule</field>
+        <field name="arch" type="xml">
+            <list string="Tax Validation Rules" decoration-muted="not is_active">
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="rule_type"/>
+                <field name="applies_to"/>
+                <field name="country_id"/>
+                <field name="severity"
+                    decoration-danger="severity == 'blocking'"
+                    decoration-warning="severity == 'warning'"/>
+                <field name="is_active" optional="show"/>
+                <field name="policy_reference" optional="show"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- =====================================================
+         Tax Validation Rule — Form View
+         ===================================================== -->
+    <record id="view_tax_validation_rule_form" model="ir.ui.view">
+        <field name="name">tax.validation.rule.form</field>
+        <field name="model">tax.validation.rule</field>
+        <field name="arch" type="xml">
+            <form string="Tax Validation Rule">
+                <sheet>
+                    <div class="oe_button_box" name="button_box"/>
+                    <widget name="web_ribbon" title="Inactive" bg_color="text-bg-secondary"
+                        invisible="is_active"/>
+                    <group>
+                        <group string="Identity">
+                            <field name="name"/>
+                            <field name="rule_type"/>
+                            <field name="applies_to"/>
+                            <field name="severity"/>
+                            <field name="sequence"/>
+                            <field name="is_active"/>
+                        </group>
+                        <group string="Scope">
+                            <field name="country_id"/>
+                            <field name="tax_group_id"/>
+                            <field name="compliance_pack_id"/>
+                            <field name="policy_reference"/>
+                        </group>
+                    </group>
+                    <group string="Description">
+                        <field name="description" nolabel="1" colspan="2"/>
+                    </group>
+                    <group string="Rule Expression" invisible="not expression">
+                        <field name="expression" nolabel="1" colspan="2"
+                            widget="code"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- =====================================================
+         Tax Validation Rule — Action
+         ===================================================== -->
+    <record id="action_tax_validation_rule" model="ir.actions.act_window">
+        <field name="name">Tax Validation Rules</field>
+        <field name="res_model">tax.validation.rule</field>
+        <field name="view_mode">list,form</field>
+        <field name="context">{"search_default_is_active": 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No tax validation rules yet.
+            </p>
+            <p>
+                Create rules to define which tax conditions are validated
+                before invoices and bills can be posted.
+            </p>
+        </field>
+    </record>
+</odoo>
