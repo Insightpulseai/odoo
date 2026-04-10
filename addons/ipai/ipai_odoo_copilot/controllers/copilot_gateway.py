@@ -31,7 +31,14 @@ _SYSTEM_PROMPT = (
     "You help users with Philippine finance, BIR tax compliance, HR, "
     "inventory, sales, and general ERP questions. "
     "Answer concisely. Use markdown formatting. "
-    "If you need to reference Odoo records, mention the model and ID."
+    "If you need to reference Odoo records, mention the model and ID.\n\n"
+    "When the user attaches a file, acknowledge it by name. "
+    "If the file is a PDF invoice or receipt, offer to review it: "
+    "check line items, tax computation (VAT, EWT), totals, and compliance. "
+    "If you cannot read the file content yet, say so honestly and explain "
+    "what you can do with the filename and context provided. "
+    "Never ignore an attached file or ask for the invoice number when "
+    "the user already attached the document."
 )
 
 
@@ -440,14 +447,18 @@ class CopilotGatewayController(http.Controller):
             'surface': context.get('surface', 'erp'),
         }
 
-        # If attachment was provided, append context to the message
+        # If attachment was provided, prepend clear context so the model knows
         dispatch_message = message.strip()
         if attachment_ref and isinstance(attachment_ref, dict):
             fname = attachment_ref.get('filename', '')
             status = attachment_ref.get('status', '')
             if fname:
-                dispatch_message += (
-                    '\n\n[Attached file: %s (upload status: %s)]' % (fname, status or 'uploaded')
+                dispatch_message = (
+                    'The user attached a file: "%s".\n'
+                    'File content extraction is not yet available (status: %s). '
+                    'Acknowledge the file, and based on the filename and the user\'s '
+                    'request, provide relevant analysis guidance.\n\n'
+                    'User message: %s' % (fname, status or 'uploaded', dispatch_message)
                 )
 
         self._audit_log('chat_request', user_id=uid,
