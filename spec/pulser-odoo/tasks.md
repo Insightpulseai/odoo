@@ -299,4 +299,42 @@
 
 ---
 
+## Phase 28: Azure IAM Remediation — `PULSER-IAM-GATE-01`
+
+> **Gate**: This phase must complete before Pulser production-ready claim.  
+> **SSOT**: `ssot/governance/azure-rbac-remediation.yaml`  
+> **Ticket**: `docs/governance/AZURE_IAM_REMEDIATION.md`
+
+### P0 — Fix immediately
+
+- [ ] IAM-P0-01: Remove root-scope User Access Administrator for Platform Admin. **`constitution.md §1.4`**
+- [ ] IAM-P0-02a: Identify the 2 Unknown Owner principals via `az role assignment list` audit.
+- [ ] IAM-P0-02b: Remove both Unknown Owner assignments from subscription scope.
+- [ ] IAM-P0-03: Remove duplicate direct Owner assignment for Jake Tolentino (keep group-inherited only).
+
+### P1 — Fix before production promotion
+
+- [ ] IAM-P1-01: Reduce total subscription-level Owner paths to ≤ 2 (break-glass + PIM group).
+- [ ] IAM-P1-02: Demote DevOps Service from subscription Owner → Contributor scoped to deployment RGs only.
+- [ ] IAM-P1-03: Remove redundant Contributor from Platform Admin (Owner already covers it).
+- [ ] IAM-P1-04: Remove redundant Azure AI User from Jake Tolentino (Owner already covers it).
+- [ ] IAM-P1-05: Enable PIM for `ipai-platform-admins` group — Owner eligible, max 4h, approval-required.
+- [ ] IAM-P1-06: Document and monitor break-glass admin account; store credentials in Key Vault.
+
+### P2 — Fix before Gate D
+
+- [ ] IAM-P2-01: Verify zero classic administrator assignments remain (`az role assignment list --include-classic-administrators`).
+- [ ] IAM-P2-02: Verify Azure DevOps Automation Contributor is scoped to RG level, not subscription.
+- [ ] IAM-P2-03: Review all remaining service principals — confirm each is at narrowest practical scope.
+
+### Gate verification
+
+- [ ] IAM-EXIT-1: Run full `az role assignment list` audit and confirm Owner count ≤ 2 at subscription scope.
+- [ ] IAM-EXIT-2: Confirm no root-scope assignments remain.
+- [ ] IAM-EXIT-3: Confirm zero Unknown/orphaned principals at any scope.
+- [ ] IAM-EXIT-4: Confirm PIM is active and break-glass is documented.
+- [ ] IAM-EXIT-5: Retain audit evidence in `docs/evidence/azure-iam-remediation/` and link to `PULSER-IAM-GATE-01`.
+
+---
+
 *Last updated: 2026-04-11*
