@@ -371,12 +371,12 @@ exceptions: none
 # G2 retrieval eval: PASS all 4 agents (threshold adjusted to 0.60 for LLM judge calibration)
 # LLM judge (GPT-4.1, 1-10→0-1): groundedness 0.612-0.667, relevance 0.889-0.933
 # G6 monitoring: 13 metric alerts + 3 agent log alerts deployed (App Insights provisioned)
-# Agents synced: ask v6, authoring v5, livechat v6, transaction v5
+# Agents synced: pulser-odoo-ask v6, pulser-odoo-authoring v5, pulser-odoo-livechat v6, pulser-odoo-transaction v5
 # Evidence: ssot/agents/g2-knowledge-binding-evidence.yaml, agents/evals/odoo-copilot/results/
 
 agent_status:
 
-  ask-agent:
+  pulser-odoo-ask:
     version: 6
     stage: staging               # Promoted 2026-04-07 — all gates PASS
     gates:
@@ -394,7 +394,7 @@ agent_status:
       All gates PASS. Promoted internal → staging 2026-04-07.
       G2 groundedness 0.667 (7/10 avg on GPT-4.1 judge). Relevance 0.933.
 
-  authoring-agent:
+  pulser-odoo-authoring:
     version: 5
     stage: staging               # Promoted 2026-04-07 — all gates PASS
     gates:
@@ -412,7 +412,7 @@ agent_status:
       All gates PASS. Promoted internal → staging 2026-04-07.
       G2 groundedness 0.612 (lowest, expected for drafting agent). Relevance 0.889.
 
-  livechat-agent:
+  pulser-odoo-livechat:
     version: 6
     stage: staging               # Promoted 2026-04-07 — all gates PASS
     gates:
@@ -430,7 +430,7 @@ agent_status:
       All gates PASS. Promoted internal → staging 2026-04-07.
       G2 groundedness 0.639. Relevance 0.889. company_info KB collection contributing.
 
-  transaction-agent:
+  pulser-odoo-transaction:
     version: 5
     stage: staging               # Promoted 2026-04-07 — all gates PASS
     gates:

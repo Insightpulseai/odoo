@@ -1,3 +1,12 @@
+---
+name: aca-private-networking
+description: Close network isolation gap for ACA and PostgreSQL with VNet integration, private endpoints, and NSG rules
+version: "1.0"
+compatibility:
+  hosts: [github-copilot, claude-code, codex-cli, cursor, gemini-cli]
+tags: [security, networking, postgres, aca]
+---
+
 # aca-private-networking
 
 **Impact tier**: P0 -- Security Exposure

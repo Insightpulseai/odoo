@@ -61,7 +61,7 @@ planes:
     name: Business Systems
     description: Transactional ERP and workflow automation
     systems:
-      - odoo_ce_19
+      - odoo_ce_18
       - n8n
 
   - id: data_intelligence
@@ -95,7 +95,7 @@ planes:
 
 systems:
   sor:
-    name: Odoo CE 19
+    name: Odoo CE 18
     role: System of Record
     plane: business_systems
     repo: odoo
@@ -231,7 +231,7 @@ integration:
 repo_ownership:
   - repo: odoo
     plane: business_systems
-    description: Odoo CE 19, OCA modules, thin ipai_* bridges
+    description: Odoo CE 18, OCA modules, thin ipai_* bridges
   - repo: platform
     plane: governance_control
     description: Governance/control plane application surfaces

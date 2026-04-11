@@ -128,7 +128,7 @@ active_services:
     azure_type: Microsoft.App/containerApps
     criticality: critical
     always_on: true
-    purpose: Odoo CE 19 HTTP frontend (port 8069)
+    purpose: Odoo CE 18 HTTP frontend (port 8069)
     depends_on:
       - aca_env
       - postgres

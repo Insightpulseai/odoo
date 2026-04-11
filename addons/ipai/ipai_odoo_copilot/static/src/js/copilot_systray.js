@@ -1,9 +1,10 @@
 /** @odoo-module **/
 
-import { Component, useState, useRef, onMounted } from "@odoo/owl";
+import { Component, useState, useRef, onMounted, markup } from "@odoo/owl";
 import { registry } from "@web/core/registry";
 import { useService } from "@web/core/utils/hooks";
 import { rpc } from "@web/core/network/rpc";
+import { renderMarkdown } from "./copilot_markdown";
 
 /**
  * CopilotSystrayButton — systray icon that opens the copilot chat panel.
@@ -105,44 +106,28 @@ export class CopilotSystrayButton extends Component {
         this._scrollToBottom();
 
         try {
-            // Read file content for text-based files (< 32KB)
-            let fileContent = "";
+            // Upload attachment if present, get attachment_ids for server-side extraction
+            let attachment_ids = [];
             if (attachedFile) {
-                const textTypes = [
-                    "text/", "application/json", "application/xml",
-                    "application/csv", "text/csv",
-                ];
-                const isText = textTypes.some((t) => (attachedFile.type || "").startsWith(t))
-                    || /\.(txt|csv|json|xml|md|log|tsv)$/i.test(attachedFile.name);
-                if (isText && attachedFile.size < 32768) {
-                    fileContent = await attachedFile.text();
+                try {
+                    const uploadResult = await this._uploadAttachment(attachedFile);
+                    if (uploadResult && uploadResult.attachment_ids) {
+                        attachment_ids = uploadResult.attachment_ids;
+                    }
+                } catch (uploadErr) {
+                    console.warn("Attachment upload failed, sending as text reference:", uploadErr);
                 }
-            }
-
-            const attachmentRef = attachedFile
-                ? { filename: attachedFile.name, status: fileContent ? "content_read" : "local_only" }
-                : null;
-            if (attachedFile) {
                 this.state.attachedFile = null;
-            }
-
-            // Build prompt: embed file content when available
-            let fullPrompt = prompt;
-            if (attachedFile) {
-                fullPrompt = `[Attached: ${attachedFile.name}]`;
-                if (fileContent) {
-                    fullPrompt += `\nFile contents:\n${fileContent}\n\n`;
-                }
-                fullPrompt += prompt;
             }
 
             const context = this._getPageContext();
             const result = await rpc("/ipai/copilot/chat", {
-                prompt: fullPrompt,
+                prompt: attachedFile && attachment_ids.length === 0
+                    ? `[Attached: ${attachedFile.name}] ${prompt}` : prompt,
                 record_model: context.record_model,
                 record_id: context.record_id,
                 surface: context.surface || "erp",
-                attachment_ref: attachmentRef,
+                attachment_ids: attachment_ids.length > 0 ? attachment_ids : undefined,
             });
 
             if (result.blocked) {
@@ -190,17 +175,24 @@ export class CopilotSystrayButton extends Component {
     }
 
     async _uploadAttachment(file) {
-        const base64 = await new Promise((resolve) => {
-            const reader = new FileReader();
-            reader.onload = () => resolve(reader.result.split(",")[1]);
-            reader.readAsDataURL(file);
+        const formData = new FormData();
+        formData.append("files", file);
+        const response = await fetch("/ipai/copilot/upload", {
+            method: "POST",
+            body: formData,
         });
-        const result = await rpc("/api/pulser/attachments/upload", {
-            filename: file.name,
-            data: base64,
-            mime_type: file.type || "application/octet-stream",
-        });
-        return result;
+        if (!response.ok) {
+            throw new Error(`Upload failed: ${response.status}`);
+        }
+        return await response.json();
+    }
+
+    /**
+     * Render markdown content as safe HTML for OWL t-out directive.
+     */
+    renderMarkdownContent(content) {
+        if (!content) return "";
+        return markup(renderMarkdown(content));
     }
 
     clearMessages() {

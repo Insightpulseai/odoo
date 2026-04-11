@@ -1,3 +1,12 @@
+---
+name: azure-observability-baseline
+description: Wire Azure-native monitoring for Odoo on ACA with Application Insights, Log Analytics, and alert rules
+version: "1.0"
+compatibility:
+  hosts: [github-copilot, claude-code, codex-cli, cursor, gemini-cli]
+tags: [observability, monitoring, aca, odoo]
+---
+
 # azure-observability-baseline
 
 **Impact tier**: P1 -- Operational Readiness

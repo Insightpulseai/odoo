@@ -5,7 +5,7 @@ description: The 12-system architecture of the InsightPulse AI platform.
 
 # System topology
 
-The InsightPulse AI platform connects 12 systems. Odoo CE 19 is the transactional core. Supabase is the control plane. Azure provides runtime, edge, storage, and AI compute.
+The InsightPulse AI platform connects 12 systems. Odoo CE 18 is the transactional core. Supabase is the control plane. Azure provides runtime, edge, storage, and AI compute.
 
 ## Architecture diagram
 
@@ -26,7 +26,7 @@ The InsightPulse AI platform connects 12 systems. Odoo CE 19 is the transactiona
 │  ┌─────────────────────────────────────────────────────────────────────┐      │
 │  │              Azure Container Apps (Southeast Asia)                  │      │
 │  │  ┌─────────────┐   ┌─────────────┐   ┌─────────────┐              │      │
-│  │  │  Odoo CE 19  │   │     n8n     │   │   Relay     │              │      │
+│  │  │  Odoo CE 18  │   │     n8n     │   │   Relay     │              │      │
 │  │  │  (ERP SoR)   │◄─►│ (Automation)│◄─►│  (Webhook)  │              │      │
 │  │  │  Port 8069   │   │             │   │             │              │      │
 │  │  └──────┬───────┘   └──────┬──────┘   └─────────────┘              │      │
@@ -61,7 +61,7 @@ The InsightPulse AI platform connects 12 systems. Odoo CE 19 is the transactiona
 | 2 | **SAP Concur** | Expense management | Travel and expense data, receipts, approvals | SaaS |
 | 3 | **SAP Joule** | AI agent | Conversational AI for SAP ecosystem queries | SaaS |
 | 4 | **Slack** | Team communication | Channels, messages, ChatOps commands | SaaS |
-| 5 | **Odoo CE 19** | ERP system of record | Accounting, HR, CRM, inventory, purchases, sales | Azure Container Apps |
+| 5 | **Odoo CE 18** | ERP system of record | Accounting, HR, CRM, inventory, purchases, sales | Azure Container Apps |
 | 6 | **n8n** | Workflow automation | Event routing, scheduled jobs, webhook processing | Azure Container Apps |
 | 7 | **Relay** | Webhook gateway | Inbound webhook validation, routing, replay | Azure Container Apps |
 | 8 | **Supabase** | Control plane / SSOT | Auth, platform events, AI indexes, analytics serving, Edge Functions | Managed (external) |
@@ -74,7 +74,7 @@ The InsightPulse AI platform connects 12 systems. Odoo CE 19 is the transactiona
 
 | Container App | Public hostname | Port | Purpose |
 |---------------|-----------------|------|---------|
-| `ipai-odoo-dev-web` | `erp.insightpulseai.com` | 8069 | Odoo CE 19 ERP |
+| `ipai-odoo-dev-web` | `erp.insightpulseai.com` | 8069 | Odoo CE 18 ERP |
 | `ipai-auth-dev` | `auth.insightpulseai.com` | -- | Keycloak SSO |
 | `ipai-mcp-dev` | `mcp.insightpulseai.com` | -- | MCP coordination |
 | `ipai-ocr-dev` | `ocr.insightpulseai.com` | -- | Document OCR |

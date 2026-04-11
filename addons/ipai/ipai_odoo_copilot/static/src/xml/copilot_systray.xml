@@ -61,20 +61,20 @@
                         <!-- User Message -->
                         <div t-if="msg.role === 'user'"
                              class="o_ipai_copilot_message o_ipai_copilot_message_user mb-2 d-flex justify-content-end">
-                            <div class="o_ipai_copilot_bubble_user rounded-3 px-3 py-2 small">
+                            <div class="o_ipai_copilot_bubble_user px-3 py-2">
                                 <t t-esc="msg.content"/>
                             </div>
                         </div>
 
-                        <!-- Assistant Message -->
+                        <!-- Assistant Message (rendered as markdown) -->
                         <div t-if="msg.role === 'assistant'"
                              class="o_ipai_copilot_message o_ipai_copilot_message_assistant mb-2">
-                            <div class="o_ipai_copilot_bubble_assistant rounded-3 px-3 py-2 small"
+                            <div class="o_ipai_copilot_bubble_assistant px-3 py-2"
                                  style="max-width: 90%;">
-                                <div class="o_ipai_copilot_content" t-esc="msg.content"/>
+                                <div class="o_ipai_copilot_content"
+                                     t-out="renderMarkdownContent(msg.content)"/>
                                 <div t-if="msg.latency_ms"
-                                     class="text-muted mt-1"
-                                     style="font-size: 0.7rem;">
+                                     class="o_ipai_copilot_latency mt-1">
                                     <t t-esc="msg.latency_ms"/>ms
                                 </div>
                             </div>

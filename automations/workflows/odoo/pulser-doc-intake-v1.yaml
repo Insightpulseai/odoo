@@ -1,0 +1,158 @@
+workflow_id: pulser-doc-intake-v1
+version: 1
+status: draft
+pattern: sequential
+purpose: >
+  Intake uploaded financial/service documents, classify them, extract structured fields,
+  validate them against Odoo context and master data, and either create a safe draft
+  transaction or route to review.
+
+triggers:
+  - type: odoo_attachment_uploaded
+  - type: odoo_documents_intake_drop
+  - type: email_ingest_attachment
+  - type: manual_reprocess_request
+
+inputs:
+  required:
+    - artifact_ref
+    - filename
+    - mime_type
+    - source_channel
+    - active_company_id
+  optional:
+    - active_branch_id
+    - active_user_id
+    - active_model
+    - active_record_id
+    - linked_purchase_order_id
+    - linked_sale_order_id
+    - linked_project_id
+    - linked_employee_id
+
+variables:
+  artifact_class: null
+  classification_confidence: null
+  extracted_fields: {}
+  active_context: {}
+  matching_results: {}
+  validation_results: {}
+  safe_action: null
+  blocker_code: null
+  created_record_ref: null
+  evidence_pack: {}
+
+output_schema:
+  name: pulser_doc_intake_result
+  ref: agents/schemas/workflow/pulser/pulser_doc_intake_result.schema.json
+
+nodes:
+  - id: read_active_context
+    type: agent
+    agent: pulser-odoo-transaction
+    task: >
+      Resolve active company, branch, user, current model/record, and linked objects.
+      Normalize company context before any accounting-direction decision.
+    save_output_as: active_context
+
+  - id: classify_artifact
+    type: agent
+    agent: pulser-odoo-ask
+    task: >
+      Classify the artifact into one of the supported finance/service document families.
+      Do not guess if the direction is ambiguous; return DOCUMENT_AMBIGUOUS instead.
+    response_format: json_schema
+    save_output_as: artifact_class
+
+  - id: extract_fields
+    type: agent
+    agent: pulser-odoo-authoring
+    task: >
+      Extract structured fields from the document or payload:
+      partner, dates, totals, tax, withholding, line items, reference numbers,
+      and any issuer/recipient cues.
+    response_format: json_schema
+    save_output_as: extracted_fields
+
+  - id: resolve_master_data
+    type: logic
+    expression: >
+      Resolve partner, employee, journal, tax mapping, PO/SO/project linkage
+      using the active context and extracted fields.
+    save_output_as: matching_results
+
+  - id: run_validations
+    type: agent
+    agent: pulser-odoo-transaction
+    task: >
+      Run deterministic checks:
+      duplicate detection, partner/employee match, company-context consistency,
+      journal availability, tax mapping completeness, PO match if present,
+      totals arithmetic, and confidence band assignment.
+    response_format: json_schema
+    save_output_as: validation_results
+
+  - id: choose_safe_action
+    type: logic
+    expression: >
+      If duplicate exists -> block_and_link_existing_record.
+      Else if required master data missing -> route_for_master_data_resolution.
+      Else if confidence_band in ["LOW","BLOCKED"] -> show_structured_review_card.
+      Else map scenario family to safe action.
+    save_output_as: safe_action
+
+  - id: create_draft_if_allowed
+    type: if_else
+    condition: >
+      Local.safe_action = "create_draft_customer_invoice" ||
+      Local.safe_action = "create_draft_vendor_bill" ||
+      Local.safe_action = "create_expense" ||
+      Local.safe_action = "create_payment_or_route_to_reconcile"
+    branches:
+      true:
+        next: invoke_odoo_transaction
+      false:
+        next: persist_evidence
+
+  - id: invoke_odoo_transaction
+    type: agent
+    agent: pulser-odoo-transaction
+    task: >
+      Create the allowed draft object only. Never post automatically.
+      Use idempotency key before creating anything.
+    save_output_as: created_record_ref
+
+  - id: persist_evidence
+    type: data_transformation
+    action: >
+      Persist raw artifact ref, extracted JSON, checks run, chosen action,
+      blocker state, and created record ref into evidence storage.
+    save_output_as: evidence_pack
+
+  - id: finish
+    type: data_transformation
+    action: >
+      Emit pulser_doc_intake_result from artifact_class, extracted_fields,
+      validation_results, safe_action, created_record_ref, and evidence_pack.
+
+decision_policies:
+  duplicate_hard_block: true
+  silent_posting_allowed: false
+  idempotency_required: true
+  ambiguity_requires_review: true
+
+failure_handling:
+  on_timeout: resume_or_show_final_status
+  on_connection_loss: lookup_existing_job_by_idempotency_key
+  on_odoo_write_failure: route_for_master_data_resolution
+
+observability:
+  emit_events:
+    - doc_intake_started
+    - doc_classified
+    - extraction_completed
+    - validations_completed
+    - draft_created
+    - review_required
+    - blocked_duplicate
+    - workflow_failed

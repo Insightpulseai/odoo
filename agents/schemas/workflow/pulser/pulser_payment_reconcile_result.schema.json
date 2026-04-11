@@ -1,0 +1,95 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "pulser_payment_reconcile_result",
+  "title": "Pulser Payment Reconcile Result",
+  "description": "Structured output from the pulser-payment-reconcile-v1 workflow. Captures payment classification, open item matching, and reconciliation action.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "payment_class",
+    "checks_run",
+    "safe_action",
+    "status"
+  ],
+  "properties": {
+    "payment_class": {
+      "type": "string",
+      "enum": [
+        "PAYMENT_CUSTOMER",
+        "PAYMENT_VENDOR",
+        "BANK_RECONCILIATION_EVENT",
+        "BATCH_PAYMENT",
+        "DOCUMENT_AMBIGUOUS"
+      ],
+      "description": "Classified payment event type."
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "matched",
+        "partial_match",
+        "review_required",
+        "blocked"
+      ],
+      "description": "Reconciliation match status."
+    },
+    "extracted_payment_data": {
+      "type": "object",
+      "description": "Fields extracted from the payment proof or statement line.",
+      "properties": {
+        "partner_name": { "type": "string" },
+        "amount": { "type": "number" },
+        "currency_code": { "type": "string" },
+        "payment_date": { "type": "string", "format": "date" },
+        "payment_reference": { "type": "string" },
+        "bank_account_hint": { "type": "string" },
+        "invoice_references": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      }
+    },
+    "checks_run": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Validation checks executed during reconciliation matching."
+    },
+    "open_item_matches": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "model": { "type": "string" },
+          "id": { "type": "integer" },
+          "name": { "type": "string" },
+          "partner_id": { "type": "integer" },
+          "amount_residual": { "type": "number" },
+          "currency_id": { "type": "integer" },
+          "date": { "type": "string", "format": "date" },
+          "match_confidence": { "type": "string", "enum": ["deterministic", "high", "medium", "low"] }
+        }
+      },
+      "description": "Open invoices/bills/lines that match the payment data."
+    },
+    "safe_action": {
+      "type": "string",
+      "enum": [
+        "create_payment_or_route_to_reconcile",
+        "open_reconciliation_with_preselected_match",
+        "create_or_update_batch_payment",
+        "show_structured_review_card",
+        "block_and_link_existing_record"
+      ],
+      "description": "The determined safe reconciliation action."
+    },
+    "write_off_candidate": {
+      "type": "object",
+      "description": "If partial match, the proposed write-off details.",
+      "properties": {
+        "amount": { "type": "number" },
+        "account_id": { "type": "integer" },
+        "reason": { "type": "string" }
+      }
+    }
+  }
+}

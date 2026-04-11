@@ -1,3 +1,12 @@
+---
+name: azure-pg-ha-dr
+description: Close PostgreSQL HA and disaster-recovery gaps with zone-redundant failover, geo-backup, and documented RPO/RTO
+version: "1.0"
+compatibility:
+  hosts: [github-copilot, claude-code, codex-cli, cursor, gemini-cli]
+tags: [postgres, security, governance, odoo]
+---
+
 # azure-pg-ha-dr
 
 **Impact tier**: P0 -- Data Loss

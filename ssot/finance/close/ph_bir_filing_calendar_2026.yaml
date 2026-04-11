@@ -1,0 +1,50 @@
+version: 2026-04-10
+country_code: PH
+calendar_year: 2026
+workflow:
+  steps:
+    - step_code: PREPARATION
+      label: Prep and file request
+      internal_target_rule: bir_deadline_minus_4_business_days
+      responsible_role: Finance Supervisor
+    - step_code: REPORT_APPROVAL
+      label: Report approval
+      internal_target_rule: bir_deadline_minus_2_business_days
+      responsible_role: Senior Finance Manager
+    - step_code: PAYMENT_APPROVAL
+      label: Payment approval
+      internal_target_rule: bir_deadline_minus_1_business_day
+      responsible_role: Finance Director
+    - step_code: FILING_AND_PAYMENT
+      label: Filing and payment
+      internal_target_rule: on_or_before_bir_deadline
+      responsible_role: Finance Supervisor
+
+roles:
+  Finance Supervisor: BOM
+  Senior Finance Manager: RIM
+  Finance Director: CKVC
+
+filings:
+  - {form_code: 1601-C, covered_period: "Dec 2025", bir_deadline: "2026-01-15"}
+  - {form_code: 1601-C_0619-E, covered_period: "Jan 2026", bir_deadline: "2026-02-10"}
+  - {form_code: 1601-C_0619-E, covered_period: "Feb 2026", bir_deadline: "2026-03-10"}
+  - {form_code: 1601-C_0619-E, covered_period: "Mar 2026", bir_deadline: "2026-04-10"}
+  - {form_code: 1601-C_0619-E, covered_period: "Apr 2026", bir_deadline: "2026-05-10"}
+  - {form_code: 1601-C_0619-E, covered_period: "May 2026", bir_deadline: "2026-06-10"}
+  - {form_code: 1601-C_0619-E, covered_period: "Jun 2026", bir_deadline: "2026-07-10"}
+  - {form_code: 1601-C_0619-E, covered_period: "Jul 2026", bir_deadline: "2026-08-10"}
+  - {form_code: 1601-C_0619-E, covered_period: "Aug 2026", bir_deadline: "2026-09-10"}
+  - {form_code: 1601-C_0619-E, covered_period: "Sep 2026", bir_deadline: "2026-10-12"}
+  - {form_code: 1601-C_0619-E, covered_period: "Oct 2026", bir_deadline: "2026-11-10"}
+  - {form_code: 1601-C_0619-E, covered_period: "Nov 2026", bir_deadline: "2026-12-10"}
+  - {form_code: 1601-EQ, covered_period: "Q4 2025", bir_deadline: "2026-01-30"}
+  - {form_code: 1702-RT_EX, covered_period: "Annual 2025", bir_deadline: "2026-04-15"}
+  - {form_code: 2550Q, covered_period: "Q1 2026", bir_deadline: "2026-04-27"}
+  - {form_code: 1601-EQ, covered_period: "Q1 2026", bir_deadline: "2026-04-30"}
+  - {form_code: 2550Q, covered_period: "Q2 2026", bir_deadline: "2026-07-27"}
+  - {form_code: 1702Q, covered_period: "Q2 2026", bir_deadline: "2026-05-30"}
+  - {form_code: 1601-EQ, covered_period: "Q2 2026", bir_deadline: "2026-07-31"}
+  - {form_code: 2550Q, covered_period: "Q3 2026", bir_deadline: "2026-10-26"}
+  - {form_code: 1702Q, covered_period: "Q3 2026", bir_deadline: "2026-08-29"}
+  - {form_code: 1601-EQ, covered_period: "Q3 2026", bir_deadline: "2026-10-30"}

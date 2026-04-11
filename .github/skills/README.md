@@ -41,6 +41,7 @@ and stop.
 | `azure-pg-ha-dr` | PG HA, backup retention, geo-backup, RPO/RTO |
 | `entra-mfa-ca-hardening` | MFA enforcement, Conditional Access, P1 path |
 | `aca-private-networking` | NSGs, private endpoints, PG subnet restriction |
+| `azure-postgres-private-networking` | PG public access, VNet integration, TLS, PgBouncer |
 
 ### P1 -- Operational Readiness
 
@@ -50,6 +51,13 @@ and stop.
 | `odoo-image-supply-chain` | ACR build, vuln scanning, image signing |
 | `odoo-release-promotion` | dev/staging/prod gates, migration verify, rollback |
 | `azure-policy-guardrails` | Require tags, deny public PG, require KV |
+| `azure-foundry-architecture` | Foundry SDK v2, agent service, model deployments, tool binding |
+| `azure-aca-runtime` | Scaling, health probes, managed identity, revision management |
+| `azure-ai-evals-governance` | Eval pipelines, content safety, monitoring, RAI gates |
+| `microsoft-learn-research` | Meta-skill: MCP query patterns, citation, escalation |
+| `pulser-odoo-architecture` | Architecture lane and boundary definitions for Pulser for Odoo |
+| `pulser-odoo-deploy` | Controlled deployment of Pulser MVP to existing Azure runtime |
+| `pulser-odoo-foundry-runtime` | Foundry agent config, naming, model baseline, tool governance |
 
 ### P2 -- Quality / Accuracy
 
@@ -57,6 +65,15 @@ and stop.
 |-------|-----|
 | `odoo-copilot-evals` | Expand from 2 to 50+ test cases, adversarial, regression |
 | `service-matrix-truth` | Remove nginx stubs from active inventory, align reality |
+| `azure-foundry-grounding` | RAG/grounding config, KB bindings, retrieval eval, topic scope |
+
+### Pulser for Odoo -- Product Release
+
+| Skill | Purpose |
+| ----- | ------- |
+| `pulser-odoo-architecture` | Architecture lane and boundary definitions |
+| `pulser-odoo-deploy` | Controlled MVP deployment to existing Azure runtime |
+| `pulser-odoo-foundry-runtime` | Foundry agent config, naming, and governance |
 
 ## MCP Server Configuration
 

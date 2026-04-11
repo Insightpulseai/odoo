@@ -6,9 +6,9 @@ Evaluates groundedness (is the response grounded in KB content?) and
 relevance (is the retrieved content relevant to the query?) for each agent.
 
 Usage:
-    python scripts/foundry/run_retrieval_eval.py --agent ask-agent
+    python scripts/foundry/run_retrieval_eval.py --agent pulser-odoo-ask
     python scripts/foundry/run_retrieval_eval.py --all
-    python scripts/foundry/run_retrieval_eval.py --agent ask-agent --dry-run
+    python scripts/foundry/run_retrieval_eval.py --agent pulser-odoo-ask --dry-run
 
 SSOT: ssot/agents/agent-factory-lifecycle.yaml (G2_knowledge gate)
 SDK:  azure-ai-projects >= 2.0.0
@@ -980,7 +980,7 @@ def main():
         description="Run G2 retrieval evaluation (groundedness + relevance) for Foundry agents"
     )
     group = parser.add_mutually_exclusive_group(required=True)
-    group.add_argument("--agent", type=str, help="Agent name (e.g. ask-agent)")
+    group.add_argument("--agent", type=str, help="Agent name (e.g. pulser-odoo-ask)")
     group.add_argument("--all", action="store_true", help="Run for all agents with retrieval datasets")
     parser.add_argument("--dry-run", action="store_true",
                         help="Show what would run without calling Foundry")

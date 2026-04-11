@@ -113,9 +113,9 @@ subdomains:
   - name: erp
     type: CNAME
     target: ipai-fd-dev-ep-fnh4e8d6gtdhc8ax.z03.azurefd.net
-    service: odoo_ce_19
+    service: odoo_ce_18
     health_check: /web/login
-    owner_system: "Odoo CE 19.0"
+    owner_system: "Odoo CE 18.0"
     tls: azure_front_door
     lifecycle: active
     status: active
@@ -307,9 +307,9 @@ subdomains:
   - name: erp-dev
     type: CNAME
     target: ipai-fd-dev-ep-fnh4e8d6gtdhc8ax.z03.azurefd.net
-    service: odoo_ce_19_dev
+    service: odoo_ce_18_dev
     health_check: /web/login
-    owner_system: "Odoo CE 19.0 (dev)"
+    owner_system: "Odoo CE 18.0 (dev)"
     tls: azure_front_door
     lifecycle: planned
     status: planned
@@ -326,9 +326,9 @@ subdomains:
   - name: erp-staging
     type: CNAME
     target: ipai-fd-dev-ep-fnh4e8d6gtdhc8ax.z03.azurefd.net
-    service: odoo_ce_19_staging
+    service: odoo_ce_18_staging
     health_check: /web/login
-    owner_system: "Odoo CE 19.0 (staging)"
+    owner_system: "Odoo CE 18.0 (staging)"
     tls: azure_front_door
     lifecycle: planned
     status: planned
@@ -413,8 +413,8 @@ subdomains:
   - name: erp-azure
     type: CNAME
     target: ipai-fd-dev-ep-fnh4e8d6gtdhc8ax.z03.azurefd.net
-    service: odoo_ce_19
-    owner_system: "Odoo CE 19.0 (Azure-specific alias)"
+    service: odoo_ce_18
+    owner_system: "Odoo CE 18.0 (Azure-specific alias)"
     tls: azure_front_door
     lifecycle: active
     status: active
@@ -564,9 +564,9 @@ subdomains:
   - name: stage-erp
     type: CNAME
     target: ipai-fd-dev-ep-fnh4e8d6gtdhc8ax.z03.azurefd.net
-    service: odoo_ce_19_staging
+    service: odoo_ce_18_staging
     health_check: /web/login
-    owner_system: "Odoo CE 19.0 (staging)"
+    owner_system: "Odoo CE 18.0 (staging)"
     tls: azure_front_door
     lifecycle: planned
     status: planned

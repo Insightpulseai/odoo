@@ -1,3 +1,12 @@
+---
+name: entra-mfa-ca-hardening
+description: Deploy Entra ID MFA enforcement and Conditional Access policies to close the identity-security gap before go-live
+version: "1.0"
+compatibility:
+  hosts: [github-copilot, claude-code, codex-cli, cursor, gemini-cli]
+tags: [security, governance, identity, odoo]
+---
+
 # entra-mfa-ca-hardening
 
 **Impact tier**: P0 -- Security Exposure

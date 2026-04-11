@@ -64,7 +64,7 @@
 | Container Apps | Infrastructure | Azure-native |
 | Key Vault | Infrastructure | Azure-native |
 | Container Registry | Infrastructure | Azure-native |
-| Odoo CE 19 | ERP | ACA-hosted |
+| Odoo CE 18 | ERP | ACA-hosted |
 | AI Foundry | AI | Azure-native |
 | Azure OpenAI | AI | Azure-native |
 | Document Intelligence | AI | Azure-native |
@@ -90,7 +90,7 @@ Supabase, n8n, Plane, Shelf, standalone CRM, Keycloak. See `RETIRED_SERVICES.md`
 | **Entra ID** | SSO/OAuth into Odoo and all Azure apps ([Odoo 18 native](https://www.odoo.com/documentation/19.0/applications/general/users/azure.html)) | Replace Odoo's internal authorization model (groups, record rules, finance permissions) |
 | **Foundry Agent Service** | Pulser agent runtime, reasoning, orchestration, tool calls ([Azure AI Foundry](https://learn.microsoft.com/azure/ai-foundry/agents/overview)) | Own transactional state (invoices, approvals, expenses, tickets stay in Odoo) |
 | **Document Intelligence** | OCR/document extraction for invoices, receipts, BIR forms, vendor bills ([Azure Doc Intel](https://learn.microsoft.com/azure/ai-services/document-intelligence/overview)) | Replace Odoo's document management (Odoo stores the record, Doc Intel extracts the data) |
-| **Odoo CE 19** | Transactional SoR: approvals, accounting, expenses, documents, projects | Reason about data (that's Foundry/Pulser) or extract from images (that's Doc Intel) |
+| **Odoo CE 18** | Transactional SoR: approvals, accounting, expenses, documents, projects | Reason about data (that's Foundry/Pulser) or extract from images (that's Doc Intel) |
 
 ### Document Intelligence Flow
 

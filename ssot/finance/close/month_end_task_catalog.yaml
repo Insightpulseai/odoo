@@ -1,0 +1,211 @@
+version: 2026-04-10
+company_scope: default
+calendar_basis: business_days
+stages:
+  - preparation
+  - review
+  - approval
+
+task_categories:
+  - INITIAL_AND_COMPLIANCE
+  - ACCRUALS_AND_AMORTIZATION
+  - WIP
+  - FINAL_ADJUSTMENTS_AND_CLOSE
+  - BIR_AND_TAX
+  - REPORTING_AND_WORKING_CAPITAL
+
+tasks:
+  - task_code: CLOSE.PAYROLL.PROVISION
+    category: INITIAL_AND_COMPLIANCE
+    name: Process and record payroll, final pay, SL conversions, and early retirement accrual
+    stages:
+      preparation: {owner_code: RIM, offset_days_from_deadline: -3, effort_days: 1.0}
+      review: {owner_code: RIM, offset_days_from_deadline: -1, effort_days: 0.5}
+      approval: {owner_code: CKVC, offset_days_from_deadline: 0, effort_days: 0.5}
+    domain: {primary: finance, secondary: payroll}
+    odoo_bindings: {models: [hr.payslip, account.move]}
+    dependencies: []
+
+  - task_code: CLOSE.TAX.MONTHLY_PROVISION
+    category: INITIAL_AND_COMPLIANCE
+    name: Calculate and record monthly tax provision and PPB provision
+    stages:
+      preparation: {owner_code: RIM, offset_days_from_deadline: -3, effort_days: 1.0}
+      review: {owner_code: RIM, offset_days_from_deadline: -1, effort_days: 0.5}
+      approval: {owner_code: CKVC, offset_days_from_deadline: 0, effort_days: 0.5}
+    domain: {primary: finance, secondary: tax}
+    odoo_bindings: {models: [account.move, account.tax]}
+    dependencies: [CLOSE.PAYROLL.PROVISION]
+
+  - task_code: CLOSE.VAT.OUTPUT_REPORT
+    category: INITIAL_AND_COMPLIANCE
+    name: Compile, review, and record monthly VAT report initial and additional entries
+    stages:
+      preparation: {owner_code: JAP, offset_days_from_deadline: -3, effort_days: 1.0}
+      review: {owner_code: JPAL, offset_days_from_deadline: -1, effort_days: 0.5}
+      approval: {owner_code: RIM, offset_days_from_deadline: 0, effort_days: 0.5}
+    domain: {primary: finance, secondary: vat}
+    odoo_bindings: {models: [account.report, account.move, account.tax]}
+    dependencies: [CLOSE.TAX.MONTHLY_PROVISION]
+
+  - task_code: CLOSE.VAT.INPUT_REPORT
+    category: INITIAL_AND_COMPLIANCE
+    name: Compile and record monthly input VAT entries and cumulative VAT activity
+    stages:
+      preparation: {owner_code: JLI, offset_days_from_deadline: -3, effort_days: 1.0}
+      review: {owner_code: JPAL, offset_days_from_deadline: -1, effort_days: 0.5}
+      approval: {owner_code: RIM, offset_days_from_deadline: 0, effort_days: 0.5}
+    domain: {primary: finance, secondary: vat}
+    odoo_bindings: {models: [account.report, account.move, account.tax]}
+    dependencies: [CLOSE.VAT.OUTPUT_REPORT]
+
+  - task_code: CLOSE.CA.LIQUIDATIONS.PROJECT
+    category: INITIAL_AND_COMPLIANCE
+    name: Process and record cash advance liquidations for project-related expenses
+    stages:
+      preparation: {owner_code: LAS, offset_days_from_deadline: -3, effort_days: 1.0}
+      review: {owner_code: RIM, offset_days_from_deadline: -1, effort_days: 0.5}
+      approval: {owner_code: CKVC, offset_days_from_deadline: 0, effort_days: 0.5}
+    domain: {primary: finance, secondary: cash_advance}
+    odoo_bindings: {models: [hr.expense, account.move, project.project]}
+    dependencies: []
+
+  - task_code: CLOSE.CA.LIQUIDATIONS.EMPLOYEE
+    category: INITIAL_AND_COMPLIANCE
+    name: Process and record cash advance liquidations submitted by employees
+    stages:
+      preparation: {owner_code: RMQB, offset_days_from_deadline: -3, effort_days: 1.0}
+      review: {owner_code: RIM, offset_days_from_deadline: -1, effort_days: 0.5}
+      approval: {owner_code: CKVC, offset_days_from_deadline: 0, effort_days: 0.5}
+    domain: {primary: finance, secondary: employee_expense}
+    odoo_bindings: {models: [hr.expense, hr.expense.sheet, account.move]}
+    dependencies: []
+
+  - task_code: CLOSE.ACCRUAL.CONSULTING_FEES
+    category: ACCRUALS_AND_AMORTIZATION
+    name: Record accruals for consultancy fees and routine general expense accruals
+    stages:
+      preparation: {owner_code: RIM, offset_days_from_deadline: -2, effort_days: 1.0}
+      review: {owner_code: CKVC, offset_days_from_deadline: -1, effort_days: 0.5}
+      approval: {owner_code: CKVC, offset_days_from_deadline: -1, effort_days: 0.5}
+    domain: {primary: finance, secondary: accruals}
+    odoo_bindings: {models: [account.move, account.account]}
+    dependencies: []
+
+  - task_code: CLOSE.ACCRUAL.MGMT_ROYALTY
+    category: ACCRUALS_AND_AMORTIZATION
+    name: Accrue monthly management and royalty fees, consulting fees, and innovation funds
+    stages:
+      preparation: {owner_code: BOM, offset_days_from_deadline: -3, effort_days: 1.0}
+      review: {owner_code: RIM, offset_days_from_deadline: -1, effort_days: 0.5}
+      approval: {owner_code: CKVC, offset_days_from_deadline: 0, effort_days: 0.5}
+    domain: {primary: finance, secondary: accruals}
+    odoo_bindings: {models: [account.move, account.account]}
+    dependencies: []
+
+  - task_code: CLOSE.REVENUE.CLIENT_BILLINGS
+    category: ACCRUALS_AND_AMORTIZATION
+    name: Recognize revenue and billable costs based on client contracts and project status
+    stages:
+      preparation: {owner_code: JPAL, offset_days_from_deadline: -3, effort_days: 1.0}
+      review: {owner_code: BOM, offset_days_from_deadline: -1, effort_days: 0.5}
+      approval: {owner_code: CKVC, offset_days_from_deadline: 0, effort_days: 0.5}
+    domain: {primary: services, secondary: ppm_revenue}
+    odoo_bindings: {models: [sale.order, account.move, project.project, account.analytic.account]}
+    dependencies: [CLOSE.WIP.OOP_RECON]
+
+  - task_code: CLOSE.WIP.OOP_RECON
+    category: WIP
+    name: Reconcile and reclassify costs between billable WIP and internal OOP
+    stages:
+      preparation: {owner_code: JPAL, offset_days_from_deadline: -2, effort_days: 1.0}
+      review: {owner_code: RIM, offset_days_from_deadline: -1, effort_days: 0.5}
+      approval: {owner_code: CKVC, offset_days_from_deadline: 0, effort_days: 0.5}
+    domain: {primary: services, secondary: ppm_wip}
+    odoo_bindings: {models: [project.project, account.analytic.account, account.move, sale.order]}
+    dependencies: []
+
+  - task_code: CLOSE.REVERSALS.PRIOR_PERIOD
+    category: FINAL_ADJUSTMENTS_AND_CLOSE
+    name: Reverse prior month accruals and reclassifications
+    stages:
+      preparation: {owner_code: RIM, offset_days_from_deadline: -1, effort_days: 1.0}
+      review: {owner_code: BOM, offset_days_from_deadline: 0, effort_days: 0.5}
+      approval: {owner_code: CKVC, offset_days_from_deadline: 0, effort_days: 0.5}
+    domain: {primary: finance, secondary: reversals}
+    odoo_bindings: {models: [account.move]}
+    dependencies: [CLOSE.ACCRUAL.CONSULTING_FEES, CLOSE.ACCRUAL.MGMT_ROYALTY]
+
+  - task_code: CLOSE.REPORT.FLASH
+    category: FINAL_ADJUSTMENTS_AND_CLOSE
+    name: Prepare Flash, Wins and Losses, and Revenue reports
+    stages:
+      preparation: {owner_code: BOM, offset_days_from_deadline: 0, effort_days: 1.0}
+      review: {owner_code: RIM, offset_days_from_deadline: 1, effort_days: 0.5}
+      approval: {owner_code: CKVC, offset_days_from_deadline: 1, effort_days: 0.5}
+    domain: {primary: finance, secondary: reporting}
+    odoo_bindings: {models: [account.report, project.project]}
+    dependencies: [CLOSE.REVENUE.CLIENT_BILLINGS, CLOSE.WIP.OOP_RECON, CLOSE.REVERSALS.PRIOR_PERIOD]
+
+  - task_code: CLOSE.REPORT.AR_AGING
+    category: FINAL_ADJUSTMENTS_AND_CLOSE
+    name: Prepare AR aging report for working capital submission
+    stages:
+      preparation: {owner_code: LAS, offset_days_from_deadline: -1, effort_days: 1.0}
+      review: {owner_code: BOM, offset_days_from_deadline: 1, effort_days: 0.5}
+      approval: {owner_code: CKVC, offset_days_from_deadline: 1, effort_days: 0.5}
+    domain: {primary: finance, secondary: working_capital}
+    odoo_bindings: {models: [account.report]}
+    dependencies: [CLOSE.REVENUE.CLIENT_BILLINGS]
+
+  - task_code: CLOSE.REPORT.AP_AGING
+    category: FINAL_ADJUSTMENTS_AND_CLOSE
+    name: Prepare AP aging report with detailed status per invoice
+    stages:
+      preparation: {owner_code: JLI, offset_days_from_deadline: -1, effort_days: 1.0}
+      review: {owner_code: LAS, offset_days_from_deadline: 0, effort_days: 0.5}
+      approval: {owner_code: RIM, offset_days_from_deadline: 0, effort_days: 0.5}
+    domain: {primary: finance, secondary: payables}
+    odoo_bindings: {models: [account.report]}
+    dependencies: []
+
+  - task_code: CLOSE.RECLASS.GL
+    category: FINAL_ADJUSTMENTS_AND_CLOSE
+    name: Process GL reclassifications between accounts and expense categories
+    stages:
+      preparation: {owner_code: LAS, offset_days_from_deadline: -1, effort_days: 1.0}
+      review: {owner_code: RIM, offset_days_from_deadline: 0, effort_days: 0.5}
+      approval: {owner_code: CKVC, offset_days_from_deadline: 0, effort_days: 0.5}
+    domain: {primary: finance, secondary: reclass}
+    odoo_bindings: {models: [account.move, account.account]}
+    dependencies: []
+
+  - task_code: CLOSE.JOB.TRANSFERS
+    category: FINAL_ADJUSTMENTS_AND_CLOSE
+    name: Adjust costs or revenues between internal project codes or job numbers
+    stages:
+      preparation: {owner_code: JAP, offset_days_from_deadline: -1, effort_days: 1.0}
+      review: {owner_code: JPAL, offset_days_from_deadline: 0, effort_days: 0.5}
+      approval: {owner_code: CKVC, offset_days_from_deadline: 0, effort_days: 0.5}
+    domain: {primary: services, secondary: project_reclass}
+    odoo_bindings: {models: [project.project, account.analytic.account, account.move]}
+    dependencies: [CLOSE.WIP.OOP_RECON]
+
+  - task_code: CLOSE.TB.REVIEW
+    category: FINAL_ADJUSTMENTS_AND_CLOSE
+    name: Final trial balance review
+    stages:
+      review: {owner_code: RIM, offset_days_from_deadline: 0, effort_days: 0.5}
+      approval: {owner_code: CKVC, offset_days_from_deadline: 0, effort_days: 0.5}
+    domain: {primary: finance, secondary: close_signoff}
+    odoo_bindings: {models: [account.report]}
+    dependencies: [CLOSE.REPORT.FLASH, CLOSE.REPORT.AR_AGING, CLOSE.REPORT.AP_AGING, CLOSE.RECLASS.GL]
+
+  - task_code: CLOSE.TB.SIGNOFF_AND_FILING
+    category: FINAL_ADJUSTMENTS_AND_CLOSE
+    name: Final trial balance sign-off and filing
+    stages:
+      approval: {owner_code: CKVC, offset_days_from_deadline: 0, effort_days: 0.5}
+    domain: {primary: finance, secondary: close_signoff}
+    odoo_bindings: {models: [account.report, documents.document]}
+    dependencies: [CLOSE.TB.REVIEW]

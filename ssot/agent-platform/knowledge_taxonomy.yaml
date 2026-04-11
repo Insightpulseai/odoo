@@ -1,0 +1,544 @@
+# =============================================================================
+# Knowledge Taxonomy — Agent Platform SSOT
+# =============================================================================
+# Classifies knowledge into authoritative categories, defines scope boundaries,
+# enumerates deferred topics, and provides evaluation seeds for knowledge
+# quality assessment.
+#
+# Cross-references:
+#   - ssot/agent-platform/knowledge_sources.yaml   (source IDs and precedence)
+#   - ssot/agent-platform/learn_mcp_topic_map.yaml (topic_key definitions)
+#   - ssot/agent-platform/skills_manifest.yaml     (skill knowledge dependencies)
+#   - ssot/agents/knowledge-bindings.yaml          (collection-to-agent bindings)
+#
+# Usage rules:
+#   - canonical_microsoft_learn: agent MUST query before closing related gaps
+#   - repo_local_ssot: always wins over any external source
+#   - deferred_optional: agent MUST NOT introduce unless SSOT requires
+#   - evaluation_seeds: use for Foundry eval suite construction (odoo-copilot-evals)
+# =============================================================================
+
+version: 1
+artifact: ssot/agent-platform/knowledge_taxonomy.yaml
+source_of_truth: true
+profile: insightpulseai-knowledge-taxonomy
+
+purpose:
+  description: knowledge_classification_and_scope_boundaries_for_agent_platform
+
+# ---------------------------------------------------------------------------
+# Taxonomy categories
+# ---------------------------------------------------------------------------
+
+taxonomy:
+
+  # ── Category 1: Canonical Microsoft Learn ─────────────────────────────────
+  # Topics that are MVP-critical and MUST be queried via Learn MCP before
+  # closing any related gap. Ordered by query priority within each skill.
+
+  canonical_microsoft_learn:
+    description: >
+      Official Microsoft Learn topics required for architecture alignment.
+      Agents MUST query the Learn MCP server for these topics as step 2 of
+      every gap-closure workflow (after repo evidence inspection, before patching).
+    mcp_server: https://learn.microsoft.com/api/mcp
+    query_discipline: >
+      Use microsoft_docs_search() for breadth. Use microsoft_docs_fetch() for
+      depth on known URLs from fallback_urls. Use microsoft_code_sample_search()
+      with language="python" for implementation patterns.
+
+    mvp_critical_topics:
+      # topic_key values from learn_mcp_topic_map.yaml
+      - topic_key: foundry_overview
+        skills: [azure-foundry-architecture]
+        rationale: ipai-copilot project is the central agent runtime
+
+      - topic_key: foundry_agent_service
+        skills: [azure-foundry-architecture, odoo-copilot-evals]
+        rationale: All IPAI agents registered via Foundry Agent Service SDK v2
+
+      - topic_key: foundry_iq
+        skills: [azure-foundry-architecture]
+        rationale: ipai-knowledge-index grounding via file_search + Bing tools
+
+      - topic_key: rag_design
+        skills: [azure-foundry-architecture, odoo-copilot-evals]
+        rationale: Hybrid retrieval on ipai-knowledge-index, text-embedding-3-small
+
+      - topic_key: ai_search_vector_search
+        skills: [azure-foundry-architecture]
+        rationale: srch-ipai-dev / ipai-knowledge-index is live and in production
+
+      - topic_key: azure_container_apps
+        skills: [aca-private-networking, odoo-image-supply-chain, odoo-release-promotion, azure-observability-baseline]
+        rationale: ca-ipai-dev is the canonical runtime for all IPAI services
+
+      - topic_key: key_vault
+        skills: [aca-private-networking, azure-policy-guardrails, entra-mfa-ca-hardening]
+        rationale: kv-ipai-dev is the mandatory secrets store
+
+      - topic_key: private_endpoints
+        skills: [aca-private-networking, azure-pg-ha-dr]
+        rationale: Public PG exposure is a P0 gap requiring private endpoints
+
+      - topic_key: azure_postgresql_flexible_server
+        skills: [azure-pg-ha-dr]
+        rationale: pg-ipai-odoo is the sole production Odoo database
+
+      - topic_key: managed_identity
+        skills: [aca-private-networking, entra-mfa-ca-hardening, azure-foundry-architecture]
+        rationale: Mandatory auth pattern for all service-to-service flows
+
+      - topic_key: ai_well_architected_guidance
+        skills: [azure-pg-ha-dr, azure-observability-baseline, azure-policy-guardrails]
+        rationale: IPAI benchmark model is WAF-anchored
+
+    non_mvp_critical_topics:
+      # Still valid Microsoft Learn topics but not on MVP critical path
+      - topic_key: ai_evaluation_and_monitoring
+        skills: [odoo-copilot-evals]
+        rationale: Eval expansion is P2 — not blocking MVP
+
+      - topic_key: content_safety
+        skills: []  # No current skill owns this exclusively
+        rationale: Required for external-facing agents but not a gap-closure skill yet
+
+      - topic_key: azure_front_door
+        skills: [aca-private-networking]
+        rationale: Front Door is deployed; not actively failing
+
+      - topic_key: azure_monitor_for_ai
+        skills: [azure-observability-baseline]
+        rationale: Observability is P1 but wiring is in progress
+
+      - topic_key: azure_ml_automl
+        skills: []
+        rationale: Fully deferred — Databricks is the ML plane
+
+  # ── Category 2: Repo-Local SSOT ───────────────────────────────────────────
+  # Repo-local files that override generic Microsoft guidance when they conflict.
+
+  repo_local_ssot:
+    description: >
+      Repo-specific SSOT and architecture docs. These take priority 1 in the
+      source precedence ladder (knowledge_sources.yaml). Agents MUST read
+      these before querying any external source.
+    override_policy: >
+      Repo SSOT takes precedence over Microsoft Learn when they conflict.
+      If a Microsoft Learn pattern contradicts a committed SSOT rule, the
+      SSOT rule wins and the agent must flag the conflict explicitly.
+
+    primary_ssot_paths:
+      - path: ssot/agent-platform/*.yaml
+        owns: [agent_factory, tool_policy, mcp_policy, task_bus, stage_gates, knowledge_governance]
+      - path: ssot/ai/*.yaml
+        owns: [agent_definitions, model_deployments, knowledge_sources]
+      - path: ssot/agents/*.yaml
+        owns: [knowledge_bindings, execution_policy, prod_policy]
+      - path: ssot/foundry/*.yaml
+        owns: [foundry_runtime_inventory, migration_status]
+      - path: CLAUDE.md
+        owns: [operating_contract, stack_reference, deprecated_services]
+      - path: AGENTS.md
+        owns: [agent_team_roster, routing]
+      - path: .claude/rules/*.md
+        owns: [security_baseline, odoo_rules, platform_architecture, ssot_rules]
+
+    architecture_doc_paths:
+      - path: docs/architecture/*.md
+        owns: [platform_doctrine, benchmark_model, repo_topology, module_doctrine]
+      - path: docs/ai/*.md
+        owns: [architecture_overview, foundry_consolidation]
+      - path: docs/compliance/*.md
+        owns: [bir_compliance_policy]
+
+    conflict_examples:
+      - scenario: >
+          Microsoft Learn suggests Azure ML AutoML for a classification task.
+          Repo SSOT specifies Databricks as the canonical ML plane.
+        resolution: Use Databricks. Flag the conflict in the evidence artifact.
+      - scenario: >
+          Microsoft Learn sample uses from_connection_string for Foundry auth.
+          Repo SSOT requires AIProjectClient with managed identity.
+        resolution: Use AIProjectClient. Reference feedback_foundry_sdk_v2_migration.
+      - scenario: >
+          A gap-closure skill references a Cloudflare WAF pattern.
+          Repo SSOT: Cloudflare deprecated 2026-04-07.
+        resolution: Use Azure Front Door WAF. Never reintroduce Cloudflare.
+
+  # ── Category 3: Deferred / Optional ───────────────────────────────────────
+  # Topics NOT on the MVP critical path. Agents MUST NOT introduce these
+  # unless the repo SSOT explicitly requires them.
+
+  deferred_optional:
+    description: >
+      Azure services and patterns deferred from the current release scope.
+      Do not introduce, configure, or reference these in new code or SSOT
+      unless an explicit SSOT change authorizes their adoption.
+    policy: >
+      Do not introduce unless repo SSOT explicitly requires. If a user requests
+      a deferred service, note it is deferred and provide the SSOT-approved
+      alternative instead.
+
+    topics:
+      - id: azure_ml_classic
+        service: Azure Machine Learning (classic studio and v1 pipelines)
+        reason_deferred: Databricks is the canonical data engineering and ML plane
+        approved_alternative: Databricks workspace + Unity Catalog (data-intelligence/)
+
+      - id: cosmos_db
+        service: Azure Cosmos DB
+        reason_deferred: Not in current azure_service_matrix KEEP/DEPLOY list
+        approved_alternative: PostgreSQL 16 (pg-ipai-odoo) for operational data
+
+      - id: fabric
+        service: Microsoft Fabric (as primary engineering plane)
+        reason_deferred: Fabric is for mirroring and OneLake complement only
+        approved_alternative: Databricks for engineering; Fabric only for OneLake mirroring
+        caveat: Fabric lakehouses and mirroring are approved as a complement, not replacement
+
+      - id: azure_openai_fine_tuning
+        service: Azure OpenAI fine-tuning
+        reason_deferred: Not required for MVP; Foundry model catalog covers current needs
+        approved_alternative: Foundry model catalog (gpt-4.1 via oai-ipai-dev)
+
+      - id: semantic_kernel
+        service: Semantic Kernel (as primary agent orchestration)
+        reason_deferred: Foundry Agent Service SDK v2 is the canonical orchestration
+        approved_alternative: Foundry Agent Service Python SDK v2
+
+      - id: langchain
+        service: LangChain
+        reason_deferred: Third-party framework conflicts with Foundry SDK v2 mandate
+        approved_alternative: Foundry Agent Service SDK v2
+
+      - id: a2a_protocol
+        service: Agent-to-Agent (A2A) protocol
+        reason_deferred: preview=true, on_mvp_critical_path=false per foundry_tool_policy
+        approved_alternative: Foundry connected agents (handoff) for MVP
+
+      - id: sharepoint_mcp
+        service: SharePoint MCP tool
+        reason_deferred: Preview tool, not on MVP critical path
+        approved_alternative: Azure AI Search + file_search tool for document retrieval
+
+      - id: computer_use
+        service: Computer Use / browser automation
+        reason_deferred: Preview tool per foundry_tool_policy preview_tools list
+        approved_alternative: Function calling or OpenAPI for bounded actions
+
+      - id: advanced_grounding_techniques
+        service: Advanced grounding (GraphRAG, knowledge graphs)
+        reason_deferred: Baseline hybrid RAG with ipai-knowledge-index covers MVP needs
+        approved_alternative: Hybrid semantic+keyword on ipai-knowledge-index
+
+      - id: supabase_all
+        service: Supabase (all components)
+        reason_deferred: Fully deprecated 2026-03-26. Azure-native only.
+        approved_alternative: Azure managed PG + Azure Functions
+
+      - id: n8n_all
+        service: n8n (all workflows)
+        reason_deferred: Fully deprecated 2026-04-07
+        approved_alternative: Azure Logic Apps / Azure Functions
+
+      - id: cloudflare_all
+        service: Cloudflare (DNS, Workers, Pages, R2)
+        reason_deferred: Fully deprecated 2026-04-07
+        approved_alternative: Azure DNS + Azure Front Door + Azure Blob
+
+      - id: vercel_all
+        service: Vercel (deployment, Edge Functions)
+        reason_deferred: Fully deprecated 2026-03-11
+        approved_alternative: Azure Container Apps
+
+      - id: digitalocean_all
+        service: DigitalOcean (all)
+        reason_deferred: Fully deprecated 2026-03-15
+        approved_alternative: Azure-native (ACA + managed PG)
+
+  # ── Category 4: Glossary ───────────────────────────────────────────────────
+  # Authoritative definitions for key platform terms. Agents MUST use these
+  # definitions consistently. Do not invent alternative meanings.
+
+  glossary:
+    description: >
+      Key terms and their authoritative definitions as used in the IPAI platform.
+      Definitions derive from SSOT files; external sources are advisory.
+
+    terms:
+      - term: Foundry
+        definition: >
+          Azure AI Foundry — the Microsoft AI platform hosting IPAI's agent runtime.
+          Specifically: project ipai-copilot in resource ipai-copilot-resource,
+          region eastus2, resource group rg-data-intel-ph.
+        authoritative_source: ssot/foundry/runtime_inventory.yaml
+
+      - term: Foundry IQ
+        definition: >
+          The grounding and knowledge retrieval capability within Foundry Agent Service.
+          For IPAI, this is implemented as file_search against ipai-knowledge-index
+          on srch-ipai-dev, plus optional Bing grounding.
+        authoritative_source: ssot/agent-platform/learn_mcp_topic_map.yaml#foundry_iq
+
+      - term: Agent Service
+        definition: >
+          Azure AI Foundry Agent Service — the runtime for registering, executing,
+          and managing IPAI agents. SDK v2 (AIProjectClient) is the mandatory
+          integration. Never use from_connection_string (v1, deprecated).
+        authoritative_source: ssot/agent-platform/foundry_tool_policy.yaml
+
+      - term: ACA
+        definition: >
+          Azure Container Apps — the canonical compute target for all IPAI services.
+          Canonical instance: ca-ipai-dev. AKS and App Service are not defaults.
+        authoritative_source: ssot/agent-platform/knowledge_sources.yaml#ms_learn_aca
+
+      - term: Config→OCA→Delta
+        definition: >
+          The mandatory module sourcing hierarchy for Odoo development.
+          1. Config: use built-in Odoo configuration first.
+          2. OCA: use vetted OCA community modules second.
+          3. Delta: create ipai_* custom modules only for truly custom needs.
+          Never skip to Delta without exhausting Config and OCA.
+        authoritative_source: CLAUDE.md (Module Philosophy section)
+
+      - term: SSOT
+        definition: >
+          Single Source of Truth. Files in ssot/ are the intended-state truth
+          for the platform. They override UI state, external documentation, and
+          any conflicting external source. Agents read SSOT first.
+        authoritative_source: docs/architecture/SSOT_BOUNDARIES.md
+
+      - term: ipai-copilot
+        definition: >
+          The canonical Foundry project identifier. Full path:
+          ipai-copilot-resource.services.ai.azure.com/api/projects/ipai-copilot.
+          All IPAI agents are registered within this project.
+        authoritative_source: ssot/agent-platform/foundry_tool_policy.yaml#current_foundry_baseline
+
+      - term: ipai-knowledge-index
+        definition: >
+          The Azure AI Search index on srch-ipai-dev containing 7224+ chunks
+          across Odoo 18 docs, OCA inventory, BIR compliance, finance domain,
+          and company info. Retrieval mode: hybrid (semantic + keyword).
+          Embedding: text-embedding-3-small (1536 dims).
+        authoritative_source: ssot/ai/sources.yaml
+
+      - term: kv-ipai-dev
+        definition: >
+          Azure Key Vault — canonical secrets store for the IPAI platform.
+          All runtime secrets (Zoho SMTP, PG passwords, API keys) are resolved
+          via managed identity → Key Vault at runtime. No hardcoded secrets.
+        authoritative_source: CLAUDE.md (Secrets Policy section)
+
+      - term: pg-ipai-odoo
+        definition: >
+          Azure Database for PostgreSQL Flexible Server (General Purpose).
+          Sole production database for Odoo 18 CE. Replaces deprecated
+          ipai-odoo-dev-pg (Burstable). Databases: odoo (prod),
+          odoo_staging (staging), odoo_dev (dev).
+        authoritative_source: CLAUDE.md (Quick Reference, Odoo Rules sections)
+
+      - term: MCP
+        definition: >
+          Model Context Protocol. Tool category for shared remote tool servers
+          and externally maintained tool surfaces. Fourth in preference order
+          (Built-in > function_calling > OpenAPI > MCP > A2A).
+          Required controls: allowed_tools, approval gates, audit logging.
+        authoritative_source: ssot/agent-platform/mcp_policy.yaml
+
+      - term: Gap-closure skill
+        definition: >
+          A skill in .github/skills/ that closes a specific gap identified in
+          the Odoo-on-Azure enterprise benchmark audit. Each skill has an
+          impact tier (P0/P1/P2), evidence gate, and mandatory MCP query set.
+          Completion requires proof artifacts in docs/evidence/.
+        authoritative_source: .github/skills/README.md
+
+  # ── Category 5: Evaluation Seeds ──────────────────────────────────────────
+  # Seed questions for evaluating agent knowledge quality.
+  # Use these to build the Foundry eval test suite (odoo-copilot-evals skill).
+  # Each question tests a specific knowledge domain + answer quality dimension.
+  # Dimensions: factual_grounding, architecture_consistency, scope_boundaries,
+  #             deprecation_awareness, ssot_adherence.
+
+  evaluation_seeds:
+    description: >
+      Seed questions for evaluating IPAI agent knowledge quality. These cover
+      factual grounding, architecture consistency, deprecation awareness, and
+      SSOT adherence. Use as a starting point for the 50+ eval case target.
+    target_eval_count: 50
+    current_seed_count: 15
+    eval_tool: azure_foundry_eval_suite  # openai_client.evals API
+
+    seeds:
+
+      - id: eval_001
+        dimension: factual_grounding
+        question: "What is the Foundry project endpoint for ipai-copilot?"
+        expected_answer_contains:
+          - "ipai-copilot-resource.services.ai.azure.com"
+          - "ipai-copilot"
+        knowledge_source_ref: ssot/agent-platform/foundry_tool_policy.yaml
+        notes: Tests whether agent uses SSOT over hallucinated endpoints.
+
+      - id: eval_002
+        dimension: architecture_consistency
+        question: "Which compute target should new IPAI services deploy to?"
+        expected_answer_contains:
+          - "Azure Container Apps"
+          - "ca-ipai-dev"
+        must_not_contain:
+          - "AKS"
+          - "Kubernetes"
+          - "App Service"
+          - "DigitalOcean"
+          - "Vercel"
+        knowledge_source_ref: CLAUDE.md
+
+      - id: eval_003
+        dimension: deprecation_awareness
+        question: "Can I use Supabase for storing agent session state?"
+        expected_answer_contains:
+          - "deprecated"
+          - "Azure"
+        must_not_contain:
+          - "yes"
+          - "Supabase is supported"
+        knowledge_source_ref: CLAUDE.md (Deprecated section)
+        notes: Tests deprecation enforcement for Supabase.
+
+      - id: eval_004
+        dimension: ssot_adherence
+        question: "Which database should be used for Odoo production?"
+        expected_answer_contains:
+          - "pg-ipai-odoo"
+          - "PostgreSQL"
+          - "General Purpose"
+        must_not_contain:
+          - "ipai-odoo-dev-pg"
+          - "Burstable"
+          - "Supabase"
+        knowledge_source_ref: CLAUDE.md (Odoo Rules section)
+
+      - id: eval_005
+        dimension: factual_grounding
+        question: "What is the Azure AI Search index used by IPAI agents?"
+        expected_answer_contains:
+          - "ipai-knowledge-index"
+          - "srch-ipai-dev"
+        knowledge_source_ref: ssot/ai/sources.yaml
+
+      - id: eval_006
+        dimension: architecture_consistency
+        question: "How should IPAI agents authenticate to Azure Key Vault?"
+        expected_answer_contains:
+          - "managed identity"
+        must_not_contain:
+          - "API key"
+          - "service principal secret"
+          - "connection string"
+          - "hardcoded"
+        knowledge_source_ref: ssot/agent-platform/foundry_tool_policy.yaml
+
+      - id: eval_007
+        dimension: scope_boundaries
+        question: "Should I use LangChain for building a new IPAI agent?"
+        expected_answer_contains:
+          - "Foundry Agent Service"
+          - "SDK v2"
+        must_not_contain:
+          - "yes"
+          - "LangChain is supported"
+        knowledge_source_ref: ssot/agent-platform/knowledge_taxonomy.yaml (deferred_optional)
+
+      - id: eval_008
+        dimension: factual_grounding
+        question: "What SMTP server does Odoo use for outbound email?"
+        expected_answer_contains:
+          - "smtp.zoho.com"
+          - "587"
+        must_not_contain:
+          - "Mailgun"
+          - "mg.insightpulseai.com"
+          - "SendGrid"
+        knowledge_source_ref: .claude/rules/ssot-platform.md (Rule 7)
+
+      - id: eval_009
+        dimension: architecture_consistency
+        question: "What is the module sourcing hierarchy for Odoo development?"
+        expected_answer_contains:
+          - "Config"
+          - "OCA"
+          - "Delta"
+          - "ipai_"
+        knowledge_source_ref: CLAUDE.md (Module Philosophy section)
+
+      - id: eval_010
+        dimension: factual_grounding
+        question: "Which Odoo database should be used for integration tests?"
+        expected_answer_contains:
+          - "test_"
+          - "disposable"
+        must_not_contain:
+          - "odoo_dev"
+          - "odoo_staging"
+          - "odoo"
+        knowledge_source_ref: CLAUDE.md (Odoo Rules section)
+        notes: Tests DB isolation policy — never use named DBs for tests.
+
+      - id: eval_011
+        dimension: deprecation_awareness
+        question: "Can I use n8n workflows to automate Odoo tasks?"
+        expected_answer_contains:
+          - "deprecated"
+          - "Azure Logic Apps"
+        must_not_contain:
+          - "n8n is supported"
+          - "yes"
+        knowledge_source_ref: CLAUDE.md (Deprecated section)
+
+      - id: eval_012
+        dimension: ssot_adherence
+        question: "What is the tool preference order for Foundry agents?"
+        expected_answer_contains:
+          - "built-in"
+          - "function calling"
+          - "OpenAPI"
+          - "MCP"
+        knowledge_source_ref: ssot/agent-platform/foundry_tool_policy.yaml
+
+      - id: eval_013
+        dimension: architecture_consistency
+        question: "Which Foundry SDK version must IPAI agents use?"
+        expected_answer_contains:
+          - "v2"
+          - "AIProjectClient"
+        must_not_contain:
+          - "from_connection_string"
+          - "v1"
+          - "1.0.0b10"
+        knowledge_source_ref: .claude/memory/reference_foundry_sdk_v2_migration.md
+
+      - id: eval_014
+        dimension: scope_boundaries
+        question: "Is Azure ML AutoML appropriate for IPAI data transformation pipelines?"
+        expected_answer_contains:
+          - "Databricks"
+          - "deferred"
+        must_not_contain:
+          - "Azure ML is recommended"
+          - "use AutoML"
+        knowledge_source_ref: ssot/agent-platform/knowledge_taxonomy.yaml (deferred_optional)
+
+      - id: eval_015
+        dimension: factual_grounding
+        question: "What is the embedding model deployed for ipai-knowledge-index?"
+        expected_answer_contains:
+          - "text-embedding-3-small"
+          - "1536"
+        knowledge_source_ref: ssot/agents/knowledge-bindings.yaml
+        notes: >
+          Tests precision on embedding model details — text-embedding-ada-002
+          would be a wrong answer indicating stale knowledge.

@@ -157,11 +157,11 @@ verticals:
       - mobile companion full app/platform
 
   # ──────────────────────────────────────────────────────────────────────────
-  # 3. Reverse SAP Joule / Pulser Assistant
+  # 3. Pulser for Odoo
   # ──────────────────────────────────────────────────────────────────────────
   pulser:
-    name: "Reverse SAP Joule / Pulser Assistant"
-    spec_bundle: "spec/reverse-sap-joule-odoo18-pulser"
+    name: "Pulser for Odoo"
+    spec_bundle: "spec/pulser-odoo-odoo18-pulser"
 
     ce:
       - name: base

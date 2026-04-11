@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ── List view ───────────────────────────────────────────────── -->
+    <record id="ppm_okr_key_result_view_list" model="ir.ui.view">
+        <field name="name">ppm.okr.key_result.list</field>
+        <field name="model">ppm.okr.key_result</field>
+        <field name="arch" type="xml">
+            <list decoration-success="status == 'on_track'"
+                  decoration-warning="status == 'at_risk'"
+                  decoration-danger="status in ('off_track', 'blocked')"
+                  editable="bottom">
+                <field name="objective_id"/>
+                <field name="code"/>
+                <field name="name"/>
+                <field name="owner_id" widget="many2one_avatar_user"/>
+                <field name="metric_source"/>
+                <field name="unit"/>
+                <field name="baseline"/>
+                <field name="target"/>
+                <field name="current"/>
+                <field name="target_direction"/>
+                <field name="score"/>
+                <field name="progress" widget="progressbar"/>
+                <field name="status" widget="badge"
+                       decoration-success="status == 'on_track'"
+                       decoration-warning="status == 'at_risk'"
+                       decoration-danger="status in ('off_track', 'blocked')"/>
+                <field name="trend" widget="badge"/>
+                <field name="last_measured"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- ── Form view ───────────────────────────────────────────────── -->
+    <record id="ppm_okr_key_result_view_form" model="ir.ui.view">
+        <field name="name">ppm.okr.key_result.form</field>
+        <field name="model">ppm.okr.key_result</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <field name="status" widget="statusbar"
+                           statusbar_visible="on_track,at_risk,off_track,blocked"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="code" class="oe_inline"/> —
+                            <field name="name" class="oe_inline" placeholder="Key result description"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group string="Ownership">
+                            <field name="objective_id"/>
+                            <field name="owner_id"/>
+                            <field name="metric_source"/>
+                            <field name="company_id" invisible="1"/>
+                        </group>
+                        <group string="Measurement">
+                            <field name="unit"/>
+                            <field name="target_direction"/>
+                            <field name="baseline"/>
+                            <field name="target"/>
+                            <field name="current"/>
+                            <field name="last_measured"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group string="Scoring">
+                            <field name="score"/>
+                            <field name="progress" widget="progressbar"/>
+                            <field name="trend"/>
+                        </group>
+                    </group>
+                    <field name="escalation_path" placeholder="What happens if score &lt; 0.4?"/>
+                    <field name="notes" placeholder="Notes..."/>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- ── Graph view ──────────────────────────────────────────────── -->
+    <record id="ppm_okr_key_result_view_graph" model="ir.ui.view">
+        <field name="name">ppm.okr.key_result.graph</field>
+        <field name="model">ppm.okr.key_result</field>
+        <field name="arch" type="xml">
+            <graph type="bar">
+                <field name="objective_id" type="row"/>
+                <field name="score" type="measure"/>
+            </graph>
+        </field>
+    </record>
+
+    <!-- ── Search view ─────────────────────────────────────────────── -->
+    <record id="ppm_okr_key_result_view_search" model="ir.ui.view">
+        <field name="name">ppm.okr.key_result.search</field>
+        <field name="model">ppm.okr.key_result</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="code"/>
+                <field name="name"/>
+                <field name="objective_id"/>
+                <field name="owner_id"/>
+                <field name="metric_source"/>
+                <filter name="on_track" string="On Track"
+                        domain="[('status', '=', 'on_track')]"/>
+                <filter name="at_risk" string="At Risk"
+                        domain="[('status', '=', 'at_risk')]"/>
+                <filter name="off_track" string="Off Track"
+                        domain="[('status', '=', 'off_track')]"/>
+                <filter name="blocked" string="Blocked"
+                        domain="[('status', '=', 'blocked')]"/>
+                <group expand="0" string="Group By">
+                    <filter name="group_objective" string="Objective"
+                            context="{'group_by': 'objective_id'}"/>
+                    <filter name="group_status" string="Status"
+                            context="{'group_by': 'status'}"/>
+                    <filter name="group_owner" string="Owner"
+                            context="{'group_by': 'owner_id'}"/>
+                    <filter name="group_trend" string="Trend"
+                            context="{'group_by': 'trend'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- ── Action ──────────────────────────────────────────────────── -->
+    <record id="action_ppm_okr_key_result" model="ir.actions.act_window">
+        <field name="name">Key Results</field>
+        <field name="res_model">ppm.okr.key_result</field>
+        <field name="view_mode">list,form,graph</field>
+        <field name="search_view_id" ref="ppm_okr_key_result_view_search"/>
+        <field name="context">{'search_default_group_objective': 1}</field>
+    </record>
+
+</odoo>
