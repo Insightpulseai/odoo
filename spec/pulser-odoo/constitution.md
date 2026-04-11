@@ -52,4 +52,111 @@ Every interaction must carry the authenticated Odoo user's identity. Production 
 
 ---
 
-*Last updated: 2026-04-10*
+## 4. LLM Application Invariants
+
+1. **Structured Output for Finance**: Every finance-critical response must use a defined JSON schema, not free-form prose.
+2. **Grounding Before Generation**: The model must ground answers on active Odoo record fields, extracted document fields, or linked master data before generating any finance claim.
+3. **Allowed Fallback States**: The model is explicitly allowed to return `not_found`, `not_yet_computable`, `needs_review`, or `blocked` instead of hallucinating certainty.
+4. **No Chain-of-Thought as Safety**: Safety and correctness come from grounded source data, deterministic validations, and explicit action gating — not from chain-of-thought extraction or "show your reasoning" prompts.
+5. **Tool Use Before Model Guessing**: Use search/retrieval/record inspection as affordances. Never let the model directly invent partner, tax, or posting state.
+6. **Classify-Extract-Validate-Act**: Every finance workflow must separate these phases. No single-step "figure it out" patterns.
+
+---
+
+## 5. Transaction Invariants
+
+1. **Draft-Only Creation**: Pulser creates draft records only. Silent posting is never allowed.
+2. **Idempotency Required**: Every transaction must use an idempotency key. Reconnect/retry must not create duplicate drafts.
+3. **Credit/Debit Notes for Corrections**: Validated invoice changes use credit note or debit note logic. Direct mutation of posted records is forbidden.
+4. **Company Context Validation**: Every transaction must validate that the active company context matches the intended record target. Wrong-company-context actions are hard-blocked.
+
+---
+
+## 6. 8-Plane Governance Invariants
+
+The complete Pulser production capability model spans 8 planes. All planes must be addressed before declaring production readiness.
+
+1. **Data Plane**: Transactional data in Odoo/PG; raw documents in Blob Storage; extraction results stored separately from raw files.
+2. **Document Pipeline**: Documents classified before record creation; low-confidence cases stop at review, not auto-post.
+3. **LLM Application Layer**: Prompts are task-specific; output is schema-constrained; fallback states are explicit.
+4. **Decision / Policy Layer**: Automation boundaries enforced at runtime; Foundry guardrail policies configured.
+5. **Transaction Layer**: Drafts only; idempotent; audit-linked; evidence-traced.
+6. **Integration Plane**: Structured upload handoff; result callbacks; Odoo-Foundry API contract defined.
+7. **Governance / Control Plane**: Evals are real (not just definitions); red-team runs exist; stored completions exist; monitoring alerts are actionable.
+8. **Operating / Compliance Plane**: Close cycles are template-instantiated; compliance scenarios are automated; evidence packs are generated; filing readiness is tracked.
+
+---
+
+## 7. External System Boundaries
+
+1. **BIR Boundary**: Pulser never labels a workflow as "officially filed" or "officially paid" without verified external confirmation. BIR-bound workflows use explicit statuses: `ready_for_filing`, `submitted_externally_pending_confirmation`, `officially_confirmed`.
+2. **Odoo Stores, Pulser Decides**: Pulser decides and prepares; Odoo stores and posts; humans approve when risk is non-trivial.
+3. **No Vanity Metrics**: Number of agents running, models deployed, or eval definitions created without runs do not count as success. Only measured behavior in supported finance workflows counts.
+
+---
+
+## 8. Professional Publishing Principle
+
+Pulser must treat PowerPoint, Word, and Excel generation as a governed professional publishing workflow, not as generic content generation.
+
+For finance, compliance, close, and executive reporting use cases, Pulser must:
+- generate native Office artifacts
+- ground outputs in approved enterprise sources
+- validate formatting and publishability before final output
+- retain linked copies in Odoo Documents
+- answer based on retained artifacts when they exist
+
+Professional Office outputs must be:
+- publishable-quality
+- evidence-linked
+- reproducible
+- reviewable before release
+
+---
+
+## 9. Agentic Pulser — Mission & Doctrine
+
+### 9.1 Mission
+Pulser for PH is an agentic ERP finance and project-operations layer for Odoo. It exists to improve finance execution, control quality, project-spend discipline, PH tax/BIR readiness, close operations, and publishable reporting output.
+
+### 9.2 Product doctrine
+Pulser must behave as a governed agentic system, not merely a chat assistant.
+
+Pulser must:
+- observe live business state
+- plan, decide, and act across bounded multi-step workflows
+- prefer evidence over unsupported explanation
+- enforce validation before completion for finance-critical actions
+- retain durable evidence in Odoo Documents
+- generate publishable native Office artifacts when requested
+
+### 9.3 Canonical capability families
+
+| # | Family | Scope summary |
+|---|--------|---------------|
+| 1 | `pulser-data-foundation` | Odoo transactional records, Finance PPM OKR/KR/milestone/task models, company/branch/fiscal period context, retained copies in Documents, read-only grounded access |
+| 2 | `pulser-copilot-experience` | Odoo-native side panel, record-aware prompting, explain/block/escalate/recommend interactions, evidence-aware answers, role-aware next-step guidance |
+| 3 | `pulser-agentic-workflows` | Plan/decide/act/validate/continue lifecycle, safe-action routing, multi-step completion, stop/escalate/approval boundaries, validation-before-completion |
+| 4 | `pulser-analytics-insights-planning` | Analytics for live KPI/finance visibility, insights for anomaly/risk/opportunity surfacing, planning for OKRs/milestones/close sequencing/scenario guidance |
+| 5 | `pulser-finance-close-and-reconciliation` | Month-end/year-end/tax-period close, reconciliation assistance, blocker detection, evidence packs, signoff readiness, finance performance review |
+| 6 | `pulser-project-spend-and-profitability` | Expense and approval workflows, time/spend visibility, project profitability, cash advance issuance/liquidation, project-to-finance linkage |
+| 7 | `pulser-ph-tax-and-bir-readiness` | VAT/withholding/TIN/ATC validation, 2307/2550Q/SAWT/SLSP readiness, BIR evidence packs, explicit external boundary states, missing-requirement blocker routing |
+| 8 | `pulser-documents-evidence-grounding` | Retained copies in Odoo Documents, evidence completeness, missing evidence queue, file-linked reasoning and answers, evidence-aware workflow support |
+| 9 | `pulser-office-publishing` | PowerPoint Studio, Word Studio, Excel Studio, publishability QA, retained artifact linkage |
+| 10 | `pulser-mcp-testing-review-security` | MCP-backed read-only grounding, structured tool execution, evals/validation harnesses, governance/monitoring, review/security gates |
+
+### 9.4 CFO operating triad
+The clean finance operating surface is: **analytics → insights → planning**. All dashboard, reporting, and agentic-workflow design should align to this triad.
+
+### 9.5 Agentic lifecycle
+Every Pulser workflow must follow this governed lifecycle before production promotion:
+
+```
+Plan → Prototype → Create → Test → Review → Optimize → Secure
+```
+
+No finance-critical workflow may jump from generation to completion without validation and review boundaries.
+
+---
+
+*Last updated: 2026-04-11*

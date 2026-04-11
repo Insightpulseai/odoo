@@ -3,6 +3,8 @@
 > **Human-facing title**: `Pulser for Odoo`
 > **Subtitle**: `Pulser Assistant for Odoo`
 > **Canonical Slug**: `pulser-odoo`
+> **Status**: Active
+> **Companion spec**: [`spec/pulser-odoo-ph/plan.md`](../pulser-odoo-ph/plan.md) — PH-specific scope
 > **Implementation Strategy**: Thin-bridge Odoo adapter with tri-modal agent routing.
 
 ---
@@ -16,6 +18,7 @@ The Pulser for Odoo system is split across two primary responsibility zones, fol
 - **Evaluations & Monitoring**: Quality and safety gates for the agent estate.
 - **Guardrails**: Enterprise-ready content safety and groundedness checks.
 - **Identity Boundary**: Microsoft Entra ID managed identity boundary.
+- **Workflow Orchestration**: Sequential, human-in-the-loop, and group-chat patterns.
 
 ### 1.2 Use Odoo / App Runtime for:
 - **ERP Integration**: Context packaging (active record, user ACLs).
@@ -79,4 +82,457 @@ To ensure a production-ready rollout, the implementation adopts these benchmarks
 
 ---
 
-*Last updated: 2026-04-10*
+## 5. Workstream: REST/FastAPI Replacement by Strangler Pattern
+
+**Goal**: Incrementally remove business logic from external REST/FastAPI layers and relocate it into Odoo-native services.
+
+**Ref**: `docs/architecture/ODOO_EDGE_AND_AGENT_BOUNDARIES.md`
+
+**Steps**:
+
+1. Inventory all existing REST/FastAPI endpoints touching Odoo business objects.
+2. Classify each endpoint:
+   - **thin edge adapter** (keep)
+   - **duplicated business logic** (migrate to Odoo)
+   - **Azure control-plane wrapper** (replace with official SDK)
+3. For duplicated business logic:
+   - Move rules into Odoo addon/service layer
+   - Keep only minimal adapter contracts
+4. Replace Azure-specific wrappers with official Azure SDK/REST/Foundry SDK where feasible.
+5. Prove parity through targeted tests and golden-path workflow validation.
+6. Register all endpoints in `ssot/agent-platform/odoo_edge_inventory.yaml`.
+
+---
+
+## 6. Workstream: Prompt & Grounding Contract
+
+**Goal**: Define and enforce how the LLM is prompted, grounded, and constrained for every Pulser finance interaction.
+
+**Ref**: `rules/pulser-odoo.rules.yaml` (section `llm_application_controls`)
+
+**Steps**:
+
+1. Define model input schemas for each active Odoo screen (account.move, hr.expense, sale.order, project.project).
+2. Define supporting context fields (company, branch, linked records, attachments).
+3. Define output schemas per workflow (4 schemas in `agents/schemas/workflow/pulser/`).
+4. Define fallback states: `not_found`, `not_yet_computable`, `needs_review`, `blocked`.
+5. Configure low-variance inference settings for finance-critical tasks.
+6. Create at least 1 Foundry IQ / AI Search index for finance policy grounding.
+
+**Controls**:
+- Task instruction first in every prompt.
+- Structured output required for all finance workflows.
+- Tool/retrieval use before unsupported generation.
+- No chain-of-thought extraction as safety mechanism.
+
+---
+
+## 7. Workstream: Tool-First Validation Layer
+
+**Goal**: Split classify/extract/validate/act into separate steps so that record inspection and config checks always run before action selection.
+
+**Ref**: Workflow specs in `automations/workflows/odoo/pulser-*.yaml`
+
+**Steps**:
+
+1. Ensure every finance answer can point to a source record or extracted field.
+2. Use the model to decide *what to check*, then use Odoo/data tools to *fetch the facts*.
+3. For document workflows: model decides class -> extraction tool returns fields -> validation layer compares -> action layer creates or blocks.
+4. Never let the model directly invent partner, tax, or posting state.
+
+---
+
+## 8. Workstream: Workflow Implementation
+
+**Goal**: Implement the 4 core Pulser workflows in Azure AI Foundry.
+
+**Ref**: `automations/workflows/odoo/pulser-*.yaml`, `agents/schemas/workflow/pulser/*.schema.json`
+
+| Workflow | Pattern | SC-PH Coverage |
+|----------|---------|----------------|
+| `pulser-doc-intake-v1` | Sequential | SC-PH-03, SC-PH-06 |
+| `pulser-form-validator-v1` | Sequential | SC-PH-01, SC-PH-07 |
+| `pulser-payment-reconcile-v1` | Sequential | SC-PH-02 |
+| `pulser-close-orchestrator-v1` | Human-in-the-loop | SC-PH-12 |
+
+**Steps**:
+
+1. Wire each workflow spec to Foundry workflow definitions.
+2. Configure structured JSON output per schema.
+3. Wire Odoo ORM calls for draft creation with idempotency keys.
+4. Wire evidence persistence to Azure Blob Storage.
+5. Wire human-in-the-loop gates for close orchestrator.
+
+---
+
+## 9. Workstream: Document Pipeline
+
+**Goal**: Stand up the finance document-analysis contract using Azure Document Intelligence and Content Understanding.
+
+**Steps**:
+
+1. Provision Azure Blob Storage for raw document intake.
+2. Wire Content Understanding Read/Layout as first-pass OCR.
+3. Wire Document Intelligence prebuilt models for invoice/receipt/bill extraction.
+4. Build PH-specific extraction schema (BIR fields, TIN, ATC, withholding).
+5. Create classification eval dataset (min 50 samples per class).
+6. Define extraction result storage schema.
+
+---
+
+## 10. Workstream: Governance & Hardening
+
+**Goal**: Make evals, guardrails, and adversarial testing real.
+
+**Steps**:
+
+1. Configure >= 4 custom Pulser compliance policies in Foundry.
+2. Run release-gate evals for all 5 core agents.
+3. Complete >= 1 red-team run against Pulser core agent surfaces.
+4. Curate >= 25 stored completions covering success + failure finance paths.
+5. Set up actionable monitoring alerts for all core agents.
+6. Implement runtime duplicate detection and company-context validation.
+
+---
+
+## 11. 8-Plane Architecture Reference
+
+The complete Pulser production capability model spans 8 planes:
+
+| # | Plane | Purpose |
+|---|-------|---------|
+| 1 | Data | Where data lives and is retained (Odoo/PG, Blob, extraction store) |
+| 2 | Document Pipeline | How documents are ingested, extracted, and classified |
+| 3 | LLM Application | How the model is prompted, grounded, and constrained |
+| 4 | Decision / Policy | How business rules choose a safe action |
+| 5 | Transaction | How Odoo records are created, updated, or blocked |
+| 6 | Integration | How Pulser is exposed to other systems and clients |
+| 7 | Governance / Control | Identity, auth, evals, adversarial testing, observability |
+| 8 | Operating / Compliance | Close orchestration, compliance scenarios, evidence packs |
+
+**Current status**: 0/8 PASS, 8/8 PARTIAL. See `docs/architecture/PULSER_8_PLANE_CAPABILITY_MATRIX.md`.
+
+---
+
+## 12. Finance PPM OKR Dashboard Implementation
+
+### Execution substrate
+Use the Odoo Project runtime as the operational execution surface:
+- milestones for objective checkpoints
+- task dependencies for close/tax sequencing
+- recurring tasks for month-end and tax-period cadence
+- task logs for effort/timing evidence
+- scheduled activities for reviewer/approver follow-ups
+
+### CE + OCA + Delta decomposition
+See `docs/architecture/PPM_DASHBOARD_DECOMPOSITION.md` for the full matrix.
+
+- **CE native**: task kanban/graph/pivot, milestones, dependencies, recurring, activities
+- **OCA**: `mis_builder` (KPI reports), `project_timeline` (Gantt), `project_pivot`
+- **Delta**: `ppm.okr.objective` + `ppm.okr.key_result` (0.0-1.0 scoring with computed RAG)
+
+### Canonical project structure
+Create one canonical finance program project:
+- Pulser for PH — Finance PPM / OKR
+
+Milestone groups:
+- Foundation
+- Finance Core (AP/AR)
+- Cash Advance
+- PH Tax / BIR
+- Close
+- Governance / Evals / Launch
+
+### Metric sources
+- AP / AR draft and review events
+- expense and cash advance states
+- tax readiness result states
+- close blocker states
+- task, milestone, and activity states
+- eval / policy / knowledge / red-team gate states
+- AI workflow volume and cost telemetry
+
+---
+
+## 13. Finance PPM Document-Retention Model
+
+### Operating split
+- Finance PPM dashboard = status, KPIs, blockers, OKRs, execution
+- Odoo Documents = copies of evidence, source artifacts, generated packs, receipts, approvals
+
+### Required document directories
+- Finance PPM / 00 Executive OKRs
+- Finance PPM / 01 AP
+- Finance PPM / 02 AR
+- Finance PPM / 03 Expenses
+- Finance PPM / 04 Cash Advance
+- Finance PPM / 05 PH Tax
+- Finance PPM / 06 BIR Ready
+- Finance PPM / 07 Close
+- Finance PPM / 08 Approvals
+- Finance PPM / 09 External Confirmations
+- Finance PPM / 10 Identity
+- Finance PPM / 11 Office Publishing
+- Finance PPM / 99 Archive
+
+### Metadata model
+Each file copy should carry metadata/tags for: fiscal period, company, branch, lane, milestone, OKR/KR, task, owner, reviewer, approver, evidence type, external status.
+
+---
+
+## 14. Odoo Documents as Pulser Grounding Surface
+
+### Retrieval model
+Pulser retrieves from Odoo Documents using: directory, tags/metadata, linked task/milestone/KR, linked accounting record, company/branch/period, evidence type.
+
+### Answering model
+1. Inspect active record context
+2. Retrieve linked Odoo Documents artifacts
+3. Check linked task/milestone/OKR context
+4. Form an evidence-backed answer
+5. Return file-aware reasoning and missing-evidence notices
+
+### Guardrail
+Pulser must not present unsupported claims as if they came from retained evidence. If no supporting file exists in Odoo Documents, Pulser must say evidence is missing.
+
+---
+
+## 15. Professional Office Skills — Studio Architecture
+
+### Architecture pattern
+
+```
+1. Inputs          →  Odoo records, PPM objects, retained Documents, approved knowledge
+2. Grounding       →  Active record context, linked artifacts, evidence classification
+3. Studio gen      →  PowerPoint Studio / Word Studio / Excel Studio
+4. QA & review     →  Render QA, story flow, hierarchy, formula integrity, DOCX/XLSX/PPTX checks
+5. Publish         →  Retained copies stored in Odoo Documents, derivative artifacts with trace links
+```
+
+**Rule**: If retained evidence exists in Odoo Documents, Pulser should prefer that evidence over generic model-only explanation.
+
+### Studio definitions
+
+| Studio | Core services | Grounding surface | Output formats |
+|--------|--------------|-------------------|----------------|
+| PowerPoint Studio | Skill orchestration, narrative structure, visual layout, slide generation | PPM OKRs, retained visuals, Odoo metrics | PPTX, PDF |
+| Word Studio | Formal document structure, policy/procedure formatting, review workflow | Odoo Documents, approved policies, approval artifacts | DOCX, PDF |
+| Excel Studio | Formula-safe workbook generation, KPI model building, scenario analysis | Record metrics, OKR scores, derived formulas | XLSX |
+
+### Publish gate (all studios)
+
+1. Content grounded in Odoo / Documents / approved knowledge.
+2. Artifact renders cleanly with no overflow, overlap, or broken layout.
+3. Reviewer notes resolved and retained copies stored in Odoo Documents.
+4. Final output ready to circulate externally without reformatting.
+
+### Finance PPM dashboard + Documents vault linkage
+
+- **Finance PPM dashboard**: Status, KPIs, blockers, OKRs, execution.
+- **Odoo Documents vault**: Source files and derivative publishable artifacts.
+  - Grounded in Odoo / Documents / approved knowledge
+  - Copies stored with trace links back to OKR/KR/milestone
+  - BIR readiness packs and close packs retained as publishable artifacts
+  - External confirmation and approval artifacts archived
+
+### Publishable-quality targets
+
+| Metric | Target |
+|--------|--------|
+| First publishable draft cycle | < 1 day |
+| QA pass without major rework | ≥ 90% |
+| Grounded publishable outputs | ≥ 95% |
+| Reviewer turnaround improvement | −30% |
+| Artifacts retained with trace links | 100% |
+
+### Release phases
+
+| Phase | Scope | Deliverables |
+|-------|-------|-------------|
+| R1 Foundation | Define studio schemas, replace HTML dashboard, native Odoo OKR views | Skill contracts, OKR views, spec bundle patch |
+| R2 Core | Documents retention, grounded answering, first publishable templates | Evidence vault live, publishable artifact set |
+| R3 Hardening | Policies + evals + red-team + evidence completeness checks | Release gate, governed publish flow |
+
+---
+
+## 16. Office Publishing Accelerator Model
+
+### Multi-agent orchestration
+
+Use a specialized agent choreography pattern for professional Office artifact creation:
+
+```
+User request
+  ↓
+[1. Triage Agent]         → classify artifact type, assign studio
+  ↓
+[2. Planning Agent]       → structure outline, section plan, data bindings
+  ↓
+[3. Grounding Agent]      → retrieve enterprise data, classify evidence
+  ↓
+[4. Studio Agent]         → generate native PPTX / DOCX / XLSX
+  (PPT | Word | Excel)
+  ↓
+[5. Publishability QA]    → format, structure, grounding, lane-specific checks
+  ↓                         ↓ (fail → loop back to Studio Agent with fix instructions)
+[6. Evidence Agent]       → retain in Odoo Documents with trace links
+  ↓
+Publishable artifact + retained copy
+```
+
+### Agent responsibilities
+
+| Agent | Owns | Does not own |
+|-------|------|--------------|
+| Triage | Request interpretation, studio routing | Content generation |
+| Planning | Narrative structure, data binding plan | Source retrieval |
+| Grounding | Enterprise data retrieval, evidence classification | Artifact creation |
+| Studio (×3) | Native file generation, brand-safe formatting | Quality validation |
+| Publishability QA | Pass/fail gate, fix instructions | File generation |
+| Evidence / Documents | Retention, trace links, metadata tagging | Content review |
+
+### Native output requirement
+
+The preferred outputs are native Office formats — not HTML exports, screenshots, or PDF-only:
+
+| Format | Library | Use |
+|--------|---------|-----|
+| PPTX | `python-pptx` | Narrative decks, board updates, operating reviews |
+| DOCX | `python-docx` | Formal documents, policies, close packs |
+| XLSX | `openpyxl` | KPI models, OKR dashboards, scenario workbooks |
+
+### Validation requirement
+
+No Office artifact should be marked publishable unless it passes:
+
+1. **Layout/format checks** — no overflow, consistent styling, clean render
+2. **Grounding checks** — all data points traced to enterprise sources
+3. **Evidence-link checks** — retained copy in Odoo Documents with trace links
+4. **Lane-specific QA** — story flow (slides), hierarchy/citations (docs), formula integrity (sheets)
+
+### Publishability scoring
+
+| Score | Meaning | Action |
+|-------|---------|--------|
+| ≥ 90% | Publishable | Release to audience |
+| 70–89% | Needs minor revision | Auto-fix or single reviewer pass |
+| < 70% | Needs rework | Loop back to planning/generation |
+
+---
+
+## 17. CE / OCA / Thin-Delta Decomposition
+
+### Odoo CE 18 native
+Use natively for:
+- Project tasks, milestones, dependencies, recurring tasks, activities
+- Odoo Documents
+- Expenses
+- Invoicing/accounting core
+- `mail.thread` and activity workflows
+
+### OCA
+Use for:
+- Analytics and pivots (`mis_builder`, `project_pivot`)
+- Project reporting enhancements (`project_timeline`)
+- Accounting/project extensions where stable and aligned
+- Any must-have modules that reduce custom delta
+
+### Thin delta (`ipai_finance_ppm` and adjacent bridge modules)
+Build only where neither native nor OCA covers the need:
+- OKR objective and key-result models
+- Finance PPM dashboard composition
+- Evidence completeness computation
+- Missing evidence queue
+- PH tax/BIR readiness state machine
+- Documents-grounded response linkage
+- Publishability QA orchestration
+- Pulser-specific skill routing and safe-action policy
+
+**Rule**: Do not build custom delta modules where native Odoo 18 or OCA already covers the capability sufficiently.
+
+---
+
+## 18. Foundry-Native Runtime Posture
+
+### Canonical runtime shell
+Use a Foundry-native web/gateway shell with Entra-aware authentication and Foundry agent integration as the baseline product posture.
+
+### Template adoption set
+Adopt patterns from:
+- Get started with AI agents
+- Multi-Agent Workflow Automation
+- Multi-modal Content Processing
+- Document Generation and Summarization
+- Deploy Your AI Application in Production
+- Governance/security accelerators
+
+### Tooling adoption set
+Enable and standardize around:
+
+| Tool | Purpose |
+|------|----------|
+| Azure AI Search | Finance knowledge indexing and agentic retrieval |
+| File Search | Evidence/document retrieval |
+| Azure Database for PostgreSQL | Read-only MCP grounding |
+| Foundry MCP Server | Canonical tool exposure |
+| GitHub | Spec, skills, workflow, and template sourcing |
+| Code Interpreter | Formula validation, scenario computation |
+| Browser Automation | BIR portal and external confirmation workflows |
+| Azure DevOps MCP | Board/progress sync where required |
+| Work IQ Word | Word document generation |
+| Microsoft MCP Server for Enterprise | Enterprise system integration |
+
+---
+
+## 19. Agentic Lifecycle
+
+Pulser workflows must follow this lifecycle:
+
+```
+Plan → Prototype → Create → Test → Review → Optimize → Secure
+```
+
+**Design rule**: No finance-critical workflow may jump from generation to completion without validation and review boundaries.
+
+| Stage | Gate |
+|-------|------|
+| Plan | Spec bundle valid, SC-PH criteria bound |
+| Prototype | Workflow runs in sandbox with test data |
+| Create | Agents wired, schemas validated, evals defined |
+| Test | Release-gate evals passing, red-team run complete |
+| Review | Reviewer signoff, evidence retained in Documents |
+| Optimize | Cost/latency measured, declining trend confirmed |
+| Secure | Policies active, governance baseline complete |
+
+---
+
+## 20. Release Gates (A–D)
+
+### Gate A — Foundation
+- Identity and access path verified (Entra login + service identity)
+- Data foundation in place (Odoo records, OKR/KR models live)
+- Documents vault directory structure created (00–99)
+- OKR objectives seeded and milestone structure defined
+
+### Gate B — Pilot Workflows
+- AP / expenses / tax readiness / close blocker detection working
+- Evidence retention enforced for all pilot workflow lanes
+- Finance PPM dashboard widgets populated from live data
+- PostgreSQL MCP connected read-only and validated
+
+### Gate C — Publishing
+- PPTX / DOCX / XLSX native generation live
+- Publishability QA enforced (all three studios)
+- Retained-copy linkage working in Odoo Documents
+- Evidence-grounded artifact answering working
+
+### Gate D — Production
+- Governance/evals in place (≥ 4 custom policies, ≥ 1 red-team run)
+- MCP/tool boundaries documented
+- Cost/usage measurement live and trending
+- Missing-evidence fail-closed behavior live
+- All SC-PH exit criteria from `prd.md §15.8` satisfied
+
+---
+
+*Last updated: 2026-04-11*
