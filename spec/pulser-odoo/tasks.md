@@ -282,4 +282,21 @@
 
 ---
 
+## Phase 27: Microsoft 365 Developer Sandbox
+
+> Scope: dev/test only. See `prd.md §25` for product rule. No production data.
+
+- [ ] M365-1: Confirm eligibility path for Microsoft 365 E5 developer subscription via Developer Program.
+- [ ] M365-2: Provision Pulser Office/M365 sandbox tenant (one per org; 25 licenses).
+- [ ] M365-3: Validate Word add-in prototyping path (review packs, close memos, signoff documents). **`pulser-office-publishing`**
+- [ ] M365-4: Validate Excel add-in prototyping path (OKR scorecards, KPI workbooks, scenario models). **`pulser-office-publishing`**
+- [ ] M365-5: Validate PowerPoint add-in prototyping path (close decks, CFO review decks, board packs). **`pulser-office-publishing`**
+- [ ] M365-6: Validate Teams / SharePoint / Graph integration paths. **`pulser-copilot-experience`**
+- [ ] M365-7: Use tenant as publishability QA surface for generated Office artifacts.
+- [ ] M365-8: Verify Entra-authenticated M365 identity patterns align with `prd.md §18` identity model.
+- [ ] M365-9: Keep all critical configurations backed up outside the developer tenant (90-day renewal risk).
+- [ ] M365-10: Do not store finance-critical evidence or production business data in developer tenant.
+
+---
+
 *Last updated: 2026-04-11*

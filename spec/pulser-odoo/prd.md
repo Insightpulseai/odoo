@@ -837,4 +837,71 @@ The winning conceptual model is: **data + Copilot + agents**, where agents plan,
 
 ---
 
+## 25. Microsoft 365 developer sandbox posture
+
+Pulser may use a Microsoft 365 Developer Program tenant as a sandbox for Office and Microsoft 365 integration development and testing.
+
+### Intended uses
+- Word, Excel, and PowerPoint add-in prototyping (`pulser-office-publishing`)
+- Teams / SharePoint / Graph integration testing
+- Office artifact rendering and review-loop validation
+- Entra-authenticated M365 workflow experiments
+- Publishability QA validation against a real M365 tenant
+
+### Product rule
+The Microsoft 365 developer tenant is a **development and testing environment only**.
+
+It must not be treated as:
+- a production tenant
+- a durable business data store or long-term evidence vault
+- the primary identity authority for customers or employees
+- a substitute for Azure production infrastructure
+
+### Canonical runtime split
+
+| Lane | Surface |
+|------|---------|
+| Production runtime | Azure / Foundry / Odoo |
+| Office/M365 integration sandbox | Microsoft 365 Developer Program tenant (dev/test only) |
+
+### Subscription constraints to track
+- One tenant per organization maximum
+- 25 user licenses included
+- Renewable based on qualified developer activity
+- Does **not** include Azure — keep Azure infra in the primary Azure subscription
+- Power BI Pro included (not Premium); sufficient for analytics prototypes only
+
+---
+
+## 26. Commercial and partner readiness
+
+Pulser for PH must treat Microsoft Partner Center and commercial marketplace posture as part of production readiness tracking, separate from the 10 capability families.
+
+### Proven commercial baseline
+Current commercial identity baseline for InsightPulseAI:
+- Authorized vetting status
+- Seller ID: `94146040`
+- Partner ID: `7097325`
+- Commercial Marketplace publisher ID: `insightpulseai`
+- Publisher name: `InsightPulseAI`
+- Microsoft Entra tenant: `insightpulseai.com`
+- DUNS: `719209694`
+
+### Not yet proven
+- Solutions Partner score (currently `0 / 100`, Not Started across all solution areas)
+- Benefits redemption / Partner Marketing Center Pro activation
+- Offer creation and marketplace publishing readiness
+
+### Strategic growth lanes
+For future partner-score alignment, prioritize:
+- **Business Applications** — maps to Odoo / ERP / finance / project operations
+- **Data & AI** — maps to Foundry / agentic workflows / analytics / AI copilots
+
+### Product rule
+Pulser may be treated as **commercially identity-ready** once publisher/legal identity is confirmed. It must not claim **Solutions Partner designation** until solution-area scoring and evidence are formally established.
+
+> **Verification note**: Confirm seller contact name in Partner Center matches legal/canonical identity before any marketplace listing or partner-facing materials are published.
+
+---
+
 *Last updated: 2026-04-11*
