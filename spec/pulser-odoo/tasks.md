@@ -395,4 +395,30 @@
 
 ---
 
+## Phase 31: Platform Governance and Entra Identity Baseline
+
+> **Ref**: `prd.md §29`, `AZURE_IAM_REMEDIATION.md`  
+> **Gate**: All IAM-P0 items must clear before production-ready claim.
+
+- [ ] GOV-01: Execute full Azure RBAC cleanup — remove/justify root UAA, remove unknown owners.
+- [ ] GOV-02: Collapse redundant human Owner/Contributor paths into group-based assignments.
+- [ ] GOV-03: Move privileged human/admin paths to **eligible / time-bound activation** via Azure PIM.
+- [ ] GOV-04: Define and implement access review cadence for all privileged roles.
+- [ ] GOV-05: Define sponsor/owner model for all agent identities — no indefinite unmanaged access.
+- [ ] GOV-06: Map Pulser platform engineering maturity against Microsoft capability areas.
+
+## Phase 32: Finance Operations Benchmark Alignment (MB-500)
+
+> **Ref**: `prd.md §30`  
+> **Goal**: Meet enterprise-grade finance-ops application standards.
+
+- [ ] FIN-01: Map Pulser workstreams to Architecture, ALM, Reporting, Integration, Security, and Performance lanes.
+- [ ] FIN-02: Implement high-density workspace surfaces for core finance pilots.
+- [ ] FIN-03: Formalize KPI/Reporting requirements for Month-End and Quarter-End close packs.
+- [ ] FIN-04: Define integration capability matrix covering APIs, business events, Office, and Azure services.
+- [ ] FIN-05: Execute performance and scalability review for long-running async finance batches.
+- [ ] FIN-06: Verify SC-PH-56 through SC-PH-58 are measurable and bound to dashboards.
+
+---
+
 *Last updated: 2026-04-11*

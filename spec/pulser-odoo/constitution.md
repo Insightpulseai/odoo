@@ -216,4 +216,22 @@ Pulser must be operated as a real cloud adoption program under the Microsoft Clo
 
 ---
 
+## 12. Mandatory Identity and Governance Production Gates
+
+Pulser for PH cannot be promoted to production or claim production-ready status while any of the following governance gaps remain unresolved. This rule is absolute and superior to feature completion.
+
+### 12.1 Identity Invariants
+1. **Azure RBAC cleanup**: The Azure estate must be least-privilege aligned.
+2. **Root-scope isolation**: Unexplained root-scope standing privileged access (User Access Administrator or Owner) must be removed or formally justified via break-glass policy.
+3. **Ghost Principal elimination**: All unknown/orphaned Owner principals at subscription scope must be eliminated.
+4. **JIT/PIM posture**: Privileged human/admin access must be moved toward eligible / time-bound activation (Azure PIM).
+5. **Agent Identity Governance**: Every production agent identity must have an accountable human sponsor/owner and a defined review cadence.
+
+### 12.2 Governance Invariants
+1. **CAF Alignment**: Rollout must be mapped to the CAF Strategy → Plan → Ready → Adopt → Govern → Secure → Manage lifecycle.
+2. **Landing Zone separation**: Platform, Application, and Security responsibilities must be logically and/or physically separated in Azure.
+3. **Auditability**: Every agentic interaction must be traces in `ipai.copilot.audit`.
+
+---
+
 *Last updated: 2026-04-11*

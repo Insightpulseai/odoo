@@ -635,4 +635,27 @@ Treat as engineering requirements, not afterthoughts:
 
 ---
 
+## 22. Finance Operations Platform Implementation Model
+
+> **Benchmark**: MB-500 (Dynamics 365 Finance & Operations Developer)  
+> **Rule**: Build a platform, not an assistant.
+
+### Implementation themes
+
+| Lane | Pulser-native implementation |
+|------|-----------------------------|
+| **ALM & Tooling** | Git + PR + Pipelines (`constitution.md §11`) |
+| **Architecture** | CE/OCA/Delta decomposition (`plan.md §17`) |
+| **UI/Workspaces** | Foundry-native webapp + high-density dashboards |
+| **Integration** | MCP-first connectors + OData/REST bridges |
+| **Security** | RBAC/IAM Remediation (`AZURE_IAM_REMEDIATION.md`) |
+| **Performance** | Async job framework for long-running finance tasks |
+
+### Reporting surface implementation
+- **Dashboards**: Pulser Finance PPM Dashboard (Phase 13).
+- **Artifacts**: Azure-native document generation for PPTX/DOCX/XLSX.
+- **KPIs**: Mapped to SMART criteria in `prd.md §15.8` and §31.
+
+---
+
 *Last updated: 2026-04-11*

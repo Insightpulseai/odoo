@@ -1108,4 +1108,77 @@ Do not collapse platform, application, and security responsibilities into a sing
 
 ---
 
+## 29. Platform Governance and Identity Baseline
+
+Pulser for PH must be operated as a governed internal platform capability, not just a collection of apps and agents.
+
+### 29.1 Platform engineering posture
+Pulser follows a platform engineering model as defined by Microsoft:
+- **Product mindset**: The platform is a product for developers and business users.
+- **Governed self-service**: Users act within a secure, predefined framework.
+- **Reusable building blocks**: Prefer existing Azure/Foundry components.
+- **Lifecycle management**: Continuous provisioning, measurement, and feedback.
+
+### 29.2 Identity governance posture
+Pulser enforces least privilege across five identity classes:
+1. **Human Admins**: JIT/PIM required; no permanent subscription-level Owner.
+2. **Business Users**: Entitlement-based access to workspace surfaces.
+3. **Service Principals**: Scoped to specific resource boundaries; no broad Owner.
+4. **Managed Identities**: Workload-specific roles only.
+5. **Agent Identities**: Accountable human sponsor; explicit access reviews; no indefinite unmanaged access.
+
+### 29.3 Governance Production Gates
+Pulser is not production-ready while any of the following remain unresolved:
+- Unexplained root-scope standing privileged access.
+- Unknown principals with Owner access.
+- Duplicate permanent Owner paths.
+- Lack of privileged access review and JIT/PIM posture.
+
+---
+
+## 30. Finance Operations Application Benchmark (MB-500)
+
+Pulser for PH must meet the standard of a serious finance-operations application platform, comparable to enterprise-grade Finance and Operations apps (Dynamics 365 benchmark).
+
+### 30.1 Core capability areas
+Pulser must satisfy the MB-500 benchmark across:
+- **Architecture and solution design**: Durable ALM, spec-driven delivery.
+- **Developer tooling**: Git-first, PR-driven, pipeline-enforced.
+- **UI/Workspace/Reporting**: High-density finance dashboards, KPIs, and workspaces.
+- **Integration and data management**: REST integration, OData patterns, business events.
+- **Security controls**: XDS-like security policies, Duty/Role/Privilege separation.
+- **Performance optimization**: Tracing, batch/async optimization, sandbox frameworks.
+
+### 30.2 Reporting and Workspace requirements
+Reporting is a first-class citizen in the Pulser workspace:
+- **KPI Dashboards**: OKR and Finance PPM dashboards.
+- **Close Packs**: Automated generation of month-end/year-end evidence folders.
+- **Publishable Artifacts**: High-fidelity native PPTX, DOCX, and XLSX outputs.
+- **Drill-through**: Viz to record drill-through between workspace and Odoo.
+
+### 30.3 Security and Performance gates
+Production gates must include finance-specific requirements:
+- **IAM/RBAC cleanup**: Aligned with Least Privilege (EPIC-GOVERNANCE).
+- **Audit Traceability**: `ipai.copilot.audit` as a continuous performance and security trace.
+- **Async Reliability**: Formal job design for long-running finance batch processes.
+
+---
+
+## 31. Success Criteria Additions (Governance & Finance Ops)
+
+| ID | Objective | Metric | Target |
+|----|-----------|--------|--------|
+| **Governance & Identity** | | | |
+| SC-PH-46 | Least privilege baseline | Unknown principals with Owner access | 0 |
+| SC-PH-47 | Root governance | Standing root-scope privileged assignments without approved exception | 0 |
+| SC-PH-48 | Privileged access hygiene | Privileged human/admin paths using eligible or time-bound activation (PIM) | ≥ 90% |
+| SC-PH-49 | Review discipline | Privileged roles covered by recurring access review | 100% |
+| SC-PH-50 | Agent governance | Production Pulser agent identities with accountable sponsor/owner defined | 100% |
+| **Finance Ops Maturity (MB-500)** | | | |
+| SC-PH-56 | Finance-app completeness | Pulser roadmap explicitly mapped to MB-500 capability areas | 100% |
+| SC-PH-57 | Reporting maturity | Scoped finance workflows with workspace/KPI/reporting support | ≥ 90% |
+| SC-PH-58 | Integration maturity | Priority Pulser workflows with documented integration pattern and secrets strategy | 100% |
+
+---
+
 *Last updated: 2026-04-11*
