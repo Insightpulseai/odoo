@@ -187,4 +187,33 @@ Pulser should go **deeper** in these finance, project-operations, close, complia
 
 ---
 
+## 11. Git and Delivery Governance Invariant
+
+All Pulser code changes must follow a governed, pipeline-driven delivery model. This is a hard engineering invariant, not a preference.
+
+### SCM rule
+- All source control uses **Git** (not TFVC, not direct-to-main).
+- Every change ships via a **pull request** against a protected branch.
+- No direct pushes to `main`, `release/*`, or equivalent protected branches.
+
+### Branch policy rule
+All key branches across scoped Pulser repos must enforce:
+- required PR review before merge
+- required status checks (lint, unit tests, security scans) before merge
+- no self-approval where Azure DevOps / GitHub policy supports enforcement
+
+### Pipeline rule
+All environment changes (staging and production) must flow through a pipeline. No manual environment mutations outside pipeline execution.
+
+### Runtime rule
+Pulser defaults to **container-based delivery** for agent and web surfaces. VM-based deployment is an exception path only for workloads that require host-level control. Exceptions require documented justification.
+
+### Azure DevOps rule
+Azure DevOps is used for Boards, Pipelines, and MCP-integrated delivery workflows. TFVC and Azure DevOps Server on-prem are not required and should not be adopted unless a hard regulatory or isolation requirement mandates it.
+
+### CAF lifecycle rule
+Pulser must be operated as a real cloud adoption program under the Microsoft Cloud Adoption Framework lifecycle: **Strategy → Plan → Ready → Adopt → Govern → Secure → Manage**. IAM cleanup, landing-zone separation, and security hardening are part of Govern/Secure — not optional side maintenance.
+
+---
+
 *Last updated: 2026-04-11*

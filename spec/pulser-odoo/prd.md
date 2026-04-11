@@ -1028,4 +1028,84 @@ Compared with a horizontal agent workspace, Pulser should be better at:
 
 ---
 
+## 28. Cloud Adoption and Delivery Governance Baseline
+
+Pulser for PH must align to a full Azure cloud adoption and delivery lifecycle rather than ad hoc workload deployment.
+
+### 28.1 Required CAF lifecycle
+
+| Phase | Pulser scope |
+|-------|-------------|
+| **Strategy** | Business justification, stakeholder alignment, operating model definition |
+| **Plan** | Spec bundle, OKRs, delivery sequencing, board structure |
+| **Ready** | Landing zone readiness — platform and application separation, IAM baseline |
+| **Adopt** | Workload deployment — Odoo, Pulser agents, Foundry services |
+| **Govern** | Policy compliance, IAM hygiene, drift detection, `PULSER-IAM-GATE-01` |
+| **Secure** | Threat model, zero-trust identity, prompt injection hardening, WAF |
+| **Manage** | Monitoring, alerting, cost control, SLA observability |
+
+IAM/RBAC cleanup (`constitution.md §11`, `tasks.md Phase 28`) belongs to **Govern + Secure** — not side maintenance.
+
+### 28.2 Delivery rule — Git/PR/pipeline
+
+All Pulser code changes must follow (see `constitution.md §11` for invariants):
+- Git-based source control — no TFVC
+- pull-request review before merge
+- protected branches with required status checks
+- pipeline-driven environment changes — no manual mutations
+
+### 28.3 Pipeline topology
+
+| Pipeline | Trigger | Steps |
+|----------|---------|-------|
+| **PR pipeline** | Every PR to `odoo`, `agent-platform`, `infra` | Lint, type/static validation, unit tests, security/dependency checks, spec contract checks |
+| **CI pipeline** | Merge to main | Repeat PR checks, integration tests, Key Vault secret fetch, build artifacts, build/push container images to ACR |
+| **CD pipeline** | Artifact promotion | Deploy to staging, acceptance tests, manual validation for finance-critical flows, production release, smoke tests, rollback on failure |
+
+### 28.4 Runtime rule
+
+Pulser defaults to **container-based delivery** for all agent and web surfaces. Container images are built, versioned, and pushed to Azure Container Registry via CI pipeline. VM/IaaS deployment is the exception path and requires documented justification.
+
+### 28.5 Azure DevOps role
+
+| Use | Yes / No |
+|-----|---------|
+| Boards / work items | ✅ Yes |
+| Pipelines (CI/CD) | ✅ Yes |
+| Azure DevOps MCP Server | ✅ Yes |
+| TFVC for Pulser repos | ❌ No |
+| Azure DevOps Server on-prem | ❌ No — cloud-native baseline only |
+
+### 28.6 Landing zone separation
+
+Pulser Azure resources must be classified into distinct responsibility lanes:
+
+| Lane | Scope |
+|------|-------|
+| **Platform landing zone** | Shared services: Key Vault, ACR, Log Analytics, AFD, DNS, shared networking |
+| **Application landing zone** | Workload resources: Odoo ACA, Pulser agent runtime, Foundry services, PostgreSQL |
+| **Security lane** | IAM, Defender, Policy, WAF — separate from platform/app responsibilities |
+
+Do not collapse platform, application, and security responsibilities into a single subscription or resource group.
+
+### 28.7 Delivery success criteria
+
+| ID | Objective | Metric | Target |
+|----|-----------|--------|--------|
+| SC-PH-51 | PR discipline | Scoped repos with protected branches requiring PR flow | 100% |
+| SC-PH-52 | Policy-gated merges | Key branches with required status checks before merge | 100% |
+| SC-PH-53 | CAF completeness | Pulser operating model explicitly mapped to all 7 CAF phases | 100% |
+| SC-PH-54 | Pipeline-driven changes | Staging and production environment changes executed through pipelines | 100% |
+| SC-PH-55 | Container delivery baseline | Pulser runtime services built and published as versioned container images | 100% of scoped services |
+
+### 28.8 What not to do
+
+- ❌ TFVC for Pulser repos
+- ❌ Azure DevOps Server on-prem without a hard regulatory requirement
+- ❌ VM/IaaS as default runtime for Pulser agent or web surfaces
+- ❌ Direct environment mutations outside pipeline execution
+- ❌ Treating IAM/RBAC cleanup as optional post-launch work
+
+---
+
 *Last updated: 2026-04-11*

@@ -359,4 +359,40 @@
 
 ---
 
+## Phase 30: CAF and CI/CD Delivery Alignment
+
+> **Ref**: `prd.md §28`, `constitution.md §11`  
+> **Gate**: All items required before production operating model is formalised.
+
+### CAF lifecycle mapping
+
+- [ ] CAF-01: Document Pulser business justification and operating model (Strategy phase).
+- [ ] CAF-02: Map Pulser Spec Kit and Boards to **Plan** phase — OKRs, sequencing, board hierarchy.
+- [ ] CAF-03: Verify landing zone readiness — platform vs application separation confirmed (Ready phase).
+- [ ] CAF-04: Classify all Azure resources into Platform / Application / Security lanes (`prd.md §28.6`).
+- [ ] CAF-05: Fold `PULSER-IAM-GATE-01` into **Govern + Secure** workstream — not optional maintenance.
+- [ ] CAF-06: Define Manage phase — monitoring, alerting, cost control, SLA observability targets.
+
+### Git/PR/pipeline delivery
+
+- [ ] CD-01: Enforce protected branches (no direct push to `main`/`release/*`) across all scoped repos.
+- [ ] CD-02: Require PR review + passing status checks before merge on all key branches.
+- [ ] CD-03: Define PR pipeline per repo (`odoo`, `agent-platform`, `infra`): lint, unit tests, security checks, spec contract.
+- [ ] CD-04: Define CI pipeline per repo: integration tests, Key Vault secret fetch, artifact build, ACR image push.
+- [ ] CD-05: Define CD pipeline: staging deploy → acceptance tests → manual approval (finance-critical) → production → smoke tests → rollback path.
+- [ ] CD-06: Verify all staging/production environment changes flow through pipelines — no manual mutations.
+
+### Container delivery
+
+- [ ] CT-01: Build container images for all Pulser agent and web surfaces via CI pipeline.
+- [ ] CT-02: Push versioned images to Azure Container Registry (ACR).
+- [ ] CT-03: Document any VM/IaaS exceptions with justification — default is container.
+
+### Verification
+
+- [ ] VF-01: Confirm SC-PH-51 to SC-PH-55 are measurable and tracked.
+- [ ] VF-02: Retain CAF mapping document in `docs/` and link to this phase.
+
+---
+
 *Last updated: 2026-04-11*
