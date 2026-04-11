@@ -1344,4 +1344,30 @@ Every Pulser capability must map to at least one end-to-end scenario. Feature "s
 
 ---
 
+## 42. SAP Concur Reporting Benchmark for Source-to-Pay and Record-to-Report
+
+Pulser utilizes the SAP Concur reporting catalog as the target benchmark for expense intelligence and finance-control reporting.
+
+### 42.1 Reporting Benchmark Areas
+- **Accrual Visibility**: Standardized views for expense accruals, including date-range aging, to provide visibility into outstanding liabilities and cash requirements.
+- **Corporate Card Hygiene**: Exception dashboards for unassigned or unsubmitted credit card transactions, identifying close-risk items and aging spend.
+- **Accounting Reconciliation**: Controls for extracted-vs-paid items to ensure payout integrity and auditability.
+- **Approval Governance**: Transparency into authorized approvers, cost-object approvers, and discretionary limits.
+
+### 42.2 Product Rule: Intelligence to Action
+Reports must not be isolated analytical views. Every benchmark report must trigger or link to:
+- **Operational Follow-up**: Workflows to nudge employees or approvers.
+- **Evidence Retrieval**: Direct linkage to supporting Odoo Documents.
+
+### 42.3 SMART Success Criteria Addition (Finance Intelligence)
+
+| ID | Objective | Metric | Target |
+|----|-----------|--------|--------|
+| SC-PH-69 | Expense accrual coverage | Scoped unreconciled employee-spend liabilities visible in accrual views | 100% |
+| SC-PH-70 | Card exception coverage | Unassigned or unsubmitted corporate-card transactions visible in exception views | 100% |
+| SC-PH-71 | Reconciliation control | Scoped extracted-vs-unpaid finance items visible in reconciliation dashboards | ≥ 90% |
+| SC-PH-72 | Approval transparency | Scoped approver-role and limit structures queryable in governance views | 100% |
+
+---
+
 *Last updated: 2026-04-11*

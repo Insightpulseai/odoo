@@ -508,4 +508,19 @@
 
 ---
 
+## Phase 40: Expense Intelligence and Reconciliation Reporting
+
+> **Ref**: `prd.md §42`, `plan.md §30`  
+> **Goal**: Implement standard expense and reconciliation controls inspired by the SAP Concur benchmark.
+
+- [ ] EXP-01: Add native Pulser expense accrual and date-range accrual views.
+- [ ] EXP-02: Add top employees with unassigned/unsubmitted card transactions dashboard.
+- [ ] EXP-03: Add unassigned credit card transactions exception dashboard.
+- [ ] EXP-04: Add accounting reconciliation dashboard (extracted-vs-paid control).
+- [ ] EXP-05: Add approver-details and limit-governance view.
+- [ ] EXP-06: Connect all exception dashboards to automated owner/approver nudge workflows.
+- [ ] EXP-07: Ensure all finance items persist supporting evidence links in Odoo Documents.
+
+---
+
 *Last updated: 2026-04-11*

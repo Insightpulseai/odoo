@@ -753,4 +753,17 @@ The backlog, operator dashboards, and agent persona definitions must follow scen
 
 ---
 
+## 30. Expense Intelligence and Reconciliation Benchmark Alignment
+
+### Goal
+Translate enterprise-grade expense reporting (Concur benchmark) into Pulser-native finance controls for Source-to-Pay and Record-to-Report.
+
+### Implementation Themes
+- **Accrual Surface**: Expose outstanding liabilities and cash-flow requirements as a finance-control view.
+- **Card Monitoring**: Implement Odoo-native dashboards for unassigned/unsubmitted corporate card transactions.
+- **Reconciliation Audit**: Implement extracted-vs-paid reconciliation controls to verify payout status against accounting records.
+- **Governance Transparency**: Expose approver-role and limit hierarchies for policy auditability.
+
+---
+
 *Last updated: 2026-04-11*
