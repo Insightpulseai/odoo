@@ -8,8 +8,8 @@ set -euo pipefail
 # Resource Identification
 export ZONE="insightpulseai.com"
 export HOSTNAME="www.insightpulseai.com"
-export LABEL="www"
-AZ_PATH="/opt/homebrew/bin/az"
+# Path identification
+AZ_PATH=$(which az || echo "/opt/homebrew/bin/az")
 
 # Target Discovery (Deterministic Baseline)
 # Website resides in the runtime/dev group per web-landing-deploy.yml

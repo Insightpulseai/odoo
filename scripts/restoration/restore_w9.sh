@@ -8,8 +8,8 @@ set -euo pipefail
 export RG_RUNTIME="rg-ipai-dev-odoo-runtime"
 export ACA_ENV="ipai-odoo-dev-env-v2"
 export APP="ipai-w9studio-dev"
-export HOSTNAME="www.w9studio.net"
-AZ_PATH="/opt/homebrew/bin/az"
+# Path identification
+AZ_PATH=$(which az || echo "/opt/homebrew/bin/az")
 
 echo "=== Restoring $HOSTNAME directly to $APP ==="
 

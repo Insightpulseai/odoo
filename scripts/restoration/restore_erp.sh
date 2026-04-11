@@ -8,8 +8,8 @@ set -euo pipefail
 # Resource Identification
 export ZONE="insightpulseai.com"
 export HOSTNAME="erp.insightpulseai.com"
-export LABEL="erp"
-AZ_PATH="/opt/homebrew/bin/az"
+# Path identification
+AZ_PATH=$(which az || echo "/opt/homebrew/bin/az")
 
 # Target Discovery (Deterministic Baseline)
 # Check for Prod target first (as per pipeline history)
