@@ -182,4 +182,53 @@ Evidence location: `docs/evidence/azure-iam-remediation/`
 
 ---
 
+## Resource Group — Target RBAC (per RG)
+
+### `rg-ipai-odoo-prod` (or dev equivalent)
+
+| Principal | Target role | Rationale |
+|-----------|-------------|-----------|
+| Deployment automation SP | Contributor | Deploy ACA, revisions, env-bound resources |
+| Odoo Runtime (managed identity) | Specific data-plane roles only | No broad RG Owner — narrow to actual runtime access |
+| Human operators | Contributor (eligible/time-bound) | Prefer group-based elevation — not standing |
+
+### `rg-ipai-data-prod` (DB / storage)
+
+| Principal | Target role | Rationale |
+|-----------|-------------|-----------|
+| DB/platform ops group | Contributor or narrow DB admin path | Manage Postgres and storage infra |
+| App/runtime identities | Resource-specific roles only | No broad RG Owner |
+| Deployment automation SP | Contributor only if deployment touches this RG | Otherwise no access |
+
+### `rg-ipai-shared-prod` (Key Vault, shared platform)
+
+| Principal | Target role | Rationale |
+|-----------|-------------|-----------|
+| Platform admin group | Contributor | Key Vault, shared platform resources |
+| App identities | Key Vault Secrets User / specific roles | Least privilege — no Contributor required |
+| Automation SP | Contributor only if deploying here | Narrow to actual target RG |
+
+### `rg-ipai-ai-prod` (Foundry / AI Search / OpenAI)
+
+| Principal | Target role | Rationale |
+|-----------|-------------|-----------|
+| AI platform group | Contributor | Manage Foundry/OpenAI/Search resources |
+| Pulser Agent Runtime (managed identity) | Cognitive Services User + AI Foundry Reader | Narrow runtime invoke — no management plane |
+| Automation SP | Contributor if needed | No Owner |
+
+---
+
+## Service-Level Guidance
+
+| Service / area | Recommended access pattern |
+|----------------|---------------------------|
+| Azure OpenAI / Foundry | Runtime identities: model/invoke roles only (`Cognitive Services User`) |
+| Azure AI Search | `Search Index Data Reader` or `Search Index Data Contributor` — not subscription Owner |
+| PostgreSQL | Azure DB roles + narrow infra roles separately; avoid broad Owner on data RG |
+| Key Vault | `Key Vault Secrets User` for read; `Key Vault Secrets Officer` for admin; never Owner |
+| Container Apps | `Container Apps Contributor` or deploy-scoped Contributor; not subscription Owner |
+| Defender managed identities | Leave system-managed roles untouched; document them in the inventory |
+
+---
+
 *Last updated: 2026-04-11*

@@ -337,4 +337,26 @@
 
 ---
 
+## Phase 29: Agent-Centered ERP Workspace — Benchmark Adoption
+
+> **Ref**: `prd.md §27`, `plan.md §21`  
+> **Design rule**: Copy the product shape, keep Pulser's authority model.
+
+- [ ] BM-01: Design and implement agent-first entry point in Odoo side-panel (dedicated entry before RAG-only Q&A). **PR-A01, `pulser-copilot-experience`**
+- [ ] BM-02: Define bounded long-running session model — resumability, progress visibility, interruption handling. **PR-A02, `pulser-agentic-workflows`**
+- [ ] BM-03: Define per-agent instruction/memory YAML surface — stored in Odoo config, governed by ERP authority. **PR-A04, `pulser-copilot-experience`**
+- [ ] BM-04: Implement Retrieval/Evidence Agent as first specialist agent. **`pulser-documents-evidence-grounding`**
+- [ ] BM-05: Implement AP Agent (vendor bill intake, duplicate detection, draft creation). **`pulser-finance-close-and-reconciliation`**
+- [ ] BM-06: Implement Expense & Cash Advance Agent (review, approval, liquidation). **`pulser-project-spend-and-profitability`**
+- [ ] BM-07: Implement PH Tax/BIR Agent (VAT/withholding/TIN/ATC validation, readiness packs). **`pulser-ph-tax-and-bir-readiness`**
+- [ ] BM-08: Implement Close Agent (blocker detection, sequencing, evidence pack generation). **`pulser-finance-close-and-reconciliation`**
+- [ ] BM-09: Implement Reporting/Publishing Agent (PPTX/DOCX/XLSX generation, publishability QA). **`pulser-office-publishing`**
+- [ ] BM-10: Add MCP tool input/output sanitization and schema validation at all connector boundaries. **`pulser-mcp-testing-review-security`**
+- [ ] BM-11: Add prompt injection test scenarios to red-team eval pack.
+- [ ] BM-12: Log all tool execution to `ipai.copilot.audit` (tool name, inputs hash, action result).
+- [ ] BM-13: Add SC-PH-41 through SC-PH-45 to SMART criteria monitoring. **`pulser-analytics-insights-planning`**
+- [ ] BM-14: Validate benchmark adoption has not expanded scope beyond the 10 canonical capability families.
+
+---
+
 *Last updated: 2026-04-11*

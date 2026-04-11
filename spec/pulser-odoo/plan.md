@@ -584,4 +584,55 @@ Plan → Prototype → Create → Test → Review → Optimize → Secure
 
 ---
 
+## 21. Agent-Centered ERP Workspace — Implementation Model
+
+> **Benchmark**: Notion 3.0 product shift (September 2025)  
+> **Ref**: `prd.md §27`  
+> **Rule**: Copy the product shape, not the horizontal scope.
+
+### Implementation themes
+
+| Theme | Pulser-native translation |
+|-------|--------------------------|
+| Agent-first entry | Dedicated agent entry point in Odoo side-panel; agent routing before RAG-only Q&A |
+| Multi-step execution | Foundry sequential + human-in-the-loop orchestration patterns; resumable workflow state |
+| Memory/instructions | Per-agent instruction YAML stored in Odoo config; user preference surface in side-panel |
+| Specialist agents | One agent per capability family lane (AP, Expense, PH Tax, Close, Publishing, Retrieval) |
+| Connector reach | MCP-first: Foundry MCP, PostgreSQL, Azure DevOps MCP, GitHub, Work IQ Word |
+| Security hardening | Input/output safeguards at every MCP boundary; prompt injection in eval and red-team scope |
+
+### Design rule — authority model
+Pulser copies the benchmark's product shape but keeps its own authority model:
+
+```
+System of action:     Odoo (records, ORM, audit)
+Evidence authority:   Odoo Documents (retained copies, grounding surface)
+Execution boundaries: Policy/review gates, approval thresholds, PIM-gated identity
+Memory authority:     Subordinate to live Odoo state and retained evidence
+```
+
+### Specialist agent sequencing
+
+Build specialist agents in this order (matches capability family tiers):
+
+| Agent | Tier | Maps to |
+|-------|------|---------|
+| Retrieval/Evidence Agent | 1 | `pulser-documents-evidence-grounding` |
+| AP Agent | 2 | `pulser-finance-close-and-reconciliation` / `pulser-data-foundation` |
+| Expense & Cash Advance Agent | 2 | `pulser-project-spend-and-profitability` |
+| PH Tax/BIR Agent | 2 | `pulser-ph-tax-and-bir-readiness` |
+| Close Agent | 2 | `pulser-finance-close-and-reconciliation` |
+| Reporting/Publishing Agent | 3 | `pulser-office-publishing` |
+
+### Prompt injection and connector security
+
+Treat as engineering requirements, not afterthoughts:
+- All MCP tool inputs sanitized before execution
+- All MCP tool outputs validated against expected schema before action
+- Injection-test scenarios added to red-team eval pack
+- Tool execution logged to `ipai.copilot.audit` with tool name, inputs hash, action result
+- No tool may write to Odoo without user confirmation (existing safe-action gate enforced)
+
+---
+
 *Last updated: 2026-04-11*

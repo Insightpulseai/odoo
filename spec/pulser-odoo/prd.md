@@ -904,4 +904,128 @@ Pulser may be treated as **commercially identity-ready** once publisher/legal id
 
 ---
 
+## 27. Reverse benchmark — Notion 3.0 → Pulser Agentic ERP Workspace
+
+### 27.1 Product thesis
+
+Pulser for PH should evolve from an assistant attached to Odoo into an **agent-centered operating surface** for finance and project operations.
+
+The benchmark signal is the product shift represented by Notion 3.0 (launched September 2025):
+- agents at the center of the product, not as a sidebar feature
+- multi-step action rather than suggestion-only AI
+- personalization and memory (instruction pages)
+- team of specialist agents as the forward roadmap
+- connectors/MCP-based tool reach
+- explicit prompt-injection and security hardening
+
+Pulser should apply those moves to **ERP finance operations**, not general knowledge work.
+
+### 27.2 Positioning
+
+Pulser is not a generic workspace agent. Pulser is a **domain-specialized agentic ERP workspace** for:
+- finance execution (AP, AR, reconciliation)
+- project spend and profitability
+- PH tax and BIR readiness
+- month-end / year-end / tax-period close
+- evidence-backed reporting and publishable outputs
+
+### 27.3 Core product promise
+
+Anything a disciplined finance operator can do across the scoped Pulser surfaces, Pulser should progressively be able to: **understand → plan → execute in bounded steps → retain evidence → explain with citations → escalate when approval is required.**
+
+### 27.4 Reverse-benchmarked product pillars
+
+#### A. Agent-centered workspace
+Pulser makes agents the primary execution interface for repetitive and research-heavy finance work, while preserving Odoo records as the system of action and Odoo Documents as the evidence system.
+
+#### B. Multi-step workflow completion
+Pulser must go beyond answering and editing. It must execute multi-step workflows:
+- review document → extract data → check policy/tax blockers → prepare draft → retain evidence → notify reviewer
+- gather evidence across Odoo and retained files → assemble close pack → surface blockers → route for signoff
+- compile findings → produce structured report / dashboard / publishable artifact
+
+#### C. Personalization and memory
+Pulser should support explicit instruction and memory surfaces for:
+- formatting preferences
+- routing/escalation preferences
+- recurring finance conventions
+- project/company/branch context
+- review style and artifact expectations
+
+Memory is **subordinate** to:
+1. Live Odoo state (highest authority)
+2. Retained evidence in Odoo Documents
+3. Workflow/policy state
+
+#### D. Team of specialist agents
+Pulser should evolve from one general assistant into a managed set of specialist agents:
+
+| Agent | Primary lane |
+|-------|-------------|
+| AP Agent | Vendor bill intake, duplicate detection, draft creation |
+| Expense & Cash Advance Agent | Review, approval, liquidation tracking |
+| PH Tax/BIR Agent | VAT, withholding, TIN/ATC validation, readiness packs |
+| Close Agent | Blocker detection, sequencing, evidence pack generation |
+| Reporting/Publishing Agent | PPTX / DOCX / XLSX generation, publishability QA |
+| Retrieval/Evidence Agent | Documents-grounded answers, missing-evidence detection |
+
+#### E. Controlled connectors and MCP reach
+Pulser extends safely across approved systems using:
+- MCP-first tool access (Foundry MCP Server, PostgreSQL, Azure DevOps MCP, GitHub)
+- approved connectors with scoped permissions
+- auditable action traces for every tool call
+
+#### F. Security by design
+Pulser treats prompt injection, unsafe tool use, and evidence corruption as first-class risks:
+- input and output safeguards at every execution boundary
+- approval boundaries enforced before finance-critical actions
+- evidence-aware reasoning (grounding before generation)
+- session/action auditability via `ipai.copilot.audit`
+- policy-constrained tool execution
+
+### 27.5 Product requirements
+
+| ID | Requirement |
+|----|-------------|
+| PR-A01 | Pulser must expose a clear agent-first entry point inside the Odoo operating experience |
+| PR-A02 | Pulser must support long-running, bounded, multi-step work sessions with resumability and progress visibility |
+| PR-A03 | Pulser must operate across multiple Odoo records, retained files, tasks/milestones/OKRs, and knowledge sources in a single workflow |
+| PR-A04 | Pulser must support an editable instruction/memory surface per agent or user context, governed by ERP/policy authority rules |
+| PR-A05 | Pulser must support creation and reuse of specialist agents by finance lane |
+| PR-A06 | Every Pulser-generated operational artifact must remain linkable to retained evidence and, where relevant, be saved in Odoo Documents |
+| PR-A07 | Pulser must generate native, professionally formatted PPTX / DOCX / XLSX for finance, close, and executive workflows |
+
+### 27.6 Non-goals
+
+Pulser should not attempt to mirror the full breadth of Notion's horizontal workspace. Pulser is not:
+- a general team docs/wiki platform
+- a general chat workspace or consumer productivity suite
+- a project management system (Odoo Project + Plane cover this)
+
+### 27.7 Competitive improvement over the benchmark
+
+Compared with a horizontal agent workspace, Pulser should be better at:
+
+| Dimension | Pulser advantage |
+|-----------|-----------------|
+| Grounding | System-of-record grounding (live Odoo state, not just indexed docs) |
+| Control | Explicit approval boundaries and safe-action mediation |
+| Domain depth | Finance-specific workflow decomposition (AP, close, BIR, reconciliation) |
+| Evidence discipline | Fail-closed evidence retention; missing evidence = blocked state |
+| Tax/compliance | PH-specific BIR readiness logic not present in horizontal tools |
+| Publishing | ERP-grounded, evidence-linked native Office artifacts |
+| Traceability | `ipai.copilot.audit` record for every interaction |
+
+### 27.8 Benchmark-derived success criteria
+
+| ID | Objective | Metric | Target | Window |
+|----|-----------|--------|--------|--------|
+| SC-PH-41 | Agent-first adoption | % of scoped pilot workflows initiated through Pulser agent entry points | ≥ 70% | 90 days |
+| SC-PH-42 | Multi-step completion depth | % of scoped pilot workflows completing ≥ 3 bounded steps without manual re-orchestration | ≥ 80% | 90 days |
+| SC-PH-43 | Instruction/memory utility | % of pilot users reporting measurable improvement from explicit Pulser memory/instruction surfaces | ≥ 80% | 90 days |
+| SC-PH-44 | Specialist-agent coverage | Production-scoped specialist agents defined and usable for core lanes | ≥ 5 agents before GA | — |
+| SC-PH-45 | Evidence-linked artifact integrity | Publishable Pulser-generated finance artifacts retaining evidence linkage before release | 100% | Continuous |
+
+---
+
 *Last updated: 2026-04-11*
