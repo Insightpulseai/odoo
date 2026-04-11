@@ -715,4 +715,23 @@ Both SDKs are used as **adapters** around the core Pulser runtime. Neither repla
 
 ---
 
+## 28. Layered Delivery Model: Core and Shells
+
+### Goal
+Implement the core/shell separation by organizing delivery adapters as subdomains around the core `agent-platform` runtime.
+
+### Repo Subdomains in `agent-platform`
+1. **`channels/`**: Houses delivery adapters for multichannel reach.
+    - `microsoft-agents/`: Shells for M365, Teams, and Webchat.
+    - `github-copilot-sdk/`: Internal DevOps and operator assistance.
+2. **`finance/`**: Houses benchmark-inspired finance workflows.
+    - `office-experiences/`: Adapters for high-fidelity Excel/Outlook UX.
+    - `collections/`: Autonomous collection assistance logic.
+    - `reconciliation/`: Spreadsheet-native reconciliation discovery.
+
+### Separation of Authority
+Authority over Odoo action and evidence remains in the **Pulser Core**. Shell subdomains are strictly responsible for formatting, interaction patterns, and channel-specific activity handling.
+
+---
+
 *Last updated: 2026-04-11*

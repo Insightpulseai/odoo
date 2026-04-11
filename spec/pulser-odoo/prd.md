@@ -1285,4 +1285,27 @@ GitHub Copilot SDK is an optional embedded runtime for internal/operational lane
 
 ---
 
+## 40. Office Productivity and Multichannel Benchmarks
+
+Pulser identifies the Microsoft Finance agents as the primary benchmark for Office-native finance user experiences.
+
+### 40.1 Excel Benchmark Lane
+Pulser must support an Excel-native experience comparable to:
+- **Finance Reconciliation**: Assistance with discrepancy discovery and analysis.
+- **Traceability**: Reusable action items and templates grounded in Odoo business records.
+- **Autonomous Flows**: Low-latency reconciliation assistance within the spreadsheet surface.
+
+### 40.2 Outlook Benchmark Lane
+Pulser must support an Outlook-native experience comparable to:
+- **Collections Workflows**: Identification and prioritization of collection tasks.
+- **Account Context**: ERP-grounded customer and account context surfaced in the email rail.
+- **Action Items**: Suggested responses, summaries, and automated ERP note-taking.
+
+### 40.3 Platform Dependency Rule
+While Pulser targets the UX/workflow outcomes of the Microsoft Finance benchmarks, it must **not** adopt their underlying platform dependency stack as a core requirement.
+- **Dataverse/Copilot Studio**: Not required for core Pulser runtime; may be used as optional adapters only.
+- **Billing/Licensing**: Pulser SaaS control plane remains the authority for tenant entitlement, not M365 per-seat Dataverse licensing.
+
+---
+
 *Last updated: 2026-04-11*

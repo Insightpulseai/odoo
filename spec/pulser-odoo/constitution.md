@@ -261,4 +261,25 @@ Pulser must be operated with a live-site-first posture.
 
 ---
 
+## 17. Layered Architectural Invariant: Core and Shells
+
+Pulser is designed as a modular platform where a single reasoning authority serves multiple delivery shells.
+
+### 17.1 The Pulser Core
+The center of the platform is the **Pulser Core**, which owns reasoning, authority, and state:
+- **ERP Authority**: Odoo (Action) and Odoo Documents (Evidence).
+- **Reasoning Plane**: Azure AI Foundry, OpenAI, and AI Search.
+- **Platform Management**: SaaS Control Plane and Deployment Stamps.
+
+### 17.2 The Three Shells
+Delivery is handled through three distinct shells around the core:
+1. **Core SaaS/Runtime Shell**: The primary web/API gateway for customer-facing services.
+2. **Enterprise Productivity Shell**: Adapters for M365 Copilot, Teams, and future Outlook/Excel experiences (leveraging Microsoft Agents SDK).
+3. **Engineering/Operator Shell**: Adapters for repository-aware internal assistants and DevOps copilots (leveraging GitHub Copilot SDK).
+
+### 17.3 Dependency Rule
+The Pulser Core must not depend on the specific authentication, billing, or substrate assumptions of its delivery shells (e.g., Dataverse, Copilot Studio, or GitHub Copilot key-based auth). Shells are **adapters** to the core, not its foundation.
+
+---
+
 *Last updated: 2026-04-11*

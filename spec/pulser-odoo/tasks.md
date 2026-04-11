@@ -478,4 +478,19 @@
 
 ---
 
+## Phase 38: Office-Native Finance Benchmark Alignment
+
+> **Ref**: `prd.md §40`, `plan.md §28`, `constitution.md §17`  
+> **Goal**: Achieve enterprise-grade Office-native finance UX without platform dependency lock-in.
+
+- [ ] OFF-01: Define Excel adapter architecture for reconciliation and discrepancy analysis.
+- [ ] OFF-02: Define Outlook adapter architecture for account context and collections triage.
+- [ ] OFF-03: Implement finance-specific shell configurations in `agent-platform/finance/`.
+- [ ] OFF-04: Map Odoo-grounded action and evidence patterns to Office interaction rails.
+- [ ] OFF-05: Verify rule that Pulser Core retains authority over action while Shells handle delivery.
+- [ ] OFF-06: Add benchmark UX validation tests for Excel and Outlook finance surfaces.
+- [ ] OFF-07: Confirm M365 Admin Center integrated apps deployment flow for Office-native shells.
+
+---
+
 *Last updated: 2026-04-11*
