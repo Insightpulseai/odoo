@@ -695,4 +695,24 @@ Execute fault-injection (chaos) and failover/resiliency testing in production-li
 
 ---
 
+## 27. Agent SDK Adoption Model
+
+### Microsoft Agents SDK Adoption
+Adopt the Microsoft 365 Agents SDK for Pulser surfaces requiring multichannel reach:
+- **Scope**: M365 Copilot, Teams, and Web/custom integrations.
+- **Rule**: Orchestration and business logic must remain in Pulser-owned services; the SDK acts as the delivery container and activity handler.
+
+### GitHub Copilot SDK Adoption
+Adopt the GitHub Copilot SDK only for scoped internal lanes:
+- **Scope**: Repository-aware operational copilots and engineering Assistants.
+- **Rule**: Do not couple the SaaS control plane or customer identity to GitHub Copilot SDK infrastructure.
+
+### Integration Rule
+Both SDKs are used as **adapters** around the core Pulser runtime. Neither replaces:
+- Odoo as the system of action and authority.
+- Odoo Documents as the retained evidence surface.
+- The Pulser SaaS control plane, deployment stamps, or Azure governance substrate.
+
+---
+
 *Last updated: 2026-04-11*

@@ -1254,4 +1254,35 @@ The Pulser agent-platform runtime must reflect a multi-agent product architectur
 
 ---
 
+## 39. Agent SDK and Channel Strategy
+
+Pulser must distinguish between the core reasoning plane and the multichannel delivery layers.
+
+### 39.1 Core runtime rule
+The primary Pulser reasoning and retrieval plane remains:
+- **Core Plane**: Azure AI Foundry / Azure OpenAI / Azure AI Search.
+- **Logic**: Pulser SaaS control-plane logic and MCP-first tool access.
+- **Authority**: Odoo-grounded workflow execution and evidence retention.
+
+### 39.2 Microsoft Agents SDK (Enterprise Channel Shell)
+Microsoft 365 Agents SDK is the primary channel/container layer for reaching enterprise surfaces:
+- **Surface Reach**: M365 Copilot, Microsoft Teams, and custom Web/App channels.
+- **Role**: Serves as the outer "multichannel shell" for delivery, state, and activity handling.
+- **Integration**: Leverages Azure AI Foundry as the backend functionality plane.
+
+### 39.3 GitHub Copilot SDK (Developer/Operator Runtime)
+GitHub Copilot SDK is an optional embedded runtime for internal/operational lanes:
+- **Scope**: GitHub-native developer workflows and internal release/devops assistants.
+- **Role**: Provides repository-aware automation and planning for engineering personas.
+- **Restriction**: Do not make GitHub Copilot SDK the default enterprise/customer runtime.
+
+### 39.4 Identity and Architecture Priority
+- **Identity Rule**: If Entra ID or managed identities are required, the core Foundry-native path must be used. GitHub Copilot SDK BYOK mode is restricted to scenarios compatible with key-based auth.
+- **Priority Order**:
+    1. **Foundry/Search/Odoo**: Core Runtime.
+    2. **Microsoft Agents SDK**: Multichannel delivery/container shell.
+    3. **GitHub Copilot SDK**: Optional developer/operator runtime extension.
+
+---
+
 *Last updated: 2026-04-11*

@@ -463,4 +463,19 @@
 
 ---
 
+## Phase 37: Agent SDK and Channel Alignment
+
+> **Ref**: `prd.md §39`, `plan.md §27`  
+> **Goal**: Align SDK adoption with core architecture and identity constraints.
+
+- [ ] SDK-01: Define Microsoft Agents SDK usage boundaries for M365/Teams/Web surfaces.
+- [ ] SDK-02: Define GitHub Copilot SDK usage boundaries for internal code/DevOps surfaces.
+- [ ] SDK-04: Secure state and activity handling for multichannel containers in `agent-platform`.
+- [ ] SDK-05: Define identity/auth constraints for SDK adoption (managed identities vs keys).
+- [ ] SDK-06: Map channel container responsibilities vs core Pulser reasoning plane responsibilities.
+- [ ] SDK-07: Add SDK selection guidance to architecture and implementation docs.
+- [ ] SDK-08: Prevent GitHub Copilot SDK from becoming the default enterprise runtime path.
+
+---
+
 *Last updated: 2026-04-11*
