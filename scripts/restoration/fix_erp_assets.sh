@@ -5,12 +5,11 @@
 # =============================================================================
 set -euo pipefail
 
-# Configuration
-export RG_DATA="rg-ipai-dev-odoo-data"
-export PG_SERVER="pg-ipai-odoo"
-export DB_NAME="odoo"
+# Identification
+export RG_RUNTIME="rg-ipai-dev-odoo-runtime"
+export APP="ipai-odoo-dev-web"
 export BASE_URL="https://erp.insightpulseai.com"
-AZ_PATH="/opt/homebrew/bin/az"
+AZ_PATH=$(which az || echo "/opt/homebrew/bin/az")
 
 echo "=== Fixing ERP Asset Bundling for $BASE_URL ==="
 
