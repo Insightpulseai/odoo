@@ -43,6 +43,12 @@ prohibited_patterns:
       - "web/platform-kit/"        # platform-kit references deprecated items
 
 canonical_subdomains:
+  # --- MIGRATION STATUS ---
+  # DO droplet 178.128.112.214 was decommissioned 2026-03-15.
+  # Subdomains below still showing resolves_to: 178.128.112.214 are PENDING
+  # DNS cutover to Azure Front Door (ipai-prod.z01.azurefd.net).
+  # www and apex are CONFIRMED broken — fix immediately (see notes).
+
   # --- Active A records (proxied via Cloudflare → 178.128.112.214) ---
   - host: erp
     service: Odoo CE 19
@@ -99,10 +105,33 @@ canonical_subdomains:
     notes: "MCP coordinator on :8766 — runs on droplet (not DO App Platform)"
 
   - host: www
-    service: WWW redirect
-    stack: self-hosted-docker
-    resolves_to: 178.128.112.214
-    notes: "Redirects to apex insightpulseai.com"
+    service: WWW redirect → AFD root-redirect → erp.insightpulseai.com
+    stack: azure-front-door
+    dns_type: CNAME
+    resolves_to: ipai-prod.z01.azurefd.net
+    status: BROKEN — DNS not yet cut over
+    fix: |
+      In Azure DNS zone insightpulseai.com:
+        DELETE: A record www → 178.128.112.214 (DO, decommissioned)
+        ADD:    CNAME www → ipai-prod.z01.azurefd.net
+      Then verify AFD custom domain insightpulseai.com and www.insightpulseai.com
+      have ManagedCertificate provisioned and association state = Approved.
+    notes: "\n  CURRENT STATE: DNS_PROBE_FINISHED_NXDOMAIN in browser (DO IP dead)\n  TARGET STATE: CNAME → AFD endpoint, AFD route root-redirect → erp.insightpulseai.com"
+
+  # --- Apex (insightpulseai.com) ---
+  - host: "@"
+    service: Apex redirect → AFD root-redirect → erp.insightpulseai.com
+    stack: azure-front-door
+    dns_type: ALIAS
+    resolves_to: ipai-prod.z01.azurefd.net
+    status: BROKEN — DNS not yet cut over
+    fix: |
+      In Azure DNS zone insightpulseai.com:
+        DELETE: A record @ → 178.128.112.214 (DO, decommissioned)
+        ADD:    ALIAS record @ → ipai-prod.z01.azurefd.net
+              (Azure DNS supports ALIAS for apex; use resource type = Azure Front Door)
+      Then verify AFD custom domain insightpulseai.com has ManagedCertificate = Approved.
+    notes: "\n  CURRENT STATE: ERR_CONNECTION_TIMED_OUT (DO droplet dead)\n  TARGET STATE: ALIAS → AFD endpoint, AFD route root-redirect → erp.insightpulseai.com"
 
   # --- Active CNAME records (DNS-only, not proxied) ---
   - host: agent
