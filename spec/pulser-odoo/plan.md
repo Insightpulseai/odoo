@@ -457,6 +457,32 @@ Build only where neither native nor OCA covers the need:
 ### Canonical runtime shell
 Use a Foundry-native web/gateway shell with Entra-aware authentication and Foundry agent integration as the baseline product posture.
 
+### Canonical repo baseline
+
+**Foundry-org repos**
+
+| Repo | Role | Use |
+|------|------|-----|
+| `foundry-agent-webapp` | Primary app shell | Entra-aware web/gateway surface with Foundry Agents integration. Adopt directly. |
+| `foundry-samples` | Patterns and Bicep | Reference repo for infra, service wiring, and sample implementations. Adopt directly. |
+| `Foundry-Local-Lab` | Dev/experiment only | Local RAG and multi-agent experimentation. Reference only. |
+| `foundry-mcp-playground` | MCP sandbox | Experimental MCP surface. Playground only. |
+| `mcp-foundry` | Deprecated | Moved to cloud; replaced by Foundry MCP Server. Do not use as primary. |
+
+**Microsoft OSS repos**
+
+| Tier | Repo | Use |
+|------|------|-----|
+| 1 — Adopt directly | `microsoft/agent-framework` | Core multi-agent orchestration and deployment substrate |
+| 1 — Adopt directly | `microsoft/azure-skills` | Azure-facing skill packaging baseline |
+| 1 — Adopt directly | `microsoft/skills` | Skill catalog structure and MCP server patterns |
+| 1 — Adopt directly | `microsoft/azure-devops-mcp` | Boards / work-item / pipeline-aware agent governance |
+| 1 — Adopt directly | `microsoft/agent-governance-toolkit` | Policy enforcement, zero-trust identity, execution sandboxing, reliability engineering |
+| 1 — Adopt directly | `microsoft/Multi-Agent-Custom-Automation-Engine-Solution-Accelerator` | Solution-accelerator packaging pattern for productionized multi-agent systems |
+| 2 — Reference | `microsoft/autogen` | Ecosystem reference; not the primary orchestration base |
+| 2 — Reference | `microsoft/semanticworkbench` | Prototyping and eval harness reference |
+| 2 — Reference | `microsoft/powerbi-modeling-mcp` | Optional for CFO/FP&A governed reporting layer |
+
 ### Template adoption set
 Adopt patterns from:
 - Get started with AI agents
@@ -464,23 +490,46 @@ Adopt patterns from:
 - Multi-modal Content Processing
 - Document Generation and Summarization
 - Deploy Your AI Application in Production
-- Governance/security accelerators
+- **Data and Agent Governance and Security** ← governance/security baseline for finance-critical flows
 
 ### Tooling adoption set
 Enable and standardize around:
 
-| Tool | Purpose |
-|------|----------|
-| Azure AI Search | Finance knowledge indexing and agentic retrieval |
-| File Search | Evidence/document retrieval |
-| Azure Database for PostgreSQL | Read-only MCP grounding |
-| Foundry MCP Server | Canonical tool exposure |
-| GitHub | Spec, skills, workflow, and template sourcing |
-| Code Interpreter | Formula validation, scenario computation |
-| Browser Automation | BIR portal and external confirmation workflows |
-| Azure DevOps MCP | Board/progress sync where required |
-| Work IQ Word | Word document generation |
-| Microsoft MCP Server for Enterprise | Enterprise system integration |
+| Tool | Purpose | Priority |
+|------|----------|----------|
+| Azure AI Search | Finance knowledge indexing and agentic retrieval | Must-have |
+| File Search | Evidence/document retrieval | Must-have |
+| Azure Database for PostgreSQL | Read-only MCP grounding | Must-have |
+| Foundry MCP Server | Canonical tool exposure | Must-have |
+| Azure DevOps MCP Server | Board/progress sync and release-gate tracking | Must-have |
+| GitHub | Spec, skills, workflow, and template sourcing | Must-have |
+| Code Interpreter | Formula validation, scenario computation | Must-have |
+| Browser Automation | BIR portal and external confirmation workflows | Very useful |
+| Work IQ Word | Word document generation | Very useful |
+| Microsoft MCP Server for Enterprise | Entra/directory-aware enterprise flows | Very useful |
+| Azure Speech MCP Server | Voice mode only if explicitly scoped | Optional |
+
+**Office tool gap note**: `Work IQ Word` covers the Word lane via a Foundry-native tool path. No equivalent first-party PowerPoint or Excel tools are currently in the catalog. PowerPoint and Excel generation must use the custom native-artifact path (`python-pptx`, `openpyxl`) defined in Phases 17–22 of `tasks.md`.
+
+### Capability-family architecture layers
+
+Map every implementation phase to one of three architecture layers:
+
+**Foundation layer** (Tier 1 — must be in place first)
+- `pulser-data-foundation` → Azure AI Search + File Search + PostgreSQL tool + Odoo context
+- `pulser-copilot-experience` → `foundry-agent-webapp` + Get started with AI agents
+- `pulser-agentic-workflows` → `agent-framework` + Multi-Agent Workflow Automation
+- `pulser-analytics-insights-planning` → agent templates + OKR dashboard + `powerbi-modeling-mcp` (optional)
+- `pulser-documents-evidence-grounding` → Multi-modal Content Processing + File Search + Azure AI Search
+
+**Business execution layer** (Tier 2 — core value delivery)
+- `pulser-finance-close-and-reconciliation` → agent orchestration + PostgreSQL + governance/security template
+- `pulser-project-spend-and-profitability` → agent orchestration + Odoo/Postgres grounding
+- `pulser-ph-tax-and-bir-readiness` → Multi-modal Content Processing + Browser Automation + Documents grounding
+
+**Scaling and governance layer** (Tier 3 — governed publishing and hardening)
+- `pulser-office-publishing` → Document Generation and Summarization + Work IQ Word + Code Interpreter + custom PPTX/XLSX path
+- `pulser-mcp-testing-review-security` → Foundry MCP Server + `azure-devops-mcp` + `agent-governance-toolkit` + `skills` + GitHub
 
 ---
 

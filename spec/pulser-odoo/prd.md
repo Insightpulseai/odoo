@@ -714,38 +714,117 @@ It combines:
 - publishable Office artifact generation
 - MCP-backed validation, tooling, and governance
 
-### 24.2 Capability family index
+### 24.2 Capability family scope definitions
 
-See `constitution.md §9.3` for the canonical capability family table (families 1–10).
+#### 1. `pulser-data-foundation`
+- Unified governed operational data from Odoo
+- Transactional records: accounts, invoices, expenses, cash advances, vendors, customers
+- Finance PPM OKR / key-result / milestone / task models
+- Company / branch / fiscal period context
+- Read-only grounded retrieval over live business state
 
-Each capability family must be:
-- tagged on all epics, issues, and tasks that implement it
-- aligned to at least one OKR objective
-- covered by at least one eval scenario
-- governed by a release gate before production promotion
+#### 2. `pulser-copilot-experience`
+- Odoo-native side-panel assistant surface
+- Context-aware prompting and explanation
+- Record-aware next-step guidance
+- Review / block / escalate / recommend UX interactions
+- Evidence-aware answers tied to retained Documents
+
+#### 3. `pulser-agentic-workflows`
+- Plan / decide / act behavior across multi-step workflows
+- Bounded execution with safe-action routing
+- Validation-before-completion for finance-critical actions
+- Escalation, stop, and approval-gate rules
+- Agentic lifecycle: Plan → Prototype → Create → Test → Review → Optimize → Secure
+
+#### 4. `pulser-analytics-insights-planning`
+- Analytics: real-time unified finance visibility and KPI dashboards
+- Insights: proactive anomaly, risk, and opportunity detection
+- Planning: scenario-based decisions, OKRs, milestones, and forecasts
+- CFO operating triad: **analytics → insights → planning**
+
+#### 5. `pulser-finance-close-and-reconciliation`
+- Month-end / year-end / tax-period close orchestration
+- Reconciliation assistance with confidence scoring
+- Close blocker detection and dependency sequencing
+- Evidence packs and signoff readiness
+- Finance performance review support
+
+#### 6. `pulser-project-spend-and-profitability`
+- Time and expense review and approvals
+- Project spend control and visibility
+- Cash advance issuance and liquidation tracking
+- Project profitability analysis
+- Project-to-finance record linkage
+
+#### 7. `pulser-ph-tax-and-bir-readiness`
+- VAT / withholding / TIN / ATC validation
+- 2307 / 2550Q / SAWT / SLSP readiness
+- BIR evidence packs and attachment completeness
+- Explicit BIR boundary status tracking (`ready_for_filing`, `submitted_externally_pending_confirmation`, `officially_confirmed`)
+- Blocker routing for missing requirements
+
+#### 8. `pulser-documents-evidence-grounding`
+- Retained copies in Odoo Documents as governed grounding surface
+- Evidence completeness computation
+- Missing evidence queue and fail-closed behavior
+- Answer-from-retained-evidence with response classification (`evidence_found`, `evidence_found_with_inference`, `evidence_missing`, `evidence_conflicting`)
+- File-linked workflow support
+
+#### 9. `pulser-office-publishing`
+- PowerPoint Studio (custom native path — `python-pptx`)
+- Word Studio (Foundry-native tool path + `python-docx`)
+- Excel Studio (custom native path — `openpyxl`)
+- Publishable-quality native Office outputs (PPTX / DOCX / XLSX)
+- Publishability QA pass before release
+- Retained artifact linkage in Odoo Documents
+
+#### 10. `pulser-mcp-testing-review-security`
+- MCP-backed read-only grounding (PostgreSQL, Foundry MCP Server, Azure DevOps MCP)
+- Structured tool execution and tool-use policy
+- Testing and validation harnesses (evals, stored completions)
+- Review gates and red-team runs
+- Runtime monitoring and alerting
+- Security and governance controls (custom policies, zero-trust identity)
 
 ### 24.3 Foundry-first product stack
 
-Pulser is built Foundry-first.
+Pulser is built Foundry-first. See `plan.md §18` for the full repo baseline and capability-family architecture-layer map.
 
 **Preferred template baselines**
 - Get started with AI agents
-- Deploy Your AI Application in Production
+- Multi-Agent Workflow Automation
 - Multi-modal Content Processing
 - Document Generation and Summarization
+- Deploy Your AI Application in Production
+- Data and Agent Governance and Security
 
 **Preferred tool baselines**
-- Azure AI Search
-- File Search
-- Code Interpreter
-- Browser Automation
-- GitHub
-- Azure Database for PostgreSQL (read-only MCP grounding)
-- Foundry MCP Server
-- Work IQ Word
-- Microsoft MCP Server for Enterprise
+- Azure AI Search (must-have)
+- File Search (must-have)
+- Azure Database for PostgreSQL, read-only MCP grounding (must-have)
+- Foundry MCP Server (must-have)
+- Azure DevOps MCP Server (must-have)
+- GitHub (must-have)
+- Code Interpreter (must-have)
+- Browser Automation (very useful)
+- Work IQ Word (very useful)
+- Microsoft MCP Server for Enterprise (very useful)
 
-### 24.4 Agentic ERP product model
+### 24.4 Priority tiers
+
+| Tier | Families | Rationale |
+|------|----------|----------|
+| 1 — Foundation | `pulser-data-foundation`, `pulser-copilot-experience`, `pulser-agentic-workflows`, `pulser-analytics-insights-planning`, `pulser-documents-evidence-grounding` | Prerequisites for all value delivery |
+| 2 — Business execution | `pulser-finance-close-and-reconciliation`, `pulser-project-spend-and-profitability`, `pulser-ph-tax-and-bir-readiness` | Core PH finance value lanes |
+| 3 — Scale and governance | `pulser-office-publishing`, `pulser-mcp-testing-review-security` | Governed publishing and production hardening |
+
+Tier 1 families must be functionally in place before Tier 2 workflows are released to production. Tier 3 runs parallel but must complete before Gate D.
+
+### 24.5 Product rule
+All major Pulser features, workstreams, board epics, and release gates must map to one or more canonical capability families. Scope outside these families requires explicit spec amendment.
+
+### 24.6 Agentic ERP product model
 The winning conceptual model is: **data + Copilot + agents**, where agents plan, decide, and act.
 
 **Strongest target finance lanes:**

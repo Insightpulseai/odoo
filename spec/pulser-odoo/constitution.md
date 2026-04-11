@@ -159,4 +159,32 @@ No finance-critical workflow may jump from generation to completion without vali
 
 ---
 
+## 10. Canonical Capability Family Principle
+
+Pulser for PH must organize product scope, implementation planning, and delivery sequencing around the 10 canonical capability families defined in §9.3.
+
+These families are the **target architecture** for Pulser and must be used consistently across:
+- PRD scope definitions
+- implementation plan phases
+- task and board structure (epics, issues, tasks)
+- OKR objective and key-result mapping
+- evaluation suite organization
+- release gate criteria
+
+### Usage mandate
+Every major feature, workstream, board epic, and release gate must declare which canonical capability family or families it advances. Unnamed scope is not valid scope.
+
+### Governance tiers
+
+| Tier | Families | Priority |
+|------|----------|----------|
+| 1 — Foundation | `pulser-data-foundation`, `pulser-copilot-experience`, `pulser-agentic-workflows`, `pulser-analytics-insights-planning`, `pulser-documents-evidence-grounding` | Must be in place before Tier 2 |
+| 2 — Business execution | `pulser-finance-close-and-reconciliation`, `pulser-project-spend-and-profitability`, `pulser-ph-tax-and-bir-readiness` | Core value-delivery lanes |
+| 3 — Scale and governance | `pulser-office-publishing`, `pulser-mcp-testing-review-security` | Governed publishing and operational hardening |
+
+### Design rule
+Pulser should go **deeper** in these finance, project-operations, close, compliance, evidence, and publishing lanes rather than mirror the full breadth of a general-purpose ERP or CRM suite. Scope expansion outside these families requires explicit spec amendment.
+
+---
+
 *Last updated: 2026-04-11*
