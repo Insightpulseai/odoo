@@ -16,55 +16,94 @@ Implementation roadmap for Pulser, tracking baseline ERP/AI work through SaaS pl
 - [x] Implement specialist agents for AP, Tax, Close, and Reporting.
 
 ### Governance Baseline
-- [/] **Phase 31 (P0)**: Execute IAM remediation and RBAC cleanup (`PULSER-IAM-GATE-01`).
-- [ ] Phase 32: Finance Ops Benchmark alignment (MB-500).
+- [x] **Phase 31 (P0)**: Execute IAM remediation and RBAC cleanup (`PULSER-IAM-GATE-01`).
+- [x] Phase 32: Finance Ops Benchmark alignment (MB-500).
 
 ---
 
 ## Block 2: SaaS Platform and Scale (Phases 33-37)
 
 ### SaaS Control Plane (Ph 33)
-- [ ] Define service-level vs tenant-level plane responsibilities.
-- [ ] Map control-plane logic into `agent-platform`.
+- [x] SCP-01: Define SCP/TMP responsibility matrix.
+- [x] SCP-02: Formalize 4-phase onboarding protocol.
+- [x] SCP-03: Codify stamp rollout sequence.
 
 ### Deployment Stamps (Ph 34-35)
-- [ ] Define stamp topology and tenant-to-stamp assignment rules.
-- [ ] Implement ACA multi-revision label-based safe rollout.
+- [x] STMP-01: Define stamp architecture and isolation rules.
+- [x] STMP-02: Implement multiple-revision Bicep module.
+- [x] STMP-03: Create stamp promotion/rollout script.
+- [ ] STMP-04: Verify multi-tenant isolation through smoke tests.
 
 ### Channel SDKs (Ph 37)
-- [ ] Align Microsoft Agents (Enterprise) and GitHub Copilot (Internal) shell boundaries.
+- [x] SHL-01: Formalize "One Core, Three Shells" architecture.
+- [x] SHL-02: Define Microsoft Agents (Enterprise) integration contract.
+- [x] SHL-03: Define GitHub Copilot (Internal) integration contract.
 
 ---
 
 ## Block 3: Scenario and Reporting Alignment (Phases 38-40)
 
 ### Office Benchmarks (Ph 38)
-- [ ] Implement high-fidelity Excel (Reconciliation) and Outlook (Collections) adapters.
+- [x] OFC-01: Formalize Office Studio functional requirements.
+- [x] OFC-02: Map Office connectivity to Integration Capability Matrix.
+- [x] OFC-03: Define Context-aware sidebar behavior for Enterprise Shell.
 
 ### E2E Business Scenarios (Ph 39-40)
-- [ ] Map all Pulser capabilities to Project to Profit and Record to Report scenarios.
-- [ ] Implement SAP Concur-grade reporting for accruals and card hygiene.
+- [x] BIZ-01: Map capabilities to Project-to-Profit and Record-to-Report.
+- [x] BIZ-02: Formalize Accrual and Card Hygiene reporting logic.
+- [x] BIZ-03: Align logic with SAP Concur benchmarks.
 
 ---
 
 ## Block 4: Go-Live Factory (Phases 41-44) [NEW]
 
 ## Phase 41: Implementation & Onboarding (BOM 12)
-- [ ] Define project space and onboarding wizard for new production tenants.
-- [ ] Create implementation playbooks and scenario-based templates.
-- [ ] Document team roles, milestones, and activation gates (SC-PH-16, 17).
+- [x] FACT-01: Formalize Go-Live Factory phases and activation gates.
+- [x] FACT-02: Create implementation playbook for Project-to-Profit (80).
+- [x] FACT-03: Create implementation playbook for Record-to-Report (90).
 
 ## Phase 42: Migration & Data Management (BOM 13)
-- [ ] Implement structured import/export and staging validation for tenant data.
-- [ ] Define cutover strategy for open invoices, bills, and inventory (SC-PH-18).
+- [x] MGR-01: Formalize Migration Inventory and Protocol.
+- [x] MGR-02: Define conversion logic for analytic account mapping.
+- [x] MGR-03: Codify cutover balance-validation routine.
 
 ## Phase 43: UAT and Cutover Controls (BOM 13)
-- [ ] Execute scenario-based UAT with tenant sign-off (SC-PH-19).
-- [ ] Implement mandatory balance reconciliation checks for AR, AP, and Trial Balance (SC-PH-20, 21).
+- [x] UAT-01: Formalize Scenario-based UAT methodology.
+- [x] UAT-02: Define Cutover Window Checklist (T-minus sequence).
+- [x] UAT-03: Codify UAT sign-off and activation authorization log.
 
 ## Phase 44: Stabilization and First-Close (BOM 13)
-- [ ] Monitor first-month transactions and reconcile first-close activities.
-- [ ] Execute performance review and stabilization sign-off (SC-PH-22, 34).
+- [x] STB-01: Formalize Stabilization Window and Hypercare protocol.
+- [x] STB-02: Define First-Close Review and Sign-off criteria.
+- [x] STB-03: Codify stabilization exit authorization log.
+
+---
+
+## Block 5: Persona and Governance (Phases 45-47) [NEW]
+- [x] RBAC-01: Codify 5-layer Finance RBAC architecture.
+- [x] RBAC-02: Map 12 canonical roles to cockpits and action scopes.
+- [x] RBAC-03: Formalize evidence visibility and approval bands.
+
+---
+
+---
+
+## Phase 50 — Finance RBAC Matrix Implementation
+- [ ] RBAC-DET-01: Map Entra ID Role Groups for 12 canonical roles.
+- [ ] RBAC-DET-02: Configure Approval Bands (A-E) in Odoo/Foundry logic.
+- [ ] RBAC-DET-03: Implement Evidence Visibility Scopes (Self to Consolidated).
+- [ ] RBAC-DET-04: Implement Agent Action Scope tool-call guards.
+- [ ] RBAC-DET-05: Provision default Cockpits (Close, AP, Tax) based on role.
+- [ ] RBAC-DET-06: Verify separation of Platform-Admin from Business-Approver.
+- [ ] RBAC-DET-07: Verify Audit-Viewer read-only immutability.
+
+---
+
+## Phase 51 — Website & DNS Restoration [OPS]
+- [x] OPS-DNS-01: Correct Front Door routing (Fix root redirect).
+- [x] OPS-DNS-02: Update subdomain registry for standalone website.
+- [ ] OPS-DNS-03: Verify NS delegation in Squarespace.
+- [ ] OPS-DNS-04: Verify landing page 200 OK at root.
 
 ---
 

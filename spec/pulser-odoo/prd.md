@@ -16,9 +16,9 @@ Pulser for PH is the primary agentic ERP workspace built on Odoo CE 18 and Azure
 Pulser must execute formal end-to-end business scenarios:
 - **Project to Profit**: Sales/Deal context, WBS, Resourcing, Profitability, and OKRs.
 - **Record to Report**: Finance close, reconciliation, audit trails, and retained evidence.
-- **Source to Pay**: Spend control, AP, expense/liquidation, and BIR readiness.
+- **Source to Pay**: Spend control, AP, expense/liquidation, **Accrual Visibility**, **Card Hygiene**, and BIR readiness.
 - **Order to Cash**: Billing, collections, and revenue linkage.
-- **Administer to Operate**: Control plane ops, onboarding, and IAM governance.
+- **Administer to Operate**: Control plane ops, onboarding (SCP/TMP), and IAM governance.
 
 ## 3. Odoo / ERP Integration (BOM 3)
 - **Baseline**: Odoo 18 CE + Curated OCA stack.
@@ -32,9 +32,13 @@ Pulser must execute formal end-to-end business scenarios:
 - **Publishing**: Native generation of PPTX, DOCX, and XLSX artifacts.
 
 ## 5. Channel Shell Strategy (BOM 5)
-- **Enterprise Reach**: Microsoft Agents SDK (M365/Teams/Webchat).
-- **Internal Ops**: GitHub Copilot SDK (Developer/DevOps assistants).
-- **Auth**: Secondary shells must not replace Entra ID/Managed Identity as the primary auth path.
+
+Pulser follows a "One Core, Three Shells" Hub-and-Spoke architecture:
+- **Web Shell (Professional)**: The primary IPAI/Next.js dashboard for high-density finance and project administration.
+- **Enterprise Shell (Productivity)**: Optimized via the **Microsoft Agents SDK** for native integration into Teams, Outlook, and M365 Copilot.
+- **Engineering Shell (Ops)**: Optimized via the **GitHub Copilot SDK** for IDE, CLI, and repo-aware operator commands.
+- **Authority**: No delivery shell may replace or bypass the Pulser Core authority or the SaaS control plane.
+- **Identity Bridge**: All shells must use **Microsoft Entra ID (OIDC)** for authentication handoff to the Core.
 
 ## 6. Control and Admin Planes (BOM 6, 7)
 - **Service-Level Plane**: Governs tenant onboarding (wizard/milestones), stamp assignment, and release targeting.
@@ -49,16 +53,81 @@ Pulser must execute formal end-to-end business scenarios:
 - **ALM**: PR-only merges, protected branches, and policy-gated pipelines across `.github`, `odoo`, `agent-platform`, `infra`, and `docs`.
 
 ## 9. Implementation and Go-Live Factory (BOM 12, 13)
-- **Workflow**: Guided onboarding -> Data Migration/Validation -> UAT -> Activation Gate -> Stabilization.
-- **Gating**: Production activation requires completion of onboarding, migration, and security checklists.
+
+### 9.1 Phase Model
+- **Activation Lifecycle**: 4-Phase progression: **Bootstrap** (Goals) -> **Ingestion** (Technical) -> **Validation** (UAT/Balance) -> **Live Site** (Cutover).
+- **Mandatory Gates**: Hard gating of production activation on **Security**, **Data Integrity** (AR/AP/TB reconciliation), and **Scenario UAT** (100% sign-off on P1 stories).
+
+### 9.2 Factory Operations
+- **Migration Scope**: Structured migration of Master, Open Transactional (sub-ledger granular), and 24-months of Historical TB data.
+- **Factory Dashboard**: The TMP must provide a "Tenant Implementation Dashboard" for tracking readiness against the 4-phase lifecycle and cutover checkpoints.
+- **Stabilization Gate**: Mandatory 30-day Hypercare window (Day 1-5 daily LSR) and **First-Close Review** before steady-state handoff.
+- **Metrics**: Track metrics for **Checklist Compliance**, **Time-to-Activation**, and **First-Close Variance**.
+
+---
+
+## 39. SaaS Tenancy Configuration
+- **Isolation**: Tenant = Organization.
+- **Identity**: Entra ID OIDC is the mandatory bridge.
+- **Branding**: Tenant-specific themes and logos in the Professional Shell.
+
+## 40. Service Control Plane (SCP)
+- **Authority**: The SCP governs the whole fleet.
+- **Function**: Tenant provisioning, stamp allocation, and global health monitoring.
+
+## 41. Deployment Stamps
+- **Unit of Scale**: An independent set of ACA + PostgreSQL + Redis.
+- **Independence**: Failure in Stamp A must not impact Stamp B.
+- **Scale-out**: New stamps are added to accommodate fleet growth.
+
+## 42. Safe Rollout & Staged Promotion
+- **Authority**: Release Orchestrator logic.
+- **Sequence**: Canary -> EA -> GA.
+- **Verification**: Health-check-gated traffic shifting at the stamp level.
+
+## 43. Live-Site Operations Strategy
+- **Culture**: No silos between dev and ops.
+- **Alerting**: Actionable, high-signal alerts mapped to BOM layers.
+
+## 44. Pulser Agent-Platform Reference
+- **Core**: Foundry-native agents grounded in Odoo Documents.
+- **MCP**: Mandatory for all external tool integrations.
+
+---
 
 ## 10. Reporting and Intelligence (BOM 14)
-- **Benchmarks**: SAP Concur-grade analytics for accruals, card hygiene, and reconciliation.
+
+### 10.1 Reporting Benchmarks
+- **Standards**: SAP Concur-grade analytics for **Accruals** (outstanding liabilities), **Card Hygiene** (unassigned/unsubmitted), and reconciliation.
 - **Outputs**: Project profitability dashboards and automated Management/Board reporting packs.
 
+### 10.2 Finance Operating Surface (MB-500)
+Pulser must deliver role-based **Cockpits** rather than a generic chat experience:
+- **Finance Head**: Close Cockpit, BIR Compliance Cockpit, and Exec Brief.
+- **Finance Manager**: Reconciliation Cockpit and Close Task Management.
+- **AP/Expense/Treasury**: High-density work queues (AP Queue, Exceptions Cockpit).
+- **Tax Lead**: BIR Compliance Cockpit and Rule-based Exception cards.
+- **Auditor**: Read-only Evidence Vault views.
+
+### 10.3 Close Pack KPIs
+Standard Month-End and Quarter-End close packs must include:
+- **Trial Balance Integrity**: Variance analysis vs previous period and budget.
+- **Accrual Aging**: Visibility into outstanding liabilities by transaction date.
+- **Payout Integrity**: Reconciliation of Odoo processed items vs Bank/Payment gateway status.
+
+### 10.4 Integration Capability Matrix
+Pulser must support a multi-layer integration model:
+- **Data (ODATA v4)**: Primary path for Power BI and **Excel Studio** (Bulk reconciliation, Trial Balance sync).
+- **Event (Service Bus)**: Asynchronous handling of business events (e.g., invoice posted, project completed).
+- **Productivity (Office Shell)**: **Outlook Studio** sidebar (AR collections, customer context) and **Word/PPTX Studio** (Report assembly).
+- **Reasoning (Foundry)**: RAG-based grounding on Odoo documents and finance metadata.
+
 ## 11. Security and Governance (BOM 15)
-- **Identity**: Least privilege at root scope and subscription scope.
-- **Agent Governance**: Sponsors required for all production agent identities.
+- **Identity Architecture**: Mandatory use of the **5-layer Finance RBAC Model** (Role -> Band -> Evidence -> Action -> UI).
+- **Persona Management**: Roles must be assigned via **Microsoft Entra ID Role Groups**.
+- **Approval Logic**: Separation of preparation work from approval authority via **Approval Bands A-E**.
+- **Action Guard**: Hard enforcement of **Agent Action Scopes** (Summarize, Draft, Reconcile, Approve, etc.).
+- **Least Privilege**: Zero unknown principals with Owner or root-scope access.
 
 ## 12. Live-Site Operations (BOM 16)
 - **Posture**: Actionable telemetry, shift-right validation, and emergency hotfix lanes.
@@ -103,6 +172,74 @@ Pulser must execute formal end-to-end business scenarios:
 | SC-PH-32 | Live-site telemetry | Production runtime components emitting logs, traces, and alerts | 100% |
 | SC-PH-33 | ACA safe release | ACA-hosted services supporting revision/traffic-based patterns | 100% |
 | SC-PH-34 | First-close readiness | Newly activated tenants completing first-close review in stabilization | 100% |
+| SC-PH-35 | Role clarity | finance users mapped to canonical Pulser role groups | 100% |
+| SC-PH-36 | Approval separation | preparer vs reviewer vs approver vs final signoff separation enforced | 100% |
+| SC-PH-37 | Evidence least privilege | finance roles limited to required evidence scope | 100% |
+| SC-PH-38 | Agent least privilege | agent action scopes aligned to user role and approval band | 100% |
+| SC-PH-39 | Audit immutability | audit-viewer role has no transact/edit/approve capability | 100% |
+
+---
+
+---
+
+## 61. Normalized Bill of Materials (BOM)
+
+| ID | Layer | Canonical Component |
+|----|-------|--------------------|
+| BOM-01 | Surface and Tenancy | insightpulseai.com (Brand), erp.insightpulseai.com (Action), Tenant = Organization |
+| BOM-02 | Business Process | Project to Profit, Record to Report, Source to Pay, Order to Cash, Administer to Operate |
+| BOM-03 | ERP Core | Odoo CE 18 + OCA, ipai_* thin bridges |
+| BOM-04 | Reasoning Plane | Azure AI Foundry, Azure AI Search, Odoo Documents (retained evidence) |
+| BOM-05 | Channel Shells | Professional Web, Enterprise M365 (SDK), Engineering DevOps (SDK) |
+| BOM-06 | Service Control Plane | Fleet-wide onboarding, lifecycle, and stamp assignment (SCP) |
+| BOM-07 | Tenant Admin Plane | Tenant-specific config, features, and implementations (TMP) |
+| BOM-08 | Deployment Stamps | Regional/Scale-unit isolation slices (ACA + PG + Redis) |
+| BOM-09 | Infrastructure | Azure Global (Front Door, Key Vault) + Regional (ACA, PG Flex) |
+| BOM-10 | Delivery Model | Git + PR + Policy-gated Pipelines (Azure Pipelines / GHA) |
+| BOM-11 | Container Authority | ACR per-stamp or shared, Immutable images |
+| BOM-12 | Implementation Factory | 4-Phase Activation (Bootstrap, Ingestion, Validation, Live Site) |
+| BOM-13 | Governance Gates | Security, Reconciliation (AR/AP/TB), Scenario UAT P1 |
+| BOM-14 | Intelligence Plane | SAP Concur-grade Analytics (Accruals, Card Hygiene, Exception Cards) |
+| BOM-15 | RBAC Model | 5-Layer Security (Role, Band, Evidence, Action, UI) |
+| BOM-16 | Live-Site Model | Actionable Telemetry, Canary Promotion, Stabilization Review |
+
+---
+
+## 63. Finance RBAC model
+
+Pulser finance access must be modeled through:
+- **Business role** (e.g., Finance Head)
+- **Approval bands** (A-E)
+- **Evidence scopes** (Self, Team, Entity, Consolidated)
+- **Agent action scopes** (Draft, Summarize, Reconcile, Approve)
+- **UI Cockpit / Queue context** (Interaction Surface)
+
+### 63.1 Canonical finance role groups
+- pulser_finance_head (Cockpit: Finance Dashboard, BIR Compliance)
+- pulser_finance_controller (Cockpit: Close Management, Reconciliation)
+- pulser_ap_manager (Cockpit: AP Queue, Exceptions)
+- pulser_ap_processor (Cockpit: AP Entry)
+- pulser_tax_lead (Cockpit: BIR Compliance, Exception Cards)
+- pulser_treasury_manager (Cockpit: Cash Flow, Bank Rec)
+- pulser_billing_collections (Cockpit: AR Queue, Collections)
+- pulser_project_finance_controller (Cockpit: Project Profitability)
+- pulser_expense_reviewer (Cockpit: Expense Queue)
+- pulser_exec_viewer (Cockpit: Exec Brief)
+- pulser_audit_viewer (Cockpit: Read-only Evidence)
+- pulser_finance_platform_admin (Cockpit: Service Monitoring)
+
+### 63.2 Product rule
+Identity directory records and contact lists must not be treated as RBAC authority.
+RBAC authority must come from explicit role-group membership and approval/evidence/action policies.
+Assign roles by **role group (Entra ID)**, not by individual name/email.
+
+### 63.3 Approval model
+Pulser must separate:
+- preparer authority
+- reviewer authority
+- threshold approver authority
+- final signoff authority
+- platform administration authority
 
 ---
 
