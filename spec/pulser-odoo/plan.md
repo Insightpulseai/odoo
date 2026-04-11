@@ -734,4 +734,23 @@ Authority over Odoo action and evidence remains in the **Pulser Core**. Shell su
 
 ---
 
+## 29. End-to-end Scenario Alignment
+
+### Goal
+Align Pulser implementation work to formal end-to-end business scenarios to ensure functional delivery remains grounded in industry-standard operating models.
+
+### Primary Scenario Lanes
+- **Project to Profit**: Finance PPM, resourcing, and margins.
+- **Record to Report**: Close, reconciliation, and audit.
+
+### Supporting Scenario Lanes
+- **Source to Pay**: AP and Spend governance.
+- **Order to Cash**: Billing and Collections velocity.
+- **Administer to Operate**: Control-plane and maintenance reliability.
+
+### Implementation Rule
+The backlog, operator dashboards, and agent persona definitions must follow scenario ownership. A "Finance Agent" is not a profile; a "Record-to-Report Specialist Agent" is.
+
+---
+
 *Last updated: 2026-04-11*

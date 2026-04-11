@@ -1308,4 +1308,40 @@ While Pulser targets the UX/workflow outcomes of the Microsoft Finance benchmark
 
 ---
 
+## 41. End-to-end Business Architecture
+
+Pulser is modeled on formal end-to-end business scenarios to ensure agents contribute to measurable process outcomes rather than isolated tasks.
+
+### 41.1 Primary Scenarios
+- **Project to Profit**: Direct benchmark from Dynamics 365 Project Operations. Connects sales, resourcing, project management, and finance to maximize profitability.
+- **Record to Report**: Governs the finance-close spine, variance analysis, auditability, and retained evidence.
+
+### 41.2 Supporting Scenarios
+- **Source to Pay**: Anchors AP, expenses, cash advances, and tax treatment (BIR readiness).
+- **Order to Cash**: Governs project billing, collections, and revenue realization.
+- **Administer to Operate**: Anchors the Pulser control plane, tenant admin, IAM, and live-site operations.
+
+### 41.3 Product Rule
+Every Pulser capability must map to at least one end-to-end scenario. Feature "sprawl" outside of these governed process lanes is prohibited without a formal spec update.
+
+### 41.4 Domain Mapping (Success Matrix)
+| Domain | E2E Scenario | Primary Outcome |
+|--------|--------------|-----------------|
+| Finance PPM / OKRs | Project to Profit | Delivery Margin & OKR Achievement |
+| Month-End Close / Audit | Record to Report | Statutory Compliance & Internal Audit |
+| AP / Expense / Liquidation | Source to Pay | Spend Control & Tax Readiness |
+| Billing / Collections | Order to Cash | Revenue Velocity & Collections efficiency |
+| Control Plane / Tenant Ops | Administer to Operate | Platform uptime, security, & scale |
+
+### 41.5 Smart Success Criteria Addition (Business Scenarios)
+
+| ID | Objective | Metric | Target |
+|----|-----------|--------|--------|
+| SC-PH-65 | Scenario coverage | Pulser capabilities mapped to a formal end-to-end scenario | 100% |
+| SC-PH-66 | Project-to-profit completeness | Scoped Finance PPM features mapped to project-to-profit flow | ≥ 90% |
+| SC-PH-67 | Record-to-report completeness | Scoped close/reporting features mapped to record-to-report flow | ≥ 90% |
+| SC-PH-68 | Platform-operability mapping | Control-plane and admin functions mapped to Administer to operate | 100% |
+
+---
+
 *Last updated: 2026-04-11*

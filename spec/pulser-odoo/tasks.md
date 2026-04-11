@@ -493,4 +493,19 @@
 
 ---
 
+## Phase 39: End-to-end Business Scenario Mapping
+
+> **Ref**: `prd.md §41`, `plan.md §29`  
+> **Goal**: Reorganize product delivery around industry-standard E2E scenario lanes.
+
+- [ ] E2E-01: Map all Finance PPM / OKR capabilities to **Project to profit**.
+- [ ] E2E-02: Map all close/reporting/audit capabilities to **Record to report**.
+- [ ] E2E-03: Map AP/expense/cash advance workflows to **Source to pay**.
+- [ ] E2E-04: Map billing/collections/revenue workflows to **Order to cash**.
+- [ ] E2E-05: Map control-plane and tenant-admin functions to **Administer to operate**.
+- [ ] E2E-06: Refactor engineering backlog labels and epics to use scenario ownership.
+- [ ] E2E-07: Add Scenario IDs (80, 90, 75, 65, 99) to PRD/Plan/Tasks cross-references.
+
+---
+
 *Last updated: 2026-04-11*
