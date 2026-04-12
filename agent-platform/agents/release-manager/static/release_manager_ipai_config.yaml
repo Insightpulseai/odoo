@@ -1,0 +1,145 @@
+# release_manager_ipai_config.yaml
+# Retargeted from microsoft-foundry/Release-Manager-Assistant planner config
+# Changes: removed Jira, removed synthetic ADO, added Odoo, added BIR, added SEA
+
+release_manager:
+  version: "1.0"
+  environment: dev  # overridden by STAMP env var at runtime
+  region: southeastasia  # RMA hardcoded 5 regions excluding SEA — IPAI adds SEA
+
+# ---------------------------------------------------------------------------
+# ADO configuration
+# ---------------------------------------------------------------------------
+ado:
+  organization: insightpulseai
+  project: ipai-platform
+  mcp_endpoint: https://dev.azure.com/insightpulseai/_mcp/sse
+  pipeline_prefix: ipai-  # all IPAI pipelines start with ipai-
+  build_agent_pool: ipai-build-agent
+  advanced_security_enabled: true
+
+# ---------------------------------------------------------------------------
+# Odoo configuration
+# ---------------------------------------------------------------------------
+odoo:
+  url: https://erp.insightpulseai.com
+  db: odoo
+  mcp_endpoint: https://erp.insightpulseai.com/mcp
+  module_prefix: ipai_  # IPAI modules always start with ipai_
+  health_check_interval_minutes: 5
+
+# ---------------------------------------------------------------------------
+# Azure resources
+# ---------------------------------------------------------------------------
+azure:
+  subscription_id: 536d8cf6-89e1-4815-aef3-d5f2c5f4d070
+  tenant_id: 402de71a-87ec-4302-a609-fb76098d1da7
+  managed_identity: id-ipai-dev
+  resource_group: rg-ipai-dev-odoo-runtime
+  key_vault: kv-ipai-dev
+  storage_account: stipaidev
+  container_registry: acripaiodoo
+  log_analytics_workspace: la-ipai-odoo-dev
+  app_insights: appi-ipai-dev
+  redis_cache: cache-ipai-dev  # to be provisioned — see release-manager-aca.bicep
+
+# ---------------------------------------------------------------------------
+# Stamp topology
+# ---------------------------------------------------------------------------
+stamps:
+  dev:
+    aca_apps:
+      - ipai-odoo-dev-web
+      - ipai-odoo-dev-cron
+      - ipai-odoo-dev-worker
+      - ipai-copilot-gateway
+    afd_origin: afd-ipai-dev
+    min_green_hours_before_promotion: 2
+    auto_promote: true
+
+  staging:
+    aca_apps:
+      - ipai-odoo-stg-web  # to be provisioned
+      - ipai-odoo-stg-cron
+      - ipai-odoo-stg-worker
+    min_green_hours_before_promotion: 24
+    auto_promote: false  # requires human approval
+
+  prod:
+    aca_apps:
+      - ipai-odoo-prod-web  # to be provisioned
+      - ipai-odoo-prod-cron
+      - ipai-odoo-prod-worker
+    blocked_hours_pht: "07:00-17:00"  # Mon-Fri PHT working hours
+    blocked_days: [monday, tuesday, wednesday, thursday, friday]
+    requires_dual_approval: true
+    approvers:
+      - admin@insightpulseai.com
+    auto_promote: false
+
+# ---------------------------------------------------------------------------
+# Release gate thresholds — SOURCED FROM ssot/release/release_contract.yaml
+# Do NOT duplicate values here. Agent loads release_contract.yaml at runtime.
+# See: gate_thresholds.module_release + gate_thresholds.stamp_promotion + gate_thresholds.bir_freeze
+# ---------------------------------------------------------------------------
+gate_policy_ref:
+  contract_path: ssot/release/release_contract.yaml
+  loaded_by: gate_evaluator
+  version_pin: "1.0"  # contract schema_version — bump when gate shape changes
+
+# ---------------------------------------------------------------------------
+# Agent configuration (from RMA, retargeted)
+# ---------------------------------------------------------------------------
+agents:
+  evidence_gatherer:
+    model: claude-sonnet-4-6
+    max_tool_calls: 20
+    timeout_seconds: 120
+    tools:
+      - azure_devops_mcp
+      - odoo_mcp
+
+  gate_evaluator:
+    model: claude-sonnet-4-6
+    max_tool_calls: 10
+    timeout_seconds: 60
+    tools:
+      - odoo_mcp
+
+  stamp_promoter:
+    model: claude-sonnet-4-6
+    max_tool_calls: 15
+    timeout_seconds: 90
+    require_human_approval: true  # for prod promotions
+    tools:
+      - azure_devops_mcp
+
+# Removed from RMA:
+#   - jira_agent (no Jira in IPAI)
+#   - visualization_agent (Power BI is canonical BI — invariant #12)
+#   - code_interpreter_agent (violates sandbox invariant)
+
+# ---------------------------------------------------------------------------
+# Notification configuration
+# ---------------------------------------------------------------------------
+notifications:
+  on_blocked:
+    channels:
+      - email: admin@insightpulseai.com
+      - ado_work_item: true
+  on_conditional:
+    channels:
+      - email: admin@insightpulseai.com
+      - ado_work_item: true
+  on_approved:
+    channels:
+      - ado_work_item: true  # creates promotion tracking work item
+
+# ---------------------------------------------------------------------------
+# Evidence bundle storage
+# ---------------------------------------------------------------------------
+evidence:
+  storage_account: stipaidev
+  container: releases
+  path_template: "releases/{module}/{version}/{timestamp}/"
+  retention_days: 90

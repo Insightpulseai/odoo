@@ -1,0 +1,36 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "PR Review Findings",
+  "type": "object",
+  "required": ["verdict", "summary", "findings"],
+  "properties": {
+    "verdict": {
+      "type": "string",
+      "enum": ["approve", "request_changes", "comment", "block"]
+    },
+    "summary": { "type": "string", "maxLength": 500 },
+    "findings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["severity", "category", "file", "message"],
+        "properties": {
+          "severity": { "type": "string", "enum": ["critical", "high", "medium", "low", "info"] },
+          "category": { "type": "string", "enum": ["security", "migration", "performance", "correctness", "style", "docs"] },
+          "file": { "type": "string" },
+          "line": { "type": "integer", "minimum": 1 },
+          "message": { "type": "string" },
+          "suggestion": { "type": "string" }
+        }
+      }
+    },
+    "coverage": {
+      "type": "object",
+      "properties": {
+        "files_reviewed": { "type": "integer" },
+        "files_skipped": { "type": "integer" },
+        "skip_reasons": { "type": "array", "items": { "type": "string" } }
+      }
+    }
+  }
+}
