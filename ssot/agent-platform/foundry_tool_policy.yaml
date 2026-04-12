@@ -96,6 +96,40 @@ structured_inputs:
     - request_scoped_configuration
   avoid_agent_version_sprawl: true
 
+tool_classes:
+  odoo_native_action:
+    allowed: true
+    purpose: invoke_bounded_odoo_native_business_actions
+    transport:
+      - function_tool
+      - openapi
+      - mcp
+    requirements:
+      - must_map_to_named_odoo_action_or_service
+      - must_not_expose_raw_table_crud_by_default
+      - must_preserve_odoo_approval_and_posting_rules
+
+  thin_edge_adapter:
+    allowed: true
+    purpose: ingress_adapter_surfaces_only
+    examples:
+      - webhook_receiver
+      - file_upload_ingress
+      - callback_handler
+      - stateless_transform
+      - foundry_tool_bridge
+    requirements:
+      - no_duplicated_business_workflow_logic
+      - no_accounting_or_tax_truth_ownership
+
+  azure_control_plane:
+    allowed: true
+    purpose: operate_azure_resources_using_official_sdk_rest
+    preferred_clients:
+      - azure_sdk
+      - azure_rest
+      - foundry_sdk
+
 risk_controls:
   high_risk_operations_require_approval: true
   review_before_approval:
@@ -103,6 +137,11 @@ risk_controls:
     - arguments
     - target_system
     - scope_of_action
+  approval_required_examples:
+    - financial_posting
+    - tax_determination_override
+    - destructive_update
+    - production_runtime_mutation
   audit_required:
     - tool_selection
     - approval_decisions
@@ -186,9 +225,34 @@ default_tool_mapping:
       - odoo_ce_oca_baseline
       - minimal_grounding_only_if_needed
 
+api_layer_doctrine:
+  reference: docs/architecture/API_LAYER_DOCTRINE.md
+  decision_date: 2026-04-10
+  rules:
+    - odoo_addon_layer_owns_all_business_logic
+    - foundry_agent_layer_owns_assistive_intelligence
+    - thin_api_edges_only_for_external_http_ingress
+    - no_fat_fastapi_business_layers
+    - azure_control_plane_uses_official_sdks_not_custom_wrappers
+  fastapi_permitted_only_for:
+    - webhook_receivers
+    - tool_function_call_adapters
+    - mcp_openapi_tool_bridges
+    - async_ingestion_endpoints
+    - external_integration_shims
+  fastapi_prohibited_for:
+    - duplicated_business_rules
+    - tax_logic_outside_odoo
+    - approval_logic_outside_odoo
+    - invoice_expense_state_machines
+    - broad_crud_wrappers_over_odoo_tables
+
 prohibited:
   - using_foundry_tools_as_erp_truth
   - replacing_odoo_workflows_with_tool_only_orchestration
   - using_mcp_when_built_in_or_openapi_is_cleaner
   - environment_specific_agent_sprawl_without_structured_inputs
   - placing_preview_tools_on_mvp_critical_path_without_explicit_justification
+  - fat_fastapi_business_layer_around_odoo
+  - duplicating_odoo_state_machines_in_external_services
+  - custom_azure_api_wrappers_when_official_sdk_exists

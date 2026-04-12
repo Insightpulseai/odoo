@@ -1,0 +1,145 @@
+- generic [active] [ref=e1]:
+  - banner [ref=e2]:
+    - navigation [ref=e3]:
+      - button "" [ref=e6] [cursor=pointer]:
+        - generic [ref=e7]: 
+      - menuitem "Discuss" [ref=e8] [cursor=pointer]
+      - menu [ref=e9]:
+        - button "Configuration" [ref=e10] [cursor=pointer]:
+          - generic [ref=e11]: Configuration
+      - menu [ref=e12]:
+        - button "Attendance" [ref=e13] [cursor=pointer]:
+          - img "Attendance" [ref=e14]: 
+        - button "" [ref=e16] [cursor=pointer]:
+          - generic [ref=e17]: 
+        - button "Messages 11" [ref=e19] [cursor=pointer]:
+          - img "Messages" [ref=e20]: 
+          - generic [ref=e21]: "11"
+        - button "Activities 39" [ref=e22] [cursor=pointer]:
+          - img "Activities" [ref=e23]: 
+          - generic [ref=e24]: "39"
+        - button "InsightPulse AI" [ref=e26] [cursor=pointer]:
+          - text: 
+          - generic [ref=e27]: InsightPulse AI
+        - generic: 
+        - button "User" [ref=e29] [cursor=pointer]:
+          - img "User" [ref=e30]
+          - text: 
+  - generic [ref=e32]:
+    - generic [ref=e34]:
+      - generic [ref=e38]: Inbox
+      - search [ref=e40]:
+        - navigation "Refresher" [ref=e41]:
+          - button "Refresh" [ref=e42] [cursor=pointer]: 
+    - generic [ref=e43]:
+      - generic [ref=e44]:
+        - generic [ref=e46]:
+          - button "" [ref=e47] [cursor=pointer]:
+            - generic [ref=e48]: 
+          - button " Start a meeting" [ref=e49] [cursor=pointer]:
+            - generic [ref=e50]: 
+            - generic [ref=e51]: Start a meeting
+        - generic [ref=e52]:
+          - button " Inbox 1" [ref=e53] [cursor=pointer]:
+            - generic "Inbox" [ref=e55]: 
+            - generic [ref=e56]: Inbox
+            - generic [ref=e57]: "1"
+          - button " Starred" [ref=e58] [cursor=pointer]:
+            - generic "Favorites" [ref=e60]: 
+            - generic [ref=e61]: Starred
+          - button " History" [ref=e62] [cursor=pointer]:
+            - generic "History" [ref=e64]: 
+            - generic [ref=e65]: History
+        - generic [ref=e66]:
+          - button " Channels" [ref=e67] [cursor=pointer]:
+            - generic [ref=e68]: 
+            - generic [ref=e69]: Channels
+          - generic [ref=e71]:
+            - button "View or join channels" [ref=e72] [cursor=pointer]:
+              - img [ref=e73]: 
+            - button "Add or join a channel" [ref=e74] [cursor=pointer]:
+              - img [ref=e75]: 
+        - button "Thread Image Administrators" [ref=e77] [cursor=pointer]:
+          - generic "Administrators" [ref=e78]:
+            - img "Thread Image" [ref=e80]
+            - generic [ref=e81]: Administrators
+          - text: 
+        - generic [ref=e82]:
+          - button "Thread Image general " [ref=e83] [cursor=pointer]:
+            - generic "general" [ref=e84]:
+              - img "Thread Image" [ref=e86]
+              - generic [ref=e87]: general
+            - text: 
+            - generic "Thread has unread messages" [ref=e88]:
+              - generic [ref=e89]: 
+          - list [ref=e90]:
+            - listitem [ref=e91]:
+              - img [ref=e92]
+              - button "Ideas & Suggestions" [ref=e93] [cursor=pointer]:
+                - generic [ref=e94]: Ideas & Suggestions
+                - text: 
+              - generic "Thread has unread messages" [ref=e95]:
+                - generic [ref=e96]: 
+        - generic [ref=e97]:
+          - button " YourWebsite.com" [ref=e98] [cursor=pointer]:
+            - generic [ref=e99]: 
+            - generic [ref=e100]: YourWebsite.com
+          - button "Leave YourWebsite.com" [ref=e103] [cursor=pointer]:
+            - img [ref=e104]: 
+        - button "Thread Image  United States Visitor (United States) 3" [ref=e106] [cursor=pointer]:
+          - generic "Visitor (United States)" [ref=e107]:
+            - generic [ref=e108]:
+              - img "Thread Image" [ref=e109]
+              - generic "Offline" [ref=e111]: 
+              - img "United States" [ref=e112]
+            - generic [ref=e113]: Visitor (United States)
+          - generic [ref=e114]: "3"
+        - generic [ref=e115]:
+          - button " Direct messages" [ref=e116] [cursor=pointer]:
+            - generic [ref=e117]: 
+            - generic [ref=e118]: Direct messages
+          - button "Start a conversation" [ref=e121] [cursor=pointer]:
+            - img [ref=e122]: 
+        - button "Thread Image  OdooBot 1" [ref=e124] [cursor=pointer]:
+          - generic "OdooBot" [ref=e125]:
+            - generic [ref=e126]:
+              - img "Thread Image" [ref=e127]
+              - generic "Bot" [ref=e129]: 
+            - generic [ref=e130]: OdooBot
+          - generic [ref=e131]: "1"
+      - generic [ref=e132]:
+        - generic [ref=e133]:
+          - generic "Inbox" [ref=e135]: 
+          - textbox "Inbox" [disabled] [ref=e137]:
+            - /placeholder: ""
+          - generic [ref=e138]:
+            - button "Mark all read" [ref=e140] [cursor=pointer]
+            - button "" [ref=e142] [cursor=pointer]:
+              - generic [ref=e143]: 
+        - generic [ref=e148]:
+          - generic [ref=e149]:
+            - separator [ref=e150]
+            - generic [ref=e151]: Apr 5, 2026
+            - separator [ref=e152]
+          - group "Message" [ref=e153]:
+            - generic [ref=e154]:
+              - generic "Open card" [ref=e156] [cursor=pointer]:
+                - img [ref=e157]
+              - generic [ref=e158]:
+                - generic [ref=e159]:
+                  - generic "Open card" [ref=e160] [cursor=pointer]:
+                    - strong [ref=e161]: Mitchell Admin
+                  - generic "4/5/2026, 7:00:11 PM" [ref=e162]: Apr 5, 7:00 PM
+                  - generic [ref=e163]:
+                    - text: "on"
+                    - link "YourCompany, Marc Demo" [ref=e164] [cursor=pointer]:
+                      - /url: http://localhost:8069/odoo/res.partner/7
+                - generic [ref=e170]:
+                  - emphasis [ref=e171]: "Subject: Failed Message"
+                  - paragraph [ref=e173]: This is another failed message
+  - generic:
+    - generic:
+      - text: TEST
+      - text: (odoo_dev)
+    - generic:
+      - paragraph: Press esc to exit full screen

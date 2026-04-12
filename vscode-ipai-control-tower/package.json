@@ -1,0 +1,209 @@
+{
+  "name": "ipai-control-tower",
+  "displayName": "IPAI Control Tower",
+  "description": "InsightPulseAI platform assistant — doctrine diagnostics, Odoo/Azure agent chat, and ops-console views for the IPAI stack.",
+  "version": "0.1.0",
+  "publisher": "insightpulseai",
+  "private": true,
+  "engines": {
+    "vscode": "^1.95.0"
+  },
+  "categories": [
+    "AI",
+    "Other"
+  ],
+  "keywords": [
+    "ipai",
+    "odoo",
+    "azure",
+    "bir",
+    "erp"
+  ],
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "chatParticipants": [
+      {
+        "id": "ipai.control-tower",
+        "name": "ipai",
+        "fullName": "IPAI Control Tower",
+        "description": "Ask about IPAI platform doctrine, Odoo 18 CE modules, Azure infrastructure, and BIR compliance.",
+        "isSticky": true,
+        "commands": [
+          {
+            "name": "doctrine",
+            "description": "Check current file or selection against IPAI platform doctrine"
+          },
+          {
+            "name": "odoo",
+            "description": "Odoo 18 CE module and OCA questions"
+          },
+          {
+            "name": "bir",
+            "description": "BIR compliance and Philippine tax queries"
+          },
+          {
+            "name": "infra",
+            "description": "Azure-native infrastructure and ACA/Foundry queries"
+          },
+          {
+            "name": "migrate",
+            "description": "D365 F&O → Odoo migration mapping and pipeline"
+          }
+        ]
+      }
+    ],
+    "commands": [
+      {
+        "command": "ipai.doctrine.checkFile",
+        "title": "IPAI: Check doctrine compliance",
+        "category": "IPAI"
+      },
+      {
+        "command": "ipai.doctrine.checkWorkspace",
+        "title": "IPAI: Check workspace doctrine",
+        "category": "IPAI"
+      },
+      {
+        "command": "ipai.odoo.scaffoldModule",
+        "title": "IPAI: Scaffold Odoo module",
+        "category": "IPAI"
+      },
+      {
+        "command": "ipai.odoo.validateViews",
+        "title": "IPAI: Validate Odoo views (no <tree>)",
+        "category": "IPAI"
+      },
+      {
+        "command": "ipai.infra.showInventory",
+        "title": "IPAI: Show Azure resource inventory",
+        "category": "IPAI"
+      },
+      {
+        "command": "ipai.infra.openFoundry",
+        "title": "IPAI: Open Foundry portal (ipai-copilot)",
+        "category": "IPAI"
+      },
+      {
+        "command": "ipai.ops.openDashboard",
+        "title": "IPAI: Open ops console",
+        "category": "IPAI"
+      },
+      {
+        "command": "ipai.ops.showRuns",
+        "title": "IPAI: Show agent run log",
+        "category": "IPAI"
+      }
+    ],
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "ipai-control-tower",
+          "title": "IPAI Control Tower",
+          "icon": "$(circuit-board)"
+        }
+      ]
+    },
+    "views": {
+      "ipai-control-tower": [
+        {
+          "id": "ipai.views.doctrine",
+          "name": "Doctrine",
+          "type": "tree",
+          "contextualTitle": "IPAI Doctrine Status"
+        },
+        {
+          "id": "ipai.views.runs",
+          "name": "Agent Runs",
+          "type": "tree",
+          "contextualTitle": "ops.agent_runs"
+        },
+        {
+          "id": "ipai.views.modules",
+          "name": "Odoo Modules",
+          "type": "tree",
+          "contextualTitle": "Installed modules"
+        }
+      ]
+    },
+    "menus": {
+      "commandPalette": [
+        {
+          "command": "ipai.doctrine.checkFile",
+          "when": "editorIsOpen"
+        }
+      ],
+      "editor/context": [
+        {
+          "command": "ipai.doctrine.checkFile",
+          "group": "ipai@1",
+          "when": "editorLangId == python || editorLangId == xml"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "IPAI Control Tower",
+      "properties": {
+        "ipai.foundry.endpoint": {
+          "type": "string",
+          "default": "https://ipai-copilot-resource.services.ai.azure.com/api/projects/ipai-copilot",
+          "description": "Foundry SDK 2.x project endpoint (services.ai.azure.com)"
+        },
+        "ipai.foundry.deployment": {
+          "type": "string",
+          "default": "claude-sonnet-4-6",
+          "description": "Default model deployment name in ipai-copilot project"
+        },
+        "ipai.odoo.serverUrl": {
+          "type": "string",
+          "default": "http://localhost:8069",
+          "description": "Odoo instance URL for the adapter connection"
+        },
+        "ipai.doctrine.enableOnSave": {
+          "type": "boolean",
+          "default": true,
+          "description": "Run doctrine diagnostics on file save"
+        },
+        "ipai.doctrine.strictMode": {
+          "type": "boolean",
+          "default": false,
+          "description": "Fail on warnings as well as errors (for CI use)"
+        }
+      }
+    },
+    "languages": [
+      {
+        "id": "ipai-doctrine",
+        "aliases": [
+          "IPAI Doctrine",
+          "ipai-doctrine"
+        ],
+        "extensions": [
+          ".system.md"
+        ]
+      }
+    ]
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "pretest": "npm run compile",
+    "test": "node ./out/testing/runTests.js",
+    "package": "npx @vscode/vsce package --no-dependencies",
+    "install-local": "npx @vscode/vsce package --no-dependencies && code --install-extension ipai-control-tower-0.1.0.vsix"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "@types/vscode": "^1.95.0",
+    "@vscode/test-electron": "^2.4.0",
+    "@vscode/vsce": "^3.0.0",
+    "typescript": "^5.4.0"
+  },
+  "dependencies": {
+    "@azure/identity": "^4.4.0",
+    "@azure/ai-projects": ">=2.0.0"
+  }
+}

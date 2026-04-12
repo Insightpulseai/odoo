@@ -4,7 +4,7 @@
 
 ## What it does
 
-OdooOps Control Plane transforms Odoo Community Edition into a full enterprise operations platform with AI-native capabilities. It combines the stability of Odoo CE 19 with OCA community modules and custom InsightPulseAI extensions to deliver enterprise-grade ERP without enterprise licensing costs.
+OdooOps Control Plane transforms Odoo Community Edition into a full enterprise operations platform with AI-native capabilities. It combines the stability of Odoo CE 18 with OCA community modules and custom InsightPulseAI extensions to deliver enterprise-grade ERP without enterprise licensing costs.
 
 ## Key capabilities
 

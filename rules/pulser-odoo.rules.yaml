@@ -1,0 +1,759 @@
+ruleset_id: pulser_odoo18_services_finance_ppm_close_bir
+version: 2026-04-10
+authoritative_format: yaml
+json_mirror_available: true
+
+authority:
+  odoo_major_version: 18
+  sources:
+    services_index: "Odoo 18 Services index"
+    finance_index: "Odoo 18 Finance index"
+    project_profitability: "Odoo 18 Project profitability"
+    helpdesk_billing: "Odoo 18 Helpdesk track and bill time"
+    year_end_closing: "Odoo 18 Year-end closing"
+    tax_return: "Odoo 18 Tax return (VAT declaration)"
+    philippines_localization: "Odoo 18 Philippines fiscal localization"
+
+principles:
+  - classify_first
+  - context_before_action
+  - services_and_finance_are_linked_by_analytic_and_sales_objects
+  - never_mutate_validated_financial_documents_silently
+  - use_credit_or_debit_notes_for_validated_document_changes
+  - auto_create_only_when_direction_partner_taxes_and_target_object_are_clear
+  - month_end_is_policy_driven
+  - year_end_and_tax_close_use_lock_dates
+  - bir_is_a_localization_overlay_not_a_generic_finance_rule
+
+required_context:
+  company:
+    required: true
+    fields: [company_id, company_name, country_code, fiscal_localization_package, currency_code]
+  branch:
+    required: false
+    fields: [branch_id, branch_name]
+  actor:
+    required: true
+    fields: [user_id, user_role, department]
+  channel:
+    required: true
+    allowed:
+      - pulser_side_panel
+      - discuss
+      - project
+      - helpdesk
+      - field_service
+      - accounting
+      - expenses
+      - bank_reconciliation
+  artifact:
+    required: false
+    fields: [artifact_type, filename, mime_type, source]
+  linked_records:
+    required: false
+    fields:
+      - project_id
+      - analytic_account_id
+      - sale_order_id
+      - purchase_order_id
+      - helpdesk_ticket_id
+      - task_id
+      - employee_id
+      - partner_id
+      - bank_statement_line_id
+
+domains:
+  services_ppm:
+    modules: [project, timesheets, planning, field_service, helpdesk, appointments]
+    ppm_objects:
+      - project
+      - task
+      - timesheet
+      - planning_shift
+      - field_service_task
+      - worksheet
+      - helpdesk_ticket
+      - appointment
+      - sales_order
+      - analytic_account
+    profitability_columns: [expected, to_invoice, to_bill, invoiced, billed]
+    profitability_revenue_sources:
+      - timesheets
+      - materials
+      - customer_invoices
+      - subscriptions
+      - down_payments
+      - reinvoiced_expenses
+    profitability_cost_sources:
+      - timesheets
+      - purchase_orders
+      - materials
+      - expenses
+      - vendor_bills
+      - manufacturing_orders
+      - other_costs
+  finance:
+    modules: [accounting, expenses, payments, bank_reconciliation, reporting, taxes]
+    finance_objects:
+      - customer_invoice
+      - customer_credit_note
+      - customer_debit_note
+      - vendor_bill
+      - vendor_refund
+      - vendor_debit_note
+      - expense
+      - expense_report
+      - payment
+      - batch_payment
+      - bank_statement_line
+      - journal_entry
+      - tax_return
+      - deferred_revenue_schedule
+      - deferred_expense_schedule
+  compliance_overlay:
+    philippines_bir:
+      enabled_when:
+        company_country_code: PH
+      localization_required: true
+      supported_localized_tax_types:
+        - sales_vat_12
+        - purchase_vat_12
+        - sales_vat_exempt
+        - purchase_vat_exempt
+        - sales_vat_zero_rated
+        - purchase_vat_zero_rated
+        - sales_withholding
+        - purchase_withholding
+      required_partner_fields: [tin]
+      tin_format: "NNN-NNN-NNN-NNNNN"
+      bir_outputs_supported_in_odoo:
+        - bir_2307_xls
+        - slsp_xlsx
+        - tax_report_2550q_reference
+        - sawt_qap_xlsx
+      bir_outputs_requiring_external_conversion:
+        - bir_2307_pdf
+        - dat_files
+        - bir_formatted_2550q_pdf
+
+enums:
+  scenario_family:
+    - SERVICE_PROJECT_TIME_AND_MATERIAL
+    - SERVICE_PROJECT_FIXED_PRICE
+    - SERVICE_PROJECT_MILESTONE
+    - SERVICE_FIELD_SERVICE_VISIT
+    - SERVICE_HELPDESK_PREPAID
+    - SERVICE_HELPDESK_POSTPAID
+    - SERVICE_APPOINTMENT_INTAKE
+    - SERVICE_INTERNAL_TIME
+    - AR_INVOICE
+    - AR_CREDIT_NOTE
+    - AR_DEBIT_NOTE
+    - AP_VENDOR_BILL
+    - AP_VENDOR_REFUND
+    - AP_VENDOR_DEBIT_NOTE
+    - AP_PO_MATCHED_BILL
+    - EXPENSE_EMPLOYEE_PAID
+    - EXPENSE_COMPANY_PAID
+    - EXPENSE_REPORT
+    - EXPENSE_REINVOICE_TO_CUSTOMER
+    - PAYMENT_CUSTOMER
+    - PAYMENT_VENDOR
+    - BATCH_PAYMENT
+    - BANK_RECONCILIATION_EVENT
+    - MONTH_END_CLOSE
+    - YEAR_END_CLOSE
+    - PH_BIR_COMPLIANCE
+    - DOCUMENT_AMBIGUOUS
+    - DOCUMENT_UNSUPPORTED
+    - DUPLICATE_DOCUMENT
+    - MASTER_DATA_MISSING
+    - CONTEXT_MISMATCH
+  confidence_band:
+    - HIGH
+    - HIGH_WITH_MATCH
+    - MEDIUM
+    - LOW
+    - BLOCKED
+  safe_action:
+    - create_draft_customer_invoice
+    - create_draft_vendor_bill
+    - create_credit_note_from_source
+    - create_debit_note_from_source
+    - create_expense
+    - group_into_expense_report
+    - create_payment_or_route_to_reconcile
+    - open_reconciliation_with_preselected_match
+    - create_or_update_batch_payment
+    - attach_to_project_profitability_context
+    - attach_to_helpdesk_billing_context
+    - create_field_service_task
+    - create_crm_opportunity_from_appointment
+    - create_month_end_close_checklist
+    - create_year_end_close_checklist
+    - prepare_bir_reporting_payload
+    - show_structured_review_card
+    - route_for_master_data_resolution
+    - block_and_link_existing_record
+    - mark_not_accounting_document
+    - resume_or_show_final_status
+
+decision_tables:
+  service_finance_bridge_rules:
+    - id: SVC-001
+      when:
+        service_object: timesheet
+        billable: true
+        linked_project: true
+        linked_sale_order: true
+      then:
+        scenario_family: SERVICE_PROJECT_TIME_AND_MATERIAL
+        target_object: project_profitability
+        checks_required:
+          - analytic_account_link
+          - sale_order_link
+          - invoicing_policy
+          - employee_cost_available
+        safe_action: attach_to_project_profitability_context
+        downstream_finance:
+          revenue_candidate: true
+          cost_candidate: true
+
+    - id: SVC-002
+      when:
+        service_object: expense
+        customer_to_reinvoice_present: true
+        linked_sale_order: true
+      then:
+        scenario_family: EXPENSE_REINVOICE_TO_CUSTOMER
+        target_object: expense
+        checks_required:
+          - expense_category_reinvoice_policy
+          - sale_order_link
+          - analytic_distribution_if_required
+          - approval_state
+          - posting_state
+        safe_action: create_expense
+        downstream_finance:
+          after_posting: add_to_sales_order_invoiceable_lines
+
+    - id: SVC-003
+      when:
+        service_object: helpdesk_ticket
+        billing_mode: prepaid
+      then:
+        scenario_family: SERVICE_HELPDESK_PREPAID
+        target_object: helpdesk_billing_context
+        checks_required:
+          - service_product_configured
+          - sales_order_exists
+          - prepaid_invoice_exists_or_can_be_created
+        safe_action: attach_to_helpdesk_billing_context
+
+    - id: SVC-004
+      when:
+        service_object: helpdesk_ticket
+        billing_mode: postpaid
+      then:
+        scenario_family: SERVICE_HELPDESK_POSTPAID
+        target_object: helpdesk_billing_context
+        checks_required:
+          - service_product_configured
+          - track_and_bill_enabled
+          - customer_link
+        safe_action: attach_to_helpdesk_billing_context
+
+    - id: SVC-005
+      when:
+        service_object: field_service_request
+        source:
+          any_of: [sales_order, helpdesk_ticket, manual]
+      then:
+        scenario_family: SERVICE_FIELD_SERVICE_VISIT
+        target_object: field_service_task
+        checks_required:
+          - customer_link
+          - assignee_or_planning_role
+          - worksheet_template_if_required
+          - itinerary_constraints_if_required
+        safe_action: create_field_service_task
+
+    - id: SVC-006
+      when:
+        service_object: appointment
+        convert_to_opportunity: true
+      then:
+        scenario_family: SERVICE_APPOINTMENT_INTAKE
+        target_object: crm_opportunity
+        checks_required:
+          - contact_resolution
+          - sales_team_mapping
+        safe_action: create_crm_opportunity_from_appointment
+
+    - id: SVC-007
+      when:
+        service_object: time_off_entry
+      then:
+        scenario_family: SERVICE_INTERNAL_TIME
+        target_object: internal_timesheet_entry
+        checks_required:
+          - time_off_validation
+          - internal_project_task_mapping
+        safe_action: attach_to_project_profitability_context
+
+  finance_document_rules:
+    - id: FIN-001
+      when:
+        artifact_kind: invoice_document
+        issuer_matches_active_company: true
+      then:
+        scenario_family: AR_INVOICE
+        target_object: {model: account.move, move_type: out_invoice}
+        checks_required:
+          - partner_match_customer
+          - duplicate_invoice_number
+          - sales_journal_available
+          - tax_mapping_complete
+          - totals_arithmetic_valid
+          - currency_resolved
+        safe_action: create_draft_customer_invoice
+        confidence_policy:
+          HIGH: auto
+          MEDIUM: review_then_create
+          LOW: review_only
+          BLOCKED: block
+
+    - id: FIN-002
+      when:
+        artifact_kind: invoice_document
+        recipient_matches_active_company: true
+      then:
+        scenario_family: AP_VENDOR_BILL
+        target_object: {model: account.move, move_type: in_invoice}
+        checks_required:
+          - partner_match_vendor
+          - duplicate_vendor_reference
+          - purchase_journal_available
+          - tax_mapping_complete
+          - totals_arithmetic_valid
+          - currency_resolved
+          - purchase_order_match_if_available
+        safe_action: create_draft_vendor_bill
+        confidence_policy:
+          HIGH_WITH_MATCH: auto
+          HIGH: auto
+          MEDIUM: review_then_create
+          LOW: review_only
+          BLOCKED: block
+
+    - id: FIN-003
+      when:
+        artifact_kind: customer_credit_document
+      then:
+        scenario_family: AR_CREDIT_NOTE
+        target_object: {model: account.move, move_type: out_refund}
+        checks_required: [source_invoice_link, sign_and_amount_valid, reason_present]
+        safe_action: create_credit_note_from_source
+
+    - id: FIN-004
+      when:
+        artifact_kind: vendor_refund_document
+      then:
+        scenario_family: AP_VENDOR_REFUND
+        target_object: {model: account.move, move_type: in_refund}
+        checks_required: [source_bill_link, sign_and_amount_valid, reason_present]
+        safe_action: create_credit_note_from_source
+
+    - id: FIN-005
+      when:
+        artifact_kind: debit_adjustment_document
+      then:
+        scenario_family:
+          resolve_by_context:
+            issuer_matches_active_company: AR_DEBIT_NOTE
+            recipient_matches_active_company: AP_VENDOR_DEBIT_NOTE
+        target_object: {model: account.move, move_type: debit_note}
+        checks_required: [source_document_link, delta_amount_valid, reason_present]
+        safe_action: create_debit_note_from_source
+
+    - id: FIN-006
+      when:
+        artifact_kind: expense_receipt
+        paid_by: employee
+      then:
+        scenario_family: EXPENSE_EMPLOYEE_PAID
+        target_object: {model: hr.expense}
+        checks_required: [employee_match, expense_category, amount_valid, reimbursement_policy]
+        safe_action: create_expense
+
+    - id: FIN-007
+      when:
+        artifact_kind: expense_receipt
+        paid_by: company
+      then:
+        scenario_family: EXPENSE_COMPANY_PAID
+        target_object: {model: hr.expense}
+        checks_required: [employee_match, expense_category, amount_valid, company_paid_policy]
+        safe_action: create_expense
+
+    - id: FIN-008
+      when:
+        artifact_kind: payment_proof
+        payer_is_customer: true
+      then:
+        scenario_family: PAYMENT_CUSTOMER
+        target_object: {model: account.payment}
+        checks_required: [open_invoice_match, amount_match, payment_reference_match, bank_or_cash_journal]
+        safe_action: create_payment_or_route_to_reconcile
+
+    - id: FIN-009
+      when:
+        artifact_kind: payment_proof
+        payee_is_vendor: true
+      then:
+        scenario_family: PAYMENT_VENDOR
+        target_object: {model: account.payment}
+        checks_required: [open_bill_match, amount_match, payment_reference_match, bank_or_cash_journal]
+        safe_action: create_payment_or_route_to_reconcile
+
+    - id: FIN-010
+      when:
+        artifact_kind: bank_statement_line
+      then:
+        scenario_family: BANK_RECONCILIATION_EVENT
+        target_object: {model: bank.reconciliation}
+        checks_required: [counterpart_match, amount_match, partner_reference_match, reconciliation_model_match]
+        safe_action: open_reconciliation_with_preselected_match
+
+    - id: FIN-011
+      when:
+        artifact_kind: batch_payment_candidate
+      then:
+        scenario_family: BATCH_PAYMENT
+        target_object: {model: account.batch.payment}
+        checks_required: [homogeneous_payment_method, included_payments_valid, batch_reference_valid]
+        safe_action: create_or_update_batch_payment
+
+    - id: FIN-012
+      when:
+        artifact_kind: financial_document
+        confidence_band: LOW
+      then:
+        scenario_family: DOCUMENT_AMBIGUOUS
+        target_object: null
+        checks_required: [issuer_vs_recipient_resolution, company_context_resolution, partner_resolution]
+        safe_action: show_structured_review_card
+
+    - id: FIN-013
+      when:
+        duplicate_of_existing_posted_record: true
+      then:
+        scenario_family: DUPLICATE_DOCUMENT
+        target_object: existing_record
+        checks_required: [duplicate_match_confidence]
+        safe_action: block_and_link_existing_record
+
+    - id: FIN-014
+      when:
+        missing_master_data:
+          any_of: [partner, employee, journal, tax_mapping, analytic_account]
+      then:
+        scenario_family: MASTER_DATA_MISSING
+        target_object: null
+        safe_action: route_for_master_data_resolution
+
+    - id: FIN-015
+      when:
+        company_context_conflicts_with_document_direction: true
+      then:
+        scenario_family: CONTEXT_MISMATCH
+        target_object: null
+        safe_action: show_structured_review_card
+
+  close_rules:
+    month_end:
+      scenario_family: MONTH_END_CLOSE
+      policy_basis: synthesized_from_odoo_finance_flows
+      cadence: monthly
+      prechecks:
+        - all_bank_statement_lines_imported_or_known
+        - all_open_customer_invoice_drafts_reviewed
+        - all_open_vendor_bill_drafts_reviewed
+        - expenses_submitted_and_approvals_processed
+        - deferred_revenue_schedules_current
+        - deferred_expense_schedules_current
+        - suspense_accounts_reviewed
+        - project_profitability_variances_reviewed_for_billable_projects
+        - helpdesk_prepaid_and_postpaid_time_billing_reviewed
+      tasks:
+        - run_bank_reconciliation
+        - review_aged_receivables
+        - review_aged_payables
+        - post_due_expense_reports
+        - verify_tax_return_period_transactions_complete
+        - set_or_review_tax_lock_date_for_closed_tax_periods
+        - generate_or_verify_tax_closing_entry_if_period_close
+        - review_deferred_revenue_entries
+        - review_deferred_expense_entries
+        - review_foreign_currency_revaluation_policy_if_applicable
+      outputs:
+        - month_end_checklist_record
+        - unresolved_exceptions_queue
+        - tax_period_readiness_status
+      hard_blocks:
+        - unreconciled_bank_accounts_marked_as_required_close_accounts
+        - draft_customer_invoices_for_closed_period
+        - draft_vendor_bills_for_closed_period
+        - missing_tax_mapping_on_closed_period_transactions
+    year_end:
+      scenario_family: YEAR_END_CLOSE
+      policy_basis: aligned_to_odoo_year_end_closing
+      cadence: annual
+      prechecks:
+        - bank_accounts_fully_reconciled_to_year_end
+        - no_draft_customer_invoices
+        - no_draft_vendor_bills
+        - expenses_accurate_and_validated
+        - payments_encoded_and_confirmed
+        - suspense_accounts_closed
+        - depreciation_booked
+        - deferred_revenue_booked
+        - deferred_expense_booked
+      tasks:
+        - run_tax_report_and_verify_tax_information
+        - reconcile_balance_sheet_accounts
+        - update_bank_balances_to_actual_statement_balances
+        - reconcile_cash_and_bank_transactions
+        - review_aged_receivables_and_aged_payables
+        - create_tax_closing_entry
+        - set_lock_tax_return_date
+        - set_lock_everything_date_after_close
+      outputs:
+        - year_end_checklist_record
+        - tax_closing_entry
+        - accounting_lock_dates
+      hard_blocks:
+        - unreconciled_required_bank_accounts
+        - open_suspense_accounts
+        - unposted_required_depreciation_or_deferral_entries
+
+  philippines_bir_rules:
+    - id: PH-001
+      when:
+        company_country_code: PH
+        fiscal_localization_enabled: true
+      then:
+        scenario_family: PH_BIR_COMPLIANCE
+        checks_required:
+          - philippines_tax_package_present
+          - atc_codes_present_for_manual_withholding_taxes
+          - partner_tin_present_and_formatted
+        safe_action: prepare_bir_reporting_payload
+    - id: PH-002
+      when:
+        report_request: bir_2307
+      then:
+        source_records:
+          any_of: [vendor_bills_with_withholding, vendor_payments_linked_to_bills_with_withholding]
+        outputs: [bir_2307_xls]
+        hard_limits: [no_generated_pdf, no_generated_dat]
+    - id: PH-003
+      when:
+        report_request: slsp
+      then:
+        source_records:
+          sales: customer_invoices_with_sales_taxes
+          purchases: vendor_bills_with_purchase_taxes
+        outputs: [slsp_xlsx]
+        hard_limits: [no_generated_dat]
+    - id: PH-004
+      when:
+        report_request: tax_return_2550q
+      then:
+        source_records: [tax_report_2550q_ph]
+        outputs: [2550q_reference_report]
+        hard_limits: [no_generated_bir_formatted_pdf]
+    - id: PH-005
+      when:
+        report_request: sawt_qap
+      then:
+        source_records:
+          sawt: customer_invoices_with_sales_withholding
+          qap: vendor_bills_with_purchase_withholding
+        outputs: [sawt_qap_xlsx]
+        hard_limits: [no_generated_dat]
+    - id: PH-006
+      when:
+        request_kind: check_printing
+        company_country_code: PH
+      then:
+        checks_required: [check_layout_is_ph]
+        safe_action: prepare_bir_reporting_payload
+
+automation_boundaries:
+  auto_create_allowed_when:
+    - direction_resolved
+    - partner_or_employee_resolved
+    - company_context_valid
+    - taxes_and_journal_resolved
+    - duplicate_not_found
+    - confidence_band_in: [HIGH, HIGH_WITH_MATCH]
+  review_required_when:
+    - confidence_band_in: [MEDIUM, LOW]
+    - direction_is_ambiguous
+    - po_match_is_partial_or_mismatched
+    - project_or_sales_link_missing_for_reinvoice
+    - bir_localization_fields_missing
+  hard_block_when:
+    - duplicate_of_posted_record
+    - attempted_silent_mutation_of_validated_document
+    - missing_required_master_data
+    - company_context_conflict
+    - closed_tax_or_accounting_period_without_exception
+
+defaults:
+  extraction:
+    if_document_is_clear_financial_artifact: extract_automatically
+    if_direction_is_unclear: extract_then_review
+  mutation:
+    validated_docs: use_credit_or_debit_notes_only
+  retry:
+    use_idempotency_key: true
+    retry_on_connection_loss: resume_existing_job_first
+  services:
+    profitability_requires_analytic_link: true
+    support_time_billing_requires_service_product_and_sales_context: true
+  close:
+    month_end_policy_type: synthesized_from_odoo_finance_flows
+    year_end_policy_type: aligned_to_odoo_year_end_closing
+  bir:
+    if_country_not_ph: disable_ph_bir_overlay
+
+retry_and_idempotency:
+  key_fields:
+    - company_id
+    - branch_id
+    - partner_id
+    - document_number
+    - document_date
+    - total_amount
+    - currency_code
+    - source_artifact_hash
+  policy:
+    on_reconnect:
+      - lookup_pending_job_by_idempotency_key
+      - lookup_existing_draft_by_business_key
+      - resume_if_pending
+      - show_existing_result_if_complete
+      - never_create_second_financial_record_without_explicit_user_override
+
+identity_resolution:
+  people_directory_source: ssot/finance/close/people_directory.yaml
+  employee_capacity_source: ssot/finance/close/close_role_capacity.yaml
+  code_alias_resolution: true
+  rules:
+    - incoming_code_aliases_must_be_normalized_before_task_assignment
+    - email_addresses_must_be_resolved_from_people_directory_not_derived_ad_hoc
+    - task_owner_display_name_should_use_people_directory_name
+
+ssot_bindings:
+  month_end_task_catalog: ssot/finance/close/month_end_task_catalog.yaml
+  bir_filing_calendar: ssot/finance/close/ph_bir_filing_calendar_2026.yaml
+  close_role_capacity: ssot/finance/close/close_role_capacity.yaml
+
+close_orchestration:
+  task_source_of_truth: month_end_task_catalog
+  capacity_source_of_truth: close_role_capacity
+  compliance_calendar_source_of_truth: bir_filing_calendar
+
+  task_instance_generation:
+    month_end:
+      instantiate_from_catalog: true
+      assign_due_dates_from_offsets: true
+      assign_stage_owners_from_catalog: true
+      compute_load_from_capacity_matrix: true
+    bir_filing:
+      instantiate_from_calendar: true
+      auto_generate_internal_dates: true
+      bind_roles_from_calendar_workflow: true
+
+  blocking_rules:
+    - no_final_tb_signoff_until_all_mandatory_close_tasks_completed
+    - no_bir_filing_task_completion_until_required_report_and_payment_approval_completed
+    - no_vat_close_if_vat_output_and_input_tasks_in_same_period_are_incomplete
+    - no_project_revenue_close_if_wip_oop_reconciliation_is_incomplete
+
+  dashboards:
+    required:
+      - close_task_board_by_category
+      - close_task_board_by_employee
+      - close_task_board_by_stage
+      - bir_deadline_countdown
+      - capacity_heatmap_by_employee
+      - blocker_queue
+
+eval_assertions:
+  must_classify_services_and_finance_jointly: true
+  must_not_route_employee_receipts_to_vendor_bills_by_default: true
+  must_bind_project_profitability_records_to_analytic_account: true
+  must_use_tax_lock_dates_for_tax_period_close: true
+  must_use_credit_or_debit_notes_for_validated_doc_changes: true
+  philippines_mode_requires:
+    - atc_validation_for_withholding_taxes
+    - tin_validation
+    - explicit_external_conversion_notice_for_pdf_or_dat_outputs
+
+llm_application_controls:
+  instruction_first: true
+  structured_output_required_for_finance: true
+  grounding_sources:
+    - active_odoo_record
+    - extracted_document_fields
+    - linked_master_data
+    - policy_rules
+    - approved_task_check_metadata
+  allowed_fallback_states:
+    - not_found
+    - not_yet_computable
+    - needs_review
+    - blocked
+  affordance_policy:
+    prefer_tool_use_over_model_guessing: true
+    search_retrieval_before_generation: true
+    record_inspection_before_action_selection: true
+  reasoning_model_policy:
+    no_chain_of_thought_extraction: true
+    safety_from_grounding_not_prompting: true
+    use_deterministic_validations: true
+    use_explicit_action_gating: true
+    use_structured_outputs: true
+    use_observable_tool_calls: true
+  prompt_construction:
+    task_instruction_position: first
+    use_clear_separators_and_field_labels: true
+    repeat_operational_instruction_at_end: true
+    prime_expected_output_format: true
+    temperature_policy: low_variance_for_finance
+    do_not_change_temperature_and_top_p_simultaneously: true
+
+workflow_registry:
+  doc_intake:
+    workflow_id: pulser-doc-intake-v1
+    path: automations/workflows/odoo/pulser-doc-intake-v1.yaml
+    schema: agents/schemas/workflow/pulser/pulser_doc_intake_result.schema.json
+    pattern: sequential
+  form_validator:
+    workflow_id: pulser-form-validator-v1
+    path: automations/workflows/odoo/pulser-form-validator-v1.yaml
+    schema: agents/schemas/workflow/pulser/pulser_form_validation_result.schema.json
+    pattern: sequential
+  payment_reconcile:
+    workflow_id: pulser-payment-reconcile-v1
+    path: automations/workflows/odoo/pulser-payment-reconcile-v1.yaml
+    schema: agents/schemas/workflow/pulser/pulser_payment_reconcile_result.schema.json
+    pattern: sequential
+  close_orchestrator:
+    workflow_id: pulser-close-orchestrator-v1
+    path: automations/workflows/odoo/pulser-close-orchestrator-v1.yaml
+    schema: agents/schemas/workflow/pulser/pulser_close_orchestrator_result.schema.json
+    pattern: human_in_the_loop

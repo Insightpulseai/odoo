@@ -1,0 +1,95 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - img [ref=e3]
+    - generic [ref=e5]:
+      - link "" [ref=e6] [cursor=pointer]:
+        - /url: "#"
+      - link "Editor" [ref=e7] [cursor=pointer]:
+        - /url: http://localhost:8069/@/web/login
+  - generic [ref=e8]:
+    - banner [ref=e9]:
+      - navigation "Main" [ref=e10]:
+        - generic [ref=e11]:
+          - link "Logo of InsightPulse AI" [ref=e12] [cursor=pointer]:
+            - /url: /
+            - img "Logo of InsightPulse AI" [ref=e13]:
+              - img "InsightPulse AI" [ref=e14]
+          - menu [ref=e15]:
+            - menuitem "Home" [ref=e16] [cursor=pointer]
+            - menuitem "Jobs" [ref=e17] [cursor=pointer]
+            - menuitem "Contact us" [ref=e18] [cursor=pointer]
+          - list [ref=e19]:
+            - listitem [ref=e20]:
+              - button "" [ref=e21] [cursor=pointer]:
+                - generic [ref=e22]: 
+            - listitem [ref=e23]:
+              - link " +1 555-555-5556" [ref=e25] [cursor=pointer]:
+                - /url: tel:+1 555-555-5556
+                - generic [ref=e26]: 
+                - generic [ref=e27]: +1 555-555-5556
+            - listitem [ref=e28]:
+              - button "Mitchell Admin" [ref=e29] [cursor=pointer]
+              - text:   
+            - listitem [ref=e30]:
+              - link "Contact Us" [ref=e34] [cursor=pointer]:
+                - /url: /contactus
+    - main [ref=e35]:
+      - generic:  
+      - generic: 
+    - contentinfo [ref=e36]:
+      - generic [ref=e40]:
+        - generic [ref=e41]:
+          - heading "Useful Links" [level=5] [ref=e42]
+          - list [ref=e43]:
+            - listitem [ref=e44]:
+              - link "Home" [ref=e45] [cursor=pointer]:
+                - /url: /
+            - listitem [ref=e46]:
+              - link "About us" [ref=e47] [cursor=pointer]:
+                - /url: "#"
+            - listitem [ref=e48]:
+              - link "Products" [ref=e49] [cursor=pointer]:
+                - /url: "#"
+            - listitem [ref=e50]:
+              - link "Services" [ref=e51] [cursor=pointer]:
+                - /url: "#"
+            - listitem [ref=e52]:
+              - link "Legal" [ref=e53] [cursor=pointer]:
+                - /url: "#"
+            - listitem [ref=e54]:
+              - link "Contact us" [ref=e55] [cursor=pointer]:
+                - /url: /contactus
+        - generic [ref=e56]:
+          - heading "About us" [level=5] [ref=e57]
+          - paragraph [ref=e58]:
+            - text: We are a team of passionate people whose goal is to improve everyone's life through disruptive products. We build great products to solve your business problems.
+            - text: Our products are designed for small to medium size companies willing to optimize their performance.
+        - generic [ref=e59]:
+          - heading "Connect with us" [level=5] [ref=e60]
+          - list [ref=e61]:
+            - listitem [ref=e62]:
+              - generic [ref=e63]: 
+              - link "Contact us" [ref=e65] [cursor=pointer]:
+                - /url: /contactus
+            - listitem [ref=e66]:
+              - generic [ref=e67]: 
+              - link "info@yourcompany.example.com" [ref=e69] [cursor=pointer]:
+                - /url: mailto:info@yourcompany.example.com
+            - listitem [ref=e70]:
+              - generic [ref=e71]: 
+              - link "+1 555-555-5556" [ref=e73] [cursor=pointer]:
+                - /url: tel:+1 555-555-5556
+          - generic [ref=e74]:
+            - link "Facebook" [ref=e75] [cursor=pointer]:
+              - /url: /website/social/facebook
+              - generic [ref=e76]: 
+            - link "X" [ref=e77] [cursor=pointer]:
+              - /url: /website/social/twitter
+              - generic [ref=e78]: 
+            - link "LinkedIn" [ref=e79] [cursor=pointer]:
+              - /url: /website/social/linkedin
+              - generic [ref=e80]: 
+            - link "Extra page" [ref=e81] [cursor=pointer]:
+              - /url: /
+              - generic [ref=e82]: 
+      - generic [ref=e86]: Copyright © Company name

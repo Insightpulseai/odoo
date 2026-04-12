@@ -1,6 +1,6 @@
 # AI modules
 
-InsightPulse AI extends Odoo CE 19 with a layered set of AI/agent modules. These modules follow the `ipai_ai_*` naming convention and are organized into dependency layers.
+InsightPulse AI extends Odoo CE 18 with a layered set of AI/agent modules. These modules follow the `ipai_ai_*` naming convention and are organized into dependency layers.
 
 ## Layer model
 

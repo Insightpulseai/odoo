@@ -1,0 +1,150 @@
+workflow_id: pulser-close-orchestrator-v1
+version: 1
+status: draft
+pattern: human_in_the_loop
+purpose: >
+  Instantiate and run month-end, year-end, or PH BIR close cycles from templates,
+  release dependent tasks, run compliance scenarios, route exceptions, and generate
+  evidence packs and filing-readiness views.
+
+triggers:
+  - type: scheduled_month_end
+  - type: scheduled_year_end
+  - type: scheduled_tax_period_close
+  - type: manual_close_cycle_start
+
+inputs:
+  required:
+    - close_type
+    - company_id
+    - period_start
+    - period_end
+  optional:
+    - branch_id
+    - key_date
+    - template_code
+    - initiated_by
+
+variables:
+  close_cycle: {}
+  task_instances: []
+  compliance_results: []
+  blockers: []
+  evidence_pack: {}
+  filing_readiness: {}
+
+output_schema:
+  name: pulser_close_orchestrator_result
+  ref: agents/schemas/workflow/pulser/pulser_close_orchestrator_result.schema.json
+
+nodes:
+  - id: instantiate_close_cycle
+    type: agent
+    agent: pulser-odoo-transaction
+    task: >
+      Create a close cycle from the appropriate template:
+      ODOO_MONTH_END_AFC_STYLE, ODOO_YEAR_END_AFC_STYLE,
+      or ODOO_PH_TAX_CLOSE_AFC_STYLE.
+    save_output_as: close_cycle
+
+  - id: generate_task_instances
+    type: data_transformation
+    action: >
+      Generate task instances from the template catalog with owners,
+      due dates, predecessors, and category metadata.
+    save_output_as: task_instances
+
+  - id: release_ready_tasks
+    type: logic
+    expression: >
+      Release only tasks with satisfied predecessors.
+      Keep blocked tasks unreleased until dependencies complete.
+
+  - id: run_close_blocker_detection
+    type: agent
+    agent: pulser-odoo-transaction
+    task: >
+      Run close blocker checks:
+      unreconciled required bank accounts,
+      draft accounting docs in closing period,
+      missing tax mapping,
+      unresolved high-severity compliance hits.
+    save_output_as: blockers
+
+  - id: run_compliance_scenarios
+    type: agent
+    agent: pulser-odoo-ask
+    task: >
+      Run configured compliance scenarios for the close type.
+      For PH tax period close, include VAT, withholding, ATC/TIN,
+      and BIR readiness scenarios.
+    save_output_as: compliance_results
+
+  - id: human_review_gate
+    type: ask_question
+    question: >
+      Blockers or open compliance hits exist. Approve exception handling path,
+      return to owners, or cancel close?
+    save_user_response_as: reviewer_decision
+
+  - id: branch_on_review_decision
+    type: if_else
+    condition: >
+      Local.reviewer_decision = "continue_with_exceptions"
+    branches:
+      true:
+        next: create_exception_tasks
+      false:
+        next: refresh_or_cancel
+
+  - id: create_exception_tasks
+    type: data_transformation
+    action: >
+      Create exception-resolution tasks for each blocker or open compliance hit,
+      assign to owner/reviewer/approver per SSOT matrix.
+
+  - id: refresh_or_cancel
+    type: logic
+    expression: >
+      If reviewer_decision = "return_to_owners", re-release blocked tasks.
+      If reviewer_decision = "cancel", mark close cycle as canceled.
+
+  - id: generate_outputs
+    type: agent
+    agent: pulser-odoo-authoring
+    task: >
+      Generate close dashboard artifacts, evidence pack, and if PH tax close,
+      filing-readiness output for 2307, SLSP, 2550Q, and SAWT/QAP.
+    save_output_as: evidence_pack
+
+  - id: finish
+    type: data_transformation
+    action: >
+      Emit pulser_close_orchestrator_result from close_cycle, blockers,
+      compliance_results, evidence_pack, and filing_readiness.
+
+template_bindings:
+  month_end:
+    template_code: ODOO_MONTH_END_AFC_STYLE
+  year_end:
+    template_code: ODOO_YEAR_END_AFC_STYLE
+  tax_period_close:
+    template_code: ODOO_PH_TAX_CLOSE_AFC_STYLE
+
+human_in_loop_points:
+  - blocker_override
+  - tax_exception_approval
+  - final_signoff
+  - close_completion_confirmation
+
+compliance_scenarios:
+  - ph_vat_output_input_consistency
+  - ph_withholding_integrity
+  - services_to_finance_integrity
+  - close_blocker_detection
+
+policies:
+  no_final_completion_with_open_mandatory_tasks: true
+  no_tax_period_close_with_open_material_withholding_hits: true
+  evidence_pack_required: true
+  lock_date_step_requires_approval: true

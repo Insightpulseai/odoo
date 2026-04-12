@@ -52,8 +52,6 @@ subdomains:
     port: 8069                   # Origin port
     health_check: /web/login     # Health check endpoint
     owner_system: "Odoo CE 19.0" # System owner
-    cloudflare_proxied: true     # Cloudflare proxy
-    tls_mode: "Full (strict)"    # TLS mode
     status: active               # Status (active, planned, deprecated)
 ```
 
@@ -72,8 +70,6 @@ subdomains:
     port: 8080
     health_check: /api/v2/health
     owner_system: "Odoo API v2"
-    cloudflare_proxied: true
-    tls_mode: "Full (strict)"
     status: active
 ```
 
@@ -162,7 +158,6 @@ app_subdomains = [
       "fqdn": "api-v2.insightpulseai.com",
       "record_type": "A",
       "target": "178.128.112.214",
-      "cloudflare_proxied": true,
       "origin_port": 8080,
       "health_check": "/api/v2/health",
       "status": "active"

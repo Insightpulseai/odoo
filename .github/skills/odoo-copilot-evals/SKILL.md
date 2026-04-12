@@ -1,3 +1,12 @@
+---
+name: odoo-copilot-evals
+description: Expand Odoo copilot test coverage to 50+ cases including adversarial, permission, edge case, and regression tests
+version: "1.0"
+compatibility:
+  hosts: [github-copilot, claude-code, codex-cli, cursor, gemini-cli]
+tags: [evals, odoo, security, governance]
+---
+
 # odoo-copilot-evals
 
 **Impact tier**: P2 -- Quality / Accuracy

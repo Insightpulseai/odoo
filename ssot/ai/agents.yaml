@@ -94,48 +94,48 @@ foundry_project:
 
 agents:
 
-  ask-agent:
+  pulser-odoo-ask:
     type: prompt                       # PromptAgentDefinition
-    foundry_name: ask-agent            # agent_reference name in Foundry
+    foundry_name: pulser-odoo-ask      # agent_reference name in Foundry
     purpose: Answer questions about Odoo data and processes
     policy_ref: policy-read-only       # → policies.yaml
-    prompt_ref: prompt-ask-agent       # → prompts.yaml
+    prompt_ref: prompt-pulser-odoo-ask # → prompts.yaml
     tools: []
     write_access: none
     pulser_surface: ask-pulser
     source_refs:
       - source-odoo-knowledge          # → sources.yaml
 
-  authoring-agent:
+  pulser-odoo-authoring:
     type: prompt
-    foundry_name: authoring-agent
+    foundry_name: pulser-odoo-authoring
     purpose: Draft documents, reports, and emails
     policy_ref: policy-draft-only      # → policies.yaml
-    prompt_ref: prompt-authoring-agent # → prompts.yaml
+    prompt_ref: prompt-pulser-odoo-authoring # → prompts.yaml
     tools: []
     write_access: draft-only
     pulser_surface: pulser-docs
     source_refs:
       - source-odoo-knowledge
 
-  livechat-agent:
+  pulser-odoo-livechat:
     type: prompt
-    foundry_name: livechat-agent
+    foundry_name: pulser-odoo-livechat
     purpose: Handle website visitor questions
     policy_ref: policy-read-only       # → policies.yaml
-    prompt_ref: prompt-livechat-agent  # → prompts.yaml
+    prompt_ref: prompt-pulser-odoo-livechat  # → prompts.yaml
     tools: []
     write_access: none
     pulser_surface: pulser-erp
     source_refs:
       - source-odoo-knowledge
 
-  transaction-agent:
+  pulser-odoo-transaction:
     type: prompt
-    foundry_name: transaction-agent
+    foundry_name: pulser-odoo-transaction
     purpose: Assist with bounded CRUD operations
     policy_ref: policy-bounded-write   # → policies.yaml
-    prompt_ref: prompt-transaction-agent # → prompts.yaml
+    prompt_ref: prompt-pulser-odoo-transaction # → prompts.yaml
     tools: []                          # future: bounded CRUD tool definitions
     write_access: draft-then-approve
     pulser_surface: pulser-erp
@@ -152,4 +152,4 @@ legacy:
       v1 physical agent ID. In SDK v2, replaced by named agents registered
       individually via project.agents.create_version(). Retained for
       runtime migration reference only.
-    migrated_to: [ask-agent, authoring-agent, livechat-agent, transaction-agent]
+    migrated_to: [pulser-odoo-ask, pulser-odoo-authoring, pulser-odoo-livechat, pulser-odoo-transaction]

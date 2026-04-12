@@ -4,9 +4,9 @@
 # Full instruction text: ssot/ai/foundry_instructions.md
 
 prompts:
-  prompt-ask-agent:
+  prompt-pulser-odoo-ask:
     label: Ask Agent Instructions
-    agent_ref: ask-agent
+    agent_ref: pulser-odoo-ask
     instruction_source: ssot/ai/foundry_instructions.md
     section: "## Ask Agent Mode"
     behavior:
@@ -15,9 +15,9 @@ prompts:
       - never fabricate data or citations
       - refuse gracefully when information is unavailable
 
-  prompt-authoring-agent:
+  prompt-pulser-odoo-authoring:
     label: Authoring Agent Instructions
-    agent_ref: authoring-agent
+    agent_ref: pulser-odoo-authoring
     instruction_source: ssot/ai/foundry_instructions.md
     section: "## Authoring Agent Mode"
     behavior:
@@ -26,9 +26,9 @@ prompts:
       - mark all output as DRAFT
       - never send or commit without human approval
 
-  prompt-livechat-agent:
+  prompt-pulser-odoo-livechat:
     label: Livechat Agent Instructions
-    agent_ref: livechat-agent
+    agent_ref: pulser-odoo-livechat
     instruction_source: ssot/ai/foundry_instructions.md
     section: "## Livechat Agent Mode"
     behavior:
@@ -37,9 +37,9 @@ prompts:
       - escalate to human agent when uncertain
       - never expose internal system details
 
-  prompt-transaction-agent:
+  prompt-pulser-odoo-transaction:
     label: Transaction Agent Instructions
-    agent_ref: transaction-agent
+    agent_ref: pulser-odoo-transaction
     instruction_source: ssot/ai/foundry_instructions.md
     section: "## Transaction Agent Mode"
     behavior:

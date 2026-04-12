@@ -1,0 +1,299 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+
+    <!-- ═══════════════════════════════════════════════════════════ -->
+    <!-- Finance PPM — Canonical OKR Project                        -->
+    <!-- Uses only CE project features: milestones, tasks, tags.    -->
+    <!-- No custom models.                                          -->
+    <!-- ═══════════════════════════════════════════════════════════ -->
+
+    <record id="project_finance_ppm_okr" model="project.project">
+        <field name="name">Finance PPM — OKR Dashboard</field>
+        <field name="description">Canonical OKR tracking for Pulser for PH finance operations.
+Objectives O1-O6 are milestones. Key results are tasks with progress %.
+See spec/pulser-odoo/prd.md Section 18 for the OKR model.</field>
+        <field name="allow_milestones" eval="True"/>
+        <field name="allow_task_dependencies" eval="True"/>
+        <field name="tag_ids" eval="[(4, ref('tag_okr'))]"/>
+    </record>
+
+    <!-- ── Milestones = Objectives ─────────────────────────────── -->
+
+    <record id="milestone_o1" model="project.milestone">
+        <field name="name">O1 — Faster finance execution</field>
+        <field name="project_id" ref="project_finance_ppm_okr"/>
+    </record>
+
+    <record id="milestone_o2" model="project.milestone">
+        <field name="name">O2 — Stronger control and correctness</field>
+        <field name="project_id" ref="project_finance_ppm_okr"/>
+    </record>
+
+    <record id="milestone_o3" model="project.milestone">
+        <field name="name">O3 — Cash advance discipline</field>
+        <field name="project_id" ref="project_finance_ppm_okr"/>
+    </record>
+
+    <record id="milestone_o4" model="project.milestone">
+        <field name="name">O4 — PH tax and BIR readiness</field>
+        <field name="project_id" ref="project_finance_ppm_okr"/>
+    </record>
+
+    <record id="milestone_o5" model="project.milestone">
+        <field name="name">O5 — Faster and safer close</field>
+        <field name="project_id" ref="project_finance_ppm_okr"/>
+    </record>
+
+    <record id="milestone_o6" model="project.milestone">
+        <field name="name">O6 — AI financial discipline</field>
+        <field name="project_id" ref="project_finance_ppm_okr"/>
+    </record>
+
+    <!-- ── Tasks = Key Results ─────────────────────────────────── -->
+    <!-- Each task: name = KR, milestone = parent objective,        -->
+    <!-- progress = 0-100%, description = metric + target.          -->
+
+    <!-- O1 KRs -->
+    <record id="kr_o1_1" model="project.task">
+        <field name="name">KR1 — Median upload-to-draft-ready &lt; 3 min</field>
+        <field name="project_id" ref="project_finance_ppm_okr"/>
+        <field name="milestone_id" ref="milestone_o1"/>
+        <field name="tag_ids" eval="[(4, ref('tag_kr')), (4, ref('tag_ap'))]"/>
+        <field name="description">Metric: median time from document upload to draft-ready decision
+Target: &lt; 3 minutes
+Source: SC-PH-03
+Unit: minutes
+Direction: lower is better</field>
+        <field name="progress" eval="0"/>
+    </record>
+
+    <record id="kr_o1_2" model="project.task">
+        <field name="name">KR2 — Finance-review turnaround -30%</field>
+        <field name="project_id" ref="project_finance_ppm_okr"/>
+        <field name="milestone_id" ref="milestone_o1"/>
+        <field name="tag_ids" eval="[(4, ref('tag_kr'))]"/>
+        <field name="description">Metric: finance-review turnaround time reduction
+Target: >= 30% reduction from baseline
+Source: SC-PH-01
+Unit: %
+Direction: higher is better</field>
+        <field name="progress" eval="0"/>
+    </record>
+
+    <record id="kr_o1_3" model="project.task">
+        <field name="name">KR3 — Workflow success rate >= 80%</field>
+        <field name="project_id" ref="project_finance_ppm_okr"/>
+        <field name="milestone_id" ref="milestone_o1"/>
+        <field name="tag_ids" eval="[(4, ref('tag_kr'))]"/>
+        <field name="description">Metric: successful completion rate for supported draft-safe workflows
+Target: >= 80% on scoped pilot scenarios
+Source: SC-PH-02
+Unit: %
+Direction: higher is better</field>
+        <field name="progress" eval="0"/>
+    </record>
+
+    <!-- O2 KRs -->
+    <record id="kr_o2_1" model="project.task">
+        <field name="name">KR1 — Incorrect safe-action rate &lt; 2%</field>
+        <field name="project_id" ref="project_finance_ppm_okr"/>
+        <field name="milestone_id" ref="milestone_o2"/>
+        <field name="tag_ids" eval="[(4, ref('tag_kr')), (4, ref('tag_governance'))]"/>
+        <field name="description">Metric: incorrect safe-action rate on evaluated finance scenarios
+Target: &lt; 2%
+Source: SC-PH-04
+Unit: %
+Direction: lower is better</field>
+        <field name="progress" eval="0"/>
+    </record>
+
+    <record id="kr_o2_2" model="project.task">
+        <field name="name">KR2 — Wrong-company-context incidents = 0</field>
+        <field name="project_id" ref="project_finance_ppm_okr"/>
+        <field name="milestone_id" ref="milestone_o2"/>
+        <field name="tag_ids" eval="[(4, ref('tag_kr')), (4, ref('tag_governance'))]"/>
+        <field name="description">Metric: wrong-company-context action incidents in production
+Target: 0 incidents
+Source: SC-PH-05
+Unit: count
+Direction: lower is better (exact = 0)</field>
+        <field name="progress" eval="0"/>
+    </record>
+
+    <record id="kr_o2_3" model="project.task">
+        <field name="name">KR3 — Silent-post incidents = 0</field>
+        <field name="project_id" ref="project_finance_ppm_okr"/>
+        <field name="milestone_id" ref="milestone_o2"/>
+        <field name="tag_ids" eval="[(4, ref('tag_kr')), (4, ref('tag_governance'))]"/>
+        <field name="description">Metric: silent-post or unauthorized final-post incidents
+Target: 0
+Source: SC-PH-13
+Unit: count
+Direction: lower is better (exact = 0)</field>
+        <field name="progress" eval="0"/>
+    </record>
+
+    <!-- O3 KRs -->
+    <record id="kr_o3_1" model="project.task">
+        <field name="name">KR1 — Overdue advances without owner = 0</field>
+        <field name="project_id" ref="project_finance_ppm_okr"/>
+        <field name="milestone_id" ref="milestone_o3"/>
+        <field name="tag_ids" eval="[(4, ref('tag_kr')), (4, ref('tag_cash_advance'))]"/>
+        <field name="description">Metric: unresolved cash advances older than policy threshold with no owner
+Target: 100% owner-assigned; 0 unowned
+Source: SC-PH-08
+Unit: count
+Direction: lower is better (exact = 0)</field>
+        <field name="progress" eval="0"/>
+    </record>
+
+    <record id="kr_o3_2" model="project.task">
+        <field name="name">KR2 — On-time liquidation >= 95%</field>
+        <field name="project_id" ref="project_finance_ppm_okr"/>
+        <field name="milestone_id" ref="milestone_o3"/>
+        <field name="tag_ids" eval="[(4, ref('tag_kr')), (4, ref('tag_cash_advance'))]"/>
+        <field name="description">Metric: cash advances liquidated, returned, or escalated by due date
+Target: >= 95% of scoped pilot advances
+Source: SC-PH-09
+Unit: %
+Direction: higher is better</field>
+        <field name="progress" eval="0"/>
+    </record>
+
+    <record id="kr_o3_3" model="project.task">
+        <field name="name">KR3 — Advance aging trend improving</field>
+        <field name="project_id" ref="project_finance_ppm_okr"/>
+        <field name="milestone_id" ref="milestone_o3"/>
+        <field name="tag_ids" eval="[(4, ref('tag_kr')), (4, ref('tag_cash_advance'))]"/>
+        <field name="description">Metric: days outstanding for unreconciled advances
+Target: declining trend period over period
+Source: working-capital discipline
+Unit: days
+Direction: lower is better</field>
+        <field name="progress" eval="0"/>
+    </record>
+
+    <!-- O4 KRs -->
+    <record id="kr_o4_1" model="project.task">
+        <field name="name">KR1 — VAT/withholding/TIN/ATC blocker recall >= 95%</field>
+        <field name="project_id" ref="project_finance_ppm_okr"/>
+        <field name="milestone_id" ref="milestone_o4"/>
+        <field name="tag_ids" eval="[(4, ref('tag_kr')), (4, ref('tag_ph_tax')), (4, ref('tag_bir'))]"/>
+        <field name="description">Metric: recall for VAT / withholding / TIN / ATC blockers
+Target: >= 95% recall on eval set
+Source: SC-PH-10
+Unit: %
+Direction: higher is better</field>
+        <field name="progress" eval="0"/>
+    </record>
+
+    <record id="kr_o4_2" model="project.task">
+        <field name="name">KR2 — BIR false-ready rate &lt; 1%</field>
+        <field name="project_id" ref="project_finance_ppm_okr"/>
+        <field name="milestone_id" ref="milestone_o4"/>
+        <field name="tag_ids" eval="[(4, ref('tag_kr')), (4, ref('tag_bir'))]"/>
+        <field name="description">Metric: false-ready rate for 2307/2550Q/SAWT/SLSP readiness
+Target: &lt; 1% on eval set
+Source: SC-PH-11
+Unit: %
+Direction: lower is better</field>
+        <field name="progress" eval="0"/>
+    </record>
+
+    <record id="kr_o4_3" model="project.task">
+        <field name="name">KR3 — Explicit readiness/submission state = 100%</field>
+        <field name="project_id" ref="project_finance_ppm_okr"/>
+        <field name="milestone_id" ref="milestone_o4"/>
+        <field name="tag_ids" eval="[(4, ref('tag_kr')), (4, ref('tag_bir'))]"/>
+        <field name="description">Metric: BIR-bound workflows using explicit status model
+Target: 100% of BIR-bound flows
+Source: SC-PH-24
+Unit: %
+Direction: higher is better (exact = 100)</field>
+        <field name="progress" eval="0"/>
+    </record>
+
+    <!-- O5 KRs -->
+    <record id="kr_o5_1" model="project.task">
+        <field name="name">KR1 — Correct close blocker surfacing >= 90%</field>
+        <field name="project_id" ref="project_finance_ppm_okr"/>
+        <field name="milestone_id" ref="milestone_o5"/>
+        <field name="tag_ids" eval="[(4, ref('tag_kr')), (4, ref('tag_close'))]"/>
+        <field name="description">Metric: month-end/tax-period blockers correctly surfaced
+Target: >= 90% on eval set
+Source: SC-PH-12
+Unit: %
+Direction: higher is better</field>
+        <field name="progress" eval="0"/>
+    </record>
+
+    <record id="kr_o5_2" model="project.task">
+        <field name="name">KR2 — Evidence pack completeness >= 95%</field>
+        <field name="project_id" ref="project_finance_ppm_okr"/>
+        <field name="milestone_id" ref="milestone_o5"/>
+        <field name="tag_ids" eval="[(4, ref('tag_kr')), (4, ref('tag_close'))]"/>
+        <field name="description">Metric: evidence-pack completeness for scoped readiness workflows
+Target: >= 95%
+Source: SC-PH-07
+Unit: %
+Direction: higher is better</field>
+        <field name="progress" eval="0"/>
+    </record>
+
+    <record id="kr_o5_3" model="project.task">
+        <field name="name">KR3 — Critical-path tasks with owner + due = 100%</field>
+        <field name="project_id" ref="project_finance_ppm_okr"/>
+        <field name="milestone_id" ref="milestone_o5"/>
+        <field name="tag_ids" eval="[(4, ref('tag_kr')), (4, ref('tag_close'))]"/>
+        <field name="description">Metric: close critical-path tasks with assigned owner and due date
+Target: 100%
+Unit: %
+Direction: higher is better (exact = 100)</field>
+        <field name="progress" eval="0"/>
+    </record>
+
+    <!-- O6 KRs -->
+    <record id="kr_o6_1" model="project.task">
+        <field name="name">KR1 — Cost per workflow measured + declining</field>
+        <field name="project_id" ref="project_finance_ppm_okr"/>
+        <field name="milestone_id" ref="milestone_o6"/>
+        <field name="tag_ids" eval="[(4, ref('tag_kr')), (4, ref('tag_finops'))]"/>
+        <field name="description">Metric: cost per successful workflow
+Target: measured and trending down or flat at higher volume
+Source: AI financial discipline
+Unit: currency
+Direction: lower is better</field>
+        <field name="progress" eval="0"/>
+    </record>
+
+    <record id="kr_o6_2" model="project.task">
+        <field name="name">KR2 — All core agents gated by evals</field>
+        <field name="project_id" ref="project_finance_ppm_okr"/>
+        <field name="milestone_id" ref="milestone_o6"/>
+        <field name="tag_ids" eval="[(4, ref('tag_kr')), (4, ref('tag_governance'))]"/>
+        <field name="description">Metric: core agents with at least one passing release-gate eval run
+Target: 100% of core agents
+Source: SC-PH-15
+Unit: %
+Direction: higher is better (exact = 100)</field>
+        <field name="progress" eval="0"/>
+    </record>
+
+    <record id="kr_o6_3" model="project.task">
+        <field name="name">KR3 — Policy + knowledge + red-team baseline complete</field>
+        <field name="project_id" ref="project_finance_ppm_okr"/>
+        <field name="milestone_id" ref="milestone_o6"/>
+        <field name="tag_ids" eval="[(4, ref('tag_kr')), (4, ref('tag_governance'))]"/>
+        <field name="description">Metric: >= 4 custom policies, >= 1 knowledge index, >= 1 red-team run
+Target: all three conditions met
+Source: SC-PH-14, SC-PH-17, SC-PH-18
+Unit: boolean
+Direction: exact (all met)</field>
+        <field name="progress" eval="0"/>
+    </record>
+
+    <!-- NOTE: Evidence vault directories should be created in       -->
+    <!-- OCA document_page or EE documents when available.           -->
+    <!-- CE does not ship the documents module.                      -->
+
+</odoo>

@@ -1,6 +1,6 @@
 # HR and payroll
 
-The HR and payroll layer provides Philippine-specific payroll processing, government contribution computation, and employee benefits management on top of Odoo CE 19.
+The HR and payroll layer provides Philippine-specific payroll processing, government contribution computation, and employee benefits management on top of Odoo CE 18.
 
 ## Modules
 

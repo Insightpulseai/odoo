@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+
+    <!-- ── Finance PPM task stages ─────────────────────────────── -->
+    <!-- These stages apply to the Finance PPM project only.       -->
+    <!-- CE project module creates stages per-project when the     -->
+    <!-- project is created with allow_task_dependencies enabled.   -->
+
+    <!-- NOTE: Odoo CE 18 creates default stages (New, In Progress,
+         Done, Cancelled) automatically for new projects.
+         These additional stages are only needed if you want
+         finance-specific stage names. The default stages are
+         sufficient for MVP. This file is kept as a reference
+         for future customization. -->
+
+</odoo>

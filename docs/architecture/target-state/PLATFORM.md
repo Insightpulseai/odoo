@@ -99,7 +99,7 @@ The platform follows the **Azure SaaS Workload Documentation** design framework,
 |---|-------|-------|-------------|
 | 1 | Governance / Control | Planning, code, release, policy | Azure Boards, GitHub, Azure Pipelines, Azure Policy |
 | 2 | Identity / Network / Security | Auth, edge, secrets, API governance | Entra ID, Front Door, Key Vault, APIM |
-| 3 | Business Systems | Transactional ERP, automation | Odoo CE 19, n8n |
+| 3 | Business Systems | Transactional ERP, automation | Odoo CE 18, n8n |
 | 4 | Data Intelligence | Lakehouse, ML, BI serving | Databricks, ADLS Gen2, Unity Catalog |
 | 5 | Agent / AI Runtime | Agent factory, tracing, evals | Microsoft Foundry, Azure OpenAI, Document Intelligence (Foundry for prebuilt; Studio for custom) |
 | 6 | Experience / Domain Apps | User-facing surfaces | Ops Console, Power BI, Copilot UIs, M365 Copilot, Slack |

@@ -33,10 +33,10 @@ models:
     canonicality: canonical
     consumers:
       - ipai_odoo_copilot
-      - ask-agent
-      - authoring-agent
-      - livechat-agent
-      - transaction-agent
+      - pulser-odoo-ask
+      - pulser-odoo-authoring
+      - pulser-odoo-livechat
+      - pulser-odoo-transaction
 
   # ---------------------------------------------------------------------------
   # Legacy (direct provider calls, to be eliminated per ai-consolidation-foundry.yaml)

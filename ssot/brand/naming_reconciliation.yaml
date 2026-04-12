@@ -1,0 +1,203 @@
+version: 1
+artifact: ssot/brand/naming_reconciliation.yaml
+source_of_truth: true
+profile: insightpulseai-naming-reconciliation
+
+purpose:
+  description: canonical_naming_reconciliation_plan_for_pulser_odoo_product_rename
+
+effective_date: "2026-04-10"
+status: in_progress
+
+# Target canonical names
+canonical:
+  product_name: "Pulser for Odoo"
+  product_subtitle: "Pulser Assistant for Odoo"
+  slug: pulser-odoo
+  key: pulser_odoo
+  addon_technical_name: ipai_odoo_copilot  # KEEP — Odoo addon convention
+  odoo_version: "Odoo CE 18.0"  # NOT 19
+
+# Foundry agent naming target
+foundry_agents:
+  top_level: pulser-odoo
+  children:
+    - pulser-odoo-ask
+    - pulser-odoo-authoring
+    - pulser-odoo-livechat
+    - pulser-odoo-transaction
+
+# Azure infra names — KEEP AS-IS (user directive: keep azure infra naming)
+azure_infra_keep:
+  - ipai-copilot-resource       # Azure AI resource
+  - ipai-copilot                # Foundry project path/ID
+  - ipai-copilot-gateway        # ACA app
+  - ca-ipai-dev                 # ACA environment
+  - pg-ipai-odoo                # PostgreSQL Flexible Server
+  - kv-ipai-dev                 # Key Vault
+  - afd-ipai-dev                # Front Door
+  - acripaiodoo                 # Container Registry
+  - wg-pulser                   # Model deployment alias
+  - ipai_odoo_copilot           # Odoo addon technical name
+  - vnet-ipai-dev               # Virtual Network
+  - ipai-appinsights            # App Insights
+  - appi-ipai-dev               # App Insights (alt)
+  - la-ipai-odoo-dev            # Log Analytics
+  note: "Do not rename Azure resource IDs, endpoints, or Odoo addon technical names"
+
+# Rename rules
+renames:
+  # Product name renames (human-facing, consumer-facing)
+  - old: "Odoo Copilot"
+    new: "Pulser for Odoo"
+    scope: human_facing_text
+    exclude_patterns:
+      - "ipai_odoo_copilot"   # addon technical name — KEEP
+      - "Dockerfile.odoo-copilot"  # infra artifact — handle separately
+
+  - old: "InsightPulseAI Odoo Copilot"
+    new: "Pulser for Odoo"
+    scope: human_facing_text
+
+  - old: "IPAI Odoo Copilot"
+    new: "Pulser for Odoo"
+    scope: human_facing_text
+    exclude_patterns:
+      - "ipai_odoo_copilot"
+      - "ipai-odoo-copilot-azure"  # directory name — handle in phase 2
+
+  - old: "Pulser Assistant"
+    new: "Pulser for Odoo"
+    scope: human_facing_text
+    note: "Only when NOT already followed by 'for Odoo'"
+    exclude_patterns:
+      - "Pulser Assistant for Odoo"  # already correct
+
+  # Spec/key renames
+  - old: "reverse-sap-joule"
+    new: "pulser-odoo"
+    scope: machine_readable_keys
+
+  - old: "reverse_sap_joule"
+    new: "pulser_odoo"
+    scope: machine_readable_keys
+
+  - old: "Reverse SAP Joule"
+    new: "Pulser for Odoo"
+    scope: human_facing_text
+
+  # Agent name renames (Foundry)
+  - old: "ask-agent"
+    new: "pulser-odoo-ask"
+    scope: foundry_agent_names
+
+  - old: "authoring-agent"
+    new: "pulser-odoo-authoring"
+    scope: foundry_agent_names
+
+  - old: "livechat-agent"
+    new: "pulser-odoo-livechat"
+    scope: foundry_agent_names
+
+  - old: "transaction-agent"
+    new: "pulser-odoo-transaction"
+    scope: foundry_agent_names
+
+  # Kebab-case product slug renames
+  - old: "pulser-assistant"
+    new: "pulser-odoo"
+    scope: machine_readable_keys
+    note: "kebab-case product slug"
+
+  # Version fix (factually wrong — Odoo 18, not 19)
+  - old: "Odoo CE 19.0"
+    new: "Odoo CE 18.0"
+    scope: version_reference
+
+  - old: "Odoo CE 19"
+    new: "Odoo CE 18"
+    scope: version_reference
+
+  - old: "Odoo 19"
+    new: "Odoo 18"
+    scope: version_reference
+    note: "Be careful not to match 'Odoo 19' inside URLs or paths that may be version-specific references"
+
+# Execution phases
+phases:
+  phase_1_version_fix:
+    description: "Fix all Odoo 19 → Odoo 18 references (factually wrong)"
+    priority: critical
+    estimated_files: 123
+    estimated_occurrences: 225
+    safe_to_batch: true
+
+  phase_2_ssot_agents:
+    description: "Rename child agents in SSOT YAML files"
+    priority: high
+    estimated_files: 15
+    estimated_occurrences: 187
+    safe_to_batch: true
+    files:
+      - ssot/ai/agents.yaml
+      - ssot/ai/topics.yaml
+      - ssot/ai/prompts.yaml
+      - ssot/ai/sources.yaml
+      - ssot/ai/foundry_normalization_plan.yaml
+      - ssot/agents/solution_registry.yaml
+      - ssot/agents/model_registry.yaml
+      - ssot/agents/agent-factory-lifecycle.yaml
+      - scripts/foundry/register_agent_v2.py
+      - scripts/foundry/run_cloud_eval.py
+      - scripts/foundry/run_retrieval_eval.py
+      - azure-pipelines-agent-eval.yml
+
+  phase_3_product_name_ssot:
+    description: "Rename Odoo Copilot → Pulser for Odoo in SSOT and spec files"
+    priority: high
+    estimated_files: 40
+    safe_to_batch: false
+    note: "Requires file-by-file review to avoid renaming addon technical name"
+
+  phase_4_product_name_docs:
+    description: "Rename Odoo Copilot → Pulser for Odoo in docs, architecture, product pages"
+    priority: medium
+    estimated_files: 80
+    safe_to_batch: false
+
+  phase_5_product_name_code:
+    description: "Rename in TypeScript, Python source, HTML, test files"
+    priority: medium
+    estimated_files: 50
+    safe_to_batch: false
+    note: "Code changes need test verification"
+
+  phase_6_directory_renames:
+    description: "Rename directories like agents/foundry/ipai-odoo-copilot-azure/"
+    priority: low
+    safe_to_batch: false
+    note: "Deferred — requires import/path updates across many files"
+
+  phase_7_spec_bundle_rename:
+    description: "Rename spec/reverse-sap-joule-* paths and fix dangling references"
+    priority: medium
+    estimated_files: 3
+
+# Scope exclusions
+exclusions:
+  - path: "odoo/"
+    reason: "Vendor directory — never modify"
+  - path: "node_modules/"
+    reason: "Dependencies"
+  - path: ".git/"
+    reason: "Git internals"
+  - path: "docs/release/DEPLOYMENT_AGENT_PROMPT.md"
+    reason: "Intentional reference doc"
+  - pattern: "ipai_odoo_copilot"
+    reason: "Odoo addon technical name — KEEP"
+  - pattern: "ipai-copilot-resource"
+    reason: "Azure resource name — KEEP"
+  - pattern: "ipai-copilot-gateway"
+    reason: "Azure resource name — KEEP"
+  - pattern: "Dockerfile.odoo-copilot"
+    reason: "Infra artifact — handle in phase 6"

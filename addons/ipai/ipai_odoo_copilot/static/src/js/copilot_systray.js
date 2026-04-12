@@ -1,9 +1,10 @@
 /** @odoo-module **/
 
-import { Component, useState, useRef, onMounted } from "@odoo/owl";
+import { Component, useState, useRef, onMounted, markup } from "@odoo/owl";
 import { registry } from "@web/core/registry";
 import { useService } from "@web/core/utils/hooks";
 import { rpc } from "@web/core/network/rpc";
+import { renderMarkdown } from "./copilot_markdown";
 
 /**
  * CopilotSystrayButton — systray icon that opens the copilot chat panel.
@@ -19,9 +20,11 @@ export class CopilotSystrayButton extends Component {
             isLoading: false,
             error: null,
             isDisabled: false,
+            attachedFile: null,
         });
         this.inputRef = useRef("promptInput");
         this.messagesRef = useRef("messageList");
+        this.fileInputRef = useRef("fileInput");
         this.action = useService("action");
 
         // Check if copilot is enabled
@@ -85,10 +88,16 @@ export class CopilotSystrayButton extends Component {
         const prompt = input?.value?.trim();
         if (!prompt || this.state.isLoading) return;
 
-        // Add user message
+        // Capture attachment before clearing
+        const attachedFile = this.state.attachedFile;
+        const displayText = attachedFile
+            ? `${prompt}\n📎 ${attachedFile.name}`
+            : prompt;
+
+        // Add user message (shows filename if attached)
         this.state.messages.push({
             role: "user",
-            content: prompt,
+            content: displayText,
             timestamp: new Date().toLocaleTimeString(),
         });
         input.value = "";
@@ -97,12 +106,28 @@ export class CopilotSystrayButton extends Component {
         this._scrollToBottom();
 
         try {
+            // Upload attachment if present, get attachment_ids for server-side extraction
+            let attachment_ids = [];
+            if (attachedFile) {
+                try {
+                    const uploadResult = await this._uploadAttachment(attachedFile);
+                    if (uploadResult && uploadResult.attachment_ids) {
+                        attachment_ids = uploadResult.attachment_ids;
+                    }
+                } catch (uploadErr) {
+                    console.warn("Attachment upload failed, sending as text reference:", uploadErr);
+                }
+                this.state.attachedFile = null;
+            }
+
             const context = this._getPageContext();
             const result = await rpc("/ipai/copilot/chat", {
-                prompt,
+                prompt: attachedFile && attachment_ids.length === 0
+                    ? `[Attached: ${attachedFile.name}] ${prompt}` : prompt,
                 record_model: context.record_model,
                 record_id: context.record_id,
                 surface: context.surface || "erp",
+                attachment_ids: attachment_ids.length > 0 ? attachment_ids : undefined,
             });
 
             if (result.blocked) {
@@ -134,9 +159,46 @@ export class CopilotSystrayButton extends Component {
         }
     }
 
+    onClickUpload() {
+        this.fileInputRef.el?.click();
+    }
+
+    onFileSelected(ev) {
+        const file = ev.target.files?.[0];
+        if (!file) return;
+        this.state.attachedFile = file;
+        ev.target.value = "";
+    }
+
+    onRemoveAttachment() {
+        this.state.attachedFile = null;
+    }
+
+    async _uploadAttachment(file) {
+        const formData = new FormData();
+        formData.append("files", file);
+        const response = await fetch("/ipai/copilot/upload", {
+            method: "POST",
+            body: formData,
+        });
+        if (!response.ok) {
+            throw new Error(`Upload failed: ${response.status}`);
+        }
+        return await response.json();
+    }
+
+    /**
+     * Render markdown content as safe HTML for OWL t-out directive.
+     */
+    renderMarkdownContent(content) {
+        if (!content) return "";
+        return markup(renderMarkdown(content));
+    }
+
     clearMessages() {
         this.state.messages = [];
         this.state.error = null;
+        this.state.attachedFile = null;
     }
 
     _scrollToBottom() {

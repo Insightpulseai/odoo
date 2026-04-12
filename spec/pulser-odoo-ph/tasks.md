@@ -164,3 +164,20 @@ Draft
 
 ### Phase 5 exit criteria
 - Eval baseline exists, traces are inspectable, and failure modes are controlled
+
+## Phase 18 — Identity, access, and Azure sign-in
+
+- [ ] Inventory current Entra application surfaces for Odoo login, Pulser gateway, and related runtime apps
+- [ ] Define canonical identity architecture for Pulser for PH
+- [ ] Validate Odoo Azure sign-in configuration against documented Odoo flow
+- [ ] Confirm `auth_oauth.authorization_header` system parameter behavior
+- [ ] Confirm Entra app audience choice for internal employee sign-in
+- [ ] Validate canonical redirect URL using `/auth_oauth/signin`
+- [ ] Validate Odoo OAuth provider fields and allowed state
+- [ ] Define first-link flow for existing users and invited users
+- [ ] Define separation between internal-user and portal-user identity patterns
+- [ ] Define Pulser gateway auth pattern using MSAL
+- [ ] Remove deprecated or unsupported auth delivery patterns for custom web surfaces
+- [ ] Define service identity / managed identity model for runtime integrations
+- [ ] Add auth and access-control eval scenarios
+- [ ] Add production checks for tenant alignment, redirect correctness, and least-privilege access

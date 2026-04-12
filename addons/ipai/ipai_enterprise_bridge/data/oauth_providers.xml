@@ -20,16 +20,21 @@
     <!-- ================================================================
          Microsoft Entra ID (primary IdP)
          ================================================================
-         Entra app registration: ipai-odoo-login-prod
+         Entra app registration: InsightPulse AI - Odoo Login
+         App ID: 3446e178-3eba-48c9-b5bd-4283ff729eb1
+         Audience: AzureADMyOrg (single-tenant, internal employees only)
          Key Vault secrets:
            - entra-odoo-login-client-id
            - entra-odoo-login-client-secret
          Redirect URI: https://erp.insightpulseai.com/auth_oauth/signin
+
+         DEPRECATED: 07bd9669-1eca-4d93-8880-fd3abb87f812 (wrong audience:
+         AzureADandPersonalMicrosoftAccount — causes "App launch failed" errors)
     -->
     <record id="provider_entra_id" model="auth.oauth.provider">
-        <field name="name">Microsoft Entra ID</field>
+        <field name="name">Microsoft Azure</field>
         <field name="flow">id_token_code</field>
-        <field name="client_id">07bd9669-1eca-4d93-8880-fd3abb87f812</field>
+        <field name="client_id">3446e178-3eba-48c9-b5bd-4283ff729eb1</field>
         <field name="auth_endpoint">https://login.microsoftonline.com/402de71a-87ec-4302-a609-fb76098d1da7/oauth2/v2.0/authorize</field>
         <field name="validation_endpoint">https://login.microsoftonline.com/402de71a-87ec-4302-a609-fb76098d1da7/oauth2/v2.0/token</field>
         <field name="data_endpoint">https://graph.microsoft.com/oidc/userinfo</field>

@@ -1,0 +1,119 @@
+- generic [ref=e1]:
+  - generic [ref=e2]:
+    - img [ref=e3]
+    - generic [ref=e5]:
+      - link "" [ref=e6] [cursor=pointer]:
+        - /url: "#"
+      - link "Editor" [ref=e7] [cursor=pointer]:
+        - /url: http://localhost:8069/@/web/login
+  - generic [ref=e8]:
+    - banner [ref=e9]:
+      - navigation "Main" [ref=e10]:
+        - generic [ref=e11]:
+          - link "Logo of InsightPulse AI" [ref=e12] [cursor=pointer]:
+            - /url: /
+            - img "Logo of InsightPulse AI" [ref=e13]:
+              - img "InsightPulse AI" [ref=e14]
+          - menu [ref=e15]:
+            - menuitem "Home" [ref=e16] [cursor=pointer]
+            - menuitem "Jobs" [ref=e17] [cursor=pointer]
+            - menuitem "Contact us" [ref=e18] [cursor=pointer]
+          - list [ref=e19]:
+            - listitem [ref=e20]:
+              - button "" [ref=e21] [cursor=pointer]:
+                - generic [ref=e22]: 
+            - listitem [ref=e23]:
+              - link " +1 555-555-5556" [ref=e25] [cursor=pointer]:
+                - /url: tel:+1 555-555-5556
+                - generic [ref=e26]: 
+                - generic [ref=e27]: +1 555-555-5556
+            - listitem [ref=e28]:
+              - button "Mitchell Admin" [ref=e29] [cursor=pointer]
+              - text:   
+            - listitem [ref=e30]:
+              - link "Contact Us" [ref=e34] [cursor=pointer]:
+                - /url: /contactus
+    - main [ref=e35]:
+      - form [ref=e37]:
+        - generic [ref=e38]:
+          - generic [ref=e39]: Email
+          - textbox "Email" [active] [ref=e40]
+        - generic [ref=e41]:
+          - generic [ref=e42]:
+            - text: Password
+            - link "Reset Password" [ref=e43] [cursor=pointer]:
+              - /url: /web/reset_password?
+          - textbox "Password Reset Password" [ref=e44]:
+            - /placeholder: Password
+        - generic [ref=e45]:
+          - button "Log in" [ref=e46] [cursor=pointer]
+          - generic [ref=e47]:
+            - emphasis [ref=e48]: "- or -"
+            - generic [ref=e49]:
+              - link " Sign in with Microsoft" [ref=e50] [cursor=pointer]:
+                - /url: https://login.microsoftonline.com/402de71a-87ec-4302-a609-fb76098d1da7/oauth2/v2.0/authorize?response_type=token&client_id=3446e178-3eba-48c9-b5bd-4283ff729eb1&redirect_uri=http%3A%2F%2Flocalhost%3A8069%2Fauth_oauth%2Fsignin&scope=openid+profile+email&state=%7B%22d%22%3A+%22odoo_dev%22%2C+%22p%22%3A+10%2C+%22r%22%3A+%22http%253A%252F%252Flocalhost%253A8069%252Fweb%22%7D
+                - generic [ref=e51]: 
+                - text: Sign in with Microsoft
+              - link " Sign in with Google" [ref=e52] [cursor=pointer]:
+                - /url: https://accounts.google.com/o/oauth2/auth?response_type=token&client_id=GOOGLE_CLIENT_ID_SET_VIA_ENV&redirect_uri=http%3A%2F%2Flocalhost%3A8069%2Fauth_oauth%2Fsignin&scope=openid+profile+email&state=%7B%22d%22%3A+%22odoo_dev%22%2C+%22p%22%3A+3%2C+%22r%22%3A+%22http%253A%252F%252Flocalhost%253A8069%252Fweb%22%7D
+                - generic [ref=e53]: 
+                - text: Sign in with Google
+        - paragraph
+      - generic: 
+    - contentinfo [ref=e54]:
+      - generic [ref=e58]:
+        - generic [ref=e59]:
+          - heading "Useful Links" [level=5] [ref=e60]
+          - list [ref=e61]:
+            - listitem [ref=e62]:
+              - link "Home" [ref=e63] [cursor=pointer]:
+                - /url: /
+            - listitem [ref=e64]:
+              - link "About us" [ref=e65] [cursor=pointer]:
+                - /url: "#"
+            - listitem [ref=e66]:
+              - link "Products" [ref=e67] [cursor=pointer]:
+                - /url: "#"
+            - listitem [ref=e68]:
+              - link "Services" [ref=e69] [cursor=pointer]:
+                - /url: "#"
+            - listitem [ref=e70]:
+              - link "Legal" [ref=e71] [cursor=pointer]:
+                - /url: "#"
+            - listitem [ref=e72]:
+              - link "Contact us" [ref=e73] [cursor=pointer]:
+                - /url: /contactus
+        - generic [ref=e74]:
+          - heading "About us" [level=5] [ref=e75]
+          - paragraph [ref=e76]:
+            - text: We are a team of passionate people whose goal is to improve everyone's life through disruptive products. We build great products to solve your business problems.
+            - text: Our products are designed for small to medium size companies willing to optimize their performance.
+        - generic [ref=e77]:
+          - heading "Connect with us" [level=5] [ref=e78]
+          - list [ref=e79]:
+            - listitem [ref=e80]:
+              - generic [ref=e81]: 
+              - link "Contact us" [ref=e83] [cursor=pointer]:
+                - /url: /contactus
+            - listitem [ref=e84]:
+              - generic [ref=e85]: 
+              - link "info@yourcompany.example.com" [ref=e87] [cursor=pointer]:
+                - /url: mailto:info@yourcompany.example.com
+            - listitem [ref=e88]:
+              - generic [ref=e89]: 
+              - link "+1 555-555-5556" [ref=e91] [cursor=pointer]:
+                - /url: tel:+1 555-555-5556
+          - generic [ref=e92]:
+            - link "Facebook" [ref=e93] [cursor=pointer]:
+              - /url: /website/social/facebook
+              - generic [ref=e94]: 
+            - link "X" [ref=e95] [cursor=pointer]:
+              - /url: /website/social/twitter
+              - generic [ref=e96]: 
+            - link "LinkedIn" [ref=e97] [cursor=pointer]:
+              - /url: /website/social/linkedin
+              - generic [ref=e98]: 
+            - link "Extra page" [ref=e99] [cursor=pointer]:
+              - /url: /
+              - generic [ref=e100]: 
+      - generic [ref=e104]: Copyright © Company name

@@ -152,14 +152,18 @@ resource odooWeb 'Microsoft.App/containerApps@2023-05-01' = {
   properties: union({
     managedEnvironmentId: acaEnvironment.id
     configuration: {
-      activeRevisionsMode: 'Single'
+      activeRevisionsMode: 'Multiple'
       ingress: {
         external: false // Internal only — Front Door routes to this via private endpoint / environment FQDN
         targetPort: 8069
         transport: 'auto'
         allowInsecure: false
         traffic: [
-          { latestRevision: true; weight: 100 }
+          {
+            latestRevision: true
+            weight: 100
+            label: 'latest'
+          }
         ]
       }
       registries: [

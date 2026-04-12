@@ -12,3 +12,7 @@ access_ppm_scoring_user,ppm.scoring.user,model_ppm_scoring,project.group_project
 access_ppm_scoring_manager,ppm.scoring.manager,model_ppm_scoring,project.group_project_manager,1,1,1,1
 access_ppm_gate_review_user,ppm.gate.review.user,model_ppm_gate_review,project.group_project_user,1,0,0,0
 access_ppm_gate_review_manager,ppm.gate.review.manager,model_ppm_gate_review,project.group_project_manager,1,1,1,1
+access_ppm_okr_objective_user,ppm.okr.objective.user,model_ppm_okr_objective,project.group_project_user,1,0,0,0
+access_ppm_okr_objective_manager,ppm.okr.objective.manager,model_ppm_okr_objective,project.group_project_manager,1,1,1,1
+access_ppm_okr_key_result_user,ppm.okr.key_result.user,model_ppm_okr_key_result,project.group_project_user,1,0,0,0
+access_ppm_okr_key_result_manager,ppm.okr.key_result.manager,model_ppm_okr_key_result,project.group_project_manager,1,1,1,1

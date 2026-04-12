@@ -305,7 +305,7 @@ stages:
                 echo "=== G3 Behavioral Evaluation ==="
 
                 FAIL=0
-                for AGENT in ask-agent authoring-agent livechat-agent transaction-agent; do
+                for AGENT in pulser-odoo-ask pulser-odoo-authoring pulser-odoo-livechat pulser-odoo-transaction; do
                   echo "--- Evaluating $AGENT ---"
                   python3 scripts/foundry/run_eval_v2.py \
                     --agent "$AGENT" 2>&1 | tee "g3-eval-${AGENT}.log" || true
@@ -519,12 +519,12 @@ stages:
                 from azure.identity import DefaultAzureCredential
 
                 PROJECT_ENDPOINT = '$(projectEndpoint)'
-                AGENTS = ['ask-agent', 'authoring-agent', 'livechat-agent', 'transaction-agent']
+                AGENTS = ['pulser-odoo-ask', 'pulser-odoo-authoring', 'pulser-odoo-livechat', 'pulser-odoo-transaction']
                 SMOKE_QUERIES = {
-                    'ask-agent': 'What is the chart of accounts structure in Odoo 18?',
-                    'authoring-agent': 'Draft a short summary of Odoo month-end close process.',
-                    'livechat-agent': 'What ERP system does your company use?',
-                    'transaction-agent': 'What fields are required for an account.move record?',
+                    'pulser-odoo-ask': 'What is the chart of accounts structure in Odoo 18?',
+                    'pulser-odoo-authoring': 'Draft a short summary of Odoo month-end close process.',
+                    'pulser-odoo-livechat': 'What ERP system does your company use?',
+                    'pulser-odoo-transaction': 'What fields are required for an account.move record?',
                 }
 
                 project = AIProjectClient(

@@ -26,16 +26,16 @@ current_state:
       - name: pulser-odoo
         role: top_level_shell
         description: "Pulser for Odoo — InsightPulseAI operational assistant for Odoo CE 18.0 with approval-gated actions and bounded tool use."
-      - name: ask-agent
+      - name: pulser-odoo-ask
         role: read_query_qa
         write_access: none
-      - name: authoring-agent
+      - name: pulser-odoo-authoring
         role: drafting_summarization
         write_access: draft_only
-      - name: livechat-agent
+      - name: pulser-odoo-livechat
         role: conversational_front_door
         write_access: none
-      - name: transaction-agent
+      - name: pulser-odoo-transaction
         role: erp_mutation
         write_access: draft_then_approve
 
@@ -101,7 +101,7 @@ normalization:
       - id: N2
         action: "Define canonical role contract for 5 agents"
         status: done  # already defined in ssot/ai/agents.yaml
-        evidence: "ssot/ai/agents.yaml lines 80-141"
+        evidence: "ssot/ai/agents.yaml (pulser-odoo-ask, pulser-odoo-authoring, pulser-odoo-livechat, pulser-odoo-transaction)"
 
       - id: N3
         action: "Enable agent monitoring features (0/3 → 3/3)"
@@ -138,7 +138,7 @@ normalization:
         method: >
           python scripts/foundry/run_cloud_eval.py --all
           Uses openai_client.evals API with built-in evaluators.
-          Datasets: agents/evals/odoo-copilot/datasets/{agent}-eval-v1.jsonl
+          Datasets: agents/evals/odoo-copilot/datasets/{pulser-odoo-ask|pulser-odoo-authoring|pulser-odoo-livechat|pulser-odoo-transaction}-eval-v1.jsonl
           Results: agents/evals/odoo-copilot/results/{agent}-cloud-eval-{stamp}.json
 
   # Phase 2 — After Phase 1 (not ship-blocking)
@@ -225,9 +225,9 @@ evidence_updates:
       agents:
         count: 5
         names:
-          - transaction-agent
-          - livechat-agent
-          - authoring-agent
+          - pulser-odoo-transaction
+          - pulser-odoo-livechat
+          - pulser-odoo-authoring
           - pulser-odoo-ask
           - pulser-odoo
         type: prompt

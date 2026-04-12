@@ -1,0 +1,64 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "pulser_form_validation_result",
+  "title": "Pulser Form Validation Result",
+  "description": "Structured output from the pulser-form-validator-v1 workflow. Returns validation status and next safe action for active Odoo form questions.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "normalized_intent",
+    "status",
+    "reason",
+    "safe_action"
+  ],
+  "properties": {
+    "normalized_intent": {
+      "type": "string",
+      "enum": [
+        "tax_validation",
+        "invoice_readiness",
+        "expense_readiness",
+        "posting_readiness",
+        "reimbursement_readiness",
+        "partner_validation",
+        "unknown"
+      ],
+      "description": "The normalized intent derived from the user's short/noisy form question."
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "correct",
+        "incorrect",
+        "not_applicable",
+        "not_yet_computable",
+        "needs_review",
+        "blocked"
+      ],
+      "description": "Validation outcome status."
+    },
+    "reason": {
+      "type": "string",
+      "description": "Human-readable explanation grounded in record field values."
+    },
+    "missing_fields": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Fields that must be populated before the check can compute."
+    },
+    "checks_run": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "List of validation checks executed against the current record."
+    },
+    "safe_action": {
+      "type": "string",
+      "description": "The next smallest safe action the user can take. Null or empty if status is correct and no transition is needed."
+    },
+    "visible_field_refs": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Field names from the active form that were used as grounding evidence."
+    }
+  }
+}

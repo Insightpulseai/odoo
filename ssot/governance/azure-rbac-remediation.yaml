@@ -1,0 +1,253 @@
+# schema: ssot.governance.azure-rbac.v1
+# Azure Subscription IAM Remediation — SSOT
+# Triggered by: Azure portal elevated-access warning (observed 2026-04-11)
+# Severity: P0/P1 governance finding — must resolve before Pulser production-ready claim
+# Owner: Platform Admin (IAM)
+# Gate: PULSER-IAM-GATE-01 in spec/pulser-odoo/tasks.md
+
+scope:
+  subscription: insightpulseai (primary production subscription)
+  tenant: insightpulseai.com
+  observed_date: "2026-04-11"
+
+# =============================================================================
+# Current broken state — as observed in Azure portal
+# =============================================================================
+current_findings:
+
+  - id: IAM-P0-01
+    priority: P0
+    finding: Root-scope permanent User Access Administrator
+    principal: Platform Admin
+    role: User Access Administrator
+    assignment_scope: Root (Inherited)
+    assignment_type: Active Permanent
+    risk: |
+      Root-scope UAA allows re-assigning any role across the entire tenant.
+      Azure explicitly warns to remove all elevated-access root-scope assignments.
+      This is the highest-risk finding in the estate.
+    remediation: |
+      1. Revoke User Access Administrator at root scope for Platform Admin.
+      2. If elevation is needed operationally, use PIM just-in-time elevation
+         scoped to the subscription level, not root.
+
+  - id: IAM-P0-02
+    priority: P0
+    finding: Two Unknown principals with Owner role at subscription scope
+    principal: Unknown (x2)
+    role: Owner
+    assignment_scope: Subscription
+    assignment_type: Active Permanent
+    risk: |
+      Unknown/orphaned principals with Owner rights are an uncontrolled privilege
+      escalation path. Azure cannot resolve these principals (deleted Entra objects
+      or cross-tenant artifacts).
+    remediation: |
+      1. Identify via: az role assignment list --include-inherited | jq '.[] | select(.principalName == null)'
+      2. Remove both unknown Owner assignments immediately.
+
+  - id: IAM-P0-03
+    priority: P0
+    finding: Duplicate permanent Owner assignments for same human identity
+    principal: Jake Tolentino (appears twice as Owner)
+    role: Owner
+    assignment_scope: Subscription
+    assignment_type: Active Permanent
+    risk: Duplicate assignments indicate poor IAM hygiene and increase attack surface.
+    remediation: |
+      1. Identify which assignment is direct vs group-inherited.
+      2. Remove the direct assignment; retain only the group-inherited path.
+      3. Verify only ONE effective Owner path per human admin identity.
+
+  - id: IAM-P1-01
+    priority: P1
+    finding: Excessive permanent Owner count (7 visible Owner assignments)
+    principals:
+      - DevOps Service
+      - IPAI Platform Admins (group)
+      - Jake Tolentino
+      - Jake Tolentino (duplicate)
+      - Platform Admin
+      - Unknown (x2)
+    role: Owner
+    risk: >
+      Production subscriptions should have at most 2-3 active Owner paths
+      (1 break-glass, 1 admin group). 7 Owner assignments dramatically widens
+      the blast radius of any credential compromise.
+    remediation: |
+      Reduce to clean Owner set — see target_state below.
+
+  - id: IAM-P1-02
+    priority: P1
+    finding: DevOps Service principal has permanent Owner
+    principal: DevOps Service
+    role: Owner
+    risk: >
+      Service principals should use narrowest practical role. Owner grants
+      full resource management + role assignment rights. Contributor or
+      purpose-specific custom role is almost always sufficient for CI/CD.
+    remediation: |
+      1. Scope DevOps Service to Contributor at subscription level, or to Owner
+         only at the specific resource groups it deploys to.
+      2. Remove subscription-level Owner.
+
+  - id: IAM-P1-03
+    priority: P1
+    finding: Platform Admin has overlapping Owner + Contributor + Azure AI User
+    principal: Platform Admin
+    roles: [Owner, Contributor, Azure AI User]
+    risk: Owner already encompasses Contributor. Stacking both is redundant and
+      indicates the role set was not cleaned up after each assignment.
+    remediation: Remove Contributor; keep Owner for admin path. Review Azure AI User need.
+
+  - id: IAM-P1-04
+    priority: P1
+    finding: Jake Tolentino has both Owner and Azure AI User
+    principal: Jake Tolentino
+    roles: [Owner, Azure AI User]
+    risk: Owner already covers all Azure AI User permissions. Redundant.
+    remediation: Remove Azure AI User assignment; Owner covers it.
+
+  - id: IAM-P2-01
+    priority: P2
+    finding: Classic administrator roles may still exist
+    risk: Classic admin roles were retired 2024-08-31. Any remaining classic
+      admin assignments are unsupported and must be converted to Azure RBAC.
+    remediation: |
+      az role assignment list --include-classic-administrators
+      Remove any remaining Co-Administrator or Account Administrator assignments.
+
+  - id: IAM-P2-02
+    priority: P2
+    finding: InsightPulseAI Azure DevOps Automation as permanent Contributor
+    principal: InsightPulseAI Azure DevOps Automation
+    role: Contributor
+    risk: >
+      Permanent Contributor for a CI/CD automation identity is acceptable if
+      scoped to specific resource groups. If at subscription level, narrow scope.
+    remediation: |
+      Verify assignment scope is resource-group level, not subscription.
+      If subscription-level, restrict to deployment resource groups only.
+
+# =============================================================================
+# Target clean state
+# =============================================================================
+target_state:
+
+  philosophy: |
+    - 1 break-glass human path (Owner, documented, rarely used, PIM-eligible)
+    - 1 admin group with eligible/time-bound Owner via PIM
+    - service principals scoped to narrowest practical resource boundary
+    - no permanent root-scope privileged access
+    - no unknown/orphaned principals
+    - no duplicate role layering
+
+  subscription_owner_paths:
+    - principal: ipai-platform-admins (Entra group)
+      role: Owner
+      assignment_type: PIM eligible (time-bound, approval-required)
+      notes: Primary admin elevation path. Max 4-hour eligible activation.
+
+    - principal: break-glass-admin (dedicated break-glass account)
+      role: Owner
+      assignment_type: Active Permanent (emergency only)
+      notes: |
+        Break-glass account. Credentials in Key Vault. Access monitored by
+        alert. Must be documented in break-glass runbook.
+
+  service_principal_rbac:
+    - principal: DevOps Service
+      role: Contributor
+      scope: resource-group (deployment RGs only, not subscription)
+      rationale: CI/CD deployment — no role assignment rights needed
+
+    - principal: InsightPulseAI Azure DevOps Automation
+      role: Contributor
+      scope: resource-group (deployment RGs only)
+      rationale: Pipeline automation — restrict to deployment scope
+
+    - principal: Odoo Runtime (managed identity)
+      role: reader + specific data-plane roles
+      scope: resource-group/rg-ipai-odoo-prod
+      rationale: Least-privilege for runtime access only
+
+    - principal: Pulser Agent Runtime (managed identity)
+      role: Cognitive Services User + AI Foundry Reader
+      scope: resource-group/rg-ipai-ai-prod
+      rationale: Agent runtime — read/invoke only, no management
+
+  human_user_rbac:
+    - principal: Jake Tolentino
+      role: Owner (via ipai-platform-admins group, PIM eligible)
+      notes: No direct subscription Owner assignment. Group path only.
+
+  ai_user_rbac:
+    - principals: [developers, data scientists]
+      role: Azure AI User
+      scope: resource-group/rg-ipai-ai-prod
+      notes: Scoped to AI resource group only, not inherited from subscription Owner
+
+  eliminated:
+    - Root-scope User Access Administrator
+    - All unknown/orphaned principals
+    - Duplicate direct Owner assignments for humans in admin group
+    - Permanent Owner for service principals
+    - Redundant Contributor where Owner already exists
+    - Classic administrator assignments (if any)
+
+# =============================================================================
+# Release gate
+# =============================================================================
+release_gate:
+  id: PULSER-IAM-GATE-01
+  name: Azure IAM least-privilege baseline
+  blocks: Pulser production-ready claim
+  pass_criteria:
+    - No root-scope privileged assignments (User Access Administrator or Owner)
+    - Zero unknown/orphaned principals at subscription scope
+    - Owner count at subscription scope <= 2 documented paths (break-glass + PIM group)
+    - No service principal with permanent subscription-level Owner
+    - No duplicate role assignments for same principal
+    - No classic administrator assignments
+    - PIM enabled for admin group Owner elevation
+    - Break-glass account documented and monitored
+  evidence_location: docs/evidence/azure-iam-remediation/
+
+# =============================================================================
+# Remediation commands (reference — require Azure RBAC write access to execute)
+# =============================================================================
+remediation_commands:
+  audit_current_state: |
+    # List all role assignments including inherited
+    az role assignment list --all --include-inherited \
+      --query '[].{principal:principalName,role:roleDefinitionName,scope:scope,type:principalType}' \
+      --output table
+
+  find_unknown_principals: |
+    # Find orphaned/unknown principals
+    az role assignment list --all \
+      --query '[?principalName==null || principalName==``].{id:id,role:roleDefinitionName,principalId:principalId,scope:scope}' \
+      --output table
+
+  find_root_scope: |
+    # Find root-scope assignments
+    az role assignment list --all \
+      --query '[?scope==\"/\"].{principal:principalName,role:roleDefinitionName,scope:scope}' \
+      --output table
+
+  find_classic_admins: |
+    # Find classic administrator assignments
+    az role assignment list --include-classic-administrators \
+      --query '[?roleDefinitionName==`Co-Administrator` || roleDefinitionName==`Account Administrator`]' \
+      --output table
+
+  remove_root_scope_uaa: |
+    # Remove root-scope User Access Administrator (replace PRINCIPAL_ID)
+    az role assignment delete \
+      --assignee <PRINCIPAL_ID> \
+      --role "User Access Administrator" \
+      --scope "/"
+
+  remove_unknown_principals: |
+    # Remove by assignment ID (get IDs from find_unknown_principals above)
+    az role assignment delete --ids <ASSIGNMENT_ID_1> <ASSIGNMENT_ID_2>

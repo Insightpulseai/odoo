@@ -1,0 +1,94 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "pulser_close_orchestrator_result",
+  "title": "Pulser Close Orchestrator Result",
+  "description": "Structured output from the pulser-close-orchestrator-v1 workflow. Captures close cycle state, blockers, compliance results, evidence pack, and filing readiness.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "close_type",
+    "close_cycle_id",
+    "run_state",
+    "blockers"
+  ],
+  "properties": {
+    "close_type": {
+      "type": "string",
+      "enum": ["month_end", "year_end", "tax_period_close"],
+      "description": "Type of close cycle."
+    },
+    "close_cycle_id": {
+      "type": "string",
+      "description": "Unique identifier for this close cycle instance."
+    },
+    "period_start": {
+      "type": "string",
+      "format": "date",
+      "description": "Start date of the closing period."
+    },
+    "period_end": {
+      "type": "string",
+      "format": "date",
+      "description": "End date of the closing period."
+    },
+    "run_state": {
+      "type": "string",
+      "enum": ["draft", "generated", "released", "in_progress", "blocked", "completed", "canceled"],
+      "description": "Current state of the close cycle."
+    },
+    "blockers": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Active blockers preventing close completion."
+    },
+    "critical_path_tasks": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "task_id": { "type": "string" },
+          "title": { "type": "string" },
+          "category": { "type": "string" },
+          "owner": { "type": "string" },
+          "status": { "type": "string", "enum": ["pending", "released", "in_progress", "completed", "blocked", "exception"] },
+          "predecessors": { "type": "array", "items": { "type": "string" } },
+          "due_date": { "type": "string", "format": "date" }
+        }
+      },
+      "description": "Tasks on the critical path for this close cycle."
+    },
+    "compliance_results": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "scenario_id": { "type": "string" },
+          "scenario_name": { "type": "string" },
+          "status": { "type": "string", "enum": ["pass", "fail", "warning", "skipped"] },
+          "hits": { "type": "integer" },
+          "material_impact": { "type": "number" },
+          "details": { "type": "string" }
+        }
+      },
+      "description": "Results from compliance scenario runs."
+    },
+    "evidence_pack_ref": {
+      "type": "string",
+      "description": "Reference to the generated evidence pack location."
+    },
+    "filing_readiness": {
+      "type": "object",
+      "description": "BIR filing readiness status for PH tax period close.",
+      "properties": {
+        "bir_2307_ready": { "type": "boolean" },
+        "bir_slsp_ready": { "type": "boolean" },
+        "bir_2550q_ready": { "type": "boolean" },
+        "bir_sawt_qap_ready": { "type": "boolean" },
+        "missing_prerequisites": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      }
+    }
+  }
+}

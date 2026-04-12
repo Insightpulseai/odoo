@@ -178,7 +178,7 @@ repos:
 
 templates:
   primary:
-    pulser_joule: get_started_with_ai_agents
+    pulser_odoo: get_started_with_ai_agents
     concur_companion: get_started_with_ai_chat
     avatax_review: get_started_with_ai_agents
     api_edge: fastapi_membership_api_template_for_azure_container_apps
@@ -314,7 +314,7 @@ bundles:
       - standalone_concur_platform
       - mobile_native_app
 
-  reverse_sap_joule:
+  pulser_odoo:
     mvp: true
     status: pulser_shell_plus_runtime
     ce18_required:

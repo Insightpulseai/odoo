@@ -32,7 +32,7 @@ active_repos:
 
   - name: odoo
     visibility: public
-    purpose: Odoo CE 19 + OCA addons + custom ipai_* modules
+    purpose: Odoo CE 18 + OCA addons + custom ipai_* modules
     scaffolding:
       - CLAUDE.md
       - .vscode/settings.json
@@ -276,7 +276,7 @@ platform_map:
     engineering: Spec Kit bundles (engineering contracts)
 
   runtime:
-    erp: Odoo CE 19 (system of record)
+    erp: Odoo CE 18 (system of record)
     platform: Supabase (Edge Functions, Vault) + Azure services
     intelligence: Databricks (lakehouse, Apps)
     agents: Azure Foundry (copilots, tool orchestration)

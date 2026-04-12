@@ -1,0 +1,143 @@
+version: 2026-04-10
+
+employees:
+  CKVC:
+    display_name: Khalil Veracruz
+    aliases: [CVCK, CKVC_FD, CVCK_FD]
+    email: khalil.veracruz@omc.com
+    role_labels: [Finance Director, Final Approver]
+    responsibilities:
+      - executive_approval
+      - final_signoff
+      - close_governance
+      - bir_payment_approval
+    default_effort_days: {preparation: 0.0, review: 0.0, approval: 0.5}
+
+  RIM:
+    display_name: Rey Meran
+    email: rey.meran@omc.com
+    role_labels: [Senior Finance Manager, Reviewer]
+    responsibilities:
+      - payroll_and_personnel
+      - tax_and_provisions
+      - rent_and_leases
+      - accruals_and_expenses
+      - prior_period_review
+      - close_review
+    default_effort_days: {preparation: 1.0, review: 0.5, approval: 0.5}
+
+  LAS:
+    display_name: Amor Lasaga
+    email: amor.lasaga@omc.com
+    role_labels: [Finance Staff]
+    responsibilities:
+      - ca_liquidations
+      - ap_aging_working_capital
+      - oop
+      - asset_and_lease_entries
+      - reclassifications
+    default_effort_days: {preparation: 1.0, review: 0.5, approval: 0.5}
+
+  BOM:
+    display_name: Beng Manalo
+    email: beng.manalo@omc.com
+    role_labels: [Finance Supervisor]
+    responsibilities:
+      - amortization_and_corporate
+      - corporate_accruals
+      - insurance
+      - treasury_and_other
+      - prior_period_review
+      - regional_reporting
+      - bir_preparation
+    default_effort_days: {preparation: 1.0, review: 0.5, approval: 0.5}
+
+  JAP:
+    display_name: Jinky Paladin
+    email: jinky.paladin@omc.com
+    role_labels: [Finance Staff]
+    responsibilities:
+      - vat_reporting
+      - job_transfers
+      - month_end_gl_reclasses
+    default_effort_days: {preparation: 1.0, review: 0.5, approval: 0.5}
+
+  JPAL:
+    display_name: Jerald Loterte
+    aliases: [JP Loterte]
+    email: jerald.loterte@omc.com
+    role_labels: [Finance Staff]
+    responsibilities:
+      - client_billings
+      - wip_oop_management
+      - amortization_and_corporate
+      - ar_aging_working_capital
+    default_effort_days: {preparation: 1.0, review: 0.5, approval: 0.5}
+
+  JLI:
+    display_name: Jasmin Ignacio
+    email: jasmin.ignacio@omc.com
+    role_labels: [Finance Staff]
+    responsibilities:
+      - vat_and_taxes
+      - accruals_and_assets
+      - ap_aging
+    default_effort_days: {preparation: 1.0, review: 0.5, approval: 0.5}
+
+  JRMO:
+    display_name: Jhoee Oliva
+    email: jhoee.oliva@omc.com
+    role_labels: [Finance Support]
+    responsibilities:
+      - accrual_support_docs
+      - wip_schedule
+    default_effort_days: {preparation: 1.0, review: 0.5, approval: 0.5}
+
+  JMSM:
+    display_name: Joana Mae Maravillas
+    aliases: [Joana Maravillas]
+    email: joana.maravillas@omc.com
+    role_labels: [Finance Support]
+    responsibilities:
+      - support_pool
+    default_effort_days: {preparation: 1.0, review: 0.5, approval: 0.5}
+
+  RMQB:
+    display_name: Sally Brillantes
+    email: sally.brillantes@omc.com
+    role_labels: [Finance Staff]
+    responsibilities:
+      - ca_liquidations
+      - accruals_and_assets
+      - expense_reclassification
+    default_effort_days: {preparation: 1.0, review: 0.5, approval: 0.5}
+
+  CSD:
+    display_name: Cliff Dejecacion
+    email: cliff.dejecacion@omc.com
+    role_labels: [DirectoryOnly]
+    responsibilities: []
+    default_effort_days: {preparation: 1.0, review: 0.5, approval: 0.5}
+
+role_aliases:
+  Finance Supervisor: {preferred_employee_code: BOM}
+  Senior Finance Manager: {preferred_employee_code: RIM}
+  Finance Director: {preferred_employee_code: CKVC}
+
+code_normalization:
+  canonical_codes:
+    CKVC: CKVC
+    RIM: RIM
+    LAS: LAS
+    BOM: BOM
+    JAP: JAP
+    JPAL: JPAL
+    JLI: JLI
+    JRMO: JRMO
+    JMSM: JMSM
+    RMQB: RMQB
+    CSD: CSD
+  aliases:
+    CVCK: CKVC
+    CKVC_FD: CKVC
+    CVCK_FD: CKVC

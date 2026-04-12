@@ -1,0 +1,74 @@
+name: Deploy Odoo ERP (Canonical)
+
+on:
+  workflow_dispatch:
+    inputs:
+      target_resource_group:
+        description: 'Resource Group'
+        required: true
+        default: 'rg-ipai-dev-odoo-runtime'
+      target_app:
+        description: 'Container App Name'
+        required: true
+        default: 'ipai-odoo-dev-web'
+      upgrade_modules:
+        description: 'Upgrade modules (-u all)'
+        required: true
+        default: false
+        type: boolean
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  deploy:
+    name: Deploy to ${{ inputs.target_app }}
+    runs-on: ubuntu-latest
+    environment: production
+    
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Azure Login
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Update Container App
+        shell: bash
+        run: |
+          set -euo pipefail
+          
+          IMAGE="acripaiodoo.azurecr.io/ipai-odoo-web:18.0"
+          RG="${{ inputs.target_resource_group }}"
+          APP="${{ inputs.target_app }}"
+          
+          echo "Updating $APP with image $IMAGE..."
+          
+          # Force direct-to-origin proxy mode OFF for this deployment
+          az containerapp update \
+            --name "$APP" \
+            --resource-group "$RG" \
+            --image "$IMAGE" \
+            --set-env-vars ODOO_PROXY_MODE=False
+            
+          if [ "${{ inputs.upgrade_modules }}" == "true" ]; then
+             echo "Triggering module upgrade..."
+             az containerapp exec --name "$APP" --resource-group "$RG" \
+               --command "odoo -u all --stop-after-init --no-http"
+          fi
+
+      - name: Fix Assets
+        shell: bash
+        run: |
+          bash scripts/restoration/fix_erp_assets.sh
+
+      - name: Verify Health
+        run: |
+          FQDN=$(az containerapp show --name "${{ inputs.target_app }}" --resource-group "${{ inputs.target_resource_group }}" --query "properties.configuration.ingress.fqdn" -o tsv)
+          echo "Verifying health at https://$FQDN/web/health"
+          curl -ILk -m 15 "https://$FQDN/web/health"

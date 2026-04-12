@@ -13,9 +13,9 @@ This is the release-gate eval runner. It:
 5. Exits non-zero if any evaluator fails threshold
 
 Usage:
-    python scripts/foundry/run_cloud_eval.py --agent ask-agent
+    python scripts/foundry/run_cloud_eval.py --agent pulser-odoo-ask
     python scripts/foundry/run_cloud_eval.py --all
-    python scripts/foundry/run_cloud_eval.py --agent ask-agent --dry-run
+    python scripts/foundry/run_cloud_eval.py --agent pulser-odoo-ask --dry-run
 
 Prereqs:
     pip install azure-ai-projects azure-identity
@@ -40,14 +40,19 @@ DATASETS_DIR = EVAL_DIR / "datasets"
 RESULTS_DIR = EVAL_DIR / "results"
 
 # Named agents (from ssot/ai/agents.yaml)
-NAMED_AGENTS = ["ask-agent", "authoring-agent", "livechat-agent", "transaction-agent"]
+NAMED_AGENTS = [
+    "pulser-odoo-ask",
+    "pulser-odoo-authoring",
+    "pulser-odoo-livechat",
+    "pulser-odoo-transaction",
+]
 
 # Dataset mapping: agent → eval dataset file
 AGENT_DATASETS = {
-    "ask-agent": "ask-agent-eval-v1.jsonl",
-    "authoring-agent": "authoring-agent-eval-v1.jsonl",
-    "livechat-agent": "livechat-agent-eval-v1.jsonl",
-    "transaction-agent": "transaction-agent-eval-v1.jsonl",
+    "pulser-odoo-ask": "pulser-odoo-ask-eval-v1.jsonl",
+    "pulser-odoo-authoring": "pulser-odoo-authoring-eval-v1.jsonl",
+    "pulser-odoo-livechat": "pulser-odoo-livechat-eval-v1.jsonl",
+    "pulser-odoo-transaction": "pulser-odoo-transaction-eval-v1.jsonl",
 }
 
 # Built-in evaluators for the release gate (N4)

@@ -1,9 +1,9 @@
 # =============================================================================
-# Docker Compose: Odoo CE 19 — Canonical SSOT
+# Docker Compose: Odoo CE 18 — Canonical SSOT
 # =============================================================================
 # SSOT for Odoo development stack. All overlays MUST use include: directive.
 # DB Name Invariant: odoo_dev (locked, no parameterization)
-# Odoo Version: 19 (unified across all files)
+# Odoo Version: 18 (unified across all files)
 # Namespace: ipai
 #
 # Authorized Overlays (MUST use include:):
@@ -91,7 +91,7 @@ services:
       retries: 20
 
   # ===========================================================================
-  # Odoo CE 19 — Core ERP (System of Record)
+  # Odoo CE 18 — Core ERP (System of Record)
   # ===========================================================================
   odoo:
     build:

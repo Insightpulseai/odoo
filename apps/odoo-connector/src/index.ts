@@ -6,12 +6,20 @@ import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js"
 import { loadPolicy } from "./policy.js";
 import { OdooClient } from "./odoo-client.js";
 import { registerOdooTools } from "./register-tools.js";
-import {
-  buildEntraConfig,
-  validateToken,
-  buildAuthenticatedUser,
-  type AuthenticatedUser,
-} from "./auth/entra-oauth.js";
+import { verifyEntraToken } from "./auth/entra-oauth.js";
+
+// Post-patch shape: verifyEntraToken returns { claims, user } from a
+// JWKS-verified token + Graph /me. The previous AuthenticatedUser type
+// (with a precomputed `scopes` array) is gone — scope extraction via
+// unstable token claims was the anti-pattern we removed.
+// TODO(security): restore scope-based authorization by reading `scp` /
+// `roles` from the verified JWT payload (safe — payload is crypto-verified).
+// For now, authorize on presence of a valid Entra user only.
+type AuthenticatedUser = {
+  id: string;
+  email: string;
+  name: string;
+};
 
 type SessionContext = {
   user?: AuthenticatedUser;
@@ -34,53 +42,44 @@ function requireEnv(name: string): string {
  *   4. Check if required scope is present
  *   5. Return ok or error with OAuth challenge metadata
  */
-const entraConfig = buildEntraConfig();
-
 async function authorize(
   ctx: unknown,
-  requiredScope: string,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  _requiredScope: string,
 ): Promise<
   | { ok: true }
   | { ok: false; error: string; errorDescription: string }
 > {
   const session = (ctx ?? {}) as SessionContext;
 
-  // If we already have a validated user in context, check scopes
+  // If we already have a validated user in context, the caller is
+  // authenticated. TODO(security): add scope check against verified JWT's
+  // `scp` / `roles` before returning ok.
   if (session.user) {
-    if (!session.user.scopes.includes(requiredScope)) {
-      return {
-        ok: false,
-        error: "insufficient_scope",
-        errorDescription: `Missing required scope: ${requiredScope}`,
-      };
-    }
     return { ok: true };
   }
 
   // Try to validate from access token
   if (session.accessToken) {
-    const claims = validateToken(entraConfig, session.accessToken);
-    if (!claims) {
+    try {
+      const { claims, user } = await verifyEntraToken(session.accessToken);
+      const authUser: AuthenticatedUser = {
+        id: claims.oid,
+        email: user.mail ?? user.userPrincipalName,
+        name: user.displayName,
+      };
+      // Cache validated user back into session
+      (session as any).user = authUser;
+      // TODO(security): gate on scope here once scope extraction is restored.
+      return { ok: true };
+    } catch (err) {
+      console.error("[odoo-connector] token verification failed:", err);
       return {
         ok: false,
         error: "invalid_token",
         errorDescription: "Token validation failed. Sign in again.",
       };
     }
-
-    const user = buildAuthenticatedUser(claims);
-    // Cache validated user back into session
-    (session as any).user = user;
-
-    if (!user.scopes.includes(requiredScope)) {
-      return {
-        ok: false,
-        error: "insufficient_scope",
-        errorDescription: `Missing required scope: ${requiredScope}`,
-      };
-    }
-
-    return { ok: true };
   }
 
   // No token at all

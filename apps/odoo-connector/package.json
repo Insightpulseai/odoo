@@ -13,6 +13,8 @@
     "@modelcontextprotocol/sdk": "^1.27.0",
     "applicationinsights": "^3.4.0",
     "express": "^5.1.0",
+    "jose": "^5.9.6",
+    "undici": "^7.0.0",
     "yaml": "^2.7.0",
     "zod": "^3.24.0"
   },

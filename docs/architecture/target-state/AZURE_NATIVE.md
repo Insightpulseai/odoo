@@ -27,7 +27,7 @@
               ┌────────────────────┼────────────────────┐
               │                    │                     │
     ┌─────────▼─────────┐ ┌───────▼────────┐  ┌────────▼────────┐
-    │  Odoo CE 19       │ │  Pulser Agents │  │  Web Surfaces   │
+    │  Odoo CE 18       │ │  Pulser Agents │  │  Web Surfaces   │
     │  (ACA: web,       │ │  (ACA +        │  │  (ACA: landing, │
     │   worker, cron)   │ │   Foundry)     │  │   SaaS, public) │
     └─────────┬─────────┘ └───────┬────────┘  └─────────────────┘

@@ -1,25 +1,42 @@
 // Pulser Copilot — Systray Chat Widget
+// Blends with native Odoo 18 design tokens and Bootstrap variables.
 // Scoped to .o_ipai_copilot_systray
+
+// ── Design tokens (inherit from Odoo where possible) ──────────────────
+:root {
+  --o-ipai-copilot-primary: var(--o-action-color, #{$o-brand-primary});
+  --o-ipai-copilot-primary-hover: var(--o-action-color-hover, #{darken($o-brand-primary, 10%)});
+  --o-ipai-copilot-bg: var(--o-view-background-color, #{$o-view-background-color});
+  --o-ipai-copilot-header-bg: var(--o-webclient-background-color, #{$o-webclient-background-color});
+  --o-ipai-copilot-border: var(--o-border-color, #{$border-color});
+  --o-ipai-copilot-text: var(--o-main-text-color, #{$body-color});
+  --o-ipai-copilot-text-muted: var(--o-text-muted, #{$text-muted});
+  --o-ipai-copilot-user-bubble-bg: var(--o-action-color, #{$o-brand-primary});
+  --o-ipai-copilot-user-bubble-text: #ffffff;
+  --o-ipai-copilot-assistant-bubble-bg: var(--o-webclient-background-color, #{$o-webclient-background-color});
+  --o-ipai-copilot-assistant-bubble-text: var(--o-main-text-color, #{$body-color});
+  --o-ipai-copilot-panel-width: 380px;
+}
 
 .o_ipai_copilot_systray {
   position: relative;
 }
 
-// Systray button
+// Systray button — uses Odoo's native hover pattern
 .o_ipai_copilot_btn {
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 4px;
-  border-radius: 6px;
+  border-radius: $border-radius;
   transition: background 0.15s;
 
   &:hover {
-    background: rgba(0, 0, 0, 0.06);
+    background: rgba(var(--o-action-color-rgb, 0, 0, 0), 0.06);
   }
 
   &.o_ipai_copilot_btn_active {
-    background: rgba(26, 122, 69, 0.12);
+    background: rgba(var(--o-action-color-rgb, 0, 0, 0), 0.12);
   }
 }
 
@@ -29,19 +46,21 @@
   object-fit: contain;
 }
 
-// Chat Panel
+// ── Chat Panel ──────────────────────────────────────────────────────
+// Slides in from right, uses Odoo's native elevation and color tokens
 .o_ipai_copilot_panel {
   position: fixed;
   top: 0;
   right: 0;
-  width: 380px;
+  width: var(--o-ipai-copilot-panel-width);
   height: 100vh;
-  background: #ffffff;
-  border-left: 1px solid #e2e6ed;
-  z-index: 1050;
+  background: var(--o-ipai-copilot-bg);
+  border-left: 1px solid var(--o-ipai-copilot-border);
+  z-index: $zindex-modal - 10; // below Odoo modals, above content
   display: flex;
   flex-direction: column;
   animation: ipai-slide-in 0.2s ease-out;
+  font-family: inherit; // inherit Odoo's font stack
 }
 
 @keyframes ipai-slide-in {
@@ -49,14 +68,25 @@
   to { transform: translateX(0); opacity: 1; }
 }
 
-// Header
+// ── Header — matches Odoo control panel style ────────────────────────
 .o_ipai_copilot_header {
-  background: #f8f9fb;
-  min-height: 48px;
+  background: var(--o-ipai-copilot-header-bg);
+  min-height: 46px;
+  border-bottom: 1px solid var(--o-ipai-copilot-border);
 
   strong {
-    font-size: 14px;
-    color: #2d3340;
+    font-size: $font-size-sm;
+    color: var(--o-ipai-copilot-text);
+    font-weight: $font-weight-bold;
+  }
+
+  .btn {
+    color: var(--o-ipai-copilot-text-muted);
+
+    &:hover {
+      color: var(--o-ipai-copilot-text);
+      background: rgba(var(--o-action-color-rgb, 0, 0, 0), 0.06);
+    }
   }
 }
 
@@ -66,33 +96,118 @@
   object-fit: contain;
 }
 
-// Messages
+// ── Messages area ────────────────────────────────────────────────────
 .o_ipai_copilot_messages {
   flex: 1;
   overflow-y: auto;
-  background: #ffffff;
+  background: var(--o-ipai-copilot-bg);
 }
 
 .o_ipai_copilot_empty {
   padding: 40px 20px;
+  color: var(--o-ipai-copilot-text-muted);
+
+  p {
+    color: var(--o-ipai-copilot-text-muted);
+  }
+
+  svg {
+    stroke: var(--o-ipai-copilot-text-muted);
+  }
 }
 
-// User bubble
+// ── User bubble — Odoo brand-colored, right-aligned ──────────────────
 .o_ipai_copilot_bubble_user {
-  background: #1a7a45;
-  color: #ffffff;
+  background: var(--o-ipai-copilot-user-bubble-bg);
+  color: var(--o-ipai-copilot-user-bubble-text);
   max-width: 85%;
-  border-radius: 12px 12px 2px 12px !important;
+  border-radius: $border-radius-lg $border-radius-lg 2px $border-radius-lg;
+  font-size: $font-size-sm;
+  line-height: $line-height-base;
 }
 
-// Assistant bubble
+// ── Assistant bubble — subtle background, left-aligned ───────────────
 .o_ipai_copilot_bubble_assistant {
-  background: #f1f3f6;
-  color: #2d3340;
-  border-radius: 12px 12px 12px 2px !important;
+  background: var(--o-ipai-copilot-assistant-bubble-bg);
+  color: var(--o-ipai-copilot-assistant-bubble-text);
+  border: 1px solid var(--o-ipai-copilot-border);
+  border-radius: $border-radius-lg $border-radius-lg $border-radius-lg 2px;
+  font-size: $font-size-sm;
+  line-height: $line-height-base;
 }
 
-// Loading dots
+// ── Markdown content inside assistant bubbles ────────────────────────
+.o_ipai_copilot_content {
+  // Headings
+  h1, h2, h3, h4 {
+    font-size: $font-size-sm;
+    font-weight: $font-weight-bold;
+    margin: 0.5em 0 0.25em;
+    color: var(--o-ipai-copilot-text);
+
+    &:first-child { margin-top: 0; }
+  }
+
+  // Paragraphs
+  .o_ipai_copilot_paragraph,
+  p {
+    margin: 0 0 0.5em;
+
+    &:last-child { margin-bottom: 0; }
+  }
+
+  // Inline code
+  code {
+    background: rgba(var(--o-action-color-rgb, 0, 0, 0), 0.06);
+    padding: 1px 4px;
+    border-radius: $border-radius-sm;
+    font-size: 0.85em;
+    color: var(--o-ipai-copilot-text);
+  }
+
+  // Code blocks
+  .o_ipai_copilot_code_block,
+  pre {
+    background: rgba(var(--o-action-color-rgb, 0, 0, 0), 0.04);
+    border: 1px solid var(--o-ipai-copilot-border);
+    border-radius: $border-radius;
+    padding: 8px 12px;
+    margin: 0.5em 0;
+    overflow-x: auto;
+    font-size: 0.85em;
+
+    code {
+      background: none;
+      padding: 0;
+    }
+  }
+
+  // Lists
+  ul, ol {
+    margin: 0.25em 0;
+    padding-left: 1.5em;
+
+    li {
+      margin: 2px 0;
+    }
+  }
+
+  // Links
+  a {
+    color: var(--o-ipai-copilot-primary);
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+
+  // Bold / italic
+  strong { font-weight: $font-weight-bold; }
+  em { font-style: italic; }
+}
+
+// ── Loading dots ─────────────────────────────────────────────────────
 .o_ipai_copilot_typing {
   display: flex;
   gap: 4px;
@@ -104,7 +219,7 @@
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background: #9aa3b1;
+  background: var(--o-ipai-copilot-text-muted);
   animation: ipai-bounce 1.4s infinite ease-in-out;
 
   &:nth-child(2) { animation-delay: 0.16s; }
@@ -116,29 +231,64 @@
   40% { transform: scale(1); opacity: 1; }
 }
 
-// Input area
+// ── Input area — matches Odoo form input style ───────────────────────
 .o_ipai_copilot_input {
-  background: #f8f9fb;
+  background: var(--o-ipai-copilot-header-bg);
+  border-top: 1px solid var(--o-ipai-copilot-border);
 
   textarea {
     resize: none;
-    border-radius: 8px;
-    border: 1px solid #d1d9e0;
-    font-size: 13px;
+    border-radius: $border-radius;
+    border: 1px solid var(--o-ipai-copilot-border);
+    font-size: $font-size-sm;
+    background: var(--o-ipai-copilot-bg);
+    color: var(--o-ipai-copilot-text);
+
+    &::placeholder {
+      color: var(--o-ipai-copilot-text-muted);
+    }
 
     &:focus {
-      border-color: #1a7a45;
-      box-shadow: 0 0 0 2px rgba(26, 122, 69, 0.12);
+      border-color: var(--o-ipai-copilot-primary);
+      box-shadow: 0 0 0 2px rgba(var(--o-action-color-rgb, 0, 0, 0), 0.12);
     }
   }
 
   .btn-primary {
-    background: #1a7a45 !important;
-    border: none !important;
-    border-radius: 8px;
+    background: var(--o-ipai-copilot-primary);
+    border: none;
+    border-radius: $border-radius;
 
     &:hover {
-      background: #145d35 !important;
+      background: var(--o-ipai-copilot-primary-hover);
     }
+
+    &:disabled {
+      opacity: 0.6;
+    }
+  }
+
+  .btn-light {
+    background: var(--o-ipai-copilot-bg);
+    border: 1px solid var(--o-ipai-copilot-border);
+    color: var(--o-ipai-copilot-text-muted);
+
+    &:hover {
+      color: var(--o-ipai-copilot-text);
+      background: rgba(var(--o-action-color-rgb, 0, 0, 0), 0.04);
+    }
+  }
+}
+
+// ── Latency indicator ────────────────────────────────────────────────
+.o_ipai_copilot_latency {
+  font-size: 0.7rem;
+  color: var(--o-ipai-copilot-text-muted);
+}
+
+// ── Responsive — collapse panel on narrow viewports ──────────────────
+@media (max-width: 576px) {
+  .o_ipai_copilot_panel {
+    width: 100vw;
   }
 }

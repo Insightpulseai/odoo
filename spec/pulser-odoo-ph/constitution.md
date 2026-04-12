@@ -16,3 +16,20 @@
 8. **Explainable outputs.** Every recommendation must expose rationale and source context. Fabricated policy or tax guidance when source context is absent is banned.
 9. **ACL-safe context.** Pulser must respect Odoo access control lists and record rules. No context leakage across permission boundaries.
 10. **Trace everything.** Every prompt, tool call, approval decision, and output must emit trace/log metadata for audit.
+
+## Identity and access principle
+
+Pulser for PH must use a governed identity model across:
+- Odoo login
+- Pulser web or gateway surfaces
+- agent/runtime access
+- document and evidence access
+- external-system access boundaries
+
+Microsoft Entra is the default enterprise identity authority for internal users.
+
+Odoo Azure sign-in must be treated as a first-class supported authentication path for internal users, with clear separation between:
+- internal employee access
+- portal/customer access
+- service-to-service access
+- agent/runtime access

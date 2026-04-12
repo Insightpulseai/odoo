@@ -13,6 +13,19 @@
               parent="project.menu_main_pm"
               sequence="40"/>
 
+    <!-- OKR Dashboard (top of menu) -->
+    <menuitem id="menu_ipai_ppm_okr_dashboard"
+              name="OKR Dashboard"
+              parent="menu_ipai_finance_ppm_root"
+              action="action_ppm_okr_objective"
+              sequence="1"/>
+
+    <menuitem id="menu_ipai_ppm_key_results"
+              name="Key Results"
+              parent="menu_ipai_finance_ppm_root"
+              action="action_ppm_okr_key_result"
+              sequence="2"/>
+
     <!-- Portfolio sub-menu -->
     <menuitem id="menu_ipai_ppm_portfolio"
               name="Portfolio"

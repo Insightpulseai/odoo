@@ -1,4 +1,4 @@
-# Odoo CE 19 + OCA + IPAI Enterprise Bridge - Consumer Guide
+# Odoo CE 18 + OCA + IPAI Enterprise Bridge - Consumer Guide
 
 > **Image**: `ghcr.io/jgtolentino/odoo:19.0-ee-parity`
 > **License**: LGPL-3.0 (100% open source)
@@ -38,7 +38,7 @@ docker run -d --name odoo_ce19_db \
   -v odoo_ce19_pgdata:/var/lib/postgresql/data \
   postgres:16
 
-# Start Odoo CE 19 EE Parity
+# Start Odoo CE 18 EE Parity
 docker run -d --name odoo_ce19_ee_parity \
   --network odoo18-ee-net \
   -p 8069:8069 \
@@ -80,7 +80,7 @@ docker exec -it odoo_ce19_ee_parity \
 ## Image Contents
 
 ### Base
-- `odoo:19.0` - Official Odoo CE 19.0 image
+- `odoo:19.0` - Official Odoo CE 18.0 image
 
 ### OCA Modules (22 repos, flattened to `/mnt/addons/oca`)
 - `account-financial-reporting` - Financial reports

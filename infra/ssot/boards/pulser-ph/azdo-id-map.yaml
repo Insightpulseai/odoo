@@ -1,0 +1,136 @@
+# Azure DevOps Work Item ID Map — Pulser for PH
+# Project: ipai-platform (insightpulseai org)
+# Created: 2026-04-11
+# Process: Basic (Epic → Issue → Task)
+# ID range: #373–#461
+
+epics:
+  EPIC-PH-00: 373   # Program epic
+  EPIC-PH-01: 374   # Foundry governance hardening
+  EPIC-PH-02: 375   # Skill packaging and safe-action contracts
+  EPIC-PH-03: 376   # AP / AR / Expense core execution
+  EPIC-PH-04: 377   # Cash advance and liquidation control
+  EPIC-PH-05: 378   # PH tax and BIR readiness
+  EPIC-PH-06: 379   # Month-end, year-end, and tax-period close orchestration
+  EPIC-PH-07: 380   # Document digitization replacement and evidence control
+  EPIC-PH-08: 381   # Knowledge, search, and MCP grounding
+  EPIC-PH-09: 382   # Online payments expert
+  EPIC-PH-10: 383   # Release, UAT, and market readiness
+
+issues:
+  # Board 1 — Runtime & Governance
+  ISSUE-PH-001: 384  # Create Pulser custom compliance policy pack
+  ISSUE-PH-002: 385  # Turn release-gate eval definitions into enforced runs
+  ISSUE-PH-003: 386  # Seed stored completions and replay corpus
+  ISSUE-PH-004: 387  # Launch first red-team campaign
+  ISSUE-PH-005: 388  # Enable monitoring and actionable alerts
+  ISSUE-PH-006: 389  # Define release promotion gates
+  ISSUE-PH-007: 390  # Publish Pulser Azure skill taxonomy
+  ISSUE-PH-008: 391  # Publish Odoo 18/OCA runtime adapter contract
+  ISSUE-PH-009: 392  # Publish structured output schemas
+  ISSUE-PH-010: 393  # Publish official BIR boundary registry
+  ISSUE-PH-011: 394  # Publish policy registry and rule catalog
+
+  # Board 2 — Finance Core
+  ISSUE-PH-012: 395  # Implement active-form grounding
+  ISSUE-PH-013: 396  # Implement AP document intake
+  ISSUE-PH-014: 397  # Implement AR invoice readiness
+  ISSUE-PH-015: 398  # Implement expense readiness
+  ISSUE-PH-016: 399  # Implement payment assist
+  ISSUE-PH-017: 400  # Implement duplicate/totals/company-context checks
+  ISSUE-PH-018: 401  # Implement cash advance request/approval
+  ISSUE-PH-019: 402  # Implement cash advance issuance tracking
+  ISSUE-PH-020: 403  # Implement liquidation against expenses
+  ISSUE-PH-021: 404  # Implement return-of-unused-cash settlement
+  ISSUE-PH-022: 405  # Implement outstanding advance aging dashboard
+  ISSUE-PH-023: 406  # Implement project/client/branch attribution
+
+  # Board 3 — PH Compliance & Close
+  ISSUE-PH-024: 407  # Implement VAT consistency
+  ISSUE-PH-025: 408  # Implement withholding/ATC/TIN validation
+  ISSUE-PH-026: 409  # Implement 2307 readiness
+  ISSUE-PH-027: 410  # Implement 2550Q reference readiness
+  ISSUE-PH-028: 411  # Implement SAWT/QAP/SLSP readiness
+  ISSUE-PH-029: 412  # Implement official BIR status model
+  ISSUE-PH-030: 413  # Create month-end close template catalog
+  ISSUE-PH-031: 414  # Create year-end close template catalog
+  ISSUE-PH-032: 415  # Create PH tax-period close template catalog
+  ISSUE-PH-033: 416  # Implement dependency/blocker/critical-path engine
+  ISSUE-PH-034: 417  # Implement evidence packs and signoff states
+  ISSUE-PH-035: 418  # Implement close dashboards and reviewer routing
+
+  # Board 4 — Documents & Integrations
+  ISSUE-PH-036: 419  # Define XML-first parser
+  ISSUE-PH-037: 420  # Implement PDF/image OCR extraction
+  ISSUE-PH-038: 421  # Implement Odoo draft-bill/draft-invoice bridge
+  ISSUE-PH-039: 422  # Implement purchase matching hooks
+  ISSUE-PH-040: 423  # Implement Documents taxonomy
+  ISSUE-PH-041: 424  # Implement evidence retention
+  ISSUE-PH-042: 425  # Sweep local content for knowledge sources
+  ISSUE-PH-043: 426  # Create first Azure AI Search index
+  ISSUE-PH-044: 427  # Implement retrieval quality eval suite
+  ISSUE-PH-045: 428  # Deploy PostgreSQL MCP server
+  ISSUE-PH-046: 429  # Implement read-only schema grounding
+  ISSUE-PH-047: 430  # Implement tool/knowledge cost controls
+
+  # Board 5 — Payments & Launch
+  ISSUE-PH-048: 431  # Implement provider readiness validator
+  ISSUE-PH-049: 432  # Implement test-mode/sandbox safety checks
+  ISSUE-PH-050: 433  # Implement tokenization/capture/refund matrix
+  ISSUE-PH-051: 434  # Implement payment journal validation
+  ISSUE-PH-052: 435  # Implement payment-method availability diagnostics
+  ISSUE-PH-053: 436  # Implement payment-provider-to-reconciliation routing
+  ISSUE-PH-054: 437  # Create UAT scenario pack
+  ISSUE-PH-055: 438  # Create competitor differentiation matrix
+  ISSUE-PH-056: 439  # Create internal enablement pack
+  ISSUE-PH-057: 440  # Create release dashboard
+  ISSUE-PH-058: 441  # Run MVP release candidate and pilot gate
+  ISSUE-PH-059: 442  # Run production-ready gate and GA signoff
+
+  # OPRG patch — new issue
+  ISSUE-PH-060: 443  # Implement corporate-document request and fit-out evidence workflow
+
+oprg_tasks:
+  TASK-OPRG-INV-001: 444     # parent: 397 (PH-014)
+  TASK-OPRG-INV-002: 445     # parent: 397
+  TASK-OPRG-INV-003: 446     # parent: 397
+  TASK-OPRG-2307-001: 447    # parent: 409 (PH-026)
+  TASK-OPRG-2307-002: 448    # parent: 409
+  TASK-OPRG-2307-003: 449    # parent: 409
+  TASK-OPRG-DOC-001: 450     # parent: 423 (PH-040)
+  TASK-OPRG-DOC-002: 451     # parent: 423
+  TASK-OPRG-DOC-003: 452     # parent: 424 (PH-041)
+  TASK-OPRG-UAT-001: 453     # parent: 437 (PH-054)
+  TASK-OPRG-UAT-002: 454     # parent: 437
+  TASK-OPRG-UAT-003: 455     # parent: 437
+  TASK-OPRG-EVAL-001: 456    # parent: 385 (PH-002)
+  TASK-OPRG-EVAL-002: 457    # parent: 385
+  TASK-OPRG-FITOUT-001: 458  # parent: 443 (PH-060)
+  TASK-OPRG-FITOUT-002: 459  # parent: 443
+  TASK-OPRG-FITOUT-003: 460  # parent: 443
+  TASK-OPRG-FITOUT-004: 461  # parent: 443
+
+iterations:
+  R1-Foundation-30d:
+    id: 20
+    start: "2026-04-14"
+    finish: "2026-05-14"
+  R2-Core-Execution-60d:
+    id: 21
+    start: "2026-05-15"
+    finish: "2026-07-14"
+  R3-PH-Ops-Hardening-90d:
+    id: 22
+    start: "2026-07-15"
+    finish: "2026-10-14"
+  R4-GA:
+    id: 23
+    start: "2026-10-15"
+    finish: "2026-12-15"
+
+summary:
+  total_work_items: 89
+  epics: 11
+  issues: 60
+  tasks: 18
+  id_range: "373-461"

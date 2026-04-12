@@ -1,3 +1,12 @@
+---
+name: odoo-image-supply-chain
+description: Close container image supply-chain gap with automated ACR builds, vulnerability scanning, and image signing
+version: "1.0"
+compatibility:
+  hosts: [github-copilot, claude-code, codex-cli, cursor, gemini-cli]
+tags: [security, odoo, governance, aca]
+---
+
 # odoo-image-supply-chain
 
 **Impact tier**: P1 -- Operational Readiness

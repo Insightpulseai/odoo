@@ -26,7 +26,7 @@ canonical_repos:
     domain: erp
     status: active
     canonical: true
-    description: "Odoo CE 19 monorepo — ERP, modules, CI, specs, scripts"
+    description: "Odoo CE 18 monorepo — ERP, modules, CI, specs, scripts"
 
   - name: platform
     domain: platform

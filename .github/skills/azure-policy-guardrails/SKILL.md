@@ -1,3 +1,12 @@
+---
+name: azure-policy-guardrails
+description: Enforce Azure Policy guardrails for tag compliance, denial of public PG access, and Key Vault requirements
+version: "1.0"
+compatibility:
+  hosts: [github-copilot, claude-code, codex-cli, cursor, gemini-cli]
+tags: [governance, security, postgres, networking]
+---
+
 # azure-policy-guardrails
 
 **Impact tier**: P1 -- Operational Readiness

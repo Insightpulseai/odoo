@@ -43,7 +43,7 @@ The platform serves four verticals (marketing, media, retail, financial services
          ┌───────────────────────┼───────────────────────┐
          │                       │                        │
 ┌────────▼────────┐   ┌─────────▼─────────┐   ┌─────────▼─────────┐
-│  Web Surfaces   │   │  Pulser Gateway   │   │  Odoo CE 19       │
+│  Web Surfaces   │   │  Pulser Gateway   │   │  Odoo CE 18       │
 │  (ACA)          │   │  (ACA)            │   │  (ACA: web,       │
 │  Landing, SaaS, │   │  Ask Pulser,      │   │   worker, cron)   │
 │  public pages   │   │  authenticated    │   │                   │
@@ -452,7 +452,7 @@ Microsoft Entra ID (Tenant)
 
 | Service | Plane | Type | Resource |
 |---------|-------|------|----------|
-| **Odoo CE 19** | ERP | ACA-hosted | `ipai-odoo-dev-web`, `-worker`, `-cron` |
+| **Odoo CE 18** | ERP | ACA-hosted | `ipai-odoo-dev-web`, `-worker`, `-cron` |
 | **Pulser** (6 surfaces) | AI Assistant | Foundry-hosted | Via `ipai-copilot-gateway` |
 | **Microsoft Entra ID** | Identity | Azure-native | Tenant-level |
 | **Azure Front Door** | Edge | Azure-native | `ipai-fd-dev` |

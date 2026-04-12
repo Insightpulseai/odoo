@@ -9,9 +9,9 @@ topics:
       General Odoo CE operations: modules, settings, workflows,
       records, reports, and administration.
     agents:
-      - ask-agent
-      - authoring-agent
-      - transaction-agent
+      - pulser-odoo-ask
+      - pulser-odoo-authoring
+      - pulser-odoo-transaction
 
   finance:
     label: Finance & Accounting
@@ -19,9 +19,9 @@ topics:
       Chart of accounts, journal entries, invoicing, BIR compliance,
       payroll, month-end close, financial reports.
     agents:
-      - ask-agent
-      - authoring-agent
-      - transaction-agent
+      - pulser-odoo-ask
+      - pulser-odoo-authoring
+      - pulser-odoo-transaction
 
   hr:
     label: Human Resources
@@ -29,16 +29,16 @@ topics:
       Employee records, leave management, attendance, expense
       liquidation, payroll computation.
     agents:
-      - ask-agent
-      - authoring-agent
+      - pulser-odoo-ask
+      - pulser-odoo-authoring
 
   helpdesk:
     label: Helpdesk & Support
     description: >
       Ticket management, SLA tracking, customer support workflows.
     agents:
-      - ask-agent
-      - livechat-agent
+      - pulser-odoo-ask
+      - pulser-odoo-livechat
 
   website:
     label: Website & Public
@@ -46,4 +46,4 @@ topics:
       Public-facing website questions, product information,
       company policies.
     agents:
-      - livechat-agent
+      - pulser-odoo-livechat

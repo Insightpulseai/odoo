@@ -50,7 +50,7 @@ repos:
     system_of_record: odoo
     data_classification: restricted
     lifecycle: active
-    description: "ERP runtime — Odoo CE 19.0 + OCA + IPAI addons + Supabase control plane"
+    description: "ERP runtime — Odoo CE 18.0 + OCA + IPAI addons + Supabase control plane"
     canonical_packages:
       - ghcr.io/insightpulseai/odoo
 

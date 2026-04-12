@@ -1,0 +1,329 @@
+# Pulser Finance Decision Table — Machine-Readable Ruleset
+# This file is the canonical source for intake classification, directionality,
+# confidence gating, and safe action selection.
+
+safe_actions:
+  - show_structured_review_card
+  - create_draft_customer_invoice
+  - create_draft_vendor_bill
+  - create_draft_vendor_refund
+  - create_credit_note_from_source_invoice
+  - create_debit_note_from_source_document
+  - create_expense_line_employee_paid
+  - create_expense_line_company_paid
+  - group_into_expense_report
+  - create_expense_and_attach_to_sales_order
+  - register_customer_payment_or_route_to_reconcile
+  - register_vendor_payment_or_route_to_reconcile
+  - open_reconciliation_with_preselected_match
+  - create_or_update_batch_payment
+  - auto_complete_from_po_then_review
+  - block_and_link_existing_record
+  - route_for_master_data_resolution
+  - mark_not_accounting_document
+  - resume_or_show_final_status
+
+# ── Primary intake classification ─────────────────────────
+
+intake_rules:
+
+  - id: DT-001
+    signal: issued_invoice_active_company_is_issuer
+    context: issuer_company
+    scenario_family: AR_INVOICE
+    odoo_object: account.move.out_invoice
+    checks: [partner_match, duplicate_invoice_no, journal, tax_mapping, totals]
+    safe_action: create_draft_customer_invoice
+    automation: auto_create_draft_if_high_confidence
+
+  - id: DT-002
+    signal: issued_invoice_active_company_is_recipient
+    context: recipient_company
+    scenario_family: AP_VENDOR_BILL
+    odoo_object: account.move.in_invoice
+    checks: [vendor_match, duplicate_vendor_ref, journal, tax_mapping, totals]
+    safe_action: create_draft_vendor_bill
+    automation: auto_create_draft_if_high_confidence
+
+  - id: DT-003
+    signal: vendor_bill_supplier_invoice_upload
+    context: recipient_company
+    scenario_family: AP_VENDOR_BILL
+    odoo_object: account.move.in_invoice
+    checks: [vendor_match, duplicate, po_match, taxes, currency]
+    safe_action: create_draft_vendor_bill
+    automation: auto_extract_first
+
+  - id: DT-004
+    signal: vendor_refund_negative_correction
+    context: recipient_company
+    scenario_family: AP_VENDOR_REFUND
+    odoo_object: account.move.in_refund
+    checks: [original_bill_link, duplicate_ref, totals_sign]
+    safe_action: create_draft_vendor_refund
+    automation: suggest_and_confirm
+
+  - id: DT-005
+    signal: customer_credit_memo_refund
+    context: issuer_company
+    scenario_family: AR_CREDIT_NOTE
+    odoo_object: account.move.out_refund
+    checks: [original_invoice_link, reason, totals_sign]
+    safe_action: create_credit_note_from_source_invoice
+    automation: never_silent_edit
+
+  - id: DT-006
+    signal: debit_adjustment_against_validated_doc
+    context: any
+    scenario_family: AR_DEBIT_NOTE|AP_VENDOR_DEBIT_NOTE
+    odoo_object: debit_note
+    checks: [source_document_link, amount_delta, reason]
+    safe_action: create_debit_note_from_source_document
+    automation: suggest_and_confirm
+
+  - id: DT-007
+    signal: expense_receipt_paid_by_employee
+    context: employer_company
+    scenario_family: EXPENSE_EMPLOYEE_PAID
+    odoo_object: hr.expense
+    checks: [employee_match, category, amount, reimbursable_policy]
+    safe_action: create_expense_line_employee_paid
+    automation: auto_create_draft_if_high_confidence
+
+  - id: DT-008
+    signal: expense_receipt_paid_by_company
+    context: employer_company
+    scenario_family: EXPENSE_COMPANY_PAID
+    odoo_object: hr.expense
+    checks: [employee_match, category, paid_by_company, analytic_tags]
+    safe_action: create_expense_line_company_paid
+    automation: auto_create_draft_if_high_confidence
+
+  - id: DT-009
+    signal: expense_batch_report_submission
+    context: employer_company
+    scenario_family: EXPENSE_REPORT
+    odoo_object: hr.expense.sheet
+    checks: [all_lines_approved, analytic_distribution, policy_compliance]
+    safe_action: group_into_expense_report
+    automation: suggest_and_confirm
+
+  - id: DT-010
+    signal: expense_marked_customer_chargeable
+    context: employer_company
+    scenario_family: EXPENSE_REINVOICE_TO_CUSTOMER
+    odoo_object: hr.expense
+    checks: [so_match, customer_to_reinvoice, posting_state]
+    safe_action: create_expense_and_attach_to_sales_order
+    automation: auto_only_if_so_exact_match
+
+  - id: DT-011
+    signal: payment_proof_from_customer
+    context: issuer_company
+    scenario_family: PAYMENT_CUSTOMER
+    odoo_object: account.payment
+    checks: [invoice_match, amount, reference, bank_journal]
+    safe_action: register_customer_payment_or_route_to_reconcile
+    automation: no_auto_reconcile_unless_deterministic
+
+  - id: DT-012
+    signal: payment_proof_to_vendor
+    context: recipient_company
+    scenario_family: PAYMENT_VENDOR
+    odoo_object: account.payment
+    checks: [bill_match, amount, reference, bank_journal]
+    safe_action: register_vendor_payment_or_route_to_reconcile
+    automation: no_auto_reconcile_unless_deterministic
+
+  - id: DT-013
+    signal: bank_statement_line_with_clear_match
+    context: any
+    scenario_family: BANK_RECONCILIATION_EVENT
+    odoo_object: account.bank.statement.line
+    checks: [model_match, amount, partner, reference]
+    safe_action: open_reconciliation_with_preselected_match
+    automation: auto_preselect_human_finalize
+
+  - id: DT-014
+    signal: batch_payment_event_file
+    context: any
+    scenario_family: BATCH_PAYMENT
+    odoo_object: account.batch.payment
+    checks: [payment_method_consistency, included_payments, reference]
+    safe_action: create_or_update_batch_payment
+    automation: validate_batch_after_items_confirmed
+
+  - id: DT-015
+    signal: purchase_linked_vendor_invoice
+    context: recipient_company
+    scenario_family: AP_PO_MATCHED_BILL
+    odoo_object: account.move.in_invoice
+    checks: [po_exact_fuzzy_match, qty_price_tax_deltas]
+    safe_action: auto_complete_from_po_then_review
+    automation: never_direct_post_on_first_mismatch
+
+  - id: DT-016
+    signal: ocr_invoice_unclear_direction
+    context: any
+    scenario_family: DOCUMENT_AMBIGUOUS
+    odoo_object: null
+    checks: [issuer_vs_recipient, active_company, partner_role]
+    safe_action: show_structured_review_card
+    automation: block_until_direction_resolved
+
+  - id: DT-017
+    signal: unsupported_non_accounting_document
+    context: any
+    scenario_family: DOCUMENT_UNSUPPORTED
+    odoo_object: null
+    checks: []
+    safe_action: mark_not_accounting_document
+    automation: block
+
+  - id: DT-018
+    signal: clear_duplicate_of_posted_document
+    context: any
+    scenario_family: DUPLICATE_DOCUMENT
+    odoo_object: null
+    checks: [exact_near_duplicate_search]
+    safe_action: block_and_link_existing_record
+    automation: hard_block
+
+  - id: DT-019
+    signal: missing_partner_employee_journal_tax
+    context: any
+    scenario_family: MASTER_DATA_MISSING
+    odoo_object: null
+    checks: [identify_missing_dependency]
+    safe_action: route_for_master_data_resolution
+    automation: block_until_dependencies_exist
+
+  - id: DT-020
+    signal: connection_loss_during_async_operation
+    context: any
+    scenario_family: WORKFLOW_RETRY
+    odoo_object: null
+    checks: [idempotency_key, pending_job_lookup]
+    safe_action: resume_or_show_final_status
+    automation: never_create_duplicate_on_retry
+
+# ── Directionality overrides ──────────────────────────────
+
+directionality_overrides:
+
+  - id: OV-001
+    condition: active_company_name_matches_document_issuer
+    override: prefer_receivable_path
+
+  - id: OV-002
+    condition: active_company_name_matches_bill_to_entity
+    override: prefer_payable_path
+
+  - id: OV-003
+    condition: consumer_expense_receipt_with_employee_evidence
+    override: prefer_expense_path_over_ap_bill
+
+  - id: OV-004
+    condition: source_document_validated_and_change_requested
+    override: force_credit_debit_note_path
+
+  - id: OV-005
+    condition: po_exact_match_exists_and_supplier_side
+    override: prefer_po_completed_vendor_bill_path
+
+  - id: OV-006
+    condition: bank_transaction_is_primary_artifact
+    override: prefer_reconciliation_over_invoice_creation
+
+  - id: OV-007
+    condition: low_confidence_on_issuer_recipient_roles
+    override: block_and_ask_structured_confirmation
+
+  - id: OV-008
+    condition: existing_draft_same_partner_ref_date_amount
+    override: attach_review_existing_before_create
+
+  - id: OV-009
+    condition: existing_posted_record_same_legal_reference
+    override: hard_duplicate_block
+
+  - id: OV-010
+    condition: multi_company_branch_mismatch_detected
+    override: block_prompt_correct_company_branch
+
+# ── Confidence-to-action gating ───────────────────────────
+
+confidence_bands:
+
+  - band: HIGH
+    extraction: header_totals_partner_direction_clear
+    validation: no_blockers
+    allowed_action: auto_create_draft
+
+  - band: HIGH_WITH_PO
+    extraction: header_partner_po_match_clear
+    validation: no_blockers_po_consistent
+    allowed_action: auto_complete_from_po_then_review
+
+  - band: MEDIUM
+    extraction: mostly_extracted_noncritical_uncertainties
+    validation: warnings_only
+    allowed_action: show_review_card_one_click_create
+
+  - band: LOW
+    extraction: direction_totals_partner_tax_unclear
+    validation: warnings_or_weak_blockers
+    allowed_action: review_required_no_create
+
+  - band: BLOCKED
+    extraction: any
+    validation: blocker_present
+    allowed_action: no_create_route_exception
+
+# ── Required checks by scenario ───────────────────────────
+
+validation_matrix:
+
+  AR_INVOICE:
+    mandatory: [customer_match, duplicate_invoice_no, journal, tax_totals, currency]
+    optional: [branch, payment_terms, edi_readiness]
+
+  AP_VENDOR_BILL:
+    mandatory: [vendor_match, duplicate_vendor_ref, journal, tax_totals]
+    optional: [po_match, auto_post_eligibility, currency]
+
+  AP_PO_MATCHED_BILL:
+    mandatory: [po_match, qty_price_delta, vendor_match, taxes]
+    optional: [goods_receipt_state]
+
+  EXPENSE_EMPLOYEE_PAID:
+    mandatory: [employee_match, category, amount, reimbursement_policy]
+    optional: [customer_reinvoice_linkage]
+
+  EXPENSE_COMPANY_PAID:
+    mandatory: [employee_match, category, company_paid_policy]
+    optional: [card_account_mapping]
+
+  AR_CREDIT_NOTE:
+    mandatory: [source_document_link, amount_sign, reason]
+    optional: [return_workflow_linkage]
+
+  AP_VENDOR_REFUND:
+    mandatory: [source_document_link, amount_sign, reason]
+    optional: [return_workflow_linkage]
+
+  PAYMENT_CUSTOMER:
+    mandatory: [open_item_match, amount, reference, journal]
+    optional: [batch_ref_grouping]
+
+  PAYMENT_VENDOR:
+    mandatory: [open_item_match, amount, reference, journal]
+    optional: [batch_ref_grouping]
+
+  BANK_RECONCILIATION_EVENT:
+    mandatory: [statement_line_match, amount, partner_ref, residual_handling]
+    optional: [model_confidence]
+
+  BATCH_PAYMENT:
+    mandatory: [same_payment_method, included_items_registered]
+    optional: [deposit_slip_file_generation]

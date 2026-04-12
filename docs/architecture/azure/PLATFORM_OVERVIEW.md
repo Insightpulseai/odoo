@@ -18,7 +18,7 @@ This document describes the platform's logical architecture at the **overview** 
 |---|-------|---------|--------------|
 | 1 | **Governance / Control** | Planning, code, release, inventory, intended-state | Azure Boards, GitHub, Azure Pipelines, Resource Graph, Repo SSOT |
 | 2 | **Identity / Network / Security** | AuthN/AuthZ, edge routing, secrets, networking | Cloudflare DNS, Azure Front Door/WAF, Entra ID, Key Vault, Managed Identities, VNet |
-| 3 | **Business Systems** | Transactional core, automation, project management | Odoo CE 19 (ACA), PostgreSQL Flexible Server, n8n (ACA), Plane (ACA), Superset (ACA) |
+| 3 | **Business Systems** | Transactional core, automation, project management | Odoo CE 18 (ACA), PostgreSQL Flexible Server, n8n (ACA), Plane (ACA), Superset (ACA) |
 | 4 | **Data Intelligence** | Governed data products, analytics, BI | Databricks, ADLS/Delta Lake, Unity Catalog, Microsoft Fabric |
 | 5 | **Agent / AI Runtime** | Agent hosting, document processing, orchestration | Microsoft Foundry, Document Intelligence, Logic Apps, Azure Functions |
 | 6 | **Experience / Domain Apps** | User-facing surfaces, APIs, browser tools | Odoo UI, Domain Workbenches, FastAPI/JSON-RPC, web/ apps |
@@ -61,7 +61,7 @@ These are operational systems of record or evidence artifacts — not governance
 
 ### Business Systems
 
-- **Odoo CE 19** — 3 ACA containers (web, worker, cron) in `rg-ipai-dev`
+- **Odoo CE 18** — 3 ACA containers (web, worker, cron) in `rg-ipai-dev`
 - **Azure PostgreSQL Flexible Server** (`ipai-odoo-dev-pg`) — Odoo transactional database
 - **n8n** — ACA, automation workflows, Plane ↔ Odoo command sync
 - **Plane** — ACA, project management, command surface only (not co-authoritative with Odoo)

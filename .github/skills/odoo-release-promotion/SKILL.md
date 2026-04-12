@@ -1,3 +1,12 @@
+---
+name: odoo-release-promotion
+description: Define and enforce a dev-to-staging-to-prod promotion pipeline for Odoo module releases with gate verification and rollback
+version: "1.0"
+compatibility:
+  hosts: [github-copilot, claude-code, codex-cli, cursor, gemini-cli]
+tags: [odoo, governance, aca, observability]
+---
+
 # odoo-release-promotion
 
 **Impact tier**: P1 -- Operational Readiness

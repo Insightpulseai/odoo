@@ -12,7 +12,7 @@
 |---------|------|---------|-------|
 | **Microsoft Entra ID** | Identity, SSO, agent identity (Agent ID preview) | Azure-native | Platform |
 | **Azure Front Door** | Edge routing, TLS termination, WAF | Azure-native | Infra |
-| **Odoo CE 19** | Operational system of record (ERP, CRM, HR, Finance) | ACA (`ipai-odoo-dev-web`) | ERP |
+| **Odoo CE 18** | Operational system of record (ERP, CRM, HR, Finance) | ACA (`ipai-odoo-dev-web`) | ERP |
 | **Pulser** | AI assistant family (Diva, Studio, Genie, Docs, Ask Pulser) | ACA + Foundry agents | Agents |
 | **Azure AI Foundry** | Agent runtime, orchestration, MCP hosting | Azure-native | Agents |
 | **Azure AI Document Intelligence** | OCR, document extraction, BIR form processing | Azure-native | Data |
@@ -57,7 +57,7 @@ Before adding any new service to the active plane:
 
 | Repo / Directory | Purpose | Active Services |
 |------------------|---------|-----------------|
-| `odoo/` (`addons/ipai/`, `vendor/odoo/`) | ERP system of record — modules, config, migrations | Odoo CE 19, PostgreSQL |
+| `odoo/` (`addons/ipai/`, `vendor/odoo/`) | ERP system of record — modules, config, migrations | Odoo CE 18, PostgreSQL |
 | `web/` | All browser-facing surfaces — landing, SaaS, public pages | ACA, Front Door |
 | `agents/` | Pulser behavior definitions — personas, skills, evals, judges | Foundry agents |
 | `platform/` | Thin SSOT — control plane config, governance YAML | DevOps, Key Vault |

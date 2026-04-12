@@ -1,0 +1,33 @@
+project: ipai-platform
+process: basic
+program: Pulser for PH
+
+area_paths:
+  - Pulser for PH
+  - Pulser for PH / Runtime & Governance
+  - Pulser for PH / Finance Core
+  - Pulser for PH / PH Compliance & Close
+  - Pulser for PH / Documents & Integrations
+  - Pulser for PH / Payments & Launch
+
+iterations:
+  - R1-Foundation-30d
+  - R2-Core-Execution-60d
+  - R3-PH-Ops-Hardening-90d
+  - R4-GA
+
+default_tags:
+  - pulser-ph
+  - odoo18
+  - oca
+  - foundry
+  - bir
+
+board_columns:
+  - New
+  - Ready
+  - In Progress
+  - Blocked
+  - Review
+  - UAT
+  - Done

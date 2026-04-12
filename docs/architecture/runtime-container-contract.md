@@ -11,7 +11,7 @@
 ### Azure Container Apps (Production)
 
 ```
-/opt/odoo/                          # Odoo CE 19 installation (read-only layer)
+/opt/odoo/                          # Odoo CE 18 installation (read-only layer)
   odoo-bin                          # Odoo server binary
   odoo/                             # Odoo Python package source
   addons/                           # Core addons (base, account, sale, ...)
@@ -76,7 +76,7 @@ repo at `/workspaces/odoo/`. The Odoo CE installation lives at `/opt/odoo/`
 
 | Root | Contents | Mutability |
 |------|----------|------------|
-| `vendor/odoo/` (local) / `/opt/odoo/` (container) | Upstream Odoo CE 19 source | Read-only -- never modify |
+| `vendor/odoo/` (local) / `/opt/odoo/` (container) | Upstream Odoo CE 18 source | Read-only -- never modify |
 | `addons/ipai/` | Custom IPAI bridge and extension modules | Read-write (developer-owned) |
 | `addons/oca/` | OCA community modules | Read-only (managed via submodules or build-time hydration) |
 | `addons/local/` | Minimal local overrides | Read-write (rarely used) |
@@ -340,7 +340,7 @@ separation of concerns.
 |   OCA requirements, IPAI requirements              |
 +--------------------------------------------------+
 | Layer 1: Base Odoo 18                             |
-|   /opt/odoo/ (Odoo CE 19 source)                  |
+|   /opt/odoo/ (Odoo CE 18 source)                  |
 |   System packages (PostgreSQL client, wkhtmltopdf) |
 |   Python 3.12                                      |
 +--------------------------------------------------+

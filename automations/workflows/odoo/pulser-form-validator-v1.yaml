@@ -1,0 +1,126 @@
+workflow_id: pulser-form-validator-v1
+version: 1
+status: draft
+pattern: sequential
+purpose: >
+  Answer short, noisy, or contextual questions from an active Odoo form by grounding
+  in the current record, validating readiness or correctness, and returning structured
+  status plus the next safe action.
+
+triggers:
+  - type: pulser_chat_message_from_active_form
+
+inputs:
+  required:
+    - user_message
+    - active_model
+    - active_view_type
+    - active_company_id
+  optional:
+    - active_record_id
+    - visible_fields_snapshot
+    - linked_attachment_refs
+    - linked_partner_id
+    - linked_employee_id
+    - linked_project_id
+
+variables:
+  normalized_intent: null
+  active_record_context: {}
+  extraction_context: {}
+  validation_result: {}
+  safe_action: null
+
+output_schema:
+  name: pulser_form_validation_result
+  ref: agents/schemas/workflow/pulser/pulser_form_validation_result.schema.json
+
+nodes:
+  - id: capture_form_context
+    type: agent
+    agent: pulser-odoo-transaction
+    task: >
+      Read current active form context, record state, visible fields, company, branch,
+      linked objects, and any currently attached documents.
+    save_output_as: active_record_context
+
+  - id: normalize_intent
+    type: agent
+    agent: pulser-odoo-livechat
+    task: >
+      Normalize the user utterance into one of the supported form-validation intents.
+      Handle typo-heavy finance prompts like "tax?", "is it correct?", or
+      "is it correctly computed?" using active form context.
+    response_format: json_schema
+    save_output_as: normalized_intent
+
+  - id: fetch_attachment_extraction_if_any
+    type: if_else
+    condition: >
+      CountRows(Local.active_record_context.linked_attachment_refs) > 0
+    branches:
+      true:
+        next: load_extraction_context
+      false:
+        next: validate_current_form
+
+  - id: load_extraction_context
+    type: data_transformation
+    action: >
+      Load any prior extracted document fields associated with current attachments.
+    save_output_as: extraction_context
+
+  - id: validate_current_form
+    type: agent
+    agent: pulser-odoo-transaction
+    task: >
+      Validate the current form according to normalized intent.
+      Examples:
+      - expense tax validation
+      - invoice readiness
+      - reimbursement readiness
+      - posting readiness
+      Use live record data first; do not ask generic follow-up if enough context exists.
+    response_format: json_schema
+    save_output_as: validation_result
+
+  - id: choose_safe_action
+    type: logic
+    expression: >
+      If status = "not_yet_computable", return the exact missing fields.
+      If status = "incorrect" or "needs_review", return the smallest safe next action.
+      If status = "correct", return no-op or the next allowed transition.
+    save_output_as: safe_action
+
+  - id: finish
+    type: data_transformation
+    action: >
+      Emit pulser_form_validation_result from normalized_intent, validation_result,
+      safe_action, and visible field references.
+
+specializations:
+  hr.expense:
+    supported_checks:
+      - category_tax_default_check
+      - included_tax_amount_check
+      - employee_paid_vs_company_paid_check
+      - reimbursement_readiness_check
+      - receipt_vs_form_total_check
+  account.move:
+    supported_checks:
+      - invoice_line_tax_check
+      - partner_presence_check
+      - duplicate_reference_check
+      - posting_readiness_check
+  sale.order:
+    supported_checks:
+      - invoiceable_lines_readiness
+      - billable_service_linkage
+  project.project:
+    supported_checks:
+      - profitability_linkage
+      - billable_timesheet_linkage
+
+failure_handling:
+  on_missing_record: needs_review
+  on_unknown_intent: unknown

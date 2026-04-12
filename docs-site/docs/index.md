@@ -1,17 +1,17 @@
 ---
 title: InsightPulse AI Documentation
-description: AI-first ERP platform on Odoo CE 19 + Azure
+description: AI-first ERP platform on Odoo CE 18 + Azure
 ---
 
 # InsightPulse AI Documentation
 
-Welcome to the InsightPulse AI platform documentation. This site covers the architecture, development workflow, deployment, and integration patterns for the AI-first ERP platform built on Odoo CE 19.
+Welcome to the InsightPulse AI platform documentation. This site covers the architecture, development workflow, deployment, and integration patterns for the AI-first ERP platform built on Odoo CE 18.
 
 ## Platform at a glance
 
 | Component | Technology |
 |-----------|-----------|
-| **ERP** | Odoo CE 19.0 + OCA + `ipai_*` modules |
+| **ERP** | Odoo CE 18.0 + OCA + `ipai_*` modules |
 | **Runtime** | Azure Container Apps (Southeast Asia) |
 | **Data platform** | Databricks + Unity Catalog |
 | **Analytical lake** | Azure Data Lake Storage Gen2 |
