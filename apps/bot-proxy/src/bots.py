@@ -5,22 +5,23 @@ All six agents share the same forwarding logic; they differ only in
 surface tag, welcome message, gateway endpoint, and whether they accept
 file uploads.
 
-Streaming contract (see docs/skills/m365-copilot-streaming-contract.md):
-  * ONE StreamingResponse per turn
-  * end_stream() in finally
-  * set_attachments() inside the stream, not a separate activity
-  * serialize outgoing messages
+NOTE: The MS Learn streaming-contract doc describes an API
+(`StreamingResponse.queue_text_chunk`, `end_stream`, `set_attachments`)
+that only ships in the .NET/TypeScript Agents SDKs — the Python
+botbuilder-core SDK does not expose those primitives. This implementation
+buffers the NDJSON chunks from the gateway and sends ONE final activity
+per turn plus an initial "typing" indicator. Token-by-token streaming in
+Python requires the newer `teams-ai` SDK (follow-up work).
 """
 
 from __future__ import annotations
 
 import logging
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import Any
 
 from botbuilder.core import ActivityHandler, TurnContext
-from botbuilder.core.streaming import StreamingResponse  # type: ignore[import-not-found]
-from botbuilder.schema import ChannelAccount
+from botbuilder.schema import Activity, ActivityTypes, Attachment, ChannelAccount
 
 from .gateway import stream_gateway
 
@@ -76,37 +77,54 @@ class BaseAgentBot(ActivityHandler):
         if not user_text and not file_refs:
             return
 
-        stream = StreamingResponse(turn_context)
+        # Acknowledge the user turn with a typing indicator so Teams
+        # doesn't sit silent while the gateway does work.
+        await turn_context.send_activity(
+            Activity(type=ActivityTypes.typing)
+        )
+
+        payload: dict[str, Any] = {
+            "prompt": user_text,
+            "user_id": turn_context.activity.from_property.aad_object_id,
+            "surface": self.cfg.surface_tag,
+            "agent": self.cfg.name,
+            "stream": True,
+        }
+        if file_refs:
+            payload["files"] = file_refs
+
+        buffered_text: list[str] = []
+        buffered_attachments: list[Attachment] = []
         try:
-            await stream.queue_informative_update(
-                "Extracting…" if file_refs else "Thinking…"
-            )
-
-            payload: dict[str, Any] = {
-                "prompt": user_text,
-                "user_id": turn_context.activity.from_property.aad_object_id,
-                "surface": self.cfg.surface_tag,
-                "agent": self.cfg.name,
-                "stream": True,
-            }
-            if file_refs:
-                payload["files"] = file_refs
-
             async for chunk in stream_gateway(self.cfg.gateway_path, payload):
                 text = chunk.get("text")
                 if text:
-                    await stream.queue_text_chunk(text)
-                chunk_attachments = chunk.get("attachments")
-                if chunk_attachments:
-                    stream.set_attachments(chunk_attachments)
+                    buffered_text.append(text)
+                for raw in chunk.get("attachments") or []:
+                    # NDJSON attachment fields are already Activity-shaped
+                    buffered_attachments.append(Attachment().deserialize(raw))
 
         except Exception as err:
             LOG.exception("%s.gateway.error %s", self.cfg.name, err)
-            await stream.queue_text_chunk(
-                f"\n\n_{self.cfg.name} backend error — try again in a moment._"
+            await turn_context.send_activity(
+                f"_{self.cfg.name} backend error — try again in a moment._"
             )
-        finally:
-            await stream.end_stream()
+            return
+
+        # One final activity with the accumulated response.
+        body = "".join(buffered_text).strip()
+        if not body and not buffered_attachments:
+            await turn_context.send_activity(
+                f"_{self.cfg.name} returned no content._"
+            )
+            return
+
+        reply = Activity(
+            type=ActivityTypes.message,
+            text=body or None,
+            attachments=buffered_attachments or None,
+        )
+        await turn_context.send_activity(reply)
 
 
 # ─── Agent configurations — ONE per IPAI custom engine agent ────────────────
