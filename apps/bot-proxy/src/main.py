@@ -81,7 +81,13 @@ def _make_handler(agent_name: str, path: str) -> Any:
 
         activity = Activity().deserialize(body)
         auth_header = req.headers.get("Authorization", "")
-        response = await adapter.process_activity(activity, auth_header, bot.on_turn)
+        try:
+            response = await adapter.process_activity(activity, auth_header, bot.on_turn)
+        except PermissionError as err:
+            # Bot Framework JWT validation failed — token missing/invalid.
+            # Return 401 instead of letting aiohttp convert the raise to 500.
+            LOG.warning("%s: auth rejected — %s", agent_name, err)
+            return web.Response(status=401, text=str(err))
         if response:
             return web.json_response(data=response.body, status=response.status)
         return web.Response(status=201)
