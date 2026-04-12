@@ -320,3 +320,12 @@ ssot/databricks/*.snapshot.json
 ssot/supabase/*.snapshot.json
 ssot/evidence/snapshot-manifest.json
 docs-site/site/
+
+# Azure CLI local state
+.azure/
+
+# Playwright MCP cache
+.playwright-mcp/
+
+# Claude scheduled tasks lock
+.claude/scheduled_tasks.lock

@@ -1,6 +1,6 @@
 # Product Requirements Document — Pulser for Odoo
 
-Pulser for PH is the primary agentic ERP workspace built on Odoo CE 18 and Azure AI. This PRD defines the requirements for a professional, enterprise-grade B2B SaaS platform.
+Pulser is a **custom-engine, multi-agent, policy-gated enterprise copilot** for Odoo-centered workflows. This PRD defines the requirements for a professional, enterprise-grade B2B SaaS platform.
 
 ---
 
@@ -26,10 +26,13 @@ Pulser must execute formal end-to-end business scenarios:
 - **Cutover Controls**: Mandatory AR/AP clearing, trial-balance validation, and bank-reconciliation handling for production activation.
 
 ## 4. Agent and Runtime Plane (BOM 4)
-- **Reasoning**: Azure AI Foundry / OpenAI.
-- **Grounding**: Azure AI Search linked to Odoo Documents.
+
+Pulser is a **Custom-engine agent**.
+- **Reasoning Authority**: It brings its own runtime, tools, policies, retrieval, and validators.
+- **Orchestration Model**: Multi-agent orchestrated system (Planner/Router + Specialists + Validators).
 - **Specialists**: Agents for AP, Expense, PH Tax (BIR), Close, and Reporting.
-- **Publishing**: Native generation of PPTX, DOCX, and XLSX artifacts.
+- **System of Action**: In Odoo, Pulser is a **transactional and operational copilot** that prepares, validates, routes, summarizes, and publishes.
+- **Publishing**: Native generation of PPTX, DOCX, and XLSX artifacts retaining evidence linkage.
 
 ## 5. Channel Shell Strategy (BOM 5)
 
@@ -187,22 +190,22 @@ The Record-to-Report bundle must consume project-finance signals where relevant 
 ### 47.3 Product rule
 Neither child bundle may redefine cross-cutting platform policy independently.
 
-## 48. Microsoft 365 surface strategy
+## 48. Microsoft 365 channel-surface strategy
 
 Pulser may be surfaced through Microsoft 365 channels for both child bundles where it improves user adoption and workflow fit.
 
-### 48.1 Valid use cases
-- Teams surface for finance and project users
-- Outlook-adjacent workflow assist where appropriate
-- Word / Excel-adjacent publishing or review flows
-- enterprise chat entry points for authorized users
+### 48.1 M365 Distribution Model
+- **Agent Type**: Custom-engine agent (delivered via M365 Declarative Agent surfaces).
+- **Branding**: "Pulser for Odoo".
+- **Action Logic**: API Plugins targeting the and `copilot_gateway.py`.
+- **Knowledge Search**: Pulser RAG/Foundry (Authoritative Reasoning/Retrieval).
 
 ### 48.2 Architectural rule
-Microsoft 365 Agents Toolkit is an optional surface/tooling layer only.
-It may accelerate packaging, app/bot setup, and deployment scaffolding, but it is not the authoritative runtime, policy engine, or business logic layer.
+The **Microsoft 365 Copilot Extensibility** model is the and and approved channel/distribution layer.
+Microsoft 365 Agents Toolkit may accelerate packaging and scaffolding, but it is not theitative runtime, policy engine, or business logic layer.
 
 ### 48.3 Safety rule
-Channel surfaces must remain subordinate to:
+Channel surfaces (Declarative Agents) must remain subordinate to:
 - Pulser behavior resolution
 - Pulser RBAC and approval bands
 - evidence scope

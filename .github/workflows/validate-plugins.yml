@@ -1,0 +1,20 @@
+name: validate-plugins
+
+on:
+  push:
+    branches: [main]
+    paths: ['plugins/**', '.claude-plugin/**', 'scripts/**']
+  pull_request:
+    branches: [main]
+    paths: ['plugins/**', '.claude-plugin/**', 'scripts/**']
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Validate plugins
+        run: chmod +x scripts/ci-validate.sh && scripts/ci-validate.sh

@@ -1,0 +1,57 @@
+{
+  "name": "IPAI Platform (Azure-native)",
+  "image": "mcr.microsoft.com/devcontainers/typescript-node:20-bullseye",
+
+  "features": {
+    "ghcr.io/devcontainers/features/git:1": {},
+    "ghcr.io/devcontainers/features/github-cli:1": {},
+    "ghcr.io/devcontainers/features/azure-cli:1": { "version": "latest" },
+    "ghcr.io/devcontainers/features/docker-in-docker:2": {},
+    "ghcr.io/azure/azure-dev/features/azd:1": { "version": "latest" }
+  },
+
+  "postCreateCommand": {
+    "bicep": "az bicep install",
+    "deps": "npm install --quiet"
+  },
+
+  "customizations": {
+    "vscode": {
+      "settings": {
+        "claudeCode.initialPermissionMode": "plan",
+        "claudeCode.autosave": true,
+        "claudeCode.useCtrlEnterToSend": true,
+        "claudeCode.disableLoginPrompt": false,
+        "[sql]": {
+          "editor.defaultFormatter": "bradymholt.pgformatter",
+          "editor.formatOnSave": false
+        }
+      },
+      "extensions": [
+        "anthropic.claude-code",
+        "ms-azuretools.vscode-bicep",
+        "ms-vscode.azure-account",
+        "bradymholt.pgformatter",
+        "mtxr.sqltools",
+        "mtxr.sqltools-driver-pg",
+        "github.vscode-github-actions",
+        "github.copilot",
+        "github.copilot-chat"
+      ]
+    }
+  },
+
+  "forwardPorts": [3000, 5432],
+  "portsAttributes": {
+    "3000": { "label": "Platform API", "onAutoForward": "notify" },
+    "5432": { "label": "PostgreSQL", "onAutoForward": "silent" }
+  },
+
+  "remoteEnv": {
+    "IPAI_ENV": "dev"
+  },
+
+  "mounts": [
+    "source=\${localEnv:HOME}/.azure,target=/root/.azure,type=bind,consistency=cached"
+  ]
+}

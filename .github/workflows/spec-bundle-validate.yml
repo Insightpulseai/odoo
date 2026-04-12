@@ -1,0 +1,57 @@
+name: spec-bundle-validate
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+jobs:
+  validate-spec-bundle:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Validate Spec Kit bundle structure
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          bundles=$(find spec -mindepth 1 -maxdepth 1 -type d | sort || true)
+          if [ -z "${bundles}" ]; then
+            echo "No spec bundles found under spec/"
+            exit 1
+          fi
+
+          fail=0
+
+          for bundle in ${bundles}; do
+            echo "Checking ${bundle}"
+
+            for f in constitution.md prd.md plan.md tasks.md; do
+              if [ ! -f "${bundle}/${f}" ]; then
+                echo "Missing file: ${bundle}/${f}"
+                fail=1
+              fi
+            done
+
+            if [ -f "${bundle}/constitution.md" ]; then
+              grep -q "^# " "${bundle}/constitution.md" || { echo "constitution.md missing title in ${bundle}"; fail=1; }
+            fi
+
+            if [ -f "${bundle}/prd.md" ]; then
+              grep -q "^# " "${bundle}/prd.md" || { echo "prd.md missing title in ${bundle}"; fail=1; }
+              grep -qi "Smart Success Criteria" "${bundle}/prd.md" || { echo "prd.md missing Smart Success Criteria in ${bundle}"; fail=1; }
+            fi
+
+            if [ -f "${bundle}/plan.md" ]; then
+              grep -q "^# " "${bundle}/plan.md" || { echo "plan.md missing title in ${bundle}"; fail=1; }
+            fi
+
+            if [ -f "${bundle}/tasks.md" ]; then
+              grep -q "^# " "${bundle}/tasks.md" || { echo "tasks.md missing title in ${bundle}"; fail=1; }
+              grep -q "\- \[ \]" "${bundle}/tasks.md" || { echo "tasks.md has no open checklist items in ${bundle}"; fail=1; }
+            fi
+          done
+
+          exit "${fail}"

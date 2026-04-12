@@ -43,18 +43,14 @@ Future major business capabilities should be introduced as bounded child bundles
 ## 48. Microsoft 365 channel-surface plan
 
 ### Goal
-Enable optional Teams / Outlook / Word / Excel channel delivery without changing the canonical Pulser architecture.
+Enable optional Teams / Outlook / Word / Excel channel delivery using the canonical **Microsoft 365 Copilot Extensibility** model.
 
 ### Design rules
 - treat M365 Agents Toolkit as scaffolding and channel packaging only
-- keep canonical business logic and policy resolution in Pulser
-- keep channel surfaces additive, not primary
+- implement **Declarative Agents** for P2P and RTR personas
+- expose Pulser actions via **API Plugins**
+- preserve canonical business logic and policy resolution in Pulser
 - require the same RBAC, evidence, and mutation controls as native Pulser surfaces
-
-### Candidate channel workstreams
-- Teams finance surface
-- Teams project/delivery surface
-- publishing-adjacent Word/Excel surface where justified
 
 ### Deployment Stamp Topology
 Scale and isolate tenants via independent capacity slices using Azure Container Apps:
