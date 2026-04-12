@@ -44,8 +44,10 @@ az devops service-endpoint create \
     "scheme": "WorkloadIdentityFederation",
     "parameters": {
       "tenantid": "402de71a-87ec-4302-a609-fb76098d1da7",
-      "serviceprincipalid": "<id-ipai-dev principal ID>"
+      "serviceprincipalid": "1aee831f-3813-4eed-b49c-f7665330f0f6"
     }
+    // id-ipai-dev user-assigned MI in rg-ipai-dev-odoo-runtime
+    // clientId: 2d9a8328-c8cb-47fc-ba4e-01c1cf9b75d8
   },
   "data": {
     "subscriptionId": "536d8cf6-89e1-4815-aef3-d5f2c5f4d070",
