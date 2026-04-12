@@ -11,6 +11,51 @@ Establish the dual control-plane model for resilient multitenancy:
 - **Service Control Plane**: Implement onboarding wizards, stamp placement logic, and fleet-wide monitoring in `agent-platform`.
 - **Tenant Admin Plane**: Implement tenant-scoped settings and feature flags.
 
+## 46. Umbrella / child-bundle operating model
+
+### Goal
+Make `spec/pulser-odoo/` the platform umbrella while keeping business capability design bounded in child bundles.
+
+### Bundle layout
+- `pulser-odoo` = platform and cross-cutting authority
+- `pulser-project-to-profit` = project/delivery/profitability authority
+- `pulser-record-to-report` = finance-control/close/reporting authority
+
+### Design rule
+Future major business capabilities should be introduced as bounded child bundles rather than expanding the umbrella PRD indefinitely.
+
+## 47. Cross-bundle implementation dependencies
+
+### Project-to-Profit outputs required by Record-to-Report
+- billing-readiness signals
+- project budget/forecast/actual signals
+- profitability and margin summaries
+- accrual-relevant delivery signals
+- evidence-linked project-finance artifacts
+
+### Record-to-Report outputs required by umbrella platform
+- finance control status
+- close readiness
+- publishable finance/reporting packs
+- tax/compliance support outputs
+- audit-safe evidence views
+
+## 48. Microsoft 365 channel-surface plan
+
+### Goal
+Enable optional Teams / Outlook / Word / Excel channel delivery without changing the canonical Pulser architecture.
+
+### Design rules
+- treat M365 Agents Toolkit as scaffolding and channel packaging only
+- keep canonical business logic and policy resolution in Pulser
+- keep channel surfaces additive, not primary
+- require the same RBAC, evidence, and mutation controls as native Pulser surfaces
+
+### Candidate channel workstreams
+- Teams finance surface
+- Teams project/delivery surface
+- publishing-adjacent Word/Excel surface where justified
+
 ### Deployment Stamp Topology
 Scale and isolate tenants via independent capacity slices using Azure Container Apps:
 - **Composition**: Scoped Odoo runtime, Pulser gateway, and agent services.

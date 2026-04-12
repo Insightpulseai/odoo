@@ -11,6 +11,22 @@ Implementation roadmap for Pulser, tracking baseline ERP/AI work through SaaS pl
 - [x] Implement `ipai_finance_ppm` and `ipai_odoo_copilot`.
 - [x] Configure Odoo Documents as the grounding vault.
 
+## Phase 27 — Umbrella / child-bundle alignment
+
+- [x] Register `pulser-project-to-profit` as the bounded Project Operations-derived child bundle
+- [x] Register `pulser-record-to-report` as the bounded Finance-derived child bundle
+- [x] Define the cross-bundle signal contract from Project-to-Profit to Record-to-Report
+- [x] Define umbrella-owned cross-cutting rules that child bundles must inherit
+- [x] Add Verify checks for child-bundle consistency with umbrella rules
+
+## Phase 28 — Microsoft 365 optional channel surfaces
+
+- [x] Define approved M365 channel-surface use cases for Project-to-Profit
+- [x] Define approved M365 channel-surface use cases for Record-to-Report
+- [x] Keep Teams / Outlook / Word / Excel surfaces behind canonical Pulser APIs
+- [x] Ensure channel actions respect Pulser behavior matrix and RBAC
+- [x] Ensure channel packaging/tooling does not become runtime authority
+
 ### Azure AI and Reasoning
 - [x] Provision Azure AI Foundry, OpenAI, and AI Search.
 - [x] Implement specialist agents for AP, Tax, Close, and Reporting.
