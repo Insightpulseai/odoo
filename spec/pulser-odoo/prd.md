@@ -129,6 +129,100 @@ Pulser must support a multi-layer integration model:
 - **Action Guard**: Hard enforcement of **Agent Action Scopes** (Summarize, Draft, Reconcile, Approve, etc.).
 - **Least Privilege**: Zero unknown principals with Owner or root-scope access.
 
+## 46. Umbrella and child-bundle topology
+
+`spec/pulser-odoo/` is the umbrella platform bundle for Pulser for Odoo.
+
+This bundle governs cross-cutting platform behavior and delegates primary business-operating-model detail to two bounded child bundles:
+
+- `spec/pulser-project-to-profit/`
+- `spec/pulser-record-to-report/`
+
+### 46.1 Child-bundle responsibilities
+
+#### `pulser-project-to-profit`
+Owns:
+- project / delivery / profitability lifecycle
+- quote / contract / WBS / execution / billing-readiness / margin visibility
+- the Project Operations-inspired operating model
+
+#### `pulser-record-to-report`
+Owns:
+- finance control / reconciliation / close / reporting / tax-support lifecycle
+- GL / AP / AR / budgeting / cash-bank / reporting / compliance support
+- the Finance-inspired operating model
+
+### 46.2 Umbrella responsibilities
+The umbrella bundle owns:
+- platform/runtime topology
+- control plane and tenant admin
+- deployment stamps
+- direct ingress architecture
+- behavior engine
+- retrieval/foundry architecture
+- RBAC and policy model
+- export/publishing model
+- live-site operations
+- self-improvement architecture
+
+## 47. Cross-bundle dependency model
+
+The child bundles are complementary, not competing.
+
+### 47.1 Project-to-Profit -> Record-to-Report handoff
+The Project-to-Profit bundle must emit finance-consumable signals into the Record-to-Report bundle, including:
+- billing-readiness signals
+- forecast / budget / actual signals
+- project health and margin signals
+- accrual-relevant signals
+- evidence-linked project-finance artifacts
+
+### 47.2 Record-to-Report <- Project-to-Profit dependency
+The Record-to-Report bundle must consume project-finance signals where relevant for:
+- accrual review
+- close readiness
+- executive reporting
+- reconciliation and blocker analysis
+
+### 47.3 Product rule
+Neither child bundle may redefine cross-cutting platform policy independently.
+
+## 48. Microsoft 365 surface strategy
+
+Pulser may be surfaced through Microsoft 365 channels for both child bundles where it improves user adoption and workflow fit.
+
+### 48.1 Valid use cases
+- Teams surface for finance and project users
+- Outlook-adjacent workflow assist where appropriate
+- Word / Excel-adjacent publishing or review flows
+- enterprise chat entry points for authorized users
+
+### 48.2 Architectural rule
+Microsoft 365 Agents Toolkit is an optional surface/tooling layer only.
+It may accelerate packaging, app/bot setup, and deployment scaffolding, but it is not the authoritative runtime, policy engine, or business logic layer.
+
+### 48.3 Safety rule
+Channel surfaces must remain subordinate to:
+- Pulser behavior resolution
+- Pulser RBAC and approval bands
+- evidence scope
+- mutation safety
+- Odoo transactional truth
+
+## 49. Smart success criteria additions
+
+- SC-PH-46 Bundle alignment:
+  100% of child bundles remain consistent with umbrella cross-cutting rules
+
+- SC-PH-47 Cross-bundle handoff:
+  100% of required project-finance signals needed by Record-to-Report are defined and consumable
+
+- SC-PH-48 Channel-surface safety:
+  100% of Microsoft 365 channel actions remain policy-gated and evidence-scoped
+
+- SC-PH-49 Platform authority clarity:
+  100% of runtime, policy, and mutation authority remains in Pulser/Odoo rather than channel scaffolding
+
 ## 12. Live-Site Operations (BOM 16)
 - **Posture**: Actionable telemetry, shift-right validation, and emergency hotfix lanes.
 
