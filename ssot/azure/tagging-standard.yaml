@@ -1,0 +1,230 @@
+# ssot/azure/tagging-standard.yaml
+#
+# Canonical Azure tagging standard for IPAI.
+# Authority:  Microsoft CAF Ready (June 2025 refresh) + FinOps F2 Allocation capability
+# Enforcement: scripts/azure/audit-tags.sh + infra/azure/policy/tagging-baseline.bicep
+# Related:    docs/ai/AZURE_TAGGING.md (doctrine + rationale)
+
+version: 1.0.0
+subscription_id: 536d8cf6-89e1-4815-aef3-d5f2c5f4d070
+updated: 2026-04-13
+
+# ─── Required tags — enforced by Azure Policy `deny` at subscription scope ──
+required:
+  env:
+    description: Environment separation
+    category: functional
+    allowed_values: [prod, staging, dev, sandbox, test]
+    inherit_from: resource_group
+  app:
+    description: Workload or application identifier
+    category: functional
+    allowed_values:
+      - odoo-erp
+      - bot-proxy
+      - copilot-gateway
+      - agents-platform
+      - sora
+      - prismalab
+      - platform-shared
+    inherit_from: resource_group
+  costcenter:
+    description: Finance cost center code (maps to GL)
+    category: accounting
+    pattern: "^[0-9]{5}$"
+    inherit_from: subscription
+  owner:
+    description: Operational accountability (email or team alias)
+    category: ownership
+    pattern: "^[a-z0-9._-]+@insightpulseai\\.com$|^[a-z-]+$"
+    inherit_from: resource_group
+  data-classification:
+    description: Security and compliance posture
+    category: classification
+    allowed_values: [public, internal, confidential, restricted]
+    inherit_from: resource_group
+
+# ─── Recommended tags — enforced via `modify` (inherit-if-missing) + `audit` ─
+recommended:
+  businessunit:
+    description: Org unit or P&L owner
+    category: ownership
+    allowed_values: [ipai, tbwa-finance, shared, w9studio, prismalab]
+    inherit_from: subscription
+  project:
+    description: Spec bundle or initiative
+    category: accounting
+    examples: [odoo-erp, agent-factory, tax-guru, w9studio, sora-phase3]
+  criticality:
+    description: Business impact tier
+    category: classification
+    allowed_values: [mission-critical, high, medium, low]
+  region:
+    description: Azure region (matches resource location)
+    category: functional
+    examples: [southeastasia, eastus2, global]
+  managed-by:
+    description: IaC tool or pipeline that owns the resource
+    category: functional
+    allowed_values: [bicep, terraform, manual, arm, azd]
+  repo:
+    description: Git repo path for drift detection
+    category: functional
+    examples: [Insightpulseai/odoo, Insightpulseai/agents]
+  created-date:
+    description: Provisioning date ISO-8601
+    category: functional
+    pattern: "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"
+
+# ─── Optional tags — discoverable, no enforcement ──────────────────────────
+optional:
+  sla:
+    allowed_values: [24hours, 8hours, best-effort]
+  backup-policy:
+    allowed_values: [daily, weekly, none]
+  expiration-date:
+    pattern: "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"
+  compliance-framework:
+    allowed_values: [bir-ph, soc2, iso27001, none]
+  cm-resource-parent:
+    description: Cost Management parent grouping — value is parent Resource ID
+    reserved: true
+
+# ─── Forbidden tag keys — deny via policy (case-variants of required keys) ──
+forbidden_keys:
+  - Environment       # use env
+  - environment       # use env (case collapse)
+  - ENV               # use env
+  - Owner             # use owner
+  - OWNER             # use owner
+  - CostCenter        # use costcenter
+  - Cost-Center       # use costcenter
+  - Project           # use project
+  - Service           # use app
+  - Stack             # use app
+  - workload          # use app
+  - managedBy         # use managed-by
+  - ManagedBy         # use managed-by
+  - managed_by        # use managed-by
+  - Managed-By        # use managed-by
+
+# ─── Resources with known tagging limitations ───────────────────────────────
+exceptions:
+  - type: classic_resources
+    action: migrate_to_arm_or_subscription_split
+  - type: Microsoft.Network/ipGroups
+    action: update_via_cli_only  # az network ip-group update
+  - type: Microsoft.Network/firewallPolicies
+    action: update_via_cli_only
+  - type: Microsoft.Graph/applications
+    description: Entra app registrations — not ARM-scoped, tags are a string list via Graph
+    action: encode_as_string_list
+    convention: "key:value strings (e.g. 'env:prod', 'app:bot-proxy')"
+    ssot_mirror: ssot/entra/app-registrations.yaml
+  - type: Microsoft.BotService/botServices/channels
+    action: inherit_from_parent_bot_service
+  - type: Microsoft.Sql/servers/*  # child types
+    action: tag_parent_server_only
+  - type: storage_account
+    constraint: tag_key_max_128_chars  # vs 512 elsewhere
+
+# ─── Applied examples per IPAI resource type ────────────────────────────────
+examples:
+  container_app:
+    resource_id: /subscriptions/.../Microsoft.App/containerApps/ipai-bot-proxy-dev
+    tags:
+      env: dev
+      app: bot-proxy
+      costcenter: "55332"
+      owner: platform@insightpulseai.com
+      data-classification: internal
+      businessunit: ipai
+      project: agent-factory
+      criticality: medium
+      region: southeastasia
+      managed-by: bicep
+      repo: Insightpulseai/odoo
+      cm-resource-parent: /subscriptions/.../managedEnvironments/ipai-odoo-dev-env-v2
+
+  front_door:
+    resource_id: /subscriptions/.../Microsoft.Cdn/profiles/afd-ipai-dev
+    tags:
+      env: dev
+      app: platform-shared
+      costcenter: "55332"
+      owner: platform@insightpulseai.com
+      data-classification: public
+      businessunit: ipai
+      project: odoo-erp
+      criticality: mission-critical
+      region: global
+      managed-by: bicep
+
+  key_vault:
+    resource_id: /subscriptions/.../Microsoft.KeyVault/vaults/kv-ipai-dev
+    tags:
+      env: dev
+      app: platform-shared
+      costcenter: "55332"
+      owner: platform@insightpulseai.com
+      data-classification: restricted
+      businessunit: ipai
+      criticality: mission-critical
+      managed-by: bicep
+
+  user_assigned_mi:
+    resource_id: /subscriptions/.../userAssignedIdentities/id-ipai-agent-pulser-dev
+    tags:
+      env: dev
+      app: bot-proxy
+      costcenter: "55332"
+      owner: platform@insightpulseai.com
+      data-classification: internal
+      businessunit: ipai
+      cm-resource-parent: /subscriptions/.../containerApps/ipai-bot-proxy-dev
+
+  entra_app_registration:
+    description: Not an ARM resource — tags are a string list via Microsoft Graph
+    tags: ["env:dev", "app:bot-proxy", "costcenter:55332", "owner:platform"]
+    ssot_source: ssot/entra/app-registrations.yaml
+
+# ─── Policy mapping — which built-in definitions enforce each key ───────────
+policy_mapping:
+  require_on_resources: 871b6d14-10aa-478d-b590-94f262ecfa99
+  require_on_resource_groups: 96670d01-0a4d-4649-9c89-2d3abc0a5025
+  inherit_from_rg_if_missing: ea3f2387-9b95-492a-a190-fcdc54f7b070
+  inherit_from_rg_add_or_replace: cd3aa116-8754-49c9-a813-ad46512ece54
+  inherit_from_subscription_if_missing: 40df99da-1232-49b1-a39a-6da8d878f469
+  inherit_from_subscription_add_or_replace: b27a0cbd-a167-4dfa-ae64-4337be671140
+  append_tag_from_rg: 9ea02ca2-71db-412d-8b00-7c7ca9fcd32d
+
+# ─── Cost Management tag inheritance ────────────────────────────────────────
+cost_management:
+  tag_inheritance_enabled: false  # owner action — enable via portal
+  note: |
+    Enable via Cost Management → Settings → Manage subscription → Tag inheritance.
+    Closes the gap for resource types whose tags are not emitted in cost usage
+    records (Classic services, SQL child types, BotService children, etc.).
+    8-24 hour propagation after enable.
+
+# ─── Audit drift baseline (from 2026-04-13 scan) ────────────────────────────
+drift_baseline:
+  total_unique_keys_observed: 17
+  casing_collisions:
+    - [Environment, environment, env, ENV]
+    - [Owner, owner, OWNER]
+    - [CostCenter, costcenter]
+    - [Project, project]
+    - [managedBy, ManagedBy, managed_by, managed-by]
+  semantic_collisions:
+    - keys: [Service, Stack, workload, product, app]
+      canonical: app
+    - keys: [layer, component]
+      canonical: null  # drop — covered by app + project
+  concerning_values:
+    - resource: acripaiodoo
+      issue: "Environment: Development (value case drift; should be env=dev)"
+    - resource: ipai-copilot-gateway
+      issue: "quarantine=true retain-until=2026-05-05 — marked for deprecation"
+    - resource: multiple
+      issue: "costcenter value is 'platform' (not a 5-digit GL code)"
