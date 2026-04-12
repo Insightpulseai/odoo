@@ -26,15 +26,15 @@
 
 ## Phase 2 — Replicate template for 5 more agents
 
-For each agent `<name>` in `{tax-guru, doc-intel, bank-recon, ap-invoice, finance-close}`:
+For each agent name in `{tax-guru, doc-intel, bank-recon, ap-invoice, finance-close}`:
 
-- [x] T2.<name>.1  (Code) Scaffold `agents/<name>-surface/` — README + agent-specific files. Owner copies shared files from teams-surface per README's cp + sed recipe.
-- [x] T2.<name>.2  (Code) `appPackage/manifest.json` v1.21 — per-agent name, description, commands, accent color
-- [x] T2.<name>.3  (Code) `bot/bot.py` — per-agent SURFACE_TAG, WELCOME, persona wiring, file handling (where applicable)
-- [x] T2.<name>.4  (Code) Bicep for all 6 MIs: `infra/azure/deploy-agent-identities.bicep` — Owner runs `az deployment group create --resource-group rg-ipai-dev-platform --template-file ...` (one command, all 6)
-- [ ] T2.<name>.5  (Owner) `atk provision --env dev` — interactive, cannot automate. See [deploy.md §Step 4](./deploy.md)
-- [x] T2.<name>.6  (Code) Bicep for all 6 AFD routes: `infra/azure/deploy-agent-routes.bicep` — Owner runs `az deployment group create` against the AFD RG. See [deploy.md §Step 2](./deploy.md)
-- [ ] T2.<name>.7  (Owner) Register Entra Agent ID via M365 Admin Center — browser UI, cannot automate. See [deploy.md §Step 5](./deploy.md)
+- [x] T2.`<name>`.1  (Code) Scaffold `agents/<name>-surface/` — README + agent-specific files. Owner copies shared files from teams-surface per README's cp + sed recipe.
+- [x] T2.`<name>`.2  (Code) `appPackage/manifest.json` v1.21 — per-agent name, description, commands, accent color
+- [x] T2.`<name>`.3  (Code) `bot/bot.py` — per-agent SURFACE_TAG, WELCOME, persona wiring, file handling (where applicable)
+- [x] T2.`<name>`.4  (Code) Bicep for all 6 MIs: `infra/azure/deploy-agent-identities.bicep` — Owner runs `az deployment group create --resource-group rg-ipai-dev-platform --template-file ...` (one command, all 6)
+- [ ] T2.`<name>`.5  (Owner) `atk provision --env dev` — interactive, cannot automate. See [deploy.md §Step 4](./deploy.md)
+- [x] T2.`<name>`.6  (Code) Bicep for all 6 AFD routes: `infra/azure/deploy-agent-routes.bicep` — Owner runs `az deployment group create` against the AFD RG. See [deploy.md §Step 2](./deploy.md)
+- [ ] T2.`<name>`.7  (Owner) Register Entra Agent ID via M365 Admin Center — browser UI, cannot automate. See [deploy.md §Step 5](./deploy.md)
 
 ## Phase 3 — Hardening
 
