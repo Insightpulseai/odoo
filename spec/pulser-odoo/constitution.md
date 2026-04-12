@@ -97,4 +97,66 @@ The agentic reasoning and action layer must be governed by a 5-layer Finance RBA
 
 ---
 
-*Last updated: 2026-04-11*
+## 22. Umbrella-bundle principle
+
+`spec/pulser-odoo/` is the umbrella platform bundle for Pulser for Odoo.
+
+It governs:
+- shared product rules
+- shared architecture rules
+- shared control-plane rules
+- shared ingress/runtime rules
+- shared RBAC and policy rules
+- shared evidence and publishing rules
+- shared live-site and self-improvement rules
+
+It does not replace bounded child bundles for major business capabilities.
+
+### 22.1 Required bounded child bundles
+
+The primary business-capability bundles under this umbrella are:
+- `spec/pulser-project-to-profit/`
+- `spec/pulser-record-to-report/`
+
+### 22.2 Scope split rule
+
+Use:
+- `pulser-project-to-profit` for the delivery/profitability spine
+- `pulser-record-to-report` for the finance-control/close/reporting spine
+
+The umbrella bundle remains the authority for cross-cutting rules that apply to both.
+
+## 23. Cross-bundle consistency principle
+
+All child bundles must inherit the umbrella bundle's cross-cutting rules for:
+- Odoo as system of action
+- Odoo Documents as retained evidence surface
+- direct ACA ingress
+- deployment-stamp model
+- RBAC / approval-band separation
+- policy-gated mutations
+- publishable output and evidence linkage
+- clarify / verify / CI validation gates
+- self-improvement and self-healing safety
+
+If a child bundle conflicts with the umbrella bundle on a cross-cutting rule, the umbrella bundle wins unless the umbrella is explicitly amended.
+
+## 24. Channel-surface principle
+
+Microsoft 365 surfaces are optional channel surfaces for both child bundles.
+
+Microsoft 365 Agents Toolkit may be used for:
+- Teams surfacing
+- Outlook surfacing
+- Word / Excel add-in style surfacing
+- app/bot/package scaffolding
+- provisioning and CI/CD helpers
+
+Toolkit usage does not change the canonical Pulser architecture:
+- Pulser runtime stays Pulser-owned
+- channel surfaces consume canonical Pulser APIs and policy resolution
+- no channel surface may bypass RBAC, evidence scope, approval bands, or mutation safety
+
+---
+
+*Last updated: 2026-04-12*
