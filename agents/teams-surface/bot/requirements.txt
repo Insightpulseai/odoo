@@ -1,0 +1,6 @@
+aiohttp>=3.9.5
+botbuilder-core>=4.15.0
+botbuilder-schema>=4.15.0
+botbuilder-integration-aiohttp>=4.15.0
+azure-identity>=1.17.0
+# Agents SDK streaming primitives (bundled with botbuilder-core >= 4.15)

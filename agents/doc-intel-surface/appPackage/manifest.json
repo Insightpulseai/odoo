@@ -1,0 +1,56 @@
+{
+  "$schema": "https://developer.microsoft.com/en-us/json-schemas/teams/v1.21/MicrosoftTeams.schema.json",
+  "manifestVersion": "1.21",
+  "version": "0.1.0",
+  "id": "${{TEAMS_APP_ID}}",
+  "developer": {
+    "name": "InsightPulseAI Inc.",
+    "websiteUrl": "https://insightpulseai.com",
+    "privacyUrl": "https://insightpulseai.com/privacy",
+    "termsOfUseUrl": "https://insightpulseai.com/terms"
+  },
+  "icons": { "color": "color.png", "outline": "outline.png" },
+  "name": {
+    "short": "Doc Intelligence",
+    "full": "Doc Intelligence — Document extraction assistant"
+  },
+  "description": {
+    "short": "Extract structured data from invoices, receipts, IDs, and BIR forms.",
+    "full": "Doc Intelligence extracts structured JSON from uploaded PDFs and images: invoices, receipts, IDs, BIR 2307 withholding certificates, and custom document types. Backed by Azure Document Intelligence + Foundry pipeline (13 MCP tools)."
+  },
+  "accentColor": "#2E7D32",
+  "bots": [
+    {
+      "botId": "${{BOT_ID}}",
+      "scopes": ["personal", "team", "groupChat"],
+      "supportsFiles": true,
+      "isNotificationOnly": false,
+      "commandLists": [
+        {
+          "scopes": ["personal", "team", "groupChat"],
+          "commands": [
+            { "title": "invoice", "description": "Extract invoice fields (vendor, line items, totals, VAT)" },
+            { "title": "receipt", "description": "Extract receipt fields (merchant, items, total)" },
+            { "title": "id",      "description": "Extract ID fields (name, number, DOB, issuer)" },
+            { "title": "2307",    "description": "Extract BIR 2307 withholding certificate" },
+            { "title": "extract", "description": "Generic extraction — give me a schema + file" },
+            { "title": "help",    "description": "What can Doc Intelligence do?" }
+          ]
+        }
+      ]
+    }
+  ],
+  "copilotAgents": {
+    "customEngineAgents": [
+      { "type": "bot", "id": "${{BOT_ID}}" }
+    ]
+  },
+  "validDomains": [
+    "ipai-copilot-gateway.insightpulseai.com",
+    "ipai-copilot-resource.services.ai.azure.com"
+  ],
+  "webApplicationInfo": {
+    "id": "${{AAD_APP_CLIENT_ID}}",
+    "resource": "api://botid-${{BOT_ID}}"
+  }
+}

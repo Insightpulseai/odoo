@@ -1,0 +1,98 @@
+# yaml-language-server: $schema=https://aka.ms/teams-toolkit/v1.8/yaml.schema.json
+#
+# Pulser for Teams — Microsoft 365 Agents Toolkit lifecycle.
+# Generated to match `atk new --type custom-engine-agent --lang python`.
+
+version: v1.8
+
+environmentFolderPath: ./env
+
+# ─── Provision ──────────────────────────────────────────────────────────────
+provision:
+  # Entra app registration — identity for the bot
+  - uses: aadApp/create
+    with:
+      name: pulser-teams-${{TEAMSFX_ENV}}
+      generateClientSecret: true
+      signInAudience: AzureADMyOrg
+    writeToEnvironmentFile:
+      clientId: AAD_APP_CLIENT_ID
+      clientSecret: SECRET_AAD_APP_CLIENT_SECRET
+      objectId: AAD_APP_OBJECT_ID
+      tenantId: AAD_APP_TENANT_ID
+      authority: AAD_APP_OAUTH_AUTHORITY
+      authorityHost: AAD_APP_OAUTH_AUTHORITY_HOST
+
+  # Azure Bot Channel Registration — routes Teams/Copilot Chat to BOT_ENDPOINT
+  - uses: botAadApp/create
+    with:
+      name: pulser-teams-bot-${{TEAMSFX_ENV}}
+    writeToEnvironmentFile:
+      botId: BOT_ID
+      botPassword: SECRET_BOT_PASSWORD
+
+  - uses: arm/deploy
+    with:
+      subscriptionId: ${{AZURE_SUBSCRIPTION_ID}}
+      resourceGroupName: ${{AZURE_RESOURCE_GROUP_NAME}}
+      templates:
+        - path: ./infra/azure.bicep
+          parameters: ./infra/azure.parameters.json
+          deploymentName: pulser-teams-${{TEAMSFX_ENV}}
+
+  # Teams app package
+  - uses: teamsApp/validateManifest
+    with:
+      manifestPath: ./appPackage/manifest.json
+
+  - uses: teamsApp/zipAppPackage
+    with:
+      manifestPath: ./appPackage/manifest.json
+      outputZipPath: ./appPackage/build/appPackage.${{TEAMSFX_ENV}}.zip
+      outputFolder: ./appPackage/build
+
+  - uses: teamsApp/update
+    with:
+      appPackagePath: ./appPackage/build/appPackage.${{TEAMSFX_ENV}}.zip
+
+# ─── Deploy ─────────────────────────────────────────────────────────────────
+# Custom engine agents: deployment target is `ipai-copilot-gateway` (ACA),
+# which handles Bot Framework traffic. The proxy code in bot/ is packaged
+# and deployed alongside.
+deploy:
+  - uses: file/createOrUpdateEnvironmentFile
+    with:
+      target: ./bot/.env
+      envs:
+        BOT_ID: ${{BOT_ID}}
+        BOT_PASSWORD: ${{SECRET_BOT_PASSWORD}}
+        COPILOT_GATEWAY_URL: ${{COPILOT_GATEWAY_URL}}
+        AZURE_CLIENT_ID: ${{AAD_APP_CLIENT_ID}}
+        AZURE_TENANT_ID: ${{AAD_APP_TENANT_ID}}
+
+  # Package bot code for ACA deployment — image builds via GHCR / ACR
+  # and is deployed by the separate `deploy-erp-canonical.yml` workflow.
+  # This action just validates the bot can start.
+  - uses: script
+    with:
+      run: |
+        cd bot
+        python -m pip install -r requirements.txt
+        python -c "from app import create_app; create_app()"
+        echo "Bot imports resolve — ready for container build."
+
+# ─── Publish ────────────────────────────────────────────────────────────────
+publish:
+  - uses: teamsApp/validateAppPackage
+    with:
+      appPackagePath: ./appPackage/build/appPackage.${{TEAMSFX_ENV}}.zip
+
+  - uses: teamsApp/update
+    with:
+      appPackagePath: ./appPackage/build/appPackage.${{TEAMSFX_ENV}}.zip
+
+  - uses: teamsApp/publishAppPackage
+    with:
+      appPackagePath: ./appPackage/build/appPackage.${{TEAMSFX_ENV}}.zip
+    writeToEnvironmentFile:
+      publishedAppId: TEAMS_APP_PUBLISHED_APP_ID

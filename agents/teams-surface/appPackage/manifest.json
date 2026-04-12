@@ -1,0 +1,69 @@
+{
+  "$schema": "https://developer.microsoft.com/en-us/json-schemas/teams/v1.21/MicrosoftTeams.schema.json",
+  "manifestVersion": "1.21",
+  "version": "0.1.0",
+  "id": "${{TEAMS_APP_ID}}",
+  "developer": {
+    "name": "InsightPulseAI Inc.",
+    "websiteUrl": "https://insightpulseai.com",
+    "privacyUrl": "https://insightpulseai.com/privacy",
+    "termsOfUseUrl": "https://insightpulseai.com/terms"
+  },
+  "icons": {
+    "color": "color.png",
+    "outline": "outline.png"
+  },
+  "name": {
+    "short": "Pulser",
+    "full": "Pulser — InsightPulseAI assistant"
+  },
+  "description": {
+    "short": "Odoo, BIR, Azure — ask Pulser anything about IPAI operations.",
+    "full": "Pulser is the InsightPulseAI platform assistant. It can answer questions about Odoo 18 CE modules, Philippine BIR compliance, Azure infrastructure, and IPAI platform doctrine. Backed by Microsoft Foundry (ipai-copilot-resource) and claude-sonnet-4-6."
+  },
+  "accentColor": "#0F6FC6",
+  "bots": [
+    {
+      "botId": "${{BOT_ID}}",
+      "scopes": ["personal", "team", "groupChat"],
+      "supportsFiles": false,
+      "isNotificationOnly": false,
+      "commandLists": [
+        {
+          "scopes": ["personal", "team", "groupChat"],
+          "commands": [
+            { "title": "odoo",    "description": "Odoo 18 module + OCA questions" },
+            { "title": "bir",     "description": "BIR compliance + Philippine tax queries" },
+            { "title": "infra",   "description": "Azure-native infrastructure / Foundry" },
+            { "title": "doctrine","description": "IPAI platform doctrine check" },
+            { "title": "help",    "description": "What can Pulser do?" }
+          ]
+        }
+      ]
+    }
+  ],
+  "copilotAgents": {
+    "customEngineAgents": [
+      {
+        "type": "bot",
+        "id": "${{BOT_ID}}"
+      }
+    ]
+  },
+  "validDomains": [
+    "ipai-copilot-gateway.insightpulseai.com",
+    "ipai-copilot-resource.services.ai.azure.com"
+  ],
+  "webApplicationInfo": {
+    "id": "${{AAD_APP_CLIENT_ID}}",
+    "resource": "api://botid-${{BOT_ID}}"
+  },
+  "authorization": {
+    "permissions": {
+      "resourceSpecific": [
+        { "name": "ChatMessage.Read.Chat",        "type": "Application" },
+        { "name": "ChannelMessage.Read.Group",    "type": "Application" }
+      ]
+    }
+  }
+}

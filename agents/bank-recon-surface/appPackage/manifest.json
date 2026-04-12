@@ -1,0 +1,56 @@
+{
+  "$schema": "https://developer.microsoft.com/en-us/json-schemas/teams/v1.21/MicrosoftTeams.schema.json",
+  "manifestVersion": "1.21",
+  "version": "0.1.0",
+  "id": "${{TEAMS_APP_ID}}",
+  "developer": {
+    "name": "InsightPulseAI Inc.",
+    "websiteUrl": "https://insightpulseai.com",
+    "privacyUrl": "https://insightpulseai.com/privacy",
+    "termsOfUseUrl": "https://insightpulseai.com/terms"
+  },
+  "icons": { "color": "color.png", "outline": "outline.png" },
+  "name": {
+    "short": "Bank Recon",
+    "full": "Bank Recon — Bank reconciliation assistant"
+  },
+  "description": {
+    "short": "Reconcile bank statements against Odoo entries in minutes.",
+    "full": "Bank Recon imports bank statements (OFX, CSV, PDF), matches them against Odoo account.move entries, and proposes reconciliations with confidence scores. Backed by ipai-copilot-gateway and the IPAI reconciliation rules engine."
+  },
+  "accentColor": "#1565C0",
+  "bots": [
+    {
+      "botId": "${{BOT_ID}}",
+      "scopes": ["personal", "team", "groupChat"],
+      "supportsFiles": true,
+      "isNotificationOnly": false,
+      "commandLists": [
+        {
+          "scopes": ["personal", "team", "groupChat"],
+          "commands": [
+            { "title": "match",        "description": "Match a statement line to an Odoo move" },
+            { "title": "unreconciled", "description": "List unreconciled entries by bank" },
+            { "title": "stmt",         "description": "Upload and parse a bank statement" },
+            { "title": "summary",      "description": "Reconciliation summary for the current period" },
+            { "title": "banks",        "description": "List configured bank accounts" },
+            { "title": "help",         "description": "What can Bank Recon do?" }
+          ]
+        }
+      ]
+    }
+  ],
+  "copilotAgents": {
+    "customEngineAgents": [
+      { "type": "bot", "id": "${{BOT_ID}}" }
+    ]
+  },
+  "validDomains": [
+    "ipai-copilot-gateway.insightpulseai.com",
+    "ipai-copilot-resource.services.ai.azure.com"
+  ],
+  "webApplicationInfo": {
+    "id": "${{AAD_APP_CLIENT_ID}}",
+    "resource": "api://botid-${{BOT_ID}}"
+  }
+}
