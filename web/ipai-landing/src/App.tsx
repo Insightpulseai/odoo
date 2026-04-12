@@ -470,6 +470,7 @@ const Footer = ({ setPage }: { setPage: (p: PageId) => void }) => (
         <div>
           <p>&copy; 2026 InsightPulseAI. All rights reserved.</p>
           <p className="mt-2 text-gray-600">Dataverse IT Consultancy &middot; La Fuerza Plaza, 2241 Chino Roces Ave, Makati City 1231, Philippines</p>
+          <p className="mt-2 text-gray-600">InsightPulseAI is a Microsoft Solutions Partner for Business Applications.</p>
         </div>
         <div className="flex gap-8">
           <button onClick={() => setPage('trust')} className="hover:text-white transition-colors">Trust Center</button>
@@ -790,10 +791,20 @@ const HomePage = ({ setPage }: { setPage: (p: PageId) => void }) => (
     </section>
 
     {/* Trust & Governance */}
-    <section className="py-24 px-6 md:px-12 max-w-7xl mx-auto">
+    <section className="py-24 px-6 md:px-12 max-w-7xl mx-auto" aria-labelledby="trust-governance-heading">
       <div className="mb-16">
-        <h2 className="text-3xl md:text-4xl font-bold mb-8 tracking-tight">Trust, governance, and current product posture</h2>
+        <h2 id="trust-governance-heading" className="text-3xl md:text-4xl font-bold mb-8 tracking-tight">Trust, governance, and current product posture</h2>
       </div>
+
+      {/* Microsoft partnership attribution */}
+      <div className="mb-12 p-8 rounded-2xl bg-white border border-gray-100" style={{ boxShadow: SHADOW.shadow4 }} aria-labelledby="microsoft-partner-heading">
+        <h3 id="microsoft-partner-heading" className="text-sm font-bold uppercase tracking-widest text-brand-primary mb-3">Microsoft partnership</h3>
+        <p className="text-lg text-gray-800 leading-relaxed">
+          InsightPulseAI is a Microsoft Solutions Partner for Business Applications.
+          We help organizations modernize business applications, operations, and ERP workflows using Microsoft technologies.
+        </p>
+      </div>
+
       <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {[
           "Role-based access and workflow-aware permissions",
