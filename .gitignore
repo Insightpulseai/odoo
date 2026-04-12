@@ -329,3 +329,6 @@ docs-site/site/
 
 # Claude scheduled tasks lock
 .claude/scheduled_tasks.lock
+
+# exclude build zips — regenerable from manifests + icons
+**/appPackage/build/
