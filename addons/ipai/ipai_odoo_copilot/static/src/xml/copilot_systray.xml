@@ -61,20 +61,20 @@
                         <!-- User Message -->
                         <div t-if="msg.role === 'user'"
                              class="o_ipai_copilot_message o_ipai_copilot_message_user mb-2 d-flex justify-content-end">
-                            <div class="o_ipai_copilot_bubble_user rounded-3 px-3 py-2 small">
+                            <div class="o_ipai_copilot_bubble_user px-3 py-2">
                                 <t t-esc="msg.content"/>
                             </div>
                         </div>
 
-                        <!-- Assistant Message -->
+                        <!-- Assistant Message (rendered as markdown) -->
                         <div t-if="msg.role === 'assistant'"
                              class="o_ipai_copilot_message o_ipai_copilot_message_assistant mb-2">
-                            <div class="o_ipai_copilot_bubble_assistant rounded-3 px-3 py-2 small"
+                            <div class="o_ipai_copilot_bubble_assistant px-3 py-2"
                                  style="max-width: 90%;">
-                                <div class="o_ipai_copilot_content" t-esc="msg.content"/>
+                                <div class="o_ipai_copilot_content"
+                                     t-out="renderMarkdownContent(msg.content)"/>
                                 <div t-if="msg.latency_ms"
-                                     class="text-muted mt-1"
-                                     style="font-size: 0.7rem;">
+                                     class="o_ipai_copilot_latency mt-1">
                                     <t t-esc="msg.latency_ms"/>ms
                                 </div>
                             </div>
@@ -104,9 +104,29 @@
                     </div>
                 </div>
 
+                <!-- Attached file indicator -->
+                <t t-if="state.attachedFile">
+                    <div class="d-flex align-items-center gap-1 px-3 py-1 bg-light border-top small">
+                        <i class="fa fa-paperclip text-primary"/>
+                        <span class="text-truncate" style="max-width: 180px;" t-esc="state.attachedFile.name"/>
+                        <button class="btn btn-link btn-sm p-0 ms-auto" t-on-click="onRemoveAttachment">
+                            <i class="fa fa-times text-danger"/>
+                        </button>
+                    </div>
+                </t>
+
                 <!-- Input Area -->
                 <div class="o_ipai_copilot_input border-top px-3 py-2">
+                    <input type="file" class="d-none" t-ref="fileInput"
+                           t-on-change="onFileSelected"
+                           accept=".txt,.csv,.md,.html,.xml,.json,.pdf,.png,.jpg,.jpeg,.webp,.xlsx,.docx"/>
                     <div class="d-flex gap-2">
+                        <button class="btn btn-light btn-sm px-2"
+                                t-on-click="onClickUpload"
+                                t-att-disabled="state.isLoading"
+                                title="Upload file">
+                            <i class="fa fa-paperclip"/>
+                        </button>
                         <textarea
                             t-ref="promptInput"
                             class="form-control form-control-sm"

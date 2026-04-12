@@ -1,3 +1,12 @@
+---
+name: service-matrix-truth
+description: Reconcile the Azure service matrix by correcting stub services from active to placeholder status with accurate inventory
+version: "1.0"
+compatibility:
+  hosts: [github-copilot, claude-code, codex-cli, cursor, gemini-cli]
+tags: [governance, observability, aca, architecture]
+---
+
 # service-matrix-truth
 
 **Impact tier**: P2 -- Quality / Accuracy

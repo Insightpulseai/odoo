@@ -1,12 +1,12 @@
 # Docker
 
-The local development stack runs Odoo CE 19 and PostgreSQL 16 via Docker Compose. An optional tools profile adds pgAdmin and Mailpit for database inspection and email testing.
+The local development stack runs Odoo CE 18 and PostgreSQL 16 via Docker Compose. An optional tools profile adds pgAdmin and Mailpit for database inspection and email testing.
 
 ## Development stack
 
 | Service | Image | Port | Purpose |
 |---------|-------|------|---------|
-| `web` | Odoo CE 19 | `8069` | Odoo web server |
+| `web` | Odoo CE 18 | `8069` | Odoo web server |
 | `db` | PostgreSQL 16 | `5433` | Database (mapped to 5433 to avoid host conflicts) |
 
 ### Optional tools profile

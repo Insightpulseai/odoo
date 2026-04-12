@@ -243,6 +243,48 @@ tiers:
   superseded_by: health-check
   sunset_date: "2026-03-07"
 
+# ── Tier 1: Pulser Finance Workflows ─────────────────────────────────
+
+- id: pulser-doc-intake-v1
+  file: odoo/pulser-doc-intake-v1.yaml
+  owner: pulser
+  purpose: Document intake, classification, extraction, validation, and draft creation
+  tier: 1
+  lifecycle: experimental
+  pattern: sequential
+  schema: agents/schemas/workflow/pulser/pulser_doc_intake_result.schema.json
+  sc_ph_coverage: [SC-PH-03, SC-PH-06]
+
+- id: pulser-form-validator-v1
+  file: odoo/pulser-form-validator-v1.yaml
+  owner: pulser
+  purpose: Active-form validation and structured status response
+  tier: 1
+  lifecycle: experimental
+  pattern: sequential
+  schema: agents/schemas/workflow/pulser/pulser_form_validation_result.schema.json
+  sc_ph_coverage: [SC-PH-01, SC-PH-07]
+
+- id: pulser-payment-reconcile-v1
+  file: odoo/pulser-payment-reconcile-v1.yaml
+  owner: pulser
+  purpose: Payment registration and reconciliation matching
+  tier: 1
+  lifecycle: experimental
+  pattern: sequential
+  schema: agents/schemas/workflow/pulser/pulser_payment_reconcile_result.schema.json
+  sc_ph_coverage: [SC-PH-02]
+
+- id: pulser-close-orchestrator-v1
+  file: odoo/pulser-close-orchestrator-v1.yaml
+  owner: pulser
+  purpose: Month-end, year-end, and PH BIR close cycle orchestration
+  tier: 1
+  lifecycle: experimental
+  pattern: human_in_the_loop
+  schema: agents/schemas/workflow/pulser/pulser_close_orchestrator_result.schema.json
+  sc_ph_coverage: [SC-PH-12]
+
 # ── Not Yet Classified (remaining 127 workflows) ─────────────────────
 # TODO: Classify remaining workflows. Run:
 #   ls .github/workflows/*.yml | wc -l  # should match total count

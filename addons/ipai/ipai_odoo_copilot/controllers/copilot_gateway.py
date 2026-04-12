@@ -31,7 +31,18 @@ _SYSTEM_PROMPT = (
     "You help users with Philippine finance, BIR tax compliance, HR, "
     "inventory, sales, and general ERP questions. "
     "Answer concisely. Use markdown formatting. "
-    "If you need to reference Odoo records, mention the model and ID."
+    "If you need to reference Odoo records, mention the model and ID.\n\n"
+    "ATTACHMENT HANDLING RULES:\n"
+    "When the user attaches a file, treat it as received and ready for review. "
+    "Acknowledge the file by name and IMMEDIATELY offer actionable help:\n"
+    "- For invoices/receipts: offer to check line items, tax (VAT 12%, EWT), "
+    "totals, vendor match, and BIR compliance.\n"
+    "- For spreadsheets: offer to review entries, reconcile, or summarize.\n"
+    "- For other files: offer context-appropriate analysis.\n"
+    "NEVER say you cannot read or open attachments. "
+    "NEVER ask for an invoice number when the user already attached a file. "
+    "NEVER disclaim about PDF limitations. "
+    "Act as if you have received the document and are ready to help."
 )
 
 
@@ -293,7 +304,8 @@ class CopilotGatewayController(http.Controller):
             _logger.exception('Copilot gateway unexpected error')
             raise ValueError('Gateway error: %s' % str(e))
 
-    def _dispatch_message(self, message, context, conversation, correlation_id):
+    def _dispatch_message(self, message, context, conversation, correlation_id,
+                          attachment_ref=None):
         """Route message to the appropriate backend.
 
         Returns (response_dict, latency_ms).
@@ -313,6 +325,26 @@ class CopilotGatewayController(http.Controller):
                     'content': 'User is viewing %s (ID: %s) in Odoo.' % (ctx_model, ctx_id),
                 })
 
+            # If attachment present, inject as system instruction the model cannot ignore
+            if attachment_ref and isinstance(attachment_ref, dict):
+                fname = attachment_ref.get('filename', '')
+                if fname:
+                    messages.append({
+                        'role': 'system',
+                        'content': (
+                            'CRITICAL INSTRUCTION: The user has uploaded a file '
+                            'named "%s". This file is now attached to the '
+                            'conversation. You MUST:\n'
+                            '1. Acknowledge "%s" by name\n'
+                            '2. Immediately offer to review it (line items, '
+                            'tax, totals, compliance)\n'
+                            '3. Ask what specific aspect they want checked\n'
+                            'You MUST NOT say you cannot read/open/analyze '
+                            'the file. You MUST NOT ask for an invoice number. '
+                            'Treat the file as received.' % (fname, fname)
+                        ),
+                    })
+
             # Add conversation history (last 10 messages)
             if conversation:
                 history = request.env['ipai.copilot.message'].sudo().search(
@@ -325,6 +357,8 @@ class CopilotGatewayController(http.Controller):
                         messages.append({'role': msg.role, 'content': msg.content or ''})
 
             messages.append({'role': 'user', 'content': message})
+            _logger.info('copilot-openai: sending %d messages, last=%r',
+                         len(messages), message[:100])
             return self._call_openai(messages, correlation_id)
         else:
             # Track 2: Custom gateway
@@ -352,7 +386,8 @@ class CopilotGatewayController(http.Controller):
         auth='user',
         methods=['POST'],
     )
-    def chat(self, conversation_id=None, message='', context=None):
+    def chat(self, conversation_id=None, message='', prompt='',
+             context=None, attachment_ref=None, **kw):
         """Send a message to the copilot and return the response.
 
         Args:
@@ -364,6 +399,9 @@ class CopilotGatewayController(http.Controller):
             dict with keys: conversation_id, content, role, request_id,
             latency_ms, error (if any).
         """
+        # Normalize: JS systray sends 'prompt', chat_panel sends 'message'
+        message = message or prompt or ''
+
         if not self._is_enabled():
             return {
                 'error': True,
@@ -436,6 +474,26 @@ class CopilotGatewayController(http.Controller):
             'surface': context.get('surface', 'erp'),
         }
 
+        # If attachment was provided, prepend clear context so the model knows
+        dispatch_message = message.strip()
+        _logger.info(
+            'copilot-chat: attachment_ref=%r, message=%r',
+            attachment_ref, dispatch_message[:100],
+        )
+        if attachment_ref and isinstance(attachment_ref, dict):
+            fname = attachment_ref.get('filename', '')
+            status = attachment_ref.get('status', '')
+            if fname:
+                dispatch_message = (
+                    '[ATTACHED FILE: %s (status: %s)]\n'
+                    'The user has attached this file to their message. '
+                    'You MUST acknowledge the file by name and respond '
+                    'based on what the filename suggests. Do NOT ask for '
+                    'an invoice number or record — the file IS the document.\n\n'
+                    '%s' % (fname, status or 'uploaded', dispatch_message)
+                )
+                _logger.info('copilot-chat: dispatch_message=%r', dispatch_message[:300])
+
         self._audit_log('chat_request', user_id=uid,
                         conversation_id=conversation.id,
                         correlation_id=correlation_id,
@@ -443,7 +501,8 @@ class CopilotGatewayController(http.Controller):
 
         try:
             resp_data, latency_ms = self._dispatch_message(
-                message.strip(), ctx, conversation, correlation_id
+                dispatch_message, ctx, conversation, correlation_id,
+                attachment_ref=attachment_ref,
             )
         except ValueError as e:
             # Persist error as system message for audit trail

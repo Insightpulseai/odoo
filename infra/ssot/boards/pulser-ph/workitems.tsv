@@ -1,0 +1,72 @@
+Key	Parent Key	Work Item Type	Title	Area Path	Iteration Path	Tags
+EPIC-PH-00		Epic	Pulser for PH: Expert Finance Operations Workspace	Pulser for PH	R1-Foundation-30d	pulser-ph;odoo18;oca;foundry;bir
+EPIC-PH-01	EPIC-PH-00	Epic	Foundry governance hardening	Pulser for PH / Runtime & Governance	R1-Foundation-30d	pulser-ph;foundry
+EPIC-PH-02	EPIC-PH-00	Epic	Skill packaging and safe-action contracts	Pulser for PH / Runtime & Governance	R1-Foundation-30d	pulser-ph;foundry;azure-skills
+EPIC-PH-03	EPIC-PH-00	Epic	AP / AR / Expense core execution	Pulser for PH / Finance Core	R2-Core-Execution-60d	pulser-ph;odoo18;oca
+EPIC-PH-04	EPIC-PH-00	Epic	Cash advance and liquidation control	Pulser for PH / Finance Core	R2-Core-Execution-60d	pulser-ph;cash-advance
+EPIC-PH-05	EPIC-PH-00	Epic	PH tax and BIR readiness	Pulser for PH / PH Compliance & Close	R2-Core-Execution-60d	pulser-ph;bir
+EPIC-PH-06	EPIC-PH-00	Epic	Month-end, year-end, and tax-period close orchestration	Pulser for PH / PH Compliance & Close	R3-PH-Ops-Hardening-90d	pulser-ph;close;bir
+EPIC-PH-07	EPIC-PH-00	Epic	Document digitization replacement and evidence control	Pulser for PH / Documents & Integrations	R2-Core-Execution-60d	pulser-ph;documents
+EPIC-PH-08	EPIC-PH-00	Epic	Knowledge, search, and MCP grounding	Pulser for PH / Documents & Integrations	R2-Core-Execution-60d	pulser-ph;knowledge;mcp;foundry
+EPIC-PH-09	EPIC-PH-00	Epic	Online payments expert	Pulser for PH / Payments & Launch	R3-PH-Ops-Hardening-90d	pulser-ph;payments
+EPIC-PH-10	EPIC-PH-00	Epic	Release, UAT, and market readiness	Pulser for PH / Payments & Launch	R4-GA	pulser-ph;launch
+ISSUE-PH-001	EPIC-PH-01	Issue	Create Pulser custom compliance policy pack	Pulser for PH / Runtime & Governance	R1-Foundation-30d	pulser-ph;foundry;policy
+ISSUE-PH-002	EPIC-PH-01	Issue	Turn release-gate eval definitions into enforced runs	Pulser for PH / Runtime & Governance	R1-Foundation-30d	pulser-ph;foundry;evals
+ISSUE-PH-003	EPIC-PH-01	Issue	Seed stored completions and replay corpus	Pulser for PH / Runtime & Governance	R2-Core-Execution-60d	pulser-ph;foundry;replay
+ISSUE-PH-004	EPIC-PH-01	Issue	Launch first red-team campaign against Pulser core agents	Pulser for PH / Runtime & Governance	R2-Core-Execution-60d	pulser-ph;foundry;redteam
+ISSUE-PH-005	EPIC-PH-01	Issue	Enable monitoring and actionable alerts for all core agents	Pulser for PH / Runtime & Governance	R1-Foundation-30d	pulser-ph;foundry;monitoring
+ISSUE-PH-006	EPIC-PH-01	Issue	Define release promotion gates for pilot, Release 1, and GA	Pulser for PH / Runtime & Governance	R1-Foundation-30d	pulser-ph;foundry;release
+ISSUE-PH-007	EPIC-PH-02	Issue	Publish Pulser Azure skill taxonomy	Pulser for PH / Runtime & Governance	R1-Foundation-30d	pulser-ph;azure-skills
+ISSUE-PH-008	EPIC-PH-02	Issue	Publish Odoo 18/OCA runtime adapter contract	Pulser for PH / Runtime & Governance	R1-Foundation-30d	pulser-ph;odoo18;oca
+ISSUE-PH-009	EPIC-PH-02	Issue	Publish structured output schemas and safe-action enum	Pulser for PH / Runtime & Governance	R1-Foundation-30d	pulser-ph;contracts
+ISSUE-PH-010	EPIC-PH-02	Issue	Publish official BIR boundary registry	Pulser for PH / Runtime & Governance	R1-Foundation-30d	pulser-ph;bir
+ISSUE-PH-011	EPIC-PH-02	Issue	Publish policy registry and rule catalog	Pulser for PH / Runtime & Governance	R1-Foundation-30d	pulser-ph;policy
+ISSUE-PH-012	EPIC-PH-03	Issue	Implement active-form grounding and intent normalization	Pulser for PH / Finance Core	R1-Foundation-30d	pulser-ph;odoo18
+ISSUE-PH-013	EPIC-PH-03	Issue	Implement AP document intake to draft vendor bill	Pulser for PH / Finance Core	R2-Core-Execution-60d	pulser-ph;ap;documents
+ISSUE-PH-014	EPIC-PH-03	Issue	Implement AR invoice readiness and draft invoice creation	Pulser for PH / Finance Core	R2-Core-Execution-60d	pulser-ph;ar
+ISSUE-PH-015	EPIC-PH-03	Issue	Implement expense readiness and not_yet_computable handling	Pulser for PH / Finance Core	R2-Core-Execution-60d	pulser-ph;expenses
+ISSUE-PH-016	EPIC-PH-03	Issue	Implement payment assist and reconciliation candidate routing	Pulser for PH / Finance Core	R2-Core-Execution-60d	pulser-ph;payments;reconciliation
+ISSUE-PH-017	EPIC-PH-03	Issue	Implement duplicate, totals, and company-context checks	Pulser for PH / Finance Core	R1-Foundation-30d	pulser-ph;controls
+ISSUE-PH-018	EPIC-PH-04	Issue	Implement cash advance request and approval workflow	Pulser for PH / Finance Core	R2-Core-Execution-60d	pulser-ph;cash-advance
+ISSUE-PH-019	EPIC-PH-04	Issue	Implement cash advance issuance tracking	Pulser for PH / Finance Core	R2-Core-Execution-60d	pulser-ph;cash-advance
+ISSUE-PH-020	EPIC-PH-04	Issue	Implement liquidation against expenses and reports	Pulser for PH / Finance Core	R3-PH-Ops-Hardening-90d	pulser-ph;cash-advance;expenses
+ISSUE-PH-021	EPIC-PH-04	Issue	Implement return-of-unused-cash settlement tracking	Pulser for PH / Finance Core	R3-PH-Ops-Hardening-90d	pulser-ph;cash-advance
+ISSUE-PH-022	EPIC-PH-04	Issue	Implement outstanding advance aging dashboard	Pulser for PH / Finance Core	R3-PH-Ops-Hardening-90d	pulser-ph;cash-advance;dashboard
+ISSUE-PH-023	EPIC-PH-04	Issue	Implement project/client/branch attribution for advances	Pulser for PH / Finance Core	R3-PH-Ops-Hardening-90d	pulser-ph;cash-advance;projects
+ISSUE-PH-024	EPIC-PH-05	Issue	Implement VAT consistency and fiscal-position rules	Pulser for PH / PH Compliance & Close	R2-Core-Execution-60d	pulser-ph;bir;vat
+ISSUE-PH-025	EPIC-PH-05	Issue	Implement withholding, ATC, and TIN validation engine	Pulser for PH / PH Compliance & Close	R2-Core-Execution-60d	pulser-ph;bir;withholding
+ISSUE-PH-026	EPIC-PH-05	Issue	Implement 2307 readiness and evidence pack	Pulser for PH / PH Compliance & Close	R3-PH-Ops-Hardening-90d	pulser-ph;bir;2307
+ISSUE-PH-027	EPIC-PH-05	Issue	Implement 2550Q reference readiness	Pulser for PH / PH Compliance & Close	R3-PH-Ops-Hardening-90d	pulser-ph;bir;2550Q
+ISSUE-PH-028	EPIC-PH-05	Issue	Implement SAWT, QAP, and SLSP/SLSPI attachment readiness	Pulser for PH / PH Compliance & Close	R3-PH-Ops-Hardening-90d	pulser-ph;bir;sawt;qap;slsp
+ISSUE-PH-029	EPIC-PH-05	Issue	Implement official BIR status model and external confirmation handling	Pulser for PH / PH Compliance & Close	R3-PH-Ops-Hardening-90d	pulser-ph;bir;status
+ISSUE-PH-030	EPIC-PH-06	Issue	Create month-end close template catalog	Pulser for PH / PH Compliance & Close	R3-PH-Ops-Hardening-90d	pulser-ph;close
+ISSUE-PH-031	EPIC-PH-06	Issue	Create year-end close template catalog	Pulser for PH / PH Compliance & Close	R3-PH-Ops-Hardening-90d	pulser-ph;close
+ISSUE-PH-032	EPIC-PH-06	Issue	Create PH tax-period close template catalog	Pulser for PH / PH Compliance & Close	R3-PH-Ops-Hardening-90d	pulser-ph;close;bir
+ISSUE-PH-033	EPIC-PH-06	Issue	Implement dependency, blocker, and critical-path engine	Pulser for PH / PH Compliance & Close	R3-PH-Ops-Hardening-90d	pulser-ph;close
+ISSUE-PH-034	EPIC-PH-06	Issue	Implement evidence packs and signoff states	Pulser for PH / PH Compliance & Close	R3-PH-Ops-Hardening-90d	pulser-ph;close;evidence
+ISSUE-PH-035	EPIC-PH-06	Issue	Implement close dashboards and reviewer routing	Pulser for PH / PH Compliance & Close	R4-GA	pulser-ph;close;dashboard
+ISSUE-PH-036	EPIC-PH-07	Issue	Define XML-first parser and extraction contract	Pulser for PH / Documents & Integrations	R2-Core-Execution-60d	pulser-ph;documents;xml
+ISSUE-PH-037	EPIC-PH-07	Issue	Implement PDF/image OCR extraction lane	Pulser for PH / Documents & Integrations	R2-Core-Execution-60d	pulser-ph;documents;ocr
+ISSUE-PH-038	EPIC-PH-07	Issue	Implement Odoo draft-bill / draft-invoice bridge	Pulser for PH / Documents & Integrations	R3-PH-Ops-Hardening-90d	pulser-ph;documents;odoo18
+ISSUE-PH-039	EPIC-PH-07	Issue	Implement purchase matching hooks for vendor bills	Pulser for PH / Documents & Integrations	R3-PH-Ops-Hardening-90d	pulser-ph;documents;purchase
+ISSUE-PH-040	EPIC-PH-07	Issue	Implement Documents taxonomy and metadata schema	Pulser for PH / Documents & Integrations	R3-PH-Ops-Hardening-90d	pulser-ph;documents;taxonomy
+ISSUE-PH-041	EPIC-PH-07	Issue	Implement evidence retention and source-attachment policy	Pulser for PH / Documents & Integrations	R3-PH-Ops-Hardening-90d	pulser-ph;documents;evidence
+ISSUE-PH-042	EPIC-PH-08	Issue	Sweep local content and select Pulser knowledge sources	Pulser for PH / Documents & Integrations	R1-Foundation-30d	pulser-ph;knowledge
+ISSUE-PH-043	EPIC-PH-08	Issue	Create first Azure AI Search / Foundry IQ index	Pulser for PH / Documents & Integrations	R2-Core-Execution-60d	pulser-ph;knowledge;foundry
+ISSUE-PH-044	EPIC-PH-08	Issue	Implement retrieval quality eval suite	Pulser for PH / Documents & Integrations	R2-Core-Execution-60d	pulser-ph;knowledge;evals
+ISSUE-PH-045	EPIC-PH-08	Issue	Deploy or verify PostgreSQL MCP server and read-only connection	Pulser for PH / Documents & Integrations	R1-Foundation-30d	pulser-ph;mcp;postgres
+ISSUE-PH-046	EPIC-PH-08	Issue	Implement read-only schema query and grounding adapter	Pulser for PH / Documents & Integrations	R3-PH-Ops-Hardening-90d	pulser-ph;mcp;postgres
+ISSUE-PH-047	EPIC-PH-08	Issue	Implement tool/knowledge attachment scoping and cost controls	Pulser for PH / Documents & Integrations	R3-PH-Ops-Hardening-90d	pulser-ph;knowledge;cost
+ISSUE-PH-048	EPIC-PH-09	Issue	Implement provider readiness validator	Pulser for PH / Payments & Launch	R3-PH-Ops-Hardening-90d	pulser-ph;payments
+ISSUE-PH-049	EPIC-PH-09	Issue	Implement test-mode and sandbox safety checks	Pulser for PH / Payments & Launch	R3-PH-Ops-Hardening-90d	pulser-ph;payments
+ISSUE-PH-050	EPIC-PH-09	Issue	Implement tokenization, manual capture, and refund capability matrix	Pulser for PH / Payments & Launch	R3-PH-Ops-Hardening-90d	pulser-ph;payments
+ISSUE-PH-051	EPIC-PH-09	Issue	Implement payment journal and outstanding-account validation	Pulser for PH / Payments & Launch	R3-PH-Ops-Hardening-90d	pulser-ph;payments;accounting
+ISSUE-PH-052	EPIC-PH-09	Issue	Implement payment-method availability diagnostics	Pulser for PH / Payments & Launch	R3-PH-Ops-Hardening-90d	pulser-ph;payments
+ISSUE-PH-053	EPIC-PH-09	Issue	Implement payment-provider-to-reconciliation routing	Pulser for PH / Payments & Launch	R4-GA	pulser-ph;payments;reconciliation
+ISSUE-PH-054	EPIC-PH-10	Issue	Create UAT scenario pack mapped to SC-PH criteria	Pulser for PH / Payments & Launch	R4-GA	pulser-ph;uat
+ISSUE-PH-055	EPIC-PH-10	Issue	Create competitor differentiation matrix	Pulser for PH / Payments & Launch	R4-GA	pulser-ph;strategy
+ISSUE-PH-056	EPIC-PH-10	Issue	Create internal enablement pack for PH finance operators	Pulser for PH / Payments & Launch	R4-GA	pulser-ph;enablement
+ISSUE-PH-057	EPIC-PH-10	Issue	Create release dashboard and board reporting pack	Pulser for PH / Payments & Launch	R4-GA	pulser-ph;reporting
+ISSUE-PH-058	EPIC-PH-10	Issue	Run MVP release candidate and pilot gate	Pulser for PH / Payments & Launch	R4-GA	pulser-ph;release
+ISSUE-PH-059	EPIC-PH-10	Issue	Run production-ready gate and GA signoff	Pulser for PH / Payments & Launch	R4-GA	pulser-ph;release;ga
+ISSUE-PH-060	EPIC-PH-07	Issue	Implement corporate-document request and fit-out evidence workflow	Pulser for PH / Documents & Integrations	R3-PH-Ops-Hardening-90d	pulser-ph;odoo18;oca;fitout;oprg

@@ -1,7 +1,11 @@
 # Unified API Gateway -- Target State
 
+> **SUPERSEDED** by [`API_LAYER_DOCTRINE.md`](API_LAYER_DOCTRINE.md) (2026-04-10).
+> This document references Supabase, n8n, APIM Consumption tier, and Odoo CE 19 — all deprecated or changed.
+> Retained for historical context only. Do not implement from this document.
+>
 > SSOT: `ssot/api/unified-api-gateway.yaml`
-> Status: Planning (no infrastructure provisioned)
+> Status: ~~Planning~~ **Superseded**
 > Last updated: 2026-03-13
 
 ---

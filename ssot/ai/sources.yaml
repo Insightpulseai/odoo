@@ -27,31 +27,31 @@ sources:
       # Core Odoo
       - id: odoo_18_docs
         scope: Odoo CE 18 official documentation
-        agents: [ask-agent, authoring-agent, livechat-agent, transaction-agent]
+        agents: [pulser-odoo-ask, pulser-odoo-authoring, pulser-odoo-livechat, pulser-odoo-transaction]
       - id: oca_18_inventory
         scope: OCA module inventory for Odoo 18
-        agents: [ask-agent, authoring-agent, transaction-agent]
+        agents: [pulser-odoo-ask, pulser-odoo-authoring, pulser-odoo-transaction]
       - id: repo_module_doctrine
         scope: IPAI module governance and naming conventions
-        agents: [ask-agent, authoring-agent, livechat-agent, transaction-agent]
+        agents: [pulser-odoo-ask, pulser-odoo-authoring, pulser-odoo-livechat, pulser-odoo-transaction]
       # Infrastructure
       - id: postgres_admin
         scope: PostgreSQL 16 administration and performance
-        agents: [ask-agent, transaction-agent]
+        agents: [pulser-odoo-ask, pulser-odoo-transaction]
       - id: local_platform_ssot
         scope: Platform architecture, deployment, and governance
-        agents: [ask-agent, authoring-agent, livechat-agent, transaction-agent]
+        agents: [pulser-odoo-ask, pulser-odoo-authoring, pulser-odoo-livechat, pulser-odoo-transaction]
       # Compliance & Finance
       - id: bir_compliance
         scope: Philippine BIR tax compliance requirements
-        agents: [ask-agent, authoring-agent, livechat-agent, transaction-agent]
+        agents: [pulser-odoo-ask, pulser-odoo-authoring, pulser-odoo-livechat, pulser-odoo-transaction]
       - id: tax_guru_ph
         scope: PH tax withholding codes and computation rules
-        agents: [transaction-agent]
+        agents: [pulser-odoo-transaction]
       - id: finance_domain
         scope: Finance operations (AP, close, reconciliation, expense)
-        agents: [authoring-agent, transaction-agent]
+        agents: [pulser-odoo-authoring, pulser-odoo-transaction]
       # Visitor-facing (livechat)
       - id: company_info
         scope: Company overview, products, services, contact information
-        agents: [livechat-agent]
+        agents: [pulser-odoo-livechat]

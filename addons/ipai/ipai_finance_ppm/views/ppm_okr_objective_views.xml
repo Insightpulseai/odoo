@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ── Kanban: Executive OKR Dashboard ──────────────────────────── -->
+    <record id="ppm_okr_objective_view_kanban" model="ir.ui.view">
+        <field name="name">ppm.okr.objective.kanban</field>
+        <field name="model">ppm.okr.objective</field>
+        <field name="arch" type="xml">
+            <kanban default_group_by="status" class="o_kanban_small_column">
+                <field name="code"/>
+                <field name="name"/>
+                <field name="score"/>
+                <field name="status"/>
+                <field name="color"/>
+                <field name="owner_id"/>
+                <field name="kr_count"/>
+                <field name="review_cadence"/>
+                <field name="sc_ph_refs"/>
+                <templates>
+                    <t t-name="card">
+                        <div t-att-class="'oe_kanban_color_' + record.color.raw_value">
+                            <div class="o_kanban_record_top mb-2">
+                                <strong>
+                                    <field name="code"/> — <field name="name"/>
+                                </strong>
+                            </div>
+                            <div class="o_kanban_record_body">
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <span class="badge rounded-pill"
+                                          t-att-class="{'bg-success': record.status.raw_value == 'on_track',
+                                                        'bg-warning': record.status.raw_value == 'at_risk',
+                                                        'bg-danger': record.status.raw_value == 'off_track',
+                                                        'bg-dark': record.status.raw_value == 'blocked'}">
+                                        <field name="status"/>
+                                    </span>
+                                    <span class="fw-bold" style="font-size: 1.2em;">
+                                        <field name="score" widget="float" digits="[3,2]"/>
+                                    </span>
+                                </div>
+                                <field name="score" widget="progressbar"
+                                       options="{'current_value': 'score', 'max_value': 1.0, 'editable': false}"/>
+                            </div>
+                            <div class="o_kanban_record_bottom mt-2">
+                                <div class="oe_kanban_bottom_left">
+                                    <span><field name="kr_count"/> KRs</span>
+                                    <span t-if="record.sc_ph_refs.raw_value"
+                                          class="ms-2 text-muted small">
+                                        <field name="sc_ph_refs"/>
+                                    </span>
+                                </div>
+                                <div class="oe_kanban_bottom_right">
+                                    <field name="owner_id" widget="many2one_avatar_user"/>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- ── List view ───────────────────────────────────────────────── -->
+    <record id="ppm_okr_objective_view_list" model="ir.ui.view">
+        <field name="name">ppm.okr.objective.list</field>
+        <field name="model">ppm.okr.objective</field>
+        <field name="arch" type="xml">
+            <list decoration-success="status == 'on_track'"
+                  decoration-warning="status == 'at_risk'"
+                  decoration-danger="status in ('off_track', 'blocked')">
+                <field name="code"/>
+                <field name="name"/>
+                <field name="owner_id" widget="many2one_avatar_user"/>
+                <field name="score" widget="progressbar"
+                       options="{'current_value': 'score', 'max_value': 1.0}"/>
+                <field name="status" widget="badge"
+                       decoration-success="status == 'on_track'"
+                       decoration-warning="status == 'at_risk'"
+                       decoration-danger="status in ('off_track', 'blocked')"/>
+                <field name="kr_count"/>
+                <field name="review_cadence"/>
+                <field name="sc_ph_refs" optional="hide"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- ── Form view ───────────────────────────────────────────────── -->
+    <record id="ppm_okr_objective_view_form" model="ir.ui.view">
+        <field name="name">ppm.okr.objective.form</field>
+        <field name="model">ppm.okr.objective</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <field name="status" widget="statusbar"
+                           statusbar_visible="on_track,at_risk,off_track,blocked"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="code" class="oe_inline"/> —
+                            <field name="name" class="oe_inline" placeholder="Objective name"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="owner_id"/>
+                            <field name="project_id"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                        </group>
+                        <group>
+                            <field name="score"/>
+                            <field name="review_cadence"/>
+                            <field name="sc_ph_refs"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group>
+                            <field name="period_start"/>
+                            <field name="period_end"/>
+                        </group>
+                    </group>
+                    <field name="description" placeholder="Describe this objective..."/>
+                    <notebook>
+                        <page string="Key Results" name="key_results">
+                            <field name="key_result_ids">
+                                <list editable="bottom">
+                                    <field name="code"/>
+                                    <field name="name"/>
+                                    <field name="owner_id" widget="many2one_avatar_user"/>
+                                    <field name="metric_source"/>
+                                    <field name="unit"/>
+                                    <field name="baseline"/>
+                                    <field name="target"/>
+                                    <field name="current"/>
+                                    <field name="target_direction"/>
+                                    <field name="score"/>
+                                    <field name="progress" widget="progressbar"/>
+                                    <field name="status" widget="badge"
+                                           decoration-success="status == 'on_track'"
+                                           decoration-warning="status == 'at_risk'"
+                                           decoration-danger="status in ('off_track', 'blocked')"/>
+                                    <field name="trend"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- ── Graph view ──────────────────────────────────────────────── -->
+    <record id="ppm_okr_objective_view_graph" model="ir.ui.view">
+        <field name="name">ppm.okr.objective.graph</field>
+        <field name="model">ppm.okr.objective</field>
+        <field name="arch" type="xml">
+            <graph type="bar">
+                <field name="code" type="row"/>
+                <field name="score" type="measure"/>
+            </graph>
+        </field>
+    </record>
+
+    <!-- ── Search view ─────────────────────────────────────────────── -->
+    <record id="ppm_okr_objective_view_search" model="ir.ui.view">
+        <field name="name">ppm.okr.objective.search</field>
+        <field name="model">ppm.okr.objective</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="code"/>
+                <field name="name"/>
+                <field name="owner_id"/>
+                <filter name="on_track" string="On Track"
+                        domain="[('status', '=', 'on_track')]"/>
+                <filter name="at_risk" string="At Risk"
+                        domain="[('status', '=', 'at_risk')]"/>
+                <filter name="off_track" string="Off Track"
+                        domain="[('status', '=', 'off_track')]"/>
+                <filter name="blocked" string="Blocked"
+                        domain="[('status', '=', 'blocked')]"/>
+                <group expand="0" string="Group By">
+                    <filter name="group_status" string="Status"
+                            context="{'group_by': 'status'}"/>
+                    <filter name="group_owner" string="Owner"
+                            context="{'group_by': 'owner_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- ── Action ──────────────────────────────────────────────────── -->
+    <record id="action_ppm_okr_objective" model="ir.actions.act_window">
+        <field name="name">OKR Dashboard</field>
+        <field name="res_model">ppm.okr.objective</field>
+        <field name="view_mode">kanban,list,form,graph</field>
+        <field name="search_view_id" ref="ppm_okr_objective_view_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create your first OKR objective
+            </p>
+            <p>
+                Track strategic objectives with measurable key results.
+                Score 0.7 = aspirational success.
+            </p>
+        </field>
+    </record>
+
+</odoo>

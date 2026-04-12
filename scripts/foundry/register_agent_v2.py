@@ -7,7 +7,8 @@ ssot/ai/foundry_instructions.md, then registers each agent via
 project.agents.create_version().
 
 Usage:
-    python scripts/foundry/register_agent_v2.py --agent ask-agent [--dry-run]
+    python scripts/foundry/register_agent_v2.py --agent pulser-odoo-ask \
+        [--dry-run]
     python scripts/foundry/register_agent_v2.py --all [--dry-run]
 
 Environment:
@@ -31,10 +32,10 @@ INSTRUCTIONS_MD = REPO_ROOT / "ssot" / "ai" / "foundry_instructions.md"
 
 # Instruction section markers (mapped from prompts.yaml)
 SECTION_MAP = {
-    "ask-agent": "## Ask Agent Mode",
-    "authoring-agent": "## Authoring Agent Mode",
-    "livechat-agent": "## Livechat Agent Mode",
-    "transaction-agent": "## Transaction Agent Mode",
+    "pulser-odoo-ask": "## Ask Agent Mode",
+    "pulser-odoo-authoring": "## Authoring Agent Mode",
+    "pulser-odoo-livechat": "## Livechat Agent Mode",
+    "pulser-odoo-transaction": "## Transaction Agent Mode",
 }
 
 
@@ -151,7 +152,10 @@ def register_agent(agent_name: str, instructions: str, model: str,
 def main():
     parser = argparse.ArgumentParser(description="Register named agents in Foundry (SDK v2)")
     group = parser.add_mutually_exclusive_group(required=True)
-    group.add_argument("--agent", type=str, help="Agent name to register (e.g. ask-agent)")
+    group.add_argument(
+        "--agent", type=str,
+        help="Agent name to register (e.g. pulser-odoo-ask)",
+    )
     group.add_argument("--all", action="store_true", help="Register all agents")
     parser.add_argument("--dry-run", action="store_true", help="Show what would be registered")
     parser.add_argument("--model", type=str, default=None, help="Override model (default: from agents.yaml)")

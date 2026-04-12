@@ -1,0 +1,125 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Pulser Finance Eval Sample",
+  "type": "object",
+  "required": ["sample_id", "split", "source_type", "scenario_family", "active_company", "expected"],
+  "properties": {
+    "sample_id": { "type": "string", "pattern": "^eval_(ar|ap|exp|pay|cor|amb)_\\d{6}$" },
+    "split": { "type": "string", "enum": ["smoke", "core", "edge", "adversarial", "regression"] },
+    "source_type": { "type": "string", "enum": ["pdf_native", "pdf_scan", "image_photo", "email_attachment", "ocr_text", "xml_edi", "manual_entry"] },
+    "modality": { "type": "array", "items": { "type": "string" } },
+    "scenario_family": {
+      "type": "string",
+      "enum": [
+        "AR_INVOICE", "AR_CREDIT_NOTE", "AR_DEBIT_NOTE",
+        "AP_VENDOR_BILL", "AP_VENDOR_REFUND", "AP_VENDOR_DEBIT_NOTE", "AP_PO_MATCHED_BILL", "AP_NON_PO_BILL",
+        "EXPENSE_EMPLOYEE_PAID", "EXPENSE_COMPANY_PAID", "EXPENSE_REPORT", "EXPENSE_REIMBURSEMENT", "EXPENSE_REINVOICE_TO_CUSTOMER",
+        "PAYMENT_CUSTOMER", "PAYMENT_VENDOR", "BATCH_PAYMENT", "BANK_STATEMENT_LINE", "BANK_RECONCILIATION_EVENT",
+        "DOCUMENT_AMBIGUOUS", "DOCUMENT_UNSUPPORTED", "DUPLICATE_DOCUMENT", "MASTER_DATA_MISSING", "TAX_MAPPING_MISSING", "CONTEXT_MISMATCH"
+      ]
+    },
+    "active_company": { "type": "string" },
+    "active_branch": { "type": "string" },
+    "artifact_refs": { "type": "array", "items": { "type": "string" } },
+    "input_context": {
+      "type": "object",
+      "properties": {
+        "active_company": { "type": "string" },
+        "active_branch": { "type": "string" },
+        "user_role": { "type": "string" },
+        "channel": { "type": "string" }
+      }
+    },
+    "expected": {
+      "type": "object",
+      "required": ["document_class", "accounting_direction", "should_create_object", "safe_action"],
+      "properties": {
+        "document_class": {
+          "type": "string",
+          "enum": ["customer_invoice", "vendor_bill", "customer_credit_note", "vendor_refund", "debit_note", "expense_receipt", "expense_report", "payment_evidence", "bank_statement", "correction_document", "ambiguous", "unsupported"]
+        },
+        "accounting_direction": {
+          "type": "string",
+          "enum": ["receivable", "payable", "expense", "reimbursement", "correction", "payment_reconciliation", "ambiguous"]
+        },
+        "should_create_object": {
+          "type": ["string", "null"],
+          "enum": ["account.move.out_invoice", "account.move.in_invoice", "account.move.out_refund", "account.move.in_refund", "hr.expense", "hr.expense.sheet", "account.payment", "account.bank.statement.line", null]
+        },
+        "should_create": { "type": "boolean" },
+        "safe_action": {
+          "type": "string",
+          "enum": ["create_draft_customer_invoice", "create_draft_vendor_bill", "create_expense_line", "create_credit_note", "register_payment", "reconcile_entries", "attach_to_existing", "review_required", "block_and_escalate", "mark_unsupported"]
+        },
+        "confidence_required": { "type": "string", "enum": ["high", "medium", "low"] },
+        "needs_human_review": { "type": "boolean" },
+        "escalation_reason": { "type": ["string", "null"] },
+        "partner_resolution": {
+          "type": "object",
+          "properties": {
+            "expected_partner_name": { "type": "string" },
+            "match_status": { "type": "string", "enum": ["exact", "fuzzy", "missing", "multiple_candidates"] }
+          }
+        },
+        "header_fields": {
+          "type": "object",
+          "properties": {
+            "document_number": { "type": ["string", "null"] },
+            "document_date": { "type": ["string", "null"], "format": "date" },
+            "due_date": { "type": ["string", "null"], "format": "date" },
+            "currency": { "type": "string" },
+            "payment_terms": { "type": ["string", "null"] }
+          }
+        },
+        "totals": {
+          "type": "object",
+          "properties": {
+            "net_amount": { "type": ["number", "null"] },
+            "tax_amount": { "type": ["number", "null"] },
+            "withholding_amount": { "type": ["number", "null"] },
+            "gross_amount": { "type": ["number", "null"] },
+            "amount_due": { "type": ["number", "null"] }
+          }
+        },
+        "line_items": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "description": { "type": "string" },
+              "quantity": { "type": "number" },
+              "unit_price": { "type": "number" },
+              "amount": { "type": "number" }
+            }
+          }
+        },
+        "checks_required": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": ["duplicate_reference_check", "partner_match_check", "journal_check", "tax_mapping_check", "po_match_check", "employee_match_check", "expense_category_check", "currency_check", "arithmetic_check", "approval_check", "branch_company_check"]
+          }
+        },
+        "blocking_conditions": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "explanations_required": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      }
+    },
+    "metadata": {
+      "type": "object",
+      "properties": {
+        "has_withholding": { "type": "boolean" },
+        "has_tax_inclusive_total": { "type": "boolean" },
+        "line_item_count": { "type": "integer" },
+        "ocr_difficulty": { "type": "string", "enum": ["easy", "medium", "hard"] },
+        "is_multi_page": { "type": "boolean" },
+        "has_handwritten_marks": { "type": "boolean" }
+      }
+    }
+  }
+}

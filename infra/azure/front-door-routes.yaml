@@ -151,7 +151,7 @@ origin_groups:
       timeout_seconds: 10
 
   - name: redirect
-    description: "Root domain redirect group — forwards to odoo-web for 301 redirect"
+    description: "Legacy redirect group — deprecated in favor of standalone website"
     origins:
       - container_app: odoo-web
         http_port: 80
@@ -163,6 +163,20 @@ origin_groups:
       path: /web/health
       protocol: Https
       interval_seconds: 60
+      timeout_seconds: 10
+
+  - name: website
+    origins:
+      - container_app: ipai-website-dev
+        http_port: 80
+        https_port: 443
+        priority: 1
+        weight: 1000
+        origin_host_header: www.insightpulseai.com
+    health_probe:
+      path: /
+      protocol: Https
+      interval_seconds: 30
       timeout_seconds: 10
 
 # =============================================================================
@@ -421,25 +435,20 @@ route_groups:
         forwarding_protocol: HttpsOnly
 
   # ---------------------------------------------------------------------------
-  # Root domain redirect — apex + www → erp
+  # Root domain website — apex + www -> standalone ACA
   # ---------------------------------------------------------------------------
-  - name: root-redirect
+  - name: root-website
     hostnames:
       - insightpulseai.com
       - www.insightpulseai.com
-    origin_group: redirect
+    origin_group: website
     routes:
-      - name: root-to-erp
+      - name: website-default
         patterns:
           - "/*"
         cache:
-          enabled: false
-        redirect:
-          type: Found
-          protocol: Https
-          destination_hostname: erp.insightpulseai.com
-          preserve_path: true
-          preserve_query_string: true
+          enabled: true
+          duration: P7D
         forwarding_protocol: HttpsOnly
 
 # =============================================================================

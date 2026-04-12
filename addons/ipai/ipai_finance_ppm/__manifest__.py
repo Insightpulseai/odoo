@@ -1,20 +1,22 @@
 {
-    "name": "IPAI Finance PPM (Delta)",
-    "version": "18.0.2.0.0",
-    "summary": "Portfolio finance delta — budget, health, risk, scoring, gate reviews",
+    "name": "IPAI Finance PPM (Delta) [DEPRECATED]",
+    "version": "18.0.4.0.0",
+    "summary": (
+        "DEPRECATED — replaced by CE project config"
+        " + OCA mis_builder + project OCA modules"
+    ),
     "description": """
-        Finance-portfolio delta addon for Clarity PPM equivalence.
+        DEPRECATED as of 2026-04-11.
 
-        CE + OCA provide the project execution and governance base.
-        This module adds only what CE/OCA do not cover:
-        - Budget vs forecast vs actual per project per period
-        - Portfolio health / RAG status
-        - Risk register
-        - Issue register
-        - Investment scoring / prioritization
-        - Phase-gate review governance
+        All capabilities are now provided by:
+        - CE project (milestones, dependencies, recurring, activities)
+        - OCA mis_builder + mis_builder_budget (KPI/budget reports)
+        - OCA project_task_stage_state (RAG stage mapping)
+        - OCA project_pivot, project_timeline
+        - Odoo Documents (evidence vault)
+        - Seed data in ipai_finance_ppm_seed
 
-        See spec/ppm-clarity-plane-odoo/ for architecture doctrine.
+        See docs/architecture/PPM_DASHBOARD_DECOMPOSITION.md
     """,
     "category": "Services/Project",
     "license": "LGPL-3",
@@ -39,6 +41,8 @@
         "views/ppm_issue_views.xml",
         "views/ppm_scoring_views.xml",
         "views/ppm_gate_review_views.xml",
+        "views/ppm_okr_objective_views.xml",
+        "views/ppm_okr_key_result_views.xml",
         "views/ppm_import_wizard_views.xml",
         "views/ipai_finance_ppm_menus.xml",
         # data/ir_cron_ppm_sync.xml removed — cron referenced deprecated sync pattern.
@@ -48,7 +52,7 @@
     "demo": [
         "demo/ipai_finance_ppm_demo_projects.xml",
     ],
-    "installable": True,
+    "installable": False,  # DEPRECATED 2026-04-11
     "application": False,
     "auto_install": False,
 }

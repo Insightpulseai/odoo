@@ -65,7 +65,7 @@
 version: "2.0"
 schema: ssot.dns.v2
 domain: insightpulseai.com
-last_reviewed: "2026-03-17"
+last_reviewed: "2026-04-11"
 
 # Canonical ingress endpoint — all CNAME records for platform apps resolve here.
 front_door_endpoint: ipai-fd-dev-ep-fnh4e8d6gtdhc8ax.z03.azurefd.net
@@ -113,9 +113,9 @@ subdomains:
   - name: erp
     type: CNAME
     target: ipai-fd-dev-ep-fnh4e8d6gtdhc8ax.z03.azurefd.net
-    service: odoo_ce_19
+    service: odoo_ce_18
     health_check: /web/login
-    owner_system: "Odoo CE 19.0"
+    owner_system: "Odoo CE 18.0"
     tls: azure_front_door
     lifecycle: active
     status: active
@@ -307,9 +307,9 @@ subdomains:
   - name: erp-dev
     type: CNAME
     target: ipai-fd-dev-ep-fnh4e8d6gtdhc8ax.z03.azurefd.net
-    service: odoo_ce_19_dev
+    service: odoo_ce_18_dev
     health_check: /web/login
-    owner_system: "Odoo CE 19.0 (dev)"
+    owner_system: "Odoo CE 18.0 (dev)"
     tls: azure_front_door
     lifecycle: planned
     status: planned
@@ -326,9 +326,9 @@ subdomains:
   - name: erp-staging
     type: CNAME
     target: ipai-fd-dev-ep-fnh4e8d6gtdhc8ax.z03.azurefd.net
-    service: odoo_ce_19_staging
+    service: odoo_ce_18_staging
     health_check: /web/login
-    owner_system: "Odoo CE 19.0 (staging)"
+    owner_system: "Odoo CE 18.0 (staging)"
     tls: azure_front_door
     lifecycle: planned
     status: planned
@@ -348,15 +348,17 @@ subdomains:
   - name: www
     type: CNAME
     target: ipai-fd-dev-ep-fnh4e8d6gtdhc8ax.z03.azurefd.net
-    service: website_redirect
-    owner_system: "Redirect to apex (insightpulseai.com)"
+    service: website
+    owner_system: "InsightPulse AI website (standalone, NOT erp)"
     tls: azure_front_door
     lifecycle: active
     status: active
-    notes: "www redirects to apex. Front Door handles 301."
+    notes: >
+      www serves the standalone InsightPulse AI website.
+      Aligned with apex (@) record for unified brand surface.
     azure_target:
-      front_door_origin_group: redirect
-      action: redirect-to-apex
+      front_door_origin_group: website
+      container_app: website
       cutover_wave: 1
     provider_claim:
       provider: azure
@@ -413,8 +415,8 @@ subdomains:
   - name: erp-azure
     type: CNAME
     target: ipai-fd-dev-ep-fnh4e8d6gtdhc8ax.z03.azurefd.net
-    service: odoo_ce_19
-    owner_system: "Odoo CE 19.0 (Azure-specific alias)"
+    service: odoo_ce_18
+    owner_system: "Odoo CE 18.0 (Azure-specific alias)"
     tls: azure_front_door
     lifecycle: active
     status: active
@@ -564,9 +566,9 @@ subdomains:
   - name: stage-erp
     type: CNAME
     target: ipai-fd-dev-ep-fnh4e8d6gtdhc8ax.z03.azurefd.net
-    service: odoo_ce_19_staging
+    service: odoo_ce_18_staging
     health_check: /web/login
-    owner_system: "Odoo CE 19.0 (staging)"
+    owner_system: "Odoo CE 18.0 (staging)"
     tls: azure_front_door
     lifecycle: planned
     status: planned

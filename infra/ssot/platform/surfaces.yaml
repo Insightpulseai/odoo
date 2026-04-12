@@ -25,7 +25,7 @@ surfaces:
       - crm
       - website_cms
     host: erp.insightpulseai.com
-    stack: "Odoo CE 19.0 + OCA addons + ipai_* bridge modules"
+    stack: "Odoo CE 18.0 + OCA addons + ipai_* bridge modules"
     database: "Local PostgreSQL 16 on odoo-production droplet (NOT Supabase)"
     see: null
     rules:

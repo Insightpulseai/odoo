@@ -1,0 +1,117 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "pulser_doc_intake_result",
+  "title": "Pulser Document Intake Result",
+  "description": "Structured output from the pulser-doc-intake-v1 workflow. Captures classification, extraction, validation, and safe action decision for a financial document.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "artifact_class",
+    "confidence_band",
+    "checks_run",
+    "blocking_conditions",
+    "safe_action"
+  ],
+  "properties": {
+    "artifact_class": {
+      "type": "string",
+      "enum": [
+        "AR_INVOICE",
+        "AP_VENDOR_BILL",
+        "AR_CREDIT_NOTE",
+        "AP_VENDOR_REFUND",
+        "EXPENSE_EMPLOYEE_PAID",
+        "EXPENSE_COMPANY_PAID",
+        "PAYMENT_CUSTOMER",
+        "PAYMENT_VENDOR",
+        "BANK_RECONCILIATION_EVENT",
+        "DOCUMENT_AMBIGUOUS",
+        "DOCUMENT_UNSUPPORTED"
+      ],
+      "description": "The classified finance/service document family."
+    },
+    "confidence_band": {
+      "type": "string",
+      "enum": ["HIGH", "HIGH_WITH_MATCH", "MEDIUM", "LOW", "BLOCKED"],
+      "description": "Confidence band after validation checks."
+    },
+    "extracted_fields": {
+      "type": "object",
+      "description": "Structured fields extracted from the document.",
+      "properties": {
+        "partner_name": { "type": "string" },
+        "partner_vat": { "type": "string" },
+        "document_number": { "type": "string" },
+        "document_date": { "type": "string", "format": "date" },
+        "due_date": { "type": "string", "format": "date" },
+        "currency_code": { "type": "string" },
+        "total_amount": { "type": "number" },
+        "tax_amount": { "type": "number" },
+        "withholding_amount": { "type": "number" },
+        "net_amount": { "type": "number" },
+        "line_items": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "description": { "type": "string" },
+              "quantity": { "type": "number" },
+              "unit_price": { "type": "number" },
+              "tax_ids": { "type": "array", "items": { "type": "string" } },
+              "subtotal": { "type": "number" }
+            }
+          }
+        },
+        "purchase_order_ref": { "type": "string" },
+        "sale_order_ref": { "type": "string" }
+      }
+    },
+    "checks_run": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "List of validation checks that were executed."
+    },
+    "blocking_conditions": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Conditions that prevent automatic draft creation."
+    },
+    "safe_action": {
+      "type": "string",
+      "enum": [
+        "create_draft_customer_invoice",
+        "create_draft_vendor_bill",
+        "create_credit_note_from_source",
+        "create_debit_note_from_source",
+        "create_expense",
+        "create_payment_or_route_to_reconcile",
+        "open_reconciliation_with_preselected_match",
+        "show_structured_review_card",
+        "route_for_master_data_resolution",
+        "block_and_link_existing_record",
+        "mark_not_accounting_document"
+      ],
+      "description": "The determined safe action after all checks pass."
+    },
+    "created_record_ref": {
+      "type": "object",
+      "description": "Reference to the created Odoo draft record, if any.",
+      "properties": {
+        "model": { "type": "string" },
+        "id": { "type": "integer" },
+        "name": { "type": "string" },
+        "move_type": { "type": "string" },
+        "state": { "type": "string" }
+      }
+    },
+    "evidence_refs": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "References to persisted evidence artifacts."
+    },
+    "idempotency_key": {
+      "type": "string",
+      "description": "Unique key preventing duplicate processing."
+    }
+  }
+}

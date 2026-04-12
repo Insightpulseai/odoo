@@ -190,6 +190,49 @@ vertical_applicability:
       - finance_workflow_ownership
 
 # ──────────────────────────────────────────────────────────────────────────
+# Source priority (conflict resolution)
+# ──────────────────────────────────────────────────────────────────────────
+source_priority:
+  - repo_ssot
+  - agents_md
+  - odoo_architecture_docs
+  - microsoft_learn_mcp
+  - azure_mcp
+  - foundry_mcp
+
+# ──────────────────────────────────────────────────────────────────────────
+# MCP server roles
+# ──────────────────────────────────────────────────────────────────────────
+mcp_roles:
+  microsoft_learn_mcp:
+    purpose: authoritative_live_documentation_retrieval
+    allowed_for:
+      - architecture_lookup
+      - product_guidance
+      - official_best_practices
+  azure_mcp:
+    purpose: live_azure_inventory_and_operational_access
+    allowed_for:
+      - resource_inventory
+      - diagnostics
+      - monitoring
+      - deployment_validation
+  foundry_mcp:
+    purpose: foundry_side_model_agent_runtime_operations
+    allowed_for:
+      - model_discovery
+      - deployment_validation
+      - agent_runtime_checks
+
+# ──────────────────────────────────────────────────────────────────────────
+# Guardrails
+# ──────────────────────────────────────────────────────────────────────────
+guardrails:
+  - mcp_tools_do_not_redefine_business_truth
+  - mcp_tools_do_not_write_directly_to_odoo_data_outside_approved_actions
+  - docs_retrieval_is_advisory_repo_ssot_wins_on_conflict
+
+# ──────────────────────────────────────────────────────────────────────────
 # Global prohibitions
 # ──────────────────────────────────────────────────────────────────────────
 prohibited:

@@ -6,3 +6,5 @@ from . import ppm_risk
 from . import ppm_issue
 from . import ppm_scoring
 from . import ppm_gate_review
+from . import ppm_okr_objective
+from . import ppm_okr_key_result

@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+
+    <!-- ── OKR objective tags ──────────────────────────────────── -->
+    <record id="tag_okr" model="project.tags">
+        <field name="name">OKR</field>
+        <field name="color">10</field>
+    </record>
+    <record id="tag_kr" model="project.tags">
+        <field name="name">Key Result</field>
+        <field name="color">4</field>
+    </record>
+
+    <!-- ── Workflow lane tags ──────────────────────────────────── -->
+    <record id="tag_ap" model="project.tags">
+        <field name="name">AP</field>
+        <field name="color">1</field>
+    </record>
+    <record id="tag_ar" model="project.tags">
+        <field name="name">AR</field>
+        <field name="color">2</field>
+    </record>
+    <record id="tag_expense" model="project.tags">
+        <field name="name">Expense</field>
+        <field name="color">3</field>
+    </record>
+    <record id="tag_cash_advance" model="project.tags">
+        <field name="name">Cash Advance</field>
+        <field name="color">5</field>
+    </record>
+    <record id="tag_ph_tax" model="project.tags">
+        <field name="name">PH Tax</field>
+        <field name="color">6</field>
+    </record>
+    <record id="tag_bir" model="project.tags">
+        <field name="name">BIR</field>
+        <field name="color">9</field>
+    </record>
+    <record id="tag_close" model="project.tags">
+        <field name="name">Close</field>
+        <field name="color">7</field>
+    </record>
+    <record id="tag_governance" model="project.tags">
+        <field name="name">Governance</field>
+        <field name="color">8</field>
+    </record>
+    <record id="tag_finops" model="project.tags">
+        <field name="name">FinOps</field>
+        <field name="color">11</field>
+    </record>
+
+    <!-- ── Status tags (RAG) ──────────────────────────────────── -->
+    <record id="tag_on_track" model="project.tags">
+        <field name="name">On Track</field>
+        <field name="color">10</field>
+    </record>
+    <record id="tag_at_risk" model="project.tags">
+        <field name="name">At Risk</field>
+        <field name="color">2</field>
+    </record>
+    <record id="tag_off_track" model="project.tags">
+        <field name="name">Off Track</field>
+        <field name="color">1</field>
+    </record>
+    <record id="tag_blocked" model="project.tags">
+        <field name="name">Blocked</field>
+        <field name="color">9</field>
+    </record>
+
+</odoo>

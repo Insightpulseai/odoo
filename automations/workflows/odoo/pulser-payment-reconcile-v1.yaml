@@ -1,0 +1,94 @@
+workflow_id: pulser-payment-reconcile-v1
+version: 1
+status: draft
+pattern: sequential
+purpose: >
+  Assist with payment registration and reconciliation by matching payment proofs or
+  bank statement lines to open items, validating confidence, and routing either to
+  draft payment registration or reconciliation review.
+
+triggers:
+  - type: payment_proof_uploaded
+  - type: bank_statement_line_detected
+  - type: user_request_register_payment
+  - type: user_request_reconcile
+
+inputs:
+  required:
+    - active_company_id
+    - artifact_or_statement_ref
+  optional:
+    - active_branch_id
+    - partner_id
+    - open_item_refs
+    - bank_journal_id
+    - source_channel
+
+variables:
+  payment_class: null
+  extracted_payment_data: {}
+  open_item_matches: []
+  reconciliation_candidate: {}
+  validation_result: {}
+  safe_action: null
+
+output_schema:
+  name: pulser_payment_reconcile_result
+  ref: agents/schemas/workflow/pulser/pulser_payment_reconcile_result.schema.json
+
+nodes:
+  - id: classify_payment_event
+    type: agent
+    agent: pulser-odoo-ask
+    task: >
+      Determine whether the incoming item is a customer payment proof,
+      vendor payment proof, bank statement line, or batch payment candidate.
+    save_output_as: payment_class
+
+  - id: extract_payment_fields
+    type: agent
+    agent: pulser-odoo-authoring
+    task: >
+      Extract partner, amount, date, payment reference, bank/account hints,
+      and any invoice/bill references.
+    save_output_as: extracted_payment_data
+
+  - id: lookup_open_items
+    type: agent
+    agent: pulser-odoo-transaction
+    task: >
+      Find open customer invoices, vendor bills, and unreconciled lines
+      matching the extracted payment data.
+    save_output_as: open_item_matches
+
+  - id: validate_reconcile_candidate
+    type: agent
+    agent: pulser-odoo-transaction
+    task: >
+      Validate amount, reference, partner, currency, journal, and residual amount.
+      Determine if the match is deterministic, partial, or ambiguous.
+    save_output_as: validation_result
+
+  - id: choose_action
+    type: logic
+    expression: >
+      If payment_class = "BANK_RECONCILIATION_EVENT" and deterministic_match = true
+      then "open_reconciliation_with_preselected_match".
+      Else if deterministic_open_item_match = true
+      then "create_payment_or_route_to_reconcile".
+      Else if batch_group_candidate = true
+      then "create_or_update_batch_payment".
+      Else "show_structured_review_card".
+    save_output_as: safe_action
+
+  - id: finish
+    type: data_transformation
+    action: >
+      Emit pulser_payment_reconcile_result from payment_class,
+      validation_result, open_item_matches, and safe_action.
+
+policies:
+  auto_full_reconcile_without_human: false
+  deterministic_preselection_allowed: true
+  write_off_requires_review: true
+  batch_payment_requires_homogeneous_method: true
