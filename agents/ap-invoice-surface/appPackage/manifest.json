@@ -1,0 +1,56 @@
+{
+  "$schema": "https://developer.microsoft.com/en-us/json-schemas/teams/v1.21/MicrosoftTeams.schema.json",
+  "manifestVersion": "1.21",
+  "version": "0.1.0",
+  "id": "${{TEAMS_APP_ID}}",
+  "developer": {
+    "name": "InsightPulseAI Inc.",
+    "websiteUrl": "https://insightpulseai.com",
+    "privacyUrl": "https://insightpulseai.com/privacy",
+    "termsOfUseUrl": "https://insightpulseai.com/terms"
+  },
+  "icons": { "color": "color.png", "outline": "outline.png" },
+  "name": {
+    "short": "AP Invoice",
+    "full": "AP Invoice — Vendor invoice automation"
+  },
+  "description": {
+    "short": "Upload vendor invoices — create draft bills in Odoo.",
+    "full": "AP Invoice processes vendor invoices by extracting data via Azure Document Intelligence and creating draft account.move entries in Odoo for approval. Supports PDF uploads, pending-approval queues, and vendor lookups."
+  },
+  "accentColor": "#6A1B9A",
+  "bots": [
+    {
+      "botId": "${{BOT_ID}}",
+      "scopes": ["personal", "team", "groupChat"],
+      "supportsFiles": true,
+      "isNotificationOnly": false,
+      "commandLists": [
+        {
+          "scopes": ["personal", "team", "groupChat"],
+          "commands": [
+            { "title": "process", "description": "Upload a vendor invoice PDF" },
+            { "title": "pending", "description": "List bills awaiting approval" },
+            { "title": "approve", "description": "Approve a pending bill by ID" },
+            { "title": "reject",  "description": "Reject a pending bill with reason" },
+            { "title": "vendor",  "description": "Look up a vendor in Odoo" },
+            { "title": "help",    "description": "What can AP Invoice do?" }
+          ]
+        }
+      ]
+    }
+  ],
+  "copilotAgents": {
+    "customEngineAgents": [
+      { "type": "bot", "id": "${{BOT_ID}}" }
+    ]
+  },
+  "validDomains": [
+    "ipai-copilot-gateway.insightpulseai.com",
+    "ipai-copilot-resource.services.ai.azure.com"
+  ],
+  "webApplicationInfo": {
+    "id": "${{AAD_APP_CLIENT_ID}}",
+    "resource": "api://botid-${{BOT_ID}}"
+  }
+}

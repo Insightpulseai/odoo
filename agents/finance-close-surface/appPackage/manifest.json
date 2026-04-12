@@ -1,0 +1,56 @@
+{
+  "$schema": "https://developer.microsoft.com/en-us/json-schemas/teams/v1.21/MicrosoftTeams.schema.json",
+  "manifestVersion": "1.21",
+  "version": "0.1.0",
+  "id": "${{TEAMS_APP_ID}}",
+  "developer": {
+    "name": "InsightPulseAI Inc.",
+    "websiteUrl": "https://insightpulseai.com",
+    "privacyUrl": "https://insightpulseai.com/privacy",
+    "termsOfUseUrl": "https://insightpulseai.com/terms"
+  },
+  "icons": { "color": "color.png", "outline": "outline.png" },
+  "name": {
+    "short": "Finance Close",
+    "full": "Finance Close — Monthly close orchestrator"
+  },
+  "description": {
+    "short": "Orchestrate Odoo monthly close: checklist, status, variance review.",
+    "full": "Finance Close runs the IPAI monthly close checklist against Odoo: reconciliations verified, accruals posted, period locked, reports generated. Surfaces variances, prompts for approvals, and reopens a period when required."
+  },
+  "accentColor": "#EF6C00",
+  "bots": [
+    {
+      "botId": "${{BOT_ID}}",
+      "scopes": ["personal", "team", "groupChat"],
+      "supportsFiles": false,
+      "isNotificationOnly": false,
+      "commandLists": [
+        {
+          "scopes": ["personal", "team", "groupChat"],
+          "commands": [
+            { "title": "status",    "description": "Current close status for this period" },
+            { "title": "checklist", "description": "Show / advance the close checklist" },
+            { "title": "close",     "description": "Run the close sequence for current period" },
+            { "title": "reopen",    "description": "Reopen a previously-closed period (requires approval)" },
+            { "title": "variance",  "description": "Show variances above threshold" },
+            { "title": "help",      "description": "What can Finance Close do?" }
+          ]
+        }
+      ]
+    }
+  ],
+  "copilotAgents": {
+    "customEngineAgents": [
+      { "type": "bot", "id": "${{BOT_ID}}" }
+    ]
+  },
+  "validDomains": [
+    "ipai-copilot-gateway.insightpulseai.com",
+    "ipai-copilot-resource.services.ai.azure.com"
+  ],
+  "webApplicationInfo": {
+    "id": "${{AAD_APP_CLIENT_ID}}",
+    "resource": "api://botid-${{BOT_ID}}"
+  }
+}
