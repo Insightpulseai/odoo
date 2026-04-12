@@ -10,7 +10,6 @@ Implementation roadmap for Pulser, tracking baseline ERP/AI work through SaaS pl
 - [x] Integrate Odoo 18 CE + OCA stack.
 - [x] Implement `ipai_finance_ppm` and `ipai_odoo_copilot`.
 - [x] Configure Odoo Documents as the grounding vault.
-
 ## Phase 27 — Umbrella / child-bundle alignment
 
 - [x] Register `pulser-project-to-profit` as the bounded Project Operations-derived child bundle
@@ -26,6 +25,21 @@ Implementation roadmap for Pulser, tracking baseline ERP/AI work through SaaS pl
 - [x] Keep Teams / Outlook / Word / Excel surfaces behind canonical Pulser APIs
 - [x] Ensure channel actions respect Pulser behavior matrix and RBAC
 - [x] Ensure channel packaging/tooling does not become runtime authority
+
+## Phase 29 — Microsoft 365 Declarative Agent packaging
+
+- [x] Align M365 distribution model with Custom-Engine identity
+- [ ] Create **Declarative Agent** manifest for Project-to-Profit (Teams/Outlook)
+- [ ] Create **Declarative Agent** manifest for Record-to-Report (Teams/Outlook)
+- [ ] Define **API Plugin** definitions for canonical project and finance actions
+- [ ] Link M365 surfaces to `copilot_gateway.py` via authorized API Plugin bridges
+
+## Phase 30 — Canonical Identity Alignment
+
+- [x] Harmonize `constitution.md` with "custom-engine, policy-gated" identity
+- [x] Harmonize `prd.md` with "system-of-action copilot" functional type
+- [x] Normalize "One Core, Three Shells" terminology across Spec Kit
+- [x] Verify multi-agent orchestration topology (Planner/Specialist/Validator)
 
 ### Azure AI and Reasoning
 - [x] Provision Azure AI Foundry, OpenAI, and AI Search.

@@ -1,6 +1,6 @@
 # Constitution — Pulser for Odoo
 
-Pulser for PH is the canonical agentic ERP workspace for finance and project operations. This document defines the engineering invariants and architectural constraints for the platform.
+Pulser is a **custom-engine, multi-agent, policy-gated enterprise copilot** for Odoo-centered workflows. This document defines the engineering invariants and architectural constraints for the platform.
 
 ---
 
@@ -18,14 +18,17 @@ Pulser must be architected around formal end-to-end business scenarios:
 - **Supporting**: Source to Pay (AP, Expense), Order to Cash (Billing, Collections), and Administer to Operate (Control Plane).
 - **Benchmark**: Dynamics 365 Project Operations and **SAP Concur Expense/Accrual benchmarks** are the canonical operating model authorities.
 
-## 3. Core Reasoning and Action (BOM 3, 4)
+## 3. Custom-Engine Architecture (BOM 3, 4)
 
-Pulser follows a "One Core, Three Shells" Hub-and-Spoke architecture.
-- **The Core Hub**: The solo authority resides in Odoo CE/OCA 18 (Persistence/Action) and Azure AI Foundry (Reasoning).
-- **Agentic Retrieval**: Pulser must use agentic retrieval and grounded flows linked to retained evidence (Odoo Documents).
-- **Persona-based Cockpits**: The Core authority is adapted into specialized, role-based "Cockpits" (e.g., Close, Source-to-Pay) rather than generic chat interfaces. 
-- **Interaction Model**: Action pills are the primary interaction surface for focused finance personas (e.g., approvals, reconciliations). Chat completion is a secondary, augmenting capability for nuance.
-- **Cognitive Load Invariant**: Pulser must prioritize low-typing, low-ambiguity interaction patterns (e.g., "Approve in Odoo", "View support docs") to support busy finance stakeholders.
+Pulser is a **Custom-engine agent**.
+- **Authority**: It does not rely on a host product’s built-in orchestration as the source of truth. It brings its own runtime, tools, policies, retrieval, and validators.
+- **Orchestration**: Pulser is a **multi-agent orchestrated system** consisting of:
+    - a **planner/router**
+    - **specialist agents** (finance, project finance, research, ops)
+    - **fallback / self-heal policies**
+    - **tool calling, retrieval, and validators**
+- **System of Action**: In Odoo, Pulser is a **transactional and operational copilot** that prepares, validates, routes, summarizes, and publishes.
+- **Interaction**: Action pills are the primary interaction surface for focused finance personas. Chat completion is a secondary, augmenting capability for nuance.
 - **Stateless Spokes**: Channel shells are stateless presentation layers and must not persist business state.
 
 ## 4. Channel Shell Adapters (BOM 5)
@@ -145,16 +148,20 @@ If a child bundle conflicts with the umbrella bundle on a cross-cutting rule, th
 
 Microsoft 365 surfaces are optional channel surfaces for both child bundles.
 
-Microsoft 365 Agents Toolkit may be used for:
-- Teams surfacing
-- Outlook surfacing
-- Word / Excel add-in style surfacing
-- app/bot/package scaffolding
-- provisioning and CI/CD helpers
+The **Microsoft 365 Copilot Extensibility** model (Declarative Agents, API Plugins, and Graph Connectors) is used to surface Pulser within Microsoft 365.
 
-Toolkit usage does not change the canonical Pulser architecture:
-- Pulser runtime stays Pulser-owned
-- channel surfaces consume canonical Pulser APIs and policy resolution
+### 24.1 Declarative Agent strategy
+Pulser uses **Declarative Agents** as tailored, packaged experiences for specific finance and project groups. Declarative Agents:
+- define specialized instructions for the channel
+- expose canonical Pulser actions as **API Plugins**
+- link to Odoo grounding data via **Graph Connectors** where required
+
+### 24.2 Custom Engine vs Extension model
+Pulser (Azure AI Foundry + Odoo) remains the **Authoritative Custom Engine**.
+
+Channel extensions (e.g., Teams Declarative Agents) serve as and **Surfaces/Channels** only:
+- they consume canonical Pulser APIs
+- they do not replace Pulser’s reasoning, orchestration, policy, or transactional authority
 - no channel surface may bypass RBAC, evidence scope, approval bands, or mutation safety
 
 ---

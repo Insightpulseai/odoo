@@ -1,0 +1,46 @@
+trigger:
+  branches:
+    include: [main]
+  paths:
+    include: ['.devcontainer/**']
+
+schedules:
+  - cron: '0 2 * * 1'
+    displayName: Weekly devcontainer image refresh
+    branches:
+      include: [main]
+
+pool:
+  vmImage: ubuntu-latest
+
+variables:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ghcr.io/$(Build.Repository.Name)
+
+steps:
+  - checkout: self
+
+  - task: DockerInstaller@0
+    inputs:
+      dockerVersion: latest
+
+  - script: |
+      npm install -g @devcontainers/cli
+    displayName: Install devcontainer CLI
+
+  - script: |
+      devcontainer build \\
+        --workspace-folder . \\
+        --image-name $(IMAGE_NAME)-devcontainer:$(Build.BuildId) \\
+        --cache-from $(IMAGE_NAME)-devcontainer:latest
+    displayName: Pre-build devcontainer image
+
+  - script: |
+      echo $(GITHUB_TOKEN) | docker login ghcr.io -u $(GITHUB_ACTOR) --password-stdin
+      docker push $(IMAGE_NAME)-devcontainer:$(Build.BuildId)
+      docker tag $(IMAGE_NAME)-devcontainer:$(Build.BuildId) $(IMAGE_NAME)-devcontainer:latest
+      docker push $(IMAGE_NAME)-devcontainer:latest
+    displayName: Push to GHCR
+    env:
+      GITHUB_TOKEN: $(GITHUB_TOKEN)
+      GITHUB_ACTOR: $(GITHUB_ACTOR)

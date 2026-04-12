@@ -1,0 +1,58 @@
+name: odoo-pr-preview
+
+on:
+  pull_request:
+    types: [opened, reopened, synchronize]
+    branches: [main]
+    paths: ['addons/ipai/**', 'odoo18/**']
+
+permissions:
+  contents: read
+  pull-requests: write
+  id-token: write
+
+jobs:
+  deploy-preview:
+    if: contains(github.event.pull_request.user.login, 'agent') || contains(github.event.pull_request.labels.*.name, 'ai-generated')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Azure Login
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Deploy ACA Revision Preview
+        id: deploy
+        run: |
+          # Create a unique revision label based on the PR number
+          PR_NUMBER="${{ github.event.pull_request.number }}"
+          REVISION_LABEL="pr-${PR_NUMBER}"
+          
+          echo "Deploying preview for PR ${PR_NUMBER}..."
+          
+          # Deploying to the 'dev' stamp web service as a and revision
+          # Using the existing 'ipai-odoo-dev-web' container app
+          az containerapp revision label add \
+            --name ipai-odoo-dev-web \
+            --resource-group rg-ipai-dev-odoo-runtime \
+            --label ${REVISION_LABEL} \
+            --revision ${REVISION_LABEL}-rev
+            
+          echo "PREVIEW_URL=https://ipai-odoo-dev-web---${REVISION_LABEL}.braveground-xxxx.southeastasia.azurecontainerapps.io" >> $GITHUB_OUTPUT
+
+      - name: Comment PR
+        uses: thollander/actions-comment-pull-request@v2
+        with:
+          message: |
+            🚀 **AI Preview Environment Ready**
+            
+            Changes in this PR have been deployed to a dedicated revision for validation.
+            
+            **URL**: [${{ steps.deploy.outputs.PREVIEW_URL }}](${{ steps.deploy.outputs.PREVIEW_URL }})
+            
+            *Note: This revision will be automatically deactivated when the PR is closed or merged.*
+          comment_tag: pr-preview-url
