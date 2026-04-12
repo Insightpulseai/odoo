@@ -22,7 +22,7 @@ jobs:
     timeout-minutes: 5
     env:
       ODOO_URL_DEV: https://ipai-odoo-dev-web.blackstone-0df78186.southeastasia.azurecontainerapps.io
-      ODOO_URL_STAGING: https://erp.insightpulseai.com
+      ODOO_URL_STAGING: https://ipai-odoo-stg-web.purplestone-d832c506.southeastasia.azurecontainerapps.io
     steps:
       - name: Set target URL
         id: target
