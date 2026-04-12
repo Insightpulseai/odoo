@@ -25,8 +25,8 @@ param afdProfileName string = 'afd-ipai-${env}'
 @description('Existing AFD endpoint name (under the profile)')
 param afdEndpointName string
 
-@description('Gateway FQDN — ipai-copilot-gateway ACA app')
-param gatewayFqdn string = 'ipai-copilot-gateway.insightpulseai.com'
+@description('Gateway FQDN — external ACA ingress for bot-proxy. After deploying modules/aca-bot-proxy.bicep, use its `fqdn` output. Default is unusable placeholder — must be overridden.')
+param gatewayFqdn string = 'ipai-bot-proxy-dev.REPLACE-ME.southeastasia.azurecontainerapps.io'
 
 @description('Agent configs — name + route pattern prefix')
 param agents array = [

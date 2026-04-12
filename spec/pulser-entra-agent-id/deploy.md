@@ -40,6 +40,48 @@ Creates:
 
 Each MI gets `get`/`list` on `kv-ipai-dev` secrets via access policy.
 
+## Step 1b — Deploy the bot-proxy ACA app (public ingress boundary)
+
+**Prereq**: `ipai-copilot-gateway` is internal-only (by design — zero-trust).
+The bot-proxy is the **public ingress** for Teams/Copilot Chat webhooks; it
+forwards all 6 agents' `/api/*/messages` to the internal gateway.
+
+```bash
+# Build and push the image (or trigger CI)
+cd apps/bot-proxy
+az acr login --name ipaiodoodevacr
+docker build -t ipaiodoodevacr.azurecr.io/ipai-bot-proxy:latest .
+docker push ipaiodoodevacr.azurecr.io/ipai-bot-proxy:latest
+cd -
+
+# Grab the pulser MI resource ID + clientId from Step 1 outputs
+PULSER_MI_ID=$(az identity show -n id-ipai-agent-pulser-dev -g rg-ipai-dev-platform --query id -o tsv)
+PULSER_MI_CLIENT=$(az identity show -n id-ipai-agent-pulser-dev -g rg-ipai-dev-platform --query clientId -o tsv)
+KV_ID=$(az keyvault show -n kv-ipai-dev -g rg-ipai-dev-platform --query id -o tsv)
+
+# Deploy the bot-proxy container app (ACA env = same as gateway)
+az deployment group create \
+  --resource-group rg-ipai-dev-odoo-runtime \
+  --template-file infra/azure/modules/aca-bot-proxy.bicep \
+  --parameters env=dev \
+               userAssignedMiResourceId="$PULSER_MI_ID" \
+               userAssignedMiClientId="$PULSER_MI_CLIENT" \
+               keyVaultResourceId="$KV_ID" \
+  --name "bot-proxy-dev-$(date +%Y%m%d%H%M)"
+
+# Capture the external FQDN — feed into Step 2 as gatewayFqdn
+PROXY_FQDN=$(az containerapp show -n ipai-bot-proxy-dev -g rg-ipai-dev-odoo-runtime --query properties.configuration.ingress.fqdn -o tsv)
+echo "Bot proxy FQDN: $PROXY_FQDN"
+```
+
+**Note**: The proxy will start with empty `BOT_ID_*` values until Step 4
+(`atk provision`). It will respond 401 to Bot Framework traffic until then,
+but `/healthz` returns 200 so AFD probes pass.
+
+**Bot passwords**: after `atk provision` creates the 6 Bot Framework credentials,
+seed them into `kv-ipai-dev` as secrets named `bot-password-{agent}` (e.g.
+`bot-password-pulser`), then restart the bot-proxy revision to pick them up.
+
 ## Step 2 — Deploy 6 AFD routes
 
 First, look up the AFD RG + endpoint name:
@@ -55,12 +97,14 @@ az resource list --name afd-ipai-dev --query "[].{rg:resourceGroup, type:type}" 
 Then deploy:
 
 ```bash
-# Replace <AFD_RG> and <ENDPOINT_NAME> with values from above
+# Use the bot-proxy FQDN from Step 1b as gatewayFqdn (NOT the internal gateway)
 az deployment group create \
-  --resource-group <AFD_RG> \
+  --resource-group rg-ipai-dev-odoo-runtime \
   --template-file infra/azure/deploy-agent-routes.bicep \
-  --parameters env=dev afdEndpointName=<ENDPOINT_NAME> \
-  --name agent-routes-dev-$(date +%Y%m%d%H%M)
+  --parameters env=dev \
+               afdEndpointName=afd-ipai-dev-ep \
+               gatewayFqdn="$PROXY_FQDN" \
+  --name "agent-routes-dev-$(date +%Y%m%d%H%M)"
 ```
 
 Creates 6 routes on the existing `afd-ipai-dev` profile:
