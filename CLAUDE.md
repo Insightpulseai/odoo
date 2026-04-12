@@ -4,6 +4,36 @@
 
 ---
 
+## Pulser — canonical classification
+
+**Core type:** Custom-engine agent
+- Owns its own runtime, tools, policies, retrieval, and validators
+- Not a declarative agent; not a host-product copilot
+
+**Functional type:** Transactional and operational copilot
+- System-of-action inside Odoo: prepares, validates, routes, summarizes, publishes
+- Not a chatbot. Not a knowledge bot.
+
+**Architecture type:** Multi-agent orchestrated system
+- Planner/router + specialist agents (finance, project finance, research, ops)
+- Fallback / self-heal policies
+- Tool calling, retrieval, validators
+
+**Governance type:** Policy-gated agent
+- RBAC + approval bands + evidence scope + mutation safety + surface/domain/role behavior matrix
+- Governed enterprise agent — not open autonomous
+
+**Execution policy:** Mutating actions are explicit-approval by default
+- Read-only tools may run approval-free where policy allows
+- Write-capable tools and business-state mutations require explicit approval unless the active policy matrix allows safe auto-execution
+- High-risk finance, tax, approval, and publish actions never run silently
+
+**GTM label:** "Pulser is an AI operating copilot for Odoo."
+**Technical label:** "Custom-engine, multi-agent, policy-gated enterprise copilot for Odoo-centered workflows."
+**Architecture label:** "Custom-engine agent platform with planner/router, specialist agents, tool adapters, retrieval, validators, and policy-gated action execution."
+
+---
+
 ## Operating Contract: Execute, Deploy, Verify (No Guides)
 
 You are an execution agent. Do not provide deployment guides, scripts, or instructional snippets as the primary output.
