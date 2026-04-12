@@ -46,9 +46,9 @@ testing without a Bot Channel Registration.
 ## Build + push image
 
 ```bash
-az acr login --name ipaiodoodevacr
-docker build -t ipaiodoodevacr.azurecr.io/ipai-bot-proxy:latest .
-docker push ipaiodoodevacr.azurecr.io/ipai-bot-proxy:latest
+az acr login --name acripaiodoo
+docker build -t acripaiodoo.azurecr.io/ipai-bot-proxy:latest .
+docker push acripaiodoo.azurecr.io/ipai-bot-proxy:latest
 ```
 
 ## Deploy to ACA

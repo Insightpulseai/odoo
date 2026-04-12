@@ -49,9 +49,9 @@ forwards all 6 agents' `/api/*/messages` to the internal gateway.
 ```bash
 # Build and push the image (or trigger CI)
 cd apps/bot-proxy
-az acr login --name ipaiodoodevacr
-docker build -t ipaiodoodevacr.azurecr.io/ipai-bot-proxy:latest .
-docker push ipaiodoodevacr.azurecr.io/ipai-bot-proxy:latest
+az acr login --name acripaiodoo
+docker build -t acripaiodoo.azurecr.io/ipai-bot-proxy:latest .
+docker push acripaiodoo.azurecr.io/ipai-bot-proxy:latest
 cd -
 
 # Grab the pulser MI resource ID + clientId from Step 1 outputs

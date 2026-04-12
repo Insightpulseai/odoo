@@ -18,7 +18,7 @@ param env string = 'dev'
 param containerAppsEnvironmentName string = 'ipai-odoo-dev-env-v2'
 
 @description('Container image (ACR + tag)')
-param image string = 'ipaiodoodevacr.azurecr.io/ipai-bot-proxy:latest'
+param image string = 'acripaiodoo.azurecr.io/ipai-bot-proxy:latest'
 
 @description('User-assigned MI resource ID (typically id-ipai-agent-pulser-<env>)')
 param userAssignedMiResourceId string
@@ -92,7 +92,7 @@ resource botProxy 'Microsoft.App/containerApps@2024-03-01' = {
       }
       registries: [
         {
-          server: 'ipaiodoodevacr.azurecr.io'
+          server: 'acripaiodoo.azurecr.io'
           identity: userAssignedMiResourceId
         }
       ]

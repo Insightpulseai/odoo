@@ -10,7 +10,7 @@ Run locally:
     python -m src.main    # (requires BOT_ID_* and BOT_PASSWORD_* env)
 
 In production (ACA):
-    docker run -p 8088:8088 ipaiodoodevacr.azurecr.io/ipai-bot-proxy:latest
+    docker run -p 8088:8088 acripaiodoo.azurecr.io/ipai-bot-proxy:latest
 """
 
 from __future__ import annotations

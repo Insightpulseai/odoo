@@ -1,9 +1,9 @@
 # apps/bot-proxy/Dockerfile
 # Lightweight Python image running the 6-agent Bot Framework proxy.
 # Built and pushed by .github/workflows/build-bot-proxy.yml or manually:
-#   docker build -t ipaiodoodevacr.azurecr.io/ipai-bot-proxy:latest .
-#   az acr login --name ipaiodoodevacr
-#   docker push ipaiodoodevacr.azurecr.io/ipai-bot-proxy:latest
+#   docker build -t acripaiodoo.azurecr.io/ipai-bot-proxy:latest .
+#   az acr login --name acripaiodoo
+#   docker push acripaiodoo.azurecr.io/ipai-bot-proxy:latest
 
 FROM python:3.12-slim AS base
 
