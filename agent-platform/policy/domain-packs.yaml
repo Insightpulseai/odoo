@@ -1,0 +1,74 @@
+version: 1
+
+domains:
+  research:
+    label: Research / PRISMA / Meta-analysis
+    default_ui_mode: wizard
+    default_tone: plain
+    default_exports:
+      - copy_text
+      - pdf
+      - docx
+    default_tools:
+      - structured_generation
+      - public_methodology_rag
+      - pubmed_search
+      - prisma_validator
+    consult_cta_default: contextual
+
+  finance:
+    label: Finance / Close / Tax
+    default_ui_mode: cockpit
+    default_tone: operational
+    default_exports:
+      - xlsx
+      - docx
+      - pptx
+    default_tools:
+      - evidence_lookup
+      - reconciliation_tools
+      - close_checklist
+      - filing_pack_generator
+    consult_cta_default: none
+
+  project_finance:
+    label: Project-to-Profit / PPM
+    default_ui_mode: cockpit
+    default_tone: concise
+    default_exports:
+      - xlsx
+      - docx
+      - pptx
+    default_tools:
+      - portfolio_metrics
+      - variance_analysis
+      - okr_tools
+      - project_reporting
+    consult_cta_default: none
+
+  sales:
+    label: Sales / CRM
+    default_ui_mode: workbench
+    default_tone: concise
+    default_exports:
+      - docx
+      - pdf
+    default_tools:
+      - summary_generation
+      - draft_reply
+      - next_best_action
+    consult_cta_default: soft
+
+  ops:
+    label: Platform / Operations
+    default_ui_mode: operator
+    default_tone: operational
+    default_exports:
+      - json
+      - csv
+    default_tools:
+      - diagnostics
+      - rollout_control
+      - drift_check
+      - recovery_actions
+    consult_cta_default: none

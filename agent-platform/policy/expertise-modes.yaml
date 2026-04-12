@@ -1,0 +1,29 @@
+version: 1
+
+expertise_modes:
+  beginner:
+    label: Beginner
+    ui_density: low
+    show_advanced_controls: false
+    helper_text_level: high
+    default_step_mode: single_step
+    tone_override: plain
+    result_explanation_depth: high
+
+  intermediate:
+    label: Intermediate
+    ui_density: medium
+    show_advanced_controls: selective
+    helper_text_level: medium
+    default_step_mode: grouped_steps
+    tone_override: guided
+    result_explanation_depth: medium
+
+  expert:
+    label: Expert
+    ui_density: high
+    show_advanced_controls: true
+    helper_text_level: low
+    default_step_mode: compact
+    tone_override: concise
+    result_explanation_depth: low

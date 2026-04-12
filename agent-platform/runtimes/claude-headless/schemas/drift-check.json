@@ -1,0 +1,25 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Infra / SSOT Drift Report",
+  "type": "object",
+  "required": ["timestamp", "scope", "status", "drifts"],
+  "properties": {
+    "timestamp": { "type": "string", "format": "date-time" },
+    "scope": { "type": "string", "description": "e.g. azure-runtime, ssot-modules, dns" },
+    "status": { "type": "string", "enum": ["in_sync", "minor_drift", "major_drift", "error"] },
+    "drifts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["resource", "kind", "expected", "actual"],
+        "properties": {
+          "resource": { "type": "string" },
+          "kind": { "type": "string", "enum": ["added", "removed", "modified", "misconfigured"] },
+          "expected": { "type": "string" },
+          "actual": { "type": "string" },
+          "remediation": { "type": "string" }
+        }
+      }
+    }
+  }
+}
