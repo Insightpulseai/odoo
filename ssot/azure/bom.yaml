@@ -1,0 +1,296 @@
+---
+# SSOT: Azure Bill of Materials — current state and desired normalization
+# Authority: this file. Source for resource normalization PRs and Bicep parameters.
+# Last updated: 2026-04-14
+version: 1
+status: canonical
+benchmark_scope:
+  - D365 Finance
+  - Finance agents
+  - D365 Project Operations (Core + Integrated with ERP)
+
+# Inventory snapshot per portal export (sponsored sub eba824fb visible items only;
+# workload sub 536d8cf6 has additional ACA apps inventoried in azure_devops.yaml).
+current_inventory:
+  total_resources: 24
+  primary_region: southeastasia
+  resource_groups:
+    - rg-ipai-dev-odoo-sea
+    - rg-ipai-dev-data-sea
+    - rg-ipai-dev-mon-sea
+    - rg-ipai-dev-security-sea
+    - rg-ipai-dev-ai-sea
+    - rg-ipai-dev-dbw-managed
+    - rg-ipai-stg-odoo-runtime
+    - rg-ipai-shared
+    - NetworkWatcherRG
+  by_type:
+    storage_accounts: 3
+    managed_identities: 3
+    log_analytics: 2
+    container_apps_envs: 2
+    container_apps: 2
+    postgres_flexible: 1
+    databricks_workspace: 1
+    key_vault: 1
+    acr: 1
+    service_bus: 1
+    vnet: 1
+    nsg: 1
+    access_connector: 1
+    application_insights: 1
+    action_group: 1
+    container_app_job: 1
+    network_watcher: 1
+
+# Desired RG taxonomy (per env × plane)
+desired_resource_groups:
+  shared:
+    - rg-ipai-shared-sea
+  dev:
+    - rg-ipai-dev-transaction-sea
+    - rg-ipai-dev-data-sea
+    - rg-ipai-dev-observability-sea
+    - rg-ipai-dev-security-sea
+  stg:
+    - rg-ipai-stg-transaction-sea
+    - rg-ipai-stg-data-sea
+    - rg-ipai-stg-observability-sea
+    - rg-ipai-stg-security-sea
+  prod:
+    - rg-ipai-prod-transaction-sea
+    - rg-ipai-prod-data-sea
+    - rg-ipai-prod-observability-sea
+    - rg-ipai-prod-security-sea
+
+# Per-resource normalization map
+# action: rename | move | normalize | keep | exception
+resources:
+
+  # ───── Shared / Platform ─────
+  - current_name: acripaiodoo
+    type: container_registry
+    current_rg: rg-ipai-shared
+    desired_name: acripaisharedsea
+    desired_rg: rg-ipai-shared-sea
+    action: rename
+    note: "ACR is shared, not workload-specific"
+
+  - current_name: NetworkWatcher_southeastasia
+    type: network_watcher
+    current_rg: NetworkWatcherRG
+    desired_name: NetworkWatcher_southeastasia
+    desired_rg: NetworkWatcherRG
+    action: keep
+    note: "Azure-managed default; provider exception"
+
+  # ───── Dev — Transaction Plane ─────
+  - current_name: acae-ipai-dev-sea
+    type: container_apps_environment
+    current_rg: rg-ipai-dev-odoo-sea
+    desired_name: cae-ipai-dev-odoo-sea
+    desired_rg: rg-ipai-dev-transaction-sea
+    action: rename_and_move
+
+  - current_name: ca-ipai-odoo-web-dev
+    type: container_app
+    current_rg: rg-ipai-dev-odoo-sea
+    desired_name: ca-ipai-dev-odoo-web-sea
+    desired_rg: rg-ipai-dev-transaction-sea
+    action: rename_and_move
+
+  - current_name: init-db
+    type: container_app_job
+    current_rg: rg-ipai-dev-odoo-sea
+    desired_name: caj-ipai-dev-odoo-initdb-sea
+    desired_rg: rg-ipai-dev-transaction-sea
+    action: rename_and_move
+
+  - current_name: pg-ipai-odoo-dev
+    type: postgresql_flexible
+    current_rg: rg-ipai-dev-data-sea
+    desired_name: pgfs-ipai-dev-odoo-sea
+    desired_rg: rg-ipai-dev-transaction-sea
+    action: rename_and_move
+    note: "PG is OLTP — belongs in transaction plane, not data plane"
+
+  - current_name: sb-ipai-dev-sea
+    type: service_bus
+    current_rg: rg-ipai-dev-odoo-sea
+    desired_name: sb-ipai-dev-odoo-sea
+    desired_rg: rg-ipai-dev-transaction-sea
+    action: rename_and_move
+
+  - current_name: id-ipai-dev
+    type: managed_identity
+    current_rg: rg-ipai-dev-security-sea
+    desired_name: id-ipai-dev-odoo-sea
+    desired_rg: rg-ipai-dev-transaction-sea
+    action: rename_and_move
+    note: "Workload identity — colocate with Odoo runtime; keep generic security identities in security plane"
+
+  # ───── Dev — Data Plane ─────
+  - current_name: dbw-ipai-dev
+    type: databricks_workspace
+    current_rg: rg-ipai-dev-ai-sea
+    desired_name: dbw-ipai-dev-data-sea
+    desired_rg: rg-ipai-dev-data-sea
+    action: rename_and_move
+
+  - current_name: stdevipai
+    type: storage_account
+    current_rg: rg-ipai-dev-data-sea
+    desired_name: stipaidevsea
+    desired_rg: rg-ipai-dev-data-sea
+    action: rename
+    constraint: service_constrained
+
+  - current_name: stlkipaidev
+    type: storage_account
+    current_rg: rg-ipai-dev-data-sea
+    desired_name: stipailakedevsea
+    desired_rg: rg-ipai-dev-data-sea
+    action: rename
+    constraint: service_constrained
+
+  - current_name: unity-catalog-access-connector
+    type: access_connector
+    current_rg: rg-ipai-dev-dbw-managed
+    desired_name: acn-ipai-dev-dbw-sea
+    desired_rg: rg-ipai-dev-data-sea
+    action: rename_and_move
+    note: "Verify provider-managed vs user-managed before move"
+
+  - current_name: workers-vnet
+    type: vnet
+    current_rg: rg-ipai-dev-dbw-managed
+    desired_name: vnet-ipai-dev-dbw-sea
+    desired_rg: rg-ipai-dev-data-sea
+    action: rename_and_move
+
+  - current_name: workers-sg
+    type: nsg
+    current_rg: rg-ipai-dev-dbw-managed
+    desired_name: nsg-ipai-dev-dbw-sea
+    desired_rg: rg-ipai-dev-data-sea
+    action: rename_and_move
+
+  # ───── Dev — Observability Plane ─────
+  - current_name: appi-ipai-dev
+    type: application_insights
+    current_rg: rg-ipai-dev-mon-sea
+    desired_name: appi-ipai-dev-odoo-sea
+    desired_rg: rg-ipai-dev-observability-sea
+    action: rename_and_move
+
+  - current_name: log-ipai-dev-sea
+    type: log_analytics_workspace
+    current_rg: rg-ipai-dev-mon-sea
+    desired_name: law-ipai-dev-odoo-sea
+    desired_rg: rg-ipai-dev-observability-sea
+    action: rename_and_move
+
+  - current_name: "Application Insights Smart Detection"
+    type: action_group
+    current_rg: rg-ipai-dev-mon-sea
+    desired_name: ag-ipai-dev-observability-sea
+    desired_rg: rg-ipai-dev-observability-sea
+    action: replace_with_user_managed
+    note: "Auto-created Smart Detection AG remains; create user-managed AG alongside"
+
+  # ───── Dev — Security Plane ─────
+  - current_name: kv-ipai-dev-sea
+    type: key_vault
+    current_rg: rg-ipai-dev-security-sea
+    desired_name: kv-ipai-dev-security-sea
+    desired_rg: rg-ipai-dev-security-sea
+    action: rename_only
+    note: "Casing/clarity normalization only"
+
+  # ───── Staging ─────
+  - current_name: ipai-odoo-stg-env
+    type: container_apps_environment
+    current_rg: rg-ipai-stg-odoo-runtime
+    desired_name: cae-ipai-stg-odoo-sea
+    desired_rg: rg-ipai-stg-transaction-sea
+    action: rename_and_move
+
+  - current_name: id-ipai-stg
+    type: managed_identity
+    current_rg: rg-ipai-stg-odoo-runtime
+    desired_name: id-ipai-stg-odoo-sea
+    desired_rg: rg-ipai-stg-transaction-sea
+    action: rename_and_move
+
+  - current_name: la-ipai-stg
+    type: log_analytics_workspace
+    current_rg: rg-ipai-stg-odoo-runtime
+    desired_name: law-ipai-stg-odoo-sea
+    desired_rg: rg-ipai-stg-observability-sea
+    action: rename_and_move
+
+  - current_name: ipai-prismalab-web
+    type: container_app
+    current_rg: rg-ipai-stg-odoo-runtime
+    desired_name: ca-ipai-stg-prismalab-web-sea
+    desired_rg: rg-ipai-stg-prismalab-sea
+    action: rename_and_split
+    note: "Prismalab is a separate workload; split out of Odoo RG"
+
+  # ───── Provider-managed exceptions ─────
+  - current_name: dbmanagedidentity
+    type: managed_identity
+    current_rg: rg-ipai-dev-dbw-managed
+    desired_name: dbmanagedidentity
+    desired_rg: rg-ipai-dev-dbw-managed
+    action: keep_exception
+    note: "Databricks provider-generated"
+
+  - current_name: dbstorageqba5raeuajc6u
+    type: storage_account
+    current_rg: rg-ipai-dev-dbw-managed
+    desired_name: dbstorageqba5raeuajc6u
+    desired_rg: rg-ipai-dev-dbw-managed
+    action: keep_exception
+    note: "Databricks provider-generated"
+
+# Migration sequencing
+sequencing:
+  phase_1:
+    - "Freeze SSOT files (this PR)"
+    - "Apply Azure Policy for mandatory tags (audit-only first)"
+    - "Tag all current resources to baseline"
+  phase_2:
+    - "Normalize observability resources (low blast radius)"
+    - "Normalize Key Vault casing"
+  phase_3:
+    - "Move PG Flexible Server to transaction plane (cross-RG; coordinate with app)"
+    - "Move identities to correct planes"
+  phase_4:
+    - "Rename ACA Environment (requires ACA app re-registration)"
+    - "Split Prismalab from Odoo stg RG"
+  phase_5:
+    - "Stand up stg/prod RG taxonomy via Bicep"
+    - "Switch policy to Deny effect after 100% baseline"
+
+# Blast radius notes
+risk:
+  high:
+    - "PG Flexible Server move/rename — connection strings change; requires app downtime or DNS aliasing"
+    - "ACA Environment rename — apps in env may need re-registration"
+  medium:
+    - "Storage account rename (constrained) — references in scripts/Bicep need update"
+    - "ACR rename — image pull paths break until referrers updated"
+  low:
+    - "Tag application"
+    - "Observability resource renames (App Insights connection strings update)"
+
+# Anchors
+anchors:
+  naming: "ssot/azure/naming-convention.yaml"
+  tag_policy: "ssot/azure/tag-policy.yaml"
+  desired_end_state: "docs/architecture/azure-desired-end-state.md"
+  predecessor_files:
+    - "ssot/azure/expected-estate.yaml"
+    - "ssot/azure/resource_rationalization.yaml"
+    - "ssot/azure/operator_view.yaml"
