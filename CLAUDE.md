@@ -172,6 +172,100 @@ pnpm install                            # Install Node dependencies
 
 ---
 
+## Odoo extension and customization doctrine
+
+When implementing new capability in Odoo, follow this decision order:
+
+1. **Odoo CE 18 native capability first**
+   - Prefer standard CE behavior before adding modules or code.
+
+2. **Odoo property fields second, when the requirement is parent-scoped metadata**
+   - Use property fields when the need is lightweight, configurable, form-level metadata tied to a parent record (e.g., project-specific task attributes, team-specific CRM qualifiers, category-scoped product enrichment).
+   - Property fields are pseudo-fields, not stored as normal database columns, scoped by a parent record.
+   - **NOT appropriate for:** core accounting logic, strong relational domain models, cross-parent canonical master data, heavy reporting, integration contracts, workflow-critical fields, fields needing robust server logic or DB-level consistency.
+
+3. **OCA 18 same-domain modules third**
+   - Search the primary OCA repository for the functional domain before writing custom code.
+
+4. **Adjacent OCA 18 modules fourth**
+   - Check neighboring OCA domains before concluding there is a gap.
+   - Example: project need → also inspect `timesheet`, `project-reporting`, `knowledge`, `account-analytic`, `connector-*`, `l10n-*`.
+   - Compose CE + property fields + OCA modules where possible.
+
+5. **Custom `ipai_*` modules last**
+   - Custom modules are a last-resort extension path only.
+   - `ipai_*` must stay thin and bridge-oriented: integration bridges, orchestration glue, AI/copilot overlays, adapters, narrow opinionated extensions.
+   - **Do not create `ipai_*` modules to duplicate viable CE/OCA parity.**
+
+### Mandatory requirements for any approved custom `ipai_*` module
+
+Every custom module is incomplete unless it includes:
+
+- `README.md`
+- `docs/MODULE_INTROSPECTION.md`
+- `docs/TECHNICAL_GUIDE.md`
+
+Required minimum structure:
+
+```
+addons/ipai/<module_name>/
+  README.md
+  docs/
+    MODULE_INTROSPECTION.md
+    TECHNICAL_GUIDE.md
+  __manifest__.py
+  models/
+  views/
+  security/
+  data/
+  tests/
+```
+
+### Required contents of `MODULE_INTROSPECTION.md`
+
+- Why this module exists
+- Business problem
+- CE 18 coverage checked
+- **Property-field assessment** (could properties solve this? If not, why not?)
+- OCA 18 same-domain coverage checked
+- Adjacent OCA modules reviewed
+- Why CE + property fields + OCA composition was insufficient
+- Why custom code is justified
+- Module type: bridge / overlay / adapter / extension
+- Functional boundaries
+- Extension points used (`_inherit`, view inheritance, hooks, server actions, APIs)
+- Blast radius
+- Upgrade risk
+- Owner
+- Retirement / replacement criteria
+
+### Required contents of `TECHNICAL_GUIDE.md`
+
+- Architecture
+- Models extended
+- Fields added
+- Methods overridden
+- View inheritance points
+- Security model
+- Data files loaded
+- Jobs / cron / queues / webhooks
+- External integrations
+- Test strategy
+- Upgrade / rollback notes
+- Known limitations and failure modes
+
+### Implementation rules
+
+- Prefer `_inherit`, view inheritance, additive extension, and modular composition over invasive overrides.
+- Override CRUD/core methods only when necessary, and always preserve parent behavior via `super()`.
+- A custom module is **not justified** if the requirement can be solved by CE 18, property fields, OCA 18, or composition of those layers.
+
+### Canonical doctrine sentence
+
+> Doctrine: CE 18 first → property fields for parent-scoped lightweight metadata → OCA 18 same-domain → adjacent OCA → compose CE + properties + OCA → custom `ipai_*` as last resort with mandatory module introspection and technical guide.
+
+---
+
 ## Deprecated (Never Use)
 
 | Item | Replacement | Date |
