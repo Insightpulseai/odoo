@@ -52,7 +52,19 @@
 
 ## 2. D365 Project Operations parity
 
-> D365 PO tiers: **Core** (opportunity→project→resource→time→invoice), **Integrated with F&O** (full project accounting, revenue recognition, POs), **Mfg** (PSA integration with production). Feature areas per docs: sales process, price lists, project management, resource management, project resourcing, forecasts and budgets, WBS.
+> **D365 PO is a services/project-based delivery ERP, not a PM tool** (see `feedback_d365_project_operations_services_erp.md`). It spans sales → resourcing → project delivery → finance as one integrated operating model.
+>
+> **Three deployment shapes → IPAI parity targets:**
+>
+> | D365 PO shape | What it is | IPAI parity target |
+> |---|---|---|
+> | **Core** | Lighter project/service core (opportunity→project→resource→time→invoice) | Odoo CE `project/sale/timesheets/planning` + OCA resource/forecast stack |
+> | **Integrated with ERP** (primary benchmark) | Delivery + accounting/profitability integrated into finance | Odoo CE + OCA accounting/project + `ipai_finance_ppm` bridges |
+> | **For Manufacturing** | Projectized manufacturing / PSA-production integration | Odoo MRP + Project + analytic accounting overlays |
+>
+> **Parity classification:** `CE + OCA + bridge` (per `feedback_odoo_module_selection_doctrine.md`). NOT CE-only.
+>
+> **Primary benchmark for displacement deals:** *Integrated with ERP* — that's the depth tier where IPAI actually competes. Feature areas per docs below: sales process, price lists, project management, resource management, project resourcing, forecasts and budgets, WBS.
 
 | D365 PO feature area | Odoo 18 equivalent | Type | Priority if gap |
 |---|---|---|---|
