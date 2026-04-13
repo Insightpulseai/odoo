@@ -1,0 +1,187 @@
+---
+# SSOT: Upstream Repo Adoption Register (canonical)
+# Authority: this file. Decision authority for "do we fork/clone/consume?"
+# Default doctrine: ADAPT FIRST. Own only thin Pulser/Odoo/Azure adapters, SSOT,
+# tests, and platform composition.
+# Last updated: 2026-04-14
+version: 1
+status: canonical
+
+# Adoption modes (4)
+modes:
+  consume_directly:
+    description: "Use as upstream package/registry/template/MCP. NO fork."
+    examples: [package_dependency, registry_module_reference, MCP_install, azd_template_reference]
+  clone_as_reference:
+    description: "Study/copy patterns into your repo. Do NOT track as a product fork."
+    examples: [docs_only_extract, selected_workflow_pattern, decision_record_input]
+  fork_and_own:
+    description: "Take ownership of long-lived derivative as a real product asset. Rare."
+    examples: [productized_internal_service, custom_governance_hooks, tenant_aware_restrictions]
+  do_not_adopt:
+    description: "Useful for learning only; not for your stack. Out of scope."
+    examples: [duplicates_canonical_stack, dataverse_lock_in, custom_runtime_against_thin_adapter_doctrine]
+
+# Default doctrine line (use verbatim in proposals/docs)
+default_doctrine: |
+  Do not fork Microsoft/Azure platform repos unless IPAI is taking ownership of
+  a long-lived derivative product. For this stack, consume frameworks and
+  registries directly, clone samples as references, and own only the thin
+  Pulser/Odoo/Azure adapters, SSOT, tests, and platform composition.
+
+# ─── Adoption decisions ───
+repos:
+
+  # ───── A. Infra / Azure substrate ─────
+
+  - upstream: Azure/bicep-registry-modules
+    purpose: "Microsoft canonical AVM Bicep modules (single Bicep standard)"
+    adopt_mode: consume_directly
+    internal_owner: platform-engineering
+    internal_destination: "infra/ (composition only — never copy AVM modules in-place)"
+    do_when: now
+    rationale: "AVM is the single Bicep standard per Microsoft. Customizing in place creates downstream burden."
+
+  - upstream: Azure-Samples/azure-fastapi-postgres-flexible-aca
+    purpose: "FastAPI + ACA + PostgreSQL Flex sample template"
+    adopt_mode: clone_as_reference
+    internal_owner: platform-engineering
+    internal_destination: "docs/architecture/reference-adaptations/ + selected GitHub workflow patterns"
+    do_when: now
+    rationale: "Useful for infra/ layout + GitHub workflow scaffolding; FastAPI app shape is NOT relevant to Odoo."
+
+  - upstream: Azure-Samples/Azure-PostgreSQL-Resiliency-Architecture
+    purpose: "PostgreSQL Flexible Server resiliency accelerator (HA topologies + RPO/RTO)"
+    adopt_mode: clone_as_reference
+    internal_owner: platform-engineering
+    internal_destination: "docs/architecture/ + DR decision records"
+    do_when: now
+    rationale: "Adopt the architectural decisions, not the Terraform IaC (canonical path is Bicep+AVM)."
+
+  - upstream: Azure-Samples/azure-postgres-pgvector-python
+    purpose: "PG Flex with pgvector + Entra auth"
+    adopt_mode: clone_as_reference
+    internal_owner: agent-platform
+    internal_destination: "agent-platform/ or data-intelligence/experiments/"
+    do_when: now
+    rationale: "Vector sidecar pattern; do not confuse with OLTP core. Adopt Entra-auth pattern broadly."
+
+  # ───── B. Data + AI connectivity ─────
+
+  - upstream: Azure-Samples/azure-postgresql-mcp
+    purpose: "MCP server for Azure Database for PostgreSQL (DB inspection + query tools)"
+    adopt_mode: clone_as_reference
+    internal_owner: agent-platform
+    internal_destination: "agent-platform/tools/ (thin hardened wrapper later if needed)"
+    do_when: now
+    fork_trigger: "Need for query allowlists, tenancy restrictions, custom RBAC controls"
+    rationale: "Run upstream in dev/sandbox first. Wrapper only when production-grade controls are required."
+
+  - upstream: microsoft/agent-framework
+    purpose: "Microsoft canonical agent orchestration runtime (Python + .NET)"
+    adopt_mode: consume_directly
+    internal_owner: agent-platform
+    internal_destination: "Dependency in agent repos (agent-platform/, agents/)"
+    do_when: now
+    rationale: "Agent orchestration runtime. IPAI owns Pulser tools/policies/prompts/adapters; never re-implements the framework."
+
+  - upstream: microsoft-foundry/* (AI templates incl. Release Manager Assistant)
+    purpose: "Microsoft Foundry azd-style AI templates (release mgmt, data unification, etc.)"
+    adopt_mode: clone_as_reference
+    internal_owner: agent-platform
+    internal_destination: "agent-platform/ (e.g., apps/release-manager) — adapt patterns, not whole template"
+    do_when: now
+    fork_trigger: "Pulser Release Ops (or similar) becomes a productized internal service"
+    rationale: "Per PRD §0.7. Adapt Foundry+MAF+MCP patterns. Do NOT clone Jira/AzDO assumptions."
+
+  # ───── C. DevOps / Boards / Delivery ─────
+
+  - upstream: microsoft/azure-devops-mcp
+    purpose: "MCP server for Azure DevOps (boards, repos, pipelines, wiki, test-plans)"
+    adopt_mode: consume_directly
+    internal_owner: delivery-engineering
+    internal_destination: "Editor/agent config (e.g., .github/copilot-instructions.md, .vscode/mcp.json)"
+    do_when: now
+    rationale: "Thin abstraction over ADO APIs. Already used in this session for Wave-01 board population."
+
+  - upstream: microsoft/azure-pipelines-yaml
+    purpose: "Azure Pipelines YAML templates + community samples"
+    adopt_mode: clone_as_reference
+    internal_owner: delivery-engineering
+    internal_destination: "Internal pipeline templates in azure-pipelines/ or .azuredevops/"
+    do_when: now
+    rationale: "Pattern reference. Do not mirror the repo."
+
+  - upstream: microsoft/azure-pipelines-agent
+    purpose: "Cross-platform Azure Pipelines agent (build runner)"
+    adopt_mode: do_not_adopt
+    internal_owner: delivery-engineering
+    internal_destination: "docs/runbooks/ only"
+    do_when: never_as_codebase
+    rationale: "Reference for runner ops behavior only. Do not own the agent code."
+
+  # ───── D. Testing / browser automation ─────
+
+  - upstream: microsoft/playwright
+    purpose: "Browser automation + test framework (canonical)"
+    adopt_mode: consume_directly
+    internal_owner: qa-engineering
+    internal_destination: "Dependency in tests/ + Playwright MCP for AI-led SDLC proof-of-change"
+    do_when: now
+    rationale: "Aligned with AI-led SDLC reference (Playwright MCP). IPAI owns suites, page objects, fixtures, reporting."
+
+# ─── Internal repos owned directly (not forked from upstream) ───
+own_directly:
+  - path: "infra/"
+    purpose: "AVM composition only — pin AVM module versions"
+  - path: "agent-platform/ + agents/"
+    purpose: "Pulser-specific tools, policies, prompts, skills"
+  - path: "data-intelligence/"
+    purpose: "Databricks/Fabric contracts + bronze/silver/gold definitions"
+  - path: "addons/ipai/"
+    purpose: "Thin Odoo adapters per CLAUDE.md §extension doctrine"
+  - path: "docs/ + ssot/"
+    purpose: "Doctrine, naming, BOM, tags, tenancy, parity matrix, decisions"
+  - path: "tests/playwright/"
+    purpose: "UI/E2E suites consuming Playwright"
+
+# ─── Mirror outcomes, not upstream repos ───
+mirror_principle: |
+  Mirror only OUTCOMES (composition, decision records, thin adapters, tests),
+  not upstream repos. Keep upstreams upstream.
+
+mirror_targets:
+  - infra/azure-avm-composition
+  - docs/architecture/reference-adaptations
+  - agent-platform/pulser-tools
+  - tests/playwright
+  - ssot/azure
+  - docs/delivery
+
+# ─── Anti-patterns ───
+anti_patterns:
+  - "Forking AVM/Bicep modules — creates downstream burden Microsoft now solves"
+  - "Forking microsoft/agent-framework — re-implementing what Microsoft owns"
+  - "Forking microsoft/playwright — adopting upstream test framework as your codebase"
+  - "Cloning Foundry templates as productized internal codebases without explicit fork_trigger"
+  - "Vendoring Azure-Samples/* repos under your repo (creates stale copies)"
+  - "Forking azure-pipelines-agent — agent ops is reference-only"
+
+# ─── Decision audit ───
+decisions_audit:
+  consumed_directly: 4   # AVM, Agent Framework, ADO MCP, Playwright
+  cloned_as_reference: 6 # FastAPI+ACA+PG, PG-Resiliency, pgvector, PG-MCP, pipelines-yaml, Foundry templates
+  fork_and_own: 0        # NONE right now
+  do_not_adopt: 1        # azure-pipelines-agent (codebase, not pattern)
+
+# ─── Anchors ───
+anchors:
+  prd_doctrine: "spec/pulser-odoo/prd.md §0"
+  authority_split: "ssot/governance/platform-authority-split.yaml"
+  coverage_matrix: "docs/architecture/microsoft-reference-coverage-matrix.md"
+  azure_naming: "ssot/azure/naming-convention.yaml"
+  azure_bom: "ssot/azure/bom.yaml"
+  related_memory:
+    - reference_release_manager_assistant_adoption.md
+    - reference_microsoft_foundry_org_repos.md
+    - reference_azd_ai_templates.md
