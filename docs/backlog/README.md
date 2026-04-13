@@ -12,6 +12,7 @@ Each pack translates a D365 / Microsoft reference track into Odoo-on-Azure
 | [`epic-02-architecture-dev-hardening.md`](epic-02-architecture-dev-hardening.md) | Architecture, Development, and Platform Hardening | D365 F&O developer track |
 | [`epic-03-azure-postgresql-foundation.md`](epic-03-azure-postgresql-foundation.md) | Azure PostgreSQL Foundation and Resilience | Azure Samples (FastAPI+PG, Resiliency, postgres-agents) |
 | [`epic-04-azure-pipelines-github.md`](epic-04-azure-pipelines-github.md) | Azure Pipelines and GitHub Delivery Integration | microsoft/azure-pipelines-yaml, Azure/pipelines action |
+| [`epic-05-admin-tooling-ui-test.md`](epic-05-admin-tooling-ui-test.md) | Admin Tooling and UI Test Automation (secondary) | MS model-driven app dev tools page + Easy Repro testing page |
 
 ## Status
 
