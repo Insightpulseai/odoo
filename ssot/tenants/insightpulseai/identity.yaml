@@ -1,0 +1,68 @@
+---
+# Tenant identity: InsightPulseAI (provider)
+# Parent SSOT: ssot/tenants/tenants-registry.yaml
+# Last updated: 2026-04-14
+tenant_code: IPAI
+tenant_name: InsightPulseAI
+legal_name: InsightPulseAI
+role: provider
+
+domains:
+  primary: insightpulseai.com
+  deprecated: [insightpulseai.net]  # per CLAUDE.md deprecation 2026-02
+
+email:
+  provider: zoho_mail
+  smtp_host: smtp.zoho.com
+  smtp_port: 587
+  secret_source: azure_key_vault  # kv-ipai-dev — ZOHO_SMTP_USER / ZOHO_SMTP_PASSWORD
+  outbound_from_default: no-reply@insightpulseai.com
+
+users_licensed:
+  - email: business@insightpulseai.com
+    name: Jake Tolentino
+    role: ceo_founder
+    mobile: "+639682699265"
+  - email: finance@insightpulseai.com
+    name: InsightPulseAI Finance
+    role: finance_operator
+    last_signin: "2025-08-14"  # ~8 months ago per Zoho panel — review cadence needed
+
+aliases_routed:
+  - admin@insightpulseai.com
+  - billing@insightpulseai.com
+  - ceo@insightpulseai.com
+  - devops@insightpulseai.com
+  - expenses@insightpulseai.com
+  - info@insightpulseai.com
+  - jake.tolentino@insightpulseai.com
+  - no-reply@insightpulseai.com
+  - security@insightpulseai.com
+  - support@insightpulseai.com
+  # Note: jgtolentino.rn@gmail.com also routed but should migrate off personal Gmail
+  # for client-facing workflows.
+
+odoo:
+  company_id: 1
+  company_name: InsightPulseAI
+  currency: PHP
+  country: PH
+  default_accounting_chart: ph_standard  # or ipai_bir_* pack
+  visibility: global  # provider sees all tenants
+
+pulser_deployment:
+  surfaces: [teams, copilot, slack, web]
+  primary_surface: slack  # per feedback_branding_copilot_policy.md
+  copilot_brand: internal  # "Copilot" label for IPAI internal use
+  public_brand: Pulser
+
+external_identifiers:
+  microsoft_mpn_id: "7097325"
+  isv_success_program: enrolled
+  azure_sponsorship_sub: eba824fb-332d-4623-9dfb-2c9f7ee83f4e
+  azure_workload_sub: 536d8cf6-89e1-4815-aef3-d5f2c5f4d070
+
+risk_notes:
+  - "Only 2 licensed users for 11 role aliases — no RBAC separation at mailbox level"
+  - "finance@ dormant ~8 months — either activate review cadence or archive seat"
+  - "security@ should route to at least 2 recipients for audit / 4-eyes review"

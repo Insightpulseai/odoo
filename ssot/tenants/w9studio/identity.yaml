@@ -1,0 +1,58 @@
+---
+# Tenant identity: W9 Studio (portfolio venture under IPAI)
+# Parent SSOT: ssot/tenants/tenants-registry.yaml
+# Last updated: 2026-04-14
+tenant_code: W9
+tenant_name: W9 Studio
+legal_name: W9 Studio
+role: portfolio_venture
+
+domains:
+  primary: w9studio.net
+
+email:
+  provider: google_workspace
+  # Not routed through Zoho — keep separate identity
+  outbound_from_default: business@w9studio.net
+
+users_licensed:
+  - email: accounts@w9studio.net
+    name: accounting & admin
+    role: accounting_admin
+    last_signin: "2025-12-14"  # ~4 months ago
+  - email: finance@w9studio.net
+    name: W9 Studio Fin
+    role: finance_operator
+    last_signin: "2026-02-14"  # ~2 months ago
+  - email: business@w9studio.net
+    name: W9 Studio Main
+    role: operator
+    last_signin: "2026-04-12"  # ~2 days ago
+    # Likely Jake — cross-tenant principal
+
+odoo:
+  company_id: 2
+  company_name: W9 Studio
+  currency: PHP
+  country: PH
+  default_accounting_chart: ph_standard
+  visibility: scoped  # W9 users only see W9 records
+  parent_company_id: 1  # IPAI — for consolidated reporting
+  vertical: photo_studio  # per project_w9studio_odoo_vertical.md
+
+business_model:
+  primary_service: photo_studio  # NOT gym — per memory
+  location: Makati
+  # See project_w9studio_concept.md, project_w9studio_odoo_cms_migration.md
+  website_migration_path: "Wix DEPRECATED → Azure DNS + ACA + Odoo CMS"
+
+pulser_deployment:
+  surfaces: [web]  # no Teams/Copilot for W9 — web-only
+  use_cases:
+    - studio_booking_assistant
+    - shoot_scheduling
+    - invoice_to_client
+
+risk_notes:
+  - "Google Workspace separate from IPAI Zoho — any IPAI→W9 email forwarding needs explicit alias"
+  - "accounts@ last sign-in 4mo — check if active or archive"
