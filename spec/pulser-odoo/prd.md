@@ -87,7 +87,38 @@ Proposals and SoWs quote these as two separate line items.
 - `docs/benchmarks/d365_finance_copilot_parity_catalog.md` §0 two-plane doctrine
 - `ssot/benchmarks/parity_matrix.yaml` domain-by-domain parity
 - `docs/tenants/TENANCY_MODEL.md` multi-company single-DB decision
-- Memory: `feedback_odoo_module_selection_doctrine.md`, `feedback_d365_two_plane_doctrine.md`, `feedback_d365_project_operations_services_erp.md`, `feedback_d365_displacement_not_development.md`
+- Memory: `feedback_odoo_module_selection_doctrine.md`, `feedback_d365_two_plane_doctrine.md`, `feedback_d365_project_operations_services_erp.md`, `feedback_d365_displacement_not_development.md`, `feedback_four_plane_architecture_doctrine.md`, `reference_release_manager_assistant_adoption.md`
+
+### 0.7 Release-governance adaptation (delivery plane)
+
+The delivery plane adapts **`microsoft/release-manager-assistant`** (RMA) as the baseline for release-governance assistance. RMA already uses Microsoft Agent Framework + Azure AI Foundry + MCP-based tool integration + confirmation-gated updates + multi-agent orchestration (planner, AzDO, JIRA, visualization, fallback) — the exact adaptation-first stack for IPAI's delivery plane.
+
+**What to adapt:**
+- Multi-agent orchestration pattern (planner + specialized agents + fallback)
+- MCP-based enterprise tool integration (Azure DevOps, GitHub)
+- Confirmation-gated updates (matches IPAI's approval-first doctrine)
+- Visualization / readiness reporting (release health, dependency mapping)
+- Foundry + Agent Framework baseline (no bespoke orchestration runtime)
+
+**Adapted capability name:** *Pulser Release Ops* (or *Pulser Delivery Control*). Lives **outside** `addons/ipai/*`, in `agent-platform/` or `apps/release-manager`. Odoo exposure is via thin adapter only (deployment evidence, environment status, ERP-specific release checks).
+
+**Narrowing from RMA defaults:**
+- **GitHub-first** (RMA is AzDO+JIRA by default). Azure DevOps bridge only where it adds real governance value.
+- **Azure-native runtime-aware** (ACA, Foundry, Fabric evidence).
+- **Odoo-aware** for ERP deployment and operational evidence.
+- **No broad agent surface** until role/approval controls are pinned down.
+
+**Explicit non-goals for Pulser Release Ops:**
+- Not an Odoo addon with deep business logic
+- Not a substitute for ERP workflow
+- Not a generic agent runtime inside Odoo
+- Not a replacement for GitHub Actions / Azure DevOps — it orchestrates them
+
+**Decision rule:**
+- USE RMA patterns for: release governance, promotion readiness, dependency/risk synthesis, cross-system release evidence, delivery-plane agent orchestration
+- DO NOT USE RMA patterns for: finance/project domain copilots, Odoo transactional workflows, ERP-native approval/posting logic, business-module customization
+
+Full adoption context in `reference_release_manager_assistant_adoption.md` memory.
 
 ---
 
