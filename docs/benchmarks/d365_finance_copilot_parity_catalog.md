@@ -13,9 +13,28 @@
 
 ---
 
+## 0. Two-plane doctrine (read first)
+
+**D365 Finance and Finance agents are NOT the same product.** Conflating them misreads the displacement opportunity. This catalog and all downstream messaging treat them as two distinct planes:
+
+| Plane | Microsoft surface | What it is | IPAI comparison target |
+|---|---|---|---|
+| **Plane A — Core finance system-of-record** | **Dynamics 365 Finance** | Full ERP transactional surface: GL, AP, AR, budgeting, cash/bank, cost accounting, fixed assets, reporting, globalization, tax calc, Power Platform/dual-write, Azure Data Lake export, X++, LCS | **Odoo 18 CE + OCA + `ipai_*`** — the system-of-record for books, transactions, compliance |
+| **Plane B — AI assistive layer** | **Copilot Finance agents** | Focused Copilot catalog under Microsoft Copilot umbrella. Install modes (admin / business-user), data handling, named capabilities (Financial Reconciliation, Collections in Outlook), delivery surfaces (in Excel, in Outlook) | **Pulser + Odoo Copilot systray + M365 Agent SDK bridge + Slack-native flows** — the assistive layer over Plane A |
+
+**Consequences:**
+
+1. **Messaging.** Not "Pulser replaces D365 Finance." The correct statement is: **IPAI replaces D365 Finance with Odoo + OCA + `ipai_*` bridges, and Pulser replaces/competes with Copilot Finance agents as the assistive layer.**
+2. **Pricing.** Plane A parity is an ERP license replacement conversation. Plane B parity is a per-seat/per-agent Copilot replacement conversation. They must be quoted separately.
+3. **Feature gaps read differently.** A gap in Plane A ("no cash-flow forecasting with ML") is a functional ERP gap. A gap in Plane B ("no Copilot-in-Excel UX") is a channel/UX gap — often solved by a different surface (Odoo systray, Slack, Teams), not by cloning Excel.
+4. **Excel/Outlook are channels, not products.** Finance agents "in Excel" and "in Outlook" are delivery surfaces for the same underlying agents. IPAI's equivalents are **Odoo Copilot systray + M365 bot proxy + Slack-native workflows** — deliberately different channel mix, not a 1:1 Excel add-in clone.
+5. **Named Copilot agents map 1:1 to Pulser sub-agents.** Financial Reconciliation → `ipai_bank_recon` + Pulser reconciliation wrapper. Collections in Outlook → AR follow-up flow + M365 bridge. See §4.
+
+---
+
 ## 1. Executive summary
 
-**Displacement thesis.** IPAI displaces D365 F&O / D365 Finance / D365 Project Operations with Odoo 18 CE + OCA + `ipai_*` delta modules + Pulser (custom-engine, multi-agent, policy-gated copilot). IPAI does **not** develop in X++/AOT/CoC, does **not** maintain Dataverse, and does **not** pursue MB-500. Functional consulting cert path is MB-310 + MB-330 only (ref: `feedback_d365_displacement_not_development.md`).
+**Displacement thesis.** IPAI displaces D365 F&O / D365 Finance / D365 Project Operations with Odoo 18 CE + OCA + `ipai_*` delta modules + Pulser (custom-engine, multi-agent, policy-gated copilot). Per §0, this is a **two-plane displacement**: Plane A (ERP) via Odoo+OCA+`ipai_*`; Plane B (Copilot) via Pulser + Odoo Copilot + M365/Slack bridges. IPAI does **not** develop in X++/AOT/CoC, does **not** maintain Dataverse, and does **not** pursue MB-500. Functional consulting cert path is MB-310 + MB-330 only (ref: `feedback_d365_displacement_not_development.md`).
 
 **Parity posture vs the three surfaces.**
 
