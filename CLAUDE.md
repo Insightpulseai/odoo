@@ -53,6 +53,46 @@ If you cannot execute due to missing credentials/tooling/access, say exactly wha
 
 ---
 
+## Engineering Execution Doctrine
+
+**Reuse first, build the delta only.**
+
+| Capability class | Action |
+|---|---|
+| Commodity (Odoo core, OCA, AVM, Agent Framework, Playwright, Workspace CLI, Azure DevOps MCP) | Adopt upstream as-is |
+| Compositional (infra topology, naming/tag policy, CI/CD composition, test harnesses, release gates) | Configure |
+| Business-specific (PH overlays, surface workflows, approval/audit guardrails, Pulser tools) | Build only the thinnest `ipai_*` layer |
+
+**Odoo extension order (canonical):**
+`Config → CE property fields → OCA → adjacent OCA composition → thin ipai_* delta`. Never fork Odoo core for standard integrations. See `docs/architecture/odoo-integrations-selfhosted-azure.md`.
+
+**Claude Code execution doctrine:**
+1. **Design first** — architecture/SSOT/adoption decisions land in `docs/architecture/`, `ssot/`, `spec/`.
+2. **Codify second** — `CLAUDE.md` (enduring doctrine, keep ≤ 200 lines), `.claude/rules/*.md` (path-scoped), `.claude/skills/` (reusable workflows), `.mcp.json` (team-approved shared MCP servers).
+3. **Execute third** — Claude Code (CLI / VS Code extension) is the preferred repo-local execution engine. It must follow repo doctrine; it does not invent platform choices ad hoc.
+
+**Repo doctrine layering:**
+
+| Layer | Purpose | Status |
+|---|---|---|
+| `CLAUDE.md` | Enduring repo doctrine (always loaded) | Committed |
+| `.claude/rules/*.md` | Path-scoped rules, loaded on demand | Committed |
+| `.claude/skills/` | Reusable workflows | Committed |
+| `.mcp.json` | Team-approved shared MCP servers | Committed (no secrets) |
+| `CLAUDE.local.md` | Personal/local overrides | Gitignored |
+| Auto memory (`~/.claude/projects/<repo>/memory/`) | Learned operational notes | Machine-local, NOT canonical architecture |
+| Branch protection / CI / tool permissions | Real hard enforcement | — |
+
+`CLAUDE.md` and `.claude/rules/` shape behavior but do not hard-block; enforcement lives in CI gates, branch protection, and tool permissions.
+
+**Verification contract:** Every meaningful task ends with at least one of — Odoo test run, Playwright smoke, schema/policy validation, CI workflow result, rendered artifact diff, runtime health check. Self-verification is mandatory; generation alone is not "done".
+
+**Execution loop (Anthropic best practice):** `Explore → Plan → Implement → Verify → Commit/PR`. Use Plan Mode for non-trivial changes.
+
+**Agent teams (experimental):** Default = single session. Subagents for focused delegation. Agent teams (`CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1`) only for parallel execution/review with separable file or plane ownership — never for architecture/SSOT drafting or tightly coupled refactors. 3–5 teammates, ~5–6 tasks each.
+
+---
+
 ## Quick Reference
 
 | Item | Value |
@@ -126,6 +166,7 @@ See `.claude/rules/security-baseline.md` for full policy (sections 2.1-2.6).
 20. **iOS Wrapper UI Contract**: For wrapper-shell changes (`WrapperViewController`, `BiometricAuth`, native chrome, auth handoff, icon assets), apply `docs/skills/ios-wrapper-ui-contract.md`. This contract is subordinate to `docs/skills/ios-native-wrapper.md` and defines enforceable code-review gates.
 21. **iOS Wrapper Code Contract**: When editing wrapper-shell implementation files, also apply `docs/skills/ios-wrapper-code-contract.md`. File-level review emphasis: `WrapperViewController.swift` owns shell orchestration only, `BiometricAuth.swift` owns biometric policy/orchestration only, `Assets.xcassets` stays minimal and governed, `Environment.swift` remains the source of routing/environment configuration, `Info.plist` remains aligned with native auth/biometric requirements.
 22. **Odoo Integration Adoption**: Check Odoo 18 native integrations first (payments, bank sync, EDI, commerce connectors, website). If native is insufficient, check OCA before creating `ipai_*`. Reserve `ipai_*` for thin bridges to external Azure/Foundry services only. SSOT: `ssot/odoo/integration_adoption.yaml`.
+23. **Engineering Execution Doctrine**: Reuse upstream for commodity capability; configure for compositional concerns; build only the thinnest `ipai_*` layer for business-specific deltas. Design first (`docs/architecture/`, `ssot/`, `spec/`) → codify second (`CLAUDE.md`, `.claude/rules/`, `.claude/skills/`, `.mcp.json`) → execute third (Claude Code follows doctrine, never invents platform choices). Auto memory is learned ops notes, not canonical architecture. See "Engineering Execution Doctrine" section above.
 
 ---
 
