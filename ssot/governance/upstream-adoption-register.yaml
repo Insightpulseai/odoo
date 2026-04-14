@@ -95,14 +95,49 @@ repos:
       source-control truth and Azure DevOps as planning/delivery integration
       surface (Azure Boards GitHub app + Azure Pipelines GitHub app).
 
-  - upstream: microsoft-foundry/* (AI templates incl. Release Manager Assistant)
-    purpose: "Microsoft Foundry azd-style AI templates (release mgmt, data unification, etc.)"
+  # microsoft-foundry org — 4 named entries (split from former wildcard 2026-04-14)
+  # Per memory reference_microsoft_foundry_org_repos.md: only 4 of 13 repos are worth adopting.
+  - upstream: microsoft-foundry/foundry-samples
+    purpose: "Foundry agent sample patterns (tool use, file search, evaluations)"
     adopt_mode: clone_as_reference
     internal_owner: agent-platform
-    internal_destination: "agent-platform/ (e.g., apps/release-manager) — adapt patterns, not whole template"
+    internal_destination: "agent-platform/experiments/foundry-samples/"
     do_when: now
-    fork_trigger: "Pulser Release Ops (or similar) becomes a productized internal service"
-    rationale: "Per PRD §0.7. Adapt Foundry+MAF+MCP patterns. Do NOT clone Jira/AzDO assumptions."
+    rationale: "Pattern reference for Pulser agent bootstrap. Explicit enumeration beats wildcard."
+
+  - upstream: microsoft-foundry/foundry-agent-webapp
+    purpose: "Foundry-native web app shell for agent UIs"
+    adopt_mode: clone_as_reference
+    internal_owner: agent-platform
+    internal_destination: "agent-platform/experiments/"
+    do_when: now
+    rationale: "Reference shape for Foundry web surface. Not a product codebase."
+
+  - upstream: microsoft-foundry/mcp-foundry
+    purpose: "Foundry ↔ MCP integration reference"
+    adopt_mode: clone_as_reference
+    internal_owner: agent-platform
+    internal_destination: "agent-platform/experiments/"
+    do_when: now
+    rationale: "MCP integration patterns between Foundry and external MCP servers."
+
+  - upstream: microsoft-foundry/fine-tuning
+    purpose: "Foundry fine-tuning reference patterns"
+    adopt_mode: clone_as_reference
+    internal_owner: agent-platform
+    internal_destination: "agent-platform/experiments/"
+    do_when: later
+    rationale: "Deferred; adopt only when custom-model tuning is in scope."
+
+  # Release Manager Assistant (formerly merged into the foundry wildcard)
+  - upstream: Azure-Samples/release-manager-assistant
+    purpose: "azd-style Release Manager Assistant (Agent Framework + MCP + OTel)"
+    adopt_mode: clone_as_reference
+    internal_owner: agent-platform
+    internal_destination: "agent-platform/agents/release-manager/"
+    do_when: now
+    fork_trigger: "Pulser Release Ops becomes a productized internal service per PRD §0.7"
+    rationale: "Already scaffolded via infra/azure/modules/release-manager-aca.bicep. Adapt Agent Framework + MCP + OTel patterns. Filter out Jira/GitHub-Actions/synthetic-MCP assumptions."
 
   # ───── C. DevOps / Boards / Delivery ─────
 
@@ -706,6 +741,85 @@ mirror_targets:
   - ssot/azure
   - docs/delivery
 
+  # ───── G. Azure-first MCP + tooling + SDK pins (reconciled from platform/templates/adaptation-map.yaml on 2026-04-14) ─────
+
+  - upstream: Azure MCP Server (first-party)
+    purpose: "First-party MCP spanning 40+ Azure namespaces (Postgres, Key Vault, ACR, Monitor, Foundry, Search, Resource Graph, etc.)"
+    adopt_mode: consume_directly
+    internal_owner: platform-engineering
+    internal_destination: ".mcp.json + .vscode/mcp.json"
+    do_when: now
+    rationale: "Canonical replacement for community Azure MCP entries. Read-only default, Entra ID auth. Already in active .mcp.json."
+
+  - upstream: Azure Developer CLI (azd)
+    purpose: "azd template install + local agent deployment shell"
+    adopt_mode: consume_directly
+    internal_owner: platform-engineering
+    internal_destination: "devcontainer + scripts/ + azure-pipelines/"
+    do_when: now
+    rationale: "Canonical CLI for azd-shaped templates (RMA, agents, etc.). Supports local agent debugging with live ACA targets."
+
+  - upstream: microsoft/dev-proxy
+    purpose: "API chaos simulator + LLM rate-limit plugin for agent resilience testing"
+    adopt_mode: clone_as_reference
+    internal_owner: qa-engineering
+    internal_destination: "docs/architecture/reference-adaptations/"
+    do_when: now
+    rationale: "Rate-limit/chaos companion to Playwright. Not a primary framework — use for agent resilience evaluations only."
+
+  - upstream: Azure Python SDK pin manifest
+    purpose: "Version-pinned Azure AI + data SDK stack for agent-platform + odoo + data-intelligence backends"
+    adopt_mode: consume_directly
+    internal_owner: agent-platform
+    internal_destination: "pyproject.toml / requirements.txt across agent-platform, odoo BIR/bridge apps, data-intelligence services"
+    do_when: now
+    packages:
+      - "azure-ai-agents>=1.1.0"
+      - "azure-ai-projects>=2.0.1"
+      - "azure-ai-evaluation>=1.16.3"
+      - "azure-ai-documentintelligence>=1.0.2"
+      - "azure-search-documents>=11.6.0"
+      - "azure-identity>=1.25.3"
+      - "azure-keyvault-secrets>=4.10.0"
+    rationale: "Version pins lived only in platform/templates/adaptation-map.yaml. Canonicalize here so all backends pin consistently."
+
+  - upstream: microsoft/unified-data-foundation
+    purpose: "Terraform IaC for Databricks + Fabric + mirroring (Microsoft-owned data-platform accelerator)"
+    adopt_mode: consume_directly
+    internal_owner: data-engineering
+    internal_destination: "infra/azure/ composition + data-intelligence/ integration reference"
+    do_when: now
+    priority: P0
+    time_sensitive: "Fabric trial expires ~2026-05-20 — adopt before then to lock in IaC shape"
+    rationale: "STRONG ADOPT per memory reference_databricks_fabric_repos.md. Deploys Databricks + Fabric + mirroring in one IaC unit; avoids splitting the data plane."
+
+  # ───── E.3. Partner Center runtime (added 2026-04-14) ─────
+
+  - upstream: Partner Center SaaS Fulfillment API v2
+    purpose: "Marketplace subscription activation + ChangePlan/ChangeQuantity/Suspend/Reinstate/Unsubscribe webhooks"
+    adopt_mode: consume_directly
+    internal_owner: platform
+    internal_destination: "platform/partner-center/fulfillment/"
+    do_when: now
+    rationale: "REST-first via azure-identity + httpx. Commercial control plane only; Odoo remains entitlement record of truth. Required for any SaaS offer launch."
+
+  - upstream: Partner Center Marketplace Metering API
+
+    purpose: "Idempotent usage event emission with 24h submission window"
+    adopt_mode: consume_directly
+    internal_owner: platform
+    internal_destination: "platform/partner-center/metering/"
+    do_when: now
+    rationale: "Event-sourced from Odoo ir.logging / platform telemetry. Reconcile to Microsoft invoice. Required for usage-based SaaS offers."
+
+  - upstream: Partner Center Referrals / Co-sell API
+    purpose: "Bridge marketplace leads to Odoo CRM"
+    adopt_mode: do_not_adopt
+    internal_owner: platform
+    internal_destination: "none (deferred)"
+    do_when: defer_until_listing_live
+    rationale: "Not actionable until SaaS offer is live on AppSource/Azure Marketplace. Revisit when commercial lane activates."
+
 # ─── Anti-patterns ───
 anti_patterns:
   - "Forking AVM/Bicep modules — creates downstream burden Microsoft now solves"
@@ -715,12 +829,29 @@ anti_patterns:
   - "Vendoring Azure-Samples/* repos under your repo (creates stale copies)"
   - "Forking azure-pipelines-agent — agent ops is reference-only"
 
-# ─── Decision audit ───
+# ─── Decision audit ─── (recounted 2026-04-14 after SSOT reconciliation)
 decisions_audit:
-  consumed_directly: 4   # AVM, Agent Framework, ADO MCP, Playwright
-  cloned_as_reference: 6 # FastAPI+ACA+PG, PG-Resiliency, pgvector, PG-MCP, pipelines-yaml, Foundry templates
+  consumed_directly: 15
+  # AVM, Agent Framework, ADO MCP, Playwright, Playwright MCP, azure-pipelines-task-lib,
+  # PSRule.Rules.Azure, PSRule-pipelines, googleworkspace/cli, googleworkspace/developer-tools,
+  # databricks/cli, databricks/terraform-provider-databricks, databricks/databricks-sdk-py,
+  # azure-pipelines-vscode, Odoo built-in integrations (google_account, microsoft_account, cloud_storage_azure, external_api)
+  # Plus 2026-04-14 additions: Azure MCP Server, azd, Azure Python SDK pins,
+  # unified-data-foundation, Partner Center SaaS Fulfillment v2, Partner Center Metering → effective 21
+  cloned_as_reference: 35
+  # Azure-Samples (FastAPI+ACA+PG, PG-Resiliency, pgvector, PG-MCP, search-openai-demo,
+  # chat-with-your-data, get-started-with-ai-agents, openai-chat-app-entra-auth, postgres-agentic-shop,
+  # ACA blue-green), microsoft-foundry (foundry-samples, foundry-agent-webapp, mcp-foundry, fine-tuning),
+  # RMA, pipelines-yaml, pipelines-tasks, pipelines-extensions, d365 refs (FastTrack, unified-ops-public,
+  # dynamics365-guidance, MB-310, ISM-Telemetry), Finance agents docs, financial-services-plugins,
+  # Awesome-Agentic-System-Design, OCA selected modules (10), googleworkspace (5 sample repos),
+  # Partner Center refs (sdk-for-dotNET, Labs, Storefront, PowerShell), databricks/bundle-examples,
+  # databricks/mlops-stacks, unitycatalog/unitycatalog, dev-proxy
   fork_and_own: 0        # NONE right now
-  do_not_adopt: 1        # azure-pipelines-agent (codebase, not pattern)
+  do_not_adopt: 10
+  # azure-pipelines-agent (codebase), GitHub Actions as delivery, Vercel, Supabase, Dataverse,
+  # azure-pipelines-terraform, Azure/ResourceModules (superseded by AVM), chrome-devtools-mcp,
+  # Apps Store appointment modules, Workspace Marketplace GitHub Integration, Partner Center Referrals (deferred)
 
 # ─── Anchors ───
 anchors:
@@ -733,3 +864,5 @@ anchors:
     - reference_release_manager_assistant_adoption.md
     - reference_microsoft_foundry_org_repos.md
     - reference_azd_ai_templates.md
+    - reference_databricks_fabric_repos.md
+    - feedback_upstream_adoption_doctrine.md

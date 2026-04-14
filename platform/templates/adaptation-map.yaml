@@ -1,6 +1,22 @@
 version: 2
 owner_repo: platform
-updated: "2026-04-04"
+updated: "2026-04-14"
+
+# STATUS (2026-04-14): Reconciled into ssot/governance/upstream-adoption-register.yaml.
+# The canonical YAML register is now the SSOT for upstream adoption decisions.
+# This file remains authoritative only for:
+#   - template_sources (generic template IDs like ai-agents-starter, ai-production, etc.)
+#   - azure_architecture_center_guidance + azure_ai_finops_guidance (runtime guidance taxonomy)
+#   - repo_mapping (flattened 2026-04-14 to match docs/architecture/upstream-landing-matrix.md)
+# NEW upstream adoption entries MUST go into the canonical YAML FIRST.
+# Reconciled items already migrated to canonical:
+#   - Azure MCP Server (first-party) → consume_directly
+#   - Azure Developer CLI (azd) → consume_directly
+#   - microsoft/dev-proxy → clone_as_reference
+#   - Azure Python SDK pin manifest (azure-ai-agents, azure-ai-projects, azure-ai-evaluation,
+#     azure-ai-documentintelligence, azure-search-documents, azure-identity, azure-keyvault-secrets)
+#     → consume_directly
+#   - Partner Center SaaS Fulfillment v2 + Metering API → consume_directly
 
 # --- Azure AI App Templates ---
 template_sources:
@@ -269,7 +285,11 @@ microsoft_runtime_guidance:
       Separate from Partner Center (commercial/GTM lane).
       This governs runtime and operating-model decisions.
 
-# --- Repo mapping ---
+# --- Repo mapping (flattened 2026-04-14) ---
+# Authority: docs/architecture/upstream-landing-matrix.md — plane ownership drives landing repo.
+# Removed: web (browser surfaces only, not agent runtime), automations (use canonical YAML),
+#          agents (use agent-platform as canonical), platform duplicate entries.
+# Each template lands in exactly ONE canonical repo + optional docs mirror.
 repo_mapping:
   odoo:
     adopt: []
@@ -278,31 +298,13 @@ repo_mapping:
       - approvals
       - proposals
       - audit_trail
-  platform:
-    adopt:
-      - ai-agents-starter
-      - ai-production
-      - multimodal-content-processing
-  automations:
-    adopt:
-      - release-manager-assistant
-      - multimodal-content-processing
-  agents:
-    adopt:
-      - home-banking-assistant
-      - ai-agents-starter
-  docs:
-    adopt:
-      - ai-production
-      - release-manager-assistant
-  web:
-    adopt:
-      - ai-agents-starter
-    optional: true
   agent-platform:
     adopt:
       - ai-agents-starter
       - ai-production
+      - home-banking-assistant         # Finance-agent orchestration reference
+      - release-manager-assistant      # Release ops reference (fork trigger: Pulser Release Ops productizes)
+      - multimodal-content-processing  # Document ingestion
     sdk:
       - azure-ai-agents
       - azure-ai-projects
@@ -315,8 +317,11 @@ repo_mapping:
       - ai-production
     tools:
       - azure-mcp-server
-      - azd-cli (evaluate)
+      - azd-cli
   data-intelligence:
     sdk:
       - azure-search-documents
       - azure-ai-documentintelligence
+  docs:
+    # docs/architecture/reference-adaptations/ mirrors pattern harvests for any template adopted above
+    mirror_only: true
