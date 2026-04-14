@@ -280,6 +280,58 @@ repos:
     do_when: never_as_codebase
     rationale: "Debugging aid, not primary E2E framework. Document as adopted tool surface."
 
+  # ───── H. OCA booking stack (added 2026-04-14) — for W9 Studio + booking-engine app ─────
+
+  - upstream: OCA/calendar
+    purpose: "Resource booking — OCA canonical booking framework (resource_booking module)"
+    adopt_mode: clone_as_reference
+    internal_owner: services-platform
+    internal_destination: "addons/oca/calendar/ — primarily resource_booking module"
+    do_when: now
+    rationale: |
+      Per `ssot/apps/desired-end-state-matrix.yaml` (W9 Studio + booking-engine).
+      18.0 branch supports availability calendars, resource combinations, portal
+      booking, tokenized URLs, automatic meeting creation, conflict detection,
+      booking lifecycle states. Strongest OCA-first booking path.
+    related_modules: [resource_booking]
+
+  - upstream: OCA/sale-workflow (sale_resource_booking module)
+    purpose: "Link resource bookings to sale orders (already in upstream-adoption-register)"
+    adopt_mode: clone_as_reference
+    internal_owner: services-platform
+    internal_destination: "addons/oca/sale-workflow/ — adds sale_resource_booking on top of base OCA selection"
+    do_when: now
+    rationale: |
+      Sale-order-driven booking creation. 18.0 branch available.
+      Pairs with OCA/calendar resource_booking. Augments existing
+      sale-workflow entry already in this register.
+    related_modules: [sale_resource_booking]
+
+  - upstream: OCA/e-commerce (website_sale_resource_booking module)
+    purpose: "Website-checkout pre-booking with timeout for unpaid pre-bookings"
+    adopt_mode: clone_as_reference
+    internal_owner: services-platform
+    internal_destination: "addons/oca/e-commerce/ — only website_sale_resource_booking module"
+    do_when: when_w9_website_checkout_in_scope
+    rationale: |
+      Only needed if W9 site moves from inquiry-first to checkout-first booking.
+      Per `ssot/apps/desired-end-state-matrix.yaml` app-w9studio optional payments.
+    related_modules: [website_sale_resource_booking]
+
+  # ───── Apps Store appointment alternatives (REJECTED for current scope) ─────
+
+  - upstream: apps.odoo.com modules — website_booking_dom / appointment_booking_ce / viin_appointment_website
+    purpose: "Third-party Apps Store appointment-first website UX"
+    adopt_mode: do_not_adopt
+    internal_owner: services-platform
+    internal_destination: "none"
+    do_when: never_for_current_scope
+    rationale: |
+      Apps Store path, not OCA. Vendor lock-in risk. Conflicts with
+      OCA-first doctrine. Use only if appointment-first website UX
+      is explicitly required AND OCA composition is proven insufficient
+      (per Odoo module selection doctrine)."
+
 # ─── Internal repos owned directly (not forked from upstream) ───
 own_directly:
   - path: "infra/"
