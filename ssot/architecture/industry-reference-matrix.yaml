@@ -1,0 +1,290 @@
+---
+# SSOT: Industry Reference Matrix (machine-readable companion)
+# Authority: this file + docs/architecture/industry-reference-matrix.md
+# Last updated: 2026-04-14
+version: 1
+status: proposed
+
+doctrine:
+  - "Use Odoo industry pages for business packaging + workflow expectations."
+  - "Use odoo/odoo + selected OCA repos/modules for actual implementation."
+  - "Do not create a separate product/app/repo just because Odoo has a separate industry page."
+  - "Prefer shared platform + shared MCP substrate + shared transactional core."
+  - "Distinct business surfaces only where the customer-facing motion truly differs."
+
+scope:
+  benchmark_surfaces:
+    - d365_finance
+    - finance_agents
+    - d365_project_operations
+
+# ─── Portfolio map ───
+portfolio:
+  - surface: insightpulseai
+    host: insightpulseai.com
+    primary_industry_ref: odoo_partner
+    overlay_industry_refs: [marketing_agency, software_reseller]
+    rationale: |
+      Services-led implementation business, package selling, quote-to-project flow,
+      partner-style delivery, productized offers, recurring/renewal-capable
+      commercial model.
+
+  - surface: prismalab
+    host: prismalab.insightpulseai.com
+    primary_industry_ref: accounting_firm
+    overlay_industry_refs: [odoo_partner]
+    rationale: |
+      Document-heavy consulting/project delivery, lead-to-quote-to-project-to-invoice,
+      timesheets, secure document workspace, e-sign, service execution.
+    important_note: "Operating-pattern reference only. Not a signal to turn PrismaLab into an accounting-practice product."
+
+  - surface: w9studio
+    host: w9studio.net
+    primary_industry_ref: photography
+    overlay_industry_refs: [marketing_agency]
+    rationale: |
+      Booking, appointment scheduling, quotes, calendar sync, project execution,
+      payments, portal-driven client interaction.
+
+# ─── Industry reference details ───
+industry_references:
+
+  odoo_partner:
+    url: https://www.odoo.com/industries/odoo-partner
+    best_fit: insightpulseai
+    emphasis:
+      - pre_defined_service_packs
+      - quote_calculator
+      - reusable_quotation_templates
+      - automatic_project_and_task_creation_after_sale
+      - centralized_implementation_dashboard
+      - timesheets_and_analytic_profitability
+      - crm_pipeline_and_invoicing
+    use_for:
+      - implementation_packages
+      - discovery_success_packs
+      - quote_to_project_automation
+      - timesheet_backed_service_delivery
+      - partner_implementation_operating_model
+
+  marketing_agency:
+    url: https://www.odoo.com/industries/marketing-agency
+    best_fit: insightpulseai_overlay
+    emphasis:
+      - website_builder_and_landing_pages
+      - appointment_booking
+      - lead_capture_website_email_whatsapp
+      - centralized_campaign_project_hub
+      - project_timesheets_meetings_invoices
+      - price_lists_and_recurring_invoices
+      - integrated_marketing_apps
+    use_for:
+      - site_led_demand_generation
+      - campaign_project_delivery_visibility
+      - lead_to_invoice_workflow
+      - marketing_service_packaging
+    do_not_treat_as:
+      - separate_top_level_platform
+      - reason_to_add_large_marketing_automation_custom_code_before_core_finance_project_ops_stable
+
+  accounting_firm:
+    url: https://www.odoo.com/industries/accounting-firm
+    best_fit: prismalab
+    emphasis:
+      - lead_to_quote_to_invoice
+      - project_dashboards_and_automated_task_creation
+      - timesheets
+      - secure_document_workspace
+      - esign
+      - flexible_billing_time_materials_fixed_milestone
+      - strong_accounting_reconciliation_posture
+    use_for:
+      - consulting_project_delivery_operations
+      - document_heavy_client_service
+      - milestone_time_based_billing
+      - secure_client_file_handling
+      - esign_compliance_workflows
+    important_note: "Operating-pattern reference for PrismaLab, NOT a signal to turn PrismaLab into an accounting-practice product."
+
+  photography:
+    url: https://www.odoo.com/industries/photography
+    best_fit: w9studio
+    emphasis:
+      - online_appointments
+      - client_portal_rescheduling
+      - google_outlook_calendar_sync
+      - quote_builder_and_quote_templates
+      - automatic_project_creation_after_quote
+      - online_signature
+      - online_payment
+      - task_project_management
+    use_for:
+      - booking_and_appointment_handling
+      - quote_to_shoot_project_flow
+      - deposits_payments
+      - customer_portal_interactions
+      - schedule_driven_studio_operations
+
+  software_reseller:
+    url: https://www.odoo.com/industries/software-reseller
+    best_fit: insightpulseai_overlay
+    emphasis:
+      - full_license_lifecycle_purchase_to_renewal
+      - automatic_purchase_order_on_license_buy
+      - track_license_keys_users_developers_versions_db_size_cpu_renewal
+      - centralized_implementation_dashboards
+      - recurring_invoicing_for_licenses
+      - service_billing_timesheets_milestones_fixed_rates
+      - quote_templates_and_planning_for_implementation_teams
+    use_for:
+      - license_or_subscription_resale
+      - managed_service_bundles
+      - recurring_commercial_contracts
+      - implementation_plus_support_packaging
+      - renewal_aware_quoting_and_invoicing
+    do_not_treat_as:
+      - separate_fourth_product_line_for_current_wave
+      - justification_to_expand_into_broad_inventory_scm_scope
+
+# ─── Per-surface packaging ───
+packages:
+
+  insightpulseai:
+    primary_refs: [odoo_partner, software_reseller, marketing_agency]
+    business_shape:
+      - implementation_and_advisory_services
+      - packaged_success_offers
+      - recurring_service_support_subscription_contracts
+      - website_led_lead_generation
+      - quote_to_project_to_timesheet_to_invoice_flow
+    capability_bundle:
+      - crm
+      - sales_quotations
+      - subscription_recurring_billing_where_justified
+      - project
+      - timesheets
+      - invoicing_accounting
+      - website_landing_pages
+      - appointments
+      - documents_knowledge
+      - pulser_assistant_overlay
+
+  prismalab:
+    primary_refs: [accounting_firm, odoo_partner]
+    business_shape:
+      - professional_services
+      - structured_project_delivery
+      - document_centric_workflows
+      - time_material_fixed_fee_milestone_billing
+      - client_facing_deliverables_and_controlled_records
+    capability_bundle:
+      - crm
+      - sales_proposals
+      - project
+      - timesheets
+      - documents
+      - esign
+      - invoicing_accounting
+      - client_portal
+      - pulser_assistant_overlay
+
+  w9studio:
+    primary_refs: [photography, marketing_agency]
+    business_shape:
+      - booking_led_studio_production_service
+      - quote_deposit_scheduling_project_execution
+      - portal_supported_customer_interaction
+      - campaign_content_overlay_where_useful
+    capability_bundle:
+      - crm
+      - website_inquiry_capture
+      - appointments_bookings
+      - calendar_sync
+      - sales_quotes
+      - payments_deposits
+      - project_task_management
+      - portal
+      - email_followup
+      - pulser_assistant_overlay
+
+# ─── Packaging matrix ───
+packaging_matrix:
+  - package: insightpulseai
+    business_motion: partner_services_plus_software_resale_subscription_plus_marketing_led_lead_gen
+    odoo_refs: [odoo_partner, software_reseller, marketing_agency]
+    core_workflow: lead_to_quote_package_to_sale_to_project_to_timesheet_to_invoice_or_renewal
+    shared_deps: [odoo_erp, shared_mcps, analytics, assistant_control_plane]
+    notes: most_likely_to_use_subscription_renewal_patterns
+
+  - package: prismalab
+    business_motion: document_heavy_consulting_project_delivery
+    odoo_refs: [accounting_firm, odoo_partner]
+    core_workflow: lead_to_proposal_to_project_to_documents_esign_to_timesheet_milestone_billing_to_invoice
+    shared_deps: [odoo_erp, documents, knowledge, assistant_control_plane]
+    notes: use_accounting_firm_as_operating_pattern_reference_only
+
+  - package: w9studio
+    business_motion: booking_scheduling_quote_project_execution
+    odoo_refs: [photography, marketing_agency]
+    core_workflow: inquiry_to_appointment_to_quote_to_deposit_payment_to_project_task_execution
+    shared_deps: [odoo_erp, scheduling, email, optional_payments]
+    notes: strongest_need_for_booking_and_calendar_ux
+
+# ─── Shared platform interpretation ───
+shared_platform:
+  not: five_separate_applications
+  is: three_business_surfaces_on_one_shared_platform
+  shared_underneath:
+    - one_transactional_odoo_core
+    - one_shared_mcp_substrate
+    - one_shared_agent_admin_control_surface
+    - one_shared_analytics_reporting_layer
+  shared_mcp_layer:
+    p0: [content, crm, scheduling, odoo_erp, knowledge]
+    p1: [documents, email]
+    p2: [payments, analytics]
+
+# ─── Implementation rules ───
+implementation_rules:
+  use_industry_pages_for:
+    - workflow_expectations
+    - packaging_language
+    - customer_facing_journey_design
+    - benchmark_ux_and_commercial_shape
+  do_not_use_for:
+    - deciding_core_module_source_of_truth
+    - overriding_ce_oca_first_doctrine
+    - justifying_new_top_level_product_lines
+    - justifying_broad_custom_module_expansion
+
+# ─── Current-wave exclusions ───
+current_wave_exclusions:
+  - supply_chain_warehouse_manufacturing_heavy_flows
+  - commerce_pos_call_center_expansion
+  - hardcore_hr_payroll
+  - broad_software_distributor_inventory_scope_beyond_current_packaging_needs
+
+# ─── Final packaging statement ───
+final_statement: >
+  The current IPAI vertical-packaging target is not a collection of separate
+  vertical ERP products. It is a shared Odoo-on-Azure platform with three
+  distinct business surfaces: InsightPulseAI packaged primarily as an Odoo
+  Partner + Software Reseller + Marketing Agency workflow; PrismaLab packaged
+  primarily as an Accounting Firm-style professional-services workflow; and
+  W9 Studio packaged primarily as a Photography-style booking and
+  project-delivery workflow.
+
+# ─── Anchors ───
+anchors:
+  matrix_doc: docs/architecture/industry-reference-matrix.md
+  apps_matrix: ssot/apps/desired-end-state-matrix.yaml
+  upstream_register: ssot/governance/upstream-adoption-register.yaml
+  desired_end_state_doc: docs/architecture/desired-end-state-matrix.md
+  desired_end_state_yaml: ssot/architecture/desired-end-state.yaml
+  tenancy_model: docs/tenants/TENANCY_MODEL.md
+  related_memory:
+    - feedback_apps_and_mcp_architecture.md
+    - feedback_odoo_module_selection_doctrine.md
+    - project_w9studio_concept.md
+    - project_payment_provider_stack.md
+    - prismalab_rag_corpus.md
