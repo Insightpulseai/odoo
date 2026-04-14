@@ -1,0 +1,21 @@
+# Spec Kit pinned version
+#
+# This file pins the upstream github/spec-kit release that .specify/ artifacts
+# (templates/, scripts/, .claude/commands/speckit.*) are derived from.
+#
+# Re-sync procedure:
+#   1. uv tool install specify-cli --force --from "git+https://github.com/github/spec-kit.git@${SPEC_KIT_VERSION}"
+#   2. specify check
+#   3. Review proposed changes BEFORE running specify init . --force
+#   4. Bump SPEC_KIT_VERSION here, commit alongside the artifact diff.
+#
+# Drift policy: do NOT install latest-from-main on developer hosts; always pin.
+# Anchor: CLAUDE.md § Engineering Execution Doctrine — Codify second.
+
+SPEC_KIT_VERSION=v0.6.2
+SPEC_KIT_PINNED_DATE=2026-04-14
+SPEC_KIT_UPSTREAM=https://github.com/github/spec-kit
+SPEC_KIT_RELEASE_URL=https://github.com/github/spec-kit/releases/tag/v0.6.2
+
+# Active extensions (managed via `specify extension list`):
+#   none yet  — see .specify/EXTENSION_EVALUATION.md for trial plan

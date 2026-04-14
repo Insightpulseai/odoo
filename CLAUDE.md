@@ -53,6 +53,46 @@ If you cannot execute due to missing credentials/tooling/access, say exactly wha
 
 ---
 
+## Engineering Execution Doctrine
+
+**Reuse first, build the delta only.**
+
+| Capability class | Action |
+|---|---|
+| Commodity (Odoo core, OCA, AVM, Agent Framework, Playwright, Workspace CLI, Azure DevOps MCP) | Adopt upstream as-is |
+| Compositional (infra topology, naming/tag policy, CI/CD composition, test harnesses, release gates) | Configure |
+| Business-specific (PH overlays, surface workflows, approval/audit guardrails, Pulser tools) | Build only the thinnest `ipai_*` layer |
+
+**Odoo extension order (canonical):**
+`Config → CE property fields → OCA → adjacent OCA composition → thin ipai_* delta`. Never fork Odoo core for standard integrations. See `docs/architecture/odoo-integrations-selfhosted-azure.md`.
+
+**Claude Code execution doctrine:**
+1. **Design first** — architecture/SSOT/adoption decisions land in `docs/architecture/`, `ssot/`, `spec/`.
+2. **Codify second** — `CLAUDE.md` (enduring doctrine, keep ≤ 200 lines), `.claude/rules/*.md` (path-scoped), `.claude/skills/` (reusable workflows), `.mcp.json` (team-approved shared MCP servers).
+3. **Execute third** — Claude Code (CLI / VS Code extension) is the preferred repo-local execution engine. It must follow repo doctrine; it does not invent platform choices ad hoc.
+
+**Repo doctrine layering:**
+
+| Layer | Purpose | Status |
+|---|---|---|
+| `CLAUDE.md` | Enduring repo doctrine (always loaded) | Committed |
+| `.claude/rules/*.md` | Path-scoped rules, loaded on demand | Committed |
+| `.claude/skills/` | Reusable workflows | Committed |
+| `.mcp.json` | Team-approved shared MCP servers | Committed (no secrets) |
+| `CLAUDE.local.md` | Personal/local overrides | Gitignored |
+| Auto memory (`~/.claude/projects/<repo>/memory/`) | Learned operational notes | Machine-local, NOT canonical architecture |
+| Branch protection / CI / tool permissions | Real hard enforcement | — |
+
+`CLAUDE.md` and `.claude/rules/` shape behavior but do not hard-block; enforcement lives in CI gates, branch protection, and tool permissions.
+
+**Verification contract:** Every meaningful task ends with at least one of — Odoo test run, Playwright smoke, schema/policy validation, CI workflow result, rendered artifact diff, runtime health check. Self-verification is mandatory; generation alone is not "done".
+
+**Execution loop (Anthropic best practice):** `Explore → Plan → Implement → Verify → Commit/PR`. Use Plan Mode for non-trivial changes.
+
+**Agent teams (experimental):** Default = single session. Subagents for focused delegation. Agent teams (`CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1`) only for parallel execution/review with separable file or plane ownership — never for architecture/SSOT drafting or tightly coupled refactors. 3–5 teammates, ~5–6 tasks each.
+
+---
+
 ## Quick Reference
 
 | Item | Value |
@@ -126,6 +166,7 @@ See `.claude/rules/security-baseline.md` for full policy (sections 2.1-2.6).
 20. **iOS Wrapper UI Contract**: For wrapper-shell changes (`WrapperViewController`, `BiometricAuth`, native chrome, auth handoff, icon assets), apply `docs/skills/ios-wrapper-ui-contract.md`. This contract is subordinate to `docs/skills/ios-native-wrapper.md` and defines enforceable code-review gates.
 21. **iOS Wrapper Code Contract**: When editing wrapper-shell implementation files, also apply `docs/skills/ios-wrapper-code-contract.md`. File-level review emphasis: `WrapperViewController.swift` owns shell orchestration only, `BiometricAuth.swift` owns biometric policy/orchestration only, `Assets.xcassets` stays minimal and governed, `Environment.swift` remains the source of routing/environment configuration, `Info.plist` remains aligned with native auth/biometric requirements.
 22. **Odoo Integration Adoption**: Check Odoo 18 native integrations first (payments, bank sync, EDI, commerce connectors, website). If native is insufficient, check OCA before creating `ipai_*`. Reserve `ipai_*` for thin bridges to external Azure/Foundry services only. SSOT: `ssot/odoo/integration_adoption.yaml`.
+23. **Engineering Execution Doctrine**: Reuse upstream for commodity capability; configure for compositional concerns; build only the thinnest `ipai_*` layer for business-specific deltas. Design first (`docs/architecture/`, `ssot/`, `spec/`) → codify second (`CLAUDE.md`, `.claude/rules/`, `.claude/skills/`, `.mcp.json`) → execute third (Claude Code follows doctrine, never invents platform choices). Auto memory is learned ops notes, not canonical architecture. See "Engineering Execution Doctrine" section above.
 
 ---
 
@@ -169,6 +210,100 @@ docker compose up -d                    # Start full stack
 ./scripts/ci/run_odoo_tests.sh          # Run Odoo unit tests
 pnpm install                            # Install Node dependencies
 ```
+
+---
+
+## Odoo extension and customization doctrine
+
+When implementing new capability in Odoo, follow this decision order:
+
+1. **Odoo CE 18 native capability first**
+   - Prefer standard CE behavior before adding modules or code.
+
+2. **Odoo property fields second, when the requirement is parent-scoped metadata**
+   - Use property fields when the need is lightweight, configurable, form-level metadata tied to a parent record (e.g., project-specific task attributes, team-specific CRM qualifiers, category-scoped product enrichment).
+   - Property fields are pseudo-fields, not stored as normal database columns, scoped by a parent record.
+   - **NOT appropriate for:** core accounting logic, strong relational domain models, cross-parent canonical master data, heavy reporting, integration contracts, workflow-critical fields, fields needing robust server logic or DB-level consistency.
+
+3. **OCA 18 same-domain modules third**
+   - Search the primary OCA repository for the functional domain before writing custom code.
+
+4. **Adjacent OCA 18 modules fourth**
+   - Check neighboring OCA domains before concluding there is a gap.
+   - Example: project need → also inspect `timesheet`, `project-reporting`, `knowledge`, `account-analytic`, `connector-*`, `l10n-*`.
+   - Compose CE + property fields + OCA modules where possible.
+
+5. **Custom `ipai_*` modules last**
+   - Custom modules are a last-resort extension path only.
+   - `ipai_*` must stay thin and bridge-oriented: integration bridges, orchestration glue, AI/copilot overlays, adapters, narrow opinionated extensions.
+   - **Do not create `ipai_*` modules to duplicate viable CE/OCA parity.**
+
+### Mandatory requirements for any approved custom `ipai_*` module
+
+Every custom module is incomplete unless it includes:
+
+- `README.md`
+- `docs/MODULE_INTROSPECTION.md`
+- `docs/TECHNICAL_GUIDE.md`
+
+Required minimum structure:
+
+```
+addons/ipai/<module_name>/
+  README.md
+  docs/
+    MODULE_INTROSPECTION.md
+    TECHNICAL_GUIDE.md
+  __manifest__.py
+  models/
+  views/
+  security/
+  data/
+  tests/
+```
+
+### Required contents of `MODULE_INTROSPECTION.md`
+
+- Why this module exists
+- Business problem
+- CE 18 coverage checked
+- **Property-field assessment** (could properties solve this? If not, why not?)
+- OCA 18 same-domain coverage checked
+- Adjacent OCA modules reviewed
+- Why CE + property fields + OCA composition was insufficient
+- Why custom code is justified
+- Module type: bridge / overlay / adapter / extension
+- Functional boundaries
+- Extension points used (`_inherit`, view inheritance, hooks, server actions, APIs)
+- Blast radius
+- Upgrade risk
+- Owner
+- Retirement / replacement criteria
+
+### Required contents of `TECHNICAL_GUIDE.md`
+
+- Architecture
+- Models extended
+- Fields added
+- Methods overridden
+- View inheritance points
+- Security model
+- Data files loaded
+- Jobs / cron / queues / webhooks
+- External integrations
+- Test strategy
+- Upgrade / rollback notes
+- Known limitations and failure modes
+
+### Implementation rules
+
+- Prefer `_inherit`, view inheritance, additive extension, and modular composition over invasive overrides.
+- Override CRUD/core methods only when necessary, and always preserve parent behavior via `super()`.
+- A custom module is **not justified** if the requirement can be solved by CE 18, property fields, OCA 18, or composition of those layers.
+
+### Canonical doctrine sentence
+
+> Doctrine: CE 18 first → property fields for parent-scoped lightweight metadata → OCA 18 same-domain → adjacent OCA → compose CE + properties + OCA → custom `ipai_*` as last resort with mandatory module introspection and technical guide.
 
 ---
 

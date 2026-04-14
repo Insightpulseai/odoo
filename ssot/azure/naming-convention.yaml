@@ -1,0 +1,125 @@
+---
+# SSOT: Azure Naming Convention (canonical)
+# Authority: this file. All Azure resources MUST follow these patterns.
+# Provider-managed/generated resources are explicit exceptions documented at the bottom.
+# Last updated: 2026-04-14
+version: 1
+status: canonical
+
+global_pattern: "<type>-<org>-<env>-<workload>-<region>"
+
+resource_group_pattern: "rg-<org>-<env>-<plane>-<region>"
+
+vocabularies:
+  org:
+    - ipai
+  env:
+    - dev
+    - stg
+    - prod
+    - shared
+  plane:
+    - transaction        # Odoo runtime, PG, Service Bus, workload identities
+    - data               # Databricks, lake storage, access connector, VNet/NSG
+    - observability      # App Insights, Log Analytics, action groups
+    - security           # Key Vault, security identities
+    - shared             # ACR, cross-env platform assets
+  workload:
+    - odoo
+    - finance
+    - finance-agents
+    - project-ops
+    - prismalab
+    - dbw
+    - monitoring
+    - data
+    - mon
+    - sec
+  region:
+    - sea               # Southeast Asia (canonical primary)
+
+type_prefixes:
+  rg:    "resource group"
+  cae:   "container apps environment"
+  ca:    "container app"
+  caj:   "container app job"
+  acr:   "container registry"
+  appi:  "application insights"
+  law:   "log analytics workspace"
+  ag:    "action group"
+  kv:    "key vault"
+  id:    "managed identity"
+  pgfs:  "postgresql flexible server"
+  sb:    "service bus namespace"
+  dbw:   "azure databricks workspace"
+  acn:   "access connector for databricks"
+  vnet:  "virtual network"
+  nsg:   "network security group"
+  st:    "storage account"
+
+# Service-constrained naming (compact lowercase, no hyphens) for resources
+# whose Azure-imposed naming rules forbid the canonical pattern.
+service_constrained:
+  pattern: "<type><org>[<purpose>]<env><region>"
+  examples:
+    - "acripaisharedsea"        # ACR, shared
+    - "stipaidevsea"            # Storage account, dev
+    - "stipailakedevsea"        # Storage account, dev lake
+    - "stipaistgsea"            # Storage account, stg
+    - "stipailakestgsea"        # Storage account, stg lake
+    - "stipaiprodsea"           # Storage account, prod
+    - "stipailakeprodsea"       # Storage account, prod lake
+
+# Locks: vocabulary additions REQUIRE doctrine update + PR review.
+locks:
+  freeze_org: true
+  freeze_env: true
+  freeze_region: true
+  freeze_type_prefixes: true
+  vocabulary_changes_via: "PR review against ssot/azure/naming-convention.yaml"
+
+# Normalization rules — current → desired
+normalize:
+  - from: "acae-"
+    to:   "cae-"
+    reason: "single canonical prefix for Container Apps Environment"
+  - from: "la-"
+    to:   "law-"
+    reason: "Log Analytics Workspace canonical prefix"
+  - from: "log-"
+    to:   "law-"
+    reason: "Log Analytics Workspace canonical prefix"
+  - from: "pg-"
+    to:   "pgfs-"
+    reason: "PostgreSQL Flexible Server explicit type"
+  - from: "ipai-odoo-stg-env"
+    to:   "cae-ipai-stg-odoo-sea"
+    reason: "match canonical pattern"
+  - from: "init-db"
+    to:   "caj-ipai-dev-odoo-initdb-sea"
+    reason: "explicit type prefix + scope"
+  - from: "acripaiodoo"
+    to:   "acripaisharedsea"
+    reason: "ACR is shared not workload-specific"
+
+# Provider-managed exceptions (DO NOT rename without controlled migration)
+exceptions:
+  - resource: "NetworkWatcher_southeastasia"
+    rg: "NetworkWatcherRG"
+    reason: "Azure-provided default; provider-managed"
+  - resource: "dbmanagedidentity"
+    rg: "rg-ipai-dev-dbw-managed"
+    reason: "Databricks provider-generated identity"
+  - resource: "dbstorageqba5raeuajc6u"
+    rg: "rg-ipai-dev-dbw-managed"
+    reason: "Databricks provider-generated storage"
+  - resource: "Application Insights Smart Detection"
+    rg: "rg-ipai-dev-mon-sea"
+    reason: "auto-created action group; user-managed equivalent applied separately"
+
+# Doctrine anchor
+anchors:
+  bom: "ssot/azure/bom.yaml"
+  tag_policy: "ssot/azure/tag-policy.yaml"
+  desired_end_state: "docs/architecture/azure-desired-end-state.md"
+  related_existing: "ssot/azure/tagging-standard.yaml (predecessor)"

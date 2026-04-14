@@ -1,0 +1,141 @@
+---
+# SSOT: Azure Tag Policy (canonical)
+# Authority: this file. Tags MUST be enforced via Azure Policy.
+# Last updated: 2026-04-14
+version: 1
+status: canonical
+
+# Azure tag rules (from Microsoft documentation):
+# - Tag names are case-insensitive; tag values are case-sensitive.
+# - Tags do NOT inherit automatically from RG or subscription.
+# - Limit: 50 tag name/value pairs per resource/RG/subscription.
+# - NEVER put secrets/tokens in tags (plain-text metadata only).
+# - Use Azure Policy to enforce required tags + allowed values.
+
+mandatory_tags:
+  org:
+    description: "Organization identifier"
+    allowed: [ipai]
+    enforce: deny_if_missing
+  platform:
+    description: "Product/platform"
+    allowed: [pulser-odoo]
+    enforce: deny_if_missing
+  env:
+    description: "Environment"
+    allowed: [dev, stg, prod, shared]
+    enforce: deny_if_missing
+  plane:
+    description: "Architectural plane"
+    allowed: [transaction, data, agent, delivery, observability, security, shared]
+    enforce: deny_if_missing
+  workload:
+    description: "Workload identifier"
+    allowed: [odoo, finance, finance-agents, project-ops, prismalab, dbw, monitoring]
+    enforce: deny_if_missing
+  service:
+    description: "Resource purpose (free-text, slug-style)"
+    enforce: deny_if_missing
+  owner:
+    description: "Primary owner"
+    allowed: [jake]   # extend as team grows
+    enforce: deny_if_missing
+  managed_by:
+    description: "Provisioning authority"
+    allowed: [terraform, bicep, manual, azure-system]
+    enforce: deny_if_missing
+  criticality:
+    description: "Operational criticality"
+    allowed: [low, medium, high, mission-critical]
+    enforce: deny_if_missing
+  cost_center:
+    description: "Cost center identifier"
+    allowed: [ipai-platform]
+    enforce: deny_if_missing
+  data_classification:
+    description: "Data sensitivity"
+    allowed: [public, internal, confidential, restricted]
+    enforce: deny_if_missing
+  dr_tier:
+    description: "Disaster recovery tier"
+    allowed: [none, bronze, silver, gold]
+    enforce: deny_if_missing
+  backup_policy:
+    description: "Backup posture"
+    allowed: [none, daily, pitr, custom]
+    enforce: deny_if_missing
+  ops_state:
+    description: "Operational state"
+    allowed: [active, pilot, deprecated, candidate-delete]
+    enforce: deny_if_missing
+  billing_scope:
+    description: "Billing aggregation scope"
+    allowed: [core-platform, benchmark, experimentation, shared]
+    enforce: deny_if_missing
+
+recommended_tags:
+  repo:
+    description: "Source repository"
+    example: "Insightpulseai/odoo"
+  spec_slug:
+    description: "Spec bundle slug"
+    example: "pulser-odoo"
+  iteration:
+    description: "ADO iteration alignment"
+    allowed:
+      - R1-Foundation-30d
+      - R2-Core-Execution-60d
+      - R3-PH-Ops-Hardening-90d
+      - R4-GA
+  parent_service:
+    description: "Logical parent service"
+    example: "ca-ipai-dev-odoo-web-sea"
+  cm-resource-parent:
+    description: "Azure Cost Management cost-rollup parent (canonical Microsoft tag)"
+    example: "/subscriptions/<sub>/resourceGroups/<rg>/providers/<resource-id>"
+
+# Resource-group baseline
+resource_group_required_tags:
+  - org
+  - platform
+  - env
+  - plane
+  - owner
+  - managed_by
+  - cost_center
+  - ops_state
+
+# Resource baseline (every taggable resource)
+resource_required_tags: "ALL of mandatory_tags"
+
+# Enforcement
+enforcement:
+  policy_definitions:
+    - name: "ipai-require-mandatory-tags"
+      effect: "Deny"
+      scope: "subscription"
+      action: "block resource creation if any mandatory tag missing"
+    - name: "ipai-validate-allowed-values"
+      effect: "Audit"
+      scope: "subscription"
+      action: "flag drift from allowed_values lists"
+    - name: "ipai-no-secrets-in-tags"
+      effect: "Audit"
+      scope: "subscription"
+      action: "scan tag values for high-entropy strings + known secret patterns"
+
+# Anti-patterns (rejected at code review)
+anti_patterns:
+  - "Storing secrets/tokens/passwords in tag values"
+  - "Relying on RG-tag inheritance (Azure does NOT auto-inherit)"
+  - "Free-text in mandatory enum tags"
+  - "Skipping tags on 'temporary' resources"
+  - "Capitalization drift in tag values (case-sensitive)"
+  - "Missing cm-resource-parent on resources that should roll up to a parent cost bucket"
+
+# Anchors
+anchors:
+  naming: "ssot/azure/naming-convention.yaml"
+  bom: "ssot/azure/bom.yaml"
+  desired_end_state: "docs/architecture/azure-desired-end-state.md"
+  predecessor: "ssot/azure/tagging-standard.yaml"
