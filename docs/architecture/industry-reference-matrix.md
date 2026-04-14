@@ -51,7 +51,7 @@ Odoo's Partner industry page emphasizes:
 - automatic project and task creation after a sale
 - centralized implementation/project dashboard
 - timesheets and analytic profitability tracking
-- CRM pipeline and invoicing
+- CRM pipeline and invoicing ([odoo.com](https://www.odoo.com/industries/odoo-partner))
 
 **Packaging implication**
 Use this as the base reference for:
@@ -73,7 +73,7 @@ Odoo's Marketing Agency page emphasizes:
 - centralized campaign/project hub
 - project + timesheets + exchanges + meetings + invoices
 - price lists and recurring invoices
-- integrated marketing apps
+- integrated marketing apps ([odoo.com](https://www.odoo.com/industries/marketing-agency))
 
 **Packaging implication**
 Use this as an overlay for:
@@ -98,7 +98,7 @@ Odoo's Accounting Firm page emphasizes:
 - secure document workspace
 - e-sign
 - flexible billing by time/materials, fixed rate, or milestones
-- strong accounting/reconciliation posture
+- strong accounting/reconciliation posture ([odoo.com](https://www.odoo.com/industries/accounting-firm))
 
 **Packaging implication**
 Use this as the reference for:
@@ -124,7 +124,7 @@ Odoo's Photography page emphasizes:
 - automatic project creation after quote confirmation
 - online signature
 - online payment
-- task/project management
+- task/project management ([odoo.com](https://www.odoo.com/industries/photography))
 
 **Packaging implication**
 Use this as the primary reference for:
@@ -146,7 +146,7 @@ Odoo's Software Reseller page emphasizes:
 - centralized implementation/project dashboards
 - recurring invoicing for licenses
 - service billing via timesheets, milestones, or fixed rates
-- quote templates and planning for implementation teams
+- quote templates and planning for implementation teams ([odoo.com](https://www.odoo.com/es_ES/industries/software-reseller))
 
 **Packaging implication**
 Use this as a strong overlay for InsightPulseAI where offers include:
@@ -314,4 +314,4 @@ The current IPAI vertical-packaging target is not a collection of separate verti
 - **Repo adoption:** [`docs/architecture/repo-adoption-register.md`](repo-adoption-register.md)
 - **Desired end state matrix:** [`docs/architecture/desired-end-state-matrix.md`](desired-end-state-matrix.md)
 - **Tenancy model:** [`docs/tenants/TENANCY_MODEL.md`](../tenants/TENANCY_MODEL.md)
-- **Machine-readable companion:** `ssot/architecture/industry-reference-matrix.yaml` (see below)
+- **Machine-readable companion:** [`ssot/architecture/industry-reference-matrix.yaml`](../../ssot/architecture/industry-reference-matrix.yaml)

@@ -332,6 +332,120 @@ repos:
       is explicitly required AND OCA composition is proven insufficient
       (per Odoo module selection doctrine)."
 
+  # ───── I. Google Workspace adoption (added 2026-04-14) — for W9 Studio ─────
+  # Per docs/architecture/w9-google-workspace-integration.md:
+  # Google Workspace = identity/collab/calendar/comms/docs/internal-productivity
+  # Odoo = transactional system of record (lead/booking/quote/invoice/project)
+
+  - upstream: googleworkspace/cli
+    purpose: "Official Google Workspace CLI — Drive/Gmail/Calendar/Sheets/Docs/Chat/Admin/AI agent skills"
+    adopt_mode: consume_directly
+    internal_owner: services-platform
+    internal_destination: "Tool/runtime dependency; documented in docs/delivery/google-workspace-tooling.md"
+    do_when: now
+    priority: P0
+    rationale: |
+      Most important Google Workspace addition. Spans all Workspace surfaces
+      with explicit AI agent skills. Fits repo-first / agent-friendly model.
+      For W9 Studio integration with Workspace per `feedback_w9_google_workspace_integration.md`.
+
+  - upstream: googleworkspace/developer-tools
+    purpose: "Official Workspace developer tools — VS Code extension + OAuth scope linting + MCP support"
+    adopt_mode: consume_directly
+    internal_owner: services-platform
+    internal_destination: "Developer tooling; reference from docs/delivery/google-workspace-tooling.md"
+    do_when: now
+    priority: P0
+    rationale: |
+      OAuth scope validation + editor-side dev tooling + MCP-aware Workspace
+      dev flows. Hardens the W9 Workspace integration build path.
+
+  - upstream: googleworkspace/add-ons-samples
+    purpose: "Sample Google Workspace Add-ons (Apps Script + Java + Node + Python)"
+    adopt_mode: clone_as_reference
+    internal_owner: services-platform
+    internal_destination: "docs/architecture/reference-adaptations/google-workspace/"
+    do_when: now
+    priority: P1
+    rationale: |
+      Gmail/Calendar/Docs/Drive add-on patterns. Internal operator extensions.
+      Future Workspace Marketplace experiments. Don't make add-ons first
+      integration path if CLI + APIs are sufficient.
+
+  - upstream: googleworkspace/google-chat-samples
+    purpose: "Google Chat app samples — bots, alerts, approval workflows"
+    adopt_mode: clone_as_reference
+    internal_owner: services-platform
+    internal_destination: "docs/architecture/reference-adaptations/google-workspace/ or agents/google-chat-ops-experiments/"
+    do_when: now
+    priority: P1
+    rationale: |
+      W9-fit: booking notifications, shoot-day reminders, ops coordination,
+      finance/admin follow-ups. Lightweight staff-facing bot surfaces.
+
+  - upstream: googleworkspace/python-samples
+    purpose: "Official Python samples for Google Workspace APIs"
+    adopt_mode: clone_as_reference
+    internal_owner: services-platform
+    internal_destination: "docs/architecture/reference-adaptations/google-workspace/ or platform/integrations/google-workspace-experiments/"
+    do_when: now
+    priority: P1
+    rationale: |
+      Service-account patterns + Gmail/Calendar/Drive examples. Best
+      code-reference repo if implementation glue is Python-heavy
+      (matches IPAI Python stack).
+
+  - upstream: googleworkspace/meet
+    purpose: "Official Google Meet integration repo"
+    adopt_mode: clone_as_reference
+    internal_owner: services-platform
+    internal_destination: "docs/architecture/reference-adaptations/google-workspace/ (later)"
+    do_when: later
+    priority: P2
+    rationale: |
+      Meet-aware integration patterns. Future call/session coordination.
+      Useful but not first-wave critical for W9.
+
+  - upstream: googleworkspace/meet-media-api-samples
+    purpose: "Official samples for the Google Meet Media API (recording/media workflows)"
+    adopt_mode: clone_as_reference
+    internal_owner: services-platform
+    internal_destination: "docs/architecture/reference-adaptations/google-workspace/ (later)"
+    do_when: later
+    priority: P2
+    rationale: |
+      Advanced meeting/media integrations. Future production-review or
+      remote-session tooling. NOT current-wave core.
+
+  - upstream: Google Workspace Marketplace GitHub Integration
+    purpose: "SaaS app on Marketplace allowing GitHub actions from Google surfaces"
+    adopt_mode: do_not_adopt
+    internal_owner: gtm
+    internal_destination: "Use as SaaS/app if useful; NOT a repo to clone or fork"
+    do_when: never_as_codebase
+    rationale: "App/integration surface, not a repo for product code."
+
+  # ───── J. Self-hosted Odoo integrations rule (added 2026-04-14) ─────
+  # Anchor: docs/architecture/odoo-integrations-selfhosted-azure.md
+
+  - upstream: odoo/odoo (built-in integration modules)
+    purpose: "Built-in google_account/calendar/gmail + microsoft_account/calendar/outlook + cloud_storage_azure + external_api"
+    adopt_mode: consume_directly
+    internal_owner: odoo-platform
+    internal_destination: "Use built-in modules from canonical odoo upstream remote"
+    do_when: now
+    priority: P0
+    rationale: |
+      For self-hosted Odoo on Azure: built-in integrations are the default.
+      Do NOT fork Odoo for integrations. Do NOT add third-party repos when
+      Odoo already ships the integration. Decision order:
+        1. built-in Odoo module
+        2. selected OCA module
+        3. thin ipai_* adapter
+        4. third-party marketplace module only if still necessary
+      Configure with stable public URL + Key Vault secrets + test/prod separation.
+      See `docs/architecture/odoo-integrations-selfhosted-azure.md`.
+
 # ─── Internal repos owned directly (not forked from upstream) ───
 own_directly:
   - path: "infra/"
