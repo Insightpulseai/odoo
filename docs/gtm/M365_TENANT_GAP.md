@@ -49,6 +49,28 @@ Everything upstream of Teams delivery:
 
 These can be reused for non-Teams surfaces (direct REST chat, web embed, Slack Bot Framework connector, email ingestion) without any changes.
 
+## UPDATE 2026-04-13 — option D discovered (recommended)
+
+Partner Center → Benefits workspace shows **3 unredeemed benefits** from
+IPAI's ISV Success enrollment that were missed in the original gap analysis:
+
+| Benefit | Qty | Activate by |
+|---|---|---|
+| **Microsoft 365 E5 Developer Subscription** | 25 licenses | 2027-04-30 |
+| Dynamics 365 discounted and free licenses | 25 licenses | 2027-04-30 |
+| Dynamics 365 Partner Sandbox — Sales, Field Service, Customer Service | 25 licenses | 2027-04-30 |
+
+**The M365 E5 Developer Subscription redemption closes this gap without
+buying anything.** It provisions Teams + M365 on the IPAI tenant via the
+existing ISV Success benefit. Zero license spend.
+
+Activation runbook: [docs/runbooks/activate-partner-center-benefits.md](../runbooks/activate-partner-center-benefits.md)
+
+This supersedes Options A–C below for short- and medium-term. Options
+B and C remain valid fallbacks only if the benefit redemption fails.
+
+---
+
 ## Options — pick one
 
 ### Option A: Buy M365 on the IPAI tenant
