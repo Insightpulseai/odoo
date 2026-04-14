@@ -46,7 +46,7 @@ own-directly      = build and maintain in Insightpulseai because it is your SSOT
 | `Azure-Samples/Azure-PostgreSQL-Resiliency-Architecture` | infra/data | clone-reference | platform/data | `docs/architecture/` | now | Use for HA/DR decisions |
 | `Azure-Samples/azure-postgres-pgvector-python` | data/agent | clone-reference | agent/data platform | `data-intelligence/experiments/` | later | Use for vector-sidecar patterns |
 | `Azure-Samples/azure-postgresql-mcp` | agent/data | fork-later | agent-platform | `agent-platform/tools/postgresql-mcp/` | later | Reference now; fork only if controls needed |
-| `microsoft/agent-framework` | agent | consume-directly | agent-platform | dependency in `agent-platform/` | now | Canonical orchestration runtime |
+| `microsoft/agent-framework` | agent | `consume-directly` | agent-platform | dependency in `agent-platform/` | now | Canonical agent-plane runtime for Pulser orchestration, multi-agent workflows, checkpointing, HITL, and observability. Keep GitHub as source-control truth and Azure DevOps as planning/delivery integration surface; do not fork or embed business-domain logic in the framework. |
 | Foundry AI templates / RMA | agent/delivery | clone-reference | delivery + agent | `docs/architecture/reference-adaptations/` | now | Adapt patterns, not productize |
 | `microsoft/azure-devops-mcp` | delivery | consume-directly | delivery/platform | agent/editor config | now | Use upstream MCP directly |
 | `microsoft/azure-pipelines-yaml` | delivery | clone-reference | delivery/platform | `azure-pipelines/` or docs | now | Copy only useful templates |
@@ -59,8 +59,28 @@ own-directly      = build and maintain in Insightpulseai because it is your SSOT
 | `Azure-Samples/postgres-agentic-shop` | agent / data | `clone-reference` | agent-platform | `agent-platform/experiments/` | later | Reference for multi-agent customer-experience patterns backed by PostgreSQL; not current-wave core. |
 | Microsoft Finance agents docs | benchmark / product surface | `clone-reference` | architecture / product | `docs/architecture/reference-adaptations/` | now | Workflow and UX benchmark for Finance agents parity, including architecture, data handling, Excel and Outlook surfaces, Financial Reconciliation agent, and Collections in Outlook. Use as parity/workflow reference only; do not treat as product code or implementation repo. |
 | `anthropics/financial-services-plugins` | agent / finance workflow packaging | `clone-reference` | agent-platform | `docs/architecture/reference-adaptations/` or `agent-platform/experiments/` | now | Reference for Claude-native finance plugin packaging, including skills, slash commands, sub-agents, and MCP-backed workflow organization. Adapt packaging patterns only; filter out investment-banking, equity-research, private-equity, and wealth-management assumptions that are outside current-wave scope. Fork only later if IPAI creates a durable Pulser finance plugin pack. |
+| `gtzheng/Awesome-Agentic-System-Design` | agent / architecture research | `clone-reference` | agent-platform + docs | `docs/architecture/reference-adaptations/` | now | Curated reading/index repo for agent-system design, evaluation, safety, and framework comparison (covers AutoGen, Claude Agent SDK, CrewAI, Google ADK, LangGraph, Microsoft Agent Framework, M365 Agents SDK, OpenAI Agents SDK, Pydantic AI, SmolAgents, AWS Strands). Reference only — survey/index, not a runtime dependency or fork target. Use to shortlist architecture reading and compare frameworks against `microsoft/agent-framework`. |
 | Playwright MCP / CLI | testing / agent browser ops | `consume-directly` | QA / delivery engineering | `tests/playwright/` and agent/editor configuration | now | Use as the canonical agent-compatible browser automation surface alongside Playwright Test. |
 | Chrome DevTools MCP | testing / diagnostics | `do-not-adopt` | QA / delivery engineering | none | later | Use only as a debugging and diagnostics aid for browser/network/performance investigation; not a primary regression framework. |
+| `microsoft/azure-pipelines-tasks` | delivery / CI-CD tasks | `clone-reference` | delivery-engineering | `docs/architecture/reference-adaptations/` | now | Pattern reference for built-in task implementations (Python, container, AKS, ACA deploy). Extract patterns only — do not fork the repo. |
+| `microsoft/azure-pipelines-task-lib` | delivery / task SDK | `consume-directly` | delivery-engineering | `package.json devDependency` in custom task package | now | Required npm SDK for authoring custom Azure Pipelines tasks (Odoo deploy gate, BIR validation). Consume via npm, never fork. |
+| `microsoft/azure-pipelines-extensions` | delivery / deploy patterns | `clone-reference` | delivery-engineering | `docs/architecture/reference-adaptations/` | now | Reference for InvokeRestAPI, ACA, and AKS deploy extension task implementations. |
+| `Azure/PSRule.Rules.Azure` | delivery / IaC validation | `consume-directly` | platform-engineering | `azure-pipelines/` validate stage | now | WAF-aligned Bicep/ARM rule set; gate infra changes before `az deployment`. Run via PSRule-pipelines task companion. |
+| `Azure/PSRule-pipelines` | delivery / IaC validation | `consume-directly` | platform-engineering | `azure-pipelines/` validate stage | now | Pipeline task wrapper that invokes `Azure/PSRule.Rules.Azure`. Both must be wired together. |
+| `Azure-Samples/azure-container-apps-blue-green-with-azure-pipelines` | delivery / deploy pattern | `clone-reference` | delivery-engineering | `azure-pipelines/odoo-deploy.yml` | now | Blue/green ACA traffic-weight pattern for Odoo container slot promotion. Wave-01 critical. |
+| `databricks/bundle-examples` | delivery / data platform | `clone-reference` | data-engineering | `azure-pipelines/databricks-deploy.yml` | now | Canonical Databricks Asset Bundle (DAB) CI/CD deploy pattern. Verify NOASSERTION license before embedding. |
+| `microsoft/azure-pipelines-vscode` | delivery / dev tooling | `consume-directly` | delivery-engineering | `.devcontainer/devcontainer.json` extensions | later | VS Code extension for Azure Pipelines YAML schema validation and IntelliSense. |
+
+### §F.1 D365 Finance reference surfaces — Wave-01 parity (Epic #523)
+
+> All D365 repos are `clone-reference` only. IPAI displaces D365 Finance with Odoo CE 18 + OCA + thin `ipai_*`. No fork, no consume-directly, no Dataverse-as-SoR.
+
+| `microsoft/Dynamics-365-FastTrack-Implementation-Assets` | transaction + agent | `clone-reference` | odoo-platform | `docs/architecture/reference-adaptations/d365-finance/` | now | Primary D365 Finance parity library. Harvest `ERP/Finance/InvoiceCapture/`, `Agents/AI ERP Agents/`, `Administration/Analytics/EntityStoreTools/`. Filter `ERP/SCM/`, `ERP/Commerce/`. |
+| `MicrosoftDocs/dynamics-365-unified-operations-public` | transaction (all Wave-01) | `clone-reference` | odoo-platform | `docs/architecture/reference-adaptations/d365-finance/` | now | Authoritative functional spec — GL, AP, AR, Budgeting, Cash & Bank, Fixed Assets, Asset Leasing, Subscription Billing, Tax, Electronic Invoicing, Finance Insights. CC-BY-4.0 — no code copy. Filter `articles/supply-chain/`, `articles/commerce/`, `articles/human-resources/`. |
+| `MicrosoftDocs/dynamics365-guidance` | transaction + agent | `clone-reference` | odoo-platform + agent-platform | `docs/architecture/reference-adaptations/d365-finance/` | now | Harvest `finance-invoice-capture-ga-features-functionality.md`, `microsoft-copilot-finance.md`, `finance-globalization-studio-regulatory-configuration-service.md`. |
+| `MicrosoftLearning/MB-310-Microsoft-Dynamics-365-Finance` | transaction (test/UAT) | `clone-reference` | odoo-platform | `docs/architecture/reference-adaptations/d365-finance/` | now | Lab sequence = Wave-01 UAT script template (GL, AP 3-way, AR collections, budgeting, bank recon, fixed assets, cost accounting). |
+| `microsoft/ISM-Telemetry-for-Finance-and-Operations` | delivery (observability) | `clone-reference` | agent-platform | `docs/architecture/reference-adaptations/d365-finance/` | now | Application Insights KQL patterns for finance transaction telemetry; adapt to Odoo ACA + Azure Monitor. |
+
 | `OCA/account-financial-reporting` | transaction | `clone-reference` | odoo/platform | `addons/oca/` | now | Selected finance reporting modules only; do not fork the whole repo by default. |
 | `OCA/account-financial-tools` | transaction | `clone-reference` | odoo/platform | `addons/oca/` | now | Selected finance operations modules only; upstream fixes should go back to OCA where feasible. |
 | `OCA/account-reconcile` | transaction | `clone-reference` | odoo/platform | `addons/oca/` | now | Selected reconciliation modules only for current Finance parity scope. |
@@ -78,6 +98,14 @@ own-directly      = build and maintain in Insightpulseai because it is your SSOT
 | `googleworkspace/python-samples` | agent / transaction | `clone-reference` | agent-platform | `docs/architecture/reference-adaptations/` | now | Official Python samples for Workspace APIs (Gmail, Calendar, Drive). |
 | `googleworkspace/meet` | agent | `clone-reference` | agent-platform | `docs/architecture/reference-adaptations/` | later | Meet-aware integration patterns; not current-wave core. |
 | `googleworkspace/meet-media-api-samples` | agent | `clone-reference` | agent-platform | `docs/architecture/reference-adaptations/` | later | Advanced meeting/media integrations; later-phase core. |
+| `OfficeDev/Microsoft-365-Copilot-Samples` | agent / delivery | `clone-reference` | agent-platform | `docs/architecture/reference-adaptations/` | now | Canonical reference for Declarative Agents, API Plugins, and Graph Connectors for M365. |
+| `microsoft/Dynamics-365-Copilot-Samples` | agent / transaction | `clone-reference` | agent-platform | `docs/architecture/reference-adaptations/` | now | Canonical reference for D365 ERP sidecar patterns and data-ingestion plugins. |
+| `microsoft/Power-Platform-Samples` | agent / delivery | `clone-reference` | agent-platform | `docs/architecture/reference-adaptations/` | now | Patterns for agent-triggered Power Automate flows and Power Apps custom controls. |
+| `microsoft/CopilotStudioSamples` | agent | `clone-reference` | agent-platform | `docs/architecture/reference-adaptations/` | now | Patterns for low-code agent creation, custom instructions, and GPT-based sub-agents. |
+| `microsoft/Microsoft-Security-Copilot-Samples` | agent | `clone-reference` | agent-platform | `docs/architecture/reference-adaptations/` | later | patterns for security-policy agents and threat-intelligence adapters. |
+| `microsoft/Fabric-Copilot-Samples` | agent / data | `clone-reference` | agent-platform | `docs/architecture/reference-adaptations/` | later | Patterns for automated data analysis, DAX generation, and visualization agents. |
+| `Azure-Samples/azure-copilot-samples` | agent | `clone-reference` | agent-platform | `docs/architecture/reference-adaptations/` | later | patterns for cloud-ops assistance, resource management, and edge-automation. |
+| `github/awesome-copilot` | agent / delivery | `consume-directly` | agent-platform | tool dependency | now | Canonical index for agents, skills, and editor-side extensibility (IDE Plane). |
 | Partner Center portal / future APIs | partner ops | do-not-adopt | GTM / partner ops | none | later/never | Portal-driven until automation funded |
 | **IPAI infra composition** | infra | own-directly | infra/platform | `infra/azure/` | now | Own |
 | **IPAI Azure SSOT** | cross-cutting | own-directly | architecture/platform | `ssot/azure/` | now | Own |
@@ -129,6 +157,10 @@ Fork only if **Pulser Release Ops** becomes a productized internal service per P
    - `googleworkspace/add-ons-samples`
    - `googleworkspace/google-chat-samples`
    - `googleworkspace/python-samples`
+   - `OfficeDev/Microsoft-365-Copilot-Samples`
+   - `microsoft/Dynamics-365-Copilot-Samples`
+   - `microsoft/Power-Platform-Samples`
+   - `microsoft/CopilotStudioSamples`
    - Selected OCA modules (Finance, Reporting, Tools, UX)
    - Foundry solution templates / Release Manager Assistant
    - `microsoft/azure-pipelines-yaml`
@@ -186,4 +218,4 @@ Fork only if **Pulser Release Ops** becomes a productized internal service per P
 
 ## Changelog
 
-- **2026-04-14** Initial canonical register. 7 consume-directly + 26 clone-reference + 2 fork-later + 3 do-not-adopt + 6 own-directly.
+- **2026-04-14** Initial canonical register. 8 consume-directly + 33 clone-reference + 2 fork-later + 3 do-not-adopt + 6 own-directly.

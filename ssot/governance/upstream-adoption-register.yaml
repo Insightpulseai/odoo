@@ -78,12 +78,22 @@ repos:
     rationale: "Run upstream in dev/sandbox first. Wrapper only when production-grade controls are required."
 
   - upstream: microsoft/agent-framework
-    purpose: "Microsoft canonical agent orchestration runtime (Python + .NET)"
+    purpose: "Canonical agent-plane runtime for Pulser orchestration, multi-agent workflows, checkpointing, HITL, and observability (Python + .NET)"
     adopt_mode: consume_directly
     internal_owner: agent-platform
     internal_destination: "Dependency in agent repos (agent-platform/, agents/)"
     do_when: now
-    rationale: "Agent orchestration runtime. IPAI owns Pulser tools/policies/prompts/adapters; never re-implements the framework."
+    rationale: |
+      Agent-plane runtime substrate. Provides graph workflows, checkpointing,
+      HITL, time-travel, OTel observability, middleware, multi-model providers
+      (Anthropic, OpenAI, Foundry). Migration paths from Semantic Kernel and
+      AutoGen documented upstream. IPAI owns ONLY the Pulser-specific delta:
+      tool adapters, approval/guardrail logic, Odoo action wrappers, Partner
+      Center / Google Workspace / Azure task wrappers, telemetry conventions.
+      Do NOT fork. Do NOT embed business-domain or ERP-parity logic in the
+      framework — that stays in Odoo + OCA + thin ipai_*. Keep GitHub as
+      source-control truth and Azure DevOps as planning/delivery integration
+      surface (Azure Boards GitHub app + Azure Pipelines GitHub app).
 
   - upstream: microsoft-foundry/* (AI templates incl. Release Manager Assistant)
     purpose: "Microsoft Foundry azd-style AI templates (release mgmt, data unification, etc.)"
@@ -190,6 +200,21 @@ repos:
     do_when: now
     rationale: "Adapt PACKAGING patterns only (plugin structure, skill decomposition, slash-command naming, MCP organization, role-specific subagent boundaries). Filter OUT investment-banking / equity-research / private-equity / wealth-management vertical content — outside current-wave Finance + Finance-agents + Project-Operations scope. Fork only later if IPAI creates a durable Pulser finance plugin pack."
 
+  - upstream: gtzheng/Awesome-Agentic-System-Design
+    purpose: "Curated awesome-list reading/index repo for agent-system design, evaluation, safety, real-world applications, and framework comparison"
+    adopt_mode: clone_as_reference
+    internal_owner: agent-platform + docs
+    internal_destination: "docs/architecture/reference-adaptations/ (reading index only)"
+    do_when: now
+    rationale: |
+      Survey/index repo, NOT an execution framework. Covers AutoGen, Claude
+      Agent SDK, CrewAI, Google ADK, LangGraph, Microsoft Agent Framework,
+      M365 Agents SDK, OpenAI Agents SDK, Pydantic AI, SmolAgents, AWS
+      Strands. Use as a curated map for agent-plane research and framework
+      comparison against canonical microsoft/agent-framework substrate.
+      DO NOT: fork, treat as runtime dependency, scaffold from, or let
+      its framework breadth dilute the agent-platform substrate decision.
+
   # ───── E.2. Partner Center automation references (added 2026-04-14) ─────
 
   - upstream: microsoft/partner-center-sdk-for-dotNET
@@ -223,6 +248,75 @@ repos:
     internal_destination: "Tooling/reference only — never as production substrate"
     do_when: now
     rationale: "Useful as a tooling/reference surface for ad-hoc operator queries. Per memory reference_partner_center_auth.md: MFA enforcement live 2026-04-01, IPAI = ISV (not CSP/CPV) → app-only + certificate auth. PowerShell wrapper does not replace canonical Python/TypeScript clients in platform/partner-center/. Do NOT make it a production dependency."
+
+  # ───── E.3 D365 Finance reference surfaces (added 2026-04-14) — Wave-01 Epic #523 ─────
+  # ALL D365 repos are clone_as_reference only. IPAI displaces D365 Finance with Odoo CE 18 + OCA.
+  # No fork, no consume_directly, no Dataverse-as-SoR.
+
+  - upstream: microsoft/Dynamics-365-FastTrack-Implementation-Assets
+    purpose: "D365 Finance parity benchmark — invoice capture, AI ERP agents, data lake analytics patterns"
+    adopt_mode: clone_as_reference
+    internal_owner: odoo-platform
+    internal_destination: "docs/architecture/reference-adaptations/d365-finance/"
+    do_when: now
+    rationale: |
+      Primary FastTrack ops pattern library for D365 Finance. Harvest paths:
+      - ERP/Finance/InvoiceCapture/ → AP parity for ipai_invoice_capture + OCA/account-financial-tools
+      - Agents/AI ERP Agents/ → agent-plane benchmark for Pulser Finance agent structure
+      - Administration/Analytics/EntityStoreTools/ → data model export pattern → d365_parity_matrix.yaml
+      Filter OUT: ERP/SCM/, ERP/Commerce/. Anti-pattern: never run D365/X++ code.
+
+  - upstream: MicrosoftDocs/dynamics-365-unified-operations-public
+    purpose: "Authoritative functional spec for all Wave-01 D365 Finance modules (CC-BY-4.0)"
+    adopt_mode: clone_as_reference
+    internal_owner: odoo-platform
+    internal_destination: "docs/architecture/reference-adaptations/d365-finance/"
+    do_when: now
+    rationale: |
+      Single source of functional truth for Wave-01 parity matrix. CC-BY-4.0 = no code copy,
+      reference only. Each articles/finance/ section maps to specific Odoo CE 18 module + OCA
+      gap analysis. Asset leasing has no OCA equivalent → ipai_asset_leasing candidate.
+      Harvest paths: articles/finance/{accounts-payable,accounts-receivable,budgeting,fixed-assets,
+      asset-leasing,cash-bank-management,cost-accounting,localizations/global,finance-insights}/
+      Filter OUT: articles/{supply-chain,commerce,human-resources}/
+
+  - upstream: MicrosoftDocs/dynamics365-guidance
+    purpose: "FastTrack TechTalk guidance for Invoice Capture, Copilot for Finance, Globalization Studio"
+    adopt_mode: clone_as_reference
+    internal_owner: odoo-platform + agent-platform
+    internal_destination: "docs/architecture/reference-adaptations/d365-finance/"
+    do_when: now
+    rationale: |
+      Three high-value TechTalk docs:
+      - finance-invoice-capture-ga-features-functionality.md → AP Invoice Capture GA spec
+      - microsoft-copilot-finance.md → Copilot for Finance benchmark for Pulser Finance agent
+      - finance-globalization-studio-regulatory-configuration-service.md → Tax Calculation
+        benchmark for ipai_bir_tax + future multi-country tax overlay
+      Guidance-only — no runnable code.
+
+  - upstream: MicrosoftLearning/MB-310-Microsoft-Dynamics-365-Finance
+    purpose: "D365 Finance certification labs — Wave-01 UAT script template source"
+    adopt_mode: clone_as_reference
+    internal_owner: odoo-platform
+    internal_destination: "docs/architecture/reference-adaptations/d365-finance/"
+    do_when: now
+    rationale: |
+      Lab sequence covers GL, AP 3-way match, AR collections, budgeting with budget control,
+      bank reconciliation, fixed asset depreciation, cost accounting allocation. Each lab
+      becomes a functional acceptance test scenario for the Odoo+OCA Wave-01 equivalent.
+      Low stars (13) is expected for a lab repo — does not indicate staleness.
+
+  - upstream: microsoft/ISM-Telemetry-for-Finance-and-Operations
+    purpose: "Application Insights KQL patterns for finance transaction telemetry — delivery plane"
+    adopt_mode: clone_as_reference
+    internal_owner: agent-platform
+    internal_destination: "docs/architecture/reference-adaptations/d365-finance/"
+    do_when: now
+    rationale: |
+      Harvest KQL query patterns for finance transaction volumes, batch job health, error rates.
+      Adapt to Odoo ACA + Azure Monitor / Application Insights wired to afd-ipai-dev.
+      Maps to Financial Reporting + Finance Insights observability requirement in Wave-01.
+      Not a functional finance module — delivery/observability reference only.
 
   # ───── F. Odoo + OCA (added 2026-04-14) ─────
 
@@ -331,6 +425,92 @@ repos:
     internal_destination: "Tooling reference only — list as dependency, not codebase"
     do_when: never_as_codebase
     rationale: "Debugging aid, not primary E2E framework. Document as adopted tool surface."
+
+  # ───── G.1 Azure Pipelines extended catalog (added 2026-04-14) ─────
+
+  - upstream: microsoft/azure-pipelines-tasks
+    purpose: "All built-in Azure Pipelines task implementations (Python, Node, container, AKS, ACA)"
+    adopt_mode: clone_as_reference
+    internal_owner: delivery-engineering
+    internal_destination: "docs/architecture/reference-adaptations/"
+    do_when: now
+    rationale: "Pattern reference for built-in task implementations. Extract task patterns for Odoo ACA deploy and BIR validation gates. Do NOT fork the repo."
+
+  - upstream: microsoft/azure-pipelines-task-lib
+    purpose: "TypeScript/Node SDK for authoring custom Azure Pipelines tasks"
+    adopt_mode: consume_directly
+    internal_owner: delivery-engineering
+    internal_destination: "package.json devDependency in any custom pipeline task package"
+    do_when: now
+    rationale: "Required SDK if IPAI promotes Odoo deploy or gate steps to reusable task extensions. Consumed via npm, never forked."
+
+  - upstream: microsoft/azure-pipelines-extensions
+    purpose: "Collection of RM and deployment extensions (InvokeRestAPI, ACA, AKS deploy patterns)"
+    adopt_mode: clone_as_reference
+    internal_owner: delivery-engineering
+    internal_destination: "docs/architecture/reference-adaptations/"
+    do_when: now
+    rationale: "Reference for InvokeRestAPI, ACA, and AKS deploy task implementations. Directly relevant to Odoo ACA deploy lane and Databricks REST API calls."
+
+  - upstream: Azure/PSRule.Rules.Azure
+    purpose: "PSRule rule set — WAF-aligned validation of Bicep/ARM IaC"
+    adopt_mode: consume_directly
+    internal_owner: platform-engineering
+    internal_destination: "azure-pipelines/ validate stage (ps-rule run)"
+    do_when: now
+    rationale: "Gate infra merges on WAF/security rule score before az deployment. Use with Azure/PSRule-pipelines task companion."
+
+  - upstream: Azure/PSRule-pipelines
+    purpose: "Azure Pipelines task wrapper that invokes PSRule.Rules.Azure"
+    adopt_mode: consume_directly
+    internal_owner: platform-engineering
+    internal_destination: "azure-pipelines/ validate stage"
+    do_when: now
+    rationale: "Companion task to PSRule.Rules.Azure — both must be wired together. Gates Bicep/ARM changes before deployment."
+
+  - upstream: Azure-Samples/azure-container-apps-blue-green-with-azure-pipelines
+    purpose: "Blue/green ACA deployment pattern for Azure Pipelines (traffic-weight-based)"
+    adopt_mode: clone_as_reference
+    internal_owner: delivery-engineering
+    internal_destination: "azure-pipelines/odoo-deploy.yml"
+    do_when: now
+    rationale: "ACA traffic-weight blue/green is the canonical Odoo container slot promotion strategy for Wave-01. Maps to current azure-pipelines/odoo-deploy.yml work."
+
+  - upstream: databricks/bundle-examples
+    purpose: "Official Databricks Asset Bundle (DAB) CI/CD examples including Azure DevOps lane"
+    adopt_mode: clone_as_reference
+    internal_owner: data-engineering
+    internal_destination: "azure-pipelines/databricks-deploy.yml"
+    do_when: now
+    license_note: "NOASSERTION — verify with legal before embedding any copied code."
+    rationale: "DAB is the canonical Databricks deploy unit. Align existing pipeline to bundle validate + deploy pattern."
+
+  - upstream: microsoft/azure-pipelines-vscode
+    purpose: "VS Code extension for Azure Pipelines YAML schema validation and IntelliSense"
+    adopt_mode: consume_directly
+    internal_owner: delivery-engineering
+    internal_destination: ".devcontainer/devcontainer.json extensions list"
+    do_when: later
+    rationale: "Dev-time tooling only. Reduces YAML authoring errors in azure-pipelines/ directories."
+
+  # ───── G.2 Azure Pipelines REJECTS (added 2026-04-14) ─────
+  # Documented for governance — do not add these regardless of Microsoft tagging:
+
+  - upstream: microsoft/azure-pipelines-terraform
+    purpose: "Pipeline tasks for Terraform install/run inside Azure Pipelines"
+    adopt_mode: do_not_adopt
+    internal_owner: platform-engineering
+    internal_destination: "none"
+    do_when: never
+    rationale: "IPAI canonical IaC = Bicep + AVM. Adopting Terraform tasks splits IaC authority. Reject."
+
+  - upstream: Azure/ResourceModules
+    purpose: "Legacy CARML Bicep module library — predecessor to AVM"
+    adopt_mode: do_not_adopt
+    internal_owner: platform-engineering
+    internal_destination: "none"
+    do_when: never
+    rationale: "Superseded by Azure/bicep-registry-modules (AVM). Last significant update 2025-08 = wind-down. Use AVM only."
 
   # ───── H. OCA booking stack (added 2026-04-14) — for W9 Studio + booking-engine app ─────
 

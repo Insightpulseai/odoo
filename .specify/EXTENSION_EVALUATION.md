@@ -9,7 +9,7 @@
 
 | Extension | Repo | License | Stars | Updated | Author | Verdict | Priority |
 |---|---|---|---|---|---|---|---|
-| **CI Guard** | `Quratulain-bilal/spec-kit-ci-guard` v1.0.0 | MIT | 0 | 2026-04-10 | community (unverified) | **Trial — sandbox branch** | P2 |
+| **CI Guard** | `Quratulain-bilal/spec-kit-ci-guard` v1.0.0 | MIT | 0 | 2026-04-10 | community (unverified) | ❌ **BLOCKED-UPSTREAM** — incompatible with v0.6.2 namespacing (see [`trial-results/ci-guard-2026-04-14.md`](./trial-results/ci-guard-2026-04-14.md)) | P2 → defer |
 | **Azure DevOps Integration** | `pragya247/spec-kit-azure-devops` v1.0.0 | MIT | 8 | 2026-04-09 | community (unverified) | **Sandbox — risk-flagged** | P3 |
 | **MAQA Azure DevOps Integration** | `GenieRobot/spec-kit-maqa-azure-devops` v0.1.0 | MIT | — | (newer) | community (unverified) | **Watch — defer** | P4 |
 
