@@ -287,12 +287,148 @@ risk:
     - "Tag application"
     - "Observability resource renames (App Insights connection strings update)"
 
+# ─────────────────────────────────────────────────────────────────
+# R3 Production-Hardening Prereq Trajectory (added 2026-04-14)
+# ─────────────────────────────────────────────────────────────────
+# Cross-referenced against:
+#   - microsoft/Deploy-Your-AI-Application-In-Production (canonical AI Landing Zone)
+#   - Azure/bicep-ptn-aiml-landing-zone (substrate)
+#   - TechCommunity: Data Intelligence with Databricks + Fabric
+#   - TechCommunity: Microsoft Foundry end-to-end
+#   - TechCommunity: AI-led SDLC
+#
+# Current dev BOM = 24 resources = ~80% of Microsoft DYAIP reference.
+# To reach DYAIP-compliant production, R3 + R4 add ~38 resources.
+#
+# Quick-deploy snippets: docs/architecture/quickstart-bicep-snippets.md
+
+production_readiness_gaps:
+  current_total: 24
+  dyaip_compliance_pct: 80
+
+  trajectory:
+    end_of_r2_jul_14:
+      target_total: 26
+      additions:
+        - resource: action_group
+          count: 1
+          ado_issue: 625
+          avm: "avm/res/insights/action-group@0.8.0"
+          prereqs:
+            - 4 notification channels (email, slack, teams, optional pagerduty)
+            - 6 alert rules (ACA errors, PG saturation, FD 5xx, RG deletion, service health, cost budget)
+            - cost budget resource (subscription scope)
+            - keyvault secret for slack webhook
+        - resource: ai_search
+          count: 1
+          ado_issue: 624
+          avm: "avm/res/search/search-service@0.9.2"
+          prereqs:
+            - system-assigned managed identity
+            - 4 role assignments (search MI → storage, search MI → foundry, pulser MI → search, admin → search)
+            - foundry connection record
+            - diagnostic settings → log analytics
+            - keyvault secret for query api key (or MI-only auth)
+            - index schema definitions in data-intelligence/search-indexes/
+
+    end_of_r3_oct_14:
+      target_total: 62
+      additions:
+        - resource: purview_account
+          count: 1
+          ado_issue: 627
+          avm: "avm/res/purview/account@0.9.2"
+          prereqs:
+            - system-assigned managed identity
+            - 5 source connections (3 ADLS, PostgreSQL, Databricks, Foundry cross-sub, Fabric)
+            - 5 role assignments (Purview MI → each source)
+            - collection structure (ipai → plane → workload)
+            - scan rule sets (default + PH BIR-sensitive)
+            - classifications (PII, PHI, PCI, BIR-tax-sensitive)
+            - private endpoint (privatelink.purview.azure.com)
+            - keyvault for source credentials
+            - diagnostic settings → log analytics
+        - resource: private_endpoints
+          count: 8
+          ado_issue: 626
+          avm: "avm/res/network/private-endpoint@0.9.1"
+          targets:
+            - { service: key_vault, group_id: vault, dns_zone: privatelink.vaultcore.azure.net }
+            - { service: storage_blob_x3, group_id: blob, dns_zone: privatelink.blob.core.windows.net }
+            - { service: postgresql, group_id: postgresqlServer, dns_zone: privatelink.postgres.database.azure.com }
+            - { service: container_registry, group_id: registry, dns_zone: privatelink.azurecr.io }
+            - { service: ai_search, group_id: searchService, dns_zone: privatelink.search.windows.net }
+            - { service: app_insights, group_id: azuremonitor, dns_zone: privatelink.applicationinsights.azure.com }
+            - { service: service_bus, group_id: namespace, dns_zone: privatelink.servicebus.windows.net }
+            - { service: foundry_cross_sub, group_id: account, dns_zone: privatelink.cognitiveservices.azure.com }
+        - resource: private_dns_zones
+          count: 8
+          avm: "avm/res/network/private-dns-zone@0.8.1"
+          shared_with: private_endpoints
+        - resource: private_dns_resolver
+          count: 1
+          purpose: "DNS resolution for VNet from on-prem or peered VNets (optional)"
+        - resource: pe_dedicated_subnet
+          count: 1
+          purpose: "Dedicated subnet for private endpoint NICs"
+        - resource: aca_internal_environment
+          count: 1
+          risk: HIGH
+          note: "ACA env recreate with internal=true; destructive migration"
+        - resource: front_door_premium_upgrade
+          count: 0_new_resources_but_sku_change
+          risk: HIGH
+          note: "Required for private link service support; cost increase"
+
+    end_of_r4_dec_15:
+      target_total: 64
+      additions:
+        - resource: ms_defender_for_cloud_plan
+          count: 1
+          purpose: "Subscription-level Defender plan activation (security baseline)"
+          prereqs:
+            - "Defender for Servers / Containers / Storage / Key Vault / SQL plans enabled"
+            - "Workspace integration (we have Log Analytics)"
+        - resource: cosmos_db_optional
+          count: 0_or_1
+          purpose: "Foundry pattern BYOR — only if needed for agent state beyond File Checkpoint Storage"
+        - resource: event_hubs_optional
+          count: 0_or_1
+          purpose: "Databricks streaming ingest — only if real-time data flows added"
+
+  out_of_scope_for_ipai:
+    - resource: bastion_host
+      reason: "IPAI has NO VMs (ACA-only) — Bastion not applicable"
+    - resource: azure_devops_extras
+      reason: "Already covered by separate ADO project + GitHub authority split"
+
+# Coverage matrix vs Microsoft DYAIP
+microsoft_dyaip_coverage:
+  azure_ai_search:        { status: PARTIAL, gap_issue: 624, target: r2_jul_14 }
+  microsoft_purview:      { status: MISSING, gap_issue: 627, target: r3_oct_14 }
+  action_group:           { status: MISSING, gap_issue: 625, target: r2_jul_14 }
+  private_endpoints_dns:  { status: MISSING, gap_issue: 626, target: r3_oct_14 }
+  microsoft_foundry:      { status: COVERED_CROSS_SUB, note: "ipai-copilot-resource in East US 2 separate sub" }
+  microsoft_fabric:       { status: COVERED_CROSS_SUB, note: "fcipaidev capacity in separate sub per memory project_fabric_finance_ppm.md" }
+  microsoft_defender:     { status: TENANT_LEVEL_OR_R4, target: r4_dec_15 }
+  cosmos_db:              { status: OPTIONAL_BYOR, note: "Foundry pattern; only if needed" }
+  event_hubs:             { status: OUT_OF_WAVE_01, note: "Real-time streaming not in scope" }
+  bastion_host:           { status: NOT_APPLICABLE, note: "No VMs" }
+
 # Anchors
 anchors:
   naming: "ssot/azure/naming-convention.yaml"
   tag_policy: "ssot/azure/tag-policy.yaml"
   desired_end_state: "docs/architecture/azure-desired-end-state.md"
+  quickstart_bicep: "docs/architecture/quickstart-bicep-snippets.md"
   predecessor_files:
     - "ssot/azure/expected-estate.yaml"
     - "ssot/azure/resource_rationalization.yaml"
     - "ssot/azure/operator_view.yaml"
+  microsoft_references:
+    - "https://github.com/microsoft/Deploy-Your-AI-Application-In-Production"
+    - "https://github.com/Azure/bicep-ptn-aiml-landing-zone"
+    - "https://github.com/Azure/bicep-registry-modules (AVM canonical source)"
+    - "https://techcommunity.microsoft.com/blog/azurearchitectureblog/data-intelligence-end-to-end-with-azure-databricks-and-microsoft-fabric/4232621"
+    - "https://techcommunity.microsoft.com/blog/azure-ai-foundry-blog/microsoft-foundry-an-end-to-end-platform-for-building-governing-and-scaling-ai/4496736"
+    - "https://techcommunity.microsoft.com/blog/appsonazureblog/an-ai-led-sdlc-building-an-end-to-end-agentic-software-development-lifecycle-wit/4491896"
