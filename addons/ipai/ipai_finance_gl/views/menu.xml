@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <!-- Top-level D365 Parity menu under Finance / Accounting configuration -->
+    <menuitem
+        id="menu_ipai_finance_gl_root"
+        name="D365 Parity"
+        parent="account.menu_finance_configuration"
+        sequence="100"
+        groups="ipai_finance_gl.group_ipai_finance_gl_user"/>
+
+    <!-- GL Parity Map -->
+    <menuitem
+        id="menu_ipai_finance_gl_parity"
+        name="GL Parity Map"
+        parent="menu_ipai_finance_gl_root"
+        action="action_finance_gl_parity"
+        sequence="10"
+        groups="ipai_finance_gl.group_ipai_finance_gl_user"/>
+
+    <!-- GL Parity Categories -->
+    <menuitem
+        id="menu_ipai_finance_gl_parity_categories"
+        name="GL Parity Categories"
+        parent="menu_ipai_finance_gl_root"
+        action="action_finance_gl_parity_category"
+        sequence="20"
+        groups="ipai_finance_gl.group_ipai_finance_gl_manager"/>
+
+</odoo>

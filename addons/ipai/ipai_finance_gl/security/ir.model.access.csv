@@ -1,0 +1,5 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_finance_gl_parity_user,finance.gl.parity.user,model_ipai_finance_gl_parity,ipai_finance_gl.group_ipai_finance_gl_user,1,0,0,0
+access_finance_gl_parity_manager,finance.gl.parity.manager,model_ipai_finance_gl_parity,ipai_finance_gl.group_ipai_finance_gl_manager,1,1,1,1
+access_finance_gl_parity_category_user,finance.gl.parity.category.user,model_ipai_finance_gl_parity_category,ipai_finance_gl.group_ipai_finance_gl_user,1,0,0,0
+access_finance_gl_parity_category_manager,finance.gl.parity.category.manager,model_ipai_finance_gl_parity_category,ipai_finance_gl.group_ipai_finance_gl_manager,1,1,1,1
