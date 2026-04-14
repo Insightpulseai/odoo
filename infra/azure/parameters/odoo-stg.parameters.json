@@ -1,0 +1,47 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "environment": {
+      "value": "staging"
+    },
+    "baseName": {
+      "value": "ipai-odoo"
+    },
+    "acrSku": {
+      "value": "Basic"
+    },
+    "pgAdminLogin": {
+      "value": "odoo_admin"
+    },
+    "pgAdminPassword": {
+      "reference": {
+        "keyVault": {
+          "id": "/subscriptions/eba824fb-332d-4623-9dfb-2c9f7ee83f4e/resourceGroups/rg-ipai-stg-odoo-data/providers/Microsoft.KeyVault/vaults/kv-ipai-stg"
+        },
+        "secretName": "pg-admin-password"
+      }
+    },
+    "pgSkuName": {
+      "value": "Standard_B1ms"
+    },
+    "pgTier": {
+      "value": "Burstable"
+    },
+    "pgStorageSizeGB": {
+      "value": 32
+    },
+    "containerCpu": {
+      "value": "0.5"
+    },
+    "containerMemory": {
+      "value": "1Gi"
+    },
+    "minReplicas": {
+      "value": 0
+    },
+    "maxReplicas": {
+      "value": 1
+    }
+  }
+}
