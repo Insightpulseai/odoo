@@ -1,0 +1,194 @@
+# =====================================================
+# R3 Production-Readiness Gap Closers — Azure Pipeline
+# Deploys: Action Group (#625), AI Search (#624), Purview (#627)
+# Doctrine: Azure Pipelines = sole CI/CD authority
+# =====================================================
+trigger:
+  branches:
+    include:
+      - main
+  paths:
+    include:
+      - infra/azure/modules/action-group.bicep
+      - infra/azure/modules/ai-search.bicep
+      - infra/azure/modules/purview.bicep
+
+parameters:
+  - name: deployActionGroup
+    type: boolean
+    default: true
+  - name: deployAiSearch
+    type: boolean
+    default: true
+  - name: deployPurview
+    type: boolean
+    default: true
+  - name: environment
+    type: string
+    default: dev
+    values:
+      - dev
+      - stg
+      - prod
+
+variables:
+  - name: subscriptionId
+    value: eba824fb-332d-4623-9dfb-2c9f7ee83f4e
+  - name: location
+    value: southeastasia
+  - name: serviceConnection
+    value: ipai-azure-sponsorship
+
+stages:
+  - stage: Validate
+    displayName: Bicep What-If
+    jobs:
+      - job: WhatIf
+        displayName: What-If All Modules
+        pool:
+          vmImage: ubuntu-latest
+        steps:
+          - checkout: self
+
+          - task: AzureCLI@2
+            displayName: What-If Action Group
+            condition: eq('${{ parameters.deployActionGroup }}', true)
+            inputs:
+              azureSubscription: $(serviceConnection)
+              scriptType: bash
+              scriptLocation: inlineScript
+              inlineScript: |
+                az deployment group what-if \
+                  --subscription $(subscriptionId) \
+                  --resource-group rg-ipai-${{ parameters.environment }}-mon-sea \
+                  --template-file infra/azure/modules/action-group.bicep \
+                  --no-pretty-print
+
+          - task: AzureCLI@2
+            displayName: What-If AI Search
+            condition: eq('${{ parameters.deployAiSearch }}', true)
+            inputs:
+              azureSubscription: $(serviceConnection)
+              scriptType: bash
+              scriptLocation: inlineScript
+              inlineScript: |
+                az deployment group what-if \
+                  --subscription $(subscriptionId) \
+                  --resource-group rg-ipai-${{ parameters.environment }}-ai-sea \
+                  --template-file infra/azure/modules/ai-search.bicep \
+                  --no-pretty-print
+
+          - task: AzureCLI@2
+            displayName: What-If Purview
+            condition: eq('${{ parameters.deployPurview }}', true)
+            inputs:
+              azureSubscription: $(serviceConnection)
+              scriptType: bash
+              scriptLocation: inlineScript
+              inlineScript: |
+                az deployment group what-if \
+                  --subscription $(subscriptionId) \
+                  --resource-group rg-ipai-${{ parameters.environment }}-security-sea \
+                  --template-file infra/azure/modules/purview.bicep \
+                  --no-pretty-print
+
+  - stage: Deploy
+    displayName: Deploy Gap Closers
+    dependsOn: Validate
+    condition: succeeded()
+    jobs:
+      - deployment: DeployActionGroup
+        displayName: T1 — Action Group (LOW risk)
+        condition: eq('${{ parameters.deployActionGroup }}', true)
+        environment: ipai-${{ parameters.environment }}
+        pool:
+          vmImage: ubuntu-latest
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - checkout: self
+                - task: AzureCLI@2
+                  inputs:
+                    azureSubscription: $(serviceConnection)
+                    scriptType: bash
+                    scriptLocation: inlineScript
+                    inlineScript: |
+                      az deployment group create \
+                        --subscription $(subscriptionId) \
+                        --resource-group rg-ipai-${{ parameters.environment }}-mon-sea \
+                        --name t1-action-group-$(Build.BuildNumber) \
+                        --template-file infra/azure/modules/action-group.bicep
+
+      - deployment: DeployAiSearch
+        displayName: T2 — AI Search (LOW risk)
+        dependsOn: DeployActionGroup
+        condition: eq('${{ parameters.deployAiSearch }}', true)
+        environment: ipai-${{ parameters.environment }}
+        pool:
+          vmImage: ubuntu-latest
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - checkout: self
+                - task: AzureCLI@2
+                  inputs:
+                    azureSubscription: $(serviceConnection)
+                    scriptType: bash
+                    scriptLocation: inlineScript
+                    inlineScript: |
+                      az deployment group create \
+                        --subscription $(subscriptionId) \
+                        --resource-group rg-ipai-${{ parameters.environment }}-ai-sea \
+                        --name t2-ai-search-$(Build.BuildNumber) \
+                        --template-file infra/azure/modules/ai-search.bicep \
+                        --parameters sku=basic
+
+      - deployment: DeployPurview
+        displayName: T3 — Purview (LOW risk)
+        dependsOn: DeployAiSearch
+        condition: eq('${{ parameters.deployPurview }}', true)
+        environment: ipai-${{ parameters.environment }}
+        pool:
+          vmImage: ubuntu-latest
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - checkout: self
+                - task: AzureCLI@2
+                  inputs:
+                    azureSubscription: $(serviceConnection)
+                    scriptType: bash
+                    scriptLocation: inlineScript
+                    inlineScript: |
+                      az deployment group create \
+                        --subscription $(subscriptionId) \
+                        --resource-group rg-ipai-${{ parameters.environment }}-security-sea \
+                        --name t3-purview-$(Build.BuildNumber) \
+                        --template-file infra/azure/modules/purview.bicep
+
+  - stage: Verify
+    displayName: Resource Graph Count
+    dependsOn: Deploy
+    condition: succeeded()
+    jobs:
+      - job: Count
+        displayName: Recount resources vs baseline 24
+        pool:
+          vmImage: ubuntu-latest
+        steps:
+          - task: AzureCLI@2
+            inputs:
+              azureSubscription: $(serviceConnection)
+              scriptType: bash
+              scriptLocation: inlineScript
+              inlineScript: |
+                COUNT=$(az graph query -q "Resources | where subscriptionId == '$(subscriptionId)' | count" --query "data[0].Count" -o tsv)
+                echo "Resource Graph count: $COUNT"
+                echo "Baseline (pre-R3): 24"
+                echo "Expected after T1+T2+T3: 27"
+                if [ "$COUNT" -lt 27 ]; then
+                  echo "##vso[task.logissue type=warning]Resource count ($COUNT) below T1+T2+T3 expectation (27)"
+                fi
