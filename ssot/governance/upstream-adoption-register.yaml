@@ -172,6 +172,24 @@ repos:
     do_when: later
     rationale: "Future customer-facing assistant patterns; multi-agent memory. NOT current-wave."
 
+  # ───── E.1. Finance agents reference surfaces (added 2026-04-14) ─────
+
+  - upstream: "Microsoft Finance agents docs (learn.microsoft.com/copilot/finance)"
+    purpose: "Workflow + UX benchmark for Finance agents parity (Financial Reconciliation, Collections in Outlook, Excel/Outlook surfaces)"
+    adopt_mode: clone_as_reference
+    internal_owner: architecture-product
+    internal_destination: "docs/architecture/reference-adaptations/"
+    do_when: now
+    rationale: "Product-doc surface, not a code repo. Use for backlog/parity/UX/workflow expectations only. Do NOT fork or treat as implementation source."
+
+  - upstream: anthropics/financial-services-plugins
+    purpose: "Claude-native finance plugin packaging reference (skills, slash commands, sub-agents, MCP integrations) — 41 skills, 38 commands, 11 MCP integrations across financial-analysis, investment-banking, equity-research, private-equity, wealth-management, partner-built"
+    adopt_mode: clone_as_reference
+    internal_owner: agent-platform
+    internal_destination: "docs/architecture/reference-adaptations/ or agent-platform/experiments/"
+    do_when: now
+    rationale: "Adapt PACKAGING patterns only (plugin structure, skill decomposition, slash-command naming, MCP organization, role-specific subagent boundaries). Filter OUT investment-banking / equity-research / private-equity / wealth-management vertical content — outside current-wave Finance + Finance-agents + Project-Operations scope. Fork only later if IPAI creates a durable Pulser finance plugin pack."
+
   # ───── F. Odoo + OCA (added 2026-04-14) ─────
 
   - upstream: odoo/odoo
