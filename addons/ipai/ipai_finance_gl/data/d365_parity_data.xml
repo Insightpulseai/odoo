@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo noupdate="0">
+
+    <!--
+        Wave-01 GL Parity Categories — D365 Finance General Ledger Foundation
+        Epic #523 — 7 tasks mapped to 7 categories.
+        noupdate="0": refreshed on every module update (seed data, not configuration).
+    -->
+
+    <record id="parity_category_chart_of_accounts" model="ipai.finance.gl.parity.category">
+        <field name="name">Chart of Accounts</field>
+        <field name="code">chart_of_accounts</field>
+        <field name="sequence">10</field>
+        <field name="description">Main account structure, account types, and COA hierarchy mapping between D365 Finance and Odoo.</field>
+        <field name="active">True</field>
+    </record>
+
+    <record id="parity_category_fiscal_calendar" model="ipai.finance.gl.parity.category">
+        <field name="name">Fiscal Calendar</field>
+        <field name="code">fiscal_calendar</field>
+        <field name="sequence">20</field>
+        <field name="description">Fiscal year definition, period setup, and year-end close calendar alignment.</field>
+        <field name="active">True</field>
+    </record>
+
+    <record id="parity_category_financial_dimensions" model="ipai.finance.gl.parity.category">
+        <field name="name">Financial Dimensions</field>
+        <field name="code">financial_dimensions</field>
+        <field name="sequence">30</field>
+        <field name="description">D365 financial dimensions and dimension sets mapped to Odoo analytic accounts and tags.</field>
+        <field name="active">True</field>
+    </record>
+
+    <record id="parity_category_accounting_structure" model="ipai.finance.gl.parity.category">
+        <field name="name">Accounting Structure</field>
+        <field name="code">accounting_structure</field>
+        <field name="sequence">40</field>
+        <field name="description">Account structures, posting rules, and financial reporting tree configuration.</field>
+        <field name="active">True</field>
+    </record>
+
+    <record id="parity_category_financial_journal" model="ipai.finance.gl.parity.category">
+        <field name="name">Financial Journal</field>
+        <field name="code">financial_journal</field>
+        <field name="sequence">50</field>
+        <field name="description">Journal types, journal control, and voucher/entry creation workflows.</field>
+        <field name="active">True</field>
+    </record>
+
+    <record id="parity_category_periodic_process" model="ipai.finance.gl.parity.category">
+        <field name="name">Periodic Financial Process</field>
+        <field name="code">periodic_process</field>
+        <field name="sequence">60</field>
+        <field name="description">Month-end and year-end periodic tasks: accruals, deferrals, closing entries, and balance sheet reports.</field>
+        <field name="active">True</field>
+    </record>
+
+    <record id="parity_category_gl_overall" model="ipai.finance.gl.parity.category">
+        <field name="name">GL Overall</field>
+        <field name="code">gl_overall</field>
+        <field name="sequence">70</field>
+        <field name="description">Cross-cutting GL parity scope, governance, and items that span multiple GL sub-domains.</field>
+        <field name="active">True</field>
+    </record>
+
+</odoo>
