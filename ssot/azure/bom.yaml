@@ -13,6 +13,7 @@ benchmark_scope:
 # workload sub 536d8cf6 has additional ACA apps inventoried in azure_devops.yaml).
 current_inventory:
   total_resources: 24
+  total_verified_via_az: 24  # confirmed 2026-04-14 via az resource list
   primary_region: southeastasia
   resource_groups:
     - rg-ipai-dev-odoo-sea
@@ -39,9 +40,10 @@ current_inventory:
     nsg: 1
     access_connector: 1
     application_insights: 1
-    action_group: 1
+    action_group: 0   # corrected 2026-04-14: not deployed yet (BOM previously expected 1; gap to close in R2 monitoring work)
     container_app_job: 1
     network_watcher: 1
+    managed_certificate: 1   # added 2026-04-14: ACA custom-domain TLS cert (Microsoft.App/managedEnvironments/managedCertificates)
 
 # Desired RG taxonomy (per env × plane)
 desired_resource_groups:
