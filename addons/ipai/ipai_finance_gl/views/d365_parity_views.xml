@@ -1,0 +1,257 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <!-- ================================================================
+         ipai.finance.gl.parity — List View
+         ================================================================ -->
+    <record id="view_finance_gl_parity_list" model="ir.ui.view">
+        <field name="name">ipai.finance.gl.parity.list</field>
+        <field name="model">ipai.finance.gl.parity</field>
+        <field name="arch" type="xml">
+            <list default_group_by="category_id"
+                  decoration-success="status == 'covered'"
+                  decoration-warning="status == 'partial'"
+                  decoration-danger="status == 'gap'"
+                  decoration-muted="status == 'out_of_scope'">
+                <field name="d365_module" optional="show"/>
+                <field name="d365_concept"/>
+                <field name="category_id"/>
+                <field name="odoo_module" optional="show"/>
+                <field name="odoo_model" optional="show"/>
+                <field name="status" widget="badge"
+                       decoration-success="status == 'covered'"
+                       decoration-warning="status == 'partial'"
+                       decoration-danger="status == 'gap'"
+                       decoration-muted="status == 'out_of_scope'"/>
+                <field name="wave" optional="show"/>
+                <field name="active" optional="hide"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- ================================================================
+         ipai.finance.gl.parity — Form View
+         ================================================================ -->
+    <record id="view_finance_gl_parity_form" model="ir.ui.view">
+        <field name="name">ipai.finance.gl.parity.form</field>
+        <field name="model">ipai.finance.gl.parity</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <field name="status" widget="statusbar"
+                           statusbar_visible="gap,partial,covered,out_of_scope"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" placeholder="Parity item name"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group string="D365">
+                            <field name="d365_module"/>
+                            <field name="d365_concept"/>
+                            <field name="d365_doc_url" widget="url"/>
+                            <field name="category_id"/>
+                            <field name="ado_task_id"/>
+                        </group>
+                        <group string="Odoo">
+                            <field name="odoo_module"/>
+                            <field name="odoo_model"/>
+                            <field name="odoo_view_ref"/>
+                            <field name="ipai_module_id"/>
+                            <field name="wave"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Notes">
+                            <field name="notes" widget="html"/>
+                        </page>
+                        <page string="Activity">
+                            <field name="activity_ids" widget="one2many_list"/>
+                        </page>
+                    </notebook>
+                    <div class="o_ipai_finance_gl_actions" attrs="{'invisible': [('odoo_view_ref', '=', False)]}">
+                        <button name="action_open_odoo_model"
+                                type="object"
+                                string="Open Odoo Model"
+                                class="btn-secondary"
+                                invisible="not odoo_view_ref"/>
+                    </div>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <!-- ================================================================
+         ipai.finance.gl.parity — Search View
+         ================================================================ -->
+    <record id="view_finance_gl_parity_search" model="ir.ui.view">
+        <field name="name">ipai.finance.gl.parity.search</field>
+        <field name="model">ipai.finance.gl.parity</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="d365_concept"/>
+                <field name="odoo_model"/>
+                <field name="d365_module"/>
+                <field name="category_id"/>
+                <separator/>
+                <filter name="filter_covered" string="Covered" domain="[('status', '=', 'covered')]"/>
+                <filter name="filter_partial" string="Partial" domain="[('status', '=', 'partial')]"/>
+                <filter name="filter_gap" string="Gap" domain="[('status', '=', 'gap')]"/>
+                <filter name="filter_out_of_scope" string="Out of Scope" domain="[('status', '=', 'out_of_scope')]"/>
+                <separator/>
+                <filter name="active_test" string="Archived" domain="[('active', '=', False)]"/>
+                <group expand="0" string="Group By">
+                    <filter name="group_by_category" string="Category" context="{'group_by': 'category_id'}"/>
+                    <filter name="group_by_status" string="Status" context="{'group_by': 'status'}"/>
+                    <filter name="group_by_wave" string="Wave" context="{'group_by': 'wave'}"/>
+                    <filter name="group_by_d365_module" string="D365 Module" context="{'group_by': 'd365_module'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- ================================================================
+         ipai.finance.gl.parity — Kanban View
+         ================================================================ -->
+    <record id="view_finance_gl_parity_kanban" model="ir.ui.view">
+        <field name="name">ipai.finance.gl.parity.kanban</field>
+        <field name="model">ipai.finance.gl.parity</field>
+        <field name="arch" type="xml">
+            <kanban default_group_by="status">
+                <field name="status"/>
+                <field name="status_color"/>
+                <field name="d365_concept"/>
+                <field name="odoo_module"/>
+                <field name="odoo_model"/>
+                <field name="category_id"/>
+                <field name="wave"/>
+                <templates>
+                    <t t-name="card">
+                        <div t-attf-class="o_kanban_record_top oe_kanban_color_#{record.status_color.raw_value}">
+                            <div class="o_kanban_record_headings">
+                                <strong class="o_kanban_record_title">
+                                    <field name="d365_concept"/>
+                                </strong>
+                            </div>
+                            <field name="status" widget="badge"
+                                   decoration-success="status == 'covered'"
+                                   decoration-warning="status == 'partial'"
+                                   decoration-danger="status == 'gap'"
+                                   decoration-muted="status == 'out_of_scope'"/>
+                        </div>
+                        <div class="o_kanban_record_body">
+                            <field name="category_id"/>
+                        </div>
+                        <div class="o_kanban_record_bottom">
+                            <div class="oe_kanban_bottom_left text-muted">
+                                <t t-if="record.odoo_module.raw_value">
+                                    <span><field name="odoo_module"/></span>
+                                    <t t-if="record.odoo_model.raw_value">
+                                        <span> / <field name="odoo_model"/></span>
+                                    </t>
+                                </t>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- ================================================================
+         ipai.finance.gl.parity — Window Action
+         ================================================================ -->
+    <record id="action_finance_gl_parity" model="ir.actions.act_window">
+        <field name="name">GL Parity Map</field>
+        <field name="res_model">ipai.finance.gl.parity</field>
+        <field name="view_mode">list,kanban,form</field>
+        <field name="search_view_id" ref="view_finance_gl_parity_search"/>
+        <field name="context">{'search_default_group_by_category': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No parity items found.
+            </p>
+            <p>
+                Add GL parity map entries to track D365 Finance
+                General Ledger feature coverage in Odoo.
+            </p>
+        </field>
+    </record>
+
+    <!-- ================================================================
+         ipai.finance.gl.parity.category — List View
+         ================================================================ -->
+    <record id="view_finance_gl_parity_category_list" model="ir.ui.view">
+        <field name="name">ipai.finance.gl.parity.category.list</field>
+        <field name="model">ipai.finance.gl.parity.category</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="code"/>
+                <field name="description"/>
+                <field name="active" optional="hide"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- ================================================================
+         ipai.finance.gl.parity.category — Form View
+         ================================================================ -->
+    <record id="view_finance_gl_parity_category_form" model="ir.ui.view">
+        <field name="name">ipai.finance.gl.parity.category.form</field>
+        <field name="model">ipai.finance.gl.parity.category</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" placeholder="Category name"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="code"/>
+                            <field name="sequence"/>
+                            <field name="active"/>
+                        </group>
+                    </group>
+                    <group>
+                        <field name="description" placeholder="One-line description of this GL category"/>
+                    </group>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <!-- ================================================================
+         ipai.finance.gl.parity.category — Window Action
+         ================================================================ -->
+    <record id="action_finance_gl_parity_category" model="ir.actions.act_window">
+        <field name="name">GL Parity Categories</field>
+        <field name="res_model">ipai.finance.gl.parity.category</field>
+        <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No categories yet.
+            </p>
+            <p>
+                Create GL parity categories to organise D365 Finance
+                module coverage areas.
+            </p>
+        </field>
+    </record>
+
+</odoo>
