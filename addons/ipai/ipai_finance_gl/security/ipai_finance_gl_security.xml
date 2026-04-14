@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <!-- Module category (custom — allows separate Settings grouping) -->
+    <record id="module_category_ipai_finance_gl" model="ir.module.category">
+        <field name="name">InsightPulseAI / Finance GL</field>
+        <field name="sequence">100</field>
+        <field name="visible">True</field>
+    </record>
+
+    <!-- GL Parity User — read-only access; inherits from account.group_account_user -->
+    <record id="group_ipai_finance_gl_user" model="res.groups">
+        <field name="name">GL Parity User</field>
+        <field name="category_id" ref="module_category_ipai_finance_gl"/>
+        <field name="implied_ids" eval="[(4, ref('account.group_account_user'))]"/>
+        <field name="comment">Read-only access to D365 GL parity records</field>
+    </record>
+
+    <!-- GL Parity Manager — full CRUD; inherits from account.group_account_manager -->
+    <record id="group_ipai_finance_gl_manager" model="res.groups">
+        <field name="name">GL Parity Manager</field>
+        <field name="category_id" ref="module_category_ipai_finance_gl"/>
+        <field name="implied_ids" eval="[(4, ref('account.group_account_manager')), (4, ref('group_ipai_finance_gl_user'))]"/>
+        <field name="comment">Full CRUD access to D365 GL parity records and categories</field>
+    </record>
+
+</odoo>
