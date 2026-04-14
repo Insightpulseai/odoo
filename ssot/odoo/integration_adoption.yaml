@@ -76,8 +76,11 @@ oca_first:
 
 external_bridge_first:
   entra_oidc:
-    module: ipai_auth_oidc
-    notes: "Entra ID authentication. Native auth_oauth + OCA auth_oidc."
+    module: null  # ipai_auth_oidc REMOVED 2026-04-14 — no custom module needed
+    implementation: "CE auth_oauth + auth_totp + SSOT + seed script"
+    ssot: ssot/identity/odoo-azure-oauth.yaml
+    seed_script: scripts/odoo/seed_auth_providers.py
+    notes: "Entra ID authentication via CE-native auth_oauth. No custom module. Follows no-custom doctrine (memory: feedback_no_custom_default.md)."
 
   azure_document_intelligence:
     module: ipai_enterprise_bridge

@@ -97,7 +97,7 @@ dependencies:
     - pgvector extension enabled on pg-ipai-odoo
     - Azure Foundry embedding endpoint operational
   nice_to_have:
-    - ipai_auth_oidc module (for Entra SSO on the consulting site)
+    - Entra SSO via CE auth_oauth (no custom module) per ssot/identity/odoo-azure-oauth.yaml
     - Pulser widget shared component (from web/ipai-landing/)
 
 # --- Sequence ---
@@ -118,7 +118,7 @@ sequence:
 
   - phase: 2  # Polish
     tasks:
-      - Add Entra SSO (after ipai_auth_oidc)
+      - Add Entra SSO via CE auth_oauth (run scripts/odoo/seed_auth_providers.py)
       - Migrate historical embeddings from Supabase
       - Add Pulser CTA actions (navigate, scheduler, contact)
       - Wire to Azure Front Door with custom domain

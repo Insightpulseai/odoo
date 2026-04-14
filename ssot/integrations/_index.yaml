@@ -57,7 +57,7 @@ integrations:
     status: active
     category: identity
     vendor: microsoft
-    notes: "Odoo auth via ipai_auth_oidc module + Entra ID"
+    notes: "Odoo auth via CE auth_oauth + auth_totp + SSOT ssot/identity/odoo-azure-oauth.yaml. No custom module (2026-04-14)."
 
   - id: zoho_mail
     file: ssot/integrations/zoho_mail.yaml

@@ -11,9 +11,17 @@ integration:
   category: identity
 
 runtime:
-  odoo_module: ipai_auth_oidc
-  tenant_id: "402de71a"
-  app_registration: "07bd9669"
+  # ipai_auth_oidc REMOVED 2026-04-14 per no-custom doctrine.
+  # Replaced by CE auth_oauth + auth_totp + infra wiring.
+  odoo_module: null
+  implementation: "CE auth_oauth + auth_totp"
+  ssot_source: "ssot/identity/odoo-azure-oauth.yaml"
+  seed_script: "scripts/odoo/seed_auth_providers.py"
+  tenant_id: "9ba5e867-1fb2-41cb-8e94-7d7a2b8fe4a9"
+  app_registration: "3446e178-3eba-48c9-b5bd-4283ff729eb1"  # InsightPulse AI - Odoo Login (canonical)
+  deprecated_app_registrations:
+    - "07bd9669"  # deleted 2026-04-14
+    - "3605a67d"  # deleted 2026-04-14
   protocol: oidc
   idp: entra
 
