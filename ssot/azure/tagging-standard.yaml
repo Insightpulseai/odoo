@@ -6,8 +6,11 @@
 # Related:    docs/ai/AZURE_TAGGING.md (doctrine + rationale)
 
 version: 1.0.0
-subscription_id: 536d8cf6-89e1-4815-aef3-d5f2c5f4d070
-updated: 2026-04-13
+subscription_id: eba824fb-332d-4623-9dfb-2c9f7ee83f4e
+subscription_name: "Microsoft Azure Sponsorship"
+tenant_id: 402de71a-87ec-4302-a609-fb76098d1da7
+updated: 2026-04-14
+status: deprecated  # Superseded by ssot/azure/tag-policy.yaml (canonical, 15 mandatory tags). Kept for CAF Ready 5-tag baseline reference only.
 
 # ─── Required tags — enforced by Azure Policy `deny` at subscription scope ──
 required:

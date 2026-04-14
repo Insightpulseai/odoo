@@ -53,6 +53,46 @@ If you cannot execute due to missing credentials/tooling/access, say exactly wha
 
 ---
 
+## Engineering Execution Doctrine
+
+**Reuse first, build the delta only.**
+
+| Capability class | Action |
+|---|---|
+| Commodity (Odoo core, OCA, AVM, Agent Framework, Playwright, Workspace CLI, Azure DevOps MCP) | Adopt upstream as-is |
+| Compositional (infra topology, naming/tag policy, CI/CD composition, test harnesses, release gates) | Configure |
+| Business-specific (PH overlays, surface workflows, approval/audit guardrails, Pulser tools) | Build only the thinnest `ipai_*` layer |
+
+**Odoo extension order (canonical):**
+`Config → CE property fields → OCA → adjacent OCA composition → thin ipai_* delta`. Never fork Odoo core for standard integrations. See `docs/architecture/odoo-integrations-selfhosted-azure.md`.
+
+**Claude Code execution doctrine:**
+1. **Design first** — architecture/SSOT/adoption decisions land in `docs/architecture/`, `ssot/`, `spec/`.
+2. **Codify second** — `CLAUDE.md` (enduring doctrine, keep ≤ 200 lines), `.claude/rules/*.md` (path-scoped), `.claude/skills/` (reusable workflows), `.mcp.json` (team-approved shared MCP servers).
+3. **Execute third** — Claude Code (CLI / VS Code extension) is the preferred repo-local execution engine. It must follow repo doctrine; it does not invent platform choices ad hoc.
+
+**Repo doctrine layering:**
+
+| Layer | Purpose | Status |
+|---|---|---|
+| `CLAUDE.md` | Enduring repo doctrine (always loaded) | Committed |
+| `.claude/rules/*.md` | Path-scoped rules, loaded on demand | Committed |
+| `.claude/skills/` | Reusable workflows | Committed |
+| `.mcp.json` | Team-approved shared MCP servers | Committed (no secrets) |
+| `CLAUDE.local.md` | Personal/local overrides | Gitignored |
+| Auto memory (`~/.claude/projects/<repo>/memory/`) | Learned operational notes | Machine-local, NOT canonical architecture |
+| Branch protection / CI / tool permissions | Real hard enforcement | — |
+
+`CLAUDE.md` and `.claude/rules/` shape behavior but do not hard-block; enforcement lives in CI gates, branch protection, and tool permissions.
+
+**Verification contract:** Every meaningful task ends with at least one of — Odoo test run, Playwright smoke, schema/policy validation, CI workflow result, rendered artifact diff, runtime health check. Self-verification is mandatory; generation alone is not "done".
+
+**Execution loop (Anthropic best practice):** `Explore → Plan → Implement → Verify → Commit/PR`. Use Plan Mode for non-trivial changes.
+
+**Agent teams (experimental):** Default = single session. Subagents for focused delegation. Agent teams (`CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1`) only for parallel execution/review with separable file or plane ownership — never for architecture/SSOT drafting or tightly coupled refactors. 3–5 teammates, ~5–6 tasks each.
+
+---
+
 ## Quick Reference
 
 | Item | Value |
@@ -126,6 +166,7 @@ See `.claude/rules/security-baseline.md` for full policy (sections 2.1-2.6).
 20. **iOS Wrapper UI Contract**: For wrapper-shell changes (`WrapperViewController`, `BiometricAuth`, native chrome, auth handoff, icon assets), apply `docs/skills/ios-wrapper-ui-contract.md`. This contract is subordinate to `docs/skills/ios-native-wrapper.md` and defines enforceable code-review gates.
 21. **iOS Wrapper Code Contract**: When editing wrapper-shell implementation files, also apply `docs/skills/ios-wrapper-code-contract.md`. File-level review emphasis: `WrapperViewController.swift` owns shell orchestration only, `BiometricAuth.swift` owns biometric policy/orchestration only, `Assets.xcassets` stays minimal and governed, `Environment.swift` remains the source of routing/environment configuration, `Info.plist` remains aligned with native auth/biometric requirements.
 22. **Odoo Integration Adoption**: Check Odoo 18 native integrations first (payments, bank sync, EDI, commerce connectors, website). If native is insufficient, check OCA before creating `ipai_*`. Reserve `ipai_*` for thin bridges to external Azure/Foundry services only. SSOT: `ssot/odoo/integration_adoption.yaml`.
+23. **Engineering Execution Doctrine**: Reuse upstream for commodity capability; configure for compositional concerns; build only the thinnest `ipai_*` layer for business-specific deltas. Design first (`docs/architecture/`, `ssot/`, `spec/`) → codify second (`CLAUDE.md`, `.claude/rules/`, `.claude/skills/`, `.mcp.json`) → execute third (Claude Code follows doctrine, never invents platform choices). Auto memory is learned ops notes, not canonical architecture. See "Engineering Execution Doctrine" section above.
 
 ---
 
@@ -172,6 +213,100 @@ pnpm install                            # Install Node dependencies
 
 ---
 
+## Odoo extension and customization doctrine
+
+When implementing new capability in Odoo, follow this decision order:
+
+1. **Odoo CE 18 native capability first**
+   - Prefer standard CE behavior before adding modules or code.
+
+2. **Odoo property fields second, when the requirement is parent-scoped metadata**
+   - Use property fields when the need is lightweight, configurable, form-level metadata tied to a parent record (e.g., project-specific task attributes, team-specific CRM qualifiers, category-scoped product enrichment).
+   - Property fields are pseudo-fields, not stored as normal database columns, scoped by a parent record.
+   - **NOT appropriate for:** core accounting logic, strong relational domain models, cross-parent canonical master data, heavy reporting, integration contracts, workflow-critical fields, fields needing robust server logic or DB-level consistency.
+
+3. **OCA 18 same-domain modules third**
+   - Search the primary OCA repository for the functional domain before writing custom code.
+
+4. **Adjacent OCA 18 modules fourth**
+   - Check neighboring OCA domains before concluding there is a gap.
+   - Example: project need → also inspect `timesheet`, `project-reporting`, `knowledge`, `account-analytic`, `connector-*`, `l10n-*`.
+   - Compose CE + property fields + OCA modules where possible.
+
+5. **Custom `ipai_*` modules last**
+   - Custom modules are a last-resort extension path only.
+   - `ipai_*` must stay thin and bridge-oriented: integration bridges, orchestration glue, AI/copilot overlays, adapters, narrow opinionated extensions.
+   - **Do not create `ipai_*` modules to duplicate viable CE/OCA parity.**
+
+### Mandatory requirements for any approved custom `ipai_*` module
+
+Every custom module is incomplete unless it includes:
+
+- `README.md`
+- `docs/MODULE_INTROSPECTION.md`
+- `docs/TECHNICAL_GUIDE.md`
+
+Required minimum structure:
+
+```
+addons/ipai/<module_name>/
+  README.md
+  docs/
+    MODULE_INTROSPECTION.md
+    TECHNICAL_GUIDE.md
+  __manifest__.py
+  models/
+  views/
+  security/
+  data/
+  tests/
+```
+
+### Required contents of `MODULE_INTROSPECTION.md`
+
+- Why this module exists
+- Business problem
+- CE 18 coverage checked
+- **Property-field assessment** (could properties solve this? If not, why not?)
+- OCA 18 same-domain coverage checked
+- Adjacent OCA modules reviewed
+- Why CE + property fields + OCA composition was insufficient
+- Why custom code is justified
+- Module type: bridge / overlay / adapter / extension
+- Functional boundaries
+- Extension points used (`_inherit`, view inheritance, hooks, server actions, APIs)
+- Blast radius
+- Upgrade risk
+- Owner
+- Retirement / replacement criteria
+
+### Required contents of `TECHNICAL_GUIDE.md`
+
+- Architecture
+- Models extended
+- Fields added
+- Methods overridden
+- View inheritance points
+- Security model
+- Data files loaded
+- Jobs / cron / queues / webhooks
+- External integrations
+- Test strategy
+- Upgrade / rollback notes
+- Known limitations and failure modes
+
+### Implementation rules
+
+- Prefer `_inherit`, view inheritance, additive extension, and modular composition over invasive overrides.
+- Override CRUD/core methods only when necessary, and always preserve parent behavior via `super()`.
+- A custom module is **not justified** if the requirement can be solved by CE 18, property fields, OCA 18, or composition of those layers.
+
+### Canonical doctrine sentence
+
+> Doctrine: CE 18 first → property fields for parent-scoped lightweight metadata → OCA 18 same-domain → adjacent OCA → compose CE + properties + OCA → custom `ipai_*` as last resort with mandatory module introspection and technical guide.
+
+---
+
 ## Deprecated (Never Use)
 
 | Item | Replacement | Date |
@@ -204,14 +339,61 @@ Authoritative rule:
 - **GitHub Issues** is the engineering execution backlog.
 - See `ssot/governance/platform-authority-split.yaml`, `ssot/governance/ci-cd-authority-matrix.yaml`, and `ssot/governance/repo-delivery-disposition.yaml`.
 
-### Engineering & Delivery Authority (Option C)
+### Engineering & Delivery Authority (REVISED 2026-04-14)
 
-Authoritative rule:
-- **GitHub Actions** remains the default CI authority and the deploy authority for docs/web properties.
-- **Azure DevOps** remains the deploy authority for Odoo, Databricks, and infra lanes requiring environment/service-connection gating.
-- **Azure Boards** is the portfolio/planning system of record.
-- **GitHub Issues** is the engineering execution backlog.
-- See `ssot/governance/platform-authority-split.yaml`, `ssot/governance/ci-cd-authority-matrix.yaml`, and `ssot/governance/repo-delivery-disposition.yaml`.
+**Azure Pipelines is the sole CI/CD authority. GitHub Actions and Vercel are FORBIDDEN.**
+
+| System | Role | Status |
+|---|---|---|
+| **Azure Pipelines** | Sole CI + deploy authority for ALL lanes (Odoo, Databricks, infra, docs, web, agents, tests) | ✅ Canonical |
+| **Azure DevOps Boards** | Portfolio/planning system of record | ✅ Canonical |
+| **GitHub** | Source control + PRs + Issues (engineering execution backlog) only | ✅ Source control only |
+| **GitHub Actions** | **FORBIDDEN** — all workflows removed 2026-04-14 | ❌ REMOVED |
+| **Vercel** | **FORBIDDEN** — deprecated 2026-04-07, fully removed | ❌ REMOVED |
+
+**Rules:**
+1. Do NOT create files under `.github/workflows/`. The directory is reserved for non-CI GitHub config only (templates, CODEOWNERS, dependabot).
+2. ALL CI (lint, test, spec-bundle-validate, plugin-validate, CodeQL-equivalent) runs in Azure Pipelines under `azure-pipelines/` or `.azuredevops/`.
+3. ALL deploys (Odoo containers, Databricks bundles, ACA apps, Bicep infra, docs sites) run in Azure Pipelines with environment/service-connection gating.
+4. No `vercel.json`, no Vercel preview checks, no `@vercel/*` dependencies.
+5. Branch protection on `main` requires Azure Pipelines success only — GitHub Actions contexts must be removed from required checks.
+
+**Migration evidence (2026-04-14):**
+- Deleted `.github/workflows/*.yml` (12 files) including claude-headless-pr-review, claude-headless-spec-check, deploy-erp-canonical, deploy-m365-bot-proxy, devcontainer-ci, foundry-name-guard, odoo-pr-preview, platform-restoration, post-deploy-smoke, spec-bundle-validate, validate-plugins
+- Replacement Azure Pipelines: existing `azure-pipelines/*.yml` (26 files) + new pipelines for PR preview, spec-bundle-validate, foundry-name-guard, plugin-validate
+
+### Agentic Workflow Security Doctrine (added 2026-04-14)
+
+Per Microsoft's GitHub Agentic Workflows architecture paper + DevBlogs Agentic Platform Engineering, ALL Pulser mutating agents must adopt the **3-tier defense pattern** — implemented on **Azure Pipelines + ACA**, not GitHub Actions.
+
+| Tier | Responsibility | IPAI implementation (Azure-native) |
+|---|---|---|
+| **Substrate** | OS/container isolation per agent invocation | ACA dedicated container (NOT GitHub Actions runner), read-only host fs, tmpfs overlay, chroot/userns |
+| **Configuration** | Declarative policy (allowlists, firewall, zero-secret) | Per-agent manifest in repo, MCP allowlist, Azure Key Vault holds creds (agent ZERO direct access) |
+| **Planning** | Runtime execution control + Safe Outputs | 3-stage vetting via Pulser middleware: filter ops → moderate content → remove secrets; rate limit per stage |
+
+**Core rules:**
+- **Zero-secret agents:** Pulser agents NEVER hold credentials directly; API proxy (ACA app) + Key Vault own auth.
+- **Allowlisted MCPs only:** No dynamic tool acquisition. Each agent's MCP set declared in manifest.
+- **Safe Outputs subsystem mandatory** for every mutating tool (filter / moderate / sanitize + rate-limit).
+- **Microsoft Content Safety** integration for prompt-injection + bias detection.
+- **Audit traceability** (who-acted-when + before/after diff + replay) per ADO Issue `#623`.
+
+**GitHub Copilot Coding Agent positioning:**
+- Routine code-gen (boilerplate, tests, docs, parity-record population) → **Coding Agent** generates PRs from Issues.
+- Architecture / SSOT / multi-step / cross-doctrine work → **Claude Code** (per session execution).
+- Coding Agent PRs are **validated by Azure Pipelines** (not GitHub Actions) before merge.
+- Both consume same `.mcp.json` shared MCP servers.
+- Both honor CLAUDE.md doctrine.
+
+**No-GitHub-Actions clarification:** Adopting the GitHub Agentic Workflows *security pattern* (3-tier defense, Safe Outputs, zero-secret agents) does NOT mean adopting GitHub Actions as runtime. The pattern is implemented on Azure Pipelines + ACA. GitHub's blog is the architecture reference; the implementation is Azure-native.
+
+**Anchors:**
+- ADO Issues: #341/#628 (3-tier defense on ACA), #240/#629 (Coding Agent → Azure Pipelines validation), #524/#630 (Safe Outputs on Pulser middleware)
+- GitHub blog (pattern reference only): agentic-workflows-security-architecture
+- Microsoft DevBlogs (pattern reference only): agentic-platform-engineering-with-github-copilot
+- `docs/research/ms-copilot-d365-m365-agents-catalog-for-ipai.md` (86-agent reference catalog)
+- `ssot/governance/platform-authority-split.yaml` (canonical authority matrix)
 
 ---
 

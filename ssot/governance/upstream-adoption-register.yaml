@@ -1,0 +1,735 @@
+---
+# SSOT: Upstream Repo Adoption Register (canonical)
+# Authority: this file. Decision authority for "do we fork/clone/consume?"
+# Default doctrine: ADAPT FIRST. Own only thin Pulser/Odoo/Azure adapters, SSOT,
+# tests, and platform composition.
+# Last updated: 2026-04-14
+version: 1
+status: canonical
+
+# Adoption modes (4)
+modes:
+  consume_directly:
+    description: "Use as upstream package/registry/template/MCP. NO fork."
+    examples: [package_dependency, registry_module_reference, MCP_install, azd_template_reference]
+  clone_as_reference:
+    description: "Study/copy patterns into your repo. Do NOT track as a product fork."
+    examples: [docs_only_extract, selected_workflow_pattern, decision_record_input]
+  fork_and_own:
+    description: "Take ownership of long-lived derivative as a real product asset. Rare."
+    examples: [productized_internal_service, custom_governance_hooks, tenant_aware_restrictions]
+  do_not_adopt:
+    description: "Useful for learning only; not for your stack. Out of scope."
+    examples: [duplicates_canonical_stack, dataverse_lock_in, custom_runtime_against_thin_adapter_doctrine]
+
+# Default doctrine line (use verbatim in proposals/docs)
+default_doctrine: |
+  Do not fork Microsoft/Azure platform repos unless IPAI is taking ownership of
+  a long-lived derivative product. For this stack, consume frameworks and
+  registries directly, clone samples as references, and own only the thin
+  Pulser/Odoo/Azure adapters, SSOT, tests, and platform composition.
+
+# ─── Adoption decisions ───
+repos:
+
+  # ───── A. Infra / Azure substrate ─────
+
+  - upstream: Azure/bicep-registry-modules
+    purpose: "Microsoft canonical AVM Bicep modules (single Bicep standard)"
+    adopt_mode: consume_directly
+    internal_owner: platform-engineering
+    internal_destination: "infra/ (composition only — never copy AVM modules in-place)"
+    do_when: now
+    rationale: "AVM is the single Bicep standard per Microsoft. Customizing in place creates downstream burden."
+
+  - upstream: Azure-Samples/azure-fastapi-postgres-flexible-aca
+    purpose: "FastAPI + ACA + PostgreSQL Flex sample template"
+    adopt_mode: clone_as_reference
+    internal_owner: platform-engineering
+    internal_destination: "docs/architecture/reference-adaptations/ + selected GitHub workflow patterns"
+    do_when: now
+    rationale: "Useful for infra/ layout + GitHub workflow scaffolding; FastAPI app shape is NOT relevant to Odoo."
+
+  - upstream: Azure-Samples/Azure-PostgreSQL-Resiliency-Architecture
+    purpose: "PostgreSQL Flexible Server resiliency accelerator (HA topologies + RPO/RTO)"
+    adopt_mode: clone_as_reference
+    internal_owner: platform-engineering
+    internal_destination: "docs/architecture/ + DR decision records"
+    do_when: now
+    rationale: "Adopt the architectural decisions, not the Terraform IaC (canonical path is Bicep+AVM)."
+
+  - upstream: Azure-Samples/azure-postgres-pgvector-python
+    purpose: "PG Flex with pgvector + Entra auth"
+    adopt_mode: clone_as_reference
+    internal_owner: agent-platform
+    internal_destination: "agent-platform/ or data-intelligence/experiments/"
+    do_when: now
+    rationale: "Vector sidecar pattern; do not confuse with OLTP core. Adopt Entra-auth pattern broadly."
+
+  # ───── B. Data + AI connectivity ─────
+
+  - upstream: Azure-Samples/azure-postgresql-mcp
+    purpose: "MCP server for Azure Database for PostgreSQL (DB inspection + query tools)"
+    adopt_mode: clone_as_reference
+    internal_owner: agent-platform
+    internal_destination: "agent-platform/tools/ (thin hardened wrapper later if needed)"
+    do_when: now
+    fork_trigger: "Need for query allowlists, tenancy restrictions, custom RBAC controls"
+    rationale: "Run upstream in dev/sandbox first. Wrapper only when production-grade controls are required."
+
+  - upstream: microsoft/agent-framework
+    purpose: "Canonical agent-plane runtime for Pulser orchestration, multi-agent workflows, checkpointing, HITL, and observability (Python + .NET)"
+    adopt_mode: consume_directly
+    internal_owner: agent-platform
+    internal_destination: "Dependency in agent repos (agent-platform/, agents/)"
+    do_when: now
+    rationale: |
+      Agent-plane runtime substrate. Provides graph workflows, checkpointing,
+      HITL, time-travel, OTel observability, middleware, multi-model providers
+      (Anthropic, OpenAI, Foundry). Migration paths from Semantic Kernel and
+      AutoGen documented upstream. IPAI owns ONLY the Pulser-specific delta:
+      tool adapters, approval/guardrail logic, Odoo action wrappers, Partner
+      Center / Google Workspace / Azure task wrappers, telemetry conventions.
+      Do NOT fork. Do NOT embed business-domain or ERP-parity logic in the
+      framework — that stays in Odoo + OCA + thin ipai_*. Keep GitHub as
+      source-control truth and Azure DevOps as planning/delivery integration
+      surface (Azure Boards GitHub app + Azure Pipelines GitHub app).
+
+  - upstream: microsoft-foundry/* (AI templates incl. Release Manager Assistant)
+    purpose: "Microsoft Foundry azd-style AI templates (release mgmt, data unification, etc.)"
+    adopt_mode: clone_as_reference
+    internal_owner: agent-platform
+    internal_destination: "agent-platform/ (e.g., apps/release-manager) — adapt patterns, not whole template"
+    do_when: now
+    fork_trigger: "Pulser Release Ops (or similar) becomes a productized internal service"
+    rationale: "Per PRD §0.7. Adapt Foundry+MAF+MCP patterns. Do NOT clone Jira/AzDO assumptions."
+
+  # ───── C. DevOps / Boards / Delivery ─────
+
+  - upstream: microsoft/azure-devops-mcp
+    purpose: "MCP server for Azure DevOps (boards, repos, pipelines, wiki, test-plans)"
+    adopt_mode: consume_directly
+    internal_owner: delivery-engineering
+    internal_destination: "Editor/agent config (e.g., .github/copilot-instructions.md, .vscode/mcp.json)"
+    do_when: now
+    rationale: "Thin abstraction over ADO APIs. Already used in this session for Wave-01 board population."
+
+  - upstream: microsoft/azure-pipelines-yaml
+    purpose: "Azure Pipelines YAML templates + community samples"
+    adopt_mode: clone_as_reference
+    internal_owner: delivery-engineering
+    internal_destination: "Internal pipeline templates in azure-pipelines/ or .azuredevops/"
+    do_when: now
+    rationale: "Pattern reference. Do not mirror the repo."
+
+  - upstream: microsoft/azure-pipelines-agent
+    purpose: "Cross-platform Azure Pipelines agent (build runner)"
+    adopt_mode: do_not_adopt
+    internal_owner: delivery-engineering
+    internal_destination: "docs/runbooks/ only"
+    do_when: never_as_codebase
+    rationale: "Reference for runner ops behavior only. Do not own the agent code."
+
+  # ───── D. Testing / browser automation ─────
+
+  - upstream: microsoft/playwright
+    purpose: "Browser automation + test framework (canonical)"
+    adopt_mode: consume_directly
+    internal_owner: qa-engineering
+    internal_destination: "Dependency in tests/ + Playwright MCP for AI-led SDLC proof-of-change"
+    do_when: now
+    rationale: "Aligned with AI-led SDLC reference (Playwright MCP). IPAI owns suites, page objects, fixtures, reporting."
+
+  # ───── E. AI samples / RAG / agent surfaces (added 2026-04-14) ─────
+
+  - upstream: Azure-Samples/azure-search-openai-demo
+    purpose: "RAG chat sample with Azure AI Search + Azure OpenAI, citations, monitoring, deploy scaffolding"
+    adopt_mode: clone_as_reference
+    internal_owner: agent-platform
+    internal_destination: "docs/architecture/reference-adaptations/"
+    do_when: now
+    rationale: "Shared knowledge assistant patterns for InsightPulseAI + PrismaLab + cross-site retrieval."
+
+  - upstream: Azure-Samples/chat-with-your-data-solution-accelerator
+    purpose: "Richer RAG sibling: ingestion + multiple orchestration choices + upload flows + Teams extension"
+    adopt_mode: clone_as_reference
+    internal_owner: agent-platform
+    internal_destination: "docs/architecture/reference-adaptations/"
+    do_when: now
+    rationale: "Document ingestion + 'chat with your own data' product architecture for assistant admin/control app."
+
+  - upstream: Azure-Samples/get-started-with-ai-agents
+    purpose: "Foundry-native starter for deploying AI agents (file-search grounding + monitoring/tracing)"
+    adopt_mode: clone_as_reference
+    internal_owner: agent-platform
+    internal_destination: "agent-platform/experiments/ or docs/architecture/reference-adaptations/"
+    do_when: now
+    rationale: "Cleanest Foundry-first agent service shape for Pulser agent plane bootstrap."
+
+  - upstream: Azure-Samples/openai-chat-app-entra-auth-builtin
+    purpose: "Authenticated internal chat on ACA with built-in Entra auth + AOAI + azd deploy"
+    adopt_mode: clone_as_reference
+    internal_owner: agent-platform
+    internal_destination: "agent-platform/experiments/ or docs/architecture/reference-adaptations/"
+    do_when: now
+    rationale: "Internal/staff-only assistant console + Entra auth pattern. Distinct from public-site assistant surfaces."
+
+  - upstream: Azure-Samples/postgres-agentic-shop
+    purpose: "Multi-agent retail experience on Azure PostgreSQL (memory + personalization)"
+    adopt_mode: clone_as_reference
+    internal_owner: agent-platform
+    internal_destination: "agent-platform/experiments/ (later)"
+    do_when: later
+    rationale: "Future customer-facing assistant patterns; multi-agent memory. NOT current-wave."
+
+  # ───── E.1. Finance agents reference surfaces (added 2026-04-14) ─────
+
+  - upstream: "Microsoft Finance agents docs (learn.microsoft.com/copilot/finance)"
+    purpose: "Workflow + UX benchmark for Finance agents parity (Financial Reconciliation, Collections in Outlook, Excel/Outlook surfaces)"
+    adopt_mode: clone_as_reference
+    internal_owner: architecture-product
+    internal_destination: "docs/architecture/reference-adaptations/"
+    do_when: now
+    rationale: "Product-doc surface, not a code repo. Use for backlog/parity/UX/workflow expectations only. Do NOT fork or treat as implementation source."
+
+  - upstream: anthropics/financial-services-plugins
+    purpose: "Claude-native finance plugin packaging reference (skills, slash commands, sub-agents, MCP integrations) — 41 skills, 38 commands, 11 MCP integrations across financial-analysis, investment-banking, equity-research, private-equity, wealth-management, partner-built"
+    adopt_mode: clone_as_reference
+    internal_owner: agent-platform
+    internal_destination: "docs/architecture/reference-adaptations/ or agent-platform/experiments/"
+    do_when: now
+    rationale: "Adapt PACKAGING patterns only (plugin structure, skill decomposition, slash-command naming, MCP organization, role-specific subagent boundaries). Filter OUT investment-banking / equity-research / private-equity / wealth-management vertical content — outside current-wave Finance + Finance-agents + Project-Operations scope. Fork only later if IPAI creates a durable Pulser finance plugin pack."
+
+  - upstream: gtzheng/Awesome-Agentic-System-Design
+    purpose: "Curated awesome-list reading/index repo for agent-system design, evaluation, safety, real-world applications, and framework comparison"
+    adopt_mode: clone_as_reference
+    internal_owner: agent-platform + docs
+    internal_destination: "docs/architecture/reference-adaptations/ (reading index only)"
+    do_when: now
+    rationale: |
+      Survey/index repo, NOT an execution framework. Covers AutoGen, Claude
+      Agent SDK, CrewAI, Google ADK, LangGraph, Microsoft Agent Framework,
+      M365 Agents SDK, OpenAI Agents SDK, Pydantic AI, SmolAgents, AWS
+      Strands. Use as a curated map for agent-plane research and framework
+      comparison against canonical microsoft/agent-framework substrate.
+      DO NOT: fork, treat as runtime dependency, scaffold from, or let
+      its framework breadth dilute the agent-platform substrate decision.
+
+  # ───── E.2. Partner Center automation references (added 2026-04-14) ─────
+
+  - upstream: microsoft/partner-center-sdk-for-dotNET
+    purpose: "Partner Center API shape, auth flow expectations, supported resource models (.NET reference SDK)"
+    adopt_mode: clone_as_reference
+    internal_owner: platform
+    internal_destination: "Read for contract design; mirror schemas into platform/partner-center/"
+    do_when: now
+    rationale: "Reference for API contract models — IPAI builds Python/TypeScript wrappers, not .NET. Use to validate API shape + auth model. Doctrine: Marketplace offers + Support requests are the two API-supported lanes per docs/marketplace/partner-center-automation-matrix.md."
+
+  - upstream: microsoft/Partner-Center-Labs
+    purpose: "Reference samples for customer/accounts/orders/subscriptions/support scenarios"
+    adopt_mode: clone_as_reference
+    internal_owner: platform
+    internal_destination: "Reference into docs/marketplace/ + platform/partner-center/"
+    do_when: now
+    rationale: "Sample-driven understanding of CSP/customer/order workflows. Use for support + billing reference patterns. Filter OUT customer/order automation unless IPAI moves to CSP motion (currently ISV)."
+
+  - upstream: microsoft/Partner-Center-Storefront
+    purpose: "Customer-facing resale/storefront pattern (CSP-style)"
+    adopt_mode: clone_as_reference
+    internal_owner: platform
+    internal_destination: "docs/marketplace/reference-adaptations/ (later only)"
+    do_when: later
+    rationale: "Not first-wave core for ISV/Marketplace lane. Bookmark only; revisit if IPAI moves to resale motion."
+
+  - upstream: microsoft/Partner-Center-PowerShell
+    purpose: "Community-maintained PowerShell wrapper around Partner Center APIs"
+    adopt_mode: clone_as_reference
+    internal_owner: platform
+    internal_destination: "Tooling/reference only — never as production substrate"
+    do_when: now
+    rationale: "Useful as a tooling/reference surface for ad-hoc operator queries. Per memory reference_partner_center_auth.md: MFA enforcement live 2026-04-01, IPAI = ISV (not CSP/CPV) → app-only + certificate auth. PowerShell wrapper does not replace canonical Python/TypeScript clients in platform/partner-center/. Do NOT make it a production dependency."
+
+  # ───── E.3 D365 Finance reference surfaces (added 2026-04-14) — Wave-01 Epic #523 ─────
+  # ALL D365 repos are clone_as_reference only. IPAI displaces D365 Finance with Odoo CE 18 + OCA.
+  # No fork, no consume_directly, no Dataverse-as-SoR.
+
+  - upstream: microsoft/Dynamics-365-FastTrack-Implementation-Assets
+    purpose: "D365 Finance parity benchmark — invoice capture, AI ERP agents, data lake analytics patterns"
+    adopt_mode: clone_as_reference
+    internal_owner: odoo-platform
+    internal_destination: "docs/architecture/reference-adaptations/d365-finance/"
+    do_when: now
+    rationale: |
+      Primary FastTrack ops pattern library for D365 Finance. Harvest paths:
+      - ERP/Finance/InvoiceCapture/ → AP parity for ipai_invoice_capture + OCA/account-financial-tools
+      - Agents/AI ERP Agents/ → agent-plane benchmark for Pulser Finance agent structure
+      - Administration/Analytics/EntityStoreTools/ → data model export pattern → d365_parity_matrix.yaml
+      Filter OUT: ERP/SCM/, ERP/Commerce/. Anti-pattern: never run D365/X++ code.
+
+  - upstream: MicrosoftDocs/dynamics-365-unified-operations-public
+    purpose: "Authoritative functional spec for all Wave-01 D365 Finance modules (CC-BY-4.0)"
+    adopt_mode: clone_as_reference
+    internal_owner: odoo-platform
+    internal_destination: "docs/architecture/reference-adaptations/d365-finance/"
+    do_when: now
+    rationale: |
+      Single source of functional truth for Wave-01 parity matrix. CC-BY-4.0 = no code copy,
+      reference only. Each articles/finance/ section maps to specific Odoo CE 18 module + OCA
+      gap analysis. Asset leasing has no OCA equivalent → ipai_asset_leasing candidate.
+      Harvest paths: articles/finance/{accounts-payable,accounts-receivable,budgeting,fixed-assets,
+      asset-leasing,cash-bank-management,cost-accounting,localizations/global,finance-insights}/
+      Filter OUT: articles/{supply-chain,commerce,human-resources}/
+
+  - upstream: MicrosoftDocs/dynamics365-guidance
+    purpose: "FastTrack TechTalk guidance for Invoice Capture, Copilot for Finance, Globalization Studio"
+    adopt_mode: clone_as_reference
+    internal_owner: odoo-platform + agent-platform
+    internal_destination: "docs/architecture/reference-adaptations/d365-finance/"
+    do_when: now
+    rationale: |
+      Three high-value TechTalk docs:
+      - finance-invoice-capture-ga-features-functionality.md → AP Invoice Capture GA spec
+      - microsoft-copilot-finance.md → Copilot for Finance benchmark for Pulser Finance agent
+      - finance-globalization-studio-regulatory-configuration-service.md → Tax Calculation
+        benchmark for ipai_bir_tax + future multi-country tax overlay
+      Guidance-only — no runnable code.
+
+  - upstream: MicrosoftLearning/MB-310-Microsoft-Dynamics-365-Finance
+    purpose: "D365 Finance certification labs — Wave-01 UAT script template source"
+    adopt_mode: clone_as_reference
+    internal_owner: odoo-platform
+    internal_destination: "docs/architecture/reference-adaptations/d365-finance/"
+    do_when: now
+    rationale: |
+      Lab sequence covers GL, AP 3-way match, AR collections, budgeting with budget control,
+      bank reconciliation, fixed asset depreciation, cost accounting allocation. Each lab
+      becomes a functional acceptance test scenario for the Odoo+OCA Wave-01 equivalent.
+      Low stars (13) is expected for a lab repo — does not indicate staleness.
+
+  - upstream: microsoft/ISM-Telemetry-for-Finance-and-Operations
+    purpose: "Application Insights KQL patterns for finance transaction telemetry — delivery plane"
+    adopt_mode: clone_as_reference
+    internal_owner: agent-platform
+    internal_destination: "docs/architecture/reference-adaptations/d365-finance/"
+    do_when: now
+    rationale: |
+      Harvest KQL query patterns for finance transaction volumes, batch job health, error rates.
+      Adapt to Odoo ACA + Azure Monitor / Application Insights wired to afd-ipai-dev.
+      Maps to Financial Reporting + Finance Insights observability requirement in Wave-01.
+      Not a functional finance module — delivery/observability reference only.
+
+  # ───── F. Odoo + OCA (added 2026-04-14) ─────
+
+  - upstream: odoo/odoo
+    purpose: "Canonical Odoo transactional core (CE)"
+    adopt_mode: clone_as_reference
+    internal_owner: odoo-platform
+    internal_destination: "Upstream remote / pinned source; never long-lived business fork by default"
+    do_when: now
+    rationale: "Includes account, analytic, project, project_account, sale_project, sale_timesheet, hr_timesheet, microsoft_outlook, cloud_storage_azure, l10n_ph. Track upstream; do NOT fork."
+
+  - upstream: OCA/account-financial-reporting
+    purpose: "Finance reporting parity (OCA Must Have)"
+    adopt_mode: clone_as_reference
+    internal_owner: finance-platform
+    internal_destination: "addons/oca/ (selected modules only)"
+    do_when: now
+    rationale: "Per OCA Must Have accounting list; pinned per parity_matrix.yaml Finance.Reporting row."
+
+  - upstream: OCA/account-financial-tools
+    purpose: "Core finance operational gaps (OCA Must Have)"
+    adopt_mode: clone_as_reference
+    internal_owner: finance-platform
+    internal_destination: "addons/oca/ (selected modules only)"
+    do_when: now
+    rationale: "account_journal_lock_date, account_lock_date_update, account_usability per OCA Must Have."
+
+  - upstream: OCA/account-reconcile
+    purpose: "Reconciliation parity (OCA Must Have)"
+    adopt_mode: clone_as_reference
+    internal_owner: finance-platform
+    internal_destination: "addons/oca/ (selected modules only)"
+    do_when: now
+    rationale: "account_reconcile_oca, account_reconcile_model_oca; pairs with ipai_bank_recon."
+
+  - upstream: OCA/mis-builder
+    purpose: "Finance reporting / budgeting patterns (OCA Must Have)"
+    adopt_mode: clone_as_reference
+    internal_owner: finance-platform
+    internal_destination: "addons/oca/"
+    do_when: now
+    rationale: "Per parity_matrix.yaml Finance.Budgeting + Finance.Reporting rows."
+
+  - upstream: OCA/account-analytic
+    purpose: "Analytic policy support (OCA Must Have)"
+    adopt_mode: clone_as_reference
+    internal_owner: finance-platform
+    internal_destination: "addons/oca/ (account_analytic_required at minimum)"
+    do_when: now
+    rationale: "Per parity_matrix.yaml Finance.CostAccounting + Services.* rows."
+
+  - upstream: OCA/currency
+    purpose: "Currency rate update (OCA Must Have)"
+    adopt_mode: clone_as_reference
+    internal_owner: finance-platform
+    internal_destination: "addons/oca/"
+    do_when: now
+    rationale: "currency_rate_update for multi-currency posture."
+
+  - upstream: OCA/server-ux
+    purpose: "Date range + general UX helpers (OCA Must Have)"
+    adopt_mode: clone_as_reference
+    internal_owner: odoo-platform
+    internal_destination: "addons/oca/ (date_range, date_range_account)"
+    do_when: now
+    rationale: "Required by mis-builder + account-financial-reporting workflows."
+
+  - upstream: OCA/partner-contact
+    purpose: "Better partner/contact ergonomics (OCA Must Have base)"
+    adopt_mode: clone_as_reference
+    internal_owner: odoo-platform
+    internal_destination: "addons/oca/"
+    do_when: now
+    rationale: "Per OCA Must Have base list; CRM ergonomics."
+
+  - upstream: OCA/sale-workflow
+    purpose: "Sales workflow support for Project Operations (OCA Must Have sales)"
+    adopt_mode: clone_as_reference
+    internal_owner: services-platform
+    internal_destination: "addons/oca/"
+    do_when: now
+    rationale: "Per parity_matrix.yaml Services.SalesProcess + Services.Timesheets rows."
+
+  - upstream: OCA/sale-reporting
+    purpose: "Sales reporting support for Project Operations"
+    adopt_mode: clone_as_reference
+    internal_owner: services-platform
+    internal_destination: "addons/oca/"
+    do_when: now
+    rationale: "Sales analytics adjacent to Services.* rows."
+
+  # ───── G. Tooling-as-MCP surfaces (added 2026-04-14) ─────
+
+  - upstream: microsoft/playwright (MCP + CLI variants)
+    purpose: "Browser automation MCP for persistent browser control + coding-agent CLI"
+    adopt_mode: consume_directly
+    internal_owner: qa-engineering
+    internal_destination: "tests/playwright/ + agent tooling config"
+    do_when: now
+    rationale: "Per AI-led SDLC reference. MCP variant complements CLI for agent flows."
+
+  - upstream: chrome-devtools-mcp
+    purpose: "Chrome DevTools MCP for agent debugging, performance, network inspection"
+    adopt_mode: do_not_adopt
+    internal_owner: qa-engineering
+    internal_destination: "Tooling reference only — list as dependency, not codebase"
+    do_when: never_as_codebase
+    rationale: "Debugging aid, not primary E2E framework. Document as adopted tool surface."
+
+  # ───── G.1 Azure Pipelines extended catalog (added 2026-04-14) ─────
+
+  - upstream: microsoft/azure-pipelines-tasks
+    purpose: "All built-in Azure Pipelines task implementations (Python, Node, container, AKS, ACA)"
+    adopt_mode: clone_as_reference
+    internal_owner: delivery-engineering
+    internal_destination: "docs/architecture/reference-adaptations/"
+    do_when: now
+    rationale: "Pattern reference for built-in task implementations. Extract task patterns for Odoo ACA deploy and BIR validation gates. Do NOT fork the repo."
+
+  - upstream: microsoft/azure-pipelines-task-lib
+    purpose: "TypeScript/Node SDK for authoring custom Azure Pipelines tasks"
+    adopt_mode: consume_directly
+    internal_owner: delivery-engineering
+    internal_destination: "package.json devDependency in any custom pipeline task package"
+    do_when: now
+    rationale: "Required SDK if IPAI promotes Odoo deploy or gate steps to reusable task extensions. Consumed via npm, never forked."
+
+  - upstream: microsoft/azure-pipelines-extensions
+    purpose: "Collection of RM and deployment extensions (InvokeRestAPI, ACA, AKS deploy patterns)"
+    adopt_mode: clone_as_reference
+    internal_owner: delivery-engineering
+    internal_destination: "docs/architecture/reference-adaptations/"
+    do_when: now
+    rationale: "Reference for InvokeRestAPI, ACA, and AKS deploy task implementations. Directly relevant to Odoo ACA deploy lane and Databricks REST API calls."
+
+  - upstream: Azure/PSRule.Rules.Azure
+    purpose: "PSRule rule set — WAF-aligned validation of Bicep/ARM IaC"
+    adopt_mode: consume_directly
+    internal_owner: platform-engineering
+    internal_destination: "azure-pipelines/ validate stage (ps-rule run)"
+    do_when: now
+    rationale: "Gate infra merges on WAF/security rule score before az deployment. Use with Azure/PSRule-pipelines task companion."
+
+  - upstream: Azure/PSRule-pipelines
+    purpose: "Azure Pipelines task wrapper that invokes PSRule.Rules.Azure"
+    adopt_mode: consume_directly
+    internal_owner: platform-engineering
+    internal_destination: "azure-pipelines/ validate stage"
+    do_when: now
+    rationale: "Companion task to PSRule.Rules.Azure — both must be wired together. Gates Bicep/ARM changes before deployment."
+
+  - upstream: Azure-Samples/azure-container-apps-blue-green-with-azure-pipelines
+    purpose: "Blue/green ACA deployment pattern for Azure Pipelines (traffic-weight-based)"
+    adopt_mode: clone_as_reference
+    internal_owner: delivery-engineering
+    internal_destination: "azure-pipelines/odoo-deploy.yml"
+    do_when: now
+    rationale: "ACA traffic-weight blue/green is the canonical Odoo container slot promotion strategy for Wave-01. Maps to current azure-pipelines/odoo-deploy.yml work."
+
+  - upstream: databricks/bundle-examples
+    purpose: "Official Databricks Asset Bundle (DAB) CI/CD examples including Azure DevOps lane"
+    adopt_mode: clone_as_reference
+    internal_owner: data-engineering
+    internal_destination: "azure-pipelines/databricks-deploy.yml"
+    do_when: now
+    license_note: "NOASSERTION — verify with legal before embedding any copied code."
+    rationale: "DAB is the canonical Databricks deploy unit. Align existing pipeline to bundle validate + deploy pattern."
+
+  - upstream: microsoft/azure-pipelines-vscode
+    purpose: "VS Code extension for Azure Pipelines YAML schema validation and IntelliSense"
+    adopt_mode: consume_directly
+    internal_owner: delivery-engineering
+    internal_destination: ".devcontainer/devcontainer.json extensions list"
+    do_when: later
+    rationale: "Dev-time tooling only. Reduces YAML authoring errors in azure-pipelines/ directories."
+
+  # ───── G.2 Azure Pipelines REJECTS (added 2026-04-14) ─────
+  # Documented for governance — do not add these regardless of Microsoft tagging:
+
+  - upstream: microsoft/azure-pipelines-terraform
+    purpose: "Pipeline tasks for Terraform install/run inside Azure Pipelines"
+    adopt_mode: do_not_adopt
+    internal_owner: platform-engineering
+    internal_destination: "none"
+    do_when: never
+    rationale: "IPAI canonical IaC = Bicep + AVM. Adopting Terraform tasks splits IaC authority. Reject."
+
+  - upstream: Azure/ResourceModules
+    purpose: "Legacy CARML Bicep module library — predecessor to AVM"
+    adopt_mode: do_not_adopt
+    internal_owner: platform-engineering
+    internal_destination: "none"
+    do_when: never
+    rationale: "Superseded by Azure/bicep-registry-modules (AVM). Last significant update 2025-08 = wind-down. Use AVM only."
+
+  # ───── H. OCA booking stack (added 2026-04-14) — for W9 Studio + booking-engine app ─────
+
+  - upstream: OCA/calendar
+    purpose: "Resource booking — OCA canonical booking framework (resource_booking module)"
+    adopt_mode: clone_as_reference
+    internal_owner: services-platform
+    internal_destination: "addons/oca/calendar/ — primarily resource_booking module"
+    do_when: now
+    rationale: |
+      Per `ssot/apps/desired-end-state-matrix.yaml` (W9 Studio + booking-engine).
+      18.0 branch supports availability calendars, resource combinations, portal
+      booking, tokenized URLs, automatic meeting creation, conflict detection,
+      booking lifecycle states. Strongest OCA-first booking path.
+    related_modules: [resource_booking]
+
+  - upstream: OCA/sale-workflow (sale_resource_booking module)
+    purpose: "Link resource bookings to sale orders (already in upstream-adoption-register)"
+    adopt_mode: clone_as_reference
+    internal_owner: services-platform
+    internal_destination: "addons/oca/sale-workflow/ — adds sale_resource_booking on top of base OCA selection"
+    do_when: now
+    rationale: |
+      Sale-order-driven booking creation. 18.0 branch available.
+      Pairs with OCA/calendar resource_booking. Augments existing
+      sale-workflow entry already in this register.
+    related_modules: [sale_resource_booking]
+
+  - upstream: OCA/e-commerce (website_sale_resource_booking module)
+    purpose: "Website-checkout pre-booking with timeout for unpaid pre-bookings"
+    adopt_mode: clone_as_reference
+    internal_owner: services-platform
+    internal_destination: "addons/oca/e-commerce/ — only website_sale_resource_booking module"
+    do_when: when_w9_website_checkout_in_scope
+    rationale: |
+      Only needed if W9 site moves from inquiry-first to checkout-first booking.
+      Per `ssot/apps/desired-end-state-matrix.yaml` app-w9studio optional payments.
+    related_modules: [website_sale_resource_booking]
+
+  # ───── Apps Store appointment alternatives (REJECTED for current scope) ─────
+
+  - upstream: apps.odoo.com modules — website_booking_dom / appointment_booking_ce / viin_appointment_website
+    purpose: "Third-party Apps Store appointment-first website UX"
+    adopt_mode: do_not_adopt
+    internal_owner: services-platform
+    internal_destination: "none"
+    do_when: never_for_current_scope
+    rationale: |
+      Apps Store path, not OCA. Vendor lock-in risk. Conflicts with
+      OCA-first doctrine. Use only if appointment-first website UX
+      is explicitly required AND OCA composition is proven insufficient
+      (per Odoo module selection doctrine)."
+
+  # ───── I. Google Workspace adoption (added 2026-04-14) — for W9 Studio ─────
+  # Per docs/architecture/w9-google-workspace-integration.md:
+  # Google Workspace = identity/collab/calendar/comms/docs/internal-productivity
+  # Odoo = transactional system of record (lead/booking/quote/invoice/project)
+
+  - upstream: googleworkspace/cli
+    purpose: "Official Google Workspace CLI — Drive/Gmail/Calendar/Sheets/Docs/Chat/Admin/AI agent skills"
+    adopt_mode: consume_directly
+    internal_owner: services-platform
+    internal_destination: "Tool/runtime dependency; documented in docs/delivery/google-workspace-tooling.md"
+    do_when: now
+    priority: P0
+    rationale: |
+      Most important Google Workspace addition. Spans all Workspace surfaces
+      with explicit AI agent skills. Fits repo-first / agent-friendly model.
+      For W9 Studio integration with Workspace per `feedback_w9_google_workspace_integration.md`.
+
+  - upstream: googleworkspace/developer-tools
+    purpose: "Official Workspace developer tools — VS Code extension + OAuth scope linting + MCP support"
+    adopt_mode: consume_directly
+    internal_owner: services-platform
+    internal_destination: "Developer tooling; reference from docs/delivery/google-workspace-tooling.md"
+    do_when: now
+    priority: P0
+    rationale: |
+      OAuth scope validation + editor-side dev tooling + MCP-aware Workspace
+      dev flows. Hardens the W9 Workspace integration build path.
+
+  - upstream: googleworkspace/add-ons-samples
+    purpose: "Sample Google Workspace Add-ons (Apps Script + Java + Node + Python)"
+    adopt_mode: clone_as_reference
+    internal_owner: services-platform
+    internal_destination: "docs/architecture/reference-adaptations/google-workspace/"
+    do_when: now
+    priority: P1
+    rationale: |
+      Gmail/Calendar/Docs/Drive add-on patterns. Internal operator extensions.
+      Future Workspace Marketplace experiments. Don't make add-ons first
+      integration path if CLI + APIs are sufficient.
+
+  - upstream: googleworkspace/google-chat-samples
+    purpose: "Google Chat app samples — bots, alerts, approval workflows"
+    adopt_mode: clone_as_reference
+    internal_owner: services-platform
+    internal_destination: "docs/architecture/reference-adaptations/google-workspace/ or agents/google-chat-ops-experiments/"
+    do_when: now
+    priority: P1
+    rationale: |
+      W9-fit: booking notifications, shoot-day reminders, ops coordination,
+      finance/admin follow-ups. Lightweight staff-facing bot surfaces.
+
+  - upstream: googleworkspace/python-samples
+    purpose: "Official Python samples for Google Workspace APIs"
+    adopt_mode: clone_as_reference
+    internal_owner: services-platform
+    internal_destination: "docs/architecture/reference-adaptations/google-workspace/ or platform/integrations/google-workspace-experiments/"
+    do_when: now
+    priority: P1
+    rationale: |
+      Service-account patterns + Gmail/Calendar/Drive examples. Best
+      code-reference repo if implementation glue is Python-heavy
+      (matches IPAI Python stack).
+
+  - upstream: googleworkspace/meet
+    purpose: "Official Google Meet integration repo"
+    adopt_mode: clone_as_reference
+    internal_owner: services-platform
+    internal_destination: "docs/architecture/reference-adaptations/google-workspace/ (later)"
+    do_when: later
+    priority: P2
+    rationale: |
+      Meet-aware integration patterns. Future call/session coordination.
+      Useful but not first-wave critical for W9.
+
+  - upstream: googleworkspace/meet-media-api-samples
+    purpose: "Official samples for the Google Meet Media API (recording/media workflows)"
+    adopt_mode: clone_as_reference
+    internal_owner: services-platform
+    internal_destination: "docs/architecture/reference-adaptations/google-workspace/ (later)"
+    do_when: later
+    priority: P2
+    rationale: |
+      Advanced meeting/media integrations. Future production-review or
+      remote-session tooling. NOT current-wave core.
+
+  - upstream: Google Workspace Marketplace GitHub Integration
+    purpose: "SaaS app on Marketplace allowing GitHub actions from Google surfaces"
+    adopt_mode: do_not_adopt
+    internal_owner: gtm
+    internal_destination: "Use as SaaS/app if useful; NOT a repo to clone or fork"
+    do_when: never_as_codebase
+    rationale: "App/integration surface, not a repo for product code."
+
+  # ───── J. Self-hosted Odoo integrations rule (added 2026-04-14) ─────
+  # Anchor: docs/architecture/odoo-integrations-selfhosted-azure.md
+
+  - upstream: odoo/odoo (built-in integration modules)
+    purpose: "Built-in google_account/calendar/gmail + microsoft_account/calendar/outlook + cloud_storage_azure + external_api"
+    adopt_mode: consume_directly
+    internal_owner: odoo-platform
+    internal_destination: "Use built-in modules from canonical odoo upstream remote"
+    do_when: now
+    priority: P0
+    rationale: |
+      For self-hosted Odoo on Azure: built-in integrations are the default.
+      Do NOT fork Odoo for integrations. Do NOT add third-party repos when
+      Odoo already ships the integration. Decision order:
+        1. built-in Odoo module
+        2. selected OCA module
+        3. thin ipai_* adapter
+        4. third-party marketplace module only if still necessary
+      Configure with stable public URL + Key Vault secrets + test/prod separation.
+      See `docs/architecture/odoo-integrations-selfhosted-azure.md`.
+
+# ─── Internal repos owned directly (not forked from upstream) ───
+own_directly:
+  - path: "infra/"
+    purpose: "AVM composition only — pin AVM module versions"
+  - path: "agent-platform/ + agents/"
+    purpose: "Pulser-specific tools, policies, prompts, skills"
+  - path: "data-intelligence/"
+    purpose: "Databricks/Fabric contracts + bronze/silver/gold definitions"
+  - path: "addons/ipai/"
+    purpose: "Thin Odoo adapters per CLAUDE.md §extension doctrine"
+  - path: "docs/ + ssot/"
+    purpose: "Doctrine, naming, BOM, tags, tenancy, parity matrix, decisions"
+  - path: "tests/playwright/"
+    purpose: "UI/E2E suites consuming Playwright"
+
+# ─── Mirror outcomes, not upstream repos ───
+mirror_principle: |
+  Mirror only OUTCOMES (composition, decision records, thin adapters, tests),
+  not upstream repos. Keep upstreams upstream.
+
+mirror_targets:
+  - infra/azure-avm-composition
+  - docs/architecture/reference-adaptations
+  - agent-platform/pulser-tools
+  - tests/playwright
+  - ssot/azure
+  - docs/delivery
+
+# ─── Anti-patterns ───
+anti_patterns:
+  - "Forking AVM/Bicep modules — creates downstream burden Microsoft now solves"
+  - "Forking microsoft/agent-framework — re-implementing what Microsoft owns"
+  - "Forking microsoft/playwright — adopting upstream test framework as your codebase"
+  - "Cloning Foundry templates as productized internal codebases without explicit fork_trigger"
+  - "Vendoring Azure-Samples/* repos under your repo (creates stale copies)"
+  - "Forking azure-pipelines-agent — agent ops is reference-only"
+
+# ─── Decision audit ───
+decisions_audit:
+  consumed_directly: 4   # AVM, Agent Framework, ADO MCP, Playwright
+  cloned_as_reference: 6 # FastAPI+ACA+PG, PG-Resiliency, pgvector, PG-MCP, pipelines-yaml, Foundry templates
+  fork_and_own: 0        # NONE right now
+  do_not_adopt: 1        # azure-pipelines-agent (codebase, not pattern)
+
+# ─── Anchors ───
+anchors:
+  prd_doctrine: "spec/pulser-odoo/prd.md §0"
+  authority_split: "ssot/governance/platform-authority-split.yaml"
+  coverage_matrix: "docs/architecture/microsoft-reference-coverage-matrix.md"
+  azure_naming: "ssot/azure/naming-convention.yaml"
+  azure_bom: "ssot/azure/bom.yaml"
+  related_memory:
+    - reference_release_manager_assistant_adoption.md
+    - reference_microsoft_foundry_org_repos.md
+    - reference_azd_ai_templates.md

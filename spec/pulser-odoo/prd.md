@@ -4,6 +4,124 @@ Pulser is a **custom-engine, multi-agent, policy-gated enterprise copilot** for 
 
 ---
 
+## 0. Architecture Doctrine (read first)
+
+This PRD is governed by three inter-locking doctrines. Everything downstream must be legible through them.
+
+### 0.1 Four-plane architecture
+
+The product is **not "Odoo hosted on Azure"**. It is an operating model with four explicit planes:
+
+| Plane | What it is | IPAI implementation |
+|---|---|---|
+| **Transaction plane** | System-of-record for books, projects, orders | **Odoo CE 18 + OCA** (canonical DB `odoo_dev` / `odoo_staging` / `odoo`) |
+| **Data intelligence plane** | Governed lakehouse + BI consumption | **Azure Databricks** (bronze/silver/gold on ADLS Gen2, Unity Catalog) + **Microsoft Fabric** (mirror, semantic model, Power BI) |
+| **Agent plane** | AI control plane for model access, orchestration, grounding, evaluation, safety, lifecycle | **Microsoft Foundry** (`ipai-copilot-resource`, Agent 365, MCP tools) |
+| **Delivery plane** | Agentic SDLC for spec-driven, PR-centric delivery | **GitHub + Azure** (spec bundles → coding agents → PR previews → ACA/AzDO promotion) |
+
+Pulser consumes **curated data products** from the data plane (not just raw Odoo reads), runs agent orchestration on the **agent plane** (not inside Odoo custom modules), and is delivered through the **delivery plane** (not manual release).
+
+### 0.2 Adaptation-first engineering
+
+**Adapt before build.** Decision order for any capability:
+
+1. Odoo CE 18 native capability
+2. Odoo property fields (parent-scoped lightweight metadata only — not canonical schema, heavy reporting, or workflow-critical logic)
+3. OCA 18 same-domain modules
+4. Adjacent OCA 18 modules
+5. Azure-native infrastructure building blocks (Bicep + Azure Verified Modules)
+6. Official Azure / Microsoft architectural patterns:
+   - Data intelligence: Databricks + Fabric reference architecture
+   - AI platform/runtime: Microsoft Foundry + Microsoft Agent Framework
+   - Agentic delivery: GitHub-native AI-led SDLC on Azure
+7. Official Azure / Microsoft samples and frameworks (Azure Samples, Azure AI Samples)
+8. Thin custom `ipai_*` adapters **only** where 1–7 are insufficient
+
+Custom `ipai_*` work **MUST NOT** recreate: infrastructure primitives, agent orchestration runtime, tracing/observability primitives, generic Azure integration patterns, OCA-solvable ERP capability.
+
+Custom `ipai_*` is reserved for: Odoo-facing domain adapters, Pulser UI entry points (systray, views), approval/RBAC hooks, action gateways, event/webhook bridges, narrow domain overlays not covered by CE/OCA.
+
+Every approved custom module requires `README.md` + `docs/MODULE_INTROSPECTION.md` + `docs/TECHNICAL_GUIDE.md` per `CLAUDE.md` §"Odoo extension and customization doctrine" (template at `addons/ipai/_template/`).
+
+### 0.3 Governance doctrine — Well-Architected as operating standard
+
+Architecture review is a first-class deliverable. Every major design decision, environment, and release path is reviewable through:
+
+**Azure Well-Architected Framework (workload quality):**
+1. Reliability
+2. Security
+3. Cost Optimization
+4. Operational Excellence
+5. Performance Efficiency
+
+**Azure workload overlays:** AI workload guidance (for the agent plane), SaaS workload guidance (for multi-tenancy + billing).
+
+**GitHub Well-Architected Framework (delivery quality):**
+1. Productivity
+2. Collaboration
+3. Application Security
+4. Governance
+5. Architecture
+
+Required evidence per major release:
+- Pillar trade-off documentation for architectural changes
+- Risks + mitigations against each relevant pillar
+- Evidence that the workload still meets its target governance posture
+
+### 0.4 Two-plane D365 displacement framing
+
+When benchmarking vs Microsoft (per `feedback_d365_two_plane_doctrine.md`):
+
+- **Plane A — Core ERP:** D365 Finance + D365 Project Operations ↔ Odoo CE + OCA + `ipai_*` adapters
+- **Plane B — AI assistive layer:** Copilot Finance agents ↔ Pulser + Odoo Copilot systray + M365 Agent SDK bridge + Slack-native
+
+Proposals and SoWs quote these as two separate line items.
+
+### 0.5 Canonical doctrine sentence
+
+> Pulser for Odoo on Azure is an adaptation-first agentic ERP and project-operations platform governed by Azure Well-Architected workload principles and GitHub Well-Architected delivery principles: Odoo CE 18 + OCA for transactions, Azure Databricks + Microsoft Fabric for governed data intelligence, Microsoft Foundry for enterprise AI control, and GitHub-native AI-led SDLC on Azure for delivery and change management. Custom `ipai_*` is reserved for thin Odoo-facing adapters only.
+
+### 0.6 Anchors
+
+- `CLAUDE.md` §"Odoo extension and customization doctrine"
+- `docs/benchmarks/d365_finance_copilot_parity_catalog.md` §0 two-plane doctrine
+- `ssot/benchmarks/parity_matrix.yaml` domain-by-domain parity
+- `docs/tenants/TENANCY_MODEL.md` multi-company single-DB decision
+- Memory: `feedback_odoo_module_selection_doctrine.md`, `feedback_d365_two_plane_doctrine.md`, `feedback_d365_project_operations_services_erp.md`, `feedback_d365_displacement_not_development.md`, `feedback_four_plane_architecture_doctrine.md`, `reference_release_manager_assistant_adoption.md`
+
+### 0.7 Release-governance adaptation (delivery plane)
+
+The delivery plane adapts **`microsoft/release-manager-assistant`** (RMA) as the baseline for release-governance assistance. RMA already uses Microsoft Agent Framework + Azure AI Foundry + MCP-based tool integration + confirmation-gated updates + multi-agent orchestration (planner, AzDO, JIRA, visualization, fallback) — the exact adaptation-first stack for IPAI's delivery plane.
+
+**What to adapt:**
+- Multi-agent orchestration pattern (planner + specialized agents + fallback)
+- MCP-based enterprise tool integration (Azure DevOps, GitHub)
+- Confirmation-gated updates (matches IPAI's approval-first doctrine)
+- Visualization / readiness reporting (release health, dependency mapping)
+- Foundry + Agent Framework baseline (no bespoke orchestration runtime)
+
+**Adapted capability name:** *Pulser Release Ops* (or *Pulser Delivery Control*). Lives **outside** `addons/ipai/*`, in `agent-platform/` or `apps/release-manager`. Odoo exposure is via thin adapter only (deployment evidence, environment status, ERP-specific release checks).
+
+**Narrowing from RMA defaults:**
+- **GitHub-first** (RMA is AzDO+JIRA by default). Azure DevOps bridge only where it adds real governance value.
+- **Azure-native runtime-aware** (ACA, Foundry, Fabric evidence).
+- **Odoo-aware** for ERP deployment and operational evidence.
+- **No broad agent surface** until role/approval controls are pinned down.
+
+**Explicit non-goals for Pulser Release Ops:**
+- Not an Odoo addon with deep business logic
+- Not a substitute for ERP workflow
+- Not a generic agent runtime inside Odoo
+- Not a replacement for GitHub Actions / Azure DevOps — it orchestrates them
+
+**Decision rule:**
+- USE RMA patterns for: release governance, promotion readiness, dependency/risk synthesis, cross-system release evidence, delivery-plane agent orchestration
+- DO NOT USE RMA patterns for: finance/project domain copilots, Odoo transactional workflows, ERP-native approval/posting logic, business-module customization
+
+Full adoption context in `reference_release_manager_assistant_adoption.md` memory.
+
+---
+
 ## 1. Surface and Tenancy (BOM 1)
 - **Tenancy Model**: Pulser Tenant represents a Customer Organization.
 - **Boundaries**: Pulser Tenant != Odoo Company != Entra Tenant.

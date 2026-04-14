@@ -251,10 +251,16 @@ modules:
     status: planned
     spec: null  # needs spec bundle
 
-  ipai_auth_oidc:
-    depends: [base, auth_signup]
-    status: planned
-    spec: spec/entra-identity-migration/
+  # ipai_auth_oidc REMOVED 2026-04-14 per no-custom doctrine.
+  # Identity integration moved to CE auth_oauth + auth_totp + infra wiring.
+  # SSOT: ssot/identity/odoo-azure-oauth.yaml
+  # Seed: scripts/odoo/seed_auth_providers.py
+  entra_identity_integration:
+    depends: [base, auth_oauth, auth_totp]  # all CE built-ins
+    status: active
+    implementation: "config + SSOT + seed script (no custom module)"
+    ssot: ssot/identity/odoo-azure-oauth.yaml
     notes: >
-      Entra OIDC module — handles identity for ALL apps.
-      Not a sync module — JIT provisioning only.
+      CE-native Entra OAuth2. JIT user provisioning via auth_oauth built-in.
+      Microsoft Graph `User.Read` scope for profile sync. MFA via CE auth_totp
+      for admin groups. No Python code — configuration only.

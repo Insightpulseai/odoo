@@ -1,0 +1,82 @@
+---
+# Tenant identity: OMC (Finance Framework Unified Workbook entity)
+# Parent SSOT: ssot/tenants/tenants-registry.yaml
+# Last updated: 2026-04-14
+# STATUS: PENDING CLARIFICATION — role, billing model, and relationship to IPAI
+#         not yet confirmed. See docs/tenants/TENANCY_MODEL.md §Open Questions.
+tenant_code: OMC
+tenant_name: OMC
+legal_name: OMC  # full legal name TBD
+role: tbd  # candidates: client | sister_entity | shared_finance_function
+
+domains:
+  primary: omc.com
+
+email:
+  provider: tbd  # not yet confirmed — likely Google Workspace or M365
+  outbound_from_default: tbd
+
+# Directory from "Finance Framework Unified Workbook" panel
+# Code column = 3-4 letter initials used in ledger/transaction reference
+directory:
+  - code: CKVC
+    name: Khalil Veracruz
+    email: khalil.veracruz@omc.com
+  - code: RIM
+    name: Rey Meran
+    email: rey.meran@omc.com
+  - code: LAS
+    name: Amor Lasaga
+    email: amor.lasaga@omc.com
+  - code: BOM
+    name: Beng Manalo
+    email: beng.manalo@omc.com
+  - code: JAP
+    name: Jinky Paladin
+    email: jinky.paladin@omc.com
+  - code: JPAL
+    name: Jerald Loterte
+    email: jerald.loterte@omc.com
+  - code: JLI
+    name: Jasmin Ignacio
+    email: jasmin.ignacio@omc.com
+  - code: JRMO
+    name: Jhoee Oliva
+    email: jhoee.oliva@omc.com
+  - code: JMSM
+    name: Joana Maravillas
+    email: joana.maravillas@omc.com
+  - code: RMQB
+    name: Sally Brillantes
+    email: sally.brillantes@omc.com
+  - code: CSD
+    name: Cliff Dejecacion
+    email: cliff.dejecacion@omc.com
+
+odoo:
+  company_id: 3
+  company_name: OMC
+  currency: PHP  # assumption
+  country: PH    # assumption
+  default_accounting_chart: ph_standard  # assumption
+  visibility: scoped
+  # User codes (CKVC, RIM, etc.) should map to res.users.login_suffix or
+  # res.partner.ref so finance ledger references stay consistent with
+  # the Unified Workbook.
+
+finance_framework_unified_workbook:
+  nature: "Shared ledger/framework reference used by the 11 named finance staff"
+  suspected_relationship: >
+    OMC appears to share a finance framework with IPAI. Could be:
+    (a) A client engaged for finance-ops-as-a-service.
+    (b) A sibling entity in the same portfolio.
+    (c) The operational finance function that services multiple IPAI entities.
+  blocks_until_resolved:
+    - billing_model
+    - data_isolation_level
+    - whether_omc_users_are_licensed_in_ipai_odoo_or_stay_in_omc_tenant
+
+risk_notes:
+  - "OMC tenancy placement is the #1 blocker for finalizing multi-company model"
+  - "If OMC is a client, record rules must be strict; if sibling, relaxed cross-company reports are acceptable"
+  - "11 named users with standardized initial-codes suggests an existing accounting system — migration plan needed"

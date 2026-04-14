@@ -2,6 +2,9 @@
 
 > Integrated from [github/spec-kit](https://github.com/github/spec-kit).
 > Specifications are executable — they generate implementations, not just describe them.
+>
+> **Pinned version:** see [`VERSION`](./VERSION) — currently **`v0.6.2`** (pinned 2026-04-14).
+> Do NOT install latest-from-main on developer hosts. Re-sync procedure documented in `VERSION`.
 
 ## Quick Start
 

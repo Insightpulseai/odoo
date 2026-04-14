@@ -183,7 +183,9 @@ install_sets:
       - ipai_social_capi
       - ipai_service_calculator
       - ipai_security_frontdoor
-      - ipai_auth_oidc
+      # ipai_auth_oidc REMOVED 2026-04-14 — replaced by CE auth_oauth + auth_totp
+      # + SSOT ssot/identity/odoo-azure-oauth.yaml + scripts/odoo/seed_auth_providers.py
+      # Per no-custom doctrine (memory: feedback_no_custom_default.md)
       - ipai_ai_widget
       - ipai_ai_platform
       - ipai_ai_copilot
