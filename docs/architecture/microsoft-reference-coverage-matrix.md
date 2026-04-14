@@ -98,7 +98,9 @@ Issue: Model access + choice catalog (Foundry catalog → Pulser tool registry)
 
 **Source:** `techcommunity.microsoft.com/blog/appsonazureblog/an-ai-led-sdlc-building-an-end-to-end-agentic-software-development-lifecycle-wit/4491896`
 
-**Center of gravity:** GitHub-first. Spec Kit, GitHub issues, GitHub Copilot coding agent, PR review, GitHub Actions, Playwright MCP, Azure-hosted preview/runtime infra.
+**Center of gravity:** GitHub for source/PR/Issues + Copilot Coding Agent; Azure Pipelines for all CI + deploy (sole authority per CLAUDE.md 2026-04-14); Spec Kit + Playwright MCP for agentic proof-of-change; Azure-hosted preview/runtime infra.
+
+> **Doctrine note (2026-04-14):** The upstream article frames delivery as "GitHub Actions". Per `CLAUDE.md` revision, IPAI adopts the *security pattern* (Safe Outputs, zero-secret agents, 3-tier defense) but implements it on **Azure Pipelines + ACA** — GitHub Actions is forbidden as a delivery runtime. See `ssot/governance/platform-authority-split.yaml`.
 
 **This is the article most under-served by the current Azure-DevOps-biased epic structure.**
 
@@ -112,7 +114,7 @@ Issue: Model access + choice catalog (Foundry catalog → Pulser tool registry)
 | Spec Kit → issue flow | — | ❌ **MISSING** (have spec/ bundles but no issue-generation flow) |
 | GitHub Copilot coding agent operating model | — | ❌ **MISSING** |
 | PR review with human-in-the-loop | — | ❌ **MISSING** (implicit only) |
-| GitHub Actions deterministic deploy path | — | ⚠️ Partial — split with AzDO per `platform-authority-split.yaml` |
+| Azure Pipelines deterministic deploy path | existing `azure-pipelines/` (26 YAML files) + #521 | ✅ Direct — Azure Pipelines sole authority per CLAUDE.md 2026-04-14 |
 | Playwright MCP / proof-of-change loop | — | ❌ **MISSING** |
 | Azure sandbox / preview environment pattern | — | ❌ **MISSING** |
 
@@ -122,7 +124,7 @@ Issue: Model access + choice catalog (Foundry catalog → Pulser tool registry)
 Issue: Spec Kit → GitHub issue auto-generation flow
 Issue: GitHub Copilot coding agent operating model + role policy
 Issue: PR review with human-in-the-loop (review checklist + approval gates)
-Issue: GitHub Actions deterministic deploy (per platform-authority-split.yaml)
+Issue: Azure Pipelines deterministic deploy hardening (PSRule validate stage + ACA blue/green + per-lane service connections per platform-authority-split.yaml)
 Issue: Playwright MCP / proof-of-change validation loop
 Issue: Azure sandbox / preview environment pattern (per-PR ephemeral env)
 ```
@@ -149,11 +151,11 @@ Issue: Azure sandbox / preview environment pattern (per-PR ephemeral env)
    - Stop framing AzDO as the primary engineering surface for AI-led SDLC.
    - GitHub is engineering truth; AzDO is portfolio/governance/test-mgmt.
    - Foundry + Databricks/Fabric are platform planes, not DevOps lanes.
-4. **Update PRD §0.4 four-plane mapping** to include cross-tool split:
-   - Transaction = Odoo + Azure runtime (CI: GitHub Actions; deploy gating: AzDO)
-   - Data = Databricks + Fabric (CI: mixed GH/AzDO; canonical Microsoft reference)
-   - Agent = Foundry (NOT AzDO-managed; AI platform control plane)
-   - Delivery = GitHub-native AI-led SDLC (Spec Kit + Copilot agent + Actions + Playwright MCP) with AzDO for portfolio/test management
+4. **Update PRD §0.4 four-plane mapping** to match the revised delivery doctrine:
+   - Transaction = Odoo + Azure runtime (CI + deploy: Azure Pipelines sole authority per CLAUDE.md 2026-04-14)
+   - Data = Databricks + Fabric (CI + deploy: Azure Pipelines; canonical Microsoft reference for data shape)
+   - Agent = Foundry (NOT AzDO-managed; AI platform control plane; deployment substrate via Azure Pipelines)
+   - Delivery = GitHub for source/PR/Issues + Copilot Coding Agent + Spec Kit + Playwright MCP; Azure Pipelines for CI+deploy; Azure DevOps Boards for portfolio/test plans
 
 ## Next actions (post-merge of PR #738)
 
@@ -174,3 +176,4 @@ Issue: Azure sandbox / preview environment pattern (per-PR ephemeral env)
 ## Changelog
 
 - **2026-04-14** Initial coverage matrix + cross-tool authority refinement. 18 missing issue buckets identified.
+- **2026-04-14 (doctrine-fix)** Aligned Reference 3 + PRD §0.4 mapping with CLAUDE.md revised delivery doctrine: **Azure Pipelines is the sole CI/CD authority; GitHub Actions is forbidden as delivery runtime**. Removed "GitHub Actions deterministic deploy" issue bucket, replaced with "Azure Pipelines deterministic deploy hardening (PSRule + blue/green + service connections)". IPAI still adopts the GitHub Agentic Workflows *security pattern* (Safe Outputs, zero-secret agents, 3-tier defense), but implemented on Azure Pipelines + ACA per `ssot/governance/platform-authority-split.yaml`.

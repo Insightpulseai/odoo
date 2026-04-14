@@ -98,15 +98,25 @@ own-directly      = build and maintain in Insightpulseai because it is your SSOT
 | `googleworkspace/python-samples` | agent / transaction | `clone-reference` | agent-platform | `docs/architecture/reference-adaptations/` | now | Official Python samples for Workspace APIs (Gmail, Calendar, Drive). |
 | `googleworkspace/meet` | agent | `clone-reference` | agent-platform | `docs/architecture/reference-adaptations/` | later | Meet-aware integration patterns; not current-wave core. |
 | `googleworkspace/meet-media-api-samples` | agent | `clone-reference` | agent-platform | `docs/architecture/reference-adaptations/` | later | Advanced meeting/media integrations; later-phase core. |
-| `OfficeDev/Microsoft-365-Copilot-Samples` | agent / delivery | `clone-reference` | agent-platform | `docs/architecture/reference-adaptations/` | now | Canonical reference for Declarative Agents, API Plugins, and Graph Connectors for M365. |
-| `microsoft/Dynamics-365-Copilot-Samples` | agent / transaction | `clone-reference` | agent-platform | `docs/architecture/reference-adaptations/` | now | Canonical reference for D365 ERP sidecar patterns and data-ingestion plugins. |
-| `microsoft/Power-Platform-Samples` | agent / delivery | `clone-reference` | agent-platform | `docs/architecture/reference-adaptations/` | now | Patterns for agent-triggered Power Automate flows and Power Apps custom controls. |
-| `microsoft/CopilotStudioSamples` | agent | `clone-reference` | agent-platform | `docs/architecture/reference-adaptations/` | now | Patterns for low-code agent creation, custom instructions, and GPT-based sub-agents. |
-| `microsoft/Microsoft-Security-Copilot-Samples` | agent | `clone-reference` | agent-platform | `docs/architecture/reference-adaptations/` | later | patterns for security-policy agents and threat-intelligence adapters. |
-| `microsoft/Fabric-Copilot-Samples` | agent / data | `clone-reference` | agent-platform | `docs/architecture/reference-adaptations/` | later | Patterns for automated data analysis, DAX generation, and visualization agents. |
-| `Azure-Samples/azure-copilot-samples` | agent | `clone-reference` | agent-platform | `docs/architecture/reference-adaptations/` | later | patterns for cloud-ops assistance, resource management, and edge-automation. |
-| `github/awesome-copilot` | agent / delivery | `consume-directly` | agent-platform | tool dependency | now | Canonical index for agents, skills, and editor-side extensibility (IDE Plane). |
 | Partner Center portal / future APIs | partner ops | do-not-adopt | GTM / partner ops | none | later/never | Portal-driven until automation funded |
+
+### §F.2 Reconciled upstreams (added 2026-04-14)
+
+> Reconciled UP from `platform/templates/adaptation-map.yaml` and memory notes into the canonical YAML. Listed here for narrative coverage.
+
+| `microsoft-foundry/foundry-samples` | agent | `clone-reference` | agent-platform | `agent-platform/experiments/foundry-samples/` | now | Pattern reference for Pulser agent bootstrap. Explicit enumeration (replaces former `microsoft-foundry/*` wildcard). |
+| `microsoft-foundry/foundry-agent-webapp` | agent | `clone-reference` | agent-platform | `agent-platform/experiments/` | now | Foundry-native web app shell reference. |
+| `microsoft-foundry/mcp-foundry` | agent | `clone-reference` | agent-platform | `agent-platform/experiments/` | now | Foundry ↔ MCP integration patterns. |
+| `microsoft-foundry/fine-tuning` | agent | `clone-reference` | agent-platform | `agent-platform/experiments/` | later | Deferred; adopt only when custom-model tuning is in scope. |
+| `Azure-Samples/release-manager-assistant` (RMA) | agent/delivery | `clone-reference` | agent-platform | `agent-platform/agents/release-manager/` | now | Already scaffolded via `infra/azure/modules/release-manager-aca.bicep`. Fork trigger: Pulser Release Ops productizes per PRD §0.7. |
+| Azure MCP Server (first-party) | agent/platform | `consume-directly` | platform-engineering | `.mcp.json` + `.vscode/mcp.json` | now | 40+ namespace first-party MCP. Replaces community Azure MCP entries. |
+| Azure Developer CLI (`azd`) | platform | `consume-directly` | platform-engineering | devcontainer + `scripts/` + `azure-pipelines/` | now | Canonical CLI for azd-shaped templates. |
+| `microsoft/dev-proxy` | testing | `clone-reference` | qa-engineering | `docs/architecture/reference-adaptations/` | now | LLM rate-limit + API chaos companion to Playwright. |
+| Azure Python SDK pin manifest | agent-platform | `consume-directly` | agent-platform | `pyproject.toml`/`requirements.txt` | now | `azure-ai-agents>=1.1.0`, `azure-ai-projects>=2.0.1`, `azure-ai-evaluation>=1.16.3`, `azure-ai-documentintelligence>=1.0.2`, `azure-search-documents>=11.6.0`, `azure-identity>=1.25.3`, `azure-keyvault-secrets>=4.10.0`. |
+| `microsoft/unified-data-foundation` | data-platform | `consume-directly` | data-engineering | `infra/azure/` composition + `data-intelligence/` integration | now (P0) | **Time-sensitive** — Fabric trial ~2026-05-20. Terraform IaC for Databricks + Fabric + mirroring in one unit. |
+| Partner Center SaaS Fulfillment API v2 | partner-ops | `consume-directly` (REST) | platform | `platform/partner-center/fulfillment/` | now | Required for SaaS offer launch. Odoo remains entitlement record of truth. |
+| Partner Center Marketplace Metering API | partner-ops | `consume-directly` (REST) | platform | `platform/partner-center/metering/` | now | Idempotent usage events, 24h submission window. Reconciled to Microsoft invoice. |
+| Partner Center Referrals / Co-sell API | partner-ops | `do-not-adopt` (defer) | platform | none | defer_until_listing_live | Not actionable until SaaS offer is live. |
 | **IPAI infra composition** | infra | own-directly | infra/platform | `infra/azure/` | now | Own |
 | **IPAI Azure SSOT** | cross-cutting | own-directly | architecture/platform | `ssot/azure/` | now | Own |
 | **IPAI Pulser tools/policies** | agent | own-directly | agent-platform | `agent-platform/` | now | Own |
@@ -157,13 +167,11 @@ Fork only if **Pulser Release Ops** becomes a productized internal service per P
    - `googleworkspace/add-ons-samples`
    - `googleworkspace/google-chat-samples`
    - `googleworkspace/python-samples`
-   - `OfficeDev/Microsoft-365-Copilot-Samples`
-   - `microsoft/Dynamics-365-Copilot-Samples`
-   - `microsoft/Power-Platform-Samples`
-   - `microsoft/CopilotStudioSamples`
    - Selected OCA modules (Finance, Reporting, Tools, UX)
-   - Foundry solution templates / Release Manager Assistant
+   - `microsoft-foundry/foundry-samples`, `foundry-agent-webapp`, `mcp-foundry` (split from former wildcard)
+   - `Azure-Samples/release-manager-assistant` (adapt patterns; fork only when Pulser Release Ops productizes)
    - `microsoft/azure-pipelines-yaml`
+   - `microsoft/dev-proxy` (chaos/rate-limit testing)
 3. **Own directly:**
    - `infra/azure/` (AVM composition)
    - `ssot/azure/` (BOM, naming, tags, desired end state)
@@ -219,3 +227,4 @@ Fork only if **Pulser Release Ops** becomes a productized internal service per P
 ## Changelog
 
 - **2026-04-14** Initial canonical register. 8 consume-directly + 33 clone-reference + 2 fork-later + 3 do-not-adopt + 6 own-directly.
+- **2026-04-14 (reconciliation)** Removed 8 phantom Copilot-sample rows (OfficeDev/M365, Dynamics-365, Power-Platform, CopilotStudio, Security-Copilot, Fabric-Copilot, azure-copilot-samples, github/awesome-copilot) — not in canonical YAML, overlap M365 Agents SDK + Foundry, Copilot Studio is declarative-tier (Pulser is custom-engine). Added §F.2 reconciled upstreams: split `microsoft-foundry/*` wildcard into 4 named entries + RMA; reconciled Azure MCP Server, `azd`, dev-proxy, Azure Python SDK pin manifest, `microsoft/unified-data-foundation` (P0, Fabric trial time-sensitive), Partner Center SaaS Fulfillment v2 + Metering API. Net counts: 15 consume-directly + ~35 clone-reference + 0 fork-later + 10 do-not-adopt + 6 own-directly.
