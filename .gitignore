@@ -232,7 +232,6 @@ docs/incidents/*
 # ---- Large/derived artifacts (indexer-noise reduction) ----
 # These bloat semantic search indexes with low-value content
 **/.turbo/
-**/.vercel/
 **/coverage/
 **/.nyc_output/
 **/storybook-static/
@@ -315,7 +314,6 @@ docs/supabase/machine_integrations_detected.json
 # SSOT inventory snapshots (large, generated — CI artifacts only)
 ssot/github/*.snapshot.json
 ssot/github/repo-details/
-ssot/vercel/*.snapshot.json
 ssot/databricks/*.snapshot.json
 ssot/supabase/*.snapshot.json
 ssot/evidence/snapshot-manifest.json
