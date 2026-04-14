@@ -339,45 +339,61 @@ Authoritative rule:
 - **GitHub Issues** is the engineering execution backlog.
 - See `ssot/governance/platform-authority-split.yaml`, `ssot/governance/ci-cd-authority-matrix.yaml`, and `ssot/governance/repo-delivery-disposition.yaml`.
 
-### Engineering & Delivery Authority (Option C)
+### Engineering & Delivery Authority (REVISED 2026-04-14)
 
-Authoritative rule:
-- **GitHub Actions** remains the default CI authority and the deploy authority for docs/web properties.
-- **Azure DevOps** remains the deploy authority for Odoo, Databricks, and infra lanes requiring environment/service-connection gating.
-- **Azure Boards** is the portfolio/planning system of record.
-- **GitHub Issues** is the engineering execution backlog.
-- See `ssot/governance/platform-authority-split.yaml`, `ssot/governance/ci-cd-authority-matrix.yaml`, and `ssot/governance/repo-delivery-disposition.yaml`.
+**Azure Pipelines is the sole CI/CD authority. GitHub Actions and Vercel are FORBIDDEN.**
+
+| System | Role | Status |
+|---|---|---|
+| **Azure Pipelines** | Sole CI + deploy authority for ALL lanes (Odoo, Databricks, infra, docs, web, agents, tests) | ✅ Canonical |
+| **Azure DevOps Boards** | Portfolio/planning system of record | ✅ Canonical |
+| **GitHub** | Source control + PRs + Issues (engineering execution backlog) only | ✅ Source control only |
+| **GitHub Actions** | **FORBIDDEN** — all workflows removed 2026-04-14 | ❌ REMOVED |
+| **Vercel** | **FORBIDDEN** — deprecated 2026-04-07, fully removed | ❌ REMOVED |
+
+**Rules:**
+1. Do NOT create files under `.github/workflows/`. The directory is reserved for non-CI GitHub config only (templates, CODEOWNERS, dependabot).
+2. ALL CI (lint, test, spec-bundle-validate, plugin-validate, CodeQL-equivalent) runs in Azure Pipelines under `azure-pipelines/` or `.azuredevops/`.
+3. ALL deploys (Odoo containers, Databricks bundles, ACA apps, Bicep infra, docs sites) run in Azure Pipelines with environment/service-connection gating.
+4. No `vercel.json`, no Vercel preview checks, no `@vercel/*` dependencies.
+5. Branch protection on `main` requires Azure Pipelines success only — GitHub Actions contexts must be removed from required checks.
+
+**Migration evidence (2026-04-14):**
+- Deleted `.github/workflows/*.yml` (12 files) including claude-headless-pr-review, claude-headless-spec-check, deploy-erp-canonical, deploy-m365-bot-proxy, devcontainer-ci, foundry-name-guard, odoo-pr-preview, platform-restoration, post-deploy-smoke, spec-bundle-validate, validate-plugins
+- Replacement Azure Pipelines: existing `azure-pipelines/*.yml` (26 files) + new pipelines for PR preview, spec-bundle-validate, foundry-name-guard, plugin-validate
 
 ### Agentic Workflow Security Doctrine (added 2026-04-14)
 
-Per Microsoft's GitHub Agentic Workflows architecture (Apr 2026) + DevBlogs Agentic Platform Engineering, ALL Pulser mutating agents must adopt the **3-tier defense pattern**:
+Per Microsoft's GitHub Agentic Workflows architecture paper + DevBlogs Agentic Platform Engineering, ALL Pulser mutating agents must adopt the **3-tier defense pattern** — implemented on **Azure Pipelines + ACA**, not GitHub Actions.
 
-| Tier | Responsibility | IPAI implementation |
+| Tier | Responsibility | IPAI implementation (Azure-native) |
 |---|---|---|
-| **Substrate** | OS/container isolation per agent invocation | ACA dedicated container, read-only host fs, tmpfs overlay, chroot/userns |
-| **Configuration** | Declarative policy (allowlists, firewall, zero-secret) | Per-agent manifest, MCP allowlist, API proxy holds creds (agent ZERO direct access) |
-| **Planning** | Runtime execution control + Safe Outputs | 3-stage vetting: filter ops → moderate content → remove secrets; rate limit per stage |
+| **Substrate** | OS/container isolation per agent invocation | ACA dedicated container (NOT GitHub Actions runner), read-only host fs, tmpfs overlay, chroot/userns |
+| **Configuration** | Declarative policy (allowlists, firewall, zero-secret) | Per-agent manifest in repo, MCP allowlist, Azure Key Vault holds creds (agent ZERO direct access) |
+| **Planning** | Runtime execution control + Safe Outputs | 3-stage vetting via Pulser middleware: filter ops → moderate content → remove secrets; rate limit per stage |
 
 **Core rules:**
-- **Zero-secret agents:** Pulser agents NEVER hold credentials directly; API proxy + MCP gateway own auth.
+- **Zero-secret agents:** Pulser agents NEVER hold credentials directly; API proxy (ACA app) + Key Vault own auth.
 - **Allowlisted MCPs only:** No dynamic tool acquisition. Each agent's MCP set declared in manifest.
 - **Safe Outputs subsystem mandatory** for every mutating tool (filter / moderate / sanitize + rate-limit).
 - **Microsoft Content Safety** integration for prompt-injection + bias detection.
-- **Audit traceability** (who-acted-when + before/after diff + replay) per `#623`.
+- **Audit traceability** (who-acted-when + before/after diff + replay) per ADO Issue `#623`.
 
 **GitHub Copilot Coding Agent positioning:**
-- Routine code-gen (boilerplate, tests, docs, parity-record population) → **Coding Agent** (autonomous PRs, label-triggered)
-- Architecture / SSOT / multi-step / cross-doctrine work → **Claude Code** (per session execution)
-- Both consume same `.mcp.json` shared MCP servers
-- Both honor CLAUDE.md doctrine
+- Routine code-gen (boilerplate, tests, docs, parity-record population) → **Coding Agent** generates PRs from Issues.
+- Architecture / SSOT / multi-step / cross-doctrine work → **Claude Code** (per session execution).
+- Coding Agent PRs are **validated by Azure Pipelines** (not GitHub Actions) before merge.
+- Both consume same `.mcp.json` shared MCP servers.
+- Both honor CLAUDE.md doctrine.
 
-**Anti-Azure-bias rebalancing:** ADO Pipelines remains correct for Odoo/Databricks/infra deploy lanes. GitHub Actions + Coding Agent + 3-tier defense is canonical for agent runtime + source control + routine code-gen. Do NOT move infra Bicep deploys to GitHub Actions just because of agent shift.
+**No-GitHub-Actions clarification:** Adopting the GitHub Agentic Workflows *security pattern* (3-tier defense, Safe Outputs, zero-secret agents) does NOT mean adopting GitHub Actions as runtime. The pattern is implemented on Azure Pipelines + ACA. GitHub's blog is the architecture reference; the implementation is Azure-native.
 
 **Anchors:**
-- ADO Issues: #341/#628 (3-tier defense), #240/#629 (Coding Agent), #524/#630 (Safe Outputs)
-- GitHub blog: agentic-workflows-security-architecture
-- Microsoft DevBlogs: agentic-platform-engineering-with-github-copilot
+- ADO Issues: #341/#628 (3-tier defense on ACA), #240/#629 (Coding Agent → Azure Pipelines validation), #524/#630 (Safe Outputs on Pulser middleware)
+- GitHub blog (pattern reference only): agentic-workflows-security-architecture
+- Microsoft DevBlogs (pattern reference only): agentic-platform-engineering-with-github-copilot
 - `docs/research/ms-copilot-d365-m365-agents-catalog-for-ipai.md` (86-agent reference catalog)
+- `ssot/governance/platform-authority-split.yaml` (canonical authority matrix)
 
 ---
 
