@@ -1,293 +1,388 @@
 # Upstream Landing Matrix
 
-> **Purpose:** Define which upstream repos / patterns / clones land in which IPAI repo (or repo subtree). No new top-level org repos required.
->
-> **Status:** Canonical
-> **Date:** 2026-04-14
-> **Anchors:** [`docs/architecture/repo-adoption-register.md`](repo-adoption-register.md), [`ssot/governance/upstream-adoption-register.yaml`](../../ssot/governance/upstream-adoption-register.yaml), `CLAUDE.md` § Engineering Execution Doctrine
+## Status
+Proposed
+
+## Purpose
+Define where cloned, forked, consumed, and adapted upstream assets should land in the current Insightpulseai GitHub organization once adoption work is complete.
+
+This matrix is grounded in the current org structure and current delivery posture:
+- 17 active repos in the Insightpulseai org, including `odoo`, `agent-platform`, `platform`, `automations`, `infra`, `.github`, `docs`, `data-intelligence`, `web`, and `agents`.
+- Wave-01 delivery remains staged across R1–R4, with first customer-usable Finance slice targeted for **2026-07-14** and GA / partner-shippable target for **2026-12-15**.
+- Azure BOM for the scoped sponsorship snapshot currently validates to **24 total resources**, with remaining reconciliation needed for one missing Action Group and one extra managed certificate.
 
 ---
 
-## 1. Per-repo landing rules
+## Core doctrine
 
-### A. `odoo` (this repo)
+1. Do not create new top-level org repos unless an ownership boundary truly requires it.
+2. Commodity capability should land in the repo that owns the plane, not in a new repo.
+3. Use upstream directly where possible.
+4. Clone as reference when harvesting patterns or docs.
+5. Fork only when a long-lived internal derivative is justified.
+6. Build only the thin IPAI-specific delta:
+   - adapters
+   - policies
+   - composition
+   - tests
+   - SSOT
+   - release governance
 
-**Land here**
-- `odoo/odoo` upstream tracking
+---
+
+## Current org target repos
+
+| Repo | Canonical role |
+|---|---|
+| `odoo` | Transaction plane: Odoo CE + OCA + thin `ipai_*` transactional adapters |
+| `agent-platform` | Agent plane runtime, orchestration, retrieval, tool wiring, operator/assistant backend |
+| `platform` | Control-plane contracts, SSOT-backed service contracts, shared metadata, integration schemas |
+| `automations` | Scheduled jobs, sync runners, batch tasks, operational runbooks |
+| `infra` | Azure-first IaC, identity, Key Vault, policy, networking, deployment patterns |
+| `.github` | Reusable workflows, CI/CD gates, policy automation, validation workflows |
+| `docs` | Architecture, strategy, governance, runbooks, evidence, marketplace and partner operations docs |
+| `data-intelligence` | Databricks/Fabric/Power BI-aligned data engineering, telemetry, reporting, semantic-serving prep |
+| `web` | Browser-facing sites and product UIs only |
+| `agents` | Agent personas, skills, judges, evals, metadata, registries, prompt contracts |
+
+---
+
+## Landing rules by repo
+
+### 1. `odoo`
+**Own here**
+- upstream `odoo/odoo` tracking
 - selected OCA repos/modules
-- thin `ipai_*` transactional adapters only
-- booking/resource modules
-- finance / project-ops parity composition
+- thin transactional `ipai_*` adapters
+- Finance parity composition
+- Project Operations parity composition
+- booking/resource modules and website-to-transaction glue
 
-**Clone/reference inputs**
+**Typical upstream inputs**
 - `odoo/odoo`
 - selected `OCA/*` repos
-- D365 Finance reference repos for parity reading only
-- Project Operations reference surfaces for workflow mapping only
+- D365 Finance functional references
+- D365 Project Operations functional references
+- Odoo industry workflow references
 
-**Do NOT land here**
+**Do not land here**
 - Partner Center automation
 - generic agent runtime
-- Marketplace publishing logic
+- Azure infra policy
+- Marketplace publishing clients
 - Google Workspace admin tooling
 
 ---
 
-### B. `agent-platform/`
-
-**Land here**
+### 2. `agent-platform`
+**Own here**
 - `microsoft/agent-framework` runtime adoption
 - Pulser orchestration layer
-- finance-agent tool wrappers
-- approval / guardrail logic
-- operator assistant surfaces
-- Partner Center / Workspace / Azure task tools for agents
+- finance-agent workflow tools
+- guarded action wrappers
+- approval and policy enforcement
+- operator/assistant backend surfaces
+- external task tools for Odoo, Partner Center, Google Workspace, Azure
 
-**Clone/reference inputs**
+**Typical upstream inputs**
 - `microsoft/agent-framework`
 - `anthropics/financial-services-plugins`
 - `Azure-Samples/get-started-with-ai-agents`
 - `Azure-Samples/openai-chat-app-entra-auth-builtin`
-- `gtzheng/Awesome-Agentic-System-Design` as architecture reference only
+- curated architecture references such as awesome-list style repos
 
-**Do NOT land here**
-- ERP parity logic
-- Odoo business-domain source-of-record code
+**Do not land here**
+- ERP source-of-record logic
+- Odoo model/business logic
+- reporting semantics
+- Azure policy/IaC
 
 ---
 
-### C. `platform/`
+### 3. `platform`
+**Own here**
+- Partner Center API contracts and schemas
+- Marketplace offer/submission models
+- shared integration schemas
+- support-request models
+- control-plane service contracts
+- machine-readable metadata and internal API boundaries
 
-**Land here**
-- control-plane contracts
-- Partner Center API client contracts
-- submission/offer schemas
-- support-ticket status models
-- shared metadata / SSOT-backed integration contracts
-
-**Clone/reference inputs**
-- Partner Center SDK/reference repos
-- Marketplace submission/API references
-- Azure Search / chat-with-your-data reference models
+**Typical upstream inputs**
+- Partner Center SDK/sample repos
+- Marketplace submission/API docs and schemas
 - Google Workspace API/client patterns
+- Azure Search / RAG control-plane patterns
 
-**Do NOT land here**
-- scheduled jobs/runners
-- infra deployment code
-- Odoo modules
+**Do not land here**
+- scheduled jobs
+- deployment IaC
+- public UIs
+- Odoo addons
 
 ---
 
-### D. `automations/` (subtree, currently `agents/workflows/`)
-
-**Land here**
-- scheduled sync jobs
-- Partner Center polling/export jobs
-- billing/report extraction jobs
+### 4. `automations`
+**Own here**
+- scheduled polling jobs
+- sync runners
 - support-ticket sync
-- operational runners and runbooks
+- billing/export pulls
+- operational scripts and runbooks
+- non-interactive background jobs
 
-**Clone/reference inputs**
+**Typical upstream inputs**
 - Azure Pipelines reference repos
 - Google Workspace CLI usage patterns
-- Partner Center Labs / operational samples
+- Partner Center Labs operational samples
+- export/download examples
 
-**Do NOT land here**
-- authoritative schemas
-- platform SSOT
-- public web apps
+**Do not land here**
+- canonical schemas
+- policy definitions
+- app backends
+- ERP logic
 
 ---
 
-### E. `infra/`
-
-**Land here**
-- Azure IaC (Bicep + AVM)
-- Key Vault / app registration / identity wiring
+### 5. `infra`
+**Own here**
+- Azure IaC
+- app registrations
+- Key Vault references
+- managed identities / service principals
 - policy assignments
 - tag enforcement
-- network / ingress / runtime deployment composition
-- Azure Pipelines deployment patterns after adaptation
+- Front Door / ACA / network / security composition
+- deployment topologies and blue/green patterns
 
-**Clone/reference inputs**
-- AVM/Bicep modules (`Azure/bicep-registry-modules`)
+**Typical upstream inputs**
+- AVM/Bicep modules
 - `Azure-Samples/azure-container-apps-blue-green-with-azure-pipelines`
 - `Azure/PSRule.Rules.Azure`
 - `Azure/PSRule-pipelines`
 
-**Do NOT land here**
-- business logic
-- Marketplace narratives
-- agent workflows themselves
+**Do not land here**
+- business workflows
+- Partner Center narratives
+- finance-agent policies
+- UI code
 
 ---
 
-### F. `.github/`
-
-**Land here**
+### 6. `.github`
+**Own here**
 - reusable workflows
-- CI gates
-- spec compliance checks
+- CI validation
 - release gates
-- partner-center validate/sync workflows
+- spec compliance
 - tag/audit drift checks
+- Partner Center validate/sync workflows
+- deployment approval jobs
 
-**Clone/reference inputs**
+**Typical upstream inputs**
 - `microsoft/azure-pipelines-yaml`
-- spec-kit CI guard patterns (deferred — see `.specify/EXTENSION_EVALUATION.md`)
-- PSRule validation stage patterns
+- spec-kit CI guard patterns
+- PSRule validation-stage patterns
+- GitHub workflow references
 
-**Do NOT land here**
-- app code
-- API client implementations
+**Do not land here**
+- product code
+- Odoo modules
+- long-lived service clients
 
 ---
 
-### G. `docs/`
-
-**Land here**
+### 7. `docs`
+**Own here**
 - adoption registers
-- reference-adaptation notes (`docs/architecture/reference-adaptations/`)
-- Marketplace runbooks (`docs/marketplace/`)
-- ISV Success artifacts
-- Partner Center ops checklist
+- reference-adaptation notes
+- Partner Center operations docs
+- ISV Success briefs
+- Marketplace runbooks
 - delivery plans
-- benchmark/parity documentation
+- benchmark/parity docs
+- evidence packs
+- architecture doctrine
+- landing matrices
 
-**Clone/reference inputs**
-- D365 docs repos (`MicrosoftDocs/dynamics-365-unified-operations-public`, `dynamics365-guidance`)
-- FastTrack assets (`microsoft/Dynamics-365-FastTrack-Implementation-Assets`)
-- MB-310 labs (`MicrosoftLearning/MB-310-Microsoft-Dynamics-365-Finance`)
+**Typical upstream inputs**
+- D365 docs repos
+- FastTrack implementation assets
+- MB-310 lab materials
 - Odoo industry pages
-- awesome-list / architecture reading repos
+- curated architecture reading lists
 
-**Do NOT land here**
+**Do not land here**
 - executable runtime logic
+- secrets
+- deployable service code
 
 ---
 
-### H. `data-intelligence/`
-
-**Land here**
-- Databricks bundle patterns
-- semantic/reporting models
-- Power BI / Fabric prep
+### 8. `data-intelligence`
+**Own here**
+- Databricks bundle adaptations
+- Power BI semantic prep
 - finance telemetry interpretation
 - reporting extracts
+- governed datasets and models
 
-**Clone/reference inputs**
+**Typical upstream inputs**
 - `databricks/bundle-examples`
 - `microsoft/ISM-Telemetry-for-Finance-and-Operations`
 
----
-
-### I. `web/` (optional, currently `apps/`)
-
-**Land here only if needed**
-- public-facing marketing/demo/operator web surfaces
-- not the core Partner Center automation path
+**Do not land here**
+- transactional logic
+- Marketplace publishing workflows
+- generic agent runtime
 
 ---
 
-## 2. Fork / clone / consume rule (canonical)
+### 9. `web`
+**Own here**
+- public sites
+- docs sites
+- browser-facing product apps
+- operator UIs only when they are truly web surfaces
 
-### Consume directly
-- `microsoft/agent-framework`
-- AVM/Bicep modules (`Azure/bicep-registry-modules`)
-- Playwright (`microsoft/playwright`)
-- Google Workspace CLI (`googleworkspace/cli`)
-- Azure DevOps MCP (`microsoft/azure-devops-mcp`)
-- PSRule packages (`Azure/PSRule.Rules.Azure`, `Azure/PSRule-pipelines`)
+**Typical upstream inputs**
+- web UI examples
+- authenticated chat/admin app references
 
-### Clone as reference
-- Azure Samples (`Azure-Samples/*`)
-- Partner Center SDK/sample repos
-- OCA repos (selected modules only)
-- D365 docs / labs / FastTrack assets
-- Anthropic finance plugin repo
-- awesome-list architecture repos
-
-### Fork later only if
-- you need a **durable internal derivative**
-- upstream cannot carry the behavior
-- thin wrappers are no longer enough
-
-### Build yourselves
-Only the thin delta:
-- Pulser tools/policies
-- Odoo adapters (`addons/ipai/*`)
-- Marketplace/operator glue
-- delivery gates
-- SSOT
-- tests
+**Do not land here**
+- core Partner Center automation contracts
+- infra logic
+- scheduled jobs
 
 ---
 
-## 3. Minimal org-level landing map
+### 10. `agents`
+**Own here**
+- personas
+- skills
+- judges
+- evals
+- metadata
+- prompt contracts
+- registries
+
+**Typical upstream inputs**
+- finance plugin packaging ideas
+- skill decomposition patterns
+- command naming patterns
+
+**Do not land here**
+- runtime orchestration engine
+- API clients
+- deployment logic
+
+---
+
+## Upstream-to-repo landing matrix
+
+| Upstream / source type | Mode | Canonical landing repo | Secondary repo(s) | Notes |
+|---|---|---|---|---|
+| `odoo/odoo` | consume-directly / upstream tracking | `odoo` | `docs` | Track upstream; do not maintain a divergence-heavy fork |
+| Selected `OCA/*` repos | clone-reference / selective vendor | `odoo` | `docs` | Pull only justified modules/repos |
+| `microsoft/agent-framework` | consume-directly | `agent-platform` | `docs`, `.github` | Canonical agent runtime substrate |
+| `anthropics/financial-services-plugins` | clone-reference | `agent-platform` | `agents`, `docs` | Harvest packaging patterns only |
+| `Azure-Samples/get-started-with-ai-agents` | clone-reference | `agent-platform` | `docs` | Reference for agent bootstrap and grounding patterns |
+| `Azure-Samples/openai-chat-app-entra-auth-builtin` | clone-reference | `agent-platform` | `web`, `docs` | Internal operator/authenticated assistant patterns |
+| Partner Center SDK/sample repos | clone-reference | `platform` | `automations`, `docs` | Contracts first, jobs second |
+| Google Workspace CLI / tooling | consume-directly | `automations` | `platform`, `docs` | Use as tooling/dependency, not fork |
+| AVM/Bicep modules | consume-directly | `infra` | `.github`, `docs` | Composition-owned, modules not forked |
+| Azure Pipelines reference repos | clone-reference | `infra` | `.github`, `automations`, `docs` | Deployment patterns and CI/CD examples |
+| PSRule repos | consume-directly | `infra` | `.github` | Policy validation and pipeline enforcement |
+| D365 Finance docs / FastTrack / MB-310 | clone-reference | `docs` | `odoo`, `data-intelligence` | Functional parity authority and UAT references |
+| Project Operations references | clone-reference | `docs` | `odoo` | Services-ERP workflow mapping only |
+| Databricks bundle examples | clone-reference | `data-intelligence` | `infra`, `.github` | Data-deploy patterns only |
+| Finance telemetry references | clone-reference | `data-intelligence` | `docs` | KQL/reporting/observability patterns |
+| Odoo industry pages | reference-only | `docs` | `odoo`, `web` | Workflow and packaging reference only |
+| Awesome-list / research repos | clone-reference / bookmark-reference | `docs` | `agent-platform` | Reading and comparison only |
+
+---
+
+## What should not create new repos
+
+The following should land inside existing repos, not as new top-level org repos:
+- Partner Center automation
+- Marketplace offer tooling
+- Azure policy/tagging enforcement
+- Pulser orchestration runtime
+- D365 parity references
+- Google Workspace integration glue
+- delivery/release governance
+- Odoo booking adaptation
+- finance-agent tool wrappers
+
+---
+
+## Shipping posture
+
+### Current honest state
+Use this statement externally and internally:
 
 ```text
-odoo               <- Odoo core/OCA composition + thin transactional adapters
-agent-platform/    <- agent runtime substrate + Pulser orchestration/tools
-platform/          <- control-plane contracts + Partner Center/API schemas
-automations/       <- scheduled jobs/runners/syncs (currently agents/workflows/)
-infra/             <- Azure IaC/policy/identity/deploy patterns
-.github/           <- reusable workflows/gates/validation
-docs/              <- runbooks/adoption registers/reference adaptations/evidence
-data-intelligence/ <- BI/semantic/reporting/telemetry patterns
-web/               <- only UI surfaces, not core automation (optional)
+Azure substrate: YES
+Functional F&O-equivalent OS: NOT YET
+Go-live-ready: NOT YET
 ```
 
-**No new top-level repos required.** This is a monorepo subtree allocation.
+This remains the correct canonical status statement.
 
----
-
-## 4. Shipping status (canonical, repeat verbatim)
-
-```text
-Azure substrate:                     YES
-Functional F&O-equivalent OS:        NOT YET
-Go-live-ready:                       NOT YET
-```
-
-### Already live
+### What is already live
 - Odoo 18 CE on Azure Container Apps
-- Front Door + WAF + custom domain (`afd-ipai-dev`)
+- Front Door + WAF + custom domain
 - Pulser Odoo Copilot
 - PrismaLab gateway
 - Zoho mail integration
-- Spec Kit pinned (`v0.6.2`) and active
+- Spec Kit pinned and active
 
-### Infrastructure validation (2026-04-14)
-- 24 total BOM resources (count-matched via `az resource list`)
-- Subscription-level canonical tags applied (15/15)
-- BOM reconciliation: Action Group missing (gap to close R2), Managed Cert reconciled
+### Validated infrastructure status
+- current scoped Azure BOM total validates at **24 resources**
+- subscription-level canonical tags are cleaned and corrected
+- resource-level enforcement and one BOM reconciliation pass are still pending
 
-### Delivery timeline (board-aligned to ADO iterations R1–R4)
-| Milestone | Date | Iteration |
+### Delivery milestones
+
+| Milestone | Target | Meaning |
 |---|---|---|
-| Internal / live platform | **Now** | — |
-| First customer-usable Wave-01 slice (GL + AP + AR + Reconciliation Agent v0 + basic PO) | **2026-07-14** | R2-Core-Execution-60d |
-| PH BIR / hardening milestone | **2026-10-14** | R3-PH-Ops-Hardening-90d |
-| GA / partner-shippable | **2026-12-15** | R4-GA |
+| Internal/live platform | now | substrate and internal surfaces available |
+| First customer-usable Wave-01 slice | 2026-07-14 | GL + AP + AR + Finance Reconciliation Agent v0 + basic Project Ops target |
+| PH BIR / hardening milestone | 2026-10-14 | production hardening + BIR pack + solution kit milestone |
+| GA / partner-shippable | 2026-12-15 | 80% parity target, Wave-01 epics closed, partner-ready state |
+
+Source basis for these dates is the current R1–R4 cadence and delivery framing already recorded on the active branch.
 
 ---
 
-## 5. Practical percentage-style read (program-level)
+## Practical ship-readiness read
 
-| Layer | % There | What's missing |
-|---|---|---|
-| **Platform / infrastructure** | **~75–85%** | Resource-level tag policy enforcement, AVM migration of 21 hand-written Bicep modules, Action Group provisioning |
-| **Product parity** | **~25–40%** | Wave-01 functional implementation (Odoo modules + thin `ipai_*` adapters) — doctrine/SSOT/backlog/specs are strong but execution ahead |
-| **Ship readiness for paying customers** | **Not ready for GA**; **ready for controlled internal/demo use now**; **first usable customer slice target = R2 (July 2026)** | Wave-01 epics #523/#524/#525 implementation |
+### Platform / infrastructure
+Approximately **75–85%** complete:
+- live substrate exists
+- tagging baseline cleaned
+- BOM total validated
+- policy/resource-level enforcement still incomplete
+
+### Product parity
+Approximately **25–40%** complete:
+- doctrine, backlog, SSOT, spec bundles, benchmark references are strong
+- actual Wave-01 business implementation still remains
+
+### Commercial ship readiness
+- ready for internal/demo use now
+- not ready for GA now
+- first real customer-usable slice targeted for R2
+- partner-shippable target remains December 2026
 
 ---
 
-## 6. Bottom line
+## Final rule
 
-- **No new top-level org repos required.** Existing subtrees absorb all clone/fork/adapt outputs.
-- **Platform is live.** Product parity is in execution.
-- **First real customer-usable slice = July 2026.**
-- **Partner-shippable target = December 2026.**
+The current org already has the right top-level repositories.
+The work now is to land upstream-derived assets into the correct existing repos, not to create new top-level homes for each capability.
 
 ---
 
