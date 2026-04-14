@@ -348,6 +348,37 @@ Authoritative rule:
 - **GitHub Issues** is the engineering execution backlog.
 - See `ssot/governance/platform-authority-split.yaml`, `ssot/governance/ci-cd-authority-matrix.yaml`, and `ssot/governance/repo-delivery-disposition.yaml`.
 
+### Agentic Workflow Security Doctrine (added 2026-04-14)
+
+Per Microsoft's GitHub Agentic Workflows architecture (Apr 2026) + DevBlogs Agentic Platform Engineering, ALL Pulser mutating agents must adopt the **3-tier defense pattern**:
+
+| Tier | Responsibility | IPAI implementation |
+|---|---|---|
+| **Substrate** | OS/container isolation per agent invocation | ACA dedicated container, read-only host fs, tmpfs overlay, chroot/userns |
+| **Configuration** | Declarative policy (allowlists, firewall, zero-secret) | Per-agent manifest, MCP allowlist, API proxy holds creds (agent ZERO direct access) |
+| **Planning** | Runtime execution control + Safe Outputs | 3-stage vetting: filter ops → moderate content → remove secrets; rate limit per stage |
+
+**Core rules:**
+- **Zero-secret agents:** Pulser agents NEVER hold credentials directly; API proxy + MCP gateway own auth.
+- **Allowlisted MCPs only:** No dynamic tool acquisition. Each agent's MCP set declared in manifest.
+- **Safe Outputs subsystem mandatory** for every mutating tool (filter / moderate / sanitize + rate-limit).
+- **Microsoft Content Safety** integration for prompt-injection + bias detection.
+- **Audit traceability** (who-acted-when + before/after diff + replay) per `#623`.
+
+**GitHub Copilot Coding Agent positioning:**
+- Routine code-gen (boilerplate, tests, docs, parity-record population) → **Coding Agent** (autonomous PRs, label-triggered)
+- Architecture / SSOT / multi-step / cross-doctrine work → **Claude Code** (per session execution)
+- Both consume same `.mcp.json` shared MCP servers
+- Both honor CLAUDE.md doctrine
+
+**Anti-Azure-bias rebalancing:** ADO Pipelines remains correct for Odoo/Databricks/infra deploy lanes. GitHub Actions + Coding Agent + 3-tier defense is canonical for agent runtime + source control + routine code-gen. Do NOT move infra Bicep deploys to GitHub Actions just because of agent shift.
+
+**Anchors:**
+- ADO Issues: #341/#628 (3-tier defense), #240/#629 (Coding Agent), #524/#630 (Safe Outputs)
+- GitHub blog: agentic-workflows-security-architecture
+- Microsoft DevBlogs: agentic-platform-engineering-with-github-copilot
+- `docs/research/ms-copilot-d365-m365-agents-catalog-for-ipai.md` (86-agent reference catalog)
+
 ---
 
 ## Deep Reference
