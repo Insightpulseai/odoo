@@ -78,12 +78,22 @@ repos:
     rationale: "Run upstream in dev/sandbox first. Wrapper only when production-grade controls are required."
 
   - upstream: microsoft/agent-framework
-    purpose: "Microsoft canonical agent orchestration runtime (Python + .NET)"
+    purpose: "Canonical agent-plane runtime for Pulser orchestration, multi-agent workflows, checkpointing, HITL, and observability (Python + .NET)"
     adopt_mode: consume_directly
     internal_owner: agent-platform
     internal_destination: "Dependency in agent repos (agent-platform/, agents/)"
     do_when: now
-    rationale: "Agent orchestration runtime. IPAI owns Pulser tools/policies/prompts/adapters; never re-implements the framework."
+    rationale: |
+      Agent-plane runtime substrate. Provides graph workflows, checkpointing,
+      HITL, time-travel, OTel observability, middleware, multi-model providers
+      (Anthropic, OpenAI, Foundry). Migration paths from Semantic Kernel and
+      AutoGen documented upstream. IPAI owns ONLY the Pulser-specific delta:
+      tool adapters, approval/guardrail logic, Odoo action wrappers, Partner
+      Center / Google Workspace / Azure task wrappers, telemetry conventions.
+      Do NOT fork. Do NOT embed business-domain or ERP-parity logic in the
+      framework — that stays in Odoo + OCA + thin ipai_*. Keep GitHub as
+      source-control truth and Azure DevOps as planning/delivery integration
+      surface (Azure Boards GitHub app + Azure Pipelines GitHub app).
 
   - upstream: microsoft-foundry/* (AI templates incl. Release Manager Assistant)
     purpose: "Microsoft Foundry azd-style AI templates (release mgmt, data unification, etc.)"

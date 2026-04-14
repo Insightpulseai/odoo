@@ -46,7 +46,7 @@ own-directly      = build and maintain in Insightpulseai because it is your SSOT
 | `Azure-Samples/Azure-PostgreSQL-Resiliency-Architecture` | infra/data | clone-reference | platform/data | `docs/architecture/` | now | Use for HA/DR decisions |
 | `Azure-Samples/azure-postgres-pgvector-python` | data/agent | clone-reference | agent/data platform | `data-intelligence/experiments/` | later | Use for vector-sidecar patterns |
 | `Azure-Samples/azure-postgresql-mcp` | agent/data | fork-later | agent-platform | `agent-platform/tools/postgresql-mcp/` | later | Reference now; fork only if controls needed |
-| `microsoft/agent-framework` | agent | consume-directly | agent-platform | dependency in `agent-platform/` | now | Canonical orchestration runtime |
+| `microsoft/agent-framework` | agent | `consume-directly` | agent-platform | dependency in `agent-platform/` | now | Canonical agent-plane runtime for Pulser orchestration, multi-agent workflows, checkpointing, HITL, and observability. Keep GitHub as source-control truth and Azure DevOps as planning/delivery integration surface; do not fork or embed business-domain logic in the framework. |
 | Foundry AI templates / RMA | agent/delivery | clone-reference | delivery + agent | `docs/architecture/reference-adaptations/` | now | Adapt patterns, not productize |
 | `microsoft/azure-devops-mcp` | delivery | consume-directly | delivery/platform | agent/editor config | now | Use upstream MCP directly |
 | `microsoft/azure-pipelines-yaml` | delivery | clone-reference | delivery/platform | `azure-pipelines/` or docs | now | Copy only useful templates |
