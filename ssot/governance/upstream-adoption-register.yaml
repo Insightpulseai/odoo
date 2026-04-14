@@ -190,6 +190,40 @@ repos:
     do_when: now
     rationale: "Adapt PACKAGING patterns only (plugin structure, skill decomposition, slash-command naming, MCP organization, role-specific subagent boundaries). Filter OUT investment-banking / equity-research / private-equity / wealth-management vertical content — outside current-wave Finance + Finance-agents + Project-Operations scope. Fork only later if IPAI creates a durable Pulser finance plugin pack."
 
+  # ───── E.2. Partner Center automation references (added 2026-04-14) ─────
+
+  - upstream: microsoft/partner-center-sdk-for-dotNET
+    purpose: "Partner Center API shape, auth flow expectations, supported resource models (.NET reference SDK)"
+    adopt_mode: clone_as_reference
+    internal_owner: platform
+    internal_destination: "Read for contract design; mirror schemas into platform/partner-center/"
+    do_when: now
+    rationale: "Reference for API contract models — IPAI builds Python/TypeScript wrappers, not .NET. Use to validate API shape + auth model. Doctrine: Marketplace offers + Support requests are the two API-supported lanes per docs/marketplace/partner-center-automation-matrix.md."
+
+  - upstream: microsoft/Partner-Center-Labs
+    purpose: "Reference samples for customer/accounts/orders/subscriptions/support scenarios"
+    adopt_mode: clone_as_reference
+    internal_owner: platform
+    internal_destination: "Reference into docs/marketplace/ + platform/partner-center/"
+    do_when: now
+    rationale: "Sample-driven understanding of CSP/customer/order workflows. Use for support + billing reference patterns. Filter OUT customer/order automation unless IPAI moves to CSP motion (currently ISV)."
+
+  - upstream: microsoft/Partner-Center-Storefront
+    purpose: "Customer-facing resale/storefront pattern (CSP-style)"
+    adopt_mode: clone_as_reference
+    internal_owner: platform
+    internal_destination: "docs/marketplace/reference-adaptations/ (later only)"
+    do_when: later
+    rationale: "Not first-wave core for ISV/Marketplace lane. Bookmark only; revisit if IPAI moves to resale motion."
+
+  - upstream: microsoft/Partner-Center-PowerShell
+    purpose: "Community-maintained PowerShell wrapper around Partner Center APIs"
+    adopt_mode: clone_as_reference
+    internal_owner: platform
+    internal_destination: "Tooling/reference only — never as production substrate"
+    do_when: now
+    rationale: "Useful as a tooling/reference surface for ad-hoc operator queries. Per memory reference_partner_center_auth.md: MFA enforcement live 2026-04-01, IPAI = ISV (not CSP/CPV) → app-only + certificate auth. PowerShell wrapper does not replace canonical Python/TypeScript clients in platform/partner-center/. Do NOT make it a production dependency."
+
   # ───── F. Odoo + OCA (added 2026-04-14) ─────
 
   - upstream: odoo/odoo
