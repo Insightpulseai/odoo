@@ -200,6 +200,21 @@ repos:
     do_when: now
     rationale: "Adapt PACKAGING patterns only (plugin structure, skill decomposition, slash-command naming, MCP organization, role-specific subagent boundaries). Filter OUT investment-banking / equity-research / private-equity / wealth-management vertical content — outside current-wave Finance + Finance-agents + Project-Operations scope. Fork only later if IPAI creates a durable Pulser finance plugin pack."
 
+  - upstream: gtzheng/Awesome-Agentic-System-Design
+    purpose: "Curated awesome-list reading/index repo for agent-system design, evaluation, safety, real-world applications, and framework comparison"
+    adopt_mode: clone_as_reference
+    internal_owner: agent-platform + docs
+    internal_destination: "docs/architecture/reference-adaptations/ (reading index only)"
+    do_when: now
+    rationale: |
+      Survey/index repo, NOT an execution framework. Covers AutoGen, Claude
+      Agent SDK, CrewAI, Google ADK, LangGraph, Microsoft Agent Framework,
+      M365 Agents SDK, OpenAI Agents SDK, Pydantic AI, SmolAgents, AWS
+      Strands. Use as a curated map for agent-plane research and framework
+      comparison against canonical microsoft/agent-framework substrate.
+      DO NOT: fork, treat as runtime dependency, scaffold from, or let
+      its framework breadth dilute the agent-platform substrate decision.
+
   # ───── E.2. Partner Center automation references (added 2026-04-14) ─────
 
   - upstream: microsoft/partner-center-sdk-for-dotNET
