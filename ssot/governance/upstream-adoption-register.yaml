@@ -130,6 +130,156 @@ repos:
     do_when: now
     rationale: "Aligned with AI-led SDLC reference (Playwright MCP). IPAI owns suites, page objects, fixtures, reporting."
 
+  # ───── E. AI samples / RAG / agent surfaces (added 2026-04-14) ─────
+
+  - upstream: Azure-Samples/azure-search-openai-demo
+    purpose: "RAG chat sample with Azure AI Search + Azure OpenAI, citations, monitoring, deploy scaffolding"
+    adopt_mode: clone_as_reference
+    internal_owner: agent-platform
+    internal_destination: "docs/architecture/reference-adaptations/"
+    do_when: now
+    rationale: "Shared knowledge assistant patterns for InsightPulseAI + PrismaLab + cross-site retrieval."
+
+  - upstream: Azure-Samples/chat-with-your-data-solution-accelerator
+    purpose: "Richer RAG sibling: ingestion + multiple orchestration choices + upload flows + Teams extension"
+    adopt_mode: clone_as_reference
+    internal_owner: agent-platform
+    internal_destination: "docs/architecture/reference-adaptations/"
+    do_when: now
+    rationale: "Document ingestion + 'chat with your own data' product architecture for assistant admin/control app."
+
+  - upstream: Azure-Samples/get-started-with-ai-agents
+    purpose: "Foundry-native starter for deploying AI agents (file-search grounding + monitoring/tracing)"
+    adopt_mode: clone_as_reference
+    internal_owner: agent-platform
+    internal_destination: "agent-platform/experiments/ or docs/architecture/reference-adaptations/"
+    do_when: now
+    rationale: "Cleanest Foundry-first agent service shape for Pulser agent plane bootstrap."
+
+  - upstream: Azure-Samples/openai-chat-app-entra-auth-builtin
+    purpose: "Authenticated internal chat on ACA with built-in Entra auth + AOAI + azd deploy"
+    adopt_mode: clone_as_reference
+    internal_owner: agent-platform
+    internal_destination: "agent-platform/experiments/ or docs/architecture/reference-adaptations/"
+    do_when: now
+    rationale: "Internal/staff-only assistant console + Entra auth pattern. Distinct from public-site assistant surfaces."
+
+  - upstream: Azure-Samples/postgres-agentic-shop
+    purpose: "Multi-agent retail experience on Azure PostgreSQL (memory + personalization)"
+    adopt_mode: clone_as_reference
+    internal_owner: agent-platform
+    internal_destination: "agent-platform/experiments/ (later)"
+    do_when: later
+    rationale: "Future customer-facing assistant patterns; multi-agent memory. NOT current-wave."
+
+  # ───── F. Odoo + OCA (added 2026-04-14) ─────
+
+  - upstream: odoo/odoo
+    purpose: "Canonical Odoo transactional core (CE)"
+    adopt_mode: clone_as_reference
+    internal_owner: odoo-platform
+    internal_destination: "Upstream remote / pinned source; never long-lived business fork by default"
+    do_when: now
+    rationale: "Includes account, analytic, project, project_account, sale_project, sale_timesheet, hr_timesheet, microsoft_outlook, cloud_storage_azure, l10n_ph. Track upstream; do NOT fork."
+
+  - upstream: OCA/account-financial-reporting
+    purpose: "Finance reporting parity (OCA Must Have)"
+    adopt_mode: clone_as_reference
+    internal_owner: finance-platform
+    internal_destination: "addons/oca/ (selected modules only)"
+    do_when: now
+    rationale: "Per OCA Must Have accounting list; pinned per parity_matrix.yaml Finance.Reporting row."
+
+  - upstream: OCA/account-financial-tools
+    purpose: "Core finance operational gaps (OCA Must Have)"
+    adopt_mode: clone_as_reference
+    internal_owner: finance-platform
+    internal_destination: "addons/oca/ (selected modules only)"
+    do_when: now
+    rationale: "account_journal_lock_date, account_lock_date_update, account_usability per OCA Must Have."
+
+  - upstream: OCA/account-reconcile
+    purpose: "Reconciliation parity (OCA Must Have)"
+    adopt_mode: clone_as_reference
+    internal_owner: finance-platform
+    internal_destination: "addons/oca/ (selected modules only)"
+    do_when: now
+    rationale: "account_reconcile_oca, account_reconcile_model_oca; pairs with ipai_bank_recon."
+
+  - upstream: OCA/mis-builder
+    purpose: "Finance reporting / budgeting patterns (OCA Must Have)"
+    adopt_mode: clone_as_reference
+    internal_owner: finance-platform
+    internal_destination: "addons/oca/"
+    do_when: now
+    rationale: "Per parity_matrix.yaml Finance.Budgeting + Finance.Reporting rows."
+
+  - upstream: OCA/account-analytic
+    purpose: "Analytic policy support (OCA Must Have)"
+    adopt_mode: clone_as_reference
+    internal_owner: finance-platform
+    internal_destination: "addons/oca/ (account_analytic_required at minimum)"
+    do_when: now
+    rationale: "Per parity_matrix.yaml Finance.CostAccounting + Services.* rows."
+
+  - upstream: OCA/currency
+    purpose: "Currency rate update (OCA Must Have)"
+    adopt_mode: clone_as_reference
+    internal_owner: finance-platform
+    internal_destination: "addons/oca/"
+    do_when: now
+    rationale: "currency_rate_update for multi-currency posture."
+
+  - upstream: OCA/server-ux
+    purpose: "Date range + general UX helpers (OCA Must Have)"
+    adopt_mode: clone_as_reference
+    internal_owner: odoo-platform
+    internal_destination: "addons/oca/ (date_range, date_range_account)"
+    do_when: now
+    rationale: "Required by mis-builder + account-financial-reporting workflows."
+
+  - upstream: OCA/partner-contact
+    purpose: "Better partner/contact ergonomics (OCA Must Have base)"
+    adopt_mode: clone_as_reference
+    internal_owner: odoo-platform
+    internal_destination: "addons/oca/"
+    do_when: now
+    rationale: "Per OCA Must Have base list; CRM ergonomics."
+
+  - upstream: OCA/sale-workflow
+    purpose: "Sales workflow support for Project Operations (OCA Must Have sales)"
+    adopt_mode: clone_as_reference
+    internal_owner: services-platform
+    internal_destination: "addons/oca/"
+    do_when: now
+    rationale: "Per parity_matrix.yaml Services.SalesProcess + Services.Timesheets rows."
+
+  - upstream: OCA/sale-reporting
+    purpose: "Sales reporting support for Project Operations"
+    adopt_mode: clone_as_reference
+    internal_owner: services-platform
+    internal_destination: "addons/oca/"
+    do_when: now
+    rationale: "Sales analytics adjacent to Services.* rows."
+
+  # ───── G. Tooling-as-MCP surfaces (added 2026-04-14) ─────
+
+  - upstream: microsoft/playwright (MCP + CLI variants)
+    purpose: "Browser automation MCP for persistent browser control + coding-agent CLI"
+    adopt_mode: consume_directly
+    internal_owner: qa-engineering
+    internal_destination: "tests/playwright/ + agent tooling config"
+    do_when: now
+    rationale: "Per AI-led SDLC reference. MCP variant complements CLI for agent flows."
+
+  - upstream: chrome-devtools-mcp
+    purpose: "Chrome DevTools MCP for agent debugging, performance, network inspection"
+    adopt_mode: do_not_adopt
+    internal_owner: qa-engineering
+    internal_destination: "Tooling reference only — list as dependency, not codebase"
+    do_when: never_as_codebase
+    rationale: "Debugging aid, not primary E2E framework. Document as adopted tool surface."
+
 # ─── Internal repos owned directly (not forked from upstream) ───
 own_directly:
   - path: "infra/"
