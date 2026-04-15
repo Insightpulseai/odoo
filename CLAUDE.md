@@ -154,6 +154,7 @@ See `.claude/rules/security-baseline.md` for full policy (sections 2.1-2.6).
 6. **Specs Required**: Significant changes must reference a spec bundle.
 9. **Databricks Governance**: Databricks + Unity Catalog is the mandatory governed transformation, engineering, and serving plane.
 10. **MCP First**: MCP is required for all reusable agent tools (Google Cloud contract).
+10a. **A2A First**: All Pulser agents MUST publish an Agent Card at `/.well-known/agent-card.json` and implement the A2A protocol (`https://a2a-protocol.org/latest/`, `github.com/a2aproject`, Linux Foundation). A2A governs agent-to-agent interop (including client-to-agent); MCP governs agent-to-tool. Both are mandatory. Local-by-power-remotely: thin local clients (ADO extension, Odoo chatter, Teams bot, Claude Code) talk to remote-compute agents via A2A. Backing model (Foundry cloud `gpt-4.1` or Foundry Local `phi-4`) is swappable without client change. Pattern reference: Claude Code itself.
 11. **SaaS Authority**: The **Azure SaaS Workload Documentation** is the canonical design framework for the platform.
 12. **Consumption**: **Power BI** is the primary mandatory business-facing reporting surface.
 13. **Fabric Complement**: Fabric is for mirroring and OneLake integration; it never replaces Databricks engineering.
@@ -412,7 +413,6 @@ Per Microsoft's GitHub Agentic Workflows architecture paper + DevBlogs Agentic P
 | MCP Jobs system | `.claude/rules/mcp-jobs.md` |
 | n8n automations & Claude integration | `.claude/rules/automations.md` |
 | Spec kit structure & bundles | `.claude/rules/spec-kit.md` |
-| Vercel observability & Figma | `.claude/rules/vercel-observability.md` |
 | SSOT platform rules | `.claude/rules/ssot-platform.md` |
 | Architecture & stack | `docs/ai/ARCHITECTURE.md` |
 | IPAI module naming | `docs/ai/IPAI_MODULES.md` |
