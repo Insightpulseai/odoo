@@ -1,0 +1,664 @@
+// ─────────────────────────────────────────────────────────────────────────────
+// Odoo Canonical Schema — DBML (SCOPED SUBSET, NOT COMPLETE)
+// ─────────────────────────────────────────────────────────────────────────────
+// Scope:    Hand-crafted subset based on what is enumerated in:
+//           - docs/architecture/data-model-erd.md (§2.1–2.5 + §3 + §4)
+//           - docs/architecture/odata-to-odoo-mapping.md (§5 + §7)
+//           - platform/contracts/odata/v1/entitysets/*.yaml
+//
+// Coverage: ~40 tables across 3 schemas (public / ops / platform)
+//           Odoo CE 18 has ~600+ tables. This is NOT a complete dump.
+//           Generate complete DBML only after scripts/generate_odoo_dbml.py
+//           runs against a live Odoo registry.
+//
+// Status:   scoped_handcrafted — treat as reference only, not authoritative
+// DBMS:     PostgreSQL 16 (Flexible Server) — pg-ipai-odoo
+// Locked:   2026-04-15
+//
+// Field types match Odoo CE 18 source for each named model.
+// Cross-schema foreign keys documented in Ref statements at bottom.
+// ─────────────────────────────────────────────────────────────────────────────
+
+Project odoo_ipai {
+  database_type: 'PostgreSQL'
+  Note: '''
+    Single PG instance, 3 schemas.
+    Multitenant via res.company per tenant (public.*)
+    and tenant_id column (ops.*, platform.*).
+    Canonical DBs: odoo_dev | odoo_staging | odoo
+  '''
+}
+
+// ═════════════════════════════════════════════════════════════════════════════
+// SCHEMA: public — Odoo ORM (CE + OCA + ipai_*)
+// ═════════════════════════════════════════════════════════════════════════════
+
+// ── §2.1 Company / Partner / User ────────────────────────────────────────────
+
+Table res_company {
+  id integer [pk, increment]
+  name varchar [not null]
+  parent_id integer [ref: > res_company.id]
+  partner_id integer [ref: > res_partner.id, not null]
+  currency_id integer [ref: > res_currency.id]
+  country_id integer [ref: > res_country.id]
+  vat varchar
+  company_registry varchar
+  email varchar
+  phone varchar
+  website varchar
+  street varchar
+  fiscal_country_code varchar
+  chart_of_accounts varchar
+  create_date timestamp
+  write_date timestamp
+
+  Note: 'One row per tenant. Multitenant boundary for ERP surface.'
+}
+
+Table res_partner {
+  id integer [pk, increment]
+  name varchar [not null]
+  parent_id integer [ref: > res_partner.id]
+  company_id integer [ref: > res_company.id]
+  is_company boolean
+  vat varchar
+  email varchar
+  phone varchar
+  street varchar
+  street2 varchar
+  city varchar
+  zip varchar
+  country_id integer [ref: > res_country.id]
+  lang varchar
+  customer_rank integer
+  supplier_rank integer
+  create_date timestamp
+  write_date timestamp
+
+  Note: 'Contacts / accounts. CDM: Account + Contact.'
+}
+
+Table res_users {
+  id integer [pk, increment]
+  login varchar [unique, not null]
+  password varchar
+  active boolean
+  partner_id integer [ref: > res_partner.id, not null]
+  company_id integer [ref: > res_company.id, not null]
+  company_ids varchar // m2m via res_company_users_rel; denormalized here
+  share boolean
+  oauth_provider_id integer [ref: > auth_oauth_provider.id]
+  oauth_uid varchar
+  oauth_access_token varchar
+  create_date timestamp
+  write_date timestamp
+
+  Note: 'share=true means portal user; false means internal.'
+}
+
+Table res_groups {
+  id integer [pk, increment]
+  name varchar [not null]
+  category_id integer
+  comment text
+}
+
+Table res_groups_users_rel {
+  uid integer [ref: > res_users.id, not null]
+  gid integer [ref: > res_groups.id, not null]
+
+  indexes {
+    (uid, gid) [pk]
+  }
+}
+
+Table res_currency {
+  id integer [pk, increment]
+  name varchar [unique, not null] // e.g., PHP, USD
+  symbol varchar
+  rounding float
+  active boolean
+}
+
+Table res_country {
+  id integer [pk, increment]
+  name varchar [not null]
+  code varchar [unique] // ISO 3166 alpha-2
+}
+
+Table auth_oauth_provider {
+  id integer [pk, increment]
+  name varchar [not null]
+  client_id varchar
+  auth_endpoint varchar
+  scope varchar
+  validation_endpoint varchar
+  data_endpoint varchar
+  enabled boolean
+}
+
+// ── §2.2 Accounting core (GL/AP/AR) ──────────────────────────────────────────
+
+Table account_account {
+  id integer [pk, increment]
+  code varchar [not null]
+  name varchar [not null]
+  account_type varchar [not null] // income | expense | asset_* | liability_* | equity_*
+  company_id integer [ref: > res_company.id, not null]
+  currency_id integer [ref: > res_currency.id]
+  reconcile boolean
+  deprecated boolean
+
+  indexes {
+    (code, company_id) [unique]
+  }
+
+  Note: 'Chart of accounts. CDM: MainAccount (msdyn / D365 Finance).'
+}
+
+Table account_journal {
+  id integer [pk, increment]
+  name varchar [not null]
+  code varchar [not null]
+  type varchar [not null] // sale | purchase | cash | bank | general
+  company_id integer [ref: > res_company.id, not null]
+  default_account_id integer [ref: > account_account.id]
+  currency_id integer [ref: > res_currency.id]
+  active boolean
+
+  indexes {
+    (code, company_id) [unique]
+  }
+}
+
+Table account_move {
+  id integer [pk, increment]
+  name varchar [not null]
+  date date [not null]
+  state varchar [not null] // draft | posted | cancel
+  move_type varchar [not null] // out_invoice | in_invoice | entry | etc.
+  journal_id integer [ref: > account_journal.id, not null]
+  company_id integer [ref: > res_company.id, not null]
+  partner_id integer [ref: > res_partner.id]
+  currency_id integer [ref: > res_currency.id]
+  amount_untaxed decimal(16,2)
+  amount_tax decimal(16,2)
+  amount_total decimal(16,2)
+  invoice_date date
+  invoice_date_due date
+  payment_state varchar
+  create_date timestamp
+  write_date timestamp
+
+  Note: 'Journal entries + invoices unified. CDM: JournalLine (header) / Invoice.'
+}
+
+Table account_move_line {
+  id integer [pk, increment]
+  move_id integer [ref: > account_move.id, not null]
+  account_id integer [ref: > account_account.id, not null]
+  partner_id integer [ref: > res_partner.id]
+  journal_id integer [ref: > account_journal.id, not null]
+  company_id integer [ref: > res_company.id, not null]
+  name varchar
+  date date
+  debit decimal(16,2)
+  credit decimal(16,2)
+  balance decimal(16,2)
+  currency_id integer [ref: > res_currency.id]
+  amount_currency decimal(16,6)
+  tax_line_id integer
+  reconciled boolean
+  analytic_account_id integer [ref: > account_analytic_account.id]
+
+  Note: 'Lines on every move. CDM: JournalLine / GeneralJournalAccountEntry.'
+}
+
+Table account_payment {
+  id integer [pk, increment]
+  name varchar
+  move_id integer [ref: > account_move.id]
+  partner_id integer [ref: > res_partner.id]
+  company_id integer [ref: > res_company.id, not null]
+  journal_id integer [ref: > account_journal.id]
+  payment_type varchar // inbound | outbound
+  amount decimal(16,2)
+  currency_id integer [ref: > res_currency.id]
+  date date
+  state varchar
+}
+
+Table account_analytic_account {
+  id integer [pk, increment]
+  name varchar [not null]
+  code varchar
+  partner_id integer [ref: > res_partner.id]
+  company_id integer [ref: > res_company.id]
+  plan_id integer
+  active boolean
+
+  Note: 'Analytic dimension for projects + cost centers.'
+}
+
+Table account_analytic_line {
+  id integer [pk, increment]
+  name varchar [not null]
+  account_id integer [ref: > account_analytic_account.id, not null]
+  partner_id integer [ref: > res_partner.id]
+  date date [not null]
+  unit_amount decimal(10,2) // hours for timesheets
+  amount decimal(16,2)
+  employee_id integer [ref: > hr_employee.id]
+  user_id integer [ref: > res_users.id]
+  project_id integer [ref: > project_project.id]
+  task_id integer [ref: > project_task.id]
+  company_id integer [ref: > res_company.id, not null]
+  create_date timestamp
+  write_date timestamp
+
+  Note: 'Timesheet lines + project actuals. Exposed as OData TimeEntries.'
+}
+
+// ── §2.3 Procure-to-Pay + Order-to-Cash ──────────────────────────────────────
+
+Table sale_order {
+  id integer [pk, increment]
+  name varchar [not null]
+  partner_id integer [ref: > res_partner.id, not null]
+  company_id integer [ref: > res_company.id, not null]
+  user_id integer [ref: > res_users.id]
+  date_order timestamp [not null]
+  state varchar [not null] // draft | sent | sale | done | cancel
+  amount_untaxed decimal(16,2)
+  amount_tax decimal(16,2)
+  amount_total decimal(16,2)
+  currency_id integer [ref: > res_currency.id]
+  project_id integer [ref: > project_project.id]
+  create_date timestamp
+  write_date timestamp
+
+  Note: 'CDM: SalesOrder + ProjectContract (when project-linked).'
+}
+
+Table sale_order_line {
+  id integer [pk, increment]
+  order_id integer [ref: > sale_order.id, not null]
+  product_id integer [ref: > product_product.id]
+  name text
+  product_uom_qty decimal(16,2)
+  price_unit decimal(16,2)
+  price_subtotal decimal(16,2)
+  price_tax decimal(16,2)
+  price_total decimal(16,2)
+  sequence integer
+}
+
+Table purchase_order {
+  id integer [pk, increment]
+  name varchar [not null]
+  partner_id integer [ref: > res_partner.id, not null]
+  company_id integer [ref: > res_company.id, not null]
+  user_id integer [ref: > res_users.id]
+  date_order timestamp [not null]
+  state varchar [not null] // draft | sent | to approve | purchase | done | cancel
+  amount_untaxed decimal(16,2)
+  amount_total decimal(16,2)
+  currency_id integer [ref: > res_currency.id]
+  create_date timestamp
+  write_date timestamp
+}
+
+Table purchase_order_line {
+  id integer [pk, increment]
+  order_id integer [ref: > purchase_order.id, not null]
+  product_id integer [ref: > product_product.id]
+  name text
+  product_qty decimal(16,2)
+  price_unit decimal(16,2)
+  price_subtotal decimal(16,2)
+}
+
+Table product_product {
+  id integer [pk, increment]
+  product_tmpl_id integer
+  default_code varchar
+  name varchar [not null]
+  type varchar // consu | service | product
+  list_price decimal(16,2)
+  standard_price decimal(16,2)
+  uom_id integer
+  company_id integer [ref: > res_company.id]
+  active boolean
+}
+
+// ── §2.4 Project + Time + Expense (PPM) ──────────────────────────────────────
+
+Table project_project {
+  id integer [pk, increment]
+  name varchar [not null]
+  partner_id integer [ref: > res_partner.id]
+  company_id integer [ref: > res_company.id, not null]
+  user_id integer [ref: > res_users.id]
+  stage_id integer [ref: > project_task_type.id]
+  date_start date
+  date date
+  active boolean
+  description text
+  analytic_account_id integer [ref: > account_analytic_account.id]
+  create_date timestamp
+  write_date timestamp
+
+  Note: 'CDM: Project (msdyn_project). OData: Projects.'
+}
+
+Table project_task {
+  id integer [pk, increment]
+  name varchar [not null]
+  project_id integer [ref: > project_project.id]
+  parent_id integer [ref: > project_task.id]
+  stage_id integer [ref: > project_task_type.id]
+  company_id integer [ref: > res_company.id, not null]
+  description text
+  date_assign timestamp
+  date_deadline date
+  date_end timestamp
+  priority varchar
+  planned_hours decimal(10,2)
+  effective_hours decimal(10,2)
+  progress decimal(5,2)
+  active boolean
+  create_date timestamp
+  write_date timestamp
+
+  Note: 'CDM: ProjectTask (msdyn_projecttask). OData: ProjectTasks.'
+}
+
+Table project_task_type {
+  id integer [pk, increment]
+  name varchar [not null]
+  sequence integer
+  fold boolean // folded = effectively closed
+
+  Note: 'Stages / kanban columns.'
+}
+
+Table project_task_user_rel {
+  task_id integer [ref: > project_task.id, not null]
+  user_id integer [ref: > res_users.id, not null]
+
+  indexes {
+    (task_id, user_id) [pk]
+  }
+
+  Note: 'Multi-assignee M2M.'
+}
+
+Table hr_employee {
+  id integer [pk, increment]
+  name varchar [not null]
+  work_email varchar
+  company_id integer [ref: > res_company.id, not null]
+  user_id integer [ref: > res_users.id]
+  department_id integer
+  job_id integer
+  active boolean
+
+  Note: 'CDM: BookableResource / Resource.'
+}
+
+Table resource_resource {
+  id integer [pk, increment]
+  name varchar [not null]
+  resource_type varchar // user | material
+  user_id integer [ref: > res_users.id]
+  company_id integer [ref: > res_company.id]
+  calendar_id integer
+  tz varchar
+  active boolean
+}
+
+Table hr_expense {
+  id integer [pk, increment]
+  name varchar [not null]
+  employee_id integer [ref: > hr_employee.id, not null]
+  company_id integer [ref: > res_company.id, not null]
+  total_amount decimal(16,2)
+  currency_id integer [ref: > res_currency.id]
+  date date
+  state varchar // draft | reported | done | refused
+  product_id integer [ref: > product_product.id]
+  analytic_account_id integer [ref: > account_analytic_account.id]
+  create_date timestamp
+}
+
+// ── §2.5 ipai_* extensions — PH-specific delta ───────────────────────────────
+
+Table ipai_finance_ppm_estimate_line {
+  id integer [pk, increment]
+  project_id integer [ref: > project_project.id, not null]
+  name varchar [not null]
+  amount decimal(16,2)
+  currency_id integer [ref: > res_currency.id]
+  company_id integer [ref: > res_company.id, not null]
+  forecast_version_id integer [ref: > ipai_finance_ppm_forecast_version.id]
+  create_date timestamp
+
+  Note: 'CDM: EstimateLine (msdyn_estimateline).'
+}
+
+Table ipai_finance_ppm_forecast_version {
+  id integer [pk, increment]
+  name varchar [not null]
+  project_id integer [ref: > project_project.id]
+  company_id integer [ref: > res_company.id, not null]
+  state varchar // draft | approved | superseded
+  version_number integer
+  approved_by_user_id integer [ref: > res_users.id]
+  approved_at timestamp
+  create_date timestamp
+
+  Note: 'CDM: BudgetVersion / Forecast.'
+}
+
+Table ipai_bir_tax_compliance_register {
+  id integer [pk, increment]
+  company_id integer [ref: > res_company.id, not null]
+  form_code varchar [not null] // 1601-C | 2550-M | 1702-Q | etc.
+  period varchar [not null]    // 2026-04 | 2026-Q2 | FY2026
+  due_date date [not null]
+  filed_date date
+  amount decimal(16,2)
+  acknowledgment_number varchar
+  state varchar // pending | filed | acknowledged | paid | closed
+  payment_journal_id integer [ref: > account_journal.id]
+  filing_evidence_path varchar // docs/evidence/YYYYMM/<form>/
+  create_date timestamp
+  write_date timestamp
+
+  indexes {
+    (company_id, form_code, period) [unique]
+  }
+
+  Note: 'Per-filing ledger. One row per filing event. PH-specific ipai_* delta.'
+}
+
+Table ipai_bir_2307 {
+  id integer [pk, increment]
+  name varchar
+  company_id integer [ref: > res_company.id, not null]
+  partner_id integer [ref: > res_partner.id, not null] // the vendor
+  period varchar [not null]
+  atc_code varchar
+  withheld_amount decimal(16,2)
+  gross_amount decimal(16,2)
+  pdf_attachment_id integer
+  delivered boolean
+  delivery_acknowledgment varchar
+  create_date timestamp
+}
+
+// ═════════════════════════════════════════════════════════════════════════════
+// SCHEMA: ops — Pulser agent operational state
+// Ownership: agent-platform. Append-only where possible.
+// Multitenancy: tenant_id FK on every row
+// ═════════════════════════════════════════════════════════════════════════════
+
+Table ops_tenants {
+  id integer [pk, increment]
+  code varchar [unique, not null] // IPAI, W9, OMC, TBWA_SMP
+  name varchar [not null]
+  status varchar [not null]       // active | prospect | inactive
+  odoo_company_id integer         // joins to public.res_company.id
+  plan varchar                    // starter | pro | enterprise
+  branding_json jsonb
+  compliance_scope varchar        // bir-ph | gdpr | none
+  created_at timestamp
+  updated_at timestamp
+
+  Note: 'Per ssot/tenants/tenants-registry.yaml. Multitenant pattern source of truth.'
+}
+
+Table ops_feature_flags {
+  id integer [pk, increment]
+  tenant_id integer [ref: > ops_tenants.id, not null]
+  flag_name varchar [not null]
+  value boolean [not null]
+  updated_at timestamp
+
+  indexes {
+    (tenant_id, flag_name) [unique]
+  }
+}
+
+Table ops_audit_log {
+  id bigint [pk, increment]
+  tenant_id integer [ref: > ops_tenants.id]
+  user_id integer    // joins to public.res_users.id
+  action varchar [not null]
+  resource_type varchar
+  resource_id bigint
+  metadata jsonb
+  created_at timestamp [not null]
+
+  Note: 'Append-only. Cross-schema reference to public.res_users by id.'
+}
+
+Table ops_agent_runs {
+  id bigint [pk, increment]
+  tenant_id integer [ref: > ops_tenants.id, not null]
+  agent_name varchar [not null] // pulser | tax_guru | recon | expense | advisory
+  invoked_by_user_id integer
+  started_at timestamp [not null]
+  finished_at timestamp
+  status varchar // running | success | failure | timeout
+  prompt_tokens integer
+  completion_tokens integer
+  cost_usd decimal(10,4)
+  trace_id varchar
+  created_at timestamp
+
+  Note: 'Per-invocation log. Drives FinOps + Tier 2 Power BI productivity metrics.'
+}
+
+Table ops_tool_calls {
+  id bigint [pk, increment]
+  agent_run_id bigint [ref: > ops_agent_runs.id, not null]
+  tool_name varchar [not null]   // odoo.search | azure.resource.list | etc.
+  mcp_server varchar
+  input_json jsonb
+  output_json jsonb
+  duration_ms integer
+  status varchar
+  created_at timestamp
+}
+
+Table ops_human_approvals {
+  id bigint [pk, increment]
+  agent_run_id bigint [ref: > ops_agent_runs.id]
+  tenant_id integer [ref: > ops_tenants.id, not null]
+  action_type varchar [not null]
+  approver_user_id integer
+  approved boolean
+  approval_note text
+  requested_at timestamp [not null]
+  resolved_at timestamp
+}
+
+// ═════════════════════════════════════════════════════════════════════════════
+// SCHEMA: platform — IPAI cross-cutting
+// Ownership: platform/ team.
+// ═════════════════════════════════════════════════════════════════════════════
+
+Table platform_migrations {
+  id bigint [pk, increment]
+  schema_target varchar [not null] // public | ops | platform
+  migration_name varchar [not null]
+  applied_at timestamp [not null]
+  applied_by varchar
+  checksum varchar
+}
+
+Table platform_secrets_index {
+  id integer [pk, increment]
+  tenant_id integer [ref: > ops_tenants.id]
+  secret_name varchar [not null]
+  kv_reference varchar [not null] // <tenant>-<name> pattern
+  rotation_due date
+  created_at timestamp
+
+  Note: 'Inventory only — actual secret value lives in Azure Key Vault.'
+}
+
+Table platform_billing_events {
+  id bigint [pk, increment]
+  tenant_id integer [ref: > ops_tenants.id, not null]
+  event_type varchar [not null] // token_usage | api_call | storage_gb_day | etc.
+  quantity decimal(16,6) [not null]
+  unit varchar
+  cost_usd decimal(10,4)
+  billing_period varchar // 2026-04
+  metadata jsonb
+  created_at timestamp [not null]
+
+  Note: 'Marketplace metering source. Required for per-tenant billing + FinOps.'
+}
+
+// ═════════════════════════════════════════════════════════════════════════════
+// CROSS-SCHEMA REFERENCES (documentary — not enforced at PG level)
+// ═════════════════════════════════════════════════════════════════════════════
+
+// ops.ops_tenants.odoo_company_id                 → public.res_company.id
+// ops.ops_audit_log.user_id                       → public.res_users.id
+// ops.ops_agent_runs.invoked_by_user_id           → public.res_users.id
+// ops.ops_human_approvals.approver_user_id        → public.res_users.id
+// platform.platform_secrets_index.tenant_id      → ops.ops_tenants.id
+// platform.platform_billing_events.tenant_id    → ops.ops_tenants.id
+
+// ═════════════════════════════════════════════════════════════════════════════
+// WHAT'S NOT IN THIS FILE (honest gap analysis)
+// ═════════════════════════════════════════════════════════════════════════════
+//
+// NOT COVERED:
+//   - Stock / Inventory models (stock.picking, stock.move, stock.lot, etc.)
+//   - Manufacturing (mrp.bom, mrp.production, mrp.workorder)
+//   - HR beyond employee + expense (hr.leave, hr.attendance, hr.contract)
+//   - Website / e-commerce (website.page, website_sale.*)
+//   - POS (pos.order, pos.session)
+//   - Appointment (appointment.type, calendar.event)
+//   - CRM (crm.lead, crm.team)
+//   - Helpdesk (helpdesk.ticket via OCA)
+//   - Mail / activity (mail.message, mail.activity, mail.thread)
+//   - Discuss (channel, im_livechat)
+//   - All Odoo CE technical tables (ir.*, base.*, bus.*)
+//   - All OCA modules not yet enumerated
+//   - 42 of 50 ipai_* modules beyond finance_ppm + bir_*
+//
+// Completion requires:
+//   scripts/generate_odoo_dbml.py against a live Odoo 18 registry
+//   Scoped output to installed modules + referenced ipai_* deltas
+//   Target: ~150 tables (still narrower than all 600+ CE tables)
+//
+// Render this file at https://dbdiagram.io/d (paste DBML content)
+//
+// ═════════════════════════════════════════════════════════════════════════════

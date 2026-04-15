@@ -1,0 +1,36 @@
+{
+  "name": "ipai-skills",
+  "description": "InsightPulseAI canonical skill set — packages IPAI domain skills (Microsoft for Startups navigation, Azure BOM validation, Foundry runtime, Odoo runtime, BIR close, Boards operating model, Pulser artifact emission, Bicep authoring, etc.) for installation across Claude Code, GitHub Copilot CLI, and VS Code. Skill bodies are authored under the microsoft/azure-skills pattern: workflow contract + references + tool allowlists + hard prerequisites.",
+  "version": "0.1.0",
+  "author": {
+    "name": "InsightPulseAI",
+    "url": "https://insightpulseai.com"
+  },
+  "homepage": "https://github.com/Insightpulseai/odoo",
+  "repository": "https://github.com/Insightpulseai/odoo",
+  "license": "Apache-2.0",
+  "keywords": [
+    "ipai",
+    "pulser",
+    "odoo",
+    "azure",
+    "foundry",
+    "ms-startups",
+    "growth-advisor",
+    "boards",
+    "ph-bir"
+  ],
+  "skills": "./skills/",
+  "compatibility": {
+    "claude-code": ">=2.0.0",
+    "github-copilot-cli": ">=1.0.0",
+    "vscode": ">=1.85.0"
+  },
+  "metadata": {
+    "doctrine_anchor": "docs/skills/ipai-skill-development-pattern.md",
+    "upstream_pattern": "microsoft/azure-skills (consume_directly)",
+    "spec_compliance": "anthropics/skills (Agent Skills spec)",
+    "category_label": "growth / partner / marketplace advisor",
+    "ship_target": "11 skills (1 today + 10 planned per pattern doc)"
+  }
+}

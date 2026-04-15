@@ -77,5 +77,5 @@ agentInstructions: |
 
   1. **Audit**: Run npm audit / pip-audit, check CVE databases
   2. **Update**: Bump versions, run tests, verify builds
-  3. **Monitor**: Check Vercel analytics, error rates, latency
+  3. **Monitor**: Check Azure Application Insights, error rates, latency
   4. **Fix**: Reproduce bug, write test, fix, verify

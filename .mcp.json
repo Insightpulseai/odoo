@@ -12,17 +12,46 @@
       "command": "npx",
       "args": ["-y", "@azure/mcp@latest", "server", "start"]
     },
-    "figma": {
-      "type": "http",
-      "url": "https://figma.com/mcp"
+    "azure-devops": {
+      "command": "npx",
+      "args": ["-y", "@azure-devops/mcp", "insightpulseai"]
+    },
+    "foundry": {
+      "command": "uvx",
+      "args": [
+        "--prerelease=allow",
+        "--from",
+        "git+https://github.com/azure-ai-foundry/mcp-foundry.git",
+        "run-azure-ai-foundry-mcp"
+      ],
+      "env": {
+        "AZURE_AI_FOUNDRY_ENDPOINT": "https://ipai-copilot-resource.services.ai.azure.com/api/projects/proj-ipai-copilot"
+      }
     },
     "playwright": {
       "command": "npx",
       "args": ["-y", "@playwright/mcp@latest"]
     },
-    "azure-devops": {
-      "command": "npx",
-      "args": ["-y", "@azure-devops/mcp", "insightpulseai"]
+    "figma": {
+      "type": "http",
+      "url": "https://figma.com/mcp"
+    },
+    "databricks-genie": {
+      "command": "python3",
+      "args": [
+        "-m",
+        "databricks_genie_mcp.server"
+      ],
+      "env": {
+        "DATABRICKS_HOST": "https://adb-7405608559466577.17.azuredatabricks.net",
+        "DATABRICKS_WORKSPACE_NAME": "dbw-ipai-dev",
+        "DATABRICKS_RESOURCE_GROUP": "rg-ipai-dev-ai-sea",
+        "DATABRICKS_SQL_WAREHOUSE_ID": "e7d89eabce4c330c",
+        "DATABRICKS_GENIE_SPACE_ID": "TBD_CREATE_GENIE_SPACE_FIRST",
+        "_NOTE": "Requires manual install: pip install -r requirements.txt from alexxx-db/databricks-genie-mcp; auth via DefaultAzureCredential (Entra MI) or DATABRICKS_TOKEN env var. Genie Space must exist in workspace UI before MCP can connect.",
+        "_REPO": "https://github.com/alexxx-db/databricks-genie-mcp",
+        "_STATUS": "configured-but-not-yet-installed"
+      }
     }
   }
 }
