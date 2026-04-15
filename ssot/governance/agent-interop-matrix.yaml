@@ -1,0 +1,130 @@
+# Pulser Agent Interop Matrix — A2A + MCP SSOT
+#
+# Canonical: every Pulser agent is an A2A server publishing an Agent Card at
+# /.well-known/agent-card.json, and an MCP client to its tools.
+#
+# A2A protocol version pinned for the R2 cohort: 0.2.0
+# Spec: https://a2a-protocol.org/latest/specification/
+# Schema source: https://github.com/a2aproject/A2A (JSON Schema under /specification/)
+# Microsoft Foundry A2A docs: https://learn.microsoft.com/azure/foundry/agents/how-to/tools/agent-to-agent
+#
+# MCP invariant reference: CLAUDE.md Cross-Repo Invariant #10
+# A2A invariant reference:  CLAUDE.md Cross-Repo Invariant #10a
+# Related doctrine: docs/research/ado-pulser-scrum-extension.addendum-a2a.md
+
+version: 1
+a2a_protocol_version: "0.2.0"
+discovery_path: "/.well-known/agent-card.json"
+legacy_discovery_aliases:
+  - "/.well-known/agent.json"   # Copilot Studio legacy probe
+
+agents:
+  - agent_name: pulser_scrum_master
+    status: a2a_server
+    agent_card_url: https://pulser-scrum-agent.blackstone-0df78186.southeastasia.azurecontainerapps.io/.well-known/agent-card.json
+    skills:
+      - standup
+      - velocity
+      - retro
+      - drift
+    backing_model:
+      prod: foundry/gpt-4.1
+      dev: foundry-local/phi-4
+    identity:
+      scheme: entra_agent_id
+      managed_identity: mi-pulser-scrum-agent
+      key_vault: kv-ipai-dev-sea
+    mcp_tools:
+      - mcp/ado-rest
+      - mcp/foundry-gpt-4.1
+      - mcp/key-vault-proxy
+      - mcp/app-insights
+    peer_callers:
+      - ado_extension_ms_pulser_scrum_master
+      - odoo_chatter
+      - teams_bot_pulser
+      - claude_code
+      - pulser_planner
+
+  - agent_name: tax_guru
+    status: a2a_server
+    agent_card_url: https://tax-guru.agents.insightpulseai.com/.well-known/agent-card.json
+    skills:
+      - ph_withholding_lookup
+      - bir_2307_classification
+      - vat_period_close
+      - tax_q_and_a
+    backing_model:
+      prod: foundry/gpt-4.1
+      dev: foundry-local/phi-4
+    identity:
+      scheme: entra_agent_id
+      managed_identity: mi-tax-guru-agent
+      key_vault: kv-ipai-dev-sea
+    mcp_tools:
+      - mcp/bir-reference
+      - mcp/foundry-gpt-4.1
+      - mcp/odoo-read
+    peer_callers:
+      - pulser_scrum_master
+      - pulser_planner
+      - bank_recon
+      - odoo_chatter
+
+  - agent_name: bank_recon
+    status: a2a_server
+    agent_card_url: https://bank-recon.agents.insightpulseai.com/.well-known/agent-card.json
+    skills:
+      - statement_match
+      - exception_triage
+      - reconciliation_summary
+    backing_model:
+      prod: foundry/gpt-4.1-mini
+      dev: foundry-local/phi-4
+    identity:
+      scheme: entra_agent_id
+      managed_identity: mi-bank-recon-agent
+      key_vault: kv-ipai-dev-sea
+    mcp_tools:
+      - mcp/odoo-read
+      - mcp/odoo-write-reconcile
+      - mcp/foundry-gpt-4.1
+      - mcp/bank-statement-importer
+    peer_callers:
+      - pulser_planner
+      - tax_guru
+      - odoo_chatter
+
+  - agent_name: pulser_planner
+    status: a2a_server
+    agent_card_url: https://pulser-planner.agents.insightpulseai.com/.well-known/agent-card.json
+    skills:
+      - intent_classify
+      - agent_route
+      - multi_step_compose
+    backing_model:
+      prod: foundry/gpt-4.1
+      dev: foundry-local/phi-4
+    identity:
+      scheme: entra_agent_id
+      managed_identity: mi-pulser-planner-agent
+      key_vault: kv-ipai-dev-sea
+    mcp_tools:
+      - mcp/foundry-gpt-4.1
+      - mcp/registry-agent-cards
+    peer_callers:
+      - ado_extension_ms_pulser_scrum_master
+      - odoo_chatter
+      - teams_bot_pulser
+      - claude_code
+      - m365_copilot
+
+# Enforcement
+validation:
+  script: scripts/validate_agent_card.py
+  pipeline: azure-pipelines/pulser-agent-interop-validate.yml
+  rules:
+    - every agent in this matrix MUST publish agent_card_url returning HTTP 200
+    - every agent_card_url MUST validate against the A2A JSON Schema at the pinned protocol version
+    - peer_callers that are Pulser agents MUST themselves appear in this matrix
+    - no entry may declare a bespoke RPC between Pulser agents
