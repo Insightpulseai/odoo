@@ -1,0 +1,144 @@
+# ---------------------------------------------------------------------------
+# OData v1 EntitySet contract — TimeEntries
+# ---------------------------------------------------------------------------
+# Authority: platform/contracts/odata/v1/entitysets/time_entries.yaml
+# Maps:      Odoo `account.analytic.line` (timesheet rows) → OData EntitySet `TimeEntries`
+# CDM hint:  D365 Project Operations `msdyn_timeentry` and `bookableresourcebooking`
+# ---------------------------------------------------------------------------
+
+metadata:
+  contract: odata-entityset-timeentries-v1
+  locked_at: 2026-04-15
+  status: design
+
+entity_set:
+  name: TimeEntries
+  url: /odata/v1/{tenant}/TimeEntries
+  odoo_model: account.analytic.line
+  cdm_target: TimeEntry (msdyn_timeentry) / BookableResourceBooking
+  read_only: true
+
+properties:
+  TimeEntryId:
+    odoo_field: id
+    edm_type: Edm.Int64
+    is_key: true
+    nullable: false
+  TaskId:
+    odoo_field: task_id
+    edm_type: Edm.Int64
+    nullable: true
+    note: Many2one to project.task
+  TaskName:
+    odoo_field: task_id.name
+    edm_type: Edm.String
+    nullable: true
+  ProjectId:
+    odoo_field: project_id
+    edm_type: Edm.Int64
+    nullable: true
+  ProjectName:
+    odoo_field: project_id.name
+    edm_type: Edm.String
+    nullable: true
+  ResourceId:
+    odoo_field: employee_id
+    edm_type: Edm.Int64
+    nullable: true
+    cdm_alias: resourceId
+    note: Many2one to hr.employee
+  ResourceName:
+    odoo_field: employee_id.name
+    edm_type: Edm.String
+    nullable: true
+    cdm_alias: resourceName
+  UserId:
+    odoo_field: user_id
+    edm_type: Edm.Int64
+    nullable: true
+    note: Many2one to res.users
+  Description:
+    odoo_field: name
+    edm_type: Edm.String
+    nullable: false
+    note: Odoo `name` field on analytic line (description text)
+  EntryDate:
+    odoo_field: date
+    edm_type: Edm.Date
+    nullable: false
+    cdm_alias: bookingDate
+  Duration:
+    odoo_field: unit_amount
+    edm_type: Edm.Decimal(10,2)
+    nullable: false
+    cdm_alias: duration
+    note: Hours
+  Amount:
+    odoo_field: amount
+    edm_type: Edm.Decimal(16,2)
+    nullable: true
+    note: Cost amount (negative for cost entries in Odoo convention)
+  AnalyticAccountId:
+    odoo_field: account_id
+    edm_type: Edm.Int64
+    nullable: false
+    note: Many2one to account.analytic.account; required by Odoo
+  CompanyId:
+    odoo_field: company_id
+    edm_type: Edm.Int64
+    nullable: false
+  CreatedOn:
+    odoo_field: create_date
+    edm_type: Edm.DateTimeOffset
+    nullable: false
+  ModifiedOn:
+    odoo_field: write_date
+    edm_type: Edm.DateTimeOffset
+    nullable: false
+
+default_domain:
+  - project_id != False           # only timesheet entries with a project
+  - company_id = <tenant_company_id>
+
+selectable_properties: all
+
+filterable_properties:
+  - TimeEntryId
+  - TaskId
+  - ProjectId
+  - ResourceId
+  - UserId
+  - EntryDate
+  - Duration
+  - CompanyId
+  - CreatedOn
+  - ModifiedOn
+
+orderable_properties:
+  - TimeEntryId
+  - EntryDate
+  - Duration
+  - CreatedOn
+  - ModifiedOn
+
+default_orderby: EntryDate desc
+
+example_request: |
+  GET /odata/v1/acme/TimeEntries?$filter=ProjectId eq 1023 and EntryDate ge 2026-04-01 and EntryDate le 2026-04-30&$select=TimeEntryId,ResourceName,EntryDate,Duration,Description&$orderby=EntryDate desc&$top=200
+  Authorization: Bearer <token>
+
+example_response: |
+  {
+    "@odata.context": "https://api.insightpulseai.com/odata/v1/acme/$metadata#TimeEntries(TimeEntryId,ResourceName,EntryDate,Duration,Description)",
+    "@odata.count": 47,
+    "@odata.nextLink": "https://api.insightpulseai.com/odata/v1/acme/TimeEntries?$skip=200&$top=200&$filter=...",
+    "value": [
+      {"TimeEntryId": 88321, "ResourceName": "Maria Santos", "EntryDate": "2026-04-25", "Duration": 4.5, "Description": "Stakeholder interviews"},
+      {"TimeEntryId": 88320, "ResourceName": "Jake Tolentino", "EntryDate": "2026-04-25", "Duration": 1.0, "Description": "Sync"}
+    ]
+  }
+
+performance:
+  p95_filtered_read_ms: 800
+  p99_filtered_read_ms: 2000
+  note: TimeEntries is the highest-volume of the v1 set; cap $top harder if needed

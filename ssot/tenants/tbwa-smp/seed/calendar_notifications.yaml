@@ -1,0 +1,359 @@
+# ---------------------------------------------------------------------------
+# Seed: TBWA\SMP calendar + deadline notifications
+# ---------------------------------------------------------------------------
+# Authority: ssot/tenants/tbwa-smp/seed/calendar_notifications.yaml
+# Tenant:    TBWA\SMP (company_id=4)
+# Program:   docs/programs/tbwa-smp-finance-program.md
+# Doctrine:  Odoo CE 18 mail.activity + ir.cron + activity_type + OCA/reminder_mail.
+#            Alerts surface in: Odoo activity feed, email (Zoho SMTP),
+#            Teams (M365 bridge), Boards via overdue-escalation-notifier.
+# Locked:    2026-04-15
+# ---------------------------------------------------------------------------
+
+metadata:
+  contract: tbwa-smp-calendar-notifications-seed
+  locked_at: 2026-04-15
+  status: specification
+
+# ---------------------------------------------------------------------------
+# Notification channels
+# ---------------------------------------------------------------------------
+channels:
+  odoo_activity:
+    model: mail.activity
+    default: true
+    scope: in-app activity feed on the originating record
+  email:
+    provider: zoho_smtp
+    host: smtp.zoho.com
+    port: 587
+    from: finance@insightpulseai.com      # from provider tenant
+    reply_to: <TBWA\SMP finance address>
+  teams:
+    bridge: M365 agent bridge (per ipai_mail_plugin_bridge)
+    channel_pattern: "TBWA\\SMP — Finance Alerts"
+  ado_boards:
+    mechanism: overdue-escalation-notifier Azure Function
+    links_to: ADO work item tagged compliance_scope:bir-ph
+
+# ---------------------------------------------------------------------------
+# Notification policies — BIR filing calendar
+# ---------------------------------------------------------------------------
+bir_filing_notifications:
+  - filing_form: 1601-C
+    cadence: monthly
+    due_day_of_following_month: 10
+    leads:
+      - days_before: 10
+        channels: [odoo_activity]
+        recipients: [FIN, ADM]
+      - days_before: 5
+        channels: [odoo_activity, email]
+        recipients: [FIN]
+      - days_before: 2
+        channels: [email, teams]
+        recipients: [FIN, controller]
+      - days_before: 0
+        channels: [email, teams, ado_boards]
+        recipients: [FIN, controller, CFO]
+        escalation: true
+      - days_after: 1
+        channels: [email, teams, ado_boards]
+        recipients: [CFO, program_sponsor]
+        escalation: high
+
+  - filing_form: 0619-E
+    cadence: monthly
+    due_day_of_following_month: 10
+    leads: same as 1601-C
+
+  - filing_form: 2550-M
+    cadence: monthly
+    due_day_of_following_month: 20
+    leads: same pattern shifted to day-20
+
+  - filing_form: 2307
+    cadence: monthly                           # issuance to vendors
+    due_day_of_following_month: 20
+    leads:
+      - days_before: 10
+        channels: [odoo_activity]
+        recipients: [AP, FIN]
+      - days_before: 3
+        channels: [email]
+        recipients: [AP]
+      - days_after: 0
+        channels: [email, ado_boards]
+        recipients: [AP, FIN]
+    vendor_delivery_tracking:
+      sla_days: 20                             # must be delivered by day 20 of following month
+      follow_up_template: email_template.vendor_2307_delivery_chase
+
+  - filing_form: 2550-Q
+    cadence: quarterly
+    due_day_of_month_following_quarter_end: 25
+    leads:
+      - days_before: 15
+        channels: [odoo_activity, teams]
+      - days_before: 7
+        channels: [email]
+      - days_before: 2
+        channels: [email, teams]
+      - days_after: 1
+        channels: [email, teams, ado_boards]
+        escalation: high
+
+  - filing_form: 1601-FQ
+    cadence: quarterly
+    due_day: last_day_of_month_following_quarter_end
+    leads: same as 2550-Q pattern
+
+  - filing_form: 1702-Q
+    cadence: quarterly
+    due_days_after_quarter_end: 60
+    leads:
+      - days_before: 30
+        channels: [odoo_activity]
+      - days_before: 14
+        channels: [email]
+      - days_before: 7
+        channels: [email, teams]
+      - days_before: 2
+        channels: [email, teams, ado_boards]
+      - days_after: 1
+        channels: [email, teams, ado_boards]
+        escalation: very_high
+
+  - filing_form: SLSP
+    cadence: quarterly
+    due_day_of_month_following_quarter_end: 25
+    leads: same as 2550-Q pattern
+
+  - filing_form: 1702
+    cadence: annual
+    due_date_iso: 2027-04-15
+    leads:
+      - days_before: 90
+        channels: [odoo_activity, teams]
+        recipients: [CFO, controller, CPA]
+      - days_before: 60
+        channels: [email, teams]
+      - days_before: 30
+        channels: [email, teams]
+      - days_before: 14
+        channels: [email, teams, ado_boards]
+      - days_before: 7
+        channels: [email, teams, ado_boards]
+      - days_before: 2
+        channels: [email, teams, ado_boards]
+        escalation: critical
+      - days_after: 1
+        channels: [email, teams, ado_boards]
+        escalation: critical
+
+  - filing_form: 2316
+    cadence: annual
+    due_date_iso: 2027-01-31
+    note: Per-employee certificate; 1 activity per hr.employee
+    leads:
+      - days_before: 45
+        channels: [odoo_activity]
+      - days_before: 20
+        channels: [email]
+        recipients: [FIN, payroll, all_employees_copied]
+      - days_before: 7
+        channels: [email]
+
+  - filing_form: 1604-CF
+    cadence: annual
+    due_date_iso: 2027-01-31
+    leads: same pattern as 1702 (scaled down)
+
+  - filing_form: 1604-EC
+    cadence: annual
+    due_date_iso: 2027-03-01
+    leads: same pattern
+
+  - filing_form: eAFS
+    cadence: annual
+    due_date_iso: 2027-04-15
+    leads: same as 1702
+
+  - filing_form: 0605
+    cadence: annual
+    due_date_iso: 2027-01-31
+    leads: same as 2316 (scaled)
+
+# ---------------------------------------------------------------------------
+# Notification policies — month-end close cadence
+# ---------------------------------------------------------------------------
+close_notifications:
+  pre_close_pack:
+    due: day_3_of_following_month
+    leads:
+      - days_before: 2
+        channels: [odoo_activity]
+        recipients: [FIN, AP, AR]
+      - days_before: 0
+        channels: [email]
+        recipients: [FIN]
+  gl_lock:
+    due: day_5_of_following_month
+    leads:
+      - days_before: 1
+        channels: [email, teams]
+        recipients: [controller, CFO]
+      - days_after: 1
+        channels: [email, teams, ado_boards]
+        escalation: high
+  management_pack_due:
+    due: day_15_of_following_month
+    leads:
+      - days_before: 5
+        channels: [odoo_activity]
+      - days_before: 2
+        channels: [email]
+      - days_after: 1
+        channels: [email, teams]
+        escalation: medium
+
+# ---------------------------------------------------------------------------
+# Notification policies — PPM task deadlines
+# ---------------------------------------------------------------------------
+ppm_notifications:
+  task_due_date:
+    leads:
+      - days_before: 3
+        channels: [odoo_activity]
+        recipient: assigned_user
+      - days_before: 1
+        channels: [email]
+        recipient: assigned_user
+      - days_after: 1
+        channels: [email, teams]
+        recipient: [assigned_user, PM]
+  timesheet_weekly_reminder:
+    day: Monday
+    time: "08:00 Asia/Manila"
+    channels: [email]
+    recipients: all_billable_employees
+    message: "Log last week's timesheet by EOD Monday"
+  project_stage_overdue:
+    trigger: stage_planned_end < today AND stage != Closed
+    channels: [odoo_activity, email]
+    recipients: [PM, AD, CD]
+
+# ---------------------------------------------------------------------------
+# Activity types (mail.activity.type seed)
+# ---------------------------------------------------------------------------
+activity_types:
+  - name: "BIR Filing — Prepare"
+    delay_count: 10
+    delay_unit: days
+    delay_from: due_date
+    summary: Prepare + validate filing
+  - name: "BIR Filing — Submit"
+    delay_count: 2
+    delay_unit: days
+    delay_from: due_date
+    summary: Submit via eFPS / eBIRForms + pay via ePAY
+  - name: "BIR Filing — File Evidence"
+    delay_count: 0
+    delay_unit: days
+    delay_from: due_date
+    summary: Attach acknowledgment + payment receipt to evidence pack
+  - name: "Month-End Close — GL Lock"
+    delay_count: 5
+    delay_unit: days
+    delay_from: period_end
+    summary: Lock fiscal period
+  - name: "Timesheet Approval"
+    delay_count: 1
+    delay_unit: days
+    delay_from: week_end
+    summary: Manager approves prior-week timesheet
+  - name: "PPM — Stage Check-in"
+    delay_count: 0
+    delay_unit: days
+    delay_from: stage_planned_end
+    summary: PM reviews stage progress
+
+# ---------------------------------------------------------------------------
+# Scheduled actions (ir.cron)
+# ---------------------------------------------------------------------------
+scheduled_actions:
+  - name: tbwa_smp_daily_filing_check
+    schedule: "0 7 * * *"    # 07:00 Asia/Manila daily
+    action: scan_upcoming_bir_filings + create activities per policy above
+    model: ipai.bir.tax.compliance
+    company_ids: [4]
+  - name: tbwa_smp_daily_close_check
+    schedule: "0 7 * * *"
+    action: scan_open_close_tasks + create activities
+    model: ipai.finance.close
+    company_ids: [4]
+  - name: tbwa_smp_weekly_timesheet_reminder
+    schedule: "0 8 * * 1"    # Monday 08:00
+    action: send_timesheet_reminder_email
+    company_ids: [4]
+  - name: tbwa_smp_ppm_overdue_sweep
+    schedule: "0 9 * * 1-5"  # weekday 09:00
+    action: flag_overdue_tasks + create activities
+    model: project.task
+    company_ids: [4]
+
+# ---------------------------------------------------------------------------
+# Escalation matrix
+# ---------------------------------------------------------------------------
+escalation_matrix:
+  routine:     [FIN, AP, AR, PM]
+  medium:      [controller]
+  high:        [CFO]
+  very_high:   [CFO, external_CPA]
+  critical:    [CFO, external_CPA, program_sponsor_IPAI]
+
+# ---------------------------------------------------------------------------
+# Confirmation / completion notifications
+# ---------------------------------------------------------------------------
+completion_notifications:
+  description: Every filing/close/PPM task completion produces a confirmation
+  channels:
+    - odoo_activity (mark done)
+    - email (weekly digest on Monday 07:00)
+    - teams (weekly Finance Ops digest)
+    - ado_boards (auto-close Story on evidence attachment)
+  program_calendar_complete:
+    trigger: all filings within a fiscal period closed with evidence
+    message_template: |
+      Period <period> close + BIR filings complete.
+      GL locked: <date>. All forms submitted + acknowledged.
+      Evidence pack: docs/evidence/<YYYYMM>/
+      Audit trail: ipai_bir_tax_compliance register #<ids>
+    recipients: [CFO, controller, program_sponsor_IPAI]
+    channels: [email, teams]
+
+# ---------------------------------------------------------------------------
+# OCA modules for enhanced calendar behavior
+# ---------------------------------------------------------------------------
+oca_modules:
+  - repo: OCA/social
+    modules:
+      - mail_activity_team       # team-level activities
+      - mail_activity_board      # calendar view of activities
+  - repo: OCA/server-ux
+    modules:
+      - base_user_role           # role-based reminder routing
+  - repo: OCA/server-tools
+    modules:
+      - scheduler_error_mailer   # cron failure alerts
+  verification_required: per oca-governance skill before install
+
+# ---------------------------------------------------------------------------
+# Governance
+# ---------------------------------------------------------------------------
+governance:
+  - All notifications scoped to company_id=4 (strict tenant isolation)
+  - Recipients resolved from hr.employee with company_id=4 only
+  - Email body never contains TBWA client-of-client IP (just BIR/filing metadata)
+  - Notification templates stored in ssot/tenants/tbwa-smp/seed/email-templates/
+  - Edits to schedule require PR + controller sign-off

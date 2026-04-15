@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  IPAI public-facing appointment types.
+  Replaces Zoho Bookings (insightpulseai.zohobookings.com).
+
+  Doctrine: Odoo CE 18 native `appointment` module.
+  No custom Python code. Pure data seed.
+
+  Customer-visible at: /appointment/<slug>
+  Public hub: /appointment
+
+  Edit appointment_duration / message_intro post-install via Odoo backend.
+-->
+<odoo>
+    <data noupdate="1">
+
+        <!-- 1. Discovery Call (30 min, free, video) -->
+        <record id="appointment_type_discovery" model="appointment.type">
+            <field name="name">Discovery Call</field>
+            <field name="appointment_duration">0.5</field>
+            <field name="min_schedule_hours">2</field>
+            <field name="max_schedule_days">30</field>
+            <field name="min_cancellation_hours">2</field>
+            <field name="appointment_tz">Asia/Manila</field>
+            <field name="assign_method">time_resource</field>
+            <field name="schedule_based_on">users</field>
+            <field name="category">website</field>
+            <field name="staff_user_ids" eval="[(6, 0, [ref('base.user_admin')])]"/>
+            <field name="message_intro" type="html">
+                <p>30-minute introductory conversation. Tell us about your business, your stack, and what you're trying to ship. We'll tell you whether IPAI's Pulser + Odoo platform fits.</p>
+            </field>
+        </record>
+
+        <!-- 2. Product Demo (45 min, free, video) -->
+        <record id="appointment_type_demo" model="appointment.type">
+            <field name="name">Product Demo — Pulser &amp; Odoo Platform</field>
+            <field name="appointment_duration">0.75</field>
+            <field name="min_schedule_hours">24</field>
+            <field name="max_schedule_days">30</field>
+            <field name="min_cancellation_hours">4</field>
+            <field name="appointment_tz">Asia/Manila</field>
+            <field name="assign_method">time_resource</field>
+            <field name="schedule_based_on">users</field>
+            <field name="category">website</field>
+            <field name="staff_user_ids" eval="[(6, 0, [ref('base.user_admin')])]"/>
+            <field name="message_intro" type="html">
+                <p>Live walkthrough of the IPAI platform: Pulser AI copilot, Odoo CE 18 + OCA, BIR compliance, finance close, agent workflows. Bring your specific use case — we'll show the path.</p>
+            </field>
+        </record>
+
+        <!-- 3. Advisory Session (60 min, by request) -->
+        <record id="appointment_type_advisory" model="appointment.type">
+            <field name="name">AI &amp; ERP Advisory Session</field>
+            <field name="appointment_duration">1.0</field>
+            <field name="min_schedule_hours">48</field>
+            <field name="max_schedule_days">45</field>
+            <field name="min_cancellation_hours">12</field>
+            <field name="appointment_tz">Asia/Manila</field>
+            <field name="assign_method">time_resource</field>
+            <field name="schedule_based_on">users</field>
+            <field name="category">website</field>
+            <field name="staff_user_ids" eval="[(6, 0, [ref('base.user_admin')])]"/>
+            <field name="message_intro" type="html">
+                <p>Strategic 60-minute session. AI/ERP roadmap, vendor consolidation (D365 → Odoo+OCA+ipai_*), Microsoft Foundry adoption, marketplace strategy, BIR compliance posture. Best for finance/IT leaders evaluating platform decisions.</p>
+            </field>
+        </record>
+
+        <!-- 4. Implementation Scoping (60 min, free for qualified prospects) -->
+        <record id="appointment_type_scoping" model="appointment.type">
+            <field name="name">Pulser Implementation Scoping</field>
+            <field name="appointment_duration">1.0</field>
+            <field name="min_schedule_hours">48</field>
+            <field name="max_schedule_days">30</field>
+            <field name="min_cancellation_hours">12</field>
+            <field name="appointment_tz">Asia/Manila</field>
+            <field name="assign_method">time_resource</field>
+            <field name="schedule_based_on">users</field>
+            <field name="category">website</field>
+            <field name="staff_user_ids" eval="[(6, 0, [ref('base.user_admin')])]"/>
+            <field name="message_intro" type="html">
+                <p>Pre-engagement scoping for Pulser deployment. Walks the Wave-01 ship lanes (R2 Finance July 14, R3 BIR October 14, R4 GA December 15) and matches your timeline. By invitation after a Discovery Call.</p>
+            </field>
+        </record>
+
+    </data>
+</odoo>

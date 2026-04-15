@@ -345,7 +345,7 @@ items:
     env_scope: prod
     canonicality: canonical
     description: "Next.js operations dashboard."
-    risk: "Contains stale @vercel/analytics, @ai-sdk/google, @google/generative-ai deps."
+    risk: "Contains stale @ai-sdk/google, @google/generative-ai deps."
 
   # ---------------------------------------------------------------------------
   # Agent Skills (~80 total, grouped)

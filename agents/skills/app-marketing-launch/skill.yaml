@@ -79,6 +79,6 @@ agentInstructions: |
   When launching apps:
 
   1. **Strategy**: Define target audience, channels, KPIs, timeline
-  2. **Landing Page**: Build with Next.js, deploy to Vercel
-  3. **Analytics**: Self-hosted (Superset) + Vercel Analytics
+  2. **Landing Page**: Build with Next.js, deploy to Azure Container Apps
+  3. **Analytics**: Power BI (primary) + Azure Application Insights
   4. **Launch**: Execute checklist, monitor metrics, iterate

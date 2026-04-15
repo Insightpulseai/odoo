@@ -820,6 +820,33 @@ mirror_targets:
     do_when: defer_until_listing_live
     rationale: "Not actionable until SaaS offer is live on AppSource/Azure Marketplace. Revisit when commercial lane activates."
 
+  # ───── Added 2026-04-15 — CDM + agentic-app-with-fabric ─────
+
+  - upstream: microsoft/CDM
+    purpose: "Common Data Model — standard/extensible schema repository (entities, attributes, relationships) for semantic reference"
+    adopt_mode: clone_as_reference
+    internal_owner: platform-engineering
+    internal_destination: "docs/architecture/reference-adaptations/cdm/ + platform/contracts/cdm-entity-map.yaml (already canonical) + data-intelligence/semantic/"
+    do_when: now
+    rationale: |
+      CDM is a schema/spec repository, NOT an application runtime.
+      Keep: entity definitions + naming patterns + schema extension patterns + additive-versioning mindset.
+      Skip: old CDM Schema Store assumptions (shut down per Microsoft notice); Dataverse-first or CDM-as-transaction-truth posture.
+      IPAI already treats CDM as projection target (Fabric Gold), not source-side schema per docs/architecture/cdm-odoo-mapping.md.
+      This entry codifies that CDM is a semantic reference — the YAML at platform/contracts/cdm-entity-map.yaml is the authoritative IPAI contract.
+
+  - upstream: Azure-Samples/agentic-app-with-fabric
+    purpose: "Agentic Banking App with Microsoft Fabric — multi-agent demo + OLTP/OLAP/AI orchestration + NL→query patterns"
+    adopt_mode: clone_as_reference
+    internal_owner: agent-platform
+    internal_destination: "docs/architecture/reference-adaptations/agentic-app-with-fabric/ + agent-platform/patterns/ + data-intelligence/fabric-reference/"
+    do_when: now
+    rationale: |
+      Demo/sample app; heavy Fabric-first setup (workspace deploy, SQL DB, Lakehouse, semantic model, Power BI, Data Agent, Eventhouse, Eventstream, AOAI).
+      Keep: orchestrated agent interaction patterns + NL→query and visualization ideas + demo/eval/test harness + deployment structure patterns worth translating.
+      Skip: Fabric as operational truth; banking domain as-is; direct runtime/env layout; Azure OpenAI/Fabric-first assumptions that conflict with IPAI's Odoo=SOR / Databricks=analytics / Foundry=agent-runtime / Azure-Pipelines=CI split.
+      Pattern harvest, not architecture authority.
+
 # ─── Anti-patterns ───
 anti_patterns:
   - "Forking AVM/Bicep modules — creates downstream burden Microsoft now solves"
@@ -838,7 +865,7 @@ decisions_audit:
   # azure-pipelines-vscode, Odoo built-in integrations (google_account, microsoft_account, cloud_storage_azure, external_api)
   # Plus 2026-04-14 additions: Azure MCP Server, azd, Azure Python SDK pins,
   # unified-data-foundation, Partner Center SaaS Fulfillment v2, Partner Center Metering → effective 21
-  cloned_as_reference: 35
+  cloned_as_reference: 37
   # Azure-Samples (FastAPI+ACA+PG, PG-Resiliency, pgvector, PG-MCP, search-openai-demo,
   # chat-with-your-data, get-started-with-ai-agents, openai-chat-app-entra-auth, postgres-agentic-shop,
   # ACA blue-green), microsoft-foundry (foundry-samples, foundry-agent-webapp, mcp-foundry, fine-tuning),
@@ -866,3 +893,172 @@ anchors:
     - reference_azd_ai_templates.md
     - reference_databricks_fabric_repos.md
     - feedback_upstream_adoption_doctrine.md
+
+# ═════════════════════════════════════════════════════════════════════════════
+# Delta 2026-04-15 — inventory sweep across microsoft/, Azure/, Azure-Samples/,
+# microsoft-foundry/, microsoftgbb/, databricks/, anthropics/, openai/,
+# modelcontextprotocol/
+# Method: gh repo view for every entry. 12 unverified 404s dropped.
+# Method: gh repo view --json nameWithOwner,isArchived,pushedAt,stars,license
+# Summary: +26 new, 9 reassessments, 5 coverage gaps, 0 fork_and_own (doctrine holds)
+# ═════════════════════════════════════════════════════════════════════════════
+
+repos_delta_20260415:
+  new_consume_directly:
+    - upstream: Azure/bicep
+      purpose: Bicep compiler + language server (canonical IaC DSL)
+      pin: via az bicep in devcontainer
+      stars: 3583
+    - upstream: Azure/azure-resource-manager-schemas
+      purpose: ARM schemas for Bicep/ARM IntelliSense
+      stars: 623
+    - upstream: microsoft/azure-skills
+      purpose: Azure + Foundry MCP + 24 workflow skills (plugin installed v1.0.9; upstream v1.0.17)
+      guardrail: never execute bestpractices/deploy on prod without approval
+      stars: 632
+    - upstream: modelcontextprotocol/python-sdk
+      purpose: Python SDK for building custom MCP servers (required for future odoo-mcp-server)
+      stars: 22639
+    - upstream: anthropics/claude-code
+      purpose: Agentic coding engine (our repo-local execution)
+      guardrail: .claude/rules + CLAUDE.md are doctrine source; auto-memory is learned-ops only
+      stars: 114018
+    - upstream: microsoft/markitdown
+      purpose: Office/PDF to Markdown for RAG ingestion (PrismaLab + BIR docs)
+      guardrail: run in Foundry/Databricks jobs, not Odoo runtime
+      stars: 108523
+    - upstream: databricks/cli
+      purpose: Databricks CLI + Asset Bundles (deploys via Azure Pipelines only)
+      stars: 321
+    - upstream: databricks/databricks-sdk-py
+      purpose: Python SDK for Databricks Workspace/Jobs/UC APIs
+      stars: 540
+    - upstream: databricks/terraform-provider-databricks
+      purpose: Terraform provider (ONLY for Databricks workspace config; Azure core stays Bicep)
+      stars: 586
+
+  new_clone_as_reference:
+    - upstream: Azure/Azure-Verified-Modules
+      purpose: AVM program root (standards, indexes; consumes via bicep-registry-modules)
+      stars: 536
+    - upstream: Azure/azure-quickstart-templates
+      purpose: ARM/Bicep quickstart library
+      guardrail: never vendor verbatim; distill into AVM or ipai_* wrapper
+      stars: 14774
+    - upstream: Azure/Enterprise-Scale
+      purpose: ALZ prescriptive guidance (cherry-pick naming/policy taxonomy only)
+      guardrail: do NOT adopt PowerShell automation; IPAI is not a CCoE
+      stars: 1936
+    - upstream: microsoft/mcp
+      purpose: Catalog of official Microsoft MCP servers (discovery surface)
+      guardrail: every new MCP requires register entry + .mcp.json PR
+      stars: 2965
+    - upstream: modelcontextprotocol/servers
+      purpose: Community MCP server patterns
+      guardrail: never run community MCP in Pulser substrate without per-agent allowlist
+      stars: 83750
+    - upstream: anthropics/skills
+      purpose: Claude Agent Skills reference library + spec
+      guardrail: license unclear — copy patterns only, not bodies
+      stars: 117403
+    - upstream: anthropics/anthropic-quickstarts
+      purpose: Claude API starter patterns
+      stars: 16093
+    - upstream: anthropics/prompt-eng-interactive-tutorial
+      purpose: Prompt engineering tutorial (onboarding education)
+      stars: 34689
+    - upstream: openai/openai-cookbook
+      purpose: OpenAI API pattern library
+      guardrail: FORBIDDEN to copy OPENAI_API_KEY auth; always adapt to Foundry + MI
+      stars: 72738
+    - upstream: databricks/mlops-stacks
+      purpose: MLOps project scaffolding reference for dbw-ipai-dev
+      stars: 666
+    - upstream: databricks/notebook-best-practices
+      purpose: Testable/modular notebook patterns
+      stars: 153
+      note: slightly stale (~18mo) but stable doctrine
+    - upstream: databricks/dbt-databricks
+      purpose: dbt adapter (reference only; defer — no current dbt requirement)
+      stars: 344
+    - upstream: microsoftgbb/agentic-platform-engineering
+      purpose: 3-tier defense + Safe Outputs doctrine reference
+      guardrail: pattern only; IPAI runtime is Azure Pipelines + ACA, NOT GitHub Actions
+      stars: 64
+    - upstream: Azure-Samples/rag-postgres-openai-python
+      purpose: RAG over pg-ipai-odoo pattern
+      guardrail: use Foundry embeddings via keyless MI, not OpenAI key
+      stars: 487
+    - upstream: Azure-Samples/contoso-chat
+      purpose: RAG app with Prompty + Foundry + evaluations
+      guardrail: FORBIDDEN to adopt its GHA deploy workflow; Azure Pipelines only
+      stars: 758
+    - upstream: microsoft/promptflow
+      purpose: LLM app lifecycle + eval reference (Foundry eval is canonical)
+      stars: 11099
+    - upstream: microsoft/kiota
+      purpose: OpenAPI → typed client code generator (fallback for orphan OpenAPIs)
+      stars: 3702
+
+  new_do_not_adopt:
+    - upstream: Azure/terraform-azurerm-caf-enterprise-scale
+      rationale: Bicep is canonical IaC; Terraform only for Databricks exception
+      stars: 954
+    - upstream: openai/openai-agents-python
+      rationale: Collides with microsoft/agent-framework (canonical Pulser SDK)
+      stars: 20781
+    - upstream: microsoft/semantic-kernel
+      rationale: Agent Framework is canonical forward path; no dual SDK
+      stars: 27703
+    - upstream: microsoft/autogen
+      rationale: Research-oriented; Pulser needs production policy-gated orchestration
+      stars: 57084
+    - upstream: microsoft/RulesEngine
+      rationale: Pulser policy gates + Odoo workflow + OCA record-rules cover this
+
+  reassessments:
+    - upstream: Azure Developer CLI (azd)
+      changes:
+        rename_suggestion: "Azure/azure-dev (canonical slug)"
+        guardrail_added: "Strip GHA workflows scaffolded by azd; replace with Azure Pipelines"
+    - upstream: Azure/ResourceModules
+      changes:
+        guardrail_added: "Reject any PR that imports from this repo; AVM only"
+    - upstream: Azure-Samples/release-manager-assistant
+      changes:
+        guardrails_added:
+          - "Strip GHA workflows; replace with azure-pipelines/"
+          - "Drop Jira adapter; replace with ADO Boards MCP"
+    - upstream: microsoft/agent-framework
+      changes:
+        guardrail_added: "SINGLE agent SDK — reject openai-agents-python, autogen, semantic-kernel"
+    - upstream: microsoft/unified-data-foundation
+      changes:
+        priority_flag: "TIME-SENSITIVE — Fabric trial expires ~2026-05-20"
+    - upstream: microsoft-foundry/foundry-samples
+      changes:
+        guardrail_added: "Do not vendor azd-scaffolded GHA workflows; replace with Azure Pipelines"
+    - upstream: microsoft-foundry/mcp-foundry
+      changes:
+        guardrail_added: "MCP-Foundry tools require per-agent allowlist before Pulser calls them (3-tier defense)"
+    - upstream: databricks/bundle-examples
+      changes:
+        guardrail_added: "Bundle deploys run via databricks/cli in Azure Pipelines only"
+
+  coverage_gaps_flagged:
+    - topic: Odoo-native MCP server (P0)
+      note: Must build as thin ipai_* adapter; SDK + catalog registered as precondition
+    - topic: Content Safety ingestion pattern sample
+      note: Azure SDK azure-ai-contentsafety covers runtime; sample pattern gap
+    - topic: Fabric CI/CD deploy-pipeline sample
+      note: Consider microsoft-fabric org sweep in next iteration
+    - topic: Partner Center programmatic offer management
+      note: Intentional gap — IPAI is ISV not CSP per memory reference_partner_center_auth
+    - topic: Entra Agent ID → Odoo res.users bridge
+      note: No upstream; build ipai_* delta
+
+  verification:
+    method: gh repo view --json nameWithOwner,isArchived,pushedAt,stars,license
+    unverified_404_dropped: 12
+    fork_and_own_count: 0  # doctrine holds — zero forks
+    stamp: 2026-04-15T00:00:00Z

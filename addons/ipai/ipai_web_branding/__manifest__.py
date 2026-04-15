@@ -2,8 +2,8 @@
 # License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl.html).
 {
     "name": "InsightPulseAI Login Branding",
-    "summary": "Production login page with Entra ID + Google sign-in and debranding",
-    "version": "18.0.4.0.0",
+    "summary": "Production login page with Entra ID + Google sign-in, debranding, and public appointment booking (Zoho Bookings replacement)",
+    "version": "18.0.5.0.0",
     "category": "Website",
     "author": "InsightPulseAI",
     "website": "https://insightpulseai.com",
@@ -13,6 +13,7 @@
         "website",
         "auth_oauth",
         "auth_oidc",
+        "appointment",
         "portal_odoo_debranding",
         "disable_odoo_online",
         "remove_odoo_enterprise",
@@ -26,6 +27,7 @@
         "data/res_company_data.xml",
         "data/auth_provider_data.xml",
         "data/website_data.xml",
+        "data/appointment_types.xml",
         "views/login_templates.xml",
         "views/website_templates.xml",
     ],

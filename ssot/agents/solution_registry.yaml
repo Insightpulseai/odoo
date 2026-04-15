@@ -129,7 +129,6 @@ solutions:
     criticality: important
     status: active
     issues:
-      - "Stale Vercel deps (@vercel/analytics, @vercel/speed-insights)"
       - "Stale AI deps (@ai-sdk/google, @google/generative-ai)"
 
   # ---------------------------------------------------------------------------

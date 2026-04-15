@@ -437,11 +437,6 @@ skills_reference:
 # SKILLS — DEPRECATED
 # =============================================================================
 skills_deprecated:
-  - id: vercel-agent-skills
-    domain: deployment
-    reason: "Vercel is deprecated (2026-03-11). Use Azure Container Apps."
-    replacement: azure-cli-safe
-
   - id: odoo18-skills (odoo18/ top-level)
     domain: odoo_ce
     reason: "Superseded by skills/odoo/odoo18-* nested structure"

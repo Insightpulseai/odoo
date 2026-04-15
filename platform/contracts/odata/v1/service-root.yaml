@@ -1,0 +1,209 @@
+# ---------------------------------------------------------------------------
+# OData Bridge for Odoo CE 18 + OCA — v1 service root contract
+# ---------------------------------------------------------------------------
+# Authority:    platform/contracts/odata/v1/service-root.yaml (this file)
+# Doctrine:     docs/architecture/odata-to-odoo-mapping.md
+# Locked:       2026-04-15
+# ---------------------------------------------------------------------------
+
+metadata:
+  contract: odata-bridge-service-root
+  version: v1
+  locked_at: 2026-04-15
+  status: design   # design | implemented | deprecated
+
+# ---------------------------------------------------------------------------
+# Service root URL pattern (per multitenant SaaS doctrine)
+# ---------------------------------------------------------------------------
+service_root: /odata/v1/{tenant}/
+
+metadata_endpoint: /odata/v1/{tenant}/$metadata
+
+entity_sets:
+  - name: Projects
+    contract: ./entitysets/projects.yaml
+    odoo_model: project.project
+  - name: ProjectTasks
+    contract: ./entitysets/project_tasks.yaml
+    odoo_model: project.task
+  - name: TimeEntries
+    contract: ./entitysets/time_entries.yaml
+    odoo_model: account.analytic.line
+
+# ---------------------------------------------------------------------------
+# Auth + tenant isolation
+# ---------------------------------------------------------------------------
+auth:
+  scheme: bearer
+  identity_provider: entra_oidc
+  required_claims:
+    - sub
+    - oid
+    - tenant_id
+    - scope
+  scope_required: odata.read.v1
+  audience: api://ipai-odata-bridge-v1
+  read_only: true
+
+tenant_isolation:
+  source: token_claim          # NEVER from URL
+  enforcement: middleware_pre_handler
+  cross_tenant_access: forbidden
+  audit: every_request_logged_with_tenant_id
+
+# ---------------------------------------------------------------------------
+# Supported OData query options (LOCKED in v1)
+# ---------------------------------------------------------------------------
+supported_query_options:
+  - $select
+  - $filter
+  - $top
+  - $skip
+  - $orderby
+  - $count
+
+unsupported_query_options:   # return 501 Not Implemented if requested
+  - $expand
+  - $batch
+  - $delta
+  - $apply
+  - $search
+  - $compute
+
+# ---------------------------------------------------------------------------
+# Method support (read-only in v1)
+# ---------------------------------------------------------------------------
+methods:
+  GET:
+    allowed: true
+    paths:
+      - /
+      - /$metadata
+      - /{EntitySet}
+      - /{EntitySet}({key})
+      - /{EntitySet}/$count
+  POST:
+    allowed: false
+    response: 405 Method Not Allowed
+  PATCH:
+    allowed: false
+    response: 405 Method Not Allowed
+  DELETE:
+    allowed: false
+    response: 405 Method Not Allowed
+  PUT:
+    allowed: false
+    response: 405 Method Not Allowed
+
+# ---------------------------------------------------------------------------
+# Response shape
+# ---------------------------------------------------------------------------
+response_shape:
+  content_type: application/json;odata.metadata=minimal
+  envelope:
+    "@odata.context": "{service_root}$metadata#{EntitySet}"
+    "@odata.count": "<int when $count=true>"
+    "@odata.nextLink": "<URL when paginated>"
+    value: "[{entity}, {entity}, ...]"
+  error_format:
+    structure:
+      error:
+        code: string
+        message: string
+        target: string
+        details: array
+
+# ---------------------------------------------------------------------------
+# Pagination
+# ---------------------------------------------------------------------------
+pagination:
+  default_top: 50
+  max_top: 1000
+  reject_top_above_max: 400 Bad Request
+  next_link_format: "{service_root}{EntitySet}?$skip={n+top}"
+
+# ---------------------------------------------------------------------------
+# Filter operators (mapped to Odoo domain)
+# ---------------------------------------------------------------------------
+filter_operators:
+  eq:
+    odoo: "="
+  ne:
+    odoo: "!="
+  gt:
+    odoo: ">"
+  ge:
+    odoo: ">="
+  lt:
+    odoo: "<"
+  le:
+    odoo: "<="
+  contains(field, x):
+    odoo: ('field', 'ilike', 'x')
+  startswith(field, x):
+    odoo: ('field', '=ilike', 'x%')
+  field in (a, b, c):
+    odoo: ('field', 'in', [a,b,c])
+  and:
+    odoo: implicit_and_in_domain
+  or:
+    odoo: explicit '|' in domain
+
+unsupported_filter_features:   # return 501 if used
+  - $expand-based filters
+  - lambda operators (any/all)
+  - geo operators
+  - arithmetic operators
+  - cast()
+  - isof()
+
+# ---------------------------------------------------------------------------
+# Performance + rate limiting
+# ---------------------------------------------------------------------------
+performance:
+  p95_target_ms: 800
+  p99_target_ms: 2000
+  max_payload_kb: 1024
+
+rate_limiting:
+  per_tenant_rps: 10
+  per_tenant_burst: 50
+  enforcement: fastapi_middleware
+  exceeded_response: 429 Too Many Requests
+
+# ---------------------------------------------------------------------------
+# Caching
+# ---------------------------------------------------------------------------
+caching:
+  $metadata: aggressive
+  $metadata_invalidation: on_module_upgrade
+  $count: 60s_per_tenant_filter_combo
+  entity_responses: no_cache_in_v1   # safe default; revisit later
+
+# ---------------------------------------------------------------------------
+# Telemetry
+# ---------------------------------------------------------------------------
+telemetry:
+  app_insights_role_name: odata-bridge-v1
+  custom_dimensions:
+    - tenant_id
+    - entityset
+    - http_status
+    - top
+    - skip
+    - filter_used
+    - count_requested
+    - response_kb
+    - duration_ms
+  exclude_from_logs:
+    - bearer_token
+    - request_body  # GET only anyway
+    - response_value_array  # only metadata
+
+# ---------------------------------------------------------------------------
+# Implementation hint
+# ---------------------------------------------------------------------------
+implementation_hint:
+  module: addons/ipai/ipai_odata_bridge/    # to be created when build trigger fires
+  framework: OCA fastapi (rest-framework)
+  contract_test_dir: tests/contracts/odata/
