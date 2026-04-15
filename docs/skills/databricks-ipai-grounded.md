@@ -5,6 +5,7 @@
 > **Workspace:** `dbw-ipai-dev` (Premium, SEA, Sponsored sub) — already provisioned ✅
 > **Companions:**
 > - [`docs/skills/azure-postgresql-ipai-grounded.md`](./azure-postgresql-ipai-grounded.md) — same methodology
+> - [`docs/architecture/databricks-one-and-workspace-operating-model.md`](../architecture/databricks-one-and-workspace-operating-model.md) — URL / surface / rollout authority
 > - [`docs/architecture/data-model-erd.md`](../architecture/data-model-erd.md) — schema layout
 > - [`docs/architecture/revised-bom-target-state.md`](../architecture/revised-bom-target-state.md) — data-intelligence plane
 >
