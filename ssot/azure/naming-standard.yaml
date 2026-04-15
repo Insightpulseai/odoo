@@ -1,0 +1,231 @@
+# ---------------------------------------------------------------------------
+# Azure Naming Standard — IPAI Platform
+# ---------------------------------------------------------------------------
+# Authority:    ssot/azure/naming-standard.yaml (this file)
+# Locked:       2026-04-15
+# Companions:   ssot/azure/bill-of-materials.yaml, ssot/azure/tagging-standard.yaml
+# Doctrine:     Predictable, plane-aware, env-aware names. Document short-name
+#               mappings for constrained-name resources (storage, ACR, etc.).
+# ---------------------------------------------------------------------------
+
+metadata:
+  authority: ssot/azure/naming-standard.yaml
+  locked_at: 2026-04-15
+  version: 1.0.0
+  enforcement: Bicep validation + PR gate
+
+# ---------------------------------------------------------------------------
+# Standard pattern
+# ---------------------------------------------------------------------------
+pattern: <type>-ipai-<env>-<product>-<plane>-<region?>
+
+components:
+  type:
+    description: Resource type prefix (Microsoft canonical abbreviations)
+    examples: [rg, kv, law, appi, aca, acaj, pg, srch, dbw, afd, waf, id, st]
+  ipai:
+    description: Org constant
+  env:
+    enum: [nonprod, prod]
+    note: Two environments target. dev/staging are sub-envs of nonprod when needed.
+  product:
+    enum: [shared, odoo, pulser, ads, prisma, w9, agent, data]
+  plane:
+    enum: [shared, web, transaction, agent, data-intelligence, research, observability, network]
+  region:
+    optional: true
+    note: Append only when multi-region; otherwise omit.
+
+# ---------------------------------------------------------------------------
+# Type prefix table (Microsoft Cloud Adoption Framework abbreviations)
+# ---------------------------------------------------------------------------
+type_prefixes:
+  resource_group: rg
+  key_vault: kv
+  log_analytics: law
+  application_insights: appi
+  container_app_environment: aca
+  container_app: aca
+  container_app_job: acaj
+  container_registry: cr           # rare — usually shared, "acr" historical
+  postgres_flexible_server: pg
+  cognitive_search: srch
+  databricks_workspace: dbw
+  cognitive_services: cog          # foundry resources land here
+  ai_services: ais                 # newer Foundry naming
+  azure_front_door: afd
+  waf_policy: waf
+  managed_identity: id
+  storage_account: st              # constrained-name; see short-names below
+  vnet: vnet
+  subnet: snet
+  nsg: nsg
+  private_dns_zone: pdnsz
+  private_endpoint: pe
+  nat_gateway: nat
+  service_bus_namespace: sb
+  event_hubs_namespace: evh
+  redis_cache: redis
+  cosmos_db: cosmos
+  api_management: apim
+  function_app: func
+  app_service_plan: asp
+
+# ---------------------------------------------------------------------------
+# Examples (full canonical names)
+# ---------------------------------------------------------------------------
+examples:
+  resource_groups:
+    - rg-ipai-prod-shared
+    - rg-ipai-prod-network
+    - rg-ipai-prod-observability
+    - rg-ipai-prod-web
+    - rg-ipai-prod-odoo-runtime
+    - rg-ipai-prod-agent-ai
+    - rg-ipai-prod-data-intel
+    - rg-ipai-nonprod-shared
+    - rg-ipai-nonprod-network
+    - rg-ipai-nonprod-observability
+    - rg-ipai-nonprod-web
+    - rg-ipai-nonprod-odoo-runtime
+    - rg-ipai-nonprod-agent-ai
+    - rg-ipai-nonprod-data-intel
+
+  key_vaults:
+    - kv-ipai-prod-shared
+    - kv-ipai-nonprod-shared
+
+  log_analytics:
+    - law-ipai-prod-obs
+    - law-ipai-nonprod-obs
+
+  app_insights:
+    - appi-ipai-prod-web
+    - appi-ipai-prod-odoo-product
+    - appi-ipai-prod-agent
+    - appi-ipai-prod-prisma-research
+
+  aca_envs:
+    - aca-ipai-prod-runtime
+    - aca-ipai-prod-product
+    - aca-ipai-nonprod-runtime
+    - aca-ipai-nonprod-product
+
+  aca_apps:
+    - aca-ipai-prod-odoo-app
+    - aca-ipai-prod-odoo-worker
+    - aca-ipai-prod-pulser-api
+    - aca-ipai-prod-prisma-api
+    - aca-ipai-prod-prisma-web
+    - aca-ipai-prod-forms-api
+
+  aca_jobs:
+    - acaj-ipai-prod-odoo-init
+    - acaj-ipai-prod-odoo-batch
+
+  postgres:
+    - pg-ipai-prod-odoo
+    - pg-ipai-nonprod-odoo
+
+  cognitive_search:
+    - srch-ipai-prod-agent
+    - srch-ipai-nonprod-agent
+
+  databricks:
+    - dbw-ipai-prod-data
+    - dbw-ipai-nonprod-data
+
+  foundry:
+    - ais-ipai-prod-agent       # AIServices kind
+    - ais-ipai-nonprod-agent
+
+  edge:
+    - afd-ipai-prod-web
+    - waf-ipai-prod-web
+
+  managed_identities:
+    - id-ipai-prod-odoo-app
+    - id-ipai-prod-prisma-app
+    - id-ipai-prod-jobs-ops
+    - id-ipai-prod-data-connector
+
+  network:
+    - vnet-ipai-prod-runtime
+    - snet-ipai-prod-web
+    - snet-ipai-prod-runtime
+    - snet-ipai-prod-data
+    - nsg-ipai-prod-runtime
+    - nat-ipai-prod-runtime
+    - pdnsz-ipai-prod-postgres
+    - pdnsz-ipai-prod-search
+    - pdnsz-ipai-prod-storage
+    - pdnsz-ipai-prod-privatelink
+
+# ---------------------------------------------------------------------------
+# Constrained-name resources (no hyphens, lowercase, length-limited)
+# ---------------------------------------------------------------------------
+constrained_names:
+  storage_accounts:
+    pattern: st<org><env><purpose><nn>
+    max_length: 24
+    case: lowercase
+    chars: alphanumeric_only
+    examples:
+      - stipaiprododoo01           # Odoo runtime/files
+      - stipaiprodagent01          # Agent attachments/retrieval artifacts
+      - stipaiprodlake01           # Data lake (bronze/silver/gold)
+      - stipaiprodweb01            # Static web assets
+      - stipaiprodprisma01         # PrismaLab research artifacts
+      - stipainonprododoo01
+      - stipainonprodagent01
+      - stipainonprodlake01
+
+  container_registries:
+    pattern: cr<org><purpose>
+    max_length: 50
+    case: lowercase
+    chars: alphanumeric_only
+    examples:
+      - cripaipublic               # public images (web, etc.)
+      - cripaiprivate              # private images (Odoo, agents)
+    deprecated:
+      - acripaiodoo                # historical, kept until migration
+
+  cognitive_services_subdomain:
+    pattern: <resource-name>      # globally unique, used as <name>.cognitiveservices.azure.com
+    max_length: 64
+    note: Use AIServices canonical resource name; subdomain is implicit.
+
+# ---------------------------------------------------------------------------
+# Tag-name normalization (mirrors tagging-standard.yaml deprecated_tag_keys)
+# ---------------------------------------------------------------------------
+deprecated_short_names:
+  - from: stdevipai
+    to: stipainonprodweb01           # rename target (post-migration)
+  - from: stipaidev
+    to: stipainonprododoo01          # rename target
+  - from: stlkipaidev
+    to: stipainonprodlake01          # rename target
+  - from: acripaiodoo
+    to: cripaiprivate                # rename target
+
+# ---------------------------------------------------------------------------
+# Enforcement
+# ---------------------------------------------------------------------------
+enforcement:
+  bicep_validation: true
+  pr_gate: true
+  policy_assignment_name: enforce-naming-standard
+  exemptions:
+    - resource_type: Microsoft.OperationalInsights/workspaces/savedSearches
+      reason: Hyphens disallowed at this layer
+    - resource_type: Microsoft.Authorization/policyAssignments
+      reason: Azure-managed names
+
+# ---------------------------------------------------------------------------
+# Migration posture
+# ---------------------------------------------------------------------------
+migration:
+  current_state: mixed_naming_observed
+  target_state: full_compliance_post_sub_consolidation
+  cutover_window: aligned_with_pg_cutover_per_adr_002

@@ -1,280 +1,237 @@
 # ---------------------------------------------------------------------------
-# Azure Bill of Materials — Target-State Contract
+# Azure Bill of Materials — Revised Target-State Contract (v2)
 # ---------------------------------------------------------------------------
 # Authority:    ssot/azure/bill-of-materials.yaml (this file)
 # Locked:       2026-04-15
-# Doctrine:     Tight target-state BOM. Not "whatever is in the subscription."
-# Enforcement:  Azure Pipelines validation + Bicep-managed infra + tag contract
-#
-# Blunt summary:
-#   1 subscription
-#   7 canonical resource groups
-#   1 Key Vault, 1 ACR, 1 Postgres Flex
-#   1 Foundry resource + 1 project
-#   1 Databricks workspace, 1 AI Search
-#   1 primary VNet boundary
-#   1 observability stack per major lane
-#   Bicep-managed tags and policy everywhere
-#   Azure Pipelines-only delivery
+# Version:      2.0.0  (revised upward to multitenant SaaS + 4 product planes)
+# Doctrine:     Build for partner-listing day one. SaaS pattern (Microsoft Learn).
+# Companions:   ssot/azure/tagging-standard.yaml v3, ssot/azure/naming-standard.yaml
+# Anchors:      docs/architecture/revised-bom-target-state.md
+#               docs/architecture/multitenant-saas-target-state.md
+#               docs/architecture/domain-and-web-bom-target-state.md
+# Supersedes:   v1 (single-sub, 7 RGs only) — kept for migration history
 # ---------------------------------------------------------------------------
 
 metadata:
   authority: ssot/azure/bill-of-materials.yaml
   locked_at: 2026-04-15
-  supersedes: []
-  companions:
-    - ssot/azure/tagging-standard.yaml
-    - infra/azure/tags/main.bicep
-    - docs/architecture/azure-bom-target-state.md
-    - docs/architecture/domain-and-web-bom-target-state.md
+  version: 2.0.0
+  status: canonical
+  supersedes: [v1.0.0]
   doctrine_anchors:
+    - "https://learn.microsoft.com/en-us/azure/architecture/guide/saas-multitenant-solution-architecture/"
+    - "https://learn.microsoft.com/en-us/azure/architecture/guide/multitenant/checklist"
     - "CLAUDE.md §Engineering & Delivery Authority (REVISED 2026-04-14)"
     - "CLAUDE.md §Engineering Execution Doctrine"
-    - ".claude/rules/security-baseline.md"
 
-subscription:
-  target_count: 1
+# ---------------------------------------------------------------------------
+# Subscription topology (revised: 3 subs, not 1)
+# ---------------------------------------------------------------------------
+subscriptions:
+  target_count: 3
   canonical:
-    name: Microsoft Azure Sponsorship
-    id: eba824fb-332d-4623-9dfb-2c9f7ee83f4e
-    offer: MS-AZR-0036P
-    directory: Default Directory (insightpulseai.com)
-  deprecated:
+    - name: ipai-shared-management
+      role: cross-env shared services (Entra-bound mgmt, billing, governance)
+      offer: pay-as-you-go (target)
+      status: pending_creation
+    - name: ipai-nonprod
+      role: dev + staging workloads
+      offer: Azure Sponsorship (current)
+      id_today: eba824fb-332d-4623-9dfb-2c9f7ee83f4e
+    - name: ipai-prod
+      role: production workloads
+      offer: pay-as-you-go (target)
+      status: pending_creation
+  current_state:
     - id: 536d8cf6-89e1-4815-aef3-d5f2c5f4d070
       name: Azure subscription 1
-      status: migration_in_progress_2026-04-15
-      target: consolidate_to_sponsored
+      status: deprecated_migration_in_progress
+      target: consolidate_into_nonprod_or_prod
+    - id: eba824fb-332d-4623-9dfb-2c9f7ee83f4e
+      name: Microsoft Azure Sponsorship
+      status: nonprod_canonical
+      target: keep_as_nonprod
 
+# ---------------------------------------------------------------------------
+# Resource group topology (per-env: 7; total 14 across nonprod+prod;
+# +shared-management RGs)
+# ---------------------------------------------------------------------------
 resource_groups:
-  target_count: 7
-  canonical:
-    - name: rg-ipai-shared
+  per_env_target_count: 7
+  total_target_count: 18           # 7×2 + 4 shared-mgmt
+  pattern_per_env:
+    - name: rg-ipai-<env>-shared
       plane: shared
-      purpose: ACR, shared Key Vault, shared managed identities
-    - name: rg-ipai-dev-network
+      purpose: ACR refs, shared MIs, env-shared utilities
+    - name: rg-ipai-<env>-network
       plane: network
-      purpose: VNet, private DNS, NSG, private endpoints
-    - name: rg-ipai-dev-observability
+      purpose: VNet, subnets, private DNS, private endpoints, NAT
+    - name: rg-ipai-<env>-observability
       plane: observability
-      purpose: Log Analytics, App Insights, action groups, alerts
-    - name: rg-ipai-dev-odoo-runtime
+      purpose: Log Analytics, App Insights (×4 per env), alerts, action groups
+    - name: rg-ipai-<env>-web
+      plane: web
+      purpose: web surfaces (root, erp shell, prisma web, w9 booking)
+    - name: rg-ipai-<env>-odoo-runtime
       plane: transaction
-      purpose: ACA env, Odoo apps and jobs
-    - name: rg-ipai-dev-odoo-data
-      plane: transaction-data
-      purpose: Postgres Flex, runtime storage
-    - name: rg-ipai-dev-agent-ai
+      purpose: ACA env + Odoo apps/jobs + storage + Postgres references
+    - name: rg-ipai-<env>-agent-ai
       plane: agent
-      purpose: Foundry, AI Search, Doc Intelligence, Language if used
-    - name: rg-ipai-dev-data-intel
+      purpose: Foundry, AI Search, Doc Intelligence, agent storage
+    - name: rg-ipai-<env>-data-intel
       plane: data-intelligence
-      purpose: Databricks, access connector, Purview, lake storage
-  rationalize:
-    - pattern: 12+ ad-hoc RGs observed today
-      action: consolidate_into_canonical_7
-    - pattern: RGs with mixed planes
-      action: split_by_plane
-    - pattern: RGs without owner_plane tag
-      action: tag_or_delete
+      purpose: Databricks, access connector, lake storage, Purview
+  shared_mgmt_rgs:
+    - name: rg-ipai-mgmt-edge
+      purpose: AFD Premium + WAF policy
+    - name: rg-ipai-mgmt-registry
+      purpose: ACR (1 shared registry across envs)
+    - name: rg-ipai-mgmt-secrets
+      purpose: Shared mgmt KV
+    - name: rg-ipai-mgmt-governance
+      purpose: Budgets, policies, action groups (cross-env)
 
 # ---------------------------------------------------------------------------
-# Governance / control-plane BOM
+# Global shared BOM (counts across the whole platform)
 # ---------------------------------------------------------------------------
-governance:
-  tagging:
-    ref: ssot/azure/tagging-standard.yaml
-    bicep_module: infra/azure/tags/main.bicep
-    enforcement: Azure Policy + Bicep validation
-  policy:
-    required:
-      - tag_compliance         # from tagging-standard.yaml
-      - allowed_locations      # southeastasia, eastus2
-      - allowed_skus           # listed per resource type
-      - deny_risky_drift       # no portal-only infra changes
-  rbac:
-    model: Entra groups + managed identities
-    principle: least_privilege
-    workload_identity: managed_identity_first
-    service_principal_exceptions: documented_in_repo
-  key_management:
-    canonical_vault: kv-ipai-dev
-    rg: rg-ipai-shared
-    target_count: 1
-    secrets_policy: .claude/rules/security-baseline.md
+global_shared:
+  azure_subscriptions: 3
+  entra_tenant: 1
+  azure_front_door_premium: 1
+  waf_policy: 1
+  shared_acr: 1
+  shared_key_vault_mgmt: 1
+  shared_action_group: 1
+  shared_cost_budgets: 4    # global + per-major-plane
+  dns_pattern_standard: 1
 
 # ---------------------------------------------------------------------------
-# Odoo transaction-plane BOM
+# Per-environment platform slice (apply to nonprod and prod)
 # ---------------------------------------------------------------------------
-odoo_plane:
-  runtime:
-    aca_environment:
-      target_count: 1
-      canonical_name: ipai-odoo-dev-env-v2
-      rg: rg-ipai-dev-odoo-runtime
-    odoo_web_container_app:
-      target_count: 1
-      canonical_name: ipai-odoo-dev-web
-    jobs:
-      target_count: 1-3
-      canonical: init/migration + optional worker jobs
-  registry:
-    target_count: 1
-    canonical: acripaiodoo.azurecr.io
-    rg: rg-ipai-shared
-  database:
-    target_count: 1
-    canonical: pg-ipai-odoo
-    rg: rg-ipai-dev-odoo-data
-    type: Azure PostgreSQL Flexible Server
-    version: 16
-  storage:
-    target_count: 1-2
-    purpose: runtime file artifacts only
-    rationalize: merge_overlapping_accounts
-  network:
-    target_count: 1
-    vnet: canonical only
-    private_dns: canonical only
-    private_endpoints: where_needed_only
-  monitoring:
-    app_insights: 1
-    log_analytics: 1
-    scope: odoo_lane
+per_env_slice:
+  resource_groups: 7
+  key_vault: 1
+  vnet: 1
+  subnets: 3                # web, runtime, data/private-link
+  private_dns_zones: 4      # postgres, privatelink, search, storage
+  nat_gateway: 1
+  log_analytics_workspace: 1
+  app_insights: 4           # web, product, agent, research
+  aca_environments: 2       # app/runtime + product
+  aca_apps: 5               # odoo-app, odoo-worker, pulser-api, prisma-api, forms-api
+  aca_jobs: 2               # odoo-init, odoo-batch
+  postgres_flexible_server: 1
+  odoo_storage_account: 1
+  foundry_resource: 1
+  foundry_project: 1
+  ai_search: 1
+  agent_storage_account: 1
+  managed_identities: 3     # app-runtime, jobs-ops, data-connector
+  databricks_workspace: 1
+  databricks_access_connector: 1
+  lake_storage_account: 1
+  purview: 0_to_1           # only if actively used
+  service_bus: 0_to_1
+  event_hubs: 0_to_1
+  redis: 0                  # defer until justified
+  cosmos_db: 0              # defer until justified
+  api_management: 0_to_1    # only when external API productization is real
+
+per_env_total: 38_to_42_resources
+total_partner_ready: 84_to_94_resources
 
 # ---------------------------------------------------------------------------
-# Agent / Foundry plane BOM
+# Product planes (4 — revised upward)
 # ---------------------------------------------------------------------------
-agent_plane:
-  foundry_resource:
-    target_count: 1
-    canonical_name: ipai-copilot-resource
-    rg: rg-data-intel-ph   # current; target rg-ipai-dev-agent-ai
-    region: eastus2
-  foundry_project:
-    target_count: 1
-    canonical_name: proj-ipai-copilot
-    status: pending_creation
-  model_deployments:
-    canonical:
-      - name: gpt-4.1
-        status: live
-      - name: text-embedding-3-small
-        status: live
-      - name: w9-pulser
-        base_model: gpt-4o-mini
-        status: live
-      - name: claude-sonnet-4-6
-        status: pending_quota_grant
-  connections:
-    required:
-      - app_insights
-      - ai_search
-      - storage
-    order: add_in_declared_order
-  tools:
-    mode: per_agent_enablement
-    never: globally_enabled
-    canonical_mcps:
-      - azure
-      - azure_devops
-      - postgresql
-      - foundry
-      - ai_search
-  deferred:
-    - durable_state
-    - cache_redis
+planes:
+  shared_saas_control:
+    role: tenancy + identity + billing + observability + deployment + policy
+    components:
+      - tenant model + pricing/tiering
+      - per-tenant Entra apps where customer-facing
+      - per-tenant managed identities for service-to-service
+      - shared Key Vault with `<tenant>-<secret-name>` naming
+      - per-tenant feature flags (ops.feature_flags)
+      - per-tenant audit (ops.audit_log)
+      - cost allocation via mandatory tags
+      - SLOs + noisy-neighbor controls
+      - Marketplace metering wiring
+    qty_per_env:
+      app_insights: 1
+      managed_identities: 1
+      reuses_shared_kv_acr_afd: true
+
+  core_operations:
+    role: D365 Finance + Project Operations + Business Central parity
+    components:
+      - Odoo CE 18 + OCA + ipai_*
+      - Pulser advisory workflows + Tax Guru
+      - Finance close + BIR compliance per docs/backlog/ph-close-bir-compliance-board-pack.md
+      - Project Operations parity per docs/architecture/odata-to-odoo-mapping.md §7.2
+      - Business Central parity (broader SMB ERP)
+    qty_per_env:
+      postgres: 1
+      odoo_storage: 1
+      aca_env: 1
+      aca_apps: 3   # odoo-web, odoo-worker, pulser-api
+      aca_jobs: 2   # odoo-init, odoo-batch
+      app_insights: 1
+      managed_identity: 1
+
+  ads_customer_intel:
+    role: Microsoft Advertising + Customer Insights parity (lead-gen + audience)
+    components:
+      - ad activation workflows
+      - customer profile unification (data-intel + customer contract)
+      - segmentation (Pulser customer intel + analytics)
+      - journeys / lead handoff (campaign/journey APIs + CRM/Odoo)
+      - campaign analytics (Databricks + Search + dashboards)
+    qty_per_env:
+      app_insights: 1
+      managed_identity: 1
+      reuses_databricks_search_forms: true
+      no_separate_database_initially: true
+
+  research_life_sciences:
+    role: research / public-health analytics, NOT clinical PHI
+    components:
+      - PrismaLab tools (PRISMA, PubMed, PICO, Cochrane)
+      - protocol support, evidence synthesis
+      - AI-assisted research support (grounded retrieval)
+      - optional public-health analytics
+    qty_per_env:
+      aca_apps: 2          # prisma-web, prisma-api
+      aca_worker_optional: 0_to_1
+      app_insights: 1
+      search_index_or_partition: 1
+      research_artifact_storage: 1   # container in shared storage
+    not_in_default_bom:
+      - Health Data Services workspace
+      - FHIR service
+      - DICOM service
+      - regulated clinical lakehouse
+    escalation_gate: regulated_scope tag transitions from `none` → `research` → `health` → `clinical` only with governance approval
 
 # ---------------------------------------------------------------------------
-# Data-intelligence plane BOM
+# Domains / public surfaces (per docs/architecture/domain-and-web-bom-target-state.md)
 # ---------------------------------------------------------------------------
-data_intelligence_plane:
-  databricks_workspace:
-    target_count: 1
-    canonical_name: dbw-ipai-dev
-    rg: rg-ipai-dev-data-intel
-  governance:
-    unity_catalog: required
-    catalogs_schemas: defined_in_repo
-  storage:
-    adls_lake: 1
-    role: bronze_silver_gold
-  access_connector:
-    target_count: 1
-  ai_search:
-    target_count: 1
-    purpose: grounded_retrieval
-  purview:
-    required_if_actively_used: true
-  event_hubs:
-    required_if_streaming: true
-  semantic_consumption:
-    fabric_power_bi: add_when_consumer_path_real
-  rules:
-    - no_writeback_to_operational_truth
-    - bronze_silver_gold_path_clear
-    - semantic_serving_separate_from_engineering
-
-# ---------------------------------------------------------------------------
-# Observability BOM
-# ---------------------------------------------------------------------------
-observability:
-  log_analytics:
-    target_count: 1_per_environment_lane
-    rationalize: consolidate_fragmented_workspaces
-  app_insights:
-    target_count: 1_per_major_app_surface
-    canonical_surfaces:
-      - odoo
-      - agent
-      - web_control_plane
-  action_groups:
-    target_count: 1-2
-    canonical: standard_action_groups
-  alerts:
-    required:
-      - budget
-      - availability
-      - queue_job_failure
-      - db_health
-      - agent_failure
-
-# ---------------------------------------------------------------------------
-# Delivery / IaC BOM
-# ---------------------------------------------------------------------------
-delivery:
-  iac_language:
-    default: bicep
-    standardize: true
-  authoring:
-    editor: vscode
-    extension: bicep
-  validation:
-    local: azure_cli
-    commands:
-      - az bicep build
-      - az deployment group what-if
-      - az deployment group validate
-  ci_cd:
-    canonical: azure_pipelines
-    forbidden:
-      - github_actions
-      - vercel
-  contracts:
-    required:
-      - ssot/azure/bill-of-materials.yaml      # this file
-      - ssot/azure/tagging-standard.yaml
-      - ssot/foundry/runtime_inventory.yaml
-      - ssot/governance/platform-authority-split.yaml
-  drift_control:
-    required:
-      - azure_policy
-      - what_if_before_deploy
-      - tag_validation
-      - contract_validation
-  forbidden:
-    - portal_only_changes
-    - untagged_resources
-    - resources_outside_canonical_rgs
+domains:
+  - hostname: www.insightpulseai.com
+    role: root brand / GTM
+    runtime_class: marketing-content
+  - hostname: erp.insightpulseai.com
+    role: product ingress (public shell + authenticated entry)
+    runtime_class: interactive-product
+  - hostname: prismalab.insightpulseai.com
+    role: research app surface (interactive product, not microsite)
+    runtime_class: interactive-product
+  - hostname: w9studio.net
+    role: booking / commerce microsite
+    runtime_class: marketing-content
+  - hostname: ads.insightpulseai.com or partner portal
+    role: optional future external portal
+    runtime_class: tbd
+    qty_target: 0_to_1
 
 # ---------------------------------------------------------------------------
 # Keep / rationalize / add matrix
@@ -298,17 +255,19 @@ rationalize:
   - any_resource_without_clear_owner_plane_and_tag_set
 
 add_next:
-  - canonical_tag_module_in_bicep        # infra/azure/tags/main.bicep
+  - canonical_tag_module_in_bicep        # infra/azure/tags/main.bicep ✅
   - foundry_connection_inventory         # ssot/foundry/runtime_inventory.yaml
   - azure_pipelines_validation_for_bicep_tags_foundry_contract
   - finops_budget_anomaly_alerting_layer
+  - per_tenant_metering_pipeline
+  - regulated_scope_governance_approval_workflow
 
 # ---------------------------------------------------------------------------
 # Migration posture (2026-04-15)
 # ---------------------------------------------------------------------------
 migration:
-  source_sub: 536d8cf6-89e1-4815-aef3-d5f2c5f4d070  # Azure subscription 1
-  target_sub: eba824fb-332d-4623-9dfb-2c9f7ee83f4e  # Sponsored
+  source_sub: 536d8cf6-89e1-4815-aef3-d5f2c5f4d070
+  target_subs: [eba824fb-332d-4623-9dfb-2c9f7ee83f4e (nonprod), pending (prod)]
   status:
     foundry_moved: true
     docai_moved: true
@@ -316,11 +275,43 @@ migration:
       - ipai-website-dev
       - ipai-w9studio-dev
     pending:
+      - prod_subscription_provisioned
+      - shared_mgmt_subscription_provisioned
       - pg_ipai_odoo_data_cutover
       - 13_container_apps_redeploy
-      - key_vault_move_or_recreate
+      - key_vault_consolidation
       - ai_search_move
-      - storage_moves
+      - storage_moves_with_naming_compliance
       - private_endpoints_rebuild
       - managed_identities_recreate
       - dns_cnames_flip
+      - tag_set_v3_applied_to_all_existing_resources
+      - rg_consolidation_to_canonical_7_per_env
+
+# ---------------------------------------------------------------------------
+# SMART success criteria
+# ---------------------------------------------------------------------------
+success_criteria:
+  tenancy_product:
+    - 100% customer-facing requests resolve to tenant context before app logic
+    - 100% paid capabilities assignable to a product tier
+    - 0 known cross-tenant reads/writes in nonprod and prod
+    - 95%+ tenant usage meterable by product, tenant, workload
+  governance_cost:
+    - 100% live resources have mandatory tag set (17 keys per tagging-standard v3)
+    - 95%+ Azure spend allocatable by product/plane/workload/billing_scope
+    - monthly unallocated spend <5%
+    - 0 untagged production resources
+  delivery_security:
+    - 100% infra PRs run Bicep validation + what-if
+    - 100% Azure-hosted workloads use managed identity where supported
+    - 0 secrets stored in git
+    - 100% prod changes flow through Azure Pipelines
+  runtime_health:
+    - all 4 canonical domains pass health checks from shared edge
+    - Odoo / Pulser / PrismaLab / shared API telemetry visible in App Insights
+    - each major plane has at least one SLO defined
+  research_health_lane:
+    - 0 PHI/clinical datasets onboarded without explicit regulated_scope upgrade
+    - 100% research exports + artifacts auditable
+    - default PrismaLab workloads run without Health Data Services / FHIR

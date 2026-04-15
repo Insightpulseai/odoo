@@ -3,40 +3,47 @@
 # ---------------------------------------------------------------------------
 # Authority:    ssot/azure/tagging-standard.yaml (this file)
 # Locked:       2026-04-15
-# Doctrine:     Mandatory tag object applied by Bicep at subscription/RG/resource
-#               scope. Bicep replaces existing tags unless explicitly preserved.
+# Version:      3.0.0
+# Doctrine:     Mandatory tag object applied by Bicep at sub/RG/resource scope.
+#               Bicep replaces existing tags unless explicitly preserved.
 # Anchor:       https://learn.microsoft.com/azure/azure-resource-manager/bicep/scenarios-rg
-# Supersedes:   Prior deprecated version + ssot/azure/tag-policy.yaml (consolidated here)
+# Companions:   ssot/azure/bill-of-materials.yaml, ssot/azure/naming-standard.yaml
+# Supersedes:   v2.0.0 (added tenant/billing/regulated/source_repo/region/backup)
 # ---------------------------------------------------------------------------
 
 metadata:
   authority: ssot/azure/tagging-standard.yaml
   locked_at: 2026-04-15
-  version: 2.0.0
+  version: 3.0.0
   status: canonical
   subscription_id: eba824fb-332d-4623-9dfb-2c9f7ee83f4e
   subscription_name: "Microsoft Azure Sponsorship"
   tenant_id: 402de71a-87ec-4302-a609-fb76098d1da7
-  companions:
-    - ssot/azure/bill-of-materials.yaml
-    - infra/azure/tags/main.bicep
 
 # ---------------------------------------------------------------------------
 # Required tags — every resource, RG, and subscription
 # ---------------------------------------------------------------------------
 required_tags:
+  organization:
+    type: const
+    value: insightpulseai
+    description: Organization constant
   environment:
     type: enum
-    values: [dev, staging, prod]
-    description: Environment lane
+    values: [nonprod, prod]
+    description: Environment lane (dev/staging are sub-envs of nonprod)
+  product:
+    type: enum
+    values: [shared, odoo, pulser, ads, prisma, w9, agent, data]
+    description: Product / surface this resource belongs to
   plane:
     type: enum
-    values: [transaction, agent, data-intelligence, platform, observability, network, shared]
-    description: Platform plane per feedback_four_plane_architecture_doctrine
-  system:
+    values: [shared, web, transaction, agent, data-intelligence, research, observability, network]
+    description: Platform plane per four-plane doctrine + new research plane
+  workload:
     type: enum
-    values: [odoo, pulser, fabric, databricks, shared, foundry, web]
-    description: Logical system the resource belongs to
+    values: [edge, odoo, prisma, ads, search, foundry, databricks, forms, worker, jobs, monitoring, identity, secrets, registry]
+    description: Specific workload pattern
   owner:
     type: string
     default: jake
@@ -50,34 +57,53 @@ required_tags:
     values: [bicep, terraform, portal_migration_temp, claude]
     target: bicep
     description: Control-plane tool managing the resource
+  source_repo:
+    type: string
+    pattern: "^[A-Za-z0-9_-]+/[A-Za-z0-9_.-]+$"
+    description: GitHub repo where this resource's IaC lives (e.g. Insightpulseai/odoo)
   criticality:
     type: enum
     values: [low, medium, high]
     description: Incident priority
   data_classification:
     type: enum
-    values: [internal, restricted, confidential, public]
+    values: [public, internal, restricted, confidential]
     description: Data sensitivity
   lifecycle:
     type: enum
-    values: [experimental, active, legacy]
+    values: [experimental, active, deprecated]
     description: Lifecycle stage
+  tenant_scope:
+    type: enum
+    values: [single-tenant, multi-tenant, platform]
+    description: Per-tenant boundary classification
+  billing_scope:
+    type: enum
+    values: [shared, product, customer]
+    description: Cost allocation boundary
+  regulated_scope:
+    type: enum
+    values: [none, research, health, clinical]
+    description: Regulatory boundary (PHI/EHR/imaging escalation gate)
+  backup_tier:
+    type: enum
+    values: [none, standard, critical]
+    description: Backup policy tier
+  region:
+    type: string
+    description: Azure region (e.g. southeastasia, eastus2)
 
 # ---------------------------------------------------------------------------
 # Optional tags (surface-specific)
 # ---------------------------------------------------------------------------
 optional_tags:
-  product:
-    description: "insightpulseai | w9studio | prismalab"
   domain:
-    description: "insightpulseai.com | w9studio.net | prismalab.insightpulseai.com"
-  workload:
-    description: "marketing-site | booking | erp-runtime | foundry-agent | etc."
+    description: Public domain binding (e.g. erp.insightpulseai.com)
   deployed:
     description: ISO date resource was deployed
     pattern: "^\\d{4}-\\d{2}-\\d{2}$"
   compliance_scope:
-    description: "bir-ph | gdpr | pci | none"
+    description: "bir-ph | gdpr | pci | hipaa | none"
 
 # ---------------------------------------------------------------------------
 # Deprecated tag keys (normalize to canonical)
@@ -94,27 +120,38 @@ deprecated_tag_keys:
   - from: data-classification
     to: data_classification
   - from: app
-    to: system
+    to: workload
   - from: application
-    to: system
+    to: workload
+  - from: system
+    to: workload
+  - from: purpose
+    to: workload
 
 # ---------------------------------------------------------------------------
 # Canonical tag object (for Bicep import / API body)
 # ---------------------------------------------------------------------------
 canonical_tag_example:
-  environment: dev
+  organization: insightpulseai
+  environment: prod
+  product: odoo
   plane: transaction
-  system: odoo
+  workload: odoo
   owner: jake
   cost_center: ipai
   managed_by: bicep
-  criticality: medium
-  data_classification: internal
+  source_repo: Insightpulseai/odoo
+  criticality: high
+  data_classification: confidential
   lifecycle: active
-  product: insightpulseai
+  tenant_scope: multi-tenant
+  billing_scope: product
+  regulated_scope: none
+  backup_tier: critical
+  region: southeastasia
   domain: erp.insightpulseai.com
-  workload: erp-runtime
   deployed: "2026-04-15"
+  compliance_scope: bir-ph
 
 # ---------------------------------------------------------------------------
 # Azure Policy enforcement
@@ -123,12 +160,32 @@ policy_enforcement:
   mode: deny_on_create_without_required_tags
   scope: subscription
   policy_assignment_name: require-canonical-tags
+  required_tag_keys_enforced:
+    - organization
+    - environment
+    - product
+    - plane
+    - workload
+    - owner
+    - cost_center
+    - managed_by
+    - source_repo
+    - criticality
+    - data_classification
+    - lifecycle
+    - tenant_scope
+    - billing_scope
+    - regulated_scope
+    - backup_tier
+    - region
   exemptions:
     - resource_type: Microsoft.Authorization/*
       reason: Azure-managed, cannot tag
     - resource_type: Microsoft.App/managedEnvironments/managedCertificates
       reason: Auto-created by ACA; tag post-create
       documented_in: docs/runbooks/zoho-bookings-to-odoo-cutover.md
+    - resource_type: Microsoft.Network/networkWatchers
+      reason: Singleton per-region per-sub, Azure-managed
 
 # ---------------------------------------------------------------------------
 # Bicep contract
@@ -137,14 +194,42 @@ bicep_contract:
   module: infra/azure/tags/main.bicep
   required_params:
     - environment
+    - product
     - plane
-    - system
+    - workload
     - owner
-    - cost_center
+    - costCenter
+    - sourceRepo
     - criticality
-    - data_classification
+    - dataClassification
     - lifecycle
+    - tenantScope
+    - billingScope
+    - regulatedScope
+    - backupTier
+    - region
   behavior:
     - merge_not_replace_at_rg_scope
     - explicit_tag_preserve_for_resource_level
     - fail_pipeline_if_missing_required_tag
+
+# ---------------------------------------------------------------------------
+# Tag rationale notes
+# ---------------------------------------------------------------------------
+notes:
+  regulated_scope: |
+    Added per revised BOM (research/life-sciences plane). Default `none`.
+    Escalation to `research` for PrismaLab. Escalation to `health` only when
+    onboarding non-PHI public-health datasets. Escalation to `clinical`
+    requires explicit governance approval — triggers Health Data Services /
+    FHIR adoption + separate compliance review.
+  tenant_scope: |
+    Required for multitenant SaaS pattern. `platform` = control-plane
+    resources (KV, ACR, AFD). `multi-tenant` = shared workload serving
+    many tenants via tenant_id. `single-tenant` = dedicated workload.
+  billing_scope: |
+    Required for FinOps + future Marketplace metering. `shared` = global
+    overhead. `product` = allocatable to a product line. `customer` =
+    allocatable to a named customer engagement.
+  source_repo: |
+    Enables PR-time validation + drift reconciliation back to the right repo.

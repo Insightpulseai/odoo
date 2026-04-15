@@ -1,0 +1,167 @@
+# ---------------------------------------------------------------------------
+# OData v1 EntitySet contract — ProjectTasks
+# ---------------------------------------------------------------------------
+# Authority: platform/contracts/odata/v1/entitysets/project_tasks.yaml
+# Maps:      Odoo `project.task` → OData EntitySet `ProjectTasks`
+# CDM hint:  D365 Project Operations `msdyn_projecttask`
+# ---------------------------------------------------------------------------
+
+metadata:
+  contract: odata-entityset-projecttasks-v1
+  locked_at: 2026-04-15
+  status: design
+
+entity_set:
+  name: ProjectTasks
+  url: /odata/v1/{tenant}/ProjectTasks
+  odoo_model: project.task
+  cdm_target: ProjectTask (msdyn_projecttask)
+  read_only: true
+
+properties:
+  TaskId:
+    odoo_field: id
+    edm_type: Edm.Int64
+    is_key: true
+    nullable: false
+  Subject:
+    odoo_field: name
+    edm_type: Edm.String
+    nullable: false
+    cdm_alias: subject
+  ProjectId:
+    odoo_field: project_id
+    edm_type: Edm.Int64
+    nullable: false
+  ProjectName:
+    odoo_field: project_id.name
+    edm_type: Edm.String
+    nullable: false
+    note: Convenience denormalized field
+  ParentTaskId:
+    odoo_field: parent_id
+    edm_type: Edm.Int64
+    nullable: true
+    note: WBS hierarchy via parent/child
+  AssignedToId:
+    odoo_field: user_ids[0].id   # first assignee
+    edm_type: Edm.Int64
+    nullable: true
+    note: Odoo supports multi-assign via user_ids; v1 surfaces first only
+  AssignedToName:
+    odoo_field: user_ids[0].name
+    edm_type: Edm.String
+    nullable: true
+  Description:
+    odoo_field: description
+    edm_type: Edm.String
+    nullable: true
+  StageId:
+    odoo_field: stage_id
+    edm_type: Edm.Int64
+    nullable: true
+  StageName:
+    odoo_field: stage_id.name
+    edm_type: Edm.String
+    nullable: true
+    cdm_alias: stageName
+  Priority:
+    odoo_field: priority
+    edm_type: Edm.String
+    nullable: true
+    note: Odoo selection field; emit code value
+  StartDate:
+    odoo_field: date_assign
+    edm_type: Edm.DateTimeOffset
+    nullable: true
+  DueDate:
+    odoo_field: date_deadline
+    edm_type: Edm.Date
+    nullable: true
+    cdm_alias: dueDate
+  CompletedOn:
+    odoo_field: date_end
+    edm_type: Edm.DateTimeOffset
+    nullable: true
+  PlannedHours:
+    odoo_field: planned_hours
+    edm_type: Edm.Decimal(10,2)
+    nullable: true
+    cdm_alias: plannedEffort
+  EffectiveHours:
+    odoo_field: effective_hours
+    edm_type: Edm.Decimal(10,2)
+    nullable: true
+    cdm_alias: actualEffort
+  ProgressPercent:
+    odoo_field: progress
+    edm_type: Edm.Decimal(5,2)
+    nullable: true
+  IsClosed:
+    odoo_field: stage_id.fold
+    edm_type: Edm.Boolean
+    nullable: false
+    note: Computed from Odoo stage's "fold" attribute
+  CompanyId:
+    odoo_field: company_id
+    edm_type: Edm.Int64
+    nullable: false
+  CreatedOn:
+    odoo_field: create_date
+    edm_type: Edm.DateTimeOffset
+    nullable: false
+  ModifiedOn:
+    odoo_field: write_date
+    edm_type: Edm.DateTimeOffset
+    nullable: false
+
+default_domain:
+  - active in [True, False]
+  - company_id = <tenant_company_id>
+
+selectable_properties: all
+
+filterable_properties:
+  - TaskId
+  - ProjectId
+  - ParentTaskId
+  - AssignedToId
+  - StageId
+  - Priority
+  - StartDate
+  - DueDate
+  - CompletedOn
+  - IsClosed
+  - CompanyId
+  - CreatedOn
+  - ModifiedOn
+
+orderable_properties:
+  - TaskId
+  - DueDate
+  - StartDate
+  - CompletedOn
+  - PlannedHours
+  - ProgressPercent
+  - CreatedOn
+  - ModifiedOn
+
+default_orderby: DueDate asc
+
+example_request: |
+  GET /odata/v1/acme/ProjectTasks?$filter=ProjectId eq 1023 and IsClosed eq false&$select=TaskId,Subject,DueDate,AssignedToName&$orderby=DueDate asc&$top=20
+  Authorization: Bearer <token>
+
+example_response: |
+  {
+    "@odata.context": "https://api.insightpulseai.com/odata/v1/acme/$metadata#ProjectTasks(TaskId,Subject,DueDate,AssignedToName)",
+    "@odata.count": 7,
+    "value": [
+      {"TaskId": 5012, "Subject": "Brand audit kickoff", "DueDate": "2026-04-22", "AssignedToName": "Maria Santos"},
+      {"TaskId": 5013, "Subject": "Stakeholder interviews", "DueDate": "2026-04-25", "AssignedToName": "Jake Tolentino"}
+    ]
+  }
+
+performance:
+  p95_filtered_read_ms: 700
+  p99_filtered_read_ms: 1700

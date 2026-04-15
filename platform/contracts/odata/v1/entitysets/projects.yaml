@@ -1,0 +1,144 @@
+# ---------------------------------------------------------------------------
+# OData v1 EntitySet contract — Projects
+# ---------------------------------------------------------------------------
+# Authority: platform/contracts/odata/v1/entitysets/projects.yaml
+# Maps:      Odoo `project.project` → OData EntitySet `Projects`
+# CDM hint:  D365 Project Operations `msdyn_project`
+# ---------------------------------------------------------------------------
+
+metadata:
+  contract: odata-entityset-projects-v1
+  locked_at: 2026-04-15
+  status: design
+
+entity_set:
+  name: Projects
+  url: /odata/v1/{tenant}/Projects
+  odoo_model: project.project
+  cdm_target: Project (msdyn_project)
+  read_only: true
+
+# ---------------------------------------------------------------------------
+# Property mapping (OData property → Odoo field)
+# ---------------------------------------------------------------------------
+properties:
+  ProjectId:
+    odoo_field: id
+    edm_type: Edm.Int64
+    is_key: true
+    nullable: false
+  Name:
+    odoo_field: name
+    edm_type: Edm.String
+    nullable: false
+    cdm_alias: projectName
+  CustomerAccountId:
+    odoo_field: partner_id
+    edm_type: Edm.Int64
+    nullable: true
+    cdm_alias: customerAccountId
+    note: Many2one to res.partner; resolved to id only (no $expand in v1)
+  CustomerAccountName:
+    odoo_field: partner_id.name
+    edm_type: Edm.String
+    nullable: true
+    note: Convenience denormalized field; populated server-side
+  Description:
+    odoo_field: description
+    edm_type: Edm.String
+    nullable: true
+  StartDate:
+    odoo_field: date_start
+    edm_type: Edm.Date
+    nullable: true
+  EndDate:
+    odoo_field: date
+    edm_type: Edm.Date
+    nullable: true
+  StatusCode:
+    odoo_field: stage_id.name
+    edm_type: Edm.String
+    nullable: true
+    cdm_alias: statusCode
+  IsActive:
+    odoo_field: active
+    edm_type: Edm.Boolean
+    nullable: false
+  CompanyId:
+    odoo_field: company_id
+    edm_type: Edm.Int64
+    nullable: false
+    cdm_alias: companyId
+  CreatedOn:
+    odoo_field: create_date
+    edm_type: Edm.DateTimeOffset
+    nullable: false
+  ModifiedOn:
+    odoo_field: write_date
+    edm_type: Edm.DateTimeOffset
+    nullable: false
+
+# ---------------------------------------------------------------------------
+# Default Odoo domain (tenant filter applied automatically by middleware)
+# ---------------------------------------------------------------------------
+default_domain:
+  - active in [True, False]    # expose archived too; consumer can filter
+  - company_id = <tenant_company_id>   # injected by middleware
+
+# ---------------------------------------------------------------------------
+# Supported $select fields
+# ---------------------------------------------------------------------------
+selectable_properties: all
+
+# ---------------------------------------------------------------------------
+# Supported $filter fields
+# ---------------------------------------------------------------------------
+filterable_properties:
+  - ProjectId
+  - Name
+  - CustomerAccountId
+  - StartDate
+  - EndDate
+  - StatusCode
+  - IsActive
+  - CompanyId
+  - CreatedOn
+  - ModifiedOn
+
+# ---------------------------------------------------------------------------
+# Supported $orderby fields
+# ---------------------------------------------------------------------------
+orderable_properties:
+  - ProjectId
+  - Name
+  - StartDate
+  - EndDate
+  - CreatedOn
+  - ModifiedOn
+
+default_orderby: CreatedOn desc
+
+# ---------------------------------------------------------------------------
+# Example request/response
+# ---------------------------------------------------------------------------
+example_request: |
+  GET /odata/v1/acme/Projects?$select=ProjectId,Name,StatusCode&$filter=IsActive eq true&$top=10&$orderby=CreatedOn desc
+  Authorization: Bearer <token>
+  Accept: application/json
+
+example_response: |
+  {
+    "@odata.context": "https://api.insightpulseai.com/odata/v1/acme/$metadata#Projects(ProjectId,Name,StatusCode)",
+    "@odata.count": 42,
+    "value": [
+      {"ProjectId": 1023, "Name": "Acme Q2 Refresh", "StatusCode": "In progress"},
+      {"ProjectId": 1022, "Name": "Acme Brand Audit", "StatusCode": "Planning"}
+    ]
+  }
+
+# ---------------------------------------------------------------------------
+# Performance contract
+# ---------------------------------------------------------------------------
+performance:
+  p95_filtered_read_ms: 600
+  p99_filtered_read_ms: 1500

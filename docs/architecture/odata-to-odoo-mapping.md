@@ -1,9 +1,25 @@
-# OData ↔ Odoo CE 18 + OCA — Mapping Position
+# OData Bridge for Odoo CE 18 + OCA
 
 > **Locked:** 2026-04-15
+> **Renamed from "OData ↔ Odoo Mapping Position" — narrower scope, clearer expectations**
 > **Authority:** this file (IPAI position on exposing Odoo data via OData)
+> **Wire contracts:** [`platform/contracts/odata/v1/`](../../platform/contracts/odata/v1/) (separate layer)
 > **Companion:** [`docs/architecture/cdm-and-analytics-bridge.md`](./cdm-and-analytics-bridge.md), [`docs/research/d365-data-model-inventory.md`](../research/d365-data-model-inventory.md)
 > **Doctrine:** No-custom-default. Use OCA `fastapi` for any external API surface; build OData adapter only when a real OData consumer exists.
+
+---
+
+## Anti-goals (read these first)
+
+```
+- not full OData v4 protocol parity
+- not a generic ORM exposure layer
+- not a Dataverse clone
+- not a write API in v1
+- not a substitute for native Odoo JSON-RPC / XML-RPC
+```
+
+This is a **bridge**, not an OData server.
 
 ---
 
@@ -12,13 +28,68 @@
 ```
 Odoo CE 18      = JSON-RPC + XML-RPC native. NO native OData.
 OCA fastapi     = Canonical external API surface (REST + Pydantic).
-OData adapter   = Not-yet-built. Defer until a real OData consumer materializes.
+OData Bridge    = Read-only, tenant-scoped, narrow v1 conformance surface.
+                  Built only when a NAMED consumer exists with explicit OData need.
 
 When OData becomes needed:
   1) OCA fastapi route that emits OData-shaped JSON   (Path A — preferred)
   2) PG mirror to Fabric → Fabric SQL endpoint        (Path B — heavy)
   3) Third-party odoo-odata module                    (Path C — last resort, not OCA-blessed)
 ```
+
+## v1 conformance surface (LOCKED)
+
+```
+SUPPORTED in v1:
+  $metadata
+  EntitySet listing
+  $select
+  $filter
+  $top
+  $skip
+  $orderby
+  $count
+
+EXPLICITLY EXCLUDED from v1:
+  $batch
+  $delta
+  $expand
+  actions/functions
+  writes (POST/PATCH/DELETE)
+  generic model reflection
+```
+
+This is the line between a **shippable bridge** and an endless protocol project.
+
+## v1 entity sets (LOCKED — first 3)
+
+```
+Projects      → project.project           (D365 PO equivalent: msdyn_project)
+ProjectTasks  → project.task              (D365 PO equivalent: msdyn_projecttask)
+TimeEntries   → account.analytic.line     (D365 PO equivalent: msdyn_timeentry)
+```
+
+Why these 3:
+- Core PPM
+- Map cleanly to D365 Project Operations concepts
+- High-value for downstream consumers (Power BI, Customer Insights, etc.)
+- Avoid the uglier finance writeback problem in v1
+- Minimal surface for first contract test cycle
+
+Wire contracts at [`platform/contracts/odata/v1/`](../../platform/contracts/odata/v1/).
+
+## Build trigger (LOCKED)
+
+Stay deferred unless ALL four are true:
+
+```
+[ ] Named consumer exists (specific Power BI / app / partner integration)
+[ ] Consumer requires OData specifically (not just REST/JSON)
+[ ] First 3 entity sets are sufficient for their use case
+[ ] Owner and target milestone are assigned
+```
+
+If any are missing → stay deferred. Do not pre-build "in case."
 
 ---
 
