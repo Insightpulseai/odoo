@@ -1,25 +1,83 @@
-# Pulser Agent Interop Matrix — A2A + MCP SSOT
+# Pulser Agent Interop Matrix — A2A + MCP + Agent365 SSOT
 #
 # Canonical: every Pulser agent is an A2A server publishing an Agent Card at
 # /.well-known/agent-card.json, and an MCP client to its tools.
+#
+# Orchestration pattern: SUPERVISOR-MEDIATED ONLY. Workers never invoke workers
+# directly. The `invoked_by` column lists approved callers; the `dispatches`
+# column lists approved downstream workers (always empty for non-supervisors).
 #
 # A2A protocol version pinned for the R2 cohort: 0.2.0
 # Spec: https://a2a-protocol.org/latest/specification/
 # Schema source: https://github.com/a2aproject/A2A (JSON Schema under /specification/)
 # Microsoft Foundry A2A docs: https://learn.microsoft.com/azure/foundry/agents/how-to/tools/agent-to-agent
 #
-# MCP invariant reference: CLAUDE.md Cross-Repo Invariant #10
-# A2A invariant reference:  CLAUDE.md Cross-Repo Invariant #10a
-# Related doctrine: docs/research/ado-pulser-scrum-extension.addendum-a2a.md
+# MCP invariant reference:      CLAUDE.md Cross-Repo Invariant #10
+# Three-protocol invariant:     CLAUDE.md Cross-Repo Invariant #10a
+# Related doctrine:
+#   docs/architecture/agent-orchestration-model.md
+#   docs/architecture/three-protocol-model.md
+#   docs/research/ado-pulser-scrum-extension.addendum-a2a.md
 
-version: 1
+version: 2
 a2a_protocol_version: "0.2.0"
 discovery_path: "/.well-known/agent-card.json"
 legacy_discovery_aliases:
   - "/.well-known/agent.json"   # Copilot Studio legacy probe
 
+# Column definitions
+schema:
+  role: supervisor | specialist_worker | judge | synthesizer | planner | intake
+  invoked_by: list of agent_names or surface_names authorized to call this agent (supervisor only for workers)
+  dispatches: list of agent_names this agent may dispatch (non-empty ONLY for supervisor/planner)
+  m365_surface: agent365-sdk | n/a     # whether this agent is exposed to M365 Copilot/Teams/Outlook
+  backing_model: { prod, dev }          # two-modes doctrine per CLAUDE.md #10a
+
 agents:
+
+  # ─────── Supervisor (the only agent that dispatches others) ───────
+  - agent_name: pulser_supervisor
+    role: supervisor
+    status: a2a_server
+    agent_card_url: https://pulser-supervisor.agents.insightpulseai.com/.well-known/agent-card.json
+    skills:
+      - intake_normalize
+      - plan_task_graph
+      - dispatch_worker
+      - run_judge_loop
+      - synthesize_response
+      - persist_workflow_trace
+    backing_model:
+      prod: foundry/gpt-4.1
+      dev: foundry-local/phi-4
+    identity:
+      scheme: entra_agent_id
+      managed_identity: mi-pulser-supervisor
+      key_vault: kv-ipai-dev-sea
+    mcp_tools:
+      - mcp/workflow-state
+      - mcp/agent-card-registry
+      - mcp/app-insights
+      - mcp/foundry-gpt-4.1
+    m365_surface: n/a                  # supervisor is internal; M365 enters via agent365 wrapper
+    invoked_by:
+      - ado_extension_ms_pulser_scrum_master
+      - odoo_chatter
+      - teams_bot_pulser_agent365    # M365 surface enters here
+      - slack_bot_pulser
+      - claude_code
+      - m365_copilot_via_agent365
+    dispatches:
+      - pulser_scrum_master
+      - tax_guru
+      - bank_recon
+      - judge_contract_conformance
+      - judge_safety
+      - judge_helpfulness
+
+  # ─────── Specialist workers (never call each other; only called by supervisor) ───────
   - agent_name: pulser_scrum_master
+    role: specialist_worker
     status: a2a_server
     agent_card_url: https://pulser-scrum-agent.blackstone-0df78186.southeastasia.azurecontainerapps.io/.well-known/agent-card.json
     skills:
@@ -39,14 +97,13 @@ agents:
       - mcp/foundry-gpt-4.1
       - mcp/key-vault-proxy
       - mcp/app-insights
-    peer_callers:
-      - ado_extension_ms_pulser_scrum_master
-      - odoo_chatter
-      - teams_bot_pulser
-      - claude_code
-      - pulser_planner
+    m365_surface: n/a                  # ADO extension consumes directly via A2A
+    invoked_by:
+      - pulser_supervisor
+    dispatches: []
 
   - agent_name: tax_guru
+    role: specialist_worker
     status: a2a_server
     agent_card_url: https://tax-guru.agents.insightpulseai.com/.well-known/agent-card.json
     skills:
@@ -65,13 +122,13 @@ agents:
       - mcp/bir-reference
       - mcp/foundry-gpt-4.1
       - mcp/odoo-read
-    peer_callers:
-      - pulser_scrum_master
-      - pulser_planner
-      - bank_recon
-      - odoo_chatter
+    m365_surface: agent365-sdk         # exposed to M365 Copilot via Agent365 wrapper
+    invoked_by:
+      - pulser_supervisor
+    dispatches: []
 
   - agent_name: bank_recon
+    role: specialist_worker
     status: a2a_server
     agent_card_url: https://bank-recon.agents.insightpulseai.com/.well-known/agent-card.json
     skills:
@@ -90,34 +147,78 @@ agents:
       - mcp/odoo-write-reconcile
       - mcp/foundry-gpt-4.1
       - mcp/bank-statement-importer
-    peer_callers:
-      - pulser_planner
-      - tax_guru
-      - odoo_chatter
+    m365_surface: n/a
+    invoked_by:
+      - pulser_supervisor
+    dispatches: []
 
-  - agent_name: pulser_planner
+  # ─────── Judges (called by supervisor in judge-loop) ───────
+  - agent_name: judge_contract_conformance
+    role: judge
     status: a2a_server
-    agent_card_url: https://pulser-planner.agents.insightpulseai.com/.well-known/agent-card.json
+    agent_card_url: https://judges.agents.insightpulseai.com/contract-conformance/.well-known/agent-card.json
     skills:
-      - intent_classify
-      - agent_route
-      - multi_step_compose
+      - validate_output_schema
+      - check_evidence_refs
+      - check_confidence_threshold
     backing_model:
-      prod: foundry/gpt-4.1
+      prod: foundry/gpt-4.1-mini
       dev: foundry-local/phi-4
     identity:
       scheme: entra_agent_id
-      managed_identity: mi-pulser-planner-agent
+      managed_identity: mi-judge-contract
       key_vault: kv-ipai-dev-sea
     mcp_tools:
       - mcp/foundry-gpt-4.1
-      - mcp/registry-agent-cards
-    peer_callers:
-      - ado_extension_ms_pulser_scrum_master
-      - odoo_chatter
-      - teams_bot_pulser
-      - claude_code
-      - m365_copilot
+    m365_surface: n/a
+    invoked_by:
+      - pulser_supervisor
+    dispatches: []
+
+  - agent_name: judge_safety
+    role: judge
+    status: a2a_server
+    agent_card_url: https://judges.agents.insightpulseai.com/safety/.well-known/agent-card.json
+    skills:
+      - content_safety_check
+      - prompt_injection_scan
+      - secret_leak_scan
+    backing_model:
+      prod: foundry/gpt-4.1-mini
+      dev: foundry-local/phi-4
+    identity:
+      scheme: entra_agent_id
+      managed_identity: mi-judge-safety
+      key_vault: kv-ipai-dev-sea
+    mcp_tools:
+      - mcp/content-safety
+      - mcp/foundry-gpt-4.1
+    m365_surface: n/a
+    invoked_by:
+      - pulser_supervisor
+    dispatches: []
+
+  - agent_name: judge_helpfulness
+    role: judge
+    status: a2a_server
+    agent_card_url: https://judges.agents.insightpulseai.com/helpfulness/.well-known/agent-card.json
+    skills:
+      - scored_helpfulness
+      - actionability_score
+      - brevity_score
+    backing_model:
+      prod: foundry/gpt-4.1-mini
+      dev: foundry-local/phi-4
+    identity:
+      scheme: entra_agent_id
+      managed_identity: mi-judge-helpfulness
+      key_vault: kv-ipai-dev-sea
+    mcp_tools:
+      - mcp/foundry-gpt-4.1
+    m365_surface: n/a
+    invoked_by:
+      - pulser_supervisor
+    dispatches: []
 
 # Enforcement
 validation:
@@ -126,5 +227,7 @@ validation:
   rules:
     - every agent in this matrix MUST publish agent_card_url returning HTTP 200
     - every agent_card_url MUST validate against the A2A JSON Schema at the pinned protocol version
-    - peer_callers that are Pulser agents MUST themselves appear in this matrix
+    - workers (role=specialist_worker|judge|synthesizer|planner|intake) MUST have invoked_by=[pulser_supervisor] and dispatches=[]
+    - only role=supervisor may have a non-empty dispatches list
     - no entry may declare a bespoke RPC between Pulser agents
+    - any agent with m365_surface=agent365-sdk MUST have a corresponding manifest under agents/<agent>/agent365/

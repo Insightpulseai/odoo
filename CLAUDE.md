@@ -154,7 +154,14 @@ See `.claude/rules/security-baseline.md` for full policy (sections 2.1-2.6).
 6. **Specs Required**: Significant changes must reference a spec bundle.
 9. **Databricks Governance**: Databricks + Unity Catalog is the mandatory governed transformation, engineering, and serving plane.
 10. **MCP First**: MCP is required for all reusable agent tools (Google Cloud contract).
-10a. **A2A First**: All Pulser agents MUST publish an Agent Card at `/.well-known/agent-card.json` and implement the A2A protocol (`https://a2a-protocol.org/latest/`, `github.com/a2aproject`, Linux Foundation). A2A governs agent-to-agent interop (including client-to-agent); MCP governs agent-to-tool. Both are mandatory. Local-by-power-remotely: thin local clients (ADO extension, Odoo chatter, Teams bot, Claude Code) talk to remote-compute agents via A2A. Backing model (Foundry cloud `gpt-4.1` or Foundry Local `phi-4`) is swappable without client change. Pattern reference: Claude Code itself.
+10a. **Three-protocol model + supervisor-mediated orchestration**: Every Pulser agent publishes an Agent Card at `/.well-known/agent-card.json`. Three industry-standard protocols, orthogonal and all mandatory:
+   - **A2A** (Linux Foundation, `a2a-protocol.org`) = agent ↔ agent interop (incl. client ↔ agent entry point into the orchestrator)
+   - **MCP** (Anthropic-originated standard) = agent ↔ tool (incl. retrieval, DB, APIs)
+   - **Agent365 SDK** (Microsoft) = agent ↔ M365 user surface (Copilot Chat, Teams, Outlook discovery/invocation/auth). Non-M365 surfaces (ADO extension, Odoo chatter, Slack, Claude Code) skip Agent365 and speak A2A directly to the orchestrator.
+
+   **Orchestration pattern — supervisor-mediated only.** Workers never invoke workers directly. `agents/` owns definitions (runtime-free): personas, skills, judges, evals, prompt contracts, registries. `agent-platform/` owns runtime: supervisor, router, dispatcher, retries, approvals, workflow state, judge loops, envelopes, handoffs. Canonical flow: `client → intake → planner/router → specialist workers (parallel ok) → judge → synthesizer → persist trace → response`. No free-form agent-to-agent chat. SSOT: `docs/architecture/agent-orchestration-model.md`, `docs/architecture/three-protocol-model.md`, `ssot/governance/agent-interop-matrix.yaml`, `agent-platform/contracts/envelopes/`.
+
+   **Two operating modes (locked).** Team mode = Codespaces/local dev → agent-platform on ACA → Foundry cloud (`ipai-copilot-resource`, gpt-4.1). Solo mode = local Mac → agent-platform in devcontainer → Foundry Local (phi-4/qwen, on-device NPU/GPU). Forbidden: Foundry Local inside Codespaces (wrong runtime pairing). Agent Card is identical across modes; backing model swaps via env var. Pattern reference: Claude Code itself (local CLI, remote Anthropic brain, MCP for tools).
 11. **SaaS Authority**: The **Azure SaaS Workload Documentation** is the canonical design framework for the platform.
 12. **Consumption**: **Power BI** is the primary mandatory business-facing reporting surface.
 13. **Fabric Complement**: Fabric is for mirroring and OneLake integration; it never replaces Databricks engineering.

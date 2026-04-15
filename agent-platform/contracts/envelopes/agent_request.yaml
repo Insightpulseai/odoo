@@ -1,0 +1,108 @@
+# Agent Request Envelope — Canonical Contract
+#
+# Every A2A call into a Pulser agent (from the supervisor) carries this envelope.
+# Workers receive it, validate it, and return an agent_result envelope.
+#
+# Authority: docs/architecture/agent-orchestration-model.md §6
+# Anchor: CLAUDE.md Cross-Repo Invariant #10a
+
+$schema: "http://json-schema.org/draft-07/schema#"
+$id: "https://insightpulseai.com/schemas/agent_request.yaml"
+title: AgentRequest
+description: |
+  Invocation envelope passed from pulser_supervisor to a specialist worker
+  (or judge). Carries identity, task scope, policy, allowed tools, timeout,
+  retry budget, and the expected output schema.
+type: object
+required:
+  - request_id
+  - workflow_id
+  - step_id
+  - agent_id
+  - task_type
+  - input_contract
+  - policy_context
+  - timeout_s
+  - retry_budget
+  - expected_output_schema
+properties:
+  request_id:
+    type: string
+    format: uuid
+    description: Unique per invocation. Used for tracing + idempotency.
+  tenant_id:
+    type: string
+    description: Multi-tenant isolation boundary (e.g. "ipai", "w9", "tbwa-smp").
+  session_id:
+    type: string
+    description: End-user session (maps to an A2A contextId when provided).
+  workflow_id:
+    type: string
+    format: uuid
+    description: Supervisor's workflow instance id (spans all steps).
+  step_id:
+    type: string
+    description: Step identifier within the workflow (e.g. "plan.dispatch.0").
+  agent_id:
+    type: string
+    description: Target agent name (must exist in ssot/governance/agent-interop-matrix.yaml).
+  task_type:
+    type: string
+    enum: [standup, velocity, retro, drift, tax_q_and_a, bir_2307_classification, reconciliation_summary, statement_match, exception_triage, ph_withholding_lookup, vat_period_close, judge_contract, judge_safety, judge_helpfulness, synthesize]
+  input_contract:
+    type: object
+    description: Task-specific input payload. Schema is enforced per task_type.
+  policy_context:
+    type: object
+    properties:
+      rbac_roles: { type: array, items: { type: string } }
+      approval_band: { type: string, enum: [L1_auto, L3_dual_review, L4_human_gate] }
+      evidence_scope: { type: array, items: { type: string } }
+      mutation_safety: { type: string, enum: [read_only, advisory, write_approved, write_auto] }
+      tenant_isolation: { type: boolean }
+      safety_level: { type: string, enum: [standard, elevated, strict] }
+    required: [approval_band, mutation_safety, tenant_isolation]
+  allowed_tools:
+    type: array
+    items: { type: string }
+    description: MCP tool allowlist for this step (subset of agent's declared mcp_tools).
+  timeout_s:
+    type: integer
+    minimum: 1
+    maximum: 600
+    description: Hard ceiling for this invocation. Supervisor cancels + retries if exceeded.
+  retry_budget:
+    type: object
+    properties:
+      max_retries: { type: integer, minimum: 0, maximum: 3 }
+      retry_on: { type: array, items: { type: string, enum: [timeout, retryable_error, judge_rejected, schema_invalid] } }
+      backoff_ms: { type: integer, minimum: 100 }
+    required: [max_retries]
+  token_budget:
+    type: object
+    properties:
+      max_input_tokens: { type: integer }
+      max_output_tokens: { type: integer }
+      max_total_tokens: { type: integer }
+    description: Optional. Supervisor caps worker cost. Default from agent manifest.
+  expected_output_schema:
+    type: object
+    description: JSON Schema (inline or $ref) that the worker's output_payload MUST satisfy.
+  human_approval_required:
+    type: boolean
+    default: false
+    description: If true, supervisor will route result to control.approvals before proceeding.
+  trace_context:
+    type: object
+    description: W3C Trace Context propagation (traceparent, tracestate).
+    properties:
+      traceparent: { type: string }
+      tracestate: { type: string }
+  created_at:
+    type: string
+    format: date-time
+  correlation_id:
+    type: string
+    description: External caller correlation (e.g. ADO extension request id).
+
+additionalProperties: false

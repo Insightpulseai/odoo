@@ -1062,3 +1062,57 @@ repos_delta_20260415:
     unverified_404_dropped: 12
     fork_and_own_count: 0  # doctrine holds — zero forks
     stamp: 2026-04-15T00:00:00Z
+
+# ─── Addenda 2026-04-15 (three-protocol model entries) ───
+addenda_2026_04_15:
+
+  - upstream: microsoft/agentic-factory-hack
+    purpose: "Hackathon reference: sequential multi-agent + MAF + A2A + MCP + APIM"
+    adopt_mode: clone_as_reference
+    internal_owner: platform-engineering
+    scope: pattern_validation_only
+    notes: |
+      MIT, Jan 2026. Validates MAF+A2A+MCP stack. Do NOT fork. Study sequential
+      orchestration pattern, APIM GenAI gateway wiring, Foundry IQ RAG pattern.
+      Gap flagged for our Scrum Master: Foundry IQ for durable sprint knowledge
+      (deferred to R3).
+
+  - upstream: microsoft/Foundry-Local
+    purpose: "On-device inference runtime for Pulser solo-mode (devcontainer dev + CI eval)"
+    adopt_mode: consume_directly
+    internal_owner: platform-engineering
+    scope: |
+      Solo-mode backing per CLAUDE.md #10a two-modes doctrine. NOT for production.
+      Forbidden inside Codespaces (wrong runtime pairing). Install via
+      `brew install microsoft/foundrylocal/foundrylocal` in local Mac devcontainer.
+    notes: |
+      MIT. CLI + REST + Python/JS/C#/Rust SDKs. OpenAI-compatible API shape.
+      Use for eval golden-set runs (phi-4 equivalence tests) to cut Batch API cost.
+
+  - upstream: GoogleCloudPlatform/agent-starter-pack
+    purpose: "Reference for production-ready agent scaffolding (Google-cloud-native)"
+    adopt_mode: clone_as_reference
+    internal_owner: agent-platform
+    scope: pattern_validation_only
+    notes: |
+      Vertex/Cloud-Run equivalent of what we're building on Foundry/ACA.
+      Extract: Dockerfile layout, eval harness, OTel wiring, IaC module
+      shape. Port concepts to Azure-native; do not adopt Google Cloud code.
+
+  - upstream: a2aproject/A2A
+    purpose: "A2A protocol JSON Schema + spec reference"
+    adopt_mode: consume_directly
+    internal_owner: platform-engineering
+    scope: schema_validation_runtime
+    notes: |
+      Pinned to 0.2.0 for R2 cohort (see agent-interop-matrix.yaml).
+      Used by scripts/validate_agent_card.py on every PR.
+
+  - upstream: modelcontextprotocol/servers
+    purpose: "MCP server reference implementations"
+    adopt_mode: clone_as_reference
+    internal_owner: platform-engineering
+    scope: pattern_validation_only
+    notes: |
+      Anthropic + community MCP servers. Study structure before writing new
+      IPAI-specific MCP servers (ado-rest, odoo-read/write, bir-reference).

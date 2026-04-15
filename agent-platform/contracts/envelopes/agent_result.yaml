@@ -1,0 +1,140 @@
+# Agent Result Envelope — Canonical Contract
+#
+# Every worker/judge returns this envelope to the supervisor.
+# Supervisor reads status, confidence, policy_flags to decide next step.
+#
+# Authority: docs/architecture/agent-orchestration-model.md §6
+# Anchor: CLAUDE.md Cross-Repo Invariant #10a
+
+$schema: "http://json-schema.org/draft-07/schema#"
+$id: "https://insightpulseai.com/schemas/agent_result.yaml"
+title: AgentResult
+description: |
+  Structured return envelope from a specialist worker (or judge) back to the
+  supervisor. Carries status, confidence, evidence, output payload, policy
+  flags, cost, and latency.
+type: object
+required:
+  - request_id
+  - workflow_id
+  - step_id
+  - agent_id
+  - status
+  - cost_tokens
+  - latency_ms
+properties:
+  request_id:
+    type: string
+    format: uuid
+    description: Matches the agent_request.request_id.
+  workflow_id:
+    type: string
+    format: uuid
+  step_id:
+    type: string
+  agent_id:
+    type: string
+  status:
+    type: string
+    enum:
+      - success
+      - retryable_error      # supervisor may retry per retry_budget
+      - hard_error           # supervisor fails the step
+      - needs_review         # supervisor routes to control.approvals
+      - judge_rejected       # for judge responses — output must be retried
+      - schema_invalid       # output did not conform to expected_output_schema
+      - timeout              # worker exceeded timeout_s
+      - budget_exceeded      # token/cost ceiling hit
+  confidence:
+    type: number
+    minimum: 0.0
+    maximum: 1.0
+    description: Worker's self-reported confidence. Below 0.6 → supervisor routes to judge/retry.
+  evidence_refs:
+    type: array
+    items:
+      type: object
+      required: [kind, uri]
+      properties:
+        kind: { type: string, enum: [mcp_tool_call, web_retrieval, db_query, foundry_completion, human_input, attested_file] }
+        uri: { type: string }
+        hash: { type: string, description: "SHA256 of the retrieved content, when applicable" }
+        retrieved_at: { type: string, format: date-time }
+  output_payload:
+    description: Task output. MUST satisfy agent_request.expected_output_schema.
+  output_schema_ref:
+    type: string
+    description: Reference to the schema the output_payload was validated against.
+  policy_flags:
+    type: array
+    items:
+      type: string
+      enum:
+        - contains_pii
+        - contains_financial_figure
+        - requires_human_approval
+        - contains_external_dependency
+        - potential_mutation
+        - prompt_injection_suspected
+        - safety_filter_triggered
+        - tenant_cross_reference
+  cost_tokens:
+    type: object
+    required: [input, output, total]
+    properties:
+      input: { type: integer, minimum: 0 }
+      output: { type: integer, minimum: 0 }
+      total: { type: integer, minimum: 0 }
+      cached_input: { type: integer, minimum: 0, description: "Prompt-cached tokens (discounted)" }
+  cost_usd:
+    type: number
+    description: Computed from cost_tokens via model-routing YAML.
+  latency_ms:
+    type: integer
+    minimum: 0
+  model_used:
+    type: object
+    required: [provider, model, version]
+    properties:
+      provider: { type: string, enum: [foundry_cloud, foundry_local, anthropic, openai] }
+      model: { type: string }
+      version: { type: string }
+      deployment: { type: string, description: "Foundry deployment name when applicable" }
+  tool_calls_made:
+    type: array
+    description: Ordered list of MCP tool calls this worker made.
+    items:
+      type: object
+      properties:
+        tool: { type: string }
+        args_hash: { type: string }
+        duration_ms: { type: integer }
+        status: { type: string, enum: [ok, error] }
+  suggested_followup:
+    type: object
+    description: |
+      Optional hint to the supervisor. Worker MAY suggest a follow-up task,
+      but MUST NOT invoke another worker directly. Supervisor decides.
+    properties:
+      reason: { type: string }
+      suggested_agent_id: { type: string }
+      suggested_task_type: { type: string }
+      rationale: { type: string }
+  trace_context:
+    type: object
+    properties:
+      traceparent: { type: string }
+      tracestate: { type: string }
+  completed_at:
+    type: string
+    format: date-time
+  error:
+    type: object
+    description: Present only when status is retryable_error or hard_error.
+    properties:
+      code: { type: string }
+      message: { type: string }
+      details: { type: object }
+      is_retryable: { type: boolean }
+
+additionalProperties: false

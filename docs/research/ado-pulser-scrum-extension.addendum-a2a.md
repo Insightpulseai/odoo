@@ -79,15 +79,19 @@ The Agent Card is one contract. The backing implementation is swappable.
 
 A client (ADO extension, Odoo chatter, Teams bot, Claude Code) never learns which backing is active. The Agent Card URL changes, the protocol does not. This makes offline dev loops, CI eval runs, and air-gapped pilots first-class surfaces rather than second-class diverges. Foundry Local's A2A story is tracked in the same Foundry Agent Service docs linked above.
 
-## 7. Peer delegation example
+## 7. Orchestrator-mediated delegation (SUPERSEDES earlier peer-delegation framing)
 
-Scrum Master encounters a retro item that asks "did we misclassify BIR 2307 withholding this sprint?" Rather than coding a custom RPC to Tax Guru, Scrum Master:
+**Correction, 2026-04-15**: An earlier draft of this section described Pulser agents calling each other directly as peers. That framing is wrong and has been replaced. Per canonical doctrine (`docs/architecture/agent-orchestration-model.md`, CLAUDE.md invariant #10a), **workers never invoke workers directly**. All cross-agent calls go through the supervisor in `agent-platform/orchestration/`.
 
-1. Resolves Tax Guru's Agent Card from `https://tax-guru.agents.insightpulseai.com/.well-known/agent-card.json`.
-2. Calls `message/send` with the retro item as context.
-3. Receives a structured answer, cites it in the retro markdown.
+Example: Scrum Master's retro worker encounters an item that asks "did we misclassify BIR 2307 withholding this sprint?" The supervisor (not the worker) decides to enrich the retro with tax reasoning:
 
-No internal RPC was written. The same code path would call a partner agent or a Microsoft-built Foundry agent with no change.
+1. Retro worker returns a structured result with a `suggested_followup` field citing the tax question.
+2. Judge agent validates the output and flags the tax-dependency hint.
+3. **Supervisor** (not the worker) reads the judge output and dispatches a second step: a Tax Guru worker call, using the standard agent-invocation envelope. Tax Guru has no idea Scrum Master exists — it only sees a well-formed request from the supervisor.
+4. Supervisor collects Tax Guru's structured result, returns to Scrum Master's synthesizer worker, which merges both into the final retro markdown.
+5. Trace carries `workflow_id` spanning all steps; every call and result persisted for replay.
+
+A2A is still the protocol on every hop (client → supervisor, supervisor → worker, supervisor → judge). What A2A does **not** authorize is free-form worker-to-worker chat. Same contract as calling a partner agent or a Microsoft-built Foundry agent — always supervisor-mediated, envelope-bound, traceable.
 
 ## 8. What this voids vs. preserves in the original research
 
