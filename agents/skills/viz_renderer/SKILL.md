@@ -161,18 +161,114 @@ that:
 - Shows Approve / Edit / Regenerate / Discard buttons
 - On Approve → RPC to `action_approve()`
 
+### Documents module integration (canonical landing)
+
+**All saved artifacts MUST also appear in Odoo Documents module** (`/odoo/action-<dms_id>` — action ID is environment-specific, e.g., `action-1367` on `localhost:8069`). Not just as orphan attachments on arbitrary records.
+
+**Why:** Users need ONE place to find all Pulser-generated artifacts — searchable, filterable, shareable. Documents module is the canonical DMS UX. CE 18 has no native Documents app (Enterprise-only), so IPAI uses **OCA `dms`** (already submodule'd at `addons/oca/dms/`).
+
+**Integration model (CE/OCA-first, no new custom module):**
+
+```python
+# On action_approve(), in addition to ir.attachment.create():
+def _save_to_documents(self):
+    """Save sandbox artifact to Odoo Documents (OCA dms) for canonical discovery."""
+    dms_directory = self.env['dms.directory'].search([
+        ('name', '=', f"Pulser/{self.tenant_slug}/{self.agent_run_id}/{self.create_date:%Y-%m}"),
+    ], limit=1) or self._create_pulser_directory()
+
+    dms_file = self.env['dms.file'].create({
+        'name': f"{self.viz_type}-{self.payload_id}.{self.mime_suffix}",
+        'directory_id': dms_directory.id,
+        'attachment_id': self.attachment_id.id,  # links to existing ir.attachment
+        # IPAI metadata — queryable in Documents search
+        'tag_ids': [
+            self.env.ref('ipai_odoo_copilot.tag_pulser_generated').id,
+            self.env.ref(f'ipai_odoo_copilot.tag_agent_{self.agent_name}').id,
+            self.env.ref(f'ipai_odoo_copilot.tag_viz_{self.viz_type}').id,
+        ],
+    })
+    return dms_file
+```
+
+**Folder structure (per dms.directory tree):**
+
+```
+/Pulser Workspace/
+  /<tenant_slug>/                          ← tenant isolation (mirrors res.company)
+    /scrum_master/                          ← per-agent folder
+      /2026-04/                             ← monthly rollup
+        sprint-burndown-<uuid>.png
+        velocity-<uuid>.svg
+        dora-kpis-<uuid>.png
+    /bank_recon/
+      /2026-04/
+        reconciliation-donut-<uuid>.png
+        discrepancy-pills-<uuid>.json
+    /tax_guru/
+      /2026-Q1/                             ← tax periods for BIR
+        2307-summary-<uuid>.png
+        2550m-kpis-<uuid>.svg
+    /finance_ppm/
+      /2026-04/
+        project-profitability-<uuid>.png
+    /prismalab/
+      /<research-project-key>/              ← per research project
+        prisma-flow-<uuid>.svg
+        forest-plot-<uuid>.svg
+    /ces_campaign/
+      /<campaign-key>/                      ← per campaign
+        kpi-cards-<uuid>.png
+        channel-mix-donut-<uuid>.png
+    /sora_creative/
+      /<brief-key>/                         ← per creative brief
+        vertical-9x16-<uuid>.mp4
+        storyboard-<uuid>.png
+```
+
+**Tags (queryable in Documents search):**
+
+- `pulser-generated` — any artifact from Pulser
+- `agent:<name>` — filter by source agent (scrum_master, bank_recon, tax_guru, etc.)
+- `viz:<type>` — filter by viz_type (kpi_cards, line_chart, prisma_flow, etc.)
+- `tenant:<slug>` — tenant isolation
+- `period:<YYYY-MM>` — monthly rollups
+- `classification:<level>` — internal / confidential / restricted
+- `approved` / `published` / `archived` — lifecycle state
+
+**URL routing (action-1367 pattern — env-specific):**
+
+- Documents landing: `/odoo/action-<dms_id>` (equivalent of Documents app)
+- Filtered Pulser view: `/odoo/action-<dms_id>?tag=pulser-generated`
+- Per-agent: `/odoo/action-<dms_id>?tag=agent:scrum_master`
+- Per-tenant: `/odoo/action-<dms_id>?tag=tenant:tbwa-smp`
+
+The action ID (1367 on localhost) varies per environment — **reference it by xml_id** (e.g., `ipai_odoo_copilot.action_pulser_workspace` or `dms.action_dms_files`), never by numeric ID in code.
+
+**Access permissions:**
+
+- `dms.directory` group: `ipai_odoo_copilot.group_pulser_user` (read); `ipai_odoo_copilot.group_pulser_admin` (write/delete)
+- Row-level per tenant: `res.company` match via `ir.rule` on `dms.directory` and `dms.file`
+- Share links: Pulser artifacts can be shared externally only if `classification IN ('public','internal')` — CONFIDENTIAL and RESTRICTED cannot be share-linked
+
+**What this replaces:**
+
+- `ir.attachment` orphans scattered across `account.move`, `project.project`, etc. — now findable in ONE Documents view
+- Ad-hoc screenshot sharing via Slack/Teams — now via Documents share links with audit trail
+- "Where did Pulser save that chart yesterday?" — now a tag filter in Documents search
+
 ### Artifact types saved after approval
 
-| Artifact | Saved to | Owner linkage |
-|---|---|---|
-| Chart PNG/SVG | `ir.attachment` + `agent.artifacts` | Active record (move / project / partner / etc.) |
-| Report PDF | `ir.attachment` with `mimetype=application/pdf` | Active record or evidence pack |
-| Excel export | `ir.attachment` with `mimetype=application/vnd.ms-excel` | Active record |
-| Teams Adaptive Card JSON | Posted to Teams channel (no Odoo save) | — |
-| ops-console preview | React component rendered in-app | Session only |
-| Sora video | `creative.video_generations` (overlay) + `ir.attachment` (Odoo projection) | Active campaign / record |
-| gpt-image-1.5 still | `creative.image_generations` + `ir.attachment` | Active brief / campaign |
-| PRISMA flow SVG | `research.prisma_flow_snapshots` (overlay) + `ir.attachment` | Active research project |
+| Artifact | Saved to | Owner linkage | Documents folder |
+|---|---|---|---|
+| Chart PNG/SVG | `ir.attachment` + `agent.artifacts` + `dms.file` | Active record (move / project / partner / etc.) | `/Pulser Workspace/<tenant>/<agent>/<YYYY-MM>/` |
+| Report PDF | `ir.attachment` (mimetype PDF) + `dms.file` | Active record or evidence pack | `/Pulser Workspace/<tenant>/<agent>/<YYYY-MM>/reports/` |
+| Excel export | `ir.attachment` (mimetype XLSX) + `dms.file` | Active record | `/Pulser Workspace/<tenant>/<agent>/<YYYY-MM>/exports/` |
+| Teams Adaptive Card JSON | Posted to Teams channel (no Odoo save) | — | — (ephemeral) |
+| ops-console preview | React component rendered in-app | Session only | — (ephemeral) |
+| Sora video | `creative.video_generations` (overlay) + `ir.attachment` + `dms.file` | Active campaign / record | `/Pulser Workspace/<tenant>/sora_creative/<brief-key>/` |
+| gpt-image-1.5 still | `creative.image_generations` + `ir.attachment` + `dms.file` | Active brief / campaign | `/Pulser Workspace/<tenant>/sora_creative/<brief-key>/` |
+| PRISMA flow SVG | `research.prisma_flow_snapshots` (overlay) + `ir.attachment` + `dms.file` | Active research project | `/Pulser Workspace/<tenant>/prismalab/<research-project-key>/` |
 
 ## The canonical contract
 
