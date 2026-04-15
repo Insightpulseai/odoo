@@ -11,7 +11,8 @@ Rev: 2026-04-15 | Status: READY FOR TASKS
 | Language | Python | 3.12 |
 | Agent framework | Microsoft Agent Framework (MAF) | latest |
 | Foundry inference | Azure AI Foundry | `ipai-copilot-resource` |
-| Chart generation | gpt-5.3-codex via Code Interpreter | — |
+| Chart generation | **gpt-4.1** via Code Interpreter (R2 baseline) | — |
+| Chart generation upgrade | gpt-5.3-codex (optional R3+) | — |
 | Chart library (console/Odoo) | Chart.js | 4.4.1 (cdnjs) |
 | Queue | Azure Service Bus | `sb-ipai-dev-sea` |
 | Blob storage | Azure Blob Storage | `stipaidevagent` |
