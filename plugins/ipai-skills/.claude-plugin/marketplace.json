@@ -1,0 +1,20 @@
+{
+  "name": "ipai-skills",
+  "description": "Private IPAI skills marketplace — InsightPulseAI canonical skill packages",
+  "owner": {
+    "name": "InsightPulseAI",
+    "url": "https://insightpulseai.com"
+  },
+  "homepage": "https://github.com/Insightpulseai/odoo",
+  "license": "Apache-2.0",
+  "version": "0.1.0",
+  "plugins": [
+    {
+      "name": "ipai-skills",
+      "description": "InsightPulseAI canonical skill set (growth advisor, Azure BOM, Foundry, Odoo, BIR, Boards, Pulser artifacts, etc.)",
+      "version": "0.1.0",
+      "path": "./",
+      "homepage": "https://github.com/Insightpulseai/odoo/tree/main/plugins/ipai-skills"
+    }
+  ]
+}
