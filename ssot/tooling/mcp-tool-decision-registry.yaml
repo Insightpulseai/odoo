@@ -1,0 +1,203 @@
+# mcp-tool-decision-registry.yaml
+# Per-workflow MCP tool selection rules for Pulser agent execution.
+# Governs which MCP tools are mandatory / recommended / optional / fallback per workflow.
+# Last updated: 2026-04-16
+
+meta:
+  schema_version: "1.0"
+  purpose: mcp_tool_selection_governance
+  doctrine: "Tools enabled per-agent, never globally. Allowlisted MCPs only — no dynamic tool acquisition."
+  anchor: "CLAUDE.md §Agentic Workflow Security Doctrine + feedback_foundry_tools_adoption.md"
+  mcp_baseline_ref: ssot/agents/mcp-baseline.yaml
+
+decision_rules:
+  - id: DR-01
+    rule: "Use minimum tool set per truth plane. Do not load tools that operate on a different truth plane than the claim being verified."
+  - id: DR-02
+    rule: "Prefer runtime tools for runtime claims (ACA health, container logs, live endpoints)."
+  - id: DR-03
+    rule: "Prefer repo tools for repo claims (file content, git history, CI pipeline state)."
+  - id: DR-04
+    rule: "Browser automation (Playwright MCP) is NOT a substitute for browser debugging. Use for UI acceptance only."
+  - id: DR-05
+    rule: "Google Workspace MCP is optional and third-party. Require explicit policy approval per agent manifest before enabling."
+  - id: DR-06
+    rule: "Azure MCP tools are the canonical runtime plane tools. Prefer over ad-hoc az CLI calls."
+  - id: DR-07
+    rule: "ADO MCP tools are the canonical planning plane tools. Use for work items, pipelines, boards — not source control claims."
+
+tool_sets:
+  core_baseline:
+    description: "Minimum viable tool set for any Pulser workflow. Always available."
+    tools:
+      - mcp__azure-devops__wit_get_work_item
+      - mcp__azure-devops__pipelines_get_build_status
+      - mcp__azure__containerapps
+      - mcp__azure__monitor
+      - mcp__azure__keyvault
+    rationale: "ADO work item + pipeline state + ACA health + Key Vault = minimum truth plane coverage."
+
+  browser_ops:
+    description: "Browser automation for UI acceptance testing only."
+    tools:
+      - mcp__playwright__browser_navigate
+      - mcp__playwright__browser_snapshot
+      - mcp__playwright__browser_take_screenshot
+      - mcp__playwright__browser_fill_form
+      - mcp__playwright__browser_click
+    rationale: "UI acceptance surface — Playwright MCP for smoke testing rendered UI."
+    constraint: "NOT for debugging — use mcp__azure__monitor or mcp__azure__applicationinsights for runtime debugging."
+
+  analytics_consumption:
+    description: "Reporting and data verification tools."
+    tools:
+      - mcp__azure__applicationinsights
+      - mcp__azure__grafana
+      - mcp__azure__workbooks
+      - mcp__azure__kusto
+    rationale: "Prefer structured query tools over browser scraping for data claims."
+
+  identity_suite:
+    description: "Identity investigation tools — Entra + Azure role + Key Vault."
+    tools:
+      - mcp__azure__role
+      - mcp__azure__keyvault
+      - mcp__azure-devops__core_get_identity_ids
+    rationale: "Entra app registration, MI RBAC, and Key Vault secret name verification."
+
+  collaboration_optional:
+    description: "Slack and Google Workspace — optional, third-party, per-agent approval required."
+    tools:
+      - mcp__claude_ai_Slack__slack_send_message
+      - mcp__claude_ai_Slack__slack_read_channel
+      - mcp__claude_ai_Google_Calendar__gcal_list_events
+      - mcp__claude_ai_Gmail__gmail_search_messages
+    constraint: "Google Workspace MCP is optional + third-party. Require explicit policy approval in agent manifest."
+    rationale: "Collaboration surface for human-in-the-loop notification. Not for data claims."
+
+workflows:
+  go_live_audit:
+    description: "Verify release readiness across all 5 ship gates."
+    mandatory:
+      - mcp__azure-devops__pipelines_get_build_status
+      - mcp__azure-devops__wit_get_work_item
+      - mcp__azure__containerapps
+      - mcp__azure__monitor
+    recommended:
+      - mcp__azure__applicationinsights
+      - mcp__azure__keyvault
+    optional:
+      - mcp__playwright__browser_snapshot
+    fallback:
+      - tool: mcp__playwright__browser_navigate
+        condition: "Use only if ACA health endpoint is unreachable via mcp__azure__containerapps."
+    success_criteria:
+      - "All 5 gate checks in ssot/release/feature-ship-readiness-gates.yaml pass."
+      - "Azure Pipelines build status = Succeeded."
+      - "ACA app health = Running."
+    truth_plane: runtime + planning
+    rule_refs: [DR-01, DR-02, DR-07]
+
+  runtime_debugging:
+    description: "Diagnose live ACA runtime failures (container crashes, dependency errors)."
+    mandatory:
+      - mcp__azure__containerapps
+      - mcp__azure__monitor
+      - mcp__azure__applicationinsights
+    recommended:
+      - mcp__azure__keyvault
+      - mcp__azure__storage
+    optional: []
+    fallback: []
+    success_criteria:
+      - "Root cause identified from structured log query."
+      - "Affected container revision identified."
+    constraint: "Do NOT use Playwright for runtime debugging. Use mcp__azure__monitor or mcp__azure__applicationinsights."
+    truth_plane: runtime
+    rule_refs: [DR-02, DR-04]
+
+  ui_acceptance:
+    description: "Smoke test rendered UI at a live endpoint."
+    mandatory:
+      - mcp__playwright__browser_navigate
+      - mcp__playwright__browser_snapshot
+      - mcp__playwright__browser_take_screenshot
+    recommended:
+      - mcp__playwright__browser_fill_form
+      - mcp__playwright__browser_click
+    optional:
+      - mcp__playwright__browser_console_messages
+    fallback: []
+    success_criteria:
+      - "Screenshot captured with expected UI elements visible."
+      - "No JavaScript console errors on critical pages."
+    truth_plane: ui
+    rule_refs: [DR-04]
+
+  reporting_verification:
+    description: "Verify Power BI / Kusto / App Insights reports show correct data."
+    mandatory:
+      - mcp__azure__applicationinsights
+      - mcp__azure__kusto
+    recommended:
+      - mcp__azure__grafana
+      - mcp__azure__workbooks
+    optional:
+      - mcp__playwright__browser_snapshot
+    fallback:
+      - tool: mcp__playwright__browser_snapshot
+        condition: "Use only if Kusto/AI query returns no results (data not yet indexed)."
+    success_criteria:
+      - "Structured query returns expected row count or metric value."
+      - "No fallback to browser scraping for primary data claims."
+    truth_plane: analytics
+    rule_refs: [DR-01, DR-03]
+
+  identity_investigation:
+    description: "Verify Entra app registration, MI RBAC, Key Vault bindings."
+    mandatory:
+      - mcp__azure__role
+      - mcp__azure__keyvault
+    recommended:
+      - mcp__azure-devops__core_get_identity_ids
+    optional: []
+    fallback: []
+    success_criteria:
+      - "MI principal ID confirmed with Azure AI User role on target resource."
+      - "Key Vault secret names match ssot/odoo/environment-contract.yaml bindings."
+    truth_plane: identity
+    rule_refs: [DR-02, DR-06]
+
+  agent_runtime_verification:
+    description: "Verify Pulser agent is live and responding on Foundry."
+    mandatory:
+      - mcp__azure__containerapps
+      - mcp__azure__monitor
+      - mcp__azure__foundry
+    recommended:
+      - mcp__azure__applicationinsights
+    optional:
+      - mcp__playwright__browser_navigate
+    fallback:
+      - tool: mcp__playwright__browser_navigate
+        condition: "Use only to confirm chat UI renders if ACA health endpoint is unreachable."
+    success_criteria:
+      - "ACA container status = Running."
+      - "Foundry resource ipai-copilot-resource responds to health check."
+    truth_plane: runtime + agent
+    rule_refs: [DR-02, DR-04]
+
+  collaboration_ops:
+    description: "Human-in-the-loop notification via Slack or calendar."
+    mandatory: []
+    recommended:
+      - mcp__claude_ai_Slack__slack_send_message
+    optional:
+      - mcp__claude_ai_Slack__slack_read_channel
+      - mcp__claude_ai_Google_Calendar__gcal_find_meeting_times
+    fallback: []
+    success_criteria:
+      - "Notification delivered to target Slack channel."
+    constraint: "Google Workspace MCP requires explicit policy approval per agent manifest before enabling."
+    truth_plane: collaboration
+    rule_refs: [DR-05]

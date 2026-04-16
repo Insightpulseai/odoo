@@ -1,0 +1,77 @@
+# odoo-sso-runtime-state.yaml
+# Records the SSO runtime binding state for Odoo ↔ Microsoft Entra (Azure AD).
+# This file captures the configured state as of 2026-04-16.
+# Status: configured — not yet verified (user has not tested login flow).
+# Last updated: 2026-04-16
+
+meta:
+  schema_version: "1.0"
+  captured: "2026-04-16"
+  environment: production
+  odoo_instance: "https://erp.insightpulseai.com"
+  status: configured_not_verified
+  doctrine: "No-custom default for self-hosted Odoo. CE 18 + OCA auth_oauth (built-in) + infra wiring only. No ipai_* module required."
+  anchor: "ssot/odoo/odoo-azure-sso.contract.yaml + feedback_no_custom_default.md"
+
+odoo_modules:
+  auth_oauth:
+    installed: true
+    authorization_header: 1
+    notes: "Built-in Odoo CE 18 OAuth module. No custom ipai_* module."
+
+provider:
+  id: 4
+  name: "Microsoft Azure"
+  enabled: true
+  client_id: "3446e178-3eba-48c9-b5bd-4283ff729eb1"
+  auth_endpoint: "https://login.microsoftonline.com/common/oauth2/v2.0/authorize"
+  data_endpoint: "https://graph.microsoft.com/v1.0/me"
+  scope: "openid profile email"
+  redirect_url: "https://erp.insightpulseai.com/auth_oauth/signin"
+  css_class: "o_auth_oauth_microsoft"
+
+disabled_providers:
+  - name: "Odoo.com Accounts"
+    reason: "CE only — no odoo.com IAP. Disabled per doctrine."
+  - name: "Facebook Graph"
+    reason: "Not applicable for enterprise Odoo login."
+  - name: "Google OAuth2"
+    reason: "Google Workspace is W9 plane only. Not enabled for IPAI ERP login."
+
+entra_app_registration:
+  display_name: "InsightPulse AI - Odoo Login"
+  client_id: "3446e178-3eba-48c9-b5bd-4283ff729eb1"
+  tenant: "common"
+  notes: "Registered in IPAI Entra tenant. Supports multi-tenant common endpoint."
+
+entra_enterprise_app:
+  object_id: "d68a080a-54e7-4416-86f3-3ec1c6dfc3db"
+  service_principal_id: "d68a080a-54e7-4416-86f3-3ec1c6dfc3db"
+
+secrets:
+  client_secret: "Azure Key Vault — kv-ipai-dev. Never committed. Runtime binding via env var."
+  secret_key_name: "odoo-azure-sso-client-secret"
+
+verification:
+  status: pending
+  method: "User tests Microsoft sign-in button at https://erp.insightpulseai.com/web/login"
+  expected_flow:
+    - "User clicks 'Sign in with Microsoft' on Odoo login page."
+    - "Redirected to login.microsoftonline.com for Entra authentication."
+    - "On success, redirected back to erp.insightpulseai.com/auth_oauth/signin."
+    - "Odoo creates or matches user session by email."
+  success_criteria:
+    - "HTTP 200 at /web/login with Microsoft button visible."
+    - "Entra login completes without error."
+    - "Odoo session established for authenticated Entra user."
+    - "Redirect back to /odoo or /web (not stuck on /auth_oauth/signin)."
+
+next_actions:
+  - step: 1
+    action: "User tests Microsoft sign-in at https://erp.insightpulseai.com/web/login"
+  - step: 2
+    action: "On success, update status: configured_not_verified → verified_and_live"
+  - step: 3
+    action: "On failure, check Entra redirect URI matches exactly: https://erp.insightpulseai.com/auth_oauth/signin"
+  - step: 4
+    action: "On persistent failure, verify client_secret in kv-ipai-dev matches Entra app registration secret."
