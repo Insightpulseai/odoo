@@ -1,0 +1,187 @@
+version: 1
+
+metadata:
+  purpose:
+    - fail_prs_when_databricks_workspace_contracts_are_incomplete
+    - enforce_uc_first_identity_first_and_network_explicit_policy
+    - prevent implicit_or_drifted_workspace_posture
+  applies_to:
+    - infra/ssot/databricks/workspace-resource.contract.yaml
+
+global_rules:
+  default_deny_on_missing_required_policy: true
+  preview_api_requires_explicit_justification: true
+  catalog_mode_must_not_be_implicit: true
+  network_posture_must_not_be_implicit: true
+  identity_binding_must_not_be_implicit: true
+  prod_workspace_must_be_governed: true
+
+required_contract_sections:
+  - resource_type
+  - api_policy
+  - workspace_contract
+
+required_workspace_fields:
+  - name
+  - location
+  - managedResourceGroupId
+  - sku
+  - tags
+
+required_workspace_properties:
+  - managedResourceGroupId
+  - publicNetworkAccess
+  - requiredNsgRules
+
+required_nested_properties:
+  accessConnector:
+    path: workspace_contract.access_connector
+    required_fields:
+      - path
+      - required
+      - fields
+      - rule
+  defaultCatalog:
+    path: workspace_contract.default_catalog
+    required_fields:
+      - path
+      - fields
+      - initialType_allowed
+      - rule
+  network:
+    path: workspace_contract.network_posture
+    required_fields:
+      - publicNetworkAccess
+      - requiredNsgRules
+      - no_public_ip_parameter
+  encryption:
+    path: workspace_contract.encryption
+    required_fields:
+      - workspace_encryption_supported
+      - cmk_supported
+      - managed_disk_encryption_supported
+      - managed_services_encryption_supported
+  security_compliance:
+    path: workspace_contract.security_compliance
+    required_fields:
+      - enhancedSecurityCompliance_supported
+      - controls
+
+policy_assertions:
+  - id: api_version_declared
+    description: preferred API version must be declared explicitly
+    check:
+      path_exists: api_policy.preferred_api_version
+  - id: preview_api_has_policy
+    description: preview API usage must be intentional
+    check:
+      when_path_matches:
+        path: api_policy.preferred_api_version
+        pattern: "preview"
+      require_path_equals:
+        path: api_policy.rule
+        value: preview_only_when_required_property_or_feature_is_needed
+  - id: access_connector_required
+    description: workspace access connector must be explicitly required
+    check:
+      require_path_equals:
+        path: workspace_contract.access_connector.required
+        value: true
+  - id: access_connector_identity_rule_present
+    description: access connector must be treated as workspace identity-binding surface
+    check:
+      require_path_contains:
+        path: workspace_contract.access_connector.rule
+        value: access_connector
+  - id: catalog_initial_type_explicit
+    description: default catalog initial type must be explicitly modeled
+    check:
+      require_path_contains:
+        path: workspace_contract.default_catalog.initialType_allowed
+        value: UnityCatalog
+  - id: uc_first_rule_present
+    description: governed workspaces must not default silently to Hive Metastore
+    check:
+      require_path_contains:
+        path: workspace_contract.default_catalog.rule
+        value: unity_catalog_default_when_governed_lakehouse_mode
+  - id: public_network_access_explicit
+    description: public network access posture must be explicitly declared
+    check:
+      require_path_contains:
+        path: workspace_contract.network_posture.publicNetworkAccess.allowed
+        value: Disabled
+  - id: required_nsg_rules_explicit
+    description: required NSG rules posture must be explicitly declared
+    check:
+      require_path_contains:
+        path: workspace_contract.network_posture.requiredNsgRules.allowed
+        value: NoAzureDatabricksRules
+  - id: no_public_ip_parameter_required
+    description: no-public-IP parameter must be explicitly required
+    check:
+      require_path_equals:
+        path: workspace_contract.network_posture.no_public_ip_parameter.required
+        value: true
+  - id: custom_vnet_surface_present
+    description: workspace parameter surface must expose custom VNet fields
+    check:
+      require_all_values_present:
+        path: workspace_contract.workspace_parameters.supported_core
+        values:
+          - customVirtualNetworkId
+          - customPrivateSubnetName
+          - customPublicSubnetName
+          - enableNoPublicIp
+  - id: encryption_surface_present
+    description: encryption controls must be declared
+    check:
+      require_path_equals:
+        path: workspace_contract.encryption.cmk_supported
+        value: true
+  - id: enhanced_security_surface_present
+    description: enhanced security/compliance controls must be declared
+    check:
+      require_path_equals:
+        path: workspace_contract.security_compliance.enhancedSecurityCompliance_supported
+        value: true
+
+environment_rules:
+  prod:
+    required_assertions:
+      - access_connector_required
+      - catalog_initial_type_explicit
+      - uc_first_rule_present
+      - public_network_access_explicit
+      - required_nsg_rules_explicit
+      - no_public_ip_parameter_required
+      - encryption_surface_present
+      - enhanced_security_surface_present
+    deny_values:
+      - path: workspace_contract.network_posture.publicNetworkAccess.allowed
+        value: Enabled
+        unless: approved_exception_present
+  nonprod:
+    required_assertions:
+      - access_connector_required
+      - catalog_initial_type_explicit
+      - public_network_access_explicit
+
+exception_policy:
+  approved_exception_present:
+    required_fields:
+      - exception_id
+      - approver
+      - rationale
+      - expiry_date
+    allowed_categories:
+      - temporary_public_network_access
+      - legacy_catalog_mode_transition
+      - preview_feature_dependency
+
+validator_outcomes:
+  on_missing_required_section: fail
+  on_missing_required_property: fail
+  on_policy_assertion_failure: fail
+  on_exception_missing_fields: fail
+  on_unknown_exception_category: fail

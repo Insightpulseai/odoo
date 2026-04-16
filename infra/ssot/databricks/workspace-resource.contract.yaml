@@ -83,3 +83,7 @@ workspace_contract:
       - automaticClusterUpdate
       - complianceSecurityProfile
       - enhancedSecurityMonitoring
+
+validator_binding:
+  source: infra/ssot/databricks/workspace-policy-validator.yaml
+  rule: workspace_contract_changes_must_pass_policy_validator_before_merge

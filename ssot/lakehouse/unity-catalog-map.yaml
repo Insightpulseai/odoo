@@ -224,3 +224,7 @@ workspace_binding:
   default_catalog_policy:
     require_initialType: UnityCatalog
     rule: do_not_default_new_governed_workspaces_to_hive_metastore
+
+workspace_validation_binding:
+  source: infra/ssot/databricks/workspace-policy-validator.yaml
+  rule: uc_first_workspace_policy_must_pass_before_governed_workspace_is_approved
