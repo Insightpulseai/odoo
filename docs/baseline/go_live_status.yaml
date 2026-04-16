@@ -1,0 +1,440 @@
+---
+# Go-Live Status — Evidence-Based Component Registry
+# Generated: 2026-04-16
+# Authority: This file is the structured audit companion to
+#   docs/baseline/PLATFORM_BASELINE_AND_GO_LIVE_STATUS.md
+# Status values: planned | repo-defined | provisioned | configured |
+#   verified-nonprod | verified-prod | live | blocked | unknown
+
+schema_version: 1
+audit_date: '2026-04-16'
+auditor: claude-code-evidence-audit
+
+components:
+
+  # ═══════════════════════════════════════════════════════════════════════════
+  # ODOO ERP RUNTIME
+  # ═══════════════════════════════════════════════════════════════════════════
+
+  - id: odoo-erp-base
+    name: Odoo CE 18 Base Install
+    plane: transaction
+    repo: Insightpulseai/odoo (monorepo)
+    environment: production
+    intended_state: Full ERP with 55+ custom modules, OCA addons, accounting, CRM, project
+    observed_state: Bare CE 18 shell with 12 base framework modules only
+    status: configured
+    evidence_refs:
+      - "PG query: 12 installed modules (auth_totp, base, base_import, base_import_module, base_setup, bus, html_editor, iap, web, web_editor, web_tour, web_unsplash)"
+      - "curl erp.insightpulseai.com/web/health -> {status: pass}"
+      - "curl erp.insightpulseai.com/web/login -> HTTP 200"
+    blockers:
+      - No accounting module installed
+      - No CRM module installed
+      - No custom ipai_* modules installed
+      - No OCA modules installed
+    owner: platform-engineering
+    notes: "ACA app ca-ipai-odoo-web-dev on Sponsored sub serves production URL despite '-dev' suffix"
+
+  - id: odoo-custom-modules
+    name: IPAI Custom Modules (55 modules)
+    plane: transaction
+    repo: addons/ipai/
+    environment: production
+    intended_state: 55 modules covering copilot, BIR, finance, agent, compliance
+    observed_state: 0 of 55 installed in production database
+    status: repo-defined
+    evidence_refs:
+      - "ls addons/ipai/ -> 55 directories"
+      - "PG query: 0 ipai_* modules in ir_module_module with state=installed"
+    blockers:
+      - No deployment pipeline verified
+      - 0/55 modules pass full doctrine checklist per prior audit
+    owner: platform-engineering
+    notes: "Prior audit found none of the 55 modules meet the mandatory MODULE_INTROSPECTION.md + TECHNICAL_GUIDE.md requirement"
+
+  - id: odoo-oca-modules
+    name: OCA Community Modules
+    plane: transaction
+    repo: addons/oca/
+    environment: production
+    intended_state: OCA modules hydrated and installed per oca-baseline.yaml
+    observed_state: Not hydrated or installed
+    status: repo-defined
+    evidence_refs:
+      - "ssot/odoo/oca-baseline.yaml exists"
+      - "No OCA modules in installed module list"
+    blockers:
+      - Submodules not hydrated
+    owner: platform-engineering
+
+  # ═══════════════════════════════════════════════════════════════════════════
+  # DATABASES
+  # ═══════════════════════════════════════════════════════════════════════════
+
+  - id: pg-odoo-prod
+    name: PostgreSQL odoo database (production)
+    plane: data
+    repo: infra
+    environment: production
+    intended_state: Full Odoo schema with all modules
+    observed_state: 121 tables (base framework only)
+    status: configured
+    evidence_refs:
+      - "psycopg2 query: 121 tables in public schema"
+      - "12 modules installed"
+    blockers: []
+    owner: platform-engineering
+
+  - id: pg-odoo-staging
+    name: PostgreSQL odoo_staging database
+    plane: data
+    repo: infra
+    environment: staging
+    intended_state: Mirror of production for testing
+    observed_state: 0 tables
+    status: provisioned
+    evidence_refs:
+      - "psycopg2 query: 0 tables"
+    blockers:
+      - Database exists but completely empty
+    owner: platform-engineering
+
+  - id: pg-odoo-dev
+    name: PostgreSQL odoo_dev database
+    plane: data
+    repo: infra
+    environment: development
+    intended_state: Development database on Azure PG
+    observed_state: DOES NOT EXIST
+    status: blocked
+    evidence_refs:
+      - "psycopg2.connect(dbname='odoo_dev') -> FATAL: database does not exist"
+      - "pg_database list: azure_maintenance, azure_sys, odoo, odoo_staging, postgres"
+    blockers:
+      - Database not created
+      - CLAUDE.md and multiple SSOT files reference odoo_dev as if it exists
+    owner: platform-engineering
+    notes: "Critical SSOT contradiction: environment-contract.yaml says odoo_dev is LOCAL ONLY, but runtime_contract.yaml implies it on Azure"
+
+  # ═══════════════════════════════════════════════════════════════════════════
+  # DNS AND EDGE
+  # ═══════════════════════════════════════════════════════════════════════════
+
+  - id: dns-erp
+    name: DNS erp.insightpulseai.com
+    plane: delivery
+    repo: infra
+    environment: production
+    intended_state: CNAME to ACA
+    observed_state: CNAME to ca-ipai-odoo-web-dev.blackriver-f68f8a9b...
+    status: live
+    evidence_refs:
+      - "dig +short erp.insightpulseai.com -> correct CNAME + IP 104.43.98.178"
+    blockers: []
+    owner: platform-engineering
+
+  - id: dns-prismalab
+    name: DNS prismalab.insightpulseai.com
+    plane: delivery
+    repo: infra
+    environment: production
+    intended_state: CNAME to PrismaLab ACA
+    observed_state: CNAME to ipai-prismalab-web.whitedesert-54fce6ca...
+    status: live
+    evidence_refs:
+      - "dig +short prismalab.insightpulseai.com -> correct CNAME"
+    blockers: []
+    owner: platform-engineering
+
+  - id: dns-www
+    name: DNS www.insightpulseai.com
+    plane: delivery
+    repo: infra
+    environment: production
+    intended_state: CNAME to website ACA
+    observed_state: CNAME to ipai-website-dev.blackstone-0df78186...
+    status: live
+    evidence_refs:
+      - "dig +short www.insightpulseai.com -> correct CNAME"
+    blockers: []
+    owner: platform-engineering
+
+  - id: azure-front-door
+    name: Azure Front Door afd-ipai-dev
+    plane: delivery
+    repo: infra
+    environment: production
+    intended_state: WAF + TLS + routing for all services
+    observed_state: Active on Sub1 only; primary Odoo ACA on Sponsored sub
+    status: configured
+    evidence_refs:
+      - "az afd profile list -> afd-ipai-dev Active on Sub1"
+      - "Not present on Sponsored sub"
+    blockers:
+      - Cross-subscription routing unverified
+    owner: platform-engineering
+    notes: "Primary Odoo ACA is on Sponsored sub but AFD is on Sub1"
+
+  # ═══════════════════════════════════════════════════════════════════════════
+  # IDENTITY AND AUTH
+  # ═══════════════════════════════════════════════════════════════════════════
+
+  - id: entra-oauth
+    name: Entra ID OAuth for Odoo
+    plane: identity
+    repo: ssot/identity/
+    environment: production
+    intended_state: CE auth_oauth + auth_totp, JIT provisioning
+    observed_state: auth_oauth NOT installed; auth_totp installed but unconfigured
+    status: repo-defined
+    evidence_refs:
+      - "ssot/identity/odoo-azure-oauth.yaml exists with full config"
+      - "PG query: auth_oauth not in installed modules"
+    blockers:
+      - auth_oauth module not installed
+      - Entra tenant ID conflict between SSOT files (402de71a vs 9ba5e867)
+    owner: platform-engineering
+
+  - id: managed-identities
+    name: Managed Identities
+    plane: identity
+    repo: infra
+    environment: production
+    intended_state: Per-agent and per-service MIs with RBAC
+    observed_state: 13 MIs provisioned across both subs
+    status: provisioned
+    evidence_refs:
+      - "az resource list: 6 MIs on Sponsored, 7 on Sub1"
+      - "RBAC assignments unverified"
+    blockers: []
+    owner: platform-engineering
+
+  # ═══════════════════════════════════════════════════════════════════════════
+  # DATA AND ANALYTICS
+  # ═══════════════════════════════════════════════════════════════════════════
+
+  - id: databricks-workspace
+    name: Databricks Workspace dbw-ipai-dev
+    plane: data
+    repo: infra
+    environment: development
+    intended_state: Bronze/Silver/Gold medallion with Unity Catalog
+    observed_state: Workspace provisioned and running; UC enabled; no verified pipeline runs
+    status: provisioned
+    evidence_refs:
+      - "az databricks workspace list -> Succeeded, UC enabled"
+      - "No pipeline run evidence collected this audit"
+    blockers:
+      - CDM export pipeline created but never run
+    owner: platform-engineering
+
+  - id: power-bi
+    name: Power BI Semantic Models
+    plane: data
+    repo: N/A
+    environment: production
+    intended_state: Primary BI surface with governed semantic models
+    observed_state: Pro trial license; no semantic models published
+    status: planned
+    evidence_refs:
+      - "Memory: trial expires ~2026-05-20"
+    blockers:
+      - Trial license expiration imminent
+      - No semantic models defined
+    owner: platform-engineering
+
+  - id: fabric-mirroring
+    name: Fabric Mirroring (PG to OneLake)
+    plane: data
+    repo: infra
+    environment: development
+    intended_state: CDC from Odoo PG to Fabric OneLake
+    observed_state: Fabric workspace fcipaidev exists per memory; trial status unknown
+    status: unknown
+    evidence_refs:
+      - "Memory: fcipaidev ACTIVE; trial may expire ~2026-05-20"
+    blockers:
+      - Trial expiration risk
+    owner: platform-engineering
+
+  # ═══════════════════════════════════════════════════════════════════════════
+  # AGENT RUNTIME
+  # ═══════════════════════════════════════════════════════════════════════════
+
+  - id: pulser-copilot-gateway
+    name: Pulser Copilot Gateway
+    plane: agent
+    repo: agent-platform/
+    environment: development
+    intended_state: Internal ACA gateway for Pulser agent invocations
+    observed_state: ACA app deployed (internal endpoint)
+    status: provisioned
+    evidence_refs:
+      - "az containerapp list: ipai-copilot-gateway.internal.blackstone..."
+    blockers:
+      - No end-to-end agent invocation verified
+      - ipai_odoo_copilot module not installed
+    owner: platform-engineering
+
+  - id: prismalab-rag-gateway
+    name: PrismaLab RAG Gateway
+    plane: agent
+    repo: apps/prismalab-gateway/
+    environment: production
+    intended_state: RAG-powered research assistant
+    observed_state: Gateway deployed; search index exists per memory
+    status: live
+    evidence_refs:
+      - "ACA ipai-prismalab-gateway deployed"
+      - "Memory: srch-ipai-dev AI Search index prismalab-rag-v1 with 8 chunks"
+      - "prismalab.insightpulseai.com returning HTTP 200"
+    blockers: []
+    owner: platform-engineering
+
+  - id: foundry-models
+    name: Azure AI Foundry Model Deployments
+    plane: agent
+    repo: ssot/governance/foundry-model-routing.yaml
+    environment: production
+    intended_state: gpt-4.1 + mini + embeddings + 4o-mini
+    observed_state: 4 deployments active
+    status: live
+    evidence_refs:
+      - "ssot/governance/foundry-model-routing.yaml verified 2026-04-15"
+    blockers:
+      - Sponsored sub quota issue blocks additional models
+    owner: platform-engineering
+
+  # ═══════════════════════════════════════════════════════════════════════════
+  # CI/CD AND RELEASE
+  # ═══════════════════════════════════════════════════════════════════════════
+
+  - id: azure-pipelines
+    name: Azure Pipelines (CI/CD)
+    plane: delivery
+    repo: azure-pipelines/
+    environment: all
+    intended_state: Sole CI/CD authority per doctrine
+    observed_state: 15 pipeline definition files; run history not collected
+    status: repo-defined
+    evidence_refs:
+      - "ls azure-pipelines/ -> 15 YAML files"
+      - "GitHub Actions correctly removed per doctrine"
+    blockers:
+      - No verified successful pipeline run for Odoo deployment
+    owner: platform-engineering
+
+  - id: container-registry
+    name: Azure Container Registry acripaiodoo
+    plane: delivery
+    repo: infra
+    environment: shared
+    intended_state: Central image registry
+    observed_state: 20 repositories
+    status: live
+    evidence_refs:
+      - "az acr repository list -> 20 repos including ipai-odoo, ipai-odoo-full"
+    blockers: []
+    owner: platform-engineering
+
+  # ═══════════════════════════════════════════════════════════════════════════
+  # WEB SURFACES
+  # ═══════════════════════════════════════════════════════════════════════════
+
+  - id: website-insightpulseai
+    name: InsightPulseAI Main Website
+    plane: delivery
+    repo: web
+    environment: production
+    intended_state: Public brand + product site
+    observed_state: HTTP 200
+    status: live
+    evidence_refs:
+      - "curl https://www.insightpulseai.com -> HTTP 200"
+    blockers: []
+    owner: marketing
+
+  - id: website-prismalab
+    name: PrismaLab Website
+    plane: delivery
+    repo: web
+    environment: production
+    intended_state: Research consulting site + RAG assistant
+    observed_state: HTTP 200
+    status: live
+    evidence_refs:
+      - "curl https://prismalab.insightpulseai.com -> HTTP 200"
+    blockers: []
+    owner: marketing
+
+  - id: website-w9studio
+    name: W9 Studio Website
+    plane: delivery
+    repo: web
+    environment: production
+    intended_state: Studio booking site
+    observed_state: HTTP 200 on ACA endpoint
+    status: live
+    evidence_refs:
+      - "ACA ipai-w9studio-dev returning HTTP 200"
+    blockers:
+      - Custom domain DNS (w9studio.net) migration from Wix incomplete
+    owner: marketing
+
+  # ═══════════════════════════════════════════════════════════════════════════
+  # MONITORING AND OBSERVABILITY
+  # ═══════════════════════════════════════════════════════════════════════════
+
+  - id: monitoring
+    name: Azure Monitor / App Insights / Log Analytics
+    plane: delivery
+    repo: infra
+    environment: all
+    intended_state: Full observability stack with alerts
+    observed_state: Multiple Log Analytics workspaces and App Insights instances provisioned; 3 alert rules on Sub1
+    status: provisioned
+    evidence_refs:
+      - "az resource list: 5 Log Analytics workspaces, 4 App Insights, 3 alert rules"
+    blockers:
+      - Alert effectiveness unverified
+      - No operational dashboard confirmed
+    owner: platform-engineering
+
+  # ═══════════════════════════════════════════════════════════════════════════
+  # KEY VAULT
+  # ═══════════════════════════════════════════════════════════════════════════
+
+  - id: key-vault
+    name: Azure Key Vault
+    plane: security
+    repo: infra
+    environment: shared
+    intended_state: All runtime secrets via KV + managed identity
+    observed_state: 2 vaults provisioned; secret contents unverified
+    status: provisioned
+    evidence_refs:
+      - "az keyvault list: kv-ipai-dev (Sub1), kv-ipai-dev-sea (Sponsored)"
+    blockers:
+      - Cannot verify secret population without vault read access in this session
+      - Environment contract notes plaintext PG password in ACA env vars as regression
+    owner: platform-engineering
+
+  # ═══════════════════════════════════════════════════════════════════════════
+  # BACKUP AND DR
+  # ═══════════════════════════════════════════════════════════════════════════
+
+  - id: backup-dr
+    name: Backup and Disaster Recovery
+    plane: security
+    repo: infra
+    environment: production
+    intended_state: PG backups, filestore backups, DR plan
+    observed_state: Backup Vault (Sponsored) and Recovery Services Vault (Sub1) provisioned
+    status: provisioned
+    evidence_refs:
+      - "az resource list: bvault-ipai-dev-sea, rsv-ipai-dev"
+    blockers:
+      - Backup policies not verified
+      - DR runbook not verified
+    owner: platform-engineering
