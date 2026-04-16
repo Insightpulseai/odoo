@@ -1,0 +1,4 @@
+relationship WorkItems_Iterations
+	fromColumn: WorkItems.Iteration
+	toColumn: Iterations.IterationName
+	crossFilteringBehavior: bothDirections
