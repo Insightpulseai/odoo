@@ -1,0 +1,169 @@
+version: 1
+
+metadata:
+  purpose:
+    - define which Unity Catalog assets are published into Microsoft Purview
+    - distinguish engineering/governance authority from metadata publication/discovery
+    - bind technical metadata, lineage, and business context to published assets
+  layering:
+    databricks: primary_data_intelligence_plane
+    unity_catalog: primary_governance_plane
+    purview: metadata_publication_and_discovery_plane
+    semantic_layer: business_metric_dimension_plane
+    odata_entity_map: governed_consumer_interface
+
+global_rules:
+  publish_only_governed_assets: true
+  publish_only_gold_or_explicitly_curated_semantic_assets_by_default: true
+  raw_bronze_assets_not_published_by_default: true
+  lineage_required_for_production_publication: true
+  classification_required_for_production_publication: true
+  business_owner_required_for_production_publication: true
+  glossary_binding_recommended: true
+  purview_not_primary_access_control_authority: true
+
+publication_sources:
+  unity_catalog_scan:
+    enabled: true
+    capabilities_expected:
+      - metastore
+      - catalogs
+      - schemas
+      - tables
+      - views
+      - columns
+      - uc_tags_as_properties
+      - lineage_from_notebook_runs
+  lineage_connections:
+    enabled: true
+    capabilities_expected:
+      - source_to_output_relationships
+      - transformation_activity_metadata
+
+publication_scopes:
+  technical_metadata:
+    publish: true
+    includes:
+      - object_name
+      - fully_qualified_name
+      - schema
+      - columns
+      - tags
+      - object_type
+  lineage:
+    publish: true
+    includes:
+      - upstream_sources
+      - downstream_outputs
+      - transformation_relationships
+  governance_metadata:
+    publish: true
+    includes:
+      - classification
+      - business_owner
+      - governance_domain
+      - glossary_terms
+      - critical_data_elements
+  semantic_metadata:
+    publish: true
+    includes:
+      - metric_name
+      - dimension_name
+      - semantic_version
+      - lineage_version
+
+publishable_objects:
+  finance:
+    - uc_object: main.finance.fact_revenue
+      publish_to_purview: true
+      asset_type: table
+      classification: confidential
+      governance_domain: finance
+      glossary_terms:
+        - Revenue
+        - Invoiced Amount
+      critical_data_elements:
+        - revenue_amount
+    - uc_object: main.finance.semantic_revenue
+      publish_to_purview: true
+      asset_type: view
+      classification: confidential
+      governance_domain: finance
+      glossary_terms:
+        - Revenue
+        - Fiscal Period
+  projects:
+    - uc_object: main.projects.fact_project_burn
+      publish_to_purview: true
+      asset_type: table
+      classification: confidential
+      governance_domain: services_delivery
+      glossary_terms:
+        - Project Burn
+        - Budget Variance
+    - uc_object: main.projects.semantic_project_burn
+      publish_to_purview: true
+      asset_type: view
+      classification: confidential
+      governance_domain: services_delivery
+      glossary_terms:
+        - Project Burn
+        - Billable Utilization
+  tax_compliance:
+    - uc_object: main.tax_compliance.fact_tax_due
+      publish_to_purview: true
+      asset_type: table
+      classification: restricted
+      governance_domain: tax_compliance
+      glossary_terms:
+        - Tax Due
+        - Tax Jurisdiction
+      critical_data_elements:
+        - tax_due_amount
+    - uc_object: main.tax_compliance.semantic_tax_due
+      publish_to_purview: true
+      asset_type: view
+      classification: restricted
+      governance_domain: tax_compliance
+      glossary_terms:
+        - Tax Due
+        - Tax Variance
+  shared_dimensions:
+    - uc_object: main.shared.dim_customer
+      publish_to_purview: true
+      asset_type: table
+      classification: confidential
+      governance_domain: shared_business_dimensions
+      glossary_terms:
+        - Customer
+    - uc_object: main.shared.dim_project
+      publish_to_purview: true
+      asset_type: table
+      classification: confidential
+      governance_domain: shared_business_dimensions
+      glossary_terms:
+        - Project
+    - uc_object: main.shared.dim_tax_jurisdiction
+      publish_to_purview: true
+      asset_type: table
+      classification: internal
+      governance_domain: shared_business_dimensions
+      glossary_terms:
+        - Tax Jurisdiction
+
+non_publish_defaults:
+  bronze:
+    publish_to_purview: false
+  silver_intermediate:
+    publish_to_purview: false
+  internal_platform_telemetry:
+    publish_to_purview: selective_only
+
+purview_bindings:
+  unified_catalog_features:
+    - governance_domains
+    - glossary_terms
+    - critical_data_elements
+    - data_products
+  search_and_browse_expected: true
+  access_request_flow_optional: true

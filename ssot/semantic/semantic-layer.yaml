@@ -231,3 +231,17 @@ domains:
 
 derived_model_bindings:
   curated_fact_dimension_map: ssot/semantic/curated-fact-dimension-map.yaml
+
+consumption_doctrine:
+  primary_serving_plane:
+    - databricks_sql_serverless
+    - unity_catalog_governed_gold
+  downstream_consumption_plane:
+    - power_bi_in_microsoft_fabric
+    - fabric_copilot_consumers
+  rule:
+    semantic_definitions_are_authored_in_governed_semantic_contracts_then_exposed_to_downstream_consumers
+
+metadata_publication_doctrine:
+  purview_publication_source: ssot/lakehouse/purview-publication-map.yaml
+  rule: published_semantic_assets_must_have_classification_owner_and_governance_domain

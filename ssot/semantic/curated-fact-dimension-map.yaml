@@ -604,3 +604,11 @@ odata_exposure:
 
 derived_interfaces:
   odata_entity_map: ssot/semantic/odata-entity-map.yaml
+
+curation_doctrine:
+  upstream_processing_pattern:
+    - bronze_raw
+    - silver_cleansed
+    - gold_business_ready
+  rule:
+    semantic_metrics_bind_only_to_gold_or_other_explicitly_curated_objects
