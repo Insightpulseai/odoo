@@ -1,0 +1,30 @@
+version: 1
+
+dimensions:
+  global:
+    - date
+    - fiscal_period
+    - tenant
+    - company
+    - customer
+    - vendor
+    - employee
+    - product
+    - product_category
+    - warehouse
+    - project
+    - currency
+    - tax_jurisdiction
+    - compliance_case_status
+    - assistant_capability
+    - eval_status
+
+conformance_rules:
+  tenant:
+    required_on_all_domains: true
+  company:
+    required_on_all_domains: true
+  date:
+    required_on_all_domains: true
+  fiscal_period:
+    required_on_finance_like_domains: true
