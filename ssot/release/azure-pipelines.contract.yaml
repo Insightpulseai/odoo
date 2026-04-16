@@ -1,0 +1,105 @@
+contract_version: 1
+
+release_plane:
+  system: azure_devops_pipelines
+  authority: release_truth
+  scopes:
+    - ci
+    - test
+    - deploy
+    - artifact_publish
+
+execution_model:
+  job_unit: pipeline_job
+  agent_execution_rule: one_job_per_agent
+  concurrency_control: parallel_jobs
+
+agent_types:
+  microsoft_hosted:
+    supported: true
+    characteristics:
+      - fresh_vm_per_job
+      - vm_discarded_after_job
+      - simplest_default
+      - no_persistent_machine_state
+
+  self_hosted:
+    supported: true
+    characteristics:
+      - persistent_machine_state
+      - custom_software_allowed
+      - machine_level_cache_persists
+      - one_agent_per_machine_preferred
+
+  managed_devops_pools:
+    supported: true
+    characteristics:
+      - fully_managed
+      - autoscale_friendly
+      - microsoft_managed_pool_compute
+      - preferred_over_vmss_when_custom_autoscaled_pool_needed
+
+  vmss_agents:
+    supported: true
+    characteristics:
+      - autoscaled_self_hosted
+      - custom_image_and_size
+      - legacy_option_if_not_using_managed_devops_pools
+
+default_selection_policy:
+  repo_validation:
+    agent_type: microsoft_hosted
+  docs_validation:
+    agent_type: microsoft_hosted
+  public_web_builds:
+    agent_type: microsoft_hosted
+  odoo_runtime_builds:
+    agent_type: microsoft_hosted
+  private_network_deployments:
+    agent_type: self_hosted
+  long_lived_dependency_cache_workloads:
+    agent_type: self_hosted
+  autoscaled_private_execution:
+    agent_type: managed_devops_pools
+
+capabilities_policy:
+  use_demands_and_capabilities_for:
+    - self_hosted
+  do_not_depend_on_capabilities_for:
+    - microsoft_hosted
+
+planning_linkage:
+  upstream_system: azure_boards
+  linkage_unit: work_item
+  required_traceability:
+    - work_item_to_branch
+    - work_item_to_pull_request
+    - work_item_to_build
+    - work_item_to_release
+
+release_assistant_patterns:
+  upstream_reference:
+    repo: microsoft/release-manager-assistant
+    classification: solution_accelerator
+    adopt_wholesale: false
+
+  adopted_patterns:
+    - planner_agent
+    - fallback_agent
+    - confirmation_before_mutation
+    - azure_devops_mcp_integration
+    - release_readiness_assessment
+    - cross_system_release_visibility
+
+  rejected_or_deferred_patterns:
+    - jira_dependency_as_default
+    - whole_repo_runtime_baseline
+    - env_dotfile_as_primary_truth
+
+truth_precedence:
+  - pipeline_yaml
+  - ssot_release_contract
+  - environment_contract
+  - repo_map
+  - route_map
+  - chat_context
