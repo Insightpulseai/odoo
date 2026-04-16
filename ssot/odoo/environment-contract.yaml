@@ -68,6 +68,8 @@ routes:
     purpose: odoo_production
     environment: production
     owning_repos: [odoo, infra]
+    status: active
+    custom_domain_note: "ACA custom domain binding completed 2026-04-16 on ca-ipai-odoo-web-dev (blackriver env)"
   - hostname: erp-staging.insightpulseai.com
     purpose: odoo_staging
     environment: staging

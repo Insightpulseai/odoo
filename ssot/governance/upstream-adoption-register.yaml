@@ -1136,6 +1136,16 @@ addenda_2026_04_15:
       Do NOT duplicate Azure Skills content into ipai_ custom skills —
       consume upstream directly.
 
+  - upstream: microsoft/well-architected-framework (AI workload guidance)
+    purpose: "Architecture assessment framework for AI workloads"
+    adopt_mode: consume_directly
+    internal_owner: platform-engineering
+    scope: assessment_and_review_input_only
+    notes: |
+      Use WAF-AI design areas as architecture review input.
+      Assessment output → docs/evidence/. NOT a runtime template.
+      Responsible-AI contract → ssot/governance/responsible-ai.contract.yaml (stub).
+
   - upstream: microsoft/Deploy-Your-AI-Application-In-Production
     purpose: "Production hardening reference: networking, MI, RBAC, private endpoints, observability"
     adopt_mode: clone_as_reference
@@ -1152,3 +1162,17 @@ addenda_2026_04_15:
       WARNING: Do NOT adopt as canonical platform baseline for Odoo ecosystem.
       IPAI's lean Azure BOM is intentional. Use as reference for security
       posture hardening only. Decision record at docs/architecture/.
+
+
+  - upstream: microsoft/well-architected-framework (AI workload guidance)
+    purpose: "Architecture assessment framework for AI workloads on Azure"
+    adopt_mode: consume_directly
+    internal_owner: platform-engineering
+    scope: assessment_and_review_input_only
+    notes: |
+      Use WAF-AI design areas as architecture review input.
+      Assessment output → docs/evidence/. NOT a runtime or implementation template.
+      Responsible-AI contract stub → ssot/governance/responsible-ai.contract.yaml.
+      10 design areas: application design, application platform, training data,
+      grounding data, data platform, MLOps/GenAIOps, operations, testing, personas,
+      responsible AI. IPAI covers 8/10 via existing SSOT contracts.
