@@ -60,3 +60,11 @@ enterprise_application_boundaries:
         - ipai-n8n-entra
       role: deprecated_identity_surface
       action: DELETE
+
+odoo_sso_boundaries:
+  source: ssot/odoo/odoo-azure-sso.contract.yaml
+  rules:
+    - odoo_sso_configuration_truth_is_distinct_from_enterprise_app_runtime_inventory
+    - entra_authenticates_identity_but_odoo_enforces_business_authorization
+    - supported_account_type_must_match_target_audience
+    - redirect_url_must_bind_to_canonical_odoo_base_url

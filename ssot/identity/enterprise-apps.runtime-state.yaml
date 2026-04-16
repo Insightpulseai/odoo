@@ -121,3 +121,9 @@ integration_resolution_rules:
     enforced: true
   - name: connector_catalog_entries_must_not_be_inferred_from_entra_enterprise_apps
     enforced: true
+
+odoo_sso_resolution_rules:
+  - name: enterprise_app_runtime_evidence_must_match_odoo_sso_contract
+    enforced: true
+  - name: insightpulse_ai_odoo_login_is_identity_surface_not_business_authorization_surface
+    enforced: true

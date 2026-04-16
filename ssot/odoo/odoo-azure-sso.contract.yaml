@@ -1,0 +1,59 @@
+---
+# Odoo Azure SSO Configuration Contract — SSOT
+# Source: https://www.odoo.com/documentation/18.0/applications/general/users/azure.html
+# Classification: Odoo SSO configuration truth + app-registration-to-Odoo binding
+# NOT: customer-tenant truth, Entra enterprise-app inventory, business auth, ORM/schema
+contract_version: 1
+
+odoo_azure_sso:
+  source:
+    type: odoo_official_user_docs
+    url: https://www.odoo.com/documentation/18.0/applications/general/users/azure.html
+    classification: odoo_sso_configuration_truth
+
+  usage_rules:
+    use_for:
+      - odoo_microsoft_sign_in_configuration
+      - redirect_url_contract
+      - supported_account_type_decision
+      - odoo_system_parameter_requirement
+      - app_registration_to_odoo_binding
+    do_not_use_for:
+      - customer_tenant_truth
+      - entra_enterprise_app_inventory_truth
+      - business_authorization_truth
+      - orm_schema_truth
+
+  required_odoo_settings:
+    system_parameters:
+      - key: auth_oauth.authorization_header
+        value: "1"
+    oauth_activation:
+      location: settings_integrations_oauth_authentication
+      required: true
+
+  microsoft_app_registration:
+    required: true
+    recommended_name: Odoo Login OAuth
+    ipai_app_name: InsightPulse AI - Odoo Login
+    ipai_application_id: 3446e178-3eba-48c9-b5bd-4283ff729eb1
+    supported_account_types:
+      internal_company_users:
+        value: accounts_in_this_organizational_directory_only
+      portal_users:
+        value: personal_microsoft_accounts_only
+    redirect_url:
+      platform: web
+      value_pattern: https://<odoo_base_url>/auth_oauth/signin
+      ipai_production: https://erp.insightpulseai.com/auth_oauth/signin
+      ipai_staging: https://erp-staging.insightpulseai.com/auth_oauth/signin
+    authentication_tokens_required:
+      - access_tokens
+      - id_tokens
+    credentials_required_for_odoo:
+      - application_client_id
+      - oauth_2_authorization_endpoint_v2
+
+  hosting_warning:
+    odoo_com_hosted_owner_admin_oauth_login_not_recommended: true
+    ipai_relevance: low  # self-hosted on ACA, not Odoo.com — warning preserved for completeness
