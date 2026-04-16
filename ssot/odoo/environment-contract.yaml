@@ -1,0 +1,135 @@
+---
+# Odoo Environment + Platform Contract — SSOT
+# Authority: CLAUDE.md, verified against Azure runtime 2026-04-16
+# Corrections applied per architect review
+contract_version: 1
+
+platform:
+  name: Pulser for Odoo
+  odoo:
+    edition: ce
+    version: 18
+  postgres:
+    engine: azure_database_for_postgresql_flexible_server
+    version: 16
+    server_name: pg-ipai-odoo
+    fqdn: pg-ipai-odoo.postgres.database.azure.com
+    resource_group: rg-ipai-data-sea
+    region: southeastasia
+    subscription: Microsoft Azure Sponsorship (eba824fb-332d-4623-9dfb-2c9f7ee83f4e)
+
+environments:
+  local:
+    role: developer_runtime
+    runtime: docker_compose
+    db_name: odoo_dev
+    base_url: http://localhost:8069
+    config_file: config/dev/odoo.conf
+    authority: local_repo_runtime
+
+  staging:
+    role: preprod_runtime
+    runtime: azure
+    db_name: odoo_staging
+    base_url: https://erp-staging.insightpulseai.com
+    config_file: config/staging/odoo.conf    # TODO: create this file
+    authority: azure_runtime
+    dns_status: planned                      # DNS record not yet created
+
+  production:
+    role: live_runtime
+    runtime: azure
+    db_name: odoo
+    base_url: https://erp.insightpulseai.com
+    config_file: config/prod/odoo.conf       # TODO: create this file
+    authority: azure_runtime
+
+postgres_databases:
+  system:
+    - azure_maintenance
+    - azure_sys
+  utility:
+    - postgres
+  application:
+    - odoo_staging
+    - odoo
+
+addons:
+  load_order:
+    - addons/oca             # OCA community modules
+    - addons/ipai            # Custom IPAI modules (thin deltas)
+  policy:
+    oca_first: true
+    ee_parity_via_oca: true
+    ipai_namespace: thin_delta_last_resort   # NOT bridge_only — last resort after CE+OCA
+
+routes:
+  - hostname: erp.insightpulseai.com
+    purpose: odoo_production
+    environment: production
+    owning_repos: [odoo, infra]
+  - hostname: erp-staging.insightpulseai.com
+    purpose: odoo_staging
+    environment: staging
+    owning_repos: [odoo, infra]
+    status: planned
+  - hostname: www.insightpulseai.com
+    purpose: public_website
+    owning_repos: [web, infra]
+  - hostname: prismalab.insightpulseai.com
+    purpose: public_website
+    owning_repos: [web, infra]
+  - hostname: www.w9studio.net
+    purpose: public_website
+    owning_repos: [web, infra]
+    transitional: true
+    migration_target: w9studio.insightpulseai.com
+    note: Wix deprecated 2026-04-02; migrating to Azure DNS + ACA + Odoo CMS
+
+config:
+  secret_source: azure_key_vault
+  vault_name: kv-ipai-dev-sea
+  preferred_auth: managed_identity
+  fallback_auth: key_vault_secret_reference
+  # SECURITY NOTE: plaintext passwords in ACA env vars are a known
+  # regression (found 2026-04-16). Migrate PASSWORD env to secretref:
+  # pointing at KV secret pg-ipai-odoo-password.
+
+execution:
+  allowed_entrypoints:
+    - docker-compose.yml
+    - config/dev/odoo.conf
+    - config/staging/odoo.conf   # planned
+    - config/prod/odoo.conf      # planned
+  forbidden_assumptions:
+    - assume_azure_has_odoo_dev          # odoo_dev is LOCAL ONLY
+    - assume_ee_modules_exist            # CE 18 only per CLAUDE.md #4
+    - assume_ipai_modules_can_replace_ee_parity  # OCA first
+    - assume_any_hostname_without_routes_contract
+    - assume_pg_has_public_access        # may be locked down at any time
+
+truth_precedence:
+  - azure_live_runtime          # what's actually deployed
+  - ssot_files                  # ssot/ directory in repo
+  - env_specific_config         # config/<env>/odoo.conf
+  - repo_code                   # source code
+  - docs                        # documentation
+  - chat_context                # ephemeral, lowest authority
+
+repo_authority:
+  primary_runtime_repo: odoo
+  infra_repo: infra
+  platform_repo: platform
+  docs_repo: docs
+  policy_repo: .github
+  public_web_repo: web
+
+repo_resolution_rules:
+  - concern: odoo_runtime_or_module
+    search_order: [odoo, docs, infra]
+  - concern: dns_edge_frontdoor
+    search_order: [infra, platform, docs]
+  - concern: public_marketing_site
+    search_order: [web, infra, docs]
+  - concern: org_policy_ci
+    search_order: [.github, docs]

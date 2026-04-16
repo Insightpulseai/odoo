@@ -1,0 +1,157 @@
+---
+# Org Repo Authority Map — SSOT
+# Authority: CLAUDE.md Repo Map + org_repo_target_state.md memory
+# Corrections applied: Cloudflare removed (deprecated), landing.io removed,
+# repos verified against github.com/orgs/Insightpulseai/repositories
+contract_version: 1
+
+org:
+  name: Insightpulseai
+
+repos:
+  odoo:
+    visibility: public
+    authority:
+      - odoo_runtime
+      - odoo_addons
+      - odoo_config
+      - odoo_db_contract
+      - erp_app_surface
+    priority: 1
+
+  infra:
+    visibility: private
+    authority:
+      - azure_iac
+      - azure_dns
+      - azure_front_door
+      - network_security
+      - private_endpoints
+      - managed_identities
+    priority: 1
+    # NOTE: Cloudflare REMOVED — fully deprecated 2026-04-07 per CLAUDE.md
+
+  platform:
+    visibility: private
+    authority:
+      - platform_ssot
+      - vault_references
+      - platform_metadata
+      - backend_control_plane_contracts
+    priority: 1
+
+  docs:
+    visibility: public
+    authority:
+      - cross_repo_architecture
+      - governance
+      - runbooks
+      - evidence
+      - operating_model
+    priority: 1
+
+  web:
+    visibility: private
+    authority:
+      - public_web_surfaces
+      - ops_console
+      - marketing_sites
+      - browser_facing_apps
+    priority: 1
+
+  .github:
+    visibility: public    # GitHub org-level config repo is conventionally public
+    authority:
+      - org_policy
+      - reusable_workflows
+      - repo_governance
+      - ci_cd_standards
+    priority: 1
+
+  agents:
+    visibility: public
+    authority:
+      - personas
+      - skills
+      - judges
+      - eval_contracts
+      - agent_cards
+      - prompt_contracts
+      - registries
+    priority: 2
+    boundary: runtime_free    # per docs/architecture/agent-orchestration-model.md
+
+  agent-platform:
+    visibility: private
+    authority:
+      - agent_runtime
+      - orchestration
+      - supervisor
+      - retrieval_grounding
+      - attachment_ingestion
+      - document_intelligence_bridge
+      - chat_backend
+      - agent_framework_integration    # microsoft/agent-framework
+    priority: 2
+
+  data-intelligence:
+    visibility: private
+    authority:
+      - databricks
+      - unity_catalog
+      - analytics_engineering
+      - semantic_delivery
+    priority: 2
+    status: planned           # verify existence in org
+
+  design:
+    visibility: internal
+    authority:
+      - design_tokens
+      - components
+      - brand_assets
+      - icon_pipeline
+    priority: 2
+    status: planned           # verify existence in org
+
+  automations:
+    visibility: private
+    authority:
+      - scheduled_jobs
+      - workflow_automation
+    priority: 2
+    status: planned           # verify existence in org
+
+  templates:
+    visibility: private
+    authority:
+      - starter_scaffolds
+      - bootstrap_templates
+    priority: 3
+
+# Low-priority repos excluded from default agent lookup paths
+excluded_from_default_lookup:
+  - demo-repository           # not production
+  - dotfiles                  # developer bootstrap only
+  - ugc-mediaops-kit          # separate product surface
+  - powerbi-skills            # separate skill plugin
+
+lookup_policy:
+  default_odoo_issue_order:
+    - odoo
+    - infra
+    - platform
+    - docs
+    - .github
+  default_public_site_issue_order:
+    - web
+    - infra
+    - platform
+    - docs
+  default_agent_issue_order:
+    - agents
+    - agent-platform
+    - platform
+    - docs
+    - infra
+  never_guess_repo_owner: true

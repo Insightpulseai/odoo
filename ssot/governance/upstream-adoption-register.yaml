@@ -1116,3 +1116,39 @@ addenda_2026_04_15:
     notes: |
       Anthropic + community MCP servers. Study structure before writing new
       IPAI-specific MCP servers (ado-rest, odoo-read/write, bir-reference).
+
+  # ─── Three-plane Microsoft repos (2026-04-16) ───
+
+  - upstream: microsoft/azure-skills
+    purpose: "Agent-side Azure/Foundry capability layer — skills + MCP tools for coding agents"
+    adopt_mode: consume_directly
+    internal_owner: agents
+    scope: |
+      Consumed by coding-agent hosts (Claude Code, GitHub Copilot CLI, Gemini CLI).
+      Provides Azure + Foundry actionability. Skills live in `agents/` repo;
+      MCP tool configs live in `.mcp.json`. NOT a runtime dependency —
+      a capability/policy layer.
+    plane: agents (skills/evals/policy)
+    notes: |
+      MIT. Supports Claude Code, Copilot CLI, Gemini CLI. Packages both
+      skills (prompt contracts) and MCP server configs. IPAI's `agents/`
+      repo owns consumption policy, eval hooks, host-specific guidance.
+      Do NOT duplicate Azure Skills content into ipai_ custom skills —
+      consume upstream directly.
+
+  - upstream: microsoft/Deploy-Your-AI-Application-In-Production
+    purpose: "Production hardening reference: networking, MI, RBAC, private endpoints, observability"
+    adopt_mode: clone_as_reference
+    internal_owner: infra
+    scope: |
+      SELECTIVE EXTRACTION ONLY. Do NOT lift as default baseline.
+      Repo provisions ~30 Azure resources (Foundry + Fabric + AI Search +
+      Purview + VNet) which is materially broader than IPAI's minimum BOM.
+      Extract only: private endpoint patterns, MI RBAC patterns, network
+      isolation, observability shape. Bicep modules go to infra/azure/modules/.
+    plane: infra
+    notes: |
+      MIT. Uses `azd up`. Opinionated end-to-end path — not neutral.
+      WARNING: Do NOT adopt as canonical platform baseline for Odoo ecosystem.
+      IPAI's lean Azure BOM is intentional. Use as reference for security
+      posture hardening only. Decision record at docs/architecture/.
