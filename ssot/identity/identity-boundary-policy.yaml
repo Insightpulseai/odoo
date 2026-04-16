@@ -68,3 +68,9 @@ odoo_sso_boundaries:
     - entra_authenticates_identity_but_odoo_enforces_business_authorization
     - supported_account_type_must_match_target_audience
     - redirect_url_must_bind_to_canonical_odoo_base_url
+
+databricks_developer_auth_boundaries:
+  rules:
+    - sdk_cli_and_ide_auth_are_developer_tooling_concerns_not_customer_tenant_truth
+    - workspace_authentication_does_not_define_business_authorization
+    - managed_identity_and_app_principal_paths_must_stay_distinct_from_interactive_ide_paths
