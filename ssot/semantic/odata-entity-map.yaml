@@ -344,3 +344,7 @@ examples:
     shape: apply_groupby_aggregate
     example: >
       TaxDue?$apply=groupby((tax_jurisdiction_id,fiscal_period_key),aggregate(tax_due_amount with sum as TaxDue))
+
+security_binding:
+  source: ssot/semantic/semantic-security-policy.yaml
+  rule: entity_set_fields_filters_and_expands_must_comply_with_semantic_security_policy

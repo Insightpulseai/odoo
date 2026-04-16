@@ -1,0 +1,240 @@
+version: 1
+
+metadata:
+  purpose:
+    - unify security policy across unity_catalog semantic views and odata exposure
+    - centralize tenant and company boundary enforcement
+    - define masking and filtering behavior for governed consumers
+    - separate identity authentication from business authorization
+  layering:
+    entra_id: identity_control_plane
+    aca_auth: edge_auth_layer
+    unity_catalog: data_governance_layer
+    semantic_views: governed_metric_dimension_layer
+    odata_entity_map: governed_query_interface
+    app_authorization: business_authorization_layer
+
+global_rules:
+  default_deny: true
+  least_privilege_required: true
+  tenant_scope_required_for_business_data: true
+  company_scope_required_when_company_sensitive: true
+  raw_odoo_tables_not_exposed: true
+  semantic_views_only_for_external_consumers: true
+  direct_cross_tenant_access_forbidden: true
+  direct_cross_company_access_forbidden_without_mapping: true
+  write_operations_via_odata_forbidden: true
+  managed_identity_for_service_runtime_only: true
+  entra_directory_not_sufficient_as_customer_tenant_boundary: true
+
+identity_policy:
+  user_interactive:
+    allowed_principal_types:
+      - entra_user_principal
+      - entra_group_mapped_principal
+    conditional_access_expected: true
+    edge_auth_allowed: true
+  service_runtime:
+    allowed_principal_types:
+      - managed_identity
+      - app_principal
+    conditional_access_expected: false
+    managed_identity_preferred: true
+    edge_auth_allowed: false
+  auth_boundary_rules:
+    - aca_auth_establishes_identity_but_not_business_permissions
+    - app_authorization_must_enforce_record_and_workflow_permissions
+    - tenant_context_must_resolve_from_app_mapping_not_directory_id_alone
+
+unity_catalog_policy:
+  access_control_layers:
+    - workspace_bindings
+    - privileges_and_ownership
+    - abac
+    - row_filters_and_column_masks
+  default_policy_model:
+    mechanism: abac_first
+    fallback_mechanisms:
+      - row_filters
+      - column_masks
+      - dynamic_views
+  row_filters:
+    enabled: true
+    rule: use_for_tenant_and_company_row_level_restrictions
+  column_masks:
+    enabled: true
+    rule: use_for_sensitive_columns_like_pii_contact_fields_tax_identifiers
+  privileges:
+    catalogs_and_schemas_governed: true
+    table_and_view_access_governed: true
+  workspace_bindings:
+    enabled: true
+    rule: prod_catalogs_restricted_to_authorized_workspaces_only
+
+semantic_view_policy:
+  approved_security_predicates:
+    - tenant_id
+    - company_id
+    - consumer_class
+    - role_class
+  masking_classes:
+    - public
+    - internal
+    - confidential
+    - restricted
+  required_columns:
+    - tenant_id
+    - company_id
+    - lineage_version
+    - semantic_version
+  domain_defaults:
+    finance:
+      row_filter:
+        - tenant_id
+        - company_id
+      mask_columns:
+        - customer_name
+        - vendor_name
+    sales:
+      row_filter:
+        - tenant_id
+        - company_id
+      mask_columns:
+        - customer_name
+    inventory:
+      row_filter:
+        - tenant_id
+        - company_id
+      mask_columns: []
+    projects:
+      row_filter:
+        - tenant_id
+        - company_id
+      mask_columns:
+        - employee_name
+    hr:
+      row_filter:
+        - tenant_id
+        - company_id
+      mask_columns:
+        - employee_name
+        - personal_email
+        - phone_number
+    tax_compliance:
+      row_filter:
+        - tenant_id
+        - company_id
+      mask_columns:
+        - customer_name
+        - vendor_name
+        - tax_identifier
+    pulser_ops:
+      row_filter:
+        - tenant_id
+      mask_columns:
+        - prompt_text
+        - response_text
+
+odata_policy:
+  metadata_access:
+    allowed: true
+    requires_authenticated_consumer_class: true
+  query_rules:
+    select_or_apply_required: true
+    explicit_field_allowlist_required: true
+    paging_via_nextlink_required_over_10000_rows: true
+    unbounded_extracts_forbidden: true
+    expand_only_for_whitelisted_dimensions: true
+  consumer_scoping:
+    tenant_filter_mandatory_for_business_entity_sets: true
+    company_filter_mandatory_when_company_sensitive: true
+  internal_only_entity_sets:
+    - InteractionSummary
+
+role_mappings:
+  bi_internal:
+    uc_policy_class: internal_analytics_reader
+    semantic_role_class: semantic_reader_internal
+    odata_scope: tenant_and_company_scoped
+  pulser_agent_runtime:
+    uc_policy_class: agent_runtime_reader
+    semantic_role_class: semantic_reader_agent
+    odata_scope: tenant_and_company_scoped
+  customer_embedded_api:
+    uc_policy_class: customer_embedded_reader
+    semantic_role_class: semantic_reader_customer
+    odata_scope: strict_customer_scope
+  customer_bi_readonly:
+    uc_policy_class: customer_bi_reader
+    semantic_role_class: semantic_reader_customer
+    odata_scope: strict_customer_scope
+  internal_ops:
+    uc_policy_class: internal_ops_reader
+    semantic_role_class: semantic_reader_ops
+    odata_scope: explicit_scope_only
+  finance_close_ops:
+    uc_policy_class: finance_close_reader
+    semantic_role_class: semantic_reader_finance
+    odata_scope: strict_finance_scope
+  compliance_ops:
+    uc_policy_class: compliance_reader
+    semantic_role_class: semantic_reader_compliance
+    odata_scope: strict_compliance_scope
+
+entity_set_security:
+  Revenue:
+    classification: confidential
+    required_row_filters:
+      - tenant_id
+      - company_id
+    allowed_roles:
+      - bi_internal
+      - pulser_agent_runtime
+      - customer_embedded_api
+      - customer_bi_readonly
+      - internal_ops
+      - finance_close_ops
+  ProjectBurn:
+    classification: confidential
+    required_row_filters:
+      - tenant_id
+      - company_id
+    allowed_roles:
+      - bi_internal
+      - pulser_agent_runtime
+      - customer_embedded_api
+      - customer_bi_readonly
+      - internal_ops
+  TaxDue:
+    classification: restricted
+    required_row_filters:
+      - tenant_id
+      - company_id
+    allowed_roles:
+      - bi_internal
+      - pulser_agent_runtime
+      - customer_embedded_api
+      - customer_bi_readonly
+      - internal_ops
+      - finance_close_ops
+      - compliance_ops
+  InteractionSummary:
+    classification: internal
+    required_row_filters:
+      - tenant_id
+    allowed_roles:
+      - bi_internal
+      - pulser_agent_runtime
+      - internal_ops
+
+enforcement_checks:
+  - name: uc_object_must_have_policy_binding
+    rule: every_governed_uc_object_must_bind_to_a_policy_class
+  - name: semantic_view_must_have_required_security_columns
+    rule: tenant_and_company_and_lineage_columns_must_exist_when_applicable
+  - name: customer_consumers_cannot_access_internal_only_sets
+    rule: deny_customer_classes_for_internal_only_entity_sets
+  - name: service_runtime_must_use_managed_identity_or_app_principal
+    rule: deny_user_principal_for_service_runtime_paths
+  - name: masked_columns_must_not_escape_via_odata_allowlists
+    rule: odata_allowed_fields_must_respect_masking_policy
