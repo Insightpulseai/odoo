@@ -76,7 +76,8 @@ databricks_developer_auth_boundaries:
     - managed_identity_and_app_principal_paths_must_stay_distinct_from_interactive_ide_paths
 
 entra_governance_bindings:
-  source: ssot/identity/entra-governance-policy.yaml
+  governance_source: ssot/identity/entra-governance-policy.yaml
+  pim_source: ssot/identity/pim-role-baseline.yaml
   last_updated: "2026-04-16"
 
   rules:
@@ -100,3 +101,11 @@ entra_governance_bindings:
         All Azure and Entra admin-plane roles (Global Administrator, Contributor,
         Key Vault Administrator, etc.) must be governed via PIM with JIT/eligible
         assignments. No permanently active admin role except break-glass accounts.
+
+    - id: EGB-04
+      rule: emergency_access_accounts_are_outside_standard_risk_enforcement
+      rationale: >
+        Break-glass accounts (breakglass-1, breakglass-2) are excluded from all
+        Conditional Access policies and PIM scope by design. They hold permanently
+        active Global Administrator and must never be blocked by risk policies.
+

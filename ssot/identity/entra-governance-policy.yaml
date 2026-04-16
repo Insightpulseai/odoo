@@ -1,12 +1,11 @@
 ---
 # Entra Governance Policy — SSOT
 # Source authorities:
-#   risk_policies:       https://learn.microsoft.com/en-us/entra/id-protection/howto-identity-protection-configure-risk-policies
-#   pim_deployment:      https://learn.microsoft.com/en-us/entra/id-governance/privileged-identity-management/pim-deployment-plan
+#   risk_policies:        https://learn.microsoft.com/en-us/entra/id-protection/howto-identity-protection-configure-risk-policies
 #   governance_use_cases: https://learn.microsoft.com/en-us/entra/id-governance/scenarios/identity-governance-use-cases
 #
-# Purpose: Canonical identity security and privileged access governance policy for the
-#          Entra security and identity-governance policy plane.
+# Scope: Risk-based Conditional Access posture + identity governance use-case scope.
+# PIM policy and privileged role posture live in: ssot/identity/pim-role-baseline.yaml
 #
 # NOT authoritative for:
 #   - Customer-tenant mapping (see ssot/tenants/)
@@ -21,9 +20,26 @@ status: active
 target_milestone: R3
 
 source_classification:
-  risk_policies: official_entra_security_policy_truth
-  pim_deployment: official_privileged_access_policy_truth
-  governance_use_cases: official_identity_governance_scope_truth
+  risk_policies:
+    type: microsoft_learn
+    classification: official_entra_security_policy_truth
+    url: https://learn.microsoft.com/en-us/entra/id-protection/howto-identity-protection-configure-risk-policies
+  governance_use_cases:
+    type: microsoft_learn
+    classification: official_identity_governance_scope_truth
+    url: https://learn.microsoft.com/en-us/entra/id-governance/scenarios/identity-governance-use-cases
+
+usage_rules:
+  use_for:
+    - conditional_access_risk_policy_baseline
+    - identity_governance_scope_definition
+    - application_access_governance_baseline
+  do_not_use_for:
+    - customer_tenant_truth
+    - odoo_business_authorization_truth
+    - enterprise_app_runtime_inventory_truth
+    - semantic_or_data_plane_truth
+    - privileged_role_baseline  # see ssot/identity/pim-role-baseline.yaml
 
 # Implementation files that consume and expand this policy
 implementation_files:
@@ -94,57 +110,7 @@ risk_policy_baseline:
     status: pending
 
 # ---------------------------------------------------------------------------
-# 2. PIM Deployment Baseline
-# Source: Plan a Privileged Identity Management deployment (Microsoft Learn)
-# ---------------------------------------------------------------------------
-pim_baseline:
-  rules:
-    - id: PIM-01
-      rule: privileged_roles_use_just_in_time_activation
-      rationale: Permanent privileged access is the default attack surface for admin abuse.
-
-    - id: PIM-02
-      rule: approval_can_be_required_for_activation
-      rationale: >
-        High-impact roles (Global Administrator, Privileged Role Administrator,
-        Security Administrator, Billing Administrator) must require one or more
-        approvers.
-
-    - id: PIM-03
-      rule: mfa_required_for_activation
-      rationale: MFA at activation is a baseline control; Conditional Access at activation is preferred.
-
-    - id: PIM-04
-      rule: eligible_assignments_preferred_over_permanent_active
-      rationale: Eligible assignments enforce JIT and reduce standing privilege.
-
-    - id: PIM-05
-      rule: zero_permanent_active_assignments_except_emergency_access
-      rationale: >
-        No role should have permanently active assignments except the two cloud-only
-        emergency Global Administrator accounts.
-
-    - id: PIM-06
-      rule: two_cloud_only_emergency_global_admin_accounts_required
-      rationale: >
-        Break-glass accounts must be cloud-only (not synced), MFA-registered with
-        FIDO2 or TAP, excluded from all Conditional Access policies, and monitored
-        via alert.
-
-    - id: PIM-07
-      rule: pilot_test_and_rollback_required_before_full_rollout
-      rationale: >
-        PIM activation must follow a pilot → test → communications → rollout → rollback
-        sequence. No direct prod enablement without staging evidence.
-
-  role_activation_defaults:
-    max_duration_hours: 8
-    require_justification: true
-    require_ticket: true
-    send_notification_to_approver: true
-
-# ---------------------------------------------------------------------------
-# 3. Identity Governance Scope
+# 2. Identity Governance Scope
 # Source: Microsoft Entra ID Governance use cases (Microsoft Learn)
 # ---------------------------------------------------------------------------
 governance_scope:

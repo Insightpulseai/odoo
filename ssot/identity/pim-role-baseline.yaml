@@ -1,30 +1,86 @@
 ---
 # PIM Role Baseline — SSOT
-# Derived from: ssot/identity/entra-governance-policy.yaml (pim_baseline)
-# Cross-referenced: ssot/identity/entra_rbac_roles.yaml, ssot/identity/entra_target_state.yaml
 # Source authority: https://learn.microsoft.com/en-us/entra/id-governance/privileged-identity-management/pim-deployment-plan
+# Cross-referenced: ssot/identity/entra_rbac_roles.yaml, ssot/identity/entra_target_state.yaml
 #
-# Purpose: Define per-role PIM activation profiles for all privileged roles in the
-#          InsightPulseAI platform. This is the implementation complement to the
-#          policy baselines in entra-governance-policy.yaml.
+# Scope: Privileged Identity Management policy principles + per-role JIT activation profiles.
+# Risk policy and governance scope live in: ssot/identity/entra-governance-policy.yaml
 #
 # Prerequisite: Entra ID P2 licensing (unlocks PIM + access reviews + identity protection).
 #               Current status: entra_id_free — see ssot/identity/entra_target_state.yaml > licensing.
 #               PIM cannot be activated until P2 is provisioned.
 #
-# Applies to: Entra directory roles, Azure subscription roles, and app roles
-#             with elevated platform privilege.
+# Applies to: Entra directory roles, Azure subscription roles, PIM for Groups.
 #
 # Last updated: 2026-04-16
 contract_version: 1
 status: planned           # becomes "active" once P2 licensing is provisioned
 target_milestone: R3
 
+source:
+  type: microsoft_learn
+  classification: official_privileged_access_policy_truth
+  url: https://learn.microsoft.com/en-us/entra/id-governance/privileged-identity-management/pim-deployment-plan
+
+usage_rules:
+  use_for:
+    - privileged_role_baseline
+    - just_in_time_role_activation_policy
+    - privileged_access_rollout_and_testing
+  do_not_use_for:
+    - customer_tenant_truth
+    - application_business_authorization_truth
+    - runtime_health_truth
+    - risk_based_conditional_access_policy  # see ssot/identity/entra-governance-policy.yaml
+
 prerequisite_licensing:
   required: entra_id_p2
   current: entra_id_free
   blocker: true
   action: Upgrade to P2 before enabling PIM. See ssot/identity/entra_target_state.yaml.
+
+# ---------------------------------------------------------------------------
+# Canonical PIM Principles
+# Source: Microsoft Learn PIM deployment plan
+# ---------------------------------------------------------------------------
+pim_principles:
+  - just_in_time_privileged_access
+  - time_bound_assignments
+  - approval_based_activation
+  - mfa_required_for_activation
+  - conditional_access_at_activation_when_used
+  - justification_required_for_activation
+  - access_reviews_required
+  - audit_history_must_be_retained
+
+assignment_posture:
+  default_assignment_type: eligible
+  permanently_active_roles:
+    allowed_only_for:
+      - emergency_access_accounts
+  rule: zero_permanent_active_assignments_except_emergency_access
+
+role_scopes:
+  covered_surfaces:
+    - microsoft_entra_roles
+    - azure_roles
+    - pim_for_groups
+
+rollout_policy:
+  required_steps:
+    - stakeholder_alignment
+    - pilot_group
+    - staged_testing
+    - communications
+    - rollback_plan
+  testing_rules:
+    - verify_mfa
+    - verify_approval
+    - verify_activation_expiry
+    - verify_notifications
+    - verify_expected_role_scope
+  production_rule:
+    - roll_to_production_only_after_pilot_validation
 
 # ---------------------------------------------------------------------------
 # Emergency Access Accounts
