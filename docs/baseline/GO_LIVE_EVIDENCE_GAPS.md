@@ -1,7 +1,8 @@
-# Go-Live Evidence Gaps
+# Go-Live Evidence Gaps (v2)
 
 > Every subsystem where evidence is missing, contradictory, or insufficient.
 > Generated 2026-04-16 from live infrastructure audit + repo analysis.
+> v2 additions: GAP-19 through GAP-25 (reporting, cutover, Databricks surfaces, Google Workspace boundary, source quality)
 
 ---
 
@@ -25,13 +26,26 @@
 
 ---
 
-## GAP-03: odoo_dev Database Does Not Exist (P0)
+## GAP-03: Finance/Accounting Cutover Impossible (P0) [EXPANDED in v2]
 
-**Claim**: `odoo_dev` is the development database (referenced in CLAUDE.md, runtime_contract.yaml, environment-contract.yaml).
-**Reality**: `odoo_dev` does not exist on `pg-ipai-odoo`. Connection attempt returns `FATAL: database "odoo_dev" does not exist`.
-**Evidence**: `psycopg2.connect(dbname='odoo_dev')` raises OperationalError; `pg_database` listing confirms only: azure_maintenance, azure_sys, odoo, odoo_staging, postgres.
-**Impact**: Development environment is broken or was never set up on Azure PG.
-**Contradiction**: `ssot/odoo/environment-contract.yaml` lines 107-108 say `assume_azure_has_odoo_dev` is forbidden, correctly noting it is local-only. But `runtime_contract.yaml` line 132 configures `odoo_dev` for local_dev. The contradiction is between docs that imply it should exist on Azure and the environment contract that says it should not.
+**Claim**: Odoo will handle GL, AP/AR, invoicing, BIR tax compliance, multi-currency.
+**Reality**: The `account` module is not installed. ALL finance cutover checks are N/A:
+
+| Cutover Check | Status |
+|---|---|
+| Opening balances loaded | N/A -- no account module |
+| AR clearing complete | N/A |
+| AP clearing complete | N/A |
+| Trial balance reconciled | N/A |
+| Bank clearing accounts | N/A |
+| Multi-currency configured | N/A |
+| Chart of accounts validated | N/A |
+| Tax configuration (BIR) | N/A -- 7+ BIR modules in repo, none installed |
+| Payment providers configured | N/A -- PayPal/Xendit available in CE18 catalog, unconfigured |
+| Fiscal year defined | N/A |
+
+**Impact**: No financial transaction processing is possible. The R2 milestone (first customer-usable Finance slice) cannot be met without installing accounting modules first.
+**Prerequisite**: Install `account` module, then load chart of accounts, configure fiscal year, before any cutover check can be assessed.
 
 ---
 
@@ -41,7 +55,8 @@
 **Reality**: Two Key Vaults exist (`kv-ipai-dev` on Sub1, `kv-ipai-dev-sea` on Sponsored). Whether they contain the required secrets is unverified in this audit.
 **Evidence**: `az keyvault list` confirms both vaults exist. Secret enumeration requires vault read permission not exercised in this session.
 **Required secrets per SSOT**: `azure-openai-api-key`, `odoo-db-password`, `zoho-smtp-user`, `zoho-smtp-password`, `odoo-entra-oauth-client-secret`.
-**Environment contract note**: Plaintext PG password in ACA env vars is a known regression (line 97-98 of `environment-contract.yaml`).
+**Known regression**: Plaintext PG password in ACA env vars (line 97-98 of `environment-contract.yaml`).
+**Additional risk**: A password was exposed during this session and requires rotation.
 
 ---
 
@@ -49,8 +64,8 @@
 
 **Claim**: Two Azure subscriptions work together seamlessly.
 **Reality**: Resources are split:
-- Sponsored sub: PG, ACR, Databricks, primary Odoo ACA, Purview, Service Bus, Backup Vault
-- Sub1: AFD, KV, AI Services, 15 ACA apps, Redis, Function App, most support services
+- Sponsored sub: PG, ACR, Databricks, primary Odoo ACA (blackriver), Purview, Service Bus, Backup Vault
+- Sub1: AFD, KV, AI Services, 15 ACA apps (blackstone), Redis, Function App, most support services
 **Missing proof**: Private endpoint connectivity between subs, DNS resolution for internal services, managed identity cross-sub RBAC assignments.
 **Impact**: The primary Odoo ACA (Sponsored) may not be able to reach KV, AFD, or AI services (Sub1) via private networking.
 
@@ -60,10 +75,10 @@
 
 **Claim**: Single Entra tenant for identity.
 **Reality**: Two different tenant IDs in SSOT files:
-- `ssot/odoo/runtime_contract.yaml` line 166: `402de71a-87ec-4302-a609-fb76098d1da7`
-- `ssot/identity/odoo-azure-oauth.yaml` line 17: `9ba5e867-1fb2-41cb-8e94-7d7a2b8fe4a9`
-**Impact**: OAuth configuration cannot be correct if the tenant ID is wrong. One of these is the actual tenant.
-**Evidence**: `az account list` shows tenant `402de71a` for both subscriptions, suggesting that is correct and `9ba5e867` in the OAuth SSOT is wrong.
+- `ssot/odoo/runtime_contract.yaml`: `402de71a-87ec-4302-a609-fb76098d1da7`
+- `ssot/identity/odoo-azure-oauth.yaml`: `9ba5e867-1fb2-41cb-8e94-7d7a2b8fe4a9`
+**Resolution**: `az account list` confirms `402de71a` for both subscriptions. The OAuth SSOT value `9ba5e867` is WRONG and must be corrected.
+**Impact**: OAuth configuration will fail if the wrong tenant ID is used.
 
 ---
 
@@ -83,7 +98,7 @@
 
 **Claim**: Clear environment separation (dev/staging/prod).
 **Reality**: Production URL `erp.insightpulseai.com` is served by `ca-ipai-odoo-web-dev` (a `-dev` suffixed app) on Sponsored sub. Sub1 has `ipai-odoo-dev-web` which appears to be an older parallel.
-**Evidence**: `az containerapp list` shows both apps. DNS points to the Sponsored one. Sub1 one has worker + cron companions suggesting it was the original intended dev env.
+**Evidence**: `az containerapp list` shows both apps. DNS points to the Sponsored one (blackriver). Sub1 one (blackstone) has worker + cron companions suggesting it was the original intended dev env.
 **Impact**: Confusing for operations; risk of deploying to wrong app.
 
 ---
@@ -91,7 +106,7 @@
 ## GAP-09: Stale Runtime Contract References (P1)
 
 **Claim**: `ssot/odoo/runtime_contract.yaml` is authoritative.
-**Reality**: Line 61 references ACA environment `salmontree-b7d27e19` which does not match current environments:
+**Reality**: References ACA environment `salmontree-b7d27e19` which does not match current environments:
 - Sponsored: `blackriver-f68f8a9b` (for ca-ipai-odoo-web-dev), `whitedesert-54fce6ca` (for other apps)
 - Sub1: `blackstone-0df78186` (for ipai-odoo-dev-web)
 **Impact**: Automation relying on this SSOT file will target wrong environment.
@@ -113,13 +128,14 @@
 **Reality**: 5 Log Analytics workspaces, 4 App Insights instances, 3 alert rules exist.
 **Missing proof**: Alerts are correctly routed and have fired on real events, dashboards exist and are reviewed, log retention policies configured, someone is on-call.
 **Alert rules** (Sub1): `alert-ipai-content-safety-blocks`, `alert-ipai-agent-latency-p95`, `alert-ipai-agent-error-rate`.
+**Note**: The 3-day Odoo outage (04-13 to 04-16, 18,526+ probe failures) was NOT caught by alerts -- discovered manually.
 
 ---
 
 ## GAP-12: Zoho SMTP Not Runtime-Verified (P1)
 
 **Claim**: Zoho SMTP is configured for outbound email.
-**Reality**: `ssot/infrastructure/dns_mail_authority.yaml` and `ssot/integrations/zoho_mail.yaml` define the integration. MX/SPF/DKIM/DMARC records are specified.
+**Reality**: `ssot/infrastructure/dns_mail_authority.yaml` and Entra enterprise apps (Zoho + Zoho Mail Admin) confirm the integration is defined.
 **Missing proof**: Odoo `ir.mail_server` record exists and points to Zoho, a test email has been sent and received, SMTP credentials are in Key Vault and accessible at runtime.
 
 ---
@@ -127,7 +143,7 @@
 ## GAP-13: Power BI / Fabric Trial Expiration (P2)
 
 **Claim**: Power BI is the primary BI surface; Fabric provides mirroring.
-**Reality**: Both appear to be on trial licenses expiring around 2026-05-20.
+**Reality**: Both appear to be on trial licenses expiring around 2026-05-20 (~34 days).
 **Missing proof**: License status, whether paid licenses have been procured, semantic models published.
 **Impact**: BI and data mirroring will stop working when trials expire.
 
@@ -138,7 +154,7 @@
 **Claim**: R2 baseline needs gpt-4.1 family + embeddings + multimodal.
 **Reality**: 4 models deployed. Attempts to deploy additional models hit error `715-123420` (sponsored subscription quota limitation).
 **Missing proof**: Support ticket filed and resolved, or workaround documented.
-**Documented in**: `ssot/governance/foundry-model-routing.yaml` lines 49-60.
+**Documented in**: `ssot/governance/foundry-model-routing.yaml`.
 
 ---
 
@@ -153,8 +169,9 @@
 ## GAP-16: Agent Skills Are Knowledge Only (P2)
 
 **Claim**: 180+ agent skills provide specialist capabilities.
-**Reality**: Skill directories contain knowledge definitions (SKILL.md files, prompts, system messages). No runtime agent framework is executing them.
+**Reality**: Skill directories contain knowledge definitions (SKILL.md files, prompts, system messages). No runtime agent framework is executing them. agents/ repo audit grade: D (44/100).
 **Missing proof**: A live agent invocation that routes to a skill, executes tools, and returns a result.
+**Best-developed agent**: Scrum Master (65/100) -- spec complete, code partial, control missing.
 
 ---
 
@@ -162,7 +179,7 @@
 
 **Claim**: Evidence exists for various deployments.
 **Reality**: `docs/evidence/` contains evidence packs from prior sessions, but these are snapshot-in-time artifacts. They do not constitute reproducible proof of current state.
-**Impact**: Evidence ages quickly. A deployment that was live on 2026-04-10 may not be live today.
+**Impact**: Evidence ages quickly. A deployment that was live on 2026-04-10 may not be live today (as proven by the 3-day outage discovered this session).
 **Recommendation**: All evidence should include a reproducible verification command, not just a screenshot or paste.
 
 ---
@@ -174,9 +191,102 @@
 - `ipai-w9studio-dev` ACA on both subs
 - AI Search `srch-ipai-dev` (Sub1) and `srch-ipai-dev-sea` (Sponsored)
 - Key Vault `kv-ipai-dev` (Sub1) and `kv-ipai-dev-sea` (Sponsored)
-- `id-ipai-dev` managed identity on both subs
+- Managed identities on both subs
 **Impact**: Unclear which is authoritative. Cost waste. Configuration drift risk.
 
 ---
 
-*Generated 2026-04-16. Each gap includes the specific evidence (or lack thereof) that surfaces the issue.*
+## GAP-19: Azure DevOps Reporting Plane Entirely Unverified (P2) [NEW in v2]
+
+**Claim**: ADO is the portfolio/planning system with 23 epics, 120+ issues, 250+ tasks, 5 iterations.
+**Reality**: This data comes from agent memory only. No ADO API queries, dashboards, Analytics views, or OData connections were verified this audit.
+**Missing proof**:
+- At least one ADO dashboard with refreshable data
+- Pipeline analytics (success rate, deployment frequency)
+- OData connection to Power BI
+- Analytics view configuration
+**Impact**: Cannot use ADO as evidence source for project health or go-live readiness until reporting surfaces are verified.
+**Source quality**: Agent memory is LOW trust. Official docs and API queries are required for evidence.
+
+---
+
+## GAP-20: No Refreshable Reporting Evidence (P2) [NEW in v2]
+
+**Claim**: Various dashboards and reports exist or will exist.
+**Reality**: No refreshable report with live data has been demonstrated for any subsystem:
+- No Power BI reports
+- No ADO dashboards
+- No Databricks dashboards
+- No operational monitoring dashboards
+**Evidence requirement**: A report qualifies as evidence only if it shows: data recency timestamp, query source, and at least one meaningful metric. Screenshots alone are insufficient.
+
+---
+
+## GAP-21: Databricks Surface Distinctions Not Assessed (P2) [NEW in v2]
+
+**Claim**: Databricks workspace is provisioned and UC-enabled.
+**Reality**: "Workspace provisioned" covers only one of four distinct Databricks surfaces:
+1. **Workspace** (notebook/SQL development) -- provisioned (verified)
+2. **Admin console** (governance, cluster policies, access control) -- NOT assessed
+3. **Developer tooling** (VS Code extension, CLI, SDK) -- contract defined, not verified
+4. **Apps runtime** (Databricks Apps hosting) -- NOT assessed
+**Impact**: Workspace provisioning does not imply developer tooling readiness or admin governance configuration.
+**Contracts**: `infra/ssot/databricks/developer-tooling.contract.yaml`, `infra/ssot/databricks/vscode-extension.contract.yaml`
+
+---
+
+## GAP-22: Google Workspace / Entra / Odoo Boundary Model Untested (P2) [NEW in v2]
+
+**Claim**: W9 Studio uses Google Workspace (w9studio.net) for collaboration; Entra is the identity authority; Odoo holds the tenant boundary via res.company.
+**Reality**: This three-system boundary model is defined in SSOT files but not tested:
+- `ssot/tenants/tenant-registry.yaml`: W9 Studio = company 2, Google Workspace = collaboration only
+- `ssot/identity/identity-boundary-policy.yaml`: enterprise apps = identity surfaces, NOT tenant boundaries
+**Missing proof**:
+- W9 Studio company record exists in Odoo
+- Google Workspace users can authenticate to Odoo via Entra (not via Google directly)
+- Tenant data isolation is enforced by company-level record rules
+**Note**: w9studio.net is NOT insightpulseai.com. It is a collaboration domain, not a tenant domain.
+
+---
+
+## GAP-23: Enterprise Apps vs App Registrations Not Reconciled (P2) [NEW in v2]
+
+**Claim**: 11 enterprise apps and 21 app registrations are properly managed.
+**Reality**: Enterprise apps are documented in `ssot/identity/enterprise-apps.runtime-state.yaml` (11 apps observed). App registrations (21 total) are NOT enumerated in this audit.
+**Missing proof**:
+- Full app registration inventory with owner/purpose
+- Mapping between enterprise apps and app registrations
+- Identification of stale/unused registrations (ipai-n8n-entra flagged for deletion)
+- Certificate/secret expiry review (GitHub SAML cert expires 2028-03-30 -- only one checked)
+**Impact**: Identity sprawl risk. Stale registrations are a security concern.
+
+---
+
+## GAP-24: Review Gate Artifacts Missing (P1) [NEW in v2]
+
+**Claim**: `ssot/assurance/review-gates.yaml` defines 5 implementation phases with mandatory gate reviews.
+**Reality**: Phase gate assessment:
+
+| Phase | Gate | Required Artifacts | Artifacts Present |
+|---|---|---|---|
+| Discover | Discover checkpoint | 5 artifacts | Partial (scope/architecture exist; gap-fit incomplete) |
+| Initiate | Solution blueprint review | 7 artifacts | Partial (architecture exists; env topology done; integration design incomplete) |
+| Implement | Implementation progress review | 5 artifacts | None (no sprint demos, no test coverage) |
+| Prepare | Go-live readiness review | 10 artifacts | None (no UAT, no cutover plan, no mock go-live, no rollback plan) |
+| Operate | Hypercare exit review | 5 artifacts | None |
+
+**Impact**: The Prepare phase requires 10 artifacts including UAT sign-off, cutover plan rehearsal, go/no-go criteria, and rollback plan testing. None exist.
+
+---
+
+## GAP-25: 3-Day Outage Not Caught by Monitoring (P1) [NEW in v2]
+
+**Claim**: Observability stack with alerts is provisioned.
+**Reality**: Odoo was down from 2026-04-13 to 2026-04-16 (3 full days) with 18,526+ startup probe failures. The outage was discovered manually during this session, not by any alert.
+**Root causes**: Wrong DB_HOST (pg-ipai-odoo-dev vs pg-ipai-odoo), env var collision (PORT/USER), empty database, ephemeral filestore.
+**Impact**: The existing alert rules (content safety, latency, error rate on Sub1) are agent-focused, not infrastructure-focused. No ACA health alert, PG connectivity alert, or startup probe failure alert exists for the production Odoo app.
+**Recommendation**: At minimum, add ACA startup probe failure alerts and PG connectivity alerts for the Sponsored sub.
+
+---
+
+*Generated 2026-04-16 v2. Each gap includes the specific evidence (or lack thereof) that surfaces the issue.*
