@@ -201,3 +201,7 @@ workflows:
     constraint: "Google Workspace MCP requires explicit policy approval per agent manifest before enabling."
     truth_plane: collaboration
     rule_refs: [DR-05]
+
+runtime_state_binding:
+  source: ssot/tooling/mcp-runtime-state.yaml
+  rule: workflow_tool_selection_must_consider_observed_runtime_availability_not_policy_only

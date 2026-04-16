@@ -86,3 +86,7 @@ anti_patterns:
   - using_implementation_guidance_as_deployment_truth
   - treating_sampling_guidance_as_mandatory_implementation_pattern
   - confusing_transport_guidance_with_transport_spec
+
+runtime_state_reference:
+  source: ssot/tooling/mcp-runtime-state.yaml
+  rule: configured_available_deprecated_and_partial_status_must_be_tracked_separately_from_authority_plane_policy

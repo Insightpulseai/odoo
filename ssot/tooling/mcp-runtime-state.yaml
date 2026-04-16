@@ -105,3 +105,8 @@ gap_analysis:
     - fabric-data-agent (BI consumption)
     - google-workspace-ops (collaboration, third-party)
     - entra-enterprise (dedicated identity MCP, R3)
+
+rules:
+  - runtime_state_is_observed_evidence_not_policy
+  - partial_tools_must_not_be_treated_as_ready
+  - deprecated_integrations_must_not_remain_in_active_baseline
