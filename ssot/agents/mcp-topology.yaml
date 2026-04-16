@@ -1,0 +1,188 @@
+version: 1
+
+mcp_topology:
+  databricks_native:
+    - name: unity_catalog_function_mcp
+      purpose: governed_data_and_function_execution
+      keep: true
+      phase: 1
+      auth: databricks_auth_plus_uc_permissions_plus_ai_gateway
+      consumers:
+        - genie_code
+        - pulser_analyst_agents
+        - finance_tax_reviewer_agents
+
+    - name: genie_space_mcp
+      purpose: natural_language_business_data_access
+      keep: true
+      phase: 1
+      auth: databricks_workspace_auth_plus_genie_space_permissions
+      consumers:
+        - genie_code
+        - business_analyst_agents
+        - ops_reviewers
+
+    - name: vector_search_mcp
+      purpose: retrieval_and_evidence_lookup
+      keep: true
+      phase: 1
+      auth: databricks_auth_plus_index_permissions
+      consumers:
+        - pulser_copilot
+        - evidence_agents
+        - support_reviewer_agents
+
+    - name: custom_function_mcp
+      purpose: bounded_actions_inside_databricks
+      keep: true
+      phase: 1
+      auth: ai_gateway_plus_uc_function_governance
+      consumers:
+        - genie_code
+        - orchestration_agents
+
+  engineering_and_planning:
+    - name: github_mcp
+      purpose: repo_and_code_context
+      keep: true
+      phase: 1
+      auth: github_app_oauth_plus_repo_permissions
+      consumers:
+        - genie_code
+        - architect_agents
+        - release_agents
+
+    - name: azure_devops_mcp
+      purpose: boards_and_pipeline_context
+      keep: true
+      phase: 1
+      auth: entra_oauth
+      consumers:
+        - planning_governance_agents
+        - delivery_agents
+
+    - name: docs_knowledge_mcp
+      purpose: policy_spec_runbook_lookup
+      keep: true
+      phase: 2
+      auth: service_auth_plus_document_acls
+      consumers:
+        - all_judge_maker_agents
+
+  business_systems:
+    - name: odoo_runtime_mcp
+      purpose: erp_context_and_guarded_actions
+      keep: true
+      phase: 2
+      mode: read_first_then_guarded_write
+      auth: service_principal_app_auth_plus_business_rbac
+      consumers:
+        - pulser_transactional_agents
+      tool_design:
+        read_tools:
+          - get_invoice
+          - list_close_tasks
+          - get_tax_exception
+          - search_partners
+          - get_account_balance
+        write_tools:
+          - approve_close_task
+          - create_reconciliation_case
+          - submit_return_package
+        write_rules:
+          - mcp_may_retrieve
+          - mcp_may_propose
+          - mcp_may_stage
+          - mcp_may_never_finalize_without_human_or_policy_approval
+
+    - name: tax_engine_mcp
+      purpose: deterministic_tax_logic_access
+      keep: true
+      phase: 3
+      auth: internal_service_auth_plus_audit_logging
+      consumers:
+        - tax_reviewer_agents
+        - pulser_tax_workflows
+      tool_design:
+        read_tools:
+          - calculate_tax
+          - validate_tax_code
+          - derive_return_line
+        write_tools: []
+        notes: deterministic_engine_only_no_write_actions
+
+    - name: platform_control_plane_mcp
+      purpose: deployment_runtime_and_evidence_state
+      keep: true
+      phase: 2
+      auth: strong_service_auth_plus_audited_action_policy
+      consumers:
+        - release_ops
+        - platform_ops
+        - judge_agents
+
+  deferred:
+    - name: generic_web_action_mcp
+      purpose: broad_external_actions
+      keep: false
+      reason: excessive_scope_and_governance_risk
+
+    - name: unscoped_browser_mcp
+      purpose: arbitrary_web_browsing
+      keep: false
+      reason: research_agents_only_tightly_scoped
+
+    - name: direct_financial_posting_mcp
+      purpose: post_financial_records_without_approval
+      keep: false
+      reason: forbidden_bypasses_deterministic_close_controls
+
+tool_design_rules:
+  separate_read_from_write: true
+  strongly_type_every_tool: true
+  required_input_fields:
+    - company
+    - environment
+    - period
+    - entity_id
+    - action_reason
+    - actor_context
+  no_authority_by_model_alone: true
+  finance_tax_close_rules:
+    - mcp_may_retrieve
+    - mcp_may_propose
+    - mcp_may_stage
+    - mcp_may_never_finalize_without_human_or_policy_approval
+  emit_evidence_references: true
+  evidence_fields:
+    - source_ids
+    - timestamps
+    - policy_checks
+    - evidence_references
+    - approval_requirement_status
+
+phasing:
+  phase_1:
+    label: Databricks-native backbone + engineering context
+    servers:
+      - unity_catalog_function_mcp
+      - genie_space_mcp
+      - vector_search_mcp
+      - custom_function_mcp
+      - github_mcp
+      - azure_devops_mcp
+
+  phase_2:
+    label: Business-system read + docs + platform status
+    servers:
+      - odoo_runtime_mcp (read-only first)
+      - docs_knowledge_mcp
+      - platform_control_plane_mcp
+
+  phase_3:
+    label: Guarded write + deterministic engines
+    servers:
+      - tax_engine_mcp
+      - odoo_runtime_mcp (guarded write)
+      - evidence_pack_mcp
+      - close_orchestration_mcp
