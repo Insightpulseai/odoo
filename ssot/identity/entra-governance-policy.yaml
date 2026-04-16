@@ -1,0 +1,164 @@
+---
+# Entra Governance Policy — SSOT
+# Source authorities:
+#   risk_policies:       https://learn.microsoft.com/en-us/entra/id-protection/howto-identity-protection-configure-risk-policies
+#   pim_deployment:      https://learn.microsoft.com/en-us/entra/id-governance/privileged-identity-management/pim-deployment-plan
+#   governance_use_cases: https://learn.microsoft.com/en-us/entra/id-governance/scenarios/identity-governance-use-cases
+#
+# Purpose: Canonical identity security and privileged access governance policy for the
+#          Entra security and identity-governance policy plane.
+#
+# NOT authoritative for:
+#   - Customer-tenant mapping (see ssot/tenants/)
+#   - Odoo business authorization (see ssot/odoo/)
+#   - Enterprise-app runtime inventory (see ssot/identity/enterprise-apps.runtime-state.yaml)
+#   - Semantic / lakehouse truth (see ssot/semantic/)
+#
+# Referenced by: ssot/identity/identity-boundary-policy.yaml
+# Last updated: 2026-04-16
+contract_version: 1
+status: active
+target_milestone: R3
+
+source_classification:
+  risk_policies: official_entra_security_policy_truth
+  pim_deployment: official_privileged_access_policy_truth
+  governance_use_cases: official_identity_governance_scope_truth
+
+# ---------------------------------------------------------------------------
+# 1. Risk Policy Baseline
+# Source: Entra ID Protection — configure risk policies (Microsoft Learn)
+# Retirement note: Legacy ID Protection risk policies retire 2026-10-01.
+#                  All organizations must migrate to Conditional Access-based
+#                  equivalents before that date.
+# ---------------------------------------------------------------------------
+risk_policy_baseline:
+  rules:
+    - id: RPB-01
+      rule: user_risk_and_sign_in_risk_policies_must_be_separate
+      rationale: >
+        Combining both risk types in one Conditional Access policy is explicitly
+        not recommended by Microsoft. Separate policies enable independent tuning
+        and rollout sequencing.
+
+    - id: RPB-02
+      rule: policies_roll_out_in_report_only_first
+      rationale: >
+        Report-only mode allows impact assessment before enforcement. All new or
+        migrated risk policies must stage in report-only before switching to
+        enforce mode.
+
+    - id: RPB-03
+      rule: break_glass_accounts_must_be_excluded
+      rationale: >
+        Emergency access accounts must never be blocked by risk policies to
+        preserve recovery access during incidents.
+
+    - id: RPB-04
+      rule: service_accounts_should_not_be_primary_identity_pattern
+      rationale: >
+        Interactive credentials for service accounts are a security anti-pattern.
+        Service accounts that cannot be replaced must use named exclusion+monitoring.
+
+    - id: RPB-05
+      rule: managed_identities_preferred_for_workloads
+      rationale: >
+        Azure Managed Identities eliminate stored credentials for service-to-service
+        flows and are the preferred identity type for all ACA, Functions, and
+        Foundry workloads.
+
+  microsoft_recommended_defaults:
+    user_risk:
+      threshold: high
+      control: require_risk_remediation
+      notes: >
+        At High risk, require the user to perform self-service password reset or
+        contact the helpdesk. Do not use MFA-only for user risk — remediation
+        clears the risk signal.
+    sign_in_risk:
+      threshold: medium_or_high
+      control: require_mfa
+      notes: >
+        At Medium or High sign-in risk, require MFA as a session-level gate.
+        Separate from user risk policy.
+
+  legacy_retirement:
+    deadline: "2026-10-01"
+    action: migrate_all_id_protection_risk_policies_to_conditional_access
+    status: pending
+
+# ---------------------------------------------------------------------------
+# 2. PIM Deployment Baseline
+# Source: Plan a Privileged Identity Management deployment (Microsoft Learn)
+# ---------------------------------------------------------------------------
+pim_baseline:
+  rules:
+    - id: PIM-01
+      rule: privileged_roles_use_just_in_time_activation
+      rationale: Permanent privileged access is the default attack surface for admin abuse.
+
+    - id: PIM-02
+      rule: approval_can_be_required_for_activation
+      rationale: >
+        High-impact roles (Global Administrator, Privileged Role Administrator,
+        Security Administrator, Billing Administrator) must require one or more
+        approvers.
+
+    - id: PIM-03
+      rule: mfa_required_for_activation
+      rationale: MFA at activation is a baseline control; Conditional Access at activation is preferred.
+
+    - id: PIM-04
+      rule: eligible_assignments_preferred_over_permanent_active
+      rationale: Eligible assignments enforce JIT and reduce standing privilege.
+
+    - id: PIM-05
+      rule: zero_permanent_active_assignments_except_emergency_access
+      rationale: >
+        No role should have permanently active assignments except the two cloud-only
+        emergency Global Administrator accounts.
+
+    - id: PIM-06
+      rule: two_cloud_only_emergency_global_admin_accounts_required
+      rationale: >
+        Break-glass accounts must be cloud-only (not synced), MFA-registered with
+        FIDO2 or TAP, excluded from all Conditional Access policies, and monitored
+        via alert.
+
+    - id: PIM-07
+      rule: pilot_test_and_rollback_required_before_full_rollout
+      rationale: >
+        PIM activation must follow a pilot → test → communications → rollout → rollback
+        sequence. No direct prod enablement without staging evidence.
+
+  role_activation_defaults:
+    max_duration_hours: 8
+    require_justification: true
+    require_ticket: true
+    send_notification_to_approver: true
+
+# ---------------------------------------------------------------------------
+# 3. Identity Governance Scope
+# Source: Microsoft Entra ID Governance use cases (Microsoft Learn)
+# ---------------------------------------------------------------------------
+governance_scope:
+  core_use_cases:
+    - id: GOV-01
+      use_case: govern_employee_guest_partner_lifecycle
+      description: >
+        Joiners/movers/leavers governance: automated provisioning, periodic access
+        reviews, and deprovision on offboarding. Covers workforce, guests, and B2B
+        partners.
+
+    - id: GOV-02
+      use_case: govern_access_to_applications
+      description: >
+        Entitlement management, role/group assignment to applications,
+        access reviews, and auto-removal when conditions expire. Covers both
+        Odoo (via Entra SSO) and all enterprise SaaS surfaces.
+
+  out_of_scope_for_this_boundary:
+    - customer_tenant_access_mapping
+    - odoo_business_authorization_rules
+    - enterprise_app_runtime_inventory
+    - lakehouse_data_access_governance

@@ -74,3 +74,29 @@ databricks_developer_auth_boundaries:
     - sdk_cli_and_ide_auth_are_developer_tooling_concerns_not_customer_tenant_truth
     - workspace_authentication_does_not_define_business_authorization
     - managed_identity_and_app_principal_paths_must_stay_distinct_from_interactive_ide_paths
+
+entra_governance_bindings:
+  source: ssot/identity/entra-governance-policy.yaml
+  last_updated: "2026-04-16"
+
+  rules:
+    - id: EGB-01
+      rule: entra_risk_and_pim_policies_govern_identity_access_not_odoo_record_rules
+      rationale: >
+        Conditional Access risk policies and PIM activation controls gate
+        identity-plane access. They do not substitute for Odoo RBAC or
+        business-authorization logic.
+
+    - id: EGB-02
+      rule: application_access_governance_is_distinct_from_customer_tenant_mapping
+      rationale: >
+        Entra Entitlement Management and access reviews govern who has access to
+        which applications. Customer-tenant scoping is resolved in application logic,
+        not in Entra group membership alone.
+
+    - id: EGB-03
+      rule: privileged_access_governance_is_required_for_admin_plane_roles
+      rationale: >
+        All Azure and Entra admin-plane roles (Global Administrator, Contributor,
+        Key Vault Administrator, etc.) must be governed via PIM with JIT/eligible
+        assignments. No permanently active admin role except break-glass accounts.

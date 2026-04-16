@@ -137,4 +137,16 @@ Implementation roadmap for Pulser, tracking baseline ERP/AI work through SaaS pl
 
 ---
 
-*Last updated: 2026-04-11*
+## Phase 52 — Entra Governance Baseline [SECURITY]
+
+- [ ] ENT-GOV-01: Add `ssot/identity/entra-governance-policy.yaml` (risk, PIM, governance scope SSOT). ✅ *Shipped 2026-04-16*
+- [ ] ENT-GOV-02: Separate sign-in risk and user risk into distinct Conditional Access policies (RPB-01).
+- [ ] ENT-GOV-03: Roll all risk policies out in report-only before switching to enforce (RPB-02).
+- [ ] ENT-GOV-04: Exclude break-glass / emergency access accounts from all risk policies (RPB-03).
+- [ ] ENT-GOV-05: Define PIM baseline for privileged roles (JIT, eligible assignments, approval, MFA at activation).
+- [ ] ENT-GOV-06: Verify emergency access account posture — two cloud-only Global Admin accounts, FIDO2/TAP MFA, no CA exclusion gaps, and pilot/rollback plan documented (PIM-06, PIM-07).
+- [ ] ENT-GOV-07: Migrate legacy ID Protection risk policies to Conditional Access before 2026-10-01 retirement deadline.
+
+---
+
+*Last updated: 2026-04-16*
