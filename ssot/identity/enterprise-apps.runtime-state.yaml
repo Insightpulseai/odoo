@@ -115,3 +115,9 @@ rules:
   enterprise_applications_are_identity_integrations: true
   enterprise_applications_are_not_customer_tenant_registry: true
   enterprise_applications_are_not_application_registration_truth: true
+
+integration_resolution_rules:
+  - name: enterprise_app_inventory_separate_from_odoo_connector_catalog
+    enforced: true
+  - name: connector_catalog_entries_must_not_be_inferred_from_entra_enterprise_apps
+    enforced: true

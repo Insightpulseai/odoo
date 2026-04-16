@@ -1,0 +1,31 @@
+---
+# Integration Boundary Policy — SSOT
+# Keeps connector catalog separate from identity, tenant, and schema planes
+contract_version: 1
+
+integration_boundary_policy:
+  authority_split:
+    odoo_integration_catalog:
+      role: connector_inventory_and_admin_reference
+    entra_id:
+      role: identity_control_plane
+    aca_auth:
+      role: edge_auth_layer
+    tenant_registry:
+      role: customer_tenant_boundary_authority
+    odoo:
+      role: business_authorization_and_workflow_plane
+    semantic_lakehouse_stack:
+      role: analytics_and_ai_consumption_plane
+
+  rules:
+    - name: odoo_integration_docs_do_not_define_identity_authority
+      enforced: true
+    - name: odoo_integration_docs_do_not_define_customer_tenant_boundary
+      enforced: true
+    - name: payment_tax_bank_marketplace_connectors_are_cataloged_separately_from_identity_apps
+      enforced: true
+    - name: connector_presence_does_not_imply_enterprise_app_registration
+      enforced: true
+    - name: connector_presence_does_not_imply_schema_or_semantic_support
+      enforced: true
