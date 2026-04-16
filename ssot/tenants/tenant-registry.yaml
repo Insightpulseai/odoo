@@ -23,8 +23,9 @@ tenants:
       domain: w9studio.net
       classification: collaboration_workspace
       role: [email, calendar, docs, directory, admin_console]
-      provider_side: true
+      provider_side: true               # observed — W9 Studio is IPAI branch entity
       customer_tenant: false
+      evidence_status: observed_workspace_branding
       identity_authority: secondary_or_tool_specific
       business_authorization_authority: false
       users:
