@@ -1,0 +1,231 @@
+# SSOT — Tag Governance Contract
+# Locked: 2026-04-16
+# Authority: this file + ssot/azure/tagging-standard.yaml (enforcement detail)
+#
+# Purpose: make tags agent-queryable. Tags are the Azure-side mirror of SSOT files.
+#   - SSOT defines truth
+#   - IaC applies truth
+#   - Azure tags expose truth for search, governance, billing, and agent lookup
+#
+# Tags are NOT runtime telemetry. Tags are classification. Do not use tags for
+# dynamic state like "healthy/unhealthy" — that's Azure Monitor's job.
+#
+# Companion to:
+#   ssot/azure/tagging-standard.yaml (v3, 17 required tags, Bicep enforcement)
+#   ssot/odoo/platform.contract.yaml (§9 truth-precedence)
+#   ssot/network/routes.yaml (route → hostname map)
+#   ssot/secrets/references.yaml (KV + auth posture)
+
+schema_version: 1
+last_updated: "2026-04-16"
+
+# =============================================================================
+# Core 8 agent-queryable tags
+# =============================================================================
+# These are the minimum tags that make an agent's az-graph queries deterministic.
+# They map 1:1 with fields in ssot/azure/tagging-standard.yaml v3 where noted.
+#
+# The full 17-tag set in tagging-standard.yaml remains canonical for enforcement.
+# This file is the GOVERNANCE VIEW — simplified for agent reasoning.
+
+core_tags:
+
+  system:
+    maps_to: product                  # tagging-standard.yaml required_tags.product
+    values: [odoo, web, platform, infra, agents, data-intelligence]
+    description: "Which system / product does this resource belong to?"
+    agent_query: "Which Azure resources belong to the Odoo system?"
+
+  environment:
+    maps_to: environment              # tagging-standard.yaml required_tags.environment
+    values: [local, dev, staging, prod]
+    description: "Which environment lane is this resource in?"
+    agent_query: "Which resources are production vs dev?"
+    note: >
+      tagging-standard uses [nonprod, prod]. This contract refines:
+      local = developer machine only (not tagged in Azure);
+      dev = current "nonprod" lane; staging = pre-prod; prod = live.
+      For Bicep enforcement, dev + staging map to 'nonprod' in tagging-standard.
+
+  service:
+    maps_to: workload                 # tagging-standard.yaml required_tags.workload
+    values: [erp, postgres, frontdoor, static-site, aca, keyvault, acr, foundry, databricks, fabric, dns, monitor]
+    description: "What Azure service type is this resource?"
+    agent_query: "Which resources are PostgreSQL servers?"
+
+  repo:
+    maps_to: source_repo              # tagging-standard.yaml required_tags.source_repo
+    values: [odoo, web, infra, platform, docs, agents, agent-platform]
+    description: "Which repo owns this resource's IaC?"
+    agent_query: "Which resources are managed by the odoo repo?"
+
+  route:
+    maps_to: domain                   # tagging-standard.yaml optional_tags.domain (promoted to core here)
+    values:
+      - erp.insightpulseai.com
+      - erp-staging.insightpulseai.com
+      - www.insightpulseai.com
+      - prismalab.insightpulseai.com
+      - www.w9studio.net
+      - pg-ipai-odoo.postgres.database.azure.com
+      - adb-7405608559466577.17.azuredatabricks.net
+    description: "Which public hostname / endpoint does this resource back?"
+    agent_query: "Which resources back erp.insightpulseai.com?"
+    note: >
+      Promoted from optional to core. Every resource that serves a public
+      endpoint must carry a route tag. Resources with no public surface
+      (KV, ACR, monitor workspace) omit this tag.
+
+  owner_plane:
+    maps_to: plane                    # tagging-standard.yaml required_tags.plane
+    values: [runtime, edge, data, agent, public-web, governance]
+    description: "Which architectural plane owns this resource?"
+    agent_query: "Which resources belong to the data plane?"
+    note: >
+      Simplified from tagging-standard 8-value enum to 6 governance-oriented
+      planes. Mapping: shared→governance, web→public-web, transaction→runtime,
+      agent→agent, data-intelligence→data, research→data, observability→governance,
+      network→edge.
+
+  criticality:
+    maps_to: criticality              # tagging-standard.yaml required_tags.criticality
+    values: [tier0, tier1, tier2]
+    description: "Incident priority tier"
+    agent_query: "Which resources are Tier 0 / production-critical?"
+    note: >
+      Renamed from low/medium/high to tier0/1/2 for unambiguous severity.
+      tier0 = production down = wake people up.
+      tier1 = degraded but functional.
+      tier2 = non-urgent / dev-only.
+
+  managed_by:
+    maps_to: managed_by               # tagging-standard.yaml required_tags.managed_by
+    values: [iac, manual, bootstrap]
+    description: "Who/what manages this resource's lifecycle?"
+    agent_query: "Which resources are still manually managed (need IaC migration)?"
+    note: >
+      Simplified from [bicep, terraform, portal_migration_temp, claude] to
+      [iac, manual, bootstrap]. iac = any IaC tool (Bicep is canonical).
+      manual = portal or CLI without IaC backing. bootstrap = one-time
+      creation that IaC doesn't manage (e.g., subscription, initial KV).
+
+# =============================================================================
+# Scope — which tags at which level
+# =============================================================================
+scope:
+
+  subscription:
+    purpose: "Broad governance + commercial attribution"
+    tags:
+      - organization: insightpulseai   # const
+      - environment: nonprod           # sub-level (dev = nonprod sub; prod = prod sub)
+      - managed_by: iac
+
+  resource_group:
+    purpose: "Dominant workload boundary"
+    tags:
+      - system: <system>
+      - environment: <env>
+      - owner_plane: <plane>
+      - criticality: <tier>
+
+  resource:
+    purpose: "Exact workload identity"
+    tags:
+      - system: <system>
+      - environment: <env>
+      - service: <service>
+      - repo: <repo>
+      - owner_plane: <plane>
+      - criticality: <tier>
+      - managed_by: <managed_by>
+      - route: <hostname>              # if resource serves a public endpoint
+
+# =============================================================================
+# SSOT mirror relationship
+# =============================================================================
+ssot_mirrors:
+  - ssot_file: ssot/odoo/runtime_contract.yaml
+    tag_fields: [system, service, environment]
+    note: "Runtime contract defines Odoo workload shape → system=odoo, service=erp/postgres/aca"
+
+  - ssot_file: ssot/network/routes.yaml
+    tag_fields: [route]
+    note: "Route map defines hostname→target → route tag on backing resources"
+
+  - ssot_file: ssot/odoo/environments.yaml
+    tag_fields: [environment]
+    note: "Environment matrix defines the 3 canonical environments → environment tag"
+
+  - ssot_file: ssot/odoo/platform.contract.yaml
+    tag_fields: [system, owner_plane, managed_by]
+    note: "Platform contract is the master → all tag values must be consistent"
+
+# =============================================================================
+# Example: current pg-ipai-odoo resource tags
+# =============================================================================
+examples:
+
+  pg-ipai-odoo:
+    subscription_tags:
+      organization: insightpulseai
+      environment: nonprod
+    rg_tags:
+      system: odoo
+      environment: dev
+      owner_plane: data
+      criticality: tier0
+    resource_tags:
+      system: odoo
+      environment: dev
+      service: postgres
+      repo: odoo
+      owner_plane: data
+      criticality: tier0
+      managed_by: manual              # target: iac (Bicep)
+      route: erp.insightpulseai.com   # PG backs the ERP route
+
+  ipai-odoo-dev-web:
+    resource_tags:
+      system: odoo
+      environment: dev
+      service: aca
+      repo: odoo
+      owner_plane: runtime
+      criticality: tier0
+      managed_by: iac
+      route: erp.insightpulseai.com
+
+  ipai-copilot-resource:
+    resource_tags:
+      system: agents
+      environment: dev
+      service: foundry
+      repo: agent-platform
+      owner_plane: agent
+      criticality: tier1
+      managed_by: manual              # target: iac
+
+# =============================================================================
+# Enforcement
+# =============================================================================
+enforcement:
+  tool: bicep                         # Bicep module applies tags at deploy time
+  fallback: "az tag create/update for manual resources"
+  policy: "Azure Policy denies resource creation without required tags (target state)"
+  audit_cadence: quarterly
+  agent_role: >
+    Tag Contributor role required for agents or automation that writes tags.
+    Read-only tag queries use Resource Graph (no special role needed).
+
+# =============================================================================
+# Rules
+# =============================================================================
+rules:
+  - "Tags are classification, not runtime telemetry"
+  - "SSOT files define truth; IaC applies truth; Azure tags expose truth"
+  - "Every resource MUST have at minimum: system, environment, service, owner_plane, criticality, managed_by"
+  - "route tag is required if the resource serves a public endpoint; omit otherwise"
+  - "Deprecated resources carry lifecycle=deprecated tag (from tagging-standard v3)"
+  - "Tag values must match SSOT file values — if SSOT and Azure tag disagree, SSOT wins"
+  - "Do not use tags for fast-changing state (health, latency, error rate)"
