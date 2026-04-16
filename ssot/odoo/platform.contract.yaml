@@ -1,0 +1,140 @@
+# SSOT — Odoo Platform Contract (minimum agent contract)
+# Locked: 2026-04-16
+# Authority: this file is the canonical agent operating contract for all IPAI agents.
+# An agent that reads this file should never guess CE vs EE, which DB, which URL, where secrets live,
+# or which truth source wins. If it still guesses, a field is missing.
+#
+# Companion: ssot/odoo/runtime_contract.yaml (container-level runtime paths, addon load order — subordinate to this file)
+# Companion: docs/architecture/canonical-platform-architecture.md (8-component architecture)
+
+contract_version: 1
+
+# =============================================================================
+# 1. Platform identity
+# =============================================================================
+platform:
+  product_name: Pulser for Odoo
+  odoo:
+    edition: ce                      # NEVER ee. CLAUDE.md non-negotiable #4.
+    version: 18                      # Odoo 18.0. 19.0 is deprecated target naming.
+    oca_version: 18.0                # OCA modules pinned to 18.0
+  postgres:
+    version: 16
+    server: pg-ipai-odoo             # single canonical PG server (sponsored sub)
+    endpoint: pg-ipai-odoo.postgres.database.azure.com
+    admin_user: ipaiadmin
+    resource_group: rg-ipai-data-sea
+  deployment_model: azure_container_apps
+  foundry:
+    resource_name: ipai-copilot-resource
+    region: eastus2
+    kind: AIServices
+    default_model: gpt-4.1           # stick to gpt-4.1 per feedback_stick_to_gpt41
+    resource_group: rg-data-intel-ph
+
+# =============================================================================
+# 2. Repo / runtime contract
+# =============================================================================
+repo:
+  canonical_repo: Insightpulseai/odoo
+  canonical_local_path: /Users/tbwa/Documents/GitHub/Insightpulseai
+  runtime_contract_ref: ssot/odoo/runtime_contract.yaml   # container-level detail
+  compose_file: docker-compose.yml
+  devcontainer: .devcontainer/
+
+# =============================================================================
+# 3. Environment matrix
+# =============================================================================
+# Detailed in: ssot/odoo/environments.yaml
+environments_ref: ssot/odoo/environments.yaml
+
+# =============================================================================
+# 4. Addon layer contract
+# =============================================================================
+addons:
+  layers:
+    - name: oca
+      path: addons/oca
+      role: oca_parity_modules
+    - name: ipai
+      path: addons/ipai
+      role: thin_integration_bridges_only
+  load_order:
+    - addons/oca
+    - addons/ipai
+  policies:
+    oca_first: true                  # CE → OCA → ipai_* (CLAUDE.md doctrine)
+    ipai_bridge_only: true           # ipai_* must not replicate CE/OCA capability
+    ee_modules: forbidden            # CLAUDE.md non-negotiable #4
+    ipai_module_requires:
+      - README.md
+      - docs/MODULE_INTROSPECTION.md
+      - docs/TECHNICAL_GUIDE.md
+
+# =============================================================================
+# 5. Routing / domain contract
+# =============================================================================
+# Detailed in: ssot/network/routes.yaml
+routes_ref: ssot/network/routes.yaml
+
+# =============================================================================
+# 6. Secrets / config contract
+# =============================================================================
+# Detailed in: ssot/secrets/references.yaml
+secrets_ref: ssot/secrets/references.yaml
+
+# =============================================================================
+# 7. Execution contract
+# =============================================================================
+execution:
+  approved_entrypoints:
+    - docker compose up -d                       # full stack (local dev)
+    - odoo-bin (inside container only)            # direct Odoo binary
+    - scripts/odoo/*.sh                           # canonical wrapper scripts
+    - az containerapp (via Azure Pipelines)       # production deploy
+  prohibited_patterns:
+    - python odoo-bin (on host)                   # Odoo must run inside devcontainer
+    - manual Portal deploy (except emergency)     # CI/CD owns deploy
+    - GitHub Actions workflows                    # CLAUDE.md: Azure Pipelines is sole CI/CD
+  lifecycle:
+    install_module: "odoo-bin -d <db> -i <module> --stop-after-init"
+    upgrade_module: "odoo-bin -d <db> -u <module> --stop-after-init"
+    test_module: "odoo-bin -d test_<module> --test-enable --stop-after-init -i <module>"
+    verify_before_commit:
+      - "./scripts/repo_health.sh"
+      - "./scripts/spec_validate.sh"
+      - "./scripts/ci_local.sh"
+
+# =============================================================================
+# 8. Health / observability contract
+# =============================================================================
+health:
+  endpoints:
+    - name: web_login
+      url: /web/login
+      expected_status: 200
+    - name: web_health
+      url: /web/health
+      expected_status: 200
+  observability:
+    primary:
+      - azure_monitor
+      - log_analytics
+    secondary:
+      - container_logs
+      - postgres_metrics (azure_monitor for PG Flex)
+    agent_audit: pg-ipai-odoo.platform.ops.run_events
+
+# =============================================================================
+# 9. Source-of-truth precedence
+# =============================================================================
+truth_precedence:
+  - ssot/**/*.yaml                    # machine-readable SSOT (this file wins)
+  - config/<env>/odoo.conf            # environment-specific Odoo config
+  - docker-compose.yml                # compose definition
+  - infra/**/*.bicep                  # IaC definitions
+  - docs/architecture/**              # architecture doctrine
+  - CLAUDE.md                         # agent operating contract
+  - .claude/rules/**                  # path-scoped agent rules
+  - runtime_state (az CLI queries)    # live Azure state (verifies, doesn't override)
+  - conversational_instructions       # lowest priority — never overrides files

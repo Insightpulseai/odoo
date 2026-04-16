@@ -1,0 +1,77 @@
+# SSOT — Odoo Environment Matrix
+# Locked: 2026-04-16
+# Authority: this file is the canonical environment matrix for all agents.
+# Every environment must define: role, db_name, base_url, config_file.
+# Companion: ssot/odoo/platform.contract.yaml §3
+
+schema_version: 1
+last_updated: "2026-04-16"
+
+environments:
+
+  local:
+    role: developer_runtime
+    db_name: odoo_dev
+    base_url: "http://localhost:8069"
+    config_file: config/dev/odoo.conf
+    runtime: devcontainer (docker compose)
+    postgres:
+      host: db                         # docker compose service name
+      port: 5432
+      user: odoo
+    notes: >
+      Local dev via .devcontainer/. PG runs as a Docker service.
+      Test DBs use test_<module> naming (disposable, never shared).
+      Demo DB: odoo_dev_demo (on-demand, not a separate environment).
+
+  staging:
+    role: preprod_runtime
+    db_name: odoo_staging
+    base_url: "https://erp-staging.insightpulseai.com"
+    config_file: config/staging/odoo.conf
+    runtime: azure_container_apps
+    aca:
+      resource_group: rg-ipai-stg-odoo-runtime
+      environment: ipai-odoo-stg-env
+    postgres:
+      host: pg-ipai-odoo.postgres.database.azure.com
+      port: 5432
+      user: odoo_admin
+      auth: key_vault_secret (odoo-pg-password)
+    notes: >
+      Staging mirrors production config but runs on dev-tier compute.
+      Deploy via Azure Pipelines; no manual deploys.
+
+  production:
+    role: live_runtime
+    db_name: odoo
+    base_url: "https://erp.insightpulseai.com"
+    config_file: config/prod/odoo.conf
+    runtime: azure_container_apps
+    aca:
+      resource_group: rg-ipai-dev-odoo-runtime    # NOTE: "dev" naming is legacy; this IS the current production-equivalent runtime
+      environment: ipai-odoo-dev-env-v2
+      apps:
+        - ipai-odoo-dev-web
+        - ipai-odoo-dev-worker
+        - ipai-odoo-dev-cron
+    postgres:
+      host: pg-ipai-odoo.postgres.database.azure.com
+      port: 5432
+      user: odoo_admin
+      auth: key_vault_secret (odoo-pg-password)
+    notes: >
+      Current "production" runs on the dev infrastructure (single-env for now).
+      Canonical per CLAUDE.md: databases are odoo_dev | odoo_staging | odoo.
+      True prod-tier infra (HA, PE, separate sub) is pending per
+      docs/architecture/revised-bom-target-state.md.
+
+# =============================================================================
+# Rules
+# =============================================================================
+rules:
+  - "Every environment MUST define: role, db_name, base_url, config_file"
+  - "Test databases use test_<module> naming; never odoo_dev/odoo_staging/odoo"
+  - "Only these 3 environments exist: local, staging, production"
+  - "odoo_dev_demo is a showroom DB, not a separate environment"
+  - "No ad-hoc environments (sandbox, preview, QA) without amending this file"

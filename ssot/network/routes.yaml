@@ -1,0 +1,105 @@
+# SSOT — Network Route Map
+# Locked: 2026-04-16
+# Authority: this file is the canonical hostname → purpose map for all agents.
+# An agent reading this file knows which hostnames are live, which are legacy, and where each points.
+# Companion: ssot/odoo/platform.contract.yaml §5
+
+schema_version: 1
+last_updated: "2026-04-16"
+
+routes:
+
+  # =========================================================================
+  # ERP surfaces
+  # =========================================================================
+  - hostname: erp.insightpulseai.com
+    purpose: odoo_production
+    environment: production
+    target: ACA app ipai-odoo-dev-web (behind Azure Front Door afd-ipai-dev)
+    status: planned     # DNS CNAME pending cutover
+    notes: >
+      Canonical production Odoo URL. Not yet live — current Odoo access is via
+      ACA FQDN directly (blackstone-0df78186.southeastasia.azurecontainerapps.io).
+
+  - hostname: erp-staging.insightpulseai.com
+    purpose: odoo_staging
+    environment: staging
+    target: ACA app in rg-ipai-stg-odoo-runtime
+    status: planned
+    notes: Staging Odoo URL. Pending ACA provisioning in staging RG.
+
+  # =========================================================================
+  # Public websites
+  # =========================================================================
+  - hostname: www.insightpulseai.com
+    purpose: public_website
+    target: ACA app ipai-website-dev
+    status: active
+    notes: Corporate site. Deployed to ACA on sponsored sub.
+
+  - hostname: insightpulseai.com
+    purpose: apex_redirect
+    target: Azure DNS → redirect to www.insightpulseai.com
+    status: active
+
+  - hostname: prismalab.insightpulseai.com
+    purpose: public_website
+    target: ACA app ipai-prismalab-web
+    status: active
+    notes: PrismaLab research tool public surface.
+
+  - hostname: www.w9studio.net
+    purpose: public_website
+    target: ACA app ipai-w9studio-dev
+    status: active
+    notes: W9 Studio site. Wix deprecated → ACA.
+
+  - hostname: book.insightpulseai.com
+    purpose: booking_surface
+    target: Odoo Website appointment module (or Zoho Bookings transitional)
+    status: planned
+    notes: Replaces insightpulseai.zohobookings.com. Pending Odoo booking module.
+
+  # =========================================================================
+  # Infrastructure endpoints
+  # =========================================================================
+  - hostname: pg-ipai-odoo.postgres.database.azure.com
+    purpose: postgres_database
+    target: Azure PG Flex (rg-ipai-data-sea, sponsored sub)
+    status: active
+
+  - hostname: adb-7405608559466577.17.azuredatabricks.net
+    purpose: databricks_workspace
+    target: dbw-ipai-dev (Premium, SEA)
+    status: active
+    notes: Per-workspace URL. Legacy regional URLs are forbidden.
+
+  - hostname: ipai-copilot-resource.services.ai.azure.com
+    purpose: foundry_endpoint
+    target: Azure AI Foundry (East US 2)
+    status: active
+
+  # =========================================================================
+  # Deprecated hostnames (never use)
+  # =========================================================================
+  - hostname: insightpulseai.net
+    purpose: deprecated
+    status: deprecated
+    notes: Deprecated 2026-02. All traffic → insightpulseai.com.
+
+  - hostname: mg.insightpulseai.com
+    purpose: deprecated
+    status: deprecated
+    notes: Mailgun deprecated 2026-03-11. Zoho SMTP is canonical.
+
+  - hostname: insightpulseai.zohobookings.com
+    purpose: deprecated
+    status: deprecated
+    notes: Zoho Bookings deprecated. Target → book.insightpulseai.com.
+
+rules:
+  - "Every route MUST have: hostname, purpose, status"
+  - "Active routes must have a target"
+  - "Deprecated routes must NEVER be reintroduced (CLAUDE.md)"
+  - "New hostnames require DNS CNAME in Azure DNS (not Cloudflare, not Squarespace)"
+  - "All hostnames use insightpulseai.com domain except w9studio.net (separate brand)"
