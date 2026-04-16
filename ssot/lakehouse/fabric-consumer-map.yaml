@@ -49,3 +49,9 @@ fabric_consumption_binding:
     - databricks_sql_to_power_bi
     - unity_catalog_metadata_to_purview
     - governed_data_to_fabric_copilot_consumers
+
+databricks_workspace_runtime_binding:
+  source: infra/ssot/databricks/workspace-resource.contract.yaml
+  rules:
+    - no_public_ip_expected_for_governed_prod_workspaces
+    - unity_catalog_expected_for_governed_prod_workspaces

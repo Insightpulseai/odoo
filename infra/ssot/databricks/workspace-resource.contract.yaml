@@ -1,0 +1,100 @@
+contract_version: 1
+
+metadata:
+  purpose: ARM resource contract for Azure Databricks workspaces
+  authority: infra/ssot/databricks/
+  scope: all governed Databricks workspaces in the IPAI platform
+  last_updated: "2026-04-16"
+
+resource_type: Microsoft.Databricks/workspaces
+
+api_policy:
+  preferred_api_version: "2025-03-01-preview"
+  minimum_api_version: "2024-05-01"
+  rationale: >
+    2025-03-01-preview exposes defaultCatalog initialType (UnityCatalog),
+    enhancedSecurityMonitoring, automaticClusterUpdate, and complianceSecurityProfile
+    not available in stable GA versions.
+
+workspace_contract:
+  required_fields:
+    - name
+    - location
+    - resource_group
+    - sku.name
+    - properties
+
+  required_properties:
+    - managedResourceGroupId
+    - parameters
+
+  network_posture:
+    rule: no_public_ip_preferred_for_prod
+    fields:
+      enableNoPublicIp:
+        dev: optional
+        prod: required_true
+      natGatewayName:
+        dev: optional
+        prod: recommended
+      publicIpName:
+        dev: optional
+        prod: recommended_if_no_public_ip_disabled
+
+  access_connector:
+    rule: required_for_unity_catalog_and_fabric_mirroring
+    fields:
+      accessConnector.id:
+        governance: required_when_unity_catalog_enabled
+        purpose: Managed Identity for Unity Catalog + Fabric mirroring
+
+  default_catalog:
+    rule: unity_catalog_first_for_governed_workspaces
+    fields:
+      defaultCatalog.initialType:
+        allowed_values:
+          - UnityCatalog
+          - HiveMetastore
+        governed_workspaces: UnityCatalog
+        note: do_not_default_governed_workspaces_to_hive_metastore
+
+  encryption:
+    rule: customer_managed_key_required_for_prod
+    fields:
+      encryption.entities.managedDisk.keySource:
+        prod: Microsoft.Keyvault
+        dev: optional
+      encryption.entities.managedServices.keySource:
+        prod: Microsoft.Keyvault
+        dev: optional
+
+  workspace_parameters:
+    customVirtualNetworkId:
+      dev: optional
+      prod: recommended_for_vnet_injection
+    customPrivateSubnetName:
+      dev: optional
+      prod: required_if_vnet_injected
+    customPublicSubnetName:
+      dev: optional
+      prod: required_if_vnet_injected
+    requireInfrastructureEncryption:
+      dev: optional
+      prod: recommended_true
+
+  security_compliance:
+    enhancedSecurityMonitoring:
+      status:
+        dev: optional
+        prod: recommended_enabled
+    automaticClusterUpdate:
+      enabledValue:
+        dev: optional
+        prod: recommended_enabled
+    complianceSecurityProfile:
+      complianceStandards:
+        dev: []
+        prod:
+          - recommended: HIPAA
+          - recommended: PCI_DSS
+          - note: enable_per_data_classification_requirements
