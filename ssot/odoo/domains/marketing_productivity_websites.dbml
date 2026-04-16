@@ -1,0 +1,166 @@
+Project "IPAI Website/Marketing/Productivity — Odoo CE 18 bounded context" {
+  database_type: 'PostgreSQL'
+  Note: 'Bounded context: Website CMS, email marketing, calendar, events, and surveys. Source: Odoo CE 18 models website, mass_mailing.*, calendar.event, event.event, survey.survey.'
+}
+
+Table website {
+  id               integer  [pk, increment]
+  name             varchar  [not null]
+  domain           varchar
+  company_id       integer  [not null, ref: > res_company.id]
+  default_lang_id  integer  [ref: > res_lang.id]
+  homepage_url     varchar
+}
+
+Table res_lang {
+  id    integer  [pk, increment]
+  name  varchar  [not null]
+  code  varchar  [not null]
+}
+
+Table website_page {
+  id            integer   [pk, increment]
+  name          varchar   [not null]
+  url           varchar   [not null]
+  website_id    integer   [ref: > website.id]
+  is_published  boolean
+  date_publish  timestamp
+}
+
+Table website_menu {
+  id          integer  [pk, increment]
+  name        varchar  [not null]
+  url         varchar
+  page_id     integer  [ref: > website_page.id]
+  parent_id   integer  [ref: > website_menu.id, note: 'parent menu item (self-ref)']
+  website_id  integer  [not null, ref: > website.id]
+  sequence    integer
+}
+
+Table mailing_contact {
+  id            integer  [pk, increment]
+  name          varchar  [not null]
+  email         varchar
+  company_name  varchar
+  country_id    integer  [ref: > res_country.id]
+  Note: 'tag_ids M2M via mailing_contact_tag_rel; list_ids M2M via mailing_contact_list_rel'
+}
+
+Table mailing_contact_tag_rel {
+  contact_id  integer  [not null, ref: > mailing_contact.id]
+  tag_id      integer  [not null, ref: > mailing_tag.id]
+  indexes {
+    (contact_id, tag_id) [pk]
+  }
+}
+
+Table mailing_contact_list_rel {
+  contact_id  integer  [not null, ref: > mailing_contact.id]
+  list_id     integer  [not null, ref: > mailing_list.id]
+  indexes {
+    (contact_id, list_id) [pk]
+  }
+}
+
+Table mailing_tag {
+  id    integer  [pk, increment]
+  name  varchar  [not null]
+}
+
+Table mailing_list {
+  id             integer  [pk, increment]
+  name           varchar  [not null]
+  active         boolean
+  contact_count  integer  [note: 'computed']
+}
+
+Table mailing_mailing {
+  id                integer  [pk, increment]
+  subject           varchar  [not null]
+  body_html         text
+  mailing_type      varchar  [not null, note: 'mail, sms']
+  state             varchar  [not null, note: 'draft, in_queue, sending, done']
+  mailing_model_id  integer  [ref: > ir_model.id, note: 'target Odoo model']
+  sent              integer
+  delivered         integer
+  opened            integer
+  clicked           integer
+  bounced           integer
+  Note: 'contact_list_ids M2M via mailing_mailing_list_rel join table'
+}
+
+Table mailing_mailing_list_rel {
+  mailing_id  integer  [not null, ref: > mailing_mailing.id]
+  list_id     integer  [not null, ref: > mailing_list.id]
+  indexes {
+    (mailing_id, list_id) [pk]
+  }
+}
+
+Table ir_model {
+  id     integer  [pk, increment]
+  name   varchar  [not null]
+  model  varchar  [not null]
+}
+
+Table calendar_event {
+  id          integer   [pk, increment]
+  name        varchar   [not null]
+  start       timestamp [not null]
+  stop        timestamp [not null]
+  user_id     integer   [ref: > res_users.id]
+  description text
+  location    varchar
+  allday      boolean
+  Note: 'partner_ids M2M via calendar_event_res_partner_rel join table'
+}
+
+Table calendar_event_res_partner_rel {
+  event_id    integer  [not null, ref: > calendar_event.id]
+  partner_id  integer  [not null, ref: > res_partner.id]
+  indexes {
+    (event_id, partner_id) [pk]
+  }
+}
+
+Table event_event {
+  id               integer   [pk, increment]
+  name             varchar   [not null]
+  date_begin       timestamp [not null]
+  date_end         timestamp [not null]
+  company_id       integer   [ref: > res_company.id]
+  organizer_id     integer   [ref: > res_partner.id]
+  seats_max        integer
+  seats_available  integer   [note: 'computed']
+  state            varchar   [not null, note: 'draft, confirm, done, cancel']
+}
+
+Table survey_survey {
+  id            integer  [pk, increment]
+  title         varchar  [not null]
+  state         varchar  [not null, note: 'draft, open, closed']
+  scoring_type  varchar  [note: 'no_scoring, scoring_with_answers, scoring_without_answers']
+  access_mode   varchar  [note: 'public, token, users']
+}
+
+Table res_country {
+  id    integer  [pk, increment]
+  name  varchar  [not null]
+  code  varchar  [not null]
+}
+
+// Shared dimension stubs
+Table res_partner {
+  id    integer  [pk]
+  name  varchar
+}
+
+Table res_users {
+  id    integer  [pk]
+  name  varchar
+}
+
+Table res_company {
+  id    integer  [pk]
+  name  varchar
+}

@@ -1,0 +1,103 @@
+Project "IPAI Projects/Services — Odoo CE 18 bounded context" {
+  database_type: 'PostgreSQL'
+  Note: 'Bounded context: Project management, tasks, milestones, and status updates. Source: Odoo CE 18 models project.project, project.task, project.milestone, project.update.'
+}
+
+Table project_project {
+  id                   integer   [pk, increment]
+  name                 varchar   [not null]
+  active               boolean
+  company_id           integer   [ref: > res_company.id]
+  partner_id           integer   [ref: > res_partner.id]
+  user_id              integer   [ref: > res_users.id]
+  date_start           date
+  date                 date      [note: 'planned end date']
+  allow_timesheets     boolean
+  analytic_account_id  integer   [ref: > account_analytic_account.id]
+  label_tasks          varchar   [note: 'custom label for task stages column']
+  task_count           integer   [note: 'computed, stored']
+}
+
+Table project_task {
+  id              integer   [pk, increment]
+  name            varchar   [not null]
+  project_id      integer   [ref: > project_project.id]
+  stage_id        integer   [ref: > project_task_type.id]
+  partner_id      integer   [ref: > res_partner.id]
+  date_deadline   date
+  kanban_state    varchar   [note: 'normal, blocked, done']
+  priority        varchar   [note: '0 normal, 1 high']
+  parent_id       integer   [ref: > project_task.id, note: 'subtask parent (self-ref)']
+  company_id      integer   [ref: > res_company.id]
+  description     text
+  planned_hours   float
+  effective_hours float      [note: 'computed from timesheets']
+  Note: 'user_ids is M2M via project_task_user_rel join table'
+}
+
+Table project_task_user_rel {
+  task_id  integer  [not null, ref: > project_task.id]
+  user_id  integer  [not null, ref: > res_users.id]
+  indexes {
+    (task_id, user_id) [pk]
+  }
+}
+
+Table project_task_type {
+  id        integer  [pk, increment]
+  name      varchar  [not null]
+  sequence  integer
+  fold      boolean
+  Note: 'project_ids is M2M via project_task_type_rel join table'
+}
+
+Table project_task_type_rel {
+  type_id     integer  [not null, ref: > project_task_type.id]
+  project_id  integer  [not null, ref: > project_project.id]
+  indexes {
+    (type_id, project_id) [pk]
+  }
+}
+
+Table project_milestone {
+  id            integer  [pk, increment]
+  name          varchar  [not null]
+  project_id    integer  [not null, ref: > project_project.id]
+  deadline      date
+  is_reached    boolean
+  reached_date  date
+}
+
+Table project_update {
+  id          integer   [pk, increment]
+  name        varchar   [not null]
+  project_id  integer   [not null, ref: > project_project.id]
+  status      varchar   [not null, note: 'on_track, at_risk, off_track, on_hold']
+  date        date
+  description text
+  progress    integer   [note: '0–100 percent']
+}
+
+Table account_analytic_account {
+  id          integer  [pk, increment]
+  name        varchar  [not null]
+  code        varchar
+  company_id  integer  [ref: > res_company.id]
+  active      boolean
+}
+
+// Shared dimension stubs
+Table res_partner {
+  id    integer  [pk]
+  name  varchar
+}
+
+Table res_users {
+  id    integer  [pk]
+  name  varchar
+}
+
+Table res_company {
+  id    integer  [pk]
+  name  varchar
+}

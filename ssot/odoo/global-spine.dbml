@@ -1,0 +1,243 @@
+Project ipai_global_spine {
+  database_type: 'PostgreSQL'
+  Note: 'IPAI Global Spine — Odoo CE 18 cross-domain anchors'
+}
+
+// ─── Currency & Country ──────────────────────────────────────────────────────
+
+Table res_currency {
+  id integer [pk, increment]
+  name varchar(3) [not null]
+  symbol varchar(4) [not null]
+  active boolean [not null, default: true]
+}
+
+Table res_country {
+  id integer [pk, increment]
+  name varchar [not null]
+  code varchar(2)
+}
+
+// ─── Unit of Measure ─────────────────────────────────────────────────────────
+
+Table uom_uom {
+  id integer [pk, increment]
+  name varchar [not null]
+  category_id integer [not null]
+  factor float8 [not null, default: 1.0]
+  uom_type varchar [not null]
+}
+
+// ─── Company & Partner ───────────────────────────────────────────────────────
+
+Table res_company {
+  id integer [pk, increment]
+  name varchar [not null]
+  partner_id integer [not null]
+  currency_id integer [not null]
+  parent_id integer
+}
+
+Table res_partner {
+  id integer [pk, increment]
+  name varchar
+  email varchar
+  phone varchar
+  is_company boolean [default: false]
+  company_id integer
+  parent_id integer
+  supplier_rank integer [not null, default: 0]
+  customer_rank integer [not null, default: 0]
+  vat varchar
+  create_uid integer
+  write_uid integer
+  create_date timestamptz
+  write_date timestamptz
+}
+
+// ─── Users & Groups ──────────────────────────────────────────────────────────
+
+Table res_users {
+  id integer [pk, increment]
+  login varchar [not null]
+  partner_id integer [not null]
+  company_id integer [not null]
+  active boolean [not null, default: true]
+}
+
+Table res_groups {
+  id integer [pk, increment]
+  name varchar [not null]
+  category_id integer
+}
+
+Table res_groups_users_rel {
+  gid integer [not null]
+  uid integer [not null]
+
+  indexes {
+    (gid, uid) [pk]
+  }
+}
+
+// ─── IR Framework ────────────────────────────────────────────────────────────
+
+Table ir_module_module {
+  id integer [pk, increment]
+  name varchar [not null]
+  state varchar [not null]
+  shortdesc varchar
+  author varchar
+}
+
+Table ir_model {
+  id integer [pk, increment]
+  name varchar [not null]
+  model varchar [not null]
+  state varchar [not null, default: 'base']
+  transient boolean [not null, default: false]
+}
+
+Table ir_model_fields {
+  id integer [pk, increment]
+  name varchar [not null]
+  field_description varchar
+  model_id integer [not null]
+  ttype varchar [not null]
+  relation varchar
+}
+
+Table ir_model_access {
+  id integer [pk, increment]
+  name varchar [not null]
+  model_id integer [not null]
+  group_id integer
+  perm_read boolean [not null, default: false]
+  perm_write boolean [not null, default: false]
+  perm_create boolean [not null, default: false]
+  perm_unlink boolean [not null, default: false]
+}
+
+Table ir_rule {
+  id integer [pk, increment]
+  name varchar [not null]
+  model_id integer [not null]
+  domain_force text
+  global_rule boolean [not null, default: false]
+}
+
+Table ir_attachment {
+  id integer [pk, increment]
+  name varchar [not null]
+  res_model varchar
+  res_id integer
+  type varchar [not null, default: 'binary']
+  mimetype varchar
+  datas text
+  store_fname varchar
+}
+
+Table ir_sequence {
+  id integer [pk, increment]
+  name varchar [not null]
+  code varchar
+  prefix varchar
+  suffix varchar
+  number_next integer [not null, default: 1]
+}
+
+// ─── Mail ─────────────────────────────────────────────────────────────────────
+
+Table mail_message {
+  id integer [pk, increment]
+  subject varchar
+  body text
+  message_type varchar [not null]
+  model varchar
+  res_id integer
+  author_id integer
+  date timestamptz [not null]
+}
+
+Table mail_activity {
+  id integer [pk, increment]
+  res_model varchar [not null]
+  res_id integer [not null]
+  activity_type_id integer [not null]
+  user_id integer [not null]
+  date_deadline date [not null]
+  summary varchar
+}
+
+// ─── Product ─────────────────────────────────────────────────────────────────
+
+Table product_category {
+  id integer [pk, increment]
+  name varchar [not null]
+  parent_id integer
+  complete_name varchar
+}
+
+Table product_template {
+  id integer [pk, increment]
+  name varchar [not null]
+  type varchar [not null, default: 'consu']
+  categ_id integer [not null]
+  list_price float8 [not null, default: 1.0]
+  uom_id integer [not null]
+}
+
+Table product_product {
+  id integer [pk, increment]
+  product_tmpl_id integer [not null]
+  default_code varchar
+  barcode varchar
+  active boolean [not null, default: true]
+}
+
+// ─── References ──────────────────────────────────────────────────────────────
+
+// res_company
+Ref: res_company.partner_id > res_partner.id
+Ref: res_company.currency_id > res_currency.id
+Ref: res_company.parent_id > res_company.id
+
+// res_partner
+Ref: res_partner.company_id > res_company.id
+Ref: res_partner.parent_id > res_partner.id
+Ref: res_partner.create_uid > res_users.id
+Ref: res_partner.write_uid > res_users.id
+
+// res_users
+Ref: res_users.partner_id > res_partner.id
+Ref: res_users.company_id > res_company.id
+
+// res_groups_users_rel (M2M join)
+Ref: res_groups_users_rel.gid > res_groups.id
+Ref: res_groups_users_rel.uid > res_users.id
+
+// ir_model_fields
+Ref: ir_model_fields.model_id > ir_model.id
+
+// ir_model_access
+Ref: ir_model_access.model_id > ir_model.id
+Ref: ir_model_access.group_id > res_groups.id
+
+// ir_rule
+Ref: ir_rule.model_id > ir_model.id
+
+// mail_message
+Ref: mail_message.author_id > res_partner.id
+
+// mail_activity
+Ref: mail_activity.user_id > res_users.id
+
+// product_category
+Ref: product_category.parent_id > product_category.id
+
+// product_template
+Ref: product_template.categ_id > product_category.id
+Ref: product_template.uom_id > uom_uom.id
+
+// product_product
+Ref: product_product.product_tmpl_id > product_template.id
