@@ -1,0 +1,36 @@
+metric: tax_due
+domain: tax_compliance
+owner: finance_compliance
+grain: tax_determination
+
+description: >
+  Expected tax amount due for scoped transactions after semantic classification and review rules.
+
+source_objects:
+  - main.tax_compliance.fact_tax_due
+
+dimensions:
+  - date
+  - fiscal_period
+  - tenant
+  - company
+  - customer
+  - vendor
+  - tax_jurisdiction
+  - currency
+
+aggregation:
+  default: sum
+  allowed:
+    - sum
+
+security_scope:
+  - tenant
+  - company
+
+lineage:
+  required: true
+
+business_rules:
+  - tax_preview_and_posted_tax_must_be_comparable
+  - ambiguous_cases_must_be_separable_from_finalized_cases

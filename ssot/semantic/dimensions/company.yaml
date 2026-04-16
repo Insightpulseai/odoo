@@ -1,0 +1,17 @@
+dimension: company
+owner: finance
+description: Legal or operating entity within the application context.
+
+source_objects:
+  - main.shared.dim_company
+
+business_key: company_id
+
+attributes:
+  - company_name
+  - company_code
+  - currency_code
+
+security_scope:
+  - tenant
+  - company

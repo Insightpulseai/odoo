@@ -1,0 +1,36 @@
+version: 1
+
+bindings:
+  semantic_layer_root:
+    catalog: main
+    schemas:
+      finance: finance
+      sales: sales
+      inventory: inventory
+      projects: projects
+      hr: hr
+      tax_compliance: tax_compliance
+      pulser_ops: pulser_ops
+
+  metrics:
+    revenue:
+      uc_object: main.finance.semantic_revenue
+      object_type: view
+    project_burn:
+      uc_object: main.projects.semantic_project_burn
+      object_type: view
+    tax_due:
+      uc_object: main.tax_compliance.semantic_tax_due
+      object_type: view
+
+  dimensions:
+    tenant:
+      uc_object: main.shared.dim_tenant
+      object_type: table
+    company:
+      uc_object: main.shared.dim_company
+      object_type: table
+
+odata_bindings:
+  source: ssot/semantic/odata-entity-map.yaml
+  rule: every_exposed_entity_set_must_resolve_to_a_governed_uc_object

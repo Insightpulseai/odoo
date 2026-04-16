@@ -1,0 +1,36 @@
+metric: project_burn
+domain: projects
+owner: services_delivery
+grain: analytic_line
+
+description: >
+  Cost and effort consumed against project delivery work within the reporting slice.
+
+source_objects:
+  - main.projects.fact_project_burn
+
+dimensions:
+  - date
+  - fiscal_period
+  - tenant
+  - company
+  - customer
+  - project
+  - employee
+  - currency
+
+aggregation:
+  default: sum
+  allowed:
+    - sum
+
+security_scope:
+  - tenant
+  - company
+
+lineage:
+  required: true
+
+business_rules:
+  - compare_against_budget_in_downstream_semantic_views
+  - use_curated_project_cost_and_time_facts

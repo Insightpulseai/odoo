@@ -1,0 +1,606 @@
+version: 1
+
+metadata:
+  purpose:
+    - bind semantic metrics to curated facts and conformed dimensions
+    - define analytical grain and governed joins
+    - separate curated analytical truth from raw Odoo ORM truth
+    - define optional OData exposure shape for governed consumers
+  layering:
+    odoo_orm: operational_truth
+    dbml_erd: logical_structure_truth
+    cdm: interchange_truth
+    curated_fact_dimension: analytics_model_truth
+    semantic_layer: metric_dimension_truth
+    unity_catalog: governance_truth
+    odata_interface: governed_query_interface
+
+global_policies:
+  tenant_dimension_required: true
+  company_dimension_required: true
+  lineage_required: true
+  uc_object_required: true
+  direct_raw_odoo_binding_for_semantic_metrics_forbidden_by_default: true
+  conformed_dimensions_must_be_reused: true
+
+conformed_dimensions:
+  date:
+    uc_object: main.shared.dim_date
+    grain: day
+    business_key: date_key
+    scope: global
+  fiscal_period:
+    uc_object: main.shared.dim_fiscal_period
+    grain: fiscal_period
+    business_key: fiscal_period_key
+    scope: global
+  tenant:
+    uc_object: main.shared.dim_tenant
+    grain: tenant
+    business_key: tenant_id
+    scope: security_boundary
+  company:
+    uc_object: main.shared.dim_company
+    grain: company
+    business_key: company_id
+    scope: security_boundary
+  customer:
+    uc_object: main.shared.dim_customer
+    grain: customer
+    business_key: customer_id
+    scope: business
+  vendor:
+    uc_object: main.shared.dim_vendor
+    grain: vendor
+    business_key: vendor_id
+    scope: business
+  employee:
+    uc_object: main.shared.dim_employee
+    grain: employee
+    business_key: employee_id
+    scope: business
+  product:
+    uc_object: main.shared.dim_product
+    grain: product
+    business_key: product_id
+    scope: business
+  product_category:
+    uc_object: main.shared.dim_product_category
+    grain: product_category
+    business_key: product_category_id
+    scope: business
+  warehouse:
+    uc_object: main.shared.dim_warehouse
+    grain: warehouse
+    business_key: warehouse_id
+    scope: business
+  project:
+    uc_object: main.shared.dim_project
+    grain: project
+    business_key: project_id
+    scope: business
+  currency:
+    uc_object: main.shared.dim_currency
+    grain: currency
+    business_key: currency_code
+    scope: business
+  tax_jurisdiction:
+    uc_object: main.shared.dim_tax_jurisdiction
+    grain: tax_jurisdiction
+    business_key: tax_jurisdiction_id
+    scope: compliance
+  compliance_case_status:
+    uc_object: main.shared.dim_compliance_case_status
+    grain: compliance_case_status
+    business_key: compliance_case_status_code
+    scope: compliance
+  assistant_capability:
+    uc_object: main.shared.dim_assistant_capability
+    grain: assistant_capability
+    business_key: capability_code
+    scope: platform
+  eval_status:
+    uc_object: main.shared.dim_eval_status
+    grain: eval_status
+    business_key: eval_status_code
+    scope: platform
+
+domains:
+  finance:
+    curated_facts:
+      fact_revenue:
+        uc_object: main.finance.fact_revenue
+        grain: journal_entry_line
+        source_models:
+          - account.move
+          - account.move.line
+        dimensions:
+          - date
+          - fiscal_period
+          - tenant
+          - company
+          - customer
+          - product
+          - currency
+          - project
+        semantic_metrics:
+          - revenue
+          - invoiced_amount
+        measures:
+          - amount_company_currency
+          - amount_transaction_currency
+      fact_cash:
+        uc_object: main.finance.fact_cash
+        grain: payment_or_bank_statement_line
+        source_models:
+          - account.payment
+          - account.bank.statement
+          - account.bank.statement.line
+        dimensions:
+          - date
+          - fiscal_period
+          - tenant
+          - company
+          - customer
+          - vendor
+          - currency
+        semantic_metrics:
+          - collected_cash
+          - cash_position
+        measures:
+          - payment_amount
+          - statement_amount
+      fact_payables_receivables:
+        uc_object: main.finance.fact_ar_ap
+        grain: open_move_line
+        source_models:
+          - account.move.line
+        dimensions:
+          - date
+          - fiscal_period
+          - tenant
+          - company
+          - customer
+          - vendor
+          - currency
+        semantic_metrics:
+          - overdue_ar
+          - open_ap
+        measures:
+          - open_amount
+          - overdue_amount
+      fact_margin:
+        uc_object: main.finance.fact_margin
+        grain: revenue_cost_line
+        source_models:
+          - account.move.line
+          - account.analytic.line
+        dimensions:
+          - date
+          - fiscal_period
+          - tenant
+          - company
+          - customer
+          - product
+          - currency
+          - project
+        semantic_metrics:
+          - cogs
+          - gross_margin
+        measures:
+          - cogs_amount
+          - gross_margin_amount
+      fact_close_tasks:
+        uc_object: main.finance.fact_close_tasks
+        grain: close_task
+        source_models:
+          - pulser.close_task
+        dimensions:
+          - date
+          - fiscal_period
+          - tenant
+          - company
+          - compliance_case_status
+        semantic_metrics:
+          - close_completion_rate
+        measures:
+          - task_count
+          - completed_task_count
+
+  sales:
+    curated_facts:
+      fact_pipeline:
+        uc_object: main.sales.fact_pipeline
+        grain: crm_lead
+        source_models:
+          - crm.lead
+        dimensions:
+          - date
+          - fiscal_period
+          - tenant
+          - company
+          - customer
+        semantic_metrics:
+          - pipeline_value
+          - expected_revenue
+          - win_rate
+          - average_sales_cycle_days
+        measures:
+          - expected_revenue_amount
+          - won_flag
+          - sales_cycle_days
+      fact_sales_orders:
+        uc_object: main.sales.fact_sales_orders
+        grain: sales_order_line
+        source_models:
+          - sale.order
+          - sale.order.line
+        dimensions:
+          - date
+          - fiscal_period
+          - tenant
+          - company
+          - customer
+          - product
+          - product_category
+          - currency
+        semantic_metrics:
+          - quotation_amount
+          - sales_order_amount
+        measures:
+          - quoted_amount
+          - ordered_amount
+
+  inventory:
+    curated_facts:
+      fact_inventory_position:
+        uc_object: main.inventory.fact_inventory_position
+        grain: stock_quant
+        source_models:
+          - stock.quant
+        dimensions:
+          - date
+          - fiscal_period
+          - tenant
+          - company
+          - product
+          - product_category
+          - warehouse
+        semantic_metrics:
+          - inventory_on_hand
+          - inventory_value
+        measures:
+          - quantity_on_hand
+          - inventory_value_amount
+      fact_inventory_flows:
+        uc_object: main.inventory.fact_inventory_flows
+        grain: stock_move_line
+        source_models:
+          - stock.move
+          - stock.move.line
+        dimensions:
+          - date
+          - fiscal_period
+          - tenant
+          - company
+          - product
+          - warehouse
+          - vendor
+        semantic_metrics:
+          - inbound_qty
+          - outbound_qty
+        measures:
+          - inbound_quantity
+          - outbound_quantity
+      fact_procurement_mfg:
+        uc_object: main.inventory.fact_procurement_mfg
+        grain: purchase_order_line_or_production
+        source_models:
+          - purchase.order
+          - purchase.order.line
+          - mrp.production
+        dimensions:
+          - date
+          - fiscal_period
+          - tenant
+          - company
+          - vendor
+          - product
+          - warehouse
+        semantic_metrics:
+          - purchase_commitment
+          - manufacturing_output_qty
+        measures:
+          - commitment_amount
+          - produced_quantity
+
+  projects:
+    curated_facts:
+      fact_project_burn:
+        uc_object: main.projects.fact_project_burn
+        grain: analytic_line
+        source_models:
+          - account.analytic.line
+          - project.project
+          - project.task
+        dimensions:
+          - date
+          - fiscal_period
+          - tenant
+          - company
+          - customer
+          - project
+          - employee
+          - currency
+        semantic_metrics:
+          - project_burn
+          - budget_variance
+        measures:
+          - burn_amount
+          - budget_amount
+          - variance_amount
+      fact_timesheets:
+        uc_object: main.projects.fact_timesheets
+        grain: timesheet_line
+        source_models:
+          - account.analytic.line
+        dimensions:
+          - date
+          - fiscal_period
+          - tenant
+          - company
+          - project
+          - employee
+        semantic_metrics:
+          - billable_hours
+          - nonbillable_hours
+          - billable_utilization
+        measures:
+          - billable_hours
+          - nonbillable_hours
+          - total_hours
+      fact_delivery_risk:
+        uc_object: main.projects.fact_delivery_risk
+        grain: project_task_risk_event
+        source_models:
+          - project.task
+          - pulser.interaction
+        dimensions:
+          - date
+          - fiscal_period
+          - tenant
+          - company
+          - project
+          - employee
+        semantic_metrics:
+          - delivery_risk_count
+        measures:
+          - risk_event_count
+
+  hr:
+    curated_facts:
+      fact_workforce:
+        uc_object: main.hr.fact_workforce
+        grain: employee_day
+        source_models:
+          - hr.employee
+          - hr.attendance
+          - hr.leave
+        dimensions:
+          - date
+          - fiscal_period
+          - tenant
+          - company
+          - employee
+        semantic_metrics:
+          - headcount
+          - attendance_hours
+          - leave_days
+        measures:
+          - employee_count
+          - attendance_hours
+          - leave_days
+      fact_hr_expense_recruiting:
+        uc_object: main.hr.fact_hr_expense_recruiting
+        grain: expense_or_applicant
+        source_models:
+          - hr.expense
+          - hr.applicant
+        dimensions:
+          - date
+          - fiscal_period
+          - tenant
+          - company
+          - employee
+        semantic_metrics:
+          - reimbursable_expense_amount
+          - open_requisitions
+        measures:
+          - expense_amount
+          - open_requisition_count
+
+  tax_compliance:
+    curated_facts:
+      fact_tax_due:
+        uc_object: main.tax_compliance.fact_tax_due
+        grain: tax_determination
+        source_models:
+          - account.move
+          - account.move.line
+          - pulser.compliance_case
+        dimensions:
+          - date
+          - fiscal_period
+          - tenant
+          - company
+          - customer
+          - vendor
+          - tax_jurisdiction
+          - currency
+          - compliance_case_status
+        semantic_metrics:
+          - tax_due
+          - tax_variance
+          - preview_to_post_delta_count
+        measures:
+          - tax_due_amount
+          - tax_variance_amount
+          - preview_post_delta_count
+      fact_tax_cases:
+        uc_object: main.tax_compliance.fact_tax_cases
+        grain: compliance_case
+        source_models:
+          - pulser.compliance_case
+        dimensions:
+          - date
+          - fiscal_period
+          - tenant
+          - company
+          - tax_jurisdiction
+          - compliance_case_status
+        semantic_metrics:
+          - ambiguous_tax_case_count
+          - compliance_case_open_count
+        measures:
+          - ambiguous_case_count
+          - open_case_count
+
+  pulser_ops:
+    curated_facts:
+      fact_assistant_interactions:
+        uc_object: main.pulser_ops.fact_assistant_interactions
+        grain: assistant_interaction
+        source_models:
+          - pulser.session
+          - pulser.interaction
+          - pulser.tool_call
+        dimensions:
+          - date
+          - fiscal_period
+          - tenant
+          - company
+          - assistant_capability
+          - eval_status
+        semantic_metrics:
+          - interaction_count
+          - grounded_answer_rate
+          - successful_tool_call_rate
+        measures:
+          - interaction_count
+          - grounded_answer_count
+          - successful_tool_call_count
+      fact_eval_and_resolution:
+        uc_object: main.pulser_ops.fact_eval_and_resolution
+        grain: eval_run_or_case
+        source_models:
+          - pulser.eval_run
+          - pulser.close_task
+          - pulser.compliance_case
+        dimensions:
+          - date
+          - fiscal_period
+          - tenant
+          - company
+          - assistant_capability
+          - eval_status
+          - compliance_case_status
+        semantic_metrics:
+          - eval_pass_rate
+          - close_task_completion_rate
+          - compliance_case_resolution_time_hours
+        measures:
+          - eval_run_count
+          - eval_pass_count
+          - close_task_completed_count
+          - compliance_case_resolution_hours
+
+semantic_metric_bindings:
+  revenue:
+    fact: main.finance.fact_revenue
+    dimensions:
+      - date
+      - fiscal_period
+      - tenant
+      - company
+      - customer
+      - product
+      - currency
+      - project
+  project_burn:
+    fact: main.projects.fact_project_burn
+    dimensions:
+      - date
+      - fiscal_period
+      - tenant
+      - company
+      - customer
+      - project
+      - employee
+      - currency
+  tax_due:
+    fact: main.tax_compliance.fact_tax_due
+    dimensions:
+      - date
+      - fiscal_period
+      - tenant
+      - company
+      - customer
+      - vendor
+      - tax_jurisdiction
+      - currency
+      - compliance_case_status
+
+odata_exposure:
+  enabled: true
+  intent:
+    - analytics_consumer_access
+    - governed_agent_query_surface
+  rules:
+    metadata_endpoint_required: true
+    entity_set_per_curated_fact_or_semantic_view: true
+    select_or_apply_required_by_default: true
+    server_side_paging_expected_over_10000_rows: true
+    next_link_following_required_for_code_clients: true
+  entity_sets:
+    finance_revenue:
+      source_uc_object: main.finance.semantic_revenue
+      entity_set_name: Revenue
+      default_select:
+        - date_key
+        - fiscal_period_key
+        - tenant_id
+        - company_id
+        - customer_id
+        - revenue_amount
+      recommended_query_shapes:
+        - select
+        - apply_groupby_aggregate
+    projects_burn:
+      source_uc_object: main.projects.semantic_project_burn
+      entity_set_name: ProjectBurn
+      default_select:
+        - date_key
+        - tenant_id
+        - company_id
+        - project_id
+        - burn_amount
+        - variance_amount
+      recommended_query_shapes:
+        - select
+        - apply_groupby_aggregate
+    tax_due:
+      source_uc_object: main.tax_compliance.semantic_tax_due
+      entity_set_name: TaxDue
+      default_select:
+        - date_key
+        - fiscal_period_key
+        - tenant_id
+        - company_id
+        - tax_jurisdiction_id
+        - tax_due_amount
+      recommended_query_shapes:
+        - select
+        - apply_groupby_aggregate
+
+derived_interfaces:
+  odata_entity_map: ssot/semantic/odata-entity-map.yaml

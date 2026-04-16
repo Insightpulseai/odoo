@@ -1,0 +1,16 @@
+dimension: tenant
+owner: platform_ai
+description: Customer organization boundary for B2B SaaS reporting.
+
+source_objects:
+  - main.shared.dim_tenant
+
+business_key: tenant_id
+
+attributes:
+  - tenant_name
+  - tenant_status
+  - tenant_type
+
+security_scope:
+  - tenant

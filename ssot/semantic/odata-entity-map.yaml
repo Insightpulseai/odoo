@@ -1,0 +1,346 @@
+version: 1
+
+metadata:
+  purpose:
+    - define governed OData entity sets for BI and agent consumers
+    - bind semantic views to stable exposed interfaces
+    - constrain exposed fields and query shapes
+    - keep OData as interface layer, not semantic truth
+  layering:
+    odoo_orm: operational_truth
+    dbml_erd: logical_structure_truth
+    cdm: interchange_truth
+    curated_fact_dimension: analytics_model_truth
+    semantic_layer: metric_dimension_truth
+    unity_catalog: governance_truth
+    odata_entity_map: governed_query_interface
+
+global_rules:
+  metadata_endpoint_required: true
+  entity_set_per_semantic_view_or_governed_fact: true
+  select_or_apply_required_by_default: true
+  server_side_paging_expected_over_10000_rows: true
+  next_link_following_required_for_code_clients: true
+  count_supported_when_explicit: true
+  tenant_scope_required: true
+  company_scope_required: true
+  raw_odoo_tables_not_exposed_directly_by_default: true
+
+query_shape_policy:
+  preferred_options_order:
+    - apply
+    - compute
+    - filter
+    - orderby
+    - top_skip
+    - select
+    - expand
+    - skiptoken
+    - count
+  notes:
+    - always_use_select_or_apply
+    - use_apply_for_aggregate_patterns
+    - use_skiptoken_via_nextlink_for_paging
+    - do_not_mix_ungoverned_fields_into_select
+
+shared_fields:
+  keys:
+    - tenant_id
+    - company_id
+    - date_key
+    - fiscal_period_key
+  audit:
+    - lineage_version
+    - semantic_version
+    - uc_object
+  security:
+    - tenant_scope
+    - company_scope
+
+entity_sets:
+  Revenue:
+    source_uc_object: main.finance.semantic_revenue
+    source_fact: main.finance.fact_revenue
+    domain: finance
+    grain: journal_entry_line_aggregated
+    default_select:
+      - tenant_id
+      - company_id
+      - date_key
+      - fiscal_period_key
+      - customer_id
+      - product_id
+      - currency_code
+      - revenue_amount
+    allowed_fields:
+      - tenant_id
+      - company_id
+      - date_key
+      - fiscal_period_key
+      - customer_id
+      - product_id
+      - project_id
+      - currency_code
+      - revenue_amount
+      - invoiced_amount
+      - lineage_version
+      - semantic_version
+    required_filters:
+      - tenant_id
+    recommended_query_shapes:
+      - select
+      - apply_groupby_aggregate
+      - filter_orderby_select
+    expandable_dimensions:
+      - Customer
+      - Product
+      - Project
+      - Date
+      - FiscalPeriods
+    measures:
+      - revenue_amount
+      - invoiced_amount
+
+  ProjectBurn:
+    source_uc_object: main.projects.semantic_project_burn
+    source_fact: main.projects.fact_project_burn
+    domain: projects
+    grain: analytic_line_aggregated
+    default_select:
+      - tenant_id
+      - company_id
+      - date_key
+      - fiscal_period_key
+      - project_id
+      - employee_id
+      - burn_amount
+      - variance_amount
+    allowed_fields:
+      - tenant_id
+      - company_id
+      - date_key
+      - fiscal_period_key
+      - customer_id
+      - project_id
+      - employee_id
+      - currency_code
+      - burn_amount
+      - budget_amount
+      - variance_amount
+      - lineage_version
+      - semantic_version
+    required_filters:
+      - tenant_id
+    recommended_query_shapes:
+      - select
+      - apply_groupby_aggregate
+      - filter_select
+    expandable_dimensions:
+      - Project
+      - Employee
+      - Customer
+      - Date
+      - FiscalPeriods
+    measures:
+      - burn_amount
+      - budget_amount
+      - variance_amount
+
+  TaxDue:
+    source_uc_object: main.tax_compliance.semantic_tax_due
+    source_fact: main.tax_compliance.fact_tax_due
+    domain: tax_compliance
+    grain: tax_determination_aggregated
+    default_select:
+      - tenant_id
+      - company_id
+      - date_key
+      - fiscal_period_key
+      - tax_jurisdiction_id
+      - tax_due_amount
+    allowed_fields:
+      - tenant_id
+      - company_id
+      - date_key
+      - fiscal_period_key
+      - customer_id
+      - vendor_id
+      - tax_jurisdiction_id
+      - compliance_case_status_code
+      - currency_code
+      - tax_due_amount
+      - tax_variance_amount
+      - preview_post_delta_count
+      - lineage_version
+      - semantic_version
+    required_filters:
+      - tenant_id
+    recommended_query_shapes:
+      - select
+      - apply_groupby_aggregate
+      - filter_select
+    expandable_dimensions:
+      - Customer
+      - Vendor
+      - TaxJurisdictions
+      - ComplianceCaseStatuses
+      - Date
+      - FiscalPeriods
+    measures:
+      - tax_due_amount
+      - tax_variance_amount
+      - preview_post_delta_count
+
+  InteractionSummary:
+    source_uc_object: main.pulser_ops.semantic_interaction_summary
+    source_fact: main.pulser_ops.fact_assistant_interactions
+    domain: pulser_ops
+    grain: assistant_interaction_aggregated
+    default_select:
+      - tenant_id
+      - company_id
+      - date_key
+      - assistant_capability_code
+      - interaction_count
+      - grounded_answer_rate
+    allowed_fields:
+      - tenant_id
+      - company_id
+      - date_key
+      - fiscal_period_key
+      - assistant_capability_code
+      - eval_status_code
+      - interaction_count
+      - grounded_answer_rate
+      - successful_tool_call_rate
+      - lineage_version
+      - semantic_version
+    required_filters:
+      - tenant_id
+    recommended_query_shapes:
+      - select
+      - apply_groupby_aggregate
+    expandable_dimensions:
+      - AssistantCapabilities
+      - EvalStatuses
+      - Date
+      - FiscalPeriods
+    measures:
+      - interaction_count
+      - grounded_answer_rate
+      - successful_tool_call_rate
+
+dimension_entity_sets:
+  Customers:
+    source_uc_object: main.shared.dim_customer
+    business_key: customer_id
+    allowed_fields:
+      - customer_id
+      - customer_name
+      - customer_segment
+      - customer_region
+      - tenant_id
+      - company_id
+
+  Vendors:
+    source_uc_object: main.shared.dim_vendor
+    business_key: vendor_id
+    allowed_fields:
+      - vendor_id
+      - vendor_name
+      - tenant_id
+      - company_id
+
+  Products:
+    source_uc_object: main.shared.dim_product
+    business_key: product_id
+    allowed_fields:
+      - product_id
+      - product_name
+      - product_category_id
+      - tenant_id
+      - company_id
+
+  Projects:
+    source_uc_object: main.shared.dim_project
+    business_key: project_id
+    allowed_fields:
+      - project_id
+      - project_name
+      - customer_id
+      - tenant_id
+      - company_id
+
+  Employees:
+    source_uc_object: main.shared.dim_employee
+    business_key: employee_id
+    allowed_fields:
+      - employee_id
+      - employee_name
+      - tenant_id
+      - company_id
+
+  Date:
+    source_uc_object: main.shared.dim_date
+    business_key: date_key
+    allowed_fields:
+      - date_key
+      - calendar_date
+      - month
+      - quarter
+      - year
+
+  FiscalPeriods:
+    source_uc_object: main.shared.dim_fiscal_period
+    business_key: fiscal_period_key
+    allowed_fields:
+      - fiscal_period_key
+      - fiscal_period_name
+      - fiscal_year
+
+  TaxJurisdictions:
+    source_uc_object: main.shared.dim_tax_jurisdiction
+    business_key: tax_jurisdiction_id
+    allowed_fields:
+      - tax_jurisdiction_id
+      - jurisdiction_name
+
+  ComplianceCaseStatuses:
+    source_uc_object: main.shared.dim_compliance_case_status
+    business_key: compliance_case_status_code
+    allowed_fields:
+      - compliance_case_status_code
+      - compliance_case_status_name
+
+  AssistantCapabilities:
+    source_uc_object: main.shared.dim_assistant_capability
+    business_key: assistant_capability_code
+    allowed_fields:
+      - assistant_capability_code
+      - assistant_capability_name
+
+  EvalStatuses:
+    source_uc_object: main.shared.dim_eval_status
+    business_key: eval_status_code
+    allowed_fields:
+      - eval_status_code
+      - eval_status_name
+
+examples:
+  RevenueByCustomer:
+    entity_set: Revenue
+    shape: apply_groupby_aggregate
+    example: >
+      Revenue?$apply=groupby((customer_id,fiscal_period_key),aggregate(revenue_amount with sum as Revenue))
+
+  ProjectBurnByProject:
+    entity_set: ProjectBurn
+    shape: filter_select
+    example: >
+      ProjectBurn?$filter=tenant_id eq 'tbwa_smp'&$select=project_id,burn_amount,variance_amount
+
+  TaxDueByJurisdiction:
+    entity_set: TaxDue
+    shape: apply_groupby_aggregate
+    example: >
+      TaxDue?$apply=groupby((tax_jurisdiction_id,fiscal_period_key),aggregate(tax_due_amount with sum as TaxDue))
