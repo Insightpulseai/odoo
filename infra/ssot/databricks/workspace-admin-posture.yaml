@@ -1,0 +1,35 @@
+contract_version: 1
+
+workspace_admin_posture:
+  dbw-ipai-dev:
+    environment: dev
+    observed_settings:
+      repos:
+        git_url_allow_list_permission:
+          observed: disabled_no_restrictions
+        git_url_allow_list:
+          observed: []
+        allow_repos_to_export_ipynb_output:
+          observed: unknown
+          note: screenshot_does_not_show_selected_value
+      apps:
+        only_allow_app_deployments_from_git:
+          observed: false
+    target_policy:
+      repos:
+        git_url_allow_list_permission:
+          dev: optional_explicit
+          prod: required_enabled
+        git_url_allow_list:
+          dev: optional
+          prod: required_non_empty
+        allow_repos_to_export_ipynb_output:
+          dev: explicit_required
+          prod: restricted_or_disabled
+      apps:
+        only_allow_app_deployments_from_git:
+          dev: recommended_true
+          prod: required_true
+    policy_notes:
+      - workspace_admin_settings_are_distinct_from_arm_bicep_resource_contract
+      - unknown_critical_settings_must_not_be_treated_as_compliant

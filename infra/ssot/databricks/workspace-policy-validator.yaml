@@ -1,0 +1,175 @@
+version: 1
+
+metadata:
+  purpose: Fail-closed policy gate for Azure Databricks workspace provisioning and governance
+  authority: infra/ssot/databricks/
+  contract_source: infra/ssot/databricks/workspace-resource.contract.yaml
+  last_updated: "2026-04-16"
+
+global_rules:
+  fail_closed: true
+  unknown_is_noncompliant: true
+  rationale: >
+    Any setting that cannot be verified is treated as noncompliant.
+    Passing the gate requires explicit evidence, not absence of failure.
+
+required_contract_sections:
+  - resource_type
+  - api_policy
+  - workspace_contract
+
+required_workspace_fields:
+  - name
+  - location
+  - resource_group
+  - sku.name
+  - properties
+
+required_workspace_properties:
+  - managedResourceGroupId
+  - parameters
+
+required_nested_properties:
+  network_posture:
+    prod:
+      - properties.parameters.enableNoPublicIp.value == true
+  access_connector:
+    governed:
+      - properties.accessConnector.id is not null
+  default_catalog:
+    governed:
+      - properties.defaultCatalog.initialType == "UnityCatalog"
+
+policy_assertions:
+  - id: PA-001
+    name: api_version_minimum
+    description: Deployment must use API version >= 2024-05-01
+    rule: api_version >= "2024-05-01"
+    severity: FAIL
+    environment: all
+
+  - id: PA-002
+    name: api_version_preferred
+    description: Governed workspaces should use preferred API version 2025-03-01-preview
+    rule: api_version == "2025-03-01-preview"
+    severity: WARN
+    environment: governed
+
+  - id: PA-003
+    name: sku_tier_premium_for_governed
+    description: Governed workspaces require Premium SKU for Unity Catalog
+    rule: sku.name == "premium"
+    severity: FAIL
+    environment: governed
+
+  - id: PA-004
+    name: managed_resource_group_set
+    description: managedResourceGroupId must be explicitly set
+    rule: properties.managedResourceGroupId is not null and not empty
+    severity: FAIL
+    environment: all
+
+  - id: PA-005
+    name: no_public_ip_prod
+    description: Production workspaces must disable public IP
+    rule: properties.parameters.enableNoPublicIp.value == true
+    severity: FAIL
+    environment: prod
+
+  - id: PA-006
+    name: access_connector_governed
+    description: Governed workspaces require an Access Connector for Unity Catalog
+    rule: properties.accessConnector.id is not null
+    severity: FAIL
+    environment: governed
+
+  - id: PA-007
+    name: unity_catalog_default_governed
+    description: Governed workspaces must default to UnityCatalog, not HiveMetastore
+    rule: properties.defaultCatalog.initialType == "UnityCatalog"
+    severity: FAIL
+    environment: governed
+
+  - id: PA-008
+    name: cmk_managed_disk_prod
+    description: Production workspaces must use Customer Managed Key for managed disk encryption
+    rule: properties.encryption.entities.managedDisk.keySource == "Microsoft.Keyvault"
+    severity: FAIL
+    environment: prod
+
+  - id: PA-009
+    name: cmk_managed_services_prod
+    description: Production workspaces must use Customer Managed Key for managed services encryption
+    rule: properties.encryption.entities.managedServices.keySource == "Microsoft.Keyvault"
+    severity: FAIL
+    environment: prod
+
+  - id: PA-010
+    name: vnet_injection_prod
+    description: Production workspaces should use VNet injection
+    rule: properties.parameters.customVirtualNetworkId is not null
+    severity: WARN
+    environment: prod
+
+  - id: PA-011
+    name: enhanced_security_monitoring_prod
+    description: Production workspaces should enable enhanced security monitoring
+    rule: properties.enhancedSecurityMonitoring.value.status == "enabled"
+    severity: WARN
+    environment: prod
+
+  - id: PA-012
+    name: automatic_cluster_update_prod
+    description: Production workspaces should enable automatic cluster updates
+    rule: properties.automaticClusterUpdate.value.enabled == "enabled"
+    severity: WARN
+    environment: prod
+
+  - id: PA-013
+    name: unknown_settings_noncompliant
+    description: Any required setting with unknown/unverified state is treated as noncompliant
+    rule: all_required_settings_have_verified_observed_values
+    severity: FAIL
+    environment: all
+
+environment_rules:
+  prod:
+    required_passing_assertions:
+      - PA-001
+      - PA-003
+      - PA-004
+      - PA-005
+      - PA-006
+      - PA-007
+      - PA-008
+      - PA-009
+      - PA-013
+    recommended_passing_assertions:
+      - PA-002
+      - PA-010
+      - PA-011
+      - PA-012
+
+  nonprod:
+    required_passing_assertions:
+      - PA-001
+      - PA-004
+      - PA-013
+    recommended_passing_assertions:
+      - PA-002
+      - PA-003
+      - PA-006
+      - PA-007
+
+exception_policy:
+  allowed: false
+  rationale: >
+    No exceptions to FAIL-severity assertions in prod.
+    WARN-severity assertions may be deferred with documented justification
+    in infra/ssot/databricks/workspace-runtime-state.yaml.
+
+validator_outcomes:
+  PASS: all required assertions for environment pass
+  WARN: all required assertions pass; one or more recommended assertions fail
+  FAIL: one or more required assertions fail; provisioning blocked
+  UNKNOWN: validator cannot determine compliance; treated as FAIL per fail-closed rule

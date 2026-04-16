@@ -1,0 +1,13 @@
+azure_docs_root:
+  url: https://learn.microsoft.com/en-us/azure/?product=popular
+  classification: upstream_navigation_root
+  allowed_uses:
+    - service_doc_discovery
+    - category_discovery
+    - architecture_center_entrypoint
+    - cloud_adoption_framework_entrypoint
+  disallowed_uses:
+    - direct_runtime_contract_source
+    - direct_bom_source
+    - direct_security_policy_source
+    - direct_service_configuration_source
