@@ -1,0 +1,61 @@
+table Iterations
+	lineageTag: b1b2c3d4-e5f6-7890-abcd-ef1234567890
+
+	column IterationId
+		dataType: int64
+		formatString: 0
+		lineageTag: 30000001-0000-0000-0000-000000000001
+		summarizeBy: none
+		sourceColumn: IterationId
+
+	column IterationName
+		dataType: string
+		lineageTag: 30000001-0000-0000-0000-000000000002
+		summarizeBy: none
+		sourceColumn: IterationName
+
+	column IterationPath
+		dataType: string
+		lineageTag: 30000001-0000-0000-0000-000000000003
+		summarizeBy: none
+		sourceColumn: IterationPath
+
+	column StartDate
+		dataType: dateTime
+		formatString: Short Date
+		lineageTag: 30000001-0000-0000-0000-000000000004
+		summarizeBy: none
+		sourceColumn: StartDate
+
+	column EndDate
+		dataType: dateTime
+		formatString: Short Date
+		lineageTag: 30000001-0000-0000-0000-000000000005
+		summarizeBy: none
+		sourceColumn: EndDate
+
+	column IsCurrentIteration
+		dataType: boolean
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		lineageTag: 30000001-0000-0000-0000-000000000006
+		summarizeBy: none
+		sourceColumn: IsCurrentIteration
+
+	partition Iterations = m
+		mode: import
+		source =
+			let
+				Source = OData.Feed(
+					"https://analytics.dev.azure.com/insightpulseai/ipai-platform/_odata/v4.0-preview/Iterations?"
+					& "$select=IterationId,IterationName,IterationPath,StartDate,EndDate,IsCurrentIteration",
+					null,
+					[Implementation="2.0"]
+				)
+			in
+				Source
+
+	measure 'Days Remaining in Current Iteration' =
+		VAR CurrentIter = CALCULATE(MAX(Iterations[EndDate]), Iterations[IsCurrentIteration] = TRUE)
+		RETURN IF(NOT ISBLANK(CurrentIter), CurrentIter - TODAY(), BLANK())
+		formatString: #,0
+		lineageTag: 40000001-0000-0000-0000-000000000001

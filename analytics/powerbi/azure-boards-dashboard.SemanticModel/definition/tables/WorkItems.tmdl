@@ -1,0 +1,122 @@
+table WorkItems
+	lineageTag: a1b2c3d4-e5f6-7890-abcd-ef1234567890
+
+	column WorkItemId
+		dataType: int64
+		formatString: 0
+		lineageTag: 10000001-0000-0000-0000-000000000001
+		summarizeBy: none
+		sourceColumn: WorkItemId
+
+	column Title
+		dataType: string
+		lineageTag: 10000001-0000-0000-0000-000000000002
+		summarizeBy: none
+		sourceColumn: Title
+
+	column WorkItemType
+		dataType: string
+		lineageTag: 10000001-0000-0000-0000-000000000003
+		summarizeBy: none
+		sourceColumn: WorkItemType
+
+	column State
+		dataType: string
+		lineageTag: 10000001-0000-0000-0000-000000000004
+		summarizeBy: none
+		sourceColumn: State
+
+	column IterationPath
+		dataType: string
+		lineageTag: 10000001-0000-0000-0000-000000000005
+		summarizeBy: none
+		sourceColumn: IterationPath
+
+	column AreaPath
+		dataType: string
+		lineageTag: 10000001-0000-0000-0000-000000000006
+		summarizeBy: none
+		sourceColumn: AreaPath
+
+	column Priority
+		dataType: int64
+		formatString: 0
+		lineageTag: 10000001-0000-0000-0000-000000000007
+		summarizeBy: none
+		sourceColumn: Priority
+
+	column Tags
+		dataType: string
+		lineageTag: 10000001-0000-0000-0000-000000000008
+		summarizeBy: none
+		sourceColumn: Tags
+
+	column CreatedDate
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: 10000001-0000-0000-0000-000000000009
+		summarizeBy: none
+		sourceColumn: CreatedDate
+
+	column ChangedDate
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: 10000001-0000-0000-0000-000000000010
+		summarizeBy: none
+		sourceColumn: ChangedDate
+
+	column Iteration
+		dataType: string
+		lineageTag: 10000001-0000-0000-0000-000000000011
+		summarizeBy: none
+		sourceColumn: Iteration
+
+	partition WorkItems = m
+		mode: import
+		source =
+			let
+				Source = OData.Feed(
+					"https://analytics.dev.azure.com/insightpulseai/ipai-platform/_odata/v4.0-preview/WorkItems?"
+					& "$select=WorkItemId,Title,WorkItemType,State,IterationPath,AreaPath,Priority,Tags,CreatedDate,ChangedDate"
+					& "&$filter=State ne 'Removed'",
+					null,
+					[Implementation="2.0"]
+				),
+				AddIteration = Table.AddColumn(Source, "Iteration", each
+					let parts = Text.Split([IterationPath], "\")
+					in if List.Count(parts) > 1 then parts{1} else "Unassigned"
+				)
+			in
+				AddIteration
+
+	measure 'Total Work Items' = COUNTROWS(WorkItems)
+		formatString: #,0
+		lineageTag: 20000001-0000-0000-0000-000000000001
+
+	measure 'To Do Count' = CALCULATE(COUNTROWS(WorkItems), WorkItems[State] = "To Do")
+		formatString: #,0
+		lineageTag: 20000001-0000-0000-0000-000000000002
+
+	measure 'In Progress Count' = CALCULATE(COUNTROWS(WorkItems), WorkItems[State] = "Doing")
+		formatString: #,0
+		lineageTag: 20000001-0000-0000-0000-000000000003
+
+	measure 'Done Count' = CALCULATE(COUNTROWS(WorkItems), WorkItems[State] = "Done")
+		formatString: #,0
+		lineageTag: 20000001-0000-0000-0000-000000000004
+
+	measure 'Completion Rate' = DIVIDE([Done Count], [Total Work Items], 0)
+		formatString: 0.0%;-0.0%;0.0%
+		lineageTag: 20000001-0000-0000-0000-000000000005
+
+	measure 'Issue Count' = CALCULATE(COUNTROWS(WorkItems), WorkItems[WorkItemType] = "Issue")
+		formatString: #,0
+		lineageTag: 20000001-0000-0000-0000-000000000006
+
+	measure 'Task Count' = CALCULATE(COUNTROWS(WorkItems), WorkItems[WorkItemType] = "Task")
+		formatString: #,0
+		lineageTag: 20000001-0000-0000-0000-000000000007
+
+	measure 'Epic Count' = CALCULATE(COUNTROWS(WorkItems), WorkItems[WorkItemType] = "Epic")
+		formatString: #,0
+		lineageTag: 20000001-0000-0000-0000-000000000008
