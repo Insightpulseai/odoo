@@ -1,0 +1,45 @@
+contract_version: 1
+
+databricks_one:
+  source:
+    type: microsoft_learn
+    url: https://learn.microsoft.com/en-us/azure/databricks/workspace/databricks-one
+    classification: databricks_business_consumption_shell_truth
+  usage_rules:
+    use_for:
+      - business_user_consumption_surface
+      - dashboard_consumption_surface
+      - genie_natural_language_qna_surface
+      - databricks_apps_business_entrypoint
+      - entitlement_based_ui_routing
+    do_not_use_for:
+      - workspace_resource_contract_truth
+      - developer_tooling_truth
+      - customer_tenant_truth
+      - business_authorization_truth
+  availability:
+    levels:
+      - workspace_level
+      - account_level
+  capabilities:
+    - ai_bi_dashboards
+    - genie_natural_language_qna
+    - chat
+    - domains
+    - asset_listings
+    - databricks_apps_listing
+  entitlement_model:
+    consumer_access:
+      default_landing_surface: databricks_one
+    workspace_access:
+      access_to:
+        - databricks_one
+        - lakehouse_workspace_ui
+    databricks_sql_access:
+      access_to:
+        - databricks_one
+        - lakehouse_workspace_ui
+  policy_notes:
+    - databricks_one_is_for_business_consumption_not_authoring_by_default
+    - databricks_apps_are_consumed_here_but_not_searchable_here
+    - authoring_privileges_switch_user_back_to_lakehouse_workspace_ui

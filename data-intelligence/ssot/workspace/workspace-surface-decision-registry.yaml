@@ -1,0 +1,27 @@
+contract_version: 1
+
+workspace_surfaces:
+  lakehouse_workspace_ui:
+    classification: technical_authoring_surface
+    source_contract: ssot/workspace/workspace-ui.contract.yaml
+    intended_users:
+      - engineers
+      - analysts
+      - authors
+      - admins
+  databricks_one:
+    classification: business_consumption_surface
+    source_contract: ssot/workspace/databricks-one.contract.yaml
+    intended_users:
+      - business_users
+      - dashboard_consumers
+      - genie_qna_consumers
+      - databricks_app_consumers
+
+rules:
+  - name: business_consumers_default_to_databricks_one_when_consumer_access_only
+    enforced: true
+  - name: authoring_users_may_use_both_surfaces
+    enforced: true
+  - name: workspace_shell_and_databricks_one_are_distinct_surfaces
+    enforced: true

@@ -1,0 +1,31 @@
+contract_version: 1
+
+workspace_ui:
+  source:
+    type: microsoft_learn
+    url: https://learn.microsoft.com/en-us/azure/databricks/workspace/
+    classification: databricks_workspace_shell_truth
+  usage_rules:
+    use_for:
+      - general_workspace_navigation_model
+      - object_discovery_and_search_model
+      - workspace_browser_reference
+      - domain_and_discover_surface_reference
+      - ai_feature_entrypoint_reference
+    do_not_use_for:
+      - workspace_resource_contract_truth
+      - unity_catalog_governance_truth
+      - semantic_metric_truth
+      - customer_tenant_truth
+  capabilities:
+    - homepage
+    - sidebar_navigation
+    - workspace_browser
+    - search
+    - discover_page
+    - domains
+    - workspace_objects
+    - genie_code_features
+  policy_notes:
+    - workspace_ui_is_general_shell_for_technical_and_authoring_users
+    - workspace_ui_is_distinct_from_databricks_one_business_surface
