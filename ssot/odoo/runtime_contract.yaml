@@ -381,3 +381,44 @@ data_intelligence:
     Copilot, BI, and downstream AI consume a governed semantic/gold layer.
     They never ground directly on raw operational exhaust. Copilot does not
     redefine business truth — it consumes governed semantic products.
+
+# =============================================================================
+# Resource tagging defaults (Odoo lane)
+# =============================================================================
+# Applied to all Azure resources in the Odoo system boundary.
+# Validator: scripts/validate_tags_ssot.py cross-checks against ssot/governance/tags.yaml
+
+resource_tag_defaults:
+  org: Insightpulseai
+  system: odoo
+  repo: odoo
+  workload: pulser-odoo
+
+environment_tag_overrides:
+  local:
+    environment: local
+    criticality: tier2
+    managed_by: manual
+
+  staging:
+    environment: staging
+    criticality: tier1
+    managed_by: iac
+
+  production:
+    environment: prod
+    criticality: tier0
+    managed_by: iac
+
+# =============================================================================
+# Release execution (Odoo lane)
+# =============================================================================
+release_execution:
+  build_agent_default: microsoft_hosted
+  deploy_agent_default: self_hosted
+  deploy_agent_reason: private_runtime_or_network_sensitive_path
+  capability_requirements:
+    self_hosted:
+      - odoo_runtime_access
+      - target_environment_access
+      - required_cli_or_sdk_installed

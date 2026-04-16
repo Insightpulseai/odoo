@@ -1,0 +1,32 @@
+contract_version: 1
+
+taxonomy:
+  portfolio:
+    - epic
+    - feature
+
+  delivery:
+    - issue
+    - task
+    - bug
+
+rules:
+  feature_must_roll_up_to_epic: true
+  task_should_roll_up_to_issue_or_bug: true
+  bugs_track_delivery_work: true
+
+planning_dimensions:
+  required_fields:
+    - title
+    - state
+    - assigned_to
+    - area_path
+    - iteration_path
+    - tags
+
+tags_policy:
+  required_axes:
+    - system
+    - environment
+    - repo
+    - criticality

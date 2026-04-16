@@ -115,4 +115,51 @@ rules:
   - All new hostnames must target Azure Front Door
   - Any hostname not on AFD must be explicitly classified
   - No silent Vercel / DigitalOcean / direct-IP drift
-  - Changes to this file require corresponding Cloudflare DNS update
+  - Changes to this file require corresponding Azure DNS update
+
+# =============================================================================
+# Tag projection — Azure-side tag values for each route
+# =============================================================================
+# Tags are projections of SSOT, not primary truth.
+# Validator: scripts/validate_tags_ssot.py cross-checks these against ssot/governance/tags.yaml
+
+tag_projection:
+  erp.insightpulseai.com:
+    system: odoo
+    environment: prod
+    service: erp
+    repo: odoo
+    owner_plane: runtime
+    criticality: tier0
+
+  erp-staging.insightpulseai.com:
+    system: odoo
+    environment: staging
+    service: erp
+    repo: odoo
+    owner_plane: runtime
+    criticality: tier1
+
+  www.insightpulseai.com:
+    system: web
+    environment: prod
+    service: static-site
+    repo: web
+    owner_plane: public-web
+    criticality: tier1
+
+  prismalab.insightpulseai.com:
+    system: web
+    environment: prod
+    service: static-site
+    repo: web
+    owner_plane: public-web
+    criticality: tier1
+
+  www.w9studio.net:
+    system: web
+    environment: prod
+    service: static-site
+    repo: web
+    owner_plane: public-web
+    criticality: tier1

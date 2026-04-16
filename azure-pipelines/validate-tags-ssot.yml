@@ -1,0 +1,39 @@
+# Azure Pipelines — SSOT Tag Contract Validator
+# Runs on PR + push to main when SSOT or validator files change.
+# Doctrine: Azure Pipelines is the sole CI authority (CLAUDE.md #24).
+
+trigger:
+  branches:
+    include:
+      - main
+  paths:
+    include:
+      - ssot/**/*.yaml
+      - scripts/validate_tags_ssot.py
+      - azure-pipelines/validate-tags-ssot.yml
+
+pr:
+  branches:
+    include:
+      - main
+  paths:
+    include:
+      - ssot/**/*.yaml
+      - scripts/validate_tags_ssot.py
+      - azure-pipelines/validate-tags-ssot.yml
+
+pool:
+  vmImage: ubuntu-latest
+
+steps:
+  - checkout: self
+
+  - task: UsePythonVersion@0
+    inputs:
+      versionSpec: '3.11'
+
+  - script: pip install pyyaml
+    displayName: Install PyYAML
+
+  - script: python scripts/validate_tags_ssot.py
+    displayName: Validate SSOT Tag Contracts
