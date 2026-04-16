@@ -1,0 +1,112 @@
+# ssot/assurance/review-gates.yaml
+# Phase-level gate reviews with required artifacts
+# Companion to: ssot/assurance/success-by-design.contract.yaml
+
+kind: gate_definition
+domain: assurance
+name: review-gates
+version: "1.0.0"
+status: active
+created: "2026-04-15"
+updated: "2026-04-15"
+
+phases:
+
+  - id: discover
+    name: Discover
+    gate_review: discover_checkpoint
+    required_artifacts:
+      - business_process_catalog
+      - gap_fit_matrix  # CE / OCA / custom assessment
+      - scope_statement
+      - risk_register_initial
+      - stakeholder_map
+    gate_criteria:
+      - "All in-scope business processes catalogued"
+      - "Gap-fit completed against CE 18 + OCA 18"
+      - "Scope boundaries agreed and signed"
+      - "Initial risk register populated"
+
+  - id: initiate
+    name: Initiate
+    gate_review: solution_blueprint_review  # mandatory per contract
+    required_artifacts:
+      - solution_architecture_document
+      - environment_topology_diagram
+      - integration_design
+      - data_migration_plan
+      - extension_strategy
+      - project_plan
+      - governance_charter
+    gate_criteria:
+      - "Solution architecture reviewed and approved"
+      - "CE → OCA → ipai_* ordering confirmed in extension strategy"
+      - "Environment topology validated (dev/staging/prod on ACA)"
+      - "Data migration approach agreed"
+      - "Integration contracts documented"
+
+  - id: implement
+    name: Implement
+    gate_review: implementation_progress_review
+    required_artifacts:
+      - sprint_demo_records
+      - test_coverage_report
+      - integration_test_results
+      - data_migration_dry_run_results
+      - configuration_change_log
+    gate_criteria:
+      - "All sprint deliverables demonstrated"
+      - "Test coverage meets minimum threshold"
+      - "Integration tests passing"
+      - "Data migration dry run completed successfully"
+      - "No unresolved blocking issues"
+
+  - id: prepare
+    name: Prepare
+    gate_review: go_live_readiness_review  # mandatory per contract
+    required_artifacts:
+      - uat_plan
+      - uat_sign_off
+      - training_plan
+      - cutover_plan
+      - go_no_go_criteria
+      - mock_go_live_schedule
+      - support_model
+      - deployment_runbook
+      - performance_test_results
+      - rollback_plan
+    gate_criteria:
+      - "UAT completed with sign-off from business stakeholders"
+      - "All training sessions delivered"
+      - "Cutover plan rehearsed (mock go-live)"
+      - "Go/no-go criteria defined and evaluated"
+      - "Support model activated with on-call schedule"
+      - "Deployment runbook validated in staging"
+      - "Performance baselines within acceptable thresholds"
+      - "Rollback plan tested"
+
+  - id: operate
+    name: Operate
+    gate_review: hypercare_exit_review
+    required_artifacts:
+      - hypercare_issue_log
+      - performance_monitoring_dashboard
+      - knowledge_transfer_checklist
+      - steady_state_runbook
+      - lessons_learned_document
+    gate_criteria:
+      - "All hypercare issues resolved or transitioned to BAU"
+      - "Performance monitoring in place and stable"
+      - "Knowledge transfer completed to operations team"
+      - "Steady-state support model confirmed"
+      - "Lessons learned documented and shared"
+
+review_escalation:
+  description: >
+    If a gate review surfaces a blocking issue (type: issue), the project
+    cannot proceed to the next phase until the issue is resolved and the
+    review is re-conducted.
+  escalation_path:
+    - project_lead
+    - delivery_manager
+    - executive_sponsor
