@@ -1,0 +1,249 @@
+// ============================================================
+// IPAI Platform / Identity / Tenant / AI Overlay
+// Bounded-context: Platform, Identity, Tenant, AI (ops + platform schemas)
+//
+// Scope: Thin IPAI layer on top of Odoo CE 18.
+//   - ops.*     — agent runtime, tenancy, feature flags, tool catalog
+//   - platform.* — cross-cutting audit
+//   - public.*  — Odoo-owned schema (referenced only, never modified here)
+//
+// NOT included in PG schemas:
+//   - cosmos.*  — Azure Cosmos DB document collections (documented below
+//                 as comments; not relational tables)
+//
+// Cross-schema FK note:
+//   ops.tenants.company_id → public.res_company(id)
+//   public schema is owned by Odoo; treat as read-only external reference.
+// ============================================================
+
+Project "IPAI Platform / Identity / Tenant / AI Overlay" {
+  database_type: 'PostgreSQL'
+  Note: '''
+    Schema: ops + platform (IPAI-owned)
+    Odoo public schema is referenced but never modified by these models.
+    Cosmos DB collections are documented as comments (document store, not relational).
+    Runtime: Azure Container Apps + PostgreSQL 16 (pg-ipai-odoo)
+    Auth: Entra ID (OIDC) — no custom ipai_auth_oidc module; wired via standard
+          Odoo OIDC config + infra env vars per no-custom-identity doctrine.
+  '''
+}
+
+// ============================================================
+// OPS SCHEMA
+// ============================================================
+
+Table ops.tenants {
+  id          serial        [pk, increment, note: "Internal tenant surrogate key"]
+  name        varchar       [not null, note: "Human-readable tenant name"]
+  code        varchar       [unique, not null, note: "Short slug, e.g. ipai / w9 / tbwa"]
+  company_id  int           [not null, ref: > public.res_company.id, note: "Odoo company this tenant maps to"]
+  entra_tenant_id varchar   [null, note: "Azure Entra external tenant GUID; null for single-tenant deployments"]
+  active      boolean       [not null, default: true]
+  created_at  timestamp     [not null, default: `now()`]
+
+  Note: '''
+    One ops.tenant = one res.company in Odoo.
+    entra_tenant_id is populated only for multi-tenant SaaS lanes.
+    Self-hosted single-tenant: leave null, rely on Odoo built-in OIDC config.
+  '''
+}
+
+Table ops.runs {
+  id              uuid          [pk, default: `gen_random_uuid()`, note: "Stable run identifier; shared with Cosmos session"]
+  agent_id        varchar       [not null, note: "Logical agent identifier, e.g. pulser/tax-guru/recon-agent"]
+  tenant_id       int           [not null, ref: > ops.tenants.id, note: "Owning tenant"]
+  session_id      varchar       [not null, note: "Cosmos session_id for cross-store correlation"]
+  started_at      timestamp     [not null, default: `now()`]
+  ended_at        timestamp     [null]
+  status          varchar       [not null, note: "running | completed | failed | cancelled"]
+  input_summary   text          [null, note: "Sanitised (Safe Outputs) summary of user input"]
+  output_summary  text          [null, note: "Sanitised summary of agent response"]
+  model_used      varchar       [null, note: "e.g. gpt-4.1, claude-sonnet-4-6"]
+  tokens_in       int           [null]
+  tokens_out      int           [null]
+  create_date     timestamp     [not null, default: `now()`]
+
+  indexes {
+    (tenant_id, started_at) [name: "idx_runs_tenant_started"]
+    (agent_id, status)      [name: "idx_runs_agent_status"]
+    session_id              [name: "idx_runs_session"]
+  }
+
+  Note: '''
+    Append-only. Updates allowed only to: ended_at, status, output_summary,
+    tokens_in, tokens_out.
+    input_summary / output_summary must pass Safe Outputs subsystem before write.
+  '''
+}
+
+Table ops.run_events {
+  id           bigserial     [pk, increment]
+  run_id       uuid          [not null, ref: > ops.runs.id, note: "Parent run"]
+  event_type   varchar       [not null, note: "input | tool_call | tool_response | output | error | guardrail"]
+  payload      jsonb         [not null, note: "Sanitised event payload; secrets stripped by Safe Outputs"]
+  timestamp    timestamp     [not null, default: `now()`]
+  sequence_num int           [not null, note: "Monotonic sequence within a run; used for ordered replay"]
+
+  indexes {
+    (run_id, sequence_num) [name: "idx_run_events_run_seq", unique]
+    (run_id, event_type)   [name: "idx_run_events_type"]
+  }
+
+  Note: '''
+    Append-only. No deletes, no updates.
+    Payload is post-Safe-Outputs (filtered / moderated / secret-stripped).
+    guardrail events record policy violations caught by Content Safety middleware.
+  '''
+}
+
+Table ops.tool_catalog {
+  id          serial        [pk, increment]
+  agent_id    varchar       [not null, note: "Agent this tool is registered for; '*' = shared across all agents"]
+  tool_name   varchar       [not null, note: "Canonical MCP / Foundry tool name"]
+  tool_type   varchar       [not null, note: "mcp | foundry | cli | odoo_rpc"]
+  endpoint    varchar       [null, note: "MCP server URI or Foundry tool endpoint; null for cli/odoo_rpc"]
+  allowed     boolean       [not null, default: true, note: "Runtime allow-flag; false = tool blocked without manifest change"]
+  create_date timestamp     [not null, default: `now()`]
+
+  indexes {
+    (agent_id, tool_name) [name: "idx_tool_catalog_agent_tool", unique]
+  }
+
+  Note: '''
+    MCP allowlist SSOT. Pulser agents may only call tools present here with allowed=true.
+    No dynamic tool acquisition permitted (Agentic Workflow Security Doctrine).
+    Changes require PR + Azure Pipelines gate.
+  '''
+}
+
+Table ops.feature_flags {
+  id          serial        [pk, increment]
+  flag_name   varchar       [unique, not null, note: "e.g. pulser.recon_agent.v2 / finance.bir_2307.auto_file"]
+  tenant_id   int           [null, ref: > ops.tenants.id, note: "Null = global flag; non-null = tenant-scoped override"]
+  enabled     boolean       [not null, default: false]
+  value       jsonb         [null, note: "Optional structured config for the flag"]
+  description text          [null]
+
+  indexes {
+    (flag_name, tenant_id) [name: "idx_feature_flags_name_tenant"]
+  }
+
+  Note: '''
+    Global flags: tenant_id IS NULL, flag_name unique globally.
+    Tenant overrides: tenant_id IS NOT NULL; take precedence over global row.
+    Evaluated at agent dispatch time; cached per-session in Cosmos scratchpad.
+  '''
+}
+
+// ============================================================
+// PLATFORM SCHEMA
+// ============================================================
+
+Table platform.audit_log {
+  id             bigserial     [pk, increment]
+  actor          varchar       [not null, note: "UPN or agent_id of the acting principal"]
+  action         varchar       [not null, note: "e.g. CREATE / UPDATE / DELETE / APPROVE / INVOKE"]
+  resource_type  varchar       [not null, note: "e.g. ops.runs / account.move / res.partner"]
+  resource_id    varchar       [not null, note: "String-cast PK of the affected resource"]
+  before_state   jsonb         [null,  note: "Snapshot before mutation; null for CREATE"]
+  after_state    jsonb         [null,  note: "Snapshot after mutation; null for DELETE"]
+  timestamp      timestamp     [not null, default: `now()`]
+  tenant_id      int           [not null, ref: > ops.tenants.id]
+
+  indexes {
+    (tenant_id, timestamp)        [name: "idx_audit_log_tenant_ts"]
+    (resource_type, resource_id)  [name: "idx_audit_log_resource"]
+    actor                         [name: "idx_audit_log_actor"]
+  }
+
+  Note: '''
+    Append-only. No updates, no deletes (ADO Issue #623 — audit traceability).
+    Covers IPAI platform mutations; Odoo native chatter covers ERP-level changes.
+    before_state / after_state are post-Safe-Outputs snapshots (secrets stripped).
+  '''
+}
+
+// ============================================================
+// EXTERNAL REFERENCE ONLY — public schema (Odoo-owned)
+// Included here solely to define the cross-schema FK target.
+// Do NOT create, alter, or drop anything in public.* from IPAI migrations.
+// ============================================================
+
+Table public.res_company {
+  id    int   [pk, note: "Odoo-managed company ID — external reference only"]
+
+  Note: '''
+    Odoo CE 18 native table. IPAI must never run DDL against this table.
+    ops.tenants.company_id references this as a logical FK;
+    enforced at application layer, not as a DB-level constraint,
+    to avoid cross-schema FK dependency on Odoo migrations.
+  '''
+}
+
+// ============================================================
+// REFS
+// ============================================================
+
+// ops.runs → ops.tenants
+Ref: ops.runs.tenant_id > ops.tenants.id
+
+// ops.run_events → ops.runs
+Ref: ops.run_events.run_id > ops.runs.id
+
+// ops.feature_flags → ops.tenants (nullable tenant-scoped override)
+Ref: ops.feature_flags.tenant_id > ops.tenants.id
+
+// platform.audit_log → ops.tenants
+Ref: platform.audit_log.tenant_id > ops.tenants.id
+
+// Cross-schema: ops.tenants → public.res_company (Odoo-owned; app-level only)
+Ref: ops.tenants.company_id > public.res_company.id
+
+// ============================================================
+// COSMOS DB — DOCUMENT COLLECTIONS (not PG tables)
+// Documented here for bounded-context completeness.
+// These are Azure Cosmos DB for NoSQL containers, NOT PostgreSQL tables.
+// Partition keys and TTL are Cosmos-native concepts.
+// Correlate to PG via: session_id ↔ ops.runs.session_id
+//                       run_id    ↔ ops.runs.id
+// ============================================================
+
+// cosmos.sessions
+// ---------------
+// Container:     sessions
+// Partition key: tenant_id
+// TTL:           7 days
+// Fields:
+//   session_id          string  — correlates to ops.runs.session_id
+//   agent_id            string  — correlates to ops.runs.agent_id
+//   conversation_turns  array   — ordered array of {role, content, timestamp}
+//   scratchpad          object  — ephemeral agent working memory (feature flags cache,
+//                                 intermediate reasoning, tool state)
+//   ttl                 int     — document TTL override in seconds (default: 604800 = 7d)
+//
+// cosmos.tool_calls
+// -----------------
+// Container:     tool_calls
+// Partition key: session_id
+// TTL:           7 days
+// Fields:
+//   call_id     string  — unique call identifier
+//   tool_name   string  — matches ops.tool_catalog.tool_name
+//   input       object  — raw tool input (pre-Safe-Outputs; store only after filter pass)
+//   output      object  — raw tool output (pre-Safe-Outputs; store only after filter pass)
+//   latency_ms  int     — wall-clock latency
+//   ttl         int     — document TTL override (default: 604800 = 7d)
+//
+// cosmos.artifacts
+// ----------------
+// Container:     artifacts
+// Partition key: session_id
+// TTL:           24 hours (86400 seconds)
+// Fields:
+//   artifact_id  string  — unique artifact identifier
+//   type         string  — e.g. pdf / xlsx / json / image
+//   content      blob    — base64-encoded or Cosmos attachment reference
+//   ttl          int     — document TTL override (default: 86400 = 24h)
+//
+// Note: Artifacts with longer retention must be promoted to Azure Blob Storage
+//       and referenced by URL. Cosmos is ephemeral session scratch only.
