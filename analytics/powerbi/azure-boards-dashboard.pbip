@@ -1,0 +1,18 @@
+{
+  "version": "1.0",
+  "artifacts": [
+    {
+      "report": {
+        "path": "azure-boards-dashboard.Report"
+      }
+    },
+    {
+      "semanticModel": {
+        "path": "azure-boards-dashboard.SemanticModel"
+      }
+    }
+  ],
+  "settings": {
+    "enableAutoRecovery": true
+  }
+}
