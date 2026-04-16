@@ -1,6 +1,62 @@
 ---
-# TODO: populate this contract
+# Identity Boundary Policy — SSOT
 # Referenced by: ssot/semantic/consumer-access-policy.yaml
-# Purpose: define identity type boundaries (user principal vs MI vs app principal)
-status: stub
+# Purpose: define identity type boundaries and enterprise app surface classification
+contract_version: 1
+status: partial
 target_milestone: R3
+
+identity_types:
+  entra_user_principal:
+    description: interactive human user authenticated via Entra ID
+    used_by: [bi_internal, customer_embedded_api, customer_bi_readonly, internal_ops, finance_close_ops, compliance_ops]
+  managed_identity:
+    description: Azure MI for service-to-service auth (ACA, Functions, Foundry)
+    used_by: [pulser_agent_runtime, internal_ops]
+    rule: reserved_for_service_runtime_paths_only
+  app_principal:
+    description: Entra app registration service principal (non-MI)
+    used_by: [pulser_agent_runtime, internal_ops]
+  entra_group_mapped_principal:
+    description: group-based role mapping for BI/finance/compliance consumers
+    used_by: [bi_internal, finance_close_ops, compliance_ops]
+
+enterprise_application_boundaries:
+  source: ssot/identity/enterprise-apps.runtime-state.yaml
+
+  rules:
+    - enterprise_app_inventory_is_provider_tenant_identity_evidence
+    - customer_tenant_mapping_must_be_resolved_in_application_logic
+    - enterprise_app_presence_does_not_define_business_authorization
+    - enterprise_app_presence_does_not_define_customer_data_scope
+    - application_registration_truth_must_be_tracked_separately_from_enterprise_apps
+
+  classified_surfaces:
+    odoo_sso:
+      apps:
+        - InsightPulse AI - Odoo Login
+      role: browser_login_and_federated_identity_surface
+
+    internal_api:
+      apps:
+        - ipai-copilot-gateway
+      role: internal_gateway_or_resource_api_surface
+
+    analytics_platform:
+      apps:
+        - Databricks
+      role: analytics_workspace_identity_surface
+
+    external_saas_sso:
+      apps:
+        - GitHub Enterprise Cloud - Insightpulseai SAML SSO
+        - Zoho
+        - Zoho Mail Admin
+        - Zoominfo Login
+      role: external_saas_federation_surface
+
+    deprecated:
+      apps:
+        - ipai-n8n-entra
+      role: deprecated_identity_surface
+      action: DELETE

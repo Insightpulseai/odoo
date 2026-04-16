@@ -1,0 +1,81 @@
+---
+# Tenant Registry — SSOT
+# Referenced by: ssot/semantic/consumer-access-policy.yaml
+# Purpose: map tenant identifiers to company records, OData isolation, identity planes
+contract_version: 1
+status: partial
+target_milestone: R2
+
+tenants:
+  insightpulseai:
+    classification: provider_org
+    odoo_company_id: 1
+    entra_tenant: Default Directory
+    google_workspace: null
+    notes: platform owner
+
+  w9_studio:
+    classification: provider_branch_legal_entity
+    odoo_company_id: 2
+    entra_tenant: Default Directory
+    google_workspace:
+      id: google_workspace_w9
+      domain: w9studio.net
+      classification: collaboration_workspace
+      role: [email, calendar, docs, directory, admin_console]
+      provider_side: true
+      customer_tenant: false
+      identity_authority: secondary_or_tool_specific
+      business_authorization_authority: false
+      users:
+        - accounts@w9studio.net
+        - finance@w9studio.net
+        - business@w9studio.net
+      org_units: [W9 Studio, Workspace Guests]
+    notes:
+      - do_not_infer_customer_tenant_from_workspace_branding
+      - do_not_infer_odoo_record_scope_from_workspace_membership
+      - workspace_domain_is_w9studio_net_not_insightpulseai_com
+
+  tbwa_smp:
+    classification: customer_tenant
+    odoo_company_id: 4    # prospect, pending
+    entra_tenant: null     # customer-side Entra, not IPAI tenant
+    google_workspace: null
+    role: b2b_application_customer_boundary
+    notes: customer tenant boundary — app-mapped, not Entra-inferred
+
+  omc:
+    classification: customer_tenant
+    odoo_company_id: 3    # pending
+    entra_tenant: null
+    google_workspace: null
+    notes: pending onboarding
+
+identity_resolution_rules:
+  - name: enterprise_apps_do_not_define_customer_tenants
+    enforced: true
+  - name: tbwa_smp_customer_boundary_must_come_from_app_tenant_mapping
+    enforced: true
+  - name: provider_side_apps_can_exist_without_implying_customer_tenancy
+    enforced: true
+  - name: google_workspace_is_collaboration_not_customer_tenant
+    enforced: true
+  - name: entra_directory_is_identity_control_plane_not_tenant_definition
+    enforced: true
+
+identity_plane_hierarchy:
+  entra_id:
+    classification: identity_control_plane
+    role: workforce_and_app_identity
+  google_workspace:
+    classification: collaboration_workspace
+    role: provider_side_productivity_and_directory_workspace
+    position: beside_entra_not_above
+  odoo:
+    classification: business_authorization_plane
+    role: record_rules_workflows_company_visibility
+  customer_tenant:
+    classification: application_customer_boundary
+    role: b2b_data_isolation_and_billing
+    source: app_tenant_mapping_not_entra_directory
