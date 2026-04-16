@@ -1,0 +1,233 @@
+version: 1
+
+semantic_layer:
+  name: pulser_odoo_semantic_layer
+  purpose:
+    - unified_business_definitions
+    - centralized_metric_logic
+    - dimensional_standardization
+    - governed_analytics_interface
+    - pulser_agent_grounding_for_kpis
+
+layering_rules:
+  odoo_orm_is_operational_truth: true
+  dbml_erd_is_logical_structure_truth: true
+  cdm_is_export_interchange_truth: true
+  semantic_layer_is_metric_dimension_truth: true
+  unity_catalog_is_governance_truth: true
+
+domain_order:
+  - finance
+  - sales
+  - inventory
+  - projects
+  - hr
+  - tax_compliance
+  - pulser_ops
+
+global_dimensions:
+  - date
+  - fiscal_period
+  - tenant
+  - company
+  - customer
+  - vendor
+  - employee
+  - product
+  - product_category
+  - warehouse
+  - project
+  - currency
+  - tax_jurisdiction
+  - compliance_case_status
+  - assistant_capability
+  - eval_status
+
+global_metric_policies:
+  single_metric_definition_per_name: true
+  dimension_conformance_required: true
+  uc_registration_required: true
+  lineage_required: true
+  tenant_scope_required: true
+  company_scope_required: true
+  direct_raw_odoo_query_not_semantic_default: true
+
+domains:
+  finance:
+    owner: finance
+    uc_schema: finance
+    grains:
+      - journal_entry_line
+      - invoice
+      - payment
+      - bank_statement_line
+      - analytic_line
+    metrics:
+      - revenue
+      - invoiced_amount
+      - collected_cash
+      - overdue_ar
+      - open_ap
+      - cash_position
+      - cogs
+      - gross_margin
+      - close_completion_rate
+    dimensions:
+      - date
+      - fiscal_period
+      - tenant
+      - company
+      - customer
+      - vendor
+      - currency
+      - project
+
+  sales:
+    owner: commercial_ops
+    uc_schema: sales
+    grains:
+      - crm_lead
+      - sales_order
+      - sales_order_line
+    metrics:
+      - pipeline_value
+      - expected_revenue
+      - quotation_amount
+      - sales_order_amount
+      - win_rate
+      - average_sales_cycle_days
+    dimensions:
+      - date
+      - fiscal_period
+      - tenant
+      - company
+      - customer
+      - product
+      - product_category
+
+  inventory:
+    owner: supply_chain
+    uc_schema: inventory
+    grains:
+      - stock_move
+      - stock_move_line
+      - stock_quant
+      - purchase_order_line
+      - mrp_production
+    metrics:
+      - inventory_on_hand
+      - inventory_value
+      - inbound_qty
+      - outbound_qty
+      - purchase_commitment
+      - manufacturing_output_qty
+    dimensions:
+      - date
+      - fiscal_period
+      - tenant
+      - company
+      - product
+      - product_category
+      - warehouse
+      - vendor
+
+  projects:
+    owner: services_delivery
+    uc_schema: projects
+    grains:
+      - project
+      - task
+      - timesheet_line
+      - analytic_line
+      - expense_line
+    metrics:
+      - project_burn
+      - billable_hours
+      - nonbillable_hours
+      - billable_utilization
+      - budget_variance
+      - delivery_risk_count
+    dimensions:
+      - date
+      - fiscal_period
+      - tenant
+      - company
+      - customer
+      - project
+      - employee
+
+  hr:
+    owner: people_ops
+    uc_schema: hr
+    grains:
+      - employee
+      - attendance
+      - leave_entry
+      - expense_line
+      - applicant
+    metrics:
+      - headcount
+      - attendance_hours
+      - leave_days
+      - reimbursable_expense_amount
+      - open_requisitions
+    dimensions:
+      - date
+      - fiscal_period
+      - tenant
+      - company
+      - employee
+      - department
+
+  tax_compliance:
+    owner: finance_compliance
+    uc_schema: tax_compliance
+    grains:
+      - taxable_transaction
+      - tax_determination
+      - compliance_case
+      - tax_review_task
+    metrics:
+      - tax_due
+      - tax_variance
+      - ambiguous_tax_case_count
+      - compliance_case_open_count
+      - preview_to_post_delta_count
+    dimensions:
+      - date
+      - fiscal_period
+      - tenant
+      - company
+      - customer
+      - vendor
+      - tax_jurisdiction
+      - compliance_case_status
+
+  pulser_ops:
+    owner: platform_ai
+    uc_schema: pulser_ops
+    grains:
+      - assistant_session
+      - assistant_interaction
+      - tool_call
+      - eval_run
+      - close_task
+      - compliance_case
+    metrics:
+      - interaction_count
+      - grounded_answer_rate
+      - successful_tool_call_rate
+      - eval_pass_rate
+      - close_task_completion_rate
+      - compliance_case_resolution_time_hours
+    dimensions:
+      - date
+      - fiscal_period
+      - tenant
+      - company
+      - assistant_capability
+      - eval_status
+      - compliance_case_status
+
+derived_model_bindings:
+  curated_fact_dimension_map: ssot/semantic/curated-fact-dimension-map.yaml

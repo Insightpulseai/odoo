@@ -1,0 +1,37 @@
+metric: revenue
+domain: finance
+owner: finance
+grain: journal_entry_line
+
+description: >
+  Sum of recognized revenue from curated finance facts for a tenant/company/fiscal slice.
+
+source_objects:
+  - main.finance.fact_revenue
+
+dimensions:
+  - date
+  - fiscal_period
+  - tenant
+  - company
+  - customer
+  - product
+  - currency
+  - project
+
+aggregation:
+  default: sum
+  allowed:
+    - sum
+
+security_scope:
+  - tenant
+  - company
+
+lineage:
+  required: true
+
+business_rules:
+  - defined_once_only
+  - sourced_from_curated_finance_fact
+  - not_computed_directly_from_raw_odoo_tables_by_default

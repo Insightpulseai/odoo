@@ -1,0 +1,59 @@
+version: 1
+
+metrics:
+  finance:
+    - revenue
+    - invoiced_amount
+    - collected_cash
+    - overdue_ar
+    - open_ap
+    - cash_position
+    - cogs
+    - gross_margin
+    - close_completion_rate
+
+  sales:
+    - pipeline_value
+    - expected_revenue
+    - quotation_amount
+    - sales_order_amount
+    - win_rate
+    - average_sales_cycle_days
+
+  inventory:
+    - inventory_on_hand
+    - inventory_value
+    - inbound_qty
+    - outbound_qty
+    - purchase_commitment
+    - manufacturing_output_qty
+
+  projects:
+    - project_burn
+    - billable_hours
+    - nonbillable_hours
+    - billable_utilization
+    - budget_variance
+    - delivery_risk_count
+
+  hr:
+    - headcount
+    - attendance_hours
+    - leave_days
+    - reimbursable_expense_amount
+    - open_requisitions
+
+  tax_compliance:
+    - tax_due
+    - tax_variance
+    - ambiguous_tax_case_count
+    - compliance_case_open_count
+    - preview_to_post_delta_count
+
+  pulser_ops:
+    - interaction_count
+    - grounded_answer_rate
+    - successful_tool_call_rate
+    - eval_pass_rate
+    - close_task_completion_rate
+    - compliance_case_resolution_time_hours
