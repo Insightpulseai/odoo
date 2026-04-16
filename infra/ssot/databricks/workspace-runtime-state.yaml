@@ -1,0 +1,19 @@
+contract_version: 1
+
+observed_workspaces:
+  dbw-ipai-dev:
+    classification: runtime_evidence
+    environment: dev
+    resource_type: Azure Databricks Service
+    status: Active
+    workspace_type: Hybrid
+    pricing_tier: Premium
+    resource_group: rg-ipai-dev-ai-sea
+    managed_resource_group: rg-ipai-dev-dbw-managed
+    location: southeastasia
+    subscription_name: Microsoft Azure Sponsorship
+    subscription_id: eba824fb-332d-4623-9dfb-2c9f7ee83f4e
+    workspace_url: https://adb-7405608559466577.17.azuredatabricks.net
+    evidence_source:
+      type: portal_screenshot
+      captured_on: 2026-04-16
