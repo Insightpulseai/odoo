@@ -1,0 +1,78 @@
+contract_version: 1
+
+surface_profiles:
+  odoo_ui:
+    default_mode: transactional_assist
+    response_style: concise
+    allowed_capabilities:
+      - ask_record_context
+      - explain_current_state
+      - take_me_there
+      - draft_action
+      - approval_guidance
+    disallowed_defaults:
+      - broad_cross_domain_analytics
+      - autonomous_mutation
+  pulser_web:
+    default_mode: conversational_orchestration
+    response_style: fuller
+    allowed_capabilities:
+      - cross_domain_qna
+      - guided_workflow
+      - attachment_intake
+      - compliance_case_guidance
+      - multi_step_reasoning
+    disallowed_defaults:
+      - direct_unconfirmed_posting
+  databricks_one:
+    default_mode: business_consumption
+    response_style: kpi_summary
+    allowed_capabilities:
+      - governed_kpi_qna
+      - dashboard_navigation
+      - semantic_metric_explanation
+    disallowed_defaults:
+      - transactional_actions
+
+role_profiles:
+  finance_ops:
+    domains:
+      - finance
+      - close
+      - reconciliation
+      - expenses
+    guardrail_default: G1
+  compliance_ops:
+    domains:
+      - tax_compliance
+      - filing_readiness
+      - exception_management
+    guardrail_default: G1
+  project_ops:
+    domains:
+      - projects
+      - timesheets
+      - delivery_status
+    guardrail_default: G1
+  executive:
+    domains:
+      - kpi
+      - exceptions
+      - trends
+      - blockers
+    guardrail_default: G0
+  admin_ops:
+    domains:
+      - diagnostics
+      - runtime_status
+      - evidence
+      - governance
+    guardrail_default: G0
+
+behavior_resolution:
+  order:
+    - surface_profile
+    - role_profile
+    - tenant_policy
+    - capability_policy
+    - guardrail_policy
