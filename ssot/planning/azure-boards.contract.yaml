@@ -1,0 +1,70 @@
+contract_version: 1
+
+planning_plane:
+  system: azure_boards
+  authority: planning_truth
+  scopes:
+    - portfolio_planning
+    - backlog_management
+    - sprint_planning
+    - work_item_tracking
+    - dependency_visibility
+    - analytics_reporting
+
+core_objects:
+  primary_unit: work_item
+  hubs:
+    - work_items
+    - boards
+    - backlogs
+    - sprints
+    - queries
+    - delivery_plans
+    - analytics_views
+
+team_model:
+  team_scoping_basis:
+    - area_paths
+    - iteration_paths
+  rule:
+    each_team_owns_its_backlog_and_board
+
+integrations:
+  github:
+    supported: true
+    capabilities:
+      - link_commits_to_work_items
+      - link_branches_to_work_items
+      - link_pull_requests_to_work_items
+  pipelines_traceability:
+    supported: true
+    capabilities:
+      - link_builds_to_work_items
+      - link_releases_to_work_items
+      - trace_requirement_to_production
+
+automation_surfaces:
+  cli:
+    tool: az_boards
+    scope:
+      - area_paths
+      - iterations
+      - queries
+      - work_items
+  api:
+    tool: azure_devops_work_rest_api
+    scope:
+      - boards
+      - board_columns
+      - card_rules
+      - charts
+      - team_settings
+      - team_iterations
+      - team_capacity
+
+truth_precedence:
+  - azure_boards_work_items
+  - planning_ssot
+  - repo_map
+  - release_contract
+  - chat_context
