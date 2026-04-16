@@ -1,0 +1,159 @@
+Project "IPAI Purchase/Inventory/MRP — Odoo CE 18 bounded context" {
+  database_type: 'PostgreSQL'
+  Note: 'Bounded context: Purchase orders, warehouse/inventory, stock movements. Source: Odoo CE 18 models purchase.order, stock.*, uom.*.'
+}
+
+Table purchase_order {
+  id              integer   [pk, increment]
+  name            varchar   [not null]
+  state           varchar   [not null, note: 'draft, sent, to approve, purchase, done, cancel']
+  partner_id      integer   [not null, ref: > res_partner.id]
+  date_order      timestamp
+  date_planned    timestamp
+  currency_id     integer   [not null, ref: > res_currency.id]
+  amount_total    numeric   [not null]
+  company_id      integer   [not null, ref: > res_company.id]
+  picking_type_id integer   [ref: > stock_picking_type.id]
+}
+
+Table purchase_order_line {
+  id              integer  [pk, increment]
+  order_id        integer  [not null, ref: > purchase_order.id]
+  product_id      integer  [not null, ref: > product_product.id]
+  name            varchar  [not null]
+  product_qty     numeric  [not null]
+  price_unit      numeric  [not null]
+  price_subtotal  numeric
+  date_planned    timestamp
+  product_uom     integer  [ref: > uom_uom.id]
+  Note: 'taxes_id is M2M via purchase_order_line_tax_rel join table'
+}
+
+Table purchase_order_line_tax_rel {
+  order_line_id  integer  [not null, ref: > purchase_order_line.id]
+  tax_id         integer  [not null, ref: > account_tax.id]
+  indexes {
+    (order_line_id, tax_id) [pk]
+  }
+}
+
+Table stock_warehouse {
+  id              integer  [pk, increment]
+  name            varchar  [not null]
+  code            varchar  [not null]
+  company_id      integer  [not null, ref: > res_company.id]
+  lot_stock_id    integer  [ref: > stock_location.id]
+  partner_id      integer  [ref: > res_partner.id]
+}
+
+Table stock_location {
+  id             integer  [pk, increment]
+  name           varchar  [not null]
+  complete_name  varchar
+  usage          varchar  [not null, note: 'internal, customer, supplier, transit, production, inventory']
+  company_id     integer  [ref: > res_company.id]
+  location_id    integer  [ref: > stock_location.id, note: 'parent location (self-ref)']
+}
+
+Table stock_picking_type {
+  id           integer  [pk, increment]
+  name         varchar  [not null]
+  code         varchar  [note: 'incoming, outgoing, internal']
+  warehouse_id integer  [ref: > stock_warehouse.id]
+  company_id   integer  [ref: > res_company.id]
+}
+
+Table stock_picking {
+  id              integer   [pk, increment]
+  name            varchar   [not null]
+  origin          varchar
+  state           varchar   [not null, note: 'draft, waiting, confirmed, assigned, done, cancel']
+  picking_type_id integer   [not null, ref: > stock_picking_type.id]
+  partner_id      integer   [ref: > res_partner.id]
+  location_id     integer   [not null, ref: > stock_location.id]
+  location_dest_id integer  [not null, ref: > stock_location.id]
+  scheduled_date  timestamp
+  date_done       timestamp
+  company_id      integer   [not null, ref: > res_company.id]
+}
+
+Table stock_move {
+  id               integer  [pk, increment]
+  name             varchar  [not null]
+  product_id       integer  [not null, ref: > product_product.id]
+  product_uom_qty  numeric  [not null]
+  quantity         numeric
+  picking_id       integer  [ref: > stock_picking.id]
+  location_id      integer  [not null, ref: > stock_location.id]
+  location_dest_id integer  [not null, ref: > stock_location.id]
+  state            varchar  [not null, note: 'draft, cancel, waiting, confirmed, partially_available, assigned, done']
+  company_id       integer  [not null, ref: > res_company.id]
+}
+
+Table stock_move_line {
+  id               integer  [pk, increment]
+  move_id          integer  [ref: > stock_move.id]
+  product_id       integer  [not null, ref: > product_product.id]
+  qty_done         numeric
+  lot_id           integer  [ref: > stock_lot.id]
+  location_id      integer  [not null, ref: > stock_location.id]
+  location_dest_id integer  [not null, ref: > stock_location.id]
+  picking_id       integer  [ref: > stock_picking.id]
+}
+
+Table stock_quant {
+  id                   integer  [pk, increment]
+  product_id           integer  [not null, ref: > product_product.id]
+  location_id          integer  [not null, ref: > stock_location.id]
+  quantity             numeric  [not null]
+  reserved_quantity    numeric
+  lot_id               integer  [ref: > stock_lot.id]
+  company_id           integer  [not null, ref: > res_company.id]
+}
+
+Table stock_lot {
+  id          integer  [pk, increment]
+  name        varchar  [not null]
+  product_id  integer  [not null, ref: > product_product.id]
+  company_id  integer  [not null, ref: > res_company.id]
+}
+
+Table uom_category {
+  id    integer  [pk, increment]
+  name  varchar  [not null]
+}
+
+Table uom_uom {
+  id           integer  [pk, increment]
+  name         varchar  [not null]
+  category_id  integer  [not null, ref: > uom_category.id]
+  factor       float
+  rounding     float
+  active       boolean
+}
+
+// Shared dimension stubs
+Table res_partner {
+  id    integer  [pk]
+  name  varchar
+}
+
+Table res_company {
+  id    integer  [pk]
+  name  varchar
+}
+
+Table res_currency {
+  id    integer  [pk]
+  name  varchar
+}
+
+Table product_product {
+  id    integer  [pk]
+  name  varchar
+}
+
+Table account_tax {
+  id    integer  [pk]
+  name  varchar
+}

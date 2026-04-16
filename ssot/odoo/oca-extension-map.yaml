@@ -1,0 +1,368 @@
+# OCA Extension Map — Odoo CE 18
+# Locked: 2026-04-16
+# Authority: this file maps OCA modules to the bounded contexts they extend.
+# Per CLAUDE.md doctrine: Config → CE → OCA → ipai_* (last resort)
+#
+# Maturity levels per OCA: beta | production/stable | mature
+# Adoption: baseline (always install) | optional (install when needed) | reference (pattern only)
+# Source: https://odoo-community.org/list-of-must-have-oca-modules
+
+schema_version: 1
+last_updated: "2026-04-16"
+
+extension_lanes:
+
+  # =========================================================================
+  # Base / Server Tools
+  # =========================================================================
+  oca_base:
+    repo: OCA/server-tools
+    extends: spine
+    modules:
+      - name: base_technical_user
+        maturity: production/stable
+        adoption: baseline
+        extends_model: res.users
+        purpose: service account for automated actions
+
+      - name: base_user_role
+        maturity: production/stable
+        adoption: baseline
+        extends_model: res.users + res.groups
+        purpose: simplified role-based access
+
+      - name: module_auto_update
+        maturity: production/stable
+        adoption: baseline
+        extends_model: ir.module.module
+        purpose: auto-detect and update changed modules
+
+  oca_server_ux:
+    repo: OCA/server-ux
+    extends: spine
+    modules:
+      - name: date_range
+        maturity: mature
+        adoption: baseline
+        purpose: reusable date range objects (fiscal periods, reporting)
+
+      - name: base_tier_validation
+        maturity: production/stable
+        adoption: baseline
+        purpose: multi-level approval workflows
+
+  # =========================================================================
+  # Accounting / Finance
+  # =========================================================================
+  oca_accounting:
+    repo: OCA/account-financial-reporting
+    extends: finance
+    modules:
+      - name: account_financial_report
+        maturity: mature
+        adoption: baseline
+        extends_model: account.move.line
+        purpose: trial balance, general ledger, aged partner balance reports
+
+  oca_account_tools:
+    repo: OCA/account-financial-tools
+    extends: finance
+    modules:
+      - name: account_lock_date_update
+        maturity: production/stable
+        adoption: baseline
+        extends_model: res.company
+        purpose: wizard to update lock dates
+
+      - name: account_move_name_sequence
+        maturity: production/stable
+        adoption: optional
+        extends_model: account.move
+        purpose: customizable journal entry naming
+
+      - name: account_asset_management
+        maturity: mature
+        adoption: baseline
+        extends_model: account.move
+        purpose: fixed asset depreciation (EE parity)
+
+  oca_account_reconcile:
+    repo: OCA/account-reconcile
+    extends: finance
+    modules:
+      - name: account_reconcile_oca
+        maturity: production/stable
+        adoption: baseline
+        extends_model: account.bank.statement.line
+        purpose: enhanced bank reconciliation (EE parity)
+
+  oca_account_payment:
+    repo: OCA/account-payment
+    extends: finance
+    modules:
+      - name: account_payment_order
+        maturity: mature
+        adoption: baseline
+        extends_model: account.payment
+        purpose: batch payment processing
+
+  oca_currency:
+    repo: OCA/currency
+    extends: finance
+    modules:
+      - name: currency_rate_update
+        maturity: mature
+        adoption: baseline
+        extends_model: res.currency.rate
+        purpose: auto-fetch exchange rates (BSP, ECB, etc.)
+
+  oca_budget:
+    repo: OCA/account-budgeting
+    extends: finance
+    modules:
+      - name: account_budget_oca
+        maturity: production/stable
+        adoption: baseline
+        extends_model: account.analytic.account
+        purpose: budget management (EE parity)
+
+  # =========================================================================
+  # Sales / CRM
+  # =========================================================================
+  oca_sales:
+    repo: OCA/sale-workflow
+    extends: sales_crm
+    modules:
+      - name: sale_order_line_sequence
+        maturity: production/stable
+        adoption: optional
+        extends_model: sale.order.line
+        purpose: manual line ordering
+
+      - name: sale_order_type
+        maturity: production/stable
+        adoption: optional
+        extends_model: sale.order
+        purpose: order type classification
+
+  oca_crm:
+    repo: OCA/crm
+    extends: sales_crm
+    modules:
+      - name: crm_stage_probability
+        maturity: production/stable
+        adoption: optional
+        extends_model: crm.lead
+        purpose: stage-based win probability
+
+  # =========================================================================
+  # Purchase / Stock / Logistics
+  # =========================================================================
+  oca_purchase:
+    repo: OCA/purchase-workflow
+    extends: purchase_inventory
+    modules:
+      - name: purchase_order_approved
+        maturity: production/stable
+        adoption: baseline
+        extends_model: purchase.order
+        purpose: approval workflow for POs
+
+  oca_stock:
+    repo: OCA/stock-logistics-workflow
+    extends: purchase_inventory
+    modules:
+      - name: stock_no_negative
+        maturity: production/stable
+        adoption: baseline
+        extends_model: stock.quant
+        purpose: prevent negative stock
+
+  oca_bank_statement:
+    repo: OCA/bank-statement-import
+    extends: finance
+    modules:
+      - name: account_statement_import
+        maturity: mature
+        adoption: baseline
+        extends_model: account.bank.statement
+        purpose: bank statement file import (CSV, OFX, QIF, CAMT)
+
+  # =========================================================================
+  # Project / Services
+  # =========================================================================
+  oca_project:
+    repo: OCA/project
+    extends: projects
+    modules:
+      - name: project_task_default_stage
+        maturity: production/stable
+        adoption: optional
+        extends_model: project.task.type
+        purpose: default stages per project
+
+      - name: project_timeline
+        maturity: production/stable
+        adoption: optional
+        extends_model: project.task
+        purpose: Gantt-like timeline view
+
+  oca_timesheet:
+    repo: OCA/timesheet
+    extends: projects
+    modules:
+      - name: hr_timesheet_sheet
+        maturity: mature
+        adoption: baseline
+        extends_model: account.analytic.line
+        purpose: timesheet approval workflow (EE parity)
+
+  # =========================================================================
+  # HR / Workforce
+  # =========================================================================
+  oca_hr:
+    repo: OCA/hr
+    extends: hr
+    modules:
+      - name: hr_employee_document
+        maturity: production/stable
+        adoption: optional
+        extends_model: hr.employee
+        purpose: document management per employee
+
+  oca_payroll:
+    repo: OCA/payroll
+    extends: hr
+    modules:
+      - name: hr_payroll_community
+        maturity: production/stable
+        adoption: optional
+        extends_model: hr.contract
+        purpose: payroll computation (EE parity)
+
+  # =========================================================================
+  # Partner / Contact
+  # =========================================================================
+  oca_partner:
+    repo: OCA/partner-contact
+    extends: spine
+    modules:
+      - name: partner_firstname
+        maturity: mature
+        adoption: baseline
+        extends_model: res.partner
+        purpose: split first/last name on contacts
+
+      - name: partner_contact_gender
+        maturity: production/stable
+        adoption: optional
+        extends_model: res.partner
+
+      - name: partner_contact_nationality
+        maturity: production/stable
+        adoption: optional
+        extends_model: res.partner
+
+  # =========================================================================
+  # Website / Marketing
+  # =========================================================================
+  oca_website:
+    repo: OCA/website
+    extends: website_marketing
+    modules:
+      - name: website_legal_page
+        maturity: production/stable
+        adoption: optional
+        extends_model: website
+        purpose: legal/privacy page management
+
+  # =========================================================================
+  # Connector / Queue / Integration
+  # =========================================================================
+  oca_connector:
+    repo: OCA/connector
+    extends: platform
+    modules:
+      - name: connector
+        maturity: mature
+        adoption: reference
+        purpose: generic connector framework (pattern reference only)
+
+  oca_queue:
+    repo: OCA/queue
+    extends: platform
+    modules:
+      - name: queue_job
+        maturity: mature
+        adoption: baseline
+        purpose: async background job execution (critical for agent workloads)
+
+      - name: queue_job_cron_jobrunner
+        maturity: production/stable
+        adoption: baseline
+        purpose: cron-based job runner for containerized deploys
+
+  # =========================================================================
+  # Localization — PH
+  # =========================================================================
+  oca_l10n_ph:
+    repo: OCA/l10n-philippines
+    extends: finance
+    modules:
+      - name: l10n_ph
+        maturity: beta
+        adoption: optional
+        purpose: PH chart of accounts + fiscal localization
+        note: "Verify 18.0 readiness before adopting"
+
+# =============================================================================
+# ipai_* bridge/overlay modules (thin deltas only)
+# =============================================================================
+ipai_extensions:
+  - name: ipai_bir_tax_compliance
+    extends: finance
+    extends_model: account.move + account.tax
+    purpose: PH BIR 2307/2316/1601C/1701Q computation + filing
+    type: bridge
+
+  - name: ipai_expense_liquidation
+    extends: finance
+    extends_model: hr.expense.sheet
+    purpose: PH expense liquidation workflow (cash advance → liquidation)
+    type: bridge
+
+  - name: ipai_ar_collections
+    extends: finance
+    extends_model: account.move (out_invoice)
+    purpose: AR aging + collection agent surface
+    type: overlay
+
+  - name: ipai_finance_ppm
+    extends: projects
+    extends_model: project.project + account.analytic.line
+    purpose: Clarity PPM-like portfolio management overlay
+    type: overlay
+
+  - name: ipai_odoo_copilot
+    extends: platform
+    extends_model: mail.message (chat surface)
+    purpose: Pulser chat widget + skill router + Foundry integration
+    type: overlay
+
+  - name: ipai_web_branding
+    extends: website_marketing
+    extends_model: web.login template
+    purpose: login page branding (Entra + Google OAuth buttons)
+    type: overlay
+
+# =============================================================================
+# Rules
+# =============================================================================
+rules:
+  - "OCA modules listed as 'baseline' should be installed in every environment"
+  - "OCA modules listed as 'optional' are installed only when the use case demands"
+  - "OCA modules listed as 'reference' are pattern references, not installed"
+  - "ipai_* modules must have MODULE_INTROSPECTION.md + TECHNICAL_GUIDE.md per CLAUDE.md doctrine"
+  - "Every module that extends a core model must declare extends_model"
+  - "Maturity level must match OCA's published classification at time of adoption"
+  - "No EE modules — OCA parity modules replace EE functionality"

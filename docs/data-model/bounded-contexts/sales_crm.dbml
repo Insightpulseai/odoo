@@ -1,0 +1,162 @@
+Project "IPAI Sales/CRM — Odoo CE 18 bounded context" {
+  database_type: 'PostgreSQL'
+  Note: 'Bounded context: Sales and CRM pipeline. Source: Odoo CE 18 models crm.lead, sale.order, product.pricelist.'
+}
+
+Table crm_lead {
+  id                integer     [pk, increment]
+  name              varchar     [not null]
+  type              varchar     [not null, note: 'lead or opportunity']
+  partner_id        integer     [ref: > res_partner.id]
+  partner_name      varchar
+  contact_name      varchar
+  email_from        varchar
+  phone             varchar
+  expected_revenue  numeric
+  probability       float
+  stage_id          integer     [not null, ref: > crm_stage.id]
+  team_id           integer     [ref: > crm_team.id]
+  user_id           integer     [ref: > res_users.id]
+  company_id        integer     [ref: > res_company.id]
+  date_deadline     date
+  source_id         integer     [ref: > utm_source.id]
+  medium_id         integer     [ref: > utm_medium.id]
+  campaign_id       integer     [ref: > utm_campaign.id]
+  create_date       timestamp
+  write_date        timestamp
+}
+
+Table crm_stage {
+  id        integer  [pk, increment]
+  name      varchar  [not null]
+  sequence  integer
+  is_won    boolean
+  fold      boolean
+}
+
+Table crm_team {
+  id          integer  [pk, increment]
+  name        varchar  [not null]
+  company_id  integer  [ref: > res_company.id]
+  user_id     integer  [ref: > res_users.id]
+}
+
+Table utm_source {
+  id    integer  [pk, increment]
+  name  varchar  [not null]
+}
+
+Table utm_medium {
+  id    integer  [pk, increment]
+  name  varchar  [not null]
+}
+
+Table utm_campaign {
+  id    integer  [pk, increment]
+  name  varchar  [not null]
+}
+
+Table sale_order {
+  id                  integer   [pk, increment]
+  name                varchar   [not null]
+  state               varchar   [not null, note: 'draft, sent, sale, done, cancel']
+  partner_id          integer   [not null, ref: > res_partner.id]
+  partner_invoice_id  integer   [not null, ref: > res_partner.id]
+  partner_shipping_id integer   [not null, ref: > res_partner.id]
+  date_order          timestamp
+  validity_date       date
+  pricelist_id        integer   [ref: > product_pricelist.id]
+  currency_id         integer   [not null, ref: > res_currency.id]
+  amount_untaxed      numeric   [not null]
+  amount_tax          numeric   [not null]
+  amount_total        numeric   [not null]
+  company_id          integer   [not null, ref: > res_company.id]
+  user_id             integer   [ref: > res_users.id]
+  team_id             integer   [ref: > crm_team.id]
+  invoice_status      varchar   [note: 'upselling, invoiced, to invoice, nothing']
+}
+
+Table sale_order_line {
+  id               integer  [pk, increment]
+  order_id         integer  [not null, ref: > sale_order.id]
+  product_id       integer  [ref: > product_product.id]
+  name             varchar  [not null]
+  product_uom_qty  numeric  [not null]
+  price_unit       numeric  [not null]
+  discount         float
+  price_subtotal   numeric
+  price_total      numeric
+  product_uom      integer  [ref: > uom_uom.id]
+  company_id       integer  [ref: > res_company.id]
+  Note: 'tax_id is M2M via sale_order_line_tax_rel join table'
+}
+
+Table sale_order_line_tax_rel {
+  order_line_id  integer  [not null, ref: > sale_order_line.id]
+  tax_id         integer  [not null, ref: > account_tax.id]
+  indexes {
+    (order_line_id, tax_id) [pk]
+  }
+}
+
+Table product_pricelist {
+  id          integer  [pk, increment]
+  name        varchar  [not null]
+  currency_id integer  [not null, ref: > res_currency.id]
+  company_id  integer  [ref: > res_company.id]
+  active      boolean
+}
+
+Table product_pricelist_item {
+  id              integer  [pk, increment]
+  pricelist_id    integer  [not null, ref: > product_pricelist.id]
+  product_tmpl_id integer  [ref: > product_template.id]
+  product_id      integer  [ref: > product_product.id]
+  min_quantity    numeric
+  fixed_price     numeric
+  percent_price   float
+  compute_price   varchar  [note: 'fixed, percentage, formula']
+  date_start      date
+  date_end        date
+}
+
+// Shared dimension stubs (defined canonically in finance_accounting.dbml)
+Table res_partner {
+  id    integer  [pk]
+  name  varchar
+}
+
+Table res_users {
+  id    integer  [pk]
+  name  varchar
+}
+
+Table res_company {
+  id    integer  [pk]
+  name  varchar
+}
+
+Table res_currency {
+  id    integer  [pk]
+  name  varchar
+}
+
+Table product_product {
+  id    integer  [pk]
+  name  varchar
+}
+
+Table product_template {
+  id    integer  [pk]
+  name  varchar
+}
+
+Table uom_uom {
+  id    integer  [pk]
+  name  varchar
+}
+
+Table account_tax {
+  id    integer  [pk]
+  name  varchar
+}

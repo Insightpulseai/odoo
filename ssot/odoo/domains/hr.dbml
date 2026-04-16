@@ -1,0 +1,128 @@
+Project "IPAI HR/Workforce — Odoo CE 18 bounded context" {
+  database_type: 'PostgreSQL'
+  Note: 'Bounded context: Employees, departments, contracts, attendance, leaves, and recruitment. Source: Odoo CE 18 models hr.employee, hr.contract, hr.attendance, hr.leave, hr.applicant.'
+}
+
+Table hr_employee {
+  id             integer  [pk, increment]
+  name           varchar  [not null]
+  user_id        integer  [ref: > res_users.id, note: 'linked portal/internal user']
+  company_id     integer  [not null, ref: > res_company.id]
+  department_id  integer  [ref: > hr_department.id]
+  job_id         integer  [ref: > hr_job.id]
+  job_title      varchar
+  work_email     varchar
+  work_phone     varchar
+  resource_id    integer  [not null, ref: > resource_resource.id]
+  parent_id      integer  [ref: > hr_employee.id, note: 'manager (self-ref)']
+  coach_id       integer  [ref: > hr_employee.id, note: 'coach (self-ref)']
+  active         boolean
+}
+
+Table hr_department {
+  id             integer  [pk, increment]
+  name           varchar  [not null]
+  company_id     integer  [not null, ref: > res_company.id]
+  parent_id      integer  [ref: > hr_department.id, note: 'parent department (self-ref)']
+  manager_id     integer  [ref: > hr_employee.id]
+  complete_name  varchar  [note: 'computed hierarchical label']
+}
+
+Table hr_job {
+  id                  integer  [pk, increment]
+  name                varchar  [not null]
+  department_id       integer  [ref: > hr_department.id]
+  company_id          integer  [ref: > res_company.id]
+  no_of_recruitment   integer
+}
+
+Table hr_contract {
+  id             integer   [pk, increment]
+  name           varchar   [not null]
+  employee_id    integer   [not null, ref: > hr_employee.id]
+  department_id  integer   [ref: > hr_department.id]
+  job_id         integer   [ref: > hr_job.id]
+  company_id     integer   [not null, ref: > res_company.id]
+  state          varchar   [not null, note: 'draft, open, close, cancel']
+  date_start     date      [not null]
+  date_end       date
+  wage           numeric   [not null]
+  struct_id      integer   [ref: > hr_payroll_structure.id]
+}
+
+Table hr_payroll_structure {
+  id          integer  [pk, increment]
+  name        varchar  [not null]
+  company_id  integer  [ref: > res_company.id]
+}
+
+Table hr_attendance {
+  id            integer   [pk, increment]
+  employee_id   integer   [not null, ref: > hr_employee.id]
+  check_in      timestamp [not null]
+  check_out     timestamp
+  worked_hours  float     [note: 'computed']
+}
+
+Table hr_leave {
+  id                 integer   [pk, increment]
+  employee_id        integer   [not null, ref: > hr_employee.id]
+  holiday_status_id  integer   [not null, ref: > hr_leave_type.id]
+  date_from          timestamp [not null]
+  date_to            timestamp [not null]
+  number_of_days     float
+  state              varchar   [not null, note: 'draft, confirm, validate1, validate, refuse']
+  company_id         integer   [not null, ref: > res_company.id]
+}
+
+Table hr_leave_type {
+  id                     integer  [pk, increment]
+  name                   varchar  [not null]
+  company_id             integer  [ref: > res_company.id]
+  requires_allocation    varchar  [note: 'yes, no']
+  leave_validation_type  varchar  [note: 'no_validation, time_off, both']
+}
+
+Table hr_applicant {
+  id               integer  [pk, increment]
+  partner_name     varchar
+  partner_id       integer  [ref: > res_partner.id]
+  job_id           integer  [ref: > hr_job.id]
+  department_id    integer  [ref: > hr_department.id]
+  stage_id         integer  [ref: > hr_recruitment_stage.id]
+  user_id          integer  [ref: > res_users.id]
+  priority         varchar  [note: '0 normal, 1 good, 2 very good, 3 excellent']
+  salary_expected  numeric
+  salary_proposed  numeric
+  company_id       integer  [ref: > res_company.id]
+}
+
+Table hr_recruitment_stage {
+  id        integer  [pk, increment]
+  name      varchar  [not null]
+  sequence  integer
+  fold      boolean
+}
+
+Table resource_resource {
+  id          integer  [pk, increment]
+  name        varchar  [not null]
+  company_id  integer  [ref: > res_company.id]
+  user_id     integer  [ref: > res_users.id]
+}
+
+// Shared dimension stubs
+Table res_partner {
+  id    integer  [pk]
+  name  varchar
+}
+
+Table res_users {
+  id    integer  [pk]
+  name  varchar
+}
+
+Table res_company {
+  id    integer  [pk]
+  name  varchar
+}

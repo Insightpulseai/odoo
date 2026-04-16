@@ -1,0 +1,216 @@
+# SSOT — Unity Catalog Governance Map
+# Locked: 2026-04-16
+# Authority: this file governs the analytics and AI projection in Databricks UC.
+# UC is the GOVERNANCE/DISCOVERY/ACCESS layer, NOT the OLTP schema.
+# OLTP truth = Odoo ORM (ssot/odoo/orm-registry.yaml).
+#
+# Reference: https://www.databricks.com/product/unity-catalog
+# Companion: docs/architecture/databricks-one-and-workspace-operating-model.md
+
+schema_version: 1
+last_updated: "2026-04-16"
+workspace: dbw-ipai-dev
+workspace_url: "https://adb-7405608559466577.17.azuredatabricks.net"
+
+catalogs:
+
+  ppm:
+    description: "IPAI Finance / PPM / Operations analytics catalog"
+    schemas:
+
+      bronze:
+        description: "Raw Odoo exports, minimally transformed"
+        objects:
+          - object_name: account_move_raw
+            object_type: table
+            source_domain: finance
+            source_model: account.move
+            owner: data
+            classification: confidential
+            policy_class: multi-company
+            lineage_required: true
+            quality_monitoring_class: freshness + completeness
+            business_semantics_binding: null
+            shareability: internal
+
+          - object_name: res_partner_raw
+            object_type: table
+            source_domain: spine
+            source_model: res.partner
+            owner: data
+            classification: confidential
+            policy_class: multi-company
+            lineage_required: true
+            quality_monitoring_class: completeness
+            shareability: internal
+
+          - object_name: project_task_raw
+            object_type: table
+            source_domain: projects
+            source_model: project.task
+            owner: data
+            classification: internal
+            policy_class: multi-company
+            lineage_required: true
+            quality_monitoring_class: freshness
+            shareability: internal
+
+      silver:
+        description: "Cleaned, type-conformed, joined"
+        objects:
+          - object_name: account_move_cleaned
+            object_type: table
+            source_domain: finance
+            owner: data
+            classification: confidential
+            lineage_required: true
+            quality_monitoring_class: accuracy + completeness
+            shareability: internal
+
+          - object_name: res_partner_cleaned
+            object_type: table
+            source_domain: spine
+            owner: data
+            classification: confidential
+            lineage_required: true
+            quality_monitoring_class: dedup + completeness
+            shareability: internal
+
+      gold:
+        description: "Domain aggregates — the consumer layer for BI + Fabric + agents"
+        objects:
+          - object_name: finance_gl_trial_balance
+            object_type: table
+            source_domain: finance
+            owner: data
+            classification: confidential
+            policy_class: multi-company + row-level
+            lineage_required: true
+            quality_monitoring_class: accuracy + timeliness
+            business_semantics_binding: cdm.JournalLine aggregated
+            shareability: internal
+
+          - object_name: finance_ap_aging
+            object_type: table
+            source_domain: finance
+            owner: data
+            classification: confidential
+            policy_class: multi-company
+            lineage_required: true
+            quality_monitoring_class: accuracy
+            business_semantics_binding: cdm.VendorInvoice aged
+            shareability: internal
+
+          - object_name: finance_ar_aging
+            object_type: table
+            source_domain: finance
+            owner: data
+            classification: confidential
+            policy_class: multi-company
+            lineage_required: true
+            quality_monitoring_class: accuracy
+            business_semantics_binding: cdm.Invoice aged
+            shareability: internal
+
+          - object_name: finance_cash_position
+            object_type: table
+            source_domain: finance
+            owner: data
+            classification: confidential
+            policy_class: multi-company
+            lineage_required: true
+            quality_monitoring_class: timeliness
+            business_semantics_binding: cdm.Payment + cdm.BankStatementLine
+            shareability: internal
+
+          - object_name: ops_project_burn
+            object_type: table
+            source_domain: projects
+            owner: data
+            classification: internal
+            policy_class: multi-company
+            lineage_required: true
+            quality_monitoring_class: completeness
+            business_semantics_binding: cdm.Project + cdm.ProjectTask
+            shareability: internal
+
+          - object_name: ops_agent_run_summary
+            object_type: table
+            source_domain: platform
+            owner: platform
+            classification: internal
+            policy_class: tenant-scoped
+            lineage_required: true
+            quality_monitoring_class: completeness
+            business_semantics_binding: cdm.AgentRun
+            shareability: internal
+
+          - object_name: compliance_bir_filing_status
+            object_type: table
+            source_domain: finance
+            owner: data
+            classification: restricted
+            policy_class: tenant-scoped + regulated
+            lineage_required: true
+            quality_monitoring_class: accuracy + audit
+            business_semantics_binding: ipai.bir.tax.compliance.register
+            shareability: internal
+
+          # --- CDM entity projections (denormalized for BI) ---
+          - object_name: cdm_account
+            object_type: table
+            source_domain: spine
+            owner: data
+            classification: confidential
+            lineage_required: true
+            business_semantics_binding: cdm.Account
+            shareability: partner
+
+          - object_name: cdm_invoice
+            object_type: table
+            source_domain: finance
+            owner: data
+            classification: confidential
+            lineage_required: true
+            business_semantics_binding: cdm.Invoice
+            shareability: partner
+
+          - object_name: cdm_payment
+            object_type: table
+            source_domain: finance
+            owner: data
+            classification: confidential
+            lineage_required: true
+            business_semantics_binding: cdm.Payment
+            shareability: partner
+
+      metrics:
+        description: "Pre-computed metric tables for dashboards (planned)"
+        objects: []
+
+      features:
+        description: "ML feature store (planned)"
+        objects: []
+
+# =============================================================================
+# Governance rules
+# =============================================================================
+governance:
+  access_control: "UC RBAC — catalog/schema/table-level GRANT. No direct PG access from analytics users."
+  lineage: "UC lineage tracks Bronze → Silver → Gold. Source = Odoo PG via Lakehouse Federation."
+  quality: "DLT expectations on Silver + Gold tables. Freshness SLA per table."
+  discovery: "UC tags on every object: owner, sensitivity, tenant_scope, freshness_sla, source_repo"
+  audit: "UC audit log enabled. All access logged."
+  sharing: "OneLake shortcuts for Fabric; partner shareability via UC managed sharing."
+
+# =============================================================================
+# Rules
+# =============================================================================
+rules:
+  - "UC governs curated analytical/AI assets, NOT raw OLTP tables"
+  - "Every UC object must have: source_domain, owner, classification, lineage_required"
+  - "Gold-layer objects must have business_semantics_binding (CDM or domain-specific)"
+  - "policy_class determines row/column-level security model"
+  - "shareability determines cross-tenant/partner data sharing scope"
+  - "No direct Odoo PG connection from UC users — Lakehouse Federation is the read path"
+  - "Bronze/Silver are internal-only; Gold + CDM projections can be partner-shared"

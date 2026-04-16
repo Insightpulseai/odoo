@@ -1,0 +1,203 @@
+# SSOT — CDM Semantic Projection Map
+# Locked: 2026-04-16
+# Authority: this file maps Odoo ORM models to CDM entity projections.
+# CDM is the EXPORT/INTERCHANGE semantic layer, NOT the OLTP truth.
+# OLTP truth = Odoo ORM (ssot/odoo/orm-registry.yaml).
+#
+# CDM reference: https://learn.microsoft.com/common-data-model/sdk/overview
+# CDM folder format: https://learn.microsoft.com/common-data-model/data-lake
+#
+# Companion: platform/contracts/cdm-entity-map.yaml (machine-readable attribute mapping)
+
+schema_version: 1
+last_updated: "2026-04-16"
+
+output_layout:
+  root: "abfss://gold@stipaidevlake.dfs.core.windows.net/"
+  manifest_file: manifest.cdm.json
+  per_entity:
+    layout: "<EntityName>/<EntityName>.cdm.json + partitions/"
+    format: parquet
+    compression: snappy
+
+doctrine:
+  cdm_is: semantic_export_interchange_layer
+  cdm_is_not: oltp_replacement
+  odoo_orm_is: operational_truth
+  rule: "Odoo model names and column names are NEVER renamed to match CDM in the OLTP layer. CDM naming applies ONLY in the export/gold/ADLS layer."
+
+# =============================================================================
+# Entity projections — Odoo model → CDM entity
+# =============================================================================
+entities:
+
+  # --- Core Business ---
+  - cdm_entity: Account
+    odoo_source: res.partner (is_company=true)
+    export_grain: per-company-record
+    snapshot_or_event: snapshot
+    partition_column: write_date
+    unity_catalog_target: ppm.gold.cdm_account
+    notes: Customers + vendors as accounts
+
+  - cdm_entity: Contact
+    odoo_source: res.partner (is_company=false)
+    export_grain: per-contact-record
+    snapshot_or_event: snapshot
+    partition_column: write_date
+    unity_catalog_target: ppm.gold.cdm_contact
+
+  - cdm_entity: Lead
+    odoo_source: crm.lead (type='lead')
+    export_grain: per-lead-record
+    snapshot_or_event: snapshot
+    partition_column: create_date
+    unity_catalog_target: ppm.gold.cdm_lead
+
+  - cdm_entity: Opportunity
+    odoo_source: crm.lead (type='opportunity')
+    export_grain: per-opportunity-record
+    snapshot_or_event: snapshot
+    partition_column: write_date
+    unity_catalog_target: ppm.gold.cdm_opportunity
+
+  # --- Finance ---
+  - cdm_entity: Invoice
+    odoo_source: account.move (move_type in ['out_invoice','out_refund'])
+    export_grain: per-invoice-header
+    snapshot_or_event: event
+    partition_column: invoice_date
+    unity_catalog_target: ppm.gold.cdm_invoice
+
+  - cdm_entity: VendorInvoice
+    odoo_source: account.move (move_type in ['in_invoice','in_refund'])
+    export_grain: per-invoice-header
+    snapshot_or_event: event
+    partition_column: invoice_date
+    unity_catalog_target: ppm.gold.cdm_vendor_invoice
+
+  - cdm_entity: Payment
+    odoo_source: account.payment
+    export_grain: per-payment-record
+    snapshot_or_event: event
+    partition_column: date
+    unity_catalog_target: ppm.gold.cdm_payment
+
+  - cdm_entity: JournalEntry
+    odoo_source: account.move (move_type='entry')
+    export_grain: per-journal-entry
+    snapshot_or_event: event
+    partition_column: date
+    unity_catalog_target: ppm.gold.cdm_journal_entry
+
+  - cdm_entity: JournalLine
+    odoo_source: account.move.line
+    export_grain: per-line
+    snapshot_or_event: event
+    partition_column: date
+    unity_catalog_target: ppm.gold.cdm_journal_line
+
+  - cdm_entity: BankStatementLine
+    odoo_source: account.bank.statement.line
+    export_grain: per-line
+    snapshot_or_event: event
+    partition_column: date
+    unity_catalog_target: ppm.gold.cdm_bank_statement_line
+
+  - cdm_entity: ChartOfAccounts
+    odoo_source: account.account
+    export_grain: per-account
+    snapshot_or_event: snapshot
+    partition_column: write_date
+    unity_catalog_target: ppm.gold.cdm_chart_of_accounts
+
+  - cdm_entity: Expense
+    odoo_source: hr.expense
+    export_grain: per-expense-line
+    snapshot_or_event: event
+    partition_column: date
+    unity_catalog_target: ppm.gold.cdm_expense
+
+  # --- Sales ---
+  - cdm_entity: SalesOrder
+    odoo_source: sale.order
+    export_grain: per-order-header
+    snapshot_or_event: event
+    partition_column: date_order
+    unity_catalog_target: ppm.gold.cdm_sales_order
+
+  - cdm_entity: SalesOrderLine
+    odoo_source: sale.order.line
+    export_grain: per-line
+    snapshot_or_event: event
+    partition_column: create_date
+    unity_catalog_target: ppm.gold.cdm_sales_order_line
+
+  # --- Purchase ---
+  - cdm_entity: PurchaseOrder
+    odoo_source: purchase.order
+    export_grain: per-order-header
+    snapshot_or_event: event
+    partition_column: date_order
+    unity_catalog_target: ppm.gold.cdm_purchase_order
+
+  # --- Project ---
+  - cdm_entity: Project
+    odoo_source: project.project
+    export_grain: per-project
+    snapshot_or_event: snapshot
+    partition_column: write_date
+    unity_catalog_target: ppm.gold.cdm_project
+
+  - cdm_entity: ProjectTask
+    odoo_source: project.task
+    export_grain: per-task
+    snapshot_or_event: snapshot
+    partition_column: write_date
+    unity_catalog_target: ppm.gold.cdm_project_task
+
+  # --- HR ---
+  - cdm_entity: Employee
+    odoo_source: hr.employee
+    export_grain: per-employee
+    snapshot_or_event: snapshot
+    partition_column: write_date
+    unity_catalog_target: ppm.gold.cdm_employee
+
+  # --- Inventory ---
+  - cdm_entity: Product
+    odoo_source: product.product + product.template
+    export_grain: per-product-variant
+    snapshot_or_event: snapshot
+    partition_column: write_date
+    unity_catalog_target: ppm.gold.cdm_product
+
+  - cdm_entity: StockMove
+    odoo_source: stock.move
+    export_grain: per-move
+    snapshot_or_event: event
+    partition_column: date
+    unity_catalog_target: ppm.gold.cdm_stock_move
+
+  # --- Platform / Agent ---
+  - cdm_entity: AgentRun
+    odoo_source: ops.runs (platform schema, not Odoo ORM)
+    export_grain: per-run
+    snapshot_or_event: event
+    partition_column: started_at
+    unity_catalog_target: ppm.gold.cdm_agent_run
+
+  - cdm_entity: AgentRunEvent
+    odoo_source: ops.run_events (platform schema)
+    export_grain: per-event
+    snapshot_or_event: event
+    partition_column: timestamp
+    unity_catalog_target: ppm.gold.cdm_agent_run_event
+
+rules:
+  - "CDM entity names use PascalCase (Microsoft convention)"
+  - "Odoo model names use dot.notation (Odoo convention)"
+  - "Mapping is one-directional: Odoo → CDM export. CDM never writes back to Odoo."
+  - "CDM attributes are defined in platform/contracts/cdm-entity-map.yaml (machine-readable)"
+  - "Every CDM entity must have a unity_catalog_target"
+  - "Snapshot entities export full-state; event entities export incremental"

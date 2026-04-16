@@ -1,0 +1,989 @@
+# orm_registry.yaml
+# Canonical ORM model registry for Odoo CE 18 + OCA + ipai_* modules.
+# SSOT for data-model bounded context. Machine-readable. Do not hand-edit generated fields.
+# Last updated: 2026-04-15
+# Maintainer: ipai-platform / data-model worktree
+
+models:
+
+  # ──────────────────────────────────────────────
+  # SPINE (15 models)
+  # ──────────────────────────────────────────────
+
+  - model: res.partner
+    table: res_partner
+    type: Model
+    owning_module: base
+    inherits_from:
+      - mail.thread
+      - mail.activity.mixin
+      - format.address.mixin
+    delegates_via: {}
+    company_scoped: false
+    chatter_enabled: true
+    activity_enabled: true
+    record_rules: multi-company (optional company_id); user-own for portal contacts
+    source_domain: spine
+    extension_policy: core_ce
+
+  - model: res.users
+    table: res_users
+    type: Model
+    owning_module: base
+    inherits_from:
+      - res.partner
+    delegates_via:
+      res.partner: partner_id
+    company_scoped: true
+    chatter_enabled: true
+    activity_enabled: false
+    record_rules: user-own; groups-based visibility; portal vs internal split
+    source_domain: spine
+    extension_policy: core_ce
+
+  - model: res.company
+    table: res_company
+    type: Model
+    owning_module: base
+    inherits_from:
+      - mail.thread
+    delegates_via:
+      res.partner: partner_id
+    company_scoped: false
+    chatter_enabled: true
+    activity_enabled: false
+    record_rules: multi-company; user sees only their own companies
+    source_domain: spine
+    extension_policy: core_ce
+
+  - model: res.groups
+    table: res_groups
+    type: Model
+    owning_module: base
+    inherits_from: []
+    delegates_via: {}
+    company_scoped: false
+    chatter_enabled: false
+    activity_enabled: false
+    record_rules: global (no per-record rules); access controlled by group membership
+    source_domain: spine
+    extension_policy: core_ce
+
+  - model: res.currency
+    table: res_currency
+    type: Model
+    owning_module: base
+    inherits_from:
+      - mail.thread
+    delegates_via: {}
+    company_scoped: false
+    chatter_enabled: true
+    activity_enabled: false
+    record_rules: global read; write restricted to base.group_system
+    source_domain: spine
+    extension_policy: core_ce
+
+  - model: res.country
+    table: res_country
+    type: Model
+    owning_module: base
+    inherits_from: []
+    delegates_via: {}
+    company_scoped: false
+    chatter_enabled: false
+    activity_enabled: false
+    record_rules: global read; write restricted to admin
+    source_domain: spine
+    extension_policy: core_ce
+
+  - model: ir.module.module
+    table: ir_module_module
+    type: Model
+    owning_module: base
+    inherits_from: []
+    delegates_via: {}
+    company_scoped: false
+    chatter_enabled: false
+    activity_enabled: false
+    record_rules: global; managed by Odoo upgrade framework only
+    source_domain: spine
+    extension_policy: core_ce
+
+  - model: ir.model
+    table: ir_model
+    type: Model
+    owning_module: base
+    inherits_from:
+      - mail.thread
+    delegates_via: {}
+    company_scoped: false
+    chatter_enabled: true
+    activity_enabled: false
+    record_rules: global read; write restricted to base.group_system
+    source_domain: spine
+    extension_policy: core_ce
+
+  - model: ir.model.fields
+    table: ir_model_fields
+    type: Model
+    owning_module: base
+    inherits_from: []
+    delegates_via: {}
+    company_scoped: false
+    chatter_enabled: false
+    activity_enabled: false
+    record_rules: global read; write restricted to base.group_system
+    source_domain: spine
+    extension_policy: core_ce
+
+  - model: ir.model.access
+    table: ir_model_access
+    type: Model
+    owning_module: base
+    inherits_from: []
+    delegates_via: {}
+    company_scoped: false
+    chatter_enabled: false
+    activity_enabled: false
+    record_rules: global; enforced by ORM on every CRUD call
+    source_domain: spine
+    extension_policy: core_ce
+
+  - model: ir.rule
+    table: ir_rule
+    type: Model
+    owning_module: base
+    inherits_from: []
+    delegates_via: {}
+    company_scoped: false
+    chatter_enabled: false
+    activity_enabled: false
+    record_rules: global; rules evaluated at query-time by ORM
+    source_domain: spine
+    extension_policy: core_ce
+
+  - model: ir.attachment
+    table: ir_attachment
+    type: Model
+    owning_module: base
+    inherits_from: []
+    delegates_via: {}
+    company_scoped: false
+    chatter_enabled: false
+    activity_enabled: false
+    record_rules: user-own for private attachments; public for website assets
+    source_domain: spine
+    extension_policy: core_ce
+
+  - model: ir.sequence
+    table: ir_sequence
+    type: Model
+    owning_module: base
+    inherits_from: []
+    delegates_via: {}
+    company_scoped: true
+    chatter_enabled: false
+    activity_enabled: false
+    record_rules: multi-company
+    source_domain: spine
+    extension_policy: core_ce
+
+  - model: mail.message
+    table: mail_message
+    type: Model
+    owning_module: mail
+    inherits_from: []
+    delegates_via: {}
+    company_scoped: false
+    chatter_enabled: false
+    activity_enabled: false
+    record_rules: user-own; follower-based visibility; internal messages restricted
+    source_domain: spine
+    extension_policy: core_ce
+
+  - model: mail.activity
+    table: mail_activity
+    type: Model
+    owning_module: mail
+    inherits_from: []
+    delegates_via: {}
+    company_scoped: false
+    chatter_enabled: false
+    activity_enabled: false
+    record_rules: user-own (assigned user); manager sees all
+    source_domain: spine
+    extension_policy: core_ce
+
+  # ──────────────────────────────────────────────
+  # FINANCE (15 models)
+  # ──────────────────────────────────────────────
+
+  - model: account.account
+    table: account_account
+    type: Model
+    owning_module: account
+    inherits_from:
+      - mail.thread
+    delegates_via: {}
+    company_scoped: true
+    chatter_enabled: true
+    activity_enabled: false
+    record_rules: multi-company
+    source_domain: finance
+    extension_policy: core_ce
+
+  - model: account.journal
+    table: account_journal
+    type: Model
+    owning_module: account
+    inherits_from:
+      - mail.thread
+      - mail.activity.mixin
+    delegates_via: {}
+    company_scoped: true
+    chatter_enabled: true
+    activity_enabled: true
+    record_rules: multi-company
+    source_domain: finance
+    extension_policy: core_ce
+
+  - model: account.move
+    table: account_move
+    type: Model
+    owning_module: account
+    inherits_from:
+      - mail.thread
+      - mail.activity.mixin
+    delegates_via: {}
+    company_scoped: true
+    chatter_enabled: true
+    activity_enabled: true
+    record_rules: multi-company; portal access for own invoices
+    source_domain: finance
+    extension_policy: oca_baseline
+
+  - model: account.move.line
+    table: account_move_line
+    type: Model
+    owning_module: account
+    inherits_from: []
+    delegates_via: {}
+    company_scoped: true
+    chatter_enabled: false
+    activity_enabled: false
+    record_rules: multi-company; inherits parent move visibility
+    source_domain: finance
+    extension_policy: core_ce
+
+  - model: account.tax
+    table: account_tax
+    type: Model
+    owning_module: account
+    inherits_from:
+      - mail.thread
+    delegates_via: {}
+    company_scoped: true
+    chatter_enabled: true
+    activity_enabled: false
+    record_rules: multi-company
+    source_domain: finance
+    extension_policy: oca_baseline
+
+  - model: account.payment
+    table: account_payment
+    type: Model
+    owning_module: account
+    inherits_from:
+      - mail.thread
+      - mail.activity.mixin
+    delegates_via:
+      account.move: move_id
+    company_scoped: true
+    chatter_enabled: true
+    activity_enabled: true
+    record_rules: multi-company
+    source_domain: finance
+    extension_policy: core_ce
+
+  - model: account.bank.statement
+    table: account_bank_statement
+    type: Model
+    owning_module: account
+    inherits_from:
+      - mail.thread
+    delegates_via: {}
+    company_scoped: true
+    chatter_enabled: true
+    activity_enabled: false
+    record_rules: multi-company; journal-level access
+    source_domain: finance
+    extension_policy: core_ce
+
+  - model: account.bank.statement.line
+    table: account_bank_statement_line
+    type: Model
+    owning_module: account
+    inherits_from: []
+    delegates_via:
+      account.move: move_id
+    company_scoped: true
+    chatter_enabled: false
+    activity_enabled: false
+    record_rules: multi-company; inherits parent statement visibility
+    source_domain: finance
+    extension_policy: core_ce
+
+  - model: account.analytic.account
+    table: account_analytic_account
+    type: Model
+    owning_module: analytic
+    inherits_from:
+      - mail.thread
+    delegates_via: {}
+    company_scoped: true
+    chatter_enabled: true
+    activity_enabled: false
+    record_rules: multi-company; plan-scoped
+    source_domain: finance
+    extension_policy: oca_baseline
+
+  - model: account.analytic.line
+    table: account_analytic_line
+    type: Model
+    owning_module: analytic
+    inherits_from: []
+    delegates_via: {}
+    company_scoped: true
+    chatter_enabled: false
+    activity_enabled: false
+    record_rules: multi-company; user-own for timesheets
+    source_domain: finance
+    extension_policy: oca_baseline
+
+  - model: account.analytic.plan
+    table: account_analytic_plan
+    type: Model
+    owning_module: analytic
+    inherits_from: []
+    delegates_via: {}
+    company_scoped: true
+    chatter_enabled: false
+    activity_enabled: false
+    record_rules: multi-company
+    source_domain: finance
+    extension_policy: core_ce
+
+  - model: account.fiscal.year
+    table: account_fiscal_year
+    type: Model
+    owning_module: account
+    inherits_from: []
+    delegates_via: {}
+    company_scoped: true
+    chatter_enabled: false
+    activity_enabled: false
+    record_rules: multi-company
+    source_domain: finance
+    extension_policy: core_ce
+
+  - model: hr.expense
+    table: hr_expense
+    type: Model
+    owning_module: hr_expense
+    inherits_from:
+      - mail.thread
+      - mail.activity.mixin
+    delegates_via: {}
+    company_scoped: true
+    chatter_enabled: true
+    activity_enabled: true
+    record_rules: user-own; manager sees all; multi-company
+    source_domain: finance
+    extension_policy: core_ce
+
+  - model: hr.expense.sheet
+    table: hr_expense_sheet
+    type: Model
+    owning_module: hr_expense
+    inherits_from:
+      - mail.thread
+      - mail.activity.mixin
+    delegates_via: {}
+    company_scoped: true
+    chatter_enabled: true
+    activity_enabled: true
+    record_rules: user-own; manager sees all; multi-company
+    source_domain: finance
+    extension_policy: core_ce
+
+  - model: account.reconcile.model
+    table: account_reconcile_model
+    type: Model
+    owning_module: account
+    inherits_from: []
+    delegates_via: {}
+    company_scoped: true
+    chatter_enabled: false
+    activity_enabled: false
+    record_rules: multi-company; journal-restricted
+    source_domain: finance
+    extension_policy: core_ce
+
+  # ──────────────────────────────────────────────
+  # SALES / CRM (8 models)
+  # ──────────────────────────────────────────────
+
+  - model: crm.lead
+    table: crm_lead
+    type: Model
+    owning_module: crm
+    inherits_from:
+      - mail.thread
+      - mail.activity.mixin
+      - utm.mixin
+    delegates_via: {}
+    company_scoped: true
+    chatter_enabled: true
+    activity_enabled: true
+    record_rules: user-own; team-based visibility; multi-company
+    source_domain: sales_crm
+    extension_policy: core_ce
+
+  - model: sale.order
+    table: sale_order
+    type: Model
+    owning_module: sale
+    inherits_from:
+      - mail.thread
+      - mail.activity.mixin
+      - portal.mixin
+    delegates_via: {}
+    company_scoped: true
+    chatter_enabled: true
+    activity_enabled: true
+    record_rules: user-own; portal access for own orders; multi-company
+    source_domain: sales_crm
+    extension_policy: core_ce
+
+  - model: sale.order.line
+    table: sale_order_line
+    type: Model
+    owning_module: sale
+    inherits_from:
+      - mail.thread
+      - mail.activity.mixin
+    delegates_via: {}
+    company_scoped: true
+    chatter_enabled: true
+    activity_enabled: true
+    record_rules: multi-company; inherits parent order visibility
+    source_domain: sales_crm
+    extension_policy: core_ce
+
+  - model: product.template
+    table: product_template
+    type: Model
+    owning_module: product
+    inherits_from:
+      - mail.thread
+      - mail.activity.mixin
+      - image.mixin
+    delegates_via: {}
+    company_scoped: false
+    chatter_enabled: true
+    activity_enabled: true
+    record_rules: global read; write restricted to product managers
+    source_domain: sales_crm
+    extension_policy: core_ce
+
+  - model: product.product
+    table: product_product
+    type: Model
+    owning_module: product
+    inherits_from:
+      - mail.thread
+      - mail.activity.mixin
+    delegates_via:
+      product.template: product_tmpl_id
+    company_scoped: false
+    chatter_enabled: true
+    activity_enabled: true
+    record_rules: global read; write restricted to product managers
+    source_domain: sales_crm
+    extension_policy: core_ce
+
+  - model: product.pricelist
+    table: product_pricelist
+    type: Model
+    owning_module: product
+    inherits_from:
+      - mail.thread
+    delegates_via: {}
+    company_scoped: true
+    chatter_enabled: true
+    activity_enabled: false
+    record_rules: multi-company; currency-scoped
+    source_domain: sales_crm
+    extension_policy: core_ce
+
+  - model: product.pricelist.item
+    table: product_pricelist_item
+    type: Model
+    owning_module: product
+    inherits_from: []
+    delegates_via: {}
+    company_scoped: true
+    chatter_enabled: false
+    activity_enabled: false
+    record_rules: multi-company; inherits parent pricelist visibility
+    source_domain: sales_crm
+    extension_policy: core_ce
+
+  - model: product.category
+    table: product_category
+    type: Model
+    owning_module: product
+    inherits_from: []
+    delegates_via: {}
+    company_scoped: false
+    chatter_enabled: false
+    activity_enabled: false
+    record_rules: global
+    source_domain: sales_crm
+    extension_policy: core_ce
+
+  # ──────────────────────────────────────────────
+  # PURCHASE / INVENTORY (10 models)
+  # ──────────────────────────────────────────────
+
+  - model: purchase.order
+    table: purchase_order
+    type: Model
+    owning_module: purchase
+    inherits_from:
+      - mail.thread
+      - mail.activity.mixin
+      - portal.mixin
+    delegates_via: {}
+    company_scoped: true
+    chatter_enabled: true
+    activity_enabled: true
+    record_rules: user-own; portal access for vendors; multi-company
+    source_domain: purchase_inventory
+    extension_policy: core_ce
+
+  - model: purchase.order.line
+    table: purchase_order_line
+    type: Model
+    owning_module: purchase
+    inherits_from:
+      - mail.thread
+      - mail.activity.mixin
+    delegates_via: {}
+    company_scoped: true
+    chatter_enabled: true
+    activity_enabled: true
+    record_rules: multi-company; inherits parent order visibility
+    source_domain: purchase_inventory
+    extension_policy: core_ce
+
+  - model: stock.picking
+    table: stock_picking
+    type: Model
+    owning_module: stock
+    inherits_from:
+      - mail.thread
+      - mail.activity.mixin
+    delegates_via: {}
+    company_scoped: true
+    chatter_enabled: true
+    activity_enabled: true
+    record_rules: multi-company; warehouse-scoped
+    source_domain: purchase_inventory
+    extension_policy: core_ce
+
+  - model: stock.move
+    table: stock_move
+    type: Model
+    owning_module: stock
+    inherits_from:
+      - mail.thread
+    delegates_via: {}
+    company_scoped: true
+    chatter_enabled: true
+    activity_enabled: false
+    record_rules: multi-company; inherits parent picking visibility
+    source_domain: purchase_inventory
+    extension_policy: core_ce
+
+  - model: stock.move.line
+    table: stock_move_line
+    type: Model
+    owning_module: stock
+    inherits_from: []
+    delegates_via: {}
+    company_scoped: true
+    chatter_enabled: false
+    activity_enabled: false
+    record_rules: multi-company; inherits parent move visibility
+    source_domain: purchase_inventory
+    extension_policy: core_ce
+
+  - model: stock.quant
+    table: stock_quant
+    type: Model
+    owning_module: stock
+    inherits_from:
+      - mail.thread
+    delegates_via: {}
+    company_scoped: true
+    chatter_enabled: true
+    activity_enabled: false
+    record_rules: multi-company; location-scoped
+    source_domain: purchase_inventory
+    extension_policy: core_ce
+
+  - model: stock.location
+    table: stock_location
+    type: Model
+    owning_module: stock
+    inherits_from:
+      - mail.thread
+    delegates_via: {}
+    company_scoped: true
+    chatter_enabled: true
+    activity_enabled: false
+    record_rules: multi-company; internal vs external location visibility
+    source_domain: purchase_inventory
+    extension_policy: core_ce
+
+  - model: stock.warehouse
+    table: stock_warehouse
+    type: Model
+    owning_module: stock
+    inherits_from: []
+    delegates_via: {}
+    company_scoped: true
+    chatter_enabled: false
+    activity_enabled: false
+    record_rules: multi-company; one warehouse per company minimum
+    source_domain: purchase_inventory
+    extension_policy: core_ce
+
+  - model: uom.uom
+    table: uom_uom
+    type: Model
+    owning_module: uom
+    inherits_from: []
+    delegates_via: {}
+    company_scoped: false
+    chatter_enabled: false
+    activity_enabled: false
+    record_rules: global read; write restricted to inventory managers
+    source_domain: purchase_inventory
+    extension_policy: core_ce
+
+  - model: uom.category
+    table: uom_category
+    type: Model
+    owning_module: uom
+    inherits_from: []
+    delegates_via: {}
+    company_scoped: false
+    chatter_enabled: false
+    activity_enabled: false
+    record_rules: global
+    source_domain: purchase_inventory
+    extension_policy: core_ce
+
+  # ──────────────────────────────────────────────
+  # PROJECTS (5 models)
+  # ──────────────────────────────────────────────
+
+  - model: project.project
+    table: project_project
+    type: Model
+    owning_module: project
+    inherits_from:
+      - mail.thread
+      - mail.activity.mixin
+      - rating.mixin
+    delegates_via:
+      account.analytic.account: analytic_account_id
+    company_scoped: true
+    chatter_enabled: true
+    activity_enabled: true
+    record_rules: multi-company; visibility field (followers/all employees/portal)
+    source_domain: projects
+    extension_policy: core_ce
+
+  - model: project.task
+    table: project_task
+    type: Model
+    owning_module: project
+    inherits_from:
+      - mail.thread
+      - mail.activity.mixin
+      - rating.mixin
+    delegates_via: {}
+    company_scoped: true
+    chatter_enabled: true
+    activity_enabled: true
+    record_rules: multi-company; project visibility cascade; user-own personal tasks
+    source_domain: projects
+    extension_policy: core_ce
+
+  - model: project.task.type
+    table: project_task_type
+    type: Model
+    owning_module: project
+    inherits_from:
+      - mail.thread
+    delegates_via: {}
+    company_scoped: false
+    chatter_enabled: true
+    activity_enabled: false
+    record_rules: global; shared across projects unless project-scoped
+    source_domain: projects
+    extension_policy: core_ce
+
+  - model: project.milestone
+    table: project_milestone
+    type: Model
+    owning_module: project
+    inherits_from:
+      - mail.thread
+    delegates_via: {}
+    company_scoped: true
+    chatter_enabled: true
+    activity_enabled: false
+    record_rules: multi-company; project-scoped
+    source_domain: projects
+    extension_policy: core_ce
+
+  - model: project.update
+    table: project_update
+    type: Model
+    owning_module: project
+    inherits_from:
+      - mail.thread
+      - mail.activity.mixin
+    delegates_via: {}
+    company_scoped: true
+    chatter_enabled: true
+    activity_enabled: true
+    record_rules: multi-company; project-scoped
+    source_domain: projects
+    extension_policy: core_ce
+
+  # ──────────────────────────────────────────────
+  # HR (8 models)
+  # ──────────────────────────────────────────────
+
+  - model: hr.employee
+    table: hr_employee
+    type: Model
+    owning_module: hr
+    inherits_from:
+      - mail.thread
+      - mail.activity.mixin
+      - image.mixin
+    delegates_via:
+      hr.employee.public: employee_id
+    company_scoped: true
+    chatter_enabled: true
+    activity_enabled: true
+    record_rules: multi-company; user-own (limited fields); HR manager sees all
+    source_domain: hr
+    extension_policy: core_ce
+
+  - model: hr.department
+    table: hr_department
+    type: Model
+    owning_module: hr
+    inherits_from:
+      - mail.thread
+      - mail.activity.mixin
+    delegates_via: {}
+    company_scoped: true
+    chatter_enabled: true
+    activity_enabled: true
+    record_rules: multi-company
+    source_domain: hr
+    extension_policy: core_ce
+
+  - model: hr.job
+    table: hr_job
+    type: Model
+    owning_module: hr
+    inherits_from:
+      - mail.thread
+    delegates_via: {}
+    company_scoped: true
+    chatter_enabled: true
+    activity_enabled: false
+    record_rules: multi-company
+    source_domain: hr
+    extension_policy: core_ce
+
+  - model: hr.contract
+    table: hr_contract
+    type: Model
+    owning_module: hr_contract
+    inherits_from:
+      - mail.thread
+      - mail.activity.mixin
+    delegates_via: {}
+    company_scoped: true
+    chatter_enabled: true
+    activity_enabled: true
+    record_rules: multi-company; HR manager only (sensitive pay data)
+    source_domain: hr
+    extension_policy: core_ce
+
+  - model: hr.attendance
+    table: hr_attendance
+    type: Model
+    owning_module: hr_attendance
+    inherits_from:
+      - mail.thread
+    delegates_via: {}
+    company_scoped: true
+    chatter_enabled: true
+    activity_enabled: false
+    record_rules: multi-company; user-own; kiosk mode bypass
+    source_domain: hr
+    extension_policy: core_ce
+
+  - model: hr.leave
+    table: hr_leave
+    type: Model
+    owning_module: hr_holidays
+    inherits_from:
+      - mail.thread
+      - mail.activity.mixin
+    delegates_via: {}
+    company_scoped: true
+    chatter_enabled: true
+    activity_enabled: true
+    record_rules: multi-company; user-own; manager approval flow
+    source_domain: hr
+    extension_policy: core_ce
+
+  - model: hr.leave.type
+    table: hr_leave_type
+    type: Model
+    owning_module: hr_holidays
+    inherits_from:
+      - mail.thread
+    delegates_via: {}
+    company_scoped: true
+    chatter_enabled: true
+    activity_enabled: false
+    record_rules: multi-company
+    source_domain: hr
+    extension_policy: core_ce
+
+  - model: hr.applicant
+    table: hr_applicant
+    type: Model
+    owning_module: hr_recruitment
+    inherits_from:
+      - mail.thread
+      - mail.activity.mixin
+      - utm.mixin
+    delegates_via: {}
+    company_scoped: true
+    chatter_enabled: true
+    activity_enabled: true
+    record_rules: multi-company; recruiter-own; hiring manager visibility
+    source_domain: hr
+    extension_policy: core_ce
+
+  # ──────────────────────────────────────────────
+  # PLATFORM / OVERLAY (6 models)
+  # ──────────────────────────────────────────────
+
+  - model: ops.runs
+    table: ops_runs
+    type: Model
+    owning_module: ipai_platform_ops
+    inherits_from:
+      - mail.thread
+    delegates_via: {}
+    company_scoped: false
+    chatter_enabled: true
+    activity_enabled: false
+    record_rules: global; append-only enforced at application layer
+    source_domain: platform
+    extension_policy: ipai_bridge
+
+  - model: ops.run_events
+    table: ops_run_events
+    type: Model
+    owning_module: ipai_platform_ops
+    inherits_from: []
+    delegates_via: {}
+    company_scoped: false
+    chatter_enabled: false
+    activity_enabled: false
+    record_rules: global; append-only enforced at application layer
+    source_domain: platform
+    extension_policy: ipai_bridge
+
+  - model: ops.tool_catalog
+    table: ops_tool_catalog
+    type: Model
+    owning_module: ipai_platform_ops
+    inherits_from:
+      - mail.thread
+    delegates_via: {}
+    company_scoped: false
+    chatter_enabled: true
+    activity_enabled: false
+    record_rules: global read; write restricted to platform admins
+    source_domain: platform
+    extension_policy: ipai_bridge
+
+  - model: ops.feature_flags
+    table: ops_feature_flags
+    type: Model
+    owning_module: ipai_platform_ops
+    inherits_from: []
+    delegates_via: {}
+    company_scoped: true
+    chatter_enabled: false
+    activity_enabled: false
+    record_rules: multi-company; write restricted to platform admins
+    source_domain: platform
+    extension_policy: ipai_bridge
+
+  - model: ops.tenants
+    table: ops_tenants
+    type: Model
+    owning_module: ipai_platform_ops
+    inherits_from:
+      - mail.thread
+    delegates_via:
+      res.company: company_id
+    company_scoped: false
+    chatter_enabled: true
+    activity_enabled: false
+    record_rules: global; tenant isolation enforced at application layer
+    source_domain: platform
+    extension_policy: ipai_overlay
+
+  - model: ipai.bir.tax.compliance.register
+    table: ipai_bir_tax_compliance_register
+    type: Model
+    owning_module: ipai_bir_2307
+    inherits_from:
+      - mail.thread
+      - mail.activity.mixin
+    delegates_via: {}
+    company_scoped: true
+    chatter_enabled: true
+    activity_enabled: true
+    record_rules: multi-company; PH BIR-sensitive; accountant and tax manager only
+    source_domain: platform
+    extension_policy: ipai_overlay
