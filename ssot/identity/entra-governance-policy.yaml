@@ -15,7 +15,7 @@
 #   - Semantic / lakehouse truth (see ssot/semantic/)
 #
 # Referenced by: ssot/identity/identity-boundary-policy.yaml
-# Last updated: 2026-04-16
+# Last updated: 2026-04-16 (pim-role-baseline.yaml added)
 contract_version: 1
 status: active
 target_milestone: R3
@@ -24,6 +24,12 @@ source_classification:
   risk_policies: official_entra_security_policy_truth
   pim_deployment: official_privileged_access_policy_truth
   governance_use_cases: official_identity_governance_scope_truth
+
+# Implementation files that consume and expand this policy
+implementation_files:
+  pim_role_baseline: ssot/identity/pim-role-baseline.yaml
+  rbac_roles: ssot/identity/entra_rbac_roles.yaml
+  identity_boundary: ssot/identity/identity-boundary-policy.yaml
 
 # ---------------------------------------------------------------------------
 # 1. Risk Policy Baseline
