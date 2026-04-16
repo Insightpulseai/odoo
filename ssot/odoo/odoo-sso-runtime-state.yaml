@@ -75,3 +75,17 @@ next_actions:
     action: "On failure, check Entra redirect URI matches exactly: https://erp.insightpulseai.com/auth_oauth/signin"
   - step: 4
     action: "On persistent failure, verify client_secret in kv-ipai-dev matches Entra app registration secret."
+
+odoo_sso_https_hotfix:
+  status: temporary
+  scope: auth_oauth_return_url_generation
+  file: docker/Dockerfile.prod
+  rationale: |
+    ACA terminates TLS at ingress, forwards HTTP internally.
+    Odoo auth_oauth controller reads request.httprequest.url_root
+    which returns http:// scheme. Entra rejects with AADSTS500117
+    ("reply uri not using secure scheme"). 12 runtime patch attempts
+    failed due to read-only filesystem + YAML quoting + cache issues.
+    Image-level sed patch is the deterministic fix.
+  follow_up_target: azure_front_door_forwarded_proto_canonicalization
+  remove_when: erp.insightpulseai.com routes through AFD with verified X-Forwarded-Proto
