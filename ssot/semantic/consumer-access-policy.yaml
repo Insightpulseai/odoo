@@ -1,3 +1,5 @@
+# CANONICAL HOME: data-intelligence repo. This copy in odoo monorepo is
+# transitional until data-intelligence repo is stood up. See ssot/org/repo-map.yaml.
 # ssot/semantic/consumer-access-policy.yaml
 # OData entity set consumer authorization policy
 # Default deny, tenant scope required, company scope where sensitive

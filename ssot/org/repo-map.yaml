@@ -98,11 +98,23 @@ repos:
     visibility: private
     authority:
       - databricks
+      - databricks_analytics_code
       - unity_catalog
+      - unity_catalog_aligned_schemas
       - analytics_engineering
       - semantic_delivery
+      - medallion_layer_contracts
+      - semantic_layer_contracts
+      - curated_fact_dimension_maps
+      - odata_governed_analytics_interfaces
+      - bi_delivery_assets
+      - purview_publication_maps
+      - fabric_consumer_maps
     priority: 2
-    status: planned           # verify existence in org
+    notes: |
+      Canonical analytics engineering repo. Owns ALL semantic/lakehouse/BI
+      contracts. Platform repo keeps only cross-plane references/pointers.
+      Odoo repo keeps transactional ORM/source truth only.
 
   design:
     visibility: internal
@@ -155,3 +167,48 @@ lookup_policy:
     - docs
     - infra
   never_guess_repo_owner: true
+
+# Explicit ownership split for analytics vs ERP vs control-plane
+repo_authority:
+  odoo:
+    owns:
+      - transactional_source_models
+      - odoo_orm_registry
+      - erp_runtime_contracts
+      - source_schema_evidence
+      - odoo_sso_configuration
+      - odoo_integration_catalog
+    does_not_own:
+      - semantic_layer_definitions
+      - medallion_contracts
+      - unity_catalog_schemas
+      - bi_delivery_assets
+
+  data-intelligence:
+    owns:
+      - databricks_analytics_code
+      - medallion_layer_contracts
+      - unity_catalog_aligned_schemas
+      - semantic_serving_preparation
+      - bi_delivery_assets
+      - semantic_layer_contracts
+      - curated_fact_dimension_maps
+      - odata_governed_analytics_interfaces
+      - purview_publication_maps
+      - fabric_consumer_maps
+    does_not_own:
+      - odoo_transactional_source_models
+      - browser_facing_apps
+      - agent_personas
+      - landing_zone_networking
+
+  platform:
+    owns:
+      - control_plane_metadata
+      - cross_plane_identity_policy
+      - tenant_registry
+      - repo_boundary_policy
+    does_not_own:
+      - analytics_contracts_canonical
+      - odoo_transactional_truth
+      - agent_runtime
