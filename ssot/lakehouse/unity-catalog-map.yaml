@@ -218,3 +218,9 @@ rules:
 security_bindings:
   source: ssot/semantic/semantic-security-policy.yaml
   rule: uc_objects_must_bind_to_workspace_privilege_and_abac_or_filter_mask_policy
+
+workspace_binding:
+  resource_contract: infra/ssot/databricks/workspace-resource.contract.yaml
+  default_catalog_policy:
+    require_initialType: UnityCatalog
+    rule: do_not_default_new_governed_workspaces_to_hive_metastore

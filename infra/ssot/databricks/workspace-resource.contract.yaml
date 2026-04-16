@@ -1,0 +1,85 @@
+contract_version: 1
+
+resource_type:
+  azure_resource: Microsoft.Databricks/workspaces
+  source_of_truth: bicep_arm_template_reference
+
+api_policy:
+  preferred_api_version: 2025-03-01-preview
+  fallback_api_versions:
+    - 2024-05-01
+    - 2023-02-01
+  rule: preview_only_when_required_property_or_feature_is_needed
+
+workspace_contract:
+  required_fields:
+    - name
+    - location
+    - managedResourceGroupId
+    - sku
+    - tags
+
+  required_properties:
+    - managedResourceGroupId
+    - publicNetworkAccess
+    - requiredNsgRules
+
+  network_posture:
+    publicNetworkAccess:
+      allowed:
+        - Disabled
+        - Enabled
+    requiredNsgRules:
+      allowed:
+        - AllRules
+        - NoAzureDatabricksRules
+    no_public_ip_parameter:
+      path: properties.parameters.enableNoPublicIp.value
+      required: true
+
+  access_connector:
+    path: properties.accessConnector
+    required: true
+    fields:
+      - id
+      - identityType
+      - userAssignedIdentityId
+    rule: use_access_connector_for_workspace_identity_binding
+
+  default_catalog:
+    path: properties.defaultCatalog
+    fields:
+      - initialName
+      - initialType
+    initialType_allowed:
+      - HiveMetastore
+      - UnityCatalog
+    rule: unity_catalog_default_when_governed_lakehouse_mode
+
+  encryption:
+    workspace_encryption_supported: true
+    cmk_supported: true
+    managed_disk_encryption_supported: true
+    managed_services_encryption_supported: true
+
+  workspace_parameters:
+    supported_core:
+      - customVirtualNetworkId
+      - customPublicSubnetName
+      - customPrivateSubnetName
+      - enableNoPublicIp
+      - loadBalancerId
+      - loadBalancerBackendPoolName
+      - natGatewayName
+      - prepareEncryption
+      - requireInfrastructureEncryption
+      - storageAccountName
+      - storageAccountSkuName
+      - vnetAddressPrefix
+
+  security_compliance:
+    enhancedSecurityCompliance_supported: true
+    controls:
+      - automaticClusterUpdate
+      - complianceSecurityProfile
+      - enhancedSecurityMonitoring
