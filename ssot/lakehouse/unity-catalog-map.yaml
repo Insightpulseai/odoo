@@ -214,3 +214,7 @@ rules:
   - "shareability determines cross-tenant/partner data sharing scope"
   - "No direct Odoo PG connection from UC users — Lakehouse Federation is the read path"
   - "Bronze/Silver are internal-only; Gold + CDM projections can be partner-shared"
+
+security_bindings:
+  source: ssot/semantic/semantic-security-policy.yaml
+  rule: uc_objects_must_bind_to_workspace_privilege_and_abac_or_filter_mask_policy

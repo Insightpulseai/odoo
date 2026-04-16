@@ -1,0 +1,51 @@
+version: 1
+
+metadata:
+  purpose:
+    - define how Fabric consumes governed Databricks outputs
+    - keep Fabric in the downstream semantic/BI plane
+    - prevent duplication of lakehouse-governance truth
+
+fabric_consumers:
+  power_bi_semantic_models:
+    source_layer:
+      - unity_catalog_governed_gold
+      - databricks_sql
+    purpose:
+      - dashboarding
+      - governed_metrics_consumption
+      - executive_reporting
+
+  fabric_copilot_consumers:
+    source_layer:
+      - power_bi_semantic_models
+      - governed_gold_data
+    purpose:
+      - natural_language_analytics
+      - business_user_insight_access
+
+  purview_metadata_visibility:
+    source_layer:
+      - unity_catalog
+    purpose:
+      - enterprise_metadata_visibility
+      - data_estate_discovery
+
+rules:
+  fabric_not_primary_data_engineering_plane: true
+  fabric_not_primary_governance_plane: true
+  fabric_consumes_only_governed_outputs_by_default: true
+
+fabric_consumption_binding:
+  source_reference: microsoft_architecture_blog_databricks_fabric_2024_09_03
+  posture:
+    databricks_is_primary_data_intelligence_plane: true
+    unity_catalog_is_primary_governance_plane: true
+    fabric_is_downstream_consumption_plane: true
+    power_bi_semantic_models_consume_governed_gold_data: true
+    purview_receives_published_metadata_from_unity_catalog: true
+  allowed_consumption_paths:
+    - databricks_gold_to_power_bi_semantic_model
+    - databricks_sql_to_power_bi
+    - unity_catalog_metadata_to_purview
+    - governed_data_to_fabric_copilot_consumers
