@@ -1,0 +1,438 @@
+# SSOT — Odoo ↔ Common Data Model entity mapping
+# Canonical machine-readable version of docs/architecture/cdm-odoo-mapping.md
+# Consumed by: data-intelligence/pipelines/odoo_cdm_export.py (Databricks DLT)
+# Mutation rule: PR-only. Code changes must not precede a YAML update.
+
+schema_version: "1.0.0"
+last_updated: "2026-04-15"
+owner: "platform"
+
+adoption_posture:
+  cdm_schema: adopt_as_projection_target   # entity names + attrs + relationships
+  cdm_folder_format_adls: adopt             # stipaidevlake/gold/ is CDM-formatted
+  cdm_naming_in_platform_contracts: adopt   # canonical cross-system reference
+  dataverse_as_backing_store: reject        # Odoo is SOR
+  cdm_shape_in_pg_ipai_odoo_public: reject  # never rename Odoo models
+  cdm_semantic_model_views_in_fabric: adopt # projection layer only
+
+output_layout:
+  root: "abfss://gold@stipaidevlake.dfs.core.windows.net/"
+  manifest_file: "manifest.cdm.json"
+  per_entity:
+    layout: "<EntityName>/<EntityName>.cdm.json + partitions/"
+    format: parquet
+    compression: snappy
+    partition_column: date-based on created_at or transaction_date
+
+# =============================================================================
+# CORE BUSINESS ENTITIES — CDM standard
+# =============================================================================
+entities:
+
+  - cdm: Account
+    odoo_model: res.partner
+    discriminator: is_company = true
+    attributes:
+      - {cdm: name, odoo: name}
+      - {cdm: accountNumber, odoo: ref}
+      - {cdm: taxRegistrationNumber, odoo: vat, note: "PH TIN"}
+      - {cdm: primaryEmailAddress, odoo: email}
+      - {cdm: primaryPhone, odoo: phone}
+      - {cdm: websiteUrl, odoo: website}
+      - {cdm: addressLine1, odoo: street}
+      - {cdm: addressLine2, odoo: street2}
+      - {cdm: city, odoo: city}
+      - {cdm: stateOrProvince, odoo: state_id.name}
+      - {cdm: postalCode, odoo: zip}
+      - {cdm: country, odoo: country_id.name}
+      - {cdm: currency, odoo: property_account_receivable_id.currency_id.name}
+
+  - cdm: Contact
+    odoo_model: res.partner
+    discriminator: is_company = false
+    attributes:
+      - {cdm: firstName, odoo: firstname, note: "via OCA partner_firstname"}
+      - {cdm: lastName, odoo: lastname, note: "via OCA partner_firstname"}
+      - {cdm: fullName, odoo: name}
+      - {cdm: parentAccountId, odoo: parent_id}
+      - {cdm: emailAddress1, odoo: email}
+      - {cdm: telephone1, odoo: phone}
+      - {cdm: jobTitle, odoo: function}
+
+  - cdm: Lead
+    odoo_model: crm.lead
+    discriminator: type = 'lead'
+    attributes:
+      - {cdm: leadName, odoo: name}
+      - {cdm: companyName, odoo: partner_name}
+      - {cdm: contactName, odoo: contact_name}
+      - {cdm: emailAddress1, odoo: email_from}
+      - {cdm: leadSourceCode, odoo: source_id.name}
+
+  - cdm: Opportunity
+    odoo_model: crm.lead
+    discriminator: type = 'opportunity'
+    attributes:
+      - {cdm: opportunityName, odoo: name}
+      - {cdm: parentAccountId, odoo: partner_id}
+      - {cdm: estimatedValue, odoo: expected_revenue}
+      - {cdm: probability, odoo: probability}
+      - {cdm: statusCode, odoo: stage_id.name}
+
+  - cdm: Product
+    odoo_model: product.template
+    attributes:
+      - {cdm: name, odoo: name}
+      - {cdm: productNumber, odoo: default_code}
+      - {cdm: description, odoo: description}
+      - {cdm: price, odoo: list_price}
+      - {cdm: productCategoryId, odoo: categ_id}
+
+  - cdm: ProductCategory
+    odoo_model: product.category
+    attributes:
+      - {cdm: name, odoo: name}
+      - {cdm: parentCategoryId, odoo: parent_id}
+
+  - cdm: BusinessUnit
+    odoo_model: res.company
+    attributes:
+      - {cdm: name, odoo: name}
+      - {cdm: currency, odoo: currency_id.name}
+      - {cdm: country, odoo: country_id.name}
+
+  - cdm: Employee
+    odoo_model: hr.employee
+    attributes:
+      - {cdm: fullName, odoo: name}
+      - {cdm: jobTitle, odoo: job_id.name}
+      - {cdm: departmentId, odoo: department_id}
+      - {cdm: emailAddress, odoo: work_email}
+
+  - cdm: Case
+    odoo_model: helpdesk.ticket
+    attributes:
+      - {cdm: title, odoo: name}
+      - {cdm: customerId, odoo: partner_id}
+      - {cdm: stageCode, odoo: stage_id.name}
+      - {cdm: description, odoo: description}
+
+  - cdm: Campaign
+    odoo_model: utm.campaign
+    attributes:
+      - {cdm: name, odoo: name}
+      - {cdm: stageCode, odoo: stage_id.name}
+
+  - cdm: PriceList
+    odoo_model: product.pricelist
+    attributes:
+      - {cdm: name, odoo: name}
+      - {cdm: currency, odoo: currency_id.name}
+
+  - cdm: Currency
+    odoo_model: res.currency
+    attributes:
+      - {cdm: currencyCode, odoo: name}
+      - {cdm: exchangeRate, odoo: rate}
+      - {cdm: symbol, odoo: symbol}
+
+  - cdm: TaxCode
+    odoo_model: account.tax
+    attributes:
+      - {cdm: name, odoo: name}
+      - {cdm: rate, odoo: amount}
+      - {cdm: taxUsageType, odoo: type_tax_use}
+
+  - cdm: BankAccount
+    odoo_model: res.partner.bank
+    joined_with: account.journal
+    attributes:
+      - {cdm: accountNumber, odoo: acc_number}
+      - {cdm: bankName, odoo: bank_id.name}
+      - {cdm: ownerAccountId, odoo: partner_id}
+
+# =============================================================================
+# SALES + PROCUREMENT
+# =============================================================================
+
+  - cdm: Quote
+    odoo_model: sale.order
+    discriminator: state IN ('draft', 'sent')
+    attributes:
+      - {cdm: quoteNumber, odoo: name}
+      - {cdm: customerId, odoo: partner_id}
+      - {cdm: totalAmount, odoo: amount_total}
+      - {cdm: quoteDate, odoo: date_order}
+
+  - cdm: SalesOrder
+    odoo_model: sale.order
+    discriminator: state IN ('sale', 'done')
+    attributes:
+      - {cdm: salesOrderNumber, odoo: name}
+      - {cdm: customerId, odoo: partner_id}
+      - {cdm: totalAmount, odoo: amount_total}
+      - {cdm: orderDate, odoo: date_order}
+      - {cdm: statusCode, odoo: state}
+
+  - cdm: SalesOrderLine
+    odoo_model: sale.order.line
+    attributes:
+      - {cdm: salesOrderId, odoo: order_id}
+      - {cdm: productId, odoo: product_id}
+      - {cdm: quantity, odoo: product_uom_qty}
+      - {cdm: unitPrice, odoo: price_unit}
+      - {cdm: lineTotal, odoo: price_subtotal}
+
+  - cdm: PurchaseOrder
+    odoo_model: purchase.order
+    discriminator: state IN ('purchase', 'done')
+    attributes:
+      - {cdm: purchaseOrderNumber, odoo: name}
+      - {cdm: vendorId, odoo: partner_id}
+      - {cdm: totalAmount, odoo: amount_total}
+      - {cdm: orderDate, odoo: date_order}
+
+  - cdm: PurchaseOrderLine
+    odoo_model: purchase.order.line
+    attributes:
+      - {cdm: purchaseOrderId, odoo: order_id}
+      - {cdm: productId, odoo: product_id}
+      - {cdm: quantity, odoo: product_qty}
+      - {cdm: unitPrice, odoo: price_unit}
+
+# =============================================================================
+# FINANCE / GL
+# =============================================================================
+
+  - cdm: Invoice
+    odoo_model: account.move
+    discriminator: move_type = 'out_invoice'
+    aliases: [CustomerInvoice]
+    attributes:
+      - {cdm: invoiceNumber, odoo: name}
+      - {cdm: customerId, odoo: partner_id}
+      - {cdm: invoiceDate, odoo: invoice_date}
+      - {cdm: dueDate, odoo: invoice_date_due}
+      - {cdm: paymentDate, odoo: payment_date}
+      - {cdm: totalAmount, odoo: amount_total}
+      - {cdm: currencyCode, odoo: currency_id.name}
+      - {cdm: statusCode, odoo: state}
+
+  - cdm: CustomerRefund
+    odoo_model: account.move
+    discriminator: move_type = 'out_refund'
+
+  - cdm: VendorInvoice
+    odoo_model: account.move
+    discriminator: move_type = 'in_invoice'
+    aliases: [Bill]
+    attributes:
+      - {cdm: invoiceNumber, odoo: ref}
+      - {cdm: vendorId, odoo: partner_id}
+      - {cdm: invoiceDate, odoo: invoice_date}
+      - {cdm: totalAmount, odoo: amount_total}
+
+  - cdm: InvoiceLine
+    odoo_model: account.move.line
+    discriminator: "move_id.move_type IN ('out_invoice','in_invoice','out_refund','in_refund')"
+    attributes:
+      - {cdm: invoiceId, odoo: move_id}
+      - {cdm: accountId, odoo: account_id}
+      - {cdm: debit, odoo: debit}
+      - {cdm: credit, odoo: credit}
+      - {cdm: balance, odoo: balance}
+      - {cdm: analyticDistribution, odoo: analytic_distribution}
+
+  - cdm: Journal
+    odoo_model: account.journal
+    aliases: [LedgerJournal]
+    attributes:
+      - {cdm: journalCode, odoo: code}
+      - {cdm: journalName, odoo: name}
+      - {cdm: journalType, odoo: type}
+
+  - cdm: GeneralLedgerAccount
+    odoo_model: account.account
+    attributes:
+      - {cdm: accountCode, odoo: code}
+      - {cdm: accountName, odoo: name}
+      - {cdm: accountType, odoo: account_type}
+
+  - cdm: GeneralLedger
+    odoo_model: account.move.line
+    discriminator: move_id.state = 'posted'
+    aliases: [GeneralJournalAccountEntry]
+
+  - cdm: Payment
+    odoo_model: account.payment
+    attributes:
+      - {cdm: paymentNumber, odoo: name}
+      - {cdm: partnerId, odoo: partner_id}
+      - {cdm: amount, odoo: amount}
+      - {cdm: paymentDate, odoo: date}
+      - {cdm: journalId, odoo: journal_id}
+
+  - cdm: BankStatement
+    odoo_model: account.bank.statement
+
+  - cdm: BankStatementLine
+    odoo_model: account.bank.statement.line
+    attributes:
+      - {cdm: statementId, odoo: statement_id}
+      - {cdm: lineDate, odoo: date}
+      - {cdm: amount, odoo: amount}
+      - {cdm: isReconciled, odoo: is_reconciled}
+      - {cdm: paymentReference, odoo: payment_ref}
+
+  - cdm: Budget
+    odoo_model: account.budget
+    alternative_odoo: account_budget_oca  # OCA module preferred
+
+  - cdm: BudgetLine
+    odoo_model: account.budget.line
+
+  - cdm: FinancialDimension
+    odoo_model: account.analytic.plan
+
+  - cdm: DimensionValue
+    odoo_model: account.analytic.account
+
+  - cdm: FiscalYear
+    odoo_model: account.fiscal.year
+
+  - cdm: Project
+    odoo_model: project.project
+
+  - cdm: ProjectTask
+    odoo_model: project.task
+
+  - cdm: TimeEntry
+    odoo_model: account.analytic.line
+    discriminator: project_id IS NOT NULL
+    attributes:
+      - {cdm: employeeId, odoo: employee_id}
+      - {cdm: projectId, odoo: project_id}
+      - {cdm: taskId, odoo: task_id}
+      - {cdm: hours, odoo: unit_amount}
+      - {cdm: entryDate, odoo: date}
+
+  - cdm: ExpenseReport
+    odoo_model: hr.expense.sheet
+
+  - cdm: ExpenseTransaction
+    odoo_model: hr.expense
+    attributes:
+      - {cdm: employeeId, odoo: employee_id}
+      - {cdm: reportId, odoo: sheet_id}
+      - {cdm: expenseDate, odoo: date}
+      - {cdm: amount, odoo: total_amount}
+
+# =============================================================================
+# IPAI-SPECIFIC CDM EXTENSIONS (PH BIR — no CDM standard equivalent)
+# =============================================================================
+ipai_extensions:
+
+  - cdm: IPAI_BIRFiling
+    extends: null   # no CDM parent; fully custom
+    odoo_model: ipai_bir_filing_run
+    attributes:
+      - {cdm: filingId, odoo: id}
+      - {cdm: formType, odoo: form_type}
+      - {cdm: period, odoo: period}
+      - {cdm: companyTin, odoo: company_tin}
+      - {cdm: branchSuffix, odoo: branch_suffix}
+      - {cdm: state, odoo: state}
+      - {cdm: submissionDate, odoo: submission_date}
+      - {cdm: birReferenceNo, odoo: bir_reference_no}
+
+  - cdm: IPAI_BIRFormLine
+    extends: null
+    odoo_model: ipai_bir_2307_line
+    attributes:
+      - {cdm: filingRunId, odoo: filing_run_id}
+      - {cdm: moveId, odoo: move_id}
+      - {cdm: vendorId, odoo: partner_id}
+      - {cdm: atcCode, odoo: atc_code}
+      - {cdm: amountPaid, odoo: amount_paid}
+      - {cdm: withholdingAmount, odoo: withholding_amount}
+      - {cdm: rate, odoo: rate}
+
+  - cdm: IPAI_ATCCode
+    extends: TaxCode  # CDM parent exists
+    odoo_model: account.tax
+    discriminator: "country_id.code = 'PH' AND atc_code IS NOT NULL"
+    attributes:
+      - {cdm: atcCode, odoo: atc_code, note: "custom field on account.tax"}
+      - {cdm: description, odoo: name}
+      - {cdm: rate, odoo: amount}
+
+  - cdm: IPAI_TINNumber
+    extends: null
+    odoo_model: res.partner
+    attributes:
+      - {cdm: partnerId, odoo: id}
+      - {cdm: tinBase, odoo: "vat (parsed NNN-NNN-NNN portion)"}
+      - {cdm: tinBranchSuffix, odoo: "branch_suffix (custom field)"}
+      - {cdm: fullTin, odoo: "computed: vat || '-' || branch_suffix"}
+
+  - cdm: IPAI_ExpenseLiquidation
+    extends: ExpenseReport   # CDM parent
+    odoo_model: ipai_expense_liquidation
+    attributes:
+      - {cdm: expenseId, odoo: expense_id}
+      - {cdm: phOrNumber, odoo: ph_or_number}
+      - {cdm: orCwtRequired, odoo: or_cwt_required}
+      - {cdm: cwtAmount, odoo: cwt_amount}
+      - {cdm: atcCode, odoo: atc_code}
+      - {cdm: birReceiptNumber, odoo: bir_receipt_number}
+
+  - cdm: IPAI_EWTRate
+    extends: TaxCode
+    odoo_model: account.tax
+    discriminator: "country_id.code = 'PH' AND type_tax_use = 'purchase'"
+
+  - cdm: IPAI_AuditEvent
+    extends: null
+    odoo_model: null   # lives in platform.audit_event (Postgres, not Odoo)
+    source_schema: platform
+    attributes:
+      - {cdm: eventId, pg_column: id}
+      - {cdm: occurredAt, pg_column: occurred_at}
+      - {cdm: actorKind, pg_column: actor_kind}
+      - {cdm: resourceType, pg_column: resource_type}
+      - {cdm: action, pg_column: action}
+      - {cdm: beforeState, pg_column: before_state}
+      - {cdm: afterState, pg_column: after_state}
+
+# =============================================================================
+# SKIP list — entities NOT projected to CDM
+# =============================================================================
+skip_from_cdm_export:
+  - ops.agent_run        # operational; not analytical
+  - ops.agent_message    # too high-volume; privacy concerns
+  - ops.tool_call        # same
+  - ops.agent_conversation
+  - "stock.*"            # inventory not in IPAI v1 scope
+  - "mrp.*"              # manufacturing not in scope
+  - "pos.*"              # point-of-sale not in scope
+  - "ir.*"               # Odoo internal models
+  - "res.users"          # auth data — Entra is SOR for identity
+
+# =============================================================================
+# Fabric Data Agent exposure
+# =============================================================================
+fabric_data_agent:
+  enabled: false   # gated on Issue 26 (CDM export pipeline) + Fabric capacity
+  expose_entities:
+    - Invoice
+    - VendorInvoice
+    - Payment
+    - BankStatementLine
+    - ExpenseReport
+    - SalesOrder
+    - PurchaseOrder
+    - Project
+    - TimeEntry
+    - IPAI_BIRFiling
+    - IPAI_ExpenseLiquidation
+  mcp_endpoint: "https://fcipaidev.fabric.microsoft.com/mcp"   # placeholder, provisioned in Phase 2
