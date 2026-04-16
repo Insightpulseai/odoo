@@ -1,0 +1,52 @@
+contract_version: 1
+
+databricks_apps_runtime:
+  source:
+    type: microsoft_learn
+    url: https://learn.microsoft.com/en-us/azure/databricks/dev-tools/databricks-apps/
+    classification: databricks_app_surface_runtime_truth
+  usage_rules:
+    use_for:
+      - workspace_hosted_data_ai_app_runtime
+      - governed_internal_app_surface
+      - rag_chat_and_dashboard_runtime_reference
+      - databricks_native_ops_ui_reference
+    do_not_use_for:
+      - primary_erp_runtime_truth
+      - primary_customer_tenant_truth
+      - unity_catalog_governance_truth
+      - entra_identity_truth
+  runtime_characteristics:
+    hosting_model: serverless
+    workspace_tier_requirement: premium
+    supported_local_languages:
+      - python
+      - nodejs
+    supported_framework_examples_python:
+      - streamlit
+      - dash
+      - gradio
+    supported_framework_examples_nodejs:
+      - react
+      - angular
+      - svelte
+      - express
+  platform_integrations:
+    - unity_catalog
+    - databricks_sql
+    - oauth
+  supported_use_cases:
+    - interactive_dashboards
+    - rag_chat_apps
+    - data_entry_forms
+    - custom_operational_interfaces
+  ops_surfaces:
+    - logs
+    - audit_events
+    - costs
+    - app_insights
+    - telemetry_in_unity_catalog
+    - embedding_in_external_sites
+  policy_notes:
+    - workspace_hosted_apps_are_separate_from_workspace_resource_contract
+    - databricks_apps_can_be_internal_or_embedded_but_are_not_default_customer_web_authority

@@ -17,3 +17,8 @@ observed_workspaces:
     evidence_source:
       type: portal_screenshot
       captured_on: 2026-04-16
+
+app_surface_capabilities:
+  databricks_apps_supported:
+    prerequisite: premium_workspace
+    current_workspace_type_observed: Premium

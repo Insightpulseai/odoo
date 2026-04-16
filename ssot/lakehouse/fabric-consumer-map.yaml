@@ -55,3 +55,16 @@ databricks_workspace_runtime_binding:
   rules:
     - no_public_ip_expected_for_governed_prod_workspaces
     - unity_catalog_expected_for_governed_prod_workspaces
+
+databricks_native_app_consumers:
+  databricks_apps:
+    role: workspace_hosted_app_surface
+    source_layer:
+      - unity_catalog_governed_data
+      - databricks_sql
+    allowed_use_cases:
+      - internal_dashboards
+      - rag_chat_apps
+      - custom_operational_interfaces
+    rule:
+      databricks_apps_are_peer_consumers_to_fabric_not_replacement_for_uc_or_semantic_authority
