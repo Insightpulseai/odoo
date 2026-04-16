@@ -1,0 +1,464 @@
+---
+# ATC Code Mapping — Canonical Crosswalk for Withholding Tax Codes
+# This file exists because Odoo and platform/Supabase use different
+# ATC code namespaces. No agent, benchmark, or production workflow
+# involving withholding tax may proceed until this mapping is resolved.
+
+version: 2
+status: draft_crosswalk_complete
+purpose: canonical_crosswalk_for_withholding_tax_codes
+created_at: "2026-03-18"
+updated_at: "2026-03-19"
+blocker_ref: "ssot/evals/tax_bir_benchmark_gap_analysis.yaml#GAP-ATC-001"
+
+canonical_namespace: bir_standard
+canonical_namespace_description: >
+  The canonical namespace uses BIR-standard Alphanumeric Tax Codes (ATC)
+  as defined in RMC 19-2007, RMC 25-2011, and subsequent BIR issuances.
+  Format: <prefix><number> where prefix indicates tax type:
+    WI = Withholding tax on Income (expanded, creditable)
+    WC = Withholding tax on Compensation
+    WB = Withholding tax on Business income
+    WV = Withholding tax on VAT (VAT withholding)
+    WF = Withholding tax — Final
+    GR = Government — Royalties
+    FI = Final tax on Interest
+
+systems:
+  odoo:
+    observed_namespace: W_series
+    examples:
+      - W010
+      - W020
+    source: "addons/ipai/ipai_bir_tax_compliance/"
+    namespace_notes: >
+      Simplified internal alias scheme. W010-W170 are shorthand codes
+      that do NOT match BIR-published ATC codes. Used in ph_rates_2025.json,
+      ewt.rules.yaml, and test fixtures. Must be translated to BIR-standard
+      codes for any BIR form filing (1601-EQ, 1604-E, 2307).
+
+  platform_supabase:
+    observed_namespace: WI_WC_series
+    examples:
+      - WI010
+      - WC010
+    source: "self-hosted Supabase on vm-ipai-supabase-dev (project: spdtwktxdalcfigzeqrz)"
+    instance: "spdtwktxdalcfigzeqrz"
+    hosting: "Azure VM vm-ipai-supabase-dev (rg-ipai-agents-dev)"
+    namespace_notes: >
+      Uses BIR-standard prefixes (WI, WC) which are closer to official ATC codes.
+      Defined in supabase/seeds/workstreams/stc_tax_compliance/60_localization_ph.yaml.
+      Includes codes not present in Odoo module (WI100, WI130, WI159, WI160, WI640, WI641).
+    deprecated_instances:
+      - "xkxyvboeubffxxbebsll (used by TaxPulse-PH-Pack legacy — DO NOT USE)"
+      - "ublqmilcjtpnflofprkr (deprecated — DO NOT USE)"
+
+  taxpulse_legacy:
+    observed_namespace: W_series
+    examples:
+      - W010
+      - W020
+      - W030
+      - W040
+      - W050
+      - W157
+      - W158
+      - W161
+      - W169
+      - W170
+    final_withholding_codes:
+      - F001
+      - F002
+      - F003
+      - F004
+      - F005
+    source: "/tmp/TaxPulse-PH-Pack-salvage/packs/ph/rates/ph_rates_2025.json"
+    notes: >
+      TaxPulse-PH-Pack uses identical W-series codes as the Odoo
+      ipai_bir_tax_compliance module. Both originate from the same codebase.
+      The W-series codes are simplified aliases (W010 = professional fees
+      individuals 10%) rather than BIR-canonical ATC codes. The F-series
+      codes (F001-F005) cover final withholding tax (interest, dividends,
+      royalties, prizes). TaxPulse also uses WC/WF prefixes in bir_1601c.py
+      compute_withholding_tax_from_moves() to classify tax lines by
+      compensation (WC prefix) vs final (WF/F prefix) withholding.
+    atc_detail:
+      expanded_withholding:
+        W010: {description: "Professional fees - individuals", rate: 0.10}
+        W020: {description: "Professional fees - juridical", rate: 0.10}
+        W030: {description: "Professional fees - medical", rate: 0.10}
+        W040: {description: "Professional fees - lawyers", rate: 0.10}
+        W050: {description: "Professional entertainers", rate: 0.10}
+        W157: {description: "Income payments to suppliers (goods)", rate: 0.01}
+        W158: {description: "Income payments to suppliers (services)", rate: 0.02}
+        W161: {description: "Commission agents", rate: 0.10}
+        W169: {description: "Rent - real property", rate: 0.05}
+        W170: {description: "Rent - personal property", rate: 0.05}
+      final_withholding:
+        F001: {description: "Interest on bank deposits", rate: 0.20}
+        F002: {description: "Cash dividends", rate: 0.10}
+        F003: {description: "Stock dividends", rate: 0.10}
+        F004: {description: "Royalties", rate: 0.20}
+        F005: {description: "Prizes over PHP 10,000", rate: 0.20}
+      compensation_detection:
+        prefixes: ["WC", "COMPENSATION", "SALARY", "PAYROLL", "1601C", "1601-C"]
+        notes: "Used in bir_1601c.py compute_withholding_tax_from_moves() to classify tax lines"
+      final_detection:
+        prefixes: ["WF", "FINAL", "F001", "F002", "F003", "F004", "F005"]
+        notes: "Used in bir_1601c.py to classify final withholding tax lines"
+
+# ============================================================
+# Canonical Crosswalk — Mapping Table
+# ============================================================
+# Each entry maps: Odoo internal code -> BIR-standard ATC code
+# bir_canonical is the source of truth for BIR form filing.
+# supabase_code is the code used in the platform/Supabase layer.
+
+mapping_status: draft_crosswalk_complete
+
+mapping_table:
+  # --- Expanded Withholding Tax (EWT / Creditable) ---
+  # BIR Form: 1601-EQ (quarterly), 2307 (certificate)
+  # Legal basis: NIRC Sec 57(B), RR 2-98 as amended
+
+  - canonical: "WI010"
+    bir_official: "WI010"
+    odoo_code: "W010"
+    supabase_code: "WI010"
+    description: "Professional fees - individuals"
+    rate: 0.10
+    bir_form: "1601-EQ"
+    applies_to: "individuals"
+    category: expanded_withholding
+    confidence: confirmed
+    notes: >
+      BIR ATC WI010: 10% on professional/talent fees paid to individuals.
+      Includes doctors, engineers, architects, CPAs when paid as individuals.
+
+  - canonical: "WI020"
+    bir_official: "WI020"
+    odoo_code: "W020"
+    supabase_code: "WI020"
+    description: "Professional fees - juridical/corporations"
+    rate: 0.10
+    bir_form: "1601-EQ"
+    applies_to: "corporations"
+    category: expanded_withholding
+    confidence: confirmed
+    notes: >
+      BIR ATC WI020: 10% on professional/talent fees paid to juridical persons.
+      Note: some BIR schedules show 15% for top-bracket corporations;
+      the 10% rate is the standard per RR 11-2018. Supabase 60_localization_ph.yaml
+      lists 15% — verify against current RR before production use.
+
+  - canonical: "WI010"
+    bir_official: "WI010"
+    odoo_code: "W030"
+    supabase_code: "WI010"
+    description: "Professional fees - medical practitioners"
+    rate: 0.10
+    bir_form: "1601-EQ"
+    applies_to: "individuals"
+    category: expanded_withholding
+    confidence: confirmed
+    notes: >
+      W030 is an Odoo-internal subdivision of WI010. BIR does not have a
+      separate ATC for medical professionals — they fall under WI010
+      (professional fees to individuals). The subdivision is useful for
+      internal reporting but maps to the same BIR ATC.
+
+  - canonical: "WI010"
+    bir_official: "WI010"
+    odoo_code: "W040"
+    supabase_code: "WI010"
+    description: "Professional fees - lawyers"
+    rate: 0.10
+    bir_form: "1601-EQ"
+    applies_to: "individuals"
+    category: expanded_withholding
+    confidence: confirmed
+    notes: >
+      W040 is an Odoo-internal subdivision of WI010. BIR does not have a
+      separate ATC for lawyers — they fall under WI010 (professional fees
+      to individuals) or WI020 (if the payee is a law firm / juridical entity).
+
+  - canonical: "WI010"
+    bir_official: "WI010"
+    odoo_code: "W050"
+    supabase_code: "WI010"
+    description: "Professional entertainers"
+    rate: 0.10
+    bir_form: "1601-EQ"
+    applies_to: "individuals"
+    category: expanded_withholding
+    confidence: confirmed
+    notes: >
+      W050 is an Odoo-internal subdivision of WI010. BIR ATC WI010 covers
+      all talent/professional fees to individuals. Entertainers are not
+      separately coded by BIR — the subdivision is for internal tracking.
+
+  - canonical: "WI640"
+    bir_official: "WI640"
+    odoo_code: "W157"
+    supabase_code: "WI640"
+    description: "Income payments to suppliers - goods"
+    rate: 0.01
+    bir_form: "1601-EQ"
+    applies_to: "all"
+    category: expanded_withholding
+    confidence: confirmed
+    notes: >
+      BIR ATC WI640: 1% on purchase of goods. The Odoo code W157 derives
+      from BIR's old EWT schedule numbering (item 157 in the EWT table).
+      BIR-standard ATC is WI640.
+
+  - canonical: "WI641"
+    bir_official: "WI641"
+    odoo_code: "W158"
+    supabase_code: "WI641"
+    description: "Income payments to suppliers - services"
+    rate: 0.02
+    bir_form: "1601-EQ"
+    applies_to: "all"
+    category: expanded_withholding
+    confidence: confirmed
+    notes: >
+      BIR ATC WI641: 2% on purchase of services. The Odoo code W158
+      derives from BIR's old EWT schedule numbering (item 158). BIR-standard
+      ATC is WI641.
+
+  - canonical: "WI157"
+    bir_official: "WI157"
+    odoo_code: "W161"
+    supabase_code: "WI157"
+    description: "Commission agents and brokers"
+    rate: 0.10
+    bir_form: "1601-EQ"
+    applies_to: "all"
+    category: expanded_withholding
+    confidence: confirmed
+    notes: >
+      BIR ATC WI157: 10% on commissions, rebates, and fees paid to
+      agents, brokers, and independent contractors. Supabase uses WI157
+      for this category. Odoo code W161 is an internal alias.
+
+  - canonical: "WI100"
+    bir_official: "WI100"
+    odoo_code: "W169"
+    supabase_code: "WI100"
+    description: "Rent - real property"
+    rate: 0.05
+    bir_form: "1601-EQ"
+    applies_to: "all"
+    category: expanded_withholding
+    confidence: confirmed
+    notes: >
+      BIR ATC WI100: 5% on rental of real property. The Odoo code W169
+      derives from BIR's old EWT schedule numbering. BIR-standard ATC
+      is WI100.
+
+  - canonical: "WI130"
+    bir_official: "WI130"
+    odoo_code: "W170"
+    supabase_code: "WI130"
+    description: "Rent - personal/movable property"
+    rate: 0.05
+    bir_form: "1601-EQ"
+    applies_to: "all"
+    category: expanded_withholding
+    confidence: confirmed
+    notes: >
+      BIR ATC WI130: 5% on rental of personal (movable) property.
+      The Odoo code W170 derives from BIR's old EWT schedule numbering.
+      BIR-standard ATC is WI130.
+
+  # --- Final Withholding Tax (FWT) ---
+  # BIR Form: 1601-FQ (quarterly), 2306 (certificate)
+  # Legal basis: NIRC Sec 57(A)
+
+  - canonical: "WF010"
+    bir_official: "WF010"
+    odoo_code: "F001"
+    supabase_code: needs_verification
+    description: "Interest on bank deposits"
+    rate: 0.20
+    bir_form: "1601-FQ"
+    applies_to: "all"
+    category: final_withholding
+    confidence: confirmed
+    notes: >
+      BIR ATC WF010: 20% final tax on interest income from Philippine
+      currency bank deposits and deposit substitutes. The Odoo F001 code
+      is an internal alias.
+
+  - canonical: "WF020"
+    bir_official: "WF020"
+    odoo_code: "F002"
+    supabase_code: needs_verification
+    description: "Cash dividends"
+    rate: 0.10
+    bir_form: "1601-FQ"
+    applies_to: "individuals"
+    category: final_withholding
+    confidence: confirmed
+    notes: >
+      BIR ATC WF020: 10% final tax on cash and property dividends from
+      domestic corporations received by individual taxpayers.
+
+  - canonical: "WF020"
+    bir_official: "WF020"
+    odoo_code: "F003"
+    supabase_code: needs_verification
+    description: "Stock dividends"
+    rate: 0.10
+    bir_form: "1601-FQ"
+    applies_to: "individuals"
+    category: final_withholding
+    confidence: confirmed
+    notes: >
+      F003 is an Odoo-internal subdivision of WF020. BIR does not separate
+      stock dividends from cash dividends — both are taxed at 10% under
+      the same ATC WF020 for individual recipients.
+
+  - canonical: "GR010"
+    bir_official: "GR010"
+    odoo_code: "F004"
+    supabase_code: needs_verification
+    description: "Royalties"
+    rate: 0.20
+    bir_form: "1601-FQ"
+    applies_to: "all"
+    category: final_withholding
+    confidence: needs_verification
+    notes: >
+      BIR uses multiple ATC codes for royalties depending on type:
+      GR010 (general royalties 20%), GR020 (books/literary 10%).
+      The Odoo F004 code at 20% maps to GR010 (general). If the business
+      also handles literary/book royalties at 10%, a separate mapping for
+      GR020 would be needed. Mark as needs_verification until confirmed.
+
+  - canonical: "WF050"
+    bir_official: "WF050"
+    odoo_code: "F005"
+    supabase_code: needs_verification
+    description: "Prizes over PHP 10,000"
+    rate: 0.20
+    bir_form: "1601-FQ"
+    applies_to: "all"
+    category: final_withholding
+    confidence: needs_verification
+    notes: >
+      BIR ATC for prizes/winnings varies: WF050 for PCSO/lotto winnings
+      above PHP 10,000 (20%), other prize categories may use different codes.
+      The Odoo F005 code at 20% is mapped to WF050 as the most common case.
+      Needs verification against specific BIR schedule for non-PCSO prizes.
+
+  # --- Compensation Withholding Tax ---
+  # BIR Form: 1601-C (monthly), 1604-CF (annual)
+  # Legal basis: NIRC Sec 24(A), TRAIN Law RA 10963
+
+  - canonical: "WC010"
+    bir_official: "WC010"
+    odoo_code: null
+    supabase_code: "WC010"
+    description: "Compensation - regular"
+    rate: graduated
+    bir_form: "1601-C"
+    applies_to: "employees"
+    category: compensation
+    confidence: confirmed
+    notes: >
+      BIR ATC WC010: Withholding on regular compensation. Rate follows
+      TRAIN Law graduated brackets. No corresponding Odoo W-series code
+      exists — compensation is handled separately via payroll module.
+
+  - canonical: "WC011"
+    bir_official: "WC011"
+    odoo_code: null
+    supabase_code: "WC011"
+    description: "Compensation - minimum wage earner (exempt)"
+    rate: 0
+    bir_form: "1601-C"
+    applies_to: "employees"
+    category: compensation
+    confidence: confirmed
+    notes: >
+      BIR ATC WC011: Minimum wage earners are exempt from withholding tax
+      per RA 9504. No Odoo W-series code — handled by payroll exemption logic.
+
+# ============================================================
+# Reconciliation Notes
+# ============================================================
+
+reconciliation_notes:
+  summary: >
+    The ATC code namespace divergence has three layers:
+
+    1. Odoo W-series (W010-W170, F001-F005): Simplified internal aliases
+       originally adopted from TaxPulse-PH-Pack. These do NOT correspond to
+       any BIR-published ATC code and cannot be used on BIR forms directly.
+
+    2. Supabase WI/WC-series: Closer to BIR-standard ATC codes. The Supabase
+       60_localization_ph.yaml uses proper BIR prefixes (WI for expanded/income
+       withholding, WC for compensation withholding).
+
+    3. BIR-standard ATC codes: The official codes published by the Bureau of
+       Internal Revenue via Revenue Memorandum Circulars (RMC 19-2007,
+       RMC 25-2011, and amendments). These are the legally required codes on
+       BIR Forms 2307, 2306, 1601-EQ, 1601-FQ, 1601-C, 1604-E, 1604-CF.
+
+  key_findings:
+    - >
+      The Odoo W-series codes are a many-to-one mapping. W010, W030, W040,
+      W050 all map to a single BIR ATC code WI010 (professional fees to
+      individuals at 10%). The internal subdivisions are useful for reporting
+      but must collapse to WI010 when generating BIR forms.
+    - >
+      The F-series codes (F001-F005) are also internal aliases. BIR uses
+      WF-series (WF010, WF020, WF050) and GR-series (GR010) for final
+      withholding taxes.
+    - >
+      The Supabase layer is closer to BIR-standard but has a rate discrepancy
+      on WI020 (shows 15%, BIR standard is 10% per RR 11-2018).
+    - >
+      Compensation codes (WC010, WC011) exist only in Supabase. Odoo handles
+      compensation through payroll modules, not through the EWT code table.
+
+  action_required:
+    - >
+      Odoo module -- Add a bir_atc_code field to the rate lookup table to
+      store the BIR-canonical code alongside the internal W-series alias.
+      This allows the rules engine to use W-series internally while emitting
+      BIR-standard codes on generated forms.
+    - "Supabase -- Verify and correct the WI020 rate (10% vs 15%)."
+    - >
+      BIR form generation -- Any code that produces BIR Forms 2307/2306/1601-EQ
+      must translate W-series to BIR-standard via this crosswalk.
+    - >
+      Test fixtures -- The atc_crosswalk_expected.csv provides validation data
+      for unit tests that confirm the mapping is applied correctly.
+
+  bir_references:
+    - "RMC 19-2007 — Revised ATC Codes"
+    - "RMC 25-2011 — Updated ATC Codes for expanded withholding"
+    - "RR 2-98 as amended — Expanded withholding tax regulations"
+    - "RR 11-2018 — Revised withholding tax rates under TRAIN Law"
+    - "TRAIN Law (RA 10963) — Tax Reform for Acceleration and Inclusion"
+
+# ============================================================
+# Rules (unchanged)
+# ============================================================
+
+rules:
+  no_agent_tax_determination_without_canonical_mapping: true
+  no_benchmark_pass_claim_for_withholding_tasks_without_mapping: true
+  unmapped_code_must_fail_closed: true
+
+next_actions:
+  - Verify WI020 rate discrepancy between Supabase (15%) and BIR standard (10%)
+  - Add bir_atc_code field to Odoo ipai_bir_tax_compliance rate tables
+  - Confirm GR010 mapping for royalties (F004) against BIR ATC schedule
+  - Confirm WF050 mapping for prizes (F005) against BIR ATC schedule
+  - Add Supabase-side codes for final withholding (WF010, WF020, GR010, WF050)
+  - Update agent rule pack to use canonical codes only
+  - Run crosswalk validation test against atc_crosswalk_expected.csv

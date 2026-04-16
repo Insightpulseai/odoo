@@ -1,0 +1,112 @@
+---
+# MCP Runtime State — observed 2026-04-16
+# Source: .mcp.json + Claude.ai integrations + session evidence
+# Classification: runtime evidence (refresh on each audit)
+contract_version: 1
+captured_on: 2026-04-16
+
+summary:
+  total_servers: 21
+  repo_configured: 8
+  active_usable: 8
+  deprecated_to_remove: 4
+  needs_config: 2
+  total_tools_approximate: 250
+
+repo_configured_servers:
+  azure:
+    package: "@azure/mcp@latest"
+    transport: npx
+    status: active
+    used_this_session: true
+    tools_used: [containerapp, postgres, network_dns, account]
+    notes: heavy-lifting for ACA, PG, DNS, infra ops
+
+  azure-devops:
+    package: "@azure-devops/mcp"
+    transport: npx
+    status: active
+    used_this_session: true
+    tools_used: [wit, work, pipelines, repo, search]
+    notes: boards, pipelines, repos, work items
+
+  databricks-genie:
+    package: databricks_genie_mcp.server
+    transport: python3
+    status: needs_config
+    env_gaps:
+      - DATABRICKS_HOST          # set to adb-7405608559466577.17.azuredatabricks.net
+      - DATABRICKS_SQL_WAREHOUSE_ID  # set to e7d89eabce4c330c
+    notes: SQL/Genie queries. Wire env vars to activate.
+
+  figma:
+    transport: remote_http
+    status: active
+    used_this_session: false
+
+  foundry:
+    package: mcp-foundry (git)
+    transport: uvx
+    status: needs_config
+    env_gaps:
+      - AZURE_AI_FOUNDRY_ENDPOINT  # set to https://ipai-copilot-resource.services.ai.azure.com
+    notes: Foundry agent/model management. Wire endpoint to activate.
+
+  github:
+    transport: remote_http
+    status: active
+    used_this_session: false
+    notes: auth flow available, gh CLI used directly instead
+
+  microsoft-learn:
+    transport: remote_http
+    status: active
+    used_this_session: true
+    tools_used: [microsoft_docs_search, microsoft_docs_fetch]
+
+  playwright:
+    package: "@playwright/mcp@latest"
+    transport: npx
+    status: active
+    used_this_session: false
+    notes: browser automation + testing
+
+cloud_remote_servers:
+  active:
+    - slack
+  available:
+    - canva
+    - gmail
+    - google_calendar
+    - hugging_face
+    - paypal
+    - pubmed
+    - sentry
+    - stripe
+  deprecated:
+    - cloudflare_1: { reason: "FORBIDDEN per CLAUDE.md 2026-04-07", action: remove }
+    - cloudflare_2: { reason: "FORBIDDEN per CLAUDE.md 2026-04-07", action: remove }
+    - supabase: { reason: "FORBIDDEN per CLAUDE.md 2026-03-26", action: remove }
+    - vercel: { reason: "FORBIDDEN per CLAUDE.md 2026-04-07", action: remove }
+    - netlify: { reason: "never used for IPAI", action: remove }
+
+gap_analysis:
+  covered:
+    core_baseline: "github ✓ azure ✓ azure-devops ✓ microsoft-learn ✓"
+    browser_ops: "playwright ✓"
+    identity: "azure (az ad commands) ✓"
+  needs_wiring:
+    - databricks-genie (env vars)
+    - foundry (endpoint)
+  missing_add_on_demand:
+    - chrome-devtools (browser debugging, separate from playwright automation)
+  optional_future:
+    - azure-managed-grafana (monitoring)
+    - fabric-data-agent (BI consumption)
+    - google-workspace-ops (collaboration, third-party)
+    - entra-enterprise (dedicated identity MCP, R3)
+
+rules:
+  - runtime_state_is_observed_evidence_not_policy
+  - partial_tools_must_not_be_treated_as_ready
+  - deprecated_integrations_must_not_remain_in_active_baseline

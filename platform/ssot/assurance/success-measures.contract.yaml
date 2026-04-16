@@ -1,0 +1,84 @@
+# ssot/assurance/success-measures.contract.yaml
+# Implementation health rating — red / yellow / green
+# Companion to: ssot/assurance/success-by-design.contract.yaml
+# This is NOT runtime SLO monitoring.
+
+kind: contract
+domain: assurance
+name: success-measures
+version: "1.0.0"
+status: active
+created: "2026-04-15"
+updated: "2026-04-15"
+
+description: >
+  Success measures track the overall health of an implementation engagement.
+  They are updated after mandatory reviews or material events — NOT continuously
+  monitored like runtime SLOs. This contract defines the rating system and
+  update protocol.
+
+rating_system:
+  - id: red
+    label: Red
+    definition: >
+      One or more critical issues threaten project success. The project
+      cannot proceed without immediate intervention. Executive escalation
+      is required.
+    trigger_conditions:
+      - "Blocking issue identified in mandatory review"
+      - "Scope change exceeds agreed tolerance"
+      - "Key resource unavailable with no mitigation"
+      - "Go-live date at risk with no recovery plan"
+      - "Data migration failure in dry run with no fix path"
+
+  - id: yellow
+    label: Yellow
+    definition: >
+      Significant risks or issues require active attention. The project
+      can proceed but mitigation plans must be in place and tracked.
+    trigger_conditions:
+      - "Risk identified without mitigation plan"
+      - "Schedule slippage within tolerance but trending"
+      - "Test coverage below target threshold"
+      - "Integration dependency delayed"
+      - "Training readiness behind schedule"
+
+  - id: green
+    label: Green
+    definition: >
+      Project is on track. All identified risks have mitigation plans.
+      No blocking issues. Gate criteria are being met on schedule.
+    trigger_conditions:
+      - "All gate criteria met for current phase"
+      - "Risk register reviewed and mitigated"
+      - "Schedule on track"
+      - "Stakeholder satisfaction confirmed"
+
+update_protocol:
+  when_updated:
+    - after_mandatory_review  # solution_blueprint_review, go_live_readiness_review
+    - after_gate_review       # any phase gate
+    - material_scope_change
+    - critical_issue_raised
+    - phase_transition
+    - executive_request
+
+  who_updates:
+    - delivery_manager
+    - project_lead
+
+  where_recorded:
+    - ado_work_item  # ADO issue with tag "success-measure"
+    - review_minutes
+
+  history:
+    description: >
+      Each rating change is recorded with timestamp, previous rating,
+      new rating, reason, and reviewer. History is append-only.
+
+boundaries:
+  - "This is implementation health, NOT runtime SLO monitoring"
+  - "This is NOT a project management status report"
+  - "Ratings reflect assurance findings, not developer velocity"
+  - "Green does not mean 'no risks' — it means risks are mitigated"
+  - "Red does not mean 'project failed' — it means intervention needed"

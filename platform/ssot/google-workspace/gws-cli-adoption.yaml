@@ -1,0 +1,180 @@
+---
+# Google Workspace CLI (gws) — Tool Adoption Record
+# Source: https://github.com/googleworkspace/cli
+# Classification in IPAI adoption matrix: consume-directly
+#
+# Purpose: Canonical CLI for Google Workspace API operations — human operators
+#          and AI agent workflows. Covers Drive, Gmail, Calendar, Sheets, Docs,
+#          Chat, Admin, and every Workspace API via Google Discovery Service.
+#
+# NOT a replacement for:
+#   - ssot/google-workspace/marketplace-app.yaml (Gmail Add-on — different surface)
+#   - ssot/google-workspace/oauth-consent.yaml (add-on OAuth consent)
+#   - Odoo business authorization (Odoo enforces its own RBAC)
+#
+# Last updated: 2026-04-16
+contract_version: 1
+
+tool:
+  name: gws
+  full_name: Google Workspace CLI
+  upstream_repo: https://github.com/googleworkspace/cli
+  maintainer: Google (googleworkspace org — not an official Google product)
+  license: Apache-2.0
+  current_stable_version: "0.22.5"  # as of 2026-04-16
+  install_reference: https://github.com/googleworkspace/cli/releases
+
+adoption_classification:
+  tier: consume-directly
+  rationale: >
+    Pre-built binary with structured JSON output, 100+ agent skills, and a Gemini
+    CLI extension. Covers the entire Workspace API surface dynamically via
+    Google Discovery Service. Zero custom tooling required for standard admin
+    and agent workflow needs.
+  doctrine_ref: AGENTS.md § Engineering Execution Doctrine (commodity → consume upstream)
+
+# ---------------------------------------------------------------------------
+# Authentication Strategy
+# ---------------------------------------------------------------------------
+auth:
+  preferred_method: oauth2_desktop_interactive
+  fallback_method: credentials_file
+  ci_method: credentials_file_from_key_vault
+
+  setup_sequence:
+    - step: 1
+      action: gws auth setup    # creates GCP project, enables APIs, OAuth login
+      requires: gcloud_cli
+    - step: 2
+      action: gws auth login    # subsequent scope selection + login
+      note: >
+        Scope preset (recommended) includes 85+ scopes; unverified (testing mode)
+        apps are limited to ~25 scopes. Use --scopes flag to select individual services.
+
+  environment_variables:
+    GOOGLE_WORKSPACE_CLI_TOKEN: Pre-obtained OAuth2 access token (highest priority)
+    GOOGLE_WORKSPACE_CLI_CREDENTIALS_FILE: Path to OAuth credentials JSON (user or service account)
+    GOOGLE_WORKSPACE_CLI_CLIENT_ID: OAuth client ID alternative
+    GOOGLE_WORKSPACE_CLI_CLIENT_SECRET: OAuth client secret paired with CLIENT_ID
+    GOOGLE_WORKSPACE_CLI_CONFIG_DIR: Override config dir (default ~/.config/gws)
+    GOOGLE_WORKSPACE_CLI_LOG: Log level for stderr (e.g. gws=debug). Off by default.
+
+  credential_storage:
+    rule: credentials_in_key_vault_or_env_only
+    secrets_ref: ssot/identity/identity-boundary-policy.yaml
+    never: hardcode_or_echo_credentials
+
+  service_account_support: true
+  note: >
+    Service account credentials follow the same GOOGLE_WORKSPACE_CLI_CREDENTIALS_FILE
+    pattern. No gws auth login step required.
+
+# ---------------------------------------------------------------------------
+# Agent Integration — Gemini CLI Extension
+# ---------------------------------------------------------------------------
+agent_integration:
+  gemini_cli_extension:
+    install: gemini extensions install https://github.com/googleworkspace/cli
+    description: >
+      Gives Gemini CLI agent direct access to all gws commands and Workspace
+      agent skills. Auth is inherited from the terminal session — no additional
+      credential plumbing required by the agent.
+    status: adopt
+
+  agent_skills:
+    upstream_count: "100+"
+    skills_index: https://github.com/googleworkspace/cli/tree/main/skills
+    install_all: npx skills add https://github.com/googleworkspace/cli
+    install_selective: |
+      npx skills add https://github.com/googleworkspace/cli/tree/main/skills/gws-drive
+      npx skills add https://github.com/googleworkspace/cli/tree/main/skills/gws-gmail
+    note: >
+      Skills are SKILL.md files — compatible with the IPAI .agents/skills/ pattern.
+      Install selectively per agent manifest, not globally.
+
+  model_armor_integration:
+    flag: --sanitize "projects/P/locations/L/templates/T"
+    env_var: GOOGLE_WORKSPACE_CLI_SANITIZE_TEMPLATE
+    mode_env_var: GOOGLE_WORKSPACE_CLI_SANITIZE_MODE
+    modes: [warn, block]
+    note: >
+      Integrate Google Cloud Model Armor to sanitize Workspace API responses
+      before they reach an agent. Aligns with Pulser Safe Outputs subsystem doctrine.
+
+# ---------------------------------------------------------------------------
+# MCP Tool Governance
+# ---------------------------------------------------------------------------
+mcp_governance:
+  classification: optional_third_party
+  policy_ref: ssot/tooling/mcp-tool-decision-registry.yaml § collaboration_optional
+  decision_rule_ref: DR-05
+  rule: >
+    Google Workspace MCP / gws agent skills are optional and third-party.
+    Require explicit policy approval in agent manifest before enabling.
+    Never loaded globally across all agents.
+
+# ---------------------------------------------------------------------------
+# Canonical Helper Commands (reference)
+# ---------------------------------------------------------------------------
+helper_commands:
+  # Prefixed with + — hand-crafted, never collide with Discovery-generated names
+  gmail:
+    - "+send: Send an email"
+    - "+reply: Reply to a message (handles threading)"
+    - "+forward: Forward a message"
+    - "+triage: Unread inbox summary"
+    - "+watch: Stream new emails as NDJSON"
+  sheets:
+    - "+append: Append row to a spreadsheet"
+    - "+read: Read values from a spreadsheet"
+  docs:
+    - "+write: Append text to a document"
+  drive:
+    - "+upload: Upload a file with automatic metadata"
+  calendar:
+    - "+insert: Create a new event"
+    - "+agenda: Show upcoming events (uses Google account timezone)"
+  chat:
+    - "+send: Send a message to a space"
+  workflow:
+    - "+standup-report: Today's meetings + open tasks"
+    - "+meeting-prep: Next meeting agenda, attendees, linked docs"
+    - "+weekly-digest: This week's meetings + unread email count"
+    - "+email-to-task: Convert Gmail message to Google Tasks entry"
+
+# ---------------------------------------------------------------------------
+# Exit Codes (for script integration)
+# ---------------------------------------------------------------------------
+exit_codes:
+  0: success
+  1: api_error        # Google returned 4xx/5xx
+  2: auth_error       # credentials missing, expired, or invalid
+  3: validation_error # bad arguments, unknown service, invalid flag
+  4: discovery_error  # cannot fetch API schema
+  5: internal_error   # unexpected failure
+
+# ---------------------------------------------------------------------------
+# Scope Caution (testing mode apps)
+# ---------------------------------------------------------------------------
+scope_caution:
+  issue: >
+    Unverified (testing mode) OAuth apps are limited to ~25 scopes.
+    The gws recommended scope preset includes 85+ scopes and will fail
+    for unverified apps.
+  mitigation: >
+    Use --scopes flag to select only the services needed:
+    gws auth login --scopes drive,gmail,calendar
+  applies_to: [insightpulseai.com GCP project OAuth app in testing mode]
+
+# ---------------------------------------------------------------------------
+# Managed Tenants Using This Tool
+# ---------------------------------------------------------------------------
+managed_tenant_coverage:
+  - tenant: insightpulseai.com
+    gcp_project: see ssot/google-workspace/oauth-consent.yaml
+    primary_use: [gmail_addon_ops, drive_agent_skills, calendar_agent_skills]
+
+  - tenant: w9studio.net
+    gcp_project: TBD
+    primary_use: [admin_user_management, drive_ops, gmail_ops]
+    users_ref: ssot/google-workspace/w9studio-tenant.yaml

@@ -1,0 +1,26 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "ipai.production_eligibility.v1",
+  "type": "object",
+  "required": [
+    "component",
+    "acceptance_status",
+    "runtime_production_status",
+    "evidence_path",
+    "tests_passed",
+    "deployment_contract_valid",
+    "remaining_risks"
+  ],
+  "properties": {
+    "component": { "type": "string" },
+    "acceptance_status": { "type": "string", "enum": ["accepted", "ready_for_release"] },
+    "runtime_production_status": { "type": "string", "enum": ["approved", "conditional-approved"] },
+    "evidence_path": { "type": "string" },
+    "tests_passed": { "type": "boolean" },
+    "deployment_contract_valid": { "type": "boolean" },
+    "remaining_risks": {
+      "type": "array",
+      "items": { "type": "string" }
+    }
+  }
+}

@@ -1,0 +1,132 @@
+schema_version: "1.0"
+namespace: release.contract
+last_reviewed: "2026-03-27"
+description: >
+  Machine-readable definition of what "production-complete" means per
+  deployable surface. Each surface declares its pipeline, required stages,
+  smoke criteria, and evidence requirements. Used by CI to gate promotion.
+
+# ---------------------------------------------------------------------------
+# Surfaces
+# ---------------------------------------------------------------------------
+surfaces:
+
+  web_landing:
+    display_name: Web Landing Page
+    pipeline: azure-pipelines/web-landing-deploy.yml
+    acr_image: acripaiodoo.azurecr.io/ipai-website:latest
+    container_app: ipai-website-dev
+    resource_group: rg-ipai-dev-odoo-runtime
+    public_url: https://www.insightpulseai.com
+    dockerfile: web/ipai-landing/Dockerfile
+    trigger_paths:
+      - web/ipai-landing/**
+    required_stages:
+      - build
+      - deploy
+      - smoke
+      - evidence
+    smoke_criteria:
+      http_status: 200
+      content_must_contain: InsightPulse
+      content_must_not_contain: null
+    evidence_artifact: evidence-web-landing-*
+
+  pulser_odoo:
+    display_name: Pulser for Odoo (Odoo CE 18)
+    pipeline: azure-pipelines/odoo-deploy.yml
+    acr_image: acripaiodoo.azurecr.io/pulser-odoo:18.0
+    container_app: ipai-odoo-dev-web
+    resource_group: rg-ipai-dev-odoo-runtime
+    public_url: https://erp.insightpulseai.com
+    dockerfile: platform/runtime/docker/docker/Dockerfile.pulser-odoo
+    trigger_paths:
+      - addons/ipai/**
+      - config/**
+      - platform/runtime/docker/docker/Dockerfile.pulser-odoo
+    required_stages:
+      - build
+      - deploy
+      - smoke
+      - evidence
+    smoke_criteria:
+      http_status: 200
+      smoke_path: /web/login
+      content_must_contain: Odoo
+      content_must_not_contain: Internal Server Error
+    evidence_artifact: evidence-pulser-odoo-*
+
+  databricks:
+    display_name: Databricks Bundles
+    pipeline: azure-pipelines/databricks-deploy.yml
+    databricks_host: https://adb-7405610347978231.11.azuredatabricks.net
+    warehouse_id: e7d89eabce4c330c
+    trigger_paths:
+      - databricks/**
+      - data-intelligence/**
+    required_stages:
+      - detect
+      - validate
+      - deploy
+      - smoke
+      - evidence
+    smoke_criteria:
+      warehouse_health: SUCCEEDED
+    bundles:
+      - databricks/bundles/foundation_python
+      - databricks/bundles/lakeflow_ingestion
+      - databricks/bundles/sql_warehouse
+    evidence_artifact: evidence-databricks-*
+
+  bi_layer:
+    display_name: BI Deploy & Promote
+    pipeline: azure-pipelines/bi-deploy-promote.yml
+    databricks_host: https://adb-7405610347978231.11.azuredatabricks.net
+    warehouse_id: e7d89eabce4c330c
+    trigger_paths:
+      - databricks/bundles/sql_warehouse/src/sql/serving/*
+      - data-intelligence/semantic/powerbi/*
+    required_stages:
+      - validate_repo
+      - deploy_serving
+      - validate
+    smoke_criteria:
+      serving_view_count_min: 9
+    evidence_artifact: null  # inline validation
+
+# ---------------------------------------------------------------------------
+# Promotion policy
+# ---------------------------------------------------------------------------
+promotion:
+  dev_to_staging:
+    requires:
+      - all_required_stages_pass
+      - evidence_artifact_published
+      - smoke_green
+    gate: manual_approval
+    environment: staging
+
+  staging_to_prod:
+    requires:
+      - staging_smoke_green
+      - evidence_artifact_published
+      - no_critical_alerts
+    gate: manual_approval
+    environment: prod
+
+# ---------------------------------------------------------------------------
+# Evidence contract
+# ---------------------------------------------------------------------------
+evidence:
+  format: json
+  schema_version: "1.0"
+  required_fields:
+    - surface
+    - timestamp
+    - build_number
+    - commit_sha
+    - image_ref
+    - smoke_url
+    - pipeline
+  artifact_naming: "evidence-{surface}-{build_number}"
+  retention_days: 90

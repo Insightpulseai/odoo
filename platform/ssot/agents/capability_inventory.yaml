@@ -1,0 +1,744 @@
+# =============================================================================
+# SSOT: Agent Capability Inventory
+# =============================================================================
+# Generated: 2026-03-18
+# Source: docs/security/AGENT_CAPABILITY_AUDIT.md
+# Schema: ssot.agents.capability_inventory.v1
+#
+# Classification taxonomy:
+#   artifact_type: agent | tool | skill | model | workflow | connector | memory | eval | prompt_pack | runtime | solution | ui_surface | other
+#   origin: native_platform | native_repo | user_generated | local_custom | provider_managed | third_party | benchmark_reference_only | unknown
+#   hosting: local_only | repo_local | self_hosted | cloud_managed | provider_hosted | hybrid | unknown
+#   ownership: insightpulseai_owned | microsoft_owned | anthropic_owned | openai_owned | github_owned | odoo_owned | third_party_vendor_owned | shared_or_unclear
+#   control_level: full_control | config_only | api_consumer_only | black_box_dependency | reference_only
+#   criticality: core_runtime | important | optional | experimental | deprecated | blocked | aspirational
+#   auth_mode: managed_identity | entra_user_auth | service_principal | api_key | oauth | local_secret | none | unknown
+#   data_access: no_data | metadata_only | read_only | bounded_write | full_write | admin_control | unknown
+#   env_scope: dev | staging | prod | shared | tenant_specific | unknown
+#   canonicality: canonical | transitional | legacy | duplicate | shadow | orphaned | reference_only
+# =============================================================================
+
+version: "1.0"
+updated_at: "2026-03-18"
+
+items:
+  # ---------------------------------------------------------------------------
+  # AI/Agent Modules (Odoo)
+  # ---------------------------------------------------------------------------
+  - id: ipai_odoo_copilot
+    name: "IPAI Odoo Copilot (Azure Foundry)"
+    path: addons/ipai/ipai_odoo_copilot/
+    artifact_type: agent
+    origin: native_repo
+    hosting: self_hosted
+    ownership: insightpulseai_owned
+    control_level: full_control
+    criticality: core_runtime
+    auth_mode: managed_identity
+    data_access: read_only
+    env_scope: prod
+    canonicality: canonical
+    description: "Single entry point for all AI copilot features. Bridges Odoo to Microsoft Foundry agent."
+    foundry_integrated: true
+    ssot_ref: ssot/ai/agents.yaml
+
+  - id: ipai_enterprise_bridge
+    name: "IPAI Enterprise Bridge"
+    path: addons/ipai/ipai_enterprise_bridge/
+    artifact_type: connector
+    origin: native_repo
+    hosting: self_hosted
+    ownership: insightpulseai_owned
+    control_level: full_control
+    criticality: core_runtime
+    auth_mode: managed_identity
+    data_access: bounded_write
+    env_scope: prod
+    canonicality: canonical
+    description: "EE parity stubs + Foundry provider config + Doc Intelligence config."
+
+  - id: ipai_workspace_core
+    name: "IPAI Workspace Core"
+    path: addons/ipai/ipai_workspace_core/
+    artifact_type: solution
+    origin: native_repo
+    hosting: self_hosted
+    ownership: insightpulseai_owned
+    control_level: full_control
+    criticality: important
+    auth_mode: managed_identity
+    data_access: bounded_write
+    env_scope: prod
+    canonicality: canonical
+    description: "Notion-like collaborative workspace with copilot integration."
+
+  - id: ipai_ai_copilot
+    name: "IPAI AI Copilot (Legacy Gemini)"
+    path: addons/ipai/ipai_ai_copilot/
+    artifact_type: agent
+    origin: native_repo
+    hosting: self_hosted
+    ownership: insightpulseai_owned
+    control_level: full_control
+    criticality: deprecated
+    auth_mode: api_key
+    data_access: read_only
+    env_scope: dev
+    canonicality: legacy
+    description: "DEPRECATED. Gemini/Supabase copilot bridge. Replaced by ipai_odoo_copilot."
+    installable: false
+
+  - id: ipai_ai_widget
+    name: "IPAI AI Widget"
+    path: addons/ipai/ipai_ai_widget/
+    artifact_type: ui_surface
+    origin: native_repo
+    hosting: self_hosted
+    ownership: insightpulseai_owned
+    control_level: full_control
+    criticality: deprecated
+    auth_mode: api_key
+    data_access: read_only
+    env_scope: dev
+    canonicality: legacy
+    description: "DEPRECATED. Ask AI widget. Replaced by Foundry ask mode."
+    installable: false
+
+  - id: ipai_ask_ai_azure
+    name: "IPAI Ask AI (Azure OpenAI)"
+    path: addons/ipai/ipai_ask_ai_azure/
+    artifact_type: ui_surface
+    origin: native_repo
+    hosting: self_hosted
+    ownership: insightpulseai_owned
+    control_level: full_control
+    criticality: deprecated
+    auth_mode: api_key
+    data_access: read_only
+    env_scope: dev
+    canonicality: legacy
+    description: "DEPRECATED. Azure OpenAI systray widget. Replaced by Foundry."
+    installable: false
+
+  - id: ipai_ai_platform
+    name: "IPAI AI Platform"
+    path: addons/ipai/ipai_ai_platform/
+    artifact_type: connector
+    origin: native_repo
+    hosting: self_hosted
+    ownership: insightpulseai_owned
+    control_level: full_control
+    criticality: deprecated
+    auth_mode: api_key
+    data_access: read_only
+    env_scope: dev
+    canonicality: legacy
+    description: "DEPRECATED. Supabase Edge Function HTTP client. Replaced by Foundry."
+    installable: false
+
+  - id: ipai_ai_channel_actions
+    name: "IPAI AI Channel Actions"
+    path: addons/ipai/ipai_ai_channel_actions/
+    artifact_type: agent
+    origin: native_repo
+    hosting: self_hosted
+    ownership: insightpulseai_owned
+    control_level: full_control
+    criticality: deprecated
+    auth_mode: api_key
+    data_access: read_only
+    env_scope: dev
+    canonicality: legacy
+    description: "DEPRECATED. External channel actions adapter. Replaced by Foundry livechat."
+    installable: false
+
+  - id: ipai_llm_supabase_bridge
+    name: "IPAI LLM Supabase Bridge"
+    path: addons/ipai/ipai_llm_supabase_bridge/
+    artifact_type: connector
+    origin: native_repo
+    hosting: self_hosted
+    ownership: insightpulseai_owned
+    control_level: full_control
+    criticality: deprecated
+    auth_mode: api_key
+    data_access: bounded_write
+    env_scope: dev
+    canonicality: legacy
+    description: "DEPRECATED. Apexive LLM to Supabase bridge. Replaced by Foundry."
+    installable: false
+
+  # ---------------------------------------------------------------------------
+  # MCP Servers & Coordinators
+  # ---------------------------------------------------------------------------
+  - id: mcp_coordinator
+    name: "MCP Coordinator"
+    path: agents/mcp/coordinator/
+    artifact_type: agent
+    origin: native_repo
+    hosting: self_hosted
+    ownership: insightpulseai_owned
+    control_level: full_control
+    criticality: important
+    auth_mode: api_key
+    data_access: metadata_only
+    env_scope: dev
+    canonicality: canonical
+    description: "FastAPI router for multiple MCP servers with A2A context propagation."
+    port: 8766
+    targets: [odoo_prod, odoo_lab, agent_coordination]
+
+  - id: n8n_api_bridge
+    name: "n8n API Bridge MCP"
+    path: agents/mcp/n8n-api-bridge/
+    artifact_type: tool
+    origin: native_repo
+    hosting: repo_local
+    ownership: insightpulseai_owned
+    control_level: full_control
+    criticality: important
+    auth_mode: api_key
+    data_access: bounded_write
+    env_scope: dev
+    canonicality: canonical
+    description: "TypeScript MCP bridge providing 3 AI tools for n8n workflow discovery and execution."
+    tools:
+      - n8n_list_workflow_tools
+      - n8n_execute_workflow_with_context
+      - n8n_get_tool_definition
+
+  - id: mcp_github_copilot
+    name: "GitHub Copilot MCP"
+    path: .mcp.json
+    artifact_type: tool
+    origin: provider_managed
+    hosting: provider_hosted
+    ownership: github_owned
+    control_level: api_consumer_only
+    criticality: optional
+    auth_mode: oauth
+    data_access: read_only
+    env_scope: shared
+    canonicality: canonical
+    url: "https://api.githubcopilot.com/mcp/"
+
+  - id: mcp_microsoft_learn
+    name: "Microsoft Learn MCP"
+    path: .mcp.json
+    artifact_type: tool
+    origin: provider_managed
+    hosting: provider_hosted
+    ownership: microsoft_owned
+    control_level: api_consumer_only
+    criticality: optional
+    auth_mode: none
+    data_access: read_only
+    env_scope: shared
+    canonicality: canonical
+    url: "https://learn.microsoft.com/api/mcp"
+
+  - id: mcp_azure
+    name: "Azure MCP"
+    path: .mcp.json
+    artifact_type: tool
+    origin: provider_managed
+    hosting: provider_hosted
+    ownership: microsoft_owned
+    control_level: api_consumer_only
+    criticality: important
+    auth_mode: managed_identity
+    data_access: admin_control
+    env_scope: shared
+    canonicality: canonical
+    risk: "Broad Azure resource management scope. Consider allowlisting operations."
+
+  - id: mcp_figma
+    name: "Figma MCP"
+    path: .mcp.json
+    artifact_type: tool
+    origin: provider_managed
+    hosting: provider_hosted
+    ownership: third_party_vendor_owned
+    control_level: api_consumer_only
+    criticality: optional
+    auth_mode: oauth
+    data_access: read_only
+    env_scope: shared
+    canonicality: canonical
+    url: "https://figma.com/mcp"
+
+  - id: mcp_supabase
+    name: "Supabase MCP"
+    path: .mcp.json
+    artifact_type: tool
+    origin: provider_managed
+    hosting: provider_hosted
+    ownership: third_party_vendor_owned
+    control_level: api_consumer_only
+    criticality: optional
+    auth_mode: api_key
+    data_access: full_write
+    env_scope: shared
+    canonicality: canonical
+    risk: "SUPABASE_ACCESS_TOKEN grants full write. Scope to read-only if possible."
+
+  - id: mcp_playwright
+    name: "Playwright MCP"
+    path: .mcp.json
+    artifact_type: tool
+    origin: provider_managed
+    hosting: local_only
+    ownership: third_party_vendor_owned
+    control_level: config_only
+    criticality: optional
+    auth_mode: none
+    data_access: no_data
+    env_scope: dev
+    canonicality: canonical
+
+  # ---------------------------------------------------------------------------
+  # Self-Hosted Services
+  # ---------------------------------------------------------------------------
+  - id: docs_assistant
+    name: "Docs Assistant API"
+    path: agents/docs-assistant/
+    artifact_type: agent
+    origin: native_repo
+    hosting: self_hosted
+    ownership: insightpulseai_owned
+    control_level: full_control
+    criticality: experimental
+    auth_mode: api_key
+    data_access: read_only
+    env_scope: dev
+    canonicality: transitional
+    description: "Kapa.ai-style self-hosted RAG. Uses Anthropic Claude + OpenAI embeddings."
+    risk: "Violates Foundry consolidation doctrine. Should migrate to Foundry."
+    models_used: [claude-3-sonnet-20240229, text-embedding-3-large]
+
+  - id: ocr_service
+    name: "OCR Service"
+    path: platform/services/ocr/
+    artifact_type: tool
+    origin: native_repo
+    hosting: self_hosted
+    ownership: insightpulseai_owned
+    control_level: full_control
+    criticality: important
+    auth_mode: none
+    data_access: no_data
+    env_scope: prod
+    canonicality: canonical
+    description: "Receipt extraction pipeline (Tesseract/PaddleOCR)."
+
+  - id: ops_console
+    name: "Ops Console"
+    path: web/apps/ops-console/
+    artifact_type: ui_surface
+    origin: native_repo
+    hosting: self_hosted
+    ownership: insightpulseai_owned
+    control_level: full_control
+    criticality: important
+    auth_mode: oauth
+    data_access: read_only
+    env_scope: prod
+    canonicality: canonical
+    description: "Next.js operations dashboard."
+    risk: "Contains stale @ai-sdk/google, @google/generative-ai deps."
+
+  # ---------------------------------------------------------------------------
+  # Agent Skills (~80 total, grouped)
+  # ---------------------------------------------------------------------------
+  - id: skills_odoo18
+    name: "Odoo 18 Reference Skills (16)"
+    path: agents/skills/odoo/
+    artifact_type: skill
+    origin: native_repo
+    hosting: repo_local
+    ownership: insightpulseai_owned
+    control_level: full_control
+    criticality: important
+    auth_mode: none
+    data_access: no_data
+    env_scope: dev
+    canonicality: canonical
+    skills:
+      - odoo18-orm
+      - odoo18-module
+      - odoo18-frontend
+      - odoo18-owl-components
+      - odoo18-qweb
+      - odoo18-testing
+      - odoo18-security
+      - odoo18-reports
+      - odoo18-performance
+      - odoo18-upgrade
+      - odoo18-cli
+      - odoo18-http-controllers
+      - odoo18-external-api
+      - odoo18-assets
+      - odoo18-coding-guidelines
+      - odoo18-git-guidelines
+
+  - id: skills_cli_safe
+    name: "CLI-Safe Wrappers (3)"
+    path: agents/skills/
+    artifact_type: skill
+    origin: native_repo
+    hosting: repo_local
+    ownership: insightpulseai_owned
+    control_level: full_control
+    criticality: important
+    auth_mode: local_secret
+    data_access: bounded_write
+    env_scope: dev
+    canonicality: canonical
+    skills: [odoo-cli-safe, github-cli-safe, azure-cli-safe]
+
+  - id: skills_business
+    name: "Business Process Skills"
+    path: agents/skills/
+    artifact_type: skill
+    origin: native_repo
+    hosting: repo_local
+    ownership: insightpulseai_owned
+    control_level: full_control
+    criticality: important
+    auth_mode: none
+    data_access: no_data
+    env_scope: dev
+    canonicality: canonical
+    skills:
+      - finance-month-end
+      - expense-processing
+      - bir-tax-filing
+      - deploy-odoo-modules-git
+      - backup-odoo-environment
+
+  - id: skills_odooops
+    name: "OdooOps Platform Skills"
+    path: agents/skills/
+    artifact_type: skill
+    origin: native_repo
+    hosting: repo_local
+    ownership: insightpulseai_owned
+    control_level: full_control
+    criticality: aspirational
+    auth_mode: api_key
+    data_access: bounded_write
+    env_scope: dev
+    canonicality: reference_only
+    description: "Designed for OdooOps platform (odooops.io). Not in active use."
+
+  # ---------------------------------------------------------------------------
+  # n8n Workflows (~70 total, grouped)
+  # ---------------------------------------------------------------------------
+  - id: workflows_finance
+    name: "Finance n8n Workflows (8)"
+    path: automations/n8n/workflows/
+    artifact_type: workflow
+    origin: native_repo
+    hosting: self_hosted
+    ownership: insightpulseai_owned
+    control_level: full_control
+    criticality: important
+    auth_mode: api_key
+    data_access: bounded_write
+    env_scope: prod
+    canonicality: canonical
+
+  - id: workflows_github
+    name: "GitHub Operations Workflows (5)"
+    path: automations/n8n/workflows/
+    artifact_type: workflow
+    origin: native_repo
+    hosting: self_hosted
+    ownership: insightpulseai_owned
+    control_level: full_control
+    criticality: important
+    auth_mode: oauth
+    data_access: bounded_write
+    env_scope: prod
+    canonicality: canonical
+
+  - id: workflows_claude_mcp
+    name: "Claude AI MCP Workflows (10)"
+    path: automations/n8n/workflows/claude-ai-mcp/
+    artifact_type: workflow
+    origin: native_repo
+    hosting: self_hosted
+    ownership: insightpulseai_owned
+    control_level: full_control
+    criticality: experimental
+    auth_mode: api_key
+    data_access: bounded_write
+    env_scope: dev
+    canonicality: transitional
+
+  - id: workflows_control_plane
+    name: "Control Plane Workflows (3)"
+    path: automations/n8n/workflows/control-plane/
+    artifact_type: workflow
+    origin: native_repo
+    hosting: self_hosted
+    ownership: insightpulseai_owned
+    control_level: full_control
+    criticality: important
+    auth_mode: api_key
+    data_access: bounded_write
+    env_scope: prod
+    canonicality: canonical
+
+  - id: workflows_notion_legacy
+    name: "Notion Monthly-Close Workflows (7)"
+    path: automations/notion-monthly-close/
+    artifact_type: workflow
+    origin: native_repo
+    hosting: self_hosted
+    ownership: insightpulseai_owned
+    control_level: full_control
+    criticality: deprecated
+    auth_mode: api_key
+    data_access: bounded_write
+    env_scope: dev
+    canonicality: legacy
+    description: "Legacy Notion-era workflows. Replaced by n8n canonical set."
+
+  # ---------------------------------------------------------------------------
+  # SuperClaude Framework (user-local)
+  # ---------------------------------------------------------------------------
+  - id: superclaude_agents
+    name: "SuperClaude Agent Personas (17)"
+    path: ~/.claude/agents/
+    artifact_type: prompt_pack
+    origin: local_custom
+    hosting: local_only
+    ownership: insightpulseai_owned
+    control_level: full_control
+    criticality: optional
+    auth_mode: none
+    data_access: no_data
+    env_scope: dev
+    canonicality: canonical
+    description: "Agent persona definitions for Claude Code (backend-architect, security-engineer, etc.)"
+
+  - id: superclaude_commands
+    name: "SuperClaude Commands (20+)"
+    path: ~/.claude/commands/
+    artifact_type: skill
+    origin: local_custom
+    hosting: local_only
+    ownership: insightpulseai_owned
+    control_level: full_control
+    criticality: optional
+    auth_mode: none
+    data_access: no_data
+    env_scope: dev
+    canonicality: canonical
+
+  - id: universal_design_agents
+    name: "Universal Design Platform Agents (10)"
+    path: ~/.claude/agents/
+    artifact_type: agent
+    origin: local_custom
+    hosting: local_only
+    ownership: insightpulseai_owned
+    control_level: full_control
+    criticality: aspirational
+    auth_mode: none
+    data_access: no_data
+    env_scope: dev
+    canonicality: reference_only
+    description: "BI Dashboard, Diagram, DataViz, React Optimization, CrossPlatform agents. Not in production."
+
+  # ---------------------------------------------------------------------------
+  # CI/CD Pipelines
+  # ---------------------------------------------------------------------------
+  - id: azdo_cicd
+    name: "Azure DevOps CI/CD Pipeline"
+    path: .azure/pipelines/ci-cd.yml
+    artifact_type: runtime
+    origin: native_repo
+    hosting: cloud_managed
+    ownership: insightpulseai_owned
+    control_level: full_control
+    criticality: core_runtime
+    auth_mode: managed_identity
+    data_access: bounded_write
+    env_scope: prod
+    canonicality: canonical
+    stages: [Lint, Build, Infra_Dev, Deploy_Dev, Deploy_Staging]
+
+  - id: github_actions
+    name: "GitHub Actions Workflows (19)"
+    path: .github/workflows/
+    artifact_type: runtime
+    origin: native_repo
+    hosting: cloud_managed
+    ownership: insightpulseai_owned
+    control_level: full_control
+    criticality: core_runtime
+    auth_mode: oauth
+    data_access: bounded_write
+    env_scope: shared
+    canonicality: canonical
+
+  # ---------------------------------------------------------------------------
+  # Docker/Runtime
+  # ---------------------------------------------------------------------------
+  - id: devcontainer
+    name: "Odoo Devcontainer"
+    path: .devcontainer/
+    artifact_type: runtime
+    origin: native_repo
+    hosting: local_only
+    ownership: insightpulseai_owned
+    control_level: full_control
+    criticality: important
+    auth_mode: none
+    data_access: full_write
+    env_scope: dev
+    canonicality: canonical
+
+  - id: odoo_prod_container
+    name: "Odoo Production Container"
+    path: odoo/Dockerfile
+    artifact_type: runtime
+    origin: native_repo
+    hosting: cloud_managed
+    ownership: insightpulseai_owned
+    control_level: full_control
+    criticality: core_runtime
+    auth_mode: managed_identity
+    data_access: full_write
+    env_scope: prod
+    canonicality: canonical
+
+  # ---------------------------------------------------------------------------
+  # Memory / Knowledge Systems
+  # ---------------------------------------------------------------------------
+  - id: project_memory_db
+    name: "Claude Project Memory"
+    path: .claude/project_memory.db
+    artifact_type: memory
+    origin: native_repo
+    hosting: local_only
+    ownership: insightpulseai_owned
+    control_level: full_control
+    criticality: optional
+    auth_mode: none
+    data_access: metadata_only
+    env_scope: dev
+    canonicality: canonical
+
+  - id: azure_ai_search
+    name: "Azure AI Search Index"
+    path: ssot/ai/sources.yaml
+    artifact_type: memory
+    origin: native_repo
+    hosting: cloud_managed
+    ownership: insightpulseai_owned
+    control_level: config_only
+    criticality: important
+    auth_mode: managed_identity
+    data_access: read_only
+    env_scope: prod
+    canonicality: canonical
+    resource: srch-ipai-dev
+    status: planned
+
+  # ---------------------------------------------------------------------------
+  # Connectors
+  # ---------------------------------------------------------------------------
+  - id: plane_api_client
+    name: "Plane API Client"
+    path: agents/scripts/plane/lib/plane_api.py
+    artifact_type: connector
+    origin: native_repo
+    hosting: repo_local
+    ownership: insightpulseai_owned
+    control_level: full_control
+    criticality: important
+    auth_mode: api_key
+    data_access: bounded_write
+    env_scope: dev
+    canonicality: canonical
+
+  - id: zoho_smtp
+    name: "Zoho SMTP Connector"
+    path: config/odoo/mail_settings.yaml
+    artifact_type: connector
+    origin: native_repo
+    hosting: provider_hosted
+    ownership: third_party_vendor_owned
+    control_level: config_only
+    criticality: core_runtime
+    auth_mode: api_key
+    data_access: bounded_write
+    env_scope: prod
+    canonicality: canonical
+
+  # ---------------------------------------------------------------------------
+  # SSOT Governance (meta-artifacts)
+  # ---------------------------------------------------------------------------
+  - id: ssot_ai_agents
+    name: "AI Agents Registry (SSOT)"
+    path: ssot/ai/agents.yaml
+    artifact_type: other
+    origin: native_repo
+    hosting: repo_local
+    ownership: insightpulseai_owned
+    control_level: full_control
+    criticality: core_runtime
+    auth_mode: none
+    data_access: no_data
+    env_scope: shared
+    canonicality: canonical
+
+  - id: ssot_ai_consolidation
+    name: "AI Consolidation Doctrine (SSOT)"
+    path: ssot/governance/ai-consolidation-foundry.yaml
+    artifact_type: other
+    origin: native_repo
+    hosting: repo_local
+    ownership: insightpulseai_owned
+    control_level: full_control
+    criticality: core_runtime
+    auth_mode: none
+    data_access: no_data
+    env_scope: shared
+    canonicality: canonical
+
+  # ---------------------------------------------------------------------------
+  # Duplicates / Orphans (flagged for cleanup)
+  # ---------------------------------------------------------------------------
+  - id: nested_odoo_duplicate
+    name: "Nested odoo/odoo/ Duplicate Tree"
+    path: odoo/odoo/
+    artifact_type: other
+    origin: native_repo
+    hosting: repo_local
+    ownership: insightpulseai_owned
+    control_level: full_control
+    criticality: deprecated
+    auth_mode: none
+    data_access: no_data
+    env_scope: dev
+    canonicality: duplicate
+    description: "Full copy of agents/, platform/, web/ trees at odoo/odoo/. Should be removed."
+
+  - id: stale_pyc_eval_rag
+    name: "Stale .pyc Files (eval, rag, agents)"
+    path: agents/scripts/*/
+    artifact_type: other
+    origin: native_repo
+    hosting: repo_local
+    ownership: insightpulseai_owned
+    control_level: full_control
+    criticality: deprecated
+    auth_mode: none
+    data_access: no_data
+    env_scope: dev
+    canonicality: orphaned
+    description: "Compiled Python caches for deleted source files. Should be removed."

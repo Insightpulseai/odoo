@@ -1,0 +1,130 @@
+# =============================================================================
+# Project Charter — InsightPulse AI Platform
+# =============================================================================
+#
+# Formal charter defining scope, stakeholders, constraints, and success criteria.
+# References (not duplicates) platform-strategy-2026.yaml for vision/mission/objectives.
+#
+# Cross-references:
+#   - ssot/governance/platform-strategy-2026.yaml (vision, mission, objectives, risks)
+#   - ssot/governance/platform-constitution.yaml (non-negotiable rules)
+#   - ssot/governance/enterprise_okrs.yaml (operational OKRs)
+#   - infra/ssot/azure/PLATFORM_TARGET_STATE.md (infrastructure target state)
+# =============================================================================
+
+schema_version: "1.0"
+schema: ssot.governance.project-charter.v1
+last_updated: "2026-03-17"
+
+project:
+  name: InsightPulse AI Platform
+  id: ipai-platform
+  status: active
+  inception: "2025-10-01"
+  planning_horizon: "2026-03-01 to 2026-12-31"
+
+# -----------------------------------------------------------------------------
+# Vision & Mission (reference only — SSOT is platform-strategy-2026.yaml)
+# -----------------------------------------------------------------------------
+vision_ref: ssot/governance/platform-strategy-2026.yaml#vision
+mission_ref: ssot/governance/platform-strategy-2026.yaml#mission
+
+vision_summary: >
+  Self-hosted, governed, repo-first enterprise platform: Odoo as ERP SoR,
+  Databricks as data intelligence, AI Foundry as agent control plane,
+  all validated through SSOT, CI gates, and evidence-backed operations.
+
+mission_summary: >
+  Integrated operating platform for finance, operations, AI copilots,
+  analytics, and compliance using deterministic ownership, measurable
+  outcomes, minimal architecture drift, and automation-first delivery.
+
+# -----------------------------------------------------------------------------
+# Scope
+# -----------------------------------------------------------------------------
+scope:
+  in_scope:
+    - "Odoo CE 18 ERP (finance, HR, CRM, project, inventory)"
+    - "Azure hosting (Container Apps, Front Door, managed PG, Key Vault)"
+    - "AI agent framework (Azure AI Foundry, Claude, OpenAI)"
+    - "Data analytics (Databricks, Superset, medallion architecture)"
+    - "Automation platform (n8n, GitHub Actions, AzDo Pipelines)"
+    - "SSO/Identity (Keycloak transitional → Entra ID)"
+    - "BIR tax compliance (Philippine regulatory)"
+    - "OCA community module curation and governance"
+
+  out_of_scope:
+    - "Consumer-facing mobile applications"
+    - "Hardware / IoT device management"
+    - "Third-party SaaS marketplace"
+    - "Odoo Enterprise modules or odoo.com IAP"
+    - "Multi-tenant customer hosting (single-tenant only)"
+
+# -----------------------------------------------------------------------------
+# Stakeholder Roles
+# -----------------------------------------------------------------------------
+stakeholders:
+  - role: platform-lead
+    responsibility: "Architecture decisions, constitution amendments, strategy"
+    authority: "Approves ADRs, infrastructure changes, new service additions"
+
+  - role: engineering-lead
+    responsibility: "OKR ownership, module development, CI/CD governance"
+    authority: "Approves OCA module adoption, ipai_* module creation"
+
+  - role: product-lead
+    responsibility: "Roadmap, feature prioritization, parity targets"
+    authority: "Approves spec bundles, capability target adjustments"
+
+# -----------------------------------------------------------------------------
+# Success Criteria (linked to strategy objectives)
+# -----------------------------------------------------------------------------
+success_criteria:
+  - id: SC-001
+    description: "All 7 SMART objectives (OBJ-001..007) tracked with measurable KRs"
+    objective_ref: "platform-strategy-2026.yaml#objectives"
+    measurement: "Quarterly OKR review via enterprise_okrs.yaml"
+
+  - id: SC-002
+    description: "EE parity ≥80% via CE + OCA + ipai_*"
+    current_baseline: "~35-45% (audited 2026-03-08)"
+    target: "≥80% by 2026-12-31"
+
+  - id: SC-003
+    description: "All canonical SSOT files CI-validated"
+    current_state: "3/3 governance layers have CI gates (PR #606)"
+    target: "100% coverage, zero ungated SSOT changes"
+
+  - id: SC-004
+    description: "Azure infrastructure fully IaC-managed"
+    target: "Zero console-only changes, all resources in resources.yaml"
+
+  - id: SC-005
+    description: "Identity migration from Keycloak to Entra ID"
+    status: "Not started"
+    gates: "OIDC/SAML parity, group mapping, service-account replacement"
+
+# -----------------------------------------------------------------------------
+# Constraints (ref: platform-constitution.yaml)
+# -----------------------------------------------------------------------------
+constraints:
+  - "CE-only: No Odoo Enterprise modules (CONST-001)"
+  - "OCA-first: Config → OCA → Delta (CONST-002)"
+  - "Cost-minimized: Self-hosted, no per-seat licensing (CONST-010)"
+  - "Azure-native: All deployment on Azure Container Apps (CONST-004)"
+  - "Secrets via Key Vault only (CONST-003)"
+  - "Repo is SSOT — no console-only changes (CONST-006, CONST-007)"
+
+# -----------------------------------------------------------------------------
+# Assumptions
+# -----------------------------------------------------------------------------
+assumptions:
+  - "GitHub Enterprise plan remains active (50k Actions minutes/mo)"
+  - "Azure subscription budget supports Southeast Asia region resources"
+  - "Single developer/operator model (solo seat, all roles)"
+  - "OCA 19.0 branches available for must-have modules by Q2 2026"
+
+# -----------------------------------------------------------------------------
+# Risks (reference — SSOT is platform-strategy-2026.yaml#risks)
+# -----------------------------------------------------------------------------
+risks_ref: ssot/governance/platform-strategy-2026.yaml#risks

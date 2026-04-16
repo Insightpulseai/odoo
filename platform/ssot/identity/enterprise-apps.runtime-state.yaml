@@ -1,0 +1,129 @@
+---
+# Entra Enterprise Applications — Runtime Identity Evidence
+# Source: Azure Portal → Entra → Enterprise Applications (2026-04-16)
+# NOT customer-tenant registry. NOT application-registration truth.
+# This is the provider-side identity integration inventory.
+contract_version: 1
+
+observed_enterprise_applications:
+  source: entra_enterprise_applications_portal
+  captured_on: 2026-04-16
+  tenant_directory: Default Directory
+
+  apps:
+    databricks:
+      display_name: Databricks
+      object_id: 32f6277a-1b95-459a-8960-38c85ca263fc
+      application_id: aaec40b0-c0ae-4211-a98b-6fc160abb71b
+      created_on: 2026-03-22
+      activation_status: Activated
+      classification: external_platform_enterprise_app
+      role: databricks_workspace_identity_surface
+
+    ipai_copilot_gateway:
+      display_name: ipai-copilot-gateway
+      object_id: c51e4632-327a-4117-a0a5-6732f284003d
+      application_id: cbdc8e90-6fe8-4dcb-a604-d44c6103270e
+      homepage_url: https://ipai-copilot-gateway.internal.blackstone-0df78186.southeastasia.azurecontainerapps.io
+      created_on: 2026-04-10
+      activation_status: Activated
+      classification: internal_api_enterprise_app
+      role: internal_gateway_identity_surface
+
+    insightpulse_ai_odoo_login:
+      display_name: InsightPulse AI - Odoo Login
+      object_id: d68a080a-54e7-4416-86f3-3ec1c6dfc3db
+      application_id: 3446e178-3eba-48c9-b5bd-4283ff729eb1
+      created_on: 2026-04-09
+      activation_status: Activated
+      classification: odoo_sso_enterprise_app
+      role: odoo_login_identity_surface
+
+    github_enterprise_cloud_saml_sso:
+      display_name: GitHub Enterprise Cloud - Insightpulseai SAML SSO
+      object_id: ee34ea33-7a6b-439a-ba41-ee3a2882c087
+      application_id: c7e32cff-7cd6-4bcb-97c7-5fd821497dc6
+      created_on: 2026-03-30
+      activation_status: Activated
+      certificate_expiry_status: Current
+      active_certificate_expiry_date: 2028-03-30
+      identifier_uri: api://github-saml-insightpulseai
+      classification: external_saas_sso_enterprise_app
+      role: github_org_saml_sso_surface
+
+    zoho:
+      display_name: Zoho
+      object_id: d34d48bd-eb07-4a1d-8b77-889f5b666fbe
+      application_id: 1e14a5c7-f257-4f32-9c77-a8b8f6c88e0d
+      homepage_url: https://accounts.zoho.com
+      created_on: 2026-03-31
+      activation_status: Activated
+      classification: external_saas_enterprise_app
+
+    zoho_mail_admin:
+      display_name: Zoho Mail Admin
+      object_id: 9d67f504-0b04-4b25-a60f-3f93aadf2203
+      application_id: 0d097417-fd63-48f3-81aa-be11db0e83d2
+      created_on: 2026-03-31
+      activation_status: Activated
+      classification: external_saas_admin_enterprise_app
+
+    microsoft_graph_command_line_tools:
+      display_name: Microsoft Graph Command Line Tools
+      object_id: 3ca9ef7d-ed5a-440d-94c6-b1cf74bb771e
+      application_id: 14d82eec-204b-4c2f-b7e8-296a70dab67e
+      created_on: 2026-03-20
+      activation_status: Activated
+      classification: microsoft_platform_enterprise_app
+
+    microsoft_tech_community:
+      display_name: Microsoft Tech Community
+      object_id: 2e9cf398-55d4-4198-9267-43729a3167b8
+      application_id: 09213cdc-9f30-4e82-aa6f-9b6e8d82dab3
+      created_on: 2026-04-13
+      activation_status: Activated
+      classification: external_reference_enterprise_app
+
+    github_subscription_permission_validation:
+      display_name: GitHub Subscription Permission Validation
+      object_id: cca45af1-e58c-4071-9b62-89b35f89a703
+      application_id: a3c04df9-984f-464e-8f9e-0c4a7e0c500d
+      created_on: 2026-03-08
+      activation_status: Activated
+      classification: github_platform_enterprise_app
+
+    zoominfo_login:
+      display_name: Zoominfo Login
+      object_id: d7e92017-74df-4c61-8640-17e186ef5e14
+      application_id: 858d7e42-35f0-44b7-9033-df309239a4f7
+      homepage_url: https://www.zoominfo.com
+      created_on: 2026-04-03
+      activation_status: Activated
+      classification: external_saas_enterprise_app
+
+    ipai_n8n_entra:
+      display_name: ipai-n8n-entra
+      object_id: 55c41689-f5d7-4bfd-b143-5072a53edde6
+      application_id: bf78cade-1727-4adc-9d8d-807e8bb5b723
+      created_on: 2026-03-21
+      activation_status: Activated
+      classification: deprecated_enterprise_app
+      role: deprecated_n8n_identity_surface
+      action_required: DELETE — n8n deprecated 2026-04-07 per CLAUDE.md
+
+rules:
+  enterprise_applications_are_identity_integrations: true
+  enterprise_applications_are_not_customer_tenant_registry: true
+  enterprise_applications_are_not_application_registration_truth: true
+
+integration_resolution_rules:
+  - name: enterprise_app_inventory_separate_from_odoo_connector_catalog
+    enforced: true
+  - name: connector_catalog_entries_must_not_be_inferred_from_entra_enterprise_apps
+    enforced: true
+
+odoo_sso_resolution_rules:
+  - name: enterprise_app_runtime_evidence_must_match_odoo_sso_contract
+    enforced: true
+  - name: insightpulse_ai_odoo_login_is_identity_surface_not_business_authorization_surface
+    enforced: true

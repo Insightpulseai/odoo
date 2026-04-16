@@ -1,0 +1,73 @@
+ado_github_authority_map:
+  version: "2026-03-23"
+  description: "Single ADO project to GitHub repos authority mapping"
+
+  ado_project:
+    name: ipai-platform
+    organization: insightpulseai
+    url: "https://dev.azure.com/insightpulseai/ipai-platform"
+    role: work_tracking_and_pipelines
+
+  github_org:
+    name: Insightpulseai
+    url: "https://github.com/Insightpulseai"
+    role: code_authority
+
+  repos:
+    - name: odoo
+      area_path: "ipai-platform\\ERP"
+      purpose: "Odoo CE 18 + IPAI addons + OCA"
+    - name: agents
+      area_path: "ipai-platform\\Agents"
+      purpose: "Agent skills, evals, knowledge base"
+    - name: data-intelligence
+      area_path: "ipai-platform\\Data"
+      purpose: "Databricks lakehouse, ETL, BI"
+    - name: agent-platform
+      area_path: "ipai-platform\\Agents\\Runtime"
+      purpose: "Agent orchestration runtime"
+    - name: infra
+      area_path: "ipai-platform\\Infra"
+      purpose: "Shared IaC (Bicep, Terraform)"
+    - name: design
+      area_path: "ipai-platform\\Design"
+      purpose: "Design tokens, component library"
+    - name: platform
+      area_path: "ipai-platform\\Platform"
+      purpose: "Control-plane services"
+    - name: web
+      area_path: "ipai-platform\\Web"
+      purpose: "Web apps, ops console"
+    - name: docs
+      area_path: "ipai-platform\\Docs"
+      purpose: "Documentation site"
+    - name: mobile
+      area_path: "ipai-platform\\Mobile"
+      purpose: "iOS/Android apps"
+    - name: mcp
+      area_path: "ipai-platform\\MCP"
+      purpose: "MCP server implementations"
+
+  area_path_mapping:
+    "ipai-platform\\ERP": odoo
+    "ipai-platform\\Agents": agents
+    "ipai-platform\\Agents\\Runtime": agent-platform
+    "ipai-platform\\Data": data-intelligence
+    "ipai-platform\\Infra": infra
+    "ipai-platform\\Design": design
+    "ipai-platform\\Platform": platform
+    "ipai-platform\\Web": web
+    "ipai-platform\\Docs": docs
+    "ipai-platform\\Mobile": mobile
+    "ipai-platform\\MCP": mcp
+
+  linkage_rules:
+    pr_tag_pattern: "AB#<work_item_id>"
+    mandatory_paths:
+      - "addons/"
+      - "agents/"
+      - "infra/"
+    enforcement_workflow: ".github/workflows/planning-index-ssot-check.yml"
+    cross_repo_tag: "ipai-platform"
+    ado_repos_disabled: true
+    single_project_rule: "All work in ipai-platform. No additional ADO projects."

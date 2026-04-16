@@ -1,0 +1,112 @@
+# SSOT: Foundry Stage 3 Contract
+# Machine-readable Stage 3 state for Odoo Copilot / Azure Foundry runtime.
+# Grounded in live Azure audit 2026-03-23.
+
+stage: 3
+status: in_progress
+use_case: odoo_copilot_grounded_docs
+updated_at: "2026-03-23"
+
+phase_map:
+  foundation: done
+  efficient_build: in_progress
+  investment_management: not_done
+
+model_contract:
+  spec_target: gpt-4.1
+  deployed_actual: gpt-4.1
+  deployment_name: gpt-4.1
+  openai_resource: oai-ipai-dev
+  openai_region: eastus
+  embedding_model: text-embedding-ada-002
+  embedding_dimensions: 1536
+  decision: resolved
+  note: "gpt-4.1 deployed 2026-03-23 (10 TPM Standard)"
+
+retrieval:
+  search_service: srch-ipai-dev
+  search_region: southeastasia
+  search_sku: basic
+  indexes:
+    - name: ipai-knowledge-base
+      docs: 331
+      vector_enabled: false
+      semantic_enabled: false
+      kb_scopes: [bir-compliance, general-kb, finance-close-kb, marketing-playbooks, ops-kb, anthropic-engineering, industry-reports, sdlc]
+    - name: odoo-docs-kb
+      docs: 26
+      vector_enabled: true
+      semantic_enabled: false
+      kb_scopes: [odoo-docs]
+      created: "2026-03-23"
+  required_kb_scopes:
+    - odoo-docs
+  missing_kb_scopes: []
+
+foundry:
+  hub: aifoundry-ipai-dev
+  hub_region: eastus2
+  hub_identity: "0ff73755-dd34-4346-97f7-7cfe3752ad5f"
+  project: proj-ipai-claude
+  project_region: eastus2
+  project_identity: "e9ce3a80-55a1-4b25-aa17-de795ab7b459"
+  connections:
+    - name: srch-ipai-dev-connection
+      category: CognitiveSearch
+      target: https://srch-ipai-dev.search.windows.net
+      status: live
+    - name: oai-ipai-dev-connection
+      category: AzureOpenAI
+      target: https://eastus.api.cognitive.microsoft.com/
+      status: live
+  endpoint:
+    name: ipai-copilot-endpoint
+    scoring_uri: https://ipai-copilot-endpoint.eastus2.inference.ml.azure.com/score
+    identity: "0b2595a3-39c0-4b43-8eb1-526fe8fc3d6c"
+    auth_mode: key
+    provisioning_state: Succeeded
+    status: live
+
+identity:
+  hub_system_identity_present: true
+  project_system_identity_present: true
+  endpoint_system_identity_present: true
+  project_to_search_rbac: true
+  project_to_openai_rbac: true
+  endpoint_to_search_rbac: true
+  endpoint_to_openai_rbac: true
+
+gateway:
+  container_app: ipai-copilot-gateway
+  rg: rg-ipai-dev-odoo-runtime
+  fqdn: pulser-odoo-gateway.internal.salmontree-b7d27e19.southeastasia.azurecontainerapps.io
+  deployed: true
+  wired_to_foundry: true
+  env_vars:
+    AZURE_AI_FOUNDRY_ENDPOINT: https://ipai-copilot-resource.cognitiveservices.azure.com/
+    AZURE_AI_FOUNDRY_DEPLOYMENT: gpt-4.1
+    PORT: "8088"
+  note: "Gateway points to ipai-copilot-resource (AIServices), not Foundry endpoint. Direct OpenAI path is functional."
+
+definition_of_done:
+  - id: odoo_docs_indexed
+    status: done
+    evidence: "26 chunks in odoo-docs-kb index with vector embeddings"
+  - id: search_connection_live
+    status: done
+    evidence: "srch-ipai-dev-connection in proj-ipai-claude"
+  - id: openai_connection_live
+    status: done
+    evidence: "oai-ipai-dev-connection in proj-ipai-claude"
+  - id: online_endpoint_live
+    status: done
+    evidence: "pulser-odoo-endpoint scoring at https://pulser-odoo-endpoint.eastus2.inference.ml.azure.com/score"
+  - id: gateway_wired
+    status: done
+    evidence: "Gateway env vars point to gpt-4.1 via ipai-copilot-resource"
+  - id: grounded_smoke_tests_pass
+    status: done
+    evidence: "Philippine withholding tax query returns 3 grounded results (score 7.33, 3.49, 3.26)"
+  - id: model_contract_resolved
+    status: done
+    evidence: "gpt-4.1 deployed to oai-ipai-dev, spec and runtime aligned"

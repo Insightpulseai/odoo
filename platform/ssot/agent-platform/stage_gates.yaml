@@ -1,0 +1,469 @@
+# =============================================================================
+# Stage Gates — Single Source of Truth
+# =============================================================================
+# Defines 16 stages (S01-S16) governing agent progression from intake through
+# decommission. Each stage has explicit entry/exit criteria, required artifacts,
+# ownership, and failure modes.
+# =============================================================================
+
+id: stage_gates
+name: IPAI Agent Stage Gates
+version: 1.0.0
+status: active
+owner: platform-team
+description: >
+  Sequential gate system ensuring agents meet quality, security, and operational
+  requirements before advancing. Maps to lifecycle phases in agent_factory.yaml
+  and maturity levels in agent_maturity_model.yaml.
+
+# -----------------------------------------------------------------------------
+# Stages
+# -----------------------------------------------------------------------------
+
+stages:
+  # ---------------------------------------------------------------------------
+  # S01 — Intake
+  # ---------------------------------------------------------------------------
+  - id: S01
+    name: intake
+    purpose: Capture and validate the initial agent request with scope and justification.
+    order: 1
+    entry_criteria:
+      - agent_request_submitted
+      - requestor_identified
+    exit_criteria:
+      - agent_brief_approved
+      - no_duplicate_agent_in_registry
+      - scope_boundary_documented
+      - owner_assigned
+    required_artifacts:
+      - agent_brief
+      - scope_boundary_document
+    owner: human
+    automation_level: semi-auto
+    failure_modes:
+      - duplicate_scope_with_existing_agent
+      - unclear_or_unbounded_scope
+      - no_owner_available
+    feeds_into: S02
+
+  # ---------------------------------------------------------------------------
+  # S02 — Design
+  # ---------------------------------------------------------------------------
+  - id: S02
+    name: design
+    purpose: Define the agent's capability contract, tool requirements, and interaction patterns.
+    order: 2
+    entry_criteria:
+      - agent_brief_approved
+      - owner_assigned
+    exit_criteria:
+      - capability_contract_defined
+      - tool_requirements_listed
+      - input_output_schemas_specified
+      - interaction_pattern_documented
+      - security_requirements_identified
+    required_artifacts:
+      - capability_contract
+      - io_schema_definition
+      - tool_dependency_list
+      - security_requirements
+    owner: human
+    automation_level: semi-auto
+    failure_modes:
+      - ambiguous_capability_contract
+      - missing_tool_availability
+      - security_requirements_incomplete
+    feeds_into: S03
+
+  # ---------------------------------------------------------------------------
+  # S03 — Scaffold
+  # ---------------------------------------------------------------------------
+  - id: S03
+    name: scaffold
+    purpose: Generate the agent project structure, configuration, and CI pipeline stubs.
+    order: 3
+    entry_criteria:
+      - capability_contract_approved
+      - repo_path_allocated
+    exit_criteria:
+      - project_structure_generated
+      - ci_pipeline_configured
+      - manifest_registered_in_agent_registry
+      - dev_environment_functional
+    required_artifacts:
+      - agent_manifest
+      - ci_pipeline_definition
+      - project_skeleton
+    owner: automation
+    automation_level: full-auto
+    failure_modes:
+      - naming_convention_violation
+      - ci_template_incompatibility
+      - registry_write_failure
+    feeds_into: S04
+
+  # ---------------------------------------------------------------------------
+  # S04 — Implement
+  # ---------------------------------------------------------------------------
+  - id: S04
+    name: implement
+    purpose: Build the agent's core logic, tool bindings, and prompt templates.
+    order: 4
+    entry_criteria:
+      - scaffold_complete
+      - dev_environment_functional
+    exit_criteria:
+      - core_logic_implemented
+      - tool_bindings_functional
+      - prompt_templates_versioned
+      - coding_standards_met
+    required_artifacts:
+      - source_code
+      - prompt_templates
+      - tool_binding_config
+    owner: human
+    automation_level: semi-auto
+    failure_modes:
+      - tool_api_breaking_change
+      - prompt_injection_vulnerability
+      - coding_standard_violations
+    feeds_into: S05
+
+  # ---------------------------------------------------------------------------
+  # S05 — Unit Test
+  # ---------------------------------------------------------------------------
+  - id: S05
+    name: unit_test
+    purpose: Validate individual agent components in isolation with deterministic tests.
+    order: 5
+    entry_criteria:
+      - implementation_complete
+      - test_harness_configured
+    exit_criteria:
+      - all_unit_tests_passing
+      - code_coverage_ge_80_percent
+      - no_critical_linting_errors
+      - prompt_template_validation_passing
+    required_artifacts:
+      - unit_test_suite
+      - coverage_report
+      - lint_report
+    owner: automation
+    automation_level: full-auto
+    failure_modes:
+      - test_flakiness
+      - insufficient_coverage
+      - prompt_template_schema_mismatch
+    feeds_into: S06
+
+  # ---------------------------------------------------------------------------
+  # S06 — Integration Test
+  # ---------------------------------------------------------------------------
+  - id: S06
+    name: integration_test
+    purpose: Verify agent interactions with external services and peer agents using synthetic data.
+    order: 6
+    entry_criteria:
+      - unit_tests_passing
+      - integration_test_environment_available
+      - synthetic_test_data_prepared
+    exit_criteria:
+      - all_integration_tests_passing
+      - error_recovery_demonstrated
+      - latency_baseline_established
+      - inter_agent_protocol_validated
+    required_artifacts:
+      - integration_test_suite
+      - latency_baseline_report
+      - error_recovery_evidence
+    owner: automation
+    automation_level: full-auto
+    failure_modes:
+      - external_service_unavailable
+      - protocol_version_mismatch
+      - synthetic_data_inadequacy
+      - timeout_threshold_exceeded
+    feeds_into: S07
+
+  # ---------------------------------------------------------------------------
+  # S07 — Security Review
+  # ---------------------------------------------------------------------------
+  - id: S07
+    name: security_review
+    purpose: Assess agent for prompt injection, data leakage, credential handling, and blast radius.
+    order: 7
+    entry_criteria:
+      - integration_tests_passing
+      - security_requirements_documented
+    exit_criteria:
+      - no_critical_or_high_security_findings
+      - prompt_injection_resistance_validated
+      - credential_handling_verified
+      - pii_handling_validated
+      - blast_radius_assessed_and_bounded
+    required_artifacts:
+      - security_review_report
+      - prompt_injection_test_results
+      - credential_audit
+    owner: human
+    automation_level: semi-auto
+    failure_modes:
+      - prompt_injection_vulnerability
+      - credential_exposure_risk
+      - unbounded_blast_radius
+      - pii_leakage_path
+    feeds_into: S08
+
+  # ---------------------------------------------------------------------------
+  # S08 — Code Review
+  # ---------------------------------------------------------------------------
+  - id: S08
+    name: code_review
+    purpose: Human review of implementation quality, architectural compliance, and maintainability.
+    order: 8
+    entry_criteria:
+      - security_review_passed
+      - pr_submitted
+    exit_criteria:
+      - minimum_2_approvals
+      - all_review_comments_resolved
+      - architectural_compliance_confirmed
+      - no_open_threads
+    required_artifacts:
+      - pull_request
+      - review_approvals
+    owner: human
+    automation_level: manual
+    failure_modes:
+      - architectural_deviation
+      - maintainability_concerns
+      - insufficient_documentation
+    feeds_into: S09
+
+  # ---------------------------------------------------------------------------
+  # S09 — Staging Deploy
+  # ---------------------------------------------------------------------------
+  - id: S09
+    name: staging_deploy
+    purpose: Deploy agent to staging for end-to-end validation with production-like configuration.
+    order: 9
+    entry_criteria:
+      - code_review_approved
+      - staging_environment_available
+      - configuration_validated
+    exit_criteria:
+      - staging_deployment_healthy
+      - smoke_tests_passing
+      - monitoring_dashboards_active
+      - rollback_procedure_verified
+    required_artifacts:
+      - deployment_manifest
+      - staging_deployment_log
+      - smoke_test_results
+      - monitoring_dashboard_config
+    owner: automation
+    automation_level: full-auto
+    failure_modes:
+      - deployment_failure
+      - configuration_drift_from_dev
+      - resource_quota_exceeded
+      - health_check_failure
+    feeds_into: S10
+
+  # ---------------------------------------------------------------------------
+  # S10 — Judge Evaluation
+  # ---------------------------------------------------------------------------
+  - id: S10
+    name: judge_evaluation
+    purpose: Run judge agents against the staged agent to score quality, accuracy, and safety.
+    order: 10
+    entry_criteria:
+      - staging_deployment_healthy
+      - judge_agent_pool_available
+      - evaluation_dataset_prepared
+    exit_criteria:
+      - judge_score_meets_maturity_threshold
+      - no_safety_violations_detected
+      - evaluation_results_archived
+    required_artifacts:
+      - evaluation_dataset
+      - judge_score_report
+      - safety_violation_report
+    owner: agent
+    automation_level: full-auto
+    failure_modes:
+      - judge_agent_unavailable
+      - evaluation_dataset_bias
+      - score_below_threshold
+      - safety_violation_detected
+    feeds_into: S11
+
+  # ---------------------------------------------------------------------------
+  # S11 — Canary Deploy
+  # ---------------------------------------------------------------------------
+  - id: S11
+    name: canary_deploy
+    purpose: Route a small percentage of production traffic to the new agent version for validation.
+    order: 11
+    entry_criteria:
+      - judge_score_meets_threshold
+      - production_environment_stable
+      - canary_routing_configured
+    exit_criteria:
+      - canary_error_rate_within_tolerance
+      - canary_latency_within_tolerance
+      - no_regressions_vs_baseline
+      - canary_duration_met (minimum 4 hours)
+    required_artifacts:
+      - canary_metrics_report
+      - comparison_vs_baseline
+    owner: automation
+    automation_level: full-auto
+    failure_modes:
+      - error_rate_spike
+      - latency_regression
+      - cascade_failure_to_downstream_agents
+      - cost_anomaly
+    feeds_into: S12
+
+  # ---------------------------------------------------------------------------
+  # S12 — Production Promote
+  # ---------------------------------------------------------------------------
+  - id: S12
+    name: production_promote
+    purpose: Shift full production traffic to the new agent version.
+    order: 12
+    entry_criteria:
+      - canary_validation_passed
+      - rollback_procedure_tested
+      - monitoring_alerts_configured
+    exit_criteria:
+      - full_traffic_shifted
+      - production_health_nominal
+      - old_version_retained_for_rollback
+      - maturity_level_updated_in_registry
+    required_artifacts:
+      - production_deployment_log
+      - health_check_evidence
+      - maturity_level_update_record
+    owner: automation
+    automation_level: semi-auto
+    failure_modes:
+      - traffic_shift_failure
+      - health_degradation_post_shift
+      - monitoring_gap
+    feeds_into: S13
+
+  # ---------------------------------------------------------------------------
+  # S13 — Observe
+  # ---------------------------------------------------------------------------
+  - id: S13
+    name: observe
+    purpose: Continuously monitor production agent for performance, drift, cost, and quality.
+    order: 13
+    entry_criteria:
+      - production_deployment_stable
+      - monitoring_fully_active
+    exit_criteria:
+      - observation_period_complete (minimum 7 days)
+      - no_critical_incidents
+      - performance_within_sla
+      - drift_detection_baseline_established
+    required_artifacts:
+      - observation_period_report
+      - drift_baseline
+      - cost_report
+    owner: automation
+    automation_level: full-auto
+    failure_modes:
+      - performance_degradation_detected
+      - model_drift_detected
+      - cost_overrun
+      - silent_failure_undetected
+    feeds_into: S14
+
+  # ---------------------------------------------------------------------------
+  # S14 — Optimize
+  # ---------------------------------------------------------------------------
+  - id: S14
+    name: optimize
+    purpose: Tune agent parameters, prompts, and resources based on production telemetry.
+    order: 14
+    entry_criteria:
+      - observation_data_sufficient
+      - optimization_opportunity_identified
+    exit_criteria:
+      - optimization_applied_and_validated
+      - no_quality_regression
+      - improvement_measured_and_documented
+    required_artifacts:
+      - optimization_proposal
+      - before_after_comparison
+      - regression_test_results
+    owner: agent
+    automation_level: semi-auto
+    failure_modes:
+      - optimization_causes_regression
+      - overfitting_to_recent_data
+      - safety_bound_violation
+    feeds_into: S15
+
+  # ---------------------------------------------------------------------------
+  # S15 — Deprecate
+  # ---------------------------------------------------------------------------
+  - id: S15
+    name: deprecate
+    purpose: Signal intent to retire the agent, freeze changes, and migrate consumers.
+    order: 15
+    entry_criteria:
+      - deprecation_decision_approved
+      - replacement_agent_identified_or_not_needed
+    exit_criteria:
+      - deprecation_notice_published
+      - consumer_migration_plan_created
+      - new_task_routing_disabled
+      - freeze_enforced_on_changes
+    required_artifacts:
+      - deprecation_notice
+      - consumer_migration_plan
+      - routing_rule_update
+    owner: human
+    automation_level: semi-auto
+    failure_modes:
+      - consumers_not_migrated
+      - deprecation_notice_missed
+      - tasks_still_routing_to_deprecated_agent
+    feeds_into: S16
+
+  # ---------------------------------------------------------------------------
+  # S16 — Decommission
+  # ---------------------------------------------------------------------------
+  - id: S16
+    name: decommission
+    purpose: Remove agent from runtime, revoke credentials, archive artifacts, and clean up resources.
+    order: 16
+    entry_criteria:
+      - all_consumers_migrated
+      - no_in_flight_tasks
+      - deprecation_period_expired (minimum 14 days)
+    exit_criteria:
+      - agent_removed_from_runtime
+      - credentials_revoked
+      - artifacts_archived
+      - registry_entry_marked_decommissioned
+      - resources_deallocated
+      - audit_trail_preserved
+    required_artifacts:
+      - decommission_checklist
+      - credential_revocation_evidence
+      - archive_manifest
+      - final_audit_log
+    owner: automation
+    automation_level: semi-auto
+    failure_modes:
+      - orphaned_credentials
+      - orphaned_resources
+      - incomplete_audit_trail
+      - consumers_still_dependent
+    feeds_into: null  # terminal

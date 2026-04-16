@@ -1,0 +1,12 @@
+# CANONICAL HOME: data-intelligence repo. This copy in odoo monorepo is
+# transitional until data-intelligence repo is stood up. See ssot/org/repo-map.yaml.
+---
+# TODO: populate this contract
+# Referenced by: ssot/semantic/consumer-access-policy.yaml
+# Purpose: governed OData query interface — entity sets, $select/$apply shapes, paging
+status: stub
+target_milestone: R2
+
+consumer_policy_binding:
+  source: ssot/semantic/consumer-access-policy.yaml
+  rule: every_entity_set_access_must_be_evaluated_against_consumer_class_policy

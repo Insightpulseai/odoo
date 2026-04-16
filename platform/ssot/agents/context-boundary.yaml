@@ -1,0 +1,61 @@
+---
+# Agent Context Boundary — SSOT
+# Prevents agents from guessing or improvising platform facts.
+# Authority: CLAUDE.md Cross-Repo Invariants, docs/architecture/agent-orchestration-model.md
+contract_version: 1
+
+agent_context_boundary:
+  required_before_action:
+    - platform_version_contract    # ssot/odoo/environment-contract.yaml
+    - environment_matrix           # local/staging/production DB binding
+    - repo_map                     # ssot/org/repo-map.yaml
+    - route_map                    # ssot/odoo/environment-contract.yaml routes
+    - truth_precedence             # what wins when sources conflict
+
+  truth_precedence:
+    - azure_live_runtime           # what's actually deployed (az CLI output)
+    - ssot_files                   # ssot/ directory
+    - env_specific_config          # config/<env>/odoo.conf
+    - repo_code                    # source code
+    - docs                         # documentation
+    - chat_context                 # ephemeral, lowest authority
+
+  forbidden_assumptions:
+    - infer_repo_ownership_from_name_only
+    - assume_all_web_surfaces_live_in_odoo
+    - assume_agent_runtime_is_in_agents_repo    # agents/ = definitions; agent-platform/ = runtime
+    - assume_public_repo_means_production_authority
+    - assume_azure_has_odoo_dev                 # odoo_dev is LOCAL ONLY
+    - assume_ee_modules_exist                   # CE 18 only
+    - assume_ipai_modules_can_replace_oca       # OCA first, ipai_* last resort
+    - assume_any_hostname_without_routes_contract
+    - assume_cloudflare_vercel_supabase_n8n_active  # all deprecated
+    - assume_github_actions_for_ci_cd           # Azure Pipelines sole deploy; GHA scoped exception only
+
+  mandatory_repos_per_concern:
+    odoo_work: [odoo, infra, platform, docs, .github]
+    public_site_work: [web, infra, platform, docs]
+    agent_runtime_work: [agents, agent-platform, platform, docs, infra]
+
+  repos_to_ignore_unless_scoped:
+    - demo-repository
+    - dotfiles
+    - ugc-mediaops-kit
+    - powerbi-skills
+    - templates
+
+  repo_resolution:
+    - concern: odoo_runtime_or_module
+      search_order: [odoo, docs, infra]
+    - concern: dns_edge_frontdoor
+      search_order: [infra, platform, docs]
+    - concern: public_marketing_site
+      search_order: [web, infra, docs]
+    - concern: org_policy_ci
+      search_order: [.github, docs]
+    - concern: agent_spec_or_skill
+      search_order: [agents, docs]
+    - concern: agent_runtime_or_orchestration
+      search_order: [agent-platform, infra, docs]
+    - concern: data_engineering
+      search_order: [data-intelligence, platform, docs]

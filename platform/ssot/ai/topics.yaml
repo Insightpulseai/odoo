@@ -1,0 +1,49 @@
+# SSOT: AI Agent Topic Domains
+# Knowledge domains the agents can address.
+# Cross-referenced by: sources.yaml, prompts.yaml
+
+topics:
+  odoo-erp:
+    label: Odoo ERP Operations
+    description: >
+      General Odoo CE operations: modules, settings, workflows,
+      records, reports, and administration.
+    agents:
+      - pulser-odoo-ask
+      - pulser-odoo-authoring
+      - pulser-odoo-transaction
+
+  finance:
+    label: Finance & Accounting
+    description: >
+      Chart of accounts, journal entries, invoicing, BIR compliance,
+      payroll, month-end close, financial reports.
+    agents:
+      - pulser-odoo-ask
+      - pulser-odoo-authoring
+      - pulser-odoo-transaction
+
+  hr:
+    label: Human Resources
+    description: >
+      Employee records, leave management, attendance, expense
+      liquidation, payroll computation.
+    agents:
+      - pulser-odoo-ask
+      - pulser-odoo-authoring
+
+  helpdesk:
+    label: Helpdesk & Support
+    description: >
+      Ticket management, SLA tracking, customer support workflows.
+    agents:
+      - pulser-odoo-ask
+      - pulser-odoo-livechat
+
+  website:
+    label: Website & Public
+    description: >
+      Public-facing website questions, product information,
+      company policies.
+    agents:
+      - pulser-odoo-livechat
