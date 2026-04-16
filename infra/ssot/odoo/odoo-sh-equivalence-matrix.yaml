@@ -1,0 +1,78 @@
+contract_version: 1
+
+odoo_sh_equivalence:
+  purpose: map_odoo_sh_capabilities_to_azure_native_equivalents
+
+  required_now:
+    - git_driven_build_deploy
+    - web_worker_cron_topology
+    - postgres_backups_and_restore
+    - logs_and_controlled_shell
+    - safe_staging_behavior
+    - https_domain_proxy_correctness
+    - deterministic_dependency_and_addon_handling
+
+  capabilities:
+    git_integration:
+      azure_equivalent: github_actions_or_azure_pipelines
+      owner: [odoo, .github, infra]
+
+    logs:
+      azure_equivalent: aca_logs_plus_azure_monitor
+      owner: [infra]
+
+    shell_access:
+      azure_equivalent: controlled_exec_diagnostics
+      owner: [infra, odoo]
+
+    dependencies:
+      azure_equivalent: docker_image_build_and_addon_path_contract
+      owner: [odoo]
+
+    staging:
+      azure_equivalent: odoo_staging_full_topology
+      owner: [infra, odoo]
+
+    backups:
+      azure_equivalent: postgresql_flexible_server_backup_and_pitr
+      owner: [infra]
+
+    dns_https:
+      azure_equivalent: erp_domain_plus_tls_plus_proxy_contract
+      owner: [infra]
+
+    mail_safety:
+      azure_equivalent: nonprod_mail_suppression_or_catcher
+      owner: [infra, odoo]
+
+    ci:
+      azure_equivalent: github_actions_or_azure_pipelines_ci
+      owner: [.github, odoo]
+
+    community_modules:
+      azure_equivalent: oca_layer_in_image_build
+      owner: [odoo]
+
+    staging_promotion:
+      azure_equivalent: gated_release_flow_staging_to_production
+      owner: [infra, .github, odoo]
+
+    monitoring:
+      azure_equivalent: azure_monitor_log_analytics_health_checks
+      owner: [infra]
+
+    recovery:
+      azure_equivalent: documented_restore_path_plus_verified_pitr
+      owner: [infra, docs]
+
+    security:
+      azure_equivalent: key_vault_secrets_https_controlled_access
+      owner: [infra, platform]
+
+    performance:
+      azure_equivalent: right_sized_aca_pg_image_tuning
+      owner: [infra, odoo]
+
+    mail_servers:
+      azure_equivalent: key_vault_smtp_config_per_environment
+      owner: [infra, odoo]
