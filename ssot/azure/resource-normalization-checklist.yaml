@@ -37,6 +37,40 @@ resource_normalization_checklist:
         action: adopt
         reason: lake_storage_may_overlap_with_stipaidevlake
 
+    private_endpoints:
+      - name: pe-ipai-dev-kv
+        rg: rg-ipai-dev-net-sea
+        action: keep
+        reason: key_vault_private_endpoint
+      - name: pe-ipai-dev-search
+        rg: rg-ipai-dev-net-sea
+        action: keep
+        reason: ai_search_private_endpoint
+      - name: pe-ipai-dev-kv.nic.738f7a8b
+        rg: rg-ipai-dev-net-sea
+        action: keep
+        reason: auto_created_nic_for_kv_pe
+      - name: pe-ipai-dev-search.nic.e1060cf8
+        rg: rg-ipai-dev-net-sea
+        action: keep
+        reason: auto_created_nic_for_search_pe
+
+    backup_vaults:
+      - name: bvault-ipai-dev-sea
+        rg: rg-ipai-dev-security-sea
+        action: keep
+        reason: canonical_backup_vault
+
+    purview_managed:
+      - name: scansoutheastasiadckrnut
+        rg: managed-rg-pv-ipai-dev-sea
+        action: keep
+        reason: auto_created_by_purview_no_separate_spec
+      - name: Atlas-e613d16b-0a3b-4715-bba1-3ecdb0857796
+        rg: managed-rg-pv-ipai-dev-sea
+        action: keep
+        reason: auto_created_event_hub_for_purview
+
     user_assigned_identities:
       notes: audit_pending_when_network_recovers
 
