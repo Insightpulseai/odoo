@@ -1,0 +1,5 @@
+program_id,program_name,portfolio_id,program_lead,description,start_date,end_date,status
+PROG-001,March 2026 Close and BIR Filing,PORT-001,JPAL,Month-end close orchestration and statutory filing preparation,2026-03-01,2026-04-30,active
+PROG-002,Finance Control Tower,PORT-001,CKVC,Databricks/Genie analytics and Pulser guided actions for finance ops,2026-01-01,2026-12-31,active
+PROG-003,Finance Delivery and Evidence,PORT-002,BOM,Reporting pack delivery evidence registry and close documentation,2026-03-01,2026-04-30,active
+PROG-004,Pulser Finance Enablement,PORT-002,CKVC,Pulser behavior profile activation for finance workflows and demos,2026-04-01,2026-06-30,active

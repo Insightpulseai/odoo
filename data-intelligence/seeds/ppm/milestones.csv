@@ -1,0 +1,41 @@
+milestone_id,milestone_name,project_id,owner,due_date,status,is_gate,evidence_required,deadline_risk,notes
+MS-001,Pre-close reconciliations complete,PRJ-001,RMQB,2026-03-28,completed,false,true,low,GL and sub-ledger balances agreed
+MS-002,Accruals and provisions posted,PRJ-001,JPAL,2026-03-30,completed,false,true,low,All accrual JEs approved and posted
+MS-003,WIP and revenue recognition complete,PRJ-001,JPAL,2026-04-01,completed,false,true,medium,WIP schedule signed off by CKVC
+MS-004,Trial balance reviewed and signed off,PRJ-001,CKVC,2026-04-05,in_progress,true,true,medium,CKVC gate approval required before filing
+MS-005,March management reporting pack delivered,PRJ-001,BOM,2026-04-10,not_started,true,true,high,Pack distributed to CKVC and stakeholders
+MS-006,VAT data extraction and mapping complete,PRJ-002,JAP,2026-04-05,in_progress,false,true,high,Zero-rated transactions require vendor evidence
+MS-007,VAT reconciliation against GL complete,PRJ-002,JAP,2026-04-08,not_started,true,true,high,Blocked on missing support for 2 transactions
+MS-008,Q1 2550Q draft reviewed and approved,PRJ-002,CKVC,2026-04-12,not_started,true,true,high,CKVC approval gate before eFPS submission
+MS-009,2550Q payment processed and confirmed,PRJ-002,JAP,2026-04-20,not_started,false,true,medium,BIR payment via ePAY
+MS-010,2550Q eFPS filing confirmed,PRJ-002,JAP,2026-04-25,not_started,true,true,medium,Filing acknowledgement saved to evidence registry
+MS-011,EWT data extraction and 2307 matching complete,PRJ-003,LAS,2026-04-03,in_progress,false,true,medium,3 EWT lines require 2307 certificate matching
+MS-012,EWT schedule reconciled to GL,PRJ-003,LAS,2026-04-07,not_started,false,true,medium,Reconciliation workpaper required
+MS-013,Q1 1601-EQ draft reviewed and approved,PRJ-003,CKVC,2026-04-12,not_started,true,true,medium,CKVC approval gate
+MS-014,1601-EQ payment processed and confirmed,PRJ-003,LAS,2026-04-20,not_started,false,true,low,BIR payment via ePAY
+MS-015,1601-EQ eFPS filing confirmed,PRJ-003,LAS,2026-04-25,not_started,true,true,low,Filing acknowledgement saved
+MS-016,FY 2025 income tax computation complete,PRJ-004,CKVC,2026-03-31,in_progress,false,true,high,Tax adjustment workpaper not yet uploaded
+MS-017,Tax adjustment workpapers uploaded and reviewed,PRJ-004,CKVC,2026-04-05,not_started,true,true,high,BLOCKED — workpaper upload overdue
+MS-018,Annual 1702 supporting schedules complete,PRJ-004,JLI,2026-04-08,not_started,false,true,high,Schedules to be prepared by JLI reviewed by CKVC
+MS-019,1702 draft reviewed and approved,PRJ-004,CKVC,2026-04-12,not_started,true,true,high,CKVC approval gate — critical path
+MS-020,1702 eFPS filing confirmed,PRJ-004,CKVC,2026-04-15,not_started,true,true,high,Annual filing deadline — no extension expected
+MS-021,FY 2025 alphalist (compensation) prepared,PRJ-005,JMSM,2026-02-15,completed,false,true,low,All employee compensation records extracted
+MS-022,FY 2025 alphalist (final withholding) prepared,PRJ-005,JMSM,2026-02-22,completed,false,true,low,Vendor final withholding records consolidated
+MS-023,1604-CF draft reviewed and approved,PRJ-005,CKVC,2026-03-01,completed,true,true,low,Approved by CKVC on 2026-03-01
+MS-024,1604-CF eFPS filing confirmed,PRJ-005,JMSM,2026-03-10,completed,true,true,low,Filing acknowledgement archived
+MS-025,1604-CF QAP/SAWT attachment submitted,PRJ-005,JMSM,2026-03-15,completed,true,true,low,Alphalist attachment confirmed on eBIRForms
+MS-026,Bronze layer ingestion pipeline deployed,PRJ-006,BOM,2026-03-15,completed,false,false,low,finance_directory and monthly_task_schedule tables live
+MS-027,Silver layer transforms and DLT pipeline running,PRJ-006,BOM,2026-04-01,in_progress,false,false,medium,DLT pipeline ipai-odoo-cdm-export running
+MS-028,Gold mart build complete (5 marts),PRJ-006,BOM,2026-04-10,not_started,true,false,medium,All 5 gold marts required for demo
+MS-029,Genie spaces configured (Finance Operations + Compliance Tax),PRJ-006,BOM,2026-04-15,not_started,true,false,medium,Genie One Chat enabled and tested
+MS-030,Databricks dashboard published with 8 KPIs,PRJ-006,BOM,2026-04-20,not_started,true,false,medium,Pre-demo gate — dashboard must show all 8 KPIs
+MS-031,March close task evidence templates created,PRJ-007,RMQB,2026-03-20,completed,false,true,low,Templates for GL recon accruals WIP and TB
+MS-032,Evidence attachments uploaded for completed tasks,PRJ-007,RMQB,2026-04-05,in_progress,false,true,medium,GL and accrual evidence uploaded — WIP pending
+MS-033,Tax exception evidence gaps identified and logged,PRJ-007,JAP,2026-04-08,not_started,false,true,high,VAT and EWT evidence gaps to be logged
+MS-034,Evidence registry review complete,PRJ-007,CKVC,2026-04-12,not_started,true,true,high,CKVC sign-off on completeness before filing
+MS-035,Audit-ready close pack assembled and archived,PRJ-007,RMQB,2026-04-20,not_started,true,true,medium,Final pack archived to evidence registry
+MS-036,Pulser finance behavior profile activated,PRJ-008,CKVC,2026-04-05,completed,false,false,low,Finance profile activated in Odoo dev
+MS-037,Demo scripts written and tested (3 scripts),PRJ-008,CKVC,2026-04-10,in_progress,false,false,low,Scripts 1 and 2 tested — script 3 in progress
+MS-038,Pulser demo dry run complete,PRJ-008,CKVC,2026-04-18,not_started,true,false,low,Full 4-minute storyboard dry run required
+MS-039,Pre-demo checklist all 10 gates passed,PRJ-008,CKVC,2026-04-22,not_started,true,false,medium,All gates per finance-control-tower-demo-spec
+MS-040,Finance Control Tower demo delivered,PRJ-008,CKVC,2026-04-25,not_started,true,false,low,Demo delivered to Khalil and finance team
