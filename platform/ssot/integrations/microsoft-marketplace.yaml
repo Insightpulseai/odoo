@@ -1,0 +1,35 @@
+---
+# SSOT: Microsoft Commercial Marketplace Integration
+# Canonical definition for SaaS Fulfillment API v2 integration.
+# Last updated: 2026-04-18
+contract_version: 1
+
+integration:
+  name: "Microsoft Marketplace Fulfillment Bridge"
+  api_version: "v2"
+  auth_method: "Bearer/ClientCredential"
+  
+  endpoints:
+    odoo_webhook: "/api/marketplace/webhook"
+    microsoft_base: "https://marketplaceapi.microsoft.com/api"
+
+  events:
+    - action: "Activate"
+      description: "Customer completed the landing page redirect."
+    - action: "Unsubscribe"
+      description: "Customer cancelled the subscription."
+    - action: "Suspend"
+      description: "Subscription suspended (e.g., non-payment)."
+    - action: "Reinstate"
+      description: "Suspended subscription reactivated."
+    - action: "ChangePlan"
+      description: "Customer upgraded or downgraded."
+    - action: "ChangeQuantity"
+      description: "Customer changed seat/resource count."
+
+security:
+  webhook_signature: true
+  identity_provider: Entra ID
+  secrets:
+    - key: "microsoft_marketplace_api_key"
+      purpose: "Authentication for fulfillment webhook calls."

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo noupdate="1">
+    <!-- Marketplace API Key Placeholder -->
+    <record id="microsoft_marketplace_api_key" model="ir.config_parameter">
+        <field name="key">microsoft_marketplace_api_key</field>
+        <field name="value">PLACEHOLDER_SET_IN_PRODUCTION</field>
+    </record>
+
+    <!-- Base Menu for Marketplace Management -->
+    <menuitem id="menu_ipai_marketplace_root" 
+              name="Marketplace" 
+              parent="base.menu_administration"
+              sequence="50"/>
+
+    <record id="action_ipai_marketplace_subscription" model="ir.actions.act_window">
+        <field name="name">Subscriptions</field>
+        <field name="res_model">ipai.marketplace.subscription</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <menuitem id="menu_ipai_marketplace_subscription" 
+              name="Subscriptions" 
+              parent="menu_ipai_marketplace_root" 
+              action="action_ipai_marketplace_subscription" 
+              sequence="10"/>
+</odoo>
