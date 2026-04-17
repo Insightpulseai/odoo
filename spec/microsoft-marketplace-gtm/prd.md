@@ -27,6 +27,21 @@ The offer encapsulates an *AI-assisted operational platform* structured in four 
 ## 5. Deployment Constraints
 All customer deployments driven through the Marketplace transactable flow must instantiate canonical Pulser deployment stamps directly onto Azure (using ACR, ACA, PostgreSQL, Databricks, and Entra ID).
 
+## 6. Microsoft Partner Network Solution Area Mapping
+To ensure commercial alignment with Microsoft's unified go-to-market motions (and to maximize Marketplace Co-sell potential), Pulser for Odoo explicitly maps to the three updated Microsoft Cloud Solution Areas:
+
+### 6.1 AI Business Solutions
+* **Mapped Components:** Odoo on Cloud (ERP), Pulser AI Wrapper
+* **Alignment:** Modernizing Line-of-Business (LOB) applications by infusing Agentic AI workflows (Azure Document Intelligence, specialist Copilot assistants) directly into enterprise operational workflows (AP, Month-End Close, Compliance).
+
+### 6.2 Cloud & AI Platforms
+* **Mapped Components:** Databricks Lakehouse, Power BI, Azure Container Apps (ACA), PostgreSQL Flexible server.
+* **Alignment:** Delivering scalable, governed data gravity and operational analytics through Unity Catalog and Azure's cloud-native app hosting infrastructure.
+
+### 6.3 Security
+* **Mapped Components:** Managed Support Services, Entra ID SSO, Platform Invariants.
+* **Alignment:** Enforcing zero-trust principles via Entra ID conditional access, Privileged Identity Management (PIM) for Tier-0 support access, and Azure Key Vault for all runtime secrets.
+
 ---
 
 *Last updated: 2026-04-18*
