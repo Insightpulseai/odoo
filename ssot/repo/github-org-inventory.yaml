@@ -1,0 +1,195 @@
+# SSOT — GitHub Organization Inventory
+# Org: github.com/Insightpulseai
+# Snapshot: 2026-04-18
+# Authority: this file indexes all repos and their relationship to the monorepo
+
+org: Insightpulseai
+monorepo: odoo
+total_repos: 17
+
+repositories:
+  # === CANONICAL (keep) ===
+  - name: odoo
+    visibility: public
+    role: canonical_monorepo
+    description: "Odoo CE 18.0 + OCA + IPAI bridge — all platform code"
+    action: keep
+    contains: "addons/, agents/, agent-platform/, apps/, automations/, data-intelligence/, deploy/, design/, docs/, infra/, mcp/, odoo18/, platform/, scripts/, spec/, ssot/, web/"
+
+  - name: dotfiles
+    visibility: public
+    role: standalone
+    description: "Codespaces developer environment bootstrap"
+    action: keep
+    reason: "Separate concern — devcontainer config, not platform code"
+
+  - name: ugc-mediaops-kit
+    visibility: public
+    role: standalone_product
+    description: "Open-source UGC finishing pipeline for agency workflows"
+    action: keep
+    reason: "Separate product, separate audience, Apache 2.0 license"
+
+  - name: .github
+    visibility: private
+    role: org_governance
+    description: "Org-level issue forms, reusable workflows, policies"
+    action: keep
+    reason: "GitHub org-level config — cannot live inside a repo"
+
+  # === DUPLICATE OF MONOREPO (archive after verification) ===
+  - name: design
+    visibility: internal
+    role: duplicate
+    monorepo_path: "design/"
+    description: "Design tokens, components, icon pipeline, brand assets"
+    action: archive
+    reason: "design/ exists in monorepo — this repo creates drift"
+
+  - name: automations
+    visibility: private
+    role: duplicate
+    monorepo_path: "automations/"
+    description: "Workflow automation, scheduled jobs, runbooks"
+    action: archive
+    reason: "automations/ exists in monorepo"
+
+  - name: data-intelligence
+    visibility: private
+    role: duplicate
+    monorepo_path: "data-intelligence/"
+    description: "Databricks + Unity Catalog analytics engineering"
+    action: archive
+    reason: "data-intelligence/ exists in monorepo"
+
+  - name: agents
+    visibility: public
+    role: duplicate
+    monorepo_path: "agents/"
+    description: "Agent personas, skills, judges, evals, registries"
+    action: archive
+    reason: "agents/ exists in monorepo — CLAUDE.md says monorepo is canonical"
+
+  - name: web
+    visibility: private
+    role: duplicate
+    monorepo_path: "web/"
+    description: "User-facing web surfaces — ops console, marketing, docs, apps"
+    action: archive
+    reason: "web/ exists in monorepo (41 dirs, needs cleanup)"
+
+  - name: platform
+    visibility: private
+    role: duplicate
+    monorepo_path: "platform/"
+    description: "Platform control plane and SSOT"
+    action: archive
+    reason: "platform/ exists in monorepo"
+
+  - name: infra
+    visibility: private
+    role: duplicate
+    monorepo_path: "infra/"
+    description: "Azure IaC, edge config, runtime infra"
+    action: archive
+    reason: "infra/ exists in monorepo — note: description says Cloudflare (deprecated)"
+
+  - name: docs
+    visibility: public
+    role: duplicate
+    monorepo_path: "docs/"
+    description: "Architecture, strategy, governance, runbooks, evidence"
+    action: archive
+    reason: "docs/ exists in monorepo"
+
+  - name: agent-platform
+    visibility: private
+    role: duplicate
+    monorepo_path: "agent-platform/"
+    description: "Agent runtime, orchestration, retrieval, chat backend"
+    action: archive
+    reason: "agent-platform/ exists in monorepo"
+
+  - name: templates
+    visibility: private
+    role: duplicate
+    monorepo_path: "spec/_templates/"
+    description: "Bootstrap scaffolds and starter templates"
+    action: archive
+    reason: "spec/_templates/ exists in monorepo"
+
+  # === MOVE INTO MONOREPO THEN ARCHIVE ===
+  - name: powerbi-skills
+    visibility: public
+    role: plugin
+    monorepo_target: ".github/plugins/powerbi-skills/"
+    description: "Power BI skills plugin for Claude Code"
+    action: move_then_archive
+    reason: "Skills belong in monorepo plugin directory — same pattern as odoo-azure-skills"
+
+  # === ALREADY ARCHIVED ===
+  - name: landing.io
+    visibility: public
+    role: deprecated
+    description: "Vercel redirect shell (deprecated)"
+    action: already_archived
+    reason: "Vercel fully deprecated 2026-04-07"
+
+  # === DELETE ===
+  - name: demo-repository
+    visibility: private
+    role: template
+    description: "GitHub demo template — no IPAI content"
+    action: delete
+    reason: "Auto-created GitHub template, no value"
+
+# === SUMMARY ===
+summary:
+  keep: 4           # odoo, dotfiles, ugc-mediaops-kit, .github
+  archive: 10       # design, automations, data-intelligence, agents, web, platform, infra, docs, agent-platform, templates
+  move_then_archive: 1  # powerbi-skills
+  already_archived: 1   # landing.io
+  delete: 1         # demo-repository
+
+# === MISSING (need to create) ===
+missing:
+  - name: w9studio-landing
+    reason: "ACA app ipai-w9studio serves www.w9studio.net but no source code in any repo"
+    action: "Find source or create from ACR image inspection"
+
+# === AZURE ACA ↔ SOURCE MAPPING ===
+aca_source_map:
+  ipai-odoo-dev:
+    image: "acripaiodoo.azurecr.io/ipai-website:latest"
+    source: "odoo/odoo18/"
+    rename_target: "ipai-odoo-web (at Odoo web/worker/cron split)"
+
+  ipai-website:
+    image: "acripaiodoo.azurecr.io/ipai-website:latest"
+    source: "odoo/web/ipai-landing/"
+    domain: "www.insightpulseai.com"
+
+  ipai-prismalab:
+    image: "acripaiodoo.azurecr.io/prismalab:latest"
+    source: "odoo/web/apps/prismalab-gateway/"
+    domain: "prismalab.insightpulseai.com"
+
+  ipai-w9studio:
+    image: "acripaiodoo.azurecr.io/w9studio-landing:latest"
+    source: "MISSING — no source found in repo"
+    domain: "www.w9studio.net"
+    action: "Find source or reconstruct"
+
+# === MCP SERVER LOCATIONS (canonical only) ===
+mcp_canonical:
+  - path: "mcp/servers/odoo-docs"
+    role: "Odoo documentation MCP server"
+  - path: "mcp/servers/oca-docs"
+    role: "OCA documentation MCP server"
+  - path: "agents/mcp/odoo-mcp"
+    role: "Odoo JSON-RPC MCP server (ipai-odoo-mcp) — canonical"
+  - path: "infra/azure/pg-mcp/"
+    role: "PostgreSQL MCP Bicep IaC"
+
+mcp_residue_count: 16
+mcp_residue_note: "16 other MCP-related directories are scattered across agents/skills/, platform/, infra/ssot/, web/, plugins/, automations/ — most are design docs or stale scaffolds, not running servers"
