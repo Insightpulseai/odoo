@@ -1,0 +1,38 @@
+domain: finance_ops
+title: Finance Operations Intelligence
+status: active
+source_systems:
+  - finance_workbook
+  - bir_deadline_calendars
+  - close_task_schedules
+owned_by_repo: data-intelligence
+purpose:
+  - close_workload_analysis
+  - approval_latency_analysis
+  - deadline_risk_analysis
+  - role_bottleneck_detection
+  - automation_candidate_scoring
+  - compliance_control_tower
+dimensions:
+  - dim_finance_person
+  - dim_finance_role
+  - dim_task_category
+  - dim_reporting_period
+  - dim_bir_form
+facts:
+  - fact_finance_task_schedule
+  - fact_bir_deadline_control
+  - fact_finance_workload_snapshot
+  - fact_close_step_status
+gold_marts:
+  - gold_finance_bir_deadline_control
+  - gold_finance_close_workload
+  - gold_finance_role_bottlenecks
+  - gold_finance_automation_candidates
+  - gold_finance_compliance_control_tower
+serving_surfaces:
+  - databricks_one_dashboard
+  - genie_space
+target_space_names:
+  - Finance Operations
+  - Compliance & Tax

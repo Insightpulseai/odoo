@@ -1,0 +1,21 @@
+fact: fact_finance_task_schedule
+domain: finance_ops
+grain: one_task_x_one_activity_stage_x_one_period
+columns:
+  - {name: period_key, type: string, fk: dim_reporting_period}
+  - {name: task_category_key, type: string, fk: dim_task_category}
+  - {name: task_name, type: string}
+  - {name: activity_stage, type: string, enum: [preparation, review, approval]}
+  - {name: assigned_person_code, type: string, fk: dim_finance_person}
+  - {name: assigned_role, type: string, fk: dim_finance_role}
+  - {name: target_date, type: date}
+  - {name: source_workbook_section, type: string}
+  - {name: is_bir_related, type: boolean}
+  - {name: is_close_related, type: boolean}
+source_contract: contracts/finance/monthly_task_schedule.contract.yaml
+uc_target: ipai_dev.gold.fact_finance_task_schedule
+measures:
+  - task_count
+  - prep_task_count
+  - review_task_count
+  - approval_task_count

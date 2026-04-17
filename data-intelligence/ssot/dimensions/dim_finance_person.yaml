@@ -1,0 +1,11 @@
+dimension: dim_finance_person
+domain: finance_ops
+grain: one_row_per_person
+columns:
+  - {name: person_code, type: string, business_key: true}
+  - {name: person_name, type: string}
+  - {name: email, type: string}
+  - {name: role_primary, type: string}
+  - {name: is_active, type: boolean}
+source_contract: contracts/finance/finance_directory.contract.yaml
+uc_target: ipai_dev.gold.dim_finance_person

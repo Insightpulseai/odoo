@@ -1,0 +1,16 @@
+dimension: dim_finance_role
+domain: finance_ops
+grain: one_row_per_role
+columns:
+  - {name: role_code, type: string, business_key: true}
+  - {name: role_name, type: string}
+  - {name: approval_level, type: int}
+  - {name: role_type, type: string}
+seed_values:
+  - {code: preparer, name: Preparer, level: 1, type: execution}
+  - {code: reviewer, name: Reviewer, level: 2, type: review}
+  - {code: approver, name: Approver, level: 3, type: approval}
+  - {code: finance_supervisor, name: Finance Supervisor, level: 4, type: approval}
+  - {code: sfm, name: Senior Finance Manager, level: 5, type: approval}
+  - {code: fd, name: Finance Director, level: 6, type: sign_off}
+uc_target: ipai_dev.gold.dim_finance_role

@@ -1,0 +1,26 @@
+contract: finance_directory
+status: active
+description: Finance team personnel directory with role mappings
+grain: one_row_per_person
+source: finance_workbook_personnel_sheet
+minimum_fields:
+  - person_code
+  - person_name
+  - email
+  - role_primary
+  - is_active
+quality_rules:
+  - person_code_not_null
+  - person_code_unique
+  - person_name_not_null
+seed_data:
+  - {code: JPAL, name: Jerald Loterte}
+  - {code: JAP, name: Jinky Paladin}
+  - {code: LAS, name: Amor Lasaga}
+  - {code: RMQB, name: Sally Brillantes}
+  - {code: JRMO, name: Jhoee Oliva}
+  - {code: RIM, name: Rey Meran}
+  - {code: CKVC, name: Khalil Vera Cruz}
+  - {code: BOM, name: Beng Manalo}
+  - {code: JLI, name: Jasmin Ignacio}
+  - {code: JMSM, name: Joana Mae Maravillas}

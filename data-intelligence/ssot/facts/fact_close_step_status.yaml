@@ -1,0 +1,18 @@
+fact: fact_close_step_status
+domain: finance_ops
+grain: one_close_step_x_one_period
+columns:
+  - {name: close_step_name, type: string}
+  - {name: period_key, type: string, fk: dim_reporting_period}
+  - {name: owner_person_code, type: string, fk: dim_finance_person}
+  - {name: reviewer_person_code, type: string, fk: dim_finance_person}
+  - {name: approver_person_code, type: string, fk: dim_finance_person}
+  - {name: target_date, type: date}
+  - {name: status, type: string, enum: [not_started, in_progress, review, approved, completed]}
+  - {name: days_to_due, type: int}
+  - {name: risk_flag, type: boolean}
+uc_target: ipai_dev.gold.fact_close_step_status
+measures:
+  - steps_at_risk
+  - steps_completed
+  - completion_rate

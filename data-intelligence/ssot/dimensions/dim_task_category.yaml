@@ -1,0 +1,18 @@
+dimension: dim_task_category
+domain: finance_ops
+grain: one_row_per_category
+columns:
+  - {name: task_category, type: string, business_key: true}
+  - {name: task_group, type: string}
+  - {name: domain, type: string}
+seed_values:
+  - {category: payroll_and_personnel, group: operations, domain: hr_finance}
+  - {category: tax_and_provisions, group: compliance, domain: tax}
+  - {category: vat_data_filing, group: compliance, domain: tax}
+  - {category: accruals, group: close, domain: accounting}
+  - {category: amortization, group: close, domain: accounting}
+  - {category: ca_liquidation, group: close, domain: accounting}
+  - {category: wip_oop, group: close, domain: project_finance}
+  - {category: ap_aging, group: close, domain: accounting}
+  - {category: final_adjustments_and_close, group: close, domain: accounting}
+uc_target: ipai_dev.gold.dim_task_category
