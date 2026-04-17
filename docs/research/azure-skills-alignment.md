@@ -12,7 +12,16 @@ The official `azure-skills` repository utilizes a modular, folder-based structur
 - **Metadata**: Every `SKILL.md` must contain YAML frontmatter with a unique `name` and a high-fidelity `description` (this is the trigger mechanism for AI discovery).
 - **Workspace Standard**: For AI Foundry integrations, we will implement the `.foundry/` workspace convention, specifically the `agent-metadata.yaml` contract for project endpoints and model routing.
 
-## 3. Microsoft AI Foundry Integration Patterns
+### 3.1 Microsoft Learn MCP Tools
+The official **Microsoft Learn MCP Server** (`https://learn.microsoft.com/api/mcp`) is the canonical source for documentation research.
+- **`microsoft_docs_search`**: Target technical concepts, limits, and tutorials.
+- **`microsoft_docs_fetch`**: Retrieve high-fidelity article content for "Copilot-native" knowledge ingestion.
+- **`microsoft_code_sample_search`**: Search for GitHub-hosted Azure samples (e.g., Odoo + ACA Bicep templates).
+
+### 3.2 Azure AI Foundry VS Code Integration
+The **Microsoft Foundry for Visual Studio Code** extension is the mandatory local developer surface.
+- **Capability**: Allows direct management of Foundry Projects, ACR image pushes, and Agent playgrounds from the IDE.
+- **Workflow**: `Foundry Resource` (Cloud) → `Foundry Project` (Management Plane) → `VS Code Extension` (Local Dev).
 The `microsoft-foundry` skill in the official repo identifies several mission-critical patterns for Pulser:
 
 - **Agent Types**: Distinction between `Prompt` (LLM-backed) and `Hosted` (Container-based/Odoo-integrated) agents.

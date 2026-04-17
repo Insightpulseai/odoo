@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo noupdate="1">
+    <!-- Google Workspace (Gmail) Client ID -->
+    <record id="google_gmail_client_id" model="ir.config_parameter">
+        <field name="key">google_gmail_client_id</field>
+        <field name="value">916601142061-kva9q6607moot9rfm00so8l7h7a4b341.apps.googleusercontent.com</field>
+    </record>
+
+    <!-- Google Workspace (Gmail) Client Secret -->
+    <!-- This should ideally be set via environment variable at runtime -->
+    <record id="google_gmail_client_secret" model="ir.config_parameter">
+        <field name="key">google_gmail_client_secret</field>
+        <field name="value">{{GOOGLE_GMAIL_CLIENT_SECRET}}</field>
+    </record>
+</odoo>

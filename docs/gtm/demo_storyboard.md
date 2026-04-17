@@ -25,8 +25,8 @@
 **Action**: User clicks a 'Project to Profit' visualization showing real-time margin tracking across all scanned invoices.
 
 ## SCENE 5: Unified Governance (Security + Compliance)
-**Visual**: Administrator dashboard showing **Entra ID** login logs and **Azure Key Vault** secret rotations.
-**Narrative**: "Built on the Microsoft Security stack. 100% Entra-ID-aligned, zero-trust infrastructure."
+**Visual**: Administrator dashboard showing the **Azure AI Foundry Portal**—unified view of agents, traced conversations, and Entra ID security logs.
+**Narrative**: "Built on the Microsoft Security stack. 100% Entra-ID-aligned governance through the unified AI Foundry management plane."
 **Action**: One-click 'Deploy Stamp' button shown in the Pulser Ops Console.
 
 ---

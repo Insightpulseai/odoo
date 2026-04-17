@@ -25,7 +25,7 @@ The offer encapsulates an *AI-assisted operational platform* structured in four 
 - **Roadblocks**: Resolving Azure Sponsorship developer conflicts and architecting the minimum publishable version for a strong first entry.
 
 ## 5. Deployment Constraints
-All customer deployments driven through the Marketplace transactable flow must instantiate canonical Pulser deployment stamps directly onto Azure (using ACR, ACA, PostgreSQL, Databricks, and Entra ID).
+All customer deployments driven through the Marketplace transactable flow must instantiate canonical Pulser deployment stamps directly onto Azure (using ACR, ACA, PostgreSQL, **Azure AI Foundry Project**, and Entra ID).
 
 ## 6. Microsoft Partner Network Solution Area Mapping
 To ensure commercial alignment with Microsoft's unified go-to-market motions (and to maximize Marketplace Co-sell potential), Pulser for Odoo explicitly maps to the three updated Microsoft Cloud Solution Areas:

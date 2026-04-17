@@ -35,6 +35,7 @@ Ref: docs/product/gmail-addon/
     'data': [
         'security/ir.model.access.csv',
         'data/google_workspace_data.xml',
+        'data/google_workspace_params.xml',
     ],
     'assets': {},
     'installable': True,

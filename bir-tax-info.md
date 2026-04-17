@@ -1,0 +1,217 @@
+- generic [active] [ref=e1]:
+  - main [ref=e2]:
+    - generic [ref=e5]:
+      - paragraph [ref=e7]:
+        - text: This is the official website of the Bureau of Internal Revenue (BIR). By using this website, you agree to the terms of the
+        - link "BIR Privacy Notice" [ref=e8] [cursor=pointer]:
+          - /url: PrivacyNotice?type=PAGE&to=PrivacyNotice&label=BIR Privacy Notice
+          - strong [ref=e9]: BIR Privacy Notice
+        - text: .
+      - button [ref=e10] [cursor=pointer]:
+        - img [ref=e11]
+    - generic [ref=e15]:
+      - generic [ref=e16]:
+        - link "Main Logo" [ref=e17] [cursor=pointer]:
+          - /url: /home
+        - generic [ref=e18]:
+          - generic:
+            - button "Menu"
+      - generic [ref=e20]:
+        - generic [ref=e21]:
+          - generic [ref=e22]:
+            - img [ref=e23]
+            - generic [ref=e25]: (02)-8538-3200
+          - generic [ref=e26]:
+            - img [ref=e27]
+            - generic [ref=e29]: contact_us@bir.gov.ph
+        - generic [ref=e30]:
+          - generic [ref=e32]:
+            - textbox "Search" [ref=e34]
+            - button "Search Button" [ref=e35] [cursor=pointer]:
+              - img [ref=e36]
+          - generic [ref=e38]:
+            - link "Transparency Seal" [ref=e39] [cursor=pointer]:
+              - /url: https://www.bir.gov.ph/transparency-seal
+            - link "Freedom of Information" [ref=e40] [cursor=pointer]:
+              - /url: https://www.foi.gov.ph/agencies/bir/
+    - generic [ref=e43]:
+      - link "HOME" [ref=e44] [cursor=pointer]:
+        - /url: /home
+      - button "About Us" [ref=e46] [cursor=pointer]:
+        - generic [ref=e47]: About Us
+        - img [ref=e48]
+      - link "eSERVICES" [ref=e50] [cursor=pointer]:
+        - /url: /eServices
+      - button "Tax Information & Regulations" [ref=e52] [cursor=pointer]:
+        - generic [ref=e53]: Tax Information & Regulations
+        - img [ref=e54]
+      - button "Announcements" [ref=e57] [cursor=pointer]:
+        - generic [ref=e58]: Announcements
+        - img [ref=e59]
+      - button "Others" [ref=e62] [cursor=pointer]:
+        - generic [ref=e63]: Others
+        - img [ref=e64]
+      - link "CONTACT US" [ref=e66] [cursor=pointer]:
+        - /url: /contactus
+    - main [ref=e67]:
+      - generic [ref=e71]: Tax Information
+      - generic [ref=e75]:
+        - generic [ref=e78] [cursor=pointer]:
+          - generic [ref=e79]: Capital Gains Tax
+          - paragraph [ref=e81]:
+            - strong [ref=e82]:
+              - link "Capital Gains Tax" [ref=e83]:
+                - /url: capitalgainstax
+            - text: is a tax imposed on the gains presumed to have been realized by the seller from the sale, exchange, or other disposition of capital assets located in the Philippines, including pacto de retro sales and other forms of conditional sale.
+        - generic [ref=e86] [cursor=pointer]:
+          - generic [ref=e87]: Documentary Stamp Tax
+          - paragraph [ref=e89]:
+            - strong [ref=e90]:
+              - link "Documentary Stamp Tax" [ref=e91]:
+                - /url: DocumentaryStampTax
+            - text: is a tax on documents, instruments, loan agreements and papers evidencing the acceptance, assignment, sale or transfer of an obligation, rights, or property incident thereto.
+        - generic [ref=e94] [cursor=pointer]:
+          - generic [ref=e95]: Donor's Tax
+          - paragraph [ref=e97]:
+            - strong [ref=e98]:
+              - link "Donor's Tax" [ref=e99]:
+                - /url: donors-tax
+            - text: is a tax on a donation or gift, and is imposed on the gratuitous transfer of property between two or more persons who are living at the time of the transfer.
+        - generic [ref=e102] [cursor=pointer]:
+          - generic [ref=e103]: Estate Tax
+          - paragraph [ref=e105]:
+            - strong [ref=e106]:
+              - link "Estate Tax" [ref=e107]:
+                - /url: estate-tax
+            - text: is a tax on the right of the deceased person to transmit his/her estate to his/her lawful heirs and beneficiaries at the time of death and on certain transfers which are made by law as equivalent to testamentary disposition.
+        - generic [ref=e110] [cursor=pointer]:
+          - generic [ref=e111]: Income Tax
+          - paragraph [ref=e113]:
+            - link "Income Tax" [ref=e114]:
+              - /url: income-tax
+              - strong [ref=e115]: Income Tax
+            - text: is a tax on all yearly profits arising from property, profession, trades or offices or as a tax on a person’s income, emoluments, profits and the like.
+        - generic [ref=e118] [cursor=pointer]:
+          - generic [ref=e119]: Percentage Tax
+          - paragraph [ref=e121]:
+            - strong [ref=e122]:
+              - link "Percentage Tax" [ref=e123]:
+                - /url: percentage-tax
+            - text: is a business tax imposed on persons or entities who sell or lease goods, properties or services in the course of trade or business whose gross annual sales or receipts do not exceed P3,000,000.00 and are not VAT-registered.
+        - generic [ref=e126] [cursor=pointer]:
+          - generic [ref=e127]: Value-Added Tax
+          - paragraph [ref=e129]:
+            - strong [ref=e130]:
+              - link "Value-Added Tax" [ref=e131]:
+                - /url: value-addedtax
+            - text: is a business tax imposed and collected from the seller in the course of trade or business on every sale of properties (real or personal) lease of goods or properties (real or personal) or vendors of services. It is an indirect tax, thus, it can be passed on to the buyer.
+        - generic [ref=e134] [cursor=pointer]:
+          - generic [ref=e135]: Withholding Tax
+          - generic [ref=e136]:
+            - paragraph [ref=e137]:
+              - strong [ref=e138]:
+                - link "Withholding Tax" [ref=e139]:
+                  - /url: WithHoldingTax
+              - text: on Compensation is the tax withheld from individuals receiving purely compensation income.
+            - paragraph [ref=e140]:
+              - strong [ref=e141]: Expanded Withholding Tax
+              - text: is a kind of withholding tax which is prescribed only for certain payors and is creditable against the income tax due of the payee for the taxable quarter year.
+            - paragraph [ref=e142]:
+              - strong [ref=e143]: Final Withholding Tax
+              - text: is a kind of withholding tax which is prescribed only for certain payors and is not creditable against the income tax due of the payee for the taxable year. Income Tax withheld constitutes the full and final payment of the Income Tax due from the payee on the said income.
+            - paragraph [ref=e144]:
+              - strong [ref=e145]: Withholding Tax on Government Money Payments
+              - text: is the withholding tax withheld by government offices and instrumentalities, including government-owned or -controlled corporations and local government units, before making any payments to private individuals, corporations, partnerships and/or associations.
+        - generic [ref=e148] [cursor=pointer]:
+          - generic [ref=e149]: Excise Tax
+          - paragraph [ref=e151]:
+            - strong [ref=e152]:
+              - link "Excise Tax" [ref=e153]:
+                - /url: excise-tax
+            - text: is a tax on the production, sale or consumption of a commodity in a country. It applies to goods manufactured or produced in the Philippines for domestic sale or consumption or for any other disposition; and to imported goods.
+    - generic [ref=e156]:
+      - generic [ref=e161]:
+        - text: Copyright © Bureau of Internal Revenue.
+        - text: All Rights Reserved
+      - generic [ref=e162]:
+        - generic [ref=e163]:
+          - link "Gov.PH" [ref=e164] [cursor=pointer]:
+            - /url: https://www.gov.ph/
+          - link "Official Gazette" [ref=e165] [cursor=pointer]:
+            - /url: https://www.officialgazette.gov.ph/
+          - link "Department of Finance" [ref=e166] [cursor=pointer]:
+            - /url: https://www.dof.gov.ph/
+          - link "Privacy Notice" [ref=e167] [cursor=pointer]:
+            - /url: /PrivacyNotice
+          - link "Contact Us" [ref=e168] [cursor=pointer]:
+            - /url: /contactus
+          - link "Accessibility" [ref=e169] [cursor=pointer]:
+            - /url: /AccessibilityFeatures
+          - link "Site Map" [ref=e170] [cursor=pointer]:
+            - /url: /SiteMap
+          - link "Open Data Philippines" [ref=e171] [cursor=pointer]:
+            - /url: "#no-action"
+          - link "• Data.Gov.PH" [ref=e172] [cursor=pointer]:
+            - /url: https://data.gov.ph/
+          - link "• Customs ng Bayan" [ref=e173] [cursor=pointer]:
+            - /url: http://www.dof.gov.ph/customsngbayan/
+          - link "• Full Disclosure Portal (LGU)" [ref=e174] [cursor=pointer]:
+            - /url: https://fdpp.dilg.gov.ph/
+        - generic [ref=e175]:
+          - generic [ref=e176]: Follow Us
+          - generic [ref=e177]:
+            - link "https://www.facebook.com/birgovph" [ref=e178] [cursor=pointer]:
+              - /url: https://www.facebook.com/birgovph
+              - img [ref=e179]
+            - link "https://x.com/birgovph" [ref=e181] [cursor=pointer]:
+              - /url: https://x.com/birgovph
+              - img [ref=e182]
+            - link "https://youtube.com/+birgovphl" [ref=e184] [cursor=pointer]:
+              - /url: https://youtube.com/+birgovphl
+              - img [ref=e185]
+        - generic [ref=e187]:
+          - generic [ref=e188]: "Developed by:"
+          - generic [ref=e189]:
+            - link [ref=e190] [cursor=pointer]:
+              - /url: https://www.bir.gov.ph
+              - img [ref=e191]
+            - link [ref=e192] [cursor=pointer]:
+              - /url: https://dict.gov.ph
+              - img [ref=e193]
+  - generic:
+    - button "Open chatbot" [ref=e194] [cursor=pointer]:
+      - generic [ref=e195]: Open chatbot
+    - generic [ref=e196]:
+      - generic "Chat with Revie" [ref=e197]:
+        - banner [ref=e198]:
+          - generic [ref=e199]:
+            - heading "Chat with Revie" [level=2] [ref=e200]
+            - generic [ref=e201]: Connected
+          - generic [ref=e203]:
+            - button "Restart chat Restart chat" [ref=e205] [cursor=pointer]:
+              - text: Restart chat
+              - img [ref=e207]
+              - generic [ref=e209]: Restart chat
+            - button "Close chat window Close chat window" [ref=e211] [cursor=pointer]:
+              - text: Close chat window
+              - img [ref=e213]
+              - generic [ref=e215]: Close chat window
+      - generic [ref=e219]:
+        - img "Chatbot" [ref=e221]
+        - generic [ref=e222]:
+          - generic [ref=e223]: File and pay early! Avoid the rush. Pay your 2025 Annual Income Tax before April 15, 2026
+          - generic [ref=e224]: Our agents are available from 8:00 AM to 5:00 PM Philippine Standard Time (PST) from Mondays to Fridays, except on holidays, non-working days and work suspension.
+          - paragraph [ref=e226]: Hello there! I’m Revie, your Interactive Taxpayer Assistant.
+          - generic [ref=e227]: Please select your preferred language.
+          - generic [ref=e228]:
+            - button "English" [ref=e229] [cursor=pointer]
+            - button "Filipino" [ref=e230] [cursor=pointer]
+      - generic [ref=e232]:
+        - generic [ref=e233]:
+          - generic [ref=e234]: Write your message
+          - textbox "Write your message" [ref=e235]:
+            - /placeholder: Write your message…
+        - button "Send message" [ref=e237] [cursor=pointer]:
+          - img [ref=e239]
+          - generic [ref=e241]: Send message
+  - alert [ref=e242]

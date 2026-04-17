@@ -10,9 +10,10 @@
 1.3 **Payout Authority**: Marketplace Payouts are the sole canonical revenue stream for external customer licenses.
 
 ## 2. Architectural Invariants
-2.1 **Azure Native**: No external hosting dependencies (Supabase, DigitalOcean, Cloudflare, etc.). All components must run on Azure Container Apps (ACA), PostgreSQL Flexible Server, and Azure AI Foundry.
+2.1 **Azure Native**: No external hosting dependencies (Supabase, DigitalOcean, Cloudflare, etc.). All components must run on Azure Container Apps (ACA), PostgreSQL Flexible Server, and **Azure AI Foundry**.
 2.2 **Entra ID Priority**: Microsoft Entra ID is the mandatory and sole identity provider for Marketplace SSO, tenant fulfillment, and service-to-service authentication.
 2.3 **Sovereign Compliance**: The initial target is the **Philippines** market; all data residency rules must be configurable via Azure region selections (East Asia / Southeast Asia).
+2.4 **Workspace Standard**: All agentic modules (`ipai_*`) must adhere to the `.foundry/agent-metadata.yaml` workspace contract for configuration and model routing.
 
 ## 3. Launch Constraint
 3.1 **Target Date**: Q3 2026 (August-September).

@@ -287,6 +287,28 @@ documentation:
       - "Matte black and acoustic specs"
     agent_use: "Grounding for the W9 Studio Assistant"
 
+  - id: gmail_addon_contract
+    title: "InsightPulseAI for Gmail — Integration Contract"
+    path: "platform/ssot/google-workspace/gmail-addon-contract.yaml"
+    domain: automation
+    type: contract
+    topics:
+      - "Add-on surfaces and triggers"
+      - "Odoo action endpoints"
+      - "Security and auditing"
+    agent_use: "Reference for building and debugging the Gmail add-on bridge"
+
+  - id: google_w9_studio_ssot
+    title: "W9 Studio Google Workspace Integration SSOT"
+    path: "ssot/integrations/google_w9_studio.yaml"
+    domain: infrastructure
+    type: reference
+    topics:
+      - "OAuth credentials"
+      - "Project scopes"
+      - "Usage domains (Gmail, Drive, Calendar)"
+    agent_use: "Grounding for W9-specific Google Cloud integration"
+
 # ============================================================================
 # CODE PATTERNS
 # ============================================================================

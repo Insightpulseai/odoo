@@ -1,0 +1,35 @@
+---
+# SSOT: Google Workspace Integration — W9 Studio
+# Last updated: 2026-04-18
+# Project ID: w9-studios-integration
+
+integration:
+  name: "W9 Studio Google Workspace"
+  type: google_workspace
+  auth_method: oauth2
+  project_id: "w9-studios-integration"
+  
+  oauth:
+    client_id: "916601142061-kva9q6607moot9rfm00so8l7h7a4b341.apps.googleusercontent.com"
+    client_secret: "{{GOOGLE_W9_CLIENT_SECRET}}"  # Set in Azure Key Vault / .env
+    auth_uri: "https://accounts.google.com/o/oauth2/auth"
+    token_uri: "https://oauth2.googleapis.com/token"
+    redirect_uris:
+      - "http://localhost"  # Default / Dev
+      - "https://erp.insightpulseai.com/google_account/authentication"  # Production
+  
+  scopes:
+    - "https://www.googleapis.com/auth/gmail.readonly"
+    - "https://www.googleapis.com/auth/gmail.modify"
+    - "https://www.googleapis.com/auth/userinfo.email"
+    - "https://www.googleapis.com/auth/userinfo.profile"
+
+  usage:
+    - "Gmail Mail Plugin (InsightPulseAI for Gmail)"
+    - "Google Calendar Sync"
+    - "Google Drive Operations (W9 Studio Docs)"
+
+compliance:
+  data_residency: PH
+  encryption: at_rest_and_in_transit
+  managed_identity: true
