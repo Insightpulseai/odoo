@@ -1,0 +1,19 @@
+spaces:
+  - name: IPAI Platform Tracker
+    status: pilot
+    domain: ado
+    backing_assets:
+      - gold_ado_work_item_flow
+      - gold_ado_iteration_health
+  - name: Finance Operations
+    status: planned
+    domain: finance_close
+    backing_assets:
+      - gold_finance_close_workload
+      - gold_finance_approval_latency
+  - name: Compliance & Tax
+    status: planned
+    domain: tax_compliance
+    backing_assets:
+      - gold_tax_deadline_control
+      - gold_tax_filing_readiness

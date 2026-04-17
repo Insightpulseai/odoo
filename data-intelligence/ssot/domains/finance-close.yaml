@@ -1,0 +1,21 @@
+domain: finance_close
+title: Finance Operations Intelligence
+status: planned
+source_systems:
+  - finance_workload_sheets
+  - close_task_schedules
+owned_by_repo: data-intelligence
+purpose:
+  - close_workload_analysis
+  - approval_latency_analysis
+  - recurring_task_analysis
+  - automation_candidate_scoring
+gold_marts:
+  - gold_finance_close_workload
+  - gold_finance_approval_latency
+  - gold_finance_recurring_task_load
+serving_surfaces:
+  - databricks_one_dashboard
+  - genie_space
+target_space_names:
+  - Finance Operations

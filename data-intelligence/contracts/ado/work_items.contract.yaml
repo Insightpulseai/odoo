@@ -1,0 +1,16 @@
+contract: ado_work_items
+status: active
+grain: one_row_per_work_item_state_snapshot_or_event
+minimum_fields:
+  - work_item_id
+  - title
+  - state
+  - type
+  - assigned_to
+  - iteration_path
+  - created_date
+  - changed_date
+quality_rules:
+  - work_item_id_not_null
+  - state_not_null
+  - type_not_null

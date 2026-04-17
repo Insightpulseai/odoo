@@ -1,0 +1,10 @@
+contract: genie_finance_ops_space
+status: planned
+domain: finance_close
+required_assets:
+  - gold_finance_close_workload
+  - gold_finance_approval_latency
+required_examples:
+  - who_has_the_highest_month_end_workload
+  - which_tasks_take_the_most_review_time
+  - what_close_steps_are_best_candidates_for_automation
