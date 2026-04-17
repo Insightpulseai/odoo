@@ -15,6 +15,9 @@
     - [ ] Develop `/api/marketplace/webhook` endpoint in Odoo
     - [ ] Implement SaaS Fulfillment API v2 (Provisioning / Cancellation)
     - [ ] Configure Entra ID Application for Marketplace Bot
+- **ISSUE**: Fulfillment API Verification
+    - [ ] Validate SaaS Fulfillment API v2 Webhook locally (Mock responses)
+    - [ ] Test Landing Page redirect flow with Azure CLI sandbox
 - **ISSUE**: SaaS Landing Page Implementation
     - [ ] Design Odoo Tenant Provisioning workflow from Marketplace redirect
     - [ ] Implement Entra ID SSO for automated user onboarding
@@ -22,9 +25,10 @@
 
 ## EPIC: Go-To-Market & Demo Readiness
 - **ISSUE**: Produce GTM Collateral
-    - [ ] Draft 'Pulser for PH' Demo Storyboard
+    - [x] Draft 'Pulser for PH' Demo Storyboard
     - [ ] Create Marketplace Screenshots (Odoo AP + Databricks Analytics)
-    - [ ] Write Marketplace Listing (Description, Features, Value Prop)
+    - [x] Write Marketplace Listing (Description, Features, Value Prop)
+- [ ] Record 'Pulser for PH' Demo walkthrough video
 - **ISSUE**: Co-sell & Partner Center Maintenance
     - [ ] Configure Tax & Payout Profiles in Partner Center
     - [ ] Draft Co-sell Solution material for MS Sellers

@@ -32,6 +32,8 @@
 ---
 ### 🛡️ Technical Implementation Note:
 This demo storyboard leverages:
-1. **Azure Document Intelligence Client (Python SDK 1.0.x)** for ingestion.
-2. **Microsoft Azure Agent Plugin (SKILL.md pattern)** for the Copilot logic.
-3. **Azure Container Apps** for hosting the Odoo engine and Pulser Wrapper.
+1. **Azure Document Intelligence**: Python SDK (v1.0.x) for structured ingestion.
+2. **Azure AI Foundry Agents**: Orchestrated via the `azure-ai-projects` SDK.
+3. **Agentic Skills**: Following the canonical `SKILL.md` pattern for domain-specific Copilot logic.
+4. **Platform Hosting**: Azure Container Apps (ACA) for the Odoo engine and Pulser Wrapper.
+5. **Data Logic**: Databricks SQL + Power BI for governed BI lineage.
