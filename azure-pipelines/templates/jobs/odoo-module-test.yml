@@ -16,10 +16,20 @@ parameters:
   - name: installModules
     type: string
     displayName: Modules to install (comma-separated)
+    default: 'base,account,purchase,project,hr,mail,auth_oauth'
   - name: testTags
     type: string
     displayName: Test tags (Odoo --test-tags format)
     default: ''
+  - name: imageName
+    type: string
+    default: ipai-odoo
+  - name: imageTag
+    type: string
+    default: '18.0'
+  - name: acrName
+    type: string
+    default: acripaiodoo
   - name: serviceConnection
     type: string
     default: ipai-dev-wif
@@ -35,6 +45,9 @@ parameters:
   - name: pgAdminUser
     type: string
     default: odoo_admin
+  - name: resourceGroup
+    type: string
+    default: rg-ipai-dev-odoo-runtime
   - name: pythonVersion
     type: string
     default: '3.11'
@@ -172,7 +185,115 @@ jobs:
           PGPASSWORD: $(pg-ipai-odoo-admin-password)
 
       # -----------------------------------------------------------------
-      # Publish test logs
+      # Convert Odoo log to JUnit XML for Tests tab
+      # -----------------------------------------------------------------
+      - bash: |
+          set -euo pipefail
+          mkdir -p .artifacts/test-results
+
+          LOG=".artifacts/test-logs/odoo-test.log"
+          JUNIT=".artifacts/test-results/odoo-junit.xml"
+
+          # Parse Odoo test log → JUnit XML
+          # Odoo outputs lines like:
+          #   INFO ... PASS: TestClassName.test_method
+          #   ERROR ... FAIL: TestClassName.test_method
+          #   ERROR ... ERROR: TestClassName.test_method
+          python3 - "${LOG}" "${JUNIT}" <<'PYEOF'
+          import sys, re, xml.etree.ElementTree as ET
+          from datetime import datetime
+
+          log_path, junit_path = sys.argv[1], sys.argv[2]
+
+          tests, failures, errors = [], [], []
+          test_pattern = re.compile(
+              r'(PASS|FAIL|ERROR|OK):\s+'
+              r'(?:test\s+)?(\S+?)(?:\s|$)'
+          )
+          # Also capture Odoo's unittest-style output
+          unit_pattern = re.compile(
+              r'(\S+)\s+\((\S+)\)\s+\.\.\.\s+(ok|FAIL|ERROR)',
+              re.IGNORECASE
+          )
+
+          with open(log_path, 'r', errors='replace') as f:
+              for line in f:
+                  m = test_pattern.search(line)
+                  if m:
+                      status, name = m.group(1), m.group(2)
+                      entry = {'name': name, 'status': status.upper(), 'message': line.strip()}
+                      if status.upper() == 'FAIL':
+                          failures.append(entry)
+                      elif status.upper() == 'ERROR':
+                          errors.append(entry)
+                      tests.append(entry)
+                      continue
+                  m = unit_pattern.search(line)
+                  if m:
+                      method, cls, status = m.group(1), m.group(2), m.group(3)
+                      name = f"{cls}.{method}"
+                      entry = {'name': name, 'status': status.upper(), 'message': line.strip()}
+                      if status.upper() == 'FAIL':
+                          failures.append(entry)
+                      elif status.upper() == 'ERROR':
+                          errors.append(entry)
+                      tests.append(entry)
+
+          # If no structured test output found, create a single summary test case
+          if not tests:
+              with open(log_path, 'r', errors='replace') as f:
+                  content = f.read()
+              has_fail = 'FAIL' in content or 'Traceback' in content
+              tests.append({
+                  'name': 'odoo_module_install',
+                  'status': 'FAIL' if has_fail else 'PASS',
+                  'message': 'Module install + test run'
+              })
+              if has_fail:
+                  failures.append(tests[0])
+
+          # Build JUnit XML
+          suite = ET.Element('testsuite', {
+              'name': 'OdooModuleTests',
+              'tests': str(len(tests)),
+              'failures': str(len(failures)),
+              'errors': str(len(errors)),
+              'timestamp': datetime.utcnow().isoformat(),
+          })
+          for t in tests:
+              tc = ET.SubElement(suite, 'testcase', {
+                  'classname': 'odoo',
+                  'name': t['name'],
+              })
+              if t['status'] == 'FAIL':
+                  ET.SubElement(tc, 'failure', {'message': t['message']})
+              elif t['status'] == 'ERROR':
+                  ET.SubElement(tc, 'error', {'message': t['message']})
+
+          tree = ET.ElementTree(suite)
+          ET.indent(tree, space='  ')
+          tree.write(junit_path, xml_declaration=True, encoding='utf-8')
+          print(f"JUnit XML: {len(tests)} tests, {len(failures)} failures, {len(errors)} errors → {junit_path}")
+          PYEOF
+        displayName: Convert Odoo test log to JUnit XML
+        condition: always()
+
+      # -----------------------------------------------------------------
+      # Publish test results to Tests tab
+      # -----------------------------------------------------------------
+      - task: PublishTestResults@2
+        displayName: Publish Odoo test results
+        condition: always()
+        inputs:
+          testResultsFormat: JUnit
+          testResultsFiles: '.artifacts/test-results/odoo-junit.xml'
+          testRunTitle: 'Odoo CE 18 Module Tests — $(Build.BuildNumber)'
+          mergeTestResults: true
+          failTaskOnFailedTests: true
+          failTaskOnMissingResultsFile: false
+
+      # -----------------------------------------------------------------
+      # Publish test logs as artifact
       # -----------------------------------------------------------------
       - publish: .artifacts/test-logs
         artifact: 'odoo-test-logs-$(Build.BuildId)'

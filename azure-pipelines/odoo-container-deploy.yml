@@ -1,10 +1,11 @@
 # =============================================================================
 # Odoo Container Build + Deploy Pipeline
 # =============================================================================
-# Builds ipai-odoo:19.0-copilot image, deploys to ACA, runs smoke test.
-# Uses shared job templates — no inline deploy logic.
+# Builds ipai-odoo:18.0-<tag> image, runs Odoo tests, deploys to ACA,
+# publishes test results to the Tests tab, runs smoke test.
 #
-# Trigger: changes to addons/ipai/ or Dockerfile.odoo-copilot
+# Trigger: changes to addons/ipai/, Dockerfile.unified, or config
+# Canonical: infra/ci/azure-pipelines-odoo-deploy.yml has full 5-stage version
 # =============================================================================
 
 trigger:
@@ -14,7 +15,10 @@ trigger:
   paths:
     include:
       - addons/ipai/**
-      - platform/runtime/docker/docker/Dockerfile.odoo-copilot
+      - addons/oca/**
+      - docker/Dockerfile.unified
+      - config/**
+      - requirements.txt
 
 pr:
   branches:
@@ -23,7 +27,9 @@ pr:
   paths:
     include:
       - addons/ipai/**
-      - platform/runtime/docker/docker/Dockerfile.odoo-copilot
+      - addons/oca/**
+      - docker/Dockerfile.unified
+      - config/**
 
 variables:
   - name: acrName
@@ -31,7 +37,7 @@ variables:
   - name: imageName
     value: ipai-odoo
   - name: imageTag
-    value: 19.0-copilot
+    value: '18.0-$(Build.BuildId)'
   - name: resourceGroup
     value: rg-ipai-dev-odoo-runtime
   - name: containerAppName
@@ -44,26 +50,41 @@ stages:
   # Stage 1: Build
   # ─────────────────────────────────────────────────────────────────
   - stage: Build
-    displayName: Build Odoo Image
+    displayName: Build Odoo CE 18 Image
     jobs:
       - template: templates/jobs/build-container.yml
         parameters:
           imageName: $(imageName)
           imageTag: $(imageTag)
-          dockerfile: platform/runtime/docker/docker/Dockerfile.odoo-copilot
+          dockerfile: docker/Dockerfile.unified
           buildContext: .
           acrName: $(acrName)
           serviceConnection: $(serviceConnection)
 
   # ─────────────────────────────────────────────────────────────────
-  # Stage 2: Deploy (main only)
+  # Stage 2: Test — Odoo module tests with result publishing
+  # ─────────────────────────────────────────────────────────────────
+  - stage: Test
+    displayName: Odoo Module Tests
+    dependsOn: Build
+    jobs:
+      - template: templates/jobs/odoo-module-test.yml
+        parameters:
+          imageName: $(imageName)
+          imageTag: $(imageTag)
+          acrName: $(acrName)
+          serviceConnection: $(serviceConnection)
+          resourceGroup: $(resourceGroup)
+
+  # ─────────────────────────────────────────────────────────────────
+  # Stage 3: Deploy (main only)
   # ─────────────────────────────────────────────────────────────────
   - stage: Deploy
     displayName: Deploy to ACA
-    dependsOn: Build
+    dependsOn: Test
     condition: |
       and(
-        succeeded('Build'),
+        succeeded('Test'),
         eq(variables['Build.SourceBranch'], 'refs/heads/main')
       )
     jobs:
@@ -77,7 +98,7 @@ stages:
           serviceConnection: $(serviceConnection)
 
   # ─────────────────────────────────────────────────────────────────
-  # Stage 3: Smoke
+  # Stage 4: Smoke
   # ─────────────────────────────────────────────────────────────────
   - stage: Smoke
     displayName: Post-Deploy Smoke
@@ -91,12 +112,13 @@ stages:
           contentMatch: Odoo
 
   # ─────────────────────────────────────────────────────────────────
-  # Stage 4: Evidence
+  # Stage 5: Evidence
   # ─────────────────────────────────────────────────────────────────
   - stage: Evidence
     displayName: Publish Evidence
     dependsOn:
       - Build
+      - Test
       - Deploy
       - Smoke
     condition: succeededOrFailed()
