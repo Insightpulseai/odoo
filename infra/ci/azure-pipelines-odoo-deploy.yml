@@ -165,23 +165,36 @@ stages:
       vmImage: ubuntu-latest
     steps:
     - task: AzureCLI@2
-      displayName: "Run Odoo tests"
+      displayName: "Create disposable test DB"
       inputs:
         azureSubscription: $(serviceConnection)
         scriptType: bash
         scriptLocation: inlineScript
         inlineScript: |
+          set -euo pipefail
           TEST_DB="test_ci_$(Build.BuildId)"
-          
-          # Create disposable test DB
+          echo "##vso[task.setvariable variable=TEST_DB]${TEST_DB}"
+
           az postgres flexible-server db create \
             --resource-group $(devRG) \
             --server-name pg-ipai-odoo \
             --database-name $TEST_DB
 
-          # Run container with test command
+          echo "PASS: Disposable DB ${TEST_DB} created"
+
+    - task: AzureCLI@2
+      displayName: "Run Odoo tests in ACA Job"
+      inputs:
+        azureSubscription: $(serviceConnection)
+        scriptType: bash
+        scriptLocation: inlineScript
+        inlineScript: |
+          set -euo pipefail
+          TEST_DB="$(TEST_DB)"
+          JOB_NAME="odoo-test-$(Build.BuildId)"
+
           az containerapp job create \
-            --name "odoo-test-$(Build.BuildId)" \
+            --name "${JOB_NAME}" \
             --resource-group $(devRG) \
             --environment acae-ipai-dev-sea \
             --image $(acrRegistry)/$(imageName):$(imageTag) \
@@ -189,31 +202,131 @@ stages:
             --trigger-type Manual \
             --cpu 1 --memory 2Gi \
             --env-vars \
-              HOST=$(pgHost) \
-              USER=$(pgUser) \
-              PASSWORD=$(pgPassword) \
+              DB_HOST=$(pgHost) \
+              DB_USER=$(pgUser) \
+              DB_PASSWORD=$(pgPassword) \
               ODOO_STAGE=test \
               ODOO_VERSION=18.0 \
             --command "odoo" \
-            --args "-d" "$TEST_DB" "-i" "base,account,purchase,project,hr,mail,auth_oauth" \
+            --args "-d" "${TEST_DB}" "-i" "base,account,purchase,project,hr,mail,auth_oauth" \
                    "--test-enable" "--stop-after-init" "--no-http" \
-                   "--db_host" "$(pgHost)" "--db_user" "$(pgUser)" "--db_password" "$(pgPassword)"
-          
-          # Wait for job completion
-          az containerapp job execution list \
-            --name "odoo-test-$(Build.BuildId)" \
-            --resource-group $(devRG) \
-            --query "[0].properties.status" -o tsv
+                   "--db_host" "$(pgHost)" "--db_user" "$(pgUser)" "--db_password" "$(pgPassword)" \
+                   "--log-level" "test"
 
-          # Cleanup
-          az postgres flexible-server db delete \
+          # Start execution
+          az containerapp job start \
+            --name "${JOB_NAME}" \
+            --resource-group $(devRG)
+
+          # Poll for completion (max 20 min)
+          for i in $(seq 1 40); do
+            STATUS=$(az containerapp job execution list \
+              --name "${JOB_NAME}" \
+              --resource-group $(devRG) \
+              --query "[0].properties.status" -o tsv 2>/dev/null || echo "Unknown")
+            echo "Attempt ${i}/40: status=${STATUS}"
+            if [[ "$STATUS" == "Succeeded" ]]; then
+              echo "PASS: Odoo tests succeeded"
+              break
+            elif [[ "$STATUS" == "Failed" ]]; then
+              echo "##vso[task.logissue type=error]Odoo test job failed"
+              exit 1
+            fi
+            sleep 30
+          done
+
+          # Retrieve logs for test result parsing
+          mkdir -p $(Build.ArtifactStagingDirectory)/test-results
+          az containerapp job execution list \
+            --name "${JOB_NAME}" \
             --resource-group $(devRG) \
-            --server-name pg-ipai-odoo \
-            --database-name $TEST_DB --yes
-          
-          az containerapp job delete \
-            --name "odoo-test-$(Build.BuildId)" \
-            --resource-group $(devRG) --yes
+            -o json > $(Build.ArtifactStagingDirectory)/test-results/job-execution.json
+
+          echo "##vso[task.setvariable variable=JOB_NAME]${JOB_NAME}"
+
+    - bash: |
+        set -euo pipefail
+        mkdir -p $(Build.ArtifactStagingDirectory)/test-results
+
+        # Generate a JUnit summary from the ACA job execution result
+        JUNIT="$(Build.ArtifactStagingDirectory)/test-results/odoo-junit.xml"
+        JOB_JSON="$(Build.ArtifactStagingDirectory)/test-results/job-execution.json"
+
+        python3 - "${JOB_JSON}" "${JUNIT}" <<'PYEOF'
+        import sys, json, xml.etree.ElementTree as ET
+        from datetime import datetime
+
+        job_json, junit_path = sys.argv[1], sys.argv[2]
+        with open(job_json) as f:
+            executions = json.load(f)
+
+        status = 'Unknown'
+        if executions:
+            status = executions[0].get('properties', {}).get('status', 'Unknown')
+
+        passed = status == 'Succeeded'
+        suite = ET.Element('testsuite', {
+            'name': 'OdooModuleTests',
+            'tests': '1',
+            'failures': '0' if passed else '1',
+            'errors': '0',
+            'timestamp': datetime.utcnow().isoformat(),
+        })
+        tc = ET.SubElement(suite, 'testcase', {
+            'classname': 'odoo.ci',
+            'name': 'module_install_and_test',
+            'time': '0',
+        })
+        if not passed:
+            ET.SubElement(tc, 'failure', {
+                'message': f'ACA job status: {status}'
+            })
+
+        tree = ET.ElementTree(suite)
+        ET.indent(tree, space='  ')
+        tree.write(junit_path, xml_declaration=True, encoding='utf-8')
+        print(f"JUnit: {'PASS' if passed else 'FAIL'} → {junit_path}")
+        PYEOF
+      displayName: "Convert test results to JUnit XML"
+      condition: always()
+
+    - task: PublishTestResults@2
+      displayName: "Publish Odoo test results"
+      condition: always()
+      inputs:
+        testResultsFormat: JUnit
+        testResultsFiles: '$(Build.ArtifactStagingDirectory)/test-results/odoo-junit.xml'
+        testRunTitle: 'Odoo CE 18 Module Tests — $(Build.BuildNumber)'
+        mergeTestResults: true
+        failTaskOnFailedTests: true
+        failTaskOnMissingResultsFile: false
+
+    - task: AzureCLI@2
+      displayName: "Cleanup test resources"
+      condition: always()
+      inputs:
+        azureSubscription: $(serviceConnection)
+        scriptType: bash
+        scriptLocation: inlineScript
+        inlineScript: |
+          set -euo pipefail
+          TEST_DB="${TEST_DB:-}"
+          JOB_NAME="${JOB_NAME:-}"
+
+          if [ -n "${TEST_DB}" ]; then
+            az postgres flexible-server db delete \
+              --resource-group $(devRG) \
+              --server-name pg-ipai-odoo \
+              --database-name "${TEST_DB}" --yes 2>/dev/null || true
+            echo "Dropped ${TEST_DB}"
+          fi
+
+          if [ -n "${JOB_NAME}" ]; then
+            az containerapp job delete \
+              --name "${JOB_NAME}" \
+              --resource-group $(devRG) --yes 2>/dev/null || true
+            echo "Deleted job ${JOB_NAME}"
+          fi
 
 # ===========================================================================
 # STAGE 3: DEPLOY DEV (auto on main)
