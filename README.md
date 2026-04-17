@@ -36,17 +36,40 @@ Odoo CE 18 is the transactional system of record. Databricks + Unity Catalog is 
 
 Details: [`docs/architecture/target-state/UNIFIED.md`](docs/architecture/target-state/UNIFIED.md) | [`docs/architecture/target-state/PLATFORM.md`](docs/architecture/target-state/PLATFORM.md)
 
+## Status
+
+**Lifecycle:** Reference architecture + accelerator proving, moving into industry solution packaging.
+
+| Surface | URL | Status |
+|---------|-----|--------|
+| Odoo ERP | erp.insightpulseai.com | ✅ Live (pending DNS) |
+| Corporate site | www.insightpulseai.com | ✅ Live (pending DNS) |
+| PrismaLab | prismalab.insightpulseai.com | ✅ Live (pending DNS) |
+| W9 Studio | www.w9studio.net | ✅ Live (pending DNS) |
+| Databricks One | adb-7405608559466577.17.azuredatabricks.net/one | ✅ Gold + 2 Genie spaces |
+
+- Maturity checkpoint: [`docs/architecture/MATURITY_CHECKPOINT.md`](docs/architecture/MATURITY_CHECKPOINT.md)
+- Baseline to target state: [`docs/architecture/baseline-to-target-state.md`](docs/architecture/baseline-to-target-state.md)
+- Docs index: [`docs/INDEX.md`](docs/INDEX.md)
+
+## Environments
+
+| Environment | GitHub | Azure Pipelines | Azure resources |
+|---|---|---|---|
+| `ipai-dev` | Branch protection | Auto-deploy on merge | Sponsored sub (eba824fb) |
+| `ipai-staging` | Branch protection | 1 approval gate | Same sub (staging RGs) |
+| `ipai-prod` | Branch protection | 2 approvals + business hours | Prod sub (when provisioned) |
+
 ## Assistant Surfaces
 
-| Surface | Description | Details |
-|---------|-------------|---------|
-| Odoo Copilot | ERP chat assistant (Odoo systray) | In-app AI for finance, HR, operations |
-| Diva | Tax and compliance advisor | BIR/PH tax workflow guidance |
-| Studio Agent | Dev/config copilot | Module scaffolding, OCA selection |
-| Azure Genie | Cloud ops assistant | Infrastructure and deployment |
-| Document AI | OCR and extraction | Invoice, receipt, document processing |
+| Surface | Description |
+|---------|-------------|
+| Pulser | Guided operating assistant (finance, close, compliance) |
+| Tax Guru | PH BIR tax compliance specialist |
+| Genie (Databricks) | NL analytics over gold marts (2 spaces live) |
+| Document Intelligence | Invoice/receipt/form extraction (docai-ipai-dev) |
 
-Details: [`docs/architecture/agents/ASSISTANT_SURFACES.md`](docs/architecture/agents/ASSISTANT_SURFACES.md)
+Details: [`docs/product/surface-blueprint.md`](docs/product/surface-blueprint.md)
 
 ## Key Constraints
 
