@@ -2,8 +2,8 @@
 
 ## EPIC: Microsoft ISV Success Program Enrollment
 - **ISSUE**: Activate Core Program Benefits
-    - [ ] Claim GitHub Enterprise Coupon (ISV-Success-Program-12months-570064f)
-    - [ ] Activate M365 E5 Developer Sandbox
+    - [x] Claim GitHub Enterprise Coupon (ISV-Success-Program-12months-570064f)
+    - [x] Activate M365 E5 Developer Sandbox
     - [ ] Redeem Azure Standard Support Benefit
     - [ ] Assign Managed Identity permissions for Azure Sponsorship management
 - **ISSUE**: Technical Onboarding

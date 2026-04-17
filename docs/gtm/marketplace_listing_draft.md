@@ -17,6 +17,8 @@
   - **The Pulser Assistant**: A context-aware agentic layer that guides users through complex SOPs, provides financial summarization, and proactively identifies budget variances.
   - **Governed Data Gravity**: Leveraging Databricks + Unity Catalog, Pulser ensures your operational data is ready for enterprise BI. Seamlessly transition from raw Odoo records to Gold-standard Power BI dashboards.
   - **Azure-Native Security**: 100% Entra ID alignment. No passwords, no shadow IT. Just governed, secure, and scalable high-performance infrastructure.
+  - **Enterprise-Grade Support**: Backed by Microsoft Standard Support. Gain peace of mind with prioritized technical assistance for your core Azure and Pulser infrastructure.
+  - **Developer Sandbox Availability**: Professional and Enterprise customers gain access to a pre-configured M365 E5 developer sandbox for testing custom integrations and automations.
 
   ### Why Pulser?
   For founders and operations leaders, Pulser provides the "Intelligent Operational Control" needed to scale without the paperwork storm.

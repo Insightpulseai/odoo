@@ -11,7 +11,8 @@ resources:
   # Core Technical Benefits & Activation States
   benefits_12_month:
     github_enterprise:
-      status: "pending_activation"
+      status: "claim_documented"
+      claimed_at: "2026-04-18T07:48:00Z"
       coupon_code: "ISV-Success-Program-12months-570064f"
       allowance: "20 seats, 50k automation mins/month"
       activation_rule: "Use incognito browser, apply to Insightpulseai organization, valid 12 months"
@@ -22,11 +23,12 @@ resources:
       rule: "Must not be combined with CSP/MCA"
     
     azure_standard_support:
-      status: "pending_activation"
+      status: "ready_for_ticket"
       rule: "Ticket selection priority route -> Partner ISV Success Azur Std"
 
     m365_e5_developer:
-      status: "pending_activation"
+      status: "claim_documented"
+      claimed_at: "2026-04-18T07:48:00Z"
       url: "https://developer.microsoft.com/en-us/microsoft-365/dev-program"
       rule: "Do not leave unused for > 6 months"
 
