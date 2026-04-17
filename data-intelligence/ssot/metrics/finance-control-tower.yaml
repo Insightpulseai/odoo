@@ -1,0 +1,42 @@
+control_tower: finance_operations
+domain: finance_ops
+
+modules:
+  - name: bir_compliance_control_tower
+    marts:
+      - gold_finance_bir_deadline_control
+      - gold_finance_compliance_control_tower
+    questions:
+      - what_filings_are_due_in_next_7_14_30_days
+      - which_forms_are_not_yet_review_ready
+      - which_approval_stage_is_the_blocker
+      - which_forms_have_tightest_internal_lead_time
+
+  - name: month_end_close_workload
+    marts:
+      - gold_finance_close_workload
+      - gold_finance_role_bottlenecks
+    questions:
+      - who_has_highest_finance_workload_this_month
+      - which_categories_consume_most_effort
+      - which_people_are_overloaded_with_approvals
+      - where_are_review_bottlenecks
+
+  - name: automation_opportunity
+    marts:
+      - gold_finance_automation_candidates
+    questions:
+      - which_tasks_repeat_every_month
+      - which_steps_are_rule_based_enough_for_pulser
+      - which_stages_are_clerical_vs_judgment
+      - which_workstreams_should_be_digitized_first
+
+  - name: finance_operating_model_explorer
+    marts:
+      - gold_finance_close_workload
+      - gold_finance_role_bottlenecks
+    questions:
+      - what_does_each_role_actually_own
+      - where_are_handoffs_concentrated
+      - which_tasks_have_single_person_dependency
+      - which_work_should_be_redistributed

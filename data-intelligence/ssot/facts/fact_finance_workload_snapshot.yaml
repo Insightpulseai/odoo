@@ -1,0 +1,17 @@
+fact: fact_finance_workload_snapshot
+domain: finance_ops
+grain: one_person_x_one_period
+columns:
+  - {name: person_code, type: string, fk: dim_finance_person}
+  - {name: period_key, type: string, fk: dim_reporting_period}
+  - {name: prep_task_count, type: int}
+  - {name: review_task_count, type: int}
+  - {name: approval_task_count, type: int}
+  - {name: total_assigned_tasks, type: int}
+  - {name: busiest_domain, type: string}
+  - {name: deadline_density_score, type: float}
+uc_target: ipai_dev.gold.fact_finance_workload_snapshot
+measures:
+  - max_workload
+  - avg_workload
+  - overload_flag_count
