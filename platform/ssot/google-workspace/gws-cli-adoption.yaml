@@ -21,7 +21,9 @@ tool:
   upstream_repo: https://github.com/googleworkspace/cli
   maintainer: Google (googleworkspace org — not an official Google product)
   license: Apache-2.0
-  current_stable_version: "0.22.5"  # as of 2026-04-16
+  current_stable_version: "0.22.5"
+  status: INSTALLED
+  binary_path: "./bin/gws"
   install_reference: https://github.com/googleworkspace/cli/releases
 
 adoption_classification:
@@ -79,10 +81,11 @@ agent_integration:
       Gives Gemini CLI agent direct access to all gws commands and Workspace
       agent skills. Auth is inherited from the terminal session — no additional
       credential plumbing required by the agent.
-    status: adopt
+    status: ACTIVE
 
   agent_skills:
     upstream_count: "100+"
+    status: BRIDGED
     skills_index: https://github.com/googleworkspace/cli/tree/main/skills
     install_all: npx skills add https://github.com/googleworkspace/cli
     install_selective: |
