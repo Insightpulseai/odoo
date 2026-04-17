@@ -1,0 +1,276 @@
+# =============================================================================
+# Agent Factory — Single Source of Truth
+# =============================================================================
+# Defines the top-level factory configuration for the IPAI Agent Orchestration
+# Platform. All agent lifecycle, routing, and governance flows derive from this.
+# =============================================================================
+
+id: agent_factory
+name: IPAI Agent Factory
+version: 1.0.0
+status: active
+owner: platform-team
+description: >
+  Central factory for agent creation, promotion, orchestration, and retirement.
+  Governs the full lifecycle from concept through production deployment and
+  eventual decommission.
+
+# -----------------------------------------------------------------------------
+# Lifecycle Phases
+# -----------------------------------------------------------------------------
+# Ordered sequence every agent traverses. Phases map to stage gates (stage_gates.yaml).
+
+lifecycle_phases:
+  - id: concept
+    name: Concept
+    purpose: Capture agent intent, scope, and initial constraints.
+    order: 1
+
+  - id: design
+    name: Design
+    purpose: Define capabilities, interfaces, and interaction contracts.
+    order: 2
+
+  - id: scaffold
+    name: Scaffold
+    purpose: Generate project structure, boilerplate, and initial configuration.
+    order: 3
+
+  - id: implement
+    name: Implement
+    purpose: Build agent logic, tool bindings, and prompt templates.
+    order: 4
+
+  - id: unit_test
+    name: Unit Test
+    purpose: Validate individual components in isolation.
+    order: 5
+
+  - id: integration_test
+    name: Integration Test
+    purpose: Verify agent interactions with external services and other agents.
+    order: 6
+
+  - id: review
+    name: Review
+    purpose: Human and automated review of code, prompts, and security posture.
+    order: 7
+
+  - id: staging
+    name: Staging
+    purpose: Deploy to staging environment for end-to-end validation.
+    order: 8
+
+  - id: canary
+    name: Canary
+    purpose: Gradual traffic shift to validate production behavior under real load.
+    order: 9
+
+  - id: production
+    name: Production
+    purpose: Full production deployment with monitoring and alerting.
+    order: 10
+
+  - id: observe
+    name: Observe
+    purpose: Continuous monitoring of performance, cost, and drift.
+    order: 11
+
+  - id: optimize
+    name: Optimize
+    purpose: Tune prompts, parameters, and resource allocation based on telemetry.
+    order: 12
+
+  - id: deprecate
+    name: Deprecate
+    purpose: Signal intent to retire, migrate consumers, freeze changes.
+    order: 13
+
+  - id: decommission
+    name: Decommission
+    purpose: Remove agent from runtime, archive artifacts, revoke credentials.
+    order: 14
+
+# -----------------------------------------------------------------------------
+# Phase-to-Stage Mapping
+# -----------------------------------------------------------------------------
+# 14 lifecycle phases map to 16 operational stages (S01-S16).
+# Some stages span multiple phases; some phases map 1:1 to a stage.
+# Canonical stage definitions: stage_gates.yaml
+
+phase_to_stage_mapping:
+  - phase: concept
+    stages: [S01]
+    description: Intake — blueprint submitted, passport created.
+  - phase: design
+    stages: [S02]
+    description: Contract drafted, I/O schemas defined.
+  - phase: scaffold
+    stages: [S03]
+    description: Project structure generated, CI configured, registry entry created.
+  - phase: implement
+    stages: [S04]
+    description: Core logic built, tool bindings functional, prompt templates versioned.
+  - phase: unit_test
+    stages: [S05]
+    description: Unit-level evaluations written and passing.
+  - phase: integration_test
+    stages: [S06]
+    description: Cross-agent and tool-binding tests passing.
+  - phase: review
+    stages: [S07, S08]
+    description: Security review (S07) and code review (S08).
+  - phase: staging
+    stages: [S09]
+    description: Staging deployment with end-to-end validation.
+  - phase: canary
+    stages: [S10, S11]
+    description: Judge evaluation (S10) and canary deploy (S11) with limited real traffic.
+  - phase: production
+    stages: [S12]
+    description: Full production traffic shift.
+  - phase: observe
+    stages: [S13]
+    description: Continuous monitoring of performance, cost, and drift.
+  - phase: optimize
+    stages: [S14]
+    description: Tune prompts, parameters, and resources based on telemetry.
+  - phase: deprecate
+    stages: [S15]
+    description: Deprecation notice published, consumers migrated, changes frozen.
+  - phase: decommission
+    stages: [S16]
+    description: Agent removed from runtime, credentials revoked, artifacts archived.
+
+# -----------------------------------------------------------------------------
+# Planes
+# -----------------------------------------------------------------------------
+
+planes:
+  control:
+    description: >
+      Governance, policy enforcement, stage gate evaluation, and promotion decisions.
+    components:
+      - stage_gate_engine
+      - maturity_evaluator
+      - policy_enforcer
+      - promotion_controller
+
+  runtime:
+    description: >
+      Agent execution, task routing, health monitoring, and scaling.
+    components:
+      - task_bus
+      - agent_runtime
+      - health_monitor
+      - autoscaler
+      - circuit_breaker
+
+  artifact:
+    description: >
+      Versioned storage for agent definitions, prompts, tools, and evaluation results.
+    components:
+      - agent_registry
+      - prompt_store
+      - tool_catalog
+      - evaluation_archive
+      - audit_log
+
+# -----------------------------------------------------------------------------
+# Core Services
+# -----------------------------------------------------------------------------
+
+core_services:
+  - id: agent_registry
+    description: Canonical registry of all agent definitions and their current maturity level.
+    backing_store: supabase
+
+  - id: task_bus
+    description: Envelope-based task routing between agents and external systems.
+    backing_store: supabase_realtime
+    spec: task_bus.yaml
+
+  - id: stage_gate_engine
+    description: Evaluates promotion criteria and enforces gate requirements.
+    spec: stage_gates.yaml
+
+  - id: maturity_evaluator
+    description: Assesses agent maturity level based on evidence and controls.
+    spec: agent_maturity_model.yaml
+
+  - id: prompt_store
+    description: Versioned prompt templates with A/B variant support.
+    backing_store: supabase
+
+  - id: tool_catalog
+    description: Registry of available tools with capability declarations and auth requirements.
+    backing_store: supabase
+
+  - id: evaluation_engine
+    description: Runs judge agents against agent outputs for quality scoring.
+    depends_on:
+      - agent_registry
+      - task_bus
+
+  - id: audit_log
+    description: Immutable record of all agent actions, promotions, and policy decisions.
+    backing_store: supabase
+    retention: 365d
+
+# -----------------------------------------------------------------------------
+# Repository Paths
+# -----------------------------------------------------------------------------
+
+repo_paths:
+  root: /
+  ssot: ssot/agent-platform/
+  specs: spec/agent-factory/
+  agents: ssot/agents/
+  edge_functions: supabase/functions/
+  workflows: .github/workflows/
+  docs: docs/ai/
+
+# -----------------------------------------------------------------------------
+# Integration Points
+# -----------------------------------------------------------------------------
+
+integrations:
+  azure:
+    compute: Azure Container Apps
+    ai: Azure OpenAI (oai-ipai-dev)
+    search: Azure AI Search (srch-ipai-dev)
+    identity: Managed Identity + Keycloak (transitional)
+    secrets: Azure Key Vault (kv-ipai-dev)
+    monitoring: Azure Monitor + Application Insights
+    container_registry: cripaidev.azurecr.io
+
+  foundry:
+    role: Agent hosting, identity lifecycle, MCP/A2A transport
+    sdk: Python + .NET
+    status: partial_migration
+    reference: ssot/agent-platform/foundry_designer_adapter.yaml
+
+  supabase:
+    instance: spdtwktxdalcfigzeqrz
+    role: Task bus, agent registry, prompt store, audit log, Realtime pub/sub
+    edge_functions: true
+    vault: true
+    pgvector: true
+
+  slack:
+    role: Human-in-the-loop notifications, approval workflows, agent status alerts
+    transport: Slack API via n8n
+
+  github:
+    role: CI/CD, spec validation, agent artifact versioning
+    workflows: .github/workflows/
+
+# -----------------------------------------------------------------------------
+# References
+# -----------------------------------------------------------------------------
+
+spec_bundle: spec/agent-factory/
+architecture_doc: docs/architecture/agent-platform/agent-factory.md
+maturity_model: ssot/agent-platform/agent_maturity_model.yaml
+task_bus_spec: ssot/agent-platform/task_bus.yaml
+stage_gates_spec: ssot/agent-platform/stage_gates.yaml

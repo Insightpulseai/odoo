@@ -62,8 +62,8 @@ phase_status:
   phase_3_foundry_adapter:
     status: partial
     evidence: "MockFoundryClient works, AzureFoundryClient has real OpenAI-compat implementation"
-    foundry_resource: "data-intel-ph-resource"
-    foundry_endpoint: "https://data-intel-ph-resource.cognitiveservices.azure.com/"
+    foundry_resource: "ipai-copilot-resource"
+    foundry_endpoint: "https://ipai-copilot-resource.cognitiveservices.azure.com/"
     model_deployment: "gpt-4.1"
     embedding_deployment: "text-embedding-3-small"
     remaining: "Set AZURE_AI_FOUNDRY_ENDPOINT + AZURE_FOUNDRY_API_KEY env vars to activate"

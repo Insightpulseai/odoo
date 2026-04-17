@@ -922,3 +922,209 @@ class CopilotGatewayController(http.Controller):
             ],
             'total': total,
         }
+
+    # ------------------------------------------------------------------
+    # Document Intelligence OCR — replaces Odoo IAP (no iap.odoo.com)
+    # Uses Azure Document Intelligence via ipai-copilot-resource (AIServices)
+    # Auth: DefaultAzureCredential (managed identity, keyless)
+    # Models: prebuilt-invoice, prebuilt-receipt, prebuilt-layout
+    # ------------------------------------------------------------------
+
+    @http.route(
+        ['/api/pulser/ocr', '/ipai/copilot/ocr'],
+        type='json',
+        auth='user',
+        methods=['POST'],
+        csrf=True,
+    )
+    def ocr_extract(self, attachment_id=None, model_id='prebuilt-invoice', **kw):
+        """Extract fields from an Odoo attachment using Azure Document Intelligence.
+
+        Replaces Odoo's built-in IAP OCR (account_invoice_extract) with
+        Azure Document Intelligence on ipai-copilot-resource. Zero IAP
+        dependency. Auth via managed identity (keyless).
+
+        Args:
+            attachment_id: int — ir.attachment record id
+            model_id: str — Document Intelligence model
+                'prebuilt-invoice'  — invoices, vendor bills
+                'prebuilt-receipt'  — receipts, POS tickets
+                'prebuilt-layout'   — general document structure
+                'prebuilt-tax.us.w2' — US W2 (placeholder for BIR 2307 custom)
+
+        Returns:
+            dict with extracted fields, confidence scores, and raw text.
+        """
+        if not self._is_enabled():
+            return {'error': True, 'message': 'Copilot is disabled.'}
+
+        if not self._check_rate_limit(request.env.uid):
+            return {'error': True, 'message': 'Rate limit exceeded.'}
+
+        if not attachment_id:
+            return {'error': True, 'message': 'attachment_id is required.'}
+
+        # Validate model_id
+        allowed_models = {
+            'prebuilt-invoice', 'prebuilt-receipt', 'prebuilt-layout',
+            'prebuilt-id-document', 'prebuilt-businessCard',
+        }
+        if model_id not in allowed_models:
+            return {
+                'error': True,
+                'message': f'Invalid model_id. Allowed: {sorted(allowed_models)}',
+            }
+
+        # Fetch attachment
+        attachment = request.env['ir.attachment'].sudo().browse(int(attachment_id))
+        if not attachment.exists():
+            return {'error': True, 'message': 'Attachment not found.'}
+
+        # Get binary data
+        import base64
+        file_data = base64.b64decode(attachment.datas) if attachment.datas else None
+        if not file_data:
+            return {'error': True, 'message': 'Attachment has no data.'}
+
+        content_type = attachment.mimetype or 'application/pdf'
+        correlation_id = str(uuid.uuid4())
+
+        _logger.info(
+            'ocr-extract: attachment=%s name=%s model=%s size=%d cid=%s',
+            attachment_id, attachment.name, model_id, len(file_data), correlation_id,
+        )
+
+        try:
+            result = self._call_document_intelligence(
+                file_data, content_type, model_id, correlation_id,
+            )
+            self._audit_log(
+                'ocr_extract',
+                attachment_id=attachment_id,
+                model_id=model_id,
+                correlation_id=correlation_id,
+                fields_count=len(result.get('fields', {})),
+            )
+            return result
+        except Exception as exc:
+            _logger.exception('ocr-extract failed: %s', exc)
+            return {
+                'error': True,
+                'message': str(exc),
+                'correlation_id': correlation_id,
+            }
+
+    def _call_document_intelligence(self, file_data, content_type, model_id, correlation_id):
+        """Call Azure Document Intelligence (prebuilt models).
+
+        Uses ipai-copilot-resource (AIServices kind includes Doc Intelligence).
+        Auth: DefaultAzureCredential → managed identity (keyless).
+        Fallback: API key from env var AZURE_FOUNDRY_API_KEY.
+        """
+        import os
+
+        endpoint = os.getenv(
+            'AZURE_DOCAI_ENDPOINT',
+            'https://ipai-copilot-resource.cognitiveservices.azure.com',
+        )
+
+        # Try managed identity first, then API key
+        headers = {'Content-Type': content_type}
+        try:
+            from azure.identity import DefaultAzureCredential
+            cred = DefaultAzureCredential()
+            token = cred.get_token('https://cognitiveservices.azure.com/.default')
+            headers['Authorization'] = f'Bearer {token.token}'
+        except Exception:
+            api_key = os.getenv('AZURE_FOUNDRY_API_KEY', '')
+            if api_key:
+                headers['Ocp-Apim-Subscription-Key'] = api_key
+            else:
+                raise RuntimeError(
+                    'No credential available for Document Intelligence. '
+                    'Set AZURE_FOUNDRY_API_KEY or configure managed identity.'
+                )
+
+        # POST to analyze endpoint
+        url = (
+            f"{endpoint.rstrip('/')}/documentintelligence/documentModels/"
+            f"{model_id}:analyze?api-version=2024-11-30"
+        )
+
+        req = urllib.request.Request(url, data=file_data, headers=headers, method='POST')
+        resp = urllib.request.urlopen(req, timeout=_GATEWAY_TIMEOUT)
+
+        # Get operation-location for polling
+        operation_url = resp.headers.get('Operation-Location') or resp.headers.get('operation-location')
+        if not operation_url:
+            raise RuntimeError('No Operation-Location header in response.')
+
+        # Poll for result
+        import time as _time
+        poll_headers = {k: v for k, v in headers.items() if k != 'Content-Type'}
+        for _ in range(30):  # max 30 attempts, 2s apart = 60s
+            _time.sleep(2)
+            poll_req = urllib.request.Request(operation_url, headers=poll_headers)
+            poll_resp = urllib.request.urlopen(poll_req, timeout=30)
+            poll_data = json.loads(poll_resp.read())
+            status = poll_data.get('status', '')
+            if status == 'succeeded':
+                return self._format_docai_result(poll_data.get('analyzeResult', {}))
+            elif status == 'failed':
+                raise RuntimeError(f'Document analysis failed: {poll_data}')
+
+        raise RuntimeError('Document analysis timed out after 60s.')
+
+    def _format_docai_result(self, analyze_result):
+        """Format Document Intelligence result into a clean dict for the UI."""
+        pages = analyze_result.get('pages', [])
+        documents = analyze_result.get('documents', [])
+
+        result = {
+            'pages': len(pages),
+            'documents': len(documents),
+            'fields': {},
+            'line_items': [],
+            'raw_text': '',
+        }
+
+        # Extract full text
+        if pages:
+            lines = []
+            for page in pages:
+                for line in page.get('lines', []):
+                    lines.append(line.get('content', ''))
+            result['raw_text'] = '\n'.join(lines)
+
+        # Extract document fields
+        if documents:
+            doc = documents[0]
+            doc_fields = doc.get('fields', {})
+            for name, field in doc_fields.items():
+                if name == 'Items':
+                    # Line items (invoice/receipt)
+                    items = field.get('valueArray', [])
+                    for item in items:
+                        item_fields = item.get('valueObject', {})
+                        line = {}
+                        for k, v in item_fields.items():
+                            line[k] = (
+                                v.get('valueString')
+                                or v.get('valueNumber')
+                                or v.get('valueCurrency', {}).get('amount')
+                                or v.get('content', '')
+                            )
+                        result['line_items'].append(line)
+                else:
+                    result['fields'][name] = {
+                        'value': (
+                            field.get('valueString')
+                            or field.get('valueNumber')
+                            or field.get('valueDate')
+                            or str(field.get('valueCurrency', ''))
+                            or field.get('content', '')
+                        ),
+                        'confidence': field.get('confidence', 0),
+                    }
+
+        return result

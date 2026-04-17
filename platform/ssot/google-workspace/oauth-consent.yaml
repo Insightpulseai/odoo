@@ -1,0 +1,95 @@
+# SSOT: Google OAuth Consent Screen Configuration
+# Source of truth for the OAuth consent screen associated with the Gmail add-on.
+# CI guard: .github/workflows/marketplace-metadata.yml
+# Last updated: 2026-03-28
+
+app_type: "web_application"
+
+branding:
+  app_name: "InsightPulseAI for Gmail"
+  logo_url: "https://erp.insightpulseai.com/web/static/img/logo.png"
+  homepage_url: "https://insightpulseai.com"
+  privacy_url: "https://insightpulseai.com/privacy"
+  tos_url: "https://insightpulseai.com/terms"
+
+user_support_email: "support@insightpulseai.com"
+developer_contact_email: "ops@insightpulseai.com"
+
+authorized_domains:
+  - "insightpulseai.com"
+
+scopes:
+  - scope: "https://www.googleapis.com/auth/gmail.readonly"
+    sensitivity: "sensitive"
+    purpose: >-
+      Read sender email address and subject line of the currently open message
+      for Odoo partner lookup and contextual card rendering.
+    data_stored: false
+    justification: >-
+      The add-on reads only the sender email and subject of the currently open
+      message. No bulk email access. No email content stored.
+
+  - scope: "https://www.googleapis.com/auth/gmail.addons.current.message.readonly"
+    sensitivity: "non_sensitive"
+    purpose: "Read metadata of the currently open message for contextual card rendering."
+    data_stored: false
+
+  - scope: "https://www.googleapis.com/auth/gmail.addons.current.action.compose"
+    sensitivity: "non_sensitive"
+    purpose: "Interact with the compose window for email linking and log actions."
+    data_stored: false
+
+  - scope: "https://www.googleapis.com/auth/gmail.addons.execute"
+    sensitivity: "non_sensitive"
+    purpose: "Execute add-on card actions within the Gmail sidebar."
+    data_stored: false
+
+  - scope: "https://www.googleapis.com/auth/script.external_request"
+    sensitivity: "non_sensitive"
+    purpose: "Make HTTPS requests to the Odoo integration backend."
+    data_stored: false
+
+  - scope: "https://www.googleapis.com/auth/script.locale"
+    sensitivity: "non_sensitive"
+    purpose: "Read user locale for internationalization."
+    data_stored: false
+
+  - scope: "https://www.googleapis.com/auth/userinfo.email"
+    sensitivity: "non_sensitive"
+    purpose: "Read the authenticated user email address for Odoo user mapping."
+    data_stored: false
+
+consent_screen_type: "internal"
+
+test_users:
+  - "admin@insightpulseai.com"
+  - "ops@insightpulseai.com"
+
+verification_status: "not_started"
+verification_notes: >-
+  Verification not required for private listing with internal consent screen.
+  Required before transitioning to public listing.
+
+domain_ownership:
+  domain: "insightpulseai.com"
+  verified: true
+  verification_method: "dns_txt"
+
+verification:
+  status: not_submitted
+  required_for_public: true
+  sensitive_scopes_count: 3
+  restricted_scopes_count: 0
+  estimated_review_weeks: "2-6"
+  verification_letter_ready: false
+  homepage_verified: false
+  privacy_policy_verified: false
+
+public_release_gate:
+  all_scopes_frozen: false
+  verification_submitted: false
+  verification_approved: false
+  marketplace_review_submitted: false
+  marketplace_review_approved: false
+
+last_updated: "2026-03-28"

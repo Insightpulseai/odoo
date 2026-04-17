@@ -1,0 +1,438 @@
+version: 1
+updated_at: "2026-03-22"
+owner: "platform-architecture"
+status: "draft"
+
+target_architecture:
+  summary: >
+    Databricks is the governed data backbone; AI Foundry is the primary
+    generative AI and agent application plane; Fabric / Power BI is the
+    downstream semantic and reporting plane; Purview is the governance
+    overlay; Azure + Entra + GitHub + Azure DevOps form the control and
+    engineering envelope.
+  canonical_tiers:
+    tier_1_canonical:
+      - ai_foundry
+      - azure
+      - devops
+      - entra
+      - fabric
+      - github
+      - purview
+      - visual_studio_code
+    tier_2_bounded:
+      - microsoft_365_admin
+      - copilot_studio
+      - power_automate
+      - power_platform
+      - defender
+    tier_3_not_core:
+      - data_explorer
+      - intune
+
+decision_enums:
+  - keep_and_expand
+  - keep
+  - keep_bounded
+  - keep_downstream_only
+  - keep_platform_control
+  - optional_later
+  - optional_bounded
+  - out_of_scope
+  - do_not_make_core
+
+services:
+  - id: ai_foundry
+    name: "AI Foundry"
+    category: "ai_application_plane"
+    current_status: "in_use_strategic"
+    target_end_state: "primary agent and generative AI application plane on top of Databricks"
+    decision: "keep_and_expand"
+    tier: "tier_1_canonical"
+    owner_plane: "agent-platform"
+    role: >
+      Primary surface for agent orchestration, model access, evaluations,
+      tracing, safety, and enterprise AI application management.
+    boundaries:
+      in_scope:
+        - "agent orchestration"
+        - "gen-AI application runtime"
+        - "RAG and tool-calling patterns"
+        - "evaluation and tracing"
+      out_of_scope:
+        - "system-of-record analytics storage"
+        - "core medallion transformations"
+    dependencies:
+      - "azure"
+      - "entra"
+      - "github"
+      - "devops"
+      - "purview"
+    notes:
+      - "Treat as the primary gen-AI and agent plane."
+      - "Ground on Databricks-governed data rather than replacing Databricks."
+
+  - id: azure
+    name: "Azure"
+    category: "platform_substrate"
+    current_status: "in_use"
+    target_end_state: "core landing zone, infra, identity, networking, and runtime substrate"
+    decision: "keep"
+    tier: "tier_1_canonical"
+    owner_plane: "infra"
+    role: >
+      Foundational cloud substrate for networking, managed identities,
+      secrets, monitoring, runtime hosting, Databricks, Foundry, and
+      governance services.
+    boundaries:
+      in_scope:
+        - "landing zones"
+        - "networking"
+        - "runtime substrate"
+        - "platform services"
+      out_of_scope:
+        - "application-specific business logic"
+    dependencies: []
+    notes:
+      - "This is the umbrella platform, not a product-plane choice."
+
+  - id: copilot_studio
+    name: "Copilot Studio"
+    category: "business_user_agent_surface"
+    current_status: "not_core_platform_today"
+    target_end_state: "optional low-code Microsoft 365-facing business copilot surface"
+    decision: "optional_later"
+    tier: "tier_2_bounded"
+    owner_plane: "web"
+    role: >
+      Optional low-code copilot and agent distribution surface when Teams,
+      Microsoft 365, or business-user low-code deployment is the goal.
+    boundaries:
+      in_scope:
+        - "M365-facing copilots"
+        - "low-code conversational agent distribution"
+      out_of_scope:
+        - "core agent factory"
+        - "primary model/runtime governance"
+    dependencies:
+      - "microsoft_365_admin"
+      - "entra"
+    notes:
+      - "Use only when Microsoft 365 distribution is the point."
+      - "Do not let this become the primary agent platform."
+
+  - id: data_explorer
+    name: "Data Explorer"
+    category: "telemetry_analytics"
+    current_status: "no_strong_evidence_in_main_stack"
+    target_end_state: "add only for KQL-native telemetry or time-series workloads"
+    decision: "do_not_make_core"
+    tier: "tier_3_not_core"
+    owner_plane: "data-intelligence"
+    role: >
+      Optional telemetry/time-series analytics service for KQL-native use
+      cases.
+    boundaries:
+      in_scope:
+        - "high-volume telemetry"
+        - "time-series exploration"
+      out_of_scope:
+        - "core finance/PPM lakehouse"
+        - "main governed analytics backbone"
+    dependencies:
+      - "azure"
+      - "entra"
+    notes:
+      - "Do not introduce into the core platform without a clear telemetry-heavy need."
+
+  - id: defender
+    name: "Defender"
+    category: "security_control"
+    current_status: "platform_security_target"
+    target_end_state: "security posture, DevSecOps, and workload protection overlay"
+    decision: "keep_platform_control"
+    tier: "tier_2_bounded"
+    owner_plane: "infra"
+    role: >
+      Security and posture-management overlay for cloud resources, workloads,
+      and engineering controls.
+    boundaries:
+      in_scope:
+        - "security posture"
+        - "threat detection"
+        - "cloud workload protection"
+      out_of_scope:
+        - "application runtime business logic"
+    dependencies:
+      - "azure"
+      - "entra"
+      - "devops"
+    notes:
+      - "Keep as a platform security layer, not a product-plane core."
+
+  - id: devops
+    name: "DevOps"
+    category: "governance_delivery_spine"
+    current_status: "in_use"
+    target_end_state: "governance spine for pipelines, environments, approvals, and boards"
+    decision: "keep"
+    tier: "tier_1_canonical"
+    owner_plane: "platform"
+    role: >
+      Governance and promotion spine for environments, approvals, pipelines,
+      work tracking, and controlled delivery.
+    boundaries:
+      in_scope:
+        - "pipelines"
+        - "environment approvals"
+        - "boards/work tracking"
+        - "release governance"
+      out_of_scope:
+        - "primary source-control truth"
+    dependencies:
+      - "azure"
+      - "entra"
+      - "github"
+    notes:
+      - "Use together with GitHub rather than forcing a repo migration unless needed."
+
+  - id: entra
+    name: "Entra"
+    category: "identity_control_plane"
+    current_status: "in_use_assumed_control_plane"
+    target_end_state: "canonical identity, RBAC, service principals, and workload identities"
+    decision: "keep"
+    tier: "tier_1_canonical"
+    owner_plane: "infra"
+    role: >
+      Canonical identity and access-control plane for users, groups, service
+      principals, workload identities, and RBAC.
+    boundaries:
+      in_scope:
+        - "SSO"
+        - "RBAC"
+        - "service principals"
+        - "managed identities"
+      out_of_scope:
+        - "application business logic"
+    dependencies:
+      - "azure"
+    notes:
+      - "Mandatory for the target state."
+
+  - id: fabric
+    name: "Fabric"
+    category: "bi_consumption_plane"
+    current_status: "target_consumption_plane_not_core_engineering"
+    target_end_state: "Power BI semantic and reporting plane downstream of Databricks gold"
+    decision: "keep_downstream_only"
+    tier: "tier_1_canonical"
+    owner_plane: "web"
+    role: >
+      Downstream semantic modeling and reporting plane for curated, governed
+      outputs produced upstream.
+    boundaries:
+      in_scope:
+        - "semantic models"
+        - "reports and dashboards"
+        - "business consumption"
+      out_of_scope:
+        - "primary data engineering plane"
+        - "core medallion processing"
+    dependencies:
+      - "azure"
+      - "entra"
+      - "purview"
+    notes:
+      - "Keep downstream only; do not let Fabric become the core engineering plane."
+
+  - id: github
+    name: "GitHub"
+    category: "engineering_source_of_truth"
+    current_status: "in_use"
+    target_end_state: "repo, PR, and engineering source of truth with optional DevOps governance around it"
+    decision: "keep"
+    tier: "tier_1_canonical"
+    owner_plane: "platform"
+    role: >
+      Canonical engineering truth for repositories, PRs, code review,
+      workflows, and source control.
+    boundaries:
+      in_scope:
+        - "source control"
+        - "PR workflows"
+        - "repo governance"
+      out_of_scope:
+        - "enterprise approvals and board workflows if governed in DevOps"
+    dependencies:
+      - "azure"
+      - "devops"
+    notes:
+      - "Remain the engineering truth unless there is a deliberate Azure Repos cutover."
+
+  - id: intune
+    name: "Intune"
+    category: "device_management"
+    current_status: "not_relevant_to_core_data_ai_platform"
+    target_end_state: "device management only"
+    decision: "out_of_scope"
+    tier: "tier_3_not_core"
+    owner_plane: "infra"
+    role: >
+      Endpoint and device management surface.
+    boundaries:
+      in_scope:
+        - "device compliance"
+        - "endpoint management"
+      out_of_scope:
+        - "core data platform"
+        - "agent runtime"
+        - "lakehouse architecture"
+    dependencies:
+      - "entra"
+    notes:
+      - "Keep outside the core platform architecture unless endpoint control becomes a direct requirement."
+
+  - id: microsoft_365_admin
+    name: "Microsoft 365 Admin"
+    category: "tenant_admin_plane"
+    current_status: "not_core_runtime_but_relevant_if_using_m365_copilot_or_copilot_studio"
+    target_end_state: >
+      tenant admin and control surface for Microsoft 365 Copilot, Copilot Chat,
+      Copilot Studio licensing, agent access, publish/reject workflows, and
+      admin benchmarking/governance
+    decision: "keep_bounded"
+    tier: "tier_2_bounded"
+    owner_plane: "platform"
+    role: >
+      Bounded tenant admin plane for licensing, availability, approval, and
+      governance of Microsoft 365-facing copilot/agent capabilities.
+    boundaries:
+      in_scope:
+        - "Copilot licensing"
+        - "Copilot availability controls"
+        - "requested-agent publish/reject workflows"
+        - "tenant admin governance"
+      out_of_scope:
+        - "primary data platform runtime"
+        - "lakehouse engineering"
+    dependencies:
+      - "entra"
+      - "copilot_studio"
+    notes:
+      - "Keep bounded; not a core runtime plane."
+      - "Elevate only if Microsoft 365 Copilot becomes a major distribution channel."
+
+  - id: power_automate
+    name: "Power Automate"
+    category: "workflow_automation"
+    current_status: "possible_automation_adjunct"
+    target_end_state: "use only for business workflow automation where it beats the existing automation stack"
+    decision: "optional_bounded"
+    tier: "tier_2_bounded"
+    owner_plane: "automations"
+    role: >
+      Optional workflow and business-process automation surface for Microsoft
+      ecosystem integrations and human workflow handoffs.
+    boundaries:
+      in_scope:
+        - "business approvals"
+        - "M365-connected automation"
+        - "light workflow orchestration"
+      out_of_scope:
+        - "core data pipeline orchestration"
+        - "primary platform automation spine"
+    dependencies:
+      - "power_platform"
+      - "entra"
+      - "microsoft_365_admin"
+    notes:
+      - "Use only when it is the best-fit business workflow tool."
+
+  - id: power_platform
+    name: "Power Platform"
+    category: "low_code_extension_plane"
+    current_status: "optional_adjacency"
+    target_end_state: "bounded low-code business app and workflow extension layer"
+    decision: "optional_bounded"
+    tier: "tier_2_bounded"
+    owner_plane: "web"
+    role: >
+      Optional low-code extension plane for business apps, workflow
+      extensions, and Microsoft ecosystem surfaces around the core platform.
+    boundaries:
+      in_scope:
+        - "low-code business experiences"
+        - "extension apps"
+      out_of_scope:
+        - "primary control plane"
+        - "core governed data platform"
+    dependencies:
+      - "entra"
+      - "microsoft_365_admin"
+    notes:
+      - "Keep bounded to edge/business use cases."
+
+  - id: purview
+    name: "Purview"
+    category: "governance_overlay"
+    current_status: "target_governance_overlay"
+    target_end_state: "enterprise metadata, lineage, governance, and compliance overlay"
+    decision: "keep"
+    tier: "tier_1_canonical"
+    owner_plane: "docs"
+    role: >
+      Enterprise metadata, lineage, governance, and compliance overlay across
+      Databricks, Fabric, and broader Azure data/AI assets.
+    boundaries:
+      in_scope:
+        - "lineage"
+        - "metadata governance"
+        - "catalog and compliance overlay"
+      out_of_scope:
+        - "primary compute plane"
+        - "core application runtime"
+    dependencies:
+      - "azure"
+      - "entra"
+      - "fabric"
+    notes:
+      - "Add deliberately after the core data backbone is stable."
+
+  - id: visual_studio_code
+    name: "Visual Studio Code"
+    category: "engineering_surface"
+    current_status: "in_use_engineering_tool"
+    target_end_state: "primary local and development IDE surface"
+    decision: "keep"
+    tier: "tier_1_canonical"
+    owner_plane: "platform"
+    role: >
+      Primary code-first engineering surface for repo work, Databricks bundle
+      work, and AI/Foundry development.
+    boundaries:
+      in_scope:
+        - "IDE"
+        - "extension-based local development"
+        - "developer workflows"
+      out_of_scope:
+        - "runtime hosting"
+        - "control plane"
+    dependencies:
+      - "github"
+      - "azure"
+    notes:
+      - "Keep as the default engineering IDE."
+
+external_core_dependencies:
+  - id: databricks
+    name: "Databricks"
+    reason: >
+      Not shown in the Microsoft Cloud picker screenshot, but central to the
+      target architecture as the governed data intelligence backbone.
+
+review_rules:
+  - "Tier 1 services are strategic and should have explicit owners and budget justification."
+  - "Tier 2 services must remain bounded and should not become parallel control planes."
+  - "Tier 3 services require an explicit, documented exception to be introduced into the core platform."
+  - "Any new service must declare whether it is runtime, control plane, admin plane, or optional extension."

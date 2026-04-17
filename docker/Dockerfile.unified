@@ -1,0 +1,43 @@
+# =============================================================================
+# Odoo CE 18 Unified Production Image — Azure Container Apps
+# =============================================================================
+# Base: official odoo:18.0 (Ubuntu 24.04 + wkhtmltopdf + PG client + Odoo deb)
+# Delta: custom config + addon layers + Python deps + SSO fix
+# One image, three ACA roles: web / worker / cron (override CMD per app)
+#
+# Keep: upstream Odoo package, wkhtmltopdf, entrypoint, non-root user, ports
+# Add:  config, addons, deps, SSO addon, ownership
+# =============================================================================
+
+FROM odoo:18.0
+
+USER root
+
+# 1. Custom odoo.conf (proxy_mode, addons_path, DB from env vars)
+COPY config/prod/odoo.conf /etc/odoo/odoo.conf
+
+# 2. Addon layers — OCA + IPAI + local
+COPY addons/oca /mnt/extra-addons/oca
+COPY addons/ipai /mnt/extra-addons/ipai
+
+# 3. Python dependencies from repo
+COPY requirements.txt /tmp/requirements.txt
+RUN pip3 install --no-cache-dir --break-system-packages -r /tmp/requirements.txt 2>/dev/null || true
+
+# 4. Temporary SSO fix — thin addon override for HTTPS callback behind ACA proxy
+# Remove once Azure Front Door / forwarded-proto edge contract is canonical.
+# See: addons/ipai/ipai_auth_oauth_https/controllers/main.py
+# Tracked: ssot/odoo/odoo-sso-runtime-state.yaml → odoo_sso_https_hotfix
+
+# 5. Ownership
+RUN chown -R odoo:odoo /etc/odoo /mnt/extra-addons
+
+USER odoo
+
+# Default: web role. Override CMD per ACA app for worker/cron.
+# web:    odoo -c /etc/odoo/odoo.conf
+# worker: odoo -c /etc/odoo/odoo.conf --no-http --max-cron-threads=0 --workers=2
+# cron:   odoo -c /etc/odoo/odoo.conf --no-http --max-cron-threads=2 --workers=0
+CMD ["odoo", "-c", "/etc/odoo/odoo.conf"]
+
+EXPOSE 8069 8071 8072

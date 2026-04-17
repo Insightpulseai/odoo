@@ -1,0 +1,32 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "ipai.dead_letter.v1",
+  "type": "object",
+  "required": [
+    "record_type",
+    "record_version",
+    "task_id",
+    "task_type",
+    "failure_reason",
+    "attempts",
+    "first_seen_at",
+    "last_failed_at",
+    "trace_id",
+    "evidence_refs"
+  ],
+  "properties": {
+    "record_type": { "type": "string", "const": "dead_letter" },
+    "record_version": { "type": "string" },
+    "task_id": { "type": "string" },
+    "task_type": { "type": "string" },
+    "failure_reason": { "type": "string" },
+    "attempts": { "type": "integer" },
+    "first_seen_at": { "type": "string", "format": "date-time" },
+    "last_failed_at": { "type": "string", "format": "date-time" },
+    "trace_id": { "type": "string" },
+    "evidence_refs": {
+      "type": "array",
+      "items": { "type": "string" }
+    }
+  }
+}

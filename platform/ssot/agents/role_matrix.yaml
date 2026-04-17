@@ -1,0 +1,163 @@
+# =============================================================================
+# Agent Role Matrix — SSOT
+# =============================================================================
+# Maps each agent credential pack to tier, domain, benchmarks, prerequisites,
+# owned surfaces, tool permissions, and eval suites.
+# =============================================================================
+
+schema_version: 1
+last_reviewed: "2026-03-28"
+
+roles:
+
+  # ─── FUNDAMENTALS ──────────────────────────────────────────────────
+  - id: fundamentals.azure-platform
+    tier: fundamentals
+    domain: cloud_ai_platforms
+    benchmark_refs: [AZ-900]
+    prerequisite_packs: []
+    summary: "Baseline Azure platform literacy"
+
+  - id: fundamentals.ai-platform
+    tier: fundamentals
+    domain: cloud_ai_platforms
+    benchmark_refs: [AI-900]
+    prerequisite_packs: []
+    summary: "Baseline AI/ML platform literacy"
+
+  - id: fundamentals.identity-security
+    tier: fundamentals
+    domain: security_identity
+    benchmark_refs: [SC-900]
+    prerequisite_packs: []
+    summary: "Baseline identity, security, and compliance literacy"
+
+  - id: fundamentals.odoo-runtime
+    tier: fundamentals
+    domain: odoo_runtime
+    benchmark_refs: []
+    prerequisite_packs: []
+    summary: "Baseline Odoo CE 18 runtime, module, and addon literacy"
+
+  # ─── ROLE-BASED ────────────────────────────────────────────────────
+  - id: role_based.foundry-copilot-engineer
+    tier: role_based
+    domain: cloud_ai_platforms
+    benchmark_refs: [AI-102, AB-900, GH-300]
+    prerequisite_packs:
+      - fundamentals.ai-platform
+      - fundamentals.identity-security
+    owned_surfaces:
+      - docs/product/odoo-copilot-on-azure/**
+      - docs/architecture/identity-architecture.md
+      - ssot/odoo/runtime_contract.yaml
+    tool_permissions: [github, azure, foundry, mcp]
+    evals:
+      - tests/test_identity_contract.py
+      - tests/test_copilot_auth_boundaries.py
+
+  - id: role_based.identity-access-admin
+    tier: role_based
+    domain: security_identity
+    benchmark_refs: [SC-300, SC-100, AZ-500]
+    prerequisite_packs:
+      - fundamentals.identity-security
+    owned_surfaces:
+      - docs/architecture/identity-architecture.md
+      - ssot/identity/**
+      - ssot/entra/**
+    tool_permissions: [entra, azure, github]
+    evals:
+      - tests/test_identity_contract.py
+
+  - id: role_based.odoo-runtime-engineer
+    tier: role_based
+    domain: odoo_runtime
+    benchmark_refs: [AZ-104]
+    prerequisite_packs:
+      - fundamentals.odoo-runtime
+      - fundamentals.azure-platform
+    owned_surfaces:
+      - addons/ipai/**
+      - docs/architecture/runtime-container-contract.md
+      - docs/runbooks/addon-discovery-debug.md
+      - platform/runtime/docker/**
+    tool_permissions: [github, azure, docker, odoo_xmlrpc]
+    evals:
+      - tests/test_addon_inventory.py
+      - tests/test_runtime_contract.py
+
+  - id: role_based.data-intelligence-engineer
+    tier: role_based
+    domain: data_intelligence
+    benchmark_refs: [DP-750, DP-203]
+    prerequisite_packs:
+      - fundamentals.azure-platform
+      - fundamentals.ai-platform
+    owned_surfaces:
+      - data-intelligence/**
+      - ssot/data-intelligence/**
+    tool_permissions: [databricks, azure, github]
+
+  - id: role_based.gmail-addon-engineer
+    tier: role_based
+    domain: marketplace_distribution
+    benchmark_refs: []
+    prerequisite_packs:
+      - fundamentals.odoo-runtime
+    owned_surfaces:
+      - web/apps/gmail-odoo-addon/**
+      - spec/gmail-inbox-addon/**
+    tool_permissions: [clasp, google_cloud, github]
+
+  - id: role_based.github-release-ops
+    tier: role_based
+    domain: cloud_ai_platforms
+    benchmark_refs: [GH-300]
+    prerequisite_packs:
+      - fundamentals.azure-platform
+    owned_surfaces:
+      - .github/workflows/**
+      - azure-pipelines/**
+    tool_permissions: [github, azure_devops]
+
+  # ─── SPECIALTY ─────────────────────────────────────────────────────
+  - id: specialty.marketplace-saas-publishing
+    tier: specialty
+    domain: marketplace_distribution
+    benchmark_refs: []
+    prerequisite_packs:
+      - role_based.odoo-runtime-engineer
+      - role_based.identity-access-admin
+    owned_surfaces:
+      - ssot/microsoft365/**
+      - docs/product/odoo-copilot-on-azure/m365-copilot-interoperability.md
+    tool_permissions: [azure, partner_center, github]
+
+  - id: specialty.runtime-contract-debugging
+    tier: specialty
+    domain: odoo_runtime
+    benchmark_refs: []
+    prerequisite_packs:
+      - role_based.odoo-runtime-engineer
+    owned_surfaces:
+      - docs/runbooks/addon-discovery-debug.md
+      - ssot/odoo/runtime_contract.yaml
+    tool_permissions: [docker, azure, odoo_xmlrpc]
+
+  # ─── BUSINESS ──────────────────────────────────────────────────────
+  - id: business.ai-solution-architect
+    tier: business
+    domain: ai_business_solutions
+    benchmark_refs: [AB-100, AB-730]
+    prerequisite_packs:
+      - fundamentals.ai-platform
+    summary: "Product positioning, architecture decisions, customer value assessment"
+
+  - id: business.release-readiness-manager
+    tier: business
+    domain: marketplace_distribution
+    benchmark_refs: [AB-731]
+    prerequisite_packs:
+      - fundamentals.azure-platform
+    summary: "Release board decisions, go-live criteria, acceptance gates"

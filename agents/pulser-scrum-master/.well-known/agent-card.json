@@ -1,0 +1,89 @@
+{
+  "name": "Pulser Scrum Master",
+  "description": "Policy-gated Scrum Master agent for Azure DevOps. Produces daily standups, weekly velocity and DORA rollups, sprint retrospectives, and doctrine-drift scans against the ipai-platform project. Read-heavy by default; mutating actions (work-item comment, tag update) are evaluator-gated and scoped to an allowlist. Backed by Microsoft Foundry gpt-4.1 in production (Foundry Local phi-4 in dev). Peer of Tax Guru, Bank Recon, and Pulser Planner over A2A.",
+  "url": "https://pulser-scrum-agent.blackstone-0df78186.southeastasia.azurecontainerapps.io/a2a",
+  "provider": {
+    "organization": "InsightPulseAI",
+    "url": "https://insightpulseai.com"
+  },
+  "version": "0.1.0",
+  "protocolVersion": "0.2.0",
+  "capabilities": {
+    "streaming": true,
+    "pushNotifications": false,
+    "stateTransitionHistory": true
+  },
+  "authentication": {
+    "schemes": ["oauth2"],
+    "credentials": {
+      "oauth2": {
+        "issuer": "https://login.microsoftonline.com/{tenant_id}/v2.0",
+        "authorizationUrl": "https://login.microsoftonline.com/{tenant_id}/oauth2/v2.0/authorize",
+        "tokenUrl": "https://login.microsoftonline.com/{tenant_id}/oauth2/v2.0/token",
+        "scopes": [
+          "api://pulser-scrum-agent/.default"
+        ]
+      }
+    }
+  },
+  "defaultInputModes": [
+    "text/plain",
+    "application/json"
+  ],
+  "defaultOutputModes": [
+    "text/plain",
+    "application/json",
+    "image/png"
+  ],
+  "skills": [
+    {
+      "id": "standup",
+      "name": "Daily standup",
+      "description": "Summarizes what closed yesterday, what is active today, and blockers in the active iteration. Read-only against Azure Boards; posts a markdown digest to a configured surface.",
+      "tags": ["scrum", "standup", "azure-boards", "agile", "daily"],
+      "examples": [
+        "Give me the standup for iteration R2.S3 team ipai-platform.",
+        "What changed in Sprint 7 since yesterday 9am?"
+      ],
+      "inputModes": ["text/plain", "application/json"],
+      "outputModes": ["text/plain", "application/json"]
+    },
+    {
+      "id": "velocity",
+      "name": "Weekly velocity and DORA",
+      "description": "Computes burn-up, velocity trend, lead time, change failure rate, and MTTR for the current and prior iterations using Azure DevOps Analytics OData. Emits a markdown summary plus a PNG chart.",
+      "tags": ["scrum", "velocity", "dora", "metrics", "weekly"],
+      "examples": [
+        "Velocity rollup for the last 3 iterations.",
+        "Show me DORA metrics for ipai-platform R2 so far."
+      ],
+      "inputModes": ["text/plain", "application/json"],
+      "outputModes": ["text/plain", "application/json", "image/png"]
+    },
+    {
+      "id": "retro",
+      "name": "Sprint retrospective synthesis",
+      "description": "Synthesizes end-of-sprint themes from work-item comments, closed items, drift findings, and prior retro actions. Only free-form reasoning step in the agent; evaluator-gated before any write.",
+      "tags": ["scrum", "retro", "synthesis", "end-of-sprint"],
+      "examples": [
+        "Draft the retro for R2.S3.",
+        "Summarize what went well and what did not in sprint 7."
+      ],
+      "inputModes": ["text/plain", "application/json"],
+      "outputModes": ["text/plain", "application/json"]
+    },
+    {
+      "id": "drift",
+      "name": "Doctrine drift scan",
+      "description": "Scans active work items for doctrine violations (GitHub Actions, Vercel, Supabase, n8n, Cloudflare, Odoo 19 references; orphan area paths; stale states) against the CLAUDE.md deprecation and area-path canonical lists. Emits structured findings and proposes L1 allowlist tag updates, never closes items.",
+      "tags": ["governance", "drift", "doctrine", "linting"],
+      "examples": [
+        "Scan R2 for doctrine drift.",
+        "Find any active items still referencing Supabase."
+      ],
+      "inputModes": ["text/plain", "application/json"],
+      "outputModes": ["text/plain", "application/json"]
+    }
+  ],
+  "documentationUrl": "https://github.com/Insightpulseai/odoo/blob/feat/ado-pulser-scrum-extension/docs/research/ado-pulser-scrum-extension.md"
+}

@@ -1,0 +1,46 @@
+# org__foundry__runtime_strategy__v1.policy.yaml
+# Org-level policy: How IPAI uses Microsoft Foundry Agent Service
+apiVersion: ipai.policy/v1
+kind: RuntimeStrategy
+metadata:
+  name: foundry-runtime-strategy
+  version: "1.0.0"
+  owner: platform-team
+  last_updated: "2026-03-16"
+
+spec:
+  agent_runtime: foundry_agent_service
+  sdk_routing:
+    foundry_sdk:
+      use_for: [agent_lifecycle, evals, traces, deployments]
+      repos: [agents/, ops-platform/]
+    openai_sdk:
+      use_for: [direct_model_calls, embeddings, completions]
+      repos: [agents/skills/, odoo/addons/ipai/ipai_ai_*]
+    agent_framework:
+      use_for: [local_multi_agent, graph_workflows, checkpointing]
+      repos: [agents/]
+      note: "Use for local dev/testing; Foundry Agent Service for production"
+    foundry_tools_sdk:
+      use_for: [document_intelligence, search, speech, vision]
+      repos: [agents/, ops-platform/]
+
+  repo_ownership:
+    agents/:
+      runtime: foundry_agent_service
+      manifests: agents/foundry/agents/
+      tools: agents/foundry/tools/
+      evals: agents/foundry/evals/
+      policies: agents/foundry/policies/
+    ops-platform/:
+      registries: ssot/
+      service_catalog: ssot/azure/
+    odoo/:
+      contracts: odoo/ssot/odoo/
+      note: "Odoo is system of record for finance; agents call approved Odoo tools"
+
+  promotion_model:
+    states: [draft, dev, staging, prod, deprecated]
+    publish_gates:
+      dev_to_staging: [eval_pass, code_review]
+      staging_to_prod: [eval_pass, load_test, security_review]

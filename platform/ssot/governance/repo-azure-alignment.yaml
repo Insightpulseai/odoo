@@ -1,0 +1,249 @@
+version: "2.0"
+schema: ssot.governance.repo-azure-alignment.v2
+updated_at: "2026-03-21"
+doc_twin: docs/architecture/azure/REPO_AZURE_ALIGNMENT.md
+
+repos:
+  - name: odoo
+    purpose: "Odoo CE 18 ERP: modules, config, deployment"
+    azure_resources:
+      - rg: rg-ipai-dev
+        resources:
+          - ipai-odoo-dev-web
+          - ipai-odoo-dev-worker
+          - ipai-odoo-dev-cron
+          - ipai-crm-dev
+          - ipaiodoodevacr
+          - ipai-odoo-dev-pg
+    managed_identity:
+      dev: mi-ipai-odoo-dev
+      staging: mi-ipai-odoo-staging
+      prod: mi-ipai-odoo-prod
+    ci_cd_owner: github-actions
+    forbidden_overlap:
+      - "Must not deploy non-Odoo containers"
+      - "Must not own Front Door config"
+
+  - name: agents
+    purpose: "Agent personas, skills, judges, evals, metadata, registries, and prompt contracts"
+    azure_resources:
+      - rg: rg-ipai-agents-dev
+        resources:
+          - odoo-web
+          - odoo-init
+          - id-ipai-aca-dev
+      - rg: rg-ipai-ai-dev
+        resources:
+          - aifoundry-ipai-dev
+          - proj-ipai-claude
+          - oai-ipai-dev
+          - docai-ipai-dev
+          - vision-ipai-dev
+          - lang-ipai-dev
+          - srch-ipai-dev
+      - rg: rg-ipai-dev
+        resources:
+          - ipai-mcp-dev
+          - ipai-ocr-dev
+    managed_identity:
+      dev: id-ipai-agents-dev
+    ci_cd_owner: github-actions
+    forbidden_overlap:
+      - "Must not contain plugin marketplace code"
+      - "Must not contain MCP server implementations"
+
+  - name: platform
+    purpose: "Platform control plane and SSOT — vault references, platform metadata, backend/control-plane contracts, and edge/runtime glue"
+    note: "Renamed from ops-platform"
+    azure_resources:
+      - rg: rg-ipai-shared-dev
+        resources:
+          - app-insights
+          - waf-policies
+      - rg: rg-ipai-devops
+        resources:
+          - ipai-devcenter
+          - ipai-build-pool
+      - rg: rg-ipai-dev
+        resources:
+          - ipai-plane-dev
+          - ipai-shelf-dev
+    managed_identity:
+      dev: mi-ipai-platform-dev
+      staging: mi-ipai-platform-staging
+      prod: mi-ipai-platform-prod
+    ci_cd_owner: github-actions
+    forbidden_overlap:
+      - "Must not own application container definitions"
+      - "Must not duplicate infra IaC"
+
+  - name: infra
+    purpose: "Azure-first infrastructure as code, Cloudflare edge/security, and remaining legacy/runtime infrastructure"
+    azure_resources:
+      - rg: rg-ipai-shared-dev
+        resources:
+          - ipai-fd-dev
+          - kv-ipai-dev
+      - rg: rg-ipai-shared-prod
+        resources:
+          - kv-ipai-prod
+      - rg: rg-ipai-shared-staging
+        resources:
+          - kv-ipai-staging
+      - rg: rg-ipai-ai-dev
+        resources:
+          - vnets
+          - nsgs
+      - rg: rg-ipai-dev
+        resources:
+          - ipaiwebacr
+          - ipai-auth-dev
+    managed_identity:
+      dev: null  # deploys identities, does not consume one
+    ci_cd_owner: github-actions-terraform-cloud
+    forbidden_overlap:
+      - "Must not contain application code or runtime configs"
+
+  - name: web
+    purpose: "User-facing web surfaces — ops console, marketing sites, docs sites, and browser-facing product apps"
+    azure_resources:
+      - rg: rg-ipai-dev-odoo-runtime
+        resources:
+          - ipai-website-dev
+    managed_identity:
+      dev: null
+    ci_cd_owner: github-actions
+    forbidden_overlap:
+      - "Must not contain Odoo website modules or ERP views"
+
+  - name: data-intelligence
+    purpose: "Databricks + Unity Catalog analytics engineering, medallion contracts, semantic-serving prep, and BI delivery artifacts"
+    note: "Renamed from lakehouse"
+    azure_resources:
+      - rg: rg-ipai-ai-dev
+        resources:
+          - dbw-ipai-dev
+          - stipaidevlake
+      - rg: rg-dbw-managed-ipai-dev
+        resources:
+          - databricks-managed
+      - rg: rg-ipai-dev
+        resources:
+          - ipai-superset-dev
+      - rg: rg-data-intel-ph
+        resources:
+          - ipai-copilot-resource
+    managed_identity:
+      dev: mi-ipai-lakehouse-dev
+      staging: mi-ipai-lakehouse-staging
+      prod: mi-ipai-lakehouse-prod
+    ci_cd_owner: github-actions-databricks-asset-bundles
+    forbidden_overlap:
+      - "Must not contain application containers"
+      - "Databricks workspace is execution surface, this repo is Git SSOT"
+
+  - name: automations
+    purpose: "Workflow automation, scheduled jobs, n8n assets, and operational runbooks"
+    azure_resources:
+      - rg: rg-ipai-agents-dev
+        resources:
+          - vm-ipai-supabase-dev
+    managed_identity:
+      dev: null  # Supabase/n8n hosted
+    ci_cd_owner: github-actions
+    forbidden_overlap:
+      - "Must not contain Odoo server actions or Databricks jobs"
+
+  - name: .github
+    purpose: "Org-wide GitHub config: profile, default workflows, issue templates"
+    azure_resources: []
+    managed_identity:
+      dev: null
+    ci_cd_owner: null
+    forbidden_overlap:
+      - "Must not contain deployable code or IaC"
+
+  - name: agent-platform
+    purpose: "Agent runtime platform — orchestration, task ledger, execution contracts, control-room integrations, and runtime glue"
+    azure_resources:
+      - rg: rg-ipai-agents-dev
+        resources:
+          - ipai-copilot-gateway
+    managed_identity:
+      dev: id-ipai-agents-dev
+    ci_cd_owner: github-actions
+    forbidden_overlap:
+      - "Must not contain agent definitions (those belong in agents repo)"
+      - "Must not contain infrastructure provisioning (belongs in infra)"
+
+  - name: docs
+    purpose: "Cross-repo architecture, strategy, governance, runbooks, evidence, and operating model docs"
+    azure_resources: []
+    managed_identity:
+      dev: null
+    ci_cd_owner: github-actions
+    forbidden_overlap:
+      - "Must not contain deployable code or IaC"
+      - "Must not duplicate SSOT files that belong in other repos"
+
+  - name: templates
+    purpose: "Bootstrap-only starter kits, scaffolds, repo templates, and Spec Kit starters"
+    azure_resources: []
+    managed_identity:
+      dev: null
+    ci_cd_owner: null
+    forbidden_overlap:
+      - "Must not contain live infrastructure or deployable services"
+
+  - name: design
+    purpose: "Design tokens, component specs, icon pipeline, and brand assets"
+    note: "Renamed from design-system"
+    azure_resources: []
+    managed_identity:
+      dev: null
+    ci_cd_owner: github-actions
+    forbidden_overlap:
+      - "Must not contain backend logic or Azure resource definitions"
+
+archived_repos:
+  - name: template-factory
+    reason: "Superseded by templates repo"
+    salvage_target: templates
+  - name: plugin-marketplace
+    reason: "Plugin architecture abandoned"
+    salvage_target: agents
+  - name: plugin-agents
+    reason: "Merged into agents"
+    salvage_target: agents
+  - name: learn
+    reason: "No active use; internal docs moved to Notion"
+    salvage_target: null
+  - name: mcp-core
+    reason: "MCP coordination moved to agents + platform"
+    salvage_target: agents
+
+repo_description_updates:
+  note: "All repo descriptions updated to canonical form 2026-03-21. See ssot/repo/org_topology.yaml."
+  status: completed
+
+alignment_rules:
+  - id: databricks-ssot
+    rule: "Databricks workspace (dbw-ipai-dev) is the execution surface. The data-intelligence repo is the Git SSOT for all notebooks, jobs, SQL, and pipeline definitions. In-workspace editing without Git sync is prohibited."
+
+  - id: one-repo-one-domain
+    rule: "Each repo owns a distinct functional domain. No two repos deploy the same container or manage the same Azure resource."
+
+  - id: iac-ownership
+    rule: "Only the infra repo provisions shared infrastructure (Front Door, Key Vaults, VNets, NSGs, managed identities). Application repos consume these resources but never define them."
+
+  - id: identity-isolation
+    rule: "Each managed identity is bound to exactly one repo. Cross-repo identity sharing is prohibited. Cross-identity access uses federated credentials or RBAC grants defined in infra."
+
+  - id: container-registry
+    rule: "ipaiodoodevacr is for Odoo images only (odoo repo). ipaiwebacr is for all other platform images (infra repo, consumed by multiple repos)."
+
+  - id: no-digitalocean
+    rule: "All DigitalOcean references are deprecated. Azure Container Apps is the canonical compute surface."
+
+  - id: key-vault-access
+    rule: "Key Vault access policies are defined in infra repo IaC. No ad-hoc portal grants. Each managed identity gets least-privilege access."

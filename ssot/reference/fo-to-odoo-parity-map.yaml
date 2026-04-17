@@ -1,0 +1,10 @@
+---
+# TODO: populate this contract
+# Referenced by: ssot/reference/fo-functional-reference.contract.yaml
+# Purpose: high-level F&O family → Odoo parity status mapping
+status: stub
+target_milestone: R3
+
+domain_matrix_binding:
+  source: ssot/reference/fo-domain-to-oca-matrix.yaml
+  rule: domain_level_mapping_refines_family_level_mapping

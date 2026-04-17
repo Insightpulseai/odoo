@@ -1,0 +1,594 @@
+# =============================================================================
+# Skills Manifest — Agent Platform SSOT
+# =============================================================================
+# Registry of all agent platform skills across three skill directories.
+# Governs which skills are active, their impact tier, knowledge dependencies,
+# and MVP gate status.
+#
+# Cross-references:
+#   - ssot/agent-platform/knowledge_sources.yaml  (source IDs used below)
+#   - ssot/agent-platform/foundry_tool_policy.yaml (tool selection rules)
+#   - ssot/agent-platform/mcp_policy.yaml          (MCP tool controls)
+#   - agents/skills/registry.yaml                  (legacy runtime registry, deprecated)
+#
+# Skill locations:
+#   .github/skills/  — Benchmark gap-closure skills (MCP-integrated, evidence-gated)
+#   .claude/skills/  — Claude Code runtime skills (inline agent execution)
+#   agents/skills/   — Full platform skill library (264+ skills, platform runtime)
+# =============================================================================
+
+version: 1
+artifact: ssot/agent-platform/skills_manifest.yaml
+source_of_truth: true
+profile: insightpulseai-skills-manifest
+
+purpose:
+  description: registry_of_agent_platform_skills_and_their_locations
+
+# ---------------------------------------------------------------------------
+# Skill directory map
+# ---------------------------------------------------------------------------
+
+skill_locations:
+  github_skills:
+    path: .github/skills/
+    description: >
+      Benchmark gap-closure skills for coding agents. Each skill closes a
+      specific gap from the Odoo-on-Azure enterprise audit. Skills are
+      evidence-gated — completion requires artifact proof in docs/evidence/.
+      MCP-integrated: agents query https://learn.microsoft.com/api/mcp
+      (microsoft_docs_search, microsoft_code_sample_search, microsoft_docs_fetch)
+      as a mandatory second step after inspecting repo evidence.
+    authority_order:
+      - "1. repo_evidence (inspect exact paths listed in each SKILL.md)"
+      - "2. microsoft_learn_mcp (query MCP server)"
+      - "3. docs_and_specs (consult docs/, spec/, infra/ssot/)"
+    evidence_path_pattern: docs/evidence/<YYYYMMDD-HHMM>/<skill-name>/
+
+  claude_skills:
+    path: .claude/skills/
+    description: >
+      Claude Code runtime skills. These are available to claude-code sessions
+      as slash commands or invokable capabilities. Covers architecture reviews,
+      governance audits, OCA module porting, identity governance, and more.
+    runtime: claude_code_harness
+
+  platform_skills:
+    path: agents/skills/
+    description: >
+      Full agent platform skill library (264+ skills). Covers the complete
+      lifecycle from agent design through deployment, monitoring, and
+      tenant management. Referenced by agents registered in ssot/agents/*.yaml.
+    notes: >
+      agents/skills/registry.yaml is deprecated (no runtime loader).
+      Skills in this directory are discovered via agents/skills/AGENTS.md
+      and bound to agents in ssot/agents/*.yaml.
+
+# ---------------------------------------------------------------------------
+# .github/skills — Gap-closure skill pack (10 skills)
+# ---------------------------------------------------------------------------
+# Impact tiers: P0 = Data Loss/Security, P1 = Operational Readiness,
+#               P2 = Quality/Accuracy
+
+skills:
+
+  # ── P0 Skills (Data Loss / Security Exposure) ────────────────────────────
+
+  - id: azure-pg-ha-dr
+    name: Azure PostgreSQL HA and Disaster Recovery
+    location: .github/skills/azure-pg-ha-dr/
+    impact_tier: P0
+    category: operations
+    description: >
+      Configure HA, backup retention (35 days), geo-backup, and RPO/RTO
+      targets for pg-ipai-odoo (General Purpose Flexible Server).
+    knowledge_sources:
+      - ssot_agent_platform
+      - ms_learn_pg_flexible
+      - ms_learn_waf
+      - ai_search_index_ipai
+    mvp_critical: true
+    status: active
+    mcp_queries_required: 3
+    gap_reference: infra_audit_20260408
+    completion_gate: >
+      HA enabled, backup retention >= 35 days, geo-backup enabled,
+      private endpoint confirmed — all evidenced in docs/evidence/.
+
+  - id: entra-mfa-ca-hardening
+    name: Entra MFA and Conditional Access Hardening
+    location: .github/skills/entra-mfa-ca-hardening/
+    impact_tier: P0
+    category: security
+    description: >
+      Enforce MFA for all admin and user accounts via Conditional Access.
+      Gate production access on P1 Entra ID license path.
+    knowledge_sources:
+      - ssot_agent_platform
+      - ms_learn_entra
+      - ms_learn_waf
+      - claude_rules
+    mvp_critical: true
+    status: active
+    mcp_queries_required: 3
+    gap_reference: infra_audit_20260408
+    completion_gate: >
+      CA policy active, MFA required for all roles, break-glass account
+      excluded with monitoring — evidenced in docs/evidence/.
+
+  - id: aca-private-networking
+    name: ACA Private Networking and NSG Configuration
+    location: .github/skills/aca-private-networking/
+    impact_tier: P0
+    category: security
+    description: >
+      Configure NSGs, private endpoints, and restrict PostgreSQL subnet
+      access for ca-ipai-dev. Close public PG exposure gap.
+    knowledge_sources:
+      - ssot_agent_platform
+      - ms_learn_aca
+      - ms_learn_pg_flexible
+      - ms_learn_key_vault
+      - ms_learn_waf
+    mvp_critical: true
+    status: active
+    mcp_queries_required: 4
+    gap_reference: infra_audit_20260408
+    completion_gate: >
+      No public PG endpoint, ACA internal ingress for internal apps,
+      NSG rules in IaC, private endpoints verified — evidenced in docs/evidence/.
+
+  # ── P1 Skills (Operational Readiness) ────────────────────────────────────
+
+  - id: azure-observability-baseline
+    name: Azure Observability Baseline (App Insights + Log Analytics)
+    location: .github/skills/azure-observability-baseline/
+    impact_tier: P1
+    category: operations
+    description: >
+      Wire Application Insights and Log Analytics to all ACA apps (ca-ipai-dev,
+      Odoo containers). Configure alert rules for SLO breach and error spikes.
+    knowledge_sources:
+      - ssot_agent_platform
+      - ms_learn_monitor
+      - ms_learn_aca
+      - ms_learn_waf
+    mvp_critical: true
+    status: active
+    mcp_queries_required: 3
+    gap_reference: infra_audit_20260408
+    completion_gate: >
+      App Insights instrumented on all ACA apps, alert rules active,
+      dashboard deployed, diagnostic settings wired — evidenced in docs/evidence/.
+
+  - id: azure-foundry-architecture
+    name: Azure AI Foundry Architecture Alignment
+    location: .github/skills/azure-foundry-architecture/
+    impact_tier: P1
+    category: architecture
+    description: >
+      Validate ipai-copilot Foundry project configuration, SDK v2 agent
+      definitions, model deployments, and tool registrations against
+      Microsoft Learn canonical patterns. Ensure no v1 classic debt remains.
+    knowledge_sources:
+      - ssot_agent_platform
+      - ssot_foundry
+      - ssot_ai
+      - ms_learn_foundry
+      - ms_learn_entra
+      - azure_samples_github
+    mvp_critical: true
+    status: active
+    mcp_queries_required: 5
+    gap_reference: project_foundry_migration_status
+    completion_gate: >
+      All agents registered via SDK v2, no from_connection_string usage,
+      AIProjectClient adopted, live validation passed — evidenced in docs/evidence/.
+
+  - id: odoo-image-supply-chain
+    name: Odoo Container Image Supply Chain
+    location: .github/skills/odoo-image-supply-chain/
+    impact_tier: P1
+    category: security
+    description: >
+      Configure ACR build pipeline, vulnerability scanning, and image signing
+      for Odoo 18 CE containers. Gate deployments on clean scan results.
+    knowledge_sources:
+      - ssot_agent_platform
+      - ms_learn_aca
+      - claude_rules
+      - arch_docs
+    mvp_critical: true
+    status: active
+    mcp_queries_required: 2
+    gap_reference: infra_audit_20260408
+    completion_gate: >
+      ACR build pipeline active, vuln scan in CI, image signing enforced,
+      deployment gate wired — evidenced in docs/evidence/.
+
+  - id: odoo-release-promotion
+    name: Odoo Release Promotion Gates
+    location: .github/skills/odoo-release-promotion/
+    impact_tier: P1
+    category: operations
+    description: >
+      Implement dev → staging → prod promotion gates with migration verification
+      and automated rollback for Odoo 18 CE deployments on ACA.
+    knowledge_sources:
+      - ssot_agent_platform
+      - ssot_agents
+      - arch_docs
+      - claude_rules
+    mvp_critical: true
+    status: active
+    mcp_queries_required: 2
+    gap_reference: ssot_release_gates
+    completion_gate: >
+      Promotion pipeline enforces 5 ship-readiness gates, rollback script
+      tested, staging DB migration verified — evidenced in docs/evidence/.
+
+  - id: pulser-odoo-architecture
+    name: Pulser for Odoo Architecture
+    location: .github/skills/pulser-odoo-architecture/
+    impact_tier: P1
+    category: product-release
+    description: >
+      Architecture lane and boundary definitions for Pulser for Odoo MVP.
+      Enforces Odoo-as-SoR, Foundry-as-assistive, and scope freeze rules.
+      Governs repo discovery order, canonical naming, and no-greenfield rule.
+    knowledge_sources:
+      - src-repo-ssot
+      - src-arch-docs
+      - src-ms-learn-mcp
+    mvp_critical: true
+    status: active
+    mcp_queries_required: 3
+    compatibility:
+      hosts:
+        - github-copilot
+        - claude-code
+        - codex-cli
+        - cursor
+        - gemini-cli
+
+  - id: pulser-odoo-deploy
+    name: Pulser for Odoo Deployment
+    location: .github/skills/pulser-odoo-deploy/
+    impact_tier: P1
+    category: product-release
+    description: >
+      Controlled deployment of Pulser for Odoo MVP to the existing Azure runtime.
+      Covers 7-phase execution model, MVP module list, Azure baseline reuse,
+      acceptance criteria, and guardrails. References DEPLOYMENT_AGENT_PROMPT.md.
+    knowledge_sources:
+      - src-repo-ssot
+      - src-arch-docs
+      - src-ms-learn-mcp
+    mvp_critical: true
+    status: active
+    mcp_queries_required: 5
+    compatibility:
+      hosts:
+        - github-copilot
+        - claude-code
+        - codex-cli
+        - cursor
+        - gemini-cli
+
+  - id: pulser-odoo-foundry-runtime
+    name: Pulser for Odoo Foundry Runtime
+    location: .github/skills/pulser-odoo-foundry-runtime/
+    impact_tier: P1
+    category: product-release
+    description: >
+      Foundry agent config, canonical naming, model baseline governance, and
+      tool selection rules for the Pulser for Odoo production runtime.
+      Enforces SDK v2 patterns, minimal model baseline, and no-scope-widening rules.
+    knowledge_sources:
+      - src-repo-ssot
+      - src-arch-docs
+      - src-ms-learn-mcp
+    mvp_critical: true
+    status: active
+    mcp_queries_required: 4
+    compatibility:
+      hosts:
+        - github-copilot
+        - claude-code
+        - codex-cli
+        - cursor
+        - gemini-cli
+
+  - id: azure-policy-guardrails
+    name: Azure Policy Guardrails
+    location: .github/skills/azure-policy-guardrails/
+    impact_tier: P1
+    category: security
+    description: >
+      Deploy Azure Policy initiatives: require tags, deny public PG endpoints,
+      require Key Vault for secrets, enforce Managed Identity on ACA apps.
+    knowledge_sources:
+      - ssot_agent_platform
+      - ms_learn_entra
+      - ms_learn_key_vault
+      - ms_learn_waf
+    mvp_critical: true
+    status: active
+    mcp_queries_required: 3
+    gap_reference: infra_audit_20260408
+    completion_gate: >
+      Policy initiative assigned to rg-data-intel-ph, compliance dashboard
+      shows 0 non-compliant resources — evidenced in docs/evidence/.
+
+  # ── P1 Skills — Pulser Professional Office Skills ────────────────────────
+
+  - id: pulser-office-powerpoint-studio
+    name: Pulser PowerPoint Studio
+    location: agents/skills/pulser-office/powerpoint-studio/
+    impact_tier: P1
+    category: product-release
+    description: >
+      Generate publishable-quality executive decks, board updates, and
+      operating review presentations from Odoo PPM OKR data, retained
+      Documents artifacts, and approved knowledge sources. Outputs PPTX/PDF.
+    knowledge_sources:
+      - ssot_agent_platform
+      - ssot_ai
+      - arch_docs
+    mvp_critical: false
+    status: active
+    mcp_queries_required: 0
+    completion_gate: >
+      Deck renders cleanly (no overflow), content grounded in OKR/Documents,
+      retained copy stored in Odoo Documents — evidenced in docs/evidence/.
+
+  - id: pulser-office-word-studio
+    name: Pulser Word Studio
+    location: agents/skills/pulser-office/word-studio/
+    impact_tier: P1
+    category: product-release
+    description: >
+      Generate publishable-quality PRDs, policies, close packs, and
+      procedural documents from Odoo Documents, policy indexes, and
+      approval artifacts. Outputs DOCX/PDF.
+    knowledge_sources:
+      - ssot_agent_platform
+      - ssot_ai
+      - arch_docs
+    mvp_critical: false
+    status: active
+    mcp_queries_required: 0
+    completion_gate: >
+      Document renders cleanly (hierarchy, citations), content grounded in
+      Documents vault, retained copy stored — evidenced in docs/evidence/.
+
+  - id: pulser-office-excel-studio
+    name: Pulser Excel Studio
+    location: agents/skills/pulser-office/excel-studio/
+    impact_tier: P1
+    category: product-release
+    description: >
+      Generate publishable-quality OKR dashboards, KPI scorecards, skill
+      matrices, and scenario workbooks from record metrics, OKR scores,
+      and derived formulas. Outputs XLSX.
+    knowledge_sources:
+      - ssot_agent_platform
+      - ssot_ai
+      - arch_docs
+    mvp_critical: false
+    status: active
+    mcp_queries_required: 0
+    completion_gate: >
+      Workbook formulas recalculate correctly, conditional formatting intact,
+      content grounded in PPM data, retained copy stored — evidenced in docs/evidence/.
+
+  # ── P2 Skills (Quality / Accuracy) ───────────────────────────────────────
+
+  - id: odoo-copilot-evals
+    name: Odoo Copilot Evaluation Expansion
+    location: .github/skills/odoo-copilot-evals/
+    impact_tier: P2
+    category: quality
+    description: >
+      Expand Foundry eval test suite from 2 to 50+ test cases. Add adversarial
+      prompts, BIR compliance scenarios, and regression coverage for
+      ipai-copilot agents.
+    knowledge_sources:
+      - ssot_agent_platform
+      - ssot_ai
+      - ms_learn_foundry
+      - ai_search_index_ipai
+    mvp_critical: false
+    status: active
+    mcp_queries_required: 3
+    gap_reference: feedback_agent_eval_framework
+    completion_gate: >
+      50+ eval cases in Foundry, adversarial coverage >= 20%, regression
+      baseline recorded — evidenced in docs/evidence/.
+
+  - id: service-matrix-truth
+    name: Service Matrix Truth Reconciliation
+    location: .github/skills/service-matrix-truth/
+    impact_tier: P2
+    category: quality
+    description: >
+      Remove nginx stub entries from active service inventory. Align
+      ssot/azure/service-matrix.yaml with live Azure resource state.
+    knowledge_sources:
+      - ssot_agent_platform
+      - ssot_foundry
+      - arch_docs
+    mvp_critical: false
+    status: active
+    mcp_queries_required: 1
+    gap_reference: infra_audit_20260408
+    completion_gate: >
+      service-matrix.yaml matches az resource list output,
+      nginx stubs removed — evidenced in docs/evidence/.
+
+  # ---------------------------------------------------------------------------
+  # .claude/skills — Claude Code runtime skills (9 skills)
+  # ---------------------------------------------------------------------------
+
+  - id: claude_azure_document_intelligence
+    name: Azure Document Intelligence
+    location: .claude/skills/azure-document-intelligence/
+    impact_tier: P1
+    category: architecture
+    description: >
+      Wire Azure Document Intelligence (data-intel-ph, rg-data-intel-ph) for
+      PDF/invoice/receipt extraction into Odoo ir.attachment pipeline.
+    knowledge_sources:
+      - ssot_agent_platform
+      - arch_ai_docs
+      - claude_rules
+    mvp_critical: true
+    status: active
+    mcp_queries_required: 2
+
+  - id: claude_azure_runtime_review
+    name: Azure Runtime Review
+    location: .claude/skills/azure-runtime-review/
+    impact_tier: P1
+    category: operations
+    description: >
+      Audit live ACA, PG, Key Vault, and Front Door resources against SSOT.
+      Detect drift between intended state and deployed state.
+    knowledge_sources:
+      - ssot_agent_platform
+      - ssot_foundry
+      - ms_learn_aca
+      - ms_learn_waf
+    mvp_critical: true
+    status: active
+    mcp_queries_required: 2
+
+  - id: claude_ci_workflow_audit
+    name: CI Workflow Audit
+    location: .claude/skills/ci-workflow-audit/
+    impact_tier: P1
+    category: operations
+    description: >
+      Audit 355 GitHub Actions workflows for dead workflows, duplicated gates,
+      and alignment with platform-authority-split.yaml.
+    knowledge_sources:
+      - ssot_agent_platform
+      - claude_rules
+      - arch_docs
+    mvp_critical: false
+    status: active
+    mcp_queries_required: 0
+
+  - id: claude_entra_identity_governance
+    name: Entra Identity Governance
+    location: .claude/skills/entra-identity-governance/
+    impact_tier: P0
+    category: security
+    description: >
+      Validate Entra ID configuration: managed identities, service principals,
+      Conditional Access policies, agent passports, and Keycloak migration status.
+    knowledge_sources:
+      - ssot_agent_platform
+      - ms_learn_entra
+      - claude_rules
+    mvp_critical: true
+    status: active
+    mcp_queries_required: 3
+
+  - id: claude_oca_module_porter
+    name: OCA Module Porter
+    location: .claude/skills/oca-module-porter/
+    impact_tier: P1
+    category: architecture
+    description: >
+      Port OCA modules from 16/17 to 18.0 with manifest validation,
+      dependency resolution, and compliance with Config→OCA→Delta doctrine.
+    knowledge_sources:
+      - ssot_agent_platform
+      - oca_module_docs
+      - ai_search_index_ipai
+      - claude_rules
+    mvp_critical: false
+    status: active
+    mcp_queries_required: 1
+
+  - id: claude_odoo_oca_governance
+    name: Odoo OCA Governance
+    location: .claude/skills/odoo-oca-governance/
+    impact_tier: P1
+    category: quality
+    description: >
+      Enforce OCA governance: no direct OCA source edits, ipai_* override pattern,
+      .gitmodules pin discipline, and oca.lock.json integrity.
+    knowledge_sources:
+      - ssot_agent_platform
+      - claude_rules
+      - oca_module_docs
+    mvp_critical: true
+    status: active
+    mcp_queries_required: 0
+
+  - id: claude_roadmap_ssot_guard
+    name: Roadmap SSOT Guard
+    location: .claude/skills/roadmap-ssot-guard/
+    impact_tier: P1
+    category: quality
+    description: >
+      Validate that roadmap changes in ssot/ are consistent with stage gates,
+      portfolio scorecard, and Azure Boards state. Detect unauthorized drift.
+    knowledge_sources:
+      - ssot_agent_platform
+      - ssot_agents
+      - arch_docs
+    mvp_critical: true
+    status: active
+    mcp_queries_required: 0
+
+  - id: claude_spec_kit_review
+    name: Spec Kit Review
+    location: .claude/skills/spec-kit-review/
+    impact_tier: P1
+    category: quality
+    description: >
+      Review spec bundles in spec/ for completeness, schema compliance,
+      and alignment with the 5-gate ship-readiness checklist.
+    knowledge_sources:
+      - ssot_agent_platform
+      - claude_rules
+      - arch_docs
+    mvp_critical: true
+    status: active
+    mcp_queries_required: 0
+
+  - id: claude_ui_ux_pro_max
+    name: UI/UX Pro Max
+    location: .claude/skills/ui-ux-pro-max/
+    impact_tier: P2
+    category: quality
+    description: >
+      Apply Apple design authority (Liquid Glass, SF Symbols) and IPAI web
+      design guidelines to iOS wrapper and Odoo CMS surfaces.
+    knowledge_sources:
+      - claude_rules
+      - arch_docs
+    mvp_critical: false
+    status: active
+    mcp_queries_required: 0
+
+# ---------------------------------------------------------------------------
+# MVP summary
+# ---------------------------------------------------------------------------
+
+mvp_summary:
+  total_skills_registered: 25
+  github_skills: 13
+  claude_skills: 9
+  office_skills: 3   # pulser-office-powerpoint-studio, word-studio, excel-studio
+  platform_skills_library: 264  # agents/skills/ — not individually listed here
+  mvp_critical_count: 18
+  p0_skills: 3   # azure-pg-ha-dr, entra-mfa-ca-hardening, aca-private-networking
+  p1_skills: 15  # +3 pulser-odoo-* product-release + 3 office studio skills
+  p2_skills: 3   # (7 platform) + odoo-copilot-evals, service-matrix-truth
+  status_active: 25
+  status_draft: 0
+  status_deprecated: 0

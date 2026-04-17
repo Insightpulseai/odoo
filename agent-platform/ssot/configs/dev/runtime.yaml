@@ -1,0 +1,34 @@
+# runtime.yaml — dev environment runtime configuration
+environment: dev
+api:
+  port: 8090
+  host: "0.0.0.0"
+
+orchestrator:
+  max_concurrent_sessions: 10
+  session_timeout_ms: 300000  # 5 minutes
+  checkpoint_interval_steps: 5
+
+executor:
+  max_tokens_per_call: 4096
+  tool_timeout_ms: 30000
+  sandbox_enabled: true
+
+gateway:
+  rate_limit_per_minute: 60
+  circuit_breaker_threshold: 5
+  backends:
+    odoo:
+      url: "https://erp.insightpulseai.com"
+      # auth: managed identity (resolved at runtime from Key Vault)
+    foundry:
+      url: "https://oai-ipai-dev.openai.azure.com"
+      # auth: managed identity
+
+telemetry:
+  enabled: true
+  exporter: "azure-monitor"
+  # connection_string: resolved from Key Vault secret 'appinsights-connection-string'
+
+logging:
+  level: "debug"

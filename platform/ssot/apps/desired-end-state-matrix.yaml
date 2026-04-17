@@ -1,0 +1,297 @@
+---
+# SSOT: Apps + MCPs Desired End State Matrix
+# Authority: this file. Per-app workflow + required/optional MCP map.
+# Default: SHARED MCP layer (5 minimum / 7 preferred), NOT per-site MCPs.
+# Last updated: 2026-04-14
+version: 1
+status: canonical
+
+# ─── Doctrine ───
+doctrine:
+  default_pattern: "Shared MCP layer + per-app surfaces"
+  rejected_pattern: "MCP-per-site (Prismalab MCP, IPAI MCP, W9 MCP) — fragmentation"
+  minimum_mcps: 5
+  preferred_mcps: 7
+  upper_bound_mcps: 9
+  rationale: |
+    The 3 public sites (PrismaLab, InsightPulseAI, W9 Studio) are different
+    businesses with different audiences but share substrate (CRM, scheduling,
+    Odoo/ERP, knowledge). MCPs are tools — share them. Sites are surfaces —
+    keep them branded and separate.
+
+# ─── App registry (current desired end state) ───
+
+apps:
+
+  # ───── Public-facing apps (3) ─────
+
+  - id: app-prismalab
+    name: PrismaLab Web
+    audience: Researchers, clinicians, evidence-synthesis customers
+    domain: prismalab.insightpulseai.com
+    plane: transaction
+    deployment: ACA (current: ipai-prismalab-web running)
+    core_workflows:
+      - PRISMA-compliant systematic review consulting inquiry
+      - Knowledge browse (PRISMA / Cochrane / RoB methodology)
+      - Document download (research templates, consent forms)
+      - Project status (post-engagement client portal — later)
+    required_mcps: [content, crm, scheduling, odoo_erp, knowledge]
+    optional_mcps: [documents, email]
+    system_of_record: Odoo (CRM + project) + Azure AI Search (RAG)
+    status: live
+    runtime_evidence: ipai-prismalab-web ACA app + ipai-prismalab-gateway RAG
+
+  - id: app-insightpulseai
+    name: InsightPulseAI Main Site
+    audience: Prospects, partners, demo/trial leads
+    domain: insightpulseai.com
+    plane: transaction
+    deployment: ACA (ipai-website-dev)
+    core_workflows:
+      - Brand + product messaging
+      - Demo / trial lead capture
+      - Service catalog browse
+      - Partner/channel inquiry
+    required_mcps: [content, crm, knowledge, odoo_erp]
+    optional_mcps: [scheduling, email, documents, analytics]
+    system_of_record: Odoo (CRM) + repo content (CMS)
+    status: live
+
+  - id: app-w9studio
+    name: Studio W9
+    audience: Photographers, video crews, agencies booking studio time
+    domain: w9studio.net
+    plane: transaction
+    deployment: ACA (ipai-w9studio-dev v11-fixes; w9studio-landing-dev v5 duplicate to retire)
+    core_workflows:
+      - Studio rate + package browse
+      - Availability + booking inquiry
+      - Live booking assistant (already live)
+      - Payment / deposit (later)
+    required_mcps: [content, crm, scheduling, odoo_erp, knowledge, documents, email]
+    optional_mcps: [payments, analytics]
+    system_of_record: Odoo (CRM + booking + invoice)
+    status: live
+    notes: "W9 is the most operational of the 3 — needs full 7 MCPs sooner"
+
+  # ───── Operational / internal apps (3 minimum, 5 preferred) ─────
+
+  - id: app-pulser-erp
+    name: Pulser / Odoo ERP
+    audience: IPAI ops team + tenants (W9 Studio, OMC, TBWA\\SMP)
+    domain: erp.insightpulseai.com (planned)
+    plane: transaction
+    deployment: ACA (ipai-odoo-dev-web; staging + prod pending)
+    core_workflows:
+      - CRM + quoting + invoicing + projects + service delivery
+      - Multi-tenant via res.company per docs/tenants/TENANCY_MODEL.md
+      - PH BIR compliance (ipai_bir_*)
+      - Pulser Copilot systray + agent governance
+    required_mcps: [odoo_erp, knowledge, documents, email]
+    optional_mcps: [analytics, payments, scheduling]
+    system_of_record: Odoo (canonical)
+    status: live (dev), staging substrate live, prod NOT YET
+
+  - id: app-assistant-console
+    name: Pulser Assistant / Agent Admin Console
+    audience: IPAI ops + tenant admins
+    domain: TBD (could embed in Pulser ERP)
+    plane: agent
+    deployment: ACA (ipai-bot-proxy-dev + ipai-prismalab-gateway as components)
+    core_workflows:
+      - MCP config + grounding source registry
+      - Guardrails + approval bands
+      - Prompts/skills catalog
+      - Telemetry + evaluation
+    required_mcps: [knowledge, content, odoo_erp]
+    optional_mcps: [analytics, documents]
+    system_of_record: Foundry (model/agent) + Odoo (policy + entitlements)
+    status: partial (gateway live, console UI not built)
+
+  - id: app-analytics
+    name: Analytics + Reporting
+    audience: IPAI ops + tenant business owners
+    domain: TBD (Power BI / Fabric workspaces)
+    plane: data
+    deployment: Fabric (fcipaidev) + Power BI Pro
+    core_workflows:
+      - Funnel + lead conversion
+      - Booking conversion (W9)
+      - Assistant performance + cost
+      - Business KPIs per tenant
+    required_mcps: [analytics, odoo_erp]
+    optional_mcps: [knowledge, content]
+    system_of_record: Databricks gold + Fabric semantic model
+    status: substrate live (Databricks + Fabric); semantic model NOT published
+
+  # ───── Optional later apps (4) ─────
+
+  - id: app-booking-engine
+    name: Booking / Scheduling Engine (embeddable)
+    audience: Embedded into W9, PrismaLab, IPAI demo flows
+    domain: embedded (no separate brand)
+    plane: transaction
+    core_workflows:
+      - Availability lookup
+      - Booking creation
+      - Confirmation + reminder
+    required_mcps: [scheduling, odoo_erp, email]
+    status: planned
+
+  - id: app-cms-admin
+    name: Content/Admin CMS
+    audience: IPAI marketing + tenant content admins
+    domain: TBD
+    plane: transaction
+    core_workflows:
+      - Manage pages, FAQs, service catalogs, rates/packages
+    required_mcps: [content, knowledge]
+    status: planned
+
+  - id: app-client-portal-prismalab
+    name: PrismaLab Client Portal
+    audience: PrismaLab post-engagement clients
+    plane: transaction
+    core_workflows:
+      - Project status, deliverables, files, messages
+    required_mcps: [odoo_erp, documents, email, knowledge]
+    status: later
+
+  - id: app-w9-ops-portal
+    name: W9 Booking Operations Portal
+    audience: W9 internal ops
+    plane: transaction
+    core_workflows:
+      - Availability, booking states, crew/resource notes, payment status
+    required_mcps: [odoo_erp, scheduling, payments, documents]
+    status: later
+
+# ─── MCP registry (shared layer) ───
+
+mcps:
+
+  # ───── 5 MCP minimum ─────
+
+  - id: content
+    name: Web CMS / Content MCP
+    purpose: "Site content reads + assistant grounding for public content"
+    consumed_by: [app-prismalab, app-insightpulseai, app-w9studio, app-cms-admin]
+    backing_systems: [Odoo CMS, repo-stored markdown content]
+    plane: agent
+    required_for_minimum: true
+
+  - id: crm
+    name: CRM / Leads MCP
+    purpose: "Inquiry capture, lead intake, contact routing, booking inquiries"
+    consumed_by: [app-prismalab, app-insightpulseai, app-w9studio, app-pulser-erp]
+    backing_systems: [Odoo CRM]
+    plane: transaction
+    required_for_minimum: true
+
+  - id: scheduling
+    name: Calendar / Scheduling MCP
+    purpose: "Consult booking, studio availability, callback scheduling"
+    consumed_by: [app-prismalab, app-w9studio, app-insightpulseai, app-booking-engine]
+    backing_systems: [Odoo calendar, optional Google Calendar bridge]
+    plane: transaction
+    required_for_minimum: true
+    most_critical_for: app-w9studio
+
+  - id: odoo_erp
+    name: Odoo / ERP MCP
+    purpose: "Customers, contacts, quotations, invoices, projects, sales/service"
+    consumed_by: [ALL apps]
+    backing_systems: [Odoo (canonical)]
+    plane: transaction
+    required_for_minimum: true
+    notes: "Already exists: ipai-odoo-mcp ACA app"
+
+  - id: knowledge
+    name: Knowledge / Retrieval MCP
+    purpose: "Assistant grounding, policy/rate/spec/package docs, unified FAQ"
+    consumed_by: [app-prismalab, app-insightpulseai, app-w9studio, app-pulser-erp, app-assistant-console]
+    backing_systems: [Azure AI Search (prismalab-rag-v1 live), Foundry RAG]
+    plane: agent
+    required_for_minimum: true
+
+  # ───── Preferred 7 (add 2) ─────
+
+  - id: documents
+    name: Document / File MCP
+    purpose: "Proposals, decks, consent forms, templates, floor plans, contracts"
+    consumed_by: [app-prismalab, app-w9studio, app-pulser-erp, app-client-portal-prismalab]
+    backing_systems: [Azure Blob Storage, Odoo documents]
+    plane: data
+    required_for_preferred: true
+
+  - id: email
+    name: Email / Communications MCP
+    purpose: "Outbound follow-up, inquiry ack, quote/proposal send, booking confirm, collections"
+    consumed_by: [app-prismalab, app-w9studio, app-insightpulseai, app-pulser-erp]
+    backing_systems: [Zoho SMTP per CLAUDE.md, Odoo mail.mail]
+    plane: agent
+    required_for_preferred: true
+
+  # ───── Optional 8/9 ─────
+
+  - id: analytics
+    name: Analytics / BI MCP
+    purpose: "Traffic-to-lead, booking funnel, attribution, assistant usage"
+    consumed_by: [app-analytics, app-pulser-erp]
+    backing_systems: [Power BI semantic model, Fabric, Databricks gold]
+    plane: data
+    required_for_minimum: false
+
+  - id: payments
+    name: Payments / Commerce MCP
+    purpose: "Booking deposits, invoice payment links, payment status awareness"
+    consumed_by: [app-w9studio, app-pulser-erp, app-w9-ops-portal]
+    backing_systems: [PayMongo, PayPal, Xendit per project_payment_provider_stack memory]
+    plane: transaction
+    required_for_minimum: false
+    most_useful_for: app-w9studio
+
+# ─── Pattern enforcement ───
+
+architecture_pattern:
+  shared_mcp_layer:
+    - content
+    - crm
+    - scheduling
+    - odoo_erp
+    - knowledge
+    - documents
+    - email
+  per_app_surfaces:
+    - app-prismalab
+    - app-insightpulseai
+    - app-w9studio
+  rejected:
+    - "MCP-per-site (creates fragmentation, defeats shared substrate)"
+
+four_plane_alignment:
+  transaction_plane:
+    apps: [app-prismalab, app-insightpulseai, app-w9studio, app-pulser-erp, app-booking-engine, app-cms-admin, app-client-portal-prismalab, app-w9-ops-portal]
+    mcps: [crm, scheduling, odoo_erp, payments]
+  data_plane:
+    apps: [app-analytics]
+    mcps: [analytics, documents]
+  agent_plane:
+    apps: [app-assistant-console]
+    mcps: [content, knowledge, email]
+  delivery_plane:
+    apps: []   # delivery plane is GitHub+Azure DevOps, not a public app
+    mcps: []   # ADO MCP is for delivery agents, not site users
+
+# ─── Anchors ───
+anchors:
+  prd_doctrine: "spec/pulser-odoo/prd.md §0.1 (four-plane)"
+  tenancy: "docs/tenants/TENANCY_MODEL.md"
+  upstream_adoption: "ssot/governance/upstream-adoption-register.yaml"
+  azure_bom: "ssot/azure/bom.yaml"
+  related_memory:
+    - prismalab_gateway_deployed.md
+    - prismalab_rag_corpus.md
+    - project_w9studio_concept.md
+    - project_payment_provider_stack.md

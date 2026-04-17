@@ -1,0 +1,352 @@
+schema_version: "1.0"
+namespace: ai.foundry_normalization
+last_reviewed: "2026-04-10"
+description: >
+  Normalization plan to migrate ipai-copilot Foundry project from classic
+  prompt-agent setup to new Foundry-native tool/knowledge/workflow model.
+  Status assessed from Azure portal screenshots on 2026-04-10.
+
+# ---------------------------------------------------------------------------
+# Current state (as of 2026-04-10)
+# ---------------------------------------------------------------------------
+
+current_state:
+  project: pulser-odoo
+  resource: pulser-odoo-resource
+  region: eastus2
+  posture: internal_alpha
+
+  agents:
+    count: 5
+    type: prompt  # classic, not new-Foundry-native
+    status: running
+    success_rate: "100.00%"
+    migration_banner: true  # "classic agents not supported in new experience"
+    inventory:
+      - name: pulser-odoo
+        role: top_level_shell
+        description: "Pulser for Odoo — InsightPulseAI operational assistant for Odoo CE 18.0 with approval-gated actions and bounded tool use."
+      - name: pulser-odoo-ask
+        role: read_query_qa
+        write_access: none
+      - name: pulser-odoo-authoring
+        role: drafting_summarization
+        write_access: draft_only
+      - name: pulser-odoo-livechat
+        role: conversational_front_door
+        write_access: none
+      - name: pulser-odoo-transaction
+        role: erp_mutation
+        write_access: draft_then_approve
+
+  model_deployments:
+    - name: gpt-4.1
+      status: healthy
+    - name: text-embedding-3-small
+      status: healthy
+    - name: wg-pulser
+      backing_model: gpt-4o-mini
+      status: healthy
+
+  guardrails:
+    policies:
+      - Microsoft.Default
+      - Microsoft.DefaultV2
+    applied_to:
+      - gpt-4.1
+      - text-embedding-3-small
+      - wg-pulser
+
+  evaluations:
+    completed: 1
+    name: pulser-odoo-safety-quality-v1
+    available_evaluators:
+      - relevance
+      - groundedness
+      - fluency
+      - coherence
+      - document_retrieval
+      - tool_call_success
+      - tool_selection
+      - task_completion
+      - task_adherence
+      - response_completeness
+      - service_groundedness
+      - safety
+
+  gaps:
+    tools: 0
+    knowledge_indexes: 0
+    foundry_iq: not_wired
+    workflows: 0
+    stored_completions: 0
+    monitoring_features: "0/3"
+
+# ---------------------------------------------------------------------------
+# Normalization plan
+# ---------------------------------------------------------------------------
+
+normalization:
+
+  # Phase 1 — Do now (ship-blocking for internal alpha)
+  phase_1:
+    name: "Ship-ready cleanup"
+    status: in_progress
+    items:
+      - id: N1
+        action: "Correct all stale Odoo 19 references to 18"
+        status: done  # PR #708, 93 files
+        pr: 708
+
+      - id: N2
+        action: "Define canonical role contract for 5 agents"
+        status: done  # already defined in ssot/ai/agents.yaml
+        evidence: "ssot/ai/agents.yaml (pulser-odoo-ask, pulser-odoo-authoring, pulser-odoo-livechat, pulser-odoo-transaction)"
+
+      - id: N3
+        action: "Enable agent monitoring features (0/3 → 3/3)"
+        status: done  # 2026-04-10: Azure Monitor + AIInferenceInstrumentor enabled
+        owner: platform_admin
+        script: scripts/foundry/enable_monitoring.py
+        evidence: >
+          Executed 2026-04-10. Azure Monitor OpenTelemetry configured,
+          AIInferenceInstrumentor enabled, Foundry SDK CONNECTED,
+          App Insights CONFIGURED. Traces flow to appi-ipai-dev.
+        method: >
+          python scripts/foundry/enable_monitoring.py
+          Configures Azure Monitor OpenTelemetry + AIInferenceInstrumentor.
+          Prereq: pip install azure-monitor-opentelemetry azure-ai-inference
+          Verify: python scripts/foundry/enable_monitoring.py --verify
+
+      - id: N4
+        action: "Expand eval suite from 1 run to release gate"
+        status: blocked  # Script proven (dry-run PASS), run blocked on RBAC
+        owner: platform_admin
+        blocker: >
+          ipai-copilot-resource AI Services not in current subscription
+          resource list. evals.runs.create returns 403 on ML asset store.
+          Fix: locate hosting subscription, assign Azure AI Developer role.
+        script: scripts/foundry/run_cloud_eval.py
+        minimum_evaluators:
+          - builtin.groundedness
+          - builtin.relevance
+          - builtin.fluency
+          - builtin.coherence
+          - builtin.task_adherence
+          - builtin.violence
+          - builtin.response_completeness
+        method: >
+          python scripts/foundry/run_cloud_eval.py --all
+          Uses openai_client.evals API with built-in evaluators.
+          Datasets: agents/evals/odoo-copilot/datasets/{pulser-odoo-ask|pulser-odoo-authoring|pulser-odoo-livechat|pulser-odoo-transaction}-eval-v1.jsonl
+          Results: agents/evals/odoo-copilot/results/{agent}-cloud-eval-{stamp}.json
+
+  # Phase 2 — After Phase 1 (not ship-blocking)
+  phase_2:
+    name: "Foundry-native normalization"
+    status: not_started
+    items:
+      - id: N5
+        action: "Migrate classic agents to new Foundry agent model"
+        status: not_started
+        note: >
+          Recreate or save/reload current 5 agents as new-experience agents.
+          This unlocks tool catalog, knowledge grounding, and workflows.
+
+      - id: N6
+        action: "Connect minimum tool set"
+        status: not_started
+        minimum_tools:
+          - type: function_calling
+            name: query_knowledge_base
+            description: "Route to ipai.knowledge.bridge via copilot gateway"
+          - type: function_calling
+            name: propose_action
+            description: "Queue write action for human approval"
+        note: >
+          Only add these two. Do not wire AI Search or File Search unless
+          the current prompt-agent pattern is insufficient.
+
+      - id: N7
+        action: "Keep AI Search disconnected"
+        status: decided
+        rationale: >
+          Azure AI Search grounding is already handled Odoo-side via
+          ipai_knowledge_bridge. Wiring it in Foundry IQ would be
+          redundant for MVP. Revisit if prompt-agent pattern hits limits.
+
+      - id: N8
+        action: "Keep workflows empty"
+        status: decided
+        rationale: >
+          No real orchestration need exists yet. System prompt + agent + tools
+          is sufficient for current scope. Add workflows only when multi-step
+          deterministic chains are needed (e.g., approval routing sequences).
+
+      - id: N9
+        action: "Keep stored completions empty"
+        status: decided
+        rationale: >
+          Not needed for MVP. Only matters for distillation, replay,
+          offline analysis, or synthetic eval generation. Not ship-blocking.
+
+# ---------------------------------------------------------------------------
+# Go/No-Go gates
+# ---------------------------------------------------------------------------
+
+go_nogo:
+  internal_alpha:
+    verdict: GO
+    conditions:
+      - "5 agents running"
+      - "Default guardrails applied"
+      - "At least 1 completed eval"
+      - "Stale 19.0 metadata corrected"
+      - "Odoo-side knowledge bridge wired"
+    missing_non_blocking:
+      - "Monitoring features (N3)"
+      - "Expanded eval suite (N4)"
+
+  production_mature:
+    verdict: NOT_YET
+    blocking:
+      - "Classic agent migration debt (N5)"
+      - "Tool catalog not wired (N6)"
+      - "Eval suite not formalized as release gate (N4 — RBAC blocked)"
+
+# ---------------------------------------------------------------------------
+# Evidence updates (from Foundry portal screenshots)
+# ---------------------------------------------------------------------------
+
+evidence_updates:
+  - date: "2026-04-10"
+    source: foundry_project_screenshots
+    findings:
+      agents:
+        count: 5
+        names:
+          - pulser-odoo-transaction
+          - pulser-odoo-livechat
+          - pulser-odoo-authoring
+          - pulser-odoo-ask
+          - pulser-odoo
+        type: prompt
+        classic_migration_debt: true
+      models:
+        deployed:
+          - name: wg-pulser
+            model: gpt-4o-mini
+            status: succeeded
+          - name: text-embedding-3-small
+            model: text-embedding-3-small
+            status: succeeded
+          - name: gpt-4.1
+            model: gpt-4.1
+            status: succeeded
+      tools:
+        configured_count: 0
+      knowledge:
+        indexes_count: 0
+        ai_search_wired: false
+      data:
+        datasets:
+          - eval-data-2026-03-30_084002_01e39_UTC
+        stored_completions_count: 0
+      ai_services_available:
+        - Speech
+        - Translation
+        - Language
+        - Content Understanding
+      stale_metadata:
+        ipai_copilot_description_mentions_odoo19: true  # fixed in PR #708
+
+# ---------------------------------------------------------------------------
+# Issue status overrides (from evidence assessment)
+# ---------------------------------------------------------------------------
+
+issue_status_overrides:
+  # Blocked — requires portal/RBAC action
+  ISSUE-004: blocked   # Classic agent migration debt
+  ISSUE-006: blocked   # Stale Odoo 19 metadata (repo-side fixed, portal pending)
+  ISSUE-007: blocked   # Minimum MVP tool set (Tools=0)
+  ISSUE-008: blocked   # MVP grounding path (no indexes)
+
+  # Ready — can be executed now
+  ISSUE-011: done      # Monitoring enabled (N3 complete 2026-04-10)
+  ISSUE-012: blocked   # Eval suite (N4 script ready, RBAC blocked)
+  ISSUE-019: ready     # Stored completions decision
+
+  # Deferred — not MVP-blocking
+  ISSUE-010: deferred  # Workflows — empty is acceptable for MVP
+  ISSUE-020: deferred  # AI Search / preview expansion off MVP path
+
+  # In progress
+  ISSUE-005: done      # Role contract defined in ssot/ai/agents.yaml
+  ISSUE-016: in_progress  # Release evidence pack
+
+# ---------------------------------------------------------------------------
+# SMART release objective
+# ---------------------------------------------------------------------------
+
+release_objective:
+  document: docs/release/RELEASE_OBJECTIVE.md
+  statement: >
+    By [TARGET DATE], ship the Odoo 18 Finance Ops MVP to internal controlled
+    production with Odoo as the sole business system of record, all installed
+    MVP IPAI modules runtime-proven, and Pulser minimally normalized in Foundry
+    with monitoring, approval gates, and repeatable evaluation coverage.
+
+  target_posture: internal_controlled_production
+
+  binary_gates:
+    - id: gate_a
+      name: "Module and runtime proof"
+      criteria:
+        - "7/7 installed MVP IPAI modules proven or removed from scope"
+        - "Fresh install passes"
+        - "Upgrade path passes"
+      status: partial  # Gate A proved 5/7, remaining 2 pending Wave 2
+
+    - id: gate_b
+      name: "Business workflow proof"
+      criteria:
+        - "Cash advance → approval/release → liquidation → settlement: PASS"
+        - "Tax validation / blocker / reroute on account.move: PASS"
+        - "TBWA cash advance + liquidation QWeb reports: 2/2 PASS"
+      status: pending
+
+    - id: gate_c
+      name: "Foundry operational minimum"
+      criteria:
+        - "5/5 active agents role-defined: DONE"
+        - "0 stale Odoo 19 references: DONE (PR #708)"
+        - "Monitoring enabled: DONE (N3)"
+        - "Repeatable eval suite: BLOCKED (N4 RBAC)"
+        - "Risky actions approval-gated: DONE"
+      status: partial
+
+    - id: gate_d
+      name: "Governance and release readiness"
+      criteria:
+        - "SSOT manifests frozen"
+        - "Evidence pack complete"
+        - "Rollback plan exists"
+        - "Deferred items remain deferred"
+      status: pending
+
+  kpi_summary:
+    modules_proven: "5/7"
+    fresh_install: pending
+    upgrade_validation: pending
+    finance_workflow: pending
+    tax_workflow: pending
+    report_rendering: pending
+    agents_role_defined: "5/5"
+    stale_odoo19_refs: 0
+    model_baseline_bounded: true
+    risky_tools_gated: true
+    monitoring_enabled: true
+    eval_suite_repeatable: blocked  # N4 RBAC
+    scope_drift: 0
+    manifests_frozen: pending
+    evidence_pack: pending

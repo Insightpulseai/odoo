@@ -1,0 +1,20 @@
+version: 1
+profiles:
+  stateless_judge:
+    storage: ephemeral_ok
+    replicas_max: 3
+    shared_lock_required: false
+    readiness_required: true
+    liveness_required: true
+  single_writer_supervisor:
+    storage: shared_persistent_required
+    replicas_max: 1
+    shared_lock_required: true
+    readiness_required: true
+    liveness_required: true
+  task_router:
+    storage: substrate_declared
+    replicas_max: 2
+    shared_lock_required: conditional
+    readiness_required: true
+    liveness_required: true

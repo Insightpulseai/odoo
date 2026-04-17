@@ -1,0 +1,55 @@
+# Foundry Designer Adapter — Machine-Readable SSOT
+# Generated: 2026-03-19
+
+id: foundry_designer_adapter
+service: designer-agent-api
+path: platform/services/designer-agent-api/
+provider: microsoft_foundry
+sdk: "@azure/ai-projects"
+auth: DefaultAzureCredential
+runtime_model:
+  - agent
+  - conversation
+  - response
+agent_strategy: reuse_or_create
+response_contract: DesignerAgentResponse
+status: proposed
+
+env_vars:
+  - AZURE_FOUNDRY_ENDPOINT (required)
+  - AZURE_FOUNDRY_PROJECT_CONNECTION_STRING (optional)
+  - AZURE_FOUNDRY_MODEL_DEPLOYMENT (optional)
+  - AZURE_FOUNDRY_DESIGNER_AGENT_ID (optional)
+  - AZURE_FOUNDRY_DESIGNER_AGENT_NAME (required)
+  - DESIGNER_AGENT_TIMEOUT_MS (optional, default 45000)
+
+adapter_files:
+  client: src/adapters/foundry/client.ts
+  agents: src/adapters/foundry/agents.ts
+  execute: src/adapters/foundry/execute.ts
+  normalize: src/adapters/foundry/normalize.ts
+  errors: src/adapters/foundry/errors.ts
+
+service_files:
+  service: src/services/designer-agent-service.ts
+  route: src/routes/designer-agent.ts
+  config: src/config/env.ts
+
+contracts:
+  backend: src/contracts/designer-agent.ts
+  foundry: src/contracts/foundry.ts
+  frontend: web/packages/fluent-designer-contract/src/types.ts
+
+integration:
+  frontend_app: web/apps/designer-agent/
+  spec_bundle: spec/fluent-designer-agent/
+  architecture_doc: docs/architecture/agent-platform/fluent-designer-backend-adapter.md
+
+request_contract: DesignerAgentRequest
+timeout_ms_default: 45000
+provider_abstraction: true
+
+notes:
+  - SDK method names may shift in preview; only client.ts/agents.ts/execute.ts need updates
+  - No thread/run concepts — uses current agent/conversation/response model
+  - Frontend remains backend-agnostic through DesignerAgentService adapter interface

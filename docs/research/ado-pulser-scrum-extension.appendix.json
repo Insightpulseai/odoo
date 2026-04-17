@@ -1,0 +1,439 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "doc_anchor": "docs/research/ado-pulser-scrum-extension.md",
+  "extension_id": "ms-pulser.scrum-master",
+  "research_branch": "feat/ado-pulser-scrum-extension",
+  "last_updated": "2026-04-15",
+
+  "package_json": {
+    "name": "pulser-scrum-extension",
+    "version": "0.1.0",
+    "private": true,
+    "description": "Azure DevOps extension for Pulser Scrum Master (insightpulseai/ipai-platform)",
+    "scripts": {
+      "build": "webpack --mode=production",
+      "build:dev": "webpack --mode=development",
+      "package": "npx tfx-cli extension create --manifest-globs vss-extension.json --rev-version --output-path dist/",
+      "publish:dev": "tfx extension publish --manifest-globs vss-extension.dev.json --share-with insightpulseai --auth-type pat",
+      "publish:prod": "tfx extension publish --manifest-globs vss-extension.json --share-with insightpulseai --auth-type pat",
+      "test": "jest --ci",
+      "eval": "node scripts/run-evals.js"
+    },
+    "dependencies": {
+      "azure-devops-extension-sdk": "4.0.2",
+      "azure-devops-extension-api": "4.240.0",
+      "azure-devops-ui": "2.259.0",
+      "react": "16.14.0",
+      "react-dom": "16.14.0",
+      "@microsoft/applicationinsights-web": "3.3.4",
+      "@microsoft/applicationinsights-react-js": "17.3.4"
+    },
+    "devDependencies": {
+      "typescript": "5.4.5",
+      "webpack": "5.95.0",
+      "webpack-cli": "5.1.4",
+      "ts-loader": "9.5.1",
+      "style-loader": "4.0.0",
+      "css-loader": "7.1.2",
+      "sass-loader": "16.0.2",
+      "sass": "1.80.3",
+      "html-webpack-plugin": "5.6.0",
+      "copy-webpack-plugin": "12.0.2",
+      "jest": "29.7.0",
+      "ts-jest": "29.2.5",
+      "@testing-library/react": "12.1.5",
+      "@testing-library/jest-dom": "6.5.0",
+      "@types/react": "16.14.60",
+      "@types/react-dom": "16.9.24",
+      "@types/jest": "29.5.13",
+      "@types/node": "20.16.11",
+      "tfx-cli": "0.21.1"
+    },
+    "engines": {
+      "node": ">=18.0.0"
+    }
+  },
+
+  "vss_extension_json_skeleton": {
+    "manifestVersion": 1,
+    "id": "scrum-master",
+    "publisher": "ms-pulser",
+    "version": "0.1.0",
+    "name": "Pulser Scrum Master",
+    "description": "AI-powered sprint intelligence: standup, velocity, retro, and doctrine-drift detection for Azure Boards.",
+    "public": false,
+    "categories": ["Azure Boards", "Planning"],
+    "tags": ["agile", "scrum", "sprint", "standup", "retro", "dora", "governance", "ai", "copilot"],
+    "targets": [
+      { "id": "Microsoft.VisualStudio.Services" }
+    ],
+    "icons": {
+      "default": "static/img/icon-128.png",
+      "large": "static/img/icon-512.png"
+    },
+    "content": {
+      "details": { "path": "overview.md" }
+    },
+    "links": {
+      "support":  { "uri": "https://insightpulseai.com/support" },
+      "privacy":  { "uri": "https://insightpulseai.com/privacy" },
+      "home":     { "uri": "https://insightpulseai.com/pulser/scrum-master" },
+      "license":  { "uri": "https://insightpulseai.com/license" }
+    },
+    "baseUri": "",
+    "scopes": [
+      "vso.work",
+      "vso.project",
+      "vso.code",
+      "vso.analytics"
+    ],
+    "demands": ["api-version/5.1"],
+    "files": [
+      { "path": "dist", "addressable": true },
+      { "path": "static", "addressable": true },
+      { "path": "overview.md", "addressable": true }
+    ],
+    "contributions": [
+      {
+        "id": "StandupHub",
+        "type": "ms.vss-web.hub",
+        "description": "Daily standup hub under Boards.",
+        "targets": ["ms.vss-work-web.work-hub-group"],
+        "properties": {
+          "name": "Pulser Standup",
+          "order": 99,
+          "uri": "dist/standup-hub.html",
+          "iconName": "People"
+        }
+      },
+      {
+        "id": "VelocityWidget",
+        "type": "ms.vss-dashboards-web.widget",
+        "description": "Weekly velocity + DORA summary widget.",
+        "targets": ["ms.vss-dashboards-web.widget-catalog"],
+        "properties": {
+          "name": "Pulser Velocity",
+          "description": "Weekly velocity + DORA metrics.",
+          "catalogIconUrl": "static/img/velocity-catalog.png",
+          "previewImageUrl": "static/img/velocity-preview.png",
+          "uri": "dist/velocity-widget.html",
+          "supportedSizes": [{ "rowSpan": 1, "columnSpan": 2 }, { "rowSpan": 2, "columnSpan": 2 }],
+          "supportedScopes": ["project_team"]
+        }
+      },
+      {
+        "id": "BurndownWidget",
+        "type": "ms.vss-dashboards-web.widget",
+        "description": "Sprint burn-down widget with projection.",
+        "targets": ["ms.vss-dashboards-web.widget-catalog"],
+        "properties": {
+          "name": "Pulser Burn-down",
+          "description": "Sprint burn-down with AI-projected completion.",
+          "catalogIconUrl": "static/img/burndown-catalog.png",
+          "previewImageUrl": "static/img/burndown-preview.png",
+          "uri": "dist/burndown-widget.html",
+          "supportedSizes": [{ "rowSpan": 2, "columnSpan": 2 }],
+          "supportedScopes": ["project_team"]
+        }
+      },
+      {
+        "id": "AskScrumMasterAction",
+        "type": "ms.vss-web.action",
+        "description": "Ask Scrum Master about this work item.",
+        "targets": ["ms.vss-work-web.work-item-context-menu"],
+        "properties": {
+          "text": "Ask Scrum Master",
+          "title": "Ask the Pulser Scrum Master about this item (staleness, reparenting, drift).",
+          "toolbarText": "Ask Scrum Master",
+          "icon": "static/img/action-ask.png",
+          "group": "actions",
+          "uri": "dist/ask-action.html",
+          "registeredObjectId": "askScrumMasterHandler"
+        }
+      },
+      {
+        "id": "DriftPivot",
+        "type": "ms.vss-web.tab",
+        "description": "Doctrine drift pivot on the Boards hub.",
+        "targets": ["ms.vss-work-web.work-hub"],
+        "properties": {
+          "name": "Drift",
+          "uri": "dist/drift-pivot.html",
+          "order": 100
+        }
+      }
+    ]
+  },
+
+  "bicep_gateway_outputs": {
+    "module_path": "infra/azure/modules/pulser-scrum-gateway.bicep",
+    "required_outputs": [
+      {
+        "name": "gatewayFqdn",
+        "type": "string",
+        "description": "Fully qualified ACA FQDN of the Scrum gateway app (consumed by extension base URI in dev mode).",
+        "example": "ipai-scrum-gateway-dev.blackstone-0df78186.southeastasia.azurecontainerapps.io"
+      },
+      {
+        "name": "managedIdentityClientId",
+        "type": "string",
+        "description": "Client ID of the user-assigned managed identity id-ipai-agent-scrum-master-dev (for KV + Foundry access).",
+        "example": "00000000-0000-0000-0000-000000000000"
+      },
+      {
+        "name": "appInsightsConnectionString",
+        "type": "string",
+        "description": "Connection string for la-ipai-platform-sea-linked App Insights (used by both gateway and extension iframe telemetry).",
+        "example": "InstrumentationKey=...;IngestionEndpoint=https://southeastasia-...in.applicationinsights.azure.com/"
+      },
+      {
+        "name": "keyVaultUri",
+        "type": "string",
+        "description": "URI of kv-ipai-dev-sea; gateway resolves ADO PAT, Power BI creds, and Foundry keys (if any) via MI.",
+        "example": "https://kv-ipai-dev-sea.vault.azure.net/"
+      }
+    ]
+  },
+
+  "openapi_gateway_stubs": {
+    "openapi": "3.1.0",
+    "info": {
+      "title": "Pulser Scrum Gateway",
+      "version": "0.1.0",
+      "description": "ACA-hosted backend for ms-pulser.scrum-master extension. Managed Identity + Key Vault; zero secrets in extension."
+    },
+    "servers": [
+      { "url": "https://{gatewayFqdn}", "variables": { "gatewayFqdn": { "default": "ipai-scrum-gateway-dev.blackstone-0df78186.southeastasia.azurecontainerapps.io" } } }
+    ],
+    "security": [{ "EntraBearer": [] }],
+    "paths": {
+      "/healthz": {
+        "get": {
+          "summary": "Liveness and dependency health",
+          "operationId": "getHealth",
+          "security": [],
+          "responses": {
+            "200": {
+              "description": "Healthy",
+              "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Health" } } }
+            }
+          }
+        }
+      },
+      "/standup": {
+        "post": {
+          "summary": "Generate daily standup markdown for active iteration",
+          "operationId": "postStandup",
+          "requestBody": {
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/StandupRequest" } } }
+          },
+          "responses": {
+            "200": { "description": "Standup markdown + proposed actions", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/StandupResponse" } } } },
+            "400": { "$ref": "#/components/responses/BadRequest" },
+            "429": { "$ref": "#/components/responses/RateLimited" }
+          }
+        }
+      },
+      "/velocity": {
+        "post": {
+          "summary": "Weekly velocity + DORA rollup",
+          "operationId": "postVelocity",
+          "requestBody": { "content": { "application/json": { "schema": { "$ref": "#/components/schemas/VelocityRequest" } } } },
+          "responses": {
+            "200": { "description": "Velocity payload", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/VelocityResponse" } } } }
+          }
+        }
+      },
+      "/retro": {
+        "post": {
+          "summary": "Sprint retrospective synthesis (end-of-sprint only)",
+          "operationId": "postRetro",
+          "requestBody": { "content": { "application/json": { "schema": { "$ref": "#/components/schemas/RetroRequest" } } } },
+          "responses": {
+            "200": { "description": "Retro markdown + proposed action items", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/RetroResponse" } } } }
+          }
+        }
+      },
+      "/drift": {
+        "post": {
+          "summary": "Doctrine-drift scan across active work items",
+          "operationId": "postDrift",
+          "requestBody": { "content": { "application/json": { "schema": { "$ref": "#/components/schemas/DriftRequest" } } } },
+          "responses": {
+            "200": { "description": "Drift violations list", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/DriftResponse" } } } }
+          }
+        }
+      }
+    },
+    "components": {
+      "securitySchemes": {
+        "EntraBearer": { "type": "http", "scheme": "bearer", "bearerFormat": "JWT", "description": "Azure DevOps app token from SDK.getAppToken()" }
+      },
+      "responses": {
+        "BadRequest": { "description": "Invalid request body", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } } },
+        "RateLimited": { "description": "Too many requests", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } } }
+      },
+      "schemas": {
+        "Health": {
+          "type": "object",
+          "required": ["status", "version", "dependencies"],
+          "properties": {
+            "status": { "type": "string", "enum": ["ok", "degraded", "down"] },
+            "version": { "type": "string" },
+            "dependencies": {
+              "type": "object",
+              "properties": {
+                "foundry": { "type": "string", "enum": ["ok", "degraded", "down"] },
+                "keyvault": { "type": "string", "enum": ["ok", "degraded", "down"] },
+                "ado": { "type": "string", "enum": ["ok", "degraded", "down"] }
+              }
+            }
+          }
+        },
+        "StandupRequest": {
+          "type": "object",
+          "required": ["organization", "project", "iterationPath"],
+          "properties": {
+            "organization": { "type": "string", "example": "insightpulseai" },
+            "project": { "type": "string", "example": "ipai-platform" },
+            "iterationPath": { "type": "string", "example": "ipai-platform\\R1-Foundation-30d" },
+            "areaPathFilter": { "type": "array", "items": { "type": "string" }, "description": "Optional canonical area paths to scope" },
+            "dryRun": { "type": "boolean", "default": true }
+          }
+        },
+        "StandupResponse": {
+          "type": "object",
+          "required": ["markdown", "proposedActions", "runId"],
+          "properties": {
+            "runId": { "type": "string", "format": "uuid" },
+            "markdown": { "type": "string" },
+            "proposedActions": { "type": "array", "items": { "$ref": "#/components/schemas/ProposedAction" } },
+            "truncated": { "type": "boolean", "default": false },
+            "costTokens": { "type": "integer" },
+            "modelUsed": { "type": "string", "example": "gpt-4.1-mini" }
+          }
+        },
+        "VelocityRequest": {
+          "type": "object",
+          "required": ["organization", "project", "weekEndingIso"],
+          "properties": {
+            "organization": { "type": "string" },
+            "project": { "type": "string" },
+            "weekEndingIso": { "type": "string", "format": "date" }
+          }
+        },
+        "VelocityResponse": {
+          "type": "object",
+          "required": ["markdown", "dora", "runId"],
+          "properties": {
+            "runId": { "type": "string", "format": "uuid" },
+            "markdown": { "type": "string" },
+            "dora": {
+              "type": "object",
+              "properties": {
+                "deployFrequencyPerWeek": { "type": "number" },
+                "leadTimeDays": { "type": "number" },
+                "changeFailureRate": { "type": "number" },
+                "mttrHours": { "type": "number" }
+              }
+            },
+            "closedByArea": { "type": "object", "additionalProperties": { "type": "integer" } }
+          }
+        },
+        "RetroRequest": {
+          "type": "object",
+          "required": ["organization", "project", "iterationPath"],
+          "properties": {
+            "organization": { "type": "string" },
+            "project": { "type": "string" },
+            "iterationPath": { "type": "string" }
+          }
+        },
+        "RetroResponse": {
+          "type": "object",
+          "required": ["markdown", "actionItems", "runId"],
+          "properties": {
+            "runId": { "type": "string", "format": "uuid" },
+            "markdown": { "type": "string" },
+            "actionItems": { "type": "array", "items": { "$ref": "#/components/schemas/ProposedAction" } }
+          }
+        },
+        "DriftRequest": {
+          "type": "object",
+          "required": ["organization", "project"],
+          "properties": {
+            "organization": { "type": "string" },
+            "project": { "type": "string" },
+            "areaPathFilter": { "type": "array", "items": { "type": "string" } }
+          }
+        },
+        "DriftResponse": {
+          "type": "object",
+          "required": ["violations", "runId"],
+          "properties": {
+            "runId": { "type": "string", "format": "uuid" },
+            "violations": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": ["workItemId", "pattern", "severity"],
+                "properties": {
+                  "workItemId": { "type": "integer" },
+                  "title": { "type": "string" },
+                  "pattern": { "type": "string" },
+                  "severity": { "type": "string", "enum": ["info", "warn", "block"] },
+                  "suggestedAction": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        "ProposedAction": {
+          "type": "object",
+          "required": ["actionType", "targetWorkItemId", "approvalBand"],
+          "properties": {
+            "actionType": { "type": "string", "enum": ["addTag", "comment", "proposeReparent", "proposeClose", "flagStale"] },
+            "targetWorkItemId": { "type": "integer" },
+            "approvalBand": { "type": "string", "enum": ["l1_no_approval", "l2_single_reviewer", "l3_dual_review", "l4_blocked"] },
+            "autoExecuted": { "type": "boolean", "default": false },
+            "rationale": { "type": "string" }
+          }
+        },
+        "Error": {
+          "type": "object",
+          "required": ["code", "message"],
+          "properties": {
+            "code": { "type": "string" },
+            "message": { "type": "string" },
+            "runId": { "type": "string", "format": "uuid" }
+          }
+        }
+      }
+    }
+  },
+
+  "eval_budget": {
+    "scenario_count": 50,
+    "judges_per_scenario": 3,
+    "model": "gpt-4.1-mini",
+    "input_tokens_per_judge_avg": 3000,
+    "output_tokens_per_judge_avg": 200,
+    "batch_api_discount_pct": 50,
+    "estimated_cost_usd_per_full_run": 0.15,
+    "cadence": "on PR to scrum_master assets + nightly baseline"
+  },
+
+  "thresholds": {
+    "accuracy_pass": 95,
+    "safety_pass": 99,
+    "helpfulness_pass": 90,
+    "baseline_regression_block_pp": 5,
+    "max_steps": 8,
+    "max_output_tokens": 10000,
+    "max_tool_calls": 12,
+    "wall_clock_timeout_standup_s": 120,
+    "wall_clock_timeout_retro_s": 300,
+    "rate_limit_posts_per_hour_per_channel": 10,
+    "daily_token_cap_per_agent": 500000
+  }
+}

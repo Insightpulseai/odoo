@@ -1,0 +1,489 @@
+# =============================================================================
+# Knowledge Source Authority — Agent Platform SSOT
+# =============================================================================
+# Defines the authoritative knowledge sources for the IPAI agent platform,
+# their precedence order, and per-source metadata.
+#
+# Cross-references:
+#   - ssot/ai/sources.yaml          (AI search index definitions)
+#   - ssot/agents/knowledge-bindings.yaml (collection-to-agent bindings)
+#   - ssot/agent-platform/learn_mcp_topic_map.yaml (MCP query catalogue)
+#   - ssot/agent-platform/skills_manifest.yaml     (skill-to-source bindings)
+#
+# Authority rule: higher-priority source wins when content conflicts.
+# Repo SSOT (priority 1) always overrides generic Microsoft Learn guidance.
+# =============================================================================
+
+version: 1
+artifact: ssot/agent-platform/knowledge_sources.yaml
+source_of_truth: true
+profile: insightpulseai-knowledge-sources
+
+purpose:
+  description: knowledge_source_authority_and_precedence_for_agent_platform
+
+# ---------------------------------------------------------------------------
+# Precedence ladder
+# ---------------------------------------------------------------------------
+# Agents MUST resolve conflicts by descending this list — stop at the first
+# source that contains a definitive answer.
+
+source_precedence:
+  - priority: 1
+    type: repo_ssot
+    description: >
+      Committed YAML/Markdown in ssot/, CLAUDE.md, AGENTS.md, docs/architecture/.
+      This is the single source of truth for the InsightPulseAI platform.
+      Overrides ALL external sources.
+    conflict_resolution: repo_wins_unconditionally
+
+  - priority: 2
+    type: architecture_reference_docs
+    description: >
+      Repo-local architecture decision records and platform doctrine files
+      under docs/architecture/ and docs/ai/. Authoritative for design
+      rationale and historical context.
+    conflict_resolution: repo_doc_wins_over_external
+
+  - priority: 3
+    type: microsoft_learn_mcp
+    description: >
+      First-party Microsoft Learn content retrieved via the MCP server at
+      https://learn.microsoft.com/api/mcp. Use tools: microsoft_docs_search,
+      microsoft_code_sample_search, microsoft_docs_fetch.
+    conflict_resolution: use_for_azure_service_specifics_not_covered_by_ssot
+
+  - priority: 4
+    type: official_microsoft_github_samples
+    description: >
+      Azure-Samples and Microsoft GitHub organizations. Use for working code
+      patterns not yet covered by Learn MCP. Validate against repo SSOT before
+      adoption.
+    conflict_resolution: validate_against_ssot_first
+
+  - priority: 5
+    type: secondary_sources
+    description: >
+      OCA READMEs, vendor docs, community references. Always mark as advisory.
+      Must not contradict higher-priority sources. Never adopt patterns from
+      secondary sources that bypass SSOT rules.
+    conflict_resolution: advisory_only_mark_explicitly
+
+# ---------------------------------------------------------------------------
+# Source catalogue
+# ---------------------------------------------------------------------------
+
+sources:
+
+  # ── Priority 1: Repo SSOT ─────────────────────────────────────────────────
+
+  - id: ssot_agent_platform
+    type: repo_ssot
+    priority: 1
+    location: ssot/agent-platform/*.yaml
+    topics_covered:
+      - agent_factory_lifecycle
+      - agent_maturity_model
+      - foundry_tool_policy
+      - mcp_policy
+      - task_bus_contract
+      - stage_gates
+      - portfolio_scorecard
+      - boards_mapping
+      - knowledge_sources        # this file
+      - skills_manifest
+      - learn_mcp_topic_map
+      - knowledge_taxonomy
+    freshness_expectation: static
+    confidence: authoritative
+    mvp_critical: true
+
+  - id: ssot_ai
+    type: repo_ssot
+    priority: 1
+    location: ssot/ai/*.yaml
+    topics_covered:
+      - agent_definitions
+      - model_deployments
+      - knowledge_source_index
+      - foundry_runtime_inventory
+    freshness_expectation: static
+    confidence: authoritative
+    mvp_critical: true
+
+  - id: ssot_agents
+    type: repo_ssot
+    priority: 1
+    location: ssot/agents/*.yaml
+    topics_covered:
+      - knowledge_bindings
+      - agent_registry
+      - execution_policy
+      - prod_policy
+      - tax_pulse_tool_contracts
+    freshness_expectation: static
+    confidence: authoritative
+    mvp_critical: true
+
+  - id: ssot_foundry
+    type: repo_ssot
+    priority: 1
+    location: ssot/foundry/*.yaml
+    topics_covered:
+      - foundry_runtime_inventory
+      - foundry_migration_status
+      - foundry_model_catalog
+    freshness_expectation: static
+    confidence: authoritative
+    mvp_critical: true
+
+  - id: repo_claude_md
+    type: repo_ssot
+    priority: 1
+    location: CLAUDE.md
+    topics_covered:
+      - operating_contract
+      - stack_quick_reference
+      - deprecated_services
+      - module_philosophy
+      - commit_conventions
+    freshness_expectation: static
+    confidence: authoritative
+    mvp_critical: true
+
+  - id: repo_agents_md
+    type: repo_ssot
+    priority: 1
+    location: AGENTS.md
+    topics_covered:
+      - agent_team_roster
+      - agent_routing
+      - agent_capabilities
+    freshness_expectation: static
+    confidence: authoritative
+    mvp_critical: true
+
+  - id: claude_rules
+    type: repo_ssot
+    priority: 1
+    location: .claude/rules/*.md
+    topics_covered:
+      - security_baseline
+      - odoo_rules
+      - platform_architecture
+      - github_governance
+      - ssot_platform_rules
+      - testing_policy
+      - oca_governance
+    freshness_expectation: static
+    confidence: authoritative
+    mvp_critical: true
+
+  # ── Priority 2: Architecture reference docs ──────────────────────────────
+
+  - id: arch_docs
+    type: architecture_doc
+    priority: 2
+    location: docs/architecture/*.md
+    topics_covered:
+      - platform_doctrine
+      - certification_mapped_architecture
+      - benchmark_model
+      - repo_topology
+      - ssot_boundaries
+      - odoo_module_doctrine
+      - service_plane_split
+    freshness_expectation: quarterly
+    confidence: authoritative
+    mvp_critical: true
+
+  - id: arch_ai_docs
+    type: architecture_doc
+    priority: 2
+    location: docs/ai/*.md
+    topics_covered:
+      - architecture_overview
+      - foundry_consolidation
+      - docker_commands
+      - oca_workflow
+      - testing_recipes
+      - troubleshooting
+    freshness_expectation: quarterly
+    confidence: high
+    mvp_critical: true
+
+  - id: spec_bundles
+    type: architecture_doc
+    priority: 2
+    location: spec/**/*.md
+    topics_covered:
+      - feature_specifications
+      - finance_domain_specs
+      - agent_capability_specs
+    freshness_expectation: quarterly
+    confidence: high
+    mvp_critical: false
+
+  # ── Priority 3: Microsoft Learn MCP ─────────────────────────────────────
+
+  - id: ms_learn_foundry
+    type: microsoft_learn
+    priority: 3
+    location: https://learn.microsoft.com/en-us/azure/ai-services/agents/
+    topics_covered:
+      - foundry_agent_service
+      - foundry_project_setup
+      - foundry_sdk_v2_python
+      - model_deployments
+      - tool_registration
+      - managed_identity_auth
+    freshness_expectation: monthly
+    confidence: high
+    mvp_critical: true
+    mcp_tools:
+      - microsoft_docs_search
+      - microsoft_docs_fetch
+      - microsoft_code_sample_search
+
+  - id: ms_learn_aca
+    type: microsoft_learn
+    priority: 3
+    location: https://learn.microsoft.com/en-us/azure/container-apps/
+    topics_covered:
+      - aca_deployment
+      - aca_scaling_revisions
+      - aca_networking_ingress
+      - aca_private_endpoints
+      - aca_jobs
+      - aca_health_probes
+    freshness_expectation: monthly
+    confidence: high
+    mvp_critical: true
+    mcp_tools:
+      - microsoft_docs_search
+      - microsoft_docs_fetch
+
+  - id: ms_learn_pg_flexible
+    type: microsoft_learn
+    priority: 3
+    location: https://learn.microsoft.com/en-us/azure/postgresql/flexible-server/
+    topics_covered:
+      - pg_ha_configuration
+      - pg_backup_retention
+      - pg_geo_backup
+      - pg_private_endpoints
+      - pg_performance_tuning
+    freshness_expectation: monthly
+    confidence: high
+    mvp_critical: true
+    mcp_tools:
+      - microsoft_docs_search
+      - microsoft_docs_fetch
+
+  - id: ms_learn_ai_search
+    type: microsoft_learn
+    priority: 3
+    location: https://learn.microsoft.com/en-us/azure/search/
+    topics_covered:
+      - ai_search_hybrid_retrieval
+      - semantic_ranking
+      - vector_search
+      - index_management
+      - skillsets
+    freshness_expectation: monthly
+    confidence: high
+    mvp_critical: true
+    mcp_tools:
+      - microsoft_docs_search
+      - microsoft_docs_fetch
+
+  - id: ms_learn_key_vault
+    type: microsoft_learn
+    priority: 3
+    location: https://learn.microsoft.com/en-us/azure/key-vault/
+    topics_covered:
+      - secret_management
+      - access_policies
+      - rbac_model
+      - private_endpoints
+      - managed_identity_integration
+    freshness_expectation: monthly
+    confidence: high
+    mvp_critical: true
+    mcp_tools:
+      - microsoft_docs_search
+      - microsoft_docs_fetch
+
+  - id: ms_learn_waf
+    type: microsoft_learn
+    priority: 3
+    location: https://learn.microsoft.com/en-us/azure/well-architected/
+    topics_covered:
+      - reliability_pillar
+      - security_pillar
+      - cost_optimization_pillar
+      - operational_excellence_pillar
+      - performance_efficiency_pillar
+      - ai_workload_guidance
+    freshness_expectation: monthly
+    confidence: high
+    mvp_critical: true
+    mcp_tools:
+      - microsoft_docs_search
+      - microsoft_docs_fetch
+
+  - id: ms_learn_entra
+    type: microsoft_learn
+    priority: 3
+    location: https://learn.microsoft.com/en-us/entra/
+    topics_covered:
+      - managed_identity
+      - conditional_access
+      - entra_agent_id
+      - mfa_enforcement
+      - service_principals
+    freshness_expectation: monthly
+    confidence: high
+    mvp_critical: true
+    mcp_tools:
+      - microsoft_docs_search
+      - microsoft_docs_fetch
+
+  - id: ms_learn_front_door
+    type: microsoft_learn
+    priority: 3
+    location: https://learn.microsoft.com/en-us/azure/frontdoor/
+    topics_covered:
+      - waf_policy
+      - routing_rules
+      - tls_termination
+      - origin_configuration
+      - health_probes
+    freshness_expectation: monthly
+    confidence: high
+    mvp_critical: false
+    mcp_tools:
+      - microsoft_docs_search
+      - microsoft_docs_fetch
+
+  - id: ms_learn_monitor
+    type: microsoft_learn
+    priority: 3
+    location: https://learn.microsoft.com/en-us/azure/azure-monitor/
+    topics_covered:
+      - log_analytics
+      - application_insights
+      - alert_rules
+      - diagnostic_settings
+      - ai_workload_monitoring
+    freshness_expectation: monthly
+    confidence: high
+    mvp_critical: false
+    mcp_tools:
+      - microsoft_docs_search
+      - microsoft_docs_fetch
+
+  # ── Priority 3: Existing AI Search index ─────────────────────────────────
+
+  - id: ai_search_index_ipai
+    type: microsoft_learn
+    priority: 3
+    location:
+      search_service: srch-ipai-dev
+      search_index: ipai-knowledge-index
+    topics_covered:
+      - odoo_18_docs
+      - oca_18_inventory
+      - bir_compliance
+      - finance_domain
+      - company_info
+      - repo_module_doctrine
+      - postgres_admin
+      - local_platform_ssot
+    freshness_expectation: quarterly
+    confidence: high
+    mvp_critical: true
+    retrieval:
+      mode: hybrid
+      embedding_model: text-embedding-3-small
+      embedding_dimensions: 1536
+
+  # ── Priority 4: Official Microsoft GitHub samples ─────────────────────────
+
+  - id: azure_samples_github
+    type: github_sample
+    priority: 4
+    location: https://github.com/Azure-Samples/
+    topics_covered:
+      - foundry_agent_patterns
+      - aca_deployment_examples
+      - pg_mcp_demo
+      - managed_identity_patterns
+    freshness_expectation: quarterly
+    confidence: medium
+    mvp_critical: false
+    notes: >
+      Validate any adopted pattern against ssot_agent_platform and claude_rules
+      before committing. Never adopt samples that contradict SSOT deprecation
+      list (n8n, Supabase, Cloudflare, Vercel, DigitalOcean).
+
+  # ── Priority 5: Secondary / vendor docs ─────────────────────────────────
+
+  - id: oca_module_docs
+    type: secondary
+    priority: 5
+    location: https://github.com/OCA/
+    topics_covered:
+      - oca_module_readmes
+      - oca_contributing_guidelines
+      - oca_18_branch_inventory
+    freshness_expectation: quarterly
+    confidence: medium
+    mvp_critical: false
+    notes: advisory_only — OCA-first policy, but never override SSOT
+
+  - id: mcp_specification
+    type: secondary
+    priority: 5
+    location: https://spec.modelcontextprotocol.io/
+    topics_covered:
+      - mcp_protocol_spec
+      - mcp_transport_patterns
+      - mcp_server_contracts
+    freshness_expectation: quarterly
+    confidence: medium
+    mvp_critical: false
+    notes: advisory_only — defer to ssot/agent-platform/mcp_policy.yaml for platform decisions
+
+  - id: odoo_18_official_docs
+    type: secondary
+    priority: 5
+    location: https://www.odoo.com/documentation/18.0/
+    topics_covered:
+      - odoo_developer_docs
+      - odoo_admin_guide
+      - odoo_module_development
+    freshness_expectation: quarterly
+    confidence: medium
+    mvp_critical: false
+    notes: >
+      Advisory only for platform-level decisions. Source of truth for Odoo module
+      development is ai_search_index_ipai + claude_rules/odoo-rules.md.
+
+# ---------------------------------------------------------------------------
+# Deprecated sources — never consult
+# ---------------------------------------------------------------------------
+
+deprecated_sources:
+  - id: supabase_docs
+    reason: Supabase fully deprecated 2026-03-26. Azure-native only.
+  - id: cloudflare_docs
+    reason: Cloudflare deprecated 2026-04-07. Azure DNS + Front Door only.
+  - id: n8n_docs
+    reason: n8n deprecated 2026-04-07. Azure Logic Apps / Azure Functions only.
+  - id: vercel_docs
+    reason: Vercel deprecated 2026-03-11. Azure Container Apps only.
+  - id: digitalocean_docs
+    reason: DigitalOcean deprecated 2026-03-15. Azure-native only.
+  - id: mailgun_docs
+    reason: Mailgun deprecated 2026-03-11. Zoho SMTP only.

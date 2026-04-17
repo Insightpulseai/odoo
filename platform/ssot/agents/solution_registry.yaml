@@ -1,0 +1,363 @@
+# =============================================================================
+# SSOT: Solution Bundle Registry
+# =============================================================================
+# Generated: 2026-03-18
+# Source: docs/security/AGENT_CAPABILITY_AUDIT.md
+# Cross-reference: ssot/platform/apps.manifest.yaml
+# =============================================================================
+
+version: "1.0"
+updated_at: "2026-03-18"
+
+solutions:
+  # ---------------------------------------------------------------------------
+  # Pulser Assistant (4-repo product)
+  # ---------------------------------------------------------------------------
+  - id: pulser-assistant
+    name: "Pulser Assistant"
+    type: ai_assistant
+    url: "https://erp.insightpulseai.com"
+    components:
+      - ipai_odoo_copilot
+      - ipai_ai_copilot
+      - foundry_agent: ipai-odoo-copilot-azure
+      - model: gpt-4.1
+      - knowledge: azure_ai_search (srch-ipai-dev)
+    sub_agents:
+      - id: tax-guru-ph
+        name: "Tax Guru PH"
+        type: tax_sub_agent
+        status: spec_complete
+        domain_packs:
+          - TaxPulse-PH-Pack
+        capabilities:
+          - pulser_tax_info
+          - pulser_tax_navigation
+          - pulser_tax_actions
+          - pulser_tax_grounding
+          - pulser_tax_exception_review
+          - pulser_tax_policy_guidance
+          - pulser_tax_filing_prep
+        grounding:
+          hierarchy: 6-tier-ph
+          tiers:
+            - { tier: 1, source: "BIR Revenue Issuances", class: legal_authority }
+            - { tier: 2, source: "BIR Tax Information", class: taxpayer_guidance }
+            - { tier: 3, source: "eBIRForms / BIR eServices", class: execution_entry }
+            - { tier: 4, source: "CGPA CBOK", class: professional_competency }
+            - { tier: 5, source: "Odoo 18 localization", class: erp_execution_benchmark }
+            - { tier: 6, source: "Internal records", class: internal_context }
+        spec_bundles:
+          - spec/pulser-platform/
+          - spec/pulser-agents/
+          - spec/pulser-web/
+          - spec/pulser-odoo/
+    repo_ownership:
+      platform: "PulserTaxRuleSource, TaxEvidenceBundle, TaxExceptionCase"
+      agents: "TaxDeterminationRequest/Result, TaxPolicyAnswer, TaxActionProposal"
+      web: "TaxDecisionCard, TaxExceptionQueueView, TaxEvidenceView"
+      odoo: "ipai.pulser.tax_context, tax_action_request, tax_exception_event"
+    safety:
+      default_action_mode: suggest_only
+      write_policy: read_only
+    canonicality: canonical
+    criticality: core_runtime
+    status: active
+    notes: "Pulser runtime (copilot) is live. Tax Guru PH is spec-complete, not yet runtime-deployed."
+
+  # ---------------------------------------------------------------------------
+  # Core ERP Platform
+  # ---------------------------------------------------------------------------
+  - id: erp-platform
+    name: "Odoo CE 18 ERP"
+    type: erp
+    url: "https://erp.insightpulseai.com"
+    components:
+      - ipai_odoo_copilot
+      - ipai_enterprise_bridge
+      - ipai_workspace_core
+      - ipai_finance_ppm
+      - ipai_hr_expense_liquidation
+      - ipai_finance_close_seed
+      - ipai_project_seed
+    runtime: odoo-web-prod
+    database: pg-odoo-prod
+    auth: entra  # Keycloak deprecated, Entra canonical
+    canonicality: canonical
+    criticality: core_runtime
+    status: active
+
+  # ---------------------------------------------------------------------------
+  # AI Copilot Platform
+  # ---------------------------------------------------------------------------
+  - id: ai-copilot
+    name: "AI Copilot (Microsoft Foundry)"
+    type: ai_platform
+    url: "https://erp.insightpulseai.com/web#action=ipai_odoo_copilot"
+    components:
+      - ipai_odoo_copilot
+      - foundry_agent: ipai-odoo-copilot-azure
+      - model: gpt-4.1
+      - knowledge: azure_ai_search (srch-ipai-dev)
+    logical_agents:
+      - pulser-odoo-ask (read-only Q&A)
+      - pulser-odoo-authoring (draft documents)
+      - pulser-odoo-livechat (website visitor chat)
+      - pulser-odoo-transaction (bounded CRUD, planned)
+    governance:
+      - ssot/ai/agents.yaml
+      - ssot/ai/policies.yaml
+      - ssot/governance/ai-consolidation-foundry.yaml
+    canonicality: canonical
+    criticality: core_runtime
+    status: active
+
+  # ---------------------------------------------------------------------------
+  # Operations Console
+  # ---------------------------------------------------------------------------
+  - id: ops-console
+    name: "Operations Console"
+    type: dashboard
+    url: "https://ops.insightpulseai.com"
+    path: web/apps/ops-console/
+    stack: next.js-15
+    components:
+      - ops dashboard
+      - platform app launcher
+      - activity log
+    canonicality: canonical
+    criticality: important
+    status: active
+    issues:
+      - "Stale AI deps (@ai-sdk/google, @google/generative-ai)"
+
+  # ---------------------------------------------------------------------------
+  # Automation Platform
+  # ---------------------------------------------------------------------------
+  - id: automation-platform
+    name: "n8n Workflow Automation"
+    type: automation
+    url: "https://n8n.insightpulseai.com"
+    components:
+      - n8n self-hosted instance
+      - 70+ workflow definitions (automations/n8n/)
+      - n8n API bridge MCP
+      - Claude AI MCP bridge workflows
+    workflow_categories:
+      - finance: 8 workflows
+      - github_ops: 5 workflows
+      - claude_mcp: 10 workflows
+      - control_plane: 3 workflows
+      - integration: 6 workflows
+      - ppm_clarity: 4 workflows
+      - legacy_notion: 7 workflows (deprecated)
+    canonicality: canonical
+    criticality: important
+    status: active
+
+  # ---------------------------------------------------------------------------
+  # MCP Gateway
+  # ---------------------------------------------------------------------------
+  - id: mcp-gateway
+    name: "MCP Coordination Gateway"
+    type: api_gateway
+    url: "https://mcp.insightpulseai.com"
+    path: agents/mcp/coordinator/
+    components:
+      - FastAPI coordinator (port 8766)
+      - A2A context propagation
+      - Multi-target routing (odoo_prod, odoo_lab, agent_coordination)
+      - GitHub App integration
+    canonicality: canonical
+    criticality: important
+    status: active
+
+  # ---------------------------------------------------------------------------
+  # Document Intelligence
+  # ---------------------------------------------------------------------------
+  - id: document-intelligence
+    name: "Document OCR/AI"
+    type: ai_service
+    url: "https://ocr.insightpulseai.com"
+    path: platform/services/ocr/
+    components:
+      - OCR extraction pipeline (Tesseract/PaddleOCR)
+      - Azure Document Intelligence (docai-ipai-dev)
+      - Receipt extraction endpoint (/extract)
+    canonicality: canonical
+    criticality: important
+    status: active
+
+  # ---------------------------------------------------------------------------
+  # Knowledge & Docs
+  # ---------------------------------------------------------------------------
+  - id: docs-assistant
+    name: "Docs Assistant (RAG)"
+    type: knowledge_system
+    path: agents/docs-assistant/
+    components:
+      - FastAPI answer engine
+      - Supabase pgvector storage
+      - Anthropic Claude generation
+      - OpenAI embeddings
+    canonicality: transitional
+    criticality: experimental
+    status: dev_only
+    migration_target: ai-copilot
+    issues:
+      - "Uses direct Anthropic/OpenAI. Should migrate to Foundry."
+      - "CORS allow all origins."
+
+  # ---------------------------------------------------------------------------
+  # BI & Analytics
+  # ---------------------------------------------------------------------------
+  - id: analytics
+    name: "Apache Superset BI"
+    type: analytics
+    url: "https://superset.insightpulseai.com"
+    path: infra/superset/
+    runtime: superset-bi
+    canonicality: canonical
+    criticality: important
+    status: active
+
+  # ---------------------------------------------------------------------------
+  # Project Management
+  # ---------------------------------------------------------------------------
+  - id: project-management
+    name: "Plane Project Management"
+    type: project_management
+    url: "https://plane.insightpulseai.com"
+    components:
+      - Plane self-hosted instance
+      - MCP server (mcp/servers/plane/)
+      - API client (agents/scripts/plane/lib/plane_api.py)
+      - PPM Clarity n8n sync workflows
+    canonicality: canonical
+    criticality: important
+    status: active
+
+  # ---------------------------------------------------------------------------
+  # Agent Skills Platform
+  # ---------------------------------------------------------------------------
+  - id: agent-skills
+    name: "Agent Skills Library"
+    type: skill_library
+    path: agents/skills/
+    components:
+      - 16 Odoo 18 reference skills
+      - 3 CLI-safe wrappers
+      - 5+ business process skills
+      - OdooOps platform skills (reference only)
+      - Marketplace skills (reference only)
+      - Skill template system
+    total_skills: ~80
+    canonicality: canonical
+    criticality: important
+    status: active
+
+  # ---------------------------------------------------------------------------
+  # Pulser Professional Office Skills
+  # ---------------------------------------------------------------------------
+  - id: office-skills
+    name: "Pulser Professional Office Skills"
+    type: skill_pack
+    components:
+      - powerpoint_studio
+      - word_studio
+      - excel_studio
+    studios:
+      - id: powerpoint-studio
+        name: "PowerPoint Studio"
+        outputs: [PPTX, PDF]
+        grounding: [ppm_okrs, odoo_docs, retained_visuals, policies]
+        quality_gates: [story_flow, no_overflow, render_qa]
+      - id: word-studio
+        name: "Word Studio"
+        outputs: [DOCX, PDF]
+        grounding: [odoo_docs, policy_indexes, approvals]
+        quality_gates: [page_render, hierarchy, citations, signoff]
+      - id: excel-studio
+        name: "Excel Studio"
+        outputs: [XLSX]
+        grounding: [record_metrics, tasks, okrs, derived_formulas]
+        quality_gates: [formula_integrity, recalc, render_qa]
+    agents:
+      - id: office-triage
+        name: "Office Triage Agent"
+        role: request_interpretation_and_studio_routing
+      - id: office-planning
+        name: "Office Planning Agent"
+        role: narrative_structure_and_data_bindings
+      - id: office-grounding
+        name: "Office Research / Grounding Agent"
+        role: enterprise_data_retrieval_and_evidence_classification
+      - id: powerpoint-studio-agent
+        name: "PowerPoint Studio Agent"
+        role: native_pptx_generation
+      - id: word-studio-agent
+        name: "Word Studio Agent"
+        role: native_docx_generation
+      - id: excel-studio-agent
+        name: "Excel Studio Agent"
+        role: native_xlsx_generation
+      - id: publishability-qa
+        name: "Publishability QA Agent"
+        role: governed_pass_fail_gate_before_output
+      - id: evidence-documents
+        name: "Evidence / Documents Agent"
+        role: retention_trace_links_metadata_tagging
+    orchestration: triage → planning → grounding → studio → qa → evidence
+    capability_family: pulser-office-publishing
+    sub_skills:
+      - triage
+      - source-grounding
+      - narrative-planning
+      - ppt-generation
+      - docx-generation
+      - xlsx-generation
+      - formatting-qa
+      - publishability-review
+      - evidence-linking
+    dependencies:
+      runtime: [python-pptx, python-docx, openpyxl]
+      odoo: [ipai_odoo_copilot, project, documents]
+      oca: [report_xlsx]
+    publish_gate:
+      - content_grounded_in_odoo_documents_or_approved_knowledge
+      - artifact_renders_cleanly_no_layout_defects
+      - reviewer_notes_resolved_and_retained_copies_stored
+      - output_ready_to_circulate_without_reformatting
+    success_criteria: [SC-PH-25, SC-PH-26, SC-PH-27, SC-PH-28, SC-PH-29, SC-PH-30]
+    production_boundary:
+      poc: { scope: single_studio_manual_review, gate: internal_only }
+      pilot: { scope: multi_studio_with_qa, gate: reviewer_approved }
+      production: { scope: full_orchestration, gate: governed_publish_flow }
+    release_phases:
+      - { phase: R1, scope: foundation, status: in_progress }
+      - { phase: R2, scope: core, status: planned }
+      - { phase: R3, scope: hardening, status: planned }
+    spec_bundle: spec/pulser-odoo/
+    canonicality: canonical
+    criticality: important
+    status: active
+
+  # ---------------------------------------------------------------------------
+  # SuperClaude Framework (user-local)
+  # ---------------------------------------------------------------------------
+  - id: superclaude
+    name: "SuperClaude Agent Framework"
+    type: agent_framework
+    path: ~/.claude/
+    components:
+      - 17 agent persona definitions
+      - 20+ slash commands
+      - 7 operating modes
+      - Agent registry (AGENT_REGISTRY.md)
+      - Design System Agent
+      - Universal Design Platform agents (10, reference only)
+    canonicality: canonical
+    criticality: optional
+    status: active
+    scope: local_only
+    note: "User-local framework. Not tracked in repo SSOT."

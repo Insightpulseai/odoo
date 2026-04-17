@@ -1,0 +1,104 @@
+# Azure resource tagging doctrine — SSOT
+# Captures the LIVE tag schema observed on Microsoft Azure Sponsorship
+# subscription (2026-04-15) and extends it with FinOps-required tags.
+#
+# This file is authoritative; Azure Policy enforces it at deploy time
+# (see infra/azure/policy/required-tags.bicep — to author).
+#
+# Cross-reference:
+#   - docs/architecture/azure-naming-convention.md (CAF naming)
+#   - platform/contracts/finops/cost-allocation-model.yaml (allocation dimensions)
+#   - ssot/finops/workload-onboarding.yaml (onboarding checklist)
+
+schema_version: "1.0"
+reference:
+  - https://learn.microsoft.com/en-us/azure/cloud-adoption-framework/ready/azure-best-practices/resource-naming
+  - https://learn.microsoft.com/en-us/azure/cloud-adoption-framework/ready/azure-best-practices/resource-tagging
+style: snake_case  # matches live Sponsorship sub; do not migrate to camelCase
+
+# Tags currently applied at the subscription level (observed 2026-04-15)
+subscription_level_tags:
+  azd_env_name: ipai-dev
+  backup_policy: daily
+  billing_scope: core-platform
+  cost_center: ipai-platform
+  criticality: medium
+  data_classification: internal
+  dr_tier: bronze
+  env: dev
+  iteration: R1-Foundation-30d
+  managed_by: manual
+  ops_state: active
+  org: ipai
+  owner: jake@insightpulseai.com
+  plane: shared
+  platform: pulser-odoo
+  repo: github.com/InsightPulseAI/odoo
+  service: azure-sponsorship-root
+  spec_slug: pulser-odoo
+  workload: shared
+
+# Required tags on EVERY Azure resource
+required_tags:
+  - name: env
+    allowed: [dev, staging, prod]
+    inherit_from_subscription: true
+  - name: workload
+    allowed: [pulser, odoo, prismalab, w9, shared]
+  - name: cost_center
+    pattern: '^ipai-[a-z-]+$'
+  - name: owner
+    description: Email or team handle
+  - name: plane
+    allowed: [transaction, data-intelligence, agent-runtime, platform, shared]
+  - name: managed_by
+    allowed: [bicep, terraform, manual, databricks, foundry]
+    default: bicep
+
+# Recommended tags (not enforced, but strongly encouraged)
+recommended_tags:
+  - name: criticality
+    allowed: [low, medium, high, tier0]
+  - name: data_classification
+    allowed: [public, internal, confidential, restricted]
+  - name: backup_policy
+    allowed: [none, daily, weekly, continuous]
+  - name: dr_tier
+    allowed: [none, bronze, silver, gold]
+  - name: spec_slug
+    description: Link to authoritative spec bundle under spec/
+  - name: repo
+    description: Source repo URL
+  - name: benchmark
+    allowed: [d365-finance, d365-project-ops, fabric-for-finops, cdm-lake, agentic-app-with-fabric]
+  - name: tenant
+    description: res.company id (1=IPAI, 2=W9, 3=OMC, 4=TBWA_SMP)
+
+# Optional tags for ops lifecycle
+optional_tags:
+  - name: ops_state
+    allowed: [active, quarantined, decommissioning, retired]
+  - name: iteration
+    description: Release train / sprint
+  - name: azd_env_name
+    description: azd environment name for azd-managed resources
+
+enforcement:
+  mechanism: Azure Policy
+  bicep_module: infra/azure/policy/required-tags.bicep   # to author
+  effect: deny
+  exemption_review_days: 90
+  audit_mode_for_first_days: 30   # run in audit mode before flipping to deny
+
+naming_cross_reference:
+  # Short IDs used in resource names (CAF-aligned)
+  cafNaming: docs/architecture/azure-naming-convention.md
+  example_composition: "{type}-{workload}-{env}-{region}-{nnn}"
+  examples:
+    - rg-ipai-dev-data-sea        # resource group, ipai, dev, data plane, SEA
+    - kv-ipai-dev                 # key vault, ipai, dev
+    - dbw-ipai-dev                # databricks workspace
+    - stipaidevlake               # storage (no-hyphen rule for storage)
+    - oai-ipai-dev                # Azure OpenAI (legacy); new resources: fnd-ipai-<product>-dev-sea
+    - srch-ipai-dev               # AI Search
+    - ipai-odoo-dev-web           # Container App (legacy naming; new: app-ipai-odoo-dev-sea-001)

@@ -1,0 +1,282 @@
+# ssot/reference/fo-domain-to-oca-matrix.yaml
+# Domain-level F&O → Odoo target lane mapping
+# This file maps D365 Finance & Operations functional domains to their
+# target parity lane in the Odoo/OCA/ipai_* stack.
+# It does NOT assert exact OCA module names or implementation completeness.
+
+kind: reference
+domain: reference
+name: fo-domain-to-oca-matrix
+version: "1.0.0"
+status: active
+created: "2026-04-15"
+updated: "2026-04-15"
+
+# TODO: create this file — ssot/reference/fo-to-odoo-parity-map.yaml
+# (detailed per-feature parity map, subordinate to this domain-level matrix)
+
+# TODO: create this file — ssot/contracts/fo-functional-reference.contract.yaml
+# (contract governing how F&O functional gaps are tracked and resolved)
+
+parity_lanes:
+  - id: core_ce
+    label: Core CE
+    description: >
+      Covered by Odoo CE 18 out of the box. No additional modules needed.
+
+  - id: oca_first
+    label: OCA First
+    description: >
+      Covered by OCA community modules. CE config + OCA adoption.
+      No custom ipai_* needed.
+
+  - id: bridge_needed
+    label: Bridge Needed
+    description: >
+      Requires a thin ipai_* bridge module or Azure Functions adapter
+      to connect Odoo with external services or fill a gap.
+
+  - id: analytics_plane
+    label: Analytics Plane
+    description: >
+      Handled by the data intelligence plane (Databricks + Fabric + Power BI).
+      Not an Odoo module concern.
+
+  - id: governance_plane
+    label: Governance Plane
+    description: >
+      Handled by platform governance (Entra ID, Azure Policy, SSOT contracts).
+      Not an Odoo module concern.
+
+  - id: not_targeted
+    label: Not Targeted
+    description: >
+      D365 F&O capability that is out of scope for IPAI. No Odoo equivalent
+      planned or needed.
+
+domain_families:
+
+  - family: finance
+    description: "D365 Finance — GL, AP, AR, Fixed Assets, Budgeting, Cash Management"
+    domains:
+      - name: general_ledger
+        fo_module: "D365 Finance — General Ledger"
+        parity_lane: core_ce
+        target_repo: odoo
+        notes: "Odoo CE 18 account module covers GL natively"
+
+      - name: accounts_payable
+        fo_module: "D365 Finance — Accounts Payable"
+        parity_lane: core_ce
+        target_repo: odoo
+        notes: "CE account module + vendor bills"
+
+      - name: accounts_receivable
+        fo_module: "D365 Finance — Accounts Receivable"
+        parity_lane: core_ce
+        target_repo: odoo
+        notes: "CE account module + customer invoices"
+
+      - name: fixed_assets
+        fo_module: "D365 Finance — Fixed Assets"
+        parity_lane: oca_first
+        target_repo: odoo
+        notes: "OCA account-financial-tools has asset management modules"
+
+      - name: budgeting
+        fo_module: "D365 Finance — Budgeting"
+        parity_lane: oca_first
+        target_repo: odoo
+        notes: "OCA account-budgeting repo"
+
+      - name: cash_management
+        fo_module: "D365 Finance — Cash and Bank Management"
+        parity_lane: core_ce
+        target_repo: odoo
+        notes: "CE bank reconciliation + payment modules"
+
+      - name: cost_accounting
+        fo_module: "D365 Finance — Cost Accounting"
+        parity_lane: oca_first
+        target_repo: odoo
+        notes: "OCA account-analytic modules"
+
+      - name: financial_reporting
+        fo_module: "D365 Finance — Financial Reporting"
+        parity_lane: analytics_plane
+        target_repo: databricks
+        notes: "Power BI + Databricks CDM export pipeline"
+
+  - family: human_resources
+    description: "D365 Human Resources — Personnel, Leave, Benefits, Payroll"
+    domains:
+      - name: personnel_management
+        fo_module: "D365 HR — Personnel Management"
+        parity_lane: core_ce
+        target_repo: odoo
+        notes: "CE hr module"
+
+      - name: leave_and_absence
+        fo_module: "D365 HR — Leave and Absence"
+        parity_lane: core_ce
+        target_repo: odoo
+        notes: "CE hr_holidays module"
+
+      - name: benefits
+        fo_module: "D365 HR — Benefits"
+        parity_lane: oca_first
+        target_repo: odoo
+        notes: "OCA hr modules"
+
+      - name: us_payroll
+        fo_module: "D365 HR — Payroll (US)"
+        parity_lane: bridge_needed
+        target_repo: odoo
+        notes: "Requires localization bridge — not primary IPAI market"
+
+      - name: ph_payroll
+        fo_module: "D365 HR — Payroll (PH)"
+        parity_lane: bridge_needed
+        target_repo: odoo
+        notes: "PH is IPAI's primary market. BIR compliance + SSS/PhilHealth/Pag-IBIG deductions. ipai_* bridge required."
+
+      - name: recruitment
+        fo_module: "D365 HR — Recruitment"
+        parity_lane: core_ce
+        target_repo: odoo
+        notes: "CE hr_recruitment module"
+
+      - name: performance
+        fo_module: "D365 HR — Performance"
+        parity_lane: oca_first
+        target_repo: odoo
+        notes: "OCA hr modules for appraisal/evaluation"
+
+  - family: supply_chain_management
+    description: "D365 SCM — Inventory, Procurement, Warehouse, Manufacturing"
+    domains:
+      - name: inventory_management
+        fo_module: "D365 SCM — Inventory Management"
+        parity_lane: core_ce
+        target_repo: odoo
+        notes: "CE stock module"
+
+      - name: procurement
+        fo_module: "D365 SCM — Procurement and Sourcing"
+        parity_lane: core_ce
+        target_repo: odoo
+        notes: "CE purchase module"
+
+      - name: warehouse_management
+        fo_module: "D365 SCM — Warehouse Management"
+        parity_lane: oca_first
+        target_repo: odoo
+        notes: "CE stock + OCA stock-logistics-warehouse"
+
+      - name: manufacturing
+        fo_module: "D365 SCM — Manufacturing"
+        parity_lane: core_ce
+        target_repo: odoo
+        notes: "CE mrp module"
+
+      - name: product_information
+        fo_module: "D365 SCM — Product Information Management"
+        parity_lane: core_ce
+        target_repo: odoo
+        notes: "CE product module"
+
+      - name: sales_orders
+        fo_module: "D365 SCM — Sales Orders"
+        parity_lane: core_ce
+        target_repo: odoo
+        notes: "CE sale module"
+
+      - name: transportation
+        fo_module: "D365 SCM — Transportation Management"
+        parity_lane: not_targeted
+        target_repo: null
+        notes: "Out of scope for IPAI"
+
+  - family: integrations
+    description: "D365 F&O Integration Services — Data Management, OData, Dual-write"
+    domains:
+      - name: data_management_framework
+        fo_module: "D365 F&O — Data Management Framework (DMF)"
+        parity_lane: analytics_plane
+        target_repo: databricks
+        notes: "CDM export pipeline on Databricks replaces DMF"
+
+      - name: odata_services
+        fo_module: "D365 F&O — OData Services"
+        parity_lane: bridge_needed
+        target_repo: odoo
+        notes: "ipai_* OData adapter or Azure Functions proxy"
+
+      - name: dual_write
+        fo_module: "D365 F&O — Dual-write to Dataverse"
+        parity_lane: not_targeted
+        target_repo: null
+        notes: "No Dataverse equivalent. Fabric mirroring replaces this pattern."
+
+  - family: intelligence
+    description: "D365 F&O Intelligence — Embedded Analytics, AI Insights"
+    domains:
+      - name: embedded_analytics
+        fo_module: "D365 F&O — Embedded Power BI"
+        parity_lane: analytics_plane
+        target_repo: databricks
+        notes: "Power BI connects to Databricks/Fabric, not embedded in Odoo"
+
+      - name: ai_insights
+        fo_module: "D365 F&O — AI Insights (Credit, Forecast)"
+        parity_lane: bridge_needed
+        target_repo: agent-platform
+        notes: "Pulser agents provide equivalent AI-driven insights"
+
+  - family: development
+    description: "D365 F&O Development — X++, Visual Studio, Extensions"
+    domains:
+      - name: x_plus_plus
+        fo_module: "D365 F&O — X++ Development"
+        parity_lane: not_targeted
+        target_repo: null
+        notes: "IPAI displaces D365, never develops in X++. Python + Odoo ORM."
+
+      - name: extension_framework
+        fo_module: "D365 F&O — Extension Framework"
+        parity_lane: core_ce
+        target_repo: odoo
+        notes: "Odoo _inherit + view inheritance replaces X++ extensions"
+
+      - name: lifecycle_services
+        fo_module: "D365 F&O — Lifecycle Services (LCS)"
+        parity_lane: governance_plane
+        target_repo: null
+        notes: "Azure Pipelines + ADO Boards + SSOT contracts replace LCS"
+
+  - family: administration
+    description: "D365 F&O Administration — Security, System Config, Batch Jobs"
+    domains:
+      - name: security_roles
+        fo_module: "D365 F&O — Security Roles and Duties"
+        parity_lane: core_ce
+        target_repo: odoo
+        notes: "CE ir.model.access + record rules + groups"
+
+      - name: system_administration
+        fo_module: "D365 F&O — System Administration"
+        parity_lane: governance_plane
+        target_repo: null
+        notes: "Azure Portal + SSOT + Entra ID"
+
+      - name: batch_processing
+        fo_module: "D365 F&O — Batch Processing"
+        parity_lane: core_ce
+        target_repo: odoo
+        notes: "CE ir.cron + queue_job (OCA)"
+
+      - name: number_sequences
+        fo_module: "D365 F&O — Number Sequences"
+        parity_lane: core_ce
+        target_repo: odoo
+        notes: "CE ir.sequence"

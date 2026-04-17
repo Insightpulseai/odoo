@@ -1,0 +1,192 @@
+# ============================================================
+# VIVA GOALS REPLACEMENT MAP
+# ============================================================
+# Maps every Viva Goals capability to its replacement in
+# the ops-platform stack. Microsoft retired Viva Goals on
+# December 31, 2025 with no first-party replacement.
+# Last updated: 2026-03-15
+# ============================================================
+
+schema_version: "1.0"
+catalog_id: viva-goals-replacement
+retirement_date: "2025-12-31"
+retirement_reason: "Microsoft discontinued Viva Goals with no successor"
+
+# ----------------------------------------------------------
+# Capability mapping
+# ----------------------------------------------------------
+capabilities:
+
+  # --- OKR Hierarchy ---
+  - viva_capability: "OKR hierarchy (org → team → individual)"
+    replacement: "release-90day-plan.yaml + okr-alignment.yaml"
+    replacement_location: "ssot/releases/"
+    status: shipped
+    notes: >
+      Objectives map to release milestones (R0-R7).
+      Key results map to exit criteria per release.
+      Team alignment via certification-ownership.yaml.
+
+  # --- Check-ins ---
+  - viva_capability: "Periodic check-ins with progress updates"
+    replacement: "Cron-driven automated check-ins"
+    replacement_location: "ssot/cron-schedule.yaml (lakehouse)"
+    status: shipped
+    notes: >
+      Daily smoke evals, weekly lane promotions, biweekly
+      release trains replace manual Viva Goals check-ins.
+
+  # --- Azure DevOps Integration ---
+  - viva_capability: "Azure DevOps work item sync"
+    replacement: "R4 — ADO Release-Control Integration"
+    replacement_location: "ops-platform (R4 deliverable)"
+    status: planned
+    target_release: R4
+    notes: >
+      ADO Boards binding, release item linking, test plan
+      linkage, promotion gates in pipeline. Ships Month 3.
+
+  # --- Jira Integration ---
+  - viva_capability: "Jira issue tracking sync"
+    replacement: "Not needed — ADO is primary tracker"
+    replacement_location: null
+    status: not_applicable
+    notes: "Stack uses ADO, not Jira. No replacement needed."
+
+  # --- Salesforce Integration ---
+  - viva_capability: "Salesforce CRM data for KR tracking"
+    replacement: "Not needed — no Salesforce in stack"
+    replacement_location: null
+    status: not_applicable
+    notes: "Odoo CRM replaces Salesforce. Direct Odoo queries."
+
+  # --- Tableau Integration ---
+  - viva_capability: "Tableau dashboard embedding in OKRs"
+    replacement: "R5 — Tableau / BI Connector Surface"
+    replacement_location: "ops-platform (R5 deliverable)"
+    status: planned
+    target_release: R5
+    notes: >
+      Governed metric export, semantic access layer,
+      Tableau Cloud consumption path. Ships Month 3.
+
+  # --- Power BI Integration ---
+  - viva_capability: "Power BI dataset binding"
+    replacement: "Apache Superset (self-hosted)"
+    replacement_location: "infra/superset/"
+    status: available
+    notes: >
+      Superset replaces Power BI for BI. Self-hosted,
+      cost-minimized, connects to same PostgreSQL sources.
+
+  # --- Excel Integration ---
+  - viva_capability: "Excel online data push/pull"
+    replacement: "CSV/JSON export from Ops Console"
+    replacement_location: "ops-platform (R3 deliverable)"
+    status: planned
+    target_release: R3
+
+  # --- GitHub Integration ---
+  - viva_capability: "GitHub issue/PR tracking for KRs"
+    replacement: "GitHub Actions CI + pulser-hub webhooks"
+    replacement_location: ".github/workflows/ + n8n"
+    status: available
+    notes: >
+      Already functional. CI status feeds into governance.
+      pulser-hub app routes events through n8n to Odoo.
+
+  # --- Dashboard ---
+  - viva_capability: "Viva Goals dashboard and explorer"
+    replacement: "Ops Console (R3)"
+    replacement_location: "ops-platform/apps/ops-console/"
+    status: planned
+    target_release: R3
+    notes: >
+      Single screen: what exists, what's deployable, what's
+      blocked. Plus OKR progress view from okr-alignment.yaml.
+
+  # --- Rhythm of Business ---
+  - viva_capability: "Rhythm of business (weekly/monthly/quarterly)"
+    replacement: "Release lanes + cron schedule"
+    replacement_location: "ssot/release-lanes.yaml + cron-schedule.yaml"
+    status: shipped
+    notes: >
+      Lane A (weekly), Lane B (biweekly), Lane C (monthly)
+      plus quarterly OKR review. Cadence is encoded in YAML.
+
+  # --- Teams & Roles ---
+  - viva_capability: "Organization/team structure with roles"
+    replacement: "Certification ownership lanes"
+    replacement_location: "ssot/certification-ownership.yaml (lakehouse)"
+    status: shipped
+    notes: >
+      Six ownership lanes mapped to MS/GitHub certifications.
+      Each lane has signoff authority for its domain.
+
+  # --- Notifications ---
+  - viva_capability: "Email/Teams notifications for OKR updates"
+    replacement: "Slack + n8n webhook notifications"
+    replacement_location: "n8n workflows"
+    status: available
+    notes: >
+      Slack replaces Teams. n8n routes events to channels.
+      No Viva Goals notification dependency.
+
+  # --- Viva Goals API ---
+  - viva_capability: "REST API for programmatic OKR management"
+    replacement: "YAML-as-API + Ops Console API (R3)"
+    replacement_location: "ssot/ YAMLs + ops-console API"
+    status: partial
+    target_release: R3
+    notes: >
+      YAMLs are the source of truth today. Ops Console
+      will add a REST API for programmatic access.
+
+# ----------------------------------------------------------
+# Architecture comparison
+# ----------------------------------------------------------
+architecture_comparison:
+  viva_goals:
+    frontend: "Azure Front Door → React SPA"
+    backend: "Azure App Service"
+    database: "Azure Cosmos DB for PostgreSQL"
+    search: "Azure Cognitive Search"
+    auth: "Azure AD / Entra ID"
+    cost: "$6/user/month (Viva Suite) — now discontinued"
+
+  ops_platform:
+    frontend: "Ops Console (R3) — self-hosted"
+    backend: "Agent Factory control plane"
+    database: "PostgreSQL 16 (self-hosted) + Supabase"
+    search: "pgvector + Supabase full-text search"
+    auth: "Keycloak SSO (self-hosted)"
+    cost: "$0 additional (runs on existing DO droplet)"
+
+# ----------------------------------------------------------
+# Migration recommendations
+# ----------------------------------------------------------
+migration:
+  from_viva_goals:
+    - step: "Export OKRs from Viva Goals before Dec 31, 2025"
+      status: "deadline_passed"
+      notes: "If data wasn't exported, it's gone."
+
+    - step: "Map objectives to release milestones"
+      status: "done"
+      artifact: "ssot/releases/release-90day-plan.yaml"
+
+    - step: "Map key results to exit criteria"
+      status: "done"
+      artifact: "ssot/releases/release-90day-plan.yaml"
+
+    - step: "Map check-in cadence to cron schedule"
+      status: "done"
+      artifact: "ssot/cron-schedule.yaml (lakehouse)"
+
+    - step: "Map team structure to ownership lanes"
+      status: "done"
+      artifact: "ssot/certification-ownership.yaml (lakehouse)"
+
+    - step: "Build dashboard replacement"
+      status: "planned"
+      artifact: "ops-platform/apps/ops-console/ (R3)"

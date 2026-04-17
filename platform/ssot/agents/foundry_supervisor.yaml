@@ -1,0 +1,24 @@
+version: 1
+mode:
+  default: dry-run
+  supported:
+    - dry-run
+    - live
+cadence:
+  poll_interval_seconds: 30
+idempotency:
+  transition_key_format: "<agent_id>:<from_stage>:<to_stage>:<gate_version>"
+  duplicate_policy: reject
+locking:
+  strategy: filesystem_wx
+  live_required: true
+records:
+  schema: ssot/agents/promotion_record.schema.json
+  immutable: true
+  overwrite_policy: forbid
+observability:
+  metrics_path: /metrics
+  health_path: /healthz
+ci_contract:
+  command: "agents foundry ci-run <agent-id> <stage>"
+  fail_closed: true

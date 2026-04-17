@@ -1,0 +1,27 @@
+version: 1
+name: eval-engine
+status: proposed
+
+authority:
+  spec_bundle: spec/eval-engine-hardening
+  schemas:
+    score: ssot/agents/eval_score_contract.schema.json
+    metrics: ssot/agents/eval_metrics_contract.yaml
+
+execution:
+  mode: synchronous
+  fail_closed_on_ambiguity: true
+  timeout_seconds: 120
+  max_retries: 3
+
+thresholds:
+  confidence_min: 0.8
+  required_evidence_refs: true
+  score_mapping:
+    pass: ["pass", "approved"]
+    fail: ["fail", "rejected", "ambiguous", "malformed"]
+
+observability:
+  metrics_path: /metrics
+  health_path: /healthz
+  audit_events_required: true

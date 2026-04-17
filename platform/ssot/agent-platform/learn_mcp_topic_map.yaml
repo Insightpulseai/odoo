@@ -1,0 +1,408 @@
+# =============================================================================
+# Microsoft Learn MCP Topic Map — Agent Platform SSOT
+# =============================================================================
+# Enumerates the exact Microsoft Learn topics the IPAI agent platform uses
+# via the Learn MCP server. Agents MUST query these topics as step 2 of the
+# gap-closure workflow (after inspecting repo evidence, before patching).
+#
+# MCP Server: https://learn.microsoft.com/api/mcp
+# Registered in: .codex/config.toml [mcp_servers.microsoft-learn]
+#
+# Cross-references:
+#   - ssot/agent-platform/knowledge_sources.yaml  (source precedence)
+#   - ssot/agent-platform/skills_manifest.yaml    (skill-level query counts)
+#   - ssot/agent-platform/knowledge_taxonomy.yaml (canonical vs deferred classification)
+#   - ssot/agent-platform/mcp_policy.yaml         (MCP controls and auth)
+#
+# Tool usage rules (from foundry_tool_policy.yaml):
+#   Built-in > function_calling > OpenAPI > MCP > A2A
+#   Use MCP for externally maintained tool surfaces only.
+#   Required controls: allowed_tools, approval for high-risk, audit logging.
+# =============================================================================
+
+version: 1
+artifact: ssot/agent-platform/learn_mcp_topic_map.yaml
+source_of_truth: true
+profile: insightpulseai-learn-mcp-topics
+
+purpose:
+  description: microsoft_learn_mcp_topic_map_for_azure_foundry_odoo_architecture
+
+# ---------------------------------------------------------------------------
+# MCP server configuration
+# ---------------------------------------------------------------------------
+
+mcp_server:
+  url: https://learn.microsoft.com/api/mcp
+  config_ref: .codex/config.toml
+  tools:
+    - id: microsoft_docs_search
+      description: >
+        Breadth search across Microsoft Learn. Returns up to 10 ranked chunks.
+        Use for topic discovery and authoritative pattern retrieval.
+      usage: search_first_then_fetch_for_depth
+
+    - id: microsoft_code_sample_search
+      description: >
+        Code-focused search. Returns working snippets filtered by language.
+        Use with language="python" for Foundry SDK patterns.
+      usage: supplement_docs_search_for_implementation_detail
+
+    - id: microsoft_docs_fetch
+      description: >
+        Fetch full page markdown from a known URL. Use when you have a specific
+        reference URL from docs_search and need the full content.
+      usage: deep_fetch_for_known_urls_from_fallback_urls
+
+# ---------------------------------------------------------------------------
+# Topic buckets
+# ---------------------------------------------------------------------------
+# Each topic has: topic_key, canonical_product, why_it_matters, mvp_critical,
+# recommended_queries (2-4 strings), fallback_urls (1-2), exclusion_notes.
+#
+# Query format: pass the string directly to microsoft_docs_search().
+# mvp_critical=true: agent MUST query before closing any related gap.
+# mvp_critical=false: query only if explicitly required by skill contract.
+
+topics:
+
+  # ── Azure AI Foundry ──────────────────────────────────────────────────────
+
+  foundry_overview:
+    topic_key: foundry_overview
+    canonical_product: Azure AI Foundry
+    why_it_matters: >
+      Central AI orchestration plane for agent runtime. ipai-copilot project
+      lives in this service (rg-data-intel-ph, eastus2). All agent definitions,
+      model deployments, and tool bindings flow through Foundry.
+    mvp_critical: true
+    recommended_queries:
+      - "Azure AI Foundry overview project setup resource"
+      - "Azure AI Foundry SDK Python v2 quickstart"
+      - "Azure AI Foundry project endpoint connection string"
+      - "Azure AI Foundry hub project resource hierarchy"
+    fallback_urls:
+      - https://learn.microsoft.com/en-us/azure/ai-services/agents/overview
+      - https://learn.microsoft.com/en-us/azure/ai-studio/what-is-ai-studio
+    exclusion_notes: >
+      Do not include Azure Machine Learning classic studio content.
+      Do not include Azure AI Studio v1 content predating the Foundry rename.
+      Prefer content explicitly referencing "Azure AI Foundry" branding.
+
+  foundry_agent_service:
+    topic_key: foundry_agent_service
+    canonical_product: Azure AI Foundry Agent Service
+    why_it_matters: >
+      Runtime for registering and executing IPAI agents (pulser-erp, ask-agent,
+      foundry-agent, etc.). Governs thread management, tool execution, and
+      multi-agent handoff. SDK v2 is the mandatory integration path.
+    mvp_critical: true
+    recommended_queries:
+      - "Azure AI Foundry Agent Service Python SDK create agent thread"
+      - "Azure AI Foundry Agent Service tool definitions function calling"
+      - "Azure AI Foundry Agent Service connected agents handoff"
+      - "Azure AI Foundry Agent Service SDK v2 migration from v1"
+    fallback_urls:
+      - https://learn.microsoft.com/en-us/azure/ai-services/agents/quickstart
+      - https://learn.microsoft.com/en-us/azure/ai-services/agents/how-to/tools/overview
+    exclusion_notes: >
+      Do not include semantic-kernel or LangChain agent patterns unless the
+      repo SSOT explicitly requires them. Foundry SDK v2 native patterns only.
+      Never use from_connection_string (deprecated v1 pattern).
+
+  foundry_iq:
+    topic_key: foundry_iq
+    canonical_product: Azure AI Foundry — Grounding and Knowledge
+    why_it_matters: >
+      Governs how IPAI agents ground responses in Azure AI Search index
+      (ipai-knowledge-index on srch-ipai-dev) and Bing grounding.
+      Covers file_search tool, vector store management, and RAG integration.
+    mvp_critical: true
+    recommended_queries:
+      - "Azure AI Foundry file search vector store grounding"
+      - "Azure AI Foundry Bing grounding tool agent"
+      - "Azure AI Foundry knowledge retrieval semantic search"
+    fallback_urls:
+      - https://learn.microsoft.com/en-us/azure/ai-services/agents/how-to/tools/file-search
+      - https://learn.microsoft.com/en-us/azure/ai-services/agents/how-to/tools/bing-grounding
+    exclusion_notes: >
+      Do not confuse with "Foundry IQ" as a separate product. This covers
+      grounding capabilities within Foundry Agent Service specifically.
+
+  rag_design:
+    topic_key: rag_design
+    canonical_product: Retrieval-Augmented Generation on Azure
+    why_it_matters: >
+      IPAI agents use hybrid semantic+keyword retrieval against ipai-knowledge-index
+      (text-embedding-3-small, 1536 dims). Chunk strategy: 500-1000 tokens,
+      50 token overlap. Correct RAG design is foundational for answer quality.
+    mvp_critical: true
+    recommended_queries:
+      - "Azure AI Search RAG retrieval augmented generation pattern"
+      - "Azure AI Foundry RAG chunking strategy embedding model selection"
+      - "Azure AI Search hybrid semantic keyword search ranking"
+    fallback_urls:
+      - https://learn.microsoft.com/en-us/azure/search/retrieval-augmented-generation-overview
+      - https://learn.microsoft.com/en-us/azure/ai-services/agents/concepts/model-region-support
+    exclusion_notes: >
+      Avoid generic RAG tutorials not specific to Azure AI Search + Foundry.
+      Text-embedding-3-small is the deployed model — do not substitute
+      text-embedding-ada-002 patterns.
+
+  # ── Azure AI Search ───────────────────────────────────────────────────────
+
+  ai_search_vector_search:
+    topic_key: ai_search_vector_search
+    canonical_product: Azure AI Search
+    why_it_matters: >
+      srch-ipai-dev hosts ipai-knowledge-index with 7224+ chunks. Correct
+      vector search, semantic ranking, and hybrid mode configuration directly
+      affects agent answer quality for all Odoo/finance/compliance domains.
+    mvp_critical: true
+    recommended_queries:
+      - "Azure AI Search vector search hybrid retrieval semantic ranking"
+      - "Azure AI Search index management skillset enrichment"
+      - "Azure AI Search integrated vectorization text-embedding-3-small"
+      - "Azure AI Search private endpoint managed identity access"
+    fallback_urls:
+      - https://learn.microsoft.com/en-us/azure/search/search-what-is-azure-search
+      - https://learn.microsoft.com/en-us/azure/search/vector-search-overview
+    exclusion_notes: >
+      Do not include Azure Cognitive Search classic content predating the
+      AI Search rename. Prefer content referencing semantic ranker v3+.
+
+  # ── Azure Container Apps ──────────────────────────────────────────────────
+
+  azure_container_apps:
+    topic_key: azure_container_apps
+    canonical_product: Azure Container Apps
+    why_it_matters: >
+      ca-ipai-dev is the canonical runtime for all IPAI services including
+      Odoo 18 CE containers. ACA scaling, revision management, ingress,
+      and health probe patterns are required knowledge for the aca-private-networking
+      and odoo-release-promotion gap-closure skills.
+    mvp_critical: true
+    recommended_queries:
+      - "Azure Container Apps deployment scaling revisions ingress"
+      - "Azure Container Apps private networking VNET subnet NSG"
+      - "Azure Container Apps managed identity Key Vault integration"
+      - "Azure Container Apps health probes liveness readiness"
+    fallback_urls:
+      - https://learn.microsoft.com/en-us/azure/container-apps/overview
+      - https://learn.microsoft.com/en-us/azure/container-apps/networking
+    exclusion_notes: >
+      Do not include AKS (Kubernetes Service) content — ACA is the mandatory
+      compute target per compute_hosting_doctrine. Do not include
+      App Service content unless explicitly bounded as an exception.
+
+  # ── Azure Key Vault ───────────────────────────────────────────────────────
+
+  key_vault:
+    topic_key: key_vault
+    canonical_product: Azure Key Vault
+    why_it_matters: >
+      kv-ipai-dev is the canonical secrets store. All SMTP credentials
+      (Zoho), PostgreSQL passwords, and API keys are resolved at runtime
+      via managed identity → Key Vault. Correct access policy and RBAC
+      configuration is a P0 security requirement.
+    mvp_critical: true
+    recommended_queries:
+      - "Azure Key Vault RBAC secrets access managed identity ACA"
+      - "Azure Key Vault private endpoint network access restriction"
+      - "Azure Key Vault secret versioning rotation policy"
+    fallback_urls:
+      - https://learn.microsoft.com/en-us/azure/key-vault/general/overview
+      - https://learn.microsoft.com/en-us/azure/key-vault/general/rbac-guide
+    exclusion_notes: >
+      Avoid access policy (legacy) patterns — RBAC model is mandatory per
+      azure-policy-guardrails skill. Never recommend hardcoded secrets.
+
+  # ── Private Endpoints ─────────────────────────────────────────────────────
+
+  private_endpoints:
+    topic_key: private_endpoints
+    canonical_product: Azure Private Link / Private Endpoints
+    why_it_matters: >
+      Required to close the public PG exposure gap (pg-ipai-odoo must not
+      have public endpoint). Also required for AI Search and Key Vault
+      internal access from ACA. Governs aca-private-networking skill.
+    mvp_critical: true
+    recommended_queries:
+      - "Azure private endpoint setup PostgreSQL Flexible Server"
+      - "Azure private link private endpoint ACA container apps integration"
+      - "Azure private DNS zone private endpoint name resolution"
+    fallback_urls:
+      - https://learn.microsoft.com/en-us/azure/private-link/private-endpoint-overview
+      - https://learn.microsoft.com/en-us/azure/postgresql/flexible-server/concepts-networking-private
+    exclusion_notes: >
+      Do not include service endpoints as a substitute — private endpoints
+      are required per azure-policy-guardrails (deny public PG policy).
+
+  # ── Azure PostgreSQL Flexible Server ─────────────────────────────────────
+
+  azure_postgresql_flexible_server:
+    topic_key: azure_postgresql_flexible_server
+    canonical_product: Azure Database for PostgreSQL — Flexible Server
+    why_it_matters: >
+      pg-ipai-odoo (General Purpose tier) is the sole production database
+      for Odoo 18 CE. HA, backup retention, geo-backup, and private networking
+      are all P0 gaps that drive azure-pg-ha-dr skill.
+    mvp_critical: true
+    recommended_queries:
+      - "Azure PostgreSQL Flexible Server high availability zone redundant"
+      - "Azure PostgreSQL Flexible Server backup retention geo-redundant backup"
+      - "Azure PostgreSQL Flexible Server private endpoint VNET integration"
+      - "Azure PostgreSQL Flexible Server major version upgrade"
+    fallback_urls:
+      - https://learn.microsoft.com/en-us/azure/postgresql/flexible-server/overview
+      - https://learn.microsoft.com/en-us/azure/postgresql/flexible-server/concepts-high-availability
+    exclusion_notes: >
+      Do not include Single Server content — Single Server is deprecated.
+      pg-ipai-odoo uses General Purpose SKU, not Burstable (ipai-odoo-dev-pg
+      was Burstable and is now deprecated). Odoo 18 requires PostgreSQL 16.
+
+  # ── AI Well-Architected Guidance ──────────────────────────────────────────
+
+  ai_well_architected_guidance:
+    topic_key: ai_well_architected_guidance
+    canonical_product: Azure Well-Architected Framework — AI Workloads
+    why_it_matters: >
+      IPAI benchmark model is anchored to WAF pillars (Reliability, Security,
+      Cost, OpEx, Performance). AI-specific WAF guidance governs agent platform
+      design decisions including stateless agents, external session state,
+      and sequential orchestration defaults.
+    mvp_critical: true
+    recommended_queries:
+      - "Azure Well-Architected Framework AI workload reliability security"
+      - "Azure Well-Architected Framework AI agent stateless session management"
+      - "Azure Well-Architected operational excellence AI platform monitoring"
+    fallback_urls:
+      - https://learn.microsoft.com/en-us/azure/well-architected/
+      - https://learn.microsoft.com/en-us/azure/well-architected/ai/get-started
+    exclusion_notes: >
+      Prefer AI-specific WAF guidance over generic WAF pillars when
+      both are available. Generic WAF still applies — do not exclude it.
+
+  # ── AI Evaluation and Monitoring ──────────────────────────────────────────
+
+  ai_evaluation_and_monitoring:
+    topic_key: ai_evaluation_and_monitoring
+    canonical_product: Azure AI Foundry — Evaluation and Monitoring
+    why_it_matters: >
+      ipai-copilot eval suite must expand from 2 to 50+ cases (odoo-copilot-evals
+      skill). Foundry's built-in evaluators (groundedness, relevance, coherence,
+      fluency) and openai_client.evals API are the canonical evaluation path.
+    mvp_critical: false
+    recommended_queries:
+      - "Azure AI Foundry evaluation metrics groundedness relevance coherence"
+      - "Azure AI Foundry online evaluation monitoring production agents"
+      - "Azure AI Foundry prompt flow evaluation SDK"
+    fallback_urls:
+      - https://learn.microsoft.com/en-us/azure/ai-studio/concepts/evaluation-approach-gen-ai
+      - https://learn.microsoft.com/en-us/azure/ai-services/agents/concepts/tracing
+    exclusion_notes: >
+      Do not use third-party eval frameworks unless the SSOT explicitly requires.
+      Foundry built-in evaluators are preferred per foundry_tool_policy.yaml.
+
+  # ── Content Safety ────────────────────────────────────────────────────────
+
+  content_safety:
+    topic_key: content_safety
+    canonical_product: Azure AI Content Safety
+    why_it_matters: >
+      All IPAI agents serving external users (livechat-agent, ask-agent) must
+      apply content safety filtering. Foundry Agent Service includes built-in
+      content safety that must be configured — not bypassed.
+    mvp_critical: false
+    recommended_queries:
+      - "Azure AI Content Safety Foundry agent integration"
+      - "Azure AI Content Safety prompt shield groundedness"
+    fallback_urls:
+      - https://learn.microsoft.com/en-us/azure/ai-services/content-safety/overview
+      - https://learn.microsoft.com/en-us/azure/ai-services/agents/concepts/content-filtering
+    exclusion_notes: >
+      Do not disable content safety filters without explicit security review.
+      Filter configuration must be committed to ssot/ai/*.yaml.
+
+  # ── Managed Identity ──────────────────────────────────────────────────────
+
+  managed_identity:
+    topic_key: managed_identity
+    canonical_product: Azure Managed Identity (Entra ID)
+    why_it_matters: >
+      All service-to-service auth in IPAI uses Managed Identity → Key Vault.
+      No hardcoded credentials. Covers ACA → Key Vault, ACA → PG, Foundry →
+      AI Search, and all runtime bindings. Governs entra-mfa-ca-hardening skill.
+    mvp_critical: true
+    recommended_queries:
+      - "Azure managed identity ACA container apps assignment Key Vault"
+      - "Azure managed identity Foundry agent service project connection"
+      - "Azure managed identity user-assigned system-assigned comparison"
+    fallback_urls:
+      - https://learn.microsoft.com/en-us/entra/identity/managed-identities-azure-resources/overview
+      - https://learn.microsoft.com/en-us/azure/container-apps/managed-identity
+    exclusion_notes: >
+      Never recommend API keys or service principal secrets as the primary
+      auth method for IPAI services. Managed Identity is mandatory.
+
+  # ── Azure Front Door ──────────────────────────────────────────────────────
+
+  azure_front_door:
+    topic_key: azure_front_door
+    canonical_product: Azure Front Door
+    why_it_matters: >
+      Azure Front Door is the canonical edge layer for all IPAI public services
+      (replaces public nginx edge, deprecated 2026-03-15). WAF policy, routing
+      rules, TLS, and origin configuration affect all user-facing endpoints.
+    mvp_critical: false
+    recommended_queries:
+      - "Azure Front Door WAF policy routing rules TLS origin"
+      - "Azure Front Door ACA origin private link integration"
+    fallback_urls:
+      - https://learn.microsoft.com/en-us/azure/frontdoor/front-door-overview
+      - https://learn.microsoft.com/en-us/azure/frontdoor/standard-premium/concept-private-link
+    exclusion_notes: >
+      Do not include Classic Front Door content — Standard/Premium tier only.
+      Cloudflare is fully deprecated (2026-04-07) — never suggest it as an
+      alternative edge layer.
+
+  # ── Azure Monitor for AI ──────────────────────────────────────────────────
+
+  azure_monitor_for_ai:
+    topic_key: azure_monitor_for_ai
+    canonical_product: Azure Monitor — AI and Agent Observability
+    why_it_matters: >
+      Foundry agent tracing, token usage, latency, and error telemetry must
+      flow into Log Analytics (azure-observability-baseline skill). Application
+      Insights instrumentation is required for all ACA-hosted services.
+    mvp_critical: false
+    recommended_queries:
+      - "Azure Monitor Application Insights ACA container apps instrumentation"
+      - "Azure AI Foundry agent tracing telemetry Log Analytics"
+      - "Azure Monitor alert rules AI workload error budget SLO"
+    fallback_urls:
+      - https://learn.microsoft.com/en-us/azure/azure-monitor/overview
+      - https://learn.microsoft.com/en-us/azure/ai-services/agents/concepts/tracing
+    exclusion_notes: >
+      Do not use third-party APM tools. Azure Monitor + Application Insights
+      is the canonical observability stack per SSOT.
+
+  # ── Azure ML AutoML (deferred) ────────────────────────────────────────────
+
+  azure_ml_automl:
+    topic_key: azure_ml_automl
+    canonical_product: Azure Machine Learning — AutoML
+    why_it_matters: >
+      DEFERRED. Azure ML AutoML is not on the MVP critical path. Databricks
+      is the canonical data engineering and ML training plane. Do not introduce
+      Azure ML unless repo SSOT explicitly requires it.
+    mvp_critical: false
+    recommended_queries:
+      - "Azure Machine Learning AutoML tabular classification regression"
+    fallback_urls:
+      - https://learn.microsoft.com/en-us/azure/machine-learning/concept-automated-ml
+    exclusion_notes: >
+      Do not adopt AzureML patterns for workloads already covered by
+      Databricks (data-intelligence/) or Foundry (agent runtime).
+      AzureML is optional/deferred — query only if a skill contract
+      explicitly requires it.

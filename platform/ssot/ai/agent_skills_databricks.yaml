@@ -1,0 +1,270 @@
+version: 1
+namespace: odoo.ai.agent_skills.databricks
+last_reviewed: "2026-03-15"
+source:
+  kind: skill_contract
+  knowledge_base: lakehouse/ssot/benchmark/databricks_apps_lakebase_kb.yaml
+description: >
+  Agent skill definitions derived from Databricks Apps + Lakebase patterns.
+  These skills define what Odoo Copilot agents should be able to do when
+  interacting with Databricks-hosted analytics, Lakebase transactional
+  data, and AI agent orchestration patterns. Each skill maps a Databricks
+  capability to an Odoo Copilot operational surface.
+
+# ─────────────────────────────────────────────
+# 1. Data Access Skills
+# ─────────────────────────────────────────────
+skills:
+  query_lakebase_synced:
+    label: Query Lakebase Synced Table
+    category: data_access
+    description: >
+      Read analytical data from a Lakebase synced table that mirrors a
+      Unity Catalog Delta table. Used for surfacing lakehouse insights
+      (Gold tables, feature outputs, ML predictions) inside Odoo workflows.
+    trigger: Agent needs analytical context that lives in the lakehouse
+    inputs:
+      - { name: table_ref, type: string, description: "schema.table in Lakebase" }
+      - { name: query, type: string, description: "SQL query or natural language question" }
+      - { name: limit, type: integer, default: 100 }
+    outputs:
+      - { name: rows, type: "array[object]" }
+      - { name: row_count, type: integer }
+    auth:
+      method: oauth_m2m
+      token_source: databricks_workspace_client
+      refresh: automatic
+    constraints:
+      - Read-only access to synced tables
+      - Respects Unity Catalog governance
+      - Sub-10ms latency target
+
+  write_lakebase_state:
+    label: Write Application State to Lakebase
+    category: data_access
+    description: >
+      Write operational state (approvals, assignments, comments, status
+      updates) to a Lakebase app table. Used when Odoo workflow actions
+      need to persist state that feeds back into analytical pipelines.
+    trigger: Agent completes an action that should be recorded transactionally
+    inputs:
+      - { name: table_ref, type: string }
+      - { name: operation, type: enum, values: [insert, update, delete] }
+      - { name: data, type: object }
+      - { name: where_clause, type: string, required: false }
+    outputs:
+      - { name: affected_rows, type: integer }
+      - { name: success, type: boolean }
+    auth:
+      method: oauth_m2m
+      token_source: databricks_workspace_client
+    constraints:
+      - ACID transaction semantics
+      - Separate from synced tables (never write to synced tables)
+      - Audit trail via Unity Catalog
+
+  reverse_etl_status:
+    label: Check Reverse ETL Sync Status
+    category: data_access
+    description: >
+      Check the status and freshness of a Lakebase synced table pipeline.
+      Used to verify data currency before making decisions based on
+      analytical data.
+    trigger: Agent needs to confirm data freshness before acting
+    inputs:
+      - { name: synced_table_name, type: string }
+    outputs:
+      - { name: sync_mode, type: enum, values: [snapshot, triggered, continuous] }
+      - { name: last_sync_at, type: datetime }
+      - { name: sync_status, type: enum, values: [running, succeeded, failed] }
+      - { name: row_count, type: integer }
+
+# ─────────────────────────────────────────────
+# 2. Agent Memory Skills
+# ─────────────────────────────────────────────
+  checkpoint_save:
+    label: Save Agent Checkpoint
+    category: agent_memory
+    description: >
+      Persist agent execution state to Lakebase using LangGraph
+      checkpointing. Enables multi-session workflows where agents
+      can pause and resume with full context.
+    trigger: Agent completes a workflow step that should be resumable
+    inputs:
+      - { name: thread_id, type: string }
+      - { name: state, type: object, description: "Messages, tool calls, intermediate results" }
+    outputs:
+      - { name: checkpoint_id, type: string }
+      - { name: persisted, type: boolean }
+    pattern: langgraph_checkpoint_postgres
+    constraints:
+      - Thread-level isolation
+      - Low-latency writes (sub-10ms target)
+      - State includes full message history + tool call results
+
+  checkpoint_resume:
+    label: Resume Agent From Checkpoint
+    category: agent_memory
+    description: >
+      Restore agent state from a Lakebase checkpoint to resume a
+      multi-step workflow. Retrieves prior messages, tool calls, and
+      intermediate state for the given thread.
+    trigger: User or system resumes a previously paused workflow
+    inputs:
+      - { name: thread_id, type: string }
+    outputs:
+      - { name: state, type: object }
+      - { name: message_count, type: integer }
+      - { name: last_checkpoint_at, type: datetime }
+    pattern: langgraph_checkpoint_postgres
+
+  memory_manage:
+    label: Manage Agent Memory
+    category: agent_memory
+    description: >
+      List, inspect, or clean up agent conversation threads stored
+      in Lakebase. Supports both short-term (thread-level) and
+      long-term (cross-thread) memory patterns.
+    trigger: Admin or agent needs to manage memory lifecycle
+    inputs:
+      - { name: operation, type: enum, values: [list_threads, get_thread, delete_thread, get_long_term] }
+      - { name: thread_id, type: string, required: false }
+      - { name: user_id, type: string, required: false }
+    outputs:
+      - { name: threads, type: "array[object]", required: false }
+      - { name: thread, type: object, required: false }
+
+# ─────────────────────────────────────────────
+# 3. Governed Tool Skills
+# ─────────────────────────────────────────────
+  invoke_uc_function:
+    label: Invoke Unity Catalog Function
+    category: governed_tools
+    description: >
+      Call a Unity Catalog SQL function as a governed tool. UC functions
+      provide secure, audited access to structured data and are the
+      Databricks pattern for exposing data to agents as callable tools.
+    trigger: Agent needs structured data context from governed sources
+    inputs:
+      - { name: function_name, type: string, description: "catalog.schema.function_name" }
+      - { name: parameters, type: object }
+    outputs:
+      - { name: result, type: string }
+    auth:
+      method: unity_catalog_permissions
+    constraints:
+      - Function must exist in Unity Catalog
+      - Caller must have EXECUTE permission
+      - Results are governed by UC access policies
+      - Lineage is tracked automatically
+
+  register_tool:
+    label: Register Agent Tool
+    category: governed_tools
+    description: >
+      Register a new tool (UC function, API endpoint, or Odoo action)
+      that agents can invoke. Follows the Databricks pattern of declaring
+      dependent resources explicitly at deployment time.
+    trigger: Admin defines a new capability for agents
+    inputs:
+      - { name: tool_name, type: string }
+      - { name: tool_type, type: enum, values: [uc_function, api_endpoint, odoo_action] }
+      - { name: description, type: string }
+      - { name: parameters_schema, type: object }
+      - { name: permissions, type: "array[string]" }
+    outputs:
+      - { name: tool_id, type: string }
+      - { name: registered, type: boolean }
+
+# ─────────────────────────────────────────────
+# 4. Deployment Skills
+# ─────────────────────────────────────────────
+  deploy_agent:
+    label: Deploy Agent via DABs Pattern
+    category: deployment
+    description: >
+      Package and deploy an agent using the DABs-style declarative
+      deployment pattern. Bundles agent code, resource definitions,
+      and configuration into a single deployable unit.
+    trigger: Agent is ready for production deployment
+    inputs:
+      - { name: bundle_name, type: string }
+      - { name: target_environment, type: enum, values: [dev, staging, production] }
+      - { name: resources, type: "array[object]", description: "Declared dependent resources" }
+    outputs:
+      - { name: deployment_id, type: string }
+      - { name: endpoint_url, type: string }
+      - { name: status, type: enum, values: [deploying, deployed, failed] }
+    pattern: databricks_asset_bundles
+
+  evaluate_agent:
+    label: Evaluate Agent Workflow
+    category: deployment
+    description: >
+      Trace and evaluate agent behavior using the MLflow pattern.
+      Captures inputs, outputs, tool calls, and intermediate steps
+      for debugging and quality assurance.
+    trigger: Agent behavior needs auditing or quality check
+    inputs:
+      - { name: agent_id, type: string }
+      - { name: thread_id, type: string, required: false }
+      - { name: evaluation_type, type: enum, values: [trace, replay, benchmark] }
+    outputs:
+      - { name: traces, type: "array[object]" }
+      - { name: tool_calls, type: "array[object]" }
+      - { name: quality_metrics, type: object }
+
+# ─────────────────────────────────────────────
+# 5. Skill-to-Benchmark Mapping
+# ─────────────────────────────────────────────
+benchmark_mapping:
+  description: >
+    Maps agent skills to the Odoo Copilot benchmark categories.
+    Each skill contributes to one or more benchmark dimensions.
+  mappings:
+    - skill: query_lakebase_synced
+      benchmark_categories:
+        - analytics_recommendations
+        - knowledge_grounding
+      benchmark_target: Databricks Financial Services
+
+    - skill: write_lakebase_state
+      benchmark_categories:
+        - odoo_native_actions
+        - multi_step_orchestration
+      benchmark_target: Databricks Financial Services
+
+    - skill: checkpoint_save
+      benchmark_categories:
+        - agent_platform_control_plane
+        - multi_step_orchestration
+      benchmark_target: Microsoft Foundry
+
+    - skill: checkpoint_resume
+      benchmark_categories:
+        - agent_platform_control_plane
+        - multi_step_orchestration
+      benchmark_target: Microsoft Foundry
+
+    - skill: invoke_uc_function
+      benchmark_categories:
+        - knowledge_grounding
+        - governance_safety_auditability
+      benchmark_target: Microsoft Foundry
+
+    - skill: register_tool
+      benchmark_categories:
+        - agent_configurability
+        - agent_platform_control_plane
+      benchmark_target: Microsoft Foundry
+
+    - skill: deploy_agent
+      benchmark_categories:
+        - agent_platform_control_plane
+      benchmark_target: Microsoft Foundry
+
+    - skill: evaluate_agent
+      benchmark_categories:
+        - agent_platform_control_plane
+        - governance_safety_auditability
+      benchmark_target: Microsoft Foundry

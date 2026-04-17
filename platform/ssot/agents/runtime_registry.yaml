@@ -1,0 +1,202 @@
+# =============================================================================
+# SSOT: Runtime Registry
+# =============================================================================
+# Generated: 2026-03-18
+# Source: docs/security/AGENT_CAPABILITY_AUDIT.md
+# =============================================================================
+
+version: "1.0"
+updated_at: "2026-03-18"
+
+runtimes:
+  # ---------------------------------------------------------------------------
+  # Production Containers (Azure Container Apps)
+  # ---------------------------------------------------------------------------
+  - id: odoo-web-prod
+    name: "Odoo Web (Production)"
+    type: container
+    platform: azure_container_apps
+    container_app: ipai-odoo-dev-web
+    resource_group: rg-ipai-dev
+    environment: cae-ipai-dev
+    registry: cripaidev
+    image: ipai-odoo-web
+    port: 8069
+    health_path: /web/health
+    auth_mode: managed_identity
+    identity_binding: azure_key_vault
+    canonicality: canonical
+    criticality: core_runtime
+
+  - id: odoo-worker-prod
+    name: "Odoo Worker (Production)"
+    type: container
+    platform: azure_container_apps
+    container_app: ipai-odoo-dev-worker
+    resource_group: rg-ipai-dev
+    canonicality: canonical
+    criticality: core_runtime
+
+  - id: odoo-cron-prod
+    name: "Odoo Cron (Production)"
+    type: container
+    platform: azure_container_apps
+    container_app: ipai-odoo-dev-cron
+    resource_group: rg-ipai-dev
+    canonicality: canonical
+    criticality: core_runtime
+
+  - id: mcp-gateway-prod
+    name: "MCP Gateway"
+    type: container
+    platform: azure_container_apps
+    container_app: ipai-mcp-dev
+    resource_group: rg-ipai-dev
+    port: 8766
+    health_path: /health
+    auth_mode: api_key
+    canonicality: canonical
+    criticality: important
+
+  - id: ocr-service-prod
+    name: "OCR Service"
+    type: container
+    platform: azure_container_apps
+    container_app: ipai-ocr-dev
+    resource_group: rg-ipai-dev
+    health_path: /health
+    auth_mode: none
+    canonicality: canonical
+    criticality: important
+
+  - id: auth-keycloak
+    name: "Keycloak SSO"
+    type: container
+    platform: azure_container_apps
+    container_app: ipai-auth-dev
+    resource_group: rg-ipai-dev
+    canonicality: transitional
+    criticality: important
+    note: "Transitional. Target: Microsoft Entra ID."
+
+  - id: superset-bi
+    name: "Apache Superset BI"
+    type: container
+    platform: azure_container_apps
+    container_app: ipai-superset-dev
+    resource_group: rg-ipai-dev
+    canonicality: canonical
+    criticality: important
+
+  - id: plane-pm
+    name: "Plane Project Management"
+    type: container
+    platform: azure_container_apps
+    container_app: ipai-plane-dev
+    resource_group: rg-ipai-dev
+    canonicality: canonical
+    criticality: important
+
+  # ---------------------------------------------------------------------------
+  # Development Containers
+  # ---------------------------------------------------------------------------
+  - id: devcontainer-odoo
+    name: "Odoo Devcontainer"
+    type: devcontainer
+    platform: docker
+    path: .devcontainer/
+    docker_context: colima
+    workspace_folder: /workspaces/odoo
+    canonicality: canonical
+    criticality: important
+    profiles:
+      - name: default
+        services: [odoo, db]
+      - name: tools
+        services: [odoo, db, pgadmin, mailpit]
+
+  # ---------------------------------------------------------------------------
+  # CI/CD Runtimes
+  # ---------------------------------------------------------------------------
+  - id: azdo-pipeline
+    name: "Azure DevOps Pipeline"
+    type: ci_cd
+    platform: azure_devops
+    path: .azure/pipelines/ci-cd.yml
+    pool: ipai-build-pool
+    service_connection: sc-azure-dev-platform
+    variable_group: vg-ipai-platform-secrets
+    stages:
+      - name: Lint
+        trigger: all_branches
+      - name: Build
+        trigger: main_only
+        produces: container_image
+      - name: Infra_Dev
+        trigger: main_only
+        produces: bicep_deployment
+      - name: Deploy_Dev
+        trigger: after_build
+        target: ipai-odoo-dev-web
+      - name: Deploy_Staging
+        trigger: manual_approval
+        target: ipai-odoo-staging-web
+    canonicality: canonical
+    criticality: core_runtime
+
+  - id: github-actions
+    name: "GitHub Actions Workflows"
+    type: ci_cd
+    platform: github_actions
+    path: .github/workflows/
+    workflow_count: 19
+    key_workflows:
+      - ci-odoo.yml
+      - codeql.yml
+      - deploy-azure.yml
+      - ssot-ai-validate.yml
+      - repo-boundary-check.yml
+      - spec-kit-enforce.yml
+    canonicality: canonical
+    criticality: core_runtime
+
+  # ---------------------------------------------------------------------------
+  # Database Runtimes
+  # ---------------------------------------------------------------------------
+  - id: pg-odoo-prod
+    name: "PostgreSQL (Odoo Production)"
+    type: database
+    platform: azure_postgres_flexible
+    server: ipai-odoo-dev-pg
+    resource_group: rg-ipai-dev
+    region: southeastasia
+    databases:
+      - name: odoo
+        role: production
+      - name: odoo_staging
+        role: staging
+      - name: odoo_dev
+        role: development
+    canonicality: canonical
+    criticality: core_runtime
+
+  - id: pg-platform-data
+    name: "PostgreSQL (Platform Data)"
+    type: database
+    platform: azure_postgres_flexible
+    server: pg-ipai-dev
+    resource_group: rg-ipai-data-dev
+    region: southeastasia
+    canonicality: canonical
+    criticality: important
+
+  - id: supabase-vm
+    name: "Supabase (Self-Hosted VM)"
+    type: database
+    platform: azure_vm
+    vm: vm-ipai-supabase-dev
+    resource_group: rg-ipai-agents-dev
+    region: southeastasia
+    canonicality: canonical
+    criticality: important
+    note: "Exception: VM, not ACA. Used for n8n workflows and external integrations."

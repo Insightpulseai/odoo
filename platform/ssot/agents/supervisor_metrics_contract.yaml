@@ -1,0 +1,35 @@
+metrics:
+  agent_registry_health:
+    type: gauge
+    description: "System health status (1=healthy, 0=degraded)"
+  agent_count:
+    type: gauge
+    description: "Total registered agents"
+  agent_eval_score:
+    type: gauge
+    description: "Latest evaluation score per agent"
+    labels: [agent_id, domain]
+  foundry_total_agents_seen:
+    type: counter
+    description: "Total agents seen in the registry during the latest cycle"
+  foundry_eligible_transitions:
+    type: counter
+    description: "Number of agents eligible for a transition evaluation"
+  foundry_successful_promotions:
+    type: counter
+    description: "Number of transitions resulting in an immutable promotion record"
+  foundry_rejected_promotions:
+    type: counter
+    description: "Number of transitions rejected by the Stage Gate Engine"
+  foundry_duplicate_transitions:
+    type: counter
+    description: "Number of transition requests blocked due to idempotency keys"
+  foundry_loop_duration_ms:
+    type: gauge
+    description: "Duration of the last supervisor polling loop"
+  foundry_registry_read_failures:
+    type: counter
+    description: "Number of times the registry rebuild crashed"
+  foundry_record_write_failures:
+    type: counter
+    description: "Number of times a promotion record write failed or was blocked by lock contention"

@@ -1,0 +1,130 @@
+# foundry-solution-template-registry.yaml
+# Foundry solution templates as reference patterns for Pulser acceleration.
+# Usage: benchmark + acceleration ONLY. NOT runtime truth.
+# These templates are upstream Microsoft patterns — adopt as-is, configure, never fork.
+# Last updated: 2026-04-16
+
+meta:
+  schema_version: "1.0"
+  purpose: reference_patterns
+  usage: benchmark_and_acceleration_only
+  runtime_truth: false
+  doctrine: "Reuse upstream for commodity capability. Configure for compositional concerns. Build only thinnest ipai_* layer for business-specific deltas."
+  anchor: "CLAUDE.md §Engineering Execution Doctrine"
+
+categories:
+  baseline_agent_runtime:
+    description: "Core Foundry agent runtime templates — adopt as-is for Pulser agent hosting."
+    templates:
+      - id: foundry-agent-webapp
+        source: microsoft/foundry-agent-webapp
+        adoption_mode: clone_as_reference
+        rationale: "Baseline chat UI + agent loop. Adapt for Pulser Odoo surface."
+        ipai_delta: "Replace AOAI direct auth with MI + Key Vault. Wire to ipai-copilot-resource East US 2."
+      - id: foundry-samples-baseline
+        source: microsoft/foundry-samples
+        adoption_mode: consume_directly
+        rationale: "Pattern library for Foundry SDK 2.x usage (azure-ai-projects>=2.0.0, services.ai.azure.com)."
+        ipai_delta: "None — use keyless MI auth pattern directly."
+      - id: azd-managed-identity-auth
+        source: azure-samples/azd-template-managed-identity
+        adoption_mode: consume_directly
+        rationale: "Keyless MI auth template. Canonical for all Pulser agent auth."
+        ipai_delta: "None."
+
+  orchestration_and_release:
+    description: "Orchestration patterns + release gate automation templates."
+    templates:
+      - id: release-manager-assistant
+        source: microsoft/release-manager-assistant
+        adoption_mode: clone_as_reference
+        rationale: "Agent Framework + MCP + OTel patterns. Build IPAI gate engine on top."
+        components_to_adopt:
+          - agent_framework_loop
+          - mcp_tool_registration
+          - opentelemetry_spans
+        components_to_skip:
+          - jira_integration
+          - frontend_ui
+          - synthetic_mcp
+        ipai_delta: "ipai_* gate engine wired to ADO Pipelines + Azure Boards."
+      - id: azure-devops-copilot-extension
+        source: azure-samples/azure-devops-copilot-extension
+        adoption_mode: do_not_adopt
+        reason: "Stale 22mo, SK-based, solves PM authoring not CI/CD. REJECT per memory record."
+
+  content_and_documents:
+    description: "Document processing + multimodal content templates."
+    templates:
+      - id: azd-home-banking-assistant
+        source: azure-samples/azd-home-banking-assistant
+        adoption_mode: clone_as_reference
+        rationale: "Foundry DI + structured extraction pattern. Reference for ipai invoice pipeline."
+        ipai_delta: "13-tool invoice pipeline already deployed. Use for pattern validation only."
+      - id: azd-multimodal-content
+        source: azure-samples/azd-multimodal-content
+        adoption_mode: clone_as_reference
+        rationale: "Multimodal processing patterns for receipt + document workflows."
+        ipai_delta: "Wire to existing Foundry DI pipeline (document_intelligence_entities.yaml)."
+
+  data_and_governance:
+    description: "Governed data Q&A + Databricks/Fabric integration templates."
+    templates:
+      - id: azd-rag-on-postgres
+        source: azure-samples/azd-rag-on-postgres
+        adoption_mode: clone_as_reference
+        rationale: "RAG on PG pattern. Reference for PrismaLab + Odoo knowledge Q&A."
+        ipai_delta: "Replace PG direct with Foundry AI Search index (prismalab-rag-v1 on srch-ipai-dev)."
+      - id: unified-data-foundation
+        source: microsoft/unified-data-foundation
+        adoption_mode: consume_directly
+        rationale: "Terraform IaC for Databricks+Fabric+mirroring. Time-sensitive (Fabric trial ~2026-05-20)."
+        ipai_delta: "Wire to dbw-ipai-dev + fcipaidev. Do NOT pause Fabric."
+
+  optional_extensions:
+    description: "Optional tooling and dev-time extensions — low-risk adoption."
+    templates:
+      - id: ai-toolkit-vscode
+        source: microsoft/ai-toolkit-vscode
+        adoption_mode: consume_directly
+        rationale: "MCP-native, dev-time only. Add to devcontainer extensions."
+        ipai_delta: "Add to .devcontainer extensions list. No runtime impact."
+      - id: mcp-foundry
+        source: microsoft/mcp-foundry
+        adoption_mode: clone_as_reference
+        rationale: "Foundry MCP server reference. Informs ipai odoo-mcp-server P0 gap."
+        ipai_delta: "Build odoo-mcp-server using this as structural reference."
+
+pulser_bindings:
+  chat_runtime:
+    category: baseline_agent_runtime
+    template: foundry-agent-webapp
+    target_resource: ipai-copilot-resource
+    target_region: eastus2
+    model: gpt-4.1
+    auth: managed_identity
+
+  close_and_compliance_orchestration:
+    category: orchestration_and_release
+    template: release-manager-assistant
+    target_pipeline: azure-pipelines/release-gate.yml
+    components: [agent_framework_loop, mcp_tool_registration, opentelemetry_spans]
+
+  document_and_receipt_processing:
+    category: content_and_documents
+    template: azd-multimodal-content
+    target_pipeline: ipai invoice pipeline (13-tool)
+    foundry_di: document_intelligence_entities.yaml
+
+  governed_data_qna:
+    category: data_and_governance
+    template: azd-rag-on-postgres
+    ai_search_index: prismalab-rag-v1
+    search_service: srch-ipai-dev
+    region: southeastasia
+
+  prod_governance:
+    category: orchestration_and_release
+    template: release-manager-assistant
+    gate_doc: docs/release/FEATURE_SHIP_READINESS_CHECKLIST.md
+    ssot_gates: ssot/release/feature-ship-readiness-gates.yaml

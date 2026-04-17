@@ -5,7 +5,7 @@
 # Uses Responses API (Agents v2) with function calling.
 #
 # Foundry project: data-intel-ph
-# Foundry resource: data-intel-ph-resource
+# Foundry resource: ipai-copilot-resource
 # Model: gpt-4.1
 #
 # Skill registry: agents/skills/pulser/SKILL_REGISTRY.yaml
@@ -18,7 +18,7 @@ agent:
   description: "AI assistant for Odoo ERP operations — search, analyze, and act on business data"
   model: gpt-4.1
   project: data-intel-ph
-  resource: data-intel-ph-resource
+  resource: ipai-copilot-resource
 
 instructions: |
   You are Pulser, the Odoo Copilot for InsightPulseAI. You help users manage their ERP data through natural language.

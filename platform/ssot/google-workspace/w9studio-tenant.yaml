@@ -1,0 +1,88 @@
+---
+# W9 Studio — Google Workspace Tenant SSOT
+# This is an EXTERNAL client/managed tenant, not the insightpulseai.com org.
+# Admin surface: Google Workspace Admin Console (admin.google.com)
+# CLI tooling: ssot/google-workspace/gws-cli-adoption.yaml
+#
+# Classification: external_managed_workspace_tenant
+# Relationship: IPAI manages this tenant as an operator/client relationship.
+#               Business authorization for W9 Studio is separate from IPAI's own Entra/Odoo RBAC.
+#
+# Last updated: 2026-04-16
+contract_version: 1
+
+tenant:
+  name: W9 Studio
+  domain: w9studio.net
+  type: google_workspace
+  admin_console: https://admin.google.com
+  relationship: external_managed_tenant
+  managing_org: insightpulseai.com
+
+organizational_units:
+  - name: W9 Studio
+    type: root_ou
+    description: Primary organizational unit for all W9 Studio staff.
+  - name: Workspace Guests
+    type: guest_ou
+    description: Guest users with restricted Workspace access.
+
+users:
+  # Source: Google Workspace Admin Console — Users page, as of 2026-04-16
+  # Status: Active unless noted.
+  - display_name: accounting & admin
+    email: accounts@w9studio.net
+    ou: W9 Studio
+    status: active
+    last_sign_in: ~4_months_ago
+    email_usage_gb: 0.001
+    role: accounting_and_admin
+
+  - display_name: W9 Studio Fin
+    email: finance@w9studio.net
+    ou: W9 Studio
+    status: active
+    last_sign_in: ~2_months_ago
+    email_usage_gb: 0.001
+    role: finance
+
+  - display_name: W9 Studio Main
+    email: business@w9studio.net
+    ou: W9 Studio
+    status: active
+    last_sign_in: ~4_days_ago
+    email_usage_gb: 0.003
+    role: primary_business_contact
+
+user_count:
+  total: 3
+  active: 3
+  guests: 0
+
+# ---------------------------------------------------------------------------
+# CLI / Agent Operations Coverage
+# ---------------------------------------------------------------------------
+cli_tooling:
+  tool: gws
+  adoption_ref: ssot/google-workspace/gws-cli-adoption.yaml
+  auth_method: oauth2_credentials_file
+  gcp_project: TBD
+  credential_storage: azure_key_vault  # never tracked in repo
+  ops_surface:
+    - admin_user_management
+    - drive_file_operations
+    - gmail_admin_operations
+    - calendar_management
+
+  mcp_governance:
+    policy: optional_third_party_explicit_approval_required
+    rule_ref: ssot/tooling/mcp-tool-decision-registry.yaml § DR-05
+
+# ---------------------------------------------------------------------------
+# Boundaries
+# ---------------------------------------------------------------------------
+boundaries:
+  - w9studio_workspace_is_not_insightpulseai_identity_plane
+  - w9studio_user_accounts_do_not_map_to_ipai_entra_roles
+  - w9studio_drive_data_is_not_ipai_lakehouse_or_odoo_truth
+  - credential_scope_for_w9studio_must_be_segregated_from_ipai_gcp_project

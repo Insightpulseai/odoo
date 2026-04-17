@@ -1,0 +1,135 @@
+# =============================================================================
+# Data-Intelligence Repo Split Manifest — SSOT
+# =============================================================================
+# Machine-readable manifest for promoting data-intelligence from an embedded
+# monorepo surface to a standalone canonical repo.
+# =============================================================================
+
+id: data_intelligence_repo_split
+canonical_repo: data-intelligence
+status: planned
+created: "2026-03-19"
+owner: platform-team
+
+# -----------------------------------------------------------------------------
+# Source Surfaces
+# -----------------------------------------------------------------------------
+source_surfaces:
+  active:
+    - path: infra/databricks/
+      description: Primary Databricks bundle — notebooks, DLT, SQL, jobs, schemas, scripts
+      file_count_approx: 100
+      classification: move
+
+    - path: odoo/infra/databricks/sql/
+      description: Medallion SQL (bronze → platinum) + DLT marketing pipeline
+      file_count_approx: 10
+      classification: move
+
+    - path: lakehouse/contracts/
+      description: Lakehouse contract stubs (Tableau BI)
+      file_count_approx: 1
+      classification: move
+
+  legacy_review:
+    - path: archive/work/databricks/
+      description: Older notebooks, DAB config, apps, dashboards, terraform state
+      file_count_approx: 60
+      classification: review
+
+# -----------------------------------------------------------------------------
+# Target Structure
+# -----------------------------------------------------------------------------
+target_structure:
+  - .github/
+  - docs/
+  - spec/
+  - ssot/
+  - databricks/bundles/
+  - databricks/pipelines/
+  - databricks/jobs/
+  - databricks/notebooks/
+  - databricks/sql/
+  - lakehouse/contracts/
+  - lakehouse/bronze/
+  - lakehouse/silver/
+  - lakehouse/gold/
+  - semantic/
+  - tests/
+  - scripts/
+
+# -----------------------------------------------------------------------------
+# Classification Rules
+# -----------------------------------------------------------------------------
+classification_rules:
+  move:
+    - databricks_delivery_assets
+    - lakehouse_transforms
+    - analytical_contracts
+    - semantic_outputs
+    - data_intelligence_ci_tests_scripts
+  keep_in_monorepo:
+    - odoo_runtime_integration_stubs
+    - direct_runtime_coupling
+    - jdbc_connection_config_referenced_by_odoo
+  archive_or_review:
+    - stale_experiments
+    - superseded_assets
+    - duplicated_assets
+    - terraform_state_files
+
+# -----------------------------------------------------------------------------
+# Migration Phases
+# -----------------------------------------------------------------------------
+phases:
+  - id: phase_0
+    name: Inventory and Classification
+    description: Classify all candidate files as move/keep/archive/review
+    status: planned
+
+  - id: phase_1
+    name: Repo Bootstrap
+    description: Create standalone repo with canonical structure and baseline CI
+    status: planned
+    depends_on: [phase_0]
+
+  - id: phase_2
+    name: Active Asset Migration
+    description: Move active Databricks/lakehouse assets to standalone repo
+    status: planned
+    depends_on: [phase_1]
+
+  - id: phase_3
+    name: Monorepo Cleanup
+    description: Remove migrated ownership, leave only integration stubs
+    status: planned
+    depends_on: [phase_2]
+
+  - id: phase_4
+    name: Validation and Cutover
+    description: CI validation in both repos, update passports/scorecards
+    status: planned
+    depends_on: [phase_3]
+
+# -----------------------------------------------------------------------------
+# Exit Criteria
+# -----------------------------------------------------------------------------
+exit_criteria:
+  - data_intelligence_repo_exists
+  - all_active_assets_owned_in_standalone
+  - monorepo_retains_only_stubs
+  - ci_passes_in_new_repo
+  - ci_passes_in_monorepo
+  - passport_blocker_removed
+  - scorecard_updated
+  - agent_promoted_to_L2
+
+# -----------------------------------------------------------------------------
+# References
+# -----------------------------------------------------------------------------
+references:
+  passport: agents/passports/data-intelligence.yaml
+  scorecard: ssot/agent-platform/portfolio_scorecard.yaml
+  split_plan: docs/architecture/data-intelligence/repo-split-plan.md
+  migration_inventory: ssot/data-intelligence/migration_inventory.yaml
+  org_topology: ssot/repo/org_topology.yaml

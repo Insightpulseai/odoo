@@ -154,6 +154,14 @@ See `.claude/rules/security-baseline.md` for full policy (sections 2.1-2.6).
 6. **Specs Required**: Significant changes must reference a spec bundle.
 9. **Databricks Governance**: Databricks + Unity Catalog is the mandatory governed transformation, engineering, and serving plane.
 10. **MCP First**: MCP is required for all reusable agent tools (Google Cloud contract).
+10a. **Three-protocol model + supervisor-mediated orchestration**: Every Pulser agent publishes an Agent Card at `/.well-known/agent-card.json`. Three industry-standard protocols, orthogonal and all mandatory:
+   - **A2A** (Linux Foundation, `a2a-protocol.org`) = agent ↔ agent interop (incl. client ↔ agent entry point into the orchestrator)
+   - **MCP** (Anthropic-originated standard) = agent ↔ tool (incl. retrieval, DB, APIs)
+   - **Agent365 SDK** (Microsoft) = agent ↔ M365 user surface (Copilot Chat, Teams, Outlook discovery/invocation/auth). Non-M365 surfaces (ADO extension, Odoo chatter, Slack, Claude Code) skip Agent365 and speak A2A directly to the orchestrator.
+
+   **Orchestration pattern — supervisor-mediated only.** Workers never invoke workers directly. `agents/` owns definitions (runtime-free): personas, skills, judges, evals, prompt contracts, registries. `agent-platform/` owns runtime: supervisor, router, dispatcher, retries, approvals, workflow state, judge loops, envelopes, handoffs. Canonical flow: `client → intake → planner/router → specialist workers (parallel ok) → judge → synthesizer → persist trace → response`. No free-form agent-to-agent chat. SSOT: `docs/architecture/agent-orchestration-model.md`, `docs/architecture/three-protocol-model.md`, `ssot/governance/agent-interop-matrix.yaml`, `agent-platform/contracts/envelopes/`.
+
+   **Two operating modes (locked).** Team mode = Codespaces/local dev → agent-platform on ACA → Foundry cloud (`ipai-copilot-resource`, gpt-4.1). Solo mode = local Mac → agent-platform in devcontainer → Foundry Local (phi-4/qwen, on-device NPU/GPU). Forbidden: Foundry Local inside Codespaces (wrong runtime pairing). Agent Card is identical across modes; backing model swaps via env var. Pattern reference: Claude Code itself (local CLI, remote Anthropic brain, MCP for tools).
 11. **SaaS Authority**: The **Azure SaaS Workload Documentation** is the canonical design framework for the platform.
 12. **Consumption**: **Power BI** is the primary mandatory business-facing reporting surface.
 13. **Fabric Complement**: Fabric is for mirroring and OneLake integration; it never replaces Databricks engineering.
@@ -339,28 +347,48 @@ Authoritative rule:
 - **GitHub Issues** is the engineering execution backlog.
 - See `ssot/governance/platform-authority-split.yaml`, `ssot/governance/ci-cd-authority-matrix.yaml`, and `ssot/governance/repo-delivery-disposition.yaml`.
 
-### Engineering & Delivery Authority (REVISED 2026-04-14)
+### Engineering & Delivery Authority (REVISED 2026-04-16)
 
-**Azure Pipelines is the sole CI/CD authority. GitHub Actions and Vercel are FORBIDDEN.**
+**Azure Pipelines is the sole CI/CD *deploy* authority. GitHub Actions is allowed only as a narrow scoped exception for pre-merge validation, with Azure-subscription billing enforced.**
 
 | System | Role | Status |
 |---|---|---|
-| **Azure Pipelines** | Sole CI + deploy authority for ALL lanes (Odoo, Databricks, infra, docs, web, agents, tests) | ✅ Canonical |
+| **Azure Pipelines** | **Sole deploy authority** for ALL lanes (Odoo, Databricks, infra, docs, web, agents, tests) | ✅ Canonical |
 | **Azure DevOps Boards** | Portfolio/planning system of record | ✅ Canonical |
-| **GitHub** | Source control + PRs + Issues (engineering execution backlog) only | ✅ Source control only |
-| **GitHub Actions** | **FORBIDDEN** — all workflows removed 2026-04-14 | ❌ REMOVED |
+| **GitHub** | Source control + PRs + Issues (engineering execution backlog) | ✅ Canonical |
+| **GitHub Actions (scoped exception)** | Pre-merge validation ONLY for allowed lanes (see §GHA Scoped Exception below). **Never a deploy authority.** Billing MUST route through Azure subscription. | 🟡 Scoped allow |
 | **Vercel** | **FORBIDDEN** — deprecated 2026-04-07, fully removed | ❌ REMOVED |
 
-**Rules:**
-1. Do NOT create files under `.github/workflows/`. The directory is reserved for non-CI GitHub config only (templates, CODEOWNERS, dependabot).
-2. ALL CI (lint, test, spec-bundle-validate, plugin-validate, CodeQL-equivalent) runs in Azure Pipelines under `azure-pipelines/` or `.azuredevops/`.
-3. ALL deploys (Odoo containers, Databricks bundles, ACA apps, Bicep infra, docs sites) run in Azure Pipelines with environment/service-connection gating.
-4. No `vercel.json`, no Vercel preview checks, no `@vercel/*` dependencies.
-5. Branch protection on `main` requires Azure Pipelines success only — GitHub Actions contexts must be removed from required checks.
+### GHA Scoped Exception (2026-04-16)
 
-**Migration evidence (2026-04-14):**
-- Deleted `.github/workflows/*.yml` (12 files) including claude-headless-pr-review, claude-headless-spec-check, deploy-erp-canonical, deploy-m365-bot-proxy, devcontainer-ci, foundry-name-guard, odoo-pr-preview, platform-restoration, post-deploy-smoke, spec-bundle-validate, validate-plugins
-- Replacement Azure Pipelines: existing `azure-pipelines/*.yml` (26 files) + new pipelines for PR preview, spec-bundle-validate, foundry-name-guard, plugin-validate
+GHA is allowed **only** for the following pre-merge validation scopes. Any new GHA workflow outside this list is a doctrine violation and blocked at code review.
+
+| Allowed scope | Rationale |
+|---|---|
+| **Copilot Coding Agent PR autogen validation** (when Coding Agent adopted) | Coding Agent generates PRs from Issues; GHA runs syntactic lint/test. Azure Pipelines still runs canonical gate before merge. |
+| **GHAS Code Scanning (CodeQL)** *only if Defender for DevOps proves insufficient* | Today Defender covers this; GHA CodeQL remains a break-glass option. |
+| **Dependabot-triggered dependency-audit PR checks** | GitHub-native; mirror in ADO not always practical. |
+| **Docs/README link validation on PRs** | Lightweight, GitHub-native, cheaper than spinning an ADO agent. |
+
+**Not allowed under this exception:** deploy workflows, image builds, infrastructure provisioning, release tags, container pushes, secret-bearing workflows, anything that writes to Azure resources, anything that writes to production branches, anything that runs on a scheduled cron outside PR context.
+
+### GHA Hard Rules (scoped exception conditions)
+
+1. **Billing MUST route through Azure subscription.** No direct GitHub billing for GHA minutes. Configure at Org → Billing → "Billed through Azure subscription" with Insightpulseai Azure subscription linked.
+2. **Every GHA workflow MUST have a sibling Azure Pipeline** that enforces the same gate (defense-in-depth). If sibling pipeline doesn't exist, the GHA workflow isn't allowed.
+3. **Azure Pipelines remains the merge gate on `main`.** GHA checks can inform review but cannot be the only required check.
+4. **Zero secrets in GHA.** If a workflow needs Azure access, use OIDC federation to a Managed Identity (no PAT, no client secret). Key Vault access is forbidden from GHA.
+5. **New GHA workflow requires a PR with:**
+   - Explicit reference to one of the allowed scopes above
+   - Sibling Azure Pipeline already merged
+   - Review from platform-engineering
+6. **Workflow location**: `.github/workflows/` is permitted ONLY for scope-exception workflows + non-CI config (CODEOWNERS, dependabot, issue templates).
+
+### Migration evidence (2026-04-14, 2026-04-16)
+
+- 2026-04-14: Deleted `.github/workflows/*.yml` (12 files) including claude-headless-pr-review, claude-headless-spec-check, deploy-erp-canonical, deploy-m365-bot-proxy, devcontainer-ci, foundry-name-guard, odoo-pr-preview, platform-restoration, post-deploy-smoke, spec-bundle-validate, validate-plugins
+- 2026-04-14: Replacement Azure Pipelines: existing `azure-pipelines/*.yml` (26 files) + new pipelines for PR preview, spec-bundle-validate, foundry-name-guard, plugin-validate
+- 2026-04-16: Scoped exception doctrine landed; billing wiring MUST be completed before any GHA workflow is created. See `ssot/governance/gha-scoped-exception.yaml`.
 
 ### Agentic Workflow Security Doctrine (added 2026-04-14)
 
@@ -412,7 +440,6 @@ Per Microsoft's GitHub Agentic Workflows architecture paper + DevBlogs Agentic P
 | MCP Jobs system | `.claude/rules/mcp-jobs.md` |
 | n8n automations & Claude integration | `.claude/rules/automations.md` |
 | Spec kit structure & bundles | `.claude/rules/spec-kit.md` |
-| Vercel observability & Figma | `.claude/rules/vercel-observability.md` |
 | SSOT platform rules | `.claude/rules/ssot-platform.md` |
 | Architecture & stack | `docs/ai/ARCHITECTURE.md` |
 | IPAI module naming | `docs/ai/IPAI_MODULES.md` |

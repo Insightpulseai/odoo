@@ -1,0 +1,33 @@
+---
+# Responsible AI Contract — stub
+# Referenced by: WAF-AI gap analysis (2026-04-16)
+# Authority: Azure Well-Architected Framework AI workload guidance
+# Purpose: codify transparency, bias monitoring, content filtering, human escalation,
+#   data retention, and explainability requirements for Pulser AI workloads
+status: stub
+target_milestone: R3
+
+sections:
+  transparency:
+    # TODO: how users know they're talking to AI
+    status: not_started
+  bias_monitoring:
+    # TODO: ongoing bias detection + mitigation
+    status: not_started
+  content_filtering:
+    # TODO: input/output filtering policy (Content Safety integration)
+    status: partially_covered_by_safe_outputs
+  human_escalation:
+    # TODO: when and how to escalate to human review
+    status: partially_covered_by_control_approvals
+  data_retention:
+    # TODO: retention policy for AI-generated outputs
+    status: not_started
+  explainability:
+    # TODO: how AI decisions are explained to users
+    status: not_started
+
+anchors:
+  - CLAUDE.md agentic_workflow_security_doctrine (Safe Outputs subsystem)
+  - ssot/governance/agent-interop-matrix.yaml (judge agents for safety/contract/helpfulness)
+  - docs/architecture/agent-orchestration-model.md (judge loop)

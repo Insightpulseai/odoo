@@ -1,0 +1,18 @@
+---
+# TODO: populate this contract
+# Referenced by: ssot/reference/fo-domain-to-oca-matrix.yaml
+# Purpose: F&O capability family reference (finance, HR, SCM, integrations, intelligence, dev, admin)
+status: stub
+target_milestone: R3
+
+derived_contracts:
+  - ssot/reference/fo-to-odoo-parity-map.yaml
+  - ssot/reference/fo-domain-to-oca-matrix.yaml
+
+usage_rules:
+  use_for:
+    - domain_language_normalization
+    - odoo_oca_parity_mapping
+    - process_to_domain_mapping
+    - implementation_question_classification
+    - domain_level_gap_triage

@@ -1,0 +1,477 @@
+---
+# SSOT: Domain-by-domain parity matrix
+# IPAI (Odoo 18 CE + OCA + ipai_* + Pulser) vs Microsoft (D365 Finance + D365 PO + Copilot Finance agents)
+#
+# Grounds:
+# - feedback_d365_two_plane_doctrine.md               (Plane A=ERP / Plane B=Copilot)
+# - feedback_d365_project_operations_services_erp.md  (PO=services ERP, three shapes)
+# - feedback_odoo_module_selection_doctrine.md        (CE→OCA→adjacent→compose→ipai_*)
+# - feedback_d365_displacement_not_development.md     (displace, don't develop X++)
+# - feedback_ipai_custom_module_doctrine.md           (introspection + technical guide required)
+#
+# Schema per row:
+#   domain            dotted path (Area.Subdomain)
+#   plane             A (ERP system-of-record) | B (Copilot assistive layer)
+#   ms_surface        which Microsoft product surface
+#   ms_shape          for PO only: core | integrated_erp | manufacturing
+#   parity_type       ce_only | ce_oca | ce_oca_bridge | bridge_only
+#   primary_benchmark the specific MS tier we're matching
+#   ce                list of CE 18 modules
+#   oca_primary       OCA repos in the same functional domain
+#   oca_adjacent      OCA repos in neighboring domains worth composing
+#   ipai_bridge       last-resort ipai_* thin bridges
+#   pulser_agent      Plane B sub-agent name (or null)
+#   status            full | partial | gap
+#   gap               1-line description of what's missing
+#   priority          P0 | P1 | P2 | null
+#   notes             optional
+#
+# Last updated: 2026-04-14
+version: 1
+rows:
+
+  # ═══════════════════════════════════════════════════════════════════
+  # PLANE A — CORE FINANCE SYSTEM-OF-RECORD (D365 Finance)
+  # ═══════════════════════════════════════════════════════════════════
+
+  - domain: Finance.GeneralLedger
+    plane: A
+    ms_surface: D365 Finance
+    parity_type: ce_oca
+    primary_benchmark: "GL with multi-dim financial dimensions + multi-company"
+    ce: [account]
+    oca_primary: [account-financial-tools, account-financial-reporting]
+    oca_adjacent: [account-consolidation, account-analytic]
+    ipai_bridge: []
+    pulser_agent: null
+    status: partial
+    gap: "account-consolidation not yet hydrated in addons/oca/ — blocks multi-entity roll-ups"
+    priority: P1
+
+  - domain: Finance.AccountsPayable
+    plane: A
+    ms_surface: D365 Finance
+    parity_type: ce_oca_bridge
+    primary_benchmark: "AP with invoice matching + invoice capture"
+    ce: [account, purchase]
+    oca_primary: [account-invoicing, account-reconcile]
+    oca_adjacent: [purchase-workflow, edi]
+    ipai_bridge: [ipai_invoice_pipeline_bridge]
+    pulser_agent: supplier_comms_agent
+    status: partial
+    gap: "Invoice capture parity depends on Foundry Document Intelligence pipeline (project_invoice_pipeline.md) — pipeline live, but automated 3-way match not wired"
+    priority: P1
+
+  - domain: Finance.AccountsReceivable.Subscription
+    plane: A
+    ms_surface: D365 Finance
+    parity_type: ce_oca
+    primary_benchmark: "Subscription billing"
+    ce: [sale_subscription, account]
+    oca_primary: [contract]
+    oca_adjacent: [account-invoicing, sale-workflow]
+    ipai_bridge: []
+    pulser_agent: null
+    status: partial
+    gap: "OCA contract not yet hydrated — verify against addons/oca/ inventory"
+    priority: P1
+
+  - domain: Finance.AccountsReceivable.Collections
+    plane: A
+    ms_surface: D365 Finance
+    parity_type: ce_oca_bridge
+    primary_benchmark: "Credit & collections workflow"
+    ce: [account]
+    oca_primary: [credit-control]
+    oca_adjacent: [account-financial-tools, mail, crm]
+    ipai_bridge: [ipai_ar_collections_copilot]
+    pulser_agent: collections_agent
+    status: gap
+    gap: "credit-control not hydrated; Pulser collections_agent not yet built. Plane B equivalent of 'Collections in Outlook'"
+    priority: P0
+
+  - domain: Finance.Budgeting
+    plane: A
+    ms_surface: D365 Finance
+    parity_type: ce_oca_bridge
+    primary_benchmark: "Budget planning + budget control + position forecasting"
+    ce: [account_budget]
+    oca_primary: [mis-builder]
+    oca_adjacent: [account-analytic, hr]
+    ipai_bridge: [ipai_position_forecast]
+    pulser_agent: null
+    status: partial
+    gap: "Position forecasting (headcount-to-budget) requires ipai_* bridge; mis_builder_budget handles general budget lines"
+    priority: P2
+
+  - domain: Finance.CashAndBank
+    plane: A
+    ms_surface: D365 Finance
+    parity_type: ce_oca_bridge
+    primary_benchmark: "Advanced bank reconciliation + cash flow forecasting"
+    ce: [account]
+    oca_primary: [account-reconcile]
+    oca_adjacent: [account-financial-reporting, account-financial-tools]
+    ipai_bridge: [ipai_bank_recon]
+    pulser_agent: financial_reconciliation_agent
+    status: partial
+    gap: "ML-based cash flow forecast not implemented; P2 until deal pressure. Reconciliation is IPAI strength (ipai_bank_recon live)."
+    priority: P2
+    notes: "This is where IPAI maps Microsoft's 'Financial Reconciliation agent' (Plane B)"
+
+  - domain: Finance.CostAccounting
+    plane: A
+    ms_surface: D365 Finance
+    parity_type: ce_oca_bridge
+    primary_benchmark: "Cost element dimensions + overhead calculation"
+    ce: [account_analytic]
+    oca_primary: [account-analytic]
+    oca_adjacent: [mis-builder, account-financial-reporting]
+    ipai_bridge: [ipai_cost_allocation]
+    pulser_agent: null
+    status: gap
+    gap: "Cost element dimension model + overhead absorption not covered by CE+OCA; requires ipai_* bridge"
+    priority: P2
+
+  - domain: Finance.FixedAssets
+    plane: A
+    ms_surface: D365 Finance
+    parity_type: ce_oca
+    primary_benchmark: "Depreciation + asset leasing (IFRS 16)"
+    ce: [account_asset]
+    oca_primary: [account-fiscal-rule, account-financial-tools]
+    oca_adjacent: []
+    ipai_bridge: [ipai_asset_leasing_ifrs16]
+    pulser_agent: null
+    status: partial
+    gap: "IFRS 16 lease accounting workflow not in CE; OCA coverage partial"
+    priority: P2
+
+  - domain: Finance.Reporting
+    plane: A
+    ms_surface: D365 Finance
+    parity_type: ce_oca_bridge
+    primary_benchmark: "Financial reporting + Power BI integration + Azure Data Lake export"
+    ce: [account]
+    oca_primary: [mis-builder, reporting-engine, account-financial-reporting]
+    oca_adjacent: [bi-sql-view]
+    ipai_bridge: [ipai_fabric_mirror]
+    pulser_agent: null
+    status: full
+    gap: "Fabric mirroring live (fcipaidev); Power BI is canonical per CLAUDE.md"
+    priority: null
+    notes: "IPAI advantage: Fabric-native reporting matches D365's Data Lake export + Power BI story"
+
+  - domain: Finance.Globalization.PH
+    plane: A
+    ms_surface: D365 Finance (Globalization Studio)
+    parity_type: ce_oca_bridge
+    primary_benchmark: "Regulatory configuration + electronic invoicing + tax calculation"
+    ce: []
+    oca_primary: [l10n-philippines]
+    oca_adjacent: [edi]
+    ipai_bridge: [ipai_bir_2307, ipai_bir_slsp, ipai_bir_1601c, ipai_bir_2550q, ipai_bir_1702rt, ipai_bir_2307_automation]
+    pulser_agent: tax_guru_ph
+    status: full
+    gap: "IPAI OUTRIGHT WIN — D365 has no comparable PH BIR coverage. 8-agency mapping, eBIRForms/eFPS/eAFS, ATC mapping all native to ipai_*"
+    priority: null
+    notes: "Material displacement advantage for PH clients (TBWA\\SMP target, OMC likely)"
+
+  - domain: Finance.Insights
+    plane: A
+    ms_surface: D365 Finance (Finance Insights)
+    parity_type: ce_oca_bridge
+    primary_benchmark: "Customer payment predictions (ML)"
+    ce: []
+    oca_primary: []
+    oca_adjacent: [credit-control]
+    ipai_bridge: [ipai_payment_prediction]
+    pulser_agent: collections_agent
+    status: gap
+    gap: "Payment prediction ML model not built; depends on Pulser/Foundry agent training. Tied to AR/Collections work"
+    priority: P2
+
+  - domain: Finance.PublicSector
+    plane: A
+    ms_surface: D365 Finance (Public Sector)
+    parity_type: ce_oca_bridge
+    primary_benchmark: "Public-sector accounting, security roles, fund accounting"
+    ce: []
+    oca_primary: []
+    oca_adjacent: [l10n-*]
+    ipai_bridge: []
+    pulser_agent: null
+    status: gap
+    gap: "Out of scope unless a govt client appears; don't build speculatively"
+    priority: P2
+    notes: "Skip unless deal forces it"
+
+  - domain: Finance.DualWriteDataverse
+    plane: A
+    ms_surface: D365 Finance (Dual-write)
+    parity_type: ipai_only
+    primary_benchmark: null
+    ce: []
+    oca_primary: []
+    oca_adjacent: []
+    ipai_bridge: []
+    pulser_agent: null
+    status: rejected
+    gap: "EXPLICITLY OUT OF SCOPE — IPAI does not maintain Dataverse (feedback_d365_displacement_not_development.md)"
+    priority: null
+
+  # ═══════════════════════════════════════════════════════════════════
+  # PLANE A — SERVICES / PROJECT DELIVERY ERP (D365 Project Operations)
+  # ═══════════════════════════════════════════════════════════════════
+
+  - domain: Services.SalesProcess
+    plane: A
+    ms_surface: D365 Project Operations
+    ms_shape: integrated_erp
+    parity_type: ce_oca
+    primary_benchmark: "Opportunity → quote → order for services"
+    ce: [crm, sale_management]
+    oca_primary: [crm, sale-workflow]
+    oca_adjacent: [account-invoicing]
+    ipai_bridge: []
+    pulser_agent: null
+    status: full
+    gap: null
+    priority: null
+
+  - domain: Services.RateCards
+    plane: A
+    ms_surface: D365 Project Operations
+    ms_shape: integrated_erp
+    parity_type: ce_oca_bridge
+    primary_benchmark: "Price lists per role/project"
+    ce: [sale_timesheet, product]
+    oca_primary: [sale-workflow]
+    oca_adjacent: [product-attribute]
+    ipai_bridge: [ipai_ppm_rate_card]
+    pulser_agent: null
+    status: partial
+    gap: "Per-resource rate cards beyond product pricelists need ipai_* bridge"
+    priority: P2
+
+  - domain: Services.ProjectManagement
+    plane: A
+    ms_surface: D365 Project Operations
+    ms_shape: core
+    parity_type: ce_oca
+    primary_benchmark: "Stages, milestones, dependencies, WBS"
+    ce: [project]
+    oca_primary: [project, project-reporting]
+    oca_adjacent: [knowledge]
+    ipai_bridge: []
+    pulser_agent: pm_copilot
+    status: partial
+    gap: "project_task_wbs OCA module hydration status unconfirmed"
+    priority: P1
+
+  - domain: Services.ResourceManagement
+    plane: A
+    ms_surface: D365 Project Operations
+    ms_shape: integrated_erp
+    parity_type: ce_oca_bridge
+    primary_benchmark: "Capacity, bookings, skills, utilization"
+    ce: [hr, hr_timesheet]
+    oca_primary: [hr, timesheet, project]
+    oca_adjacent: [hr-attendance, hr-holidays]
+    ipai_bridge: [ipai_ppm_resource_bookings]
+    pulser_agent: resourcing_agent
+    status: partial
+    gap: "Resource bookings + skills matrix + utilization heatmap requires composition + bridge"
+    priority: P1
+
+  - domain: Services.Timesheets
+    plane: A
+    ms_surface: D365 Project Operations
+    ms_shape: core
+    parity_type: ce_oca
+    primary_benchmark: "Time entry → project allocation → billing"
+    ce: [hr_timesheet, sale_timesheet]
+    oca_primary: [timesheet, sale-workflow]
+    oca_adjacent: []
+    ipai_bridge: []
+    pulser_agent: null
+    status: full
+    gap: null
+    priority: null
+
+  - domain: Services.ForecastsAndBudgets
+    plane: A
+    ms_surface: D365 Project Operations
+    ms_shape: integrated_erp
+    parity_type: ce_oca_bridge
+    primary_benchmark: "Project-level budgets + forecast variance"
+    ce: [account_budget]
+    oca_primary: [mis-builder, project]
+    oca_adjacent: [account-analytic]
+    ipai_bridge: [ipai_finance_ppm_forecast]
+    pulser_agent: forecast_variance_agent
+    status: partial
+    gap: "Forecast variance analysis with AI assistance not yet built; ipai_finance_ppm (parent) was deprecated 2026-04-11, needs re-scope"
+    priority: P1
+
+  - domain: Services.ProfitabilityCockpit
+    plane: A
+    ms_surface: D365 Project Operations
+    ms_shape: integrated_erp
+    parity_type: ce_oca_bridge
+    primary_benchmark: "Project profitability dashboard + margin intelligence"
+    ce: [project, account]
+    oca_primary: [mis-builder, account-financial-reporting, project-reporting]
+    oca_adjacent: [account-analytic]
+    ipai_bridge: [ipai_ppm_profitability_cockpit]
+    pulser_agent: profitability_agent
+    status: gap
+    gap: "Margin intelligence + utilization-adjusted profitability is the key differentiator for services consulting clients. NEEDS BUILD."
+    priority: P0
+    notes: "Primary differentiator for TBWA\\SMP-style agency clients"
+
+  - domain: Services.DeliveryToFinanceReconciliation
+    plane: A
+    ms_surface: D365 Project Operations
+    ms_shape: integrated_erp
+    parity_type: ce_oca_bridge
+    primary_benchmark: "Revenue recognition + delivery-to-billing reconciliation"
+    ce: [account, sale_timesheet]
+    oca_primary: [account-invoicing, sale-workflow]
+    oca_adjacent: [account-reconcile]
+    ipai_bridge: [ipai_revrec_bridge]
+    pulser_agent: null
+    status: gap
+    gap: "Revenue recognition automation for services contracts (time-and-materials, fixed-fee, milestone) needs ipai_* bridge"
+    priority: P1
+
+  - domain: Services.PortfolioGovernance
+    plane: A
+    ms_surface: D365 Project Operations
+    ms_shape: integrated_erp
+    parity_type: ce_oca_bridge
+    primary_benchmark: "Cross-entity portfolio reporting + governance RAG"
+    ce: [project]
+    oca_primary: [mis-builder, project-reporting]
+    oca_adjacent: [account-consolidation]
+    ipai_bridge: [ipai_portfolio_rag]
+    pulser_agent: null
+    status: gap
+    gap: "Cross-tenant portfolio dashboards blocked on account-consolidation hydration + multi-company tenancy finalization (docs/tenants/TENANCY_MODEL.md)"
+    priority: P1
+
+  - domain: Services.Manufacturing
+    plane: A
+    ms_surface: D365 Project Operations (Manufacturing)
+    ms_shape: manufacturing
+    parity_type: ce_oca_bridge
+    primary_benchmark: "Projectized manufacturing with PSA"
+    ce: [mrp, project, account_analytic]
+    oca_primary: [manufacture, project]
+    oca_adjacent: [account-analytic]
+    ipai_bridge: []
+    pulser_agent: null
+    status: gap
+    gap: "Out of scope unless a mfg client appears; don't build speculatively"
+    priority: P2
+
+  # ═══════════════════════════════════════════════════════════════════
+  # PLANE B — AI ASSISTIVE LAYER (Copilot Finance agents)
+  # ═══════════════════════════════════════════════════════════════════
+
+  - domain: Copilot.FinancialReconciliation
+    plane: B
+    ms_surface: Copilot Finance agents — Financial Reconciliation agent
+    parity_type: ce_oca_bridge
+    primary_benchmark: "Bank-and-ledger reconciliation agent"
+    ce: []
+    oca_primary: []
+    oca_adjacent: []
+    ipai_bridge: [ipai_bank_recon]
+    pulser_agent: financial_reconciliation_agent
+    status: partial
+    gap: "ipai_bank_recon live; Pulser reconciliation wrapper skill needed to match conversational UX"
+    priority: P0
+
+  - domain: Copilot.CollectionsOutlook
+    plane: B
+    ms_surface: Copilot Finance agents — Collections in Outlook
+    parity_type: ce_oca_bridge
+    primary_benchmark: "AR follow-up drafted in Outlook"
+    ce: []
+    oca_primary: [credit-control]
+    oca_adjacent: [mail, crm]
+    ipai_bridge: [ipai_ar_collections_copilot]
+    pulser_agent: collections_agent
+    status: gap
+    gap: "Requires credit-control OCA hydration + M365 bot-proxy integration (agents/tax-guru-surface pattern) + Pulser collections_agent"
+    priority: P0
+
+  - domain: Copilot.InExcel
+    plane: B
+    ms_surface: Copilot Finance agents — in Excel (delivery channel)
+    parity_type: bridge_only
+    primary_benchmark: "Finance agents delivered via Excel UX"
+    ce: []
+    oca_primary: []
+    oca_adjacent: []
+    ipai_bridge: []
+    pulser_agent: null
+    status: substituted
+    gap: "DELIBERATE CHANNEL SUBSTITUTION — IPAI does not build an Excel add-in. Substitute: Odoo Copilot systray + ad-hoc exports. Per two-plane doctrine §4"
+    priority: null
+    notes: "Not a parity target. Excel is a channel, not a product."
+
+  - domain: Copilot.InOutlook
+    plane: B
+    ms_surface: Copilot Finance agents — in Outlook (delivery channel)
+    parity_type: bridge_only
+    primary_benchmark: "Finance agents delivered via Outlook UX"
+    ce: []
+    oca_primary: []
+    oca_adjacent: []
+    ipai_bridge: [ipai_m365_bot_proxy]
+    pulser_agent: null
+    status: partial
+    gap: "M365 bot-proxy ACA app deployed (ipai-bot-proxy-dev live); Outlook-specific flows per Pulser sub-agent needed"
+    priority: P1
+    notes: "Delivery channel parity via M365 Agent SDK bridge, not Excel clone"
+
+  - domain: Copilot.ExpenseAgent
+    plane: B
+    ms_surface: D365 Expense agent (preview)
+    parity_type: ce_oca_bridge
+    primary_benchmark: "Expense capture + liquidation workflow"
+    ce: [hr_expense]
+    oca_primary: [hr-expense]
+    oca_adjacent: [account-invoicing]
+    ipai_bridge: [ipai_expense_ops, ipai_hr_expense_liquidation]
+    pulser_agent: expense_agent
+    status: full
+    gap: "Matched via Foundry DI + existing ipai_expense_ops + liquidation module"
+    priority: null
+
+  - domain: Copilot.SupplierCommsAgent
+    plane: B
+    ms_surface: D365 Supplier Comms agent (preview)
+    parity_type: ce_oca_bridge
+    primary_benchmark: "Supplier follow-up + PO exception handling"
+    ce: [purchase]
+    oca_primary: [purchase-workflow]
+    oca_adjacent: [mail]
+    ipai_bridge: [ipai_supplier_comms_bridge]
+    pulser_agent: supplier_comms_agent
+    status: partial
+    gap: "Pulser wrapper + Slack/Teams delivery surface needed"
+    priority: P1
+
+# ─── Invariants ───
+# 1. Plane A rows target ERP system-of-record parity. Plane B rows target Copilot overlay parity.
+# 2. Every ipai_bridge module listed MUST comply with feedback_ipai_custom_module_doctrine.md:
+#    - README.md (overview)
+#    - docs/MODULE_INTROSPECTION.md (why this module exists, CE/OCA coverage checked, justification)
+#    - docs/TECHNICAL_GUIDE.md (extension points, tests, upgrade notes)
+# 3. A row with status=gap and non-null ipai_bridge does NOT mean ipai_* is the approved solution.
+#    It means a bridge is a candidate after OCA exhaustion per feedback_odoo_module_selection_doctrine.md.
+# 4. This matrix is the canonical reference for spec bundles, proposals, and RFP responses.
+#    Update it when new OCA modules hydrate or when ipai_bridge modules ship/retire.

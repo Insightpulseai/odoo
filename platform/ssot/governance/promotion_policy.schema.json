@@ -1,0 +1,43 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Agent Factory V2 Promotion Policy",
+  "type": "object",
+  "required": ["agent_id", "target_level", "gates"],
+  "properties": {
+    "agent_id": { "type": "string" },
+    "target_level": {
+      "type": "string",
+      "enum": ["L1", "L2", "L3", "L4", "L5"]
+    },
+    "gates": {
+      "type": "object",
+      "properties": {
+        "freshness_days": { "type": "integer", "minimum": 1 },
+        "spec_kit": {
+          "type": "object",
+          "required": ["present"],
+          "properties": { "present": { "type": "boolean" } }
+        },
+        "red_team": {
+          "type": "object",
+          "required": ["status"],
+          "properties": { "status": { "type": "string", "enum": ["PASSED", "FAILED"] } }
+        },
+        "soak_window": {
+          "type": "object",
+          "required": ["cycles_completed", "stability_score"],
+          "properties": {
+            "cycles_completed": { "type": "integer", "minimum": 0 },
+            "stability_score": { "type": "number", "minimum": 0, "maximum": 1 }
+          }
+        },
+        "fail_closed_verification": {
+          "type": "object",
+          "required": ["verified"],
+          "properties": { "verified": { "type": "boolean" } }
+        }
+      }
+    }
+  },
+  "additionalProperties": false
+}

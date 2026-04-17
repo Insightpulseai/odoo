@@ -1,0 +1,84 @@
+---
+# Databricks Developer Tooling Contract — SSOT
+# Source: https://learn.microsoft.com/en-us/azure/databricks/developers/
+# Classification: developer workflow/toolchain truth
+# NOT: workspace resource IaC, governance, semantic-layer, identity-plane
+contract_version: 1
+
+databricks_developer_tooling:
+  source:
+    type: microsoft_learn
+    url: https://learn.microsoft.com/en-us/azure/databricks/developers/
+    classification: databricks_developer_workflow_truth
+
+  usage_rules:
+    use_for:
+      - developer_workflow_design
+      - local_vs_workspace_dev_policy
+      - sdk_cli_bundle_tool_selection
+      - ci_cd_tooling_reference
+      - repo_and_git_workflow_reference
+    do_not_use_for:
+      - workspace_resource_contract_truth
+      - unity_catalog_governance_truth
+      - semantic_model_truth
+      - tenant_boundary_truth
+
+  development_modes:
+    workspace_development:
+      supported_languages: [python, sql, scala, r]
+      strengths:
+        - quick_api_familiarization
+        - notebook_first_iteration
+        - dbutils_access
+        - workspace_native_features
+        - git_folders
+    local_development:
+      strengths:
+        - richer_ide_features
+        - broader_language_support
+        - local_debugging
+        - test_frameworks
+        - direct_source_control_access
+
+  app_and_solution_tools:
+    workspace_hosted:
+      - databricks_apps
+    ide_tools:
+      - vscode_extension
+      - pycharm_plugin
+    sdks:
+      - databricks_sdk_python
+      - databricks_sdk_go
+      - databricks_sdk_java
+      - databricks_sdk_r
+
+  ide_surfaces:
+    vscode_extension:
+      source: infra/ssot/databricks/vscode-extension.contract.yaml
+      role: primary_local_ide_surface_for_databricks_projects
+      default_project_shape: declarative_automation_bundle
+
+  connectivity_tools:
+    - databricks_connect
+    - databricks_remote_development
+    - sql_drivers_and_tools
+
+  automation_and_ci_cd:
+    - databricks_cli
+    - declarative_automation_bundles
+    - databricks_terraform_provider
+    - azure_pipelines              # IPAI canonical — NOT github_actions
+    # github_actions listed in MS docs but FORBIDDEN per CLAUDE.md 2026-04-16
+    # scoped exception only per ssot/governance/gha-scoped-exception.yaml
+
+  collaboration_surfaces:
+    - git_folders
+    - udfs
+
+  policy_notes:
+    - workspace_dev_and_local_dev_are_both_first_class
+    - bundles_are_the_databricks_native_cicd_surface
+    - terraform_is_for_infra_and_resource_provisioning_not_notebook_logic
+    - git_folders_are_workspace_collaboration_surface_not_repo_authority_by_themselves
+    - ipai_uses_azure_pipelines_not_github_actions_for_databricks_ci_cd

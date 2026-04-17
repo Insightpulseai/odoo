@@ -1,0 +1,239 @@
+# ---------------------------------------------------------------------------
+# Seed: TBWA\SMP PPM task structure (agency workflow)
+# ---------------------------------------------------------------------------
+# Authority: ssot/tenants/tbwa-smp/seed/ppm_tasks.yaml
+# Tenant:    TBWA\SMP (company_id=4)
+# Program:   docs/programs/tbwa-smp-finance-program.md
+# Doctrine:  Odoo CE 18 project.project + project.task; OCA/project extensions.
+#            CDM target: msdyn_project + msdyn_projecttask.
+# Locked:    2026-04-15
+# ---------------------------------------------------------------------------
+
+metadata:
+  contract: tbwa-smp-ppm-seed
+  locked_at: 2026-04-15
+  status: specification    # populated with real data on A.M4
+  notes: >
+    Agency PPM template. One project per (client × campaign) pair.
+    Sub-tasks follow canonical agency workflow: brief → concept →
+    production → delivery → wrap. Time tracked against each stage.
+
+# ---------------------------------------------------------------------------
+# Project stages (project.task.type / project.project.stage)
+# ---------------------------------------------------------------------------
+project_stages:
+  - name: Briefing
+    sequence: 10
+    fold: false
+  - name: Concept
+    sequence: 20
+    fold: false
+  - name: Client Review
+    sequence: 30
+    fold: false
+  - name: Production
+    sequence: 40
+    fold: false
+  - name: Delivery
+    sequence: 50
+    fold: false
+  - name: Wrap
+    sequence: 60
+    fold: false
+  - name: Closed
+    sequence: 70
+    fold: true           # folded = closed
+
+# ---------------------------------------------------------------------------
+# Task template per project stage (project.task with parent)
+# ---------------------------------------------------------------------------
+task_template:
+  Briefing:
+    - name: Client kickoff meeting
+      planned_hours: 2
+      priority: "1"
+    - name: Brief document (approved)
+      planned_hours: 4
+      priority: "1"
+    - name: Success criteria + KPIs locked
+      planned_hours: 2
+  Concept:
+    - name: Creative territories (3)
+      planned_hours: 16
+    - name: Internal creative review
+      planned_hours: 2
+    - name: Concept deck prep
+      planned_hours: 8
+  "Client Review":
+    - name: Client presentation
+      planned_hours: 2
+    - name: Client feedback consolidated
+      planned_hours: 2
+    - name: Revision round 1
+      planned_hours: 8
+    - name: Revision round 2 (if needed)
+      planned_hours: 4
+  Production:
+    - name: Production brief to vendors
+      planned_hours: 4
+    - name: Shoot / recording / build
+      planned_hours: 24     # variable; placeholder
+    - name: Post-production
+      planned_hours: 16
+    - name: Version control / asset library
+      planned_hours: 2
+  Delivery:
+    - name: Client delivery pack
+      planned_hours: 4
+    - name: Approval before go-live
+      planned_hours: 2
+    - name: Go-live / launch
+      planned_hours: 4
+  Wrap:
+    - name: Post-campaign analytics
+      planned_hours: 8
+    - name: Learnings write-up
+      planned_hours: 4
+    - name: Billable hours reconciled to timesheet
+      planned_hours: 2
+    - name: Vendor invoices closed
+      planned_hours: 2
+    - name: Client final invoice issued
+      planned_hours: 2
+
+# ---------------------------------------------------------------------------
+# Demo projects (5) for user training at A.M2
+# ---------------------------------------------------------------------------
+demo_projects:
+  - code: DEMO-01
+    name: "[DEMO] Brand X — Q3 Brand Refresh"
+    client_account: <partner_id: Brand X>
+    fiscal_year: 2026
+    stage: Concept
+    task_count: 18
+    billable: true
+  - code: DEMO-02
+    name: "[DEMO] Telco Y — Awareness Campaign"
+    client_account: <partner_id: Telco Y>
+    fiscal_year: 2026
+    stage: Production
+    task_count: 22
+    billable: true
+  - code: DEMO-03
+    name: "[DEMO] Retail Z — Always-On Digital"
+    client_account: <partner_id: Retail Z>
+    fiscal_year: 2026
+    stage: Delivery
+    task_count: 16
+    billable: true
+  - code: DEMO-04
+    name: "[DEMO] Bank W — Monthly Retainer"
+    client_account: <partner_id: Bank W>
+    fiscal_year: 2026
+    stage: Briefing
+    task_count: 12
+    billable: true
+  - code: DEMO-05
+    name: "[DEMO] Internal — Agency Website Refresh"
+    client_account: null     # internal
+    fiscal_year: 2026
+    stage: Concept
+    task_count: 14
+    billable: false
+
+# ---------------------------------------------------------------------------
+# Timesheet template (account.analytic.line)
+# ---------------------------------------------------------------------------
+timesheet_template:
+  source: task.timesheet_ids
+  required_fields:
+    - employee_id
+    - task_id (or project_id)
+    - date
+    - unit_amount (hours)
+    - name (description)
+  daily_reminder: true       # per-user activity/reminder
+  weekly_lock_day: Monday    # per week, prior week's lines locked Mon AM
+  approval_workflow: direct_manager then PM
+  billability_flag:
+    source: task.project.is_billable
+    gl_account_if_billable: 4001 (Creative Services Revenue)
+    gl_account_if_nonbillable: 7xxx (internal overhead)
+
+# ---------------------------------------------------------------------------
+# Resource roles (hr.job → skill map)
+# ---------------------------------------------------------------------------
+resource_roles:
+  - code: CD
+    name: Creative Director
+    default_billing_rate_php: <TBD>
+  - code: ACD
+    name: Associate Creative Director
+    default_billing_rate_php: <TBD>
+  - code: AD
+    name: Art Director
+  - code: CW
+    name: Copywriter
+  - code: PM
+    name: Project / Account Manager
+  - code: STRAT
+    name: Strategist / Planner
+  - code: PROD
+    name: Producer
+  - code: DIG
+    name: Digital Lead
+  - code: MED
+    name: Media Planner / Buyer
+  - code: FIN
+    name: Finance / Billing
+  - code: ADM
+    name: Admin / Traffic
+
+# ---------------------------------------------------------------------------
+# OCA modules to adopt for PPM depth
+# ---------------------------------------------------------------------------
+oca_modules:
+  - repo: OCA/project
+    modules:
+      - project_timeline         # Gantt view
+      - project_status           # custom state machine
+      - project_template         # template-based project creation
+      - project_task_material    # materials linked to tasks
+      - project_key              # cross-module project reference
+      - project_role             # role-based assignments
+  - repo: OCA/project-reporting
+    modules:
+      - (multiple)               # KPIs, burn-down, profitability
+  - repo: OCA/account-analytic
+    modules:
+      - (multiple)               # project actuals + budgets
+  - repo: OCA/hr-timesheet
+    modules:
+      - (multiple)               # timesheet enhancements
+  - repo: OCA/contract
+    modules:
+      - contract                 # recurring contracts (retainers)
+  verification_required: per oca-governance skill before install
+
+# ---------------------------------------------------------------------------
+# OData exposure (per platform/contracts/odata/v1/)
+# ---------------------------------------------------------------------------
+odata_exposure:
+  Projects:       project.project (all TBWA\SMP, company_id=4)
+  ProjectTasks:   project.task (all TBWA\SMP)
+  TimeEntries:    account.analytic.line (timesheet lines, company_id=4)
+  read_only: true
+  consumer: TBWA\SMP Power BI report (target: Q3 2026)
+
+# ---------------------------------------------------------------------------
+# Governance
+# ---------------------------------------------------------------------------
+governance:
+  record_rules:
+    - all PPM data scoped to company_id=4
+    - client-of-client IP protected (attachment encryption, KV per-client secrets)
+    - billable/nonbillable separation enforced at GL posting
+  retention: 7_years  # per engagement_posture.audit_retention_days
+  export_policy:
+    - Client can export own project data on request (GDPR/PH-DPA)
+    - IPAI retains aggregated metrics only after engagement ends

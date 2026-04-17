@@ -1,0 +1,75 @@
+---
+# SSOT: Tenant Registry
+# Canonical list of all tenants served by IPAI's Odoo 18 instance.
+# Authority: this file. Changes here drive per-tenant identity YAMLs + record rules.
+#
+# Tenancy model: SINGLE Odoo database (odoo_dev), MULTI-COMPANY (res.company per tenant).
+# See docs/tenants/TENANCY_MODEL.md for full rationale and access controls.
+#
+# Last updated: 2026-04-14
+version: 1
+tenancy_model: single_db_multi_company
+canonical_database: odoo_dev
+provider_tenant: insightpulseai  # IPAI is the platform provider
+
+tenants:
+  - code: IPAI
+    name: InsightPulseAI
+    domain: insightpulseai.com
+    role: provider
+    identity_file: ssot/tenants/insightpulseai/identity.yaml
+    odoo_company_id: 1  # TBD — primary/default company in res.company
+    status: active
+    billing_model: n/a  # provider does not bill itself
+    data_isolation: global  # provider has cross-tenant visibility for operations
+    notes: >
+      The platform/product company. Owns Pulser, ipai_* modules, Foundry agents.
+      Email infra: Zoho Mail (smtp.zoho.com:587).
+
+  - code: W9
+    name: W9 Studio
+    domain: w9studio.net
+    role: portfolio_venture
+    identity_file: ssot/tenants/w9studio/identity.yaml
+    odoo_company_id: 2  # TBD
+    status: active
+    billing_model: internal_venture  # W9 is a sibling company under IPAI umbrella
+    data_isolation: per_company_record_rules
+    notes: >
+      Photo studio venture in Makati. See project_w9studio_*.md memories.
+      Currently 3-user Google Workspace. Finance consolidated through IPAI Odoo.
+
+  - code: OMC
+    name: OMC (Finance Framework Unified Workbook)
+    domain: omc.com
+    role: tbd  # UNCLEAR — see TENANCY_MODEL.md §Open Questions
+    identity_file: ssot/tenants/omc/identity.yaml
+    odoo_company_id: 3  # TBD
+    status: active
+    billing_model: tbd
+    data_isolation: per_company_record_rules
+    notes: >
+      11-person finance team with a shared "Finance Framework Unified Workbook".
+      Relationship to IPAI is unconfirmed (client | sister entity | parent finance
+      function). Blocks tenancy model finalization.
+
+  - code: TBWA_SMP
+    name: TBWA\SMP (Santiago Mangada Puno)
+    domain: tbd  # likely tbwasmp.com or similar
+    role: client
+    identity_file: ssot/tenants/tbwa-smp/identity.yaml
+    odoo_company_id: 4  # TBD
+    status: prospect  # directory not yet imported
+    billing_model: saas_per_seat  # default assumption; confirm on contract
+    data_isolation: per_company_record_rules_strict  # client — hard boundary required
+    notes: >
+      PH advertising agency (TBWA Santiago Mangada Puno).
+      Treated as external client — strict record-rule isolation required.
+
+# ─── Invariants ───
+# 1. All tenants live in odoo_dev. No separate DB per tenant.
+# 2. Every record owned by a tenant MUST have company_id set.
+# 3. Portal users are scoped via res.users.company_ids (whitelist).
+# 4. Cross-tenant reports are provider-only (IPAI admin role).
+# 5. Adding a tenant requires: (a) new row here, (b) identity.yaml, (c) res.company creation,
+#    (d) record rules validation, (e) portal user provisioning.

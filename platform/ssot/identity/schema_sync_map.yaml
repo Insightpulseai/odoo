@@ -1,0 +1,266 @@
+# Schema Sync Map — Cross-App Data Synchronization
+# SSOT for which Odoo schemas sync to Plane, CRM, and Shelf
+# Spec: spec/entra-identity-migration/ (unified auth eliminates identity sync)
+# Created: 2026-03-22
+
+# ─── Architecture Principle ────────────────────────────────────────────
+#
+# Identity is NOT a sync problem.
+# Entra ID is the single identity spine — all 6 apps authenticate via OIDC.
+# JIT provisioning creates local user records on first login.
+# No user replication, no password sync, no identity federation between apps.
+#
+# Only BUSINESS DATA syncs between apps:
+#   - Odoo → Plane: project/task metadata
+#   - Odoo → CRM: lead/contact projections
+#   - Odoo ↔ Shelf: inventory (bidirectional)
+
+identity:
+  provider: Microsoft Entra ID
+  protocol: OIDC
+  sync_method: none  # JIT provisioning per app, no user replication
+  apps:
+    - odoo     # erp.insightpulseai.com
+    - plane    # plane.insightpulseai.com
+    - superset # superset.insightpulseai.com
+    - n8n      # n8n.insightpulseai.com
+    - shelf    # shelf.insightpulseai.com
+    - crm      # crm.insightpulseai.com
+  notes: >
+    Each app creates a local user profile on first Entra login.
+    Role/group assignment comes from Entra security group claims.
+    No app-to-app user sync needed.
+
+# ─── Odoo → Plane (Project/Task Metadata) ──────────────────────────────
+sync_plane:
+  direction: bidirectional
+  transport: webhook + REST API
+  trigger: Odoo server action on write + Plane webhooks (HMAC-SHA256)
+  rate_limit: 60 req/min (Plane API)
+  pagination: cursor-based
+
+  odoo_to_plane:
+    description: Project and task metadata projection
+    schemas:
+      - odoo_model: project.project
+        plane_entity: Project
+        fields:
+          - odoo: name → plane: name
+          - odoo: description → plane: description
+          - odoo: date_start → plane: start_date
+          - odoo: date → plane: target_date
+          - odoo: ipai_ppm_budget_amount → plane: custom_field (budget)
+          - odoo: ipai_ppm_cost_center → plane: custom_field (cost_center)
+          - odoo: tag_ids.name → plane: labels
+        key: odoo project.project.id ↔ plane project UUID (stored in ipai_plane_project_uuid)
+
+      - odoo_model: project.task
+        plane_entity: Issue
+        fields:
+          - odoo: name → plane: name
+          - odoo: description → plane: description_html
+          - odoo: stage_id.name → plane: state (mapped)
+          - odoo: user_ids.email → plane: assignees (by Entra email)
+          - odoo: priority → plane: priority (mapped: 0→none, 1→urgent)
+          - odoo: date_deadline → plane: target_date
+          - odoo: tag_ids.name → plane: labels
+        key: odoo project.task.id ↔ plane issue UUID (stored in ipai_plane_issue_uuid)
+        stage_mapping:
+          draft: Backlog
+          in_progress: In Progress
+          review: In Review
+          done: Done
+          cancelled: Cancelled
+
+  plane_to_odoo:
+    description: Status and assignment updates flow back
+    schemas:
+      - plane_entity: Issue
+        odoo_model: project.task
+        fields:
+          - plane: state → odoo: stage_id (reverse mapped)
+          - plane: assignees → odoo: user_ids (by Entra email)
+          - plane: priority → odoo: priority (reverse mapped)
+        webhook_events:
+          - issue.updated
+          - issue.deleted
+        notes: >
+          Only status/assignment changes flow back.
+          Task creation always originates in Odoo (SoR).
+
+  module: ipai_plane_connector  # Odoo module handling sync
+  mcp_server: plane  # MCP server at mcp.plane.so/http/mcp
+
+# ─── Odoo → CRM (Lead/Contact Projection) ──────────────────────────────
+sync_crm:
+  direction: odoo_to_crm  # read projection, CRM is not SoR for contacts
+  transport: REST API (scheduled sync)
+  trigger: Odoo cron job (ir.cron) — every 15 minutes
+
+  schemas:
+    - odoo_model: res.partner
+      crm_entity: Contact
+      filter: "partner.customer_rank > 0 OR partner.supplier_rank > 0"
+      fields:
+        - odoo: name → crm: name
+        - odoo: email → crm: email
+        - odoo: phone → crm: phone
+        - odoo: mobile → crm: mobile
+        - odoo: street, street2, city, state_id, zip, country_id → crm: address
+        - odoo: company_type → crm: type (company/individual)
+        - odoo: parent_id.name → crm: company_name
+        - odoo: category_id.name → crm: tags
+        - odoo: user_id.email → crm: owner (by Entra email)
+      key: odoo res.partner.id ↔ crm contact UUID (stored in ipai_crm_contact_uuid)
+
+    - odoo_model: crm.lead
+      crm_entity: Deal
+      fields:
+        - odoo: name → crm: name
+        - odoo: partner_id → crm: contact (via mapped UUID)
+        - odoo: expected_revenue → crm: value
+        - odoo: probability → crm: probability
+        - odoo: stage_id.name → crm: stage (mapped)
+        - odoo: user_id.email → crm: owner (by Entra email)
+        - odoo: date_deadline → crm: close_date
+        - odoo: tag_ids.name → crm: tags
+        - odoo: description → crm: notes
+      key: odoo crm.lead.id ↔ crm deal UUID (stored in ipai_crm_deal_uuid)
+
+    - odoo_model: sale.order
+      crm_entity: Activity
+      filter: "order.state in ('sale', 'done')"
+      fields:
+        - odoo: name → crm: reference
+        - odoo: partner_id → crm: contact (via mapped UUID)
+        - odoo: amount_total → crm: value
+        - odoo: date_order → crm: date
+      notes: Read-only activity log in CRM, not editable
+
+  module: ipai_crm_connector  # Odoo module handling projection
+
+# ─── Odoo ↔ Shelf (Inventory — Bidirectional) ──────────────────────────
+sync_shelf:
+  direction: bidirectional
+  transport: event-driven (Odoo server actions + Shelf webhooks) + scheduled reconciliation
+  trigger:
+    realtime: Odoo server action on stock.move confirm + Shelf inventory webhooks
+    batch: Odoo cron job — full reconciliation every 4 hours
+
+  odoo_to_shelf:
+    description: Product catalog and stock levels
+    schemas:
+      - odoo_model: product.product
+        shelf_entity: Item
+        fields:
+          - odoo: name → shelf: name
+          - odoo: default_code → shelf: sku
+          - odoo: barcode → shelf: barcode
+          - odoo: categ_id.complete_name → shelf: category
+          - odoo: list_price → shelf: price
+          - odoo: standard_price → shelf: cost
+          - odoo: uom_id.name → shelf: unit
+          - odoo: weight → shelf: weight
+          - odoo: image_128 → shelf: thumbnail (base64)
+          - odoo: active → shelf: active
+        key: odoo product.product.id ↔ shelf item UUID (stored in ipai_shelf_item_uuid)
+
+      - odoo_model: stock.quant
+        shelf_entity: StockLevel
+        fields:
+          - odoo: product_id → shelf: item (via mapped UUID)
+          - odoo: location_id.complete_name → shelf: location
+          - odoo: quantity → shelf: on_hand
+          - odoo: reserved_quantity → shelf: reserved
+          - odoo: lot_id.name → shelf: lot_number
+        notes: >
+          Aggregated by product+location.
+          Shelf displays real-time stock from Odoo quants.
+
+      - odoo_model: stock.lot
+        shelf_entity: Lot
+        fields:
+          - odoo: name → shelf: lot_number
+          - odoo: product_id → shelf: item (via mapped UUID)
+          - odoo: expiration_date → shelf: expiry_date
+          - odoo: ref → shelf: reference
+        key: odoo stock.lot.id ↔ shelf lot UUID (stored in ipai_shelf_lot_uuid)
+
+  shelf_to_odoo:
+    description: Inventory adjustments and receiving confirmations
+    schemas:
+      - shelf_entity: InventoryAdjustment
+        odoo_model: stock.quant
+        action: stock.quant.inventory_adjust_action
+        fields:
+          - shelf: item → odoo: product_id (via reverse UUID lookup)
+          - shelf: location → odoo: location_id (by complete_name)
+          - shelf: new_quantity → odoo: inventory_quantity
+          - shelf: reason → odoo: inventory_diff_reason
+        notes: >
+          Shelf barcode scans trigger inventory adjustments in Odoo.
+          Each adjustment creates an Odoo stock.move for audit trail.
+
+      - shelf_entity: ReceivingConfirmation
+        odoo_model: stock.picking
+        action: button_validate
+        fields:
+          - shelf: purchase_reference → odoo: origin (PO number lookup)
+          - shelf: items[].sku → odoo: move_ids.product_id (by default_code)
+          - shelf: items[].received_qty → odoo: move_ids.quantity
+          - shelf: items[].lot_number → odoo: move_ids.lot_ids
+        notes: >
+          Shelf confirms receipt against Odoo purchase orders.
+          Validates quantities and creates lot records if new.
+
+  reconciliation:
+    schedule: "0 */4 * * *"  # every 4 hours
+    method: >
+      Full stock.quant snapshot compared to Shelf StockLevel.
+      Discrepancies logged to ipai_shelf_sync_log.
+      Auto-correct if delta < 5 units; flag for review if larger.
+
+  module: ipai_shelf_connector  # Odoo module handling inventory sync
+
+# ─── Sync Infrastructure ───────────────────────────────────────────────
+infrastructure:
+  orchestrator: n8n  # n8n.insightpulseai.com
+  queue: Supabase task bus (ops.task_queue)
+  error_handling:
+    retry: 3 attempts with exponential backoff
+    dead_letter: ops.sync_dead_letter table in Supabase
+    alerting: Slack #ops-alerts channel
+  logging:
+    sync_events: ops.platform_events (Supabase, append-only)
+    module_logs: Odoo ir.logging (per-module)
+
+# ─── Module Dependency Map ──────────────────────────────────────────────
+modules:
+  ipai_plane_connector:
+    depends: [base, project, ipai_finance_ppm]
+    status: planned
+    spec: spec/plane-unified-docs/
+
+  ipai_crm_connector:
+    depends: [base, crm, sale, contacts]
+    status: planned
+    spec: null  # needs spec bundle
+
+  ipai_shelf_connector:
+    depends: [base, stock, product, purchase]
+    status: planned
+    spec: null  # needs spec bundle
+
+  # ipai_auth_oidc REMOVED 2026-04-14 per no-custom doctrine.
+  # Identity integration moved to CE auth_oauth + auth_totp + infra wiring.
+  # SSOT: ssot/identity/odoo-azure-oauth.yaml
+  # Seed: scripts/odoo/seed_auth_providers.py
+  entra_identity_integration:
+    depends: [base, auth_oauth, auth_totp]  # all CE built-ins
+    status: active
+    implementation: "config + SSOT + seed script (no custom module)"
+    ssot: ssot/identity/odoo-azure-oauth.yaml
+    notes: >
+      CE-native Entra OAuth2. JIT user provisioning via auth_oauth built-in.
+      Microsoft Graph `User.Read` scope for profile sync. MFA via CE auth_totp
+      for admin groups. No Python code — configuration only.

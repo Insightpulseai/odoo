@@ -1,0 +1,31 @@
+# runtime.yaml — production environment runtime configuration
+environment: prod
+api:
+  port: 8090
+  host: "0.0.0.0"
+
+orchestrator:
+  max_concurrent_sessions: 100
+  session_timeout_ms: 600000  # 10 minutes
+  checkpoint_interval_steps: 1
+
+executor:
+  max_tokens_per_call: 4096
+  tool_timeout_ms: 30000
+  sandbox_enabled: true
+
+gateway:
+  rate_limit_per_minute: 300
+  circuit_breaker_threshold: 10
+  backends:
+    odoo:
+      url: ""  # TODO: Set production Odoo URL
+    foundry:
+      url: ""  # TODO: Set production Foundry URL
+
+telemetry:
+  enabled: true
+  exporter: "azure-monitor"
+
+logging:
+  level: "warn"

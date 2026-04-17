@@ -1,0 +1,112 @@
+# Supervisor → Worker Handoff Contract
+#
+# When the supervisor dispatches a specialist worker, it emits a handoff
+# contract alongside the agent_request envelope. The handoff is the binding
+# that scopes what the worker is authorized to do for this specific step.
+#
+# Authority: docs/architecture/agent-orchestration-model.md §6
+# Related: agent_request.yaml, agent_result.yaml
+
+$schema: "http://json-schema.org/draft-07/schema#"
+$id: "https://insightpulseai.com/schemas/handoff.yaml"
+title: Handoff
+description: |
+  Supervisor's decision record for dispatching a worker. Scopes allowed tools,
+  input projection, timeout, retry policy, and human-approval gate.
+type: object
+required:
+  - handoff_id
+  - workflow_id
+  - from_agent
+  - to_agent
+  - input_projection
+  - allowed_tools
+  - timeout_s
+  - retry_policy
+  - human_approval_required
+properties:
+  handoff_id:
+    type: string
+    format: uuid
+  workflow_id:
+    type: string
+    format: uuid
+  step_id:
+    type: string
+  from_agent:
+    type: string
+    description: Must be the supervisor (or planner) per orchestration doctrine.
+    enum: [pulser_supervisor, pulser_planner]
+  to_agent:
+    type: string
+    description: Target agent name (must exist in agent-interop-matrix.yaml).
+  input_projection:
+    type: object
+    description: |
+      Subset of the original user request + workflow state passed to this worker.
+      Supervisor strips data the worker does not need (principle of least context).
+    properties:
+      task_payload: { type: object }
+      context_refs: { type: array, items: { type: string }, description: "References to prior step outputs the worker may read" }
+      sanitized: { type: boolean, default: true, description: "Content Safety pre-filter already applied" }
+  allowed_tools:
+    type: array
+    items: { type: string }
+    description: |
+      MCP tool allowlist for this step. MUST be a subset of to_agent's declared
+      mcp_tools in agent-interop-matrix.yaml. Worker enforcer rejects any call
+      outside this list.
+  timeout_s:
+    type: integer
+    minimum: 1
+    maximum: 600
+  retry_policy:
+    type: object
+    required: [max_retries, retry_on]
+    properties:
+      max_retries: { type: integer, minimum: 0, maximum: 3 }
+      retry_on: { type: array, items: { type: string, enum: [timeout, retryable_error, judge_rejected, schema_invalid] } }
+      backoff_ms: { type: integer, minimum: 100 }
+      judge_loop: { type: boolean, default: false, description: "If true, supervisor runs judges between retries" }
+  human_approval_required:
+    type: boolean
+    default: false
+    description: |
+      When true, supervisor BLOCKS the workflow on the worker's result, writes
+      to control.approvals, and does not proceed until signed off. Default
+      for: mutation_safety=write_approved, L3_dual_review, L4_human_gate.
+  approval_band:
+    type: string
+    enum: [L1_auto, L3_dual_review, L4_human_gate]
+  safe_output_gates:
+    type: array
+    description: Safe Outputs subsystem stages applied to worker output before synthesis.
+    items: { type: string, enum: [filter, moderate, sanitize, rate_limit] }
+    default: [filter, moderate, sanitize]
+  allowed_models:
+    type: array
+    items: { type: string }
+    description: |
+      Model routing constraint for this step. Defaults to agent's backing_model.
+      Can be narrowed (e.g. force nano classifier before full reasoning model).
+  token_budget:
+    type: object
+    properties:
+      max_input_tokens: { type: integer }
+      max_output_tokens: { type: integer }
+      max_total_tokens: { type: integer }
+  created_at:
+    type: string
+    format: date-time
+
+# Hard rules enforced at dispatch
+invariants:
+  - from_agent MUST be pulser_supervisor or pulser_planner
+  - to_agent MUST exist in ssot/governance/agent-interop-matrix.yaml
+  - to_agent.invoked_by MUST contain pulser_supervisor
+  - allowed_tools MUST be a subset of to_agent.mcp_tools
+  - human_approval_required MUST be true when approval_band in (L3_dual_review, L4_human_gate)
+  - human_approval_required MUST be true when any allowed_tool matches pattern mcp/*-write*
+  - no handoff may target a worker that itself has non-empty dispatches list
+
+additionalProperties: false

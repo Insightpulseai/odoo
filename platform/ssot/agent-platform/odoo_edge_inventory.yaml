@@ -1,0 +1,42 @@
+# Odoo Edge Inventory — Migration Register
+# SSOT for tracking REST/FastAPI endpoint classification and migration status.
+# Reference: docs/architecture/ODOO_EDGE_AND_AGENT_BOUNDARIES.md
+# Created: 2026-04-10
+
+version: 1
+artifact: ssot/agent-platform/odoo_edge_inventory.yaml
+source_of_truth: true
+
+# Classification keys:
+#   duplicated_business_logic  -> migrate to Odoo addon
+#   thin_edge_adapter          -> keep as-is
+#   azure_wrapper              -> replace with official Azure SDK/REST
+#   foundry_tool_bridge        -> keep (bounded tool adapter)
+
+endpoints:
+  - key: copilot_chat_endpoint
+    module: ipai_odoo_copilot
+    current_surface: odoo_controller
+    classification: thin_edge_adapter
+    target_surface: odoo_controller
+    migration_status: keep
+    notes: "/copilot/chat JSON-RPC bridge to Foundry — thin adapter, no business logic"
+
+  - key: copilot_extraction_endpoint
+    module: ipai_odoo_copilot
+    current_surface: odoo_controller
+    classification: thin_edge_adapter
+    target_surface: odoo_controller
+    migration_status: keep
+    notes: "/copilot/extract routes to Azure Document Intelligence — stateless bridge"
+
+  - key: copilot_gateway_aca
+    module: ipai-copilot-gateway
+    current_surface: aca_container
+    classification: foundry_tool_bridge
+    target_surface: foundry_tool_bridge
+    migration_status: keep
+    notes: "ACA sidecar for Foundry agent routing — placeholder image, awaiting real build"
+
+# Placeholder entries for future inventory (Phase 5: F-1)
+# Add entries as endpoints are discovered during the REST/FastAPI audit.

@@ -1,0 +1,9 @@
+# TODO: implement
+# Referenced by: ssot/governance/gha-scoped-exception.yaml
+# Purpose: block PRs adding .github/workflows/ unless scope-exception rules met
+trigger: none
+pool:
+  vmImage: ubuntu-latest
+steps:
+  - script: echo "TODO — implement GHA scoped exception guard"
+    displayName: placeholder

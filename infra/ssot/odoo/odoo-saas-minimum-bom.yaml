@@ -1,0 +1,84 @@
+contract_version: 1
+
+service: odoo_erp_saas_alone
+scope:
+  includes:
+    - odoo_runtime
+    - background_jobs
+    - transactional_database
+    - image_registry
+    - secret_management
+    - dns_and_https
+  excludes:
+    - databricks
+    - fabric
+    - power_bi
+    - foundry
+    - prismalab
+    - non_erp_browser_apps
+
+minimum_bom:
+  required:
+    - id: acr
+      name: azure_container_registry
+      purpose: canonical_odoo_runtime_image_registry
+
+    - id: aca_env
+      name: azure_container_apps_environment
+      purpose: shared_runtime_environment_for_odoo_services
+
+    - id: odoo_web
+      name: azure_container_app_web
+      purpose: primary_http_erp_surface
+
+    - id: odoo_worker
+      name: azure_container_app_worker
+      purpose: async_background_processing
+
+    - id: odoo_cron
+      name: azure_container_app_cron
+      purpose: scheduled_jobs_and_recurring_tasks
+
+    - id: postgres
+      name: azure_database_for_postgresql_flexible_server
+      purpose: transactional_source_of_truth
+
+    - id: key_vault
+      name: azure_key_vault
+      purpose: secret_and_config_authority
+
+    - id: erp_domain
+      name: dns_custom_domain_and_https
+      purpose: canonical_public_erp_entrypoint
+
+runtime_contract:
+  topology:
+    - web
+    - worker
+    - cron
+
+  canonical_domain:
+    - erp.insightpulseai.com
+
+  data_contract:
+    database: postgresql_flexible_server
+    attachment_strategy:
+      allowed:
+        - db_backed_attachments
+        - durable_external_attachment_store
+      default: db_backed_attachments
+
+  secret_contract:
+    authority: key_vault
+    examples:
+      - db_password
+      - smtp_credentials
+      - oauth_credentials
+      - payment_provider_secrets
+
+non_goals:
+  - analytics_plane
+  - semantic_plane
+  - lakehouse
+  - agent_runtime
+  - public_marketing_sites

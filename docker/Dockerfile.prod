@@ -89,6 +89,15 @@ RUN find /opt/odoo/src -name "requirements.txt" \
 # Install requests for streaming copilot proxy
 RUN pip3 install --no-cache-dir --break-system-packages requests || true
 
+# HOTFIX: force secure OAuth callback generation for Azure sign-in on ACA.
+# ACA terminates TLS at ingress and forwards HTTP internally. Odoo reads
+# request.httprequest.url_root which returns http:// → Entra rejects with
+# AADSTS500117. This one-line patch rewrites http→https in the redirect_uri.
+# Remove once Azure Front Door / forwarded-proto edge contract is canonical.
+# Tracked: ssot/odoo/odoo-sso-runtime-state.yaml → odoo_sso_https_hotfix
+RUN sed -i "s|return_url = request.httprequest.url_root + 'auth_oauth/signin'|return_url = request.httprequest.url_root.replace('http://', 'https://', 1) + 'auth_oauth/signin'|" \
+    /usr/lib/python3/dist-packages/odoo/addons/auth_oauth/controllers/main.py
+
 # Permissions
 RUN chown -R odoo:odoo /opt/odoo/src /etc/odoo/odoo.conf
 

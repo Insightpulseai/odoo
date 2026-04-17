@@ -1,0 +1,1188 @@
+# Tax/BIR Asset Inventory
+# Machine-readable inventory of all discovered tax/BIR-related assets
+# Generated: 2026-03-18
+# Scan scope: Insightpulseai/odoo, Insightpulseai/agents
+
+version: "1.0.0"
+generated_at: "2026-03-18T00:00:00+08:00"
+scan_terms:
+  - BIR
+  - TaxPulse
+  - withholding
+  - EWT
+  - FWT
+  - SAWT
+  - SLSP
+  - alphalist
+  - ATC
+  - RDO
+  - eBIR
+  - eFPS
+  - Philippine tax
+  - VAT
+  - Avalara
+  - AvaTax
+
+assets:
+
+  # ===== ODOO MODULES =====
+
+  - id: odoo-mod-001
+    title: ipai_bir_tax_compliance module
+    repo: Insightpulseai/odoo
+    path: addons/ipai/ipai_bir_tax_compliance/
+    asset_type: odoo_module
+    domain_tags: [tax, bir, compliance, ewt, vat, rules_engine]
+    owner_plane: odoo
+    status: active
+    source_class: odoo
+    duplicate_group: null
+    recommended_action: keep_canonical
+    notes: "Canonical BIR compliance module. Contains rules engine, rates, tests."
+
+  - id: odoo-mod-002
+    title: ipai_finance_ppm module (BIR demo data)
+    repo: Insightpulseai/odoo
+    path: addons/ipai/ipai_finance_ppm/demo/ipai_finance_ppm_demo_bir_tax_filing.xml
+    asset_type: odoo_demo_data
+    domain_tags: [tax, bir, month_end, demo]
+    owner_plane: odoo
+    status: active
+    source_class: odoo
+    duplicate_group: null
+    recommended_action: keep
+    notes: "BIR tax filing demo data for month-end close."
+
+  - id: odoo-mod-003
+    title: ipai_finance_close_seed module (BIR task seeds)
+    repo: Insightpulseai/odoo
+    path: addons/ipai/ipai_finance_close_seed/data/
+    asset_type: odoo_seed_data
+    domain_tags: [tax, bir, seeds, tasks]
+    owner_plane: odoo
+    status: active
+    source_class: odoo
+    duplicate_group: null
+    recommended_action: keep
+    notes: "Files: 07_tasks_bir_tax.xml, tasks_bir.csv, tasks_bir.xml"
+
+  # ===== RULES ENGINE =====
+
+  - id: engine-001
+    title: JSONLogic evaluator
+    repo: Insightpulseai/odoo
+    path: addons/ipai/ipai_bir_tax_compliance/engine/evaluator.py
+    asset_type: python_engine
+    domain_tags: [rules_engine, jsonlogic, tax_computation]
+    owner_plane: odoo
+    status: active
+    source_class: odoo
+    duplicate_group: null
+    recommended_action: keep_canonical
+    notes: "Full JSONLogic evaluator with 14 operators. Core of rules-based tax computation."
+
+  - id: engine-002
+    title: Formula engine
+    repo: Insightpulseai/odoo
+    path: addons/ipai/ipai_bir_tax_compliance/engine/formula.py
+    asset_type: python_engine
+    domain_tags: [rules_engine, aggregation]
+    owner_plane: odoo
+    status: active
+    source_class: odoo
+    duplicate_group: null
+    recommended_action: keep_canonical
+    notes: "Aggregation formula engine (SUM, etc.)"
+
+  - id: engine-003
+    title: Rules loader
+    repo: Insightpulseai/odoo
+    path: addons/ipai/ipai_bir_tax_compliance/engine/loader.py
+    asset_type: python_engine
+    domain_tags: [rules_engine, yaml_loader]
+    owner_plane: odoo
+    status: active
+    source_class: odoo
+    duplicate_group: null
+    recommended_action: keep_canonical
+    notes: "YAML rules file loader."
+
+  # ===== RULES PACKS / RATE TABLES =====
+
+  - id: rules-001
+    title: EWT rules pack (JSONLogic YAML)
+    repo: Insightpulseai/odoo
+    path: addons/ipai/ipai_bir_tax_compliance/data/rules/ewt.rules.yaml
+    asset_type: rules_pack
+    domain_tags: [ewt, atc, withholding, jsonlogic]
+    owner_plane: odoo
+    status: active
+    source_class: odoo
+    duplicate_group: atc_codes
+    recommended_action: reconcile_with_supabase
+    notes: "11 EWT rules using W-series ATC codes (W010-W170). Conflicts with Supabase WI/WC namespace."
+
+  - id: rules-002
+    title: VAT rules pack (JSONLogic YAML)
+    repo: Insightpulseai/odoo
+    path: addons/ipai/ipai_bir_tax_compliance/data/rules/vat.rules.yaml
+    asset_type: rules_pack
+    domain_tags: [vat, output_vat, input_vat, jsonlogic]
+    owner_plane: odoo
+    status: active
+    source_class: odoo
+    duplicate_group: null
+    recommended_action: keep_canonical
+    notes: "8 VAT computation rules."
+
+  - id: rates-001
+    title: PH rates 2025 (JSON)
+    repo: Insightpulseai/odoo
+    path: addons/ipai/ipai_bir_tax_compliance/data/rates/ph_rates_2025.json
+    asset_type: rate_table
+    domain_tags: [rates, train_law, ewt, fwt, corporate_it, vat]
+    owner_plane: odoo
+    status: active
+    source_class: odoo
+    duplicate_group: atc_codes
+    recommended_action: reconcile_with_supabase
+    notes: "Uses W-series ATC codes. Must reconcile with Supabase WI/WC codes."
+
+  # ===== TEST FIXTURES =====
+
+  - id: test-001
+    title: EWT expected withholding fixture
+    repo: Insightpulseai/odoo
+    path: addons/ipai/ipai_bir_tax_compliance/tests/fixtures/ewt_expected_withholding.csv
+    asset_type: test_fixture
+    domain_tags: [ewt, test, fixtures]
+    owner_plane: odoo
+    status: active
+    source_class: tests
+    duplicate_group: null
+    recommended_action: keep
+    notes: "CSV fixture for EWT computation validation."
+
+  - id: test-002
+    title: VAT basic transactions fixture
+    repo: Insightpulseai/odoo
+    path: addons/ipai/ipai_bir_tax_compliance/tests/fixtures/vat_basic_transactions.csv
+    asset_type: test_fixture
+    domain_tags: [vat, test, fixtures]
+    owner_plane: odoo
+    status: active
+    source_class: tests
+    duplicate_group: null
+    recommended_action: keep
+    notes: "CSV fixture for VAT computation validation."
+
+  - id: test-003
+    title: VAT expected lines fixture
+    repo: Insightpulseai/odoo
+    path: addons/ipai/ipai_bir_tax_compliance/tests/fixtures/vat_basic_expected_lines.csv
+    asset_type: test_fixture
+    domain_tags: [vat, test, fixtures]
+    owner_plane: odoo
+    status: active
+    source_class: tests
+    duplicate_group: null
+    recommended_action: keep
+    notes: "Expected output lines for VAT computation tests."
+
+  - id: test-004
+    title: Rules engine tests
+    repo: Insightpulseai/odoo
+    path: addons/ipai/ipai_bir_tax_compliance/tests/test_rules_engine.py
+    asset_type: test_file
+    domain_tags: [test, rules_engine]
+    owner_plane: odoo
+    status: active
+    source_class: tests
+    duplicate_group: null
+    recommended_action: keep
+    notes: "Unit tests for JSONLogic evaluator."
+
+  - id: test-005
+    title: EWT compute tests
+    repo: Insightpulseai/odoo
+    path: addons/ipai/ipai_bir_tax_compliance/tests/test_bir_ewt_compute.py
+    asset_type: test_file
+    domain_tags: [test, ewt, computation]
+    owner_plane: odoo
+    status: active
+    source_class: tests
+    duplicate_group: null
+    recommended_action: keep
+    notes: "EWT computation tests against fixtures."
+
+  - id: test-006
+    title: VAT compute tests
+    repo: Insightpulseai/odoo
+    path: addons/ipai/ipai_bir_tax_compliance/tests/test_bir_vat_compute.py
+    asset_type: test_file
+    domain_tags: [test, vat, computation]
+    owner_plane: odoo
+    status: active
+    source_class: tests
+    duplicate_group: null
+    recommended_action: keep
+    notes: "VAT computation tests against fixtures."
+
+  # ===== SUPABASE SCHEMA / FUNCTIONS =====
+
+  - id: supa-001
+    title: BIR Tax Engine schema migration
+    repo: Insightpulseai/odoo
+    path: odoo/supabase/migrations/20260317_bir_tax_engine.sql
+    asset_type: supabase_migration
+    domain_tags: [schema, atc, tax_runs, tax_findings, bir_forms, audit]
+    owner_plane: platform
+    status: active
+    source_class: platform
+    duplicate_group: atc_codes
+    recommended_action: reconcile_with_odoo_rates
+    notes: "Full schema: mdm.tax_codes, mdm.tax_rates, mdm.atc_matrix, ops.tax_runs, ops.tax_findings, ops.bir_forms, ops.tax_exceptions, audit.tax_events. 18 ATC codes seeded with WI/WC namespace."
+
+  - id: supa-002
+    title: BIR Forms registry migration
+    repo: Insightpulseai/odoo
+    path: odoo/supabase/migrations/20260212000001_registry_bir_forms.sql
+    asset_type: supabase_migration
+    domain_tags: [schema, bir_forms, registry]
+    owner_plane: platform
+    status: active
+    source_class: platform
+    duplicate_group: null
+    recommended_action: keep
+    notes: "BIR forms registry schema."
+
+  - id: supa-003
+    title: tax-compute Edge Function
+    repo: Insightpulseai/odoo
+    path: odoo/supabase/functions/tax-compute/index.ts
+    asset_type: edge_function
+    domain_tags: [computation, ewt, risk_scoring, webhook]
+    owner_plane: platform
+    status: active
+    source_class: platform
+    duplicate_group: null
+    recommended_action: keep_canonical
+    notes: "Deno function: HMAC-signed webhook from Odoo, ATC resolution via RPC, EWT computation, risk scoring, batch findings insert."
+
+  - id: supa-004
+    title: bir-urgent-alert Edge Function
+    repo: Insightpulseai/odoo
+    path: odoo/supabase/functions/bir-urgent-alert/index.ts
+    asset_type: edge_function
+    domain_tags: [alerts, deadlines, notifications]
+    owner_plane: platform
+    status: active
+    source_class: platform
+    duplicate_group: null
+    recommended_action: keep
+    notes: "Deadline alert Edge Function."
+
+  - id: supa-005
+    title: BIR finance templates seed
+    repo: Insightpulseai/odoo
+    path: odoo/supabase/seed/9001_erp/9001_erp_finance_bir_templates.sql
+    asset_type: seed_data
+    domain_tags: [seeds, templates, bir]
+    owner_plane: platform
+    status: active
+    source_class: platform
+    duplicate_group: null
+    recommended_action: keep
+    notes: "BIR finance template seed data."
+
+  # ===== SUPABASE WORKSTREAM SEEDS =====
+
+  - id: seed-001
+    title: STC Tax Compliance workstream (6 files)
+    repo: Insightpulseai/odoo
+    path: odoo/supabase/seeds/workstreams/stc_tax_compliance/
+    asset_type: seed_data
+    domain_tags: [sap_parity, tax_compliance, worklists, scenarios, ph_localization]
+    owner_plane: platform
+    status: active
+    source_class: platform
+    duplicate_group: null
+    recommended_action: keep
+    notes: "SAP Tax Compliance parity workstream: 00_workstream, 10_worklist_types, 20_compliance_checks, 30_scenarios, 60_localization_ph, 90_odoo_mapping."
+
+  - id: seed-002
+    title: BIR tax tasks CSV
+    repo: Insightpulseai/odoo
+    path: odoo/supabase/data/seed/finance_ppm/tbwa_smp/tasks_bir_tax.csv
+    asset_type: seed_data
+    domain_tags: [seeds, tasks, bir]
+    owner_plane: platform
+    status: active
+    source_class: platform
+    duplicate_group: bir_task_seeds
+    recommended_action: keep
+    notes: "BIR tax task seeds for finance PPM."
+
+  - id: seed-003
+    title: BIR December 2025 seed
+    repo: Insightpulseai/odoo
+    path: odoo/supabase/data/bir_december_2025_seed.xml
+    asset_type: seed_data
+    domain_tags: [seeds, bir, demo]
+    owner_plane: platform
+    status: active
+    source_class: platform
+    duplicate_group: null
+    recommended_action: keep
+    notes: "December 2025 BIR filing demo seed."
+
+  - id: seed-004
+    title: BIR calendar 2026
+    repo: Insightpulseai/odoo
+    path: odoo/supabase/data/bir_calendar_2026.json
+    asset_type: seed_data
+    domain_tags: [seeds, calendar, deadlines]
+    owner_plane: platform
+    status: active
+    source_class: platform
+    duplicate_group: null
+    recommended_action: keep
+    notes: "2026 BIR filing deadline calendar."
+
+  # ===== SSOT =====
+
+  - id: ssot-001
+    title: Compliance check catalog
+    repo: Insightpulseai/odoo
+    path: odoo/ssot/tax/compliance_check_catalog.yaml
+    asset_type: ssot_yaml
+    domain_tags: [compliance_checks, 12_checks, severity, trigger_type]
+    owner_plane: docs
+    status: active
+    source_class: docs
+    duplicate_group: null
+    recommended_action: keep_canonical
+    notes: "SSOT for 12 compliance intelligence checks (CI-001 through CI-012)."
+
+  - id: ssot-002
+    title: Tax Pulse tool contracts
+    repo: Insightpulseai/odoo
+    path: odoo/ssot/agents/tax_pulse_tool_contracts.yaml
+    asset_type: ssot_yaml
+    domain_tags: [tool_contracts, agent_tools, approval_gates]
+    owner_plane: agents
+    status: active
+    source_class: agents
+    duplicate_group: null
+    recommended_action: keep_canonical
+    notes: "8 tool contracts with typed inputs/outputs, approval requirements, Odoo model mappings."
+
+  # ===== SPEC BUNDLES =====
+
+  - id: spec-001
+    title: tax-pulse-sub-agent spec (root)
+    repo: Insightpulseai/odoo
+    path: spec/tax-pulse-sub-agent/
+    asset_type: spec_bundle
+    domain_tags: [spec, prd, plan, tasks, constitution]
+    owner_plane: docs
+    status: active
+    source_class: docs
+    duplicate_group: tax_pulse_spec
+    recommended_action: keep_canonical
+    notes: "Canonical Tax Pulse spec bundle. 4 files: constitution, prd, plan, tasks."
+
+  - id: spec-002
+    title: tax-pulse-sub-agent spec (nested duplicate)
+    repo: Insightpulseai/odoo
+    path: odoo/spec/tax-pulse-sub-agent/
+    asset_type: spec_bundle
+    domain_tags: [spec, duplicate]
+    owner_plane: docs
+    status: duplicate
+    source_class: docs
+    duplicate_group: tax_pulse_spec
+    recommended_action: remove_duplicate
+    notes: "Duplicate of spec-001. Remove."
+
+  - id: spec-003
+    title: taxpulse-ph-port spec
+    repo: Insightpulseai/odoo
+    path: odoo/spec/taxpulse-ph-port/
+    asset_type: spec_bundle
+    domain_tags: [spec, port, migration, taxpulse]
+    owner_plane: docs
+    status: active
+    source_class: docs
+    duplicate_group: null
+    recommended_action: keep
+    notes: "Port plan from TaxPulse-PH-Pack into canonical module."
+
+  - id: spec-004
+    title: ipai-tax-engine spec
+    repo: Insightpulseai/odoo
+    path: odoo/spec/ipai-tax-engine/
+    asset_type: spec_bundle
+    domain_tags: [spec, supabase, tax_engine]
+    owner_plane: docs
+    status: active
+    source_class: docs
+    duplicate_group: null
+    recommended_action: keep
+    notes: "Supabase tax engine spec (PRD, constitution, tasks)."
+
+  - id: spec-005
+    title: bir-tax-compliance portfolio spec (multiple copies)
+    repo: Insightpulseai/odoo
+    path: odoo/docs/portfolio/specs/bir-tax-compliance/
+    asset_type: spec_bundle
+    domain_tags: [spec, portfolio, duplicate]
+    owner_plane: docs
+    status: duplicate
+    source_class: docs
+    duplicate_group: bir_portfolio_spec
+    recommended_action: remove_duplicates_keep_one
+    notes: "Exists in 4+ locations: odoo/docs/portfolio, archive/root, odoo/odoo/docs/portfolio, odoo/odoo/archive. Keep only one."
+
+  - id: spec-006
+    title: finance-unified spec
+    repo: Insightpulseai/odoo
+    path: odoo/spec/finance-unified/
+    asset_type: spec_bundle
+    domain_tags: [spec, finance, unified]
+    owner_plane: docs
+    status: active
+    source_class: docs
+    duplicate_group: null
+    recommended_action: keep
+    notes: "Unified finance system spec (references tax compliance)."
+
+  - id: spec-007
+    title: afc-parity spec
+    repo: Insightpulseai/odoo
+    path: odoo/spec/afc-parity/
+    asset_type: spec_bundle
+    domain_tags: [spec, sap, afc, parity]
+    owner_plane: docs
+    status: active
+    source_class: docs
+    duplicate_group: null
+    recommended_action: keep
+    notes: "SAP AFC parity spec (references withholding, EWT)."
+
+  # ===== AGENT SKILLS =====
+
+  - id: skill-001
+    title: taxpulse-ph-pack agent skill
+    repo: Insightpulseai/agents
+    path: skills/odoo/taxpulse-ph-pack/SKILL.md
+    asset_type: agent_skill
+    domain_tags: [skill, taxpulse, benchmark, avatax, architecture]
+    owner_plane: agents
+    status: active
+    source_class: agents
+    duplicate_group: null
+    recommended_action: keep_canonical
+    notes: "Full skill doc: architecture, benchmark vs AvaTax, multi-agency framework, SSOT refs."
+
+  - id: skill-002
+    title: bir-tax-filing agent skill
+    repo: Insightpulseai/agents
+    path: skills/bir-tax-filing/SKILL.md
+    asset_type: agent_skill
+    domain_tags: [skill, bir, filing, forms, workflow, sql]
+    owner_plane: agents
+    status: active
+    source_class: agents
+    duplicate_group: null
+    recommended_action: keep_canonical
+    notes: "Filing workflow skill: form reference, SQL queries, validation checks, compliance calendar."
+
+  - id: skill-003
+    title: bir-eservices agent skill
+    repo: Insightpulseai/agents
+    path: skills/odoo/bir-eservices/SKILL.md
+    asset_type: agent_skill
+    domain_tags: [skill, efps, ebirforms, eservices, automation]
+    owner_plane: agents
+    status: active
+    source_class: agents
+    duplicate_group: null
+    recommended_action: keep_canonical
+    notes: "eFPS/eBIRForms integration architecture, automation roadmap, TIN validation pattern."
+
+  # ===== KNOWLEDGE BASE =====
+
+  - id: kb-001
+    title: BIR forms reference
+    repo: Insightpulseai/agents
+    path: knowledge-base/bir-compliance/bir-forms-reference.md
+    asset_type: knowledge_article
+    domain_tags: [kb, forms, reference]
+    owner_plane: agents
+    status: active
+    source_class: agents
+    duplicate_group: null
+    recommended_action: keep_canonical
+    notes: "Reference doc for BIR form types."
+
+  - id: kb-002
+    title: BIR filing calendar
+    repo: Insightpulseai/agents
+    path: knowledge-base/bir-compliance/bir-filing-calendar.md
+    asset_type: knowledge_article
+    domain_tags: [kb, calendar, deadlines]
+    owner_plane: agents
+    status: active
+    source_class: agents
+    duplicate_group: null
+    recommended_action: keep_canonical
+    notes: "Filing deadline calendar reference."
+
+  - id: kb-003
+    title: VAT compliance guide
+    repo: Insightpulseai/agents
+    path: knowledge-base/bir-compliance/vat-compliance-guide.md
+    asset_type: knowledge_article
+    domain_tags: [kb, vat, compliance]
+    owner_plane: agents
+    status: active
+    source_class: agents
+    duplicate_group: null
+    recommended_action: keep_canonical
+    notes: "VAT compliance guide for PH."
+
+  - id: kb-004
+    title: Withholding tax guide
+    repo: Insightpulseai/agents
+    path: knowledge-base/bir-compliance/withholding-tax-guide.md
+    asset_type: knowledge_article
+    domain_tags: [kb, withholding, ewt, fwt]
+    owner_plane: agents
+    status: active
+    source_class: agents
+    duplicate_group: null
+    recommended_action: keep_canonical
+    notes: "Withholding tax (EWT/FWT) guide for PH."
+
+  # ===== BENCHMARKS / EVALS =====
+
+  - id: bench-001
+    title: BIR eServices/eBIRForms benchmark
+    repo: Insightpulseai/agents
+    path: knowledge/benchmarks/bir-eservices-ebirforms.md
+    asset_type: benchmark_doc
+    domain_tags: [benchmark, ebirforms, efps, eservices]
+    owner_plane: docs
+    status: active
+    source_class: docs
+    duplicate_group: null
+    recommended_action: keep_canonical
+    notes: "Compliance benchmark: eBIRForms v7.9.5, eFPS, integration targets."
+
+  - id: eval-001
+    title: Copilot eval dataset v2 (references BIR)
+    repo: Insightpulseai/agents
+    path: evals/odoo-copilot/datasets/eval-dataset-v2.json
+    asset_type: eval_dataset
+    domain_tags: [eval, copilot, bir]
+    owner_plane: agents
+    status: active
+    source_class: agents
+    duplicate_group: null
+    recommended_action: keep
+    notes: "Contains BIR-related test cases within broader copilot eval set."
+
+  # ===== PLATFORM BRIDGES =====
+
+  - id: bridge-001
+    title: BIR form generation bridge (n8n)
+    repo: Insightpulseai/odoo
+    path: odoo/platform/bridges/bir-form-generation/README.md
+    asset_type: platform_bridge
+    domain_tags: [bridge, n8n, bir_forms, dat_generation]
+    owner_plane: platform
+    status: documented_only
+    source_class: platform
+    duplicate_group: null
+    recommended_action: implement
+    notes: "Contract for n8n workflow that generates .dat files. Not yet implemented."
+
+  - id: bridge-002
+    title: BIR compliance feature registry
+    repo: Insightpulseai/odoo
+    path: odoo/platform/registry/features/bir-compliance.json
+    asset_type: feature_registry
+    domain_tags: [registry, feature, bir]
+    owner_plane: platform
+    status: active
+    source_class: platform
+    duplicate_group: null
+    recommended_action: keep
+    notes: "Feature registry entry for BIR compliance. References ipai_finance_bir_compliance (note: module name mismatch with ipai_bir_tax_compliance)."
+
+  # ===== ARCHITECTURE DOCS =====
+
+  - id: doc-001
+    title: TaxPulse Salvage Map
+    repo: Insightpulseai/odoo
+    path: docs/architecture/TAXPULSE_SALVAGE_MAP.md
+    asset_type: architecture_doc
+    domain_tags: [salvage, migration, taxpulse]
+    owner_plane: docs
+    status: active
+    source_class: docs
+    duplicate_group: null
+    recommended_action: keep
+    notes: "Documents the legacy TaxPulse-PH-Pack precursor and salvage targets."
+
+  # ===== EXTERNAL (NOT ABSORBED) =====
+
+  - id: ext-001
+    title: TaxPulse-PH-Pack (external precursor)
+    repo: jgtolentino/TaxPulse-PH-Pack
+    path: (external repo)
+    asset_type: external_repo
+    domain_tags: [taxpulse, upstream, multi_agency, ai_review, supabase]
+    owner_plane: external
+    status: not_absorbed
+    source_class: external
+    duplicate_group: null
+    recommended_action: selective_absorb
+    notes: "Upstream precursor. Contains multi-agency framework (8 entities), AI review engine (5-dimension scoring), Supabase protocol tables. Rules engine partially ported to ipai_bir_tax_compliance."
+
+  # ===== TAXPULSE-PH-PACK SALVAGE ASSETS (2026-03-18) =====
+  # Source: /tmp/TaxPulse-PH-Pack-salvage (commit 72ce864958099748c60cf11ed3b3536ddf82064c)
+  # Clone: git clone https://github.com/jgtolentino/TaxPulse-PH-Pack.git
+  # All entries below have source_class: salvage and status: legacy
+
+  # ===== TaxPulse-PH-Pack Salvage Assets =====
+  # Source: https://github.com/jgtolentino/TaxPulse-PH-Pack (commit 72ce864)
+  # Classification: salvage/reference — NOT canonical
+  # CRITICAL: All Supabase references in this repo point to DEPRECATED instance
+  # xkxyvboeubffxxbebsll. Canonical instance is spdtwktxdalcfigzeqrz
+  # (self-hosted on Azure VM vm-ipai-supabase-dev, rg-ipai-agents-dev).
+  # Any salvaged Supabase code MUST be retargeted before use.
+
+  # --- Odoo Module (root-level, Odoo 18.0) ---
+
+  - id: TXP-001
+    title: TaxPulse PH Pack root Odoo module (__manifest__.py)
+    repo: jgtolentino/TaxPulse-PH-Pack
+    path: __manifest__.py
+    asset_type: odoo_module
+    domain_tags: [taxpulse, odoo18, bir, compliance, multi_agency, supabase]
+    owner_plane: external
+    status: legacy
+    source_class: salvage
+    duplicate_group: null
+    recommended_action: review_before_salvage
+    notes: "Odoo 18.0.1.0.0 module. Depends on account, account_reports (EE!), l10n_ph, analytic. AGPL-3 license. post_init_hook. References views, reports, demo data not present in repo (missing XML files). The account_reports dependency makes it Enterprise-only."
+
+  - id: TXP-002
+    title: BIR 1601-C model (Monthly Withholding Tax)
+    repo: jgtolentino/TaxPulse-PH-Pack
+    path: models/bir_1601c.py
+    asset_type: odoo_model
+    domain_tags: [bir, 1601c, withholding, compensation, final_tax, supabase_sync]
+    owner_plane: external
+    status: legacy
+    source_class: salvage
+    duplicate_group: null
+    recommended_action: salvage_to_odoo
+    notes: "Odoo model bir.1601c with mail.thread, agency_id FK, period fields, compensation_tax/final_tax Monetary fields, state workflow (draft/confirmed/posted/cancelled), compute_withholding_tax_from_moves() method, Supabase sync on post. Tax type detection via tax group name and WC/WF/F-series code prefixes. Line items model bir.1601c.line included."
+
+  - id: TXP-003
+    title: BIR 2550Q model (Quarterly VAT)
+    repo: jgtolentino/TaxPulse-PH-Pack
+    path: models/bir_2550q.py
+    asset_type: odoo_model
+    domain_tags: [bir, 2550q, vat, quarterly, supabase_sync]
+    owner_plane: external
+    status: legacy
+    source_class: salvage
+    duplicate_group: null
+    recommended_action: salvage_to_odoo
+    notes: "Odoo model bir.2550q with output_vat, input_vat, vat_payable compute, quarter auto-detection, state workflow, Supabase sync on post."
+
+  - id: TXP-004
+    title: BIR 1702-RT model (Annual Income Tax)
+    repo: jgtolentino/TaxPulse-PH-Pack
+    path: models/bir_1702rt.py
+    asset_type: odoo_model
+    domain_tags: [bir, 1702rt, income_tax, annual, supabase_sync]
+    owner_plane: external
+    status: legacy
+    source_class: salvage
+    duplicate_group: null
+    recommended_action: salvage_to_odoo
+    notes: "Odoo model bir.1702rt with gross_income, deductions, taxable_income (computed), income_tax_due, tax_credits, net_tax_payable (computed), fiscal year, state workflow, Supabase sync."
+
+  - id: TXP-005
+    title: TaxPulse Agency model
+    repo: jgtolentino/TaxPulse-PH-Pack
+    path: models/taxpulse_agency.py
+    asset_type: odoo_model
+    domain_tags: [agency, multi_entity, tin, rdo, analytic]
+    owner_plane: external
+    status: legacy
+    source_class: salvage
+    duplicate_group: null
+    recommended_action: salvage_to_odoo
+    notes: "Odoo model taxpulse.agency. 8 agencies (RIM, CKVC, BOM, JPAL, JLI, JAP, LAS, RMQB). Fields: code, name, analytic_account_id, tin, rdo_code, line_of_business. Smart buttons for BIR form counts."
+
+  - id: TXP-006
+    title: Supabase sync handler model
+    repo: jgtolentino/TaxPulse-PH-Pack
+    path: models/supabase_sync.py
+    asset_type: odoo_model
+    domain_tags: [supabase, sync, rpc, deprecated_instance]
+    owner_plane: external
+    status: legacy
+    source_class: salvage
+    duplicate_group: null
+    recommended_action: review_before_salvage
+    notes: >-
+      taxpulse.supabase.sync model. Uses DEPRECATED Supabase instance
+      xkxyvboeubffxxbebsll. Has upsert RPC functions for all 3 BIR forms +
+      bulk_sync_all(). Sync pattern is salvageable but MUST point to canonical
+      self-hosted instance spdtwktxdalcfigzeqrz on Azure VM vm-ipai-supabase-dev
+      (rg-ipai-agents-dev). Never use xkxyvboeubffxxbebsll or ublqmilcjtpnflofprkr.
+
+  - id: TXP-007
+    title: Security ACL (ir.model.access.csv)
+    repo: jgtolentino/TaxPulse-PH-Pack
+    path: security/ir.model.access.csv
+    asset_type: odoo_security
+    domain_tags: [security, acl, roles]
+    owner_plane: external
+    status: legacy
+    source_class: salvage
+    duplicate_group: null
+    recommended_action: salvage_to_odoo
+    notes: "18 ACL rules. 3-tier access: base.group_user (read), account.group_account_user (read/write/create), account.group_account_manager (full). Covers agency, 1601c, 1601c.line, 2550q, 1702rt, supabase.sync."
+
+  # --- Rules Engine ---
+
+  - id: TXP-008
+    title: JSONLogic rules evaluator (engine)
+    repo: jgtolentino/TaxPulse-PH-Pack
+    path: engine/rules_engine/evaluator.py
+    asset_type: python_engine
+    domain_tags: [rules_engine, jsonlogic, evaluator]
+    owner_plane: external
+    status: legacy
+    source_class: salvage
+    duplicate_group: rules_engine
+    recommended_action: salvage_to_odoo
+    notes: "JSONLogic evaluator with 14 operators (==, !=, >, >=, <, <=, and, or, in, var, if, +, -, *, /). apply_rules() returns buckets + matched_rules. Earlier version of the evaluator now in ipai_bir_tax_compliance."
+
+  - id: TXP-009
+    title: Formula engine (engine)
+    repo: jgtolentino/TaxPulse-PH-Pack
+    path: engine/rules_engine/formula.py
+    asset_type: python_engine
+    domain_tags: [rules_engine, formula, aggregation]
+    owner_plane: external
+    status: legacy
+    source_class: salvage
+    duplicate_group: rules_engine
+    recommended_action: salvage_to_odoo
+    notes: "FormulaEngine with SUM, MAX, MIN, ABS, ROUND functions. evaluate_form_lines() maps buckets to BIR form lines via mapping config. evaluate_aggregation_rules() computes derived buckets. Earlier version of formula.py in ipai_bir_tax_compliance."
+
+  - id: TXP-010
+    title: Rules loader (engine)
+    repo: jgtolentino/TaxPulse-PH-Pack
+    path: engine/rules_engine/loader.py
+    asset_type: python_engine
+    domain_tags: [rules_engine, loader, yaml]
+    owner_plane: external
+    status: legacy
+    source_class: salvage
+    duplicate_group: rules_engine
+    recommended_action: salvage_to_odoo
+    notes: "RulesLoader with caching for rules, rates, mappings, validations, forms. get_rate_value() resolves rate codes from rate JSON. Earlier version of loader.py in ipai_bir_tax_compliance."
+
+  # --- Rules Packs / Rate Tables ---
+
+  - id: TXP-011
+    title: EWT rules pack (YAML, W-series ATC)
+    repo: jgtolentino/TaxPulse-PH-Pack
+    path: packs/ph/rules/ewt.rules.yaml
+    asset_type: rules_pack
+    domain_tags: [ewt, atc, W_series, jsonlogic, withholding]
+    owner_plane: external
+    status: legacy
+    source_class: salvage
+    duplicate_group: atc_codes
+    recommended_action: salvage_to_odoo
+    notes: "10 EWT rules + 1 aggregation rule. Uses W-series ATC codes: W010, W020, W030, W040, W157, W158, W161, W169, W170. Same namespace as ipai_bir_tax_compliance. Legal basis: NIRC Section 57, RR 2-98."
+
+  - id: TXP-012
+    title: VAT rules pack (YAML)
+    repo: jgtolentino/TaxPulse-PH-Pack
+    path: packs/ph/rules/vat.rules.yaml
+    asset_type: rules_pack
+    domain_tags: [vat, output, input, payable, exempt, zero_rated]
+    owner_plane: external
+    status: legacy
+    source_class: salvage
+    duplicate_group: null
+    recommended_action: salvage_to_odoo
+    notes: "8 VAT rules: output 12%, zero-rated, exempt, input 12%, input zero, payable calc, prior adjustment, penalty. Same structure as ipai_bir_tax_compliance version."
+
+  - id: TXP-013
+    title: PH rates 2025 (JSON, W-series + F-series + TRAIN brackets)
+    repo: jgtolentino/TaxPulse-PH-Pack
+    path: packs/ph/rates/ph_rates_2025.json
+    asset_type: rate_table
+    domain_tags: [rates, ewt, fwt, vat, train_law, corporate_it, W_series, F_series]
+    owner_plane: external
+    status: legacy
+    source_class: salvage
+    duplicate_group: atc_codes
+    recommended_action: salvage_to_odoo
+    notes: "Uses W-series ATC codes (W010-W170) for EWT and F-series (F001-F005) for FWT. TRAIN Law graduated brackets (6 tiers: 0% to 35%). Corporate IT 25%/2% MCIT. VAT 12%. Legal basis: TRAIN (RA 10963), CREATE (RA 11534)."
+
+  - id: TXP-014
+    title: Pack metadata (pack.meta.yaml)
+    repo: jgtolentino/TaxPulse-PH-Pack
+    path: packs/ph/pack.meta.yaml
+    asset_type: pack_metadata
+    domain_tags: [metadata, forms, periods, deadlines]
+    owner_plane: external
+    status: legacy
+    source_class: salvage
+    duplicate_group: null
+    recommended_action: salvage_to_docs
+    notes: "Pack metadata: PH, BIR authority, fiscal year Jan-Dec, 3 periods (monthly/quarterly/annual), 3 forms (1601-C, 2550Q, 1702-RT), 4 tax types (vat, ewt, fwt, income_tax), filing deadlines."
+
+  - id: TXP-015
+    title: BIR 2550Q form definition (YAML)
+    repo: jgtolentino/TaxPulse-PH-Pack
+    path: packs/ph/forms/bir_2550Q_2025.form.yaml
+    asset_type: form_definition
+    domain_tags: [bir, 2550q, form_lines, sections, validations, attachments]
+    owner_plane: external
+    status: legacy
+    source_class: salvage
+    duplicate_group: null
+    recommended_action: salvage_to_odoo
+    notes: "Detailed BIR 2550Q form definition: 5 sections (header, Part I-V), all line items with bucket_source/formula, 5 form-level validations, filing instructions, attachment requirements. Very well-structured."
+
+  - id: TXP-016
+    title: VAT 2550Q bucket-to-line mapping (YAML)
+    repo: jgtolentino/TaxPulse-PH-Pack
+    path: packs/ph/mappings/vat_2550Q.mapping.yaml
+    asset_type: form_mapping
+    domain_tags: [mapping, 2550q, vat, buckets, form_lines]
+    owner_plane: external
+    status: legacy
+    source_class: salvage
+    duplicate_group: null
+    recommended_action: salvage_to_odoo
+    notes: "Maps VAT output buckets to BIR 2550Q form lines (17-35). Includes 5 validation rules (V2550Q_01 through V2550Q_05). Formulas reference other lines."
+
+  - id: TXP-017
+    title: Core validations (transaction + aggregate)
+    repo: jgtolentino/TaxPulse-PH-Pack
+    path: packs/ph/validations/core_validations.yaml
+    asset_type: validation_rules
+    domain_tags: [validations, transaction, aggregate, tin, atc, reasonableness]
+    owner_plane: external
+    status: legacy
+    source_class: salvage
+    duplicate_group: null
+    recommended_action: salvage_to_odoo
+    notes: "9 transaction validations (TIN format, gross_amount positive, ATC required for EWT, vendor type consistency, date range, currency, doc type, VAT-registered vendor, zero-rated export docs) + 9 aggregate validations (VAT reasonableness, input/output ratio, EWT total, professional fees concentration, negative buckets, quarterly threshold, penalty non-negative, prior adjustment range)."
+
+  # --- Test Fixtures ---
+
+  - id: TXP-018
+    title: EWT expected withholding fixture (CSV)
+    repo: jgtolentino/TaxPulse-PH-Pack
+    path: packs/ph/tests/fixtures/ewt_expected_withholding.csv
+    asset_type: test_fixture
+    domain_tags: [test, ewt, golden_dataset, fixtures]
+    owner_plane: external
+    status: legacy
+    source_class: salvage
+    duplicate_group: null
+    recommended_action: salvage_to_odoo
+    notes: "7 EWT test transactions + total row. ATC codes: W020, W157, W169, W158, W040. Expected total EWT: 6899.20. W-series namespace."
+
+  - id: TXP-019
+    title: VAT test fixtures (CSV pair)
+    repo: jgtolentino/TaxPulse-PH-Pack
+    path: packs/ph/tests/fixtures/vat_basic_transactions.csv
+    asset_type: test_fixture
+    domain_tags: [test, vat, golden_dataset, fixtures]
+    owner_plane: external
+    status: legacy
+    source_class: salvage
+    duplicate_group: null
+    recommended_action: salvage_to_odoo
+    notes: "VAT basic transactions + expected lines CSV pair."
+
+  # --- Supabase Schema / Functions ---
+
+  - id: TXP-020
+    title: BIR tables Supabase schema (001)
+    repo: jgtolentino/TaxPulse-PH-Pack
+    path: supabase/001_create_bir_tables.sql
+    asset_type: supabase_migration
+    domain_tags: [supabase, schema, bir_tables, agencies, rls, deprecated_instance]
+    owner_plane: external
+    status: legacy
+    source_class: salvage
+    duplicate_group: null
+    recommended_action: review_before_salvage
+    notes: "Creates bir schema with tables: agencies, form_1601c, form_2550q, form_1702rt, user_agency_access. Full RLS policies (agency-scoped + service_role). 8 default agencies seeded (RIM, CKVC, BOM, JPAL, JLI, JAP, LAS, RMQB). Indexes and updated_at triggers. Points to deprecated Supabase instance."
+
+  - id: TXP-021
+    title: RPC upsert functions (002)
+    repo: jgtolentino/TaxPulse-PH-Pack
+    path: supabase/002_rpc_functions.sql
+    asset_type: supabase_migration
+    domain_tags: [supabase, rpc, upsert, sync, dashboard_stats]
+    owner_plane: external
+    status: legacy
+    source_class: salvage
+    duplicate_group: null
+    recommended_action: salvage_to_platform
+    notes: "3 upsert RPCs (upsert_bir_1601c, upsert_bir_2550q, upsert_bir_1702rt) with odoo_id conflict resolution + get_bir_dashboard_stats() for Superset dashboards. SECURITY DEFINER."
+
+  - id: TXP-022
+    title: Tax Pulse schema (003) - authority registry + run log
+    repo: jgtolentino/TaxPulse-PH-Pack
+    path: supabase/003_tax_pulse_schema.sql
+    asset_type: supabase_migration
+    domain_tags: [supabase, schema, tax_pulse, authority_sources, run_log, protocols, 5_dimension_scoring]
+    owner_plane: external
+    status: legacy
+    source_class: salvage
+    duplicate_group: null
+    recommended_action: salvage_to_platform
+    notes: "Creates: tax_pulse_sources (authority registry by tier 0-3), tax_pulse_source_aliases, tax_pulse_protocols (versioned review protocols), tax_pulse_run_log (5-dimension scoring: compliance, numeric, coverage, timeliness, clarity). Views: v_tax_pulse_source_domains, v_tax_pulse_protocol_stats. RPCs: fn_fetch_finance_data, fn_insert_tax_pulse_run. Seeds 10 authority sources across 4 tiers."
+
+  - id: TXP-023
+    title: Protocol v1 seed (004) - High Compliance Mode
+    repo: jgtolentino/TaxPulse-PH-Pack
+    path: supabase/004_tax_pulse_protocol_seed.sql
+    asset_type: supabase_migration
+    domain_tags: [supabase, seed, protocol, compliance_review, 5_dimensions, scoring_rubric, variance_tolerance, reconciliation]
+    owner_plane: external
+    status: legacy
+    source_class: salvage
+    duplicate_group: null
+    recommended_action: salvage_to_agents
+    notes: "Full Review Protocol v1 (High Compliance Mode): 5 scoring dimensions with weights (Compliance 30%, Numeric 25%, Coverage 20%, Timeliness 15%, Clarity 10%), variance thresholds (GL vs Return 0.01%, Period-over-Period 15%), reconciliation requirements (GL-to-Return, Subledger-to-Return, Period-over-Period), authority hierarchy (4 tiers), memo output structure (7 sections), escalation triggers, protocol maintenance procedures. Also creates tax_pulse_protocol_audit table."
+
+  - id: TXP-024
+    title: finance-tax-pulse Edge Function (Deno)
+    repo: jgtolentino/TaxPulse-PH-Pack
+    path: supabase/functions/finance-tax-pulse/index.ts
+    asset_type: edge_function
+    domain_tags: [supabase, edge_function, ai_review, llm, claude, 5_dimension_scoring]
+    owner_plane: external
+    status: legacy
+    source_class: salvage
+    duplicate_group: null
+    recommended_action: salvage_to_agents
+    notes: "450-line Deno Edge Function. Orchestrates: (1) load protocol from DB, (2) fetch BIR form data via RPC, (3) fetch authority sources, (4) build system prompt with protocol + authority context, (5) call Claude/GPT for 5-dimension scoring, (6) calculate composite score with weights, (7) determine pass/conditional/fail status, (8) save to run log. Full structured JSON output with findings, reconciliations, risk_flags."
+
+  # --- Config / Authority Sources ---
+
+  - id: TXP-025
+    title: PH Tax Authority Sources YAML (RAG config)
+    repo: jgtolentino/TaxPulse-PH-Pack
+    path: config/tax_pulse_sources.yaml
+    asset_type: config_yaml
+    domain_tags: [authority_sources, rag, tiers, citations, query_routing]
+    owner_plane: external
+    status: legacy
+    source_class: salvage
+    duplicate_group: null
+    recommended_action: salvage_to_agents
+    notes: "13 authority sources across 4 tiers: Tier 0 (officialgazette.gov.ph, dof.gov.ph), Tier 1 (bir.gov.ph main/issuances/guides/tax-code), Tier 2 (ntrc.gov.ph, judiciary.gov.ph, cta.judiciary.gov.ph), Tier 3 (picpa.com.ph, tmap.org.ph, doftaxacademy.gov.ph, prc.gov.ph). Includes authority_rules for reasoning, citation, and query_routing."
+
+  - id: TXP-026
+    title: Finance Tax Pulse orchestrator model config
+    repo: jgtolentino/TaxPulse-PH-Pack
+    path: engine/config/finance_tax_pulse_model.yaml
+    asset_type: config_yaml
+    domain_tags: [ai_review, llm_config, cost_controls, rate_limits, observability]
+    owner_plane: external
+    status: legacy
+    source_class: salvage
+    duplicate_group: null
+    recommended_action: salvage_to_agents
+    notes: "LLM orchestrator config: Anthropic claude-sonnet-4-20250514 primary, haiku fallback. Temperature 0.1, max_tokens 4096. Rate limits (10 req/min, 100K tok/min). Cost controls ($1 warn, $5 block). PII filtering, TIN redaction, audit log. Hooks: pre_request (validate, rate_limit, load_protocol), post_response (parse, validate_scores, save_run_log)."
+
+  # --- Specs / Docs ---
+
+  - id: TXP-027
+    title: TaxPulse Engine PRD (SpectraTax Engine)
+    repo: jgtolentino/TaxPulse-PH-Pack
+    path: specs/001-taxpulse-engine.prd.md
+    asset_type: spec_prd
+    domain_tags: [spec, prd, spectra, tax_engine, validation, reconciliation, parallel_run]
+    owner_plane: external
+    status: legacy
+    source_class: salvage
+    duplicate_group: null
+    recommended_action: salvage_to_docs
+    notes: "Comprehensive PRD. 18 functional requirements (FR-1 through FR-18). Covers: canonical transaction schema, rules/rates model, BIR form mapping, tax return lifecycle (Draft/ForReview/Approved/Filed), validation engine with violations, reconciliation engine (GL vs Return, Subledger vs Return, Period vs Period), AI agent integration (read-only on math). NFRs: centavo accuracy, determinism, 2min perf target. 5-phase rollout plan. Originally targets TBWA/SMP Spectra system."
+
+  - id: TXP-028
+    title: Finance Tax Pulse spec (002)
+    repo: jgtolentino/TaxPulse-PH-Pack
+    path: specs/002_finance_tax_pulse.md
+    asset_type: spec_doc
+    domain_tags: [spec, finance_tax_pulse, ai_review]
+    owner_plane: external
+    status: legacy
+    source_class: salvage
+    duplicate_group: null
+    recommended_action: salvage_to_docs
+    notes: "Finance Tax Pulse system spec."
+
+  - id: TXP-029
+    title: Data model validation doc
+    repo: jgtolentino/TaxPulse-PH-Pack
+    path: docs/validation/DATA_MODEL_VALIDATION.md
+    asset_type: validation_doc
+    domain_tags: [docs, validation, data_model]
+    owner_plane: external
+    status: legacy
+    source_class: salvage
+    duplicate_group: null
+    recommended_action: salvage_to_docs
+    notes: "Data model validation documentation."
+
+  - id: TXP-030
+    title: Validation coverage doc
+    repo: jgtolentino/TaxPulse-PH-Pack
+    path: docs/validation/VALIDATION_COVERAGE.md
+    asset_type: validation_doc
+    domain_tags: [docs, validation, coverage]
+    owner_plane: external
+    status: legacy
+    source_class: salvage
+    duplicate_group: null
+    recommended_action: salvage_to_docs
+    notes: "Validation coverage analysis."
+
+  # --- Agent Skills (legacy) ---
+
+  - id: TXP-031
+    title: taxpulse-repo-audit skill
+    repo: jgtolentino/TaxPulse-PH-Pack
+    path: skills/taxpulse-repo-audit/SKILL.md
+    asset_type: agent_skill
+    domain_tags: [skill, audit, architecture, compliance, tax_logic]
+    owner_plane: external
+    status: legacy
+    source_class: salvage
+    duplicate_group: null
+    recommended_action: salvage_to_agents
+    notes: "5-phase audit skill: Discovery, Architecture Assessment, Tax Logic Verification, Risk Identification, Recommendations. Structured output format. Covers layer separation, OCA compliance, numeric risk, golden dataset verification."
+
+  - id: TXP-032
+    title: odoo-18-oca-architect skill
+    repo: jgtolentino/TaxPulse-PH-Pack
+    path: skills/odoo-18-oca-architect/SKILL.md
+    asset_type: agent_skill
+    domain_tags: [skill, odoo18, oca, architecture]
+    owner_plane: external
+    status: legacy
+    source_class: salvage
+    duplicate_group: null
+    recommended_action: review_before_salvage
+    notes: "Odoo 18 + OCA architecture skill. May be outdated (we are on Odoo 18)."
+
+  - id: TXP-033
+    title: sap-odoo18-taxpulse-certified skill
+    repo: jgtolentino/TaxPulse-PH-Pack
+    path: skills/sap-odoo18-taxpulse-certified/SKILL.md
+    asset_type: agent_skill
+    domain_tags: [skill, sap, odoo18, certification]
+    owner_plane: external
+    status: legacy
+    source_class: salvage
+    duplicate_group: null
+    recommended_action: review_before_salvage
+    notes: "SAP-Odoo tax certification skill. Targets Odoo 18."
+
+  # --- Spec Certs / Prompts ---
+
+  - id: TXP-034
+    title: Odoo 18 CE+OCA dev cert spec
+    repo: jgtolentino/TaxPulse-PH-Pack
+    path: spec/certs/odoo18_ce_oca_custom_dev_cert.yaml
+    asset_type: spec_cert
+    domain_tags: [spec, certification, odoo18, oca]
+    owner_plane: external
+    status: legacy
+    source_class: salvage
+    duplicate_group: null
+    recommended_action: drop
+    notes: "Certification spec for Odoo 18 CE+OCA custom dev. Obsolete (we are on Odoo 18)."
+
+  - id: TXP-035
+    title: Odoo 18 CE+OCA dev agent prompt
+    repo: jgtolentino/TaxPulse-PH-Pack
+    path: spec/prompts/odoo18_ce_oca_custom_dev_agent.md
+    asset_type: agent_prompt
+    domain_tags: [spec, prompt, odoo18, agent]
+    owner_plane: external
+    status: legacy
+    source_class: salvage
+    duplicate_group: null
+    recommended_action: drop
+    notes: "Agent prompt for Odoo 18 CE+OCA dev. Obsolete (we are on Odoo 18)."
+
+  # --- CI/CD ---
+
+  - id: TXP-036
+    title: CI workflow (GitHub Actions)
+    repo: jgtolentino/TaxPulse-PH-Pack
+    path: .github/workflows/ci.yml
+    asset_type: ci_workflow
+    domain_tags: [ci, lint, test, supabase_migrate, release]
+    owner_plane: external
+    status: legacy
+    source_class: salvage
+    duplicate_group: null
+    recommended_action: review_before_salvage
+    notes: "4-job CI: lint (flake8/pylint/black/isort), test (Odoo 18.0 + postgres:15, installs taxpulse_ph_pack), supabase-migrate (SQL syntax only), release (creates GitHub release from manifest version). Targets Odoo 18.0 and Python 3.11."
+
+  # --- Sub-module (ipai_project_brief) ---
+
+  - id: TXP-037
+    title: ipai_project_brief module (in addons/)
+    repo: jgtolentino/TaxPulse-PH-Pack
+    path: addons/ipai_project_brief/
+    asset_type: odoo_module
+    domain_tags: [project_brief, odoo, non_tax]
+    owner_plane: external
+    status: legacy
+    source_class: salvage
+    duplicate_group: null
+    recommended_action: drop
+    notes: "Unrelated to tax. Project brief management module. Already exists in canonical repo if needed."
+
+  # --- Tickets / Roadmap ---
+
+  - id: TXP-038
+    title: Roadmap tickets (6 tickets)
+    repo: jgtolentino/TaxPulse-PH-Pack
+    path: docs/tickets/
+    asset_type: roadmap_doc
+    domain_tags: [tickets, roadmap, ai_anomaly, realtime_api, cross_tenant, tin_registry, atc_suggestion, cfo_deck]
+    owner_plane: external
+    status: legacy
+    source_class: salvage
+    duplicate_group: null
+    recommended_action: salvage_to_docs
+    notes: "6 roadmap tickets: TICKET-001 AI anomaly detection, TICKET-002 realtime validation API, TICKET-003 cross-tenant validation, TICKET-004 BIR TIN registry, TICKET-005 ATC suggestion, TICKET-006 CFO validation deck."

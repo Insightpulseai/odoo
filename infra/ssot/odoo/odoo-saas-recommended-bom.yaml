@@ -1,0 +1,14 @@
+contract_version: 1
+
+service: odoo_erp_saas_alone
+profile: recommended_minimum
+
+adds_to_minimum_bom:
+  - azure_monitor_or_log_analytics
+  - staging_environment
+  - restore_verification_runbook
+
+optional_later:
+  - azure_front_door
+  - durable_external_attachment_store
+  - ha_database_posture

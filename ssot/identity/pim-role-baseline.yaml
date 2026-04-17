@@ -1,0 +1,329 @@
+---
+# PIM Role Baseline — SSOT
+# Source authority: https://learn.microsoft.com/en-us/entra/id-governance/privileged-identity-management/pim-deployment-plan
+# Cross-referenced: ssot/identity/entra_rbac_roles.yaml, ssot/identity/entra_target_state.yaml
+#
+# Scope: Privileged Identity Management policy principles + per-role JIT activation profiles.
+# Risk policy and governance scope live in: ssot/identity/entra-governance-policy.yaml
+#
+# Prerequisite: Entra ID P2 licensing (unlocks PIM + access reviews + identity protection).
+#               Current status: entra_id_free — see ssot/identity/entra_target_state.yaml > licensing.
+#               PIM cannot be activated until P2 is provisioned.
+#
+# Applies to: Entra directory roles, Azure subscription roles, PIM for Groups.
+#
+# Last updated: 2026-04-16
+contract_version: 1
+status: planned           # becomes "active" once P2 licensing is provisioned
+target_milestone: R3
+
+source:
+  type: microsoft_learn
+  classification: official_privileged_access_policy_truth
+  url: https://learn.microsoft.com/en-us/entra/id-governance/privileged-identity-management/pim-deployment-plan
+
+usage_rules:
+  use_for:
+    - privileged_role_baseline
+    - just_in_time_role_activation_policy
+    - privileged_access_rollout_and_testing
+  do_not_use_for:
+    - customer_tenant_truth
+    - application_business_authorization_truth
+    - runtime_health_truth
+    - risk_based_conditional_access_policy  # see ssot/identity/entra-governance-policy.yaml
+
+prerequisite_licensing:
+  required: entra_id_p2
+  current: entra_id_free
+  blocker: true
+  action: Upgrade to P2 before enabling PIM. See ssot/identity/entra_target_state.yaml.
+
+# ---------------------------------------------------------------------------
+# Canonical PIM Principles
+# Source: Microsoft Learn PIM deployment plan
+# ---------------------------------------------------------------------------
+pim_principles:
+  - just_in_time_privileged_access
+  - time_bound_assignments
+  - approval_based_activation
+  - mfa_required_for_activation
+  - conditional_access_at_activation_when_used
+  - justification_required_for_activation
+  - access_reviews_required
+  - audit_history_must_be_retained
+
+assignment_posture:
+  default_assignment_type: eligible
+  permanently_active_roles:
+    allowed_only_for:
+      - emergency_access_accounts
+  rule: zero_permanent_active_assignments_except_emergency_access
+
+role_scopes:
+  covered_surfaces:
+    - microsoft_entra_roles
+    - azure_roles
+    - pim_for_groups
+
+rollout_policy:
+  required_steps:
+    - stakeholder_alignment
+    - pilot_group
+    - staged_testing
+    - communications
+    - rollback_plan
+  testing_rules:
+    - verify_mfa
+    - verify_approval
+    - verify_activation_expiry
+    - verify_notifications
+    - verify_expected_role_scope
+  production_rule:
+    - roll_to_production_only_after_pilot_validation
+
+# ---------------------------------------------------------------------------
+# Emergency Access Accounts
+# Rule: PIM-05, PIM-06 from entra-governance-policy.yaml
+# These accounts are EXCLUDED from PIM scope and all Conditional Access policies.
+# They hold permanently active Global Administrator and must never be blocked.
+# ---------------------------------------------------------------------------
+emergency_access_accounts:
+  count: 2
+  accounts:
+    - upn: breakglass-1@insightpulseai.com
+      assignment_type: permanent_active
+      role: Global Administrator
+      excluded_from: [conditional_access, pim_scope, risk_policies]
+      mfa_method:
+        registered: true
+        preferred: fido2_security_key  # TAP as fallback only
+        note: FIDO2 key must be physically secured and inventory-tracked.
+      monitoring:
+        alert_on_sign_in: true
+        destination: Azure Monitor + security team email
+      review_frequency: quarterly
+
+    - upn: breakglass-2@insightpulseai.com
+      assignment_type: permanent_active
+      role: Global Administrator
+      excluded_from: [conditional_access, pim_scope, risk_policies]
+      mfa_method:
+        registered: true
+        preferred: fido2_security_key
+        note: Second key must be stored separately from breakglass-1 key.
+      monitoring:
+        alert_on_sign_in: true
+        destination: Azure Monitor + security team email
+      review_frequency: quarterly
+
+# ---------------------------------------------------------------------------
+# Entra Directory Roles — PIM Profiles
+# Assignment types: eligible (JIT) | permanent_active (break-glass only)
+# ---------------------------------------------------------------------------
+directory_role_profiles:
+
+  - role_name: Global Administrator
+    classification: tier0_critical
+    pim_assignment_type: eligible
+    max_activation_hours: 4
+    require_justification: true
+    require_ticket: true
+    require_approval: true
+    approvers:
+      - breakglass-1@insightpulseai.com  # peer approval from second admin
+    mfa_at_activation: true
+    ca_policy_at_activation: CA-001
+    eligible_principals:
+      - entra_group: SG-IPAI-Admin
+        note: Platform Administrators only. Zero permanently active except break-glass.
+    notify_on_activation: [security-team@insightpulseai.com]
+    review_frequency: quarterly
+    notes: >
+      Highest-risk role. Approval required at every activation.
+      Activation window capped at 4 hours. All activations are alert-triggering events.
+
+  - role_name: Privileged Role Administrator
+    classification: tier0_critical
+    pim_assignment_type: eligible
+    max_activation_hours: 4
+    require_justification: true
+    require_ticket: true
+    require_approval: true
+    approvers:
+      - breakglass-1@insightpulseai.com
+    mfa_at_activation: true
+    ca_policy_at_activation: CA-001
+    eligible_principals:
+      - entra_group: SG-IPAI-Admin
+    notify_on_activation: [security-team@insightpulseai.com]
+    review_frequency: quarterly
+
+  - role_name: Security Administrator
+    classification: tier1_high
+    pim_assignment_type: eligible
+    max_activation_hours: 6
+    require_justification: true
+    require_ticket: true
+    require_approval: false   # self-approve but logged and alerted
+    mfa_at_activation: true
+    ca_policy_at_activation: CA-001
+    eligible_principals:
+      - entra_group: SG-IPAI-Admin
+    notify_on_activation: [security-team@insightpulseai.com]
+    review_frequency: semi_annual
+
+  - role_name: Billing Administrator
+    classification: tier1_high
+    pim_assignment_type: eligible
+    max_activation_hours: 8
+    require_justification: true
+    require_ticket: true
+    require_approval: true
+    approvers:
+      - entra_group: SG-IPAI-Admin
+    mfa_at_activation: true
+    ca_policy_at_activation: CA-002
+    eligible_principals:
+      - entra_group: SG-IPAI-Finance-Manager
+    notify_on_activation: [finance-manager@insightpulseai.com, security-team@insightpulseai.com]
+    review_frequency: quarterly
+
+  - role_name: User Administrator
+    classification: tier1_high
+    pim_assignment_type: eligible
+    max_activation_hours: 8
+    require_justification: true
+    require_ticket: true
+    require_approval: false
+    mfa_at_activation: true
+    ca_policy_at_activation: CA-001
+    eligible_principals:
+      - entra_group: SG-IPAI-Admin
+    notify_on_activation: [security-team@insightpulseai.com]
+    review_frequency: semi_annual
+
+# ---------------------------------------------------------------------------
+# Azure Subscription Roles — PIM Profiles
+# Scope: All Azure subscriptions hosting platform resources (ACA, PG, KV, ADF)
+# ---------------------------------------------------------------------------
+azure_subscription_role_profiles:
+
+  - role_name: Owner
+    scope: subscription
+    classification: tier0_critical
+    pim_assignment_type: eligible
+    max_activation_hours: 4
+    require_justification: true
+    require_ticket: true
+    require_approval: true
+    approvers:
+      - entra_group: SG-IPAI-Admin
+    mfa_at_activation: true
+    eligible_principals:
+      - entra_group: SG-IPAI-Admin
+    notify_on_activation: [security-team@insightpulseai.com]
+    review_frequency: quarterly
+
+  - role_name: Contributor
+    scope: subscription
+    classification: tier1_high
+    pim_assignment_type: eligible
+    max_activation_hours: 8
+    require_justification: true
+    require_ticket: false
+    require_approval: false
+    mfa_at_activation: true
+    eligible_principals:
+      - entra_group: SG-IPAI-Admin
+    notify_on_activation: [security-team@insightpulseai.com]
+    review_frequency: semi_annual
+
+  - role_name: Key Vault Administrator
+    scope: resource_group
+    classification: tier0_critical
+    pim_assignment_type: eligible
+    max_activation_hours: 4
+    require_justification: true
+    require_ticket: true
+    require_approval: true
+    approvers:
+      - entra_group: SG-IPAI-Admin
+    mfa_at_activation: true
+    eligible_principals:
+      - entra_group: SG-IPAI-Admin
+    notify_on_activation: [security-team@insightpulseai.com]
+    review_frequency: quarterly
+    notes: Secrets must only be read via Managed Identity in normal operations, never direct KV admin.
+
+  - role_name: User Access Administrator
+    scope: subscription
+    classification: tier1_high
+    pim_assignment_type: eligible
+    max_activation_hours: 4
+    require_justification: true
+    require_ticket: true
+    require_approval: true
+    approvers:
+      - entra_group: SG-IPAI-Admin
+    mfa_at_activation: true
+    eligible_principals:
+      - entra_group: SG-IPAI-Admin
+    notify_on_activation: [security-team@insightpulseai.com]
+    review_frequency: quarterly
+
+# ---------------------------------------------------------------------------
+# Platform Roles NOT in PIM scope
+# (standard business roles managed via group assignment, not PIM)
+# ---------------------------------------------------------------------------
+out_of_pim_scope:
+  - role_id: finance-manager
+    reason: Business role, not an admin-plane privilege. Governed by Odoo RBAC + CA-002.
+  - role_id: finance-user
+    reason: Standard user role. No elevated privilege.
+  - role_id: project-manager
+    reason: Standard user role. No elevated privilege.
+  - role_id: bir-approver
+    reason: Application-level approver role. Governed by Odoo group + CA-002.
+  - role_id: project-user
+    reason: Standard user role. No elevated privilege.
+  - role_id: agent-workload
+    reason: Managed identity — not subject to PIM. Governed by RBAC + Key Vault policy.
+
+# ---------------------------------------------------------------------------
+# Rollout Plan
+# Rule: PIM-07 from entra-governance-policy.yaml
+# ---------------------------------------------------------------------------
+rollout_plan:
+  prerequisite: entra_id_p2_provisioned
+
+  phases:
+    - phase: 1_pilot
+      scope: SG-IPAI-Admin only
+      actions:
+        - Enable PIM for Global Administrator and Privileged Role Administrator
+        - Assign current admins as eligible (remove permanent active)
+        - Verify break-glass accounts retain permanent active and are excluded
+        - Test activation flow end-to-end including MFA and approval
+      exit_criteria: At least one successful JIT activation + successful break-glass sign-in test
+
+    - phase: 2_expand
+      scope: All tier0 + tier1 Entra directory roles
+      actions:
+        - Add Security Administrator, Billing Administrator, User Administrator
+        - Add Azure Subscription Owner and Key Vault Administrator
+        - Configure approver notifications and Azure Monitor alerts
+      exit_criteria: All tier0/tier1 roles have zero permanent active assignments except break-glass
+
+    - phase: 3_access_reviews
+      scope: All PIM-governed roles
+      actions:
+        - Configure quarterly access reviews for tier0 roles
+        - Configure semi-annual access reviews for tier1 roles
+        - Integrate review results with audit evidence (docs/evidence/)
+      exit_criteria: First access review cycle completed and results documented
+
+  rollback:
+    trigger: PIM activation blocks legitimate admin access
+    action: Re-assign permanent active assignment to affected admin, investigate, then re-enable eligible
+    owner: Platform Administrator (break-glass account if primary admin locked out)

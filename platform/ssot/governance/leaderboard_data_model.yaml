@@ -1,0 +1,204 @@
+version: 1
+namespace: ops.leaderboard
+last_reviewed: "2026-03-15"
+description: >
+  Data model for the IPAI Ops Console leaderboard page. Separates capability
+  maturity scoring from release readiness, with provenance on every score and
+  explicit links between blockers, remediation actions, and benchmark dimensions.
+
+maturity_thresholds:
+  - { min: 0,  max: 24,  label: missing }
+  - { min: 25, max: 49,  label: scaffolded }
+  - { min: 50, max: 74,  label: partial }
+  - { min: 75, max: 89,  label: operational }
+  - { min: 90, max: 100, label: hardened }
+
+enums:
+  maturity_label:
+    values: [missing, scaffolded, partial, operational, hardened]
+  blocker_severity:
+    values: [critical, high, medium, low]
+  action_status:
+    values: [todo, in_progress, blocked, done]
+  run_status:
+    values: [running, completed, failed]
+
+entities:
+  evaluation_run:
+    label: Evaluation Run
+    description: Groups all scores from one evaluation pass into a single snapshot.
+    primary_key: id
+    fields:
+      - { name: id, type: uuid, required: true }
+      - { name: run_type, type: string, required: true }
+      - { name: environment, type: string, required: true }
+      - { name: commit_sha, type: string, required: false }
+      - { name: source_mode, type: string, required: false }
+      - { name: started_at, type: timestamptz, required: true }
+      - { name: completed_at, type: timestamptz, required: false }
+      - { name: status, type: enum, enum_ref: run_status, required: true }
+
+  maturity_domain_score:
+    label: Domain Maturity Score
+    description: One row per domain per evaluation run.
+    primary_key: id
+    fields:
+      - { name: id, type: uuid, required: true }
+      - { name: evaluation_run_id, type: uuid, required: true }
+      - { name: domain_key, type: string, required: true }
+      - { name: domain_label, type: string, required: true }
+      - { name: score_pct, type: "numeric(5,2)", required: true }
+      - { name: maturity_label, type: enum, enum_ref: maturity_label, required: true }
+      - { name: passed_checks, type: integer, required: true }
+      - { name: total_checks, type: integer, required: true }
+      - { name: weight, type: "numeric(5,2)", required: false }
+      - { name: trend_delta_pct, type: "numeric(5,2)", required: false }
+      - { name: status, type: string, required: false }
+      - { name: evidence_count, type: integer, required: false }
+      - { name: blocker_count, type: integer, required: false }
+      - { name: source_systems, type: jsonb, required: false }
+      - { name: notes, type: string, required: false }
+      - { name: evaluated_at, type: timestamptz, required: true }
+      - { name: created_at, type: timestamptz, required: true }
+
+  maturity_category_score:
+    label: Category Maturity Score
+    description: Rollup score for Microsoft Cloud chart categories.
+    primary_key: id
+    fields:
+      - { name: id, type: uuid, required: true }
+      - { name: evaluation_run_id, type: uuid, required: true }
+      - { name: category_key, type: string, required: true }
+      - { name: category_label, type: string, required: true }
+      - { name: score_pct, type: "numeric(5,2)", required: true }
+      - { name: maturity_label, type: enum, enum_ref: maturity_label, required: true }
+      - { name: passed_checks, type: integer, required: true }
+      - { name: total_checks, type: integer, required: true }
+      - { name: weight, type: "numeric(5,2)", required: false }
+      - { name: trend_delta_pct, type: "numeric(5,2)", required: false }
+      - { name: blocker_count, type: integer, required: false }
+      - { name: source_systems, type: jsonb, required: false }
+      - { name: evaluated_at, type: timestamptz, required: true }
+      - { name: created_at, type: timestamptz, required: true }
+
+  release_blocker:
+    label: Release Blocker
+    description: Active blocker preventing or degrading a release.
+    primary_key: id
+    fields:
+      - { name: id, type: uuid, required: true }
+      - { name: blocker_code, type: string, required: true }
+      - { name: title, type: string, required: true }
+      - { name: description, type: string, required: false }
+      - { name: severity, type: enum, enum_ref: blocker_severity, required: true }
+      - { name: status, type: string, required: true }
+      - { name: blocking_surface, type: string, required: false }
+      - { name: impacted_domains, type: jsonb, required: false }
+      - { name: impacted_categories, type: jsonb, required: false }
+      - { name: owner, type: string, required: false }
+      - { name: linked_action_ids, type: jsonb, required: false }
+      - { name: evidence_summary, type: string, required: false }
+      - { name: source_system, type: string, required: false }
+      - { name: detected_at, type: timestamptz, required: true }
+      - { name: updated_at, type: timestamptz, required: true }
+      - { name: resolved_at, type: timestamptz, required: false }
+
+  remediation_action:
+    label: Remediation Action
+    description: Ranked action in the remediation backlog.
+    primary_key: id
+    fields:
+      - { name: id, type: uuid, required: true }
+      - { name: action_code, type: string, required: true }
+      - { name: title, type: string, required: true }
+      - { name: description, type: string, required: false }
+      - { name: priority_rank, type: integer, required: true }
+      - { name: status, type: enum, enum_ref: action_status, required: true }
+      - { name: owner, type: string, required: false }
+      - { name: impacted_domains, type: jsonb, required: false }
+      - { name: impacted_categories, type: jsonb, required: false }
+      - { name: linked_blocker_ids, type: jsonb, required: false }
+      - { name: expected_score_lift_pct, type: "numeric(5,2)", required: false }
+      - { name: effort_size, type: string, required: false }
+      - { name: confidence, type: "numeric(5,2)", required: false }
+      - { name: evidence_basis, type: string, required: false }
+      - { name: due_at, type: timestamptz, required: false }
+      - { name: created_at, type: timestamptz, required: true }
+      - { name: updated_at, type: timestamptz, required: true }
+
+  benchmark_score:
+    label: Benchmark Score
+    description: Odoo Copilot benchmark dimension score for the leaderboard widget.
+    primary_key: id
+    fields:
+      - { name: id, type: uuid, required: true }
+      - { name: evaluation_run_id, type: uuid, required: true }
+      - { name: benchmark_dimension_key, type: string, required: true }
+      - { name: benchmark_dimension_label, type: string, required: true }
+      - { name: score_0_5, type: "numeric(3,2)", required: true }
+      - { name: weight, type: "numeric(5,2)", required: true }
+      - { name: weighted_score, type: "numeric(5,2)", required: true }
+      - { name: benchmark_target, type: string, required: false }
+      - { name: evidence_count, type: integer, required: false }
+      - { name: notes, type: string, required: false }
+      - { name: trend_delta, type: "numeric(3,2)", required: false }
+      - { name: evaluated_at, type: timestamptz, required: true }
+      - { name: created_at, type: timestamptz, required: true }
+
+  score_evidence:
+    label: Score Evidence
+    description: Proof object behind a score or blocker.
+    primary_key: id
+    fields:
+      - { name: id, type: uuid, required: true }
+      - { name: evaluation_run_id, type: uuid, required: true }
+      - { name: entity_type, type: string, required: true }
+      - { name: entity_id, type: uuid, required: true }
+      - { name: evidence_type, type: string, required: true }
+      - { name: title, type: string, required: true }
+      - { name: summary, type: string, required: false }
+      - { name: source_system, type: string, required: false }
+      - { name: source_ref, type: string, required: false }
+      - { name: severity, type: string, required: false }
+      - { name: created_at, type: timestamptz, required: true }
+
+relationships:
+  - from: evaluation_run
+    to: maturity_domain_score
+    type: one_to_many
+    via: evaluation_run_id
+  - from: evaluation_run
+    to: maturity_category_score
+    type: one_to_many
+    via: evaluation_run_id
+  - from: evaluation_run
+    to: benchmark_score
+    type: one_to_many
+    via: evaluation_run_id
+  - from: evaluation_run
+    to: score_evidence
+    type: one_to_many
+    via: evaluation_run_id
+
+canonical_categories:
+  - { key: dev_delivery, label: Dev & Delivery }
+  - { key: runtime, label: Runtime }
+  - { key: governance_compliance, label: Governance & Compliance }
+  - { key: ai_agents, label: AI Agents }
+  - { key: identity_security, label: Identity & Security }
+  - { key: automation, label: Automation }
+  - { key: data_analytics, label: Data & Analytics }
+
+api_shape:
+  description: Minimal JSON payload shape for the leaderboard page.
+  example:
+    evaluationRun:
+      id: uuid
+      environment: dev
+      status: completed
+      completedAt: "2026-03-15T11:54:00Z"
+    domainScores: []
+    categoryScores: []
+    releaseBlockers: []
+    remediationActions: []
+    benchmarkScores: []

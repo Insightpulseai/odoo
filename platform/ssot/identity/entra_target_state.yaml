@@ -1,0 +1,163 @@
+# =============================================================================
+# Microsoft Entra ID Target State — SSOT
+# =============================================================================
+# Last updated: 2026-03-23
+# =============================================================================
+
+schema_version: "1.0"
+last_updated: "2026-03-23"
+owner: "platform-architecture"
+
+tenant:
+  name: Default Directory
+  default_domain: ceoinsightpulseai.onmicrosoft.com
+  verified_custom_domain: insightpulseai.com
+  additional_subdomains: 0
+  subdomain_policy: >
+    Do not add Entra subdomains unless a distinct UPN/identity
+    namespace is truly required. Root domain auto-verifies children.
+
+licensing:
+  current: entra_id_free
+  minimum_target: entra_id_p1
+  preferred_target: entra_id_p2
+  p1_unlocks:
+    - conditional_access
+    - group_based_app_assignment
+    - self_service_password_reset
+    - dynamic_groups
+  p2_unlocks:
+    - identity_protection
+    - risk_based_conditional_access
+    - privileged_identity_management
+    - access_reviews
+
+authentication:
+  current_baseline: security_defaults
+  target_baseline: conditional_access_after_p1
+  legacy_mfa_sspr_policy: must_migrate_to_modern
+  auth_methods_enabled:
+    - passkey_fido2
+    - microsoft_authenticator
+    - temporary_access_pass
+    - software_oath
+    - email_otp
+  auth_methods_deferred:
+    - sms
+    - voice
+    - certificate_based
+    - qr_code
+  conditional_access_policies_after_p1:
+    - name: require_mfa_for_admins
+      scope: global_admins + privileged_roles
+    - name: require_strong_auth_all_users
+      scope: all_users
+    - name: block_legacy_auth
+      scope: all_users
+    - name: secure_mfa_registration
+      scope: all_users_excluding_breakglass
+
+users:
+  current_count: 4
+  target_count: 4-8
+  emergency_access_accounts:
+    required: 2
+    excluded_from: conditional_access_lockout
+    naming: breakglass-1@insightpulseai.com, breakglass-2@insightpulseai.com
+
+groups:
+  current_count: 12
+  target_count: 8-15
+  recommended:
+    - grp-global-admins
+    - grp-platform-admins
+    - grp-developers
+    - grp-finance-tax
+    - grp-data-intelligence
+    - grp-odoo-users
+    - grp-diva-approvers
+    - grp-breakglass-exclusions
+  policy: >
+    All app/role assignment must be group-based.
+    No direct user-to-app assignment unless unavoidable.
+
+enterprise_applications:
+  current_count: 4
+  target:
+    - name: Databricks
+      status: keep
+      group_assignment: grp-data-intelligence
+    - name: GitHub Subscription Permission Validation
+      status: keep
+      notes: Microsoft-managed system app
+    - name: ipai-n8n-entra
+      status: keep
+      group_assignment: grp-platform-admins
+    - name: Microsoft Graph Command Line Tools
+      status: keep
+      group_assignment: grp-platform-admins
+    - name: Odoo ERP SSO
+      status: add_if_using_entra_signin
+      group_assignment: grp-odoo-users
+    - name: Tableau Cloud
+      status: keep_or_add
+      group_assignment: grp-data-intelligence
+
+app_registrations:
+  current_count: 6
+  keep:
+    - name: InsightPulse AI - Odoo ERP
+      purpose: Odoo SSO/API integration
+    - name: InsightPulse AI - Tableau Cloud
+      purpose: Tableau integration
+    - name: ipai-github-oidc
+      purpose: GitHub Actions federated credential (no long-lived secrets)
+    - name: ipai-n8n-entra
+      purpose: n8n auth
+    - name: sp-ipai-azdevops
+      purpose: Azure DevOps integration
+    - name: ipai-tableau-sso
+      purpose: Tableau SSO
+  add:
+    - name: Diva Goals Web
+      purpose: Browser sign-in for Diva Goals web app
+      type: spa
+    - name: Diva Goals API
+      purpose: Protected API resource for platform backend
+      type: api
+
+managed_identities:
+  target_count: 3
+  identities:
+    - name: mi-web-runtime
+      purpose: Web/runtime authenticates to Key Vault, Search, etc.
+      scope: Azure Container Apps
+    - name: mi-jobs-automation
+      purpose: Scheduled jobs, pipelines, background workers
+      scope: Databricks, ACA Jobs
+    - name: mi-data-agent
+      purpose: Agent and data services
+      scope: Foundry, Databricks, AI Search
+  policy: >
+    Prefer managed identities and federated credentials over
+    long-lived client secrets for all Azure-hosted workloads.
+
+domain_services:
+  target_count: 0
+  provision: false
+  reason: >
+    No LDAP/Kerberos/NTLM/domain-join dependency exists.
+    Current stack is modern-auth only (OIDC/OAuth/SAML).
+
+verified_id:
+  target_count: 0
+  provision: false
+  future: >
+    Enable only for concrete credential use cases such as
+    contractor onboarding, helpdesk verification, or
+    high-assurance identity recovery.
+
+devices:
+  current_count: 0
+  target: out_of_scope
+  notes: Device management via Intune is not part of core platform target

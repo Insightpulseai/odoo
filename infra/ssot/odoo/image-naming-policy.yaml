@@ -1,0 +1,45 @@
+contract_version: 1
+
+image_naming:
+  upstream_base_image: "odoo:18.0"
+  canonical_derived_image: "acripaiodoo.azurecr.io/ipai-odoo:18.0"
+
+  allowed_tags:
+    - "18.0"
+    - "18.0-YYYYMMDD"
+    - "18.0-rNNNNNNN"
+    - "sha-<gitsha>"
+
+  forbidden_patterns:
+    - environment_in_image_tag
+    - role_in_image_tag
+    - vague_latest_only_for_production
+    - hotfix_name_in_tag
+    - combined_role_env_version_tag
+
+runtime_naming:
+  app_pattern: "odoo-{role}-{environment}"
+
+  roles:
+    - web
+    - worker
+    - cron
+
+  environments:
+    - dev
+    - staging
+    - production
+
+  examples:
+    dev: [odoo-web-dev, odoo-worker-dev, odoo-cron-dev]
+    staging: [odoo-web-staging, odoo-worker-staging, odoo-cron-staging]
+    production: [odoo-web-production, odoo-worker-production, odoo-cron-production]
+
+current_state:
+  image: "acripaiodoo.azurecr.io/ipai-odoo:18.0-copilot"
+  migration_target: "acripaiodoo.azurecr.io/ipai-odoo:18.0"
+  aca_apps:
+    - ca-ipai-odoo-web-dev        # rename to odoo-web-dev
+    - ca-ipai-odoo-worker-dev     # rename to odoo-worker-dev
+    - ca-ipai-odoo-cron-dev       # rename to odoo-cron-dev
+  note: current names use ca-ipai- prefix; migrate to odoo-{role}-{env} pattern

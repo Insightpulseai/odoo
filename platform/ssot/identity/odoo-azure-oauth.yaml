@@ -1,0 +1,99 @@
+# Odoo Self-Hosted ↔ Microsoft Entra ID OAuth2 — SSOT
+#
+# Doctrine: CE 18 native `auth_oauth` + CE `auth_totp`. NO custom module.
+# Reference: https://www.odoo.com/documentation/18.0/applications/general/users/azure.html
+# Feedback memory: feedback_no_custom_default.md
+#
+# This SSOT replaces the `ipai_auth_oidc` custom module (deprecated 2026-04-14).
+# Everything below is infra wiring + config records — no Python code.
+
+schema_version: 1
+last_updated: 2026-04-14
+
+provider:
+  name: Microsoft
+  display_label: "Sign in with Microsoft"
+  client_id: 3446e178-3eba-48c9-b5bd-4283ff729eb1   # Entra App Reg: InsightPulse AI - Odoo Login
+  tenant_id: 9ba5e867-1fb2-41cb-8e94-7d7a2b8fe4a9   # default (adjust if multitenant)
+  authority: "https://login.microsoftonline.com/{tenant_id}/oauth2/v2.0/authorize"
+  token_endpoint: "https://login.microsoftonline.com/{tenant_id}/oauth2/v2.0/token"
+  validation_endpoint: "https://graph.microsoft.com/v1.0/me"
+  scopes:
+    - openid
+    - profile
+    - email
+    - User.Read
+
+  # Odoo-side config record (configured via data XML or Odoo settings UI — no custom code)
+  odoo_provider_record:
+    model: auth.oauth.provider
+    values:
+      name: Microsoft
+      auth_endpoint: "{authority}"
+      validation_endpoint: "{validation_endpoint}"
+      client_id: "{client_id}"
+      scope: "openid profile email User.Read"
+      css_class: "fa fa-windows"
+      body: "Sign in with Microsoft"
+      enabled: true
+
+redirect_uris:
+  prod: "https://erp.insightpulseai.com/auth_oauth/signin"
+  staging: "https://odoo.insightpulseai.com/auth_oauth/signin"
+  dev: "http://localhost:8069/auth_oauth/signin"
+
+# Secret injection — NEVER commit client secrets; pulled at ACA runtime from KV
+secret_management:
+  key_vault: kv-ipai-dev-sea
+  secret_name: odoo-entra-oauth-client-secret
+  acv_env_var_ref: "@Microsoft.KeyVault(SecretUri=https://kv-ipai-dev-sea.vault.azure.net/secrets/odoo-entra-oauth-client-secret)"
+  odoo_env_var_consumed: ODOO_ENTRA_OAUTH_SECRET  # container reads this at startup
+  rotation_policy_days: 90
+
+mfa:
+  module: auth_totp   # CE 18 built-in, NO custom needed
+  enforced_for_groups:
+    - base.group_system
+    - base.group_erp_manager
+  enforcement_record:
+    model: res.users.totp.policy
+    values:
+      required: true
+      group_ids: "[ref('base.group_system'), ref('base.group_erp_manager')]"
+
+user_provisioning:
+  mode: just_in_time    # Odoo native JIT provisioning on first sign-in
+  auto_create_user: true
+  default_user_template: base.default_user
+  sync_profile_fields_from_graph:
+    - displayName → name
+    - userPrincipalName → login
+    - mail → email
+    - jobTitle → function
+    - mobilePhone → mobile
+  microsoft_graph_permission_required: User.Read        # delegated, not User.Read.All
+
+deprecated_modules:
+  - name: ipai_auth_oidc
+    reason: "CE auth_oauth + auth_totp + this SSOT cover every capability. Module was seed-data + env-var config only. Violates CLAUDE.md Odoo extension doctrine."
+    action: "Remove from addons/ipai/ in a follow-up PR; migrate seed data → one-shot script or config records; update module_install_manifest.yaml."
+    decision_date: 2026-04-14
+
+deprecated_entra_apps:
+  - appId: 07bd9669-1eca-4d93-8880-fd3abb87f812
+    name: "InsightPulseAI Odoo Login"
+    created: 2026-03-23
+    deleted: 2026-04-14
+    reason: "Superseded by 3446e178 (newer, broader redirect set)"
+  - appId: 3605a67d-7135-44a0-8640-03a9b4225923
+    name: "InsightPulse AI - Odoo ERP"
+    created: 2026-03-17
+    deleted: 2026-04-14
+    reason: "Duplicate of 3446e178; separate app had no MI/RBAC distinction"
+
+anchors:
+  - "Odoo 18 CE doc: https://www.odoo.com/documentation/18.0/applications/general/users/azure.html"
+  - "CLAUDE.md §Odoo extension and customization doctrine"
+  - "docs/architecture/odoo-integrations-selfhosted-azure.md"
+  - "Memory: feedback_no_custom_default.md"
+  - "Memory: feedback_odoo_selfhosted_azure_integrations.md"

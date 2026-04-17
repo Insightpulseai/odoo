@@ -1,0 +1,122 @@
+# =============================================================================
+# Org Topology — SSOT
+# =============================================================================
+# Canonical 12-repo / 8-plane organization topology.
+# All docs, configs, and CI should reference these repo names and planes.
+# =============================================================================
+
+id: org_topology
+version: 1.2.0
+updated: "2026-03-21"
+status: target_state
+
+# -----------------------------------------------------------------------------
+# Repos
+# -----------------------------------------------------------------------------
+repos:
+  - id: .github
+    plane: governance
+    purpose: Org governance, reusable workflows, policy baselines, issue forms, and CI contracts
+    status: active
+
+  - id: odoo
+    plane: transactional
+    purpose: Transactional system of record — Odoo 18 CE + OCA + thin IPAI bridge modules
+    status: active
+
+  - id: platform
+    plane: control
+    purpose: Platform control plane and SSOT — vault references, platform metadata, backend/control-plane contracts, and edge/runtime glue
+    status: active
+
+  - id: data-intelligence
+    plane: intelligence
+    purpose: Databricks + Unity Catalog analytics engineering, medallion contracts, semantic-serving prep, and BI delivery artifacts
+    status: split_required
+    current_surface: embedded_in_monorepo
+    transition_paths:
+      - infra/databricks/
+      - odoo/infra/databricks/sql/
+      - lakehouse/contracts/
+    split_plan: docs/architecture/data-intelligence/repo-split-plan.md
+
+  - id: agent-platform
+    plane: agent
+    purpose: Agent runtime platform — orchestration, task ledger, execution contracts, control-room integrations, and runtime glue
+    status: active
+
+  - id: web
+    plane: experience
+    purpose: User-facing web surfaces — ops console, marketing sites, docs sites, and browser-facing product apps
+    status: planned
+
+  - id: infra
+    plane: substrate
+    purpose: Azure-first infrastructure as code, Cloudflare edge/security, and remaining legacy/runtime infrastructure
+    status: active
+
+  - id: automations
+    plane: automation
+    purpose: Workflow automation, scheduled jobs, n8n assets, and operational runbooks
+    status: active
+
+  - id: agents
+    plane: doctrine
+    purpose: Agent personas, skills, judges, evals, metadata, registries, and prompt contracts
+    status: active
+
+  - id: design
+    plane: visual
+    purpose: Design tokens, component specs, icon pipeline, and brand assets
+    status: planned
+
+  - id: docs
+    plane: documentation
+    purpose: Cross-repo architecture, strategy, governance, runbooks, evidence, and operating model docs
+    status: active
+
+  - id: templates
+    plane: bootstrap
+    purpose: Bootstrap-only starter kits, scaffolds, repo templates, and Spec Kit starters
+    status: planned
+
+# -----------------------------------------------------------------------------
+# Planes
+# -----------------------------------------------------------------------------
+planes:
+  - id: governance
+    description: Org-wide policies, workflows, rulesets
+  - id: transactional
+    description: ERP runtime, business process execution
+  - id: control
+    description: Platform services, service catalog, ops
+  - id: intelligence
+    description: Data engineering, analytics, governed data products
+  - id: agent
+    description: Agent runtime, tools, evaluation, orchestration
+  - id: experience
+    description: User-facing apps, portals, extensions
+  - id: substrate
+    description: Cloud infrastructure, identity, networking
+  - id: automation
+    description: Workflow engines, schedulers, event-driven jobs
+  - id: doctrine
+    description: Agent definitions, skills, knowledge, evaluations
+  - id: visual
+    description: Design tokens, brand assets, component libraries
+  - id: documentation
+    description: Architecture docs, strategy, evidence packs
+  - id: bootstrap
+    description: Starter kits, repo templates, scaffolds
+
+# -----------------------------------------------------------------------------
+# Naming Corrections
+# -----------------------------------------------------------------------------
+naming_corrections:
+  - wrong: control-plane
+    correct: platform
+    note: concept alias, not repo name
+
+  - wrong: design-system
+    correct: design
+    note: internal folder name, not repo name

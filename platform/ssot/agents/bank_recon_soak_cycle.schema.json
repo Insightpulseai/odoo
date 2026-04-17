@@ -1,0 +1,38 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Bank Reconciliation Soak Cycle Evidence",
+  "type": "object",
+  "required": [
+    "cycle_id",
+    "batch_scope",
+    "posted_count",
+    "ambiguous_count",
+    "unmatched_count",
+    "duplicate_block_count",
+    "illegal_post_count",
+    "evidence_complete",
+    "operator_review_completed",
+    "anomalies",
+    "residual_risks"
+  ],
+  "properties": {
+    "cycle_id": { "type": "string" },
+    "batch_scope": { "type": "string" },
+    "posted_count": { "type": "integer" },
+    "ambiguous_count": { "type": "integer" },
+    "unmatched_count": { "type": "integer" },
+    "duplicate_block_count": { "type": "integer" },
+    "illegal_post_count": { "type": "integer" },
+    "evidence_complete": { "type": "boolean" },
+    "operator_review_completed": { "type": "boolean" },
+    "anomalies": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "residual_risks": {
+      "type": "array",
+      "items": { "type": "string" }
+    }
+  },
+  "additionalProperties": false
+}

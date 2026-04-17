@@ -1,0 +1,198 @@
+# Platform SSOT: Active Service Registry
+# Cross-referenced by: docs/architecture/ACTIVE_PLATFORM_BOUNDARIES.md
+# Cross-referenced by: docs/architecture/AZURE_NATIVE_TARGET_STATE.md
+# Updated: 2026-03-25
+
+version: "1.0.0"
+
+# --- Active Services (Reduced Azure-Native Stack) ---
+
+active_services:
+
+  # Identity Plane
+  entra_id:
+    role: identity_authority
+    type: azure_native
+    scope: [sso, agent_identity, rbac, conditional_access]
+    odoo_integration: "OAuth provider → /auth_oauth/signin (Odoo 18 native)"
+    note: "Canonical IdP for all services. Replaces Keycloak."
+
+  # Edge Plane
+  azure_front_door:
+    role: edge_routing
+    type: azure_native
+    resource: ipai-fd-dev
+    scope: [tls_termination, waf, public_ingress]
+
+  # ERP Plane
+  odoo_ce_19:
+    role: operational_system_of_record
+    type: aca_hosted
+    resources: [ipai-odoo-dev-web, ipai-odoo-dev-worker, ipai-odoo-dev-cron]
+    database: pg-ipai-odoo
+    scope: [erp, crm, hr, finance, inventory, approvals, documents]
+    note: "Transactional SoR. Foundry agents call Odoo APIs — they do not own business state."
+
+  # AI Plane
+  azure_ai_foundry:
+    role: ai_build_govern_scale
+    type: azure_native
+    resource: aifoundry-ipai-dev
+    scope: [agent_runtime, orchestration, model_management, eval, safety]
+    note: "Pulser agentic behavior plane. agents/ owns behavior, Foundry owns execution."
+
+  azure_openai:
+    role: llm_inference
+    type: azure_native
+    resource: oai-ipai-dev
+    scope: [text_generation, eval_judges, multimodal_understanding]
+
+  azure_doc_intelligence:
+    role: document_extraction
+    type: azure_native
+    resource: docai-ipai-dev
+    scope: [ocr, invoice_extraction, bir_forms, custom_models, receipt_extraction, vendor_bills]
+    flow: "File → Odoo attachment → Doc Intel → structured output → Odoo record"
+    note: "Use Read/Layout for documents. Use Azure AI Vision OCR for non-document images."
+
+  # Data Plane
+  azure_databricks:
+    role: canonical_lakehouse
+    type: azure_native
+    resource: dbw-ipai-dev
+    scope: [dlt_pipelines, unity_catalog, ml_serving, feature_store]
+    note: "Primary data-engineering and lakehouse plane. Not replaced by Fabric."
+
+  power_bi:
+    role: business_reporting
+    type: azure_native_saas
+    scope: [dashboards, reports, analyst_self_service]
+    note: "Primary business-facing BI surface."
+
+  microsoft_fabric:
+    role: consumption_complement
+    type: azure_native_saas
+    scope: [onelake_mirroring, semantic_models]
+    note: "Consumption/semantic layer ONLY. Does not replace Databricks for engineering."
+
+  # Infrastructure Plane
+  azure_container_apps:
+    role: application_hosting
+    type: azure_native
+    resource: ipai-odoo-dev-env
+    scope: [all_application_containers]
+
+  azure_key_vault:
+    role: secrets_management
+    type: azure_native
+    resources: [kv-ipai-dev, kv-ipai-staging, kv-ipai-prod]
+    scope: [secrets, certificates, managed_identity_binding]
+
+  azure_container_registry:
+    role: image_registry
+    type: azure_native
+    resource: cripaidev
+    scope: [docker_images]
+
+  cloudflare_dns:
+    role: authoritative_dns
+    type: external
+    scope: [dns_zone, record_management]
+    domain: insightpulseai.com
+    note: "Current DNS authority. Proxy mode disabled (DNS-only). Azure DNS is target replacement (not deployed)."
+
+  azure_monitor:
+    role: observability
+    type: azure_native
+    scope: [metrics, logs, application_insights, alerts]
+
+  # API Facade
+  api_facade:
+    role: public_api_proxy
+    type: aca_hosted
+    repo: web/packages/api-facade/
+    scope: [lead_capture, demo_booking, contact_form]
+    note: "Thin proxy between browser and Odoo. No direct browser-to-Odoo coupling."
+    contract_ref: ssot/contracts/api_facade.yaml
+
+  # SDLC Plane
+  github:
+    role: source_control
+    type: external
+    scope: [git_hosting, code_review, issues]
+
+  github_actions:
+    role: ci_cd_orchestration
+    type: external
+    scope: [build, test, deploy_preview, agent_triggered_ci]
+    note: "Transitional — migrating to Azure DevOps Pipelines."
+
+  azure_devops:
+    role: ci_cd_target
+    type: azure_native
+    scope: [pipelines, boards, artifacts, promotion_gates]
+
+  # Pulser (Assistant Family)
+  pulser:
+    role: ai_assistant_family
+    type: foundry_hosted
+    surfaces: [pulser_erp, pulser_diva, pulser_studio, pulser_genie, pulser_docs, ask_pulser]
+    behavior_repo: agents/
+    ui_repo: web/packages/pulser-widget/
+    odoo_module: addons/ipai/ipai_ai_copilot/
+    policy_ref: ssot/agents/assistant_surfaces.yaml
+
+# --- External Dependencies (Non-Azure, Justified) ---
+
+external_dependencies:
+
+  squarespace:
+    role: domain_registrar
+    scope: "NS delegation to Azure DNS only"
+
+  zoho_smtp:
+    role: outbound_mail
+    justification: "Outbound mail for insightpulseai.com"
+
+  gemini_direct_api:
+    role: creative_generation
+    justification: "Nano Banana / Imagen / Veo models not on Azure OpenAI"
+
+  fal:
+    role: mixed_media_generation
+    justification: "Kling video, LTX, audio, SFX models"
+
+# --- Retired Services (Not Part of Active Architecture) ---
+
+retired_services:
+  - name: supabase
+    reason: "Non-Azure-native; replaced by Entra (auth), Databricks (data), ACA (functions)"
+    decommissioned: 2026-03-25
+    note: "VM deleted, DNS removed, RG empty."
+  - name: n8n
+    reason: "Replaced by Foundry agents + DevOps pipelines"
+    decommissioned: 2026-03-25
+    note: "VM deleted, DNS removed."
+  - name: plane
+    reason: "Replaced by Azure DevOps Boards"
+    decommissioned: 2026-03-25
+    note: "ACA app deleted, DNS removed."
+  - name: shelf
+    reason: "Replaced by Odoo Knowledge + Databricks"
+    decommissioned: 2026-03-25
+    note: "ACA app deleted, DNS removed."
+  - name: standalone_crm
+    reason: "Redundant — Odoo CRM is canonical"
+    decommissioned: 2026-03-25
+    note: "ACA app deleted, DNS removed."
+  - name: keycloak
+    reason: "Never operationalized — Entra is target IdP"
+    decommissioned: 2026-03-25
+    note: "ACA app deleted, DNS removed."
+  - name: cloudflare_proxy
+    reason: "Proxy/WAF role retired — Front Door handles edge. DNS authority remains on Cloudflare until Azure DNS migration."
+    retired: 2026-03-25
+    note: "Cloudflare DNS-only mode is still active. See active_services.cloudflare_dns."
+
+# --- Doctrinal Split ---
+# Entra authenticates. Foundry thinks. Document Intelligence reads. Odoo records.

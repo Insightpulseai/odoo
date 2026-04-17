@@ -1,0 +1,257 @@
+---
+# Go-Live Readiness Matrix — Formal Stage Assessment
+# Generated: 2026-04-16T14:00:00+08:00
+# Authority: companion to PLATFORM_BASELINE_AND_GO_LIVE_STATUS.md v2
+# Readiness stages:
+#   prerequisite-pending | readiness-review-pending | deployment-ready |
+#   cutover-ready | go-live-ready | stabilization-required | blocked | unknown
+
+schema_version: 1
+audit_date: '2026-04-16'
+auditor: claude-code-evidence-audit
+
+readiness_stages_definition:
+  prerequisite-pending:
+    description: foundational prerequisites not yet met (infra, modules, env)
+  readiness-review-pending:
+    description: prerequisites met but formal readiness review not conducted
+  deployment-ready:
+    description: technically deployable but cutover steps not complete
+  cutover-ready:
+    description: deployment complete, cutover checklist (balances, data, UAT) satisfied
+  go-live-ready:
+    description: all cutover + operational readiness confirmed, can switch production traffic
+  stabilization-required:
+    description: live but in hypercare / stabilization period
+  blocked:
+    description: cannot progress due to a hard dependency or blocker
+  unknown:
+    description: insufficient evidence to determine stage
+
+subsystems:
+
+  # ── ERP Transaction Plane ──────────────────────────────────────────────
+  odoo_erp_core:
+    name: Odoo CE 18 ERP Core (base framework)
+    readiness_stage: prerequisite-pending
+    evidence:
+      - "HTTP 200 at erp.insightpulseai.com/web/login (2026-04-16)"
+      - "Health endpoint returns {status: pass}"
+      - "CSS/JS assets serving correctly (HTTP 200 on web/assets/d8d2511/web.assets_frontend.min.css)"
+      - "12 base modules installed"
+      - "ACA revision ca-ipai-odoo-web-dev--0000011 on blackriver-f68f8a9b"
+    prerequisites_met:
+      - container_runtime: true
+      - database_connection: true
+      - dns_resolution: true
+      - tls_certificate: true
+      - health_check: true
+      - asset_serving: true
+    prerequisites_not_met:
+      - business_modules_installed: false     # no account, sale, purchase, crm, project, hr
+      - custom_modules_installed: false       # 0/55 ipai_* installed
+      - oca_modules_installed: false          # not hydrated
+      - sso_configured: false                 # auth_oauth not installed
+      - email_outbound_verified: false        # Zoho SMTP record unverified at runtime
+      - staging_environment_functional: false  # odoo_staging has 0 tables
+    blockers:
+      - "Zero business modules — bare framework shell only"
+      - "No verified deployment pipeline for module updates"
+
+  odoo_accounting:
+    name: Odoo Accounting (GL/AP/AR/Invoicing)
+    readiness_stage: blocked
+    evidence:
+      - "account module not in installed modules list"
+    blockers:
+      - "account module not installed"
+      - "No chart of accounts loaded"
+      - "No fiscal year configured"
+      - "No journal entries exist"
+
+  odoo_custom_modules:
+    name: IPAI Custom Modules (55 modules)
+    readiness_stage: blocked
+    evidence:
+      - "55 module directories in addons/ipai/"
+      - "0/55 installed in production database"
+      - "0/55 pass doctrine checklist (MODULE_INTROSPECTION.md + TECHNICAL_GUIDE.md)"
+    blockers:
+      - "No deployment pipeline verified"
+      - "Doctrine compliance 0%"
+
+  # ── Finance/Accounting Cutover ─────────────────────────────────────────
+  finance_cutover:
+    name: Finance/Accounting Cutover Readiness
+    readiness_stage: blocked
+    evidence:
+      - "No accounting module installed — all checks below are N/A until core finance modules operational"
+    cutover_checks:
+      opening_balances_loaded: unknown        # cannot assess — no account module
+      ar_clearing_complete: unknown
+      ap_clearing_complete: unknown
+      trial_balance_reconciled: unknown
+      bank_clearing_accounts: unknown
+      multi_currency_configured: unknown
+      chart_of_accounts_validated: unknown
+      tax_configuration_complete: unknown     # BIR modules not installed
+      payment_provider_configured: unknown    # PayPal/Xendit not configured
+      fiscal_year_defined: unknown
+    blockers:
+      - "All finance cutover checks blocked by missing accounting modules"
+      - "BIR compliance modules (7+) not installed"
+
+  # ── Data and Analytics ─────────────────────────────────────────────────
+  databricks_workspace:
+    name: Databricks Workspace
+    readiness_stage: prerequisite-pending
+    evidence:
+      - "dbw-ipai-dev: Succeeded, UC enabled, D4s_v3, 128GiB"
+      - "Unity Catalog reported as created (3 catalogs) per agent memory — not verified this audit"
+      - "CDM export pipeline created but never run"
+    notes:
+      workspace_vs_admin: "Workspace provisioned (developer access). Admin console and developer tooling contract defined in infra/ssot/databricks/developer-tooling.contract.yaml. Apps runtime not assessed."
+      developer_tooling: "VS Code extension contract at infra/ssot/databricks/vscode-extension.contract.yaml"
+    blockers:
+      - "No pipeline has successfully executed"
+      - "No data flowing from Odoo PG to medallion layers"
+
+  power_bi_reporting:
+    name: Power BI Reporting
+    readiness_stage: blocked
+    evidence:
+      - "Pro trial license — expiry ~2026-05-20"
+      - "No semantic models published"
+      - "No reports or dashboards configured"
+    blockers:
+      - "Trial license — no paid capacity"
+      - "No semantic model to report against"
+      - "No data pipeline feeding BI layer"
+
+  fabric_mirroring:
+    name: Fabric Mirroring (PG to OneLake)
+    readiness_stage: unknown
+    evidence:
+      - "fcipaidev workspace reported as ACTIVE per agent memory"
+      - "Trial may expire ~2026-05-20"
+    blockers:
+      - "Trial status unverified"
+      - "No mirroring pipeline evidence"
+
+  # ── Identity and Auth ──────────────────────────────────────────────────
+  identity_sso:
+    name: Entra ID SSO for Odoo
+    readiness_stage: blocked
+    evidence:
+      - "Enterprise app 'InsightPulse AI - Odoo Login' exists in Entra (app_id: 3446e178)"
+      - "auth_oauth module NOT installed in Odoo"
+      - "auth_totp installed but unconfigured"
+      - "Tenant ID: 402de71a confirmed from az account (SSOT conflict: 9ba5e867 in oauth SSOT)"
+    blockers:
+      - "auth_oauth not installed"
+      - "Entra tenant ID conflict in SSOT files"
+      - "No login flow tested"
+
+  tenant_boundary:
+    name: Tenant/Company Boundary Model
+    readiness_stage: prerequisite-pending
+    evidence:
+      - "4 tenants defined in ssot/tenants/tenant-registry.yaml"
+      - "Only company 1 (IPAI) likely exists in bare Odoo install"
+      - "W9 Studio uses Google Workspace (w9studio.net domain) for collaboration"
+      - "Identity boundary policy documented at ssot/identity/identity-boundary-policy.yaml"
+    notes:
+      google_workspace_boundary: "w9studio.net is a collaboration workspace, NOT a tenant boundary. Identity authority is Entra, not Google Workspace."
+      enterprise_apps_vs_tenants: "11 enterprise apps observed in Entra — these define identity surfaces, NOT customer tenant boundaries (per identity-boundary-policy.yaml rules)"
+      app_registrations: "21 app registrations — separate from enterprise apps. ipai-n8n-entra flagged for deletion."
+
+  # ── Agent/Pulser Runtime ───────────────────────────────────────────────
+  pulser_agent_platform:
+    name: Pulser Agent Platform
+    readiness_stage: prerequisite-pending
+    evidence:
+      - "ipai-copilot-gateway deployed as internal ACA on Sub1"
+      - "Agent interop matrix v2 committed with A2A v0.2.0 protocol"
+      - "Agent orchestration model documented"
+      - "Three-protocol model (A2A + MCP + Agent365) documented"
+      - "180+ skill definitions in agents/skills/"
+      - "Scrum Master skill scored 65/100 (best-developed agent)"
+      - "agents/ repo audit: D grade (44/100)"
+    blockers:
+      - "No end-to-end agent invocation verified"
+      - "ipai_odoo_copilot module not installed"
+      - "Zero A2A agent cards deployed to live endpoints"
+
+  # ── CI/CD and Release ──────────────────────────────────────────────────
+  cicd_pipelines:
+    name: Azure Pipelines CI/CD
+    readiness_stage: unknown
+    evidence:
+      - "15 pipeline definition files in azure-pipelines/"
+      - "GitHub Actions correctly removed per doctrine"
+      - "ADO project ipai-platform exists with 23 epics, 120+ issues"
+    blockers:
+      - "No verified successful pipeline run for Odoo deployment"
+      - "Pipeline run history not collected"
+
+  # ── Infrastructure ─────────────────────────────────────────────────────
+  azure_infrastructure:
+    name: Azure Infrastructure (ACA/PG/KV/VNet)
+    readiness_stage: deployment-ready
+    evidence:
+      - "PG pg-ipai-odoo: Ready, D4s_v3, 128GiB, v16, publicAccess enabled"
+      - "ACA: 4 apps on Sponsored, 15 on Sub1"
+      - "ACR: 20 repositories"
+      - "KV: 2 vaults (kv-ipai-dev on Sub1, kv-ipai-dev-sea on Sponsored)"
+      - "VNet, Private Endpoints, Backup Vault provisioned"
+      - "AFD afd-ipai-dev Active on Sub1"
+    notes: "Infrastructure is provisioned and mostly operational. Gap is application-layer configuration, not infrastructure."
+
+  # ── Monitoring and Observability ───────────────────────────────────────
+  monitoring:
+    name: Monitoring and Observability
+    readiness_stage: prerequisite-pending
+    evidence:
+      - "5 Log Analytics workspaces provisioned"
+      - "4 App Insights instances provisioned"
+      - "3 alert rules on Sub1 (content safety, latency, error rate)"
+    blockers:
+      - "No operational dashboard verified"
+      - "Alert routing not verified"
+      - "No on-call schedule"
+
+  # ── Web Surfaces ───────────────────────────────────────────────────────
+  web_surfaces:
+    name: Public Web Surfaces (IPAI, PrismaLab, W9)
+    readiness_stage: stabilization-required
+    evidence:
+      - "www.insightpulseai.com → HTTP 200 (blackstone env)"
+      - "prismalab.insightpulseai.com → HTTP 200 (whitedesert env)"
+      - "W9 Studio ACA returning HTTP 200"
+      - "PrismaLab RAG gateway deployed"
+    notes: "Web surfaces are live but w9studio.net custom domain migration from Wix incomplete"
+
+  # ── Backup and DR ──────────────────────────────────────────────────────
+  backup_dr:
+    name: Backup and Disaster Recovery
+    readiness_stage: prerequisite-pending
+    evidence:
+      - "bvault-ipai-dev-sea (Backup Vault) provisioned on Sponsored"
+      - "PG built-in backups (Azure managed)"
+    blockers:
+      - "Backup policies not verified"
+      - "No tested restore procedure"
+      - "No RPO/RTO documented"
+      - "ir_attachment.location=db fixes ephemeral filestore but no filestore backup verified"
+
+overall_readiness:
+  stage: prerequisite-pending
+  verdict: NOT READY
+  summary: >
+    The platform is at infrastructure-provisioned stage. The Odoo container is running
+    and returning HTTP 200 with health check passing and assets serving correctly, but
+    contains zero business modules. No accounting, CRM, project, or custom modules are
+    installed. No deployment pipeline has been verified. No finance cutover checks can
+    be assessed. The platform cannot process any business transactions.
+  highest_stage_achieved: deployment-ready (infrastructure only)
+  lowest_stage: blocked (accounting, custom modules, finance cutover, SSO)

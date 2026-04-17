@@ -1,0 +1,169 @@
+# Entra ID Company Branding — IPAI Platform
+# SSOT for sign-in page customization across all Entra-authenticated apps
+# Spec: spec/entra-identity-migration/
+# Reference: https://learn.microsoft.com/en-us/entra/fundamentals/how-to-customize-branding
+# Created: 2026-03-22
+
+# Prerequisites:
+#   - Microsoft Entra ID P1 or P2 license
+#   - Organizational Branding Administrator role
+#   - Admin center: https://entra.microsoft.com → Entra ID → Custom Branding
+
+branding:
+
+  # ─── Basics ───────────────────────────────────────────────────────────
+  basics:
+    favicon:
+      description: Browser tab icon
+      source: design/assets/favicon-32x32.png
+      requirements:
+        size: 32x32 px
+        format: PNG (preferred) or JPG
+        max_file_size: 5 KB
+
+    background_image:
+      description: Full sign-in page background
+      source: design/assets/entra-login-bg-1920x1080.png
+      requirements:
+        size: 1920x1080 px
+        format: PNG (preferred) or JPG
+        max_file_size: 300 KB
+      notes: >
+        Sign-in box partially obscures center of image.
+        Place key branding elements in corners or edges.
+        Use partial-screen layout template to preserve visibility.
+
+    page_background_color:
+      description: Fallback color when background image fails to load
+      value: "#1a1a2e"  # IPAI dark navy — matches brand palette
+      notes: Shown on slow connections before image loads
+
+  # ─── Layout ───────────────────────────────────────────────────────────
+  layout:
+    template: partial-screen  # preserves background image visibility
+    header:
+      enabled: true
+      logo:
+        source: design/assets/ipai-header-logo-245x36.png
+        requirements:
+          size: 245x36 px
+          format: PNG
+          max_file_size: 10 KB
+    footer:
+      enabled: true
+      privacy:
+        show: true
+        display_text: "Privacy Policy"
+        url: "https://insightpulseai.com/privacy"
+      terms_of_use:
+        show: true
+        display_text: "Terms of Service"
+        url: "https://insightpulseai.com/terms"
+    custom_css:
+      enabled: false  # Not available for tenants created after 2026-01-05
+      notes: >
+        Custom CSS deprecated for new tenants.
+        Use visual templates + branding elements instead.
+
+  # ─── Sign-In Form ────────────────────────────────────────────────────
+  sign_in_form:
+    banner_logo:
+      description: Logo at top of sign-in box (short and wide)
+      source: design/assets/ipai-banner-logo-245x36.png
+      requirements:
+        size: 245x36 px
+        format: PNG
+        max_file_size: 50 KB
+
+    square_logo_light:
+      description: Square logo for light theme browsers
+      source: design/assets/ipai-square-logo-light-240x240.png
+      requirements:
+        size: 240x240 px
+        format: PNG
+        max_file_size: 50 KB
+
+    square_logo_dark:
+      description: Square logo for dark theme browsers
+      source: design/assets/ipai-square-logo-dark-240x240.png
+      requirements:
+        size: 240x240 px
+        format: PNG
+        max_file_size: 50 KB
+      notes: Only needed if light logo doesn't work on dark backgrounds
+
+    username_hint_text: "user@insightpulseai.com"
+
+    sign_in_page_title: "InsightPulse AI Platform"
+
+    sign_in_page_description: >
+      Enterprise operations platform — ERP, analytics, compliance, and AI agents.
+
+    sign_in_page_text: >
+      Sign in with your InsightPulse AI account.
+      For support, contact [help@insightpulseai.com](mailto:help@insightpulseai.com).
+
+    self_service_password_reset:
+      enabled: true
+      url: "https://passwordreset.microsoftonline.com/?whr=insightpulseai.com"
+      username_display_text: "Can't access your account?"
+      password_display_text: "Forgot my password"
+
+  # ─── Browser Language Overrides ───────────────────────────────────────
+  locale_overrides:
+    - locale: fil  # Filipino
+      sign_in_page_title: "InsightPulse AI Platform"
+      sign_in_page_description: >
+        Enterprise operations platform — ERP, analytics, compliance, at AI agents.
+      sign_in_page_text: >
+        Mag-sign in gamit ang iyong InsightPulse AI account.
+      username_hint_text: "user@insightpulseai.com"
+
+  # ─── Home Realm Discovery ────────────────────────────────────────────
+  home_realm_discovery:
+    description: >
+      Use whr parameter to show IPAI branding immediately (skip email entry).
+      All IPAI apps should include whr=insightpulseai.com in auth redirect.
+    examples:
+      odoo: "https://erp.insightpulseai.com/auth/oidc/callback?whr=insightpulseai.com"
+      plane: "https://plane.insightpulseai.com/?whr=insightpulseai.com"
+      superset: "https://superset.insightpulseai.com/oauth-authorized/entra?whr=insightpulseai.com"
+      myapps: "https://myapps.microsoft.com/?whr=insightpulseai.com"
+      sspr: "https://passwordreset.microsoftonline.com/?whr=insightpulseai.com"
+
+  # ─── Design Asset Checklist ──────────────────────────────────────────
+  # All assets must be created and placed in design/assets/ before applying
+  assets_required:
+    - path: design/assets/favicon-32x32.png
+      size: "32x32"
+      status: pending
+    - path: design/assets/entra-login-bg-1920x1080.png
+      size: "1920x1080"
+      status: pending
+    - path: design/assets/ipai-header-logo-245x36.png
+      size: "245x36"
+      status: pending
+    - path: design/assets/ipai-banner-logo-245x36.png
+      size: "245x36"
+      status: pending
+    - path: design/assets/ipai-square-logo-light-240x240.png
+      size: "240x240"
+      status: pending
+    - path: design/assets/ipai-square-logo-dark-240x240.png
+      size: "240x240"
+      status: pending
+
+  # ─── Implementation Notes ────────────────────────────────────────────
+  implementation:
+    admin_role: Organizational Branding Administrator
+    admin_center: https://entra.microsoft.com
+    path: "Entra ID → Custom Branding"
+    graph_api: "/beta/organization/{id}/branding"
+    graph_resource: organizationalBranding
+    notes:
+      - Branding appears AFTER user enters email (Home Realm Discovery)
+      - Use whr parameter in app redirect URLs for immediate branding
+      - B2B guests see their HOME tenant branding, not IPAI branding
+      - Personal Microsoft accounts never show tenant branding
+      - RTL languages (Arabic, Hebrew) auto-adjust layout
+      - Changes may take time to propagate based on tenant geo (SEA)

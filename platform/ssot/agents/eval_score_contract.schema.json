@@ -1,0 +1,26 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "ipai.eval_score.v1",
+  "type": "object",
+  "required": [
+    "agent_id",
+    "target_stage",
+    "judge_id",
+    "decision",
+    "confidence",
+    "reasoning",
+    "evidence_refs"
+  ],
+  "properties": {
+    "agent_id": { "type": "string" },
+    "target_stage": { "type": "string" },
+    "judge_id": { "type": "string" },
+    "decision": { "type": "string", "enum": ["pass", "fail", "ambiguous"] },
+    "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+    "reasoning": { "type": "string" },
+    "evidence_refs": {
+      "type": "array",
+      "items": { "type": "string" }
+    }
+  }
+}

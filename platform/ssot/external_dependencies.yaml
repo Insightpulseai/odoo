@@ -49,7 +49,41 @@ active:
       Zoho replaced Mailgun (mg.insightpulseai.com) as of 2026-03-11.
       Credentials are in Azure Key Vault, never in tracked config.
 
-retired:
+  - key: gws_cli
+    name: Google Workspace CLI (gws)
+    role: workspace_api_cli_and_agent_skills
+    upstream: https://github.com/googleworkspace/cli
+    version: "0.22.5"
+    purpose: >
+      CLI for all Google Workspace APIs (Drive, Gmail, Calendar, Sheets, Docs, Chat,
+      Admin). Used for operator automation and AI agent workflows via Gemini CLI extension.
+    adoption_classification: consume-directly
+    integration_surface: oauth2_cli + gemini_extension + agent_skills
+    data_flow: read_write_to_google_workspace_apis
+    credential_source: azure_key_vault (per tenant, segregated)
+    adoption_ref: ssot/google-workspace/gws-cli-adoption.yaml
+    mcp_classification: optional_third_party_explicit_approval_required
+    notes: >
+      Not an officially supported Google product. Classified as commodity tooling —
+      consume upstream binary, do not fork or build custom tooling for standard
+      Workspace API coverage.
+
+  - key: w9studio_workspace
+    name: W9 Studio (Google Workspace managed tenant)
+    role: external_managed_workspace_tenant
+    domain: w9studio.net
+    purpose: >
+      External client tenant managed by IPAI via Google Workspace Admin Console.
+      3 active users (accounts@, finance@, business@w9studio.net).
+    integration_surface: google_workspace_admin_api + gws_cli
+    data_flow: admin_read_write_within_tenant
+    credential_source: azure_key_vault (w9studio GCP project — segregated from ipai GCP project)
+    tenant_ref: ssot/google-workspace/w9studio-tenant.yaml
+    notes: >
+      W9 Studio identity is separate from the insightpulseai.com Entra tenant.
+      No cross-tenant identity bridging. Credentials are segregated per GCP project.
+
+
 
   - key: cloudflare
     name: Cloudflare

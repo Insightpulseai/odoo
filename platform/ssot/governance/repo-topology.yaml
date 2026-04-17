@@ -1,0 +1,245 @@
+# repo-topology.yaml — Org Repo Authority Model
+# Authority: ssot/governance/org-repo-target-state.yaml
+# Crosswalk: docs/architecture/ORG_AZURE_SAP_CROSSWALK.md
+# Last updated: 2026-04-07
+#
+# Classification system:
+#   plane            — Azure-landscape responsibility plane this repo serves
+#   authority_level  — core (architecture-authority) | adjunct (public/OSS, no architecture authority)
+#   visibility_class — private | internal | public
+#   lifecycle        — active | frozen | redirect | deprecated
+#   owner_scope      — which platform concern this repo is accountable for
+
+version: "1.0"
+schema: ssot.governance.repo-topology.v1
+updated_at: "2026-04-07"
+org: Insightpulseai
+doc_twin: docs/architecture/ORG_AZURE_SAP_CROSSWALK.md
+
+# ─── CANONICAL PLANES ──────────────────────────────────────────
+#
+# Derived from Azure SAP whole-landscape guidance (hub-spoke model):
+#   governance          → management groups / policy boundaries
+#   platform_substrate  → regional hub subscription / shared connectivity
+#   transactional_runtime → SAP workload spoke
+#   perimeter_experience  → SAP perimeter subnet (browser-facing)
+#   operations_automation → SAP Basis-style automation / landscape ops
+#   agent_runtime       → REST/API extensibility + AI orchestration plane
+#   agent_spec_layer    → agent definitions / evals / judges (not runtime)
+#   analytics           → reporting / BI / governed data plane
+#   shared_assets       → design system + bootstrap templates
+
+canonical_planes:
+  governance:
+    description: "Central policy, standards, governance, reusable controls"
+    azure_analogy: "Management groups / policy boundaries"
+    repos: [".github", "docs"]
+
+  platform_substrate:
+    description: "Shared connectivity, firewalling, central services, control plane"
+    azure_analogy: "Regional hub subscription + central services"
+    repos: ["infra", "platform"]
+
+  transactional_runtime:
+    description: "Business workload runtime and ERP models"
+    azure_analogy: "SAP spoke VNet / SAP systems"
+    repos: ["odoo"]
+
+  perimeter_experience:
+    description: "Browser-facing surfaces managed by workload team"
+    azure_analogy: "SAP perimeter subnet"
+    repos: ["web"]
+
+  operations_automation:
+    description: "Scheduled jobs, event-driven triggers, landscape operations"
+    azure_analogy: "SAP Basis-style automation / LaMa-equivalent"
+    repos: ["automations"]
+
+  agent_runtime:
+    description: "Agent orchestration, execution, retrieval, attachment ingestion"
+    azure_analogy: "REST/API extensibility + AI workflow orchestration"
+    repos: ["agent-platform"]
+
+  agent_spec_layer:
+    description: "Agent definitions, skills, judges, eval suites, routing maps"
+    azure_analogy: "Configuration/definition layer (not runtime)"
+    repos: ["agents"]
+
+  analytics:
+    description: "Governed lakehouse, semantic models, BI delivery"
+    azure_analogy: "Reporting / analytics plane"
+    repos: ["data-intelligence"]
+
+  shared_assets:
+    description: "Design tokens, components, bootstrap scaffolds"
+    azure_analogy: "Shared libraries / templated deployment"
+    repos: ["design", "templates"]
+
+# ─── REPO CLASSIFICATIONS ──────────────────────────────────────
+
+repos:
+
+  # ── Governance plane ─────────────────────────────────────────
+  - name: ".github"
+    plane: governance
+    authority_level: core
+    visibility_class: private
+    lifecycle: active
+    owner_scope: "org policy, reusable workflows, community profile"
+
+  - name: "docs"
+    plane: governance
+    authority_level: core
+    visibility_class: public
+    lifecycle: active
+    owner_scope: "cross-repo architecture, governance, ADRs, runbooks, evidence"
+
+  # ── Platform substrate ───────────────────────────────────────
+  - name: "infra"
+    plane: platform_substrate
+    authority_level: core
+    visibility_class: private
+    lifecycle: active
+    owner_scope: "Azure IaC, DNS, Front Door, Key Vault, OIDC, observability"
+
+  - name: "platform"
+    plane: platform_substrate
+    authority_level: core
+    visibility_class: private
+    lifecycle: active
+    owner_scope: "control plane, admin console, shared APIs, cross-plane contracts"
+
+  # ── Transactional runtime ────────────────────────────────────
+  - name: "odoo"
+    plane: transactional_runtime
+    authority_level: core
+    visibility_class: public
+    lifecycle: active
+    owner_scope: "ERP runtime, Odoo addons, OCA curation, IPAI bridge modules"
+
+  # ── Perimeter experience ─────────────────────────────────────
+  - name: "web"
+    plane: perimeter_experience
+    authority_level: core
+    visibility_class: private
+    lifecycle: active
+    owner_scope: "marketing site, product portals, shared UI packages, edge delivery"
+
+  # ── Operations automation ────────────────────────────────────
+  - name: "automations"
+    plane: operations_automation
+    authority_level: core
+    visibility_class: private
+    lifecycle: active
+    owner_scope: "scheduled jobs, event-driven triggers, connectors, ops runbooks"
+
+  # ── Agent runtime ────────────────────────────────────────────
+  - name: "agent-platform"
+    plane: agent_runtime
+    authority_level: core
+    visibility_class: private
+    lifecycle: active
+    owner_scope: "Foundry runtime, orchestration, retrieval grounding, attachment ingestion, Document Intelligence, chat backend, eval runtime"
+
+  # ── Agent spec layer ─────────────────────────────────────────
+  - name: "agents"
+    plane: agent_spec_layer
+    authority_level: core
+    visibility_class: public
+    lifecycle: active
+    owner_scope: "personas, skills, judges, eval suites, routing maps, agent schemas"
+
+  # ── Analytics ────────────────────────────────────────────────
+  - name: "data-intelligence"
+    plane: analytics
+    authority_level: core
+    visibility_class: private
+    lifecycle: active
+    owner_scope: "Databricks lakehouse, governed data products, semantic layer, analytics SQL"
+
+  # ── Shared assets ────────────────────────────────────────────
+  - name: "design"
+    plane: shared_assets
+    authority_level: core
+    visibility_class: internal
+    lifecycle: active
+    owner_scope: "design tokens, component mappings, brand assets, Figma exports"
+
+  - name: "templates"
+    plane: shared_assets
+    authority_level: core
+    visibility_class: private
+    lifecycle: active
+    owner_scope: "repo scaffolds, spec templates, automation templates"
+
+# ─── ADJUNCT REPOS (no architecture authority) ─────────────────
+
+adjunct_repos:
+
+  - name: "powerbi-skills"
+    authority_level: adjunct
+    visibility_class: public
+    lifecycle: active
+    owner_scope: "OSS Claude Code skill pack for Power BI"
+    note: "Public product. Does not define platform architecture."
+
+  - name: "ugc-mediaops-kit"
+    authority_level: adjunct
+    visibility_class: public
+    lifecycle: active
+    owner_scope: "OSS media finishing pipeline for agency UGC workflows"
+    note: "Public product. Does not define platform architecture."
+
+  - name: "landing.io"
+    authority_level: adjunct
+    visibility_class: public
+    lifecycle: redirect
+    owner_scope: "Public redirect shell for ERP login"
+    note: "Candidate to fold into web/apps/landing-redirect. Keep standalone until web repo is hydrated."
+
+# ─── DECISION RULES ────────────────────────────────────────────
+
+decision_rules:
+  - rule: "Shared connectivity / landing zone / policy / ingress substrate"
+    repo: infra
+
+  - rule: "Shared metadata / secrets references / control contracts"
+    repo: platform
+
+  - rule: "Business workload and ERP models"
+    repo: odoo
+
+  - rule: "Browser-facing login / admin / portal / perimeter UX"
+    repo: web
+
+  - rule: "Scheduled runbooks and lifecycle ops"
+    repo: automations
+
+  - rule: "Agent runtime and grounding / orchestration"
+    repo: agent-platform
+
+  - rule: "Prompt / skill / eval definitions"
+    repo: agents
+
+  - rule: "Governed data products and analytics engineering"
+    repo: data-intelligence
+
+  - rule: "Design tokens, brand assets, component mappings"
+    repo: design
+
+  - rule: "Org policy, reusable workflows, community profile"
+    repo: ".github"
+
+  - rule: "Cross-repo architecture docs, governance, ADRs"
+    repo: docs
+
+# ─── ANTI-PATTERNS ─────────────────────────────────────────────
+
+anti_patterns:
+  - "Do not create repos per environment (no odoo-prod, odoo-dev, odoo-qa)"
+  - "Do not create repos per system instance"
+  - "Do not rename or merge repos unless explicitly justified"
+  - "Do not place agent runtime code in agents (spec-only repo)"
+  - "Do not place agent definitions in agent-platform (runtime-only repo)"
+  - "Do not place IaC in workload repos (infra owns all IaC)"
+  - "Do not place business logic in infra"

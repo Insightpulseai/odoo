@@ -1,0 +1,116 @@
+---
+# Reference Samples Register — Microsoft 365 Agents Toolkit + Azure AI Foundry
+#
+# Canonical list of upstream sample repos IPAI uses as reference patterns.
+# adopt_mode: reference_only (study patterns, do not fork).
+# All samples here consumed for PATTERN VALIDATION, never forked or productized.
+#
+# Authority: ssot/governance/upstream-adoption-register.yaml (this is a subset)
+# Invariant: CLAUDE.md Cross-Repo Invariant #10a (three-protocol model)
+# Last updated: 2026-04-15
+
+version: 1
+status: canonical
+source_gallery: https://learn.microsoft.com/microsoft-365/agents/samples/
+
+samples:
+
+  # ─────── APIM GenAI Gateway pattern (closes gap A from 2026-04-15) ───────
+  - name: custom-engine-agent-apim-genai-gateway
+    language: TypeScript
+    category: Custom Engine Agent
+    tags: [APIM, GenAI Gateway, Agents SDK, Declarative Agent]
+    relevance: HIGH
+    ipai_use: |
+      Reference for APIM GenAI Gateway in front of pulser_supervisor. Provides
+      per-tenant rate limit, semantic cache, cost cap, policy enforcement.
+      Port the gateway pattern to Python/MAF in agent-platform/orchestration/.
+    action: port_to_python
+    owner: platform-engineering
+    target_module: infra/azure/modules/apim-genai-gateway.bicep
+
+  # ─────── MAF custom engine agent (closest to Scrum Master shape) ───────
+  - name: travel-agent-maf
+    language: "C#"
+    category: Custom Engine Agent
+    tags: [M365 Copilot Retrieval API, Agents SDK, Agent Framework, MAF]
+    relevance: HIGH
+    ipai_use: |
+      End-to-end MAF custom engine agent reference. Closest pattern match
+      for pulser_scrum_master (specialist worker, A2A server, Foundry backing).
+      Study dispatch + response shape; re-implement in Python.
+    action: study_pattern
+    owner: platform-engineering
+
+  # ─────── Viz-renderer pattern (Data Analyst v2 is close twin) ───────
+  - name: data-analyst-agent-v2
+    language: TypeScript
+    category: Custom Engine Agent
+    tags: [Data Visualization, Adaptive Cards, LLM SQL, Microsoft Teams SDK]
+    relevance: HIGH
+    ipai_use: |
+      Reference for viz_renderer meta-skill. Adaptive Card + chart generation
+      pipeline via LLM → structured viz payload → rendered card. Validates our
+      spec/pulser-inline-viz/ design decisions.
+    action: reference_for_viz_renderer
+    owner: data-intelligence
+
+  # ─────── MAF + Agent365 in Python (canonical template for our agents) ───────
+  - name: agent-framework-agent-with-agent365-sdk-python
+    language: Python
+    category: Agent365
+    tags: [Agent365, MAF, Python]
+    relevance: HIGH
+    ipai_use: |
+      Primary reference template for Pulser Python agents. MAF + Agent365 SDK
+      in our target language. Use as scaffold for any Pulser agent that ships
+      to M365 surface (R3+ work). Includes SSO + manifest + deployment.
+    action: scaffold_template
+    owner: agent-platform
+
+  # ─────── Foundry → M365 Copilot with SSO (Scrum Master R3 target) ───────
+  - name: foundry-agent-to-m365-copilot-sso-python
+    language: Python
+    category: Foundry Agent
+    tags: [Azure, Foundry, SSO, Copilot]
+    relevance: MEDIUM
+    ipai_use: |
+      Reference for surfacing a Foundry-backed agent into M365 Copilot with
+      Entra SSO. Applies to pulser_scrum_master when we add M365 surface at R3.
+      Until R3: ADO extension speaks A2A directly to supervisor, no Agent365.
+    action: r3_reference
+    owner: agent-platform
+
+  # ─────── Proactive push (Scrum Master daily standup push) ───────
+  - name: proactive-messaging
+    language: JavaScript
+    category: Bot
+    tags: [Bot, Adaptive Cards, Proactive]
+    relevance: MEDIUM
+    ipai_use: |
+      Pattern for Scrum Master scheduled push of daily standup digest into
+      Teams. Pair with adaptive-card-notification sample for the card shape.
+      Used by ops.scheduled_jobs cadence at 09:00 Asia/Manila.
+    action: reference_for_scheduled_push
+    owner: agent-platform
+
+  # ─────── Meta-pattern: Claude as Agent365 agent ───────
+  - name: claude-agent-with-agent365-sdk-nodejs
+    language: TypeScript
+    category: Agent365
+    tags: [Agent365, Claude]
+    relevance: MEDIUM
+    ipai_use: |
+      Meta-pattern. Proves Claude Code (and by extension any non-MS backend)
+      can surface into M365 via Agent365 SDK. Useful if we later expose Claude
+      Code as a discoverable agent inside M365. Not R2/R3 scope.
+    action: meta_pattern_reference
+    owner: agent-platform
+
+# Enforcement
+validation:
+  rules:
+    - no sample here may be forked into IPAI repos
+    - any port MUST preserve attribution to the upstream sample URL
+    - any divergence from a sample's architecture MUST be documented in the target module's docs/
+    - samples with action=scaffold_template MAY be copied with heavy adaptation; all others are read-only references

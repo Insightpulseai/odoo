@@ -1,0 +1,12 @@
+version: 1
+environments:
+  dev:
+    promotion_allowed: true
+    evidence_required: basic
+  staging:
+    promotion_allowed: true
+    evidence_required: extended
+  prod:
+    promotion_allowed: conditional
+    evidence_required: strict
+    requires_topology_match: true

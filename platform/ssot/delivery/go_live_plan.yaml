@@ -1,0 +1,506 @@
+# =============================================================================
+# Go-Live Acceleration Plan — InsightPulse AI
+# =============================================================================
+#
+# Machine-readable plan for go-live acceleration.
+# Human-readable narrative: docs/delivery/GO_LIVE_ACCELERATION_PLAN.md
+#
+# Last updated: 2026-03-18
+# =============================================================================
+
+version: 2
+last_updated: "2026-03-19"
+target: first_live_poc_with_evidence_pack
+caf_current_stage: ready
+caf_target_stage: adopt
+
+# -----------------------------------------------------------------------------
+# Critical Path (strictly ordered)
+# -----------------------------------------------------------------------------
+
+critical_path:
+  - id: CP-1
+    name: Re-enable Security Defaults / enroll emergency-admin MFA
+    board_refs:
+      - TASK-003
+    blocker_type: identity
+    inputs:
+      - emergency-admin@insightpulseai.com credentials
+      - Entra admin portal access
+    done_criteria:
+      - Both native admins have MFA enrolled
+      - Security Defaults enabled OR Conditional Access policy deployed
+    evidence:
+      - Entra portal screenshot showing Security Defaults enabled
+
+  - id: CP-2
+    name: Deploy Azure Files + mount to ACA
+    board_refs:
+      - "Phase 1 tasks.md: Deploy Azure Files"
+    blocker_type: data_durability
+    inputs:
+      - infra/azure/modules/azure-files.bicep
+      - ACA resource names
+    done_criteria:
+      - Azure Files share exists
+      - ACA volume mount active
+      - Odoo filestore survives container restart
+    evidence:
+      - az containerapp show with volume mount
+      - Persistence test log
+
+  - id: CP-3
+    name: Deploy Azure Front Door + validate routing
+    board_refs:
+      - "Phase 1 tasks.md: Deploy Front Door"
+      - TASK-001.3
+    blocker_type: edge_security
+    inputs:
+      - infra/azure/parameters/front-door-dev.parameters.json
+      - Cloudflare DNS access
+    done_criteria:
+      - AFD routes to ACA origins
+      - WAF managed rules active
+      - erp.insightpulseai.com resolves through AFD
+    evidence:
+      - curl -I showing AFD response headers
+      - WAF policy screenshot
+
+  - id: CP-4
+    name: Fix Odoo cron job (analytic_account_id drift)
+    board_refs:
+      - "Go-Live Checklist 4.2"
+      - FIN-I4.2
+    blocker_type: runtime_functionality
+    inputs:
+      - Cron log with analytic_account_id error
+      - Odoo 18 field schema reference
+    done_criteria:
+      - Server action runs without field error
+      - Cron log shows successful execution
+    evidence:
+      - test_ipai_finance_ppm install log
+      - Cron execution log
+
+  - id: CP-5
+    name: Run first pipeline deploy (ci-cd.yml)
+    board_refs:
+      - TASK-005.1
+      - TASK-005.2
+      - TASK-005.3
+      - TASK-005.4
+      - TASK-005.5
+    blocker_type: release_truth
+    inputs:
+      - .azure/pipelines/ci-cd.yml
+      - ADO project ipai-platform
+      - Service connection sc-azure-dev-platform
+    done_criteria:
+      - Pipeline runs end-to-end in ADO
+      - Artifacts deployed to dev ACA
+      - Release evidence captured
+    evidence:
+      - ADO pipeline run URL with green stages
+      - ACA revision showing pipeline-deployed image
+
+  - id: CP-6
+    name: Validate database-per-tenant routing
+    board_refs:
+      - "Go-Live Checklist 3"
+    blocker_type: tenancy_model
+    inputs:
+      - PostgreSQL server ipai-odoo-dev-pg
+      - Odoo config
+    done_criteria:
+      - dbfilter explicitly set
+      - Hostname-to-database routing tested
+      - External API validated with correct Host behavior
+    evidence:
+      - curl commands showing correct DB selection per hostname
+
+  - id: CP-7
+    name: Smoke test core business paths
+    board_refs:
+      - "Go-Live Checklist 4.4"
+      - TASK-001.5
+    blocker_type: functional_verification
+    inputs:
+      - Working Odoo instance with persistent storage and edge
+    done_criteria:
+      - Login succeeds
+      - Sales order creation and invoicing complete
+      - Project/task workflow completes
+      - Finance PPM dashboard renders
+    evidence:
+      - Screenshots or test script output per path
+
+  - id: CP-8
+    name: Produce POC evidence pack
+    board_refs:
+      - ISSUE-006
+      - TASK-006.1
+      - TASK-006.2
+      - TASK-006.3
+      - TASK-006.4
+      - TASK-006.5
+    blocker_type: adopt_stage_gate
+    inputs:
+      - Completed CP-1 through CP-7
+    done_criteria:
+      - Architecture diagram exists
+      - Runtime screenshots captured
+      - Azure resource inventory captured
+      - Demo narrative written
+      - Demo script executable by one operator
+    evidence:
+      - All artifacts committed to docs/delivery/evidence/poc-pack/
+
+# -----------------------------------------------------------------------------
+# Scope Cut
+# -----------------------------------------------------------------------------
+
+scope_cut:
+  must_do:
+    - Security Defaults / MFA enforcement
+    - Azure Files persistent storage
+    - Azure Front Door + WAF
+    - Fix broken cron/server actions
+    - First pipeline deploy
+    - Database-per-tenant validation
+    - Core business path smoke test
+    - POC evidence pack
+    - Grant ceo@ Basic access to ADO
+
+  should_do:
+    - Import 3 Board CSVs to ADO
+    - OCA 56-module baseline hydration
+    - Application Insights + alerts
+    - Centralized observability dashboard
+    - Custom Odoo image in ACR
+    - AB#-linked commits
+
+  defer:
+    - Databricks workspace activation
+    - Unity Catalog governance
+    - APIM provisioning
+    - Foundry runtime hardening (OBJ-003)
+    - Public advisory assistant (OBJ-004)
+    - M365 Business Premium redemption
+    - Keycloak-to-Entra cutover
+    - Expense OCR pipeline
+    - Copilot bounded actions
+    - SAP Concur integration
+    - CDC/lakehouse pipeline
+    - Tableau Cloud publication
+    - Automation consolidation (OBJ-005)
+    - OLTP/OLAP separation (OBJ-006)
+    - VNet injection for Databricks
+    - Defender for Cloud
+    - Azure Policy for unmanaged resources
+
+# -----------------------------------------------------------------------------
+# Worktrees
+# -----------------------------------------------------------------------------
+
+worktrees:
+
+  - name: edge-and-network
+    branch: accel/edge-network
+    board_items:
+      - CP-3
+      - "Go-Live Checklist 2.x"
+    files:
+      - infra/azure/parameters/front-door-dev.parameters.json
+      - infra/azure/modules/front-door.bicep
+      - ssot/network/public_endpoints.yaml
+    dependencies: []
+    merge_order: 2
+    conflict_risk: low
+    exit_criteria:
+      - All canonical hostnames route through AFD
+      - WAF managed rules active
+      - Host header behavior validated
+
+  - name: odoo-runtime
+    branch: accel/odoo-runtime
+    board_items:
+      - CP-4
+      - CP-6
+      - CP-7
+      - "Go-Live Checklist 3.x"
+      - "Go-Live Checklist 4.x"
+    files:
+      - addons/ipai/ipai_finance_ppm/**
+      - config/dev/odoo.conf
+      - scripts/odoo/**
+    dependencies:
+      - storage-and-persistence
+    merge_order: 3
+    conflict_risk: low
+    exit_criteria:
+      - Zero broken cron jobs
+      - Hostname routing maps correctly
+      - Core business paths complete without error
+
+  - name: storage-and-persistence
+    branch: accel/storage
+    board_items:
+      - CP-2
+      - "Go-Live Checklist 5.x"
+    files:
+      - infra/azure/modules/azure-files.bicep
+    dependencies: []
+    merge_order: 1
+    conflict_risk: low
+    exit_criteria:
+      - Azure Files share exists and is mounted
+      - Odoo filestore survives container restart
+
+  - name: pipeline-and-release
+    branch: accel/pipeline
+    board_items:
+      - CP-5
+      - TASK-005.1
+      - TASK-005.2
+      - TASK-005.3
+      - TASK-005.4
+      - TASK-005.5
+    files:
+      - .azure/pipelines/ci-cd.yml
+      - docker/Dockerfile.unified
+      - docker/Dockerfile.seeded
+    dependencies:
+      - edge-and-network
+    merge_order: 4
+    conflict_risk: low
+    exit_criteria:
+      - Pipeline runs from commit to deployed ACA
+      - Secrets/variables resolve correctly
+      - Release evidence captured
+
+  - name: observability
+    branch: accel/observability
+    board_items:
+      - TASK-006
+      - TASK-007
+      - "Go-Live Checklist 9.x"
+    files:
+      - infra/azure/modules/log-analytics.bicep
+      - infra/azure/modules/diagnostics.bicep
+    dependencies: []
+    merge_order: 5
+    conflict_risk: low
+    exit_criteria:
+      - Container logs visible in Log Analytics
+      - At least 3 alert rules active
+      - Application Insights shows request telemetry
+
+  - name: evidence-and-boards
+    branch: accel/evidence
+    board_items:
+      - CP-8
+      - ISSUE-006
+      - ISSUE-007
+    files:
+      - docs/delivery/**
+      - docs/boards/**
+    dependencies:
+      - edge-and-network
+      - odoo-runtime
+      - storage-and-persistence
+    merge_order: 6
+    conflict_risk: none
+    exit_criteria:
+      - Evidence pack complete and committed
+      - Demo script executable by one operator
+
+# -----------------------------------------------------------------------------
+# Merge Strategy
+# -----------------------------------------------------------------------------
+
+merge_strategy:
+  order:
+    - storage-and-persistence
+    - edge-and-network
+    - odoo-runtime
+    - pipeline-and-release
+    - observability
+    - evidence-and-boards
+
+  integration_gates:
+    - after: storage-and-persistence
+      validation: Odoo filestore survives container restart
+    - after: edge-and-network
+      validation: curl -I erp.insightpulseai.com returns AFD headers
+    - after: odoo-runtime
+      validation: Smoke test script passes on production hostname
+    - after: pipeline-and-release
+      validation: Pipeline deploys no-op change end-to-end
+    - after: observability
+      validation: Application Insights shows telemetry for smoke test
+    - after: evidence-and-boards
+      validation: Evidence pack complete and demo script runs
+
+# -----------------------------------------------------------------------------
+# Board State Updates (evidence-backed only)
+# -----------------------------------------------------------------------------
+
+board_updates:
+  move_to_done:
+    - item: TASK-001
+      evidence: "insightpulseai.com verified and set as default domain — 2026-03-18"
+    - item: TASK-002
+      evidence: "admin@ and emergency-admin@ accounts created — 2026-03-18"
+    - item: TASK-004
+      evidence: "ipai-platform project id b4267980 — 2026-03-10"
+    - item: TASK-005
+      evidence: "ci-cd.yml references pools and connections — 2026-03-15"
+
+  move_to_doing:
+    - item: TASK-003
+      status: "MFA on admin@; emergency-admin@ pending enrollment"
+    - item: TASK-006
+      status: "Resources exist but not fully wired"
+
+  move_to_blocked:
+    - item: ISSUE-007
+      blocker: "M365 Business Premium not redeemed; zero SKUs"
+    - item: "Board CSV import"
+      blocker: "ceo@ needs Basic access level in ADO"
+
+# -----------------------------------------------------------------------------
+# Risks
+# -----------------------------------------------------------------------------
+
+risks:
+  - id: RISK-GL-001
+    description: M365 Business Premium never redeemed
+    likelihood: high
+    impact: medium
+    mitigation: Continue with Entra ID Free + Security Defaults
+
+  - id: RISK-GL-002
+    description: ADO access for ceo@ remains blocked
+    likelihood: high
+    impact: medium
+    mitigation: Use admin@ for Board operations
+
+  - id: RISK-GL-003
+    description: Azure Front Door deployment fails
+    likelihood: medium
+    impact: high
+    mitigation: Fall back to ACA direct ingress with Cloudflare proxy
+
+  - id: RISK-GL-004
+    description: analytic_account_id fix cascades to other modules
+    likelihood: medium
+    impact: medium
+    mitigation: Test on disposable DB; do not modify OCA source
+
+  - id: RISK-GL-005
+    description: Self-hosted agent pool unavailable
+    likelihood: medium
+    impact: medium
+    mitigation: ci-cd.yml already has ubuntu-latest fallback
+
+  - id: RISK-GL-006
+    description: Solo operator capacity constraint
+    likelihood: high
+    impact: high
+    mitigation: Strict scope cut; defer everything not on critical path
+
+# -----------------------------------------------------------------------------
+# SMART Targets (deduplicated, 2026-03-19 review)
+# -----------------------------------------------------------------------------
+
+targets:
+  - id: TGT-001
+    title: "Complete identity readiness for go-live"
+    critical_path: CP-1
+    due: "2026-03-22"
+    status: blocked
+    owner: platform_operator
+    acceptance:
+      - "MFA evidence for required admin accounts"
+      - "Security defaults blocker removed"
+      - "Evidence linked from go-live plan"
+
+  - id: TGT-002
+    title: "Enable persistent storage for ACA-hosted Odoo"
+    critical_path: CP-2
+    due: "2026-03-24"
+    status: partial
+    owner: infrastructure_owner
+    acceptance:
+      - "Azure Files mount wired into ACA"
+      - "Restart persistence test passes"
+      - "Mount evidence linked"
+
+  - id: TGT-003
+    title: "Validate Azure pipeline deploy path"
+    critical_path: CP-5
+    due: "2026-03-23"
+    status: blocked
+    owner: release_operator
+    acceptance:
+      - "ci-cd.yml deploy stage completes"
+      - "ipai-build-pool verified or replaced"
+      - "Pipeline log stored"
+
+  - id: TGT-004
+    title: "Prove cron fix works in execution"
+    critical_path: CP-4
+    due: "2026-03-24"
+    status: partial
+    owner: workload_operator
+    acceptance:
+      - "Module test DB execution log exists"
+      - "Cron path exercised successfully"
+      - "Evidence linked from plan"
+
+  - id: TGT-005
+    title: "Create core business smoke test for go-live"
+    critical_path: CP-7
+    due: "2026-03-25"
+    status: missing
+    owner: quality_engineer
+    acceptance:
+      - "scripts/odoo/smoke_test.sh exists"
+      - "Login, SO, invoice, project, PPM covered"
+      - "Results in evidence pack"
+
+  - id: TGT-006
+    title: "Create the canonical go-live runbook"
+    critical_path: null
+    due: "2026-03-22"
+    status: done
+    owner: platform_operator
+    acceptance:
+      - "docs/runbooks/ODOO18_GO_LIVE_CHECKLIST.md exists"
+      - "All 9 sections present"
+      - "Manifest contract passes"
+    evidence:
+      - "Created 2026-03-19 with all 9 sections"
+
+  - id: TGT-007
+    title: "Build the POC evidence pack"
+    critical_path: CP-8
+    due: "2026-03-26"
+    status: missing
+    depends_on: [TGT-001, TGT-002, TGT-003, TGT-004, TGT-005, TGT-006]
+    owner: release_operator
+    acceptance:
+      - "docs/delivery/evidence/poc-pack/ exists"
+      - "CP-1 through CP-7 artifacts linked"
+      - "Readiness summary reproducible"
+
+  - id: TGT-008
+    title: "Align Boards to the actual go-live plan"
+    critical_path: null
+    due: "2026-03-21"
+    status: partial
+    owner: platform_operator
+    acceptance:
+      - "Every CP item has one Board item"
+      - "No duplicate work items"
+      - "Cron and evidence pack have Board items"

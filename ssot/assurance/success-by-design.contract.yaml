@@ -1,0 +1,183 @@
+# ssot/assurance/success-by-design.contract.yaml
+# Implementation assurance truth — adapted for Odoo/OCA (not D365)
+# Source: Microsoft Success by Design framework, localized for IPAI
+# This is NOT runtime truth, NOT release truth, NOT module truth.
+# Truth precedence: assurance > planning > release > repo > runtime > chat
+
+kind: contract
+domain: assurance
+name: success-by-design
+version: "1.0.0"
+status: active
+created: "2026-04-15"
+updated: "2026-04-15"
+
+metadata:
+  adapted_from: microsoft_success_by_design
+  target_erp: odoo_ce_18  # NOT D365 — adapted for self-hosted Odoo + OCA
+  note: >
+    Success by Design was originally designed for Dynamics 365 FastTrack engagements.
+    This contract adapts the framework for Odoo CE 18 + OCA implementations on Azure,
+    preserving the phase structure, review gates, and findings taxonomy while removing
+    D365-specific artifacts (LCS, BPM, Regression Suite).
+
+implementation_assurance_truth:
+  description: >
+    Success by Design is the implementation assurance framework that governs
+    project delivery quality across all phases. It defines mandatory reviews,
+    findings taxonomy, and success measures that gate progression.
+
+  phases:
+    - id: discover
+      name: Discover
+      description: >
+        Understand business requirements, map processes, identify gaps between
+        Odoo CE/OCA capabilities and business needs. Confirm scope boundaries.
+      key_activities:
+        - business_process_mapping
+        - gap_fit_analysis_against_ce_oca
+        - scope_definition
+        - risk_identification
+        - stakeholder_alignment
+
+    - id: initiate
+      name: Initiate
+      description: >
+        Establish project governance, environment strategy, team structure,
+        and implementation approach. Confirm Azure infrastructure baseline.
+      key_activities:
+        - project_governance_setup
+        - environment_strategy  # dev / staging / prod on ACA
+        - team_onboarding
+        - implementation_methodology_selection
+        - infrastructure_baseline_confirmation
+
+    - id: implement
+      name: Implement
+      description: >
+        Build, configure, and extend. CE config first, OCA second, ipai_* last.
+        Iterative sprints with continuous integration on Azure Pipelines.
+      key_activities:
+        - configuration_sprints
+        - oca_module_adoption
+        - custom_module_development  # ipai_* only when justified
+        - data_migration_design
+        - integration_development
+        - unit_and_integration_testing
+
+    - id: prepare
+      name: Prepare
+      description: >
+        Validate readiness for production. UAT, performance testing, cutover
+        rehearsal, training, and go/no-go decision.
+      key_activities:
+        - user_acceptance_testing
+        - performance_testing
+        - cutover_rehearsal
+        - end_user_training
+        - go_no_go_decision
+        - support_model_activation
+
+    - id: operate
+      name: Operate
+      description: >
+        Post-go-live stabilization, hypercare, and transition to steady-state
+        operations. Monitor, resolve, optimize.
+      key_activities:
+        - hypercare_support
+        - issue_triage_and_resolution
+        - performance_monitoring
+        - optimization_cycles
+        - knowledge_transfer
+        - steady_state_transition
+
+  mandatory_reviews:
+    - id: solution_blueprint_review
+      phase: initiate
+      description: >
+        Review of solution architecture, environment topology, integration
+        design, data migration approach, and extension strategy. Must confirm
+        CE → OCA → ipai_* ordering is followed.
+      artifacts_required:
+        - solution_architecture_document
+        - environment_topology_diagram
+        - integration_design
+        - data_migration_plan
+        - extension_strategy  # CE/OCA/ipai_* justification
+
+    - id: go_live_readiness_review
+      phase: prepare
+      description: >
+        Final gate before production cutover. Validates UAT completion,
+        performance baselines, cutover plan, rollback plan, and support readiness.
+      artifacts_required:
+        - uat_sign_off
+        - performance_test_results
+        - cutover_plan
+        - rollback_plan
+        - support_model_document
+        - deployment_runbook
+
+  findings_taxonomy:
+    - type: assertion
+      severity: informational
+      description: >
+        A statement of fact or recommendation that does not require action
+        but should be acknowledged and tracked.
+
+    - type: risk
+      severity: warning
+      description: >
+        A potential issue that may impact project success if not mitigated.
+        Requires a mitigation plan and owner.
+
+    - type: issue
+      severity: blocking
+      description: >
+        A confirmed problem that must be resolved before proceeding to the
+        next phase. Blocks gate progression until closed.
+
+  success_measures:
+    rating_scale:
+      - id: red
+        label: Red
+        description: >
+          Critical issues or risks that threaten project success.
+          Immediate intervention required.
+
+      - id: yellow
+        label: Yellow
+        description: >
+          Significant risks or issues that require attention and active
+          mitigation. Project can proceed with caution.
+
+      - id: green
+        label: Green
+        description: >
+          Project is on track. No critical issues. Risks are identified
+          and mitigated.
+
+    update_triggers:
+      - after_mandatory_review
+      - material_scope_change
+      - critical_issue_raised
+      - phase_transition
+
+  truth_precedence:
+    description: >
+      When conflicting information exists across governance layers,
+      this precedence order determines which source is authoritative.
+    order:
+      - assurance   # This contract and its reviews
+      - planning    # ADO boards, iteration plans
+      - release     # Release gates, ship-readiness checklist
+      - repo        # CLAUDE.md, ssot/, spec/
+      - runtime     # Live system state
+      - chat        # Conversation history (least authoritative)
+
+  boundaries:
+    - "This contract governs implementation assurance only"
+    - "It is NOT runtime truth — see ssot/release/ for release gates"
+    - "It is NOT module truth — see ssot/odoo/ for module governance"
+    - "It does NOT replace the Feature Ship-Readiness Checklist"
+    - "Findings from reviews feed into ADO work items for tracking"

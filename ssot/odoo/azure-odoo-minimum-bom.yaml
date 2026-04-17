@@ -1,0 +1,120 @@
+---
+# Azure Odoo Minimum Bill of Materials — SSOT
+# The smallest production-capable Azure BOM for Odoo ERP SaaS.
+# No Databricks, no Foundry, no extra product surfaces.
+# Rev: 2026-04-16
+contract_version: 1
+
+minimum_bom:
+  description: |
+    Bare minimum for a real self-hosted Odoo SaaS posture on Azure.
+    Reproduces Odoo.sh operational guarantees: reproducible build,
+    isolated runtime, persistent data, background processing,
+    safe deploys, safe restores.
+
+  required:
+    acr:
+      service: Azure Container Registry
+      purpose: one canonical Odoo runtime image
+      count: 1
+      ipai_instance: acripaiodoo
+
+    aca_environment:
+      service: Azure Container Apps Environment
+      purpose: shared networking + logging for all Odoo containers
+      count: 1
+      ipai_instance: acae-ipai-dev-sea (blackriver)
+
+    aca_web:
+      service: Azure Container Apps (app)
+      purpose: Odoo HTTP server — serves web UI, API, OAuth callbacks
+      count: 1
+      config: workers=4, proxy_mode=True, http_port=8069
+      ipai_instance: ca-ipai-odoo-web-dev
+
+    aca_worker:
+      service: Azure Container Apps (app)
+      purpose: Odoo background job processing — mail queue, async actions
+      count: 1
+      config: workers=2, max_cron_threads=0, --no-http
+      ipai_instance: ca-ipai-odoo-worker-dev
+
+    aca_cron:
+      service: Azure Container Apps (app)
+      purpose: Odoo scheduled actions — recurring tasks, reminders
+      count: 1
+      config: workers=0, max_cron_threads=2, --no-http
+      ipai_instance: ca-ipai-odoo-cron-dev
+
+    postgresql:
+      service: Azure Database for PostgreSQL Flexible Server
+      purpose: primary transactional database
+      count: 1
+      config: PG 16, General Purpose D4s_v3, 128GB, backup 7-35 days, PITR
+      ipai_instance: pg-ipai-odoo
+
+    key_vault:
+      service: Azure Key Vault
+      purpose: secrets for DB, SMTP, OAuth, payment providers, API tokens
+      count: 1
+      ipai_instance: kv-ipai-dev-sea
+
+    dns_https:
+      service: Azure DNS + ACA custom domain + managed TLS cert
+      purpose: canonical public ERP endpoint, HTTPS only
+      count: 1
+      ipai_instance: erp.insightpulseai.com
+
+  recommended:
+    front_door:
+      service: Azure Front Door
+      purpose: edge/proxy/WAF, forwarded-proto, CDN, multi-region
+      priority: high
+      notes: not strictly required if ACA custom domain + TLS is stable
+      ipai_instance: afd-ipai-dev (exists but not wired to Odoo yet)
+
+    log_analytics:
+      service: Azure Monitor / Log Analytics
+      purpose: centralized logging, alerting, probe-failure detection
+      priority: high
+      notes: would have caught the 3-day outage automatically
+
+    staging:
+      service: duplicate of required topology
+      purpose: pre-production validation
+      priority: medium
+      database: odoo_staging
+      dns: erp-staging.insightpulseai.com (planned)
+
+  not_required_for_erp:
+    - Databricks / Unity Catalog (data-intelligence plane)
+    - Azure AI Foundry (agent plane)
+    - Fabric / Power BI (BI consumption plane)
+    - Azure Files / Blob (not needed if DB-backed attachments)
+    - Application Gateway (ACA ingress sufficient)
+    - Virtual Network (optional for private endpoints)
+
+  current_state:
+    acr: provisioned
+    aca_environment: provisioned (blackriver-f68f8a9b, Sponsored sub)
+    aca_web: live (rev 0000024, 69 modules, HTTP 200)
+    aca_worker: live (rev 42rc9oa)
+    aca_cron: live (rev t3vz975)
+    postgresql: live (pg-ipai-odoo, 440 tables, 7-day PITR)
+    key_vault: provisioned (kv-ipai-dev-sea)
+    dns_https: live (erp.insightpulseai.com, managed cert)
+    front_door: provisioned but not wired to Odoo
+    log_analytics: not configured for Odoo
+    staging: not deployed
+
+  odoo_sh_parity_checklist:
+    reproducible_image_build: true
+    isolated_container_runtime: true
+    web_worker_cron_topology: true
+    persistent_data: true           # DB-backed attachments
+    background_processing: true     # worker + cron apps
+    managed_database_backups: true   # 7-day PITR
+    safe_deploys: partial           # manual ACA revision, no pipeline-gated deploy yet
+    safe_restores: unverified       # PITR exists but no drill executed
+    no_runtime_patching: partial    # addon-based SSO fix replaces sed; remove after AFD
+    secrets_in_vault: partial       # PG password still in ACA env var plaintext

@@ -1,0 +1,169 @@
+# SSOT: Gmail Add-on Integration Contract
+# Defines the add-on surfaces, backend endpoints, Odoo operations, and operational rules.
+# CI guard: .github/workflows/gmail-addon-contract.yml
+# Last updated: 2026-03-28
+
+addon_name: "InsightPulseAI for Gmail"
+version: "1.0.0"
+
+supported_surfaces:
+  - surface: "homepage"
+    trigger: "homepageTrigger"
+    function: "homepage"
+    description: "User opens the add-on panel in Gmail."
+
+  - surface: "contextual_message"
+    trigger: "contextualTriggers.unconditional"
+    function: "onGmailMessage"
+    description: "User opens an email message."
+
+  - surface: "compose_action"
+    trigger: "composeTrigger"
+    function: "onCompose"
+    description: "User composes or replies to an email."
+
+card_entrypoints:
+  - name: "homepage"
+    surface: "homepage"
+    returns: "Session status, quick actions, Odoo connection health."
+
+  - name: "contextual_partner_lookup"
+    surface: "contextual_message"
+    returns: "Partner info, related leads, invoices, tasks for the email sender."
+
+  - name: "contextual_unknown_sender"
+    surface: "contextual_message"
+    returns: "Unknown contact card with Create Contact action."
+
+  - name: "create_lead_form"
+    surface: "contextual_message"
+    returns: "Pre-filled lead creation form (name from subject, email from sender)."
+
+  - name: "create_ticket_form"
+    surface: "contextual_message"
+    returns: "Pre-filled ticket creation form with project selection."
+
+  - name: "create_expense_form"
+    surface: "contextual_message"
+    returns: "Pre-filled expense form with optional OCR data."
+
+  - name: "log_note_form"
+    surface: "contextual_message"
+    returns: "Record selector and note preview for email logging."
+
+  - name: "compose_link"
+    surface: "compose_action"
+    returns: "Link outgoing email to an Odoo record."
+
+backend_base_url: "PLACEHOLDER"
+odoo_base_url: "https://erp.insightpulseai.com"
+
+odoo_operations:
+  - name: "partner_lookup"
+    endpoint: "/ipai/mail_plugin/context"
+    method: "POST"
+    odoo_model: "res.partner"
+    classification: "read"
+    description: "Look up Odoo partner by sender email address."
+    audit_required: false
+
+  - name: "lead_create"
+    endpoint: "/ipai/mail_plugin/actions/create_lead"
+    method: "POST"
+    odoo_model: "crm.lead"
+    classification: "write"
+    description: "Create a CRM lead from email context."
+    audit_required: true
+    idempotency_key: "source_message_id"
+
+  - name: "ticket_create"
+    endpoint: "/ipai/mail_plugin/actions/create_ticket"
+    method: "POST"
+    odoo_model: "project.task"
+    classification: "write"
+    description: "Create a project task from email context."
+    audit_required: true
+    idempotency_key: "source_message_id"
+
+  - name: "activity_log"
+    endpoint: "/ipai/mail_plugin/actions/log_note"
+    method: "POST"
+    odoo_model: "mail.message"
+    classification: "write"
+    description: "Log an email as a note on an Odoo record."
+    audit_required: true
+    idempotency_key: "source_message_id+model+record_id"
+
+  - name: "expense_create"
+    endpoint: "/ipai/mail_plugin/actions/create_expense"
+    method: "POST"
+    odoo_model: "hr.expense"
+    classification: "write"
+    description: "Create an expense entry from a receipt email."
+    audit_required: true
+    idempotency_key: "source_message_id"
+
+  - name: "contact_create"
+    endpoint: "/jsonrpc"
+    method: "POST"
+    odoo_model: "res.partner"
+    classification: "write"
+    description: "Create a new partner from an unknown email sender."
+    audit_required: true
+    idempotency_key: "sender_email"
+
+  - name: "session_create"
+    endpoint: "/ipai/mail_plugin/session"
+    method: "POST"
+    odoo_model: "res.users"
+    classification: "privileged"
+    description: "Create an authenticated Odoo session for the mapped user."
+    audit_required: true
+
+fallback_behaviors:
+  - condition: "odoo_unreachable"
+    behavior: "Display 'Service unavailable' card with retry button."
+    retry: true
+
+  - condition: "no_odoo_account"
+    behavior: "Display 'No linked Odoo account' card with admin contact link."
+    retry: false
+
+  - condition: "access_denied"
+    behavior: "Display 'Insufficient permissions' card with explanation."
+    retry: false
+
+  - condition: "partner_not_found"
+    behavior: "Display 'Unknown contact' card with Create Contact button."
+    retry: false
+
+  - condition: "session_expired"
+    behavior: "Backend auto-creates new session and retries the operation."
+    retry: true
+
+  - condition: "rate_limited"
+    behavior: "Display 'Too many requests' card with wait message."
+    retry: true
+
+audit_requirements:
+  write_operations_logged: true
+  log_fields:
+    - "timestamp"
+    - "google_email"
+    - "odoo_uid"
+    - "operation"
+    - "odoo_model"
+    - "record_id"
+    - "success"
+  source_tracking:
+    leads: "utm_source=gmail_addon"
+    expenses: "origin=gmail_addon"
+    tasks: "description contains gmail_addon reference"
+    notes: "source_message_id in body"
+
+network_restrictions:
+  url_fetch_whitelist:
+    - "https://erp.insightpulseai.com/"
+  backend_accepts_from: "Google Apps Script runtime (verified via ID token)"
+
+last_updated: "2026-03-28"

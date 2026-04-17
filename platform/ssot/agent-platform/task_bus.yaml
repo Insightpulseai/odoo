@@ -1,0 +1,284 @@
+# =============================================================================
+# Task Bus — Single Source of Truth
+# =============================================================================
+# Defines the envelope schema, state machine, routing rules, and failure
+# handling for the IPAI agent task bus. All inter-agent and agent-to-system
+# communication flows through this bus.
+# =============================================================================
+
+id: task_bus
+name: IPAI Task Bus
+version: 1.0.0
+status: active
+owner: platform-team
+backing_store: supabase_realtime
+description: >
+  Envelope-based asynchronous task routing system. Tasks flow between agents,
+  external systems, and human reviewers via typed envelopes with correlation
+  tracking and guaranteed delivery semantics.
+
+# -----------------------------------------------------------------------------
+# Envelope Schema
+# -----------------------------------------------------------------------------
+
+envelope_schema:
+  fields:
+    - name: task_id
+      type: uuid
+      required: true
+      description: Globally unique task identifier, generated at creation.
+
+    - name: correlation_id
+      type: uuid
+      required: true
+      description: Groups related tasks into a single logical workflow.
+
+    - name: parent_task_id
+      type: uuid
+      required: false
+      description: ID of the task that spawned this one (for sub-task trees).
+
+    - name: type
+      type: string
+      required: true
+      description: >
+        Task type determining routing and handler selection.
+        Format: <domain>.<action> (e.g., odoo.create_invoice, agent.evaluate).
+
+    - name: source
+      type: string
+      required: true
+      description: Identifier of the originating agent or system.
+
+    - name: target
+      type: string
+      required: false
+      description: >
+        Explicit target agent or system. If null, routing rules determine target.
+
+    - name: priority
+      type: enum
+      values: [critical, high, normal, low, background]
+      required: true
+      default: normal
+      description: Scheduling priority. Critical tasks preempt lower priorities.
+
+    - name: state
+      type: string
+      required: true
+      description: Current task state per the state machine below.
+
+    - name: payload
+      type: object
+      required: true
+      description: >
+        Task-specific data. Schema depends on task type. Must be JSON-serializable.
+
+    - name: metadata
+      type: object
+      required: false
+      description: >
+        Non-functional metadata (trace IDs, timestamps, retry count, cost tracking).
+
+    - name: created_at
+      type: timestamp_iso8601
+      required: true
+      description: Task creation time in UTC.
+
+    - name: updated_at
+      type: timestamp_iso8601
+      required: true
+      description: Last state transition time in UTC.
+
+    - name: expires_at
+      type: timestamp_iso8601
+      required: false
+      description: >
+        Task expiry time. Expired tasks transition to timed_out.
+        Default: created_at + 1 hour for normal priority.
+
+    - name: attempt
+      type: integer
+      required: true
+      default: 0
+      description: Current retry attempt number (0 = first execution).
+
+    - name: result
+      type: object
+      required: false
+      description: >
+        Task output. Populated when state transitions to completed or failed.
+
+    - name: error
+      type: object
+      required: false
+      description: >
+        Error details when state is failed or dead_letter.
+        Fields: code (string), message (string), stack (string, optional).
+
+# -----------------------------------------------------------------------------
+# Task States
+# -----------------------------------------------------------------------------
+
+states:
+  - id: pending
+    description: Task created and awaiting pickup by a handler.
+    transitions_to:
+      - assigned
+      - cancelled
+      - timed_out
+
+  - id: assigned
+    description: Task claimed by a specific agent or handler.
+    transitions_to:
+      - running
+      - pending        # released back to queue
+      - cancelled
+
+  - id: running
+    description: Task actively being executed by the assigned handler.
+    transitions_to:
+      - completed
+      - failed
+      - blocked
+      - timed_out
+
+  - id: completed
+    description: Task finished successfully with a result payload.
+    transitions_to: []  # terminal
+
+  - id: failed
+    description: Task execution failed. May be retried depending on policy.
+    transitions_to:
+      - pending         # retry
+      - dead_letter     # exhausted retries
+
+  - id: blocked
+    description: Task waiting on an external dependency or human approval.
+    transitions_to:
+      - running         # dependency resolved
+      - cancelled
+      - timed_out
+
+  - id: cancelled
+    description: Task explicitly cancelled by source, operator, or policy.
+    transitions_to: []  # terminal
+
+  - id: timed_out
+    description: Task exceeded its expiry window without completing.
+    transitions_to:
+      - pending         # retry if retries remain
+      - dead_letter     # exhausted retries
+
+  - id: dead_letter
+    description: >
+      Task permanently failed after exhausting retries. Requires human investigation.
+    transitions_to: []  # terminal
+
+# -----------------------------------------------------------------------------
+# Routing
+# -----------------------------------------------------------------------------
+
+routing:
+  strategy: rule_based_with_capability_fallback
+  description: >
+    Tasks route by explicit target first, then by type-based rules, then by
+    capability matching against the agent registry.
+
+  rules:
+    - condition: "type starts_with 'odoo.'"
+      target: odoo_agent
+      description: All Odoo domain tasks route to the Odoo agent.
+
+    - condition: "type starts_with 'data.'"
+      target: data_agent
+      description: Data pipeline and analytics tasks.
+
+    - condition: "type starts_with 'agent.evaluate'"
+      target: judge_agent_pool
+      description: Evaluation tasks fan out to judge agents.
+
+    - condition: "type starts_with 'infra.'"
+      target: infra_agent
+      description: Infrastructure provisioning and management.
+
+    - condition: "type starts_with 'notify.'"
+      target: notification_service
+      description: Human notifications via Slack or email.
+
+    - condition: "type starts_with 'approval.'"
+      target: human_approval_queue
+      description: Tasks requiring human-in-the-loop sign-off.
+
+    - condition: "target is null AND no rule matches"
+      target: unroutable_queue
+      description: >
+        Tasks with no explicit target and no matching rule land here
+        for manual triage.
+
+# -----------------------------------------------------------------------------
+# Failure Handling
+# -----------------------------------------------------------------------------
+
+failure_handling:
+  max_retries: 3
+  retry_backoff:
+    strategy: exponential
+    base_delay_ms: 1000
+    max_delay_ms: 60000
+    jitter: true
+  dead_letter_policy:
+    destination: dead_letter_queue
+    notification:
+      channel: slack
+      target: "#agent-platform-alerts"
+    retention: 30d
+    requires_human_review: true
+  timeout_defaults:
+    critical: 300s
+    high: 600s
+    normal: 3600s
+    low: 7200s
+    background: 86400s
+
+# -----------------------------------------------------------------------------
+# Correlation
+# -----------------------------------------------------------------------------
+
+correlation:
+  id_format: "uuidv4"
+  description: >
+    Correlation IDs group related tasks into logical workflows. A single
+    user request may spawn a tree of correlated tasks across multiple agents.
+  propagation_rules:
+    - Sub-tasks inherit the parent's correlation_id.
+    - Sub-tasks set parent_task_id to the spawning task's task_id.
+    - Correlation ID must be passed through all inter-agent calls.
+    - External system calls include correlation_id in request headers (X-Correlation-ID).
+    - Audit log entries reference correlation_id for full workflow reconstruction.
+
+# -----------------------------------------------------------------------------
+# Observability
+# -----------------------------------------------------------------------------
+
+observability:
+  metrics:
+    - task_throughput_per_second
+    - task_latency_p50_p95_p99
+    - queue_depth_by_priority
+    - retry_rate_by_type
+    - dead_letter_rate
+    - agent_utilization
+  tracing:
+    propagation: W3C Trace Context
+    sampling_rate: 1.0  # 100% in dev, reduce in production
+  logging:
+    format: structured_json
+    fields:
+      - task_id
+      - correlation_id
+      - type
+      - state
+      - source
+      - target
+      - duration_ms

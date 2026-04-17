@@ -204,7 +204,7 @@ databricks:
 
 foundry:
   auth_method: entra_id_sso
-  resource: data-intel-ph-resource
+  resource: ipai-copilot-resource
   resource_group: rg-data-intel-ph
   region: eastus2
 
