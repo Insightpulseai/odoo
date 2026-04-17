@@ -1,0 +1,141 @@
+# =============================================================================
+# Platform Constitution — InsightPulse AI
+# =============================================================================
+#
+# Non-negotiable platform rules. These are permanent unless amended by ADR.
+# Consolidates rules currently scattered across CLAUDE.md, .claude/rules/,
+# and spec/constitution.md into a single machine-readable governance artifact.
+#
+# Scope: Platform-wide (all repos, all environments)
+# Amendment: Requires an Architecture Decision Record (ADR) + PR approval
+# Authority model: See ADR-GSR-001 (odoo/docs/architecture/GOALS_SYSTEM_OF_RECORD_DECISION.md)
+# =============================================================================
+
+schema_version: "1.0"
+schema: ssot.governance.platform-constitution.v1
+last_updated: "2026-03-17"
+
+project: InsightPulse AI Platform
+status: ratified
+
+# -----------------------------------------------------------------------------
+# Non-Negotiable Rules
+# -----------------------------------------------------------------------------
+# These rules are permanent. Violation requires an ADR to amend.
+
+rules:
+
+  - id: CONST-001
+    name: "CE-only — no Enterprise modules"
+    scope: odoo
+    rule: >
+      Odoo Community Edition only. No Enterprise modules, no odoo.com IAP
+      dependencies, no Enterprise-gated features. Parity achieved via
+      CE + OCA + ipai_* custom modules.
+    source: CLAUDE.md
+
+  - id: CONST-002
+    name: "OCA-first module philosophy"
+    scope: odoo
+    rule: >
+      Config → OCA → Delta. Prefer built-in Odoo configuration first,
+      vetted OCA community modules second, custom ipai_* modules only
+      for truly custom needs. Never modify OCA source — use _inherit overrides.
+    source: CLAUDE.md
+
+  - id: CONST-003
+    name: "Secrets never in git"
+    scope: platform
+    rule: >
+      Secrets must never appear in any file tracked by Git. Runtime secrets
+      resolved via Azure Key Vault (kv-ipai-dev) with managed identity binding.
+      Local dev uses .env files (gitignored). CI uses GitHub Actions secrets.
+    source: .claude/rules/security-baseline.md
+
+  - id: CONST-004
+    name: "Azure-native deployment"
+    scope: infrastructure
+    rule: >
+      Azure Container Apps (behind Azure Front Door) is the canonical
+      deployment surface. DigitalOcean, Vercel, and self-hosted nginx
+      are permanently deprecated. All new services deploy to ACA.
+    deprecated_alternatives:
+      - DigitalOcean (all) — deprecated 2026-03-15
+      - Vercel deployment — deprecated 2026-03-11
+      - Public nginx edge — deprecated 2026-03-15
+
+  - id: CONST-005
+    name: "Zoho SMTP for outbound email"
+    scope: mail
+    rule: >
+      Odoo outbound mail routes through Zoho SMTP (smtp.zoho.com:587/TLS).
+      Credentials via Azure Key Vault (zoho-smtp-user, zoho-smtp-password).
+      Mailgun (mg.insightpulseai.com) is permanently deprecated.
+    deprecated_alternatives:
+      - Mailgun — deprecated 2026-03-11
+
+  - id: CONST-006
+    name: "Repo is SSOT"
+    scope: platform
+    rule: >
+      The Git repository is the single source of truth. UI changes in
+      external tools must be exported back: n8n → JSON, Figma → tokens,
+      Cloudflare → DNS YAML. No console-only infrastructure changes.
+    source: .claude/rules/ssot-platform.md
+
+  - id: CONST-007
+    name: "No console-only infrastructure changes"
+    scope: infrastructure
+    rule: >
+      All infrastructure changes (Azure, Cloudflare, Vercel residue) must
+      have a corresponding repo commit (IaC, YAML, or config). Dashboard-only
+      changes are prohibited.
+    source: .claude/rules/ssot-platform.md
+
+  - id: CONST-008
+    name: "Domain deprecations are permanent"
+    scope: platform
+    rule: >
+      Deprecated domains, tools, and services are never reintroduced.
+      insightpulseai.net → insightpulseai.com. Mattermost → Slack.
+      Once deprecated, the item is permanently removed from active use.
+    source: .claude/rules/ssot-platform.md
+
+  - id: CONST-009
+    name: "Schema changes only via migrations"
+    scope: database
+    rule: >
+      No ad-hoc SQL, no Supabase dashboard schema edits. All schema changes
+      go through migration files. Supabase ops.* tables are append-only.
+    source: .claude/rules/ssot-platform.md
+
+  - id: CONST-010
+    name: "Cost-minimized self-hosted philosophy"
+    scope: platform
+    rule: >
+      Build over buy. No expensive SaaS subscriptions, no per-seat enterprise
+      licensing. Self-hosted stack: Odoo CE, Superset, Keycloak (transitional
+      to Entra), n8n, PostgreSQL on Azure managed services.
+    source: .claude/rules/platform-architecture.md
+
+# -----------------------------------------------------------------------------
+# Authority References
+# -----------------------------------------------------------------------------
+authority:
+  goals_sor: "ADR-GSR-001 (odoo/docs/architecture/GOALS_SYSTEM_OF_RECORD_DECISION.md)"
+  strategy: "ssot/governance/platform-strategy-2026.yaml"
+  okrs: "ssot/governance/enterprise_okrs.yaml"
+  infrastructure: "infra/ssot/azure/resources.yaml"
+  spec_kit: "spec/constitution.md"
+
+# -----------------------------------------------------------------------------
+# Amendment Process
+# -----------------------------------------------------------------------------
+amendment:
+  process: >
+    To amend a constitutional rule: (1) Draft an ADR with rationale,
+    (2) Create a PR modifying this file with the ADR reference,
+    (3) Require platform-lead approval. No rule may be amended by
+    convention or verbal agreement alone.
+  adr_location: "docs/architecture/decisions/"
+  approval_required: platform-lead

@@ -1,0 +1,928 @@
+# =============================================================================
+# VMOKRAPI-SPATRES Platform Strategy — InsightPulse AI
+# =============================================================================
+#
+# Full strategic operating model covering vision, mission, KRAs, objectives,
+# OKRs, KPIs, strategies, programs, activities, tasks, resources, evidence
+# policy, risks, and SPATRES analysis.
+#
+# Scope: Enterprise-wide platform strategy for 2026.
+# Complementary to: enterprise_okrs.yaml (operational OKR stack + KPI cross-refs)
+#
+# Schema: platform-strategy.schema.json
+# CI validator: scripts/ci/validate_platform_strategy.py
+# Planning index: planning_system_index.yaml (layer: strategy)
+# =============================================================================
+
+schema_version: "1.0"
+last_updated: "2026-03-21"
+revision: "2.2 — SaaS workload readiness status fields added"
+
+strategy:
+  id: ipai-platform-2026
+  name: InsightPulseAI Platform Strategic Operating Model
+  version: 1.0.0
+  status: active
+  review_cycle: monthly
+  reporting_cycle: monthly
+  planning_horizon:
+    start: 2026-03-01
+    end: 2026-12-31
+
+vision: >
+  Build a self-hosted, governed, repo-first enterprise platform where Odoo is the ERP
+  system of record, Azure Databricks is the data intelligence backbone, Azure AI Foundry
+  is the agent control plane, and all execution is validated through machine-readable SSOT,
+  CI gates, and evidence-backed operations.
+
+mission: >
+  Deliver an integrated operating platform for finance, operations, AI copilots, analytics,
+  and compliance using deterministic ownership, measurable outcomes, minimal architecture
+  drift, and automation-first delivery.
+
+platform_doctrine:
+  source_control: github
+  primary_pr_surface: github
+  erp_system_of_record: odoo
+  agent_control_plane: azure_ai_foundry
+  data_intelligence_backbone: azure_databricks
+  secrets_control_plane: ops_platform
+  infrastructure_mode: infrastructure_as_code
+  preferred_runtime_pattern: self_hosted_except_tableau_cloud
+  governance_model: ssot_plus_ci_plus_evidence
+
+# ---------------------------------------------------------------------------
+# SaaS Workload Readiness — machine-readable status fields
+# Ref: docs/architecture/target-platform-architecture.md §SaaS Readiness Gate
+# Ref: docs/architecture/microsoft_collection_alignment.md §7
+# ---------------------------------------------------------------------------
+saas_workload_readiness:
+  saas_workload_assessment_status: not_run        # not_run | in_progress | complete
+  saas_workload_assessment_last_run: null
+  saas_workload_assessment_owner: platform-lead
+  billing_metering_status: partial                 # not_started | partial | complete
+  billing_metering_authority: docs/architecture/saas_billing_metering.md
+  incident_management_status: partial              # not_started | partial | complete
+  incident_management_authority: docs/architecture/reliability_operating_model.md
+  blocking_gaps:
+    - per-tenant metering implementation deferred (design authority documented)
+    - SaaS assessment not yet executed against platform
+    - SaaS incident playbook not yet exercised in production
+
+current_context:
+  active_repositories:
+    - agents
+    - odoo
+    - ops-platform
+    - .github
+    - web
+    - infra
+    - automations
+    - templates
+    - design-system
+    - lakehouse
+  foundry:
+    project_name: data-intel-ph
+    resource_name: ipai-copilot-resource
+    project_endpoint: https://ipai-copilot-resource.services.ai.azure.com/api/projects/ipai-copilot
+    observed_agent: ipai-odoo-copilot-azure
+    model_deployments:
+      - gpt-4.1
+      - text-embedding-3-small
+    observed_tools:
+      - srchipaidev8tlstu
+    guardrails_present: true
+    workflows_present: false
+    evaluations_present: false
+    fine_tunes_present: false
+  databricks:
+    workspace_name: dbw-ipai-dev
+    role: governed_data_intelligence_layer
+
+# =============================================================================
+# Key Result Areas (KRAs)
+# =============================================================================
+kras:
+  - id: KRA-ARCH
+    name: Architecture and boundary discipline
+    owner: platform-governance
+  - id: KRA-GOV
+    name: Governance and control-plane discipline
+    owner: platform-governance
+  - id: KRA-ERP
+    name: ERP runtime and Odoo integration
+    owner: odoo-engineering
+  - id: KRA-AI
+    name: Agent platform and model governance
+    owner: ai-platform
+  - id: KRA-DATA
+    name: Data intelligence and analytics
+    owner: lakehouse
+  - id: KRA-DELIVERY
+    name: Delivery automation and CI quality
+    owner: devops-platform
+
+# =============================================================================
+# Strategic Objectives (Revised Target State — 7 SMART Objectives)
+# =============================================================================
+objectives:
+  - id: OBJ-001
+    name: Identity baseline
+    description: >
+      Establish the canonical identity baseline across Microsoft 365, Entra ID,
+      and Azure DevOps. Verify primary business domain, create emergency access
+      accounts, move all platform admins to named accounts, enable MFA baseline,
+      and eliminate day-to-day Global Admin usage.
+    owner: identity-platform
+    kra_ref:
+      - KRA-GOV
+      - KRA-ARCH
+    target_date: 2026-04-14
+    status: not_started
+    success_metric: Identity bootstrap checklist fully green by end of Week 2
+
+  - id: OBJ-002
+    name: Azure DevOps operationalization
+    description: >
+      Make Azure DevOps the real control plane for delivery. Operationalize
+      ipai-platform project, create dev/staging/prod environments, activate
+      3 self-hosted agent pools and 3 ARM WIF service connections, and route
+      100% of Azure deployments through YAML pipelines.
+    owner: devops-platform
+    kra_ref:
+      - KRA-DELIVERY
+      - KRA-GOV
+    target_date: 2026-04-21
+    status: not_started
+    success_metric: First end-to-end deploy runs through Azure DevOps with no manual portal steps
+
+  - id: OBJ-003
+    name: Foundry production runtime hardening
+    description: >
+      Promote ipai-odoo-copilot-azure from working agent to governed production
+      runtime. Complete repo-side runtime contract, activate dev deploy pipeline,
+      enable Application Insights, validate Foundry role assignments, and clearly
+      separate public advisory mode from internal operator mode.
+    owner: ai-platform
+    kra_ref:
+      - KRA-AI
+      - KRA-GOV
+    target_date: 2026-04-28
+    status: not_started
+    success_metric: Production-readiness checklist for Foundry runtime reaches 100%
+
+  - id: OBJ-004
+    name: Public advisory assistant exposure
+    description: >
+      Expose the public advisory assistant safely through web. Implement
+      marketing-site copilot shell, backend adapter path, enforce no
+      browser-side privileged secrets, document optional Cloudflare Worker
+      proxy, and enforce advisory-only policy.
+    owner: web-platform
+    kra_ref:
+      - KRA-AI
+      - KRA-ERP
+    target_date: 2026-05-05
+    status: not_started
+    success_metric: Public assistant answers advisory questions in production-safe mode with zero secret leakage
+
+  - id: OBJ-005
+    name: Self-hosted automation consolidation
+    description: >
+      Consolidate operational workflows into the automations repo. Inventory
+      100% of active n8n workflows, classify 100% of active cron/webhook jobs,
+      implement canonical automations structure, reduce duplicate automation
+      assets by at least 70%, and create runbooks and schedules registry.
+    owner: automations-platform
+    kra_ref:
+      - KRA-DELIVERY
+      - KRA-ARCH
+    target_date: 2026-05-19
+    status: not_started
+    success_metric: automations becomes the single canonical repo for operational workflows
+
+  - id: OBJ-006
+    name: OLTP/OLAP separation
+    description: >
+      Separate transactional Odoo workloads from analytics workloads. Document
+      and approve CDC architecture, inventory source tables and schemas, define
+      lakehouse landing path, define bronze/silver/gold model contract, and
+      define Tableau Cloud publication contract.
+    owner: lakehouse
+    kra_ref:
+      - KRA-DATA
+      - KRA-ARCH
+    target_date: 2026-05-19
+    status: not_started
+    success_metric: First governed analytics path from operational data to curated Tableau-ready output is defined and testable
+
+  - id: OBJ-007
+    name: Observability and security baseline
+    description: >
+      Make observability and security posture part of the baseline, not an
+      afterthought. Enable Application Insights, activate Log Analytics
+      workspace, configure Azure Monitor alerts, enable Defender for Cloud
+      for the active Azure estate, and define smoke/health checks for every
+      production workload.
+    owner: infra-platform
+    kra_ref:
+      - KRA-GOV
+      - KRA-DELIVERY
+    target_date: 2026-04-21
+    status: not_started
+    success_metric: All production-bound workloads have telemetry, log visibility, and alerting before go-live
+
+# =============================================================================
+# OKRs — Revised Target State (7 Objectives)
+# =============================================================================
+# NOTE: These OKRs (OKR-001 through OKR-007) cover the revised target state.
+# See also: enterprise_okrs.yaml for operational OKRs (O1-O3) covering
+# engineering control plane, Odoo runtime, and AI/data maturity.
+# =============================================================================
+okrs:
+  - id: OKR-001
+    objective_ref: OBJ-001
+    title: Identity baseline is established and enforced
+    owner: identity-platform
+    horizon_end: 2026-04-14
+    key_results:
+      - id: KR-001-1
+        description: Primary business domain added and verified in Microsoft 365
+        target: true
+        measure: boolean
+      - id: KR-001-2
+        description: 2 emergency access accounts created
+        target: 2
+        measure: count
+      - id: KR-001-3
+        description: 100% of platform admins on named accounts with MFA
+        target: 100
+        measure: percentage
+
+  - id: OKR-002
+    objective_ref: OBJ-002
+    title: Azure DevOps is the canonical delivery control plane
+    owner: devops-platform
+    horizon_end: 2026-04-21
+    key_results:
+      - id: KR-002-1
+        description: ipai-platform project operationalized with dev/staging/prod environments
+        target: true
+        measure: boolean
+      - id: KR-002-2
+        description: Self-hosted agent pools active
+        target: 3
+        measure: count
+      - id: KR-002-3
+        description: ARM WIF service connections active
+        target: 3
+        measure: count
+      - id: KR-002-4
+        description: 100% of Azure deployments routed through YAML pipelines
+        target: 100
+        measure: percentage
+
+  - id: OKR-003
+    objective_ref: OBJ-003
+    title: Foundry runtime is production-hardened and governed
+    owner: ai-platform
+    horizon_end: 2026-04-28
+    key_results:
+      - id: KR-003-1
+        description: Repo-side runtime contract completed
+        target: true
+        measure: boolean
+      - id: KR-003-2
+        description: Dev deploy pipeline active
+        target: true
+        measure: boolean
+      - id: KR-003-3
+        description: Application Insights instrumentation enabled
+        target: true
+        measure: boolean
+      - id: KR-003-4
+        description: Public advisory and internal operator modes clearly separated
+        target: true
+        measure: boolean
+
+  - id: OKR-004
+    objective_ref: OBJ-004
+    title: Public advisory assistant is safely exposed
+    owner: web-platform
+    horizon_end: 2026-05-05
+    key_results:
+      - id: KR-004-1
+        description: Marketing-site copilot shell implemented
+        target: true
+        measure: boolean
+      - id: KR-004-2
+        description: Backend adapter path implemented
+        target: true
+        measure: boolean
+      - id: KR-004-3
+        description: Zero browser-side privileged secrets
+        target: true
+        measure: boolean
+
+  - id: OKR-005
+    objective_ref: OBJ-005
+    title: Operational workflows are consolidated and auditable
+    owner: automations-platform
+    horizon_end: 2026-05-19
+    key_results:
+      - id: KR-005-1
+        description: 100% of active n8n workflows inventoried
+        target: 100
+        measure: percentage
+      - id: KR-005-2
+        description: 100% of active cron/webhook jobs classified
+        target: 100
+        measure: percentage
+      - id: KR-005-3
+        description: Duplicate automation assets reduced by at least 70%
+        target: 70
+        measure: percentage
+
+  - id: OKR-006
+    objective_ref: OBJ-006
+    title: OLTP and OLAP workloads are cleanly separated
+    owner: lakehouse
+    horizon_end: 2026-05-19
+    key_results:
+      - id: KR-006-1
+        description: CDC architecture documented and approved
+        target: true
+        measure: boolean
+      - id: KR-006-2
+        description: Bronze/silver/gold model contract defined
+        target: true
+        measure: boolean
+      - id: KR-006-3
+        description: Tableau Cloud publication contract defined
+        target: true
+        measure: boolean
+
+  - id: OKR-007
+    objective_ref: OBJ-007
+    title: Observability and security posture is baseline-complete
+    owner: infra-platform
+    horizon_end: 2026-04-21
+    key_results:
+      - id: KR-007-1
+        description: Application Insights enabled for all production workloads
+        target: true
+        measure: boolean
+      - id: KR-007-2
+        description: Log Analytics workspace active
+        target: true
+        measure: boolean
+      - id: KR-007-3
+        description: Azure Monitor alerts configured
+        target: true
+        measure: boolean
+      - id: KR-007-4
+        description: Defender for Cloud enabled for active Azure estate
+        target: true
+        measure: boolean
+
+# =============================================================================
+# KPIs
+# =============================================================================
+kpis:
+  - id: SKPI-001
+    name: Repo ownership codification coverage
+    description: Percentage of active repos with codified boundaries
+    formula: coded_repos / active_repos * 100
+    target: 100
+    unit: percent
+
+  - id: SKPI-002
+    name: Governance CI enforcement
+    description: Whether governance CI checks run on all relevant PRs
+    formula: ci_check_enabled
+    target: true
+    unit: boolean
+
+  - id: SKPI-003
+    name: Azure resource ownership mapping coverage
+    description: Percentage of core Azure resources mapped to an owning repo/domain
+    formula: mapped_resources / core_resources * 100
+    target: 100
+    unit: percent
+
+  - id: SKPI-004
+    name: Foundry agent repo mirror existence
+    description: Whether the active agent has repo-backed manifest and prompt
+    formula: repo_backed_agent_exists
+    target: true
+    unit: boolean
+
+  - id: SKPI-005
+    name: Evaluation artifact coverage
+    description: Count of required evaluation categories scaffolded
+    formula: count(eval_categories_present)
+    target: 3
+    unit: count
+
+  - id: SKPI-006
+    name: Odoo bridge Foundry alignment
+    description: Whether Odoo bridge config validates correct Foundry endpoint taxonomy
+    formula: bridge_alignment_pass
+    target: true
+    unit: boolean
+
+  - id: SKPI-007
+    name: Foundry mirror completeness
+    description: Percentage of observed portal assets mirrored into inventory
+    formula: mirrored_foundry_assets / observed_foundry_assets * 100
+    target: 100
+    unit: percent
+
+  - id: SKPI-008
+    name: Curated AI data contract count
+    description: Count of approved Databricks AI-facing data contracts
+    formula: count(curated_ai_contracts)
+    target: 5
+    unit: count
+
+  - id: SKPI-009
+    name: Boundary-protection rule presence
+    description: Whether validators explicitly block prompt-agent ownership in lakehouse
+    formula: boundary_rule_exists
+    target: true
+    unit: boolean
+
+  - id: SKPI-010
+    name: Foundry-Databricks doctrine documentation coverage
+    description: Whether the separation-of-concerns doctrine is documented and linked
+    formula: doctrine_docs_present
+    target: true
+    unit: boolean
+
+  - id: SKPI-011
+    name: Evidence mapping coverage
+    description: Percentage of key results with at least one evidence mapping
+    formula: key_results_with_evidence / total_key_results * 100
+    target: 100
+    unit: percent
+
+  - id: SKPI-012
+    name: Validation coverage for governance-critical workflows
+    description: Percentage of governance-critical workflows with CI or runtime validation
+    formula: validated_workflows / governance_critical_workflows * 100
+    target: 100
+    unit: percent
+
+  - id: SKPI-013
+    name: Machine-generated reporting readiness
+    description: Whether status reporting can be derived from SSOT plus evidence
+    formula: reporting_pipeline_ready
+    target: true
+    unit: boolean
+
+# =============================================================================
+# Strategies
+# =============================================================================
+strategies:
+  - id: STR-001
+    name: Identity-first foundation
+    description: >
+      Establish Microsoft Entra ID as the canonical identity plane before any runtime
+      or delivery automation, ensuring RBAC, WIF, and MFA are prerequisites for all
+      downstream capabilities.
+    supports_objectives:
+      - OBJ-001
+      - OBJ-002
+
+  - id: STR-002
+    name: Azure DevOps as delivery control plane
+    description: >
+      Route all deployment, CI/CD, and release management through Azure DevOps with
+      self-hosted agents, WIF service connections, and YAML pipelines. No ad hoc
+      portal deployments.
+    supports_objectives:
+      - OBJ-002
+      - OBJ-003
+      - OBJ-007
+
+  - id: STR-003
+    name: Repo-backed Foundry lifecycle
+    description: >
+      Treat Azure AI Foundry portal state as managed runtime surface, but maintain
+      runtime contracts, deploy pipelines, evaluation scaffolds, and mode separation
+      in repos.
+    supports_objectives:
+      - OBJ-003
+      - OBJ-004
+
+  - id: STR-004
+    name: Self-hosted core with managed exceptions
+    description: >
+      Self-host by default. Only Cloudflare (edge) and Tableau Cloud (BI consumption)
+      are allowed managed exceptions. No DigitalOcean, no Vercel.
+    supports_objectives:
+      - OBJ-005
+      - OBJ-006
+      - OBJ-007
+
+  - id: STR-005
+    name: OLTP/OLAP separation
+    description: >
+      Separate transactional Odoo workloads from analytics via CDC, lakehouse medallion
+      architecture, and governed Tableau publication contracts.
+    supports_objectives:
+      - OBJ-006
+
+# =============================================================================
+# Programs
+# =============================================================================
+programs:
+  - id: PRG-001
+    name: Q1 Foundation
+    strategies:
+      - STR-001
+      - STR-002
+    owner: identity-platform
+    quarter: Q1
+
+  - id: PRG-002
+    name: Q2 Runtime
+    strategies:
+      - STR-003
+      - STR-002
+    owner: ai-platform
+    quarter: Q2
+
+  - id: PRG-003
+    name: Q3 Operational Consolidation
+    strategies:
+      - STR-004
+    owner: automations-platform
+    quarter: Q3
+
+  - id: PRG-004
+    name: Q4 Data Maturity
+    strategies:
+      - STR-005
+      - STR-004
+    owner: lakehouse
+    quarter: Q4
+
+# =============================================================================
+# Activities
+# =============================================================================
+activities:
+  - id: ACT-001
+    program_ref: PRG-001
+    name: Establish Microsoft 365 + Entra identity baseline
+    owner: identity-platform
+
+  - id: ACT-002
+    program_ref: PRG-001
+    name: Operationalize Azure DevOps project and delivery pipeline
+    owner: devops-platform
+
+  - id: ACT-003
+    program_ref: PRG-001
+    name: Enable observability and security baseline
+    owner: infra-platform
+
+  - id: ACT-004
+    program_ref: PRG-002
+    name: Harden Foundry production runtime
+    owner: ai-platform
+
+  - id: ACT-005
+    program_ref: PRG-002
+    name: Expose public advisory assistant
+    owner: web-platform
+
+  - id: ACT-006
+    program_ref: PRG-003
+    name: Consolidate operational workflows into automations repo
+    owner: automations-platform
+
+  - id: ACT-007
+    program_ref: PRG-004
+    name: Implement CDC and lakehouse landing
+    owner: lakehouse
+
+  - id: ACT-008
+    program_ref: PRG-004
+    name: Define Tableau publication contracts
+    owner: lakehouse
+
+# =============================================================================
+# Tasks
+# =============================================================================
+tasks:
+  # --- Q1 Foundation (Days 1-30) ---
+  - id: TASK-001
+    activity_ref: ACT-001
+    name: Verify primary business domain in Microsoft 365
+    owner: identity-platform
+    due: 2026-04-07
+    status: done
+    completed: 2026-03-18
+    evidence: "insightpulseai.com verified and set as default domain in M365"
+    priority: critical
+
+  - id: TASK-002
+    activity_ref: ACT-001
+    name: Create 2 emergency access accounts and assign least-privilege roles
+    owner: identity-platform
+    due: 2026-04-10
+    status: done
+    completed: 2026-03-18
+    evidence: "admin@ and emergency-admin@ accounts created with Global Admin + MFA"
+    priority: critical
+
+  - id: TASK-003
+    activity_ref: ACT-001
+    name: Enable MFA baseline and eliminate day-to-day Global Admin usage
+    owner: identity-platform
+    due: 2026-04-14
+    status: in_progress
+    evidence: "MFA assigned to both admins. Security Defaults temporarily disabled for bootstrap — re-enable after enrollment."
+    priority: critical
+
+  - id: TASK-004
+    activity_ref: ACT-002
+    name: Operationalize ipai-platform project with dev/staging/prod environments
+    owner: devops-platform
+    due: 2026-04-14
+    status: done
+    completed: 2026-03-10
+    evidence: "ADO project ipai-platform created (id: b4267980), environments defined in azure_devops.yaml"
+    priority: critical
+
+  - id: TASK-005
+    activity_ref: ACT-002
+    name: Create 3 self-hosted agent pools and 3 WIF service connections
+    owner: devops-platform
+    due: 2026-04-21
+    status: done
+    completed: 2026-03-15
+    evidence: "ci-cd.yml references ipai-build-pool and sc-azure-dev-platform WIF connection"
+    priority: high
+
+  - id: TASK-006
+    activity_ref: ACT-003
+    name: Enable Application Insights and Log Analytics workspace
+    owner: infra-platform
+    due: 2026-04-14
+    status: not_started
+    priority: high
+
+  - id: TASK-007
+    activity_ref: ACT-003
+    name: Configure Azure Monitor alerts and enable Defender for Cloud
+    owner: infra-platform
+    due: 2026-04-21
+    status: not_started
+    priority: high
+
+  # --- Q2 Runtime (Days 31-60) ---
+  - id: TASK-008
+    activity_ref: ACT-004
+    name: Complete repo-side Foundry runtime contract and dev deploy pipeline
+    owner: ai-platform
+    due: 2026-04-28
+    status: not_started
+    priority: critical
+
+  - id: TASK-009
+    activity_ref: ACT-004
+    name: Separate public advisory mode from internal operator mode
+    owner: ai-platform
+    due: 2026-05-05
+    status: not_started
+    priority: high
+
+  - id: TASK-010
+    activity_ref: ACT-005
+    name: Implement marketing-site copilot shell and backend adapter
+    owner: web-platform
+    due: 2026-05-12
+    status: not_started
+    priority: high
+
+  - id: TASK-011
+    activity_ref: ACT-005
+    name: Document optional Cloudflare Worker proxy and enforce advisory-only policy
+    owner: web-platform
+    due: 2026-05-19
+    status: not_started
+    priority: high
+
+  # --- Q3 Operations (Days 61-90) ---
+  - id: TASK-012
+    activity_ref: ACT-006
+    name: Inventory all active n8n workflows and cron/webhook jobs
+    owner: automations-platform
+    due: 2026-06-02
+    status: in_progress
+    evidence: "Automation sweep shipped (commit f4f31af31): 14 canonical, 42 stray, 190 stale-ref files inventoried"
+    priority: high
+
+  - id: TASK-013
+    activity_ref: ACT-006
+    name: Implement canonical automations structure and reduce duplicates by 70%
+    owner: automations-platform
+    due: 2026-06-16
+    status: not_started
+    priority: high
+
+  # --- Q4 Data Maturity ---
+  - id: TASK-014
+    activity_ref: ACT-007
+    name: Document CDC architecture and inventory source tables
+    owner: lakehouse
+    due: 2026-07-01
+    status: not_started
+    priority: high
+
+  - id: TASK-015
+    activity_ref: ACT-007
+    name: Define bronze/silver/gold model contracts
+    owner: lakehouse
+    due: 2026-07-15
+    status: not_started
+    priority: high
+
+  - id: TASK-016
+    activity_ref: ACT-008
+    name: Define Tableau Cloud publication contracts and governed outputs
+    owner: lakehouse
+    due: 2026-07-31
+    status: not_started
+    priority: high
+
+# =============================================================================
+# Resources
+# =============================================================================
+resources:
+  people:
+    - role: platform-governance
+      owner: Jake Tolentino
+      capacity_fraction: 0.25
+    - role: ai-platform
+      owner: Jake Tolentino
+      capacity_fraction: 0.25
+    - role: odoo-engineering
+      owner: Jake Tolentino
+      capacity_fraction: 0.20
+    - role: lakehouse
+      owner: Jake Tolentino
+      capacity_fraction: 0.15
+    - role: devops-platform
+      owner: Jake Tolentino
+      capacity_fraction: 0.15
+
+  systems:
+    - microsoft_365
+    - microsoft_entra_id
+    - azure_devops
+    - azure_ai_foundry
+    - azure_databricks
+    - azure_ai_search
+    - azure_key_vault
+    - azure_front_door
+    - azure_monitor
+    - azure_defender
+    - cloudflare
+    - github
+    - odoo
+    - tableau_cloud
+
+  repositories:
+    - name: agents
+      role: agent_manifests_prompts_workflows_evals
+    - name: odoo
+      role: erp_runtime_and_bridge
+    - name: ops-platform
+      role: control_plane_ssot_and_inventories
+    - name: infra
+      role: infrastructure_as_code
+    - name: lakehouse
+      role: databricks_pipelines_and_ai_data_contracts
+    - name: .github
+      role: org_governance_and_ci
+
+  infrastructure:
+    - name: ipai-copilot-resource
+      role: foundry_resource
+    - name: data-intel-ph
+      role: foundry_project
+    - name: srchipaidev8tlstu
+      role: azure_ai_search_tool
+    - name: dbw-ipai-dev
+      role: databricks_workspace
+
+# =============================================================================
+# Evidence Policy
+# =============================================================================
+evidence_policy:
+  required_types:
+    - pull_request
+    - ci_pass
+    - repository_file
+    - test_output
+    - runtime_screenshot
+    - portal_inventory_snapshot
+    - validation_log
+  rule: >
+    No key result may be marked complete without at least one evidence mapping.
+
+# =============================================================================
+# Risks
+# =============================================================================
+risks:
+  - id: RISK-001
+    description: Identity drift — domain, accounts, or RBAC not locked before runtime expansion
+    likelihood: high
+    impact: high
+    mitigation: Lock domain + named-account + MFA baseline first
+
+  - id: RISK-002
+    description: Over-broad RBAC assignments before proper review
+    likelihood: high
+    impact: high
+    mitigation: Use RG-scoped roles and review before expansion
+
+  - id: RISK-003
+    description: Foundry runtime drift from repo — portal state diverges from source-controlled contracts
+    likelihood: medium
+    impact: medium
+    mitigation: Make runtime contract repo-backed and versioned
+
+  - id: RISK-004
+    description: Public assistant overexposure — privileged data or actions leak to advisory mode
+    likelihood: high
+    impact: high
+    mitigation: Enforce advisory-only mode and backend secret boundary
+
+  - id: RISK-005
+    description: Automation sprawl — workflows drift across repos and tools
+    likelihood: medium
+    impact: medium
+    mitigation: Inventory first, migrate second, delete last
+
+  - id: RISK-006
+    description: Analytics load on OLTP — BI queries degrade ERP performance
+    likelihood: high
+    impact: high
+    mitigation: CDC separation before large-scale BI
+
+# =============================================================================
+# SPATRES Analysis
+# =============================================================================
+spatres:
+  scope:
+    - 10 active repositories with defined boundaries
+    - Self-hosted core platform with Azure-native identity and control plane
+    - Azure AI Foundry as production AI runtime
+    - Azure DevOps as CI/CD and release control plane
+    - Cloudflare edge services (allowed exception)
+    - Tableau Cloud for BI consumption (allowed exception)
+    - Odoo CE 18 as ERP system of record
+  people:
+    - Solo developer covering all roles at fractional capacity
+    - Q1 focus on identity, DevOps, observability foundation
+    - Q2 focus on AI runtime hardening and public exposure
+    - Q3 focus on automation consolidation
+    - Q4 focus on data maturity and analytics separation
+  artifacts:
+    - SSOT YAML files for ownership, inventories, and strategy
+    - Repo-backed Foundry runtime contracts and evaluation scaffolds
+    - Azure DevOps YAML pipelines for all deployments
+    - Canonical reference stack documentation
+    - Figma roadmap board for visual tracking
+  timeline:
+    - "Q1 2026: Identity baseline + DevOps operationalization + observability"
+    - "Q2 2026: Foundry hardening + public advisory assistant"
+    - "Q3 2026: Automation consolidation + Odoo boundary cleanup"
+    - "Q4 2026: CDC implementation + lakehouse maturity + Tableau outputs"
+  risks:
+    - Identity drift if not locked before runtime expansion
+    - Over-broad RBAC before proper review
+    - Foundry runtime drift from repo-backed contracts
+    - Public assistant overexposure of privileged data
+    - Automation sprawl across repos and tools
+    - Analytics load degrading OLTP performance
+  environments:
+    - Microsoft 365 + Entra ID (identity)
+    - Azure DevOps (delivery control plane)
+    - Azure (Foundry, ACA, Front Door, Key Vault, Monitor)
+    - Cloudflare (DNS, WAF, CDN, optional Workers)
+    - Self-hosted Odoo CE 18 + Postgres
+    - Self-hosted lakehouse
+    - Tableau Cloud (BI consumption)
+  success:
+    - Identity bootstrap checklist fully green
+    - All deployments routed through Azure DevOps
+    - Foundry runtime production-readiness at 100%
+    - Public advisory assistant live with zero secret leakage
+    - automations is the single canonical workflow repo
+    - First governed Odoo-to-Tableau analytics path testable
+    - All production workloads have telemetry and alerting

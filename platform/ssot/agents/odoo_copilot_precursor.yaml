@@ -1,0 +1,87 @@
+---
+version: 1
+name: odoo_copilot_precursor
+status: planned
+created_at: "2026-03-18"
+
+purpose: >
+  Thin reusable Odoo copilot core that provides conversation entry,
+  context binding, provider routing, tool orchestration, audit logging,
+  and specialist handoff surfaces.
+
+scope:
+  owns:
+    - chat_entry_surface
+    - user_company_context_binding
+    - foundry_provider_adapter
+    - tool_registry
+    - safe_tool_invocation_envelope
+    - audit_event_log
+    - structured_response_contract
+    - specialist_handoff_hook
+  excludes:
+    - autonomous_posting
+    - autonomous_filing
+    - final_tax_determination
+    - unrestricted_write_actions
+
+initial_capabilities:
+  - odoo_record_lookup
+  - document_search
+  - policy_lookup
+  - benchmarkable_structured_responses
+  - specialist_route_stub
+
+release_mode: read_heavy_assisted_only
+
+policy:
+  default_tool_mode: allowlisted
+  write_actions_allowed: false
+  fail_closed_on_missing_context: true
+  fail_closed_on_missing_rule_source: true
+
+specialists:
+  - name: TaxPulse
+    status: planned
+    depends_on: odoo_copilot_precursor
+    scope: philippine_tax_compliance
+    attachment_contract: specialist_handoff_hook
+
+benchmark_reference:
+  primary_marketplace_benchmark: "SAP Joule"
+  primary_benchmark_scope:
+    - transactional
+    - navigational
+    - informational
+    - document_grounding
+    - role_aware_assistance
+
+  secondary_marketplace_benchmark: "Notion 3.0"
+  secondary_benchmark_scope:
+    - multi_step_work_product_generation
+    - memory_page_personalization
+    - cross_tool_knowledge_search
+    - specialist_agent_handoff_model
+    - document_database_creation
+
+  benchmark_ssot: "ssot/evals/copilot_marketplace_benchmark.yaml"
+
+build_order:
+  phase_a:
+    name: "Core Precursor"
+    delivers:
+      - systray_chat_entry
+      - foundry_provider_bridge
+      - read_only_tools
+      - structured_responses
+      - audit_trail
+      - specialist_handoff_stub
+  phase_b:
+    name: "TaxPulse Specialist"
+    depends_on: phase_a
+    delivers:
+      - tax_exception_review
+      - rule_source_citation
+      - audit_note_generation
+      - human_escalation
+      - fail_closed_on_unresolved_atc

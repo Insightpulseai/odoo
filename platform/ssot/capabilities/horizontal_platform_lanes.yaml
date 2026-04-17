@@ -1,0 +1,29 @@
+version: 1
+status: active
+updated_at: "2026-03-17"
+
+horizontal_lanes:
+  data_engineering:
+    owns:
+      - ingestion
+      - normalization
+      - identity_resolution
+      - semantic_layers
+      - feature_metrics_stores
+      - governed_exports
+
+  app_development:
+    owns:
+      - analyst_apps
+      - operator_apps
+      - client_facing_copilots
+      - domain_workbenches
+      - internal_control_plane_apps
+
+  ai_agents:
+    owns:
+      - planning_agents
+      - research_insight_agents
+      - activation_agents
+      - qa_eval_judges
+      - domain_advisors

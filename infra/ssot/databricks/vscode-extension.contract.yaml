@@ -1,0 +1,55 @@
+---
+# Databricks VS Code Extension Contract — SSOT
+# Source: https://learn.microsoft.com/en-us/azure/databricks/dev-tools/vscode-ext/
+# Classification: IDE/dev-loop truth for Databricks development
+# NOT: workspace resource IaC, Apps runtime, Unity Catalog governance
+contract_version: 1
+
+databricks_vscode_extension:
+  source:
+    type: microsoft_learn
+    url: https://learn.microsoft.com/en-us/azure/databricks/dev-tools/vscode-ext/
+    classification: databricks_ide_extension_truth
+
+  usage_rules:
+    use_for:
+      - local_ide_to_workspace_workflow
+      - bundle_project_bootstrap
+      - databricks_connect_debug_flow
+      - local_code_run_and_job_submission
+      - workspace_sync_policy
+    do_not_use_for:
+      - workspace_resource_contract_truth
+      - unity_catalog_governance_truth
+      - customer_tenant_truth
+      - semantic_model_truth
+
+  supported_hosts:
+    - visual_studio_code
+    - cursor
+
+  supported_capabilities:
+    - declarative_automation_bundles_ui
+    - run_local_python_on_databricks_compute
+    - run_files_as_lakeflow_jobs
+    - databricks_connect_setup_and_debug
+    - notebook_cell_debug_with_databricks_connect
+    - workspace_sync
+
+  project_model:
+    bundle_project_marker: databricks.yml
+    rule: bundle_project_is_the_primary_workspace_project_shape
+
+  language_posture:
+    deep_ide_support:
+      - python
+    automated_job_support_only:
+      - r
+      - scala
+      - sql
+
+  workflow_rules:
+    - host_and_auth_must_be_selected_per_project
+    - multiple_bundle_projects_may_exist_in_one_workspace
+    - run_actions_apply_only_to_active_bundle
+    - v1_projects_require_migration_to_current_extension_model

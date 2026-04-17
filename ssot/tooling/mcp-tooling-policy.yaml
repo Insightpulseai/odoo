@@ -1,0 +1,92 @@
+---
+# MCP Tooling Policy — SSOT
+# Governs MCP tool selection, authority planes, upstream references, and anti-patterns.
+# Companion to: ssot/tooling/mcp-tool-decision-registry.yaml
+# Anchor: CLAUDE.md Cross-Repo Invariant #10 (MCP First) + #10a (three-protocol model)
+contract_version: 1
+
+global_rules:
+  - tools_enabled_per_agent_never_globally
+  - allowlisted_mcps_only_no_dynamic_tool_acquisition
+  - each_agents_mcp_set_declared_in_manifest
+  - canonical_mcp_protocol_truth_must_come_from_official_mcp_docs_not_training_material
+
+decision_registry_binding:
+  source: ssot/tooling/mcp-tool-decision-registry.yaml
+  rule: workflow_level_mcp_selection_must_follow_the_decision_registry
+
+authority_planes:
+  mcp_protocol_architecture_truth:
+    canonical_sources:
+      - official_mcp_architecture_docs
+    description: |
+      The official MCP specification defines the client-server model,
+      host/client/server roles, and the two transport mechanisms (STDIO
+      and Streamable HTTP). This is canonical protocol architecture truth.
+
+  mcp_implementation_guidance:
+    canonical_sources:
+      - anthropic_mcp_advanced_topics
+    description: |
+      Training and reference material for MCP implementation patterns.
+      Useful for design decisions (transport selection, sampling, scaling)
+      but NOT canonical spec truth or runtime evidence.
+
+non_mcp_upstream_references:
+  official_mcp_architecture_docs:
+    display_name: Model Context Protocol Architecture Docs
+    url: https://modelcontextprotocol.io/docs/learn/architecture
+    class: official_docs_reference
+    authority_plane: mcp_protocol_architecture_truth
+    allowed_uses:
+      - canonical_client_server_architecture_reference
+      - transport_model_reference
+      - host_client_server_role_reference
+    disallowed_uses:
+      - live_runtime_truth
+      - deployment_evidence
+    evidence_strength: strong_for_protocol_architecture_truth
+
+  anthropic_mcp_advanced_topics:
+    display_name: Anthropic MCP Advanced Topics
+    url: https://anthropic.skilljar.com/model-context-protocol-advanced-topics
+    class: training_reference
+    authority_plane: mcp_implementation_guidance
+    allowed_uses:
+      - transport_selection_guidance
+      - sampling_pattern_guidance
+      - log_and_progress_notification_guidance
+      - roots_and_file_access_guidance
+      - json_message_architecture_guidance
+      - stdio_vs_streamable_http_tradeoff_guidance
+      - stateful_vs_stateless_scaling_guidance
+    disallowed_uses:
+      - canonical_mcp_spec_truth
+      - live_runtime_truth
+      - repo_truth
+      - deployment_evidence
+      - customer_tenant_truth
+    evidence_strength: educational_reference_only
+
+preferred_usage_order:
+  architecture_grounding:
+    - official_mcp_architecture_docs
+    - microsoft_learn_mcp
+    - github_mcp
+    - anthropic_mcp_advanced_topics
+    - azure_mcp_server
+    - foundry_mcp
+    - azure_postgresql_mcp
+    - microsoft_entra_enterprise_mcp
+    - databricks_genie_mcp
+
+anti_patterns:
+  - using_training_courses_as_runtime_evidence
+  - using_anthropic_mcp_course_as_canonical_spec_authority
+  - using_implementation_guidance_as_deployment_truth
+  - treating_sampling_guidance_as_mandatory_implementation_pattern
+  - confusing_transport_guidance_with_transport_spec
+
+runtime_state_reference:
+  source: ssot/tooling/mcp-runtime-state.yaml
+  rule: configured_available_deprecated_and_partial_status_must_be_tracked_separately_from_authority_plane_policy

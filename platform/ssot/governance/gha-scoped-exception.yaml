@@ -1,0 +1,178 @@
+---
+# GHA Scoped Exception — SSOT
+#
+# Authority: CLAUDE.md §"Engineering & Delivery Authority (REVISED 2026-04-16)"
+# Purpose: Govern the narrow conditions under which GitHub Actions is permitted.
+# Default: FORBIDDEN. Exception: scopes listed below, with hard conditions.
+# Rev: 2026-04-16
+
+version: 1
+status: canonical
+effective_date: 2026-04-16
+supersedes: null
+
+doctrine_sentence: |
+  GitHub Actions is allowed ONLY as a pre-merge validation tool for the scopes
+  enumerated here, with Azure-subscription billing, sibling Azure Pipeline
+  defense-in-depth, and zero direct Azure write access. Azure Pipelines
+  remains the sole deploy authority.
+
+# ───────────────────────────────────────────────
+# Allowed scopes (ANY new GHA workflow must match one)
+# ───────────────────────────────────────────────
+allowed_scopes:
+
+  copilot_coding_agent_validation:
+    description: |
+      When GitHub Copilot Coding Agent is adopted, GHA runs syntactic
+      lint/test on Coding-Agent-generated PRs. Azure Pipelines still runs
+      the canonical gate before merge.
+    triggers: [pull_request]
+    permissions: [contents:read, pull-requests:read]
+    allowed_actions: [lint, format-check, unit-test, smoke-test]
+    forbidden: [deploy, release, container-push, secret-read, main-write]
+    sibling_azure_pipeline_required: true
+    status: allowed_when_coding_agent_adopted
+
+  ghas_codeql:
+    description: |
+      Break-glass only. Today Defender for DevOps covers code scanning.
+      This scope is allowed only if Defender proves insufficient for a
+      specific language/lane, with platform-engineering sign-off.
+    triggers: [pull_request, push]
+    permissions: [security-events:write, contents:read]
+    allowed_actions: [codeql-analyze]
+    forbidden: [deploy, main-write, secret-read]
+    sibling_azure_pipeline_required: false   # Defender is the canonical coverage
+    status: break_glass_only
+
+  dependabot_checks:
+    description: |
+      Dependabot-generated PRs need GitHub-native check context for the
+      GitHub merge-queue UX. GHA runs dep-audit validation; Azure
+      Pipelines runs the canonical build.
+    triggers: [pull_request]
+    permissions: [contents:read, pull-requests:read]
+    allowed_actions: [dependency-audit, sbom-generate, license-check]
+    forbidden: [deploy, secret-read, main-write]
+    sibling_azure_pipeline_required: true
+    status: allowed
+
+  docs_link_check:
+    description: |
+      Lightweight README / docs link validation. GitHub-native, cheaper
+      than spinning an ADO agent. Pre-merge only.
+    triggers: [pull_request]
+    permissions: [contents:read]
+    allowed_actions: [link-check, markdown-lint, alt-text-audit]
+    forbidden: [deploy, anything-that-modifies-content]
+    sibling_azure_pipeline_required: false   # trivial scope
+    status: allowed
+
+# ───────────────────────────────────────────────
+# Forbidden scopes (explicit — prevents scope creep)
+# ───────────────────────────────────────────────
+forbidden_scopes:
+  - deploy_to_azure                 # ADO owns all Azure deploys
+  - deploy_to_container_registry    # ADO owns image push
+  - deploy_to_databricks            # ADO owns Databricks bundle deploy
+  - deploy_to_odoo_aca              # ADO owns Odoo container deploys
+  - provision_infrastructure        # ADO owns Bicep apply
+  - release_tagging                 # ADO owns release pipeline
+  - scheduled_cron_jobs             # ACA Scheduled Jobs + ADO triggers canonical
+  - container_image_build           # ADO owns image builds
+  - secret_bearing_workflows        # zero-secret GHA rule
+  - production_branch_writes        # no GHA bot writes to main
+  - agent_runtime_hosting           # agent-platform + ACA canonical
+  - any_workflow_that_reads_key_vault
+
+# ───────────────────────────────────────────────
+# Hard conditions (ALL must hold for any allowed workflow)
+# ───────────────────────────────────────────────
+hard_conditions:
+
+  billing:
+    requirement: Azure-subscription billing only
+    configuration_steps: |
+      1. GitHub → Organization Insightpulseai → Settings → Billing and plans
+      2. Set "Pay for GitHub Actions through Azure subscription"
+      3. Link Azure subscription ID (Sponsored OR Pay-As-You-Go — document which)
+      4. Set monthly spending limit (recommend: $50/mo cap for R2)
+      5. Configure Azure budget alert on the subscription for GHA meter category
+    verification: |
+      Azure Portal → Cost Management → filter meter category "GitHub Actions"
+      should show non-zero usage after first workflow run.
+
+  auth_to_azure:
+    requirement: OIDC federation to Managed Identity only
+    forbidden: [PAT, client_secret, azure_credentials_json]
+    configuration_steps: |
+      1. Create federated credential on an IPAI Managed Identity scoped to
+         the specific repo + branch + workflow
+      2. Use `azure/login@v2` with `client-id`, `tenant-id`, `subscription-id`
+         (all non-secret) and NO `client-secret` input
+      3. Federated MI grants minimal RBAC for the specific validation task
+
+  key_vault_access:
+    requirement: absolutely_forbidden
+    rationale: Zero-secret GHA rule. Any secret need = promote to Azure Pipeline.
+
+  sibling_azure_pipeline:
+    requirement: every GHA workflow in `allowed_scopes` (except noted exemptions) MUST have a sibling Azure Pipeline that enforces the same gate
+    rationale: defense-in-depth, avoids single-point-of-failure on GitHub outage
+    cross_reference: azure-pipelines/<same-name>.yml
+
+  branch_protection:
+    requirement: Azure Pipelines check is the ONLY required status on `main`
+    rationale: GHA checks inform review but cannot gate merge
+    github_setting: Settings → Branches → main → Require status checks → include only `azure-pipelines/*`
+
+  approval_workflow:
+    requirement: new GHA workflow creation requires PR with doctrine-exception tag
+    labels_required: [doctrine-exception, gha-scoped-allow]
+    reviewers_required: 1
+    reviewer_team: platform-engineering
+    merge_forbidden_without: linked-allowed-scope-from-this-yaml
+
+# ───────────────────────────────────────────────
+# Enforcement (CI gates)
+# ───────────────────────────────────────────────
+enforcement:
+
+  pipeline: azure-pipelines/gha-scoped-exception-guard.yml
+  script: scripts/validate_gha_scoped_exception.py
+  rules:
+    - any PR adding `.github/workflows/*.yml` MUST reference an allowed_scope key in the workflow file header
+    - any PR adding a GHA workflow without corresponding `sibling_azure_pipeline_required=false` exemption or sibling pipeline file → BLOCK
+    - any GHA workflow using `client-secret` / `AZURE_CREDENTIALS` / `azure-credentials-json` → BLOCK
+    - any GHA workflow that references `actions/github-script` to write-on-main or write-to-release → BLOCK
+    - any GHA workflow that runs on `schedule:` trigger unless scope allows → BLOCK
+
+  checklist_at_pr_review:
+    - [ ] Scope matches an allowed_scopes entry
+    - [ ] Billing configured (Azure subscription)
+    - [ ] OIDC federation in use (no client-secret)
+    - [ ] Sibling Azure Pipeline exists (if required by scope)
+    - [ ] Branch protection unchanged on main
+    - [ ] Workflow file references this YAML in its header comment
+    - [ ] platform-engineering approval recorded
+
+# ───────────────────────────────────────────────
+# Revision triggers (when to revisit this doctrine)
+# ───────────────────────────────────────────────
+revision_triggers:
+  - GitHub Copilot Coding Agent adoption (adds copilot_coding_agent_validation active)
+  - Defender for DevOps gap identified (may promote ghas_codeql out of break_glass)
+  - Microsoft-only feature launched that is GHA-native for >6 months
+  - Cost comparison shows Azure Pipelines materially more expensive than GHA for equivalent work (threshold: 2x)
+  - User explicitly reverses the scoped-exception model
+
+# ───────────────────────────────────────────────
+# Anchors
+# ───────────────────────────────────────────────
+anchors:
+  - CLAUDE.md §"Engineering & Delivery Authority (REVISED 2026-04-16)"
+  - ssot/governance/platform-authority-split.yaml
+  - ssot/governance/ci-cd-authority-matrix.yaml
+  - docs/architecture/three-protocol-model.md
+  - docs/runbooks/gha-azure-subscription-billing.md   # TO BE WRITTEN (see below)

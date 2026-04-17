@@ -1,0 +1,240 @@
+version: 1
+tranche: 1
+source_repo: odoo
+target_project: ipai-platform
+strategy:
+  mode: copy_then_cutover
+  rule: "Do not remove source paths from odoo until target repo CI passes and odoo no longer depends on them."
+  protected_paths:
+    - addons/**
+    - config/**
+    - docker/**
+    - scripts/odoo/**
+    - tests/**/*
+    - spec/**/*
+    - ssot/odoo/**/*
+    - docs/data-model/**/*
+    - docs/architecture/CANONICAL_RUNTIME_IMAGE.md
+
+repos:
+  infra:
+    create_now: true
+    populate_now: true
+    moves:
+      - source: infra/**
+        target: /
+        mode: move
+        reason: shared cloud, edge, network, IaC authority
+      - source: .azure/pipelines/**
+        target: .azure/pipelines/
+        mode: split
+        filter: "only infra-owned pipeline definitions/templates"
+      - source: .azuredevops/**
+        target: .azuredevops/
+        mode: split
+        filter: "only infra-owned ADO metadata/templates"
+      - source: docs/**
+        target: docs/
+        mode: split
+        filter: "only infra-specific architecture/deployment/landing-zone/network/front-door content"
+      - source: spec/**
+        target: spec/
+        mode: split
+        filter: "only infra-owned spec bundles"
+      - source: ssot/**
+        target: ssot/
+        mode: split
+        filter: "only infra-owned intended-state artifacts"
+      - source: tests/**
+        target: tests/
+        mode: split
+        filter: "only infra validation/integration tests"
+      - source: scripts/**
+        target: scripts/
+        mode: split
+        filter: "only infra-owned automation/validation scripts"
+
+  platform:
+    create_now: true
+    populate_now: true
+    moves:
+      - source: platform/**
+        target: /
+        mode: move
+        reason: control-plane/admin authority
+      - source: ops-platform/**
+        target: ops-platform/
+        mode: move
+        reason: fold into canonical platform repo
+      - source: supabase/**
+        target: supabase/
+        mode: split
+        filter: "only non-ERP control-plane/backend assets"
+      - source: .supabase/**
+        target: .supabase/
+        mode: split
+        filter: "only platform-owned Supabase local/dev tooling"
+      - source: .insightpulse/**
+        target: .insightpulse/
+        mode: split
+        filter: "only platform/control-plane metadata"
+      - source: apps/roadmap/**
+        target: apps/roadmap/
+        mode: review
+        decision: "platform if internal operational app; web if public-facing"
+      - source: docs/**
+        target: docs/
+        mode: split
+        filter: "only platform/control-plane/admin docs"
+      - source: spec/**
+        target: spec/
+        mode: split
+        filter: "only platform-owned spec bundles"
+      - source: ssot/**
+        target: ssot/
+        mode: split
+        filter: "only platform-owned SSOT"
+      - source: tests/**
+        target: tests/
+        mode: split
+        filter: "only platform-owned tests"
+      - source: scripts/**
+        target: scripts/
+        mode: split
+        filter: "only platform-owned scripts"
+
+  agents:
+    create_now: true
+    populate_now: true
+    moves:
+      - source: agents/**
+        target: /
+        mode: move
+        reason: shared agent/registry/prompt authority
+      - source: skills/**
+        target: skills/
+        mode: split
+        filter: "only shared reusable skills; keep skills/odoo-implementation/** in odoo"
+      - source: .ai/**
+        target: .ai/
+        mode: review
+        decision: "agents if shared metadata; keep local hooks in owning repo"
+      - source: .mcp.json
+        target: .mcp.json
+        mode: review
+        decision: "agents if platform-wide MCP config; otherwise leave repo-local"
+      - source: .claude/**
+        target: .claude/
+        mode: split
+        filter: "only shared agent skills/prompts; keep repo-local instructions in odoo"
+      - source: docs/**
+        target: docs/
+        mode: split
+        filter: "only shared agent/runtime/skill docs"
+      - source: spec/**
+        target: spec/
+        mode: split
+        filter: "only agent-owned spec bundles"
+      - source: ssot/**
+        target: ssot/
+        mode: split
+        filter: "only agent-owned SSOT"
+      - source: tests/**
+        target: tests/
+        mode: split
+        filter: "only shared agent tests"
+
+  automations:
+    create_now: true
+    populate_now: true
+    moves:
+      - source: automations/**
+        target: /
+        mode: move
+        reason: shared workflow/scheduler/runbook authority
+      - source: docs/**
+        target: docs/
+        mode: split
+        filter: "only automation/n8n/job/runbook docs"
+      - source: spec/**
+        target: spec/
+        mode: split
+        filter: "only automation-owned spec bundles"
+      - source: ssot/**
+        target: ssot/
+        mode: split
+        filter: "only automation-owned SSOT"
+      - source: tests/**
+        target: tests/
+        mode: split
+        filter: "only automation-owned tests"
+      - source: scripts/**
+        target: scripts/
+        mode: split
+        filter: "only automation-owned scripts"
+
+  web:
+    create_now: true
+    populate_now: true
+    moves:
+      - source: web/**
+        target: /
+        mode: move
+        reason: non-ERP public/product web surfaces
+      - source: web-site/**
+        target: web-site/
+        mode: move
+        reason: fold into canonical web repo
+      - source: docs-site/**
+        target: docs-site/
+        mode: split
+        filter: "only published/static site assets; move source/reference docs to docs"
+      - source: vercel.json
+        target: vercel.json
+        mode: review
+        decision: "move only if a surviving web surface still uses it; otherwise retire"
+      - source: docs/**
+        target: docs/
+        mode: split
+        filter: "only public-site or web-surface docs"
+      - source: spec/**
+        target: spec/
+        mode: split
+        filter: "only web-owned spec bundles"
+      - source: tests/**
+        target: tests/
+        mode: split
+        filter: "only web-owned tests"
+
+odoo_retained_after_tranche_1:
+  required_runtime_authority:
+    - addons/**
+    - config/**
+    - docker/**
+    - scripts/odoo/**
+    - docs/data-model/**
+    - docs/architecture/CANONICAL_RUNTIME_IMAGE.md
+    - ssot/odoo/**
+    - spec/**/*
+    - tests/**/*
+    - README.md
+    - CLAUDE.md
+    - Makefile
+    - azure-pipelines-ci.yml
+  explicit_keep_notes:
+    - "Keep ERP-local docs/spec/ssot/tests/scripts in odoo."
+    - "Keep skills/odoo-implementation/** in odoo."
+    - "Keep only ERP-runtime-local Supabase integration shims in odoo."
+    - "Do not move repo-root governance files wholesale; rewrite per target repo."
+
+cutover_gates:
+  - "Target repo exists in Azure DevOps under ipai-platform."
+  - "Target repo README, CLAUDE.md, spec/, ssot/, and minimal CI skeleton exist."
+  - "Moved paths have no unresolved imports/path references back into odoo."
+  - "odoo CI still passes after source-path reduction."
+  - "No directory is authoritative in both repos after cutover."
+
+completion_definition:
+  - "infra/, platform/, ops-platform/, shared agents/, automations/, web/, and web-site/ no longer grow inside odoo."
+  - "Ownership docs in odoo and target repos match actual locations."
+  - "Remaining duplicated paths are explicitly marked as temporary compatibility shims with removal follow-up."

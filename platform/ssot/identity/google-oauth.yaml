@@ -1,0 +1,21 @@
+---
+# SSOT: Google OAuth Provider Configuration
+# Canonical definition for Google Sign-In used by Odoo and other services.
+# Used by scripts/odoo/seed_auth_providers.py to configure Odoo.
+#
+# Last updated: 2026-04-16
+contract_version: 1
+
+provider:
+  name: "Google (OIDC)"
+  display_label: "Sign in with Google"
+  auth_endpoint: "https://accounts.google.com/o/oauth2/v2/auth"
+  validation_endpoint: "https://openidconnect.googleapis.com/v1/userinfo"
+  scopes:
+    - openid
+    - email
+    - profile
+  client_id: "PLACEHOLDER_SET_VIA_ENV"  # Replace with actual Google Client ID
+  enabled: true
+  sequence: 20
+  css_class: "fa fa-fw fa-google"

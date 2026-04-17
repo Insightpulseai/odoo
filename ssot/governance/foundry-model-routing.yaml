@@ -1,0 +1,246 @@
+# Foundry Model Routing Policy
+#
+# Canonical rules for which Azure OpenAI / Foundry models IPAI uses per wave.
+# Doctrine: gpt-4.x baseline for R2 go-live; frontier models (5.x, o3, Sora)
+# deployed only when R2 evidence proves 4.x ceiling.
+#
+# Authoritative for: Pulser agents (Tax Guru, Bank Recon, Finance Close, AP/AR,
+# Doc Intel, Scout, Ces, PrismaLab, Scrum Master), viz-renderer meta-skill,
+# all Odoo chatter copilot invocations.
+#
+# Anchors:
+#   - CLAUDE.md (invariant #24 — Azure Pipelines sole CI/CD authority implies
+#     service-connection / KV / MI pattern for Foundry deploy)
+#   - spec/pulser-inline-viz/plan.md (chart gen model)
+#   - memory: project_foundry_models_onboarded_20260415.md (gating status)
+
+version: 1.0.0
+rev_date: '2026-04-15'
+owner: platform-engineering
+
+# ----------------------------------------------------------------------------
+# ACTUAL DEPLOYED (on ipai-copilot-resource, rg-data-intel-ph, eastus2)
+# ----------------------------------------------------------------------------
+# Verified 2026-04-15 via az cognitiveservices account deployment list:
+deployed_current:
+  - name: gpt-4.1
+    model: gpt-4.1
+    version: '2025-04-14'
+    sku: GlobalStandard
+    capacity: 50
+  - name: gpt-4.1-mini-20260415
+    model: gpt-4.1-mini
+    version: '2025-04-14'
+    sku: GlobalStandard
+    capacity: 10
+  - name: text-embedding-3-small
+    model: text-embedding-3-small
+    version: '1'
+    sku: Standard
+    capacity: 120
+  - name: w9-pulser
+    model: gpt-4o-mini
+    version: '2024-07-18'
+    sku: GlobalStandard
+    capacity: 10
+
+# These 4 deployments COVER R2 baseline minus nano/full-4o/image-1.
+# Attempts to deploy additional models hit error 715-123420 (sponsored-sub
+# quota issue per memory azure-bicep-troubleshooting skill).
+# Workaround: use what's deployed; file support ticket for missing quota.
+
+deployment_gaps:
+  - name: gpt-4.1-nano
+    fallback: use gpt-4.1-mini (capacity sufficient); nano is cheaper but not blocking
+    action: request quota via support ticket; acceptable R2 gap
+  - name: gpt-4o (full, not mini)
+    fallback: use gpt-4o-mini (via w9-pulser deployment) for multimodal text+image input
+    action: request quota; full 4o needed only for high-stakes vision tasks
+  - name: gpt-image-1
+    fallback: defer image generation to R3; use Azure Document Intelligence for receipt/invoice images
+    action: request quota; acceptable since Sora/image are R3+ scope anyway
+  - name: text-embedding-3-large
+    fallback: text-embedding-3-small works (1536 dim vs 3072); acceptable for R2 RAG
+    action: upgrade at R3 if retrieval quality insufficient
+
+
+# ----------------------------------------------------------------------------
+# R2 BASELINE — REQUIRED for go-live (2026-07-14)
+# ----------------------------------------------------------------------------
+# All gpt-4.x + embeddings + image-1 are standard GA, zero gating required,
+# available in SEA region via Global Standard SKU (cross-region to East US 2
+# is acceptable; avg 2.2s latency).
+baseline_r2:
+  reasoning_default:
+    model: gpt-4.1
+    model_version: '2025-04-14'
+    context_window: 1047576   # 1M tokens
+    used_by:
+      - pulser_planner         # orchestration + routing
+      - tax_guru               # BIR reasoning (with strict prompts + eval gates)
+      - bank_recon             # reconciliation logic
+      - finance_close          # D+5 orchestration
+      - scout_analytics        # brand share narrative
+      - ces_campaign           # campaign analysis
+      - prismalab              # research synthesis (non-deep)
+      - scrum_master           # retro synthesis
+      - viz_renderer_codegen   # Code Interpreter chart generation
+    rationale: |
+      1M context matches gpt-5.1. Zero gating. Available in SEA + EUS2.
+      Prompt caching well-supported; Batch API supported.
+      Sufficient reasoning depth for 90% of Pulser go-live workloads.
+
+  reasoning_fast:
+    model: gpt-4.1-mini
+    model_version: '2025-04-14'
+    context_window: 1047576
+    used_by:
+      - pulser_routine         # repeated calls (low complexity)
+      - scrum_master_daily     # daily standup queries
+      - ap_invoice             # invoice extraction + validation
+      - ar_collections         # collection reminder drafts
+      - doc_intel_classify     # document classification
+    rationale: Cheap + fast for high-volume routine agent calls
+
+  classifier:
+    model: gpt-4.1-nano
+    model_version: '2025-04-14'
+    used_by:
+      - intent_router          # which skill to load per user message
+      - content_safety_pre     # pre-filter before full agent call
+      - skill_selector
+    rationale: Cheapest 4.x variant; sufficient for classification
+
+  multimodal:
+    model: gpt-4o
+    model_version: '2024-11-20'
+    used_by:
+      - doc_intel_visual       # receipt/invoice images + text
+      - chart_interpretation   # read existing dashboards
+      - ui_screenshot_analysis
+    rationale: Multimodal (text + image input); Sora not required here
+
+  multimodal_fast:
+    model: gpt-4o-mini
+    model_version: '2024-07-18'
+    used_by:
+      - receipt_quick_parse
+    rationale: Cheap multimodal
+
+  embeddings:
+    model: text-embedding-3-large
+    context_window: 8192
+    output_dimensions: 3072
+    used_by:
+      - azure_ai_search_indexing   # srch-ipai-dev
+      - prismalab_rag              # prismalab-rag-v1 index
+      - workspace_rag              # ipai-workspace-v1 (to build)
+    rationale: Latest embedding model; no upgrade path needed from ada-002
+
+  image_generation:
+    model: gpt-image-1
+    model_version: '2025-04-15'
+    used_by:
+      - creative_brief_still       # story frames, thumbnails
+      - viz_thumbnail              # chart preview thumbs
+    rationale: Standard GA; no gating; gpt-image-1.5 deferred to R4
+
+  ocr_extraction:
+    service: azure-document-intelligence
+    model: prebuilt-layout + prebuilt-invoice + custom (BIR 2307)
+    rationale: Separate Azure service (not OpenAI); used for PDF OCR
+
+# ----------------------------------------------------------------------------
+# R3 OPTIONAL UPGRADES — Deploy ONLY if value proven in R2
+# ----------------------------------------------------------------------------
+r3_optional:
+  tax_guru_high_stakes:
+    model: o3
+    reason: BIR audit reasoning (quarterly filings, edge cases)
+    gate: Customer-signed SLA requires >99% tax calc accuracy
+    fallback: gpt-4.1 with enhanced evals + dual-check via Tax Guru sub-agent
+    available_region: East US 2, Sweden Central (Global Standard SKU for SEA access)
+
+  code_scaffolding:
+    model: gpt-5.1-codex
+    reason: Odoo addon generation + Bicep module scaffolding
+    gate: Code-gen volume >100 modules/month
+    fallback: gpt-4.1 (general-purpose, slightly slower but adequate)
+
+  deep_research:
+    model: o3-deep-research
+    reason: PrismaLab systematic review literature search
+    gate: Active PrismaLab customer with >100 citations/week workload
+    fallback: gpt-4.1 + AI Search grounding + Code Interpreter for statistical analysis
+    note: Foundry Agent Service only; NOT available via direct API
+
+# ----------------------------------------------------------------------------
+# R4 CONDITIONAL — Gated on actual revenue signal
+# ----------------------------------------------------------------------------
+r4_conditional:
+  video_generation:
+    model: sora-2
+    reason: W9 Studio vertical ads (9:16 for TikTok/Reels/Shorts)
+    gate: W9 Studio has >1 paying customer signed for AI-generated video
+    fallback: External video production (not AI-generated)
+    available_region: East US 2 ONLY (no SEA)
+    cost_warning: Usage-priced; can spike fast. Hard rate-limit at tool wrapper required.
+    provenance_requirement: C2PA metadata MUST be preserved (per CLAUDE.md Sora doctrine)
+
+  image_generation_upgrade:
+    model: gpt-image-1.5
+    reason: Higher-quality stills when R2's gpt-image-1 ceiling hit
+    replaces: gpt-image-1
+    gate: Creative-ops customer feedback demands upgrade
+
+# ----------------------------------------------------------------------------
+# ROUTING RULES
+# ----------------------------------------------------------------------------
+routing:
+  fallback_chain: |
+    Every Pulser agent specifies primary + fallback model.
+    If primary unavailable (region outage, quota, deprecation), agent falls back.
+    Fallback chain: <primary> → gpt-4.1 → gpt-4.1-mini → error with user-visible message.
+    No hard dependency on 5.x / o3 / Sora models in R2 scope.
+
+  cost_optimization:
+    - Prompt caching MANDATORY on stable system prompts (per .claude/rules/anthropic-api-usage.md pattern adapted for Foundry)
+    - Batch API PREFERRED for eval runs (50% discount, async 24h window)
+    - Use gpt-4.1-nano for classifier tasks BEFORE invoking full reasoning model
+    - Cache document retrieval embeddings in AI Search; never re-embed
+
+  region_routing:
+    - ipai-copilot-resource (East US 2) is canonical Foundry deployment
+    - SEA workloads access via Global Standard SKU cross-region
+    - No separate SEA Foundry resource (doctrine: one shared Foundry, not per-env)
+    - If SEA-only models needed later, evaluate new Foundry project; do not fork ipai-copilot
+
+# ----------------------------------------------------------------------------
+# DEPLOYMENT COMMANDS (for operators)
+# ----------------------------------------------------------------------------
+deployment_commands:
+  r2_baseline: |
+    # All deployments to ipai-copilot in East US 2, Global Standard SKU
+    az cognitiveservices account deployment create \
+      --name <foundry-account-name> \
+      --resource-group <foundry-rg> \
+      --deployment-name gpt-4.1 \
+      --model-name gpt-4.1 \
+      --model-version "2025-04-14" \
+      --model-format OpenAI \
+      --sku-name GlobalStandard \
+      --sku-capacity 100
+
+    # Repeat for: gpt-4.1-mini, gpt-4.1-nano, gpt-4o, gpt-4o-mini,
+    #             text-embedding-3-large, gpt-image-1
+
+# ----------------------------------------------------------------------------
+# ANCHORS
+# ----------------------------------------------------------------------------
+anchors:
+  - CLAUDE.md (Azure-native doctrine)
+  - memory/project_foundry_models_onboarded_20260415.md
+  - memory/feedback_foundry_reuse_doctrine.md (one shared Foundry)
+  - spec/pulser-inline-viz/plan.md (viz renderer model choice)
+  - agents/skills/viz_renderer/SKILL.md (consumer)
+  - agents/skills/scrum_master/SKILL.md (consumer)

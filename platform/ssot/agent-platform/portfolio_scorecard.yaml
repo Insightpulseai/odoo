@@ -1,0 +1,305 @@
+# =============================================================================
+# Agent Portfolio Scorecard — SSOT
+# =============================================================================
+# Snapshot of all active agents with maturity, stage, readiness, and promotion
+# path. Updated alongside passport changes. Derived from agents/passports/*.yaml.
+#
+# Generated: 2026-03-19
+# =============================================================================
+
+id: agent_portfolio_scorecard
+version: 1.0.0
+snapshot_date: "2026-03-19"
+status: baseline
+
+# -----------------------------------------------------------------------------
+# Summary
+# -----------------------------------------------------------------------------
+summary:
+  total_active: 12
+  makers: 6
+  judges: 6
+  legacy_retained: 3
+  legacy_superseded: 3
+
+  maturity_distribution:
+    L0: 4
+    L1: 4
+    L2: 2
+    L3: 1
+    L4: 0
+    L5: 0
+
+  stage_distribution:
+    S01: 2   # customer-value-judge, platform-fit-judge
+    S02: 2   # governance-judge, finops-judge
+    S03: 2   # architecture-judge, security-judge
+    S04: 1   # data-intelligence
+    S05: 2   # azure-platform, foundry-agent
+    S07: 2   # chief-architect, release-ops
+    S09: 1   # odoo-runtime
+
+  promotion_readiness:
+    ready_for_promotion: 0
+    blocked: 0
+    needs_evidence: 12
+
+# -----------------------------------------------------------------------------
+# Maker Agents
+# -----------------------------------------------------------------------------
+makers:
+  - id: chief-architect
+    maturity: L2
+    stage: S07
+    domain: orchestration
+    health: green
+    promotion_path:
+      next_level: L3
+      next_stage: S08
+      blockers:
+        - canary deployment not yet configured
+        - human-approval workflow not yet wired
+      evidence_needed:
+        - integration_test_results
+        - judge_score_ge_70
+        - error_rate_lt_5_percent
+    risk: low
+    notes: Strong architecture artifacts. Needs runtime execution evidence.
+
+  - id: azure-platform
+    maturity: L1
+    stage: S05
+    domain: infrastructure
+    health: yellow
+    promotion_path:
+      next_level: L2
+      next_stage: S06
+      blockers:
+        - no integration tests against live Azure resources
+        - staging environment isolation not validated
+      evidence_needed:
+        - integration_test_results
+        - staging_deployment_log
+        - error_recovery_demonstration
+    risk: medium
+    notes: Infra provisioning scripts exist but agent execution is untested.
+
+  - id: odoo-runtime
+    maturity: L3
+    stage: S09
+    domain: erp
+    health: green
+    promotion_path:
+      next_level: L4
+      next_stage: S10
+      blockers:
+        - no 30-day supervised production log
+        - cost projection under load not measured
+      evidence_needed:
+        - canary_success_rate_ge_95
+        - human_override_rate_lt_15_percent
+        - cost_per_task_within_budget
+        - no_critical_incidents_in_7_days
+    risk: low
+    notes: Highest maturity. Inherits odoo-sage production capabilities. Closest to autonomous production.
+
+  - id: foundry-agent
+    maturity: L1
+    stage: S05
+    domain: agent-platform
+    health: yellow
+    promotion_path:
+      next_level: L2
+      next_stage: S06
+      blockers:
+        - Azure AI Foundry project not yet provisioned (P0 blocker)
+        - Knowledge index needs seeding
+      evidence_needed:
+        - integration_test_results
+        - staging_deployment_log
+        - latency_baseline_measurement
+    risk: high
+    notes: Critical path for agent platform but blocked on Foundry provisioning.
+
+  - id: data-intelligence
+    maturity: L1
+    stage: S04
+    domain: data
+    health: yellow
+    repo_status: split_required
+    canonical_repo: data-intelligence
+    current_surface:
+      - infra/databricks/
+      - odoo/infra/databricks/sql/
+      - lakehouse/contracts/
+    blocking_gate: standalone_repo_creation_and_asset_consolidation
+    next_major_milestone: bootstrap_data_intelligence_repo
+    split_plan: docs/architecture/data-intelligence/repo-split-plan.md
+    promotion_path:
+      next_level: L2
+      next_stage: S06
+      blockers:
+        - standalone data-intelligence repo not yet created
+        - Databricks credentials not scoped for agent use
+        - DLT pipeline not yet tested end-to-end
+        - active assets scattered across 3 monorepo paths
+      evidence_needed:
+        - repo_created_and_assets_migrated
+        - integration_test_results
+        - staging_deployment_log
+        - error_recovery_demonstration
+    risk: medium-high
+    notes: >-
+      No standalone repo exists. Assets embedded in monorepo under
+      infra/databricks/, odoo/infra/databricks/sql/, lakehouse/contracts/.
+      Repo split is a prerequisite for L2 promotion.
+
+  - id: release-ops
+    maturity: L2
+    stage: S07
+    domain: devops
+    health: green
+    promotion_path:
+      next_level: L3
+      next_stage: S08
+      blockers:
+        - canary deployment pattern not implemented
+        - cost ceiling enforcement not configured
+      evidence_needed:
+        - canary_deployment_metrics
+        - human_approval_workflow_verification
+        - rollback_procedure_tested
+    risk: low
+    notes: CI/CD pipelines are production-grade. Good candidate for next promotion.
+
+# -----------------------------------------------------------------------------
+# Judge Agents
+# -----------------------------------------------------------------------------
+judges:
+  - id: architecture-judge
+    maturity: L1
+    stage: S03
+    domain: governance
+    pass_threshold: 75
+    health: green
+    activation_status: ready
+    notes: Review lens is well-defined. Needs first real evaluation run.
+
+  - id: security-judge
+    maturity: L1
+    stage: S03
+    domain: governance
+    pass_threshold: 90
+    health: green
+    activation_status: ready
+    notes: Highest threshold. Should be first judge activated — security is non-negotiable.
+
+  - id: governance-judge
+    maturity: L0
+    stage: S02
+    domain: governance
+    pass_threshold: 70
+    health: yellow
+    activation_status: needs_rubric
+    notes: Needs formalized rubric before activation. Reviews factory's own compliance.
+
+  - id: finops-judge
+    maturity: L0
+    stage: S02
+    domain: governance
+    pass_threshold: 65
+    health: yellow
+    activation_status: needs_rubric
+    notes: Cost baselines not yet established. Needs benchmark data before scoring.
+
+  - id: customer-value-judge
+    maturity: L0
+    stage: S01
+    domain: governance
+    pass_threshold: 60
+    health: yellow
+    activation_status: needs_rubric
+    notes: Most subjective judge. Needs explicit value criteria per domain.
+
+  - id: platform-fit-judge
+    maturity: L0
+    stage: S01
+    domain: governance
+    pass_threshold: 70
+    health: yellow
+    activation_status: needs_rubric
+    notes: Can leverage existing CLAUDE.md rules and naming conventions as rubric source.
+
+# -----------------------------------------------------------------------------
+# Promotion Priority Queue
+# -----------------------------------------------------------------------------
+promotion_priority:
+  - agent: odoo-runtime
+    from: L3
+    to: L4
+    priority: P1
+    reason: Highest maturity, closest to autonomous production
+    gate: 30-day supervised production log + cost projection
+
+  - agent: chief-architect
+    from: L2
+    to: L3
+    priority: P1
+    reason: Orchestrator must lead maturity curve
+    gate: canary deployment + human-approval workflow
+
+  - agent: release-ops
+    from: L2
+    to: L3
+    priority: P1
+    reason: CI/CD is production-grade, needs runtime evidence
+    gate: canary metrics + rollback procedure test
+
+  - agent: foundry-agent
+    from: L1
+    to: L2
+    priority: P0-blocked
+    reason: Critical path but blocked on Foundry provisioning
+    gate: Foundry project provisioned + integration tests
+
+  - agent: azure-platform
+    from: L1
+    to: L2
+    priority: P2
+    reason: Infra exists but agent execution untested
+    gate: Integration tests against live Azure
+
+  - agent: data-intelligence
+    from: L1
+    to: L2
+    priority: P2
+    reason: Pipelines scaffolded but no standalone repo — split required before promotion
+    gate: Repo created + assets migrated + DLT test + credential verification
+
+# -----------------------------------------------------------------------------
+# Key Risks
+# -----------------------------------------------------------------------------
+risks:
+  - id: RISK-01
+    description: Foundry project not provisioned — blocks foundry-agent and all hosted agent capabilities
+    severity: high
+    mitigation: Provision Azure AI Foundry project in rg-ipai-ai-dev
+    owner: platform-team
+
+  - id: RISK-02
+    description: No judge agents have run a real evaluation yet — thresholds are untested
+    severity: medium
+    mitigation: Run security-judge and architecture-judge against odoo-runtime as first eval
+    owner: platform-team
+
+  - id: RISK-03
+    description: Task bus is design-only — no runtime messages flowing
+    severity: medium
+    mitigation: Implement Phase 1 (AF-010 to AF-019) of agent-factory tasks
+    owner: platform-team
+
+  - id: RISK-04
+    description: Passport schema is not yet CI-enforced — passports could drift
+    severity: low
+    mitigation: Add passport schema validation to agent-factory-ssot-check workflow
+    owner: platform-team

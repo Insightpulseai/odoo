@@ -1,0 +1,9 @@
+# TODO: implement
+# Referenced by: ssot/governance/agent-interop-matrix.yaml
+# Purpose: validate Agent Cards + interop matrix on every PR
+trigger: none
+pool:
+  vmImage: ubuntu-latest
+steps:
+  - script: echo "TODO — implement agent card + interop matrix validation"
+    displayName: placeholder

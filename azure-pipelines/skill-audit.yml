@@ -1,0 +1,108 @@
+# azure-pipelines/skill-audit.yml
+# Skill drift audit gate — enforces librarian-indexer v3 doctrine rules
+# Triggered by changes to agents/skills/ or docs/*.md
+# Per: .claude/skills/librarian-indexer/SKILL.md §6
+# Per: CLAUDE.md 2026-04-14 revision (Azure Pipelines sole CI/CD authority)
+
+trigger:
+  branches:
+    include: [main]
+  paths:
+    include:
+      - agents/skills/**/*.md
+      - docs/**/*.md
+      - .claude/skills/**/*.md
+
+pr:
+  branches:
+    include: [main]
+  paths:
+    include:
+      - agents/skills/**/*.md
+      - docs/**/*.md
+      - .claude/skills/**/*.md
+
+pool:
+  name: ipai-build-agent
+
+variables:
+  - name: driftPatterns
+    value: 'GitHub Actions|\.github/workflows|supabase|Supabase|Vercel|vercel|n8n|DigitalOcean|Cloudflare|cloudflare|DockerHub|dockerhub|Odoo 19|odoo19|<tree>|view_mode="tree|nginx'
+
+jobs:
+  - job: SkillDriftCheck
+    displayName: Skill drift audit
+    steps:
+      - checkout: self
+        clean: true
+
+      - script: |
+          set -e
+          # Exclude lines that document deprecation (negative context is expected)
+          VIOLATIONS=$(grep -rn -E "$(driftPatterns)" \
+            agents/skills/ docs/ .claude/skills/ \
+            --include="*.md" 2>/dev/null \
+            | grep -v -iE "DEPRECATED|deprecated|removed|forbidden|NEVER|never use|do not use|banned|stale|legacy" \
+            | tee /tmp/skill-drift.txt \
+            | wc -l)
+
+          echo "Drift violations detected: $VIOLATIONS"
+          if [ "$VIOLATIONS" -gt 0 ]; then
+            echo "---Sample violations (first 30)---"
+            head -30 /tmp/skill-drift.txt
+            echo "##vso[task.logissue type=error]Skill drift: $VIOLATIONS violations (see /tmp/skill-drift.txt)"
+            exit 1
+          fi
+          echo "##vso[task.setvariable variable=driftClean]true"
+          echo "PASS — zero drift violations"
+        displayName: "Drift pattern scan"
+
+      - script: |
+          set -e
+          python - << 'PYEOF'
+          import os, yaml, sys
+          failures = []
+          for root, dirs, files in os.walk('agents/skills'):
+              for f in files:
+                  if f == 'SKILL.md':
+                      path = os.path.join(root, f)
+                      try:
+                          with open(path) as fh:
+                              content = fh.read()
+                      except Exception as e:
+                          failures.append(f"{path}: read error: {e}")
+                          continue
+                      if not content.startswith('---'):
+                          failures.append(f"{path}: missing frontmatter")
+                          continue
+                      parts = content.split('---', 2)
+                      if len(parts) < 3:
+                          failures.append(f"{path}: malformed frontmatter")
+                          continue
+                      try:
+                          meta = yaml.safe_load(parts[1])
+                          if not meta or 'name' not in meta:
+                              failures.append(f"{path}: missing 'name' field")
+                          if not meta or 'description' not in meta:
+                              failures.append(f"{path}: missing 'description' field")
+                      except Exception as e:
+                          failures.append(f"{path}: YAML parse error: {e}")
+          if failures:
+              for f in failures: print(f"ERROR: {f}")
+              print(f"\nTotal frontmatter failures: {len(failures)}")
+              sys.exit(1)
+          print("OK: all SKILL.md files have valid frontmatter")
+          PYEOF
+        displayName: "Frontmatter validation"
+
+  - job: AuditReport
+    displayName: Generate audit report
+    dependsOn: SkillDriftCheck
+    condition: always()
+    steps:
+      - script: |
+          mkdir -p docs/evidence/$(date +%Y%m%d-%H%M)/skill-audit
+          cp /tmp/skill-drift.txt docs/evidence/$(date +%Y%m%d-%H%M)/skill-audit/drift-scan.txt 2>/dev/null || echo "No drift file to archive"
+          echo "Audit artifact saved to docs/evidence/"
+        displayName: "Archive drift scan"
+        continueOnError: true

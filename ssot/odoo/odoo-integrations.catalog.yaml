@@ -1,0 +1,70 @@
+---
+# Odoo 18 Integration Catalog — SSOT
+# Source: https://www.odoo.com/documentation/18.0/applications/general/integrations.html
+# Classification: user-facing integration catalog truth
+# NOT: identity truth, tenant truth, ORM/schema truth, semantic truth
+contract_version: 1
+
+odoo_integration_catalog:
+  source:
+    type: odoo_official_user_docs
+    url: https://www.odoo.com/documentation/18.0/applications/general/integrations.html
+    classification: user_facing_integration_catalog_truth
+
+  usage_rules:
+    use_for:
+      - supported_connector_inventory
+      - admin_enablement_reference
+      - integration_category_classification
+      - benchmarking_ce_vs_oca_vs_bridge
+    do_not_use_for:
+      - oauth_registration_truth
+      - entra_enterprise_app_truth
+      - customer_tenant_truth
+      - orm_schema_truth
+      - semantic_model_truth
+
+  categories:
+    mail_plugins:
+      - outlook_plugin
+      - gmail_plugin
+
+    finance_integrations:
+      - avatax_integration
+      - ponto
+      - silverfin_integration
+
+    payment_integrations:
+      - adyen
+      - authorize_net
+      - paypal
+      - razorpay
+      - stripe
+      - worldline
+      - xendit
+      - mollie
+      - flutterwave
+      - mercado_pago
+      - nuvei
+      - asiapay
+      - buckaroo
+      - amazon_payment_services
+
+    sales_marketplace_connectors:
+      - amazon_connector
+      - shopee_connector
+      - gelato
+
+    website_integrations:
+      - google_search_console
+      - address_autocomplete
+      - cdn
+
+    pos_integrations:
+      - epos_printers
+      - qr_code_payments
+      - payment_terminals
+
+  integration_posture:
+    core_odoo_catalog_only: true
+    oca_or_bridge_evaluation_required_before_custom_build: true

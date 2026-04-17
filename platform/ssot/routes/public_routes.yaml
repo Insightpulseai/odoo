@@ -1,0 +1,78 @@
+# SSOT: Public Route Registry
+# Cross-referenced by: docs/architecture/INSIGHTPULSEAI_TARGET_STATE_ARCHITECTURE.md §2.1
+# Updated: 2026-03-25
+
+version: "1.0.0"
+
+edge: azure_front_door
+resource: ipai-fd-dev
+
+routes:
+  landing:
+    path: /
+    method: GET
+    auth: public
+    backend: ipai-website-dev
+    service: Landing page / marketing
+    repo: web/ipai-landing/
+
+  ask_pulser:
+    path: /ask
+    method: GET
+    auth: public_anonymous
+    backend: ipai-copilot-gateway
+    service: Ask Pulser (read-only, no PII)
+    repo: web/packages/pulser-widget/
+    agent: ask-pulser-agent
+    grounding: [approved_public_docs, pricing_faq, architecture_pages, release_notes]
+
+  lead_capture:
+    path: /api/v1/leads
+    method: POST
+    auth: public_captcha
+    backend: ipai-api-facade
+    service: Lead capture → Odoo crm.lead
+    repo: web/packages/api-facade/
+    odoo_target: crm.lead.create
+
+  demo_booking:
+    path: /api/v1/demo
+    method: POST
+    auth: public_captcha
+    backend: ipai-api-facade
+    service: Demo booking → Odoo calendar.event
+    repo: web/packages/api-facade/
+    odoo_target: calendar.event.create
+
+  contact:
+    path: /api/v1/contact
+    method: POST
+    auth: public_captcha
+    backend: ipai-api-facade
+    service: Contact form → Odoo mail
+    repo: web/packages/api-facade/
+    odoo_target: mail.mail.create
+
+  odoo_erp:
+    path: /erp/*
+    method: "*"
+    auth: entra_oidc
+    backend: ipai-odoo-dev-web
+    service: Odoo ERP (authenticated)
+    hostname: erp.insightpulseai.com
+
+  document_ocr:
+    path: /ocr/*
+    method: POST
+    auth: entra_bearer
+    backend: ipai-ocr-dev
+    service: Document upload + OCR
+    hostname: ocr.insightpulseai.com
+
+  mcp:
+    path: /mcp/*
+    method: "*"
+    auth: entra_managed_identity
+    backend: ipai-mcp-dev
+    service: MCP tool coordination (internal)
+    hostname: mcp.insightpulseai.com

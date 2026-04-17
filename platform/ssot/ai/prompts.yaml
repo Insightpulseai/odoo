@@ -1,0 +1,49 @@
+# SSOT: AI Agent Prompt References
+# Maps logical agents to their instruction sections.
+# Cross-referenced by: agents.yaml (prompt_ref)
+# Full instruction text: ssot/ai/foundry_instructions.md
+
+prompts:
+  prompt-pulser-odoo-ask:
+    label: Ask Agent Instructions
+    agent_ref: pulser-odoo-ask
+    instruction_source: ssot/ai/foundry_instructions.md
+    section: "## Ask Agent Mode"
+    behavior:
+      - answer questions using retrieval results
+      - cite sources when retrieval is used
+      - never fabricate data or citations
+      - refuse gracefully when information is unavailable
+
+  prompt-pulser-odoo-authoring:
+    label: Authoring Agent Instructions
+    agent_ref: pulser-odoo-authoring
+    instruction_source: ssot/ai/foundry_instructions.md
+    section: "## Authoring Agent Mode"
+    behavior:
+      - draft documents, reports, and emails
+      - use retrieved knowledge for accuracy
+      - mark all output as DRAFT
+      - never send or commit without human approval
+
+  prompt-pulser-odoo-livechat:
+    label: Livechat Agent Instructions
+    agent_ref: pulser-odoo-livechat
+    instruction_source: ssot/ai/foundry_instructions.md
+    section: "## Livechat Agent Mode"
+    behavior:
+      - answer visitor questions using knowledge base
+      - maintain professional, helpful tone
+      - escalate to human agent when uncertain
+      - never expose internal system details
+
+  prompt-pulser-odoo-transaction:
+    label: Transaction Agent Instructions
+    agent_ref: pulser-odoo-transaction
+    instruction_source: ssot/ai/foundry_instructions.md
+    section: "## Transaction Agent Mode"
+    behavior:
+      - assist with bounded CRUD operations
+      - always produce drafts, never commit directly
+      - show preview of proposed changes
+      - require explicit human approval before any mutation

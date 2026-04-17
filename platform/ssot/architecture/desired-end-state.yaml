@@ -1,0 +1,144 @@
+version: 1
+artifact: ssot/architecture/desired-end-state.yaml
+status: proposed
+last_updated: 2026-04-14
+
+doctrine:
+  benchmark_scope: [Finance, Finance Agents, Project Operations]
+  planes: [Transaction, Data Intelligence, Agent, Delivery]
+  engineering_truth: GitHub
+  planning_governance: Azure DevOps (aware)
+  module_priority: [CE, OCA, ipai_* thin adapters]
+
+surfaces:
+  public:
+    - url: insightpulseai.com
+      role: main brand and product site
+      planes: [agent, transaction, delivery]
+    - url: prismalab.insightpulseai.com
+      role: research services site
+      planes: [agent, transaction, delivery]
+    - url: w9studio.net
+      role: studio booking and inquiry
+      planes: [agent, transaction, delivery]
+  internal:
+    - name: Pulser/Odoo ERP
+      role: canonical transactional operating system
+      planes: [transaction, delivery]
+    - name: Assistant admin console
+      role: authenticated control plane for agents and MCPs
+      planes: [agent, delivery]
+    - name: Analytics / reporting app
+      role: governed reporting surface
+      planes: [data intelligence, delivery]
+
+mcp_strategy:
+  shared_layer: true
+  target_mcps:
+    - Content
+    - CRM
+    - Scheduling
+    - Odoo/ERP
+    - Knowledge
+    - Documents
+    - Email
+    - Analytics (P2)
+    - Payments (P2)
+
+repo_adoption:
+  consume_directly:
+    - AVM / Bicep modules
+    - Agent Framework
+    - Azure DevOps MCP
+    - Playwright
+  clone_reference:
+    - Azure/Microsoft Samples
+    - Foundry Templates
+    - Selected OCA repos
+    - Odoo core (upstream reference)
+  own_directly:
+    - infra composition
+    - SSOT
+    - Pulser tools/policies
+    - Odoo thin adapters
+    - tests and delivery doctrine
+
+oca_must_haves:
+  ppm:
+    - project_parent
+    - project_group
+    - project_department
+    - project_type
+    - project_version
+    - project_key
+    - project_template
+    - project_task_ancestor
+    - project_task_parent_completion_blocking
+    - project_task_parent_due_auto
+    - project_task_stage_mgmt
+    - project_task_stage_change_restriction
+    - project_task_stage_state
+    - project_task_code
+    - project_task_name_with_id
+    - project_task_wbs
+    - project_stakeholder
+    - project_reviewer
+    - project_role
+    - project_timeline
+    - project_timeline_hr_timesheet
+    - project_pivot
+  finance:
+    - mis_builder
+    - mis_builder_budget
+    - account_consolidation
+    - credit_control
+    - account_financial_report
+  governance_ops:
+    - hr_timesheet_sheet
+    - hr_timesheet_sheet_policy_project_manager
+    - hr_timesheet_begin_end
+    - project_timesheet_time_control
+    - hr_expense_advance_clearing
+    - hr_expense_advance_clearing_sequence
+    - hr_expense_payment
+    - hr_expense_sequence
+    - hr_expense_tier_validation
+    - base_tier_validation
+    - dms
+    - dms_field
+    - document_page_approval
+    - queue_job
+    - auditlog
+    - helpdesk_mgmt
+
+governance:
+  naming_grammar: "<type>-<org>-<env>-<workload>-<region>"
+  required_tags:
+    - org
+    - platform
+    - env
+    - plane
+    - workload
+    - service
+    - owner
+    - managed_by
+    - criticality
+    - cost_center
+    - data_classification
+    - dr_tier
+    - backup_policy
+    - ops_state
+    - billing_scope
+
+testing_stack:
+  transactional: Odoo native testing
+  browser_automation: Playwright
+  manual_uat: Azure Test Plans
+  diagnostics: Chrome DevTools MCP
+
+boards:
+  canonical_epics:
+    - D365 Finance Parity
+    - Finance Agents Parity
+    - D365 Project Operations Parity
+  hierarchy: Epic -> Issue -> Task

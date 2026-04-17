@@ -1,0 +1,167 @@
+# Entra ID RBAC Role Definitions — IPAI Platform
+# SSOT for security group → app role mappings across all platform apps
+# Spec: spec/entra-identity-migration/
+# Created: 2026-03-22
+
+roles:
+
+  # ─── Role 1: Platform Administrator ────────────────────────────────
+  - id: platform-admin
+    entra_group: SG-IPAI-Admin
+    description: Full platform administration across all apps
+    scope: all-apps
+    mfa_required: true
+    conditional_access: CA-001, CA-004
+    app_mappings:
+      odoo:
+        groups:
+          - base.group_system
+          - base.group_erp_manager
+        description: Full Odoo system admin
+      plane:
+        role: admin
+        description: Workspace admin with God Mode access
+      superset:
+        role: Admin
+        description: Full Superset admin (datasources, dashboards, users)
+      n8n:
+        role: owner
+        description: Workflow owner, credential management
+      shelf:
+        role: admin
+        description: Full Shelf admin
+      crm:
+        role: admin
+        description: Full CRM admin
+
+  # ─── Role 2: Finance Manager ───────────────────────────────────────
+  - id: finance-manager
+    entra_group: SG-IPAI-Finance-Manager
+    description: Finance operations lead — accounting, reporting, close, compliance oversight
+    scope: finance-apps
+    mfa_required: true
+    conditional_access: CA-002
+    app_mappings:
+      odoo:
+        groups:
+          - account.group_account_manager
+          - project.group_project_manager
+          - ipai_finance_ppm.group_ipai_ppm_manager
+        description: Full accounting + project management for finance workflows
+      plane:
+        role: member
+        projects: [COMPLY, ERP, DATA]
+        description: Finance compliance and ERP project access
+      superset:
+        role: Alpha
+        description: Create/edit dashboards, access all finance datasources
+      n8n:
+        role: editor
+        description: Edit finance automation workflows
+
+  # ─── Role 3: Finance User ─────────────────────────────────────────
+  - id: finance-user
+    entra_group: SG-IPAI-Finance-User
+    description: Finance team member — invoicing, expense, day-to-day accounting
+    scope: finance-apps
+    mfa_required: false
+    conditional_access: null
+    app_mappings:
+      odoo:
+        groups:
+          - account.group_account_invoice
+          - project.group_project_user
+        description: Invoice creation, expense submission, task execution
+      plane:
+        role: member
+        projects: [COMPLY]
+        description: View compliance tasks and wiki
+      superset:
+        role: Gamma
+        description: View-only dashboards
+
+  # ─── Role 4: Project Manager ───────────────────────────────────────
+  - id: project-manager
+    entra_group: SG-IPAI-Project-Manager
+    description: Project and delivery management — milestones, resources, profitability
+    scope: project-apps
+    mfa_required: false
+    conditional_access: null
+    app_mappings:
+      odoo:
+        groups:
+          - project.group_project_manager
+          - hr_timesheet.group_hr_timesheet_approver
+        description: Project management, timesheet approval, resource allocation
+      plane:
+        role: member
+        projects: [ARCH, SPEC, INFRA, ERP, AI, DATA]
+        description: Full project member across delivery projects
+      superset:
+        role: Alpha
+        description: Create/edit project dashboards
+
+  # ─── Role 5: BIR Tax Approver ─────────────────────────────────────
+  - id: bir-approver
+    entra_group: SG-IPAI-BIR-Approver
+    description: BIR compliance approver — tax filing approval, compliance sign-off
+    scope: compliance
+    mfa_required: true
+    conditional_access: CA-002
+    app_mappings:
+      odoo:
+        groups:
+          - account.group_account_manager
+          - ipai_bir_tax_compliance.group_ipai_bir_approver
+        description: Approve tax computations, filings, and compliance tasks
+      plane:
+        role: member
+        projects: [COMPLY]
+        description: Compliance project access for BIR approvals
+      superset:
+        role: Gamma
+        description: View tax/compliance dashboards
+
+  # ─── Role 6: Project User ─────────────────────────────────────────
+  - id: project-user
+    entra_group: SG-IPAI-Project-User
+    description: General project contributor — task execution, time tracking
+    scope: project-apps
+    mfa_required: false
+    conditional_access: null
+    app_mappings:
+      odoo:
+        groups:
+          - project.group_project_user
+          - hr_timesheet.group_hr_timesheet_user
+        description: Task execution, timesheet entry
+      plane:
+        role: member
+        projects: []  # assigned per-project as needed
+        description: Basic Plane member, project-specific access
+      superset:
+        role: Gamma
+        description: View-only dashboards
+
+  # ─── Role 7: Agent Workload (Non-Human) ────────────────────────────
+  - id: agent-workload
+    entra_group: null  # managed identity, not security group
+    description: AI agent runtime identity — managed identity on ACA, not a human user
+    scope: agent-runtime
+    mfa_required: false  # managed identities are not subject to MFA
+    conditional_access: null  # governed via RBAC + Key Vault + monitoring
+    app_mappings:
+      odoo:
+        groups: []
+        description: API access via ipai_odoo_copilot bridge (not a login user)
+      plane:
+        role: null
+        description: API access via Plane API key (not a login user)
+      superset:
+        role: null
+        description: No direct Superset access (reads via Databricks/PG)
+    governance:
+      auth_method: Azure Managed Identity (system-assigned)
+      key_vault: kv-ipai-dev
+      monitoring: Azure Monitor + Entra sign-in logs
+      future: Entra Agent ID (when GA/Frontier access confirmed)

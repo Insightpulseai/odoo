@@ -1,0 +1,86 @@
+# FinOps workload-onboarding SSOT
+# Aligns to Microsoft FinOps Framework "Onboarding workloads" capability.
+# Every new Azure workload onboarded to the IPAI platform MUST pass this checklist.
+# CI gate: azure-pipelines/templates/finops-export-validate.yml (extension planned)
+# Locked 2026-04-15.
+
+schema_version: "1.0"
+reference: https://learn.microsoft.com/en-us/cloud-computing/finops/capabilities-onboarding
+
+required_tags:
+  - name: product
+    description: Product family this workload serves
+    allowed_values: [pulser, odoo, prismalab, w9, shared]
+  - name: costCenter
+    description: Chargeback bucket
+    pattern: '^ipai-[a-z-]+$'
+  - name: environment
+    description: Deployment lifecycle stage
+    allowed_values: [dev, staging, prod]
+  - name: owner
+    description: Responsible team / persona
+    pattern: '^[a-z-]+$'
+
+optional_tags:
+  - name: tenant
+    description: res.company mapping (multi-tenant runtime)
+    allowed_values:
+      1: IPAI
+      2: W9
+      3: OMC        # pending go-live
+      4: TBWA_SMP   # prospect
+  - name: benchmark
+    description: Reference architecture this workload implements
+    examples: [d365-finance, d365-project-ops, fabric-for-finops, cdm-lake, agentic-app]
+
+onboarding_checklist:
+  substrate:
+    - tagged_with_required_tags: true
+    - bicep_iac_lives_in: infra/azure/
+    - no_portal_only_drift: true
+    - network_acls_configured: true
+    - no_shared_keys: prefer managed identity
+
+  identity_and_secrets:
+    - managed_identity_assigned: true
+    - key_vault_reference_for_secrets: true
+    - no_secrets_in_git: true
+    - principal_of_least_privilege: true
+
+  observability:
+    - application_insights_connected: true
+    - log_analytics_workspace: la-ipai-dev
+    - diagnostic_settings_enabled: true
+    - alert_rules_on_action_group: ag-ipai-dev-oncall
+
+  finops:
+    - budget_line_item_created: true
+    - allocation_dimension_mapped: true   # per cost-allocation-model.yaml
+    - forecast_horizon_days: 90
+    - variance_threshold_pct: 20
+
+  governance:
+    - spec_bundle_exists: true            # under spec/ or docs/runbooks/
+    - deprovisioning_runbook_documented: true
+    - owner_named_in_ssot: true
+    - ssot_entry_in: ssot/apps/desired-end-state-matrix.yaml
+
+  security:
+    - disable_local_auth_where_possible: true
+    - private_endpoints_for_data_plane: prefer
+    - defender_for_cloud_coverage: true
+    - content_safety_for_ai_surfaces: required_if_agentic
+
+review_cadence:
+  dev: weekly
+  staging: weekly
+  prod: monthly
+  finops_quarterly_review: true
+
+enforcement:
+  pipeline: azure-pipelines/templates/finops-export-validate.yml
+  tag_policy: infra/azure/policy/required-tags.bicep   # to author
+  exemption_process:
+    who_approves: platform owner + finance owner
+    documented_in: docs/decisions/
+    review_period_days: 90

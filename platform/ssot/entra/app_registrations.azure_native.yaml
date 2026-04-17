@@ -1,0 +1,219 @@
+schema_version: 1
+kind: entra_app_registrations
+scope: azure_native_with_odoo_backend
+
+tenant:
+  primary_domain: insightpulseai.com
+  fallback_domain: ceoinsightpulseai.onmicrosoft.com
+
+selection_policy:
+  include:
+    - Azure/Microsoft-native platform operations
+    - Odoo backend and Odoo workforce sign-in because Odoo is a first-class Azure-hosted workload
+  exclude:
+    - Tableau-specific identities
+    - Diva Goals identities
+    - legacy n8n identities
+    - external-federation identities whose primary caller is not Azure-native or Odoo workload-native
+
+benchmark_policy:
+  sap_reference:
+    enabled: true
+    classification: benchmark_only
+    implementation_dependency: false
+    note: >
+      SAP remains a reference benchmark for workload lifecycle/operator patterns.
+      The Azure CLI workloads extension is SAP-focused and is not a canonical
+      implementation dependency for the Odoo backend lane.
+
+registrations:
+  - key: ipai_odoo_login_prod
+    canonical_name: ipai-odoo-login-prod
+    current_display_name: InsightPulseAI Odoo Login
+    client_id: 07bd9669-1eca-4d93-8880-fd3abb87f812
+    created_on: "2026-03-23"
+    status: current
+    lifecycle: active
+    azure_native: true
+    workload_class: odoo_backend
+    primary_boundary: odoo_workforce_login
+    app_type: web_confidential_client
+    intended_use:
+      - odoo_user_sign_in
+      - entra_federated_login
+    auth_policy:
+      preferred_library: msal
+      deprecated:
+        - adal
+        - azure_ad_graph
+      resource_api_policy:
+        use_microsoft_graph: true
+    odoo_contract:
+      redirect_uri_path: /auth_oauth/signin
+      redirect_uris:
+        - "https://erp.insightpulseai.com/auth_oauth/signin"
+      single_tenant_preferred: true
+      external_oauth_providers:
+        - google_workspace  # tracked in infra/ssot/auth/oidc_clients.yaml, not here
+    ownership:
+      minimum_owners: 2
+      required_roles:
+        - primary_platform_owner
+        - secondary_recovery_owner
+    governance:
+      least_privilege_required: true
+      periodic_review_required: true
+      redirect_uri_review_required: true
+    notes:
+      - canonical interactive Entra login app for Odoo
+      - keep separate from admin CLI and automation identities
+
+  - key: ipai_odoo_api_prod
+    canonical_name: ipai-odoo-api-prod
+    current_display_name: InsightPulse AI - Odoo ERP
+    client_id: 3605a67d-7135-44a0-8640-03a9b4225923
+    created_on: "2026-03-18"
+    status: review_required
+    lifecycle: active
+    azure_native: true
+    workload_class: odoo_backend
+    primary_boundary: odoo_backend_or_api
+    app_type: confidential_client
+    intended_use:
+      - odoo_backend_integration
+      - protected_api_or_service_identity
+    auth_policy:
+      preferred_library: msal
+      deprecated:
+        - adal
+        - azure_ad_graph
+      resource_api_policy:
+        use_microsoft_graph: true
+    ownership:
+      minimum_owners: 2
+      required_roles:
+        - primary_platform_owner
+        - secondary_recovery_owner
+    governance:
+      least_privilege_required: true
+      periodic_review_required: true
+      redirect_uri_review_required: false
+    notes:
+      - keep only if this is truly distinct from the Odoo login app
+      - retire or merge if duplicate of interactive sign-in boundary
+
+  - key: ipai_platform_admin_cli_prod
+    canonical_name: ipai-platform-admin-cli-prod
+    current_display_name: IPAI Platform Admin CLI
+    client_id: b0172e9f-b179-4abe-9281-d3b56eda4489
+    created_on: "2026-03-23"
+    status: rotate_required
+    lifecycle: active
+    azure_native: true
+    workload_class: platform_operations
+    primary_boundary: azure_platform_operations
+    app_type: confidential_client
+    intended_use:
+      - platform_admin_operations
+      - operator_cli_access
+      - privileged_platform_automation
+    credential_policy:
+      preferred:
+        - workload_identity_federation
+        - certificate
+      allowed:
+        - client_secret
+      current_risk: expiring_soon
+    auth_policy:
+      preferred_library: msal
+      deprecated:
+        - adal
+        - azure_ad_graph
+      resource_api_policy:
+        use_microsoft_graph: true
+    ownership:
+      minimum_owners: 2
+      required_roles:
+        - primary_platform_owner
+        - secondary_recovery_owner
+    governance:
+      least_privilege_required: true
+      periodic_review_required: true
+    notes:
+      - rotate or replace current credential immediately
+      - keep separate from Odoo login identities
+
+  - key: ipai_azure_devops_automation_prod
+    canonical_name: ipai-azure-devops-automation-prod
+    current_display_name: InsightPulseAI Azure DevOps Automation
+    client_id: ae2df138-de9a-4a4a-a02b-b8fd8a8925e6
+    created_on: "2026-03-10"
+    status: current
+    lifecycle: active
+    azure_native: true
+    workload_class: platform_operations
+    primary_boundary: azure_devops_automation
+    app_type: confidential_client
+    intended_use:
+      - ci_cd_automation
+      - release_automation
+      - devops_service_integration
+    credential_policy:
+      preferred:
+        - workload_identity_federation
+        - certificate
+      allowed:
+        - client_secret
+      current_risk: review_secret_usage
+    auth_policy:
+      preferred_library: msal
+      deprecated:
+        - adal
+        - azure_ad_graph
+      resource_api_policy:
+        use_microsoft_graph: true
+    ownership:
+      minimum_owners: 2
+      required_roles:
+        - primary_platform_owner
+        - release_ops_owner
+    governance:
+      least_privilege_required: true
+      periodic_review_required: true
+    notes:
+      - keep isolated from interactive login apps
+      - prefer federated identity for pipeline scenarios where supported
+
+policy:
+  naming:
+    required_pattern: "<platform>-<service>-<purpose>-<env>"
+    examples:
+      - ipai-odoo-login-prod
+      - ipai-odoo-api-prod
+      - ipai-platform-admin-cli-prod
+      - ipai-azure-devops-automation-prod
+
+  authentication:
+    preferred_library: msal
+    deprecated_libraries_disallowed:
+      - adal
+      - azure_ad_graph
+    graph_policy:
+      microsoft_graph_required_for_new_work: true
+
+  odoo:
+    azure_signin_supported: true
+    redirect_uri_path: /auth_oauth/signin
+    single_tenant_preferred: true
+
+  benchmarking:
+    sap_operator_model:
+      allowed_as_reference: true
+      allowed_as_runtime_dependency: false
+      rationale: >
+        SAP workload tooling can inform workload-operator and lifecycle design,
+        but Odoo remains the actual backend workload.
+
+  ownership:
+    minimum_owners: 2
+    orphaned_applications_allowed: false

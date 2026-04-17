@@ -1,0 +1,197 @@
+# CANONICAL HOME: data-intelligence repo. This copy in odoo monorepo is
+# transitional until data-intelligence repo is stood up. See ssot/org/repo-map.yaml.
+# ssot/semantic/consumer-access-policy.yaml
+# OData entity set consumer authorization policy
+# Default deny, tenant scope required, company scope where sensitive
+# Customer consumers cannot access internal-only sets
+
+kind: policy
+domain: semantic
+name: consumer-access-policy
+version: "1.0.0"
+status: active
+created: "2026-04-15"
+updated: "2026-04-15"
+
+# Policy bindings reference these companion files:
+references:
+  - file: ssot/semantic/odata-entity-map.yaml
+    relationship: "Defines the entity sets this policy governs"
+  - file: ssot/identity/identity-boundary-policy.yaml  # TODO: create this file
+    relationship: "Defines identity boundaries and authentication requirements"
+  - file: ssot/tenants/tenant-registry.yaml  # TODO: create this file
+    relationship: "Defines tenant identifiers and company mappings"
+
+# --- Consumer Classes ---
+
+consumer_classes:
+
+  - id: bi_internal
+    label: "BI Internal"
+    description: >
+      Power BI workspace connections for internal dashboards and reports.
+      Read-only access to gold-tier semantic entities.
+    auth_method: managed_identity
+    tenant_scope: required
+    company_scope: optional
+
+  - id: pulser_agent_runtime
+    label: "Pulser Agent Runtime"
+    description: >
+      Pulser specialist agents accessing semantic entities for
+      transactional and operational copilot functions.
+    auth_method: managed_identity
+    tenant_scope: required
+    company_scope: required
+
+  - id: customer_embedded_api
+    label: "Customer Embedded API"
+    description: >
+      Customer-facing API endpoints that surface entity data in
+      embedded experiences (portals, mobile apps).
+    auth_method: entra_app_registration
+    tenant_scope: required
+    company_scope: required
+
+  - id: customer_bi_readonly
+    label: "Customer BI Read-Only"
+    description: >
+      Customer-provisioned Power BI workspaces with read-only access
+      to their own tenant's data.
+    auth_method: entra_app_registration
+    tenant_scope: required
+    company_scope: required
+
+  - id: internal_ops
+    label: "Internal Ops"
+    description: >
+      Internal operations team accessing entity data for support,
+      troubleshooting, and operational monitoring.
+    auth_method: managed_identity
+    tenant_scope: required
+    company_scope: optional
+
+  - id: finance_close_ops
+    label: "Finance Close Ops"
+    description: >
+      Finance team executing month-end close procedures. Elevated
+      access to financial entities with audit trail.
+    auth_method: managed_identity
+    tenant_scope: required
+    company_scope: required
+
+  - id: compliance_ops
+    label: "Compliance Ops"
+    description: >
+      Compliance and audit team accessing entity data for regulatory
+      reporting (BIR, tax filings).
+    auth_method: managed_identity
+    tenant_scope: required
+    company_scope: required
+
+# --- Entity Set Policies ---
+
+entity_set_policies:
+
+  - entity_set: Revenue
+    description: "Revenue recognition and invoice data"
+    visibility: customer_visible
+    allowed_consumers:
+      - bi_internal
+      - pulser_agent_runtime
+      - customer_embedded_api
+      - customer_bi_readonly
+      - internal_ops
+      - finance_close_ops
+      - compliance_ops
+    tenant_filter: required
+    company_scope: required
+    notes: "All consumers can access. Tenant + company isolation enforced."
+
+  - entity_set: ProjectBurn
+    description: "Project cost burn-down and budget consumption"
+    visibility: customer_visible
+    allowed_consumers:
+      - bi_internal
+      - pulser_agent_runtime
+      - customer_embedded_api
+      - customer_bi_readonly
+      - internal_ops
+      - finance_close_ops
+    tenant_filter: required
+    company_scope: required
+    notes: "Customer-visible. Compliance ops excluded (not finance-reporting scope)."
+
+  - entity_set: TaxDue
+    description: "Tax obligation and BIR filing data"
+    visibility: customer_visible
+    allowed_consumers:
+      - bi_internal
+      - pulser_agent_runtime
+      - customer_embedded_api
+      - customer_bi_readonly
+      - finance_close_ops
+      - compliance_ops
+    tenant_filter: required
+    company_scope: required
+    notes: "Sensitive financial data. Company scope always required."
+
+  - entity_set: InteractionSummary
+    description: "Agent interaction logs and conversation summaries"
+    visibility: internal_only
+    allowed_consumers:
+      - bi_internal
+      - pulser_agent_runtime
+      - internal_ops
+    tenant_filter: required
+    company_scope: optional
+    denied_consumers:
+      - customer_embedded_api
+      - customer_bi_readonly
+    notes: >
+      Internal-only. Customer consumers CANNOT access interaction data.
+      Contains agent reasoning traces and internal operational context.
+
+# --- Enforcement Rules ---
+
+enforcement_rules:
+
+  - rule: tenant_filter_required
+    description: >
+      Every query MUST include a tenant filter. Queries without tenant
+      scope are rejected at the API gateway level.
+    enforcement: api_gateway
+    exception: none
+
+  - rule: company_scope_on_sensitive
+    description: >
+      Entity sets marked with company_scope: required MUST include a
+      company filter. This prevents cross-company data leakage within
+      a multi-company tenant.
+    enforcement: api_gateway
+    exception: none
+
+  - rule: customer_denial
+    description: >
+      Entity sets with visibility: internal_only MUST deny access to
+      customer_embedded_api and customer_bi_readonly consumer classes.
+      This is enforced at the authorization layer, not the query layer.
+    enforcement: authorization_middleware
+    exception: none
+
+  - rule: managed_identity_reserved
+    description: >
+      Managed identity authentication is reserved for service runtime
+      (Pulser agents, internal ops, BI pipelines, finance/compliance ops).
+      Customer consumers MUST use Entra app registration with OAuth2.
+    enforcement: identity_provider
+    exception: none
+
+# --- Default Policy ---
+
+default_policy:
+  action: deny
+  description: >
+    Any consumer class or entity set combination not explicitly listed
+    in entity_set_policies is denied by default. New entity sets must
+    be added to this policy before consumers can access them.

@@ -1,0 +1,121 @@
+---
+# Azure DevOps Reporting and Portfolio Visibility — Evidence-Based Assessment
+# Generated: 2026-04-16T14:00:00+08:00
+# Authority: companion to PLATFORM_BASELINE_AND_GO_LIVE_STATUS.md v2
+# Status values: planned | repo-defined | provisioned | configured |
+#   verified-nonprod | verified-prod | live | blocked | unknown | stale
+
+schema_version: 1
+audit_date: '2026-04-16'
+auditor: claude-code-evidence-audit
+
+ado_organization: insightpulseai
+ado_project: ipai-platform
+
+# ─── Portfolio / Planning ────────────────────────────────────────────────
+
+portfolio_state:
+  status: configured
+  evidence:
+    - "23 epics in ADO Boards per agent memory (normalized to 9 per project_ado_9_epic_normalization_20260415.md)"
+    - "120+ issues, 250+ tasks per agent memory"
+    - "5 iterations (R1 active) per agent memory"
+    - "9 area paths per normalization"
+  source_quality: agent_memory_not_live_verified
+  notes:
+    - "Board population confirmed via prior session; not re-verified with ADO API this audit"
+    - "Normalization from 23→9 epics documented but implementation not verified"
+
+# ─── Azure DevOps Analytics and OData ────────────────────────────────────
+
+analytics_views:
+  status: unknown
+  evidence: []
+  notes:
+    - "No Analytics views queried or verified this audit"
+    - "OData entity map stub at ssot/semantic/odata-entity-map.yaml"
+    - "Consumer access policy at ssot/semantic/consumer-access-policy.yaml"
+  required_for_reporting:
+    - work_item_analytics_view
+    - pipeline_analytics_view
+    - test_results_analytics_view
+
+odata_endpoint:
+  status: unknown
+  evidence: []
+  notes:
+    - "OData endpoint for ipai-platform not queried"
+    - "Required for Power BI DirectQuery to ADO"
+  expected_url: "https://analytics.dev.azure.com/insightpulseai/ipai-platform/_odata/v4.0-preview/"
+
+# ─── Dashboards ──────────────────────────────────────────────────────────
+
+ado_dashboards:
+  status: unknown
+  evidence: []
+  notes:
+    - "No dashboards verified in ADO portal or via API"
+    - "Required: Sprint burndown, velocity, cumulative flow, pipeline health"
+  reporting_evidence_requirements:
+    - "Refreshable proof required — a dashboard screenshot is insufficient"
+    - "Evidence must show: data recency (last refresh timestamp), query source, and at least one meaningful metric"
+
+# ─── Power BI Integration ────────────────────────────────────────────────
+
+power_bi_ado_integration:
+  status: unknown
+  evidence: []
+  notes:
+    - "Power BI Pro trial license (~expiry 2026-05-20)"
+    - "No semantic model connecting ADO OData to Power BI verified"
+    - "No published ADO reporting workbook"
+  integration_requirements:
+    - odata_connection_configured: unknown
+    - semantic_model_published: unknown
+    - report_published_to_workspace: unknown
+    - scheduled_refresh_configured: unknown
+    - row_level_security_applied: unknown
+
+# ─── Pipeline Analytics ──────────────────────────────────────────────────
+
+pipeline_reporting:
+  status: unknown
+  evidence:
+    - "15 pipeline definitions in azure-pipelines/"
+    - "No pipeline run history collected via API"
+  notes:
+    - "Cannot report on pipeline success/failure rates without run history"
+    - "ADO Pipelines Analytics requires at least 1 successful run per pipeline"
+  metrics_needed:
+    - pipeline_success_rate_30d
+    - mean_pipeline_duration
+    - deployment_frequency
+    - change_failure_rate
+
+# ─── Test Results Analytics ──────────────────────────────────────────────
+
+test_reporting:
+  status: unknown
+  evidence: []
+  notes:
+    - "No test plans or test suites verified in ADO"
+    - "Test results analytics requires published test results from pipeline runs"
+
+# ─── Reporting Plane Assessment ──────────────────────────────────────────
+
+reporting_plane_verdict:
+  status: unknown
+  summary: >
+    The Azure DevOps reporting plane has not been verified. Portfolio data (epics,
+    issues, tasks, iterations) reportedly exists from prior sessions but was not
+    re-verified via API. No Analytics views, OData connections, Power BI integrations,
+    dashboards, or pipeline analytics have been confirmed. The reporting plane cannot
+    be assessed as an evidence source for go-live readiness until at least one
+    refreshable report with live data is demonstrated.
+  evidence_quality: insufficient
+  source_quality_policy:
+    official_docs: highest     # Microsoft Learn, ADO REST API docs
+    blogs: medium              # MS DevBlogs, Foundry blog
+    forums: low                # Stack Overflow, community
+    screenshots: insufficient  # point-in-time, not refreshable
+    agent_memory: low          # learned notes, not live verification

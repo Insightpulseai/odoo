@@ -1,0 +1,56 @@
+---
+# Tenant identity: TBWA\SMP (Santiago Mangada Puno)
+# Parent SSOT: ssot/tenants/tenants-registry.yaml
+# Last updated: 2026-04-14
+# STATUS: PROSPECT — directory not yet shared; stub only.
+tenant_code: TBWA_SMP
+tenant_name: TBWA\SMP
+legal_name: TBWA Santiago Mangada Puno  # to verify
+role: client
+status: prospect
+
+domains:
+  primary: tbd  # likely tbwasmp.com or tbwa.com subdomain — confirm
+
+industry: advertising_agency
+geography: PH
+
+email:
+  provider: tbd  # M365 is plausible (TBWA is a WPP/Omnicom holding affiliate — M365-heavy enterprise norm)
+
+users_licensed: []  # to be populated on client directory import
+
+odoo:
+  company_id: 4
+  company_name: "TBWA\\SMP"
+  currency: PHP
+  country: PH
+  default_accounting_chart: ph_standard
+  visibility: scoped_strict  # CLIENT — hard boundary required, no cross-company leak
+  record_rule_policy: deny_by_default
+  audit_retention_days: 2555  # 7 years — typical client engagement
+
+engagement_posture:
+  contract_type: tbd  # saas_per_seat | msa_consulting | retainer
+  data_residency: ph_required
+  compliance_requirements:
+    - ph_bir  # expected for any PH business client
+    - ph_dpa  # Data Privacy Act
+  pulser_usage:
+    allowed_surfaces: [teams, web]  # most likely via their M365 tenant
+    disallowed_surfaces: [slack]  # IPAI-internal brand
+    branding: Pulser  # public brand per feedback_branding_copilot_policy.md
+
+onboarding_checklist:
+  - confirm_legal_entity_and_domain
+  - capture_user_directory
+  - create_res_company (company_id: 4)
+  - provision_portal_users_with_company_ids_whitelist
+  - define_record_rules (strict deny-by-default)
+  - validate_data_isolation (spot-check: IPAI user cannot see TBWA records unless admin)
+  - kv_secrets_tbwa_tenant  # per-client secret scope in Azure Key Vault
+  - billing_setup (subscription or project rate)
+
+risk_notes:
+  - "First external client in the multi-company model — data isolation must be verified, not assumed"
+  - "Advertising agency data includes client-of-client IP — may require client-specific NDA before import"

@@ -1,0 +1,57 @@
+# SSOT: Knowledge Source Definitions
+# Defines source_refs used by agents in agents.yaml.
+# Cross-references: knowledge-bindings.yaml (collection definitions),
+#   g2-knowledge-binding-evidence.yaml (binding evidence)
+# Updated: 2026-04-06
+
+version: 1
+artifact: knowledge_sources
+
+# ---------------------------------------------------------------------------
+# Source definitions
+# ---------------------------------------------------------------------------
+
+sources:
+
+  source-odoo-knowledge:
+    description: >
+      Odoo-domain knowledge collections for ERP copilot agents.
+      Covers Odoo CE 18 documentation, OCA modules, module governance,
+      database administration, BIR/PH tax compliance, finance domain,
+      and platform architecture.
+    search_service: srch-ipai-dev
+    search_index: ipai-knowledge-index
+    embedding_model: text-embedding-3-small
+    retrieval_mode: hybrid  # semantic + keyword
+    collections:
+      # Core Odoo
+      - id: odoo_18_docs
+        scope: Odoo CE 18 official documentation
+        agents: [pulser-odoo-ask, pulser-odoo-authoring, pulser-odoo-livechat, pulser-odoo-transaction]
+      - id: oca_18_inventory
+        scope: OCA module inventory for Odoo 18
+        agents: [pulser-odoo-ask, pulser-odoo-authoring, pulser-odoo-transaction]
+      - id: repo_module_doctrine
+        scope: IPAI module governance and naming conventions
+        agents: [pulser-odoo-ask, pulser-odoo-authoring, pulser-odoo-livechat, pulser-odoo-transaction]
+      # Infrastructure
+      - id: postgres_admin
+        scope: PostgreSQL 16 administration and performance
+        agents: [pulser-odoo-ask, pulser-odoo-transaction]
+      - id: local_platform_ssot
+        scope: Platform architecture, deployment, and governance
+        agents: [pulser-odoo-ask, pulser-odoo-authoring, pulser-odoo-livechat, pulser-odoo-transaction]
+      # Compliance & Finance
+      - id: bir_compliance
+        scope: Philippine BIR tax compliance requirements
+        agents: [pulser-odoo-ask, pulser-odoo-authoring, pulser-odoo-livechat, pulser-odoo-transaction]
+      - id: tax_guru_ph
+        scope: PH tax withholding codes and computation rules
+        agents: [pulser-odoo-transaction]
+      - id: finance_domain
+        scope: Finance operations (AP, close, reconciliation, expense)
+        agents: [pulser-odoo-authoring, pulser-odoo-transaction]
+      # Visitor-facing (livechat)
+      - id: company_info
+        scope: Company overview, products, services, contact information
+        agents: [pulser-odoo-livechat]

@@ -1,0 +1,16 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "IPAI Odoo Copilot Publish Policy",
+  "type": "object",
+  "required": ["agent_id", "min_eval_score", "max_eval_age_days"],
+  "properties": {
+    "agent_id": { "type": "string" },
+    "min_eval_score": { "type": "number", "minimum": 0, "maximum": 1 },
+    "max_eval_age_days": { "type": "integer", "minimum": 1 },
+    "required_mode_coverage": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "forbidden_tool_check": { "type": "boolean" }
+  }
+}

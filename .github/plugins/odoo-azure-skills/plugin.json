@@ -1,0 +1,10 @@
+{
+  "name": "odoo-azure-skills",
+  "version": "0.1.0",
+  "description": "Odoo on Azure — skills + judges for self-hosted Odoo SaaS (Odoo.sh parity)",
+  "publisher": "insightpulseai",
+  "hosts": ["claude-code", "copilot-cli", "gemini-cli"],
+  "skills_path": "skills/",
+  "mcp_config": ".mcp.json",
+  "categories": ["developer", "tester", "project-manager", "sysadmin", "judge"]
+}

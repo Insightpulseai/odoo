@@ -1,0 +1,836 @@
+# =============================================================================
+# Unified Platform Capabilities Matrix — InsightPulse AI
+# =============================================================================
+#
+# Single source of truth for ALL platform capabilities across every domain.
+# Consolidates: EE parity, Odoo.sh equivalence, AI consolidation, OCA adoption,
+# BIR compliance, infrastructure readiness, creative/genAI, and roadmap.
+#
+# Cross-references:
+#   infra/ssot/parity/ee_to_oca_matrix.yaml (EE parity details)
+#   ssot/governance/azure-odoosh-equivalent.yaml (Odoo.sh parity)
+#   ssot/governance/ai-consolidation-foundry.yaml (AI consolidation)
+#   ssot/governance/enterprise_okrs.yaml (OKR/KPI alignment)
+#   ssot/governance/platform-strategy-2026.yaml (VMOKRAPI strategy)
+#   infra/ssot/roadmap/product_roadmap.yaml (quarterly roadmap)
+#
+# NOTE: Strategic KPIs in platform-strategy-2026.yaml use SKPI-* namespace
+# to avoid collision with operational KPIs (kpi_001..kpi_017) in
+# platform/data/contracts/control_room_kpis.yaml.
+#
+# Status values: active | partial | planned | blocked | deprecated | n/a
+# Priority: P0 (production blocker) | P1 (operational maturity) | P2 (enhancement) | P3 (future)
+#
+# Last updated: 2026-03-15
+# =============================================================================
+
+schema_version: "1.0"
+last_updated: "2026-03-18"
+
+# =============================================================================
+# A. ERP — Odoo Enterprise Parity (CE + OCA + ipai_*)
+# =============================================================================
+erp_parity:
+  target: ">=80% weighted parity"
+  current: "35-45% (audited 2026-03-08)"
+  ssot_ref: infra/ssot/parity/ee_to_oca_proof_matrix.yaml
+
+  accounting:
+    - id: bank_reconciliation
+      ee_module: account_accountant
+      replacement: account_reconcile_oca (OCA)
+      status: planned
+      priority: P0
+      parity_pct: 0
+
+    - id: financial_reports
+      ee_module: account_reports
+      replacement: account_financial_report (OCA)
+      status: planned
+      priority: P0
+      parity_pct: 0
+
+    - id: asset_management
+      ee_module: account_asset
+      replacement: account_asset_management (OCA)
+      status: planned
+      priority: P1
+      parity_pct: 0
+
+    - id: budget_management
+      ee_module: account_budget
+      replacement: ipai_finance_ppm
+      status: active
+      priority: P0
+      parity_pct: 40
+
+    - id: consolidation
+      ee_module: account_consolidation
+      replacement: ipai_finance_consolidation (planned)
+      status: planned
+      priority: P2
+      parity_pct: 0
+
+  hr_payroll:
+    - id: payroll
+      ee_module: hr_payroll
+      replacement: ipai_hr_payroll_ph
+      status: active
+      priority: P0
+      parity_pct: 70
+
+    - id: attendance
+      ee_module: hr_attendance
+      replacement: ipai_hr_attendance (planned)
+      status: planned
+      priority: P1
+      parity_pct: 0
+
+    - id: leave_management
+      ee_module: hr_holidays
+      replacement: ipai_hr_leave (planned)
+      status: planned
+      priority: P1
+      parity_pct: 0
+
+    - id: expense_management
+      ee_module: hr_expense
+      replacement: hr_expense (OCA)
+      status: planned
+      priority: P0
+      parity_pct: 0
+
+    - id: appraisals
+      ee_module: hr_appraisal
+      replacement: ipai_hr_appraisal (planned)
+      status: planned
+      priority: P2
+      parity_pct: 0
+
+  services:
+    - id: helpdesk
+      ee_module: helpdesk
+      replacement: ipai_helpdesk
+      status: active
+      priority: P1
+      parity_pct: 40
+
+    - id: approvals
+      ee_module: approvals
+      replacement: ipai_approvals (planned)
+      status: planned
+      priority: P0
+      parity_pct: 0
+
+    - id: planning
+      ee_module: planning
+      replacement: ipai_planning (planned)
+      status: planned
+      priority: P1
+      parity_pct: 0
+
+    - id: timesheet_grid
+      ee_module: timesheet_grid
+      replacement: ipai_timesheet (planned)
+      status: planned
+      priority: P1
+      parity_pct: 0
+
+  studio_customization:
+    - id: studio
+      ee_module: studio
+      replacement: ipai_dev_studio_base (planned)
+      status: planned
+      priority: P2
+      parity_pct: 0
+
+    - id: spreadsheet
+      ee_module: spreadsheet
+      replacement: Apache Superset
+      status: partial
+      priority: P2
+      parity_pct: 20
+
+  documents_knowledge:
+    - id: documents
+      ee_module: documents
+      replacement: dms (OCA) + ipai_enterprise_bridge
+      status: partial
+      priority: P2
+      parity_pct: 30
+
+    - id: knowledge
+      ee_module: knowledge
+      replacement: ipai_knowledge_base (planned)
+      status: planned
+      priority: P2
+      parity_pct: 0
+
+    - id: sign
+      ee_module: sign
+      replacement: ipai_sign
+      status: partial
+      priority: P2
+      parity_pct: 20
+
+# =============================================================================
+# B. OCA Module Adoption
+# =============================================================================
+oca_adoption:
+  target: "56 must-have modules installed and green"
+  ssot_ref: "~/.claude/rules/oca-governance.md"
+
+  base:
+    total: 27
+    status: "checklist defined, hydration pending"
+    priority: P0
+    key_modules:
+      - queue_job
+      - auditlog
+      - password_security
+      - web_responsive
+      - sentry
+      - base_user_role
+      - auth_totp_ip_check
+
+  accounting:
+    total: 18
+    status: "checklist defined, hydration pending"
+    priority: P0
+    key_modules:
+      - account_reconcile_oca
+      - account_financial_report
+      - mis_builder
+      - account_asset_management
+
+  sales:
+    total: 11
+    status: "checklist defined, hydration pending"
+    priority: P1
+    key_modules:
+      - sale_order_type
+      - sale_cancel_reason
+      - sale_delivery_state
+
+  manifest_gaps: 7
+  note: "7 modules need ports or new repos for Odoo 18"
+
+# =============================================================================
+# C. Platform Operations — Odoo.sh Equivalence
+# =============================================================================
+platform_ops:
+  target: "All 15 capabilities active with evidence"
+  current: "5 active, 5 partial, 5 planned"
+  ssot_ref: ssot/governance/azure-odoosh-equivalent.yaml
+
+  capabilities:
+    - id: git_triggered_builds
+      status: partial
+      priority: P1
+      gap: "Deploy gate not wired to ACA"
+
+    - id: branch_test_environments
+      status: planned
+      priority: P2
+      gap: "No per-branch ACA revision automation"
+
+    - id: staging_from_prod_data
+      status: planned
+      priority: P0
+      gap: "No automated staging refresh pipeline"
+
+    - id: shell_access
+      status: active
+      priority: P1
+
+    - id: logs_in_browser
+      status: planned
+      priority: P1
+      gap: "Log Analytics workspace not provisioned"
+
+    - id: mail_catcher_non_prod
+      status: planned
+      priority: P0
+      gap: "Mailpit/MailHog not deployed in ACA"
+
+    - id: backup_restore
+      status: partial
+      priority: P0
+      gap: "No filestore backup, no restore rehearsal"
+
+    - id: custom_domain_tls
+      status: active
+      priority: P1
+
+    - id: monitoring_kpis
+      status: planned
+      priority: P1
+      gap: "No OdooOps KPI dashboard"
+
+    - id: promote_dev_staging_prod
+      status: planned
+      priority: P0
+      gap: "No gated promotion workflow"
+
+    - id: rollback
+      status: planned
+      priority: P0
+      gap: "No documented rollback procedure"
+
+    - id: cron_controls_per_env
+      status: planned
+      priority: P1
+      gap: "features.yaml defined but not enforced"
+
+    - id: pii_masking
+      status: planned
+      priority: P1
+      gap: "No automated PII masking script"
+
+    - id: addons_dependency_discovery
+      status: active
+      priority: P1
+
+    - id: runtime_contract_ci
+      status: active
+      priority: P0
+      note: "Added in PR #591"
+
+# =============================================================================
+# D. AI / Copilot — Foundry Consolidation
+# =============================================================================
+ai_copilot:
+  target: "Single Foundry gateway, 5 capability modes"
+  current: "Phase 1 active (ask + authoring)"
+  ssot_ref: ssot/governance/ai-consolidation-foundry.yaml
+
+  foundry:
+    project: data-intel-ph
+    agent: ipai-odoo-copilot-azure
+    model: gpt-4.1
+
+  modes:
+    - id: ask
+      description: "Read-only Q&A + RAG"
+      status: active
+      priority: P0
+
+    - id: authoring
+      description: "Draft documents, reports, emails"
+      status: active
+      priority: P0
+
+    - id: livechat
+      description: "Website visitor Q&A"
+      status: active
+      priority: P1
+
+    - id: transaction
+      description: "Bounded CRUD with approval gates"
+      status: planned
+      priority: P1
+      gap: "Model/action whitelisting not implemented"
+
+    - id: creative
+      description: "Content generation, campaign copy, image gen"
+      status: planned
+      priority: P2
+      gap: "DALL-E 3 integration, campaign brief templates"
+      replaces:
+        - "Manual campaign copywriting"
+        - "External content tools"
+
+  deprecated_modules:
+    - ipai_ai_widget
+    - ipai_ask_ai_azure
+    - ipai_ai_platform
+    - ipai_llm_supabase_bridge
+    - ipai_ai_channel_actions
+    - ipai_ai_copilot
+
+  retained_infrastructure:
+    - ipai_ai_core
+    - ipai_ai_agent_builder
+    - ipai_ai_rag
+    - ipai_agent_skills
+
+  knowledge_sources:
+    - id: rag_pipeline
+      module: ipai_ai_rag
+      status: active
+
+    - id: foundry_search_index
+      service: srch-ipai-dev
+      status: active
+
+    - id: contextual_prompts
+      module: ipai_ai_prompts
+      count: 10
+      status: active
+
+# =============================================================================
+# E. Creative / GenAI
+# =============================================================================
+creative_genai:
+  target: "Foundry creative mode + campaign management"
+  current: "Text generation only, no image/video"
+
+  text_generation:
+    - id: mail_compose
+      description: "Email/message composition and rewriting"
+      status: active
+      module: ipai_ai_prompts
+
+    - id: seo_optimization
+      description: "Meta titles, descriptions, keyword suggestions"
+      status: active
+      module: ipai_ai_prompts
+
+    - id: document_summarization
+      description: "Summarize files, projects, transcriptions"
+      status: active
+      module: ipai_ai_prompts
+
+    - id: knowledge_articles
+      description: "Draft and improve knowledge base articles"
+      status: active
+      module: ipai_ai_prompts
+
+  campaign_management:
+    - id: media_vertical
+      description: "TBWA CES campaign tracking, budget, media channels"
+      status: active
+      module: ipai_vertical_media
+
+    - id: creative_briefs
+      description: "Creative brief management with approval workflow"
+      status: archived
+      module: ipai_marketing_agency_pack (18.0)
+      action: "Port to 19.0 as ipai_creative_studio"
+      priority: P2
+
+  gaps:
+    - id: image_generation
+      description: "DALL-E 3 / text-to-image via Foundry"
+      status: planned
+      priority: P2
+
+    - id: email_campaigns
+      description: "AI-assisted mass mailing / newsletter"
+      status: planned
+      priority: P2
+
+    - id: social_content
+      description: "Platform-adapted social media posts"
+      status: planned
+      priority: P3
+
+    - id: video_generation
+      description: "Azure AI Video / Sora integration"
+      status: planned
+      priority: P3
+
+    - id: campaign_copy_variants
+      description: "A/B copy generation from campaign briefs"
+      status: planned
+      priority: P2
+
+# =============================================================================
+# F. BIR / Philippine Compliance
+# =============================================================================
+bir_compliance:
+  target: "100% on-time BIR filing, <0.1% tax variance"
+  ssot_ref: ssot/governance/enterprise_okrs.yaml (obj_E)
+
+  modules:
+    - id: bir_tax_compliance
+      module: ipai_bir_tax_compliance
+      status: active
+      parity_pct: 60
+      priority: P0
+
+    - id: bir_notifications
+      module: ipai_bir_notifications
+      status: active
+      parity_pct: 50
+      priority: P1
+
+    - id: bir_plane_sync
+      module: ipai_bir_plane_sync
+      status: active
+      parity_pct: 50
+      priority: P1
+
+  payroll_compliance:
+    - id: sss_contributions
+      description: "SSS 15% (5% EE + 10% ER), max ₱35K base"
+      status: active
+      module: ipai_hr_payroll_ph
+
+    - id: philhealth
+      description: "5% (2.5% each), ₱10K-₱100K base"
+      status: active
+      module: ipai_hr_payroll_ph
+
+    - id: pagibig
+      description: "2% each, max ₱5K base"
+      status: active
+      module: ipai_hr_payroll_ph
+
+    - id: train_law_tax
+      description: "Monthly withholding per TRAIN brackets"
+      status: active
+      module: ipai_hr_payroll_ph
+
+  forms:
+    - id: form_1601c
+      description: "Monthly Withholding Tax"
+      status: active
+      priority: P0
+
+    - id: form_2316
+      description: "Certificate of Compensation"
+      status: planned
+      priority: P0
+
+    - id: alphalist
+      description: "Annual Employee List"
+      status: planned
+      priority: P0
+
+    - id: form_2550mq
+      description: "Monthly/Quarterly VAT"
+      status: planned
+      priority: P1
+
+# =============================================================================
+# G. Infrastructure & Azure Platform
+# =============================================================================
+infrastructure:
+  target: "Azure-native, IaC-governed, cost-minimized"
+  ssot_ref: infra/ssot/azure/service-matrix.yaml
+
+  compute:
+    - id: container_apps
+      service: Azure Container Apps
+      status: active
+      apps: 6
+      priority: P0
+
+    - id: postgresql
+      service: Azure PostgreSQL Flexible Server v16
+      status: active
+      priority: P0
+
+    - id: container_registry
+      service: Azure Container Registry
+      status: active
+      priority: P0
+
+  networking:
+    - id: front_door
+      service: Azure Front Door
+      status: active
+      priority: P0
+
+    - id: dns
+      service: Cloudflare (authoritative)
+      status: active
+      priority: P0
+
+    - id: waf
+      service: Azure Front Door WAF
+      status: active
+      priority: P1
+
+  security:
+    - id: key_vault
+      service: Azure Key Vault (kv-ipai-dev)
+      status: active
+      priority: P0
+
+    - id: entra_id
+      service: Microsoft Entra ID
+      status: active
+      priority: P0
+
+    - id: managed_identity
+      service: Azure Managed Identity
+      status: active
+      priority: P0
+
+  observability:
+    - id: log_analytics
+      service: Azure Log Analytics
+      status: planned
+      priority: P1
+      gap: "Workspace not provisioned"
+
+    - id: app_insights
+      service: Azure Application Insights
+      status: partial
+      priority: P1
+
+    - id: azure_monitor
+      service: Azure Monitor
+      status: planned
+      priority: P1
+
+  data_intelligence:
+    - id: databricks
+      service: Azure Databricks (dbw-ipai-dev)
+      status: planned
+      priority: P2
+      gap: "Phase 1 not started"
+
+    - id: foundry
+      service: Azure AI Foundry (data-intel-ph)
+      status: active
+      priority: P0
+
+# =============================================================================
+# H. Design System & UX
+# =============================================================================
+design_system:
+  target: "Unified Fluent v9 + Copilot design tokens across all surfaces"
+
+  modules:
+    - id: design_tokens
+      module: ipai_design_system
+      status: active
+      description: "Fluent UI v9 + Copilot design tokens for Odoo backend"
+
+    - id: apps_sdk
+      module: ipai_design_system_apps_sdk
+      status: active
+      description: "Platform-wide design tokens for portals/apps"
+
+  gaps:
+    - id: figma_sync
+      description: "Figma → design token export pipeline"
+      status: planned
+      priority: P3
+
+# =============================================================================
+# I. Integrations & Automation
+# =============================================================================
+integrations:
+  n8n:
+    status: active
+    role: "Workflow automation (GitHub → Odoo, scheduled jobs)"
+    priority: P0
+
+  slack:
+    status: active
+    role: "Team communication, alerts, ChatOps"
+    module: ipai_slack_connector
+    priority: P0
+
+  supabase:
+    status: active
+    role: "External integrations only (NOT for Odoo data)"
+    instance: spdtwktxdalcfigzeqrz
+    priority: P1
+
+  zoho_mail:
+    status: active
+    role: "Production SMTP (smtppro.zoho.com:587)"
+    priority: P0
+
+  github:
+    status: active
+    role: "Source control, CI/CD, PR automation"
+    app: pulser-hub (App ID 2191216)
+    priority: P0
+
+# =============================================================================
+# J. Identity & SSO (aligned to OBJ-001)
+# =============================================================================
+identity_sso:
+  target: "Entra ID as canonical identity plane, MFA enforced, no GA day-to-day"
+  current: "Bootstrap complete — domain verified, emergency accounts, MFA assigned"
+  strategy_ref: OBJ-001
+  okr_ref: OKR-001
+
+  capabilities:
+    - id: domain_verification
+      description: "Primary business domain verified in M365"
+      status: active
+      priority: P0
+
+    - id: emergency_access
+      description: "2 emergency access accounts with Global Admin"
+      status: active
+      priority: P0
+
+    - id: mfa_baseline
+      description: "MFA enforced for all admin accounts"
+      status: partial
+      priority: P0
+      gap: "Security Defaults temporarily disabled for bootstrap"
+
+    - id: named_accounts
+      description: "All platform admins on named accounts, no shared credentials"
+      status: active
+      priority: P0
+
+    - id: entra_sso_odoo
+      description: "Entra ID SSO for Odoo via OIDC"
+      status: partial
+      priority: P0
+      gap: "App registration created, M365 Business Premium needed for Conditional Access P1"
+
+# =============================================================================
+# K. DevOps Maturity (aligned to OBJ-002)
+# =============================================================================
+devops_maturity:
+  target: "Azure DevOps as canonical delivery control plane"
+  current: "Project created, CI/CD pipeline active, Boards populated"
+  strategy_ref: OBJ-002
+  okr_ref: OKR-002
+
+  capabilities:
+    - id: ado_project
+      description: "Azure DevOps project operationalized with environments"
+      status: active
+      priority: P0
+
+    - id: yaml_pipelines
+      description: "All deployments via YAML pipelines in repo"
+      status: active
+      priority: P0
+
+    - id: wif_service_connections
+      description: "Workload Identity Federation service connections"
+      status: active
+      priority: P0
+
+    - id: agent_pools
+      description: "Self-hosted agent pools operational"
+      status: active
+      priority: P1
+
+    - id: boards_hierarchy
+      description: "Azure Boards with Epic→Issue hierarchy, GitHub AB# linking"
+      status: partial
+      priority: P1
+      gap: "Epics created but Issues not parented, AB# linking not active in commits"
+
+    - id: environment_gates
+      description: "Manual approval gates for staging and prod"
+      status: partial
+      priority: P0
+      gap: "Environments defined but gates not tested end-to-end"
+
+# =============================================================================
+# SCORING SUMMARY
+# =============================================================================
+scoring:
+  domains:
+    - domain: ERP Parity
+      target_pct: 80
+      current_pct: 38
+      p0_gaps: 5
+      status: "Major gap — OCA hydration + ipai modules needed"
+
+    - domain: OCA Adoption
+      target_pct: 100
+      current_pct: 15
+      p0_gaps: 45
+      status: "Checklists defined, modules not hydrated"
+
+    - domain: Platform Ops
+      target_pct: 100
+      current_pct: 47
+      p0_gaps: 5
+      status: "Doctrine merged, runtime proof pending"
+
+    - domain: AI/Copilot
+      target_pct: 100
+      current_pct: 60
+      p0_gaps: 0
+      status: "Foundry consolidated, transaction mode planned"
+
+    - domain: Creative/GenAI
+      target_pct: 100
+      current_pct: 30
+      p0_gaps: 0
+      status: "Text gen active, image/campaign gaps"
+
+    - domain: BIR Compliance
+      target_pct: 100
+      current_pct: 55
+      p0_gaps: 3
+      status: "Core modules active, forms 2316/alphalist pending"
+
+    - domain: Infrastructure
+      target_pct: 100
+      current_pct: 75
+      p0_gaps: 0
+      status: "Core Azure stack active, observability pending"
+
+    - domain: Design System
+      target_pct: 100
+      current_pct: 70
+      p0_gaps: 0
+      status: "Tokens active, Figma sync future"
+
+    - domain: Integrations
+      target_pct: 100
+      current_pct: 85
+      p0_gaps: 0
+      status: "All core integrations active"
+
+    - domain: Identity & SSO
+      target_pct: 100
+      current_pct: 70
+      p0_gaps: 1
+      status: "Bootstrap complete, Conditional Access P1 blocked on M365 Business Premium"
+
+    - domain: DevOps Maturity
+      target_pct: 100
+      current_pct: 65
+      p0_gaps: 1
+      status: "Project + pipeline active, Boards hierarchy not wired, gates untested"
+
+  overall:
+    weighted_score: 53
+    p0_gap_count: 15
+    critical_path: "OCA hydration → EE parity → platform ops proof"
+
+# =============================================================================
+# CROSS-REFERENCE INDEX
+# =============================================================================
+cross_references:
+  previous_documents_consolidated:
+    - path: infra/ssot/parity/ee_to_oca_matrix.yaml
+      role: "EE parity detail (still authoritative for per-feature routing)"
+    - path: infra/ssot/parity/ee_to_oca_proof_matrix.yaml
+      role: "EE parity evidence links"
+    - path: infra/ssot/parity/ee_to_oca_execution_map.yaml
+      role: "EE parity execution milestones"
+    - path: ssot/governance/azure-odoosh-equivalent.yaml
+      role: "Odoo.sh parity detail"
+    - path: ssot/governance/odooops-capabilities.yaml
+      role: "OdooOps capabilities detail"
+    - path: ssot/governance/ai-consolidation-foundry.yaml
+      role: "AI consolidation detail"
+    - path: ssot/governance/enterprise_okrs.yaml
+      role: "OKR/KPI definitions"
+    - path: ssot/governance/platform-strategy-2026.yaml
+      role: "Full VMOKRAPI strategy"
+    - path: infra/ssot/roadmap/product_roadmap.yaml
+      role: "Quarterly epic roadmap"
+    - path: infra/ssot/platform/capability_matrix.yaml
+      role: "Developer UX capability details"
+    - path: docs/architecture/EE_PARITY_MATRIX.md
+      role: "Human-readable EE parity matrix"
+    - path: docs/operations/ODOOSH_CAPABILITY_PARITY_MATRIX.md
+      role: "Human-readable Odoo.sh parity matrix"
+    - path: docs/architecture/AI_CONSOLIDATION_FOUNDRY.md
+      role: "Human-readable AI consolidation doc"
+
+  note: >
+    This file is the unified index. Domain-specific files remain authoritative
+    for detailed routing, evidence links, and per-feature configuration.
+    This file provides the consolidated view and scoring.
