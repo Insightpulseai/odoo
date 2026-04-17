@@ -1,0 +1,133 @@
+# SSOT — Azure Resource Normalization Checklist
+# Locked: 2026-04-17
+# Authority: this file tracks keep/adopt/retire decisions for all Azure resources.
+
+resource_normalization_checklist:
+  subscription: eba824fb-332d-4623-9dfb-2c9f7ee83f4e
+  last_audited: "2026-04-17"
+
+  categories:
+    storage_accounts:
+      - name: dbstorageqba5raeuajc6u
+        rg: rg-ipai-dev-dbw-managed
+        action: keep
+        reason: databricks_uc_managed_storage
+      - name: stdevipai
+        rg: rg-ipai-dev-data-sea
+        action: keep
+        reason: general_dev_storage
+      - name: stipaidevagent
+        rg: rg-ipai-dev-data-sea
+        action: keep
+        reason: agent_platform_storage
+      - name: stipaidevbkp
+        rg: rg-ipai-dev-data-sea
+        action: keep
+        reason: backup_storage
+      - name: stipaidevlake
+        rg: rg-ipai-dev-data-sea
+        action: keep
+        reason: adls_lake_canonical
+      - name: stipaidevlogs
+        rg: rg-ipai-dev-data-sea
+        action: keep
+        reason: log_storage
+      - name: stlkipaidev
+        rg: rg-ipai-dev-data-sea
+        action: adopt
+        reason: lake_storage_may_overlap_with_stipaidevlake
+
+    user_assigned_identities:
+      notes: audit_pending_when_network_recovers
+
+    workspaces:
+      - name: dbw-ipai-dev
+        type: databricks
+        action: keep
+        reason: canonical_databricks_workspace
+      - name: la-ipai-odoo-dev
+        type: log_analytics
+        action: keep
+        reason: monitoring_workspace
+        notes: verify_if_on_old_sub_or_sponsored
+
+    application_insights:
+      - name: ipai-appinsights
+        action: keep
+        reason: monitoring_component
+        notes: may_be_on_old_sub_only
+      - name: appi-ipai-dev
+        action: keep
+        reason: monitoring_component
+
+    action_groups:
+      notes: 3_observed_review_when_network_recovers
+
+    private_dns_zones:
+      notes: 8_observed_review_when_network_recovers
+
+  active_runtime_apps:
+    sponsored_sub:
+      - name: ca-ipai-odoo-web-dev
+        rg: rg-ipai-dev-odoo-sea
+        action: keep
+        reason: canonical_odoo_web
+      - name: ca-ipai-odoo-worker-dev
+        rg: rg-ipai-dev-odoo-sea
+        action: keep
+        reason: canonical_odoo_worker
+      - name: ca-ipai-odoo-cron-dev
+        rg: rg-ipai-dev-odoo-sea
+        action: keep
+        reason: canonical_odoo_cron
+      - name: ipai-prismalab-web
+        rg: rg-ipai-stg-odoo-runtime
+        action: keep
+        reason: prismalab_web_surface
+      - name: ipai-website-dev
+        rg: rg-ipai-stg-odoo-runtime
+        action: keep
+        reason: corporate_website
+      - name: ipai-w9studio-dev
+        rg: rg-ipai-stg-odoo-runtime
+        action: keep
+        reason: w9_studio_website
+
+    old_sub_still_running:
+      - name: ipai-website-dev
+        rg: rg-ipai-dev-odoo-runtime
+        action: retire_after_dns_cutover
+        reason: www.insightpulseai.com_still_points_here
+      - name: ipai-copilot-gateway
+        rg: rg-ipai-dev-odoo-runtime
+        action: retire_after_consumer_check
+        reason: may_have_active_consumers
+      - name: ipai-prismalab-gateway
+        rg: rg-ipai-dev-odoo-runtime
+        action: retire_after_verification
+        reason: prismalab_dns_already_on_sponsored
+
+    old_sub_scaled_to_zero:
+      count: 10
+      action: delete_after_90_day_buffer
+      buffer_start: "2026-04-15"
+      buffer_end: "2026-07-14"
+
+  retired_apps:
+    - n8n
+    - shelf
+    - plane
+    - crm
+
+  actions:
+    - keep
+    - adopt
+    - retire
+    - delete_after_buffer
+
+  criteria:
+    - referenced_by_odoo_runtime
+    - referenced_by_monitoring
+    - referenced_by_identity_flow
+    - duplicate_or_residue
+    - matches_canonical_name

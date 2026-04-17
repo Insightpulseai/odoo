@@ -1,0 +1,54 @@
+# SSOT — Azure Subscription Baseline
+# Locked: 2026-04-17
+# Authority: this file is the canonical subscription posture for IPAI.
+
+azure_subscription_baseline:
+  name: Microsoft Azure Sponsorship
+  subscription_id: eba824fb-332d-4623-9dfb-2c9f7ee83f4e
+  directory: insightpulseai.com
+  tenant_id: 402de71a-87ec-4302-a609-fb76098d1da7
+  offer: MS-AZR-0036P
+  status: active
+  billing_period:
+    start: 2026-04-12
+    end: 2026-05-11
+  security:
+    defender_for_cloud: not_enabled
+    secure_score: not_available
+
+  observed_resource_shape:
+    private_dns_zones: 8
+    storage_accounts: 8
+    user_assigned_identities: 8
+    workspaces: 6
+    components: 5
+    action_groups: 3
+
+odoo_azure_baseline:
+  subscription_id: eba824fb-332d-4623-9dfb-2c9f7ee83f4e
+  runtime_model: azure_native
+  dns_model: azure_dns
+  edge_model: azure_managed
+  postgres_server: pg-ipai-odoo
+  identity_model: managed_identity_preferred
+  observability_model: reuse_existing_workspace_and_components
+
+  excluded_apps:
+    - n8n
+    - shelf
+    - plane
+    - crm
+
+  excluded_services:
+    - cloudflare
+    - vercel
+    - digitalocean
+    - supabase
+    - mailgun
+    - wix
+
+  notes:
+    - adopt existing names where already canonical
+    - do not duplicate storage identities or workspaces blindly
+    - azure dns is the sole dns authority
+    - no cloudflare proxy or dns in any layer
