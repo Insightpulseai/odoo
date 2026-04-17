@@ -1,0 +1,6 @@
+board_id,board_name,board_type,program_id,primary_project_ids,description,genie_space,databricks_mart,odoo_view_ref
+BOARD-001,March 2026 Close Control Tower,close_calendar,PROG-001,PRJ-001,Phase-milestone-task view for March 2026 month-end close orchestration,Finance Operations,gold_finance_close_workload,project_view_close_2026_03
+BOARD-002,BIR Filing Readiness Board,bir_filing,PROG-001,"PRJ-002,PRJ-003,PRJ-004,PRJ-005",Readiness status for 5 BIR forms with deadlines blockers and evidence status,Compliance & Tax,gold_finance_bir_deadline_control,project_view_bir_filing_q1_2026
+BOARD-003,Finance Workload and Bottleneck Dashboard,workload_analytics,PROG-002,"PRJ-001,PRJ-002,PRJ-003,PRJ-004",Workload by employee stage and bottleneck heatmap across all close and filing projects,Finance Operations,gold_finance_role_bottlenecks,project_view_workload_q1_2026
+BOARD-004,Evidence and Compliance Registry,evidence_registry,PROG-003,"PRJ-002,PRJ-003,PRJ-004,PRJ-007",Evidence completeness tracker across all tax filings with gap identification,Compliance & Tax,gold_finance_compliance_control_tower,project_view_evidence_2026
+BOARD-005,Pulser Finance Demo Board,demo_board,PROG-004,PRJ-008,Demo storyboard tracker for Finance Control Tower — 5 modules 4-minute run,Finance Operations,gold_finance_close_workload,project_view_pulser_demo
