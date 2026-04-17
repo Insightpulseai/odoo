@@ -231,3 +231,69 @@ Analytics surface:
 | 10 | **Cash advance unliquidated > 30d** | fact_expense_liquidation | Expense Agent |
 | 11 | **Invoice extraction accuracy** | ipai_doc_intel confidence | Invoice capture automation |
 | 12 | **Budget variance by project** | gold_ppm_project_health | Budget tracking |
+
+### From Odoo 19 release notes (what we achieve on CE 18 + OCA)
+
+| Odoo 19 feature | CE 18 + OCA equivalent | Demo module |
+|---|---|---|
+| Tax return module (fiscal obligations + deadlines) | `ipai_bir_tax_compliance` + BIR deadline control tower | Module 3 |
+| Tax return validation checks | fact_bir_deadline_control + evidence gap analysis | Module 2 |
+| Payment withholding support | EWT 2%/10% auto-classification in `ipai_doc_intel` | Module 2 |
+| Improved PH localization (2550Q, SLSP, QAP, SAWT) | `ipai_bir_2307` + filing readiness board | Module 3 |
+| Official BIR format / .dat export | .dat export readiness tracking (v1.1) | Module 3 |
+| Improved payment flow UX | Payment approval queue + payment readiness state | Module 1 |
+| AI-powered Discuss features | Pulser chat widget + Llama 4 / Qwen3 inference | Module 5 |
+| Improved project UX | OCA `project_timeline` + `project_task_default_stage` | Odoo native |
+| Spreadsheet improvements | Databricks gold views + Genie (better for analytics) | Module 4 |
+| Improved accounting reports | OCA `account_financial_report` + Databricks dashboards | Module 4 |
+
+### From Notion 3.0 (what we achieve without Notion)
+
+| Notion 3.0 feature | IPAI equivalent | Where |
+|---|---|---|
+| AI agents (create, search, execute multi-step) | Pulser (guided finance ops) + 6 MAF agents | Odoo + ACA |
+| Workspace search across tools | Genie spaces (NL over gold marts) + Odoo global search | Databricks One |
+| Projects / tasks / databases | Odoo `project.project` + `project.task` + kanban | Odoo native |
+| Connected apps / integrations | MCP topology (12 servers, 3 phases) | MCP |
+| Multi-step workflow orchestration | Odoo approval chains + OCA `base_tier_validation` | Odoo + OCA |
+| Templates for repeatable work | `spec/_templates/` (4 types, 15 files) | Repo |
+| Custom databases (tables) | Odoo models + property fields (CE 18) | Odoo native |
+| Real-time collaboration | Odoo bus + chatter + live editing | Odoo native |
+| AI writing / summarization | Pulser summaries + Databricks serving (Llama 4) | Module 5 |
+| Domain-organized content | Genie spaces per domain (Finance Ops + Compliance) | Databricks One |
+| Kanban + calendar + timeline | Odoo kanban + calendar + OCA `project_timeline` | Odoo native |
+| API access | Odoo JSON-RPC + MCP + OData entity map | All layers |
+
+### From SAP Joule / AFC / Tax Compliance
+
+| SAP capability | IPAI equivalent | Demo module |
+|---|---|---|
+| Joule plain-language explanations | Pulser: "why is this blocked?" + summaries | Module 5 |
+| Joule document processing | DocAI prebuilt-invoice + custom TBWA models | Module 2 |
+| Joule dispute/root-cause help | Pulser: evidence request drafting + exception triage | Module 5 |
+| AFC close calendar orchestration | Close cockpit with phases/milestones/dependencies | Module 1 |
+| AFC critical path analysis | Deadline risk scoring + compression detection | Module 1 |
+| AFC real-time close status | gold_ppm_milestone_status + gold_close_step_status | Module 1 |
+| AFC task dependency governance | Milestone sequence_no + approval_stage chain | Module 1 |
+| Tax Compliance rule-based checks | Tax exception cockpit (blocker/warning/info) | Module 2 |
+| Tax Compliance filing readiness | BIR filing readiness board (2550Q, 1601-EQ, 1702) | Module 3 |
+| Tax Compliance issue severity | deadline_risk + evidence_status classification | Module 2 |
+
+### From AvaTax (Avalara) — compliance benchmark
+
+| AvaTax capability | IPAI equivalent | Demo module |
+|---|---|---|
+| Automated tax determination | EWT 2%/10% + VAT 12% auto-classification | Module 2 |
+| Use-tax control | Withholding-on-payment review | Module 1 |
+| Filing/payment handling | BIR filing readiness + payment approval queue | Module 3 |
+| Compliance automation | fact_bir_deadline_control + control tower | Module 3 |
+| Tax calendar management | Tax obligation registry (data-driven, not hardcoded) | Module 3 |
+| Jurisdiction-aware rates | PH BIR ATC codes (WI010, WC010, etc.) | Module 2 |
+
+### Doctrine statement
+
+> We do not need Odoo 19, Notion, or D365 agents.
+> CE 18 + OCA + Pulser + Databricks achieves the same outcomes at a fraction of the cost.
+> Odoo 19 validates our direction; SAP validates our close/compliance patterns;
+> Notion 3.0 validates our workspace/agent patterns; AvaTax validates our tax posture.
+> D365 Finance + Project Ops = $510/user/month. IPAI = open-source ERP + pay-per-query analytics.
