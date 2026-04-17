@@ -1,0 +1,45 @@
+contract_version: 1
+
+repo_rationalization:
+  purpose: align_repo_boundaries_to_domain_site_map
+
+  keep:
+    web:
+      reason: owns_all_public_sites_and_browser_facing_surfaces
+      domains:
+        - insightpulseai.com
+        - prismalab.insightpulseai.com
+        - w9studio.net
+    odoo:
+      reason: owns_erp_runtime_only
+      domains:
+        - erp.insightpulseai.com
+    platform:
+      reason: platform_control_plane
+    infra:
+      reason: infrastructure_as_code
+    docs:
+      reason: public_docs_and_governance
+    design:
+      reason: shared_design_tokens
+    data-intelligence:
+      reason: lakehouse_and_databricks
+    agent-platform:
+      reason: agent_runtime_orchestration
+    agents:
+      reason: agent_definitions_runtime_free
+    templates:
+      reason: starter_scaffolds
+
+  merge_then_delete:
+    landing.io:
+      action: retire
+      merge_target: web
+      reason: redirect_shell_replaced_by_domain_site_map_and_web_repo_ownership
+
+  delete:
+    demo-repository:
+      action: delete
+      reason: pure_demo_noise_no_domain_or_surface_boundary
+
+  authority: platform/ssot/domain/domain-site-map.yaml

@@ -1,0 +1,161 @@
+contract_version: 1
+
+domain_site_map:
+  rules:
+    - one_public_domain_maps_to_one_canonical_surface
+    - erp_domain_is_reserved_for_odoo_only
+    - lab_domain_is_reserved_for_demo_or_experiment_surfaces
+    - brand_domain_is_reserved_for_brand_specific_public_site
+    - public_site_code_lives_in_web_repo
+    - erp_runtime_code_lives_in_odoo_repo
+    - redirect_only_repos_should_be_absorbed_or_retired
+
+  domains:
+    insightpulseai.com:
+      role: company_and_product_root
+      repo: web
+      app_type: marketing_product_site
+      status: target_active
+      canonical: true
+      pages:
+        - /
+        - /pulser-for-odoo
+        - /solutions
+        - /solutions/finance-operations
+        - /solutions/marketing-operations
+        - /solutions/media-operations
+        - /solutions/research-knowledge-workflows
+        - /analytics-dashboards
+        - /managed-services
+        - /architecture
+        - /pricing
+        - /demo
+        - /about
+        - /contact
+        - /privacy
+        - /terms
+      links_out:
+        - prismalab.insightpulseai.com
+        - erp.insightpulseai.com
+        - w9studio.net
+
+    www.insightpulseai.com:
+      role: alias
+      repo: web
+      app_type: redirect_or_alias
+      status: target_active
+      canonical_to: insightpulseai.com
+
+    prismalab.insightpulseai.com:
+      role: lab_demo_surface
+      repo: web
+      app_type: demo_lab_app
+      status: target_active
+      canonical: true
+      pages:
+        - /
+        - /pulser
+        - /scenarios
+        - /scenarios/finance-close
+        - /scenarios/expenses-approvals
+        - /scenarios/operations-qna
+        - /analytics
+        - /erp-walkthrough
+        - /request-access
+        - /about-prismalab
+      links_out:
+        - insightpulseai.com/pulser-for-odoo
+        - erp.insightpulseai.com
+
+    erp.insightpulseai.com:
+      role: erp_runtime
+      repo: odoo
+      app_type: odoo_ui
+      status: target_active
+      canonical: true
+      pages:
+        - /web/login
+        - /web
+        - /odoo
+      restrictions:
+        - no_marketing_pages
+        - no_lab_navigation
+        - no_non_erp_product_shell
+
+    w9studio.net:
+      role: brand_site
+      repo: web
+      app_type: brand_public_site
+      status: target_active
+      canonical: true
+      pages:
+        - /
+        - /services
+        - /portfolio
+        - /workflow-operations
+        - /case-studies
+        - /about
+        - /contact
+        - /privacy
+        - /terms
+      links_out:
+        - insightpulseai.com
+
+    www.w9studio.net:
+      role: alias
+      repo: web
+      app_type: redirect_or_alias
+      status: target_active
+      canonical_to: w9studio.net
+
+repo_actions:
+  web:
+    action: keep
+    reason: owns_all_public_sites_and_browser_facing_surfaces
+
+  odoo:
+    action: keep
+    reason: owns_erp_runtime_only
+
+  landing.io:
+    action: retire
+    preferred_handling:
+      - keep_archived_or_delete
+      - do_not_reuse_as_canonical_public_surface
+    reason: redirect_shell_is_redundant_now_that_web_repo_owns_public_site_surfaces
+
+  demo-repository:
+    action: delete
+    reason: no_domain_or_surface_ownership_value
+
+  templates:
+    action: keep
+    reason: starter_scaffolds_not_public_surface
+
+  docs:
+    action: keep
+    reason: public_docs_and_governance_not_primary_public_marketing_surface
+
+implementation_priority:
+  phase_1:
+    - insightpulseai.com
+    - erp.insightpulseai.com
+  phase_2:
+    - prismalab.insightpulseai.com
+  phase_3:
+    - w9studio.net
+
+domain_to_repo_contract:
+  public_company_product_sites:
+    repo: web
+  public_brand_sites:
+    repo: web
+  demo_lab_sites:
+    repo: web
+  erp_runtime:
+    repo: odoo
+
+non_goals:
+  - move_erp_into_web
+  - split_odoo_by_business_module
+  - create_new_redirect_only_repo
