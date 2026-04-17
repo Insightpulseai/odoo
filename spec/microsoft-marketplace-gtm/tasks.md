@@ -31,7 +31,7 @@
 - [ ] Record 'Pulser for PH' Demo walkthrough video
 - **ISSUE**: Co-sell & Partner Center Maintenance
     - [ ] Configure Tax & Payout Profiles in Partner Center
-    - [ ] Draft Co-sell Solution material for MS Sellers
+    - [x] Draft Co-sell Solution material for MS Sellers
 
 ---
 *Last updated: 2026-04-18*

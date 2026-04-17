@@ -25,6 +25,16 @@ Built for Philippine SMBs and agencies, Pulser integrates with Odoo 18 CE and su
 
 ---
 
+## Co-sell & ACR Value Prop
+
+Pulser is a high-ACR vehicle designed for Microsoft Sellers. Deployment leverages:
+- **Azure AI Foundry**: Cognitive ingress and agent evaluation.
+- **ACA & PostgreSQL**: Native containerized compute and managed data.
+- **Databricks**: Gold-standard business intelligence for Odoo records.
+- **Entra ID**: Unified governance for the AI-first enterprise.
+
+---
+
 ## Technical Classification
 
 - **Core type**: Custom-engine agent
