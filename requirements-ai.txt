@@ -1,0 +1,9 @@
+# requirements-ai.txt
+# Azure AI Foundry SDK & Agent dependencies
+# Source: https://learn.microsoft.com/en-us/azure/foundry/how-to/develop/install-cli-sdk
+
+azure-ai-projects>=2.0.0b1
+azure-identity>=1.15.0
+azure-ai-ml>=1.15.0
+aiohttp>=3.9.0
+openai>=1.12.0
