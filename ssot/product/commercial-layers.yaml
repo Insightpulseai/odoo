@@ -1,0 +1,174 @@
+contract_version: 1
+decided: 2026-04-17
+authority: founder
+
+commercial_layers:
+  platform_version: odoo_ce_18
+  upgrade_to_19: deferred
+  reason: >
+    Odoo 19 AI themes (agents, AI fields, AI search, AI drafting) are reproducible
+    on Odoo 18 with Foundry bridge. PH/BIR localization is the only material 19
+    advantage — handled as a bridge pack on 18 until migration is justified.
+
+  layer_1:
+    name: Pulser for Odoo
+    target: fastest_sellable_sku
+    positioning: AI-assisted ERP and workflow guidance for SMB and operations-heavy teams
+
+    includes:
+      erp:
+        - odoo_ce_18
+        - curated_oca_stack
+        - finance
+        - sales
+        - purchase
+        - project
+        - expenses
+        - crm
+      ai:
+        - foundry_pulser_assistant
+        - odoo_chatter_integration
+        - form_assist
+        - task_guidance
+      auth:
+        - entra_sso
+      payments:
+        - stripe
+        - paypal
+        - xendit
+        - razorpay
+      reporting:
+        - basic_dashboards_inside_odoo
+        - lightweight_reporting
+      operations:
+        - managed_deployment
+        - managed_support
+
+    excludes:
+      - databricks_lakehouse
+      - advanced_governed_analytics
+      - advanced_bir_pack_unless_addon
+      - multi_agent_orchestration_beyond_core_assistant
+
+  layer_2:
+    name: Pulser Operations Cloud
+    target: full_stack_strategic_offer
+    positioning: Operational system + AI assistant + governed analytics + compliance and managed delivery
+
+    includes:
+      everything_in_layer_1: true
+      analytics:
+        - databricks_unity_catalog
+        - conversational_analytics
+        - governed_dashboards
+        - historical_operational_intelligence
+      compliance:
+        - ph_finance_tax_bir_pack
+        - form_2550q
+        - slsp
+        - qap
+        - sawt
+        - official_format_export
+        - dat_file_compatibility
+      payments_advanced:
+        - payment_operations_dashboards
+        - reconciliation_intelligence
+        - exception_handling
+        - provider_abstraction_reporting
+      operations_advanced:
+        - workflow_telemetry
+        - operational_monitoring
+        - managed_cloud_operations
+        - release_governance
+
+  odoo_19_assessment:
+    ai_features_on_19:
+      - ai_agents
+      - ai_database_queries
+      - ai_button_top_bar
+      - ai_fields
+      - ai_search
+      - ai_drafting
+      - ai_sources
+      - livechat_ai_integration
+      - unified_ai_workflows
+    verdict: reproducible_on_18_with_foundry_bridge
+
+    ph_localization_on_19:
+      - revamped_form_2550q
+      - improved_slsp_qap_sawt
+      - official_bir_format_reports
+      - dat_file_export_for_alphalist_relief
+    verdict: material_advantage_handle_as_bridge_pack_on_18
+
+    payments_on_18:
+      supported_providers:
+        - adyen
+        - authorize_net
+        - flutterwave
+        - mercado_pago
+        - mollie
+        - nuvei
+        - paypal
+        - razorpay
+        - stripe
+        - worldline
+        - xendit
+      features:
+        - tokenization
+        - manual_capture
+        - refunds
+      verdict: sufficient_for_layer_1_no_19_required
+
+    items_available_from_18:
+      - payment_withholding_tax
+      - some_provider_localization_improvements
+
+  component_ownership:
+    odoo_18_core:
+      - erp_transactions
+      - standard_accounting_invoicing_payments
+      - official_auth_integration_surfaces
+      - standard_localization_baseline
+
+    foundry:
+      - agents
+      - multi_step_workflows
+      - document_grounded_answers
+      - task_guidance
+      - cross_system_orchestration
+      - ai_evaluation_and_publishing
+
+    custom_thin_bridges:
+      - odoo_18_to_foundry_agent_actions
+      - ph_bir_workflows_not_in_18
+      - payment_intelligence_reconciliation_overlays
+      - pulser_specific_ux_in_odoo
+
+    databricks_layer_2_only:
+      - governed_analytics
+      - semantic_dashboards
+      - conversational_bi
+      - historical_operational_intelligence
+
+  tax_bir_strategy:
+    on_18_now:
+      - standard_accounting_taxes_withholding
+      - custom_bridge_pack_for_2550q_slsp_qap_sawt
+      - official_format_export_dat_compatibility
+    on_19_later:
+      - evaluate_retiring_bridge_pack_when_native_19_ph_localization_is_mature
+      - does_not_force_immediate_platform_migration
+
+  payments_strategy:
+    layer_1_shortlist:
+      - stripe
+      - paypal
+      - xendit
+      - razorpay
+    layer_2_additions:
+      - payment_operations_dashboards
+      - reconciliation_intelligence
+      - exception_handling
+      - provider_abstraction_reporting
+    verdict: payments_do_not_block_staying_on_18
