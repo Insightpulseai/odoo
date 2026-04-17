@@ -15,7 +15,7 @@ Azure tags are the load-bearing metadata layer for **cost allocation, governance
 - Azure Policy built-in definitions for tag compliance
 - Cost Management tag inheritance mechanics
 
-into a single enforceable schema ready for IPAI's subscription `536d8cf6-89e1-4815-aef3-d5f2c5f4d070`.
+into a single enforceable schema ready for IPAI's subscription `eba824fb-332d-4623-9dfb-2c9f7ee83f4e`.
 
 ## Current state (audit 2026-04-13)
 
@@ -68,7 +68,7 @@ IPAI's required set matches 1:1 with the CAF required set. See `ssot/azure/taggi
 az deployment sub create \
   --location southeastasia \
   --template-file infra/azure/policy/tagging-baseline.bicep \
-  --subscription 536d8cf6-89e1-4815-aef3-d5f2c5f4d070 \
+  --subscription eba824fb-332d-4623-9dfb-2c9f7ee83f4e \
   --parameters requiredTagKeys='["env","costcenter","owner"]'
 ```
 

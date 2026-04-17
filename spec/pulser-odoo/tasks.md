@@ -150,4 +150,12 @@ Implementation roadmap for Pulser, tracking baseline ERP/AI work through SaaS pl
 
 ---
 
-*Last updated: 2026-04-16*
+## Phase 53 — Go-To-Market & ISV Success [GTM]
+
+- [ ] GTM-01: Reconcile and track Azure Boards for ISV Success activation (See: `spec/microsoft-marketplace-gtm/tasks.md`).
+- [ ] GTM-02: Package Transactable Azure Marketplace offer for Q3 2026 publish target.
+- [ ] GTM-03: Resolve MS Benefit Entitlement Blockers (Sponsorship / GitHub).
+
+---
+
+*Last updated: 2026-04-17*

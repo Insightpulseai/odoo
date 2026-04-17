@@ -1,0 +1,105 @@
+# ============================================================
+# AGENT FACTORY — Constitution
+# ============================================================
+# Defines what the agent factory is, what it owns, and
+# its boundaries with other subsystems.
+# Last updated: 2026-03-15
+# ============================================================
+
+schema_version: "1.0"
+service_id: agent-factory
+
+identity:
+  name: "Agent Factory"
+  type: control_plane_service
+  home: ops-platform/apps/agent-factory
+  description: >
+    Spec ingestion, template resolution, artifact generation,
+    eval orchestration, and publish gating for all agents.
+
+# ----------------------------------------------------------
+# Ownership — what the factory owns
+# ----------------------------------------------------------
+owns:
+  - factory_ui_api
+  - release_orchestration
+  - catalog_registration
+  - packaging_resolution
+  - publish_gating
+  - promotion_state
+  - offer_registry_writes
+
+# ----------------------------------------------------------
+# Does NOT own (boundary contracts)
+# ----------------------------------------------------------
+does_not_own:
+  agents_repo:
+    owns:
+      - agent_manifests
+      - skills
+      - tool_allowlists
+      - eval_datasets
+      - deployment_profile_schemas
+      - runtime_policies
+    relationship: "Factory reads agent specs from agents repo"
+
+  templates_repo:
+    owns:
+      - foundry_template_mappings
+      - azd_template_mappings
+      - packaging_skeletons
+      - bootstrap_accelerators
+    relationship: "Factory resolves templates from templates repo"
+
+  infra_repo:
+    owns:
+      - hosting_for_factory
+      - ado_github_foundry_identities
+      - key_vault_secrets
+      - app_insights_monitoring
+      - ci_cd_runtime_infra
+    relationship: "Infra provisions and hosts the factory"
+
+# ----------------------------------------------------------
+# Core workflows
+# ----------------------------------------------------------
+workflows:
+  - id: spec_ingestion
+    description: "Accept agent spec → validate → register in catalog"
+    inputs: [agent_manifest, tool_allowlist, eval_dataset]
+    outputs: [catalog_entry, validation_report]
+
+  - id: template_resolution
+    description: "Match spec to best Foundry/azd template → generate scaffold"
+    inputs: [agent_spec, template_catalog]
+    outputs: [resolved_scaffold, customization_delta]
+
+  - id: artifact_generation
+    description: "Build deployable artifact from scaffold + customizations"
+    inputs: [resolved_scaffold, custom_code, config]
+    outputs: [deployable_artifact, build_report]
+
+  - id: eval_orchestration
+    description: "Run eval packs against candidate artifacts"
+    inputs: [deployable_artifact, eval_dataset]
+    outputs: [eval_results, readiness_score]
+
+  - id: publish_gating
+    description: "Check all gates → approve or block publish"
+    inputs: [eval_results, policy_compliance, security_review]
+    outputs: [publish_decision, gate_report]
+
+  - id: promotion
+    description: "Move artifact through lane_a → lane_b → lane_c"
+    inputs: [publish_decision, promotion_rules]
+    outputs: [promoted_artifact, release_record]
+
+# ----------------------------------------------------------
+# Principles
+# ----------------------------------------------------------
+principles:
+  - "agents = what agents are"
+  - "templates = what agents can be bootstrapped from"
+  - "ops-platform = how agents are built, governed, promoted, and published"
+  - "Factory is a control-plane service, not agent runtime"
+  - "Do not create a separate repo until separate team + cadence + API justify it"

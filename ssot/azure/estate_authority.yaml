@@ -21,12 +21,12 @@ audit_principal:
   current_gaps:
     - description: "az resource list returns 3/62 resources — principal lacks subscription-wide Reader"
       impact: "Generic enumeration unreliable; targeted per-type queries compensate but are not exhaustive"
-      remediation: "Grant Reader on subscription 536d8cf6-89e1-4815-aef3-d5f2c5f4d070 to SP ae2df138"
+      remediation: "Grant Reader on subscription eba824fb-332d-4623-9dfb-2c9f7ee83f4e to SP ae2df138"
       status: open
 
 subscription_scope:
-  id: "536d8cf6-89e1-4815-aef3-d5f2c5f4d070"
-  name: "Azure subscription 1"
+  id: "eba824fb-332d-4623-9dfb-2c9f7ee83f4e"
+  name: "Microsoft Azure Sponsorship"
   tenant: "402de71a-87ec-4302-a609-fb76098d1da7"
   resource_groups:
     - rg-ipai-dev-odoo-runtime

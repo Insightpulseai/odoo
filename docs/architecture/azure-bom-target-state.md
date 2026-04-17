@@ -189,7 +189,7 @@ Deprecated keys (normalize to canonical): `env→environment`, `costCenter→cos
 
 ## 10. Migration posture (2026-04-15)
 
-Migration from `Azure subscription 1` (`536d8cf6-…`) → **Microsoft Azure Sponsorship** (`eba824fb-…`).
+Migration from `Azure subscription 1` (`eba824fb-…`) → **Microsoft Azure Sponsorship** (`eba824fb-…`).
 
 | Resource | Status |
 |---|---|

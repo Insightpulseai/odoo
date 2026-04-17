@@ -1,0 +1,70 @@
+version: 1
+overlay:
+  locale: PH
+  extends: schemas/taxonomy/core_taxonomy.yaml
+
+philippines:
+  authorities:
+    - id: bir
+      name: Bureau of Internal Revenue
+  taxes:
+    - id: ph_vat
+      name: Value-Added Tax (VAT)
+      domain: tax
+    - id: ph_withholding
+      name: Withholding Tax
+      domain: tax
+    - id: ph_income_tax
+      name: Income Tax
+      domain: tax
+
+  # NOTE: Form IDs and deadlines vary by taxpayer classification and BIR rules.
+  # Keep these as configurable catalog entries, not hard-coded logic.
+  forms_catalog:
+    - id: bir_2550m
+      name: BIR Form 2550M
+      tax: ph_vat
+      evidence_required:
+        [official_return, payment_proof, workbook_schedule, approval]
+    - id: bir_2550q
+      name: BIR Form 2550Q
+      tax: ph_vat
+      evidence_required:
+        [official_return, payment_proof, workbook_schedule, approval]
+    - id: bir_1601c
+      name: BIR Form 1601C
+      tax: ph_withholding
+      evidence_required:
+        [official_return, payment_proof, workbook_schedule, approval]
+    - id: bir_1601eq
+      name: BIR Form 1601EQ
+      tax: ph_withholding
+      evidence_required:
+        [official_return, payment_proof, workbook_schedule, approval]
+
+  month_end_close:
+    checklist:
+      - id: close_lock_period
+        kind: approve
+        domain: finance_close
+        evidence: [approval]
+      - id: reconcile_bank
+        kind: reconcile
+        domain: finance_close
+        evidence: [reconciliation, workbook_schedule]
+      - id: reconcile_ar_ap
+        kind: reconcile
+        domain: finance_close
+        evidence: [reconciliation, workbook_schedule]
+      - id: post_accruals
+        kind: prepare
+        domain: finance_close
+        evidence: [journal_entry, approval]
+      - id: vat_workpapers
+        kind: prepare
+        domain: tax
+        evidence: [workbook_schedule, approval]
+      - id: archive_evidence_bundle
+        kind: archive
+        domain: compliance
+        evidence: [approval]

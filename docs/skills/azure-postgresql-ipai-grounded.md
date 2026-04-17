@@ -21,7 +21,7 @@
 | Tier | General Purpose | MEMORY.md Data Platform |
 | Region | Southeast Asia (primary) | CLAUDE.md; runtime FQDN `blackstone-0df78186.southeastasia.azurecontainerapps.io` |
 | Paired region (DR) | East Asia | Azure region pairs (SEA ↔ East Asia) |
-| Current subscription | Subscription 1 (`536d8cf6-…`) | Prompt context |
+| Current subscription | Subscription 1 (`eba824fb-…`) | Prompt context |
 | Target subscription | Sponsored (`eba824fb-…`) | project_sponsored_sub_migration_adr.md (ADR-002: native-move, DNS stays) |
 | Logical DBs | `odoo_dev`, `odoo_staging`, `odoo`, `test_<module>` | CLAUDE.md Quick Reference |
 | Schemas in `odoo` / `odoo_dev` | `public` (Odoo ORM), `ops` (Pulser), `platform` (cross-cutting) | prompt context |

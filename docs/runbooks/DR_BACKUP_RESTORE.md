@@ -108,7 +108,7 @@ If the primary region (`southeastasia`) is unavailable:
 az postgres flexible-server geo-restore \
   --resource-group rg-ipai-dr \
   --name pg-ipai-odoo-geo-restore \
-  --source-server /subscriptions/536d8cf6-89e1-4815-aef3-d5f2c5f4d070/resourceGroups/rg-ipai-dev-odoo-data/providers/Microsoft.DBforPostgreSQL/flexibleServers/pg-ipai-odoo \
+  --source-server /subscriptions/eba824fb-332d-4623-9dfb-2c9f7ee83f4e/resourceGroups/rg-ipai-dev-odoo-data/providers/Microsoft.DBforPostgreSQL/flexibleServers/pg-ipai-odoo \
   --location eastasia
 ```
 

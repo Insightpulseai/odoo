@@ -1,0 +1,61 @@
+# azure.yaml — InsightPulseAI Pulser Production Deployment
+# azd up --environment ipai-prd
+# Repo: InsightPulseAI/odoo | ADO: dev.azure.com/insightpulseai/ipai-platform
+name: ipai-pulser
+metadata:
+  template: ipai-pulser@0.6.0
+
+services:
+  odoo-web:
+    project: ./odoo
+    language: python
+    host: containerapp
+    docker:
+      path: Dockerfile
+      buildArgs:
+        - ODOO_ENV=production
+    hooks:
+      postdeploy:
+        shell: sh
+        run: ./infra/scripts/post-deploy.sh odoo-web
+
+  odoo-cron:
+    project: ./odoo
+    language: python
+    host: containerapp
+    docker:
+      path: Dockerfile
+      buildArgs:
+        - ODOO_ENV=production
+        - ODOO_ROLE=cron
+
+  odoo-worker:
+    project: ./odoo
+    language: python
+    host: containerapp
+    docker:
+      path: Dockerfile
+      buildArgs:
+        - ODOO_ENV=production
+        - ODOO_ROLE=worker
+
+  release-manager:
+    project: ./agents/release-manager
+    language: python
+    host: containerapp
+
+  ade-mcp:
+    project: ./agents/ade-mcp-server
+    language: python
+    host: containerapp
+
+infra:
+  provider: bicep
+  path: ./infra
+  module: main
+
+pipeline:
+  provider: azdo
+  settings:
+    org: insightpulseai
+    project: ipai-platform

@@ -60,7 +60,7 @@ external_identifiers:
   microsoft_mpn_id: "7097325"
   isv_success_program: enrolled
   azure_sponsorship_sub: eba824fb-332d-4623-9dfb-2c9f7ee83f4e
-  azure_workload_sub: 536d8cf6-89e1-4815-aef3-d5f2c5f4d070
+  azure_workload_sub: eba824fb-332d-4623-9dfb-2c9f7ee83f4e
 
 risk_notes:
   - "Only 2 licensed users for 11 role aliases — no RBAC separation at mailbox level"

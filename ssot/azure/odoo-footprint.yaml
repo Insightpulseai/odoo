@@ -29,19 +29,19 @@ existing_resources:
   aca_environment:
     name: ipai-odoo-dev-env-v2
     resource_group: rg-ipai-dev-odoo-runtime
-    subscription: 536d8cf6-89e1-4815-aef3-d5f2c5f4d070  # sub 1
+    subscription: eba824fb-332d-4623-9dfb-2c9f7ee83f4e  # sponsored
   key_vault:
     name: kv-ipai-dev
     resource_group: rg-ipai-dev-platform
-    subscription: 536d8cf6-89e1-4815-aef3-d5f2c5f4d070
+    subscription: eba824fb-332d-4623-9dfb-2c9f7ee83f4e
   managed_identity:
     name: id-ipai-dev
     resource_group: rg-ipai-dev-odoo-runtime
-    subscription: 536d8cf6-89e1-4815-aef3-d5f2c5f4d070
+    subscription: eba824fb-332d-4623-9dfb-2c9f7ee83f4e
   log_analytics:
     name: la-ipai-odoo-dev
     resource_group: rg-ipai-dev-odoo-runtime
-    subscription: 536d8cf6-89e1-4815-aef3-d5f2c5f4d070
+    subscription: eba824fb-332d-4623-9dfb-2c9f7ee83f4e
   container_registry:
     name: acripaiodoo
     resource_group: rg-ipai-shared

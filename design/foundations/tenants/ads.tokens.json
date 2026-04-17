@@ -1,0 +1,37 @@
+{
+  "$schema": "../../schema.tokens.json",
+  "tenant": "ads",
+  "vertical": "ads-market-intelligence",
+  "extends": "../tokens",
+  "description": "Ads / Market Intelligence vertical overlay. Drives Smartly-like activation, Quilt-like intelligence, AI Answer Share, Digital Health, Creator Graph, Promo Radar, and ads-copilot surfaces. Design goal: fast, analytical, campaign-native. Tone: sharper, signal-heavy, dashboard-forward. Brand anchor sampled from about.ads.microsoft.com (#225B62 at position 80).",
+  "brand": {
+    "name": "Advertising Copilot",
+    "primary": "#225B62",
+    "variants": {
+      "10": "#020404",
+      "20": "#0E1A1B",
+      "30": "#132B2D",
+      "40": "#163A3D",
+      "50": "#18494D",
+      "60": "#1B585D",
+      "70": "#1E696D",
+      "80": "#225B62",
+      "90": "#3B7780",
+      "100": "#528E98",
+      "110": "#6AA5AF",
+      "120": "#84BCC5",
+      "130": "#9ED2DB",
+      "140": "#B9E8EF",
+      "150": "#D5F3F7",
+      "160": "#EDFAFC"
+    }
+  },
+  "posture": {
+    "density": "compact",
+    "rowHeight": "36px",
+    "panelSurface": "elevated",
+    "typographyRhythm": "scan-first",
+    "emphasis": "data-accent-chart",
+    "decorative": "campaign-cards"
+  }
+}

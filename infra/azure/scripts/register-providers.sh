@@ -4,7 +4,7 @@
 
 set -e
 
-SUBSCRIPTION_ID="536d8cf6-89e1-4815-aef3-d5f2c5f4d070"
+SUBSCRIPTION_ID="eba824fb-332d-4623-9dfb-2c9f7ee83f4e"
 
 echo "Setting subscription to $SUBSCRIPTION_ID..."
 az account set --subscription "$SUBSCRIPTION_ID"

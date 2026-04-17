@@ -1,0 +1,23 @@
+schema: ipai.eval.scenarios.v1
+agent: ap-invoice-agent
+scenarios:
+  - id: AP-SC-001
+    name: Clean Local Vendor Bill
+    description: 12% VAT, 1% EWT (Services), PO Match.
+    expected_result: posted
+    taxpulse_rules: [VAT-12, EWT-ATC-WC100]
+  - id: AP-SC-002
+    name: Tax Mismatch (VAT)
+    description: Invoice claims 15% VAT (illegal).
+    expected_result: exception_diverted
+    reason: fail_closed_on_tax_ambiguity
+  - id: AP-SC-003
+    name: Unregistered Vendor
+    description: Bill from vendor not in Odoo.
+    expected_result: ingested
+    reason: require_vendor_verification
+  - id: AP-SC-004
+    name: Missing EWT for Service Vendor
+    description: Vendor requires EWT but invoice doesn't specify.
+    expected_result: exception_diverted
+    reason: require_atc_match

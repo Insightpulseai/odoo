@@ -1,0 +1,95 @@
+version: 1
+
+role_groups:
+  anonymous:
+    evidence_scope: public_only
+    allowed_mutations: []
+    allowed_exports:
+      - copy_text
+      - pdf
+    tags:
+      - no_auth
+
+  authenticated_basic:
+    evidence_scope: tenant_project_scoped
+    allowed_mutations:
+      - save_draft
+      - update_draft
+    allowed_exports:
+      - copy_text
+      - pdf
+      - docx
+
+  pulser_finance_head:
+    evidence_scope: cross_entity_consolidated
+    approval_bands:
+      - band_d_final_signoff
+    allowed_mutations:
+      - prepare
+      - route
+      - approve_signoff
+      - publish_artifact
+    allowed_exports:
+      - xlsx
+      - docx
+      - pptx
+
+  pulser_finance_controller:
+    evidence_scope: entity
+    approval_bands:
+      - band_c_approver_threshold
+    allowed_mutations:
+      - prepare
+      - route
+      - approve_within_threshold
+    allowed_exports:
+      - xlsx
+      - docx
+      - pptx
+
+  pulser_ap_processor:
+    evidence_scope: self_assigned
+    approval_bands:
+      - band_a_preparer
+    allowed_mutations:
+      - prepare
+      - route
+      - classify
+      - reconcile_draft
+    allowed_exports:
+      - xlsx
+      - docx
+
+  pulser_tax_lead:
+    evidence_scope: entity
+    approval_bands:
+      - band_c_approver_threshold
+    allowed_mutations:
+      - prepare
+      - route
+      - generate_filing_pack
+    allowed_exports:
+      - xlsx
+      - docx
+      - pptx
+
+  pulser_audit_viewer:
+    evidence_scope: audit_readonly
+    approval_bands: []
+    allowed_mutations: []
+    allowed_exports:
+      - pdf
+      - xlsx
+
+  pulser_finance_platform_admin:
+    evidence_scope: config_scoped
+    approval_bands:
+      - band_e_platform_admin_non_business_approver
+    allowed_mutations:
+      - change_config
+      - route
+      - retry
+      - reopen_operational_task
+    allowed_exports:
+      - json
+      - csv

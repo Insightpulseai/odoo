@@ -95,7 +95,7 @@ Must show IPAI primarily platformed on Azure (SEA region):
 Microsoft takes 3% of SaaS transactions. 97% to publisher.
 
 ## IPAI advantage
-Existing Azure footprint (Sub `536d8cf6`, SEA, ACA + PG Flex + Databricks)
+Existing Azure footprint (Sub `eba824fb`, SEA, ACA + PG Flex + Databricks)
 already satisfies "primarily platformed on Azure" for IP Co-sell validation.
 Reference architecture diagram ≈ existing infra diagram.
 

@@ -29,7 +29,7 @@ docker compose exec odoo odoo -d odoo_dev -u ipai_web_branding --stop-after-init
 
 # Option B — Azure Container App exec
 az containerapp exec --name ipai-odoo-dev-web --resource-group rg-ipai-dev-odoo-runtime \
-  --subscription 536d8cf6-89e1-4815-aef3-d5f2c5f4d070 \
+  --subscription eba824fb-332d-4623-9dfb-2c9f7ee83f4e \
   --command "/opt/odoo/odoo-bin -c /etc/odoo/odoo.conf -d odoo_dev -u ipai_web_branding --stop-after-init"
 
 # Verify install
@@ -97,7 +97,7 @@ docker compose exec odoo odoo -d odoo_dev --uninstall=appointment --stop-after-i
 
 # 3. Remove ACA hostname binding (DNS stays)
 az containerapp hostname remove --name ipai-odoo-dev-web --resource-group rg-ipai-dev-odoo-runtime \
-  --subscription 536d8cf6-89e1-4815-aef3-d5f2c5f4d070 \
+  --subscription eba824fb-332d-4623-9dfb-2c9f7ee83f4e \
   --hostname book.insightpulseai.com
 
 # 4. Point marketing back to zohobookings.com

@@ -50,7 +50,7 @@ Each plane owns specific capabilities. Each tags `plane:<name>` so cost, telemet
 | `ipai-nonprod` | Dev + staging workloads (= current Sponsorship sub `eba824fb`) | Live |
 | `ipai-prod` | Production workloads | Pending creation |
 
-`Azure subscription 1` (`536d8cf6`) is deprecated; consolidating into the above per ADR-002.
+`Azure subscription 1` (`eba824fb`) is deprecated; consolidating into the above per ADR-002.
 
 ---
 

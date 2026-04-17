@@ -14,7 +14,7 @@
 //   az deployment sub create \
 //     --location southeastasia \
 //     --template-file infra/azure/policy/tagging-baseline.bicep \
-//     --subscription 536d8cf6-89e1-4815-aef3-d5f2c5f4d070
+//     --subscription eba824fb-332d-4623-9dfb-2c9f7ee83f4e
 //
 // After deploy — trigger remediation on existing non-compliant resources:
 //   for tag in env costcenter owner businessunit project data-classification; do

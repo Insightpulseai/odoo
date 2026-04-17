@@ -1,7 +1,7 @@
 # InsightPulseAI — Platform Target State
 
 **Version:** 1.4.0 | **Last Updated:** 2026-03-11 | **Owner:** Jake Tolentino
-**Subscription:** Azure subscription 1 (`536d8cf6-89e1-4815-aef3-d5f2c5f4d070`) | **Primary Region:** Southeast Asia
+**Subscription:** Microsoft Azure Sponsorship (`eba824fb-332d-4623-9dfb-2c9f7ee83f4e`) | **Primary Region:** Southeast Asia
 
 -----
 

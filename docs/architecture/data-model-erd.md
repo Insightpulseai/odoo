@@ -25,7 +25,7 @@
 | DBMS | PostgreSQL 16 (Flexible Server) | PostgreSQL 16 (Flexible Server) — one per env |
 | Instance (nonprod) | `pg-ipai-odoo` | `pg-ipai-nonprod-odoo` (after naming-standard rename) |
 | Instance (prod) | — | `pg-ipai-prod-odoo` (to provision) |
-| Subscription (current) | **Azure subscription 1** `536d8cf6-…` — **deprecated, migration in progress** | **Microsoft Azure Sponsorship** `eba824fb-…` (nonprod) + new prod sub |
+| Subscription (current) | **Azure subscription 1** `eba824fb-…` — **deprecated, migration in progress** | **Microsoft Azure Sponsorship** `eba824fb-…` (nonprod) + new prod sub |
 | Resource group (current) | `rg-ipai-dev-odoo-data` | `rg-ipai-<env>-odoo-data` per canonical RG layout |
 | Region | Southeast Asia | Southeast Asia |
 | Compute | General Purpose tier | GP tier per env (right-sized at cutover) |

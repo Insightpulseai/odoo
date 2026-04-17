@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agent-a-thon | Founderz & Microsoft</title>
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+    <!-- Header -->
+    <header class="navbar">
+        <div class="nav-container">
+            <div class="logos">
+                <div class="logo">Founderz</div>
+                <div class="divider">|</div>
+                <div class="logo">Microsoft</div>
+            </div>
+            <a href="#signup" class="btn btn-outline">Sign In</a>
+        </div>
+    </header>
+
+    <main>
+        <!-- Hero Section -->
+        <section class="hero-section">
+            <div class="hero-container">
+                <!-- Left Content -->
+                <div class="hero-content fade-in-up">
+                    <span class="pill-label">Free & Online Course</span>
+                    <h1 class="headline">Learn how to build an AI Agent</h1>
+                    <p class="description">
+                        Sign up to this free course and create your first AI Agent, attend the live Microsoft Agent-a-thon build event, show your agent to the world and achieve a Microsoft Credential.
+                    </p>
+                </div>
+
+                <!-- Right Content: Form Card -->
+                <div class="hero-form fade-in-up delay-1">
+                    <div class="card glass-card form-card">
+                        <h2>Join the Agent-a-thon</h2>
+                        <form id="signupForm" action="#">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="name">First Name</label>
+                                    <input type="text" id="name" placeholder="Enter your name" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="surname">Surname</label>
+                                    <input type="text" id="surname" placeholder="Enter your surname" required>
+                                </div>
+                            </div>
+                            <div class="form-group full-width">
+                                <label for="email">Email</label>
+                                <input type="email" id="email" placeholder="name@company.com" required>
+                            </div>
+                            
+                            <div class="level-selection">
+                                <label>Select your Path</label>
+                                <div class="level-cards">
+                                    <div class="level-card active" data-level="explorer">
+                                        <h4>Explorer</h4>
+                                        <p>Level 1</p>
+                                    </div>
+                                    <div class="level-card" data-level="commander">
+                                        <h4>Commander</h4>
+                                        <p>Level 2</p>
+                                    </div>
+                                    <div class="level-card" data-level="master">
+                                        <h4>Master</h4>
+                                        <p>Level 3</p>
+                                    </div>
+                                </div>
+                                <input type="hidden" id="selectedLevel" value="explorer">
+                            </div>
+
+                            <button type="submit" class="btn btn-primary full-btn">Sign up for free</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- How It Works Section -->
+        <section class="how-it-works bg-light">
+            <div class="container center-text fade-in-up">
+                <h2>How it works</h2>
+                <div class="grid-3-col">
+                    <div class="feature-card">
+                        <div class="circle-number">1</div>
+                        <h3>Pick a Level</h3>
+                        <p>Choose the intensity that matches your ambition. From Explorer to Master.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="circle-number">2</div>
+                        <h3>Get Access</h3>
+                        <p>Unlock premium models and Azure cloud environments tailored to your track.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="circle-number">3</div>
+                        <h3>Build & Submit</h3>
+                        <p>Follow the guided track, deploy your agent, and submit to earn your credential.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Paths Section -->
+        <section class="paths-section">
+            <div class="container center-text fade-in-up">
+                <h2>Choose your Path</h2>
+                <div class="grid-3-col">
+                    <div class="path-card">
+                        <div class="path-header bg-explorer">
+                            <h3>Explorer</h3>
+                        </div>
+                        <div class="path-body">
+                            <ul>
+                                <li>Introduction to LLMs</li>
+                                <li>Prompt Engineering 101</li>
+                                <li>Deploy a basic bot</li>
+                            </ul>
+                            <a href="#signup" class="btn btn-outline full-btn">Unlock Path</a>
+                        </div>
+                    </div>
+                    <div class="path-card highlight-card">
+                        <div class="path-header bg-commander">
+                            <h3>Commander</h3>
+                        </div>
+                        <div class="path-body">
+                            <ul>
+                                <li>RAG Architecture</li>
+                                <li>Vector Databases</li>
+                                <li>API Integrations</li>
+                            </ul>
+                            <a href="#signup" class="btn btn-primary full-btn">Unlock Path</a>
+                        </div>
+                    </div>
+                    <div class="path-card">
+                        <div class="path-header bg-master">
+                            <h3>Master</h3>
+                        </div>
+                        <div class="path-body">
+                            <ul>
+                                <li>Multi-Agent Orchestration</li>
+                                <li>Fine-tuning SLMs</li>
+                                <li>Enterprise Security</li>
+                            </ul>
+                            <a href="#signup" class="btn btn-outline full-btn">Unlock Path</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Final CTA -->
+        <section class="final-cta" id="signup">
+            <div class="cta-overlay glass-card fade-in-up">
+                <h2>Ready to build your first AI Agent?</h2>
+                <button class="btn btn-primary large-btn">Start Registration</button>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-container">
+            <p>&copy; 2026 Founderz & Microsoft Event. All rights reserved.</p>
+            <div class="links">
+                <a href="#">Privacy Policy</a>
+                <a href="#">Terms of Use</a>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>

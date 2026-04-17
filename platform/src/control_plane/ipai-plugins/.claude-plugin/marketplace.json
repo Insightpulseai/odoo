@@ -1,0 +1,26 @@
+{
+  "name": "ipai-plugins",
+  "owner": {
+    "name": "InsightPulseAI"
+  },
+  "description": "InsightPulseAI plugin marketplace — Pulser for Odoo, Power BI, and UGC media ops plugins for Claude Code.",
+  "version": "0.1.0",
+  "repository": "https://github.com/InsightPulseAI/ipai-plugins",
+  "license": "MIT",
+  "plugins": [
+    {
+      "name": "pulser-odoo",
+      "source": "./plugins/pulser-odoo",
+      "description": "Pulser for Odoo — governed AI-augmented layer for Odoo CE/OCA 18 on Azure. Covers architecture, IaC, deployment stamps, go-live factory, finance RBAC, behavior engine, research tools, and self-improvement.",
+      "category": "erp",
+      "tags": ["odoo", "azure", "finance", "erp", "saas", "ipai"]
+    },
+    {
+      "name": "powerbi-skills",
+      "source": "./plugins/powerbi-skills",
+      "description": "Power BI skills for Claude Code — DAX authoring, data modeling, PBIP scaffolding, report theming, and CI/CD pipelines.",
+      "category": "analytics",
+      "tags": ["powerbi", "dax", "fabric", "microsoft", "analytics"]
+    }
+  ]
+}

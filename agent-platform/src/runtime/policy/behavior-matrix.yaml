@@ -1,0 +1,193 @@
+version: 1
+
+defaults:
+  cta_mode: contextual
+  exports: []
+  allowed_tools: []
+  allowed_mutations: []
+
+surfaces:
+  public_site:
+    trust_level: low
+    default_ui_mode: wizard
+    default_cta_mode: soft
+
+  prisma_playground:
+    trust_level: low_medium
+    default_ui_mode: workbench
+    default_cta_mode: contextual
+
+  client_workspace:
+    trust_level: medium
+    default_ui_mode: workbench
+    default_cta_mode: contextual
+
+  odoo_erp:
+    trust_level: high
+    default_ui_mode: cockpit
+    default_cta_mode: none
+
+  admin_control:
+    trust_level: highest
+    default_ui_mode: operator
+    default_cta_mode: none
+
+rules:
+  - match:
+      surface: public_site
+      domain: research
+      role_groups: [anonymous]
+    resolve:
+      ui_mode: wizard
+      tone: plain
+      allowed_tools:
+        - structured_generation
+        - public_methodology_rag
+      allowed_mutations: []
+      exports:
+        - copy_text
+        - pdf
+      cta_mode: soft
+
+  - match:
+      surface: prisma_playground
+      domain: research
+      expertise_mode: beginner
+    resolve:
+      ui_mode: workbench
+      tone: plain
+      allowed_tools:
+        - structured_generation
+        - public_methodology_rag
+        - pubmed_search
+        - prisma_validator
+      allowed_mutations:
+        - local_save
+      exports:
+        - copy_text
+        - pdf
+        - docx
+      cta_mode: contextual
+
+  - match:
+      surface: client_workspace
+      domain: research
+      role_groups: [authenticated_basic]
+    resolve:
+      ui_mode: workbench
+      tone: guided
+      allowed_tools:
+        - structured_generation
+        - tenant_research_rag
+        - pubmed_search
+        - prisma_validator
+        - artifact_export
+      allowed_mutations:
+        - save_draft
+        - update_draft
+      exports:
+        - copy_text
+        - pdf
+        - docx
+      cta_mode: contextual
+
+  - match:
+      surface: odoo_erp
+      domain: finance
+      role_groups: [pulser_finance_head]
+    resolve:
+      ui_mode: cockpit
+      tone: operational
+      allowed_tools:
+        - evidence_lookup
+        - close_checklist
+        - filing_pack_generator
+        - reporting_export
+      allowed_mutations:
+        - prepare
+        - route
+        - approve_signoff
+        - publish_artifact
+      exports:
+        - xlsx
+        - docx
+        - pptx
+      cta_mode: none
+
+  - match:
+      surface: odoo_erp
+      domain: finance
+      role_groups: [pulser_finance_controller]
+    resolve:
+      ui_mode: cockpit
+      tone: operational
+      allowed_tools:
+        - evidence_lookup
+        - reconciliation_tools
+        - journal_prep
+        - reporting_export
+      allowed_mutations:
+        - prepare
+        - route
+        - approve_within_threshold
+      exports:
+        - xlsx
+        - docx
+        - pptx
+      cta_mode: none
+
+  - match:
+      surface: odoo_erp
+      domain: finance
+      role_groups: [pulser_ap_processor]
+    resolve:
+      ui_mode: queue
+      tone: operational
+      allowed_tools:
+        - evidence_lookup
+        - classify_extract
+        - reconcile_draft
+      allowed_mutations:
+        - prepare
+        - route
+      exports:
+        - xlsx
+        - docx
+      cta_mode: none
+
+  - match:
+      surface: odoo_erp
+      domain: finance
+      role_groups: [pulser_audit_viewer]
+    resolve:
+      ui_mode: vault
+      tone: concise
+      allowed_tools:
+        - evidence_lookup
+        - explanation_only
+      allowed_mutations: []
+      exports:
+        - pdf
+        - xlsx
+      cta_mode: none
+
+  - match:
+      surface: admin_control
+      domain: ops
+      role_groups: [pulser_finance_platform_admin]
+    resolve:
+      ui_mode: operator
+      tone: operational
+      allowed_tools:
+        - diagnostics
+        - rollout_control
+        - drift_check
+        - recovery_actions
+      allowed_mutations:
+        - change_config
+        - retry
+        - reopen_operational_task
+      exports:
+        - json
+        - csv
+      cta_mode: none

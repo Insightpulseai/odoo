@@ -1,0 +1,30 @@
+{
+  "pim_profiles": [
+    {
+      "roleName": "Global Administrator",
+      "settings": {
+        "maxActivationHours": 4,
+        "requireJustification": true,
+        "requireTicket": true,
+        "requireApproval": true,
+        "requireMfa": true,
+        "approverUserIds": [
+          "ID_OF_BREAKGLASS_1"
+        ]
+      }
+    },
+    {
+      "roleName": "Privileged Role Administrator",
+      "settings": {
+        "maxActivationHours": 4,
+        "requireJustification": true,
+        "requireTicket": true,
+        "requireApproval": true,
+        "requireMfa": true,
+        "approverUserIds": [
+          "ID_OF_BREAKGLASS_1"
+        ]
+      }
+    }
+  ]
+}

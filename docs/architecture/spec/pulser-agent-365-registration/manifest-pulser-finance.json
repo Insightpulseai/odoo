@@ -1,0 +1,112 @@
+{
+  "agent_identity": {
+    "catalog_sp_appId": "49aceaad-554d-4cd9-89d6-7d5cb388a508",
+    "catalog_sp_displayName": "ipai-agent-pulser-finance-dev",
+    "runtime_mi_primary": "id-ipai-agent-finance-close-dev",
+    "runtime_mi_peers": [
+      "id-ipai-agent-ap-invoice-dev",
+      "id-ipai-agent-bank-recon-dev",
+      "id-ipai-agent-doc-intel-dev",
+      "id-ipai-agent-tax-guru-dev"
+    ],
+    "runtime_mi_rg": "rg-ipai-dev-platform",
+    "runtime_mi_subscription": "Microsoft Azure Sponsorship (eba824fb-332d-4623-9dfb-2c9f7ee83f4e)"
+  },
+  "catalog_metadata": {
+    "display_name": "Pulser Finance",
+    "description": "Finance specialist agent for Odoo ledger reads, BIR compliance, AR collections, bank reconciliation, and expense liquidation.",
+    "publisher": "InsightPulse AI (MpnId 7097325)",
+    "category": "Finance",
+    "version": "1.0.0",
+    "vertical_targets": ["Services", "Photo/Video production", "Research"],
+    "differentiators": [
+      "PH BIR compliance (2307, 2550M, SAWT, QAP, SLSP, 1601-C, 1702)",
+      "1-hop Odoo reads via ipai-odoo-mcp (vs D365's 3-hop Dataverse path)",
+      "Zero incremental license (OCA + ipai_* on Odoo CE 18)"
+    ]
+  },
+  "runtime": {
+    "foundry_project_endpoint": "https://ipai-copilot-resource.services.ai.azure.com/api/projects/ipai-copilot",
+    "model_deployment_complex": "gpt-4.1",
+    "model_deployment_routine": "gpt-4.1-mini-20260415",
+    "region": "eastus2",
+    "foundry_subscription": "Microsoft Azure Sponsorship",
+    "foundry_rg": "rg-data-intel-ph"
+  },
+  "tool_surface": [
+    "azure_database_postgresql (ipai-odoo-mcp → pg-ipai-odoo, read-first)",
+    "azure_ai_search (srch-ipai-dev-sea, indexes: pulser-bir-rulings, pulser-odoo-docs)",
+    "code_interpreter (Foundry built-in — BIR DAT gen + PDF render + reconciliation fuzzy match)",
+    "browser_automation (Foundry built-in — eBIRForms/eFPS submission in Phase 2)",
+    "document_intelligence (docai-ipai-dev — receipt/invoice OCR)",
+    "file_search (Foundry built-in — BIR form templates, liquidation forms)",
+    "foundry_mcp_server (eval access + agent introspection)"
+  ],
+  "repo_inventory": {
+    "skills": [
+      "agents/skills/bir_tax_compliance/SKILL.md",
+      "agents/skills/finance_recon/SKILL.md",
+      "agents/skills/ar_collections/SKILL.md",
+      "agents/skills/expense_liquidation/SKILL.md"
+    ],
+    "odoo_modules_installed": [
+      "addons/ipai/ipai_bir_tax_compliance/",
+      "addons/ipai/ipai_finance_ppm/",
+      "addons/ipai/ipai_bank_recon/",
+      "addons/ipai/ipai_bir_2307/",
+      "addons/ipai/ipai_bir_compliance/",
+      "addons/ipai/ipai_bir_returns/",
+      "addons/ipai/ipai_bir_slsp/",
+      "addons/ipai/ipai_finance_close/"
+    ],
+    "oca_modules_required": [
+      "account_reconcile_oca",
+      "account_financial_report",
+      "account_credit_control",
+      "account_asset_management",
+      "mis_builder",
+      "l10n_ph"
+    ],
+    "runtime_code": [
+      "apps/odoo-connector/",
+      "agent-platform/bank-recon/",
+      "mcp/servers/ (13-tool Odoo MCP)"
+    ],
+    "evals": [
+      "spec/pulser-evals/pulser-finance-evals.md"
+    ],
+    "storage": [
+      "stipaidevagent (BIR PDFs, DATs, liquidation artifacts)"
+    ],
+    "unity_catalog_reads": [
+      "ipai_dev.gold.Invoice",
+      "ipai_dev.gold.VendorInvoice",
+      "ipai_dev.gold.Payment",
+      "ipai_dev.gold.BankStatementLine",
+      "ipai_dev.metrics.dso_daily",
+      "ipai_dev.metrics.dpo_daily",
+      "ipai_dev.metrics.filing_on_time_rate",
+      "odoo_erp.public.account_move (FOREIGN_CATALOG via Lakehouse Federation)"
+    ]
+  },
+  "rbac_at_publish": {
+    "ipai_tenant": [
+      "Azure AI User on ipai-copilot-resource",
+      "USE CATALOG + SELECT on ipai_dev.gold",
+      "SELECT on ipai_dev.metrics",
+      "read-only via pg_mcp on pg-ipai-odoo (scoped to finance tables)"
+    ],
+    "tbwa_tenant": "deferred to post-pilot"
+  },
+  "kpi_ownership": [
+    "Days Sales Outstanding (DSO)",
+    "Days Payable Outstanding (DPO)",
+    "Filing on-time rate",
+    "First-pass-yield AP",
+    "Reconciliation exception count"
+  ],
+  "closes_packs": ["Pack 1 (Finance Ops)", "Pack 4 (PH Compliance)"],
+  "agent_365_extension_applied": false,
+  "frontier_gate_release_tracked": true,
+  "last_updated": "2026-04-15"
+}

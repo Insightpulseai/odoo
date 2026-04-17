@@ -5,7 +5,7 @@
 > **Companion to:** `d365_fin_ops_surface_and_skills_catalog.md` (skills) and `../benchmarks/d365_finance_copilot_parity_catalog.md` (parity).
 >
 > **Last updated:** 2026-04-14
-> **Status authority:** Azure Resource Graph (subs `eba824fb-…` sponsored + `536d8cf6-…` workload), Insightpulseai/odoo GitHub repo, `ssot/benchmarks/parity_matrix.yaml`.
+> **Status authority:** Azure Resource Graph (subs `eba824fb-…` sponsored + `eba824fb-…` workload), Insightpulseai/odoo GitHub repo, `ssot/benchmarks/parity_matrix.yaml`.
 
 ---
 

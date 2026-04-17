@@ -4,7 +4,7 @@
 
 ### Budget alert
 - Name: `ipai-dev-monthly-500`
-- Scope: Subscription `536d8cf6-89e1-4815-aef3-d5f2c5f4d070`
+- Scope: Subscription `eba824fb-332d-4623-9dfb-2c9f7ee83f4e` (Microsoft Azure Sponsorship)
 - Amount: $500/month
 - Thresholds: 80% actual, 100% actual
 - Contact: admin@insightpulseai.com

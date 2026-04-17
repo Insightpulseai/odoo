@@ -1,0 +1,37 @@
+{
+  "version": "1.0",
+  "name": "Pulser for Odoo — Adaptive Cards Manifest",
+  "cards": [
+    {
+      "id": "p2p-wbs-score-card",
+      "description": "Visualizes the 0-100 Project Operations WBS Quality Score with gate status.",
+      "blueprint": "dynamics-365-insight-pattern",
+      "elements": {
+        "title": "WBS Quality Score (Project Ops)",
+        "indicator": "gauge",
+        "thresholds": {"optimal": 80, "warning": 60, "critical": 40}
+      }
+    },
+
+    {
+      "id": "r2r-close-readiness-card",
+      "description": "Visualizes the current period close readiness and blockers.",
+      "blueprint": "dynamics-365-finance-pattern",
+      "elements": {
+        "title": "Period Close Status",
+        "sections": ["Accruals", "Reconciliations", "Gaps"],
+        "action": "Open Close Cockpit"
+      }
+    },
+    {
+      "id": "bir-compliance-status-card",
+      "description": "Visualizes the Philippine tax compliance health and SLSP state.",
+      "blueprint": "bir-compliance-pattern",
+      "elements": {
+        "title": "BIR Compliance Health",
+        "indicator": "status-pill",
+        "details": ["SLSP Readiness", "Input VAT Match Rate"]
+      }
+    }
+  ]
+}

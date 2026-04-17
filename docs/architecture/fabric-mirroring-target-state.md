@@ -89,7 +89,7 @@ Ground truth as of 2026-04-15 (`az postgres flexible-server show` + `az network 
 
 | Attribute | `pg-ipai-odoo` (OLD SUB) | `pg-ipai-odoo-dev` (SPONSORED) |
 |---|---|---|
-| Sub | Azure subscription 1 (`536d8cf6…`) | Microsoft Azure Sponsorship (`eba824fb…`) |
+| Sub | Azure subscription 1 (`eba824fb…`) | Microsoft Azure Sponsorship (`eba824fb…`) |
 | RG | `rg-ipai-dev-odoo-data` | `rg-ipai-dev-data-sea` |
 | Tier / SKU | GP / `Standard_D2ds_v5` | GP / `Standard_D4s_v3` |
 | Storage | 32 GB | 128 GB |

@@ -50,8 +50,8 @@ az devops service-endpoint create \
     // clientId: 2d9a8328-c8cb-47fc-ba4e-01c1cf9b75d8
   },
   "data": {
-    "subscriptionId": "536d8cf6-89e1-4815-aef3-d5f2c5f4d070",
-    "subscriptionName": "Azure subscription 1",
+    "subscriptionId": "eba824fb-332d-4623-9dfb-2c9f7ee83f4e",
+    "subscriptionName": "Microsoft Azure Sponsorship",
     "environment": "AzureCloud",
     "scopeLevel": "Subscription"
   }

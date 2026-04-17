@@ -1,0 +1,266 @@
+{
+  "$schema": "https://json.schemastore.org/ipai-skills-registry.json",
+  "_version": "0.1.0",
+  "_maintained_by": "InsightPulseAI/agents",
+  "_updated": "2026-04-12",
+
+  "skills": [
+    {
+      "name": "pulser-constitution",
+      "bundle": "governance",
+      "purpose": "Enforce IPAI platform doctrine and Pulser governing principles",
+      "owner": "jake@insightpulseai.com",
+      "version": "0.1.0",
+      "model_invocable": true,
+      "risk_tier": "low",
+      "dependencies": [],
+      "eval_status": { "last_run": null, "result": "pending" }
+    },
+    {
+      "name": "pulser-scenario-map",
+      "bundle": "governance",
+      "purpose": "Map features and backlog items to E2E scenario lanes",
+      "owner": "jake@insightpulseai.com",
+      "version": "0.1.0",
+      "model_invocable": true,
+      "risk_tier": "low",
+      "dependencies": [],
+      "eval_status": { "last_run": null, "result": "pending" }
+    },
+    {
+      "name": "pulser-iac-scaffold",
+      "bundle": "governance",
+      "purpose": "Generate and audit canonical infra/azure/ Bicep module layout",
+      "owner": "jake@insightpulseai.com",
+      "version": "0.1.0",
+      "model_invocable": false,
+      "risk_tier": "medium",
+      "dependencies": ["az CLI", "azd CLI"],
+      "eval_status": { "last_run": null, "result": "pending" },
+      "allowed_tools": ["Bash(az bicep lint *)", "Bash(az deployment group validate *)", "Write"]
+    },
+    {
+      "name": "pulser-stamp-deploy",
+      "bundle": "governance",
+      "purpose": "Execute deployment stamp promotion with safety gates",
+      "owner": "jake@insightpulseai.com",
+      "version": "0.1.0",
+      "model_invocable": false,
+      "risk_tier": "high",
+      "dependencies": ["az CLI", "azd CLI"],
+      "eval_status": { "last_run": null, "result": "pending" },
+      "allowed_tools": ["Bash(az containerapp *)", "Bash(az deployment group create *)"],
+      "review_notes": "Destructive — requires pre-flight checklist. Manual-only."
+    },
+    {
+      "name": "pulser-runtime-classify",
+      "bundle": "governance",
+      "purpose": "Audit ACA apps: keep/justify/merge/decommission",
+      "owner": "jake@insightpulseai.com",
+      "version": "0.1.0",
+      "model_invocable": false,
+      "risk_tier": "medium",
+      "dependencies": ["az CLI"],
+      "eval_status": { "last_run": null, "result": "pending" }
+    },
+    {
+      "name": "pulser-devops-gate",
+      "bundle": "governance",
+      "purpose": "Verify Boards→Spec Kit→GitHub→IaC→CI/CD authority chain and cost tagging",
+      "owner": "jake@insightpulseai.com",
+      "version": "0.1.0",
+      "model_invocable": false,
+      "risk_tier": "low",
+      "dependencies": ["az CLI", "gh CLI"],
+      "eval_status": { "last_run": null, "result": "pending" }
+    },
+    {
+      "name": "pulser-ga-gate",
+      "bundle": "governance",
+      "purpose": "GA readiness assessment against 41 Smart Success Criteria",
+      "owner": "jake@insightpulseai.com",
+      "version": "0.1.0",
+      "model_invocable": false,
+      "risk_tier": "low",
+      "dependencies": [],
+      "eval_status": { "last_run": null, "result": "pending" }
+    },
+    {
+      "name": "pulser-control-plane",
+      "bundle": "tenant-lifecycle",
+      "purpose": "Service-level control plane — tenant lifecycle and fleet health",
+      "owner": "jake@insightpulseai.com",
+      "version": "0.1.0",
+      "model_invocable": true,
+      "risk_tier": "low",
+      "dependencies": [],
+      "eval_status": { "last_run": null, "result": "pending" }
+    },
+    {
+      "name": "pulser-tenant-admin",
+      "bundle": "tenant-lifecycle",
+      "purpose": "Tenant-level admin plane — settings, feature controls, evidence retention",
+      "owner": "jake@insightpulseai.com",
+      "version": "0.1.0",
+      "model_invocable": true,
+      "risk_tier": "low",
+      "dependencies": [],
+      "eval_status": { "last_run": null, "result": "pending" }
+    },
+    {
+      "name": "pulser-onboarding",
+      "bundle": "tenant-lifecycle",
+      "purpose": "Tenant onboarding wizard stages and activation gate enforcement",
+      "owner": "jake@insightpulseai.com",
+      "version": "0.1.0",
+      "model_invocable": false,
+      "risk_tier": "low",
+      "dependencies": ["gh CLI"],
+      "eval_status": { "last_run": null, "result": "pending" }
+    },
+    {
+      "name": "pulser-go-live",
+      "bundle": "tenant-lifecycle",
+      "purpose": "Go-live factory — migration, cutover, AR/AP reconciliation, stabilization",
+      "owner": "jake@insightpulseai.com",
+      "version": "0.1.0",
+      "model_invocable": false,
+      "risk_tier": "high",
+      "dependencies": ["gh CLI"],
+      "eval_status": { "last_run": null, "result": "pending" },
+      "review_notes": "Irreversible tenant state changes. Manual-only."
+    },
+    {
+      "name": "pulser-uat-gate",
+      "bundle": "tenant-lifecycle",
+      "purpose": "UAT execution, defect tracking, and signoff flow",
+      "owner": "jake@insightpulseai.com",
+      "version": "0.1.0",
+      "model_invocable": false,
+      "risk_tier": "low",
+      "dependencies": ["gh CLI"],
+      "eval_status": { "last_run": null, "result": "pending" }
+    },
+    {
+      "name": "pulser-livesite",
+      "bundle": "tenant-lifecycle",
+      "purpose": "Health checks, incident response, ACA rollback",
+      "owner": "jake@insightpulseai.com",
+      "version": "0.1.0",
+      "model_invocable": true,
+      "risk_tier": "medium",
+      "dependencies": ["az CLI"],
+      "eval_status": { "last_run": null, "result": "pending" }
+    },
+    {
+      "name": "pulser-ppm",
+      "bundle": "finance-ops",
+      "purpose": "Finance PPM and Project-to-Profit domain guidance",
+      "owner": "jake@insightpulseai.com",
+      "version": "0.1.0",
+      "model_invocable": true,
+      "risk_tier": "low",
+      "dependencies": [],
+      "eval_status": { "last_run": null, "result": "pending" }
+    },
+    {
+      "name": "pulser-expense-intel",
+      "bundle": "finance-ops",
+      "purpose": "Expense accrual, card exceptions, AP reconciliation",
+      "owner": "jake@insightpulseai.com",
+      "version": "0.1.0",
+      "model_invocable": true,
+      "risk_tier": "low",
+      "dependencies": [],
+      "eval_status": { "last_run": null, "result": "pending" }
+    },
+    {
+      "name": "pulser-finance-rbac",
+      "bundle": "finance-ops",
+      "purpose": "Finance role groups, approval bands, evidence scopes",
+      "owner": "jake@insightpulseai.com",
+      "version": "0.1.0",
+      "model_invocable": true,
+      "risk_tier": "low",
+      "dependencies": [],
+      "eval_status": { "last_run": null, "result": "pending" }
+    },
+    {
+      "name": "pulser-behavior-resolve",
+      "bundle": "finance-ops",
+      "purpose": "Policy matrix behavior resolver (surface × domain × role)",
+      "owner": "jake@insightpulseai.com",
+      "version": "0.1.0",
+      "model_invocable": true,
+      "risk_tier": "low",
+      "dependencies": [],
+      "eval_status": { "last_run": null, "result": "pending" }
+    },
+    {
+      "name": "pulser-publish",
+      "bundle": "finance-ops",
+      "purpose": "PPTX/DOCX/XLSX publishable outputs with evidence linkage",
+      "owner": "jake@insightpulseai.com",
+      "version": "0.1.0",
+      "model_invocable": false,
+      "risk_tier": "low",
+      "dependencies": ["python3"],
+      "eval_status": { "last_run": null, "result": "pending" }
+    },
+    {
+      "name": "pulser-prisma",
+      "bundle": "intelligence",
+      "purpose": "PrismaLab research tools — PICO, PubMed, PRISMA flow, review type",
+      "owner": "jake@insightpulseai.com",
+      "version": "0.1.0",
+      "model_invocable": true,
+      "risk_tier": "low",
+      "dependencies": [],
+      "eval_status": { "last_run": null, "result": "pending" }
+    },
+    {
+      "name": "pulser-rag-wire",
+      "bundle": "intelligence",
+      "purpose": "RAG index routing and Azure AI Foundry wiring",
+      "owner": "jake@insightpulseai.com",
+      "version": "0.1.0",
+      "model_invocable": true,
+      "risk_tier": "low",
+      "dependencies": ["Azure AI Search", "Azure AI Foundry"],
+      "eval_status": { "last_run": null, "result": "pending" }
+    },
+    {
+      "name": "pulser-run-trace",
+      "bundle": "intelligence",
+      "purpose": "Structured agent run event instrumentation",
+      "owner": "jake@insightpulseai.com",
+      "version": "0.1.0",
+      "model_invocable": true,
+      "risk_tier": "low",
+      "dependencies": ["ops.run_events (Supabase)"],
+      "eval_status": { "last_run": null, "result": "pending" }
+    },
+    {
+      "name": "pulser-self-heal",
+      "bundle": "intelligence",
+      "purpose": "Failure taxonomy and safe recovery policy",
+      "owner": "jake@insightpulseai.com",
+      "version": "0.1.0",
+      "model_invocable": true,
+      "risk_tier": "low",
+      "dependencies": [],
+      "eval_status": { "last_run": null, "result": "pending" }
+    },
+    {
+      "name": "pulser-eval",
+      "bundle": "intelligence",
+      "purpose": "Domain scorecards, replay evals, small-model training targets",
+      "owner": "jake@insightpulseai.com",
+      "version": "0.1.0",
+      "model_invocable": false,
+      "risk_tier": "low",
+      "dependencies": ["python3", "ops.run_events (Supabase)"],
+      "eval_status": { "last_run": null, "result": "pending" }
+    }
+  ]
+}

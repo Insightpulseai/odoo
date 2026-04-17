@@ -1,0 +1,74 @@
+{
+  "agent_identity": {
+    "catalog_sp_appId": "486bd9d1-dfe6-4ca0-8b39-5daa8d7b75c5",
+    "catalog_sp_displayName": "ipai-agent-pulser-ops-dev",
+    "runtime_mi_primary": "id-ipai-agent-pulser-dev",
+    "runtime_mi_rg": "rg-ipai-dev-platform",
+    "runtime_mi_subscription": "Azure subscription 1"
+  },
+  "catalog_metadata": {
+    "display_name": "Pulser Ops",
+    "description": "Infrastructure and devops specialist agent for Azure resource inspection, pipeline operations, and model/agent deployment via Foundry.",
+    "publisher": "InsightPulse AI (MpnId 7097325)",
+    "category": "DevOps / IT Operations",
+    "version": "1.0.0",
+    "differentiators": [
+      "Cross-subscription awareness (Sponsorship + PAYG split)",
+      "Azure Pipelines-only CI/CD authority enforcement (per CLAUDE.md doctrine)",
+      "Least-capability principle — never accesses data-plane"
+    ]
+  },
+  "runtime": {
+    "foundry_project_endpoint": "https://ipai-copilot-resource.services.ai.azure.com/api/projects/ipai-copilot",
+    "model_deployment_complex": "gpt-4.1",
+    "model_deployment_routine": "gpt-4.1-mini-20260415",
+    "region": "eastus2"
+  },
+  "tool_surface": [
+    "azure_mcp_server (Azure resource graph, ARM, cost queries — 40+ Azure services)",
+    "azure_devops_mcp_server (ADO project ipai-platform — pipelines, work items, repos, wiki)",
+    "foundry_mcp_server (model catalog, agent eval, deployment operations)",
+    "github_mcp (conditional — InsightPulseAI/odoo repo context when needed)"
+  ],
+  "repo_inventory": {
+    "skills": [
+      "agents/skills/azure_ops/SKILL.md (planned)",
+      "agents/skills/ado_ops/SKILL.md (planned)",
+      "agents/skills/foundry_ops/SKILL.md (planned)"
+    ],
+    "runtime_code": [
+      "agent-platform/ops/",
+      "apps/roadmap/"
+    ],
+    "evals": [
+      "spec/pulser-evals/pulser-ops-evals.md"
+    ],
+    "iac_surface": [
+      "infra/azure/ (Bicep modules)",
+      "azure-pipelines/ (26 pipeline YAMLs)"
+    ]
+  },
+  "rbac_at_publish": {
+    "ipai_tenant": [
+      "Reader on subscription (Azure subscription 1 + Microsoft Azure Sponsorship) — for inspection only",
+      "NO data-plane access (no PG MCP, no Document Intelligence, no Storage write)",
+      "ADO Basic access on ipai-platform project",
+      "Contributor on rg-ipai-dev-platform (ACA app deploy/restart only)"
+    ],
+    "tbwa_tenant": "deferred"
+  },
+  "kpi_ownership": [
+    "Infrastructure drift (resources vs SSOT)",
+    "Pipeline success rate",
+    "Azure cost per agent-call (via appi-ipai-dev-agent-sea traces)"
+  ],
+  "forbidden_actions": [
+    "Deploy via GitHub Actions (CLAUDE.md: Azure Pipelines is sole CI/CD authority)",
+    "Call PG MCP directly (route to pulser-finance)",
+    "Mutate resources without operator approval (Tier 2 + Tier 3 safe outputs)"
+  ],
+  "closes_packs": ["Cross-cutting — supports all packs"],
+  "agent_365_extension_applied": false,
+  "frontier_gate_release_tracked": true,
+  "last_updated": "2026-04-15"
+}

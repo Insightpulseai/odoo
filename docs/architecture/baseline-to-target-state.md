@@ -52,15 +52,15 @@
 | Private endpoints | ✅ KV + Search only |
 | VNet | ✅ vnet-ipai-dev-sea |
 | Private DNS zones (8) | ✅ Complete |
-| Defender for Cloud | ❌ NOT registered |
-| PG private endpoint | ❌ MISSING |
+| Defender for Cloud | ✅ Registered (Free tier) |
+| PG private endpoint | ✅ pe-ipai-dev-pg deployed |
 
-### DNS — zones created, not propagated
+### DNS — zones created, propagated
 
 | Zone | Nameservers | Squarespace updated? |
 |---|---|---|
-| insightpulseai.com | ns1-06 through ns4-06 | ❌ PENDING |
-| w9studio.net | ns1-07 through ns4-07 | ❌ PENDING |
+| insightpulseai.com | ns1-06 through ns4-06 | ✅ DONE |
+| w9studio.net | ns1-07 through ns4-07 | ✅ DONE |
 
 ### Monitoring — complete
 
@@ -71,6 +71,14 @@
 | Action groups | 1 |
 | Backup vault | 1 |
 
+### Realtime — provisioned
+
+| Resource | RG | Status |
+|---|---|---|
+| SignalR (sigr-ipai-dev-sea) | rg-ipai-dev-realtime | ✅ Live |
+| Communication Services (acs-ipai-dev-sea) | rg-ipai-dev-realtime | ✅ Live |
+| Redis (redis-ipai-dev-sea) | rg-ipai-dev-realtime | ✅ Provisioning |
+
 ### Other
 
 | Resource | Status |
@@ -78,7 +86,7 @@
 | ACR (acripaiodoo) | ✅ Live |
 | AI Search (srch-ipai-dev-sea) | ✅ Live + PE |
 | Purview (pv-ipai-dev-sea) | ✅ Live |
-| Total resources | 44 |
+| Total resources | 47+ |
 
 ---
 
@@ -179,30 +187,31 @@
 
 ## Gap summary: baseline → target
 
-| # | Gap | Effort | Priority |
-|---|---|---|---|
-| 1 | Update Squarespace nameservers | 5 min (you) | **P0** |
-| 2 | Bind custom domains + managed certs on 4 ACA apps | 30 min | **P0** |
-| 3 | Enable Defender for Cloud | 5 min | **P0** |
-| 4 | Deploy PG private endpoint | 2 hrs | **P0** |
-| 5 | File RTFP support ticket for Foundry | 15 min (you) | **P0** |
-| 6 | Downsize PG D4s_v3 → D2s_v3 | 30 min | **P1** |
-| 7 | Create Foundry project (proj-ipai-copilot) | 15 min | **P1** |
-| 8 | Split Odoo into web + worker + cron | 2 hrs | **P1** |
-| 9 | Import Odoo seed data (13 tasks per spec-kit) | 4 hrs | **P1** |
-| 10 | Install ipai_doc_intel + configure API key | 30 min | **P1** |
-| 11 | Create 3-stage infra-promote.yml pipeline | 1 day | **P1** |
-| 12 | Create ADO environments (dev/staging/prod) | 30 min | **P1** |
-| 13 | Enable Databricks One Chat | 5 min | **P1** |
-| 14 | Tag all 44 resources with 8 core tags | 2 hrs | **P1** |
-| 15 | Run DLT pipeline (populate gold from federation) | 2 hrs | **P1** |
-| 16 | Deploy APIM GenAI gateway | 4 hrs | **P2** |
-| 17 | Train custom DocAI model on TBWA forms | 1 day | **P2** |
-| 18 | Record demo | 30 min | **P2** |
-| 19 | Submit marketplace listing | 1 hr | **P2** |
+| # | Gap | Effort | Priority | Status |
+|---|---|---|---|---|
+| 1 | Update Squarespace nameservers | 5 min (you) | **P0** | ✅ DONE |
+| 2 | Bind custom domains + managed certs on 4 ACA apps | 30 min | **P0** | In progress |
+| 3 | Enable Defender for Cloud | 5 min | **P0** | ✅ DONE |
+| 4 | Deploy PG private endpoint | 2 hrs | **P0** | ✅ DONE |
+| 5 | File RTFP support ticket for Foundry | 15 min (you) | **P0** | Pending (user) |
+| 6 | Downsize PG D4s_v3 → D2s_v3 | 30 min | **P1** | ✅ DONE |
+| 7 | Create Foundry project (proj-ipai-copilot) | 15 min | **P1** | Pending |
+| 8 | Split Odoo into web + worker + cron | 2 hrs | **P1** | Pending |
+| 9 | Import Odoo seed data (13 tasks per spec-kit) | 4 hrs | **P1** | Spec ready |
+| 10 | Install ipai_doc_intel + configure API key | 30 min | **P1** | ✅ Module built |
+| 11 | Create 3-stage infra-promote.yml pipeline | 1 day | **P1** | Pending |
+| 12 | Create ADO environments (dev/staging/prod) | 30 min | **P1** | Pending |
+| 13 | Enable Databricks One Chat | 5 min | **P1** | Pending |
+| 14 | Tag all 47 resources with 8 core tags | 2 hrs | **P1** | ✅ 41/47 tagged |
+| 15 | Run DLT pipeline (populate gold from federation) | 2 hrs | **P1** | Pending |
+| 16 | Deploy APIM GenAI gateway | 4 hrs | **P2** | Pending |
+| 17 | Train custom DocAI model on TBWA forms | 1 day | **P2** | Pending |
+| 18 | Record demo | 30 min | **P2** | Pending |
+| 19 | Submit marketplace listing | 1 hr | **P2** | Pending |
+| 20 | Provision SignalR + ACS + Redis | 30 min | **P1** | ✅ DONE |
 
-**Total estimated effort: ~5 days to reach full target state from current baseline.**
+**Closed: 7/20 gaps. Remaining effort: ~3 days to reach full target state.**
 
 ---
 
-*Last updated: 2026-04-17*
+*Last updated: 2026-04-18*

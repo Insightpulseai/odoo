@@ -1,0 +1,52 @@
+# ============================================================
+# AGENT FACTORY REGISTRY
+# ============================================================
+# Tracks all agents managed by the factory, their current
+# state, packaging channel, and promotion lane.
+# Last updated: 2026-03-15
+# ============================================================
+
+schema_version: "1.0"
+registry_id: agent-factory-registry
+
+agents:
+
+  - id: odoo-copilot
+    name: "Odoo Copilot"
+    release_target: R1
+    status: spec_defined
+    current_lane: null
+    packaging_channel: internal_one_click
+    maturity: draft
+    eval_status: not_started
+    owner: ai_team
+    constraints:
+      - read_only_mode
+    last_updated: "2026-03-15"
+
+  - id: finance-docflow
+    name: "Finance DocFlow"
+    release_target: R2
+    status: spec_defined
+    current_lane: null
+    packaging_channel: internal_one_click
+    maturity: draft
+    eval_status: not_started
+    owner: ai_team
+    constraints:
+      - draft_only_posting
+    last_updated: "2026-03-15"
+
+# ----------------------------------------------------------
+# State machine
+# ----------------------------------------------------------
+states:
+  - spec_defined       # manifest exists
+  - template_resolved  # matched to Foundry/azd template
+  - scaffold_generated # bootstrap artifact built
+  - eval_running       # eval packs executing
+  - eval_passed        # all evals green
+  - gate_review        # awaiting publish gate checks
+  - published          # live in target channel
+  - promoted           # moved to next lane
+  - blocked            # failed gate or eval

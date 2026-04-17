@@ -1,10 +1,19 @@
 # SSOT — Azure Resource Normalization Checklist
-# Locked: 2026-04-17
+# Locked: 2026-04-18
 # Authority: this file tracks keep/adopt/retire decisions for all Azure resources.
 
 resource_normalization_checklist:
   subscription: eba824fb-332d-4623-9dfb-2c9f7ee83f4e
-  last_audited: "2026-04-17"
+  last_audited: "2026-04-18"
+
+  resource_groups:
+    - name: rg-ipai-dev-agent-runtime
+      action: keep
+      reason: agent_aca_apps_and_mcp_servers
+    - name: rg-ipai-dev-realtime
+      action: keep
+      reason: signalr_redis_acs_realtime_services
+    # rg-ipai-sec deleted — naming drift, empty duplicate of rg-ipai-dev-security-sea
 
   categories:
     storage_accounts:
@@ -93,6 +102,25 @@ resource_normalization_checklist:
       - name: appi-ipai-dev
         action: keep
         reason: monitoring_component
+
+    signalr:
+      - name: sigr-ipai-dev-sea
+        rg: rg-ipai-dev-realtime
+        action: keep
+        reason: realtime_websocket_for_pulser_chat
+
+    communication_services:
+      - name: acs-ipai-dev-sea
+        rg: rg-ipai-dev-realtime
+        action: keep
+        reason: email_sms_voice_for_agent_notifications
+
+    redis:
+      - name: redis-ipai-dev-sea
+        rg: rg-ipai-dev-realtime
+        action: keep
+        reason: agent_session_cache_and_vector_ephemeral
+        sku: Basic_C0
 
     action_groups:
       notes: 3_observed_review_when_network_recovers

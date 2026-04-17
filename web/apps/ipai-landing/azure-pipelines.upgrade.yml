@@ -1,0 +1,20 @@
+# =============================================================================
+# DEPRECATED — merged into azure-pipelines.yml
+# =============================================================================
+# The upgrade-web.yml@templates reference was broken (template repo missing).
+# All deploy logic is now in azure-pipelines.yml using in-repo shared templates.
+# This file is retained to avoid AzDO pipeline definition breakage.
+# Remove after AzDO pipeline ID 12 (ipai-landing-upgrade) is deleted.
+# =============================================================================
+
+trigger: none
+pr: none
+
+pool:
+  vmImage: ubuntu-latest
+
+steps:
+  - script: |
+      echo "This pipeline is deprecated. Deploy logic moved to web/ipai-landing/azure-pipelines.yml"
+      echo "Delete AzDO pipeline ID 12 (ipai-landing-upgrade) to complete cleanup."
+    displayName: 'DEPRECATED — see azure-pipelines.yml'

@@ -29,7 +29,7 @@ tenant:
   name: ceoinsightpulseai.onmicrosoft.com
   id: 402de71a-87ec-4302-a609-fb76098d1da7
   default_domain: insightpulseai.com
-  subscription_id: 536d8cf6-89e1-4815-aef3-d5f2c5f4d070
+  subscription_id: eba824fb-332d-4623-9dfb-2c9f7ee83f4e
   primary_region: southeastasia
   entra_tier: free  # target: p1 (M365 Business Premium)
   security_defaults_enabled: true  # Enabled 2026-03-24. Replace with Conditional Access policies once Entra P1 (M365 Business Premium) is available.

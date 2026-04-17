@@ -1,0 +1,76 @@
+{
+  "agent_identity": {
+    "catalog_sp_appId": "faab82f3-0da4-4e7b-a563-b27f7418579f",
+    "catalog_sp_displayName": "ipai-agent-pulser-research-dev",
+    "runtime_mi_primary": "id-ipai-agent-pulser-dev",
+    "runtime_mi_note": "Initially reuses pulser-dev MI with distinct SP scoping. Spawn dedicated MI id-ipai-agent-pulser-research-dev when runtime separation is justified by workload or cost attribution.",
+    "runtime_mi_rg": "rg-ipai-dev-platform",
+    "runtime_mi_subscription": "Azure subscription 1"
+  },
+  "catalog_metadata": {
+    "display_name": "Pulser Research",
+    "description": "Read-only research agent for cited retrieval over internal IPAI corpus (PrismaLab, BIR rulings, Odoo docs) + web grounding via Bing Search.",
+    "publisher": "InsightPulse AI (MpnId 7097325)",
+    "category": "Research / Knowledge",
+    "version": "1.0.0",
+    "vertical_targets": ["Research (PrismaLab)", "Services (TBWA\\SMP)"],
+    "differentiators": [
+      "Citation discipline — every factual claim cites source (AI Search result, Bing result, or user-provided doc)",
+      "Internal-corpus-first — prefers IPAI indexes over web when both answer",
+      "Hallucination rate target ≤2%"
+    ]
+  },
+  "runtime": {
+    "foundry_project_endpoint": "https://ipai-copilot-resource.services.ai.azure.com/api/projects/ipai-copilot",
+    "model_deployment_complex": "gpt-4.1",
+    "model_deployment_routine": "gpt-4.1-mini-20260415",
+    "region": "eastus2"
+  },
+  "tool_surface": [
+    "azure_ai_search (srch-ipai-dev-sea, indexes: pulser-prismalab, pulser-bir-rulings, pulser-odoo-docs, pulser-runbooks)",
+    "bing_search (Foundry built-in — web grounding)",
+    "file_search (Foundry built-in — uploaded research artifacts)",
+    "github_mcp (conditional — when repo-context grounding explicitly required)"
+  ],
+  "repo_inventory": {
+    "skills": [
+      "agents/skills/prismalab_research/SKILL.md (planned)",
+      "agents/skills/bir_rulings_lookup/SKILL.md (planned)"
+    ],
+    "runtime_code": [
+      "agent-platform/research/"
+    ],
+    "evals": [
+      "spec/pulser-evals/pulser-research-evals.md"
+    ],
+    "corpus_sources": [
+      "PrismaLab systematic review corpus (indexed in pulser-prismalab)",
+      "BIR Revenue Regulations + RMCs + ATC catalog (pulser-bir-rulings)",
+      "Odoo 18 CE + OCA documentation (pulser-odoo-docs)",
+      "IPAI runbooks (automations/runbooks/, indexed)"
+    ]
+  },
+  "rbac_at_publish": {
+    "ipai_tenant": [
+      "Azure AI User on ipai-copilot-resource",
+      "SELECT on ipai_dev.gold (read-only; for any structured data grounding)",
+      "Read on srch-ipai-dev-sea (all indexes)",
+      "NO write paths anywhere"
+    ],
+    "tbwa_tenant": "deferred"
+  },
+  "kpi_ownership": [
+    "Citation specificity rate (section-level vs document-level)",
+    "Hallucination rate (≤2% target)",
+    "Internal-corpus-first hit rate (≥90% target)"
+  ],
+  "forbidden_actions": [
+    "Any write operation to any system",
+    "Calling PG MCP (route read requests to pulser-finance)",
+    "Fabricating citations (must say 'UNKNOWN — not found in indexed corpus' instead)"
+  ],
+  "closes_packs": ["Supports PrismaLab customers + Research use cases"],
+  "agent_365_extension_applied": false,
+  "frontier_gate_release_tracked": true,
+  "last_updated": "2026-04-15"
+}

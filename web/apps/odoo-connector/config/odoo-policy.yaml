@@ -1,0 +1,140 @@
+version: 1
+
+oauth:
+  resource_metadata_url: "https://erp.insightpulseai.com/.well-known/oauth-protected-resource"
+
+feature_groups:
+  contacts:
+    label: "Contacts"
+  sales:
+    label: "Sales"
+  finance:
+    label: "Finance"
+  projects:
+    label: "Projects"
+  cms_pages:
+    label: "CMS Pages"
+  cms_seo:
+    label: "CMS SEO"
+  cms_publish:
+    label: "CMS Publish"
+  reporting:
+    label: "Reporting"
+  admin_debug:
+    label: "Admin / Debug"
+
+tool_count: 19
+tools:
+  odoo_search_sale_orders:
+    title: "Search sale orders"
+    description: "Search Odoo sale orders by customer or order reference."
+    feature_group: "sales"
+    scope: "odoo.sales.orders.read"
+    mode: "read"
+    read_only: true
+    input_schema:
+      type: object
+      additionalProperties: false
+      properties:
+        query:
+          type: string
+        limit:
+          type: integer
+          minimum: 1
+          maximum: 25
+      required: ["query"]
+    wrapper: "sales.searchSaleOrders"
+
+  odoo_list_overdue_invoices:
+    title: "List overdue invoices"
+    description: "List customer invoices that are overdue."
+    feature_group: "finance"
+    scope: "odoo.finance.invoices.read"
+    mode: "read"
+    read_only: true
+    input_schema:
+      type: object
+      additionalProperties: false
+      properties:
+        partner_name:
+          type: string
+        limit:
+          type: integer
+          minimum: 1
+          maximum: 50
+      required: []
+    wrapper: "finance.listOverdueInvoices"
+
+  odoo_cms_list_pages:
+    title: "List CMS pages"
+    description: "List website pages from Odoo CMS."
+    feature_group: "cms_pages"
+    scope: "odoo.cms.pages.read"
+    mode: "read"
+    read_only: true
+    input_schema:
+      type: object
+      additionalProperties: false
+      properties:
+        query:
+          type: string
+        website_id:
+          type: integer
+        limit:
+          type: integer
+          minimum: 1
+          maximum: 50
+      required: []
+    wrapper: "cms.listPages"
+
+  odoo_cms_update_page_content:
+    title: "Update CMS page content"
+    description: "Update the editable content of an Odoo CMS page draft."
+    feature_group: "cms_pages"
+    scope: "odoo.cms.pages.write"
+    mode: "write"
+    read_only: false
+    destructive: false
+    idempotent: false
+    input_schema:
+      type: object
+      additionalProperties: false
+      properties:
+        page_id:
+          type: integer
+        html:
+          type: string
+      required: ["page_id", "html"]
+    wrapper: "cms.updatePageContent"
+
+  odoo_cms_publish_page:
+    title: "Publish CMS page"
+    description: "Publish an Odoo CMS page."
+    feature_group: "cms_publish"
+    scope: "odoo.cms.publish.write"
+    mode: "write"
+    read_only: false
+    destructive: false
+    idempotent: true
+    input_schema:
+      type: object
+      additionalProperties: false
+      properties:
+        page_id:
+          type: integer
+      required: ["page_id"]
+    wrapper: "cms.publishPage"
+
+  odoo_health_check:
+    title: "Odoo connector health check"
+    description: "Return a connector and Odoo reachability summary."
+    feature_group: "admin_debug"
+    scope: "odoo.admin.debug.read"
+    mode: "read"
+    read_only: true
+    input_schema:
+      type: object
+      additionalProperties: false
+      properties: {}
+      required: []
+    wrapper: "admin.healthCheck"

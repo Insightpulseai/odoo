@@ -1,0 +1,29 @@
+{
+  "supplier_name": "Acme Supplies Corp.",
+  "supplier_tin": "123-456-789-000",
+  "customer_name": "Dataverse IT Consultancy",
+  "customer_tin": "987-654-321-000",
+  "invoice_no": "INV-2026-001",
+  "invoice_date": "2026-04-01",
+  "lines": [
+    {
+      "line_no": 1,
+      "description": "IT Consulting Services - March 2026",
+      "quantity": "1",
+      "unit_price": "100000.00",
+      "amount": "100000.00",
+      "tax_type": "vatable",
+      "vat_amount": "12000.00",
+      "ewt_rate": "0.02",
+      "ewt_amount": "2000.00"
+    }
+  ],
+  "printed_subtotal": "100000.00",
+  "printed_vat": "12000.00",
+  "printed_gross": "112000.00",
+  "printed_withholding": "2000.00",
+  "printed_total_due": "110000.00",
+  "extraction_confidence": 0.97,
+  "extraction_notes": [],
+  "source_file": "fixtures/clean_vat_invoice.pdf"
+}

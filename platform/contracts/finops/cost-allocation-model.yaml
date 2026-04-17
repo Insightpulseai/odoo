@@ -1,0 +1,133 @@
+# Cost allocation model — machine-readable contract
+# Maps Azure resources → cost-allocation dimensions for FinOps reporting.
+# Used by: FOCUS data join in Databricks, Power BI semantic model, chargeback views.
+# Locked 2026-04-15.
+
+schema_version: "1.0"
+reference: https://learn.microsoft.com/en-us/cloud-computing/finops/capabilities-allocation
+source_of_truth_for:
+  - Power BI FinOps dashboards (once Fabric F2 attached)
+  - Databricks `ipai_dev.metrics.cost_by_dimension` view
+  - Chargeback statements per tenant
+
+dimensions:
+  - id: subscription
+    source: FOCUS.SubAccountId
+    values:
+      - id: eba824fb-332d-4623-9dfb-2c9f7ee83f4e
+        name: "Microsoft Azure Sponsorship"
+        purpose: all workloads (canonical — PAYG sub 536d8cf6 deleted 2026-04-18)
+        cost_center: ipai-platform
+        note: Cost Management FOCUS export unsupported (offer MS-AZR-0036P)
+
+  - id: resource_group
+    source: FOCUS.ResourceId parent RG
+    values:
+      - name: rg-ipai-dev-odoo-runtime
+        plane: transaction
+        product: odoo
+      - name: rg-ipai-dev-data-sea
+        plane: data-intelligence
+        product: pulser
+      - name: rg-ipai-dev-ai-sea
+        plane: agent-runtime
+        product: pulser
+      - name: rg-ipai-dev-platform
+        plane: platform
+        product: shared
+      - name: rg-ipai-dev-dbw-managed
+        plane: data-intelligence
+        product: pulser
+        note: Databricks-managed RG, limited user control
+
+  # Note: tag keys below follow the LIVE observed schema on
+  # Microsoft Azure Sponsorship (verified 2026-04-15) — snake_case,
+  # not camelCase. See ssot/governance/tagging-doctrine.yaml.
+  - id: workload
+    source: tag:workload
+    allowed_values: [pulser, odoo, prismalab, w9, shared]
+
+  - id: cost_center
+    source: tag:cost_center
+    pattern: '^ipai-[a-z-]+$'
+
+  - id: env
+    source: tag:env
+    allowed_values: [dev, staging, prod]
+
+  - id: owner
+    source: tag:owner
+
+  - id: plane
+    source: tag:plane
+    allowed_values: [transaction, data-intelligence, agent-runtime, platform, shared]
+
+  - id: tenant
+    source: tag:tenant
+    description: res.company mapping from Odoo
+    values:
+      1: IPAI
+      2: W9
+      3: OMC
+      4: TBWA_SMP
+
+  - id: service
+    source: FOCUS.ServiceName
+    grouping:
+      compute: [Azure Container Apps, Azure Container Registry, Azure Kubernetes Service]
+      data: [Azure Database for PostgreSQL, Azure Databricks, Azure Storage]
+      ai: [Azure OpenAI, Azure AI Foundry, Document Intelligence, Azure AI Search]
+      networking: [Azure Front Door, Azure DNS, Virtual Network]
+      observability: [Application Insights, Log Analytics]
+      governance: [Azure Policy, Key Vault, Managed Identity]
+
+  - id: benchmark
+    source: tag:benchmark
+    description: Reference architecture this resource implements
+    allowed_values:
+      - d365-finance
+      - d365-project-ops
+      - fabric-for-finops
+      - cdm-lake
+      - agentic-app-with-fabric
+      - foundry-agent-webapp
+      - release-manager-assistant
+
+allocation_keys:
+  # Order matters — first non-null wins per FOCUS row
+  priority:
+    - tag:tenant              # explicit tenant allocation
+    - tag:product             # product-family allocation
+    - resource_group          # RG-level fallback
+    - subscription            # sub-level fallback (last resort)
+
+shared_cost_allocation:
+  # How to split unallocated shared costs across tenants
+  strategy: weighted_by_primary_usage
+  primary_usage_metric: ops.agent_run_count per tenant
+  refresh: monthly
+
+chargeback:
+  unit_economics:
+    - name: cost_per_agent_request
+      numerator: sum(cost where benchmark in [agentic-app-with-fabric, foundry-agent-webapp])
+      denominator: sum(ops.agent_run_count)
+      target_usd: 0.10
+    - name: cost_per_bir_filing
+      numerator: sum(cost where tag:product=pulser and ops.category=bir)
+      denominator: count(ops.bir_filing_runs where state in [confirmed, submitted])
+      target_usd: 0.50
+    - name: cost_per_tenant_per_month
+      numerator: sum(cost grouped_by tag:tenant)
+      denominator: 1  # absolute
+      review_cadence: monthly
+
+integrations:
+  foundry_token_usage: appi-ipai-dev-agent-sea custom metrics  # per-deployment token counts
+  odoo_ops_agent_runs: ops.agent_run table (PG on pg-ipai-odoo)
+  databricks_compute: billing usage via Databricks REST API
+
+enforcement:
+  tag_policy_bicep: infra/azure/policy/required-tags.bicep   # to author
+  policy_effect: deny
+  exemption_review_days: 90

@@ -1,0 +1,360 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		4ACF47440E0B5EC5C9309181 /* Environment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69B1B0503BB404387E3DF604 /* Environment.swift */; };
+		67E616987E36BAAD66124F46 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3E1D3597F3B4DDF295A97749 /* LaunchScreen.storyboard */; };
+		6990E8636318FCA5055A3179 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F94726E340C80E0F660F9486 /* SceneDelegate.swift */; };
+		DFC31791A8557AAC48398C9A /* WrapperViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C40FE285D9C84225C2953E0 /* WrapperViewController.swift */; };
+		EE1CA1D6D34CC232F48F6685 /* BiometricAuth.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BBA037EA78310E5D526C391 /* BiometricAuth.swift */; };
+		F11980839DC4BAC58778D7F2 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 218418DBE9DABC7AC200EB55 /* AppDelegate.swift */; };
+		A1B2C3D4E5F60001A0000001 /* CameraCaptureBridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60002A0000001 /* CameraCaptureBridge.swift */; };
+		A1B2C3D4E5F60001A0000002 /* GlassEffectComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60002A0000002 /* GlassEffectComponents.swift */; };
+		A1B2C3D4E5F60001A0000003 /* KeychainService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60002A0000003 /* KeychainService.swift */; };
+		A1B2C3D4E5F60001A0000004 /* LiquidGlassTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60002A0000004 /* LiquidGlassTabView.swift */; };
+		A1B2C3D4E5F60001A0000005 /* MileageTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60002A0000005 /* MileageTracker.swift */; };
+		A1B2C3D4E5F60001A0000006 /* OCRService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60002A0000006 /* OCRService.swift */; };
+		A1B2C3D4E5F60001A0000007 /* ReceiptQueueManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60002A0000007 /* ReceiptQueueManager.swift */; };
+		A1B2C3D4E5F60001A0000008 /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60002A0000008 /* Theme.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		1BBA037EA78310E5D526C391 /* BiometricAuth.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BiometricAuth.swift; sourceTree = "<group>"; };
+		1C40FE285D9C84225C2953E0 /* WrapperViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WrapperViewController.swift; sourceTree = "<group>"; };
+		2068B0B55D31EBE4BBB965D9 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		218418DBE9DABC7AC200EB55 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		3E1D3597F3B4DDF295A97749 /* LaunchScreen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
+		5A61BFCF3A85382D7887A0C6 /* OdooWrapper.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = OdooWrapper.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		69B1B0503BB404387E3DF604 /* Environment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Environment.swift; sourceTree = "<group>"; };
+		7DBC9EE5570544D03F89498C /* OdooWrapper.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = OdooWrapper.entitlements; sourceTree = "<group>"; };
+		F94726E340C80E0F660F9486 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
+		A1B2C3D4E5F60002A0000001 /* CameraCaptureBridge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraCaptureBridge.swift; sourceTree = "<group>"; };
+		A1B2C3D4E5F60002A0000002 /* GlassEffectComponents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlassEffectComponents.swift; sourceTree = "<group>"; };
+		A1B2C3D4E5F60002A0000003 /* KeychainService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainService.swift; sourceTree = "<group>"; };
+		A1B2C3D4E5F60002A0000004 /* LiquidGlassTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiquidGlassTabView.swift; sourceTree = "<group>"; };
+		A1B2C3D4E5F60002A0000005 /* MileageTracker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MileageTracker.swift; sourceTree = "<group>"; };
+		A1B2C3D4E5F60002A0000006 /* OCRService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OCRService.swift; sourceTree = "<group>"; };
+		A1B2C3D4E5F60002A0000007 /* ReceiptQueueManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReceiptQueueManager.swift; sourceTree = "<group>"; };
+		A1B2C3D4E5F60002A0000008 /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXGroup section */
+		9394A189AA0DBCDE57CBB599 = {
+			isa = PBXGroup;
+			children = (
+				C770EEA39C927BB02A81FCEB /* Sources */,
+				B9099894BC2662848F8891A0 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		B9099894BC2662848F8891A0 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				5A61BFCF3A85382D7887A0C6 /* OdooWrapper.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		C770EEA39C927BB02A81FCEB /* Sources */ = {
+			isa = PBXGroup;
+			children = (
+				218418DBE9DABC7AC200EB55 /* AppDelegate.swift */,
+				1BBA037EA78310E5D526C391 /* BiometricAuth.swift */,
+				A1B2C3D4E5F60002A0000001 /* CameraCaptureBridge.swift */,
+				69B1B0503BB404387E3DF604 /* Environment.swift */,
+				A1B2C3D4E5F60002A0000002 /* GlassEffectComponents.swift */,
+				2068B0B55D31EBE4BBB965D9 /* Info.plist */,
+				A1B2C3D4E5F60002A0000003 /* KeychainService.swift */,
+				3E1D3597F3B4DDF295A97749 /* LaunchScreen.storyboard */,
+				A1B2C3D4E5F60002A0000004 /* LiquidGlassTabView.swift */,
+				A1B2C3D4E5F60002A0000005 /* MileageTracker.swift */,
+				A1B2C3D4E5F60002A0000006 /* OCRService.swift */,
+				7DBC9EE5570544D03F89498C /* OdooWrapper.entitlements */,
+				A1B2C3D4E5F60002A0000007 /* ReceiptQueueManager.swift */,
+				F94726E340C80E0F660F9486 /* SceneDelegate.swift */,
+				A1B2C3D4E5F60002A0000008 /* Theme.swift */,
+				1C40FE285D9C84225C2953E0 /* WrapperViewController.swift */,
+			);
+			path = Sources;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		0579498F2FE397FB41A31842 /* OdooWrapper */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A9B549B4430DEEB30705AA9C /* Build configuration list for PBXNativeTarget "OdooWrapper" */;
+			buildPhases = (
+				93AED475EFDEAEF34B39AC47 /* Sources */,
+				BCFB447CF4C66B2650F1071F /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = OdooWrapper;
+			packageProductDependencies = (
+			);
+			productName = OdooWrapper;
+			productReference = 5A61BFCF3A85382D7887A0C6 /* OdooWrapper.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		94768B00DCCAB846FA2E407B /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1600;
+				TargetAttributes = {
+					0579498F2FE397FB41A31842 = {
+						ProvisioningStyle = Automatic;
+					};
+				};
+			};
+			buildConfigurationList = C618E2AB655DD5F61E50D8C2 /* Build configuration list for PBXProject "OdooWrapper" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = 9394A189AA0DBCDE57CBB599;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = B9099894BC2662848F8891A0 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				0579498F2FE397FB41A31842 /* OdooWrapper */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		BCFB447CF4C66B2650F1071F /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				67E616987E36BAAD66124F46 /* LaunchScreen.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		93AED475EFDEAEF34B39AC47 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F11980839DC4BAC58778D7F2 /* AppDelegate.swift in Sources */,
+				EE1CA1D6D34CC232F48F6685 /* BiometricAuth.swift in Sources */,
+				A1B2C3D4E5F60001A0000001 /* CameraCaptureBridge.swift in Sources */,
+				4ACF47440E0B5EC5C9309181 /* Environment.swift in Sources */,
+				A1B2C3D4E5F60001A0000002 /* GlassEffectComponents.swift in Sources */,
+				A1B2C3D4E5F60001A0000003 /* KeychainService.swift in Sources */,
+				A1B2C3D4E5F60001A0000004 /* LiquidGlassTabView.swift in Sources */,
+				A1B2C3D4E5F60001A0000005 /* MileageTracker.swift in Sources */,
+				A1B2C3D4E5F60001A0000006 /* OCRService.swift in Sources */,
+				A1B2C3D4E5F60001A0000007 /* ReceiptQueueManager.swift in Sources */,
+				6990E8636318FCA5055A3179 /* SceneDelegate.swift in Sources */,
+				A1B2C3D4E5F60001A0000008 /* Theme.swift in Sources */,
+				DFC31791A8557AAC48398C9A /* WrapperViewController.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		4F1170480A7DD02B55DB0EE4 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = Sources/OdooWrapper.entitlements;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
+				INFOPLIST_FILE = Sources/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.insightpulseai.odoo;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		9D2D371571164BF10B8FD0F9 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				MARKETING_VERSION = 1.0.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.9;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		B3AE4CDD30D19519E722C236 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				MARKETING_VERSION = 1.0.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.9;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		DAB8F01EBCE192958EF7D200 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = Sources/OdooWrapper.entitlements;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
+				INFOPLIST_FILE = Sources/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.insightpulseai.odoo;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		A9B549B4430DEEB30705AA9C /* Build configuration list for PBXNativeTarget "OdooWrapper" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				DAB8F01EBCE192958EF7D200 /* Debug */,
+				4F1170480A7DD02B55DB0EE4 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		C618E2AB655DD5F61E50D8C2 /* Build configuration list for PBXProject "OdooWrapper" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B3AE4CDD30D19519E722C236 /* Debug */,
+				9D2D371571164BF10B8FD0F9 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 94768B00DCCAB846FA2E407B /* Project object */;
+}

@@ -1,0 +1,24 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "location": {
+      "value": "southeastasia"
+    },
+    "entraAppDisplayName": {
+      "value": "IPAI PG MCP Server"
+    },
+    "acaNamePrefix": {
+      "value": "ipai-pg-mcp-server"
+    },
+    "postgresResourceId": {
+      "value": "/subscriptions/eba824fb-332d-4623-9dfb-2c9f7ee83f4e/resourceGroups/rg-ipai-dev-odoo-data/providers/Microsoft.DBforPostgreSQL/flexibleServers/pg-ipai-odoo"
+    },
+    "aifProjectResourceId": {
+      "value": "/subscriptions/eba824fb-332d-4623-9dfb-2c9f7ee83f4e/resourceGroups/rg-data-intel-ph/providers/Microsoft.CognitiveServices/accounts/ipai-copilot-resource/projects/ipai-copilot"
+    },
+    "appInsightsConnectionString": {
+      "value": "DISABLED"
+    }
+  }
+}

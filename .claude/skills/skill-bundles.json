@@ -1,0 +1,75 @@
+{
+  "_comment": "Max 8 skills per API request. Route by task_type at call time.",
+  "_version": "0.1.0",
+
+  "bundles": {
+    "governance": {
+      "description": "Architecture decisions, IaC, DevOps gate, GA readiness",
+      "trigger_keywords": ["constitution", "architecture", "bicep", "stamp", "iac", "devops", "ga readiness", "scenario map"],
+      "skills": [
+        "pulser-constitution",
+        "pulser-scenario-map",
+        "pulser-iac-scaffold",
+        "pulser-stamp-deploy",
+        "pulser-runtime-classify",
+        "pulser-devops-gate",
+        "pulser-ga-gate"
+      ],
+      "count": 7
+    },
+
+    "tenant-lifecycle": {
+      "description": "Onboarding, go-live, UAT, control plane, live-site ops",
+      "trigger_keywords": ["onboarding", "go-live", "uat", "tenant", "control plane", "health check", "incident", "activation"],
+      "skills": [
+        "pulser-control-plane",
+        "pulser-tenant-admin",
+        "pulser-onboarding",
+        "pulser-go-live",
+        "pulser-uat-gate",
+        "pulser-livesite"
+      ],
+      "count": 6
+    },
+
+    "finance-ops": {
+      "description": "Finance PPM, expense, RBAC, behavior resolution, publishable outputs",
+      "trigger_keywords": ["project to profit", "finance ppm", "expense", "rbac", "role group", "approval band", "publish", "pptx", "docx", "behavior"],
+      "skills": [
+        "pulser-ppm",
+        "pulser-expense-intel",
+        "pulser-finance-rbac",
+        "pulser-behavior-resolve",
+        "pulser-publish"
+      ],
+      "count": 5
+    },
+
+    "intelligence": {
+      "description": "Research tools, RAG, run tracing, self-healing, evals",
+      "trigger_keywords": ["prisma", "pico", "pubmed", "rag", "retrieval", "run trace", "self-heal", "fallback", "eval", "scorecard", "replay"],
+      "skills": [
+        "pulser-prisma",
+        "pulser-rag-wire",
+        "pulser-run-trace",
+        "pulser-self-heal",
+        "pulser-eval"
+      ],
+      "count": 5
+    }
+  },
+
+  "routing_logic": {
+    "comment": "In agent-platform, resolve bundle at request time from task context.",
+    "default_bundle": "finance-ops",
+    "fallback": "Load the two most relevant skills from any bundle based on task description.",
+    "max_per_request": 8
+  },
+
+  "cross_surface_note": {
+    "claude_code_plugins": "Skills installed via 'claude plugin install pulser-odoo@ipai-plugins' are available in Claude Code sessions only.",
+    "api_skills": "Skills uploaded via Anthropic Skills API are available in agent-platform API calls only.",
+    "not_synced": "These two surfaces do NOT sync. Maintain both: plugins for Claude Code dev sessions, API uploads for agent-platform runtime.",
+    "source_of_truth": "agents/skills/<name>/SKILL.md is the single source. Publish to both surfaces from there."
+  }
+}

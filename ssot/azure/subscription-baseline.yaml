@@ -121,8 +121,8 @@ subscriptions:
         keep: true
 
   sub1:
-    name: Azure subscription 1
-    subscription_id: 536d8cf6-89e1-4815-aef3-d5f2c5f4d070
+    name: Microsoft Azure Sponsorship
+    subscription_id: eba824fb-332d-4623-9dfb-2c9f7ee83f4e
     directory: insightpulseai.com
     status: active
     role: aca_runtime_host
@@ -143,7 +143,7 @@ subscriptions:
 
 odoo_bom_binding:
   subscription: eba824fb-332d-4623-9dfb-2c9f7ee83f4e
-  aca_subscription: 536d8cf6-89e1-4815-aef3-d5f2c5f4d070
+  aca_subscription: eba824fb-332d-4623-9dfb-2c9f7ee83f4e
   postgres: pg-ipai-odoo
   acr: acripaiodoo
   aca_environment: ipai-odoo-dev-env-v2

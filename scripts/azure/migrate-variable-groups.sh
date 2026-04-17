@@ -17,7 +17,7 @@ ORG="https://dev.azure.com/insightpulseai"
 PROJECT="ipai-platform"
 KV_NAME="kv-ipai-dev"
 KV_RG="rg-ipai-dev-platform"
-KV_SUB="536d8cf6-89e1-4815-aef3-d5f2c5f4d070"
+KV_SUB="eba824fb-332d-4623-9dfb-2c9f7ee83f4e"
 KV_ID="/subscriptions/${KV_SUB}/resourceGroups/${KV_RG}/providers/Microsoft.KeyVault/vaults/${KV_NAME}"
 
 # ---------------------------------------------------------------------------

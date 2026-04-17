@@ -14,6 +14,7 @@ import argparse
 import sys
 from datetime import datetime, timezone
 from pathlib import Path
+from typing import Optional
 
 REPO_ROOT = Path(__file__).resolve().parent.parent.parent
 
@@ -54,7 +55,7 @@ VALID_SOURCE_TYPE_ORDER = [
 ]
 
 
-def load_yaml(path: Path) -> dict | None:
+def load_yaml(path: Path) -> Optional[dict]:
     """Load a YAML file; return None if missing or invalid."""
     try:
         import yaml

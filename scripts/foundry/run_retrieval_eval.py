@@ -622,7 +622,7 @@ def try_builtin_eval(
 
         # azure_ai_project dict for builtin evaluators
         azure_ai_project = {
-            "subscription_id": "536d8cf6-89e1-4815-aef3-d5f2c5f4d070",
+            "subscription_id": "eba824fb-332d-4623-9dfb-2c9f7ee83f4e",
             "resource_group_name": "rg-data-intel-ph",
             "project_name": m.group(2),
         }

@@ -1,0 +1,37 @@
+{
+  "$schema": "../../schema.tokens.json",
+  "tenant": "pulser",
+  "vertical": "pulser-odoo-finance",
+  "extends": "../tokens",
+  "description": "Pulser / Odoo Finance vertical overlay. Drives ERP copilot, finance agents, reconciliation, collections, BIR workflows, approvals. Design goal: trustworthy, operational, finance-grade. Tone: controlled, structured, audit-friendly. Fluent default communication blue ramp (anchor 80 = #0F6CBD).",
+  "brand": {
+    "name": "Pulser",
+    "primary": "#0F6CBD",
+    "variants": {
+      "10": "#020305",
+      "20": "#111725",
+      "30": "#16263D",
+      "40": "#193253",
+      "50": "#1B3F6A",
+      "60": "#1B4C82",
+      "70": "#18599B",
+      "80": "#0F6CBD",
+      "90": "#2886DE",
+      "100": "#479EF5",
+      "110": "#62ABF5",
+      "120": "#77B7F7",
+      "130": "#96C6FA",
+      "140": "#B4D6FA",
+      "150": "#CFE4FA",
+      "160": "#EBF3FC"
+    }
+  },
+  "posture": {
+    "density": "compact",
+    "rowHeight": "32px",
+    "panelSurface": "flat",
+    "typographyRhythm": "operational",
+    "emphasis": "data-state-contrast",
+    "decorative": "minimal"
+  }
+}

@@ -1,0 +1,44 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Spec Kit Bundle Check",
+  "type": "object",
+  "required": ["bundle", "status", "sections", "issues"],
+  "properties": {
+    "bundle": { "type": "string", "description": "Path to spec bundle, e.g. spec/pulser-odoo/" },
+    "status": { "type": "string", "enum": ["pass", "fail", "warn"] },
+    "sections": {
+      "type": "object",
+      "required": ["constitution", "prd", "plan", "tasks"],
+      "properties": {
+        "constitution": { "$ref": "#/definitions/section" },
+        "prd": { "$ref": "#/definitions/section" },
+        "plan": { "$ref": "#/definitions/section" },
+        "tasks": { "$ref": "#/definitions/section" }
+      }
+    },
+    "issues": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["severity", "section", "message"],
+        "properties": {
+          "severity": { "type": "string", "enum": ["block", "warn", "info"] },
+          "section": { "type": "string" },
+          "message": { "type": "string" },
+          "remediation": { "type": "string" }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "section": {
+      "type": "object",
+      "required": ["present", "consistent"],
+      "properties": {
+        "present": { "type": "boolean" },
+        "consistent": { "type": "boolean" },
+        "missing_parts": { "type": "array", "items": { "type": "string" } }
+      }
+    }
+  }
+}

@@ -1,0 +1,38 @@
+{
+  "$schema": "../../schema.tokens.json",
+  "tenant": "ipai",
+  "vertical": "research-strategy",
+  "extends": "../tokens",
+  "description": "Research / Strategy vertical overlay. Drives LIONS-like research assistant, PrismaLab-style evidence/review flows, brief generation, evidence packs, strategy workspaces, and deck-facing UI. Design goal: premium, editorial, cited, deck-friendly. Tone: calmer, content-first, reading-oriented.",
+  "brand": {
+    "name": "IPAI Research",
+    "primary": "#225B62",
+    "variants": {
+      "10": "#0F1E20",
+      "20": "#163033",
+      "30": "#1B4247",
+      "40": "#20525B",
+      "50": "#225B62",
+      "60": "#2B7079",
+      "70": "#378892",
+      "80": "#49A3AE",
+      "90": "#66BCC6",
+      "100": "#84D2DA",
+      "110": "#A5E3E8",
+      "120": "#C4EFF2",
+      "130": "#DDF6F8",
+      "140": "#ECFAFB",
+      "150": "#F6FDFD",
+      "160": "#FBFEFE"
+    }
+  },
+  "posture": {
+    "density": "comfortable",
+    "rowHeight": "44px",
+    "panelSurface": "soft",
+    "typographyRhythm": "editorial",
+    "readingMaxWidth": "72ch",
+    "emphasis": "citation-forward",
+    "decorative": "allowed"
+  }
+}

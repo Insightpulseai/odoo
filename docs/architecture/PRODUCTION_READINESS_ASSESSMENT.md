@@ -2,7 +2,7 @@
 
 > Assessment date: 2026-04-09
 > Scope: Azure-native Odoo 18 CE stack in `rg-ipai-dev-odoo-runtime`
-> Subscription: `536d8cf6-89e1-4815-aef3-d5f2c5f4d070` ("Azure subscription 1")
+> Subscription: `eba824fb-332d-4623-9dfb-2c9f7ee83f4e` ("Microsoft Azure Sponsorship")
 > Assessor: automated via `az` CLI live queries
 > Last remediation pass: 2026-04-09T21:00+08:00
 
@@ -596,6 +596,6 @@ Full BCDR procedures: `docs/architecture/BCDR_RUNBOOK.md`
 
 ---
 
-*Assessment generated: 2026-04-09 from live `az` CLI queries against subscription 536d8cf6*
+*Assessment generated: 2026-04-09 from live `az` CLI queries against subscription eba824fb*
 *Remediation executed: 2026-04-09 via 10 parallel agent teams + follow-up session*
 *Final pass: 2026-04-09T21:00+08:00 — 24/26 gates, risk rating LOW*

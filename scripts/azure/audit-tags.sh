@@ -14,7 +14,7 @@
 
 set -euo pipefail
 
-SUBSCRIPTION_ID="${AZURE_SUBSCRIPTION_ID:-536d8cf6-89e1-4815-aef3-d5f2c5f4d070}"
+SUBSCRIPTION_ID="${AZURE_SUBSCRIPTION_ID:-eba824fb-332d-4623-9dfb-2c9f7ee83f4e}"
 REQUIRED_TAGS=(env app costcenter owner data-classification)
 FORBIDDEN_KEYS=(Environment environment ENV Owner OWNER CostCenter Cost-Center Project Service Stack workload managedBy ManagedBy managed_by Managed-By)
 

@@ -1,0 +1,12 @@
+{
+  "name": "powerbi-skills",
+  "description": "Power BI skills for Claude Code — DAX authoring, data modeling, PBIP scaffolding, report theming, and CI/CD pipelines.",
+  "version": "0.1.0",
+  "author": "InsightPulseAI",
+  "skills": [
+    "dax-authoring",
+    "pbip-scaffolding",
+    "report-theming",
+    "analytics-pipeline"
+  ]
+}

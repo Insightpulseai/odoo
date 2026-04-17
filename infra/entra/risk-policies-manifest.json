@@ -1,0 +1,46 @@
+{
+  "policies": [
+    {
+      "displayName": "CA-001: User Risk Policy (Report-only)",
+      "state": "enabledForReportingButNotEnforced",
+      "conditions": {
+        "userRiskLevels": ["high"],
+        "users": {
+          "includeUsers": ["All"],
+          "excludeUsers": [
+            "ID_OF_BREAKGLASS_1",
+            "ID_OF_BREAKGLASS_2"
+          ]
+        },
+        "applications": {
+          "includeApplications": ["All"]
+        }
+      },
+      "grantControls": {
+        "operator": "OR",
+        "builtInControls": ["passwordChange"]
+      }
+    },
+    {
+      "displayName": "CA-002: Sign-in Risk Policy (Report-only)",
+      "state": "enabledForReportingButNotEnforced",
+      "conditions": {
+        "signInRiskLevels": ["medium", "high"],
+        "users": {
+          "includeUsers": ["All"],
+          "excludeUsers": [
+            "ID_OF_BREAKGLASS_1",
+            "ID_OF_BREAKGLASS_2"
+          ]
+        },
+        "applications": {
+          "includeApplications": ["All"]
+        }
+      },
+      "grantControls": {
+        "operator": "OR",
+        "builtInControls": ["mfa"]
+      }
+    }
+  ]
+}

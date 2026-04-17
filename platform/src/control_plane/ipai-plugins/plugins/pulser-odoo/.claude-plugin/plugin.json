@@ -1,0 +1,37 @@
+{
+  "name": "pulser-odoo",
+  "description": "Pulser for Odoo — governed AI-augmented layer for Odoo CE/OCA 18 on Azure. Covers architecture, IaC, deployment stamps, go-live factory, finance RBAC, behavior engine, research tools, and self-improvement.",
+  "version": "0.1.0",
+  "author": "InsightPulseAI",
+  "skills": [
+    "pulser-constitution",
+    "pulser-scenario-map",
+    "pulser-iac-scaffold",
+    "pulser-stamp-deploy",
+    "pulser-runtime-classify",
+    "pulser-control-plane",
+    "pulser-tenant-admin",
+    "pulser-onboarding",
+    "pulser-go-live",
+    "pulser-uat-gate",
+    "pulser-ppm",
+    "pulser-expense-intel",
+    "pulser-finance-rbac",
+    "pulser-behavior-resolve",
+    "pulser-prisma",
+    "pulser-rag-wire",
+    "pulser-livesite",
+    "pulser-run-trace",
+    "pulser-self-heal",
+    "pulser-publish",
+    "pulser-eval",
+    "pulser-devops-gate",
+    "pulser-ga-gate",
+    "odoo-docs-enhance"
+  ],
+  "mcpServers": [
+    "azure",
+    "azure-foundry",
+    "pulser-n8n"
+  ]
+}

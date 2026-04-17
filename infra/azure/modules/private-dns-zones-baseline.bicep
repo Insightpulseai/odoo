@@ -28,6 +28,8 @@ var zoneNames = [
   'privatelink.applicationinsights.azure.com'      // App Insights
   'privatelink.servicebus.windows.net'             // Service Bus + Event Hub (Purview uses this)
   'privatelink.cognitiveservices.azure.com'        // Foundry / Azure AI Services
+  'privatelink.redis.cache.windows.net'            // Redis Cache
+  'privatelink.service.signalr.net'                // SignalR Service
 ]
 
 module zones 'br/public:avm/res/network/private-dns-zone:0.8.1' = [for zone in zoneNames: {
