@@ -39,3 +39,4 @@
 ## Skills
 
 - [Databricks IPAI Grounded](skills/databricks-ipai-grounded.md) — setup + auth + deployment guide
+- [Baseline → Target State](architecture/baseline-to-target-state.md) — current 44 resources vs desired state, 19 gaps
