@@ -1,0 +1,18 @@
+domain: ado
+title: Delivery Intelligence
+status: active
+source_systems:
+  - azure_devops
+owned_by_repo: data-intelligence
+purpose:
+  - work_item_flow_analysis
+  - iteration_health
+  - delivery_bottleneck_detection
+gold_marts:
+  - gold_ado_work_item_flow
+  - gold_ado_iteration_health
+serving_surfaces:
+  - databricks_one_dashboard
+  - genie_space
+target_space_names:
+  - IPAI Platform Tracker

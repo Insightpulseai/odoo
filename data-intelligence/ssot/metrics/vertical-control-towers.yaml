@@ -1,0 +1,25 @@
+control_towers:
+  - name: delivery_intelligence
+    marts:
+      - gold_ado_work_item_flow
+      - gold_ado_iteration_health
+    questions:
+      - what_is_blocked
+      - where_are_bottlenecks
+      - which_iterations_are_at_risk
+  - name: finance_operations
+    marts:
+      - gold_finance_close_workload
+      - gold_finance_approval_latency
+    questions:
+      - who_is_overloaded
+      - what_tasks_repeat_most
+      - where_are_close_delays
+  - name: tax_compliance
+    marts:
+      - gold_tax_deadline_control
+      - gold_tax_filing_readiness
+    questions:
+      - what_filings_are_at_risk
+      - which_approvals_are_bottlenecked
+      - what_deadlines_need_escalation

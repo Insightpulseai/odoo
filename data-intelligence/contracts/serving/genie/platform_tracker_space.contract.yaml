@@ -1,0 +1,10 @@
+contract: genie_platform_tracker_space
+status: pilot
+domain: ado
+required_assets:
+  - gold_ado_work_item_flow
+  - gold_ado_iteration_health
+required_examples:
+  - how_many_work_items_are_in_r2
+  - what_is_blocked_right_now
+  - which_owner_has_the_most_open_items

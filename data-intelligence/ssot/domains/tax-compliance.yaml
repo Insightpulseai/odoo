@@ -1,0 +1,21 @@
+domain: tax_compliance
+title: Tax and Compliance Intelligence
+status: planned
+source_systems:
+  - bir_deadline_calendars
+  - internal_approval_calendars
+owned_by_repo: data-intelligence
+purpose:
+  - filing_readiness
+  - deadline_risk_analysis
+  - approval_bottleneck_analysis
+  - compliance_control_tower
+gold_marts:
+  - gold_tax_deadline_control
+  - gold_tax_filing_readiness
+  - gold_tax_approval_latency
+serving_surfaces:
+  - databricks_one_dashboard
+  - genie_space
+target_space_names:
+  - Compliance & Tax

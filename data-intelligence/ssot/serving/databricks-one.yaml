@@ -1,0 +1,19 @@
+surface: databricks_one
+role: business_user_consumption_surface
+owned_by_repo: data-intelligence
+supported_assets:
+  - dashboards
+  - genie_spaces
+  - vertical_analytics_apps
+primary_users:
+  - executives
+  - managers
+  - analysts
+  - consumer_access_stakeholders
+non_goals:
+  - transactional_execution_workspace
+  - erp_replacement_ui
+promotion_rules:
+  - use_live_data_first
+  - prefer_gold_or_curated_serving_views
+  - allow_bronze_backed_pilots_only_temporarily
